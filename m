@@ -1,115 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-17887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DAA8B36A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 13:43:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7511F8B36A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 13:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54B01C21EBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 11:43:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321E4284A75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 11:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145B9145343;
-	Fri, 26 Apr 2024 11:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154AE145B37;
+	Fri, 26 Apr 2024 11:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="aQ34CJ9E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxW0Hd2d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D473A1B7;
-	Fri, 26 Apr 2024 11:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B039145B21;
+	Fri, 26 Apr 2024 11:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714131797; cv=none; b=KO6P4qfN4cqfn3oc0Ewiwx2NrC8kJ/E7YXKJkFVAnUXSnLsqxh7Uw+WHsg45A9nc3PCwUc9Cq2TPgtNZPbCrbZY9U1IG8IA+AdrkF9xL99oyeMAl+4Qly1Dh8J/cZtpOZ6fsJ29zuF8dZ4x7hq0DDVHmq7acw9xzxR+6KjHyUVs=
+	t=1714131801; cv=none; b=VyQbCT3hZ8wrmMqJiAUGBhQdxTjPQAYH/2G61GopPG/I3Soz4eYBmqPS20acA4i3YJMbi2sek2f1+28H9bUXK70kYKULjZCopIzq9VUvB5Tyhj4nAGW7LSSjOFo7irSExhAwEoB2VikdeWhvgZMkdBwbaxctUgitEm1HzoErG7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714131797; c=relaxed/simple;
-	bh=BcEjWt3YbmNIE7LVBFxvxMgZ2KaV3f86h2IsdGvrfSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYVd2y3Ngvr2QWW/iD0jVS5dhC1WFjylcuF5pEdDacNMWiGDAIotYGJEGk/dy4nF65Q0A1oEzabMHjHqmW+usxoPlq2Lmbusm/L530+oDKN3No6qj8ueaFM2quUM2Y/QRKli+3LmEqJwduqmh9/kVtUHR2T/RtZNkLvLWAJBo+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=aQ34CJ9E; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VQrSn4Vb2z9smT;
-	Fri, 26 Apr 2024 13:43:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1714131785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cltDh65KDZw+OJ1Jx8uFob9VDGIFeVIuEhOR2xoeV7w=;
-	b=aQ34CJ9EipShkD28LV1bat6g3mnpc2GYmdBbBDCxEOoKx1zuh67XteNQm//lttTjtJ0edL
-	6LHYT43I/gKfoQuSGCtBrXqszUCosiV79JLe/IpGS2LxZSkhUI7OvKsJYEDjwHNBKu8mdo
-	UlDUKmUFUqBoNudAiYdIi/bpWmjmwDddMKFafy8oYEyhkldv+0DZxVEi8SZ1hUtGFCQf/B
-	rdfj2D7v9znaP2RGoKhZD/BYFOGRi82ix5kxdxKbu4K5kZkVUmO3U2/QhsErvykWztTiKe
-	7h0LLoaQJb+HZoz5OX0ZqX+BGUNHfMp8oEV433VEKJDCmdeFCDClI1k7vcvcPQ==
-Date: Fri, 26 Apr 2024 11:43:01 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: willy@infradead.org, djwong@kernel.org, brauner@kernel.org,
-	david@fromorbit.com, chandan.babu@oracle.com,
-	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com,
-	p.raghav@samsung.com
-Subject: Re: [PATCH v4 07/11] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240426114301.rtrqsv653a6vkbh6@quentin>
-References: <20240425113746.335530-1-kernel@pankajraghav.com>
- <20240425113746.335530-8-kernel@pankajraghav.com>
- <ZitIK5OnR7ZNY0IG@infradead.org>
+	s=arc-20240116; t=1714131801; c=relaxed/simple;
+	bh=W2Yi4b8UUflYNjFBhKm+kSTDx5VFRPzQrHLBTed65Eo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=a5jt+07T5f6bC45RpQVxJR46PaXsZcSjeKdVTA2G3vT8bdLZo9L9/izadbj7c7AkQikWzOZWeo+uBVvHiiGjq3gMS1hP7VjeJbYArf0+lCUhgw3tUyOHZmhH0WJn5ShQHJfWczbVJy9gkifAcewK/dLnvysZbwSoeUiHltGH8dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxW0Hd2d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BCFC113CD;
+	Fri, 26 Apr 2024 11:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714131801;
+	bh=W2Yi4b8UUflYNjFBhKm+kSTDx5VFRPzQrHLBTed65Eo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=BxW0Hd2dK2F/YPPiVT1xiQG5GFCiDj/hJDpVwiGyocQgdwzxvWmYRYTgWcRy9IkbN
+	 5aRPbbergf3asX5vbt3nG/jmaKq5DM6kYtiEEKlQKHHgO/OBH2gUyAh9CG/R09PVdU
+	 WPv/8XRaP0occLuKeiMMsLQ4TheW8WKQQkGABFz7zOpkra4Y1lm0T4iCntWi/6gCj5
+	 /wzXg1efvKb0JjUg8c2/2T3TJKX+ldf8I6IJ2xD1JW97G8HJWIsOugwKTiApeUgkXl
+	 mJHH9LPsbfTmuY4ZCA4l9qz5Gg8b8BHu/gvoKR+DEHRNZv4K3EoHs9FDzjHKS4PMPT
+	 eqHQZMURSPdBQ==
+Message-ID: <873caf750d495a1850839f30fb120be7c6b5fd36.camel@kernel.org>
+Subject: Re: [PATCH] netfs: Fix the pre-flush when appending to a file in
+ writethrough mode
+From: Jeffrey Layton <jlayton@kernel.org>
+To: David Howells <dhowells@redhat.com>, Christian Brauner
+ <brauner@kernel.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>,  Dominique Martinet <asmadeus@codewreck.org>, Christian
+ Schoenebeck <linux_oss@crudebyte.com>, Marc Dionne
+ <marc.dionne@auristor.com>, netfs@lists.linux.dev, 
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, v9fs@lists.linux.dev, 
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Fri, 26 Apr 2024 07:43:18 -0400
+In-Reply-To: <2150448.1714130115@warthog.procyon.org.uk>
+References: <2150448.1714130115@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0 (3.52.0-1.fc40app1) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZitIK5OnR7ZNY0IG@infradead.org>
-X-Rspamd-Queue-Id: 4VQrSn4Vb2z9smT
 
-On Thu, Apr 25, 2024 at 11:22:35PM -0700, Christoph Hellwig wrote:
-> On Thu, Apr 25, 2024 at 01:37:42PM +0200, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
-> > < fs block size. iomap_dio_zero() has an implicit assumption that fs block
-> > size < page_size. This is true for most filesystems at the moment.
-> > 
-> > If the block size > page size, this will send the contents of the page
-> > next to zero page(as len > PAGE_SIZE) to the underlying block device,
-> > causing FS corruption.
-> > 
-> > iomap is a generic infrastructure and it should not make any assumptions
-> > about the fs block size and the page size of the system.
-> 
-> So what happened to the plan to making huge_zero_page a folio and have
-> it available for non-hugetlb setups?  Not only would this be cleaner
-> and more efficient, but it would actually work for the case where you'd
-> have to zero more than 1MB on a 4k PAGE_SIZE system, which doesn't
-> seem impossible with 2MB folios.
+On Fri, 2024-04-26 at 12:15 +0100, David Howells wrote:
+> In netfs_perform_write(), when the file is marked NETFS_ICTX_WRITETHROUGH
+> or O_*SYNC or RWF_*SYNC was specified, write-through caching is performed
+> on a buffered file.  When setting up for write-through, we flush any
+> conflicting writes in the region and wait for the write to complete,
+> failing if there's a write error to return.
+>=20
+> The issue arises if we're writing at or above the EOF position because we
+> skip the flush and - more importantly - the wait.  This becomes a problem
+> if there's a partial folio at the end of the file that is being written o=
+ut
+> and we want to make a write to it too.  Both the already-running write an=
+d
+> the write we start both want to clear the writeback mark, but whoever is
+> second causes a warning looking something like:
+>=20
+>     ------------[ cut here ]------------
+>     R=3D00000012: folio 11 is not under writeback
+>     WARNING: CPU: 34 PID: 654 at fs/netfs/write_collect.c:105
+>     ...
+>     CPU: 34 PID: 654 Comm: kworker/u386:27 Tainted: G S ...
+>     ...
+>     Workqueue: events_unbound netfs_write_collection_worker
+>     ...
+>     RIP: 0010:netfs_writeback_lookup_folio
+>=20
+> Fix this by making the flush-and-wait unconditional.  It will do nothing =
+if
+> there are no folios in the pagecache and will return quickly if there are
+> no folios in the region specified.
+>=20
+> Further, move the WBC attachment above the flush call as the flush is goi=
+ng
+> to attach a WBC and detach it again if it is not present - and since we
+> need one anyway we might as well share it.
+>=20
+> Fixes: 41d8e7673a77 ("netfs: Implement a write-through caching option")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202404161031.468b84f-oliver.sang@i=
+ntel.com
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Eric Van Hensbergen <ericvh@kernel.org>
+> cc: Latchesar Ionkov <lucho@ionkov.net>
+> cc: Dominique Martinet <asmadeus@codewreck.org>
+> cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> cc: v9fs@lists.linux.dev
+> cc: linux-afs@lists.infradead.org
+> cc: linux-cifs@vger.kernel.org
+> ---
+>  fs/netfs/buffered_write.c |   13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+> index 9a0d32e4b422..07aff231926c 100644
+> --- a/fs/netfs/buffered_write.c
+> +++ b/fs/netfs/buffered_write.c
+> @@ -172,15 +172,14 @@ ssize_t netfs_perform_write(struct kiocb *iocb, str=
+uct iov_iter *iter,
+>  	if (unlikely(test_bit(NETFS_ICTX_WRITETHROUGH, &ctx->flags) ||
+>  		     iocb->ki_flags & (IOCB_DSYNC | IOCB_SYNC))
+>  	    ) {
+> -		if (pos < i_size_read(inode)) {
+> -			ret =3D filemap_write_and_wait_range(mapping, pos, pos + iter->count)=
+;
+> -			if (ret < 0) {
+> -				goto out;
+> -			}
+> -		}
+> -
+>  		wbc_attach_fdatawrite_inode(&wbc, mapping->host);
+> =20
+> +		ret =3D filemap_write_and_wait_range(mapping, pos, pos + iter->count);
+> +		if (ret < 0) {
+> +			wbc_detach_inode(&wbc);
+> +			goto out;
+> +		}
+> +
+>  		wreq =3D netfs_begin_writethrough(iocb, iter->count);
+>  		if (IS_ERR(wreq)) {
+>  			wbc_detach_inode(&wbc);
+>=20
 
-I mentioned this Darrick in one of the older series[1] that it was
-proving to be a bit complicated (at least for me) to add that support.
-
-Currently, we reserve the ZERO_PAGE during kernel startup (arch/x86/kernel/head_64.S).
-
-Do we go about doing the same by reserving 1 PMD (512 PTEs with base page size)
-at kernel startup if we want to have zeroed 2MB (for x86) always at
-our disposal to use for zeroing out?
-Because allocating it during runtime will defeat the purpose.
-
-Let me know what you think.
-
-In anycase, I would like to pursue huge_zero_page folio separately
-from this series. Also iomap_dio_zero() only pads a fs block with
-zeroes, which should never be > 64k for XFS.
-
-[1] https://lore.kernel.org/linux-fsdevel/5kodxnrvjq5dsjgjfeps6wte774c2sl75bn3fg3hh46q3wkwk5@2tru4htvqmrq/
+Reviewed-by: Jeffrey Layton <jlayton@kernel.org>
 
