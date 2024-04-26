@@ -1,113 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-17874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E578B3341
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1571B8B335B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F00128285C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:50:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC538284391
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605C313CAB7;
-	Fri, 26 Apr 2024 08:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5F813D291;
+	Fri, 26 Apr 2024 08:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3J/Wyo2"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="rWsqqCr+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB3C14293;
-	Fri, 26 Apr 2024 08:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2A413A3E2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 08:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714121419; cv=none; b=T5sNx7KANcQIUF+mq44NVFnO+KYAq/OH2Iiy2V/cQLjo/3Q20np6OSAcpwCPv9aXsVflqnUVR/mX+0zIwjHH4qt/CEgFbvs9l1xCuhr0deBdtSFpKiitIxN74OvnENVL52W5oL0blju649wTAfyx4LfwbR7DK1WpgXqEaVIhWGQ=
+	t=1714121548; cv=none; b=pkX0C6jZipFA8z794WIXCpnYK+fZ3yZOFl0KbNgpQr7Z/IIPqmukTss0lQ/tN9Zhztph0zRLeQbEtB94I8xgCTBebne9sFAX9wsShky5vHBHQ0xcZE1iI2DWd00ApVOvIBk87F0P0UmS7mup+5L/EoG8AP5fZmi4QVSnwsDW7qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714121419; c=relaxed/simple;
-	bh=DYNyroIVKSZ0unmnVFHuxmgLOubVibFZ/fyc8X1R8f8=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=nBa8HN9FbuPH+pPbwAoTyRtOF7qih+nxh3tI3aDESwJ5pvD1uaQjDXTOcpW8iS1xCEfSjKTnaWzVm00GDAnD7PKbaTk1xAnUhWHDhbEo1u4KYs9I5Yc+7TKHAIYwo3PtD44gpuLmZanDC/4sBECZFkjxTTaHjlXNmIMh0LjybSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3J/Wyo2; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-60c49bdbcd3so517982a12.0;
-        Fri, 26 Apr 2024 01:50:18 -0700 (PDT)
+	s=arc-20240116; t=1714121548; c=relaxed/simple;
+	bh=8d8ZoRzxM6PBtUjZL3c7tjnRzbqJejNO/8ZEK0WIKz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ViQse8F2S9B3YwdqGivfB3IdK2xpNvU0YwJJkW0Pcpi4MHQVbM/GFbaX3rUfZMvkPbinT+09E4K6lgk/KioyuyVoGDC2mWDiyoynfkWs9R4tx5mk7ceSoxe1ap79dzvApOODszC04eoAzRKdPyfAI5G9BW0ZVXxAd9Sl3IhRWxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=rWsqqCr+; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-572347c2c16so2362516a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 01:52:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714121418; x=1714726218; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cJFMMSFWa30LVDJuI+U3h4eLS4EveVUZvpWPDq6Pib4=;
-        b=A3J/Wyo2xwjgOMWyBdMtUfVWXPYA6+GmPoGaMsicZkZffLBVmdokLub+mMMKE/eF7Z
-         8rfnpUYxIbaJaLsKmVaNngPrELRs2EhS1EVNV4m7ZsCiBKmmFqAvlWfICkwdZQD06ipY
-         9KK7PQAixruu6ApvyGCBs66B+G37h4ANd/cdBELHQo8d4gib0QZTkNoeSS4sVwzDk6cv
-         EgfS/aVINe5gn0d2p79KJbMdvngXiJqVZ7NbP4jOvVlxw6MD0CJ4Mrqh0ZVF0duiRP9N
-         3IvQlDbyWg7CnkDTDKXrYIG9MiwhMhRBEeu5+sN9TGrYyK4YSMcG3J8jvWKTYrD9vTgp
-         YX6A==
+        d=szeredi.hu; s=google; t=1714121543; x=1714726343; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0fkv6wWFTNWgEz6ll78Ca4JYk3GwPYplTEZ0oHg/fHE=;
+        b=rWsqqCr+CYOKUHjUSkO4JNdHW/yTk21yJcVk41dPDXoLW1ROzKdJGlw04FpUw++t8A
+         Au2Ezb3b9FYiW2CjLemrIrkUIFuyvAM8QIch59yn6t2dV+1m8lj2rqMWSbMWbjWyVhj9
+         KXeIULb5CDnE7FtxlE7jUIMSMJBsz+mK6A7nQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714121418; x=1714726218;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cJFMMSFWa30LVDJuI+U3h4eLS4EveVUZvpWPDq6Pib4=;
-        b=qXOzJbOUsx67hxYg2d3uWE2Z+4xeh5ZPZYYHy6zftA8aJpiVbWDwjqnNXKmTUiI4RK
-         /MvxQM46MTavg/OWGr4R1quE2/rSYtFNyb0+Iwkc16p5rJkPOX3+yhSZ5Faj3orpuHeu
-         hcNocAIUjQ8FshVJbEM9JSSC9L51baTqMXRrYsoUDbuPKGDBmyPuxpmHxINm5JCo4Kiv
-         9ik5twUDJWxzHQDuvdu5YxFSh3KvyUPtrTOlvQI4ZPWyxESUfkjnnkAF15u8BLCL40AG
-         0j+B6boz5AKHDUGkqDuiI+FPM2TP92NYCmbJp2E5H8BhUXKQfRKqr33ZJKYpP4KwdUVM
-         M+Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxvkGf9EnQNtaQZenyKfn+3cwx5Voiy7oPudqQ5UNQvM4ZYAKRVgKkzcpTSiVSlu6Df4fbA03N86e99SJG47CV80goc4VObOay3NEsf9C49Yx0vWuP939U10ubBvGtwHUzw8HWHeyIOA==
-X-Gm-Message-State: AOJu0YyiBJ7TAsxdhZOdinnA8JDQ0F9Cg5ytRk1PsErymro9uIpNP6Dr
-	Y/zSnNUoUba2ScELgOFG/jvjSvPdbf6xrHj2M4GYKb57PZji6GTs
-X-Google-Smtp-Source: AGHT+IGxZ62PmQ42Oa+TlKbuThlX/EEh+sLT9Dn2wqRaG7974BD0kJBa+ZEsvaggtj4RBRD4Ah+VfA==
-X-Received: by 2002:a05:6a20:daa7:b0:1ad:7e4d:6dae with SMTP id iy39-20020a056a20daa700b001ad7e4d6daemr2613505pzb.6.1714121417750;
-        Fri, 26 Apr 2024 01:50:17 -0700 (PDT)
-Received: from dw-tp ([171.76.87.172])
-        by smtp.gmail.com with ESMTPSA id 192-20020a6301c9000000b0060795a08227sm3694145pgb.37.2024.04.26.01.50.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 01:50:17 -0700 (PDT)
-Date: Fri, 26 Apr 2024 14:20:05 +0530
-Message-Id: <87wmokik3m.fsf@gmail.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, "Darrick J . Wong" <djwong@kernel.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFCv3 6/7] iomap: Optimize iomap_read_folio
-In-Reply-To: <ZitPUH20e-jOb0n-@infradead.org>
+        d=1e100.net; s=20230601; t=1714121543; x=1714726343;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0fkv6wWFTNWgEz6ll78Ca4JYk3GwPYplTEZ0oHg/fHE=;
+        b=u/3b45dXYMFQaTXgJ5quabWK1bs6CWbxCn8ohid12gUYcU3Wyfz4mf4JL38rG8iGOZ
+         RtjsFHMK4flwow3n+zAMs2NEr7DjazzNmaD/heChch4YLMhlh8mwt0rDHaTFgASxRRl9
+         z5JfeeZdQgSPYqZiEJ/P9C+lKKLcrpSXAa0JnwbFxIPL1sVvTXTjOODnJvL07ksaJzgR
+         +Cd7O1VtHFopkbfw2Fz9wWoUy53iNK2D7JGluQfnT5/R0BvvCHEMEBy6OyEVW9uK40nj
+         O+l/TYDBRXf4am77etMaPus2dpdbBeytyMCLBlsn9PvcuVQe9Em1TbGii9zwc5OSeW9m
+         38kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFqAwu9MC3joe78tUZmX2fykl2SijhumaJXMZQa+6JLnebdb4El9xdx1aTc/ogOt/j4vjI04JFHDgx8nGx/1YUvCke4cwWZOA72QcYBQ==
+X-Gm-Message-State: AOJu0Yx7CB28XTO4ixbFDGnxlcAjOH4NE/IkzWQ9/D3Fwgmhuq/YpZvF
+	lMre6WTCq053wRvs/5Gs9jVMquuv3xG3HOllvvUkNNkyOpclH1dSYffHqyFewK2P1JuVi0Zu2l6
+	huYwf3iidC7TH4KT8ssebfAG9H0Cz9nUL6vvS82AeYdlb1xMr
+X-Google-Smtp-Source: AGHT+IEzP+AnWzynmp0hKyqC2hgOWDa1A0KY4hC1oNymjtmEhVnsP0y31ok+p9bIEgYqfWxVu5r3tW/ToS8ZNibN3pg=
+X-Received: by 2002:a17:906:378d:b0:a52:1770:965 with SMTP id
+ n13-20020a170906378d00b00a5217700965mr1385843ejc.42.1714121543195; Fri, 26
+ Apr 2024 01:52:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <1b946a20-5e8a-497e-96ef-f7b1e037edcb@infinite-source.de>
+ <ff9b490d-421f-4092-8497-84f545a47e6a@infinite-source.de> <1db87cbf-0465-4226-81a8-3b288d6f47e4@spawn.link>
+ <f7c97360-8f5e-45f4-876c-3dcbf9522a3a@infinite-source.de> <032cfe2c-a595-4371-a70b-f6d208974b0f@spawn.link>
+ <f764ac09-bd84-41f0-847b-bc89016a4613@infinite-source.de> <aaabfbe6-2c61-46dc-ab82-b8d555f30238@spawn.link>
+ <58766a27-e6ff-4d73-a7aa-625f3aa5f7d3@infinite-source.de> <CAJfpegv1K-sF6rq-jXGJX12+K38PwvQNsGTP-H64K5a2tkxiPA@mail.gmail.com>
+ <9f991dcc-8921-434c-90f2-30dd0e5ec5bc@spawn.link> <CAJfpegsJ47o=KwvW6KQV5byo7OtmUys9jh-xtzhvR6u8RAD=aA@mail.gmail.com>
+ <692a9f0b-9c2b-4850-b8bc-48f09fe41762@infinite-source.de> <d862407f-640a-4fa0-833d-c2fa35eff119@infinite-source.de>
+In-Reply-To: <d862407f-640a-4fa0-833d-c2fa35eff119@infinite-source.de>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 26 Apr 2024 10:52:11 +0200
+Message-ID: <CAJfpegsCJi5fZOhbWGht9vcoBKRxF8RmvmEao0cBqXDv4hn+ow@mail.gmail.com>
+Subject: Re: EBADF returned from close() by FUSE
+To: The 8472 <kernel@infinite-source.de>
+Cc: Antonio SJ Musumeci <trapexit@spawn.link>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Christoph Hellwig <hch@infradead.org> writes:
+On Tue, 23 Apr 2024 at 23:38, The 8472 <kernel@infinite-source.de> wrote:
 
-> On Thu, Apr 25, 2024 at 06:58:50PM +0530, Ritesh Harjani (IBM) wrote:
->> iomap_readpage_iter() handles "uptodate blocks" and "not uptodate blocks"
->> within a folio separately. This makes iomap_read_folio() to call into
->> ->iomap_begin() to request for extent mapping even though it might already
->> have an extent which is not fully processed.
->> 
->> This happens when we either have a large folio or with bs < ps. In these
->> cases we can have sub blocks which can be uptodate (say for e.g. due to
->> previous writes). With iomap_read_folio_iter(), this is handled more
->> efficiently by not calling ->iomap_begin() call until all the sub blocks
->> with the current folio are processed.
->
-> Maybe throw in a sentence here that this copies what
-> iomap_readahead_iter already does?
+> In some places we do rely on error codes having exactly the documented meaning
+> and no other. E.g. fcntl(..., F_GETFD) failing with EBADF is treated as fatal,
+> other codes are not.
+> Or openat(..., O_NOFOLLOW | O_DIRECTORY) returning ENOTDIR is trusted to mean
+> that the file is in fact not a directory and can be unlinked instead of rmdir'd
 
-Does this sound any better?
+There are lot of assumptions from applications.  Fuse won't and can't
+check them all.  This applies to error codes as well.
 
-iomap_read_folio_iter() handles multiple sub blocks within a given
-folio but it's implementation logic is similar to how
-iomap_readahead_iter() handles multiple folios within a single mapped
-extent. Both of them iterate over a given range of folio/mapped extent
-and call iomap_readpage_iter() for reading.
+> Current Rust versions unwind if closedir() is not successful since
+> directories aren't writable and aren't expected to have writeback
+> errors. That's what lead to this thread.
 
+Is that bad?  I mean can that lead to a security breach?  If not, then
+it's not interesting, lets just fix the bad filesystem.
 
->
-> Otherwise this looks good to me modulo the offset comment from willy.
+> If that had returned an EIO that would have been annoying but
+> would clearly point at unreliable storage. If it returns
+> EBADF that is more concerning because it could be a double-close or
+> something similar within the process clobbering FDs.
 
-Yes, I will address willy's comment too. 
-Thanks for the review!
+So the worst thing that can happen is that a bad fuse filesystem is
+able to confuse the user of an application, believing the application
+is at fault when in fact it's the filesystem that's acting up?
 
--ritesh
+> So if linux implements its fuse client in a way that propagates arbitrary
+> error codes to syscalls for which the linux-specific documentation says that only
+> a certain set of error codes with specific meanings would be returned then
+> either the documentation is wrong or those errors should be mangled before
+> they bubble up to the syscall.
+
+Man pages do not say that the error list is exhaustive.  Other error
+codes are almost always possible even without fuse.
+
+Thanks,
+Miklos
 
