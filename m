@@ -1,157 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-17888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7511F8B36A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 13:43:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9C88B36C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 13:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321E4284A75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 11:43:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A85AAB2202B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 11:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154AE145B37;
-	Fri, 26 Apr 2024 11:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A74314535A;
+	Fri, 26 Apr 2024 11:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxW0Hd2d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcDuYQwB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B039145B21;
-	Fri, 26 Apr 2024 11:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835D213CF99;
+	Fri, 26 Apr 2024 11:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714131801; cv=none; b=VyQbCT3hZ8wrmMqJiAUGBhQdxTjPQAYH/2G61GopPG/I3Soz4eYBmqPS20acA4i3YJMbi2sek2f1+28H9bUXK70kYKULjZCopIzq9VUvB5Tyhj4nAGW7LSSjOFo7irSExhAwEoB2VikdeWhvgZMkdBwbaxctUgitEm1HzoErG7k=
+	t=1714132528; cv=none; b=DBvg7C5MzPvnv/0DcCTG0HbGO88YMlOq4lVYmlt/j0elgWd2rvIxUE5uoOftsIoIVQQsmTnC8nO2KAtqmKIOI+8H333N3kk/3iTMwDInhC9zVkC92XOA2buoX2iCf0JOOZ7P/4B+LhXTP1d/GCop5iTiUXu95zgi5zuFwteXWR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714131801; c=relaxed/simple;
-	bh=W2Yi4b8UUflYNjFBhKm+kSTDx5VFRPzQrHLBTed65Eo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=a5jt+07T5f6bC45RpQVxJR46PaXsZcSjeKdVTA2G3vT8bdLZo9L9/izadbj7c7AkQikWzOZWeo+uBVvHiiGjq3gMS1hP7VjeJbYArf0+lCUhgw3tUyOHZmhH0WJn5ShQHJfWczbVJy9gkifAcewK/dLnvysZbwSoeUiHltGH8dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxW0Hd2d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BCFC113CD;
-	Fri, 26 Apr 2024 11:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714131801;
-	bh=W2Yi4b8UUflYNjFBhKm+kSTDx5VFRPzQrHLBTed65Eo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BxW0Hd2dK2F/YPPiVT1xiQG5GFCiDj/hJDpVwiGyocQgdwzxvWmYRYTgWcRy9IkbN
-	 5aRPbbergf3asX5vbt3nG/jmaKq5DM6kYtiEEKlQKHHgO/OBH2gUyAh9CG/R09PVdU
-	 WPv/8XRaP0occLuKeiMMsLQ4TheW8WKQQkGABFz7zOpkra4Y1lm0T4iCntWi/6gCj5
-	 /wzXg1efvKb0JjUg8c2/2T3TJKX+ldf8I6IJ2xD1JW97G8HJWIsOugwKTiApeUgkXl
-	 mJHH9LPsbfTmuY4ZCA4l9qz5Gg8b8BHu/gvoKR+DEHRNZv4K3EoHs9FDzjHKS4PMPT
-	 eqHQZMURSPdBQ==
-Message-ID: <873caf750d495a1850839f30fb120be7c6b5fd36.camel@kernel.org>
-Subject: Re: [PATCH] netfs: Fix the pre-flush when appending to a file in
- writethrough mode
-From: Jeffrey Layton <jlayton@kernel.org>
-To: David Howells <dhowells@redhat.com>, Christian Brauner
- <brauner@kernel.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>,  Dominique Martinet <asmadeus@codewreck.org>, Christian
- Schoenebeck <linux_oss@crudebyte.com>, Marc Dionne
- <marc.dionne@auristor.com>, netfs@lists.linux.dev, 
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, v9fs@lists.linux.dev, 
- linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Fri, 26 Apr 2024 07:43:18 -0400
-In-Reply-To: <2150448.1714130115@warthog.procyon.org.uk>
-References: <2150448.1714130115@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.0 (3.52.0-1.fc40app1) 
+	s=arc-20240116; t=1714132528; c=relaxed/simple;
+	bh=r8Yt3anXN1vUUKfLUBfHTd3DWwQ6mszASIVqJfELd2Y=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=YfRbYLbnTiHvLiwAC71MQRcFN31sITbBwPwlcLeVxPcqtCXvv5EnTSsqOwQARS5jAekInLyJkvhP3/wVLyhZbaF0Jq0UpI0giM5vD13LptV/YssMBOdKsNvbs97+vR23uY+fD/baNcziQTmxuLs3J5EZ/P7sBCy+y8T+sgU6Y5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcDuYQwB; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e36b7e7dd2so17381615ad.1;
+        Fri, 26 Apr 2024 04:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714132526; x=1714737326; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5JEso13ULMuURfYi/Pq/VHWb8qnGq4WPHzsbPJPnYSY=;
+        b=IcDuYQwB5F5NMx1cHgDv88uIZq4xBIeY8860qz8czb6L3OGCk0AzBGDpMtUvhzWJ5g
+         oy2QK6YeEQE1R7QmnZSh0jriVpzKMyvnpfwdrnywt+3DHeJe9inNpPS2VFJ1IRymDhoq
+         wH7I5zsnsLFveZLhQcVLl6zSAP0lcsJEj/d9QEXLj+LfcghfkrZ3n0ogoQTegThOXzaa
+         jJNQWw0Lvf8p3+MTmzwpYJDSs78RGMZzWPDJ6HB02HLXaiwIcaZrCxDdxZvjdnTllfmk
+         DtAoh7S5WfQL7Kk2709d3BXYaqVFcyxMsYZEha7jowd+/+fSvXMqsxbJafi5TS7WkxN9
+         tR7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714132526; x=1714737326;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5JEso13ULMuURfYi/Pq/VHWb8qnGq4WPHzsbPJPnYSY=;
+        b=JCzX/YeX4sQ/fPRWIHSSgE32bdeyhuDEK+IbB/ebW0JdqTuL1RNfrdofto7cVRTtRw
+         iobs2gzF0PA0MycjiNl9aN2yjb2BL9LDCymlPwqq5y4fpIGUVPTeOstMFT7im+tDDAmH
+         sNzVOlCGkDtLupLLEAlCG+WNr4WYnFT7NauTsSAgmr1IkH2QOxgHaYXucuu8IAvDaDAl
+         fgvEDttnfY7G2gBCYvXetvZUVYH+h0qaKpqCfXLTOAqBw0ExzyJvfM0+KFqNak+50VsN
+         F9pUYtApQAx5JkfOE7yI5/91IFNUykbY/gpTMxhTE0swmXh1mJT3efFJ+JWs1QzONolb
+         UMjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcX3T8FwFcANOb0K+Dpuz3C4dfjcho34J6Iy6/WMR6NExTc72dsWixZ5C1auN0cO0HnSf35+bHFoSLguUMYm9ZMdzVqqIU64oaq51Tdy3JbeOAfLa7XOBzVdyQ+SZCT9lE1PBgT9LyJw==
+X-Gm-Message-State: AOJu0YxDDDyNKyjDG+0d38hmnI/4MP0qaBMnt3rcol7XPxPjLTHXlkLc
+	Fd93GxeEk0S6PnYFq0Z6On9iV0KYfbpk2AnqUHZ908ED45SAmxLk
+X-Google-Smtp-Source: AGHT+IFtJ+Gpm3oDitTkbUHH52GvIU+9HkHSBaiQPMMFJTKHjouSTLIyggXLWnO2qxHj1zJvDnv66w==
+X-Received: by 2002:a17:902:f68d:b0:1e8:418b:7640 with SMTP id l13-20020a170902f68d00b001e8418b7640mr2415097plg.48.1714132525737;
+        Fri, 26 Apr 2024 04:55:25 -0700 (PDT)
+Received: from dw-tp ([171.76.87.172])
+        by smtp.gmail.com with ESMTPSA id q16-20020a17090311d000b001e9685ad053sm10214490plh.248.2024.04.26.04.55.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Apr 2024 04:55:24 -0700 (PDT)
+Date: Fri, 26 Apr 2024 17:25:09 +0530
+Message-Id: <87il04nxsy.fsf@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, hch@infradead.org, djwong@kernel.org, david@fromorbit.com, willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com, yi.zhang@huaweicloud.com, chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v4 01/34] ext4: factor out a common helper to query extent map
+In-Reply-To: <20240410142948.2817554-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-On Fri, 2024-04-26 at 12:15 +0100, David Howells wrote:
-> In netfs_perform_write(), when the file is marked NETFS_ICTX_WRITETHROUGH
-> or O_*SYNC or RWF_*SYNC was specified, write-through caching is performed
-> on a buffered file.  When setting up for write-through, we flush any
-> conflicting writes in the region and wait for the write to complete,
-> failing if there's a write error to return.
->=20
-> The issue arises if we're writing at or above the EOF position because we
-> skip the flush and - more importantly - the wait.  This becomes a problem
-> if there's a partial folio at the end of the file that is being written o=
-ut
-> and we want to make a write to it too.  Both the already-running write an=
-d
-> the write we start both want to clear the writeback mark, but whoever is
-> second causes a warning looking something like:
->=20
->     ------------[ cut here ]------------
->     R=3D00000012: folio 11 is not under writeback
->     WARNING: CPU: 34 PID: 654 at fs/netfs/write_collect.c:105
->     ...
->     CPU: 34 PID: 654 Comm: kworker/u386:27 Tainted: G S ...
->     ...
->     Workqueue: events_unbound netfs_write_collection_worker
->     ...
->     RIP: 0010:netfs_writeback_lookup_folio
->=20
-> Fix this by making the flush-and-wait unconditional.  It will do nothing =
-if
-> there are no folios in the pagecache and will return quickly if there are
-> no folios in the region specified.
->=20
-> Further, move the WBC attachment above the flush call as the flush is goi=
-ng
-> to attach a WBC and detach it again if it is not present - and since we
-> need one anyway we might as well share it.
->=20
-> Fixes: 41d8e7673a77 ("netfs: Implement a write-through caching option")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202404161031.468b84f-oliver.sang@i=
-ntel.com
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Eric Van Hensbergen <ericvh@kernel.org>
-> cc: Latchesar Ionkov <lucho@ionkov.net>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
-> cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> cc: v9fs@lists.linux.dev
-> cc: linux-afs@lists.infradead.org
-> cc: linux-cifs@vger.kernel.org
+Zhang Yi <yi.zhang@huaweicloud.com> writes:
+
+> From: Zhang Yi <yi.zhang@huawei.com>
+>
+> Factor out a new common helper ext4_map_query_blocks() from the
+> ext4_da_map_blocks(), it query and return the extent map status on the
+> inode's extent path, no logic changes.
+>
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > ---
->  fs/netfs/buffered_write.c |   13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->=20
-> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-> index 9a0d32e4b422..07aff231926c 100644
-> --- a/fs/netfs/buffered_write.c
-> +++ b/fs/netfs/buffered_write.c
-> @@ -172,15 +172,14 @@ ssize_t netfs_perform_write(struct kiocb *iocb, str=
-uct iov_iter *iter,
->  	if (unlikely(test_bit(NETFS_ICTX_WRITETHROUGH, &ctx->flags) ||
->  		     iocb->ki_flags & (IOCB_DSYNC | IOCB_SYNC))
->  	    ) {
-> -		if (pos < i_size_read(inode)) {
-> -			ret =3D filemap_write_and_wait_range(mapping, pos, pos + iter->count)=
-;
-> -			if (ret < 0) {
-> -				goto out;
-> -			}
+>  fs/ext4/inode.c | 57 +++++++++++++++++++++++++++----------------------
+>  1 file changed, 32 insertions(+), 25 deletions(-)
+
+Looks good to me. Straight forward refactoring.
+Feel free to add - 
+
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+>
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 537803250ca9..6a41172c06e1 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -453,6 +453,35 @@ static void ext4_map_blocks_es_recheck(handle_t *handle,
+>  }
+>  #endif /* ES_AGGRESSIVE_TEST */
+>  
+> +static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
+> +				 struct ext4_map_blocks *map)
+> +{
+> +	unsigned int status;
+> +	int retval;
+> +
+> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+> +		retval = ext4_ext_map_blocks(handle, inode, map, 0);
+> +	else
+> +		retval = ext4_ind_map_blocks(handle, inode, map, 0);
+> +
+> +	if (retval <= 0)
+> +		return retval;
+> +
+> +	if (unlikely(retval != map->m_len)) {
+> +		ext4_warning(inode->i_sb,
+> +			     "ES len assertion failed for inode "
+> +			     "%lu: retval %d != map->m_len %d",
+> +			     inode->i_ino, retval, map->m_len);
+> +		WARN_ON(1);
+> +	}
+> +
+> +	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
+> +			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+> +	ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+> +			      map->m_pblk, status);
+> +	return retval;
+> +}
+> +
+>  /*
+>   * The ext4_map_blocks() function tries to look up the requested blocks,
+>   * and returns if the blocks are already mapped.
+> @@ -1744,33 +1773,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+>  	down_read(&EXT4_I(inode)->i_data_sem);
+>  	if (ext4_has_inline_data(inode))
+>  		retval = 0;
+> -	else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+> -		retval = ext4_ext_map_blocks(NULL, inode, map, 0);
+>  	else
+> -		retval = ext4_ind_map_blocks(NULL, inode, map, 0);
+> -	if (retval < 0) {
+> -		up_read(&EXT4_I(inode)->i_data_sem);
+> -		return retval;
+> -	}
+> -	if (retval > 0) {
+> -		unsigned int status;
+> -
+> -		if (unlikely(retval != map->m_len)) {
+> -			ext4_warning(inode->i_sb,
+> -				     "ES len assertion failed for inode "
+> -				     "%lu: retval %d != map->m_len %d",
+> -				     inode->i_ino, retval, map->m_len);
+> -			WARN_ON(1);
 > -		}
 > -
->  		wbc_attach_fdatawrite_inode(&wbc, mapping->host);
-> =20
-> +		ret =3D filemap_write_and_wait_range(mapping, pos, pos + iter->count);
-> +		if (ret < 0) {
-> +			wbc_detach_inode(&wbc);
-> +			goto out;
-> +		}
-> +
->  		wreq =3D netfs_begin_writethrough(iocb, iter->count);
->  		if (IS_ERR(wreq)) {
->  			wbc_detach_inode(&wbc);
->=20
-
-Reviewed-by: Jeffrey Layton <jlayton@kernel.org>
+> -		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
+> -				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+> -		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+> -				      map->m_pblk, status);
+> -		up_read(&EXT4_I(inode)->i_data_sem);
+> -		return retval;
+> -	}
+> +		retval = ext4_map_query_blocks(NULL, inode, map);
+>  	up_read(&EXT4_I(inode)->i_data_sem);
+> +	if (retval)
+> +		return retval;
+>  
+>  add_delayed:
+>  	down_write(&EXT4_I(inode)->i_data_sem);
+> -- 
+> 2.39.2
 
