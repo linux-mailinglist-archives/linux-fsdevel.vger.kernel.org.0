@@ -1,296 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-17926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCE28B3CE4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 18:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F588B3CFD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 18:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C8F11C22274
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 16:33:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A8521C227F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 16:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4368515CD63;
-	Fri, 26 Apr 2024 16:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00916152E1C;
+	Fri, 26 Apr 2024 16:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q201RN7F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbnzfCGM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9959C15887D;
-	Fri, 26 Apr 2024 16:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928B16BFB1;
+	Fri, 26 Apr 2024 16:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714149149; cv=none; b=SoiyZmQzhf9Ktb8gnShtC7iN7d7NzanxF+5f8wstoDhJgpQhBkp/ZA/MZ+Qs5hUvrhaG6LBhAzbFqxpbJ88bam72mQEBiO02NIiyWoND/H87L7os52DfJUwEB5l2jYPxlsusl6homJu6llSGXT1g/OyUExVzOZs2DomIWA/wH/0=
+	t=1714149571; cv=none; b=Q/2m+2qnzmCbv+mq5jox3OscknNaz0m2V4DYBC3Cg8TkqPJd58SLJ4Sc7ZFo18NgFDUk9x58H9TSPI4BUzCeaSwL72rHBdeQeS6F7EMyGljVZadK4VSiFuO8O1J0BKsTl2rJC44Dt0SZ/Vq6b6cWX61bfIbOpzga/E0sHY+VJl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714149149; c=relaxed/simple;
-	bh=SBlaSh6t2/sIV1l8auQvXPiVq/omuABChorg9DjaUbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9rkwmQtV6BJKEBbxk0Zcz/hoOoUw2BxH2NGvIjFUjpRe33Ed/Hl28EBIgVxQgQ7NHaVRjRUpHh88p1g4o3o23uyojHsQ9MiAjFzVw216EjFo6xKD8SYpfcIC5ASvotU6oCrIsHLW0woIVGcc3ehH94zlXR8enfjm+CEJq2znfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q201RN7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B712C113CD;
-	Fri, 26 Apr 2024 16:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714149149;
-	bh=SBlaSh6t2/sIV1l8auQvXPiVq/omuABChorg9DjaUbo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q201RN7Fv9eKhELhH1MMcRUshOMYqIOSf5jX0xGxxWn86Rp3zR+SR+Jk37Gc7rHqO
-	 GS4ugj0WEFrHxitsyarQvzDHyN+duPEOpxhMIyzUW6Ir17HhlL5khOzeGraBG2/u9n
-	 GHMIVUC5t+dPzvaIqjFkPxji3N3/dO7YnUKLcHf8GH9AAwz3UVEXm/Yo5FbDVVJauM
-	 dmqKB+4omcsDOrb8o976fLRSWUsNBsjDAJjHJofqyucCsdd9avjlGKKhcBGKortAi4
-	 Wx+Wvbc6u9rxvf8NJ/6+TrqihLydYLEL2n9tyCJHRkN0CYSkCAUkYz4U6pR5E9dT0T
-	 sHhNAs+1T243A==
-Date: Fri, 26 Apr 2024 09:32:28 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: syzbot <syzbot+b7e8d799f0ab724876f9@syzkaller.appspotmail.com>
-Cc: chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_ilock_data_map_shared
-Message-ID: <20240426163228.GP360919@frogsfrogsfrogs>
-References: <00000000000028dd9a0616ecda61@google.com>
+	s=arc-20240116; t=1714149571; c=relaxed/simple;
+	bh=w/gBi3edSmNDW/znJg1vZKFL1LvFh9km4CBTyDCZ8D0=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=d6+akkOA8x8ZNCUjPyPjS3datlnpxQZGWUicZDQZJlHEwvkft53/Pl7BSqD9ULf0Q81IdlmmabcbnzovflH/J3P39J7/bj69hegIX1BkjFD56l/UVlW3/K0Fx4RvHdIGaGa+LmqIkgJKpZLbPMNq22sFgyzN9564xjg0iEjX5vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbnzfCGM; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e3ff14f249so18017175ad.1;
+        Fri, 26 Apr 2024 09:39:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714149569; x=1714754369; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5vdb3yhYZF5PVXMwqqX9zuy/qHRdeg9Flas2P2+YbpY=;
+        b=bbnzfCGMXVLjPaJoB5S1TCy3ZEXQ3W0PzadUKI4mu4nmS7Bgf6+znRrckhC/y8FxRL
+         z+YznnN/TIcJIazzBYzuqR3T9Ntla8Jk090MQHN4EE6lY2Jgx2TN1XWcaZUIDZbjiy1G
+         tKyPEXyWffON2vQmuefjmLllyberL/7F+E5AN5MSN4J4h7lvvWzyUc6YJHwWJa+fgaNU
+         GwvV44EDS0ugV7f9tHaM9s3M7nMwvOBmqx7Aco0V5P7nYypkh4+klZpaQJQMubCV1WWs
+         6xV4m6pHmKICscAK5LdmgntMtvPTRY8iV2kjcyNsO+mSmT9NA1QgRz7fY/K2lYbXETO9
+         ItJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714149569; x=1714754369;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5vdb3yhYZF5PVXMwqqX9zuy/qHRdeg9Flas2P2+YbpY=;
+        b=eSJ9jX/SS4y+yTNOyYGz7neeS0e/sZ32Ec06HNZSEhacEpD5X3r3PbTigyaaHCVEWr
+         tHRtbt776g33HMhfw/w0Gg4/jR2FIAMpcrgrKAWjbfajfsqZv1sDP02bWXrppsqAisaL
+         tFf53tXLoZaznXBTPrY7QeHUpm+OXqbmBU3dnf3DM08bfpF2u1xitMmt7HshuEk/Pme+
+         aHgXxL7H2srzUpA/EQbXKS6F3KMjLApFj1Mf0jIZB8ZT1bYXgveKPPAhJqqYYFIK1sH7
+         CngMSXPDnpCqdV2e3MpobSTx3JJ8D5xeyly2rlGfyaquR+F4F3D405ujPUlNCnC3YKmO
+         Crfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHJ0RuaR4mIB+rmUvH0MdyJqIg4iu2dWZ/3iXuR1tpSPNqKe3w/hDUkbsRPuj4o78j29JFnEGxG867PEOFzX13MkFIWUomNAGxeUyXV4gTDZDpg3nQTaLbrnfDL/+RCBN1ads+yWNIMw==
+X-Gm-Message-State: AOJu0Yx2EzWe8PzlFHxSQsF/CEVwpW4K9xkFzgPgZHxXxv9tzm8veW7v
+	UBbf3xwfA033zvG0VRjvcLNzZXqkx34JUWj0eIVQgdR58pjxtDyB
+X-Google-Smtp-Source: AGHT+IEymwytHhWcAtyIhw1i68RqqiL4j2SDBBwBfiMs1KrBO+LxIoTewEe2hXkZc6FjNkC9DbUTtQ==
+X-Received: by 2002:a17:902:e802:b0:1e0:c0b9:589e with SMTP id u2-20020a170902e80200b001e0c0b9589emr308917plg.25.1714149568671;
+        Fri, 26 Apr 2024 09:39:28 -0700 (PDT)
+Received: from dw-tp ([171.76.87.172])
+        by smtp.gmail.com with ESMTPSA id lf13-20020a170902fb4d00b001ea374c5099sm6545823plb.197.2024.04.26.09.39.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Apr 2024 09:39:27 -0700 (PDT)
+Date: Fri, 26 Apr 2024 22:09:22 +0530
+Message-Id: <87cyqcyt6t.fsf@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, hch@infradead.org, djwong@kernel.org, david@fromorbit.com, willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v4 02/34] ext4: check the extent status again before inserting delalloc block
+In-Reply-To: <185a0d75-558e-a1ae-9415-c3eed4def60f@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000028dd9a0616ecda61@google.com>
 
-On Thu, Apr 25, 2024 at 07:46:28AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    977b1ef51866 Merge tag 'block-6.9-20240420' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=126497cd180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d239903bd07761e5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b7e8d799f0ab724876f9
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/08d7b6e107aa/disk-977b1ef5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/9c5e543ffdcf/vmlinux-977b1ef5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/04a6d79d2f69/bzImage-977b1ef5.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b7e8d799f0ab724876f9@syzkaller.appspotmail.com
-> 
-> XFS (loop2): Ending clean mount
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.9.0-rc4-syzkaller-00266-g977b1ef51866 #0 Not tainted
-> ------------------------------------------------------
-> syz-executor.2/7915 is trying to acquire lock:
-> ffffffff8e42a800 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:312 [inline]
-> ffffffff8e42a800 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3746 [inline]
-> ffffffff8e42a800 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3827 [inline]
-> ffffffff8e42a800 (fs_reclaim){+.+.}-{0:0}, at: kmalloc_trace+0x47/0x360 mm/slub.c:3992
-> 
-> but task is already holding lock:
-> ffff888056da8118 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4f/0x70 fs/xfs/xfs_inode.c:114
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (&xfs_dir_ilock_class){++++}-{3:3}:
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
->        down_write_nested+0x3d/0x50 kernel/locking/rwsem.c:1695
->        xfs_reclaim_inode fs/xfs/xfs_icache.c:945 [inline]
->        xfs_icwalk_process_inode fs/xfs/xfs_icache.c:1631 [inline]
->        xfs_icwalk_ag+0x120e/0x1ad0 fs/xfs/xfs_icache.c:1713
->        xfs_icwalk fs/xfs/xfs_icache.c:1762 [inline]
->        xfs_reclaim_inodes_nr+0x257/0x360 fs/xfs/xfs_icache.c:1011
->        super_cache_scan+0x411/0x4b0 fs/super.c:227
->        do_shrink_slab+0x707/0x1160 mm/shrinker.c:435
->        shrink_slab+0x1092/0x14d0 mm/shrinker.c:662
->        shrink_one+0x453/0x880 mm/vmscan.c:4774
->        shrink_many mm/vmscan.c:4835 [inline]
->        lru_gen_shrink_node mm/vmscan.c:4935 [inline]
->        shrink_node+0x3b17/0x4310 mm/vmscan.c:5894
->        kswapd_shrink_node mm/vmscan.c:6704 [inline]
->        balance_pgdat mm/vmscan.c:6895 [inline]
->        kswapd+0x1882/0x38a0 mm/vmscan.c:7164
->        kthread+0x2f2/0x390 kernel/kthread.c:388
->        ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> 
-> -> #0 (fs_reclaim){+.+.}-{0:0}:
->        check_prev_add kernel/locking/lockdep.c:3134 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
->        validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
->        __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
->        __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
->        fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3712
->        might_alloc include/linux/sched/mm.h:312 [inline]
->        slab_pre_alloc_hook mm/slub.c:3746 [inline]
->        slab_alloc_node mm/slub.c:3827 [inline]
->        kmalloc_trace+0x47/0x360 mm/slub.c:3992
->        kmalloc include/linux/slab.h:628 [inline]
->        add_stack_record_to_list mm/page_owner.c:177 [inline]
->        inc_stack_record_count mm/page_owner.c:219 [inline]
->        __set_page_owner+0x561/0x810 mm/page_owner.c:334
->        set_page_owner include/linux/page_owner.h:32 [inline]
->        post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
->        prep_new_page mm/page_alloc.c:1541 [inline]
->        get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
->        __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
->        __alloc_pages_bulk+0x729/0xd40 mm/page_alloc.c:4523
->        alloc_pages_bulk_array include/linux/gfp.h:202 [inline]
->        xfs_buf_alloc_pages+0x1a7/0x860 fs/xfs/xfs_buf.c:398
->        xfs_buf_find_insert+0x19a/0x1540 fs/xfs/xfs_buf.c:650
->        xfs_buf_get_map+0x149c/0x1ae0 fs/xfs/xfs_buf.c:755
->        xfs_buf_read_map+0x111/0xa60 fs/xfs/xfs_buf.c:860
->        xfs_trans_read_buf_map+0x260/0xad0 fs/xfs/xfs_trans_buf.c:289
->        xfs_da_read_buf+0x2b1/0x470 fs/xfs/libxfs/xfs_da_btree.c:2674
->        xfs_dir3_block_read+0x92/0x1a0 fs/xfs/libxfs/xfs_dir2_block.c:145
->        xfs_dir2_block_lookup_int+0x109/0x7d0 fs/xfs/libxfs/xfs_dir2_block.c:700
->        xfs_dir2_block_lookup+0x19a/0x630 fs/xfs/libxfs/xfs_dir2_block.c:650
->        xfs_dir_lookup+0x633/0xaf0 fs/xfs/libxfs/xfs_dir2.c:399
+Zhang Yi <yi.zhang@huaweicloud.com> writes:
 
-Hm.  We've taken an ILOCK in xfs_dir_lookup, and now we're reading a
-directory block.  We don't have PF_MEMALLOC_NOFS set, nor do we pass
-GFP_NOFS when allocating the xfs_buf pages.
+> On 2024/4/26 20:57, Ritesh Harjani (IBM) wrote:
+>> Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
+>> 
+>>> Zhang Yi <yi.zhang@huaweicloud.com> writes:
+>>>
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> Now we lookup extent status entry without holding the i_data_sem before
+>>>> inserting delalloc block, it works fine in buffered write path and
+>>>> because it holds i_rwsem and folio lock, and the mmap path holds folio
+>>>> lock, so the found extent locklessly couldn't be modified concurrently.
+>>>> But it could be raced by fallocate since it allocate block whitout
+>>>> holding i_rwsem and folio lock.
+>>>>
+>>>> ext4_page_mkwrite()             ext4_fallocate()
+>>>>  block_page_mkwrite()
+>>>>   ext4_da_map_blocks()
+>>>>    //find hole in extent status tree
+>>>>                                  ext4_alloc_file_blocks()
+>>>>                                   ext4_map_blocks()
+>>>>                                    //allocate block and unwritten extent
+>>>>    ext4_insert_delayed_block()
+>>>>     ext4_da_reserve_space()
+>>>>      //reserve one more block
+>>>>     ext4_es_insert_delayed_block()
+>>>>      //drop unwritten extent and add delayed extent by mistake
+>>>>
+>>>> Then, the delalloc extent is wrong until writeback, the one more
+>>>> reserved block can't be release any more and trigger below warning:
+>>>>
+>>>>  EXT4-fs (pmem2): Inode 13 (00000000bbbd4d23): i_reserved_data_blocks(1) not cleared!
+>>>>
+>>>> Hold i_data_sem in write mode directly can fix the problem, but it's
+>>>> expansive, we should keep the lockless check and check the extent again
+>>>> once we need to add an new delalloc block.
+>>>
+>>> Hi Zhang, 
+>>>
+>>> It's a nice finding. I was wondering if this was caught in any of the
+>>> xfstests?
+>>>
+>
+> Hi, Ritesh
+>
+> I caught this issue when I tested my iomap series in generic/344 and
+> generic/346. It's easy to reproduce because the iomap's buffered write path
+> doesn't hold folio lock while inserting delalloc blocks, so it could be raced
+> by the mmap page fault path. But the buffer_head's buffered write path can't
+> trigger this problem,
 
-Nothing in this code path sets PF_MEMALLOC_NOFS explicitly, nor does it
-create a xfs_trans_alloc_empty, which would set that.  Prior to the
-removal of kmem_alloc, I think we were much more aggressive about
-GFP_NOFS usage.
+ya right! That's the difference between how ->map_blocks() is called
+between buffer_head v/s iomap path. In iomap the ->map_blocks() call
+happens first to map a large extent and then it iterate over all the
+locked folios covering the mapped extent for doing writes.
+Whereas in buffer_head while iterating, we first instantiate/lock the
+folio and then call ->map_blocks() to map an extent for the given folio.
 
-Seeing as a lookup could involve walking a dabtree, we probably want the
-empty transaction to guard against dabtree cycle livelocks.  This would
-be a good time to change xfs_bmapi_read to take a transaction parameter.
+... So this opens up this window for a race between iomap buffered write
+path v/s page mkwrite path for inserting delalloc blocks entries.
 
---D
+> the race between buffered write path and fallocate path
+> was discovered while I was analyzing the code, so I'm not sure if it could
+> be caught by xfstests now, at least I haven't noticed this problem so far.
+>
 
->        xfs_lookup+0x298/0x550 fs/xfs/xfs_inode.c:640
->        xfs_vn_lookup+0x192/0x290 fs/xfs/xfs_iops.c:303
->        lookup_open fs/namei.c:3475 [inline]
->        open_last_lookups fs/namei.c:3566 [inline]
->        path_openat+0x1035/0x3240 fs/namei.c:3796
->        do_filp_open+0x235/0x490 fs/namei.c:3826
->        do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
->        do_sys_open fs/open.c:1421 [inline]
->        __do_sys_openat fs/open.c:1437 [inline]
->        __se_sys_openat fs/open.c:1432 [inline]
->        __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
->        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->        do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> other info that might help us debug this:
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   rlock(&xfs_dir_ilock_class);
->                                lock(fs_reclaim);
->                                lock(&xfs_dir_ilock_class);
->   lock(fs_reclaim);
-> 
->  *** DEADLOCK ***
-> 
-> 3 locks held by syz-executor.2/7915:
->  #0: ffff8881d0472420 (sb_writers#14){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
->  #1: ffff888056da8338 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: inode_lock include/linux/fs.h:795 [inline]
->  #1: ffff888056da8338 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: open_last_lookups fs/namei.c:3563 [inline]
->  #1: ffff888056da8338 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: path_openat+0x7d3/0x3240 fs/namei.c:3796
->  #2: ffff888056da8118 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4f/0x70 fs/xfs/xfs_inode.c:114
-> 
-> stack backtrace:
-> CPU: 1 PID: 7915 Comm: syz-executor.2 Not tainted 6.9.0-rc4-syzkaller-00266-g977b1ef51866 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
->  check_prev_add kernel/locking/lockdep.c:3134 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3253 [inline]
->  validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
->  __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
->  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
->  __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
->  fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3712
->  might_alloc include/linux/sched/mm.h:312 [inline]
->  slab_pre_alloc_hook mm/slub.c:3746 [inline]
->  slab_alloc_node mm/slub.c:3827 [inline]
->  kmalloc_trace+0x47/0x360 mm/slub.c:3992
->  kmalloc include/linux/slab.h:628 [inline]
->  add_stack_record_to_list mm/page_owner.c:177 [inline]
->  inc_stack_record_count mm/page_owner.c:219 [inline]
->  __set_page_owner+0x561/0x810 mm/page_owner.c:334
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
->  prep_new_page mm/page_alloc.c:1541 [inline]
->  get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
->  __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
->  __alloc_pages_bulk+0x729/0xd40 mm/page_alloc.c:4523
->  alloc_pages_bulk_array include/linux/gfp.h:202 [inline]
->  xfs_buf_alloc_pages+0x1a7/0x860 fs/xfs/xfs_buf.c:398
->  xfs_buf_find_insert+0x19a/0x1540 fs/xfs/xfs_buf.c:650
->  xfs_buf_get_map+0x149c/0x1ae0 fs/xfs/xfs_buf.c:755
->  xfs_buf_read_map+0x111/0xa60 fs/xfs/xfs_buf.c:860
->  xfs_trans_read_buf_map+0x260/0xad0 fs/xfs/xfs_trans_buf.c:289
->  xfs_da_read_buf+0x2b1/0x470 fs/xfs/libxfs/xfs_da_btree.c:2674
->  xfs_dir3_block_read+0x92/0x1a0 fs/xfs/libxfs/xfs_dir2_block.c:145
->  xfs_dir2_block_lookup_int+0x109/0x7d0 fs/xfs/libxfs/xfs_dir2_block.c:700
->  xfs_dir2_block_lookup+0x19a/0x630 fs/xfs/libxfs/xfs_dir2_block.c:650
->  xfs_dir_lookup+0x633/0xaf0 fs/xfs/libxfs/xfs_dir2.c:399
->  xfs_lookup+0x298/0x550 fs/xfs/xfs_inode.c:640
->  xfs_vn_lookup+0x192/0x290 fs/xfs/xfs_iops.c:303
->  lookup_open fs/namei.c:3475 [inline]
->  open_last_lookups fs/namei.c:3566 [inline]
->  path_openat+0x1035/0x3240 fs/namei.c:3796
->  do_filp_open+0x235/0x490 fs/namei.c:3826
->  do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
->  do_sys_open fs/open.c:1421 [inline]
->  __do_sys_openat fs/open.c:1437 [inline]
->  __se_sys_openat fs/open.c:1432 [inline]
->  __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f23c887dea9
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f23c95950c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> RAX: ffffffffffffffda RBX: 00007f23c89abf80 RCX: 00007f23c887dea9
-> RDX: 000000000000275a RSI: 0000000020000080 RDI: ffffffffffffff9c
-> RBP: 00007f23c88ca4a4 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000000b R14: 00007f23c89abf80 R15: 00007fff62a26428
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
+Did you mean the race between page fault path and fallocate path here?
+Because buffered write path and fallocate path should not have any race
+since both takes the inode_lock. I guess you meant page fault path and
+fallocate path for which you wrote this patch too :)
+
+I am surprised, why we cannot see the this race between page mkwrite and
+fallocate in fstests for inserting da entries to extent status cache.
+Because the race you identified looks like a legitimate race and is
+mostly happening since ext4_da_map_blocks() was not doing the right
+thing.
+... looking at the src/holetest, it doesn't really excercise this path.
+So maybe we can writing such fstest to trigger this race.
+
+
+>>> I have reworded some of the commit message, feel free to use it if you
+>>> think this version is better. The use of which path uses which locks was
+>>> a bit confusing in the original commit message.
+>>>
+>
+> Thanks for the message improvement, it looks more clear then mine, I will
+> use it.
+>
+
+Glad, it was helpful.
+
+-ritesh
 
