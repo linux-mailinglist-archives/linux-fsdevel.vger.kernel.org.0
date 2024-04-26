@@ -1,102 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-17876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32308B335E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A80988B3360
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D163285BF6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651D8286210
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E918B13D601;
-	Fri, 26 Apr 2024 08:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D46313CAB7;
+	Fri, 26 Apr 2024 08:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3lg3lIE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HuqJqGtn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8BC13C838;
-	Fri, 26 Apr 2024 08:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8A713CF99
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 08:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714121553; cv=none; b=g0zsaARrDMDOql1+maRw9anCt+W0WyYjBdbJLB5bo6XhkqFnDVNKqSgwIzvmmTTiCgEDbRipWbgN3vE1MAN0VF9RYNJ8jGd3kWj+h+LohVMg7YrxQkBFdoz3v1xMGFBXPU21aU0wMfQtvdvWCPl5YwKn26IWgBdRv56vu06fqPI=
+	t=1714121582; cv=none; b=MDuebsgWzPUZpYkcHu2we9Ey19kfBgSn1mf6xUJlgtozkIAJSYInyKAPnNq3AVtgOEW5/uUBvImzuleVzgtsNfTGV0eioPTweRm5mb8ijgNbh4iT1OhI5xDhBbvNZxYZHfNuHOdkhC+ZvtwQChtu2x3ocab1AoBkfy5j+E+uEAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714121553; c=relaxed/simple;
-	bh=yLCiVH/bKuinl6izRxfxxNSURtlqZzTFG7b5YuQhMT8=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=r1i1t2LidghL1jsdQLuqhemY9QZCGveIUjOvt6+sj0pBubH/y9V4VMWMol4hYwURvLNnLEMEm3f2lIyP3282C7NWMuT9hDXAne1XraNTIUPbHI8G7UUtpnuLstPPFTzpFMrmPq0DjvGUNlPCkbaRqArKUD0U/TD2UBzUgZvsVXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3lg3lIE; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6ed627829e6so2232318b3a.1;
-        Fri, 26 Apr 2024 01:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714121551; x=1714726351; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NkH2LOuzP9VBrs2iZ/5ie59uWLP3/LNP8BoBQzx8edk=;
-        b=Q3lg3lIEr6Qu2T7by0EiM6DCpMeGD8MAR4qKnnXgdt3WJ1ULt/ZjsmjqJBre8yM0He
-         D1cJcTBONE1v1vy+bkudBucKPaxpIDDv55Cz92stdrMBKhwhvEzRH3JKhkL8h6aYy8tg
-         WXPBHK+cnxJQYCcT0UBRyv4PoYJ7KFIltoO7mcPjbZinu+FlxtiSfRUEE6Nf+/zuIBN4
-         NiniDGzwlHvNMiKtwnSP75AInTBnlWm2kN8siX5EbK/WhcosMo6BH/BQPtgdEjzBpXil
-         HVo9kDEsNVZl62+6c+ODsnMulHp7mMSoGxEzYUDw0xsYJkE4OilJ5N1LMT/IlKzjruqu
-         HfRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714121551; x=1714726351;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NkH2LOuzP9VBrs2iZ/5ie59uWLP3/LNP8BoBQzx8edk=;
-        b=Plp1takprm9SAQZvgqWoGwH4ilrusq+Zc38m7kPzkGLiA5Ta7R4itPAVxurg+Wnkh0
-         tIsDQZ6uUi0qJKkvDFx/QKBdUnr9ammToLssvEzX+Xp8PoI2VDNMXVWMUUWaoK2UGlY2
-         1vbUEKqb9tpmMTFplL83Z91meZRqTNHOd7iw6qM+H7n/XFgTp5EXdexiZ0rii2Lk5chj
-         lQymNIA7t+aCPOcUouTLbCrusMpLzcmZxo9w8nJqSqOr72W3HUBC8w4Wmmm5oMuE/jiC
-         I4EdmTUfS78bY/VWxGraoTyXi/VLeQ9Xo53efLZFllE6D1HrFs33HhCgbRJ7DtyjSNUZ
-         WQcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/8mMgDvobLpDxsGAZsHsC8CY48wnXsVU0ZTwT045kTgGg18S56P4pN0ilX+F/Mg140esNIJMTnFe3Kbb1oV9cQ/k7lZif6CjmNXxORS6EJsqtfio6cAJ2VBWGe6GohUQRrSZ6ecmp9Q==
-X-Gm-Message-State: AOJu0YxNtZj1zzw8Qske7vgSsALyaqmsp2S0ghYwRJlL3iEbfsBqejud
-	qrAV84H34s4baqgwqBeRySKhyoZ7+3MVQVsW71fKRMGTbeZ1C6Dq
-X-Google-Smtp-Source: AGHT+IH+evr3TGWciCfLL71ftTuj+ywPmxl+AHQrxmi7SKa1RC22Htox+rkziYr4eEdLrr+C5z7RzQ==
-X-Received: by 2002:a05:6a00:22ca:b0:6ec:f097:1987 with SMTP id f10-20020a056a0022ca00b006ecf0971987mr2609579pfj.31.1714121550222;
-        Fri, 26 Apr 2024 01:52:30 -0700 (PDT)
-Received: from dw-tp ([171.76.87.172])
-        by smtp.gmail.com with ESMTPSA id kr3-20020a056a004b4300b006ed26aa0ae6sm14356559pfb.54.2024.04.26.01.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 01:52:29 -0700 (PDT)
-Date: Fri, 26 Apr 2024 14:22:25 +0530
-Message-Id: <87ttjoijzq.fsf@gmail.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, "Darrick J . Wong" <djwong@kernel.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFCv3 5/7] iomap: Fix iomap_adjust_read_range for plen calculation
-In-Reply-To: <ZitOlbeIO4_XVw8r@infradead.org>
+	s=arc-20240116; t=1714121582; c=relaxed/simple;
+	bh=hUX2DVFFmTQX/4s5jbyX/Z7hdBlcgTsJJWSFEVnr4JM=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=g6WuBbBS+RVDqqrHgGd8b3KeGzcWZaZfIMutPmqBx+bAFXfXda6/u125ZqHSgj0tTIujhC6DLDXvR6qAAOGiKlh0YPvjaS0O8HITAvNJZNcP/axnj2HwGzlGsXbt2d1L1RoTTZWNaO53whpDLMZ+0u/1lxd1tp+vAabi7rVbJzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HuqJqGtn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714121580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5XDOx+LRv/jq1Nvyq0OuXZVtvg/bIzTKjHQEeVzF+Yk=;
+	b=HuqJqGtnD1Mjj6iwa3EiD2M5SLgDKGCkd91dLg8l9vMS5pVaSl3rR6/yfXlAYRADmYLlkk
+	dp6piYHg2almSDFZ4Q/BEouU4qoS55UNIcrCCBmANsLdg0oz2pC2Dq+PYdEFtOWlpqitTw
+	PkHKTVT0fbMJVAnFiQpkPZqR2Xaln84=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-373-Ri3cBZkiMNm8Eg-Jxet00Q-1; Fri,
+ 26 Apr 2024 04:52:54 -0400
+X-MC-Unique: Ri3cBZkiMNm8Eg-Jxet00Q-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 43FFC293248B;
+	Fri, 26 Apr 2024 08:52:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.200])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id F3E9710000AD;
+	Fri, 26 Apr 2024 08:52:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <Zin4G2VYUiaYxsKQ@xsang-OptiPlex-9020>
+References: <Zin4G2VYUiaYxsKQ@xsang-OptiPlex-9020> <202404161031.468b84f-oliver.sang@intel.com> <164954.1713356321@warthog.procyon.org.uk>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: dhowells@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
+    Steve French <sfrench@samba.org>,
+    Shyam Prasad N <nspmangalore@gmail.com>,
+    "Rohith
+ Surabattula" <rohiths.msft@gmail.com>,
+    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+    samba-technical@lists.samba.org
+Subject: Re: [dhowells-fs:cifs-netfs] [cifs] b4834f12a4: WARNING:at_fs/netfs/write_collect.c:#netfs_writeback_lookup_folio
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2145849.1714121572.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 26 Apr 2024 09:52:52 +0100
+Message-ID: <2145850.1714121572@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Christoph Hellwig <hch@infradead.org> writes:
+The "lkp install" didn't complete:
 
-> On Thu, Apr 25, 2024 at 06:58:49PM +0530, Ritesh Harjani (IBM) wrote:
->> If the extent spans the block that contains the i_size, we need to
->
-> s/the i_size/i_size/.
->
->> handle both halves separately
->
-> .. so that we properly zero data in the page cache for blocks that are
-> entirely outside of i_size.
+=3D=3D> Retrieving sources...
+  -> Source is https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
+nux.git
+  -> Cloning linux git repo...
+Cloning into bare repository '/root/lkp-tests/programs/turbostat/pkg/linux=
+'...
+remote: Enumerating objects: 10112942, done.
+remote: Counting objects: 100% (889/889), done.
+remote: Compressing objects: 100% (475/475), done.
+remote: Total 10112942 (delta 554), reused 549 (delta 412), pack-reused 10=
+112053
+Receiving objects: 100% (10112942/10112942), 2.78 GiB | 4.16 MiB/s, done.
+Resolving deltas: 100% (8300839/8300839), done.
+=3D=3D> WARNING: Skipping verification of source file PGP signatures.
+=3D=3D> Validating source files with md5sums...
+    linux ... Skipped
+=3D=3D> Extracting sources...
+  -> Source is https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
+nux.git
+  -> Creating working copy of linux git repo...
+fatal: '/root/lkp-tests/pkg/turbostat/linux' does not appear to be a git r=
+epository
+fatal: Could not read from remote repository.
 
-Sure. 
 
->
-> Otherwise looks good:
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+I looked around under /root/lkp-tests and there's no pkg/ directory.  It s=
+eems
+to be using tmp-pkg instead.
 
-Thanks for the review.
+Is there a way to skip the cloning of the kernel?  I already have my test
+kernel running on my test machine, booted by PXE/tftp from the build tree =
+on
+my desktop.  Just tell me what options I need to enable.
 
--ritesh
+David
+
 
