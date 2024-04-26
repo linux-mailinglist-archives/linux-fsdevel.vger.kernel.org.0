@@ -1,88 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-17899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2D28B388D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 15:35:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14168B3891
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 15:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF5D1F237A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 13:35:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC78E1C23758
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 13:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDBB148301;
-	Fri, 26 Apr 2024 13:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B821147C8B;
+	Fri, 26 Apr 2024 13:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="YPtAgXSN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D21A1474A0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 13:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57410146A95;
+	Fri, 26 Apr 2024 13:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714138505; cv=none; b=jPZgtWv/eOT7N2l5rz1UqeNcLGuxpBMXjWl98wtaoSfj3wUm8nvtQWhNoznJg4LFqv2BA0hXYecU9l7RljBpsOVRgvgU6j3Xma6nOGsu6qBfxJK+/2EV5yzsbZNSvH9RMUw8JFu0ZRyjWn9GHUayDpgHT74MlKJKReNz1z4GdrU=
+	t=1714138609; cv=none; b=QhZTqE05zyoYFsx4kK4s6IcLop0z1l0af1PlYAi+tR8hQojohMH2Qyu4Yb63rE6EZ01F26YPg6pplj0Ms3jMCLjfz6wEwCPSGY9FO/bVOxwSYye3ZMBHcg4y1oBwuDRTAtZBTklscHcPPCT/26jyp9etJ9thnoLbC/c3ETfo+6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714138505; c=relaxed/simple;
-	bh=m+kS218jt0du5H+U4ww/ufMUqNVw+bWZWMftVxqX6uU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UG8N8eBeXxz/2ZUCSIq+LXqqd42cLHeYdC6cuycWcyTX/yNfqDEBrck0uWtCE/hnxWPsoRUs5RRQ4+zGUG01Y//GsqKIv/KgPqieQZPgX/VmJicTAM5SS5xK0U74383jsVOBetutl4MvYVVCAV9knudtStkVAYt199ARjlRJnEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c2ff79144so15655945ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 06:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714138502; x=1714743302;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wuDLgNPEPbdMqePbD8KgIT6xOlVG4D1tdaDE2YInWA8=;
-        b=v4vq0rHj6RjlPhZHuYOMUnS7eF/R3kv0oTi3yc2a8s0glvqUUw/t5IFqsvtSBEg2xF
-         jGTS85OBGM+s1hNmisz4A72eRySNItIJwGoU2GMZMT6Wk/CM0A3vKdE8d/xLiFArcSa1
-         x0W5tX1+jYQq/XGsPCnf5x/1NF8FtT34AiKCPydAvVeHdW08TVCl5uzIRK3kJ3ToouBC
-         dYSTU8Dh5wyONcFFDyltampQkIIr3OnkcwqdoNwZ0Tl+3k+aRqDeKCVM6Ec/TgWmd8xA
-         0VF0zj8QOjG/QtwK6VB32jpB73dbdoHMg5ix3zeb00Qg9g/SxvjTVHQYsciRGdfVBaNf
-         PFLg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3o3n4SG+G6xpjOsPUSaYiSaN/LE9selGW963D8MMnr6ke8fObbi0traJgCiYVt2XwIJYLsHtycrq3zj/zLtTf38VvwMvFkh2S848WBA==
-X-Gm-Message-State: AOJu0YxXo0j/U+XUVOUpwEmcQSSYRoaRefm+sl/vuQmSnx1p+lvrKBZ0
-	I1Z9tzDhTbbD/j9D1+DgeARNgnvjoXZG99Snar0wMrpHi9HaWzaZhHL1qYwQWZDJyHY+iVhDdSF
-	GzVutzSRw3icWjhQZ/OrlzT2mx9YiIDd60MqIa3Ej/1S2p/TzR/iXbfE=
-X-Google-Smtp-Source: AGHT+IEmE/D5eUWM3aazPdASVp2ndWN2Klx3oxJWUkQ8hKxgnVlM7qt0MSyaTsonzow98DrxSD3ec2fL1yp+5/rIGkUCMCzs2HRR
+	s=arc-20240116; t=1714138609; c=relaxed/simple;
+	bh=UZEKCSMOlPugsqTdVqsYjGwVSviRJ6x6JgpVujoo2HU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FrBJ8w58mCzl6chadBhSQ2NONtJ1JDubyKbyuAc5IfYqOs4CT9uVbzmUc4lLX3oBw01AGnPfMCkzTQ1PVQXBrxCrgvzBXQydcIudwb3HVpx7IhEEtC8Bz6hOHwH7qZZuUctxR+fgBrbxd2gPsGl0b5ZlfAKnyoOR0sHYac47fVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=YPtAgXSN; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:409f:0:640:f1f0:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id 28F6661B17;
+	Fri, 26 Apr 2024 16:36:39 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id aaNbhfCoGa60-MnW4YCOJ;
+	Fri, 26 Apr 2024 16:36:37 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1714138597; bh=BnAGBRm2IUQnHS4izm6Ni2M7N8TM+Gw+UHZPQIZQ9Qo=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=YPtAgXSNXzwu0STQORXGdAKiogKF43T0eIO8ULFeEoYuX7801hLA7RGGgHu5ERvuT
+	 YVESMsL8Ix69hizTursX9xlhbfsnrV7ZA/GuVjdHhZ9m6L3jZ1nz8Qt92TfeZc4URS
+	 H8UshasGupfQRZLZJxZThjQEqJFGqd69YgBs9S2g=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <fd05ef9e-7f6f-43b1-98ae-6b25e299dd2f@yandex.ru>
+Date: Fri, 26 Apr 2024 16:36:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9a:b0:368:c9e2:b372 with SMTP id
- h26-20020a056e021d9a00b00368c9e2b372mr59976ila.0.1714138502468; Fri, 26 Apr
- 2024 06:35:02 -0700 (PDT)
-Date: Fri, 26 Apr 2024 06:35:02 -0700
-In-Reply-To: <c0a1b8d8-4b54-4881-b924-406e0e2cbca5@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000892ccb0616fff80b@google.com>
-Subject: Re: [syzbot] [f2fs?] KASAN: slab-out-of-bounds Read in f2fs_get_node_info
-From: syzbot <syzbot+3694e283cf5c40df6d14@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] openat2: add OA2_INHERIT_CRED flag
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, Alexander Aring
+ <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240424105248.189032-1-stsp2@yandex.ru>
+ <20240424105248.189032-3-stsp2@yandex.ru>
+ <20240425-akrobatisch-palmen-4c1e7a0f69d2@brauner>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <20240425-akrobatisch-palmen-4c1e7a0f69d2@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+25.04.2024 17:02, Christian Brauner пишет:
+>>   struct open_flags {
+>> -	int open_flag;
+>> +	u64 open_flag;
+> Btw, this change taken together with
+All fixed in v5.
+I dropped u64 use.
+Other comments are addressed as well.
+Please let me know if I missed some.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-and-tested-by: syzbot+3694e283cf5c40df6d14@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         77d6a556 f2fs: fix to do sanity check on i_xattr_nid i..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
-console output: https://syzkaller.appspot.com/x/log.txt?x=1535f237180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=3694e283cf5c40df6d14
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Thank you.
 
