@@ -1,310 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-17854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198A88B2FAF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 07:15:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E472E8B2FB3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 07:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4622284293
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 05:15:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8287EB2262A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 05:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0963813A3E1;
-	Fri, 26 Apr 2024 05:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF7F13A26E;
+	Fri, 26 Apr 2024 05:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQ5SzrEg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D6913A240
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 05:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C241617CD;
+	Fri, 26 Apr 2024 05:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714108531; cv=none; b=uLnAtu6TxZbVx7gba9XZeFD7wKFnZWsLgmGR8FfhGejEbWWcCvNEHivbFX3D+CWe/ems0nhpTSWF5ksEBgJqC7D1fMcOudmsu2ISu3se2R0UMuYiu2+eDWak11dJ9kbCPF3o6raGmse4sQGQWLU3f49CAOU+00103VPoGvOiOPA=
+	t=1714108667; cv=none; b=opIrUztzkrBNh+gP86zCOiSV9e7xhXQ225NkVLVQYvdlMMJiu8x0k5liAiPQ+QJPIo2GuL2/GTg/cSb6vrFXtv74MznHJaqu9KC0ckNvdhkinLJarfBLTv+m3CCHJvorkxcRZHi6vrghFHYn23j74IBoJmZVYS7s8k3qTCcRQIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714108531; c=relaxed/simple;
-	bh=baHPmeqi++OzxY0/EDR1/7GQxx7Oc7qHLuRLqj252aM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r39a811i86d4mMPS+X7er7aQZJU/C7ODNNdV3HJzrYRH2tNtncSE7B/eRW4piJ0uFqPjDAKvpb6V8kZWvrRtskCr9BNGpgmvqmLSH5lAGnq/q0bwYyUK7rGajSF26xbCxTxf994P9IE7KG1EsDj8rGMmNWe44VID9TRZOm+4wpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7de2de148f9so167247939f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 22:15:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714108529; x=1714713329;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ykNK5VhsI+dP9tKxCFYw3VBfRAQeinv0rad6NPmo4qE=;
-        b=Yq+E7oE0q1x2zZ9M0ibMghfoeGO1K4wu8Yvkqiv8BoeVTIzzrWjDJP/hBD5xMJ9/7G
-         7uwKa78+HV00LZ3nYkQ245mGxCycET3wL/IrCGSxvPzhEgr/Vb+tkHZXgsGtV/cMW4O0
-         7TK2DUcJIaEe00GCoQA/kNEaHMkX83JWU3T+0YJMI9p+/ULdPvRF/EbqUoIC7aRJUi5R
-         H5g0rzojsC7MpEApzwuPL7jM8qePHiovkx7rJa2xpSY6sCYy63sLRMhE0yMK8u85aIf3
-         ISi7xJBYcXLYDFZNax9+upR1RUFRAueawCk2wJloqJoFnIZGHZtMeuBfd1SVf62L/epv
-         mNuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXY06jMpqmqt/8dWJKnQ7xRx7U436hHI3LCCcbRD1O/gDIhrZto/7xXNXfPXjxCTRpNygQolR1ARA/574zkzUcPN7d+3afa3KYtwTvP7A==
-X-Gm-Message-State: AOJu0YzbVKkvWsga1ndxpTPtj23ooxIH5ZMSFSCVY8jjqI03pRF0GN94
-	mgBpVaJsxuT6wgxQVAK6HOv6F1sTz2mMoE7Z/QKcez2pHMlUQCVzHgP7jGOMwLCbKFIUN5nfgtQ
-	z5CT5bVxqfxAQAFiahbh6P1O6xl3FxJax1hTiZf0RZ50jnR46jiebqgo=
-X-Google-Smtp-Source: AGHT+IFBKFmYe5laHydCAqQAoeaWdcBuRyGTbku/3XoPsQe4bRsTG1szZALj8hXm8DhrnHGu7dMNxvO5xY50AgAMkDYBEwH96pYK
+	s=arc-20240116; t=1714108667; c=relaxed/simple;
+	bh=xUxiLmVXu95NiGCGkNvbiheq9/ydrit+Cc/inAMz5Jc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CyzFGGazeAv1q5GOAiPIAiX3jbMvH1Y0ztb9+QbEgM5i6RqdqIa3k2RFcVi5T7fJKKSlTGUihljNKTblQyp8xZyTqadd7xf41xDoJfrJmL7CyvXvyNR3LArx7sTT2ZwmZWVe3jare7+lbryNgISNHN/pPd1eTZW1bGVdRcOd/rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQ5SzrEg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998A1C113CD;
+	Fri, 26 Apr 2024 05:17:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714108667;
+	bh=xUxiLmVXu95NiGCGkNvbiheq9/ydrit+Cc/inAMz5Jc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KQ5SzrEg1cXrBquSU+7PX0PJ4MRJpudeHXB1clnJFus0QyF5GTFWBBRk8YZzzTny/
+	 +4G10PIyIJ3t6hl02ZORKCZhKaowQ7yCDBm1aPyE847ZuAhokxLATqjiMiGnZzNNCV
+	 q67/r25+yMZrxxbJIVyAzQ/thtNgvNyz6w4XRqLN1bciYHdxqtt8oCvqD/H0hy6LCg
+	 dwCXCeckN/q/rescM0Ao3iuSQyRAm03ncdF4tFdOtUbDBHTZPF6WrE2hZMT0gZ4PcK
+	 /xn7al6LYx9Pab9St5qH4E4hhEwUgG44rsCXID+sN3PhYPWJQ16wnMZL/4vPQkl2zq
+	 Wd2gbbJd08RDA==
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: chandanbabu@kernel.org
+Cc: abaci@linux.alibaba.com,allison.henderson@oracle.com,darrick.wong@oracle.com,dchinner@redhat.com,djwong@kernel.org,hch@lst.de,jiapeng.chong@linux.alibaba.com,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org,mark.tinguely@oracle.com
+Subject: [ANNOUNCE] xfs-linux: for-next updated to 08e012a62de8
+Date: Fri, 26 Apr 2024 10:46:53 +0530
+Message-ID: <877cgkog7c.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4116:b0:485:549f:eed8 with SMTP id
- ay22-20020a056638411600b00485549feed8mr84862jab.0.1714108529299; Thu, 25 Apr
- 2024 22:15:29 -0700 (PDT)
-Date: Thu, 25 Apr 2024 22:15:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fee02e0616f8fdff@google.com>
-Subject: [syzbot] [xfs?] possible deadlock in xfs_fs_dirty_inode
-From: syzbot <syzbot+1619d847a7b9ba3a9137@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+Hi folks,
 
-syzbot found the following issue on:
+The for-next branch of the xfs-linux repository at:
 
-HEAD commit:    3b68086599f8 Merge tag 'sched_urgent_for_v6.9_rc5' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=158206bb180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f47e5e015c177e57
-dashboard link: https://syzkaller.appspot.com/bug?extid=1619d847a7b9ba3a9137
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-Unfortunately, I don't have any reproducer for this issue yet.
+has just been updated.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/caa90b55d476/disk-3b680865.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/17940f1c5e8f/vmlinux-3b680865.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b03bd6929a1c/bzImage-3b680865.xz
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1619d847a7b9ba3a9137@syzkaller.appspotmail.com
+The new head of the for-next branch is commit:
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc4-syzkaller-00274-g3b68086599f8 #0 Not tainted
-------------------------------------------------------
-kswapd0/81 is trying to acquire lock:
-ffff8881a895a610 (sb_internal#3){.+.+}-{0:0}, at: xfs_fs_dirty_inode+0x158/0x250 fs/xfs/xfs_super.c:689
+08e012a62de8 xfs: Remove unused function xrep_dir_self_parent
 
-but task is already holding lock:
-ffffffff8e428e80 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6782 [inline]
-ffffffff8e428e80 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xb20/0x30c0 mm/vmscan.c:7164
+95 new commits:
 
-which lock already depends on the new lock.
+Allison Henderson (15):
+      [98493ff87885] xfs: add parent pointer support to attribute code
+      [8337d58ab286] xfs: define parent pointer ondisk extended attribute format
+      [297da63379c6] xfs: Expose init_xattrs in xfs_create_tmpfile
+      [a08d67296374] xfs: add parent pointer validator functions
+      [7dba4a5fe1c5] xfs: extend transaction reservations for parent attributes
+      [b7c62d90c12c] xfs: parent pointer attribute creation
+      [f1097be220fa] xfs: add parent attributes to link
+      [5d31a85dcc1f] xfs: add parent attributes to symlink
+      [d2d18330f63c] xfs: remove parent pointers in unlink
+      [5a8338c88284] xfs: Add parent pointers to rename
+      [1c12949e50e1] xfs: Add parent pointers to xfs_cross_rename
+      [daf9f884906b] xfs: don't return XFS_ATTR_PARENT attributes via listxattr
+      [8f4b980ee67f] xfs: pass the attr value to put_listent when possible
+      [7dafb449b792] xfs: don't remove the attr fork when parent pointers are enabled
+      [5f98ec1cb5c2] xfs: add a incompat feature bit for parent pointers
 
+Chandan Babu R (9):
+      [1321890a1b51] Merge tag 'shrink-dirattr-args-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [d7d02f750ae9] Merge tag 'improve-attr-validation-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [47d83c194606] Merge tag 'pptrs-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [0d2dd382a7c0] Merge tag 'scrub-pptrs-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [1da824b0bfcf] Merge tag 'repair-pptrs-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [f7cea94646b4] Merge tag 'scrub-directory-tree-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [496baa2cb94f] Merge tag 'vectorized-scrub-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [b878dbbe2acd] Merge tag 'reduce-scrub-iget-overhead-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
+      [4b0bf86c1797] Merge tag 'repair-fixes-6.10_2024-04-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.10-mergeC
 
-the existing dependency chain (in reverse order) is:
+Christoph Hellwig (1):
+      [f49af061f49c] xfs: check the flags earlier in xfs_attr_match
 
--> #2 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
-       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3712
-       might_alloc include/linux/sched/mm.h:312 [inline]
-       slab_pre_alloc_hook mm/slub.c:3746 [inline]
-       slab_alloc_node mm/slub.c:3827 [inline]
-       kmalloc_trace+0x47/0x360 mm/slub.c:3992
-       kmalloc include/linux/slab.h:628 [inline]
-       add_stack_record_to_list mm/page_owner.c:177 [inline]
-       inc_stack_record_count mm/page_owner.c:219 [inline]
-       __set_page_owner+0x561/0x810 mm/page_owner.c:334
-       set_page_owner include/linux/page_owner.h:32 [inline]
-       post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
-       prep_new_page mm/page_alloc.c:1541 [inline]
-       get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
-       __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
-       __alloc_pages_node include/linux/gfp.h:238 [inline]
-       alloc_pages_node include/linux/gfp.h:261 [inline]
-       alloc_slab_page+0x5f/0x160 mm/slub.c:2175
-       allocate_slab mm/slub.c:2338 [inline]
-       new_slab+0x84/0x2f0 mm/slub.c:2391
-       ___slab_alloc+0xc73/0x1260 mm/slub.c:3525
-       __slab_alloc mm/slub.c:3610 [inline]
-       __slab_alloc_node mm/slub.c:3663 [inline]
-       slab_alloc_node mm/slub.c:3835 [inline]
-       kmem_cache_alloc+0x252/0x340 mm/slub.c:3852
-       kmem_cache_zalloc include/linux/slab.h:739 [inline]
-       xfs_btree_alloc_cursor fs/xfs/libxfs/xfs_btree.h:679 [inline]
-       xfs_refcountbt_init_cursor+0x65/0x2a0 fs/xfs/libxfs/xfs_refcount_btree.c:367
-       xfs_reflink_find_shared fs/xfs/xfs_reflink.c:147 [inline]
-       xfs_reflink_trim_around_shared+0x53a/0x9d0 fs/xfs/xfs_reflink.c:194
-       xfs_buffered_write_iomap_begin+0xebf/0x1b40 fs/xfs/xfs_iomap.c:1062
-       iomap_iter+0x691/0xf60 fs/iomap/iter.c:91
-       iomap_file_unshare+0x17a/0x710 fs/iomap/buffered-io.c:1364
-       xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1710
-       xfs_file_fallocate+0x87c/0xd00 fs/xfs/xfs_file.c:1082
-       vfs_fallocate+0x564/0x6c0 fs/open.c:330
-       ksys_fallocate fs/open.c:353 [inline]
-       __do_sys_fallocate fs/open.c:361 [inline]
-       __se_sys_fallocate fs/open.c:359 [inline]
-       __x64_sys_fallocate+0xbd/0x110 fs/open.c:359
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Darrick J. Wong (69):
+      [f566d5b9fb71] xfs: remove XFS_DA_OP_REMOVE
+      [779a4b606c76] xfs: remove XFS_DA_OP_NOTIME
+      [54275d8496f3] xfs: remove xfs_da_args.attr_flags
+      [ef80de940a63] xfs: attr fork iext must be loaded before calling xfs_attr_is_leaf
+      [8ef1d96a985e] xfs: require XFS_SB_FEAT_INCOMPAT_LOG_XATTRS for attr log intent item recovery
+      [c27411d4c640] xfs: make attr removal an explicit operation
+      [f759784cb61c] xfs: use an XFS_OPSTATE_ flag for detecting if logged xattrs are available
+      [cda60317ac57] xfs: rearrange xfs_da_args a bit to use less space
+      [ad206ae50eca] xfs: check opcode and iovec count match in xlog_recover_attri_commit_pass2
+      [f660ec8eaeb5] xfs: fix missing check for invalid attr flags
+      [309dc9cbbb43] xfs: check shortform attr entry flags specifically
+      [992c3b5c3fe6] xfs: restructure xfs_attr_complete_op a bit
+      [2a2c05d013d0] xfs: use helpers to extract xattr op from opflags
+      [1c7f09d210ab] xfs: validate recovered name buffers when recovering xattr items
+      [0aeeeb796980] xfs: always set args->value in xfs_attri_item_recover
+      [c07f018bc094] xfs: use local variables for name and value length in _attri_commit_pass2
+      [50855427c254] xfs: refactor name/length checks in xfs_attri_validate
+      [ffdcc3b8eb4d] xfs: refactor name/value iovec validation in xlog_recover_attri_commit_pass2
+      [ea0b3e814741] xfs: enforce one namespace per attribute
+      [63211876ced3] xfs: rearrange xfs_attr_match parameters
+      [9713dc88773d] xfs: move xfs_attr_defer_add to xfs_attr_item.c
+      [a64e0134754b] xfs: create a separate hashname function for extended attributes
+      [f041455eb577] xfs: allow xattr matching on name and value for parent pointers
+      [a918f5f2cd2c] xfs: refactor xfs_is_using_logged_xattrs checks in attr item recovery
+      [5773f7f82be5] xfs: create attr log item opcodes and formats for parent pointers
+      [ae673f534a30] xfs: record inode generation in xattr update log intent items
+      [fb102fe7fe02] xfs: create a hashname function for parent pointers
+      [af69d852dfe6] xfs: move handle ioctl code to xfs_handle.c
+      [b8c9d4253da4] xfs: split out handle management helpers a bit
+      [233f4e12bbb2] xfs: add parent pointer ioctls
+      [7ea816ca4043] xfs: fix unit conversion error in xfs_log_calc_max_attrsetm_res
+      [6ed858c7c678] xfs: drop compatibility minimum log size computations for reflink
+      [2a009397eb5a] xfs: revert commit 44af6c7e59b12
+      [67ac7091e35b] xfs: enable parent pointers
+      [61b3f0df5c23] xfs: check dirents have parent pointers
+      [b961c8bf1fc3] xfs: deferred scrub of dirents
+      [0d29a20fbdba] xfs: scrub parent pointers
+      [8ad345306d1e] xfs: deferred scrub of parent pointers
+      [e7420e75ef04] xfs: remove some boilerplate from xfs_attr_set
+      [bf61c36a45d4] xfs: make the reserved block permission flag explicit in xfs_attr_set
+      [77ede5f44b0d] xfs: walk directory parent pointers to determine backref count
+      [086e934fe9c7] xfs: salvage parent pointers when rebuilding xattr structures
+      [59a2af9086f0] xfs: check parent pointer xattrs when scrubbing
+      [5769aa41ee34] xfs: add raw parent pointer apis to support repair
+      [76fc23b695f4] xfs: repair directories by scanning directory parent pointers
+      [8559b21a64d9] xfs: implement live updates for directory repairs
+      [e5d7ce0364d8] xfs: replay unlocked parent pointer updates that accrue during xattr repair
+      [b334f7fab57a] xfs: repair directory parent pointers by scanning for dirents
+      [65a1fb7a1129] xfs: implement live updates for parent pointer repairs
+      [13db70078926] xfs: remove pointless unlocked assertion
+      [55edcd1f8647] xfs: split xfs_bmap_add_attrfork into two pieces
+      [6efbbdeb1406] xfs: add a per-leaf block callback to xchk_xattr_walk
+      [a26dc21309af] xfs: actually rebuild the parent pointer xattrs
+      [7be3d20bbeda] xfs: adapt the orphanage code to handle parent pointers
+      [928b721a1178] xfs: teach online scrub to find directory tree structure problems
+      [3f50ddbf4b47] xfs: repair link count of nondirectories after rebuilding parent pointers
+      [d54c5ac80f8f] xfs: invalidate dirloop scrub path data when concurrent updates happen
+      [327ed702d840] xfs: inode repair should ensure there's an attr fork to store parent pointers
+      [271557de7cbf] xfs: reduce the rate of cond_resched calls inside scrub
+      [37056912d572] xfs: report directory tree corruption in the health information
+      [be7cf174e908] xfs: move xfs_ioc_scrub_metadata to scrub.c
+      [3f31406aef49] xfs: fix corruptions in the directory tree
+      [b27ce0da60a5] xfs: use dontcache for grabbing inodes during scrub
+      [669175375223] xfs: drop the scrub file's iolock when transaction allocation fails
+      [c77b37584c2d] xfs: introduce vectored scrub mode
+      [4ad350ac5862] xfs: only iget the file once when doing vectored scrub-by-handle
+      [b44bfc06958f] xfs: fix iunlock calls in xrep_adoption_trans_alloc
+      [6d335233fe69] xfs: exchange-range for repairs is no longer dynamic
+      [5e1c7d0b29f7] xfs: invalidate dentries for a file before moving it to the orphanage
 
--> #1 (&xfs_nondir_ilock_class#3){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       down_write_nested+0x3d/0x50 kernel/locking/rwsem.c:1695
-       xfs_dquot_disk_alloc+0x399/0xe50 fs/xfs/xfs_dquot.c:332
-       xfs_qm_dqread+0x1a3/0x650 fs/xfs/xfs_dquot.c:693
-       xfs_qm_dqget+0x2bb/0x6f0 fs/xfs/xfs_dquot.c:905
-       xfs_qm_quotacheck_dqadjust+0xea/0x5a0 fs/xfs/xfs_qm.c:1096
-       xfs_qm_dqusage_adjust+0x4db/0x6f0 fs/xfs/xfs_qm.c:1215
-       xfs_iwalk_ag_recs+0x4e0/0x860 fs/xfs/xfs_iwalk.c:213
-       xfs_iwalk_run_callbacks+0x218/0x470 fs/xfs/xfs_iwalk.c:372
-       xfs_iwalk_ag+0xa39/0xb50 fs/xfs/xfs_iwalk.c:478
-       xfs_iwalk_ag_work+0xfb/0x1b0 fs/xfs/xfs_iwalk.c:620
-       xfs_pwork_work+0x7f/0x190 fs/xfs/xfs_pwork.c:47
-       process_one_work kernel/workqueue.c:3254 [inline]
-       process_scheduled_works+0xa10/0x17c0 kernel/workqueue.c:3335
-       worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
-       kthread+0x2f0/0x390 kernel/kthread.c:388
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Jiapeng Chong (1):
+      [08e012a62de8] xfs: Remove unused function xrep_dir_self_parent
 
--> #0 (sb_internal#3){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1664 [inline]
-       sb_start_intwrite include/linux/fs.h:1847 [inline]
-       xfs_trans_alloc+0xe5/0x830 fs/xfs/xfs_trans.c:264
-       xfs_fs_dirty_inode+0x158/0x250 fs/xfs/xfs_super.c:689
-       __mark_inode_dirty+0x325/0xe20 fs/fs-writeback.c:2477
-       mark_inode_dirty_sync include/linux/fs.h:2410 [inline]
-       iput+0x1fe/0x930 fs/inode.c:1764
-       __dentry_kill+0x20d/0x630 fs/dcache.c:603
-       shrink_kill+0xa9/0x2c0 fs/dcache.c:1048
-       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1075
-       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1156
-       super_cache_scan+0x34f/0x4b0 fs/super.c:221
-       do_shrink_slab+0x705/0x1160 mm/shrinker.c:435
-       shrink_slab_memcg mm/shrinker.c:548 [inline]
-       shrink_slab+0x883/0x14d0 mm/shrinker.c:626
-       shrink_node_memcgs mm/vmscan.c:5875 [inline]
-       shrink_node+0x11f5/0x2d60 mm/vmscan.c:5908
-       kswapd_shrink_node mm/vmscan.c:6704 [inline]
-       balance_pgdat mm/vmscan.c:6895 [inline]
-       kswapd+0x1a25/0x30c0 mm/vmscan.c:7164
-       kthread+0x2f0/0x390 kernel/kthread.c:388
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Code Diffstat:
 
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#3 --> &xfs_nondir_ilock_class#3 --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&xfs_nondir_ilock_class#3);
-                               lock(fs_reclaim);
-  rlock(sb_internal#3);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd0/81:
- #0: ffffffff8e428e80 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6782 [inline]
- #0: ffffffff8e428e80 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xb20/0x30c0 mm/vmscan.c:7164
- #1: ffff8881a895a0e0 (&type->s_umount_key#65){++++}-{3:3}, at: super_trylock_shared fs/super.c:561 [inline]
- #1: ffff8881a895a0e0 (&type->s_umount_key#65){++++}-{3:3}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
-
-stack backtrace:
-CPU: 1 PID: 81 Comm: kswapd0 Not tainted 6.9.0-rc4-syzkaller-00274-g3b68086599f8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1664 [inline]
- sb_start_intwrite include/linux/fs.h:1847 [inline]
- xfs_trans_alloc+0xe5/0x830 fs/xfs/xfs_trans.c:264
- xfs_fs_dirty_inode+0x158/0x250 fs/xfs/xfs_super.c:689
- __mark_inode_dirty+0x325/0xe20 fs/fs-writeback.c:2477
- mark_inode_dirty_sync include/linux/fs.h:2410 [inline]
- iput+0x1fe/0x930 fs/inode.c:1764
- __dentry_kill+0x20d/0x630 fs/dcache.c:603
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1048
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1075
- prune_dcache_sb+0x10f/0x180 fs/dcache.c:1156
- super_cache_scan+0x34f/0x4b0 fs/super.c:221
- do_shrink_slab+0x705/0x1160 mm/shrinker.c:435
- shrink_slab_memcg mm/shrinker.c:548 [inline]
- shrink_slab+0x883/0x14d0 mm/shrinker.c:626
- shrink_node_memcgs mm/vmscan.c:5875 [inline]
- shrink_node+0x11f5/0x2d60 mm/vmscan.c:5908
- kswapd_shrink_node mm/vmscan.c:6704 [inline]
- balance_pgdat mm/vmscan.c:6895 [inline]
- kswapd+0x1a25/0x30c0 mm/vmscan.c:7164
- kthread+0x2f0/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-NILFS (loop4): discard dirty page: offset=98304, ino=3
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=0, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty page: offset=0, ino=12
-NILFS (loop4): discard dirty block: blocknr=17, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty page: offset=0, ino=3
-NILFS (loop4): discard dirty block: blocknr=42, size=1024
-NILFS (loop4): discard dirty block: blocknr=43, size=1024
-NILFS (loop4): discard dirty block: blocknr=44, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty page: offset=4096, ino=6
-NILFS (loop4): discard dirty block: blocknr=39, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty page: offset=196608, ino=3
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-NILFS (loop4): discard dirty block: blocknr=49, size=1024
-NILFS (loop4): discard dirty block: blocknr=18446744073709551615, size=1024
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+ fs/xfs/Makefile                 |    7 +-
+ fs/xfs/libxfs/xfs_attr.c        |  214 ++++---
+ fs/xfs/libxfs/xfs_attr.h        |   44 +-
+ fs/xfs/libxfs/xfs_attr_leaf.c   |   94 +++-
+ fs/xfs/libxfs/xfs_attr_sf.h     |    1 +
+ fs/xfs/libxfs/xfs_bmap.c        |   38 +-
+ fs/xfs/libxfs/xfs_bmap.h        |    3 +-
+ fs/xfs/libxfs/xfs_da_btree.h    |   33 +-
+ fs/xfs/libxfs/xfs_da_format.h   |   30 +-
+ fs/xfs/libxfs/xfs_dir2.c        |    2 +-
+ fs/xfs/libxfs/xfs_dir2.h        |    2 +-
+ fs/xfs/libxfs/xfs_format.h      |    4 +-
+ fs/xfs/libxfs/xfs_fs.h          |  116 +++-
+ fs/xfs/libxfs/xfs_health.h      |    4 +-
+ fs/xfs/libxfs/xfs_log_format.h  |   25 +-
+ fs/xfs/libxfs/xfs_log_rlimit.c  |   46 ++
+ fs/xfs/libxfs/xfs_ondisk.h      |    6 +
+ fs/xfs/libxfs/xfs_parent.c      |  379 +++++++++++++
+ fs/xfs/libxfs/xfs_parent.h      |  110 ++++
+ fs/xfs/libxfs/xfs_sb.c          |    4 +
+ fs/xfs/libxfs/xfs_trans_resv.c  |  328 +++++++++--
+ fs/xfs/libxfs/xfs_trans_space.c |  121 ++++
+ fs/xfs/libxfs/xfs_trans_space.h |   25 +-
+ fs/xfs/scrub/attr.c             |   79 ++-
+ fs/xfs/scrub/attr_repair.c      |  492 +++++++++++++++-
+ fs/xfs/scrub/attr_repair.h      |    4 +
+ fs/xfs/scrub/common.c           |   12 +-
+ fs/xfs/scrub/common.h           |   27 +-
+ fs/xfs/scrub/dir.c              |  342 ++++++++++-
+ fs/xfs/scrub/dir_repair.c       |  591 +++++++++++++++++--
+ fs/xfs/scrub/dirtree.c          |  985 ++++++++++++++++++++++++++++++++
+ fs/xfs/scrub/dirtree.h          |  178 ++++++
+ fs/xfs/scrub/dirtree_repair.c   |  821 +++++++++++++++++++++++++++
+ fs/xfs/scrub/findparent.c       |   12 +-
+ fs/xfs/scrub/findparent.h       |   10 +-
+ fs/xfs/scrub/health.c           |    1 +
+ fs/xfs/scrub/ino_bitmap.h       |   37 ++
+ fs/xfs/scrub/inode_repair.c     |   41 ++
+ fs/xfs/scrub/iscan.c            |   13 +-
+ fs/xfs/scrub/listxattr.c        |   10 +-
+ fs/xfs/scrub/listxattr.h        |    4 +-
+ fs/xfs/scrub/nlinks.c           |   86 ++-
+ fs/xfs/scrub/nlinks_repair.c    |    6 +-
+ fs/xfs/scrub/orphanage.c        |   98 +++-
+ fs/xfs/scrub/orphanage.h        |   11 +
+ fs/xfs/scrub/parent.c           |  686 ++++++++++++++++++++++
+ fs/xfs/scrub/parent_repair.c    | 1314 ++++++++++++++++++++++++++++++++++++++++++-
+ fs/xfs/scrub/readdir.c          |   78 +++
+ fs/xfs/scrub/readdir.h          |    3 +
+ fs/xfs/scrub/repair.h           |    4 +
+ fs/xfs/scrub/rtsummary_repair.c |   10 +-
+ fs/xfs/scrub/scrub.c            |  239 +++++++-
+ fs/xfs/scrub/scrub.h            |   79 ++-
+ fs/xfs/scrub/stats.c            |    1 +
+ fs/xfs/scrub/symlink_repair.c   |    5 +-
+ fs/xfs/scrub/tempexch.h         |    1 -
+ fs/xfs/scrub/tempfile.c         |   26 +-
+ fs/xfs/scrub/trace.c            |    5 +
+ fs/xfs/scrub/trace.h            |  570 ++++++++++++++++++-
+ fs/xfs/scrub/xfarray.c          |   10 +-
+ fs/xfs/scrub/xfarray.h          |    4 +
+ fs/xfs/scrub/xfile.c            |    2 +-
+ fs/xfs/scrub/xfs_scrub.h        |    6 +-
+ fs/xfs/xfs_acl.c                |   17 +-
+ fs/xfs/xfs_attr_item.c          |  559 +++++++++++++++---
+ fs/xfs/xfs_attr_item.h          |   10 +
+ fs/xfs/xfs_attr_list.c          |   31 +-
+ fs/xfs/xfs_export.c             |    2 +-
+ fs/xfs/xfs_export.h             |    2 +
+ fs/xfs/xfs_handle.c             |  952 +++++++++++++++++++++++++++++++
+ fs/xfs/xfs_handle.h             |   33 ++
+ fs/xfs/xfs_health.c             |    1 +
+ fs/xfs/xfs_inode.c              |  220 ++++++--
+ fs/xfs/xfs_inode.h              |    3 +-
+ fs/xfs/xfs_ioctl.c              |  620 +-------------------
+ fs/xfs/xfs_ioctl.h              |   28 -
+ fs/xfs/xfs_ioctl32.c            |    1 +
+ fs/xfs/xfs_iops.c               |   17 +-
+ fs/xfs/xfs_mount.c              |   16 +
+ fs/xfs/xfs_mount.h              |    6 +-
+ fs/xfs/xfs_super.c              |   14 +
+ fs/xfs/xfs_symlink.c            |   30 +-
+ fs/xfs/xfs_trace.c              |    1 +
+ fs/xfs/xfs_trace.h              |  102 +++-
+ fs/xfs/xfs_xattr.c              |   54 +-
+ fs/xfs/xfs_xattr.h              |    3 +-
+ 86 files changed, 10020 insertions(+), 1241 deletions(-)
+ create mode 100644 fs/xfs/libxfs/xfs_parent.c
+ create mode 100644 fs/xfs/libxfs/xfs_parent.h
+ create mode 100644 fs/xfs/libxfs/xfs_trans_space.c
+ create mode 100644 fs/xfs/scrub/dirtree.c
+ create mode 100644 fs/xfs/scrub/dirtree.h
+ create mode 100644 fs/xfs/scrub/dirtree_repair.c
+ create mode 100644 fs/xfs/scrub/ino_bitmap.h
+ create mode 100644 fs/xfs/xfs_handle.c
+ create mode 100644 fs/xfs/xfs_handle.h
 
