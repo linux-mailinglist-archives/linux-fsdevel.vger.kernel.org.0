@@ -1,100 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-17845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6428B2D8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 01:22:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD088B2E20
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 02:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09ACD1C21C38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 23:22:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368741C21D0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 00:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E789E156997;
-	Thu, 25 Apr 2024 23:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B88EDC;
+	Fri, 26 Apr 2024 00:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vzSAlPZl"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f0+vinsW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559B156655;
-	Thu, 25 Apr 2024 23:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638B8380;
+	Fri, 26 Apr 2024 00:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714087349; cv=none; b=sM6553PtVgfgOPf/qMfMVqkdEhLRB79LMWkbsjl+6Rc9orlnP7863ZPoR0FlhrQbUz6gPSPhAfxNqD6HQcFQmY9GAxUQN5h9ky6nnAf3sn8HHuZ++M2qWDE8Xb67c175ILFQRLSv31R9WJYUErgQGuWmbofHL4ZcMnD3CECmLoY=
+	t=1714092453; cv=none; b=MRrdzrqBKu6AFDOgD8SIHwbx+TPy2RbqEZyz93X3niUsymj8/p12426vmwZ6zzojQ94i02Dud1OrEiQoIZbGO82oYi5xc2Yu8Phc2LC4Z+YHJ84u4GZRCToyhMmkJ9b28/XpkRx51SvjC1vaLv4D78ZWytDotEvGmJtjD8smkIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714087349; c=relaxed/simple;
-	bh=dRp6JaHDxGxz2lxzI2b56sUndPwMeli8MnALnCX8GRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qp/kBXq9X1Nit7Wipm4jEaAFIcLFSMKBAzzrAFylVBGZ6kEUzjOZPJdT40HNhFESPQ8xkdgsFWQV3gEmrBFP43llao8+5e60mkpIjNxYaN6CbuTJg1WJ1EkYjBB2DipQn4BxkPbMr3UZ4TLxBL9aBjTDo7MZQLq3Zbs0jdnpv5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vzSAlPZl; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1714087343; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=LNAFLzKfa5asTQif+KQv5a4+XeE0zy0NfPO0NMRW4Jk=;
-	b=vzSAlPZlGzlCxbgNpN1w8hscetrlIZ0LTf8uzRBpzWo/PHMzEWFbO29dPXn9NTy5KI8yQxfxXP8e+KztjAJJw+m48aVAu535XyYN4h5hv0AG5PmPNz3lj/RO6i2+sGbaSU1iqq5xCf4nUgnehp7YWQ7soHXDJ7XCxpPgX8ePN6w=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W5GYu4o_1714087339;
-Received: from 30.25.226.163(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W5GYu4o_1714087339)
-          by smtp.aliyun-inc.com;
-          Fri, 26 Apr 2024 07:22:22 +0800
-Message-ID: <e2781e10-6d5c-4130-805c-89087c24c131@linux.alibaba.com>
-Date: Fri, 26 Apr 2024 07:22:18 +0800
+	s=arc-20240116; t=1714092453; c=relaxed/simple;
+	bh=C5A9J+Gbrbj/i3IjchhAKHt0ZfALGWbdhp86L8wkEeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bylh/Z1HXsecrhNR1qVBabeg37u/d2nyDscAmtk7E8oXMdXS4wezRBNsay3sB3xirhz8GjIsMDZffgAwcBMi+fNQCUSHIzSX2PRycNh3hBxR7/cdi3yImyN8CT9/DE7DZd5wiPeQeCZ+kclrhscJ7KsVcLJIL0qqzz1s1ZT+i0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f0+vinsW; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6jnE6LGAE0Ge7rAWbVl9vm4Cu+KrxLEesibskCl1htg=; b=f0+vinsWX0muKf6vaKgTKwJ3aM
+	+DuqXXB3MLam69jGiOjU663h1e9sUMxRNxElfr+tDjGlokyrag0jL2mcN8ZbbcqjrwPxD1buayqVl
+	UoYWexnagnozKyAzskjB+udRYZc3DZDJIiPRS0ntTrnlmyY/Z4RmmBme6dq2D5aL0NQ5GdaXg8YZw
+	DjuORwkpqODS4GMKICRq7fXPJqps+xnze0ZE6HY8P+JzFOOXHwHxqiOFbC9xXpVisUc/zJqFnpqxE
+	UCWk+aZXz+kfClceSFXdTtaQyKtUhgg5UGmZLP+vSa3L1Hxl+A5UO3r4j35dUrWjT/HxavIBNg0Ye
+	tGVH1xCQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s09kN-0000000Ak4J-0KrB;
+	Fri, 26 Apr 2024 00:47:28 +0000
+Date: Thu, 25 Apr 2024 17:47:27 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, djwong@kernel.org,
+	brauner@kernel.org, david@fromorbit.com, chandan.babu@oracle.com,
+	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com
+Subject: Re: [PATCH v4 05/11] mm: do not split a folio if it has minimum
+ folio order requirement
+Message-ID: <Zir5n6JNiX14VoPm@bombadil.infradead.org>
+References: <20240425113746.335530-1-kernel@pankajraghav.com>
+ <20240425113746.335530-6-kernel@pankajraghav.com>
+ <Ziq4qAJ_p7P9Smpn@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vfs.all 08/26] erofs: prevent direct access of bd_inode
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
- brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- yukuai3@huawei.com
-References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-9-yukuai1@huaweicloud.com>
- <20240407040531.GA1791215@ZenIV>
- <a660a238-2b7e-423f-b5aa-6f5777259f4d@linux.alibaba.com>
- <20240425195641.GJ2118490@ZenIV>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240425195641.GJ2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ziq4qAJ_p7P9Smpn@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-Hi Al,
-
-On 2024/4/26 03:56, Al Viro wrote:
-> On Fri, Apr 12, 2024 at 12:13:42AM +0800, Gao Xiang wrote:
-
-...
-
->>
->> Just saw this again by chance, which is unexpected.
->>
->> Yeah, I think that is a good idea.  The story is that erofs_bread()
->> was derived from a page-based interface:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/erofs/data.c?h=v5.10#n35
->>
->> so it was once a page index number.  I think a byte offset will be
->> a better interface to clean up these, thanks for your time and work
->> on this!
+On Thu, Apr 25, 2024 at 09:10:16PM +0100, Matthew Wilcox wrote:
+> On Thu, Apr 25, 2024 at 01:37:40PM +0200, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > Splitting a larger folio with a base order is supported using
+> > split_huge_page_to_list_to_order() API. However, using that API for LBS
+> > is resulting in an NULL ptr dereference error in the writeback path [1].
+> > 
+> > Refuse to split a folio if it has minimum folio order requirement until
+> > we can start using split_huge_page_to_list_to_order() API. Splitting the
+> > folio can be added as a later optimization.
+> > 
+> > [1] https://gist.github.com/mcgrof/d12f586ec6ebe32b2472b5d634c397df
 > 
-> FWIW, see #misc.erofs and #more.erofs in my tree; the former is the
-> minimal conversion of erofs_read_buf() and switch from buf->inode
-> to buf->mapping, the latter follows that up with massage for
-> erofs_read_metabuf().
-> 
-> Completely untested; it builds, but that's all I can promise.  Individual
-> patches in followups.
+> Obviously this has to be tracked down and fixed before this patchset can
+> be merged ... I think I have some ideas.  Let me look a bit.  How
+> would I go about reproducing this?
 
-Thanks for so much time on this, I will review/test/feedback
-these patches by the end of this week since an internal project
-for my employer is also ongoing.
+Using kdevops this is easy:
 
-Thanks,
-Gao Xiang
+make defconfig-lbs-xfs-small -j $(nproc)
+make -j $(nproc)
+make fstests
+make linux
+make fstests-baseline TESTS=generic/447 COUNT=10
+tail -f
+
+guestfs/*-xfs-reflink-16k-4ks/console.log
+or
+sudo virsh list
+sudo virsh console ${foo}-xfs-reflink-16k-4ks
+
+Where $foo is the value of CONFIG_KDEVOPS_HOSTS_PREFIX in .config for
+your kdevops run.
+
+Otherwise if you wanna run things manually the above uses an lbs branch
+called large-block-minorder on kdevops [0] based on v6.9-rc5 with:
+
+a) Fixes we know we need
+b) this patch series minus this patch
+c) A truncation enablement patch
+
+Note that the above also uses an fstests git tree with the fstests
+changes we also have posted as fixes and some new tests which have been
+posted [1]. You will then want to run:
+
+./check -s xfs_reflink_16k_4ks -I 10 generic/447
+
+The configuration for xfs_reflink_16k_4ks follows:
+
+cat /var/lib/xfstests/configs/min-xfs-reflink-16k-4ks.config
+
+[default]
+FSTYP=xfs
+TEST_DIR=/media/test
+SCRATCH_MNT=/media/scratch
+RESULT_BASE=$PWD/results/$HOST/$(uname -r)
+DUMP_CORRUPT_FS=1
+CANON_DEVS=yes
+RECREATE_TEST_DEV=true
+SOAK_DURATION=9900
+
+[xfs_reflink_16k_4ks]
+TEST_DEV=/dev/loop16
+SCRATCH_DEV_POOL="/dev/loop5 /dev/loop6 /dev/loop7 /dev/loop8 /dev/loop9 /dev/loop10 /dev/loop11 /dev/loop12"
+MKFS_OPTIONS='-f -m reflink=1,rmapbt=1, -i sparse=1, -b size=16384, -s size=4k'
+USE_EXTERNAL=no
+LOGWRITES_DEV=/dev/loop15
+
+I didn't have time to verify if the above commands for kdevops worked but... in
+theory its possible it may, because you know, May is right around the
+corner, and May... the force be with us.
+
+[0] https://github.com/linux-kdevops/linux/tree/large-block-minorder
+[1] https://github.com/linux-kdevops/fstests
+
+  Luis
 
