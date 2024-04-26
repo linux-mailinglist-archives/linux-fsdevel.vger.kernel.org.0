@@ -1,111 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-17878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C64E8B336F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:57:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B906B8B3375
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58741F21B01
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E3861F21440
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D546613CFA9;
-	Fri, 26 Apr 2024 08:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E0413CF8D;
+	Fri, 26 Apr 2024 08:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RUo6s2AZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duIlAcoE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8D013C8E0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 08:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A954D23A8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 08:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714121826; cv=none; b=OIUvkTX82JFxYKMq9MwuOWV2zgNOqz2DGJeuUU8XqO1VdvebwaDP37ggMQsBkfkla1TTh11l8HsEBZ/q2VQFcVmnkvxa9x4/ZC6zaIz/Dr9fqeLOywpFac/jx/RdoP0gGvIjxLY7BDKel4Oisel/emiupGgz/iZv1NBIWurhkug=
+	t=1714121919; cv=none; b=mTZrHg0lbRzyFh/trOi5KMqm+O6nNrO4Lnz6s1tJYoQ2viCMrz6GY8HOSBdo2EWlds5pVg6gPeAOfpn5yliqCBjPBkcN+FYjz3DS2y12V1tmGQeltqobm/nMKbwrWX8MBnFBSiGfbvLk3L6WHgAj3IkqhIiIppbKuaGceBfSesU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714121826; c=relaxed/simple;
-	bh=1XTN5T6PRQMZa8FXz2scQeKYQ8+8piXFIKhjXNy4qqk=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=apEQSMpNFwDUKP3Qbuf58EHvQNszxKINUEoULJfhzkqg+ZCwHd3SVBicIB662E2ij8MhiLVuxZwXuyCa9JcpK6BuqbPXv+6YFhMU95n36fyQhuHJnCZt/lQXmpQG5jAbv/pxbYvtGFVscm7xO3YGCSgaLnDvzk3v0pWUKKuYors=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RUo6s2AZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714121823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q2pEeDTYgZgn4hwUL7ZGzmZnqIMR6LoTfbNN89+uR1s=;
-	b=RUo6s2AZe8NQ5NpJpLKfHcyvqqouScb5cATRaWiRYCAvUZCQEQHwtlkx4JGtuYFUI0+Jev
-	UBi4/0UmQl/FedbAHWhwPXDVKT81lH8ghgMpAt2pcfcmGOt7/TALgeBUwq+/MD3mLHhDr7
-	dwLGYJYPdMaUOxycnhqmagUfuGHPuvM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-17-qRaC9TC_OIC8O5N87ajHKw-1; Fri, 26 Apr 2024 04:57:00 -0400
-X-MC-Unique: qRaC9TC_OIC8O5N87ajHKw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5B03E8032FA;
-	Fri, 26 Apr 2024 08:56:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.200])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 146B72166B31;
-	Fri, 26 Apr 2024 08:56:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2145850.1714121572@warthog.procyon.org.uk>
-References: <2145850.1714121572@warthog.procyon.org.uk> <Zin4G2VYUiaYxsKQ@xsang-OptiPlex-9020> <202404161031.468b84f-oliver.sang@intel.com> <164954.1713356321@warthog.procyon.org.uk>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: dhowells@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
-    Steve French <sfrench@samba.org>,
-    Shyam Prasad N <nspmangalore@gmail.com>,
-    "Rohith
- Surabattula" <rohiths.msft@gmail.com>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-    samba-technical@lists.samba.org
-Subject: Re: [dhowells-fs:cifs-netfs] [cifs] b4834f12a4: WARNING:at_fs/netfs/write_collect.c:#netfs_writeback_lookup_folio
+	s=arc-20240116; t=1714121919; c=relaxed/simple;
+	bh=0SmOUhVUwWxtwCtv+kK8udGkIddWAy8YYFOJ0of7ixQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtemRPjDAvndldpnyG/W6YG3oxweEx66BHxPqlmx7SRCNzKBCPr7FlaBS3O5E+Fx5hCvHSmab8YwGpvWRGSqVvpBR4R7vnOlgQfpVqUH7Vsca69Zz7PeJuGWSyVazjkOkXLUZhWdu0jCsS4FH6aFwOMZinPIwhfSJD3wso4G1x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duIlAcoE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6060C113CD;
+	Fri, 26 Apr 2024 08:58:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714121919;
+	bh=0SmOUhVUwWxtwCtv+kK8udGkIddWAy8YYFOJ0of7ixQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=duIlAcoEYKCS5r34BSQ1rAaNU4EWq0TAy5e1qD9vS7aFIv8x2lGaMl4a5qFiiD0Zg
+	 sK2MxvWTD2ZGgo+DozovyOvGr++zWrf63pzslLHG83q36ObPanUwvTvRnXdKv1dWWg
+	 WepJ5vaWXttkA0V5bVuT7Q+zTdXZVCsJvX51MLkvHOGFMo/6l+E2MN5gkY2vBNpToZ
+	 29pSGMkarfyb6pB90wK4mmYk3/+6PQXu07jxqnq5H86b34OVCglXNuzCySj6j6Vf1B
+	 bB5NZTbZu0aiaxbXctqdM/2Td2TiLpYDbFSpxwWzYW5fihd7g7KxDwfhQPmTrFAEjr
+	 9RjIzrg62cF+w==
+Date: Fri, 26 Apr 2024 10:58:35 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dawid Osuchowski <linux@osuchow.ski>, linux-fsdevel@vger.kernel.org, 
+	jack@suse.cz
+Subject: Re: [PATCH] fs: Create anon_inode_getfile_fmode()
+Message-ID: <20240426-achsen-aufnimmt-8ff4ff3933ec@brauner>
+References: <20240424233859.7640-1-linux@osuchow.ski>
+ <20240425-wohltat-galant-16b3360118d0@brauner>
+ <20240425202550.GL2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2145948.1714121817.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 26 Apr 2024 09:56:57 +0100
-Message-ID: <2145949.1714121817@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240425202550.GL2118490@ZenIV>
 
-David Howells <dhowells@redhat.com> wrote:
+On Thu, Apr 25, 2024 at 09:25:50PM +0100, Al Viro wrote:
+> On Thu, Apr 25, 2024 at 11:57:12AM +0200, Christian Brauner wrote:
+> > On Thu, Apr 25, 2024 at 01:38:59AM +0200, Dawid Osuchowski wrote:
+> > > Creates an anon_inode_getfile_fmode() function that works similarly to
+> > > anon_inode_getfile() with the addition of being able to set the fmode
+> > > member.
+> > 
+> > And for what use-case exactly?
+> 
+> There are several places where we might want that -
+> arch/powerpc/platforms/pseries/papr-vpd.c:488:  file = anon_inode_getfile("[papr-vpd]", &papr_vpd_handle_ops,
+> fs/cachefiles/ondemand.c:233:   file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
+> fs/eventfd.c:412:       file = anon_inode_getfile("[eventfd]", &eventfd_fops, ctx, flags);
+> in addition to vfio example Dawid mentions, as well as a couple of
+> borderline cases in
+> virt/kvm/kvm_main.c:4404:       file = anon_inode_getfile(name, &kvm_vcpu_stats_fops, vcpu, O_RDONLY);
+> virt/kvm/kvm_main.c:5092:       file = anon_inode_getfile("kvm-vm-stats",
+> 
+> So something of that sort is probably a good idea.  Said that,
 
-> =3D=3D> Retrieving sources...
->   -> Source is https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/=
-linux.git
->   -> Cloning linux git repo...
-> Cloning into bare repository '/root/lkp-tests/programs/turbostat/pkg/lin=
-ux'...
+Ok. It wouldn't be the worst if @Dawid would also sent a follow-patch
+converting the obvious cases over to the new helper then.
 
-Actually, it cloned the linux git repo twice by http, once into:
+> what the hell is __anon_inode_getfile_fmode() for?  It's identical
 
-	programs/turbostat/pkg/linux/
+Unrelated to this patch but the other really unpleasant part is that
+"make_secure" boolean argument to __anon_inode_getfile() to indicate
+allocation of a new inode. That "context_inode" argument is also really
+unused for the normal case where the same anon_inode_inode is reused...
+IMHO, that should just be split apart. A little more code but it would
+make things easier to understand imho...
 
-which is a bare repo, and once into:
+> to exported variant, AFAICS.  And then there's this:
+> 
+> 	if (IS_ERR(file))
+> 		goto err;
+> 
+> 	file->f_mode |= f_mode;
+> 
+> 	return file;
+> 
+> err:
+> 	return file;
+> 
+> a really odd way to spell
+> 
+> 	if (!IS_ERR(file))
+> 		file->f_mode |= f_mode;
+> 	return file;
 
-	tmp-pkg/turbostat/src/linux/
-
-which has all the files checked out.
-
-If it must clone linux, can it at least clone one from the other?
-
-David
-
+Yeah.
 
