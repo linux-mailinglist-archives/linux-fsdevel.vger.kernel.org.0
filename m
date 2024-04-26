@@ -1,103 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-17942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55958B40AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 22:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D5F8B40FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 22:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB9C282E0A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 20:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA8D1F229EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 20:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9765A23746;
-	Fri, 26 Apr 2024 20:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DXpPccp/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996C428680;
+	Fri, 26 Apr 2024 20:57:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A2B2231F;
-	Fri, 26 Apr 2024 20:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049801EEE9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 20:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714162196; cv=none; b=o7z2AmgyjQDqjMZ0CtWsAKLZuMwUaGBoG8044qjrPAfTJ4QtyrqkgPTP0dJHBirYN1gSCrOxLGaqkGoZeNSP6d4w4zt7Zp77dMQ1N9P0wRKZewaSXspsCEqS6Sh3A4QlNUHT7d4TVZPY2to5cErKDsDzFDCUaEDY9y3SVL89I+0=
+	t=1714165024; cv=none; b=lGEUrkJB60jK78D5nRVIFr8hELyvje4oKYgeDyPrryc3MwLbF9jsxXqb78eFU9Pf4h0ZBohSQqWlhAKLJfTBg86E2iFZ/s920DP2QPvBBHEmk510W41OG4DW4PDc7DtY1wgr/NH445KI+8P7icGm5edWjBtVKaXix5WqDGLQuQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714162196; c=relaxed/simple;
-	bh=B2y0EhLw+wM5wP9UmPyHkEJLcBkxN6TEuBi1BXG1Qqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VWgKURvg2sknvjsc/eezbxl+msAsyfYmDd5/V32Q1odu3PLcfaXBQOagvOhbCovQQqH+ilvfxMXxsEJKRPAWqkU8gEGW3WI6kJih9J46vIsAmk0wtdqtRs795WKHyBY0gN8Z1JYEnZzYvTb4ID1fhRBaqCxkKs4ZqfREWB05kfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DXpPccp/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jB1S2xzTGiFiesx+Ltzu8Nbt+KQhHNk6IJcbmv7OyAc=; b=DXpPccp/07yVxEzKTsHTNu48m2
-	CLX6pcZeeTv4p1bouiI2vYjMvVNNdNIpDtYk/jxQKB38ekCXTpC43ywwG0DfqzMh4msq8RPPF9bSK
-	HnwsQtVjKZ9Ux53zlgxHZigWQQe3RcwjiRFgk2P4q3DvgfQpxVHQIRAvvBmD4312wYaeWrKeHQ+Cg
-	MZHYYnXLecy9VKcEqa1mXo2yvBOk1bVe4Tn4gsnPl3n6WqKahm9ZlHv50G9TPcFImAjWJdPuJVZU8
-	3A+zsvJG/g4L+sSt2ZMBPf1xs2uG1GYejS2eIy4qIWoE4U9Zdd2J9qp79K1Zft5D+0BdEmcXxrhP8
-	VwKxX5Og==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s0Rt7-005OpJ-0s;
-	Fri, 26 Apr 2024 20:09:41 +0000
-Date: Fri, 26 Apr 2024 21:09:41 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Lucas Karpinski <lkarpins@redhat.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alexl@redhat.com, echanude@redhat.com,
-	ikent@redhat.com
-Subject: Re: [RFC v2 1/1] fs/namespace: defer RCU sync for MNT_DETACH umount
-Message-ID: <20240426200941.GP2118490@ZenIV>
-References: <20240426195429.28547-1-lkarpins@redhat.com>
- <20240426195429.28547-2-lkarpins@redhat.com>
+	s=arc-20240116; t=1714165024; c=relaxed/simple;
+	bh=ColKp8LTeqV3MomYovw1AaLOb4uUmnU2k5nxP/XTD6M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qFcWuaD831Wtw18KDXM73G5Xq+XdiZiDga/os2kwhUhen6lvYuEZYbafpRw/l1keItbsCFhdKQ1QFuEyd9LquPqHiVpkOxNhyKFcf8yhbHD7j90mvGF4yDCti175qqI1PSb/2bXpvW5C2B4Z73ntkSy6z5OkmWhew75diHiQxhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7dab89699a8so258580939f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 13:57:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714165022; x=1714769822;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2wmPxjA1cjQgQAONaZgBDFgfHJ2vCvymGfali2ADE1s=;
+        b=KLcAV3K0C+PMeaDroXtdcpDg9ngZGaJ+4tgmkndQZ5MI2MxI9SfY7Y09el2ifHZnF6
+         nDuRfj9LJzBzCGrkBi44TzqYpXYeKB+7KwkVaaWeaa4s+Tin3PjuMQ43VURJt1YT90gw
+         CUVjwnlmBuXoLjXH7V2alt8WvuHwTYLbkXh0TXgcF3DySjm2RR33kpPToic1bF4uVp2v
+         i/1CTdEI8SAePoE+hnaFpFyOiMu30XlLsFpz9QnwidB15SNBvbJLZYHeL9vR1TMuG+uZ
+         fkZVXil0H8ntUTtqBM2yuq73D3XPU533h+FCH3ujDc2jDr+nj7QQZIsyZ+IzUXwW4jVW
+         4c/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUpgBaeTGekQUiTdi0+dMQhmk4cZ9LcDctmNahAHJjwBIMBQUyyZZnhdrZ+t2RLLfdA7AFTo44ZWBlp9mNrU4qEPjkPZtV6w5Gx/SQ4Q==
+X-Gm-Message-State: AOJu0YyUxD5TW8cmOMSkh+wNFTHjqide4o7A6TC09c7BQNUAr5D72EEf
+	HEIGk4l64Mk3Svk88AR8g/rmg8txss0YxYmvJBNZUp/3n/Mp3CFR8dmpuOOl+5w920DBNFC3c/e
+	lX9/pmau5pfa7f6dx4JXITDMXzOmbELGy8hxGN1QtTBrcxLj5/wWugjE=
+X-Google-Smtp-Source: AGHT+IHBare5qaUO/kJwI42/lbgUs9Vos7M9Tuo43dypHaC5WkLmbSXOx39jMzLVqNXtInVCffs3LOc42jWH6h5bBadKTSIgegTA
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240426195429.28547-2-lkarpins@redhat.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6638:1451:b0:487:1189:3544 with SMTP id
+ l17-20020a056638145100b0048711893544mr312104jad.3.1714165022327; Fri, 26 Apr
+ 2024 13:57:02 -0700 (PDT)
+Date: Fri, 26 Apr 2024 13:57:02 -0700
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003e1ae2061706252a@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, 
+	clang-built-linux@googlegroups.com, kari.argillander@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nathan@kernel.org, ndesaulniers@google.com, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Apr 26, 2024 at 03:53:48PM -0400, Lucas Karpinski wrote:
+syzbot has bisected this issue to:
 
-> -static void namespace_unlock(void)
-> +static void free_mounts(struct hlist_head *mount_list)
->  {
-> -	struct hlist_head head;
->  	struct hlist_node *p;
->  	struct mount *m;
-> +
-> +	hlist_for_each_entry_safe(m, p, mount_list, mnt_umount) {
-> +		hlist_del(&m->mnt_umount);
-> +		mntput(&m->mnt);
+commit ef9297007e9904588682699e618c56401f61d1c2
+Author: Kari Argillander <kari.argillander@gmail.com>
+Date:   Thu Sep 2 15:40:49 2021 +0000
 
-... which may block in quite a few ways.
+    fs/ntfs3: Make binary search to search smaller chunks in beginning
 
-> +	}
-> +}
-> +
-> +static void delayed_mount_release(struct rcu_head *head)
-> +{
-> +	struct mount_delayed_release *drelease =
-> +		container_of(head, struct mount_delayed_release, rcu);
-> +
-> +	free_mounts(&drelease->release_list);
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=144f18b0980000
+start commit:   e33c4963bf53 Merge tag 'nfsd-6.9-5' of git://git.kernel.or..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=164f18b0980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=124f18b0980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11655ed8980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12499380980000
 
-... and therefore so can this.
+Reported-by: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
+Fixes: ef9297007e99 ("fs/ntfs3: Make binary search to search smaller chunks in beginning")
 
-> +	kfree(drelease);
-> +}
-
-
-> +		call_rcu(&drelease->rcu, delayed_mount_release);
-
-... which is a bad idea, since call_rcu() callbacks are run
-from interrupt context.  Which makes blocking in them a problem.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
