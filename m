@@ -1,153 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-17935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADCB8B3F0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 20:15:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3228D8B3F9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 20:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500351F234FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 18:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A0D285474
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 18:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62D816EC0B;
-	Fri, 26 Apr 2024 18:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724D48475;
+	Fri, 26 Apr 2024 18:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RWYkJ2mN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Gowg+N32"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC3616C86A;
-	Fri, 26 Apr 2024 18:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14936FB6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 18:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714155222; cv=none; b=ZardeBRnl1xEslapxodzOIU5dOmdDNqjNA4+0KaFEam4goY4HjttyVAoILj5iWhNYD9SNpfIDFHtNPK7giiwLUwEwaJih/HZQLCdd1WrPTYPd/Lg5kMlduebDi52BsNrK/Fyl0kSiv9JD1wodZjZSSXbs9eHTw9hWaZEUrU5aNo=
+	t=1714157346; cv=none; b=pi7BMeVVxYReo7UJGRMOTOsQl/WRsjHoqGPeMffP2F8k70TExS5b5FwkkqHQeoyFd/YZ/6nmaUAmzBF7i8AX7LpbcMOwOo1uHQTQa7HpFb3Ur6Nn3s3o699FYcPpEOxbyK0CjArPWB8I5bbjPoXH926gVJsrNJnnRTSzjUn3p00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714155222; c=relaxed/simple;
-	bh=l1r/lYxpPzPn/HAudEoymODrCp4PmtA86iSl458bsfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brnzIYqqYgjvbOnA4PZ0DwfwtLcngeoVz5iQAlYXisK1Mtmf/0R9Qra3EAuShUzLzl3Pit8lHDSmqVzJBnKxSjeTEWBjIPRq6Uold7Pg0By9JxH1elIHx1OWWm+MPVzmSo6bMx4JVVTLkRd6vYCbgOStKqsDEWvlTkCBIPjOw1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RWYkJ2mN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jIW3CriVTfoH1UMfUvTh3PH9I5Jcg8Sj5wlkPjF7+Ds=; b=RWYkJ2mNoX+MCBp1zy0CVqUQxN
-	Qx6os4j5Y2tLgleULdEgOY5Jk9hUDPrigGSP9XcLO9kx/vV3K/uX/1wd9ra4xp4kXEr3QgCUOjUk1
-	WSImOORLEQhI9msZ78ylfeviDtsWoPMzLM7AntQchyAMPGMRB+LPDDQidfyM12u4QdKghYdd7gwTK
-	WGq9fpnguxxS6xMhuPZecadj/uUAAy21vQD4U7iJ8NxNq1WcWZAzpgshQNByt8GWB89Ou7LBp04yC
-	CvwgCq0JFHnM5vu79+GyyHM93kW8LhG8PNFfAyj22RXTTwu//ckoWQK0Vxlrw5bl7Inn765JlNGLR
-	9y9OZXxg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s0Q4o-00000005kdx-1Mbm;
-	Fri, 26 Apr 2024 18:13:38 +0000
-Date: Fri, 26 Apr 2024 19:13:38 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFCv3 7/7] iomap: Optimize data access patterns for filesystems
- with indirect mappings
-Message-ID: <Zivu0gzb4aiazSNu@casper.infradead.org>
-References: <ZivmaVAvnyQ8kKHi@casper.infradead.org>
- <874jboypo2.fsf@gmail.com>
+	s=arc-20240116; t=1714157346; c=relaxed/simple;
+	bh=2z6vF8qxPMRT039by+3fR74GjN+7YlbplU/DVWyW3AI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=WDph4U6YAWh8wRSJtge2a1qpY157m726BojFJ7/jlL4OvRwmzQ/17fYjv4MxOvT+wAdi0acUucAj333NC0urvdTw3ze3j0BHyfEadCcqvZyduyxyyVeImUZQMwZqdqBVq7rZxU6o+BWLf4QFPPx94yykO5WcmFAFl9vscL+qDRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Gowg+N32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE19C2BD10;
+	Fri, 26 Apr 2024 18:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1714157346;
+	bh=2z6vF8qxPMRT039by+3fR74GjN+7YlbplU/DVWyW3AI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Gowg+N32tsmUNQRdZHszFRGOGH5d7dM4fnZYSZ2VXZhYo2xLqNqA1VY7g7jxuHqqK
+	 /tDbOYKPEWPtRZJDKvXVmVjmUgL3CihFtJnbyiOtBsmYog2GBzitdV6X+rl3Rg9aeD
+	 LCHPPyFpoNUJdV5IcHKvHumAIW3RirbMmSqITv3A=
+Date: Fri, 26 Apr 2024 11:49:05 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, <linux-mm@kvack.org>,
+ <linux-fsdevel@vger.kernel.org>, zhangyi <yi.zhang@huawei.com>
+Subject: Re: [PATCH] mm: use memalloc_nofs_save() in page_cache_ra_order()
+Message-Id: <20240426114905.216e3d41b97f9a59be26999e@linux-foundation.org>
+In-Reply-To: <20240426112938.124740-1-wangkefeng.wang@huawei.com>
+References: <20240426112938.124740-1-wangkefeng.wang@huawei.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <874jboypo2.fsf@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 26, 2024 at 11:25:25PM +0530, Ritesh Harjani wrote:
-> Matthew Wilcox <willy@infradead.org> writes:
-> > The approach I suggested was to initialise read_bytes_pending to
-> > folio_size() at the start.  Then subtract off blocksize for each
-> > uptodate block, whether you find it already uptodate, or as the
-> > completion handler runs.
-> >
-> > Is there a reason that doesn't work?
-> 
-> That is what this patch series does right. The current patch does work
-> as far as my testing goes.
-> 
-> For e.g. This is what initializes the r_b_p for the first time when
-> ifs->r_b_p is 0.
-> 
-> +		loff_t to_read = min_t(loff_t, iter->len - offset,
-> +			folio_size(folio) - offset_in_folio(folio, orig_pos));
-> <..>
-> +		if (!ifs->read_bytes_pending)
-> +			ifs->read_bytes_pending = to_read;
-> 
-> 
-> Then this is where we subtract r_b_p for blocks which are uptodate.
-> +		padjust = pos - orig_pos;
-> +		ifs->read_bytes_pending -= padjust;
-> 
-> 
-> This is when we adjust r_b_p when we directly zero the folio.
->  	if (iomap_block_needs_zeroing(iter, pos)) {
-> +		if (ifs) {
-> +			spin_lock_irq(&ifs->state_lock);
-> +			ifs->read_bytes_pending -= plen;
-> +			if (!ifs->read_bytes_pending)
-> +				rbp_finished = true;
-> +			spin_unlock_irq(&ifs->state_lock);
-> +		}
-> 
-> But as you see this requires surgery throughout read paths. What if
-> we add a state flag to ifs only for BH_BOUNDARY. Maybe that could
-> result in a more simplified approach?
-> Because all we require is to know whether the folio should be unlocked
-> or not at the time of completion. 
-> 
-> Do you think we should try that part or you think the current approach
-> looks ok?
+On Fri, 26 Apr 2024 19:29:38 +0800 Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
 
-You've really made life hard for yourself.  I had something more like
-this in mind.  I may have missed a few places that need to be changed,
-but this should update read_bytes_pending everwhere that we set bits
-in the uptodate bitmap, so it should be right?
+> See commit f2c817bed58d ("mm: use memalloc_nofs_save in readahead
+> path"), ensure that page_cache_ra_order() do not attempt to reclaim
+> file-backed pages too, or it leads to a deadlock, found issue when
+> test ext4 large folio.
+> 
+>  INFO: task DataXceiver for:7494 blocked for more than 120 seconds.
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>  task:DataXceiver for state:D stack:0     pid:7494  ppid:1      flags:0x00000200
+>  Call trace:
+>   __switch_to+0x14c/0x240
+>   __schedule+0x82c/0xdd0
+>   schedule+0x58/0xf0
+>   io_schedule+0x24/0xa0
+>   __folio_lock+0x130/0x300
+>   migrate_pages_batch+0x378/0x918
+>   migrate_pages+0x350/0x700
+>   compact_zone+0x63c/0xb38
+>   compact_zone_order+0xc0/0x118
+>   try_to_compact_pages+0xb0/0x280
+>   __alloc_pages_direct_compact+0x98/0x248
+>   __alloc_pages+0x510/0x1110
+>   alloc_pages+0x9c/0x130
+>   folio_alloc+0x20/0x78
+>   filemap_alloc_folio+0x8c/0x1b0
+>   page_cache_ra_order+0x174/0x308
+>   ondemand_readahead+0x1c8/0x2b8
+>   page_cache_async_ra+0x68/0xb8
+>   filemap_readahead.isra.0+0x64/0xa8
+>   filemap_get_pages+0x3fc/0x5b0
+>   filemap_splice_read+0xf4/0x280
+>   ext4_file_splice_read+0x2c/0x48 [ext4]
+>   vfs_splice_read.part.0+0xa8/0x118
+>   splice_direct_to_actor+0xbc/0x288
+>   do_splice_direct+0x9c/0x108
+>   do_sendfile+0x328/0x468
+>   __arm64_sys_sendfile64+0x8c/0x148
+>   invoke_syscall+0x4c/0x118
+>   el0_svc_common.constprop.0+0xc8/0xf0
+>   do_el0_svc+0x24/0x38
+>   el0_svc+0x4c/0x1f8
+>   el0t_64_sync_handler+0xc0/0xc8
+>   el0t_64_sync+0x188/0x190
+> 
+> Cc: zhangyi (F) <yi.zhang@huawei.com>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 41c8f0c68ef5..f87ca8ee4d19 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -79,6 +79,7 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
- 	if (ifs) {
- 		spin_lock_irqsave(&ifs->state_lock, flags);
- 		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-+		ifs->read_bytes_pending -= len;
- 		spin_unlock_irqrestore(&ifs->state_lock, flags);
- 	}
- 
-@@ -208,6 +209,8 @@ static struct iomap_folio_state *ifs_alloc(struct inode *inode,
- 	spin_lock_init(&ifs->state_lock);
- 	if (folio_test_uptodate(folio))
- 		bitmap_set(ifs->state, 0, nr_blocks);
-+	else
-+		ifs->read_bytes_pending = folio_size(folio);
- 	if (folio_test_dirty(folio))
- 		bitmap_set(ifs->state, nr_blocks, nr_blocks);
- 	folio_attach_private(folio, ifs);
-@@ -396,12 +399,6 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	}
- 
- 	ctx->cur_folio_in_bio = true;
--	if (ifs) {
--		spin_lock_irq(&ifs->state_lock);
--		ifs->read_bytes_pending += plen;
--		spin_unlock_irq(&ifs->state_lock);
--	}
--
- 	sector = iomap_sector(iomap, pos);
- 	if (!ctx->bio ||
- 	    bio_end_sector(ctx->bio) != sector ||
+I'm thinking
+
+Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
+Cc: stable
+
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -494,6 +494,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  	pgoff_t index = readahead_index(ractl);
+>  	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
+>  	pgoff_t mark = index + ra->size - ra->async_size;
+> +	unsigned int nofs;
+>  	int err = 0;
+>  	gfp_t gfp = readahead_gfp_mask(mapping);
+>  
+> @@ -508,6 +509,8 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
+>  	}
+>  
+> +	/* See comment in page_cache_ra_unbounded() */
+> +	nofs = memalloc_nofs_save();
+>  	filemap_invalidate_lock_shared(mapping);
+>  	while (index <= limit) {
+>  		unsigned int order = new_order;
+> @@ -531,6 +534,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  
+>  	read_pages(ractl);
+>  	filemap_invalidate_unlock_shared(mapping);
+> +	memalloc_nofs_restore(nofs);
+>  
+>  	/*
+>  	 * If there were already pages in the page cache, then we may have
+> -- 
+> 2.41.0
 
