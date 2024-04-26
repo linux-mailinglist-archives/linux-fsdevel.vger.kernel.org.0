@@ -1,147 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-17867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62EE8B31D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 09:59:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E318B31DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE251F21B7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 07:59:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26D41C219D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DF513C8ED;
-	Fri, 26 Apr 2024 07:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1964613CABA;
+	Fri, 26 Apr 2024 08:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DthkIkvj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C449813B7AC
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 07:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC7413C903
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 08:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714118375; cv=none; b=UhDP9M8PB/6lG1Iazh9T/gvSwYseM98qIVwyUURvUEMdAZaNpS2INFdz98YWN2YIrSzKaxOu1OyrJq65e5/hNqYFB4DR0yCAKHVaS4HWuV4ZKOuC/XdCkgRB6Lz1Uz9y8/7JduxarEGL1INzR5C0u9oacDRp0urVi8zTmLXGTdU=
+	t=1714118444; cv=none; b=OOxML6mwpBdeU7z4cQ63pXJ027lUkKt0Y/W1q27vDagsD0k2Qw4qwlG5IMaZpR6NFMuiJT026WieNz2RUfvIHXchmHgzJ08cDQtOsmn7qJihI69kVNt/0MJD+L2/T/DWqNfCqAlhKqaGWqwD32OMISKYlJgwd6kfaHjwbMQBLmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714118375; c=relaxed/simple;
-	bh=lBjhkc1ra6ZR5/NcX4XL4UY9h6ce0GOiAlsOPWRkPvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aabzq2EOxojyVLdp4pCJdUzWL3Wv77rb1YFgKMIuTF0DRo1V8Y2BvIIOD7QheTiJZXy8pwXmyRTmmru7361IM4ZZi0mFb/fdjlYXGIJt8DDnjGm2vq9YqvLOPVb/jmI6kkdvOwLiSf3YWWIi2ns7pBK1lQ9zslpuSe6fdiMz6fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osuchow.ski; spf=none smtp.mailfrom=osuchow.ski; arc=none smtp.client-ip=91.198.250.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osuchow.ski
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osuchow.ski
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	s=arc-20240116; t=1714118444; c=relaxed/simple;
+	bh=8moJHIF915kF9JPZZi2hSy1ahaIWtygA+5VPkH7e8r8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=PKK5kT4cOUQDMNC9QNeRF09VD1vPqcNSohgPQjnmdJZsDEfU8uVCDR4TXojAS2aD6URnVjIibTM8ETZ+horcG8J1I52cxrS8l94qy5I+Ek6d3cVwPkKetIWda404m6hk6psz+YEq6oPnNUZYbA6aauMNJ/9cbiVc/69lLF+XoAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DthkIkvj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714118442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xIFFxT8ZyW309/4jPgibBUS9mKjAZgteIkx/pxryLuo=;
+	b=DthkIkvjr3CwlIX2FtQWnIvf15oQZS/O7nxVr5+zu8WvQKulzHBu9NUwabCX9aGSsRTD9+
+	5wh2CSpN3I+lxjERz0QK0XLLMGr+nHDLw1TJTlc3rw+KxY7Y3yC/51iMNQ+xAgTNkxYuch
+	2jFRsgqrjcV4S3aK+D00M+avVB38BOk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-mr3uO8cZOamc3ageCNO_lw-1; Fri,
+ 26 Apr 2024 04:00:37 -0400
+X-MC-Unique: mr3uO8cZOamc3ageCNO_lw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4VQlVh30Dvz9spT;
-	Fri, 26 Apr 2024 09:59:24 +0200 (CEST)
-From: Dawid Osuchowski <linux@osuchow.ski>
-To: linux-fsdevel@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	Dawid Osuchowski <linux@osuchow.ski>
-Subject: [PATCH v3] fs: Create anon_inode_getfile_fmode()
-Date: Fri, 26 Apr 2024 09:58:54 +0200
-Message-ID: <20240426075854.4723-1-linux@osuchow.ski>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BE0893811701;
+	Fri, 26 Apr 2024 08:00:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.200])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 16B5016D93;
+	Fri, 26 Apr 2024 08:00:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240425084537.6e406d86@kernel.org>
+References: <20240425084537.6e406d86@kernel.org> <1967121.1714034372@warthog.procyon.org.uk>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: dhowells@redhat.com, netdev@vger.kernel.org,
+    Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    "David S.
+ Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    netfs@lists.linux.dev, linux-crypto@vger.kernel.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] Fix a potential infinite loop in extract_user_to_sg()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2101063.1714118434.1@warthog.procyon.org.uk>
+Date: Fri, 26 Apr 2024 09:00:34 +0100
+Message-ID: <2101064.1714118434@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-Creates an anon_inode_getfile_fmode() function that works similarly to
-anon_inode_getfile() with the addition of being able to set the fmode
-member.
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-Signed-off-by: Dawid Osuchowski <linux@osuchow.ski>
----
-Changes since v1:
-* removed __anon_inode_create_getfile_fmode()
-* streamlined if statement and got rid of goto
-Changes since v2:
-* changed unsigned int for f_mode into fmode_t in anon_inodes.h
-* added <linux/types.h> header to anon_inodes.h
----
- fs/anon_inodes.c            | 33 +++++++++++++++++++++++++++++++++
- include/linux/anon_inodes.h |  5 +++++
- 2 files changed, 38 insertions(+)
+> On Thu, 25 Apr 2024 09:39:32 +0100 David Howells wrote:
+> > Fix extract_user_to_sg() so that it will break out of the loop if
+> > iov_iter_extract_pages() returns 0 rather than looping around forever.
+> 
+> Is "goto fail" the right way to break out here?
+> My intuition would be "break".
+> 
+> On a quick read it seems like res = 0 may occur if we run out of
+> iterator, is passing maxsize > iter->count illegal?
 
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 0496cb5b6eab..42bd1cb7c9cd 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -148,6 +148,38 @@ struct file *anon_inode_getfile(const char *name,
- }
- EXPORT_SYMBOL_GPL(anon_inode_getfile);
- 
-+/**
-+ * anon_inode_getfile_fmode - creates a new file instance by hooking it up to an
-+ *                      anonymous inode, and a dentry that describe the "class"
-+ *                      of the file
-+ *
-+ * @name:    [in]    name of the "class" of the new file
-+ * @fops:    [in]    file operations for the new file
-+ * @priv:    [in]    private data for the new file (will be file's private_data)
-+ * @flags:   [in]    flags
-+ * @f_mode:  [in]    fmode
-+ *
-+ * Creates a new file by hooking it on a single inode. This is useful for files
-+ * that do not need to have a full-fledged inode in order to operate correctly.
-+ * All the files created with anon_inode_getfile() will share a single inode,
-+ * hence saving memory and avoiding code duplication for the file/inode/dentry
-+ * setup. Allows setting the fmode. Returns the newly created file* or an error
-+ * pointer.
-+ */
-+struct file *anon_inode_getfile_fmode(const char *name,
-+				const struct file_operations *fops,
-+				void *priv, int flags, fmode_t f_mode)
-+{
-+	struct file *file;
-+
-+	file = __anon_inode_getfile(name, fops, priv, flags, NULL, false);
-+	if (!IS_ERR(file))
-+		file->f_mode |= f_mode;
-+
-+	return file;
-+}
-+EXPORT_SYMBOL_GPL(anon_inode_getfile_fmode);
-+
- /**
-  * anon_inode_create_getfile - Like anon_inode_getfile(), but creates a new
-  *                             !S_PRIVATE anon inode rather than reuse the
-@@ -271,6 +303,7 @@ int anon_inode_create_getfd(const char *name, const struct file_operations *fops
- 	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
- }
- 
-+
- static int __init anon_inode_init(void)
- {
- 	anon_inode_mnt = kern_mount(&anon_inode_fs_type);
-diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-index 93a5f16d03f3..edef565c2a1a 100644
---- a/include/linux/anon_inodes.h
-+++ b/include/linux/anon_inodes.h
-@@ -9,12 +9,17 @@
- #ifndef _LINUX_ANON_INODES_H
- #define _LINUX_ANON_INODES_H
- 
-+#include <linux/types.h>
-+
- struct file_operations;
- struct inode;
- 
- struct file *anon_inode_getfile(const char *name,
- 				const struct file_operations *fops,
- 				void *priv, int flags);
-+struct file *anon_inode_getfile_fmode(const char *name,
-+				const struct file_operations *fops,
-+				void *priv, int flags, fmode_t f_mode);
- struct file *anon_inode_create_getfile(const char *name,
- 				       const struct file_operations *fops,
- 				       void *priv, int flags,
--- 
-2.44.0
+I would say that you're not allowed to ask for more than is in the iterator.
+In a number of places this is called, it's a clear failure if you can't get
+that the requested amount out of it - for example, if we're building a cifs
+message and have set all the fields in the header and are trying to encrypt
+the message.
+
+David
 
 
