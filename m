@@ -1,421 +1,475 @@
-Return-Path: <linux-fsdevel+bounces-17974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C238B4644
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 13:58:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA868B47DB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 22:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74346288C7E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 11:58:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F821F2177A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 20:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0264D5A0;
-	Sat, 27 Apr 2024 11:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55688145340;
+	Sat, 27 Apr 2024 20:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ai3JQzWU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rC0kD8p3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6D0383B2;
-	Sat, 27 Apr 2024 11:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54C41448DE
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Apr 2024 20:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714219106; cv=none; b=RWRhzcfC71VJjhNdi27iCwt9tvvH787h5W1JswgTpJ1HBDOK9Wla+Hg0osaAFh83TrNokcffQL2BpME106odA9vpegPMDC8UnBtEcnbZDVsai11isqqk+71NYpRoYD1cuzspRtP2x/co6/1mNjc0TKOV5AJAS+Wp+3iKfjrvLS4=
+	t=1714249738; cv=none; b=LIJvqp732gRTjkl8BgHVHUR0yT23GhJqcjyBSsJfjVvzpcjVkki2Q4meoApvpNzX5v1yJOUmv/GiK9B8rFr8THojoAIioqCU+zqnaxHe7RJAd31/nMMfmnPj+k4N9qY1tiTvJcBBFzvHihMKeC9AM+0cN98psoO0VDyzeeSslW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714219106; c=relaxed/simple;
-	bh=4yBYy/e8fqD6PVLELNDiBeMDaQ8RxIXtGMJQ7flPNKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HCvZfVcNhwOq3Gthw2gvuM1H59wiriuvT1V/D/x/TjbLMx+dMa6n2X+6nMWGaNNf+3+0UAz6/jtCrPALi9ujZPvJAwt2zvO9KoUsvnDWNCSed5INcP4D37wNLaDiSet7HXS/qEnag7oLM/eqCosUtUbJtuvmkIax5OElet/cRPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ai3JQzWU; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-61af74a010aso29931577b3.0;
-        Sat, 27 Apr 2024 04:58:24 -0700 (PDT)
+	s=arc-20240116; t=1714249738; c=relaxed/simple;
+	bh=VyzAOP6cBErG2lWHlD6dmIvpShUXapcdoDUV8M9J4Ek=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=fuHUsFBxPejoInWr5L8Fd7fA1js8OBhbkR8VpgKi8qHbJy4UU00kyB7lHn3I6P0yL/TpP4ExrbtaEMinFuA54UfJ59/W2IQ+Yo5feEM2iFJvftH7J6l1R2yXyzbV9dct/3TcuFINIIdUpJz5N4s0KHs9lbZxM6sF998gBM7u1nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rC0kD8p3; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61ab00d8a2eso55329387b3.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Apr 2024 13:28:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714219104; x=1714823904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hMnQ9lC99MS72qmf7RGKrqRnKroV0Cshw6deBxLxYEk=;
-        b=Ai3JQzWUrIoIRE2HCIO9eba5Iw+oLA0Abnddm7s2NAG21I8G9XEVaXJdpagE38CnUD
-         ggwmggqE3zShNm68khUZycvBZptgxWv3KO3d4atiE5B+J146aOvQB+M4ZGWG/zHbzUYA
-         7k8TISKgHnT7LL86L7uVwj0UIEWSwhbeGeNOn/EUnBDVpjJIbBF3UBsx7gfgc6yMEr6Y
-         Rj4BuEel8x586Ea1/qH51nCKGXJQ+Q4FhL6BQ26x3c5y+0aADlbnhjBdQ4WrK8WSAwnO
-         mZKnvlsCHCFpIHxhlIsue+TS8B16pzaPRraCqhDr0xPMmwRtenC0Xt4BnhF+SXWlpPGe
-         DfOA==
+        d=google.com; s=20230601; t=1714249735; x=1714854535; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RYLGF/0aO2r8neVHspI/sAcXaU1UNwU63yfESIZI6eU=;
+        b=rC0kD8p33crGIyWqgAqBgHmG16CtbrrsKPscwQUUxDGygONfoEkgP5pW3cn2DMXqEc
+         /k4aJZ4OeEJITmoZeNNQrjKmIPOdBnh6MehgzXYdMdYHVi9x67RDPe0VflGlvRq8GAt8
+         9KZO9Y6iEhMP6SMsRZLoSfh6Q3g3kFP8KfB86dRXxQBq/TzudhMUI5euJGCKe4s9v6YS
+         tOOt+o7aM/vaVgoNwEI7pz68ulkxbdSvUYUzx9Rl6yAXRK4sYQv6gdyL5DiVgWlEDuQs
+         tOMAHyT2+/cuJVrfs5ZFTaEvaegSCn1URr/augzgWJOBt8x4/tqRVZ8VC4spQf4nMPtj
+         TOeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714219104; x=1714823904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hMnQ9lC99MS72qmf7RGKrqRnKroV0Cshw6deBxLxYEk=;
-        b=POMQzuUwPMrhbDIcCc5T5YK6nmlzrfvRcwA+8jddGlsLCui5nZMSQB3bQYzK3PCljI
-         cId8gCxdZQgn5F+kn6+0UqnbiqzzDxrRaHBviGnihjXxzL+A/15MY0T3rPd2XiFmGNst
-         hD+vN+XxeaRlG9R+UXjYe6R9+7he7SEJ85NAtGV4Qnmiw6Ui90mBo0Xar1zx4EVrBsEE
-         FBcu1Ml61hAxbMKOXeP/PJqNJAPRrusqMH6yJi02VAyaKD81kgUpNxDlu2ErknpPutvV
-         AlWmwSXPUWtO76afh1f1awiZSj+dlwVmnAJ6//xMPMC5Kzn/avxRmeD9cCt8FITjaaA4
-         nGLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhUfqYPffyDx3RWtXcMHcMtX9vso6hEOSgnIrc1KaM3I0Zn4Dp7S93IVmJyW6t4eWnl917ngYFEfjeEAS5tD3RUIuKKmLof2LHMkPP0A==
-X-Gm-Message-State: AOJu0YwDO7RhUunubQNmoMHplHaWmTTsxHpgr9hH9RnXwY7cYsR6OImy
-	qE/Z3dD83qolJBaTv7lUo9u8X90TcoGpGeDcis8Dl0k6DTvPrAzRbmsSQZ7MtoyzaaBBDBUfo/E
-	FYWEvX62Uap52ghzwrrIh+JT5MqQ=
-X-Google-Smtp-Source: AGHT+IEfVR1JnMAHscvY1fWCLOOEGs4G86L/s2D/8NkD8WMpQgRXWxXW9dSpI7hf2duQRjABmX7rhihhIFyUb8Qkg8s=
-X-Received: by 2002:a05:690c:6f84:b0:61a:b7c8:ea05 with SMTP id
- je4-20020a05690c6f8400b0061ab7c8ea05mr6507837ywb.35.1714219103780; Sat, 27
- Apr 2024 04:58:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714249735; x=1714854535;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RYLGF/0aO2r8neVHspI/sAcXaU1UNwU63yfESIZI6eU=;
+        b=rNVbyEDn0w1gNojRA2wcMsVxS4Adv6t8vQ1vv/AVnTq7VckknzSwl8Pjr46g9NJIv2
+         QbJGZraTQ3AR4VUT+W8YsrIFt2KRg71jl9bagTB1CIc0MSLI7S10N4s0lYqntMlmvksd
+         Ay9Vwdq+NWtUe6T5g9InIOFfsgZbnlHh8tJ+BwcB/C2+r43EgAQSxiP55LhYfA2koEP+
+         WnZoPzWVhb05IySN6vtDvtHYokPXz+PD/Jh+oukKyl8NzYwXCUS/aCpzbeTNMbLIFXmT
+         hzlFZHPznNcsbFH3pKY7N3PRPN9BoYE8i7g/eo+hgDuay3KLCaquZEepdCdypONRdVgw
+         xwjw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/zjqxzfd8urKm2//VjvmYO+R9Su36ZkjBXD6eTr1Zhvzz1nx9D17Gv76swISP9zsfanQCZU9gM6sXNfYNbCa4Pkf4bSgO8S58KFgRog==
+X-Gm-Message-State: AOJu0Yw3LV9o0oeNF5mn4Xtd5WUjcQY5KxQ/bjSZcb+VDhEFE0brOlwb
+	1aWOnCMDfV7O8hrXX/xX/fY0DzTj+NK/OQf6LL0ulTxjGJQpqjmqQ38zKOJmXu2PdefHWM6c32c
+	PpcKSDkhMjU2KzTKPwlho0g==
+X-Google-Smtp-Source: AGHT+IEDrBTayUWC5Zgc7VhYWXwjMRHXZP7iBh8X039uLEsrumw5+sF0TgfZMUYx3nzZ7n/eywGx2adAgsY8s22lrQ==
+X-Received: from souravbig.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:3b3a])
+ (user=souravpanda job=sendgmr) by 2002:a0d:d856:0:b0:615:577e:6af with SMTP
+ id a83-20020a0dd856000000b00615577e06afmr1356165ywe.0.1714249734834; Sat, 27
+ Apr 2024 13:28:54 -0700 (PDT)
+Date: Sat, 27 Apr 2024 20:28:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240425101556.573616-1-mszeredi@redhat.com>
-In-Reply-To: <20240425101556.573616-1-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 27 Apr 2024 14:58:12 +0300
-Message-ID: <CAOQ4uxgD3tTNKScRPD4r+ePuGkS5s2X2A3chMA1MXbfz-_P5PA@mail.gmail.com>
-Subject: Re: [PATCH] ovl: implement tmpfile
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
+Message-ID: <20240427202840.4123201-1-souravpanda@google.com>
+Subject: [PATCH v11] mm: report per-page metadata information
+From: Sourav Panda <souravpanda@google.com>
+To: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	akpm@linux-foundation.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
+	rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
+	chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, souravpanda@google.com, 
+	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, hannes@cmpxchg.org, 
+	shakeelb@google.com, kirill.shutemov@linux.intel.com, 
+	wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
+	Liam.Howlett@Oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, weixugc@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 25, 2024 at 1:16=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com=
-> wrote:
->
-> Combine inode creation with opening a file.
->
-> There are six separate objects that are being set up: the backing inode,
-> dentry and file and the overlay inode, dentry and file.  Cleanup in case =
-of
-> an error is a bit of a challenge and is difficult to test, so careful
-> review is needed.
+Adds a global Memmap field to /proc/meminfo. This information can
+be used by users to see how much memory is being used by per-page
+metadata, which can vary depending on build configuration, machine
+architecture, and system use.
 
-Did you try running the xfstests with the t_open_tmpfiles test program?
-(generic/530 generic/531)
-Note that those tests also run without O_TMPFILE support, so if you run
-them you should verify that they do not fall back to unlinked files.
+Accounting per-page metadata allocated by boot-allocator:
+    /proc/vmstat:nr_memmap_boot * PAGE_SIZE
 
-There are also a few tests that require O_TMPFILE support:
-_require_xfs_io_command "-T"
-(generic/004 generic/389 generic/509)
+Accounting per-page metadata allocated by buddy-allocator:
+    /proc/vmstat:nr_memmap * PAGE_SIZE
 
-There are some tests in src/vfs/vfstest that run sgid tests
-with O_TMPFILE if it is supported.
-I identified generic/696 and generic/697, but only the latter
-currently runs on overlayfs.
+Accounting total Perpage metadata allocated on the machine:
+    (/proc/vmstat:nr_memmap_boot + /proc/vmstat:nr_memmap) * PAGE_SIZE
 
+Utility for userspace:
 
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/backing-file.c            |  23 +++++++
->  fs/internal.h                |   3 +
->  fs/namei.c                   |   6 +-
->  fs/overlayfs/dir.c           | 130 +++++++++++++++++++++++++++++++++++
->  fs/overlayfs/file.c          |   3 -
->  fs/overlayfs/overlayfs.h     |   3 +
->  include/linux/backing-file.h |   4 ++
->  7 files changed, 166 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/backing-file.c b/fs/backing-file.c
-> index 740185198db3..2dc3f7477d1d 100644
-> --- a/fs/backing-file.c
-> +++ b/fs/backing-file.c
-> @@ -52,6 +52,29 @@ struct file *backing_file_open(const struct path *user=
-_path, int flags,
->  }
->  EXPORT_SYMBOL_GPL(backing_file_open);
->
-> +struct file *backing_tmpfile_open(const struct path *user_path, int flag=
-s,
-> +                                 struct mnt_idmap *real_idmap,
-> +                                 const struct path *real_parentpath,
-> +                                 umode_t mode, const struct cred *cred)
-> +{
-> +       struct file *f;
-> +       int error;
-> +
-> +       f =3D alloc_empty_backing_file(flags, cred);
-> +       if (IS_ERR(f))
-> +               return f;
-> +
-> +       path_get(user_path);
-> +       *backing_file_user_path(f) =3D *user_path;
-> +       error =3D vfs_tmpfile(real_idmap, real_parentpath, f, mode);
+Application Optimization: Depending on the kernel version and command
+line options, the kernel would relinquish a different number of pages
+(that contain struct pages) when a hugetlb page is reserved (e.g., 0, 6
+or 7 for a 2MB hugepage). This patch allows the userspace application
+to know the exact savings achieved through page metadata deallocation
+without dealing with the intricacies of the kernel.
 
-We do not have a custom idmap in other backing_file helpers
-don't see why we need real_idmap in this helper.
-I think that should be:
-mnt_idmap(real_parentpath.mnt)
+Observability: Struct page overhead can only be calculated on-paper at
+boot time (e.g., 1.5% machine capacity). Beyond boot once hugepages are
+reserved or memory is hotplugged, the computation becomes complex.
+Per-page metrics will help explain part of the system memory overhead,
+which shall help guide memory optimizations and memory cgroup sizing.
 
+Debugging: Tracking the changes or absolute value in struct pages can
+help detect anomalies as they can be correlated with other metrics in
+the machine (e.g., memtotal, number of huge pages, etc).
 
-> +       if (error) {
-> +               fput(f);
-> +               f =3D ERR_PTR(error);
-> +       }
-> +       return f;
-> +}
-> +EXPORT_SYMBOL(backing_tmpfile_open);
-> +
->  struct backing_aio {
->         struct kiocb iocb;
->         refcount_t ref;
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 7ca738904e34..ab2225136f60 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -62,6 +62,9 @@ int do_mkdirat(int dfd, struct filename *name, umode_t =
-mode);
->  int do_symlinkat(struct filename *from, int newdfd, struct filename *to)=
-;
->  int do_linkat(int olddfd, struct filename *old, int newdfd,
->                         struct filename *new, int flags);
-> +int vfs_tmpfile(struct mnt_idmap *idmap,
-> +               const struct path *parentpath,
-> +               struct file *file, umode_t mode);
->
->  /*
->   * namespace.c
-> diff --git a/fs/namei.c b/fs/namei.c
-> index c5b2a25be7d0..13e50b0a49d2 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3668,9 +3668,9 @@ static int do_open(struct nameidata *nd,
->   * On non-idmapped mounts or if permission checking is to be performed o=
-n the
->   * raw inode simply pass @nop_mnt_idmap.
->   */
-> -static int vfs_tmpfile(struct mnt_idmap *idmap,
-> -                      const struct path *parentpath,
-> -                      struct file *file, umode_t mode)
-> +int vfs_tmpfile(struct mnt_idmap *idmap,
-> +               const struct path *parentpath,
-> +               struct file *file, umode_t mode)
->  {
->         struct dentry *child;
->         struct inode *dir =3D d_inode(parentpath->dentry);
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 0f8b4a719237..91ac268986a9 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -14,6 +14,7 @@
->  #include <linux/posix_acl_xattr.h>
->  #include <linux/atomic.h>
->  #include <linux/ratelimit.h>
-> +#include <linux/backing-file.h>
->  #include "overlayfs.h"
->
->  static unsigned short ovl_redirect_max =3D 256;
-> @@ -1290,6 +1291,134 @@ static int ovl_rename(struct mnt_idmap *idmap, st=
-ruct inode *olddir,
->         return err;
->  }
->
-> +static int ovl_create_upper_tmpfile(struct file *file, struct dentry *de=
-ntry,
-> +                                   struct inode *inode, umode_t mode)
-> +{
-> +       struct ovl_inode_params oip;
-> +       struct path realparentpath;
-> +       struct file *realfile;
-> +       /* It's okay to set O_NOATIME, since the owner will be current fs=
-uid */
-> +       int flags =3D file->f_flags | OVL_OPEN_FLAGS;
-> +
-> +       ovl_path_upper(dentry->d_parent, &realparentpath);
-> +
-> +       if (!IS_POSIXACL(d_inode(realparentpath.dentry)))
-> +               mode &=3D ~current_umask();
-> +
-> +       realfile =3D backing_tmpfile_open(&file->f_path, flags,
-> +                                       &nop_mnt_idmap, &realparentpath, =
-mode,
-> +                                       current_cred());
+page_ext overheads: Some kernel features such as page_owner
+page_table_check that use page_ext can be optionally enabled via kernel
+parameters. Having the total per-page metadata information helps users
+precisely measure impact.
 
-Using &nop_mnt_idmap here is not only unneeded but also looks wrong.
+For background and results see:
+lore.kernel.org/all/20240220214558.3377482-1-souravpanda@google.com
 
-> +       if (IS_ERR(realfile))
-> +               return PTR_ERR(realfile);
-> +
-> +       ovl_dentry_set_upper_alias(dentry);
-> +       ovl_dentry_update_reval(dentry, realfile->f_path.dentry);
-> +
-> +       /* ovl_get_inode() consumes the .upperdentry reference on success=
- */
-> +       oip =3D (struct ovl_inode_params) {
-> +               .upperdentry =3D dget(realfile->f_path.dentry),
-> +               .newinode =3D inode,
-> +       };
-> +
-> +       inode =3D ovl_get_inode(dentry->d_sb, &oip);
-> +       if (IS_ERR(inode))
-> +               goto out_err;
-> +
-> +       /* d_tmpfile() expects inode to have a positive link count */
-> +       set_nlink(inode, 1);
-> +       d_tmpfile(file, inode);
+Signed-off-by: Sourav Panda <souravpanda@google.com>
+Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+---
+Changelog:
+Fixed positioning of node_stat_item:NR_MEMMAP's comment.
+Synchronized with 6.9-rc5.
 
-Any reason not to reuse ovl_instantiate() to avoid duplicating some
-of the subtlety? for example:
+v10:
+lore.kernel.org/all/20240416201335.3551099-1-souravpanda@google.com/
+---
+ Documentation/filesystems/proc.rst |  3 +++
+ fs/proc/meminfo.c                  |  4 ++++
+ include/linux/mmzone.h             |  3 +++
+ include/linux/vmstat.h             |  4 ++++
+ mm/hugetlb_vmemmap.c               | 17 ++++++++++++----
+ mm/mm_init.c                       |  3 +++
+ mm/page_alloc.c                    |  1 +
+ mm/page_ext.c                      | 32 +++++++++++++++++++++---------
+ mm/sparse-vmemmap.c                |  8 ++++++++
+ mm/sparse.c                        |  7 ++++++-
+ mm/vmstat.c                        | 26 +++++++++++++++++++++++-
+ 11 files changed, 93 insertions(+), 15 deletions(-)
 
-+       /* ovl_instantiate() consumes the .upperdentry reference on success=
- */
-+       dget(realfile->f_path.dentry)
-+       err =3D ovl_instantiate(dentry, inode, realfile->f_path.dentry, 0, =
-1);
-+       if (err)
-+               goto out_err;
-
-[...]
-
- static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
--                          struct dentry *newdentry, bool hardlink)
-+                          struct dentry *newdentry, bool hardlink,
-bool tmpfile)
- {
-        struct ovl_inode_params oip =3D {
-                .upperdentry =3D newdentry,
-@@ -295,6 +295,9 @@ static int ovl_instantiate(struct dentry *dentry,
-struct inode *inode,
-                inc_nlink(inode);
-        }
-
-+       if (tmpfile)
-+               d_mark_tmpfile(dentry);
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index c6a6b9df21049..a7445d49a3bb7 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -993,6 +993,7 @@ Example output. You may not have all of these fields.
+     AnonPages:       4654780 kB
+     Mapped:           266244 kB
+     Shmem:              9976 kB
++    Memmap:           513419 kB
+     KReclaimable:     517708 kB
+     Slab:             660044 kB
+     SReclaimable:     517708 kB
+@@ -1095,6 +1096,8 @@ Mapped
+               files which have been mmapped, such as libraries
+ Shmem
+               Total memory used by shared memory (shmem) and tmpfs
++Memmap
++              Memory used for per-page metadata
+ KReclaimable
+               Kernel allocations that the kernel will attempt to reclaim
+               under memory pressure. Includes SReclaimable (below), and other
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 45af9a989d404..3d3db55cfeab6 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -39,6 +39,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 	long available;
+ 	unsigned long pages[NR_LRU_LISTS];
+ 	unsigned long sreclaimable, sunreclaim;
++	unsigned long nr_memmap;
+ 	int lru;
+ 
+ 	si_meminfo(&i);
+@@ -57,6 +58,8 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 	sreclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B);
+ 	sunreclaim = global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B);
+ 
++	nr_memmap = global_node_page_state_pages(NR_MEMMAP);
 +
-        d_instantiate(dentry, inode);
-
-
-> +       file->private_data =3D realfile;
-> +       return 0;
-> +
-> +out_err:
-> +       dput(realfile->f_path.dentry);
-> +       fput(realfile);
-> +       return PTR_ERR(inode);
-> +}
-> +
-> +static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
-> +                             struct inode *inode, umode_t mode)
-> +{
-> +       int err;
-> +       const struct cred *old_cred;
-> +       struct cred *override_cred;
-> +
-> +       err =3D ovl_copy_up(dentry->d_parent);
-> +       if (err)
-> +               return err;
-> +
-> +       old_cred =3D ovl_override_creds(dentry->d_sb);
-> +
-> +       err =3D -ENOMEM;
-> +       override_cred =3D prepare_creds();
-> +       if (override_cred) {
-> +               override_cred->fsuid =3D inode->i_uid;
-> +               override_cred->fsgid =3D inode->i_gid;
-> +               err =3D security_dentry_create_files_as(dentry, mode,
-> +                                                     &dentry->d_name, ol=
-d_cred,
-> +                                                     override_cred);
-> +               if (err) {
-> +                       put_cred(override_cred);
-> +                       goto out_revert_creds;
-> +               }
-> +               put_cred(override_creds(override_cred));
-> +               put_cred(override_cred);
-> +
-> +               err =3D ovl_create_upper_tmpfile(file, dentry, inode, mod=
-e);
-> +       }
-> +out_revert_creds:
-> +       revert_creds(old_cred);
-> +       return err;
-> +}
-
-This also shouts unneeded and subtle code duplication to me:
-
- static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
--                             struct ovl_cattr *attr, bool origin)
-+                             struct ovl_cattr *attr, bool origin,
-+                             struct file *tmpfile)
+ 	show_val_kb(m, "MemTotal:       ", i.totalram);
+ 	show_val_kb(m, "MemFree:        ", i.freeram);
+ 	show_val_kb(m, "MemAvailable:   ", available);
+@@ -104,6 +107,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 	show_val_kb(m, "Mapped:         ",
+ 		    global_node_page_state(NR_FILE_MAPPED));
+ 	show_val_kb(m, "Shmem:          ", i.sharedram);
++	show_val_kb(m, "Memmap:         ", nr_memmap);
+ 	show_val_kb(m, "KReclaimable:   ", sreclaimable +
+ 		    global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE));
+ 	show_val_kb(m, "Slab:           ", sreclaimable + sunreclaim);
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index c11b7cde81efa..87963b13b53ee 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -217,6 +217,9 @@ enum node_stat_item {
+ 	PGDEMOTE_KSWAPD,
+ 	PGDEMOTE_DIRECT,
+ 	PGDEMOTE_KHUGEPAGED,
++	/* Page metadata size (struct page and page_ext) in pages */
++	NR_MEMMAP,
++	NR_MEMMAP_BOOT,		/* NR_MEMMAP for bootmem */
+ 	NR_VM_NODE_STAT_ITEMS
+ };
+ 
+diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+index 343906a98d6ee..c3785fdd3668d 100644
+--- a/include/linux/vmstat.h
++++ b/include/linux/vmstat.h
+@@ -632,4 +632,8 @@ static inline void lruvec_stat_sub_folio(struct folio *folio,
  {
-        int err;
-        const struct cred *old_cred;
-@@ -602,7 +606,9 @@ static int ovl_create_or_link(struct dentry
-*dentry, struct inode *inode,
-                put_cred(override_cred);
-        }
+ 	lruvec_stat_mod_folio(folio, idx, -folio_nr_pages(folio));
+ }
++
++void __meminit mod_node_early_perpage_metadata(int nid, long delta);
++void __meminit store_early_perpage_metadata(void);
++
+ #endif /* _LINUX_VMSTAT_H */
+diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+index da177e49d9564..2da8689aeb93f 100644
+--- a/mm/hugetlb_vmemmap.c
++++ b/mm/hugetlb_vmemmap.c
+@@ -184,10 +184,13 @@ static int vmemmap_remap_range(unsigned long start, unsigned long end,
+  */
+ static inline void free_vmemmap_page(struct page *page)
+ {
+-	if (PageReserved(page))
++	if (PageReserved(page)) {
+ 		free_bootmem_page(page);
+-	else
++		mod_node_page_state(page_pgdat(page), NR_MEMMAP_BOOT, -1);
++	} else {
+ 		__free_page(page);
++		mod_node_page_state(page_pgdat(page), NR_MEMMAP, -1);
++	}
+ }
+ 
+ /* Free a list of the vmemmap pages */
+@@ -338,6 +341,7 @@ static int vmemmap_remap_free(unsigned long start, unsigned long end,
+ 		copy_page(page_to_virt(walk.reuse_page),
+ 			  (void *)walk.reuse_addr);
+ 		list_add(&walk.reuse_page->lru, vmemmap_pages);
++		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, 1);
+ 	}
+ 
+ 	/*
+@@ -384,14 +388,19 @@ static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
+ 	unsigned long nr_pages = (end - start) >> PAGE_SHIFT;
+ 	int nid = page_to_nid((struct page *)start);
+ 	struct page *page, *next;
++	int i;
+ 
+-	while (nr_pages--) {
++	for (i = 0; i < nr_pages; i++) {
+ 		page = alloc_pages_node(nid, gfp_mask, 0);
+-		if (!page)
++		if (!page) {
++			mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, i);
+ 			goto out;
++		}
+ 		list_add(&page->lru, list);
+ 	}
+ 
++	mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, nr_pages);
++
+ 	return 0;
+ out:
+ 	list_for_each_entry_safe(page, next, list, lru)
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 549e76af8f82a..1a429c73b32e4 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -27,6 +27,7 @@
+ #include <linux/swap.h>
+ #include <linux/cma.h>
+ #include <linux/crash_dump.h>
++#include <linux/vmstat.h>
+ #include "internal.h"
+ #include "slab.h"
+ #include "shuffle.h"
+@@ -1656,6 +1657,8 @@ static void __init alloc_node_mem_map(struct pglist_data *pgdat)
+ 		panic("Failed to allocate %ld bytes for node %d memory map\n",
+ 		      size, pgdat->node_id);
+ 	pgdat->node_mem_map = map + offset;
++	mod_node_early_perpage_metadata(pgdat->node_id,
++					DIV_ROUND_UP(size, PAGE_SIZE));
+ 	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
+ 		 __func__, pgdat->node_id, (unsigned long)pgdat,
+ 		 (unsigned long)pgdat->node_mem_map);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 14d39f34d3367..aa8dd5bccb7ac 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5650,6 +5650,7 @@ void __init setup_per_cpu_pageset(void)
+ 	for_each_online_pgdat(pgdat)
+ 		pgdat->per_cpu_nodestats =
+ 			alloc_percpu(struct per_cpu_nodestat);
++	store_early_perpage_metadata();
+ }
+ 
+ __meminit void zone_pcp_init(struct zone *zone)
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index 4548fcc66d74d..c1e324a1427e0 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -201,6 +201,8 @@ static int __init alloc_node_page_ext(int nid)
+ 		return -ENOMEM;
+ 	NODE_DATA(nid)->node_page_ext = base;
+ 	total_usage += table_size;
++	mod_node_page_state(NODE_DATA(nid), NR_MEMMAP_BOOT,
++			    DIV_ROUND_UP(table_size, PAGE_SIZE));
+ 	return 0;
+ }
+ 
+@@ -255,12 +257,15 @@ static void *__meminit alloc_page_ext(size_t size, int nid)
+ 	void *addr = NULL;
+ 
+ 	addr = alloc_pages_exact_nid(nid, size, flags);
+-	if (addr) {
++	if (addr)
+ 		kmemleak_alloc(addr, size, 1, flags);
+-		return addr;
+-	}
++	else
++		addr = vzalloc_node(size, nid);
+ 
+-	addr = vzalloc_node(size, nid);
++	if (addr) {
++		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
++				    DIV_ROUND_UP(size, PAGE_SIZE));
++	}
+ 
+ 	return addr;
+ }
+@@ -303,18 +308,27 @@ static int __meminit init_section_page_ext(unsigned long pfn, int nid)
+ 
+ static void free_page_ext(void *addr)
+ {
++	size_t table_size;
++	struct page *page;
++	struct pglist_data *pgdat;
++
++	table_size = page_ext_size * PAGES_PER_SECTION;
++
+ 	if (is_vmalloc_addr(addr)) {
++		page = vmalloc_to_page(addr);
++		pgdat = page_pgdat(page);
+ 		vfree(addr);
+ 	} else {
+-		struct page *page = virt_to_page(addr);
+-		size_t table_size;
+-
+-		table_size = page_ext_size * PAGES_PER_SECTION;
+-
++		page = virt_to_page(addr);
++		pgdat = page_pgdat(page);
+ 		BUG_ON(PageReserved(page));
+ 		kmemleak_free(addr);
+ 		free_pages_exact(addr, table_size);
+ 	}
++
++	mod_node_page_state(pgdat, NR_MEMMAP,
++			    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
++
+ }
+ 
+ static void __free_page_ext(unsigned long pfn)
+diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+index a2cbe44c48e10..1dda6c53370b0 100644
+--- a/mm/sparse-vmemmap.c
++++ b/mm/sparse-vmemmap.c
+@@ -469,5 +469,13 @@ struct page * __meminit __populate_section_memmap(unsigned long pfn,
+ 	if (r < 0)
+ 		return NULL;
+ 
++	if (system_state == SYSTEM_BOOTING) {
++		mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(end - start,
++								  PAGE_SIZE));
++	} else {
++		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
++				    DIV_ROUND_UP(end - start, PAGE_SIZE));
++	}
++
+ 	return pfn_to_page(pfn);
+ }
+diff --git a/mm/sparse.c b/mm/sparse.c
+index aed0951b87fa0..684a91773bd76 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -14,7 +14,7 @@
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
+ #include <linux/bootmem_info.h>
+-
++#include <linux/vmstat.h>
+ #include "internal.h"
+ #include <asm/dma.h>
+ 
+@@ -465,6 +465,9 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+ 	 */
+ 	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
+ 	sparsemap_buf_end = sparsemap_buf + size;
++#ifndef CONFIG_SPARSEMEM_VMEMMAP
++	mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(size, PAGE_SIZE));
++#endif
+ }
+ 
+ static void __init sparse_buffer_fini(void)
+@@ -641,6 +644,8 @@ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
+ 	unsigned long start = (unsigned long) pfn_to_page(pfn);
+ 	unsigned long end = start + nr_pages * sizeof(struct page);
+ 
++	mod_node_page_state(page_pgdat(pfn_to_page(pfn)), NR_MEMMAP,
++			    -1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
+ 	vmemmap_free(start, end, altmap);
+ }
+ static void free_map_bootmem(struct page *memmap)
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index db79935e4a543..79466450040e6 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1252,7 +1252,8 @@ const char * const vmstat_text[] = {
+ 	"pgdemote_kswapd",
+ 	"pgdemote_direct",
+ 	"pgdemote_khugepaged",
+-
++	"nr_memmap",
++	"nr_memmap_boot",
+ 	/* enum writeback_stat_item counters */
+ 	"nr_dirty_threshold",
+ 	"nr_dirty_background_threshold",
+@@ -2279,4 +2280,27 @@ static int __init extfrag_debug_init(void)
+ }
+ 
+ module_init(extfrag_debug_init);
++
+ #endif
++
++/*
++ * Page metadata size (struct page and page_ext) in pages
++ */
++static unsigned long early_perpage_metadata[MAX_NUMNODES] __meminitdata;
++
++void __meminit mod_node_early_perpage_metadata(int nid, long delta)
++{
++	early_perpage_metadata[nid] += delta;
++}
++
++void __meminit store_early_perpage_metadata(void)
++{
++	int nid;
++	struct pglist_data *pgdat;
++
++	for_each_online_pgdat(pgdat) {
++		nid = pgdat->node_id;
++		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP_BOOT,
++				    early_perpage_metadata[nid]);
++	}
++}
+-- 
+2.44.0.769.g3c40516874-goog
 
--       if (!ovl_dentry_is_whiteout(dentry))
-+       if (tmpfile)
-+               err =3D ovl_create_upper_tmpfile(tmpfile, dentry, inode,
-attr->mode);
-+       else if (!ovl_dentry_is_whiteout(dentry))
-                err =3D ovl_create_upper(dentry, inode, attr);
-        else
-                err =3D ovl_create_over_whiteout(dentry, inode, attr);
-
-> +
-> +static int ovl_dummy_open(struct inode *inode, struct file *file)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int ovl_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
-> +                      struct file *file, umode_t mode)
-> +{
-> +       int err;
-> +       struct dentry *dentry =3D file->f_path.dentry;
-> +       struct inode *inode;
-> +
-> +       err =3D ovl_want_write(dentry);
-> +       if (err)
-> +               return err;
-> +
-> +       err =3D -ENOMEM;
-> +       inode =3D ovl_new_inode(dentry->d_sb, mode, 0);
-> +       if (!inode)
-> +               goto drop_write;
-> +
-> +       inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
-> +       err =3D ovl_create_tmpfile(file, dentry, inode, inode->i_mode);
-> +       if (err)
-> +               goto put_inode;
-> +
-> +       /*
-> +        * Check if the preallocated inode was actually used.  Having som=
-ething
-> +        * else assigned to the dentry shouldn't happen as that would ind=
-icate
-> +        * that the backing tmpfile "leaked" out of overlayfs.
-> +        */
-> +       err =3D -EIO;
-> +       if (WARN_ON(inode !=3D d_inode(dentry)))
-> +               goto put_realfile;
-> +
-> +       /* inode reference was transferred to dentry */
-> +       inode =3D NULL;
-> +       err =3D finish_open(file, dentry, ovl_dummy_open);
-> +put_realfile:
-> +       if (!(file->f_mode & FMODE_OPENED))
-> +               fput(file->private_data);
-
-This cleanup bit is very subtle and hard for me to review.
-I wonder if there is a way to improve this subtlety?
-
-Would it be possible to write this cleanup as:
-+       if (err && file->private_data)
-+               fput(file->private_data);
-
-With a comment explaining where file->private_data is set?
-
-Overall, I did not find any bugs, but I am hoping that the code could be
-a bit easier to review and maintain.
-
-Thanks,
-Amir.
 
