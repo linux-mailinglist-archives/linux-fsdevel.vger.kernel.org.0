@@ -1,48 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-17970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC1E8B4619
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 13:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E8B8B4623
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 13:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D4FAB238FB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 11:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67C79287F7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 11:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033574C61F;
-	Sat, 27 Apr 2024 11:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD314CB38;
+	Sat, 27 Apr 2024 11:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="qzFP3BHf"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="YZps4iP4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward103a.mail.yandex.net (forward103a.mail.yandex.net [178.154.239.86])
+Received: from forward205a.mail.yandex.net (forward205a.mail.yandex.net [178.154.239.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A164AECA;
-	Sat, 27 Apr 2024 11:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E4945C18;
+	Sat, 27 Apr 2024 11:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714217106; cv=none; b=ht6wSNmlFCeNnqSO3eju99ULcdTyEGUtTcMf9lDnIeaRGAUER9z2UePAugL305HniigkoX6oE8SsUWS0iMQ25QqmdGp6ncKqkmBHlIjmeN7rdCrPxykeRjGl9qqQ6dRdjT8uMk51r0D6cbvPwxYF+dvltOcrs4l8RjRxoMMo1dU=
+	t=1714217505; cv=none; b=ju5d+0xU9uGqvbox+1nAXYwLncqZgC0ZDWn6sL3ts000pfQ8yx42xMA3JHt/ZGiQKOk2hW0a1X8P0w/FyQh3gXNYI2Re28PZT5LYlRZb5del1U3/Vbt7t3Pu/vUYPGzjm9Ab7OwBw/HJGo487oGwwb77D7etl4TeyYFJttmAbAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714217106; c=relaxed/simple;
-	bh=eW+R7T+4wDE0CCmXnPO5w8nUsJ7ogtYZtHHlx4MY378=;
+	s=arc-20240116; t=1714217505; c=relaxed/simple;
+	bh=rGiiYWN0bwz8S7WshuQ1nUQQHIR1C44r//9xZQ8agl8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lPNcCG/PIjRnSFJ4GwUb4EblSfr1lAx1y2ZrYZCjdWg8dSOzC490BxcqCQX3HQEelKNbGFfFitOJKUYKbXhKrQjhwwJHcq3mH8mMm7rD688tZDrZjTowE5nBU9EfnUJtRgKvSAO/GiMoAQ4kj9BWHwSpwv4roYTJic38kziyizI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=qzFP3BHf; arc=none smtp.client-ip=178.154.239.86
+	 MIME-Version; b=K0djdXOo1IncBXu5e40ZmpQN0PG6OiXQa9R1IsrMXkAKlRV9XWNstCYt18PBdSfyITExXIERlnaodtkZOCAChoSFVhUkUHh/BiUEKVmJ2KAK3aVCLfGlj7248no9Ldwf4iRaMVAqXjUHJ8kRNk/QFn6nPFlNN0jNP4fssfg2qVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=YZps4iP4; arc=none smtp.client-ip=178.154.239.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d100])
+	by forward205a.mail.yandex.net (Yandex) with ESMTPS id 80A27667F1;
+	Sat, 27 Apr 2024 14:25:10 +0300 (MSK)
 Received: from mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:2a02:0:640:77d9:0])
-	by forward103a.mail.yandex.net (Yandex) with ESMTPS id C6FAE60030;
-	Sat, 27 Apr 2024 14:24:59 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id uOMFvPQXlqM0-vUxBD1Hs;
-	Sat, 27 Apr 2024 14:24:58 +0300
+	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 9BCFC46D54;
+	Sat, 27 Apr 2024 14:25:02 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id uOMFvPQXlqM0-AesOqMtr;
+	Sat, 27 Apr 2024 14:25:01 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1714217098; bh=N6Wa5ZdYH+jnqmFV3t56OpNcrMxvOQwAgYBdbDZuPl8=;
+	t=1714217101; bh=7Tx4MmiVvo3dc9P2ErVjG5tVev7EKB9T5e2ufGJi1cs=;
 	h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=qzFP3BHfeY7rNGhZqBxXwE4wxJOr2GnR07ho6nERxZiLgP3hs34KsBaZUdFQUWueA
-	 ybOo2p7OvRCqzugDoddGG6scVZTISVNsvZRwRuPHoKZDu9BsTWeK75cjmp3Ngl2Nj0
-	 Z1DNCq4MaKmj2OiVF3aYmInGHMWD8uK+kuKN9Lus=
+	b=YZps4iP4CGkv2ggh0f3DO0HVDeqSwgnYAErWpgIjxVz/CDvq7BdKyxmpEAld8lg+E
+	 hnwVE3pUtohKTItUyHDqP1R3Qk7WcvA13W+/BXBAaX2ojROpq1xcvd38EoKRciX9pj
+	 PnVbkTIm0i5XS36BksrJwJ9Dt6JcHom4DEHFosIg=
 Authentication-Results: mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
 From: Stas Sergeev <stsp2@yandex.ru>
 To: linux-kernel@vger.kernel.org
@@ -60,10 +63,20 @@ Cc: Stas Sergeev <stsp2@yandex.ru>,
 	linux-fsdevel@vger.kernel.org,
 	linux-api@vger.kernel.org,
 	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-Subject: [PATCH v6 1/3] fs: reorganize path_openat()
-Date: Sat, 27 Apr 2024 14:24:49 +0300
-Message-ID: <20240427112451.1609471-2-stsp2@yandex.ru>
+	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-arch@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v6 2/3] open: add O_CRED_ALLOW flag
+Date: Sat, 27 Apr 2024 14:24:50 +0300
+Message-ID: <20240427112451.1609471-3-stsp2@yandex.ru>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240427112451.1609471-1-stsp2@yandex.ru>
 References: <20240427112451.1609471-1-stsp2@yandex.ru>
@@ -75,12 +88,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch moves the call to alloc_empty_file() down the if branches.
-That changes is needed for the next patch, which adds a cred override
-for alloc_empty_file(). The cred override is only needed in one branch,
-i.e. it is not needed for O_PATH and O_TMPFILE..
+This flag prevents an fd from being passed via unix socket, and
+makes it to be always closed on exec().
 
-No functional changes are intended by that patch.
+Selftest is added to check for both properties.
+
+It is needed for the subsequent OA2_CRED_INHERIT addition, to work
+as an "opt-in" for the new cred-inherit functionality. Without using
+O_CRED_ALLOW when opening dir fd, OA2_CRED_INHERIT is going to return
+EPERM.
 
 Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
 
@@ -90,50 +106,281 @@ CC: Christian Brauner <brauner@kernel.org>
 CC: Jan Kara <jack@suse.cz>
 CC: Andy Lutomirski <luto@kernel.org>
 CC: David Laight <David.Laight@ACULAB.COM>
+CC: Arnd Bergmann <arnd@arndb.de>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: Eric Dumazet <edumazet@google.com>
+CC: Jakub Kicinski <kuba@kernel.org>
+CC: Paolo Abeni <pabeni@redhat.com>
+CC: Jens Axboe <axboe@kernel.dk>
+CC: Kuniyuki Iwashima <kuniyu@amazon.com>
+CC: Pavel Begunkov <asml.silence@gmail.com>
+CC: linux-arch@vger.kernel.org
+CC: netdev@vger.kernel.org
 CC: linux-fsdevel@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
+CC: linux-api@vger.kernel.org
 ---
- fs/namei.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ fs/fcntl.c                                |   2 +-
+ fs/file.c                                 |  15 +--
+ include/linux/fcntl.h                     |   2 +-
+ include/uapi/asm-generic/fcntl.h          |   5 +
+ net/core/scm.c                            |   5 +
+ tools/testing/selftests/core/Makefile     |   2 +-
+ tools/testing/selftests/core/cred_allow.c | 139 ++++++++++++++++++++++
+ 7 files changed, 160 insertions(+), 10 deletions(-)
+ create mode 100644 tools/testing/selftests/core/cred_allow.c
 
-diff --git a/fs/namei.c b/fs/namei.c
-index c5b2a25be7d0..dd50345f7260 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3781,17 +3781,24 @@ static struct file *path_openat(struct nameidata *nd,
- {
- 	struct file *file;
- 	int error;
-+	int open_flags = op->open_flag;
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 54cc85d3338e..78c96b1293c2 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -1039,7 +1039,7 @@ static int __init fcntl_init(void)
+ 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+ 	 * is defined as O_NONBLOCK on some platforms and not on others.
+ 	 */
+-	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
++	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
+ 		HWEIGHT32(
+ 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+ 			__FMODE_EXEC | __FMODE_NONOTIFY));
+diff --git a/fs/file.c b/fs/file.c
+index 3b683b9101d8..2a09d5276676 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -827,22 +827,23 @@ void do_close_on_exec(struct files_struct *files)
+ 	/* exec unshares first */
+ 	spin_lock(&files->file_lock);
+ 	for (i = 0; ; i++) {
++		int j;
+ 		unsigned long set;
+ 		unsigned fd = i * BITS_PER_LONG;
+ 		fdt = files_fdtable(files);
+ 		if (fd >= fdt->max_fds)
+ 			break;
+ 		set = fdt->close_on_exec[i];
+-		if (!set)
+-			continue;
+ 		fdt->close_on_exec[i] = 0;
+-		for ( ; set ; fd++, set >>= 1) {
+-			struct file *file;
+-			if (!(set & 1))
+-				continue;
+-			file = fdt->fd[fd];
++		for (j = 0; j < BITS_PER_LONG; j++, fd++, set >>= 1) {
++			struct file *file = fdt->fd[fd];
+ 			if (!file)
+ 				continue;
++			/* Close all cred-allow files. */
++			if (file->f_flags & O_CRED_ALLOW)
++				set |= 1;
++			if (!(set & 1))
++				continue;
+ 			rcu_assign_pointer(fdt->fd[fd], NULL);
+ 			__put_unused_fd(files, fd);
+ 			spin_unlock(&files->file_lock);
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index a332e79b3207..e074ee9c1e36 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -10,7 +10,7 @@
+ 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
+ 	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
+ 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+-	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
++	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_CRED_ALLOW)
  
--	file = alloc_empty_file(op->open_flag, current_cred());
--	if (IS_ERR(file))
--		return file;
--
--	if (unlikely(file->f_flags & __O_TMPFILE)) {
--		error = do_tmpfile(nd, flags, op, file);
--	} else if (unlikely(file->f_flags & O_PATH)) {
--		error = do_o_path(nd, flags, file);
-+	if (unlikely(open_flags & (__O_TMPFILE | O_PATH))) {
-+		file = alloc_empty_file(open_flags, current_cred());
-+		if (IS_ERR(file))
-+			return file;
-+		if (open_flags & __O_TMPFILE)
-+			error = do_tmpfile(nd, flags, op, file);
-+		else
-+			error = do_o_path(nd, flags, file);
- 	} else {
--		const char *s = path_init(nd, flags);
-+		const char *s;
+ /* List of all valid flags for the how->resolve argument: */
+ #define VALID_RESOLVE_FLAGS \
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index 80f37a0d40d7..9244c54bb933 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -89,6 +89,11 @@
+ #define __O_TMPFILE	020000000
+ #endif
+ 
++#ifndef O_CRED_ALLOW
++/* On parisc bit 23 is taken. On alpha bit 24 is also taken. Try bit 25. */
++#define O_CRED_ALLOW	0200000000
++#endif
 +
-+		file = alloc_empty_file(open_flags, current_cred());
-+		if (IS_ERR(file))
-+			return file;
+ /* a horrid kludge trying to make sure that this will fail on old kernels */
+ #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+ 
+diff --git a/net/core/scm.c b/net/core/scm.c
+index 9cd4b0a01cd6..f54fb0ee9727 100644
+--- a/net/core/scm.c
++++ b/net/core/scm.c
+@@ -111,6 +111,11 @@ static int scm_fp_copy(struct cmsghdr *cmsg, struct scm_fp_list **fplp)
+ 			fput(file);
+ 			return -EINVAL;
+ 		}
++		/* don't allow files with creds */
++		if (file->f_flags & O_CRED_ALLOW) {
++			fput(file);
++			return -EPERM;
++		}
+ 		if (unix_get_socket(file))
+ 			fpl->count_unix++;
+ 
+diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
+index ce262d097269..347a5a9d3f29 100644
+--- a/tools/testing/selftests/core/Makefile
++++ b/tools/testing/selftests/core/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ CFLAGS += -g $(KHDR_INCLUDES)
+ 
+-TEST_GEN_PROGS := close_range_test
++TEST_GEN_PROGS := close_range_test cred_allow
+ 
+ include ../lib.mk
+ 
+diff --git a/tools/testing/selftests/core/cred_allow.c b/tools/testing/selftests/core/cred_allow.c
+new file mode 100644
+index 000000000000..07d533207a2c
+--- /dev/null
++++ b/tools/testing/selftests/core/cred_allow.c
+@@ -0,0 +1,139 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <errno.h>
++#include <fcntl.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdbool.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <sys/socket.h>
++#include <time.h>
++#include <unistd.h>
++#include <string.h>
 +
-+		s = path_init(nd, flags);
- 		while (!(error = link_path_walk(s, nd)) &&
- 		       (s = open_last_lookups(nd, file, op)) != NULL)
- 			;
++#include "../kselftest.h"
++
++#ifndef O_CRED_ALLOW
++#define O_CRED_ALLOW 0x2000000
++#endif
++
++enum { FD_NORM, FD_CE, FD_CA, FD_MAX };
++
++static int is_opened(int n)
++{
++	char buf[256];
++
++	snprintf(buf, sizeof(buf), "/proc/self/fd/%d", n);
++	return (access(buf, F_OK) == 0);
++}
++
++/* Sends an FD on a UNIX socket. Returns 0 on success or -errno. */
++static int send_fd(int usock, int fd_tx)
++{
++	union {
++		/* Aligned ancillary data buffer. */
++		char buf[CMSG_SPACE(sizeof(fd_tx))];
++		struct cmsghdr _align;
++	} cmsg_tx = {};
++	char data_tx = '.';
++	struct iovec io = {
++		.iov_base = &data_tx,
++		.iov_len = sizeof(data_tx),
++	};
++	struct msghdr msg = {
++		.msg_iov = &io,
++		.msg_iovlen = 1,
++		.msg_control = &cmsg_tx.buf,
++		.msg_controllen = sizeof(cmsg_tx.buf),
++	};
++	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++
++	cmsg->cmsg_len = CMSG_LEN(sizeof(fd_tx));
++	cmsg->cmsg_level = SOL_SOCKET;
++	cmsg->cmsg_type = SCM_RIGHTS;
++	memcpy(CMSG_DATA(cmsg), &fd_tx, sizeof(fd_tx));
++
++	if (sendmsg(usock, &msg, 0) < 0)
++		return -errno;
++	return 0;
++}
++
++int main(int argc, char *argv[], char *env[])
++{
++	int status;
++	int err;
++	pid_t pid;
++	int socket_fds[2];
++	int fds[FD_MAX];
++#define NFD(n) ((n) + 3)
++#define FD_OK(n) (NFD(n) == fds[n] && is_opened(fds[n]))
++
++	if (argc > 1 && strcmp(argv[1], "--child") == 0) {
++		int nfd = 0;
++		ksft_print_msg("we are child\n");
++		ksft_set_plan(3);
++		nfd += is_opened(NFD(FD_NORM));
++		ksft_test_result(nfd == 1, "normal fd opened\n");
++		nfd += is_opened(NFD(FD_CE));
++		ksft_test_result(nfd == 1, "O_CLOEXEC fd closed\n");
++		nfd += is_opened(NFD(FD_CA));
++		ksft_test_result(nfd == 1, "O_CRED_ALLOW fd closed\n");
++		/* exit with non-zero status propagates to parent's failure */
++		ksft_finished();
++		return 0;
++	}
++
++	ksft_set_plan(7);
++
++	fds[FD_NORM] = open("/proc/self/exe", O_RDONLY);
++	fds[FD_CE] = open("/proc/self/exe", O_RDONLY | O_CLOEXEC);
++	fds[FD_CA] = open("/proc/self/exe", O_RDONLY | O_CRED_ALLOW);
++	ksft_test_result(FD_OK(FD_NORM), "regular open\n");
++	ksft_test_result(FD_OK(FD_CE), "O_CLOEXEC open\n");
++	ksft_test_result(FD_OK(FD_CA), "O_CRED_ALLOW open\n");
++
++	err = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, socket_fds);
++	if (err) {
++		ksft_perror("socketpair() failed");
++		ksft_exit_fail_msg("socketpair\n");
++		return 1;
++	}
++	err = send_fd(socket_fds[0], fds[FD_NORM]);
++	ksft_test_result(err == 0, "normal fd sent\n");
++	err = send_fd(socket_fds[0], fds[FD_CE]);
++	ksft_test_result(err == 0, "O_CLOEXEC fd sent\n");
++	err = send_fd(socket_fds[0], fds[FD_CA]);
++	ksft_test_result(err == -EPERM, "O_CRED_ALLOW fd not sent, EPERM\n");
++	close(socket_fds[0]);
++	close(socket_fds[1]);
++
++	pid = fork();
++	if (pid < 0) {
++		ksft_perror("fork() failed");
++		ksft_exit_fail_msg("fork\n");
++		return 1;
++	}
++
++	if (pid == 0) {
++		char *cargv[] = {"cred_allow", "--child", NULL};
++
++		execve("/proc/self/exe", cargv, env);
++		ksft_perror("execve() failed");
++		ksft_exit_fail_msg("execve\n");
++		return 1;
++	}
++
++	if (waitpid(pid, &status, 0) != pid) {
++		ksft_perror("waitpid() failed");
++		ksft_exit_fail_msg("waitpid\n");
++		return 1;
++	}
++	ksft_print_msg("back to parent\n");
++
++	ksft_test_result(status == 0, "child success\n");
++
++	ksft_finished();
++	return 0;
++}
 -- 
 2.44.0
 
