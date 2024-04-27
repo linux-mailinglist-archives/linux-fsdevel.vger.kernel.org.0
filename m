@@ -1,110 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-17985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0909D8B485E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 23:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22E58B48EE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 01:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B40DC28295F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 21:40:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738231F2171C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 23:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE19C146596;
-	Sat, 27 Apr 2024 21:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947F81487D3;
+	Sat, 27 Apr 2024 23:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DqnOULJ9"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IlrHyZvo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEAD47F63
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Apr 2024 21:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F44C4A3D;
+	Sat, 27 Apr 2024 23:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714254044; cv=none; b=bPQCyAQ9TxJPcqRBqI1MBNf9RahL/xnvWUPBSjKHcce0HBrlf1/FdUx9RqXx4mRo2qM5zVa+w7K/SfL12b0iNQHh4YUNqEH1gYl2GoDq0HpPXczyzTKnLODlrvpkV7VFsTtzWo2VXGGNgxVDMj1irhY0rVypXaQOk/8OmIZGNQ4=
+	t=1714261590; cv=none; b=Lg+MWxhfo9EcdYJTApG/6XNLs+f0/igIkS8P6gBtrx87o9YcecZXLoamV3cHD662eDRNRhP5aLutVuxQRB1/RzEzX8AaalhBXxpAPHnIqNU/Qm76ieab6RaEMdgQ+RPnmWQpoxqCX66aQ3alwLQBww9MDSOawEfEqPhumMyDEHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714254044; c=relaxed/simple;
-	bh=IIGshDaph8veGUjCfHMCr5hhSRQX7mrwk6r+2BogNic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s29OF2DD7kr9iJUpuE37qFhPqDTwLDWsGJ+wj8qEl3eGzcft4q7GIe6aqjwPpOoB5IZGBqwM7pSUqcSUY9OJplInmVYqdlr5JyQpiTz/sLhDpI+nBtal9JeUrEw6AtmMTOD27JXDPKM+mR6aMfRcc1KL4hh8fvtSSkOdHHgikks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DqnOULJ9; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a58eb9a42d9so63375566b.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Apr 2024 14:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1714254040; x=1714858840; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mA6ESoMU41euVvMMgdzVMUo8Y0YkwHfh7I4CxBNPhNU=;
-        b=DqnOULJ9dqAM66O2vPpfXP9h4/RTISLzUsRpuasrayesu09yyFLA2iM/KmCT/LCWiA
-         JNnmR6CEoccMoaPzEU/pI8WMRxLuVGLXekJqfgKUM/jn0sCdZUCWmIzwuNO7QogEfoIN
-         p71K/OpKt5F5f1BuT67/hN0iQj1fi2LxxQ2mE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714254040; x=1714858840;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mA6ESoMU41euVvMMgdzVMUo8Y0YkwHfh7I4CxBNPhNU=;
-        b=B8qiHhKn6/CRY1fq4c6aiwjlfjBS9VcPLMvVANfVJK+W8KwZheT9wKNsMn8EpfKr4L
-         beLE0j6b/82mw9JSgl9BA4lTQ7LELUPehal0/415k3mMbZyTMmS6RCGNlJPF/dOYLhg1
-         O/VTE10zFar0k30l2fy/OfcatD74MZ6A7RVfU7VwLZ8PxY7U4dmRGL3wE/ttbVHUCZfb
-         fTx5v85XDGvl+iBfxS5SEB75bOHRNMXLs+Lkt1Le4F3xKzJqEBU6pFobDq9hoOgktrRD
-         YjQnzcgq2k2qHQ/CjVSnCCld/4q5VZnDDj6NZAJodjWM0BpsFnwzgao55sUKGIDtM4vj
-         SiVA==
-X-Gm-Message-State: AOJu0YzGCgw6ifbyhjgr9CzIjimqRrQECxl9FFSAjrGAWRx/cLwKEyaK
-	kW+46yrFSaDDxDg/ghdwaRGx56V8mmlqHmd3zh+/fS1fyK3AYcOpPirkxy8kd1EF8gtHTupAPsd
-	EGnw=
-X-Google-Smtp-Source: AGHT+IFpZXJPALKIBmX0NFMcui5pbOGS1+cO8SsbzUqwexN6CmFfgwQq1ADbaEpSL2e7Dpd4yHkgMg==
-X-Received: by 2002:a17:906:b2d2:b0:a58:eab7:7bab with SMTP id cf18-20020a170906b2d200b00a58eab77babmr1433426ejb.52.1714254040466;
-        Sat, 27 Apr 2024 14:40:40 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id y20-20020a170906471400b00a58db2429b5sm1619078ejq.111.2024.04.27.14.40.39
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Apr 2024 14:40:39 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a58eb9a42d9so63375066b.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Apr 2024 14:40:39 -0700 (PDT)
-X-Received: by 2002:a17:906:22ce:b0:a55:b99d:74a7 with SMTP id
- q14-20020a17090622ce00b00a55b99d74a7mr3773528eja.11.1714254039321; Sat, 27
- Apr 2024 14:40:39 -0700 (PDT)
+	s=arc-20240116; t=1714261590; c=relaxed/simple;
+	bh=gJwg9xG8VlL/41boVI9dbukbsm9h734IFRS3g0vDnV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1/gKabLAl7VGFkV3QGsgadHoetRAfKN2qwConfqzqnffT28+DrZydx50nmbB535v4F48b9k8vrfRm18tgfntnZsx3izzaG+Mg7aOBHwsJ3DjB7EC2T6mbPesuf4mmDYBGhQpy9J/ALVQBGUQ3ZQdapHgVx1BL7C1HLLsNMk3t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IlrHyZvo; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GYaIaWc5ozD1igWj/dlah909E8eLQGhxWKN9amtdGrY=; b=IlrHyZvo4caZIVYM3oj/LRaAR9
+	1BzkCio9PHBE7cxaqhG0bieVtoZehI/dmYHvggdzInJTK6GAieUL1ly0ityJmSVSwMOlP0KiyPAHu
+	qv96v4U3LyWtR2ZSnBiC25kJcHKdm93YmhGdUVk8x+Cj0K0bz6LKNiueAIRkPdqBtZCK/2yULeoVy
+	+3NYgTr74TV4nB869rvgfTJWqWFPrYLV07LnzUybdY5+PaLfeDmPKv+H6M7Zpql8HM3R4PNjho5M+
+	4tS9E67clJgHRkbvl7CqRdpBzztly2sBLk9uT++4FI6CXXcZRsMys9pLE1jNyU7PkqtJ7FfxZWfkG
+	s8XsL3Cw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s0rkN-006M7p-1f;
+	Sat, 27 Apr 2024 23:46:23 +0000
+Date: Sun, 28 Apr 2024 00:46:23 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 4/7] swapon(2): open swap with O_EXCL
+Message-ID: <20240427234623.GS2118490@ZenIV>
+References: <20240427210920.GR2118490@ZenIV>
+ <20240427211128.GD1495312@ZenIV>
+ <CAHk-=wiag-Dn=7v0tX2UazhMTBzG7P42FkgLSsVc=rfN8_NC2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240427210920.GR2118490@ZenIV> <20240427211128.GD1495312@ZenIV>
-In-Reply-To: <20240427211128.GD1495312@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 27 Apr 2024 14:40:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiag-Dn=7v0tX2UazhMTBzG7P42FkgLSsVc=rfN8_NC2A@mail.gmail.com>
-Message-ID: <CAHk-=wiag-Dn=7v0tX2UazhMTBzG7P42FkgLSsVc=rfN8_NC2A@mail.gmail.com>
-Subject: Re: [PATCH 4/7] swapon(2): open swap with O_EXCL
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	linux-btrfs@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiag-Dn=7v0tX2UazhMTBzG7P42FkgLSsVc=rfN8_NC2A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, 27 Apr 2024 at 14:11, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> ... eliminating the need to reopen block devices so they could be
-> exclusively held.
+On Sat, Apr 27, 2024 at 02:40:22PM -0700, Linus Torvalds wrote:
+> On Sat, 27 Apr 2024 at 14:11, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > ... eliminating the need to reopen block devices so they could be
+> > exclusively held.
+> 
+> This looks like a good change, but it raises the question of why we
+> did it this odd way to begin with?
+> 
+> Is it just because O_EXCL without O_CREAT is kind of odd, and only has
+> meaning for block devices?
+> 
+> Or is it just that before we used fiel pointers for block devices, the
+> old model made more sense?
+> 
+> Anyway, I like it, it just makes me go "why didn't we do it that way
+> originally?"
 
-This looks like a good change, but it raises the question of why we
-did it this odd way to begin with?
+Exclusion for swap partitions:
 
-Is it just because O_EXCL without O_CREAT is kind of odd, and only has
-meaning for block devices?
+commit 75e9c9e1bffbe4a1767172855296b94ccba28f71
+Author: Alexander Viro <viro@math.psu.edu>
+Date:   Mon Mar 4 22:56:47 2002 -0800
 
-Or is it just that before we used fiel pointers for block devices, the
-old model made more sense?
+    [PATCH] death of is_mounted() and aother fixes
 
-Anyway, I like it, it just makes me go "why didn't we do it that way
-originally?"
 
-                Linus
+O_EXCL for block devices:
+
+commit c366082d9ed0a0d3c46441d1b3fdf895d8e55ca9
+Author: Andrew Morton <akpm@osdl.org>
+Date:   Wed Aug 20 10:26:57 2003 -0700
+
+    [PATCH] Allow O_EXCL on a block device to claim exclusive use.
+
+IOW, O_EXCL hadn't been available at the time - it had been implemented
+on top of bd_claim()/bd_release() introduced in the same earlier commit.
+
+Switching swap exclusion to O_EXCL could've been done back in 2003 or
+at any later point; it's just that swapon(2)/swapoff(2) is something that
+rarely gets a look...
 
