@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-17977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A6C8B482C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 23:09:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CE38B4833
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 23:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65941C20D6B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 21:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 754D928220E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 21:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E763145B34;
-	Sat, 27 Apr 2024 21:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F65B145B3D;
+	Sat, 27 Apr 2024 21:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="P6v6S3s+"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fZUZ8m1I"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A19E63B9;
-	Sat, 27 Apr 2024 21:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BED863B9;
+	Sat, 27 Apr 2024 21:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714252166; cv=none; b=qR9yP7wnAVZWBbVov3mMYHfb5upXOAwzel5oXR6bZq5lyBGnPxtj2xipJ7VR5dB7nwz/GkuiUr+VnMPJrIuYUtrJ2Yqza7gHvwk1nIh8R33j99L6W9f7P99qY1kuwNs7dFsSUAyM9z1qDmjb7LuEvvhc3XmJOg5qxBzhG1m0jZk=
+	t=1714252211; cv=none; b=Vzm9e+w3h6YBkQ4upplzg0Kk3sttNjTzSGp7xzRqj50MQAWe2zo0GHeUZ3Nrx/SYVcVdZNiFmUZQYjU/cJUevsZhL7Fxvac0+tTiqIeHvHHrUoibl3AV44jUt9miGkCLQb8Orq/lrbROdBR6NjkAZc72Yg5GEAsR67DAKOyYfhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714252166; c=relaxed/simple;
-	bh=hRmktWpr9OzXmJVsLgrjtNWmYsntF4OYL8uwEulRmWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JrjxzZq4Gnu97uN2SyKu/e6cGsMOUnI7pWKjrBZek/ALU2nZ+t4Ujmu0tDzJjnK+tze5zvVRoC9pFnLJzmKk4vZnr1/NoTPYfuptflFOA0j3PINx5Od5giQmku8Uwn1k+9spU6xSZaJpml1TFaQUq4oOUE8kAEiuE8yhILipLvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=P6v6S3s+; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1714252211; c=relaxed/simple;
+	bh=dVsV+suRWdeSLs4M2uRGgnhXWCL23HP01Bass/RE1+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTT0GdULWF6B30wUpIbkY1XBIqXx44GmR6S3gASqJAd/WYiC2En/esvCUw66u/DhaWAWavC+q58S1rtJsLtJTcG9QZwNLku2Cg8gTdr+iSEFY2ulRnanolBMEhyjyB+AmCf/S3APDbme/Mu6X82Iv+Hdwzora8IHjRFfZpaOxcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fZUZ8m1I; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=xRFbES86ktcJSPmzYhgNe+40m7ES/+ZCOLVjegWPQwc=; b=P6v6S3s+5bwoO+Polm3dm4kn5k
-	oMSzJUHyyr5BNmrQtWd1Vrt/1wZVipxsolgdY7Icygxmi4SISOEePD93NwmOJ8JrzeY7OAKgPyYIe
-	4kdVZkJhpyIiG9SKCXx3CyyBzeRwmhtJPT7So8S/nD9w8FgW1p11pFIgE4Xcw/0A8kXVbBU1whUgg
-	r7CvjxlCwUP5c6bLefxTd+AbkIGUvWxwlKy96C3+umt7nusuiZZsq1rCuMx6T6EQEIcHyI+3WFz8n
-	dpVxbUdR5UV/LJNuWDrWKX68voxcrv6yEmMKwxyKb6l3mMfLihouStrUoDKaV0UX8qBYUID3A6pXK
-	6cDaAhmg==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xFS+qBCy2Bcky/O/uXQHGoo0wfXXcYfy2ak+7vNvwmw=; b=fZUZ8m1IEx8EYaPX7L6Cex2RE5
+	GlWSFtLJkNHsVnz4B0d+O8+7nCN1fcfzqKWhJKzsEuE5x9mWnIriMFjWghPzG/LUMf6csTtHgC0Xr
+	hk0fkR41EgBmilvf2XJR/0JDKXohhk6qTriDjghnT4pS6WtKnGmKuzZFnrqVefGsqXPqgXJBTz33J
+	Ke7S8cebKcAAMdQLO+pZG4SxbiGBqpbOIXkD7cD0VnriPyaVXoHzYs6j5wX7ta6Vf6zJ5TG1wq8ok
+	Zb5rKClmJXRDqke4GG2XKAPntgEHalyHA3ShzPnw0hmPTInuyzsRaFNM+Gu9CcgCkEqvS/eJVlEt8
+	tqFyM05A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s0pIO-006GzR-0J;
-	Sat, 27 Apr 2024 21:09:20 +0000
-Date: Sat, 27 Apr 2024 22:09:20 +0100
+	id 1s0pJ9-006H26-0S;
+	Sat, 27 Apr 2024 21:10:07 +0000
+Date: Sat, 27 Apr 2024 22:10:07 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -53,8 +53,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCHES][RFC] set_blocksize() rework
-Message-ID: <20240427210920.GR2118490@ZenIV>
+Subject: [PATCH 1/7] bcache_register(): don't bother with set_blocksize()
+Message-ID: <20240427211007.GA1495312@ZenIV>
+References: <20240427210920.GR2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,62 +64,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240427210920.GR2118490@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	Any buffer-cache based filesystem is going to be FUBAR
-if somebody manages to change block size of device under it,
-since primitives (sb_bread(), sb_getblk(), etc.) operate in
-terms of block numbers.  If block size suddenly doubles, so
-will the offsets from the beginning of device.  Results are
-not pretty, obviously.
+We are not using __bread() anymore and read_cache_page_gfp() doesn't
+care about block size.  Moreover, we should *not* change block
+size on a device that is currently held exclusive - filesystems
+that use buffer cache expect the block numbers to be interpreted
+in units set by filesystem.
 
-	The thing that (mostly) prevents that kind of mess
-is that most of the mechanisms that lead to block size
-change require the device being opened exclusive.  However,
-there are several exceptions that allow to do that without
-an exclusive open.  Fortunately, all of them require
-CAP_SYS_ADMIN, so it's not a security problem - anyone
-who already has that level of access can screw the system
-into the ground in any number of ways.  However, security
-problems or not, that crap should be fixed.
+ACKed-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ drivers/md/bcache/super.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-	The series below eliminates these calls of set_blocksize()
-and changes calling conventsion of set_blocksize() so that it
-uses struct file * instead of struct block_device * to tell
-which device to act upon.  Unlike struct block_device, struct
-file has enough information to tell an exclusive open from
-non-exclusive one, so we can reject the operation in non-exclusive
-case.
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 330bcd9ea4a9..0ee5e17ae2dd 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2554,10 +2554,6 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	if (IS_ERR(bdev_file))
+ 		goto out_free_sb;
+ 
+-	err = "failed to set blocksize";
+-	if (set_blocksize(file_bdev(bdev_file), 4096))
+-		goto out_blkdev_put;
+-
+ 	err = read_super(sb, file_bdev(bdev_file), &sb_disk);
+ 	if (err)
+ 		goto out_blkdev_put;
+-- 
+2.39.2
 
-	The branch is available at
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.set_blocksize
-Individual patches in followups.
-
-Review (and testing, obviously) would be very welcome.
-
-Shortlog:
-Al Viro (7):
-      bcache_register(): don't bother with set_blocksize()
-      pktcdvd: sort set_blocksize() calls out
-      swapon(2)/swapoff(2): don't bother with block size
-      swapon(2): open swap with O_EXCL
-      swsusp: don't bother with setting block size
-      btrfs_get_dev_args_from_path(): don't call set_blocksize()
-      set_blocksize(): switch to passing struct file *, fail if it's not opened exclusive
-
-Diffstat:
- block/bdev.c              | 14 ++++++++++----
- block/ioctl.c             | 21 ++++++++++++---------
- drivers/block/pktcdvd.c   |  7 +------
- drivers/md/bcache/super.c |  4 ----
- fs/btrfs/dev-replace.c    |  2 +-
- fs/btrfs/volumes.c        | 13 ++++++++-----
- fs/ext4/super.c           |  2 +-
- fs/reiserfs/journal.c     |  5 ++---
- fs/xfs/xfs_buf.c          |  2 +-
- include/linux/blkdev.h    |  2 +-
- include/linux/swap.h      |  2 --
- kernel/power/swap.c       |  7 +------
- mm/swapfile.c             | 29 ++---------------------------
- 13 files changed, 40 insertions(+), 70 deletions(-)
 
