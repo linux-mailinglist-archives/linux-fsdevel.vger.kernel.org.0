@@ -1,51 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-17972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E8B8B4623
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 13:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961598B461C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 13:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67C79287F7C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 11:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81BA1C23669
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 11:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD314CB38;
-	Sat, 27 Apr 2024 11:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427464E1C3;
+	Sat, 27 Apr 2024 11:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="YZps4iP4"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="adGg37hg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward205a.mail.yandex.net (forward205a.mail.yandex.net [178.154.239.88])
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E4945C18;
-	Sat, 27 Apr 2024 11:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929EC4AEE6;
+	Sat, 27 Apr 2024 11:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714217505; cv=none; b=ju5d+0xU9uGqvbox+1nAXYwLncqZgC0ZDWn6sL3ts000pfQ8yx42xMA3JHt/ZGiQKOk2hW0a1X8P0w/FyQh3gXNYI2Re28PZT5LYlRZb5del1U3/Vbt7t3Pu/vUYPGzjm9Ab7OwBw/HJGo487oGwwb77D7etl4TeyYFJttmAbAg=
+	t=1714217110; cv=none; b=NiaxJUhrd/eb4By6MviK8NnjePqnwMN43C9UAUMvVRDPWRSkUmP6tPGZnSDbXVsu4qWh0BxCLh8X4XGW5T//AhEg9uunPY/AyRPaROL0rWRUqtsJajn6YmBO65euA3ZBSQMviPYUd4dGyCgTyp+NgOE4Z3iopqUA0AyJxGNdEOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714217505; c=relaxed/simple;
-	bh=rGiiYWN0bwz8S7WshuQ1nUQQHIR1C44r//9xZQ8agl8=;
+	s=arc-20240116; t=1714217110; c=relaxed/simple;
+	bh=W7PssKyiRaYEQB5YHrsW1/XTUqJyt5uCS+o+ZGyF7XU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K0djdXOo1IncBXu5e40ZmpQN0PG6OiXQa9R1IsrMXkAKlRV9XWNstCYt18PBdSfyITExXIERlnaodtkZOCAChoSFVhUkUHh/BiUEKVmJ2KAK3aVCLfGlj7248no9Ldwf4iRaMVAqXjUHJ8kRNk/QFn6nPFlNN0jNP4fssfg2qVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=YZps4iP4; arc=none smtp.client-ip=178.154.239.88
+	 MIME-Version:Content-Type; b=eYrD3N4/EbZ2n3vW9sN6v6yuvFXVlXxJFIlCDjs3t7lC+6vCOG5nWFdpb95mR1LTq2VHDMRAOHUr4SWTN4DeUpoKAT85gFYomRf5ihMmz3M/bICNLcrrLDOeFpoXvInOiNuDi6OpVWH1N0lZj+GGR7bjOG41XuR4Zid/4cBEi5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=adGg37hg; arc=none smtp.client-ip=178.154.239.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d100])
-	by forward205a.mail.yandex.net (Yandex) with ESMTPS id 80A27667F1;
-	Sat, 27 Apr 2024 14:25:10 +0300 (MSK)
 Received: from mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:2a02:0:640:77d9:0])
-	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 9BCFC46D54;
-	Sat, 27 Apr 2024 14:25:02 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id uOMFvPQXlqM0-AesOqMtr;
-	Sat, 27 Apr 2024 14:25:01 +0300
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id D77E060B3E;
+	Sat, 27 Apr 2024 14:25:03 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id uOMFvPQXlqM0-loBR5XnJ;
+	Sat, 27 Apr 2024 14:25:02 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1714217101; bh=7Tx4MmiVvo3dc9P2ErVjG5tVev7EKB9T5e2ufGJi1cs=;
-	h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=YZps4iP4CGkv2ggh0f3DO0HVDeqSwgnYAErWpgIjxVz/CDvq7BdKyxmpEAld8lg+E
-	 hnwVE3pUtohKTItUyHDqP1R3Qk7WcvA13W+/BXBAaX2ojROpq1xcvd38EoKRciX9pj
-	 PnVbkTIm0i5XS36BksrJwJ9Dt6JcHom4DEHFosIg=
+	t=1714217102; bh=WN9hMK6T6laeTAn39mP2s0GnYEpzPpKo/cK8/O3HMGs=;
+	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
+	b=adGg37hger9WzzkUg+MntVW6ndkwqBel40+o4inpuy5H4x/4KSaRXxmL2puJOTWX5
+	 DT3l2MZCIfCNo5HSjsRY9Wq7Z6ZoDiUxDEKPBhyu+mto2OUjjjYuCieVFTQSz9BxDN
+	 qpKwhjz0hUw+w3ZApsutO7obQ0C7HjF//gG0S6jU=
 Authentication-Results: mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
 From: Stas Sergeev <stsp2@yandex.ru>
 To: linux-kernel@vger.kernel.org
@@ -63,20 +60,10 @@ Cc: Stas Sergeev <stsp2@yandex.ru>,
 	linux-fsdevel@vger.kernel.org,
 	linux-api@vger.kernel.org,
 	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-arch@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v6 2/3] open: add O_CRED_ALLOW flag
-Date: Sat, 27 Apr 2024 14:24:50 +0300
-Message-ID: <20240427112451.1609471-3-stsp2@yandex.ru>
+	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+Subject: [PATCH v6 3/3] openat2: add OA2_CRED_INHERIT flag
+Date: Sat, 27 Apr 2024 14:24:51 +0300
+Message-ID: <20240427112451.1609471-4-stsp2@yandex.ru>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240427112451.1609471-1-stsp2@yandex.ru>
 References: <20240427112451.1609471-1-stsp2@yandex.ru>
@@ -86,162 +73,242 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This flag prevents an fd from being passed via unix socket, and
-makes it to be always closed on exec().
+This flag performs the open operation with the fs credentials
+(fsuid, fsgid, group_info) that were in effect when dir_fd was opened.
+dir_fd must be opened with O_CRED_ALLOW, or EPERM is returned.
 
-Selftest is added to check for both properties.
+Selftests are added to check for these properties as well as for
+the invalid flag combinations.
 
-It is needed for the subsequent OA2_CRED_INHERIT addition, to work
-as an "opt-in" for the new cred-inherit functionality. Without using
-O_CRED_ALLOW when opening dir fd, OA2_CRED_INHERIT is going to return
-EPERM.
+This allows the process to pre-open some directories and then
+change eUID (and all other UIDs/GIDs) to a less-privileged user,
+retaining the ability to open/create files within these directories.
+
+Design goal:
+The idea is to provide a very light-weight sandboxing, where the
+process, without the use of any heavy-weight techniques like chroot
+within namespaces, can restrict the access to the set of pre-opened
+directories.
+This patch is just a first step to such sandboxing. If things go
+well, in the future the same extension can be added to more syscalls.
+These should include at least unlinkat(), renameat2() and the
+not-yet-upstreamed setxattrat().
+
+Security considerations:
+- Only the bare minimal set of credentials is overridden:
+  fsuid, fsgid and group_info. The rest, for example capabilities,
+  are not overridden to avoid unneeded security risks.
+- To avoid sandboxing escape, this patch makes sure the restricted
+  lookup modes are used. Namely, RESOLVE_BENEATH or RESOLVE_IN_ROOT.
+- Magic /proc symlinks are discarded, as suggested by
+  Andy Lutomirski <luto@kernel.org>
+- O_CRED_ALLOW fds cannot be passed via unix socket and are always
+  closed on exec() to prevent "unsuspecting userspace" from not being
+  able to fully drop privs.
+
+Use cases:
+Virtual machines that deal with untrusted code, can use that
+instead of a more heavy-weighted approaches.
+Currently the approach is being tested on a dosemu2 VM.
 
 Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
 
+CC: Stefan Metzmacher <metze@samba.org>
 CC: Eric Biederman <ebiederm@xmission.com>
 CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Andy Lutomirski <luto@kernel.org>
 CC: Christian Brauner <brauner@kernel.org>
 CC: Jan Kara <jack@suse.cz>
-CC: Andy Lutomirski <luto@kernel.org>
-CC: David Laight <David.Laight@ACULAB.COM>
-CC: Arnd Bergmann <arnd@arndb.de>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: Eric Dumazet <edumazet@google.com>
-CC: Jakub Kicinski <kuba@kernel.org>
-CC: Paolo Abeni <pabeni@redhat.com>
-CC: Jens Axboe <axboe@kernel.dk>
-CC: Kuniyuki Iwashima <kuniyu@amazon.com>
-CC: Pavel Begunkov <asml.silence@gmail.com>
-CC: linux-arch@vger.kernel.org
-CC: netdev@vger.kernel.org
+CC: Jeff Layton <jlayton@kernel.org>
+CC: Chuck Lever <chuck.lever@oracle.com>
+CC: Alexander Aring <alex.aring@gmail.com>
 CC: linux-fsdevel@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
-CC: linux-api@vger.kernel.org
+CC: Paolo Bonzini <pbonzini@redhat.com>
+CC: Christian Göttsche <cgzones@googlemail.com>
 ---
- fs/fcntl.c                                |   2 +-
- fs/file.c                                 |  15 +--
- include/linux/fcntl.h                     |   2 +-
- include/uapi/asm-generic/fcntl.h          |   5 +
- net/core/scm.c                            |   5 +
- tools/testing/selftests/core/Makefile     |   2 +-
- tools/testing/selftests/core/cred_allow.c | 139 ++++++++++++++++++++++
- 7 files changed, 160 insertions(+), 10 deletions(-)
- create mode 100644 tools/testing/selftests/core/cred_allow.c
+ fs/fcntl.c                                    |   2 +
+ fs/namei.c                                    |  56 +++++++++-
+ fs/open.c                                     |  10 +-
+ include/linux/fcntl.h                         |   2 +
+ include/uapi/linux/openat2.h                  |   2 +
+ tools/testing/selftests/openat2/Makefile      |   2 +-
+ .../testing/selftests/openat2/cred_inherit.c  | 105 ++++++++++++++++++
+ .../testing/selftests/openat2/openat2_test.c  |  12 +-
+ 8 files changed, 186 insertions(+), 5 deletions(-)
+ create mode 100644 tools/testing/selftests/openat2/cred_inherit.c
 
 diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 54cc85d3338e..78c96b1293c2 100644
+index 78c96b1293c2..283c2e65fc2c 100644
 --- a/fs/fcntl.c
 +++ b/fs/fcntl.c
-@@ -1039,7 +1039,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
+@@ -1043,6 +1043,8 @@ static int __init fcntl_init(void)
  		HWEIGHT32(
  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
  			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/file.c b/fs/file.c
-index 3b683b9101d8..2a09d5276676 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -827,22 +827,23 @@ void do_close_on_exec(struct files_struct *files)
- 	/* exec unshares first */
- 	spin_lock(&files->file_lock);
- 	for (i = 0; ; i++) {
-+		int j;
- 		unsigned long set;
- 		unsigned fd = i * BITS_PER_LONG;
- 		fdt = files_fdtable(files);
- 		if (fd >= fdt->max_fds)
- 			break;
- 		set = fdt->close_on_exec[i];
--		if (!set)
--			continue;
- 		fdt->close_on_exec[i] = 0;
--		for ( ; set ; fd++, set >>= 1) {
--			struct file *file;
--			if (!(set & 1))
--				continue;
--			file = fdt->fd[fd];
-+		for (j = 0; j < BITS_PER_LONG; j++, fd++, set >>= 1) {
-+			struct file *file = fdt->fd[fd];
- 			if (!file)
- 				continue;
-+			/* Close all cred-allow files. */
-+			if (file->f_flags & O_CRED_ALLOW)
-+				set |= 1;
-+			if (!(set & 1))
-+				continue;
- 			rcu_assign_pointer(fdt->fd[fd], NULL);
- 			__put_unused_fd(files, fd);
- 			spin_unlock(&files->file_lock);
++	BUILD_BUG_ON(HWEIGHT32(VALID_OPENAT2_FLAGS) !=
++			HWEIGHT32(VALID_OPEN_FLAGS) + 1);
+ 
+ 	fasync_cache = kmem_cache_create("fasync_cache",
+ 					 sizeof(struct fasync_struct), 0,
+diff --git a/fs/namei.c b/fs/namei.c
+index dd50345f7260..aa5dcf57851b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3776,6 +3776,43 @@ static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
+ 	return error;
+ }
+ 
++static const struct cred *openat2_init_creds(int dfd)
++{
++	struct cred *cred;
++	struct fd f;
++
++	if (dfd == AT_FDCWD)
++		return ERR_PTR(-EINVAL);
++
++	f = fdget_raw(dfd);
++	if (!f.file)
++		return ERR_PTR(-EBADF);
++
++	cred = ERR_PTR(-EPERM);
++	if (!(f.file->f_flags & O_CRED_ALLOW))
++		goto done;
++
++	cred = prepare_creds();
++	if (!cred) {
++		cred = ERR_PTR(-ENOMEM);
++		goto done;
++	}
++
++	cred->fsuid = f.file->f_cred->fsuid;
++	cred->fsgid = f.file->f_cred->fsgid;
++	cred->group_info = get_group_info(f.file->f_cred->group_info);
++
++done:
++	fdput(f);
++	return cred;
++}
++
++static void openat2_done_creds(const struct cred *cred)
++{
++	put_group_info(cred->group_info);
++	put_cred(cred);
++}
++
+ static struct file *path_openat(struct nameidata *nd,
+ 			const struct open_flags *op, unsigned flags)
+ {
+@@ -3793,18 +3830,33 @@ static struct file *path_openat(struct nameidata *nd,
+ 			error = do_o_path(nd, flags, file);
+ 	} else {
+ 		const char *s;
++		const struct cred *old_cred = NULL, *cred = NULL;
+ 
+-		file = alloc_empty_file(open_flags, current_cred());
+-		if (IS_ERR(file))
++		if (open_flags & OA2_CRED_INHERIT) {
++			cred = openat2_init_creds(nd->dfd);
++			if (IS_ERR(cred))
++				return ERR_CAST(cred);
++		}
++		file = alloc_empty_file(open_flags, cred ?: current_cred());
++		if (IS_ERR(file)) {
++			if (cred)
++				openat2_done_creds(cred);
+ 			return file;
++		}
+ 
+ 		s = path_init(nd, flags);
++		if (cred)
++			old_cred = override_creds(cred);
+ 		while (!(error = link_path_walk(s, nd)) &&
+ 		       (s = open_last_lookups(nd, file, op)) != NULL)
+ 			;
+ 		if (!error)
+ 			error = do_open(nd, file, op);
++		if (old_cred)
++			revert_creds(old_cred);
+ 		terminate_walk(nd);
++		if (cred)
++			openat2_done_creds(cred);
+ 	}
+ 	if (likely(!error)) {
+ 		if (likely(file->f_mode & FMODE_OPENED))
+diff --git a/fs/open.c b/fs/open.c
+index ee8460c83c77..dd4fab536135 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1225,7 +1225,7 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ 	 * values before calling build_open_flags(), but openat2(2) checks all
+ 	 * of its arguments.
+ 	 */
+-	if (flags & ~VALID_OPEN_FLAGS)
++	if (flags & ~VALID_OPENAT2_FLAGS)
+ 		return -EINVAL;
+ 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
+ 		return -EINVAL;
+@@ -1326,6 +1326,14 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ 		lookup_flags |= LOOKUP_CACHED;
+ 	}
+ 
++	if (flags & OA2_CRED_INHERIT) {
++		/* Inherit creds only with scoped look-up modes. */
++		if (!(lookup_flags & LOOKUP_IS_SCOPED))
++			return -EPERM;
++		/* Reject /proc "magic" links if inheriting creds. */
++		lookup_flags |= LOOKUP_NO_MAGICLINKS;
++	}
++
+ 	op->lookup_flags = lookup_flags;
+ 	return 0;
+ }
 diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index a332e79b3207..e074ee9c1e36 100644
+index e074ee9c1e36..33b9c7ad056b 100644
 --- a/include/linux/fcntl.h
 +++ b/include/linux/fcntl.h
-@@ -10,7 +10,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
+@@ -12,6 +12,8 @@
  	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_CRED_ALLOW)
+ 	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_CRED_ALLOW)
  
++#define VALID_OPENAT2_FLAGS (VALID_OPEN_FLAGS | OA2_CRED_INHERIT)
++
  /* List of all valid flags for the how->resolve argument: */
  #define VALID_RESOLVE_FLAGS \
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 80f37a0d40d7..9244c54bb933 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -89,6 +89,11 @@
- #define __O_TMPFILE	020000000
- #endif
+ 	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
+diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+index a5feb7604948..f803558ad62f 100644
+--- a/include/uapi/linux/openat2.h
++++ b/include/uapi/linux/openat2.h
+@@ -40,4 +40,6 @@ struct open_how {
+ 					return -EAGAIN if that's not
+ 					possible. */
  
-+#ifndef O_CRED_ALLOW
-+/* On parisc bit 23 is taken. On alpha bit 24 is also taken. Try bit 25. */
-+#define O_CRED_ALLOW	0200000000
-+#endif
++#define OA2_CRED_INHERIT		(1UL << 28)
 +
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- 
-diff --git a/net/core/scm.c b/net/core/scm.c
-index 9cd4b0a01cd6..f54fb0ee9727 100644
---- a/net/core/scm.c
-+++ b/net/core/scm.c
-@@ -111,6 +111,11 @@ static int scm_fp_copy(struct cmsghdr *cmsg, struct scm_fp_list **fplp)
- 			fput(file);
- 			return -EINVAL;
- 		}
-+		/* don't allow files with creds */
-+		if (file->f_flags & O_CRED_ALLOW) {
-+			fput(file);
-+			return -EPERM;
-+		}
- 		if (unix_get_socket(file))
- 			fpl->count_unix++;
- 
-diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
-index ce262d097269..347a5a9d3f29 100644
---- a/tools/testing/selftests/core/Makefile
-+++ b/tools/testing/selftests/core/Makefile
+ #endif /* _UAPI_LINUX_OPENAT2_H */
+diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
+index 254d676a2689..a1f4b5395f82 100644
+--- a/tools/testing/selftests/openat2/Makefile
++++ b/tools/testing/selftests/openat2/Makefile
 @@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS += -g $(KHDR_INCLUDES)
+ # SPDX-License-Identifier: GPL-2.0-or-later
  
--TEST_GEN_PROGS := close_range_test
-+TEST_GEN_PROGS := close_range_test cred_allow
+ CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined -static-libasan
+-TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
++TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test cred_inherit
  
  include ../lib.mk
  
-diff --git a/tools/testing/selftests/core/cred_allow.c b/tools/testing/selftests/core/cred_allow.c
+diff --git a/tools/testing/selftests/openat2/cred_inherit.c b/tools/testing/selftests/openat2/cred_inherit.c
 new file mode 100644
-index 000000000000..07d533207a2c
+index 000000000000..550a06763ac7
 --- /dev/null
-+++ b/tools/testing/selftests/core/cred_allow.c
-@@ -0,0 +1,139 @@
++++ b/tools/testing/selftests/openat2/cred_inherit.c
+@@ -0,0 +1,105 @@
 +// SPDX-License-Identifier: GPL-2.0
 +#include <errno.h>
 +#include <fcntl.h>
@@ -258,129 +325,132 @@ index 000000000000..07d533207a2c
 +#include <string.h>
 +
 +#include "../kselftest.h"
++#include "helpers.h"
 +
 +#ifndef O_CRED_ALLOW
 +#define O_CRED_ALLOW 0x2000000
 +#endif
 +
-+enum { FD_NORM, FD_CE, FD_CA, FD_MAX };
++#ifndef OA2_CRED_INHERIT
++#define OA2_CRED_INHERIT (1UL << 28)
++#endif
 +
-+static int is_opened(int n)
-+{
-+	char buf[256];
-+
-+	snprintf(buf, sizeof(buf), "/proc/self/fd/%d", n);
-+	return (access(buf, F_OK) == 0);
-+}
-+
-+/* Sends an FD on a UNIX socket. Returns 0 on success or -errno. */
-+static int send_fd(int usock, int fd_tx)
-+{
-+	union {
-+		/* Aligned ancillary data buffer. */
-+		char buf[CMSG_SPACE(sizeof(fd_tx))];
-+		struct cmsghdr _align;
-+	} cmsg_tx = {};
-+	char data_tx = '.';
-+	struct iovec io = {
-+		.iov_base = &data_tx,
-+		.iov_len = sizeof(data_tx),
-+	};
-+	struct msghdr msg = {
-+		.msg_iov = &io,
-+		.msg_iovlen = 1,
-+		.msg_control = &cmsg_tx.buf,
-+		.msg_controllen = sizeof(cmsg_tx.buf),
-+	};
-+	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
-+
-+	cmsg->cmsg_len = CMSG_LEN(sizeof(fd_tx));
-+	cmsg->cmsg_level = SOL_SOCKET;
-+	cmsg->cmsg_type = SCM_RIGHTS;
-+	memcpy(CMSG_DATA(cmsg), &fd_tx, sizeof(fd_tx));
-+
-+	if (sendmsg(usock, &msg, 0) < 0)
-+		return -errno;
-+	return 0;
-+}
++enum { FD_NORM, FD_NCA, FD_DIR, FD_DCA, FD_MAX };
 +
 +int main(int argc, char *argv[], char *env[])
 +{
-+	int status;
++	struct open_how how1 = {
++				.flags = O_RDONLY,
++				.resolve = RESOLVE_BENEATH,
++			       };
++	struct open_how how2 = {
++				.flags = O_RDONLY | OA2_CRED_INHERIT,
++				.resolve = RESOLVE_BENEATH,
++			       };
++	int size = sizeof(struct open_how);
++	int i;
++	int fd;
 +	int err;
-+	pid_t pid;
-+	int socket_fds[2];
 +	int fds[FD_MAX];
 +#define NFD(n) ((n) + 3)
-+#define FD_OK(n) (NFD(n) == fds[n] && is_opened(fds[n]))
++#define FD_OK(n) (NFD(n) == fds[n])
 +
-+	if (argc > 1 && strcmp(argv[1], "--child") == 0) {
-+		int nfd = 0;
-+		ksft_print_msg("we are child\n");
-+		ksft_set_plan(3);
-+		nfd += is_opened(NFD(FD_NORM));
-+		ksft_test_result(nfd == 1, "normal fd opened\n");
-+		nfd += is_opened(NFD(FD_CE));
-+		ksft_test_result(nfd == 1, "O_CLOEXEC fd closed\n");
-+		nfd += is_opened(NFD(FD_CA));
-+		ksft_test_result(nfd == 1, "O_CRED_ALLOW fd closed\n");
-+		/* exit with non-zero status propagates to parent's failure */
-+		ksft_finished();
++	if (!openat2_supported) {
++		ksft_print_msg("openat2(2) unsupported\n");
 +		return 0;
 +	}
 +
-+	ksft_set_plan(7);
++	ksft_set_plan(14);
 +
-+	fds[FD_NORM] = open("/proc/self/exe", O_RDONLY);
-+	fds[FD_CE] = open("/proc/self/exe", O_RDONLY | O_CLOEXEC);
-+	fds[FD_CA] = open("/proc/self/exe", O_RDONLY | O_CRED_ALLOW);
-+	ksft_test_result(FD_OK(FD_NORM), "regular open\n");
-+	ksft_test_result(FD_OK(FD_CE), "O_CLOEXEC open\n");
-+	ksft_test_result(FD_OK(FD_CA), "O_CRED_ALLOW open\n");
++	fds[FD_NORM] = open("/proc/self/maps", O_RDONLY);
++	fds[FD_NCA] = open("/proc/self/maps", O_RDONLY | O_CRED_ALLOW);
++	fds[FD_DIR] = open("/proc/self", O_RDONLY | O_DIRECTORY);
++	fds[FD_DCA] = open("/proc/self", O_RDONLY | O_DIRECTORY | O_CRED_ALLOW);
++	ksft_test_result(FD_OK(FD_NORM), "file open\n");
++	ksft_test_result(FD_OK(FD_NCA), "file open with O_CRED_ALLOW\n");
++	ksft_test_result(FD_OK(FD_DIR), "directory open\n");
++	ksft_test_result(FD_OK(FD_DCA), "directory open with O_CRED_ALLOW\n");
 +
-+	err = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, socket_fds);
++	err = fchdir(fds[FD_DIR]);
 +	if (err) {
-+		ksft_perror("socketpair() failed");
-+		ksft_exit_fail_msg("socketpair\n");
++		ksft_perror("fchdir() failed");
++		ksft_exit_fail_msg("fchdir\n");
 +		return 1;
 +	}
-+	err = send_fd(socket_fds[0], fds[FD_NORM]);
-+	ksft_test_result(err == 0, "normal fd sent\n");
-+	err = send_fd(socket_fds[0], fds[FD_CE]);
-+	ksft_test_result(err == 0, "O_CLOEXEC fd sent\n");
-+	err = send_fd(socket_fds[0], fds[FD_CA]);
-+	ksft_test_result(err == -EPERM, "O_CRED_ALLOW fd not sent, EPERM\n");
-+	close(socket_fds[0]);
-+	close(socket_fds[1]);
++	fd = syscall(SYS_openat2, AT_FDCWD, "maps", &how1, size);
++	ksft_test_result(fd != -1, "AT_FDCWD success\n");
++	close(fd);
++	/* OA2_CRED_INHERIT fails with AT_FDCWD */
++	fd = syscall(SYS_openat2, AT_FDCWD, "maps", &how2, size);
++	ksft_test_result(fd == -1 && errno == EINVAL, "AT_FDCWD EINVAL\n");
 +
-+	pid = fork();
-+	if (pid < 0) {
-+		ksft_perror("fork() failed");
-+		ksft_exit_fail_msg("fork\n");
-+		return 1;
-+	}
++	fd = syscall(SYS_openat2, fds[FD_NORM], "maps", &how1, size);
++	ksft_test_result(fd == -1 && errno == ENOTDIR, "regilar file ENOTDIR\n");
++	/* No O_CRED_ALLOW -> EPERM */
++	fd = syscall(SYS_openat2, fds[FD_NORM], "maps", &how2, size);
++	ksft_test_result(fd == -1 && errno == EPERM, "regilar file EPERM\n");
 +
-+	if (pid == 0) {
-+		char *cargv[] = {"cred_allow", "--child", NULL};
++	fd = syscall(SYS_openat2, fds[FD_NCA], "maps", &how1, size);
++	ksft_test_result(fd == -1 && errno == ENOTDIR, "regilar file ENOTDIR\n");
++	fd = syscall(SYS_openat2, fds[FD_NCA], "maps", &how2, size);
++	ksft_test_result(fd == -1 && errno == ENOTDIR, "regilar file ENOTDIR\n");
 +
-+		execve("/proc/self/exe", cargv, env);
-+		ksft_perror("execve() failed");
-+		ksft_exit_fail_msg("execve\n");
-+		return 1;
-+	}
++	fd = syscall(SYS_openat2, fds[FD_DIR], "maps", &how1, size);
++	ksft_test_result(fd != -1, "dir fd success\n");
++	close(fd);
++	/* No O_CRED_ALLOW -> EPERM */
++	fd = syscall(SYS_openat2, fds[FD_DIR], "maps", &how2, size);
++	ksft_test_result(fd == -1 && errno == EPERM, "dir fd EPERM\n");
 +
-+	if (waitpid(pid, &status, 0) != pid) {
-+		ksft_perror("waitpid() failed");
-+		ksft_exit_fail_msg("waitpid\n");
-+		return 1;
-+	}
-+	ksft_print_msg("back to parent\n");
++	fd = syscall(SYS_openat2, fds[FD_DCA], "maps", &how1, size);
++	ksft_test_result(fd != -1, "dir O_CRED_ALLOW fd success\n");
++	close(fd);
++	fd = syscall(SYS_openat2, fds[FD_DCA], "maps", &how2, size);
++	ksft_test_result(fd != -1, "dir O_CRED_ALLOW fd O_CRED_INHERIT success\n");
++	close(fd);
 +
-+	ksft_test_result(status == 0, "child success\n");
-+
++	for (i = 0; i < FD_MAX; i++)
++		close(fds[i]);
 +	ksft_finished();
 +	return 0;
 +}
+diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
+index 9024754530b2..5095288fe1ac 100644
+--- a/tools/testing/selftests/openat2/openat2_test.c
++++ b/tools/testing/selftests/openat2/openat2_test.c
+@@ -28,6 +28,10 @@
+ #define	O_LARGEFILE 0x8000
+ #endif
+ 
++#ifndef OA2_CRED_INHERIT
++#define OA2_CRED_INHERIT (1UL << 28)
++#endif
++
+ struct open_how_ext {
+ 	struct open_how inner;
+ 	uint32_t extra1;
+@@ -159,7 +163,7 @@ struct flag_test {
+ 	int err;
+ };
+ 
+-#define NUM_OPENAT2_FLAG_TESTS 25
++#define NUM_OPENAT2_FLAG_TESTS 27
+ 
+ void test_openat2_flags(void)
+ {
+@@ -233,6 +237,12 @@ void test_openat2_flags(void)
+ 		{ .name = "invalid how.resolve and O_PATH",
+ 		  .how.flags = O_PATH,
+ 		  .how.resolve = 0x1337, .err = -EINVAL },
++		{ .name = "invalid how.resolve and OA2_CRED_INHERIT",
++		  .how.flags = OA2_CRED_INHERIT,
++		  .how.resolve = 0, .err = -EPERM },
++		{ .name = "invalid AT_FDCWD and OA2_CRED_INHERIT",
++		  .how.flags = OA2_CRED_INHERIT,
++		  .how.resolve = 0x08, .err = -EINVAL },
+ 
+ 		/* currently unknown upper 32 bit rejected. */
+ 		{ .name = "currently unknown bit (1 << 63)",
 -- 
 2.44.0
 
