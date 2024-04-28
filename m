@@ -1,109 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-17987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860FD8B48F8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 02:57:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3C78B4900
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 03:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F709B21419
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 00:57:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77EF2B21EB5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 01:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F7A10F2;
-	Sun, 28 Apr 2024 00:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IWHqDCYU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DA6A5F;
+	Sun, 28 Apr 2024 01:09:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758067E1;
-	Sun, 28 Apr 2024 00:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE7E7E2
+	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 01:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714265848; cv=none; b=cog7h0mayUNiy74bCCewoqZKCwaKH6d/MOtgEPlT9kQxgOor0SkrnAqR13RNsyijiqmJdRWuvnTMHXjNqetCPfSY8KXW8n6sHoL95EoWPlRJq22uPMIY8iuqRQukdIA2G1ltX3lo/6Wwol+mUEhr5svaMDOkMnABPfRgDOgGSAs=
+	t=1714266548; cv=none; b=kw0Q35yZeZLtVj1x0WwmBlO5Dy4wqXN4zqUrHbRsYf1YBDqMk2i+audP5Pk04ZpkiJcmEWKztmQZniCi0AfzSaEmCF3nVj1GJoIBi/LQnVq6Ddk1kJt2wZw7WKb3a8EWmvjU72S72NuKPWd+Ej/hfV9D45zs5jTCcqQ8GIFivDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714265848; c=relaxed/simple;
-	bh=54uIGKbchIqeyGHCinmigs69p/bVqpwlPIcL4lKukpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uonBy4nHXkFcmUKnQcq79r86Pm3L9ZoB9gyNuX2KMUniWp4vCuyqqSa5HTGDPaHNYsszm8QiuH6qGFpfFqsHG4fw+QBsTF4I/tN/dTbTUyjyfqKKKkr92xEhC6MSCEmv9HfynDqc6/CT9bU3Xw2oYeq0y/WICxWi8yJfZ0Otpn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IWHqDCYU; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iEhnO4AWXoNxFsAFeSCOgVl/u1tIJg7C/6bLYFJsfso=; b=IWHqDCYUczIV+YtqAUlL6HVU+V
-	qCtZyJpY5Sh2NfLpSQK0jlGyEtErUphjfxsjrprhsLPjB+PmckQ17consJv5VugT5B64CyFQ3dIAD
-	WajK1Il7ARNNEV/N8P0Mb0R5DHCFMJoAMKyWI7Qmz4Lu6MNnDpgneBWjCEKZoSN8OpO1PbghXkg+c
-	vrs8MDYIDAUlKDlpojo4H5DPbN0R8m6m/6qvwBnplNJ9p4Lm03LOOuvj5k846ad5o1rV/sczirBif
-	P5BktIszYYw7GDr4ZqNSZVwKat58sz1tf2UdKbpR4DrowlURDVSud5kA9E9EvWWc+Q5LmyKtpUtoW
-	wy8sUNtw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s0sqz-0000000GWGt-1oqf;
-	Sun, 28 Apr 2024 00:57:17 +0000
-Date: Sat, 27 Apr 2024 17:57:17 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>, ziy@nvidia.com
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, djwong@kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandan.babu@oracle.com,
-	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
-	p.raghav@samsung.com
-Subject: Re: [PATCH v4 05/11] mm: do not split a folio if it has minimum
- folio order requirement
-Message-ID: <Zi2e7ecKJK6p6ERu@bombadil.infradead.org>
-References: <20240425113746.335530-1-kernel@pankajraghav.com>
- <20240425113746.335530-6-kernel@pankajraghav.com>
- <Ziq4qAJ_p7P9Smpn@casper.infradead.org>
- <Zir5n6JNiX14VoPm@bombadil.infradead.org>
- <Ziw8w3P9vljrO9JV@bombadil.infradead.org>
+	s=arc-20240116; t=1714266548; c=relaxed/simple;
+	bh=X1sXRCr05tBiWPyr7yjJQO+IR/q09WNlq+55NjPqLv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YNbZu4tXVbXTD8ziSIqHeh8naRZfAKtYVUoRs12adskPaenrj0v29JoL60gdFji2BmmySVeajlsLbEFtxGRuEad8ZAzFTEIStX/i1c2mW/BEraig/ylr67XB1ulvJSuiJDmnzsThNgi8O/KT8P/fiH858cO9bb0WmYQzklMXnAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VRpDZ447SzvPr0;
+	Sun, 28 Apr 2024 09:05:50 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id F29FC1403D2;
+	Sun, 28 Apr 2024 09:08:56 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Sun, 28 Apr 2024 09:08:56 +0800
+Message-ID: <38017f5c-a74a-4d66-9092-efa79ffebfb9@huawei.com>
+Date: Sun, 28 Apr 2024 09:08:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ziw8w3P9vljrO9JV@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: use memalloc_nofs_save() in page_cache_ra_order()
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>, zhangyi
+	<yi.zhang@huawei.com>
+References: <20240426112938.124740-1-wangkefeng.wang@huawei.com>
+ <20240426114905.216e3d41b97f9a59be26999e@linux-foundation.org>
+ <Zix0zk2faI6HeG9D@casper.infradead.org>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <Zix0zk2faI6HeG9D@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-On Fri, Apr 26, 2024 at 04:46:11PM -0700, Luis Chamberlain wrote:
-> On Thu, Apr 25, 2024 at 05:47:28PM -0700, Luis Chamberlain wrote:
-> > On Thu, Apr 25, 2024 at 09:10:16PM +0100, Matthew Wilcox wrote:
-> > > On Thu, Apr 25, 2024 at 01:37:40PM +0200, Pankaj Raghav (Samsung) wrote:
-> > > > From: Pankaj Raghav <p.raghav@samsung.com>
-> > > > 
-> > > > using that API for LBS is resulting in an NULL ptr dereference
-> > > > error in the writeback path [1].
-> > > >
-> > > > [1] https://gist.github.com/mcgrof/d12f586ec6ebe32b2472b5d634c397df
-> > > 
-> > >  How would I go about reproducing this?
 
-Well so the below fixes this but I am not sure if this is correct.
-folio_mark_dirty() at least says that a folio should not be truncated
-while its running. I am not sure if we should try to split folios then
-even though we check for writeback once. truncate_inode_partial_folio()
-will folio_wait_writeback() but it will split_folio() before checking
-for claiming to fail to truncate with folio_test_dirty(). But since the
-folio is locked its not clear why this should be possible.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 83955362d41c..90195506211a 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3058,7 +3058,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 	if (new_order >= folio_order(folio))
- 		return -EINVAL;
- 
--	if (folio_test_writeback(folio))
-+	if (folio_test_dirty(folio) || folio_test_writeback(folio))
- 		return -EBUSY;
- 
- 	if (!folio_test_anon(folio)) {
+On 2024/4/27 11:45, Matthew Wilcox wrote:
+> On Fri, Apr 26, 2024 at 11:49:05AM -0700, Andrew Morton wrote:
+>> On Fri, 26 Apr 2024 19:29:38 +0800 Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+>>>    io_schedule+0x24/0xa0
+>>>    __folio_lock+0x130/0x300
+>>>    migrate_pages_batch+0x378/0x918
+>>>    migrate_pages+0x350/0x700
+>>>    compact_zone+0x63c/0xb38
+>>>    compact_zone_order+0xc0/0x118
+>>>    try_to_compact_pages+0xb0/0x280
+>>>    __alloc_pages_direct_compact+0x98/0x248
+>>>    __alloc_pages+0x510/0x1110
+>>>    alloc_pages+0x9c/0x130
+>>>    folio_alloc+0x20/0x78
+>>>    filemap_alloc_folio+0x8c/0x1b0
+>>>    page_cache_ra_order+0x174/0x308
+>>>    ondemand_readahead+0x1c8/0x2b8
+>>
+>> I'm thinking
+>>
+>> Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
+>> Cc: stable
+> 
+> I think it goes back earlier than that.
+> https://lore.kernel.org/linux-mm/20200128060304.GA6615@bombadil.infradead.org/
+> details how it can happen with the old readpages code.  It's just easier
+> to hit now.
+> 
+
+The page_cache_ra_order() is introduced from 793917d997df, but previous
+bugfix f2c817bed58d ("mm: use memalloc_nofs_save in readahead path")
+don't Cc stable, so the previous patch should be posted to stable?
 
