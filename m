@@ -1,160 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-17995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B773D8B495C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 05:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF5A8B4963
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 05:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE1C2825B2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 03:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0DDA1C20C33
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 03:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2654C28F1;
-	Sun, 28 Apr 2024 03:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJ7UqIrI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7282907;
+	Sun, 28 Apr 2024 03:26:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0735915A4;
-	Sun, 28 Apr 2024 03:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5805A1854;
+	Sun, 28 Apr 2024 03:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714274603; cv=none; b=srOHzBYd0HPHDlR9uBWnuQWOslCkym8A3TaAKRp0XRXG2NP9ZyzHEM1jYlthw5ci5NGVlfVs6Y4JC8RP81tdvsoRNl18pM65gn5R1Nx7HDob1FeI9ytqJ0WW93lVqAb5xTAT08MoLhiljFFxzXtBm4PyU22vZpbVqWGqGNs7tnw=
+	t=1714274768; cv=none; b=G6dXRwcGYpbq7VjpHEHxBHdBvi91ywGeY9JAfksdv480mJ01k6X0JRAwyhOM7xaHbR1qYVo/oKVURosohX2RLodTTtWMCQ9fULgbooM5U+Q8dICqqgoS6FhIuMfSbgRCpcbJfVKoqlk3ohUUJeWBjF0Y8kHnULMNy9DWXq15+dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714274603; c=relaxed/simple;
-	bh=3VdbSUjP3eJlri/gGS+1w5VBWjDH3Cbj6PZzvQnzlBY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QmOOC6ZMbc1flEPZyh3iHnFbf+2kUej5xITWarBY04JLmA8PJBMQN3DGGePeiB+SG5MiQjym4GIEaqpWsnTbMPqJAPf7T7Ldw2iRh8dwU8Sn5tq6W88n9qNYwA6kAwhT9VSI7+8a6G+fW1GguYONor8fgpYEPPD7kMVbWpdgw6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJ7UqIrI; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714274603; x=1745810603;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=3VdbSUjP3eJlri/gGS+1w5VBWjDH3Cbj6PZzvQnzlBY=;
-  b=KJ7UqIrIn48mTuT0MhAQYiGPfAl8i89TBGyPSphDJ0yoW/USCQ29Vn2l
-   gj2JhvHtkfPEbUi1sijWpJ+JwHbs+DREibA7bnHDNBR/DIdTpZ6qkrnAl
-   XS7Eha4F7k22+aC2RU5TAr/7UFkJIit6DSQCFofQqpK0CfZdlc6YrtV6g
-   SCQTwXxYwVN3qkoGxUK/9XPpOTMyJVJg4C4kSUcxkbfrxvgqsDXem92jI
-   GmoHCtuj4cnfwbmclZJefJfdbs2WzyKrfuDY6St3sIJFa06Xu9Y1bBwlK
-   W5wnSzBCzzfO8C2OP+HxL7oAFazQBNI9pGofWfHUSHBTw0VuABLp34yCM
-   w==;
-X-CSE-ConnectionGUID: G+JSJnJ7TpqgJdfN/hG48Q==
-X-CSE-MsgGUID: PMbicFgZTtqjJ7iCFNEUsg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11057"; a="20522215"
-X-IronPort-AV: E=Sophos;i="6.07,236,1708416000"; 
-   d="scan'208";a="20522215"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2024 20:23:22 -0700
-X-CSE-ConnectionGUID: yBivDVFrS8q2dgPD5A/8Aw==
-X-CSE-MsgGUID: nJUD/d7bQsGwEcvEC2dXUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,236,1708416000"; 
-   d="scan'208";a="26413851"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2024 20:23:17 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,  Kairui Song <ryncsn@gmail.com>,
-  linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Barry Song <v-songbaohua@oppo.com>,  Ryan
- Roberts <ryan.roberts@arm.com>,  Neil Brown <neilb@suse.de>,  Minchan Kim
- <minchan@kernel.org>,  Hugh Dickins <hughd@google.com>,  David Hildenbrand
- <david@redhat.com>,  Yosry Ahmed <yosryahmed@google.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
-In-Reply-To: <CANeU7QknjZrRXH71Uejs1BCKHsmFe5X=neK7D1d1fyos0sAb9Q@mail.gmail.com>
-	(Chris Li's message of "Sat, 27 Apr 2024 19:43:20 -0700")
-References: <20240417160842.76665-1-ryncsn@gmail.com>
-	<87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<Zico_U_i5ZQu9a1N@casper.infradead.org>
-	<87o79zsdku.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com>
-	<87bk5uqoem.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CANeU7QknjZrRXH71Uejs1BCKHsmFe5X=neK7D1d1fyos0sAb9Q@mail.gmail.com>
-Date: Sun, 28 Apr 2024 11:21:25 +0800
-Message-ID: <871q6qqiiy.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1714274768; c=relaxed/simple;
+	bh=dRbYW5r1aha79uQUUDDP7FX0PER5xuIeZ/k7nBZKlQs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cmY6WszkunThFlqRB8YjiNfj6VDXTp1XdOAjMbCo4Lvi/69vvIpH0zudJ3nakWdFUKA1mlOtSnC7mJpSwDv14uqdQIoPM0sit3U4ydCRahgZc1TWViN4yOL0cwIbgQ1jdfduzl6OShJub5QBqBXZKBS9Q5D/pHsXsFj+vzSYiY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VRsLF1V3tz4f3k6h;
+	Sun, 28 Apr 2024 11:25:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 2D14A1A0568;
+	Sun, 28 Apr 2024 11:26:02 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgBXfA_IwS1m1qSpLQ--.48414S3;
+	Sun, 28 Apr 2024 11:26:01 +0800 (CST)
+Subject: Re: [PATCH v5 4/9] xfs: convert delayed extents to unwritten when
+ zeroing post eof blocks
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+ tytso@mit.edu, jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
+ <20240425131335.878454-5-yi.zhang@huaweicloud.com>
+ <20240425182904.GA360919@frogsfrogsfrogs>
+ <3be86418-e629-c7e6-fd73-f59f97a73a89@huaweicloud.com>
+ <ZitKncYr0cCmU0NG@infradead.org>
+ <5b6228ce-c553-3387-dfc4-2db78e3bd810@huaweicloud.com>
+ <ZiyiNzQ6oY3ZAohg@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <c4ab199e-92bf-4b22-fe41-1fca400bdc31@huaweicloud.com>
+Date: Sun, 28 Apr 2024 11:26:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ZiyiNzQ6oY3ZAohg@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgBXfA_IwS1m1qSpLQ--.48414S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7GryDZF1ftw1DXw47uF1UAwb_yoWDCrbEg3
+	9Yv39rCr4kAa13AF45Kw15Jrs2kr1rKr1rXrZ8Xrs7JrW8AFykJas5ur93Z3y7Xa1Yyr1a
+	9F9av3W7Z3sFvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Chris Li <chrisl@kernel.org> writes:
-
-> On Sat, Apr 27, 2024 at 6:16=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
-> wrote:
+On 2024/4/27 14:59, Christoph Hellwig wrote:
+> On Fri, Apr 26, 2024 at 03:18:17PM +0800, Zhang Yi wrote:
+>> I've had the same idea before, I asked Dave and he explained that Linux
+>> could leak data beyond EOF page for some cases, e.g. mmap() can write to
+>> the EOF page beyond EOF without failing, and the data in that EOF page
+>> could be non-zeroed by mmap(), so the zeroing is still needed now.
 >>
->> Chris Li <chrisl@kernel.org> writes:
->>
->> > Hi Ying,
->> >
->> > For the swap file usage, I have been considering an idea to remove the
->> > index part of the xarray from swap cache. Swap cache is different from
->> > file cache in a few aspects.
->> > For one if we want to have a folio equivalent of "large swap entry".
->> > Then the natural alignment of those swap offset on does not make
->> > sense. Ideally we should be able to write the folio to un-aligned swap
->> > file locations.
->> >
->> > The other aspect for swap files is that, we already have different
->> > data structures organized around swap offset, swap_map and
->> > swap_cgroup. If we group the swap related data structure together. We
->> > can add a pointer to a union of folio or a shadow swap entry.
->>
->> The shadow swap entry may be freed.  So we need to prepare for that.
->
-> Free the shadow swap entry will just set the pointer to NULL.
-> Are you concerned that the memory allocated for the pointer is not
-> free to the system after the shadow swap entry is free?
->
-> It will be subject to fragmentation on the free swap entry.
-> In that regard, xarray is also subject to fragmentation. It will not
-> free the internal node if the node has one xa_index not freed. Even if
-> the xarray node is freed to slab, at slab level there is fragmentation
-> as well, the backing page might not free to the system.
+>> OTOH, if we free the delalloc and unwritten blocks beyond EOF blocks, he
+>> said it could lead to some performance problems and make thinks
+>> complicated to deal with the trimming of EOF block. Please see [1]
+>> for details and maybe Dave could explain more.
+> 
+> Oh well.  Given that we're full in on the speculative allocations
+> we might as well deal with it.
+> 
 
-Sorry my words were confusing.  What I wanted to say is that the xarray
-node may be freed.
+Let me confirm, so you also think the preallocations in the COW fork that
+overlaps the unreflinked range is useless, we should avoid allocating
+this range, is that right? If so, I suppose we can do this improvement in
+another patch(set), this one works fine now.
 
->> And, in current design, only swap_map[] is allocated if the swap space
->> isn't used.  That needs to be considered too.
->
-> I am aware of that. I want to make the swap_map[] not static allocated
-> any more either.
+Thanks,
+Yi.
 
-Yes.  That's possible.
-
-> The swap_map static allocation forces the rest of the swap data
-> structure to have other means to sparsely allocate their data
-> structure, repeating the fragmentation elsewhere, in different
-> ways.That is also the one major source of the pain point hacking on
-> the swap code. The data structure is spread into too many different
-> places.
-
-Look forward to more details to compare :-)
-
->> > We can use atomic updates on the swap struct member or breakdown the
->> > access lock by ranges just like swap cluster does.
->>
->> The swap code uses xarray in a simple way.  That gives us opportunity to
->> optimize.  For example, it makes it easy to use multiple xarray
->
-> The fixed swap offset range makes it like an array. There are many
-> ways to shard the array like swap entry, e.g. swap cluster is one way
-> to shard it. Multiple xarray is another way. We can also do multiple
-> xarray like sharding, or even more fancy ones.
-
---
-Best Regards,
-Huang, Ying
 
