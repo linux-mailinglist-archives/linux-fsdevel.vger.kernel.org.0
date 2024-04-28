@@ -1,172 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-18015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBC98B4D46
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 19:37:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50218B4D48
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 19:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69801B20B1C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 17:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7123B281590
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 17:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BA73510;
-	Sun, 28 Apr 2024 17:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0565B73526;
+	Sun, 28 Apr 2024 17:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOzbiPHs"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Tfu+By08"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6AE79F0;
-	Sun, 28 Apr 2024 17:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCA073506;
+	Sun, 28 Apr 2024 17:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714325844; cv=none; b=DlkBwL/J60om7GdUJ673RJQvaOlOmxY0dDjezSTzrYkjQjOhY1Tn/PEpEorC/WL/VUCbWSlUKb7U6dS9RwKt/OAh814KnogZprlNIoE2Fz41Kqd3DhifF8IvJAqLXg9rnP3IGgVl/Ni21MVTG+6LczhjyWgGg9VkPk/amU+IQo0=
+	t=1714325967; cv=none; b=WjNEFZTUumwayA1NF7wzTRnLA2BXnuH7sljhcqwTe36IKPq3c3X+nFUftOvmMoTvbtMbQ+I4zAB2uXehYG3155455SZcdaabdJ2uDBf8EJr5XWQyGZL0JszubCUjZPHsqP7dmrB0GA0800QiIzp+0vGZ8z5NEl3tuRy7jxvEdKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714325844; c=relaxed/simple;
-	bh=k/p0+piWbqFxV0/iw58pgAaRMUt66R+LBwhDr0aqIVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WLMeSVOab1BjMiIceQHU05diXdEot+M5uQJoYB/GVs8XdAO1lZeJBumouDRB2nvwgc8+MbZqYDnyGzvPodGoo3xcplOMjioeoSFbgdhuGv2F2JAqgZUBSQ7JeN7t20H7ToRUwCqKwDkZvhmKu0/JvTtjlh1ukP1NF78O5UHO2r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EOzbiPHs; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2dd6c14d000so45175261fa.0;
-        Sun, 28 Apr 2024 10:37:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714325841; x=1714930641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2M+7SXqqUCz3AMb8S+u8A0bUNwyf95ASvG0+qysyKfY=;
-        b=EOzbiPHsJA8Gpknno4b55KEoTi0FAuy5FsXkqSo/zExyHjcGGGRmaLZFdYgL4HE+VH
-         8YrZ+VtvRHRTFLGHnL3ZtXR1IsjarVYGDRCpK1oQVYMxPwXJ0ODHZKC5DSlgDlSSOeix
-         OKIii5q2p71jor1xslh7df2h2ypH1/vlP4z5ku0IlWyMi9rgCNmr2nIm83fknI3Q+VV3
-         Utuuzv95/YfWYqQu0qZrBU1t00oCxVUfquyzCmqsA/AkyNzOC8vTfWsCCDVFReDcryYf
-         sjpNc4NQOuR2eYPm/dpnts/BNTnX+4yUAyFLz+ALn+hbsmlppVEJLCa74Dsu8RnYB3bn
-         3lxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714325841; x=1714930641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2M+7SXqqUCz3AMb8S+u8A0bUNwyf95ASvG0+qysyKfY=;
-        b=Lcd8RMe2dnsU4H54Iqmrcj5lrI/kF2zyldFRQMEhKTSNS6vpXfnEQGTWg8aTFYZQXy
-         hyDpiBecQEHpfmVQaMItVuB3AvULQRDxrrpIv2+X8yaIBPZlCTyx+zmzBLGEAh7/bvpy
-         Wpz/rFit+lje3RvNnF6BnpruqPToKik80V4XuOphS/z6zQg9R6UN0E07WnYzCJL4KyKe
-         ts+MZAkU5NbX3dRdwoKaDMa1cx/VoTXQ3kf1GZrLoLKw1Hy+LJD60PQ3QdqGiOH9d8Iy
-         CSHPLFQ/JKyf+nWLN2HCJdp+tFG3Z9+mYAOGSqp4zUiNjXMWSYbQR3/oduy1flxmh6pd
-         vChg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgOUx7rMGVg6oRT0wlCJKOwModajlBpiiE/jVqHKbt3vvPH4D+8JZkEx6tMrv5HhWtaejvqQYzYGnCDfB8JwDVeqSFlAZGjlsdqBG1lENaTJ6c7YxWIMoeQf5nJWMe2oyfIa1GW7LY9XzdSQ==
-X-Gm-Message-State: AOJu0YyBN0wVMYNRVcDhh7FUSgbUmXibwjTyOUPvrjIJivGurjQB5a0k
-	2DZQG6q5m+V4jwYOQhm5FUAE2y2dhY1RTT/OAdbHNOwO8IES+5EQ/uLTjJy4xceHFeiqdt/0Z4O
-	AjcUrxzE1Scltx2kuBJ5FJMGwSyI=
-X-Google-Smtp-Source: AGHT+IETOZuoJd/xz6aIGmwIsw9yXSQIJCM4rWPYbEALodfeYov81CKqQggfN1JeZG0fTBDgM6yKkiGNkU+PuSxgCiI=
-X-Received: by 2002:a2e:9d10:0:b0:2db:ef48:ea38 with SMTP id
- t16-20020a2e9d10000000b002dbef48ea38mr5486201lji.45.1714325840835; Sun, 28
- Apr 2024 10:37:20 -0700 (PDT)
+	s=arc-20240116; t=1714325967; c=relaxed/simple;
+	bh=9vIlJGfggIMfPt+kTenoSp+mbnyzBRWNaGgd/qGD9jY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WRXVrLt/h0q9zC1HqLnzX1xTpKGii54iqLxHFX+7+vhK/I3NJkim85ENGwg5NjVqpSvPEbbx9N5+tCEhKKvE4EptU1ECeXBV1H/j+ttHrXNn2N+spi5ly+YwWvnESAy/DFfaBl6rfCYQAFCZZzXXNOfisVdIUt+We9maWt2SiL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=Tfu+By08; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:230c:0:640:f8e:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 32A8960ED8;
+	Sun, 28 Apr 2024 20:39:20 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id GdTtsTB1F0U0-lo6nDCcX;
+	Sun, 28 Apr 2024 20:39:18 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1714325958; bh=9vIlJGfggIMfPt+kTenoSp+mbnyzBRWNaGgd/qGD9jY=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=Tfu+By08UfkKGhVPTYhVI6BnA1Wju3hpF4QtM5GMyJHs87pOGnq9ahyKkfaSFOBYd
+	 PuZNm7p1jJK6yGWp1W8xCE+fwRghzwRyBYV8iPO+bqdHVPRX2Gfs9nmNmrkCL1/p3C
+	 rdQ5IkGjX1fUJW878+sX+jTCYXmQAKpUwbSffXfM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <8e186307-bed2-4b5c-9bc6-bdc70171cc93@yandex.ru>
+Date: Sun, 28 Apr 2024 20:39:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417160842.76665-1-ryncsn@gmail.com> <87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <Zico_U_i5ZQu9a1N@casper.infradead.org> <87o79zsdku.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com>
-In-Reply-To: <CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 29 Apr 2024 01:37:04 +0800
-Message-ID: <CAMgjq7AD=n0T8C=pn_NM2nr-njNKXOxLh49GRrnP0ugGvuATcA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
-To: Chris Li <chrisl@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Barry Song <v-songbaohua@oppo.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, Minchan Kim <minchan@kernel.org>, 
-	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Content-Language: en-US
+To: Andy Lutomirski <luto@amacapital.net>, Aleksa Sarai <cyphar@cyphar.com>,
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240426133310.1159976-1-stsp2@yandex.ru>
+ <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 27, 2024 at 7:16=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
+28.04.2024 19:41, Andy Lutomirski пишет:
+>> On Apr 26, 2024, at 6:39 AM, Stas Sergeev <stsp2@yandex.ru> wrote:
+>> ﻿This patch-set implements the OA2_CRED_INHERIT flag for openat2() syscall.
+>> It is needed to perform an open operation with the creds that were in
+>> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLOW
+>> flag. This allows the process to pre-open some dirs and switch eUID
+>> (and other UIDs/GIDs) to the less-privileged user, while still retaining
+>> the possibility to open/create files within the pre-opened directory set.
+>>
+> Then two different things could be done:
 >
-> Hi Ying,
+> 1. The subtree could be used unmounted or via /proc magic links. This
+> would be for programs that are aware of this interface.
 >
-> On Tue, Apr 23, 2024 at 7:26=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
-> wrote:
-> >
-> > Hi, Matthew,
-> >
-> > Matthew Wilcox <willy@infradead.org> writes:
-> >
-> > > On Mon, Apr 22, 2024 at 03:54:58PM +0800, Huang, Ying wrote:
-> > >> Is it possible to add "start_offset" support in xarray, so "index"
-> > >> will subtract "start_offset" before looking up / inserting?
-> > >
-> > > We kind of have that with XA_FLAGS_ZERO_BUSY which is used for
-> > > XA_FLAGS_ALLOC1.  But that's just one bit for the entry at 0.  We cou=
-ld
-> > > generalise it, but then we'd have to store that somewhere and there's
-> > > no obvious good place to store it that wouldn't enlarge struct xarray=
-,
-> > > which I'd be reluctant to do.
-> > >
-> > >> Is it possible to use multiple range locks to protect one xarray to
-> > >> improve the lock scalability?  This is why we have multiple "struct
-> > >> address_space" for one swap device.  And, we may have same lock
-> > >> contention issue for large files too.
-> > >
-> > > It's something I've considered.  The issue is search marks.  If we de=
-lete
-> > > an entry, we may have to walk all the way up the xarray clearing bits=
- as
-> > > we go and I'd rather not grab a lock at each level.  There's a conven=
-ient
-> > > 4 byte hole between nr_values and parent where we could put it.
-> > >
-> > > Oh, another issue is that we use i_pages.xa_lock to synchronise
-> > > address_space.nrpages, so I'm not sure that a per-node lock will help=
-.
-> >
-> > Thanks for looking at this.
-> >
-> > > But I'm conscious that there are workloads which show contention on
-> > > xa_lock as their limiting factor, so I'm open to ideas to improve all
-> > > these things.
-> >
-> > I have no idea so far because my very limited knowledge about xarray.
->
-> For the swap file usage, I have been considering an idea to remove the
-> index part of the xarray from swap cache. Swap cache is different from
-> file cache in a few aspects.
-> For one if we want to have a folio equivalent of "large swap entry".
-> Then the natural alignment of those swap offset on does not make
-> sense. Ideally we should be able to write the folio to un-aligned swap
-> file locations.
->
+> 2. The subtree could be mounted, and accessed through the mount would
+> use the captured creds.
+Doesn't this have the same problem
+that was pointed to me? Namely (explaining
+my impl first), that if someone puts the cred
+fd to an unaware process's fd table, such
+process can't fully drop its privs. He may not
+want to access these dirs, but once its hacked,
+the hacker will access these dirs with the
+creds came from an outside.
+My solution was to close such fds on
+exec and disallowing SCM_RIGHTS passage.
+SCM_RIGHTS can be allowed in the future,
+but the receiver will need to use some
+new flag to indicate that he is willing to
+get such an fd. Passage via exec() can
+probably never be allowed however.
 
-Hi Chris,
+If I understand your model correctly, you
+put a magic sub-tree to the fs scope of some
+unaware process. He may not want to access
+it, but once hacked, the hacker will access
+it with the creds from an outside.
+And, unlike in my impl, in yours there is
+probably no way to prevent that?
 
-This sound interesting, I have a few questions though...
+In short: my impl confines the hassle within
+the single process. It can be extended, and
+then the receiver will need to explicitly allow
+adding such fds to his fd table.
+But your idea seems to inherently require
+2 processes, and there is probably no way
+for the second process to say "ok, I allow
+such sub-tree in my fs scope". And even if
+he could, in my impl he can just close the
+cred fd, while in yours it seems to persist.
 
-Are you suggesting we handle swap on file and swap on device
-differently? Swap on file is much less frequently used than swap on
-device I think.
-
-And what do you mean "index part of the xarray"? If we need a cache,
-xarray still seems one of the best choices to hold the content.
-
-> The other aspect for swap files is that, we already have different
-> data structures organized around swap offset, swap_map and
-> swap_cgroup. If we group the swap related data structure together. We
-> can add a pointer to a union of folio or a shadow swap entry. We can
-> use atomic updates on the swap struct member or breakdown the access
-> lock by ranges just like swap cluster does.
->
-> I want to discuss those ideas in the upcoming LSF/MM meet up as well.
-
-Looking forward to it!
-
->
-> Chris
+Sorry if I misunderstood your idea.
 
