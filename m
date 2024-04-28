@@ -1,108 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-18019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4201C8B4D80
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 20:46:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4AB8B4D8B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 20:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC611F2149F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 18:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3E2281615
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 18:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1ED74438;
-	Sun, 28 Apr 2024 18:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB4474438;
+	Sun, 28 Apr 2024 18:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OD+kJilx"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="U0r2nH1Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24C810F1
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 18:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F191971B25;
+	Sun, 28 Apr 2024 18:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714329986; cv=none; b=aR0c1WaU20BauZ5zFAvsBIeaX068XUiAQBTQpvKOwJzONK9utmqd3TKcq2VIh9a6IEPqENQ+C98mC+Af6JbFBcHO+TArgoGxECRm6lC4Utq0YLA3b+hA88m2HknACK8hNGwDFHHAa9jb4VwHbtg69/6mS/VajOZ1RNg4lL5DpvA=
+	t=1714330711; cv=none; b=J5eaDwYe1zEXKiHmJNf4U78SzkepkHjaHjYOrAvU0gN7LDuS24j7dWQsAOAmNLsEdhiZDyg7rcs8bcQJRWjwmSiYQkYLsBH+rw7ch1DwMr5Cd5X0KDYwFdmP/2UK6yfOUjMjv7xPERR6WPbm/j7Hm4WRemN5iiaAv1XYkyHC6fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714329986; c=relaxed/simple;
-	bh=UCyUGbVStsQ4PqcA5v9cIrp44bn4QBwbJ1SKpM09zOc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZXgR0vVR+GABziq7Y04tFEPgUzk4jjAxViMwwZ9lLBjzcc6ooOqRhweYMkBupXflNz4K9yWg53TBY4vTfr/Gd5UmfuC82uPm0Az3Y6r2nLpvS0ghR122hMM5Ji7Mhv+j+lusYrZm1q7n0QH3kqcwsvSbZVrpTElX/R6fiUxcyB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OD+kJilx; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a5872b74c44so410542566b.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 11:46:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1714329983; x=1714934783; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jGHcgF+VuTvfty4lb510NeRVdXMmfzGhEByfgWFXZww=;
-        b=OD+kJilx9xZ9IEnsJx70FScd6agDuG5vRjpJ0LOL784/QHP39vMTjDMQvdRcOeThli
-         4WI/T/8IxkN0k4h+Y7p98Sq9F9JeqIOc61MG5SLD6Jj+ZKAUlL1hilvyPcJa9z0IRV61
-         ZND9lUMZ4R4febOMl3bHzZyfJ/6NkBW/fNS2w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714329983; x=1714934783;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jGHcgF+VuTvfty4lb510NeRVdXMmfzGhEByfgWFXZww=;
-        b=w5DN57gqx0i+h+l+bKJCEL9oZEI5XHbdg4hpLbZXkYWuPatSSmA5ac3gRYP/aSyTx2
-         Sgzt+mQYAZBlO0me9PxAXRfzftWRqs28jgcKq5jtUDiMllOnARf1cLJzt/ZkCKUB2U3D
-         SL4wBlz61RdNFQvxYUgZfQioQbd0pUFORMwQJWOo24FI3pbjpKkW30RiWvl3gSluXNGu
-         vYKedAblEOJq0FSLeHakoZes9uQrVseTmXoyW206ZeUqmaU40NC2PYB0dIVWNxRlrWcu
-         Ix3AWlpY7+azyYvfNxiwpr+aVjzFXrJDjKEGrR1+eNRO9EJzDw/xn4oLOMCTjv9Ii3oI
-         gjTQ==
-X-Gm-Message-State: AOJu0Yw2q928KfrnQQtQfLTqsyiePg5HSqQspOGhs6ybb17XSuh9+NOh
-	9N9Wx2g7OM8ELxKAQeDMDOYFbivBx5b2NZD4rbKizOGoFnsh9o9Zc5pxXKK6RC15Vl8E1wRvuPV
-	7gCUh/w==
-X-Google-Smtp-Source: AGHT+IGRoudl4DrJ7NZZBuBp/Ux6zBJm3EqWbRB2xsRE+jxUTsDcNj1l3a/IO4183lvaV98Gjpfm9A==
-X-Received: by 2002:a17:906:6b86:b0:a58:bd8e:f24 with SMTP id l6-20020a1709066b8600b00a58bd8e0f24mr5845833ejr.39.1714329983024;
-        Sun, 28 Apr 2024 11:46:23 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id ld14-20020a170906f94e00b00a58ff5adad2sm524624ejb.90.2024.04.28.11.46.22
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Apr 2024 11:46:22 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a58ebdd8b64so102540966b.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 11:46:22 -0700 (PDT)
-X-Received: by 2002:a17:906:c7d6:b0:a58:a13b:37b with SMTP id
- dc22-20020a170906c7d600b00a58a13b037bmr5288677ejb.56.1714329981787; Sun, 28
- Apr 2024 11:46:21 -0700 (PDT)
+	s=arc-20240116; t=1714330711; c=relaxed/simple;
+	bh=u2ZtkqxxcCpJtfkEaULrWkv4u+hez/5B6PoU3df+/uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XhiPn5enx/rQAA8iplm7TgOW4aMDxigNq9fQftRaR0cDVbug/k58HmF9wzBJN33P8ZYoOHxO0fX3O3RHUQWvvQEbbftcGmwpKE6+y3F5IYnF98QVZimJRrKbU83jlZboiaEJdsX7NoD7IHrof1P3lX0KKGejz4F4IRHYkv7ACSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=U0r2nH1Q; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mBuI6KLe53HXsLCkW0E3ngY1egf0eTXGKyNTP/1IL4o=; b=U0r2nH1Q1fZ+zxHW/3LVsJ5p1J
+	Lhs1SBXV0fARFuOjwkyxM1HqIoCK2lnbohJoYV3ddkn0MspnhRsLs8rKeISIA7mAJ2TrA+gfrhR0Y
+	o1M9PBtviRrJhRwTT68MsuVKe1dLrDetuNFiXCTVM2W9X+jyp+w7cJsFh8xCPj8szri+TGrAXHjKr
+	w9RiUvEnFt0QHXupMu5neM5i45RnLl4GB4ToEpQORNQTuGDbC500wIvar8HbIs9PAcDwCJT2MNaNY
+	YAU+jZF4qFO6H0CvXugDSCGfYYAoTvfp/GvnDqkRN6uNInQKU2Ci6zzJA4u/SXgNh9rewYZ2aG2yw
+	XSO6+FUg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s19jD-006w1h-1G;
+	Sun, 28 Apr 2024 18:58:23 +0000
+Date: Sun, 28 Apr 2024 19:58:23 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Stefan Haberland <sth@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, jack@suse.cz, hch@lst.de,
+	brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, yukuai3@huawei.com,
+	Yu Kuai <yukuai1@huaweicloud.com>,
+	Eduard Shishkin <edward6@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>
+Subject: Re: [PATCH vfs.all 15/26] s390/dasd: use bdev api in dasd_format()
+Message-ID: <20240428185823.GW2118490@ZenIV>
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-16-yukuai1@huaweicloud.com>
+ <20240416013555.GZ2118490@ZenIV>
+ <Zh47IY7M1LQXjckX@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <ca513589-2110-45fe-95b7-5ce23487ea10@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240427210920.GR2118490@ZenIV> <20240427211128.GD1495312@ZenIV>
- <CAHk-=wiag-Dn=7v0tX2UazhMTBzG7P42FkgLSsVc=rfN8_NC2A@mail.gmail.com>
- <20240427234623.GS2118490@ZenIV> <20240428181934.GV2118490@ZenIV>
-In-Reply-To: <20240428181934.GV2118490@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 28 Apr 2024 11:46:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgPpeg1fj4zk0mvCmpYrrs0jVqrFrRONNFgA8Yq6nLTeg@mail.gmail.com>
-Message-ID: <CAHk-=wgPpeg1fj4zk0mvCmpYrrs0jVqrFrRONNFgA8Yq6nLTeg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] swapon(2): open swap with O_EXCL
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	linux-btrfs@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca513589-2110-45fe-95b7-5ce23487ea10@linux.ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, 28 Apr 2024 at 11:19, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> FWIW, pretty much the same can be done with zram - open with O_EXCL and to
-> hell with reopening.  Guys, are there any objections to that?
+On Wed, Apr 17, 2024 at 02:47:14PM +0200, Stefan Haberland wrote:
 
-Please do. The fewer of these strange "re-open block device" things we
-have, the better.
+> set_blocksize() does basically also set i_blkbits like it was before.
+> The dasd_format ioctl does only work on a disabled device. To achieve this
+> all partitions need to be unmounted.
+> The tooling also refuses to work on disks actually in use.
+> 
+> So there should be no page cache to evict.
 
-I particularly dislike our "holder" logic, and this re-opening is one
-source of nasty confusion, and if we could replace them all with just
-the "O_EXCL uses the file itself as the holder", that would be
-absolutely _lovely_.
+You mean this?
+        if (base->state != DASD_STATE_BASIC) {
+                pr_warn("%s: The DASD cannot be formatted while it is enabled\n",
+                        dev_name(&base->cdev->dev));
+                return -EBUSY;
+        }  
 
-                Linus
+OK, but what would prevent dasd_ioctl_disable() from working while
+disk is in use?  And I don't see anything that would evict the
+page cache in dasd_ioctl_disable() either, actually...
+
+What am I missing here?
 
