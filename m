@@ -1,176 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-18032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C06728B4E7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 00:13:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E608B4EC8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 01:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77381281213
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 22:13:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B192CB20F6B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 23:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7819FFBFD;
-	Sun, 28 Apr 2024 22:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9C31A286;
+	Sun, 28 Apr 2024 23:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="LsyOqxLS"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="U6rtpiMs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward502c.mail.yandex.net (forward502c.mail.yandex.net [178.154.239.210])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DB6B642;
-	Sun, 28 Apr 2024 22:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F9A17C96;
+	Sun, 28 Apr 2024 23:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714342388; cv=none; b=rn5YsOC/LfycICS2MVyjlzpM9svLjEQhR1dXdmInak/BtlZk7jfZyXwPeTRHxPdsMijTMXLFvpnZOtbCJ8zfi+IzRTCgtxp4r5lS31D/o6mUVPIrRbrofvHCWO/MUBx4Y+6MK7Do4sRoU0djsI73+tEHhBpHkfFFkmzO8Fs+uN4=
+	t=1714346637; cv=none; b=E2L+4BoijQSzTjA84dLordivdG/K9yCzajnxLoouatznfMI5kboi0kKWKyGOagwTqGC0iZVuKZZrMaG7GiqrOcWzfw4sRf8UezuNwDsRFaTrt+mnDMhRrZPbt69F4txhiYVegZ8e21sJHryfyg+0dEos/msEIgvplxtaxep+8mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714342388; c=relaxed/simple;
-	bh=v+x60Em69Y3V15yKVtpLHgKkcW8An+47dIIafknn1Ek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWATB4jWPHVQ1ZZhEymdEh7xka/D7I+KXw7TqQLL0pV2XUd5IGlupvD/rAmrSZdl1yhem7pxEJe20Xzh9fYr4/5agSnOd8gSi8Ns714+2aN1d2On5jJcFd3z5Ws0ETH7Xkw1xvyqqa82O8DRBPH62cAq2Q0DaC5mjAvlw2Rn2rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=LsyOqxLS; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:28a2:0:640:9f07:0])
-	by forward502c.mail.yandex.net (Yandex) with ESMTPS id A818360E39;
-	Mon, 29 Apr 2024 01:13:01 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id wCYcLSYpCSw0-neCwgFvP;
-	Mon, 29 Apr 2024 01:13:00 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1714342380; bh=c9Y0BivHdjPKZY5c2XXTa9ws62jwT30YMQALX3hKUgU=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=LsyOqxLSL+upd6hnVyorcANpJaN3+4rBG+WC9FGO2DJNOLJqiBFKcdVbORF/YVI6k
-	 k1c9E5X7wsizm3X+SBFEdRVCBDXzZSSBjrxGZvnDpE/C7KRJRjBYSRLtWBzTSdxa+m
-	 JVb5ceF0eM55CN/tzh31ttIGaTAnZwuLtTnuIMGc=
-Authentication-Results: mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <eae8e7e6-9c03-4c8e-ab61-cf7060d74d6d@yandex.ru>
-Date: Mon, 29 Apr 2024 01:12:58 +0300
+	s=arc-20240116; t=1714346637; c=relaxed/simple;
+	bh=G8bcd97UC4AdurHIryOXHBOgo8XBvyOM0yQ3eotL3G0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ou5UI/MZNCx7lSbSwkny0GzMs/68mA5sAhpWv+3wvpt5u4KdYShT6zwI7jpFwsdu4xjUWpdrzHvsr1bdTkqImI2gxNKDs8/+jf0ik9JNqZqMZYZ3BmCXE6djfyAlk0xJSI7J5ghFSd9yCDMWuKzrTPlUrQC+YVCv9PZUcDoutHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=U6rtpiMs; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GvGwY/VyPI7NHMoTrlnxk5E4tmObsoCK28HHsMidyBY=; b=U6rtpiMsmVcjaZOh8OKTi7XMW0
+	yNj5zje20sL7z+USF0KWoWTTODzk7u+FeS0dmRZX+kTzBjUtyO1eurUWHR4Va8Lfo3SgWHErayv7J
+	JVtGN4aHwopsGKTxEx/SpI0Ph4UoD0aVm0/3wxuEqe84gBrbNyr27BjTLrof11+GYauwS9q4gQnoo
+	IbiRHLy6hLj9Jyx6qWgfXDjDUW8M0X48vLNYMI505f0nBelbKOGMMUw54+mNuU9nXyr/VMHl9hr8S
+	RD9+aPrVw//LujYmUv3X4mdx+Od+dvshzXb29N/baU3KijKHYB/9RqlDEpSGtYd9xRbpekjG+AsaQ
+	btyP2fFQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s1Ds5-006zcl-2p;
+	Sun, 28 Apr 2024 23:23:49 +0000
+Date: Mon, 29 Apr 2024 00:23:49 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Stefan Haberland <sth@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, jack@suse.cz, hch@lst.de,
+	brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, yukuai3@huawei.com,
+	Yu Kuai <yukuai1@huaweicloud.com>,
+	Eduard Shishkin <edward6@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>
+Subject: Re: [PATCH vfs.all 15/26] s390/dasd: use bdev api in dasd_format()
+Message-ID: <20240428232349.GY2118490@ZenIV>
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-16-yukuai1@huaweicloud.com>
+ <20240416013555.GZ2118490@ZenIV>
+ <Zh47IY7M1LQXjckX@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <ca513589-2110-45fe-95b7-5ce23487ea10@linux.ibm.com>
+ <20240428185823.GW2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Content-Language: en-US
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>,
- David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-References: <20240426133310.1159976-1-stsp2@yandex.ru>
- <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
- <8e186307-bed2-4b5c-9bc6-bdc70171cc93@yandex.ru>
- <CALCETrVioWt0HUt9K1vzzuxo=Hs89AjLDUjz823s4Lwn_Y0dJw@mail.gmail.com>
- <33bbaf98-db4f-4ea6-9f34-d1bebf06c0aa@yandex.ru>
- <CALCETrXPgabERgWAru7PNz6A5rc6BTG9k2RRmjU71kQs4rSsPQ@mail.gmail.com>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <CALCETrXPgabERgWAru7PNz6A5rc6BTG9k2RRmjU71kQs4rSsPQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240428185823.GW2118490@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-29.04.2024 00:30, Andy Lutomirski пишет:
-> On Sun, Apr 28, 2024 at 2:15 PM stsp <stsp2@yandex.ru> wrote:
->> But isn't that becoming a problem once
->> you are (maliciously) passed such fds via
->> exec() or SCM_RIGHTS? You may not know
->> about them (or about their creds), so you
->> won't close them. Or?
-> Wait, who's the malicious party?
+On Sun, Apr 28, 2024 at 07:58:23PM +0100, Al Viro wrote:
+> On Wed, Apr 17, 2024 at 02:47:14PM +0200, Stefan Haberland wrote:
+> 
+> > set_blocksize() does basically also set i_blkbits like it was before.
+> > The dasd_format ioctl does only work on a disabled device. To achieve this
+> > all partitions need to be unmounted.
+> > The tooling also refuses to work on disks actually in use.
+> > 
+> > So there should be no page cache to evict.
+> 
+> You mean this?
+>         if (base->state != DASD_STATE_BASIC) {
+>                 pr_warn("%s: The DASD cannot be formatted while it is enabled\n",
+>                         dev_name(&base->cdev->dev));
+>                 return -EBUSY;
+>         }  
+> 
+> OK, but what would prevent dasd_ioctl_disable() from working while
+> disk is in use?  And I don't see anything that would evict the
+> page cache in dasd_ioctl_disable() either, actually...
+> 
+> What am I missing here?
 
-Someone who opens an fd with O_CRED_ALLOW
-and passes it to an unsuspecting process. This
-is at least how I understood the Christian Brauner's
-point about "unsuspecting userspace".
-
-
->    Anyone who can open a directory has,
-> at the time they do so, permission to do so.  If you send that fd to
-> someone via SCM_RIGHTS, all you accomplish is that they now have the
-> fd.
-
-Normally yes.
-But fd with O_CRED_ALLOW prevents the
-receiver from fully dropping his privs, even
-if he doesn't want to deal with it.
-
-> In my scenario, the malicious party attacks an *existing* program that
-> opens an fd for purposes that it doesn't think are dangerous.  And
-> then it gives the fd *to the malicious program* by whatever means
-> (could be as simple as dropping privs then doing dlopen).  Then the
-> malicious program does OA2_INHERIT_CREDS and gets privileges it
-> shouldn't have.
-
-But what about an inverse scenario?
-Malicious program passes an fd to the
-"unaware" program, putting it under a
-risk. That program probably never cared
-about security, since it doesn't play with
-privs. But suddenly it has privs, passed
-out of nowhere (via exec() for example),
-and someone who hacks it, takes them.
-
->>>> My solution was to close such fds on
->>>> exec and disallowing SCM_RIGHTS passage.
->>> I don't see what problem this solves.
->> That the process that received them,
->> doesn't know they have O_CRED_ALLOW
->> within. So it won't deduce to close them
->> in time.
-> Hold on -- what exactly are you talking about?  A process does
-> recvmsg() and doesn't trust the party at the other end.  Then it
-> doesn't close the received fd.  Then it does setuid(getuid()).  Then
-> it does dlopen or exec of an untrusted program.
->
-> Okay, so the program now has a completely unknown fd.  This is already
-> part of the thread model.  It could be a cred-capturing fd, it could
-> be a device node, it could be a socket, it could be a memfd -- it
-> could be just about anything.  How do any of your proposals or my
-> proposals cause an actual new problem here?
-
-I am not actually sure how widely
-does this spread. I.e. /dev/mem is
-restricted these days, but if you can
-freely pass device nodes around, then
-perhaps the ability to pass an r/o dir fd
-that can suddenly give creds, is probably
-not something new...
-But I really don't like to add to this
-particular set of cases. I don't think
-its safe, I just think its legacy, so while
-it is done that way currently, doesn't
-mean I can do the same thing and
-call it "secure" just because something
-like this was already possible.
-Or is this actually completely safe?
-Does it hurt to have O_CRED_ALLOW
-non-passable?
-
->>> This is fundamental to the whole model. If I stick a FAT formatted USB
->>> drive in the system and mount it, then any process that can find its
->>> way to the mountpoint can write to it.  And if I open a dirfd, any
->>> process with that dirfd can write it.  This is old news and isn't a
->>> problem.
->> But IIRC O_DIRECTORY only allows O_RDONLY.
->> I even re-checked now, and O_DIRECTORY|O_RDWR
->> gives EISDIR. So is it actually true that
->> whoever has dir_fd, can write to it?
-> If the filesystem grants that UID permission to write, then it can write.
-
-Which to me sounds like owning an
-O_DIRECTORY fd only gives you the
-ability to skip the permission checks
-of the outer path components, but not
-the inner ones. So passing it w/o O_CRED_ALLOW
-was quite safe and didn't give you any
-new abilities.
-
+BTW, you are updating block size according to new device size, before
+        rc = base->discipline->format_device(base, fdata, 1);
+	if (rc == -EAGAIN)
+		rc = base->discipline->format_device(base, fdata, 0);
+Unless something very unidiomatic is going on, this attempt to
+format might fail...
 
