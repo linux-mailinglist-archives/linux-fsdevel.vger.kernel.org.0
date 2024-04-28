@@ -1,178 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-18013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F798B4CD4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 18:41:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61F48B4D30
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 19:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597902817DF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 16:41:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FC58B2121F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 17:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D367319F;
-	Sun, 28 Apr 2024 16:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D31774262;
+	Sun, 28 Apr 2024 17:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="NW6/8fqJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W317A/ho"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EDF7316D
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 16:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC04631A81;
+	Sun, 28 Apr 2024 17:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714322494; cv=none; b=lBzpQ2sYzOp/PFBLaXX8y/lENSqmueEgQ732iKbFDfc9VE7XGojleXI6+loJprBBwc6iON/lbRWgMAknq7K5PXOEXukUtrC0wwFyzy6hIMJL265p/74hoO2HpJvMpNvgd6ERvIcFA/qX6XeDXCTGv9Vglpkd+QwNwjeT2kY8s7g=
+	t=1714325206; cv=none; b=IpQwaHu/G6t6Ft5GekTNlGRdyCiL6bjRTWy+BNsk2ySsQGITq2n2SWdh95lK0elmzXWZCPDmib/GxFA2P1Z472oXiG65GhiLu5LAbZ5GQBYeoouo9XLZckza+hJJbgVYt+NBFvWT5RkvesLpc4BMBYs0k6FZhxfXOCm1PHY+xPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714322494; c=relaxed/simple;
-	bh=e9kozUVYrHIwrCQGcfpV/ZYobiatodQ1z9SiykSi/TI=;
+	s=arc-20240116; t=1714325206; c=relaxed/simple;
+	bh=NZBB+ghwJcuayzIp9bDWsCN8O4KXLge43NacmZc8NQc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J73xYDNMdohcUlz91J9ZSOn5ia/LIRsoYZDhOndcoFiRk4rx6XTw0U3vcZbX82cXRjQX8O+O/iZwv5lL3/kiiCwuAO5MhMG9JCUW/HvLplNux48VX6x0FUBFH93FS+/FoFUwh3ch1PDsG4jZTSaK7muFPa1h0WGDg0u4L68T1kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=NW6/8fqJ; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4dac6802e7aso845615e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 09:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1714322491; x=1714927291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=34jZPs9Eiu4Qw7ZtmIIlooQKHvZkQc1XBH5UVUDjhOE=;
-        b=NW6/8fqJ+KdO/DzZrbNCTHib82w9uzAfVxzbzF5B174BLRoEJo1OlmWTErs4rBQI1Z
-         r00CQkONj79FwD5v3l1P2uOvR3yX4Tbo79HOZw1svG64XX7ksPBYy7E4HlsQb2xJG6QT
-         BnkLBfFkT9qz3L6gM3Rb6YN9BQjWQof4fCOnR9DloKu7i0fBMKV+cbCiOGQbjaIO+6oF
-         4VLTPAkYRktWEJmAHsJUOg1mS2scXHK1k/kr2lDgRkHbjfyBY/sTKrZjNw1eYOe36Oej
-         PhcMckUbpvccKIUrq1v08nnAt5jFpYfnABQr3IOLxePNRj1mzC34SUPxgK+KWOvAQlXS
-         M38g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714322491; x=1714927291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=34jZPs9Eiu4Qw7ZtmIIlooQKHvZkQc1XBH5UVUDjhOE=;
-        b=ROy7JTxXb8oNyqAYn3c7iFPcmRi9SBHzgLS0+nFMCWlReFqNpszoTbRVLCJIxJp2vE
-         Zo8rxoskv5ADn7M+unIy5KLyPqHM4D5xy2Gq/UNkCoy7I5JCsB99ps0V5AoUfhEop0CF
-         yF2Tv8aEEDgAC6maSaPrjEyPskQu1+/r21cRd4tGi/fnb0Wewv9oEYQwNqKVARimKoJm
-         2kF2oR7QAnMFH7VSc1dq2BvU8ICU2PQIenEH1wM2FvsXQ+5RITWZdbP91RuTbcSzaNXJ
-         RFqBLPR6p6bXsF1UoKWW1bExwZbppCvqqfuGXwvsrpY/npfUjsJtku41UN6svXwAQSm6
-         SQUg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7InYxsNOX29xvrRObhcC9yOh9d+AsGpTBoARAhoZ0Pxym0dNUaw9aobu8aRvnog+Mzyz6gyGRsSdbYncTPWuU0q4W1rvdUfiyv2ccqg==
-X-Gm-Message-State: AOJu0YxmmnFuaZhSeKsRM0vu8Rm9K3IWvnT8JnFRzJOyXspUqhrX8gAw
-	x/r1/vPsMp2FFDoWG1JyJqvSeppHxXIZiUnhBFRVjlLUF66+9SDRYeOOYuFGKrRJd6D8Uh8zTAV
-	rkbqAC231RY1je+fh/7jYnnxTwqSTZvZIQ70i
-X-Google-Smtp-Source: AGHT+IHLdpt/9XWo4+d0fq5u+aGoe2Xweu2bbEMtHa8Q4gbQxrfJ/vnch45Ynf8rpTHz6dgnxhOkWQ1+y1wLqy+FQw8=
-X-Received: by 2002:a05:6122:251e:b0:4da:704f:7fc6 with SMTP id
- cl30-20020a056122251e00b004da704f7fc6mr8248281vkb.15.1714322491304; Sun, 28
- Apr 2024 09:41:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=Di2SK5mcigO266KGbQc/jD2Z6pbLQzeUAHLQB2EiW5yFG43AbaGy8tZS4VowyVrllTLVzUwNIlovH6ZRRulL1JDWvqS6vDu2wUSO9omOuSu58amfAhaI5fLwQrTt1rEjB4cZ+s+R1u8GUV6X30jG6zDcsCfUkMU5kqrfKSepqq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W317A/ho; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C07CC113CC;
+	Sun, 28 Apr 2024 17:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714325206;
+	bh=NZBB+ghwJcuayzIp9bDWsCN8O4KXLge43NacmZc8NQc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W317A/hoX8B+KiUST+7/pu2WuTHJo52zMGPXrI7lYfc0FC8+TjED96YPfgydfYdWo
+	 x1e+paLmPebdJCp3cnujaVvv446sPJmLGkD3wnqwH5ecX3Oy4/vdnk2XTVUCQDXk0b
+	 I0GvuAQx7CdrTXftLMoiDPTsxg4XFC7eDhry1D1vIkoZ642PnBrRgrflOAovuIu7ek
+	 CWT16uXtDdbetE0WqMVk0A48apjdLMhscN1YZlJxSx6b0JN35x5eWTLiaLhxlyRS4g
+	 Pfe+UmQPPAXzR8h3NOzMhcwwyklvkKSHWZKJlOmC+MLBl+BePfnqsEtZwGd+oF7rhR
+	 VvMR/fWeoq4Ow==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5196fe87775so4142722e87.3;
+        Sun, 28 Apr 2024 10:26:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXMpHKpPgUgnyuiWPK9QLn4BXRxmJtavy76KMG9rSzkTmGBAhbzDk/C3OWRz6VgOyNLuc3cj+CyKmFZjd0/fZ2PbyPCmHOOmAy/Tn/u1WgIBtkl+WbXS5cLowpProK/XTjdSVuiJ5HXAgEgTw==
+X-Gm-Message-State: AOJu0YwIVS8CHdc0Lyah+aWZt0i4iIDb09bg8R6DPa/cR8pn5G7o9QxI
+	kYpM1eysKSiq56In0pGKQ50io5t5LGWWqRDd1dmBcntDXBYthx9FjIxzFcUG7qGCZWxGhVN4VKY
+	bJuhYo7SgIhB0pQ44AntwDwMyEw==
+X-Google-Smtp-Source: AGHT+IFxQjAw2SnF0iRAXtnb8jTmrOY2NuODB+Cj3WvrPU2Ml05CysfJT5l2mppXdZWCM5syLOZelMTQm4+fIB0DT/8=
+X-Received: by 2002:ac2:55a2:0:b0:51b:f78d:c189 with SMTP id
+ y2-20020ac255a2000000b0051bf78dc189mr3486644lfg.14.1714325205084; Sun, 28 Apr
+ 2024 10:26:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240426133310.1159976-1-stsp2@yandex.ru>
-In-Reply-To: <20240426133310.1159976-1-stsp2@yandex.ru>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Sun, 28 Apr 2024 09:41:20 -0700
-Message-ID: <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-To: Stas Sergeev <stsp2@yandex.ru>, Aleksa Sarai <cyphar@cyphar.com>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Andy Lutomirski <luto@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240417160842.76665-1-ryncsn@gmail.com> <87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <Zico_U_i5ZQu9a1N@casper.infradead.org> <87o79zsdku.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com>
+ <87bk5uqoem.fsf@yhuang6-desk2.ccr.corp.intel.com> <CANeU7QknjZrRXH71Uejs1BCKHsmFe5X=neK7D1d1fyos0sAb9Q@mail.gmail.com>
+ <871q6qqiiy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <871q6qqiiy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Sun, 28 Apr 2024 10:26:33 -0700
+X-Gmail-Original-Message-ID: <CANeU7QkTev=cyL37mcVJNUJT2-WccRvKJirkNQU8Av97ePB3Pg@mail.gmail.com>
+Message-ID: <CANeU7QkTev=cyL37mcVJNUJT2-WccRvKJirkNQU8Av97ePB3Pg@mail.gmail.com>
+Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Kairui Song <kasong@tencent.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> On Apr 26, 2024, at 6:39=E2=80=AFAM, Stas Sergeev <stsp2@yandex.ru> wrote=
-:
-> =EF=BB=BFThis patch-set implements the OA2_CRED_INHERIT flag for openat2(=
-) syscall.
-> It is needed to perform an open operation with the creds that were in
-> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLO=
-W
-> flag. This allows the process to pre-open some dirs and switch eUID
-> (and other UIDs/GIDs) to the less-privileged user, while still retaining
-> the possibility to open/create files within the pre-opened directory set.
+On Sat, Apr 27, 2024 at 8:23=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
+wrote:
 >
+> Chris Li <chrisl@kernel.org> writes:
+>
+> > On Sat, Apr 27, 2024 at 6:16=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
+om> wrote:
+> >>
+> >> Chris Li <chrisl@kernel.org> writes:
+> > Free the shadow swap entry will just set the pointer to NULL.
+> > Are you concerned that the memory allocated for the pointer is not
+> > free to the system after the shadow swap entry is free?
+> >
+> > It will be subject to fragmentation on the free swap entry.
+> > In that regard, xarray is also subject to fragmentation. It will not
+> > free the internal node if the node has one xa_index not freed. Even if
+> > the xarray node is freed to slab, at slab level there is fragmentation
+> > as well, the backing page might not free to the system.
+>
+> Sorry my words were confusing.  What I wanted to say is that the xarray
+> node may be freed.
 
-I=E2=80=99ve been contemplating this, and I want to propose a different sol=
-ution.
+Somehow I get that is what you mean :-) My previous reply still
+applies here. The xarray node freeing will be subject to the
+fragmentation at slab level. The actual backing page might not release
+to the kernel after the node freeing.
 
-First, the problem Stas is solving is quite narrow and doesn=E2=80=99t
-actually need kernel support: if I want to write a user program that
-sandboxes itself, I have at least three solutions already.  I can make
-a userns and a mountns; I can use landlock; and I can have a separate
-process that brokers filesystem access using SCM_RIGHTS.
+>
+> >> And, in current design, only swap_map[] is allocated if the swap space
+> >> isn't used.  That needs to be considered too.
+> >
+> > I am aware of that. I want to make the swap_map[] not static allocated
+> > any more either.
+>
+> Yes.  That's possible.
 
-But what if I want to run a container, where the container can access
-a specific host directory, and the contained application is not aware
-of the exact technology being used?  I recently started using
-containers in anger in a production setting, and =E2=80=9Canger=E2=80=9D wa=
-s
-definitely the right word: binding part of a filesystem in is
-*miserable*.  Getting the DAC rules right is nasty.  LSMs are worse.
-Podman=E2=80=99s =E2=80=9Cbind,relabel=E2=80=9D feature is IMO utterly disg=
-usting.  I think I
-actually gave up on making one of my use cases work on a Fedora
-system.
+Of course there will be a price to pay for that. The current swap_map
+is only 1 byte per entry. That swap map count size per swap entry is
+going to be hard to beat in the alternatives. Hopefully find the trade
+off in other places.
 
-Here=E2=80=99s what I wanted to do, logically, in production: pick a host
-directory, pick a host *principal* (UID, GID, label, etc), and have
-the *entire container* access the directory as that principal. This is
-what happens automatically if I run the whole container as a userns
-with only a single UID mapped, but I don=E2=80=99t really want to do that f=
-or
-a whole variety and of reasons.
+>
+> > The swap_map static allocation forces the rest of the swap data
+> > structure to have other means to sparsely allocate their data
+> > structure, repeating the fragmentation elsewhere, in different
+> > ways.That is also the one major source of the pain point hacking on
+> > the swap code. The data structure is spread into too many different
+> > places.
+>
+> Look forward to more details to compare :-)
 
-So maybe reimagining Stas=E2=80=99 feature a bit can actually solve this
-problem.  Instead of a special dirfd, what if there was a special
-subtree (in the sense of open_tree) that captures a set of creds and
-does all opens inside the subtree using those creds?
+Sure. When I make more progress I will post it.
 
-This isn=E2=80=99t a fully formed proposal, but I *think* it should be
-generally fairly safe for even an unprivileged user to clone a subtree
-with a specific flag set to do this. Maybe a capability would be
-needed (CAP_CAPTURE_CREDS?), but it would be nice to allow delegating
-this to a daemon if a privilege is needed, and getting the API right
-might be a bit tricky.
-
-Then two different things could be done:
-
-1. The subtree could be used unmounted or via /proc magic links. This
-would be for programs that are aware of this interface.
-
-2. The subtree could be mounted, and accessed through the mount would
-use the captured creds.
-
-(Hmm. What would a new open_tree() pointing at this special subtree do?)
-
-
-With all this done, if userspace wired it up, a container user could
-do something like:
-
-=E2=80=94bind-capture-creds source=3Ddest
-
-And the contained program would access source *as the user who started
-the container*, and this would just work without relabeling or
-fiddling with owner uids or gids or ACLs, and it would continue to
-work even if the container has multiple dynamically allocated subuids
-mapped (e.g. one for =E2=80=9Croot=E2=80=9D and one for the actual applicat=
-ion).
-
-Bonus points for the ability to revoke the creds in an already opened
-subtree. Or even for the creds to automatically revoke themselves when
-the opener exits (or maybe when a specific cred-pinning fd goes away).
-
-(This should work for single files as well as for directories.)
-
-New LSM hooks or extensions of existing hooks might be needed to make
-LSMs comfortable with this.
-
-What do you all think?
+Chris
 
