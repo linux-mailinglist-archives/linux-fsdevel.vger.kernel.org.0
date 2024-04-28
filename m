@@ -1,101 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-17988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3C78B4900
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 03:09:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8398B4905
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 03:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77EF2B21EB5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 01:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092A11F21B10
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 01:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DA6A5F;
-	Sun, 28 Apr 2024 01:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485EB10F1;
+	Sun, 28 Apr 2024 01:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jl7vdDFf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE7E7E2
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 01:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D16764A;
+	Sun, 28 Apr 2024 01:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714266548; cv=none; b=kw0Q35yZeZLtVj1x0WwmBlO5Dy4wqXN4zqUrHbRsYf1YBDqMk2i+audP5Pk04ZpkiJcmEWKztmQZniCi0AfzSaEmCF3nVj1GJoIBi/LQnVq6Ddk1kJt2wZw7WKb3a8EWmvjU72S72NuKPWd+Ej/hfV9D45zs5jTCcqQ8GIFivDU=
+	t=1714266983; cv=none; b=iQfW0iF8MfrHWcWNN80P681wEHjXL5+LWWG/7TYmDGLk9aAxsbpjOA6ByvVaI/O0FIbeGzjskSlcpI8CK+kGa+18j3p4BYOEjwpD+bMOFFZFk2ViY9MjfHg2iwtuXA6UTp7SBhWmFy0nnUezrB9KeKujL8tyh/PsNxgQ83soEQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714266548; c=relaxed/simple;
-	bh=X1sXRCr05tBiWPyr7yjJQO+IR/q09WNlq+55NjPqLv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YNbZu4tXVbXTD8ziSIqHeh8naRZfAKtYVUoRs12adskPaenrj0v29JoL60gdFji2BmmySVeajlsLbEFtxGRuEad8ZAzFTEIStX/i1c2mW/BEraig/ylr67XB1ulvJSuiJDmnzsThNgi8O/KT8P/fiH858cO9bb0WmYQzklMXnAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VRpDZ447SzvPr0;
-	Sun, 28 Apr 2024 09:05:50 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id F29FC1403D2;
-	Sun, 28 Apr 2024 09:08:56 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sun, 28 Apr 2024 09:08:56 +0800
-Message-ID: <38017f5c-a74a-4d66-9092-efa79ffebfb9@huawei.com>
-Date: Sun, 28 Apr 2024 09:08:56 +0800
+	s=arc-20240116; t=1714266983; c=relaxed/simple;
+	bh=T37KaSyUuWuW85l2ruCLx2uNwdP395EJMwHfBNBUsPg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XkNA2QMV33KxhNoCO5I+kRgfs3H0oXuAl3hb0i5PaGUQGSQrhj+A54jSK4CWSdo4FiOxPyXrE9j/43KY3HTB/PqBm1bVWoN3toFx45LVs8F2c6dty82fjtLF3XZQ2UyUShCDyWTvRBYy9LE7pbQQI+yKGp7B8uF2LZPCrzWjj4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jl7vdDFf; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714266982; x=1745802982;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=T37KaSyUuWuW85l2ruCLx2uNwdP395EJMwHfBNBUsPg=;
+  b=Jl7vdDFftVx5UTxyXB0KQMO3abyhF3/izh97yvVnUdKzDd1fJLnBi+Qv
+   KJ6HpKL7mXAlIlc4HmT/kY+UtN634Wmgd0uhOW0qUlS1SErPcgh7aBNb/
+   ASziOvFfj2d92nvAphHf9hoRukne5A8sq24fBwE3a+itLD3PLn0LPffla
+   O1pBrw9WMu/7CtWZQH6Zky4TCdIRcNDI+GD6xnDQ/4wHN8w3Ak9xyr0Ws
+   Mv+2qCHdS3Chk4u1yuLQQqSyhdVpLShViCxLVqsm7tZjQB9C1j4WEEXfJ
+   z08mS/mO75BNeA8KP9bvpWsEpW3tsqvzoinG5VL4QYp+Q5qNQpfemISIO
+   Q==;
+X-CSE-ConnectionGUID: aBhIBntCT1us6HoyvG8wMQ==
+X-CSE-MsgGUID: i2o3lF+9QlKhYeOC3eoy9w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11057"; a="27419755"
+X-IronPort-AV: E=Sophos;i="6.07,236,1708416000"; 
+   d="scan'208";a="27419755"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2024 18:16:22 -0700
+X-CSE-ConnectionGUID: Z9PtG/FCQ3mjkxBgoTxZ/A==
+X-CSE-MsgGUID: /usw1doHTVC2NDoUvemriw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,236,1708416000"; 
+   d="scan'208";a="30574669"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2024 18:16:17 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,  Kairui Song <ryncsn@gmail.com>,
+  linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Barry Song <v-songbaohua@oppo.com>,  Ryan
+ Roberts <ryan.roberts@arm.com>,  Neil Brown <neilb@suse.de>,  Minchan Kim
+ <minchan@kernel.org>,  Hugh Dickins <hughd@google.com>,  David Hildenbrand
+ <david@redhat.com>,  Yosry Ahmed <yosryahmed@google.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
+In-Reply-To: <CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com>
+	(Chris Li's message of "Fri, 26 Apr 2024 16:16:01 -0700")
+References: <20240417160842.76665-1-ryncsn@gmail.com>
+	<87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<Zico_U_i5ZQu9a1N@casper.infradead.org>
+	<87o79zsdku.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com>
+Date: Sun, 28 Apr 2024 09:14:25 +0800
+Message-ID: <87bk5uqoem.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: use memalloc_nofs_save() in page_cache_ra_order()
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>, zhangyi
-	<yi.zhang@huawei.com>
-References: <20240426112938.124740-1-wangkefeng.wang@huawei.com>
- <20240426114905.216e3d41b97f9a59be26999e@linux-foundation.org>
- <Zix0zk2faI6HeG9D@casper.infradead.org>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <Zix0zk2faI6HeG9D@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Chris Li <chrisl@kernel.org> writes:
 
-
-On 2024/4/27 11:45, Matthew Wilcox wrote:
-> On Fri, Apr 26, 2024 at 11:49:05AM -0700, Andrew Morton wrote:
->> On Fri, 26 Apr 2024 19:29:38 +0800 Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
->>>    io_schedule+0x24/0xa0
->>>    __folio_lock+0x130/0x300
->>>    migrate_pages_batch+0x378/0x918
->>>    migrate_pages+0x350/0x700
->>>    compact_zone+0x63c/0xb38
->>>    compact_zone_order+0xc0/0x118
->>>    try_to_compact_pages+0xb0/0x280
->>>    __alloc_pages_direct_compact+0x98/0x248
->>>    __alloc_pages+0x510/0x1110
->>>    alloc_pages+0x9c/0x130
->>>    folio_alloc+0x20/0x78
->>>    filemap_alloc_folio+0x8c/0x1b0
->>>    page_cache_ra_order+0x174/0x308
->>>    ondemand_readahead+0x1c8/0x2b8
+> Hi Ying,
+>
+> On Tue, Apr 23, 2024 at 7:26=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
+> wrote:
 >>
->> I'm thinking
+>> Hi, Matthew,
 >>
->> Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
->> Cc: stable
-> 
-> I think it goes back earlier than that.
-> https://lore.kernel.org/linux-mm/20200128060304.GA6615@bombadil.infradead.org/
-> details how it can happen with the old readpages code.  It's just easier
-> to hit now.
-> 
+>> Matthew Wilcox <willy@infradead.org> writes:
+>>
+>> > On Mon, Apr 22, 2024 at 03:54:58PM +0800, Huang, Ying wrote:
+>> >> Is it possible to add "start_offset" support in xarray, so "index"
+>> >> will subtract "start_offset" before looking up / inserting?
+>> >
+>> > We kind of have that with XA_FLAGS_ZERO_BUSY which is used for
+>> > XA_FLAGS_ALLOC1.  But that's just one bit for the entry at 0.  We could
+>> > generalise it, but then we'd have to store that somewhere and there's
+>> > no obvious good place to store it that wouldn't enlarge struct xarray,
+>> > which I'd be reluctant to do.
+>> >
+>> >> Is it possible to use multiple range locks to protect one xarray to
+>> >> improve the lock scalability?  This is why we have multiple "struct
+>> >> address_space" for one swap device.  And, we may have same lock
+>> >> contention issue for large files too.
+>> >
+>> > It's something I've considered.  The issue is search marks.  If we del=
+ete
+>> > an entry, we may have to walk all the way up the xarray clearing bits =
+as
+>> > we go and I'd rather not grab a lock at each level.  There's a conveni=
+ent
+>> > 4 byte hole between nr_values and parent where we could put it.
+>> >
+>> > Oh, another issue is that we use i_pages.xa_lock to synchronise
+>> > address_space.nrpages, so I'm not sure that a per-node lock will help.
+>>
+>> Thanks for looking at this.
+>>
+>> > But I'm conscious that there are workloads which show contention on
+>> > xa_lock as their limiting factor, so I'm open to ideas to improve all
+>> > these things.
+>>
+>> I have no idea so far because my very limited knowledge about xarray.
+>
+> For the swap file usage, I have been considering an idea to remove the
+> index part of the xarray from swap cache. Swap cache is different from
+> file cache in a few aspects.
+> For one if we want to have a folio equivalent of "large swap entry".
+> Then the natural alignment of those swap offset on does not make
+> sense. Ideally we should be able to write the folio to un-aligned swap
+> file locations.
+>
+> The other aspect for swap files is that, we already have different
+> data structures organized around swap offset, swap_map and
+> swap_cgroup. If we group the swap related data structure together. We
+> can add a pointer to a union of folio or a shadow swap entry.
 
-The page_cache_ra_order() is introduced from 793917d997df, but previous
-bugfix f2c817bed58d ("mm: use memalloc_nofs_save in readahead path")
-don't Cc stable, so the previous patch should be posted to stable?
+The shadow swap entry may be freed.  So we need to prepare for that.
+And, in current design, only swap_map[] is allocated if the swap space
+isn't used.  That needs to be considered too.
+
+> We can use atomic updates on the swap struct member or breakdown the
+> access lock by ranges just like swap cluster does.
+
+The swap code uses xarray in a simple way.  That gives us opportunity to
+optimize.  For example, it makes it easy to use multiple xarray
+instances for one swap device.
+
+> I want to discuss those ideas in the upcoming LSF/MM meet up as well.
+
+Good!
+
+--
+Best Regards,
+Huang, Ying
 
