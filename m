@@ -1,100 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-17994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFFA8B4956
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 05:17:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B773D8B495C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 05:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52C8EB21222
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 03:17:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE1C2825B2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 03:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5DD23BB;
-	Sun, 28 Apr 2024 03:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2654C28F1;
+	Sun, 28 Apr 2024 03:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSE1W0ug"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJ7UqIrI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666AC15A4;
-	Sun, 28 Apr 2024 03:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0735915A4;
+	Sun, 28 Apr 2024 03:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714274267; cv=none; b=cP9md6zaa0CJuDNOyD+pEaPz7iGY4/XKMPfrFmoHsBInvqbZejPCazvq8WuMzKXFjzLZMcRuVfpDzM/022KNSnPbA5CxplQexOp5GKKpR3jjEOsz2EgCzmOOwu+f9MuVTsWmR1Fp1XiX2z/pY2QG1NyXo08DkRI78TCGndys7n0=
+	t=1714274603; cv=none; b=srOHzBYd0HPHDlR9uBWnuQWOslCkym8A3TaAKRp0XRXG2NP9ZyzHEM1jYlthw5ci5NGVlfVs6Y4JC8RP81tdvsoRNl18pM65gn5R1Nx7HDob1FeI9ytqJ0WW93lVqAb5xTAT08MoLhiljFFxzXtBm4PyU22vZpbVqWGqGNs7tnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714274267; c=relaxed/simple;
-	bh=Stf6RD+wk0dcrnB98wXmtvpPzh3y/7iTC6dGDf6CG6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dOhPdt927EMgfc0qosSs1xvSCEYtFT0DdWcYt0j3xeKiml+hJJtnNVpX23w/0GhUKOGypkWzHuXXbCuc7AU0uVbEEUD6av2SPxA2nWozZN9O3I5V/Im/JGtVb27rMwzF6ncNxo/Psr5bApU+2fQDwyEUpZLDC/AE6a4JdteQXxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSE1W0ug; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B53A4C4AF17;
-	Sun, 28 Apr 2024 03:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714274265;
-	bh=Stf6RD+wk0dcrnB98wXmtvpPzh3y/7iTC6dGDf6CG6E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eSE1W0uggxKHMhGrafLiJ1MoFp6jqU0EtHhmTgaE7FD4rgDGhvXvwpgtHYv7X7tv9
-	 IUyXlgs2qZyH77BpEWVg91SzUXwOMH+0G6jiV5pKwep68UypOG9Y6DaiiKLz6Mkczc
-	 kma9smBLp1ZgQZvjYGPIXrgitC0pyJTSmmtX+w8nYqWqXEF9r8q8iTzLjvTlhwNUAQ
-	 3avnbxMudfJ/zwx0/ZETQql4MRxSBH0e9dBBPqGsHAXBLDeBw6UUwMm0qJOCmWdveF
-	 nIsER7Q+8JoeGWomOi6vvyBFi69Rk0dKnLglCYpQe70Ux/uu/E9KY2+EUcikN9uZuI
-	 semwXapexl8aA==
-Message-ID: <e635105f-829d-457d-a2ff-4672ec7a42fe@kernel.org>
-Date: Sun, 28 Apr 2024 11:17:37 +0800
+	s=arc-20240116; t=1714274603; c=relaxed/simple;
+	bh=3VdbSUjP3eJlri/gGS+1w5VBWjDH3Cbj6PZzvQnzlBY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QmOOC6ZMbc1flEPZyh3iHnFbf+2kUej5xITWarBY04JLmA8PJBMQN3DGGePeiB+SG5MiQjym4GIEaqpWsnTbMPqJAPf7T7Ldw2iRh8dwU8Sn5tq6W88n9qNYwA6kAwhT9VSI7+8a6G+fW1GguYONor8fgpYEPPD7kMVbWpdgw6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJ7UqIrI; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714274603; x=1745810603;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=3VdbSUjP3eJlri/gGS+1w5VBWjDH3Cbj6PZzvQnzlBY=;
+  b=KJ7UqIrIn48mTuT0MhAQYiGPfAl8i89TBGyPSphDJ0yoW/USCQ29Vn2l
+   gj2JhvHtkfPEbUi1sijWpJ+JwHbs+DREibA7bnHDNBR/DIdTpZ6qkrnAl
+   XS7Eha4F7k22+aC2RU5TAr/7UFkJIit6DSQCFofQqpK0CfZdlc6YrtV6g
+   SCQTwXxYwVN3qkoGxUK/9XPpOTMyJVJg4C4kSUcxkbfrxvgqsDXem92jI
+   GmoHCtuj4cnfwbmclZJefJfdbs2WzyKrfuDY6St3sIJFa06Xu9Y1bBwlK
+   W5wnSzBCzzfO8C2OP+HxL7oAFazQBNI9pGofWfHUSHBTw0VuABLp34yCM
+   w==;
+X-CSE-ConnectionGUID: G+JSJnJ7TpqgJdfN/hG48Q==
+X-CSE-MsgGUID: PMbicFgZTtqjJ7iCFNEUsg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11057"; a="20522215"
+X-IronPort-AV: E=Sophos;i="6.07,236,1708416000"; 
+   d="scan'208";a="20522215"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2024 20:23:22 -0700
+X-CSE-ConnectionGUID: yBivDVFrS8q2dgPD5A/8Aw==
+X-CSE-MsgGUID: nJUD/d7bQsGwEcvEC2dXUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,236,1708416000"; 
+   d="scan'208";a="26413851"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2024 20:23:17 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,  Kairui Song <ryncsn@gmail.com>,
+  linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Barry Song <v-songbaohua@oppo.com>,  Ryan
+ Roberts <ryan.roberts@arm.com>,  Neil Brown <neilb@suse.de>,  Minchan Kim
+ <minchan@kernel.org>,  Hugh Dickins <hughd@google.com>,  David Hildenbrand
+ <david@redhat.com>,  Yosry Ahmed <yosryahmed@google.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
+In-Reply-To: <CANeU7QknjZrRXH71Uejs1BCKHsmFe5X=neK7D1d1fyos0sAb9Q@mail.gmail.com>
+	(Chris Li's message of "Sat, 27 Apr 2024 19:43:20 -0700")
+References: <20240417160842.76665-1-ryncsn@gmail.com>
+	<87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<Zico_U_i5ZQu9a1N@casper.infradead.org>
+	<87o79zsdku.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com>
+	<87bk5uqoem.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CANeU7QknjZrRXH71Uejs1BCKHsmFe5X=neK7D1d1fyos0sAb9Q@mail.gmail.com>
+Date: Sun, 28 Apr 2024 11:21:25 +0800
+Message-ID: <871q6qqiiy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] f2fs: drop usage of page_index
-To: Matthew Wilcox <willy@infradead.org>, Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- "Huang, Ying" <ying.huang@intel.com>, Chris Li <chrisl@kernel.org>,
- Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Neil Brown <neilb@suse.de>, Minchan Kim <minchan@kernel.org>,
- Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>,
- Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20240423170339.54131-1-ryncsn@gmail.com>
- <20240423170339.54131-4-ryncsn@gmail.com>
- <Zig9JCrhky9JieRS@casper.infradead.org>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Zig9JCrhky9JieRS@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/4/24 6:58, Matthew Wilcox wrote:
-> On Wed, Apr 24, 2024 at 01:03:34AM +0800, Kairui Song wrote:
->> @@ -4086,8 +4086,7 @@ void f2fs_clear_page_cache_dirty_tag(struct page *page)
->>   	unsigned long flags;
->>   
->>   	xa_lock_irqsave(&mapping->i_pages, flags);
->> -	__xa_clear_mark(&mapping->i_pages, page_index(page),
->> -						PAGECACHE_TAG_DIRTY);
->> +	__xa_clear_mark(&mapping->i_pages, page->index, PAGECACHE_TAG_DIRTY);
->>   	xa_unlock_irqrestore(&mapping->i_pages, flags);
->>   }
-> 
-> I just sent a patch which is going to conflict with this:
-> 
-> https://lore.kernel.org/linux-mm/20240423225552.4113447-3-willy@infradead.org/
-> 
-> Chao Yu, Jaegeuk Kim; what are your plans for converting f2fs to use
+Chris Li <chrisl@kernel.org> writes:
 
-Hi Matthew,
+> On Sat, Apr 27, 2024 at 6:16=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
+> wrote:
+>>
+>> Chris Li <chrisl@kernel.org> writes:
+>>
+>> > Hi Ying,
+>> >
+>> > For the swap file usage, I have been considering an idea to remove the
+>> > index part of the xarray from swap cache. Swap cache is different from
+>> > file cache in a few aspects.
+>> > For one if we want to have a folio equivalent of "large swap entry".
+>> > Then the natural alignment of those swap offset on does not make
+>> > sense. Ideally we should be able to write the folio to un-aligned swap
+>> > file locations.
+>> >
+>> > The other aspect for swap files is that, we already have different
+>> > data structures organized around swap offset, swap_map and
+>> > swap_cgroup. If we group the swap related data structure together. We
+>> > can add a pointer to a union of folio or a shadow swap entry.
+>>
+>> The shadow swap entry may be freed.  So we need to prepare for that.
+>
+> Free the shadow swap entry will just set the pointer to NULL.
+> Are you concerned that the memory allocated for the pointer is not
+> free to the system after the shadow swap entry is free?
+>
+> It will be subject to fragmentation on the free swap entry.
+> In that regard, xarray is also subject to fragmentation. It will not
+> free the internal node if the node has one xa_index not freed. Even if
+> the xarray node is freed to slab, at slab level there is fragmentation
+> as well, the backing page might not free to the system.
 
-I've converted .read_folio and .readahead of f2fs to use folio w/ below patchset,
-and let me take a look how to support and enable large folio...
+Sorry my words were confusing.  What I wanted to say is that the xarray
+node may be freed.
 
-https://lore.kernel.org/linux-f2fs-devel/20240422062417.2421616-1-chao@kernel.org/
+>> And, in current design, only swap_map[] is allocated if the swap space
+>> isn't used.  That needs to be considered too.
+>
+> I am aware of that. I want to make the swap_map[] not static allocated
+> any more either.
 
-Thanks,
+Yes.  That's possible.
 
-> folios?  This is getting quite urgent.
+> The swap_map static allocation forces the rest of the swap data
+> structure to have other means to sparsely allocate their data
+> structure, repeating the fragmentation elsewhere, in different
+> ways.That is also the one major source of the pain point hacking on
+> the swap code. The data structure is spread into too many different
+> places.
+
+Look forward to more details to compare :-)
+
+>> > We can use atomic updates on the swap struct member or breakdown the
+>> > access lock by ranges just like swap cluster does.
+>>
+>> The swap code uses xarray in a simple way.  That gives us opportunity to
+>> optimize.  For example, it makes it easy to use multiple xarray
+>
+> The fixed swap offset range makes it like an array. There are many
+> ways to shard the array like swap entry, e.g. swap cluster is one way
+> to shard it. Multiple xarray is another way. We can also do multiple
+> xarray like sharding, or even more fancy ones.
+
+--
+Best Regards,
+Huang, Ying
 
