@@ -1,109 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-18029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD1A8B4E11
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 23:58:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C06728B4E7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 00:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62E9B20BBE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 21:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77381281213
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 22:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AB6C144;
-	Sun, 28 Apr 2024 21:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7819FFBFD;
+	Sun, 28 Apr 2024 22:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bIJNctnC"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="LsyOqxLS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward502c.mail.yandex.net (forward502c.mail.yandex.net [178.154.239.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB828F4E
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 21:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DB6B642;
+	Sun, 28 Apr 2024 22:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714341491; cv=none; b=QSVGRfACMLTwB+Uvlr6X0Ei+2n6lTP5YHEMmDqs9AKkxMokPleBsaVpf2TJFRduaYMkeH5S3JxEKw4C6nFypC6L0VxNot24mkqGkoSIjKnd/Bjk+yONOfFSha5FJZwg2Bl+vh42EuYu1nlGIvWOnKRvj31xMLst4WQdoQ1hcA9s=
+	t=1714342388; cv=none; b=rn5YsOC/LfycICS2MVyjlzpM9svLjEQhR1dXdmInak/BtlZk7jfZyXwPeTRHxPdsMijTMXLFvpnZOtbCJ8zfi+IzRTCgtxp4r5lS31D/o6mUVPIrRbrofvHCWO/MUBx4Y+6MK7Do4sRoU0djsI73+tEHhBpHkfFFkmzO8Fs+uN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714341491; c=relaxed/simple;
-	bh=tdAhCl7mjJa8RjUt4m4/7T2fZ2dVw3IwCO8GrNawYNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AsILOapr+J5qdsIj2xLmQpv+mpN+FiefTrF2kwvmuOl+nOnEUAaFS2g2Wo8QiIB1aGzb+UtstcbtboXMOA7F0/3v80A6hKQNTLN057/ZXgAQCevRwpOLpK+W9Ph21p6ZCVkeXgu617jimAMQQNkJLkEP9tVzUdrjMzQKIwpjCyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bIJNctnC; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6ed01c63657so3699509b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 14:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714341489; x=1714946289; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eXuV7csRtJz4GGD7tR7/rDnQZRyGku0WW8DuEX0XcjY=;
-        b=bIJNctnCWEY9lV3LZntTmI5WvDBMx1KFZkm9CIn25Et6vGQpLxi5cUC+JVyK3btS1w
-         ep8CNfUn1x+UPTsLHKczGOmLnhdLQ6rd4E5Y438D3aqEf2thRdILmeXpGtMtdM76Sa7m
-         ENQJW3e0n/sjT0g8v4cvtq+s6GjVV19WWqxH1UPvGuQoah7irri5JfOGuJZr/OOcUttO
-         6pObWAZl+nmnPzzoxuanQA/YCPUoTfK5dJrKutlodSPvaTaa6Eg7Xovs7pBSkyIlYH9D
-         hqqMl+HNCsp+grtDj0iMebnR3Ctug9eu6ZPlqmXTDBRV5Yt7PqLvrJPZjKIaMVDPIIvE
-         cqog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714341489; x=1714946289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eXuV7csRtJz4GGD7tR7/rDnQZRyGku0WW8DuEX0XcjY=;
-        b=mo8XKvtPhUFo9HtSOr84AiWTLPeIqVNWx7YQqplMkUmY9dxlPKEKPgfnlYO5z9jnqX
-         SUYc+S+Gbdv6HzA8SVu2Ghq427lhJB49pbXbAY/ApExEWAZE5BQ9TL9YnDDxJEsLnIs8
-         D9TWUig4u9YwoyNae0Jk1sA232LSxVgacD8h7EM5k+4ZcBrRQJ1OAwwDV+qMWd7wZT7N
-         myZtv0woQ6ji/wKPwsQoBTjGnMDABiTrhVHDS9u6L42KtYgtRncomC8ltCybKteHuvFU
-         hEKoEmB2ruBYvmOlLL8+HlLNcBYR48qKCCT7IzZA4QIT3LRI/HIKz6U8QSqbtEbO3RGQ
-         cuxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVt8GAOL0cMdiTnwCngL1Yfqfe8uyR6ahpMwtUmWOqYLMlo0q3ONfu5ksnJyZY+BthriId7UrHlTClkGHu+hp6SiXBoU9jaMi9j7kiGAQ==
-X-Gm-Message-State: AOJu0YxGHsLtwKSAluqyky2//WPDDeASIsshOkkctVNgTz2eJ9OzlL04
-	fE9Zh9IX3bb8BFOQHpp/9kWBr4Yfhsj8yknIrYQlDkXeTP/LJyn0HM2HMnypQOs=
-X-Google-Smtp-Source: AGHT+IGye1ehSZZt4yT2nFPbQ7vud3lFr2xIjqVEFKvhITtSxlMsboN0QCMiyts7aBjcuVaOJTfFww==
-X-Received: by 2002:a05:6a00:4fc3:b0:6ed:5f64:2fef with SMTP id le3-20020a056a004fc300b006ed5f642fefmr6735175pfb.17.1714341488792;
-        Sun, 28 Apr 2024 14:58:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-29-7.pa.nsw.optusnet.com.au. [49.181.29.7])
-        by smtp.gmail.com with ESMTPSA id n7-20020a635907000000b0061236221eeesm1876214pgb.21.2024.04.28.14.58.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Apr 2024 14:58:08 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1s1CX7-00EKuy-0J;
-	Mon, 29 Apr 2024 07:58:05 +1000
-Date: Mon, 29 Apr 2024 07:58:05 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: syzbot <syzbot+7766d4a620956dfe7070@syzkaller.appspotmail.com>
-Cc: chandan.babu@oracle.com, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_icwalk_ag
-Message-ID: <Zi7GbdillYG7gSB6@dread.disaster.area>
-References: <000000000000a1ce0006144f7533@google.com>
+	s=arc-20240116; t=1714342388; c=relaxed/simple;
+	bh=v+x60Em69Y3V15yKVtpLHgKkcW8An+47dIIafknn1Ek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWATB4jWPHVQ1ZZhEymdEh7xka/D7I+KXw7TqQLL0pV2XUd5IGlupvD/rAmrSZdl1yhem7pxEJe20Xzh9fYr4/5agSnOd8gSi8Ns714+2aN1d2On5jJcFd3z5Ws0ETH7Xkw1xvyqqa82O8DRBPH62cAq2Q0DaC5mjAvlw2Rn2rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=LsyOqxLS; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:28a2:0:640:9f07:0])
+	by forward502c.mail.yandex.net (Yandex) with ESMTPS id A818360E39;
+	Mon, 29 Apr 2024 01:13:01 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id wCYcLSYpCSw0-neCwgFvP;
+	Mon, 29 Apr 2024 01:13:00 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1714342380; bh=c9Y0BivHdjPKZY5c2XXTa9ws62jwT30YMQALX3hKUgU=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=LsyOqxLSL+upd6hnVyorcANpJaN3+4rBG+WC9FGO2DJNOLJqiBFKcdVbORF/YVI6k
+	 k1c9E5X7wsizm3X+SBFEdRVCBDXzZSSBjrxGZvnDpE/C7KRJRjBYSRLtWBzTSdxa+m
+	 JVb5ceF0eM55CN/tzh31ttIGaTAnZwuLtTnuIMGc=
+Authentication-Results: mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <eae8e7e6-9c03-4c8e-ab61-cf7060d74d6d@yandex.ru>
+Date: Mon, 29 Apr 2024 01:12:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000a1ce0006144f7533@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Content-Language: en-US
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240426133310.1159976-1-stsp2@yandex.ru>
+ <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
+ <8e186307-bed2-4b5c-9bc6-bdc70171cc93@yandex.ru>
+ <CALCETrVioWt0HUt9K1vzzuxo=Hs89AjLDUjz823s4Lwn_Y0dJw@mail.gmail.com>
+ <33bbaf98-db4f-4ea6-9f34-d1bebf06c0aa@yandex.ru>
+ <CALCETrXPgabERgWAru7PNz6A5rc6BTG9k2RRmjU71kQs4rSsPQ@mail.gmail.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <CALCETrXPgabERgWAru7PNz6A5rc6BTG9k2RRmjU71kQs4rSsPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 23, 2024 at 01:09:28AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11525d81180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fe78468a74fdc3b7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7766d4a620956dfe7070
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+29.04.2024 00:30, Andy Lutomirski пишет:
+> On Sun, Apr 28, 2024 at 2:15 PM stsp <stsp2@yandex.ru> wrote:
+>> But isn't that becoming a problem once
+>> you are (maliciously) passed such fds via
+>> exec() or SCM_RIGHTS? You may not know
+>> about them (or about their creds), so you
+>> won't close them. Or?
+> Wait, who's the malicious party?
 
-#syz dup: possible deadlock in xfs_ilock_data_map_shared
+Someone who opens an fd with O_CRED_ALLOW
+and passes it to an unsuspecting process. This
+is at least how I understood the Christian Brauner's
+point about "unsuspecting userspace".
 
--- 
-Dave Chinner
-david@fromorbit.com
+
+>    Anyone who can open a directory has,
+> at the time they do so, permission to do so.  If you send that fd to
+> someone via SCM_RIGHTS, all you accomplish is that they now have the
+> fd.
+
+Normally yes.
+But fd with O_CRED_ALLOW prevents the
+receiver from fully dropping his privs, even
+if he doesn't want to deal with it.
+
+> In my scenario, the malicious party attacks an *existing* program that
+> opens an fd for purposes that it doesn't think are dangerous.  And
+> then it gives the fd *to the malicious program* by whatever means
+> (could be as simple as dropping privs then doing dlopen).  Then the
+> malicious program does OA2_INHERIT_CREDS and gets privileges it
+> shouldn't have.
+
+But what about an inverse scenario?
+Malicious program passes an fd to the
+"unaware" program, putting it under a
+risk. That program probably never cared
+about security, since it doesn't play with
+privs. But suddenly it has privs, passed
+out of nowhere (via exec() for example),
+and someone who hacks it, takes them.
+
+>>>> My solution was to close such fds on
+>>>> exec and disallowing SCM_RIGHTS passage.
+>>> I don't see what problem this solves.
+>> That the process that received them,
+>> doesn't know they have O_CRED_ALLOW
+>> within. So it won't deduce to close them
+>> in time.
+> Hold on -- what exactly are you talking about?  A process does
+> recvmsg() and doesn't trust the party at the other end.  Then it
+> doesn't close the received fd.  Then it does setuid(getuid()).  Then
+> it does dlopen or exec of an untrusted program.
+>
+> Okay, so the program now has a completely unknown fd.  This is already
+> part of the thread model.  It could be a cred-capturing fd, it could
+> be a device node, it could be a socket, it could be a memfd -- it
+> could be just about anything.  How do any of your proposals or my
+> proposals cause an actual new problem here?
+
+I am not actually sure how widely
+does this spread. I.e. /dev/mem is
+restricted these days, but if you can
+freely pass device nodes around, then
+perhaps the ability to pass an r/o dir fd
+that can suddenly give creds, is probably
+not something new...
+But I really don't like to add to this
+particular set of cases. I don't think
+its safe, I just think its legacy, so while
+it is done that way currently, doesn't
+mean I can do the same thing and
+call it "secure" just because something
+like this was already possible.
+Or is this actually completely safe?
+Does it hurt to have O_CRED_ALLOW
+non-passable?
+
+>>> This is fundamental to the whole model. If I stick a FAT formatted USB
+>>> drive in the system and mount it, then any process that can find its
+>>> way to the mountpoint can write to it.  And if I open a dirfd, any
+>>> process with that dirfd can write it.  This is old news and isn't a
+>>> problem.
+>> But IIRC O_DIRECTORY only allows O_RDONLY.
+>> I even re-checked now, and O_DIRECTORY|O_RDWR
+>> gives EISDIR. So is it actually true that
+>> whoever has dir_fd, can write to it?
+> If the filesystem grants that UID permission to write, then it can write.
+
+Which to me sounds like owning an
+O_DIRECTORY fd only gives you the
+ability to skip the permission checks
+of the outer path components, but not
+the inner ones. So passing it w/o O_CRED_ALLOW
+was quite safe and didn't give you any
+new abilities.
+
 
