@@ -1,165 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-18027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6638F8B4DED
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 23:31:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A438B4E12
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 23:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEB78B20A80
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 21:31:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE705B20C96
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 21:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3365B661;
-	Sun, 28 Apr 2024 21:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="T46qo4nu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD99BA27;
+	Sun, 28 Apr 2024 21:59:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sxb1plsmtpa01-13.prod.sxb1.secureserver.net (sxb1plsmtpa01-13.prod.sxb1.secureserver.net [188.121.53.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00F5947B
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 21:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CC98F4E
+	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 21:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714339854; cv=none; b=WdDGyFmXRVcOuGqlnGBVpIvsmm426WshTOeM0zpLjYXjfyHHYj6JJve2VFqLoA+g0TZPGdMfPRMhZmGF7X4m8kVpWzFB2GrJc2mo6EzxyUyQtWzw/XUsU71WzKMRFEsKU1382k1un1GvjSfNefr2P4LUFb0e43kVs9k/Gup3uWc=
+	t=1714341554; cv=none; b=pQs3eyp+xfgei3GYgX7BhDhNjHX6cU5mIEGN3LTTli6bCClw6KaQ8Ofa+GmWX+Wipz+/k9eFTuOYwocvAiOgqLLw5Rk+pECUZouOue3vsUcXvJ/dXyr9sAuKThr8bRfSgWVi0Y/G2bIOkmpu4pnnqh3k5ND0cM9OWh1SVp1/TyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714339854; c=relaxed/simple;
-	bh=iGTiqLpUAG8tJk0tZZXhVpkv3sDrq4xQk2Vsf0SnG0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UkPVr9inEy7oH5dyuFXuCuDoHgTMD8OUrSjsjMjYvmHuX1EZZYHiHjV4Lip5nj5r+eWjgO+UtUPs6MWu8WewW6rIcwYD+MktblQO1H/gy2PqfRF1oGMxSZ3NYOT+T8HxdtobSOj+rcIGfJd8Ojw1NhcL+FXTd1MMEPyLlPo/h4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=T46qo4nu; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-7e128b1ba75so1150112241.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 14:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1714339851; x=1714944651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uJJ35N4q0VyKFRaZhKEeRutim4StKWKCGfhx+lo+8WU=;
-        b=T46qo4nuLxB/m8R1EzSBwQiyztMf4/wQbuFE0yGSPR3DlrA8GwtAEBHQ8KJhtz1StC
-         TfiPbAQb/M08wrLTbSS7JT6S6uhIzfwvlW4Zbf2SZStO7u5U/GRs0N39qwCGK+8tnttv
-         TW15AQx8gmyHloHohM9bVuV2GfLx/yFOEqCeiVpeWbPmSgTrwg4eMGJLqtLkVM+2veru
-         XrcXqq88Sj/Nbjn2cMDgI34excSxccFRFAMHkK3pdeCE5oC++yo8MmZKmRI/2vu7g3eP
-         BW/JzZ1Y3XSl0bTdpurE1tyGsabsoXyllaEFoXEbXMUIyjuIGxmO0Qg6L/iDbvloHuwA
-         qtUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714339851; x=1714944651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uJJ35N4q0VyKFRaZhKEeRutim4StKWKCGfhx+lo+8WU=;
-        b=N+tS7TQj0sMQ6Y4xNkN+x0WkkBjNvKIx9dae4FfYq6+GKrjRwcNYljrm6uNLgJcb17
-         f86bpL6JhAdkvvIf43bgyrFFIhOavEhvYcPLHtuVewiy6knP/5FUe4U3EHVaKI7ndgiH
-         thb3QhPDfdYlbYZQTLgP+TApMZdiidUCq00I9jNAZmuvc6iH3D09/QyAqpjLi+94GU/7
-         A9+cl1qNbsyBq5gJMH4qiRPnzwvtcja++Nx1WaC1b0wyqHK6UL5tMfrn93LTMXXvGkxw
-         OIt8pwbnIoNYTDdPtR0MISvBMye5GRkonxCow9OrSixmrc+35OyEwXZHjalEFzZxFsS5
-         anMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEfLi+3vmZcvTslUBDkwEctczPnB05Jz+RIKuuwLxVp+v3UwYU9PYG/YU9iuZ2GPCcjNv56HnpgDaj7K1drDyEfvdDiCijdthVPVrd8A==
-X-Gm-Message-State: AOJu0Yx4TGoMCCdw52RtxyidMU7cheVfqvzNeJ8eHVfiez53e+PXfzhQ
-	twgMv3YDpNN+BJ4QhA6auSh44bu6iiWvflPDo4gZsMRR6L3aYUZmFKFWSP8BvuOqFFZMFz9rm8g
-	VyMAaN3YLrA/iYHZ7p9DdyKmTkXxtJLQBxrzd
-X-Google-Smtp-Source: AGHT+IF8s3jPedCe069Eq93UJ1szjQ8DEEkODSmOra+9QpZeoqVtaQCCYqCnnCYq10+dMd4Mf9SVZZ7nuqKSS4JjZ6Q=
-X-Received: by 2002:a05:6122:369f:b0:4c0:24e6:f49d with SMTP id
- ec31-20020a056122369f00b004c024e6f49dmr9623078vkb.1.1714339851513; Sun, 28
- Apr 2024 14:30:51 -0700 (PDT)
+	s=arc-20240116; t=1714341554; c=relaxed/simple;
+	bh=3yI8YZpe4PDtSE1G4xDe/BaKByXpx/bBXsaZyJ4nJtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=hAzuEao1xPAmZCPbXiSnN3GRpat/0soigtxz3rgHHE3vHL4nHRHOSMZgXzsyFqqjvRQkhXpSXWgCU5Yi50ajxMjfQEm3qj6YE1l8+KnUa+poF/JWNCvgp/RQR3+X6ySCAFvnRd+ArI/qwfwwiVO3FYIae1cCq/sYCO45zbcDjkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.90] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPA
+	id 1CFesySMyeOLy1CFgsTbOO; Sun, 28 Apr 2024 14:40:05 -0700
+X-CMAE-Analysis: v=2.4 cv=B4Ny0/tM c=1 sm=1 tr=0 ts=662ec236
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=FXvPX3liAAAA:8 a=JfrnYn6hAAAA:8 a=zF9BiN6CPQy_781Rqo8A:9
+ a=QEXdDO2ut3YA:10 a=UObqyxdv-6Yh2QiB9mM_:22 a=1CNFftbPRP8L7MoqJWF3:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <87af91eb-e5cb-473f-9724-35d7dab41736@squashfs.org.uk>
+Date: Sun, 28 Apr 2024 22:40:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240426133310.1159976-1-stsp2@yandex.ru> <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
- <8e186307-bed2-4b5c-9bc6-bdc70171cc93@yandex.ru> <CALCETrVioWt0HUt9K1vzzuxo=Hs89AjLDUjz823s4Lwn_Y0dJw@mail.gmail.com>
- <33bbaf98-db4f-4ea6-9f34-d1bebf06c0aa@yandex.ru>
-In-Reply-To: <33bbaf98-db4f-4ea6-9f34-d1bebf06c0aa@yandex.ru>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Sun, 28 Apr 2024 14:30:40 -0700
-Message-ID: <CALCETrXPgabERgWAru7PNz6A5rc6BTG9k2RRmjU71kQs4rSsPQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-To: stsp <stsp2@yandex.ru>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	Stefan Metzmacher <metze@samba.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 22/30] squashfs: Convert squashfs_symlink_read_folio to
+ use folio APIs
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ linux-fsdevel@vger.kernel.org
+References: <20240420025029.2166544-1-willy@infradead.org>
+ <20240420025029.2166544-23-willy@infradead.org>
+Content-Language: en-GB
+Cc: Andrew Morton <akpm@linux-foundation.org>
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20240420025029.2166544-23-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfINapGQ+fQcK89WIrrlJL81PMGVkcH/krmsG2KNHVDWYThJ8HxZ5mmnJeffZlB5j9tzj3x4kIDIMlHMaNAbNYOPTmWKogSL+zWRRIr3ryHBvYthP92Ef
+ EXk//aLTZk+UpVjxyqQbkBAYUCMQaDvAqfuu6KrpQg6xe6lH27W2r7kfLmrwbCBY/h+XtsdH+TV/RRnsvIGG1G9JG4BeR2g8xxI8QTNcoXAJhthle3hxJXjF
+ ansVup477VAjbFhy470ZFk4LkhvnyWhr+5/OBHbSf0E=
 
-On Sun, Apr 28, 2024 at 2:15=E2=80=AFPM stsp <stsp2@yandex.ru> wrote:
->
-> 28.04.2024 23:19, Andy Lutomirski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> Doesn't this have the same problem
-> >> that was pointed to me? Namely (explaining
-> >> my impl first), that if someone puts the cred
-> >> fd to an unaware process's fd table, such
-> >> process can't fully drop its privs. He may not
-> >> want to access these dirs, but once its hacked,
-> >> the hacker will access these dirs with the
-> >> creds came from an outside.
-> > This is not a real problem. If I have a writable fd for /etc/shadow or
-> > an fd for /dev/mem, etc, then I need close them to fully drop privs.
->
-> But isn't that becoming a problem once
-> you are (maliciously) passed such fds via
-> exec() or SCM_RIGHTS? You may not know
-> about them (or about their creds), so you
-> won't close them. Or?
+On 20/04/2024 03:50, Matthew Wilcox (Oracle) wrote:
+> Remove use of page APIs, return the errno instead of 0, switch from
+> kmap_atomic to kmap_local and use folio_end_read() to unify the two
+> exit paths.
+> 
+> Cc: Phillip Lougher <phillip@squashfs.org.uk>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Wait, who's the malicious party?  Anyone who can open a directory has,
-at the time they do so, permission to do so.  If you send that fd to
-someone via SCM_RIGHTS, all you accomplish is that they now have the
-fd.
+Tested-by: Phillip Lougher <phillip@squashfs.org.uk>
+Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
 
-In my scenario, the malicious party attacks an *existing* program that
-opens an fd for purposes that it doesn't think are dangerous.  And
-then it gives the fd *to the malicious program* by whatever means
-(could be as simple as dropping privs then doing dlopen).  Then the
-malicious program does OA2_INHERIT_CREDS and gets privileges it
-shouldn't have.
+You've mentioned a couple of times you prefer the patches in
+the series to go through the fs maintainers.  Andrew Morton is
+currently handling submission of Squashfs patches for me, and
+I'm happy with either Andrew or you merging it.
 
-But if the *whole point* of opening the fd was to capture privileges
-and preserve them across a privilege drop, and the program loads
-malicious code after dropping privs, then that's a risk that's taken
-intentionally.  This is like how, if you do curl
-http://whatever.com/foo.sh | bash, you are granting all kinds of
-permissions to unknown code.
+CC'ing Andrew.
 
-> >> My solution was to close such fds on
-> >> exec and disallowing SCM_RIGHTS passage.
-> > I don't see what problem this solves.
->
-> That the process that received them,
-> doesn't know they have O_CRED_ALLOW
-> within. So it won't deduce to close them
-> in time.
+Regards
 
-Hold on -- what exactly are you talking about?  A process does
-recvmsg() and doesn't trust the party at the other end.  Then it
-doesn't close the received fd.  Then it does setuid(getuid()).  Then
-it does dlopen or exec of an untrusted program.
+Phillip
 
-Okay, so the program now has a completely unknown fd.  This is already
-part of the thread model.  It could be a cred-capturing fd, it could
-be a device node, it could be a socket, it could be a memfd -- it
-could be just about anything.  How do any of your proposals or my
-proposals cause an actual new problem here?
+> ---
+>   fs/squashfs/symlink.c | 35 ++++++++++++++++-------------------
+>   1 file changed, 16 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
+> index 2bf977a52c2c..6ef735bd841a 100644
+> --- a/fs/squashfs/symlink.c
+> +++ b/fs/squashfs/symlink.c
+> @@ -32,20 +32,19 @@
+>   
+>   static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+>   {
+> -	struct page *page = &folio->page;
+> -	struct inode *inode = page->mapping->host;
+> +	struct inode *inode = folio->mapping->host;
+>   	struct super_block *sb = inode->i_sb;
+>   	struct squashfs_sb_info *msblk = sb->s_fs_info;
+> -	int index = page->index << PAGE_SHIFT;
+> +	int index = folio_pos(folio);
+>   	u64 block = squashfs_i(inode)->start;
+>   	int offset = squashfs_i(inode)->offset;
+>   	int length = min_t(int, i_size_read(inode) - index, PAGE_SIZE);
+> -	int bytes, copied;
+> +	int bytes, copied, error;
+>   	void *pageaddr;
+>   	struct squashfs_cache_entry *entry;
+>   
+>   	TRACE("Entered squashfs_symlink_readpage, page index %ld, start block "
+> -			"%llx, offset %x\n", page->index, block, offset);
+> +			"%llx, offset %x\n", folio->index, block, offset);
+>   
+>   	/*
+>   	 * Skip index bytes into symlink metadata.
+> @@ -57,14 +56,15 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+>   			ERROR("Unable to read symlink [%llx:%x]\n",
+>   				squashfs_i(inode)->start,
+>   				squashfs_i(inode)->offset);
+> -			goto error_out;
+> +			error = bytes;
+> +			goto out;
+>   		}
+>   	}
+>   
+>   	/*
+>   	 * Read length bytes from symlink metadata.  Squashfs_read_metadata
+>   	 * is not used here because it can sleep and we want to use
+> -	 * kmap_atomic to map the page.  Instead call the underlying
+> +	 * kmap_local to map the folio.  Instead call the underlying
+>   	 * squashfs_cache_get routine.  As length bytes may overlap metadata
+>   	 * blocks, we may need to call squashfs_cache_get multiple times.
+>   	 */
+> @@ -75,29 +75,26 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+>   				squashfs_i(inode)->start,
+>   				squashfs_i(inode)->offset);
+>   			squashfs_cache_put(entry);
+> -			goto error_out;
+> +			error = entry->error;
+> +			goto out;
+>   		}
+>   
+> -		pageaddr = kmap_atomic(page);
+> +		pageaddr = kmap_local_folio(folio, 0);
+>   		copied = squashfs_copy_data(pageaddr + bytes, entry, offset,
+>   								length - bytes);
+>   		if (copied == length - bytes)
+>   			memset(pageaddr + length, 0, PAGE_SIZE - length);
+>   		else
+>   			block = entry->next_index;
+> -		kunmap_atomic(pageaddr);
+> +		kunmap_local(pageaddr);
+>   		squashfs_cache_put(entry);
+>   	}
+>   
+> -	flush_dcache_page(page);
+> -	SetPageUptodate(page);
+> -	unlock_page(page);
+> -	return 0;
+> -
+> -error_out:
+> -	SetPageError(page);
+> -	unlock_page(page);
+> -	return 0;
+> +	flush_dcache_folio(folio);
+> +	error = 0;
+> +out:
+> +	folio_end_read(folio, error == 0);
+> +	return error;
+>   }
+>   
+>   
 
-> > This is fundamental to the whole model. If I stick a FAT formatted USB
-> > drive in the system and mount it, then any process that can find its
-> > way to the mountpoint can write to it.  And if I open a dirfd, any
-> > process with that dirfd can write it.  This is old news and isn't a
-> > problem.
->
-> But IIRC O_DIRECTORY only allows O_RDONLY.
-> I even re-checked now, and O_DIRECTORY|O_RDWR
-> gives EISDIR. So is it actually true that
-> whoever has dir_fd, can write to it?
-
-If the filesystem grants that UID permission to write, then it can write.
 
