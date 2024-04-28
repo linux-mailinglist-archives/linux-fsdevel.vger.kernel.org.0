@@ -1,62 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-17986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22E58B48EE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 01:46:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860FD8B48F8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 02:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738231F2171C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Apr 2024 23:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F709B21419
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 00:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947F81487D3;
-	Sat, 27 Apr 2024 23:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F7A10F2;
+	Sun, 28 Apr 2024 00:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IlrHyZvo"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IWHqDCYU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F44C4A3D;
-	Sat, 27 Apr 2024 23:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758067E1;
+	Sun, 28 Apr 2024 00:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714261590; cv=none; b=Lg+MWxhfo9EcdYJTApG/6XNLs+f0/igIkS8P6gBtrx87o9YcecZXLoamV3cHD662eDRNRhP5aLutVuxQRB1/RzEzX8AaalhBXxpAPHnIqNU/Qm76ieab6RaEMdgQ+RPnmWQpoxqCX66aQ3alwLQBww9MDSOawEfEqPhumMyDEHE=
+	t=1714265848; cv=none; b=cog7h0mayUNiy74bCCewoqZKCwaKH6d/MOtgEPlT9kQxgOor0SkrnAqR13RNsyijiqmJdRWuvnTMHXjNqetCPfSY8KXW8n6sHoL95EoWPlRJq22uPMIY8iuqRQukdIA2G1ltX3lo/6Wwol+mUEhr5svaMDOkMnABPfRgDOgGSAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714261590; c=relaxed/simple;
-	bh=gJwg9xG8VlL/41boVI9dbukbsm9h734IFRS3g0vDnV0=;
+	s=arc-20240116; t=1714265848; c=relaxed/simple;
+	bh=54uIGKbchIqeyGHCinmigs69p/bVqpwlPIcL4lKukpQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1/gKabLAl7VGFkV3QGsgadHoetRAfKN2qwConfqzqnffT28+DrZydx50nmbB535v4F48b9k8vrfRm18tgfntnZsx3izzaG+Mg7aOBHwsJ3DjB7EC2T6mbPesuf4mmDYBGhQpy9J/ALVQBGUQ3ZQdapHgVx1BL7C1HLLsNMk3t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IlrHyZvo; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=uonBy4nHXkFcmUKnQcq79r86Pm3L9ZoB9gyNuX2KMUniWp4vCuyqqSa5HTGDPaHNYsszm8QiuH6qGFpfFqsHG4fw+QBsTF4I/tN/dTbTUyjyfqKKKkr92xEhC6MSCEmv9HfynDqc6/CT9bU3Xw2oYeq0y/WICxWi8yJfZ0Otpn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IWHqDCYU; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GYaIaWc5ozD1igWj/dlah909E8eLQGhxWKN9amtdGrY=; b=IlrHyZvo4caZIVYM3oj/LRaAR9
-	1BzkCio9PHBE7cxaqhG0bieVtoZehI/dmYHvggdzInJTK6GAieUL1ly0ityJmSVSwMOlP0KiyPAHu
-	qv96v4U3LyWtR2ZSnBiC25kJcHKdm93YmhGdUVk8x+Cj0K0bz6LKNiueAIRkPdqBtZCK/2yULeoVy
-	+3NYgTr74TV4nB869rvgfTJWqWFPrYLV07LnzUybdY5+PaLfeDmPKv+H6M7Zpql8HM3R4PNjho5M+
-	4tS9E67clJgHRkbvl7CqRdpBzztly2sBLk9uT++4FI6CXXcZRsMys9pLE1jNyU7PkqtJ7FfxZWfkG
-	s8XsL3Cw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s0rkN-006M7p-1f;
-	Sat, 27 Apr 2024 23:46:23 +0000
-Date: Sun, 28 Apr 2024 00:46:23 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 4/7] swapon(2): open swap with O_EXCL
-Message-ID: <20240427234623.GS2118490@ZenIV>
-References: <20240427210920.GR2118490@ZenIV>
- <20240427211128.GD1495312@ZenIV>
- <CAHk-=wiag-Dn=7v0tX2UazhMTBzG7P42FkgLSsVc=rfN8_NC2A@mail.gmail.com>
+	bh=iEhnO4AWXoNxFsAFeSCOgVl/u1tIJg7C/6bLYFJsfso=; b=IWHqDCYUczIV+YtqAUlL6HVU+V
+	qCtZyJpY5Sh2NfLpSQK0jlGyEtErUphjfxsjrprhsLPjB+PmckQ17consJv5VugT5B64CyFQ3dIAD
+	WajK1Il7ARNNEV/N8P0Mb0R5DHCFMJoAMKyWI7Qmz4Lu6MNnDpgneBWjCEKZoSN8OpO1PbghXkg+c
+	vrs8MDYIDAUlKDlpojo4H5DPbN0R8m6m/6qvwBnplNJ9p4Lm03LOOuvj5k846ad5o1rV/sczirBif
+	P5BktIszYYw7GDr4ZqNSZVwKat58sz1tf2UdKbpR4DrowlURDVSud5kA9E9EvWWc+Q5LmyKtpUtoW
+	wy8sUNtw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s0sqz-0000000GWGt-1oqf;
+	Sun, 28 Apr 2024 00:57:17 +0000
+Date: Sat, 27 Apr 2024 17:57:17 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>, ziy@nvidia.com
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, djwong@kernel.org,
+	brauner@kernel.org, david@fromorbit.com, chandan.babu@oracle.com,
+	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com
+Subject: Re: [PATCH v4 05/11] mm: do not split a folio if it has minimum
+ folio order requirement
+Message-ID: <Zi2e7ecKJK6p6ERu@bombadil.infradead.org>
+References: <20240425113746.335530-1-kernel@pankajraghav.com>
+ <20240425113746.335530-6-kernel@pankajraghav.com>
+ <Ziq4qAJ_p7P9Smpn@casper.infradead.org>
+ <Zir5n6JNiX14VoPm@bombadil.infradead.org>
+ <Ziw8w3P9vljrO9JV@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,48 +69,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiag-Dn=7v0tX2UazhMTBzG7P42FkgLSsVc=rfN8_NC2A@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <Ziw8w3P9vljrO9JV@bombadil.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Sat, Apr 27, 2024 at 02:40:22PM -0700, Linus Torvalds wrote:
-> On Sat, 27 Apr 2024 at 14:11, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > ... eliminating the need to reopen block devices so they could be
-> > exclusively held.
-> 
-> This looks like a good change, but it raises the question of why we
-> did it this odd way to begin with?
-> 
-> Is it just because O_EXCL without O_CREAT is kind of odd, and only has
-> meaning for block devices?
-> 
-> Or is it just that before we used fiel pointers for block devices, the
-> old model made more sense?
-> 
-> Anyway, I like it, it just makes me go "why didn't we do it that way
-> originally?"
+On Fri, Apr 26, 2024 at 04:46:11PM -0700, Luis Chamberlain wrote:
+> On Thu, Apr 25, 2024 at 05:47:28PM -0700, Luis Chamberlain wrote:
+> > On Thu, Apr 25, 2024 at 09:10:16PM +0100, Matthew Wilcox wrote:
+> > > On Thu, Apr 25, 2024 at 01:37:40PM +0200, Pankaj Raghav (Samsung) wrote:
+> > > > From: Pankaj Raghav <p.raghav@samsung.com>
+> > > > 
+> > > > using that API for LBS is resulting in an NULL ptr dereference
+> > > > error in the writeback path [1].
+> > > >
+> > > > [1] https://gist.github.com/mcgrof/d12f586ec6ebe32b2472b5d634c397df
+> > > 
+> > >  How would I go about reproducing this?
 
-Exclusion for swap partitions:
+Well so the below fixes this but I am not sure if this is correct.
+folio_mark_dirty() at least says that a folio should not be truncated
+while its running. I am not sure if we should try to split folios then
+even though we check for writeback once. truncate_inode_partial_folio()
+will folio_wait_writeback() but it will split_folio() before checking
+for claiming to fail to truncate with folio_test_dirty(). But since the
+folio is locked its not clear why this should be possible.
 
-commit 75e9c9e1bffbe4a1767172855296b94ccba28f71
-Author: Alexander Viro <viro@math.psu.edu>
-Date:   Mon Mar 4 22:56:47 2002 -0800
-
-    [PATCH] death of is_mounted() and aother fixes
-
-
-O_EXCL for block devices:
-
-commit c366082d9ed0a0d3c46441d1b3fdf895d8e55ca9
-Author: Andrew Morton <akpm@osdl.org>
-Date:   Wed Aug 20 10:26:57 2003 -0700
-
-    [PATCH] Allow O_EXCL on a block device to claim exclusive use.
-
-IOW, O_EXCL hadn't been available at the time - it had been implemented
-on top of bd_claim()/bd_release() introduced in the same earlier commit.
-
-Switching swap exclusion to O_EXCL could've been done back in 2003 or
-at any later point; it's just that swapon(2)/swapoff(2) is something that
-rarely gets a look...
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 83955362d41c..90195506211a 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3058,7 +3058,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 	if (new_order >= folio_order(folio))
+ 		return -EINVAL;
+ 
+-	if (folio_test_writeback(folio))
++	if (folio_test_dirty(folio) || folio_test_writeback(folio))
+ 		return -EBUSY;
+ 
+ 	if (!folio_test_anon(folio)) {
 
