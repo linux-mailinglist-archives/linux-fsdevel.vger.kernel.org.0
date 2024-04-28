@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-18000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347858B49C6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 07:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4158B49C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 07:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6662E1C20D4E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 05:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F471C20D4E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Apr 2024 05:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF7E5664;
-	Sun, 28 Apr 2024 05:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B560453BE;
+	Sun, 28 Apr 2024 05:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hMrBQnLU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="dZX9cYZo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4A321D;
-	Sun, 28 Apr 2024 05:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C7C320C;
+	Sun, 28 Apr 2024 05:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714281384; cv=none; b=klBXkzAeAEdEdwLTVqq6VXnnfRrbMias+sD0BzdS07Ejo4V+g1BNN/GY9uNwEyOl/TOQCBGRhbwoTcvTdZ8EUXY6+bj3bzukG430Pj7zYKfTCgS+SMPkaji8enN/Ax9m01OL/7S3ySESap6EektLFAyDAYTsvBdLR8TrD2x9hOU=
+	t=1714281449; cv=none; b=kc9rcLLgOWMdZvQH51/DAEYASA49fCcc2SFs0iBdzIhfpR0L1JtBuMbDswZ7MQYhhYrV5uNg23UQuH49AdPS3VgpbrWTu1JGI9OMPrjhJuI6tzX7OnGl/ZuSOI15WCpyWBEFberd4w8zaf6XNtFUGofEjmk4z4fmkO8JGiXBxRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714281384; c=relaxed/simple;
-	bh=q0RAssYWsvGYCQEhxffMOxjxrhMhIBZbvWOAYDWsB+c=;
+	s=arc-20240116; t=1714281449; c=relaxed/simple;
+	bh=+BLcWJoCEy6Lcy7oq8TS69eqNomO12mqU0xRquEsrYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVafpBfNnOr7Cs/BRkm7/oMdKXC3mCkV49sTSVxoCD6j5aT2vQIKfHPVpZIANCxtpgfX19/ywpbi5e/3iFWs374GLd2tO2qT3InQuycqSFOKvSAfYrURv2LVz/D7q3TkSuEzORfuiFmkrQhwEDypgt47y2LrgrWWoPsvbn3WwLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hMrBQnLU; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=qpAp4BL0DOpvn1Da/Gt0olBkYkZHgWQ73QyYFYp+9M4lfOaCinOXcU7AvsYc1ZS00gdd0vQliyOtw8FGzsxOhVyrgMiH68F/YsYzKyPHmblvm95FrvUJk35sldzl1UOKhc3kl9Xc4vBAXRt3F7RSNFT2+yKVyGKZb9r+uHl7Zi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=dZX9cYZo; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pa27QOZhgTYyjdTX6K9oFf7IjSK8d/+qozIJWisXWV0=; b=hMrBQnLU5MFUWkpUtzCSjw9U+F
-	vze8lDtnckLgJuXdAWEj+ZJrABZ6L5a07rBHGDeVPE+ANvU6p5dVZ0ocO2iHShvVtI6ThIXtKUbgp
-	ZzajvdfPtOxvuBC6wtIZ+Oe+LuswR3kgFB8ByIlZSSK2nR0FHauDA3jdqmNm1HEH1ol0GNnumRTWy
-	zTVUFSj6ANLsvEKYiLGBxTM9GJqcL5S4GCnivwLjYFneSbf1Kh66TpQE8pCwk5dXVqKpIwVZVvIIY
-	3InOlQA8XdXX/eVPZwyuPXygPtGMHXnWQlqeG0coQO7oAnaU62ZouVCITs5PS0qQdOdHx9CCRZRAS
-	NfkmFxCA==;
+	bh=S4nF/w/dYVCfQoFNcFEm8mUpsqd4FCdsG1qHmSeVg+s=; b=dZX9cYZo5ltwl6wfk1EwmZ+KHK
+	chQ9A7R9oBQdhzaqhn9N7As5xwxdSD2CAa9oFbhCiWqxWH716NKsdYuKl64dWVlEVvRcrqK3gP+iw
+	Nm6e4VSIU+tLcVu0iRkKPAhpkMKtMaS8T7ZMVHhouaxiY0CYmdcQfPNhiZL5qYPRcTAuB0jHQpZ8E
+	8Y5i5SVxwSa5SpF0sfAMM26jnS0pjLPNf+gbmEdxhO4nxxFlLqh7vYvSCoBAWy1fVv8KeiZqOodS/
+	pILSld896lWMAaFI1iON6MlVOfgNglZgrHqvnQuCTEtGMi3A97I/OOwd4gfySJV1pgZeyshNJavp1
+	hBKoijvQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s0wtg-006VIB-3B;
-	Sun, 28 Apr 2024 05:16:21 +0000
-Date: Sun, 28 Apr 2024 06:16:20 +0100
+	id 1s0wui-006VKS-1l;
+	Sun, 28 Apr 2024 05:17:24 +0000
+Date: Sun, 28 Apr 2024 06:17:24 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Yu Kuai <yukuai1@huaweicloud.com>, linux-block@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/8] bdev: infrastructure for flags
-Message-ID: <20240428051620.GC1549798@ZenIV>
+Subject: [PATCH 4/8] bdev: move ->bd_read_only to ->__bd_flags
+Message-ID: <20240428051724.GD1549798@ZenIV>
 References: <20240428051232.GU2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -64,96 +64,72 @@ Content-Disposition: inline
 In-Reply-To: <20240428051232.GU2118490@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Replace bd_partno with a 32bit field (__bd_flags).  The lower 8 bits
-contain the partition number, the upper 24 are for flags.
-
-Helpers: bdev_{test,set,clear}_flag(bdev, flag), where flag numbers
-are zero-based.  Use cmpxchg() to set/clear - all architectures support
-it for u32.
-
-NOTE: this commit does not actuall move any flags over there - they
-are still bool fields.  As the result, it shifts the fields wrt
-cacheline boundaries; that's going to be restored once the first
-3 flags are dealt with.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- block/bdev.c              |  2 +-
- include/linux/blk_types.h |  2 +-
- include/linux/blkdev.h    | 33 ++++++++++++++++++++++++++++++++-
- 3 files changed, 34 insertions(+), 3 deletions(-)
+ block/ioctl.c             | 5 ++++-
+ include/linux/blk_types.h | 5 ++++-
+ include/linux/blkdev.h    | 4 ++--
+ 3 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 7a5f611c3d2e..0c55f7abaac3 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -411,7 +411,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
- 	mutex_init(&bdev->bd_fsfreeze_mutex);
- 	spin_lock_init(&bdev->bd_size_lock);
- 	mutex_init(&bdev->bd_holder_lock);
--	bdev->bd_partno = partno;
-+	bdev->__bd_flags = partno;
- 	bdev->bd_inode = inode;
- 	bdev->bd_queue = disk->queue;
- 	if (partno)
+diff --git a/block/ioctl.c b/block/ioctl.c
+index 0c76137adcaa..be173e4ff43d 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -402,7 +402,10 @@ static int blkdev_roset(struct block_device *bdev, unsigned cmd,
+ 		if (ret)
+ 			return ret;
+ 	}
+-	bdev->bd_read_only = n;
++	if (n)
++		bdev_set_flag(bdev, BD_READ_ONLY);
++	else
++		bdev_clear_flag(bdev, BD_READ_ONLY);
+ 	return 0;
+ }
+ 
 diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index cb1526ec44b5..274f7eb4138f 100644
+index 274f7eb4138f..1aa41b651614 100644
 --- a/include/linux/blk_types.h
 +++ b/include/linux/blk_types.h
-@@ -45,8 +45,8 @@ struct block_device {
- 	struct request_queue *	bd_queue;
+@@ -46,7 +46,6 @@ struct block_device {
  	struct disk_stats __percpu *bd_stats;
  	unsigned long		bd_stamp;
-+	u32			__bd_flags;	// partition number + flags
- 	bool			bd_read_only;	/* read-only policy */
--	u8			bd_partno;
+ 	u32			__bd_flags;	// partition number + flags
+-	bool			bd_read_only;	/* read-only policy */
  	bool			bd_write_holder;
  	bool			bd_has_submit_bio;
  	dev_t			bd_dev;
+@@ -86,6 +85,10 @@ struct block_device {
+ #define bdev_kobj(_bdev) \
+ 	(&((_bdev)->bd_device.kobj))
+ 
++enum {
++	BD_READ_ONLY,		// read-only policy
++};
++
+ /*
+  * Block error status values.  See block/blk-core:blk_errors for the details.
+  * Alpha cannot write a byte atomically, so we need to use 32-bit value.
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 32549d675955..b9dbfb811533 100644
+index b9dbfb811533..d556cec9224b 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -722,7 +722,38 @@ void disk_uevent(struct gendisk *disk, enum kobject_action action);
- 
- static inline u8 bdev_partno(const struct block_device *bdev)
- {
--	return bdev->bd_partno;
-+	return bdev->__bd_flags & 0xff;
-+}
-+
-+static inline bool bdev_test_flag(const struct block_device *bdev, int flag)
-+{
-+	return bdev->__bd_flags & (1 << (flag + 8));
-+}
-+
-+static inline void bdev_set_flag(struct block_device *bdev, int flag)
-+{
-+	u32 v = bdev->__bd_flags;
-+
-+	for (;;) {
-+		u32 w = cmpxchg(&bdev->__bd_flags, v, v | (1 << (flag + 8)));
-+
-+		if (v == w)
-+			return;
-+		v = w;
-+	}
-+}
-+
-+static inline void bdev_clear_flag(struct block_device *bdev, int flag)
-+{
-+	u32 v = bdev->__bd_flags;
-+
-+	for (;;) {
-+		u32 w = cmpxchg(&bdev->__bd_flags, v, v & ~(1 << (flag + 8)));
-+
-+		if (v == w)
-+			return;
-+		v = w;
-+	}
- }
+@@ -758,13 +758,13 @@ static inline void bdev_clear_flag(struct block_device *bdev, int flag)
  
  static inline int get_disk_ro(struct gendisk *disk)
+ {
+-	return disk->part0->bd_read_only ||
++	return bdev_test_flag(disk->part0, BD_READ_ONLY) ||
+ 		test_bit(GD_READ_ONLY, &disk->state);
+ }
+ 
+ static inline int bdev_read_only(struct block_device *bdev)
+ {
+-	return bdev->bd_read_only || get_disk_ro(bdev->bd_disk);
++	return bdev_test_flag(bdev, BD_READ_ONLY) || get_disk_ro(bdev->bd_disk);
+ }
+ 
+ bool set_capacity_and_notify(struct gendisk *disk, sector_t size);
 -- 
 2.39.2
 
