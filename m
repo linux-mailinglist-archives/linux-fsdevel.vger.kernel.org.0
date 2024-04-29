@@ -1,88 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-18088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307FB8B54D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 12:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D152D8B5547
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 12:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542951C219B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 10:16:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F6B1F22F01
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 10:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957722DF84;
-	Mon, 29 Apr 2024 10:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D764439AF1;
+	Mon, 29 Apr 2024 10:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c+Ee0UQR"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J3YXv5De";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NUUTHm6H";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J3YXv5De";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NUUTHm6H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BD32C86A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 10:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8074C383BA;
+	Mon, 29 Apr 2024 10:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714385765; cv=none; b=khGMXJCqF8XblAPMfve1LhFWgA5O8Moj2/786Vh16KiOhTRny7i9qcrkhATzw6nqUvIFB6K6cC0fo5CD9ESgQjMIFnceCjkQNxCpeZ5id4bXu1eEIFskYnYzLRaUMeKZTtFlGBc6Sc9sF0huIJTyT47QS5Jfv2oUTMiByzxF1oI=
+	t=1714386359; cv=none; b=JYLTuBg1Fom8cjGi6sPvN+7gCSKoAeIHrDSaRg+csHd/kpF8Czml5gMm8jx8cK0yLnmHtjY3wiWEbOSPboe0jTe4VQ0fN7Lx4Sz8cr2sU2VkgAsObB2XMM/nKK84hTQfgGj3WukFYLEI58ICnqqdggU93LvqtPKK2Zz62TmwUNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714385765; c=relaxed/simple;
-	bh=lKTOU9N+85BvqC3gloCf/TwFceRQrNXCqbIxxTFKCTo=;
+	s=arc-20240116; t=1714386359; c=relaxed/simple;
+	bh=cADUwdCDxPZT/pSB/dKjxUYhDiMPjw+O+Xt5ZtJsSKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NUi/rK6GZNC96LsPIyhL/I+BflHLZYbU/eFufosEunI2DlVH3gIGotlBzuYHkRWw5yxUvCYmDxRJiRJ45nm1RwuUlBlw4e7WrCbQj93ZNb+NHU4QNPA1NCb3k7vP+fF8i6fmChBw6TuNNC4cmXjQs1B4qJwg8GTCH3I+nSUg8n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c+Ee0UQR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714385762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prfR6T7K8WZ1jZ2UyLbzg1Sw2kaPEI8PO7UD48VUbWBfmjOaIviKvSHKzJyr/WQJUr9C0rnFk6o+HiWFfucYwYoF1QKBGBEuLFgXsyVb+6VZ+malvTc/0myzWvgmrv3Udq5pPahDr8RLzMkaC0KoUaJzf2AT52ZoG7IdH8eSZYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J3YXv5De; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NUUTHm6H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J3YXv5De; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NUUTHm6H; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 629FF225FA;
+	Mon, 29 Apr 2024 10:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714386355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JNchlTgOKwFFInGOdGwC6RbeyHgd+ZHvemJPoJarTq4=;
-	b=c+Ee0UQRUjIw5fRgyMA5dXc9rS1VKYkLAkWgwSe993ifjklizRupGtZAmhfzXjVIDk+TeB
-	+cexCvCWOA6ChTWDtHtAirpFLT1cCNB75ZWemT1ff9UL2+2XZEE4mvL6kAmlvgCtOe3xvD
-	OzN/tjwYUWXkMH/kvb2sEzxxa0J9ll8=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-582-wpSLAvLMMyO1aljrSVY61g-1; Mon, 29 Apr 2024 06:15:59 -0400
-X-MC-Unique: wpSLAvLMMyO1aljrSVY61g-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-56c1ac93679so3351156a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 03:15:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714385758; x=1714990558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JNchlTgOKwFFInGOdGwC6RbeyHgd+ZHvemJPoJarTq4=;
-        b=jb8IPVmsSZ2a0ttXuuyNtWqKcTXOXInMDf5sOlOAR2Y4KnTcrSBGM0VWM7B4WmSYj7
-         gY+Gx2V/I5phFVGiJYfcZo+s1goXfgMGXbpKug4Vv9uq0gPE2I9NnNwpLA8O451hIinp
-         r0Jcg8XDp+9qf+9B4y1ss+A2A3VJDAh4XwvgolmSI8h988hRwtIEICKJIMu8/Jw2zcHX
-         G3sPm8d1ssbxcx2NJDk86PosY9bBrxyJISoIM1sDUtuWcqFrpSp+wOJGYTGWo9/oKrK5
-         pUu2enKV2nfxhUegEQ1Hy3lhHwfF4UFMHEyV1U6XStDBkij0g6DzgcFE/Yzq6WsATQxG
-         JZGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvJ6bMzubBnAYro0dkDD1ycTDzag/Z6OHY+mDJc5Pypks2FYJR3W74L6Y0M2STGxaTMx4E+qzcBlL66ip0l6gVe1Q128AkDHKClxli6w==
-X-Gm-Message-State: AOJu0YyEolcMxxqkUCSPYvwQzXY3J3o/2XKMlR1lUgmxkpnT5T+J4KQv
-	V/qHiGu9RPWuFiNuCwlguYWA6WcIxLfD7ha+jHHEagktwmNjqfRXQRfvNJviur4j+auCgVd12Qx
-	QvT4UL2UYSltl8HyIuBuklxcAocDd7RyPgre3pDpO3vxaNLJvdgSnS99Enql3lg==
-X-Received: by 2002:a50:ab0a:0:b0:570:369:3e06 with SMTP id s10-20020a50ab0a000000b0057003693e06mr6735116edc.19.1714385757764;
-        Mon, 29 Apr 2024 03:15:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERi+njQq/kNI4MqXnZavZnU6Y9BVUhxt3DFboXnNrfq5klNd0Tca0cq3Xwn4hhEyNxQ3/zUw==
-X-Received: by 2002:a50:ab0a:0:b0:570:369:3e06 with SMTP id s10-20020a50ab0a000000b0057003693e06mr6735084edc.19.1714385757195;
-        Mon, 29 Apr 2024 03:15:57 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id ek17-20020a056402371100b0057266474cd2sm2854873edb.15.2024.04.29.03.15.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 03:15:56 -0700 (PDT)
-Date: Mon, 29 Apr 2024 12:15:55 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH 12/13] fsverity: remove system-wide workqueue
-Message-ID: <j6a357qbjsf346khicummgmutjvkircf7ff7gd7for2ajn4k7q@q6dw22io6dcp>
-References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
- <171175868064.1987804.7068231057141413548.stgit@frogsfrogsfrogs>
- <20240405031407.GJ1958@quark.localdomain>
- <20240424180520.GJ360919@frogsfrogsfrogs>
+	bh=wdguafLdAH4AdttvIwHOB3Ush9+rDDpiVxU7qZjO9K0=;
+	b=J3YXv5DeF63aric9ZS4jrCwDLLyL5Gq4Shk2YyT+Cya0zsUwL7pKrSSitNgXGs+RV1ZGWC
+	0kYRSIhPo5CMhMiF+p/2Hz+0LwG/wKbpIZF9l0HuihtmMMLJz1/Z4SLd9oI0O3dqQGmQ3K
+	UUP7LFJyJY0KUj9sGX+xOO+/MXJ33Og=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714386355;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wdguafLdAH4AdttvIwHOB3Ush9+rDDpiVxU7qZjO9K0=;
+	b=NUUTHm6HmvLhAvbA7nKESwcZ7fFHCyQ1QcYJ2Ssh0q+Xqwhpm/gmTFmJf/Y5sYnxWaTnnf
+	l9B6UU9FJCapryBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714386355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wdguafLdAH4AdttvIwHOB3Ush9+rDDpiVxU7qZjO9K0=;
+	b=J3YXv5DeF63aric9ZS4jrCwDLLyL5Gq4Shk2YyT+Cya0zsUwL7pKrSSitNgXGs+RV1ZGWC
+	0kYRSIhPo5CMhMiF+p/2Hz+0LwG/wKbpIZF9l0HuihtmMMLJz1/Z4SLd9oI0O3dqQGmQ3K
+	UUP7LFJyJY0KUj9sGX+xOO+/MXJ33Og=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714386355;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wdguafLdAH4AdttvIwHOB3Ush9+rDDpiVxU7qZjO9K0=;
+	b=NUUTHm6HmvLhAvbA7nKESwcZ7fFHCyQ1QcYJ2Ssh0q+Xqwhpm/gmTFmJf/Y5sYnxWaTnnf
+	l9B6UU9FJCapryBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59148139DE;
+	Mon, 29 Apr 2024 10:25:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2cTIFbN1L2blMgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 29 Apr 2024 10:25:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 01A2EA082F; Mon, 29 Apr 2024 12:25:50 +0200 (CEST)
+Date: Mon, 29 Apr 2024 12:25:50 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 3/9] ext4: trim delalloc extent
+Message-ID: <20240429102550.sx4vdl75whxovmc2@quack3>
+References: <20240410034203.2188357-1-yi.zhang@huaweicloud.com>
+ <20240410034203.2188357-4-yi.zhang@huaweicloud.com>
+ <20240425155640.ktvqqwhteitysaby@quack3>
+ <acd4e7c9-c68b-9edc-bba4-dce5e8ce7879@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,75 +107,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240424180520.GJ360919@frogsfrogsfrogs>
+In-Reply-To: <acd4e7c9-c68b-9edc-bba4-dce5e8ce7879@huaweicloud.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,huawei.com:email]
 
-On 2024-04-24 11:05:20, Darrick J. Wong wrote:
-> On Thu, Apr 04, 2024 at 11:14:07PM -0400, Eric Biggers wrote:
-> > On Fri, Mar 29, 2024 at 05:35:48PM -0700, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > Now that we've made the verity workqueue per-superblock, we don't need
-> > > the systemwide workqueue.  Get rid of the old implementation.
+On Fri 26-04-24 17:38:23, Zhang Yi wrote:
+> On 2024/4/25 23:56, Jan Kara wrote:
+> > On Wed 10-04-24 11:41:57, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> The cached delalloc or hole extent should be trimed to the map->map_len
+> >> if we map delalloc blocks in ext4_da_map_blocks(). But it doesn't
+> >> trigger any issue now because the map->m_len is always set to one and we
+> >> always insert one delayed block once a time. Fix this by trim the extent
+> >> once we get one from the cached extent tree, prearing for mapping a
+> >> extent with multiple delalloc blocks.
+> >>
+> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > > 
-> > This commit message needs to be rephrased because this commit isn't just
-> > removing unused code.  It's also converting ext4 and f2fs over to the new
-> > workqueue type.  (Maybe these two parts belong as separate patches?)
+> > Well, but we already do the trimming in ext4_da_map_blocks(), don't we? You
+> > just move it to a different place... Or do you mean that we actually didn't
+> > set 'map' at all in some cases and now we do? 
 > 
-> Yes, will fix that.
+> Yeah, now we only trim map len if we found an unwritten extent or written
+> extent in the cache, this isn't okay if we found a hole and
+> ext4_insert_delayed_block() and ext4_da_map_blocks() support inserting
+> map->len blocks. If we found a hole which es->es_len is shorter than the
+> length we want to write, we could delay more blocks than we expected.
 > 
-> > Also, if there are any changes in the workqueue flags that are being used for
-> > ext4 and f2fs, that needs to be documented.
+> Please assume we write data [A, C) to a file that contains a hole extent
+> [A, B) and a written extent [B, D) in cache.
 > 
-> Hmm.  The current codebase does this:
+>                       A     B  C  D
+> before da write:   ...hhhhhh|wwwwww....
 > 
-> 	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
-> 						  WQ_HIGHPRI,
-> 						  num_online_cpus());
-> 
-> Looking at commit f959325e6ac3 ("fsverity: Remove WQ_UNBOUND from
-> fsverity read workqueue"), I guess you want a bound workqueue so that
-> the CPU that handles the readahead ioend will also handle the verity
-> validation?
-> 
-> Why do you set max_active to num_online_cpus()?  Is that because the
-> verity hash is (probably?) being computed on the CPUs, and there's only
-> so many of those to go around, so there's little point in making more?
-> Or is it to handle systems with more than WQ_DFL_ACTIVE (~256) CPUs?
-> Maybe there's a different reason?
-> 
-> If you add more CPUs to the system later, does this now constrain the
-> number of CPUs that can be participating in verity validation?  Why not
-> let the system try to process as many read ioends as are ready to be
-> processed, rather than introducing a constraint here?
-> 
-> As for WQ_HIGHPRI, I wish Dave or Andrey would chime in on why this
-> isn't appropriate for XFS.  I think they have a reason for this, but the
-> most I can do is speculate that it's to avoid blocking other things in
-> the system.
+> Then we will get extent [A, B), we should trim map->m_len to B-A before
+> inserting new delalloc blocks, if not, the range [B, C) is duplicated.
 
-The log uses WQ_HIGHPRI for journal IO completion
-log->l_ioend_workqueue, as far I understand some data IO completion
-could require a transaction which make a reservation which
-could lead to data IO waiting for journal IO. But if data IO
-completion will be scheduled first this could be a possible
-deadlock... I don't see a particular example, but also I'm not sure
-why to make fs-verity high priority in XFS.
+Thanks for explanation!
 
-> In Andrey's V5 patch, XFS creates its own the workqueue like this:
-> https://lore.kernel.org/linux-xfs/20240304191046.157464-10-aalbersh@redhat.com/
+> > In either case the 'map'
+> > handling looks a bit sloppy in ext4_da_map_blocks() as e.g. the
+> > 'add_delayed' case doesn't seem to bother with properly setting 'map' based
+> > on what it does. So maybe we should clean that up to always set 'map' just
+> > before returning at the same place where we update the 'bh'? And maybe bh
+> > update could be updated in some common helper because it's content is
+> > determined by the 'map' content?
+> > 
 > 
-> 	struct workqueue_struct *wq = alloc_workqueue(
-> 		"pread/%s", (WQ_FREEZABLE | WQ_MEM_RECLAIM), 0, sb->s_id);
-> 
-> I don't grok this either -- read ioend workqueues aren't usually
-> involved in memory reclaim at all, and I can't see why you'd want to
-> freeze the verity workqueue during suspend.  Reads are allowed on frozen
-> filesystems, so I don't see why verity would be any different.
+> I agree with you, it looks that we should always revise the map->m_len
+> once we found an extent from the cache, and then do corresponding handling
+> according to the extent type. so it's hard to put it to a common place.
+> But we can merge the handling of written and unwritten extent, I've moved
+> the bh updating into ext4_da_get_block_prep() and do some cleanup in
+> patch 9, please look at that patch, does it looks fine to you?
 
-Yeah maybe freezable can go away, initially I picked those flags as
-most of the other workqueues in xfs are in same configuration.
+Oh, yes, what patch 9 does improve things significantly and it addresses my
+concern. So feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+Maybe in the changelog you can just mention that the remaining cases not
+setting map->m_len will be handled in patch 9.
+
+								Honza
 
 -- 
-- Andrey
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
