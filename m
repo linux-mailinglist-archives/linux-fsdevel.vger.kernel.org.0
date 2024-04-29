@@ -1,263 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-18070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490D98B525A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 09:30:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D718B525F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 09:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A11C1C21346
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 07:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817EF1F21E29
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 07:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C903914A83;
-	Mon, 29 Apr 2024 07:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAC314A83;
+	Mon, 29 Apr 2024 07:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H8CSOms1"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="l9BvLWjf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9413313FE7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 07:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C5213AC5;
+	Mon, 29 Apr 2024 07:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714375829; cv=none; b=kQcRXnrsQjovBcmjOZqkBY+b7NyNlH47+rdkAygK+90d3UJmKTaTKRmq6oZYsgUnmRHh/aLy3mrztBTkQoixp5v+23cTH9K/yNpcWy8uueoj9TDj8jwWB6EwPQT3YJHorZB5NTK3lyLZrzWRoHmWliAaXROsKlUAWeTBWLgQZFs=
+	t=1714375874; cv=none; b=g+TUG+3Phljeaw7n7IX8YYgRziXFhvcqOWxKTPgxo+m1uJimZ2ovJ7ASYIkKAWfpR00iiSh/wQKBlKbBgArNFNB+mPbo0RYYTiw+3+n6ANcq2aGOr+uHXyC46nIaSy1e6Lfbfzc9eaA6sJUX2ECGFW0fGravCHuu92vQSLC6mUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714375829; c=relaxed/simple;
-	bh=abiLjfbVYT1PCT8XRlCX9O4WSfYiaoIRAzu9ILdzJ2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QgwYPGWLJxVZ6w7PpR+1rdGJsdybv3Ylv3etOR2pZfuY6sBmbI5JH39/8FB6R7zdf1bdIURIjd9yaApbdthlzZoNHC1TbliFQHb2QQQdESedJekd9wVFprRa+JYD0ixnZw4m7NLddZ9nzz6QjwabAL9ycOXeKmuguwJoxrhHoKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H8CSOms1; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1714375824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7wClpp3ytBXqx6FuSYlOnTSoe8yKiqfJfSI+cFyyNaw=;
-	b=H8CSOms1feJGszTeR+vBaTEQtjXR5FxreTPVPjzizsrz37isE0gqaQT4IzQxHynsstrhja
-	v2EEbIntUxkwwMcQLN/tnVtJX5k2tikAwVt/DB0Akiwn5IspaBpnIWDt1ApqlVA6EwAT5I
-	5eqsj+z2JukScCjiI04eWaCYkU2EULs=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH] bcachefs: Developer guide
-Date: Mon, 29 Apr 2024 03:29:55 -0400
-Message-ID: <20240429072957.3103483-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1714375874; c=relaxed/simple;
+	bh=Rn229G1MrAFSOW7jk1YKb/eSOR4GeySma2G223farvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/b6MtnXrC2fpCYdGHXsIhT/HYzOo/wFh3hic3pJfmsvfBYtqvzR+YH2qrR/oY+Dui119ZcnzTdxFq1IfJQbCH16+aoPWiDvAYIgsPW4UO9rzLJ9asJRvGUIWKBBb0S6lQIPQA5oK8enIC1DmHI17MsOhjzKXX3WCzieONBvjHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=l9BvLWjf; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WjWH/DEh5Ad+FnR7wUY6bk0viEmvMG0F/8p5Zq3qc/Q=; b=l9BvLWjf8X7yPFoutvd+5bybSE
+	QrvxGEJMXJ2TT0148FLHbGzU9jXqp1PO0XqnBw6kdelCM63iiTq1a0nNwXssFfdQ49pvL8h2U7Kp9
+	avtfP0iqD40QzT7x+Gf9fKiDnX4cO8cW87u3r5Uwnr3eIxk+SKYF96nPU7kfBX+h1RTgSEQ/ovjsk
+	FjuQH5E/fimWfOizGlcPiyFCUfhoNFT3qNwbGS4WYX4x0aacT+m8rucl0aWoopqJDyrHSK1MBKN9l
+	gZgkWBtGgnguN34eycuR6k/aNsknUIQEwzQZ0Zb0m7eWS/LFjw3SdKy+ICRnu5TDnZ6M6bWaQ5EXj
+	UuG9QrIg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s1LTf-0076pI-1V;
+	Mon, 29 Apr 2024 07:31:07 +0000
+Date: Mon, 29 Apr 2024 08:31:07 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, Yu Kuai <yukuai1@huaweicloud.com>,
+	linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCHES][RFC] packing struct block_device flags
+Message-ID: <20240429073107.GZ2118490@ZenIV>
+References: <20240428051232.GU2118490@ZenIV>
+ <20240429052315.GB32688@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240429052315.GB32688@lst.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- .../filesystems/bcachefs/developer-guide.rst  | 177 ++++++++++++++++++
- Documentation/filesystems/bcachefs/index.rst  |   1 +
- 2 files changed, 178 insertions(+)
- create mode 100644 Documentation/filesystems/bcachefs/developer-guide.rst
+On Mon, Apr 29, 2024 at 07:23:15AM +0200, Christoph Hellwig wrote:
+> On Sun, Apr 28, 2024 at 06:12:32AM +0100, Al Viro wrote:
+> > 	We have several bool members in struct block_device.
+> > It would be nice to pack that stuff, preferably without
+> > blowing the cacheline boundaries.
+> > 
+> > 	That had been suggested a while ago, and initial
+> > implementation by Yu Kuai <yukuai1@huaweicloud.com> ran into
+> > objections re atomicity, along with the obvious suggestion to
+> > use unsigned long and test_bit/set_bit/clear_bit for access.
+> > Unfortunately, that *does* blow the cacheline boundaries.
+> > 
+> > 	However, it's not hard to do that without bitops;
+> > we have an 8-bit assign-once partition number nearby, and
+> > folding it into a 32-bit member leaves us up to 24 bits for
+> > flags.  Using cmpxchg for setting/clearing flags is not
+> > hard, and 32bit cmpxchg is supported everywhere.
+> 
+> To me this looks pretty complicated and arcane.
 
-diff --git a/Documentation/filesystems/bcachefs/developer-guide.rst b/Documentation/filesystems/bcachefs/developer-guide.rst
-new file mode 100644
-index 000000000000..47e851c3fba5
---- /dev/null
-+++ b/Documentation/filesystems/bcachefs/developer-guide.rst
-@@ -0,0 +1,177 @@
-+Good development is like gardening, and codebases are our gardens. Tend to them
-+every day; look for little things that are out of place or in need of tidying.
-+A little weeding here and there goes a long way; don't wait until things have
-+spiraled out of control.
-+
-+Things don't always have to be perfect - nitpicking often does more harm than
-+good. But appreciate beauty when you see it - and let people know.
-+
-+The code that you are afraid to touch is the code most in need of refactoring.
-+
-+A little organizing here and there goes a long way.
-+
-+Put real thought into how you organize things.
-+
-+Good code is readable code, where the structure is simple and leaves nowhere
-+for bugs to hide.
-+
-+Assertions are one of our most important tools for writing reliable code. If in
-+the course of writing a patchset you encounter a condition that shouldn't
-+happen (and will have unpredictable or undefined behaviour if it does), or
-+you're not sure if it can happen and not sure how to handle it yet - make it a
-+BUG_ON(). Don't leave undefined or unspecified behavior lurking in the codebase.
-+
-+By the time you finish the patchset, you should understand better which
-+assertions need to be handled and turned into checks with error paths, and
-+which should be logically impossible. Leave the BUG_ON()s in for the ones which
-+are logically impossible. (Or, make them debug mode assertions if they're
-+expensive - but don't turn everything into a debug mode assertion, so that
-+we're not stuck debugging undefined behaviour should it turn out that you were
-+wrong).
-+
-+Assertions are documentation that can't go out of date. Good assertions are
-+wonderful.
-+
-+Good assertions drastically and dramatically reduce the amount of testing
-+required to shake out bugs.
-+
-+Good assertions are based on state, not logic. To write good assertions, you
-+have to think about what the invariants on your state are.
-+
-+Good invariants and assertions will hold everywhere in your codebase. This
-+means that you can run them in only a few places in the checked in version, but
-+should you need to debug something that caused the assertion to fail, you can
-+quickly shotgun them everywhere to find the codepath that broke the invariant.
-+
-+A good assertion checks something that the compiler could check for us, and
-+elide - if we were working in a language with embedded correctness proofs that
-+the compiler could check. This is something that exists today, but it'll likely
-+still be a few decades before it comes to systems programming languages. But we
-+can still incorporate that kind of thinking into our code and document the
-+invariants with runtime checks - much like the way people working in
-+dynamically typed languages may add type annotations, gradually making their
-+code statically typed.
-+
-+Looking for ways to make your assertions simpler - and higher level - will
-+often nudge you towards making the entire system simpler and more robust.
-+
-+Good code is code where you can poke around and see what it's doing -
-+introspection. We can't debug anything if we can't see what's going on.
-+
-+Whenever we're debugging, and the solution isn't immediately obvious, if the
-+issue is that we don't know where the issue is because we can't see what's
-+going on - fix that first.
-+
-+We have the tools to make anything visible at runtime, efficiently - RCU and
-+percpu data structures among them. Don't let things stay hidden.
-+
-+The most important tool for introspection is the humble pretty printer - in
-+bcachefs, this means `*_to_text()` functions, which output to printbufs.
-+
-+Pretty printers are wonderful, because they compose and you can use them
-+everywhere. Having functions to print whatever object you're working with will
-+make your error messages much easier to write (therefore they will actually
-+exist) and much more informative. And they can be used from sysfs/debugfs, as
-+well as tracepoints.
-+
-+Error messages should, whenever possible, tell you everything you need to debug
-+the issue. It's worth putting effort into them.
-+
-+Tracepoints shouldn't be the first thing you reach for. They're an important
-+tool, but always look for more immediate ways to make things visible. When we
-+have to rely on tracing, we have to know which tracepoints we're looking for,
-+and then we have to run the troublesome workload, and then we have to sift
-+through logs. This is a lot of steps to go through when a user is hitting
-+something, and if it's intermittent it may not even be possible.
-+
-+The humble counter is an incredibly useful tool. They're cheap and simple to
-+use, and many complicated internal operations with lots of things that can
-+behave weirdly (anything involving memory reclaim, for example) become
-+shockingly easy to debug once you have counters on every distinct codepath.
-+
-+Persistent counters are even better.
-+
-+When debugging, try to get the most out of every bug you come across; don't
-+rush to fix the initial issue. Look for things that will make related bugs
-+easier the next time around - introspection, new assertions, better error
-+messages, new debug tools, and do those first. Look for ways to make the system
-+better behaved; often one bug will uncover several other bugs through
-+downstream effects.
-+
-+Fix all that first, and then the original bug first - even if that means
-+keeping a user waiting. They'll thank you in the long run, and when they
-+understand what you're doing you'll be amazed at how patient they're happy to
-+be. Users like to help - otherwise they wouldn't be reporting the bug in the
-+first place.
-+
-+Talk to your users. Don't isolate yourself.
-+
-+Users notice all sorts of interesting things, and by just talking to them and
-+interacting with them you can benefit from their experience.
-+
-+Spend time doing support and helpdesk stuff. Don't just write code - code isn't
-+finished until it's being used trouble free.
-+
-+This will also motivate you to make your debugging tools as good as possible,
-+and perhaps even your documentation, too. Like anything else in life, the more
-+time you spend at it the better you'll get, and you the developer are the
-+person most able to improve the tools to make debugging quick and easy.
-+
-+Be wary of how you take on and commit to big projects. Don't let development
-+become product-manager focused. Often time an idea is a good one but needs to
-+wait for its proper time - but you won't know if it's the proper time for an
-+idea until you start writing code.
-+
-+Expect to throw a lot of things away, or leave them half finished for later.
-+Nobody writes all perfect code that all gets shipped, and you'll be much more
-+productive in the long run if you notice this early and shift to something
-+else. The experience gained and lessons learned will be valuable for all the
-+other work you do.
-+
-+But don't be afraid to tackle projects that require significant rework of
-+existing code. Sometimes these can be the best projects, because they can lead
-+us to make existing code more general, more flexible, more multipurpose and
-+perhaps more robust. Just don't hesitate to abandon the idea if it looks like
-+it's going to make a mess of things.
-+
-+Complicated features can often be done as a series of refactorings, with the
-+final change that actually implements the feature as a quite small patch at the
-+end. It's wonderful when this happens, especially when those refactorings are
-+things that improve the codebase in their own right. When that happens there's
-+much less risk of wasted effort if the feature you were going for doesn't work
-+out.
-+
-+Always strive to work incrementally. Always strive to turn the big projects
-+into little bite sized projects that can prove their own merits.
-+
-+Instead of always tackling those big projects, look for little things that
-+will be useful, and make the big projects easier.
-+
-+The question of what's likely to be useful is where junior developers most
-+often go astray - doing something because it seems like it'll be useful often
-+leads to overengineering. Knowing what's useful comes from many years of
-+experience, or talking with people who have that experience - or from simply
-+reading lots of code and looking for common patterns and issues. Don't be
-+afraid to throw things away and do something simpler.
-+
-+Talk about your ideas with your fellow developers; often times the best things
-+come from relaxed conversations where people aren't afraid to say "what if?".
-+
-+Don't neglect your tools.
-+
-+The most important tools (besides the compiler and our text editor) are the
-+tools we use for testing. The shortest possible edit/test/debug cycle is
-+essential for working productively. We learn, gain experience, and discover the
-+errors in our thinking by running our code and seeing what happens. If your
-+time is being wasted because your tools are bad or too slow - don't accept it,
-+fix it.
-+
-+Put effort into your documentation, commmit messages, and code comments - but
-+don't go overboard. A good commit message is wonderful - but if the information
-+was important enough to go in a commit message, ask yourself if it would be
-+even better as a code comment.
-+
-+A good code comment is wonderful, but even better is the comment that didn't
-+need to exist because the code was so straightforward as to be obvious;
-+organized into small clean and tidy modules, with clear and descriptive names
-+for functions and variable, where every line of code has a clear purpose.
-diff --git a/Documentation/filesystems/bcachefs/index.rst b/Documentation/filesystems/bcachefs/index.rst
-index e2bd61ccd96f..7fb8d54e150a 100644
---- a/Documentation/filesystems/bcachefs/index.rst
-+++ b/Documentation/filesystems/bcachefs/index.rst
-@@ -8,4 +8,5 @@ bcachefs Documentation
-    :maxdepth: 2
-    :numbered:
- 
-+   developer-guide
-    errorcodes
--- 
-2.43.0
+cmpxchg for setting/clearing a bit in u32 is hardly arcane,
+especially since these bits are rarely modified.  _Reading_
+is done on hot paths, but that's cheap.
 
+For more familiar form,
+static inline void bdev_set_flag(struct block_device *bdev, int flag)
+{
+	u32 *p = &bdev->__bd_flags;
+        u32 c, old;
+
+	c = *p;
+	while ((old = cmpxchg(p, c, c | (1 << (flag + 8)))) != c)
+		c = old;
+}
+
+to keep it closer to e.g. generic_atomic_or() and its ilk (asm-generic/atomic.h)
+or any number of similar places.
+
+FWIW, we could go for atomic_t there and use
+	atomic_read() & 0xff
+for partno, with atomic_or()/atomic_and() for set/clear and
+atomic_read() & constant for test.  That might slightly optimize
+set/clear on some architectures, but setting/clearing flags is
+nowhere near hot enough for that to make a difference.
+
+> How about we just
+> reclaim a little space in the block device and just keep bd_partno
+> and add an unsigned long base flags?
+> 
+> E.g. bd_meta_info is only used in slow path early boot and sysfs code
+> and just set for a few partitions.
+> 
+> Just turn it into a hash/xrray/whatever indexed by bd_dev and we've
+> already reclaimed enough space.
+
+The problem is not the total size, though - it's blowing the first
+cacheline.  With struct device shoved into that thing, a word or two
+in total size is noise; keeping the fields read on the hot paths within
+the first 64 bytes is not.
 
