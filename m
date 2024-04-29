@@ -1,153 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-18093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3B48B56F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 13:41:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0878B570D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 13:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C835BB25218
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 11:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3271C21A59
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 11:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92660481B5;
-	Mon, 29 Apr 2024 11:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31234E1DC;
+	Mon, 29 Apr 2024 11:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pj6P5rkr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDA74596C;
-	Mon, 29 Apr 2024 11:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEB745019;
+	Mon, 29 Apr 2024 11:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714390877; cv=none; b=UsA6MYd53KSL1Oa7+lPxwZB329E3clG/OphoODtkNFoNgLK3Yck3Kt37RDZ93KziT2/iz1ls3UkzA68Og/sN1KUrpx/azvzBT3Ju/v04w66Dn0nLJXNgpKhVNCmh92amg8LBoydpwvcPWW4b/DfDzudiwgsG5akzMVkvGTJJcYI=
+	t=1714391196; cv=none; b=axxvgSQJ8IRN8lSJ8L1LGjMqwiSFC4uMtZxtspcWVRimLIUk/9zO1rR5pZ+YDaXgja5kQHsi5KP46G5EBnzcNRto/05YtMrPlItjbPMURw04Xfk9WuviKRIAulB9z++v5sLyDPb+BLRwQbdLicRsm4N5IZPl14AbCcG5LwLrckQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714390877; c=relaxed/simple;
-	bh=Mb3aQUpWdhn/dnpvjmFr0rgIm6z7baWnACBiOxUtT4E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eFO2I5gFJYPfZX8ta+QUdBTE1kUS/FzoGrmzbKEU1CUzBH1LLfTbKEcJpBMX+bcOnyozYbhvxO4EibPDo3i+4Q7at3kilXnH4MTeOEoVXYymc4/GWY4aYnqNogjPSO8RrXAvGbUOrN+p/QoEOkXqTGXzMckvN3wPkH4uuR+dL9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA5E82F4;
-	Mon, 29 Apr 2024 04:41:40 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E33883F793;
-	Mon, 29 Apr 2024 04:41:12 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Peter Xu <peterx@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1] fs/proc/task_mmu: Fix uffd-wp confusion in pagemap_scan_pmd_entry()
-Date: Mon, 29 Apr 2024 12:41:04 +0100
-Message-Id: <20240429114104.182890-1-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1714391196; c=relaxed/simple;
+	bh=IV+ygMs7PiO/TTkU9zkJBAHn6CUSMGd5cDU2VnC6I3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pOvLmaBKSrVzePYlRpATtYf3OyPH1chavCJpMbepAZGSpBnOCAMZmR53VQHywoj/gYPwhwM0GTMl1CfDHet7IbP1p2PEb3+UIeS0Z+zSUsjDJBKCq/t1AmXh+T2Kzonolr7TfUN9fOmokIDDeF3t+W/g6Njm6nXODPHGlfhMUsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pj6P5rkr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A73DC4AF19;
+	Mon, 29 Apr 2024 11:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714391195;
+	bh=IV+ygMs7PiO/TTkU9zkJBAHn6CUSMGd5cDU2VnC6I3A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Pj6P5rkr8Q7knSG+3gnF32/ImkEdUQsu0uATCnsR5khCIAiHD71nhxWcC4yheOFHt
+	 YjOOfm3FHCx8BMNh9PtAZ36LCYlNWtNDpsIWY1DjLE/B6l63BE/HP2EBYGElNt5p3b
+	 qXHgoIhe3DrtFyiQ3Cvr3Qq82rBl65LsEyqW/QI2S4apUWO24zwZ3Duy0Qsx2r+w53
+	 uoTYwsFzRCX24hjwfi4PJ0w/upuDlKefvsg1K/LpYn2PfhO0NEoWUGKJBPpHgAtnQ2
+	 S0z5KuDRuQI3O/zuT28VcU/XvVKYUBo1mgvTi71qYudfcvy3xQV9EtS7YprPTKxrGM
+	 cJqCrbE6LJBAA==
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: chandanbabu@kernel.org
+Cc: djwong@kernel.org,hch@lst.de,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org
+Subject: [ANNOUNCE] xfs-linux: for-next updated to e58ac1770ded
+Date: Mon, 29 Apr 2024 17:15:18 +0530
+Message-ID: <87wmogpf1k.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-pagemap_scan_pmd_entry() checks if uffd-wp is set on each pte to avoid
-unnecessary if set. However it was previously checking with
-`pte_uffd_wp(ptep_get(pte))` without first confirming that the pte was
-present. It is only valid to call pte_uffd_wp() for present ptes. For
-swap ptes, pte_swp_uffd_wp() must be called because the uffd-wp bit may
-be kept in a different position, depending on the arch.
+Hi folks,
 
-This was leading to test failures in the pagemap_ioctl mm selftest, when
-bringing up uffd-wp support on arm64 due to incorrectly interpretting
-the uffd-wp status of migration entries.
+The for-next branch of the xfs-linux repository at:
 
-Let's fix this by using the correct check based on pte_present(). While
-we are at it, let's pass the pte to make_uffd_wp_pte() to avoid the
-pointless extra ptep_get() which can't be optimized out due to
-READ_ONCE() on many arches.
+	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-Closes: https://lore.kernel.org/linux-arm-kernel/ZiuyGXt0XWwRgFh9@x1n/
-Fixes: 12f6b01a0bcb ("fs/proc/task_mmu: add fast paths to get/clear PAGE_IS_WRITTEN flag")
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- fs/proc/task_mmu.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+has just been updated.
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index af4bc1da0c01..102f48668c35 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1817,10 +1817,8 @@ static unsigned long pagemap_page_category(struct pagemap_scan_private *p,
- }
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
 
- static void make_uffd_wp_pte(struct vm_area_struct *vma,
--			     unsigned long addr, pte_t *pte)
-+			     unsigned long addr, pte_t *pte, pte_t ptent)
- {
--	pte_t ptent = ptep_get(pte);
--
- 	if (pte_present(ptent)) {
- 		pte_t old_pte;
+The new head of the for-next branch is commit:
 
-@@ -2175,9 +2173,12 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
- 	if ((p->arg.flags & PM_SCAN_WP_MATCHING) && !p->vec_out) {
- 		/* Fast path for performing exclusive WP */
- 		for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
--			if (pte_uffd_wp(ptep_get(pte)))
-+			pte_t ptent = ptep_get(pte);
-+
-+			if ((pte_present(ptent) && pte_uffd_wp(ptent)) ||
-+			    pte_swp_uffd_wp_any(ptent))
- 				continue;
--			make_uffd_wp_pte(vma, addr, pte);
-+			make_uffd_wp_pte(vma, addr, pte, ptent);
- 			if (!flush_end)
- 				start = addr;
- 			flush_end = addr + PAGE_SIZE;
-@@ -2190,8 +2191,10 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
- 	    p->arg.return_mask == PAGE_IS_WRITTEN) {
- 		for (addr = start; addr < end; pte++, addr += PAGE_SIZE) {
- 			unsigned long next = addr + PAGE_SIZE;
-+			pte_t ptent = ptep_get(pte);
+e58ac1770ded xfs: refactor dir format helpers
 
--			if (pte_uffd_wp(ptep_get(pte)))
-+			if ((pte_present(ptent) && pte_uffd_wp(ptent)) ||
-+			    pte_swp_uffd_wp_any(ptent))
- 				continue;
- 			ret = pagemap_scan_output(p->cur_vma_category | PAGE_IS_WRITTEN,
- 						  p, addr, &next);
-@@ -2199,7 +2202,7 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
- 				break;
- 			if (~p->arg.flags & PM_SCAN_WP_MATCHING)
- 				continue;
--			make_uffd_wp_pte(vma, addr, pte);
-+			make_uffd_wp_pte(vma, addr, pte, ptent);
- 			if (!flush_end)
- 				start = addr;
- 			flush_end = next;
-@@ -2208,8 +2211,9 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
- 	}
+5 new commits:
 
- 	for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
-+		pte_t ptent = ptep_get(pte);
- 		unsigned long categories = p->cur_vma_category |
--					   pagemap_page_category(p, vma, addr, ptep_get(pte));
-+					   pagemap_page_category(p, vma, addr, ptent);
- 		unsigned long next = addr + PAGE_SIZE;
+Christoph Hellwig (5):
+      [14ee22fef420] xfs: factor out a xfs_dir_lookup_args helper
+      [4d893a40514e] xfs: factor out a xfs_dir_createname_args helper
+      [3866e6e669e2] xfs: factor out a xfs_dir_removename_args helper
+      [dfe5febe2b6a] xfs: factor out a xfs_dir_replace_args helper
+      [e58ac1770ded] xfs: refactor dir format helpers
 
- 		if (!pagemap_scan_is_interesting_page(categories, p))
-@@ -2224,7 +2228,7 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
- 		if (~categories & PAGE_IS_WRITTEN)
- 			continue;
+Code Diffstat:
 
--		make_uffd_wp_pte(vma, addr, pte);
-+		make_uffd_wp_pte(vma, addr, pte, ptent);
- 		if (!flush_end)
- 			start = addr;
- 		flush_end = next;
---
-2.25.1
-
+ fs/xfs/libxfs/xfs_dir2.c     | 276 +++++++++++++---------------
+ fs/xfs/libxfs/xfs_dir2.h     |  17 +-
+ fs/xfs/libxfs/xfs_exchmaps.c |   9 +-
+ fs/xfs/scrub/dir.c           |   3 +-
+ fs/xfs/scrub/dir_repair.c    |  58 +-----
+ fs/xfs/scrub/readdir.c       |  59 +-----
+ fs/xfs/xfs_dir2_readdir.c    |  19 +-
+ 7 files changed, 169 insertions(+), 272 deletions(-)
 
