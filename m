@@ -1,202 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-18063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95E98B50CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 07:50:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BC58B5208
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 09:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500971F2147A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 05:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C409C281737
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 07:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FDD107B6;
-	Mon, 29 Apr 2024 05:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDVQFtHI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E41013AEE;
+	Mon, 29 Apr 2024 07:11:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DF5F9DF;
-	Mon, 29 Apr 2024 05:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917751079D;
+	Mon, 29 Apr 2024 07:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714369847; cv=none; b=pE6f8OXpyHC7S10gzSToCvXSeSiSm6CyrzQ4XkWO68HC+D8irwRSc1kw6NtrF/VakR6NzBV5XCuN7mOiLRkilPoeFP7OFABIpEtSXVesUqFz9hDSMdJAgPmisjNxoSxrtHafv/PDA8+GbbCo4omRQjJR1MIVik5EoyXR0xNEOmc=
+	t=1714374718; cv=none; b=H/4RrAWL1WgEAq/aXCrYZuWi1mNIjMy33UzgM2y8QqAtIHUWS+dz8Cn0Y00pxV7pkAkbb7EfgunEYJPQMahQ5Q0u2i6Gb+DCtfGZOxbA4VvUhkDx59oO2Ybc8eC3DnpudgQFDihKCJu3EhpHZM5Y+6qJpQRi/+ljr08cw/bJwnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714369847; c=relaxed/simple;
-	bh=DOYjcOGT2lvFGzzOnztFKgQBfcSNc3I4JqaOJDOA3jQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E8vYmeg8GBgsovdqbPNg1NTQ4ApuBt4dtpeAVWsaymxqUee/6z1lej6g91WzcqmL0Heo2mneNSKVL9UFpN59CPhuRnv0R+wYtsBnh+j+W7117cDf3xjs6JmIcFIQAHP3gRJxM2rITukHXW7iNLjxT1mtO6i5M+uL2ttTHzHiauE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDVQFtHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C9AC4AF1D;
-	Mon, 29 Apr 2024 05:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714369847;
-	bh=DOYjcOGT2lvFGzzOnztFKgQBfcSNc3I4JqaOJDOA3jQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fDVQFtHIL71AwWubiWRpC5V7cVJP+UE8URy1geXOBDV0MEeHBMi8JS/1WT/qM7av7
-	 pFgt79/xS7B9NQlz1bu7FBDA6lDitzKg2x+GAYAv7oHjDrrlUSluBZVoD53ddRmYNF
-	 lJvd2unpFmJ7qgGESv1GKcOWsxQcNiToIZ8zotCpcCDC8GPXeO3ZGG+j4eTcj0+kNF
-	 FOD+qvx55NejF/Fw1y/iWVDThxXqJNDaKO2XKGDjLU92tf5pOix+fCvCPCPp6tZQS3
-	 etYPP/u8YObV6Lyrg7vQuf7tAqQaUZrfmSze8VondIYVqtiDNARcUGZyMqOf3cQKmK
-	 jC8Bt754Q3jfw==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51ac9c6599bso4335459e87.1;
-        Sun, 28 Apr 2024 22:50:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU8TtYlMBKdW8+lso4yzFEaL4CxY5ezJ0DP9gkS+odUUulLUyZstlUxeHHun7JS+5oDgTv3pPI3M6z0aAXarUFKXK7Jm2/vow/dppUGI9x/M0APpbTpwxNn2TT1ZMNrjWCa9TDsUmjp+SVdjw==
-X-Gm-Message-State: AOJu0YxfrDlQJj7fb5Vn7B51onH/8BIVVRhMuIIH1XCIdbiYnSU2tHv/
-	EVdkk6/yeXUPCVQ1a2tXBrjwvxYceobw5nyamVVheR2nDcjFyl+1KD1Xp+zi3CeR8+EEylUaagN
-	jArNvjXZO6vZygbILEJwAT7Bjdw==
-X-Google-Smtp-Source: AGHT+IHEaMf3LwcTvqhFz7t0z8NVl14xdoF0IutWNhbpIHDYBF2FnwK8O/uwZkbLX4yS0SfYSJsvt/nMH8aECkAoFSw=
-X-Received: by 2002:a05:6512:e86:b0:51d:ed1:b44c with SMTP id
- bi6-20020a0565120e8600b0051d0ed1b44cmr4438441lfb.19.1714369845752; Sun, 28
- Apr 2024 22:50:45 -0700 (PDT)
+	s=arc-20240116; t=1714374718; c=relaxed/simple;
+	bh=VrcNs7voZl2xbyNLKiAEs2ZgJnR3UJ/Zp71/jqId5Po=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=AzLTvnnLd7xfn45ZMBH1NgXLuUEWJ7KdBtmrIX7CzjgFNOG3WD/UMqHJQ+7sc0lhvsp4DO3I/BvjKgT9t8QKm3MIrOTjnOqsThpRdh2fg7Sf3b/vElTEfeA0lB1+NTg9oPQ1n400oheGSOvjDNBFT4NbmFFOC6J8HnizMUqePNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VSZJF44Qpz4f3mHg;
+	Mon, 29 Apr 2024 15:11:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id F3B691A0568;
+	Mon, 29 Apr 2024 15:11:50 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAXOQw1SC9mlDgXLg--.20275S3;
+	Mon, 29 Apr 2024 15:11:50 +0800 (CST)
+Subject: Re: [PATCH v5 4/9] xfs: convert delayed extents to unwritten when
+ zeroing post eof blocks
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+ tytso@mit.edu, jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
+ <20240425131335.878454-5-yi.zhang@huaweicloud.com>
+ <20240425182904.GA360919@frogsfrogsfrogs>
+ <3be86418-e629-c7e6-fd73-f59f97a73a89@huaweicloud.com>
+ <ZitKncYr0cCmU0NG@infradead.org>
+ <5b6228ce-c553-3387-dfc4-2db78e3bd810@huaweicloud.com>
+ <ZiyiNzQ6oY3ZAohg@infradead.org>
+ <c4ab199e-92bf-4b22-fe41-1fca400bdc31@huaweicloud.com>
+ <Zi8lCUjX8lByIVZI@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <f8363f80-027c-cbc2-8abc-fd211e639b38@huaweicloud.com>
+Date: Mon, 29 Apr 2024 15:11:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417160842.76665-1-ryncsn@gmail.com> <87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <Zico_U_i5ZQu9a1N@casper.infradead.org> <87o79zsdku.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <CANeU7Q=YYFWPBMHPPeOQDxO9=yAiQP8w90e2mO0U+hBuzCV1RQ@mail.gmail.com> <CAMgjq7AD=n0T8C=pn_NM2nr-njNKXOxLh49GRrnP0ugGvuATcA@mail.gmail.com>
-In-Reply-To: <CAMgjq7AD=n0T8C=pn_NM2nr-njNKXOxLh49GRrnP0ugGvuATcA@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Sun, 28 Apr 2024 22:50:33 -0700
-X-Gmail-Original-Message-ID: <CANeU7Q=aqrb+qqGBc1NQxObQxuCPL80pJHc4mfpsirWPOCzboA@mail.gmail.com>
-Message-ID: <CANeU7Q=aqrb+qqGBc1NQxObQxuCPL80pJHc4mfpsirWPOCzboA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
-To: Kairui Song <ryncsn@gmail.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Barry Song <v-songbaohua@oppo.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, Minchan Kim <minchan@kernel.org>, 
-	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zi8lCUjX8lByIVZI@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAXOQw1SC9mlDgXLg--.20275S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw18JF1DCFWfuFy5ZFyfCrg_yoW3urc_uF
+	WI939xCrs7Jan3Zan0kr1SqrWvkF45Gr1YgrZ8Xrs7Jas8AFyxJ395GrZ5uw1fKw42yrnx
+	W3ZFvFy7CF9FqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU1zuWJUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Sun, Apr 28, 2024 at 10:37=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> On Sat, Apr 27, 2024 at 7:16=E2=80=AFAM Chris Li <chrisl@kernel.org> wrot=
-e:
-> >
-> > Hi Ying,
-> >
-> > On Tue, Apr 23, 2024 at 7:26=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
-om> wrote:
-> > >
-> > > Hi, Matthew,
-> > >
-> > > Matthew Wilcox <willy@infradead.org> writes:
-> > >
-> > > > On Mon, Apr 22, 2024 at 03:54:58PM +0800, Huang, Ying wrote:
-> > > >> Is it possible to add "start_offset" support in xarray, so "index"
-> > > >> will subtract "start_offset" before looking up / inserting?
-> > > >
-> > > > We kind of have that with XA_FLAGS_ZERO_BUSY which is used for
-> > > > XA_FLAGS_ALLOC1.  But that's just one bit for the entry at 0.  We c=
-ould
-> > > > generalise it, but then we'd have to store that somewhere and there=
-'s
-> > > > no obvious good place to store it that wouldn't enlarge struct xarr=
-ay,
-> > > > which I'd be reluctant to do.
-> > > >
-> > > >> Is it possible to use multiple range locks to protect one xarray t=
-o
-> > > >> improve the lock scalability?  This is why we have multiple "struc=
-t
-> > > >> address_space" for one swap device.  And, we may have same lock
-> > > >> contention issue for large files too.
-> > > >
-> > > > It's something I've considered.  The issue is search marks.  If we =
-delete
-> > > > an entry, we may have to walk all the way up the xarray clearing bi=
-ts as
-> > > > we go and I'd rather not grab a lock at each level.  There's a conv=
-enient
-> > > > 4 byte hole between nr_values and parent where we could put it.
-> > > >
-> > > > Oh, another issue is that we use i_pages.xa_lock to synchronise
-> > > > address_space.nrpages, so I'm not sure that a per-node lock will he=
-lp.
-> > >
-> > > Thanks for looking at this.
-> > >
-> > > > But I'm conscious that there are workloads which show contention on
-> > > > xa_lock as their limiting factor, so I'm open to ideas to improve a=
-ll
-> > > > these things.
-> > >
-> > > I have no idea so far because my very limited knowledge about xarray.
-> >
-> > For the swap file usage, I have been considering an idea to remove the
-> > index part of the xarray from swap cache. Swap cache is different from
-> > file cache in a few aspects.
-> > For one if we want to have a folio equivalent of "large swap entry".
-> > Then the natural alignment of those swap offset on does not make
-> > sense. Ideally we should be able to write the folio to un-aligned swap
-> > file locations.
-> >
->
-> Hi Chris,
->
-> This sound interesting, I have a few questions though...
->
-> Are you suggesting we handle swap on file and swap on device
-> differently? Swap on file is much less frequently used than swap on
-> device I think.
+On 2024/4/29 12:41, Christoph Hellwig wrote:
+> On Sun, Apr 28, 2024 at 11:26:00AM +0800, Zhang Yi wrote:
+>>>
+>>> Oh well.  Given that we're full in on the speculative allocations
+>>> we might as well deal with it.
+>>>
+>>
+>> Let me confirm, so you also think the preallocations in the COW fork that
+>> overlaps the unreflinked range is useless, we should avoid allocating
+>> this range, is that right? If so, I suppose we can do this improvement in
+>> another patch(set), this one works fine now.
+> 
+> Well, not stop allocating it, but not actually convert it to a real
+> allocation when we're just truncating it and replacing the blocks with
+> reflinked blocks.
 
-That is not what I have in mind. The swap struct idea did not
-distinguish the swap file vs swap device.BTW, I sometimes use swap on
-file because I did not allocate a swap partition in advance.
+OK, it looks fine, too.
 
->
-> And what do you mean "index part of the xarray"? If we need a cache,
-> xarray still seems one of the best choices to hold the content.
+Thanks,
+Yi.
 
-We still need to look up swap file offset -> folio. However if we
-allocate each swap offset a "struct swap", then the folio lookup can
-be as simple as get the swap_struc by offset, then atomic read of
-swap_structt->folio.
+> 
+> But yes, this is a bigger project.>
+> For now for this patch to go ahead:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
 
-Not sure how you come to the conclusion for "best choices"?  It is one
-choice, but it has its drawbacks. The natural alignment requirement of
-xarray, e.g. 2M large swap entries need to be written to 2M aligned
-offset, that is an unnecessary restriction. If we allocate the "struct
-swap" ourselves, we have more flexibility.
-
-> > The other aspect for swap files is that, we already have different
-> > data structures organized around swap offset, swap_map and
-> > swap_cgroup. If we group the swap related data structure together. We
-> > can add a pointer to a union of folio or a shadow swap entry. We can
-> > use atomic updates on the swap struct member or breakdown the access
-> > lock by ranges just like swap cluster does.
-> >
-> > I want to discuss those ideas in the upcoming LSF/MM meet up as well.
->
-> Looking forward to it!
-
-Thanks, I will post more when I get more progress on that.
-
->
-> Oh, and BTW I'm also trying to breakdown the swap address space range
-> (from 64M to 16M, SWAP_ADDRESS_SPACE_SHIFT from 14 to
-> 12). It's a simple approach, but the coupling and increased memory
-> usage of address_space structure makes the performance go into
-> regression (about -2% for worst real world workload). I found this
-
-Yes, that sounds plausible.
-
-> part very performance sensitive, so basically I'm not making much
-> progress for the future items I mentioned in this cover letter. New
-> ideas could be very helpful!
->
-
-The swap_struct idea is very different from what you are trying to do
-in this series. It is more related to my LSF/MM topic on the swap back
-end overhaul. More long term and bigger undertakings.
-
-Chris
 
