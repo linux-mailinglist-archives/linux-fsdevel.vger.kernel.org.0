@@ -1,123 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-18181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9DE8B61F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 21:21:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293388B61F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 21:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2715628462D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC421F25243
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B99F13B5BB;
-	Mon, 29 Apr 2024 19:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95A713AD3E;
+	Mon, 29 Apr 2024 19:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jc0JoP+e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbI2AEXd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0923113AA3B;
-	Mon, 29 Apr 2024 19:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF07A12B73;
+	Mon, 29 Apr 2024 19:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714418496; cv=none; b=lbePcjylgjlyZkbmJM01kk1+M9d0CDZOYK1cWO7DC4L5bI/RC03LxkYKEwpHvulGmHCsh5mmlAK8gBcuJes2Fn+VT1mtYx2KATiuIw3ZMEJ9J5RMkTTbAd2XbXk36siEveHe08zL2mQm35Jbp1YkmgQAzTcaDBmPAEKcNfj+AhU=
+	t=1714418551; cv=none; b=GlOIVpjHpfLwAJZ237mj6OZN+dDu4rmCKi+GUtbdIgDdNcYyJzjmHzqk1cIvaYaGuZQjEMgSj8zSmoHWUy2dTeeGtUQyw1CPo3dKLayxTMwzrD1ddm3z2oGU8T6BxH3acoFIaa/Vd7dItchJjRjsCUrw9TQMZbBg90IFSo+Fz1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714418496; c=relaxed/simple;
-	bh=jp0/hhNkqyvc+wcHZcmBPELue9y/n98F9TDt18ONk+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lgAx6T7XRs0SE5R+TzH6KJH76qxmhcQTX/1yTowdZkvLepFo4m0zYpHaHj424KDCrbXdT3makDa/6hufNn8PzRPT2k3siMAjduvbPK5F05Z9gOMkv6kAVpdWg6AUs9bTg7VtCnLLFOob8F+e9QNnNbnxviwZhjjmr9DHRMF3wkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jc0JoP+e; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=neJzdRz9MNUmJ0r+KdRG51iWaNXVEV9Q2WvkNbVMuAo=; b=Jc0JoP+eKlc+BEPzMeneXAxsma
-	j/OYXl9xWbSVrgWEs60bJmZmC5ymQ6SxfijEAStU0JqYGSMrjhQl6oNoCCKdGKJWUrSWku+ucHqTd
-	PX1zm4qHityOpwJAN4lQlbZteHHAf1yVdNPaFECdf0EE0gXFMv7iJgeYnyrdgXnQBOwxRVi4j4q1K
-	+NWVRPqo4iabfKD59KHwsIpvkgf1QQuiO/oAQl1F9jEZlKEvQhCb+NCFSPzmwkpI9i7cev5c5lHkB
-	6zsNABrfOfPUa8ebmNG6SglJtXXI0vKLoXXI5iLW3FpLMd/2fpU/w572XWrQS4/s+eomGeYpFOSvw
-	sqIfsjmw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s1WYv-0000000D9vn-12aN;
-	Mon, 29 Apr 2024 19:21:17 +0000
-Date: Mon, 29 Apr 2024 20:21:17 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	"Huang, Ying" <ying.huang@intel.com>, Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/12] nfs: drop usage of folio_file_pos
-Message-ID: <Zi_zLQqpJ6PRX7HD@casper.infradead.org>
-References: <20240429190500.30979-1-ryncsn@gmail.com>
- <20240429191138.34123-1-ryncsn@gmail.com>
+	s=arc-20240116; t=1714418551; c=relaxed/simple;
+	bh=6/2fDYkZ0Fc/sJSvHR4r/NMjtwcjsKhDUHRFLAmNtSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nVtDbaA7FJJpdNLnF2zERXkU1VFcD2/Zmjv78YSlXEH9kwdgm7erf7CP+Wa1hEmrUPNQ6KHZFP+vbuCDvqmuofAZVROR5xis+yV7QYT8+fIuzS5/I8C6zGIqhb7KiUTgx1qp0nYZfWh/l3adVLO4tIizGLt0fYrkATa7AHI+bH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbI2AEXd; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e0933d3b5fso14139841fa.2;
+        Mon, 29 Apr 2024 12:22:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714418548; x=1715023348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cpd1WYildkuoLom26860P+BikCx3lu1sKsq7QDlDPG8=;
+        b=QbI2AEXdTTDJQB662zdIT1aekFHJfEt14OcrX2kZOv0gw1Ud01Ziz3SalF24haOlrD
+         Tr8icVrTMUs/6anFU1xd79it5Xvu+bNtzkIwNxa932qHaqJ/bJkc1ga9TBGixl7l4zk2
+         xHEpSHMvbMvPNzPvh43d49hYzrIjrowKxvDux7DmHDiTc8T3VuaG5fGdkje5qvkTmaOJ
+         U/4Zm0m9D6kK9NBxvYAFku74mDYhHLZRKwCMFod9sP/5OvHmT4NiLLDh1IyxOGGcSoZV
+         lvNVjqaYIWw8g1BFkmjL7cqscEYqBF/ZrUd/dcFVA/N0a92do3mBm2PwXlt0YxyIYRBv
+         Wlkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714418548; x=1715023348;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cpd1WYildkuoLom26860P+BikCx3lu1sKsq7QDlDPG8=;
+        b=g2ELdxRPQQOldc+9tl49txyWOA/yp/AWCthINvOSZaGO43D5fEcXJZ/SLU3sIC/ume
+         MHh5/zat8UTndih5KheO9+Q02yKowjuWfsqqlz1OnVRyBPJP7/OTPRh2guCEB7VNgdwX
+         f4BSyRMjJg99LQBBdi5KyGGRBkfp7dmurPgEgck5d2ZzZ8SiUDpSVy6r80aY868z0EXt
+         nqPLjS6ejTGSL1rjZXyPJ4pccOZQ/yempJD/niSlBD3/jL4+YrAW1c1pRsEhylY7dUov
+         MEfPfAmcofIMiNvGjwMxIOpx4XuMu3R0n8jWmV7ErDZxuXLl/VZu2jeCobN2+rANP/bv
+         LM/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9XNRoZ2ew52jmZplaxDNG5ldpMIW6nAQ9Gwse+qu/W3dieaN+V+jFUbkj+jxt7pGEvRr8ZQm1T16i2RmEWxvtnQGBOXXO0iAX6bjr1aGfpHUxNzFK7FjQ5Wiali2dlH/m2JvOlcB5A2zEK91gAlhL4bIP/tuGFDDS8a9Rt7ZuNvfR24fMkLBf
+X-Gm-Message-State: AOJu0Yy9mzOovZcdcq260h9QQdlzKXo6QAfyZxwocNEy0tktqa4eWS3Z
+	tZvYeYxYW9mr84NF/uqUbyez4fqypTh3iXQDksikrpJuFZmRwjBj8bfNUGREgmMoIE92tWYpmRj
+	7qKzFdy8F4N3PX4wfeDRbFDtL6F4=
+X-Google-Smtp-Source: AGHT+IGSowF/+xWsJ96Y/dHBc0kV+WSElRsdFJhZmSTk9Dz1YbSkQSIgU2LDwJkdHchcBZki+qVTxZok5w4qnCfrVlQ=
+X-Received: by 2002:a2e:b6d1:0:b0:2d6:e2aa:6801 with SMTP id
+ m17-20020a2eb6d1000000b002d6e2aa6801mr6798806ljo.46.1714418547561; Mon, 29
+ Apr 2024 12:22:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240429191138.34123-1-ryncsn@gmail.com>
+References: <20240429190500.30979-1-ryncsn@gmail.com> <20240429190500.30979-3-ryncsn@gmail.com>
+ <Zi_xeKUSD6C8TNYK@casper.infradead.org>
+In-Reply-To: <Zi_xeKUSD6C8TNYK@casper.infradead.org>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 30 Apr 2024 03:22:10 +0800
+Message-ID: <CAMgjq7D5zwksHxh5c00U82BCsLxYj-_GevZZtAM8xNZO7p-RQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 02/12] nilfs2: drop usage of page_index
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	"Huang, Ying" <ying.huang@intel.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	linux-nilfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 30, 2024 at 03:11:34AM +0800, Kairui Song wrote:
-> +++ b/fs/nfs/file.c
-> @@ -588,7 +588,7 @@ static vm_fault_t nfs_vm_page_mkwrite(struct vm_fault *vmf)
->  
->  	dfprintk(PAGECACHE, "NFS: vm_page_mkwrite(%pD2(%lu), offset %lld)\n",
->  		 filp, filp->f_mapping->host->i_ino,
-> -		 (long long)folio_file_pos(folio));
-> +		 (long long)folio_pos(folio));
+On Tue, Apr 30, 2024 at 3:14=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Tue, Apr 30, 2024 at 03:04:50AM +0800, Kairui Song wrote:
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > page_index is only for mixed usage of page cache and swap cache, for
+> > pure page cache usage, the caller can just use page->index instead.
+> >
+> > It can't be a swap cache page here (being part of buffer head),
+> > so just drop it, also convert it to use folio.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > Cc: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+> > Cc: linux-nilfs@vger.kernel.org
+> > ---
+> >  fs/nilfs2/bmap.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/nilfs2/bmap.c b/fs/nilfs2/bmap.c
+> > index 383f0afa2cea..f4e5df0cd720 100644
+> > --- a/fs/nilfs2/bmap.c
+> > +++ b/fs/nilfs2/bmap.c
+> > @@ -453,9 +453,8 @@ __u64 nilfs_bmap_data_get_key(const struct nilfs_bm=
+ap *bmap,
+> >       struct buffer_head *pbh;
+> >       __u64 key;
+> >
+> > -     key =3D page_index(bh->b_page) << (PAGE_SHIFT -
+> > -                                      bmap->b_inode->i_blkbits);
+> > -     for (pbh =3D page_buffers(bh->b_page); pbh !=3D bh; pbh =3D pbh->=
+b_this_page)
+> > +     key =3D bh->b_folio->index << (PAGE_SHIFT - bmap->b_inode->i_blkb=
+its);
+> > +     for (pbh =3D folio_buffers(bh->b_folio); pbh !=3D bh; pbh =3D pbh=
+->b_this_page)
+> >               key++;
+> >
+> >       return key;
+>
+> Why isn't this entire function simply:
+>
+>         return bh->b_blocknr;
+>
 
-Yes, we can't call page_mkwrite() on a swapcache page.
-
-> +++ b/fs/nfs/nfstrace.h
-> @@ -960,7 +960,7 @@ DECLARE_EVENT_CLASS(nfs_folio_event,
->  			__entry->fileid = nfsi->fileid;
->  			__entry->fhandle = nfs_fhandle_hash(&nfsi->fh);
->  			__entry->version = inode_peek_iversion_raw(inode);
-> -			__entry->offset = folio_file_pos(folio);
-> +			__entry->offset = folio_pos(folio);
->  			__entry->count = nfs_folio_length(folio);
->  		),
->  
-> @@ -1008,7 +1008,7 @@ DECLARE_EVENT_CLASS(nfs_folio_event_done,
->  			__entry->fileid = nfsi->fileid;
->  			__entry->fhandle = nfs_fhandle_hash(&nfsi->fh);
->  			__entry->version = inode_peek_iversion_raw(inode);
-> -			__entry->offset = folio_file_pos(folio);
-> +			__entry->offset = folio_pos(folio);
-
-These two I don't know about.
-
-> +++ b/fs/nfs/write.c
-> @@ -281,7 +281,7 @@ static void nfs_grow_file(struct folio *folio, unsigned int offset,
->  	end_index = ((i_size - 1) >> folio_shift(folio)) << folio_order(folio);
->  	if (i_size > 0 && folio_index(folio) < end_index)
->  		goto out;
-> -	end = folio_file_pos(folio) + (loff_t)offset + (loff_t)count;
-> +	end = folio_pos(folio) + (loff_t)offset + (loff_t)count;
-
-This one concerns me.  Are we sure we can't call nfs_grow_file()
-for a swapfile?
-
-> @@ -2073,7 +2073,7 @@ int nfs_wb_folio_cancel(struct inode *inode, struct folio *folio)
->   */
->  int nfs_wb_folio(struct inode *inode, struct folio *folio)
->  {
-> -	loff_t range_start = folio_file_pos(folio);
-> +	loff_t range_start = folio_pos(folio);
->  	loff_t range_end = range_start + (loff_t)folio_size(folio) - 1;
-
-Likewise here.  Are we absolutely certain that swap I/O can't call this
-function?
+Nice idea, I didn't plan for extra clean up and test for fs code, but
+this might be OK to have, will check it.
 
