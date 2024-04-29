@@ -1,271 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-18084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739128B5431
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 11:25:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACE68B5466
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 11:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014DB1F2063E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 09:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B29C5B20BC6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 09:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6E222F19;
-	Mon, 29 Apr 2024 09:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCD3249ED;
+	Mon, 29 Apr 2024 09:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S3VvU8so";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xsKVvbqt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TbEZVP/y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UN283RcQ"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bGmN/4Au"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1DC22EEB;
-	Mon, 29 Apr 2024 09:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BC4171C8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 09:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714382741; cv=none; b=msQQ6nivTDQKSU/qR6TmrMFid7skS6ouUQ4PY1sY9R9qYrTaHTWYg3kWB/sky/kZj1I8N4tfJyPwDB6MSOnf7mYTkmamEtA4weiqmCgn6+scvYTlPMw0g3dpzZg7ZLdS1rPjwJEPVL1Wvho2BMiQxVuUWxWkuKvScIWtsTVtR5M=
+	t=1714383708; cv=none; b=MjgvxwsUx+okHBiYXvMjfwtLdGC8gU0nctGM05GNNnMzNo5vuQwVG7MoriP0Jljf7U0TDR9YaHPYGyDuu5HDSd1OHu21nqVGcHWwp8GBzkITZFKczK3rWggcbCTBG/MAtIjrmQqWQnG/3hoEZgZYuA21dDZIw0IWudWLJrErlUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714382741; c=relaxed/simple;
-	bh=4ioOWcAqkTZZPjxQySuZggD5dP4NRy7hb4jvt44FYWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FOme/8iMR50zeRaxEI9Gri9eAjhle2HJW4mdAhqSu+P6Jq8HlufKa+U16/yJ76vKV7J/PYzmFQ4EpZc+HodPGqkOrBz7dXH0MUmaQEqsHgW0fdNuhFQPei41ONy95Cjw6mMD7mAnAHJ5Obv0eRQKV7ax2rBLnAQnsmPsZKGpnlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S3VvU8so; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xsKVvbqt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TbEZVP/y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UN283RcQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 15C33203C2;
-	Mon, 29 Apr 2024 09:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714382738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JibG7+lygOof8Tla5+bT9hwsr3Ht7OkMeg7rsKbncvc=;
-	b=S3VvU8so2o0Yi6JisbeTYXOeHYB9NTzDma5tn7VeyLIZ1vQfNOA1hZtm+J0zWTtyEECckP
-	Cj4BvBQ4Fxfrx+jBpHSVgB7BlKWWChZjiE3yjdTyf6BL26JltCUArz2VyQTGmohZdUQJdX
-	2YaV4h3M7u41wceqRGb9zHiU+hqrmYs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714382738;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JibG7+lygOof8Tla5+bT9hwsr3Ht7OkMeg7rsKbncvc=;
-	b=xsKVvbqtjs0jYUZvyC0fNteMSgilnf6otqEtr6w/N0h5c8cJXXp+hcfveDyLxgWBSeDXrE
-	175FwLOMTvj4abCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="TbEZVP/y";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UN283RcQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714382737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JibG7+lygOof8Tla5+bT9hwsr3Ht7OkMeg7rsKbncvc=;
-	b=TbEZVP/yaFIr8YRQhe0N+Azf+EXlFjeWWp/NNDxnkqKPoIOuLQCQCaWJNlOg0YnU9STQAP
-	xHCulS25Oepn/K64TxWxqhYHRdS7+dtI+meXHn2BhCtb+DcKHINXw4LGOsN9Bj+axtaBAD
-	FoQtAIXl5p/s6ROuhJw1KpQBlJYLrhM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714382737;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JibG7+lygOof8Tla5+bT9hwsr3Ht7OkMeg7rsKbncvc=;
-	b=UN283RcQbx3kTBpA3qT6WwdhJModTs5RykCLl3VATHTtM4KSj8F/+isVI9uaHA+yNqIqIJ
-	M5cVdysic/g7tECA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0BF39138A7;
-	Mon, 29 Apr 2024 09:25:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y2vrApFnL2bOHgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 29 Apr 2024 09:25:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C0282A082F; Mon, 29 Apr 2024 11:25:36 +0200 (CEST)
-Date: Mon, 29 Apr 2024 11:25:36 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 6/9] ext4: make ext4_da_reserve_space() reserve
- multi-clusters
-Message-ID: <20240429092536.mtlqw4omhc3mrd5g@quack3>
-References: <20240410034203.2188357-1-yi.zhang@huaweicloud.com>
- <20240410034203.2188357-7-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1714383708; c=relaxed/simple;
+	bh=7xAWea8cioriAeYwM8ij/w7ZcsuSDYoHl8WaxNgp9Lk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ri41D8Bf75WEJJuZPjlrhD8Wyvw+X8daNgbhBrJ/t346WnFZDez2LxS4RzUfuDA5EBhH9vw0sJAWnPvCGWNP0xjEhZEmhvcIqFpUN5fRJxYaf/0RMvCh4YyA9LC0KQfFeNKQESQ/jsrwGT2o10S4x3cy62Cn6XLpko3q2BibNKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bGmN/4Au; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a58e7628aeaso205659866b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 02:41:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1714383704; x=1714988504; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KW3b7ICejyiea4orM3gLgyXEngHryT3qr27lnHqKhVw=;
+        b=bGmN/4AuBxwOFhj41TaeujswCargDORzaHj3xvrPAg7M5IiNKn5giedtZ7lcT5kDpl
+         3Hv9s3OcHKLmx18S+ShZppZ5IOjod0ozYfXIQY4iwDyTiiH97iG+G2Ya4Lb3ELXF+xq1
+         O8bw8VwvIFGQdeEP+5AMJBaD4wVkXcIKvrBrY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714383704; x=1714988504;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KW3b7ICejyiea4orM3gLgyXEngHryT3qr27lnHqKhVw=;
+        b=PecpzuY8tDHA6hfBhgrbrEx8KsYHuL5wf8CDBz6Ur33odJedZqWyXsusnvu85KMvpl
+         m02tuEsCRxsUGn0htBOt4Yn8YYXbjUWnrk0aRdkwvqEz4GNxGJJVX41NqJZK4yx0kD6z
+         BAW7RZab7p7IxZmu+F0drxi/eqw0PpaAJBhoK20+H2NWey9oVNq7GnfSe4y8/dD0nmQP
+         Ik57joBaOXZP2tCTsn9MQKnrza1J8E6sPfPKrVOmZh24jjiOpixDq0jpSJTjllhF5nOb
+         J2noE0QrdKhR7QYrZn+ELNwNVqXXcjn3oLrsiwZ5Xx9jemEkhMGIWbD4sHsW5MrfJ8//
+         RguA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6tqfvKO3zuFw33YJ0A8iRYS+1fITFXsGgPfU2wBWwBZtphJ3B8sPnEXvOvtXYPyiakUyV4dIXHlvCJ/tA1Q25KBGTDomUjfxwpRXWMg==
+X-Gm-Message-State: AOJu0Yzv/nZOk0PEOsJU2RswIujOjuTNy94MqBL/lhvDfhcxku7juYq7
+	DM/R9T3Cjf8gkF1M+nr76+1F+iraUB1WBpWPIuLSe15nkeJTH9nyhYxuvrLQpbQyYXvveDsRtmM
+	WeH20SAN97u8T/2/F50fF5eUspDapCj3FpRA6rw==
+X-Google-Smtp-Source: AGHT+IH60wIgzLEx+kUxMnW7BqXpHPHOXYGnlvC/TyVLBhgkxx37j7maA7xaGaYE53DqHYkezKYhWHcR1UJQo7CQPk4=
+X-Received: by 2002:a17:907:1b25:b0:a58:bcad:47c0 with SMTP id
+ mp37-20020a1709071b2500b00a58bcad47c0mr7842584ejc.47.1714383703403; Mon, 29
+ Apr 2024 02:41:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240410034203.2188357-7-yi.zhang@huaweicloud.com>
-X-Spam-Level: ****
-X-Spamd-Result: default: False [4.39 / 50.00];
-	BAYES_SPAM(5.10)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	BAD_REP_POLICIES(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email,suse.com:email,huawei.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: 4.39
-X-Spamd-Bar: ++++
-X-Rspamd-Queue-Id: 15C33203C2
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
+References: <20240425101556.573616-1-mszeredi@redhat.com> <CAOQ4uxgD3tTNKScRPD4r+ePuGkS5s2X2A3chMA1MXbfz-_P5PA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgD3tTNKScRPD4r+ePuGkS5s2X2A3chMA1MXbfz-_P5PA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 29 Apr 2024 11:41:31 +0200
+Message-ID: <CAJfpegvQs+sT0AE64o+=D8b0q4a9YU7PEuGV+kPfejVAP0+a4A@mail.gmail.com>
+Subject: Re: [PATCH] ovl: implement tmpfile
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 10-04-24 11:42:00, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Add 'nr_resv' parameter to ext4_da_reserve_space(), which indicates the
-> number of clusters wants to reserve, make it reserve multi-clusters once
-> a time.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Sat, 27 Apr 2024 at 13:58, Amir Goldstein <amir73il@gmail.com> wrote:
 
-Looks good. Feel free to add:
+> There are some tests in src/vfs/vfstest that run sgid tests
+> with O_TMPFILE if it is supported.
+> I identified generic/696 and generic/697, but only the latter
+> currently runs on overlayfs.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Yes, I ran full xfstests, but now I also verified that they do use
+O_TMPFILE on overlayfs and it works.
 
-								Honza
+The only one that didn't run from these was:
 
-> ---
->  fs/ext4/inode.c             | 18 +++++++++---------
->  include/trace/events/ext4.h | 10 ++++++----
->  2 files changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index d37233e2ed0b..1180a9eb4362 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1479,9 +1479,9 @@ static int ext4_journalled_write_end(struct file *file,
->  }
->  
->  /*
-> - * Reserve space for a single cluster
-> + * Reserve space for 'nr_resv' clusters
->   */
-> -static int ext4_da_reserve_space(struct inode *inode)
-> +static int ext4_da_reserve_space(struct inode *inode, int nr_resv)
+generic/509       [not run] require /scratch to be valid block disk
+
+> > +       path_get(user_path);
+> > +       *backing_file_user_path(f) = *user_path;
+> > +       error = vfs_tmpfile(real_idmap, real_parentpath, f, mode);
+>
+> We do not have a custom idmap in other backing_file helpers
+> don't see why we need real_idmap in this helper.
+> I think that should be:
+> mnt_idmap(real_parentpath.mnt)
+
+Yes.
+
+> > +       realfile = backing_tmpfile_open(&file->f_path, flags,
+> > +                                       &nop_mnt_idmap, &realparentpath, mode,
+> > +                                       current_cred());
+>
+> Using &nop_mnt_idmap here is not only unneeded but also looks wrong.
+
+Yep, no need to pass idmap down this helper, since it can be extracted
+form realparentpath.
+
+> Any reason not to reuse ovl_instantiate() to avoid duplicating some
+> of the subtlety? for example:
+>
+> +       /* ovl_instantiate() consumes the .upperdentry reference on success */
+> +       dget(realfile->f_path.dentry)
+> +       err = ovl_instantiate(dentry, inode, realfile->f_path.dentry, 0, 1);
+> +       if (err)
+> +               goto out_err;
+>
+> [...]
+>
+>  static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
+> -                          struct dentry *newdentry, bool hardlink)
+> +                          struct dentry *newdentry, bool hardlink,
+> bool tmpfile)
 >  {
->  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->  	struct ext4_inode_info *ei = EXT4_I(inode);
-> @@ -1492,18 +1492,18 @@ static int ext4_da_reserve_space(struct inode *inode)
->  	 * us from metadata over-estimation, though we may go over by
->  	 * a small amount in the end.  Here we just reserve for data.
->  	 */
-> -	ret = dquot_reserve_block(inode, EXT4_C2B(sbi, 1));
-> +	ret = dquot_reserve_block(inode, EXT4_C2B(sbi, nr_resv));
->  	if (ret)
->  		return ret;
->  
->  	spin_lock(&ei->i_block_reservation_lock);
-> -	if (ext4_claim_free_clusters(sbi, 1, 0)) {
-> +	if (ext4_claim_free_clusters(sbi, nr_resv, 0)) {
->  		spin_unlock(&ei->i_block_reservation_lock);
-> -		dquot_release_reservation_block(inode, EXT4_C2B(sbi, 1));
-> +		dquot_release_reservation_block(inode, EXT4_C2B(sbi, nr_resv));
->  		return -ENOSPC;
->  	}
-> -	ei->i_reserved_data_blocks++;
-> -	trace_ext4_da_reserve_space(inode);
-> +	ei->i_reserved_data_blocks += nr_resv;
-> +	trace_ext4_da_reserve_space(inode, nr_resv);
->  	spin_unlock(&ei->i_block_reservation_lock);
->  
->  	return 0;       /* success */
-> @@ -1678,7 +1678,7 @@ static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
->  	 * extents status tree doesn't get a match.
->  	 */
->  	if (sbi->s_cluster_ratio == 1) {
-> -		ret = ext4_da_reserve_space(inode);
-> +		ret = ext4_da_reserve_space(inode, 1);
->  		if (ret != 0)   /* ENOSPC */
->  			return ret;
->  	} else {   /* bigalloc */
-> @@ -1690,7 +1690,7 @@ static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
->  				if (ret < 0)
->  					return ret;
->  				if (ret == 0) {
-> -					ret = ext4_da_reserve_space(inode);
-> +					ret = ext4_da_reserve_space(inode, 1);
->  					if (ret != 0)   /* ENOSPC */
->  						return ret;
->  				} else {
-> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> index 6b41ac61310f..cc5e9b7b2b44 100644
-> --- a/include/trace/events/ext4.h
-> +++ b/include/trace/events/ext4.h
-> @@ -1246,14 +1246,15 @@ TRACE_EVENT(ext4_da_update_reserve_space,
->  );
->  
->  TRACE_EVENT(ext4_da_reserve_space,
-> -	TP_PROTO(struct inode *inode),
-> +	TP_PROTO(struct inode *inode, int nr_resv),
->  
-> -	TP_ARGS(inode),
-> +	TP_ARGS(inode, nr_resv),
->  
->  	TP_STRUCT__entry(
->  		__field(	dev_t,	dev			)
->  		__field(	ino_t,	ino			)
->  		__field(	__u64,	i_blocks		)
-> +		__field(	int,	reserve_blocks		)
->  		__field(	int,	reserved_data_blocks	)
->  		__field(	__u16,  mode			)
->  	),
-> @@ -1262,16 +1263,17 @@ TRACE_EVENT(ext4_da_reserve_space,
->  		__entry->dev	= inode->i_sb->s_dev;
->  		__entry->ino	= inode->i_ino;
->  		__entry->i_blocks = inode->i_blocks;
-> +		__entry->reserve_blocks = nr_resv;
->  		__entry->reserved_data_blocks = EXT4_I(inode)->i_reserved_data_blocks;
->  		__entry->mode	= inode->i_mode;
->  	),
->  
-> -	TP_printk("dev %d,%d ino %lu mode 0%o i_blocks %llu "
-> +	TP_printk("dev %d,%d ino %lu mode 0%o i_blocks %llu reserve_blocks %d"
->  		  "reserved_data_blocks %d",
->  		  MAJOR(__entry->dev), MINOR(__entry->dev),
->  		  (unsigned long) __entry->ino,
->  		  __entry->mode, __entry->i_blocks,
-> -		  __entry->reserved_data_blocks)
-> +		  __entry->reserve_blocks, __entry->reserved_data_blocks)
->  );
->  
->  TRACE_EVENT(ext4_da_release_space,
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>         struct ovl_inode_params oip = {
+>                 .upperdentry = newdentry,
+> @@ -295,6 +295,9 @@ static int ovl_instantiate(struct dentry *dentry,
+> struct inode *inode,
+>                 inc_nlink(inode);
+>         }
+>
+> +       if (tmpfile)
+> +               d_mark_tmpfile(dentry);
+> +
+>         d_instantiate(dentry, inode);
+>
+
+Okay, makes sense.
+
+
+> > +static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
+> > +                             struct inode *inode, umode_t mode)
+> > +{
+> > +       int err;
+> > +       const struct cred *old_cred;
+> > +       struct cred *override_cred;
+> > +
+> > +       err = ovl_copy_up(dentry->d_parent);
+> > +       if (err)
+> > +               return err;
+> > +
+> > +       old_cred = ovl_override_creds(dentry->d_sb);
+> > +
+> > +       err = -ENOMEM;
+> > +       override_cred = prepare_creds();
+> > +       if (override_cred) {
+> > +               override_cred->fsuid = inode->i_uid;
+> > +               override_cred->fsgid = inode->i_gid;
+> > +               err = security_dentry_create_files_as(dentry, mode,
+> > +                                                     &dentry->d_name, old_cred,
+> > +                                                     override_cred);
+> > +               if (err) {
+> > +                       put_cred(override_cred);
+> > +                       goto out_revert_creds;
+> > +               }
+> > +               put_cred(override_creds(override_cred));
+> > +               put_cred(override_cred);
+> > +
+> > +               err = ovl_create_upper_tmpfile(file, dentry, inode, mode);
+> > +       }
+> > +out_revert_creds:
+> > +       revert_creds(old_cred);
+> > +       return err;
+> > +}
+>
+> This also shouts unneeded and subtle code duplication to me:
+>
+>  static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+> -                             struct ovl_cattr *attr, bool origin)
+> +                             struct ovl_cattr *attr, bool origin,
+> +                             struct file *tmpfile)
+>  {
+>         int err;
+>         const struct cred *old_cred;
+> @@ -602,7 +606,9 @@ static int ovl_create_or_link(struct dentry
+> *dentry, struct inode *inode,
+>                 put_cred(override_cred);
+>         }
+>
+> -       if (!ovl_dentry_is_whiteout(dentry))
+> +       if (tmpfile)
+> +               err = ovl_create_upper_tmpfile(tmpfile, dentry, inode,
+> attr->mode);
+> +       else if (!ovl_dentry_is_whiteout(dentry))
+>                 err = ovl_create_upper(dentry, inode, attr);
+>         else
+>                 err = ovl_create_over_whiteout(dentry, inode, attr);
+
+
+Instead I opted to extract the creds preparation into a separate helper.
+
+> > +       /* inode reference was transferred to dentry */
+> > +       inode = NULL;
+> > +       err = finish_open(file, dentry, ovl_dummy_open);
+> > +put_realfile:
+> > +       if (!(file->f_mode & FMODE_OPENED))
+> > +               fput(file->private_data);
+>
+> This cleanup bit is very subtle and hard for me to review.
+> I wonder if there is a way to improve this subtlety?
+
+The reason I did it this way is because fput() code checks
+FMODE_OPENED and calls ->release() only if it's set.  So essentially
+it's an indication whether the VFS will initiate the cleanup or we
+need to do that ourselves.
+
+> Would it be possible to write this cleanup as:
+> +       if (err && file->private_data)
+> +               fput(file->private_data);
+>
+> With a comment explaining where file->private_data is set?
+
+If you look at do_dentry_open() there's an error condition after
+setting FMODE_OPENED, that would result in the above being wrong.  In
+fact that error condition cannot happen in overlayfs, due to aops
+being set just for this reason.  So checking the error works in our
+case, but I think that's more subtle than the FMODE_OPENED check.  A
+comment would make sense, though.
+
+>
+> Overall, I did not find any bugs, but I am hoping that the code could be
+> a bit easier to review and maintain.
+
+Thanks for the review, will post a new version shortly.
+
+Thanks,
+Miklos
 
