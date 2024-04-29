@@ -1,206 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-18110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE7A8B5BD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 16:48:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732038B5C29
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 16:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E0C1F22001
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 14:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948911C21575
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 14:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2479182499;
-	Mon, 29 Apr 2024 14:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796F2811E9;
+	Mon, 29 Apr 2024 14:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G6jIuhkS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nF39WmpM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354CD823A8;
-	Mon, 29 Apr 2024 14:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684F87EEE3;
+	Mon, 29 Apr 2024 14:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714402008; cv=none; b=gO+N8La36zQmhqbFz9o63re/fxU2FTWBVMrtXHkR4ZFgViPjheTmKpncp+Q7u6RkmngmNBupmLP2guIoJmn492JwrLCCgOprvJhoHGh6NNvptKhSOmUuJSDFJNQjAAbrL2Ey3O78Z2UDp5AeTwquH5xN2619ySW0CJN0d/IhkeI=
+	t=1714402787; cv=none; b=jKYJxxBsq/v3XYo4DXlewtt/k4PCovd/TOlERM/L3lieM3x3kRTEhNQ8R2E562yxaEXKPiPdBYa7F/Ek+zZgIRa5eKB7uE09aNXXDsnoumW4JA961pO3xWK5aPswp+lft61R3uIIrnJ1Nx4Qe/FYGCp42Igixc89UuszfVUKq8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714402008; c=relaxed/simple;
-	bh=Fhs83ZbAkYZQXQM56ipxdCCgzackLcW+b3mmf1PvGHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D+34kPEgLLTXXZNStaXwjQF78FY/A1R1l7qFdP8jvtqeNRhlwF8iTZjkqcSw2aKLMqCcRi/7ib6gPV4kbW4lLuYw2Hvzi2Aho1x18oHuYu8FKNMD+55CXkns8JDMm86+FJXaYoypoDe6tMaSCXRxBQ9dIMC1kIIqXn3iQChCYIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G6jIuhkS; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43TEkGA7032074;
-	Mon, 29 Apr 2024 14:46:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=QO8ml3oM6AEXnzIgf1uRDOXfLnFMIu07iom+fZ5HZn8=;
- b=G6jIuhkSYqlYKH7UcTEkLfBTxhtX/Ysl+D68ZnlAlGukGS5cW9XALH1qKArxx4FvKuBI
- n9VZjtQfjib4BAnDMeKHChR07V80gCeQE7DoVBDYCDjMnB++Cr1R2Tjw9UKxFFoluqBA
- bOrK0m86kKrKgRylvWAmxa/L+eSgzvNaivS9T88Zg+1rbERsP1FiSw9lNHZ108ujN8JB
- ttYBafZWc4qEKbgXzP95xltOKTMcPDNe9dgJL0ZPoyLQHHXehdHlhZg7DlJLOPxyMXmz
- boT4k30JhELejPJyZ+BIXNoB/dfLZa1GUUbfYKAoKN9Rxuwzrw/MQMsKcZozT6jddugF kQ== 
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xtcy6r4fe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Apr 2024 14:46:16 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 43TE2Snx001443;
-	Mon, 29 Apr 2024 14:41:26 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xsbptr1up-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Apr 2024 14:41:26 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 43TEfMtQ58524094
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Apr 2024 14:41:24 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 968CE58066;
-	Mon, 29 Apr 2024 14:41:22 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E87A158068;
-	Mon, 29 Apr 2024 14:41:19 +0000 (GMT)
-Received: from [9.171.53.131] (unknown [9.171.53.131])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 29 Apr 2024 14:41:19 +0000 (GMT)
-Message-ID: <dc4325fb-d723-4d9f-adb7-7ee65a195231@linux.ibm.com>
-Date: Mon, 29 Apr 2024 16:41:19 +0200
+	s=arc-20240116; t=1714402787; c=relaxed/simple;
+	bh=B8vjlOZiqRrOg81+lbAx47cYya0urA5P44QLkl8RbAw=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=VQyvlGzx+M9C4LutqwayTxXHWEs14CGGvY9/kgNz3lOTEWr9NhH3h6Pjzv5h+2waQF3aXU+cf8VAAzadPmAL2a5qvEsY6lB7fdcLK9Wln0i9X2LMF85wcUVhPS0MhIZR8nttYv7PjZsIK6xWeSLX2HLIUQjY3o4GkU8Bali5q6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nF39WmpM; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6ecf05fd12fso4056436b3a.2;
+        Mon, 29 Apr 2024 07:59:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714402786; x=1715007586; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D2i2h/fU62HBi0Yob2v06SoPeokjr50XNhm9YQdF1O4=;
+        b=nF39WmpMKRHKLWReGnwNaJkDn7q+YHhE6mNNqFBNmtwPZ27utw7nsOczm8cg82vrr0
+         d4lYiOBqbv2cm6ic8qXMnT+qNxK69zZ8eBWzY50KMvTdFh+ihU2w81HqyrU1BWpxToIz
+         aeob/2Pa27CQBznViQMtUmY5ybmH8RFAx6gEWMZvjF7MofQlRWdm/8AkMrVtbJuX6yG9
+         9dhBz6D7LcE4+QOkTb1wa/rfIaFTIlX4gh6mSngjZvWbL0cagSVQ6aSsOxsnJis0Wchw
+         Tva+9uXh/FreaLogcUmD1p/4Kt8xDu6EjOUrMWlTIDiRkC0ByyIMon8iX/D2dOQmTRBU
+         KnOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714402786; x=1715007586;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D2i2h/fU62HBi0Yob2v06SoPeokjr50XNhm9YQdF1O4=;
+        b=Y0w1YWGDuDybzJjCKnGAz38KL5BBavdhm9hgdZr814QvEsp8W1WVvpl3fo3Qp0ViM8
+         aYLCaQ3T5A14mKle8wPPczR7dIPJFaYoamm6NpJCLVCi57FnsApiv5c8Y/mtGbJ+dU7C
+         U2R56oR8m0DpNs0ptQp6dmazYHIvq3iuzbXR9wrK4l0e0oUtY0Nah+MQBnoLQahBvhgF
+         tZI5P73GsiVQglDv6mbReEd2gTCG+Z9pAoLdgkJyH29L7jDeFvKaEjsERjfRaYFl9zQt
+         H8tdy2D9NxtrXA6abLXyLd8SuE2H4BBCddC33tl8u2NncVS8PVaXoqMGQPygF3JCikZF
+         xP6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXRQf1UGZNons+heP0lhnK0zkyB3r9NM8xy6a4xIFjhbknJlAqvGRZc3vlfxu0f/HJe3dw63nG4mTdZPFYRPXG29stZgGQzBExLlsGkiOmxawN3dNKc+F/qXJNW1QOnT5KONpE9ID4vww==
+X-Gm-Message-State: AOJu0Yz8JFIp/yU9p8kGZV89Y2yrL0yfYb4DoRw94tmk/ipQSWS6nY2c
+	9Q3/5/LNsLMLA6SBjqFBKGPpbAOKDuYa9W2fCEwPj+9ou8hoLCuk
+X-Google-Smtp-Source: AGHT+IFrQ4pzYZvOZbN3sE0v0c88khjAywVfp5oa41UWydT1M8w695R8CfnRvziWkYDWRWB95h5gNg==
+X-Received: by 2002:a05:6a20:748b:b0:1a7:7358:f111 with SMTP id p11-20020a056a20748b00b001a77358f111mr14510571pzd.31.1714402785678;
+        Mon, 29 Apr 2024 07:59:45 -0700 (PDT)
+Received: from dw-tp ([171.76.84.250])
+        by smtp.gmail.com with ESMTPSA id w12-20020a170902a70c00b001e45c0d6be6sm20463521plq.246.2024.04.29.07.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Apr 2024 07:59:45 -0700 (PDT)
+Date: Mon, 29 Apr 2024 20:29:38 +0530
+Message-Id: <87o79sxlid.fsf@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, hch@infradead.org, djwong@kernel.org, david@fromorbit.com, willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v4 02/34] ext4: check the extent status again before inserting delalloc block
+In-Reply-To: <3243c67d-e783-4ec5-998f-0b6170f36e35@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vfs.all 15/26] s390/dasd: use bdev api in dasd_format()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-s390@vger.kernel.org, jack@suse.cz, hch@lst.de, brauner@kernel.org,
-        axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
-        yukuai3@huawei.com, Yu Kuai <yukuai1@huaweicloud.com>,
-        Eduard Shishkin <edward6@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>
-References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-16-yukuai1@huaweicloud.com>
- <20240416013555.GZ2118490@ZenIV>
- <Zh47IY7M1LQXjckX@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <ca513589-2110-45fe-95b7-5ce23487ea10@linux.ibm.com>
- <20240428185823.GW2118490@ZenIV> <20240428232349.GY2118490@ZenIV>
-Content-Language: en-US
-From: Stefan Haberland <sth@linux.ibm.com>
-In-Reply-To: <20240428232349.GY2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: F5U40lbmVabxMZE9O7j__YMMi9ehI18J
-X-Proofpoint-ORIG-GUID: F5U40lbmVabxMZE9O7j__YMMi9ehI18J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-29_12,2024-04-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 suspectscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 clxscore=1011 adultscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2404290093
 
-Am 29.04.24 um 01:23 schrieb Al Viro:
-> On Sun, Apr 28, 2024 at 07:58:23PM +0100, Al Viro wrote:
->> On Wed, Apr 17, 2024 at 02:47:14PM +0200, Stefan Haberland wrote:
->>
->>> set_blocksize() does basically also set i_blkbits like it was before.
->>> The dasd_format ioctl does only work on a disabled device. To achieve this
->>> all partitions need to be unmounted.
->>> The tooling also refuses to work on disks actually in use.
+Zhang Yi <yi.zhang@huaweicloud.com> writes:
+
+> On 2024/4/27 0:39, Ritesh Harjani (IBM) wrote:
+>> Zhang Yi <yi.zhang@huaweicloud.com> writes:
+>> 
+>>> On 2024/4/26 20:57, Ritesh Harjani (IBM) wrote:
+>>>> Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
+>>>>
+>>>>> Zhang Yi <yi.zhang@huaweicloud.com> writes:
+>>>>>
+>>>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>>>
+>>>>>> Now we lookup extent status entry without holding the i_data_sem before
+>>>>>> inserting delalloc block, it works fine in buffered write path and
+>>>>>> because it holds i_rwsem and folio lock, and the mmap path holds folio
+>>>>>> lock, so the found extent locklessly couldn't be modified concurrently.
+>>>>>> But it could be raced by fallocate since it allocate block whitout
+>>>>>> holding i_rwsem and folio lock.
+>>>>>>
+>>>>>> ext4_page_mkwrite()             ext4_fallocate()
+>>>>>>  block_page_mkwrite()
+>>>>>>   ext4_da_map_blocks()
+>>>>>>    //find hole in extent status tree
+>>>>>>                                  ext4_alloc_file_blocks()
+>>>>>>                                   ext4_map_blocks()
+>>>>>>                                    //allocate block and unwritten extent
+>>>>>>    ext4_insert_delayed_block()
+>>>>>>     ext4_da_reserve_space()
+>>>>>>      //reserve one more block
+>>>>>>     ext4_es_insert_delayed_block()
+>>>>>>      //drop unwritten extent and add delayed extent by mistake
+>>>>>>
+>>>>>> Then, the delalloc extent is wrong until writeback, the one more
+>>>>>> reserved block can't be release any more and trigger below warning:
+>>>>>>
+>>>>>>  EXT4-fs (pmem2): Inode 13 (00000000bbbd4d23): i_reserved_data_blocks(1) not cleared!
+>>>>>>
+>>>>>> Hold i_data_sem in write mode directly can fix the problem, but it's
+>>>>>> expansive, we should keep the lockless check and check the extent again
+>>>>>> once we need to add an new delalloc block.
+>>>>>
+>>>>> Hi Zhang, 
+>>>>>
+>>>>> It's a nice finding. I was wondering if this was caught in any of the
+>>>>> xfstests?
+>>>>>
 >>>
->>> So there should be no page cache to evict.
->> You mean this?
->>          if (base->state != DASD_STATE_BASIC) {
->>                  pr_warn("%s: The DASD cannot be formatted while it is enabled\n",
->>                          dev_name(&base->cdev->dev));
->>                  return -EBUSY;
->>          }
->>
->> OK, but what would prevent dasd_ioctl_disable() from working while
->> disk is in use?  And I don't see anything that would evict the
->> page cache in dasd_ioctl_disable() either, actually...
->>
->> What am I missing here?
+>>> Hi, Ritesh
+>>>
+>>> I caught this issue when I tested my iomap series in generic/344 and
+>>> generic/346. It's easy to reproduce because the iomap's buffered write path
+>>> doesn't hold folio lock while inserting delalloc blocks, so it could be raced
+>>> by the mmap page fault path. But the buffer_head's buffered write path can't
+>>> trigger this problem,
+>> 
+>> ya right! That's the difference between how ->map_blocks() is called
+>> between buffer_head v/s iomap path. In iomap the ->map_blocks() call
+>> happens first to map a large extent and then it iterate over all the
+>> locked folios covering the mapped extent for doing writes.
+>> Whereas in buffer_head while iterating, we first instantiate/lock the
+>> folio and then call ->map_blocks() to map an extent for the given folio.
+>> 
+>> ... So this opens up this window for a race between iomap buffered write
+>> path v/s page mkwrite path for inserting delalloc blocks entries.
+>> 
+>>> the race between buffered write path and fallocate path
+>>> was discovered while I was analyzing the code, so I'm not sure if it could
+>>> be caught by xfstests now, at least I haven't noticed this problem so far.
+>>>
+>> 
+>> Did you mean the race between page fault path and fallocate path here?
+>> Because buffered write path and fallocate path should not have any race
+>> since both takes the inode_lock. I guess you meant page fault path and
+>> fallocate path for which you wrote this patch too :)
+>
+> Yep.
+>
+>> 
+>> I am surprised, why we cannot see the this race between page mkwrite and
+>> fallocate in fstests for inserting da entries to extent status cache.
+>> Because the race you identified looks like a legitimate race and is
+>> mostly happening since ext4_da_map_blocks() was not doing the right
+>> thing.
+>> ... looking at the src/holetest, it doesn't really excercise this path.
+>> So maybe we can writing such fstest to trigger this race.
+>> 
+>
+> I guess the stress tests and smoke tests in fstests have caught it,
+> e.g. generic/476. Since there is only one error message in ext4_destroy_inode()
+> when the race issue happened, we can't detect it unless we go and check the logs
+> manually.
 
-Thank you for your input.
-Let me provide some more insides how it is intended to work.
-Maybe there is something we should improve.
+Hi Zhang,
 
-This whole code is basically intended to be used by the dasdfmt tool.
+I wasn't able to reproduce the any error messages with generic/476.
 
-For the dasdfmt tool and the dasd_format ioctl we are talking about DASD
-ECKD devices.
-An important note: for those devices a partition has to be used to access
-the disk because the first tracks of the disks are not safe to store user
-data. A partition has to be created by fdasd.
+>
+> I suppose we need to add more warnings, something like this, how does it sound?
+>
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index c8b691e605f1..4b6fd9b63b12 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1255,6 +1255,8 @@ static void ext4_percpu_param_destroy(struct ext4_sb_info *sbi)
+>  	percpu_counter_destroy(&sbi->s_freeclusters_counter);
+>  	percpu_counter_destroy(&sbi->s_freeinodes_counter);
+>  	percpu_counter_destroy(&sbi->s_dirs_counter);
+> +	WARN_ON_ONCE(!ext4_forced_shutdown(sbi->s_sb) &&
+> +		     percpu_counter_sum(&sbi->s_dirtyclusters_counter));
+>  	percpu_counter_destroy(&sbi->s_dirtyclusters_counter);
+>  	percpu_counter_destroy(&sbi->s_sra_exceeded_retry_limit);
+>  	percpu_free_rwsem(&sbi->s_writepages_rwsem);
+> @@ -1476,7 +1478,8 @@ static void ext4_destroy_inode(struct inode *inode)
+>  		dump_stack();
+>  	}
+>
+> -	if (EXT4_I(inode)->i_reserved_data_blocks)
+> +	if (!ext4_forced_shutdown(inode->i_sb) &&
+> +	    WARN_ON_ONCE(EXT4_I(inode)->i_reserved_data_blocks))
+>  		ext4_msg(inode->i_sb, KERN_ERR,
+>  			 "Inode %lu (%p): i_reserved_data_blocks (%u) not cleared!",
+>  			 inode->i_ino, EXT4_I(inode),
+>
 
-A disk in use has the state DASD_STATE_ONLINE.
-To format a device the dasdfmt tool has to be called, it does the
-following:
+I also ran ext4 -g auto and I couldn't reproduce anything with above
+patch. Please note that I didn't use this patch series for testing. I was running
+xfstests on upstream kernel with above diff (because that's what the
+idea was that the problem even exists in upstream kernel and are we able
+to observe the race with page mkwrite and fallocate path)
 
-The dasdfmt tool checks if the disk is actually in use and refuses to
-work on an 'in use' DASD.
-So for example a partition that was in use has to be unmounted first.
+-ritesh
 
-Afterwards it does the following calls:
-
-BIODASDDISABLE
-  - to disable the device and prevent further usage
-  - sets the disk in state DASD_STATE_BASIC
-BIODASDFMT
-  - does the actual formatting
-  - checks if the disk is in state DASD_STATE_BASIC (if BIODASDDISABLE was
-    called before)
-  - this ioctl is usually called multiple times to format smaller parts of
-    the disk each time
-  - in the first call to this ioctl the first track (track 0) is
-    invalidated (basically wiped out) and format_data_t.intensity equals
-DASD_FMT_INT_INVAL
-  - the last step is to finally format the first track to indicate a
-    successful formatting of the whole disk
-BIODASDENABLE
-  - to enable the disk again for general usage
-  - sets the disk to state DASD_STATE_ONLINE again
-  - NOTE: a disabled device refuses an open call, so the tooling needs to
-    keep the file descriptor open.
-
-So the assumption in this processing is that a possibly used page cache is
-evicted when removing the partition from actual usage (e.g. unmounting, ..).
-
-While writing this I get to the point that it might not be the best idea to
-rely on proper tool handling only and it might be a good idea to check for
-an open count in BIODASDDISABLE as well so that the ioctls itself are safe
-to use. (While it does not make a lot sense to use them alone.)
-My assumption was that this is already done but obviously it isn't.
-
-> BTW, you are updating block size according to new device size, before
->          rc = base->discipline->format_device(base, fdata, 1);
-> 	if (rc == -EAGAIN)
-> 		rc = base->discipline->format_device(base, fdata, 0);
-> Unless something very unidiomatic is going on, this attempt to
-> format might fail...
-
-This is true. I guess the idea here was that the actual formatting of
-track 0 is done last after the whole disk was successfully formatted and
-everything went fine.
-But actually also the invalidation of the first track would do this here.
-
-So we should not only move this after the format_device call but we should
-also add a check for DASD_FMT_INT_INVAL which is the first step in the
-whole formatting.
-
-
-My current conclusion would be that this patch itself is fine as is but I
-should submit patches later to address the findings in this discussion.
-
-
+>
+> Thanks,
+> Yi.
+>
+>> 
+>>>>> I have reworded some of the commit message, feel free to use it if you
+>>>>> think this version is better. The use of which path uses which locks was
+>>>>> a bit confusing in the original commit message.
+>>>>>
+>>>
+>>> Thanks for the message improvement, it looks more clear then mine, I will
+>>> use it.
+>>>
+>> 
+>> Glad, it was helpful.
+>> 
+>> -ritesh
+>> 
 
