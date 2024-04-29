@@ -1,233 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-18034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C653D8B4EFB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 02:37:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405618B4F22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 03:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40FCE1F212E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 00:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E441C21396
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 01:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F742624;
-	Mon, 29 Apr 2024 00:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C853AEC3;
+	Mon, 29 Apr 2024 01:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="i8bCA03Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C003385
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 00:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DA57F;
+	Mon, 29 Apr 2024 01:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714351043; cv=none; b=r99Ee+qYas1GewqKY8Aemd4qwJaow1WLGET5rf4Sgd9Fi8MpNKnahpiaGpmxJieWpNfOjOm7xrqm0P3DkNdy74Iq3fPsa5UzQAH/phCjphowlvEfdJEHBJYDhYAdVXReeYulP5nHBByqCQ/7QyviUtFENDe9h7sOJIDrT/hOHYE=
+	t=1714353181; cv=none; b=qnLIdcBUi9tesTL2EmCtyVnRzQrIePerBGqsaISNGY+h3dF3/yslJD7NLae/P0ebBHXZG2AnDzkiwS/O7GYEyPVHJM9rABdlptGdw4ILpOjBVRN6KuuwuxvpvVSdero4lTKr8BJg1Tdf8JFxQMpPCjrmNmPKYktqgfqfDk1NRXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714351043; c=relaxed/simple;
-	bh=7ESwKgKfWHLoUD1b3Oaf+4nfPcXJo3zWieZr3tgides=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BjjqJn6fb4HZlsEvRBfNnLTUOLe0ThJaxZbm+Y+sdtKLiXrMJL7FreV/b+VME2R+y5aKNUPDjvveXkhnG2PIGgEAaZhCwAwSrhoqa7hJ+Ls+X+2rBX1sxGPZdMBGf4E394g6WSyzH84GamZ3P5U7nL4OADx/rNkrng3yUg7pCyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-36c4ff49136so4955405ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Apr 2024 17:37:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714351040; x=1714955840;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g6G48/biMy9lu9kuSBLQ0SeD+p96HimcuQQuEdtDohk=;
-        b=Gb7AhvmVX8NhTaldcWmdaPcl1TlZH73jGXbdlURPb3aH6+1xphpugYjMVWp+nt0az4
-         Q9jJHwWvDWODTOcC2YRh4w8j9M5p+BO24lnco6ITW2wmYXmpg2i+FwO557lxY2NYgIQ8
-         QxfLepqsk0jcgT1F8DuvFqh6pPVVD7zJ5dhKXnP9XTgurK9w0wPT3dHPnUzHE4T2OOX0
-         xXSA7F9xRvgMM3M+qnd4lHnprw/B7Ldtgw3BoLubTwhomwFQMu8/JtvUNR3DEWXxfHTC
-         /ZhLJSMyG2YtwOzliaW02IXZvyCO32ApK/Fa4jPbEBGsDSC4U+I23uiua9q7287m3J/n
-         Poeg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6LIBUyfb5yJ8nwpLsXxG9QeMMxIShrtvE200u8+L9rXsxmc2LT2Jtgdu3u4rt29b08pzyEzVxMWfy+zCcmgE5BPebcrKYQeHrlTLYeQ==
-X-Gm-Message-State: AOJu0YzkEgUKrfdYCp01/pPCQmaT8tQQ4J7xrYC5UkkrPV0FQ8ixYjfM
-	/FBbRRgHG3QL2rEnRl//ydbFPbBfmTPECv4k42vwS17A7Y/ZYsVyvyI9iIwZZXvz2O2ILL4f8cZ
-	M+xdL4gR37rGWXIrO5a05QpV22hGMTOf1ZaeH0wYrXoUOLgI4CUhpw7U=
-X-Google-Smtp-Source: AGHT+IHLHjsjjdJW/9XTAw4K0m55hB+icnXY8+dbh9C9PFf2SwcHVU1PykfHFYxbdBvOifGtPU24qCd1ll2OOuvT3qyAL71CUFef
+	s=arc-20240116; t=1714353181; c=relaxed/simple;
+	bh=atZTjMvbp/J9uFNSUp7SmwuYN/0G1ObO2MY7u9rDM18=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dqN3ueeFofg3TGR1uEd57ElmXWLG/1VdGaBdPTHKul1j2N6OhpxEEL0rTP9Fze/dmbzcCQDGHfovTNHHRTBYVcdNxXcys7+OzI8uJKlaYulaiLz3dJJkY93/i8/gs4ElgN6aZWxOzrunHUoF6uHI+HwWarZXs5guOnipvWT7Q2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=i8bCA03Z; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:570c:0:640:ca74:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 0DBA160E11;
+	Mon, 29 Apr 2024 04:12:54 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id pCESEr1uC0U0-N8n5dLns;
+	Mon, 29 Apr 2024 04:12:52 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1714353172; bh=JbpFPDnYYOMMsam7KnZq1vujrIs611gr9o5FFJ/T4I4=;
+	h=In-Reply-To:Cc:Date:References:To:From:Subject:Message-ID;
+	b=i8bCA03ZOoqiZUGgIkgPsnsvM6PQg7Off+6jOkXlfLqxgqxmeruErexcs9PZkwcEG
+	 kdvOD6IvUfUGvCdvMUmSlRoMfPrdbJctP6VymDRBj1N2nkTF0L53s4hhJjdk87yLic
+	 c5d8Y34wJv11ocOSdzo+fEOVYGJz27d92wTxsFmw=
+Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <35f7149a-728d-47a8-8884-347d87d5680e@yandex.ru>
+Date: Mon, 29 Apr 2024 04:12:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c28:b0:368:efa4:be00 with SMTP id
- m8-20020a056e021c2800b00368efa4be00mr345432ilh.3.1714351040801; Sun, 28 Apr
- 2024 17:37:20 -0700 (PDT)
-Date: Sun, 28 Apr 2024 17:37:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cebc5e06173174e2@google.com>
-Subject: [syzbot] [jfs?] KASAN: slab-use-after-free Read in dtSearch
-From: syzbot <syzbot+bd3506d55fa4e2fd9030@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Content-Language: en-US
+From: stsp <stsp2@yandex.ru>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240426133310.1159976-1-stsp2@yandex.ru>
+ <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
+ <8e186307-bed2-4b5c-9bc6-bdc70171cc93@yandex.ru>
+ <CALCETrVioWt0HUt9K1vzzuxo=Hs89AjLDUjz823s4Lwn_Y0dJw@mail.gmail.com>
+ <33bbaf98-db4f-4ea6-9f34-d1bebf06c0aa@yandex.ru>
+ <CALCETrXPgabERgWAru7PNz6A5rc6BTG9k2RRmjU71kQs4rSsPQ@mail.gmail.com>
+ <eae8e7e6-9c03-4c8e-ab61-cf7060d74d6d@yandex.ru>
+In-Reply-To: <eae8e7e6-9c03-4c8e-ab61-cf7060d74d6d@yandex.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+29.04.2024 01:12, stsp пишет:
+> freely pass device nodes around, then
+> perhaps the ability to pass an r/o dir fd
+> that can suddenly give creds, is probably
+> not something new...
+Actually there is probably something
+new anyway. The process knows to close
+all sensitive files before dropping privs.
+But this may not be the case with dirs,
+because dir_fd pretty much invalidates
+itself when you drop privs: you'll get
+EPERM from openat() if you no longer
+have rights to open the file, and dir_fd
+doesn't help.
+Which is why someone may neglect
+to close dir_fd before dropping privs,
+but with O_CRED_ALLOW that would
+be a mistake.
 
-syzbot found the following issue on:
+Or what about this scenario: receiver
+gets this fd thinking its some useful and
+harmless file fd that would be needed
+even after priv drop. So he makes sure
+with F_GETFL that this fd is O_RDONLY
+and doesn't close it. But it appears to be
+malicious O_CRED_ALLOW dir_fd, which
+basically exposes many files for a write.
 
-HEAD commit:    e88c4cfcb7b8 Merge tag 'for-6.9-rc5-tag' of git://git.kern..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1223c980980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=bd3506d55fa4e2fd9030
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d1256b180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d3b7bb180000
+So I am concerned about the cases where
+an fd was not closed before a priv drop,
+because the process didn't realize the threat.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/124765f3f2cd/disk-e88c4cfc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0e2773bfa348/vmlinux-e88c4cfc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/66c56fe803c8/bzImage-e88c4cfc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/3ac261abbe6e/mount_0.gz
+> But if the*whole point*  of opening the fd was to capture privileges
+> and preserve them across a privilege drop, and the program loads
+> malicious code after dropping privs, then that's a risk that's taken
+> intentionally.
+If you opened an fd yourself, then yes.
+You know what have you opened, and
+you care to close sensitive fds before
+dropping privs, or you take the risk.
+But if you requested something from
+another process and got some fd as
+the result, the kernel doesn't guarantee
+you got an fd to what you have requested.
+You can get a malicious fd, which is not
+"so" possible when you open an fd yourself.
+So if you want to keep such an fd open,
+you will probably at least make sure its
+read-only, its not a device node (with fstat)
+and so on.
+All checks pass, and oops, O_CRED_ALLOW...
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16722217180000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15722217180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11722217180000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bd3506d55fa4e2fd9030@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-==================================================================
-BUG: KASAN: slab-out-of-bounds in dtCompare fs/jfs/jfs_dtree.c:3315 [inline]
-BUG: KASAN: slab-out-of-bounds in dtSearch+0x1664/0x2520 fs/jfs/jfs_dtree.c:649
-Read of size 1 at addr ffff888077222498 by task syz-executor129/5079
-
-CPU: 1 PID: 5079 Comm: syz-executor129 Not tainted 6.9.0-rc5-syzkaller-00042-ge88c4cfcb7b8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- dtCompare fs/jfs/jfs_dtree.c:3315 [inline]
- dtSearch+0x1664/0x2520 fs/jfs/jfs_dtree.c:649
- jfs_lookup+0x17f/0x410 fs/jfs/namei.c:1461
- lookup_open fs/namei.c:3475 [inline]
- open_last_lookups fs/namei.c:3566 [inline]
- path_openat+0x1033/0x3240 fs/namei.c:3796
- do_filp_open+0x235/0x490 fs/namei.c:3826
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
- do_sys_open fs/open.c:1421 [inline]
- __do_sys_creat fs/open.c:1497 [inline]
- __se_sys_creat fs/open.c:1491 [inline]
- __x64_sys_creat+0x123/0x170 fs/open.c:1491
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5f2a737639
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff3ca43838 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007fff3ca43a18 RCX: 00007f5f2a737639
-RDX: 00007f5f2a737639 RSI: 0000000000000000 RDI: 0000000020000000
-RBP: 00007f5f2a7b0610 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000006152 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff3ca43a08 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-The buggy address belongs to the object at ffff888077221bc0
- which belongs to the cache jfs_ip of size 2240
-The buggy address is located 24 bytes to the right of
- allocated 2240-byte region [ffff888077221bc0, ffff888077222480)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x77220
-head: order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff80000000840(slab|head|node=0|zone=1|lastcpupid=0xfff)
-page_type: 0xffffffff()
-raw: 00fff80000000840 ffff88801a7f1140 dead000000000122 0000000000000000
-raw: 0000000000000000 00000000800d000d 00000001ffffffff 0000000000000000
-head: 00fff80000000840 ffff88801a7f1140 dead000000000122 0000000000000000
-head: 0000000000000000 00000000800d000d 00000001ffffffff 0000000000000000
-head: 00fff80000000003 ffffea0001dc8801 dead000000000122 00000000ffffffff
-head: 0000000800000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_RECLAIMABLE), pid 5079, tgid 1143321743 (syz-executor129), ts 5079, free_ts 26577297598
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
- prep_new_page mm/page_alloc.c:1541 [inline]
- get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
- __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
- __alloc_pages_node include/linux/gfp.h:238 [inline]
- alloc_pages_node include/linux/gfp.h:261 [inline]
- alloc_slab_page+0x5f/0x160 mm/slub.c:2175
- allocate_slab mm/slub.c:2338 [inline]
- new_slab+0x84/0x2f0 mm/slub.c:2391
- ___slab_alloc+0xc73/0x1260 mm/slub.c:3525
- __slab_alloc mm/slub.c:3610 [inline]
- __slab_alloc_node mm/slub.c:3663 [inline]
- slab_alloc_node mm/slub.c:3835 [inline]
- kmem_cache_alloc_lru+0x253/0x350 mm/slub.c:3864
- alloc_inode_sb include/linux/fs.h:3091 [inline]
- jfs_alloc_inode+0x28/0x70 fs/jfs/super.c:105
- alloc_inode fs/inode.c:261 [inline]
- new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
- new_inode+0x22/0x1d0 fs/inode.c:1033
- diReadSpecial+0x52/0x680 fs/jfs/jfs_imap.c:423
- jfs_mount+0x28b/0x830 fs/jfs/jfs_mount.c:138
- jfs_fill_super+0x59c/0xc50 fs/jfs/super.c:556
- mount_bdev+0x20a/0x2d0 fs/super.c:1658
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1779
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1141 [inline]
- free_unref_page_prepare+0x97b/0xaa0 mm/page_alloc.c:2347
- free_unref_page+0x37/0x3f0 mm/page_alloc.c:2487
- free_contig_range+0x9e/0x160 mm/page_alloc.c:6572
- destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1036
- debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1416
- do_one_initcall+0x248/0x880 init/main.c:1245
- do_initcall_level+0x157/0x210 init/main.c:1307
- do_initcalls+0x3f/0x80 init/main.c:1323
- kernel_init_freeable+0x435/0x5d0 init/main.c:1555
- kernel_init+0x1d/0x2b0 init/main.c:1444
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff888077222380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888077222400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888077222480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                            ^
- ffff888077222500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888077222580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+So why my patch makes O_CRED_ALLOW
+non-passable? Because the receiver has
+no way to see the potential harm within
+such fd. So if he intended to keep an fd
+open after some basic safety checks, he
+will be tricked.
+So while I think its a rather bad idea to
+leave the received fds open after priv drop,
+I don't completely exclude the possibility
+that someone did that, together with a few
+safety checks which would be tricked by
+O_CRED_ALLOW.
 
