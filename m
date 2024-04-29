@@ -1,205 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-18192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA028B65C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 00:32:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B5B8B65C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 00:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3377282D48
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 22:32:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3AD1F22712
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 22:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52A813AEE;
-	Mon, 29 Apr 2024 22:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E311E179AF;
+	Mon, 29 Apr 2024 22:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAjXYJdu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtVEjwaF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6486364;
-	Mon, 29 Apr 2024 22:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21D0364;
+	Mon, 29 Apr 2024 22:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714429965; cv=none; b=vEvZa65q00ztYMoYKDvGQ7BO8TfjjwpRlIfmF0j8FmwmWbq3DHUT3ZYA+RNyWn9GKPIUO0wT/SFxxSmoIoUrayBwoc/Kwd5OhjWDdV28RFrbwPdQ9isxy6opgi+9XF7nZYSZ6YFt0e5PQSz9oBvju+Pqf0bLY1qev/GeNSUN1eE=
+	t=1714430114; cv=none; b=PD3u/vKMn9GDEhMfIEovHCEWWETJQDjiBtx4yZkCzpoUsejT9wbOy3r6U3JG+2rnsng22mogV+AnRTL/K0NfdoHLBr1Q7UTfLHlI/u0/q61hrzA94lLOjO+NLIv2Hsz4SWMXMjLPM1DAXLATwa6SrBDNGjLfrvy5NI7WKT651s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714429965; c=relaxed/simple;
-	bh=p/iI16OA08IEgLyP0+r0CbUdvuIpdRO2lczb4WiYp4I=;
+	s=arc-20240116; t=1714430114; c=relaxed/simple;
+	bh=uJHbZ7vipqgiXJox3wk/pO0u4N91l9xJKUv2D8Ybkcs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PQEcMd2yuFzEJzAP/Qa2/LJod+imooJ1Oi6nWo3eHjtctujRz9g8ebzy9mg1XKIvJZVGAh23KPuZNwgps3C84y/ifwVpqAUSnFnYLADOmnDk0r8Pkf2Edp7VBfiw8jnH+2vrYpan72iBRf/eR5q1Nxyzh5mB1h6K6EatuJHfk6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAjXYJdu; arc=none smtp.client-ip=209.85.222.44
+	 To:Cc:Content-Type; b=ICFSdJheeEVQz+sglGIsMYM+7GHw+SPcyaJ88KOwnqpWdrbRizSnb1WKLHYL2J4eZqxROa1ENMsCTeEWvK4+yixDzzcGqNV/W1cki4RYRDiUrhBx+FMVjFiNhfqsqBmTrGU4E9Od+RX6Ju1jdGgLH32btJ9K3c+c4H8JdxLHh+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PtVEjwaF; arc=none smtp.client-ip=209.85.221.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-7ebe09eb289so1300028241.2;
-        Mon, 29 Apr 2024 15:32:43 -0700 (PDT)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4dceafca40bso1167978e0c.3;
+        Mon, 29 Apr 2024 15:35:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714429962; x=1715034762; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714430112; x=1715034912; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kkJIofc7sCacjx+o3Bhnh3utDqU2SSgA8jzJYUliTOM=;
-        b=XAjXYJduYgZKBtGSYmurzCotmI7c+0+GI0gFYdzLwWAkcmgP5AYwYNdsoXBgk6CU1a
-         xB1EuTtMWI+0GRvgJactJyWvbIwR+5TM20H9Cb7IVzs712pGgCqNxEZTvDaqti4IZ2Sl
-         VYFzovL8zA16AiQctftPOoSR4wMiumL38vTxHTl+9+1NTgatiIQYpRBXkZt98Z5S65Eq
-         kvbRAZh1qSmDg7/5DPcL3LCuvF8SaCjAPRgAlP3OTxr6fL4dD3t+YuUU2FrX72My+V0V
-         ABpyqcUTzIbNxl+gbWGfRZM2gP4fy2XMB5R9WWVLZdE18S6iYM6/en/OyZn9hLoVmNNs
-         G4UQ==
+        bh=giNP6mUJZHfDuRo+cIvLi3ag8NuQrcBWgEzhMToaOic=;
+        b=PtVEjwaFSkR6E9yj32LgzEQ1RvQ/nCQZiFiqh+JT5jRQeVuCbv8VUJPv4TVx8Ps3AA
+         4Aqk2lPiee6PLNbYrf1nBMU0iL7MzXyF9l5JCTuoAN/iHtgp3MBITq8NeQVaym3fS9zN
+         DjMGGZnWF3mtzU6gzlu2HV06xoNYDOvMtlCfdUVXzLXKZf6tUm/37XDvOLpc5w8yWXTb
+         0owli3PVpZca7N+rDDXhIHjz9Ev61K7ZQ7iVWTYTritX7Ap6p4LDIVLjSyyF8Et1t7Xz
+         gd86spAPKTFm/hVOkARBYAetXZ1bjOjid8kQFn/teZ5sPajzJWUCtD9t26gDQBO0XUWz
+         r+hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714429962; x=1715034762;
+        d=1e100.net; s=20230601; t=1714430112; x=1715034912;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kkJIofc7sCacjx+o3Bhnh3utDqU2SSgA8jzJYUliTOM=;
-        b=QOo8ykz4VofdtAWV8L9jI6SbOaMzVwKJLZHjM2Sx1bfeVmkimVY4k2eGKSi5lo22HB
-         CH157YdMdja9H6L+omLO9KgwEIfGML1g60NbgYY3RgqnTiDF9lgZU4kBsbDfOY6geiIq
-         zQxeSfL/tsIJ6luWBosWpnZwXIx+UPOxXaiDwjX0lv7sSZq9wCERVYf3YA0okxRl9hcm
-         b6WIAE/0d/QBn5nnnyeUZaesZsVx/fKWWHtdvWaZxp0YKr68hA9Bg2UOhkFTdhyYrItb
-         hND3EQFaxybqZXqwdrAz31ruZacDFB7TkzZ5Hb/dwk00xsLHCfyYsAGMRXfP+PZTGJpR
-         9rcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNrqlbxHH0r7Jj6aA58cJTki/OB0wDWdETjGCBAGgenu10JzykDeKmxQ+tekApRcOB6r7FkAJQ89jGR8Ra0dixku/U0WuAX3uzJJtr94sbn2AcnqOKIfp5Cx2nm9BgNchwaiuvcZr6T/eLcA==
-X-Gm-Message-State: AOJu0Yye/Oajda61ntC5tXx5BFWB6nTnj8q/csSfcjwE7Vxs+ZfTf/Cn
-	qcF+ewqkDKdft96JyRlenfhJFwKaam9JrgjFDStxtvAic5lRlggQ5svk0ynAAwa7J3vRmZ2l0YL
-	hIhUEpeAW08eP46lvMhDtC/bbJAk=
-X-Google-Smtp-Source: AGHT+IGKchtg51G2XH8ZwTYZxKRYw/SHqQw3ypfHaPs1T6l41y11+ZRLuYxdEw4Z+cOtExre4q50Kl3T+0HHClwvz3A=
-X-Received: by 2002:a05:6122:2522:b0:4d8:7359:4c25 with SMTP id
- cl34-20020a056122252200b004d873594c25mr12797577vkb.12.1714429962449; Mon, 29
- Apr 2024 15:32:42 -0700 (PDT)
+        bh=giNP6mUJZHfDuRo+cIvLi3ag8NuQrcBWgEzhMToaOic=;
+        b=TI1aWhpI2UaM1gfKvDdGvOyb2WTWE8Oyt2le++HOewd6jDCTyfzKYpmSiWkhLuUgWf
+         pDLrugtDRtQra9cFGAOm7i+211v50Jwbd2g5TYWrlK6L68jI7W3pjJE0atGFcfm9K8FX
+         mhEn8sPoUM0f0mO7yaaidQXzphMfQNbyK5dbpGz2R5yELRFYmv9R6NGWQzYNoxOm1D9O
+         MPlUOIX9hUTldVzp04Qt3SHRx45VFoFa301dvIHLtC0waAe+gwtNI9kAT7XpekhuP4cq
+         rsqDHZXcqWX2fgfM+S3T40BajFz+SuUXli3ThvQFc86vnJJ1q9N8kTHDVzvNmn7uwptA
+         b23g==
+X-Forwarded-Encrypted: i=1; AJvYcCUwteOPeITBdPEEA/9UlC/aVClxZw+rey30HkYpjjorVX2WOgPy7lWDIcTvxtN1r2kUUQ7A89G+H8RfoE+HkMu4DTjaSjghs+151USApyNh3RYw7PMp97b9W8M0sBCL+oRnZ54CZ5uHB5H3lA==
+X-Gm-Message-State: AOJu0Yzu7ZWHhpuIdNIm+XDT6h9xRQ5yXhz9jhumsopiQ+l3eF9NruiS
+	CS0OpCqxU0ORwLQzFBG+9nt5yX5KKvjvqIRiUSt3Z/SBWYw5XQB/w3FHSIfkzZdMpKDycj/72Qg
+	mAsDoNVbwu0Nsdy5PJQCZRLeIBwM=
+X-Google-Smtp-Source: AGHT+IGa/i0nN98GS2VsTjzVAvr2RQG96odo51ftlshRyGhUf4qNiggjj+2ZkACUlKbkr16pF6t6A2UJFj4H8SmmVeo=
+X-Received: by 2002:a05:6122:1695:b0:4d4:2931:7d4d with SMTP id
+ 21-20020a056122169500b004d429317d4dmr12138191vkl.5.1714430111799; Mon, 29 Apr
+ 2024 15:35:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240429172128.4246-1-apais@linux.microsoft.com> <Zi_pNF0OMgKViIWe@bombadil.infradead.org>
-In-Reply-To: <Zi_pNF0OMgKViIWe@bombadil.infradead.org>
+References: <20240429172128.4246-1-apais@linux.microsoft.com> <202404291245.18281A6D@keescook>
+In-Reply-To: <202404291245.18281A6D@keescook>
 From: Allen <allen.lkml@gmail.com>
-Date: Mon, 29 Apr 2024 15:32:31 -0700
-Message-ID: <CAOMdWS+u3WkB5yiwTjNKOD1sMSQP-F22FSpkq0R8TCPhihp=2w@mail.gmail.com>
+Date: Mon, 29 Apr 2024 15:35:01 -0700
+Message-ID: <CAOMdWS+k63T9TQ=Zvev-+Q3Zw-wuEUv_f63=YiTx0nK1J9Jfwg@mail.gmail.com>
 Subject: Re: [RFC PATCH] fs/coredump: Enable dynamic configuration of max file
  note size
-To: Luis Chamberlain <mcgrof@kernel.org>
+To: Kees Cook <keescook@chromium.org>
 Cc: Allen Pais <apais@linux.microsoft.com>, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-mm@kvack.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, ebiederm@xmission.com, 
-	keescook@chromium.org, j.granados@samsung.com
+	brauner@kernel.org, jack@suse.cz, ebiederm@xmission.com, mcgrof@kernel.org, 
+	j.granados@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 29, 2024 at 11:38=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.or=
-g> wrote:
+On Mon, Apr 29, 2024 at 12:49=E2=80=AFPM Kees Cook <keescook@chromium.org> =
+wrote:
 >
 > On Mon, Apr 29, 2024 at 05:21:28PM +0000, Allen Pais wrote:
 > > Introduce the capability to dynamically configure the maximum file
 > > note size for ELF core dumps via sysctl. This enhancement removes
 > > the previous static limit of 4MB, allowing system administrators to
 > > adjust the size based on system-specific requirements or constraints.
-> >
-> > - Remove hardcoded `MAX_FILE_NOTE_SIZE` from `fs/binfmt_elf.c`.
-> > - Define `max_file_note_size` in `fs/coredump.c` with an initial value =
-set to 4MB.
-> > - Declare `max_file_note_size` as an external variable in `include/linu=
-x/coredump.h`.
-> > - Add a new sysctl entry in `kernel/sysctl.c` to manage this setting at=
- runtime.
-> >
-> > $ sysctl -a | grep max_file_note_size
-> > kernel.max_file_note_size =3D 4194304
-> >
-> > $ sysctl -n kernel.max_file_note_size
-> > 4194304
-> >
-> > $echo 519304 > /proc/sys/kernel/max_file_note_size
-> >
-> > $sysctl -n kernel.max_file_note_size
-> > 519304
 >
-> This doesn't highlight anything about *why*. So in practice you must've
-> hit a use case where ELF notes are huge, can you give an example of
-> that? The commit should also describe that this is only used in the path
-> of a coredump on ELF binaries via elf_core_dump().
+> Under what conditions is this actually needed?
+
+ I addressed this in the email I sent out before this.
+
 >
-
- Yes, I should have captured it. We have observed that during a crash
-when there are more than 65k mmaps in memory, the existing fixed limit on t=
-he
-size of the ELF notes section becomes a bottleneck. The notes section quick=
-ly
-reaches its capacity, leading to incomplete memory segment information in t=
-he
-resulting coredump. This truncation compromises the utility of the coredump=
-s,
-as crucial information about the memory state at the time of the crash
-might be omitted.
-
-I will add the above to the commit message. Hope that addresses your concer=
-n.
-
-> More below.
->
-> > Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
-> > Signed-off-by: Allen Pais <apais@linux.microsoft.com>
-> > ---
-> >  fs/binfmt_elf.c          | 3 +--
-> >  fs/coredump.c            | 3 +++
-> >  include/linux/coredump.h | 1 +
-> >  kernel/sysctl.c          | 8 ++++++++
-> >  4 files changed, 13 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > index 5397b552fbeb..5fc7baa9ebf2 100644
-> > --- a/fs/binfmt_elf.c
-> > +++ b/fs/binfmt_elf.c
-> > @@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *=
-note, user_siginfo_t *csigdata,
-> >       fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
-> >  }
-> >
-> > -#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-> >  /*
-> >   * Format of NT_FILE note:
-> >   *
-> > @@ -1592,7 +1591,7 @@ static int fill_files_note(struct memelfnote *not=
-e, struct coredump_params *cprm
-> >
-> >       names_ofs =3D (2 + 3 * count) * sizeof(data[0]);
-> >   alloc:
-> > -     if (size >=3D MAX_FILE_NOTE_SIZE) /* paranoia check */
-> > +     if (size >=3D max_file_note_size) /* paranoia check */
-> >               return -EINVAL;
-> >       size =3D round_up(size, PAGE_SIZE);
-> >       /*
-> > diff --git a/fs/coredump.c b/fs/coredump.c
-> > index be6403b4b14b..a83c6cc893fc 100644
-> > --- a/fs/coredump.c
-> > +++ b/fs/coredump.c
-> > @@ -56,10 +56,13 @@
-> >  static bool dump_vma_snapshot(struct coredump_params *cprm);
-> >  static void free_vma_snapshot(struct coredump_params *cprm);
-> >
-> > +#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-> > +
-> >  static int core_uses_pid;
-> >  static unsigned int core_pipe_limit;
-> >  static char core_pattern[CORENAME_MAX_SIZE] =3D "core";
-> >  static int core_name_size =3D CORENAME_MAX_SIZE;
-> > +unsigned int max_file_note_size =3D MAX_FILE_NOTE_SIZE;
-> >
-> >  struct core_name {
-> >       char *corename;
-> > diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-> > index d3eba4360150..e1ae7ab33d76 100644
-> > --- a/include/linux/coredump.h
-> > +++ b/include/linux/coredump.h
-> > @@ -46,6 +46,7 @@ static inline void do_coredump(const kernel_siginfo_t=
- *siginfo) {}
-> >  #endif
-> >
-> >  #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
-> > +extern unsigned int max_file_note_size;
-> >  extern void validate_coredump_safety(void);
-> >  #else
-> >  static inline void validate_coredump_safety(void) {}
+> > [...]
 > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
 > > index 81cc974913bb..80cdc37f2fa2 100644
 > > --- a/kernel/sysctl.c
@@ -223,31 +124,86 @@ e, struct coredump_params *cprm
 > > +             .mode           =3D 0644,
 > > +             .proc_handler   =3D proc_dointvec,
 > > +     },
-> >  #ifdef CONFIG_PROC_SYSCTL
 >
-> No, please move this to coredump_sysctls in fs/coredump.c. And there is
-> no point in supporting int, this is unisgned int right? So use the right
-> proc handler for it.
+> Please don't add new sysctls to kernel/sysctl.c. Put this in fs/coredump.=
+c
+> instead, and name it "core_file_note_size_max". (A "max" suffix is more
+> common than prefixes, and I'd like it clarified that it relates to the
+> coredumper with the "core" prefix that match the other coredump sysctls.
 >
+> -Kees
 
- Will address it in v2.
+Makes sense. Let me know if the below looks fine,
 
-> If we're gonna do this, it makes sense to document the ELF note binary
-> limiations. Then, consider a defense too, what if a specially crafted
-> binary with a huge elf note are core dumped many times, what then?
-> Lifting to 4 MiB puts in a situation where abuse can lead to many silly
-> insane kvmalloc()s. Is that what we want? Why?
->
-  You raise a good point. I need to see how we can safely handle this case.
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 5397b552fbeb..6aebd062b92b 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote
+*note, user_siginfo_t *csigdata,
+        fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
+ }
+
+-#define MAX_FILE_NOTE_SIZE (4*1024*1024)
+ /*
+  * Format of NT_FILE note:
+  *
+@@ -1592,7 +1591,7 @@ static int fill_files_note(struct memelfnote
+*note, struct coredump_params *cprm
+
+        names_ofs =3D (2 + 3 * count) * sizeof(data[0]);
+  alloc:
+-       if (size >=3D MAX_FILE_NOTE_SIZE) /* paranoia check */
++       if (size >=3D core_file_note_size_max) /* paranoia check */
+                return -EINVAL;
+        size =3D round_up(size, PAGE_SIZE);
+        /*
+diff --git a/fs/coredump.c b/fs/coredump.c
+index be6403b4b14b..2108eb93acb9 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -56,10 +56,13 @@
+ static bool dump_vma_snapshot(struct coredump_params *cprm);
+ static void free_vma_snapshot(struct coredump_params *cprm);
+
++#define MAX_FILE_NOTE_SIZE (4*1024*1024)
++
+ static int core_uses_pid;
+ static unsigned int core_pipe_limit;
+ static char core_pattern[CORENAME_MAX_SIZE] =3D "core";
+ static int core_name_size =3D CORENAME_MAX_SIZE;
++unsigned int core_file_note_size_max =3D MAX_FILE_NOTE_SIZE;
+
+ struct core_name {
+        char *corename;
+@@ -1020,6 +1023,13 @@ static struct ctl_table coredump_sysctls[] =3D {
+                .mode           =3D 0644,
+                .proc_handler   =3D proc_dointvec,
+        },
++       {
++               .procname       =3D "core_file_note_size_max",
++               .data           =3D &core_file_note_size_max,
++               .maxlen         =3D sizeof(unsigned int),
++               .mode           =3D 0644,
++               .proc_handler   =3D proc_douintvec,
++       },
+ };
+
+ static int __init init_fs_coredump_sysctls(void)
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index d3eba4360150..14c057643e7f 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -46,6 +46,7 @@ static inline void do_coredump(const
+kernel_siginfo_t *siginfo) {}
+ #endif
+
+ #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
++extern unsigned int core_file_note_size_max;
+ extern void validate_coredump_safety(void);
+ #else
+ static inline void validate_coredump_safety(void) {}
 
 Thanks,
 Allen
-
-
->   Luis
-
-
-
---=20
-       - Allen
 
