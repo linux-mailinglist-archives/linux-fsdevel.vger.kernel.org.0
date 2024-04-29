@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-18106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578AE8B59E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 15:28:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C318B59E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 15:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4E11C24477
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 13:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB621F20222
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 13:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9D46E5EF;
-	Mon, 29 Apr 2024 13:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF9C6F510;
+	Mon, 29 Apr 2024 13:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Gjh+jVlS"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iZOgrpSG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE3A56768;
-	Mon, 29 Apr 2024 13:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2746442055;
+	Mon, 29 Apr 2024 13:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714397276; cv=none; b=Fjd6+4FczwdbuP0piPczTrTyMjFRaIjOSxOmLk38h6jrexHcQWXW8iGVALnOoFZHrvGG+7FjvrM4SsmHguRTylYs+9xI8uL9SeIEsZe5dQmTPISS0qwGi2wOv/xwrhhSLqIatiJ7RACOO/pKt5wcJTsnec2iMtNaYjBsigC1c/c=
+	t=1714397308; cv=none; b=QRDGwS9kTC6XPVAksyRgHLb0BN9CRQOgJQa0cYW2HKOmwlUUw8XaDozEhegwyg+FA9LLNgCzxVOBM1kSsxz88i9tY+PrienmLEcwdU5O0UyUqeEs0n2nkibn/MEdsMOhXY+gsV2hzJaxukw1/1IBdK1y6ZtCX8y+kEyCrCIU5J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714397276; c=relaxed/simple;
-	bh=uu+beZKI3o95LC0DBDGmU+b7eBp2cD9rZyXroXh6L0Y=;
+	s=arc-20240116; t=1714397308; c=relaxed/simple;
+	bh=w3I0KB3Wx4VUBmPLi5oXkCJcbKLadPaoVRj5i8XU6Lg=;
 	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=owqfQiOddXpaxg/gPycMKQANUJP7H59UdIMJ3m/AIUi80BegGvUJ71E0ViJBYPz0huBe/1lOLdfCGya5v6C9ii878coQh4OBZWPPaXKvuPtmPT7tY0DJVO7IZmIAaDhPrAo1hCMaISXFr3SefYQO56oyOo4SLF7mK3mS94bUYUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Gjh+jVlS; arc=none smtp.client-ip=46.235.227.194
+	 In-Reply-To:Content-Type; b=f3gU/e+rVXWSIMrR7ep638U26Qj/eqZNE9why9TKjdkIbv3DM8GVFLS3WfTWb6v5w8JdXGjT4+D3F36yaL+B2ScAqch3vNnkfTV0KBm00QtA9LdS2EjWn1tiq2L8N4QTFedt5yfCFdAw0WV7WKIWLL/lX+i3bu5Jr6okGhjzbSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iZOgrpSG; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1714397273;
-	bh=uu+beZKI3o95LC0DBDGmU+b7eBp2cD9rZyXroXh6L0Y=;
+	s=mail; t=1714397305;
+	bh=w3I0KB3Wx4VUBmPLi5oXkCJcbKLadPaoVRj5i8XU6Lg=;
 	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Gjh+jVlSPSai+JANWfpL6b2N4ly11fetxM6hx+ZDtsVQn+yrw8y7tDYNDvvSJ7nkf
-	 PcTe/2BBdENnU8q4wsJS8VpIaOs2AVGiUEgZGp/qr1pjqqDCNljRYYRR3nxOHRvmQJ
-	 QlqwiLxJgd4RfYjnrwandAcui3TlV4gjhaMk/Lghva32zDQt6TAg3IYjJAGpVzcnQs
-	 FPuTxUgC2o1NQLYp3o0zeSlo1fIq/thKXduGYYLjrf4+pXpPwR9YWRfcWlIaZW5ztY
-	 eCLm/Rs/dTFCa3mjMf2Rrr2RR0hRZylvmSmMAQfugxw3o7eIiNCoQ/hMqaiDgMvg5D
-	 ecyr7i8gzrCEQ==
+	b=iZOgrpSGYFamkt2yD9BicbFgxnhdSs/yuGP6l/j6ZBNgNUmhGWlMTORX2defVI0se
+	 jy5V2yW9njRyq7xaxVNNw0npZa1qoYBH4yRy9b7R3jOLF4YdA/FF0cJGez2wTWN7Yo
+	 W4Pv02X9j2RBS8a2oeIozt+WO4ZoODUCbFUVh79pLd8k9H+kgXxbhT4XdLmC4rD0wW
+	 f1q9gXNpO8QSMOnDeWUoQ5v/OwkJbaZx/qZv/pAQ1wmNMk3XvA60wzNQ+RHhIHPa8t
+	 6FsYuVP8AaaSBzbigltgMMJb6kE4GVvDTQ2OL67bLICmDLvdj8B+nT8PrcC89q3pa0
+	 MBxpQ/IiEGDUQ==
 Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2F3C53780C22;
-	Mon, 29 Apr 2024 13:27:50 +0000 (UTC)
-Message-ID: <256aa75f-abaa-45b5-8615-537e50a5077a@collabora.com>
-Date: Mon, 29 Apr 2024 18:28:20 +0500
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A333A3780C22;
+	Mon, 29 Apr 2024 13:28:23 +0000 (UTC)
+Message-ID: <700ae50c-2fd6-4bcc-8840-f426558b847f@collabora.com>
+Date: Mon, 29 Apr 2024 18:28:53 +0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,119 +59,60 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1] fs/proc/task_mmu: Fix uffd-wp confusion in
- pagemap_scan_pmd_entry()
+Subject: Re: [PATCH v1] fs/proc/task_mmu: Fix loss of young/dirty bits during
+ pagemap scan
 To: Ryan Roberts <ryan.roberts@arm.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
-References: <20240429114104.182890-1-ryan.roberts@arm.com>
+References: <20240429114017.182570-1-ryan.roberts@arm.com>
 Content-Language: en-US
 From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240429114104.182890-1-ryan.roberts@arm.com>
+In-Reply-To: <20240429114017.182570-1-ryan.roberts@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Thanks for finding and fixing Ryan!
+Thanks!
 
-On 4/29/24 4:41 PM, Ryan Roberts wrote:
-> pagemap_scan_pmd_entry() checks if uffd-wp is set on each pte to avoid
-> unnecessary if set. However it was previously checking with
-> `pte_uffd_wp(ptep_get(pte))` without first confirming that the pte was
-> present. It is only valid to call pte_uffd_wp() for present ptes. For
-> swap ptes, pte_swp_uffd_wp() must be called because the uffd-wp bit may
-> be kept in a different position, depending on the arch.
+On 4/29/24 4:40 PM, Ryan Roberts wrote:
+> make_uffd_wp_pte() was previously doing:
 > 
-> This was leading to test failures in the pagemap_ioctl mm selftest, when
-> bringing up uffd-wp support on arm64 due to incorrectly interpretting
-> the uffd-wp status of migration entries.
+>   pte = ptep_get(ptep);
+>   ptep_modify_prot_start(ptep);
+>   pte = pte_mkuffd_wp(pte);
+>   ptep_modify_prot_commit(ptep, pte);
 > 
-> Let's fix this by using the correct check based on pte_present(). While
-> we are at it, let's pass the pte to make_uffd_wp_pte() to avoid the
-> pointless extra ptep_get() which can't be optimized out due to
-> READ_ONCE() on many arches.
+> But if another thread accessed or dirtied the pte between the first 2
+> calls, this could lead to loss of that information. Since
+> ptep_modify_prot_start() gets and clears atomically, the following is
+> the correct pattern and prevents any possible race. Any access after the
+> first call would see an invalid pte and cause a fault:
 > 
-> Closes: https://lore.kernel.org/linux-arm-kernel/ZiuyGXt0XWwRgFh9@x1n/
-> Fixes: 12f6b01a0bcb ("fs/proc/task_mmu: add fast paths to get/clear PAGE_IS_WRITTEN flag")
+>   pte = ptep_modify_prot_start(ptep);
+>   pte = pte_mkuffd_wp(pte);
+>   ptep_modify_prot_commit(ptep, pte);
+> 
+> Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
 > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
 > ---
->  fs/proc/task_mmu.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
+>  fs/proc/task_mmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index af4bc1da0c01..102f48668c35 100644
+> index 23fbab954c20..af4bc1da0c01 100644
 > --- a/fs/proc/task_mmu.c
 > +++ b/fs/proc/task_mmu.c
-> @@ -1817,10 +1817,8 @@ static unsigned long pagemap_page_category(struct pagemap_scan_private *p,
->  }
-> 
->  static void make_uffd_wp_pte(struct vm_area_struct *vma,
-> -			     unsigned long addr, pte_t *pte)
-> +			     unsigned long addr, pte_t *pte, pte_t ptent)
->  {
-> -	pte_t ptent = ptep_get(pte);
-> -
->  	if (pte_present(ptent)) {
+> @@ -1825,7 +1825,7 @@ static void make_uffd_wp_pte(struct vm_area_struct *vma,
 >  		pte_t old_pte;
 > 
-> @@ -2175,9 +2173,12 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->  	if ((p->arg.flags & PM_SCAN_WP_MATCHING) && !p->vec_out) {
->  		/* Fast path for performing exclusive WP */
->  		for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
-> -			if (pte_uffd_wp(ptep_get(pte)))
-> +			pte_t ptent = ptep_get(pte);
-> +
-> +			if ((pte_present(ptent) && pte_uffd_wp(ptent)) ||
-> +			    pte_swp_uffd_wp_any(ptent))
->  				continue;
-> -			make_uffd_wp_pte(vma, addr, pte);
-> +			make_uffd_wp_pte(vma, addr, pte, ptent);
->  			if (!flush_end)
->  				start = addr;
->  			flush_end = addr + PAGE_SIZE;
-> @@ -2190,8 +2191,10 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->  	    p->arg.return_mask == PAGE_IS_WRITTEN) {
->  		for (addr = start; addr < end; pte++, addr += PAGE_SIZE) {
->  			unsigned long next = addr + PAGE_SIZE;
-> +			pte_t ptent = ptep_get(pte);
-> 
-> -			if (pte_uffd_wp(ptep_get(pte)))
-> +			if ((pte_present(ptent) && pte_uffd_wp(ptent)) ||
-> +			    pte_swp_uffd_wp_any(ptent))
->  				continue;
->  			ret = pagemap_scan_output(p->cur_vma_category | PAGE_IS_WRITTEN,
->  						  p, addr, &next);
-> @@ -2199,7 +2202,7 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->  				break;
->  			if (~p->arg.flags & PM_SCAN_WP_MATCHING)
->  				continue;
-> -			make_uffd_wp_pte(vma, addr, pte);
-> +			make_uffd_wp_pte(vma, addr, pte, ptent);
->  			if (!flush_end)
->  				start = addr;
->  			flush_end = next;
-> @@ -2208,8 +2211,9 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->  	}
-> 
->  	for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
-> +		pte_t ptent = ptep_get(pte);
->  		unsigned long categories = p->cur_vma_category |
-> -					   pagemap_page_category(p, vma, addr, ptep_get(pte));
-> +					   pagemap_page_category(p, vma, addr, ptent);
->  		unsigned long next = addr + PAGE_SIZE;
-> 
->  		if (!pagemap_scan_is_interesting_page(categories, p))
-> @@ -2224,7 +2228,7 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->  		if (~categories & PAGE_IS_WRITTEN)
->  			continue;
-> 
-> -		make_uffd_wp_pte(vma, addr, pte);
-> +		make_uffd_wp_pte(vma, addr, pte, ptent);
->  		if (!flush_end)
->  			start = addr;
->  		flush_end = next;
+>  		old_pte = ptep_modify_prot_start(vma, addr, pte);
+> -		ptent = pte_mkuffd_wp(ptent);
+> +		ptent = pte_mkuffd_wp(old_pte);
+>  		ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
+>  	} else if (is_swap_pte(ptent)) {
+>  		ptent = pte_swp_mkuffd_wp(ptent);
 > --
 > 2.25.1
 > 
