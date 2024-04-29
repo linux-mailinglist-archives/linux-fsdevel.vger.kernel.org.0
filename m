@@ -1,244 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-18085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACE68B5466
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 11:41:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293048B5488
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 11:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B29C5B20BC6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 09:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D375C282840
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 09:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCD3249ED;
-	Mon, 29 Apr 2024 09:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4982E40E;
+	Mon, 29 Apr 2024 09:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bGmN/4Au"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Kg9UUvOf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BC4171C8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 09:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B7CEAC2;
+	Mon, 29 Apr 2024 09:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714383708; cv=none; b=MjgvxwsUx+okHBiYXvMjfwtLdGC8gU0nctGM05GNNnMzNo5vuQwVG7MoriP0Jljf7U0TDR9YaHPYGyDuu5HDSd1OHu21nqVGcHWwp8GBzkITZFKczK3rWggcbCTBG/MAtIjrmQqWQnG/3hoEZgZYuA21dDZIw0IWudWLJrErlUY=
+	t=1714384117; cv=none; b=et4LcncpJLClI7XZP4GAY+YrXhU0IHVny5ZndivIfXoSyUhm6Hkt/CUAfqnqm0Z6znZoV8X6zMD14tvTY8JTmiGBBFsHkd9UjrdvOjfynNrR/HOa5UV2IsdowUSPQ5dVQBGBU7Hq1wCfSa7hgDrvtKJA7Dza6oJ+7e0xCUPEQic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714383708; c=relaxed/simple;
-	bh=7xAWea8cioriAeYwM8ij/w7ZcsuSDYoHl8WaxNgp9Lk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ri41D8Bf75WEJJuZPjlrhD8Wyvw+X8daNgbhBrJ/t346WnFZDez2LxS4RzUfuDA5EBhH9vw0sJAWnPvCGWNP0xjEhZEmhvcIqFpUN5fRJxYaf/0RMvCh4YyA9LC0KQfFeNKQESQ/jsrwGT2o10S4x3cy62Cn6XLpko3q2BibNKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bGmN/4Au; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a58e7628aeaso205659866b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 02:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1714383704; x=1714988504; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KW3b7ICejyiea4orM3gLgyXEngHryT3qr27lnHqKhVw=;
-        b=bGmN/4AuBxwOFhj41TaeujswCargDORzaHj3xvrPAg7M5IiNKn5giedtZ7lcT5kDpl
-         3Hv9s3OcHKLmx18S+ShZppZ5IOjod0ozYfXIQY4iwDyTiiH97iG+G2Ya4Lb3ELXF+xq1
-         O8bw8VwvIFGQdeEP+5AMJBaD4wVkXcIKvrBrY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714383704; x=1714988504;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KW3b7ICejyiea4orM3gLgyXEngHryT3qr27lnHqKhVw=;
-        b=PecpzuY8tDHA6hfBhgrbrEx8KsYHuL5wf8CDBz6Ur33odJedZqWyXsusnvu85KMvpl
-         m02tuEsCRxsUGn0htBOt4Yn8YYXbjUWnrk0aRdkwvqEz4GNxGJJVX41NqJZK4yx0kD6z
-         BAW7RZab7p7IxZmu+F0drxi/eqw0PpaAJBhoK20+H2NWey9oVNq7GnfSe4y8/dD0nmQP
-         Ik57joBaOXZP2tCTsn9MQKnrza1J8E6sPfPKrVOmZh24jjiOpixDq0jpSJTjllhF5nOb
-         J2noE0QrdKhR7QYrZn+ELNwNVqXXcjn3oLrsiwZ5Xx9jemEkhMGIWbD4sHsW5MrfJ8//
-         RguA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6tqfvKO3zuFw33YJ0A8iRYS+1fITFXsGgPfU2wBWwBZtphJ3B8sPnEXvOvtXYPyiakUyV4dIXHlvCJ/tA1Q25KBGTDomUjfxwpRXWMg==
-X-Gm-Message-State: AOJu0Yzv/nZOk0PEOsJU2RswIujOjuTNy94MqBL/lhvDfhcxku7juYq7
-	DM/R9T3Cjf8gkF1M+nr76+1F+iraUB1WBpWPIuLSe15nkeJTH9nyhYxuvrLQpbQyYXvveDsRtmM
-	WeH20SAN97u8T/2/F50fF5eUspDapCj3FpRA6rw==
-X-Google-Smtp-Source: AGHT+IH60wIgzLEx+kUxMnW7BqXpHPHOXYGnlvC/TyVLBhgkxx37j7maA7xaGaYE53DqHYkezKYhWHcR1UJQo7CQPk4=
-X-Received: by 2002:a17:907:1b25:b0:a58:bcad:47c0 with SMTP id
- mp37-20020a1709071b2500b00a58bcad47c0mr7842584ejc.47.1714383703403; Mon, 29
- Apr 2024 02:41:43 -0700 (PDT)
+	s=arc-20240116; t=1714384117; c=relaxed/simple;
+	bh=eOQoFD2Q1RfOcsu5iO/K4iGBJCStR6G+ZsM+imLU3t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHlOSVCRZv8lmIgFhso1S12E/Dr61l2VU/aTPZf4gjg2fg+HXs0HnJQf/w1h9/a4dnOXS3tpyNZdknwiuh9Ggl2X/4VYA8IOnvWPl808vjn6iEsau1aV0ouD5tDMq/vTMpV5BZ9+HbJFmaUJl4ISFay+mBBHXH4aUdTwTQF6/Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Kg9UUvOf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43T9WcRr023175;
+	Mon, 29 Apr 2024 09:47:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=pp1;
+ bh=Kn2/uMMJ4m7IZDO8WlgsPqO7vUsAlVouDdMvBgTuG6Q=;
+ b=Kg9UUvOfIY+q0ndE7ZECmZZUdA61ZCkJRFtD9wLCjYzo6fe8LGiqgmj/OaQd5I/iEeGT
+ h1W12UFRvhBs0Ojrxq2EVahg4SwzhBVbMh+nl7Xnt0KphpPc+1K4uJnLB1ltR+O9/J8Y
+ xH2aBPNbeoLf7rIVjTmAK85pN4JRaPC9PScCooRYa7ChiJY29YfixJaL//aFd9303wQR
+ GZQxdsEVeB2nF62y0IT3RUjuxSeOIjIAGLlEpPQHiihzSala+ltUzs1I4eJF+yCxcsu9
+ xwGFkZf6AwHS79UZe7yymFDc9jL+Zte2Za8lJWgzOlYfHYZrwUSEHHijG4bCs204Im4A kw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xt90jg0v6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Apr 2024 09:47:55 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 43T9ltmx016519;
+	Mon, 29 Apr 2024 09:47:55 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xt90jg0v5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Apr 2024 09:47:54 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 43T7DaXf001450;
+	Mon, 29 Apr 2024 09:47:53 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xsbptppem-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Apr 2024 09:47:53 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 43T9loYx26542522
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Apr 2024 09:47:52 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0556520040;
+	Mon, 29 Apr 2024 09:47:50 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B4E6220043;
+	Mon, 29 Apr 2024 09:47:48 +0000 (GMT)
+Received: from osiris (unknown [9.171.12.101])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 29 Apr 2024 09:47:48 +0000 (GMT)
+Date: Mon, 29 Apr 2024 11:47:47 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+        Joel Granados <j.granados@samsung.com>,
+        Kees Cook <keescook@chromium.org>, Eric Dumazet <edumazet@google.com>,
+        Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        kexec@lists.infradead.org, linux-hardening@vger.kernel.org,
+        bridge@lists.linux.dev, lvs-devel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
+        apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 11/11] sysctl: treewide: constify the ctl_table
+ argument of handlers
+Message-ID: <20240429094747.29046-G-hca@linux.ibm.com>
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240425101556.573616-1-mszeredi@redhat.com> <CAOQ4uxgD3tTNKScRPD4r+ePuGkS5s2X2A3chMA1MXbfz-_P5PA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgD3tTNKScRPD4r+ePuGkS5s2X2A3chMA1MXbfz-_P5PA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 29 Apr 2024 11:41:31 +0200
-Message-ID: <CAJfpegvQs+sT0AE64o+=D8b0q4a9YU7PEuGV+kPfejVAP0+a4A@mail.gmail.com>
-Subject: Re: [PATCH] ovl: implement tmpfile
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: dsJabyKjD5wmo-a4UVf9qexuuOQkOoCK
+X-Proofpoint-GUID: 7SlQVN0HjcUbQBl5eVSaH1VEy2oE_0-m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-04-29_07,2024-04-26_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 clxscore=1011 mlxscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2404290061
 
-On Sat, 27 Apr 2024 at 13:58, Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue, Apr 23, 2024 at 09:54:46AM +0200, Thomas Weiﬂschuh wrote:
+> Adapt the proc_hander function signature to make it clear that handlers
+> are not supposed to modify their ctl_table argument.
+> 
+> This is a prerequisite to moving the static ctl_table structs into
+> rodata.
+> By migrating all handlers at once a lengthy transition can be avoided.
+> 
+> The patch was mostly generated by coccinelle with the following script:
+> 
+>     @@
+>     identifier func, ctl, write, buffer, lenp, ppos;
+>     @@
+> 
+>     int func(
+>     - struct ctl_table *ctl,
+>     + const struct ctl_table *ctl,
+>       int write, void *buffer, size_t *lenp, loff_t *ppos)
+>     { ... }
+> 
+> In addition to the scripted changes some other changes are done:
+> 
+> * the typedef proc_handler is adapted
+> 
+> * the prototypes of non-static handler are adapted
+> 
+> * kernel/seccomp.c:{read,write}_actions_logged() and
+>   kernel/watchdog.c:proc_watchdog_common() are adapted as they need to
+>   adapted together with the handlers for type-consistency reasons
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-> There are some tests in src/vfs/vfstest that run sgid tests
-> with O_TMPFILE if it is supported.
-> I identified generic/696 and generic/697, but only the latter
-> currently runs on overlayfs.
+...
 
-Yes, I ran full xfstests, but now I also verified that they do use
-O_TMPFILE on overlayfs and it works.
+>  arch/s390/appldata/appldata_base.c        | 10 ++---
+>  arch/s390/kernel/debug.c                  |  2 +-
+>  arch/s390/kernel/topology.c               |  2 +-
+>  arch/s390/mm/cmm.c                        |  6 +--
 
-The only one that didn't run from these was:
-
-generic/509       [not run] require /scratch to be valid block disk
-
-> > +       path_get(user_path);
-> > +       *backing_file_user_path(f) = *user_path;
-> > +       error = vfs_tmpfile(real_idmap, real_parentpath, f, mode);
->
-> We do not have a custom idmap in other backing_file helpers
-> don't see why we need real_idmap in this helper.
-> I think that should be:
-> mnt_idmap(real_parentpath.mnt)
-
-Yes.
-
-> > +       realfile = backing_tmpfile_open(&file->f_path, flags,
-> > +                                       &nop_mnt_idmap, &realparentpath, mode,
-> > +                                       current_cred());
->
-> Using &nop_mnt_idmap here is not only unneeded but also looks wrong.
-
-Yep, no need to pass idmap down this helper, since it can be extracted
-form realparentpath.
-
-> Any reason not to reuse ovl_instantiate() to avoid duplicating some
-> of the subtlety? for example:
->
-> +       /* ovl_instantiate() consumes the .upperdentry reference on success */
-> +       dget(realfile->f_path.dentry)
-> +       err = ovl_instantiate(dentry, inode, realfile->f_path.dentry, 0, 1);
-> +       if (err)
-> +               goto out_err;
->
-> [...]
->
->  static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
-> -                          struct dentry *newdentry, bool hardlink)
-> +                          struct dentry *newdentry, bool hardlink,
-> bool tmpfile)
->  {
->         struct ovl_inode_params oip = {
->                 .upperdentry = newdentry,
-> @@ -295,6 +295,9 @@ static int ovl_instantiate(struct dentry *dentry,
-> struct inode *inode,
->                 inc_nlink(inode);
->         }
->
-> +       if (tmpfile)
-> +               d_mark_tmpfile(dentry);
-> +
->         d_instantiate(dentry, inode);
->
-
-Okay, makes sense.
-
-
-> > +static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
-> > +                             struct inode *inode, umode_t mode)
-> > +{
-> > +       int err;
-> > +       const struct cred *old_cred;
-> > +       struct cred *override_cred;
-> > +
-> > +       err = ovl_copy_up(dentry->d_parent);
-> > +       if (err)
-> > +               return err;
-> > +
-> > +       old_cred = ovl_override_creds(dentry->d_sb);
-> > +
-> > +       err = -ENOMEM;
-> > +       override_cred = prepare_creds();
-> > +       if (override_cred) {
-> > +               override_cred->fsuid = inode->i_uid;
-> > +               override_cred->fsgid = inode->i_gid;
-> > +               err = security_dentry_create_files_as(dentry, mode,
-> > +                                                     &dentry->d_name, old_cred,
-> > +                                                     override_cred);
-> > +               if (err) {
-> > +                       put_cred(override_cred);
-> > +                       goto out_revert_creds;
-> > +               }
-> > +               put_cred(override_creds(override_cred));
-> > +               put_cred(override_cred);
-> > +
-> > +               err = ovl_create_upper_tmpfile(file, dentry, inode, mode);
-> > +       }
-> > +out_revert_creds:
-> > +       revert_creds(old_cred);
-> > +       return err;
-> > +}
->
-> This also shouts unneeded and subtle code duplication to me:
->
->  static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
-> -                             struct ovl_cattr *attr, bool origin)
-> +                             struct ovl_cattr *attr, bool origin,
-> +                             struct file *tmpfile)
->  {
->         int err;
->         const struct cred *old_cred;
-> @@ -602,7 +606,9 @@ static int ovl_create_or_link(struct dentry
-> *dentry, struct inode *inode,
->                 put_cred(override_cred);
->         }
->
-> -       if (!ovl_dentry_is_whiteout(dentry))
-> +       if (tmpfile)
-> +               err = ovl_create_upper_tmpfile(tmpfile, dentry, inode,
-> attr->mode);
-> +       else if (!ovl_dentry_is_whiteout(dentry))
->                 err = ovl_create_upper(dentry, inode, attr);
->         else
->                 err = ovl_create_over_whiteout(dentry, inode, attr);
-
-
-Instead I opted to extract the creds preparation into a separate helper.
-
-> > +       /* inode reference was transferred to dentry */
-> > +       inode = NULL;
-> > +       err = finish_open(file, dentry, ovl_dummy_open);
-> > +put_realfile:
-> > +       if (!(file->f_mode & FMODE_OPENED))
-> > +               fput(file->private_data);
->
-> This cleanup bit is very subtle and hard for me to review.
-> I wonder if there is a way to improve this subtlety?
-
-The reason I did it this way is because fput() code checks
-FMODE_OPENED and calls ->release() only if it's set.  So essentially
-it's an indication whether the VFS will initiate the cleanup or we
-need to do that ourselves.
-
-> Would it be possible to write this cleanup as:
-> +       if (err && file->private_data)
-> +               fput(file->private_data);
->
-> With a comment explaining where file->private_data is set?
-
-If you look at do_dentry_open() there's an error condition after
-setting FMODE_OPENED, that would result in the above being wrong.  In
-fact that error condition cannot happen in overlayfs, due to aops
-being set just for this reason.  So checking the error works in our
-case, but I think that's more subtle than the FMODE_OPENED check.  A
-comment would make sense, though.
-
->
-> Overall, I did not find any bugs, but I am hoping that the code could be
-> a bit easier to review and maintain.
-
-Thanks for the review, will post a new version shortly.
-
-Thanks,
-Miklos
+Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
 
