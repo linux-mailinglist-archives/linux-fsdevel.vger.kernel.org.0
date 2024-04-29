@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-18131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942168B5F9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:06:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2CF8B5F9F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75F51C215A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 17:06:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5021F23FE6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 17:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C370B86269;
-	Mon, 29 Apr 2024 17:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BD3126F1D;
+	Mon, 29 Apr 2024 17:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="didp0iEx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzt8Wa3F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F67C86AFC;
-	Mon, 29 Apr 2024 17:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB6F127E22;
+	Mon, 29 Apr 2024 17:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714410330; cv=none; b=jsXAe87opXa4zBDlEe/7MV/pzYCRmZQ8xoQW6yZkNeyNJ1dmvfwQIFXEUNjdhjwXzAZwAKB43Gpum1qHVqOGQeCrlO5TE2upjLhTIplpyLOv40DC9H4TtoJXBwn8Lr1EqgJEHtJf9mOe5iGZ6aWeWlUTM2QnUxe0WUvvQG/7MIk=
+	t=1714410336; cv=none; b=NW5JJkjqHYMO3dHIPKQjHiOaTWdQVwkPHfB9ocwgw+dwT/4hN5es1pv5uNhN35HhFAWi7wd4/a70+IEoLcL5Rj+F5IIFxRcmDCu2+VfAP+NjUpVxaAILVmTRvRybuMIhK8Si3PIobcS0R4mOBdrpMc9Rp7LusTOnI6/9l+q/CJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714410330; c=relaxed/simple;
-	bh=f7nr9BHgMNY07SuBb7AMIuKL8EhAF6Lae/DCFaA0XMM=;
+	s=arc-20240116; t=1714410336; c=relaxed/simple;
+	bh=qYcyL0hIBedDSxOc4RRWxp74kl4dcZDEKqcuPynXMsA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B6ZiHLulbMcyAZ/AxtYumUs9YWLbaSSfzZSKfH9/fU355WtJ2snui9YZ3aiFMZ41NlHhgL6isGaZPTQpwhP4AvUnYTQhDqIZOji1Va0FP0GyG65kL5b4oPM/CA0YCsyfIolQC233qHwfdMczlUup0C6tDj7RXh2niMRhd+ZnlTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=didp0iEx; arc=none smtp.client-ip=209.85.210.54
+	 MIME-Version; b=T8yWVlkUdqgf39Vign0UMW5iTW9FBD8aqA8i3sVe7NGsL6B4tKxUeoF4r3K8r8Z/WQMeHjshEYG+6n0unYVC9fyLpohOKeEVQRzqGXqKsbFa6XZMctQZE5ye8Fy+3qXZ03eRasfsGt7wwOhCHvrghKxgoctt6SSEMQn5pOaGH6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzt8Wa3F; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6ea1a55b0c0so2432798a34.3;
-        Mon, 29 Apr 2024 10:05:28 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-22edcfcd187so1495423fac.2;
+        Mon, 29 Apr 2024 10:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714410328; x=1715015128; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714410331; x=1715015131; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MvRMVdHLhDXhOx55ypqAZ1Z/pDm9XYtxQRRB/JnE99c=;
-        b=didp0iExgM+JMPqPE0C7wqUFsDhroOnu9Jq6rSGAb95JxHl7gS7yRmHU9d/gwgBmGd
-         d9swxdm12Z9NXbMLHcT1eVh2VG5qENmVwx4+r2wEzbwS0qdmhkXUjlNJXHHLbfZSkY0j
-         7lX1gpRNLMPow90jad9pRI42orAvXjOIobfiBsVgCeTkYrqTyr3FQJW46ZqGHvCDvDUB
-         fYZrFLsUZ+HR1W4n+tck2Ro3mP4nVhNTGmcR0wwfW20hIw/KUGc4BodLGuBJ5GpnKf7L
-         Kl14vZ/Q44zdfvz7LTEZzM9c5yJ8jQuZfYkDNu66vrqLByRdYFv0VpQE7pot5MXR/9fh
-         omHw==
+        bh=yYsNSadbDL/XO8+Ce/eg3N1cTx7anq8xr5/2FvNISeg=;
+        b=jzt8Wa3FUS6B5dMs8285D77VALgzSOwELY/bgLHcvS3bYTcfQRFly4WQGSz5FvRE6j
+         3BB5LGJcNTNI4gJ42MgQyzdeif2MCIPoSHd07Rwtm+MMdyeWc0XYikrWoPSheBLCDYB+
+         PnpWQDehA4MwLEHDIu3JA+RtT81s7FEdS+RxpkPyp86b/BnJBXFVbgyw4Lmk4nnjjdvw
+         wC2t/pT0jxWER2oexLVBINLoSY91DPPkYDtr5ufQmAF6sRqQnm2jdGYe+Hc2DZCQ84Y8
+         zVE71lr74JzAb671OsIhC/SeduNXo6D45SN5uOX+PPS0oxyzhxD+UWdZ5eI2+vBol0jt
+         V40g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714410328; x=1715015128;
+        d=1e100.net; s=20230601; t=1714410331; x=1715015131;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=MvRMVdHLhDXhOx55ypqAZ1Z/pDm9XYtxQRRB/JnE99c=;
-        b=jBnx+ZBhlxSMCrgV9tbbhuVq4AEtzTB3bl+9oEtI8gz3jv05P2yd6Tuurq3SGLKnNZ
-         Fs1MaOE64nVZHfYrqt9T7FmnTdAaMHnPQDPJESMoLb67zPhfZ1MJKX/TbS2ZUi2/2pfn
-         vBVwO+46SGzkppt5a/gi9WcGzDhKDYNLdKZ3dtiNwPppMHPRZwDKLfj9LyuhcjE05ZgF
-         K34U8Ow9ZKZvog2MrFhr1VOfOYSd+6hrT7cselA7U92oKzlm0wdwyE1V2eVVMbqGKDP4
-         XUWm6Ff7guvnuenL0aBZ4ne5xXmOC4o/p9VmV3+APR/thiMwdruLPu2nK2nuXaW+bAOz
-         0irQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGkEGMTGgV4JUS94CLONTOxvScWJee0YFErsjIHX+1ZVZbnZJ20LKBK0p8yAS0JPzKlBiBJ9CVlkf6P8G6429ZcrRk24gUx3Q4XwAAI23A9Bhg8H6qDhanfCAXkcBDZN5kq9DNDT6/xQ==
-X-Gm-Message-State: AOJu0YyoW5MvFMW+IGwkqcTKfv9iK9qjI6+tet8Xx47ItQkiJMPbVXus
-	P5Vzro38sainp1DN+xs5I1WFFpMP7dh4YAY2Q5oz80brbyNRl2zc
-X-Google-Smtp-Source: AGHT+IG/ZcwB0huKygPBvFdcgDmjShYrcDklwOFhU2UIhkvvjhkEis6/aiEjDF1au3eTMnKT4Qud0g==
-X-Received: by 2002:a05:6830:59:b0:6ee:3232:160a with SMTP id d25-20020a056830005900b006ee3232160amr328210otp.38.1714410326944;
-        Mon, 29 Apr 2024 10:05:26 -0700 (PDT)
+        bh=yYsNSadbDL/XO8+Ce/eg3N1cTx7anq8xr5/2FvNISeg=;
+        b=Ko+QNqGv5pft8kgHgsCeqJZBoXaNp0TB0ny4pdY2O4Y9U1Kc3MaHdPHOCmMaFZiKHH
+         7K+JGDTa3PTnZqhQ9BvgeMXn484J7AfHi/MtCWkMwedva+3xl5KLVsL8hjeeIqV9zU7f
+         MrO7CfAqsatoFJE5UGyo1HOioeGtuIGP9ypaDZOQJZ78gip3vxmrlk7LMtTkGgpU9Deg
+         ctaCHvESPF0dO7OECdL16Dic/JR5xxvD/ua/G/LZ6yPpi+8DJpOq7BuFA5XToskbvCR4
+         AY4glr2OjsF3VtIJUXJdhL6g/Boe9OohFDtCuOXzRLD6PE1kF1GCg/YrPRODhCW+sNZ3
+         m8eg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9jF8MEefXfPhhDkJFn4dLRZSVb591Z3FnhT2Kpvf1mjrZo8EpTWO0m19QxH5HbQ5156aESHNe6T49bK+gkp9zYilG9HHGyEYak487lOtvNu4VLzdgRNK7kU4zr9uojYV7MR1HXip+ZQ==
+X-Gm-Message-State: AOJu0YzIVcKejW2v4+jmw2ZqAxiqsga5YFzMnBz1Okq2Di8XwaiU2b6S
+	6Bak365ZbJj41KwKBz8kYz72dsG+NlXI2GyRmc63UKipVRVDdGW/
+X-Google-Smtp-Source: AGHT+IHpy5rIS85sX04zYGzAy0Qk38IVj3GM56nKt2jdu2LLX/opQJ4URM6nJrxFSBqIHBiafXyrsQ==
+X-Received: by 2002:a05:6871:408a:b0:21f:2b1:cdea with SMTP id kz10-20020a056871408a00b0021f02b1cdeamr14600153oab.57.1714410331618;
+        Mon, 29 Apr 2024 10:05:31 -0700 (PDT)
 Received: from localhost.localdomain ([70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id g1-20020a9d6201000000b006ea20712e66sm4074448otj.17.2024.04.29.10.05.24
+        by smtp.gmail.com with ESMTPSA id g1-20020a9d6201000000b006ea20712e66sm4074448otj.17.2024.04.29.10.05.28
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 29 Apr 2024 10:05:26 -0700 (PDT)
+        Mon, 29 Apr 2024 10:05:31 -0700 (PDT)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -110,9 +110,9 @@ Cc: John Groves <jgroves@micron.com>,
 	Stanislav Fomichev <sdf@google.com>,
 	Dongsheng Yang <dongsheng.yang@easystack.cn>,
 	John Groves <john@groves.net>
-Subject: [RFC PATCH v2 10/12] famfs: Introduce file_operations read/write
-Date: Mon, 29 Apr 2024 12:04:26 -0500
-Message-Id: <4584f1e26802af540a60eadb70f42c6ac5fe4679.1714409084.git.john@groves.net>
+Subject: [RFC PATCH v2 11/12] famfs: Introduce mmap and VM fault handling
+Date: Mon, 29 Apr 2024 12:04:27 -0500
+Message-Id: <744981e208f94d5fc12549e48b775d10cee550e8.1714409084.git.john@groves.net>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 In-Reply-To: <cover.1714409084.git.john@groves.net>
 References: <cover.1714409084.git.john@groves.net>
@@ -124,83 +124,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit introduces fs/famfs/famfs_file.c and the famfs
-file_operations for read/write.
-
-This is not usable yet because:
-
-* It calls dax_iomap_rw() with NULL iomap_ops (which will be
-  introduced in a subsequent commit).
-* famfs_ioctl() is coming in a later commit, and it is necessary
-  to map a file to a memory allocation.
+This commit adds vm_operations, plus famfs_mmap() and fault handlers.
+It is still missing iomap_ops, iomap mapping resolution, and
+famfs_ioctl() for setting up file-to-memory mappings.
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- fs/famfs/Makefile         |   2 +-
- fs/famfs/famfs_file.c     | 122 ++++++++++++++++++++++++++++++++++++++
- fs/famfs/famfs_inode.c    |   2 +-
- fs/famfs/famfs_internal.h |   2 +
- 4 files changed, 126 insertions(+), 2 deletions(-)
- create mode 100644 fs/famfs/famfs_file.c
+ fs/famfs/famfs_file.c | 108 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 106 insertions(+), 2 deletions(-)
 
-diff --git a/fs/famfs/Makefile b/fs/famfs/Makefile
-index 62230bcd6793..8cac90c090a4 100644
---- a/fs/famfs/Makefile
-+++ b/fs/famfs/Makefile
-@@ -2,4 +2,4 @@
- 
- obj-$(CONFIG_FAMFS) += famfs.o
- 
--famfs-y := famfs_inode.o
-+famfs-y := famfs_inode.o famfs_file.o
 diff --git a/fs/famfs/famfs_file.c b/fs/famfs/famfs_file.c
-new file mode 100644
-index 000000000000..48036c71d4ed
---- /dev/null
+index 48036c71d4ed..585b776dd73c 100644
+--- a/fs/famfs/famfs_file.c
 +++ b/fs/famfs/famfs_file.c
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * famfs - dax file system for shared fabric-attached memory
-+ *
-+ * Copyright 2023-2024 Micron Technology, Inc.
-+ *
-+ * This file system, originally based on ramfs the dax support from xfs,
-+ * is intended to allow multiple host systems to mount a common file system
-+ * view of dax files that map to shared memory.
-+ */
-+
-+#include <linux/fs.h>
-+#include <linux/mm.h>
-+#include <linux/dax.h>
-+#include <linux/iomap.h>
-+
-+#include "famfs_internal.h"
-+
+@@ -16,6 +16,88 @@
+ 
+ #include "famfs_internal.h"
+ 
 +/*********************************************************************
-+ * file_operations
++ * vm_operations
 + */
-+
-+/* Reject I/O to files that aren't in a valid state */
-+static ssize_t
-+famfs_file_invalid(struct inode *inode)
++static vm_fault_t
++__famfs_filemap_fault(struct vm_fault *vmf, unsigned int pe_size,
++		      bool write_fault)
 +{
-+	if (!IS_DAX(inode)) {
-+		pr_debug("%s: inode %llx IS_DAX is false\n", __func__, (u64)inode);
-+		return -ENXIO;
-+	}
-+	return 0;
-+}
-+
-+static ssize_t
-+famfs_rw_prep(struct kiocb *iocb, struct iov_iter *ubuf)
-+{
-+	struct inode *inode = iocb->ki_filp->f_mapping->host;
++	struct inode *inode = file_inode(vmf->vma->vm_file);
 +	struct super_block *sb = inode->i_sb;
 +	struct famfs_fs_info *fsi = sb->s_fs_info;
-+	size_t i_size = i_size_read(inode);
-+	size_t count = iov_iter_count(ubuf);
-+	size_t max_count;
++	vm_fault_t ret;
++	pfn_t pfn;
++
++	if (fsi->deverror)
++		return VM_FAULT_SIGBUS;
++
++	if (!IS_DAX(file_inode(vmf->vma->vm_file))) {
++		pr_err("%s: file not marked IS_DAX!!\n", __func__);
++		return VM_FAULT_SIGBUS;
++	}
++
++	if (write_fault) {
++		sb_start_pagefault(inode->i_sb);
++		file_update_time(vmf->vma->vm_file);
++	}
++
++	ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL, NULL /*&famfs_iomap_ops */);
++	if (ret & VM_FAULT_NEEDDSYNC)
++		ret = dax_finish_sync_fault(vmf, pe_size, pfn);
++
++	if (write_fault)
++		sb_end_pagefault(inode->i_sb);
++
++	return ret;
++}
++
++static inline bool
++famfs_is_write_fault(struct vm_fault *vmf)
++{
++	return (vmf->flags & FAULT_FLAG_WRITE) &&
++	       (vmf->vma->vm_flags & VM_SHARED);
++}
++
++static vm_fault_t
++famfs_filemap_fault(struct vm_fault *vmf)
++{
++	return __famfs_filemap_fault(vmf, 0, famfs_is_write_fault(vmf));
++}
++
++static vm_fault_t
++famfs_filemap_huge_fault(struct vm_fault *vmf, unsigned int pe_size)
++{
++	return __famfs_filemap_fault(vmf, pe_size, famfs_is_write_fault(vmf));
++}
++
++static vm_fault_t
++famfs_filemap_page_mkwrite(struct vm_fault *vmf)
++{
++	return __famfs_filemap_fault(vmf, 0, true);
++}
++
++static vm_fault_t
++famfs_filemap_pfn_mkwrite(struct vm_fault *vmf)
++{
++	return __famfs_filemap_fault(vmf, 0, true);
++}
++
++static vm_fault_t
++famfs_filemap_map_pages(struct vm_fault	*vmf, pgoff_t start_pgoff,
++			pgoff_t	end_pgoff)
++{
++	return filemap_map_pages(vmf, start_pgoff, end_pgoff);
++}
++
++const struct vm_operations_struct famfs_file_vm_ops = {
++	.fault		= famfs_filemap_fault,
++	.huge_fault	= famfs_filemap_huge_fault,
++	.map_pages	= famfs_filemap_map_pages,
++	.page_mkwrite	= famfs_filemap_page_mkwrite,
++	.pfn_mkwrite	= famfs_filemap_pfn_mkwrite,
++};
++
+ /*********************************************************************
+  * file_operations
+  */
+@@ -25,7 +107,8 @@ static ssize_t
+ famfs_file_invalid(struct inode *inode)
+ {
+ 	if (!IS_DAX(inode)) {
+-		pr_debug("%s: inode %llx IS_DAX is false\n", __func__, (u64)inode);
++		pr_debug("%s: inode %llx IS_DAX is false\n",
++			 __func__, (u64)inode);
+ 		return -ENXIO;
+ 	}
+ 	return 0;
+@@ -101,6 +184,27 @@ famfs_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	return dax_iomap_rw(iocb, from, NULL /*&famfs_iomap_ops*/);
+ }
+ 
++static int
++famfs_file_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	struct inode *inode = file_inode(file);
++	struct super_block *sb = inode->i_sb;
++	struct famfs_fs_info *fsi = sb->s_fs_info;
 +	ssize_t rc;
 +
 +	if (fsi->deverror)
@@ -208,105 +253,26 @@ index 000000000000..48036c71d4ed
 +
 +	rc = famfs_file_invalid(inode);
 +	if (rc)
-+		return rc;
++		return (int)rc;
 +
-+	max_count = max_t(size_t, 0, i_size - iocb->ki_pos);
-+
-+	if (count > max_count)
-+		iov_iter_truncate(ubuf, max_count);
-+
-+	if (!iov_iter_count(ubuf))
-+		return 0;
-+
-+	return rc;
++	file_accessed(file);
++	vma->vm_ops = &famfs_file_vm_ops;
++	vm_flags_set(vma, VM_HUGEPAGE);
++	return 0;
 +}
 +
-+static ssize_t
-+famfs_dax_read_iter(struct kiocb *iocb, struct iov_iter	*to)
-+{
-+	ssize_t rc;
-+
-+	rc = famfs_rw_prep(iocb, to);
-+	if (rc)
-+		return rc;
-+
-+	if (!iov_iter_count(to))
-+		return 0;
-+
-+	rc = dax_iomap_rw(iocb, to, NULL /*&famfs_iomap_ops */);
-+
-+	file_accessed(iocb->ki_filp);
-+	return rc;
-+}
-+
-+/**
-+ * famfs_dax_write_iter()
-+ *
-+ * We need our own write-iter in order to prevent append
-+ *
-+ * @iocb:
-+ * @from: iterator describing the user memory source for the write
-+ */
-+static ssize_t
-+famfs_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	ssize_t rc;
-+
-+	rc = famfs_rw_prep(iocb, from);
-+	if (rc)
-+		return rc;
-+
-+	if (!iov_iter_count(from))
-+		return 0;
-+
-+	return dax_iomap_rw(iocb, from, NULL /*&famfs_iomap_ops*/);
-+}
-+
-+const struct file_operations famfs_file_operations = {
-+	.owner             = THIS_MODULE,
-+
-+	/* Custom famfs operations */
-+	.write_iter	   = famfs_dax_write_iter,
-+	.read_iter	   = famfs_dax_read_iter,
-+	.unlocked_ioctl    = NULL /*famfs_file_ioctl*/,
-+	.mmap		   = NULL /* famfs_file_mmap */,
-+
-+	/* Force PMD alignment for mmap */
-+	.get_unmapped_area = thp_get_unmapped_area,
-+
-+	/* Generic Operations */
-+	.fsync		   = noop_fsync,
-+	.splice_read	   = filemap_splice_read,
-+	.splice_write	   = iter_file_splice_write,
-+	.llseek		   = generic_file_llseek,
-+};
-+
-diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
-index e00e9cdecadf..490a2c0fd326 100644
---- a/fs/famfs/famfs_inode.c
-+++ b/fs/famfs/famfs_inode.c
-@@ -56,7 +56,7 @@ static struct inode *famfs_get_inode(struct super_block *sb,
- 		break;
- 	case S_IFREG:
- 		inode->i_op = &famfs_file_inode_operations;
--		inode->i_fop = NULL /* &famfs_file_operations */;
-+		inode->i_fop = &famfs_file_operations;
- 		break;
- 	case S_IFDIR:
- 		inode->i_op = &famfs_dir_inode_operations;
-diff --git a/fs/famfs/famfs_internal.h b/fs/famfs/famfs_internal.h
-index 951b32ec4fbd..36efaef425e7 100644
---- a/fs/famfs/famfs_internal.h
-+++ b/fs/famfs/famfs_internal.h
-@@ -11,6 +11,8 @@
- #ifndef FAMFS_INTERNAL_H
- #define FAMFS_INTERNAL_H
+ const struct file_operations famfs_file_operations = {
+ 	.owner             = THIS_MODULE,
  
-+extern const struct file_operations famfs_file_operations;
-+
- struct famfs_mount_opts {
- 	umode_t mode;
- };
+@@ -108,7 +212,7 @@ const struct file_operations famfs_file_operations = {
+ 	.write_iter	   = famfs_dax_write_iter,
+ 	.read_iter	   = famfs_dax_read_iter,
+ 	.unlocked_ioctl    = NULL /*famfs_file_ioctl*/,
+-	.mmap		   = NULL /* famfs_file_mmap */,
++	.mmap		   = famfs_file_mmap,
+ 
+ 	/* Force PMD alignment for mmap */
+ 	.get_unmapped_area = thp_get_unmapped_area,
 -- 
 2.43.0
 
