@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-18176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C694B8B61C0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 21:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E4D8B61C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 21:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E74284218
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0181F222CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4033013AD2F;
-	Mon, 29 Apr 2024 19:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335ED13B7A7;
+	Mon, 29 Apr 2024 19:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbp9bn6V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7bsrhX6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6292F12B73;
-	Mon, 29 Apr 2024 19:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD7413B598;
+	Mon, 29 Apr 2024 19:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714417998; cv=none; b=fZ81HgckpBoMCNIfEIJ/bgKFBKt1VW/f1midmmmbMas+yz5SmXPf4dbO7audqyBsFi6mtg5dumkvFEPIvibf52CEjOa8Mo8Tvj5nILZvcDWvErA2DM4wpt8p1S6DI4bXEzPHpONv63ihG3mtJZU/iaj+EW/fJxTIcSWHSALCN7c=
+	t=1714418002; cv=none; b=U/nQgI2ti31phiqgS7EPYLVaGmUSQ772ySxHm8o/CJpkqCz+XbUmJYdqVhVUh7lEItW82RllVZylcNF62xPDlxxHi9SN5976qBzN1ah20aKMBABr+TWF5EU7FqCQnuvNajJbqrvvbtVrLO7bujbOTDXMvA2YkyapmB9fA6CxhVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714417998; c=relaxed/simple;
-	bh=jgvygBW8CqDhFBa68pFHF5Z1PEjjMQjnloI/Wq6AjY4=;
+	s=arc-20240116; t=1714418002; c=relaxed/simple;
+	bh=sgR0dU15JB8rGvD/MDR+dhiv67zgFby0JOYk45sAObs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S7mSX6ROwtEO1/8X8slgxs1Jpqq3NqnXu22SmboPU+BO24uE0HdIfINoWUeJ0L2rrr750+7Sl1LVvhWCntBGOGgJlZSd21LDnnu9McD072XrrnH8RjtDvnpdRz4WTipfxhiHD7ULQUo0k/4mg07CbLorSB2eyshxg4wXT4TCPQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fbp9bn6V; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=W2mxemUD0n0d+XMMEUrXY5pxIj/CPwWY6IZwDlZuCtCPmz4vGB4ET8220m1PGrKo0/It17YHZQigxsf7EHf0pkCU3u20Go14AWumHNCn7P7KsWJMwZdgwvXGjcwXiZwzJiT6WGU2qdzKjSp63jC7AxG911fbtv0VuHxq3+rECyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7bsrhX6; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f26588dd5eso4140309b3a.0;
-        Mon, 29 Apr 2024 12:13:17 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f4081574d6so1065517b3a.2;
+        Mon, 29 Apr 2024 12:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714417997; x=1715022797; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714418001; x=1715022801; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=54tBEeL3WLk/xvTe7LsTeIRT4DqSpvAgzssbqgMQpYw=;
-        b=fbp9bn6VRXCdZNbfERvTb1fe82W24gw3vbhcf/eaPtBcSTmA2qFoLRx1d1cjzp/DaC
-         +wJpVacIGIbpTHgTl0npVZ6xp19yx+Nf4a2BxzxJyeZOzedcAwi1GG3W93Bn75K1F8x8
-         ulROygEPf662WkyNRIZH459DGTHtNV+k+hgIPy0S1Io/O4cONolqnGtQyfYfByNix79q
-         6305kPdria4Jra0QakuwD9ZJoJq/Ey3PqTxnF2xnf04/FfS4WKP/b8gIUv+orJ5X/63G
-         VbtGzVmRGQ1bfrrYV14+EIXlGa0avLLvZDJYrzyV9CtJaNasuiA/QmQ+B90qHpp7quxP
-         p77g==
+        bh=hcA4nZ293WdWUF1yQsfhWEusCPbJDpQqrWzNvwMbGT0=;
+        b=V7bsrhX6LZVEC3aKL2uLuwxn1avCMvO4nQyQmHDEHK/9wAOFISJFAGPs8cF58mm/YK
+         bGJDhsTFRM4Ztjing/WgQUm2pN0Nlbap8RfW+oZjR2TY61KBAySKWa4OsVCHLrkYaLwo
+         wJDwJL1gyBsZYlAV2jPMVdMMHZXvbITdEkTdf3fZvLBJulnecZKAWAgqVjt28ZS7FWjT
+         +BszWc8w4dZKNmInqx5UknpsmllyuUiX9Fhq95s/32VHYGPTbfB6jrKFzeag3ROvtTgF
+         Z2193ziC6mo7LCVlnoo5tmA7j438r1CILHzrQbSVyBE5IeR0jRpvfh8PN+6eF9wdvD4A
+         Qang==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714417997; x=1715022797;
+        d=1e100.net; s=20230601; t=1714418001; x=1715022801;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=54tBEeL3WLk/xvTe7LsTeIRT4DqSpvAgzssbqgMQpYw=;
-        b=JyPvrsuUQFmUOgYZ0Gwqgn2JZrPObF9utklw24icS6W9bt8zTxxdIJB0aZuOiH+8S5
-         aVwvbSPHMP5xmvCD5qxgHi593sWhVVv10qW/g9DUmlJWhlRxCArUAmiK0BpciuvqdB7w
-         aEv5idGutgv9WSOq+BkpdyxYWGBzsfbWM/+8KmilqmEXs7hlQrKqWzwdNH7EIYVrsy/0
-         26Q1G0SCeoy0xCMYNndP5tVSe1QyXFPg5yVhx7YFblPyC32b5SW0Q/slx3ZIVOyBzIk8
-         vJsAgaKWbTh5l0Fcu++MbnUnHDxLW8Iku9FehF+0ke4vY/bEY6J90MK2jbeGXSrNluod
-         NnoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX0Lk8LlS/XUgGivC9dk8RHjiHsF5rZrxK3IMgfeBz6XJKJqa+Pl7nkxkcxmvLV5LcuKrpcBOqf4kt4NV1o/SetEwQ+dTAyU0kMlDjw+jBfOlA446XYyElNIGaLcLmTUvuoXt+FpKhg7SbYQ==
-X-Gm-Message-State: AOJu0YxJ8emtGq3i9Tr5Ht4TNHm9KkxdRrl7ZGuvPC/D0GkQqfI+LzeW
-	mLQ17WlwRDlC6loZGxNMlKDf3jIWLSie5LodnVI3NdZSZVGf362R
-X-Google-Smtp-Source: AGHT+IEkukKzFyXvcUcUCBcg+pFFl4Blb7KQzrcsvkEmMumk82TvVZAkxzMjSXvoKBD5ECjHeKmIeQ==
-X-Received: by 2002:a05:6a00:3a07:b0:6ec:ea4b:f07a with SMTP id fj7-20020a056a003a0700b006ecea4bf07amr12308186pfb.34.1714417996587;
-        Mon, 29 Apr 2024 12:13:16 -0700 (PDT)
+        bh=hcA4nZ293WdWUF1yQsfhWEusCPbJDpQqrWzNvwMbGT0=;
+        b=djDtbODSML5P7EZMV9n8FaC9mh4MSXIh0/DMQ/M2Vcp145u3jE++iPxn8M0B3UMGuu
+         whBavL8qJB9FFsV6kLWvbIhaPqHvMzbD2M3zWKWXq7DWJrsQo/5R7TI50R74iSy7IZEk
+         OPw0yzPrgTW8JQpEeirjIeeKhTs2qww16iQuyUnYk0QwJAlxHQbz0hpFgiiyTMwKCB3x
+         DGVktH6stP8JO27ifFrJDNdqvEZ0cYcvQxLgJ8BTHJVf1QjDU74l7Icw/4kDcP9U0vRT
+         oYdxudDkmVZqsmftZd5tQ4r6vGUwoMk+EWt3fgMSoQA6CbiksJo5hrTIAzEs5lQ8zjgr
+         ujcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3VOzoqNYfqzlFEJGZQgAfG7v3ra4PMaWCgqtanoDc+ECuB+KYYRciQAQyJ8yegRL/h0utwyG1COJQyBdU2KH60ReQ2gjrepM/h/+PwVC+Pb5F42tZUu580Dyz5goz5umgYxsmXce8ibpSlg==
+X-Gm-Message-State: AOJu0Yx2zMyUdZjS+J3CnVj93O/LI4IRLyUutXsoLz+LRkgi34AC4PGS
+	OweHxJCRnAskid8+NlF+8nMw+OdSYqWr6Qn6hGrhf+UxylB7NRkh
+X-Google-Smtp-Source: AGHT+IHLvjgAnYI9Ysv2ceA6BnVwlRDqXI0/taYU8YoY6DhE56amomjz9GVryhH/eJ61mj48VwV1lw==
+X-Received: by 2002:a05:6a20:2d0a:b0:1aa:930d:3dd7 with SMTP id g10-20020a056a202d0a00b001aa930d3dd7mr14861872pzl.6.1714418000676;
+        Mon, 29 Apr 2024 12:13:20 -0700 (PDT)
 Received: from KASONG-MB2.tencent.com ([1.203.116.31])
-        by smtp.gmail.com with ESMTPSA id e10-20020aa7980a000000b006ed38291aebsm20307988pfl.178.2024.04.29.12.13.12
+        by smtp.gmail.com with ESMTPSA id e10-20020aa7980a000000b006ed38291aebsm20307988pfl.178.2024.04.29.12.13.16
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 29 Apr 2024 12:13:15 -0700 (PDT)
+        Mon, 29 Apr 2024 12:13:20 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -83,9 +83,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v3 09/12] mm/swap: get the swap file offset directly
-Date: Tue, 30 Apr 2024 03:11:35 +0800
-Message-ID: <20240429191138.34123-2-ryncsn@gmail.com>
+Subject: [PATCH v3 10/12] mm: remove page_file_offset and folio_file_pos
+Date: Tue, 30 Apr 2024 03:11:36 +0800
+Message-ID: <20240429191138.34123-3-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240429190500.30979-1-ryncsn@gmail.com>
 References: <20240429190500.30979-1-ryncsn@gmail.com>
@@ -100,77 +100,62 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-folio_file_pos and page_file_offset are for mixed usage of swap cache
-and page cache, it can't be page cache here, so introduce a new helper
-to get the swap offset in swap file directly.
+These two helpers were useful for mixed usage of swap cache and page
+cache, which help retrieve the corresponding file or swap device offset
+of a page or folio.
 
-Need to include swapops.h in mm/swap.h to ensure swp_offset is always
-defined before use.
+They were introduced in commit f981c5950fa8 ("mm: methods for teaching
+filesystems about PG_swapcache pages") and used in commit d56b4ddf7781
+("nfs: teach the NFS client how to treat PG_swapcache pages"), suppose
+to be used with direct_IO for swap over fs.
+
+But after commit e1209d3a7a67 ("mm: introduce ->swap_rw and use it
+for reads from SWP_FS_OPS swap-space"), swap with direct_IO is no more,
+and swap cache mapping is never exposed to fs.
+
+Now we have dropped all users of page_file_offset and folio_file_pos,
+so they can be deleted.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
 ---
- mm/page_io.c | 6 +++---
- mm/swap.h    | 9 +++++++++
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ include/linux/pagemap.h | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 46c603dddf04..a360857cf75d 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -280,7 +280,7 @@ static void sio_write_complete(struct kiocb *iocb, long ret)
- 		 * be temporary.
- 		 */
- 		pr_err_ratelimited("Write error %ld on dio swapfile (%llu)\n",
--				   ret, page_file_offset(page));
-+				   ret, swap_dev_pos(page_swap_entry(page)));
- 		for (p = 0; p < sio->pages; p++) {
- 			page = sio->bvec[p].bv_page;
- 			set_page_dirty(page);
-@@ -299,7 +299,7 @@ static void swap_writepage_fs(struct folio *folio, struct writeback_control *wbc
- 	struct swap_iocb *sio = NULL;
- 	struct swap_info_struct *sis = swp_swap_info(folio->swap);
- 	struct file *swap_file = sis->swap_file;
--	loff_t pos = folio_file_pos(folio);
-+	loff_t pos = swap_dev_pos(folio->swap);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 4e85f33721c4..91474dcc6cce 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -917,11 +917,6 @@ static inline loff_t page_offset(struct page *page)
+ 	return ((loff_t)page->index) << PAGE_SHIFT;
+ }
  
- 	count_swpout_vm_event(folio);
- 	folio_start_writeback(folio);
-@@ -430,7 +430,7 @@ static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
- {
- 	struct swap_info_struct *sis = swp_swap_info(folio->swap);
- 	struct swap_iocb *sio = NULL;
--	loff_t pos = folio_file_pos(folio);
-+	loff_t pos = swap_dev_pos(folio->swap);
+-static inline loff_t page_file_offset(struct page *page)
+-{
+-	return ((loff_t)page_index(page)) << PAGE_SHIFT;
+-}
+-
+ /**
+  * folio_pos - Returns the byte position of this folio in its file.
+  * @folio: The folio.
+@@ -931,18 +926,6 @@ static inline loff_t folio_pos(struct folio *folio)
+ 	return page_offset(&folio->page);
+ }
  
- 	if (plug)
- 		sio = *plug;
-diff --git a/mm/swap.h b/mm/swap.h
-index fc2f6ade7f80..82023ab93205 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -5,6 +5,7 @@
- struct mempolicy;
- 
- #ifdef CONFIG_SWAP
-+#include <linux/swapops.h> /* for swp_offset */
- #include <linux/blk_types.h> /* for bio_end_io_t */
- 
- /* linux/mm/page_io.c */
-@@ -31,6 +32,14 @@ extern struct address_space *swapper_spaces[];
- 	(&swapper_spaces[swp_type(entry)][swp_offset(entry) \
- 		>> SWAP_ADDRESS_SPACE_SHIFT])
- 
-+/*
-+ * Return the swap device position of the swap entry.
-+ */
-+static inline loff_t swap_dev_pos(swp_entry_t entry)
-+{
-+	return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
-+}
-+
- void show_swap_cache_info(void);
- bool add_to_swap(struct folio *folio);
- void *get_shadow_from_swap_cache(swp_entry_t entry);
+-/**
+- * folio_file_pos - Returns the byte position of this folio in its file.
+- * @folio: The folio.
+- *
+- * This differs from folio_pos() for folios which belong to a swap file.
+- * NFS is the only filesystem today which needs to use folio_file_pos().
+- */
+-static inline loff_t folio_file_pos(struct folio *folio)
+-{
+-	return page_file_offset(&folio->page);
+-}
+-
+ /*
+  * Get the offset in PAGE_SIZE (even for hugetlb folios).
+  */
 -- 
 2.44.0
 
