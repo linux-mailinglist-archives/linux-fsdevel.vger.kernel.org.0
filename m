@@ -1,186 +1,461 @@
-Return-Path: <linux-fsdevel+bounces-18104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9B68B59B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 15:18:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221548B59D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 15:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6482F1F23119
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 13:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2D11C239AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 13:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280B36BB28;
-	Mon, 29 Apr 2024 13:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603AC5F861;
+	Mon, 29 Apr 2024 13:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oxcqpyph"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A30548F3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 13:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4EC42055
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 13:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714396713; cv=none; b=jqlQ7eC1Q5vzuaTjZ5WyG93p6N6VpsRSSzvTFqR9eKypOzjxzWhFzLtfTpS+JtL+krV6Ka6WvO8qWAv7gAUpQp9MEja1DGLhxSGPWtwupfy5EsUKVL4wqMCeN10qdcWIZf4JaScTNZRGCJX/EhzVQFvSZ9TQ8noD6BpwcAHFvmM=
+	t=1714397188; cv=none; b=epkXkV+l8ozb+m5xzkd+O0Bs+Wx/iK9sR9g/rBmvL5+kVyKqjYxjCngfPOxmv4HwKjbnC5Xt5LaYIpPZ7y0p/H159be8k/j/MGrj3bKYdZbHqxlE80Iwk00xWKksA7sC6BL42SdNwZxc2TUO/xeb0z6I6Tm4QPOsKn1mVQQR6XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714396713; c=relaxed/simple;
-	bh=nAUzRtyfZc+YT5p13LOMII3XWYViOuMI7MpfCz3tj4o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iROAcpyP0H0xrAnwhjn7eRrs/uRmqqRrtCmD9pRW64bBaFv4lNdwbwXgjHVSP9BN8ny9qVdOx+ZiEvKmQE3Ty11ZjSz6UsdCOSc3gM8WkhszftxDgXgecPMK73zdktc44zEPkfV4hTcsPO9eCp11/IrmVMARYXGT/Rcsw0kFwe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c10cac5f9so27020555ab.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 06:18:32 -0700 (PDT)
+	s=arc-20240116; t=1714397188; c=relaxed/simple;
+	bh=JF8s8pfUNALjYV4XYo6IZD3fk7FpqAUkyRR3EltZ8AQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lAHyrEZ6grjL/08EVgokA8CfGJOcbHcp7oxDp9XSlKGTigVEMb1BX5WwgkhFWNT06aC7CZCW9RtsvE7y5MZ84WqK6JUWHxTK3WCwTlAgJOo/PUygc/YbalREeLE0gOKEEmZhJGVAvlyq8INfbSZnuw1ZnEu/JPkkovWx9Q7kfD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oxcqpyph; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714397185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=g/UFL8mP+AUxpEYC9faxnXPXi2vEiwF5wGayAgrqKmo=;
+	b=OxcqpyphEjDaXyjphKK4QldT0ILmzSXCGEKKuklDNDimjb9kPcAxA9ZDq4RgTWlP3+XRy2
+	18EGkI4nvQJgaduWjvbU6BEl3df/k9guSbzLvxdROR97aCuTHcC2hJPE8v4S4hGwSfx5pe
+	0c3/HS9Vwden6ym0+STX4tBkfS4MCsA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-9oX-nYRSPDqJbLiEFjrPfQ-1; Mon, 29 Apr 2024 09:26:24 -0400
+X-MC-Unique: 9oX-nYRSPDqJbLiEFjrPfQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34bb415008bso3250482f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 06:26:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714396711; x=1715001511;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cuCBf4tttiDsG5JpIj8SVgWDFkDZthGhW/tj0MoVwMg=;
-        b=IkQ4GS+mY8ah6RdSewfW/H3x39KYs0JWkGWbe9ChuDxRTR8IiLf9YfYstXxkC/89TK
-         NPXbVhGI7sq5iLxNepoCxHuUIDptCpH9ddr1ozngPAXGifqwbmIFrxzYZjkQrDgswll8
-         7wWRBVEefYqT0ZmL+nMTMGuVqn5LxO/ecb4jyAdH2o9+g18JhvTziYHLYm064kEbob1g
-         QDErvZt2zlWGoZCBtST/mUVOGYVGJFQ/GvKKCb4clnYWWBkaPjCo/8+g054r+j+lTgy8
-         sFsuasKH6s/hhEYU1OPZfuXdxb7ueIUyBUit0cXYxH4qRuF+2gv4CCfKRgx3NGRIekIZ
-         UA4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWNO4bqUZOxbQ67DeNSAva9MsI970Tu3uKB0KL2ta6wrMb5uuoYNV9/iU03bur5/aBM9CPCTTJaNs1mrQtso5GzyjmqcpkDULL7n1V7NQ==
-X-Gm-Message-State: AOJu0YzNB07YwnS7JpJe3fyTLryFGhRxdVu72kd8bEG7sWkW25tXNbBx
-	iR0UlemZ51sjaeDG8mUQSFiFT395JPtDg3N1HiDQLe8+/9FgwzJbOy/EugOW278z5A+G+fseWlf
-	F13DYY0qnij7mnvm6PN/lcxKEkYd8yFhTr+C3dsMFIkE0NUhDsg1V4OM=
-X-Google-Smtp-Source: AGHT+IEc9AYzqZHLbQbZ7KmYBDG+f4zarqd82Oo976ESfl5shCzSxxJmxbO/HTKf8LTXt1Kl8i0LgwCW43xzQav+DCEsXuEQthuM
+        d=1e100.net; s=20230601; t=1714397183; x=1715001983;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/UFL8mP+AUxpEYC9faxnXPXi2vEiwF5wGayAgrqKmo=;
+        b=f2B3PKsKxYt+346GB7TDAzQSfxnTg3KPjSzCzBbihhLZmLs2pk2cuoXkgNlSuZygA0
+         MYh8ltKRTY4uVb2QbhieOCwTGRtv+mAbgGhKTJvr2h4i3FqEXFssdJYayd325yAzMttx
+         bw+FyJAaTjf3Uf05yXttLxs7DziVfx7UXbZFJYwZJZ/okNbaqULA2MU1oVLjUTyof3eZ
+         KAqweCqGl2EhxvIjozix2ZdOipt6Dh6saDzCS2esIbqub7C17dIzAk+JINCNQd/EYINI
+         jFipxhSCK/z8AXmO/abWnyQWKv+SmZxu1bAmqMw15YzjHIJH1nwe57bNhKOdeUqCjH/x
+         WnVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB+uBuZCD9b+HFy3NlAqi12cAcx1m4H+DQlJAh5QuHVESZbu7ZNx96zClIQyioff0I7nN8o46pMMGeCN0R5a66+k69wrdXjIO7E979qw==
+X-Gm-Message-State: AOJu0YyeJqnOLSMz/DRscs+/o4AiK08HGngp8wl82eFU+7WswWEZkKfh
+	qQ3SppvdpqVMPB3cYdVdBZnQjdubyHukN00HVHgMFozysTA+I+6+mpHIfkzU6eB6myIys198K0y
+	/5alt7y9gzZxdUgSJAxBv0tJCERemIs1H61GHO0AjP7zZtEPkQxaNpgXxW+8wgVlUkTYNFlU=
+X-Received: by 2002:a05:6000:154d:b0:34d:2466:df51 with SMTP id 13-20020a056000154d00b0034d2466df51mr2010090wry.48.1714397182699;
+        Mon, 29 Apr 2024 06:26:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEzmmhdSfq9Wove4AQtvoencUdS16/OXuWxt3Lb/r/FK195mEPIUUJEbZlIBK/oVBe16qPitw==
+X-Received: by 2002:a05:6000:154d:b0:34d:2466:df51 with SMTP id 13-20020a056000154d00b0034d2466df51mr2010068wry.48.1714397182256;
+        Mon, 29 Apr 2024 06:26:22 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (176-241-63-114.pool.digikabel.hu. [176.241.63.114])
+        by smtp.gmail.com with ESMTPSA id l7-20020adffe87000000b0034c7330da82sm7845049wrr.80.2024.04.29.06.26.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Apr 2024 06:26:21 -0700 (PDT)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] ovl: implement tmpfile
+Date: Mon, 29 Apr 2024 15:26:19 +0200
+Message-ID: <20240429132620.659012-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a43:b0:36c:5029:1925 with SMTP id
- u3-20020a056e021a4300b0036c50291925mr124207ilv.0.1714396711562; Mon, 29 Apr
- 2024 06:18:31 -0700 (PDT)
-Date: Mon, 29 Apr 2024 06:18:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ff44c506173c1642@google.com>
-Subject: [syzbot] [nilfs?] kernel BUG in nilfs_delete_entry
-From: syzbot <syzbot+32c3706ebf5d95046ea1@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, konishi.ryusuke@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Combine inode creation with opening a file.
 
-syzbot found the following issue on:
+There are six separate objects that are being set up: the backing inode,
+dentry and file, and the overlay inode, dentry and file.  Cleanup in case
+of an error is a bit of a challenge and is difficult to test, so careful
+review is needed.
 
-HEAD commit:    5eb4573ea63d Merge tag 'soc-fixes-6.9-2' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1591a5e8980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d46aa9d7a44f40d
-dashboard link: https://syzkaller.appspot.com/bug?extid=32c3706ebf5d95046ea1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1213956b180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ac32ef180000
+All tmpfile testcases except generic/509 now run/pass, and no regressions
+are observed with full xfstests.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7e4c1378cbb1/disk-5eb4573e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8e4487ecdd86/vmlinux-5eb4573e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d84518ee028f/bzImage-5eb4573e.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/350446baf90d/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/e66542e7352f/mount_2.gz
-
-The issue was bisected to:
-
-commit 602ce7b8e1343b19c0cf93a3dd1926838ac5a1cc
-Author: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Fri Jan 27 13:22:02 2023 +0000
-
-    nilfs2: prevent WARNING in nilfs_dat_commit_end()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15d757d8980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17d757d8980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13d757d8980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+32c3706ebf5d95046ea1@syzkaller.appspotmail.com
-Fixes: 602ce7b8e134 ("nilfs2: prevent WARNING in nilfs_dat_commit_end()")
-
-------------[ cut here ]------------
-kernel BUG at fs/nilfs2/dir.c:545!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 5115 Comm: syz-executor410 Not tainted 6.9.0-rc5-syzkaller-00296-g5eb4573ea63d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:nilfs_delete_entry+0x349/0x350 fs/nilfs2/dir.c:545
-Code: 8d fe e9 de fd ff ff 44 89 f9 80 e1 07 fe c1 38 c1 0f 8c 20 ff ff ff 4c 89 ff e8 f2 a6 8d fe e9 13 ff ff ff e8 68 56 2c fe 90 <0f> 0b 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900036078b8 EFLAGS: 00010293
-RAX: ffffffff8369aa08 RBX: 0000000000000050 RCX: ffff888018339e00
-RDX: 0000000000000000 RSI: 00000000fffffffb RDI: 0000000000000000
-RBP: 00000000fffffffb R08: ffffffff8369a8de R09: 1ffff1100806d722
-R10: dffffc0000000000 R11: ffffed100806d723 R12: ffffea00010fed80
-R13: ffff888043fb6038 R14: 0000000000000020 R15: ffff888043fb6020
-FS:  00007fa2992ee6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd3dbd8b98 CR3: 0000000024b86000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nilfs_rename+0x57d/0xaf0 fs/nilfs2/namei.c:413
- vfs_rename+0xbdb/0xf00 fs/namei.c:4880
- do_renameat2+0xd94/0x13f0 fs/namei.c:5037
- __do_sys_renameat2 fs/namei.c:5071 [inline]
- __se_sys_renameat2 fs/namei.c:5068 [inline]
- __x64_sys_renameat2+0xd2/0xf0 fs/namei.c:5068
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa299358f49
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa2992ee218 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007fa2993e16d8 RCX: 00007fa299358f49
-RDX: 0000000000000006 RSI: 0000000020000100 RDI: 0000000000000005
-RBP: 00007fa2993e16d0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000020000580 R11: 0000000000000246 R12: 00007fa2993ade20
-R13: 00007fa2993adb68 R14: 0030656c69662f2e R15: 3e2efc42dc31fca1
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:nilfs_delete_entry+0x349/0x350 fs/nilfs2/dir.c:545
-Code: 8d fe e9 de fd ff ff 44 89 f9 80 e1 07 fe c1 38 c1 0f 8c 20 ff ff ff 4c 89 ff e8 f2 a6 8d fe e9 13 ff ff ff e8 68 56 2c fe 90 <0f> 0b 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900036078b8 EFLAGS: 00010293
-
-RAX: ffffffff8369aa08 RBX: 0000000000000050 RCX: ffff888018339e00
-RDX: 0000000000000000 RSI: 00000000fffffffb RDI: 0000000000000000
-RBP: 00000000fffffffb R08: ffffffff8369a8de R09: 1ffff1100806d722
-R10: dffffc0000000000 R11: ffffed100806d723 R12: ffffea00010fed80
-R13: ffff888043fb6038 R14: 0000000000000020 R15: ffff888043fb6020
-FS:  00007fa2992ee6c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa2993149f0 CR3: 0000000024b86000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+v2:
+  - don't pass real_idmap to backing_tmpfile_open()
+  - move ovl_dir_modified() from ovl_instantiate() to callers
+  - use ovl_instantiate() for tmpfile
+  - call d_mark_tmpfile() before d_instantiate() in ovl_instantiate();
+    no longer need to mess with nlink
+  - extract helper ovl_setup_cred_for_create() from ovl_create_or_link()
+  - don't apply umask to mode, VFS will do that when creating the tmpfile
+  - add comment above file->private_data cleanup
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/backing-file.c            |  23 ++++++
+ fs/internal.h                |   3 +
+ fs/namei.c                   |   6 +-
+ fs/overlayfs/dir.c           | 145 ++++++++++++++++++++++++++++++-----
+ fs/overlayfs/file.c          |   3 -
+ fs/overlayfs/overlayfs.h     |   3 +
+ include/linux/backing-file.h |   3 +
+ 7 files changed, 161 insertions(+), 25 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/fs/backing-file.c b/fs/backing-file.c
+index 740185198db3..afb557446c27 100644
+--- a/fs/backing-file.c
++++ b/fs/backing-file.c
+@@ -52,6 +52,29 @@ struct file *backing_file_open(const struct path *user_path, int flags,
+ }
+ EXPORT_SYMBOL_GPL(backing_file_open);
+ 
++struct file *backing_tmpfile_open(const struct path *user_path, int flags,
++				  const struct path *real_parentpath,
++				  umode_t mode, const struct cred *cred)
++{
++	struct mnt_idmap *real_idmap = mnt_idmap(real_parentpath->mnt);
++	struct file *f;
++	int error;
++
++	f = alloc_empty_backing_file(flags, cred);
++	if (IS_ERR(f))
++		return f;
++
++	path_get(user_path);
++	*backing_file_user_path(f) = *user_path;
++	error = vfs_tmpfile(real_idmap, real_parentpath, f, mode);
++	if (error) {
++		fput(f);
++		f = ERR_PTR(error);
++	}
++	return f;
++}
++EXPORT_SYMBOL(backing_tmpfile_open);
++
+ struct backing_aio {
+ 	struct kiocb iocb;
+ 	refcount_t ref;
+diff --git a/fs/internal.h b/fs/internal.h
+index 7ca738904e34..ab2225136f60 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -62,6 +62,9 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode);
+ int do_symlinkat(struct filename *from, int newdfd, struct filename *to);
+ int do_linkat(int olddfd, struct filename *old, int newdfd,
+ 			struct filename *new, int flags);
++int vfs_tmpfile(struct mnt_idmap *idmap,
++		const struct path *parentpath,
++		struct file *file, umode_t mode);
+ 
+ /*
+  * namespace.c
+diff --git a/fs/namei.c b/fs/namei.c
+index c5b2a25be7d0..13e50b0a49d2 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3668,9 +3668,9 @@ static int do_open(struct nameidata *nd,
+  * On non-idmapped mounts or if permission checking is to be performed on the
+  * raw inode simply pass @nop_mnt_idmap.
+  */
+-static int vfs_tmpfile(struct mnt_idmap *idmap,
+-		       const struct path *parentpath,
+-		       struct file *file, umode_t mode)
++int vfs_tmpfile(struct mnt_idmap *idmap,
++		const struct path *parentpath,
++		struct file *file, umode_t mode)
+ {
+ 	struct dentry *child;
+ 	struct inode *dir = d_inode(parentpath->dentry);
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 0f8b4a719237..cac21ef546fe 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -14,6 +14,7 @@
+ #include <linux/posix_acl_xattr.h>
+ #include <linux/atomic.h>
+ #include <linux/ratelimit.h>
++#include <linux/backing-file.h>
+ #include "overlayfs.h"
+ 
+ static unsigned short ovl_redirect_max = 256;
+@@ -260,14 +261,13 @@ static int ovl_set_opaque(struct dentry *dentry, struct dentry *upperdentry)
+  * may not use to instantiate the new dentry.
+  */
+ static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
+-			   struct dentry *newdentry, bool hardlink)
++			   struct dentry *newdentry, bool hardlink, struct file *tmpfile)
+ {
+ 	struct ovl_inode_params oip = {
+ 		.upperdentry = newdentry,
+ 		.newinode = inode,
+ 	};
+ 
+-	ovl_dir_modified(dentry->d_parent, false);
+ 	ovl_dentry_set_upper_alias(dentry);
+ 	ovl_dentry_init_reval(dentry, newdentry, NULL);
+ 
+@@ -295,6 +295,9 @@ static int ovl_instantiate(struct dentry *dentry, struct inode *inode,
+ 		inc_nlink(inode);
+ 	}
+ 
++	if (tmpfile)
++		d_mark_tmpfile(tmpfile, inode);
++
+ 	d_instantiate(dentry, inode);
+ 	if (inode != oip.newinode) {
+ 		pr_warn_ratelimited("newly created inode found in cache (%pd2)\n",
+@@ -345,7 +348,8 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+ 		ovl_set_opaque(dentry, newdentry);
+ 	}
+ 
+-	err = ovl_instantiate(dentry, inode, newdentry, !!attr->hardlink);
++	ovl_dir_modified(dentry->d_parent, false);
++	err = ovl_instantiate(dentry, inode, newdentry, !!attr->hardlink, NULL);
+ 	if (err)
+ 		goto out_cleanup;
+ out_unlock:
+@@ -529,7 +533,8 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ 		if (err)
+ 			goto out_cleanup;
+ 	}
+-	err = ovl_instantiate(dentry, inode, newdentry, hardlink);
++	ovl_dir_modified(dentry->d_parent, false);
++	err = ovl_instantiate(dentry, inode, newdentry, hardlink, NULL);
+ 	if (err) {
+ 		ovl_cleanup(ofs, udir, newdentry);
+ 		dput(newdentry);
+@@ -551,12 +556,35 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ 	goto out_dput;
+ }
+ 
++static int ovl_setup_cred_for_create(struct dentry *dentry, struct inode *inode,
++				     umode_t mode, const struct cred *old_cred)
++{
++	int err;
++	struct cred *override_cred;
++
++	override_cred = prepare_creds();
++	if (!override_cred)
++		return -ENOMEM;
++
++	override_cred->fsuid = inode->i_uid;
++	override_cred->fsgid = inode->i_gid;
++	err = security_dentry_create_files_as(dentry, mode, &dentry->d_name,
++					      old_cred, override_cred);
++	if (err) {
++		put_cred(override_cred);
++		return err;
++	}
++	put_cred(override_creds(override_cred));
++	put_cred(override_cred);
++
++	return 0;
++}
++
+ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 			      struct ovl_cattr *attr, bool origin)
+ {
+ 	int err;
+ 	const struct cred *old_cred;
+-	struct cred *override_cred;
+ 	struct dentry *parent = dentry->d_parent;
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+@@ -572,10 +600,6 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 	}
+ 
+ 	if (!attr->hardlink) {
+-		err = -ENOMEM;
+-		override_cred = prepare_creds();
+-		if (!override_cred)
+-			goto out_revert_creds;
+ 		/*
+ 		 * In the creation cases(create, mkdir, mknod, symlink),
+ 		 * ovl should transfer current's fs{u,g}id to underlying
+@@ -589,17 +613,9 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 		 * create a new inode, so just use the ovl mounter's
+ 		 * fs{u,g}id.
+ 		 */
+-		override_cred->fsuid = inode->i_uid;
+-		override_cred->fsgid = inode->i_gid;
+-		err = security_dentry_create_files_as(dentry,
+-				attr->mode, &dentry->d_name, old_cred,
+-				override_cred);
+-		if (err) {
+-			put_cred(override_cred);
++		err = ovl_setup_cred_for_create(dentry, inode, attr->mode, old_cred);
++		if (err)
+ 			goto out_revert_creds;
+-		}
+-		put_cred(override_creds(override_cred));
+-		put_cred(override_cred);
+ 	}
+ 
+ 	if (!ovl_dentry_is_whiteout(dentry))
+@@ -1290,6 +1306,96 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
+ 	return err;
+ }
+ 
++static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
++			      struct inode *inode, umode_t mode)
++{
++	const struct cred *old_cred;
++	struct path realparentpath;
++	struct file *realfile;
++	struct dentry *newdentry;
++	/* It's okay to set O_NOATIME, since the owner will be current fsuid */
++	int flags = file->f_flags | OVL_OPEN_FLAGS;
++	int err;
++
++	err = ovl_copy_up(dentry->d_parent);
++	if (err)
++		return err;
++
++	old_cred = ovl_override_creds(dentry->d_sb);
++	err = ovl_setup_cred_for_create(dentry, inode, mode, old_cred);
++	if (err)
++		goto out_revert_creds;
++
++	ovl_path_upper(dentry->d_parent, &realparentpath);
++	realfile = backing_tmpfile_open(&file->f_path, flags, &realparentpath,
++					mode, current_cred());
++	err = PTR_ERR(realfile);
++	if (IS_ERR(realfile))
++		goto out_revert_creds;
++
++	/* ovl_instantiate() consumes the newdentry reference on success */
++	newdentry = dget(realfile->f_path.dentry);
++	err = ovl_instantiate(dentry, inode, newdentry, false, file);
++	if (!err) {
++		file->private_data = realfile;
++	} else {
++		dput(newdentry);
++		fput(realfile);
++	}
++out_revert_creds:
++	revert_creds(old_cred);
++	return err;
++}
++
++static int ovl_dummy_open(struct inode *inode, struct file *file)
++{
++	return 0;
++}
++
++static int ovl_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
++		       struct file *file, umode_t mode)
++{
++	int err;
++	struct dentry *dentry = file->f_path.dentry;
++	struct inode *inode;
++
++	err = ovl_want_write(dentry);
++	if (err)
++		return err;
++
++	err = -ENOMEM;
++	inode = ovl_new_inode(dentry->d_sb, mode, 0);
++	if (!inode)
++		goto drop_write;
++
++	inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
++	err = ovl_create_tmpfile(file, dentry, inode, inode->i_mode);
++	if (err)
++		goto put_inode;
++
++	/*
++	 * Check if the preallocated inode was actually used.  Having something
++	 * else assigned to the dentry shouldn't happen as that would indicate
++	 * that the backing tmpfile "leaked" out of overlayfs.
++	 */
++	err = -EIO;
++	if (WARN_ON(inode != d_inode(dentry)))
++		goto put_realfile;
++
++	/* inode reference was transferred to dentry */
++	inode = NULL;
++	err = finish_open(file, dentry, ovl_dummy_open);
++put_realfile:
++	/* Without FMODE_OPENED ->release() won't be called on @file */
++	if (!(file->f_mode & FMODE_OPENED))
++		fput(file->private_data);
++put_inode:
++	iput(inode);
++drop_write:
++	ovl_drop_write(dentry);
++	return err;
++}
++
+ const struct inode_operations ovl_dir_inode_operations = {
+ 	.lookup		= ovl_lookup,
+ 	.mkdir		= ovl_mkdir,
+@@ -1310,4 +1416,5 @@ const struct inode_operations ovl_dir_inode_operations = {
+ 	.update_time	= ovl_update_time,
+ 	.fileattr_get	= ovl_fileattr_get,
+ 	.fileattr_set	= ovl_fileattr_set,
++	.tmpfile	= ovl_tmpfile,
+ };
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 05536964d37f..1a411cae57ed 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -24,9 +24,6 @@ static char ovl_whatisit(struct inode *inode, struct inode *realinode)
+ 		return 'm';
+ }
+ 
+-/* No atime modification on underlying */
+-#define OVL_OPEN_FLAGS (O_NOATIME)
+-
+ static struct file *ovl_open_realfile(const struct file *file,
+ 				      const struct path *realpath)
+ {
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index ee949f3e7c77..0bfe35da4b7b 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -175,6 +175,9 @@ static inline int ovl_metadata_digest_size(const struct ovl_metacopy *metacopy)
+ 	return (int)metacopy->len - OVL_METACOPY_MIN_SIZE;
+ }
+ 
++/* No atime modification on underlying */
++#define OVL_OPEN_FLAGS (O_NOATIME)
++
+ extern const char *const ovl_xattr_table[][2];
+ static inline const char *ovl_xattr(struct ovl_fs *ofs, enum ovl_xattr ox)
+ {
+diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
+index 3f1fe1774f1b..4b61b0e57720 100644
+--- a/include/linux/backing-file.h
++++ b/include/linux/backing-file.h
+@@ -22,6 +22,9 @@ struct backing_file_ctx {
+ struct file *backing_file_open(const struct path *user_path, int flags,
+ 			       const struct path *real_path,
+ 			       const struct cred *cred);
++struct file *backing_tmpfile_open(const struct path *user_path, int flags,
++				  const struct path *real_parentpath,
++				  umode_t mode, const struct cred *cred);
+ ssize_t backing_file_read_iter(struct file *file, struct iov_iter *iter,
+ 			       struct kiocb *iocb, int flags,
+ 			       struct backing_file_ctx *ctx);
+-- 
+2.44.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
