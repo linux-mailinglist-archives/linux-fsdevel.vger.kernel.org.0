@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-18130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178A38B5F9A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942168B5F9C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2927AB23383
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 17:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75F51C215A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 17:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD75127B65;
-	Mon, 29 Apr 2024 17:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C370B86269;
+	Mon, 29 Apr 2024 17:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWjl1urZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="didp0iEx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D85127B45;
-	Mon, 29 Apr 2024 17:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F67C86AFC;
+	Mon, 29 Apr 2024 17:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714410326; cv=none; b=Rp+QpkUefA2BqkvkToUfF9ii72OPfLq8eNtDBQFyRB3DG0BFymKivmBvUBumt+9JixzASkBIXAaYO3iK6JYjvfZ+p/V8+nwxG2E3Lw0jrsTWNLXQWZMf43pI7jYLBwI+2hg0vopoTv+d8ArstA0B/1/NcYHNnpuNWWQ/Lu2n1t0=
+	t=1714410330; cv=none; b=jsXAe87opXa4zBDlEe/7MV/pzYCRmZQ8xoQW6yZkNeyNJ1dmvfwQIFXEUNjdhjwXzAZwAKB43Gpum1qHVqOGQeCrlO5TE2upjLhTIplpyLOv40DC9H4TtoJXBwn8Lr1EqgJEHtJf9mOe5iGZ6aWeWlUTM2QnUxe0WUvvQG/7MIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714410326; c=relaxed/simple;
-	bh=3okyjXHCMhcAJ0EEcEcf6cQaC7PkHdUAYWpAVtSMGPY=;
+	s=arc-20240116; t=1714410330; c=relaxed/simple;
+	bh=f7nr9BHgMNY07SuBb7AMIuKL8EhAF6Lae/DCFaA0XMM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S9Ha8DuorZHcX14WXutGHsxgDMbf12TiG2nGcfRlbaKhZ99CzWRuZKHLpE6/osxN4V4yYhlQBToXuleoxeI/31E8OcapRPAnUwUgfQYb0gYAKxglUltpA00E6F2R9DoNWvf5qG9kFxpavWVs6oAIeFN/MCn6P8x6Ls1T50qUCDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWjl1urZ; arc=none smtp.client-ip=209.85.210.53
+	 MIME-Version; b=B6ZiHLulbMcyAZ/AxtYumUs9YWLbaSSfzZSKfH9/fU355WtJ2snui9YZ3aiFMZ41NlHhgL6isGaZPTQpwhP4AvUnYTQhDqIZOji1Va0FP0GyG65kL5b4oPM/CA0YCsyfIolQC233qHwfdMczlUup0C6tDj7RXh2niMRhd+ZnlTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=didp0iEx; arc=none smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6ea2375d8d0so3895028a34.0;
-        Mon, 29 Apr 2024 10:05:23 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6ea1a55b0c0so2432798a34.3;
+        Mon, 29 Apr 2024 10:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714410323; x=1715015123; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714410328; x=1715015128; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2UaofW1Ss7ysgCpPsl4E9jKgtjI2OUWLad4tGWrXZwU=;
-        b=QWjl1urZ0wbXplKUjcZEeCDJu/tiuW9/z3PZllkb4HWCedlObKDJEIf9qfO4vL8vGy
-         MdsnU/ljt0C/rdmmt6IM/FFh7EFpTIbzxeSXWO6OByBDZddD1v66lS0LQkVxQ2yHfZCa
-         xzaw/T3226aH70LQCgip6axYFX5BLzsYFcHYz1x5Ttj4d/dOzfCMHOmegLw8QPtjftXU
-         llTmnuvKXpcjM+dQa91ibhtoeoTdGQLSwwTYdsF4mznH3jg+HiajrkbA5n6gBfsj814q
-         fGOArCb9Jml569izgdIZ3BYP2Q94sUBHT7Aq7pncfmd7/q2LbYOioY9KiViknmEuZ/Rd
-         Xz7A==
+        bh=MvRMVdHLhDXhOx55ypqAZ1Z/pDm9XYtxQRRB/JnE99c=;
+        b=didp0iExgM+JMPqPE0C7wqUFsDhroOnu9Jq6rSGAb95JxHl7gS7yRmHU9d/gwgBmGd
+         d9swxdm12Z9NXbMLHcT1eVh2VG5qENmVwx4+r2wEzbwS0qdmhkXUjlNJXHHLbfZSkY0j
+         7lX1gpRNLMPow90jad9pRI42orAvXjOIobfiBsVgCeTkYrqTyr3FQJW46ZqGHvCDvDUB
+         fYZrFLsUZ+HR1W4n+tck2Ro3mP4nVhNTGmcR0wwfW20hIw/KUGc4BodLGuBJ5GpnKf7L
+         Kl14vZ/Q44zdfvz7LTEZzM9c5yJ8jQuZfYkDNu66vrqLByRdYFv0VpQE7pot5MXR/9fh
+         omHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714410323; x=1715015123;
+        d=1e100.net; s=20230601; t=1714410328; x=1715015128;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=2UaofW1Ss7ysgCpPsl4E9jKgtjI2OUWLad4tGWrXZwU=;
-        b=jbGwngemDJZtwriaUpvyNtI4DSl72RLKyVQ1cMP0QJpMrXWwxvM/q723yjUS0oSgn1
-         y6lDuBq6RXYx/jervI9M6HM5tGxQ7ZECiHKRgDyW8xubuiI0rH/QqHnjk8iPQoUCO0y6
-         ykL/iCkQUH/P4s++jDSsvi1h5jOeGx0VS6qpwmJg4Rj4KWVLWTTZhJqKKqhD73Bno9hI
-         XvLooZMQe+6io5Skb/ItFGdb2Dy6KZqRBBxq5fMUYoNGYVIyz5p861iE5lFuaHpArptq
-         MMonq3fH0N2qHTWepAV2mg/bLGnpR1s7WDgSQmid6af689d1nWHmEFb3P2aWIESYDTlh
-         /nQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbd4duhT5vSHMp4N2mW9Inm1xp6yU0l1Z71JJDSBVmUCXAvxy7yU3ZEL2w7638Ddkf61HBi8nhym2ID7lYcNwmycZHVp0MorcBwUhEt58D51xYhZkBc3VAfXYn2ShERvstmwbzuOYRLQ==
-X-Gm-Message-State: AOJu0YzSsZCkpt5bhG+KO9Xoa7nrSjq1MA3eG8pmEsgXJjzKWoRB4sTD
-	kBn7AIju8vpCRQ5p+dWM95DttvEKTeWPEaWpIYYHrTydpUEz3rBhEz+n+LhT
-X-Google-Smtp-Source: AGHT+IFvD88Udyo+NvOBr4PNFG9gOR+wiZU+XL9Ie5iTR0+/Cv+NkgpNj5yEeSCkfCvrufai21KfAw==
-X-Received: by 2002:a05:6830:4513:b0:6eb:d349:8c3f with SMTP id i19-20020a056830451300b006ebd3498c3fmr13821572otv.28.1714410323111;
-        Mon, 29 Apr 2024 10:05:23 -0700 (PDT)
+        bh=MvRMVdHLhDXhOx55ypqAZ1Z/pDm9XYtxQRRB/JnE99c=;
+        b=jBnx+ZBhlxSMCrgV9tbbhuVq4AEtzTB3bl+9oEtI8gz3jv05P2yd6Tuurq3SGLKnNZ
+         Fs1MaOE64nVZHfYrqt9T7FmnTdAaMHnPQDPJESMoLb67zPhfZ1MJKX/TbS2ZUi2/2pfn
+         vBVwO+46SGzkppt5a/gi9WcGzDhKDYNLdKZ3dtiNwPppMHPRZwDKLfj9LyuhcjE05ZgF
+         K34U8Ow9ZKZvog2MrFhr1VOfOYSd+6hrT7cselA7U92oKzlm0wdwyE1V2eVVMbqGKDP4
+         XUWm6Ff7guvnuenL0aBZ4ne5xXmOC4o/p9VmV3+APR/thiMwdruLPu2nK2nuXaW+bAOz
+         0irQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGkEGMTGgV4JUS94CLONTOxvScWJee0YFErsjIHX+1ZVZbnZJ20LKBK0p8yAS0JPzKlBiBJ9CVlkf6P8G6429ZcrRk24gUx3Q4XwAAI23A9Bhg8H6qDhanfCAXkcBDZN5kq9DNDT6/xQ==
+X-Gm-Message-State: AOJu0YyoW5MvFMW+IGwkqcTKfv9iK9qjI6+tet8Xx47ItQkiJMPbVXus
+	P5Vzro38sainp1DN+xs5I1WFFpMP7dh4YAY2Q5oz80brbyNRl2zc
+X-Google-Smtp-Source: AGHT+IG/ZcwB0huKygPBvFdcgDmjShYrcDklwOFhU2UIhkvvjhkEis6/aiEjDF1au3eTMnKT4Qud0g==
+X-Received: by 2002:a05:6830:59:b0:6ee:3232:160a with SMTP id d25-20020a056830005900b006ee3232160amr328210otp.38.1714410326944;
+        Mon, 29 Apr 2024 10:05:26 -0700 (PDT)
 Received: from localhost.localdomain ([70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id g1-20020a9d6201000000b006ea20712e66sm4074448otj.17.2024.04.29.10.05.20
+        by smtp.gmail.com with ESMTPSA id g1-20020a9d6201000000b006ea20712e66sm4074448otj.17.2024.04.29.10.05.24
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 29 Apr 2024 10:05:22 -0700 (PDT)
+        Mon, 29 Apr 2024 10:05:26 -0700 (PDT)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -110,9 +110,9 @@ Cc: John Groves <jgroves@micron.com>,
 	Stanislav Fomichev <sdf@google.com>,
 	Dongsheng Yang <dongsheng.yang@easystack.cn>,
 	John Groves <john@groves.net>
-Subject: [RFC PATCH v2 09/12] famfs: Introduce inode_operations and super_operations
-Date: Mon, 29 Apr 2024 12:04:25 -0500
-Message-Id: <ada861141fc80963d93cb0083da5537cd46633a0.1714409084.git.john@groves.net>
+Subject: [RFC PATCH v2 10/12] famfs: Introduce file_operations read/write
+Date: Mon, 29 Apr 2024 12:04:26 -0500
+Message-Id: <4584f1e26802af540a60eadb70f42c6ac5fe4679.1714409084.git.john@groves.net>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 In-Reply-To: <cover.1714409084.git.john@groves.net>
 References: <cover.1714409084.git.john@groves.net>
@@ -124,163 +124,189 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The famfs inode and super operations are pretty much generic.
+This commit introduces fs/famfs/famfs_file.c and the famfs
+file_operations for read/write.
 
-This commit builds but is still too incomplete to run
+This is not usable yet because:
+
+* It calls dax_iomap_rw() with NULL iomap_ops (which will be
+  introduced in a subsequent commit).
+* famfs_ioctl() is coming in a later commit, and it is necessary
+  to map a file to a memory allocation.
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- fs/famfs/famfs_inode.c | 113 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 110 insertions(+), 3 deletions(-)
+ fs/famfs/Makefile         |   2 +-
+ fs/famfs/famfs_file.c     | 122 ++++++++++++++++++++++++++++++++++++++
+ fs/famfs/famfs_inode.c    |   2 +-
+ fs/famfs/famfs_internal.h |   2 +
+ 4 files changed, 126 insertions(+), 2 deletions(-)
+ create mode 100644 fs/famfs/famfs_file.c
 
-diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
-index 61306240fc0b..e00e9cdecadf 100644
---- a/fs/famfs/famfs_inode.c
-+++ b/fs/famfs/famfs_inode.c
-@@ -28,6 +28,9 @@
+diff --git a/fs/famfs/Makefile b/fs/famfs/Makefile
+index 62230bcd6793..8cac90c090a4 100644
+--- a/fs/famfs/Makefile
++++ b/fs/famfs/Makefile
+@@ -2,4 +2,4 @@
  
- #define FAMFS_DEFAULT_MODE	0755
+ obj-$(CONFIG_FAMFS) += famfs.o
  
-+static const struct inode_operations famfs_file_inode_operations;
-+static const struct inode_operations famfs_dir_inode_operations;
-+
- static struct inode *famfs_get_inode(struct super_block *sb,
- 				     const struct inode *dir,
- 				     umode_t mode, dev_t dev)
-@@ -52,11 +55,11 @@ static struct inode *famfs_get_inode(struct super_block *sb,
- 		init_special_inode(inode, mode, dev);
- 		break;
- 	case S_IFREG:
--		inode->i_op = NULL /* famfs_file_inode_operations */;
-+		inode->i_op = &famfs_file_inode_operations;
- 		inode->i_fop = NULL /* &famfs_file_operations */;
- 		break;
- 	case S_IFDIR:
--		inode->i_op = NULL /* famfs_dir_inode_operations */;
-+		inode->i_op = &famfs_dir_inode_operations;
- 		inode->i_fop = &simple_dir_operations;
- 
- 		/* Directory inodes start off with i_nlink == 2 (for ".") */
-@@ -70,6 +73,110 @@ static struct inode *famfs_get_inode(struct super_block *sb,
- 	return inode;
- }
- 
-+/***************************************************************************
-+ * famfs inode_operations: these are currently pretty much boilerplate
-+ */
-+
-+static const struct inode_operations famfs_file_inode_operations = {
-+	/* All generic */
-+	.setattr	   = simple_setattr,
-+	.getattr	   = simple_getattr,
-+};
-+
+-famfs-y := famfs_inode.o
++famfs-y := famfs_inode.o famfs_file.o
+diff --git a/fs/famfs/famfs_file.c b/fs/famfs/famfs_file.c
+new file mode 100644
+index 000000000000..48036c71d4ed
+--- /dev/null
++++ b/fs/famfs/famfs_file.c
+@@ -0,0 +1,122 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * File creation. Allocate an inode, and we're done..
++ * famfs - dax file system for shared fabric-attached memory
++ *
++ * Copyright 2023-2024 Micron Technology, Inc.
++ *
++ * This file system, originally based on ramfs the dax support from xfs,
++ * is intended to allow multiple host systems to mount a common file system
++ * view of dax files that map to shared memory.
 + */
-+static int
-+famfs_mknod(struct mnt_idmap *idmap, struct inode *dir, struct dentry *dentry,
-+	    umode_t mode, dev_t dev)
++
++#include <linux/fs.h>
++#include <linux/mm.h>
++#include <linux/dax.h>
++#include <linux/iomap.h>
++
++#include "famfs_internal.h"
++
++/*********************************************************************
++ * file_operations
++ */
++
++/* Reject I/O to files that aren't in a valid state */
++static ssize_t
++famfs_file_invalid(struct inode *inode)
 +{
-+	struct famfs_fs_info *fsi = dir->i_sb->s_fs_info;
-+	struct timespec64 tv;
-+	struct inode *inode;
-+
-+	if (fsi->deverror)
-+		return -ENODEV;
-+
-+	inode = famfs_get_inode(dir->i_sb, dir, mode, dev);
-+	if (!inode)
-+		return -ENOSPC;
-+
-+	d_instantiate(dentry, inode);
-+	dget(dentry);	/* Extra count - pin the dentry in core */
-+	tv = inode_set_ctime_current(inode);
-+	inode_set_mtime_to_ts(inode, tv);
-+	inode_set_atime_to_ts(inode, tv);
-+
++	if (!IS_DAX(inode)) {
++		pr_debug("%s: inode %llx IS_DAX is false\n", __func__, (u64)inode);
++		return -ENXIO;
++	}
 +	return 0;
 +}
 +
-+static int famfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+		       struct dentry *dentry, umode_t mode)
++static ssize_t
++famfs_rw_prep(struct kiocb *iocb, struct iov_iter *ubuf)
 +{
-+	struct famfs_fs_info *fsi = dir->i_sb->s_fs_info;
-+	int rc;
++	struct inode *inode = iocb->ki_filp->f_mapping->host;
++	struct super_block *sb = inode->i_sb;
++	struct famfs_fs_info *fsi = sb->s_fs_info;
++	size_t i_size = i_size_read(inode);
++	size_t count = iov_iter_count(ubuf);
++	size_t max_count;
++	ssize_t rc;
 +
 +	if (fsi->deverror)
 +		return -ENODEV;
 +
-+	rc = famfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFDIR, 0);
++	rc = famfs_file_invalid(inode);
 +	if (rc)
 +		return rc;
 +
-+	inc_nlink(dir);
++	max_count = max_t(size_t, 0, i_size - iocb->ki_pos);
 +
-+	return 0;
++	if (count > max_count)
++		iov_iter_truncate(ubuf, max_count);
++
++	if (!iov_iter_count(ubuf))
++		return 0;
++
++	return rc;
 +}
 +
-+static int famfs_create(struct mnt_idmap *idmap, struct inode *dir,
-+			struct dentry *dentry, umode_t mode, bool excl)
++static ssize_t
++famfs_dax_read_iter(struct kiocb *iocb, struct iov_iter	*to)
 +{
-+	struct famfs_fs_info *fsi = dir->i_sb->s_fs_info;
++	ssize_t rc;
 +
-+	if (fsi->deverror)
-+		return -ENODEV;
++	rc = famfs_rw_prep(iocb, to);
++	if (rc)
++		return rc;
 +
-+	return famfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
++	if (!iov_iter_count(to))
++		return 0;
++
++	rc = dax_iomap_rw(iocb, to, NULL /*&famfs_iomap_ops */);
++
++	file_accessed(iocb->ki_filp);
++	return rc;
 +}
 +
-+static const struct inode_operations famfs_dir_inode_operations = {
-+	.create		= famfs_create,
-+	.lookup		= simple_lookup,
-+	.link		= simple_link,
-+	.unlink		= simple_unlink,
-+	.mkdir		= famfs_mkdir,
-+	.rmdir		= simple_rmdir,
-+	.rename		= simple_rename,
-+};
-+
-+/*****************************************************************************
-+ * famfs super_operations
++/**
++ * famfs_dax_write_iter()
 + *
-+ * TODO: implement a famfs_statfs() that shows size, free and available space,
-+ * etc.
++ * We need our own write-iter in order to prevent append
++ *
++ * @iocb:
++ * @from: iterator describing the user memory source for the write
 + */
-+
-+/*
-+ * famfs_show_options() - Display the mount options in /proc/mounts.
-+ */
-+static int famfs_show_options(struct seq_file *m, struct dentry *root)
++static ssize_t
++famfs_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
 +{
-+	struct famfs_fs_info *fsi = root->d_sb->s_fs_info;
++	ssize_t rc;
 +
-+	if (fsi->mount_opts.mode != FAMFS_DEFAULT_MODE)
-+		seq_printf(m, ",mode=%o", fsi->mount_opts.mode);
++	rc = famfs_rw_prep(iocb, from);
++	if (rc)
++		return rc;
 +
-+	return 0;
++	if (!iov_iter_count(from))
++		return 0;
++
++	return dax_iomap_rw(iocb, from, NULL /*&famfs_iomap_ops*/);
 +}
 +
-+static const struct super_operations famfs_super_ops = {
-+	.statfs		= simple_statfs,
-+	.drop_inode	= generic_delete_inode,
-+	.show_options	= famfs_show_options,
++const struct file_operations famfs_file_operations = {
++	.owner             = THIS_MODULE,
++
++	/* Custom famfs operations */
++	.write_iter	   = famfs_dax_write_iter,
++	.read_iter	   = famfs_dax_read_iter,
++	.unlocked_ioctl    = NULL /*famfs_file_ioctl*/,
++	.mmap		   = NULL /* famfs_file_mmap */,
++
++	/* Force PMD alignment for mmap */
++	.get_unmapped_area = thp_get_unmapped_area,
++
++	/* Generic Operations */
++	.fsync		   = noop_fsync,
++	.splice_read	   = filemap_splice_read,
++	.splice_write	   = iter_file_splice_write,
++	.llseek		   = generic_file_llseek,
 +};
 +
-+/*****************************************************************************/
-+
- /*
-  * famfs dax_operations  (for char dax)
-  */
-@@ -103,7 +210,7 @@ famfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_blocksize		= PAGE_SIZE;
- 	sb->s_blocksize_bits	= PAGE_SHIFT;
- 	sb->s_magic		= FAMFS_SUPER_MAGIC;
--	sb->s_op		= NULL /* famfs_super_ops */;
-+	sb->s_op		= &famfs_super_ops;
- 	sb->s_time_gran		= 1;
+diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
+index e00e9cdecadf..490a2c0fd326 100644
+--- a/fs/famfs/famfs_inode.c
++++ b/fs/famfs/famfs_inode.c
+@@ -56,7 +56,7 @@ static struct inode *famfs_get_inode(struct super_block *sb,
+ 		break;
+ 	case S_IFREG:
+ 		inode->i_op = &famfs_file_inode_operations;
+-		inode->i_fop = NULL /* &famfs_file_operations */;
++		inode->i_fop = &famfs_file_operations;
+ 		break;
+ 	case S_IFDIR:
+ 		inode->i_op = &famfs_dir_inode_operations;
+diff --git a/fs/famfs/famfs_internal.h b/fs/famfs/famfs_internal.h
+index 951b32ec4fbd..36efaef425e7 100644
+--- a/fs/famfs/famfs_internal.h
++++ b/fs/famfs/famfs_internal.h
+@@ -11,6 +11,8 @@
+ #ifndef FAMFS_INTERNAL_H
+ #define FAMFS_INTERNAL_H
  
- 	return rc;
++extern const struct file_operations famfs_file_operations;
++
+ struct famfs_mount_opts {
+ 	umode_t mode;
+ };
 -- 
 2.43.0
 
