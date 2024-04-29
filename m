@@ -1,58 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-18119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31228B5F21
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 18:36:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCB48B5F7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 19:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0CC0B221A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 16:36:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACB9283FA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2024 17:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BCF85922;
-	Mon, 29 Apr 2024 16:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF786640;
+	Mon, 29 Apr 2024 17:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tfyk3HIA"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="a4NDn8EA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6B284A58;
-	Mon, 29 Apr 2024 16:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA22F8595F;
+	Mon, 29 Apr 2024 17:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714408552; cv=none; b=HHd617YptkU6m9QSFDYltqt679yOVQWTITWeKi2c14iRM0NwuUmvMEXFfGiA71mnWvXruje78SkEBvEZ5uiqzLtsvXp52IIGNk1J3GBfg2rljJzpJJBMOECQXao5u0kJBj4rafsfM5V2m7PoJwWf6rUQOQ8WVz41dUAL6SohsOw=
+	t=1714410137; cv=none; b=I+JpNg0AnHoHiKMNRpODicAl0ocZ1OUAmMAollOR6TEg7VLlvi9gZdeqqb9AOfvR0QOsBdxGtaWV4ew/6WNUIJzkQ6PHpjAI1ChFgBBqx3Uo0rORJFfq8zIGiEAkprB+tKT17etUG0gXWRcr7YETg7Ifiksi7ZskuBmy0RFEH+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714408552; c=relaxed/simple;
-	bh=Tkte1ZXDpuj4Yqy27Z3wPjS9EO/uFnFgnqfi4bNHG7Q=;
+	s=arc-20240116; t=1714410137; c=relaxed/simple;
+	bh=bSBKbk0dakvui62/1/gpj5Gf+LvIq6ltNpq6o8uujCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJGaTy3tTlw8x+K1L8weL62vVaubWuBgcRpLpDt9kC8Pz4KsApvwmA7PWl/BeGPZ/IlSY+jVEQYfzzWUgwIHads2Q+ATJHDLyafcIAfnRBeyBj4vFpFy7qH+TLrJce4GlJpajSlGCRoTUu5Ws2opCORqeuN6cIe30dcsWsHxXXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tfyk3HIA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227E5C4AF1B;
-	Mon, 29 Apr 2024 16:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714408552;
-	bh=Tkte1ZXDpuj4Yqy27Z3wPjS9EO/uFnFgnqfi4bNHG7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tfyk3HIAkPaEoXfOOGrrEaB5tW1bz7aRk3cWP14ZeP46WJdATa87w21AzjSsd5XOP
-	 9aAOl3HGR6hWceZU5qvZJZMdiGk5A4Nr6+8yrfV04aBsOPH/DlBQs4ilNz6DpPm7uC
-	 EFxbgs/hfvIeVST9N5+AXHJQDZgPwTTBJasg61wGHHAzHJWdB01bR7+2ZWzAJcngp6
-	 8rPHFraWAYOlwAg53a4OLJR1UJUV+mswKC4qg11Dqc7k/ln/jVNIEj6qg3oF2cGS0e
-	 s1tqMtoGqozJx9XRsK1qY1e31XYnEPMhIhWOgZnNq9mg91JnnosYT3uBHbDZvovioA
-	 1DQNdueqv8gNQ==
-Date: Mon, 29 Apr 2024 09:35:51 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH 12/13] fsverity: remove system-wide workqueue
-Message-ID: <20240429163551.GD360898@frogsfrogsfrogs>
-References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
- <171175868064.1987804.7068231057141413548.stgit@frogsfrogsfrogs>
- <20240405031407.GJ1958@quark.localdomain>
- <20240424180520.GJ360919@frogsfrogsfrogs>
- <j6a357qbjsf346khicummgmutjvkircf7ff7gd7for2ajn4k7q@q6dw22io6dcp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ibg0QbpUUHnyFh34Dzfe6/6W1P1wjmEh8zsbi+NlBesiPGXNUbL05Vo4LMvA89RMOdHmOI/Hi4NaMm0v8+K/OguCo+EnuVYwRrYDDc+lPkDgLxnxW+2/AO3uMk8WD1XeNGmeJgLO3nO5434DWMATPPpdtHQQYTQ7pmrT3PfR+wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=a4NDn8EA; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yTC+bWVgM4SBE+HjKOSSMptE8ndZVGdRXrI5RUQIhsY=; b=a4NDn8EAViKGB748ph/GzB4yNx
+	EkE+vTWSQuoylM13u+ONh7KVF/Pgil71T79f5ICgoA89/ysBKdIi80oROhm/m0i5bBrLq1YWxmL26
+	i6REVIhwhHnUCr24FrrCSIXAO+OcBDq+/NHZnbktqvrEoMA1VvapdGLUVYkEoODyygxnKe9jJjfZ0
+	8BUWCMVqMiGYFbFVrho7QavIjwkUrtH4fv+TZRI91Q3boVuvA4QctoC3yeT51WfqbKbV9aSSU2HBd
+	BBNpPTXzdcOuoGifoqa2Z5Ff9dWFDs7Jpbu4eo9ZvdEWwh/ftQIHkM4ZOE7493EVMf13X0QBxMkGV
+	Z+XJk1Cw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s1UOH-007Hz0-1Z;
+	Mon, 29 Apr 2024 17:02:09 +0000
+Date: Mon, 29 Apr 2024 18:02:09 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, Yu Kuai <yukuai1@huaweicloud.com>,
+	linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCHES][RFC] packing struct block_device flags
+Message-ID: <20240429170209.GA2118490@ZenIV>
+References: <20240428051232.GU2118490@ZenIV>
+ <20240429052315.GB32688@lst.de>
+ <20240429073107.GZ2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,83 +63,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <j6a357qbjsf346khicummgmutjvkircf7ff7gd7for2ajn4k7q@q6dw22io6dcp>
+In-Reply-To: <20240429073107.GZ2118490@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Apr 29, 2024 at 12:15:55PM +0200, Andrey Albershteyn wrote:
-> On 2024-04-24 11:05:20, Darrick J. Wong wrote:
-> > On Thu, Apr 04, 2024 at 11:14:07PM -0400, Eric Biggers wrote:
-> > > On Fri, Mar 29, 2024 at 05:35:48PM -0700, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > > 
-> > > > Now that we've made the verity workqueue per-superblock, we don't need
-> > > > the systemwide workqueue.  Get rid of the old implementation.
-> > > 
-> > > This commit message needs to be rephrased because this commit isn't just
-> > > removing unused code.  It's also converting ext4 and f2fs over to the new
-> > > workqueue type.  (Maybe these two parts belong as separate patches?)
-> > 
-> > Yes, will fix that.
-> > 
-> > > Also, if there are any changes in the workqueue flags that are being used for
-> > > ext4 and f2fs, that needs to be documented.
-> > 
-> > Hmm.  The current codebase does this:
-> > 
-> > 	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
-> > 						  WQ_HIGHPRI,
-> > 						  num_online_cpus());
-> > 
-> > Looking at commit f959325e6ac3 ("fsverity: Remove WQ_UNBOUND from
-> > fsverity read workqueue"), I guess you want a bound workqueue so that
-> > the CPU that handles the readahead ioend will also handle the verity
-> > validation?
-> > 
-> > Why do you set max_active to num_online_cpus()?  Is that because the
-> > verity hash is (probably?) being computed on the CPUs, and there's only
-> > so many of those to go around, so there's little point in making more?
-> > Or is it to handle systems with more than WQ_DFL_ACTIVE (~256) CPUs?
-> > Maybe there's a different reason?
-> > 
-> > If you add more CPUs to the system later, does this now constrain the
-> > number of CPUs that can be participating in verity validation?  Why not
-> > let the system try to process as many read ioends as are ready to be
-> > processed, rather than introducing a constraint here?
-> > 
-> > As for WQ_HIGHPRI, I wish Dave or Andrey would chime in on why this
-> > isn't appropriate for XFS.  I think they have a reason for this, but the
-> > most I can do is speculate that it's to avoid blocking other things in
-> > the system.
-> 
-> The log uses WQ_HIGHPRI for journal IO completion
-> log->l_ioend_workqueue, as far I understand some data IO completion
-> could require a transaction which make a reservation which
-> could lead to data IO waiting for journal IO. But if data IO
-> completion will be scheduled first this could be a possible
-> deadlock... I don't see a particular example, but also I'm not sure
-> why to make fs-verity high priority in XFS.
+On Mon, Apr 29, 2024 at 08:31:07AM +0100, Al Viro wrote:
 
-Ah, ok.  I'll add a comment about that to my patch then.
+> FWIW, we could go for atomic_t there and use
+> 	atomic_read() & 0xff
+> for partno, with atomic_or()/atomic_and() for set/clear and
+> atomic_read() & constant for test.  That might slightly optimize
+> set/clear on some architectures, but setting/clearing flags is
+> nowhere near hot enough for that to make a difference.
 
-> > In Andrey's V5 patch, XFS creates its own the workqueue like this:
-> > https://lore.kernel.org/linux-xfs/20240304191046.157464-10-aalbersh@redhat.com/
-> > 
-> > 	struct workqueue_struct *wq = alloc_workqueue(
-> > 		"pread/%s", (WQ_FREEZABLE | WQ_MEM_RECLAIM), 0, sb->s_id);
-> > 
-> > I don't grok this either -- read ioend workqueues aren't usually
-> > involved in memory reclaim at all, and I can't see why you'd want to
-> > freeze the verity workqueue during suspend.  Reads are allowed on frozen
-> > filesystems, so I don't see why verity would be any different.
-> 
-> Yeah maybe freezable can go away, initially I picked those flags as
-> most of the other workqueues in xfs are in same configuration.
+Incremental for that (would be folded into 3/8 if we went that way)
+is below; again, I'm not at all sure it's idiomatic enough to bother
+with, but that should at least show what's going on:
 
-<nod>
-
---D
-
-> -- 
-> - Andrey
-> 
-> 
+diff --git a/block/bdev.c b/block/bdev.c
+index 9aa23620fe92..fae30eae7741 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -411,7 +411,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+ 	mutex_init(&bdev->bd_fsfreeze_mutex);
+ 	spin_lock_init(&bdev->bd_size_lock);
+ 	mutex_init(&bdev->bd_holder_lock);
+-	bdev->__bd_flags = partno;
++	atomic_set(&bdev->__bd_flags, partno);
+ 	bdev->bd_inode = inode;
+ 	bdev->bd_queue = disk->queue;
+ 	if (partno && bdev_test_flag(disk->part0, BD_HAS_SUBMIT_BIO))
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 98e1c2d28d60..a822911e28e5 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -45,7 +45,7 @@ struct block_device {
+ 	struct request_queue *	bd_queue;
+ 	struct disk_stats __percpu *bd_stats;
+ 	unsigned long		bd_stamp;
+-	u32			__bd_flags;	// partition number + flags
++	atomic_t		__bd_flags;	// partition number + flags
+ 	dev_t			bd_dev;
+ 	struct inode		*bd_inode;	/* will die */
+ 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index d556cec9224b..a8271497ac62 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -722,38 +722,22 @@ void disk_uevent(struct gendisk *disk, enum kobject_action action);
+ 
+ static inline u8 bdev_partno(const struct block_device *bdev)
+ {
+-	return bdev->__bd_flags & 0xff;
++	return atomic_read(&bdev->__bd_flags) & 0xff;
+ }
+ 
+ static inline bool bdev_test_flag(const struct block_device *bdev, int flag)
+ {
+-	return bdev->__bd_flags & (1 << (flag + 8));
++	return atomic_read(&bdev->__bd_flags) & (1 << (flag + 8));
+ }
+ 
+ static inline void bdev_set_flag(struct block_device *bdev, int flag)
+ {
+-	u32 v = bdev->__bd_flags;
+-
+-	for (;;) {
+-		u32 w = cmpxchg(&bdev->__bd_flags, v, v | (1 << (flag + 8)));
+-
+-		if (v == w)
+-			return;
+-		v = w;
+-	}
++	atomic_or(1 << (flag + 8), &bdev->__bd_flags);
+ }
+ 
+ static inline void bdev_clear_flag(struct block_device *bdev, int flag)
+ {
+-	u32 v = bdev->__bd_flags;
+-
+-	for (;;) {
+-		u32 w = cmpxchg(&bdev->__bd_flags, v, v & ~(1 << (flag + 8)));
+-
+-		if (v == w)
+-			return;
+-		v = w;
+-	}
++	atomic_and(~(1 << (flag + 8)), &bdev->__bd_flags);
+ }
+ 
+ static inline int get_disk_ro(struct gendisk *disk)
 
