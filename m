@@ -1,161 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-18302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8068B6AD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 08:47:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADC78B6B2B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 09:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9677028132D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 06:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA681282BCC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 07:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE35C3A29A;
-	Tue, 30 Apr 2024 06:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbCASJSV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22813AC2B;
+	Tue, 30 Apr 2024 07:12:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE4D199AD;
-	Tue, 30 Apr 2024 06:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A8A2C683
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 07:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714459598; cv=none; b=c86ZgY58G+Dtd2QmmspOkKWY8QYkXHe5i99gFlpyNo8CzLwZitBl/muujLoh2I5uaJzY4mPAvOC8fqXCcL85+KE0aBwUe1LrLtNmFQxYbfOhkAoiKVNH3p7S8vOvfnobMpcC3W/t1hAbyBmmvlZ1d+KBPn3wBAkGscFMoSxmUX4=
+	t=1714461150; cv=none; b=nfz1TR3tI8nSWkwfO6bOkvHTZiczKCelencWVZtErRK/63migY2OxaA2Qvyqw6K77uvvJ47HDTj0e5TZu8dVxdaQ11QpLuadTEqaExXmtB0Pc61/e/3hnfm2s2pB58kO45Z80BR5EKnFodrij3SDTMsZLDlJkOY4EpY1jz8sI+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714459598; c=relaxed/simple;
-	bh=BJHpOQBTYl2CusEmnHRWz9TzqP85OwFTue5pk4Z5ba4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IILD+880TMzR5nNFg49TS8IzkmGcBIJgOP8fz6Wks6av+MTnl0jXYIa6Dy2MNWPJBPLU7IssRKs6Gie4i/hgK7AB4YXHadyH1rU7XgAY6115x1OAoe68Lrk/XnF1krOv14x7d3L+GZuQGXCV2tSvYFnmXGxqw1twDTDtDCKYOIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbCASJSV; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f3e3d789cdso3302938b3a.1;
-        Mon, 29 Apr 2024 23:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714459596; x=1715064396; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hCjGa0cyR+5KjlfrnK0wTPM9nmlXBCTQii4J3Gjgfc=;
-        b=VbCASJSVR7mb4y03jimQHsulDrXI5KKfUAYE9NqwPP3eN30bLLtYe5SwRPGmwgOwzx
-         sbNidX+3Qjdk2nbAPdq5aWH9tvB/syvXMuJh+inTn0SxqkrfMUcmXRfJgdYozExoB0Us
-         u2MWO22kxzVewCVqex1IXS6eiYAOqdxDG0Q3VZRLUrRhUY3+HtlNC5lV4RU3imtv0UCU
-         K35VtwMwrVPVE0MU4ah0LP9ScnhwAqrhnlsf3gX/QBbZBQ8Plw0h3bbSSLGSR5vvaInl
-         fVAHqL1/Re9q2yu641IWURD8vGuHjJt04QfS8J+ZIZrnbS+HgL99oWDoB9Iz60zdazO/
-         siSA==
+	s=arc-20240116; t=1714461150; c=relaxed/simple;
+	bh=8kOIIkTnsdnSonUhLv9/UaA+zad7K0ZVq0aEzCL8TUQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T26HjBqx/IOIOq5oBuqOGvBkgNB/6PYH68h2N/TNKPtwfDHtkAgPZ618miqHKphcbjprf3yHrEsO4riCvK7gI7LdptTdovJmtE5D0o3r4OmLYEvyE3CogTCChsvIYef/KTosp3GCEe5EH92DzI6ReTvYOpMnqWfjII8usMN1CCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7d9913d3174so555272639f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 00:12:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714459596; x=1715064396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hCjGa0cyR+5KjlfrnK0wTPM9nmlXBCTQii4J3Gjgfc=;
-        b=xMYLfx1UOKuxps1PuSM1eRtIQyGA3TkSoMUiWEGqzK4Cl4Gz9cpwT54vNl8QWg+gJp
-         WTAQbjsaUhTkhUK4vRJGK/g0bISQLh2Ma5gaz1kNf1xcmDsFnXva/LgVN9/qsTX6k0YZ
-         8OI8BTdmhend2gjOswqbXV05Z8W5ll0yejZ9eEL+um9Bn2gSNdhFO9VWcDyGeISwuQXc
-         GEqfhPNuTgFy2GCaAY23rZzgOmXqOV6/lt3yHGYlvXq70IyEUn/MWKKxxppH2oFjs/P8
-         kbi+mt5Icc46MvSjvBLU85TKiS3MDdaYf6E+1pI+dXbxH9BxYL/dUYTFpG8iKu/cFwek
-         5B+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUc7URIviLquADjEI1w3mynFsx59wXKufdixx6LHBl6o2eY7YsPYLUVhvAi9xS7ZmLsI5ib4ietB7OL9Ouujc6lwL5NWDfTM1oe183+5wtrCvXuAubzqoZJ0kNJL+Z5+8YM+MNgcuL5Zz9VZIl/gRsDQzdCkTI0T3pXERl+8w8CkHyQZoqp/hs7n3B7bFwIN6hpKEA4XVgjv9b13900MPo8yw==
-X-Gm-Message-State: AOJu0YxSLg5iausCRyfV932p6jezrW75rCuej0PU4lp4RFy/MhlBQLt7
-	f3WnQtfpNmgnZuiy5Bm4tijJfDL2Zk3NUxNusOrT7y0DbUrhMDlv
-X-Google-Smtp-Source: AGHT+IHZptiykpZhYjFmG4OGGymocqD+APs98M8NEhYGo1chm3Kg5U9XPh+dOTwbEH1pATR3JSfM+A==
-X-Received: by 2002:a05:6a20:de96:b0:1aa:7097:49e2 with SMTP id la22-20020a056a20de9600b001aa709749e2mr12942263pzb.50.1714459596260;
-        Mon, 29 Apr 2024 23:46:36 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id u2-20020a170902e5c200b001e556734814sm21511890plf.134.2024.04.29.23.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 23:46:35 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 64E1318462BA1; Tue, 30 Apr 2024 13:46:32 +0700 (WIB)
-Date: Tue, 30 Apr 2024 13:46:32 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: John Groves <John@groves.net>, Jonathan Corbet <corbet@lwn.net>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Linux CXL <linux-cxl@vger.kernel.org>,
-	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>,
-	Linux NVIDMM <nvdimm@lists.linux.dev>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: John Groves <jgroves@micron.com>, john@jagalactic.com,
-	Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com,
-	gregory.price@memverge.com, Randy Dunlap <rdunlap@infradead.org>,
-	Jerome Glisse <jglisse@google.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>,
-	Eishan Mirakhur <emirakhur@micron.com>,
-	Ravi Shankar <venkataravis@micron.com>,
-	Srinivasulu Thanneeru <sthanneeru@micron.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Steve French <stfrench@microsoft.com>,
-	Nathan Lynch <nathanl@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Julien Panis <jpanis@baylibre.com>,
-	Stanislav Fomichev <sdf@google.com>,
-	Dongsheng Yang <dongsheng.yang@easystack.cn>,
-	Mao Zhu <zhumao001@208suo.com>, Ran Sun <sunran001@208suo.com>,
-	Xiang wangx <wangxiang@cdjrlc.com>,
-	Shaomin Deng <dengshaomin@cdjrlc.com>,
-	Charles Han <hanchunchao@inspur.com>,
-	Attreyee M <tintinm2017@gmail.com>
-Subject: Re: [RFC PATCH v2 01/12] famfs: Introduce famfs documentation
-Message-ID: <ZjCTyOvpBDBuCg5i@archie.me>
-References: <cover.1714409084.git.john@groves.net>
- <0270b3e2d4c6511990978479771598ad62cf2ddd.1714409084.git.john@groves.net>
+        d=1e100.net; s=20230601; t=1714461148; x=1715065948;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4bIJ2+4VC6gGGh8bBw9yymu72oC7PpvLlQwyhTnjnXY=;
+        b=Ncs/sBtcT9IvMs8n1KVu4j3lt2Zs6rlk4aNry+Dd365XMRzJeehIWDfucNOykUmZmp
+         Jmos4Lw/Gc45lPdrsyoghm4VyXZP40oURdX2pFGtCkqMiEap/72pdyVq6URn9KvMynom
+         uqLNDBC69APumHOatICNdnqAfvfmaozHsxvvtBVFBjmzjFC2udEKI746dxcmxYsoLX6T
+         eaCnrXZPgMhcI3qyWjr7yRFfndzo4MNBkkHvyzYx241O4enpJadDo1FxApLpNlJFKsNr
+         Hq/nad82lH1CH6kdH4bLIiqRYIPa4NWKeVdeg7zQMkfNP+woaLAHf6ZOt51RPKHMAOY9
+         jsAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUR+zkP0ISSWHRrwamjJu33EPy3b27PILBT6UK8s/nR0eIZiACZPyKBHztubm6KEVxNFKO0D9fgJBbHHj001a7y7fQepawAvKMosiFW+g==
+X-Gm-Message-State: AOJu0Yz43l075wm0gx5CHEs+HBoZJXkvHkBQ/m8wCz2jNwfUQeruLUuA
+	91NsJVEGvhrItywxnKt84KCJRgWviRMd4iDbn9UQVqYIH+lFB5Tqzkd5Y0IxXt+KAX2xuEdSFs2
+	5jIxLjPWNtHSqHd8SsfgqC5CS4a6B9BX/KkVj9q50LB3EAdOo2e259bA=
+X-Google-Smtp-Source: AGHT+IFC19oIKhGX1rlYJgjVBL1OU7Ig1NdVc43Vgmk4vIZTiGKO3wuegWsILLqMgXIqc+uAApbL2U1YHW0jZrTQd6w8v46UpXIY
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="crT4BUp9nHuKakh4"
-Content-Disposition: inline
-In-Reply-To: <0270b3e2d4c6511990978479771598ad62cf2ddd.1714409084.git.john@groves.net>
+X-Received: by 2002:a05:6638:450b:b0:487:4afc:b6b with SMTP id
+ bs11-20020a056638450b00b004874afc0b6bmr647191jab.4.1714461148035; Tue, 30 Apr
+ 2024 00:12:28 -0700 (PDT)
+Date: Tue, 30 Apr 2024 00:12:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b5c82b06174b1793@google.com>
+Subject: [syzbot] Monthly v9fs report (Apr 2024)
+From: syzbot <syzbot+liste18b65911e42aaaf2e63@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lucho@ionkov.net, 
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+Hello v9fs maintainers/developers,
 
---crT4BUp9nHuKakh4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a 31-day syzbot report for the v9fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/v9fs
 
-On Mon, Apr 29, 2024 at 12:04:17PM -0500, John Groves wrote:
-> * Introduce Documentation/filesystems/famfs.rst into the Documentation
->   tree and filesystems index
-> * Add famfs famfs.rst to the filesystems doc index
-> * Add famfs' ioctl opcodes to ioctl-number.rst
-> * Update MAINTAINERS FILE
->=20
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 28 have been fixed so far.
 
-The doc LGTM, thanks!
+Some of the still happening issues:
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Ref Crashes Repro Title
+<1> 2768    Yes   WARNING in v9fs_fid_get_acl
+                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
+<2> 6       No    WARNING: refcount bug in p9_req_put (3)
+                  https://syzkaller.appspot.com/bug?extid=d99d2414db66171fccbb
+<3> 5       Yes   KMSAN: uninit-value in p9_client_rpc (2)
+                  https://syzkaller.appspot.com/bug?extid=ff14db38f56329ef68df
 
---=20
-An old man doll... just what I always wanted! - Clara
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---crT4BUp9nHuKakh4
-Content-Type: application/pgp-signature; name="signature.asc"
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
------BEGIN PGP SIGNATURE-----
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjCTwwAKCRD2uYlJVVFO
-o6cyAP9LSH332uDKE+seiJLwDjMnIq+YE0884MKXbf8SHc2gdQEArqUm84vOu682
-HXx1CyZQ45bTEfyOQgYNRg/+bNbzpw8=
-=+4jA
------END PGP SIGNATURE-----
-
---crT4BUp9nHuKakh4--
+You may send multiple commands in a single email message.
 
