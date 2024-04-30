@@ -1,129 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-18315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0738B7499
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 13:36:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0AD8B75BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 14:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B512CB20471
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 11:36:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3102844DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 12:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3E012D779;
-	Tue, 30 Apr 2024 11:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A4013FD6F;
+	Tue, 30 Apr 2024 12:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="p5MeRN+6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A6J4lvun"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DFD12C47A;
-	Tue, 30 Apr 2024 11:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F8F12B73
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 12:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714476956; cv=none; b=jS+Ub4NMszyWxGY8+1Nw76dO1JEIXA9KrJpOVcx7QUNSLOdpUwTLvfAuZ+itFIsq1TTvZjuyKTOCBCwGKXppT2Bab9HQChCknJKgqmDTm4ubThKup/OmaoY7kj7B3iRcLSwHPPHrnnwJ1cAiQaCtlasjUKlFvXUPSnFAQrYQgF8=
+	t=1714480204; cv=none; b=AjL195maxJT2R/wmIL+tvabZ+QmC2/QsQFyKdjgBbu3oTABBGSOr0tP+6W/WTJPdRLpktzGs4peG8mM1d4872HzWGiaQ+dc445s2z1JRi2h16duNxzrgfO0wSowWdIoFeaIq0/xv9pGkvSbnhRknl26DUk7d5dQYK7wqsUsmY4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714476956; c=relaxed/simple;
-	bh=g+cBr5orEjmAzQPCYbsMIuUiqJOlAHEMvwGH1h//IOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JbolQhZT3aKxqfOc3rRb47o+Ecc14rFQcH30th8SaSUW0IVIlUu0dwr6TYhmhEt2OvF8iGfgt3HfzSFfuikYS0o5G8Lizj9WZlr10fCmA5VvXCrQzsRIVWggUvtEbgcRnVgTRSrDiDd+vJuoJxAHCeOFW3ME9bIia3Ub8Wx12As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=p5MeRN+6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43UBRLmn014950;
-	Tue, 30 Apr 2024 11:35:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=Rz9uygTbqVG62LQ7p2+/PWf+aNdpv9MlmOBId+rAPVU=;
- b=p5MeRN+6BvR5gu5pdMowbZIbZUXkxcEk9rpIE2pbvx0/fWIpcpb7XIShwJ4k/k9GXKvk
- 0qne6Haivv7viZ0LolsY5bRYaFMXaly2pTRHR4Y68juVp5ZVXprTb6S265IVd5NVfcDi
- OE6Gw1RHoQN7Acm4dvMOqGfSzLCkEt4oOoV82OgPC5ndZ5Rm6m3umKArELou45t+gs+c
- EDcYRSN2wT0yKSXKOMv89BpQEyqGSkh864ntzzOm1c3CDeQF1DPRAA9mN6jQvPfS/u4k
- NShcMFi7dT3sCIL7qdjqEd5sqU3t93j3MTYnbJ6KyESOc1GTPv6LlP1Xe7ZbcsaYfJZM Bw== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xtysgg0pc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 11:35:25 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 43UB79BO015592;
-	Tue, 30 Apr 2024 11:35:24 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xsed2vbtp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 11:35:24 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 43UBZLbl15336182
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Apr 2024 11:35:23 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E18458059;
-	Tue, 30 Apr 2024 11:35:21 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C33058055;
-	Tue, 30 Apr 2024 11:35:18 +0000 (GMT)
-Received: from [9.152.212.230] (unknown [9.152.212.230])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 30 Apr 2024 11:35:18 +0000 (GMT)
-Message-ID: <84024ec7-4689-4f68-85ce-bee9fc7b1c5c@linux.ibm.com>
-Date: Tue, 30 Apr 2024 13:35:17 +0200
+	s=arc-20240116; t=1714480204; c=relaxed/simple;
+	bh=rvl2LGQYTgzq38mG6SzOpcDNFvD/j4jBEIgOtnfpgmM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsHcZNuQUKzJArlxC+Z47xZSKEZWStnxvhAa+71FaLcaMeWw8VotGOs9XMvJbH5hm+fA4fAQONdqs1rUC7QTTL0cr2IB9excldjbCu05X9w73SfOGTh559AKprJ0N9ipRk8XcgYT9RK1f651HbcZvPF8HPHb+4ZnUY95cInwyrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A6J4lvun; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714480201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PSKTo0fsUqmzxcGkY1pyXO8izPBGY9fWGNOTqw95lTQ=;
+	b=A6J4lvun1KlwYAb2Ix0K0OWTyD2KtEZFwJrsbn3KrPA9zr5CBGVdNug4o6MZvr7IyKtzR8
+	DCLytg7V2bF5lHBf56C+qZdat24PD37sdadJKPFKz4W5N3bkojASZivg53G++cgXUh6lZX
+	okqyu67HN278I9GpWVRSoAgvKaLl4EA=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-596-PSc7PI4mMBuye8CjWUsR6g-1; Tue, 30 Apr 2024 08:29:30 -0400
+X-MC-Unique: PSc7PI4mMBuye8CjWUsR6g-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a55709e5254so272822766b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 05:29:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714480145; x=1715084945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PSKTo0fsUqmzxcGkY1pyXO8izPBGY9fWGNOTqw95lTQ=;
+        b=uJmbvad66LP1lD2JPLIbOtb0x+cWN1yPTpTXQqPC7dsFVo7CqmBPFXlJ5IzsxWU1lC
+         pAmEwZTeVj7lhYjfCSg0lyL3y9c2uXg6izOY2x1e9au7FQYPg5tyHJx7yuIDIBEp2CnJ
+         HJvjpiKe5yBmrdxoTsQNqf0n9GolF+8Q7JhWb3sHPYx2W0VmcsXO1Y4kpGI0qkh4vFJC
+         n7k2TvjVgf4zvKG9aL1q0PCFpPVL2h4mThFK1XJoLJLzVNz+YyenqmHDWth3q+Bejc9F
+         DUv9+QY60Z1JVZYqNLv7upXL0Ah5bbRC7PVYKewNH9Xu9WnmY2dpTvOTGbkGxQorynIH
+         lolQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ9udzvFpfCtTVa9NUF/1LP+hwJlcSVwjZu29JgWW/AAlS7I6GgCg3zMQeHSm7/5V4t21lVGi3vqFT3Nbk0L7RfWRzyiKimTxUeSkDrg==
+X-Gm-Message-State: AOJu0Yz8M2jrYwU0c96OCo0ylMpi6Y1w2FVe8VIdDqFXzU7PRZtK2mkp
+	nselbFmw/yFhChW4gKizSJ3hb8cb/jDvwDWDvO4dBnezA0SSqvAy6AKiyPEoRoHnDsDLjcFjap9
+	/81S19z0D8O+3wlQBTnnCvaQtPtbn7RMXp7Rwjo4abLSaeaXfwoLOx/uXeMdMqg==
+X-Received: by 2002:a17:906:140a:b0:a55:b05b:cdf2 with SMTP id p10-20020a170906140a00b00a55b05bcdf2mr1982561ejc.21.1714480145009;
+        Tue, 30 Apr 2024 05:29:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExbEF0B6PaeOO+gY91rAjKvEnZ0XZPuVp+IG/Xa1dBjLeL09mDJp7gx/hEZ7mhWw+WUvxzVQ==
+X-Received: by 2002:a17:906:140a:b0:a55:b05b:cdf2 with SMTP id p10-20020a170906140a00b00a55b05bcdf2mr1982527ejc.21.1714480144432;
+        Tue, 30 Apr 2024 05:29:04 -0700 (PDT)
+Received: from thinky ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id u3-20020a170906b10300b00a52552a8605sm14992175ejy.159.2024.04.30.05.29.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Apr 2024 05:29:04 -0700 (PDT)
+Date: Tue, 30 Apr 2024 14:29:03 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: zlang@redhat.com, ebiggers@kernel.org, fsverity@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, guan@eryu.me, linux-xfs@vger.kernel.org, fstests@vger.kernel.org
+Subject: Re: [PATCH 4/6] xfs: test xfs_scrub detection and correction of
+ corrupt fsverity metadata
+Message-ID: <4atckq27cuppwfue762g3xctp46dnwmjffawuxqsdfq6qeb5rd@g4snomzn7v4g>
+References: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
+ <171444688039.962488.5264219734710985894.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vfs.all 15/26] s390/dasd: use bdev api in dasd_format()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-s390@vger.kernel.org, jack@suse.cz, hch@lst.de, brauner@kernel.org,
-        axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
-        yukuai3@huawei.com, Yu Kuai <yukuai1@huaweicloud.com>,
-        Eduard Shishkin <edward6@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>
-References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-16-yukuai1@huaweicloud.com>
- <20240416013555.GZ2118490@ZenIV>
- <Zh47IY7M1LQXjckX@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <ca513589-2110-45fe-95b7-5ce23487ea10@linux.ibm.com>
- <20240428185823.GW2118490@ZenIV> <20240428232349.GY2118490@ZenIV>
- <dc4325fb-d723-4d9f-adb7-7ee65a195231@linux.ibm.com>
- <20240430003036.GD2118490@ZenIV>
-Content-Language: en-US
-From: Stefan Haberland <sth@linux.ibm.com>
-In-Reply-To: <20240430003036.GD2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -ZYTew2xQeNqA-vYR2MxqK4HBtCiky7r
-X-Proofpoint-ORIG-GUID: -ZYTew2xQeNqA-vYR2MxqK4HBtCiky7r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-30_04,2024-04-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- bulkscore=0 priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 spamscore=0 mlxlogscore=565 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2404010000
- definitions=main-2404300083
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171444688039.962488.5264219734710985894.stgit@frogsfrogsfrogs>
 
-Am 30.04.24 um 02:30 schrieb Al Viro:
-> On Mon, Apr 29, 2024 at 04:41:19PM +0200, Stefan Haberland wrote:
->
->> The dasdfmt tool checks if the disk is actually in use and refuses to
->> work on an 'in use' DASD.
->> So for example a partition that was in use has to be unmounted first.
-> Hmm...  How is that check done?  Does it open device exclusive?
->
+On 2024-04-29 20:41:50, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+> 
+> Create a basic test to ensure that xfs_scrub media scans complain about
+> files that don't pass fsverity validation.
+> 
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+>  tests/xfs/1880     |  135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/xfs/1880.out |   37 ++++++++++++++
+>  2 files changed, 172 insertions(+)
+>  create mode 100755 tests/xfs/1880
+>  create mode 100644 tests/xfs/1880.out
+> 
+> 
+> diff --git a/tests/xfs/1880 b/tests/xfs/1880
+> new file mode 100755
+> index 0000000000..a2119f04c2
+> --- /dev/null
+> +++ b/tests/xfs/1880
+> @@ -0,0 +1,135 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2024 Oracle.  All Rights Reserved.
+> +#
+> +# FS QA Test 1880
+> +#
+> +# Corrupt fsverity descriptor, merkle tree blocks, and file contents.  Ensure
+> +# that xfs_scrub detects this and repairs whatever it can.
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick verity
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	_restore_fsverity_signatures
+> +	rm -f $tmp.*
+> +}
+> +
+> +. ./common/verity
+> +. ./common/filter
+> +. ./common/fuzzy
+> +
+> +_supported_fs xfs
+> +_require_scratch_verity
+> +_disable_fsverity_signatures
+> +_require_fsverity_corruption
+> +_require_scratch_nocheck	# fsck test
+> +
+> +_scratch_mkfs >> $seqres.full
+> +_scratch_mount
+> +
+> +_require_scratch_xfs_scrub
+> +_require_xfs_has_feature "$SCRATCH_MNT" verity
+> +VICTIM_FILE="$SCRATCH_MNT/a"
+> +_fsv_can_enable "$VICTIM_FILE" || _notrun "cannot enable fsverity"
 
-No, it just checks the open_count gathered from the driver through 
-another ioctl.
+I think this is not necessary, _require_scratch_verity already does
+check if verity can be enabled (with more detailed errors).
 
-And yes, of course there is a race in this check that between gathering 
-the data
-and disabling the device it could be opened.
+Otherwise, looks good to me:
+Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+
+-- 
+- Andrey
 
 
