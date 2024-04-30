@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-18296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1978B6925
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28928B6927
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7F2281490
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 436B11F2149A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEBA11187;
-	Tue, 30 Apr 2024 03:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0046C10A3F;
+	Tue, 30 Apr 2024 03:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUQnIYLw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvMyL9O7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ED110799;
-	Tue, 30 Apr 2024 03:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5542311CBD;
+	Tue, 30 Apr 2024 03:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714448480; cv=none; b=odBtZDndFOO0oy67yDedEr0+yLKHVss8QFo/SSFIht6b3683mdAHdQKQHL0g9LJy6Lj+oR7pvgzxzczL7KKfot5Gb3SER5r7qOEZ9Qd7sFeh+u9MGPXYGHsTRsqgt1g50ykbDX3gzYBnq+ea6Z6U6z7b/FssbudYBU0qOOpHMwQ=
+	t=1714448495; cv=none; b=hBdXrWB6rmfMPEIYBCmSxMht3YYhcpA23uumQWPndyLTGykFUsS/3KhNwHrTV9tc5U7BYtikasHmCZF3cX+MM/VNnl2T5a8d3fRpch9aySJl2QGd+I9DK/bBnC8eeEbA/Nn9eLsbffRWAhNBJWQ/GFRlwWmkldnHFVjavBRMMRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714448480; c=relaxed/simple;
-	bh=BNuhBfz8p90b3tugGpJQ21bYXxQIzLmERz5lJk6RXJg=;
+	s=arc-20240116; t=1714448495; c=relaxed/simple;
+	bh=jkDQ8eXsq+DHM5pSHVl9SYPETIT1FOlvO5lUtfN+v24=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jMqQSdG8kFjZyqP69Se1LnPUrMvGtjCIc6pZ5Q9WLEo9sRXmKzb2NiaFqesXyDwNc0gaNEHIqlAHuA8w3Ib1hxXaImjewzTqvCfivXa1f8wuloQiT5eGUmcOi+ZiMnj0FI6s58ZqnUKKhsloP1BELUVniMvTI3ewm5c1mW7Rb9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUQnIYLw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8637BC116B1;
-	Tue, 30 Apr 2024 03:41:19 +0000 (UTC)
+	 MIME-Version:Content-Type; b=TYEkG9YZa8l5llzdoZMyH6PKWGr/d/9t547KD9GWtYLZtL/y7ed5vddxfcXyro9BdTie/9XHX+uAGfowDEDgxN1clIeb0r97fGpf/AZ78GTEczbX9rqJCytf1rMSGZgksrJYq3JybPOEOMYJ0FzzPLLivN9nYO5SNmNu5Kd0DYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvMyL9O7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256E7C116B1;
+	Tue, 30 Apr 2024 03:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714448479;
-	bh=BNuhBfz8p90b3tugGpJQ21bYXxQIzLmERz5lJk6RXJg=;
+	s=k20201202; t=1714448495;
+	bh=jkDQ8eXsq+DHM5pSHVl9SYPETIT1FOlvO5lUtfN+v24=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=rUQnIYLwKct0DckLry7PuJAIYDpyBlLa1e+AjfgI/yGVH+B+7rUoxDsHcRt+iQ+ZH
-	 JQQKpvI4kqDXkgWoTtJBPQ25sIsw/sztpG826CEwvqsHSj+W/JI2L1/IZOTzc1iNG1
-	 eLg6yT9XqSo+Ep66L/IwEraaWUTjscxZ6oS9LiaEM1f7dL9NAieZWbAKhh7B6Mg3bA
-	 y05jzxzAt/YDwzXoKcuFaTi6kipbMELHU9giksmqREmNIQLfg4zt3aBHdEPDDyD8CM
-	 8T5rlE5ICVI+WuQFLG2iItGIwdpu6blqhUb4kAyfoV3F8QnbwtsG/+t4Q9qCUxcja3
-	 lxRiMHGxU0Vlg==
-Date: Mon, 29 Apr 2024 20:41:19 -0700
-Subject: [PATCH 2/6] xfs/{021,122}: adapt to fsverity xattrs
+	b=JvMyL9O7DtsHeJAuOtUlU/n6Ybj9+vv6utvj/TlMZkxtXsZHpWD6zLn6vge7cLfiP
+	 Y4heCy5FNJVa8EI+qVyB12bNrfyYv+77PofauYg5UdaMePiSwrzbuvFL48MHjxNwb2
+	 SPBiSpbTdnlvyel+wCp+Pvu1ZK3gq3vIH0BUiqQMMcc4WEdL5UoMW88KWOhmT/8Ipe
+	 W6+puVd7ziXOUFLzu35w54ellSSFRu40frwUQHJo+/LwNJr0sATwH7bszNr+HhiX75
+	 k/+9HpQdNy3T4Vw+7o/RO/I5GbnmHfWgIqWM1oJ65QIKgW+xci/rUK6s619g1k8pgy
+	 LtZV3FKHX01Zg==
+Date: Mon, 29 Apr 2024 20:41:34 -0700
+Subject: [PATCH 3/6] xfs/122: adapt to fsverity
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, zlang@redhat.com, ebiggers@kernel.org,
  djwong@kernel.org
 Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, guan@eryu.me,
  linux-xfs@vger.kernel.org, fstests@vger.kernel.org
-Message-ID: <171444688009.962488.1019465154475766682.stgit@frogsfrogsfrogs>
+Message-ID: <171444688024.962488.13214660928692324111.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
 References: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,55 +63,33 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Adjust these tests to accomdate the use of xattrs to store fsverity
-metadata.
+Add fields for fsverity ondisk structures.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- tests/xfs/021     |    3 +++
- tests/xfs/122.out |    1 +
- 2 files changed, 4 insertions(+)
+ tests/xfs/122.out |    2 ++
+ 1 file changed, 2 insertions(+)
 
 
-diff --git a/tests/xfs/021 b/tests/xfs/021
-index ef307fc064..dcecf41958 100755
---- a/tests/xfs/021
-+++ b/tests/xfs/021
-@@ -118,6 +118,7 @@ _scratch_xfs_db -r -c "inode $inum_1" -c "print a.sfattr"  | \
- 	perl -ne '
- /\.secure/ && next;
- /\.parent/ && next;
-+/\.verity/ && next;
- 	print unless /^\d+:\[.*/;'
- 
- echo "*** dump attributes (2)"
-@@ -128,6 +129,7 @@ _scratch_xfs_db -r -c "inode $inum_2" -c "a a.bmx[0].startblock" -c print  \
- 	| perl -ne '
- s/,secure//;
- s/,parent//;
-+s/,verity//;
- s/info.hdr/info/;
- /hdr.info.crc/ && next;
- /hdr.info.bno/ && next;
-@@ -135,6 +137,7 @@ s/info.hdr/info/;
- /hdr.info.lsn/ && next;
- /hdr.info.owner/ && next;
- /\.parent/ && next;
-+/\.verity/ && next;
- s/^(hdr.info.magic =) 0x3bee/\1 0xfbee/;
- s/^(hdr.firstused =) (\d+)/\1 FIRSTUSED/;
- s/^(hdr.freemap\[0-2] = \[base,size]).*/\1 [FREEMAP..]/;
 diff --git a/tests/xfs/122.out b/tests/xfs/122.out
-index abd82e7142..019fe7545f 100644
+index 019fe7545f..22f36c0311 100644
 --- a/tests/xfs/122.out
 +++ b/tests/xfs/122.out
-@@ -142,6 +142,7 @@ sizeof(struct xfs_scrub_vec) = 16
- sizeof(struct xfs_scrub_vec_head) = 40
- sizeof(struct xfs_swap_extent) = 64
- sizeof(struct xfs_unmount_log_format) = 8
-+sizeof(struct xfs_verity_merkle_key) = 8
- sizeof(struct xfs_xmd_log_format) = 16
- sizeof(struct xfs_xmi_log_format) = 88
- sizeof(union xfs_rtword_raw) = 4
+@@ -65,6 +65,7 @@ sizeof(struct xfs_agfl) = 36
+ sizeof(struct xfs_attr3_leaf_hdr) = 80
+ sizeof(struct xfs_attr3_leafblock) = 88
+ sizeof(struct xfs_attr3_rmt_hdr) = 56
++sizeof(struct xfs_attr3_rmtverity_hdr) = 36
+ sizeof(struct xfs_attr_sf_entry) = 3
+ sizeof(struct xfs_attr_sf_hdr) = 4
+ sizeof(struct xfs_attr_shortform) = 8
+@@ -120,6 +121,7 @@ sizeof(struct xfs_log_dinode) = 176
+ sizeof(struct xfs_log_legacy_timestamp) = 8
+ sizeof(struct xfs_map_extent) = 32
+ sizeof(struct xfs_map_freesp) = 32
++sizeof(struct xfs_merkle_key) = 8
+ sizeof(struct xfs_parent_rec) = 12
+ sizeof(struct xfs_phys_extent) = 16
+ sizeof(struct xfs_refcount_key) = 4
 
 
