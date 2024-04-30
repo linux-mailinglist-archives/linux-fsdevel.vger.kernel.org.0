@@ -1,87 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-18323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3936F8B76EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:23:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56C98B76F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A1F81C221BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 13:23:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07FBAB20A08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 13:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D088171669;
-	Tue, 30 Apr 2024 13:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C0917167B;
+	Tue, 30 Apr 2024 13:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Id0L6v32"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKgN3mp1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142EF171E4F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 13:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8FF17109E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 13:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714483377; cv=none; b=V776AyfB24yRBm2Nntygio+yRAJOaaB6bR+4j4APz38bVyXTx/pkyFhClf7fW+UPoP4d3uRipKLaKcNcPgFXW4f3lgcfLtyW4Z6zqAwKuEkPtSDJHTr6NiYZZuVBJBApO7RkMdelcvnmVjlTVSgzjCtRherTrGqoMQTXvJNW1bU=
+	t=1714483563; cv=none; b=mi7BZJcj+57lw+t1WcYmouzMSR8+BW2Dw1RDiqgAwmPSuF5BBS40p6yq6gx6zKvguKo6oE0JbfqMcWL1F6nz/PzKjXQvUOVNB5Q5A4RJuhuX51WBjfAr06NJb3rlwZ3N8eMfuDTDYHbSTdjZ3FssrYcOfzJ5/9XwgFvrQRhCez4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714483377; c=relaxed/simple;
-	bh=YnEJ0sEcEqRvMruWiehseLaJw4OasqybHAEjGtiIl2s=;
+	s=arc-20240116; t=1714483563; c=relaxed/simple;
+	bh=qxKHc+3IjdtgWPSzmFTsm4Rp1Qe+Rn+ZDTiZ1WfOFko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=koa3qAL536WYlafrSXfYopUkNzdRef0zZrJYYeJvNLXaPeo+bvMr5FfaE5vzFyjqlizA4lG/CHB2HNHmd+7T0hdZY21sr7J05XFo1nkL1FLJjH7PU2bqvsP/pn/UgmQH9RzkTnEuqQVWWm25bi1/a06xZ989fIaPVqVj3JQ3P6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Id0L6v32; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhiXCh3vad3Azb1sP4wLcUCa+t7xkQA/7zkF+87IwHA0EEsKFzpj9KZ4PGgbF4THU6GkXRDqjHSIHutGAI/YSwcpAUV8Mfh+KHnX7qe/GFPtt2JQ+yBtW1XCazs8eSlgs6iyaRoI32mZzHWog4TWeVLT2EzPdi1xj0vD/Z3l9H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKgN3mp1; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714483375;
+	s=mimecast20190719; t=1714483561;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kf4VuVjSkqqaSBuXyiy9b+enj0lsiQgUxAzYhGA5mE8=;
-	b=Id0L6v32oey+N40rOj0hWK9lp0rb6ECgGCXCDpFwqAIbtqL0BVZjxS49n4xdQMhhWylc+8
-	eebXv6PQGUAN3/Qwl69nd9n3o8+YgqCAfS/Zy2NYjZXxPMcNtDpGzFKK7iEJ/XJj1Xox3l
-	TacriKsOAV+THXxRjqfi/nrNyfsFMJ8=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=5bYB5V2IJRmUQ43j0ThALYY+p/bSkCZh56Wtp2ChfRM=;
+	b=TKgN3mp1nzxKiW0+mFPO9QhGqOgUwphUI1rXXRztjq/3yiScgCF7wxwosLythA8IPgkI6H
+	0LE65GEvOFQl8LxsVV+UfYI2zOEsvSnjMMZlGM9qHeEtIespjPvHGbS929riUjbcEtTJaR
+	GgpcNhGafX1kWceksv0m5GIOMVQqd6o=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-AGiZTdwpMoeVQRteOfTkXw-1; Tue, 30 Apr 2024 09:22:53 -0400
-X-MC-Unique: AGiZTdwpMoeVQRteOfTkXw-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-558aafe9bf2so3442920a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 06:22:53 -0700 (PDT)
+ us-mta-214-lTWCjtPLNw2NiTrsyNl4xQ-1; Tue, 30 Apr 2024 09:25:59 -0400
+X-MC-Unique: lTWCjtPLNw2NiTrsyNl4xQ-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1ec263943d0so9299345ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 06:25:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714483372; x=1715088172;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kf4VuVjSkqqaSBuXyiy9b+enj0lsiQgUxAzYhGA5mE8=;
-        b=sU9UiKob9sqWjvOGA1dtDDMxz3UL+6enXYdir1gzZ0drkhgQo20GE0Ogup0+evjwuk
-         JO52WuDednDRJ7MENqcl4EH1D1cJjvlZdgOy8oVCgJl2dUhX3DomW8F+eKIUNUTzMHXU
-         0eTu1IjnZ2rqfno5A5Muahzw6zj3ozMwCF1XhXK/PBOgww0W7BrCAEyGp9Cn9mQu5Ust
-         75SVi+dHwqDlOSrwz/dljfiswBawHHN8p7VLFFxvaqW00nlcsenc8/ryRDf48HYAyFkn
-         f2es0rfVPX52sd7C8Ru5ymvVTsK0yHIcJUZjXBI2UtrxUYJQU7WKsPEpy69bZOOdOFZS
-         3/OA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEzcOjpDqGQgYibNy4jhI2EhkUHkBC0P2L3bSYlg+LeRkuzmz8SaFP0Q/LZkNqPqLcodQ2epkKP4LFyS5WN+aYXGRoDcz+Xtz+W7sCvQ==
-X-Gm-Message-State: AOJu0YwROXOoqlkmpgiaHU9o6N+HGe5Db8F71ZDpOWSgg3jgv4wkONas
-	B7zWauWA0gPXKAB5aPPJxqEYA3mbQVytll3iDIoW3HKsqOyUaC3JHZeOzJ831LvaCTnbdvo5EID
-	0m7AlgB9Hi5Tj+S+r/VZoa3lvuThKc2pA/I3aGBVeJw1aOB2ZBD7zGnAAHrBDuvRxcuGapw==
-X-Received: by 2002:a50:9993:0:b0:572:9e96:cdd0 with SMTP id m19-20020a509993000000b005729e96cdd0mr891909edb.2.1714483372144;
-        Tue, 30 Apr 2024 06:22:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEpwaRQV/7d7WM8xQJn8O8slwrFWWcV0hlAQMVCF07J1eFJuZ01TvonvPaHMPCXLdzduGgyw==
-X-Received: by 2002:a50:9993:0:b0:572:9e96:cdd0 with SMTP id m19-20020a509993000000b005729e96cdd0mr891893edb.2.1714483371609;
-        Tue, 30 Apr 2024 06:22:51 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id b61-20020a509f43000000b0056e51535a2esm14826411edf.82.2024.04.30.06.22.50
+        d=1e100.net; s=20230601; t=1714483558; x=1715088358;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5bYB5V2IJRmUQ43j0ThALYY+p/bSkCZh56Wtp2ChfRM=;
+        b=EfrzbUbYhBzLc+ecZ2nwyKmo0BWnm7nYjTuwim+chdkORT40AyHZCezh6gqyr1cjKo
+         xwLYaKsgDC5jtXb5UDXfbSYmpTS2IYCUht3wjB8nEAo+RBIdTgSgiEAP+ePta0dTTrUb
+         YTT6HsTYliA8O4729A8fZVjsC8LwRSuFEdh+q8Dfn4w2eBO9Ik/7ji9JKMwiBvtVEGV8
+         Ca253WSqiRJv3iTdGnwptYXapRXC8xqZz0wi7uigVlYuOggJoNddDSy9hmJ0ccKxlkGV
+         HF7Zj2eJcR4n2bVvCQBaPg6iXG2KHMwem2evl07iFG486urCIdbs6YW8pTRZ3If0IgQp
+         sP3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ5uzJsNqvl13b+DtTVDO2xBfRu7vOP0c6Nda8YFCu9R4g6Joei3tQTtNpYMNSF0p4uxH0KeX4OXDeYp/kk+tuNDVPHqCc+7k0ESbhOw==
+X-Gm-Message-State: AOJu0Ywim4AzzozQqefaMGHB9PNCOSUN/RLxiAWfiwg0cdFFNX9d+wQF
+	pRCtMJ68au/4SW7Cz6Gv9YeW6I93amPmuaZL62dMaL1RvFwywKcf2ByL0Y0V4qK8w3Uz9c2Ipvn
+	vVTi7OxerIHl1+GSID7YgDScPfzWgx3cNEcMeBXhqMeGufgUXK2qrzQRD7+Pqt/Q=
+X-Received: by 2002:a17:902:f550:b0:1eb:b50e:3577 with SMTP id h16-20020a170902f55000b001ebb50e3577mr10570420plf.56.1714483558646;
+        Tue, 30 Apr 2024 06:25:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxs4AWBUfB1yS81UFM8h1aOfhXtPbsohVjWorZOtXKS8eQlwPvSE0k3WOK36lgTTVuZX0QVw==
+X-Received: by 2002:a17:902:f550:b0:1eb:b50e:3577 with SMTP id h16-20020a170902f55000b001ebb50e3577mr10570389plf.56.1714483558318;
+        Tue, 30 Apr 2024 06:25:58 -0700 (PDT)
+Received: from fedora ([142.189.203.61])
+        by smtp.gmail.com with ESMTPSA id l13-20020a170902f68d00b001ebd7ef383fsm3846580plg.203.2024.04.30.06.25.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 06:22:51 -0700 (PDT)
-Date: Tue, 30 Apr 2024 15:22:50 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: zlang@redhat.com, ebiggers@kernel.org, fsverity@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, guan@eryu.me, linux-xfs@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCH 6/6] common/populate: add verity files to populate xfs
- images
-Message-ID: <jalepm6lu3nwy4bext62pj2fii6s2iknkgbsh5p3ltz65yeqcs@5z4s72utnopv>
-References: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
- <171444688070.962488.15915265664424203708.stgit@frogsfrogsfrogs>
+        Tue, 30 Apr 2024 06:25:57 -0700 (PDT)
+Date: Tue, 30 Apr 2024 09:25:55 -0400
+From: Lucas Karpinski <lkarpins@redhat.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, alexl@redhat.com, echanude@redhat.com, ikent@redhat.com, 
+	ahalaney@redhat.com
+Subject: Re: [RFC v2 1/1] fs/namespace: defer RCU sync for MNT_DETACH umount
+Message-ID: <6rp73lih7g2b7i5rhsztwc66quq6fi3mesel52uavvt7uhfzlf@6rytjc7gb2tj>
+References: <20240426195429.28547-1-lkarpins@redhat.com>
+ <20240426195429.28547-2-lkarpins@redhat.com>
+ <20240426200941.GP2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,62 +91,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <171444688070.962488.15915265664424203708.stgit@frogsfrogsfrogs>
+In-Reply-To: <20240426200941.GP2118490@ZenIV>
+User-Agent: NeoMutt/20240201
 
-On 2024-04-29 20:42:21, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
+On Fri, Apr 26, 2024 at 09:09:41PM +0100, Al Viro wrote:
+> > +		call_rcu(&drelease->rcu, delayed_mount_release);
 > 
-> If verity is enabled on a filesystem, we should create some sample
-> verity files.
-> 
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  common/populate |   24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> 
-> diff --git a/common/populate b/common/populate
-> index 35071f4210..ab9495e739 100644
-> --- a/common/populate
-> +++ b/common/populate
-> @@ -520,6 +520,30 @@ _scratch_xfs_populate() {
->  		done
->  	fi
->  
-> +	# verity merkle trees
-> +	is_verity="$(_xfs_has_feature "$SCRATCH_MNT" verity -v)"
-> +	if [ $is_verity -gt 0 ]; then
-> +		echo "+ fsverity"
-> +
-> +		# Create a biggish file with all zeroes, because metadump
-> +		# won't preserve data blocks and we don't want the hashes to
-> +		# stop working for our sample fs.
+> ... which is a bad idea, since call_rcu() callbacks are run
+> from interrupt context.  Which makes blocking in them a problem.
+>
 
-Hashes of the data blocks in the merkle tree? All zeros to use
-.zero_digest in fs-verity? Not sure if got this comment right
+Thanks for the quick review.
 
-> +		for ((pos = 0, i = 88; pos < 23456789; pos += 234567, i++)); do
-> +			$XFS_IO_PROG -f -c "pwrite -S 0 $pos 234567" "$SCRATCH_MNT/verity"
-> +		done
-> +
-> +		fsverity enable "$SCRATCH_MNT/verity"
-> +
-> +		# Create a sparse file
-> +		$XFS_IO_PROG -f -c "pwrite -S 0 0 3" -c "pwrite -S 0 23456789 3" "$SCRATCH_MNT/sparse_verity"
-> +		fsverity enable "$SCRATCH_MNT/sparse_verity"
-> +
-> +		# Create a salted sparse file
-> +		$XFS_IO_PROG -f -c "pwrite -S 0 0 3" -c "pwrite -S 0 23456789 3" "$SCRATCH_MNT/salted_verity"
-> +		local salt="5846532066696e616c6c7920686173206461746120636865636b73756d732121"	# XFS finally has data checksums!!
-> +		fsverity enable --salt="$salt" "$SCRATCH_MNT/salted_verity"
-> +	fi
-> +
->  	# Copy some real files (xfs tests, I guess...)
->  	echo "+ real files"
->  	test $fill -ne 0 && __populate_fill_fs "${SCRATCH_MNT}" 5
-> 
+Documentation/RCU/checklist.rst suggests switching to queue_rcu_work()
+function in scenarios where the callback function can block. This seems
+like it would fix the issue you found, while still providing similar
+performance improvements.
 
--- 
-- Andrey
+workqueue:
+perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount -l mnt
+        0.003066 +- 0.000307 seconds time elapsed  ( +- 10.02% )
+
+callrcu:
+perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount -l mnt
+        0.0030812 +- 0.0000524 seconds time elapsed  ( +-  1.70% )
+
+Regards,
+Lucas
+ 
 
 
