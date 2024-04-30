@@ -1,54 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-18210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DA98B684A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:19:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690068B684C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89338B21BF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0EB1F21EC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FC310979;
-	Tue, 30 Apr 2024 03:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87E7101C5;
+	Tue, 30 Apr 2024 03:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcccXUih"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3DNxmWQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5650612E63;
-	Tue, 30 Apr 2024 03:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F74DDDA;
+	Tue, 30 Apr 2024 03:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447150; cv=none; b=b9hdB0EWP/woMXeQpZUMmx66bsrs6na0YO2kK17uZ9QGwLG76u9MDWBhdz8q+UdtJteiuE1y+BtWVwPCQccqX2ITgU4P24iHuvfJ1i1IKb/sIWoVDW+0q0FKXXaTUjIVdPnkvOZzi147pKWMX3l7Bh2NGhM+zLgq+xUbnxwoulM=
+	t=1714447166; cv=none; b=cwt6zQub3omfK2b1jhcLt75hpoab+snXCi8cy6mSyRkaRvMuGeHu4RWGFlkGrVCKMEqduwvSJ4tyXVgjPZp5CjcTSB8mMRTltxzEbd0PYGYYBS7esdJUJPhaDR/zSyVaYF7BJCHbIYG4kcwCHj1bvv7RH2PGGErrjkxDBsdA370=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447150; c=relaxed/simple;
-	bh=WXWIRp8b84gW40Oz6GIjp75D8fmFPc4voGJalTZbaqw=;
+	s=arc-20240116; t=1714447166; c=relaxed/simple;
+	bh=FHlcZvFx6GfuKtymFK4OGO+74fcA3bU1aWNe4GeLjZ4=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a8VCbOtnFpGtps2AFqxICL4CwTbulFkoScjc9BIT76DHwZjfvjQDqvLmJXfssn64kaiHBbpPCfCrJ4OR+QQnLrwmkrJ40xuzsv3M3p1YiPwdnIumMVnIO9VIMIbLvBlvBZUG6Dm5fojBxGxWE+y5LQNk/pxziye77wmDSeXSwE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcccXUih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F2EC116B1;
-	Tue, 30 Apr 2024 03:19:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=G72RkFWPvw1u8EdHpFZKCZ/zpaCXJuAlP1Tf5j9ckufriFJMR5UofbZsYX6XKf7h068tHLsm1Q/SQkrz9XXX/k8Us2fD9zGDRDm3u0Pt7KDq0uO4C1wFYYTbrTO/UGJqnmR+H917NgswDXCjQRLAzdOtlI0tZ/v1f0ng8eDAYfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3DNxmWQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EDA0C116B1;
+	Tue, 30 Apr 2024 03:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447149;
-	bh=WXWIRp8b84gW40Oz6GIjp75D8fmFPc4voGJalTZbaqw=;
+	s=k20201202; t=1714447165;
+	bh=FHlcZvFx6GfuKtymFK4OGO+74fcA3bU1aWNe4GeLjZ4=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=XcccXUiha24WiDV3y9ZzKdNxfJEQyJ4GZ7qfYA/X4Zh4o12NBdgcGNynSmZ2acCo7
-	 RNaykJADRA7S1dGaVGAqFGunZQAh+Fl16fMo/gEQJLRUxpwz3ai/hLn2hGKM3X3cvm
-	 Si44FWOWp+kU4+iZbLUQkUFA4lsJzSur2cdWr8Zj3O2GkadqDyozSKn51JTZe+nG+V
-	 LE5EGZVH410sfWcjHvS8zadghlfmu9tJqRqx6FAjgLY5fWCSuySAmpR5jeI3SxrS0m
-	 vSUHOyy9ReZw+i6zPlFSy1yaQkYQVa6Q+yKAFdl2EZEh0ybTRVNj4z7eUX3dWa6IYS
-	 zVjOlgrUsgc0Q==
-Date: Mon, 29 Apr 2024 20:19:09 -0700
-Subject: [PATCHSET v5.6] xfsprogs: fs-verity support for XFS
+	b=k3DNxmWQoP2K48vdbyGH39ytCfxdcelEgltdFCfKM2eyqwVu5NXUNsXgWKzleWpoc
+	 o4DiCm3AFtbtQhV2wsK8UHhMG/mCKz0rtXj6lTryLXnJYl5THJC8+o8ELyO/2HAnIH
+	 10V2iInASne6/cBg6ZM1DLHVpIkC6HSeqmVzJ8sQiPPWh6l/9Ikh8VbZfjXks6Zf6a
+	 ap8vhUzr6Hksd8+PP1WJwX4fc32kNnGM9Wo/qvXegzWLNNjRrqPZ55Wfp1W0phSamL
+	 UHHBCCtQUDHey15yOQDHMpiDGvcBMKO6AA0PkdeK4rRy1VuO4o9y/wx5betFugUcXD
+	 1frt7lygLi99w==
+Date: Mon, 29 Apr 2024 20:19:24 -0700
+Subject: [PATCHSET v5.6] fstests: fs-verity support for XFS
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: aalbersh@redhat.com, ebiggers@kernel.org, cem@kernel.org,
+To: aalbersh@redhat.com, zlang@redhat.com, ebiggers@kernel.org,
  djwong@kernel.org
-Cc: "Darrick J. Wong" <djwong@djwong.org>, linux-fsdevel@vger.kernel.org,
- linux-xfs@vger.kernel.org, fsverity@lists.linux.dev
-Message-ID: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
+Cc: Andrey Albershteyn <andrey.albershteyn@gmail.com>,
+ fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, guan@eryu.me,
+ linux-xfs@vger.kernel.org, fstests@vger.kernel.org
+Message-ID: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
 In-Reply-To: <20240430031134.GH360919@frogsfrogsfrogs>
 References: <20240430031134.GH360919@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -92,6 +93,47 @@ Here's v5 of my patchset of adding fs-verity support to XFS.
 This implementation uses extended attributes to store fs-verity
 metadata. The Merkle tree blocks are stored in the remote extended
 attributes. The names are offsets into the tree.
+From Darrick J. Wong:
+
+This v5.3 patchset builds upon v5.2 of Andrey's patchset to implement
+fsverity for XFS.
+
+The biggest thing that I didn't like in the v5 patchset is the abuse of
+the data device's buffer cache to store the incore version of the merkle
+tree blocks.  Not only do verity state flags end up in xfs_buf, but the
+double-alloc flag wastes memory and doesn't remain internally consistent
+if the xattrs shift around.
+
+I replaced all of that with a per-inode xarray that indexes incore
+merkle tree blocks.  For cache hits, this dramatically reduces the
+amount of work that xfs has to do to feed fsverity.  The per-block
+overhead is much lower (8 bytes instead of ~300 for xfs_bufs), and we no
+longer have to entertain layering violations in the buffer cache.  I
+also added a per-filesystem shrinker so that reclaim can cull cached
+merkle tree blocks, starting with the leaf tree nodes.
+
+I've also rolled in some changes recommended by the fsverity maintainer,
+fixed some organization and naming problems in the xfs code, fixed a
+collision in the xfs_inode iflags, and improved dead merkle tree cleanup
+per the discussion of the v5 series.  At this point I'm happy enough
+with this code to start integrating and testing it in my trees, so it's
+time to send it out a coherent patchset for comments.
+
+For v5.3, I've added bits and pieces of online and offline repair
+support, reduced the size of partially filled merkle tree blocks by
+removing trailing zeroes, changed the xattr hash function to better
+avoid collisions between merkle tree keys, made the fsverity
+invalidation bitmap unnecessary, and made it so that we can save space
+on sparse verity files by not storing merkle tree blocks that hash
+totally zeroed data blocks.
+
+From Andrey Albershteyn:
+
+Here's v5 of my patchset of adding fs-verity support to XFS.
+
+This implementation uses extended attributes to store fs-verity
+metadata. The Merkle tree blocks are stored in the remote extended
+attributes. The names are offsets into the tree.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -111,114 +153,25 @@ fstests git tree:
 https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity
 ---
 Commits in this patchset:
- * fs: add FS_XFLAG_VERITY for verity files
- * xfs: use unsigned ints for non-negative quantities in xfs_attr_remote.c
- * xfs: turn XFS_ATTR3_RMT_BUF_SPACE into a function
- * xfs: create a helper to compute the blockcount of a max sized remote value
- * xfs: minor cleanups of xfs_attr3_rmt_blocks
- * xfs: use an empty transaction to protect xfs_attr_get from deadlocks
- * xfs: add attribute type for fs-verity
- * xfs: do not use xfs_attr3_rmt_hdr for remote verity value blocks
- * xfs: add fs-verity ro-compat flag
- * xfs: add inode on-disk VERITY flag
- * xfs: add fs-verity support
- * xfs: use merkle tree offset as attr hash
- * xfs: advertise fs-verity being available on filesystem
- * xfs: report verity failures through the health system
- * xfs: enable ro-compat fs-verity flag
- * libfrog: add fsverity to xfs_report_geom output
- * xfs_db: introduce attr_modify command
- * xfs_db: add ATTR_PARENT support to attr_modify command
- * xfs_db: make attr_set/remove/modify be able to handle fs-verity attrs
- * man: document attr_modify command
- * xfs_db: create hex string as a field type
- * xfs_db: dump verity features and metadata
- * xfs_db: dump merkle tree data
- * xfs_db: dump the verity descriptor
- * xfs_db: don't obfuscate verity xattrs
- * xfs_db: dump the inode verity flag
- * xfs_db: compute hashes of merkle tree blocks
- * xfs_repair: junk fsverity xattrs when unnecessary
- * xfs_repair: clear verity iflag when verity isn't supported
- * xfs_repair: handle verity remote attrs
- * xfs_repair: allow upgrading filesystems with verity
- * xfs_scrub: check verity file metadata
- * xfs_scrub: validate verity file contents when doing a media scan
- * xfs_scrub: use MADV_POPULATE_READ to check verity files
- * xfs_spaceman: report data corruption
- * xfs_io: report fsverity status via statx
- * xfs_io: create magic command to disable verity
- * mkfs.xfs: add verity parameter
+ * common/verity: enable fsverity for XFS
+ * xfs/{021,122}: adapt to fsverity xattrs
+ * xfs/122: adapt to fsverity
+ * xfs: test xfs_scrub detection and correction of corrupt fsverity metadata
+ * xfs: test disabling fsverity
+ * common/populate: add verity files to populate xfs images
 ---
- configure.ac                    |    1 
- db/Makefile                     |    4 
- db/attr.c                       |  222 +++++++++++++++++++++-
- db/attrset.c                    |  237 ++++++++++++++++++++++-
- db/attrshort.c                  |   68 +++++++
- db/field.c                      |   31 +++
- db/field.h                      |    4 
- db/fprint.c                     |   24 ++
- db/fprint.h                     |    2 
- db/hash.c                       |   21 ++
- db/inode.c                      |    3 
- db/metadump.c                   |   16 +-
- db/sb.c                         |    2 
- db/write.c                      |    2 
- db/write.h                      |    1 
- include/builddefs.in            |    1 
- include/libxfs.h                |    1 
- include/linux.h                 |    4 
- include/platform_defs.h         |   13 +
- include/xfs_mount.h             |    2 
- io/attr.c                       |    2 
- io/scrub.c                      |   47 +++++
- libfrog/fsgeom.c                |    6 -
- libxfs/Makefile                 |    6 -
- libxfs/libxfs_api_defs.h        |    3 
- libxfs/xfs_ag.h                 |    8 +
- libxfs/xfs_attr.c               |   35 +++
- libxfs/xfs_attr_leaf.c          |    5 
- libxfs/xfs_attr_remote.c        |  199 +++++++++++++++----
- libxfs/xfs_attr_remote.h        |   12 +
- libxfs/xfs_da_format.h          |   55 +++++
- libxfs/xfs_format.h             |   15 +
- libxfs/xfs_fs.h                 |    2 
- libxfs/xfs_health.h             |    4 
- libxfs/xfs_inode_buf.c          |    8 +
- libxfs/xfs_inode_util.c         |    2 
- libxfs/xfs_log_format.h         |    1 
- libxfs/xfs_ondisk.h             |    5 
- libxfs/xfs_sb.c                 |    4 
- libxfs/xfs_shared.h             |    1 
- libxfs/xfs_verity.c             |   74 +++++++
- libxfs/xfs_verity.h             |   14 +
- m4/package_libcdev.m4           |   18 ++
- man/man2/ioctl_xfs_bulkstat.2   |    3 
- man/man2/ioctl_xfs_fsgetxattr.2 |    3 
- man/man8/mkfs.xfs.8.in          |    6 +
- man/man8/xfs_admin.8            |    6 +
- man/man8/xfs_db.8               |   47 ++++-
- man/man8/xfs_io.8               |    7 +
- mkfs/lts_4.19.conf              |    1 
- mkfs/lts_5.10.conf              |    1 
- mkfs/lts_5.15.conf              |    1 
- mkfs/lts_5.4.conf               |    1 
- mkfs/lts_6.1.conf               |    1 
- mkfs/lts_6.6.conf               |    1 
- mkfs/xfs_mkfs.c                 |   25 ++
- repair/attr_repair.c            |   44 ++++
- repair/dinode.c                 |   28 +++
- repair/globals.c                |    1 
- repair/globals.h                |    1 
- repair/phase2.c                 |   24 ++
- repair/xfs_repair.c             |   11 +
- scrub/Makefile                  |    4 
- scrub/inodes.h                  |   22 ++
- scrub/phase5.c                  |  182 ++++++++++++++++++
- scrub/phase6.c                  |  402 +++++++++++++++++++++++++++++++++++++++
- spaceman/health.c               |    4 
- 67 files changed, 1918 insertions(+), 93 deletions(-)
- create mode 100644 libxfs/xfs_verity.c
- create mode 100644 libxfs/xfs_verity.h
+ common/populate    |   24 +++++++++
+ common/verity      |   39 ++++++++++++++-
+ tests/xfs/021      |    3 +
+ tests/xfs/122.out  |    3 +
+ tests/xfs/1880     |  135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/xfs/1880.out |   37 ++++++++++++++
+ tests/xfs/1881     |  111 +++++++++++++++++++++++++++++++++++++++++++
+ tests/xfs/1881.out |   28 +++++++++++
+ 8 files changed, 378 insertions(+), 2 deletions(-)
+ create mode 100755 tests/xfs/1880
+ create mode 100644 tests/xfs/1880.out
+ create mode 100755 tests/xfs/1881
+ create mode 100644 tests/xfs/1881.out
 
 
