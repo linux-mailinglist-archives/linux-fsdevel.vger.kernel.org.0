@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-18283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58ACD8B6903
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99008B6904
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D06CB231D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FAC1F2184C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CEC10A35;
-	Tue, 30 Apr 2024 03:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF83810A3E;
+	Tue, 30 Apr 2024 03:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePupY1Y5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nyf5WJjc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A596511187;
-	Tue, 30 Apr 2024 03:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1722B101CE;
+	Tue, 30 Apr 2024 03:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714448276; cv=none; b=abXyMDyV5NzoafB1fZOF0tPHJ2pMgRGr1YG0njbsf7oc4cMA4lPL5JH322kwyj8yPlo/t+xjA1kGB4sZo0d7wxbae3/FrLsQcIGlmRkan+KE2dEddpV/dzVPLsRNYOkqjVe86iu41GsypVyqVI/AVnJN323bbyCYDR2b6lmDiZU=
+	t=1714448292; cv=none; b=SsZ6dNQF4NiI9RcVkWAVDY1r4t2wOD/3nmnyM+C8k7NrzpS1Hv+rTwGNc526+LkfjGvHjWdhVgO7KTJFHXPGlbOUSqnP56B9srTTFWOt4GAv2BqajnRhBJLxuRbZHqHQyROhwYjwLa/F7AxWGJcg8dMfWW/1GXbZvu56aMQ3O8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714448276; c=relaxed/simple;
-	bh=GHgtj/1UbymAOfvPd+HjIlt0SEHUsLn/bLHqYWdt7AE=;
+	s=arc-20240116; t=1714448292; c=relaxed/simple;
+	bh=Fx+iBR1INLeZPQ429XVKohGIqa4/fizPIT+AcDKitok=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uc6y4n7c7wtIlrkAv6WgvAFc46V4QgQBBupJEsQjBEvvVoXW5W42H4Oaa8XnRRRa0FC6v/s8COJscw5mJKzOeJia2+Iy3yPdTig7jqfdJZLD09l9VV+XEyVnIkXId3Phlk0sxeL8R+TcI9SFSs5m9fjKQX7iclPgxrX8NNLnNOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePupY1Y5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 372E2C116B1;
-	Tue, 30 Apr 2024 03:37:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Bhs6JqVF6hBCfvTEpDtkrdier7rkYJb+8cgwluGZKjOXahm2CKrtyhCCdwQ6u5mQE3Tnt3EanQtVnSZ34InNP7hsMRwqfxL63QeLovWFhkVt0WRoykSJ4J0SG3kVzh1EN8qEbUwU5TpJCOHZtr5U1w2Z0+NLIzK3XCER4CHuuwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nyf5WJjc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9424C116B1;
+	Tue, 30 Apr 2024 03:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714448276;
-	bh=GHgtj/1UbymAOfvPd+HjIlt0SEHUsLn/bLHqYWdt7AE=;
+	s=k20201202; t=1714448291;
+	bh=Fx+iBR1INLeZPQ429XVKohGIqa4/fizPIT+AcDKitok=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=ePupY1Y5CtKAhTqFLRhI6IqYgzkhyPYTWCHrXd1nRzVvvhiMFHy+bdDvOGaK10Uod
-	 ZgJoNk/8CPVF04sZpRZUfx/9kIKzqPaJe1vbcY5sFR2ygXI9R94QM01mgkoUm/l3LJ
-	 Bx98lESCkUoUYaGsfybiDY35ic27bXkYPPTZbJ99cobKvOQB12x+HjhywPOpKQIkiS
-	 Ro6aNejMEs9gE1b7yXcDKEjq+kMDGQ8LAzRMPDGm4pEeP/4Tzhh62EzHeloWuFPLL6
-	 wgfzPb1xj1SZQDmdKqzf/NtmZk1XcH3+4/TaQxiKhSF5M9G+1zBpdy4cxCurJSHQqZ
-	 FZkjowCx1s0eg==
-Date: Mon, 29 Apr 2024 20:37:55 -0700
-Subject: [PATCH 27/38] xfs_db: compute hashes of merkle tree blocks
+	b=Nyf5WJjcPe7aqrEvJCWoPf9pA3BK8ikVkdwhwKudfZsqVWXuXKMgF4ceq+gbI+ZNv
+	 3lD2k8V3rT8SlXZJ423hnJN0ZiSBIpvmcSa7ba1C71CndAsrK87VUZOgsshCgMh94i
+	 6d7JCdXfdgxOaB0aTK/kJm1a2iOz1NA6ALs7ZClqzL7P/UTxqMmFDFsroIanx1qlDf
+	 Y42CHDVJ+cAGmSWx/eWo9Z/r/4flqoP4IHbM5gXEwJl5Ea8frNi3E+dtT0KCWbvVcA
+	 0E9NMTQwUw58zQ0l5BS89LTl0x43WJ94iFjUDB+ofASXj4plThW4/lDNFcXLqorlLY
+	 x7TA/vhlwBrTw==
+Date: Mon, 29 Apr 2024 20:38:11 -0700
+Subject: [PATCH 28/38] xfs_repair: junk fsverity xattrs when unnecessary
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, cem@kernel.org,
  djwong@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  fsverity@lists.linux.dev
-Message-ID: <171444683526.960383.14370813739332837103.stgit@frogsfrogsfrogs>
+Message-ID: <171444683541.960383.2565362271938349523.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 References: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,118 +63,62 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Compute the hash of verity merkle tree blocks.
+Remove any fs-verity extended attributes when the filesystem doesn't
+support fs-verity.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- db/hash.c                |   21 +++++++++++++++++++--
- include/libxfs.h         |    1 +
- libxfs/libxfs_api_defs.h |    1 +
- man/man8/xfs_db.8        |    5 +++++
- 4 files changed, 26 insertions(+), 2 deletions(-)
+ repair/attr_repair.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 
-diff --git a/db/hash.c b/db/hash.c
-index ab9c435b545f..e88d7d326bb5 100644
---- a/db/hash.c
-+++ b/db/hash.c
-@@ -36,7 +36,7 @@ hash_help(void)
- " 'hash' prints out the calculated hash value for a string using the\n"
- "directory/attribute code hash function.\n"
- "\n"
--" Usage:  \"hash [-d|-p parent_ino] <string>\"\n"
-+" Usage:  \"hash [-d|-p parent_ino|-m merkle_blkno] <string>\"\n"
- "\n"
- ));
- 
-@@ -46,6 +46,7 @@ enum hash_what {
- 	ATTR,
- 	DIRECTORY,
- 	PPTR,
-+	MERKLE,
- };
- 
- /* ARGSUSED */
-@@ -54,16 +55,28 @@ hash_f(
- 	int		argc,
- 	char		**argv)
- {
-+	struct xfs_merkle_key mk = { };
- 	xfs_ino_t	p_ino = 0;
- 	xfs_dahash_t	hashval;
-+	unsigned long long mk_pos;
- 	enum hash_what	what = ATTR;
- 	int		c;
- 
--	while ((c = getopt(argc, argv, "dp:")) != EOF) {
-+	while ((c = getopt(argc, argv, "dm:p:")) != EOF) {
- 		switch (c) {
- 		case 'd':
- 			what = DIRECTORY;
- 			break;
-+		case 'm':
-+			errno = 0;
-+			mk_pos = strtoull(optarg, NULL, 0);
-+			if (errno) {
-+				perror(optarg);
-+				return 1;
-+			}
-+			mk.mk_pos = cpu_to_be64(mk_pos << XFS_VERITY_HASH_SHIFT);
-+			what = MERKLE;
-+			break;
- 		case 'p':
- 			errno = 0;
- 			p_ino = strtoull(optarg, NULL, 0);
-@@ -97,6 +110,10 @@ hash_f(
- 		case ATTR:
- 			hashval = libxfs_attr_hashname(xname.name, xname.len);
- 			break;
-+		case MERKLE:
-+			hashval = libxfs_verity_hashname((void *)&mk, sizeof(mk));
-+			break;
-+
+diff --git a/repair/attr_repair.c b/repair/attr_repair.c
+index 227e5dbcd016..898eb3edfd12 100644
+--- a/repair/attr_repair.c
++++ b/repair/attr_repair.c
+@@ -334,6 +334,13 @@ process_shortform_attr(
+ 			junkit |= 1;
  		}
- 		dbprintf("0x%x\n", hashval);
- 	}
-diff --git a/include/libxfs.h b/include/libxfs.h
-index b4c6a2882aa3..0c3f0be85565 100644
---- a/include/libxfs.h
-+++ b/include/libxfs.h
-@@ -100,6 +100,7 @@ struct iomap;
- #include "xfs_rtgroup.h"
- #include "xfs_rtrmap_btree.h"
- #include "xfs_ag_resv.h"
-+#include "xfs_verity.h"
  
- #ifndef ARRAY_SIZE
- #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-diff --git a/libxfs/libxfs_api_defs.h b/libxfs/libxfs_api_defs.h
-index 6ad728af2e0a..d125e2679348 100644
---- a/libxfs/libxfs_api_defs.h
-+++ b/libxfs/libxfs_api_defs.h
-@@ -394,6 +394,7 @@
- #define xfs_verify_fsbno		libxfs_verify_fsbno
- #define xfs_verify_ino			libxfs_verify_ino
- #define xfs_verify_rtbno		libxfs_verify_rtbno
-+#define xfs_verity_hashname		libxfs_verity_hashname
- #define xfs_zero_extent			libxfs_zero_extent
- 
- /* Please keep this list alphabetized. */
-diff --git a/man/man8/xfs_db.8 b/man/man8/xfs_db.8
-index 2c5aed2cf38c..deba4a6354aa 100644
---- a/man/man8/xfs_db.8
-+++ b/man/man8/xfs_db.8
-@@ -902,6 +902,11 @@ option is specified, the directory-specific hash function is used.
- This only makes a difference on filesystems with ascii case-insensitive
- lookups enabled.
- 
-+If the
-+.B \-m
-+option is specified, the merkle tree-specific hash function is used.
-+The merkle tree block offset must be specified as an argument.
++		if ((currententry->flags & XFS_ATTR_VERITY) &&
++		    !xfs_has_verity(mp)) {
++			do_warn(
++ _("verity metadata found on filesystem that doesn't support verity\n"));
++			junkit |= 1;
++		}
 +
- If the
- .B \-p
- option is specified, the parent pointer-specific hash function is used.
+ 		remainingspace = remainingspace -
+ 					xfs_attr_sf_entsize(currententry);
+ 
+@@ -543,6 +550,14 @@ process_leaf_attr_local(
+ 		return -1;
+ 	}
+ 
++	if ((entry->flags & XFS_ATTR_VERITY) && !xfs_has_verity(mp)) {
++		do_warn(
++ _("verity metadata found in attribute entry %d in attr block %u, inode %"
++   PRIu64 " on filesystem that doesn't support verity\n"),
++				i, da_bno, ino);
++		return -1;
++	}
++
+ 	return xfs_attr_leaf_entsize_local(local->namelen,
+ 						be16_to_cpu(local->valuelen));
+ }
+@@ -592,6 +607,14 @@ process_leaf_attr_remote(
+ 		return -1;
+ 	}
+ 
++	if ((entry->flags & XFS_ATTR_VERITY) && !xfs_has_verity(mp)) {
++		do_warn(
++ _("verity metadata found in attribute entry %d in attr block %u, inode %"
++   PRIu64 " on filesystem that doesn't support verity\n"),
++				i, da_bno, ino);
++		return -1;
++	}
++
+ 	value = malloc(be32_to_cpu(remotep->valuelen));
+ 	if (value == NULL) {
+ 		do_warn(
 
 
