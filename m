@@ -1,111 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-18375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690C08B7BDE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:37:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6888B7BFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39311F2624A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2307283000
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25DB17164D;
-	Tue, 30 Apr 2024 15:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3CA173359;
+	Tue, 30 Apr 2024 15:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCIuBI5z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YX4MpSTm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A95143749;
-	Tue, 30 Apr 2024 15:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5541D770F5;
+	Tue, 30 Apr 2024 15:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714491458; cv=none; b=pOa1aVxM9fYt8Jv3WOP01Bv4RLmV++JYGzV2OoIv0VZm2NHwV1v3I/E92iFEbwiLGR7oU0TuIb6xiW6RlOUmyJ80XUeVKY5iU4oPqlKEJV6lfqeZ9SEWTZFljDMwK9EgzvCs23GTPG6AgEHM7UOhjN8eHuaJQKT4iH9IW0iCj54=
+	t=1714491663; cv=none; b=Xluunrp/E/DpeQA1O+SPCBU5Xh1lsEiIDj4o8tTChSyP8Ngl92QCIjMk+PzTsOcMXTCOfhGk50QXbC2kWZbW+di+337dhRhnrYGf3lntSYJi62gO6NJIwqf0wmZ+A7zpBZuH6BHZjhDTOBPeKig1WS13IjTWXJKP/kjRFsu+Veo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714491458; c=relaxed/simple;
-	bh=xORt9UOknaSFIomTBlaOlmxJ4xrvI1EdljKTZ8SCzps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SB1nsprJW7LKvp/u8N/LbZcRPm1zoy7kIwAcr1jo414dDnx/duuu1PW2gPwPo4W/XDYnkinNfE6nRuZuDG+v0BIJ8A/EhM/jxYfonZOLdQ846MC+OQXiTUvyi1cgcQvNttI5C8oIMruFDF/GbesrHlY9hjRWpY/puGEhBscbfTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCIuBI5z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF2CC2BBFC;
-	Tue, 30 Apr 2024 15:37:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714491457;
-	bh=xORt9UOknaSFIomTBlaOlmxJ4xrvI1EdljKTZ8SCzps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dCIuBI5zLW1M4I9Y0u4VEmf9EcXCNdCBejkynkCh2yDAmvOgKliFQ6E5grkY9AHMT
-	 1M3zWuByF5/hpiABu/wdyntQ0Cz+swqCQ6EgksFb5vkY+p3jeFFxeviX39iSl1fyKL
-	 0fKWv+MAp2zq1zB7g65yzfv+OT0uLJRhf85Nz/PhDSPCF4PXEK1oElrF9wAdl6LIO6
-	 B3Wz/uFeoulc4QXSjLjLbsgwqroaSOKTdw0jOeuM0dg5Mdqv7d+OJu9ao3hlQH1Y4v
-	 RXGX6/yeSzcy1oFCjVi9/O2MpkFvKvLFW7omcccFcP+JihhR9osKCVb4IkxZ39CXQC
-	 Mn9VCvYnleBqA==
-Date: Tue, 30 Apr 2024 08:37:37 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: zlang@redhat.com, ebiggers@kernel.org, fsverity@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, guan@eryu.me,
-	linux-xfs@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCH 3/6] xfs/122: adapt to fsverity
-Message-ID: <20240430153737.GK360919@frogsfrogsfrogs>
-References: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
- <171444688024.962488.13214660928692324111.stgit@frogsfrogsfrogs>
- <wrxpj5cduflmsthmgrlbdewpis5mkpz6rnrcsmgapybtznavxp@dryj5f364uxa>
+	s=arc-20240116; t=1714491663; c=relaxed/simple;
+	bh=f6IqcFeBOCpWpa4vG7S+dRgb7PQm2Hc82dX1ztXa+5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z6XP3/yLXMEQSAw2Co8VjSKN18BYcqb6CnFjAeBRufcPKINySHtF6tX5sx9Gjv3gZJC6qoSgeciNyiEhEC9N9lnEgWES/ySbGrYf5Bf8p4aZtEDn6ix/QCmAkpAE9oupYQomoWswlV2QKgGcy4n4OzrgrbHKmYUtSCiJJFd6w3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YX4MpSTm; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e10b6e2bacso7408371fa.0;
+        Tue, 30 Apr 2024 08:41:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714491660; x=1715096460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HktqAitX/MFbl8Jl2t5m5ekVWv2NVSNp30OIaNycsOg=;
+        b=YX4MpSTmm/b3Up98/2cWLzaS4hN1qZ8tdHqTr6Sr9Ii/E7JlA2jWYCi5kvsOWbQS0F
+         LUvSiZgrGWuOpEF4VDzrjHjedlENPtxCUOE6QsTPr8ian2MG/yK3CPCXPsCcnH+9AlN5
+         dKwEMU/rVrKSc58V7zcYftF9MGJZMhikxCwBRkUfXDGUtxzCvKnKAFnN0ZJXxFAqu08e
+         J8t5NfAMszcRqS5hyXYMBjToEG3dGS7+q7v9eYsQNOF/vuWNtPLGhwTLTL20pLqmYNHc
+         bjEu7+azmmDRVFiDUHiYnGZyzQXwbdLqZsz8yeZDfyYhNKhIJlTmKk90SI1ZDNfSIb0o
+         a4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714491660; x=1715096460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HktqAitX/MFbl8Jl2t5m5ekVWv2NVSNp30OIaNycsOg=;
+        b=oOemjloDRRM8THokoAC+/GtT4fMhQ+A7Escz4Cr9MZ9Z1K2mgZccW+csQ2t3Phry2W
+         0oCdioaWpVqQJX8opj96HKJeF9ztZGmJfTfwQBV+wcftjj8HnQFrQBrzKyfQ0gt2ikTL
+         BqPrvCKi90jM1L0q3S3Ar1w1S7RahghzhZ4EerWyw1bmy0/OSLaMww/j8XZUWXA45PN2
+         bCDa2BpJik5oQ9nhGhfwZnqunCXa75V4lzk1nd/mSYqfq/87vwMUupHnxo5oOKhGMkG0
+         w4L9HIbh1XWquFuhtSmdc/CKdWCsop41qm4/Gk/klL3BEdlWv6zTlLgoann0yMm2Shck
+         sKEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxyy1852J9oPrygDB1OkEtos/4YBdRQre+Z9n7y9aUVfnuwKGoWiLMvavu/m9OflfRUtESf+/pAAHP6wgQtaO3nNRBpGCSeM33mAuTBeGSFe3DiP77YzmQXjEy6KoSaaTkKdVYiLtP/RviRw==
+X-Gm-Message-State: AOJu0Yy2yghjOMuytJ7YRQHMlLETlAOnZiLJwWJSRoaWyjbA4G4tlfNA
+	DZmPZ22JF/3/1DNUMKPZrQaKzRNwYGb5AZ++50b/muO40pDJNLrXwmn9mIf1U7ngcEMcla+TBIu
+	sRsOwvhenklyaKLm1dfhLf3IUJDg=
+X-Google-Smtp-Source: AGHT+IG8HZi5mm/vVlVqKzeYyGwgwHQuIG8Dud5BOqVzlJHHrAvxS6dc1LaLoIjZ8FytpPc1dV7Iv1vI9mO9znyrWMQ=
+X-Received: by 2002:a2e:b747:0:b0:2e0:4cbb:858a with SMTP id
+ k7-20020a2eb747000000b002e04cbb858amr39154ljo.27.1714491660173; Tue, 30 Apr
+ 2024 08:41:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wrxpj5cduflmsthmgrlbdewpis5mkpz6rnrcsmgapybtznavxp@dryj5f364uxa>
+References: <20240429190500.30979-1-ryncsn@gmail.com> <20240429190500.30979-6-ryncsn@gmail.com>
+ <SA0PR21MB1898817BA920C2A45660DE65E41B2@SA0PR21MB1898.namprd21.prod.outlook.com>
+In-Reply-To: <SA0PR21MB1898817BA920C2A45660DE65E41B2@SA0PR21MB1898.namprd21.prod.outlook.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 30 Apr 2024 23:40:43 +0800
+Message-ID: <CAMgjq7ADnn+uEL0jY676rk6+9cFWgrZxMCZ2m2qf1GM87Eav9Q@mail.gmail.com>
+Subject: Re: [EXTERNAL] [PATCH v3 05/12] cifs: drop usage of page_file_offset
+To: Steven French <Steven.French@microsoft.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Shyam Prasad <Shyam.Prasad@microsoft.com>, 
+	Bharath S M <bharathsm@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 30, 2024 at 02:45:29PM +0200, Andrey Albershteyn wrote:
-> On 2024-04-29 20:41:34, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > Add fields for fsverity ondisk structures.
-> > 
-> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > ---
-> >  tests/xfs/122.out |    2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > 
-> > diff --git a/tests/xfs/122.out b/tests/xfs/122.out
-> > index 019fe7545f..22f36c0311 100644
-> > --- a/tests/xfs/122.out
-> > +++ b/tests/xfs/122.out
-> > @@ -65,6 +65,7 @@ sizeof(struct xfs_agfl) = 36
-> >  sizeof(struct xfs_attr3_leaf_hdr) = 80
-> >  sizeof(struct xfs_attr3_leafblock) = 88
-> >  sizeof(struct xfs_attr3_rmt_hdr) = 56
-> > +sizeof(struct xfs_attr3_rmtverity_hdr) = 36
-> >  sizeof(struct xfs_attr_sf_entry) = 3
-> >  sizeof(struct xfs_attr_sf_hdr) = 4
-> >  sizeof(struct xfs_attr_shortform) = 8
-> > @@ -120,6 +121,7 @@ sizeof(struct xfs_log_dinode) = 176
-> >  sizeof(struct xfs_log_legacy_timestamp) = 8
-> >  sizeof(struct xfs_map_extent) = 32
-> >  sizeof(struct xfs_map_freesp) = 32
-> > +sizeof(struct xfs_merkle_key) = 8
-> >  sizeof(struct xfs_parent_rec) = 12
-> >  sizeof(struct xfs_phys_extent) = 16
-> >  sizeof(struct xfs_refcount_key) = 4
-> > 
-> > 
-> 
-> Shouldn't this patch be squashed with previous one?
+On Tue, Apr 30, 2024 at 4:19=E2=80=AFAM Steven French
+<Steven.French@microsoft.com> wrote:
+>
+> Wouldn't this make it harder to fix the regression when swap file support=
+ was temporarily removed from cifs.ko (due to the folio migration)?   I was=
+ hoping to come back to fixing swapfile support for cifs.ko in 6.10-rc (whi=
+ch used to pass the various xfstests for this but code got removed with fol=
+ios/netfs changes).
+>
 
-Actualy, the 122.out change in the previous patch is now wrong and can
-go away.  These two changes are still relevant though.
+Hi Steven,
 
---D
-
-> -- 
-> - Andrey
-> 
-> 
+I think this won't cause any trouble for that, the new swap_rw
+interface should have splitted the swap cache from fs side, which made
+the code struct cleaner, and I think that's the right path. NFS is
+using that already. With this interface, .read_folio (cifs_read_folio)
+should never be called for swap cache folios.
 
