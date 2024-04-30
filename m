@@ -1,337 +1,289 @@
-Return-Path: <linux-fsdevel+bounces-18305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D626B8B6B5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 09:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E078B6C5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 10:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F7291F22A47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 07:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2A0283E4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 08:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA8239FEF;
-	Tue, 30 Apr 2024 07:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A939545026;
+	Tue, 30 Apr 2024 08:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fURv/6Zr"
+	dkim=pass (1024-bit key) header.d=sysophe.eu header.i=@sysophe.eu header.b="WJc7dvxe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from hygieia.sysophe.eu (hygieia.sysophe.eu [138.201.91.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1B02C184
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 07:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A47E54676;
+	Tue, 30 Apr 2024 08:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.201.91.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714461873; cv=none; b=orRDHB3/fsanEDvucdpZrSzvY3Zd7xDy0koLVDtGp1YTVLY4UYN3CSkffprvUGE72BmfVgnNQN7BDr5i6judeqhn1Gkq7C33gyImStox8QCwHp4+h+CqSHMsfo3t+wQc9oKNNaQG/T3kV7gDNkcW3jgAKZbmOeTMnIqOd025wko=
+	t=1714464017; cv=none; b=KPsCPucBgrNHZTV7SHWB2/pYSJsr/Lz+4ILvvXnRDM9afV0WKHVzYsgkOUr+1N48oZi+iqJL0NNJKKjpaHDp5nKsxMr0rQ0pb1nBIrhCsS2Bc7UqjLHRe27JfFypP+DKLUtptUh9VDbk4e7z6W5XU6XHQSLWs29YWK7iX98OCYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714461873; c=relaxed/simple;
-	bh=yyZjb6uJBHtfQDi9vcRqAluwv7g2WUi3qhsCuCrRV1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=eUnnTsCzWaDQoJsVpRj2noo9K0wbjFYJnzhFTIEtK6j95b9JYci8n6P4wSyHCs0zH/Cq5nvgmCsNWz60qH0IAIJtL9maRQGPGAtd6vIMfHMa9sfwSjhgVgyou2I/PR8+ipRGQSKYwz7wfYIh356njrMXhzn8HOdB2xdKfZsq8x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fURv/6Zr; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57255e89facso4579083a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 00:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714461870; x=1715066670; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/7s89Ib+yw/GmKuXOIYBvUFt2qfG5QHiPGhNhFrnzGQ=;
-        b=fURv/6ZruI1ZKi8M8i0IZen5i6WOQQT5uGO/idIBENJ5vNjkbcIsT5Warv0Ym5qzgG
-         Dth0/ZuQxvrmCrrtpxnX58iYhuDPbYUSmEWgnZYkg8KG4WNNbSNVGh+Rwo3HF3/z7B/i
-         r55OMpEiTIl1GH0DJi8kZEKE4gLV5iCmHCvPiyy8aspAk05LgzkHHzOhGQnyfLXU6tEe
-         7kWsFzgAfF0c1BvtD3ODsj6R8gWQdR6r7iWa2BI0ihw7rDgzv+z6o6a+5rcudnozwpE6
-         EM8iGO6kI09513x2dIP8+L2Rixxc7oLT6gGjdMNfqbl9Zu/dQHMvLZ6qynbbvCacOHH5
-         WsWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714461870; x=1715066670;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/7s89Ib+yw/GmKuXOIYBvUFt2qfG5QHiPGhNhFrnzGQ=;
-        b=ghE2Lv/l8aa2avxfLyJJhWjxFGI37/Ue7Kk6AurEeSwRDHPdXKNLmZybiitOECOw9W
-         4HNwwfNjoDej1ZJy021OfQ7Tb+M4u20TNk4Nai62MAc0Bxfq2iJdXyYNh4zcIsVYdOk9
-         rCFNYxUK58uHAlkuaioe7J4zIam3BAeTQ/SMIqXk8S7mB+Gk604lqtbJLg5DouOBqbhW
-         VcRpke9bzbhZR/q3L9vuwv6qh2HXFCTgNKNJkXRIqZO8O8gJQmpdzsz5v4iLflYawN5E
-         UiaaJnCbMPKJfwKD05SCuvv4pvNvh8hpmYqfrMCFAgzwI/GaUq7ieRxIYfWmp3C9GggO
-         0LRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrs8zyJwv4gomW9GOhVvd2AniqrmtfZjnQss35SH6IoXWKef0Bu5IsxQf9tnB7PBnf92P8w/TSb3vHf+LpQARv5PpIkr1jqEUJH7bQOw==
-X-Gm-Message-State: AOJu0YxWHj6sHu5WXEyi83cCqF+SiQrSmOTiGtkk9FmkQBmLdVOJ7oBj
-	mb9XP00AZC+4OOiD+KKlZ1RIbpDDe/Du6ptNSU3/0PCbn6tvfP+Cma/KD4F707s=
-X-Google-Smtp-Source: AGHT+IEnyAcN6JEupMPAax6ZOgByVwP2oJqMT6SUvW+cb6CrU28YZX/Ub7ZnrT1/7sFjFCoZOg1jwA==
-X-Received: by 2002:a05:6402:1a4d:b0:572:8aab:4420 with SMTP id bf13-20020a0564021a4d00b005728aab4420mr2380881edb.39.1714461869687;
-        Tue, 30 Apr 2024 00:24:29 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id e12-20020a056402104c00b00571c12b388dsm13389893edu.35.2024.04.30.00.24.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 00:24:29 -0700 (PDT)
-Date: Tue, 30 Apr 2024 10:24:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Kemeng Shi <shikemeng@huaweicloud.com>,
-	willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
-	tj@kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] writeback: factor out wb_dirty_exceeded to remove
- repeated code
-Message-ID: <6d3471cd-f491-4949-ba75-9fae63198b59@moroto.mountain>
+	s=arc-20240116; t=1714464017; c=relaxed/simple;
+	bh=+v2I/ss7RNt6Oyx8bGWBHXm9Te+cwsqYzc96gK+yXCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=s+JoAi1ytTohC9Qegr8N6l80USXXo2jt4sOqe2i2vFIjvNWf/9izhUsLi7R5lhkoNsUPo6o5uLUkkl/d6TrZpFGt3NYeeE7jXyutkbWEKsAMn+E1mVJAIURdWQJ1H2COxuA17PcRQLX/qcI52Ohq6PFxjEZwRjYL+Psea0j4Sew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sysophe.eu; spf=pass smtp.mailfrom=sysophe.eu; dkim=pass (1024-bit key) header.d=sysophe.eu header.i=@sysophe.eu header.b=WJc7dvxe; arc=none smtp.client-ip=138.201.91.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sysophe.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sysophe.eu
+Received: from pluto.restena.lu (pluto.restena.lu [IPv6:2001:a18:1:10::156])
+	by smtp.sysophe.eu (Postfix) with ESMTPSA id 9BA1D425E0A5;
+	Tue, 30 Apr 2024 09:50:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=sysophe.eu; s=201205;
+	t=1714463410; x=1714549810;
+	bh=+v2I/ss7RNt6Oyx8bGWBHXm9Te+cwsqYzc96gK+yXCo=;
+	h=Date:From:To:Cc:Subject;
+	b=WJc7dvxeMgMlfSgpu4njNTDVBkSmlR+dtiFvleCGG0NJfalcanomK01v39wt08Zub
+	 KHxMOFotgrUH3wMb0+u3+t0DEG0gHL9bhdtyCgq6I8QJz1/G4JH5AAh67JYfPQe4V5
+	 fkeUwqtfgPS/Pe8jW+1tRTNYb217aGC6Ca2RdFsc=
+Date: Tue, 30 Apr 2024 09:49:50 +0200
+From: Bruno =?UTF-8?B?UHLDqW1vbnQ=?= <bonbons@sysophe.eu>
+To: David Howells <dhowells@redhat.com>
+Cc: <netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+ linux-cifs@vger.kernel.org
+Subject: [BUG] 6.8.x general protection fault during cifs/netfs write
+Message-ID: <20240430094651.17461d73@hemera>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.39; x86_64-pc-linux-gnu)
+Importance: high
+X-Priority: 1 (Highest)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240429034738.138609-10-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kemeng,
+Hi,
 
-kernel test robot noticed the following build warnings:
+I've been experiencing general protection fault during cifs IO recently
+with 6.8 kernels (6.8.7 and 6.8.0).
+For the 6.8.7 it was during a `cp -a $localdir /path/to/cifs/mount`.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[276389.427110] general protection fault, probably for non-canonical addres=
+s 0x5a5a5a5a5a5a5ae2: 0000 [#1] SMP NOPTI
+[276389.427129] CPU: 4 PID: 4373 Comm: cp Not tainted 6.8.7 #2
+[276389.427137] Hardware name: LENOVO 20N4S13W00/20N4S13W00, BIOS N2IETA2W =
+(1.80 ) 06/21/2023
+[276389.427143] RIP: 0010:__fscache_use_cookie+0x1e/0x2b0
+[276389.427156] Code: 90 90 90 90 90 90 90 90 90 90 90 90 41 57 41 56 41 55=
+ 41 54 55 53 48 83 ec 48 65 48 8b 04 25 28 00 00 00 48 89 44 24 40 31 c0 <4=
+8> 8b 87 88 00 00 00 89 c5 83 e5 01 0f 85 c3 01 00 00 4c 8d 6f 14
+[276389.427164] RSP: 0018:ffffaf3e85053ca8 EFLAGS: 00010246
+[276389.427173] RAX: 0000000000000000 RBX: ffff9b8feefd1ef8 RCX: 0000000000=
+000000
+[276389.427178] RDX: 0000000000040004 RSI: 0000000000000001 RDI: 5a5a5a5a5a=
+5a5a5a
+[276389.427184] RBP: 5a5a5a5a5a5a5a5a R08: 0000000000000000 R09: 0000000000=
+000000
+[276389.427189] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9b8fee=
+fd1ef8
+[276389.427194] R13: 0000000000001000 R14: ffff9b8feefd2070 R15: ffff9b8fe2=
+db4a00
+[276389.427199] FS:  00007fac30b10740(0000) GS:ffff9b922e700000(0000) knlGS=
+:0000000000000000
+[276389.427206] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[276389.427211] CR2: 00007fac30aa8000 CR3: 00000001dcafa006 CR4: 0000000000=
+3706f0
+[276389.427217] Call Trace:
+[276389.427223]  <TASK>
+[276389.427227]  ? die_addr+0x2d/0x80
+[276389.427239]  ? exc_general_protection+0x2ba/0x340
+[276389.427251]  ? asm_exc_general_protection+0x22/0x30
+[276389.427262]  ? __fscache_use_cookie+0x1e/0x2b0
+[276389.427269]  ? queue_delayed_work_on+0x27/0x30
+[276389.427280]  netfs_dirty_folio+0x8b/0xa0
+[276389.427290]  cifs_write_end+0x145/0x1d0
+[276389.427299]  generic_perform_write+0x11e/0x230
+[276389.427308]  cifs_strict_writev+0x256/0x2d0
+[276389.427318]  vfs_write+0x274/0x420
+[276389.427326]  ksys_write+0x66/0xf0
+[276389.427332]  do_syscall_64+0x49/0x120
+[276389.427340]  entry_SYSCALL_64_after_hwframe+0x78/0x80
+[276389.427351] RIP: 0033:0x7fac30c02264
+[276389.427358] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00=
+ 00 00 00 00 f3 0f 1e fa 80 3d 05 31 0d 00 00 74 13 b8 01 00 00 00 0f 05 <4=
+8> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 48 83 ec 28 48 89 54 24 18 48
+[276389.427364] RSP: 002b:00007ffd93d03ac8 EFLAGS: 00000202 ORIG_RAX: 00000=
+00000000001
+[276389.427372] RAX: ffffffffffffffda RBX: 0000000000099ec3 RCX: 00007fac30=
+c02264
+[276389.427378] RDX: 0000000000099ec3 RSI: 00007fac30a0f000 RDI: 0000000000=
+000004
+[276389.427382] RBP: 0000000000099ec3 R08: 00007fac30a0f000 R09: 0000000000=
+000000
+[276389.427387] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fac30=
+a0f000
+[276389.427392] R13: 0000000000000004 R14: 0000000000099ec3 R15: 0000000000=
+099ec3
+[276389.427398]  </TASK>
+[276389.427401] Modules linked in:
+[276389.427409] ---[ end trace 0000000000000000 ]---
+[276389.427414] RIP: 0010:__fscache_use_cookie+0x1e/0x2b0
+[276389.427421] Code: 90 90 90 90 90 90 90 90 90 90 90 90 41 57 41 56 41 55=
+ 41 54 55 53 48 83 ec 48 65 48 8b 04 25 28 00 00 00 48 89 44 24 40 31 c0 <4=
+8> 8b 87 88 00 00 00 89 c5 83 e5 01 0f 85 c3 01 00 00 4c 8d 6f 14
+[276389.427427] RSP: 0018:ffffaf3e85053ca8 EFLAGS: 00010246
+[276389.427433] RAX: 0000000000000000 RBX: ffff9b8feefd1ef8 RCX: 0000000000=
+000000
+[276389.427438] RDX: 0000000000040004 RSI: 0000000000000001 RDI: 5a5a5a5a5a=
+5a5a5a
+[276389.427442] RBP: 5a5a5a5a5a5a5a5a R08: 0000000000000000 R09: 0000000000=
+000000
+[276389.427447] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9b8fee=
+fd1ef8
+[276389.427451] R13: 0000000000001000 R14: ffff9b8feefd2070 R15: ffff9b8fe2=
+db4a00
+[276389.427456] FS:  00007fac30b10740(0000) GS:ffff9b922e700000(0000) knlGS=
+:0000000000000000
+[276389.427462] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[276389.427467] CR2: 00007fac30aa8000 CR3: 00000001dcafa006 CR4: 0000000000=
+3706f0
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kemeng-Shi/writeback-factor-out-wb_bg_dirty_limits-to-remove-repeated-code/20240429-114903
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240429034738.138609-10-shikemeng%40huaweicloud.com
-patch subject: [PATCH 09/10] writeback: factor out wb_dirty_exceeded to remove repeated code
-config: i386-randconfig-141-20240429 (https://download.01.org/0day-ci/archive/20240430/202404300231.bnb28iB8-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202404300231.bnb28iB8-lkp@intel.com/
+This looks like the delayed work is suffering from some use-after-free.
+Note that I have `slub_debug=3DZP` on my kernel cmdline which will make
+use after free issues more visible.
 
-New smatch warnings:
-mm/page-writeback.c:1903 balance_dirty_pages() error: we previously assumed 'mdtc' could be null (see line 1886)
+The kernel not being built with debugging symbols, here is what I get
+from objdump:
+0000000000001130 <__fscache_use_cookie>:
+__fscache_use_cookie():
+    1130:       41 57                   push   %r15
+    1132:       41 56                   push   %r14
+    1134:       41 55                   push   %r13
+    1136:       41 54                   push   %r12
+    1138:       55                      push   %rbp
+    1139:       53                      push   %rbx
+    113a:       48 83 ec 48             sub    $0x48,%rsp
+    113e:       65 48 8b 04 25 28 00    mov    %gs:0x28,%rax
+    1145:       00 00=20
+    1147:       48 89 44 24 40          mov    %rax,0x40(%rsp)
+    114c:       31 c0                   xor    %eax,%eax
+    114e:       48 8b 87 88 00 00 00    mov    0x88(%rdi),%rax
+                ^^^^^^^^^^^^^^^^^^^^
+    1155:       89 c5                   mov    %eax,%ebp
+    1157:       83 e5 01                and    $0x1,%ebp
+    115a:       0f 85 c3 01 00 00       jne    1323 <__fscache_use_cookie+0=
+x1f3>
+    1160:       4c 8d 6f 14             lea    0x14(%rdi),%r13
+    1164:       48 89 fb                mov    %rdi,%rbx
+    1167:       41 89 f4                mov    %esi,%r12d
+    116a:       4c 89 ef                mov    %r13,%rdi
+    116d:       e8 00 00 00 00          call   1172 <__fscache_use_cookie+0=
+x42>
+    1172:       b8 01 00 00 00          mov    $0x1,%eax
+    1177:       f0 0f c1 43 04          lock xadd %eax,0x4(%rbx)
+    117c:       8b 43 08                mov    0x8(%rbx),%eax
+    117f:       8b 03                   mov    (%rbx),%eax
+    1181:       0f b6 b3 90 00 00 00    movzbl 0x90(%rbx),%esi
+    1188:       40 80 fe 04             cmp    $0x4,%sil
+    118c:       77 26                   ja     11b4 <__fscache_use_cookie+0=
+x84>
+    118e:       40 80 fe 02             cmp    $0x2,%sil
+    1192:       77 7b                   ja     120f <__fscache_use_cookie+0=
+xdf>
+    1194:       40 84 f6                test   %sil,%sil
+    1197:       0f 84 0f 01 00 00       je     12ac <__fscache_use_cookie+0=
+x17c>
+    119d:       45 84 e4                test   %r12b,%r12b
+    11a0:       0f 84 fd 00 00 00       je     12a3 <__fscache_use_cookie+0=
+x173>
+    11a6:       f0 80 8b 88 00 00 00    lock orb $0x80,0x88(%rbx)
+    11ad:       80=20
 
-vim +/mdtc +1903 mm/page-writeback.c
+Unless I'm misreading code that feels like the cookie was freed
+already and the first access at cookie details crashes.
 
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  1800  static int balance_dirty_pages(struct bdi_writeback *wb,
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  1801  			       unsigned long pages_dirtied, unsigned int flags)
-^1da177e4c3f41 Linus Torvalds  2005-04-16  1802  {
-2bc00aef030f4f Tejun Heo       2015-05-22  1803  	struct dirty_throttle_control gdtc_stor = { GDTC_INIT(wb) };
-c2aa723a609363 Tejun Heo       2015-05-22  1804  	struct dirty_throttle_control mdtc_stor = { MDTC_INIT(wb, &gdtc_stor) };
-2bc00aef030f4f Tejun Heo       2015-05-22  1805  	struct dirty_throttle_control * const gdtc = &gdtc_stor;
-c2aa723a609363 Tejun Heo       2015-05-22  1806  	struct dirty_throttle_control * const mdtc = mdtc_valid(&mdtc_stor) ?
-c2aa723a609363 Tejun Heo       2015-05-22  1807  						     &mdtc_stor : NULL;
-c2aa723a609363 Tejun Heo       2015-05-22  1808  	struct dirty_throttle_control *sdtc;
-c8a7ee1b73042a Kemeng Shi      2024-04-23  1809  	unsigned long nr_dirty;
-83712358ba0a14 Wu Fengguang    2011-06-11  1810  	long period;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1811  	long pause;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1812  	long max_pause;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1813  	long min_pause;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1814  	int nr_dirtied_pause;
-143dfe8611a630 Wu Fengguang    2010-08-27  1815  	unsigned long task_ratelimit;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1816  	unsigned long dirty_ratelimit;
-dfb8ae56783542 Tejun Heo       2015-05-22  1817  	struct backing_dev_info *bdi = wb->bdi;
-5a53748568f796 Maxim Patlasov  2013-09-11  1818  	bool strictlimit = bdi->capabilities & BDI_CAP_STRICTLIMIT;
-e98be2d599207c Wu Fengguang    2010-08-29  1819  	unsigned long start_time = jiffies;
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  1820  	int ret = 0;
-^1da177e4c3f41 Linus Torvalds  2005-04-16  1821  
-^1da177e4c3f41 Linus Torvalds  2005-04-16  1822  	for (;;) {
-83712358ba0a14 Wu Fengguang    2011-06-11  1823  		unsigned long now = jiffies;
-83712358ba0a14 Wu Fengguang    2011-06-11  1824  
-c8a7ee1b73042a Kemeng Shi      2024-04-23  1825  		nr_dirty = global_node_page_state(NR_FILE_DIRTY);
-5fce25a9df4865 Peter Zijlstra  2007-11-14  1826  
-204c26b42a22b8 Kemeng Shi      2024-04-29  1827  		balance_domain_limits(gdtc, strictlimit);
-204c26b42a22b8 Kemeng Shi      2024-04-29  1828  		if (mdtc)
-c2aa723a609363 Tejun Heo       2015-05-22  1829  			/*
-c2aa723a609363 Tejun Heo       2015-05-22  1830  			 * If @wb belongs to !root memcg, repeat the same
-c2aa723a609363 Tejun Heo       2015-05-22  1831  			 * basic calculations for the memcg domain.
-c2aa723a609363 Tejun Heo       2015-05-22  1832  			 */
-204c26b42a22b8 Kemeng Shi      2024-04-29  1833  			balance_domain_limits(mdtc, strictlimit);
-5a53748568f796 Maxim Patlasov  2013-09-11  1834  
-ea6813be07dcdc Jan Kara        2022-06-23  1835  		/*
-ea6813be07dcdc Jan Kara        2022-06-23  1836  		 * In laptop mode, we wait until hitting the higher threshold
-ea6813be07dcdc Jan Kara        2022-06-23  1837  		 * before starting background writeout, and then write out all
-ea6813be07dcdc Jan Kara        2022-06-23  1838  		 * the way down to the lower threshold.  So slow writers cause
-ea6813be07dcdc Jan Kara        2022-06-23  1839  		 * minimal disk activity.
-ea6813be07dcdc Jan Kara        2022-06-23  1840  		 *
-ea6813be07dcdc Jan Kara        2022-06-23  1841  		 * In normal mode, we start background writeout at the lower
-ea6813be07dcdc Jan Kara        2022-06-23  1842  		 * background_thresh, to keep the amount of dirty memory low.
-ea6813be07dcdc Jan Kara        2022-06-23  1843  		 */
-c8a7ee1b73042a Kemeng Shi      2024-04-23  1844  		if (!laptop_mode && nr_dirty > gdtc->bg_thresh &&
-ea6813be07dcdc Jan Kara        2022-06-23  1845  		    !writeback_in_progress(wb))
-ea6813be07dcdc Jan Kara        2022-06-23  1846  			wb_start_background_writeback(wb);
-ea6813be07dcdc Jan Kara        2022-06-23  1847  
-16c4042f08919f Wu Fengguang    2010-08-11  1848  		/*
-c2aa723a609363 Tejun Heo       2015-05-22  1849  		 * If memcg domain is in effect, @dirty should be under
-c2aa723a609363 Tejun Heo       2015-05-22  1850  		 * both global and memcg freerun ceilings.
-16c4042f08919f Wu Fengguang    2010-08-11  1851  		 */
-c474a90dc076a7 Kemeng Shi      2024-04-29  1852  		if (gdtc->freerun && (!mdtc || mdtc->freerun)) {
-a37b0715ddf300 NeilBrown       2020-06-01  1853  			unsigned long intv;
-a37b0715ddf300 NeilBrown       2020-06-01  1854  			unsigned long m_intv;
-a37b0715ddf300 NeilBrown       2020-06-01  1855  
-a37b0715ddf300 NeilBrown       2020-06-01  1856  free_running:
-c474a90dc076a7 Kemeng Shi      2024-04-29  1857  			intv = domain_poll_intv(gdtc, strictlimit);
-a37b0715ddf300 NeilBrown       2020-06-01  1858  			m_intv = ULONG_MAX;
-c2aa723a609363 Tejun Heo       2015-05-22  1859  
-83712358ba0a14 Wu Fengguang    2011-06-11  1860  			current->dirty_paused_when = now;
-83712358ba0a14 Wu Fengguang    2011-06-11  1861  			current->nr_dirtied = 0;
-c2aa723a609363 Tejun Heo       2015-05-22  1862  			if (mdtc)
-c474a90dc076a7 Kemeng Shi      2024-04-29  1863  				m_intv = domain_poll_intv(mdtc, strictlimit);
-c2aa723a609363 Tejun Heo       2015-05-22  1864  			current->nr_dirtied_pause = min(intv, m_intv);
-16c4042f08919f Wu Fengguang    2010-08-11  1865  			break;
-83712358ba0a14 Wu Fengguang    2011-06-11  1866  		}
-16c4042f08919f Wu Fengguang    2010-08-11  1867  
-ea6813be07dcdc Jan Kara        2022-06-23  1868  		/* Start writeback even when in laptop mode */
-bc05873dccd27d Tejun Heo       2015-05-22  1869  		if (unlikely(!writeback_in_progress(wb)))
-9ecf4866c018ae Tejun Heo       2015-05-22  1870  			wb_start_background_writeback(wb);
-143dfe8611a630 Wu Fengguang    2010-08-27  1871  
-97b27821b4854c Tejun Heo       2019-08-26  1872  		mem_cgroup_flush_foreign(wb);
-97b27821b4854c Tejun Heo       2019-08-26  1873  
-c2aa723a609363 Tejun Heo       2015-05-22  1874  		/*
-c2aa723a609363 Tejun Heo       2015-05-22  1875  		 * Calculate global domain's pos_ratio and select the
-c2aa723a609363 Tejun Heo       2015-05-22  1876  		 * global dtc by default.
-c2aa723a609363 Tejun Heo       2015-05-22  1877  		 */
-aab09fbaa2dd34 Kemeng Shi      2024-04-29  1878  		wb_dirty_freerun(gdtc, strictlimit);
-aab09fbaa2dd34 Kemeng Shi      2024-04-29  1879  		if (gdtc->freerun)
-a37b0715ddf300 NeilBrown       2020-06-01  1880  			goto free_running;
-a37b0715ddf300 NeilBrown       2020-06-01  1881  
-8b8bf84233eccf Kemeng Shi      2024-04-29  1882  		wb_dirty_exceeded(gdtc, strictlimit);
-daddfa3cb30ebf Tejun Heo       2015-05-22  1883  		wb_position_ratio(gdtc);
-c2aa723a609363 Tejun Heo       2015-05-22  1884  		sdtc = gdtc;
-e98be2d599207c Wu Fengguang    2010-08-29  1885  
-c2aa723a609363 Tejun Heo       2015-05-22 @1886  		if (mdtc) {
-                                                                ^^^^^^^^^^^
-This code assumes mdtc can be NULL
 
-c2aa723a609363 Tejun Heo       2015-05-22  1887  			/*
-c2aa723a609363 Tejun Heo       2015-05-22  1888  			 * If memcg domain is in effect, calculate its
-c2aa723a609363 Tejun Heo       2015-05-22  1889  			 * pos_ratio.  @wb should satisfy constraints from
-c2aa723a609363 Tejun Heo       2015-05-22  1890  			 * both global and memcg domains.  Choose the one
-c2aa723a609363 Tejun Heo       2015-05-22  1891  			 * w/ lower pos_ratio.
-c2aa723a609363 Tejun Heo       2015-05-22  1892  			 */
-aab09fbaa2dd34 Kemeng Shi      2024-04-29  1893  			wb_dirty_freerun(mdtc, strictlimit);
-aab09fbaa2dd34 Kemeng Shi      2024-04-29  1894  			if (mdtc->freerun)
-a37b0715ddf300 NeilBrown       2020-06-01  1895  				goto free_running;
-aab09fbaa2dd34 Kemeng Shi      2024-04-29  1896  
-8b8bf84233eccf Kemeng Shi      2024-04-29  1897  			wb_dirty_exceeded(mdtc, strictlimit);
-c2aa723a609363 Tejun Heo       2015-05-22  1898  			wb_position_ratio(mdtc);
-c2aa723a609363 Tejun Heo       2015-05-22  1899  			if (mdtc->pos_ratio < gdtc->pos_ratio)
-c2aa723a609363 Tejun Heo       2015-05-22  1900  				sdtc = mdtc;
-c2aa723a609363 Tejun Heo       2015-05-22  1901  		}
-daddfa3cb30ebf Tejun Heo       2015-05-22  1902  
-8b8bf84233eccf Kemeng Shi      2024-04-29 @1903  		wb->dirty_exceeded = gdtc->dirty_exceeded || mdtc->dirty_exceeded;
-                                                                                                             ^^^^^^
-Unchecked dereference
+A previous trace with 6.8.0:
+[1164231.756488] CPU: 7 PID: 23080 Comm: cp Tainted: G      D            6.=
+8.0 #1
+[1164231.756491] Hardware name: LENOVO 20N4S13W00/20N4S13W00, BIOS N2IETA2W=
+ (1.80 ) 06/21/2023
+[1164231.756493] RIP: 0010:__fscache_use_cookie+0x1e/0x2b0
+[1164231.756500] Code: 90 90 90 90 90 90 90 90 90 90 90 90 41 57 41 56 41 5=
+5 41 54 55 53 48 83 ec 48 65 48 8b 04 25 28 00 00 00 48 89 44 24 40 31 c0 <=
+48> 8b 87 88 00 00 00 89 c5 83 e5 01 0f 85 c3 01 00 00 4c 8d 6f 14
+[1164231.756502] RSP: 0018:ffffaedd076cfca8 EFLAGS: 00010246
+[1164231.756504] RAX: 0000000000000000 RBX: ffffa3179d9863b8 RCX: ffffa3179=
+d9864a0
+[1164231.756506] RDX: 0000000000040004 RSI: 0000000000000001 RDI: 5a5a5a5a5=
+a5a5a5a
+[1164231.756507] RBP: 5a5a5a5a5a5a5a5a R08: ffffa3179d9864a0 R09: 000000000=
+0000000
+[1164231.756508] R10: 0000000000000000 R11: 0000000000000000 R12: ffffa3179=
+d9863b8
+[1164231.756510] R13: 0000000000001000 R14: ffffa3179d986530 R15: ffffa3161=
+7172c00
+[1164231.756511] FS:  00007f66d8685740(0000) GS:ffffa31a2e7c0000(0000) knlG=
+S:0000000000000000
+[1164231.756513] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[1164231.756514] CR2: 00007f66d8589000 CR3: 00000001b9dce001 CR4: 000000000=
+03706f0
+[1164231.756516] Call Trace:
+[1164231.756518]  <TASK>
+[1164231.756520]  ? die_addr+0x2d/0x80
+[1164231.756526]  ? exc_general_protection+0x2ba/0x340
+[1164231.756531]  ? asm_exc_general_protection+0x22/0x30
+[1164231.756535]  ? __fscache_use_cookie+0x1e/0x2b0
+[1164231.756536]  ? locked_inode_to_wb_and_lock_list+0x3b/0x130
+[1164231.756541]  ? __mark_inode_dirty+0x12e/0x220
+[1164231.756543]  netfs_dirty_folio+0x8b/0xa0
+[1164231.756547]  cifs_write_end+0x145/0x1d0
+[1164231.756552]  generic_perform_write+0x11e/0x230
+[1164231.756556]  cifs_strict_writev+0x256/0x2d0
+[1164231.756559]  vfs_write+0x274/0x420
+[1164231.756563]  ksys_write+0x66/0xf0
+[1164231.756565]  do_syscall_64+0x4e/0x120
+[1164231.756568]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
+[1164231.756573] RIP: 0033:0x7f66d8777264
+[1164231.756576] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 0=
+0 00 00 00 00 f3 0f 1e fa 80 3d 05 31 0d 00 00 74 13 b8 01 00 00 00 0f 05 <=
+48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 48 83 ec 28 48 89 54 24 18 48
+[1164231.756577] RSP: 002b:00007ffea7f86228 EFLAGS: 00000202 ORIG_RAX: 0000=
+000000000001
+[1164231.756579] RAX: ffffffffffffffda RBX: 00000000000059d5 RCX: 00007f66d=
+8777264
+[1164231.756581] RDX: 00000000000059d5 RSI: 00007f66d8584000 RDI: 000000000=
+0000004
+[1164231.756582] RBP: 00000000000059d5 R08: 00007f66d8584000 R09: 000000000=
+0000000
+[1164231.756583] R10: 0000000000000000 R11: 0000000000000202 R12: 00007f66d=
+8584000
+[1164231.756584] R13: 0000000000000004 R14: 00000000000059d5 R15: 000000000=
+00059d5
+[1164231.756585]  </TASK>
+[1164231.756586] Modules linked in:
+[1164231.756589] ---[ end trace 0000000000000000 ]---
+[1164231.756591] RIP: 0010:__fscache_use_cookie+0x1e/0x2b0
+[1164231.756593] Code: 90 90 90 90 90 90 90 90 90 90 90 90 41 57 41 56 41 5=
+5 41 54 55 53 48 83 ec 48 65 48 8b 04 25 28 00 00 00 48 89 44 24 40 31 c0 <=
+48> 8b 87 88 00 00 00 89 c5 83 e5 01 0f 85 c3 01 00 00 4c 8d 6f 14
+[1164231.756594] RSP: 0018:ffffaedd03103ca0 EFLAGS: 00010246
+[1164231.756595] RAX: 0000000000000000 RBX: ffffa3179d9825d8 RCX: 000000000=
+0000000
+[1164231.756597] RDX: 0000000000040004 RSI: 0000000000000001 RDI: 5a5a5a5a5=
+a5a5a5a
+[1164231.756598] RBP: 5a5a5a5a5a5a5a5a R08: 0000000000000000 R09: 000000000=
+0000000
+[1164231.756599] R10: 0000000000000000 R11: 0000000000000000 R12: ffffa3179=
+d9825d8
+[1164231.756600] R13: 000000000000005c R14: ffffa3179d982750 R15: ffffa316e=
+1f66e00
+[1164231.756601] FS:  00007f66d8685740(0000) GS:ffffa31a2e7c0000(0000) knlG=
+S:0000000000000000
+[1164231.756602] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[1164231.756604] CR2: 00007f66d8589000 CR3: 00000001b9dce001 CR4: 000000000=
+03706f0
 
-20792ebf3eeb82 Jan Kara        2021-09-02  1904  		if (time_is_before_jiffies(READ_ONCE(wb->bw_time_stamp) +
-45a2966fd64147 Jan Kara        2021-09-02  1905  					   BANDWIDTH_INTERVAL))
-fee468fdf41cdf Jan Kara        2021-09-02  1906  			__wb_update_bandwidth(gdtc, mdtc, true);
-e98be2d599207c Wu Fengguang    2010-08-29  1907  
-c2aa723a609363 Tejun Heo       2015-05-22  1908  		/* throttle according to the chosen dtc */
-20792ebf3eeb82 Jan Kara        2021-09-02  1909  		dirty_ratelimit = READ_ONCE(wb->dirty_ratelimit);
-c2aa723a609363 Tejun Heo       2015-05-22  1910  		task_ratelimit = ((u64)dirty_ratelimit * sdtc->pos_ratio) >>
-3a73dbbc9bb3fc Wu Fengguang    2011-11-07  1911  							RATELIMIT_CALC_SHIFT;
-c2aa723a609363 Tejun Heo       2015-05-22  1912  		max_pause = wb_max_pause(wb, sdtc->wb_dirty);
-a88a341a73be4e Tejun Heo       2015-05-22  1913  		min_pause = wb_min_pause(wb, max_pause,
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1914  					 task_ratelimit, dirty_ratelimit,
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1915  					 &nr_dirtied_pause);
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1916  
-3a73dbbc9bb3fc Wu Fengguang    2011-11-07  1917  		if (unlikely(task_ratelimit == 0)) {
-83712358ba0a14 Wu Fengguang    2011-06-11  1918  			period = max_pause;
-c8462cc9de9e92 Wu Fengguang    2011-06-11  1919  			pause = max_pause;
-143dfe8611a630 Wu Fengguang    2010-08-27  1920  			goto pause;
-e50e37201ae2e7 Wu Fengguang    2010-08-11  1921  		}
-83712358ba0a14 Wu Fengguang    2011-06-11  1922  		period = HZ * pages_dirtied / task_ratelimit;
-83712358ba0a14 Wu Fengguang    2011-06-11  1923  		pause = period;
-83712358ba0a14 Wu Fengguang    2011-06-11  1924  		if (current->dirty_paused_when)
-83712358ba0a14 Wu Fengguang    2011-06-11  1925  			pause -= now - current->dirty_paused_when;
-83712358ba0a14 Wu Fengguang    2011-06-11  1926  		/*
-83712358ba0a14 Wu Fengguang    2011-06-11  1927  		 * For less than 1s think time (ext3/4 may block the dirtier
-83712358ba0a14 Wu Fengguang    2011-06-11  1928  		 * for up to 800ms from time to time on 1-HDD; so does xfs,
-83712358ba0a14 Wu Fengguang    2011-06-11  1929  		 * however at much less frequency), try to compensate it in
-83712358ba0a14 Wu Fengguang    2011-06-11  1930  		 * future periods by updating the virtual time; otherwise just
-83712358ba0a14 Wu Fengguang    2011-06-11  1931  		 * do a reset, as it may be a light dirtier.
-83712358ba0a14 Wu Fengguang    2011-06-11  1932  		 */
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1933  		if (pause < min_pause) {
-5634cc2aa9aebc Tejun Heo       2015-08-18  1934  			trace_balance_dirty_pages(wb,
-c2aa723a609363 Tejun Heo       2015-05-22  1935  						  sdtc->thresh,
-c2aa723a609363 Tejun Heo       2015-05-22  1936  						  sdtc->bg_thresh,
-c2aa723a609363 Tejun Heo       2015-05-22  1937  						  sdtc->dirty,
-c2aa723a609363 Tejun Heo       2015-05-22  1938  						  sdtc->wb_thresh,
-c2aa723a609363 Tejun Heo       2015-05-22  1939  						  sdtc->wb_dirty,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1940  						  dirty_ratelimit,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1941  						  task_ratelimit,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1942  						  pages_dirtied,
-83712358ba0a14 Wu Fengguang    2011-06-11  1943  						  period,
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1944  						  min(pause, 0L),
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1945  						  start_time);
-83712358ba0a14 Wu Fengguang    2011-06-11  1946  			if (pause < -HZ) {
-83712358ba0a14 Wu Fengguang    2011-06-11  1947  				current->dirty_paused_when = now;
-83712358ba0a14 Wu Fengguang    2011-06-11  1948  				current->nr_dirtied = 0;
-83712358ba0a14 Wu Fengguang    2011-06-11  1949  			} else if (period) {
-83712358ba0a14 Wu Fengguang    2011-06-11  1950  				current->dirty_paused_when += period;
-83712358ba0a14 Wu Fengguang    2011-06-11  1951  				current->nr_dirtied = 0;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1952  			} else if (current->nr_dirtied_pause <= pages_dirtied)
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1953  				current->nr_dirtied_pause += pages_dirtied;
-57fc978cfb61ed Wu Fengguang    2011-06-11  1954  			break;
-e50e37201ae2e7 Wu Fengguang    2010-08-11  1955  		}
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1956  		if (unlikely(pause > max_pause)) {
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1957  			/* for occasional dropped task_ratelimit */
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1958  			now += min(pause - max_pause, max_pause);
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1959  			pause = max_pause;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1960  		}
-143dfe8611a630 Wu Fengguang    2010-08-27  1961  
-143dfe8611a630 Wu Fengguang    2010-08-27  1962  pause:
-5634cc2aa9aebc Tejun Heo       2015-08-18  1963  		trace_balance_dirty_pages(wb,
-c2aa723a609363 Tejun Heo       2015-05-22  1964  					  sdtc->thresh,
-c2aa723a609363 Tejun Heo       2015-05-22  1965  					  sdtc->bg_thresh,
-c2aa723a609363 Tejun Heo       2015-05-22  1966  					  sdtc->dirty,
-c2aa723a609363 Tejun Heo       2015-05-22  1967  					  sdtc->wb_thresh,
-c2aa723a609363 Tejun Heo       2015-05-22  1968  					  sdtc->wb_dirty,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1969  					  dirty_ratelimit,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1970  					  task_ratelimit,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1971  					  pages_dirtied,
-83712358ba0a14 Wu Fengguang    2011-06-11  1972  					  period,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1973  					  pause,
-ece13ac31bbe49 Wu Fengguang    2010-08-29  1974  					  start_time);
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  1975  		if (flags & BDP_ASYNC) {
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  1976  			ret = -EAGAIN;
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  1977  			break;
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  1978  		}
-499d05ecf990a7 Jan Kara        2011-11-16  1979  		__set_current_state(TASK_KILLABLE);
-f814bdda774c18 Jan Kara        2024-01-23  1980  		bdi->last_bdp_sleep = jiffies;
-d25105e8911bff Wu Fengguang    2009-10-09  1981  		io_schedule_timeout(pause);
-87c6a9b253520b Jens Axboe      2009-09-17  1982  
-83712358ba0a14 Wu Fengguang    2011-06-11  1983  		current->dirty_paused_when = now + pause;
-83712358ba0a14 Wu Fengguang    2011-06-11  1984  		current->nr_dirtied = 0;
-7ccb9ad5364d6a Wu Fengguang    2011-11-30  1985  		current->nr_dirtied_pause = nr_dirtied_pause;
-83712358ba0a14 Wu Fengguang    2011-06-11  1986  
-ffd1f609ab1053 Wu Fengguang    2011-06-19  1987  		/*
-2bc00aef030f4f Tejun Heo       2015-05-22  1988  		 * This is typically equal to (dirty < thresh) and can also
-2bc00aef030f4f Tejun Heo       2015-05-22  1989  		 * keep "1000+ dd on a slow USB stick" under control.
-ffd1f609ab1053 Wu Fengguang    2011-06-19  1990  		 */
-1df647197c5b8a Wu Fengguang    2011-11-13  1991  		if (task_ratelimit)
-ffd1f609ab1053 Wu Fengguang    2011-06-19  1992  			break;
-499d05ecf990a7 Jan Kara        2011-11-16  1993  
-c5c6343c4d75f9 Wu Fengguang    2011-12-02  1994  		/*
-f0953a1bbaca71 Ingo Molnar     2021-05-06  1995  		 * In the case of an unresponsive NFS server and the NFS dirty
-de1fff37b2781f Tejun Heo       2015-05-22  1996  		 * pages exceeds dirty_thresh, give the other good wb's a pipe
-c5c6343c4d75f9 Wu Fengguang    2011-12-02  1997  		 * to go through, so that tasks on them still remain responsive.
-c5c6343c4d75f9 Wu Fengguang    2011-12-02  1998  		 *
-3f8b6fb7f279c7 Masahiro Yamada 2017-02-27  1999  		 * In theory 1 page is enough to keep the consumer-producer
-c5c6343c4d75f9 Wu Fengguang    2011-12-02  2000  		 * pipe going: the flusher cleans 1 page => the task dirties 1
-de1fff37b2781f Tejun Heo       2015-05-22  2001  		 * more page. However wb_dirty has accounting errors.  So use
-93f78d882865cb Tejun Heo       2015-05-22  2002  		 * the larger and more IO friendly wb_stat_error.
-c5c6343c4d75f9 Wu Fengguang    2011-12-02  2003  		 */
-2bce774e8245e9 Wang Long       2017-11-15  2004  		if (sdtc->wb_dirty <= wb_stat_error())
-c5c6343c4d75f9 Wu Fengguang    2011-12-02  2005  			break;
-c5c6343c4d75f9 Wu Fengguang    2011-12-02  2006  
-499d05ecf990a7 Jan Kara        2011-11-16  2007  		if (fatal_signal_pending(current))
-499d05ecf990a7 Jan Kara        2011-11-16  2008  			break;
-^1da177e4c3f41 Linus Torvalds  2005-04-16  2009  	}
-fe6c9c6e3e3e33 Jan Kara        2022-06-23  2010  	return ret;
-^1da177e4c3f41 Linus Torvalds  2005-04-16  2011  }
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
+Cheers,
+Bruno
 
