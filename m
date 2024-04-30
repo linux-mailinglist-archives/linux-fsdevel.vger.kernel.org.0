@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-18253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99AA8B68B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:30:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A558B68B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E901C21CBC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:30:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9CE28363C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783461118C;
-	Tue, 30 Apr 2024 03:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C07110A3C;
+	Tue, 30 Apr 2024 03:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdVpHkU8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsZ/7gmu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFFADDA6;
-	Tue, 30 Apr 2024 03:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B22101DE;
+	Tue, 30 Apr 2024 03:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447806; cv=none; b=L+N3Zb3YaQfCx473HkHfH64z6tiqebRDmVENZGjXZA6Ws95vblh/5d+eHkVGkY6HX9MmQwlC56/cZawOPT/JRU7gYjhUjgm33yDn1Mk6TJq8MI/T49QPYjHcAitzUDilC/oJfO7wxAkwb/jcF0xV8/DfpU6FZHlzQwhlwEoKTrY=
+	t=1714447822; cv=none; b=lVi8usBX5crp0lGReIw+KxZKsc6tJED8wn6wOZbGALXoi2XZkj9a3Ts1jOl4Hyv4RcXGwKkQS0nDrPT008eqiuGUiiCSkbIbfG0tulOqEUXO1lvRk1aDbpQug4w8ddUhUit3GEpmXtOm5i0Bey8qyW8WLTHawTwtQaOAt18jwks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447806; c=relaxed/simple;
-	bh=onh5fSUvb4T8Q52MEVObwn5ZKikQJKXx88H4RpZBu4o=;
+	s=arc-20240116; t=1714447822; c=relaxed/simple;
+	bh=Km5UncDH2YB10uPS5kqBLLtNh5A/FULlD9bScC2ld/U=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ox4vbL/iMf35SuV9uAXos/kL/+Q1RC1AWmeFDv3kT7/ERjJ5n2sfQ4l4gd9ja6Xv2+BDWPJ8m5H55pwY95sTMaEL8B8NhUySSBgTN5ANSKBKWitcDCglJS3nxfeWgEE/aADCrTcMelfgLGP28thlGvjl3ENDag3HiXtablQpm9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdVpHkU8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4E10C116B1;
-	Tue, 30 Apr 2024 03:30:06 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pV6AqzjEd2yIIId/sb/d+Y8FWrd3W22sw2fdn9mfkbEmBohqrDFCMAlRLPGev1Uwk5n+sCZOQJZ/qJiuHgClWdIe953WJZbrB0ffFzs/JiRopQlUBtwOdac5t+saqMgS6ZDgzXcO2tr5cKiTeXQEPz0A7cKyPmPukUXlkd11xig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsZ/7gmu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B7AC116B1;
+	Tue, 30 Apr 2024 03:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447806;
-	bh=onh5fSUvb4T8Q52MEVObwn5ZKikQJKXx88H4RpZBu4o=;
+	s=k20201202; t=1714447822;
+	bh=Km5UncDH2YB10uPS5kqBLLtNh5A/FULlD9bScC2ld/U=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=UdVpHkU82ramTSfxXMcTGZuy6/GDspmKt4gfhWH7P0YIyikDqZ8382L7UssY/Uuku
-	 upQZep+xRJqfza3wHMloqdIcAqKxgKQxTi5BHCZDTP+QHNFIVl/7NmkmNmaDV5RC1/
-	 OucmBDklvo2Z7nRpzJCcDW/f5+SyrIHFpT8PTL8m+I/liXWLn2gdKcyHP4UmlnAXgl
-	 8B7tVcVFCfNipxFsY4HiKkndtEWkBVxNRKWa3Fmw3FFCPSRbVu1NTQ+JM21OinDHGP
-	 Gec1ZATv9OWB/S5X9AE/PIqIK9BQFWE3iDbWueaKG1/JXvbCNaFvozMlgEgmmVV0y/
-	 PCgpnHConkwFQ==
-Date: Mon, 29 Apr 2024 20:30:06 -0700
-Subject: [PATCH 23/26] xfs: teach online repair to evaluate fsverity xattrs
+	b=JsZ/7gmuG3Qj9tAvLN2wFRHTjf1XJ9Zf8qa+NAnL9TzqG+4O33swQFZAb+hOdQPFx
+	 VvuHN19Koc5PbWdRW+2cqKHRRO4TrVASZ3MwegdQpyoeTC2M4sO/SevFiGIv8Nvh9W
+	 xHptLv/DDNqELGMdSt4TXyf5NNaxIH0F2w0ayfx49jdCaQIJQMRVlK1Vv2CSt5sRzb
+	 EiK7uk8RNpq09IHjRBSP0Bm6Kc9UwRygfOv6jLBHt2eXhy4PxM8QoDa7Kp95lsirkP
+	 ggw2r3mYxquSVPuda3ahOIF0lGqB++kaHs7MExxtpNkTkhd+Vjpvr217TA6zy0xuQg
+	 8pfMZ1/BMglWA==
+Date: Mon, 29 Apr 2024 20:30:21 -0700
+Subject: [PATCH 24/26] xfs: report verity failures through the health system
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, djwong@kernel.org
 Cc: linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
  fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Message-ID: <171444680757.957659.8130677930415663024.stgit@frogsfrogsfrogs>
+Message-ID: <171444680775.957659.13934229412323879338.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
 References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,359 +62,97 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Teach online repair to check for unused fsverity metadata and purge it
-on reconstruction.
+Record verity failures and report them through the health system.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/xfs/scrub/attr.c        |  138 ++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/attr.h        |    6 ++
- fs/xfs/scrub/attr_repair.c |   51 ++++++++++++++++
- fs/xfs/scrub/trace.c       |    1 
- fs/xfs/scrub/trace.h       |   31 ++++++++++
- 5 files changed, 226 insertions(+), 1 deletion(-)
+ fs/xfs/libxfs/xfs_fs.h     |    1 +
+ fs/xfs/libxfs/xfs_health.h |    4 +++-
+ fs/xfs/xfs_fsverity.c      |   11 +++++++++++
+ fs/xfs/xfs_health.c        |    1 +
+ 4 files changed, 16 insertions(+), 1 deletion(-)
 
 
-diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
-index b1448832ae6ba..f5fd7424bad1a 100644
---- a/fs/xfs/scrub/attr.c
-+++ b/fs/xfs/scrub/attr.c
-@@ -18,6 +18,7 @@
- #include "xfs_attr_leaf.h"
- #include "xfs_attr_sf.h"
- #include "xfs_parent.h"
-+#include "xfs_verity.h"
- #include "scrub/scrub.h"
- #include "scrub/common.h"
- #include "scrub/dabtree.h"
-@@ -126,6 +127,47 @@ xchk_setup_xattr_buf(
- 	return 0;
- }
- 
-+#ifdef CONFIG_FS_VERITY
-+/*
-+ * Obtain merkle tree geometry information for a verity file so that we can
-+ * perform sanity checks of the fsverity xattrs.
-+ */
-+STATIC int
-+xchk_xattr_setup_verity(
-+	struct xfs_scrub	*sc)
-+{
-+	struct xchk_xattr_buf	*ab;
-+	int			error;
-+
-+	/*
-+	 * Drop the ILOCK and the transaction because loading the fsverity
-+	 * metadata will call into the xattr code.  S_VERITY is enabled with
-+	 * IOLOCK_EXCL held, so it should not change here.
-+	 */
-+	xchk_iunlock(sc, XFS_ILOCK_EXCL);
-+	xchk_trans_cancel(sc);
-+
-+	error = xchk_setup_xattr_buf(sc, 0);
-+	if (error)
-+		return error;
-+
-+	ab = sc->buf;
-+	error = xchk_inode_setup_verity(sc, &ab->merkle_blocksize,
-+			&ab->merkle_tree_size);
-+	if (error)
-+		return error;
-+
-+	error = xchk_trans_alloc(sc, 0);
-+	if (error)
-+		return error;
-+
-+	xchk_ilock(sc, XFS_ILOCK_EXCL);
-+	return 0;
-+}
-+#else
-+# define xchk_xattr_setup_verity(...)	(0)
-+#endif /* CONFIG_FS_VERITY */
-+
- /* Set us up to scrub an inode's extended attributes. */
- int
- xchk_setup_xattr(
-@@ -150,9 +192,89 @@ xchk_setup_xattr(
- 			return error;
- 	}
- 
--	return xchk_setup_inode_contents(sc, 0);
-+	error = xchk_setup_inode_contents(sc, 0);
-+	if (error)
-+		return error;
-+
-+	if (IS_VERITY(VFS_I(sc->ip))) {
-+		error = xchk_xattr_setup_verity(sc);
-+		if (error)
-+			return error;
-+	}
-+
-+	return error;
- }
- 
-+#ifdef CONFIG_FS_VERITY
-+/* Check the merkle tree xattrs. */
-+STATIC void
-+xchk_xattr_verity(
-+	struct xfs_scrub		*sc,
-+	xfs_dablk_t			blkno,
-+	const unsigned char		*name,
-+	unsigned int			namelen,
-+	unsigned int			valuelen)
-+{
-+	struct xchk_xattr_buf		*ab = sc->buf;
-+
-+	/* Non-verity filesystems should never have verity xattrs. */
-+	if (!xfs_has_verity(sc->mp)) {
-+		xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-+		return;
-+	}
-+
-+	/*
-+	 * Any verity metadata on a non-verity file are leftovers from a
-+	 * previous attempt to enable verity.
-+	 */
-+	if (!IS_VERITY(VFS_I(sc->ip))) {
-+		xchk_ino_set_preen(sc, sc->ip->i_ino);
-+		return;
-+	}
-+
-+	/* Zero blocksize occurs if we couldn't load the merkle tree data. */
-+	if (ab->merkle_blocksize == 0)
-+		return;
-+
-+	switch (namelen) {
-+	case sizeof(struct xfs_merkle_key):
-+		/* Oversized blocks are not allowed */
-+		if (valuelen > ab->merkle_blocksize) {
-+			xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-+			return;
-+		}
-+		break;
-+	case XFS_VERITY_DESCRIPTOR_NAME_LEN:
-+		/* Has to match the descriptor xattr name */
-+		if (memcmp(name, XFS_VERITY_DESCRIPTOR_NAME, namelen))
-+			xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-+		return;
-+	default:
-+		xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-+		return;
-+	}
-+
-+	/*
-+	 * Merkle tree blocks beyond the end of the tree are leftovers from
-+	 * a previous failed attempt to enable verity.
-+	 */
-+	if (xfs_merkle_key_from_disk(name, namelen) >= ab->merkle_tree_size)
-+		xchk_ino_set_preen(sc, sc->ip->i_ino);
-+}
-+#else
-+static void
-+xchk_xattr_verity(
-+	struct xfs_scrub		*sc,
-+	xfs_dablk_t			blkno,
-+	const unsigned char		*name,
-+	unsigned int			namelen,
-+	unsigned int			valuelen)
-+{
-+	/* Should never see verity xattrs when verity is not enabled. */
-+	xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-+}
-+#endif /* CONFIG_FS_VERITY */
-+
- /* Extended Attributes */
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index edc019d89702d..bc529d862af75 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -424,6 +424,7 @@ struct xfs_bulkstat {
+ #define XFS_BS_SICK_SYMLINK	(1 << 6)  /* symbolic link remote target */
+ #define XFS_BS_SICK_PARENT	(1 << 7)  /* parent pointers */
+ #define XFS_BS_SICK_DIRTREE	(1 << 8)  /* directory tree structure */
++#define XFS_BS_SICK_DATA	(1 << 9)  /* file data */
  
  /*
-@@ -216,6 +338,13 @@ xchk_xattr_actor(
- 		return -ECANCELED;
- 	}
+  * Project quota id helpers (previously projid was 16bit only
+diff --git a/fs/xfs/libxfs/xfs_health.h b/fs/xfs/libxfs/xfs_health.h
+index 89b80e957917e..0f8533335e25f 100644
+--- a/fs/xfs/libxfs/xfs_health.h
++++ b/fs/xfs/libxfs/xfs_health.h
+@@ -105,6 +105,7 @@ struct xfs_rtgroup;
+ /* Don't propagate sick status to ag health summary during inactivation */
+ #define XFS_SICK_INO_FORGET	(1 << 12)
+ #define XFS_SICK_INO_DIRTREE	(1 << 13)  /* directory tree structure */
++#define XFS_SICK_INO_DATA	(1 << 14)  /* file data */
  
-+	/* Check verity xattr geometry */
-+	if (attr_flags & XFS_ATTR_VERITY) {
-+		xchk_xattr_verity(sc, args.blkno, name, namelen, valuelen);
-+		if (sc->sm->sm_flags & XFS_SCRUB_OFLAG_CORRUPT)
-+			return -ECANCELED;
-+	}
-+
- 	/*
- 	 * Try to allocate enough memory to extract the attr value.  If that
- 	 * doesn't work, return -EDEADLOCK as a signal to try again with a
-@@ -653,6 +782,13 @@ xchk_xattr(
- 	if (xchk_inode_verity_broken(sc->ip))
- 		xchk_set_incomplete(sc);
+ /* Primary evidence of health problems in a given group. */
+ #define XFS_SICK_FS_PRIMARY	(XFS_SICK_FS_COUNTERS | \
+@@ -143,7 +144,8 @@ struct xfs_rtgroup;
+ 				 XFS_SICK_INO_XATTR | \
+ 				 XFS_SICK_INO_SYMLINK | \
+ 				 XFS_SICK_INO_PARENT | \
+-				 XFS_SICK_INO_DIRTREE)
++				 XFS_SICK_INO_DIRTREE | \
++				 XFS_SICK_INO_DATA)
  
-+	/*
-+	 * If this is a verity file that won't activate, we cannot check the
-+	 * merkle tree geometry.
-+	 */
-+	if (xchk_inode_verity_broken(sc->ip))
-+		xchk_set_incomplete(sc);
+ #define XFS_SICK_INO_ZAPPED	(XFS_SICK_INO_BMBTD_ZAPPED | \
+ 				 XFS_SICK_INO_BMBTA_ZAPPED | \
+diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
+index e2de99272b7da..87edf23954336 100644
+--- a/fs/xfs/xfs_fsverity.c
++++ b/fs/xfs/xfs_fsverity.c
+@@ -22,6 +22,7 @@
+ #include "xfs_ag.h"
+ #include "xfs_fsverity.h"
+ #include "xfs_icache.h"
++#include "xfs_health.h"
+ #include <linux/fsverity.h>
+ 
+ /*
+@@ -930,6 +931,15 @@ xfs_fsverity_drop_merkle(
+ 	block->context = NULL;
+ }
+ 
++static void
++xfs_fsverity_file_corrupt(
++	struct inode		*inode,
++	loff_t			pos,
++	size_t			len)
++{
++	xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_DATA);
++}
 +
- 	/* Allocate memory for xattr checking. */
- 	error = xchk_setup_xattr_buf(sc, 0);
- 	if (error == -ENOMEM)
-diff --git a/fs/xfs/scrub/attr.h b/fs/xfs/scrub/attr.h
-index 7db58af56646b..40b8c12384f55 100644
---- a/fs/xfs/scrub/attr.h
-+++ b/fs/xfs/scrub/attr.h
-@@ -22,6 +22,12 @@ struct xchk_xattr_buf {
- 	/* Memory buffer used to extract xattr values. */
- 	void			*value;
- 	size_t			value_sz;
-+
-+#ifdef CONFIG_FS_VERITY
-+	/* Geometry of the merkle tree attached to this verity file. */
-+	u64			merkle_tree_size;
-+	unsigned int		merkle_blocksize;
-+#endif
+ const struct fsverity_operations xfs_fsverity_ops = {
+ 	.begin_enable_verity		= xfs_fsverity_begin_enable,
+ 	.end_enable_verity		= xfs_fsverity_end_enable,
+@@ -937,4 +947,5 @@ const struct fsverity_operations xfs_fsverity_ops = {
+ 	.read_merkle_tree_block		= xfs_fsverity_read_merkle,
+ 	.write_merkle_tree_block	= xfs_fsverity_write_merkle,
+ 	.drop_merkle_tree_block		= xfs_fsverity_drop_merkle,
++	.file_corrupt			= xfs_fsverity_file_corrupt,
+ };
+diff --git a/fs/xfs/xfs_health.c b/fs/xfs/xfs_health.c
+index 33059d979857a..ce7385c207d37 100644
+--- a/fs/xfs/xfs_health.c
++++ b/fs/xfs/xfs_health.c
+@@ -591,6 +591,7 @@ static const struct ioctl_sick_map ino_map[] = {
+ 	{ XFS_SICK_INO_DIR_ZAPPED,	XFS_BS_SICK_DIR },
+ 	{ XFS_SICK_INO_SYMLINK_ZAPPED,	XFS_BS_SICK_SYMLINK },
+ 	{ XFS_SICK_INO_DIRTREE,	XFS_BS_SICK_DIRTREE },
++	{ XFS_SICK_INO_DATA,	XFS_BS_SICK_DATA },
+ 	{ 0, 0 },
  };
  
- bool xchk_xattr_set_map(struct xfs_scrub *sc, unsigned long *map,
-diff --git a/fs/xfs/scrub/attr_repair.c b/fs/xfs/scrub/attr_repair.c
-index c7eb94069cafc..ff38c563a090b 100644
---- a/fs/xfs/scrub/attr_repair.c
-+++ b/fs/xfs/scrub/attr_repair.c
-@@ -29,6 +29,7 @@
- #include "xfs_exchrange.h"
- #include "xfs_acl.h"
- #include "xfs_parent.h"
-+#include "xfs_verity.h"
- #include "scrub/xfs_scrub.h"
- #include "scrub/scrub.h"
- #include "scrub/common.h"
-@@ -155,6 +156,44 @@ xrep_setup_xattr(
- 	return xrep_tempfile_create(sc, S_IFREG);
- }
- 
-+#ifdef CONFIG_FS_VERITY
-+static int
-+xrep_xattr_want_salvage_verity(
-+	struct xrep_xattr	*rx,
-+	const void		*name,
-+	int			namelen,
-+	int			valuelen)
-+{
-+	struct xchk_xattr_buf	*ab = rx->sc->buf;
-+
-+	if (!xfs_has_verity(rx->sc->mp))
-+		return false;
-+	if (!IS_VERITY(VFS_I(rx->sc->ip)))
-+		return false;
-+
-+	switch (namelen) {
-+	case sizeof(struct xfs_merkle_key):
-+		/* Oversized blocks are not allowed */
-+		if (valuelen > ab->merkle_blocksize)
-+			return false;
-+		break;
-+	case XFS_VERITY_DESCRIPTOR_NAME_LEN:
-+		/* Has to match the descriptor xattr name */
-+		return !memcmp(name, XFS_VERITY_DESCRIPTOR_NAME, namelen);
-+	default:
-+		return false;
-+	}
-+
-+	/*
-+	 * Merkle tree blocks beyond the end of the tree are leftovers from
-+	 * a previous failed attempt to enable verity.
-+	 */
-+	return xfs_merkle_key_from_disk(name, namelen) < ab->merkle_tree_size;
-+}
-+#else
-+# define xrep_xattr_want_salvage_verity(...)	(false)
-+#endif /* CONFIG_FS_VERITY */
-+
- /*
-  * Decide if we want to salvage this attribute.  We don't bother with
-  * incomplete or oversized keys or values.  The @value parameter can be null
-@@ -179,6 +218,9 @@ xrep_xattr_want_salvage(
- 		return false;
- 	if (attr_flags & XFS_ATTR_PARENT)
- 		return xfs_parent_valuecheck(rx->sc->mp, value, valuelen);
-+	if (attr_flags & XFS_ATTR_VERITY)
-+		return xrep_xattr_want_salvage_verity(rx, name, namelen,
-+				valuelen);
- 
- 	return true;
- }
-@@ -212,6 +254,11 @@ xrep_xattr_salvage_key(
- 
- 		trace_xrep_xattr_salvage_pptr(rx->sc->ip, flags, name,
- 				key.namelen, value, valuelen);
-+	} else if (flags & XFS_ATTR_VERITY) {
-+		key.namelen = namelen;
-+
-+		trace_xrep_xattr_salvage_verity(rx->sc->ip, flags, name,
-+				key.namelen, value, valuelen);
- 	} else {
- 		while (i < namelen && name[i] != 0)
- 			i++;
-@@ -663,6 +710,10 @@ xrep_xattr_insert_rec(
- 				ab->name, key->namelen, ab->value,
- 				key->valuelen);
- 		args.op_flags |= XFS_DA_OP_LOGGED;
-+	} else if (key->flags & XFS_ATTR_VERITY) {
-+		trace_xrep_xattr_insert_verity(rx->sc->ip, key->flags,
-+				ab->name, key->namelen, ab->value,
-+				key->valuelen);
- 	} else {
- 		trace_xrep_xattr_insert_rec(rx->sc->tempip, key->flags,
- 				ab->name, key->namelen, key->valuelen);
-diff --git a/fs/xfs/scrub/trace.c b/fs/xfs/scrub/trace.c
-index 6d8acb2f63d8a..69c234f2a4b32 100644
---- a/fs/xfs/scrub/trace.c
-+++ b/fs/xfs/scrub/trace.c
-@@ -22,6 +22,7 @@
- #include "xfs_parent.h"
- #include "xfs_imeta.h"
- #include "xfs_rtgroup.h"
-+#include "xfs_verity.h"
- #include "scrub/scrub.h"
- #include "scrub/xfile.h"
- #include "scrub/xfarray.h"
-diff --git a/fs/xfs/scrub/trace.h b/fs/xfs/scrub/trace.h
-index c43d02f9afade..c41598456dfcf 100644
---- a/fs/xfs/scrub/trace.h
-+++ b/fs/xfs/scrub/trace.h
-@@ -3072,6 +3072,37 @@ DEFINE_EVENT(xrep_pptr_salvage_class, name, \
- DEFINE_XREP_PPTR_SALVAGE_EVENT(xrep_xattr_salvage_pptr);
- DEFINE_XREP_PPTR_SALVAGE_EVENT(xrep_xattr_insert_pptr);
- 
-+DECLARE_EVENT_CLASS(xrep_verity_salvage_class,
-+	TP_PROTO(struct xfs_inode *ip, unsigned int flags, const void *name,
-+		 unsigned int namelen, const void *value, unsigned int valuelen),
-+	TP_ARGS(ip, flags, name, namelen, value, valuelen),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(xfs_ino_t, ino)
-+		__field(unsigned long long, merkle_off)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = ip->i_mount->m_super->s_dev;
-+		__entry->ino = ip->i_ino;
-+		if (namelen == sizeof(struct xfs_merkle_key))
-+			__entry->merkle_off = xfs_merkle_key_from_disk(name,
-+								namelen);
-+		else
-+			__entry->merkle_off = -1ULL;
-+	),
-+	TP_printk("dev %d:%d ino 0x%llx merkle_off 0x%llx",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->ino,
-+		  __entry->merkle_off)
-+)
-+#define DEFINE_XREP_VERITY_SALVAGE_EVENT(name) \
-+DEFINE_EVENT(xrep_verity_salvage_class, name, \
-+	TP_PROTO(struct xfs_inode *ip, unsigned int flags, const void *name, \
-+		 unsigned int namelen, const void *value, unsigned int valuelen), \
-+	TP_ARGS(ip, flags, name, namelen, value, valuelen))
-+DEFINE_XREP_VERITY_SALVAGE_EVENT(xrep_xattr_salvage_verity);
-+DEFINE_XREP_VERITY_SALVAGE_EVENT(xrep_xattr_insert_verity);
-+
- TRACE_EVENT(xrep_xattr_class,
- 	TP_PROTO(struct xfs_inode *ip, struct xfs_inode *arg_ip),
- 	TP_ARGS(ip, arg_ip),
 
 
