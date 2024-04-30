@@ -1,206 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-18317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178008B75E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 14:39:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B918B75E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 14:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CA3282741
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 12:39:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42BD28380D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 12:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C94917109A;
-	Tue, 30 Apr 2024 12:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5CE171640;
+	Tue, 30 Apr 2024 12:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="enWqOxC4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFPOBSoY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E43C17592
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 12:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D4F13F43D;
+	Tue, 30 Apr 2024 12:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714480751; cv=none; b=XFpEPT5IGPq96nKFvVHkVQPNwZp3k7Ae2zwfyRpRrLFfJNVWP2h/yzJit4NqOhC9z0452aM31YbJN70BMz5LTzx/MrCbKSUijuFHzhZ7OJJe7uGlEeZbjG8LbyrQVATodnvEA8WEZ8Ktx2iQmsIvjNHX+WjHZyGnDPz4qeTVPlQ=
+	t=1714480836; cv=none; b=kDjq1IQ++tJIhaEpOslMYWYLLhMTXYWYfwjfnYt115NufxMQpLgQ9At1JVQ/JWU69zcw01CpjpdD2dv+ZJoGWOPlBB68f5tr2pSBJ0R0SOw/wunsrWczKHw/4YTUabjX/z02qHT8Dh95ahtECGHdIV0jqT0Bq9O5ojgguhV7Lwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714480751; c=relaxed/simple;
-	bh=2B5D0D1GgUPmS0uCeYNjZO5NRwRu0X9XoEhIRqRwJsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQRUCHMAlTbJtK1XD7x0Xin35MwY7XucQj7L5Dz6cThUEWQD1JLmmWseN974S33KhMV7QMZRFTc+3XXDMj1kBeQAlvtFhabDQmxiPcwG+khOGLbZ1CcFJJJ+j+OcseThuPUMCUxmflDprguPpOsFKLf/xgmKxZc7/f7z+GEmh/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=enWqOxC4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714480749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W8nGH1asXpyg2kuAwkDFcJcU70PWri0NFYqSFUgAKXg=;
-	b=enWqOxC4hJ2z3NCoYs5iGAKuxCcdU8B09PevdcMNoT+v1WejC41dXt+QTOYpIIx/ZmADB3
-	plSxX4c5BR0oSKZMfpnhnXqfp0CJvcKA1YH4kLcAhbwOBFf+hRgeitNDBgM9RdUfHgUA06
-	G8urrwdE5PSKrIeJyVy00m0ghJb+1ks=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-Id_Kx2jFPnWUaY32rxQ_vA-1; Tue, 30 Apr 2024 08:39:07 -0400
-X-MC-Unique: Id_Kx2jFPnWUaY32rxQ_vA-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2db6fbc1dedso54327481fa.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 05:39:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714480746; x=1715085546;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W8nGH1asXpyg2kuAwkDFcJcU70PWri0NFYqSFUgAKXg=;
-        b=h3LpzZ26FJGegzlHblkfGgVfSWc4qc9shpbnLtts9WGb+Fy+IivREeNy/acv3LHjdp
-         +PzLzDXPtM2IYz0cFcJm+pv9FRrNlLGpKyutA/BZXvOAVT3TqhiW3vXckb/gHLhN/c+M
-         EThcDoZrX7xmUcPQvofCOL8278gSeRDrD9zgyiDYrRPiOai2zkkJI0dMuNmU5Asb7DUy
-         EqEKD/kMCFIupa+1Umro5hgROKpU+8617lquIbJK1tqDLPGsCgkr1DtmpVbxb0c43M2r
-         VkOdhqck+XRXEDhYAA40Zee9fslA0Zvfs3ZN4OuqalkG5tmjsO8UyLuq+5GOWeqU3ufo
-         M6Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjQ/JBxFr2iMTQ046fco1tX0eH2Ngc2Ipw8ARNDqy45hcB32u7HM/oDOjY0s3vXdF4qF1mczuuIM5Vgnp39XCigmfR//4XjOp/oqZRWg==
-X-Gm-Message-State: AOJu0Yxh6G4M6mhOH2eWk2wHFPEPcZEahZTT4rGD8SH4MakuplEBghkG
-	aFUGsI5gEss27METDh7b4xTCdUfLpkDRVlQTcbOcFAJL9i35lZGnCxkHF7Kk7BVxvpWRYCBfvUm
-	EAGl4ws0Uu/itDamLFSiAPeBB43p+xLzcBxop01uRBrLx9z2Xahkf1osUAuDKRQ==
-X-Received: by 2002:a2e:8751:0:b0:2da:7cd1:3f1f with SMTP id q17-20020a2e8751000000b002da7cd13f1fmr9600216ljj.52.1714480745915;
-        Tue, 30 Apr 2024 05:39:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVYxuPVguCsONK3OpB7FYzf3d9kL4MuW/MmdYMbqLYevCuGHaDwdtQS1Ck+BozrjZINcYDmg==
-X-Received: by 2002:a2e:8751:0:b0:2da:7cd1:3f1f with SMTP id q17-20020a2e8751000000b002da7cd13f1fmr9600183ljj.52.1714480745328;
-        Tue, 30 Apr 2024 05:39:05 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id jw5-20020a170906e94500b00a58eab0f0e9sm3899676ejb.185.2024.04.30.05.39.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 05:39:04 -0700 (PDT)
-Date: Tue, 30 Apr 2024 14:39:04 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: zlang@redhat.com, ebiggers@kernel.org, 
-	Andrey Albershteyn <andrey.albershteyn@gmail.com>, fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	guan@eryu.me, linux-xfs@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCH 1/6] common/verity: enable fsverity for XFS
-Message-ID: <owfufxxoyiv3f67shc42n7pxvw4ippzjgukn3lfhayu5uraeci@pmqvwjh2u424>
-References: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
- <171444687994.962488.5112127418406573234.stgit@frogsfrogsfrogs>
+	s=arc-20240116; t=1714480836; c=relaxed/simple;
+	bh=L1Aic3xKzmIUnbMtx7dn18xXuu7pZty9NcrqDKTeuSY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OKWd8ssXUeHCKWJblb1Ji+myyXaGb2PNhm5hBeuynOW4E60IkE4J74JnTdZSMcuhbA1AAB4/GtqLjmBd+K5QxyeBgfwGKW0IPZVtatOGsIhRLFk4S++7e4V4nS2g2W0sEWp4B4y97ys5aXi+h/9JevxAuzh/S3nFgZLSd0cPIJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFPOBSoY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31BEFC2BBFC;
+	Tue, 30 Apr 2024 12:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714480835;
+	bh=L1Aic3xKzmIUnbMtx7dn18xXuu7pZty9NcrqDKTeuSY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZFPOBSoYBWDlnA1pUzMNku5YhKYgJIyeFt+nCXrgIDzAbVv6chpGNDPF2tp25cwSt
+	 bOgUAhhMoZlvRJEgG9hu86gODCfiDkPOj9YQpIJ/kA/NLknUP7pKeJw8DgYQFEeL21
+	 r4edywvo2zCazHNSN+o/2YibPIBxeacaHPl5VKu6Nk8Vn7Oz/SracQ9Q4VqUSsA3ca
+	 dGEMBNGZ3/H9dJ7lUFFn6VaYOC9btjdPKDqc5t8YioS1Jj/11mSgYl1eqZ3wNAB3OA
+	 j3yMoy211eF0DNz6lld3xsQT4gZ+mbOOJW9I76K0V/y3/wktoX+j2qElTEOaPOOn3j
+	 gGRw3ouNI+Vng==
+From: Christian Brauner <brauner@kernel.org>
+To: cgzones@googlemail.com,
+	cgoettsche@seltendoof.de
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] fs: rename struct xattr_ctx to kernel_xattr_ctx
+Date: Tue, 30 Apr 2024 14:40:15 +0200
+Message-ID: <20240430-machbar-jogginganzug-7fd3cff2c3ed@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240426162042.191916-2-cgoettsche@seltendoof.de>
+References: <20240426162042.191916-1-cgoettsche@seltendoof.de> <20240426162042.191916-2-cgoettsche@seltendoof.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171444687994.962488.5112127418406573234.stgit@frogsfrogsfrogs>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1792; i=brauner@kernel.org; h=from:subject:message-id; bh=L1Aic3xKzmIUnbMtx7dn18xXuu7pZty9NcrqDKTeuSY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQZPNvp2Bi3a/usql//CnpXfvbykf/aFlH/fJNtQJZt1 AoHUz2mjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk4MDAy/FdaeEPxYKpuavrU /9sigo+8NnrBq22wZLL4tO7pdg+UtjEyXGvwW6Z/6keDpOsz0fh52/4klhgsb/H6cMnXN9vo/EJ hJgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2024-04-29 20:41:03, Darrick J. Wong wrote:
-> From: Andrey Albershteyn <aalbersh@redhat.com>
+On Fri, 26 Apr 2024 18:20:15 +0200, Christian Göttsche wrote:
+> Rename the struct xattr_ctx to increase distinction with the about to be
+> added user API struct xattr_args.
 > 
-> XFS supports verity and can be enabled for -g verity group.
-> 
-> Signed-off-by: Andrey Albershteyn <andrey.albershteyn@gmail.com>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  common/verity |   39 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 37 insertions(+), 2 deletions(-)
-> 
-> 
-> diff --git a/common/verity b/common/verity
-> index 59b67e1201..20408c8c0e 100644
-> --- a/common/verity
-> +++ b/common/verity
-> @@ -43,7 +43,16 @@ _require_scratch_verity()
->  
->  	# The filesystem may be aware of fs-verity but have it disabled by
->  	# CONFIG_FS_VERITY=n.  Detect support via sysfs.
-> -	if [ ! -e /sys/fs/$fstyp/features/verity ]; then
-> +	case $FSTYP in
-> +	xfs)
-> +		_scratch_unmount
-> +		_check_scratch_xfs_features VERITY &>>$seqres.full
-> +		_scratch_mount
-> +	;;
-> +	*)
-> +		test -e /sys/fs/$fstyp/features/verity
-> +	esac
-> +	if [ ! $? ]; then
->  		_notrun "kernel $fstyp isn't configured with verity support"
->  	fi
->  
-> @@ -201,6 +210,9 @@ _scratch_mkfs_verity()
->  	ext4|f2fs)
->  		_scratch_mkfs -O verity
->  		;;
-> +	xfs)
-> +		_scratch_mkfs -i verity
-> +		;;
->  	btrfs)
->  		_scratch_mkfs
->  		;;
-> @@ -334,12 +346,19 @@ _fsv_scratch_corrupt_bytes()
->  	local lstart lend pstart pend
->  	local dd_cmds=()
->  	local cmd
-> +	local device=$SCRATCH_DEV
->  
->  	sync	# Sync to avoid unwritten extents
->  
->  	cat > $tmp.bytes
->  	local end=$(( offset + $(_get_filesize $tmp.bytes ) ))
->  
-> +	# If this is an xfs realtime file, switch @device to the rt device
-> +	if [ $FSTYP = "xfs" ]; then
-> +		$XFS_IO_PROG -r -c 'stat -v' "$file" | grep -q -w realtime && \
-> +			device=$SCRATCH_RTDEV
-> +	fi
-> +
->  	# For each extent that intersects the requested range in order, add a
->  	# command that writes the next part of the data to that extent.
->  	while read -r lstart lend pstart pend; do
-> @@ -355,7 +374,7 @@ _fsv_scratch_corrupt_bytes()
->  		elif (( offset < lend )); then
->  			local len=$((lend - offset))
->  			local seek=$((pstart + (offset - lstart)))
-> -			dd_cmds+=("head -c $len | dd of=$SCRATCH_DEV oflag=seek_bytes seek=$seek status=none")
-> +			dd_cmds+=("head -c $len | dd of=$device oflag=seek_bytes seek=$seek status=none")
->  			(( offset += len ))
->  		fi
->  	done < <($XFS_IO_PROG -r -c "fiemap $offset $((end - offset))" "$file" \
-> @@ -408,6 +427,22 @@ _fsv_scratch_corrupt_merkle_tree()
->  		done
->  		_scratch_mount
->  		;;
-> +	xfs)
-> +		local ino=$(stat -c '%i' $file)
-
-I didn't know about xfs_db's "path" command, this can be probably
-replace with -c "path $file", below in _scratch_xfs_db.
-
-> +		local attr_offset=$(( $offset % $FSV_BLOCK_SIZE ))
-> +		local attr_index=$(printf "%08d" $(( offset - attr_offset )))
-> +		_scratch_unmount
-> +		# Attribute name is 8 bytes long (byte position of Merkle tree block)
-> +		_scratch_xfs_db -x -c "inode $ino" \
-                                here   ^^^^^^^^^^
-> +			-c "attr_modify -f -m 8 -o $attr_offset $attr_index \"BUG\"" \
-> +			-c "ablock 0" -c "print" \
-> +			>>$seqres.full
-> +		# In case bsize == 4096 and merkle block size == 1024, by
-> +		# modifying attribute with 'attr_modify we can corrupt quota
-> +		# account. Let's repair it
-> +		_scratch_xfs_repair >> $seqres.full 2>&1
-> +		_scratch_mount
-> +		;;
->  	*)
->  		_fail "_fsv_scratch_corrupt_merkle_tree() unimplemented on $FSTYP"
->  		;;
+> No functional change.
 > 
 > 
 
-Otherwise, looks good to me:
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+So I've picked that series up as this is still a useful addition.
+Obviously too late for this merge window.
 
--- 
-- Andrey
+However, I stated multiple times that we're not going to add *xattrat()
+variants that allow to set or get xattrs with AT_EMPTY_PATH on O_PATH
+file descriptors. Not just because conceptually setting and getting
+xattrs should be treated akin to read/write wrt to O_PATH but also
+because it makes the concept of an O_PATH more and more meaningless if
+we can do ever more things we it.
 
+But it will also break assumptions of code that would be surprised if an
+O_PATH fd suddenly can be used to set and get xattr. So I'll fix it up
+so AT_EMPTY_PATH is handled to exclude O_PATH file descriptors.
+
+---
+
+Applied to the vfs.xattr branch of the vfs/vfs.git tree.
+Patches in the vfs.xattr branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.xattr
+
+[1/2] fs: rename struct xattr_ctx to kernel_xattr_ctx
+      https://git.kernel.org/vfs/vfs/c/836c8e8bb147
+[2/2] fs/xattr: add *at family syscalls
+      https://git.kernel.org/vfs/vfs/c/71491cbe0205
 
