@@ -1,109 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-18367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05298B7AC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:00:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9470C8B7AF3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A3D1F23BBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50FD7287451
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC039173345;
-	Tue, 30 Apr 2024 14:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="In4TrlxU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E93143734;
+	Tue, 30 Apr 2024 15:04:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB96172BCB;
-	Tue, 30 Apr 2024 14:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3FA129E9F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 15:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714489143; cv=none; b=j0lGmgZD7CX6HGBBVxpUtrGawyVom0oOuUI6NRnO4sHwm6XkDl6pv61wc2+enKIA6zvumyZYeF3C/KxRSaPwLTDfGZI2sbCqN/gCrNu9WjzxqxrxZrANegLXLXc0f2LIiqCnOjCjw5mFLB5y+8t/8igsCrB0sIWauA7YzIsqf/4=
+	t=1714489445; cv=none; b=fELCUMUPJk1MrigM+k2XyPNi7D+kTJ4KwXbLQchz+zKhshhqV1EJdyIGXnmpyJNqtVLFRKEC8EqnSJdO0m1ZiovjbXMCHf3eYCsaHh91p+MhRh0Wly5eFUD7we8ZNofP1C/CyxgmCSRkN3MxwgRsSq6Pwv22kKOeTTzLUFYBeYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714489143; c=relaxed/simple;
-	bh=/e+NK6Czol+7PAxT9nfpaxf/IU9cfQ6ydxY3hYa29qI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hFtfxmKH8TldDL0BgFAUPimB7v3h+Sgj19Wo/dvwtbv1tjxuFgbe7UVWOKCDmEMPGawKjVga1CDeqdsnUGt8DBElcDFIXk9dbU5paRKh4jSVHlu7t3/Ej6aZgjsr1OKIA8g9BHOz1EWJ6Kry/C3TWYkTMroiWps0iBdS4G6LwEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=In4TrlxU; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2dd041acff1so67257441fa.1;
-        Tue, 30 Apr 2024 07:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714489140; x=1715093940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/e+NK6Czol+7PAxT9nfpaxf/IU9cfQ6ydxY3hYa29qI=;
-        b=In4TrlxUn/3B20SsfTFKsru6wYVF+M8ItJQGZTkH94H0wUQJ5Dns+FiCz42AkLS68a
-         rLL549AKp6D51F7U5X9ErsE1qsQZDbP4g70YvCAqOFX55rtOtNkCr9BnBnsep7Tpc/Lg
-         utJrYdKTccy952/EW+oZQzSpH1U9tzs7JJkutQiXoYmgw8HbgwFCA80z8zKLXIR920at
-         Yn0X8L/wnFCIHgutsihqgEiVC8nWkOUyaNED4VeUFhjfZ9IFHrybkKc8dvQHCCJcOYFP
-         r6D8YiZGbmcAl+1mFA3XXky6ICbga6InluTqSZvVmk+xSpinH/ezM0IF6of7xxqehzmL
-         qULw==
+	s=arc-20240116; t=1714489445; c=relaxed/simple;
+	bh=g+eaDs/HNr91gYab7fvFMZUmUzQXEdyjAn6OH6gxOuM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=okzuJTD4+CnzbkDHz7e1/U6MvHCJ8nXPChmQQHu8D98z5cqE3uFpB50pG+hS5wlXa/kymS/C44H45+XXKQaWlLFZuQnhrsMlQ9UNdj2HEUB7z4dl+R2p5bvD/fjxQPfjyYWsKFNA7tteA4ZaIQZ1nMVdQpePfjMLVGhgbPKp3dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ded69927d4so162263439f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 08:04:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714489140; x=1715093940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/e+NK6Czol+7PAxT9nfpaxf/IU9cfQ6ydxY3hYa29qI=;
-        b=wi4xb1TOVJUFWIHw+/wql24Cqb+zEd3pTAKJMbwkFIRr/SYf3nTOatnb9TbMP8hOZb
-         nfvl4lbMkYJY8ksPwoUAN1WZs4/RfL5fernKpaHU6Xgut2hi1VIQ0xMUg9j738zRV1bH
-         hOrcA4cJ3Bfumx3nfGvIIxDygkQoDzlhjJfkJyUlTF6G6Hdmhcz+amjrph6XdwfdgRqe
-         HAof8R5+tQ2grI/TmfbFcneGiKKlN/9NmAyKdoP8lpicJZ6jRZlkg3EMAze1C5516dSR
-         tYzVqZp++lyH/Abk6PJeMhaHxfdKeCcjJlUXaO2oRI+Asnam+Cy1Cu7k8I+nA9uKzaCK
-         H0JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQLoe+DgSmyZfprIC5chJnXoywLKCiMi96n0WYEoIk2h/yPiZ+somCQYWhlcigTXLRQdjVe4w8v+vJ1NE5TFmoi16SBC64vCVEEETwIP+6XIVy0h43vSCg4c/C5H/MGCj6GDe7J0GCAzzRo1jZ0fyWiwog7WUP5qF6txCmMiW2s73+VUVOBtY=
-X-Gm-Message-State: AOJu0Ywu29FwKOFAsguDvo1B+dS+sWshtY8ohBwUGvT5QuM+jONwgfDQ
-	LjB4Pttt+Ww53d890noylN5BmYDRzcUfBEwOy7H7FfxvmcDLiO4jpE/YgQ+Eb5l4f6mPhZeGWDL
-	gukpX8YtsK5Bxx5diY1C1Wc3i7LY=
-X-Google-Smtp-Source: AGHT+IH1ix0BqVq9FIQTiQZX/OFdgb0zFuvm/XZ1HQbS+UYTDWVWBCztGEQwH9uF9Er2JGQROqanY7i0WYIkpAAzanE=
-X-Received: by 2002:a2e:7a0a:0:b0:2d8:45ff:d606 with SMTP id
- v10-20020a2e7a0a000000b002d845ffd606mr7232211ljc.50.1714489139376; Tue, 30
- Apr 2024 07:58:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714489443; x=1715094243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RXCBsJ9VpJqP069pIpVcCX4AQCkHuzifZjAsyl3v/7A=;
+        b=pzTmdDRW6gjlzGSPRF0RPiVPPx+zwrdPfexhd5I71sstq7ZR0VuYL60M9tQmVfMP3z
+         L9lcku+L1gYkMX6nThYNcOF2jrH8vx5dUlrWMg4rCpT1Yl/T5U+gRkLQm309c7KFRJrH
+         +8qraqRo4jkDEBhzkDvp33yQItnmlxqeguRPuemSZEFGs5KZMrLFJVdG6wt5nbdTD9T+
+         Xmm+8VNT8POR/Buamlt0OhxbooK2vVs61f9cLBnkRLOlE+rRvZghxJVMar7lyklnptOD
+         yftapPcBrH36cvOGQXxQkOyTGYoceAIu7+7+b+SilA9qysNO8D8VjEPGmSygmuy1XI85
+         P/sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTj3f8IWxAmrxH2gQ+kCEOBMCjon1qosAkFIWFG+tEwbKv5OE136fH3C7yCCls8PiPJZJW2bnUi+PGt1XhZpSuRxQHR3cWelTAj55p/Q==
+X-Gm-Message-State: AOJu0Yyycd2Mg/CnGgm9ivnfU2gN9EZ1RQ2tSialcVzUrr+tECCaPfIW
+	JNYgVJmWMkGgOoHx5DvnGI6IRfwRrVDXhk5zzPyUhDhZZt1yAX8mgFqd9T6I1+wBBpzb1/ECARi
+	Xof7bL7IuDC8ETYjqf86s8mqB9dq/1rCqJvNVYG5jliwIR08S4dgItVE=
+X-Google-Smtp-Source: AGHT+IGkd8oAm76xqllvXiuSWamFxZZiYiLXM1NPguwb9PwGX3UzuHCPrjUn7xv8FxEBtfkwICP8m65fHvN8Z8HUb/km2DGAfMWu
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240430140930.262762-1-dhowells@redhat.com> <264960.1714488463@warthog.procyon.org.uk>
-In-Reply-To: <264960.1714488463@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 30 Apr 2024 09:58:47 -0500
-Message-ID: <CAH2r5mspax98XVdEyYaupSFqh=M5zjcwckjta8H9=e+N-dnrmA@mail.gmail.com>
-Subject: Re: [PATCH v7 00/16] netfs, cifs: Delegate high-level I/O to netfslib
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Jeff Layton <jlayton@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, netfs@lists.linux.dev, 
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6638:37a9:b0:487:ea0:dc07 with SMTP id
+ w41-20020a05663837a900b004870ea0dc07mr1194901jal.0.1714489443214; Tue, 30 Apr
+ 2024 08:04:03 -0700 (PDT)
+Date: Tue, 30 Apr 2024 08:04:03 -0700
+In-Reply-To: <00000000000072c6ba06174b30b7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003bf5be061751ae70@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in mb_cache_destroy
+From: syzbot <syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, jack@suse.cz, libaokun1@huawei.com, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, nathan@kernel.org, 
+	ndesaulniers@google.com, ritesh.list@gmail.com, 
+	syzkaller-bugs@googlegroups.com, trix@redhat.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Yes - I think it is easier for now if Christian picks up the series in
-his tree due to the VFS dependencies - if we start hitting merge
-conflicts with my tree later we can consider changing that.
+syzbot has bisected this issue to:
 
-On Tue, Apr 30, 2024 at 9:47=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Hi Christian,
->
-> With Steve's agreement, could you pick this set of patches up also?
->
-> Thanks,
-> David
->
+commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
+Author: Baokun Li <libaokun1@huawei.com>
+Date:   Thu Jun 16 02:13:56 2022 +0000
 
+    ext4: fix use-after-free in ext4_xattr_set_entry
 
---=20
-Thanks,
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1011bcf8980000
+start commit:   b947cc5bf6d7 Merge tag 'erofs-for-6.9-rc7-fixes' of git://..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1211bcf8980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1411bcf8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd43bd0f7474512edc47
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d2957f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1620ca40980000
 
-Steve
+Reported-by: syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com
+Fixes: 67d7d8ad99be ("ext4: fix use-after-free in ext4_xattr_set_entry")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
