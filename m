@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-18223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082468B6864
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:22:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526EA8B6869
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9698E1F21CE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60C21F22358
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C14101C5;
-	Tue, 30 Apr 2024 03:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D38A101CE;
+	Tue, 30 Apr 2024 03:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YM/DV0R2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1sutzYc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A60BDF58;
-	Tue, 30 Apr 2024 03:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFE0DF78;
+	Tue, 30 Apr 2024 03:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447353; cv=none; b=dNUGKNEUDD4uqz8JWz+h9ZlAP6yiV7zOmhaWUFqk97P+k3bBWm//LnsTJ4IjdALDOp4/75CMh1HRjAbrgi5Cseh09VgjXa2pJyoqmd48rRSkC0mUPeGi0ke4IIU9x5yduqpYr6rFRUZSib1TwgxPwIw0a6f+wkjUHxk0w8gAQFo=
+	t=1714447369; cv=none; b=iDebB0vFUlUJfkrwSt4lwfTUwMSKBAdRby2lXWlcJSLvQpWEFcp8pd2kgXrrA70XaU94LXGeS6T2zCFJPGpTYDgKKlo6vzj/jIbz7utnkS+zLnb7PhgJwxos7iwn8yQKKeVJ9A0rNILofdyWt9tFWWUIn5AgATXR3q5DptUeX6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447353; c=relaxed/simple;
-	bh=nrVlaQU2IrwSGBzZTi6Pc/FQDWhRCu9nrgdykjbTDlU=;
+	s=arc-20240116; t=1714447369; c=relaxed/simple;
+	bh=ojc4zoxHfnXRxrt/MXmCm6Sg7KyoTJ4+MSzWsO6IrLo=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NeTcVCzWKTYT5Q7/J3OewTMj7UXrxlyiAKzfglxDJC8esWl+H5n8Fif23N0zTDevJuQ5Rbb1W6L42dpI7qQzD7qDMT8i+kvNWACcVQF2XmCsB/LwOfuOLbMmP5MGyOoiPJV35AqINnx+r0kgKxiyhhdf4AwQND4v3cFdBafQXqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YM/DV0R2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1111CC116B1;
-	Tue, 30 Apr 2024 03:22:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=DGN/sSJfT2wHMot13BtigoUezMYvdg7q94bcg06qo2zcIOHYQJTHOUhhs0x2GVIqVrH7u0Xj35WQsHPVC09yvznblyzZxfVGGKLsuG9YNIwlxWFjZdKB+28JKlxjYh+a4aPpcFMVeQjCBGXWd88DTWJ7M3mAjG9YUOBS6ydYRlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1sutzYc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4C9C116B1;
+	Tue, 30 Apr 2024 03:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447353;
-	bh=nrVlaQU2IrwSGBzZTi6Pc/FQDWhRCu9nrgdykjbTDlU=;
+	s=k20201202; t=1714447368;
+	bh=ojc4zoxHfnXRxrt/MXmCm6Sg7KyoTJ4+MSzWsO6IrLo=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=YM/DV0R21/SDoCG0KpNtluQycXHZ3nFXdrEcBaYdhS/awMdI5gKvmVRp5s85Twgmc
-	 hVHAcWrcmgDMgVUlx/ti0NZZZRJuc+bgoSfKeowLUITKzZnUsCT4aGncodBZ1uP4vq
-	 op/GQLmQoihwUA1/j5jSNeiCp/Dt0R3pxX3sM/MCUpYe/EhzdlKQ5ix6UNNthVqAnk
-	 o0U3rMH/x4nr3EgneIp3TU+38+bKu9Zc9L3C2d7VMVb8qT4Y5loW1Ix0+BgsNBeEcc
-	 8l5WGpjT+bRE8rYAzoxD1Y2o7XdV2vWJuuq2jmQ8Eua4Ah5eTpfVcASJFU8mqrot2n
-	 S1V6ADOrhX2fQ==
-Date: Mon, 29 Apr 2024 20:22:32 -0700
-Subject: [PATCH 12/18] fsverity: report validation errors back to the
- filesystem
+	b=S1sutzYcCimCy0KPDkAVaes5nuxAbrsSN1/tjjeyYivtk+93+gKXlgtV6yCjM43ce
+	 XmdKdI3GN3c3pxGuA+hKICrudJXOi8TJZV75mNdgqc2x6DdO2LVl/g0yynCQ6qoZ91
+	 l9kEpd/BkoPlsSXmY25Hr4R/WnGtbZoR6/+gXRi6IaAbyuWHd8yhSZpnQ0NNzrttaa
+	 +69xJUxgOVnPuBb07QY8gkHLhb3OtEgl5Hf4o/a4u1D2a2baxftqXOMZDhMODcfX0r
+	 WhHSuhG/rKfG12bN5mlHwOIhTSQN6xZUlEZxwOLsMUlBwVIARSGSHzAJ//upagP/ey
+	 C6Fx4+K+n9dXg==
+Date: Mon, 29 Apr 2024 20:22:48 -0700
+Subject: [PATCH 13/18] fsverity: pass super_block to
+ fsverity_enqueue_verify_work
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, djwong@kernel.org
 Cc: linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
  fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Message-ID: <171444679792.955480.12734412776214738149.stgit@frogsfrogsfrogs>
+Message-ID: <171444679808.955480.3704351386206183587.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444679542.955480.18087310571597618350.stgit@frogsfrogsfrogs>
 References: <171444679542.955480.18087310571597618350.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,85 +63,152 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Provide a new function call so that validation errors can be reported
-back to the filesystem.
+In preparation for having per-superblock fsverity workqueues, pass the
+super_block object to fsverity_enqueue_verify_work.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/verity/verify.c              |    3 +++
- include/linux/fsverity.h        |   14 ++++++++++++++
- include/trace/events/fsverity.h |   19 +++++++++++++++++++
- 3 files changed, 36 insertions(+)
+ fs/buffer.c              |    7 +++++--
+ fs/ext4/readpage.c       |    4 +++-
+ fs/f2fs/compress.c       |    3 ++-
+ fs/f2fs/data.c           |    2 +-
+ fs/verity/verify.c       |    6 ++++--
+ include/linux/fsverity.h |    6 ++++--
+ 6 files changed, 19 insertions(+), 9 deletions(-)
 
 
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 4f73d23c2c469..b871fbc796e83 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -327,13 +327,15 @@ static void decrypt_bh(struct work_struct *work)
+ 	err = fscrypt_decrypt_pagecache_blocks(bh->b_folio, bh->b_size,
+ 					       bh_offset(bh));
+ 	if (err == 0 && need_fsverity(bh)) {
++		struct super_block *sb = bh->b_folio->mapping->host->i_sb;
++
+ 		/*
+ 		 * We use different work queues for decryption and for verity
+ 		 * because verity may require reading metadata pages that need
+ 		 * decryption, and we shouldn't recurse to the same workqueue.
+ 		 */
+ 		INIT_WORK(&ctx->work, verify_bh);
+-		fsverity_enqueue_verify_work(&ctx->work);
++		fsverity_enqueue_verify_work(sb, &ctx->work);
+ 		return;
+ 	}
+ 	end_buffer_async_read(bh, err == 0);
+@@ -362,7 +364,8 @@ static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
+ 				fscrypt_enqueue_decrypt_work(&ctx->work);
+ 			} else {
+ 				INIT_WORK(&ctx->work, verify_bh);
+-				fsverity_enqueue_verify_work(&ctx->work);
++				fsverity_enqueue_verify_work(inode->i_sb,
++							     &ctx->work);
+ 			}
+ 			return;
+ 		}
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index 21e8f0aebb3c6..d3915a3f5da7c 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -61,6 +61,7 @@ enum bio_post_read_step {
+ 
+ struct bio_post_read_ctx {
+ 	struct bio *bio;
++	struct super_block *sb;
+ 	struct work_struct work;
+ 	unsigned int cur_step;
+ 	unsigned int enabled_steps;
+@@ -132,7 +133,7 @@ static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+ 	case STEP_VERITY:
+ 		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
+ 			INIT_WORK(&ctx->work, verity_work);
+-			fsverity_enqueue_verify_work(&ctx->work);
++			fsverity_enqueue_verify_work(ctx->sb, &ctx->work);
+ 			return;
+ 		}
+ 		ctx->cur_step++;
+@@ -195,6 +196,7 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ 			mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
+ 
+ 		ctx->bio = bio;
++		ctx->sb = inode->i_sb;
+ 		ctx->enabled_steps = post_read_steps;
+ 		bio->bi_private = ctx;
+ 	}
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 8892c82621414..efd0b0a3a2c37 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1775,7 +1775,8 @@ void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
+ 		 * file, and these metadata pages may be compressed.
+ 		 */
+ 		INIT_WORK(&dic->verity_work, f2fs_verify_cluster);
+-		fsverity_enqueue_verify_work(&dic->verity_work);
++		fsverity_enqueue_verify_work(dic->inode->i_sb,
++					     &dic->verity_work);
+ 		return;
+ 	}
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d9494b5fc7c18..994339216a06e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -221,7 +221,7 @@ static void f2fs_verify_and_finish_bio(struct bio *bio, bool in_task)
+ 
+ 	if (ctx && (ctx->enabled_steps & STEP_VERITY)) {
+ 		INIT_WORK(&ctx->work, f2fs_verify_bio);
+-		fsverity_enqueue_verify_work(&ctx->work);
++		fsverity_enqueue_verify_work(ctx->sbi->sb, &ctx->work);
+ 	} else {
+ 		f2fs_finish_read_bio(bio, in_task);
+ 	}
 diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 0782a69d89f26..2c1de3cdf24c8 100644
+index 2c1de3cdf24c8..e1fab60303d6d 100644
 --- a/fs/verity/verify.c
 +++ b/fs/verity/verify.c
-@@ -250,6 +250,9 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- 		     data_pos, level - 1,
- 		     params->hash_alg->name, hsize, want_hash,
- 		     params->hash_alg->name, hsize, real_hash);
-+	trace_fsverity_file_corrupt(inode, data_pos, params->block_size);
-+	if (vops->file_corrupt)
-+		vops->file_corrupt(inode, data_pos, params->block_size);
- error:
- 	for (; level > 0; level--)
- 		fsverity_drop_merkle_tree_block(inode, &hblocks[level - 1].block);
+@@ -367,13 +367,15 @@ EXPORT_SYMBOL_GPL(fsverity_init_wq);
+ 
+ /**
+  * fsverity_enqueue_verify_work() - enqueue work on the fs-verity workqueue
++ * @sb: superblock for this filesystem
+  * @work: the work to enqueue
+  *
+  * Enqueue verification work for asynchronous processing.
+  */
+-void fsverity_enqueue_verify_work(struct work_struct *work)
++void fsverity_enqueue_verify_work(struct super_block *sb,
++				  struct work_struct *work)
+ {
+-	queue_work(fsverity_read_workqueue, work);
++	queue_work(sb->s_verity_wq ?: fsverity_read_workqueue, work);
+ }
+ EXPORT_SYMBOL_GPL(fsverity_enqueue_verify_work);
+ 
 diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index dc8f85380b9c7..6849c4e8268f8 100644
+index 6849c4e8268f8..1336f4b9011ea 100644
 --- a/include/linux/fsverity.h
 +++ b/include/linux/fsverity.h
-@@ -228,6 +228,20 @@ struct fsverity_operations {
- 	 * be implemented.
- 	 */
- 	void (*drop_merkle_tree_block)(struct fsverity_blockbuf *block);
-+
-+	/**
-+	 * Notify the filesystem that file data is corrupt.
-+	 *
-+	 * @inode: the inode being validated
-+	 * @pos: the file position of the invalid data
-+	 * @len: the length of the invalid data
-+	 *
-+	 * This function is called when fs-verity detects that a portion of a
-+	 * file's data is inconsistent with the Merkle tree, or a Merkle tree
-+	 * block needed to validate the data is inconsistent with the level
-+	 * above it.
-+	 */
-+	void (*file_corrupt)(struct inode *inode, loff_t pos, size_t len);
- };
+@@ -297,7 +297,8 @@ int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg);
  
- #ifdef CONFIG_FS_VERITY
-diff --git a/include/trace/events/fsverity.h b/include/trace/events/fsverity.h
-index dab220884b897..375fdddac6a99 100644
---- a/include/trace/events/fsverity.h
-+++ b/include/trace/events/fsverity.h
-@@ -137,6 +137,25 @@ TRACE_EVENT(fsverity_verify_merkle_block,
- 		__entry->hidx)
- );
+ bool fsverity_verify_blocks(struct folio *folio, size_t len, size_t offset);
+ void fsverity_verify_bio(struct bio *bio);
+-void fsverity_enqueue_verify_work(struct work_struct *work);
++void fsverity_enqueue_verify_work(struct super_block *sb,
++				  struct work_struct *work);
  
-+TRACE_EVENT(fsverity_file_corrupt,
-+	TP_PROTO(const struct inode *inode, loff_t pos, size_t len),
-+	TP_ARGS(inode, pos, len),
-+	TP_STRUCT__entry(
-+		__field(ino_t, ino)
-+		__field(loff_t, pos)
-+		__field(size_t, len)
-+	),
-+	TP_fast_assign(
-+		__entry->ino = inode->i_ino;
-+		__entry->pos = pos;
-+		__entry->len = len;
-+	),
-+	TP_printk("ino %lu pos %llu len %zu",
-+		(unsigned long) __entry->ino,
-+		__entry->pos,
-+		__entry->len)
-+);
-+
- #endif /* _TRACE_FSVERITY_H */
+ int fsverity_init_wq(struct super_block *sb, unsigned int wq_flags,
+ 		       int max_active);
+@@ -389,7 +390,8 @@ static inline void fsverity_verify_bio(struct bio *bio)
+ 	WARN_ON_ONCE(1);
+ }
  
- /* This part must be outside protection */
+-static inline void fsverity_enqueue_verify_work(struct work_struct *work)
++static inline void fsverity_enqueue_verify_work(struct super_block *sb,
++						struct work_struct *work)
+ {
+ 	WARN_ON_ONCE(1);
+ }
 
 
