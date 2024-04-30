@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-18271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CC38B68E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:34:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4738B68EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95109B23E87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 619FD1F21515
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708A410A1E;
-	Tue, 30 Apr 2024 03:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B5910A1E;
+	Tue, 30 Apr 2024 03:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QT6flQ6F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drUQvWDE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD82E10A0C;
-	Tue, 30 Apr 2024 03:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8AC10A01;
+	Tue, 30 Apr 2024 03:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714448088; cv=none; b=opb2vhfr4ZyUZxkJw2CFdXsfR2p4oJ8KdumL1tICHYrbAQ/uiwKYJE1AZnKC8m8y6prfb1JBz5UVAF+pW27tC468e2AS6FcuM0HctwOXtFBxhdD5/Vb7RzDrO30Z6vCJK23cJJKF0UvURj2vByFeRs4TnKY3cxBi4wx6cT5/IoA=
+	t=1714448104; cv=none; b=P8OH5tjUK19ya40zv1pvA2HMBzRN0daX6XwA/YsdEo+v93H1zf+MGxfAygb081q3irUHz13740+3Cn3RblOIpBuceSedmTpqUa95vh68KGU3o5/9etX7JxsjTUO/cycEOgHPe0rxW7SyCTivTz00abwwfTusYW92NZHurqsz75U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714448088; c=relaxed/simple;
-	bh=hmJOMOwk41JRVTWfJoBKJMwWmQsbOLdZ56PzB9yGz5k=;
+	s=arc-20240116; t=1714448104; c=relaxed/simple;
+	bh=HOS6WdiKFJC173Z2Oe52jYwWeMqhC/Qvwq5X6huJW+o=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=locCnVhztHm3oYnmMhD+HXjIVenxk1Gy2vw8OcyGwFPieGzCtO0+ELZqLyQnanSw+cKghcbRZux/E6dtQ8X5ouFZXJdOJxkaBFT+TW8GKiL1LH+oe+B2QszHzTUWtG3qClUpOLriP+1oDgHmSwOmqyr9jpwOD21qHVfnyz2jbT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QT6flQ6F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F9EC116B1;
-	Tue, 30 Apr 2024 03:34:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=KLiUHWXS2GwTmYBd3cXbfzSDyo0VrDpBrlaafvvUsaVMc0K9w0gEz1BpcgDOJnINEQZ7aWhAlXtnGEqCAzp/SHoBq63NAeQ/ng+euHljSsV/0yuQBVRCVf2ZmEKTGPJ2r8uYkB52JL4YyRWz5ohHJUOaZtrdZ71tG+E+Gxkp2HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drUQvWDE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 160D7C116B1;
+	Tue, 30 Apr 2024 03:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714448088;
-	bh=hmJOMOwk41JRVTWfJoBKJMwWmQsbOLdZ56PzB9yGz5k=;
+	s=k20201202; t=1714448104;
+	bh=HOS6WdiKFJC173Z2Oe52jYwWeMqhC/Qvwq5X6huJW+o=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=QT6flQ6FWk+EgfQpVKr6YcHRXLDXlKsIttv9414hYFax/CMu3vD6W7JgU9iCR1SGk
-	 GGQtzikJAS2UHGrUieqBFnfm3CKQBEDHVNJFM4xqz0cgRekcmLjsMYRjDsIIy6pmSK
-	 +sgp+YcsVxhimDQiBGbXPYJJL7iL+/stfRCNAPhU7hB1CsYTbseC6Plszy1fnjEkEp
-	 pE+l8OlIDEkWm8jpGQb0ApPJHHhSHMzAAhiInPcX61IDUvfNhT60Z5t4elxZXgvPgE
-	 5gp+puUiosJCtSb41aiEwIOjg0aCG3IbsxaGmpildVjx8uS4j3TO4A2EfefMbW1Fk8
-	 jNNFcVqqqc9dA==
-Date: Mon, 29 Apr 2024 20:34:47 -0700
-Subject: [PATCH 15/38] xfs: enable ro-compat fs-verity flag
+	b=drUQvWDE5jUmInd2XuBsrleoB83xKYUTh0+V1+gFRAMOGsAQ1chmItquDhC9Wkqip
+	 iNJajO+qJMKuzYo16fdoNQatVq1fxr+Zujw4rQSQtiF53jjMh6PEgkp5jDqRlAIWHZ
+	 qd5eqkw/vrsW6D+zhkf88Rksrx2An4TB8gHlkBMVNQEN35wu0nTOW7jNqAyCNUv002
+	 35QoUY03QyIPdUaPBdp+kNPKrWaKGbhTGKpMVoJjtb+IyapIwGWdeLSiDsUKOfiYOm
+	 MiQ9PfOldnAfV3Z5WejeXAGL1Yn4hXKTysKI0rxkZMcudgdhz35NlaRAAnYte+coI0
+	 6nB1dpfE//A8A==
+Date: Mon, 29 Apr 2024 20:35:03 -0700
+Subject: [PATCH 16/38] libfrog: add fsverity to xfs_report_geom output
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, cem@kernel.org,
  djwong@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  fsverity@lists.linux.dev
-Message-ID: <171444683343.960383.9838479985541357618.stgit@frogsfrogsfrogs>
+Message-ID: <171444683358.960383.16789390120394175042.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 References: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -61,39 +61,52 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
+From: Darrick J. Wong <djwong@kernel.org>
 
-Finalize fs-verity integration in XFS by making kernel fs-verity
-aware with ro-compat flag.
+Announce the presence of fsverity on a filesystem.
 
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: add spaces]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- libxfs/xfs_format.h |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ libfrog/fsgeom.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 
-diff --git a/libxfs/xfs_format.h b/libxfs/xfs_format.h
-index 810f2556762b..78a12705a88d 100644
---- a/libxfs/xfs_format.h
-+++ b/libxfs/xfs_format.h
-@@ -389,10 +389,11 @@ xfs_sb_has_compat_feature(
- #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
- #define XFS_SB_FEAT_RO_COMPAT_VERITY   (1 << 4)		/* fs-verity */
- #define XFS_SB_FEAT_RO_COMPAT_ALL \
--		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
--		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
--		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
--		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
-+		(XFS_SB_FEAT_RO_COMPAT_FINOBT   | \
-+		 XFS_SB_FEAT_RO_COMPAT_RMAPBT   | \
-+		 XFS_SB_FEAT_RO_COMPAT_REFLINK  | \
-+		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT | \
-+		 XFS_SB_FEAT_RO_COMPAT_VERITY)
- #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
- static inline bool
- xfs_sb_has_ro_compat_feature(
+diff --git a/libfrog/fsgeom.c b/libfrog/fsgeom.c
+index 41958f00ce34..99d6d98e4679 100644
+--- a/libfrog/fsgeom.c
++++ b/libfrog/fsgeom.c
+@@ -34,6 +34,7 @@ xfs_report_geom(
+ 	int			exchangerange;
+ 	int			parent;
+ 	int			metadir;
++	int			verity;
+ 
+ 	isint = geo->logstart > 0;
+ 	lazycount = geo->flags & XFS_FSOP_GEOM_FLAGS_LAZYSB ? 1 : 0;
+@@ -55,13 +56,14 @@ xfs_report_geom(
+ 	exchangerange = geo->flags & XFS_FSOP_GEOM_FLAGS_EXCHANGE_RANGE ? 1 : 0;
+ 	parent = geo->flags & XFS_FSOP_GEOM_FLAGS_PARENT ? 1 : 0;
+ 	metadir = geo->flags & XFS_FSOP_GEOM_FLAGS_METADIR ? 1 : 0;
++	verity = geo->flags & XFS_FSOP_GEOM_FLAGS_VERITY ? 1 : 0;
+ 
+ 	printf(_(
+ "meta-data=%-22s isize=%-6d agcount=%u, agsize=%u blks\n"
+ "         =%-22s sectsz=%-5u attr=%u, projid32bit=%u\n"
+ "         =%-22s crc=%-8u finobt=%u, sparse=%u, rmapbt=%u\n"
+ "         =%-22s reflink=%-4u bigtime=%u inobtcount=%u nrext64=%u\n"
+-"         =%-22s exchange=%-3u metadir=%u\n"
++"         =%-22s exchange=%-3u metadir=%u verity=%u\n"
+ "data     =%-22s bsize=%-6u blocks=%llu, imaxpct=%u\n"
+ "         =%-22s sunit=%-6u swidth=%u blks\n"
+ "naming   =version %-14u bsize=%-6u ascii-ci=%d, ftype=%d, parent=%d\n"
+@@ -73,7 +75,7 @@ xfs_report_geom(
+ 		"", geo->sectsize, attrversion, projid32bit,
+ 		"", crcs_enabled, finobt_enabled, spinodes, rmapbt_enabled,
+ 		"", reflink_enabled, bigtime_enabled, inobtcount, nrext64,
+-		"", exchangerange, metadir,
++		"", exchangerange, metadir, verity,
+ 		"", geo->blocksize, (unsigned long long)geo->datablocks,
+ 			geo->imaxpct,
+ 		"", geo->sunit, geo->swidth,
 
 
