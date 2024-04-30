@@ -1,223 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-18370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6F68B7B52
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:19:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726F28B7B83
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD880B21160
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE8751F22FF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078A0143737;
-	Tue, 30 Apr 2024 15:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215B4176FDB;
+	Tue, 30 Apr 2024 15:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="YieStm/f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ex6G+WZF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4447A152799;
-	Tue, 30 Apr 2024 15:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45FD174EF8;
+	Tue, 30 Apr 2024 15:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714490382; cv=none; b=p3z3fHhd/FJ/e8h0HGfjvXLai1yjf714QRNqJmblk+LkhMZWIIDN380zl1+NLvtopuI0gUnDZWyVYV6YZArByUbF90ZKnDGJfvdIdPuLQNWlFM57o6LO8bCIk64qHaxpvzfL5xIbG4kF9KrrReyiop2K5dqSrgcKLVdwm0Vm1NA=
+	t=1714490854; cv=none; b=fxX3M6CVKLLldDo1KAFTFdYldFYsd0pWsLSiLfFPI/joulS3j2lTkUq6Lo/DNv1BoKqS5r5CGtFWUZY5SgazoXgzvUjGMyMa/YbLqvT5QkgivaHK2V4H6h6lqnL48qqRsUBgvNnsZYKCefeSE1ZR3hwvirCuvm5QivhwDeFS4XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714490382; c=relaxed/simple;
-	bh=3E7LMLmQaL5tGcWs1QA023J3ddzjIGbmnfR3mFYjJhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WtwqxlFcnbg7ST2/cn+yyuaCwDTcGBBriYbjmCoXB97MuclcYWvyxCb0DsVJ/MtqCFD7bKt8tWmdDLC7Bvq+sbapjvE9huilppPST0gs4NvKdQ8vWLOyxCHjc2JwDJypYkEcRcLqa15yVmx346owRSpqfWTmsJlRppGc0OZb3cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=YieStm/f; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1714490373;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=qUFnqnB6znIDj+q1NPyYoIZ8zE7Eb30cXcMkX9V8te8=;
-	b=YieStm/fos4plj+5Ek/rF7kivqnOKzhbGlbaVKsjn1Gw+zNmiQIxJgveo8SWf6+AMwtCGN
-	CeIaurK0s4NnFnCSnQm6e0Uj3qZqEgSxaTlX/yKMSVyYiJ6m1dGSpaowCotc2qGEKNJ9Uw
-	qmlrZ8WYGQ0jrHHFUNVDOsO9PoDwA472NoV15Qu2vw/dl/ZpO5WWPyTW81vXdcFRjF3wU4
-	oO1W6ZULxpa9NICTJEywCCI55em3Jw9m/1wKJ9deK/jKVecaoEWB9R1ajXaEL6Siu0bJc8
-	12b4Ur1naQKhHOvtXwar45HEQXxD8fAACvVu9yf02oQo4k6TdXBlvaf3y+iORA==
-To: brauner@kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Jan Kara <jack@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kees Cook <keescook@chromium.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org
-Subject: [PATCH] fs/xattr: unify *at syscalls
-Date: Tue, 30 Apr 2024 17:19:14 +0200
-Message-ID: <20240430151917.30036-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1714490854; c=relaxed/simple;
+	bh=G2aFg75Ul9Crtdd2fDfTN6nEZKobxn6q24Vr/7Ka/YE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p0tpx96OGhFFeIh/Uccu3f5io8wCXjAbFf+vjqPvx6Hq21wMfvnFEiVWxkXNDpAzm6d3bIwOtQ9iPT0u/dysaVP2oNBUMXrg+c8wbsb/GuT1WA9/6+1YoVAMU883ekbXDEfXWJURzigt+RKlRatwAnfXPDEQxx38WOCDcEt+bNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ex6G+WZF; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2dd615b6c44so63352821fa.0;
+        Tue, 30 Apr 2024 08:27:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714490851; x=1715095651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+1HgWwLjoipLTcuV2mY+tWY78vZZqlbVL58B4f0iiu4=;
+        b=Ex6G+WZFfD8IybSvygSSSBp5gAiM9pb1wbNNfy+wtSjGXtMX5x/QWOUW2nKL4bhmTV
+         fPHF4rWf7L00B/n7V2CfwqsDeeha0Y6tH9F64PYq5nl5D1VKBy7NT31S3P1AADtGKkcv
+         87xU3eQrBDg/WN7qoHVcweXth09RIc34U7P6a6GzeMGhUJw9dMcnXM109z1d30m0MdUm
+         czxdFPjiAqoCPicn34xCoVyb4lnF7AUK+f0U5zH57GWpRBhIclRXyisKF67qwfHNT0z3
+         PIA8GDYofdyBx7PVxkLFuQlwieQv0tLnSX+6sTo1URZx9Ur5i1yILqIPoyX1kRtPCNeK
+         fRiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714490851; x=1715095651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+1HgWwLjoipLTcuV2mY+tWY78vZZqlbVL58B4f0iiu4=;
+        b=u6OUZOAIZY1G5QsQuycYWZ2RTnbgihl3i6b3WcG2SHdLPenHZUc0ccqLRXrs47E6aP
+         XztgDgY03wq2BDqcBPRYAIQI7jO+FCGFFFPHV+Q28irTMECHtwZqfNlE9bflHm+eP95Z
+         /wb3RozJr2NkNWCXklsMFJQ5aNuf/OD5eY3AL/hCqnluPLz770X2GGpO/nwwaoKuvU2C
+         8c1sbFm1CjvoreQ3fC3Prn1xXy0nD8+GYlPz2gHodjUVOBgGjNhc7xzUgcnjzKoQ86u3
+         GjvsMqzG/+SEbEdB6zjOMrh8EgvQmYMz2BAqMpyd0ldW3VscHl8Z68TrX+KPzO74H8ft
+         ptuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxdrcM8KjaGBRagSvt7Hh5UPK3AqGd3i0c9UzJIeVKgeMF9ie1ggzlPSPstu/1W+KU0Im5QhhrfmCY6E96PTOGQ36Yzabqs/qa57ecFvG5v+c6McOw+RMyVvzI7Xeb0kgu+yqZ7L3kwgXEZ2iMqIwSmiBny/XW4kZcXNwxPfnaRbc1pCMOCeCD
+X-Gm-Message-State: AOJu0YzvRV1XAbhSxT7cwe0lvMRM4kZwSeP+SBCm9OC7f2K1KQrD9zYR
+	8deQ72ToA5T3OOAwO/GLwSiUqr5IWWDERXlbkk4gQlBLJ65e8iHhG1L4NAANaSbAhvJNwDeQCkg
+	7UEoQrDm85FxX+rhjJpcVkbxVzC0=
+X-Google-Smtp-Source: AGHT+IH7pdZicu4uh/ZkHr0Ti6TFgkBfJ9pqAtcJFUfLakRoyEY+RT0Y2F0U8MhrSCG7VjRQg5cnZkXUG29elM5wPDA=
+X-Received: by 2002:a2e:9f09:0:b0:2de:48ef:c3ce with SMTP id
+ u9-20020a2e9f09000000b002de48efc3cemr23422ljk.49.1714490850543; Tue, 30 Apr
+ 2024 08:27:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240429190500.30979-1-ryncsn@gmail.com> <20240429190500.30979-3-ryncsn@gmail.com>
+ <Zi_xeKUSD6C8TNYK@casper.infradead.org> <CAMgjq7D5zwksHxh5c00U82BCsLxYj-_GevZZtAM8xNZO7p-RQQ@mail.gmail.com>
+ <CAKFNMomdPzaF4AL5qHCZovtgdefd3V35D_qFDPoMeXyWCZtzUg@mail.gmail.com>
+ <Zi_3OxP6xKjBWBLO@casper.infradead.org> <CAKFNMokDR7oQxDH8WeUeJKm6GLDo54AnByYXxdAWHjiFeGWEwA@mail.gmail.com>
+In-Reply-To: <CAKFNMokDR7oQxDH8WeUeJKm6GLDo54AnByYXxdAWHjiFeGWEwA@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 30 Apr 2024 23:27:13 +0800
+Message-ID: <CAMgjq7D0HwiD-v_HCQWkGNoK2hWzL-B-1u0zRAp9xR6p+HfiUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 02/12] nilfs2: drop usage of page_index
+To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, Minchan Kim <minchan@kernel.org>, 
+	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Christian Göttsche <cgzones@googlemail.com>
+On Tue, Apr 30, 2024 at 4:01=E2=80=AFAM Ryusuke Konishi
+<konishi.ryusuke@gmail.com> wrote:
+>
+> On Tue, Apr 30, 2024 at 4:38=E2=80=AFAM Matthew Wilcox wrote:
+> >
+> > On Tue, Apr 30, 2024 at 04:28:41AM +0900, Ryusuke Konishi wrote:
+> > > On Tue, Apr 30, 2024 at 4:22=E2=80=AFAM Kairui Song <ryncsn@gmail.com=
+> wrote:
+> > > >
+> > > > On Tue, Apr 30, 2024 at 3:14=E2=80=AFAM Matthew Wilcox <willy@infra=
+dead.org> wrote:
+> > > > >
+> > > > > On Tue, Apr 30, 2024 at 03:04:50AM +0800, Kairui Song wrote:
+> > > > > > From: Kairui Song <kasong@tencent.com>
+> > > > > >
+> > > > > > page_index is only for mixed usage of page cache and swap cache=
+, for
+> > > > > > pure page cache usage, the caller can just use page->index inst=
+ead.
+> > > > > >
+> > > > > > It can't be a swap cache page here (being part of buffer head),
+> > > > > > so just drop it, also convert it to use folio.
+> > > > > >
+> > > > > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > > > > > Cc: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+> > > > > > Cc: linux-nilfs@vger.kernel.org
+> > > > > > ---
+> > > > > >  fs/nilfs2/bmap.c | 5 ++---
+> > > > > >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > > > > >
+> > > > > > diff --git a/fs/nilfs2/bmap.c b/fs/nilfs2/bmap.c
+> > > > > > index 383f0afa2cea..f4e5df0cd720 100644
+> > > > > > --- a/fs/nilfs2/bmap.c
+> > > > > > +++ b/fs/nilfs2/bmap.c
+> > > > > > @@ -453,9 +453,8 @@ __u64 nilfs_bmap_data_get_key(const struct =
+nilfs_bmap *bmap,
+> > > > > >       struct buffer_head *pbh;
+> > > > > >       __u64 key;
+> > > > > >
+> > > > > > -     key =3D page_index(bh->b_page) << (PAGE_SHIFT -
+> > > > > > -                                      bmap->b_inode->i_blkbits=
+);
+> > > > > > -     for (pbh =3D page_buffers(bh->b_page); pbh !=3D bh; pbh =
+=3D pbh->b_this_page)
+> > > > > > +     key =3D bh->b_folio->index << (PAGE_SHIFT - bmap->b_inode=
+->i_blkbits);
+> > > > > > +     for (pbh =3D folio_buffers(bh->b_folio); pbh !=3D bh; pbh=
+ =3D pbh->b_this_page)
+> > > > > >               key++;
+> > > > > >
+> > > > > >       return key;
+> > > > >
+> > > > > Why isn't this entire function simply:
+> > > > >
+> > > > >         return bh->b_blocknr;
+> > > > >
+> > > >
+> > > > Nice idea, I didn't plan for extra clean up and test for fs code, b=
+ut
+> > > > this might be OK to have, will check it.
+> > >
+> > > Wait a minute.
+> > >
+> > > This function returns a key that corresponds to the cache offset of
+> > > the data block, not the disk block number.
+> > >
+> > > Why is returning to bh->b_blocknr an alternative ?
+> > > Am I missing something?
+> >
+> > Sorry, I forgot how b_blocknr was used.  What I meant was:
+> >
+> >         u64 key =3D bh->b_folio->index << (PAGE_SHIFT - bmap->b_inode->=
+i_blkbits);
+> >
+> >         return key + bh_offset(bh) >> bmap->b_inode->i_blkbits;
+> >
+> > The point is to get rid of the loop.  We could simplify this (and make
+> > it ready for bs>PS) by doing:
+> >
+> >         loff_t pos =3D folio_pos(bh->b_folio) + bh_offset(bh);
+> >         return pos >> bmap->b_inode->i_blkbits;
+>
+> I see, I understand the idea that it would be better to eliminate the loo=
+p.
+>
+> The above conversion looks fine.
+> What are you going to do, Kairui ?
 
-Use the same parameter ordering for all four newly added *xattrat
-syscalls:
+Hi, I'd like to remove the loop as Matthew suggested, that will make
+the code cleaner.
+I'm not very familiar with this part so I'll check related code first
+for double check, won't take long though.
 
-    dirfd, pathname, at_flags, ...
-
-Also consistently use unsigned int as the type for at_flags.
-
-Suggested-by: Jan Kara <jack@suse.com>
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- fs/xattr.c               | 36 +++++++++++++++++++-----------------
- include/linux/syscalls.h |  8 +++++---
- 2 files changed, 24 insertions(+), 20 deletions(-)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 45603e74c632..454304046d7d 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -931,17 +931,18 @@ listxattr(struct dentry *d, char __user *list, size_t size)
- 	return error;
- }
- 
--static ssize_t do_listxattrat(int dfd, const char __user *pathname, char __user *list,
--			      size_t size, int flags)
-+static ssize_t do_listxattrat(int dfd, const char __user *pathname,
-+			      unsigned int at_flags,
-+			      char __user *list, size_t size)
- {
- 	struct path path;
- 	ssize_t error = 0;
- 	int lookup_flags;
- 
--	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-+	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
- 		return -EINVAL;
- 
--	if (flags & AT_EMPTY_PATH && vfs_empty_path(dfd, pathname)) {
-+	if (at_flags & AT_EMPTY_PATH && vfs_empty_path(dfd, pathname)) {
- 		CLASS(fd, f)(dfd);
- 
- 		if (!f.file)
-@@ -965,22 +966,23 @@ static ssize_t do_listxattrat(int dfd, const char __user *pathname, char __user
- 	return error;
- }
- 
--SYSCALL_DEFINE5(listxattrat, int, dfd, const char __user *, pathname, char __user *, list,
--		size_t, size, int, flags)
-+SYSCALL_DEFINE5(listxattrat, int, dfd, const char __user *, pathname,
-+		unsigned int, at_flags,
-+		char __user *, list, size_t, size)
- {
--	return do_listxattrat(dfd, pathname, list, size, flags);
-+	return do_listxattrat(dfd, pathname, at_flags, list, size);
- }
- 
- SYSCALL_DEFINE3(listxattr, const char __user *, pathname, char __user *, list,
- 		size_t, size)
- {
--	return do_listxattrat(AT_FDCWD, pathname, list, size, 0);
-+	return do_listxattrat(AT_FDCWD, pathname, 0, list, size);
- }
- 
- SYSCALL_DEFINE3(llistxattr, const char __user *, pathname, char __user *, list,
- 		size_t, size)
- {
--	return do_listxattrat(AT_FDCWD, pathname, list, size, AT_SYMLINK_NOFOLLOW);
-+	return do_listxattrat(AT_FDCWD, pathname, AT_SYMLINK_NOFOLLOW, list, size);
- }
- 
- SYSCALL_DEFINE3(flistxattr, int, fd, char __user *, list, size_t, size)
-@@ -1019,17 +1021,17 @@ removexattr(struct mnt_idmap *idmap, struct dentry *d,
- }
- 
- static int do_removexattrat(int dfd, const char __user *pathname,
--			    const char __user *name, int flags)
-+			    unsigned int at_flags, const char __user *name)
- {
- 	struct path path;
- 	int error;
- 	int lookup_flags;
- 
--	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-+	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
- 		return -EINVAL;
- 
--	lookup_flags = (flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
--	if (flags & AT_EMPTY_PATH)
-+	lookup_flags = (at_flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
-+	if (at_flags & AT_EMPTY_PATH)
- 		lookup_flags |= LOOKUP_EMPTY;
- retry:
- 	error = user_path_at(dfd, pathname, lookup_flags, &path);
-@@ -1049,21 +1051,21 @@ static int do_removexattrat(int dfd, const char __user *pathname,
- }
- 
- SYSCALL_DEFINE4(removexattrat, int, dfd, const char __user *, pathname,
--		const char __user *, name, int, flags)
-+		unsigned int, at_flags, const char __user *, name)
- {
--	return do_removexattrat(dfd, pathname, name, flags);
-+	return do_removexattrat(dfd, pathname, at_flags, name);
- }
- 
- SYSCALL_DEFINE2(removexattr, const char __user *, pathname,
- 		const char __user *, name)
- {
--	return do_removexattrat(AT_FDCWD, pathname, name, 0);
-+	return do_removexattrat(AT_FDCWD, pathname, 0, name);
- }
- 
- SYSCALL_DEFINE2(lremovexattr, const char __user *, pathname,
- 		const char __user *, name)
- {
--	return do_removexattrat(AT_FDCWD, pathname, name, AT_SYMLINK_NOFOLLOW);
-+	return do_removexattrat(AT_FDCWD, pathname, AT_SYMLINK_NOFOLLOW, name);
- }
- 
- SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index e06fffc48535..ca3cba698602 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -356,15 +356,17 @@ asmlinkage long sys_fgetxattr(int fd, const char __user *name,
- 			      void __user *value, size_t size);
- asmlinkage long sys_listxattr(const char __user *path, char __user *list,
- 			      size_t size);
--asmlinkage long sys_listxattrat(int dfd, const char __user *path, char __user *list,
--			      size_t size, int flags);
-+asmlinkage long sys_listxattrat(int dfd, const char __user *path,
-+				unsigned int at_flags,
-+				char __user *list, size_t size);
- asmlinkage long sys_llistxattr(const char __user *path, char __user *list,
- 			       size_t size);
- asmlinkage long sys_flistxattr(int fd, char __user *list, size_t size);
- asmlinkage long sys_removexattr(const char __user *path,
- 				const char __user *name);
- asmlinkage long sys_removexattrat(int dfd, const char __user *path,
--				const char __user *name, int flags);
-+				  unsigned int at_flags,
-+				  const char __user *name);
- asmlinkage long sys_lremovexattr(const char __user *path,
- 				 const char __user *name);
- asmlinkage long sys_fremovexattr(int fd, const char __user *name);
--- 
-2.43.0
-
+> Thanks,
+> Ryusuke Konishi
 
