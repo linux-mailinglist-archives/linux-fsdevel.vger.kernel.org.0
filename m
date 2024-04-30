@@ -1,111 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-18376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6888B7BFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:41:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DE28B7C05
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 17:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2307283000
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:41:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E911C20D2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 15:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3CA173359;
-	Tue, 30 Apr 2024 15:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52DC172BD9;
+	Tue, 30 Apr 2024 15:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YX4MpSTm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvN9kz4D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5541D770F5;
-	Tue, 30 Apr 2024 15:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EFC152781;
+	Tue, 30 Apr 2024 15:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714491663; cv=none; b=Xluunrp/E/DpeQA1O+SPCBU5Xh1lsEiIDj4o8tTChSyP8Ngl92QCIjMk+PzTsOcMXTCOfhGk50QXbC2kWZbW+di+337dhRhnrYGf3lntSYJi62gO6NJIwqf0wmZ+A7zpBZuH6BHZjhDTOBPeKig1WS13IjTWXJKP/kjRFsu+Veo=
+	t=1714491790; cv=none; b=ItPRpw1PSkdWV63X/OqCWppDIShovKVIAMmg+VHOg/38o1ZN3Jy3qUUMw8YZlwUVAMSuoZJ5WTJfJUil3scV34R45H+L2EJ7NMSgSztq33/ZdIQvaxj7kWHURRC3747joryMgh0QJtARMMHWtjjAuAoAaS6VhqVhKUQtmN1ngSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714491663; c=relaxed/simple;
-	bh=f6IqcFeBOCpWpa4vG7S+dRgb7PQm2Hc82dX1ztXa+5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z6XP3/yLXMEQSAw2Co8VjSKN18BYcqb6CnFjAeBRufcPKINySHtF6tX5sx9Gjv3gZJC6qoSgeciNyiEhEC9N9lnEgWES/ySbGrYf5Bf8p4aZtEDn6ix/QCmAkpAE9oupYQomoWswlV2QKgGcy4n4OzrgrbHKmYUtSCiJJFd6w3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YX4MpSTm; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e10b6e2bacso7408371fa.0;
-        Tue, 30 Apr 2024 08:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714491660; x=1715096460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HktqAitX/MFbl8Jl2t5m5ekVWv2NVSNp30OIaNycsOg=;
-        b=YX4MpSTmm/b3Up98/2cWLzaS4hN1qZ8tdHqTr6Sr9Ii/E7JlA2jWYCi5kvsOWbQS0F
-         LUvSiZgrGWuOpEF4VDzrjHjedlENPtxCUOE6QsTPr8ian2MG/yK3CPCXPsCcnH+9AlN5
-         dKwEMU/rVrKSc58V7zcYftF9MGJZMhikxCwBRkUfXDGUtxzCvKnKAFnN0ZJXxFAqu08e
-         J8t5NfAMszcRqS5hyXYMBjToEG3dGS7+q7v9eYsQNOF/vuWNtPLGhwTLTL20pLqmYNHc
-         bjEu7+azmmDRVFiDUHiYnGZyzQXwbdLqZsz8yeZDfyYhNKhIJlTmKk90SI1ZDNfSIb0o
-         a4cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714491660; x=1715096460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HktqAitX/MFbl8Jl2t5m5ekVWv2NVSNp30OIaNycsOg=;
-        b=oOemjloDRRM8THokoAC+/GtT4fMhQ+A7Escz4Cr9MZ9Z1K2mgZccW+csQ2t3Phry2W
-         0oCdioaWpVqQJX8opj96HKJeF9ztZGmJfTfwQBV+wcftjj8HnQFrQBrzKyfQ0gt2ikTL
-         BqPrvCKi90jM1L0q3S3Ar1w1S7RahghzhZ4EerWyw1bmy0/OSLaMww/j8XZUWXA45PN2
-         bCDa2BpJik5oQ9nhGhfwZnqunCXa75V4lzk1nd/mSYqfq/87vwMUupHnxo5oOKhGMkG0
-         w4L9HIbh1XWquFuhtSmdc/CKdWCsop41qm4/Gk/klL3BEdlWv6zTlLgoann0yMm2Shck
-         sKEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxyy1852J9oPrygDB1OkEtos/4YBdRQre+Z9n7y9aUVfnuwKGoWiLMvavu/m9OflfRUtESf+/pAAHP6wgQtaO3nNRBpGCSeM33mAuTBeGSFe3DiP77YzmQXjEy6KoSaaTkKdVYiLtP/RviRw==
-X-Gm-Message-State: AOJu0Yy2yghjOMuytJ7YRQHMlLETlAOnZiLJwWJSRoaWyjbA4G4tlfNA
-	DZmPZ22JF/3/1DNUMKPZrQaKzRNwYGb5AZ++50b/muO40pDJNLrXwmn9mIf1U7ngcEMcla+TBIu
-	sRsOwvhenklyaKLm1dfhLf3IUJDg=
-X-Google-Smtp-Source: AGHT+IG8HZi5mm/vVlVqKzeYyGwgwHQuIG8Dud5BOqVzlJHHrAvxS6dc1LaLoIjZ8FytpPc1dV7Iv1vI9mO9znyrWMQ=
-X-Received: by 2002:a2e:b747:0:b0:2e0:4cbb:858a with SMTP id
- k7-20020a2eb747000000b002e04cbb858amr39154ljo.27.1714491660173; Tue, 30 Apr
- 2024 08:41:00 -0700 (PDT)
+	s=arc-20240116; t=1714491790; c=relaxed/simple;
+	bh=//LVdMRWy2Z0Kru5a8uMOF9ni1OsANoBtfNqEBjJPlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kl9ydFqsPlvnxzmGuxAFvwKg+GBKtjJ2aOQJolimf6QYDP4OA2Yea/PRoKv38Y+BHYpGO8LJtMwoAQyx/xR6Rpk/8+WDaz/nXVrkSWa8p/nhBm+/9LvCghk4DEOVzBSNEFYvHW7PlLE+wD8Zpci3t8mg8EMaLFwkzbEdoX3aEvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvN9kz4D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D62C2BBFC;
+	Tue, 30 Apr 2024 15:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714491789;
+	bh=//LVdMRWy2Z0Kru5a8uMOF9ni1OsANoBtfNqEBjJPlA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DvN9kz4D+/LQpjQAV7KVMlDQdYc1d+Y6CxYK4jgO4c7KZPkKS3Qe5WYVOy8m1d7ot
+	 mF5U0A6GLgCd3n8fs+5dCq4V1tf22F1mqaM2rSYDSK6G2sWNXzCQk8i9yqYC7hbtJX
+	 K1GUTwKUmNPR+r+/LFU7bm/hXsISQyiQ9c0LGI9MT/XHLfvZ1qGkLyUivW4s/N7Vs8
+	 LulGjkyNFLx1I+m6oUlTBjmxw7vK8WvvkMFn3ylxtTI70ZEc4kY9NvrUcvuAZDrCWG
+	 0vcGBeGpJ9+gWXYwcgyPzkm7dOxYC9+ib5ZdlbBEKPoDBmUxuBBX9TW6J8OXESonuO
+	 1MWZZvhc75Dmg==
+Date: Tue, 30 Apr 2024 08:43:09 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: zlang@redhat.com, ebiggers@kernel.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, guan@eryu.me,
+	linux-xfs@vger.kernel.org, fstests@vger.kernel.org
+Subject: Re: [PATCH 4/6] xfs: test xfs_scrub detection and correction of
+ corrupt fsverity metadata
+Message-ID: <20240430154309.GL360919@frogsfrogsfrogs>
+References: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
+ <171444688039.962488.5264219734710985894.stgit@frogsfrogsfrogs>
+ <4atckq27cuppwfue762g3xctp46dnwmjffawuxqsdfq6qeb5rd@g4snomzn7v4g>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240429190500.30979-1-ryncsn@gmail.com> <20240429190500.30979-6-ryncsn@gmail.com>
- <SA0PR21MB1898817BA920C2A45660DE65E41B2@SA0PR21MB1898.namprd21.prod.outlook.com>
-In-Reply-To: <SA0PR21MB1898817BA920C2A45660DE65E41B2@SA0PR21MB1898.namprd21.prod.outlook.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 30 Apr 2024 23:40:43 +0800
-Message-ID: <CAMgjq7ADnn+uEL0jY676rk6+9cFWgrZxMCZ2m2qf1GM87Eav9Q@mail.gmail.com>
-Subject: Re: [EXTERNAL] [PATCH v3 05/12] cifs: drop usage of page_file_offset
-To: Steven French <Steven.French@microsoft.com>
-Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
-	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Shyam Prasad <Shyam.Prasad@microsoft.com>, 
-	Bharath S M <bharathsm@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4atckq27cuppwfue762g3xctp46dnwmjffawuxqsdfq6qeb5rd@g4snomzn7v4g>
 
-On Tue, Apr 30, 2024 at 4:19=E2=80=AFAM Steven French
-<Steven.French@microsoft.com> wrote:
->
-> Wouldn't this make it harder to fix the regression when swap file support=
- was temporarily removed from cifs.ko (due to the folio migration)?   I was=
- hoping to come back to fixing swapfile support for cifs.ko in 6.10-rc (whi=
-ch used to pass the various xfstests for this but code got removed with fol=
-ios/netfs changes).
->
+On Tue, Apr 30, 2024 at 02:29:03PM +0200, Andrey Albershteyn wrote:
+> On 2024-04-29 20:41:50, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Create a basic test to ensure that xfs_scrub media scans complain about
+> > files that don't pass fsverity validation.
+> > 
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  tests/xfs/1880     |  135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tests/xfs/1880.out |   37 ++++++++++++++
+> >  2 files changed, 172 insertions(+)
+> >  create mode 100755 tests/xfs/1880
+> >  create mode 100644 tests/xfs/1880.out
+> > 
+> > 
+> > diff --git a/tests/xfs/1880 b/tests/xfs/1880
+> > new file mode 100755
+> > index 0000000000..a2119f04c2
+> > --- /dev/null
+> > +++ b/tests/xfs/1880
+> > @@ -0,0 +1,135 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2024 Oracle.  All Rights Reserved.
+> > +#
+> > +# FS QA Test 1880
+> > +#
+> > +# Corrupt fsverity descriptor, merkle tree blocks, and file contents.  Ensure
+> > +# that xfs_scrub detects this and repairs whatever it can.
+> > +#
+> > +. ./common/preamble
+> > +_begin_fstest auto quick verity
+> > +
+> > +_cleanup()
+> > +{
+> > +	cd /
+> > +	_restore_fsverity_signatures
+> > +	rm -f $tmp.*
+> > +}
+> > +
+> > +. ./common/verity
+> > +. ./common/filter
+> > +. ./common/fuzzy
+> > +
+> > +_supported_fs xfs
+> > +_require_scratch_verity
+> > +_disable_fsverity_signatures
+> > +_require_fsverity_corruption
+> > +_require_scratch_nocheck	# fsck test
+> > +
+> > +_scratch_mkfs >> $seqres.full
+> > +_scratch_mount
+> > +
+> > +_require_scratch_xfs_scrub
+> > +_require_xfs_has_feature "$SCRATCH_MNT" verity
+> > +VICTIM_FILE="$SCRATCH_MNT/a"
+> > +_fsv_can_enable "$VICTIM_FILE" || _notrun "cannot enable fsverity"
+> 
+> I think this is not necessary, _require_scratch_verity already does
+> check if verity can be enabled (with more detailed errors).
 
-Hi Steven,
+It is because _require_scratch_verity calls _scratch_mkfs_verity to
+format the filesystem.  _scratch_mkfs_verity in turn forces verity on,
+possibly overriding MKFS_OPTIONS to make it happen.  -iverity=1 might
+not be set for a regular _scratch_mkfs call.
 
-I think this won't cause any trouble for that, the new swap_rw
-interface should have splitted the swap cache from fs side, which made
-the code struct cleaner, and I think that's the right path. NFS is
-using that already. With this interface, .read_folio (cifs_read_folio)
-should never be called for swap cache folios.
+Therefore, this second _fsv_can_enable call checks that the test
+runner's MKFS_OPTIONS set actually supports fsverity.
+
+I'll leave a comment summarizing this:
+
+# Check again to confirm that the caller's MKFS_OPTIONS result in a filesystem
+# that supports fsverity.
+_fsv_can_enable "$VICTIM_FILE" || _notrun "cannot enable fsverity"
+
+--D
+
+> Otherwise, looks good to me:
+> Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+> 
+> -- 
+> - Andrey
+> 
+> 
 
