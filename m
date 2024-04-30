@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-18292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2DA38B691C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:40:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 606E08B691E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8079B21A5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11F611F21F4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5D11429A;
-	Tue, 30 Apr 2024 03:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820A9111A2;
+	Tue, 30 Apr 2024 03:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyXxFNSd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLppyDyK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3566013FEE;
-	Tue, 30 Apr 2024 03:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D176510A1D;
+	Tue, 30 Apr 2024 03:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714448417; cv=none; b=Wix9ZRCkDZTMtB/3K9mraYZpPgxozNTd5Yq0i0lQaHTINMaNdMoW48JlVl1Objhzn9S/8JXi690vlNkZksOqexsYXA0Z9nwFJ2JyYH8sGhiZg0hjqMw0p10wV3Qrk2Nhj3vAj+ZhsXPDJELWWFx8NS0zEif+m/Ysn4awwWvyosg=
+	t=1714448432; cv=none; b=t1CyNwDkyowVDJNINt3wtvjIqIpDx5APsPsCZOoVYQEHoeiBbCnzkvR5ooxlZfE+TaanI8V29Y3yZ8m9Bz5yHo0aF+s++V/fd/WvTy+NJKahRnyP4FW708aOx8gW0z71MJNB2kKWI3uRH+AAyPZAp1EQkXfTZnFn1DEyV1QLDFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714448417; c=relaxed/simple;
-	bh=BW4AA+hEuHNfXzS8ZpR/m4RoUoXCRJ3Bv/44PzEyqDY=;
+	s=arc-20240116; t=1714448432; c=relaxed/simple;
+	bh=FqpOy3OpxfeJJgGwxXoDU0/j2emkdd9a+CGm9UtME5I=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jM8swoLo38u/srUJcV9GZMBB3n1JgBxDUc2EfuAgqcjMq0uYHnFjl0EB2zHrnuwYRzfQv54QO2+0o68/S6jSO2PRJ9ssIWXbzbZrWJeMD5LmuoToIhS7Cy5UFNZCufRr5g6RBgIWbx7MauVHA1DnkbmCO5NEWO10aWeU3nQM93E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyXxFNSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A326C116B1;
-	Tue, 30 Apr 2024 03:40:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=bJ5r71FzaOrEpcU50r68F+l+Kha2mpWw2eNSiAGG9k6e2ANg7iUiCMkZeV+/7vsyZgvQsGSsMx2qeLhCidQ8VEDMnVqTUtZUOE1hFIFzR52gE2AnT9qur4I8IThuZ5i2YnViwdOEigsCziramYxYQUZIyOHdRQG6p9BJXkBw7TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLppyDyK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A986FC116B1;
+	Tue, 30 Apr 2024 03:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714448417;
-	bh=BW4AA+hEuHNfXzS8ZpR/m4RoUoXCRJ3Bv/44PzEyqDY=;
+	s=k20201202; t=1714448432;
+	bh=FqpOy3OpxfeJJgGwxXoDU0/j2emkdd9a+CGm9UtME5I=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=nyXxFNSdnxrES7ZkfxT7+GJt4UdLNNv0uxW6RnAgfl9DCRTo9wqwX16g2Sf8/8N/b
-	 tI2Z5uaeUdv78cXmMPVV04yLbttDn8WwUkDFxmutJiikVNwtws+4zWh7ZKNL/9ygQk
-	 Jrh68MyqYXFNal0viHIxgX4Kg7K9LAx61zI2jchcvTVYCoq04RlQn7CzBn+yUi2iBj
-	 RIvwCbEBJQBknego/eF9WMfcXkEk6uje01PHn6HQj+gOG2RB15/SWFcXpY0dwABAdt
-	 H0qNWK7xydv68ZcEyMJgHbemx5dmPUhWS0bG4jd46zCjG88G5lh7L9Y8q01LIu+5iQ
-	 mm6GTYl2qJ4Sw==
-Date: Mon, 29 Apr 2024 20:40:16 -0700
-Subject: [PATCH 36/38] xfs_io: report fsverity status via statx
+	b=jLppyDyKbOeXNbVnYuR8H1pMPDhqiM4w9+fzqSEEmG+r9RHzv/wf+EPcd+TrctpzS
+	 PvZ3v8vpG6W/9m4hjSl4g2rpwlhHD/se3HnNdxLFfFFlXAa4UApi8/wJBky4cTgZXy
+	 PPNbrFmuBqxz73+FwTSTePPY/9zn+Mh0fUU5Gj6LdPp8Z7mb/aanthxCMVap35Cy3L
+	 FEawoQ1QBKPXenMH49NiolWAvbmBKWe62cYsti/zl/zZ4hJHmqwXd7OVx45Nvp/CbO
+	 rZagono654G7ccZwDZrZqwVvdBSdHUFZCppZOKhM4of08P5dE3H+aoZ879BBE7p4d6
+	 fZRg90M2w2FQQ==
+Date: Mon, 29 Apr 2024 20:40:32 -0700
+Subject: [PATCH 37/38] xfs_io: create magic command to disable verity
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, cem@kernel.org,
  djwong@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  fsverity@lists.linux.dev
-Message-ID: <171444683660.960383.9649245519206526450.stgit@frogsfrogsfrogs>
+Message-ID: <171444683675.960383.13899048413901232465.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 References: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,64 +63,97 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Report if a file has verity enable.
+Create a secret command to turn off fsverity if we need to.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- io/attr.c                       |    2 ++
- man/man2/ioctl_xfs_fsgetxattr.2 |    3 +++
- man/man8/xfs_io.8               |    4 ++++
- 3 files changed, 9 insertions(+)
+ io/scrub.c        |   47 +++++++++++++++++++++++++++++++++++++++++++++++
+ man/man8/xfs_io.8 |    3 +++
+ 2 files changed, 50 insertions(+)
 
 
-diff --git a/io/attr.c b/io/attr.c
-index fd82a2e73801..5df4edbbbb41 100644
---- a/io/attr.c
-+++ b/io/attr.c
-@@ -37,6 +37,7 @@ static struct xflags {
- 	{ FS_XFLAG_FILESTREAM,		"S", "filestream"	},
- 	{ FS_XFLAG_DAX,			"x", "dax"		},
- 	{ FS_XFLAG_COWEXTSIZE,		"C", "cowextsize"	},
-+	{ FS_XFLAG_VERITY,		"v", "verity"		},
- 	{ FS_XFLAG_HASATTR,		"X", "has-xattr"	},
- 	{ 0, NULL, NULL }
- };
-@@ -66,6 +67,7 @@ lsattr_help(void)
- " S -- enable filestreams allocator for this directory\n"
- " x -- Use direct access (DAX) for data in this file\n"
- " C -- for files with shared blocks, observe the inode CoW extent size value\n"
-+" v -- file has fsverity metadata to validate data contents\n"
- " X -- file has extended attributes (cannot be changed using chattr)\n"
- "\n"
- " Options:\n"
-diff --git a/man/man2/ioctl_xfs_fsgetxattr.2 b/man/man2/ioctl_xfs_fsgetxattr.2
-index 2c626a7e3742..ffcdedc1fb13 100644
---- a/man/man2/ioctl_xfs_fsgetxattr.2
-+++ b/man/man2/ioctl_xfs_fsgetxattr.2
-@@ -200,6 +200,9 @@ below).
- If set on a directory, new files and subdirectories created in the directory
- will have both the flag and the CoW extent size value set.
- .TP
-+.B XFS_XFLAG_VERITY
-+The file has fsverity metadata to verify the file contents.
-+.TP
- .B XFS_XFLAG_HASATTR
- The file has extended attributes associated with it.
+diff --git a/io/scrub.c b/io/scrub.c
+index dc40afdfb36f..8a4a7e2fc3af 100644
+--- a/io/scrub.c
++++ b/io/scrub.c
+@@ -19,6 +19,7 @@
+ static struct cmdinfo scrub_cmd;
+ static struct cmdinfo repair_cmd;
+ static const struct cmdinfo scrubv_cmd;
++static const struct cmdinfo noverity_cmd;
  
+ static void
+ scrub_help(void)
+@@ -356,6 +357,7 @@ scrub_init(void)
+ 
+ 	add_command(&scrub_cmd);
+ 	add_command(&scrubv_cmd);
++	add_command(&noverity_cmd);
+ }
+ 
+ static void
+@@ -730,3 +732,48 @@ static const struct cmdinfo scrubv_cmd = {
+ 	.oneline	= N_("vectored metadata scrub"),
+ 	.help		= scrubv_help,
+ };
++
++static void
++noverity_help(void)
++{
++	printf(_(
++"\n"
++" Disable fsverity on a file.\n"));
++}
++
++#ifndef FS_IOC_DISABLE_VERITY
++# define FS_IOC_DISABLE_VERITY _IO('f', 136)
++#endif
++
++static int
++noverity_f(
++	int		argc,
++	char		**argv)
++{
++	int		c;
++	int		error;
++
++	while ((c = getopt(argc, argv, "")) != EOF) {
++		switch (c) {
++		default:
++			noverity_help();
++			return 0;
++		}
++	}
++
++	error = ioctl(file->fd, FS_IOC_DISABLE_VERITY);
++	if (error)
++		perror("noverity");
++
++	return 0;
++}
++
++static const struct cmdinfo noverity_cmd = {
++	.name		= "noverity",
++	.cfunc		= noverity_f,
++	.argmin		= -1,
++	.argmax		= -1,
++	.flags		= CMD_NOMAP_OK,
++	.oneline	= N_("disable fsverity"),
++	.help		= noverity_help,
++};
 diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
-index cd6e953d8223..4991ad471bd7 100644
+index 4991ad471bd7..013750faa113 100644
 --- a/man/man8/xfs_io.8
 +++ b/man/man8/xfs_io.8
-@@ -934,6 +934,10 @@ direct access persistent memory (XFS_XFLAG_DAX)
- .B C
- copy on write extent hint (XFS_XFLAG_COWEXTSIZE)
- 
+@@ -1093,6 +1093,9 @@ Check parameters without changing anything.
+ Do not print timing information at all.
+ .PD
+ .RE
 +.TP
-+.B v
-+fsverity enabled (XFS_XFLAG_VERITY)
-+
++.B noverity
++Disable fs-verity on this file.
+ 
+ .SH MEMORY MAPPED I/O COMMANDS
  .TP
- .B X
- has extended attributes (XFS_XFLAG_HASATTR)
 
 
