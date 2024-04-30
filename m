@@ -1,214 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-18301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2138B69FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 07:36:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8068B6AD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 08:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DED2E1C21DAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9677028132D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 06:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160461774E;
-	Tue, 30 Apr 2024 05:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE35C3A29A;
+	Tue, 30 Apr 2024 06:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kUvPO+dy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbCASJSV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3166B17582
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 05:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE4D199AD;
+	Tue, 30 Apr 2024 06:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714455411; cv=none; b=KkBfhrSRAmNWc6hzFGyR1x3SYWcORuOs61lz+9XfraDSuEyAbLODl7mKFeVonCCrUMurqSCQh1w/ED6fVauiAnAGNiayJdhLw81AfGgDLeHeBglPN5JCsE7zeTkYwxH5Od3QuJPvZZO7iVlF1qQsEJttWlGWQeF8xnz+MDG9A8E=
+	t=1714459598; cv=none; b=c86ZgY58G+Dtd2QmmspOkKWY8QYkXHe5i99gFlpyNo8CzLwZitBl/muujLoh2I5uaJzY4mPAvOC8fqXCcL85+KE0aBwUe1LrLtNmFQxYbfOhkAoiKVNH3p7S8vOvfnobMpcC3W/t1hAbyBmmvlZ1d+KBPn3wBAkGscFMoSxmUX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714455411; c=relaxed/simple;
-	bh=ic45Ly5iOqM2hN40D+e1MnLz2cah/7zHv0WBtywKiU8=;
+	s=arc-20240116; t=1714459598; c=relaxed/simple;
+	bh=BJHpOQBTYl2CusEmnHRWz9TzqP85OwFTue5pk4Z5ba4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNg6cPZ8Qp35AeZOA/eU+eQ2lmHqNaJJGL4eIzM+4druCQS9IF4K1Te3AXw5BBzYRIv7NUQhFlVLPzG4wNmorypgbIUwWpIa+ovUc5kE5GN1bxV+bqHxNn9TYlNjZyY5G+aNsqXF11HOnDF3+vO4hJvMnF8rlvczUadhL+OSxZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kUvPO+dy; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1e9ffd3f96eso41851805ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2024 22:36:49 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IILD+880TMzR5nNFg49TS8IzkmGcBIJgOP8fz6Wks6av+MTnl0jXYIa6Dy2MNWPJBPLU7IssRKs6Gie4i/hgK7AB4YXHadyH1rU7XgAY6115x1OAoe68Lrk/XnF1krOv14x7d3L+GZuQGXCV2tSvYFnmXGxqw1twDTDtDCKYOIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbCASJSV; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f3e3d789cdso3302938b3a.1;
+        Mon, 29 Apr 2024 23:46:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714455409; x=1715060209; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tfcUvly+FIvb0j4uFmsdXOeKUl+PlbA1SIU5IPSmRRs=;
-        b=kUvPO+dyIdUtHDCRCw+bSVBv2FNq1I4DEqiMAbE7LqxbvlX9XhLkoU/x11Z0H5eM0g
-         09LOmvnCr/JFaspzk7Y/Czo/QXMif/fwLWt88ODWVO5c84y9i50lPDZI7toB5OQVGf3+
-         jelFypwwof1N5v3dgB4teLsKIyc6LqXyH+uFg=
+        d=gmail.com; s=20230601; t=1714459596; x=1715064396; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hCjGa0cyR+5KjlfrnK0wTPM9nmlXBCTQii4J3Gjgfc=;
+        b=VbCASJSVR7mb4y03jimQHsulDrXI5KKfUAYE9NqwPP3eN30bLLtYe5SwRPGmwgOwzx
+         sbNidX+3Qjdk2nbAPdq5aWH9tvB/syvXMuJh+inTn0SxqkrfMUcmXRfJgdYozExoB0Us
+         u2MWO22kxzVewCVqex1IXS6eiYAOqdxDG0Q3VZRLUrRhUY3+HtlNC5lV4RU3imtv0UCU
+         K35VtwMwrVPVE0MU4ah0LP9ScnhwAqrhnlsf3gX/QBbZBQ8Plw0h3bbSSLGSR5vvaInl
+         fVAHqL1/Re9q2yu641IWURD8vGuHjJt04QfS8J+ZIZrnbS+HgL99oWDoB9Iz60zdazO/
+         siSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714455409; x=1715060209;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tfcUvly+FIvb0j4uFmsdXOeKUl+PlbA1SIU5IPSmRRs=;
-        b=Xu+qe6EgBumr0/sJR+7Wp01qo0GzsrNkBGB1LkLCHEOwgF6100pFeYH7FU+GNzUyG0
-         /JpD9qkHqDH76W4WU6g73V4IwRYHiEWyvILUnd2rHcH3pxV+AKZGC/NwaXPSJdDrnfaP
-         U2TJ3+Mm+rAIUZUzJNI7d8r5gjKRKK3cBYN2tYGzBgFNlvu62OXYoy8ju7gZDcr4/dmw
-         OMUyC+u5eeuEqDQ6ZzA+WQg471Qt2jxTkYIFtCXOl9piWbYz2lWM7b5ZNfQq98QRay6B
-         fGp6FQE2Og8q99rMr3Whrsqd6pnnRC7cPpEI5lxlD1JWrhZBMeinuyRNLWv2k7Sx2Zoy
-         TJ2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWKX+VdnlozXmbW06xolKNpCLfe0Zi1WoTtHrBXRX6u5NroQJ4RnA42t3ji3I8hdIO81cAkT43TM/st7UrsWB0maYc6zHXbwDX/AxAsdg==
-X-Gm-Message-State: AOJu0Ywc4uKCOJ8rEMuTR2HCPNtqqqLAOS71zoYByHDavxfsyiTckO9N
-	GbloJFkLuv0ZijsHEgO2+QBUp6H73SQp+SlPWp/E3t0idDlGeMkzeidt55dEsg==
-X-Google-Smtp-Source: AGHT+IEI1xCl5MgJCRf5jfTPqNjC35t8O+Ee/g+Asor/wizBcjvlYPWp+LqGt/RJxxnu3iJri6Tn1w==
-X-Received: by 2002:a17:903:487:b0:1dc:a605:5435 with SMTP id jj7-20020a170903048700b001dca6055435mr12028201plb.31.1714455409417;
-        Mon, 29 Apr 2024 22:36:49 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id n1-20020a170902d2c100b001e2a7e90321sm21334480plc.224.2024.04.29.22.36.48
+        d=1e100.net; s=20230601; t=1714459596; x=1715064396;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8hCjGa0cyR+5KjlfrnK0wTPM9nmlXBCTQii4J3Gjgfc=;
+        b=xMYLfx1UOKuxps1PuSM1eRtIQyGA3TkSoMUiWEGqzK4Cl4Gz9cpwT54vNl8QWg+gJp
+         WTAQbjsaUhTkhUK4vRJGK/g0bISQLh2Ma5gaz1kNf1xcmDsFnXva/LgVN9/qsTX6k0YZ
+         8OI8BTdmhend2gjOswqbXV05Z8W5ll0yejZ9eEL+um9Bn2gSNdhFO9VWcDyGeISwuQXc
+         GEqfhPNuTgFy2GCaAY23rZzgOmXqOV6/lt3yHGYlvXq70IyEUn/MWKKxxppH2oFjs/P8
+         kbi+mt5Icc46MvSjvBLU85TKiS3MDdaYf6E+1pI+dXbxH9BxYL/dUYTFpG8iKu/cFwek
+         5B+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUc7URIviLquADjEI1w3mynFsx59wXKufdixx6LHBl6o2eY7YsPYLUVhvAi9xS7ZmLsI5ib4ietB7OL9Ouujc6lwL5NWDfTM1oe183+5wtrCvXuAubzqoZJ0kNJL+Z5+8YM+MNgcuL5Zz9VZIl/gRsDQzdCkTI0T3pXERl+8w8CkHyQZoqp/hs7n3B7bFwIN6hpKEA4XVgjv9b13900MPo8yw==
+X-Gm-Message-State: AOJu0YxSLg5iausCRyfV932p6jezrW75rCuej0PU4lp4RFy/MhlBQLt7
+	f3WnQtfpNmgnZuiy5Bm4tijJfDL2Zk3NUxNusOrT7y0DbUrhMDlv
+X-Google-Smtp-Source: AGHT+IHZptiykpZhYjFmG4OGGymocqD+APs98M8NEhYGo1chm3Kg5U9XPh+dOTwbEH1pATR3JSfM+A==
+X-Received: by 2002:a05:6a20:de96:b0:1aa:7097:49e2 with SMTP id la22-20020a056a20de9600b001aa709749e2mr12942263pzb.50.1714459596260;
+        Mon, 29 Apr 2024 23:46:36 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id u2-20020a170902e5c200b001e556734814sm21511890plf.134.2024.04.29.23.46.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 22:36:48 -0700 (PDT)
-Date: Mon, 29 Apr 2024 22:36:48 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Allen <allen.lkml@gmail.com>
-Cc: Allen Pais <apais@linux.microsoft.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, mcgrof@kernel.org, j.granados@samsung.com
-Subject: Re: [RFC PATCH] fs/coredump: Enable dynamic configuration of max
- file note size
-Message-ID: <202404292236.568F42D3C@keescook>
-References: <20240429172128.4246-1-apais@linux.microsoft.com>
- <202404291245.18281A6D@keescook>
- <CAOMdWS+k63T9TQ=Zvev-+Q3Zw-wuEUv_f63=YiTx0nK1J9Jfwg@mail.gmail.com>
+        Mon, 29 Apr 2024 23:46:35 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 64E1318462BA1; Tue, 30 Apr 2024 13:46:32 +0700 (WIB)
+Date: Tue, 30 Apr 2024 13:46:32 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: John Groves <John@groves.net>, Jonathan Corbet <corbet@lwn.net>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Linux CXL <linux-cxl@vger.kernel.org>,
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>,
+	Linux NVIDMM <nvdimm@lists.linux.dev>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: John Groves <jgroves@micron.com>, john@jagalactic.com,
+	Dave Chinner <david@fromorbit.com>,
+	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com,
+	gregory.price@memverge.com, Randy Dunlap <rdunlap@infradead.org>,
+	Jerome Glisse <jglisse@google.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>,
+	Eishan Mirakhur <emirakhur@micron.com>,
+	Ravi Shankar <venkataravis@micron.com>,
+	Srinivasulu Thanneeru <sthanneeru@micron.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Chandan Babu R <chandanbabu@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Steve French <stfrench@microsoft.com>,
+	Nathan Lynch <nathanl@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Julien Panis <jpanis@baylibre.com>,
+	Stanislav Fomichev <sdf@google.com>,
+	Dongsheng Yang <dongsheng.yang@easystack.cn>,
+	Mao Zhu <zhumao001@208suo.com>, Ran Sun <sunran001@208suo.com>,
+	Xiang wangx <wangxiang@cdjrlc.com>,
+	Shaomin Deng <dengshaomin@cdjrlc.com>,
+	Charles Han <hanchunchao@inspur.com>,
+	Attreyee M <tintinm2017@gmail.com>
+Subject: Re: [RFC PATCH v2 01/12] famfs: Introduce famfs documentation
+Message-ID: <ZjCTyOvpBDBuCg5i@archie.me>
+References: <cover.1714409084.git.john@groves.net>
+ <0270b3e2d4c6511990978479771598ad62cf2ddd.1714409084.git.john@groves.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="crT4BUp9nHuKakh4"
+Content-Disposition: inline
+In-Reply-To: <0270b3e2d4c6511990978479771598ad62cf2ddd.1714409084.git.john@groves.net>
+
+
+--crT4BUp9nHuKakh4
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOMdWS+k63T9TQ=Zvev-+Q3Zw-wuEUv_f63=YiTx0nK1J9Jfwg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 29, 2024 at 03:35:01PM -0700, Allen wrote:
-> On Mon, Apr 29, 2024 at 12:49 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Mon, Apr 29, 2024 at 05:21:28PM +0000, Allen Pais wrote:
-> > > Introduce the capability to dynamically configure the maximum file
-> > > note size for ELF core dumps via sysctl. This enhancement removes
-> > > the previous static limit of 4MB, allowing system administrators to
-> > > adjust the size based on system-specific requirements or constraints.
-> >
-> > Under what conditions is this actually needed?
-> 
->  I addressed this in the email I sent out before this.
-> 
-> >
-> > > [...]
-> > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > > index 81cc974913bb..80cdc37f2fa2 100644
-> > > --- a/kernel/sysctl.c
-> > > +++ b/kernel/sysctl.c
-> > > @@ -63,6 +63,7 @@
-> > >  #include <linux/mount.h>
-> > >  #include <linux/userfaultfd_k.h>
-> > >  #include <linux/pid.h>
-> > > +#include <linux/coredump.h>
-> > >
-> > >  #include "../lib/kstrtox.h"
-> > >
-> > > @@ -1623,6 +1624,13 @@ static struct ctl_table kern_table[] = {
-> > >               .mode           = 0644,
-> > >               .proc_handler   = proc_dointvec,
-> > >       },
-> > > +     {
-> > > +             .procname       = "max_file_note_size",
-> > > +             .data           = &max_file_note_size,
-> > > +             .maxlen         = sizeof(unsigned int),
-> > > +             .mode           = 0644,
-> > > +             .proc_handler   = proc_dointvec,
-> > > +     },
-> >
-> > Please don't add new sysctls to kernel/sysctl.c. Put this in fs/coredump.c
-> > instead, and name it "core_file_note_size_max". (A "max" suffix is more
-> > common than prefixes, and I'd like it clarified that it relates to the
-> > coredumper with the "core" prefix that match the other coredump sysctls.
-> >
-> > -Kees
-> 
-> Makes sense. Let me know if the below looks fine,
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 5397b552fbeb..6aebd062b92b 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote
-> *note, user_siginfo_t *csigdata,
->         fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
->  }
-> 
-> -#define MAX_FILE_NOTE_SIZE (4*1024*1024)
->  /*
->   * Format of NT_FILE note:
->   *
-> @@ -1592,7 +1591,7 @@ static int fill_files_note(struct memelfnote
-> *note, struct coredump_params *cprm
-> 
->         names_ofs = (2 + 3 * count) * sizeof(data[0]);
->   alloc:
-> -       if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
-> +       if (size >= core_file_note_size_max) /* paranoia check */
->                 return -EINVAL;
->         size = round_up(size, PAGE_SIZE);
->         /*
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index be6403b4b14b..2108eb93acb9 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -56,10 +56,13 @@
->  static bool dump_vma_snapshot(struct coredump_params *cprm);
->  static void free_vma_snapshot(struct coredump_params *cprm);
-> 
-> +#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-> +
->  static int core_uses_pid;
->  static unsigned int core_pipe_limit;
->  static char core_pattern[CORENAME_MAX_SIZE] = "core";
->  static int core_name_size = CORENAME_MAX_SIZE;
-> +unsigned int core_file_note_size_max = MAX_FILE_NOTE_SIZE;
-> 
->  struct core_name {
->         char *corename;
-> @@ -1020,6 +1023,13 @@ static struct ctl_table coredump_sysctls[] = {
->                 .mode           = 0644,
->                 .proc_handler   = proc_dointvec,
->         },
-> +       {
-> +               .procname       = "core_file_note_size_max",
-> +               .data           = &core_file_note_size_max,
-> +               .maxlen         = sizeof(unsigned int),
-> +               .mode           = 0644,
-> +               .proc_handler   = proc_douintvec,
-> +       },
->  };
-> 
->  static int __init init_fs_coredump_sysctls(void)
-> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-> index d3eba4360150..14c057643e7f 100644
-> --- a/include/linux/coredump.h
-> +++ b/include/linux/coredump.h
-> @@ -46,6 +46,7 @@ static inline void do_coredump(const
-> kernel_siginfo_t *siginfo) {}
->  #endif
-> 
->  #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
-> +extern unsigned int core_file_note_size_max;
->  extern void validate_coredump_safety(void);
->  #else
->  static inline void validate_coredump_safety(void) {}
+On Mon, Apr 29, 2024 at 12:04:17PM -0500, John Groves wrote:
+> * Introduce Documentation/filesystems/famfs.rst into the Documentation
+>   tree and filesystems index
+> * Add famfs famfs.rst to the filesystems doc index
+> * Add famfs' ioctl opcodes to ioctl-number.rst
+> * Update MAINTAINERS FILE
+>=20
 
-Yes; thank you! I like this naming (and sysctl location) now. :)
+The doc LGTM, thanks!
 
--Kees
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
--- 
-Kees Cook
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--crT4BUp9nHuKakh4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjCTwwAKCRD2uYlJVVFO
+o6cyAP9LSH332uDKE+seiJLwDjMnIq+YE0884MKXbf8SHc2gdQEArqUm84vOu682
+HXx1CyZQ45bTEfyOQgYNRg/+bNbzpw8=
+=+4jA
+-----END PGP SIGNATURE-----
+
+--crT4BUp9nHuKakh4--
 
