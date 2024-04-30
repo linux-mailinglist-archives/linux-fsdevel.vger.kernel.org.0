@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-18208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44968B683D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8285E8B6848
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127E41C2172E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A67681C2163E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6589BFC02;
-	Tue, 30 Apr 2024 03:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3F7FC02;
+	Tue, 30 Apr 2024 03:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhWYmLrl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAo3C/cZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4814DDDA;
-	Tue, 30 Apr 2024 03:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E0A12E47;
+	Tue, 30 Apr 2024 03:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447118; cv=none; b=EdYEu00XzH2ltfyO3bwza7JbDm7Zmk0kGAn3csbb9xEvHq/eIqxbavux8nNCYQ2O9UdLxdsO9eCxZrtOeVH76tAQ4VzY6x/39sr/mHGBSaChnjRb9VAurY4jDgAP64VZ5joHUIx72/bovFrMeRwO0+SsmP/HPp6pLS1V+b2bBsE=
+	t=1714447134; cv=none; b=f9VOhKl9FwHMlAVzhzISs7SH2Fn8GQrCK4sW5zmUlkocqRjgyuzOl7XxF5T9baKEXwUMhpTvieiLG1XACAEKh/HfIkoNO5Hv07h/NpWIGMwfYOKWmRIO2W9pjZ/2RysF5KD+RpYBasP6QnV1e503zhZXNTEhlS4nQZ040lwKn7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447118; c=relaxed/simple;
-	bh=OE+6BcBWqdBR28p2ql6S6XK5gbn2kgnRE8ScEA18iVY=;
+	s=arc-20240116; t=1714447134; c=relaxed/simple;
+	bh=HjZZQrp9uD/tMXSpT9bIEjQzS34U5AeccOyi0GO3lL0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iDThPZfjyrzsO+KXzIwnS96R5zPqFObPJVqRYiBA/m2L8/YDLHTsW+mTyPwhKBACPUCThuLvQ6z2qFO5pJeC4NX3gJ6OfbUabzDsJJurTB6tkiEK5KIox088GNt8qAC1ZgwvcqDGxvTN9jVDS6tRgmDLKD0PdzNTfKJAJT9iw5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhWYmLrl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F35EC116B1;
-	Tue, 30 Apr 2024 03:18:38 +0000 (UTC)
+	 MIME-Version:Content-Type; b=cPk2FpL7judgQ/VvuSIMsJI39i+WyRc5Dgelt6PjcWXjQQkZB3Qhyrh+HJVTdYVwgjgRqSP6V0JPq2o1V8YCU5yr7qP0kaNds+C59yJCH8UkKXShfpmzg0WUFCmA647MK4S8DFQWh9B3T+8lKCG/YyWeZhaL7d9EVPIm4btWoWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAo3C/cZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EDD7C116B1;
+	Tue, 30 Apr 2024 03:18:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447118;
-	bh=OE+6BcBWqdBR28p2ql6S6XK5gbn2kgnRE8ScEA18iVY=;
+	s=k20201202; t=1714447134;
+	bh=HjZZQrp9uD/tMXSpT9bIEjQzS34U5AeccOyi0GO3lL0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=DhWYmLrlIlyL/46cfAgPazDXo5Eze6mCuW01bH09bmRjd8YJsfSFzNKPL/S52Sj6z
-	 wfm1vxScSKKGA7eEfBgGOOxNtbwVCFb/qLAnNo4Y6h/vbCCmZXJ9MA4hKp/KrzQcu2
-	 Qi/PBhTo5a2O/ZcrRZSTvVfZxnpevt0p5Sdrs21w8BqpxOhhlZdasj/g0XI55f34Xq
-	 n6NEh7irQh2e0rIlXqtjHqiFa6QmZj56+HLJ3S2IQCIXqwZn19L8sP0IpNHMGRxw/f
-	 5iNEi8UNTcFxqGhmA7bcf3Y/6D20na8Gnhbv/m0tRW9dzHkl7HicTm+2AO7ttEdBql
-	 xSIT1ohaPhcOw==
-Date: Mon, 29 Apr 2024 20:18:37 -0700
-Subject: [PATCHSET v5.6 1/2] fs-verity: support merkle tree access by blocks
+	b=KAo3C/cZClJz+4pkqdNWS2/SgYsjz7vFn9bVCgvbkScwPAyHVhfcwVQSxTAbcQqr1
+	 hMDhwUb4C/X9AcA0g4WLcTu+fI5Ni0J6fEJSaojBUnjlAipQk6CKRQoMWc3kpKVBw1
+	 wZsOrEyc2y9aZVdnSJ7pFtyl0lXuD6/q7hUSeUm6oz5WsP1rAxroE0BmtjKol1AoGG
+	 Z2euohIBeOB1QNKffykE+YoJLSqE2c9VgBAR5UanznxFknUiUceYbzFvv/Uo4LvCyL
+	 n13sgYB5XhVUDh4i4Y2a+6YOZcPvWWbvDTXpJ6Cfc8tw8yk1ZPJ6BmY0CzbW20lVWj
+	 YMouuCoGLgSKg==
+Date: Mon, 29 Apr 2024 20:18:53 -0700
+Subject: [PATCHSET v5.6 2/2] xfs: fs-verity support
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, djwong@kernel.org
-Cc: Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
- alexl@redhat.com, walters@verbum.org, fsverity@lists.linux.dev,
- linux-fsdevel@vger.kernel.org
-Message-ID: <171444679542.955480.18087310571597618350.stgit@frogsfrogsfrogs>
+Cc: linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
+ fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Message-ID: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
 In-Reply-To: <20240430031134.GH360919@frogsfrogsfrogs>
 References: <20240430031134.GH360919@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,25 +62,91 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-I've split Andrey's fsverity patchset into two parts -- refactoring
-fsverity to support per-block (instead of per-page) access to merkle
-tree blocks, moving all filesystems to a per-superblock workqueue, and
-enhancing iomap to support validating readahead with fsverity data.
-This will hopefully address everything that Eric Biggers noted in his
-review of the v5 patchset.
+This patchset adds support for fsverity to XFS.  In keeping with
+Andrey's original design, XFS stores all fsverity metadata in the
+extended attribute data.  However, I've made a few changes to the code:
+First, it now caches merkle tree blocks directly instead of abusing the
+buffer cache.  This reduces lookup overhead quite a bit, at a cost of
+needing a new shrinker for cached merkle tree blocks.
 
-To eliminate the requirement of using a verified bitmap, I added to the
-fsverity_blockbuf object the ability to pass around verified bits so
-that the underlying implementation can remember if the fsverity common
-code actually validated a block.
+To reduce the ondisk footprint further, I also made the verity
+enablement code detect trailing zeroes whenever fsverity tells us to
+write a buffer, and elide storing the zeroes.  To further reduce the
+footprint of sparse files, I also skip writing merkle tree blocks if the
+block contents are entirely hashes of zeroes.
 
-To support cleaning up stale/dead merkle trees and online repair, I've
-added a couple of patches to export enough of the merkle tree geometry
-to XFS so that it can erase remnants of previous attempts to enable
-verity.  I've also augmented it to share with XFS the hash of a
-completely zeroed data block so that we can elide writing merkle leaves
-for sparse regions of a file.  This might be useful for enabling
-fsverity on gold master disk images.
+Next, I implemented more of the tooling around verity, such as debugger
+support, as much fsck support as I can manage without knowing the
+internal format of the fsverity information; and added support for
+xfs_scrub to read fsverity files to validate the consistency of the data
+against the merkle tree.
+
+Finally, I add the ability for administrators to turn off fsverity,
+which might help recovering damaged data from an inconsistent file.
+
+From Andrey Albershteyn:
+
+Here's v5 of my patchset of adding fs-verity support to XFS.
+
+This implementation uses extended attributes to store fs-verity
+metadata. The Merkle tree blocks are stored in the remote extended
+attributes. The names are offsets into the tree.
+
+A few key points of this patchset:
+- fs-verity can work with Merkle tree blocks based caching (xfs) and
+  PAGE caching (ext4, f2fs, btrfs)
+- iomap does fs-verity verification
+- In XFS, fs-verity metadata is stored in extended attributes
+- per-sb workqueue for verification processing
+- Inodes with fs-verity have new on-disk diflag
+- xfs_attr_get() can return a buffer with an extended attribute
+- xfs_buf can allocate double space for Merkle tree blocks. Part of
+  the space is used to store  the extended attribute data without
+  leaf headers
+- xfs_buf tracks verified status of merkle tree blocks
+
+Testing:
+The patchset is tested with xfstests -g verity on xfs_1k, xfs_4k,
+xfs_1k_quota, xfs_4k_quota, ext4_4k, and ext4_4k_quota. With
+KMEMLEAK and KASAN enabled. More testing on the way.
+
+Changes from V4:
+- Mainly fs-verity changes; removed unnecessary functions
+- Replace XFS workqueue with per-sb workqueue created in
+  fsverity_set_ops()
+- Drop patch with readahead calculation in bytes
+Changes from V3:
+- redone changes to fs-verity core as previous version had an issue
+  on ext4
+- add blocks invalidation interface to fs-verity
+- move memory ordering primitives out of block status check to fs
+  read block function
+- add fs-verity verification to iomap instead of general post read
+  processing
+Changes from V2:
+- FS_XFLAG_VERITY extended attribute flag
+- Change fs-verity to use Merkle tree blocks instead of expecting
+  PAGE references from filesystem
+- Change approach in iomap to filesystem provided bio_set and
+  submit_io instead of just callouts to filesystem
+- Add possibility for xfs_buf allocate more space for fs-verity
+  extended attributes
+- Make xfs_attr module to copy fs-verity blocks inside the xfs_buf,
+  so XFS can get data without leaf headers
+- Add Merkle tree removal for error path
+- Makae scrub aware of new dinode flag
+Changes from V1:
+- Added parent pointer patches for easier testing
+- Many issues and refactoring points fixed from the V1 review
+- Adjusted for recent changes in fs-verity core (folios, non-4k)
+- Dropped disabling of large folios
+- Completely new fsverity patches (fix, callout, log_blocksize)
+- Change approach to verification in iomap to the same one as in
+  write path. Callouts to fs instead of direct fs-verity use.
+- New XFS workqueue for post read folio verification
+- xfs_attr_get() can return underlying xfs_buf
+- xfs_bufs are marked with XBF_VERITY_CHECKED to track verified
+  blocks
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -92,55 +157,94 @@ Comments and questions are, as always, welcome.
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity-by-block
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity
+
+xfsprogs git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=fsverity
+
+fstests git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity
 ---
 Commits in this patchset:
- * fs: add FS_XFLAG_VERITY for verity files
- * fsverity: pass tree_blocksize to end_enable_verity()
- * fsverity: convert verification to use byte instead of page offsets
- * fsverity: support block-based Merkle tree caching
- * fsverity: pass the merkle tree block level to fsverity_read_merkle_tree_block
- * fsverity: add per-sb workqueue for post read processing
- * fsverity: add tracepoints
- * fsverity: pass the new tree size and block size to ->begin_enable_verity
- * fsverity: expose merkle tree geometry to callers
- * fsverity: box up the write_merkle_tree_block parameters too
- * fsverity: pass the zero-hash value to the implementation
- * fsverity: report validation errors back to the filesystem
- * fsverity: pass super_block to fsverity_enqueue_verify_work
- * ext4: use a per-superblock fsverity workqueue
- * f2fs: use a per-superblock fsverity workqueue
- * btrfs: use a per-superblock fsverity workqueue
- * fsverity: remove system-wide workqueue
- * iomap: integrate fs-verity verification into iomap's read path
+ * xfs: use unsigned ints for non-negative quantities in xfs_attr_remote.c
+ * xfs: turn XFS_ATTR3_RMT_BUF_SPACE into a function
+ * xfs: create a helper to compute the blockcount of a max sized remote value
+ * xfs: minor cleanups of xfs_attr3_rmt_blocks
+ * xfs: use an empty transaction to protect xfs_attr_get from deadlocks
+ * xfs: add attribute type for fs-verity
+ * xfs: do not use xfs_attr3_rmt_hdr for remote verity value blocks
+ * xfs: add fs-verity ro-compat flag
+ * xfs: add inode on-disk VERITY flag
+ * xfs: initialize fs-verity on file open and cleanup on inode destruction
+ * xfs: don't allow to enable DAX on fs-verity sealed inode
+ * xfs: disable direct read path for fs-verity files
+ * xfs: widen flags argument to the xfs_iflags_* helpers
+ * xfs: add fs-verity support
+ * xfs: create a per-mount shrinker for verity inodes merkle tree blocks
+ * xfs: shrink verity blob cache
+ * xfs: don't store trailing zeroes of merkle tree blocks
+ * xfs: use merkle tree offset as attr hash
+ * xfs: don't bother storing merkle tree blocks for zeroed data blocks
+ * xfs: add fs-verity ioctls
+ * xfs: advertise fs-verity being available on filesystem
+ * xfs: check and repair the verity inode flag state
+ * xfs: teach online repair to evaluate fsverity xattrs
+ * xfs: report verity failures through the health system
+ * xfs: make it possible to disable fsverity
+ * xfs: enable ro-compat fs-verity flag
 ---
- Documentation/filesystems/fsverity.rst |    8 +
- MAINTAINERS                            |    1 
- fs/btrfs/super.c                       |   14 ++
- fs/btrfs/verity.c                      |   13 +-
- fs/buffer.c                            |    7 +
- fs/ext4/readpage.c                     |    4 -
- fs/ext4/super.c                        |   11 ++
- fs/ext4/verity.c                       |   13 +-
- fs/f2fs/compress.c                     |    3 
- fs/f2fs/data.c                         |    2 
- fs/f2fs/super.c                        |   11 ++
- fs/f2fs/verity.c                       |   13 +-
- fs/ioctl.c                             |   11 ++
- fs/iomap/buffered-io.c                 |  133 +++++++++++++++++-
- fs/super.c                             |    3 
- fs/verity/enable.c                     |   20 ++-
- fs/verity/fsverity_private.h           |   13 ++
- fs/verity/init.c                       |    2 
- fs/verity/open.c                       |   61 ++++++++
- fs/verity/read_metadata.c              |   66 ++++-----
- fs/verity/verify.c                     |  232 +++++++++++++++++++++++---------
- include/linux/fs.h                     |    2 
- include/linux/fsverity.h               |  166 ++++++++++++++++++++++-
- include/linux/iomap.h                  |    5 +
- include/trace/events/fsverity.h        |  162 ++++++++++++++++++++++
- include/uapi/linux/fs.h                |    1 
- 26 files changed, 835 insertions(+), 142 deletions(-)
- create mode 100644 include/trace/events/fsverity.h
+ Documentation/filesystems/fsverity.rst |   10 
+ fs/verity/enable.c                     |   50 ++
+ fs/xfs/Makefile                        |    2 
+ fs/xfs/libxfs/xfs_ag.h                 |    8 
+ fs/xfs/libxfs/xfs_attr.c               |   35 +
+ fs/xfs/libxfs/xfs_attr_leaf.c          |    5 
+ fs/xfs/libxfs/xfs_attr_remote.c        |  199 +++++-
+ fs/xfs/libxfs/xfs_attr_remote.h        |   12 
+ fs/xfs/libxfs/xfs_da_format.h          |   55 ++
+ fs/xfs/libxfs/xfs_format.h             |   15 
+ fs/xfs/libxfs/xfs_fs.h                 |    2 
+ fs/xfs/libxfs/xfs_health.h             |    4 
+ fs/xfs/libxfs/xfs_inode_buf.c          |    8 
+ fs/xfs/libxfs/xfs_inode_util.c         |    2 
+ fs/xfs/libxfs/xfs_log_format.h         |    1 
+ fs/xfs/libxfs/xfs_ondisk.h             |    5 
+ fs/xfs/libxfs/xfs_sb.c                 |    4 
+ fs/xfs/libxfs/xfs_shared.h             |    1 
+ fs/xfs/libxfs/xfs_verity.c             |   74 ++
+ fs/xfs/libxfs/xfs_verity.h             |   14 
+ fs/xfs/scrub/attr.c                    |  145 +++++
+ fs/xfs/scrub/attr.h                    |    6 
+ fs/xfs/scrub/attr_repair.c             |   51 ++
+ fs/xfs/scrub/common.c                  |   68 ++
+ fs/xfs/scrub/common.h                  |    3 
+ fs/xfs/scrub/inode.c                   |    7 
+ fs/xfs/scrub/inode_repair.c            |   36 +
+ fs/xfs/scrub/reap.c                    |    4 
+ fs/xfs/scrub/trace.c                   |    1 
+ fs/xfs/scrub/trace.h                   |   31 +
+ fs/xfs/xfs_attr_inactive.c             |    2 
+ fs/xfs/xfs_file.c                      |   23 +
+ fs/xfs/xfs_fsops.c                     |    6 
+ fs/xfs/xfs_fsverity.c                  |  997 ++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_fsverity.h                  |   32 +
+ fs/xfs/xfs_health.c                    |    1 
+ fs/xfs/xfs_icache.c                    |    4 
+ fs/xfs/xfs_inode.h                     |   16 -
+ fs/xfs/xfs_ioctl.c                     |   22 +
+ fs/xfs/xfs_iops.c                      |    4 
+ fs/xfs/xfs_mount.c                     |   10 
+ fs/xfs/xfs_mount.h                     |    8 
+ fs/xfs/xfs_super.c                     |   24 +
+ fs/xfs/xfs_trace.c                     |    1 
+ fs/xfs/xfs_trace.h                     |   85 +++
+ include/linux/fsverity.h               |   24 +
+ include/trace/events/fsverity.h        |   13 
+ include/uapi/linux/fsverity.h          |    1 
+ 48 files changed, 2048 insertions(+), 83 deletions(-)
+ create mode 100644 fs/xfs/libxfs/xfs_verity.c
+ create mode 100644 fs/xfs/libxfs/xfs_verity.h
+ create mode 100644 fs/xfs/xfs_fsverity.c
+ create mode 100644 fs/xfs/xfs_fsverity.h
 
 
