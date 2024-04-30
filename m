@@ -1,54 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-18261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2019C8B68D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774AE8B68D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F541B23727
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B7B283B85
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7C817589;
-	Tue, 30 Apr 2024 03:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A191417731;
+	Tue, 30 Apr 2024 03:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBwplYul"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/dwnMo0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B6A10A1F;
-	Tue, 30 Apr 2024 03:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092C710A0D;
+	Tue, 30 Apr 2024 03:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447932; cv=none; b=CrJBfHnaHOOntXkxwk4wI7ENFvsYTm/rxm15MAfXKt6UFtCEdBnM91zVXc7C8rNWX10+DMypHCjfTn6g0Tcjbxsw0pt7qmubQs/zXZXj8oXbnZVn3PmKtimxcwxnwB4R/dgC6e5JHoC59LNlpEv5ESqrrfbZ6Oc3C7guop4eMts=
+	t=1714447948; cv=none; b=AV7K1+PYbPxa5nFzch6qa3i/olFqxaXUX7GkCv/N/jbY8WCMU0/SBiJszbh+vKG33BarIkfNFbiKRdcKjB+wQ2JdQeJYeyXUSp40ITKF3azg+M3St2YvSG5GhFpe904kr95vpvoIGDV0n4BFKRCJtg7RMpPMr94kltrfFjSWaf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447932; c=relaxed/simple;
-	bh=zzOIEgE+CHVA+ZNtgRAVQMTsqe8hg2dE5Clj17eW2sE=;
+	s=arc-20240116; t=1714447948; c=relaxed/simple;
+	bh=bFFVF59FtuOzAhQ+x2mWVF5N2VzrjOmGE5wEfGjihi0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=px83ywE5Wqo+UES8FE/spBmakjH1xDp6TFaB4msy0GXPF438PuFIAhTjTlTAoIgb7+M9xTfJ4auKdItI13L3JSJ/93AjoVSbKynLFt9iAyTy+XpeRIRDabyLwvh1Nwprtf1YSSZf81zJQ7fO1j6EMQj24hrS1A/iRqyd06Iwpbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBwplYul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A26C116B1;
-	Tue, 30 Apr 2024 03:32:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=slphmKhBCXU8jtYU7viOtZN/910C+4G6GlcHFv3smrojQCEsr0IHIi1cQweD5+oeRpzXrXXcsBeYfWNClTyLWDrbIuaz5a70PBBK5gddI/ioNKRYtGJckKmllODCVNAzQQspkI1F1bPUHJlkyxWgsR2HTD/Y6BQ9dpKI9cAz9wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/dwnMo0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 799A0C116B1;
+	Tue, 30 Apr 2024 03:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447931;
-	bh=zzOIEgE+CHVA+ZNtgRAVQMTsqe8hg2dE5Clj17eW2sE=;
+	s=k20201202; t=1714447947;
+	bh=bFFVF59FtuOzAhQ+x2mWVF5N2VzrjOmGE5wEfGjihi0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=fBwplYulUtARIbRlOx1gUCSccdonty/2IsE2JpYj3XmhytWctvO+MgZhDdhp8aWCD
-	 7t5N4L2ncoYdalkMIF87TrI31CkJYVqDVXD6yFfmk747gU9GCfj+QPUDtKXKRgBKmm
-	 sH8N1CIF78kf5U+i4Rq4oXT2bBuwWElAGTm1hSnMQyTESPxCoGonvyCqyivb4k47h+
-	 tEM6oO5/5UKZvRW9ZtYLYl9IR9sZ0SIYhSW3XwRFgDhqLAwYv2l9o0npy7IUQbwQ9e
-	 RZkQi8iPxqtrteTxQnynJako2JgzUaRLU6JwoiAPE8f47U853YKU6K8LxfwSuAMsHW
-	 VzUFDVtKnK1VQ==
-Date: Mon, 29 Apr 2024 20:32:11 -0700
-Subject: [PATCH 05/38] xfs: minor cleanups of xfs_attr3_rmt_blocks
+	b=V/dwnMo0KpHLxmA5kO3RtTojkVRxTUiyj51UrErteJ0ZD45qSJxa8poB+2mZqdezc
+	 /q/8FZvjgAFNvY128kclHtqbFK+mOtjaaOvzYm8eBIdeJ+XIaPfDAlqbRiYrrO9iRn
+	 cULszSk4+4v1zMBZ28r/40S6QGFh+GAPKpcrB/tmKJkn7urtqo0yAVhc1ac9mo0W1e
+	 YHX+tU0P4f9jNmv996SoxTbJJjItsHc8FIy7M4ur37mgNevGvXdnSrW+bIgfVan78p
+	 YqTFkijoFAdnw708gsC/DpQz0wmdqx4Yt7BBL+aa3b3Tdz1FutQcl+llksR9guouvO
+	 IimnNbeuPvTdw==
+Date: Mon, 29 Apr 2024 20:32:27 -0700
+Subject: [PATCH 06/38] xfs: use an empty transaction to protect xfs_attr_get
+ from deadlocks
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, cem@kernel.org,
  djwong@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  fsverity@lists.linux.dev
-Message-ID: <171444683188.960383.715192327245703651.stgit@frogsfrogsfrogs>
+Message-ID: <171444683203.960383.14371751684414769283.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 References: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,47 +64,56 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Clean up the type signature of this function since we don't have
-negative attr lengths or block counts.
+Wrap the xfs_attr_get_ilocked call in xfs_attr_get with an empty
+transaction so that we cannot livelock the kernel if someone injects a
+loop into the attr structure or the attr fork bmbt.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- libxfs/xfs_attr_remote.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ libxfs/xfs_attr.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 
-diff --git a/libxfs/xfs_attr_remote.c b/libxfs/xfs_attr_remote.c
-index b98805bb5926..f9c0da51a8fa 100644
---- a/libxfs/xfs_attr_remote.c
-+++ b/libxfs/xfs_attr_remote.c
-@@ -55,19 +55,19 @@ xfs_attr3_rmt_buf_space(
- 	return blocksize;
- }
+diff --git a/libxfs/xfs_attr.c b/libxfs/xfs_attr.c
+index 3058e609c514..0a9fb396885e 100644
+--- a/libxfs/xfs_attr.c
++++ b/libxfs/xfs_attr.c
+@@ -273,6 +273,8 @@ xfs_attr_get(
  
--/*
-- * Each contiguous block has a header, so it is not just a simple attribute
-- * length to FSB conversion.
-- */
-+/* Compute number of fsblocks needed to store a remote attr value */
- unsigned int
- xfs_attr3_rmt_blocks(
- 	struct xfs_mount	*mp,
- 	unsigned int		attrlen)
- {
--	if (xfs_has_crc(mp)) {
--		unsigned int buflen = xfs_attr3_rmt_buf_space(mp);
--		return (attrlen + buflen - 1) / buflen;
--	}
-+	/*
-+	 * Each contiguous block has a header, so it is not just a simple
-+	 * attribute length to FSB conversion.
-+	 */
-+	if (xfs_has_crc(mp))
-+		return howmany(attrlen, xfs_attr3_rmt_buf_space(mp));
+ 	XFS_STATS_INC(args->dp->i_mount, xs_attr_get);
+ 
++	ASSERT(!args->trans);
 +
- 	return XFS_B_TO_FSB(mp, attrlen);
- }
+ 	if (xfs_is_shutdown(args->dp->i_mount))
+ 		return -EIO;
  
+@@ -285,8 +287,27 @@ xfs_attr_get(
+ 	/* Entirely possible to look up a name which doesn't exist */
+ 	args->op_flags = XFS_DA_OP_OKNOENT;
+ 
++	error = xfs_trans_alloc_empty(args->dp->i_mount, &args->trans);
++	if (error)
++		return error;
++
+ 	lock_mode = xfs_ilock_attr_map_shared(args->dp);
++
++        /*
++	 * Make sure the attr fork iext tree is loaded.  Use the empty
++	 * transaction to load the bmbt so that we avoid livelocking on loops.
++	 */
++        if (xfs_inode_hasattr(args->dp)) {
++                error = xfs_iread_extents(args->trans, args->dp, XFS_ATTR_FORK);
++                if (error)
++                        goto out_cancel;
++        }
++
+ 	error = xfs_attr_get_ilocked(args);
++
++out_cancel:
++	xfs_trans_cancel(args->trans);
++	args->trans = NULL;
+ 	xfs_iunlock(args->dp, lock_mode);
+ 
+ 	return error;
 
 
