@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-18384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DDF8B81B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 23:01:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB4F8B82CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 00:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFD2284AC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 21:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62662284057
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 22:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1F41A38C2;
-	Tue, 30 Apr 2024 21:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157F753E33;
+	Tue, 30 Apr 2024 22:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="reW6wlvQ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="cKCuPwav"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DD88F6E;
-	Tue, 30 Apr 2024 21:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21905249E8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 22:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714510897; cv=none; b=SMH2u8jopQ29F4KYJX1i5wSGqbSLTGznLDXHedsLhrVGM2QTd07ApuO9HFLG17Ge5vAAkx9kF76/Ix/LFoEAeIBkkHMH2ek91SYY+yruyuQ0DHoslnuZsx2PZc+XQdQ6yADvR2SMrbzYoFIIrBwjuUHG2Or2732Oq9401W9u/Fc=
+	t=1714517652; cv=none; b=dLd77HaTljTE+mBzq4GG9nET1EsH9A2/VarIzsAYx3+5MOq/I21nvs60DnL4xMNrgx2RgqYuvvLMWx2Sc0jQ45XcpqmVqDSaj9FIEy/4jZHU9swSTDL9kQ3/p2rvodzF27zR2icLA/ynmUZqCKillJ/t//+3IDlymSYVchHWeN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714510897; c=relaxed/simple;
-	bh=ivAeT8Lh4hTJJoOvGma6HWl1YOPnEPRgEYoTLHjirCI=;
+	s=arc-20240116; t=1714517652; c=relaxed/simple;
+	bh=ELCQBpWKeGyBAGZEDQIwR6I++BaU9ZU4JnHAqG4/FhA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VYYWuSrZaJEaFtpSrgy2j69Zx/QX+stECqVK4wC9QZq1zQS7pJxsUpxTGWOPDd4v4g69rBnDG3HN1Uhcea8+KWtnNftux5pnFK0Pn840qNN5lchSIqoZXUsDuuWlHMUsYQS3TAn+tp2WACtLWTtis3RVF3Nl9GKSU6kyXuS2//I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=reW6wlvQ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yPx7hXYNWdm8HsLrOMtYckL5fyGc+4ZNrlVxqpRmA3c=; b=reW6wlvQ6JU/8Zc/bx4AUuZHpd
-	cncMdTPtYZ+Xfbp8fRosXOGkj0Qe9qeZQGSZMwqe9m124aYjJFf2qha0bgADfZvZlMF+9h5am+R9X
-	SI2FeiyRXBUZlfCWEgmawzcsJYVKokkbTdUM7ahhc4/+LZGmjbnqT4JYEBUmefACODSkz7wuYJ/Xe
-	tlEuP7NYmxbW2dIBZyo8f2Lf32Sr2nxgMeaPADT8wdzIBKZB7ghJjdWhAIQYGhl9+lIgFM5zkVMlv
-	yphG0qermw6JDG1nP6dmYZE30taJSP1BodvfnF6p8zJAZxggdc+rPa25lJPDJj0bZAeQPBbTowxjo
-	JIZaF9kQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s1ubD-0000000FZHT-1b7j;
-	Tue, 30 Apr 2024 21:01:15 +0000
-Date: Tue, 30 Apr 2024 22:01:15 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: John Groves <John@groves.net>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, John Groves <jgroves@micron.com>,
-	john@jagalactic.com, Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com,
-	gregory.price@memverge.com, Randy Dunlap <rdunlap@infradead.org>,
-	Jerome Glisse <jglisse@google.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>,
-	Eishan Mirakhur <emirakhur@micron.com>,
-	Ravi Shankar <venkataravis@micron.com>,
-	Srinivasulu Thanneeru <sthanneeru@micron.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Steve French <stfrench@microsoft.com>,
-	Nathan Lynch <nathanl@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Julien Panis <jpanis@baylibre.com>,
-	Stanislav Fomichev <sdf@google.com>,
-	Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: Re: [RFC PATCH v2 00/12] Introduce the famfs shared-memory file
- system
-Message-ID: <ZjFcG9Q1CegMPj_7@casper.infradead.org>
-References: <cover.1714409084.git.john@groves.net>
- <Zi_n15gvA89rGZa_@casper.infradead.org>
- <c3mhc33u4yqhd75xc2ew53iuumg3c2vi3nk3msupt35fj7qkrp@pve6htn64e7c>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQTG9HiIPhawHhkgV/Crl9Y6koN4wi5etSQk+YhaJzbNUFp9htHHVuvaIswgqYcsDPF5LuTmsP/VTKBEQvdBLdtStpFa/LKUmwFBsg2lcRGDD9GgN5xpXTYbRRl8hM4qoeTJgMWfXP7w/WVTxpoKMofa+8UBg3tmiMAHX72eCkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=cKCuPwav; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5ce6b5e3c4eso3577052a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 15:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714517650; x=1715122450; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i0LVmUY7m8aRmrjgIR6OFP9AYQPOV0DVsJoP0m1MDb4=;
+        b=cKCuPwavKW8/53jCuKCf2hdUZEfxJoZhAZz25IeyZabYCOfOES54qOyTkjSJEMBx/y
+         J+M0YplwFNfTnGo07oY3FT5p4CJKzWDooZt7vF5/Bc8XCDIuFBimOIDZvDlCh9ahl4hP
+         2ULKZJ71F23NU0b4rbvVvzynof7wUfzuzNGYqqQZITuGqYYYu6eTFQudxYqPzL7A+zPW
+         nuT8G5IKvqDU6paOv1hFayOa6UwGYipyTxs4k9WYbXcYcJ5sB4p1rTrAkxQ+7n+D/IWg
+         JBpHJyWNSVdZopoduD6dhavz9l5/N9t9Owf4TgMrfaYUbp/ENXy+pu66vuhsXBv3Vz2x
+         kBZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714517650; x=1715122450;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i0LVmUY7m8aRmrjgIR6OFP9AYQPOV0DVsJoP0m1MDb4=;
+        b=VYZY8EgYwJ1DVKPGpJzMwyKvyAXLx3T/10dbpk2ENkgNbs/dbDMZj1xY/lF9O5+ueI
+         cnXqaiBl3S52UgFZ3MYWeT7ACd0p4Y31MSZh5mgVml00RyppVKYjtL5L800OL4V3HPNa
+         PNFopYjNj4/ll4HGVGl1n2pJLkvAYR9lhA6047Ob+MxMW17Xt//ZuHyLzxe1L5WL01Sx
+         A21I4XZg6JuUVlXVLxjS40LYxoD6xhMzzY1jTRD3Jx5Dp+OMUD88iFrXk8sAPQFuKc1A
+         ZnotIvynTB9NM24ld9LAEN0umO9yPBLT5rPqOmv2humNFKT3FSCwEYQrZXw7cBFiEFkf
+         GP4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUFNH9KMe79Dw8fK2OmwO6GSCE8CDwg1NsqRH/uP2EH0+ckYL7YmN3RYKojWg+16IRwnyUrAIsuFZTnp7TbXXnt7aDDjjdwaWoDWrLY7A==
+X-Gm-Message-State: AOJu0YzDuMfkWvTQbv+o3K73FYuagdQ1A2UQ/byZDzl+FSsNjbGa5nrE
+	TR2I8llmYBIt0X02JO+GaD56INO0SkXFYQBPpeTYuJoRSYzhrhH5aSpE2JlAjXE=
+X-Google-Smtp-Source: AGHT+IFdKgrs+o6HFaANKCFZe5u9KfE5HvS/5OT4u7VzSor1QeTJKbZboJYBHK46avlW+rVCuzXLCw==
+X-Received: by 2002:a17:90b:3a89:b0:2ab:9819:64bc with SMTP id om9-20020a17090b3a8900b002ab981964bcmr813792pjb.32.1714517650271;
+        Tue, 30 Apr 2024 15:54:10 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id pi17-20020a17090b1e5100b002b1dd7c71afsm122863pjb.40.2024.04.30.15.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Apr 2024 15:54:09 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1s1wMQ-00GhUA-2S;
+	Wed, 01 May 2024 08:54:06 +1000
+Date: Wed, 1 May 2024 08:54:06 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com,
+	willy@infradead.org, axboe@kernel.dk, martin.petersen@oracle.com,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
+	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com
+Subject: Re: [PATCH v3 09/21] xfs: Do not free EOF blocks for forcealign
+Message-ID: <ZjF2jjtsA/C6ajtb@dread.disaster.area>
+References: <20240429174746.2132161-1-john.g.garry@oracle.com>
+ <20240429174746.2132161-10-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,89 +92,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c3mhc33u4yqhd75xc2ew53iuumg3c2vi3nk3msupt35fj7qkrp@pve6htn64e7c>
+In-Reply-To: <20240429174746.2132161-10-john.g.garry@oracle.com>
 
-On Mon, Apr 29, 2024 at 09:11:52PM -0500, John Groves wrote:
-> On 24/04/29 07:32PM, Matthew Wilcox wrote:
-> > On Mon, Apr 29, 2024 at 12:04:16PM -0500, John Groves wrote:
-> > > This patch set introduces famfs[1] - a special-purpose fs-dax file system
-> > > for sharable disaggregated or fabric-attached memory (FAM). Famfs is not
-> > > CXL-specific in anyway way.
-> > > 
-> > > * Famfs creates a simple access method for storing and sharing data in
-> > >   sharable memory. The memory is exposed and accessed as memory-mappable
-> > >   dax files.
-> > > * Famfs supports multiple hosts mounting the same file system from the
-> > >   same memory (something existing fs-dax file systems don't do).
-> > 
-> > Yes, but we do already have two filesystems that support shared storage,
-> > and are rather more advanced than famfs -- GFS2 and OCFS2.  What are
-> > the pros and cons of improving either of those to support DAX rather
-> > than starting again with a new filesystem?
-> > 
+On Mon, Apr 29, 2024 at 05:47:34PM +0000, John Garry wrote:
+> For when forcealign is enabled, we want the EOF to be aligned as well, so
+> do not free EOF blocks.
+
+This is doesn't match what the code does. The code is correct - it
+rounds the range to be trimmed up to the aligned offset beyond EOF
+and then frees them. The description needs to be updated to reflect
+this.
+
 > 
-> Thanks for paying attention to this Willy.
-
-Well, don't mistake this for an endorsement!  I remain convinced that
-this is a science project, not a product.  I am hugely sceptical of
-disaggregated systems, mostly because I've seen so many fail.  And they
-rarely attempt to answer the "janitor tripped over the cable" problem,
-the "we need to upgrade the firmware on the switch" problem, or a bunch
-of other problems I've outlined in the past on this list.
-
-So I am not supportive of any changes you want to make to the core kernel
-to support this kind of adventure.  Play in your own sandbox all you
-like, but not one line of code change in the core.  Unless it's something
-generally beneficial, of course; you mentioned refactoring DAX and that
-might be a good thing for everybody.
-
-> * Famfs is not, not, not a general purpose file system.
-> * One can think of famfs as a shared memory allocator where allocations can be
->   accessed as files. For certain data analytics work flows (especially 
->   involving Apache Arrow data frames) this is really powerful. Consumers of
->   data frames commonly use mmap(MAP_SHARED), and can benefit from the memory
->   de-duplication of shared memory and don't need any new abstractions.
-
-... and are OK with the extra latency?
-
-> * Famfs is not really a data storage tool. It's more of a shared-memroy 
->   allocation tool that has the benefit of allocations being accesssible 
->   (and memory-mappable) as files. So a lot of software can automatically use 
->   it.
-> * Famfs is oriented to dumping sharable data into files and then allowing a
->   scale-out cluster to share it (often read-only) to access a single copy in
->   shared memory.
-
-Depending on the exact workload, I can see this being more efficient
-than replicating the data to each member of the cluster.  In other
-workloads, it'll be a loss, of course.
-
-> * I'm no expert on GFS2 or OCFS2, but I've been around memory, file systems 
->   and storage since well before the turn of the century...
-> * If you had brought up the existing fs-dax file systems, I would have pointed
->   that they use write-back metadata, which does not reconcile with shared
->   access to media - but these file systems do handle that.
-> * The shared media file systems are still oriented to block devices that
->   provide durable storage and page-oriented access. CXL DRAM is a character 
-
-I'd say "block oriented" rather than page oriented, but I agree.
-
->   dax (devdax) device and does not provide durable storage.
-> * fs-dax-style memory mapping for volatile cxl memory requires the 
->   dev_dax_iomap portion of this patch set - or something similar. 
-> * A scale-out shared media file system presumably requires some commitment to
->   configure and manage some complexity in a distributed environment; whether
->   that should be mandatory for enablement of shared memory is worthy of
->   discussion.
-> * Adding memory to the storage tier for GFS2/OCFS2 would add non-persistent
->   media to the storage tier; whether this makes sense would be a topic that
->   GFS2/OCFS2 developers/architects should get involved in if they're 
->   interested.
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_bmap_util.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> Although disaggregated shared memory is not commercially available yet, famfs 
-> is being actively tested by multiple companies for several use cases and 
-> patterns with real and simulated shared memory. Demonstrations will start to
-> surface in the coming weeks & months.
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index 19e11d1da660..f26d1570b9bd 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -542,8 +542,13 @@ xfs_can_free_eofblocks(
+>  	 * forever.
+>  	 */
+>  	end_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip));
+> -	if (XFS_IS_REALTIME_INODE(ip) && mp->m_sb.sb_rextsize > 1)
+> +
+> +	/* Do not free blocks when forcing extent sizes */
+> +	if (xfs_inode_has_forcealign(ip) && ip->i_extsize > 1)
 
-I guess we'll see.  SGI died for a reason.
+I see this sort of check all through the remaining patches.
+
+Given there are significant restrictions on forced alignment,
+shouldn't this all the details be pushed inside the helper function?
+e.g.
+
+/*
+ * Forced extent alignment is dependent on extent size hints being
+ * set to define the alignment. Alignment is only necessary when the
+ * extent size hint is larger than a single block.
+ *
+ * If reflink is enabled on the file or we are in always_cow mode,
+ * we can't easily do forced alignment.
+ *
+ * We don't support forced alignment on realtime files.
+ * XXX(dgc): why not?
+ */
+static inline bool
+xfs_inode_has_forcealign(struct xfs_inode *ip)
+{
+	if (!(ip->di_flags & XFS_DIFLAG_EXTSIZE))
+		return false;
+	if (ip->i_extsize <= 1)
+		return false;
+
+	if (xfs_is_cow_inode(ip))
+		return false;
+	if (ip->di_flags & XFS_DIFLAG_REALTIME)
+		return false;
+
+	return ip->di_flags2 & XFS_DIFLAG2_FORCEALIGN;
+}
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
