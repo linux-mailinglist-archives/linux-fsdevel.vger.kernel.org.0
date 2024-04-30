@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-18256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1797F8B68BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:31:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7348B68BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78C2283421
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9471C21E01
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9481310A01;
-	Tue, 30 Apr 2024 03:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378E110979;
+	Tue, 30 Apr 2024 03:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zl+PTkEa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpH9qhw9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA52FC02;
-	Tue, 30 Apr 2024 03:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D1A10A0C;
+	Tue, 30 Apr 2024 03:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447854; cv=none; b=qMNTeCQLz/nIFKi+DlLn0CwxTMAdIegMsvq34lrIJF/oyTzGIg+feUzRvEmDMeH8hEkQOOxfJRNTHjQXPbn0MCT7A3xckpttLMRLPN4jTP3Omy99oL69LEa43gfHN8wJBiQ5ZG0VrIq7x+aBIveKqd+KJZa4PGIVE6psKOyqV7k=
+	t=1714447869; cv=none; b=OcHfOafOLqdV0hQbiMTo+/jLNkN0tvsQhLoq7vXRIgri48Lf9AtrJdFFhhgMlhTf4RI8uwHmqxIkjGuoNUi3h9PtZQ5W3FZcWjgbct1QqaLrAYcXI0w0BvdBbk/dhhUd75QWe6XnhRx6REFzs5p+2NS37tcpU2kvxE1bG3IGIP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447854; c=relaxed/simple;
-	bh=M8AM9IxxGqoCgTZ0iQiBDvLoNrgbrCBLplb4gk4CjyE=;
+	s=arc-20240116; t=1714447869; c=relaxed/simple;
+	bh=eoOuwQplEfTtqp6x6BmwFhj00mBNeG6r5IEbVognfrg=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PneQnk52RTKJZD0yhheYALCjTRfTIoK30GldhBm+RoIITCgTf8IzCAPvbswqyT9+a9+50g12+O4IMidWibxfpz9lvFpIcrnuVhtB3u0NMBfj1zgd1L58TJEoXDM7g8KSWFnemSj9+aMW1t1pdRjKDHWLTeOdAGx6iN+3rhyck6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zl+PTkEa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82419C116B1;
-	Tue, 30 Apr 2024 03:30:53 +0000 (UTC)
+	 MIME-Version:Content-Type; b=HEkqN2wrFAdRz6wWg6fCmqRt6ttC3m4I7lyOLxDGOMY7qewB48SqT0xGwRkPHqatLzeD0puOOYgMonXbR8bnCZSrhW8fQtQbpOOFsxv6RMnlgeez35ubfhTeXyiRFGyfn+oPqkWIgpf8diss/7E7rFzmuZLNS+oQwe46kk+ZHU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpH9qhw9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ECDAC116B1;
+	Tue, 30 Apr 2024 03:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447853;
-	bh=M8AM9IxxGqoCgTZ0iQiBDvLoNrgbrCBLplb4gk4CjyE=;
+	s=k20201202; t=1714447869;
+	bh=eoOuwQplEfTtqp6x6BmwFhj00mBNeG6r5IEbVognfrg=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Zl+PTkEajqFUYD3rIMbX71oO2k/U3wc+u4Zr0Hp9nVdwJAL2jKYuF/i5yGoF6SVns
-	 PWCRV1nn5LltywKCH6WfCYo+wz54AOrFDFQOKWYj70nm1tSGdLSFKnVLGQf4QDSnfA
-	 ET4FFiOQBOXHlSpgsDFo8zvRplelOlLwIyDuwn/ee9p15KPSc9+mqTQe72x6SicIU3
-	 ZbPlvGaZPf4i/uxGNfSdAg2quvPa/XY4kJmBvZayTJQGcVY8U4VESMb6NcXQYfkwv/
-	 MxrRgyIyf+Qn7c4RIrnLUBVW9a19XPOXY4qRWb4kr0AMPOiDrfQS/Wa7SWcAUZJIay
-	 enM9kMrf2kcRA==
-Date: Mon, 29 Apr 2024 20:30:53 -0700
-Subject: [PATCH 26/26] xfs: enable ro-compat fs-verity flag
+	b=dpH9qhw9Tp5dIaiXPGzoOzXfNRvUzjOZv7xI8KB592USjkWlX9zkewGLB5Nw1cCXb
+	 FORxUvIxjcOyfbeXGQT2hxYzmOs3veTzQ98DidhZ6+C90iYE6b4gy3CwUxRSRRvIzm
+	 MU/ED0ANlpGggihGER8mjki90ZJ5wgzYlkAHwcEwmCRHIvkgrkWpVKfVczl9O/eA8h
+	 gt34pTH/KsJpa/Nv1HTmNyBfXM4Qy5TTwwmSHxbTSr+cwJY1/KL07uSp0bItf9ZPnp
+	 GLcz0BgTBImv72ovYilMO76zmxz47vZsNJIh0iNLPAIV/82rVFZR4Og3AX1/46cj21
+	 tDCgBj4XZX/4g==
+Date: Mon, 29 Apr 2024 20:31:08 -0700
+Subject: [PATCH 01/38] fs: add FS_XFLAG_VERITY for verity files
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: aalbersh@redhat.com, ebiggers@kernel.org, djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
- fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Message-ID: <171444680811.957659.5776113562801329570.stgit@frogsfrogsfrogs>
-In-Reply-To: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
-References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
+To: aalbersh@redhat.com, ebiggers@kernel.org, cem@kernel.org,
+ djwong@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ fsverity@lists.linux.dev
+Message-ID: <171444683126.960383.14706856644618362588.stgit@frogsfrogsfrogs>
+In-Reply-To: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
+References: <171444683053.960383.12871831441554683674.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -62,37 +63,32 @@ Content-Transfer-Encoding: 7bit
 
 From: Andrey Albershteyn <aalbersh@redhat.com>
 
-Finalize fs-verity integration in XFS by making kernel fs-verity
-aware with ro-compat flag.
+Add extended attribute FS_XFLAG_VERITY for inodes with fs-verity
+enabled.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+[djwong: fix broken verity flag checks]
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: add spaces]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_format.h |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ include/linux.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
 
-diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-index 810f2556762b0..78a12705a88da 100644
---- a/fs/xfs/libxfs/xfs_format.h
-+++ b/fs/xfs/libxfs/xfs_format.h
-@@ -389,10 +389,11 @@ xfs_sb_has_compat_feature(
- #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
- #define XFS_SB_FEAT_RO_COMPAT_VERITY   (1 << 4)		/* fs-verity */
- #define XFS_SB_FEAT_RO_COMPAT_ALL \
--		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
--		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
--		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
--		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
-+		(XFS_SB_FEAT_RO_COMPAT_FINOBT   | \
-+		 XFS_SB_FEAT_RO_COMPAT_RMAPBT   | \
-+		 XFS_SB_FEAT_RO_COMPAT_REFLINK  | \
-+		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT | \
-+		 XFS_SB_FEAT_RO_COMPAT_VERITY)
- #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
- static inline bool
- xfs_sb_has_ro_compat_feature(
+diff --git a/include/linux.h b/include/linux.h
+index 95a0deee2594..d98d387e88b0 100644
+--- a/include/linux.h
++++ b/include/linux.h
+@@ -249,6 +249,10 @@ struct fsxattr {
+ #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
+ #endif
+ 
++#ifndef FS_XFLAG_VERITY
++#define FS_XFLAG_VERITY		0x00020000	/* fs-verity enabled */
++#endif
++
+ /*
+  * Reminder: anything added to this file will be compiled into downstream
+  * userspace projects!
 
 
