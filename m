@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-18245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CD98B68A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:28:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8238B68A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3672834A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2E22834D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E3E11185;
-	Tue, 30 Apr 2024 03:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1501B111A2;
+	Tue, 30 Apr 2024 03:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ku9/CaVN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGsjAm52"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE42156C2;
-	Tue, 30 Apr 2024 03:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC4DFC12;
+	Tue, 30 Apr 2024 03:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447697; cv=none; b=rFeCSn8ykVhp7kpf+gzHyQQA6+CAcPqT8KgGCmKpsyrmhvx0gDqpiU/XX0O0zS/6wxangR47xfWhbfMbTfS1NAPXxw46UeSmdTDPmhkencZ/TPH9GcVP8Vm3toG9iHw22Yl4tBIOyzJPsK+o8jkV0rkv774vY3p6JnTzVhsbRfg=
+	t=1714447713; cv=none; b=AA15OUlBVXBfZ9u1GUVXsmlmO16R4zIGOvxmRr6S64+xfNWgRJJ3WBrSy02QK9KP/zFJH+DUEqewFndf3EpZY48F+2FF0zqHGSXCGIucac4uGNi4p9N4X0x8EnzsiROyeF6qUPpKf2psWDRilEpXGwWCtJkEFlMSthKTwqcBoi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447697; c=relaxed/simple;
-	bh=Vkmr4g33MoOF/Zqsrvn4ruSmF3/aw67gsvBQJB9Oh9s=;
+	s=arc-20240116; t=1714447713; c=relaxed/simple;
+	bh=Y8ydKds1U2pvghMYIgw6Fxe3YX2j96GNme/aPZBSYB8=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VEfapR0IJPFP+tAVelEiBreX/ae0QEWpJEvHV3zi0Fkx7xaOL+5rLcdjy3LUqwXOvLh/RnoWaRJ9pVYreVVi7JGdORnoDsIPAdtAZda+Z3dY7rYavtAoUPCwed5UGmRNoafzvShkQOFznclJ+whuc1l+/EInfHFLxTWLEpFHmy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ku9/CaVN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B14C116B1;
-	Tue, 30 Apr 2024 03:28:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=gOAfzLkA5bW0xzsAJVqizzpYB3bHe1bnfGFk/50fsc6SEEjGway0B9FxlKXuIBmvlyETs0/vXJ50PHDSkJ7DvaHs9ShveOLR7SE/vUGSUIanglGV+YEgtZTe2ABuHRhGTmQoZ1Zx/FRwopC0RgA1mXBNyDt1fCLbvp3HrX5YRH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGsjAm52; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7DF0C116B1;
+	Tue, 30 Apr 2024 03:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447697;
-	bh=Vkmr4g33MoOF/Zqsrvn4ruSmF3/aw67gsvBQJB9Oh9s=;
+	s=k20201202; t=1714447713;
+	bh=Y8ydKds1U2pvghMYIgw6Fxe3YX2j96GNme/aPZBSYB8=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Ku9/CaVN0DnrJtoTv3MrlxNDVsXe44a3eDSJfX+/I2qupn//NGpO/nFdUOjQRoMHD
-	 MTHx5xgSRwdIb9YpKkgfEHWK6dNm7OSsDsWSLLanRn8dx9PPV/7m8w7XDczwYuNmWP
-	 tea76pd+srnZ0MxfdAzn7CDbe+3IlVC05+Z5nBT5iNXx6iylG4JzSEHDexdVEw/jUF
-	 IXc5BfKtUwfhs0Qp65HqJhy8+08tGsrz8SVHf309f+SjhJPL4f+eHv5M3wPl/FR1U2
-	 cNc/XggVqFf2Ei9V8x1q9splv7ONXqyWuA0auohKon3nfxMMYRK91ci5C9ghJR8X5C
-	 0dgAEfSvuyerw==
-Date: Mon, 29 Apr 2024 20:28:16 -0700
-Subject: [PATCH 16/26] xfs: shrink verity blob cache
+	b=fGsjAm52p2L68X181ZkAValyGkrHC3kWhCynn6WOsw2BPDqjHce/h81sa6BaNQz0F
+	 j4nzWiOcsxy6+PYtYJxAEFJPhoEe+xR5hPSsIfIMSzkGc63lJM9vrqEfOLTXBkzwDj
+	 RH9dto0hLX07QNyWtZWkYU6EZ4elFxlDygtIn9MftN2HrWyEZ+MzogIq9+d7J82vyZ
+	 HpaRFTasBVBz7FZVh7J4NxSfFPRDwxyq+rWZqMLFDWI/kUuiaKqXGhVch8cDlX23+U
+	 jMbTN9ZzACkW83Hw/tA5Ajo7Ey0rlTpzPX40uF9sE7xN1tAZ/vW79EHet3gTOfYKqW
+	 K/M3sN1m2fEOA==
+Date: Mon, 29 Apr 2024 20:28:32 -0700
+Subject: [PATCH 17/26] xfs: don't store trailing zeroes of merkle tree blocks
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, ebiggers@kernel.org, djwong@kernel.org
 Cc: linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
  fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Message-ID: <171444680638.957659.5700993395267457237.stgit@frogsfrogsfrogs>
+Message-ID: <171444680655.957659.12064584983986798030.stgit@frogsfrogsfrogs>
 In-Reply-To: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
 References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,183 +62,37 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add some shrinkers so that reclaim can free cached merkle tree blocks
-when memory is tight.  We add a shrinkref variable to bias reclaim
-against freeing the upper levels of the merkle tree in the hope of
-maintaining read performance.
+As a minor space optimization, don't store trailing zeroes of merkle
+tree blocks to reduce space consumption and copying overhead.  This
+really only affects the rightmost blocks at each level of the tree.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/xfs/xfs_fsverity.c |   89 ++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/xfs/xfs_trace.h    |   23 +++++++++++++
- 2 files changed, 111 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_fsverity.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 
 diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
-index ae3d1bdac2876..546c7ec6daadc 100644
+index 546c7ec6daadc..f6c650e81cb26 100644
 --- a/fs/xfs/xfs_fsverity.c
 +++ b/fs/xfs/xfs_fsverity.c
-@@ -50,6 +50,9 @@ struct xfs_merkle_blob {
- 	/* refcount of this item; the cache holds its own ref */
- 	refcount_t		refcount;
- 
-+	/* number of times the shrinker should ignore this item */
-+	atomic_t		shrinkref;
+@@ -874,6 +874,16 @@ xfs_fsverity_write_merkle(
+ 		.value			= (void *)buf,
+ 		.valuelen		= size,
+ 	};
++	const char			*p;
 +
- 	unsigned long		flags;
- 
- 	/* Pointer to the merkle tree block, which is power-of-2 sized */
-@@ -89,6 +92,7 @@ xfs_merkle_blob_alloc(
- 
- 	/* Caller owns this refcount. */
- 	refcount_set(&mk->refcount, 1);
-+	atomic_set(&mk->shrinkref, 0);
- 	mk->flags = 0;
- 	mk->key.ino = ip->i_ino;
- 	mk->key.pos = pos;
-@@ -321,18 +325,94 @@ xfs_fsverity_shrinker_count(
- 	return min_t(u64, ULONG_MAX, count);
- }
- 
-+struct xfs_fsverity_scan {
-+	struct shrink_control	*sc;
-+
-+	unsigned long		scanned;
-+	unsigned long		freed;
-+};
-+
-+/* Reclaim inactive merkle tree blocks that have run out of second chances. */
-+static void
-+xfs_fsverity_perag_reclaim(
-+	struct xfs_perag		*pag,
-+	struct xfs_fsverity_scan	*vs)
-+{
-+	struct rhashtable_iter		iter;
-+	struct xfs_mount		*mp = pag->pag_mount;
-+	struct xfs_merkle_blob		*mk;
-+	s64				freed = 0;
-+
-+	rhashtable_walk_enter(&pag->pagi_merkle_blobs, &iter);
-+	rhashtable_walk_start(&iter);
-+	while ((mk = rhashtable_walk_next(&iter)) != NULL) {
-+		if (IS_ERR(mk))
-+			continue;
-+
-+		/*
-+		 * Tell the shrinker that we scanned this merkle tree block,
-+		 * even if we don't remove it.
-+		 */
-+		vs->scanned++;
-+		if (vs->sc->nr_to_scan-- == 0)
-+			break;
-+
-+		/* Retain if there are active references */
-+		if (refcount_read(&mk->refcount) > 1)
-+			continue;
-+
-+		/* Ignore if the item still has lru refcount */
-+		if (atomic_add_unless(&mk->shrinkref, -1, 0))
-+			continue;
-+
-+		/*
-+		 * Grab our own active reference to the blob handle.  If we
-+		 * can't, then we're racing with a cache drop and can move on.
-+		 */
-+		if (!refcount_inc_not_zero(&mk->refcount))
-+			continue;
-+
-+		rhashtable_walk_stop(&iter);
-+
-+		trace_xfs_fsverity_cache_reclaim(mp, &mk->key, _RET_IP_);
-+
-+		xfs_merkle_blob_drop(pag, mk);
-+		freed++;
-+
-+		rhashtable_walk_start(&iter);
-+	}
-+	rhashtable_walk_stop(&iter);
-+	rhashtable_walk_exit(&iter);
-+
-+	percpu_counter_sub(&mp->m_verity_blocks, freed);
-+	vs->freed += freed;
-+}
-+
- /* Actually try to reclaim merkle tree blocks. */
- static unsigned long
- xfs_fsverity_shrinker_scan(
- 	struct shrinker		*shrink,
- 	struct shrink_control	*sc)
- {
-+	struct xfs_fsverity_scan vs = { .sc = sc };
- 	struct xfs_mount	*mp = shrink->private_data;
-+	struct xfs_perag	*pag;
-+	xfs_agnumber_t		agno;
- 
- 	if (!xfs_has_verity(mp))
- 		return SHRINK_STOP;
- 
--	return 0;
-+	for_each_perag(mp, agno, pag) {
-+		xfs_fsverity_perag_reclaim(pag, &vs);
-+
-+		if (sc->nr_to_scan == 0) {
-+			xfs_perag_rele(pag);
-+			break;
-+		}
-+	}
-+
-+	trace_xfs_fsverity_shrinker_scan(mp, vs.scanned, vs.freed, _RET_IP_);
-+	return vs.freed;
- }
- 
- /* Set up fsverity for this mount. */
-@@ -765,6 +845,13 @@ xfs_fsverity_read_merkle(
- 	block->context = mk;
- 	block->verified = test_bit(XFS_MERKLE_BLOB_VERIFIED_BIT, &mk->flags);
- 
 +	/*
-+	 * Prioritize keeping the root-adjacent levels cached if this isn't a
-+	 * streaming read.
++	 * Don't store trailing zeroes, except for the first byte, which we
++	 * need to avoid ENODATA errors in the merkle read path.
 +	 */
-+	if (req->level != FSVERITY_STREAMING_READ)
-+		atomic_set(&mk->shrinkref, req->level + 1);
-+
- 	return 0;
++	p = buf + size - 1;
++	while (p >= (const char *)buf && *p == 0)
++		p--;
++	args.valuelen = max(1, p - (const char *)buf + 1);
  
- out_new_mk:
-diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 3810e20b9ee9b..21e8643e021eb 100644
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -5979,6 +5979,29 @@ TRACE_EVENT(xfs_fsverity_shrinker_count,
- 		  __entry->count,
- 		  __entry->caller_ip)
- )
-+
-+TRACE_EVENT(xfs_fsverity_shrinker_scan,
-+	TP_PROTO(struct xfs_mount *mp, unsigned long scanned,
-+		 unsigned long freed, unsigned long caller_ip),
-+	TP_ARGS(mp, scanned, freed, caller_ip),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(unsigned long, scanned)
-+		__field(unsigned long, freed)
-+		__field(void *, caller_ip)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = mp->m_super->s_dev;
-+		__entry->scanned = scanned;
-+		__entry->freed = freed;
-+		__entry->caller_ip = (void *)caller_ip;
-+	),
-+	TP_printk("dev %d:%d scanned %lu freed %lu caller %pS",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->scanned,
-+		  __entry->freed,
-+		  __entry->caller_ip)
-+)
- #endif /* CONFIG_XFS_VERITY */
- 
- #endif /* _TRACE_XFS_H */
+ 	xfs_fsverity_init_merkle_args(ip, &name, pos, &args);
+ 	return xfs_attr_set(&args, XFS_ATTRUPDATE_UPSERT, false);
 
 
