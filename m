@@ -1,88 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-18381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DDB8B7F6A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 20:06:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E63A8B8081
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 21:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A346D1F2348C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 18:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8ABE1C22663
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 19:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DAE181328;
-	Tue, 30 Apr 2024 18:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BABA199E8A;
+	Tue, 30 Apr 2024 19:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FurPK9Ph"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XJ8rRF7l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B840175560
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 18:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B4D7710B;
+	Tue, 30 Apr 2024 19:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714500397; cv=none; b=n/TkP7tB5KQSj0UnPFiWX+kviDjcqUKUc2uBc3vl1mfaJJqipUI2rfIlzgXDOJsCPnAntZIh765dY/ps4ZYINX78dL0FDqeZUxmKset3HXQ6G9ZOlNIqJQmWWsoLgdLyazsR/epfvzljmiorTwe45+cSqrU1f4mw3HVI3hAhpiE=
+	t=1714505234; cv=none; b=p8hPvxbzjGU4Gp27sFzRLd6L/7VS1OKglIDZtvlYo47LzKhUR1znc88l6fASrg4sHTIH2ualveeQ6SbAHBtkpr0va1poVPagh1V8MMkWv8xcMNu0Sl21ChbL1CHA47admUKAH/krqvIPl4kqAN7d1Yhb9atoVFh8p9veZ4HdmDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714500397; c=relaxed/simple;
-	bh=PwI1PrOotdPpKXX5QAwi15HY6YoGol2geJBgw3UZ8VY=;
+	s=arc-20240116; t=1714505234; c=relaxed/simple;
+	bh=tLeUnb21C0E61J6DUcp6XCZENQ2nb1hmTQn1cmnkFxc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=arMjVU+VMFt4ZsIhRiK/WOeVZKz1a9HQVhJSqNh0ReokROfyyxb5gLZHmx08eO/VzujfvsXDxL0XFVx2dkfmfLwO1hL1v3YVVDEnARZq3tbzptv3FlLeiByjCzVuqEaKglvZ8xtlA4g6zMkJf17eL7+/bjfz3F1R56za++Na4OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FurPK9Ph; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714500394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=imQQal1msniqCC7SSyjMUlHWjAzNmLrGF8VoQ2n0MHk=;
-	b=FurPK9Phz3EOrdqIyPyd+RNYP4n2OzpTJkKAvs2C5+P688MN6rAieAV0VRYDflmS1Gyw4k
-	SCRN+hQ8w1FeVn/fbHbXzGNyrj9U4NWP5jeqeXwjDGDLTAmcC3ShZO4+bnVistbuglMXo/
-	RCeOv3x2eC058vUabredyrrnd2MjsRU=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-231-fluHSI94OvyEcKOAXYARfw-1; Tue, 30 Apr 2024 14:06:32 -0400
-X-MC-Unique: fluHSI94OvyEcKOAXYARfw-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a558739aaf4so361169566b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 11:06:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714500391; x=1715105191;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=imQQal1msniqCC7SSyjMUlHWjAzNmLrGF8VoQ2n0MHk=;
-        b=Hr9zyg/hQuC4QzZ+R4NuPa52F0MiFENOkPwyv/rki9Cm9lir5lh4fSL2UF8orFZpyk
-         win6P/WQXXPNhGLiPDX9CF9wjaEQXwi+gTwc0vCeVS8eUefP8rOkVL1xRfPiAC2C8lkg
-         z5ZQ8yG2l/0vHXZ1c4R/aUSArqqXCaS3umQ817zGje21ATVcHCQNrlVQ0oYoKSi3m2vm
-         GqF8x/GbdEBYh/8+Ypn1dx6poqwadwMMg2INQPnYUwCcxKEYfrNA+whUFL82mx+fpJ+f
-         G5RLOd8XDTdrVsAioPadRrxvqtHDbKJz1XDSzEGnjjGUlTWFanNzgu4zzyjwV5Ji/9su
-         fMJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNiYXwzmKQTuWAmU/V59XFldlWHLDW2ZvDgpwVEmFmUOfaN4aZt/WH8d+n8D5pt238GG74VYNjtjzRLRoSHZKXf7n6g+/KqCqDCxIMjw==
-X-Gm-Message-State: AOJu0YwDkgbsFSUhKhX4Y8/NvGWo4RZQHlvlqFgHkBPHQVyZyajNMeWf
-	UhuON28CzpUryEmy3z7iauDMqkOYtfsKyJuSTifhclAH8LI80YrhSXtBIhzDEbEyKTXQdrrzJxY
-	SmLQ9TAT3vr0ZpsMWoJCIk2oPwwalqxC59AlrYRY6BrE5w45Op6YCB0G1P6ZSuA==
-X-Received: by 2002:a17:906:3952:b0:a52:2c4f:7957 with SMTP id g18-20020a170906395200b00a522c4f7957mr336760eje.66.1714500390992;
-        Tue, 30 Apr 2024 11:06:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjmyO5251sKWtcwGbGfFOrVzhA6dBFSD9UqK7uJf0jtnRf/sKg9Lc8u0v7WdZoeggiao3A+Q==
-X-Received: by 2002:a17:906:3952:b0:a52:2c4f:7957 with SMTP id g18-20020a170906395200b00a522c4f7957mr336746eje.66.1714500390308;
-        Tue, 30 Apr 2024 11:06:30 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id v5-20020a170906380500b00a58f36e5fecsm3720608ejc.67.2024.04.30.11.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 11:06:29 -0700 (PDT)
-Date: Tue, 30 Apr 2024 20:06:29 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: zlang@redhat.com, ebiggers@kernel.org, fsverity@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, guan@eryu.me, linux-xfs@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCH 5/6] xfs: test disabling fsverity
-Message-ID: <uffkpx5hbin4ym3jmechs4yuby3x2azze56mo4afyy6op3ysro@y6kpnc2ixyue>
-References: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
- <171444688055.962488.12884471948592949028.stgit@frogsfrogsfrogs>
- <cjwdgeptjooy65czttyopop4ipkxmdxgdkxxdpfsmtdtzr5jbj@6bu7ql72wtue>
- <20240430154810.GM360919@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Za2dZHm67QX/cwbBGXnvzx3/y0jzy9D89qicDEiqvcAsEHVlfZWxBmMiZkm1CbLR/ejsRgHCFTxNSRo5utXEfGq3W26kcoRYguMb4fwrDCGIdU/n8O+Ub7+xz/ZpI7DcGAkAaEpZ3V7jDJRCoCuFUG5gCUFG4YLj6A2q/OHtL/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XJ8rRF7l; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=d4uhdnzN52dglUpGiwJQWyEwkgPfxbPV9ZmXem8nWDY=; b=XJ8rRF7ls2IfN2IJoliZVBdhjM
+	42gv/xsrHCKCKzC6THCARoxNA6ZXylAH5AWwK6JxcCPJaJrLkdzp/k6JoxxQsIbaImIK/IbSZhlX9
+	WluVFCuLV6aa8pKdhoWxY5dKKANJDxkrfQm7eCpywzPZzUmPwcpgqXTvmk99Rcn/99CLauGb2dYsv
+	4HPO9oevwtxiMCjFYWpfYA++CkoectTKlZMcLDHBCVq4/gIy6u7S1qQFlnpNfPap6t86qLfYFhl17
+	85JvoHZdM3Rn77spl8fm15NwRzrb9jVq66x6zYVHUBJ1HSgynpyIHfSC+47pBH45RU3EwnbHrmgr/
+	kDSYU3TQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s1t84-00000007iBc-0DFf;
+	Tue, 30 Apr 2024 19:27:04 +0000
+Date: Tue, 30 Apr 2024 12:27:04 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Sean Christopherson <seanjc@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandan.babu@oracle.com, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com
+Subject: Re: [PATCH v4 05/11] mm: do not split a folio if it has minimum
+ folio order requirement
+Message-ID: <ZjFGCOYk3FK_zVy3@bombadil.infradead.org>
+References: <20240425113746.335530-1-kernel@pankajraghav.com>
+ <20240425113746.335530-6-kernel@pankajraghav.com>
+ <Ziq4qAJ_p7P9Smpn@casper.infradead.org>
+ <Zir5n6JNiX14VoPm@bombadil.infradead.org>
+ <Ziw8w3P9vljrO9JV@bombadil.infradead.org>
+ <Zi2e7ecKJK6p6ERu@bombadil.infradead.org>
+ <Zi8aYA92pvjDY7d5@bombadil.infradead.org>
+ <6799F341-9E37-4F3E-B0D0-B5B2138A5F5F@nvidia.com>
+ <ZjA7yBQjkh52TM_T@bombadil.infradead.org>
+ <202988BE-58D1-4D21-BF7F-9AECDC178D2A@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,148 +78,383 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240430154810.GM360919@frogsfrogsfrogs>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <202988BE-58D1-4D21-BF7F-9AECDC178D2A@nvidia.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On 2024-04-30 08:48:10, Darrick J. Wong wrote:
-> On Tue, Apr 30, 2024 at 03:11:11PM +0200, Andrey Albershteyn wrote:
-> > On 2024-04-29 20:42:05, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > Add a test to make sure that we can disable fsverity on a file that
-> > > doesn't pass fsverity validation on its contents anymore.
-> > > 
-> > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > > ---
-> > >  tests/xfs/1881     |  111 ++++++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  tests/xfs/1881.out |   28 +++++++++++++
-> > >  2 files changed, 139 insertions(+)
-> > >  create mode 100755 tests/xfs/1881
-> > >  create mode 100644 tests/xfs/1881.out
-> > > 
-> > > 
-> > > diff --git a/tests/xfs/1881 b/tests/xfs/1881
-> > > new file mode 100755
-> > > index 0000000000..411802d7c7
-> > > --- /dev/null
-> > > +++ b/tests/xfs/1881
-> > > @@ -0,0 +1,111 @@
-> > > +#! /bin/bash
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +# Copyright (c) 2024 Oracle.  All Rights Reserved.
-> > > +#
-> > > +# FS QA Test 1881
-> > > +#
-> > > +# Corrupt fsverity descriptor, merkle tree blocks, and file contents.  Ensure
-> > > +# that we can still disable fsverity, at least for the latter cases.
-> > > +#
-> > > +. ./common/preamble
-> > > +_begin_fstest auto quick verity
-> > > +
-> > > +_cleanup()
-> > > +{
-> > > +	cd /
-> > > +	_restore_fsverity_signatures
-> > > +	rm -f $tmp.*
-> > > +}
-> > > +
-> > > +. ./common/verity
-> > > +. ./common/filter
-> > > +. ./common/fuzzy
-> > > +
-> > > +_supported_fs xfs
-> > > +_require_scratch_verity
-> > > +_disable_fsverity_signatures
-> > > +_require_fsverity_corruption
-> > > +_require_xfs_io_command noverity
-> > > +_require_scratch_nocheck	# corruption test
-> > > +
-> > > +_scratch_mkfs >> $seqres.full
-> > > +_scratch_mount
-> > > +
-> > > +_require_xfs_has_feature "$SCRATCH_MNT" verity
-> > > +VICTIM_FILE="$SCRATCH_MNT/a"
-> > > +_fsv_can_enable "$VICTIM_FILE" || _notrun "cannot enable fsverity"
-> > > +
-> > > +create_victim()
-> > > +{
-> > > +	local filesize="${1:-3}"
-> > > +
-> > > +	rm -f "$VICTIM_FILE"
-> > > +	perl -e "print 'moo' x $((filesize / 3))" > "$VICTIM_FILE"
-> > > +	fsverity enable --hash-alg=sha256 --block-size=1024 "$VICTIM_FILE"
-> > > +	fsverity measure "$VICTIM_FILE" | _filter_scratch
-> > > +}
-> > > +
-> > > +disable_verity() {
-> > > +	$XFS_IO_PROG -r -c 'noverity' "$VICTIM_FILE" 2>&1 | _filter_scratch
-> > > +}
-> > > +
-> > > +cat_victim() {
-> > > +	$XFS_IO_PROG -r -c 'pread -q 0 4096' "$VICTIM_FILE" 2>&1 | _filter_scratch
-> > > +}
-> > > +
-> > > +echo "Part 1: Delete the fsverity descriptor" | tee -a $seqres.full
-> > > +create_victim
-> > > +_scratch_unmount
-> > > +_scratch_xfs_db -x -c "path /a" -c "attr_remove -f vdesc" -c 'ablock 0' -c print >> $seqres.full
-> > > +_scratch_mount
-> > > +cat_victim
-> > > +
-> > > +echo "Part 2: Disable fsverity, which won't work" | tee -a $seqres.full
-> > > +disable_verity
-> > > +cat_victim
-> > > +
-> > > +echo "Part 3: Corrupt the fsverity descriptor" | tee -a $seqres.full
-> > > +create_victim
-> > > +_scratch_unmount
-> > > +_scratch_xfs_db -x -c "path /a" -c 'attr_modify -f "vdesc" -o 0 "BUGSAHOY"' -c 'ablock 0' -c print >> $seqres.full
-> > > +_scratch_mount
-> > > +cat_victim
-> > > +
-> > > +echo "Part 4: Disable fsverity, which won't work" | tee -a $seqres.full
-> > > +disable_verity
-> > > +cat_victim
-> > > +
-> > > +echo "Part 5: Corrupt the fsverity file data" | tee -a $seqres.full
-> > > +create_victim
-> > > +_scratch_unmount
-> > > +_scratch_xfs_db -x -c "path /a" -c 'dblock 0' -c 'blocktrash -3 -o 0 -x 24 -y 24 -z' -c print >> $seqres.full
-> > > +_scratch_mount
-> > > +cat_victim
-> > > +
-> > > +echo "Part 6: Disable fsverity, which should work" | tee -a $seqres.full
-> > > +disable_verity
-> > > +cat_victim
-> > > +
-> > > +echo "Part 7: Corrupt a merkle tree block" | tee -a $seqres.full
-> > > +create_victim 1234 # two merkle tree blocks
-> > > +_fsv_scratch_corrupt_merkle_tree "$VICTIM_FILE" 0
-> > 
-> > hmm, _fsv_scratch_corrupt_merkle_tree calls _scratch_xfs_repair, and
-> > now with xfs_repair knowing about fs-verity is probably a problem. I
-> 
-> It shouldn't be -- xfs_repair doesn't check the contents of the merkle
-> tree itself.
-> 
-> (xfs_scrub sort of does, but only by calling out to the kernel fsverity
-> code to get rough tree geometry and calling MADV_POPULATE_READ to
-> exercise the read validation.)
+On Mon, Apr 29, 2024 at 10:43:16PM -0400, Zi Yan wrote:
+> On 29 Apr 2024, at 20:31, Luis Chamberlain wrote:
+>=20
+> > On Mon, Apr 29, 2024 at 10:29:29AM -0400, Zi Yan wrote:
+> >> On 28 Apr 2024, at 23:56, Luis Chamberlain wrote:
+> >>
+> >>> On Sat, Apr 27, 2024 at 05:57:17PM -0700, Luis Chamberlain wrote:
+> >>>> On Fri, Apr 26, 2024 at 04:46:11PM -0700, Luis Chamberlain wrote:
+> >>>>> On Thu, Apr 25, 2024 at 05:47:28PM -0700, Luis Chamberlain wrote:
+> >>>>>> On Thu, Apr 25, 2024 at 09:10:16PM +0100, Matthew Wilcox wrote:
+> >>>>>>> On Thu, Apr 25, 2024 at 01:37:40PM +0200, Pankaj Raghav (Samsung)=
+ wrote:
+> >>>>>>>> From: Pankaj Raghav <p.raghav@samsung.com>
+> >>>>>>>>
+> >>>>>>>> using that API for LBS is resulting in an NULL ptr dereference
+> >>>>>>>> error in the writeback path [1].
+> >>>>>>>>
+> >>>>>>>> [1] https://gist.github.com/mcgrof/d12f586ec6ebe32b2472b5d634c39=
+7df
+> >>>>>>>
+> >>>>>>>  How would I go about reproducing this?
+> >>>>
+> >>>> Well so the below fixes this but I am not sure if this is correct.
+> >>>> folio_mark_dirty() at least says that a folio should not be truncated
+> >>>> while its running. I am not sure if we should try to split folios th=
+en
+> >>>> even though we check for writeback once. truncate_inode_partial_foli=
+o()
+> >>>> will folio_wait_writeback() but it will split_folio() before checking
+> >>>> for claiming to fail to truncate with folio_test_dirty(). But since =
+the
+> >>>> folio is locked its not clear why this should be possible.
+> >>>>
+> >>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >>>> index 83955362d41c..90195506211a 100644
+> >>>> --- a/mm/huge_memory.c
+> >>>> +++ b/mm/huge_memory.c
+> >>>> @@ -3058,7 +3058,7 @@ int split_huge_page_to_list_to_order(struct pa=
+ge *page, struct list_head *list,
+> >>>>  	if (new_order >=3D folio_order(folio))
+> >>>>  		return -EINVAL;
+> >>>>
+> >>>> -	if (folio_test_writeback(folio))
+> >>>> +	if (folio_test_dirty(folio) || folio_test_writeback(folio))
+> >>>>  		return -EBUSY;
+> >>>>
+> >>>>  	if (!folio_test_anon(folio)) {
+> >>>
+> >>> I wondered what code path is causing this and triggering this null
+> >>> pointer, so I just sprinkled a check here:
+> >>>
+> >>> 	VM_BUG_ON_FOLIO(folio_test_dirty(folio), folio);
+> >>>
+> >>> The answer was:
+> >>>
+> >>> kcompactd() --> migrate_pages_batch()
+> >>>                   --> try_split_folio --> split_folio_to_list() -->
+> >>> 		       split_huge_page_to_list_to_order()
+> >>>
+> >>
+> >> There are 3 try_split_folio() in migrate_pages_batch().
+> >
+> > This is only true for linux-next, for v6.9-rc5 off of which this testing
+> > is based on there are only two.
+> >
+> >> First one is to split anonymous large folios that are on deferred
+> >> split list, so not related;
+> >
+> > This is in linux-next and not v6.9-rc5.
+> >
+> >> second one is to split THPs when thp migration is not supported, but
+> >> this is compaction, so not related; third one is to split large folios
+> >> when there is no same size free page in the system, and this should be
+> >> the one.
+> >
+> > Agreed, the case where migrate_folio_unmap() failed with -ENOMEM. This
+> > also helps us enhance the reproducer further, which I'll do next.
+> >
+> >>> And I verified that moving the check only to the migrate_pages_batch()
+> >>> path also fixes the crash:
+> >>>
+> >>> diff --git a/mm/migrate.c b/mm/migrate.c
+> >>> index 73a052a382f1..83b528eb7100 100644
+> >>> --- a/mm/migrate.c
+> >>> +++ b/mm/migrate.c
+> >>> @@ -1484,7 +1484,12 @@ static inline int try_split_folio(struct folio=
+ *folio, struct list_head *split_f
+> >>>  	int rc;
+> >>>
+> >>>  	folio_lock(folio);
+> >>> +	if (folio_test_dirty(folio)) {
+> >>> +		rc =3D -EBUSY;
+> >>> +		goto out;
+> >>> +	}
+> >>>  	rc =3D split_folio_to_list(folio, split_folios);
+> >>> +out:
+> >>>  	folio_unlock(folio);
+> >>>  	if (!rc)
+> >>>  		list_move_tail(&folio->lru, split_folios);
+> >>>
+> >>> However I'd like compaction folks to review this. I see some indicati=
+ons
+> >>> in the code that migration can race with truncation but we feel fine =
+by
+> >>> it by taking the folio lock. However here we have a case where we see
+> >>> the folio clearly locked and the folio is dirty. Other migraiton code
+> >>> seems to write back the code and can wait, here we just move on. Furt=
+her
+> >>> reading on commit 0003e2a414687 ("mm: Add AS_UNMOVABLE to mark mapping
+> >>> as completely unmovable") seems to hint that migration is safe if the
+> >>> mapping either does not exist or the mapping does exist but has
+> >>> mapping->a_ops->migrate_folio so I'd like further feedback on this.
+> >>
+> >> During migration, all page table entries pointing to this dirty folio
+> >> are invalid, and accesses to this folio will cause page fault and
+> >> wait on the migration entry. I am not sure we need to skip dirty folio=
+s.
+> >
+> > I see.. thanks!
+> >
+> >>> Another thing which requires review is if we we split a folio but not
+> >>> down to order 0 but to the new min order, does the accounting on
+> >>> migrate_pages_batch() require changing?  And most puzzling, why do we
+> >>
+> >> What accounting are you referring to? split code should take care of i=
+t.
+> >
+> > The folio order can change after split, and so I was concerned about the
+> > nr_pages used in migrate_pages_batch(). But I see now that when
+> > migrate_folio_unmap() first failed we try to split the folio, and if
+> > successful I see now we the caller will again call migrate_pages_batch()
+> > with a retry attempt of 1 only to the split folios. I also see the
+> > nr_pages is just local to each list for each loop, first on the from
+> > list to unmap and afte on the unmap list so we move the folios.
+> >
+> >>> not see this with regular large folios, but we do see it with minorde=
+r ?
+> >>
+> >> I wonder if the split code handles folio->mapping->i_pages properly.
+> >> Does the i_pages store just folio pointers or also need all tail page
+> >> pointers? I am no expert in fs, thus need help.
+> >
+> > mapping->i_pages stores folio pointers in the page cache or
+> > swap/dax/shadow entries (xa_is_value(folio)). The folios however can be
+> > special and we special-case them with shmem_mapping(mapping) checks.
+> > split_huge_page_to_list_to_order() doens't get called with swap/dax/sha=
+dow
+> > entries, and we also bail out on shmem_mapping(mapping) already.
+>=20
+> Hmm, I misunderstood the issue above. To clarify it, the error comes out
+> when a page cache folio with minorder is split to order-0,
 
-oh right, it's xfs_scrub, I meant re-reading file validation
+No, min order is used.
 
-> 
-> > don't remember what was the problem with quota (why xfs_repiar is
-> > there), I can check it.
-> 
-> If the attr_modify commandline changes the block count of the file, it
-> won't update the quota accounting information.  That can happen if the
-> dabtree changes shape, or if the new attr requires the creation of a new
-> attr leaf block, or if the remote value block count changes due to
-> changes in the size of the attr value.
+In order to support splits with min order we require an out of tree
+patch not yet posted:
 
-aha, yeah
+https://github.com/linux-kdevops/linux/commit/e77a2a4fd6d9aa7e2641d5ea456ad=
+0522c1e8a04
 
--- 
-- Andrey
+The important part is if no order is specified we use the min order:
 
+int split_folio_to_list(struct folio *folio, struct list_head *list)
+{
+	unsigned int min_order =3D 0;
+
+	if (!folio_test_anon(folio))
+		min_order =3D mapping_min_folio_order(folio->mapping);
+
+	return split_huge_page_to_list_to_order(&folio->page, list, min_order);
+}
+
+and so compaction's try_split_folio() -->
+   split_folio_to_list(folio, split_folios)
+
+will use the min order implicitly due to the above.
+
+So yes, we see a null ptr deref on the writeback path when min order is set.
+
+> I wonder if you can isolate the issue by just splitting a dirty minorder
+> page cache folio instead of having folio split and migration going on tog=
+ether.
+> You probably can use the debugfs to do that. Depending on the result,
+> we can narrow down the cause of the issue.
+
+That's what I had tried with my new fstsest test but now I see where it
+also failed -- on 4k filesystems it was trying to split to order 0 and
+that had no issues as you pointed out. We can now fine tune the test
+very well. I can now reproduce the crash on plain on boring vanilla
+linux v6.9-rc6 on a plain xfs filesystem with 4k block size on x86_64
+doing this:
+
+You may want the following appended to your kernel command line:
+
+   dyndbg=3D'file mm/huge_memory.c +p'
+
+mkfs.xfs /dev/vdd
+mkdir -p /media/scratch/
+mount /dev/vdd /media/scratch/
+
+while true; do dd if=3D/dev/zero of=3D$FILE bs=3D4M count=3D200 2> /dev/nul=
+l; done &
+while true; do sleep 2; echo $FILE,0x0,0x4000,2 > /sys/kernel/debug/split_h=
+uge_pages 0x400000 2> /dev/null; done
+
+The crash:
+
+Apr 30 10:37:09 debian12-xfs-reflink-4k kernel: SGI XFS with ACLs, security=
+ attributes, realtime, scrub, repair, quota, fatal assert, debug enabled
+Apr 30 10:37:09 debian12-xfs-reflink-4k kernel: XFS (vdd): Mounting V5 File=
+system d1f9e444-f61c-4439-a2bf-61a13f6d8e81
+Apr 30 10:37:09 debian12-xfs-reflink-4k kernel: XFS (vdd): Ending clean mou=
+nt
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: huge_memory: split file-bac=
+ked THPs in file: /media/scratch/foo, page offset: [0x0 - 0x200000]
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: BUG: kernel NULL pointer de=
+reference, address: 0000000000000036
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: #PF: supervisor read access=
+ in kernel mode
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: #PF: error_code(0x0000) - n=
+ot-present page
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: PGD 0 P4D 0
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: Oops: 0000 [#1] PREEMPT SMP=
+ NOPTI
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: CPU: 4 PID: 89 Comm: kworke=
+r/u37:2 Not tainted 6.9.0-rc6 #10
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: Hardware name: QEMU Standar=
+d PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: Workqueue: writeback wb_wor=
+kfn (flush-254:48)
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: RIP: 0010:filemap_get_folio=
+s_tag (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arc=
+h-fallback.h:457 ./include/linux/atomic/atomic-arch-fallback.h:2426 ./inclu=
+de/linux/atomic/atomic-arch-fallback.h:2456 ./include/linux/atomic/atomic-i=
+nstrumented.h:1518 ./include/linux/page_ref.h:238 ./include/linux/page_ref.=
+h:247 ./include/linux/page_ref.h:280 ./include/linux/page_ref.h:313 mm/file=
+map.c:1980 mm/filemap.c:2218)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: Code: bd 06 86 00 48 89 c3 =
+48 3d 06 04 00 00 74 e8 48 81 fb 02 04 00 00 0f 84 d0 00 00 00 48 85 db 0f =
+84 04 01 00 00 f6 c3 01 75 c4 <8b> 43 34 85 c0 0f 84 b7 00 00 00 8d 50 01 4=
+8 8d 73 34 f0 0f b1 53
+All code
+=3D=3D=3D=3D=3D=3D=3D=3D
+   0:	bd 06 86 00 48       	mov    $0x48008606,%ebp
+   5:	89 c3                	mov    %eax,%ebx
+   7:	48 3d 06 04 00 00    	cmp    $0x406,%rax
+   d:	74 e8                	je     0xfffffffffffffff7
+   f:	48 81 fb 02 04 00 00 	cmp    $0x402,%rbx
+  16:	0f 84 d0 00 00 00    	je     0xec
+  1c:	48 85 db             	test   %rbx,%rbx
+  1f:	0f 84 04 01 00 00    	je     0x129
+  25:	f6 c3 01             	test   $0x1,%bl
+  28:	75 c4                	jne    0xffffffffffffffee
+  2a:*	8b 43 34             	mov    0x34(%rbx),%eax		<-- trapping instructi=
+on
+  2d:	85 c0                	test   %eax,%eax
+  2f:	0f 84 b7 00 00 00    	je     0xec
+  35:	8d 50 01             	lea    0x1(%rax),%edx
+  38:	48 8d 73 34          	lea    0x34(%rbx),%rsi
+  3c:	f0                   	lock
+  3d:	0f                   	.byte 0xf
+  3e:	b1 53                	mov    $0x53,%cl
+
+Code starting with the faulting instruction
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+   0:	8b 43 34             	mov    0x34(%rbx),%eax
+   3:	85 c0                	test   %eax,%eax
+   5:	0f 84 b7 00 00 00    	je     0xc2
+   b:	8d 50 01             	lea    0x1(%rax),%edx
+   e:	48 8d 73 34          	lea    0x34(%rbx),%rsi
+  12:	f0                   	lock
+  13:	0f                   	.byte 0xf
+  14:	b1 53                	mov    $0x53,%cl
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: RSP: 0018:ffffa8f0c07cb8f8 =
+EFLAGS: 00010246
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: RAX: 0000000000000002 RBX: =
+0000000000000002 RCX: 0000000000018000
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: RDX: 0000000000000002 RSI: =
+0000000000000002 RDI: ffff987380564920
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: RBP: 0000000000000000 R08: =
+ffffffffffffffff R09: 0000000000000000
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: R10: 0000000000000228 R11: =
+0000000000000000 R12: ffffffffffffffff
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: R13: ffffa8f0c07cbbb8 R14: =
+ffffa8f0c07cbcb8 R15: ffff98738c4ea800
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: FS:  0000000000000000(0000)=
+ GS:ffff9873fbd00000(0000) knlGS:0000000000000000
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: CS:  0010 DS: 0000 ES: 0000=
+ CR0: 0000000080050033
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: CR2: 0000000000000036 CR3: =
+000000011aca8003 CR4: 0000000000770ef0
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: DR0: 0000000000000000 DR1: =
+0000000000000000 DR2: 0000000000000000
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: DR3: 0000000000000000 DR6: =
+00000000fffe07f0 DR7: 0000000000000400
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: PKRU: 55555554
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: Call Trace:
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel:  <TASK>
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? __die (arch/x86/kernel/du=
+mpstack.c:421 arch/x86/kernel/dumpstack.c:434)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? page_fault_oops (arch/x86=
+/mm/fault.c:713)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? do_user_addr_fault (./inc=
+lude/linux/kprobes.h:591 (discriminator 1) arch/x86/mm/fault.c:1265 (discri=
+minator 1))=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? exc_page_fault (./arch/x8=
+6/include/asm/paravirt.h:693 arch/x86/mm/fault.c:1513 arch/x86/mm/fault.c:1=
+563)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? asm_exc_page_fault (./arc=
+h/x86/include/asm/idtentry.h:623)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? filemap_get_folios_tag (.=
+/arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallba=
+ck.h:457 ./include/linux/atomic/atomic-arch-fallback.h:2426 ./include/linux=
+/atomic/atomic-arch-fallback.h:2456 ./include/linux/atomic/atomic-instrumen=
+ted.h:1518 ./include/linux/page_ref.h:238 ./include/linux/page_ref.h:247 ./=
+include/linux/page_ref.h:280 ./include/linux/page_ref.h:313 mm/filemap.c:19=
+80 mm/filemap.c:2218)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? filemap_get_folios_tag (m=
+m/filemap.c:1968 mm/filemap.c:2218)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? __pfx_iomap_do_writepage =
+(fs/iomap/buffered-io.c:1963)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: writeback_iter (./include/l=
+inux/pagevec.h:91 mm/page-writeback.c:2421 mm/page-writeback.c:2520)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: write_cache_pages (mm/page-=
+writeback.c:2568)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: iomap_writepages (fs/iomap/=
+buffered-io.c:1984)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: xfs_vm_writepages (fs/xfs/x=
+fs_aops.c:508) xfs
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: do_writepages (mm/page-writ=
+eback.c:2612)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? update_sd_lb_stats.constp=
+rop.0 (kernel/sched/fair.c:9902 (discriminator 2) kernel/sched/fair.c:10583=
+ (discriminator 2))=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: __writeback_single_inode (f=
+s/fs-writeback.c:1659)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: writeback_sb_inodes (fs/fs-=
+writeback.c:1943)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: __writeback_inodes_wb (fs/f=
+s-writeback.c:2013)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: wb_writeback (fs/fs-writeba=
+ck.c:2119)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: wb_workfn (fs/fs-writeback.=
+c:2277 (discriminator 1) fs/fs-writeback.c:2304 (discriminator 1))=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: process_one_work (kernel/wo=
+rkqueue.c:3254)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: worker_thread (kernel/workq=
+ueue.c:3329 (discriminator 2) kernel/workqueue.c:3416 (discriminator 2))=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? _raw_spin_lock_irqsave (.=
+/arch/x86/include/asm/atomic.h:115 (discriminator 4) ./include/linux/atomic=
+/atomic-arch-fallback.h:2170 (discriminator 4) ./include/linux/atomic/atomi=
+c-instrumented.h:1302 (discriminator 4) ./include/asm-generic/qspinlock.h:1=
+11 (discriminator 4) ./include/linux/spinlock.h:187 (discriminator 4) ./inc=
+lude/linux/spinlock_api_smp.h:111 (discriminator 4) kernel/locking/spinlock=
+=2Ec:162 (discriminator 4))=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? __pfx_worker_thread (kern=
+el/workqueue.c:3362)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: kthread (kernel/kthread.c:3=
+88)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? __pfx_kthread (kernel/kth=
+read.c:341)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ret_from_fork (arch/x86/ker=
+nel/process.c:147)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ? __pfx_kthread (kernel/kth=
+read.c:341)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel: ret_from_fork_asm (arch/x86=
+/entry/entry_64.S:257)=20
+Apr 30 10:38:04 debian12-xfs-reflink-4k kernel:  </TASK>
+
+The full decoded crash on v6.9-rc6:
+
+https://gist.github.com/mcgrof/c44aaed21b99ae4ecf3d7fc6a1bb00bc
+
+  Luis
 
