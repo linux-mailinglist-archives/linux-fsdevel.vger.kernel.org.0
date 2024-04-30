@@ -1,57 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-18211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690068B684C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:19:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6FB8B684E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 05:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0EB1F21EC1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:19:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80918B21BF1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 03:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87E7101C5;
-	Tue, 30 Apr 2024 03:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46238FC01;
+	Tue, 30 Apr 2024 03:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3DNxmWQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoBNXOD0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F74DDDA;
-	Tue, 30 Apr 2024 03:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07BA10965;
+	Tue, 30 Apr 2024 03:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714447166; cv=none; b=cwt6zQub3omfK2b1jhcLt75hpoab+snXCi8cy6mSyRkaRvMuGeHu4RWGFlkGrVCKMEqduwvSJ4tyXVgjPZp5CjcTSB8mMRTltxzEbd0PYGYYBS7esdJUJPhaDR/zSyVaYF7BJCHbIYG4kcwCHj1bvv7RH2PGGErrjkxDBsdA370=
+	t=1714447181; cv=none; b=BExMkbf1xWY4dy/F4yEiRYmUlGQpiT38HN5DO9i3ik/8gyxVKOCY2+U4ZNP4ZaS81BtSHRksWy0FPVQCS/zj66PHgAjZPHAxaOxtjcQWIqyRthnOLVdJUYzqX0tAJr7blnXDRPO/M8/SS83rH3gRRwYQE/iTL7AbkNdM9S09J3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714447166; c=relaxed/simple;
-	bh=FHlcZvFx6GfuKtymFK4OGO+74fcA3bU1aWNe4GeLjZ4=;
+	s=arc-20240116; t=1714447181; c=relaxed/simple;
+	bh=M01Iljf7yDb61KAk+WlQdMTtF7AOiBI7LsZy97M6s2E=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G72RkFWPvw1u8EdHpFZKCZ/zpaCXJuAlP1Tf5j9ckufriFJMR5UofbZsYX6XKf7h068tHLsm1Q/SQkrz9XXX/k8Us2fD9zGDRDm3u0Pt7KDq0uO4C1wFYYTbrTO/UGJqnmR+H917NgswDXCjQRLAzdOtlI0tZ/v1f0ng8eDAYfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3DNxmWQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EDA0C116B1;
-	Tue, 30 Apr 2024 03:19:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qxzOkP1j2HBbETHYvSFmED2TVrMiyaIkV3i3QoMWu08LWExBxhvdq1gK4r5jawyTXJwm9zL5aTHoLHQFn6uZ6+RGOp1iWHViGCmaKTPKlqjV6dB/3FgfbHCiGdZHowJ6D3uJLQdakjj+xK1JPNzfwiee0KOWe8H8lTLxeb9Jzho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoBNXOD0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B41C116B1;
+	Tue, 30 Apr 2024 03:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714447165;
-	bh=FHlcZvFx6GfuKtymFK4OGO+74fcA3bU1aWNe4GeLjZ4=;
+	s=k20201202; t=1714447181;
+	bh=M01Iljf7yDb61KAk+WlQdMTtF7AOiBI7LsZy97M6s2E=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=k3DNxmWQoP2K48vdbyGH39ytCfxdcelEgltdFCfKM2eyqwVu5NXUNsXgWKzleWpoc
-	 o4DiCm3AFtbtQhV2wsK8UHhMG/mCKz0rtXj6lTryLXnJYl5THJC8+o8ELyO/2HAnIH
-	 10V2iInASne6/cBg6ZM1DLHVpIkC6HSeqmVzJ8sQiPPWh6l/9Ikh8VbZfjXks6Zf6a
-	 ap8vhUzr6Hksd8+PP1WJwX4fc32kNnGM9Wo/qvXegzWLNNjRrqPZ55Wfp1W0phSamL
-	 UHHBCCtQUDHey15yOQDHMpiDGvcBMKO6AA0PkdeK4rRy1VuO4o9y/wx5betFugUcXD
-	 1frt7lygLi99w==
-Date: Mon, 29 Apr 2024 20:19:24 -0700
-Subject: [PATCHSET v5.6] fstests: fs-verity support for XFS
+	b=aoBNXOD03Ctx2XDPrOEp9sEnR/OXnJB03KZf5ZwnILFo9XUD5EBbtAmaOcK9gxLPM
+	 7fC2jyouRxtGpsFWvkILMKph17g7UlgPax67p0JJw5+5FlXVDCJxMyuTRWsTUCt9dv
+	 oAyF1TSYM8TPbhZwi8OlNX8+NqvpuAsKtYJ+swqd2pX11kHzeLfHepr58Z3pWZhVBy
+	 1AvPtLn5MbxKRqSANR7M6RrTRh/fDmIWoJB4csz01TWKOFQBq8D4gEG7UY1ynDigs1
+	 kU6rPvRh+DTQi9uNKeNdV9jLa2lVdL+7nucMS2N9o6SrPEMCpob4M2p1Jt3X+0jVjy
+	 x5Vl4+3WV1xiw==
+Date: Mon, 29 Apr 2024 20:19:40 -0700
+Subject: [PATCH 01/18] fs: add FS_XFLAG_VERITY for verity files
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: aalbersh@redhat.com, zlang@redhat.com, ebiggers@kernel.org,
- djwong@kernel.org
-Cc: Andrey Albershteyn <andrey.albershteyn@gmail.com>,
- fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, guan@eryu.me,
- linux-xfs@vger.kernel.org, fstests@vger.kernel.org
-Message-ID: <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
-In-Reply-To: <20240430031134.GH360919@frogsfrogsfrogs>
-References: <20240430031134.GH360919@frogsfrogsfrogs>
+To: aalbersh@redhat.com, ebiggers@kernel.org, djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
+ fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Message-ID: <171444679609.955480.8875715000452315324.stgit@frogsfrogsfrogs>
+In-Reply-To: <171444679542.955480.18087310571597618350.stgit@frogsfrogsfrogs>
+References: <171444679542.955480.18087310571597618350.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -62,116 +60,88 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-Hi all,
+From: Andrey Albershteyn <aalbersh@redhat.com>
 
-This patchset adds support for fsverity to XFS.  In keeping with
-Andrey's original design, XFS stores all fsverity metadata in the
-extended attribute data.  However, I've made a few changes to the code:
-First, it now caches merkle tree blocks directly instead of abusing the
-buffer cache.  This reduces lookup overhead quite a bit, at a cost of
-needing a new shrinker for cached merkle tree blocks.
+Add extended attribute FS_XFLAG_VERITY for inodes with fs-verity
+enabled.
 
-To reduce the ondisk footprint further, I also made the verity
-enablement code detect trailing zeroes whenever fsverity tells us to
-write a buffer, and elide storing the zeroes.  To further reduce the
-footprint of sparse files, I also skip writing merkle tree blocks if the
-block contents are entirely hashes of zeroes.
-
-Next, I implemented more of the tooling around verity, such as debugger
-support, as much fsck support as I can manage without knowing the
-internal format of the fsverity information; and added support for
-xfs_scrub to read fsverity files to validate the consistency of the data
-against the merkle tree.
-
-Finally, I add the ability for administrators to turn off fsverity,
-which might help recovering damaged data from an inconsistent file.
-
-From Andrey Albershteyn:
-
-Here's v5 of my patchset of adding fs-verity support to XFS.
-
-This implementation uses extended attributes to store fs-verity
-metadata. The Merkle tree blocks are stored in the remote extended
-attributes. The names are offsets into the tree.
-From Darrick J. Wong:
-
-This v5.3 patchset builds upon v5.2 of Andrey's patchset to implement
-fsverity for XFS.
-
-The biggest thing that I didn't like in the v5 patchset is the abuse of
-the data device's buffer cache to store the incore version of the merkle
-tree blocks.  Not only do verity state flags end up in xfs_buf, but the
-double-alloc flag wastes memory and doesn't remain internally consistent
-if the xattrs shift around.
-
-I replaced all of that with a per-inode xarray that indexes incore
-merkle tree blocks.  For cache hits, this dramatically reduces the
-amount of work that xfs has to do to feed fsverity.  The per-block
-overhead is much lower (8 bytes instead of ~300 for xfs_bufs), and we no
-longer have to entertain layering violations in the buffer cache.  I
-also added a per-filesystem shrinker so that reclaim can cull cached
-merkle tree blocks, starting with the leaf tree nodes.
-
-I've also rolled in some changes recommended by the fsverity maintainer,
-fixed some organization and naming problems in the xfs code, fixed a
-collision in the xfs_inode iflags, and improved dead merkle tree cleanup
-per the discussion of the v5 series.  At this point I'm happy enough
-with this code to start integrating and testing it in my trees, so it's
-time to send it out a coherent patchset for comments.
-
-For v5.3, I've added bits and pieces of online and offline repair
-support, reduced the size of partially filled merkle tree blocks by
-removing trailing zeroes, changed the xattr hash function to better
-avoid collisions between merkle tree keys, made the fsverity
-invalidation bitmap unnecessary, and made it so that we can save space
-on sparse verity files by not storing merkle tree blocks that hash
-totally zeroed data blocks.
-
-From Andrey Albershteyn:
-
-Here's v5 of my patchset of adding fs-verity support to XFS.
-
-This implementation uses extended attributes to store fs-verity
-metadata. The Merkle tree blocks are stored in the remote extended
-attributes. The names are offsets into the tree.
-
-If you're going to start using this code, I strongly recommend pulling
-from my git trees, which are linked below.
-
-This has been running on the djcloud for months with no problems.  Enjoy!
-Comments and questions are, as always, welcome.
-
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity
-
-xfsprogs git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=fsverity
-
-fstests git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity
+Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+[djwong: fix broken verity flag checks]
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
-Commits in this patchset:
- * common/verity: enable fsverity for XFS
- * xfs/{021,122}: adapt to fsverity xattrs
- * xfs/122: adapt to fsverity
- * xfs: test xfs_scrub detection and correction of corrupt fsverity metadata
- * xfs: test disabling fsverity
- * common/populate: add verity files to populate xfs images
----
- common/populate    |   24 +++++++++
- common/verity      |   39 ++++++++++++++-
- tests/xfs/021      |    3 +
- tests/xfs/122.out  |    3 +
- tests/xfs/1880     |  135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- tests/xfs/1880.out |   37 ++++++++++++++
- tests/xfs/1881     |  111 +++++++++++++++++++++++++++++++++++++++++++
- tests/xfs/1881.out |   28 +++++++++++
- 8 files changed, 378 insertions(+), 2 deletions(-)
- create mode 100755 tests/xfs/1880
- create mode 100644 tests/xfs/1880.out
- create mode 100755 tests/xfs/1881
- create mode 100644 tests/xfs/1881.out
+ Documentation/filesystems/fsverity.rst |    8 ++++++++
+ fs/ioctl.c                             |   11 +++++++++++
+ include/uapi/linux/fs.h                |    1 +
+ 3 files changed, 20 insertions(+)
+
+
+diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
+index 13e4b18e5dbbb..887cdaf162a99 100644
+--- a/Documentation/filesystems/fsverity.rst
++++ b/Documentation/filesystems/fsverity.rst
+@@ -326,6 +326,14 @@ the file has fs-verity enabled.  This can perform better than
+ FS_IOC_GETFLAGS and FS_IOC_MEASURE_VERITY because it doesn't require
+ opening the file, and opening verity files can be expensive.
+ 
++FS_IOC_FSGETXATTR
++-----------------
++
++Since Linux v6.9, the FS_IOC_FSGETXATTR ioctl sets FS_XFLAG_VERITY (0x00020000)
++in the returned flags when the file has verity enabled. Note that this attribute
++cannot be set with FS_IOC_FSSETXATTR as enabling verity requires input
++parameters. See FS_IOC_ENABLE_VERITY.
++
+ .. _accessing_verity_files:
+ 
+ Accessing verity files
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index fb0628e680c40..d69d0feee4bc6 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -481,6 +481,8 @@ void fileattr_fill_xflags(struct fileattr *fa, u32 xflags)
+ 		fa->flags |= FS_DAX_FL;
+ 	if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+ 		fa->flags |= FS_PROJINHERIT_FL;
++	if (fa->fsx_xflags & FS_XFLAG_VERITY)
++		fa->flags |= FS_VERITY_FL;
+ }
+ EXPORT_SYMBOL(fileattr_fill_xflags);
+ 
+@@ -511,6 +513,8 @@ void fileattr_fill_flags(struct fileattr *fa, u32 flags)
+ 		fa->fsx_xflags |= FS_XFLAG_DAX;
+ 	if (fa->flags & FS_PROJINHERIT_FL)
+ 		fa->fsx_xflags |= FS_XFLAG_PROJINHERIT;
++	if (fa->flags & FS_VERITY_FL)
++		fa->fsx_xflags |= FS_XFLAG_VERITY;
+ }
+ EXPORT_SYMBOL(fileattr_fill_flags);
+ 
+@@ -641,6 +645,13 @@ static int fileattr_set_prepare(struct inode *inode,
+ 	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+ 		return -EINVAL;
+ 
++	/*
++	 * Verity cannot be changed through FS_IOC_FSSETXATTR/FS_IOC_SETFLAGS.
++	 * See FS_IOC_ENABLE_VERITY.
++	 */
++	if ((fa->fsx_xflags ^ old_ma->fsx_xflags) & FS_XFLAG_VERITY)
++		return -EINVAL;
++
+ 	/* Extent size hints of zero turn off the flags. */
+ 	if (fa->fsx_extsize == 0)
+ 		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 45e4e64fd6643..101d1d71242c7 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -158,6 +158,7 @@ struct fsxattr {
+ #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
+ #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
+ #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
++#define FS_XFLAG_VERITY		0x00020000	/* fs-verity enabled */
+ #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ 
+ /* the read-only stuff doesn't really belong here, but any other place is
 
 
