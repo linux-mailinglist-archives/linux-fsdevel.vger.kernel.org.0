@@ -1,177 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-18429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DD68B8A87
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 14:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF048B8B67
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 15:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24ABC286C78
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 12:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6EC528154F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 13:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55DC12AAC9;
-	Wed,  1 May 2024 12:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C1112EBF3;
+	Wed,  1 May 2024 13:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="SoVtLLGJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TkCvjX5p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE0E12A151
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 12:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0304B433D4;
+	Wed,  1 May 2024 13:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714567887; cv=none; b=q8m2vboezyucS2PdPTszpjWy76X+Xf8wBWWLqETtW7dYdzRdo97yoMJgUw3JK3eTUnRdSkwEnIQ1ep0v8buxao0VgdKRYg22wdxCPUlYMn2VlPIQKkikvu2S1bUlbe6+rKoH1DSO2nRSqVLbwIcxYnzPeFMfJVlDiKW9d6WgFDY=
+	t=1714570926; cv=none; b=ATZQvp5n1A34ROy8aLXpTBs/63SiSSLpMjnwl9+2kKrNzYF4iw1cP4G/s8r/ZDtXI+2GWhjwpHJN1Yz4tc8kmDyLliaIoimrlsOvtFPUEuAzbLvoJTcY3PoEIBWUzVoq1BmRe2MsvfQlpnDiE8IZdpJdcjApKb9fxOuufGwMNy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714567887; c=relaxed/simple;
-	bh=9gjkchFMJwUjpF/uchEYtIcWsr1hiGH0tVbUVogWLfY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VYDBrCFSszSiKqZIy7CLaXg71ZSLBoYds/h5/FypfO8L5UxhdlPW2Ce2HgannSrRv/DeIjneq4lvNR01cuZe5+vaVLzKZP1xJZZP+cFhHmY+DHDxsL/0h+qIo7gIvLGKlFwWWVyrg1lgfxurr3HSRbOLOt5+yNK8MhSpe9bI6mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c5e4166cfso12361215ab.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2024 05:51:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714567885; x=1715172685;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7wnNbmWU078woIxMllctBTvqWvHXn4tL8L+Wpu7svmM=;
-        b=OD864dma2CRd/eo3/iv4uXYxO/begxLj5UjuS+6dopLLDqbiCmpnBLMqSb3sQiBf1F
-         PMSOnEClgk7jIlBHhaboZ0fz3phfrjrRsWqZZgGs4TNsRnCmLc5dNmlegUGEMSGDRGb9
-         iNrJzn9sGjNOxwcbip9LJDJeqI/hue3HOygSJCLdg/ip9ODKmEGxghn7nPjsvOBGOYrE
-         AkdvWzAI2cybSF9SERtRv3noRs0jmL+ivkGED+wxA1n1TGuJ13lpRnxuLP9FNrAbPkg/
-         18EpzyfcPNBW9rGLh7N2EXmBqrp0DikvCIJr11DnhN5A2UyQKpZjxTfio/TEXpiv6Alt
-         8V4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWHm97V4gmsC/vmgXzIkGTZKcsUM31YT3wZcTgTzN6gtca/4ysY2vMmkliNtiSUl+rMYbinvHZ+BTjM/Mp0kpmAy8L5s990+kYYJME11w==
-X-Gm-Message-State: AOJu0Yz7yFzkSuewK3/mhwlBPgbSj8zqu8XRSOkeFle03jXTPHySMiXj
-	QxzT45nhaVr4o+nfmTx7g+U+I7h961C9Ta6GYEhvs6yV1cFqH8JiqWm1g15MTvTQ5wQwhMT/yrv
-	14tKRkXYz2Btphj10JVK7stI2ozyNUJSQFA09PjyafrdeR8DqAwEedU8=
-X-Google-Smtp-Source: AGHT+IFwqIAlIAaPoqZ9mYyeoyOw68HsY4uzYc7329qvgtFI9BPVks0/KISy/dNE+mk1ZQwyS76jJ6VBeW00aiQyGUD66Qjed4jE
+	s=arc-20240116; t=1714570926; c=relaxed/simple;
+	bh=PRe9JziAYd7Oekv6Bxx8TMGGJC66QjPnsc2sC/Dk61s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kqLaS2WQLk8aZ+9TwHGqf4Xo/bhIl4fS4Qyi/eOPQL8/Iz2O2P8nE2ogKU81ZbKWAsFmw5NeqBOraFyWUIOVqN+8bl/U0guKaqruQhWrQ8GgODR54byY5h4ftmQVXRIxHooePSboknPQBzrjQkWIZf/dKoM8yovRexn+C9xv+qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=SoVtLLGJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TkCvjX5p; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 1ADBC11400A8;
+	Wed,  1 May 2024 09:42:03 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 01 May 2024 09:42:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1714570923;
+	 x=1714657323; bh=tygaZVq4PloivL6PKL6UBSuUKd5G8T84EjzJZGAmu30=; b=
+	SoVtLLGJwb9+QlNlugu+ktJASrPT7j4zKY8Tu8FhpycUrDt9f00tF4gfDmKduwz6
+	7xDpXQdMKKMGaF2HcBRZLWERSrzjU+33BFsxo16UtzrpXl0W/D9vMDqymgZWNdjv
+	BRKRJE3RpIw0FpckZQtDn8qRbYGkCO84znr2ARtWCZKZ7tyvu2ydj2E3xPRRvBdE
+	MF7XIaN3u8+2RoM6s07Q53KQJsIiC24+t+isOKi3YH316S3kMrXGe+0RG49zk7+S
+	24MoFeNWYQImwWA6EuGzrRJNo85oL4PA+SL9uAg0esDpwQfq1GGcoE/3Tndd4bCj
+	jxG8BX24kaY+jFH87t0vvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1714570923; x=
+	1714657323; bh=tygaZVq4PloivL6PKL6UBSuUKd5G8T84EjzJZGAmu30=; b=T
+	kCvjX5pjq3yDfFlOndr6eDu4Li5gQdtU5I+ZGkLzU70AZPyKwVvEVwFpwTWdyBH5
+	dzVg07zDyAGYyImH78Qtie1c9R/hYGvGmtbxz0+vuVHnO/TKsTkB9MlxxbZBEBAc
+	a6IlR5MK+SNy0axAg4AJyYOcwzHP1zjSsTJqF1AwhC2XuKIcC7AdbLZ9e3aK/V+s
+	GkaLlo/tsukN4p60zkzkKcemYrAxqcxb8bkPXpq7fcYhjkhlzk5ZzhirHqgbwYfl
+	AWJgLmpf8CZyjp+9FSbgIhXYH8vFQllqdTYzZV0c9uWme+kXgXxiWavuzF1TZgQl
+	blsT0xLT2fOEpg6xQGiKQ==
+X-ME-Sender: <xms:qkYyZnKVPoQoVHlJRWfzWK83aT6JGikjgM1FaL-DoFjDcRhrjcnR3Q>
+    <xme:qkYyZrIp-HFuByp5WI4742-1D3uRTncJeR52musV09EZLEZhUVi_H1lqr7Ta2OHD8
+    twT4ehYU9LU>
+X-ME-Received: <xmr:qkYyZvsEmD-EPNmFYLkRQuix8izrhMH6H_FzAqx5NL0Ea71YgwNnkIRlmGDKX5K4WspwVeuLNGf9zAMUTosbb32II6-99SnYgPScDaY2lbCESgBPmGXTf2EC>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdduhedguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepkfgr
+    nhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrh
+    hnpeefkefhgeeigeetleffgeelteejkeduvdfhheejhfehueeitdehuefhkeeukeffheen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvg
+    hnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:qkYyZgYNey5oxNfSEzZTd8plULSaM2nDWxUS8zh7ZF81euIosI7Fkg>
+    <xmx:qkYyZuaz48nYFOyn7m0yee1nxsaeNo93L65aDL41FlPjVetKmAbhrw>
+    <xmx:qkYyZkDZglbXqfjWpcIIixgB2zfyOVTL16PXypuEIlUYF8i5ybizBw>
+    <xmx:qkYyZsaRg57a7t7QMSlXsHBksfGSGhwZghVoBQwzP781DT_UUrPG8A>
+    <xmx:q0YyZkl7JQfKvy959ZcIHZPkpdHsr7cbQ5xRgIke86IgCT7Rq5SWXGFD>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 1 May 2024 09:41:58 -0400 (EDT)
+Message-ID: <52eab48d-9098-4609-895b-6bed5953cc6c@themaw.net>
+Date: Wed, 1 May 2024 21:41:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2a:b0:36c:5029:1925 with SMTP id
- m10-20020a056e021c2a00b0036c50291925mr119176ilh.0.1714567885259; Wed, 01 May
- 2024 05:51:25 -0700 (PDT)
-Date: Wed, 01 May 2024 05:51:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000be9914061763f17a@google.com>
-Subject: [syzbot] [ntfs3?] BUG: unable to handle kernel NULL pointer
- dereference in attr_make_nonresident
-From: syzbot <syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 1/1] fs/namespace: defer RCU sync for MNT_DETACH umount
+To: Lucas Karpinski <lkarpins@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alexl@redhat.com, echanude@redhat.com,
+ ikent@redhat.com, ahalaney@redhat.com
+References: <20240426195429.28547-1-lkarpins@redhat.com>
+ <20240426195429.28547-2-lkarpins@redhat.com> <20240426200941.GP2118490@ZenIV>
+ <6rp73lih7g2b7i5rhsztwc66quq6fi3mesel52uavvt7uhfzlf@6rytjc7gb2tj>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <6rp73lih7g2b7i5rhsztwc66quq6fi3mesel52uavvt7uhfzlf@6rytjc7gb2tj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 30/4/24 21:25, Lucas Karpinski wrote:
+> On Fri, Apr 26, 2024 at 09:09:41PM +0100, Al Viro wrote:
+>>> +		call_rcu(&drelease->rcu, delayed_mount_release);
+>> ... which is a bad idea, since call_rcu() callbacks are run
+>> from interrupt context.  Which makes blocking in them a problem.
+>>
+> Thanks for the quick review.
+>
+> Documentation/RCU/checklist.rst suggests switching to queue_rcu_work()
+> function in scenarios where the callback function can block. This seems
+> like it would fix the issue you found, while still providing similar
+> performance improvements.
 
-syzbot found the following issue on:
+You know I've been looking at this and you can see that mntput() will 
+just call
 
-HEAD commit:    bb7a2467e6be Add linux-next specific files for 20240426
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16152fd8980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6a0288262dd108
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b6ed16da1077f45bc8e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1425307f180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129b956b180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5175af7dda64/disk-bb7a2467.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/70db0462e868/vmlinux-bb7a2467.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3217fb825698/bzImage-bb7a2467.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5f3094e29bc3/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com
-
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 8000000078309067 P4D 8000000078309067 PUD 7b739067 PMD 0 
-Oops: Oops: 0010 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 10600 Comm: syz-executor757 Not tainted 6.9.0-rc5-next-20240426-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc9000df7f698 EFLAGS: 00010282
-RAX: 1ffffffff17f906b RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffea0001dd3440 RDI: ffff8880785f9a98
-RBP: ffffc9000df7f800 R08: ffffffff81cfce8a R09: 1ffffd40003ba688
-R10: dffffc0000000000 R11: 0000000000000000 R12: ffff888022288170
-R13: ffff888022288188 R14: ffffea0001dd3440 R15: 1ffff92001befee8
-FS:  00007fb8369ff6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000007c042000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- attr_make_nonresident+0xa49/0xe80 fs/ntfs3/attrib.c:301
- attr_set_size_res fs/ntfs3/attrib.c:371 [inline]
- attr_set_size+0x711/0x4290 fs/ntfs3/attrib.c:432
- ntfs_set_size+0x161/0x200 fs/ntfs3/inode.c:851
- ntfs_extend+0x16d/0x4a0 fs/ntfs3/file.c:335
- ntfs_file_write_iter+0x3ea/0x770 fs/ntfs3/file.c:1124
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb837280a29
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb8369ff168 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fb8373276f8 RCX: 00007fb837280a29
-RDX: 000000000000fea7 RSI: 0000000020000200 RDI: 0000000000000004
-RBP: 00007fb8373276f0 R08: 00007ffc182e95a7 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb8373276fc
-R13: 000000000000006e R14: 00007ffc182e94c0 R15: 00007ffc182e95a8
- </TASK>
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 0000000000000000 ]---
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc9000df7f698 EFLAGS: 00010282
-RAX: 1ffffffff17f906b RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffea0001dd3440 RDI: ffff8880785f9a98
-RBP: ffffc9000df7f800 R08: ffffffff81cfce8a R09: 1ffffd40003ba688
-R10: dffffc0000000000 R11: 0000000000000000 R12: ffff888022288170
-R13: ffff888022288188 R14: ffffea0001dd3440 R15: 1ffff92001befee8
-FS:  00007fb8369ff6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000007c042000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+mntput_no_expire() which queues work to do the bulk of the work and returns.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+So I'm wondering what would happen to the timing if you simply didn't 
+call the
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+rcu wait for the lazy umount case and left everything else as it is.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Ian
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
