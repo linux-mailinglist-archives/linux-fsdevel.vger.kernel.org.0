@@ -1,84 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-18443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35BF8B8EDF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 19:15:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DEFB8B8EEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 19:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897681F21BF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 17:15:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36282B20F47
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 17:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E744118654;
-	Wed,  1 May 2024 17:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7447418C1A;
+	Wed,  1 May 2024 17:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7uclbwB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsAlGXHL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067D118039;
-	Wed,  1 May 2024 17:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DC018030;
+	Wed,  1 May 2024 17:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714583722; cv=none; b=MK4qGGwkiht5ZViuc/4gDrGl3c9fYDgilKY+dJPst0QXHZ4DLlxJQYgh4NFEOkVQynRedFcukej6VdFlGI+G1aadLTfGBdJNXu3JD4Vp0KFLkhGT28MCS0dakUb1KIUPmDCspAaxVRPlrsZdxOlDrjOfAi8eWbmTEybfC74kKsI=
+	t=1714583940; cv=none; b=hQ7eXL6KbO/PCBUv8sDNoCJ5m+M9vwYtxgQg8kRdIt4nRQNf11EbvNAvPkHI+cRo0mtAnOaHr3fn7OqZd5b9OSfnNVv2aY2N5nVuZ2kG9osYXhj0wuhoBHUiqa86MuQ8pqUwAQdjiL6mX77SzHBWSq4UbopiybiilRDwU+ZTRAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714583722; c=relaxed/simple;
-	bh=ICW05E2U/Zg2RncpT9jvyC2HtZg9MVgRhGObpqa0WG4=;
+	s=arc-20240116; t=1714583940; c=relaxed/simple;
+	bh=A4CNBvfCgBvtTve4c3x3JmtcP/T/LBzmR3wc5V/73Yc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gO8ufz/3HUQG65Xi1jdPExkR5+4tQpySiJfY5dCXismU41BlLXPzTRlEZLVV5ytYY1LbzOBMnyR2vgZtA4JRvBh79+IaUEj2cp7N9wQ6n5QKJjwK/MPpozUEcRd/7Yp9VNrRcZVL0+9WHe/Xnc6468CP8qwGjUTg9HL7odjvWLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7uclbwB; arc=none smtp.client-ip=209.85.215.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0TZT5c++uWrF2uIm/44WOcfnFbE6IkiYApm+f8WRsUPX7iym+v7mEoY9cOr4OVuFib2kgq0DMzmYHCMzv8t2nzdtCSgWmiKPmzq6npgDMcbcUNH/k61nJejSaoDRkts8Ue4yD4VbUaNOMTcNG6BBrmOIgWatV1fLrVb+L+Y6d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsAlGXHL; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-60c49bdbcd3so2797502a12.0;
-        Wed, 01 May 2024 10:15:20 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ac9b225a91so5419694a91.2;
+        Wed, 01 May 2024 10:18:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714583720; x=1715188520; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714583939; x=1715188739; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Y1sTmKUbY7Erj5o9iGRoOkNetvvPf7EoiqrNttYoous=;
-        b=Z7uclbwBBVcb+0uAnPoq5m7S2e48YPRtPMOdrAnkyWVT1AMXAZpYhfXsmSqUQuEts5
-         ne+ZdHhxRlPYg81UHsBaQEemrKWmaa1QLqCC7H1DyGsKu/eFH8sNtt7aY3uLCYlyioo9
-         9Q3E8nvkXvZE+m18azx0Ru6azEmWVR7SKzS6jCGT1GyCIWHxIvUIKk09BfPWRFno2/aB
-         6xPrAZApePaZhuXsigZXeRNtCINkXpPTSHrb1ATiT90NGZ6wYXRx9QGZ+WI89c1PiCfD
-         ffJVsT6Yrvc3/fwS8ghslk8WhuGi+TOFDtOBLQeKht2O1svyXFsIzz9mUEftTcJYzKLE
-         0yTA==
+        bh=m07c5Fi/jiQW9GTxIy2Gh/ikvj0HKOu2QlszwrphLI0=;
+        b=XsAlGXHLlD0V/32kJDh2a7CBY8CnkinUAKJvM+jkq6QTy9mQk24Ia2XF3liyIAyPEt
+         kQ36w3XHJCn7Urvib/ys3WO7jgpletvo3ezoy6Wnql+8YVxZZxYm5IXgpvDK/Eo2ZGhP
+         a6wCU+vZNr3gqGcGZeBpDJgKiMOhqB6l3wdGwle1tADGdDNLlRQaCVBiTyrbMCih6048
+         dag1k9SaJc/Mp1ETFUI0y9YNRlccl/2x+MnTgsL08mV6/XOfXxNEPTl+wpkZC+fTGdbV
+         +Yw2MvabHEFAF8/Nybt06/0yV7I0Hzo3ZmqukWgE8nlhy0ArhmeSrPN75LBm2w1mpTU3
+         Japg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714583720; x=1715188520;
+        d=1e100.net; s=20230601; t=1714583939; x=1715188739;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y1sTmKUbY7Erj5o9iGRoOkNetvvPf7EoiqrNttYoous=;
-        b=rC7jMKOn/AK3jTeKPWRRg1ntBPBMBJrYs+S7MpQoSRQAhk6cgL3P15SUyo+KSMRq0B
-         hgGb+LZunccePLtAtShBCJNwzXyXZKagFO4VOpNCntBAy0N0CC50MBfeqBWNpiDHUimR
-         91AFlZkwjL4w4VjM81EVUk5BEVDbTWwhqH2XERMAEY2EUjE4qkNwe7BU4XOg3KIOZHQL
-         lb/i8SKHEgfu2udxhlxter5OdGvQ/c3XYh0x/DCGBvggMrto+K2VsfZwXpBhuIt3fyvy
-         5NyL2fswQZxN7jTpyZBy25aoQLa0YNvCdx9MDe0KTsYy+yQs7NaeOS8z4XXnl1sd6KML
-         cTGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDuObJf4dmmU0tA65lKa8gzUYdY2Ca9MyhvNUN/SryGb+gU8DvvaUk3FIp5jLeUeI1AJt9/+Z9VrcGWwCtwePw/VWhsyRhTwwJfEe1nuhlyLPmrvJAmiBXBS3SSbveWlHTBbU2aTI5XoSGjQ==
-X-Gm-Message-State: AOJu0YwWPuOMQNsf+uzPd8Q8tc12UP5w7y0hJkyrEXs5npnqklvGHBY3
-	DNw5ttyW8nGrpFhvey3yvPUZOJlzPIW6D0ojdLi0pXDcrynehwMhoLvADHLc
-X-Google-Smtp-Source: AGHT+IHToyNU976i2/tu4fzc25QnAIFb7zURgJSBPg02WmcCuaOef8SkHUtdI0ud/W4lwlBRwqzu8w==
-X-Received: by 2002:a17:90a:d48b:b0:2a2:1900:493 with SMTP id s11-20020a17090ad48b00b002a219000493mr2783537pju.40.1714583720163;
-        Wed, 01 May 2024 10:15:20 -0700 (PDT)
+        bh=m07c5Fi/jiQW9GTxIy2Gh/ikvj0HKOu2QlszwrphLI0=;
+        b=VRNIwpRNCFEyjEJvHS/7TQ0d5qlg8AAE9WgE55V1Q606pReLYcUs2ZpFm8ugxoa6yP
+         FF1JILxSx+D2X/WfFtYhE2vy1YijpnjL+bVhf0FZL/5GV3Rjn4G4e7zLIJAgHx0oskyE
+         3WIiZVmQrhU5d5cdjuzqGiS7hG0ZHwgUJANV2shhLBdOr2ilIqVBAjA733ktix2RrwhU
+         Mh9NafgcuoZBUGsUafS+reSrhtF1tvzhtjPMEYho0oiyzXOxAZ78OsPFKdRgJtlThg6C
+         E0JrVysFwVG2NhpGUF/6pvafB468InHcvwbH+gePDm7fre62+i9rEo8rkJs5xQkTXuSz
+         +kOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWp8i/QcIdxGHaNs0ZeYFk4pzFobfThGrB7FqjMh0YB31dpOgDz860gSkwYkuhTxcZnIJ71mVZRFTD0gzlQw/AJVUai7lH9wYLJ0mKOaV8U7oytkKhPWa4rv8PtFQTRneD+RrubCtac6vVPnw==
+X-Gm-Message-State: AOJu0Ywn0pX9N4mMDz9ftrs19sGJjaJ7uDylq4r0N9hvlUgSCUur4qOZ
+	akXVw1d1k87lzlxYta/or1x6aWbBSzetRrWv33qBqNBhbn2/yh/y
+X-Google-Smtp-Source: AGHT+IEM3V8NcvdrAmWIJZjePi+DWealRmXF6lmrLSb3GFNx1agPl7w6QxPM1Kw8esx4uAxxYweJOw==
+X-Received: by 2002:a17:90b:602:b0:2b1:535f:c3dc with SMTP id gb2-20020a17090b060200b002b1535fc3dcmr3293351pjb.26.1714583938764;
+        Wed, 01 May 2024 10:18:58 -0700 (PDT)
 Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id c20-20020a17090ab29400b002b2927bf5b6sm1592177pjr.16.2024.05.01.10.15.19
+        by smtp.gmail.com with ESMTPSA id o9-20020a17090aac0900b002ad059491f6sm1572839pjq.5.2024.05.01.10.18.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 10:15:19 -0700 (PDT)
+        Wed, 01 May 2024 10:18:58 -0700 (PDT)
 Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 1 May 2024 07:15:18 -1000
+Date: Wed, 1 May 2024 07:18:57 -1000
 From: Tejun Heo <tj@kernel.org>
 To: Kemeng Shi <shikemeng@huaweicloud.com>
 Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/10] writeback: Factor out code of freerun to remove
- repeated code
-Message-ID: <ZjJ4pjm9073R-LH0@slm.duckdns.org>
+Subject: Re: [PATCH 07/10] writeback: factor out wb_dirty_freerun to remove
+ more repeated freerun code
+Message-ID: <ZjJ5gfIXBmpKMj9c@slm.duckdns.org>
 References: <20240429034738.138609-1-shikemeng@huaweicloud.com>
- <20240429034738.138609-7-shikemeng@huaweicloud.com>
+ <20240429034738.138609-8-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,29 +87,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240429034738.138609-7-shikemeng@huaweicloud.com>
+In-Reply-To: <20240429034738.138609-8-shikemeng@huaweicloud.com>
 
-On Mon, Apr 29, 2024 at 11:47:34AM +0800, Kemeng Shi wrote:
-> Factor out code of freerun into new helper functions domain_poll_intv and
-> domain_dirty_freerun to remove repeated code.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+On Mon, Apr 29, 2024 at 11:47:35AM +0800, Kemeng Shi wrote:
+...
+> +static void wb_dirty_freerun(struct dirty_throttle_control *dtc,
+> +			     bool strictlimit)
+> +{
+...
+> +	/*
+> +	 * LOCAL_THROTTLE tasks must not be throttled when below the per-wb
+> +	 * freerun ceiling.
+> +	 */
+> +	if (!(current->flags & PF_LOCAL_THROTTLE))
+> +		return;
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Shouldn't this set free_run to true?
 
-with one nit:
-
-> +/*
-> + * Throttle it only when the background writeback cannot
-> + * catch-up. This avoids (excessively) small writeouts
-> + * when the wb limits are ramping up in case of !strictlimit.
-> + *
-> + * In strictlimit case make decision based on the wb counters
-> + * and limits. Small writeouts when the wb limits are ramping
-> + * up are the price we consciously pay for strictlimit-ing.
-> + */
-
-Can you please reflow the above to 80col or at least seventy something?
+Also, wouldn't it be better if these functions return bool instead of
+recording the result in dtc->freerun?
 
 Thanks.
 
