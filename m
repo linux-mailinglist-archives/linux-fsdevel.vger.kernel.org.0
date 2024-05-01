@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-18449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C428B91A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 00:35:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44508B91AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 00:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2821F22567
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 22:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211601C2148A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 22:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621C012D76F;
-	Wed,  1 May 2024 22:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EA612D76F;
+	Wed,  1 May 2024 22:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jormAfGI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1IUss+J"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82BC1E481;
-	Wed,  1 May 2024 22:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F64E1E481;
+	Wed,  1 May 2024 22:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714602920; cv=none; b=ppv2huELm0B5ISVAPXhlWVpeotWry/x3d8tPReZtHsNpjXOtBDdM1iRUMDBw1M/TShZRcuB+WeJi75WJZfRoBFDaIkFwEqaZZdIHYc0sX2A+5QHUnctJ7XMNGkT8GXctXpngFfwXt16YejF0LK+gCkv+lKA0NFhXY/aNcmtGcRc=
+	t=1714603076; cv=none; b=fSS/b7zKNSDvNu8QlkV05k+sSqkOmKElnWEImNLPGfU4z9EzzmpvBgvu0EbmQ4aEdGRMBXwJxBciqaKuTaMAnWyVFRN/u/coidEHJNJYQPhASnPdAU3S6ns5ta/fuVNY3sjsjk44A2EW9dH12moAbSausqA0I0UNZYNlMJrUSQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714602920; c=relaxed/simple;
-	bh=IvBt0AnsQRK03r72S9Hzs8jvLYj9n9tVLdaSRgQErx4=;
+	s=arc-20240116; t=1714603076; c=relaxed/simple;
+	bh=z+zmvVARuPhrr08/Yvg9+EebAAa784VOK0GNsyhwW5U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TbeRwCESA2E4hl78lek6KGKHcWlKCRaRePvSMwYR2A7rhC5a+uXvudDu1bMMON92kH+2spRY0hjWmiyf3LNkPo9MV6izcgZL7dHjU9Zv06X/r1wMlk/fnKrYmjVtIb/dza30CijznjZj0dYjWbURZj9Glibj8dpYudF29oMF1dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jormAfGI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3453FC072AA;
-	Wed,  1 May 2024 22:35:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJDDl91ktu23kFLXP8diEvUbO6PopoLC0aOlJejbVqOHjhlUQiKTlkaywcXArCp5e5QkAD1cSjbPGQCSEcdKwgONXk6hdzL22HaATmrdKgT/bVkDmF3t3PQRv81YO2BMP2YCwAZ9XzWwIN6JhQ1E8WZ5HiGPEeNT1VLLYeVs3IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1IUss+J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEA3C072AA;
+	Wed,  1 May 2024 22:37:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714602920;
-	bh=IvBt0AnsQRK03r72S9Hzs8jvLYj9n9tVLdaSRgQErx4=;
+	s=k20201202; t=1714603076;
+	bh=z+zmvVARuPhrr08/Yvg9+EebAAa784VOK0GNsyhwW5U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jormAfGIONiIfCJxskjav5eEAg6QLdko/VnQ/DQkYE6ugfOpTMtautWR+RNrjiBfO
-	 hl8Ap7Hq+ieaGmv2/zM7IRNkutkGI8mL2QGGERrCE1EXoa6gFAcOj2YBVaB6LYhxww
-	 WR/DfeNCFvEKd8z6LqWjZfTtJg1ssSjG6UYxW7OXXAQiEnXy5BAdgfbYFw6biKGwX/
-	 w1ipIOuZa0RsHtrGuOHwulDJHmY3MG+GBQv6dP9ReorSmrpqmPbdJS3NNK4MLd5TD9
-	 513KYjcgbUhPLK9XdUKqKtUmwkWuiSQniQQ+wTYzTm2RHXzse4/wVFwk4/ffwfSUoH
-	 5q7pC/cK3hFzQ==
-Date: Wed, 1 May 2024 15:35:19 -0700
+	b=E1IUss+JjJpvRl0NeSTK3RispOu88/CPlJ3Ao5dlwMb1V/Z8GPCseRuIx2ijp1aDa
+	 0YQGLAvqXFnaFRSlmJPSPcwciSa5bzVemBvqFgBwwlFHbzeBQYKwA3QZ24eQt7W9qf
+	 A754ve3ZyD1Yh5PO8IO1pYVPsJsWX4oL4l6tLxUHxYpSQlsGYLXVYYU+tRGol3p+Ui
+	 WEcIn1QzHXoM7PrKq+/lno8SF9STznvLGkA7JrkMhqP+hXq5XRkHEUsSjoUrUNR7kN
+	 oFORxbpor/U7fq6ogShmfjE2Hz1mFWQ2cwSWxstYOe0XzNSKIV+v7u7yPkOmxIOVe5
+	 Az6yTui5rVIKw==
+Date: Wed, 1 May 2024 15:37:55 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Christoph Hellwig <hch@infradead.org>
-Cc: aalbersh@redhat.com, ebiggers@kernel.org, linux-xfs@vger.kernel.org,
+Cc: aalbersh@redhat.com, ebiggers@kernel.org,
+	Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
 	alexl@redhat.com, walters@verbum.org, fsverity@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/18] fsverity: support block-based Merkle tree caching
-Message-ID: <20240501223519.GG360919@frogsfrogsfrogs>
+Subject: Re: [PATCH 18/18] iomap: integrate fs-verity verification into
+ iomap's read path
+Message-ID: <20240501223755.GH360919@frogsfrogsfrogs>
 References: <171444679542.955480.18087310571597618350.stgit@frogsfrogsfrogs>
- <171444679658.955480.4637262867075831070.stgit@frogsfrogsfrogs>
- <ZjHw6wt3K164hOBr@infradead.org>
+ <171444679890.955480.13343949435701450583.stgit@frogsfrogsfrogs>
+ <ZjHq_XiLQnXO_pqo@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,35 +62,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjHw6wt3K164hOBr@infradead.org>
+In-Reply-To: <ZjHq_XiLQnXO_pqo@infradead.org>
 
-On Wed, May 01, 2024 at 12:36:11AM -0700, Christoph Hellwig wrote:
-> > @@ -377,6 +391,19 @@ int fsverity_read_merkle_tree_block(struct inode *inode,
-> >  
-> >  	block->pos = pos;
-> >  	block->size = params->block_size;
-> > +	block->verified = false;
-> > +
-> > +	if (vops->read_merkle_tree_block) {
-> > +		struct fsverity_readmerkle req = {
-> > +			.inode = inode,
-> > +			.ra_bytes = ra_bytes,
-> > +		};
-> > +
-> > +		err = vops->read_merkle_tree_block(&req, block);
-> > +		if (err)
-> > +			goto bad;
-> > +		return 0;
+On Wed, May 01, 2024 at 12:10:53AM -0700, Christoph Hellwig wrote:
+> On Mon, Apr 29, 2024 at 08:24:06PM -0700, Darrick J. Wong wrote:
+> > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > 
+> > This patch adds fs-verity verification into iomap's read path. After
+> > BIO's io operation is complete the data are verified against
+> > fs-verity's Merkle tree. Verification work is done in a separate
+> > workqueue.
+> > 
+> > The read path ioend iomap_read_ioend are stored side by side with
+> > BIOs if FS_VERITY is enabled.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> I still don't understand why we're keeping two interfaces instead of
-> providing a read through pagecache helper that implements the
-> ->read_block interface.  That makes the interface really hard to follow
-> and feel rather ad-hoc.  I also have vague memories of providing such a
-> refactoring a long time ago.
+> Not sure where my signoff is coming from.  It looks pretty similar to
+> a patch I sent a long time ago, but apparently it's been modified enough
+> to drop my authorship, in whih case my signoff should be dropped as
+> well.
 
-Got a link?  This is the first I've heard of this, but TBH I've been
-ignoring a /lot/ of things trying to get online repair merged (thank
-you!) over the past months...
+Removed.
 
---D
+---D
 
