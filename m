@@ -1,86 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-18447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75398B9062
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 22:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 901288B91A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 00:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A01B20EE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 20:05:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D6D0B22AD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 22:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88429161B6A;
-	Wed,  1 May 2024 20:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14F412D76F;
+	Wed,  1 May 2024 22:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OVfwXoDu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4963b2x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B1A16191B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 20:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4382B1E481;
+	Wed,  1 May 2024 22:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714593901; cv=none; b=BbyhPMOv3o8T1gw7RILcI7L1IBpMrQrS9DyHpdNLyoRyzC4aoP6qczOACa9zioEArmx8YSOvi3U0NkJ883MysYt63ovo4hFB5uH5YUxdK103narvKeSnjxrVXxLUh6kZ9CD0O4jugaKhaCe+luVF7bpda6Kl4aByAcvvYazYv1g=
+	t=1714602784; cv=none; b=bdBGw6m1deOq7H82qtIdZf5cH4qsvcgYfqdFxMnEas4GSn2E35hsZjJ2jIjMuU7vwBcFzCkagzNtBQV0DhGMvQ2xtel3ogBh75qDhJTYCtXPAcribHZ+Gty49Q/W+R/M0Ua2rjEF/ts84x935U9t1jNDQ7SEOA8L0MLMqbbbFAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714593901; c=relaxed/simple;
-	bh=IErg5JgZ1tt5Cj7bOCZ88y1HXdEMOV4/p7EdFtr+ouw=;
+	s=arc-20240116; t=1714602784; c=relaxed/simple;
+	bh=SXUFuaOJoSac9lyY+40DWv0sbSS1T9Uq9O7o2TAjUR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UMCxUuGB0z2MteN2UbGl9qjbROejPMSH9sGuDgYo5tt1Gtbgp8rOsfEM6p2hiCETRtMSXNNaw/bL6OGzJsAj/BFXNO0y1FtggxVf7m2orvmOOlkSqxRb+xZP97zU3V5xLZ3ca3xsI5jFD77LWxEiDBFFFkwY9cNppPSeFrzkCgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OVfwXoDu; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5f807d941c4so5711184a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2024 13:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714593897; x=1715198697; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o6B3Xf7Y8DtHU8X6ec9fpWeWDMwWUAohTamqd+6jpKk=;
-        b=OVfwXoDuMvIqm5QQv0xnKq1/+um4wWVHqkU5H3mB9j4CdpAEi85iebfhytTUbygf5E
-         KrKk2SpgGv7Oc7aQZOGNt+LZaAtYNjg36ElUOlTXICrWQ7yEkFpl10u/FeYoIRns1Fll
-         FNBlBkkylAHau8vIJNYzcWHwUHaUzxakVHQjk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714593897; x=1715198697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6B3Xf7Y8DtHU8X6ec9fpWeWDMwWUAohTamqd+6jpKk=;
-        b=V72x5ljfvRIfT3q1VyMy0LKWbm1MVvaRjNbNSIFjnprn8l/ztNCK2wvMLFzxYgsFDb
-         ued+Itwc32YhiEAF7WjgFf9GOJw0OjHdza9ykhFhKwHpez8ygF8WjdRX6tPwzP8PXrwy
-         LHEuksdk2X0piTm3k5sYMyvU5lILLXwxubCGBVdA7iI75//Gg7MEAUm005ZOwIwuMqtK
-         8XpMKUBAMstK/0YbUltQIceVIVXRt5rjToG6XtGbVKnj/pq4Qllwl0L7yTfgblBHFj9G
-         knvi/7hu/0gF7UzjWAiuQ50MnanVYZPSXyQlN0YbtalfjR/id5ZQb/RvrrLHYs28IS5g
-         MEbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRdz9wwYpWXvwN1UVcu1de2izyYzmCPAXM+uyfiyuBZbOcP4A3dqNEKsHe/AROPYcYm2LzBXMDS5Vw84ecXouekqRW6tt+qzWMuyp0vA==
-X-Gm-Message-State: AOJu0Yx7M2DiENIf1q6/hh8J8HnAwALHX2Rpe8D9TlEu9ASf8SKEHc8R
-	kNWq4dEQj03xrVAYSqkuTYRWKnnBxGRqGUylFP0DD0eFS/fekaQRspFHgJPMBA==
-X-Google-Smtp-Source: AGHT+IFueDV9pgqBTe9WW+kzPRkaGYU9e4IIONIKkDrAtl9sg/iZA6URogFxsjQdrbrnVvd332CkkA==
-X-Received: by 2002:a17:90b:35c9:b0:2b2:aac3:fc2f with SMTP id nb9-20020a17090b35c900b002b2aac3fc2fmr4036614pjb.18.1714593897495;
-        Wed, 01 May 2024 13:04:57 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id nw10-20020a17090b254a00b002b0e8d4c426sm1729700pjb.11.2024.05.01.13.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 13:04:57 -0700 (PDT)
-Date: Wed, 1 May 2024 13:04:56 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-security-module <linux-security-module@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-Message-ID: <202405011257.E590171@keescook>
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
- <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
- <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
- <202402070631.7B39C4E8@keescook>
- <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
- <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
- <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k76KJ83iRrJjmZqjuLB4G9uKSqASr5QyJjMbyo1CAm7v6iIdNv3ECSl1R0GMCayKjkyM1ndwFFoft7KGmsxU5ssVLL+dovTUDey7/ZGxKHKWVSU/iW07VKBO0aND+KoNhTgT1oGiK+X29Edwgol6/g9Ll56o+6/GhWIGh7rxQHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4963b2x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10AC0C072AA;
+	Wed,  1 May 2024 22:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714602784;
+	bh=SXUFuaOJoSac9lyY+40DWv0sbSS1T9Uq9O7o2TAjUR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t4963b2xT5uS1LxZd3jXl14nSt5FL/Ad6apgV5Wcj6LwRXa5IYbS247mYVGMmfxdt
+	 ui55y7CbF3lDMqNWloT3jnvmTwdPZR5+Bujot0HLehDNaP3n9hzMrpUzhbMlQAjanG
+	 yLygY8yDsv9xxU+ArZ5inB/Y6yd6FlWu2ipPttqzWobKR1gyYTYERbbAa754q5WmR8
+	 0BK4mLcYX2Bd68FBwBGlT0mUXxaQBYLtk4AC/h/NnO66AX99fkcgnxJzi5bROhFpvY
+	 UwXDrha3ilJG2hvGtikuEY/8IPsJ4+4K/kSylxbwH8DtcZi4OCMPIFv5LLuQOstjHz
+	 yvm0e29o9U2Fw==
+Date: Wed, 1 May 2024 15:33:03 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: aalbersh@redhat.com, ebiggers@kernel.org, linux-xfs@vger.kernel.org,
+	alexl@redhat.com, walters@verbum.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 03/18] fsverity: convert verification to use byte instead
+ of page offsets
+Message-ID: <20240501223303.GF360919@frogsfrogsfrogs>
+References: <171444679542.955480.18087310571597618350.stgit@frogsfrogsfrogs>
+ <171444679642.955480.14668034329027994356.stgit@frogsfrogsfrogs>
+ <ZjHwOm-BeLtY25wc@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,66 +61,99 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
+In-Reply-To: <ZjHwOm-BeLtY25wc@infradead.org>
 
-On Thu, Feb 15, 2024 at 11:33:32PM +0900, Tetsuo Handa wrote:
-> On 2024/02/15 6:46, Paul Moore wrote:
-> >> To quickly summarize, there are two paths forward that I believe are
-> >> acceptable from a LSM perspective, pick either one and send me an
-> >> updated patchset.
-> >>
-> >> 1. Rename the hook to security_bprm_free() and update the LSM hook
-> >> description as I mentioned earlier in this thread.
-> >>
-> >> 2. Rename the hook to security_execve_revert(), move it into the
-> >> execve related functions, and update the LSM hook description to
-> >> reflect that this hook is for reverting execve related changes to the
-> >> current task's internal LSM state beyond what is possible via the
-> >> credential hooks.
-> > 
-> > Hi Tetsuo, I just wanted to check on this and see if you've been able
-> > to make any progress?
-> > 
+On Wed, May 01, 2024 at 12:33:14AM -0700, Christoph Hellwig wrote:
+> > +	const u64 end_pos = min(pos + length, vi->tree_params.tree_size);
+> > +	struct backing_dev_info *bdi = inode->i_sb->s_bdi;
+> > +	const u64 max_ra_bytes = min((u64)bdi->io_pages << PAGE_SHIFT,
+> > +				     ULONG_MAX);
+> > +	const struct merkle_tree_params *params = &vi->tree_params;
 > 
-> I'm fine with either approach. Just worrying that someone doesn't like
-> overhead of unconditionally calling security_bprm_free() hook.
+> bdi->io_pages is really a VM readahead concept.  I know this is existing
+> code, but can we rething why this is even used here?
 
-With the coming static calls series, this concern will delightfully go
-away. :)
+I would get rid of it entirely for the merkle-by-block case, since we'd
+have to walk the xattr tree again just to find the next block.  XFS
+ignores the readahead value entirely.
 
-> If everyone is fine with below one, I'll post v4 patchset.
+I think this only makes sense for the merkle-by-page case, and only
+because ext4 and friends are stuffing the merkle data in the posteof
+parts of the file mapping.
 
-I'm okay with it being security_bprm_free(). One question I had was how
-Tomoyo deals with it? I was depending on the earlier hook only being
-called in a failure path.
+And even then, shouldn't we figure out the amount of readahead going on
+and only ask for enough readahead of the merkle tree to satisfy that
+readahead?
 
-> [...]
-> @@ -1530,6 +1530,7 @@ static void free_bprm(struct linux_binprm *bprm)
->  		kfree(bprm->interp);
->  	kfree(bprm->fdpath);
->  	kfree(bprm);
-> +	security_bprm_free();
->  }
+> > +	unsigned int offs_in_block = pos & (params->block_size - 1);
+> >  	int retval = 0;
+> >  	int err = 0;
+> >  
+> > +	 * Iterate through each Merkle tree block in the requested range and
+> > +	 * copy the requested portion to userspace. Note that we are returning
+> > +	 * a byte stream.
+> >  	 */
+> > +	while (pos < end_pos) {
+> > +		unsigned long ra_bytes;
+> > +		unsigned int bytes_to_copy;
+> > +		struct fsverity_blockbuf block = { };
+> >  
+> > +		ra_bytes = min_t(unsigned long, end_pos - pos, max_ra_bytes);
+> > +		bytes_to_copy = min_t(u64, end_pos - pos,
+> > +				      params->block_size - offs_in_block);
+> > +
+> > +		err = fsverity_read_merkle_tree_block(inode, &vi->tree_params,
+> > +						      pos - offs_in_block,
+> > +						      ra_bytes, &block);
+> 
+> Maybe it's just me, but isn't passing a byte offset to a read...block
+> routine a bit weird and this should operate on the block number instead?
 
-I'm fine with security_bprm_free(), but this needs to be moved to the
-start of free_bprm(), and to pass the bprm itself. This is the pattern we
-use for all the other "free" hooks. (Though in this case we don't attach
-any security context to the brpm, but there may be state of interest in
-it.) i.e.:
+I would think so, but here's the thing -- the write_merkle_tree_block
+functions get passed pos and length in units of bytes.  Maybe fsverity
+should clean be passing (blockno, blocksize) to the read and write
+functions?  Eric said he could be persuaded to change it:
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 40073142288f..7ec13b104960 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1532,6 +1532,7 @@ static void do_close_execat(struct file *file)
- 
- static void free_bprm(struct linux_binprm *bprm)
- {
-+	security_bprm_free(bprm);
- 	if (bprm->mm) {
- 		acct_arg_size(bprm, 0);
- 		mmput(bprm->mm);
+https://lore.kernel.org/linux-xfs/20240307224903.GE1799@sol.localdomain/
 
--- 
-Kees Cook
+> > +		if (copy_to_user(buf, block.kaddr + offs_in_block, bytes_to_copy)) {
+> 
+> And the returned/passed value should be a kernel pointer to the start
+> of the in-memory copy of the block?
+> to 
+
+<shrug> This particular callsite is reading merkle data on behalf of an
+ioctl that exports data.  Maybe we want the filesystem's errors to be
+bounced up to userspace?
+
+> > +static bool is_hash_block_verified(struct inode *inode,
+> > +				   struct fsverity_blockbuf *block,
+> >  				   unsigned long hblock_idx)
+> 
+> Other fsverify code seems to use the (IMHO) much more readable
+> two-tab indentation for prototype continuations, maybe stick to that?
+
+I'll do that, if Eric says so. :)
+
+> >
+> >  {
+> > +	struct fsverity_info *vi = inode->i_verity_info;
+> > +	struct page *hpage = (struct page *)block->context;
+> 
+> block->context is a void pointer, no need for casting it.
+
+Eric insisted on it:
+https://lore.kernel.org/linux-xfs/20240306035622.GA68962@sol.localdomain/
+
+> > +	for (; level > 0; level--)
+> > +		fsverity_drop_merkle_tree_block(inode, &hblocks[level - 1].block);
+> 
+> Overlh long line here.  But the loop kinda looks odd anyway with the
+> exta one off in the body instead of the loop.
+
+I /think/ that's a side effect of reusing the value of @level after the
+first loop fails as the initial conditions of the unwind loop.  AFAICT
+it doesn't leak, but it's not entirely straightforward.
+
+--D
 
