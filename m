@@ -1,89 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-18400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440A08B85B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 08:51:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913628B85B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 08:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74FF81C22063
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 06:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30481C2224F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 06:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B224D13B;
-	Wed,  1 May 2024 06:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4241E4C624;
+	Wed,  1 May 2024 06:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="JWy6cbG+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e0bw+T2J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E50243AAB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 06:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDD77F;
+	Wed,  1 May 2024 06:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714546280; cv=none; b=Z1Rw5ywlbR7zoMS9VyZbSxmRaUrAH93qZqDxjULaahzuDFjhE2G8ULmU7b95hmMRSan5aPJeATAR9Pq/0mH9HuaMEQPJPcATF1MuluExgA7OhwRb4uoaIX6S+s4s3RgboXPVfmWEnwiFIiVwhKFFPJyEzp69ZAvu3HTZ9ZNWym4=
+	t=1714546382; cv=none; b=Cgw2kHGL35ZFzRDVuYSbUy5Aaq1i0Y630NDNJ0qSWzZIkXTBIp3PfVCPLtpJ59cZ46e9KksKC8C42zbjupKFV88CyZbuZpDsyiWqa4joclxT8/PPT3ct1cBDN4KWjvWF+hMqNWPAM5+d/focpXnOMcdktT6wqPLqp43KEO+rTms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714546280; c=relaxed/simple;
-	bh=JHfTGE6XFrijEkQaAb+wvtESU483miAAM5IVbgbcahQ=;
+	s=arc-20240116; t=1714546382; c=relaxed/simple;
+	bh=x4/TCHTQ2CIiEU+IYP0xq4p/5qELX/wuD5aeJRl2faA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZjWlc3/kSin0J0yri3kIQC6Y7hBCWtbd7q01G4FZP5Q2p3oSnR1cZWNXn37pzXdRrEUnS4ssSTff5iGWkojN5nqao9rHzz6NRnqdP1br6DkPMZcgNr9722eYbumlwUofqaj332yvKCm3HHti2laVePepC9cz00RG5Hz0c1tPOO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=JWy6cbG+; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e83a2a4f2cso43148355ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 23:51:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714546279; x=1715151079; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dNZLyG6u4xUG/H7FZmJcRs0vrAIcDKlQHLf7CLLPwDA=;
-        b=JWy6cbG+1d0schy6VblnRV1b8O4/WRVEMZHSY9TLj4GUzMQmgIV51zl+D+cwb/04Vt
-         mWoruIvdADMNphspxbztAELyMdqn/4muC18D7P/YRyOJkj6DmEPgeeh8ROIuP7Sm1g3B
-         aEh6VWgMYzV+6PFI7UBTVuJnUzr5KV0+FZ3MAcYiZMBfVM+fEPqcxo37vtRq2b6zEMx/
-         IoxJqhGmORhFLrb3Stl22h5LimBfRQRbcCpR70eBJHh1YLlC8XYmIP/7BCTO+FEtFfFN
-         zB9psiBUymZXoTGmtATB9191oPfWTlPT3hrjTKNUwMXZhKvKqPzmOS8yYwuK1xFRvuyp
-         MzGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714546279; x=1715151079;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dNZLyG6u4xUG/H7FZmJcRs0vrAIcDKlQHLf7CLLPwDA=;
-        b=QoD2NLAtfgktThVNffjTi/1CcGnsDC5kgcdtfJmUEOwi85uNgCVGN1auc0D+Zl84JI
-         rvK2RQOJSS6SvPYDmYEZvc0dSUWgpRQ92b6meTvIQ+ECfxxClpGv+dQyL4g6FS8pgByY
-         0O7dDdZJX6IS5FOH3aGlpUZCY90lumgl6s1LuU+9nI5Pc9Wv5FApHY8R4ff0hr9RyaYO
-         4tafrQc5czz+f6uKFqn1/h/OB6rFoyjTZxyTTVB5LglIOlwtEYK1Fzm+bxwvF0ZEbO5M
-         Rc50N5asRMkeH3riTjpZCUChDpaLnqbaa9wSBv7sV8kKwKMCex7MmuxHXeRALPy9bTim
-         oEfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXog3qnDDfAfmMunpln5ogshA3jBHIxbwvY0xtBHOI/IaJ4F6uYc6OYuelfaTV07c4SS0i7xFRszg66SnNnQaaXciJM+K6dUm7EH5cdaw==
-X-Gm-Message-State: AOJu0YwmYRFmkodghmhgu9nMvPWU5PnGkX/zwTVSv5a8djKyEMP1xqiT
-	sPV+IcpKCYgSVRqNiKvYpbzPxJ9m3GRO7Oc2OWTdCbzdIjMNdtMH4TeIS0q/Ils=
-X-Google-Smtp-Source: AGHT+IG2Z/wySqd1NJnCFct2EGwo2kzRUh5XmAZi5hWfxL0w1v8Ms72FMH2GUKU/yvqUwnEtxfxs8g==
-X-Received: by 2002:a17:902:bb17:b0:1e2:bf94:487 with SMTP id im23-20020a170902bb1700b001e2bf940487mr1480759plb.57.1714546278723;
-        Tue, 30 Apr 2024 23:51:18 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id mi7-20020a170902fcc700b001e2c1740264sm23528976plb.252.2024.04.30.23.51.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 23:51:18 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1s23oB-00H5CZ-1A;
-	Wed, 01 May 2024 16:51:15 +1000
-Date: Wed, 1 May 2024 16:51:15 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, willy@infradead.org,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v4 02/34] ext4: check the extent status again before
- inserting delalloc block
-Message-ID: <ZjHmY6RoE3ILnsMv@dread.disaster.area>
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
- <20240410142948.2817554-3-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAZitSIpQwSGNCBb2cAtXgVI4kiYdAjzF3hLG9+6GyCRKIFto4ZSxki7zLzmVBjWvKlZ1UF8QQ+zsWtx0G9H0iRfPj0K5mgsO9LhPc6DT4HZhOcCnUaVj5z8BViYYySAqIf34fepfHjtFAfn4c3PQrdIeIsEzS7Hxjlqwm9I/g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e0bw+T2J; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6RPkpPeaalQOMJ0bQq2FXUwHcqT9dx3J+KM+uCCIqJ0=; b=e0bw+T2JiQLo8+byqe+bCNvSYG
+	sTnhgNwBQIEYj0I2LmpwGMuv5PLMPlwKPU3qXSRJv4ZLETblw2ieCa76SiTkrlpNBBrwlgY7Ex4DW
+	wjCW9UMj5wc+x5qH9CelPuAS4sqjvLNWkGNsDBwqimpWUQ/UKtoDQRKgREScg1IekjvP8jxw0+XIQ
+	8jXGs7YYOAHaqGcXizFfyCRFWCMcsO1I50wSouKpjSf9hqlB9T51taO7eexFFY4qFMgjoXGKiVIX3
+	ZeflSIwFD25lZ5bWlvf1YtUJ5RRawmPCuAvM70WJU+yY4qpJU2mnKHdiUN5Oj0GKcp4n7p0n4lljf
+	cGZZ6Ssw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s23ps-00000008i3q-3D3m;
+	Wed, 01 May 2024 06:53:00 +0000
+Date: Tue, 30 Apr 2024 23:53:00 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: aalbersh@redhat.com, ebiggers@kernel.org, linux-xfs@vger.kernel.org,
+	alexl@redhat.com, walters@verbum.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
+Message-ID: <ZjHmzBRVc3HcyX7-@infradead.org>
+References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
+ <171444680671.957659.2149857258719599236.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,53 +62,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240410142948.2817554-3-yi.zhang@huaweicloud.com>
+In-Reply-To: <171444680671.957659.2149857258719599236.stgit@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Apr 10, 2024 at 10:29:16PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Mon, Apr 29, 2024 at 08:28:48PM -0700, Darrick J. Wong wrote:
+> Within just this attr leaf block, there are 76 attr entries, but only 38
+> distinct hash values.  There are 415 merkle tree blocks for this file,
+> but we already have hash collisions.  This isn't good performance from
+> the standard da hash function because we're mostly shifting and rolling
+> zeroes around.
 > 
-> Now we lookup extent status entry without holding the i_data_sem before
-> inserting delalloc block, it works fine in buffered write path and
-> because it holds i_rwsem and folio lock, and the mmap path holds folio
-> lock, so the found extent locklessly couldn't be modified concurrently.
-> But it could be raced by fallocate since it allocate block whitout
-> holding i_rwsem and folio lock.
+> However, we don't even have to do that much work -- the merkle tree
+> block keys are themslves u64 values.  Truncate that value to 32 bits
+> (the size of xfs_dahash_t) and use that for the hash.  We won't have any
+> collisions between merkle tree blocks until that tree grows to 2^32nd
+> blocks.  On a 4k block filesystem, we won't hit that unless the file
+> contains more than 2^49 bytes, assuming sha256.
 > 
-> ext4_page_mkwrite()             ext4_fallocate()
->  block_page_mkwrite()
->   ext4_da_map_blocks()
->    //find hole in extent status tree
->                                  ext4_alloc_file_blocks()
->                                   ext4_map_blocks()
->                                    //allocate block and unwritten extent
->    ext4_insert_delayed_block()
->     ext4_da_reserve_space()
->      //reserve one more block
->     ext4_es_insert_delayed_block()
->      //drop unwritten extent and add delayed extent by mistake
+> As a side effect, the keys for merkle tree blocks get written out in
+> roughly sequential order, though I didn't observe any change in
+> performance.
 
-Shouldn't this be serialised by the file invalidation lock?  Hole
-punching via fallocate must do this to avoid data use-after-free
-bugs w.r.t racing page faults and all the other fallocate ops need
-to serialise page faults to avoid page cache level data corruption.
-Yet here we see a problem resulting from a fallocate operation
-racing with a page fault....
+This and the header hacks suggest to me that shoe horning the fsverity
+blocks into attrs just feels like the wrong approach.
 
-Ah, I see that the invalidation lock is only picked up deep inside
-ext4_punch_hole(), ext4_collapse_range(), ext4_insert_range() and
-ext4_zero_range(). They all do the same flush, lock, and dio wait
-preamble but each do it just a little bit differently. The allocation path does
-it just a little bit differently again and does not take the
-invalidate lock...
+They don't really behave like attrs, they aren't key/value paris that
+are separate, but a large amount of same sized blocks with logical
+indexing.  All that is actually nicely solved by the original fsverity
+used by ext4/f2fs, while we have to pile workarounds ontop of
+workarounds to make attrs work.
 
-Perhaps the ext4 fallocate code should be factored so that all the
-fallocate operations run the same flush, lock and wait code rather
-than having 5 slightly different copies of the same code?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
