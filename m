@@ -1,204 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-18394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE878B842B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 04:09:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F01E8B8479
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 05:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087E61C2234D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 02:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AC9283623
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 03:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE4110A19;
-	Wed,  1 May 2024 02:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5EF22097;
+	Wed,  1 May 2024 03:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwKAJDJs"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mIDxnyJF";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wQza1Uzp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E531101DB;
-	Wed,  1 May 2024 02:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714529365; cv=none; b=Yn8AGZO0VL5X6mDoNVKwbxSBm48Dp26B2oZCjZvIGrWVDFcDnub7d2idD7iO9PAAxYpdUctCMGY92+GY+5EkDtmXajnKkY9+ZlJDP5j+PeBHPN9cydZKKg5XAVMpxSG47WedaQrq7rui3XE/PyRq44mF+uNzjdt+bN54w3ArDI0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714529365; c=relaxed/simple;
-	bh=ySsZVAs1iEFo2LCjm6AMLn2MXUzr5ui6+DRDT1wzK5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j16QywS4Ylu6ALWdFOzFCLkT2/z6Bw+FDImk8J8j5eYvrtbncIgMXn3FTbQm62KiDHdosjVT1g5pc6LLIbxmgsQd5Njuh7olItYKctBmCKbBIxtqvNQHYbA5zWVzLkxFBVpr/9rqDwq/eGdD/c00q9wtl5O20WfeeS/ypwZyUn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwKAJDJs; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6ee135f6a21so1505940a34.2;
-        Tue, 30 Apr 2024 19:09:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497D053A9
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 03:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714533429; cv=fail; b=VaEssohIUdunGyC1rdhgL5HU5f7WWoR+u4t2yo7xJxFSEKzpqp5Xu1stZ3S63+nvpsrBa/+M8IC7ClvThEeqkQukWCAj7lyv8vwtI2qEIkhn2uFw6kp39IxMuYtJxyHf7aNxuGlCyzflLkkIiEAyxpzx+//xoyOp+GvlX2jDLU0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714533429; c=relaxed/simple;
+	bh=zVnYogvZMNrQ+eUGeezP+p0890vgC8gVOE26BLVqEdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=h0/hXLEArlREvMuBEojxGZdZzm5wiO1tnxxwwJkr8tXvy49J/NX0gtQLBNKEWnD3BA3rGRJ3B4dT9pUaDzWUD8tD10tNiVe7IHLoppVFEBVq/pjQx2j+2mQkAceBbkqBtUDerj8YNHXzlAI+Edtt8IQOiPwsBXAhdVWDdBamavI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mIDxnyJF; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wQza1Uzp; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4412hrP1019783;
+	Wed, 1 May 2024 03:17:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2023-11-20;
+ bh=+2KGBsQXnFMdbPJXbuEUi8z7Bqj9ehQMASvMTf/JEb8=;
+ b=mIDxnyJF+wN93Jezi1ca/spvDcvtvh0cvmahq3GI4kBUJDQz2BMkask1fgLTCty+LgQf
+ 6qVC78WNmVU6ZCUH6QWOJ2KbdI4n0KMdMWq6DgpHuiHjYgFYOHBemwYLsQNNupxyc+e+
+ 8a0o/NAFrGCWi8DLWXmPndK82vekQVwDpkM7kj4p8VW2Di0MLCTKEl1EqwpNBwjrku3M
+ iNKM2uOdyiqFXGBxZiDXmKWedpWAPiR9Bv7RNoxGdR7fsbYP9Cn/Wdj7rG4hiE0Fx+Kc
+ Fv9/T4crjvUs+iW5aLLhxRKNbHW3poTUqrFUb+NMp1rhooUAjqYjbxPCsOWh3dRbnX2L 6g== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xrsdepfx8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 01 May 2024 03:16:59 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4410lShm034589;
+	Wed, 1 May 2024 03:16:59 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2100.outbound.protection.outlook.com [104.47.70.100])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xu4c04fmg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 01 May 2024 03:16:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IE4YhC4+a07Ruk1m3CtqOnusIgDRalt0W7WKB+7EmHaIw4Sin7zrlqgoI+trTVUXfwkr5MmW3dqTGgs2QlhMESVStgE2bbf5UVH5VGKhsJlwmaexdjvx6D0lAAEzM7SgdMkM4LeUCmTiz3wrMA5a45hllxlowLFft4A/mjin2mYTpgWFSg71MTHHKPTNFpGLqiJo4jISmtrB1c5FAsSIYP2Cgv/eN9k4sIOnXAmHUY1KjkyUhIbfF+V2egCNcvT7Oo3NeQDfQsfMpPY0F14XzyVIwBBlwMJnZ95NvJS9lxP3wWR1yAm62bPwa/C9cMX9DrMsR46fOmmHFz1gxGM9Kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+2KGBsQXnFMdbPJXbuEUi8z7Bqj9ehQMASvMTf/JEb8=;
+ b=U1Ic/0cmUDXvXeMtpm3rR2XE7ZRNcg0nVUgV9SQ88hHcxIItG3w1+BgJ6NU8LA6/FDsNP6xrgFb4/JNpdKKH7IwvoRTxwlUGb779PrenY0pvqkKb8ygnr+4bofBfUtPJA9jtwMMm4smuQXFGUGsmf0jxLvglTnWS1f96IakNYg80+gUSBK2FCv7Ue/Nyh7Kss9Lr5JB9sViKQKE3twJnkdaSqBoLJYKxkJFdk4h88+rkef8cegrQh1yMvv0IiyJqLbhPxl9xST+1dDEaSpNWvzhUowuzAZYw/edgyTUVcJU4O05MuC9rIvN3niKWmN/qUkuroDS5GkuyglOZxWMOow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714529362; x=1715134162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yezFULKDfkH4O3tF/9359IJey7y6CAqBHbGwFEbOyVA=;
-        b=YwKAJDJsrHJzy9Nhbd12XqQYho1TDtij29n7QRiMJGkOF8kGSQUPZtMF8U3ewLC1zC
-         utlHXeKGXUxmGB+6ogC7/CIH3woelnDK4NjA5l0XCPvvrJ2QaD/xuEQCZ3JJnyzUNCMU
-         V7Vrf2/56Yvyv0zFQ6e6030dUyoW+IBgw+tJEK1rg1Zfk1dXzWg8lRIehqsi5KxFcf8f
-         11n63us67jlyzX+iOj9DbMtBEWTPetudWM840eZsei0u8fv/lg1GnOIovg1ueULh61Dq
-         YF/W83VxJsj/cf+z4/2ejYudXvsX81IlxtO76SAODgWihEPJoVashL8sv0ykf49JJGZX
-         9jbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714529362; x=1715134162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yezFULKDfkH4O3tF/9359IJey7y6CAqBHbGwFEbOyVA=;
-        b=cILeYf77/KsjeBJHSmCvuA/iBoHtjuDCMdc3uhUzxaZWSQNV10TkDW1xJvpQ8Zmd3c
-         svLdUfeuCTV7Qz5hy4cXeBveRU8RvuIu5ohBg5JtMVqm3BWprce4pymj6LzlSB6vwsvV
-         CB0Q0KRC8FjLl6zfurRYgurQiGS/CXmWDHwcYcIXw6kKsjJtLNvrCTeaHO4qa2dOvHpB
-         vSjbwWDEkkIdqYN5zWJos/2YXtX6TIVPbfWH4Q1hBsPMeDunofWU6fClDPspAM9lmfrf
-         OLg08sLItiW5e0nIaI2KtIkcFv+tv7tsApzFARQoqS25RKDEAnV6S+5AfWm4y1W1RxzU
-         PYXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU65CSe5ZfTUAV6m0+enmMHD9mKUWSmL7Tfy8hgWkVvEX++0wgjGnVW1JGQ8Yokc6SvYf01fr5tQbKWUTRmOmirdgy32f5irVtGRPz5H2zutei3Yj7LIv4QDHeXhmqZftIBQA5RPyTqnA==
-X-Gm-Message-State: AOJu0Yzrc9M/OK9SK2VouCywMjUoED6osGQ1iEQO3JkJ4OTMTMrZmmDZ
-	3HGROdlTmvt2Ic0ALT/mgRPkucAEnwJTJOGgO4ZgbfAIEuK5tjkf
-X-Google-Smtp-Source: AGHT+IFCXZV9GskZrc8P0wyeR7SistjwlusLdB0r7UTGFqSaOO/E5aKxcvUFB9ZcRRmGCZ6KMJV0HQ==
-X-Received: by 2002:a05:6830:e16:b0:6ee:62e5:8fe3 with SMTP id do22-20020a0568300e1600b006ee62e58fe3mr1414305otb.25.1714529361993;
-        Tue, 30 Apr 2024 19:09:21 -0700 (PDT)
-Received: from Borg-10.local (syn-070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id bq10-20020a056830388a00b006ef888380a9sm338042otb.59.2024.04.30.19.09.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 19:09:21 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Tue, 30 Apr 2024 21:09:18 -0500
-From: John Groves <John@groves.net>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	John Groves <jgroves@micron.com>, john@jagalactic.com, Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, gregory.price@memverge.com, 
-	Randy Dunlap <rdunlap@infradead.org>, Jerome Glisse <jglisse@google.com>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
-	Eishan Mirakhur <emirakhur@micron.com>, Ravi Shankar <venkataravis@micron.com>, 
-	Srinivasulu Thanneeru <sthanneeru@micron.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Chandan Babu R <chandanbabu@kernel.org>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, "Darrick J . Wong" <djwong@kernel.org>, 
-	Steve French <stfrench@microsoft.com>, Nathan Lynch <nathanl@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Julien Panis <jpanis@baylibre.com>, Stanislav Fomichev <sdf@google.com>, 
-	Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: Re: [RFC PATCH v2 00/12] Introduce the famfs shared-memory file
- system
-Message-ID: <zwtglxnnbjbgtzcv7rhrbtqz6owmviv3yg25bcluenaayzzj4p@nng3gh5twcjo>
-References: <cover.1714409084.git.john@groves.net>
- <Zi_n15gvA89rGZa_@casper.infradead.org>
- <bnkdeobpatyunljvujzvwydtixkkj3gfeyvk4pzgndfxo7uc32@y6lk7nplt3uk>
- <jklmoshdemmnv62nfvygkr5blz75jq6fhhaqaditws4hsj6glr@rkhdqze4d7un>
- <h6tbyvdeq5hzkttsy4uyzq4v64xlkzeqfyo52ku3w4x3vvtpd7@4vxafcct62xh>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+2KGBsQXnFMdbPJXbuEUi8z7Bqj9ehQMASvMTf/JEb8=;
+ b=wQza1UzpGkeyDeH0MQZOiiXXxoSBju+2sC3R2iz0GQR6eJJU0oO4YLUX8rRDqtzwRix4i6pw9jezkq70CpqLZfq7yrER6/kguqIdb6B5OFWtgokPr/Fy02kyjR0nVNs1N+b4X1VSAifwktiznG+aJZC+fqeva0enW3yL4Wbbw6Q=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by PH0PR10MB5870.namprd10.prod.outlook.com (2603:10b6:510:143::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.36; Wed, 1 May
+ 2024 03:16:57 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7519.031; Wed, 1 May 2024
+ 03:16:57 +0000
+Date: Tue, 30 Apr 2024 23:16:55 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: lsf-pc@lists.linux-foundation.org
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: [LSF/MM/BPF TOPIC] Maple Tree Proposed Features
+Message-ID: <rqvsoisywsbb326ybechwwgpdrdt57sngr2zwwrbp2riyi7ml5@uppobkrmbxoz>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: YT4PR01CA0373.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:fd::15) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <h6tbyvdeq5hzkttsy4uyzq4v64xlkzeqfyo52ku3w4x3vvtpd7@4vxafcct62xh>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH0PR10MB5870:EE_
+X-MS-Office365-Filtering-Correlation-Id: 273e7ede-3f92-4ca8-ef08-08dc698d28a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005|27256008;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?dajXbCK+YVEx4UMIDdACCCoVftE6CMstvKaO2qT3e2rHtQnFw3Yng8a/bQ4x?=
+ =?us-ascii?Q?6EkYdFVaBZtDsuLAIoiDzvnfneb0oy9jQKXoIyd1QQmh3lkbm25/fYDk3RE5?=
+ =?us-ascii?Q?XHvmVJwKZm//yUykH3Fx3HrXPTV1mfClJ31BMRZxYsdEOuxF5PCFJXHBQIMw?=
+ =?us-ascii?Q?OT8pWVEZXtd5cgBvZx0A96JarMS7l/loC1m/WmSUeD5PWIroA1A5CR/gRDBJ?=
+ =?us-ascii?Q?nhx47d+0xC2WruUVxRnKN2yBaI+ti0uhR4ZsCOGHFDj4vF9jM94c9wcuTAf8?=
+ =?us-ascii?Q?j7Y7XsqbeWYGWN96MqW9ejmMiRg+xvDSKgew7hTfpjTN4ztT9yjZtodkQLfA?=
+ =?us-ascii?Q?YN3/j4+NTi99qIgfqmk1CH3gGstsWt6pnHnZps3UdnY8i8RSUI9Lc9SYjofA?=
+ =?us-ascii?Q?zDgTnriqvCRvK5nsyPABJbZMW4JzRmtpky3kDI6vA2cOPD4GlXaEBK1JXRQj?=
+ =?us-ascii?Q?VGPKqO2n7fgCCJCaEczeIJyMP7XTKmlXZx61eSjsd0ticNzXSv1MS3H5MFUm?=
+ =?us-ascii?Q?gT0JFgMK62+0JXSdGE279Mbls622DV8pfecdeCoOIFF1WKT7DrNakYdxMXQA?=
+ =?us-ascii?Q?3P9j4WFlydZ4QWoThcHi8aqIzLw7Mkhd1V2VgXFIVbM5dzFl+oZ9DVojjQql?=
+ =?us-ascii?Q?/T41Tg0iWsaN05DNFXno8OtThP7NzPvmedk65GVyyeP0lGO2AkMayW7g1eML?=
+ =?us-ascii?Q?FuW65QI8gnfQcprjqTV1nZxppcIgNcdiTYX6z2vUkiwB/VTQ+ynd8gjk+xTS?=
+ =?us-ascii?Q?0HTd2QGMh/gr5bhPEJ14uurt1yP6gy5EZSVbM3oLSWjJlPrMcEhR69VhJotI?=
+ =?us-ascii?Q?sAxKRAPWMk/wnzOarzJq2TAE3Pp57bTyM1QLUDZADDRx6qyLO4r3LCCuiJ1i?=
+ =?us-ascii?Q?fZL+4881YhjUEe9LaSm5hFviKYQkhgVV2RuMok0nXgU0lnpwbRO4YfFNL4XP?=
+ =?us-ascii?Q?gQ806JQNAcmzuRWuYKIoTYTYIh0Pt+mUmvlIL675743o/syndH/n8C4Pgl17?=
+ =?us-ascii?Q?NcEjBendAeFVXabpuM679melnx02x3UlFeFKJvGtuuf5oWgI13XCneNSizQE?=
+ =?us-ascii?Q?TrbjH6mLDUUuPoq2LG3shnLC9Hg+SbALgCCH6yLTjjSmumwpF6MbVd70Iaip?=
+ =?us-ascii?Q?NTOlbuSVbnuDxxttx1wMpEqttKk6T66/e4T5EB8vEO7frUC2EhVQi0SA/hi5?=
+ =?us-ascii?Q?nGZ/BSOwT5BlRp089rKEpnxJ2LctAtmGy3H17xjtxp0rUgxjIOYafNLACw3e?=
+ =?us-ascii?Q?sWHxkgZYEuTLym8st82XPPXMVxDfhRgnaq16oA3/Aq7keQmoLSVVdLDOD9mM?=
+ =?us-ascii?Q?QAW8oAVLrnJ6swcVuB2NHqI0?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(27256008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?AddKFiVB8n8HFqfWbnw9co7qRnE9PrERQEq/Ni8F6l1S6fL7V/Jc+VDAwwee?=
+ =?us-ascii?Q?C3yKjOApIdJPkkycSd5j1hKxEZj9INDVJk3HAQl/SG5TrUn+ebKlqOxv9lDc?=
+ =?us-ascii?Q?6M2QxVbaHiUBidg6zDkNZBABwwXTBCh62mRJwS6QnWQrVshMch0/en5UrK+G?=
+ =?us-ascii?Q?tOM7FrJs9LaI4PMrvsBADIdah7OfNPlitL7fqCDDw6HZ5UkHbtheLic3fJLz?=
+ =?us-ascii?Q?PBZ5Ri7VcOhXX2g2c9MFBqiz1ya06YRQdmRpwQWqY7O20bAg0Ddgh1odo0CY?=
+ =?us-ascii?Q?EPK0juEzFZiZu+cTyxLeIcHcNe1tTBfTxPS1vcC1+yQd2FU7hIqsgyGkwr8P?=
+ =?us-ascii?Q?C+hXNQba+Wxady7ohDGNDp6PLUwOuBA+OCCPMlTdikdVuSrttpOytK9Ww6uD?=
+ =?us-ascii?Q?w9UKtQHj0GiaRe3DVZSh9HwqgW1E8cKKo6pXA/tewdkqg9lJAvARpaB4dCy5?=
+ =?us-ascii?Q?E8a8UEOVymMAikbFgEGKXXeECOxQaxsoZfoajurIkFIs4AOilZ1kt96HWmeW?=
+ =?us-ascii?Q?a117R4FEpIuGXdloDXy7VVfzKNwL39QVAYhr3Yd8r4uZQ8yj3oL5FqO1dp8G?=
+ =?us-ascii?Q?RLMkiq5zZnqIQ5gQGMgrXaRRWljhcN7JF0sbkAlwypoOYnR/aSFi8dmXY4uo?=
+ =?us-ascii?Q?FfLGxsQ1YCu9t9sK0AaIw6hH/h3nltGTxZDVZTWhZ9/GYX7X5KX9fnbPXU6z?=
+ =?us-ascii?Q?7/YzOP1tTYQlH2Zu7oqbpt3F2cLouHGo5w629SYBYaaPHOxUvbH8Jaqv/I7D?=
+ =?us-ascii?Q?JFPV7XoqrYoMsNX47ncbfI6xXmoX3hG+g9QTBiR9wuEImzHT39xf/tRTYKa4?=
+ =?us-ascii?Q?GCQOub4Tct/5yl2QSaQvLAzZ4Pvais7j8uGoezqJ5QQtYtt6U6e/V3wNFzuH?=
+ =?us-ascii?Q?8jBM3kS8giK7wgxFy+l2HkQbME9YqlsUIchPpRsY9ltM3EstiJ5Pxt2KXdkD?=
+ =?us-ascii?Q?HFg/BHdU7PPKDtJlnFxs7F0wWGF+/hZuOjltt2x4XEdOjN0XGE3atApxr9jM?=
+ =?us-ascii?Q?2Zt3xF69db+PSoNYzW+i8ZlalCwbjVqhR7VN5ook29CVo9vScFd3hXdYQ86T?=
+ =?us-ascii?Q?tZq3wRDludOpT4BQ5f4emt4ls61rPlMx53NvBBuYsG/InVDvV+O4ZMLHQJky?=
+ =?us-ascii?Q?5Z5BIhyoDaHKrWs9EU04RuvoSGiPhlI5tBAsLzYZvZ3dEioSXqa6GS65Wjti?=
+ =?us-ascii?Q?T6xkwbRr/NuFLIIv8XUP/szocxSONH7VKHbsrdl7/djhhArQIThlKb8Tr3xC?=
+ =?us-ascii?Q?EaFKNoDTbvSVjWyqvWfWxD4AvQLuaU6dcFoofcr4hDhX75AjpuPLk+fgut/u?=
+ =?us-ascii?Q?gDXpehZ55AtZfdVMl1lk0cZjlu7E8JIfMnAceNT1Ts33xHVvK1BE5MvolR9a?=
+ =?us-ascii?Q?C0Os500ucr11ukRAIR7BpNKuumQ3xneqwCchv/mrR6C23DNp9m52wkiZ/YHy?=
+ =?us-ascii?Q?QrPHGzgM7xtW18p6kM/cwjgknGefsrdtz9GbBsHZmSnoqGIZQahIMdPWF9Tj?=
+ =?us-ascii?Q?cQpufdojYAw6uzrEu8G9KHiFii39FLnTwXOyqoNO3NYAWSEaJpH0/xG+PLQY?=
+ =?us-ascii?Q?Xp3PvRrnZYFciFsv43Ph46LtvfIAkS9+zEpwdmdz?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	xZ7tGaukCL3xDct8wgbA1FOXICoAPPhUpYGO2165BEWIuZW93CdejkBmE1uCZXIdiAt0uKrHjtNdDfRcq4P4doUBfnVjYTR/uUYgV7Iv5PAtot0wcC0vgbieGuMN/JKsYyR4EsCEKtZ8NKFYGPBERvYu78ge15nxsoApIEpy8vlGF3t2loTYPMbM6gM8rO5xvbwB5kjMj01S0L3KuU6lyRHKQHUbwAFS7h1xAOVh9nOSqsRkzURQVQvco7P1yWoGcUGBEmC7y2yqhjYjQFPZYTeragHnfURCAZ7all4JrHfHorHUjsUmAwwpRY1wTQFGqwgvgzE+WQrb2nQERlFRAgRLtbDWu8sbdNd6w2EWJeF3Z4jhBx/rXiqXFAcg/YVzmM0YAjCqdQPlK2kLBnB0u14D8vYVxEG1x73a1lQoO22pUSgF/ORKb+t7d0IB9UmDJIAOtOf65LdFcxK63E+A2GRUAPMY6UoRVub931CGmJWfHaWqDXxHYHa1nOxiBR1uCur+7hty4Kd6UYlccdUiYV67ARGy+SCkR5j7lNoTAZTOjCnBkcmNkLyyzko2+NQ1YXPSAdcOFzfRslmGQ2N2iBCn1FNHUmoW+ZYlr5vunAg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 273e7ede-3f92-4ca8-ef08-08dc698d28a6
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2024 03:16:57.4049
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yYJ3gnCo+BvT9szofspouAgTSkdWc72fAX18odaTswYNw7Bu45ILNf1t7ZhIKs9gSgH+s/VKz8ApksxXugxenw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5870
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-01_02,2024-04-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
+ mlxlogscore=715 suspectscore=0 mlxscore=0 spamscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405010023
+X-Proofpoint-GUID: O9nkbB5TZnSo5nAOOdWWDa6x3xm-bgJq
+X-Proofpoint-ORIG-GUID: O9nkbB5TZnSo5nAOOdWWDa6x3xm-bgJq
 
-On 24/04/29 11:11PM, Kent Overstreet wrote:
-> On Mon, Apr 29, 2024 at 09:24:19PM -0500, John Groves wrote:
-> > On 24/04/29 07:08PM, Kent Overstreet wrote:
-> > > On Mon, Apr 29, 2024 at 07:32:55PM +0100, Matthew Wilcox wrote:
-> > > > On Mon, Apr 29, 2024 at 12:04:16PM -0500, John Groves wrote:
-> > > > > This patch set introduces famfs[1] - a special-purpose fs-dax file system
-> > > > > for sharable disaggregated or fabric-attached memory (FAM). Famfs is not
-> > > > > CXL-specific in anyway way.
-> > > > > 
-> > > > > * Famfs creates a simple access method for storing and sharing data in
-> > > > >   sharable memory. The memory is exposed and accessed as memory-mappable
-> > > > >   dax files.
-> > > > > * Famfs supports multiple hosts mounting the same file system from the
-> > > > >   same memory (something existing fs-dax file systems don't do).
-> > > > 
-> > > > Yes, but we do already have two filesystems that support shared storage,
-> > > > and are rather more advanced than famfs -- GFS2 and OCFS2.  What are
-> > > > the pros and cons of improving either of those to support DAX rather
-> > > > than starting again with a new filesystem?
-> > > 
-> > > I could see a shared memory filesystem as being a completely different
-> > > beast than a shared block storage filesystem - and I've never heard
-> > > anyone talking about gfs2 or ocfs2 as codebases we particularly liked.
-> > 
-> > Thanks for your attention on famfs, Kent.
-> > 
-> > I think of it as a completely different beast. See my reply to Willy re:
-> > famfs being more of a memory allocator with the benefit of allocations 
-> > being accessible (and memory-mappable) as files.
-> 
-> That's pretty much what I expected.
-> 
-> I would suggest talking to RDMA people; RDMA does similar things with
-> exposing address spaces across machine, and an "external" memory
-> allocator is a basic building block there as well - it'd be great if we
-> could get that turned into some clean library code.
-> 
-> GPU people as well, possibly.
+Since there is interest (and users) in both the filesystem and mm track,
+this could be a joint session.  Although, I'm pretty sure there is not
+enough interest for a large session.
 
-Thanks for your attention Kent.
+I'd like to discuss what functionality people want/need to help their
+projects, and if the maple tree is the right solution for those
+problems.
 
-I'm on it. Part of the core idea behind famfs is that page-oriented data
-movement can be avoided with actual shared memory. Yes, the memory is likely to 
-be slower (either BW or latency or both) but it's cacheline access rather than 
-full-page (or larger) retrieval, which is a win for some access patterns (and
-not so for others).
+I'd also like to go over common use cases of the maple tree that are
+emerging and point out common pitfalls, if there is any interest in this
+level of discussion.
 
-Part of the issue is communicating the fact that shared access to cachelines
-is possible.
-
-There are some interesting possibilities with GPUs retrieving famfs files
-(or portions thereof), but I have no insight as to the motivations of GPU 
-vendors.
-
-> 
-> > The famfs user space repo has some good documentation as to the on-
-> > media structure of famfs. Scroll down on [1] (the documentation from
-> > the famfs user space repo). There is quite a bit of info in the docs
-> > from that repo.
-> 
-> Ok, looking through that now.
-> 
-> So youv've got a metadata log; that looks more like a conventional
-> filesystem than a conventional purely in-memory thing.
-> 
-> But you say it's a shared filesystem, and it doesn't say anything about
-> that. Inter node locking?
-> 
-> Perhaps the ocfs2/gfs2 comparison is appropriate, after all.
-
-Famfs is intended to be mounted from more than one host from the same in-memory
-image. A metadata log is kinda the simpliest approach to make that work (let me
-know your thoughts if you disagree on that). When a client mounts, playing the 
-log from the shared memory brings that client mount into sync with the source 
-(the Master).
-
-No inter-node locking is currently needed because only the node that created
-the file system (the Master) can write the log. Famfs is not intended to be 
-a general-purpose FS...
-
-The famfs log is currently append-only, and I think of it as a "code-first"
-implementation of a shared memory FS that that gets the job done in something
-approaching the simplest possible approach.
-
-If the approach evolves to full allocate-on-write, then moving to a file system
-platform that handles that would make sense. If it remains (as I suspect will
-make sense) a way to share collections of data sets, or indexes, or other 
-data that is published and then consumed [all or mostly] read-only, this
-simple approach may be long-term sufficient.
-
-Regards,
-John
-
-
-
+Thanks,
+Liam
 
