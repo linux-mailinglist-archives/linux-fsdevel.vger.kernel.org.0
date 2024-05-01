@@ -1,143 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-18431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AF88B8BE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 16:29:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7498B8BE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 16:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FE01C20FEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 14:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694F7284EC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 14:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2054A12F5BC;
-	Wed,  1 May 2024 14:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D6B1DA24;
+	Wed,  1 May 2024 14:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iphh46RM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAbznpP4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472FA12F367;
-	Wed,  1 May 2024 14:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B217539B;
+	Wed,  1 May 2024 14:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714573718; cv=none; b=OgQEAlcQmG9tI2mL4Ux/96zOqDa+qqViEK77h2PO88x3DkMR6jh4nY+mlOG7ZKIOX4DXxzN5RNA+akPDsD9L5VoGiGY6Fjlf53lIO4FSc9NRnJTCBlDIRX5Zbohguh4XX74hJBoxfnjDIDWBxmgp/AuXliHyMiFoO36w5u6nVV4=
+	t=1714573897; cv=none; b=hZ4v2N/95T5A7wLImuV/v/plRfRSSTZ249D2Tc7VD2JqMCb6nkkvgTTuF9uqTBQtus5VMgO8W6XvO/n40rCEOxW9XTQQyDijogVXx5ME+m8uC1/8pAvdO7wTchu1jCMNXmGINoqQUrWnT1vb+KFP/8b0oulxY0JSCHu2j/sI5j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714573718; c=relaxed/simple;
-	bh=jEmQ4txAq3/S4EgZfg1vd1tqSRsNWdIJJEIUUU1j5Q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpNXTQDtKNotthKs5PxYd/XXGf7fyxVtlGvbY7eG+g8Cfq1bJIeh17y3uyyGfcoMmYuOxLm2loLMgbkFR35YgSGsTpzxa9OkqLLx8C6qMEcf8q2jKLFiW5uP9z7tzEe5KPKQUP/fkaR8vBi+Sh+6ljJn6Rzcsm+5xJk9dM+1YVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iphh46RM; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JoTrIvL17+SwrKhlHwdvALrB368mhDrkTh87Dex2qHk=; b=iphh46RMtc1VisceeYQYEMTctQ
-	7IE0zuIqLkGjqVjpiZfl58A5H4WMuhjTQ+ueoeV9fEuIGP8/n8/LFo1Pa5rDaehZxOSVtKBrzRm57
-	w1KlcUk0alQep3MeSVvdWMYxNb+G+R3BTVIyibyvvECw+qaZUnsGq4dj7rHrv+PArJ5iJydn0nqAb
-	jcLK+2FUWHyAFfKn+l7TuFYTj0C2OWatOAsHQS4WFcftGvlvdNTp/4lF+wkknhR8WB1nY/3vqilpa
-	Bo3fpi+IHJnzgSZKnAKItzcIxUXwk9sRkAor1lTVvmtlGj42OkW4K3EIASQRKBggHx9Flzaqm+ySv
-	Aq/lS4jA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s2Awc-0000000H4FY-3319;
-	Wed, 01 May 2024 14:28:26 +0000
-Date: Wed, 1 May 2024 15:28:26 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Sean Christopherson <seanjc@google.com>,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
-	chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
-	p.raghav@samsung.com
-Subject: Re: [PATCH v4 05/11] mm: do not split a folio if it has minimum
- folio order requirement
-Message-ID: <ZjJRimEszNRvvGdJ@casper.infradead.org>
-References: <Ziq4qAJ_p7P9Smpn@casper.infradead.org>
- <Zir5n6JNiX14VoPm@bombadil.infradead.org>
- <Ziw8w3P9vljrO9JV@bombadil.infradead.org>
- <Zi2e7ecKJK6p6ERu@bombadil.infradead.org>
- <Zi8aYA92pvjDY7d5@bombadil.infradead.org>
- <6799F341-9E37-4F3E-B0D0-B5B2138A5F5F@nvidia.com>
- <ZjA7yBQjkh52TM_T@bombadil.infradead.org>
- <202988BE-58D1-4D21-BF7F-9AECDC178D2A@nvidia.com>
- <ZjFGCOYk3FK_zVy3@bombadil.infradead.org>
- <ZjHBh7my1X7qYtCV@casper.infradead.org>
+	s=arc-20240116; t=1714573897; c=relaxed/simple;
+	bh=+wNamIIBjqWv8wNbYxdQ9RyH/LZFpQ1Ija47F0o7+ak=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=I1NwXQdFKL5mJL2K861shKzyQrgZiM/wLQTHSmPamPn402nSwpUBOq8L60xqgfRtZVCKd/twrcyQ35xJXnxcR8ZsJNv8YVeHliDoaMunRy1iu9N2UTty9oK+9+/z+XptUxCn2EaPmo+TWuKGxLDwzI0nPaoOn45yAfIB2NHyKSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAbznpP4; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6effe9c852eso6112734b3a.3;
+        Wed, 01 May 2024 07:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714573895; x=1715178695; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zcjwcyL162mAw3vYWOhklGg/HCY1i6wwZ9HtuvhcCfU=;
+        b=AAbznpP43J0qDUcIX8pNp1qTUOzMfK5ej7OhZ7us4o+wYtn7vFl8OG2I846dgalY6O
+         bCpbyRyCs7WwrMfwn4HNKD3iga37sh5dOd+SlWAEt6q698xN58VK3MwjezzV51OeB+4D
+         doNngV09AoXO1g87ElEcHRjm6HHgY2QQVDAjjuBDjBqDSQcYJ2rAoZcWdbDzLEQK21Rs
+         JYJ0AKhoLS5y+IDIyvSeAhXGaw9FJV4jJNYPsglCVfGXWXB02N9CFCaBon61wCKIu+jx
+         AFHC0mKFECOiTgD7LVCPh+zYMO51pmyxFzzyPaxMLfh6blm7LdLjWlyzckYX+Adb7Jyx
+         eOBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714573895; x=1715178695;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zcjwcyL162mAw3vYWOhklGg/HCY1i6wwZ9HtuvhcCfU=;
+        b=YMxBYyO/yXINimQitmFtTpjZx+DOKv26dcBoZGyPHMZOFFR6TMKLUvwylpYnc+B4HN
+         gg0H4DPupAZfbdv8jvSIquanaYrPJhkTMnFnP1XceCha4o88FshfLjo9dryKkGbel51F
+         OtQJtONg4zqNlYNDW2b/xevPxeJgle7aKM8l6PSTeYnyG6aukZ8fejrI/VXZs6jhlraN
+         0FGEbVq5PGm3XrfnjLNPIYIXke+kYad39ow0IBWFAKSG779helaHxPqyUaToeM+ijKXK
+         20hIGIWbL6FBlq27Q6u8braHwvXZpnj6pLWKHMB/3zBj/XouQ/4LSVnofdZi1wZLkqnE
+         /5EA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeH6Vwiv9MuZEKesNt7fG6jcRU0SkFQPM7DmYTqw1tDZ7/TKs1fyfNDZZOt/bbggO35R/aLk8jVWRz8ekqyHtCv83cad1vl9hNDgEC5vQANiqEa60aFw0jMbkUGLflPRMT3SJcrG0Bsw==
+X-Gm-Message-State: AOJu0YwWM3sQfhfaTZQxEIh3dlsc3vBUKwXN8J7fp5rmhzgXxmr/jHLP
+	5KhvRepVNchofehSC0NyV84WDsaCvpRynCUR63XbO8i9JXHgMdc0
+X-Google-Smtp-Source: AGHT+IGsJOaC+lS+/evg5Leq+hxeaR9zb7+g4k0bI/FQiC36XhEwuw9ttXGSR/TYaCH0fF4LcExP7Q==
+X-Received: by 2002:a05:6a20:8418:b0:1ad:31e2:56c with SMTP id c24-20020a056a20841800b001ad31e2056cmr3321219pzd.8.1714573894892;
+        Wed, 01 May 2024 07:31:34 -0700 (PDT)
+Received: from dw-tp ([171.76.84.250])
+        by smtp.gmail.com with ESMTPSA id fh31-20020a056a00391f00b006f3ef025ed2sm7601061pfb.94.2024.05.01.07.31.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 May 2024 07:31:33 -0700 (PDT)
+Date: Wed, 01 May 2024 20:01:27 +0530
+Message-Id: <87h6fh4n9c.fsf@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, hch@infradead.org, djwong@kernel.org, david@fromorbit.com, willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com, yi.zhang@huaweicloud.com, chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v4 03/34] ext4: trim delalloc extent
+In-Reply-To: <20240410142948.2817554-4-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjHBh7my1X7qYtCV@casper.infradead.org>
 
-On Wed, May 01, 2024 at 05:13:59AM +0100, Matthew Wilcox wrote:
-> On Tue, Apr 30, 2024 at 12:27:04PM -0700, Luis Chamberlain wrote:
-> >   2a:*	8b 43 34             	mov    0x34(%rbx),%eax		<-- trapping instruction
-> > RBX: 0000000000000002 RCX: 0000000000018000
-> 
-> Thanks, got it.  I'll send a patch in the morning, but I know exactly
-> what the problem is.  You're seeing sibling entries tagged as dirty.
-> That shouldn't happen; we should only see folios tagged as dirty.
-> The bug is in node_set_marks() which calls node_mark_all().  This works
-> fine when splitting to order 0, but we should only mark the first entry
-> of each order.  eg if we split to order 3, we should tag slots 0, 8,
-> 16, 24, .., 56.
+Zhang Yi <yi.zhang@huaweicloud.com> writes:
 
-Confirmed:
+> From: Zhang Yi <yi.zhang@huawei.com>
+>
+> The cached delalloc or hole extent should be trimed to the map->map_len
+> if we map delalloc blocks in ext4_da_map_blocks().
 
-+++ b/lib/test_xarray.c
-@@ -1789,8 +1789,10 @@ static void check_split_1(struct xarray *xa, unsigned lon
-g index,
- {
-        XA_STATE_ORDER(xas, xa, index, new_order);
-        unsigned int i;
-+       void *entry;
+Why do you say the cached delalloc extent should also be trimemd to
+m_len? Because we are only inserting delalloc blocks of
+min(hole_len, m_len), right?
 
-        xa_store_order(xa, index, order, xa, GFP_KERNEL);
-+       xa_set_mark(xa, index, XA_MARK_1);
-
-        xas_split_alloc(&xas, xa, order, GFP_KERNEL);
-        xas_lock(&xas);
-@@ -1807,6 +1809,12 @@ static void check_split_1(struct xarray *xa, unsigned long index,
-        xa_set_mark(xa, index, XA_MARK_0);
-        XA_BUG_ON(xa, !xa_get_mark(xa, index, XA_MARK_0));
-
-+       xas_set_order(&xas, index, 0);
-+       rcu_read_lock();
-+       xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_1)
-+               XA_BUG_ON(xa, xa_is_internal(entry));
-+       rcu_read_unlock();
-+
-        xa_destroy(xa);
- }
+If we find delalloc blocks, we don't need to insert anything in ES
+cache. So we just return 0 in such case in this function.
 
 
-spits out:
+> But it doesn't
+> trigger any issue now because the map->m_len is always set to one and we
+> always insert one delayed block once a time. Fix this by trim the extent
+> once we get one from the cached extent tree, prearing for mapping a
+> extent with multiple delalloc blocks.
+>
 
-$ ./tools/testing/radix-tree/xarray
-BUG at check_split_1:1815
-xarray: 0x562b4043e580x head 0x50c0095cc082x flags 3000000 marks 1 1 0
-0-63: node 0x50c0095cc080x max 0 parent (nil)x shift 3 count 1 values 0 array 0x562b4043e580x list 0x50c0095cc098x 0x50c0095cc098x marks 1 1 0
-0-7: node 0x50c0095cc140x offset 0 parent 0x50c0095cc080x shift 0 count 8 values 4 array 0x562b4043e580x list 0x50c0095cc158x 0x50c0095cc158x marks 1 ff 0
-0: value 0 (0x0) [0x1x]
-1: sibling (slot 0)
-2: value 2 (0x2) [0x5x]
-3: sibling (slot 2)
-4: value 4 (0x4) [0x9x]
-5: sibling (slot 4)
-6: value 6 (0x6) [0xdx]
-7: sibling (slot 6)
-xarray: ../../../lib/test_xarray.c:1815: check_split_1: Assertion `0' failed.
-Aborted
+Yes, it wasn't clear until I looked at the discussion in the other
+thread. It would be helpful if you could use that example in the commit
+msg here for clarity.
 
 
+"""
+Yeah, now we only trim map len if we found an unwritten extent or written
+extent in the cache, this isn't okay if we found a hole and
+ext4_insert_delayed_block() and ext4_da_map_blocks() support inserting
+map->len blocks. If we found a hole which es->es_len is shorter than the
+length we want to write, we could delay more blocks than we expected.
+
+Please assume we write data [A, C) to a file that contains a hole extent
+[A, B) and a written extent [B, D) in cache.
+
+                      A     B  C  D
+before da write:   ...hhhhhh|wwwwww....
+
+Then we will get extent [A, B), we should trim map->m_len to B-A before
+inserting new delalloc blocks, if not, the range [B, C) is duplicated.
+
+"""
+
+Minor nit: ext4_da_map_blocks() function comments have become stale now. 
+It's not clear of it's return value, the lock it uses etc. etc. If we are
+at it, we might as well fix the function description.
+
+-ritesh
 
