@@ -1,84 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-18446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6208B8F0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 19:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D75398B9062
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 22:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A68BB22A8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 17:29:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A01B20EE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 20:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B961B7F4;
-	Wed,  1 May 2024 17:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88429161B6A;
+	Wed,  1 May 2024 20:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kg1VHinU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OVfwXoDu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B40E18C22;
-	Wed,  1 May 2024 17:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B1A16191B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 20:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714584531; cv=none; b=Wyonh3asWBf14p1sNrHT90I9BsNEiDmrg79s9BLcq5R1uPeY0CE7/LzMNwWxq31d8dVSEmpWnpNePn0CaBipYC2B2usnDlib8UmgFDRIaqXyvvGJRtXnGzpQ2Xjw2VGRAVeo/Q0aKlj+xEDndDKG5DD7MFV7plLYmFxOkRFogFk=
+	t=1714593901; cv=none; b=BbyhPMOv3o8T1gw7RILcI7L1IBpMrQrS9DyHpdNLyoRyzC4aoP6qczOACa9zioEArmx8YSOvi3U0NkJ883MysYt63ovo4hFB5uH5YUxdK103narvKeSnjxrVXxLUh6kZ9CD0O4jugaKhaCe+luVF7bpda6Kl4aByAcvvYazYv1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714584531; c=relaxed/simple;
-	bh=+hjBT4f2fglD+v2rS4MciZgOO8UjEC7rc5M9uGPcJwE=;
+	s=arc-20240116; t=1714593901; c=relaxed/simple;
+	bh=IErg5JgZ1tt5Cj7bOCZ88y1HXdEMOV4/p7EdFtr+ouw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdQEKFXMps0ZYyzU2EspJMvtkq6oo0izoAHRMx5Rvh2SzkvbqOS5R1dNx+v8tqwzhOTan3pJdLkPy8+f16JO0fZ2mdxYtB3hS7suCr8wRuvbfA7z+xZ/2duH8/6j0qHDnOzMp+3NW10MGiDDiUFzZnziYloJMsZCS+WaN8mzJm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kg1VHinU; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6ed627829e6so8300543b3a.1;
-        Wed, 01 May 2024 10:28:50 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMCxUuGB0z2MteN2UbGl9qjbROejPMSH9sGuDgYo5tt1Gtbgp8rOsfEM6p2hiCETRtMSXNNaw/bL6OGzJsAj/BFXNO0y1FtggxVf7m2orvmOOlkSqxRb+xZP97zU3V5xLZ3ca3xsI5jFD77LWxEiDBFFFkwY9cNppPSeFrzkCgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OVfwXoDu; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5f807d941c4so5711184a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2024 13:04:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714584530; x=1715189330; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1714593897; x=1715198697; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/z3qwZ2T0f1AcIzMY8k1DdsGurc58CRUSveN9mEOGBw=;
-        b=Kg1VHinUK78MX+5aSthlCmKrAggOfU7/U4FxZfFKCgdBUiyNljhsbKy34xCH1ug6tK
-         5t2NaCA6qNK1oUVaRvY16BBRErJ3jtoxpjPGtBlO/9RFGYdM6+vUnKaUZyGE1loavbb3
-         PXiPDBJ4I6e5mREB7KMG9OC3Iaj6TB64cjOZoqzw4De9vLP/2reak3ascZTsT54UGWUw
-         OiGbbUd2nNKUTLxWJb8sNm7YK23ZNCtmhw/OBPggH1lN4lhv3C5T2Tn49sqM2mYvrqEA
-         LmdgcoZFtyjieb7/SFTVYG6gaxsdMTAwMAmTBC118Geg3S10pSAAAeyY0pw4061hm3m0
-         AnOw==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o6B3Xf7Y8DtHU8X6ec9fpWeWDMwWUAohTamqd+6jpKk=;
+        b=OVfwXoDuMvIqm5QQv0xnKq1/+um4wWVHqkU5H3mB9j4CdpAEi85iebfhytTUbygf5E
+         KrKk2SpgGv7Oc7aQZOGNt+LZaAtYNjg36ElUOlTXICrWQ7yEkFpl10u/FeYoIRns1Fll
+         FNBlBkkylAHau8vIJNYzcWHwUHaUzxakVHQjk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714584530; x=1715189330;
+        d=1e100.net; s=20230601; t=1714593897; x=1715198697;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/z3qwZ2T0f1AcIzMY8k1DdsGurc58CRUSveN9mEOGBw=;
-        b=A+7oJzrGOWd2zKfBJtANRkbS/2+l3cOBFWsZbbWHVBQ1t38PBDnHgNJ8PYUQy1H2E0
-         9/XlApdEovY3XVPOHbtIe2wBw4aQAvcAV91Faowo//EYWDRM+ClKZroEq1CI777fEILY
-         BboBWyqrs6E1FqSk7oC4AIEgRkoCVzEti57yGzGbFPmmRFc6HKvtA9lZf2re3yKV7jne
-         3djzt7y8phJEucqbptUUi4134minfpJNWN+NkG+z7kHDn5SYD0XbvCooxS7wc1yFbCZo
-         6sKTKu6aP/Wjb/Fbkbw5PUVJ9cOm5YsP/m/CzMUHwAQsSbQ3MGzQuE61CNi/jAJbkkZi
-         12Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlnySztmKvEOxFHHL8oGoO77taGv83oTsWTJyEwNZMzjRmCmENbfTjw4HfkEyttK6I7/zbASg2xc3UzrfCHo3jQe9O4wWsriE3WdGByjFSaK6Zg4FsJOh8f1+4zvg4t1MO0obIL+OhY/0Tew==
-X-Gm-Message-State: AOJu0YwjxRHT28j3kVPfDlUI86nKbpPPI4bSyfuIJWNVRNG0b9DJygNp
-	Wl45D3kbseMRQPR4pVHxfNkbyC3IHdUMLkX+T94QtDk1UT9o/veT
-X-Google-Smtp-Source: AGHT+IH+nW1nZbrDkFK5KLEoS5L4brAnP2C/EKD2m8b1DlKQM6YyKuTyZE5zX/wqdIzp611O87FXWw==
-X-Received: by 2002:a05:6a00:4655:b0:6ea:dfbf:13d4 with SMTP id kp21-20020a056a00465500b006eadfbf13d4mr3353946pfb.18.1714584528767;
-        Wed, 01 May 2024 10:28:48 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id j16-20020a62b610000000b006f423ab373bsm1156887pff.126.2024.05.01.10.28.48
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o6B3Xf7Y8DtHU8X6ec9fpWeWDMwWUAohTamqd+6jpKk=;
+        b=V72x5ljfvRIfT3q1VyMy0LKWbm1MVvaRjNbNSIFjnprn8l/ztNCK2wvMLFzxYgsFDb
+         ued+Itwc32YhiEAF7WjgFf9GOJw0OjHdza9ykhFhKwHpez8ygF8WjdRX6tPwzP8PXrwy
+         LHEuksdk2X0piTm3k5sYMyvU5lILLXwxubCGBVdA7iI75//Gg7MEAUm005ZOwIwuMqtK
+         8XpMKUBAMstK/0YbUltQIceVIVXRt5rjToG6XtGbVKnj/pq4Qllwl0L7yTfgblBHFj9G
+         knvi/7hu/0gF7UzjWAiuQ50MnanVYZPSXyQlN0YbtalfjR/id5ZQb/RvrrLHYs28IS5g
+         MEbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRdz9wwYpWXvwN1UVcu1de2izyYzmCPAXM+uyfiyuBZbOcP4A3dqNEKsHe/AROPYcYm2LzBXMDS5Vw84ecXouekqRW6tt+qzWMuyp0vA==
+X-Gm-Message-State: AOJu0Yx7M2DiENIf1q6/hh8J8HnAwALHX2Rpe8D9TlEu9ASf8SKEHc8R
+	kNWq4dEQj03xrVAYSqkuTYRWKnnBxGRqGUylFP0DD0eFS/fekaQRspFHgJPMBA==
+X-Google-Smtp-Source: AGHT+IFueDV9pgqBTe9WW+kzPRkaGYU9e4IIONIKkDrAtl9sg/iZA6URogFxsjQdrbrnVvd332CkkA==
+X-Received: by 2002:a17:90b:35c9:b0:2b2:aac3:fc2f with SMTP id nb9-20020a17090b35c900b002b2aac3fc2fmr4036614pjb.18.1714593897495;
+        Wed, 01 May 2024 13:04:57 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id nw10-20020a17090b254a00b002b0e8d4c426sm1729700pjb.11.2024.05.01.13.04.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 10:28:48 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 1 May 2024 07:28:47 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] writeback: factor out wb_dirty_exceeded to remove
- repeated code
-Message-ID: <ZjJ7z0j8T2rTicLD@slm.duckdns.org>
-References: <20240429034738.138609-1-shikemeng@huaweicloud.com>
- <20240429034738.138609-10-shikemeng@huaweicloud.com>
+        Wed, 01 May 2024 13:04:57 -0700 (PDT)
+Date: Wed, 1 May 2024 13:04:56 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-security-module <linux-security-module@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+Message-ID: <202405011257.E590171@keescook>
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
+ <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+ <202402070631.7B39C4E8@keescook>
+ <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
+ <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
+ <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,32 +89,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240429034738.138609-10-shikemeng@huaweicloud.com>
+In-Reply-To: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
 
-On Mon, Apr 29, 2024 at 11:47:37AM +0800, Kemeng Shi wrote:
-> Factor out wb_dirty_exceeded to remove repeated code
+On Thu, Feb 15, 2024 at 11:33:32PM +0900, Tetsuo Handa wrote:
+> On 2024/02/15 6:46, Paul Moore wrote:
+> >> To quickly summarize, there are two paths forward that I believe are
+> >> acceptable from a LSM perspective, pick either one and send me an
+> >> updated patchset.
+> >>
+> >> 1. Rename the hook to security_bprm_free() and update the LSM hook
+> >> description as I mentioned earlier in this thread.
+> >>
+> >> 2. Rename the hook to security_execve_revert(), move it into the
+> >> execve related functions, and update the LSM hook description to
+> >> reflect that this hook is for reverting execve related changes to the
+> >> current task's internal LSM state beyond what is possible via the
+> >> credential hooks.
+> > 
+> > Hi Tetsuo, I just wanted to check on this and see if you've been able
+> > to make any progress?
+> > 
 > 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  mm/page-writeback.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 68ae4c90ce8b..26b638cc58c5 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -140,6 +140,7 @@ struct dirty_throttle_control {
->  
->  	unsigned long		pos_ratio;
->  	bool			freerun;
-> +	bool			dirty_exceeded;
+> I'm fine with either approach. Just worrying that someone doesn't like
+> overhead of unconditionally calling security_bprm_free() hook.
 
-Can you try making the function return bool? That or collect dtc setup into
-a single function which takes flags to initialize different parts? It can
-become pretty error-prone to keep partially storing results in the struct.
+With the coming static calls series, this concern will delightfully go
+away. :)
 
-Thanks.
+> If everyone is fine with below one, I'll post v4 patchset.
+
+I'm okay with it being security_bprm_free(). One question I had was how
+Tomoyo deals with it? I was depending on the earlier hook only being
+called in a failure path.
+
+> [...]
+> @@ -1530,6 +1530,7 @@ static void free_bprm(struct linux_binprm *bprm)
+>  		kfree(bprm->interp);
+>  	kfree(bprm->fdpath);
+>  	kfree(bprm);
+> +	security_bprm_free();
+>  }
+
+I'm fine with security_bprm_free(), but this needs to be moved to the
+start of free_bprm(), and to pass the bprm itself. This is the pattern we
+use for all the other "free" hooks. (Though in this case we don't attach
+any security context to the brpm, but there may be state of interest in
+it.) i.e.:
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 40073142288f..7ec13b104960 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1532,6 +1532,7 @@ static void do_close_execat(struct file *file)
+ 
+ static void free_bprm(struct linux_binprm *bprm)
+ {
++	security_bprm_free(bprm);
+ 	if (bprm->mm) {
+ 		acct_arg_size(bprm, 0);
+ 		mmput(bprm->mm);
 
 -- 
-tejun
+Kees Cook
 
