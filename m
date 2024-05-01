@@ -1,172 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-18434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293F28B8D28
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 17:34:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906048B8DDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 18:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34A2289E3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 15:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C196E1C213BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 16:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0375132C23;
-	Wed,  1 May 2024 15:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB7312FF87;
+	Wed,  1 May 2024 16:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EezvSwcv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+T9GnP0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DACF12FF70
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 15:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861EF14012;
+	Wed,  1 May 2024 16:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714577490; cv=none; b=HtCqw91YjeDeYWv+82CvS1GhT3TYy+dDYpNLBv+EBynonGT4UtCUh255Lgt1dG8A5XYz4fze/BFWlHYWLPGgfOpGLVQm1PZAcNVM4dzuktdJxyrmn3N9IgmvboOkKRC9XzucscaY+uKZhyFJzToHDlNbebh1FeWyocmY4mx0ShE=
+	t=1714580189; cv=none; b=Xe4uyX6HvseWvVUl1nF6QxQqZZfH3mVIFXI8O+Tx3PRHNtE1QxQrMcVNoHN5lRFgU/Xt7JTOTsQmIQAt2AhVXuZOlraYkc12+ykcCcsh9O6z4dHIesdvPzOFps/Z4UAMSB2XaDc5EsqHOwEXt8aS9O1jbg7pUUsy68dkUREjf6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714577490; c=relaxed/simple;
-	bh=mRhqKyKQM7kmXtTGBCehmVbF99rjAE4eA92doUiUT9M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e6QLUVPqrq5htVnOXbd9qN8H0Gcr6lYcS183laYtYca4aX5HEfbIiasOjvTISzIUtlRPOrsEA43vLjUnfnB5EdXHAN+GlPtBIEPcI38/kZ0lI+hOX+yXJUE+drHIzWu4p/Tvs1wTxwzFHhm2OzrZJaTHAz3LZtsXsdvGx1EFtks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EezvSwcv; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=XZIMUVzeCJFd/i9fs7YI0OvweKFJssoNWijoVhKZP4M=; b=EezvSwcvlmxK90Q6NuYmO18x6I
-	M0B1IRc9HRN3oK2TGfh0Md5hYoTKFRBM3xcBk74Va8UJKNF+gx3dZetJZ2xQMXNe3d3AcvZo32tBR
-	1jD5TSVDVzjpl/NldRB0XBrwoRZP/R3BjrErpQrviNyZyOiqNuycFP4LtCrJPXWUqh1jGmBoDw7rR
-	+jFQVDbRRwj88faJp8DrxFPGW/f5IF9IqiGHbZeITDRBHomzbmFY+QH++9iAnht5qbFRJJL3tjpGY
-	SaJueaYP4iRWbjJIHoFDeC4H5Wp8chmDzsIOFAfe+CZmhDAezY8VRpn5vBcCEKrQ+s7omugfTuft+
-	4XmqnjDw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s2BvV-0000000HBB0-2Wrz;
-	Wed, 01 May 2024 15:31:21 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH] XArray: Set the marks correctly when splitting an entry
-Date: Wed,  1 May 2024 16:31:18 +0100
-Message-ID: <20240501153120.4094530-1-willy@infradead.org>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1714580189; c=relaxed/simple;
+	bh=//LEnlvSVSXUbJfMDjvd6bTaR+rRYvm4s7OOaxCY8DY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0X54kC5USrkZJjXdiCe1bQOzLg0chwyAKB7Sc/3AzerhmnkHfEXOpdO/Yqg2H93LAP1ZfdUC1UsF/7YarFwQKmUXUdqchTq+JyuGChmF0jBqCMxq04jxqm+JMSSDdMjTRIYYORRdhUhR+pRGElAGPEB0Bo2gym0wMHsvQde1Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+T9GnP0; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f3f6aa1437so3420740b3a.3;
+        Wed, 01 May 2024 09:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714580188; x=1715184988; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2eqaP89xJW0ujXnZ+hB2QVGRIufSQtfLwgVff4XKb0I=;
+        b=K+T9GnP0zY1PolGTDO47p/z/r9Kr5Nh796dYcTGsUTAWeUUi6NEbUlYlfKN7sf7Tu3
+         pOTbbMZ8COlFKma6rWD8koC2zkCKHKiodpL+JfKWdhT/UBcRMFGBpIJpRWVLbuTfj0ST
+         Smlu4ag9xHlds/h9SmYfs9TObfPkoTfOwzBIfDWCblggFh1JBs145OLJyKKxl694jIG1
+         lumKGNxBLhF84kBrYCMY1/QVPnOgN5jjtpn+R/S+ZsHfZIq4Go39NEUQauY34Yr40ozB
+         oHNae+pUO/BH4ayfpDISzBEmfGLOeafRbQ5YwyIaPeOP/Rvuan8Q6yBHZ23kP4HiubQ+
+         Ro5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714580188; x=1715184988;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2eqaP89xJW0ujXnZ+hB2QVGRIufSQtfLwgVff4XKb0I=;
+        b=cMzoD3zu8BrCvxkzI1YHEYYCictcnR9aW/H2goO9yQZdnvofrz3QeEU/RDTvWpD/Ck
+         aqiRlGP8DWugUGDI+3tdfjVN8WrycUTeULab5OjEGKFrzy3SZMFvnHcTe9YcKLTxaoHC
+         5uG3HmLps0P7fEzumclS5PyEnmhKV90aAnoTFj723c1odVGdgO3lIN5S9HoU0pgJz1Wk
+         BUJCxVMwdDoTR+69sVhihT5k/gMUtgrdVYDBFVk+XxKjArYfHQ5qSg+HmXsFDCYsavo8
+         n3dlvyFJLVoUiVKPpImzdAvRQ7Yc2mwTkI/l6UvsJpyOAh5kHEbj4mIJ+v2CUM0Dau8T
+         9Wiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUs7IYm0RrhZu0pCcQsB88vO6kz794WBfMhrg3TpC0fIlTFM0eX0gV+a7Cya5dZH6rVVgH4XlvTMfvSUU1VdJo3Tm0E158COqsJOpJwNMa4gtUzEleSn9oPG1xum8zjrsvezQM8hOk9v3jQnQ==
+X-Gm-Message-State: AOJu0YwwE63iuX4H4gz3WxjrXiuPMn1Wvpigz7sipKQWGKEXfQMc4qXv
+	egvPL0Ac1L6xuWoE/E9qWNsvhP8ZlbhozFw+TUOp2yx9wzAly+5k
+X-Google-Smtp-Source: AGHT+IFG4/zw2BTucTObEcs4prhPN8niNp0Os6Yg5zzDwEAG7i1CghqpTQkkOnlieXo3HxSODetzjg==
+X-Received: by 2002:a05:6a20:430c:b0:1a7:1b6e:4d4 with SMTP id h12-20020a056a20430c00b001a71b6e04d4mr3003804pzk.23.1714580187677;
+        Wed, 01 May 2024 09:16:27 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id a20-20020a056a0011d400b006ecec1f4b08sm22766536pfu.118.2024.05.01.09.16.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 May 2024 09:16:27 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 1 May 2024 06:16:26 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
+	hcochran@kernelspring.com, axboe@kernel.dk, mszeredi@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Fix and cleanups to page-writeback
+Message-ID: <ZjJq2uvuXZoZ5aj3@slm.duckdns.org>
+References: <20240425131724.36778-1-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240425131724.36778-1-shikemeng@huaweicloud.com>
 
-If we created a new node to replace an entry which had search marks set,
-we were setting the search mark on every entry in that node.  That works
-fine when we're splitting to order 0, but when splitting to a larger
-order, we must not set the search marks on the sibling entries.
+On Thu, Apr 25, 2024 at 09:17:20PM +0800, Kemeng Shi wrote:
+> v1->v2:
+> -rebase on up-to-date tree.
+> -add test result in "mm: correct calculation of wb's bg_thresh in cgroup
+> domain"
+> -drop "mm: remove redundant check in wb_min_max_ratio"
+> -collect RVB from Matthew to "mm: remove stale comment __folio_mark_dirty"
+> 
+> This series contains some random cleanups and a fix to correct
+> calculation of wb's bg_thresh in cgroup domain. More details can
+> be found respective patches. Thanks!
 
-Reported-by: Luis Chamberlain <mcgrof@kernel.org>
-Link: https://lore.kernel.org/r/ZjFGCOYk3FK_zVy3@bombadil.infradead.org
-Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- lib/test_xarray.c | 14 +++++++++++++-
- lib/xarray.c      | 23 +++++++++++++++++++----
- 2 files changed, 32 insertions(+), 5 deletions(-)
+Isn't this series already in -mm? Why is this being reposted? What tree is
+this based on? Please provide more context to help reviewing the patches.
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 0aea6a85099d..ab9cc42a0d74 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -1788,9 +1788,11 @@ static void check_split_1(struct xarray *xa, unsigned long index,
- 				unsigned int order, unsigned int new_order)
- {
- 	XA_STATE_ORDER(xas, xa, index, new_order);
--	unsigned int i;
-+	unsigned int i, found;
-+	void *entry;
- 
- 	xa_store_order(xa, index, order, xa, GFP_KERNEL);
-+	xa_set_mark(xa, index, XA_MARK_1);
- 
- 	xas_split_alloc(&xas, xa, order, GFP_KERNEL);
- 	xas_lock(&xas);
-@@ -1807,6 +1809,16 @@ static void check_split_1(struct xarray *xa, unsigned long index,
- 	xa_set_mark(xa, index, XA_MARK_0);
- 	XA_BUG_ON(xa, !xa_get_mark(xa, index, XA_MARK_0));
- 
-+	xas_set_order(&xas, index, 0);
-+	found = 0;
-+	rcu_read_lock();
-+	xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_1) {
-+		found++;
-+		XA_BUG_ON(xa, xa_is_internal(entry));
-+	}
-+	rcu_read_unlock();
-+	XA_BUG_ON(xa, found != 1 << (order - new_order));
-+
- 	xa_destroy(xa);
- }
- 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 1c87d871cacf..32d4bac8c94c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -970,8 +970,22 @@ static unsigned int node_get_marks(struct xa_node *node, unsigned int offset)
- 	return marks;
- }
- 
-+static inline void node_mark_slots(struct xa_node *node, unsigned int sibs,
-+		xa_mark_t mark)
-+{
-+	int i;
-+
-+	if (sibs == 0)
-+		node_mark_all(node, mark);
-+	else {
-+		for (i = 0; i < XA_CHUNK_SIZE; i += sibs + 1)
-+			node_set_mark(node, i, mark);
-+	}
-+}
-+
- static void node_set_marks(struct xa_node *node, unsigned int offset,
--			struct xa_node *child, unsigned int marks)
-+			struct xa_node *child, unsigned int sibs,
-+			unsigned int marks)
- {
- 	xa_mark_t mark = XA_MARK_0;
- 
-@@ -979,7 +993,7 @@ static void node_set_marks(struct xa_node *node, unsigned int offset,
- 		if (marks & (1 << (__force unsigned int)mark)) {
- 			node_set_mark(node, offset, mark);
- 			if (child)
--				node_mark_all(child, mark);
-+				node_mark_slots(child, sibs, mark);
- 		}
- 		if (mark == XA_MARK_MAX)
- 			break;
-@@ -1078,7 +1092,8 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
- 			child->nr_values = xa_is_value(entry) ?
- 					XA_CHUNK_SIZE : 0;
- 			RCU_INIT_POINTER(child->parent, node);
--			node_set_marks(node, offset, child, marks);
-+			node_set_marks(node, offset, child, xas->xa_sibs,
-+					marks);
- 			rcu_assign_pointer(node->slots[offset],
- 					xa_mk_node(child));
- 			if (xa_is_value(curr))
-@@ -1087,7 +1102,7 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
- 		} else {
- 			unsigned int canon = offset - xas->xa_sibs;
- 
--			node_set_marks(node, canon, NULL, marks);
-+			node_set_marks(node, canon, NULL, 0, marks);
- 			rcu_assign_pointer(node->slots[canon], entry);
- 			while (offset > canon)
- 				rcu_assign_pointer(node->slots[offset--],
+Thanks.
+
 -- 
-2.43.0
-
+tejun
 
