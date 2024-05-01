@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-18387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B108B830A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 01:35:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C690E8B839D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 02:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5104B1F2388D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2024 23:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED5A1F22996
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 00:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2549B1C0DD3;
-	Tue, 30 Apr 2024 23:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD4B10F4;
+	Wed,  1 May 2024 00:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="OB8Lb87u"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="yMO3Ewp2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CAE29A2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 23:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB3C37E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 00:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714520124; cv=none; b=X86qg1dJP5q12umI28EZvnLsyAJaWo004XooHPlcrMEW2W+TaZyUZCCL3zoyuuf0Ao7WrZgCDMKcX7HThat0xPdgX3sQRc2NXcJj6gQy7H0ywcj3v1226JR6SDAu9EtSd5r6bocwYexNC8jDWFtFAU2ZBMr4ZIsCTc3s3jWLCGo=
+	t=1714522265; cv=none; b=qt/cXOrH67EeUpgKJxbu1P2KLHF8fRnh9JUzU9MkypH2vXiDbvgHxSGE/5/6FB3DTYM7E9wRveaThIdWkffFmaVYign/cj7FKRy0z84+0/mXWYDbvcBSB7j3jruXdt7dZXBHOKOO8JzY9Vlpi0/LJ/RIiep32fpDt/y2jRRVuQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714520124; c=relaxed/simple;
-	bh=zPLAG6BC9oqdmiJPIVvNKy2SbltyL+Qt1bdLKj01Us8=;
+	s=arc-20240116; t=1714522265; c=relaxed/simple;
+	bh=sSO6dh8KNFY+YwfUmmoyAukDGCYEhucFS5/dS54kCYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ori4oFAB7qarEB7itbztkm1IrD62cFHfY+MVvZGyKYs1PO3bUi77RRUXAaNJ+O12sYbs4gruxu8Yc3S1UqEhhlbsH3qe/3kUm0ES1JeTQtvw7sZBrnpC1mfup4e9vO9wcEH03YW79zwarWSrGmxLnXzziKUc/oG14h4GhVOypHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=OB8Lb87u; arc=none smtp.client-ip=209.85.214.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqOsr0WyHA5Ao6ZRCCuASD/Cx9GJaT7IFm02XBRekrqbLHvCehaj97zsunN4NJUoC6n9OO8lqwwGqztey+JD1yqIxfHCFKm8HuPlJRxlfpnaRXEgWhQGcwL3d+9hCSmW2n++FJjqBB/83IswpPtzw0aSJFGsMSY7kUJqKo4eeN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=yMO3Ewp2; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ec41d82b8bso12673385ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 16:35:23 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6ee0642f718so304753b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2024 17:11:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714520122; x=1715124922; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714522262; x=1715127062; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ebJ+P7E3aPLzGdXLYVSI2foIXw8t4rGULdg+JhpGfGw=;
-        b=OB8Lb87u/3QqijEVkcv43sf0DSe4BNdNBWcFn2i8Y8hMd4lHZY+sRMdDhkukp1CTZz
-         bed9P3Hy6+rW4/hjOg7Uvp20Po4sBx/1vYyeDfXMG5q1TJk8RsuWUSLIcMSbp0a+GorD
-         7jP2TknkPKtpd5J0E67wp+JCFFWh91KQI+Vv9WG5qPIqCzfIa+RXwwzZiBF0PIzs8lyf
-         qJBJ22SUyol+9NBZYCWryewVVjv0LhYx+MjTj7CirvD+Dcpmy538+JFMk2kI2Z2J9/27
-         xGJOI2HJsGC/lxRbdBqS9HLNqnwI+/wOzDpy8jJH/NK97f6pJ9RgDHa6dY9iXNLFE41H
-         KX1w==
+        bh=rZ/9qicPxGQaaPDcPC5n5ignkZa6a7DoBwymuEfhOJw=;
+        b=yMO3Ewp2A4ysL9IgnIe9EFOHvqFxO++Fs/BYubSI4c2tP3bgu1TOZ+NEqGMwNn3GmZ
+         5h9oAw2UZbiwLKq7gECExtfb/4uPFiJXRzgQaa3DkA0cXj3tBsR+Nug9gIxJXfFsmi5y
+         Apg+RyGcxncOsATldKciPVprKIKxy7X4tIbWv0EjOXeOA5UJpJdI3BaxyVD9v5vFCKyU
+         KJlXkVWRJyLK/XISZuBBnjspw01m8FrSmslQQl+8giG0GkwfucplU7+7rrBo3t9RpQ/A
+         cqNQRUq+6r7RgzSam7BpApoDBGiXO4g7E6Gdpzdgv7mbawMQ5HT6ushNEcxtz4cx1KNz
+         K3Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714520122; x=1715124922;
+        d=1e100.net; s=20230601; t=1714522262; x=1715127062;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ebJ+P7E3aPLzGdXLYVSI2foIXw8t4rGULdg+JhpGfGw=;
-        b=iuuj1P+0ZIj22D7vN5X0zHknI3mHkjgeQ5e2GOKTQ6b7KwFQzCF1/NKGvddmH7isT8
-         aghnr/26jHw+JbMigVE4vGbURi+2uO4G32KBm3KhlUjVMmZ1bIZwj1DHKUKDIKyuKEH6
-         WnajSx/d/8npvhyXRL9wXu6fb4dALJT7zSLPzkqhe6Njn4wMUS8nGk5A7bcOxqRxiG3k
-         dmgZZL1WHVDNpppQ7t6G8b+lJPprxUXMiC4dCyuEuQrsMWuIrWAJxz2s6tR3xGT+JYFB
-         jxRuFVodSxYugIR4V+wKqOKpxqJrkvNQS/bhiVAXIOrHxyRIeFJP942kOhVcYoTCB54Z
-         z/zA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUpBbm+uhF1njoNBu+nAOOdsVEmsWCvrKf9fmmWRDTUqE8c0ZbutfOT4++ZxTFA4kT7vSoYTCyRurV04K/hyIK6tIIhNLdEel704+NYw==
-X-Gm-Message-State: AOJu0Yypy63vAb/r42tMXXeqc0k9lYVD7lSLfuOVF9PbxLSRHGdrXFgP
-	cmA+Vh/6ldwWWtuYH8VSFD6GgEQZK9GnKGBDHJYicixxtatTosR2SiCnjIhtw3w=
-X-Google-Smtp-Source: AGHT+IE3t6+966YIcpEKzQ8cccfZ2BAKj6uBcJiHH6Y92YMU+lJ5oaeNPKZc5ddIgEnzUQ298y/KoQ==
-X-Received: by 2002:a17:902:bb17:b0:1ec:6b87:e125 with SMTP id im23-20020a170902bb1700b001ec6b87e125mr867641plb.50.1714520122398;
-        Tue, 30 Apr 2024 16:35:22 -0700 (PDT)
+        bh=rZ/9qicPxGQaaPDcPC5n5ignkZa6a7DoBwymuEfhOJw=;
+        b=Bp063Ex6buGS4jQsHPoWZ8ZBv1O1dd2IwDBhO6UfjlGFpAZZLW7gfRVGQYvmcOCGd+
+         lJdG6+fUV3RAVDBDDVUA/pMmCssET8OHhUZq6/jWN7VmorqGGeVSplKUMjd7NTy3JKm0
+         noDjTOH/7t75ZLfTB9sZVQj/ma9MjsC+UkqroPAVpYV7Qx5BlCWTGFB0sfBvbGPX3V+Z
+         B4tUMBB6h727H3WU4kyhgUGMls63KTuJpZNlbB9q4TlO8vs1hG1n4lrEK56bJkEDjxpf
+         LAr+I04OZlPDEwzywOmxtbIh08oSd633R++sy+JehPD/2dDzehqupnDYXnlB6En0vvjf
+         rubQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUw3WrXPerBYdT0XToA9FjqzvSrTTvCGkEYvIO8Hn+kRsfr0SbzcVKNKdC8GWQCrf0kctcV1AHFUaH/RURD7wF7obFrv1IPqlesncos2g==
+X-Gm-Message-State: AOJu0YwGgFpPwz7DH97MA41KT/iRXgDPLGhf5XACx1MH5Yupr1YE/Ss9
+	2xYh2MqmTbkm+rmN5guDg3tjXTPnzNwqFD6O3eaeH1i/M39iMN8Q4lmx9o7WQvo=
+X-Google-Smtp-Source: AGHT+IEG6NH1QHNLpZzkQmg5AjwrcE2NxKLckqvSU7/Ip5lLqz1027nr9cedQH0qastwL2x6xybBHg==
+X-Received: by 2002:a05:6a20:6a13:b0:1ac:dead:68 with SMTP id p19-20020a056a206a1300b001acdead0068mr2216896pzk.24.1714522261820;
+        Tue, 30 Apr 2024 17:11:01 -0700 (PDT)
 Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id w9-20020a170902c78900b001ea699b79cbsm1603839pla.213.2024.04.30.16.35.21
+        by smtp.gmail.com with ESMTPSA id ei9-20020a056a0080c900b006f33c0aee44sm13980314pfb.91.2024.04.30.17.11.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 16:35:22 -0700 (PDT)
+        Tue, 30 Apr 2024 17:11:01 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1s1x0J-00GjfX-18;
-	Wed, 01 May 2024 09:35:19 +1000
-Date: Wed, 1 May 2024 09:35:19 +1000
+	id 1s1xYo-00GlOK-0Z;
+	Wed, 01 May 2024 10:10:58 +1000
+Date: Wed, 1 May 2024 10:10:58 +1000
 From: Dave Chinner <david@fromorbit.com>
 To: John Garry <john.g.garry@oracle.com>
 Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
@@ -80,11 +80,10 @@ Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
 	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
 	ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
 	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com
-Subject: Re: [PATCH v3 10/21] xfs: Update xfs_is_falloc_aligned() mask for
- forcealign
-Message-ID: <ZjGAN8g3yqH01g1w@dread.disaster.area>
+Subject: Re: [PATCH RFC v3 11/21] xfs: Unmap blocks according to forcealign
+Message-ID: <ZjGIktQV12qas14f@dread.disaster.area>
 References: <20240429174746.2132161-1-john.g.garry@oracle.com>
- <20240429174746.2132161-11-john.g.garry@oracle.com>
+ <20240429174746.2132161-12-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,55 +92,141 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240429174746.2132161-11-john.g.garry@oracle.com>
+In-Reply-To: <20240429174746.2132161-12-john.g.garry@oracle.com>
 
-On Mon, Apr 29, 2024 at 05:47:35PM +0000, John Garry wrote:
-> For when forcealign is enabled, we want the alignment mask to cover an
-> aligned extent, similar to rtvol.
+On Mon, Apr 29, 2024 at 05:47:36PM +0000, John Garry wrote:
+> For when forcealign is enabled, blocks in an inode need to be unmapped
+> according to extent alignment, like what is already done for rtvol.
 > 
 > Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  fs/xfs/xfs_file.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  fs/xfs/libxfs/xfs_bmap.c | 39 +++++++++++++++++++++++++++++++++------
+>  fs/xfs/xfs_inode.h       |  5 +++++
+>  2 files changed, 38 insertions(+), 6 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 632653e00906..e81e01e6b22b 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -61,7 +61,10 @@ xfs_is_falloc_aligned(
->  		}
->  		mask = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize) - 1;
->  	} else {
-> -		mask = mp->m_sb.sb_blocksize - 1;
-> +		if (xfs_inode_has_forcealign(ip) && ip->i_extsize > 1)
-> +			mask = (mp->m_sb.sb_blocksize * ip->i_extsize) - 1;
-> +		else
-> +			mask = mp->m_sb.sb_blocksize - 1;
->  	}
+> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> index 4f39a43d78a7..4a78ab193753 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.c
+> +++ b/fs/xfs/libxfs/xfs_bmap.c
+> @@ -5339,6 +5339,15 @@ xfs_bmap_del_extent_real(
+>  	return 0;
+>  }
 >  
->  	return !((pos | len) & mask);
+> +/* Return the offset of an block number within an extent for forcealign. */
+> +static xfs_extlen_t
+> +xfs_forcealign_extent_offset(
+> +	struct xfs_inode	*ip,
+> +	xfs_fsblock_t		bno)
+> +{
+> +	return bno & (ip->i_extsize - 1);
+> +}
+> +
+>  /*
+>   * Unmap (remove) blocks from a file.
+>   * If nexts is nonzero then the number of extents to remove is limited to
+> @@ -5361,6 +5370,7 @@ __xfs_bunmapi(
+>  	struct xfs_bmbt_irec	got;		/* current extent record */
+>  	struct xfs_ifork	*ifp;		/* inode fork pointer */
+>  	int			isrt;		/* freeing in rt area */
+> +	int			isforcealign;	/* freeing for file inode with forcealign */
+>  	int			logflags;	/* transaction logging flags */
+>  	xfs_extlen_t		mod;		/* rt extent offset */
+>  	struct xfs_mount	*mp = ip->i_mount;
+> @@ -5397,7 +5407,10 @@ __xfs_bunmapi(
+>  		return 0;
+>  	}
+>  	XFS_STATS_INC(mp, xs_blk_unmap);
+> -	isrt = xfs_ifork_is_realtime(ip, whichfork);
+> +	isrt = (whichfork == XFS_DATA_FORK) && XFS_IS_REALTIME_INODE(ip);
 
-I think this whole function needs to be rewritten so that
-non-power-of-2 extent sizes are supported on both devices properly.
+Why did you change this check? What's wrong with
+xfs_ifork_is_realtime(), and if there is something wrong, why
+shouldn't xfs_ifork_is_relatime() get fixed?
 
-	xfs_extlen_t	fsbs = 1;
-	u64		bytes;
-	u32		mod;
+> +	isforcealign = (whichfork == XFS_DATA_FORK) &&
+> +			xfs_inode_has_forcealign(ip) &&
+> +			xfs_inode_has_extsize(ip) && ip->i_extsize > 1;
 
-	if (xfs_inode_has_forcealign(ip))
-		fsbs = ip->i_extsize;
-	else if (XFS_IS_REALTIME_INODE(ip))
-		fsbs = mp->m_sb.sb_rextsize;
+This is one of the reasons why I said xfs_inode_has_forcealign()
+should be checking that extent size hints should be checked in that
+helper....
 
-	bytes = XFS_FSB_TO_B(mp, fsbs);
-	if (is_power_of_2(fsbs))
-		return !((pos | len) & (bytes - 1));
+>  	end = start + len;
+>  
+>  	if (!xfs_iext_lookup_extent_before(ip, ifp, &end, &icur, &got)) {
+> @@ -5459,11 +5472,15 @@ __xfs_bunmapi(
+>  		if (del.br_startoff + del.br_blockcount > end + 1)
+>  			del.br_blockcount = end + 1 - del.br_startoff;
+>  
+> -		if (!isrt || (flags & XFS_BMAPI_REMAP))
+> +		if ((!isrt && !isforcealign) || (flags & XFS_BMAPI_REMAP))
+>  			goto delete;
+>  
+> -		mod = xfs_rtb_to_rtxoff(mp,
+> -				del.br_startblock + del.br_blockcount);
+> +		if (isrt)
+> +			mod = xfs_rtb_to_rtxoff(mp,
+> +					del.br_startblock + del.br_blockcount);
+> +		else if (isforcealign)
+> +			mod = xfs_forcealign_extent_offset(ip,
+> +					del.br_startblock + del.br_blockcount);
 
-	div_u64_rem(pos, bytes, &mod);
-	if (mod)
-		return false;
-	div_u64_rem(len, bytes, &mod);
-	return mod == 0;
+There's got to be a cleaner way to do this.
+
+We already know that either isrt or isforcealign must be set here,
+so there's no need for the "else if" construct.
+
+Also, forcealign should take precedence over realtime, so that
+forcealign will work on realtime devices as well. I'd change this
+code to call a wrapper like:
+
+		mod = xfs_bunmapi_align(ip, del.br_startblock + del.br_blockcount);
+
+static xfs_extlen_t
+xfs_bunmapi_align(
+	struct xfs_inode	*ip,
+	xfs_fsblock_t		bno)
+{
+	if (!XFS_INODE_IS_REALTIME(ip)) {
+		ASSERT(xfs_inode_has_forcealign(ip))
+		if (is_power_of_2(ip->i_extsize))
+			return bno & (ip->i_extsize - 1);
+		return do_div(bno, ip->i_extsize);
+	}
+	return xfs_rtb_to_rtxoff(ip->i_mount, bno);
+}
+
+
+
+>  		if (mod) {
+>  			/*
+>  			 * Realtime extent not lined up at the end.
+> @@ -5511,9 +5528,19 @@ __xfs_bunmapi(
+>  			goto nodelete;
+>  		}
+>  
+> -		mod = xfs_rtb_to_rtxoff(mp, del.br_startblock);
+> +		if (isrt)
+> +			mod = xfs_rtb_to_rtxoff(mp, del.br_startblock);
+> +		else if (isforcealign)
+> +			mod = xfs_forcealign_extent_offset(ip,
+> +					del.br_startblock);
+> +
+		mod = xfs_bunmapi_align(ip, del.br_startblock);
+
+>  		if (mod) {
+> -			xfs_extlen_t off = mp->m_sb.sb_rextsize - mod;
+> +			xfs_extlen_t off;
+> +
+> +			if (isrt)
+> +				off = mp->m_sb.sb_rextsize - mod;
+> +			else if (isforcealign)
+> +				off = ip->i_extsize - mod;
+
+			if (forcealign)
+				off = ip->i_extsize - mod;
+			else
+				off = mp->m_sb.sb_rextsize - mod;
 
 -Dave.
 -- 
