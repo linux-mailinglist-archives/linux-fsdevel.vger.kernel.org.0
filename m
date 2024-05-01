@@ -1,173 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-18415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1E08B86F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 10:34:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30958B86F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 10:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6951D1F23738
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 08:34:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB9D1F23630
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2024 08:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1771654725;
-	Wed,  1 May 2024 08:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mqAo+nql"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16DE50283;
+	Wed,  1 May 2024 08:36:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D153502A4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 08:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153321E4A1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 May 2024 08:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714552389; cv=none; b=i671yNN9fZbsstp3wt/ZsW5GyKNMqJsJ9V7N8wP474PFJyN+TDPsZszf4KrwbiVTW21ZUVW81MA6mwkGQSSPzCYXkIN3lfKxqhupEPLwELX5cvmDxVW7USPq50xjPULWJJOrhc1MwHQrX90yk3JapeOwPQtmK69JJMWu85QI38M=
+	t=1714552586; cv=none; b=b9tqwhrL76fGBSLHv6KdhFW0FoZv9JA3/zwIff9NZc/XwG6oO7MamLoXNG6bPxtEFOcVPe8sOW7Cgu2V+rgLN7U2TNm82Ob3qdgX5PT4hKJL5B9NmZ7v3xAlxne5YYM3j3IfzROugsUFLuf9A7aW2s17VVPa/v13mWaBPWT/MUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714552389; c=relaxed/simple;
-	bh=Sm5FnFUyYdyHJUqxyzhk02pT/oeijbycGLLbBF7pMUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlIvX3Y8eklME9OxJvjdrhiaX7ugYjpDWff2xiLcwXUEUMNmsfg+BXvqS/vfC0tIkaD6KLbMfy7+0agxcEWImUtzOoTYxyn74ZxKj+mlhOHW6EOOsmgtyU8gY5o8Mhnef4U/EPyX7BYLw4jgDKREzDRHWhHEjZsZQje/QLOyh3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mqAo+nql; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2b33d011e5dso117423a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2024 01:33:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714552387; x=1715157187; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZTYNlvyrYVbQYSeq48cS2P70mX2dX5gOsnD6+FgyUPQ=;
-        b=mqAo+nqlkFoz6bfARGP5j0I9RTX7DLhccAVp6CofbL+IxL9vtW/lTZ4cvR/HzzcyqM
-         3ajBa3cnRSPN147EpZ6WaSb0s5rZ2aDfnFeg8xFFShIjRlKplh+T0YtJCXroiLc0x33p
-         upHj0M24AIAGeBTqE70lyEHOStZLNlaIMFpV3J1UO03FORK55XRLuUSKLWh2SN4qmmYc
-         DUtTYLJ22VYLfyO16SfVQVE9f0cDVquD0XrPTWM8hUK4PyVPAjYmcdUf8ZTtPFEWdp/p
-         WGyHFevs2Z7KzYXs1SXlXSYock3M6ljsSvHOZkJ5tLDSwQiVhABgkBSsnStHPsRRdad2
-         obzw==
+	s=arc-20240116; t=1714552586; c=relaxed/simple;
+	bh=5vwp6LeS+InKkVJmVbD48z6EEpNvk7Na4UovYorBhwk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LhdTfDFLJDegxONrD1npd3diz5JaVIwJcAhTkrcHxqTXDrHGqnWr4EdJxw1It9iuOqDTu8j6ZNPawX6YBT5M0loZk9zkg8nWeUeJKJRvhL2owbS6esBK40V5Zxhv+4Fbe/9eBXjp3Lgvm2Ncl7+ZoIdGGPd/lK/vGd2ShA4RDIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ded1e919d2so49755139f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2024 01:36:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714552387; x=1715157187;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZTYNlvyrYVbQYSeq48cS2P70mX2dX5gOsnD6+FgyUPQ=;
-        b=q5xXjWOqI5rbhnvASkgTfICplov+84YXvlM6jDd20BRbXNGM7VM5OmX2qq5Zq9vGkv
-         L0kkkTPSTx+rbXKyALV5vNHHS5miqSUuUNB/SVSuVZh0iVdEmieuScwZ+rpLOeKNYUkw
-         PMtMpT2IscbX+eEnkPJvV0uqGgMf8gJJObbr6EsSFNPPasFujVOmDevSxfJQMoTcjufj
-         9EZbvrgsR0RiNa9u95XsMeHo2YpMxDwLofmMaJzBMGYLCA3t164QZ483Ig9Hghn+oEV2
-         78q71e1wpaeZibKUA4FtEiziW119Pdp3aL3TYNL8ZJLshT6w+qF65LAfFSQj+wA/O6IK
-         kh2w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+V0UqCqLjdIFJECQ8/NE4++5c5tgnHAqcSU0eDS0XkRM0szSfn+kEvMlTeE8NIPCWlmc8eqPwZ0+HzDD2kc+PbRJKTBB173oHhfWJEQ==
-X-Gm-Message-State: AOJu0Yz6JDj9cFsaGJw6M9HZ4ILBeynNHLMoeMl9gnPYnE0s80Pb8Wmx
-	yG5RddYQrpekC0/OokdmcJOk7KrrI1VnUQlzJZjdCpbPOLWJhMxGsRCLOYoxgzQ=
-X-Google-Smtp-Source: AGHT+IEiZg4Ov1wyuvwipwKu7F/ZM1MAg10yW7QiVfhsFN3PpgghzgYyHjehJ85DP2fIrKsN7R9vJA==
-X-Received: by 2002:a17:90a:a592:b0:2b1:cf6a:848 with SMTP id b18-20020a17090aa59200b002b1cf6a0848mr7414655pjq.7.1714552387057;
-        Wed, 01 May 2024 01:33:07 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id sx11-20020a17090b2ccb00b002b1750f228csm874075pjb.7.2024.05.01.01.33.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 01:33:06 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1s25Oi-00HAPQ-1S;
-	Wed, 01 May 2024 18:33:04 +1000
-Date: Wed, 1 May 2024 18:33:04 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, willy@infradead.org,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, wangkefeng.wang@huawei.com
-Subject: Re: [RFC PATCH v4 24/34] ext4: implement buffered write iomap path
-Message-ID: <ZjH+QFVXLlcDkSdh@dread.disaster.area>
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
- <20240410142948.2817554-25-yi.zhang@huaweicloud.com>
- <ZjH5Ia+dWGss5Duv@dread.disaster.area>
+        d=1e100.net; s=20230601; t=1714552584; x=1715157384;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fDQZsNtCQX/xSGP3zHzoLW1EYofYgs37kJqsg6TLsKw=;
+        b=LN5nlxFpNrogjGdSxvYl3Zlv29Ot8iKMMmamAOHnKTugn0zoPWZzQbHqatfxZDBJdS
+         c6lcJuX4bq6hSHp3s8Smb7nz+0W5I+C1CaY84Y+STSx7wTgZ+unT+CbD3BxKT78JxDcc
+         8gKNdr9+1BXZ3VW6soR78IYV2/GTNmoNLW3PR8WpE40p4RvyyVLyEOpPFmO/z1euE4LE
+         DtTYRDvBE8c6/PLZZRi7D6061yy/Mkw/BWU3Y2WoaV4QnpGB1uPTGr8RKMkHD1UO2GyO
+         HicGvbXH0qN1FLQSk1Tsr6UpuL5KTtpySD9DK6aE2KLqEemr5jt4quH7QHHXCpjWycIS
+         utrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhk4DennzkZ/3kXBZzRgCJw+uSoiH86yMDiZctBeHmtjbtBpE578Hb1PPU8Fzy6kMZoNhAOfCo/jmn9Xz0N6B8LZ2CSliHoSb/Vny+6w==
+X-Gm-Message-State: AOJu0YzZRcdk0jc4wbUHqpJzQXVsuIcoXXXytMSiceDvKrqrW93OKzna
+	KJo8NRRAeyeQCKtJPRLTgSPvqrR0QjuDDWKqKtL82sDjDuUouTC8nlEe/hbm1Jl777FCHHQq86T
+	XCZMP33D4DCUmQTjzM6VNPSdleNYQxi2hiIU9j12EZRtFCtf9W/kQO48=
+X-Google-Smtp-Source: AGHT+IFPEC9Ed6WfkUJm19XUVcN8J027PA+t7900I9LXMY7L6F3jetTdwDxo5pRaQiQceTAHsq5jy4qbU2GYZ5fpLSqf/1QQlTei
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjH5Ia+dWGss5Duv@dread.disaster.area>
+X-Received: by 2002:a05:6602:2d8a:b0:7de:da38:b7df with SMTP id
+ k10-20020a0566022d8a00b007deda38b7dfmr67096iow.0.1714552584287; Wed, 01 May
+ 2024 01:36:24 -0700 (PDT)
+Date: Wed, 01 May 2024 01:36:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bc46690617606123@google.com>
+Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtReadFirst
+From: syzbot <syzbot+65fa06e29859e41a83f3@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 01, 2024 at 06:11:13PM +1000, Dave Chinner wrote:
-> On Wed, Apr 10, 2024 at 10:29:38PM +0800, Zhang Yi wrote:
-> > From: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > Implement buffered write iomap path, use ext4_da_map_blocks() to map
-> > delalloc extents and add ext4_iomap_get_blocks() to allocate blocks if
-> > delalloc is disabled or free space is about to run out.
-> > 
-> > Note that we always allocate unwritten extents for new blocks in the
-> > iomap write path, this means that the allocation type is no longer
-> > controlled by the dioread_nolock mount option. After that, we could
-> > postpone the i_disksize updating to the writeback path, and drop journal
-> > handle in the buffered dealloc write path completely.
-.....
-> > +/*
-> > + * Drop the staled delayed allocation range from the write failure,
-> > + * including both start and end blocks. If not, we could leave a range
-> > + * of delayed extents covered by a clean folio, it could lead to
-> > + * inaccurate space reservation.
-> > + */
-> > +static int ext4_iomap_punch_delalloc(struct inode *inode, loff_t offset,
-> > +				     loff_t length)
-> > +{
-> > +	ext4_es_remove_extent(inode, offset >> inode->i_blkbits,
-> > +			DIV_ROUND_UP_ULL(length, EXT4_BLOCK_SIZE(inode->i_sb)));
-> >  	return 0;
-> >  }
-> >  
-> > +static int ext4_iomap_buffered_write_end(struct inode *inode, loff_t offset,
-> > +					 loff_t length, ssize_t written,
-> > +					 unsigned int flags,
-> > +					 struct iomap *iomap)
-> > +{
-> > +	handle_t *handle;
-> > +	loff_t end;
-> > +	int ret = 0, ret2;
-> > +
-> > +	/* delalloc */
-> > +	if (iomap->flags & IOMAP_F_EXT4_DELALLOC) {
-> > +		ret = iomap_file_buffered_write_punch_delalloc(inode, iomap,
-> > +			offset, length, written, ext4_iomap_punch_delalloc);
-> > +		if (ret)
-> > +			ext4_warning(inode->i_sb,
-> > +			     "Failed to clean up delalloc for inode %lu, %d",
-> > +			     inode->i_ino, ret);
-> > +		return ret;
-> > +	}
-> 
-> Why are you creating a delalloc extent for the write operation and
-> then immediately deleting it from the extent tree once the write
-> operation is done?
+Hello,
 
-Ignore this, I mixed up the ext4_iomap_punch_delalloc() code
-directly above with iomap_file_buffered_write_punch_delalloc().
+syzbot found the following issue on:
 
-In hindsight, iomap_file_buffered_write_punch_delalloc() is poorly
-named, as it is handling a short write situation which requires
-newly allocated delalloc blocks to be punched.
-iomap_file_buffered_write_finish() would probably be a better name
-for it....
+HEAD commit:    5eb4573ea63d Merge tag 'soc-fixes-6.9-2' of git://git.kern..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10d00af8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3d46aa9d7a44f40d
+dashboard link: https://syzkaller.appspot.com/bug?extid=65fa06e29859e41a83f3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103728a7180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b3c937180000
 
-> Also, why do you need IOMAP_F_EXT4_DELALLOC? Isn't a delalloc iomap
-> set up with iomap->type = IOMAP_DELALLOC? Why can't that be used?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7e4c1378cbb1/disk-5eb4573e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8e4487ecdd86/vmlinux-5eb4573e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d84518ee028f/bzImage-5eb4573e.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/8d252f0d561d/mount_0.gz
 
-But this still stands - the first thing
-iomap_file_buffered_write_punch_delalloc() is:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+65fa06e29859e41a83f3@syzkaller.appspotmail.com
 
-	if (iomap->type != IOMAP_DELALLOC)
-                return 0;
+loop0: detected capacity change from 0 to 32768
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:3087:20
+index -1 is out of range for type 'struct dtslot[128]'
+CPU: 0 PID: 5074 Comm: syz-executor356 Not tainted 6.9.0-rc5-syzkaller-00296-g5eb4573ea63d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ dtReadFirst+0x612/0xbe0 fs/jfs/jfs_dtree.c:3087
+ jfs_readdir+0x81a/0x4660 fs/jfs/jfs_dtree.c:2818
+ wrap_directory_iterator+0x94/0xe0 fs/readdir.c:67
+ iterate_dir+0x539/0x6f0 fs/readdir.c:110
+ __do_sys_getdents64 fs/readdir.c:409 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:394
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3471781639
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcff008118 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007ffcff0082e8 RCX: 00007f3471781639
+RDX: 0000000000001000 RSI: 0000000020002ec0 RDI: 0000000000000005
+RBP: 00007f34717fa610 R08: 0000000000000000 R09: 00007ffcff0082e8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffcff0082d8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+---[ end trace ]---
 
-Cheers,
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
