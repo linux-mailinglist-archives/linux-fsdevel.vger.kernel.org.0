@@ -1,107 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-18502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578778B9B3D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 15:03:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC7F8B9B43
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 15:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F411C22073
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 13:03:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E77F1C21CEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 13:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B9E83CD5;
-	Thu,  2 May 2024 13:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911FA83CCF;
+	Thu,  2 May 2024 13:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGfl1koh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iC/n65fl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6448182498;
-	Thu,  2 May 2024 13:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADCD32C60;
+	Thu,  2 May 2024 13:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714654981; cv=none; b=Tj4y7oPGEZGyeIsTUsE31a+CXO0QuyYfWSimmj1QsNZi4R1bXknbdTG8Zp4vx9CQUuoYsaHfYX3gjhj7q+g8d48TxWE9YdpIgU9RhQtE0K+WNV0j/uimHtm+3QLUcYwODF9PUpJGoHliYNTHkzi/ZfDXsZnpewtlS0wZXno36R0=
+	t=1714655073; cv=none; b=CMMvVAO1weEEPKIAJjF9bXzfdcO1VchZusAzMfIaVkYMTqKDYvSAni5mV8OfvV0OUoZbzlK1hcc+acfuSxncc3PN0qp/mMKD/YpmOwky2OhRf2Gw/vNLhUCE4jxLDmirIKsv9gQdjaY5sCN+sZD1bX6kfj2qCDycoX2jSbAPn6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714654981; c=relaxed/simple;
-	bh=3owJXZqQKDlXM66fGaGPZa02w52uxImomYF9LMzgu3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z2VwANajyowWk39A/X3wTtHCt6RRtVMmXyeaY29+vuBDAihjqWA2cwVLdOnhxHEkBhLwiXXsUTKKAHdp6nhAkvssdX5y8P9+/2imyV1348ljgbA4kvW2d6O11WZMpV9boGfytgfSRoLXH2A8rC1/g7Yrv4mDfQ3PFOGrCUGKZ48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGfl1koh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5EA2C113CC;
-	Thu,  2 May 2024 13:02:56 +0000 (UTC)
+	s=arc-20240116; t=1714655073; c=relaxed/simple;
+	bh=LxYoy5aryNP2HMhsf2xv0naIvXnZbLmH+o8waQE0UrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kWD5SlOC25PN080cxgouhoC8R17s7t+i+foj04XMnt+tuFKfIqQj+BJYAmj/AxzMIhAmnlwr/5ZvWOupH5doRCbGgh+dF/jkP4G0c4EPn59nJBlww7GfE6PIT0Tra3d0ZxihHLETKQm2g86YVwKWYHEIWRgzDH8E5AQzAl1z4so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iC/n65fl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FFD2C113CC;
+	Thu,  2 May 2024 13:04:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714654981;
-	bh=3owJXZqQKDlXM66fGaGPZa02w52uxImomYF9LMzgu3U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dGfl1koh6Y7gdMSVQbhEOifZUKx3KCVuEOMk4QSZwo6EGVpnsvBYbzXNQ3RrhPKHF
-	 gTtVKsJ/SBShnz5kt0UynrqEf5oK8gNabqpzKUXbSEoKGWm6sBaAn2eMvNemWyQD49
-	 EIuK1xJTQ/aDKXzsqlpJL+B4EB/cjMXoUPWIU0U/pI4YHdGZsXQ0wKYTEH5Pf6T4Gk
-	 WMI6VlyjgOF7G/+tA68fLLdapkmJ1LtkPhPsuw8EDSzuUMGPhaRqUqmrHLXtQ23qGh
-	 bDjoU4jVQ2GTc3Co5UPzoXZiweLtquwjbbootjM6vNyjpkLy6WVV061JdZUCzBZZhX
-	 KeQymeCCKG1aA==
+	s=k20201202; t=1714655072;
+	bh=LxYoy5aryNP2HMhsf2xv0naIvXnZbLmH+o8waQE0UrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iC/n65flUWWkvVzlWCRqHhOK18rapNIuK5TRG/60Hb4VkQXdaXhjcSKi45tYurzXB
+	 QYxWML007PwZWEYaYC5JoKXVbpDce+u5GoYgOZE0SB7ENfrm6za00f8roLirVb1LZ2
+	 Ed5nKsebg88bbdxqn0+wtWQv00XkjpiY3aUBactJVBXkEmZs916WErcTaPTL6ZXc/Y
+	 vLeU2lJk/uHNzbaFk5bqxi0Bj/LKMSfbi5KmylDzMX+PScS9S3Nx7y39QHfXx9U74V
+	 qykma9KTEkX+aTgm91VfnSQOKKwOqen6N6WIBBZyofgr0nbg9NQWQd/khkmpQBBeza
+	 mvfQlsROA9dWg==
+Date: Thu, 2 May 2024 15:04:26 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Christian Goettsche <cgoettsche@seltendoof.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Christian Goettsche <cgzones@googlemail.com>,
-	Jan Kara <jack@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kees Cook <keescook@chromium.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	peterz@infradead.org,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: cgzones@googlemail.com, Jan Kara <jack@suse.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Kees Cook <keescook@chromium.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	"peterz@infradead.org" <peterz@infradead.org>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
 Subject: Re: [PATCH] fs/xattr: unify *at syscalls
-Date: Thu,  2 May 2024 15:02:32 +0200
-Message-ID: <20240502-nagel-geschirr-33c262989d99@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240430151917.30036-1-cgoettsche@seltendoof.de>
+Message-ID: <20240502-wegweisend-hippen-75aae5b9da3f@brauner>
 References: <20240430151917.30036-1-cgoettsche@seltendoof.de>
+ <20240502103716.avdfm6r3ma2wfxjj@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1012; i=brauner@kernel.org; h=from:subject:message-id; bh=3owJXZqQKDlXM66fGaGPZa02w52uxImomYF9LMzgu3U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQZ9/3+rJRo8l5+5hvv6R9i3GeXzFk4N/pT4gfLzWe8g 1UPSLSydJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkqY7hr2xTsuBW11WaJRoM EWK6z47bf/b77y2o2//qawSv0d7HFowMf7u3XqjUnnEzdfKGX5U7Ei49vvWJMYPx7bPQ2eeT51T fYQUA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240502103716.avdfm6r3ma2wfxjj@quack3>
 
-On Tue, 30 Apr 2024 17:19:14 +0200, Christian Göttsche wrote:
-> Use the same parameter ordering for all four newly added *xattrat
-> syscalls:
+On Thu, May 02, 2024 at 12:37:16PM +0200, Jan Kara wrote:
+> On Tue 30-04-24 17:19:14, Christian Göttsche wrote:
+> > From: Christian Göttsche <cgzones@googlemail.com>
+> > 
+> > Use the same parameter ordering for all four newly added *xattrat
+> > syscalls:
+> > 
+> >     dirfd, pathname, at_flags, ...
+> > 
+> > Also consistently use unsigned int as the type for at_flags.
+> > 
+> > Suggested-by: Jan Kara <jack@suse.com>
+> > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 > 
->     dirfd, pathname, at_flags, ...
-> 
-> Also consistently use unsigned int as the type for at_flags.
-> 
-> [...]
+> Thanks! The change looks good to me. Christian, do you plan to fold this
+> into the series you've taken to your tree?
 
-Applied to the vfs.xattr branch of the vfs/vfs.git tree.
-Patches in the vfs.xattr branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.xattr
-
-[1/1] fs/xattr: unify *at syscalls
-      https://git.kernel.org/vfs/vfs/c/1d5e73c8c531
+Yep, that's the plan.
 
