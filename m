@@ -1,283 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-18519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1010A8BA14A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 22:04:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BBC8BA17B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 22:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA537284524
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 20:04:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A112B22D03
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 20:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA481802DF;
-	Thu,  2 May 2024 20:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B268F181305;
+	Thu,  2 May 2024 20:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJDfhZTE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZSZPuzPu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4EB17334F;
-	Thu,  2 May 2024 20:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE96040BE3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 20:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714680245; cv=none; b=hMsbxG/rPDI679xQgvRprra0u7e7NolF3+TKKuK7v2hlbsdoWSChBqqrryABIS2j80uzSe9c+D//L36IGp3koRlLPQROF9xmzWS9JgmALjIeGZ/M+jQWMejrrD0J8xZP5W4XzrEePbzOs9MHIijKHPwUfaX13urWpDuorKmdmVk=
+	t=1714681048; cv=none; b=Sqw/Q1GhYGRnqfXtcBHDtX8cnR573ww79vijacHiWb5S0uKzpKlN0CBdDcugf1jImMo3MNhzODAt8aqYyUYZQ69UNyfHGbt4Xxv6Uo/VXw3APwTzfZPR7ZcO2pwkiSHoqTckwLm2JhIk0Yv93ueBPL7kR8IeL2+NjYeuBjgDUpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714680245; c=relaxed/simple;
-	bh=2LiKalV3e3RB3t5fnoOKuv4rLHFNP1OOukxWuZYYBOs=;
+	s=arc-20240116; t=1714681048; c=relaxed/simple;
+	bh=4RHxfi53wIEd6JqUPxfrXAoUpSxbk4fwPAifJPNDrhM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tLWRoS2NSXBC2/XL1ITbP5OHwXaVRQzwr90Fr6HXDo+MlrLxEfo9VWh0Td+oPHEKYCPtRF6HBjTYSrEN/JyaD5tWG0GY+Na0GoO6JdM0L17I6VKm6kqt38+hJN8r9fwKRKlLLVQgVscLNwNfXjHLOUtSMiK2Ya1P+QO4ZEXUzVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJDfhZTE; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c7498041cfso4786542b6e.2;
-        Thu, 02 May 2024 13:04:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714680243; x=1715285043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OjQQjpH8NhWGNJDJapsehrY5QM3o3eHZRU+UWPn4Acs=;
-        b=dJDfhZTECwq55zkaNtZkQ81Qo6K62oiWkLQqSadoZj14P2pWG29mYraHhBME9UOIv7
-         eRbjaTuIUGOk7/Qneb4hyLINkjAlp/hU1l7zWRXMvOG7FztKRGlUcDgKYV+gIRgQYHsK
-         jJaXZ3Ze3nLSuVcpsWUJ/2LDrn2dfm192ddcZB2xF5mGP9ivq5D34ZXX9BzwkCnhAPpb
-         Jv840TgT68Mp87XB0MMehqMiBOCH/wH0mwR2qNXKjGy3SnI0mDxcTbNmquMfm7x+TA0w
-         G6tzvt3KmeiuOFYJnEDgqoN2jvS06anXBLgyOWVWEFE3FUy8pSyU5rQMGQp5TGsZ9m5J
-         TLVQ==
+	 To:Cc:Content-Type; b=YkTX94VKMDJPE+PTWZm/HqMW4dXRpF8ok2/kuXOkJ96kDfN7EQ4VFS2f3wKmO8QSdAk4Hcl/EcEwoQK3lL9iEQJ93J3FuID9HIq5h3dzX7a012X62PeptIOk+MLseJQwANjYlBz5Hqbl5f+Ek17TkBi0jmMcmqljnxZy+TOj1lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZSZPuzPu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714681045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VbBqeOpD7Ka/zVtu/tJ94H3PCNLziAZYUNi8FEkKEko=;
+	b=ZSZPuzPu7+9lpRfsfnQGHMhy81cGBOHak6CLQK6r4Xvb/oYyfsBqThvJIeyUIgxa4Ht+YF
+	uEYqbCnmMf/cGOQRngFG0eLOLsN2VVasbDl1A9Uzocuz4YSVkAHJHoyEWmPooff/JQKodx
+	7TtfBg7vLa3WvtHVZW3Jnl+y3yJ5PcY=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-130-TjMPeSB7O6Gulh8xCDwF4g-1; Thu, 02 May 2024 16:17:24 -0400
+X-MC-Unique: TjMPeSB7O6Gulh8xCDwF4g-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1ec3279c43dso41795015ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2024 13:17:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714680243; x=1715285043;
+        d=1e100.net; s=20230601; t=1714681043; x=1715285843;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OjQQjpH8NhWGNJDJapsehrY5QM3o3eHZRU+UWPn4Acs=;
-        b=n0JuYhHBqDAhBzfGPrHgyaB/rOG775QO+L3VqOldszLrCdpzWfoSaGT6pDMUmsjXqq
-         H8D56L0vkU/Lb7ixZSLYaXrUe0ncfszlFzpptdsM6gC9EzHAQYA567dyHR4YjD00MHt7
-         S0mkVQp0d2JJXSa8OXfr7OYijhJkoyOKJ0yUZ1Juw5dCZ9pVQWcioF4GO9JH27TRxEQm
-         2QVcVqVegKYQnO5WHFx9T1aExuOPqiswpcCquUWASfdcfpnb+5vZWioKI2x8koMR8k3C
-         tpe/E2Ld9bQZuhKKc5TYNm4bAj6UPFu+kn94Y4ZDKQ+dJFm6zUbVDeVH8dSyyHjmThiB
-         3MPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDOmNnv5EK75yM9GFoolPftGLOaLTKvz+TwKtQqV1VKY4hq1WorjWCAggGn8YbkP7iEnsNAGYLqejBM12pzGynowTEcyoNvdx7LY+FlLJz5AmJV/2ipQx51PFUlOiddK28zvgQrNTYRqe57A==
-X-Gm-Message-State: AOJu0YxGXcOvVoEPqoEVd4kgz8vGmovnOfm4+I3eTV0m3zNCAc8ZuoZ5
-	TZU3QlJSknI8mFGvpdN3MYhYgWQKhPVJF17Mx/1h2GbEdHrypxucotiHeV+anCS2dh1rFCzCHD2
-	MvlaaFlnEvcOHnTjgsbAeJQoHulRw+T2f
-X-Google-Smtp-Source: AGHT+IF5LRau2j9XR/7D0bXq9AYjJs5NDRapLGLlplnxUEZH7AF5vTaffEWNENripCd5tT/bMf3GYCkhnbdiAwDX+Ek=
-X-Received: by 2002:a05:6808:1898:b0:3c8:7599:d6a3 with SMTP id
- bi24-20020a056808189800b003c87599d6a3mr1174647oib.11.1714680243011; Thu, 02
- May 2024 13:04:03 -0700 (PDT)
+        bh=VbBqeOpD7Ka/zVtu/tJ94H3PCNLziAZYUNi8FEkKEko=;
+        b=VwELGeLMfmHJyDlyjehd1wN01WhIYH76I0i6Gh5dn0+t2l+Pl6FvFcpGN6S2535cxR
+         nnhMiCqaG3v0sRE5Me5dRPPoQe3qZQA1htTrx0xtfmGDuu6cXVbKwvOiU93Zd6hmHPY/
+         igZSfLAxgBheej8prNqGJC3PhqqXmMyZtZw0p2r+Ra4lJYjUSafLupGB2WoLKJnUEOe1
+         Ms10OiKruAipKtR0aXbGLO3pZaU7+onylULeCvlLGgwLMUUmKGFmcahiENNwH2ezi/d7
+         H3vjhIK+GRhi0uqc57auAxtz2tBNPa73dIUJqWWfhoFn7EJiKJM8r4DRjNkiB7D7CEgF
+         9vZw==
+X-Gm-Message-State: AOJu0YyUhaawNmq7Kcmc2Dj+AlioPXC1K4kGsfK49n5jh/Up0CCRDqmL
+	9gJATME8Ycp4Y4aYTuJlnWYPEdKGD1PxN/BKdzidFdrk6+evHNauIeMtIZUzVdEgNtGig/Ek2c7
+	AEgkms7ll6G0CqJJhyDxvOI00IV6WXpDN5ukgGUwwWPf28CyPtGsZPeED2YyM+mpsr3SnqcP8E1
+	W6c7fv/r0z9vIGe79qjmVdT8UJ0iuAWp4AldPCqQ==
+X-Received: by 2002:a17:903:2283:b0:1ea:26bf:5989 with SMTP id b3-20020a170903228300b001ea26bf5989mr979543plh.1.1714681043207;
+        Thu, 02 May 2024 13:17:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IES8pb2h5WMXry13XBJ+sx5LzQj27HizreXZd3yLm/TbuqBwvZVFnMvkbisY810Hd1pBjgIyDgiLaHbLeMJ1i4=
+X-Received: by 2002:a17:903:2283:b0:1ea:26bf:5989 with SMTP id
+ b3-20020a170903228300b001ea26bf5989mr979519plh.1.1714681042829; Thu, 02 May
+ 2024 13:17:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502145920.5011-1-apais@linux.microsoft.com> <202405021045.360F5313EA@keescook>
-In-Reply-To: <202405021045.360F5313EA@keescook>
-From: Allen <allen.lkml@gmail.com>
-Date: Thu, 2 May 2024 13:03:52 -0700
-Message-ID: <CAOMdWSJzXiqB5tusdKaavJFTaKC-qyArT0ssRHVY-fvZVKJW+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/coredump: Enable dynamic configuration of max file
- note size
-To: Kees Cook <keescook@chromium.org>
-Cc: Allen Pais <apais@linux.microsoft.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, ebiederm@xmission.com, mcgrof@kernel.org, 
-	j.granados@samsung.com
+References: <20240403172400.1449213-1-willy@infradead.org>
+In-Reply-To: <20240403172400.1449213-1-willy@infradead.org>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Thu, 2 May 2024 22:17:11 +0200
+Message-ID: <CAHc6FU5-1Qm170Qc_DV1zEidd+hQEEGDa6K=tnmKjfOm=Hnb4Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] More GFS2 folio conversions
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 2, 2024 at 10:50=E2=80=AFAM Kees Cook <keescook@chromium.org> w=
-rote:
->
-> On Thu, May 02, 2024 at 02:59:20PM +0000, Allen Pais wrote:
-> > Introduce the capability to dynamically configure the maximum file
-> > note size for ELF core dumps via sysctl. This enhancement removes
-> > the previous static limit of 4MB, allowing system administrators to
-> > adjust the size based on system-specific requirements or constraints.
-> >
-> > - Remove hardcoded `MAX_FILE_NOTE_SIZE` from `fs/binfmt_elf.c`.
-> > - Define `max_file_note_size` in `fs/coredump.c` with an initial value
-> >   set to 4MB.
-> > - Declare `max_file_note_size` as an external variable in
-> >   `include/linux/coredump.h`.
-> > - Add a new sysctl entry in `kernel/sysctl.c` to manage this setting
-> >   at runtime.
-> >
-> > $ sysctl -a | grep max_file_note_size
-> > kernel.max_file_note_size =3D 4194304
-> >
-> > $ sysctl -n kernel.max_file_note_size
-> > 4194304
-> >
-> > $echo 519304 > /proc/sys/kernel/max_file_note_size
-> >
-> > $sysctl -n kernel.max_file_note_size
-> > 519304
->
-> The names and paths in the commit log need a refresh here, since they've
-> changed.
+Hi Willy,
 
-Will fix it in v3.
->
-> >
-> > Why is this being done?
-> > We have observed that during a crash when there are more than 65k mmaps
-> > in memory, the existing fixed limit on the size of the ELF notes sectio=
-n
-> > becomes a bottleneck. The notes section quickly reaches its capacity,
-> > leading to incomplete memory segment information in the resulting cored=
-ump.
-> > This truncation compromises the utility of the coredumps, as crucial
-> > information about the memory state at the time of the crash might be
-> > omitted.
->
-> Thanks for adding this!
->
-> >
-> > Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
-> > Signed-off-by: Allen Pais <apais@linux.microsoft.com>
-> >
-> > ---
-> > Changes in v2:
-> >    - Move new sysctl to fs/coredump.c [Luis & Kees]
-> >    - rename max_file_note_size to core_file_note_size_max [kees]
-> >    - Capture "why this is being done?" int he commit message [Luis & Ke=
-es]
-> > ---
-> >  fs/binfmt_elf.c          |  3 +--
-> >  fs/coredump.c            | 10 ++++++++++
-> >  include/linux/coredump.h |  1 +
-> >  3 files changed, 12 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > index 5397b552fbeb..6aebd062b92b 100644
-> > --- a/fs/binfmt_elf.c
-> > +++ b/fs/binfmt_elf.c
-> > @@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *=
-note, user_siginfo_t *csigdata,
-> >       fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
-> >  }
-> >
-> > -#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-> >  /*
-> >   * Format of NT_FILE note:
-> >   *
-> > @@ -1592,7 +1591,7 @@ static int fill_files_note(struct memelfnote *not=
-e, struct coredump_params *cprm
-> >
-> >       names_ofs =3D (2 + 3 * count) * sizeof(data[0]);
-> >   alloc:
-> > -     if (size >=3D MAX_FILE_NOTE_SIZE) /* paranoia check */
-> > +     if (size >=3D core_file_note_size_max) /* paranoia check */
-> >               return -EINVAL;
->
-> I wonder, given the purpose of this sysctl, if it would be a
-> discoverability improvement to include a pr_warn_once() before the
-> EINVAL? Like:
->
->         /* paranoia check */
->         if (size >=3D core_file_note_size_max) {
->                 pr_warn_once("coredump Note size too large: %zu (does ker=
-nel.core_file_note_size_max sysctl need adjustment?\n", size);
->                 return -EINVAL;
->         }
->
-> What do folks think? (I can't imagine tracking down this problem
-> originally was much fun, for example.)
+thanks a lot for yet another set of folio conversion patches.
 
- I think this would really be helpful. I will go ahead and add this if
-there's no objection from anyone.
+On Wed, Apr 3, 2024 at 7:24=E2=80=AFPM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+> Yet more gfs2 folio conversions.  As usual, compile tested only.
+> The third patch is a bit more "interesting" than most.
 
-Also, I haven't received a reply from Luis, do you think we need to
-add a ceiling?
+The third patch looks fine to me, as does the first and fourth. Those
+are the ones I've added so far.
 
-+#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-+#define MAX_ALLOWED_NOTE_SIZE (16*1024*1024) // Define a reasonable max ca=
-p
-.....
-
-+       {
-+               .procname       =3D "core_file_note_size_max",
-+               .data           =3D &core_file_note_size_max,
-+               .maxlen         =3D sizeof(unsigned int),
-+               .mode           =3D 0644,
-+               .proc_handler   =3D proc_core_file_note_size_max,
-+       },
- };
-
-+int proc_core_file_note_size_max(struct ctl_table *table, int write,
-void __user *buffer, size_t *lenp, loff_t *ppos) {
-+    int error =3D proc_douintvec(table, write, buffer, lenp, ppos);
-+    if (write && (core_file_note_size_max < MAX_FILE_NOTE_SIZE ||
-core_file_note_size_max > MAX_ALLOWED_NOTE_SIZE))
-+        core_file_note_size_max =3D MAX_FILE_NOTE_SIZE;  // Revert to
-default if out of bounds
-+    return error;
-+}
-
-
-Or, should we go ahead with the current patch(with the warning added)?
+The second one is problematic; I'll respond to that separately.
 
 Thanks,
-Allen
+Andreas
+
+> Matthew Wilcox (Oracle) (4):
+>   gfs2: Convert gfs2_page_mkwrite() to use a folio
+>   gfs2: Add a migrate_folio operation for journalled files
+>   gfs2: Simplify gfs2_read_super
+>   gfs2: Convert gfs2_aspace_writepage() to use a folio
 >
-> >       size =3D round_up(size, PAGE_SIZE);
-> >       /*
-> > diff --git a/fs/coredump.c b/fs/coredump.c
-> > index be6403b4b14b..a312be48030f 100644
-> > --- a/fs/coredump.c
-> > +++ b/fs/coredump.c
-> > @@ -56,10 +56,13 @@
-> >  static bool dump_vma_snapshot(struct coredump_params *cprm);
-> >  static void free_vma_snapshot(struct coredump_params *cprm);
-> >
-> > +#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-> > +
-> >  static int core_uses_pid;
-> >  static unsigned int core_pipe_limit;
-> >  static char core_pattern[CORENAME_MAX_SIZE] =3D "core";
-> >  static int core_name_size =3D CORENAME_MAX_SIZE;
-> > +unsigned int core_file_note_size_max =3D MAX_FILE_NOTE_SIZE;
-> >
-> >  struct core_name {
-> >       char *corename;
-> > @@ -1020,6 +1023,13 @@ static struct ctl_table coredump_sysctls[] =3D {
-> >               .mode           =3D 0644,
-> >               .proc_handler   =3D proc_dointvec,
-> >       },
-> > +     {
-> > +             .procname       =3D "core_file_note_size_max",
-> > +             .data           =3D &core_file_note_size_max,
-> > +             .maxlen         =3D sizeof(unsigned int),
-> > +             .mode           =3D 0644,
-> > +             .proc_handler   =3D proc_douintvec,
-> > +     },
-> >  };
-> >
-> >  static int __init init_fs_coredump_sysctls(void)
-> > diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-> > index d3eba4360150..14c057643e7f 100644
-> > --- a/include/linux/coredump.h
-> > +++ b/include/linux/coredump.h
-> > @@ -46,6 +46,7 @@ static inline void do_coredump(const kernel_siginfo_t=
- *siginfo) {}
-> >  #endif
-> >
-> >  #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
-> > +extern unsigned int core_file_note_size_max;
-> >  extern void validate_coredump_safety(void);
-> >  #else
-> >  static inline void validate_coredump_safety(void) {}
-> > --
-> > 2.17.1
->
-> Otherwise, yes, this looks good to me.
+>  fs/gfs2/aops.c       | 34 ++-----------------------
+>  fs/gfs2/file.c       | 59 ++++++++++++++++++++++----------------------
+>  fs/gfs2/meta_io.c    | 16 ++++++------
+>  fs/gfs2/ops_fstype.c | 46 ++++++++++------------------------
+>  4 files changed, 53 insertions(+), 102 deletions(-)
 >
 > --
-> Kees Cook
+> 2.43.0
+>
 
-
-
---=20
-       - Allen
 
