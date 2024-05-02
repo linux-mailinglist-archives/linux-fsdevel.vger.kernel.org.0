@@ -1,129 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-18544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84FA08BA42A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 01:42:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A845F8BA441
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 01:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AEF1F2281E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 23:42:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4883C1F21672
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 23:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B3A158A08;
-	Thu,  2 May 2024 23:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77752158A19;
+	Thu,  2 May 2024 23:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BNq4ALpK"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KEz01Qxj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4BC64CFC;
-	Thu,  2 May 2024 23:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D95158860;
+	Thu,  2 May 2024 23:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714693322; cv=none; b=u9pPyWYumtSssQEg4j+Pw3qxpK57En0oJPxjdbJWMEm09n23vgaW8KfosIBGUPB3SUTDpldhwcR8YnUbQc+J47BhXbVbhMnr5kRESO9e5eAWLle/8OAWCB9zyVbvGFviOLh3wrK7zgbTCyc8ntmiZ9Cmi6haRc6KFDM4rhLBioA=
+	t=1714694169; cv=none; b=bXbtruAZM0L5csmXYO8GUDo0kaarG3z6FzHfeqokjWyJ1VjSVmZ6M+O0N2lKI5wM4i/Rp0LKsLQBcwNep0lgwnr2Qa1nnuSE5DN7p3DExHMuASFMjqD5OgWds+YJjhP+LMIEI6l7bvWvi8MplydVfbwAl1jv638G6cKi2Jphqmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714693322; c=relaxed/simple;
-	bh=IMzxej8gM+J5XtCh0Iw8AuKDl9QKct+s+p69UDAyyz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFF1NWNcZScN4IY0JYXHXfQ1UvijUYHAgLiJjJgPjD4GUprinTfVxhWiHuUdCys2Sc0aBMAICDWoyM7Q3uj1ZcsdRfkTt8v2yK6ju9jyOJO8qG/S/8MFyoFvPsHTgj9xgG9jxe0Pa+nfQWMYkd1NeeEQYB+8KIcb7HCKMafVRQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BNq4ALpK; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+jAuGAUMlirWHwpsbSRnjzxGiwK0lb5RSO05/kE9BCw=; b=BNq4ALpKLbJH/KcTZGVVsf3CKJ
-	6oohbExTsN0l0871Q/7TlyO/laXpsBkWo09az4DGUWLvE3ZnhSutgPPbRrSdmjVD64ociH3mDN1/r
-	gcuF5m3Wd1/GtmS9WdQNT76M7n0pZW4/4mjMhFRhlNHD7QLOPUWnD3I2+RAnpUlOKzb3y7KyOS98x
-	K09oUyMoAR7KSwTEuyYKEXwf8HhZd5wgO8ntlHUFD+3XXf7A8HhJSuBcTLMaabEHDix2ylHnIL6m+
-	FlrlcoZL1dAfDyMQU82WNe22tv6MCZ5QyTfCry9vkmmNLUa09aNWUKuoG7qNYKGPHCEEaBGvCjE3I
-	mJG5dmsQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s2g3k-009s3X-2Z;
-	Thu, 02 May 2024 23:41:52 +0000
-Date: Fri, 3 May 2024 00:41:52 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Kees Cook <keescook@chromium.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Matt Atwood <matthew.s.atwood@intel.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Nirmoy Das <nirmoy.das@intel.com>,
-	Jonathan Cavitt <jonathan.cavitt@intel.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-kbuild@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 5/5] fs: Convert struct file::f_count to refcount_long_t
-Message-ID: <20240502234152.GP2118490@ZenIV>
-References: <20240502222252.work.690-kees@kernel.org>
- <20240502223341.1835070-5-keescook@chromium.org>
- <20240502224250.GM2118490@ZenIV>
- <202405021548.040579B1C@keescook>
- <20240502231228.GN2118490@ZenIV>
- <202405021620.C8115568@keescook>
+	s=arc-20240116; t=1714694169; c=relaxed/simple;
+	bh=KDTPeN05M57xS2MXKydvC49uBoYhEKguBW3iE8aLQTo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=eu4wx3LJ2s99jOSGhnBqFus2YJiddQU0chIJ2VC1tSZ2nb9wKvh0gf1sU/7ob7Y3ayNxPsize1yFPEJNGcdrd3RB4/Ej4kd3IAutYWu6aCpxAoa8ARQAJ8xfKs33R3huDAvgp9kxmvTwMx3Epmvk++Pbt0XJd4nvOAAuR4pl5OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KEz01Qxj; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from apais-vm1.0synte4vioeebbvidf5q0vz2ua.xx.internal.cloudapp.net (unknown [52.183.86.224])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 516C2206B4FD;
+	Thu,  2 May 2024 16:56:07 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 516C2206B4FD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1714694167;
+	bh=0ApDPPUAUdsRc/Ls5y+zI70kXBtCixjZ+x/qjau8Og4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KEz01Qxj2Gpz2MBLoacRPZ8SwgTCX//O2/jmyVG8S+s22YPkRX+F8OF4H1wJ1VFjt
+	 uGI+B7bpOFmIJKh6Oj7CclSJRYzfEMhybumBWn1uXhDVUKOmEqRNm4fQi9MZa6pHLB
+	 UMq+yPmihLGsnHw0X6ivB5+3nABH2jmfwTMroBYI=
+From: Allen Pais <apais@linux.microsoft.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	ebiederm@xmission.com,
+	keescook@chromium.org,
+	mcgrof@kernel.org,
+	j.granados@samsung.com,
+	allen.lkml@gmail.com
+Subject: [PATCH v3] fs/coredump: Enable dynamic configuration of max file note size
+Date: Thu,  2 May 2024 23:56:03 +0000
+Message-Id: <20240502235603.19290-1-apais@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202405021620.C8115568@keescook>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, May 02, 2024 at 04:21:13PM -0700, Kees Cook wrote:
-> On Fri, May 03, 2024 at 12:12:28AM +0100, Al Viro wrote:
-> > On Thu, May 02, 2024 at 03:52:21PM -0700, Kees Cook wrote:
-> > 
-> > > As for semantics, what do you mean? Detecting dec-below-zero means we
-> > > catch underflow, and detected inc-from-zero means we catch resurrection
-> > > attempts. In both cases we avoid double-free, but we have already lost
-> > > to a potential dangling reference to a freed struct file. But just
-> > > letting f_count go bad seems dangerous.
-> > 
-> > Detected inc-from-zero can also mean an RCU lookup detecting a descriptor
-> > in the middle of getting closed.  And it's more subtle than that, actually,
-> > thanks to SLAB_TYPESAFE_BY_RCU for struct file.
-> 
-> But isn't that already handled by __get_file_rcu()? i.e. shouldn't it be
-> impossible for a simple get_file() to ever see a 0 f_count under normal
-> conditions?
+Introduce the capability to dynamically configure the maximum file
+note size for ELF core dumps via sysctl. This enhancement removes
+the previous static limit of 4MB, allowing system administrators to
+adjust the size based on system-specific requirements or constraints.
 
-For get_file() it is impossible.  The comment about semantics had been
-about the sane ways to recover if such crap gets detected.
+- Remove hardcoded `MAX_FILE_NOTE_SIZE` from `fs/binfmt_elf.c`.
+- Define `max_file_note_size` in `fs/coredump.c` with an initial value
+  set to 4MB.
+- Declare `max_file_note_size` as an external variable in
+  `include/linux/coredump.h`.
+- Add a new sysctl entry in `kernel/sysctl.c` to manage this setting
+  at runtime.
 
-__get_file_rcu() is a separate story - consider the comment in there: 
-	* atomic_long_inc_not_zero() above provided a full memory
-	* barrier when we acquired a reference.
-         *
-         * This is paired with the write barrier from assigning to the
-         * __rcu protected file pointer so that if that pointer still
-         * matches the current file, we know we have successfully
-         * acquired a reference to the right file.
+$ sysctl -a | grep core_file_note_size_max
+kernel.core_file_note_size_max = 4194304
 
-and IIRC, refcount_t is weaker wrt barriers.
+$ sysctl -n kernel.core_file_note_size_max
+4194304
+
+$echo 519304 > /proc/sys/kernel/core_file_note_size_max
+
+$sysctl -n kernel.core_file_note_size_max
+519304
+
+Attempting to write beyond the ceiling value of 16MB
+$echo 17194304 > /proc/sys/kernel/core_file_note_size_max
+bash: echo: write error: Invalid argument
+
+Why is this being done?
+We have observed that during a crash when there are more than 65k mmaps
+in memory, the existing fixed limit on the size of the ELF notes section
+becomes a bottleneck. The notes section quickly reaches its capacity,
+leading to incomplete memory segment information in the resulting coredump.
+This truncation compromises the utility of the coredumps, as crucial
+information about the memory state at the time of the crash might be
+omitted.
+
+Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
+Signed-off-by: Allen Pais <apais@linux.microsoft.com>
+
+---
+Chagnes in v3:
+   - Fix commit message to reflect the correct sysctl knob [Kees]
+   - Add a ceiling for maximum pssible note size(16M) [Allen]
+   - Add a pr_warn_once() [Kees]
+Changes in v2:
+   - Move new sysctl to fs/coredump.c [Luis & Kees]
+   - rename max_file_note_size to core_file_note_size_max [kees]
+   - Capture "why this is being done?" int he commit message [Luis & Kees]
+---
+ fs/binfmt_elf.c          |  8 ++++++--
+ fs/coredump.c            | 15 +++++++++++++++
+ include/linux/coredump.h |  1 +
+ 3 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 5397b552fbeb..5294f8f3a9a8 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
+ 	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
+ }
+ 
+-#define MAX_FILE_NOTE_SIZE (4*1024*1024)
+ /*
+  * Format of NT_FILE note:
+  *
+@@ -1592,8 +1591,13 @@ static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm
+ 
+ 	names_ofs = (2 + 3 * count) * sizeof(data[0]);
+  alloc:
+-	if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
++	/* paranoia check */
++	if (size >= core_file_note_size_max) {
++		pr_warn_once("coredump Note size too large: %u "
++		"(does kernel.core_file_note_size_max sysctl need adjustment?)\n",
++		size);
+ 		return -EINVAL;
++	}
+ 	size = round_up(size, PAGE_SIZE);
+ 	/*
+ 	 * "size" can be 0 here legitimately.
+diff --git a/fs/coredump.c b/fs/coredump.c
+index be6403b4b14b..ffaed8c1b3b0 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -56,10 +56,16 @@
+ static bool dump_vma_snapshot(struct coredump_params *cprm);
+ static void free_vma_snapshot(struct coredump_params *cprm);
+ 
++#define MAX_FILE_NOTE_SIZE (4*1024*1024)
++/* Define a reasonable max cap */
++#define MAX_ALLOWED_NOTE_SIZE (16*1024*1024)
++
+ static int core_uses_pid;
+ static unsigned int core_pipe_limit;
+ static char core_pattern[CORENAME_MAX_SIZE] = "core";
+ static int core_name_size = CORENAME_MAX_SIZE;
++unsigned int core_file_note_size_max = MAX_FILE_NOTE_SIZE;
++unsigned int core_file_note_size_allowed = MAX_ALLOWED_NOTE_SIZE;
+ 
+ struct core_name {
+ 	char *corename;
+@@ -1020,6 +1026,15 @@ static struct ctl_table coredump_sysctls[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
++	{
++		.procname       = "core_file_note_size_max",
++		.data           = &core_file_note_size_max,
++		.maxlen         = sizeof(unsigned int),
++		.mode           = 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= &core_file_note_size_max,
++		.extra2		= &core_file_note_size_allowed,
++	},
+ };
+ 
+ static int __init init_fs_coredump_sysctls(void)
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index d3eba4360150..14c057643e7f 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -46,6 +46,7 @@ static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
+ #endif
+ 
+ #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
++extern unsigned int core_file_note_size_max;
+ extern void validate_coredump_safety(void);
+ #else
+ static inline void validate_coredump_safety(void) {}
+-- 
+2.17.1
+
 
