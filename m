@@ -1,225 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-18537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBD88BA374
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 00:47:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC4D8BA390
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 00:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351321F24D4A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 22:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B20E283190
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 22:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BD71BDCD;
-	Thu,  2 May 2024 22:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B54321360;
+	Thu,  2 May 2024 22:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f4lPAkip"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vXFR8b+4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HNqahZD0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vXFR8b+4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HNqahZD0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A251BC43
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 22:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3D71C2AD;
+	Thu,  2 May 2024 22:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714690052; cv=none; b=RWUbw1ythSRblEvxdCbeldtms0lvj0nDeZo30StJsYQykT3OLqGV2GolzehmPne/WpTyg8wv0OHlC1MFusuJ0JJSA+lb6ol1Q/CWQib9WEotXY3itqlDstfv3lvpCpyvmvhKf3Jwae3GD2I0/Dvy7tDu784zkn5hsNaz4rfru08=
+	t=1714690646; cv=none; b=iJGP6xGPpgMl5ojVXS0srlWeewAw4xpVjxvHxWZjFlmM5TnnwiIsQPc5j5X7P55/6I2MoSkn2UO0ejEXUCvUUVlFgqF9zxsEWXpjpX5DxYkwmAgNwrcBUKl0D6fd9oCsPvrt9ThDQLimmlR7kVKOvLDjPXilcPuufVY3pjdL2og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714690052; c=relaxed/simple;
-	bh=MJJwatBneGbQvS95q/E5NzUx6xQig2VQFamIP+L0rYw=;
+	s=arc-20240116; t=1714690646; c=relaxed/simple;
+	bh=KNuj+zPw1itV3KkMBcKodkx4OvddR49LGBRoZuKC0jw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RBB9OswHRHXZU+1Gm/VV11w8E/TuAGqGxnbVhAo0/pv9DUaPd10n3UlGZ9uE6/rDnk1dmgZIX+NNIKM0JKmPaETJOR4QiBzPwIofFy8XWfT4l+luUWBSdfYbCaxw5x4LT3LehLJmo2l1J0EYmNEI0anEYBBzq2UMiLjtbh3G04g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=f4lPAkip; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2b338460546so1525175a91.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2024 15:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714690050; x=1715294850; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qMDOwJlnqLjVTDrfPZW0Iu5hD97JbrHipMX/GW9VxEA=;
-        b=f4lPAkipX7Zl8HmkSUo+rCCW+DmlqFijmXA7Szam4DSgcSdmfXXogieOTh+tAguefj
-         auTsyDVjZlAAAp0CeHZ/s8tpuTupXqnxGHw7f906yCXDLaHsgN1jbOX+xHPu6wGcNYrW
-         z9hkrVMbBBXhiSoGRbnrKIFafD+84wb2kAdvM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714690050; x=1715294850;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qMDOwJlnqLjVTDrfPZW0Iu5hD97JbrHipMX/GW9VxEA=;
-        b=ZYyAQg4inbS1E69XbfeR7/wPDietzLiI/89WEX7hQ7z/za4ZBzjT565p+QkNxnmW3K
-         MYSzzfAlwlaFiDp4XoCliYVkQHWlPYuC56bNgy0dXM/wh9XmfMF1r6oo/X54u/ZOUDsl
-         WBcHe9XZcIbrVeVEMzqrbQCfF/8/gK3wcvbc+0H05OUY1rkcbTkQ21CkEc0l9lATmnsD
-         lnz4/NtkrT+fCPrI9duPBisl79B4ivhUS33YPOSv2MQLClvpTZLOCMxbohrW32CUlh7P
-         4N/kthfqDZq4M6iY03OaFTizzpq2XLDHgZZmR3zAGqNeJGpOom4bb1pQy3sEHqdA4scK
-         Tgag==
-X-Forwarded-Encrypted: i=1; AJvYcCWK5DgH9KNHqfoIb09JMjdZEzszn4ij7ydzST7bxHNXCeipsTChtBR9173uTEk+1W/J0Wqk5vPyc0qtnF5mJMhhDRPjoQxyeju5U6SNfQ==
-X-Gm-Message-State: AOJu0YxOElTbXHPkeLR8KMMPvjog1q3/th2gidM6PWwI2130PolWLKws
-	mx0hLSJTOWP2QjJlRQzzOxNEp75pqjM3gcqclPxoL3aOhvmmkIf6um4nYZvk4eGEP+3fQUk46dE
-	=
-X-Google-Smtp-Source: AGHT+IHD0FBpS56EdsfC3+XKdOjNxpAQUA2NXZ5FFtInn2XZKWCGioJvIGY86CTQK3kPpRVrkEePfg==
-X-Received: by 2002:a17:90b:149:b0:2b3:70d4:15fb with SMTP id em9-20020a17090b014900b002b370d415fbmr1053056pjb.24.1714690049899;
-        Thu, 02 May 2024 15:47:29 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id q6-20020a170902a3c600b001e446490072sm1905831plb.25.2024.05.02.15.47.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 May 2024 15:47:29 -0700 (PDT)
-Date: Thu, 2 May 2024 15:47:28 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Allen <allen.lkml@gmail.com>
-Cc: Allen Pais <apais@linux.microsoft.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, mcgrof@kernel.org, j.granados@samsung.com
-Subject: Re: [PATCH v2] fs/coredump: Enable dynamic configuration of max file
- note size
-Message-ID: <202405021545.4A3ACDED0@keescook>
-References: <20240502145920.5011-1-apais@linux.microsoft.com>
- <202405021045.360F5313EA@keescook>
- <CAOMdWSJzXiqB5tusdKaavJFTaKC-qyArT0ssRHVY-fvZVKJW+Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAtxZuLuvlYhcytpkBcwSWiWgr8dKLatm7G8A7EmXwEGa+Qevtf1OWoXEEJZIV/EpFwSa13SHfFiDBVN+WGu891d0dejgkrZBpSAITZ29yhwTDrNGS/v20mkx/3ZdpTGFMvgoyKdReSmorHh87HYCvMQzhmryAuOaiH6alUBono=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vXFR8b+4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HNqahZD0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vXFR8b+4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HNqahZD0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4BA8521B6D;
+	Thu,  2 May 2024 22:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714690642;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzZUXDPV0PB0GLA7qoIAy85H9S+PZoQXohv8tj76ZUE=;
+	b=vXFR8b+47fVienxCNHPpZEgaFl8IRR1Mv71xdUtU2622Csxiucd04oEJVudXAF/3dZZNOL
+	5qNcdcB9sSojwmpUriiCZRok+GGh4OGmhrQ7fE2dhTP1etELCXv80VumvTxLCy0EOxtpo/
+	H8bcJ9lxrkFjfxAvCydRKS1OSGHKjno=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714690642;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzZUXDPV0PB0GLA7qoIAy85H9S+PZoQXohv8tj76ZUE=;
+	b=HNqahZD0v59hLZv9836klkwGH5Zx+9048K1YzBWruiSenefzAMz0+ei9HFfuJv8vmMbSVh
+	rve/oT7LivploiAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vXFR8b+4;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HNqahZD0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714690642;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzZUXDPV0PB0GLA7qoIAy85H9S+PZoQXohv8tj76ZUE=;
+	b=vXFR8b+47fVienxCNHPpZEgaFl8IRR1Mv71xdUtU2622Csxiucd04oEJVudXAF/3dZZNOL
+	5qNcdcB9sSojwmpUriiCZRok+GGh4OGmhrQ7fE2dhTP1etELCXv80VumvTxLCy0EOxtpo/
+	H8bcJ9lxrkFjfxAvCydRKS1OSGHKjno=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714690642;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzZUXDPV0PB0GLA7qoIAy85H9S+PZoQXohv8tj76ZUE=;
+	b=HNqahZD0v59hLZv9836klkwGH5Zx+9048K1YzBWruiSenefzAMz0+ei9HFfuJv8vmMbSVh
+	rve/oT7LivploiAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D3EC1386E;
+	Thu,  2 May 2024 22:57:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XE/sClIaNGauegAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 02 May 2024 22:57:22 +0000
+Date: Fri, 3 May 2024 00:50:06 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, Baoquan He <bhe@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 1/4] btrfs: Remove duplicate included header
+Message-ID: <20240502225006.GU2585@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20240502212631.110175-1-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOMdWSJzXiqB5tusdKaavJFTaKC-qyArT0ssRHVY-fvZVKJW+Q@mail.gmail.com>
+In-Reply-To: <20240502212631.110175-1-thorsten.blum@toblux.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.17 / 50.00];
+	BAYES_HAM(-2.96)[99.83%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[fb.com,toxicpanda.com,suse.com,redhat.com,kernel.org,szeredi.hu,gmail.com,vger.kernel.org,lists.linux.dev,lists.infradead.org];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 4BA8521B6D
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.17
 
-On Thu, May 02, 2024 at 01:03:52PM -0700, Allen wrote:
-> On Thu, May 2, 2024 at 10:50 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Thu, May 02, 2024 at 02:59:20PM +0000, Allen Pais wrote:
-> > > Introduce the capability to dynamically configure the maximum file
-> > > note size for ELF core dumps via sysctl. This enhancement removes
-> > > the previous static limit of 4MB, allowing system administrators to
-> > > adjust the size based on system-specific requirements or constraints.
-> > >
-> > > - Remove hardcoded `MAX_FILE_NOTE_SIZE` from `fs/binfmt_elf.c`.
-> > > - Define `max_file_note_size` in `fs/coredump.c` with an initial value
-> > >   set to 4MB.
-> > > - Declare `max_file_note_size` as an external variable in
-> > >   `include/linux/coredump.h`.
-> > > - Add a new sysctl entry in `kernel/sysctl.c` to manage this setting
-> > >   at runtime.
-> > >
-> > > $ sysctl -a | grep max_file_note_size
-> > > kernel.max_file_note_size = 4194304
-> > >
-> > > $ sysctl -n kernel.max_file_note_size
-> > > 4194304
-> > >
-> > > $echo 519304 > /proc/sys/kernel/max_file_note_size
-> > >
-> > > $sysctl -n kernel.max_file_note_size
-> > > 519304
-> >
-> > The names and paths in the commit log need a refresh here, since they've
-> > changed.
+On Thu, May 02, 2024 at 11:26:28PM +0200, Thorsten Blum wrote:
+> Remove duplicate included header file linux/blkdev.h
 > 
-> Will fix it in v3.
-> >
-> > >
-> > > Why is this being done?
-> > > We have observed that during a crash when there are more than 65k mmaps
-> > > in memory, the existing fixed limit on the size of the ELF notes section
-> > > becomes a bottleneck. The notes section quickly reaches its capacity,
-> > > leading to incomplete memory segment information in the resulting coredump.
-> > > This truncation compromises the utility of the coredumps, as crucial
-> > > information about the memory state at the time of the crash might be
-> > > omitted.
-> >
-> > Thanks for adding this!
-> >
-> > >
-> > > Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
-> > > Signed-off-by: Allen Pais <apais@linux.microsoft.com>
-> > >
-> > > ---
-> > > Changes in v2:
-> > >    - Move new sysctl to fs/coredump.c [Luis & Kees]
-> > >    - rename max_file_note_size to core_file_note_size_max [kees]
-> > >    - Capture "why this is being done?" int he commit message [Luis & Kees]
-> > > ---
-> > >  fs/binfmt_elf.c          |  3 +--
-> > >  fs/coredump.c            | 10 ++++++++++
-> > >  include/linux/coredump.h |  1 +
-> > >  3 files changed, 12 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > > index 5397b552fbeb..6aebd062b92b 100644
-> > > --- a/fs/binfmt_elf.c
-> > > +++ b/fs/binfmt_elf.c
-> > > @@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
-> > >       fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
-> > >  }
-> > >
-> > > -#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-> > >  /*
-> > >   * Format of NT_FILE note:
-> > >   *
-> > > @@ -1592,7 +1591,7 @@ static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm
-> > >
-> > >       names_ofs = (2 + 3 * count) * sizeof(data[0]);
-> > >   alloc:
-> > > -     if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
-> > > +     if (size >= core_file_note_size_max) /* paranoia check */
-> > >               return -EINVAL;
-> >
-> > I wonder, given the purpose of this sysctl, if it would be a
-> > discoverability improvement to include a pr_warn_once() before the
-> > EINVAL? Like:
-> >
-> >         /* paranoia check */
-> >         if (size >= core_file_note_size_max) {
-> >                 pr_warn_once("coredump Note size too large: %zu (does kernel.core_file_note_size_max sysctl need adjustment?\n", size);
-> >                 return -EINVAL;
-> >         }
-> >
-> > What do folks think? (I can't imagine tracking down this problem
-> > originally was much fun, for example.)
-> 
->  I think this would really be helpful. I will go ahead and add this if
-> there's no objection from anyone.
-> 
-> Also, I haven't received a reply from Luis, do you think we need to
-> add a ceiling?
-> 
-> +#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-> +#define MAX_ALLOWED_NOTE_SIZE (16*1024*1024) // Define a reasonable max cap
-> .....
-> 
-> +       {
-> +               .procname       = "core_file_note_size_max",
-> +               .data           = &core_file_note_size_max,
-> +               .maxlen         = sizeof(unsigned int),
-> +               .mode           = 0644,
-> +               .proc_handler   = proc_core_file_note_size_max,
-> +       },
->  };
-> 
-> +int proc_core_file_note_size_max(struct ctl_table *table, int write,
-> void __user *buffer, size_t *lenp, loff_t *ppos) {
-> +    int error = proc_douintvec(table, write, buffer, lenp, ppos);
-> +    if (write && (core_file_note_size_max < MAX_FILE_NOTE_SIZE ||
-> core_file_note_size_max > MAX_ALLOWED_NOTE_SIZE))
-> +        core_file_note_size_max = MAX_FILE_NOTE_SIZE;  // Revert to
-> default if out of bounds
-> +    return error;
-> +}
-> 
-> 
-> Or, should we go ahead with the current patch(with the warning added)?
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-Let's add a ceiling just to avoid really pathological behavior. We got
-this far with 4M, so having a new ceiling seems reasonable. And for
-implementing it, see proc_douintvec_minmax.
-
--Kees
-
--- 
-Kees Cook
+Added to for-next, thanks.
 
