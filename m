@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-18464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF298B92ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 02:51:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2648B9309
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 03:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D4E1C216FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 00:50:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2151F2246A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 01:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F10B12B87;
-	Thu,  2 May 2024 00:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FACE12B93;
+	Thu,  2 May 2024 01:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="z3JnhcMc"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="HizvQYYw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6DDD299
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 00:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD1011184
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 01:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714611049; cv=none; b=Tz1NixOM/dg8AMCmYP7Rl+ZMPRupQfxBTOjnbz3H2pHI4mCaqkxR9hMWiPdIQzI43TOUHNW8JmTYF9PvmqcTobkeVgRcXt6OOsSg5Q7EfIu6EZGHhnNEIu5lRvTdGpnbWYIIsd9beLkm1/B7YsOHdD95uHuNn2jZPinuuTmbX6c=
+	t=1714612269; cv=none; b=IVfXcxwaYM+4agL7dIGww5jriMeF0iPLmqy+is0oFIxWD/ktLsTNoq3c1/eenoMEYVraQcNmJb99OHh3NGW5OPjPm8LXVDJ4VXikQAtwSbBEaxBETuwhqhYfM6XE0qywF2Trgs7rPXvsSlpiqmU/2wNyYmYvJ6aIvKhqBa8IWrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714611049; c=relaxed/simple;
-	bh=A2sMRVET5TYa3/vVhRzf6iYtSiEMpUna17lSSfqkZGc=;
+	s=arc-20240116; t=1714612269; c=relaxed/simple;
+	bh=goGnx7+o0cvrtydIDAhojJQ/cmld+QqZebwaXWoS2ZQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=snLFW5PH7fva9W/KGMyttqrKvrt8rIzlZldZooThE5ZwsaO6oQrzHFDQYNpAPStrkUz5b2SYv9aytLmsAIZvOSisKwKPIIb6fxUGKoGsrI9YZxasuUG7wFrAxGuCYQze7d3IFZ+inlXsSGdLarzRxmDKzqq5R7K8mPqB0CsN0K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=z3JnhcMc; arc=none smtp.client-ip=209.85.214.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtPTvYEi+jFP83G67rGpM6SEXV/bN4/5ak0Toh0940jySZtCosCp0vTbxcRqBjEhfPagz8XWf7T65ULA90EFNZO35vamyLWJSK0P5zetaiwTvgM7dqYB6omDpf2Id1yEuAKmSwj7nEFx0GqytNVSATfJY9eY5qbKI5iSPcHkuns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=HizvQYYw; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ecc23e6c9dso5495245ad.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2024 17:50:46 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1e5c7d087e1so63581155ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2024 18:11:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714611046; x=1715215846; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1714612267; x=1715217067; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0yro6mCsnOYESpgiEY/eqEksfYNfYV/p03nQpH383Y=;
-        b=z3JnhcMcPs9rxNQNBiDKwX1SGk47U2BwrCTqYYJfqsn8FxIhY9Z5jIkCJ6M2fjMyNK
-         JEp7laTb34msmF4gL1ooB5g5fKn4e7HEzu9Vc99dTpSwTQRKtIvkliuYFtNM9cZOGuOV
-         5TwbrAh8K19HJiVjQCqrvLuoMOhbM8280qkmkKhg6m40n4gPbdRciQ2JDeMO227LuKyI
-         /7RVol4eKdBOjW/RbkxFBCazblvwcXouQfqRRsmjPid6mr5M99B3GfBlfnuFKxK+6Osc
-         xPe64o5kWsHdUD21FufE9bgszNQu16YWRTqEVKclGVYbAikX95xKiDaFsl4CwxLNnD30
-         fOcQ==
+        bh=cTmHTn+EDFvVBp/uyb7cTt66Oy+JEt94l4VC8Lg3nkQ=;
+        b=HizvQYYw2Vk/8lTkUD9rgJxIJ4rRQszigVSXO925Q/ViWXwPDpvBITXu+XzWF20o6L
+         0Djz/fjB+kR2wF+Hhx6wY5f2z7wfmqiUsEK5/MamyQGFuoNrLtdTlFFRGQAuzgaR0j1Q
+         OFRbNIstCFhbaLvtcfH4hPEz9xy8z/IcvWbhnjETX8M9m57yE+wF/x9QjXsKgDLXAIrk
+         tzvVi9RkT3t6UaCESlEHSWojWbgNo5MyICfMkMGgvD4lxkgTNWWJ1xQwx80drWaapT3b
+         tP4JvZtdjc00oeNiS5YbRwIPTc+C8aN7XJEoz1UliNlO+jD9LXaoE7ETeImzhOQAt2Pa
+         EARA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714611046; x=1715215846;
+        d=1e100.net; s=20230601; t=1714612267; x=1715217067;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C0yro6mCsnOYESpgiEY/eqEksfYNfYV/p03nQpH383Y=;
-        b=k4uhRIB3p75K/TE1HT41A1m7jNbRkm2j6A1N8Y4BRqXsaMa6NdXR1S89ShWuRsDFMw
-         6CAGaI7N1yCB3miUYCcnCMUaAMsRECg8faBIQNnBwktVI+Jhjc041BIUTqip4xEPU/zd
-         eak+h6RgADflsPR0KuQdVYAHvA8Hgw+fuENcbmdFXlhBIu3u/pAXk5bYAggIQOLVZcQw
-         t36O93m9jkqAgx3h5/EJRnuBfN17Vhls1tpPYP1+Tt2BgajUG5+6XbHImkkQYfT3hKPl
-         R/78DoB424MAxW/rh327KmccpXw8GR58cAy2+OLzBfev16vvtS/DT5VOzHiNMgSnt1Aw
-         mcvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXcJ4u3uHZmJrGCXth0O2zEQyH/LWu0fOutX9apgUDBuftdNdM0ja0QHaxn/BBA5Ura/9jwHia2Ssaq2XuRyNj72dx5KPLCrqXJtatEA==
-X-Gm-Message-State: AOJu0YzNJugjX7ElGf5zq1xWBKsAXN3ICYmUnR/PkbSCmhhnc0Qg2Mbq
-	EPbuiFitIROftzQt8IyxWo7+PwypkPkpu1VFDXdDMfGGwt/UQJHxHJmOea5WK3o=
-X-Google-Smtp-Source: AGHT+IF1CEpl4XkYgWfwAZRE9Iw5tzc1lpvTtka9TKQ8B/BxRJk8eYZOBT9guSPfHkUCxQ+vkMQGmw==
-X-Received: by 2002:a17:902:da90:b0:1e3:cfc5:589e with SMTP id j16-20020a170902da9000b001e3cfc5589emr4792731plx.64.1714611045317;
-        Wed, 01 May 2024 17:50:45 -0700 (PDT)
+        bh=cTmHTn+EDFvVBp/uyb7cTt66Oy+JEt94l4VC8Lg3nkQ=;
+        b=qX7M+X0SrMkXZ9KPGlev2f8k6s+05ARyY2VqGdRveUb5e7NLuq31f35U7EcoSMXYIW
+         hO0aFPSMEXpkWsG5ENiptf8LLbvj63WRmbOx8M155QY0F6VOQtAEABBxxpdfiT1IFwxa
+         vna+RcDxsd9roJ+XE4FoY9crx2jMiGXUKeDD0L9eodNF4TiLsz3S9/1ZdRrRIFdqo7k6
+         Cvhr+993xEG93sQg1aMFGRAiPMzDuFYOjDaaaInpA1YCo8rpQ9XHLritQeHgLZk56AAW
+         CiiI4Nd8uWjdgHnyg7vw2aBMYhj0BhPmG2GyooIJu3Fa7kGv38Gkiq81PjH1a+S1xZaL
+         dEzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVztebVojwejJbCOIMcIhdwlD5ZDuRy03Rol/sY7iQ3a5C8iObbXv2NRgUUgb6angeGnFDrXe/qy9R9uQNCnCmjPQr3VJyWeNZptFGrHw==
+X-Gm-Message-State: AOJu0Ywh38kjY05pwl8Tpd6BDC4o1RvQIUSxViNHeIzp3+/cFSbjGQpA
+	zKzekpWVGfQjlpKktU4McbJGKspJwUcwIpi72ZFI/ssP3MN1Rixxc4a5+KMSnio=
+X-Google-Smtp-Source: AGHT+IG2tMNTomS3ZqyWOINVPtwBWTHlZFdEmCLTkAdgm8tukRJkLC5VAwUJPVsGDfNYzBUOMRcRmg==
+X-Received: by 2002:a17:902:ed01:b0:1e8:674b:d10f with SMTP id b1-20020a170902ed0100b001e8674bd10fmr426300pld.41.1714612266683;
+        Wed, 01 May 2024 18:11:06 -0700 (PDT)
 Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id b5-20020a170902d88500b001e40898e9acsm24733459plz.276.2024.05.01.17.50.44
+        by smtp.gmail.com with ESMTPSA id b18-20020a170903229200b001eb2e6b14e0sm9671431plh.126.2024.05.01.18.11.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 17:50:44 -0700 (PDT)
+        Wed, 01 May 2024 18:11:06 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1s2Keo-000M2e-12;
-	Thu, 02 May 2024 10:50:42 +1000
-Date: Thu, 2 May 2024 10:50:42 +1000
+	id 1s2KyV-000N8D-2i;
+	Thu, 02 May 2024 11:11:03 +1000
+Date: Thu, 2 May 2024 11:11:03 +1000
 From: Dave Chinner <david@fromorbit.com>
 To: John Garry <john.g.garry@oracle.com>
 Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
@@ -80,12 +80,12 @@ Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
 	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
 	ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
 	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com
-Subject: Re: [PATCH v3 08/21] xfs: Introduce FORCEALIGN inode flag
-Message-ID: <ZjLjYsjTJGSdWZ9q@dread.disaster.area>
+Subject: Re: [PATCH v3 09/21] xfs: Do not free EOF blocks for forcealign
+Message-ID: <ZjLoJ4FeSbsb/hch@dread.disaster.area>
 References: <20240429174746.2132161-1-john.g.garry@oracle.com>
- <20240429174746.2132161-9-john.g.garry@oracle.com>
- <ZjF9RVetf+Xt70BX@dread.disaster.area>
- <cc54060a-2dc3-45e4-b47c-a9926553e59b@oracle.com>
+ <20240429174746.2132161-10-john.g.garry@oracle.com>
+ <ZjF2jjtsA/C6ajtb@dread.disaster.area>
+ <833f5821-a928-441f-848f-3a846111dcb7@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,250 +94,106 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cc54060a-2dc3-45e4-b47c-a9926553e59b@oracle.com>
+In-Reply-To: <833f5821-a928-441f-848f-3a846111dcb7@oracle.com>
 
-On Wed, May 01, 2024 at 11:03:06AM +0100, John Garry wrote:
-> 
-> > > +/* Validate the forcealign inode flag */
-> > > +xfs_failaddr_t
-> > > +xfs_inode_validate_forcealign(
-> > > +	struct xfs_mount	*mp,
-> > > +	uint16_t		mode,
+On Wed, May 01, 2024 at 09:30:37AM +0100, John Garry wrote:
+> On 30/04/2024 23:54, Dave Chinner wrote:
+> > On Mon, Apr 29, 2024 at 05:47:34PM +0000, John Garry wrote:
+> > > For when forcealign is enabled, we want the EOF to be aligned as well, so
+> > > do not free EOF blocks.
 > > 
-> > 	umode_t			mode,
+> > This is doesn't match what the code does. The code is correct - it
+> > rounds the range to be trimmed up to the aligned offset beyond EOF
+> > and then frees them. The description needs to be updated to reflect
+> > this.
 > 
-> ok. BTW, other functions like xfs_inode_validate_extsize() use uint16_t
-> 
-> > 
-> > > +	uint16_t		flags,
-> > > +	uint32_t		extsize,
-> > > +	uint32_t		cowextsize)
-> > 
-> > extent sizes are xfs_extlen_t types.
-> 
-> ok
+> ok, fine
 > 
 > > 
-> > > +{
-> > > +	/* superblock rocompat feature flag */
-> > > +	if (!xfs_has_forcealign(mp))
-> > > +		return __this_address;
+> > > 
+> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > > ---
+> > >   fs/xfs/xfs_bmap_util.c | 7 ++++++-
+> > >   1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> > > index 19e11d1da660..f26d1570b9bd 100644
+> > > --- a/fs/xfs/xfs_bmap_util.c
+> > > +++ b/fs/xfs/xfs_bmap_util.c
+> > > @@ -542,8 +542,13 @@ xfs_can_free_eofblocks(
+> > >   	 * forever.
+> > >   	 */
+> > >   	end_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip));
+> > > -	if (XFS_IS_REALTIME_INODE(ip) && mp->m_sb.sb_rextsize > 1)
 > > > +
-> > > +	/* Only regular files and directories */
-> > > +	if (!S_ISDIR(mode) && !S_ISREG(mode))
-> > > +		return __this_address;
-> > > +
-> > > +	/* Doesn't apply to realtime files */
-> > > +	if (flags & XFS_DIFLAG_REALTIME)
-> > > +		return __this_address;
+> > > +	/* Do not free blocks when forcing extent sizes */
+> > > +	if (xfs_inode_has_forcealign(ip) && ip->i_extsize > 1)
 > > 
-> > Why not? A rt device with an extsize of 1 fsb could make use of
-> > forced alignment just like the data device to allow larger atomic
-> > writes to be done. I mean, just because we haven't written the code
-> > to do this yet doesn't mean it is an illegal on-disk format state.
-> 
-> ok, so where is a better place to disallow forcealign for RT now (since we
-> have not written the code to support it nor verified it)?
-
-Just don't allow it to be set in the setattr ioctl if the inode is
-RT. ANd don't let an inode be marked RT if forcealign is already
-set.
-
-> 
+> > I see this sort of check all through the remaining patches.
 > > 
-> > > +	/* Requires a non-zero power-of-2 extent size hint */
-> > > +	if (extsize == 0 || !is_power_of_2(extsize) ||
-> > > +	    (mp->m_sb.sb_agblocks % extsize))
-> > > +		return __this_address;
+> > Given there are significant restrictions on forced alignment,
+> > shouldn't this all the details be pushed inside the helper function?
+> > e.g.
 > > 
-> > Please do these as indiviual checks with their own fail address.
+> > /*
+> >   * Forced extent alignment is dependent on extent size hints being
+> >   * set to define the alignment. Alignment is only necessary when the
+> >   * extent size hint is larger than a single block.
+> >   *
+> >   * If reflink is enabled on the file or we are in always_cow mode,
+> >   * we can't easily do forced alignment.
+> >   *
+> >   * We don't support forced alignment on realtime files.
+> >   * XXX(dgc): why not?
 > 
-> ok
+> There is no technical reason to not be able to support forcealign on RT,
+> AFAIK. My idea is to support RT after non-RT is supported.
 > 
-> > That way we can tell which check failed from the console output.
-> > Also, the agblocks check is already split out below, so it's being
-> > checked twice...
+> >   */
+> > static inline bool
+> > xfs_inode_has_forcealign(struct xfs_inode *ip)
+> > {
+> > 	if (!(ip->di_flags & XFS_DIFLAG_EXTSIZE))
+> > 		return false;
+> > 	if (ip->i_extsize <= 1)
+> > 		return false;
 > > 
-> > Also, why does force-align require a power-of-2 extent size? Why
-> > does it require the extent size to be an exact divisor of the AG
-> > size? Aren't these atomic write alignment restrictions? i.e.
-> > shouldn't these only be enforced when the atomic writes inode flag
-> > is set?
+> > 	if (xfs_is_cow_inode(ip))
+> > 		return false;
 > 
-> With regards the power-of-2 restriction, I think that the code changes are
-> going to become a lot more complex if we don't enforce this for forcealign.
+> Could we just include this in the forcealign validate checks? Currently we
+> just check CoW extsize is zero there.
+
+Checking COW extsize is zero doesn't tell us anything useful about
+whether the inode might have shared extents, or that the filesystem
+has had the sysfs "always cow" debug knob turned on. That changes
+filesystem behaviour at mount time and has nothing to do with the
+on-disk format constraints.
+
+And now that I think about it, checking for COW extsize is
+completely the wrong thing to do because it doesn't get used until
+an extent is shared and a COW trigger is hit. So the presence of COW
+extsize has zero impact on whether we can use forced alignment or
+not.
+
+IOWs, we have to check for shared extents or always cow here,
+because even a file with correctly set up forced alignment needs to
+have forced alignment disabled when always_cow is enabled. Every
+write is going to use the COW path and AFAICT we don't support
+forced alignment through that path yet.
+
 > 
-> For example, consider xfs_file_dio_write(), where we check for an unaligned
-> write based on forcealign extent mask. It's much simpler to rely on a
-> power-of-2 size. And same for iomap extent zeroing.
-
-But it's not more complex - we already do this non-power-of-2
-alignment stuff for all the realtime code, so it's just a matter
-of not blindly using bit masking in alignment checks.
-
-> So then it can be asked, for what reason do we want to support unorthodox,
-> non-power-of-2 sizes? Who would want this?
-
-I'm constantly surprised by the way people use stuff like this
-filesystem and storage alignment constraints are not arbitrarily
-limited to power-of-2 sizes.
-
-For example, code implementation is simple in RAID setups when you
-use power-of-2 chunk sizes and stripe widths. But not all storage
-hardware fits power-of-2 configs like 4+1, 4+2, 8+1, 8+2, etc. THis
-is pretty common - 2.5" 2U drive trays have 24 drive bays. If you
-want to give up 33% of the storage capacity just to use power-of-2
-stripe widths then you would use 4x4+2 RAID6 luns. However, most
-people don't want to waste that much money on redundancy. They are
-much more likely to use 2x10+2 RAID6 luns or 1x21+2 with a hot spare
-to maximise the data storage capacity.
-
-If someone wants to force-align allocation to stripe widths on such
-a RAID array config rather than trying to rely on the best effort
-swalloc mount option, then they need non-power-of-2
-alignments to be supported.
-
-It's pretty much a no-brainer - the alignment code already handles
-non-power-of-2 alignments, and it's not very much additional code to
-ensure we can handle any alignment the user specified.
-
-> As for AG size, again I think that it is required to be aligned to the
-> forcealign extsize. As I remember, when converting from an FSB to a DB, if
-> the AG itself is not aligned to the forcealign extsize, then the DB will not
-> be aligned to the forcealign extsize. More below...
+> > 	if (ip->di_flags & XFS_DIFLAG_REALTIME)
+> > 		return false;
 > 
-> > 
-> > > +	/* Requires agsize be a multiple of extsize */
-> > > +	if (mp->m_sb.sb_agblocks % extsize)
-> > > +		return __this_address;
-> > > +
-> > > +	/* Requires stripe unit+width (if set) be a multiple of extsize */
-> > > +	if ((mp->m_dalign && (mp->m_dalign % extsize)) ||
-> > > +	    (mp->m_swidth && (mp->m_swidth % extsize)))
-> > > +		return __this_address;
-> > 
-> > Again, this is an atomic write constraint, isn't it?
-> 
-> So why do we want forcealign? It is to only align extent FSBs?
+> We check this in xfs_inode_validate_forcealign()
 
-Yes. forced alignment is essentially just extent size guarantees.
-
-This is part of what is needed for atomic writes, but atomic writes
-also require specific physical storage alignment between the
-filesystem and the device. The filesystem setup has to correctly
-align AGs to the physical storage, and stuff like RAID
-configurations need to be specifically compatible with the atomic
-write capabilities of the underlying hardware.
-
-None of these hardware iand storage stack alignment constraints have
-any relevance to the filesystem forced alignment functionality. They
-are completely indepedent. All the forced alignment does is
-guarantees that allocation is aligned according the extent size hint
-on the inode or it fails with ENOSPC.
-
-> > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > > index d0e2cec6210d..d1126509ceb9 100644
-> > > --- a/fs/xfs/xfs_ioctl.c
-> > > +++ b/fs/xfs/xfs_ioctl.c
-> > > @@ -1110,6 +1110,8 @@ xfs_flags2diflags2(
-> > >   		di_flags2 |= XFS_DIFLAG2_DAX;
-> > >   	if (xflags & FS_XFLAG_COWEXTSIZE)
-> > >   		di_flags2 |= XFS_DIFLAG2_COWEXTSIZE;
-> > > +	if (xflags & FS_XFLAG_FORCEALIGN)
-> > > +		di_flags2 |= XFS_DIFLAG2_FORCEALIGN;
-> > >   	return di_flags2;
-> > >   }
-> > > @@ -1146,6 +1148,22 @@ xfs_ioctl_setattr_xflags(
-> > >   	if (i_flags2 && !xfs_has_v3inodes(mp))
-> > >   		return -EINVAL;
-> > > +	/*
-> > > +	 * Force-align requires a nonzero extent size hint and a zero cow
-> > > +	 * extent size hint.  It doesn't apply to realtime files.
-> > > +	 */
-> > > +	if (fa->fsx_xflags & FS_XFLAG_FORCEALIGN) {
-> > > +		if (!xfs_has_forcealign(mp))
-> > > +			return -EINVAL;
-> > > +		if (fa->fsx_xflags & FS_XFLAG_COWEXTSIZE)
-> > > +			return -EINVAL;
-> > > +		if (!(fa->fsx_xflags & (FS_XFLAG_EXTSIZE |
-> > > +					FS_XFLAG_EXTSZINHERIT)))
-> > > +			return -EINVAL;
-> > > +		if (fa->fsx_xflags & FS_XFLAG_REALTIME)
-> > > +			return -EINVAL;
-> > > +	}
-> > 
-> > What about if the file already has shared extents on it (i.e.
-> > reflinked or deduped?)
-> 
-> At the top of the function we have this check for RT:
-> 
-> 	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
-> 		/* Can't change realtime flag if any extents are allocated. */
-> 		if (ip->i_df.if_nextents || ip->i_delayed_blks)
-> 			return -EINVAL;
-> 	}
-> 
-> Would expanding that check for forcealign also suffice? Indeed, later in
-> this series I expanded this check to cover atomicwrites (when I really
-> intended it for forcealign).
-
-For the moment, yes.
-
-> > > @@ -1263,7 +1283,19 @@ xfs_ioctl_setattr_check_extsize(
-> > >   	failaddr = xfs_inode_validate_extsize(ip->i_mount,
-> > >   			XFS_B_TO_FSB(mp, fa->fsx_extsize),
-> > >   			VFS_I(ip)->i_mode, new_diflags);
-> > > -	return failaddr != NULL ? -EINVAL : 0;
-> > > +	if (failaddr)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (new_diflags2 & XFS_DIFLAG2_FORCEALIGN) {
-> > > +		failaddr = xfs_inode_validate_forcealign(ip->i_mount,
-> > > +				VFS_I(ip)->i_mode, new_diflags,
-> > > +				XFS_B_TO_FSB(mp, fa->fsx_extsize),
-> > > +				XFS_B_TO_FSB(mp, fa->fsx_cowextsize));
-> > > +		if (failaddr)
-> > > +			return -EINVAL;
-> > > +	}
-> > 
-> > Oh, it's because you're trying to use on-disk format validation
-> > routines for user API validation. That, IMO, is a bad idea because
-> > the on-disk format and kernel/user APIs should not be tied
-> > together as they have different constraints and error conditions.
-> > 
-> > That also explains why xfs_inode_validate_forcealign() doesn't just
-> > get passed the inode to validate - it's because you want to pass
-> > information from the user API to it. This results in sub-optimal
-> > code for both on-disk format validation and user API validation.
-> > 
-> > Can you please separate these and put all the force align user API
-> > validation checks in the one function?
-> > 
-> 
-> ok, fine. But it would be good to have clarification on function of
-> forcealign, above, i.e. does it always align extents to disk blocks?
-
-No, it doesn't. XFS has never done this - physical extent alignment
-is always done relative to the start of the AG, not the underlying
-disk geometry.
-
-IOWs, forced alignement is not aligning to disk blocks at all - it
-is aligning extents logically to file offset and physically to the
-offset from the start of the allocation group.  Hence there are no
-real constraints on forced alignment - we can do any sort of
-alignment as long it is smaller than half the max size of a physical
-extent.
-
-For allocation to then be aligned to physical storage, we need mkfs
-to physically align the start of each AG to the geometry of the
-underlying storage. We already do this for filesystems with a stripe
-unit defined, hence stripe aligned allocation is physically aligned
-to the underlying storage.
-
-However, if mkfs doesn't get the physical layout of AGs right, there
-is nothing the mounted filesystem can do to guarantee extent
-allocation is aligned to physical disk blocks regardless of whether
-forced alignment is enabled or not...
+That's kinda my point - we have a random smattering of different
+checks at different layers and in different contexts. i.e.  There's
+no one function that performs -all- the "can we do forced alignment"
+checks that allow forced alignment to be used. This simply adds all
+those checks in the one place and ensures that even if other code
+gets checks wrong, we won't use forcealign inappropriately.
 
 -Dave.
 -- 
