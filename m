@@ -1,121 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-18504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C428B9BF8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 16:02:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4DD8B9C1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 16:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5001F222E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 14:02:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F04DB2146F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 14:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3968713C683;
-	Thu,  2 May 2024 14:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE8C13C81F;
+	Thu,  2 May 2024 14:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="KGc9K55g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8xTyZlQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FA513C68E
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 14:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7D613C811;
+	Thu,  2 May 2024 14:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714658536; cv=none; b=FEPmxx5v0uHUp59d3Z04FDduiPoU8OO62rTE88nafTfNW0d/+zK0PIx7psG8P98Z8z1Gqx49YsENtG8DDeP9ZYUjufQw7wFoxN43awDG3z6ZwhV7TURxg37yQGqMEDqzbF0utq0FGHmq1+f6sYDD2v8dXQQG79am+1hYzzEaA+o=
+	t=1714659224; cv=none; b=ivQ6qguK1bhqtIgGBw+oUl49SRtCgweDHUdLm1tCtkkwoX+USkW1rdz1cOYWsskJ7obh2SNMCgzSCc3iTPRydcmx/ydTVg0Con7jwGLs8xo1qbKv3lDyJG5PAw/hmI2l32sWBdUSPMnJnm/LIY3lXC8jsfnSpARXWWXgxvJ8DXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714658536; c=relaxed/simple;
-	bh=ZM9T6R7S8K4p4/89PZv5xZTw1drdCyPBkdOVr0adZ8g=;
+	s=arc-20240116; t=1714659224; c=relaxed/simple;
+	bh=1vUXQjL1XIYEiLePPiS1dnxjykzdCGKwKFECXqOOXzc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2TODaQl/MKVOpSrxTc9km3r0w80qndGxa3I3gEuLoozysgit76ppeocdprd03NSF74SrX+54hMX86wl+NTTcmFpEcLxGcOlNQmrcDzEe5bXvqYutQ2M5jvt2tdFLKlj/LVVWgd2vLFPj57/xUU15nyJ0LVUEp2luaCGgJZS/7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=KGc9K55g; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-108-26-156-33.bstnma.fios.verizon.net [108.26.156.33])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 442E1dJE031567
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 2 May 2024 10:01:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1714658503; bh=duxA4e5bb2slFBM2DuV5/NyEGX/IrYnPRt/udTa/gnw=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=KGc9K55g0J4WVV/KLX4hsaE3/oSNDDGJwmS0Rs/KFzAk8GdB4T/AEfbm/YQcJDHnX
-	 fDd94sXS8thWudS+1ULE3+F8bKufScI1dIB/ksSscPPcnc0XefU+VZW4Xrf1XdrFWp
-	 Ku4br1qsVqQK/TOhJADvBP5w/rGdTcjaBBnnzLKDM1xdlDETRmCTljdU1Ll/qk/Ees
-	 LW/oeWx5mx+R60ds7qEqnQkYeoFqbZPHYdQvUthiJUtYqXsQusulyUypTXSktVfG7h
-	 cOaPp1JlUucWJ2bXAaD40zjdvnBCO6euqj3ezMzKEjkeaX3xoWC0MZP0gpA2bLXali
-	 B9iOdYYMTG8qw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id CE6E415C02BB; Thu,  2 May 2024 10:01:39 -0400 (EDT)
-Date: Thu, 2 May 2024 10:01:39 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jeremy Bongio <bongiojp@gmail.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, Jeremy Bongio <jbongio@google.com>
-Subject: Re: [RFC PATCH 1/1] Remove buffered failover for ext4 and block fops
- direct writes.
-Message-ID: <20240502140139.GE1743554@mit.edu>
-References: <20240501231533.3128797-1-bongiojp@gmail.com>
- <20240501231533.3128797-2-bongiojp@gmail.com>
- <ZjMoYkUsQnd33mXm@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dfijr899So2gKGZhhOFuuXhuDaT+9Je6XSmudKlLU66jl6Sp+qoS5kVTO0d8gW1rO1WI9HoMBflVrvuFg57GuiH32442hiceyjYne54KMNv7L4WJSooLPHoUZynmg0bXsDEx6DhOoz7toUOOVNtYQ6ASMoV5ULoGIDUyvi4fDg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8xTyZlQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC64C113CC;
+	Thu,  2 May 2024 14:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714659224;
+	bh=1vUXQjL1XIYEiLePPiS1dnxjykzdCGKwKFECXqOOXzc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l8xTyZlQzl3HNe7cUjrdAgZ1NKd380t0HFvkjEvsnV+7K5cONejVCpBir2khe4grt
+	 IHE37n0odjwFWjz/dLJui5uXE5zfT9y8I1oyfmFlDdHY7oyIsrTw7Xb15EJyap380V
+	 GMJManJexVkv5kFR40UDgRIsUVtRd40xVghp5dqGaG6CIYeXa1xt7Qzaj4zUSQ8FhV
+	 JsgIQvMoLGc7x+BnQLcd8FPPXmn1PO4F7pMQnOljy2mhEAxQbdQLzvXyu1JGonVQwJ
+	 8dTasmNqJ5lcRe9QZ9Ua3V/Ay4cBLszk1nRUPXCRxvO96/f+LYcCnJs0tbTM9EYqQR
+	 2zqWufBT8RCPw==
+Date: Thu, 2 May 2024 16:13:38 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, 
+	Steve French <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, netfs@lists.linux.dev, 
+	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 00/16] netfs, cifs: Delegate high-level I/O to netfslib
+Message-ID: <20240502-beteuern-vollzeit-54b8237c2809@brauner>
+References: <20240430140930.262762-1-dhowells@redhat.com>
+ <264960.1714488463@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZjMoYkUsQnd33mXm@infradead.org>
+In-Reply-To: <264960.1714488463@warthog.procyon.org.uk>
 
-On Wed, May 01, 2024 at 10:45:06PM -0700, Christoph Hellwig wrote:
+On Tue, Apr 30, 2024 at 03:47:43PM +0100, David Howells wrote:
+> Hi Christian,
 > 
-> Please don't combine ext4 and block changes in a single patch.  Please
-> also explain why you want to change things.
-> 
-> AFAIK this is simply the historic behavior of the old direct I/O code
-> that's been around forever.  I think the XFS semantics make a lot more
-> sense, but people might rely on this one way or another.
+> With Steve's agreement, could you pick this set of patches up also?
 
-I agree that the ext4 and block I/O change should be split into two
-separate patches.
-
-As for the rest, we discussed this at the weekly ext4 conference call
-last week and at the, I had indicated that this was indeed the
-historical Direct I/O behavior.  Darrick mentioned that XFS is only
-falling back to buffered I/O in one circumstances, which is when there
-is direct I/O to a file which is reflinked, which since the
-application wouldn't know that this might be the case, falling back to
-buffered I/O was the best of not-so-great alternatives.
-
-It might be a good idea if we could agree on a unfied set of standard
-semantics for Direct I/O, including what should happen if there is an
-I/O error in the middle of a DIO request; should the kernel return a
-short write?  Should it silently fallback to buffered I/O?  Given that
-XFS has had a fairly strict "never fall back to buffered" practice,
-and there haven't been users screaming bloody murder, perhaps it is
-time that we can leave the old historical Direct I/O semantics behind,
-and we should just be more strict.
-
-Ext4 can make a decision about what to do on its own, but if we want
-to unify behavior across all file systems and all of the direct I/O
-implications in the kernels, then this is a discussion that would need
-to take place on linux-fsdevel, linux-block, and/or LSF/MM.
-
-With that context, what are folks' thiking about the proposal that we
-unify Linux's Direct I/O semantics?  I think it would be good if it
-was (a) clearly documented, and (b) not be surprising for userspace
-application which they switch beteween file systems, or between a file
-system and a raw block device.  (Which for certain enterprise
-database, is mostly only use for benchmarketing, on the back cover of
-Business Week, but sometimes there might be users who decide to
-squeeze that last 1% of performance by going to a raw block device,
-and it might be nice if they see the same behaviour when they make
-that change.)
-
-Cheers,
-
-					- Ted
+Pulled both branches from you. Thank you!
 
