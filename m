@@ -1,178 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-18508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2538B9D0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 17:08:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1788B9D6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 17:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29DFA1C22CAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 15:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AED41C20F85
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 15:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A2A15AAD5;
-	Thu,  2 May 2024 15:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A63715B13A;
+	Thu,  2 May 2024 15:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kLpxbUQM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GD6JXjaU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC21A1552EE;
-	Thu,  2 May 2024 15:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C41B60BB6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 15:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714662498; cv=none; b=c0lwOCXvpnwfxMsdXg3V/G7lkUq3A1NHvBh1TgPrS5SZ8YM3vGrF3CD2KgD3yFfi/HDzfAGcKfZpNx3fpcrL1hwlDmo83E8VYDeCmBf4AtJyyJcFBxHZvWFASRok5uruolq7EtHPWO2G67LuX8mTluxFSWRsxmca/RKwemr1Ro0=
+	t=1714663887; cv=none; b=XLBSrzKUVmtXi+6JsN0vb0NxOmtM0U5Y+vt/5jbQNd/vVNRDjdhnEz0tVt/tvEjyNZmitAg8z0uZwv2skKAoHXItoz+Y/sHdZ69xyOzxX/BdD5sfUwKw2/Cw+R2R29gqV9ttNNyw2deTAR1UJFxqhfsE77ZqRD22horlww6LZzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714662498; c=relaxed/simple;
-	bh=vqe6bqVfksmhA3Dv0sGQ+VBpqTfUtbHpQ4u1lvvVW/k=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Ch13iceUqkf78i/rzxfNYBXd3JoF+yo4kSMYGHCeWO3Bxs1RWbmqH6CRSZjdhkRIsoZmzj7OF8jptECzuy/Gjqbhn4p0EZXcbiiC8sR+AqvCGanKoUtOoxYTRGD15p2cjaDbESkxp/O0df9tsM5EkUvlkuyAt8nlDLcTmzAOhM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kLpxbUQM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from apais-vm1.0synte4vioeebbvidf5q0vz2ua.xx.internal.cloudapp.net (unknown [52.183.86.224])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4E46E20B2C80;
-	Thu,  2 May 2024 07:59:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4E46E20B2C80
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1714661965;
-	bh=emptab7+3YFMG1SQMC0wFEdq7q5l4lpPKpITnuC0zJg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kLpxbUQM6vgG2iRx6mGF27Bwzlq2ikZH0BIuBoKzsQ0i7ds67Lu5X4A7WWApGpM7I
-	 uXdh2D8hr8mXwvd2AM9XSyAxcCX3NtWB6bQiN+RFltl5adKQ5Ht6BPHpEgj0du8fAX
-	 JEZ8PEm5s2jkhU5eJFIac47yXgch+NYOIJIcwj1E=
-From: Allen Pais <apais@linux.microsoft.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	ebiederm@xmission.com,
-	keescook@chromium.org,
-	mcgrof@kernel.org,
-	j.granados@samsung.com
-Subject: [PATCH v2] fs/coredump: Enable dynamic configuration of max file note size
-Date: Thu,  2 May 2024 14:59:20 +0000
-Message-Id: <20240502145920.5011-1-apais@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1714663887; c=relaxed/simple;
+	bh=zywPH8/dSOmVZJVYvt9PJ6JqqHh9ICpy13lmwVdQNeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TazKXzhE1nrSsRYEKfpHrSLyATSkUF9LDm+GuYxWLP8YeABZEwEB+Mm458gi2zaT8wfxM06DJrX708om7hChyy1ErSw77AA8RDk/dgT/gxOUK8ZJEV2NS0WHJm+0gbdtualiy+76ObNa3FHjF93vCU/NB4jsgzTbYJz3ZU1MQZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GD6JXjaU; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51f29e80800so1020247e87.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2024 08:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714663884; x=1715268684; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wz4pWrlFgyjwYvnScmZZlbzO6Sk2PvcgKXFchkKHGrE=;
+        b=GD6JXjaUW6FjOozSS9z2Ad8RKpGO/aQX5kG11jwgSipCnO9RtzyU42T/qllLmOSGIO
+         y9dGR5fMLJsoC/OMb0lQjzQCL/5zC9RpXbs5QLXGU6B7133L3HUpJdBsZQHayey3ONsc
+         ddEXtb0WmQMKiRtZvaLkOyH9WhxRd8WC9x+zGQVjGTSYjZSlGpKja4kEC5U1OIVHp/xu
+         Qo9P+s8et8KTurE34OXku5EohtLBByxJWHvoKJBO5Ot4km9yXVyvHf1HN4dzPUGVX8e3
+         /Tdzkiv8P/ZmF1TP0TOMt+Kr+ueuzYRxaP1T9U7ZTENwB3ZQozBDKsQlUES5xtqFurG7
+         0sEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714663884; x=1715268684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wz4pWrlFgyjwYvnScmZZlbzO6Sk2PvcgKXFchkKHGrE=;
+        b=PDTuGlTJp9Ijy9Ed4+Gvjtk+TZRAUpCD9G8Vp+UWXvu5t1WaZeNAkcY49NpdLQ4hMG
+         Eda1zJobtlU39NgIlW1zlrjK9+nVW2FLcoV8QwllecvlRW/hZMKa3PAK99P9EezKpIBU
+         GTboNEyPVp5wn6CAPVUXpFCpFdWCZs9b6+ViJLNYqSQUJWiuCAVKl9EOqHIio38+6YBr
+         tJN9Gy4yD4eonfATpyeyITHNIKaR9NgajcE3ujUaKDwrCBoJNfB7o6y9hEIGg+aOgE2D
+         zrpfJ8jj9mk3jOvPLKhCm6FQnmBuxx3IjZ43cXgaIxFdjBbrp3B+thMBhRyS4K76TR8B
+         KHCw==
+X-Gm-Message-State: AOJu0Yz68HVzIEsrRcdBIvwysslDFLiDIr6prv4PMf41j2mOtBRci14Z
+	TS0wdK0LC5GcuYY4VHA9mvninNzYWP0hmn/Cbc3dbu20meMw3KFR
+X-Google-Smtp-Source: AGHT+IEM41jJBy+USoJjRE2kX7vNeIoiqcx0acR21vBmyFnYS7kzxVRXWWtquvDfkknaqK5ju+4EGA==
+X-Received: by 2002:a19:7004:0:b0:51d:8159:598 with SMTP id h4-20020a197004000000b0051d81590598mr128480lfc.19.1714663883912;
+        Thu, 02 May 2024 08:31:23 -0700 (PDT)
+Received: from f (cst-prg-82-17.cust.vodafone.cz. [46.135.82.17])
+        by smtp.gmail.com with ESMTPSA id p12-20020adfe60c000000b0034ccd06a6a3sm1524862wrm.18.2024.05.02.08.31.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 May 2024 08:31:23 -0700 (PDT)
+Date: Thu, 2 May 2024 17:31:12 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: RFC: asserting an inode is locked
+Message-ID: <w5aicng35yjeqef7ll5kiakg2ayarodl7h5o4uxwi76zvaewxt@kcja7hf5qqhb>
+References: <ZgTL4jrUqIgCItx3@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZgTL4jrUqIgCItx3@casper.infradead.org>
 
-Introduce the capability to dynamically configure the maximum file
-note size for ELF core dumps via sysctl. This enhancement removes
-the previous static limit of 4MB, allowing system administrators to
-adjust the size based on system-specific requirements or constraints.
+On Thu, Mar 28, 2024 at 01:46:10AM +0000, Matthew Wilcox wrote:
+> 
+> I have this patch in my tree that I'm thinking about submitting:
+> 
+> +static inline void inode_assert_locked(const struct inode *inode)
+> +{
+> +       rwsem_assert_held(&inode->i_rwsem);
+> +}
+> +
+> +static inline void inode_assert_locked_excl(const struct inode *inode)
+> +{
+> +       rwsem_assert_held_write(&inode->i_rwsem);
+> +}
+> 
 
-- Remove hardcoded `MAX_FILE_NOTE_SIZE` from `fs/binfmt_elf.c`.
-- Define `max_file_note_size` in `fs/coredump.c` with an initial value
-  set to 4MB.
-- Declare `max_file_note_size` as an external variable in
-  `include/linux/coredump.h`.
-- Add a new sysctl entry in `kernel/sysctl.c` to manage this setting
-  at runtime.
+Huh, I thought this was sorted out some time last year.
 
-$ sysctl -a | grep max_file_note_size
-kernel.max_file_note_size = 4194304
+> Then we can do a whole bunch of "replace crappy existing assertions with
+> the shiny new ones".
+> 
+> @@ -2746,7 +2746,7 @@ struct dentry *lookup_one_len(const char *name, struct den
+> try *base, int len)
+>         struct qstr this;
+>         int err;
+> 
+> -       WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+> +       inode_assert_locked(base->d_inode);
+> 
+> for example.
+> 
+> But the naming is confusing and I can't think of good names.
+> 
+> inode_lock() takes the lock exclusively, whereas inode_assert_locked()
+> only checks that the lock is held.  ie 1-3 pass and 4 fails.
+> 
+> 1.	inode_lock(inode);		inode_assert_locked(inode);
+> 2.	inode_lock_shared(inode);	inode_assert_locked(inode);
+> 3.	inode_lock(inode);		inode_assert_locked_excl(inode);
+> 4.	inode_lock_shared(inode);	inode_assert_locked_excl(inode);
+> 
+> I worry that this abstraction will cause people to write
+> inode_assert_locked() when they really need to check
+> inode_assert_locked_excl().  We already had/have this problem:
+> https://lore.kernel.org/all/20230831101824.qdko4daizgh7phav@f/
+> 
+> So how do we make it that people write the right one?
+> Renaming inode_assert_locked() to inode_assert_locked_shared() isn't
+> the answer because it checks that the lock is _at least_ shared, it
+> might be held exclusively.
+> 
+> Rename inode_assert_locked() to inode_assert_held()?  That might be
+> enough of a disconnect that people would not make bad assumptions.
+> I don't have a good answer here, or I'd send a patch to do that.
+> Please suggest something ;-)
 
-$ sysctl -n kernel.max_file_note_size
-4194304
+Ideally all ops would explicitly specify how they lock and what they
+check, so in particular there would be inode_lock_write or similar, but
+that's not worth the churn.
 
-$echo 519304 > /proc/sys/kernel/max_file_note_size
+Second best option that I see is to patch up just the assertions to be
+very explicit, to that end:
+inode_assert_locked_excl
+inode_assert_locked_any
 
-$sysctl -n kernel.max_file_note_size
-519304
+No dedicated entry for shared-only, unless someone can point out
+legitimate usage.
 
-Why is this being done?
-We have observed that during a crash when there are more than 65k mmaps
-in memory, the existing fixed limit on the size of the ELF notes section
-becomes a bottleneck. The notes section quickly reaches its capacity,
-leading to incomplete memory segment information in the resulting coredump.
-This truncation compromises the utility of the coredumps, as crucial
-information about the memory state at the time of the crash might be
-omitted.
-
-Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
-Signed-off-by: Allen Pais <apais@linux.microsoft.com>
-
----
-Changes in v2:
-   - Move new sysctl to fs/coredump.c [Luis & Kees]
-   - rename max_file_note_size to core_file_note_size_max [kees]
-   - Capture "why this is being done?" int he commit message [Luis & Kees]
----
- fs/binfmt_elf.c          |  3 +--
- fs/coredump.c            | 10 ++++++++++
- include/linux/coredump.h |  1 +
- 3 files changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 5397b552fbeb..6aebd062b92b 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
- 	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
- }
- 
--#define MAX_FILE_NOTE_SIZE (4*1024*1024)
- /*
-  * Format of NT_FILE note:
-  *
-@@ -1592,7 +1591,7 @@ static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm
- 
- 	names_ofs = (2 + 3 * count) * sizeof(data[0]);
-  alloc:
--	if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
-+	if (size >= core_file_note_size_max) /* paranoia check */
- 		return -EINVAL;
- 	size = round_up(size, PAGE_SIZE);
- 	/*
-diff --git a/fs/coredump.c b/fs/coredump.c
-index be6403b4b14b..a312be48030f 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -56,10 +56,13 @@
- static bool dump_vma_snapshot(struct coredump_params *cprm);
- static void free_vma_snapshot(struct coredump_params *cprm);
- 
-+#define MAX_FILE_NOTE_SIZE (4*1024*1024)
-+
- static int core_uses_pid;
- static unsigned int core_pipe_limit;
- static char core_pattern[CORENAME_MAX_SIZE] = "core";
- static int core_name_size = CORENAME_MAX_SIZE;
-+unsigned int core_file_note_size_max = MAX_FILE_NOTE_SIZE;
- 
- struct core_name {
- 	char *corename;
-@@ -1020,6 +1023,13 @@ static struct ctl_table coredump_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
-+	{
-+		.procname       = "core_file_note_size_max",
-+		.data           = &core_file_note_size_max,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_douintvec,
-+	},
- };
- 
- static int __init init_fs_coredump_sysctls(void)
-diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index d3eba4360150..14c057643e7f 100644
---- a/include/linux/coredump.h
-+++ b/include/linux/coredump.h
-@@ -46,6 +46,7 @@ static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
- #endif
- 
- #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
-+extern unsigned int core_file_note_size_max;
- extern void validate_coredump_safety(void);
- #else
- static inline void validate_coredump_safety(void) {}
--- 
-2.17.1
-
+So happens I was looking at adding VFS_* debug macros (as in a config
+option to have them be optionally compiled in) and this bit is related
+-- namely absent the debug option *and* lockdep all these asserts should
+compile to nothing. But I can elide these asserts from my initial patch
+and add them after the above is settled.
 
