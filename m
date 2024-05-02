@@ -1,329 +1,287 @@
-Return-Path: <linux-fsdevel+bounces-18476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0BF8B95F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 09:59:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E2D8B9698
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 10:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35634282E25
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 07:59:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BB01C21B2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 08:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901A332C8E;
-	Thu,  2 May 2024 07:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XoGzgCko";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="IhdB4aMi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCF146544;
+	Thu,  2 May 2024 08:39:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD931527BD;
-	Thu,  2 May 2024 07:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714636643; cv=fail; b=ZB2fRNHOUdpnDh4nohA2kNb8CYcOkQmIRlYsNkiz5Wp+saB1aPmpOWAgEEgr2PhH4HIcYth/fOz1Nm4xyOXBxX4uKw2YAIFfNspXDTPSROZ+RAUQO4j7Q+8hE7ZNp+C+gZDrm2H4UCq3/HqZy7darczMokRvhXhJbPWsT01gN/I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714636643; c=relaxed/simple;
-	bh=luJ3k8CbAW0Ko1tFdfuJRcplY0iI0xD5eb/m4YD8zBY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JbRO4PE00L78ZrEft1mJxNxLHWfDKtxZddP5PQKicEPUdT68cnUmVDR/I9+zu5SwnJaZvIUzbZwtLTVVq0wenh85YK9dgGc9ebwTjJybF5xoSTubQgRAAg/Jwrjv/P6b18HWqW2rNK/QMdlUBw0xOJ23h8L1GZYvF2I8wZQGSZU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XoGzgCko; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=IhdB4aMi; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4426U1sX005285;
-	Thu, 2 May 2024 07:56:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=VELNTqVEtkWDHTBI+f3TYzE93eJE0d1K/8nP7Qs+WeQ=;
- b=XoGzgCkoeBbLV3fGoxNdyKiPhWB99eyUtfRpJemdMlQUj6jN5YxG5DLjm6cYp6Ou8Ue9
- gEekQL1BfTl+x3GvtJroQs95eAcWPc+C2l5RnfeRo8kJ3YMr8VUbqBek8r3Q6HdDvB7I
- Q4c1QoMrZvPBLBO8iMbtobFg1b7j64atSJNVOgQzpSH8SApMuOv9AfnTBIM5wdLAs6aQ
- CnQknn6Zm+D8x+BkdLdKe6bMouW7mGEdhOyR+5sJCLUwDLdyL1El5E9V7cNcWt8O0nTM
- 2wl20tywxEkxsOzU6rKtRfElT2IanVwmaQ1akBXH99RREFDbm4Qrb8wZTBd0ggEbAeCA IQ== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xrs8cvy43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 02 May 2024 07:56:58 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44279Ypu033247;
-	Thu, 2 May 2024 07:56:56 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xrqtaarey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 02 May 2024 07:56:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lX3h2rQbnda7ZEBly1+NQ53tMUZz5gTIkzFM6NopABQAYikjuuq/Cmab5ag/Ldpvlm8dzZOhCw52Qsym+yN5diMTMHAljrHl80uMn/mymEVMj+Ddux7hC7vzVv3pH3N8ce/ac54BUuVfMgu1IQVBwIhPOVS0WN+OxycvNjnHPSgPLNLIqAZv2a1eqi6dgiNz/oVqHNp+irJE05HTX6jsuPXKEQTXZ0jAWeWx9sSthrokMYAmY5xlFZf3B8+DEe6wL0gMsHRSwcJKq4g1tsa+3onC9EU6Yn9QIJ3b9UtpJYtlq2bUduPTmquYl9n2QAlCrbpjpvEd7kciV0mGCLJUgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VELNTqVEtkWDHTBI+f3TYzE93eJE0d1K/8nP7Qs+WeQ=;
- b=YlHv1eA0A+k5JDDQIxXm7C2MAIdIGNlA1yFGih+OujfVriVBFQlNF3vgs+8nqLsGRyT5wGEONPsDXmvAg20BXrrWLq7mR3pM8DTZiqb0A93+Un+mgoaTmOPg5DqtTxKdETaStgai8x7ZM6ViCnxqvY6+VKT5PXWnWZGzDZmer3BqL64/TiC/fUjtvyIgn19U3YY8Phgnj+zbyTxVVuaQRYkzAMuetP7V2cguOmn+v1g1dFKi6XDxAIIzTCRtvtP7oIUhCsI06PDlPyl1KfizakVjiWHog67yBkr8KB5dzqpaKmk3M8PhG8nOaFi5lp3gdI2+jd+PUarDucrJJzzSCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VELNTqVEtkWDHTBI+f3TYzE93eJE0d1K/8nP7Qs+WeQ=;
- b=IhdB4aMi/IG6bP3LdJTig9cAc2IAJ0rBBTw6KuQdYni+565PhyhtMcPJ2aGUkEPcA8PVFpmnIA1EEHLyD08NVejDAoBT1Ug3OCda7eJO0m+DI9H+jAIWJef94wT5FrKX7pzin5x3HpsboBqJbQ6j4SQklofl4N9dig2Ejg/h/zY=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH0PR10MB4728.namprd10.prod.outlook.com (2603:10b6:510:3b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.24; Thu, 2 May
- 2024 07:56:54 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.7544.029; Thu, 2 May 2024
- 07:56:54 +0000
-Message-ID: <41612184-0804-47d6-8712-3dd99270a665@oracle.com>
-Date: Thu, 2 May 2024 08:56:49 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/21] xfs: Introduce FORCEALIGN inode flag
-To: Dave Chinner <david@fromorbit.com>
-Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
-        jack@suse.cz, chandan.babu@oracle.com, willy@infradead.org,
-        axboe@kernel.dk, martin.petersen@oracle.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
-        ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
-        linux-xfs@vger.kernel.org, catherine.hoang@oracle.com
-References: <20240429174746.2132161-1-john.g.garry@oracle.com>
- <20240429174746.2132161-9-john.g.garry@oracle.com>
- <ZjF9RVetf+Xt70BX@dread.disaster.area>
- <cc54060a-2dc3-45e4-b47c-a9926553e59b@oracle.com>
- <ZjLjYsjTJGSdWZ9q@dread.disaster.area>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <ZjLjYsjTJGSdWZ9q@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO0P265CA0003.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::12) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F46821A0B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 08:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714639169; cv=none; b=tTsQzOu1uIj2GgLf/7Wge45PC8xocRUv9gKA/Pu1692HZaQSmVzuaAVGeRR0NM0sOjx1/c9uynq9r4sflHASnn516WsDUttlgnvJu9LVHttp3kzwlN1kzpo6cUc+58+qCZRZOEeoUeMjwJldKP2rRQsQd4vd5qFF7kQDsDavL0s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714639169; c=relaxed/simple;
+	bh=rSpnHOYtnkUEP73ms6hF6CuYO3AJmWnwYNZ3WErQnRg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D018pJaY0wd7dbegYbAF1NDZrQ4Wv9lDQh3aBfyp/eOyFg76kchbuUifItmYM95Q4t7nMmDo/ngz30gTYxRY+4XVQ50C2fIEZ8k4tYni+WFZdM+8pT1XlWmkmmAbWUS0gD5dlezv6WfjtxKh3C1Y1qYY/qxWkzIIzb4Pa1V8O4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7dda529a35cso865957839f.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2024 01:39:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714639167; x=1715243967;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hh6J8jT52AtDRD1PAOaybgMxVZrYszBBBUsdf7Azj1g=;
+        b=alQfUmd2g1sk3HtryAEqlnoFTUjvJaAf719Y2Kq2M5Jrn3SGMZWuIdMJ59JTvcxDN7
+         D4eQdcFyk0AJ3+7oJi3qG+V5j2WmQfd7jAinSolezkq5r5dVh3fAYHB0ZsCwc2lmZxz1
+         FfGp+SLqJbmwyug4grOhYx3kGf+0QZmeAm67wlPfqPs0GujTwqQavAHYI90blz/znMu0
+         45VCiLEgb2dbqAo5MyEke4JtQfTp9tlV2+ChfrVADS+3PzImduhZ9+iaKN47PaCgVy2f
+         OZWO2ITl4ZElr7bMbrGWjZ+5UOWidDjGjLaK0jvipZUTrUHyR+ttF1Od9kB19WVlf7b5
+         qosg==
+X-Forwarded-Encrypted: i=1; AJvYcCUH+uvhkw878SAq5mL77GUZuN5vW2zsJqNrvRCzN7j47Hi0nCqcaehtkiApOzjUdxa2dY3cXyhgt2lmfTb9VmUE2DgNA6GGyokM8w2Mvw==
+X-Gm-Message-State: AOJu0YyP1YiPoPfpsKvE1ZosX/uDOLoF4Yo0e9VgT+VIZmZPLw8Bdbu5
+	iMYaRyv1SZOFsT3pMxfKLHydJo5u06DxQ5SczXndd8oAev6EKoGsuOLuWC/7snApoecxJsXXlTQ
+	yB+XYEpAZlWU6gBVTbsPnLD+BUCvQYVhnH51Y0IzqvGlaz+DLtV+AbDA=
+X-Google-Smtp-Source: AGHT+IGqobK3lOmwFSPbUQOu5U7pbAXN68QvY6iIv5vwkJRNNRtcsxnKMbLRWJ4jujbNTYaa0tZ/54uUTEvwQ9gldmbhypfNcGOD
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH0PR10MB4728:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6a8e75f-0901-432f-792f-08dc6a7d6ee3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?RVlOK2YzZmhqVGYrd3ZZNlpzeFo0eDlaelVkZG5jUlgrTTgrb21nWU5oc3oy?=
- =?utf-8?B?TEZIbDF3Zkc4ZGJReStpR1QrNC9VQ1RMWlllYVdDbVYxclpRbnlkU3orV2NW?=
- =?utf-8?B?QVJabjErbGw2bXlwaWhxV3VKd2RTaXgybi91ZStLQThXeGJSc2hCcEE3TXE0?=
- =?utf-8?B?T0ROSWFORVc1bVh3anQzMkgzTWF0YVBWVEE2Z3R6SEZ3NG52bU8zbE90a0U5?=
- =?utf-8?B?NEtObnFCaDRoR3NpdFY2MW5zNVZGNTlxMDhYdmxCbmR1c3hjdWlzVEQzdVRi?=
- =?utf-8?B?a2FDTXR4ZWkwNFl3SG11Yk5Mb1d0bWwwSG1wbDlVSkJFMm9hc3E2VEdKV1p3?=
- =?utf-8?B?N1lGS05OMXZVVGdNSHNQVzBTK1pxcEhHTmJNOUwydEZZV01yWkFUdGhZM1lG?=
- =?utf-8?B?RVdmOGFhNVRGUUlHL1AyOGhWWmpFY3VmODdLcHo3a1ByYzBGTUwxZTE2c0pV?=
- =?utf-8?B?dlB5bEk2aWJCU3FVVDdaQXJSekhiMVZJU2JPRjg1WHY3T24xdy9GOWRGc1Nx?=
- =?utf-8?B?ZTRlSk1oMnVlN01Qb0xhb2YxMGw1bUR3bFU3N0tWOEVDSE85cXJrc01VZ2dW?=
- =?utf-8?B?VmRVWk5iR2lvdDRHRFA5K0paUFFWUlhWMTBrRVhiRHBVVS9NMFVFeDNudkRn?=
- =?utf-8?B?ZDJoSkNjVW9ZVjBhbWRheHBnVC9lQm01UnU0azlNSEpCem8zaU40VEFPZDdz?=
- =?utf-8?B?MXNoV3VwcWEvbjl0alN1bkZCM2xhdU90S2w3cjhrK0ZDdmNtSElHL3MzKzI5?=
- =?utf-8?B?dlREdjgwUDllaEd5M0ZNRG5WZVZCbG1wR0RjYkVnNlVCWlFhWXhvOTRjaEU1?=
- =?utf-8?B?VWtaemc5Y2hpajV5NC9wS1lxS1dqU09YT1NMaVN0UDI5Tld2dWt3NEZxK3VB?=
- =?utf-8?B?Q1RiKzlkZ2cyM1YxTUdMcG8rVlVwQVRBSkVqU01BTUdFVi9lZUdyazlIazZ0?=
- =?utf-8?B?bDRlZnZDRnRqa3hDcjRQMWxGR1pXUjNUakdJWDVqNFRIRnY0TVY2TE9rYlhi?=
- =?utf-8?B?TUVMc2NydzI0ZU1wejNzR0YwSDVicVB5TFo2bmY5by92OHhaVkF3QllqTmJJ?=
- =?utf-8?B?R2szRDZabHI0WkZPY1pmd0Q1eUlIMTMweXlpeWR0aWdTa2tRUTFMSzB2bm1U?=
- =?utf-8?B?OGxjdUprNy9nYWc1SGlqVW9sS2p5elNFMUdmOVF6N056S3R6RldHRTRuY0Fs?=
- =?utf-8?B?czRUR00zaXIyUE4vR084R3FQT0RwMDZnZlJ5NkwyMWZWVEhJeFBNaU1DaE1M?=
- =?utf-8?B?cVdJbDZ6dmhnM3BpbU5UZVB2bzBJK0FSTVJ2b1pZZTQ2SXZ6Tk01OUE4dndu?=
- =?utf-8?B?Qlp0eVB1ejQwSWY0Nk81VzFXQXNub3V4bHo2V2RUZ2VPWHh4UkNtMG9PWW13?=
- =?utf-8?B?anhOcGpqcHFnUkRhVndKV3YzNnBxRFU4S2N3elZlZGZaUmxkTjBGTm5DTisx?=
- =?utf-8?B?YXRTS3BtS2lqQ0Z3S1VMRVVJTSszOExTLzdGRkdjOWlkVzRYVTBTdXVWdFBr?=
- =?utf-8?B?SlVHd0ZySVBlRmNvc1l5TFNHelYzQ25EOHlESmw0cEZCQU15elc5MTNYTVNI?=
- =?utf-8?B?OFJDdTArbVFOaGlnZWEyNi9PRVppa0VWUGNlK216aUpxZ25SMmJQQ3I3cFYx?=
- =?utf-8?B?Ty81MklmQldEV1I4bzhDd3owQWMwQzVGV3FhN2Y0QTJib2I4UzV3STBucWpE?=
- =?utf-8?B?VmFNOHNQMG1qQ1BMT015ajRzaUI4dzhOZnJHbEJaL1JoN3pkbTNsUDVnPT0=?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?VkFXK2N3UEFUUkJVTjZUK2FnRnBXQkVuZlpGN1IrVDlEUDdKSVNOOTEvcXpV?=
- =?utf-8?B?b2ZWSDhLS2hOR29aTUZ3ZVJ0d01Jb0cxZDdTT3lzSzBpQnFvcGFxRkZkTCtD?=
- =?utf-8?B?WkRGV0FsS2g1OXdiQnl0eXdhUms4MnZranJyeHJnMzd2anBGUDVQOXVWOFRY?=
- =?utf-8?B?a0E0RjZwSFk4TWs3UDg4Y0p5NzZSeGJYS0dTeXo0WG5Ed1lLQmpBc3BtT3VZ?=
- =?utf-8?B?a01heVNwbVJZRWwvdXVWZ2JIalg3ZWUxSkNJNnpTbU8zTTJzNFlxY1gycDFS?=
- =?utf-8?B?NmdERGY3eWRGSFhTWGxvWWU2VU96VVVXY3lFWmpGTFQ0RjFxeExUS3Z2amFH?=
- =?utf-8?B?dEJVZEVaRy8zZ0pyK3NBSWw4a0hXbXJHSFlMMnMyZlBqRDhTcVo2WUwzd1M4?=
- =?utf-8?B?NWRpcHlhTE9tVU1vazJ3TnN5MUE3MW5DSE9xSXJoWC9nOTl2RzVVY0lRUUlm?=
- =?utf-8?B?R3BEWDhUbnFTdHBoWTZRTVNLbFRucXAwN2RJaDlMR1N5U1AwRnBTYTlIUmxS?=
- =?utf-8?B?Y1lFK3d4OVV4aHN4ZGdzc0Z5cXM1eXFQU2pGL1Jwd3hhYVNNaU5UV0UvaVlq?=
- =?utf-8?B?ZXhUT0QzZGRFZFNBUWNLOE9zNnJQQzh2NCtJdjF5UEVUSXdOK1ZpRXNqNGpp?=
- =?utf-8?B?TkNXREN6T2J0UmIzdXhURjU5UG5za1hROS9OaFlBUHBONS9MSFRpUXhQcENY?=
- =?utf-8?B?bzl6d3M4cDNvdXB4aGJXY0dkc2RMKzA2SW9vRnB2MHpURURIM3hSZk0zcjdr?=
- =?utf-8?B?TkYvaSsrVm1EVHdGWDVvMVlQdlFSdUpHMEtwWFBqeDBxeDRybm44UHkvMThq?=
- =?utf-8?B?elg0L2czZ243Q3QwcDV5WGU3emVRUDN3RnVLR2poQzdhVnhDaHVjMjBqRjE2?=
- =?utf-8?B?WVRtTFc3bTZwY3IxWkhhVDlRMjJpSnB5anplVUZBUmRPVVowK3BUcUF3ZE9M?=
- =?utf-8?B?dFRLWE5EeWowRzhVMW04S280NlhpakZZc2dHUG9JdHdpclg2NWhIaTNhU2F4?=
- =?utf-8?B?aE5uTTAvS2wvVWJmN054dmFFY1hVNFJxOFYyRktNdWZUeFM0Yi9HRmdLZ1RK?=
- =?utf-8?B?VEQ4VFdOVWRORGl2TXhTMTlLN1l5MkNIaXJYWTZTRjlpU2NRaWtFMFFld1Rj?=
- =?utf-8?B?Y1lVcUFwRSs4c0JPaXRwYnZ0bUdyblRoWithV2svZCs2VytYUVdlVksxRWpn?=
- =?utf-8?B?dXZTTUh4VCtzUFg5WWlveHh3TVpmUVVEc3JUaVRYbzl3Vm4wK3VCaXhPR25q?=
- =?utf-8?B?TGJPTDExeVZ4ZVV5aXZTdXAybldOZWNZbldhc3JMMzY4RWM5cGp0NFlIV0ZQ?=
- =?utf-8?B?U2IvVExJMllsMUpSNVl4N3A3dWZ6eFNmeU9mQnZlMktJczJpWGYwMXFjSVdT?=
- =?utf-8?B?MnVUZS9hSk5jMzNnQmpiN3IvcWw1aTRUS3ZhZjdwRHNPSng2N204aVpEMFhE?=
- =?utf-8?B?UlYwcWliZjZqaDh2UHZNU2V0eXRRRzZhbnNCVVAzMU5IRXZYRkh5Ly96eUY3?=
- =?utf-8?B?SnRpVktVZHQ1SWFjRVZOTFB1OWpUKzdVcWoxT2lpSEorSHFOUUdGVmpZY3RK?=
- =?utf-8?B?UnpVMjlmVzFpajM4djNxYkpyVUs1c0RmZ1QwTERmd1VrVXpsRnZvNXMveVJo?=
- =?utf-8?B?QWNDdXJmT2plM2F1M3Q5czROMUo3WExYQ1BNLzgvM3ZuS2N5Rk0vWUsxT0Rj?=
- =?utf-8?B?S1hNSkxlVGwrVXJveU1KQUhBZ3RVcUJmZXE3Q2psNUpDYzE3R1pHUHhBcXFm?=
- =?utf-8?B?NmFGVWlncjN2b1Q4SXdWMC9TYlBCNGVtSFllRnQ1QVBoaURtVkd3UUx3Zmd3?=
- =?utf-8?B?K24ydktlUWRoaTEwREhybzhOUUF5K3YxWFd5WGJKL05mK0xhU2M2VzNIZUJQ?=
- =?utf-8?B?S3FNUWhjSW05cWd3Nlh2cWc2bmcwR1JwakJYTkJDNVNxNEgzeGtic20vVFJy?=
- =?utf-8?B?Nm04Q1M5R2VaZnlseXJuVllBNjVUTHR3OVk3OU8waUhybSt2d2dTTS9XODA1?=
- =?utf-8?B?aUFGOFdQZEprT1R2YitmVnNqMXNZSjFFa2R0eG1kRjNQcHlKa1hMU0JrVEFi?=
- =?utf-8?B?cEx6Mm5wMmtwTXlqMC9OUXVWaUZQZmRPTlBIWnZxTzIybXh5VWxGeDJvaUR0?=
- =?utf-8?B?ZkdMNDU3T25DZEJnczVYaDZ6UHdUUHV1OCt4Q3BmMXJ6K2FseGk3M2FCUVJp?=
- =?utf-8?B?bmc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	QfKlnY9VpW/21xy7rqEB2Xu3VE2Cu4Youwzx8iQC2sffi4VnXKK6buGOA8tbYpn+WJHwBmmelmLykfOuS7esVOgGHpdhIwhLBrEqM5t0bR6yVzTqyoZoXwkUjhmgpnpxEB70LaNNpBQt+dqy2cnIf2FMTE7OYR3+PMBy0JKsKKGqkKRjXgCMg6gJZmyF2WW1YJyHMKW/46T79USjMfNBUVLXBhoZlTP0VfUudesinUwSQiVyVBUWPE9+XYv2whycZe+Uzev7bwlsO6VNFnF4ztsYU3FZCF4Z4NUj09fxNqhnpfgIheLhJAe/eekhcwx9HDhb9kOeDkP723qCh02jvIYoE68XiG0fFNg//ND4anVox8MM/UXDcr1ZbKxL7Wvu0Y3JJzt1Yk4mwkgYXydLdzlUfQqpzsd/JB3AZEPEDOTynVkiv0SOaqJKFNZqcKVYWYS3peEoZWb9FDCfb/R/sCAlMLMs0NBNHTMMFB78KyfK2Lq4konOVetFs4UkR03F1fHMXIJpXa2vvd/vF+X9wxFBJE/3wMorkLVID8WxWOlE9VoiAW67ardKGRwZx6cGE9Ra9AoAbQBikfY3IO9eDZM2RuksUa4ZdmCW79UZNkI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6a8e75f-0901-432f-792f-08dc6a7d6ee3
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2024 07:56:54.6662
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8RXVXUz1jS4RceoUrkMFMm1kRmhlzr+k9KAlqBwmLx4R2LXnkRsBf3fh6P5HKBkrqxjFuudPx5HYiz8CSENjmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4728
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-01_16,2024-05-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2404010000
- definitions=main-2405020045
-X-Proofpoint-GUID: fRtMHauviVm5ud56B534nErtM6N1vt1L
-X-Proofpoint-ORIG-GUID: fRtMHauviVm5ud56B534nErtM6N1vt1L
+X-Received: by 2002:a05:6e02:1d9d:b0:36c:11a2:725f with SMTP id
+ h29-20020a056e021d9d00b0036c11a2725fmr275664ila.3.1714639167424; Thu, 02 May
+ 2024 01:39:27 -0700 (PDT)
+Date: Thu, 02 May 2024 01:39:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007e1e3a0617748a94@google.com>
+Subject: [syzbot] [jfs?] KASAN: slab-use-after-free Read in jfs_strfromUCS_le
+From: syzbot <syzbot+c7019fac44a50a2ab16f@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/05/2024 01:50, Dave Chinner wrote:
->> For example, consider xfs_file_dio_write(), where we check for an unaligned
->> write based on forcealign extent mask. It's much simpler to rely on a
->> power-of-2 size. And same for iomap extent zeroing.
-> But it's not more complex - we already do this non-power-of-2
-> alignment stuff for all the realtime code, so it's just a matter
-> of not blindly using bit masking in alignment checks.
-> 
->> So then it can be asked, for what reason do we want to support unorthodox,
->> non-power-of-2 sizes? Who would want this?
-> I'm constantly surprised by the way people use stuff like this
-> filesystem and storage alignment constraints are not arbitrarily
-> limited to power-of-2 sizes.
-> 
-> For example, code implementation is simple in RAID setups when you
-> use power-of-2 chunk sizes and stripe widths. But not all storage
-> hardware fits power-of-2 configs like 4+1, 4+2, 8+1, 8+2, etc. THis
-> is pretty common - 2.5" 2U drive trays have 24 drive bays. If you
-> want to give up 33% of the storage capacity just to use power-of-2
-> stripe widths then you would use 4x4+2 RAID6 luns. However, most
-> people don't want to waste that much money on redundancy. They are
-> much more likely to use 2x10+2 RAID6 luns or 1x21+2 with a hot spare
-> to maximise the data storage capacity.
+Hello,
 
-Thanks for sharing this info
+syzbot found the following issue on:
 
-> 
-> If someone wants to force-align allocation to stripe widths on such
-> a RAID array config rather than trying to rely on the best effort
-> swalloc mount option, then they need non-power-of-2
-> alignments to be supported.
-> 
-> It's pretty much a no-brainer - the alignment code already handles
-> non-power-of-2 alignments, and it's not very much additional code to
-> ensure we can handle any alignment the user specified.
+HEAD commit:    c942a0cd3603 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d85a9b180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=c7019fac44a50a2ab16f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-ok, fine
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> 
->> As for AG size, again I think that it is required to be aligned to the
->> forcealign extsize. As I remember, when converting from an FSB to a DB, if
->> the AG itself is not aligned to the forcealign extsize, then the DB will not
->> be aligned to the forcealign extsize. More below...
->>
->>>> +	/* Requires agsize be a multiple of extsize */
->>>> +	if (mp->m_sb.sb_agblocks % extsize)
->>>> +		return __this_address;
->>>> +
->>>> +	/* Requires stripe unit+width (if set) be a multiple of extsize */
->>>> +	if ((mp->m_dalign && (mp->m_dalign % extsize)) ||
->>>> +	    (mp->m_swidth && (mp->m_swidth % extsize)))
->>>> +		return __this_address;
->>> Again, this is an atomic write constraint, isn't it?
->> So why do we want forcealign? It is to only align extent FSBs?
-> Yes. forced alignment is essentially just extent size guarantees.
-> 
-> This is part of what is needed for atomic writes, but atomic writes
-> also require specific physical storage alignment between the
-> filesystem and the device. The filesystem setup has to correctly
-> align AGs to the physical storage, and stuff like RAID
-> configurations need to be specifically compatible with the atomic
-> write capabilities of the underlying hardware.
-> 
-> None of these hardware iand storage stack alignment constraints have
-> any relevance to the filesystem forced alignment functionality. They
-> are completely indepedent. All the forced alignment does is
-> guarantees that allocation is aligned according the extent size hint
-> on the inode or it fails with ENOSPC.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9eed57ad49bb/disk-c942a0cd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/00b3750541fe/vmlinux-c942a0cd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/384cbdc161a0/bzImage-c942a0cd.xz
 
-Fine, so only for atomic writes we just need to ensure FSBs are aligned 
-to DBs.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c7019fac44a50a2ab16f@syzkaller.appspotmail.com
 
-And so it is the responsibility of mkfs to ensure AG size aligns to any 
-forcealign extsize specified and also disk atomic write geometry.
+ERROR: (device loop3): remounting filesystem as read-only
+non-latin1 character 0x706d found in JFS file name
+mount with iocharset=utf8 to access
+==================================================================
+BUG: KASAN: slab-use-after-free in jfs_strfromUCS_le+0x28d/0x3b0 fs/jfs/jfs_unicode.c:40
+Read of size 2 at addr ffff8880641f2d32 by task syz-executor.3/6266
 
-For atomic write only, it is the responsibility of the kernel to check 
-the forcealign extsize is compatible with any stripe alignment and AG size.
+CPU: 1 PID: 6266 Comm: syz-executor.3 Not tainted 6.9.0-rc5-syzkaller-00159-gc942a0cd3603 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ jfs_strfromUCS_le+0x28d/0x3b0 fs/jfs/jfs_unicode.c:40
+ jfs_readdir+0x19b6/0x4660 fs/jfs/jfs_dtree.c:2965
+ wrap_directory_iterator+0x94/0xe0 fs/readdir.c:67
+ iterate_dir+0x539/0x6f0 fs/readdir.c:110
+ __do_sys_getdents64 fs/readdir.c:409 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:394
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f35f267dea9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f35f33a90c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007f35f27abf80 RCX: 00007f35f267dea9
+RDX: 0000000000001000 RSI: 0000000020000f80 RDI: 0000000000000009
+RBP: 00007f35f26ca4a4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f35f27abf80 R15: 00007fff3bf15438
+ </TASK>
 
->>>
->>> Can you please separate these and put all the force align user API
->>> validation checks in the one function?
->>>
->> ok, fine. But it would be good to have clarification on function of
->> forcealign, above, i.e. does it always align extents to disk blocks?
-> No, it doesn't. XFS has never done this - physical extent alignment
-> is always done relative to the start of the AG, not the underlying
-> disk geometry.
-> 
-> IOWs, forced alignement is not aligning to disk blocks at all - it
-> is aligning extents logically to file offset and physically to the
-> offset from the start of the allocation group.  Hence there are no
-> real constraints on forced alignment - we can do any sort of
-> alignment as long it is smaller than half the max size of a physical
-> extent.
-> 
-> For allocation to then be aligned to physical storage, we need mkfs
-> to physically align the start of each AG to the geometry of the
-> underlying storage. We already do this for filesystems with a stripe
-> unit defined, hence stripe aligned allocation is physically aligned
-> to the underlying storage.
+Allocated by task 6266:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3798 [inline]
+ slab_alloc_node mm/slub.c:3845 [inline]
+ kmem_cache_alloc_lru+0x178/0x350 mm/slub.c:3864
+ alloc_inode_sb include/linux/fs.h:3091 [inline]
+ jfs_alloc_inode+0x28/0x70 fs/jfs/super.c:105
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x1ad/0x850 fs/inode.c:1280
+ jfs_iget+0x22/0x3b0 fs/jfs/inode.c:29
+ jfs_lookup+0x226/0x410 fs/jfs/namei.c:1469
+ __lookup_slow+0x28c/0x3f0 fs/namei.c:1692
+ lookup_slow+0x53/0x70 fs/namei.c:1709
+ walk_component+0x2e1/0x410 fs/namei.c:2004
+ lookup_last fs/namei.c:2461 [inline]
+ path_lookupat+0x16f/0x450 fs/namei.c:2485
+ filename_lookup+0x256/0x610 fs/namei.c:2514
+ user_path_at_empty+0x42/0x60 fs/namei.c:2921
+ user_path_at include/linux/namei.h:57 [inline]
+ do_mount fs/namespace.c:3689 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x29a/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Sure
+Freed by task 1563:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xa6/0xe0 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2106 [inline]
+ slab_free mm/slub.c:4280 [inline]
+ kmem_cache_free+0x10b/0x2c0 mm/slub.c:4344
+ rcu_do_batch kernel/rcu/tree.c:2196 [inline]
+ rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2471
+ __do_softirq+0x2c6/0x980 kernel/softirq.c:554
 
-> 
-> However, if mkfs doesn't get the physical layout of AGs right, there
-> is nothing the mounted filesystem can do to guarantee extent
-> allocation is aligned to physical disk blocks regardless of whether
-> forced alignment is enabled or not...
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:2734 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:2838
+ jfs_iget+0x18d/0x3b0 fs/jfs/inode.c:37
+ jfs_lookup+0x226/0x410 fs/jfs/namei.c:1469
+ __lookup_slow+0x28c/0x3f0 fs/namei.c:1692
+ lookup_slow+0x53/0x70 fs/namei.c:1709
+ walk_component+0x2e1/0x410 fs/namei.c:2004
+ lookup_last fs/namei.c:2461 [inline]
+ path_lookupat+0x16f/0x450 fs/namei.c:2485
+ filename_lookup+0x256/0x610 fs/namei.c:2514
+ user_path_at_empty+0x42/0x60 fs/namei.c:2921
+ user_path_at include/linux/namei.h:57 [inline]
+ do_mount fs/namespace.c:3689 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x29a/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-ok, understood.
+The buggy address belongs to the object at ffff8880641f2500
+ which belongs to the cache jfs_ip of size 2240
+The buggy address is located 2098 bytes inside of
+ freed 2240-byte region [ffff8880641f2500, ffff8880641f2dc0)
 
-Thanks,
-John
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880641f0940 pfn:0x641f0
+head: order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff888028d26e01
+flags: 0xfff80000000840(slab|head|node=0|zone=1|lastcpupid=0xfff)
+page_type: 0xffffffff()
+raw: 00fff80000000840 ffff8880197d13c0 dead000000000122 0000000000000000
+raw: ffff8880641f0940 00000000800d000b 00000001ffffffff ffff888028d26e01
+head: 00fff80000000840 ffff8880197d13c0 dead000000000122 0000000000000000
+head: ffff8880641f0940 00000000800d000b 00000001ffffffff ffff888028d26e01
+head: 00fff80000000003 ffffea0001907c01 dead000000000122 00000000ffffffff
+head: 0000000800000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5433, tgid -1337237977 (syz-executor.3), ts 5435, free_ts 62450070106
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
+ prep_new_page mm/page_alloc.c:1541 [inline]
+ get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
+ __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
+ __alloc_pages_node include/linux/gfp.h:238 [inline]
+ alloc_pages_node include/linux/gfp.h:261 [inline]
+ alloc_slab_page+0x5f/0x160 mm/slub.c:2175
+ allocate_slab mm/slub.c:2338 [inline]
+ new_slab+0x84/0x2f0 mm/slub.c:2391
+ ___slab_alloc+0xc73/0x1260 mm/slub.c:3525
+ __slab_alloc mm/slub.c:3610 [inline]
+ __slab_alloc_node mm/slub.c:3663 [inline]
+ slab_alloc_node mm/slub.c:3835 [inline]
+ kmem_cache_alloc_lru+0x253/0x350 mm/slub.c:3864
+ alloc_inode_sb include/linux/fs.h:3091 [inline]
+ jfs_alloc_inode+0x28/0x70 fs/jfs/super.c:105
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x1ad/0x850 fs/inode.c:1280
+ jfs_iget+0x22/0x3b0 fs/jfs/inode.c:29
+ jfs_lookup+0x226/0x410 fs/jfs/namei.c:1469
+ lookup_one_qstr_excl+0x11f/0x260 fs/namei.c:1607
+ do_unlinkat+0x297/0x830 fs/namei.c:4387
+ __do_sys_unlink fs/namei.c:4447 [inline]
+ __se_sys_unlink fs/namei.c:4445 [inline]
+ __x64_sys_unlink+0x49/0x60 fs/namei.c:4445
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 50 tgid 50 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1141 [inline]
+ free_unref_page_prepare+0x97b/0xaa0 mm/page_alloc.c:2347
+ free_unref_page+0x37/0x3f0 mm/page_alloc.c:2487
+ __folio_put_large+0x13f/0x190 mm/swap.c:132
+ __folio_put+0x299/0x390 mm/swap.c:140
+ io_rings_free+0x76/0x370 io_uring/io_uring.c:2801
+ io_ring_ctx_free+0x798/0x9a0 io_uring/io_uring.c:2923
+ io_ring_exit_work+0x7c7/0x850 io_uring/io_uring.c:3136
+ process_one_work kernel/workqueue.c:3254 [inline]
+ process_scheduled_works+0xa10/0x17c0 kernel/workqueue.c:3335
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
+ kthread+0x2f0/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
+Memory state around the buggy address:
+ ffff8880641f2c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880641f2c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880641f2d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff8880641f2d80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8880641f2e00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
