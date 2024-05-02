@@ -1,198 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-18511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EDF8B9E7E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 18:25:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6348B9FCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 19:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB9041C22A35
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 16:25:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 939D6B226DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2024 17:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2E615F3E6;
-	Thu,  2 May 2024 16:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6734D172BCE;
+	Thu,  2 May 2024 17:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LrVzlPHg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E655A15E1EF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 16:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BC3171064
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2024 17:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714667073; cv=none; b=uDB/XF+fqRPhxwQ6v4VI34d+vPkDCDifdv0LBLDj8oFcYQBEh9fO6IYWFWyog+AjXYxXlxe+AhlWWu2YAf/F1wue1tScGCtTIkr4hvHeZ3Fti5dZPXGOwANSuSefX2MSCibC4oIF1DxAfUPGbNDZMnXj+kf111FyZs8tI5t1W8c=
+	t=1714672243; cv=none; b=AqM4m7OXR6X1BExl0ZV1G9jNXGrU5QWVuB4ORb/oh+85LUzJmPA7/7/Gm0XCMZYjUJfGWbIZBf8vlC+DSQKR473I4yKFmFQsGEl68wVrvfUb5F3cQtVyWAcGgtmyQe3Hd88vtdyA5b002vtiJ8amMdC2qSR0j++tCwXH6o9RrQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714667073; c=relaxed/simple;
-	bh=0/ZunkJEpZN/4OPSGwOcBxhrTmPptZAmWRgi2vQAPZI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HhxnfD7uZii03koyyi8BkV3xIeZpi21rOcxkIjpo9veM3YKZ7eT5u9qi+q5w3zfWSjD05OMwe6BF7chFyqm0ZuCXVw7zRKn1qjxNtS+3LAU2gLitvCPj7D9iuYOMjc/IGFZIODU/X6oo+0uIbpX270YuQM05meX5fFD2fZKy4Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dee502fae6so243804739f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2024 09:24:30 -0700 (PDT)
+	s=arc-20240116; t=1714672243; c=relaxed/simple;
+	bh=HrgFyTGrENLhznRwHqGjk8BqKyptnIBvF/Bip8ApHXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXt8fkl8/mZQBNf5HQmlwX6O0kuczXKaHyiVfoOeso8CwrrpGwTsl7W26VnPiFdCQedp6izFHF96+XwZ4KquUsRUwGdU5bQgfvEvEWk6XgnebQRcfeX0/9nf19YuTpNjkqywlQWol/VT/PkNohBfVNZ/oGgd7jROHbatj32H0w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LrVzlPHg; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5c229dabbb6so5356849a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2024 10:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1714672241; x=1715277041; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+uaF0GOsku/Enw0IBZ0DNja/DdL69X77dW5yUv4AwZo=;
+        b=LrVzlPHgfYp6e1p7pVOzsYrKD3NT0Vn+qteZ8ecmIrn9eUMcJd3Kc8m7oqsI9BXkVo
+         4sQE8NUd+FgckbKNS2A4VNSVkhgf2p7WHC42gPv2cc7PSeZhfXWkMGwnZGyNXavs3qsG
+         8zrgj9tmPdP4s8gBWqB5PhJcghAkSF/dudQRg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714667070; x=1715271870;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SFyj694V0D/vLHEgtWStUV4YFzhNaN+kM0JlKVVUeBY=;
-        b=TCcKh6tEZ0Q6/UcQJivE0PrZo179O0CLZB7ACZxRZXv6kjl5GvWrhDvWr/3It3Jma0
-         89hYNCP5XWgHDMAwAJOYYV3KBJpQMeM0ULsi7gOcrLcluE4fzmeS22d5QpSrK7qHP0YV
-         lO2vM99xZg/Azdv61uR2cwlEw2LwjS4A4xoCDPwLiJiyswiIZJG33luZ8t0Xf0KS/xuy
-         ND2mNKD3JH9qLGO3pgMpC8qmqUlIeZ6x5hR6fleDyql/NuH9HXHY/TUXvxcGFIgWcdzu
-         P4NA31VPJBvoHAlCPT87c5j5ZIAhxFHdIUInFI1WAmI1SWgvhS3bm/eHZgFh3cn2BGoi
-         A2KA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDyeMykEzU2DCVdt9LJ3l5AVq7q7DPR3t2GqB+nvyDhdO89IokE8aH/0PRJmSlHTMYnmIbelj77Yv61fby8iNDFabf11/eQpnyRzUS1w==
-X-Gm-Message-State: AOJu0YzoX1b1Y8SWTBtfvuYZ/gThSUwVyCHnqCRTCjnfJQYa+D+izUJU
-	qd2tFSxfgPY5ua5kIWQC2nT0qUk37FlOPA/Y4NuK88CDrgLeMc8toPZC3rqhQu/kzKFU8VoLQi/
-	7YyMK9v3b1SPQ+MIS9peILMrb3FHn+iRVRT/7G8fyBUgBdhZuGLtufpw=
-X-Google-Smtp-Source: AGHT+IE15CgMIlFF9wAA/PYoqD8Aqqy1VC0nYZW13rmvitrAHILPCstERAbY5qc8J0+/EEWv+okVnWRojEdKGl94DKkZqxVwFRJH
+        d=1e100.net; s=20230601; t=1714672241; x=1715277041;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+uaF0GOsku/Enw0IBZ0DNja/DdL69X77dW5yUv4AwZo=;
+        b=P1UEMxG8JvEE55nTpgCYRMy0ODiDlipXlFItFW5+o7Atkw0UuTfIB1b9Sth/ypfpqH
+         RNDUanWASrHu4+Wh8N5XOxgE1NtjDQyNLrR8VXqorHKkYakI+5UiZz32OLcChbcXFqG6
+         gPNBPH5WeeFmytpNOpCGmt7Dv83O6SwvVPeaUn925vcbEatAMHijuJmuUAdgQHbQE9t9
+         G59ZGbaBo+ltciHcUOvUDFT6akAXW4qVFSZKjUqP/Y841f1UMIQEmLYde4e8tHwXHKff
+         JHRxeMDIibkUS6if+f8cWZewFRP4qW7gU17qwBoUGzkIuF1xIKbeft5vb1nO+rU3y4ST
+         hxxA==
+X-Gm-Message-State: AOJu0YxVGUgjFYzHws/wupxEKC41DVtKgkWE4hWs4Te4Znyrze0rCVOJ
+	uAexZVhyFeJ1mQxQv9m07zhxp3hpN5Y5hXKvhPfZYSd0141g/81emqBP7P0GKg==
+X-Google-Smtp-Source: AGHT+IEopB5Z+Ot/+/0juPZG0PnqSIGb9G/R6G3qibniQnQojE/g26Yasy+fM+manPwub9pyTkHN6Q==
+X-Received: by 2002:a17:90a:890d:b0:2af:8fa4:40e with SMTP id u13-20020a17090a890d00b002af8fa4040emr559066pjn.1.1714672240673;
+        Thu, 02 May 2024 10:50:40 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id g5-20020a17090a828500b0029df9355e79sm1540941pjn.13.2024.05.02.10.50.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 May 2024 10:50:40 -0700 (PDT)
+Date: Thu, 2 May 2024 10:50:39 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Allen Pais <apais@linux.microsoft.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, ebiederm@xmission.com, mcgrof@kernel.org,
+	j.granados@samsung.com
+Subject: Re: [PATCH v2] fs/coredump: Enable dynamic configuration of max file
+ note size
+Message-ID: <202405021045.360F5313EA@keescook>
+References: <20240502145920.5011-1-apais@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:448f:b0:487:31da:eaf1 with SMTP id
- bv15-20020a056638448f00b0048731daeaf1mr127840jab.1.1714667070047; Thu, 02 May
- 2024 09:24:30 -0700 (PDT)
-Date: Thu, 02 May 2024 09:24:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009e614206177b0968@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in folio_unlock (2)
-From: syzbot <syzbot+9e39ac154d8781441e60@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502145920.5011-1-apais@linux.microsoft.com>
 
-Hello,
+On Thu, May 02, 2024 at 02:59:20PM +0000, Allen Pais wrote:
+> Introduce the capability to dynamically configure the maximum file
+> note size for ELF core dumps via sysctl. This enhancement removes
+> the previous static limit of 4MB, allowing system administrators to
+> adjust the size based on system-specific requirements or constraints.
+> 
+> - Remove hardcoded `MAX_FILE_NOTE_SIZE` from `fs/binfmt_elf.c`.
+> - Define `max_file_note_size` in `fs/coredump.c` with an initial value
+>   set to 4MB.
+> - Declare `max_file_note_size` as an external variable in
+>   `include/linux/coredump.h`.
+> - Add a new sysctl entry in `kernel/sysctl.c` to manage this setting
+>   at runtime.
+> 
+> $ sysctl -a | grep max_file_note_size
+> kernel.max_file_note_size = 4194304
+> 
+> $ sysctl -n kernel.max_file_note_size
+> 4194304
+> 
+> $echo 519304 > /proc/sys/kernel/max_file_note_size
+> 
+> $sysctl -n kernel.max_file_note_size
+> 519304
 
-syzbot found the following issue on:
+The names and paths in the commit log need a refresh here, since they've
+changed.
 
-HEAD commit:    9c6ecb3cb6e2 Add linux-next specific files for 20240502
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17418c40980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25ba1e5e9c955f1a
-dashboard link: https://syzkaller.appspot.com/bug?extid=9e39ac154d8781441e60
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e4117f180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10efe5f8980000
+> 
+> Why is this being done?
+> We have observed that during a crash when there are more than 65k mmaps
+> in memory, the existing fixed limit on the size of the ELF notes section
+> becomes a bottleneck. The notes section quickly reaches its capacity,
+> leading to incomplete memory segment information in the resulting coredump.
+> This truncation compromises the utility of the coredumps, as crucial
+> information about the memory state at the time of the crash might be
+> omitted.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/dc32e924f570/disk-9c6ecb3c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7bc65d787cc9/vmlinux-9c6ecb3c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/19096ecded11/bzImage-9c6ecb3c.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/45e18da02dc2/mount_0.gz
+Thanks for adding this!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9e39ac154d8781441e60@syzkaller.appspotmail.com
+> 
+> Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
+> Signed-off-by: Allen Pais <apais@linux.microsoft.com>
+> 
+> ---
+> Changes in v2:
+>    - Move new sysctl to fs/coredump.c [Luis & Kees]
+>    - rename max_file_note_size to core_file_note_size_max [kees]
+>    - Capture "why this is being done?" int he commit message [Luis & Kees]
+> ---
+>  fs/binfmt_elf.c          |  3 +--
+>  fs/coredump.c            | 10 ++++++++++
+>  include/linux/coredump.h |  1 +
+>  3 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 5397b552fbeb..6aebd062b92b 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
+>  	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
+>  }
+>  
+> -#define MAX_FILE_NOTE_SIZE (4*1024*1024)
+>  /*
+>   * Format of NT_FILE note:
+>   *
+> @@ -1592,7 +1591,7 @@ static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm
+>  
+>  	names_ofs = (2 + 3 * count) * sizeof(data[0]);
+>   alloc:
+> -	if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
+> +	if (size >= core_file_note_size_max) /* paranoia check */
+>  		return -EINVAL;
 
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1088 [inline]
- free_unref_page+0xd22/0xea0 mm/page_alloc.c:2601
- free_contig_range+0x9e/0x160 mm/page_alloc.c:6655
- destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1037
- debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1417
- do_one_initcall+0x248/0x880 init/main.c:1265
- do_initcall_level+0x157/0x210 init/main.c:1327
- do_initcalls+0x3f/0x80 init/main.c:1343
- kernel_init_freeable+0x435/0x5d0 init/main.c:1576
- kernel_init+0x1d/0x2b0 init/main.c:1465
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-------------[ cut here ]------------
-kernel BUG at mm/filemap.c:1507!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 5109 Comm: syz-executor359 Not tainted 6.9.0-rc6-next-20240502-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:folio_unlock+0x18b/0x2f0 mm/filemap.c:1507
-Code: 4c 89 f0 48 25 ff 0f 00 00 74 62 e8 bf df c9 ff e9 eb fe ff ff e8 b5 df c9 ff 4c 89 f7 48 c7 c6 a0 85 d3 8b e8 96 95 13 00 90 <0f> 0b e8 9e df c9 ff 4c 89 f7 48 c7 c6 a0 8e d3 8b e8 7f 95 13 00
-RSP: 0018:ffffc900036b6b48 EFLAGS: 00010246
-RAX: 85f60d17a1306500 RBX: 1ffffd40003a3d50 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8bcab340 RDI: 0000000000000001
-RBP: 00fff4000000402c R08: ffffffff92faa657 R09: 1ffffffff25f54ca
-R10: dffffc0000000000 R11: fffffbfff25f54cb R12: ffffea0001d1ea88
-R13: 1ffffd40003a3d51 R14: ffffea0001d1ea80 R15: dffffc0000000000
-FS:  00007f5d709cb6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5d70a710d0 CR3: 000000002e66e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __extent_writepage fs/btrfs/extent_io.c:1519 [inline]
- extent_write_cache_pages fs/btrfs/extent_io.c:2173 [inline]
- btrfs_writepages+0x1fab/0x26f0 fs/btrfs/extent_io.c:2294
- do_writepages+0x359/0x870 mm/page-writeback.c:2633
- filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- filemap_fdatawrite_range+0x120/0x180 mm/filemap.c:448
- btrfs_fdatawrite_range fs/btrfs/file.c:4050 [inline]
- start_ordered_ops fs/btrfs/file.c:1753 [inline]
- btrfs_sync_file+0x2b4/0xf80 fs/btrfs/file.c:1828
- generic_write_sync include/linux/fs.h:2793 [inline]
- btrfs_do_write_iter+0xb84/0x10a0 fs/btrfs/file.c:1705
- iter_file_splice_write+0xbd7/0x14e0 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11e/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x58e/0xc90 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x28c/0x3e0 fs/splice.c:1233
- vfs_copy_file_range+0xd37/0x1510 fs/read_write.c:1558
- __do_sys_copy_file_range fs/read_write.c:1612 [inline]
- __se_sys_copy_file_range+0x3f2/0x5d0 fs/read_write.c:1575
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5d70a356c9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5d709cb208 EFLAGS: 00000246 ORIG_RAX: 0000000000000146
-RAX: ffffffffffffffda RBX: 00007f5d70ac1618 RCX: 00007f5d70a356c9
-RDX: 0000000000000004 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007f5d70ac1610 R08: ffffffffa003e45b R09: 0700000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5d70a8e1b0
-R13: 007570637265705f R14: 6f6f6c2f7665642f R15: 0700000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:folio_unlock+0x18b/0x2f0 mm/filemap.c:1507
-Code: 4c 89 f0 48 25 ff 0f 00 00 74 62 e8 bf df c9 ff e9 eb fe ff ff e8 b5 df c9 ff 4c 89 f7 48 c7 c6 a0 85 d3 8b e8 96 95 13 00 90 <0f> 0b e8 9e df c9 ff 4c 89 f7 48 c7 c6 a0 8e d3 8b e8 7f 95 13 00
-RSP: 0018:ffffc900036b6b48 EFLAGS: 00010246
-RAX: 85f60d17a1306500 RBX: 1ffffd40003a3d50 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8bcab340 RDI: 0000000000000001
-RBP: 00fff4000000402c R08: ffffffff92faa657 R09: 1ffffffff25f54ca
-R10: dffffc0000000000 R11: fffffbfff25f54cb R12: ffffea0001d1ea88
-R13: 1ffffd40003a3d51 R14: ffffea0001d1ea80 R15: dffffc0000000000
-FS:  00007f5d709cb6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5d70a710d0 CR3: 000000002e66e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+I wonder, given the purpose of this sysctl, if it would be a
+discoverability improvement to include a pr_warn_once() before the
+EINVAL? Like:
 
+	/* paranoia check */
+	if (size >= core_file_note_size_max) {
+		pr_warn_once("coredump Note size too large: %zu (does kernel.core_file_note_size_max sysctl need adjustment?\n", size);
+  		return -EINVAL;
+	}
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+What do folks think? (I can't imagine tracking down this problem
+originally was much fun, for example.)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>  	size = round_up(size, PAGE_SIZE);
+>  	/*
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index be6403b4b14b..a312be48030f 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -56,10 +56,13 @@
+>  static bool dump_vma_snapshot(struct coredump_params *cprm);
+>  static void free_vma_snapshot(struct coredump_params *cprm);
+>  
+> +#define MAX_FILE_NOTE_SIZE (4*1024*1024)
+> +
+>  static int core_uses_pid;
+>  static unsigned int core_pipe_limit;
+>  static char core_pattern[CORENAME_MAX_SIZE] = "core";
+>  static int core_name_size = CORENAME_MAX_SIZE;
+> +unsigned int core_file_note_size_max = MAX_FILE_NOTE_SIZE;
+>  
+>  struct core_name {
+>  	char *corename;
+> @@ -1020,6 +1023,13 @@ static struct ctl_table coredump_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec,
+>  	},
+> +	{
+> +		.procname       = "core_file_note_size_max",
+> +		.data           = &core_file_note_size_max,
+> +		.maxlen         = sizeof(unsigned int),
+> +		.mode           = 0644,
+> +		.proc_handler   = proc_douintvec,
+> +	},
+>  };
+>  
+>  static int __init init_fs_coredump_sysctls(void)
+> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+> index d3eba4360150..14c057643e7f 100644
+> --- a/include/linux/coredump.h
+> +++ b/include/linux/coredump.h
+> @@ -46,6 +46,7 @@ static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
+>  #endif
+>  
+>  #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
+> +extern unsigned int core_file_note_size_max;
+>  extern void validate_coredump_safety(void);
+>  #else
+>  static inline void validate_coredump_safety(void) {}
+> -- 
+> 2.17.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Otherwise, yes, this looks good to me.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Kees Cook
 
