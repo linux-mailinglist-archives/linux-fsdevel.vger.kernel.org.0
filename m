@@ -1,274 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-18644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7A08BAE84
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 16:09:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9998BAE92
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 16:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3DC282150
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 14:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8DD1F21488
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 14:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BCA154BF4;
-	Fri,  3 May 2024 14:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2031552F2;
+	Fri,  3 May 2024 14:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ppJJr1aD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K2Swz6qM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ppJJr1aD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K2Swz6qM"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="KM4XIarb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B20215444E;
-	Fri,  3 May 2024 14:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F1415444E;
+	Fri,  3 May 2024 14:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714745361; cv=none; b=C6k3kgkHffScnHuxuSmrJEeA0zCNUtdKTU6kMObwEp5HNJyJ44fZgbXX6idv1AaafzceIXedKqsxfmY6rRCIrAM3I4qIQ6riwC5Lf9yZxMtPWT+DNo1RyuffxgqOkOMmvWcIiQxcWJVPoHZWMqohAuTtSg1bnrVhZspXVoU+1tY=
+	t=1714745385; cv=none; b=mUVWfdVt0zYaR0o2/SbDplsl3eIToZqAKv+V/l2tox9igjNvNhu+YAjaf2+P4MUCwHgCM+BXRW1fvxmc2bckq1D2TW1uElLHlBiRqqtsP58W8hwu+a4nok4u5MmGUqCX33zQUrnNGkxMWqHUh7iJNJ2B2nvMqmI1lDR6LBR4Pxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714745361; c=relaxed/simple;
-	bh=yzxhMm+OX7Dr7aYseilNZKDnyQLup8KnYfLAkzglVJw=;
+	s=arc-20240116; t=1714745385; c=relaxed/simple;
+	bh=+fi7fUfomErHHAmvDww2p/WTBqGy/yFZDfIKZxnytjc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6X+NFiT9TIx/kGdOHtuZyasgi+QXseA02eYGP1TH2Pyh+h4vZ5d1GZbkz3aqXIS74sgZcveCSdMcgzUIoJr/rCRthQTKRhCTtFlvKS6iSLZIYiLekdtJuBRjLHDxFAJXWWe3CnEUKw3h6WpBBBfbepdvkIB3Alr7sM1gAZndDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ppJJr1aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K2Swz6qM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ppJJr1aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K2Swz6qM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8BDD42058F;
-	Fri,  3 May 2024 14:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714745357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
-	b=ppJJr1aDg5zyCfKxoPAv0SSHKf7byu4Soibv3aPPxehvtyCLU24K0tOeMK1fpq/qqj95vs
-	7Huq/PJ28xC/3xVLnII9qSxTJ1RcdraPH7+4ontuw+BPYdhfT8CimDx96Mri7um/wZdp2y
-	0ps8IuDnWu9frNbdqy3w1oYfR7Bn77M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714745357;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
-	b=K2Swz6qMrqILGKqgotraJ8/X4aWP6k8SUn/TJbAciKo7Ft3XSdSAGar/ZP8Se5nTgEpc3A
-	yp9v4Br4dsQpGnDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714745357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
-	b=ppJJr1aDg5zyCfKxoPAv0SSHKf7byu4Soibv3aPPxehvtyCLU24K0tOeMK1fpq/qqj95vs
-	7Huq/PJ28xC/3xVLnII9qSxTJ1RcdraPH7+4ontuw+BPYdhfT8CimDx96Mri7um/wZdp2y
-	0ps8IuDnWu9frNbdqy3w1oYfR7Bn77M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714745357;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
-	b=K2Swz6qMrqILGKqgotraJ8/X4aWP6k8SUn/TJbAciKo7Ft3XSdSAGar/ZP8Se5nTgEpc3A
-	yp9v4Br4dsQpGnDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 78D1A13991;
-	Fri,  3 May 2024 14:09:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Wl16HQ3wNGYyEgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 03 May 2024 14:09:17 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C2A5DA0A12; Fri,  3 May 2024 16:09:16 +0200 (CEST)
-Date: Fri, 3 May 2024 16:09:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu,
-	syzbot <syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com>,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-	ritesh.list@gmail.com, syzkaller-bugs@googlegroups.com,
-	trix@redhat.com, yangerkun <yangerkun@huawei.com>
-Subject: Re: [syzbot] [ext4?] WARNING in mb_cache_destroy
-Message-ID: <20240503140916.zd33jcev7c6fy254@quack3>
-References: <00000000000072c6ba06174b30b7@google.com>
- <0000000000003bf5be061751ae70@google.com>
- <20240502103341.t53u6ya7ujbzkkxo@quack3>
- <dca44ba5-5c33-05ef-d9de-21a84f9d7eaa@huawei.com>
- <20240503102328.cstcauc5qakmk2bg@quack3>
- <9209062c-fa94-33f3-fd89-834a3314c7ed@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCdPlKyCDCaJhJaOwA2p1JSxq4VuaZLqvkDZ1bf5bPxs0s+fVuu+J0ErRRJkTUSueX9Ozh8KROPOdICNpBkkA0BfOXwwJ1uBH/IrSLWigC6wpebd33UiFahRV/Z+4aHBbfG/UsiIoZw2Vs6tTQ0nRUb/EjIJuxDYXdq9/FKLSJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=KM4XIarb; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1714745381;
+	bh=+fi7fUfomErHHAmvDww2p/WTBqGy/yFZDfIKZxnytjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KM4XIarbWLiqP+rTdHhYP4ADp2FfBPZJESIvebE/x46r3wpaPNaKYYJ8DjRuiR4XK
+	 lgnUuJtE42KneR0ACxiqLQ5uJD/S7BK84VwhVwYe9egEdoAzvtQwKV4FeMNTpP6GjL
+	 22eK/o3npUywdzgLbvtpx7d4AZBFjdzVsbPnc49I=
+Date: Fri, 3 May 2024 16:09:40 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Eric Dumazet <edumazet@google.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <4cda5d2d-dd92-44ef-9e7b-7b780ec795ab@t-8ch.de>
+References: <CGME20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803@eucas1p2.samsung.com>
+ <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <20240503090332.irkiwn73dgznjflz@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9209062c-fa94-33f3-fd89-834a3314c7ed@huawei.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[dd43bd0f7474512edc47];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,mit.edu,syzkaller.appspotmail.com,dilger.ca,vger.kernel.org,lists.linux.dev,kernel.org,google.com,gmail.com,googlegroups.com,redhat.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+In-Reply-To: <20240503090332.irkiwn73dgznjflz@joelS2.panther.com>
 
-On Fri 03-05-24 19:38:21, Baokun Li wrote:
-> On 2024/5/3 18:23, Jan Kara wrote:
-> > Hi!
-> > 
-> > On Fri 03-05-24 17:51:07, Baokun Li wrote:
-> > > On 2024/5/2 18:33, Jan Kara wrote:
-> > > > On Tue 30-04-24 08:04:03, syzbot wrote:
-> > > > > syzbot has bisected this issue to:
-> > > > > 
-> > > > > commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
-> > > > > Author: Baokun Li <libaokun1@huawei.com>
-> > > > > Date:   Thu Jun 16 02:13:56 2022 +0000
-> > > > > 
-> > > > >       ext4: fix use-after-free in ext4_xattr_set_entry
-> > > > So I'm not sure the bisect is correct since the change is looking harmless.
-> > > Yes, the root cause of the problem has nothing to do with this patch,
-> > > and please see the detailed analysis below.
-> > > > But it is sufficiently related that there indeed may be some relationship.
-> > > > Anyway, the kernel log has:
-> > > > 
-> > > > [   44.932900][ T1063] EXT4-fs warning (device loop0): ext4_evict_inode:297: xattr delete (err -12)
-> > > > [   44.943316][ T1063] EXT4-fs (loop0): unmounting filesystem.
-> > > > [   44.949531][ T1063] ------------[ cut here ]------------
-> > > > [   44.955050][ T1063] WARNING: CPU: 0 PID: 1063 at fs/mbcache.c:409 mb_cache_destroy+0xda/0x110
-> > > > 
-> > > > So ext4_xattr_delete_inode() called when removing inode has failed with
-> > > > ENOMEM and later mb_cache_destroy() was eventually complaining about having
-> > > > mbcache entry with increased refcount. So likely some error cleanup path is
-> > > > forgetting to drop mbcache entry reference somewhere but at this point I
-> > > > cannot find where. We'll likely need to play with the reproducer to debug
-> > > > that. Baokun, any chance for looking into this?
-> > > > 
-> > > > 								Honza
-> > > As you guessed, when -ENOMEM is returned in ext4_sb_bread(),
-> > > the reference count of ce is not properly released, as follows.
-> > > 
-> > > ext4_create
-> > >   __ext4_new_inode
-> > >    security_inode_init_security
-> > >     ext4_initxattrs
-> > >      ext4_xattr_set_handle
-> > >       ext4_xattr_block_find
-> > >       ext4_xattr_block_set
-> > >        ext4_xattr_block_cache_find
-> > >          ce = mb_cache_entry_find_first
-> > >              __entry_find
-> > >              atomic_inc_not_zero(&entry->e_refcnt)
-> > >          bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
-> > >          if (PTR_ERR(bh) == -ENOMEM)
-> > >              return NULL;
-> > > 
-> > > Before merging into commit 67d7d8ad99be("ext4: fix use-after-free
-> > > in ext4_xattr_set_entry"), it will not return early in
-> > > ext4_xattr_ibody_find(),
-> > > so it tries to find it in iboy, fails the check in xattr_check_inode() and
-> > > returns without executing ext4_xattr_block_find(). Thus it will bisect
-> > > the patch, but actually has nothing to do with it.
-> > > 
-> > > ext4_xattr_ibody_get
-> > >   xattr_check_inode
-> > >    __xattr_check_inode
-> > >     check_xattrs
-> > >      if (end - (void *)header < sizeof(*header) + sizeof(u32))
-> > >        "in-inode xattr block too small"
-> > > 
-> > > Here's the patch in testing, I'll send it out officially after it is tested.
-> > > (PS:  I'm not sure if propagating the ext4_xattr_block_cache_find() errors
-> > > would be better.)
-> > Great! Thanks for debugging this! Some comments to your fix below:
-> > 
-> > > diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> > > index b67a176bfcf9..5c9e751915fd 100644
-> > > --- a/fs/ext4/xattr.c
-> > > +++ b/fs/ext4/xattr.c
-> > > @@ -3113,11 +3113,10 @@ ext4_xattr_block_cache_find(struct inode *inode,
-> > > 
-> > >           bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
-> > >           if (IS_ERR(bh)) {
-> > > -            if (PTR_ERR(bh) == -ENOMEM)
-> > > -                return NULL;
-> > > +            if (PTR_ERR(bh) != -ENOMEM)
-> > > +                EXT4_ERROR_INODE(inode, "block %lu read error",
-> > > +                         (unsigned long)ce->e_value);
-> > >               bh = NULL;
-> > > -            EXT4_ERROR_INODE(inode, "block %lu read error",
-> > > -                     (unsigned long)ce->e_value);
-> > >           } else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
-> > >               *pce = ce;
-> > >               return bh;
-> > So if we get the ENOMEM error, continuing the iteration seems to be
-> > pointless as we'll likely get it for the following entries as well. I think
-> > the original behavior of aborting the iteration in case of ENOMEM is
-> > actually better. We just have to do mb_cache_entry_put(ea_block_cache, ce)
-> > before returning...
-> > 
-> > 								Honza
-> Returning NULL here would normally attempt to allocate a new
-> xattr_block in ext4_xattr_block_set(), and when ext4_sb_bread() fails,
-> allocating the new block and inserting it would most likely fail as well,
-> so my initial thought was to propagate the error from ext4_sb_bread()
-> to also make ext4_xattr_block_set() fail when ext4_sb_bread() fails.
+Hey Joel,
 
-Yes, this would be probably even better solution.
+On 2024-05-03 11:03:32+0000, Joel Granados wrote:
+> Here is my feedback for your outstanding constification patches [1] and [2].
 
-> But I noticed that before Ted added the special handling for -ENOMEM,
-> EXT4_ERROR_INODE was called to set the ERROR_FS flag no matter
-> what error ext4_sb_bread() returned, and after we can distinguish
-> between -EIO and -ENOMEM, we don't have to set the ERROR_FS flag
-> in the case of -ENOMEM. So there's this conservative fix now.
+Thanks!
+
+> # You need to split the patch
+> The answer that you got from Jakub in the network subsystem is very clear and
+> baring a change of heart from the network folks, this will go in as but as a
+> split patchset. Please split it considering the following:
+> 1. Create a different patchset for drivers/,  fs/, kernel/, net, and a
+>    miscellaneous that includes whatever does not fit into the others.
+> 2. Consider that this might take several releases.
+> 3. Consider the following sufix for the interim function name "_const". Like in
+>    kfree_const. Please not "_new".
+
+Ack. "_new" was an intentionally unacceptable placeholder.
+
+> 4. Please publish the final result somewhere. This is important so someone can
+>    take over in case you need to stop.
+
+Will do. Both for each single series and a combination of all of them.
+
+> 5. Consistently mention the motivation in your cover letters. I specify more
+>    further down in "#Motivation".
+> 6. Also mention that this is part of a bigger effort (like you did in your
+>    original cover letters). I would include [3,4,5,6]
+> 7. Include a way to show what made it into .rodata. I specify more further down
+>    in "#Show the move".
 > 
-> In short, in my personal opinion, for -EIO and -ENOMEM, they should
-> be the same except whether or not the ERROR_FS flag is set.
-> Otherwise, I think adding mb_cache_entry_put() directly is the easiest
-> and most straightforward fix.  Honza, do you have any other thoughts?
+> # Motivation
+> As I read it, the motivation for these constification efforts are:
+> 1. It provides increased safety: Having things in .rodata section reduces the
+>    attack surface. This is especially relevant for structures that have function
+>    pointers (like ctl_table); having these in .rodata means that these pointers
+>    always point to the "intended" function and cannot be changed.
+> 2. Compiler optimizations: This was just a comment in the patchsets that I have
+>    mentioned ([3,4,5]). Do you know what optimizations specifically? Does it
+>    have to do with enhancing locality for the data in .rodata? Do you have other
+>    specific optimizations in mind?
 
-Yeah. I'd go for adding mb_cache_entry_put() now as a quick fix and then
-work on propagating the error from ext4_xattr_block_cache_find() as a
-cleaner solution...
+I don't know about anything that would make it faster.
+It's more about safety and transmission of intent to API users,
+especially callback implementers.
 
-								Honza
+> 3. Readability: because it is easier to know up-front that data is not supposed
+>    to change or its obvious that a function is re-entrant. Actually a lot of the
+>    readability reasons is about knowing things "up-front".
+> As we move forward with the constification in sysctl, please include a more
+> detailed motivation in all your cover letters. This helps maintainers (that
+> don't have the context) understand what you are trying to do. It does not need
+> to be my three points, but it should be more than just "put things into
+> .rodata". Please tell me if I have missed anything in the motivation.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Will do.
+
+> # Show the move
+> I created [8] because there is no easy way to validate which objects made it
+> into .rodata. I ran [8] for your Dec 2nd patcheset [7] and there are less in
+> .rodata than I expected (the results are in [9]) Why is that? Is it something
+> that has not been posted to the lists yet? 
+
+Constifying the APIs only *allows* the actual table to be constified
+themselves.
+Then each table definition will have to be touched and "const" added.
+
+See patches 17 and 18 in [7] for two examples.
+
+Some tables in net/ are already "const" as the static definitions are
+never registered themselves but only their copies are.
+
+This seems to explain your findings.
+
+> Best
+
+Thanks!
+
+> [1] https://lore.kernel.org/all/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
+> [2] https://lore.kernel.org/all/20240418-sysctl-const-table-arg-v2-1-4012abc31311@weissschuh.net
+> [3] [PATCH v2 00/14] ASoC: Constify local snd_sof_dsp_ops
+>     https://lore.kernel.org/all/20240426-n-const-ops-var-v2-0-e553fe67ae82@kernel.org
+> [4] [PATCH v2 00/19] backlight: Constify lcd_ops
+>     https://lore.kernel.org/all/20240424-video-backlight-lcd-ops-v2-0-1aaa82b07bc6@kernel.org
+> [5] [PATCH 1/4] iommu: constify pointer to bus_type
+>     https://lore.kernel.org/all/20240216144027.185959-1-krzysztof.kozlowski@linaro.org
+> [6] [PATCH 00/29] const xattr tables
+>     https://lore.kernel.org/all/20230930050033.41174-1-wedsonaf@gmail.com
+> [7] https://lore.kernel.org/all/20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net/
+> 
+> [8]
+
+[snip]
+
+> [9]
+>     section: .rodata                obj_name : kern_table
+>     section: .rodata                obj_name : sysctl_mount_point
+>     section: .rodata                obj_name : addrconf_sysctl
+>     section: .rodata                obj_name : ax25_param_table
+>     section: .rodata                obj_name : mpls_table
+>     section: .rodata                obj_name : mpls_dev_table
+>     section: .data          obj_name : sld_sysctls
+>     section: .data          obj_name : kern_panic_table
+>     section: .data          obj_name : kern_exit_table
+>     section: .data          obj_name : vm_table
+>     section: .data          obj_name : signal_debug_table
+>     section: .data          obj_name : usermodehelper_table
+>     section: .data          obj_name : kern_reboot_table
+>     section: .data          obj_name : user_table
+>     section: .bss           obj_name : sched_core_sysctls
+>     section: .data          obj_name : sched_fair_sysctls
+>     section: .data          obj_name : sched_rt_sysctls
+>     section: .data          obj_name : sched_dl_sysctls
+>     section: .data          obj_name : printk_sysctls
+>     section: .data          obj_name : pid_ns_ctl_table_vm
+>     section: .data          obj_name : seccomp_sysctl_table
+>     section: .data          obj_name : uts_kern_table
+>     section: .data          obj_name : vm_oom_kill_table
+>     section: .data          obj_name : vm_page_writeback_sysctls
+>     section: .data          obj_name : page_alloc_sysctl_table
+>     section: .data          obj_name : hugetlb_table
+>     section: .data          obj_name : fs_stat_sysctls
+>     section: .data          obj_name : fs_exec_sysctls
+>     section: .data          obj_name : fs_pipe_sysctls
+>     section: .data          obj_name : namei_sysctls
+>     section: .data          obj_name : fs_dcache_sysctls
+>     section: .data          obj_name : inodes_sysctls
+>     section: .data          obj_name : fs_namespace_sysctls
+>     section: .data          obj_name : dnotify_sysctls
+>     section: .data          obj_name : inotify_table
+>     section: .data          obj_name : epoll_table
+>     section: .data          obj_name : aio_sysctls
+>     section: .data          obj_name : locks_sysctls
+>     section: .data          obj_name : coredump_sysctls
+>     section: .data          obj_name : fs_shared_sysctls
+>     section: .data          obj_name : fs_dqstats_table
+>     section: .data          obj_name : root_table
+>     section: .data          obj_name : pty_table
+>     section: .data          obj_name : xfs_table
+>     section: .data          obj_name : ipc_sysctls
+>     section: .data          obj_name : key_sysctls
+>     section: .data          obj_name : kernel_io_uring_disabled_table
+>     section: .data          obj_name : tty_table
+>     section: .data          obj_name : random_table
+>     section: .data          obj_name : scsi_table
+>     section: .data          obj_name : iwcm_ctl_table
+>     section: .data          obj_name : net_core_table
+>     section: .data          obj_name : netns_core_table
+>     section: .bss           obj_name : nf_log_sysctl_table
+>     section: .data          obj_name : nf_log_sysctl_ftable
+>     section: .data          obj_name : vs_vars
+>     section: .data          obj_name : vs_vars_table
+>     section: .data          obj_name : ipv4_route_netns_table
+>     section: .data          obj_name : ipv4_route_table
+>     section: .data          obj_name : ip4_frags_ns_ctl_table
+>     section: .data          obj_name : ip4_frags_ctl_table
+>     section: .data          obj_name : ctl_forward_entry
+>     section: .data          obj_name : ipv4_table
+>     section: .data          obj_name : ipv4_net_table
+>     section: .data          obj_name : unix_table
+>     section: .data          obj_name : ipv6_route_table_template
+>     section: .data          obj_name : ipv6_icmp_table_template
+>     section: .data          obj_name : ip6_frags_ns_ctl_table
+>     section: .data          obj_name : ip6_frags_ctl_table
+>     section: .data          obj_name : ipv6_table_template
+>     section: .data          obj_name : ipv6_rotable
+>     section: .data          obj_name : sctp_net_table
+>     section: .data          obj_name : sctp_table
+>     section: .data          obj_name : smc_table
+>     section: .data          obj_name : lowpan_frags_ns_ctl_table
+>     section: .data          obj_name : lowpan_frags_ctl_table
 
