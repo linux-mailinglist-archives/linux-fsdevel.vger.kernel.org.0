@@ -1,285 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-18576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C597A8BA896
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 10:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350438BA951
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 11:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2541F22A2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 08:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B188C1F221F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 09:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BAC148FE2;
-	Fri,  3 May 2024 08:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CCE14EC6F;
+	Fri,  3 May 2024 09:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jW8xozV4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qB969JDn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558621487E9;
-	Fri,  3 May 2024 08:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714724341; cv=fail; b=sQjnYslGxym2lEp7SVsYRYvFcMnju+zucsxIBjzhn7asMg7+OpPeK0keddileMTMirhJ+lwV72DeVHwcukSKbn6L6rmIrUxvjuNsNJcL/ft0fF66k0z3QSbj/qEPXOBac0PjrRAGjJXE5aHOip15R5o3Hn95RTmMMVQXjAO1+Gs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714724341; c=relaxed/simple;
-	bh=E57zS8pU9+M/87XYA+RUYsP8Z9rnYqgFLysuDOFUVZ0=;
-	h=Content-Type:Message-ID:Date:Subject:To:Cc:References:From:
-	 In-Reply-To:MIME-Version; b=TurV0KCs1rG16L+qZTkQNkoLLrC/HuKTmki+jphlwTazJTdldz69crLn/UFVggfbs7YMAkA+E5PP6mAy3N5NRQGp7rXzIR2EU9RpUNH2B5JC75awDLUMuQETymGywdV9GrBSbNVDZszoUh/3tuY24fjp38nUtZsTc3IvD/uQ0RY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jW8xozV4; arc=fail smtp.client-ip=40.107.243.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JFUB3fHBLxpTXeX0Iqyjpk4e2AeYWUmDyArZCTEggI6nHX8ZYekhLKzub/wwRhKm8BbazdsbWADGrJzKuaep0X05GPbcfeAESM0Qc7BCSIrZA/fgx9IKcMtxpIoWWUSBKm0WFkZ+R0M+pbywrmlkFLyuf37YLn6vtkJhCC79mvDIsOINkJEADOMukI3j5iLfbTqSVXyUgvF/P1eUniRVh3u3jXv20ga0SwS8h91PqpRS2Dt4aTEFjW/K5s+MVET0Absqol2HTQ87ifscj2rXIhSnHGK/X4i7SiFCAIOmVU6FWXcUmeA87ZgpKNzLm8nKX44eHrl1u0nqKd1mxzFXIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o915BZ04WlVC3i2TAMpdiP+uc1WoYeoEJAgVkWSv4yU=;
- b=e7gkuuNJYo1zxjm4GqHuLez0GLFTVVJKzz1DHby/Oz4mPQIgXwVhTBK8vXnuF5+m9yClmBLaIetsCcYDnONoClSizlRUHMoh22bwGsqEZkUATL4Fm3FDLW3OoW7/Z5KNKvGmUJJEVRctA/aCepeOw/Ib9DYcMwBRFyOIeiy6y2IZJblpOUlNBiKGx2FXgOIizRVgwUrKLxIdhVkg4E3LmOnDfWyt3ekyltBMtAsZ8h1ZhiswpGn923aoV3SvJLrBJKayuf7bx0gkfd9itCsGQMN/a5HlCxyqIEBNCmyG0CRYv/+siQxEFLH4+AsUOeO7fUSMtIJQGlRHISrQkDuM2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o915BZ04WlVC3i2TAMpdiP+uc1WoYeoEJAgVkWSv4yU=;
- b=jW8xozV4xb5K1nUiEneCV6Sdhz0cvpet5/u8K4uUQf1bzJF9WLckKVxvDF8L0U9uscKQoBaG0xBQVw2z4O23sHBVQu6wi77tL7fYYqJN99O8iLR77oyiV54EDvIPuaqIXNHStuFFAAHd4ZTu3T5ob+VP3oI99r03zs9+T9X3ags=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DS0PR12MB8454.namprd12.prod.outlook.com (2603:10b6:8:15e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.30; Fri, 3 May
- 2024 08:18:55 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7544.029; Fri, 3 May 2024
- 08:18:54 +0000
-Content-Type: multipart/mixed; boundary="------------N8iAFb3zsMHHLBMpyFe3ApK2"
-Message-ID: <a87d7ef8-2c59-4dc5-ba0a-b821d1effc72@amd.com>
-Date: Fri, 3 May 2024 10:18:39 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [RFC] dma-buf: fix race condition between poll and close
-To: Dmitry Antipov <dmantipov@yandex.ru>,
- Sumit Semwal <sumit.semwal@linaro.org>, Zhiguo Jiang <justinjiang@vivo.com>,
- "T.J. Mercier" <tjmercier@google.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- lvc-project@linuxtesting.org,
- syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com,
- linux-fsdevel@vger.kernel.org
-References: <20240423191310.19437-1-dmantipov@yandex.ru>
- <85b476cd-3afd-4781-9168-ecc88b6cc837@amd.com>
- <3a7d0f38-13b9-4e98-a5fa-9a0d775bcf81@yandex.ru>
- <72f5f1b8-ca5b-4207-9ac9-95b60c607f3a@amd.com>
- <d5866bd9-299c-45be-93ac-98960de1c91e@yandex.ru>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <d5866bd9-299c-45be-93ac-98960de1c91e@yandex.ru>
-X-ClientProxiedBy: VI1P190CA0038.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:800:1bb::9) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4231367;
+	Fri,  3 May 2024 09:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714726990; cv=none; b=Z+iTWtlM73HJpCif/CGp9AfKEWxpWne3kJ+fDR1m9irZgwanwzNuW3BuDLfoftZaEGxt7VYM7s2qKy7S/8nh+qfnfvL66eukwpC3qPstBQB3lzUxBb/ZI9qDP20LtleV7vjlwCDfi1ixInNdO2MDtejkuzIaKXDG70HyZBgK+P4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714726990; c=relaxed/simple;
+	bh=Pa9ms/rBsNJu3pSJcnarFZ5cEol78sMnDDgBVhFC6xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvv+VT5XgnUNJXwYr3Ndk9k45p2HimzZKHVudDekE+CRSebDCdixWzo32HIc6tMAcQ33LhlBbOe8swzLb+9yR/rIPBH0PjIta9g9B7MBT1dTrZLLgP4sGcVPdKIFjUWh5Jz6GHH9dbAJMz7M1X/TtS7ArY+6QFIe88rdNPVW4HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qB969JDn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BB2C116B1;
+	Fri,  3 May 2024 09:03:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714726988;
+	bh=Pa9ms/rBsNJu3pSJcnarFZ5cEol78sMnDDgBVhFC6xk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qB969JDna8vdDAAup8xKrh+zFSQBwBslcunfOcEOyavNcEJ8bK4lvjj5bUDsNG76O
+	 wZeC5qbvxPfxCzkLem/9IHPFfqzZFZS0+KhJVYiTbAHtDJvmCqTy+HeFPvmCE+Rgm+
+	 5E5Vm6mMHAiSNcFsr3k/9nGy5QquIdnPbWESP8djFxDbIiRe/Iz2l7gEZVFCxn2I3c
+	 /LP+fQqbFZPF8CtcwkbqPYGn0eBgQYGIB0X8n6npBWvvhqocA7MruMF1ttlcwHszgL
+	 +ykGN9tWpVmG8+BagsMenh/9QElipmDT7qPD2WQAkMo2k/IyN6/n39gNCjU0Oc/bjY
+	 0XQ74oBsuGowQ==
+Date: Fri, 3 May 2024 11:02:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Jann Horn <jannh@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Zack Rusin <zack.rusin@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Andi Shyti <andi.shyti@linux.intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	Matt Atwood <matthew.s.atwood@intel.com>, Matthew Auld <matthew.auld@intel.com>, 
+	Nirmoy Das <nirmoy.das@intel.com>, Jonathan Cavitt <jonathan.cavitt@intel.com>, 
+	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/5] fs: Do not allow get_file() to resurrect 0 f_count
+Message-ID: <20240503-mitmachen-redakteur-2707ab0cacc3@brauner>
+References: <20240502222252.work.690-kees@kernel.org>
+ <20240502223341.1835070-1-keescook@chromium.org>
+ <CAG48ez0d81xbOHqTUbWcBFWx5WY=RM8MM++ug79wXe0O-NKLig@mail.gmail.com>
+ <202405021600.F5C68084D@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS0PR12MB8454:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e5edfbd-3605-48fc-15bb-08dc6b49abb1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UE9CV2VIWXdqTGx6Sjk1VmdaZm9DQkNqTzRPWHUwL2dhazM1ekxLVEVTalR3?=
- =?utf-8?B?V0JjbHlBTTRCMnpScStMa2RpajNkZ0p0ZUQwZWxUY2JUY09pa1lGTkQ0cFBR?=
- =?utf-8?B?RDdjamQrT3JTZXlSTHMxdWlkUkFoN3JTZUZXdVJGd05VaUduZUFxL3g2RkVK?=
- =?utf-8?B?ZDR1bmtRYTRHOE56em5DcDJPQmxWWjlHSlpPMkR0TCtiZ29ZUlZRZTJqK0lO?=
- =?utf-8?B?Z3JJWkJXRElLYkxFTmdRS0NwVGZXbjR0SEZDQW8rSHZlQlV0TUxFcE1VZnEr?=
- =?utf-8?B?MEFBdGtYbUFuVTJzNi8zWCtLUkErUTZnMmg4aHhXcFdFMjRwY3UzVUFQWHI5?=
- =?utf-8?B?K2xjTWIvd3FlZWV3RXFXRkw5OVo3ZnluNDdNalpJY3VhekhZSzFoT2R0S3Vq?=
- =?utf-8?B?eHVyb3ZKbi9FalJxVzFFRG1oTmFOdWxRVGhpQjhibUV1MDZFL3BYc01FMWgr?=
- =?utf-8?B?Y2V1K1dZaXZLWXhHM29WNTZuTytiRHA0aEdrcUFTeXgvdGpaS1hrMExUYm01?=
- =?utf-8?B?RTA1TmdPbERpdnBFdzVrN1BSY2JINHh2aEtDZFpkVXJDK2JzOFVmVTVrQkFN?=
- =?utf-8?B?Vnk0dmNiWFpaemZleHl1Y0FwZExUNWtSQ2NSMTVGQjJ1MlVZKzRqdFgwK0Rj?=
- =?utf-8?B?RkpQNWxidVVSU0VYVTd5YnRnRlpIWkphcFJCUHRva2dnWG1NUklxR21CYkhO?=
- =?utf-8?B?bEo5NTJqRENUelpRL1NJYXR1ckRKVTh0ek9OSjQ5ay8yY0dvVGIzQk5uNHdW?=
- =?utf-8?B?NGhmSFgzR1FvYjljNWM4NWRhZkM4YjlQbXVreDAydHkrdmk4MkU2N3phRkRa?=
- =?utf-8?B?d1FzQ0FSQ2p6YU05SkxoRjQvcCt4N0sxT1BFcCtHa2ZidzZoeE1tZnhFR0RG?=
- =?utf-8?B?b1NlQm1hU0V6a2VVcTgyL1BsUUoxUzRhQUhyS1ZuZnJMNEx2bXUxbzk0S0Jj?=
- =?utf-8?B?RU5nclNPTUNmc3RMVFpGcWlFY0E5ODlNQjRKUTlMMGxzUVNlQzdlcSt4S0tZ?=
- =?utf-8?B?RmhybUpZMmhaMXFlNGRDTHdLZWF2N1VTeWNhMHBXZjNmN1FYRGpMM0ppa1l5?=
- =?utf-8?B?cG5WZ2RBc2VZVVBFbW1mM29DUWlqRnpxc1NHYUR2WUxaRkR2dEZSWU1uL3V4?=
- =?utf-8?B?RStmUnc1aGV4TFNTblQ3NDQzMFc5VStDNlkwalBTeUdrZHNOcWQ4Q1pzQ0ZI?=
- =?utf-8?B?WUVHMTQ3OTlySTVKelI0N3kvcFgvZ1ZGSUdja1orbGNLWmF2QjNXcjVPQWxW?=
- =?utf-8?B?U1V6aGZLKzNIRjZLZzRXRE9DVHhoRFBFbUVXN2RrOEozK3prOU4rNjhFS2lM?=
- =?utf-8?B?QjRMQ3RxRk1zQlBML0x4K2Z2dTdYdXo2Y3RuMVhjTmJ1L20xQjFNL0R6VDY0?=
- =?utf-8?B?UWhKWEJXazhIS21DbldjTVJvUnMwbTQ4OEpybUZ4bmlueElWSkRmRG4weHpw?=
- =?utf-8?B?OStVN01yNm9QdWFxbXdodkJZOEFzanNMNGtIUE9aR3JqV0dpQUN6YjQrcnVJ?=
- =?utf-8?B?bzY0RFpXSlhDa243RWtSL3o0bCtJRTlLNVlWb3BrYnhFTXRidU1vN0hCUVJy?=
- =?utf-8?B?VlcrK1Z0a1BGVHJwS0kyWDZMUGdBZ1hPUlFLRUhaV3JJZWIzNW52UlM3Ulc4?=
- =?utf-8?B?Wkh0VjFqczdMRzdVckVBNmNsS2FLTXd6R2dnUXZ6L05EdWh0V1BzSCtmZkox?=
- =?utf-8?B?VG1QRUNXNmxwMFpwaGdSeWVlV0NBbWladXd6NjRlQmU2dWFONjV0V2dnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QXBwWHpoNW11UDU4K0NzUWRPV0ZkemExS3liYnpaY0dBRjVtV0I0Wk5BY1p3?=
- =?utf-8?B?aUxUa1JGOWJtZ3F1RnhXREptTVNKZlU0S0JZWnJoOGxtT05CU3U3dnk3cE1H?=
- =?utf-8?B?V2piWFpDOWxGeEU5OUdZVkdhS0xLZDRLRlp1anlpNGFEMnVFQnp5OExjbldj?=
- =?utf-8?B?Qm85YUNDbVhUSGxGY1hyYnFHdnVNRkFxOHpWb3NiTXNpOGV0K1dMTWlzTU04?=
- =?utf-8?B?VVdoSWdTRTBHYVFoQm9KTDRzanV2eS9CVUd0dytCcFF1eE41RUFIK2kwSmNN?=
- =?utf-8?B?ZmRtR2VLSlpiTWRNa1JZTHFxSlBVRVBldGU1bks2ZlROb0JhNFN0b2M2SnA4?=
- =?utf-8?B?RjBjMXBPUXFTUWdKMXd4SGVvenIwQmkxYm1pVTRBL1ZQWXFqSGV3WERxVkNn?=
- =?utf-8?B?OTJrTE8zYSs0MkxleVdJbU1lV2tobGxucE9halRsblRIdVpzVFhyOGVFSGpi?=
- =?utf-8?B?THBYNGd1U0lTTjBaeTJTOGZ5bDNvellrelpobXl2WUhzTDd4YTdDT0FlR0hY?=
- =?utf-8?B?Ymlqaks3RG4rbEdZVlBrMDZScmpBQ1NkSVo1ZjlvSTZ6TXVRY1pRS1NWT1Nv?=
- =?utf-8?B?QWZWb1MzZjEwWTh3QWJlZ1V0Q2JrZ2VrTThDSDkvUnlRbVE2YlJtdnZzNjN2?=
- =?utf-8?B?RHlrWUpmSGVqZm1YS0liNkVBVHluNDcrQTk0S1ZPakJkQ0JFS2pRQXEvTTlT?=
- =?utf-8?B?OVNLQnYySXJxNEJjTzFtOUx2clNxWXQrbklEd3YrSk1jTWFkQmJDa0RLcExK?=
- =?utf-8?B?VVU0MUJab0owWERYcHd1YUl1MUduam9EdVBxcUlhenVITXBYdVFNWkN2SkxG?=
- =?utf-8?B?MHhFamljdDVza3psdXg0UW9SbVlOSDRVeHRFWHVTejJuQ1JSMzhhbUJidWF4?=
- =?utf-8?B?OTZTaGNsa1J4YU9yUkw2UjlDNXpzb3JLTjJjb2RINVpMdnIrRVlqNkhMSGdH?=
- =?utf-8?B?c0R6SmIwRzNFcWIwYjh4YkQwQ01rZUR5ampiQjJJd0pESUZwSlpLWEY0alRq?=
- =?utf-8?B?QXBrNi9IbDN1elJzUUk0QW00a0x1VkFUYUZwVFZXL1paemRiV1RFZDNxZzJQ?=
- =?utf-8?B?OEUyclpyY3ZrM3VHMDhaOThab1Uvc295UzFJRUxYMGYrOEk1NXIyTVhOcjZY?=
- =?utf-8?B?R3BDYk5oQUxRanpldUJUakorVzRsZVI4dnM5WWJCemNhL1NwZzZkWE9CZkxy?=
- =?utf-8?B?VVA2bncxWE5LdE40elhkOEJDSnowaHZ2WXpsSkhlYXVKSGVYRnZ5NEFONmFM?=
- =?utf-8?B?R0JDcnllNEhqZG5MVFBXWjNKS2haR0pRbHZOUmxkSUVlYWs3ZVNvbXVWamFQ?=
- =?utf-8?B?cGJrai9DNTV1ZXNqR0QxcEZUeDYyY0E4QUZaMU4vNElsSTRybjFLQkZST014?=
- =?utf-8?B?dDA1T1FTMUVjTHR0bVpoMUtFYStoTFB0SXhaSlcxU2hsZUtwVThiVFQ5VGd2?=
- =?utf-8?B?ckwrQnB2cVVTZHpYRTkrRTZHdnQ5NnR4YkFtRXZWOWkwTFBjSmtBdmZjN0g1?=
- =?utf-8?B?QUErRUpGUVZNRVgrcU5Yb2t3V3ZDdW5tQ2IvWVgzc1k4elhjMS9zeUQ5Q2lw?=
- =?utf-8?B?R0R3U0tJTVRpOXJXcTg3VE5qc1VNMzlMR240WlhRcGRMVEgzVjlyZ1RRS0J2?=
- =?utf-8?B?OFVzOFdJcVVpZWhJNDhGaUt3VHB2TVgwZStZRXhqL0hFUWZYanFLY2w0WUFn?=
- =?utf-8?B?am1KUS9GYkI2cm5xc2xHbUEyMUJYd24wY1pLRVlvTVlPTm9yQi90Z0h2SS90?=
- =?utf-8?B?MkZOa05oOVZHWGRvOUI5NVpqUnBxZGRKeXNFU21hTDJHSVZPamZwQmkxQVNw?=
- =?utf-8?B?cWlJS1o1c0ZrS040bTFzOFhXUGdEYzk0TnVCSkY5QWxhYVdSWTdnWm9YeHp5?=
- =?utf-8?B?ejgvVjZXMWtwdFkvQ0lqQ1FWZXpWZUZZN2tiVGVndUpvRENWcEx2VllxNjlp?=
- =?utf-8?B?Q053NWFSbDVrTXorbVJ6ZHo3WTU4bU1DcC9JT2U2SHh6QjlUQlBEdHltOHla?=
- =?utf-8?B?TXhSWEU4Y2pBemlQTXd0ai9JMUVqS2NWcExqd1NWb0ZMQTkwR0VmMWp6cUoz?=
- =?utf-8?B?YmRuTGxFb1BndFZlSFdEdTYzY0tPZXkzK09XajhjSzBnUkQ0ZkdFaHlYZUlW?=
- =?utf-8?Q?SxcD5fcyuxmHPiizrni3YxmGt?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e5edfbd-3605-48fc-15bb-08dc6b49abb1
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2024 08:18:54.2446
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rS4GPd+N2CrA9pRlA7qI5e/z5AiuLxyVZpJi5Tje/wYuCjSr4fB6FPZluEoDPhrc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8454
-
---------------N8iAFb3zsMHHLBMpyFe3ApK2
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <202405021600.F5C68084D@keescook>
 
-Am 03.05.24 um 09:07 schrieb Dmitry Antipov:
-> On 4/24/24 2:28 PM, Christian König wrote:
->
->> I don't fully understand how that happens either, it could be that 
->> there is some bug in the EPOLL_FD code. Maybe it's a race when the 
->> EPOLL file descriptor is closed or something like that.
->
-> IIUC the race condition looks like the following:
->
-> Thread 0                        Thread 1
-> -> do_epoll_ctl()
->    f_count++, now 2
->    ...
->    ...                          -> vfs_poll(), f_count == 2
->    ...                          ...
-> <- do_epoll_ctl()               ...
->    f_count--, now 1             ...
-> -> filp_close(), f_count == 1   ...
->    ...                            -> dma_buf_poll(), f_count == 1
->    -> fput()                      ... [*** race window ***]
->       f_count--, now 0              -> maybe get_file(), now ???
->       -> __fput() (delayed)
->
-> E.g. dma_buf_poll() may be entered in thread 1 with f->count == 1
-> and call to get_file() shortly later (and may even skip this if
-> there is nothing to EPOLLIN or EPOLLOUT). During this time window,
-> thread 0 may call fput() (on behalf of close() in this example)
-> and (since it sees f->count == 1) file is scheduled to delayed_fput().
+On Thu, May 02, 2024 at 04:03:24PM -0700, Kees Cook wrote:
+> On Fri, May 03, 2024 at 12:53:56AM +0200, Jann Horn wrote:
+> > On Fri, May 3, 2024 at 12:34 AM Kees Cook <keescook@chromium.org> wrote:
+> > > If f_count reaches 0, calling get_file() should be a failure. Adjust to
+> > > use atomic_long_inc_not_zero() and return NULL on failure. In the future
+> > > get_file() can be annotated with __must_check, though that is not
+> > > currently possible.
+> > [...]
+> > >  static inline struct file *get_file(struct file *f)
+> > >  {
+> > > -       atomic_long_inc(&f->f_count);
+> > > +       if (unlikely(!atomic_long_inc_not_zero(&f->f_count)))
+> > > +               return NULL;
+> > >         return f;
+> > >  }
+> > 
+> > Oh, I really don't like this...
+> > 
+> > In most code, if you call get_file() on a file and see refcount zero,
+> > that basically means you're in a UAF write situation, or that you
+> > could be in such a situation if you had raced differently. It's
+> > basically just like refcount_inc() in that regard.
+> 
+> Shouldn't the system attempt to not make things worse if it encounters
+> an inc-from-0 condition? Yes, we've already lost the race for a UaF
+> condition, but maybe don't continue on.
+> 
+> > And get_file() has semantics just like refcount_inc(): The caller
+> > guarantees that it is already holding a reference to the file; and if
+> 
+> Yes, but if that guarantee is violated, we should do something about it.
+> 
+> > the caller is wrong about that, their subsequent attempt to clean up
+> > the reference that they think they were already holding will likely
+> > lead to UAF too. If get_file() sees a zero refcount, there is no safe
+> > way to continue. And all existing callers of get_file() expect the
+> > return value to be the same as the non-NULL pointer they passed in, so
+> > they'll either ignore the result of this check and barrel on, or oops
+> > with a NULL deref.
+> > 
+> > For callers that want to actually try incrementing file refcounts that
+> > could be zero, which is only possible under specific circumstances, we
+> > have helpers like get_file_rcu() and get_file_active().
+> 
+> So what's going on in here:
+> https://lore.kernel.org/linux-hardening/20240502223341.1835070-2-keescook@chromium.org/
 
-Wow, this is indeed looks like a bug in the epoll implementation.
+Afaict, there's dma_buf_export() that allocates a new file and sets:
 
-Basically Thread 1 needs to make sure that the file reference can't 
-vanish. Otherwise it is illegal to call vfs_poll().
+file->private_data = dmabuf;
+dmabuf->file = file;
 
-I only skimmed over the epoll implementation and never looked at the 
-code before, but of hand it looks like the implementation uses a mutex 
-in the eventpoll structure which makes sure that the epitem structures 
-don't go away during the vfs_poll() call.
+The file has f_op->release::dma_buf_file_release() as it's f_op->release
+method. When that's called the file's refcount is already zero but the
+file has not been freed yet. This will remove the dmabuf from some
+public list but it won't free it.
 
-But when I look closer at the do_epoll_ctl() function I can see that the 
-file reference acquired isn't handed over to the epitem structure, but 
-rather dropped when returning from the function.
+Then we see that any dentry allocated for such a dmabuf file will have
+dma_buf_dentry_ops which in turn has
+dentry->d_release::dma_buf_release() which is where the actual release
+of the dma buffer happens taken from dentry->d_fsdata.
 
-That seems to be a buggy behavior because it means that vfs_poll() can 
-be called with a stale file pointer. That in turn can lead to all kind 
-of use after free bugs.
+That whole thing calls allocate_file_pseudo() which allocates a new
+dentry specific to that struct file. That dentry is unhashed (no lookup)
+and thus isn't retained so when dput() is called and it's the last
+reference it's immediately followed by
+dentry->d_release::dma_buf_release() which wipes the dmabuf itself.
 
-Attached is a compile only tested patch, please verify if it fixes your 
-problem.
+The lifetime of the dmabuf is managed via fget()/fput(). So the lifetime
+of the dmabuf and the lifetime of the file are almost identical afaict:
 
-Regards,
-Christian.
+__fput()
+-> f_op->release::dma_buf_file_release() // handles file specific freeing
+-> dput()
+   -> d_op->d_release::dma_buf_release() // handles dmabuf freeing
+                                         // including the driver specific stuff.
 
+If you fput() the file then the dmabuf will be freed as well immediately
+after it when the dput() happens in __fput() (I struggle to come up with
+an explanation why the freeing of the dmabuf is moved to
+dentry->d_release instead of f_op->release itself but that's a separate
+matter.).
 
+So on the face of it without looking a little closer
 
+static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
+{
+        return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
+}
 
+looks wrong or broken. Because if dmabuf->file->f_count is 0 it implies
+that @dmabuf should have already been freed. So the bug would be in
+accessing @dmabuf. And if @dmabuf is valid then it automatically means
+that dmabuf->file->f_count isn't 0. So it looks like it could just use
+get_file().
 
->
-> Dmitry
+_But_ the interesting bits are in ttm_object_device_init(). This steals
+the dma_buf_ops into tdev->ops. It then takes dma_buf_ops->release and
+stores it away into tdev->dma_buf_release. Then it overrides the
+dma_buf_ops->release with ttm_prime_dmabuf_release(). And that's where
+the very questionable magic happens.
 
---------------N8iAFb3zsMHHLBMpyFe3ApK2
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-epoll-fix-file-reference-counting.patch"
-Content-Disposition: attachment;
- filename="0001-epoll-fix-file-reference-counting.patch"
-Content-Transfer-Encoding: base64
+So now let's say the dmabuf is freed because of lat fput(). We now get
+f_op->release::dma_buf_file_release(). Then it's followed by dput() and
+ultimately dentry->d_release::dma_buf_release() as mentioned above.
 
-RnJvbSA3MThlMTBkZjYxYzUyMjY2N2NiYjdjMzI5Nzg3NjFjYzNmMWE0ZDNkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiA9P1VURi04P3E/Q2hyaXN0aWFuPTIwSz1DMz1CNm5pZz89IDxj
-aHJpc3RpYW4ua29lbmlnQGFtZC5jb20+CkRhdGU6IEZyaSwgMyBNYXkgMjAyNCAxMDowMTowMCAr
-MDIwMApTdWJqZWN0OiBbUEFUQ0hdIGVwb2xsOiBmaXggZmlsZSByZWZlcmVuY2UgY291bnRpbmcK
-TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluOyBjaGFyc2V0PVVURi04
-CkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IDhiaXQKClRoZSBlcG9sbCBpbXBsZW1lbnRhdGlv
-biBrZWVwcyBwb2ludGVycyB0byBzdHJ1Y3QgZmlsZXMgYW5kCmV2ZW50dWFsbHkgY2FsbHMgdmZz
-X3BvbGwoKSBvbiB0aGVtIHdpdGhvdXQgaG9sZGluZyBhIHJlZmVyZW5jZS4KClRoaXMgY2FuIHJl
-c3VsdCBpbiB2YXJpb3VzIHVzZSBhZnRlciBmcmVlIGlzc3VlcyB3aGVuIHRoZSBmaWxlCmRlc2Ny
-aXB0b3Igd2hpY2ggaXMgYWRkZWQgdG8gYW4gZXBvbGxfZmQgaXMgY2xvc2VkIHdpdGhvdXQKcHJl
-dmlvdXNseSByZW1vdmluZyBpdCBmcm9tIHRoZSBlcG9sbF9mZC4KClRyeSB0byBmaXggdGhpcyBi
-eSBnZXR0aW5nIGFuZCBkcm9wcGluZyB0aGUgcmVmZXJlbmNlIHRvIHRoZSBmaWxlCnBvaW50ZXIg
-YXMgbmVjZXNzYXJ5LgoKU2lnbmVkLW9mZi1ieTogQ2hyaXN0aWFuIEvDtm5pZyA8Y2hyaXN0aWFu
-LmtvZW5pZ0BhbWQuY29tPgotLS0KIGZzL2V2ZW50cG9sbC5jIHwgMTIgKysrKysrKysrKystCiAx
-IGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdp
-dCBhL2ZzL2V2ZW50cG9sbC5jIGIvZnMvZXZlbnRwb2xsLmMKaW5kZXggODgyYjg5ZWRjNTJhLi5m
-MzU4NGY2ZmJhZWQgMTAwNjQ0Ci0tLSBhL2ZzL2V2ZW50cG9sbC5jCisrKyBiL2ZzL2V2ZW50cG9s
-bC5jCkBAIC0zNDksMTAgKzM0OSwxNyBAQCBzdGF0aWMgaW5saW5lIGludCBpc19maWxlX2Vwb2xs
-KHN0cnVjdCBmaWxlICpmKQogc3RhdGljIGlubGluZSB2b2lkIGVwX3NldF9mZmQoc3RydWN0IGVw
-b2xsX2ZpbGVmZCAqZmZkLAogCQkJICAgICAgc3RydWN0IGZpbGUgKmZpbGUsIGludCBmZCkKIHsK
-LQlmZmQtPmZpbGUgPSBmaWxlOworCWZmZC0+ZmlsZSA9IGdldF9maWxlKGZpbGUpOwogCWZmZC0+
-ZmQgPSBmZDsKIH0KIAorLyogQ2xlYW51cCB0aGUgc3RydWN0dXJlIHVzZWQgYXMga2V5IGZvciB0
-aGUgUkIgdHJlZSAqLworc3RhdGljIGlubGluZSB2b2lkIGVwX2NsZWFyX2ZmZChzdHJ1Y3QgZXBv
-bGxfZmlsZWZkICpmZmQpCit7CisJZnB1dChmZmQtPmZpbGUpOworCWZmZC0+ZmlsZSA9IE5VTEw7
-Cit9CisKIC8qIENvbXBhcmUgUkIgdHJlZSBrZXlzICovCiBzdGF0aWMgaW5saW5lIGludCBlcF9j
-bXBfZmZkKHN0cnVjdCBlcG9sbF9maWxlZmQgKnAxLAogCQkJICAgICBzdHJ1Y3QgZXBvbGxfZmls
-ZWZkICpwMikKQEAgLTg0Myw2ICs4NTAsOCBAQCBzdGF0aWMgYm9vbCBfX2VwX3JlbW92ZShzdHJ1
-Y3QgZXZlbnRwb2xsICplcCwgc3RydWN0IGVwaXRlbSAqZXBpLCBib29sIGZvcmNlKQogCXdyaXRl
-X3VubG9ja19pcnEoJmVwLT5sb2NrKTsKIAogCXdha2V1cF9zb3VyY2VfdW5yZWdpc3RlcihlcF93
-YWtldXBfc291cmNlKGVwaSkpOworCWVwX2NsZWFyX2ZmZCgmZXBpLT5mZmQpOworCiAJLyoKIAkg
-KiBBdCB0aGlzIHBvaW50IGl0IGlzIHNhZmUgdG8gZnJlZSB0aGUgZXZlbnRwb2xsIGl0ZW0uIFVz
-ZSB0aGUgdW5pb24KIAkgKiBmaWVsZCBlcGktPnJjdSwgc2luY2Ugd2UgYXJlIHRyeWluZyB0byBt
-aW5pbWl6ZSB0aGUgc2l6ZSBvZgpAQCAtMTEyNiw2ICsxMTM1LDcgQEAgc3RhdGljIHN0cnVjdCBl
-cGl0ZW0gKmVwX2ZpbmQoc3RydWN0IGV2ZW50cG9sbCAqZXAsIHN0cnVjdCBmaWxlICpmaWxlLCBp
-bnQgZmQpCiAJCQlicmVhazsKIAkJfQogCX0KKwllcF9jbGVhcl9mZmQoJmZmZCk7CiAKIAlyZXR1
-cm4gZXBpcjsKIH0KLS0gCjIuMzQuMQoK
+But now when we get:
 
---------------N8iAFb3zsMHHLBMpyFe3ApK2--
+dentry->d_release::dma_buf_release()
+-> dmabuf->ops->release::ttm_prime_dmabuf_release()
+
+instead of the original dmabuf->ops->release method that was stolen into
+tdev->dmabuf_release. And ttm_prime_dmabuf_release() now calls
+tdev->dma_buf_release() which just frees the data associated with the
+dmabuf not the dmabuf itself.
+
+ttm_prime_dmabuf_release() then takes prime->mutex_lock replacing
+prime->dma_buf with NULL.
+
+The same lock is taken in ttm_prime_handle_to_fd() which is picking that
+dmabuf from prime->dmabuf. So the interesting case is when
+ttm_prime_dma_buf_release() has called tdev->dmabuf_release() and but
+someone else maanged to grab prime->mutex_lock before
+ttm_prime_dma_buf_release() could grab it to NULL prime->dma_buf.
+
+So at that point @dmabuf hasn't been freed yet and is still valid. So
+dereferencing prime->dma_buf is still valid and by extension
+dma_buf->file as their lifetimes are tied.
+
+IOW, that should just use get_file_active() which handles that just
+fine.
+
+And while that get_dma_buf_unless_doomed() thing is safe that whole code
+reeks of a level of complexity that's asking for trouble.
+
+But that has zero to do with get_file() and it is absolutely not a
+reason to mess with it's semantics impacting every caller in the tree.
+
+> 
+> > Can't you throw a CHECK_DATA_CORRUPTION() or something like that in
+> > there instead?
+> 
+> I'm open to suggestions, but given what's happening with struct dma_buf
+> above, it seems like this is a state worth checking for?
+
+No, it's really not. If you use get_file() you better know that you're
+already holding a valid reference that's no reason to make it suddenly
+fail.
 
