@@ -1,154 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-18642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7003F8BADE2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7A08BAE84
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 16:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87EB21C22AF8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3DC282150
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 14:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8888B154421;
-	Fri,  3 May 2024 13:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BCA154BF4;
+	Fri,  3 May 2024 14:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ppJJr1aD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K2Swz6qM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ppJJr1aD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K2Swz6qM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA673153BCC
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B20215444E;
+	Fri,  3 May 2024 14:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714743636; cv=none; b=lU4PeBZ6PWpTCS25GzNGqJzi7IkCHNPap6yybthGIE5JP9IZB+PYb7JTT1Ve5zXtn7K+Xq/cVJtKjj0X3RKj+dJ4nz0Jg64oX+JgzVxQrbIZ9e4Y/y/VxNfyl43gaRTTjzCZsKFTGK4hojAA78lawJLSWgmvlQ4sFPPcN1mEZWw=
+	t=1714745361; cv=none; b=C6k3kgkHffScnHuxuSmrJEeA0zCNUtdKTU6kMObwEp5HNJyJ44fZgbXX6idv1AaafzceIXedKqsxfmY6rRCIrAM3I4qIQ6riwC5Lf9yZxMtPWT+DNo1RyuffxgqOkOMmvWcIiQxcWJVPoHZWMqohAuTtSg1bnrVhZspXVoU+1tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714743636; c=relaxed/simple;
-	bh=np4KX/dQO/jILjhh5P5s5rwj9Il7+4Lnx3P23KtV/EY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=o+sj+osCqrqUagzSyu3iJO8k8dDFWW4QtgkrSPVR7BC3g+g2CIDar9Kv7FWrk2QQ7EuR+lAKqRyqXuB5LiAPEqom7BD4zytHF9MnZIELbX+FRaQ5p7lV1/AzLN+kTc73V0uSKhDwejPrY00hKN3cK2C5Gof/Fdvb1NnG4NmdFo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7da41c44e78so969190939f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2024 06:40:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714743634; x=1715348434;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hrBI8RJiDyViM5gs3peU14/2k5AZb/mtjpSoFWNKvCQ=;
-        b=TJmC2t/c3LsYKpES9gyd8E2sHQN+Hyx9Wa6g/3wcKDFFyk9yvpv7oV89RS0MEaD6ir
-         60gdf9bLT8eZeaDLemHF+flrLJ9Rf7y5ujnKiopVo114cHB5IVrt1ULOYQ1q2PXoYAB1
-         WWK/X619mDWRWJX+EyzTa/iCs0XPnfDRn1kBdW9lJYfBciYDDxwjtkdVb/ct3WOpPToH
-         oBMWKN8h1VEih2LvGNnUPTR/3rz8wFKqIgdR0DIx8zPt2nJTezGTk63y2lzRYyLIPCRV
-         tfEeJabQHrUMVv00VUExiVHVrW3nxx9EkI6tpV8kA1YnFpp/Bgq18D5yfEznLr3Bxv6a
-         JUvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEFk5o4YbtDHXFNp+x0DNq34paFF4Cjwr7eaJCKoakb3n76KCOllXp5BZnGjVargFb2hjv/9fibXzVmVCdS1DvV8E9WmbGpmWXgYkg2g==
-X-Gm-Message-State: AOJu0Yz1ST+S4OkHoz+HjI/x1yiES5mw8eEfU66YqaEB+k4MCU8joO2g
-	i+FZfH/HnXvcs7+V3b9mL6ABAkmlYBb8AcubtWDx0Fm924lnDq6JGBvqAD54G5Ilj/UXXCQCFXY
-	GxqRRGTYSivW/9HLgrKsSBQCgX8gZ2p40AuKcJQoqBr9Fw+3OimNowjo=
-X-Google-Smtp-Source: AGHT+IHLiPRuKvp1YPAZuP8DRx6hN3I7YDbeFST4/QEJYaCw4Jl0HdtdMkRvFt+ffhZTv5NWicEuTFyXspeRO/9/4mcHJcLnJ8vj
+	s=arc-20240116; t=1714745361; c=relaxed/simple;
+	bh=yzxhMm+OX7Dr7aYseilNZKDnyQLup8KnYfLAkzglVJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6X+NFiT9TIx/kGdOHtuZyasgi+QXseA02eYGP1TH2Pyh+h4vZ5d1GZbkz3aqXIS74sgZcveCSdMcgzUIoJr/rCRthQTKRhCTtFlvKS6iSLZIYiLekdtJuBRjLHDxFAJXWWe3CnEUKw3h6WpBBBfbepdvkIB3Alr7sM1gAZndDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ppJJr1aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K2Swz6qM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ppJJr1aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K2Swz6qM; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8BDD42058F;
+	Fri,  3 May 2024 14:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714745357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
+	b=ppJJr1aDg5zyCfKxoPAv0SSHKf7byu4Soibv3aPPxehvtyCLU24K0tOeMK1fpq/qqj95vs
+	7Huq/PJ28xC/3xVLnII9qSxTJ1RcdraPH7+4ontuw+BPYdhfT8CimDx96Mri7um/wZdp2y
+	0ps8IuDnWu9frNbdqy3w1oYfR7Bn77M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714745357;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
+	b=K2Swz6qMrqILGKqgotraJ8/X4aWP6k8SUn/TJbAciKo7Ft3XSdSAGar/ZP8Se5nTgEpc3A
+	yp9v4Br4dsQpGnDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714745357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
+	b=ppJJr1aDg5zyCfKxoPAv0SSHKf7byu4Soibv3aPPxehvtyCLU24K0tOeMK1fpq/qqj95vs
+	7Huq/PJ28xC/3xVLnII9qSxTJ1RcdraPH7+4ontuw+BPYdhfT8CimDx96Mri7um/wZdp2y
+	0ps8IuDnWu9frNbdqy3w1oYfR7Bn77M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714745357;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lCLk7Ggx6SE086KTSnCfd61jjTZpX1jQg+IBaAc2Btk=;
+	b=K2Swz6qMrqILGKqgotraJ8/X4aWP6k8SUn/TJbAciKo7Ft3XSdSAGar/ZP8Se5nTgEpc3A
+	yp9v4Br4dsQpGnDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 78D1A13991;
+	Fri,  3 May 2024 14:09:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Wl16HQ3wNGYyEgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 03 May 2024 14:09:17 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C2A5DA0A12; Fri,  3 May 2024 16:09:16 +0200 (CEST)
+Date: Fri, 3 May 2024 16:09:16 +0200
+From: Jan Kara <jack@suse.cz>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu,
+	syzbot <syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com>,
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+	ritesh.list@gmail.com, syzkaller-bugs@googlegroups.com,
+	trix@redhat.com, yangerkun <yangerkun@huawei.com>
+Subject: Re: [syzbot] [ext4?] WARNING in mb_cache_destroy
+Message-ID: <20240503140916.zd33jcev7c6fy254@quack3>
+References: <00000000000072c6ba06174b30b7@google.com>
+ <0000000000003bf5be061751ae70@google.com>
+ <20240502103341.t53u6ya7ujbzkkxo@quack3>
+ <dca44ba5-5c33-05ef-d9de-21a84f9d7eaa@huawei.com>
+ <20240503102328.cstcauc5qakmk2bg@quack3>
+ <9209062c-fa94-33f3-fd89-834a3314c7ed@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188e:b0:36c:5f85:6979 with SMTP id
- o14-20020a056e02188e00b0036c5f856979mr125430ilu.0.1714743633939; Fri, 03 May
- 2024 06:40:33 -0700 (PDT)
-Date: Fri, 03 May 2024 06:40:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002e9eb506178cdd71@google.com>
-Subject: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in extAlloc (2)
-From: syzbot <syzbot+13e8cd4926977f8337b6@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9209062c-fa94-33f3-fd89-834a3314c7ed@huawei.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dd43bd0f7474512edc47];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,mit.edu,syzkaller.appspotmail.com,dilger.ca,vger.kernel.org,lists.linux.dev,kernel.org,google.com,gmail.com,googlegroups.com,redhat.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-Hello,
+On Fri 03-05-24 19:38:21, Baokun Li wrote:
+> On 2024/5/3 18:23, Jan Kara wrote:
+> > Hi!
+> > 
+> > On Fri 03-05-24 17:51:07, Baokun Li wrote:
+> > > On 2024/5/2 18:33, Jan Kara wrote:
+> > > > On Tue 30-04-24 08:04:03, syzbot wrote:
+> > > > > syzbot has bisected this issue to:
+> > > > > 
+> > > > > commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
+> > > > > Author: Baokun Li <libaokun1@huawei.com>
+> > > > > Date:   Thu Jun 16 02:13:56 2022 +0000
+> > > > > 
+> > > > >       ext4: fix use-after-free in ext4_xattr_set_entry
+> > > > So I'm not sure the bisect is correct since the change is looking harmless.
+> > > Yes, the root cause of the problem has nothing to do with this patch,
+> > > and please see the detailed analysis below.
+> > > > But it is sufficiently related that there indeed may be some relationship.
+> > > > Anyway, the kernel log has:
+> > > > 
+> > > > [   44.932900][ T1063] EXT4-fs warning (device loop0): ext4_evict_inode:297: xattr delete (err -12)
+> > > > [   44.943316][ T1063] EXT4-fs (loop0): unmounting filesystem.
+> > > > [   44.949531][ T1063] ------------[ cut here ]------------
+> > > > [   44.955050][ T1063] WARNING: CPU: 0 PID: 1063 at fs/mbcache.c:409 mb_cache_destroy+0xda/0x110
+> > > > 
+> > > > So ext4_xattr_delete_inode() called when removing inode has failed with
+> > > > ENOMEM and later mb_cache_destroy() was eventually complaining about having
+> > > > mbcache entry with increased refcount. So likely some error cleanup path is
+> > > > forgetting to drop mbcache entry reference somewhere but at this point I
+> > > > cannot find where. We'll likely need to play with the reproducer to debug
+> > > > that. Baokun, any chance for looking into this?
+> > > > 
+> > > > 								Honza
+> > > As you guessed, when -ENOMEM is returned in ext4_sb_bread(),
+> > > the reference count of ce is not properly released, as follows.
+> > > 
+> > > ext4_create
+> > >   __ext4_new_inode
+> > >    security_inode_init_security
+> > >     ext4_initxattrs
+> > >      ext4_xattr_set_handle
+> > >       ext4_xattr_block_find
+> > >       ext4_xattr_block_set
+> > >        ext4_xattr_block_cache_find
+> > >          ce = mb_cache_entry_find_first
+> > >              __entry_find
+> > >              atomic_inc_not_zero(&entry->e_refcnt)
+> > >          bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+> > >          if (PTR_ERR(bh) == -ENOMEM)
+> > >              return NULL;
+> > > 
+> > > Before merging into commit 67d7d8ad99be("ext4: fix use-after-free
+> > > in ext4_xattr_set_entry"), it will not return early in
+> > > ext4_xattr_ibody_find(),
+> > > so it tries to find it in iboy, fails the check in xattr_check_inode() and
+> > > returns without executing ext4_xattr_block_find(). Thus it will bisect
+> > > the patch, but actually has nothing to do with it.
+> > > 
+> > > ext4_xattr_ibody_get
+> > >   xattr_check_inode
+> > >    __xattr_check_inode
+> > >     check_xattrs
+> > >      if (end - (void *)header < sizeof(*header) + sizeof(u32))
+> > >        "in-inode xattr block too small"
+> > > 
+> > > Here's the patch in testing, I'll send it out officially after it is tested.
+> > > (PS:  I'm not sure if propagating the ext4_xattr_block_cache_find() errors
+> > > would be better.)
+> > Great! Thanks for debugging this! Some comments to your fix below:
+> > 
+> > > diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> > > index b67a176bfcf9..5c9e751915fd 100644
+> > > --- a/fs/ext4/xattr.c
+> > > +++ b/fs/ext4/xattr.c
+> > > @@ -3113,11 +3113,10 @@ ext4_xattr_block_cache_find(struct inode *inode,
+> > > 
+> > >           bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+> > >           if (IS_ERR(bh)) {
+> > > -            if (PTR_ERR(bh) == -ENOMEM)
+> > > -                return NULL;
+> > > +            if (PTR_ERR(bh) != -ENOMEM)
+> > > +                EXT4_ERROR_INODE(inode, "block %lu read error",
+> > > +                         (unsigned long)ce->e_value);
+> > >               bh = NULL;
+> > > -            EXT4_ERROR_INODE(inode, "block %lu read error",
+> > > -                     (unsigned long)ce->e_value);
+> > >           } else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
+> > >               *pce = ce;
+> > >               return bh;
+> > So if we get the ENOMEM error, continuing the iteration seems to be
+> > pointless as we'll likely get it for the following entries as well. I think
+> > the original behavior of aborting the iteration in case of ENOMEM is
+> > actually better. We just have to do mb_cache_entry_put(ea_block_cache, ce)
+> > before returning...
+> > 
+> > 								Honza
+> Returning NULL here would normally attempt to allocate a new
+> xattr_block in ext4_xattr_block_set(), and when ext4_sb_bread() fails,
+> allocating the new block and inserting it would most likely fail as well,
+> so my initial thought was to propagate the error from ext4_sb_bread()
+> to also make ext4_xattr_block_set() fail when ext4_sb_bread() fails.
 
-syzbot found the following issue on:
+Yes, this would be probably even better solution.
 
-HEAD commit:    9221b2819b8a Add linux-next specific files for 20240503
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14631754980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8ab537f51a6a0d98
-dashboard link: https://syzkaller.appspot.com/bug?extid=13e8cd4926977f8337b6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15123b1f180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b7da2f180000
+> But I noticed that before Ted added the special handling for -ENOMEM,
+> EXT4_ERROR_INODE was called to set the ERROR_FS flag no matter
+> what error ext4_sb_bread() returned, and after we can distinguish
+> between -EIO and -ENOMEM, we don't have to set the ERROR_FS flag
+> in the case of -ENOMEM. So there's this conservative fix now.
+> 
+> In short, in my personal opinion, for -EIO and -ENOMEM, they should
+> be the same except whether or not the ERROR_FS flag is set.
+> Otherwise, I think adding mb_cache_entry_put() directly is the easiest
+> and most straightforward fix.  Honza, do you have any other thoughts?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3e67dbdc3c37/disk-9221b281.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ade618fa19f8/vmlinux-9221b281.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/df12e5073c97/bzImage-9221b281.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/41dea5c977c2/mount_0.gz
+Yeah. I'd go for adding mb_cache_entry_put() now as a quick fix and then
+work on propagating the error from ext4_xattr_block_cache_find() as a
+cleaner solution...
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+13e8cd4926977f8337b6@syzkaller.appspotmail.com
+								Honza
 
-loop0: detected capacity change from 0 to 32768
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/jfs/jfs_extent.c:319:16
-shift exponent 108 is too large for 64-bit type 's64' (aka 'long long')
-CPU: 0 PID: 5090 Comm: syz-executor421 Not tainted 6.9.0-rc6-next-20240503-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- extBalloc fs/jfs/jfs_extent.c:319 [inline]
- extAlloc+0xe5c/0x1010 fs/jfs/jfs_extent.c:122
- jfs_get_block+0x41b/0xe60 fs/jfs/inode.c:248
- __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2128
- __block_write_begin fs/buffer.c:2177 [inline]
- block_write_begin+0x9b/0x1e0 fs/buffer.c:2236
- jfs_write_begin+0x31/0x70 fs/jfs/inode.c:299
- generic_perform_write+0x322/0x640 mm/filemap.c:4016
- generic_file_write_iter+0xaf/0x310 mm/filemap.c:4137
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4d15f6f639
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff3dae85f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fff3dae87c8 RCX: 00007f4d15f6f639
-RDX: 00000000fffffef2 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 00007f4d15fe8610 R08: 0000000000000000 R09: 00007fff3dae87c8
-R10: 0000000000006162 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff3dae87b8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
----[ end trace ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
