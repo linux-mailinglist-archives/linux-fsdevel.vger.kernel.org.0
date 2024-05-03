@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-18633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517E58BAD0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:04:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F2C8BAD0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 724FBB22AE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:04:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81806B2301F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B30A153BEE;
-	Fri,  3 May 2024 13:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA64815357B;
+	Fri,  3 May 2024 13:03:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D0F153BE6
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322BC153833
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714741390; cv=none; b=BMWABdVfEtpmv2t+MfU0S6aar3oDmhD/RHoXU2KJmsPg4MGMDYSdGuCuTAarnlBmPrIU4BF5+W95ZwLeT25MlPW3Hpjh0f+sMo6DuZ7n5TPvBB9aOh6wACbnhgm9d3F619Ci82QPoChuaen5AUa8isIMkm4yGpojiXkU2Oi3uyI=
+	t=1714741393; cv=none; b=UXCzGQQcao6/Z9YZOX996RjHtvu/D5OKcRQDGbXzz6l3ECfEuefCyd7qsAIu2W1AXryzkIq4htt3zzbRQkzUL8hSM2pUhC9IUjmxTzMI6FRDCRvs074/ideHRNxINfS3zgNdewUIAHLmg3R6FO96KN2qerLEA5O+/8TjuS7Y0Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714741390; c=relaxed/simple;
-	bh=QL7Z2oX9KcDRABPheq8Sil8DiHxZ/oUCj/OkPUP/MPw=;
+	s=arc-20240116; t=1714741393; c=relaxed/simple;
+	bh=7xsoCNDicTsO4BNOynKfnrIy70mOIjvNCAjE7sYvVYc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AR9Sq5mYqWTCgskdNFCmBpFfhPzOHqroukeIbzkqqnfmU777KtOO7FtqRvtjQON3gntYNgjvHFa3blTR8X41Dk7Gdo2zhd6Nxb58zlEUqOPD3pVgSr7i1FD2AWzhavI2LUxrZHHL5QOwyibu2r5OYF1mE8iWtf4FFi/mF5Bov1Y=
+	 MIME-Version; b=Fhum6tcO6HG4SzadPgXmgZbu4MWCWk5DNyn3LJUm7s4KfO4ewhQ1JtZIjsB7g02uqjjxsajv72axMBKyPYT7SdDqEkk1gVaygevVLpL42W4wZQ4GmH1PvL5uG2os1fZQh0XWfXzsa5ATaQvBGsPCxCT1DZE9GzBVAIRhoUai73Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC8511713;
-	Fri,  3 May 2024 06:03:33 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14B72175D;
+	Fri,  3 May 2024 06:03:37 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B5063F73F;
-	Fri,  3 May 2024 06:03:05 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7DF53F73F;
+	Fri,  3 May 2024 06:03:08 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: akpm@linux-foundation.org,
@@ -60,9 +60,9 @@ Cc: akpm@linux-foundation.org,
 	will@kernel.org,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev
-Subject: [PATCH v4 22/29] arm64: add Permission Overlay Extension Kconfig
-Date: Fri,  3 May 2024 14:01:40 +0100
-Message-Id: <20240503130147.1154804-23-joey.gouly@arm.com>
+Subject: [PATCH v4 23/29] kselftest/arm64: move get_header()
+Date: Fri,  3 May 2024 14:01:41 +0100
+Message-Id: <20240503130147.1154804-24-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240503130147.1154804-1-joey.gouly@arm.com>
 References: <20240503130147.1154804-1-joey.gouly@arm.com>
@@ -74,49 +74,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that support for POE and Protection Keys has been implemented, add a
-config to allow users to actually enable it.
+Put this function in the header so that it can be used by other tests, without
+needing to link to testcases.c.
+
+This will be used by selftest/mm/protection_keys.c
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Reviewed-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/Kconfig | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ .../arm64/signal/testcases/testcases.c        | 23 -----------------
+ .../arm64/signal/testcases/testcases.h        | 25 +++++++++++++++++--
+ 2 files changed, 23 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7b11c98b3e84..676ebe4bf9eb 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -2095,6 +2095,28 @@ config ARM64_EPAN
- 	  if the cpu does not implement the feature.
- endmenu # "ARMv8.7 architectural features"
+diff --git a/tools/testing/selftests/arm64/signal/testcases/testcases.c b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+index 674b88cc8c39..e4331440fed0 100644
+--- a/tools/testing/selftests/arm64/signal/testcases/testcases.c
++++ b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+@@ -6,29 +6,6 @@
  
-+menu "ARMv8.9 architectural features"
-+config ARM64_POE
-+	prompt "Permission Overlay Extension"
-+	def_bool y
-+	select ARCH_USES_HIGH_VMA_FLAGS
-+	select ARCH_HAS_PKEYS
-+	help
-+	  The Permission Overlay Extension is used to implement Memory
-+	  Protection Keys. Memory Protection Keys provides a mechanism for
-+	  enforcing page-based protections, but without requiring modification
-+	  of the page tables when an application changes protection domains.
+ #include "testcases.h"
+ 
+-struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+-				size_t resv_sz, size_t *offset)
+-{
+-	size_t offs = 0;
+-	struct _aarch64_ctx *found = NULL;
+-
+-	if (!head || resv_sz < HDR_SZ)
+-		return found;
+-
+-	while (offs <= resv_sz - HDR_SZ &&
+-	       head->magic != magic && head->magic) {
+-		offs += head->size;
+-		head = GET_RESV_NEXT_HEAD(head);
+-	}
+-	if (head->magic == magic) {
+-		found = head;
+-		if (offset)
+-			*offset = offs;
+-	}
+-
+-	return found;
+-}
+-
+ bool validate_extra_context(struct extra_context *extra, char **err,
+ 			    void **extra_data, size_t *extra_size)
+ {
+diff --git a/tools/testing/selftests/arm64/signal/testcases/testcases.h b/tools/testing/selftests/arm64/signal/testcases/testcases.h
+index 7727126347e0..3185e6875694 100644
+--- a/tools/testing/selftests/arm64/signal/testcases/testcases.h
++++ b/tools/testing/selftests/arm64/signal/testcases/testcases.h
+@@ -88,8 +88,29 @@ struct fake_sigframe {
+ 
+ bool validate_reserved(ucontext_t *uc, size_t resv_sz, char **err);
+ 
+-struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
+-				size_t resv_sz, size_t *offset);
++static inline struct _aarch64_ctx *get_header(struct _aarch64_ctx *head, uint32_t magic,
++				size_t resv_sz, size_t *offset)
++{
++	size_t offs = 0;
++	struct _aarch64_ctx *found = NULL;
 +
-+	  For details, see Documentation/core-api/protection-keys.rst
++	if (!head || resv_sz < HDR_SZ)
++		return found;
 +
-+	  If unsure, say y.
++	while (offs <= resv_sz - HDR_SZ &&
++	       head->magic != magic && head->magic) {
++		offs += head->size;
++		head = GET_RESV_NEXT_HEAD(head);
++	}
++	if (head->magic == magic) {
++		found = head;
++		if (offset)
++			*offset = offs;
++	}
 +
-+config ARCH_PKEY_BITS
-+	int
-+	default 3
++	return found;
++}
 +
-+endmenu # "ARMv8.9 architectural features"
-+
- config ARM64_SVE
- 	bool "ARM Scalable Vector Extension support"
- 	default y
+ 
+ static inline struct _aarch64_ctx *get_terminator(struct _aarch64_ctx *head,
+ 						  size_t resv_sz,
 -- 
 2.25.1
 
