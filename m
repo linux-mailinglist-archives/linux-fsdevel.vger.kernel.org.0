@@ -1,202 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-18617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A98D8BACFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:02:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F1E8BACF2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B1E6B22BD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:02:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D69B227A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FFF15358F;
-	Fri,  3 May 2024 13:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593B215382D;
+	Fri,  3 May 2024 13:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ScwgviME"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C8C152E17
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C3D14267;
+	Fri,  3 May 2024 13:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714741337; cv=none; b=Wkd2VBwidL3gDi5jUtFB0F3uu8Qk89+EKRHxWxbeJjN1F7L/nBENO9sECWZfFsRhzyQs+99VvdHAHFt6tZunEqTjQ0DMnA1tlB+rtWnaQt5oU6sXFJ21jBCT8jPA9gBTYYzmtoc/BTQ89ImWJJB14qRbttMuJvjMMbTPX843ul4=
+	t=1714741302; cv=none; b=Lv2+REK0tC3Se2T4uuMz0VO+pzlqXV5srUDcQ527+hWG4xantXhtGUNpPHWeFm25eyLlLVxJhCGn2anPtnlWp/AmTOHK2VFSRrJoOP3yZyjFRSh8KqI3SUVdYNi7cfBHfc/WBQFo5Yhtxflfa4gm9o401OVroGZXQaQXRUw3cIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714741337; c=relaxed/simple;
-	bh=sVJ7CVCnTpKsT1LOSnx9wh0XnmlUdPP24AFugBeYylk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S3N0J08cpLxQTb7IraYTH1zj+3CBpASEh+axiK0VLlMD01t9UpNIghMkDqkK3Wtv+bfG+ShvBVF8VNXX7kiVB/O+6T6QtdxdO2fUUXXKGts486tY+JDazwk+qVYpAHoUMtBmXwWHEn1wNUquU5SQmq+XLQ072Yc0BjWO1rYtMug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A58911650;
-	Fri,  3 May 2024 06:02:40 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54B283F73F;
-	Fri,  3 May 2024 06:02:12 -0700 (PDT)
-From: Joey Gouly <joey.gouly@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com,
-	bp@alien8.de,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	joey.gouly@arm.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	maz@kernel.org,
-	mingo@redhat.com,
-	mpe@ellerman.id.au,
-	naveen.n.rao@linux.ibm.com,
-	npiggin@gmail.com,
-	oliver.upton@linux.dev,
-	shuah@kernel.org,
-	szabolcs.nagy@arm.com,
-	tglx@linutronix.de,
-	will@kernel.org,
-	x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: [PATCH v4 06/29] arm64: context switch POR_EL0 register
-Date: Fri,  3 May 2024 14:01:24 +0100
-Message-Id: <20240503130147.1154804-7-joey.gouly@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240503130147.1154804-1-joey.gouly@arm.com>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
+	s=arc-20240116; t=1714741302; c=relaxed/simple;
+	bh=tkWOYpBTX1ragk+/y68Re0nzBv9+jwv8Ga7g1pbZG8A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gbI7PIM3DaZWr/1nzmq5hWzNkmciQBOXLiAFsu0jEHpl05SL85gZVqqg33uzhZHZ25Q/kH7Tf4WngYP1OFa7aXl5I2GE/2GYDQKzxRE0wbo25AgtBbm32AX5S9ZKjJeiJHbzu6Dm8j3uK/kbrsDyFi3Jbkk+uZNthhJepvG2GiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ScwgviME; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714741291; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=EPeFenupyrKpMSg+17T/sYHi2YONSaQ4xhAfluC20hU=;
+	b=ScwgviMETjcDXq7tAFJLALvgA50JAjbCWpZVT6WdTQm4UPlx2dr6DOQZ9l/FvVEvIqOU0GjO9NQiIbdQEb2lsM+PDJnMnobC9kuUF05DzFUNE5neqXwxr9erwxipjfR0j/rNAfwtSwaR07QbZ3gk/qFUVLwrviCKZTNBUnUDouY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R511e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W5kRlML_1714741289;
+Received: from 192.168.2.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W5kRlML_1714741289)
+          by smtp.aliyun-inc.com;
+          Fri, 03 May 2024 21:01:30 +0800
+Message-ID: <afe72011-e6d7-4ce6-9157-2d4a998b730f@linux.alibaba.com>
+Date: Fri, 3 May 2024 21:01:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] z_erofs_pcluster_begin(): don't bother with rounding
+ position down
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
+ brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ yukuai3@huawei.com
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-9-yukuai1@huaweicloud.com>
+ <20240407040531.GA1791215@ZenIV>
+ <a660a238-2b7e-423f-b5aa-6f5777259f4d@linux.alibaba.com>
+ <20240425195641.GJ2118490@ZenIV> <20240425200017.GF1031757@ZenIV>
+ <7ba8c1a3-be59-4a2f-b88a-23b6ab23e1c8@linux.alibaba.com>
+ <20240503041542.GV2118490@ZenIV>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240503041542.GV2118490@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-POR_EL0 is a register that can be modified by userspace directly,
-so it must be context switched.
 
-Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
----
- arch/arm64/include/asm/cpufeature.h |  6 ++++++
- arch/arm64/include/asm/processor.h  |  1 +
- arch/arm64/include/asm/sysreg.h     |  3 +++
- arch/arm64/kernel/process.c         | 28 ++++++++++++++++++++++++++++
- 4 files changed, 38 insertions(+)
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 8b904a757bd3..d46aab23e06e 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -832,6 +832,12 @@ static inline bool system_supports_lpa2(void)
- 	return cpus_have_final_cap(ARM64_HAS_LPA2);
- }
- 
-+static inline bool system_supports_poe(void)
-+{
-+	return IS_ENABLED(CONFIG_ARM64_POE) &&
-+		alternative_has_cap_unlikely(ARM64_HAS_S1POE);
-+}
-+
- int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
- bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
- 
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index f77371232d8c..e6376f979273 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -184,6 +184,7 @@ struct thread_struct {
- 	u64			sctlr_user;
- 	u64			svcr;
- 	u64			tpidr2_el0;
-+	u64			por_el0;
- };
- 
- static inline unsigned int thread_get_vl(struct thread_struct *thread,
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index 9e8999592f3a..62c399811dbf 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -1064,6 +1064,9 @@
- #define POE_RXW		UL(0x7)
- #define POE_MASK	UL(0xf)
- 
-+/* Initial value for Permission Overlay Extension for EL0 */
-+#define POR_EL0_INIT	POE_RXW
-+
- #define ARM64_FEATURE_FIELD_BITS	4
- 
- /* Defined for compatibility only, do not add new users. */
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 4ae31b7af6c3..0ffaca98bed6 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -271,12 +271,23 @@ static void flush_tagged_addr_state(void)
- 		clear_thread_flag(TIF_TAGGED_ADDR);
- }
- 
-+static void flush_poe(void)
-+{
-+	if (!system_supports_poe())
-+		return;
-+
-+	write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
-+	/* ISB required for kernel uaccess routines when chaning POR_EL0 */
-+	isb();
-+}
-+
- void flush_thread(void)
- {
- 	fpsimd_flush_thread();
- 	tls_thread_flush();
- 	flush_ptrace_hw_breakpoint(current);
- 	flush_tagged_addr_state();
-+	flush_poe();
- }
- 
- void arch_release_task_struct(struct task_struct *tsk)
-@@ -371,6 +382,9 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
- 		if (system_supports_tpidr2())
- 			p->thread.tpidr2_el0 = read_sysreg_s(SYS_TPIDR2_EL0);
- 
-+		if (system_supports_poe())
-+			p->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
-+
- 		if (stack_start) {
- 			if (is_compat_thread(task_thread_info(p)))
- 				childregs->compat_sp = stack_start;
-@@ -495,6 +509,19 @@ static void erratum_1418040_new_exec(void)
- 	preempt_enable();
- }
- 
-+static void permission_overlay_switch(struct task_struct *next)
-+{
-+	if (!system_supports_poe())
-+		return;
-+
-+	current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
-+	if (current->thread.por_el0 != next->thread.por_el0) {
-+		write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
-+		/* ISB required for kernel uaccess routines when chaning POR_EL0 */
-+		isb();
-+	}
-+}
-+
- /*
-  * __switch_to() checks current->thread.sctlr_user as an optimisation. Therefore
-  * this function must be called with preemption disabled and the update to
-@@ -530,6 +557,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	ssbs_thread_switch(next);
- 	erratum_1418040_thread_switch(next);
- 	ptrauth_thread_switch_user(next);
-+	permission_overlay_switch(next);
- 
- 	/*
- 	 * Complete any pending TLB or cache maintenance on this CPU in case
--- 
-2.25.1
+On 2024/5/3 12:15, Al Viro wrote:
+> On Fri, Apr 26, 2024 at 01:32:04PM +0800, Gao Xiang wrote:
+>> Hi Al,
+> 
+>> This patch caused some corrupted failure, since
+>> here erofs_read_metabuf() is EROFS_NO_KMAP and
+>> it's no needed to get a maped-address since only
+>> a page reference is needed.
+>>
+>>>    		if (IS_ERR(mptr)) {
+>>>    			ret = PTR_ERR(mptr);
+>>>    			erofs_err(sb, "failed to get inline data %d", ret);
+>>> @@ -876,7 +876,7 @@ static int z_erofs_pcluster_begin(struct z_erofs_decompress_frontend *fe)
+>>>    		}
+>>>    		get_page(map->buf.page);
+>>>    		WRITE_ONCE(fe->pcl->compressed_bvecs[0].page, map->buf.page);
+>>> -		fe->pcl->pageofs_in = map->m_pa & ~PAGE_MASK;
+>>> +		fe->pcl->pageofs_in = offset_in_page(mptr);
+>>
+>> So it's unnecessary to change this line IMHO.
+> 
+> *nod*
+> 
+> thanks for catching that.
+> 
+>> BTW, would you mind routing this series through erofs tree
+>> with other erofs patches for -next (as long as this series
+>> isn't twisted with vfs and block stuffs...)?  Since I may
+>> need to test more to ensure they don't break anything and
+>> could fix them immediately by hand...
+> 
+> FWIW, my immediate interest here is the first couple of patches.
 
+Yes, the first two patches are fine by me, you could submit
+directly.
+
+> 
+> How about the following variant:
+> 
+> #misc.erofs (the first two commits) is put into never-rebased mode;
+> you pull it into your tree and do whatever's convenient with the rest.
+> I merge the same branch into block_device work; that way it doesn't
+> cause conflicts whatever else happens in our trees.
+> 
+> Are you OK with that?  At the moment I have
+> ; git shortlog v6.9-rc2^..misc.erofs
+> Al Viro (2):
+>        erofs: switch erofs_bread() to passing offset instead of block number
+>        erofs_buf: store address_space instead of inode
+> 
+> Linus Torvalds (1):
+>        Linux 6.9-rc2
+> 
+> IOW, it's those two commits, based at -rc2.  I can rebase that to other
+> starting point if that'd be more convenient for you.
+
+Yeah, thanks for that.  I think I will submit two pull requests for
+the next cycle, and I will send the second pull request after your
+vfs work is landed upstream and it will include the remaining
+patches you sent (a bit off this week since we're on holiday here).
+
+Thanks,
+Gao Xiang
 
