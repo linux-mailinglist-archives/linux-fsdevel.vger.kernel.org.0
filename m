@@ -1,142 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-18562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E69F8BA59D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 05:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4E08BA5C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 05:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD5651F24086
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 03:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664841F22CC0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 03:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2931CA9C;
-	Fri,  3 May 2024 03:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OjgJo//a"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9344D208D0;
+	Fri,  3 May 2024 03:44:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5149F1B299;
-	Fri,  3 May 2024 03:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33E718B1A
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 03:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714706319; cv=none; b=XMq8gt8xe1Ar/hNu2upEM0P4QZPttsQQkbtd5W7xhd/v81gPr1XvCrEduHLLhIhmCJJdDt4DvTpq1HpB61aWKGnDWvK54Y6Gxf0H8J35dg5wWyKd3SiZaUa7ge7DdXcv6O7NOaZomI/VgQ0VlVXt1M1ucT+jlS1gCJAYmtSFmIU=
+	t=1714707861; cv=none; b=Lo6E65zDbVCXG4FfsCMmF9Or4Oko2QxZIl2alrb07P5MvGpChxKLEDPBu3YcEHd7sZeEw+ZwBoRQHHb5J70IJHSfLoPqpqx9GV5yGWH0nPFqwOj8MSkgeXkfh/htjbetsYcJNQZ9UAREJ8BBEhJh9FlFcfG0YVm5JLNnk6PjHNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714706319; c=relaxed/simple;
-	bh=FUU9iVfjt1Iwtk/vnvoYlu5LlKdIrGnJl89nXQBrA3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahD2PleZIB0xFkfn82ZnejuFQsh/fr2bzCzzvFIgSFz2SSaBaE8Ko4QvVTA/4L1Iejonm48N352SIlzRFkS6u9GLpWBtfL//eym46EYeD0En+Li9/hCrBI5xCuyG2sE/U0o2n6/7buOojG1KuPNSAPVrxn2N2ixoD94lCkgj+7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OjgJo//a; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AD1DWCmY12Xm6FHUbR56Tj82yPsHjkXdgFTV9BSpp4E=; b=OjgJo//aBsu1n+3YSE8Rq8CrEz
-	uCx2vLqnLAheat0PP105qYxUZm6q+QVvYWx8zjdxoyS7QkVqhYyNU/5+IkvMUmhu3euV39SI0f3hm
-	6U/l7AifaEJs93QL3OeeaOwd3ctDL7ePIHymbvpdwMt8erXL+aVOIvZJ6KvnaSK7txkUqXJ61znt2
-	azsLWNNyxdgOJ9nsfDPTIOl74amCs89DCwhnL3fKYAApNjkc++i4iV2zikDGujpXthd4+EZa0RPDa
-	vT+Xto49R3aUnh8ZbM4m12IpJc5QXjq8qFCBdFus/HCf3JUbDSi0IjJ0T9hypdhF0xd6bSgN7ruqt
-	KFf2JgLQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s2jRR-00A2Fw-0O;
-	Fri, 03 May 2024 03:18:33 +0000
-Date: Fri, 3 May 2024 04:18:33 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCHES v2][RFC] set_blocksize() rework
-Message-ID: <20240503031833.GU2118490@ZenIV>
-References: <20240427210920.GR2118490@ZenIV>
+	s=arc-20240116; t=1714707861; c=relaxed/simple;
+	bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fz7TT3H7DSvBTLyl1OYZpfcRZZ3hzzBpVlW4roVRoje1uk2lRtPZmYVbfMJJI+upsiGWM0gBV7R7nfw8RjGIPi3LWpFZEyX4D3bLXRPAoLk5BHbhGeUqw47BM0yPFArNZUw6m8V9NMqIaEF5n2NMIdMnZOq9WONzjcbR6bowQmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7dec9dbd40aso566839139f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2024 20:44:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714707859; x=1715312659;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+        b=afeplKUubJFbezc76ZBM6+KE2wmVVQhXvQaNSxzmQo7wgW5xGCf+BYIGvEBokJL8bT
+         ZcpJsgFT4bGCYtgiB5X0gN4Wu1Ab3V3ZEuaIPVulLqatGf38KBDeTGUHDUOfaS1dqhtR
+         fM2LBHWslNR3zdyBAypZJrUTfJv1KqTqB0chXQFiCsDMCS4qHiYarmZnBBPAFKf8qV98
+         iw8vDZoXyjzqTEeqJSiRn9KhnWNu7jA5eWpm8zyIYQklt6+NsTCmh0kuRT7HysuKRtC4
+         BAMysPyHII27NeM/j2ZMuPYnrevh8SZxjOfwGQQ/D8yTd757I+TSNtsL6cWhYsOQdWHs
+         5P/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWdkt3LGyY5knNvhZ57A4+GJ+5+6tyf/mUUMFJV+FVChvdVvert0Zk+Huf1TW29bxKxt1C0OqjdpEtVBNqfhJBFPczPooT2jaQo/Ev2bQ==
+X-Gm-Message-State: AOJu0YyYZB+q8rNphZeGbjusigO6OHC4Z4vgbNy0zhxqiXWd2ywiu68M
+	XRQKql5SgbtWxcRI8Jf42IiQl3m/xznOZDj6YorB67LHP/4cdtwY5+JHRGyA4bt0wDoa8tIg5Ny
+	3cZ49Bn59GbFJsjya7ll4rtib/pp6fL8tR1pd92C1Sigo9vl9oA6cS3Q=
+X-Google-Smtp-Source: AGHT+IF6jdtVimKJ3sPtIlW6psc1aZK/nSNQxAxNcKk6WGV4mZGOrwytWBePLmVCVM24GexqMQgZkn/SIF5cdqAA9s2wWfiSdIMn
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240427210920.GR2118490@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6638:3f0f:b0:487:5b21:e66f with SMTP id
+ ck15-20020a0566383f0f00b004875b21e66fmr65625jab.0.1714707859267; Thu, 02 May
+ 2024 20:44:19 -0700 (PDT)
+Date: Thu, 02 May 2024 20:44:19 -0700
+In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d873390617848870@google.com>
+Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
+From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Apr 27, 2024 at 10:09:20PM +0100, Al Viro wrote:
-> 	Any buffer-cache based filesystem is going to be FUBAR
-> if somebody manages to change block size of device under it,
-> since primitives (sb_bread(), sb_getblk(), etc.) operate in
-> terms of block numbers.  If block size suddenly doubles, so
-> will the offsets from the beginning of device.  Results are
-> not pretty, obviously.
-> 
-> 	The thing that (mostly) prevents that kind of mess
-> is that most of the mechanisms that lead to block size
-> change require the device being opened exclusive.  However,
-> there are several exceptions that allow to do that without
-> an exclusive open.  Fortunately, all of them require
-> CAP_SYS_ADMIN, so it's not a security problem - anyone
-> who already has that level of access can screw the system
-> into the ground in any number of ways.  However, security
-> problems or not, that crap should be fixed.
-> 
-> 	The series below eliminates these calls of set_blocksize()
-> and changes calling conventsion of set_blocksize() so that it
-> uses struct file * instead of struct block_device * to tell
-> which device to act upon.  Unlike struct block_device, struct
-> file has enough information to tell an exclusive open from
-> non-exclusive one, so we can reject the operation in non-exclusive
-> case.
-> 
-> 	The branch is available at
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.set_blocksize
-> Individual patches in followups.
-> 
-> Review (and testing, obviously) would be very welcome.
+This bug is marked as fixed by commit:
+ext4: fix race condition between buffer write and page_mkwrite
 
-Branch updated and force-pushed (same place).  Individual patches in
-followups.
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-Changes:
-* zram elimination of double-open added.
-* hopefully better description of btrfs side of things.
-* final commit split into switch of set_blocksize() to struct file
-  and adding a check for exclusive open.
-* chunk in Documentation/filesystems/porting.rst added.
+#syz fix: exact-commit-title
 
-Shortlog:
-Al Viro (9):
-      bcache_register(): don't bother with set_blocksize()
-      pktcdvd: sort set_blocksize() calls out
-      swapon(2)/swapoff(2): don't bother with block size
-      swapon(2): open swap with O_EXCL
-      zram: don't bother with reopening - just use O_EXCL for open
-      swsusp: don't bother with setting block size
-      btrfs_get_bdev_and_sb(): call set_blocksize() only for exclusive opens
-      set_blocksize(): switch to passing struct file *
-      make set_blocksize() fail unless block device is opened exclusive
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
 
-Diffstat:
- Documentation/filesystems/porting.rst |  7 +++++++
- block/bdev.c                          | 14 ++++++++++----
- block/ioctl.c                         | 21 ++++++++++++---------
- drivers/block/pktcdvd.c               |  7 +------
- drivers/block/zram/zram_drv.c         | 29 +++++++----------------------
- drivers/block/zram/zram_drv.h         |  2 +-
- drivers/md/bcache/super.c             |  4 ----
- fs/btrfs/dev-replace.c                |  2 +-
- fs/btrfs/volumes.c                    | 13 ++++++++-----
- fs/ext4/super.c                       |  2 +-
- fs/reiserfs/journal.c                 |  5 ++---
- fs/xfs/xfs_buf.c                      |  2 +-
- include/linux/blkdev.h                |  2 +-
- include/linux/swap.h                  |  2 --
- kernel/power/swap.c                   |  7 +------
- mm/swapfile.c                         | 29 ++---------------------------
- 16 files changed, 55 insertions(+), 93 deletions(-)
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+
+---
+[1] I expect the commit to be present in:
+
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
