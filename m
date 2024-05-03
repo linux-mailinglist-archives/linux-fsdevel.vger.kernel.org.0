@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-18622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3129B8BAD00
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:03:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3CF8BAD01
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7561F215C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1692B226C0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB6D153BCE;
-	Fri,  3 May 2024 13:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E812153BD8;
+	Fri,  3 May 2024 13:02:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48843153589
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F90153BCB
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714741353; cv=none; b=A7vNsnwPXyh3jZZ/BYzcXKLhLncqhoROKi3Vb8e7H9xZSRhYKgKMt/p/xPKqegXDs1NyZIhiUs7IXtzpqQbNLc3bYWUW68V6rOxO3w5b0IqAaBLf8JhVz+okYVlAN0NtyqOiBfUnmpn5Whya7EWuh5E4ESq+t1lR6e8ULCGJ+9s=
+	t=1714741356; cv=none; b=jzT0znOfxUtA3/WiMEMg7oewY0ERIGp6j+RWtRq17Xwyc2xjyLT1rr99z+VBWBTfw7TB9vkCkXVW5PBK8rLQ4FQMwEY+1VO+r0HSaOmNfOdslZTUNgsThO3lcD7EfouO0Br85WY4dVfVgA8ZwTmsXyz70L9qyRRnKSQmqinvNDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714741353; c=relaxed/simple;
-	bh=DAsBzvXn06x72amD7FRRM2eLQMHCzzbbk1JIP6LZH9o=;
+	s=arc-20240116; t=1714741356; c=relaxed/simple;
+	bh=o0dlkbVRikWxjrVzFMMU95GM+kD8+vmsleowLTPabfk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i0aq6exCn24F+UackE8gsmd5RtYoMWGgOUBXN3DSmZZocghOQxJeLGTo4zGjeeIeJpxLNcp1gm1HfoyR+TGTWd7bqHZmlcKRl6XIWl3B0nJgzBnoFJ6UI32JOL/iES/5lcM4ERmAlSSAeX8SWRlJuJd61jqL8VtgQZPetn82Faw=
+	 MIME-Version; b=O4uN/KbemSJQJJziUGV6TXapUXnKbKKaHPXV49QayBURLY5hWGbV7LF+jpbFS79XtYtg50m88+RBq6aKyQcL4ZfO91zh/qqftbZgVk5ozWuaHkZAoEOH/CrvCkMmGdjBrFinwGJhdv6SVUvwb99Qwlw5Tk0/JzhZseB7XazIUFc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3471E1691;
-	Fri,  3 May 2024 06:02:57 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F63A1692;
+	Fri,  3 May 2024 06:03:00 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7C373F73F;
-	Fri,  3 May 2024 06:02:28 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EC6C3F73F;
+	Fri,  3 May 2024 06:02:32 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: akpm@linux-foundation.org,
@@ -60,9 +60,9 @@ Cc: akpm@linux-foundation.org,
 	will@kernel.org,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev
-Subject: [PATCH v4 11/29] arm64: re-order MTE VM_ flags
-Date: Fri,  3 May 2024 14:01:29 +0100
-Message-Id: <20240503130147.1154804-12-joey.gouly@arm.com>
+Subject: [PATCH v4 12/29] arm64: add POIndex defines
+Date: Fri,  3 May 2024 14:01:30 +0100
+Message-Id: <20240503130147.1154804-13-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240503130147.1154804-1-joey.gouly@arm.com>
 References: <20240503130147.1154804-1-joey.gouly@arm.com>
@@ -74,30 +74,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To make it easier to share the generic PKEYs flags, move the MTE flag.
+The 3-bit POIndex is stored in the PTE at bits 60..62.
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
 ---
- include/linux/mm.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/pgtable-hwdef.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5605b938acce..2065727b3787 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -377,8 +377,8 @@ extern unsigned int kobjsize(const void *objp);
- #endif
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index ef207a0d4f0d..370a02922fe1 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -198,6 +198,16 @@
+ #define PTE_PI_IDX_2	53	/* PXN */
+ #define PTE_PI_IDX_3	54	/* UXN */
  
- #if defined(CONFIG_ARM64_MTE)
--# define VM_MTE		VM_HIGH_ARCH_0	/* Use Tagged memory for access control */
--# define VM_MTE_ALLOWED	VM_HIGH_ARCH_1	/* Tagged memory permitted */
-+# define VM_MTE		VM_HIGH_ARCH_4	/* Use Tagged memory for access control */
-+# define VM_MTE_ALLOWED	VM_HIGH_ARCH_5	/* Tagged memory permitted */
- #else
- # define VM_MTE		VM_NONE
- # define VM_MTE_ALLOWED	VM_NONE
++/*
++ * POIndex[2:0] encoding (Permission Overlay Extension)
++ */
++#define PTE_PO_IDX_0	(_AT(pteval_t, 1) << 60)
++#define PTE_PO_IDX_1	(_AT(pteval_t, 1) << 61)
++#define PTE_PO_IDX_2	(_AT(pteval_t, 1) << 62)
++
++#define PTE_PO_IDX_MASK		GENMASK_ULL(62, 60)
++
++
+ /*
+  * Memory Attribute override for Stage-2 (MemAttr[3:0])
+  */
 -- 
 2.25.1
 
