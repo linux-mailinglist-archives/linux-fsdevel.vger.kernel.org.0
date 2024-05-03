@@ -1,93 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-18672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4888BB461
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 21:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDC28BB46A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 21:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BC061F22FD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 19:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7C01F21F26
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 19:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36C0158D71;
-	Fri,  3 May 2024 19:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vcue1ghk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA6158D77;
+	Fri,  3 May 2024 19:58:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEFA1581FD;
-	Fri,  3 May 2024 19:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2480158A11
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 19:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714765865; cv=none; b=SQKx1aqXii+VvVvWMpZE5fJaStp0CbW58B1/w//mP6TwR8IyVVcaV1/6prhMh1+Ej8KEaa9tOUhZyfHmEeLlzmtZzmbtLcBFphA/+zUkgF4djmnVPN0JZpW/JpyU1Di8h0NU+Do+coArdm1UN8kIRzBkl4h3wbyfkurzUV4EOwA=
+	t=1714766287; cv=none; b=pZ6W4uSB4YpO3iiIHSOW8sL4SutK9pOrjmpDmH7e0UBM05CnrLIspJplqZpOZMNsgj7yY31lxzW4/E+3A/6u8C2okvnAz0VqXijU8f+DXeMByqFUWsmjwbUU1Cgm5TRGvJ6CBpoi8MVEKbBp/4A6esJuOrrtxciccYfAbPKtQJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714765865; c=relaxed/simple;
-	bh=2JyPRo2Ro2xyGaHzv78UPZmNJQTNXNYjBIsAi3zZbGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3KjKacnWgJSjqI37srDcNTK/KgIqQkVPWzqZ0RQVhU9yEcRY9Qfmps7u5DKvSL8jLtbxTFAivDtZrUKsalqkJVQxh835kAw2rxbEs3CnwWvJGAlUr/lmsWrMihHdzOAlmyU8I3IAUQZKMSG3+OUZ1OnQCBeyTpIQK0D9EPZxHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Vcue1ghk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dT/tZ4BeVrX503tjBuNztLOilBaPjVoqnxlR5AjEN90=; b=Vcue1ghkLjZN/Pe40AnCT5GmP9
-	p8Ci91b4oylITVwrlE0lJHNHQ8hYq8UsAy82XhSPcb+39l0pSU2jMCfwsg7UsBtpZdXW/2K3xIxGK
-	u9HR7Zh2jJwR8nfJ2le4iJHsE2UB+SHcXEycw6svdqdqv/C/4U7+4JyRa+LItfjvHwd2Ds5L1J61F
-	NTthaERztVnLYJ4DMtLSk5GPab0AxaDZJmRKX7Jo8NFhujqnDUmCjPDEcrf0hO5NLpC7lg2XzhU69
-	fnoJsP0dMW8pBG/xWO/jjigWBxxAZ1sUDpqirxvfJSUOJp6BTVnpp8l394Zwx7d2VYgPLAvr8HYML
-	e/xZoG2Q==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s2yvs-00000000EEx-2NIY;
-	Fri, 03 May 2024 19:51:00 +0000
-Date: Fri, 3 May 2024 12:51:00 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Allen Pais <apais@linux.microsoft.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, ebiederm@xmission.com, keescook@chromium.org,
-	j.granados@samsung.com, allen.lkml@gmail.com
-Subject: Re: [PATCH v3] fs/coredump: Enable dynamic configuration of max file
- note size
-Message-ID: <ZjVAJOsC-EtlIXd6@bombadil.infradead.org>
-References: <20240502235603.19290-1-apais@linux.microsoft.com>
+	s=arc-20240116; t=1714766287; c=relaxed/simple;
+	bh=GxOghFVCZOu1BSfEKDJHdFXujzxM0Vhi46jNlkXNViI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BdYUY7uVstJMo52McjZW/4HhywUgjcq8ybKYqdjbm4F5WmqgXrR7AauhGnl0kf05qv+uHRnof60yJF2H53ZyWx5tfpLiHAs8Xx3013tjOq82Powpg9yZ5tBEAdnK5g8msmym25vcAm1hi2DDLAIh/NEWXLvybCo/KphMy2kjDh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c5ec76c08so471925ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2024 12:58:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714766285; x=1715371085;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pwVY/fyH1gQuGakUUTvfCy/Q1T0f0xT1xNncswAUms0=;
+        b=JDdZFjj22IZbXuOgyQuo7ov0/Qq+Kra+TQFX/S5YTvWnUXyN+jBmoE6R02shYZotps
+         TZhVphhNuUI/+6ntd3aSj31W8C6JWZt+hJ7CfCi/TVxnyP3hD2+Z220JiKmcc+i1xV3n
+         IpwOpkPtshlLGK1robc2h4VM1ZAF8SdQLBO+pHxnBy3S1NbgFq/sJgS7rk7CnZKbvPzT
+         QdRhI+UaPZyhKCzOBeWubUkFC4CB00vrsxCeJknhXLf78pEz33ZmGHLmec7uJop9gN5m
+         duKde0v4VbAyjknjmb0w7DrpJ/VuGfPGpm0zVdPeCcCt5jT+EiJRo9f0cGLhpkeoD04o
+         PZUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTvqmIKJ+AOhIATL/anmt9F/e9P+/44Q3jLqSAZhTahuTJl418O7TyzcL9hMza1NtuEW4SXnXUNlSAyXkIL6pIXNE/8+09785eQ32WcQ==
+X-Gm-Message-State: AOJu0Ywiuui2ctXVbB7GlKcDPJG0alswOJ/RWa6Nn9pedjQ4vatOYyrS
+	uuq0ZPdyqTyqCg7rbLoK0RReErE+ASynSkdE4CQkU12nUIiCNCsYUWulMxF84g/tvZp5w/lkv7K
+	bB/zRd/xddwdvCjpmx8I1BhHghoGcjWNwT+UTD6cdjXKnRRAx9/VkLB8=
+X-Google-Smtp-Source: AGHT+IFsKhYlfy6o3M/ol0YgBhmeqITegGAPVwX3qSt2L72wwyPU5neB1NYYig825a03FvrKiVlSZ/AuOfzjIlZAaX292wXvouR3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502235603.19290-1-apais@linux.microsoft.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Received: by 2002:a05:6e02:218d:b0:36c:307b:7f08 with SMTP id
+ j13-20020a056e02218d00b0036c307b7f08mr196694ila.0.1714766283713; Fri, 03 May
+ 2024 12:58:03 -0700 (PDT)
+Date: Fri, 03 May 2024 12:58:03 -0700
+In-Reply-To: <00000000000022a23c061604edb3@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000036c3d90617922353@google.com>
+Subject: Re: [syzbot] [kasan?] [mm?] INFO: rcu detected stall in __run_timer_base
+From: syzbot <syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, brauner@kernel.org, davem@davemloft.net, 
+	dvyukov@google.com, elver@google.com, glider@google.com, hdanton@sina.com, 
+	jhs@mojatatu.com, kasan-dev@googlegroups.com, keescook@chromium.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, luyun@kylinos.cn, netdev@vger.kernel.org, 
+	pctammela@mojatatu.com, syzkaller-bugs@googlegroups.com, victor@mojatatu.com, 
+	viro@zeniv.linux.org.uk, vladimir.oltean@nxp.com
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks for the cleanups, this is certainly now in the right direction.
-Generic long term growth questions below.
+syzbot has bisected this issue to:
 
-On Thu, May 02, 2024 at 11:56:03PM +0000, Allen Pais wrote:
-> Why is this being done?
-> We have observed that during a crash when there are more than 65k mmaps
-> in memory, the existing fixed limit on the size of the ELF notes section
-> becomes a bottleneck. The notes section quickly reaches its capacity,
+commit da71714e359b64bd7aab3bd56ec53f307f058133
+Author: Jamal Hadi Salim <jhs@mojatatu.com>
+Date:   Tue Aug 22 10:12:31 2023 +0000
 
-I'm not well versed here on how core dumps associate mmaps to ELF notes
-section, can you elaborate? Does each new mmap potentially peg
-information on ELF notes section? Where do we standardize on this? Does
-it also change depending on any criteria of the mmap?
+    net/sched: fix a qdisc modification with ambiguous command request
 
-Depending on the above, we might want to be proactive to get a sense of
-when we want to go beyond the new 16 MiB max cap on new mmaps for instance.
-How many mmaps can we have anyway too?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13b9b317180000
+start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1079b317180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b9b317180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fe78468a74fdc3b7
+dashboard link: https://syzkaller.appspot.com/bug?extid=1acbadd9f48eeeacda29
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16435913180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111600cb180000
 
-> leading to incomplete memory segment information in the resulting coredump.
-> This truncation compromises the utility of the coredumps, as crucial
-> information about the memory state at the time of the crash might be
-> omitted.
+Reported-by: syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com
+Fixes: da71714e359b ("net/sched: fix a qdisc modification with ambiguous command request")
 
-  Luis
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
