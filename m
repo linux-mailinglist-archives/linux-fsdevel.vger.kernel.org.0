@@ -1,377 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-18600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CA88BAA65
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 11:58:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEF48BAAB1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 12:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79EBC1F23180
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 09:58:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 906711F2309E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 10:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80B41514C8;
-	Fri,  3 May 2024 09:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDCD15099B;
+	Fri,  3 May 2024 10:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYY7lLlo"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eHBR2JW9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+IWhWpVd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eHBR2JW9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+IWhWpVd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F76F14D2BC;
-	Fri,  3 May 2024 09:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4082A150981;
+	Fri,  3 May 2024 10:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714730284; cv=none; b=cNOYjHQStLJmTzNt09eEauS4pxtyJ+dc7+UtUBtS7BSGZ261J3JA0p9q5XYELUWbEPa4g+Z+caohxgzKkGxFewGhjLS+qktlJEk1AGkWgawdtmd7apJnZpbUvbM0k4FqSRmLzf3tHDIpCssA7b+S25uG/PKEoLRZ3udquAQ392Q=
+	t=1714731817; cv=none; b=JIB5RBEndqfG47m6OEg2ulzK/G0dE7tcTrqzJJ5BWRyqgw8w/vkIbCWg5B2BUjZROqmK6BfAGZ7SZ/b8c+Xx0Io8RxQsjC3dPYwQZOkGEFaPYvfCzZ85ifhbbQH1Fz+vOauabBXfxu3Z7R8+aV1VD+wg4Xh2qtYaIlBDwlUMOeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714730284; c=relaxed/simple;
-	bh=f8Mn/L/rPRgscXzOJ4TK13C7rdziWCwow2p/jHjIwJ8=;
+	s=arc-20240116; t=1714731817; c=relaxed/simple;
+	bh=fHtHD+g9ZeMccn+bieIn+XHwW1USx6/ejeg+8z6817o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ixS8mChSbTcwJXZ2G3I/3Ixwh/CuyWn20xluJX2l0q/D077N/85mx2isnrskHMBDwEHGbWAARZxY5dV/IyJe5ldWCZ0EOJ2JuSdKlZO/Uje+SDxP2w3AJZH8qd8IyKqvcq/F0/qE3a/oAMEBtBj0IBg442c11uzomjAjYgAUdK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYY7lLlo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0249C116B1;
-	Fri,  3 May 2024 09:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714730283;
-	bh=f8Mn/L/rPRgscXzOJ4TK13C7rdziWCwow2p/jHjIwJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BYY7lLlogB03mbGSB3SgN+WPEjR3akhQYsqOL/HAjXxgEOk1biLm7Gy4WYyr12fQF
-	 1lG/DTrRz7WofC8yDi/4cYNplVMGXjuIkuJV7kRYFydEm+vzIC74uwoYa8qZ4RSZtX
-	 Jf3+olxTYdYiKQh2ghqGXScHeUQaw/sjqLWqVl4uc6Kjk3TgESTReef9kcoQkgu1L3
-	 CrirGXZxlKJQIdgmLFcuez6Xyri0pGyzHhKRJQOO/NWXOUpSsZ4q1d/FfvhIS3KCyD
-	 8+Et9wTVudLQiYemszcf74rgyEa4hsYqZLwMQ982eXTmfcjnsqTbZlg35mxT3Hncir
-	 MMy3qXrsZaQww==
-Date: Fri, 3 May 2024 11:57:56 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, 
-	ajordanr@google.com, jorgelo@chromium.org, Guenter Roeck <groeck@chromium.org>, 
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Mike Frysinger <vapier@chromium.org>
-Subject: Re: [PATCH v3 1/2] proc: restrict /proc/pid/mem access via param
- knobs
-Message-ID: <20240503-nulltarif-karten-82213463dedc@brauner>
-References: <20240409175750.206445-1-adrian.ratiu@collabora.com>
- <202404261544.1EAD63D@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+xMg/dxYXJ93cLJmJRNULoU/L5NMZbNINp6ecejrvTp3IFCvbyqSziBzSckMAvCB9fH4YiYdQaPYd3iYLePc+P01UyY6iudTuOOi/uxQnJ0aRYtGKkUZSNITIWfLJjwtRkGJdisj4C0VWZd9NBw1xZff9vAF0CIPfIfjYjSpmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eHBR2JW9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+IWhWpVd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eHBR2JW9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+IWhWpVd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4F6B5337BF;
+	Fri,  3 May 2024 10:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714731813; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fbe1RMkmxuSQr7773iy44PO+z9CJb3ltRRFeG3he+PM=;
+	b=eHBR2JW91Cub5ghh08YZgv0gotBMYgWmUYcxm0nc9ddIdpMtjYHkaYiB/MdBy0g6WtZgj1
+	KZ3g1iVOEgzaZU2saWuY1aBCD3cbRhd4rm9yb1sL0GHhiuWxsFx+COGId8Eoaf8BiZK12n
+	ahBepk7qxjL0DG9Q74e3fsl95DgSY70=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714731813;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fbe1RMkmxuSQr7773iy44PO+z9CJb3ltRRFeG3he+PM=;
+	b=+IWhWpVd47hr9VNZX2IscVXbEBcjuy7zjRj+/nMQu0vqKOtif3k8gsV8PvkC2ww6YpjlLl
+	QBgO0uEWI3hXBNCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eHBR2JW9;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+IWhWpVd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1714731813; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fbe1RMkmxuSQr7773iy44PO+z9CJb3ltRRFeG3he+PM=;
+	b=eHBR2JW91Cub5ghh08YZgv0gotBMYgWmUYcxm0nc9ddIdpMtjYHkaYiB/MdBy0g6WtZgj1
+	KZ3g1iVOEgzaZU2saWuY1aBCD3cbRhd4rm9yb1sL0GHhiuWxsFx+COGId8Eoaf8BiZK12n
+	ahBepk7qxjL0DG9Q74e3fsl95DgSY70=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1714731813;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fbe1RMkmxuSQr7773iy44PO+z9CJb3ltRRFeG3he+PM=;
+	b=+IWhWpVd47hr9VNZX2IscVXbEBcjuy7zjRj+/nMQu0vqKOtif3k8gsV8PvkC2ww6YpjlLl
+	QBgO0uEWI3hXBNCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 40A2613991;
+	Fri,  3 May 2024 10:23:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8Lm/DyW7NGZeRAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 03 May 2024 10:23:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CF584A0A12; Fri,  3 May 2024 12:23:28 +0200 (CEST)
+Date: Fri, 3 May 2024 12:23:28 +0200
+From: Jan Kara <jack@suse.cz>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu,
+	syzbot <syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com>,
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+	ritesh.list@gmail.com, syzkaller-bugs@googlegroups.com,
+	trix@redhat.com, yangerkun <yangerkun@huawei.com>
+Subject: Re: [syzbot] [ext4?] WARNING in mb_cache_destroy
+Message-ID: <20240503102328.cstcauc5qakmk2bg@quack3>
+References: <00000000000072c6ba06174b30b7@google.com>
+ <0000000000003bf5be061751ae70@google.com>
+ <20240502103341.t53u6ya7ujbzkkxo@quack3>
+ <dca44ba5-5c33-05ef-d9de-21a84f9d7eaa@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <202404261544.1EAD63D@keescook>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dca44ba5-5c33-05ef-d9de-21a84f9d7eaa@huawei.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 4F6B5337BF
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[dd43bd0f7474512edc47];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,mit.edu,syzkaller.appspotmail.com,dilger.ca,vger.kernel.org,lists.linux.dev,kernel.org,google.com,gmail.com,googlegroups.com,redhat.com,huawei.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SUBJECT_HAS_QUESTION(0.00)[]
 
-On Fri, Apr 26, 2024 at 04:10:49PM -0700, Kees Cook wrote:
-> On Tue, Apr 09, 2024 at 08:57:49PM +0300, Adrian Ratiu wrote:
-> > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-> > after which it got allowed in commit 198214a7ee50 ("proc: enable
-> > writing to /proc/pid/mem"). Famous last words from that patch:
-> > "no longer a security hazard". :)
-> > 
-> > Afterwards exploits started causing drama like [1]. The exploits
-> > using /proc/*/mem can be rather sophisticated like [2] which
-> > installed an arbitrary payload from noexec storage into a running
-> > process then exec'd it, which itself could include an ELF loader
-> > to run arbitrary code off noexec storage.
-> > 
-> > One of the well-known problems with /proc/*/mem writes is they
-> > ignore page permissions via FOLL_FORCE, as opposed to writes via
-> > process_vm_writev which respect page permissions. These writes can
-> > also be used to bypass mode bits.
-> > 
-> > To harden against these types of attacks, distrbutions might want
-> > to restrict /proc/pid/mem accesses, either entirely or partially,
-> > for eg. to restrict FOLL_FORCE usage.
-> > 
-> > Known valid use-cases which still need these accesses are:
-> > 
-> > * Debuggers which also have ptrace permissions, so they can access
-> > memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
-> > are designed to write /proc/pid/mem for basic functionality.
-> > 
-> > * Container supervisors using the seccomp notifier to intercept
-> > syscalls and rewrite memory of calling processes by passing
-> > around /proc/pid/mem file descriptors.
-> > 
-> > There might be more, that's why these params default to disabled.
-> > 
-> > Regarding other mechanisms which can block these accesses:
-> > 
-> > * seccomp filters can be used to block mmap/mprotect calls with W|X
-> > perms, but they often can't block open calls as daemons want to
-> > read/write their runtime state and seccomp filters cannot check
-> > file paths, so plain write calls can't be easily blocked.
-> > 
-> > * Since the mem file is part of the dynamic /proc/<pid>/ space, we
-> > can't run chmod once at boot to restrict it (and trying to react
-> > to every process and run chmod doesn't scale, and the kernel no
-> > longer allows chmod on any of these paths).
-> > 
-> > * SELinux could be used with a rule to cover all /proc/*/mem files,
-> > but even then having multiple ways to deny an attack is useful in
-> > case one layer fails.
-> > 
-> > Thus we introduce three kernel parameters to restrict /proc/*/mem
-> > access: read, write and foll_force. All three can be independently
-> > set to the following values:
-> > 
-> > all     => restrict all access unconditionally.
-> > ptracer => restrict all access except for ptracer processes.
-> > 
-> > If left unset, the existing behaviour is preserved, i.e. access
-> > is governed by basic file permissions.
-> > 
-> > Examples which can be passed by bootloaders:
-> > 
-> > restrict_proc_mem_foll_force=all
-> > restrict_proc_mem_write=ptracer
-> > restrict_proc_mem_read=ptracer
-> > 
-> > Each distribution needs to decide what restrictions to apply,
-> > depending on its use-cases. Embedded systems might want to do
-> > more, while general-purpouse distros might want a more relaxed
-> > policy, because for e.g. foll_force=all and write=all both break
-> > break GDB, so it might be a bit excessive.
-> > 
-> > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
-> 
-> Thanks for this new version!
-> 
-> > 
-> > Link: https://lwn.net/Articles/476947/ [1]
-> > Link: https://issues.chromium.org/issues/40089045 [2]
-> > Cc: Guenter Roeck <groeck@chromium.org>
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Jann Horn <jannh@google.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Co-developed-by: Mike Frysinger <vapier@chromium.org>
-> > Signed-off-by: Mike Frysinger <vapier@chromium.org>
-> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |  27 +++++
-> >  fs/proc/base.c                                | 103 +++++++++++++++++-
-> >  include/linux/jump_label.h                    |   5 +
-> >  3 files changed, 133 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index 6e62b8cb19c8d..d7f7db41369c7 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -5665,6 +5665,33 @@
-> >  	reset_devices	[KNL] Force drivers to reset the underlying device
-> >  			during initialization.
-> >  
-> > +	restrict_proc_mem_read= [KNL]
-> > +			Format: {all | ptracer}
-> > +			Allows restricting read access to /proc/*/mem files.
-> > +			Depending on restriction level, open for reads return -EACCESS.
-> > +			Can be one of:
-> > +			- 'all' restricts all access unconditionally.
-> > +			- 'ptracer' allows access only for ptracer processes.
-> > +			If not specified, then basic file permissions continue to apply.
-> > +
-> > +	restrict_proc_mem_write= [KNL]
-> > +			Format: {all | ptracer}
-> > +			Allows restricting write access to /proc/*/mem files.
-> > +			Depending on restriction level, open for writes return -EACCESS.
-> > +			Can be one of:
-> > +			- 'all' restricts all access unconditionally.
-> > +			- 'ptracer' allows access only for ptracer processes.
-> > +			If not specified, then basic file permissions continue to apply.
-> > +
-> > +	restrict_proc_mem_foll_force= [KNL]
-> > +			Format: {all | ptracer}
-> > +			Restricts the use of the FOLL_FORCE flag for /proc/*/mem access.
-> > +			If restricted, the FOLL_FORCE flag will not be added to vm accesses.
-> > +			Can be one of:
-> > +			- 'all' restricts all access unconditionally.
-> > +			- 'ptracer' allows access only for ptracer processes.
-> > +			If not specified, FOLL_FORCE is always used.
-> 
-> bike shedding: I wonder if this should be a fake namespace (adding a dot
-> just to break it up for reading more easily), and have words reordered
-> to the kernel's more common subject-verb-object: proc_mem.restrict_read=...
-> 
-> > +
-> >  	resume=		[SWSUSP]
-> >  			Specify the partition device for software suspend
-> >  			Format:
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 18550c071d71c..c733836c42a65 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -152,6 +152,41 @@ struct pid_entry {
-> >  		NULL, &proc_pid_attr_operations,	\
-> >  		{ .lsmid = LSMID })
-> >  
-> > +/*
-> > + * each restrict_proc_mem_* param controls the following static branches:
-> > + * key[0] = restrict all writes
-> > + * key[1] = restrict writes except for ptracers
-> > + * key[2] = restrict all reads
-> > + * key[3] = restrict reads except for ptracers
-> > + * key[4] = restrict all FOLL_FORCE usage
-> > + * key[5] = restrict FOLL_FORCE usage except for ptracers
-> > + */
-> > +DEFINE_STATIC_KEY_ARRAY_FALSE_RO(restrict_proc_mem, 6);
-> 
-> So, I don't like having open-coded numbers. And I'm not sure there's a
-> benefit to stuffing these all into an array? So:
-> 
-> DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_read);
-> DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_write);
-> DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_foll_force);
-> 
-> > +
-> > +static int __init early_restrict_proc_mem(char *buf, int offset)
-> > +{
-> > +	if (!buf)
-> > +		return -EINVAL;
-> > +
-> > +	if (strncmp(buf, "all", 3) == 0)
-> 
-> I'd use strcmp() to get exact matches. That way "allalksdjflas" doesn't
-> match. :)
-> 
-> > +		static_branch_enable(&restrict_proc_mem[offset]);
-> > +	else if (strncmp(buf, "ptracer", 7) == 0)
-> > +		static_branch_enable(&restrict_proc_mem[offset + 1]);
-> > +
-> > +	return 0;
-> > +}
-> 
-> Then don't bother with a common helper since you've got a macro, and
-> it'll all get tossed after __init anyway.
-> 
-> > +
-> > +#define DEFINE_EARLY_RESTRICT_PROC_MEM(name, offset)			\
-> > +static int __init early_restrict_proc_mem_##name(char *buf)		\
-> > +{									\
-> > +	return early_restrict_proc_mem(buf, offset);			\
-> > +}									\
-> > +early_param("restrict_proc_mem_" #name, early_restrict_proc_mem_##name)
-> > +
-> > +DEFINE_EARLY_RESTRICT_PROC_MEM(write, 0);
-> > +DEFINE_EARLY_RESTRICT_PROC_MEM(read, 2);
-> > +DEFINE_EARLY_RESTRICT_PROC_MEM(foll_force, 4);
-> 
-> #define DEFINE_EARLY_PROC_MEM_RESTRICT(name)				\
-> static int __init early_proc_mem_restrict_##name(char *buf)		\
-> {									\
-> 	if (!buf)							\
-> 		return -EINVAL;						\
-> 									\
-> 	if (strcmp(buf, "all") == 0)					\
-> 		static_branch_enable(&proc_mem_restrict_##name);	\
-> 	else if (strcmp(buf, "ptracer") == 0)				\
-> 		static_branch_enable(&proc_mem_restrict_##name);	\
-> 									\
-> 	return 0;							\
-> }									\
-> early_param("proc_mem_restrict_" #name, early_proc_mem_restrict_##name)
-> 
-> 
-> > +
-> >  /*
-> >   * Count the number of hardlinks for the pid_entry table, excluding the .
-> >   * and .. links.
-> > @@ -825,9 +860,58 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
-> >  	return 0;
-> >  }
-> >  
-> > +static bool __mem_open_current_is_ptracer(struct file *file)
-> > +{
-> > +	struct inode *inode = file_inode(file);
-> > +	struct task_struct *task = get_proc_task(inode);
-> > +	int ret = false;
-> > +
-> > +	if (task) {
-> > +		rcu_read_lock();
-> > +		if (current == ptrace_parent(task))
-> > +			ret = true;
-> > +		rcu_read_unlock();
-> > +		put_task_struct(task);
-> > +	}
-> 
-> This creates a ToCToU race between this check (which releases the task)
-> and the later memopen which make get a different task (and mm).
-> 
-> To deal with this, I think you need to add a new mode flag for
-> proc_mem_open(), and add the checking there.
-> 
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int __mem_open_check_access_restriction(struct file *file)
-> > +{
-> > +	if (file->f_mode & FMODE_WRITE) {
-> > +		/* Deny if writes are unconditionally disabled via param */
-> > +		if (static_branch_unlikely(&restrict_proc_mem[0]))
-> > +			return -EACCES;
-> > +
-> > +		/* Deny if writes are allowed only for ptracers via param */
-> > +		if (static_branch_unlikely(&restrict_proc_mem[1]) &&
-> > +		    !__mem_open_current_is_ptracer(file))
-> > +			return -EACCES;
-> > +
-> > +	} else if (file->f_mode & FMODE_READ) {
-> 
-> I think this "else" means that O_RDWR opens will only check the write
-> flag, so drop the "else".
-> 
-> > +		/* Deny if reads are unconditionally disabled via param */
-> > +		if (static_branch_unlikely(&restrict_proc_mem[2]))
-> > +			return -EACCES;
-> > +
-> > +		/* Deny if reads are allowed only for ptracers via param */
-> > +		if (static_branch_unlikely(&restrict_proc_mem[3]) &&
-> > +		    !__mem_open_current_is_ptracer(file))
-> > +			return -EACCES;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int mem_open(struct inode *inode, struct file *file)
-> >  {
-> > -	int ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
-> > +	int ret;
-> > +
-> > +	ret = __mem_open_check_access_restriction(file);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
-> >  
-> >  	/* OK to pass negative loff_t, we can catch out-of-range */
-> >  	file->f_mode |= FMODE_UNSIGNED_OFFSET;
-> > @@ -835,6 +919,20 @@ static int mem_open(struct inode *inode, struct file *file)
-> >  	return ret;
-> >  }
-> >  
-> > +static unsigned int __mem_rw_get_foll_force_flag(struct file *file)
-> > +{
-> > +	/* Deny if FOLL_FORCE is disabled via param */
-> > +	if (static_branch_unlikely(&restrict_proc_mem[4]))
-> > +		return 0;
-> > +
-> > +	/* Deny if FOLL_FORCE is allowed only for ptracers via param */
-> > +	if (static_branch_unlikely(&restrict_proc_mem[5]) &&
-> > +	    !__mem_open_current_is_ptracer(file))
-> 
-> This is like the ToCToU: the task may have changed out from under us
-> between the open the read/write.
+Hi!
 
-But why would you care? As long as the task is the ptracer it doesn't
-really matter afaict.
+On Fri 03-05-24 17:51:07, Baokun Li wrote:
+> On 2024/5/2 18:33, Jan Kara wrote:
+> > On Tue 30-04-24 08:04:03, syzbot wrote:
+> > > syzbot has bisected this issue to:
+> > > 
+> > > commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
+> > > Author: Baokun Li <libaokun1@huawei.com>
+> > > Date:   Thu Jun 16 02:13:56 2022 +0000
+> > > 
+> > >      ext4: fix use-after-free in ext4_xattr_set_entry
+> > So I'm not sure the bisect is correct since the change is looking harmless.
+> Yes, the root cause of the problem has nothing to do with this patch,
+> and please see the detailed analysis below.
+> > But it is sufficiently related that there indeed may be some relationship.
+> > Anyway, the kernel log has:
+> > 
+> > [   44.932900][ T1063] EXT4-fs warning (device loop0): ext4_evict_inode:297: xattr delete (err -12)
+> > [   44.943316][ T1063] EXT4-fs (loop0): unmounting filesystem.
+> > [   44.949531][ T1063] ------------[ cut here ]------------
+> > [   44.955050][ T1063] WARNING: CPU: 0 PID: 1063 at fs/mbcache.c:409 mb_cache_destroy+0xda/0x110
+> > 
+> > So ext4_xattr_delete_inode() called when removing inode has failed with
+> > ENOMEM and later mb_cache_destroy() was eventually complaining about having
+> > mbcache entry with increased refcount. So likely some error cleanup path is
+> > forgetting to drop mbcache entry reference somewhere but at this point I
+> > cannot find where. We'll likely need to play with the reproducer to debug
+> > that. Baokun, any chance for looking into this?
+> > 
+> > 								Honza
+> As you guessed, when -ENOMEM is returned in ext4_sb_bread(),
+> the reference count of ce is not properly released, as follows.
+> 
+> ext4_create
+>  __ext4_new_inode
+>   security_inode_init_security
+>    ext4_initxattrs
+>     ext4_xattr_set_handle
+>      ext4_xattr_block_find
+>      ext4_xattr_block_set
+>       ext4_xattr_block_cache_find
+>         ce = mb_cache_entry_find_first
+>             __entry_find
+>             atomic_inc_not_zero(&entry->e_refcnt)
+>         bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+>         if (PTR_ERR(bh) == -ENOMEM)
+>             return NULL;
+> 
+> Before merging into commit 67d7d8ad99be("ext4: fix use-after-free
+> in ext4_xattr_set_entry"), it will not return early in
+> ext4_xattr_ibody_find(),
+> so it tries to find it in iboy, fails the check in xattr_check_inode() and
+> returns without executing ext4_xattr_block_find(). Thus it will bisect
+> the patch, but actually has nothing to do with it.
+> 
+> ext4_xattr_ibody_get
+>  xattr_check_inode
+>   __xattr_check_inode
+>    check_xattrs
+>     if (end - (void *)header < sizeof(*header) + sizeof(u32))
+>       "in-inode xattr block too small"
+> 
+> Here's the patch in testing, I'll send it out officially after it is tested.
+> (PS:  I'm not sure if propagating the ext4_xattr_block_cache_find() errors
+> would be better.)
+
+Great! Thanks for debugging this! Some comments to your fix below:
+
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index b67a176bfcf9..5c9e751915fd 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -3113,11 +3113,10 @@ ext4_xattr_block_cache_find(struct inode *inode,
+> 
+>          bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+>          if (IS_ERR(bh)) {
+> -            if (PTR_ERR(bh) == -ENOMEM)
+> -                return NULL;
+> +            if (PTR_ERR(bh) != -ENOMEM)
+> +                EXT4_ERROR_INODE(inode, "block %lu read error",
+> +                         (unsigned long)ce->e_value);
+>              bh = NULL;
+> -            EXT4_ERROR_INODE(inode, "block %lu read error",
+> -                     (unsigned long)ce->e_value);
+>          } else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
+>              *pce = ce;
+>              return bh;
+
+So if we get the ENOMEM error, continuing the iteration seems to be
+pointless as we'll likely get it for the following entries as well. I think
+the original behavior of aborting the iteration in case of ENOMEM is
+actually better. We just have to do mb_cache_entry_put(ea_block_cache, ce)
+before returning...
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
