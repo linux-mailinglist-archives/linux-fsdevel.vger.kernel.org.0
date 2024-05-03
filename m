@@ -1,440 +1,717 @@
-Return-Path: <linux-fsdevel+bounces-18646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0988BAE98
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 16:10:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96008BAEA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 16:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5A81F217D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 14:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73EF82842B9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 14:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B27154BF8;
-	Fri,  3 May 2024 14:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10566154BF4;
+	Fri,  3 May 2024 14:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URrzFEig"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wyim2pkC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D8857C84;
-	Fri,  3 May 2024 14:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF7F154441;
+	Fri,  3 May 2024 14:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714745437; cv=none; b=qwPb76CvId+ph53XwNe+wDzS6dl7b3yQdkTI0YGmJWnux4rJoPDtrvId1opLFvOjuSS5ivl8iYxyGdmVi7Ff5H0DR3K1MMYw4XNkKACs8s1L7zNnDvcREbxMJdMdppmnySrSIdcnSEHSKU5nFYbkSh7klXF9TemEOt/9abcPbcw=
+	t=1714745710; cv=none; b=iKY2i38aFBhUTwlepu6Qnd/AZRx+GZCee+6IEd/rzG1wsrJO6nHUXBVJ9AEy0AIOUZWlExJDfmuoyTG5Xn+FU7Isrq+NeKdrM7x9BF0cYqlQ/Qd2vnKvomgPWhL0KaZdIBnle0K5tRb6ZHWTFIyTFQy2TTcsOgxp9wDaLWPjJXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714745437; c=relaxed/simple;
-	bh=xrkPnr6M2fqqjyNqVJXriL7Kgs//GJeo6hKRlFFCj2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J99IfAnFDYB0KSkOfMftqnsVoaDqzHFBSni4GlRW0q3LvmuktcZjFGM9sb/rZ9x0SfY2hxxkNtFbYOUuU6z9Z8nEyGHLJ1vrIFszoAb7xn7L1PG1IeM/tbaiJku567PRT+sHaRBRvGAJkFc9KFTZxfqyaGGDyL2vB7awxT12qmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URrzFEig; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1714745710; c=relaxed/simple;
+	bh=Id6ElNj0sEpoRegcL0Is1k1R9hLfr2Yeu3kdZOF2mrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i0Ur03qZJq2R1yfBkWdiiCuaZrWbRakoryIa5QB49qtNILTHk5fxaFfeWGqB/DKKh5n4j8tllsz5s6oD/mhXdsRa1uFz6t7EEE4d5WJ8rIHukguXZxyDYlicjehfaH3NEro0JzhstAUlkEq7lVFn6yuGR02Ea6WQehxCbDQxGJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wyim2pkC; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6edb76d83d0so8006696b3a.0;
-        Fri, 03 May 2024 07:10:34 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c70b652154so5532367b6e.2;
+        Fri, 03 May 2024 07:15:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714745433; x=1715350233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oC7NrlSFTxzEfGtJOryUeXYXwbNnyIitzb4rNtOwuA4=;
-        b=URrzFEigLr2m2VYY+Bg7mtQCFxqH9bD2eQO4TtoyMDBi5KjATltBgaV4AeNoWGBvCa
-         do9a5jGV84/spqcwfpREETZoGj0snnXaaqusxY3E7MtyLQwQKhqG0soICXvjs9Yrc9Xw
-         8hU0DLbhJeHJxQIUKHuG+z03xVFN31NJZBZCjNxDEXtsEt/N0Ajl6S30cHG/JRW7NMCM
-         syIKoG3chX/8TBeDgpE6DS8IHWdqgIcEeQcXbrIHoO0RYbBB9FYKBUjsxhuF/6jL4OeQ
-         gfkxBPk7UyGRWjxtaDZygx7FUo6K/Py4d7dF2vXuFVv2S7QbluNNWKMaQLfdn/X1pqq9
-         15rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714745433; x=1715350233;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1714745707; x=1715350507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oC7NrlSFTxzEfGtJOryUeXYXwbNnyIitzb4rNtOwuA4=;
-        b=siKc04RqU29GXsnunuAOap/E3lqqCAJPVV16n3L61DknS6UsVRxM1Hlx53c8pPTaFN
-         wMnKI/9PaC+HH4shB1TEfciN0grQSNgFTCMakhCmrv87bGZVYxvEnL2ZeAZMM2VjBSns
-         RmPRbfmPZMd3xpkdI2OdSd/ACZ7XbHlXY7D2v3UzjoVcNBhaj54A6d91ISE1/YI5wpei
-         j8L+SNTj4lLVJh/dr4qwBMSIZth/YM89fyYjEai4gDjvY2CeOEfYiGKtnbBBdwOnM7ls
-         0hmnVVtLINvnqADjqzmvP2TeXmOIDG8xHl5HDil4OMUheUc8M6gcnDOT4dxJsvtPFSiV
-         ccbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxGW5kn08sTXSyJPRRq4yHjcsmN9jyKqdf8m55yY+SFoMKgaahsQu/ZjGd1Dhosjl9TMuaFUgzIb0RiipilgtFmVDVdRTmiTVF
-X-Gm-Message-State: AOJu0YxGcxfvlHuhikf0/3A+K9n4ka1mwKAWIBB9Tib5Klt25NB5CAEo
-	Chv2tywBN/FDzrIXr7xhcUrFvwDryoN1VcPRMyc0JQXrKfnWgxI2OldOCQ==
-X-Google-Smtp-Source: AGHT+IHHJtsoaeT27cxG9e+WvigTzN/BBuUGZCOAHPLj5kRZFwvfoZyfWBdgz30OnGnEey4HoRBj5Q==
-X-Received: by 2002:a05:6a00:4b42:b0:6ed:21bc:ed8c with SMTP id kr2-20020a056a004b4200b006ed21bced8cmr2525952pfb.18.1714745433122;
-        Fri, 03 May 2024 07:10:33 -0700 (PDT)
-Received: from dw-tp.. ([171.76.87.126])
-        by smtp.gmail.com with ESMTPSA id u40-20020a056a0009a800b006ed98adec98sm3088580pfg.76.2024.05.03.07.10.29
+        bh=zrX77LDgQ9AjxKMcOfntaYcMmlEdkaEGEXeOOAW7N6A=;
+        b=Wyim2pkC5W92KZCElZv5GvktMjmL60/9tjU3l4VWPpwYieI8Ge4Wru33YX3WD+wdBz
+         rVGTUmReXOs/2VfjpxTNriyFSy7Fpyml4+b6zJzqyz3o1pGyrF+8QHAybHQwMmQ9zMUg
+         2tTfee15KIimauPYGvvvoR4+lrQjiZ6e+giTJPQiDToBfkqQbj3zrY3XoU6V+9XUYFyi
+         Qq1FcT91uPc5ncPoglwZTrojS/r9H8f1x+GQQrRzODkeUncZscCNKqTAazlo1tzv8UA6
+         qteoT2sQ4aHnmwMKgwIINBaNuuhEwa9pc2pRt+v2Oh/d/3Yl5mWxDYVc9mPDvMKTQkxj
+         Mf1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714745707; x=1715350507;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zrX77LDgQ9AjxKMcOfntaYcMmlEdkaEGEXeOOAW7N6A=;
+        b=dqRYJpEJMPZFw6UWbX2ve2AT0qsvjlOdmB6Vl65NVTWkMpEmfxlYU14DSILWYoUGiq
+         laWvChdKIazQ0L6LFoPDzlTP5paXDhw3zGRhU6age4OZ52hnCo70XL+T3S5Pyc5aANoe
+         f1yNEly0/qEPmWDXehGJv+GcD4k3FRQrYVd036651bBND11UpgNLnb409vRq0/S08Jo9
+         iR1D+h4m1PsDiJBqmkaUQaKasme8J+bn/BCTttRm+0f8ja8ogb9mWakJgQXq7n9SJClJ
+         K+E8nh7L/K1P0vtr/FjRvfFs84yC5VpmuD4goywPhEm/9/Up1JYLsWljsHFQJqA60FN6
+         09sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyQCo5aGuE+dzDOBvAv7X8Vfe38uX+1MADqncrQ/WEQ0oyqRhnRkwXnOY6kfwFbKsuYYlsj7HI6x3no1DfaP+L1lUTt6+CQ2iZxx0XeySuF9JeXG/JFKnucMWKoGNd66Ggo6eo3brQCA==
+X-Gm-Message-State: AOJu0YxuhtzO/8A7VfNF9Aib4coADneOGMjARK5DCArHJ9FPoU28B9tX
+	a5mOIEQP6zedMrzCiV6o2gP4fZ4+YBXsS/FHJ0KMTfAWhZkOgK7H
+X-Google-Smtp-Source: AGHT+IF1f6K9lV+bRbMym2R+gd9eOO7t2eNJ7d80IbJ7WhVcFdePW18b30bt+8JSpXjB+4HIDr7M2g==
+X-Received: by 2002:a05:6808:4346:b0:3c7:41ba:102f with SMTP id dx6-20020a056808434600b003c741ba102fmr2927770oib.34.1714745706479;
+        Fri, 03 May 2024 07:15:06 -0700 (PDT)
+Received: from Borg-10.local (syn-070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id en2-20020a056808394200b003c85ab75886sm529220oib.5.2024.05.03.07.15.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 07:10:32 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Jan Kara <jack@suse.cz>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC] Documentation: Add initial iomap document
-Date: Fri,  3 May 2024 19:40:19 +0530
-Message-ID: <17e84cbae600898269e9ad35046ce6dc929036ae.1714744795.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.44.0
+        Fri, 03 May 2024 07:15:05 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Fri, 3 May 2024 09:15:03 -0500
+From: John Groves <John@groves.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	John Groves <jgroves@micron.com>, john@jagalactic.com, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, gregory.price@memverge.com, 
+	Randy Dunlap <rdunlap@infradead.org>, Jerome Glisse <jglisse@google.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
+	Eishan Mirakhur <emirakhur@micron.com>, Ravi Shankar <venkataravis@micron.com>, 
+	Srinivasulu Thanneeru <sthanneeru@micron.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Chandan Babu R <chandanbabu@kernel.org>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Steve French <stfrench@microsoft.com>, 
+	Nathan Lynch <nathanl@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Julien Panis <jpanis@baylibre.com>, 
+	Stanislav Fomichev <sdf@google.com>, Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: Re: [RFC PATCH v2 08/12] famfs: module operations & fs_context
+Message-ID: <xpban4zhri7hhxy4fv6j6kmqjlm3fid7n6lrzsr7fsfthxqxwq@xhsqipkvnd7w>
+References: <cover.1714409084.git.john@groves.net>
+ <86694a1a663ab0b6e8e35c7b187f5ad179103482.1714409084.git.john@groves.net>
+ <20240430-badeverbot-paletten-05442cfbbdf0@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240430-badeverbot-paletten-05442cfbbdf0@brauner>
 
-This adds an initial first draft of iomap documentation. Hopefully this
-will come useful to those who are looking for converting their
-filesystems to iomap. Currently this is in text format since this is the
-first draft. I would prefer to work on it's conversion to .rst once we
-receive the feedback/review comments on the overall content of the document.
-But feel free to let me know if we prefer it otherwise.
+On 24/04/30 01:01PM, Christian Brauner wrote:
+> On Mon, Apr 29, 2024 at 12:04:24PM -0500, John Groves wrote:
+> > Start building up from the famfs module operations. This commit
+> > includes the following:
+> > 
+> > * Register as a file system
+> > * Parse mount parameters
+> > * Allocate or find (and initialize) a superblock via famfs_get_tree()
+> > * Lookup the host dax device, and bail if it's in use (or not dax)
+> > * Register as the holder of the dax device if it's available
+> > * Add Kconfig and Makefile misc to build famfs
+> > * Add FAMFS_SUPER_MAGIC to include/uapi/linux/magic.h
+> > * Add export of fs/namei.c:may_open_dev(), which famfs needs to call
+> > * Update MAINTAINERS file for the fs/famfs/ path
+> > 
+> > The following exports had to happen to enable famfs:
+> > 
+> > * This uses the new fs/super.c:kill_char_super() - the other kill*super
+> >   helpers were not quite right.
+> > * This uses the dev_dax_iomap export of dax_dev_get()
+> > 
+> > This commit builds but is otherwise too incomplete to run
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  MAINTAINERS                |   1 +
+> >  fs/Kconfig                 |   2 +
+> >  fs/Makefile                |   1 +
+> >  fs/famfs/Kconfig           |  10 ++
+> >  fs/famfs/Makefile          |   5 +
+> >  fs/famfs/famfs_inode.c     | 345 +++++++++++++++++++++++++++++++++++++
+> >  fs/famfs/famfs_internal.h  |  36 ++++
+> >  fs/namei.c                 |   1 +
+> >  include/uapi/linux/magic.h |   1 +
+> >  9 files changed, 402 insertions(+)
+> >  create mode 100644 fs/famfs/Kconfig
+> >  create mode 100644 fs/famfs/Makefile
+> >  create mode 100644 fs/famfs/famfs_inode.c
+> >  create mode 100644 fs/famfs/famfs_internal.h
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 3f2d847dcf01..365d678e2f40 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -8188,6 +8188,7 @@ L:	linux-cxl@vger.kernel.org
+> >  L:	linux-fsdevel@vger.kernel.org
+> >  S:	Supported
+> >  F:	Documentation/filesystems/famfs.rst
+> > +F:	fs/famfs
+> >  
+> >  FANOTIFY
+> >  M:	Jan Kara <jack@suse.cz>
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index a46b0cbc4d8f..53b4629e92a0 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -140,6 +140,8 @@ source "fs/autofs/Kconfig"
+> >  source "fs/fuse/Kconfig"
+> >  source "fs/overlayfs/Kconfig"
+> >  
+> > +source "fs/famfs/Kconfig"
+> > +
+> >  menu "Caches"
+> >  
+> >  source "fs/netfs/Kconfig"
+> > diff --git a/fs/Makefile b/fs/Makefile
+> > index 6ecc9b0a53f2..3393f399a9e9 100644
+> > --- a/fs/Makefile
+> > +++ b/fs/Makefile
+> > @@ -129,3 +129,4 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
+> >  obj-$(CONFIG_EROFS_FS)		+= erofs/
+> >  obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
+> >  obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
+> > +obj-$(CONFIG_FAMFS)             += famfs/
+> > diff --git a/fs/famfs/Kconfig b/fs/famfs/Kconfig
+> > new file mode 100644
+> > index 000000000000..edb8980820f7
+> > --- /dev/null
+> > +++ b/fs/famfs/Kconfig
+> > @@ -0,0 +1,10 @@
+> > +
+> > +
+> > +config FAMFS
+> > +       tristate "famfs: shared memory file system"
+> > +       depends on DEV_DAX && FS_DAX && DEV_DAX_IOMAP
+> > +       help
+> > +	  Support for the famfs file system. Famfs is a dax file system that
+> > +	  can support scale-out shared access to fabric-attached memory
+> > +	  (e.g. CXL shared memory). Famfs is not a general purpose file system;
+> > +	  it is an enabler for data sets in shared memory.
+> > diff --git a/fs/famfs/Makefile b/fs/famfs/Makefile
+> > new file mode 100644
+> > index 000000000000..62230bcd6793
+> > --- /dev/null
+> > +++ b/fs/famfs/Makefile
+> > @@ -0,0 +1,5 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +obj-$(CONFIG_FAMFS) += famfs.o
+> > +
+> > +famfs-y := famfs_inode.o
+> > diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
+> > new file mode 100644
+> > index 000000000000..61306240fc0b
+> > --- /dev/null
+> > +++ b/fs/famfs/famfs_inode.c
+> > @@ -0,0 +1,345 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * famfs - dax file system for shared fabric-attached memory
+> > + *
+> > + * Copyright 2023-2024 Micron Technology, inc
+> > + *
+> > + * This file system, originally based on ramfs the dax support from xfs,
+> > + * is intended to allow multiple host systems to mount a common file system
+> > + * view of dax files that map to shared memory.
+> > + */
+> > +
+> > +#include <linux/fs.h>
+> > +#include <linux/time.h>
+> > +#include <linux/init.h>
+> > +#include <linux/string.h>
+> > +#include <linux/parser.h>
+> > +#include <linux/magic.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/fs_context.h>
+> > +#include <linux/fs_parser.h>
+> > +#include <linux/dax.h>
+> > +#include <linux/hugetlb.h>
+> > +#include <linux/iomap.h>
+> > +#include <linux/path.h>
+> > +#include <linux/namei.h>
+> > +
+> > +#include "famfs_internal.h"
+> > +
+> > +#define FAMFS_DEFAULT_MODE	0755
+> > +
+> > +static struct inode *famfs_get_inode(struct super_block *sb,
+> > +				     const struct inode *dir,
+> > +				     umode_t mode, dev_t dev)
+> > +{
+> > +	struct inode *inode = new_inode(sb);
+> > +	struct timespec64 tv;
+> > +
+> > +	if (!inode)
+> > +		return NULL;
+> > +
+> > +	inode->i_ino = get_next_ino();
+> > +	inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
+> > +	inode->i_mapping->a_ops = &ram_aops;
+> > +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+> > +	mapping_set_unevictable(inode->i_mapping);
+> > +	tv = inode_set_ctime_current(inode);
+> > +	inode_set_mtime_to_ts(inode, tv);
+> > +	inode_set_atime_to_ts(inode, tv);
+> > +
+> > +	switch (mode & S_IFMT) {
+> > +	default:
+> > +		init_special_inode(inode, mode, dev);
+> > +		break;
+> > +	case S_IFREG:
+> > +		inode->i_op = NULL /* famfs_file_inode_operations */;
+> > +		inode->i_fop = NULL /* &famfs_file_operations */;
+> > +		break;
+> > +	case S_IFDIR:
+> > +		inode->i_op = NULL /* famfs_dir_inode_operations */;
+> > +		inode->i_fop = &simple_dir_operations;
+> > +
+> > +		/* Directory inodes start off with i_nlink == 2 (for ".") */
+> > +		inc_nlink(inode);
+> > +		break;
+> > +	case S_IFLNK:
+> > +		inode->i_op = &page_symlink_inode_operations;
+> > +		inode_nohighmem(inode);
+> > +		break;
+> > +	}
+> > +	return inode;
+> > +}
+> > +
+> > +/*
+> > + * famfs dax_operations  (for char dax)
+> > + */
+> > +static int
+> > +famfs_dax_notify_failure(struct dax_device *dax_dev, u64 offset,
+> > +			u64 len, int mf_flags)
+> > +{
+> > +	struct super_block *sb = dax_holder(dax_dev);
+> > +	struct famfs_fs_info *fsi = sb->s_fs_info;
+> > +
+> > +	pr_err("%s: rootdev=%s offset=%lld len=%llu flags=%x\n", __func__,
+> > +	       fsi->rootdev, offset, len, mf_flags);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct dax_holder_operations famfs_dax_holder_ops = {
+> > +	.notify_failure		= famfs_dax_notify_failure,
+> > +};
+> > +
+> > +/*****************************************************************************
+> > + * fs_context_operations
+> > + */
+> > +
+> > +static int
+> > +famfs_fill_super(struct super_block *sb, struct fs_context *fc)
+> > +{
+> > +	int rc = 0;
+> > +
+> > +	sb->s_maxbytes		= MAX_LFS_FILESIZE;
+> > +	sb->s_blocksize		= PAGE_SIZE;
+> > +	sb->s_blocksize_bits	= PAGE_SHIFT;
+> > +	sb->s_magic		= FAMFS_SUPER_MAGIC;
+> > +	sb->s_op		= NULL /* famfs_super_ops */;
+> > +	sb->s_time_gran		= 1;
+> > +
+> > +	return rc;
+> > +}
+> > +
+> > +static int
+> > +lookup_daxdev(const char *pathname, dev_t *devno)
+> > +{
+> > +	struct inode *inode;
+> > +	struct path path;
+> > +	int err;
+> > +
+> > +	if (!pathname || !*pathname)
+> > +		return -EINVAL;
+> > +
+> > +	err = kern_path(pathname, LOOKUP_FOLLOW, &path);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	inode = d_backing_inode(path.dentry);
+> > +	if (!S_ISCHR(inode->i_mode)) {
+> > +		err = -EINVAL;
+> > +		goto out_path_put;
+> > +	}
+> > +
+> > +	if (!may_open_dev(&path)) { /* had to export this */
+> > +		err = -EACCES;
+> > +		goto out_path_put;
+> > +	}
+> > +
+> > +	 /* if it's dax, i_rdev is struct dax_device */
+> > +	*devno = inode->i_rdev;
+> > +
+> > +out_path_put:
+> > +	path_put(&path);
+> > +	return err;
+> > +}
+> > +
+> > +static int
+> > +famfs_get_tree(struct fs_context *fc)
+> > +{
+> > +	struct famfs_fs_info *fsi = fc->s_fs_info;
+> > +	struct dax_device *dax_devp;
+> > +	struct super_block *sb;
+> > +	struct inode *inode;
+> > +	dev_t daxdevno;
+> > +	int err;
+> > +
+> > +	/* TODO: clean up chatty messages */
+> > +
+> > +	err = lookup_daxdev(fc->source, &daxdevno);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	fsi->daxdevno = daxdevno;
+> > +
+> > +	/* This will set sb->s_dev=daxdevno */
+> > +	sb = sget_dev(fc, daxdevno);
+> 
+> This will open the dax device as a block device. However, nothing in
+> your ->kill_sb method or kill_char_super() closes it again. So you're
+> leaking block device references and leaving unitialized memory around as
+> you've claimed that device but never ended your claim.
+> 
+> > +	if (IS_ERR(sb)) {
+> > +		pr_err("%s: sget_dev error\n", __func__);
+> > +		return PTR_ERR(sb);
+> > +	}
+> > +
+> > +	if (sb->s_root) {
+> > +		pr_info("%s: found a matching suerblock for %s\n",
+> > +			__func__, fc->source);
+> > +
+> > +		/* We don't expect to find a match by dev_t; if we do, it must
+> > +		 * already be mounted, so we bail
+> > +		 */
+> > +		err = -EBUSY;
+> > +		goto deactivate_out;
+> > +	} else {
+> > +		pr_info("%s: initializing new superblock for %s\n",
+> > +			__func__, fc->source);
+> > +		err = famfs_fill_super(sb, fc);
+> > +		if (err)
+> > +			goto deactivate_out;
+> > +	}
+> > +
+> > +	/* This will fail if it's not a dax device */
+> > +	dax_devp = dax_dev_get(daxdevno);
+> > +	if (!dax_devp) {
+> > +		pr_warn("%s: device %s not found or not dax\n",
+> > +		       __func__, fc->source);
+> > +		err = -ENODEV;
+> > +		goto deactivate_out;
+> > +	}
+> > +
+> > +	err = fs_dax_get(dax_devp, sb, &famfs_dax_holder_ops);
+> > +	if (err) {
+> > +		pr_err("%s: fs_dax_get(%lld) failed\n", __func__, (u64)daxdevno);
+> > +		err = -EBUSY;
+> > +		goto deactivate_out;
+> > +	}
+> > +	fsi->dax_devp = dax_devp;
+> > +
+> > +	inode = famfs_get_inode(sb, NULL, S_IFDIR | fsi->mount_opts.mode, 0);
+> > +	sb->s_root = d_make_root(inode);
+> > +	if (!sb->s_root) {
+> > +		pr_err("%s: d_make_root() failed\n", __func__);
+> > +		err = -ENOMEM;
+> > +		fs_put_dax(fsi->dax_devp, sb);
+> > +		goto deactivate_out;
+> > +	}
+> > +
+> > +	sb->s_flags |= SB_ACTIVE;
+> > +
+> > +	WARN_ON(fc->root);
+> > +	fc->root = dget(sb->s_root);
+> > +	return err;
+> > +
+> > +deactivate_out:
+> > +	pr_debug("%s: deactivating sb=%llx\n", __func__, (u64)sb);
+> > +	deactivate_locked_super(sb);
+> > +	return err;
+> > +}
+> > +
+> > +/*****************************************************************************/
+> > +
+> > +enum famfs_param {
+> > +	Opt_mode,
+> > +	Opt_dax,
+> > +};
+> > +
+> > +const struct fs_parameter_spec famfs_fs_parameters[] = {
+> > +	fsparam_u32oct("mode",	  Opt_mode),
+> > +	fsparam_string("dax",     Opt_dax),
+> > +	{}
+> > +};
+> > +
+> > +static int famfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> > +{
+> > +	struct famfs_fs_info *fsi = fc->s_fs_info;
+> > +	struct fs_parse_result result;
+> > +	int opt;
+> > +
+> > +	opt = fs_parse(fc, famfs_fs_parameters, param, &result);
+> > +	if (opt == -ENOPARAM) {
+> > +		opt = vfs_parse_fs_param_source(fc, param);
+> > +		if (opt != -ENOPARAM)
+> > +			return opt;
+> 
+> This shouldn't be needed. The VFS will handle all that for you.
+> 
+> > +
+> > +		return 0;
+> > +	}
+> > +	if (opt < 0)
+> > +		return opt;
+> > +
+> > +	switch (opt) {
+> > +	case Opt_mode:
+> > +		fsi->mount_opts.mode = result.uint_32 & S_IALLUGO;
+> > +		break;
+> > +	case Opt_dax:
+> > +		if (strcmp(param->string, "always"))
+> > +			pr_notice("%s: invalid dax mode %s\n",
+> > +				  __func__, param->string);
+> > +		break;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void famfs_free_fc(struct fs_context *fc)
+> > +{
+> > +	struct famfs_fs_info *fsi = fc->s_fs_info;
+> > +
+> > +	if (fsi && fsi->rootdev)
+> > +		kfree(fsi->rootdev);
+> 
+> Dead code since rootdev is unused an unset?
+> 
+> > +
+> > +	kfree(fsi);
+> > +}
+> > +
+> > +static const struct fs_context_operations famfs_context_ops = {
+> > +	.free		= famfs_free_fc,
+> > +	.parse_param	= famfs_parse_param,
+> > +	.get_tree	= famfs_get_tree,
+> > +};
+> > +
+> > +static int famfs_init_fs_context(struct fs_context *fc)
+> > +{
+> > +	struct famfs_fs_info *fsi;
+> > +
+> > +	fsi = kzalloc(sizeof(*fsi), GFP_KERNEL);
+> > +	if (!fsi)
+> > +		return -ENOMEM;
+> > +
+> > +	fsi->mount_opts.mode = FAMFS_DEFAULT_MODE;
+> > +	fc->s_fs_info        = fsi;
+> > +	fc->ops              = &famfs_context_ops;
+> > +	return 0;
+> > +}
+> > +
+> > +static void famfs_kill_sb(struct super_block *sb)
+> > +{
+> > +	struct famfs_fs_info *fsi = sb->s_fs_info;
+> > +
+> > +	if (fsi->dax_devp)
+> > +		fs_put_dax(fsi->dax_devp, sb);
+> > +	if (fsi && fsi->rootdev)
+> > +		kfree(fsi->rootdev);
+> > +	kfree(fsi);
+> > +	sb->s_fs_info = NULL;
+> > +
+> > +	kill_char_super(sb); /* new */
+> > +}
+> 
+> Can likely just be
+> 
+> static void famfs_kill_sb(struct super_block *sb)
+> {
+> 	struct famfs_fs_info *fsi = sb->s_fs_info;
+> 
+> 	generic_shutdown_super(sb);
+> 
+>         if (sb->s_bdev_file)
+> 		bdev_fput(sb->s_bdev_file);
+> 
+> 	if (fsi->dax_devp)
+> 		fs_put_dax(fsi->dax_devp, sb);
+> 
+> 	kfree(fsi);
+> }
+> 
+> and then you don't need any custom helpers at all.
 
-A lot of this has been collected from various email conversations, code
-comments, commit messages and/or my own understanding of iomap. Please
-note a large part of this has been taken from Dave's reply to last iomap
-doc patchset. Thanks to Dave, Darrick, Matthew, Christoph and other iomap
-developers who have taken time to explain the iomap design in various emails,
-commits, comments etc.
+I replaced famfs_kill_sb() with this function.  On [the first] umount, I
+get one of these dentry bugs for each file in the file system:
 
-Please note that this is not the complete iomap design doc. but a brief
-overview of iomap.
 
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- Documentation/filesystems/index.rst |   1 +
- Documentation/filesystems/iomap.txt | 289 ++++++++++++++++++++++++++++
- MAINTAINERS                         |   1 +
- 3 files changed, 291 insertions(+)
- create mode 100644 Documentation/filesystems/iomap.txt
+    May 03 07:27:03 f39-dev1 kernel: ------------[ cut here ]------------
+    May 03 07:27:03 f39-dev1 kernel: BUG: Dentry 0000000033362594{i=217d,n=smoke_loop4.log}  still in use (1) [unmount of famfs famfs]
+    May 03 07:27:03 f39-dev1 kernel: WARNING: CPU: 0 PID: 1138 at fs/dcache.c:1524 umount_check+0x56/0x70
+    May 03 07:27:03 f39-dev1 kernel: Modules linked in: famfs rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_resolver nfs lockd grace netfs qrtr rfkill intel_rapl_msr sunrpc snd_hda_codec_generic intel_rapl_common snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi kvm_intel snd_hda_codec kmem snd_hda_core iTCO_wdt intel_pmc_bxt snd_hwdep device_dax iTCO_vendor_support kvm snd_seq snd_seq_device rapl dax_hmem cxl_acpi snd_pcm cxl_core i2c_i801 snd_timer einj pcspkr i2c_smbus snd lpc_ich soundcore virtio_balloon joydev vfat fat fuse loop zram xfs crct10dif_pclmul crc32_pclmul crc32c_intel polyval_clmulni polyval_generic ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 virtio_blk virtio_console virtio_gpu virtio_net net_failover virtio_dma_buf failover serio_raw scsi_dh_rdac scsi_dh_emc scsi_dh_alua dm_multipath qemu_fw_cfg
+    May 03 07:27:03 f39-dev1 kernel: CPU: 0 PID: 1138 Comm: umount Tainted: G        W          6.9.0-rc5+ #266
+    May 03 07:27:03 f39-dev1 kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20230301gitf80f052277c8-26.fc38 03/01/2023
+    May 03 07:27:03 f39-dev1 kernel: RIP: 0010:umount_check+0x56/0x70
+    May 03 07:27:03 f39-dev1 kernel: Code: 03 00 00 48 8b 40 28 48 89 e5 4c 8b 08 48 8b 46 30 48 85 c0 74 04 48 8b 50 40 51 48 c7 c7 b0 a6 ae 82 48 89 f1 e8 ba 56 c4 ff <0f> 0b 58 31 c0 c9 c3 cc cc cc cc 41 83 f8 01 75 ba eb a8 0f 1f 80
+    May 03 07:27:03 f39-dev1 kernel: RSP: 0018:ffffc90000717bd0 EFLAGS: 00010282
+    May 03 07:27:03 f39-dev1 kernel: RAX: 0000000000000000 RBX: 0000000000000f34 RCX: 0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: RDX: 0000000000000004 RSI: ffffffff82b1c111 RDI: 00000000ffffffff
+    May 03 07:27:03 f39-dev1 kernel: RBP: ffffc90000717bd8 R08: 0000000000000000 R09: 0000000000000003
+    May 03 07:27:03 f39-dev1 kernel: R10: ffffc90000717a20 R11: ffffffff82f3c3a8 R12: ffff8881007be840
+    May 03 07:27:03 f39-dev1 kernel: R13: ffffffff814d8ae0 R14: ffff8881007be8a0 R15: ffff88810d82ab40
+    May 03 07:27:03 f39-dev1 kernel: FS:  00007f3163f71800(0000) GS:ffff88886fc00000(0000) knlGS:0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    May 03 07:27:03 f39-dev1 kernel: CR2: 00007fff84673f78 CR3: 000000010c338002 CR4: 0000000000170ef0
+    May 03 07:27:03 f39-dev1 kernel: Call Trace:
+    May 03 07:27:03 f39-dev1 kernel:  <TASK>
+    May 03 07:27:03 f39-dev1 kernel:  ? show_regs+0x64/0x70
+    May 03 07:27:03 f39-dev1 kernel:  ? __warn+0x88/0x130
+    May 03 07:27:03 f39-dev1 kernel:  ? umount_check+0x56/0x70
+    May 03 07:27:03 f39-dev1 kernel:  ? report_bug+0x192/0x1c0
+    May 03 07:27:03 f39-dev1 kernel:  ? handle_bug+0x44/0x90
+    May 03 07:27:03 f39-dev1 kernel:  ? exc_invalid_op+0x18/0x70
+    May 03 07:27:03 f39-dev1 kernel:  ? asm_exc_invalid_op+0x1b/0x20
+    May 03 07:27:03 f39-dev1 kernel:  ? __pfx_umount_check+0x10/0x10
+    May 03 07:27:03 f39-dev1 kernel:  ? umount_check+0x56/0x70
+    May 03 07:27:03 f39-dev1 kernel:  d_walk+0xc3/0x280
+    May 03 07:27:03 f39-dev1 kernel:  shrink_dcache_for_umount+0x4e/0x130
+    May 03 07:27:03 f39-dev1 kernel:  generic_shutdown_super+0x1f/0x120
+    May 03 07:27:03 f39-dev1 kernel:  famfs_kill_sb+0x1b/0x70 [famfs]
+    May 03 07:27:03 f39-dev1 kernel:  deactivate_locked_super+0x35/0xb0
+    May 03 07:27:03 f39-dev1 kernel:  deactivate_super+0x40/0x50
+    May 03 07:27:03 f39-dev1 kernel:  cleanup_mnt+0xc3/0x160
+    May 03 07:27:03 f39-dev1 kernel:  __cleanup_mnt+0x12/0x20
+    May 03 07:27:03 f39-dev1 kernel:  task_work_run+0x60/0x90
+    May 03 07:27:03 f39-dev1 kernel:  syscall_exit_to_user_mode+0x21a/0x220
+    May 03 07:27:03 f39-dev1 kernel:  do_syscall_64+0x8d/0x180
+    May 03 07:27:03 f39-dev1 kernel:  ? mntput+0x24/0x40
+    May 03 07:27:03 f39-dev1 kernel:  ? path_put+0x1e/0x30
+    May 03 07:27:03 f39-dev1 kernel:  ? do_faccessat+0x1b8/0x2e0
+    May 03 07:27:03 f39-dev1 kernel:  ? syscall_exit_to_user_mode+0x7c/0x220
+    May 03 07:27:03 f39-dev1 kernel:  ? do_syscall_64+0x8d/0x180
+    May 03 07:27:03 f39-dev1 kernel:  ? putname+0x55/0x70
+    May 03 07:27:03 f39-dev1 kernel:  ? syscall_exit_to_user_mode+0x7c/0x220
+    May 03 07:27:03 f39-dev1 kernel:  ? do_syscall_64+0x8d/0x180
+    May 03 07:27:03 f39-dev1 kernel:  ? do_user_addr_fault+0x315/0x6e0
+    May 03 07:27:03 f39-dev1 kernel:  ? irqentry_exit_to_user_mode+0x71/0x220
+    May 03 07:27:03 f39-dev1 kernel:  ? irqentry_exit+0x3b/0x50
+    May 03 07:27:03 f39-dev1 kernel:  ? exc_page_fault+0x90/0x190
+    May 03 07:27:03 f39-dev1 kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+    May 03 07:27:03 f39-dev1 kernel: RIP: 0033:0x7f316419041b
+    May 03 07:27:03 f39-dev1 kernel: Code: c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 31 f6 e9 05 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 e1 19 0c 00 f7 d8
+    May 03 07:27:03 f39-dev1 kernel: RSP: 002b:00007fff84675728 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+    May 03 07:27:03 f39-dev1 kernel: RAX: 0000000000000000 RBX: 00005648cab2eb90 RCX: 00007f316419041b
+    May 03 07:27:03 f39-dev1 kernel: RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00005648cab33ba0
+    May 03 07:27:03 f39-dev1 kernel: RBP: 00007fff84675800 R08: 0000000000000020 R09: 0000000000000001
+    May 03 07:27:03 f39-dev1 kernel: R10: 0000000000000004 R11: 0000000000000246 R12: 00005648cab2ec90
+    May 03 07:27:03 f39-dev1 kernel: R13: 0000000000000000 R14: 00005648cab33ba0 R15: 00005648cab2efa0
+    May 03 07:27:03 f39-dev1 kernel:  </TASK>
+    May 03 07:27:03 f39-dev1 kernel: ---[ end trace 0000000000000000 ]---
 
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 1f9b4c905a6a..c17b5a2ec29b 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -34,6 +34,7 @@ algorithms work.
-    seq_file
-    sharedsubtree
-    idmappings
-+   iomap
+After one of the above for every file:
 
-    automount-support
+    May 03 07:27:03 f39-dev1 kernel: VFS: Busy inodes after unmount of famfs (famfs)
 
-diff --git a/Documentation/filesystems/iomap.txt b/Documentation/filesystems/iomap.txt
-new file mode 100644
-index 000000000000..4f766b129975
---- /dev/null
-+++ b/Documentation/filesystems/iomap.txt
-@@ -0,0 +1,289 @@
-+Introduction
-+============
-+iomap is a filesystem centric mapping layer that maps file's logical offset
-+ranges to physical extents. It provides several iterator APIs which filesystems
-+can use for doing various file_operations, address_space_operations,
-+vm_operations, inode_operations etc. It supports APIs for doing direct-io,
-+buffered-io, lseek, dax-io, page-mkwrite, swap_activate and extent reporting
-+via fiemap.
-+
-+iomap is termed above as filesystem centric because it first calls
-+->iomap_begin() phase supplied by the filesystem to get a mapped extent and
-+then loops over each folio within that mapped extent.
-+This is useful for filesystems because now they can allocate/reserve a much
-+larger extent at begin phase v/s the older approach of doing block allocation
-+of one block at a time by calling filesystem's provided ->get_blocks() routine.
-+
-+i.e. at a high level how iomap does write iter is [1]::
-+	user IO
-+	  loop for file IO range
-+	    loop for each mapped extent
-+	      if (buffered) {
-+		loop for each page/folio {
-+		  instantiate page cache
-+		  copy data to/from page cache
-+		  update page cache state
-+		}
-+	      } else { /* direct IO */
-+		loop for each bio {
-+		  pack user pages into bio
-+		  submit bio
-+		}
-+	      }
-+	    }
-+	  }
-+
-+
-+Motivation for filesystems to convert to iomap
-+===============================================
-+1. iomap is a modern filesystem mapping layer VFS abstraction.
-+2. It also supports large folios for buffered-writes. Large folios can help
-+improve filesystem buffered-write performance and can also improve overall
-+system performance.
-+3. Less maintenance overhead for individual filesystem maintainers.
-+iomap is able to abstract away common folio-cache related operations from the
-+filesystem to within the iomap layer itself. e.g. allocating, instantiating,
-+locking and unlocking of the folios for buffered-write operations are now taken
-+care within iomap. No ->write_begin(), ->write_end() or direct_IO
-+address_space_operations are required to be implemented by filesystem using
-+iomap.
-+
-+
-+blocksize < pagesize path/large folios
-+======================================
-+Large folio support or systems with large pagesize e.g 64K on Power/ARM64 and
-+4k blocksize, needs filesystems to support bs < ps paths. iomap embeds
-+struct iomap_folio_state (ifs) within folio->private. ifs maintains uptodate
-+and dirty bits for each subblock within the folio. Using ifs iomap can track
-+update and dirty status of each block within the folio. This helps in supporting
-+bs < ps path for such systems with large pagesize or with large folios [2].
-+
-+
-+struct iomap
-+=============
-+This structure defines a file mapping information of logical file offset range
-+to a physical mapped extent on which an IO operation could be performed.
-+An iomap reflects a single contiguous range of filesystem address space that
-+either exists in memory or on a block device.
-+1. The type field within iomap determines what type the range maps to e.g.
-+IOMAP_HOLE, IOMAP_DELALLOC, IOMAP_UNWRITTEN etc.
-+
-+2. The flags field represent the state flags (e.g. IOMAP_F_*), most of which are
-+set the by the filesystem during mapping time that indicates how iomap
-+infrastructure should modify it's behaviour to do the right thing.
-+
-+3. private void pointer within iomap allows the filesystems to pass filesystem's
-+private data from ->iomap_begin() to ->iomap_end() [3].
-+(see include/linux/iomap.h for more details)
-+
-+
-+iomap operations
-+================
-+iomap provides different iterator APIs for direct-io, buffered-io, lseek,
-+dax-io, page-mkwrite, swap_activate and extent reporting via fiemap. It requires
-+various struct operations to be prepared by filesystem and to be supplied to
-+iomap iterator APIs either at the beginning of iomap api call or attaching it
-+during the mapping callback time e.g iomap_folio_ops is attached to
-+iomap->folio_ops during ->iomap_begin() call.
-+
-+Following provides various ops to be supplied by filesystems to iomap layer for
-+doing different I/O types as discussed above.
-+
-+iomap_ops: IO interface specific operations
-+==========
-+The methods are designed to be used as pairs. The begin method creates the iomap
-+and attaches all the necessary state and information which subsequent iomap
-+methods & their callbacks might need. Once the iomap infrastructure has finished
-+working on the iomap it will call the end method to allow the filesystem to tear
-+down any unused space and/or structures it created for the specific iomap
-+context.
-+
-+Almost all iomap iterator APIs require filesystems to define iomap_ops so that
-+filesystems can be called into for providing logical to physical extent mapping,
-+wherever required. This is required by the iomap iter apis used for the
-+operations which are listed in the beginning of "iomap operations" section.
-+  - iomap_begin: This either returns an existing mapping or reserve/allocates a
-+    new mapping when called by iomap. pos and length are passed as function
-+    arguments. Filesystem returns the new mapping information within struct
-+    iomap which also gets passed as a function argument. Filesystems should
-+    provide the type of this extent in iomap->type for e.g. IOMAP_HOLE,
-+    IOMAP_UNWRITTEN and it should set the iomap->flags e.g. IOMAP_F_*
-+    (see details in include/linux/iomap.h)
-+
-+    Note that iomap_begin() call has srcmap passed as another argument. This is
-+    mainly used only during the begin phase for COW mappings to identify where
-+    the reads are to be performed from. Filesystems needs to fill that mapping
-+    information if iomap should read data for partially written blocks from a
-+    different location than the write target [4].
-+
-+  - iomap_end: Commit and/or unreserve space which was previously allocated
-+    using iomap_begin. During buffered-io, when a short writes occurs,
-+    filesystem may need to remove the reserved space that was allocated
-+    during ->iomap_begin. For filesystems that use delalloc allocation, we need
-+    to punch out delalloc extents from the range that are not dirty in the page
-+    cache. See comments in iomap_file_buffered_write_punch_delalloc() for more
-+    info [5][6].
-+
-+iomap_dio_ops: Direct I/O operations structure for iomap.
-+=============
-+This gets passed with iomap_dio_rw(), so that iomap can call certain operations
-+before submission or on completion of DIRECT_IO.
-+  - end_io: Required after bio completion for e.g. for conversion of unwritten
-+    extents.
-+
-+  - submit_io: This hook is required for e.g. by filesystems like btrfs who
-+    would like to do things like data replication for fs-handled RAID.
-+
-+  - bio_set: This allows the filesystem to provide custom bio_set for allocating
-+    direct I/O bios. This will allow the filesystem who uses ->submit_io hook to
-+    stash away additional information for filesystem use. Filesystems will
-+    provide their custom ->bi_end_io function completion which should then call
-+    into iomap_dio_bio_end_io() for dio completion [11].
-+
-+iomap_writeback_ops: Writeback operations structure for iomap
-+====================
-+Writeback address space operations e.g. iomap_writepages(), requires the
-+filesystem to pass this ops field.
-+   - map_blocks: map the blocks at the writeback time. This is called once per
-+     folio. Filesystems can return an existing mapping from a previous call if
-+     that mapping is still valid. This can race with paths which can invalidate
-+     previous mappings such as fallocate/truncate. Hence filesystems must have
-+     a mechanism by which it can validate if the previous mapping provided is
-+     still valid. Filesystems might need a per inode seq counter which can be
-+     used to verify if the underlying mapping of logical to physical blocks
-+     has changed since the last ->map_blocks call or not.
-+     They can then use wpc->iomap->validity_cookie to cache their seq count in
-+     ->map_blocks call [6].
-+
-+  - prepare_ioend: Allows filesystems to process the extents before submission
-+    for e.g. convert COW extents to regular. This also allows filesystem to
-+    hook in a custom completion handler for processing bio completion e.g.
-+    conversion of unwritten extents.
-+    Note that ioends might need to be processed as an atomic completion unit
-+    (using transactions) when all the chained bios in the ioend have completed
-+    (e.g. for conversion of unwritten extents). iomap provides some helper
-+    methods for ioend merging and completion [12]. Look at comments in
-+    xfs_end_io() routine for more info.
-+
-+  - discard_folio: In case if the filesystem has any delalloc blocks on it,
-+    then those needs to be punched out in this call. Otherwise, it may leave a
-+    stale delalloc mapping covered by a clean page that needs to be dirtied
-+    again before the delalloc mapping can be converted. This stale delalloc
-+    mapping can trip the direct I/O reads when done on the same region [7].
-+
-+iomap_folio_ops: Folio related operations structure for iomap.
-+================
-+When filesystem sets folio_ops in an iomap mapping it returns, ->get_folio()
-+and ->put_folio() will be called for each folio written to during write iter
-+time of buffered writes.
-+  - get_folio: iomap will call ->get_folio() for every folio of the returned
-+    iomap mapping. Currently gfs2 uses this to start the transaction before
-+    taking the folio lock [8].
-+
-+  - put_folio: iomap will call ->put_folio() once the data has been written to
-+    for each folio of the returned iomap mapping. GFS2 uses this to add data
-+    bufs to the transaction before unlocking the folio and then ending the
-+    transaction [9].
-+
-+  - iomap_valid: Filesystem internal extent map can change while iomap is
-+    iterating each folio of a cached iomap, so this hook allows iomap to detect
-+    that the iomap needs to be refreshed during a long running write operation.
-+    Filesystems can store an internal state (e.g. a sequence no.) in
-+    iomap->validity_cookie when the iomap is first mapped, to be able to detect
-+    changes between the mapping time and whenever iomap calls ->iomap_valid().
-+    This gets called with the locked folio. See iomap_write_begin() for more
-+    comments around ->iomap_valid() [10].
-+
-+
-+Locking
-+========
-+iomap assumes two layers of locking. It requires locking above the iomap layer
-+for IO serialisation (i_rwsem, invalidation lock) which is generally taken
-+before calling into iomap iter functions. There is also locking below iomap for
-+mapping/allocation serialisation on an inode (e.g. XFS_ILOCK or i_data_sem in
-+ext4 etc) that is usually taken inside the mapping methods which filesystems
-+supplied to the iomap infrastructure. This layer of locking needs to be
-+independent of the IO path serialisation locking as it nests inside in the IO
-+path but is also used without the filesystem IO path locking protecting it
-+(e.g. in the iomap writeback path).
-+
-+General Locking order in iomap is:
-+inode->i_rwsem (shared or exclusive)
-+  inode->i_mapping->invalidate_lock (exclusive)
-+    folio_lock()
-+	internal filesystem allocation lock (e.g. XFS_ILOCK or i_data_sem)
-+
-+
-+Zeroing/Truncate Operations
-+===========================
-+Filesystems can use iomap provided helper functions e.g. iomap_zero_range(),
-+iomap_truncate_page() & iomap_file_unshare() for various truncate/fallocate or
-+any other similar operations that requires zeroing/truncate.
-+See above functions for more details on how these can be used by individual
-+filesystems.
-+
-+
-+Guideline for filesystem conversion to iomap
-+=============================================
-+The right approach is to first implement ->iomap_begin and (if necessary)
-+->iomap_end to allow iomap to obtain a read-only mapping of a file range.  In
-+most cases, this is a relatively trivial conversion of the existing get_block()
-+callback for read-only mappings.
-+
-+i.e. rewrite the filesystem's get_block(create = false) implementation to use
-+the new ->iomap_begin() implementation. i.e. get_block wraps around the outside
-+and converts the information from bufferhead-based map to what iomap expects.
-+This will convert all the existing read-only mapping users to use the new iomap
-+mapping function internally. This way the iomap mapping function can be further
-+tested without needing to implement any other iomap APIs.
-+
-+FIEMAP operation is a really good first target because it is trivial to
-+implement support for it and then to determine that the extent map iteration is
-+correct from userspace. i.e. if FIEMAP is returning the correct information,
-+it's a good sign that other read-only mapping operations will also do the right
-+thing.
-+
-+Once everything is working like this, then convert all the other read-only
-+mapping operations to use iomap. Done one at a time, regressions should be self
-+evident. The only likely complexity at this point will be the buffered read IO
-+path because of bufferheads. The buffered read IO paths doesn't need to be
-+converted yet, though the direct IO read path should be converted in this phase.
-+
-+The next thing to do is implement get_blocks(create = true) functionality in the
-+->iomap_begin/end() methods. Then convert the direct IO write path to iomap, and
-+start running fsx w/ DIO enabled in earnest on filesystem. This will flush out
-+lots of data integrity corner case bug that the new write mapping implementation
-+introduces.
-+
-+(TODO - get more info on this from Dave): At this point, converting the entire
-+get_blocks() path to call the iomap functions and convert the iomaps to
-+bufferhead maps is possible. This will get the entire filesystem using the new
-+mapping functions, and they should largely be debugged and working correctly
-+after this step.
-+
-+This now largely leaves the buffered read and write paths to be converted. The
-+mapping functions should all work correctly, so all that needs to be done is
-+rewriting all the code that interfaces with bufferheads to interface with iomap
-+and folios. It is rather easier first to get regular file I/O (without any
-+fancy feature like fscrypt, fsverity, data=journaling) converted to use iomap
-+and then work on directory handling conversion to iomap.
-+
-+The rest is left as an exercise for the reader, as it will be different for
-+every filesystem.
-+
-+References:
-+===========
-+[1]: https://lore.kernel.org/all/ZGbVaewzcCysclPt@dread.disaster.area/
-+[2]: https://lore.kernel.org/all/20230725122932.144426-1-ritesh.list@gmail.com/
-+[3]: https://lore.kernel.org/all/20180619164137.13720-7-hch@lst.de/
-+[4]: https://lore.kernel.org/all/20191008071527.29304-9-hch@lst.de/
-+[5]: https://lore.kernel.org/all/20221123055812.747923-6-david@fromorbit.com/
-+[6]: https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
-+[7]: https://lore.kernel.org/all/20201029163313.1766967-1-bfoster@redhat.com/
-+[8]: https://lore.kernel.org/all/20190429220934.10415-5-agruenba@redhat.com/
-+[9]: https://lore.kernel.org/all/20180619164137.13720-6-hch@lst.de/
-+[10]: https://lore.kernel.org/all/20221123055812.747923-8-david@fromorbit.com/
-+[11]: https://lore.kernel.org/all/20220505201115.937837-3-hch@lst.de/
-+[12]: https://lore.kernel.org/all/20220120034733.221737-1-david@fromorbit.com/
-+[13]: LWN article on iomap https://lwn.net/Articles/935934/
-+[14]: Kernel newbies page on iomap https://kernelnewbies.org/KernelProjects/iomap
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ebf03f5f0619..41e739a94927 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8302,6 +8302,7 @@ R:	Darrick J. Wong <djwong@kernel.org>
- L:	linux-xfs@vger.kernel.org
- L:	linux-fsdevel@vger.kernel.org
- S:	Supported
-+F:	Documentation/filesystems/iomap.txt
- F:	fs/iomap/
- F:	include/linux/iomap.h
+    May 03 07:27:03 f39-dev1 kernel: ------------[ cut here ]------------
+    May 03 07:27:03 f39-dev1 kernel: kernel BUG at fs/super.c:649!
+    May 03 07:27:03 f39-dev1 kernel: invalid opcode: 0000 [#1] PREEMPT SMP PTI
+    May 03 07:27:03 f39-dev1 kernel: CPU: 3 PID: 1138 Comm: umount Tainted: G        W          6.9.0-rc5+ #266
+    May 03 07:27:03 f39-dev1 kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20230301gitf80f052277c8-26.fc38 03/01/2023
+    May 03 07:27:03 f39-dev1 kernel: RIP: 0010:generic_shutdown_super+0x112/0x120
+    May 03 07:27:03 f39-dev1 kernel: Code: cc cc e8 e1 4f f0 ff 48 8b bb 00 01 00 00 eb d9 48 8b 43 28 48 8d b3 c0 03 00 00 48 c7 c7 c0 98 ae 82 48 8b 10 e8 5e 2d d0 ff <0f> 0b 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90
+    May 03 07:27:03 f39-dev1 kernel: RSP: 0018:ffffc90000717c70 EFLAGS: 00010246
+    May 03 07:27:03 f39-dev1 kernel: RAX: 000000000000002f RBX: ffff8881215d5000 RCX: 0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: RDX: 0000000000000000 RSI: ffffffff82b1c111 RDI: 00000000ffffffff
+    May 03 07:27:03 f39-dev1 kernel: RBP: ffffc90000717c80 R08: 0000000000000000 R09: 0000000000000003
+    May 03 07:27:03 f39-dev1 kernel: R10: ffffc90000717ad8 R11: ffffffff82f3c3a8 R12: ffffffffa0cf4380
+    May 03 07:27:03 f39-dev1 kernel: R13: ffff888124ed359c R14: 0000000000000000 R15: 0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: FS:  00007f3163f71800(0000) GS:ffff88886fd80000(0000) knlGS:0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    May 03 07:27:03 f39-dev1 kernel: CR2: 000055fd5fc6a370 CR3: 000000010c338003 CR4: 0000000000170ef0
+    May 03 07:27:03 f39-dev1 kernel: Call Trace:
+    May 03 07:27:03 f39-dev1 kernel:  <TASK>
+    May 03 07:27:03 f39-dev1 kernel:  ? show_regs+0x64/0x70
+    May 03 07:27:03 f39-dev1 kernel:  ? die+0x37/0x90
+    May 03 07:27:03 f39-dev1 kernel:  ? do_trap+0xca/0xe0
+    May 03 07:27:03 f39-dev1 kernel:  ? do_error_trap+0x73/0xa0
+    May 03 07:27:03 f39-dev1 kernel:  ? generic_shutdown_super+0x112/0x120
+    May 03 07:27:03 f39-dev1 kernel:  ? exc_invalid_op+0x52/0x70
+    May 03 07:27:03 f39-dev1 kernel:  ? generic_shutdown_super+0x112/0x120
+    May 03 07:27:03 f39-dev1 kernel:  ? asm_exc_invalid_op+0x1b/0x20
+    May 03 07:27:03 f39-dev1 kernel:  ? generic_shutdown_super+0x112/0x120
+    May 03 07:27:03 f39-dev1 kernel:  famfs_kill_sb+0x1b/0x70 [famfs]
+    May 03 07:27:03 f39-dev1 kernel:  deactivate_locked_super+0x35/0xb0
+    May 03 07:27:03 f39-dev1 kernel:  deactivate_super+0x40/0x50
+    May 03 07:27:03 f39-dev1 kernel:  cleanup_mnt+0xc3/0x160
+    May 03 07:27:03 f39-dev1 kernel:  __cleanup_mnt+0x12/0x20
+    May 03 07:27:03 f39-dev1 kernel:  task_work_run+0x60/0x90
+    May 03 07:27:03 f39-dev1 kernel:  syscall_exit_to_user_mode+0x21a/0x220
+    May 03 07:27:03 f39-dev1 kernel:  do_syscall_64+0x8d/0x180
+    May 03 07:27:03 f39-dev1 kernel:  ? mntput+0x24/0x40
+    May 03 07:27:03 f39-dev1 kernel:  ? path_put+0x1e/0x30
+    May 03 07:27:03 f39-dev1 kernel:  ? do_faccessat+0x1b8/0x2e0
+    May 03 07:27:03 f39-dev1 kernel:  ? syscall_exit_to_user_mode+0x7c/0x220
+    May 03 07:27:03 f39-dev1 kernel:  ? do_syscall_64+0x8d/0x180
+    May 03 07:27:03 f39-dev1 kernel:  ? putname+0x55/0x70
+    May 03 07:27:03 f39-dev1 kernel:  ? syscall_exit_to_user_mode+0x7c/0x220
+    May 03 07:27:03 f39-dev1 kernel:  ? do_syscall_64+0x8d/0x180
+    May 03 07:27:03 f39-dev1 kernel:  ? do_user_addr_fault+0x315/0x6e0
+    May 03 07:27:03 f39-dev1 kernel:  ? irqentry_exit_to_user_mode+0x71/0x220
+    May 03 07:27:03 f39-dev1 kernel:  ? irqentry_exit+0x3b/0x50
+    May 03 07:27:03 f39-dev1 kernel:  ? exc_page_fault+0x90/0x190
+    May 03 07:27:03 f39-dev1 kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+    May 03 07:27:03 f39-dev1 kernel: RIP: 0033:0x7f316419041b
+    May 03 07:27:03 f39-dev1 kernel: Code: c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 31 f6 e9 05 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 e1 19 0c 00 f7 d8
+    May 03 07:27:03 f39-dev1 kernel: RSP: 002b:00007fff84675728 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+    May 03 07:27:03 f39-dev1 kernel: RAX: 0000000000000000 RBX: 00005648cab2eb90 RCX: 00007f316419041b
+    May 03 07:27:03 f39-dev1 kernel: RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00005648cab33ba0
+    May 03 07:27:03 f39-dev1 kernel: RBP: 00007fff84675800 R08: 0000000000000020 R09: 0000000000000001
+    May 03 07:27:03 f39-dev1 kernel: R10: 0000000000000004 R11: 0000000000000246 R12: 00005648cab2ec90
+    May 03 07:27:03 f39-dev1 kernel: R13: 0000000000000000 R14: 00005648cab33ba0 R15: 00005648cab2efa0
+    May 03 07:27:03 f39-dev1 kernel:  </TASK>
+    May 03 07:27:03 f39-dev1 kernel: Modules linked in: famfs rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_resolver nfs lockd grace netfs qrtr rfkill intel_rapl_msr sunrpc snd_hda_codec_generic intel_rapl_common snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi kvm_intel snd_hda_codec kmem snd_hda_core iTCO_wdt intel_pmc_bxt snd_hwdep device_dax iTCO_vendor_support kvm snd_seq snd_seq_device rapl dax_hmem cxl_acpi snd_pcm cxl_core i2c_i801 snd_timer einj pcspkr i2c_smbus snd lpc_ich soundcore virtio_balloon joydev vfat fat fuse loop zram xfs crct10dif_pclmul crc32_pclmul crc32c_intel polyval_clmulni polyval_generic ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 virtio_blk virtio_console virtio_gpu virtio_net net_failover virtio_dma_buf failover serio_raw scsi_dh_rdac scsi_dh_emc scsi_dh_alua dm_multipath qemu_fw_cfg
+    May 03 07:27:03 f39-dev1 kernel: ---[ end trace 0000000000000000 ]---
 
---
-2.44.0
+    May 03 07:27:03 f39-dev1 kernel: RIP: 0010:generic_shutdown_super+0x112/0x120
+    May 03 07:27:03 f39-dev1 kernel: Code: cc cc e8 e1 4f f0 ff 48 8b bb 00 01 00 00 eb d9 48 8b 43 28 48 8d b3 c0 03 00 00 48 c7 c7 c0 98 ae 82 48 8b 10 e8 5e 2d d0 ff <0f> 0b 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90
+    May 03 07:27:03 f39-dev1 kernel: RSP: 0018:ffffc90000717c70 EFLAGS: 00010246
+    May 03 07:27:03 f39-dev1 kernel: RAX: 000000000000002f RBX: ffff8881215d5000 RCX: 0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: RDX: 0000000000000000 RSI: ffffffff82b1c111 RDI: 00000000ffffffff
+    May 03 07:27:03 f39-dev1 kernel: RBP: ffffc90000717c80 R08: 0000000000000000 R09: 0000000000000003
+    May 03 07:27:03 f39-dev1 kernel: R10: ffffc90000717ad8 R11: ffffffff82f3c3a8 R12: ffffffffa0cf4380
+    May 03 07:27:03 f39-dev1 kernel: R13: ffff888124ed359c R14: 0000000000000000 R15: 0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: FS:  00007f3163f71800(0000) GS:ffff88886fd80000(0000) knlGS:0000000000000000
+    May 03 07:27:03 f39-dev1 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    May 03 07:27:03 f39-dev1 kernel: CR2: 000055fd5fc6a370 CR3: 000000010c338003 CR4: 0000000000170ef0
+
+These BUG dumps are familiar; famfs_kill_sb()/kill_char_sb() in this
+patch set are clean in this regard. (I'm not saying they're "right", but
+clean). But to be clear, blowing away the dentries is appropriate in the
+famfs case.
+
+An important thing, I think, is that instantiation of famfs file
+(which happens when user space plays the log) looks a lot like creating
+ramfs files - except that after an empty ramfs-like file is created,
+an ioctl is called to "tell the file where its backing memory is".
+And famfs does not persist metadata changes, which is a feature and
+not a bug...
+
+I think the d_genocide() call is what cleans up the dentry cache with
+famfs_kill_sb() from the patch (which calls the new kill_char_super()).
+
+Thanks for any suggestions,
+John
 
 
