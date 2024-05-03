@@ -1,104 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-18571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2C58BA5FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 06:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2850E8BA760
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 09:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAA81F24251
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 04:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CFA1F21C97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 07:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C533E479;
-	Fri,  3 May 2024 04:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EF6146A8F;
+	Fri,  3 May 2024 07:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eGMHKCEM"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="WAIf9HaO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from forward502c.mail.yandex.net (forward502c.mail.yandex.net [178.154.239.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9312C22F00
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 04:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4DF14658F;
+	Fri,  3 May 2024 07:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714709865; cv=none; b=Mwq/HlKFlapdlj1UqX30rgmXM2mEHKGYvo7A8L0D1dLiaybrjphj+HAJx88qvYkPmsPWzpCusI43CsJ1rgakaNpVjVoNeMwYHYGojoYm6XPfmcNcRCGwVkdfRCZTXGnhLHpQ6BORda4uO0/oPkVP40wqfFZMcpPNrYP/XciJDNY=
+	t=1714720044; cv=none; b=UjmAwbi0RvUi8ogSE1RhJeCDk1t27Yt5m11XYKtT+XU8uKsbNqNEdSYqQhDS8cw7OnsNq336RFLigDy9MIL6D6/as4T+RHQKH8VlExAydMLIHnyVl+7HW4xF1TpzNmE9zzYNRjOA6KZiEuTsyYRR7XAshxNqT5RxsFodtyo0RYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714709865; c=relaxed/simple;
-	bh=T22JrpafRjR0cPiRd37OY+3r5BzgSapXYKLtL7I1f1g=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u5BEBLAcS7eWmv1OtuzvAi5E60QdcWXe40Xwyeil1lZ7Lude4Jr0I4BY3ix8vWGiOnuQJJx5Neep6SQdWc+J1Vv5YEvTsqZ9wesxW2XWBDqvfLVOKNC8prMwmt0A1VZ0UmkEWuo6jPK+Tl8d7/eyKOSiiwd7NIYvudDyBeTkBQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eGMHKCEM; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:To:From:Reply-To:
-	Cc:Content-Type:Content-ID:Content-Description;
-	bh=zwCOMy2NEj3BPtx134SFdJYS70Xwr8CQmU8M48tauxc=; b=eGMHKCEMOJDF/XvbCBpsQwX7ey
-	csla19ABCZl0aO5E+TcMkTy4LlbgxU5BtEgiDJdBm3b0C90IL8jyNq3lT+C/UihLmiu3kRpFxWA7j
-	Blp67+4m0bA+XsgxitFBPMQVtRiU+AFgcovEJe3pJICK4P1VL0G16jKjTDkE/Nqmy/Q5DMANusDe1
-	yZ6NDwg1J7dx+5iBzvfzhx86DkERGw9Ir7hzusZsQfvlkyCuiFJNbczmv/RhvVpsrxVy4joppuftL
-	q4Jbes+R8eShnhVW4c+p3IoK/OIHfogNT6TNii+7pVJkV8rCrl1tCmSCkhxnb8QZLquonlOzHeo3G
-	BaGJyHlQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s2kMf-00A5Vb-2f
-	for linux-fsdevel@vger.kernel.org;
-	Fri, 03 May 2024 04:17:41 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 9/9] make set_blocksize() fail unless block device is opened exclusive
-Date: Fri,  3 May 2024 05:17:40 +0100
-Message-Id: <20240503041740.2404425-9-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240503041740.2404425-1-viro@zeniv.linux.org.uk>
-References: <20240503031833.GU2118490@ZenIV>
- <20240503041740.2404425-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1714720044; c=relaxed/simple;
+	bh=O/sHsdCylG2MFy1pSJ1PRazemWy7FKCci38WHBEzE9g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=tjnRr6Cd9cepS43rS1XDcjSslkRrFyZ8v1uBbJNJjM9EEsVxAfio4cLtzLrnYBSShSmEDBS4+qfCYm4HhDrDFDxhAvEnKqTpOIpLQdXtIe/V3NIRwa14qN9wWV8nJvmMjbGTkLHfi0R4aHmef4K2LUoAH3564aVlabtmtTspF3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=WAIf9HaO; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net [IPv6:2a02:6b8:c11:49a3:0:640:a0c5:0])
+	by forward502c.mail.yandex.net (Yandex) with ESMTPS id E94DD6129C;
+	Fri,  3 May 2024 10:07:12 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id B7OTss7uBeA0-71e0e3jK;
+	Fri, 03 May 2024 10:07:12 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1714720032; bh=O/sHsdCylG2MFy1pSJ1PRazemWy7FKCci38WHBEzE9g=;
+	h=In-Reply-To:Subject:To:From:Cc:Date:References:Message-ID;
+	b=WAIf9HaOlTOaIVdooYDyz/agzHBhFaEj5ddWhxaxW6ZMpp9oacohngFBO7K4/LZ2p
+	 wv+RlKiuFQsE0VHQOwQBDIO9KlCvtElS6Tk8/F7YRFRC9DRT6xUjxCMSdek4fr9euj
+	 EbdFUr2M4Elo6XG6efknhRLcXprPdynIeexpg1Co=
+Authentication-Results: mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <d5866bd9-299c-45be-93ac-98960de1c91e@yandex.ru>
+Date: Fri, 3 May 2024 10:07:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ lvc-project@linuxtesting.org,
+ syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com,
+ linux-fsdevel@vger.kernel.org
+References: <20240423191310.19437-1-dmantipov@yandex.ru>
+ <85b476cd-3afd-4781-9168-ecc88b6cc837@amd.com>
+ <3a7d0f38-13b9-4e98-a5fa-9a0d775bcf81@yandex.ru>
+ <72f5f1b8-ca5b-4207-9ac9-95b60c607f3a@amd.com>
+Content-Language: en-US
+From: Dmitry Antipov <dmantipov@yandex.ru>
+Autocrypt: addr=dmantipov@yandex.ru; keydata=
+ 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
+ A/UwwXBRuvydGV0=
+Subject: Re: [PATCH] [RFC] dma-buf: fix race condition between poll and close
+In-Reply-To: <72f5f1b8-ca5b-4207-9ac9-95b60c607f3a@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- Documentation/filesystems/porting.rst | 7 +++++++
- block/bdev.c                          | 3 +++
- 2 files changed, 10 insertions(+)
-
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 1be76ef117b3..5503d5c614a7 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1134,3 +1134,10 @@ superblock of the main block device, i.e., the one stored in sb->s_bdev. Block
- device freezing now works for any block device owned by a given superblock, not
- just the main block device. The get_active_super() helper and bd_fsfreeze_sb
- pointer are gone.
-+
-+---
-+
-+**mandatory**
-+
-+set_blocksize() takes opened struct file instead of struct block_device now
-+and it *must* be opened exclusive.
-diff --git a/block/bdev.c b/block/bdev.c
-index a329ff9be11d..a89bce368b64 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -157,6 +157,9 @@ int set_blocksize(struct file *file, int size)
- 	if (size < bdev_logical_block_size(bdev))
- 		return -EINVAL;
- 
-+	if (!file->private_data)
-+		return -EINVAL;
-+
- 	/* Don't change the size if it is same as current */
- 	if (inode->i_blkbits != blksize_bits(size)) {
- 		sync_blockdev(bdev);
--- 
-2.39.2
-
+T24gNC8yNC8yNCAyOjI4IFBNLCBDaHJpc3RpYW4gS8O2bmlnIHdyb3RlOg0KDQo+IEkgZG9u
+J3QgZnVsbHkgdW5kZXJzdGFuZCBob3cgdGhhdCBoYXBwZW5zIGVpdGhlciwgaXQgY291bGQg
+YmUgdGhhdCB0aGVyZSBpcyBzb21lIGJ1ZyBpbiB0aGUgRVBPTExfRkQgY29kZS4gTWF5YmUg
+aXQncyBhIHJhY2Ugd2hlbiB0aGUgRVBPTEwgZmlsZSBkZXNjcmlwdG9yIGlzIGNsb3NlZCBv
+ciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KDQpJSVVDIHRoZSByYWNlIGNvbmRpdGlvbiBsb29r
+cyBsaWtlIHRoZSBmb2xsb3dpbmc6DQoNClRocmVhZCAwICAgICAgICAgICAgICAgICAgICAg
+ICAgVGhyZWFkIDENCi0+IGRvX2Vwb2xsX2N0bCgpDQogICAgZl9jb3VudCsrLCBub3cgMg0K
+ICAgIC4uLg0KICAgIC4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgLT4gdmZzX3BvbGwo
+KSwgZl9jb3VudCA9PSAyDQogICAgLi4uICAgICAgICAgICAgICAgICAgICAgICAgICAuLi4N
+CjwtIGRvX2Vwb2xsX2N0bCgpICAgICAgICAgICAgICAgLi4uDQogICAgZl9jb3VudC0tLCBu
+b3cgMSAgICAgICAgICAgICAuLi4NCi0+IGZpbHBfY2xvc2UoKSwgZl9jb3VudCA9PSAxICAg
+Li4uDQogICAgLi4uICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0+IGRtYV9idWZfcG9s
+bCgpLCBmX2NvdW50ID09IDENCiAgICAtPiBmcHV0KCkgICAgICAgICAgICAgICAgICAgICAg
+Li4uIFsqKiogcmFjZSB3aW5kb3cgKioqXQ0KICAgICAgIGZfY291bnQtLSwgbm93IDAgICAg
+ICAgICAgICAgIC0+IG1heWJlIGdldF9maWxlKCksIG5vdyA/Pz8NCiAgICAgICAtPiBfX2Zw
+dXQoKSAoZGVsYXllZCkNCg0KRS5nLiBkbWFfYnVmX3BvbGwoKSBtYXkgYmUgZW50ZXJlZCBp
+biB0aHJlYWQgMSB3aXRoIGYtPmNvdW50ID09IDENCmFuZCBjYWxsIHRvIGdldF9maWxlKCkg
+c2hvcnRseSBsYXRlciAoYW5kIG1heSBldmVuIHNraXAgdGhpcyBpZg0KdGhlcmUgaXMgbm90
+aGluZyB0byBFUE9MTElOIG9yIEVQT0xMT1VUKS4gRHVyaW5nIHRoaXMgdGltZSB3aW5kb3cs
+DQp0aHJlYWQgMCBtYXkgY2FsbCBmcHV0KCkgKG9uIGJlaGFsZiBvZiBjbG9zZSgpIGluIHRo
+aXMgZXhhbXBsZSkNCmFuZCAoc2luY2UgaXQgc2VlcyBmLT5jb3VudCA9PSAxKSBmaWxlIGlz
+IHNjaGVkdWxlZCB0byBkZWxheWVkX2ZwdXQoKS4NCg0KRG1pdHJ5DQo=
 
