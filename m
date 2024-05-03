@@ -1,120 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-18605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3988BABB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:36:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E4E8BABBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3964C283880
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 11:36:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32125B22B63
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 11:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329541534E0;
-	Fri,  3 May 2024 11:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kU+Pbgfm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E3A152DF6;
+	Fri,  3 May 2024 11:38:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842A0152180;
-	Fri,  3 May 2024 11:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74375C2E9;
+	Fri,  3 May 2024 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714736165; cv=none; b=JCr6zMqcgsmRZ0pz5j+67A9OZHeqr3ibwh49H1MALaLLQ1YcSZbe84JwGyukg/3nbFmahd7lauzOiKId0Qs1TXedY1iuuSf/hU+AIyWHO+P1DkxL+mttWhPLE1u0wYuW8kTGAr4A+g+YF+xfvsZkz+3FMSIygG5CF1SuF9moYzo=
+	t=1714736308; cv=none; b=t9omWwCl10uT48h/TpUsjnZ1UFIFMY3BeMUDlUmyUQmNTzU79sybf3DFHOkBjQ1L1NKqv/mNu5a1hRwidRga0jQZBjzQV8xlnmMcEq8IiX4snRFbmu9RzxJFiObglQLNj1ZunTRtDIH38N9XyTN9dr3yXn3P/xsyEYcJbmLOg9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714736165; c=relaxed/simple;
-	bh=fIbetBuQVrEG023U7eI1zy1F+Dx8KclRAJyueT8XV4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pcs9VHaEGz8HRsx3M2aMzxXWKtIzWXPp5RT5cSotSajMnZp2kmU1YJcFjjSXd0W/9a22F+GaTZds8fMtFHGtVRks8Una2Z3VXIO2RuiYyKLieHsBCKOgx6mwtOqbqIu8FNQnbMXlThMcLDVqelOoKXG4O7cd4GD20JRHxr9AR1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kU+Pbgfm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35FEDC116B1;
-	Fri,  3 May 2024 11:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714736165;
-	bh=fIbetBuQVrEG023U7eI1zy1F+Dx8KclRAJyueT8XV4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kU+PbgfmV2WYTvcKoIKD2SagvRYfVtWIILVja2exLH0MFtfHic0+Py5SLz8ioBh2c
-	 bqpbYbxJ/W9l6syTIapYfSN8oXLB4jn8f3Me0mm0uAJK/HVh9Fym6kP9MVBwSMsr3k
-	 Jxor+f8RX7pVwuuRJivzQlZh7ay51U+v39/npfLfZ7SyAMSRMB4SIfamdKqeQwinVk
-	 K9VNzZ0cPydBqTF+/eTYn5JPlrfdcNvCY5ixi4VD0+WIvYHt43TEYrbf91dw/oLydB
-	 tffGxIoNupZL31C61JfQelalR2aYh/QVLvdIroxHiS3/lJQpV1lJ/uyXJPQRKOstnd
-	 l8jmPUnOkSLrw==
-Date: Fri, 3 May 2024 13:35:54 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Kees Cook <keescook@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Zack Rusin <zack.rusin@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Andi Shyti <andi.shyti@linux.intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	Matt Atwood <matthew.s.atwood@intel.com>, Matthew Auld <matthew.auld@intel.com>, 
-	Nirmoy Das <nirmoy.das@intel.com>, Jonathan Cavitt <jonathan.cavitt@intel.com>, 
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 5/5] fs: Convert struct file::f_count to refcount_long_t
-Message-ID: <20240503-kramen-punkten-848aa0cfd3d0@brauner>
-References: <20240502224250.GM2118490@ZenIV>
- <202405021548.040579B1C@keescook>
- <20240502231228.GN2118490@ZenIV>
- <202405021620.C8115568@keescook>
- <20240502234152.GP2118490@ZenIV>
- <202405021708.267B02842@keescook>
- <20240503001445.GR2118490@ZenIV>
- <202405021736.574A688@keescook>
- <20240503-inventar-braut-c82e15e56a32@brauner>
- <20240503103614.GF30852@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1714736308; c=relaxed/simple;
+	bh=k5AjE5JLkBAfjGLh7xerPBX/7aoAXhBzlXTnHmIL+us=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SA5X96K1pbZN/MDMs60bJ25831JJVV8598K1HZDoFohM1F14+CLaIydnAO8tOBEO1MfZbhJsFCgxbtz9oV2QhErnBVXl06kg7iIc1C4YsWBZOc5d78kTbAp+5NQErnF8+Wn1LRTAFfteg1jxFM8/97Q+1+y4tNuE0xti5Iid50I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VW80n6HpyzcdFh;
+	Fri,  3 May 2024 19:37:13 +0800 (CST)
+Received: from dggpeml500021.china.huawei.com (unknown [7.185.36.21])
+	by mail.maildlp.com (Postfix) with ESMTPS id A7D1B180A9C;
+	Fri,  3 May 2024 19:38:22 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 3 May 2024 19:38:21 +0800
+Message-ID: <9209062c-fa94-33f3-fd89-834a3314c7ed@huawei.com>
+Date: Fri, 3 May 2024 19:38:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240503103614.GF30852@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [syzbot] [ext4?] WARNING in mb_cache_destroy
+Content-Language: en-US
+To: Jan Kara <jack@suse.cz>
+CC: <tytso@mit.edu>, syzbot
+	<syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com>,
+	<adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, <nathan@kernel.org>, <ndesaulniers@google.com>,
+	<ritesh.list@gmail.com>, <syzkaller-bugs@googlegroups.com>,
+	<trix@redhat.com>, yangerkun <yangerkun@huawei.com>, Baokun Li
+	<libaokun1@huawei.com>
+References: <00000000000072c6ba06174b30b7@google.com>
+ <0000000000003bf5be061751ae70@google.com>
+ <20240502103341.t53u6ya7ujbzkkxo@quack3>
+ <dca44ba5-5c33-05ef-d9de-21a84f9d7eaa@huawei.com>
+ <20240503102328.cstcauc5qakmk2bg@quack3>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20240503102328.cstcauc5qakmk2bg@quack3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
 
-On Fri, May 03, 2024 at 12:36:14PM +0200, Peter Zijlstra wrote:
-> On Fri, May 03, 2024 at 11:37:25AM +0200, Christian Brauner wrote:
-> > On Thu, May 02, 2024 at 05:41:23PM -0700, Kees Cook wrote:
-> > > On Fri, May 03, 2024 at 01:14:45AM +0100, Al Viro wrote:
-> > > > On Thu, May 02, 2024 at 05:10:18PM -0700, Kees Cook wrote:
-> > > > 
-> > > > > But anyway, there needs to be a general "oops I hit 0"-aware form of
-> > > > > get_file(), and it seems like it should just be get_file() itself...
-> > > > 
-> > > > ... which brings back the question of what's the sane damage mitigation
-> > > > for that.  Adding arseloads of never-exercised failure exits is generally
-> > > > a bad idea - it's asking for bitrot and making the thing harder to review
-> > > > in future.
-> > > 
-> > > Linus seems to prefer best-effort error recovery to sprinkling BUG()s
-> > > around.  But if that's really the solution, then how about get_file()
-> > > switching to to use inc_not_zero and BUG on 0?
-> > 
-> > Making get_file() return an error is not an option. For all current
-> > callers that's pointless churn for a condition that's not supposed to
-> > happen at all.
-> > 
-> > Additionally, iirc *_inc_not_zero() variants are implemented with
-> > try_cmpxchg() which scales poorly under contention for a condition
-> > that's not supposed to happen.
-> 
-> 	unsigned long old = atomic_long_fetch_inc_relaxed(&f->f_count);
-> 	WARN_ON(!old);
-> 
-> Or somesuch might be an option?
+On 2024/5/3 18:23, Jan Kara wrote:
+> Hi!
+>
+> On Fri 03-05-24 17:51:07, Baokun Li wrote:
+>> On 2024/5/2 18:33, Jan Kara wrote:
+>>> On Tue 30-04-24 08:04:03, syzbot wrote:
+>>>> syzbot has bisected this issue to:
+>>>>
+>>>> commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
+>>>> Author: Baokun Li <libaokun1@huawei.com>
+>>>> Date:   Thu Jun 16 02:13:56 2022 +0000
+>>>>
+>>>>       ext4: fix use-after-free in ext4_xattr_set_entry
+>>> So I'm not sure the bisect is correct since the change is looking harmless.
+>> Yes, the root cause of the problem has nothing to do with this patch,
+>> and please see the detailed analysis below.
+>>> But it is sufficiently related that there indeed may be some relationship.
+>>> Anyway, the kernel log has:
+>>>
+>>> [   44.932900][ T1063] EXT4-fs warning (device loop0): ext4_evict_inode:297: xattr delete (err -12)
+>>> [   44.943316][ T1063] EXT4-fs (loop0): unmounting filesystem.
+>>> [   44.949531][ T1063] ------------[ cut here ]------------
+>>> [   44.955050][ T1063] WARNING: CPU: 0 PID: 1063 at fs/mbcache.c:409 mb_cache_destroy+0xda/0x110
+>>>
+>>> So ext4_xattr_delete_inode() called when removing inode has failed with
+>>> ENOMEM and later mb_cache_destroy() was eventually complaining about having
+>>> mbcache entry with increased refcount. So likely some error cleanup path is
+>>> forgetting to drop mbcache entry reference somewhere but at this point I
+>>> cannot find where. We'll likely need to play with the reproducer to debug
+>>> that. Baokun, any chance for looking into this?
+>>>
+>>> 								Honza
+>> As you guessed, when -ENOMEM is returned in ext4_sb_bread(),
+>> the reference count of ce is not properly released, as follows.
+>>
+>> ext4_create
+>>   __ext4_new_inode
+>>    security_inode_init_security
+>>     ext4_initxattrs
+>>      ext4_xattr_set_handle
+>>       ext4_xattr_block_find
+>>       ext4_xattr_block_set
+>>        ext4_xattr_block_cache_find
+>>          ce = mb_cache_entry_find_first
+>>              __entry_find
+>>              atomic_inc_not_zero(&entry->e_refcnt)
+>>          bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+>>          if (PTR_ERR(bh) == -ENOMEM)
+>>              return NULL;
+>>
+>> Before merging into commit 67d7d8ad99be("ext4: fix use-after-free
+>> in ext4_xattr_set_entry"), it will not return early in
+>> ext4_xattr_ibody_find(),
+>> so it tries to find it in iboy, fails the check in xattr_check_inode() and
+>> returns without executing ext4_xattr_block_find(). Thus it will bisect
+>> the patch, but actually has nothing to do with it.
+>>
+>> ext4_xattr_ibody_get
+>>   xattr_check_inode
+>>    __xattr_check_inode
+>>     check_xattrs
+>>      if (end - (void *)header < sizeof(*header) + sizeof(u32))
+>>        "in-inode xattr block too small"
+>>
+>> Here's the patch in testing, I'll send it out officially after it is tested.
+>> (PS:  I'm not sure if propagating the ext4_xattr_block_cache_find() errors
+>> would be better.)
+> Great! Thanks for debugging this! Some comments to your fix below:
+>
+>> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+>> index b67a176bfcf9..5c9e751915fd 100644
+>> --- a/fs/ext4/xattr.c
+>> +++ b/fs/ext4/xattr.c
+>> @@ -3113,11 +3113,10 @@ ext4_xattr_block_cache_find(struct inode *inode,
+>>
+>>           bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+>>           if (IS_ERR(bh)) {
+>> -            if (PTR_ERR(bh) == -ENOMEM)
+>> -                return NULL;
+>> +            if (PTR_ERR(bh) != -ENOMEM)
+>> +                EXT4_ERROR_INODE(inode, "block %lu read error",
+>> +                         (unsigned long)ce->e_value);
+>>               bh = NULL;
+>> -            EXT4_ERROR_INODE(inode, "block %lu read error",
+>> -                     (unsigned long)ce->e_value);
+>>           } else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
+>>               *pce = ce;
+>>               return bh;
+> So if we get the ENOMEM error, continuing the iteration seems to be
+> pointless as we'll likely get it for the following entries as well. I think
+> the original behavior of aborting the iteration in case of ENOMEM is
+> actually better. We just have to do mb_cache_entry_put(ea_block_cache, ce)
+> before returning...
+>
+> 								Honza
+Returning NULL here would normally attempt to allocate a new
+xattr_block in ext4_xattr_block_set(), and when ext4_sb_bread() fails,
+allocating the new block and inserting it would most likely fail as well,
+so my initial thought was to propagate the error from ext4_sb_bread()
+to also make ext4_xattr_block_set() fail when ext4_sb_bread() fails.
 
-Yeah, I'd be fine with that. WARN_ON() (or WARN_ON_ONCE() even?) and
-then people can do their panic_on_warn stuff to get the BUG_ON()
-behavior if they want to.
+But I noticed that before Ted added the special handling for -ENOMEM,
+EXT4_ERROR_INODE was called to set the ERROR_FS flag no matter
+what error ext4_sb_bread() returned, and after we can distinguish
+between -EIO and -ENOMEM, we don't have to set the ERROR_FS flag
+in the case of -ENOMEM. So there's this conservative fix now.
+
+In short, in my personal opinion, for -EIO and -ENOMEM, they should
+be the same except whether or not the ERROR_FS flag is set.
+Otherwise, I think adding mb_cache_entry_put() directly is the easiest
+and most straightforward fix.  Honza, do you have any other thoughts?
+
+Thanks,
+Baokun
 
