@@ -1,201 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-18586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F088BAA2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 11:51:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAF88BAA56
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 11:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB481C21C56
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 09:51:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2C01F230CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 09:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85CB14F9E3;
-	Fri,  3 May 2024 09:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8287F152DF6;
+	Fri,  3 May 2024 09:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TPBco6Nw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102D313959C;
-	Fri,  3 May 2024 09:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D511F14F9DC;
+	Fri,  3 May 2024 09:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714729879; cv=none; b=ZwAHAVyNwkJyK2poKGUc5nN195J65IbfbxU01dfaMNwD9Lm8Sgz+x/hfLJHa7A+1HudsdN8Mb8Cj8009WARsTbbhvjUN0Xi3SDcuHNfiRkLb9UH/I/zZsN3D6uB8O/VWMSP1mSXw+fB2a+D8uvoMyFyGe1uNSFOq/liSxvDYOmg=
+	t=1714730046; cv=none; b=Ghg2Ro9VjeBLv8M3XzhsBePSZhAIaqC2EFV5IhBGM5Y1mc2u3B75rW0ZZLSWM+96EFvnONLQ5y26HK5HDmaSduFNYHRBRMrqMoydaLLMplKP8RGD+GfaZyr3kNi4DEptkXhZsKtSxXAVwkAU6lzShKimgxidYB3Gf0U993WoOqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714729879; c=relaxed/simple;
-	bh=nl8IYhxxn7R72hjVZ+8gasR48TtifZBriO+2gTzBRmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JRn8WvwP9juPUzSr34YRsbBl/Z6LIMVJztvbsTDtzLNHEc61rB8+Yl/Q70r77Oy+S0VCm2AKXCCdP2v/RRzcbyjUJbGu9gWoQJ9ZwPkGpRHvzfiVn9lpJ43T7paDW/F2g8ERi+QQRBJOxnELZ+cTtuWgHFi8+XzvtQlei6foj/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VW5bH28w9zyNMT;
-	Fri,  3 May 2024 17:48:27 +0800 (CST)
-Received: from dggpeml500021.china.huawei.com (unknown [7.185.36.21])
-	by mail.maildlp.com (Postfix) with ESMTPS id 83A431403D2;
-	Fri,  3 May 2024 17:51:08 +0800 (CST)
-Received: from [10.174.177.174] (10.174.177.174) by
- dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 3 May 2024 17:51:07 +0800
-Message-ID: <dca44ba5-5c33-05ef-d9de-21a84f9d7eaa@huawei.com>
-Date: Fri, 3 May 2024 17:51:07 +0800
+	s=arc-20240116; t=1714730046; c=relaxed/simple;
+	bh=pu9F0zR23Dd+IeBMpmXkhzvgqox3np2XcF6nNsTxb9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PnI7nrZJT73Uwr1aNi+V1VbQxF2XMXd0zzJzVaX/EjOuMALmUjQx/V2F+0aBrc/hcJJFBjnlWZi58Db4B5Yx24YIcXzVmcCqDuRng8yAKVQjRX+P+vVNBz6FlnZGlAIbk0qBCVb7Wd2zAs3YrrMWbo5Ras6KL9tNiy9tR7DUI/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TPBco6Nw; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=tXICgLDlPt9x6LyrrWFPrPPbantK/kpg/WVZcyA0J9Y=; b=TPBco6NwOG01vvbhxTM9YpTwNz
+	Ts/4OKTR96oWhFG9iI0NxLctIXyBHrsBnvRF/O4c9zc7GZ5qVi5vEib/fh8BB9bzXn/JUqsvOs+5i
+	nMmiVM6S9z+TeyoLQ9Zg86YuzfPWMu1V9U0aA8gYbXqhxWHGV88wo2EWXmp6wySW0XlmntDpxkoJi
+	g61EgLRDXBIgbmJ+djGYd/zbulnGpNEFdQAvKZClOmoip3KNKbE2x8NUuZ375gi63lcuajfMN02Jx
+	MpPQ3kTvz1Ck0Ti/pc0f5utZGO+H4/e/jXsPh1bxEDYiOOprrbFwhESBdscaR1bLP1pkC+huP1/xi
+	v/kFNmMQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s2pc2-0000000Fw3K-3Q2M;
+	Fri, 03 May 2024 09:53:54 +0000
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: akpm@linux-foundation.org,
+	willy@infradead.org,
+	djwong@kernel.org,
+	brauner@kernel.org,
+	david@fromorbit.com,
+	chandan.babu@oracle.com
+Cc: hare@suse.de,
+	ritesh.list@gmail.com,
+	john.g.garry@oracle.com,
+	ziy@nvidia.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-block@vger.kernel.org,
+	gost.dev@samsung.com,
+	p.raghav@samsung.com,
+	kernel@pankajraghav.com,
+	mcgrof@kernel.org
+Subject: [PATCH v5 00/11] enable bs > ps in XFS
+Date: Fri,  3 May 2024 02:53:42 -0700
+Message-ID: <20240503095353.3798063-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [syzbot] [ext4?] WARNING in mb_cache_destroy
-Content-Language: en-US
-To: Jan Kara <jack@suse.cz>, <tytso@mit.edu>, syzbot
-	<syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com>
-CC: <adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<llvm@lists.linux.dev>, <nathan@kernel.org>, <ndesaulniers@google.com>,
-	<ritesh.list@gmail.com>, <syzkaller-bugs@googlegroups.com>,
-	<trix@redhat.com>, Baokun Li <libaokun1@huawei.com>, yangerkun
-	<yangerkun@huawei.com>
-References: <00000000000072c6ba06174b30b7@google.com>
- <0000000000003bf5be061751ae70@google.com>
- <20240502103341.t53u6ya7ujbzkkxo@quack3>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20240502103341.t53u6ya7ujbzkkxo@quack3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500021.china.huawei.com (7.185.36.21)
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-Hi Honza,
+[ I was asked by Pankaj to post this v5 as he's out right now. ]
 
-On 2024/5/2 18:33, Jan Kara wrote:
-> On Tue 30-04-24 08:04:03, syzbot wrote:
->> syzbot has bisected this issue to:
->>
->> commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
->> Author: Baokun Li <libaokun1@huawei.com>
->> Date:   Thu Jun 16 02:13:56 2022 +0000
->>
->>      ext4: fix use-after-free in ext4_xattr_set_entry
-> So I'm not sure the bisect is correct since the change is looking harmless.
-Yes, the root cause of the problem has nothing to do with this patch,
-and please see the detailed analysis below.
-> But it is sufficiently related that there indeed may be some relationship.
-> Anyway, the kernel log has:
->
-> [   44.932900][ T1063] EXT4-fs warning (device loop0): ext4_evict_inode:297: xattr delete (err -12)
-> [   44.943316][ T1063] EXT4-fs (loop0): unmounting filesystem.
-> [   44.949531][ T1063] ------------[ cut here ]------------
-> [   44.955050][ T1063] WARNING: CPU: 0 PID: 1063 at fs/mbcache.c:409 mb_cache_destroy+0xda/0x110
->
-> So ext4_xattr_delete_inode() called when removing inode has failed with
-> ENOMEM and later mb_cache_destroy() was eventually complaining about having
-> mbcache entry with increased refcount. So likely some error cleanup path is
-> forgetting to drop mbcache entry reference somewhere but at this point I
-> cannot find where. We'll likely need to play with the reproducer to debug
-> that. Baokun, any chance for looking into this?
->
-> 								Honza
-As you guessed, when -ENOMEM is returned in ext4_sb_bread(),
-the reference count of ce is not properly released, as follows.
+This is the fifth version of the series that enables block size > page size
+(Large Block Size) in XFS. The context and motivation can be seen in cover
+letter of the RFC v1 [0]. We also recorded a talk about this effort at LPC [1],
+if someone would like more context on this effort.
 
-ext4_create
-  __ext4_new_inode
-   security_inode_init_security
-    ext4_initxattrs
-     ext4_xattr_set_handle
-      ext4_xattr_block_find
-      ext4_xattr_block_set
-       ext4_xattr_block_cache_find
-         ce = mb_cache_entry_find_first
-             __entry_find
-             atomic_inc_not_zero(&entry->e_refcnt)
-         bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
-         if (PTR_ERR(bh) == -ENOMEM)
-             return NULL;
+The major change on this v5 is truncation to min order now included and has been
+tested. The main issue which was observed was root cuased, and Matthew was able
+to identify a fix for it in xarray, that fix is now queued up on
+mm-hotfixes-unstable [2].
 
-Before merging into commit 67d7d8ad99be("ext4: fix use-after-free
-in ext4_xattr_set_entry"), it will not return early in 
-ext4_xattr_ibody_find(),
-so it tries to find it in iboy, fails the check in xattr_check_inode() and
-returns without executing ext4_xattr_block_find(). Thus it will bisect
-the patch, but actually has nothing to do with it.
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
 
-ext4_xattr_ibody_get
-  xattr_check_inode
-   __xattr_check_inode
-    check_xattrs
-     if (end - (void *)header < sizeof(*header) + sizeof(u32))
-       "in-inode xattr block too small"
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
 
-Here's the patch in testing, I'll send it out officially after it is tested.
-(PS:  I'm not sure if propagating the ext4_xattr_block_cache_find() 
-errors would be better.)
+No regressions were found with these patches added on top.
 
-Regards,
-Baokun
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
 
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
 
-From: Baokun Li <libaokun1@huawei.com>
-Date: Fri, 3 May 2024 16:51:43 +0800
-Subject: [PATCH] ext4: fix mb_cache_entry's e_refcnt leak in
-  ext4_xattr_block_cache_find()
+No new failures were found with the LBS support.
 
-Syzbot reports a warning as follows:
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
 
-============================================
-WARNING: CPU: 0 PID: 5075 at fs/mbcache.c:419 mb_cache_destroy+0x224/0x290
-Modules linked in:
-CPU: 0 PID: 5075 Comm: syz-executor199 Not tainted 6.9.0-rc6-gb947cc5bf6d7
-RIP: 0010:mb_cache_destroy+0x224/0x290 fs/mbcache.c:419
-Call Trace:
-  <TASK>
-  ext4_put_super+0x6d4/0xcd0 fs/ext4/super.c:1375
-  generic_shutdown_super+0x136/0x2d0 fs/super.c:641
-  kill_block_super+0x44/0x90 fs/super.c:1675
-  ext4_kill_sb+0x68/0xa0 fs/ext4/super.c:7327
-[...]
-============================================
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
 
-This is because when finding an entry in ext4_xattr_block_cache_find(), if
-ext4_sb_bread() returns -ENOMEM, the ce's e_refcnt, which has already grown
-in the __entry_find(), won't be put away, and eventually trigger the above
-issue in mb_cache_destroy() due to reference count leakage. So correct the
-handling of the -ENOMEM error branch to avoid the above issue.
+For those who want this in a git tree we have this up on a kdevops
+20240503-large-block-minorder branch [6].
 
-Reported-by: syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=dd43bd0f7474512edc47
-Fixes: fb265c9cb49e ("ext4: add ext4_sb_bread() to disambiguate ENOMEM 
-cases")
-Cc: stable@kernel.org # v5.0-rc1
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
-  fs/ext4/xattr.c | 7 +++----
-  1 file changed, 3 insertions(+), 4 deletions(-)
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[7] https://github.com/linux-kdevops/linux/tree/20240503-large-block-minorder
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index b67a176bfcf9..5c9e751915fd 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -3113,11 +3113,10 @@ ext4_xattr_block_cache_find(struct inode *inode,
+Changes since v4:
+- Added new Reviewed-by tags
+- Truncation is now enabled, this depends on Matthew Wilcox xarray fix
+  being merged and its already on its way
+- filemap_map_pages() simplification as suggested by Matthew Wilcox
+- minor variable forward declration ordering as suggested by Matthew Wilcox
 
-          bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
-          if (IS_ERR(bh)) {
--            if (PTR_ERR(bh) == -ENOMEM)
--                return NULL;
-+            if (PTR_ERR(bh) != -ENOMEM)
-+                EXT4_ERROR_INODE(inode, "block %lu read error",
-+                         (unsigned long)ce->e_value);
-              bh = NULL;
--            EXT4_ERROR_INODE(inode, "block %lu read error",
--                     (unsigned long)ce->e_value);
-          } else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
-              *pce = ce;
-              return bh;
+Changes since v3:
+- Cap the PTE range to i_size for LBS configuration in folio_map_range()
+- Added Chinners kvmalloc xattr patches
+- Moved Hannes patches before adding the minorder patches to avoid confusion.
+- Added mapping_set_folio_order_range().
+- Return EINVAL instead EAGAIN in split_huge_page_to_list_to_order()
+
+Changes since v2:
+- Simplified the filemap and readahead changes. (Thanks willy)
+- Removed DEFINE_READAHEAD_ALIGN.
+- Added minorder support to readahead_expand().
+
+Changes since v1:
+- Round up to nearest min nr pages in ra_init
+- Calculate index in filemap_create instead of doing in filemap_get_pages
+- Remove unnecessary BUG_ONs in the delete path
+- Use check_shl_overflow instead of check_mul_overflow
+- Cast to uint32_t instead of unsigned long in xfs_stat_blksize
+
+Changes since RFC v2:
+- Move order 1 patch above the 1st patch
+- Remove order == 1 conditional in `fs: Allow fine-grained control of
+folio sizes`. This fixed generic/630 that was reported in the previous version.
+- Hide the max order and expose `mapping_set_folio_min_order` instead.
+- Add new helper mapping_start_index_align and DEFINE_READAHEAD_ALIGN
+- don't call `page_cache_ra_order` with min order in do_mmap_sync_readahead
+- simplify ondemand readahead with only aligning the start index at the end
+- Don't cap ra_pages based on bdi->io_pages
+- use `checked_mul_overflow` while calculating bytes in validate_fsb
+- Remove config lbs option
+- Add a warning while mounting a LBS kernel
+- Add Acked-by and Reviewed-by from Hannes and Darrick.
+
+Changes since RFC v1:
+- Added willy's patch to enable order-1 folios.
+- Unified common page cache effort from Hannes LBS work.
+- Added a new helper min_nrpages and added CONFIG_THP for enabling
+  mapping_large_folio_support
+- Don't split a folio if it has minorder set. Remove the old code where we
+  set extra pins if it has that requirement.
+- Split the code in XFS between the validation of mapping count. Put the
+  icache code changes with enabling bs > ps.
+- Added CONFIG_XFS_LBS option
+- align the index in do_read_cache_folio()
+- Removed truncate changes
+- Fixed generic/091 with iomap changes to iomap_dio_zero function.
+- Took care of folio truncation scenario in page_cache_ra_unbounded()
+  that happens after read_pages if a folio was found.
+- Sqaushed and moved commits around
+- Rebased on top of v6.8-rc4
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Hannes Reinecke (1):
+  readahead: rework loop in page_cache_ra_unbounded()
+
+Luis Chamberlain (2):
+  filemap: allocate mapping_min_order folios in the page cache
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (6):
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/direct-io.c          |  13 +++-
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |  10 ++-
+ fs/xfs/xfs_super.c            |  10 +--
+ include/linux/huge_mm.h       |  12 ++--
+ include/linux/pagemap.h       | 116 ++++++++++++++++++++++++++++------
+ mm/filemap.c                  |  31 ++++++---
+ mm/huge_memory.c              |  50 ++++++++++++++-
+ mm/readahead.c                |  94 +++++++++++++++++++++------
+ 13 files changed, 290 insertions(+), 77 deletions(-)
+
 -- 
-2.39.2
+2.43.0
 
 
