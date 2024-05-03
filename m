@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-18616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9F38BACFA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:02:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A98D8BACFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75CB0B21F94
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:02:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B1E6B22BD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B498153BD9;
-	Fri,  3 May 2024 13:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FFF15358F;
+	Fri,  3 May 2024 13:02:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7141A153580
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C8C152E17
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714741333; cv=none; b=ZYphgLYANYJX+lqzpzvPeRgBIPXcKh8kEJu8tf9Jj33HOZ00rgVusOX5VowBMhs5mv4uQ0tzWc/5VoGmXfNeinfq5BSuiGjp60FP7Wb+jtRLt+ryogGtHc0FQsfaNEwPDwItcw3n+sjAyAdzQQUvZA+M73Mf8WBdJa5+cbQPxC0=
+	t=1714741337; cv=none; b=Wkd2VBwidL3gDi5jUtFB0F3uu8Qk89+EKRHxWxbeJjN1F7L/nBENO9sECWZfFsRhzyQs+99VvdHAHFt6tZunEqTjQ0DMnA1tlB+rtWnaQt5oU6sXFJ21jBCT8jPA9gBTYYzmtoc/BTQ89ImWJJB14qRbttMuJvjMMbTPX843ul4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714741333; c=relaxed/simple;
-	bh=LN8ufBtjoLY3E6lvW+MTJXNh09G6S7SviEHGay1G86s=;
+	s=arc-20240116; t=1714741337; c=relaxed/simple;
+	bh=sVJ7CVCnTpKsT1LOSnx9wh0XnmlUdPP24AFugBeYylk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LikyZWc7Rvm218eoHzJb4+2t8f7bdqmENQfGnVg30hckGUXVoe65XYGJFOXkw57f3Ba0PFTnf6NxR6PMrLakQ4bO7wrfXxfSVA9147RBzoBJ5rcWuk9M/iFzTup7qkxZSQvRPMH092gCK3tjgsaaLp3U9kg237tnUuFh97hCBUw=
+	 MIME-Version; b=S3N0J08cpLxQTb7IraYTH1zj+3CBpASEh+axiK0VLlMD01t9UpNIghMkDqkK3Wtv+bfG+ShvBVF8VNXX7kiVB/O+6T6QtdxdO2fUUXXKGts486tY+JDazwk+qVYpAHoUMtBmXwWHEn1wNUquU5SQmq+XLQ072Yc0BjWO1rYtMug=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57FC215BF;
-	Fri,  3 May 2024 06:02:37 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A58911650;
+	Fri,  3 May 2024 06:02:40 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0728D3F73F;
-	Fri,  3 May 2024 06:02:08 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54B283F73F;
+	Fri,  3 May 2024 06:02:12 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: akpm@linux-foundation.org,
@@ -60,9 +60,9 @@ Cc: akpm@linux-foundation.org,
 	will@kernel.org,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev
-Subject: [PATCH v4 05/29] arm64: cpufeature: add Permission Overlay Extension cpucap
-Date: Fri,  3 May 2024 14:01:23 +0100
-Message-Id: <20240503130147.1154804-6-joey.gouly@arm.com>
+Subject: [PATCH v4 06/29] arm64: context switch POR_EL0 register
+Date: Fri,  3 May 2024 14:01:24 +0100
+Message-Id: <20240503130147.1154804-7-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240503130147.1154804-1-joey.gouly@arm.com>
 References: <20240503130147.1154804-1-joey.gouly@arm.com>
@@ -74,50 +74,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This indicates if the system supports POE. This is a CPUCAP_BOOT_CPU_FEATURE
-as the boot CPU will enable POE if it has it, so secondary CPUs must also
-have this feature.
+POR_EL0 is a register that can be modified by userspace directly,
+so it must be context switched.
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
 ---
- arch/arm64/kernel/cpufeature.c | 9 +++++++++
- arch/arm64/tools/cpucaps       | 1 +
- 2 files changed, 10 insertions(+)
+ arch/arm64/include/asm/cpufeature.h |  6 ++++++
+ arch/arm64/include/asm/processor.h  |  1 +
+ arch/arm64/include/asm/sysreg.h     |  3 +++
+ arch/arm64/kernel/process.c         | 28 ++++++++++++++++++++++++++++
+ 4 files changed, 38 insertions(+)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 56583677c1f2..2f3c2346e156 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -2861,6 +2861,15 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 		.matches = has_nv1,
- 		ARM64_CPUID_FIELDS_NEG(ID_AA64MMFR4_EL1, E2H0, NI_NV1)
- 	},
-+#ifdef CONFIG_ARM64_POE
-+	{
-+		.desc = "Stage-1 Permission Overlay Extension (S1POE)",
-+		.capability = ARM64_HAS_S1POE,
-+		.type = ARM64_CPUCAP_BOOT_CPU_FEATURE,
-+		.matches = has_cpuid_feature,
-+		ARM64_CPUID_FIELDS(ID_AA64MMFR3_EL1, S1POE, IMP)
-+	},
-+#endif
- 	{},
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index 8b904a757bd3..d46aab23e06e 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -832,6 +832,12 @@ static inline bool system_supports_lpa2(void)
+ 	return cpus_have_final_cap(ARM64_HAS_LPA2);
+ }
+ 
++static inline bool system_supports_poe(void)
++{
++	return IS_ENABLED(CONFIG_ARM64_POE) &&
++		alternative_has_cap_unlikely(ARM64_HAS_S1POE);
++}
++
+ int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+ bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
+ 
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index f77371232d8c..e6376f979273 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -184,6 +184,7 @@ struct thread_struct {
+ 	u64			sctlr_user;
+ 	u64			svcr;
+ 	u64			tpidr2_el0;
++	u64			por_el0;
  };
  
-diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-index 62b2838a231a..45f558fc0d87 100644
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@ -45,6 +45,7 @@ HAS_MOPS
- HAS_NESTED_VIRT
- HAS_PAN
- HAS_S1PIE
-+HAS_S1POE
- HAS_RAS_EXTN
- HAS_RNG
- HAS_SB
+ static inline unsigned int thread_get_vl(struct thread_struct *thread,
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 9e8999592f3a..62c399811dbf 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -1064,6 +1064,9 @@
+ #define POE_RXW		UL(0x7)
+ #define POE_MASK	UL(0xf)
+ 
++/* Initial value for Permission Overlay Extension for EL0 */
++#define POR_EL0_INIT	POE_RXW
++
+ #define ARM64_FEATURE_FIELD_BITS	4
+ 
+ /* Defined for compatibility only, do not add new users. */
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index 4ae31b7af6c3..0ffaca98bed6 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -271,12 +271,23 @@ static void flush_tagged_addr_state(void)
+ 		clear_thread_flag(TIF_TAGGED_ADDR);
+ }
+ 
++static void flush_poe(void)
++{
++	if (!system_supports_poe())
++		return;
++
++	write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
++	/* ISB required for kernel uaccess routines when chaning POR_EL0 */
++	isb();
++}
++
+ void flush_thread(void)
+ {
+ 	fpsimd_flush_thread();
+ 	tls_thread_flush();
+ 	flush_ptrace_hw_breakpoint(current);
+ 	flush_tagged_addr_state();
++	flush_poe();
+ }
+ 
+ void arch_release_task_struct(struct task_struct *tsk)
+@@ -371,6 +382,9 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+ 		if (system_supports_tpidr2())
+ 			p->thread.tpidr2_el0 = read_sysreg_s(SYS_TPIDR2_EL0);
+ 
++		if (system_supports_poe())
++			p->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
++
+ 		if (stack_start) {
+ 			if (is_compat_thread(task_thread_info(p)))
+ 				childregs->compat_sp = stack_start;
+@@ -495,6 +509,19 @@ static void erratum_1418040_new_exec(void)
+ 	preempt_enable();
+ }
+ 
++static void permission_overlay_switch(struct task_struct *next)
++{
++	if (!system_supports_poe())
++		return;
++
++	current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
++	if (current->thread.por_el0 != next->thread.por_el0) {
++		write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
++		/* ISB required for kernel uaccess routines when chaning POR_EL0 */
++		isb();
++	}
++}
++
+ /*
+  * __switch_to() checks current->thread.sctlr_user as an optimisation. Therefore
+  * this function must be called with preemption disabled and the update to
+@@ -530,6 +557,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
+ 	ssbs_thread_switch(next);
+ 	erratum_1418040_thread_switch(next);
+ 	ptrauth_thread_switch_user(next);
++	permission_overlay_switch(next);
+ 
+ 	/*
+ 	 * Complete any pending TLB or cache maintenance on this CPU in case
 -- 
 2.25.1
 
