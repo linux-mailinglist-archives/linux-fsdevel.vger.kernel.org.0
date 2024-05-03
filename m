@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-18637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4EF8BAD10
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0198BAD11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C431B22BB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:04:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC5DAB22B9E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 13:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C9C15444C;
-	Fri,  3 May 2024 13:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D23615381E;
+	Fri,  3 May 2024 13:03:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D33F153595
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FB3153595
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 13:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714741403; cv=none; b=TskGbXSyFEmmcgh0XGY+yc28pLLA91gct+AR98x14HMqLyfoA6ZqWDoZRX1dAJXP6SvlgZl/ur9mJSdkiDEye3I7d3yZ+egJ1jq8Jq8S8r278TDbzJFz8T2Z7iTagnzWbZEYQWaiBr+0blUsR6CDK5UzxEq9FMioF1NWRBQgFPQ=
+	t=1714741407; cv=none; b=EWaeFHojIgCy0zeJR/F7n+tX5wfgOWJPXQ+33j0olKRu3Yd0WxQZ7waZaQwrFI8jMfQOcOq1sKD5U29vK2Hs8nwrUodQWj2syB5vecQQwVmKivVwkhW8SD1Y6pnmsrDqqalqMOXduYwkV051JHTGYEibSfUUuolTP4TwT2XbnbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714741403; c=relaxed/simple;
-	bh=Hbvq+6GpRTTIW4/aYz4Y7LVl0q/xJxeqkVNZ8g98WFk=;
+	s=arc-20240116; t=1714741407; c=relaxed/simple;
+	bh=zyddZqUCL7P/l1h4KmUABQWY5FfJEVCxJZm7OZ/3NF8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RM36vFGRl2vkWjH3TTyxN3SPt9k5Zu+AKA3GQoBUfqiQz4HTXO8feyI4zC+fbJw7OLRLeUjL1fCGp8BuxRmVH3fRRfAVv5L/xYL/OQOWsPa2dixZMkb1P+MOAINwOmNNuivdNajvXHPiu2kYAUG8k697095FqN8TPULWhCo/cso=
+	 MIME-Version; b=nyPfpJX/kKzPrxAoZcKMUHErmRqz35xt08O3hkwJr+mST7qXF59q80MJSzRaxeqwVLswgz+c/HcGYoebypQvirm7omZ43IGjkSAmq+OY3wTlNWI0cbHqnhWxaevwD4lOSrk00Jh3e5ja6MqR2Hpf7+UcI8vxUnEwrUDZ7gZj4ak=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A9D21713;
-	Fri,  3 May 2024 06:03:47 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90E15175A;
+	Fri,  3 May 2024 06:03:50 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABFB83F73F;
-	Fri,  3 May 2024 06:03:18 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 052593F73F;
+	Fri,  3 May 2024 06:03:21 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: akpm@linux-foundation.org,
@@ -60,9 +60,9 @@ Cc: akpm@linux-foundation.org,
 	will@kernel.org,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev
-Subject: [PATCH v4 26/29] kselftest/arm64: add HWCAP test for FEAT_S1POE
-Date: Fri,  3 May 2024 14:01:44 +0100
-Message-Id: <20240503130147.1154804-27-joey.gouly@arm.com>
+Subject: [PATCH v4 27/29] kselftest/arm64: parse POE_MAGIC in a signal frame
+Date: Fri,  3 May 2024 14:01:45 +0100
+Message-Id: <20240503130147.1154804-28-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240503130147.1154804-1-joey.gouly@arm.com>
 References: <20240503130147.1154804-1-joey.gouly@arm.com>
@@ -74,7 +74,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Check that when POE is enabled, the POR_EL0 register is accessible.
+Teach the signal frame parsing about the new POE frame, avoids warning when it
+is generated.
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
@@ -83,41 +84,24 @@ Cc: Mark Brown <broonie@kernel.org>
 Cc: Shuah Khan <shuah@kernel.org>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 ---
- tools/testing/selftests/arm64/abi/hwcap.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ tools/testing/selftests/arm64/signal/testcases/testcases.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/arm64/abi/hwcap.c b/tools/testing/selftests/arm64/abi/hwcap.c
-index d8909b2b535a..f2d6007a2b98 100644
---- a/tools/testing/selftests/arm64/abi/hwcap.c
-+++ b/tools/testing/selftests/arm64/abi/hwcap.c
-@@ -156,6 +156,12 @@ static void pmull_sigill(void)
- 	asm volatile(".inst 0x0ee0e000" : : : );
- }
- 
-+static void poe_sigill(void)
-+{
-+	/* mrs x0, POR_EL0 */
-+	asm volatile("mrs x0, S3_3_C10_C2_4" : : : "x0");
-+}
-+
- static void rng_sigill(void)
- {
- 	asm volatile("mrs x0, S3_3_C2_C4_0" : : : "x0");
-@@ -601,6 +607,14 @@ static const struct hwcap_data {
- 		.cpuinfo = "pmull",
- 		.sigill_fn = pmull_sigill,
- 	},
-+	{
-+		.name = "POE",
-+		.at_hwcap = AT_HWCAP2,
-+		.hwcap_bit = HWCAP2_POE,
-+		.cpuinfo = "poe",
-+		.sigill_fn = poe_sigill,
-+		.sigill_reliable = true,
-+	},
- 	{
- 		.name = "RNG",
- 		.at_hwcap = AT_HWCAP2,
+diff --git a/tools/testing/selftests/arm64/signal/testcases/testcases.c b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+index e4331440fed0..e6daa94fcd2e 100644
+--- a/tools/testing/selftests/arm64/signal/testcases/testcases.c
++++ b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+@@ -161,6 +161,10 @@ bool validate_reserved(ucontext_t *uc, size_t resv_sz, char **err)
+ 			if (head->size != sizeof(struct esr_context))
+ 				*err = "Bad size for esr_context";
+ 			break;
++		case POE_MAGIC:
++			if (head->size != sizeof(struct poe_context))
++				*err = "Bad size for poe_context";
++			break;
+ 		case TPIDR2_MAGIC:
+ 			if (head->size != sizeof(struct tpidr2_context))
+ 				*err = "Bad size for tpidr2_context";
 -- 
 2.25.1
 
