@@ -1,155 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-18655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDC68BAFD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 17:30:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A7D8BB01A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 17:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC6C1F23084
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:30:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA4041C2244B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 15:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6046153BD2;
-	Fri,  3 May 2024 15:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EF5154432;
+	Fri,  3 May 2024 15:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kniFtGSZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270681514E5
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 15:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C110A1BF31;
+	Fri,  3 May 2024 15:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714750234; cv=none; b=sk8ILLOcV7Xj/mQeGwoPchmHMxUsAwWut4O98oscl7k8Eh1K1PDg+vJs/GM9Xfv++XAoK79VQLOVaVdZe2SH3sHvHiqSuJYYAx/iUI7QFugGQMWfwGU7jCrIptIdgxk35KG3IISceGX4IhtI90jMDm65m3+++gpiIBgyndPlF2s=
+	t=1714750692; cv=none; b=ZLWJ2PYkqBNwrL8SEWBFa1fLAlZX1+sKyDYxHbK9dLIIMMBnkfChhKtLqRxucLEdS9cl0eU6dOARXIDiDagWLlUqjVzq5JP7SNclFRGSYBX1LEq4qmqEiWcX60ShGRpt3FgILuDpKA4hg5RqHuDJru08sGdIpsUQ8WtubNPjJvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714750234; c=relaxed/simple;
-	bh=kyrVC4J9Vz6z/FduOGDJDpnwitp8VpXFgJDjIHnTBRw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HbpNzsAc3bepBc8fVZAsW7Y1Y1bXLTKLT5XFVL8t9FaIekpU1YLiPg5XHHUDbxZc4c7rHXq2ZTlQK+f3eqApaQAqNu/MpqqlYZ1pN2UMuvktwQJ4HLq3LzSSJ8EePmU0PEP5bJTZdXB2ibaFMcx95NytN61NojfI3uhEVPV0cnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7dec4e29827so622629639f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2024 08:30:32 -0700 (PDT)
+	s=arc-20240116; t=1714750692; c=relaxed/simple;
+	bh=cDQ3u/CXaUY5Of/Cl26YkTLnL8uhLQ6U1jCRpoQi9ME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFD5KNWMg8+xmYoYJwOC4p30guB55rYbw9loVbt8xSdlXGuOBL9crlEChRcR1o1Yz3hwduMPLOMVkVBtwb+aMqmSY0idroDYnqQvoepQExJAyGBEi/yG5dkf1orcsS1tg64d9OOn/+NLx08N0R4vQqJRcd3aphDNAWKBwSTFQ8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kniFtGSZ; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5aa20adda1dso5743301eaf.1;
+        Fri, 03 May 2024 08:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714750690; x=1715355490; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z/B6VoK43BAi8AR2X/X4aT3bzABV07D0UCLRCGFiZBM=;
+        b=kniFtGSZk6N1GDHT88FZb+E/9pn8DtHmUhg2wctci1Ivgx2HT1mNWpQk3R8XLXRCzz
+         SAWymFu4TZuhrxkGlFII1fU/1kLwyeveg9vZepY7kCTp7NVHHjT3lGbV8BaHHywJ9pN3
+         wawcklBfgC0tywZuuaRTftXE1zJ3E299oKMepYsG+G+pETU8A/fwOABSrGpvUdAbzkUs
+         Zy6+vONaxmJ7Volvtq+yGYKQZub+8FkClEP5xftmwsNdmZh+xgli2Gf22EMRFgtwfa8W
+         AhGo27Xx1KkOfQ06MJSEZHiDuhlyLzDDBOGAUXDmeDi3SHWIgNcIwgWdDqrVLOQlmtXe
+         fgRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714750232; x=1715355032;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rhz7DHtOSMsZMwSUUcoIINLpsdvrcVbqiM74fDm/9ds=;
-        b=qOCAigBvpy1HwdJ+BqK0i4A/GHjqx+1VR6PbRYqhQUjN1HVqChdV50DNQrcRGQiCFL
-         tP5EA8WKZ0ancB5sQSLdkTkpPmJNUWfAKe9X1DztAismEkFH5Ow757N3/z15s1FxrjyE
-         BYEynyD2+kUnQo+YGnPBI8JQ5VVIqurKodSB27m3hBaTQAyLxvrHIjkfmUWta82KlqU8
-         yjAzma+91TI+lX+Fe4pokd6pYD6UMwFKxwFMH3/D47Bd4kLm/23+MrBEzUBZ4G+eSPxs
-         RQ+n/aHFsM6gT8m1MNV+1/kiXTc16ZmZw5hEkexk0UcWT1Cn22nY7IMuffdo95Z9AFcM
-         GMkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxa/06HkMPzmVn6FMNCv7oufn1OHVwbhvN7hjTfC0WNlDnEZThNjKAEn/CSvOutzv3DY2uMxLPsdBIxhOv6Mp5/kke/HQQgO18eoEhFA==
-X-Gm-Message-State: AOJu0YxAZmGzcjJ9we/SgP44UWNA9hvPqnwNiTQvCbeZ6pX8TwhYU40E
-	zMMr4lMLWdBGdWmv/3P4Gw5rjZH3W+J5FwPLL2dgEnarV8jQlsGkf8QwgQ6JbOUinkdbZDoR5a7
-	DEqxbnMI+f+iIpGcRg5VA59qk4nIZdfQ6EVXiWAmWbRrw0xl7QOULpeA=
-X-Google-Smtp-Source: AGHT+IGTgCq9tXwTAcBv0XkMyEOkCP2eIv3Y5VNOhHWc1xhZeAZrHPNWS3QFPeWNq1lSuslJ+IMDkNjaHFvEgqynGXgZZ9zfKE0F
+        d=1e100.net; s=20230601; t=1714750690; x=1715355490;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z/B6VoK43BAi8AR2X/X4aT3bzABV07D0UCLRCGFiZBM=;
+        b=oT/v82hdDd06JQ79tUHsGAU3tNDDoVKsKLz+PCrTVkoe/vBPXgHEuoCS9skY2hRUlE
+         fkXtJyMyPoELojy3Nhv76eu5YKTNdMRtSQH5RohmI3M27/FU/wxpuAGFHU5qZkf2RTHC
+         vJry49I5Rg5s3CeFvdGYtzayUc9g06Ky0nlFfq1i/jjOic4jwUhYryTEJM6BrN6qDQ8p
+         Y8gQ0Gi0blKOg3SNdG8/eczdKTbqTwJQUMgFLyrxbwkaZfFs2aOc6K+tzYAyW0M3lQvA
+         W7uXrKkU5KKk1q/7kLgW1HNS84ndYE+muv+fmV68jKUM0+g28n8He8lPGbL5Nudby/4o
+         8w3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVNwlHRTDiaKeLyejWWAint8idU+W1BwPspsAc1U+nlJcyDWWqVW8bW7e3JVkM5Vq5OE9sfYcQHrw+ddRkimtCAcwGFl9eKFvEAngIRPfB7aMrHW8FcUeW4PZ8uQlw3GbG79XJ4sMlcPQ==
+X-Gm-Message-State: AOJu0Yy+Kkh3UOnDZRY2UIhks2hkS1wgav8yOAOX8A9g+E4DWgpSVDL2
+	5XPxCJOonZcUiBiw+VN7a+oVmkFx8XK2a/U/VSTTbiXcPwMSIJWK
+X-Google-Smtp-Source: AGHT+IEFu9BR0ISADGxJbE24i5mw/wIXgLL+GRAWkh90N+Ksp2ghyt7cJKEfDnfpwFO5lNH0gx5osg==
+X-Received: by 2002:a4a:ae42:0:b0:5aa:4e19:39aa with SMTP id a2-20020a4aae42000000b005aa4e1939aamr3144492oon.2.1714750689801;
+        Fri, 03 May 2024 08:38:09 -0700 (PDT)
+Received: from Borg-10.local (syn-070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id s19-20020a9d7593000000b006ee4db9f637sm660586otk.52.2024.05.03.08.38.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 May 2024 08:38:09 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Fri, 3 May 2024 10:38:07 -0500
+From: John Groves <John@groves.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, John Groves <jgroves@micron.com>, john@jagalactic.com, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
+	dave.hansen@linux.intel.com, gregory.price@memverge.com, Randy Dunlap <rdunlap@infradead.org>, 
+	Jerome Glisse <jglisse@google.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>, Eishan Mirakhur <emirakhur@micron.com>, 
+	Ravi Shankar <venkataravis@micron.com>, Srinivasulu Thanneeru <sthanneeru@micron.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Chandan Babu R <chandanbabu@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Steve French <stfrench@microsoft.com>, Nathan Lynch <nathanl@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Julien Panis <jpanis@baylibre.com>, Stanislav Fomichev <sdf@google.com>, 
+	Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: Re: [RFC PATCH v2 07/12] famfs prep: Add fs/super.c:kill_char_super()
+Message-ID: <fqothg6pcgsmuctiydtyfmcwbmkr3uxd2h6rpbfchtfu5a3caj@dy5u7xlwqtt3>
+References: <cover.1714409084.git.john@groves.net>
+ <a702d42c922737c4f8278617db69ce2b6d813c5f.1714409084.git.john@groves.net>
+ <20240502181716.GG2118490@ZenIV>
+ <eiobix2ovov5gywodc4bqyhhv7mshe7bvbp2ekewrvpdlnz5gh@6ryuna2lfpt7>
+ <20240503-vorstadt-zehren-caf579725c2a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1522:b0:368:c9e2:b372 with SMTP id
- i2-20020a056e02152200b00368c9e2b372mr124577ilu.0.1714750232241; Fri, 03 May
- 2024 08:30:32 -0700 (PDT)
-Date: Fri, 03 May 2024 08:30:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000078baec06178e6601@google.com>
-Subject: [syzbot] [bcachefs?] WARNING in bch2_trans_srcu_unlock
-From: syzbot <syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503-vorstadt-zehren-caf579725c2a@brauner>
 
-Hello,
+On 24/05/03 11:04AM, Christian Brauner wrote:
+> On Thu, May 02, 2024 at 05:25:33PM -0500, John Groves wrote:
+> > On 24/05/02 07:17PM, Al Viro wrote:
+> > > On Mon, Apr 29, 2024 at 12:04:23PM -0500, John Groves wrote:
+> > > > Famfs needs a slightly different kill_super variant than already existed.
+> > > > Putting it local to famfs would require exporting d_genocide(); this
+> > > > seemed a bit cleaner.
+> > > 
+> > > What's wrong with kill_litter_super()?
+> > 
+> > I struggled with that, I don't have my head fully around the superblock
+> > handling code.
+> 
+> Fyi, see my other mail where I point out what's wrong and one way to fix it.
 
-syzbot found the following issue on:
+No luck with that, but please let me know if I did it wrong.
 
-HEAD commit:    f03359bca01b Merge tag 'for-6.9-rc6-tag' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f82450980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-dashboard link: https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+https://lore.kernel.org/linux-fsdevel/cover.1714409084.git.john@groves.net/T/#m98890d9b46d9c83d2d144c07e6de7ae7f64a595d
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Thank you,,
+John
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e3ee5200440e/disk-f03359bc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c651e70b4ae3/vmlinux-f03359bc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/196f43b316ad/bzImage-f03359bc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-btree trans held srcu lock (delaying memory reclaim) for 28 seconds
-WARNING: CPU: 1 PID: 5195 at fs/bcachefs/btree_iter.c:2873 check_srcu_held_too_long fs/bcachefs/btree_iter.c:2871 [inline]
-WARNING: CPU: 1 PID: 5195 at fs/bcachefs/btree_iter.c:2873 bch2_trans_srcu_unlock+0x4f1/0x600 fs/bcachefs/btree_iter.c:2887
-Modules linked in:
-CPU: 1 PID: 5195 Comm: syz-executor.1 Not tainted 6.9.0-rc6-syzkaller-00131-gf03359bca01b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:check_srcu_held_too_long fs/bcachefs/btree_iter.c:2871 [inline]
-RIP: 0010:bch2_trans_srcu_unlock+0x4f1/0x600 fs/bcachefs/btree_iter.c:2887
-Code: 2b 1f 48 c1 eb 02 48 b9 c3 f5 28 5c 8f c2 f5 28 48 89 d8 48 f7 e1 48 c1 ea 02 48 c7 c7 40 26 11 8c 48 89 d6 e8 e0 a5 49 fd 90 <0f> 0b 90 90 e9 c0 fe ff ff 44 89 f9 80 e1 07 38 c1 0f 8c 38 fb ff
-RSP: 0018:ffffc900042ff1b0 EFLAGS: 00010246
-RAX: e963e25abba3d100 RBX: 00000000000002c5 RCX: 0000000000040000
-RDX: ffffc9000ade7000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: 00000000ffffaff9 R08: ffffffff81588e32 R09: 1ffff110172a519a
-R10: dffffc0000000000 R11: ffffed10172a519b R12: dffffc0000000000
-R13: 1ffff1100fe0000d R14: 1ffff1100fe00008 R15: ffff88807f000068
-FS:  00007f85a17656c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5df13ff000 CR3: 000000007841e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_trans_begin+0x1482/0x1920 fs/bcachefs/btree_iter.c:2963
- __bchfs_fallocate fs/bcachefs/fs-io.c:608 [inline]
- bchfs_fallocate fs/bcachefs/fs-io.c:733 [inline]
- bch2_fallocate_dispatch+0x1181/0x3810 fs/bcachefs/fs-io.c:780
- vfs_fallocate+0x564/0x6c0 fs/open.c:330
- do_vfs_ioctl+0x2592/0x2e50 fs/ioctl.c:883
- __do_sys_ioctl fs/ioctl.c:902 [inline]
- __se_sys_ioctl+0x81/0x170 fs/ioctl.c:890
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f85a0a7dd29
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f85a17650c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f85a0babf80 RCX: 00007f85a0a7dd29
-RDX: 0000000020000000 RSI: 0000000040305828 RDI: 000000000000000a
-RBP: 00007f85a0aca47e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f85a0babf80 R15: 00007fff348b2c78
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
