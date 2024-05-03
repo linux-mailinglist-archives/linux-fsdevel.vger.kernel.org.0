@@ -1,156 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-18659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531A68BB11D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 18:43:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7638BB131
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 18:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E0E6282C30
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 16:43:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED8AB221A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 16:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C8615749F;
-	Fri,  3 May 2024 16:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iSPTLegI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45190156C6D;
+	Fri,  3 May 2024 16:47:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE7C156994
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 16:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF6614F9DF
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 16:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714754522; cv=none; b=NFtOp+OpV/7JGgrUf0kBGz/M6yu/+zPpthVx5toSLT3ZmC5O4nB8x4LtLzwrw2Ql0QrpA5N41LFkn2nypu+eKDZCzX7aZZT3hUR5uTiX0SSxUnlq8m7JEwnvYUF8DeyHMFbZMHLlnJWWkxA0G8DPZXVzhblkj0rpbIfs4/CJlJg=
+	t=1714754844; cv=none; b=Ww3R2/0hozi0ornLJfnnd/Ub01TAW7E/3xr5nYNxreuErQTIt7V0J4F3RuibMGsW/CWkZWUN6sno+0CVzCjS4t3oaompSHyf0PWgKw4WccyNfF9sOf6Mx4OB70YKTnMRTvirljFntVfwClHaI5LALXNAnpZaJ/GKjhBf6X5GhdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714754522; c=relaxed/simple;
-	bh=6yaN6Tg5Pi5uYX9aCa0y3OfnrA67rHUXaDA4i8gsLlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZYZ6C0cDhg9CkE1swGtjDzTqYw9l0tJmbIjDREGUwwd0wFe4moI0OhMs6d6oFRQkKC2YAiCaiWEqdZW18IeICbz5Yiw5QK7SlHHDqcvilKnKGeP8Fnd/VXRn00r15OZZvmxWoheGGb1eLRCqEijx6EvHS/5FCVLviLZ2pmFk4A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iSPTLegI; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714754521; x=1746290521;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6yaN6Tg5Pi5uYX9aCa0y3OfnrA67rHUXaDA4i8gsLlY=;
-  b=iSPTLegIj/6vB0FGLyYwjj0QQCIwKadP9vdNn+tbRtSUIjDuAOGqMmLc
-   P69Zyib99JBdFojmsJ/8dnWInzpHwbGApq6drzaGuOdPyoa/hURUqFfZ0
-   4u8OQjwi2uJEpGRfkQZKm1wqV+BtC4ju4CeS/F5EdmPAeg2oRtnCf2V0m
-   S0C6KqICiLNo9iulSb/c8e4rpi31L/uyIrTCcEGIhTsyY4s9/TbmRTzDd
-   hxpMYVfd8Y7Rp1GrOON8EOzKvdvBSwp1tPD/zTKfXgV85hqJ9nnfWWBrT
-   3WLQLtgTy+fhgZp812ILx2DZ7pCD9PHUqW/BBH+luGssfMkG9BcCOJ5ys
-   g==;
-X-CSE-ConnectionGUID: Hyv+Pnp4Rsin6U2XV4bc+Q==
-X-CSE-MsgGUID: pX5XeerLRayK82xQLe8zBg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="10415364"
-X-IronPort-AV: E=Sophos;i="6.07,251,1708416000"; 
-   d="scan'208";a="10415364"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2024 09:42:00 -0700
-X-CSE-ConnectionGUID: K6Vn7gjMR26u5PtnJMH4hA==
-X-CSE-MsgGUID: 6T7K0AKiRK+99ocJX5AK6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,251,1708416000"; 
-   d="scan'208";a="32305945"
-Received: from zhangche-mobl.amr.corp.intel.com (HELO [10.209.82.31]) ([10.209.82.31])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2024 09:41:58 -0700
-Message-ID: <37447227-b478-4751-953f-b7199a6a55d0@intel.com>
-Date: Fri, 3 May 2024 09:41:57 -0700
+	s=arc-20240116; t=1714754844; c=relaxed/simple;
+	bh=YYwepeePkijgkT4cPDmiFifUSmHB0zHBAcVI5kGTPf8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=r16UVP85X09g7Ak49XTiMNuYBXsx/KqQSf3XRfuCq+6lCv4QG2vOKgNni1xVRLD3V9Eprp28Jf8mad/Yqj7Gcu6n7r1UW95hN8aiUJaZrGoFkYd3b3sANf//as0G/MvfFVy9KjOSHeecoXWVQCCY8rnZBI0kt/pu4tYe3lqh4ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7d6bf30c9e3so1028605439f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2024 09:47:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714754842; x=1715359642;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xGZsHUUo8jw065nsmI0c4WQ+Fpe4fxWGBJML8EfnTGI=;
+        b=oHE1W8XFS19oyN87jv4aETvark3ktlLxNagt+51+oiCEbRL2Y9ZSP32zBn4ui6NVpo
+         x8jl1DOYIwxbPUB1wasSoMkw8pybWdEYftpnN7XELiJqOdrGVuWyzvEZmQ/CnC1Be0zZ
+         6pPrVPUMYTfp7DgsOMyxeuXSHw1urWHjP2Jo4x7FDa5tZPiGTEJOdE84cHFvnDcvDbPg
+         olizjrANMGtLfRaghQb4z/n6V8rYKYJjMV6sc2EhTZDg6rmE3yuPKzS2JJNXQagcGyWy
+         R0CB/id52SK/9gEMToNf2gofVaco6jv41LqUJzAZSa4Eabb1S9FX+Xq/Ygc+LNAYQt16
+         JjMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgfthjpu19+DYLlIrltNuArVlMo/bhWmSge2SOwoFdr2BWMyu+7efdFj+YFwOk54yll+ELjE/qelXVQTPsuhHboQ+doIlcGk6WvAze3Q==
+X-Gm-Message-State: AOJu0YyrhDWpK8xxw5I+b2i+cZeCG88Chs/uJCVZLtbG80fcyfE84zSS
+	iDF/tu4h/I6Jo3PVud006BYNuYF5rfhhgiHWd0M7KbjYp1DbjVJB9Dv2qs+KJCjQJ1VNGNRxBN+
+	6yqMKKHxmhEB5zCUPYuRV/KGul7mNgj6EGhpw0Eb5srTQbBupsGfYkNE=
+X-Google-Smtp-Source: AGHT+IFqaVjrHilv46QxdAUYF5hN3r+rgxzFI7hhnU/+44ZWJIieQczY/mRpSacDLBTdtEUTcX8EimHXRyOoeOkZB9DQiOdhm69H
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/29] mm: use ARCH_PKEY_BITS to define VM_PKEY_BITN
-To: Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: akpm@linux-foundation.org, aneesh.kumar@kernel.org,
- aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
- catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
- dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, maz@kernel.org,
- mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com,
- npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org,
- szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org,
- kvmarm@lists.linux.dev
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-4-joey.gouly@arm.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240503130147.1154804-4-joey.gouly@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:8320:b0:488:59cc:eb54 with SMTP id
+ io32-20020a056638832000b0048859cceb54mr38688jab.3.1714754842634; Fri, 03 May
+ 2024 09:47:22 -0700 (PDT)
+Date: Fri, 03 May 2024 09:47:22 -0700
+In-Reply-To: <0000000000003355e706178d7a8a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000045bc2e06178f79e6@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in __virt_to_phys (3)
+From: syzbot <syzbot+3333603f569fc2ef258c@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/3/24 06:01, Joey Gouly wrote:
->  #ifdef CONFIG_ARCH_HAS_PKEYS
-> -# define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
-> -# define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
-> -# define VM_PKEY_BIT1	VM_HIGH_ARCH_1	/* on x86 and 5-bit value on ppc64   */
-> -# define VM_PKEY_BIT2	VM_HIGH_ARCH_2
-> -# define VM_PKEY_BIT3	VM_HIGH_ARCH_3
-> -#ifdef CONFIG_PPC
-> +# define VM_PKEY_SHIFT VM_HIGH_ARCH_BIT_0
-> +# define VM_PKEY_BIT0  VM_HIGH_ARCH_0
-> +# define VM_PKEY_BIT1  VM_HIGH_ARCH_1
-> +# define VM_PKEY_BIT2  VM_HIGH_ARCH_2
-> +#if CONFIG_ARCH_PKEY_BITS > 3
-> +# define VM_PKEY_BIT3  VM_HIGH_ARCH_3
-> +#else
-> +# define VM_PKEY_BIT3  0
-> +#endif
-> +#if CONFIG_ARCH_PKEY_BITS > 4
+syzbot has found a reproducer for the following issue on:
 
-It's certainly not pretty, but it does get the arch #ifdef out of
-generic code.  We might need to rethink this if we get another
-architecture or two, but this seems manageable for now.
+HEAD commit:    6a71d2909427 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c8ea2f180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fca646cf17cc616b
+dashboard link: https://syzkaller.appspot.com/bug?extid=3333603f569fc2ef258c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1618e660980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f44a2f180000
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c77d21fa1405/disk-6a71d290.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/429fcd369816/vmlinux-6a71d290.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d3d8a4b85112/Image-6a71d290.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f31e8145d293/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3333603f569fc2ef258c@syzkaller.appspotmail.com
+
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 0
+------------[ cut here ]------------
+virt_to_phys used for non-linear address: fffffffffffff75e (0xfffffffffffff75e)
+WARNING: CPU: 1 PID: 6236 at arch/arm64/mm/physaddr.c:15 __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+Modules linked in:
+CPU: 1 PID: 6236 Comm: syz-executor237 Not tainted 6.9.0-rc4-syzkaller-g6a71d2909427 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+pstate: 60401005 (nZCv daif +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
+pc : __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+lr : __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+sp : ffff8000a05d6e00
+x29: ffff8000a05d6e00 x28: 1ffff000140bae02 x27: fffffffffffff75e
+x26: ffff8000a05d7010 x25: ffff7000140badf4 x24: dfff800000000000
+x23: ffff0000e1000000 x22: 000f600000000000 x21: 000000000000002d
+x20: fffffffffffff75e x19: 000ffffffffff75e x18: 1fffe000367bdd96
+x17: ffff80008ee7d000 x16: ffff800080333fec x15: 0000000000000001
+x14: 1fffe0001abcfe00 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001abcfe01 x10: 1fffe0001abcfe00 x9 : 08be2e043077f700
+x8 : 08be2e043077f700 x7 : ffff8000802aabc8 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff800080296e70
+x2 : 0000000000000001 x1 : 0000000000000004 x0 : 0000000000000001
+Call trace:
+ __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+ virt_to_phys arch/arm64/include/asm/memory.h:368 [inline]
+ virt_to_pfn arch/arm64/include/asm/memory.h:382 [inline]
+ virt_to_folio include/linux/mm.h:1304 [inline]
+ kfree+0xa4/0x3e8 mm/slub.c:4382
+ bch2_fs_recovery+0x32c/0x4854 fs/bcachefs/recovery.c:902
+ bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1042
+ bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2101
+ bch2_mount+0x558/0xe10 fs/bcachefs/fs.c:1900
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+ vfs_get_tree+0x90/0x288 fs/super.c:1779
+ do_new_mount+0x278/0x900 fs/namespace.c:3352
+ path_mount+0x590/0xe04 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+irq event stamp: 75602
+hardirqs last  enabled at (75601): [<ffff8000802aac68>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1397 [inline]
+hardirqs last  enabled at (75601): [<ffff8000802aac68>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5163
+hardirqs last disabled at (75602): [<ffff80008ae6da08>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
+softirqs last  enabled at (75492): [<ffff8000800218e4>] softirq_handle_end kernel/softirq.c:400 [inline]
+softirqs last  enabled at (75492): [<ffff8000800218e4>] __do_softirq+0xb10/0xd2c kernel/softirq.c:583
+softirqs last disabled at (75397): [<ffff80008002ad34>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+---[ end trace 0000000000000000 ]---
+Unable to handle kernel paging request at virtual address ffffffffc37affc8
+KASAN: maybe wild-memory-access in range [0x0003fffe1bd7fe40-0x0003fffe1bd7fe47]
+Mem abort info:
+  ESR = 0x0000000096000006
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001ad5bd000
+[ffffffffc37affc8] pgd=0000000000000000, p4d=00000001b0d98003, pud=00000001b0d99003, pmd=0000000000000000
+Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 6236 Comm: syz-executor237 Tainted: G        W          6.9.0-rc4-syzkaller-g6a71d2909427 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+pstate: 80401005 (Nzcv daif +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
+pc : _compound_head include/linux/page-flags.h:247 [inline]
+pc : virt_to_folio include/linux/mm.h:1306 [inline]
+pc : kfree+0xbc/0x3e8 mm/slub.c:4382
+lr : virt_to_phys arch/arm64/include/asm/memory.h:368 [inline]
+lr : virt_to_pfn arch/arm64/include/asm/memory.h:382 [inline]
+lr : virt_to_folio include/linux/mm.h:1304 [inline]
+lr : kfree+0xa4/0x3e8 mm/slub.c:4382
+sp : ffff8000a05d6e30
+x29: ffff8000a05d6e40 x28: 1ffff000140bae02 x27: fffffffffffff75e
+x26: ffff8000a05d7010 x25: ffff7000140badf4 x24: dfff800000000000
+x23: ffff0000e1000000 x22: 0000000000000001 x21: ffffffffc37affc0
+x20: ffff80008293e95c x19: fffffffffffff75e x18: 1fffe000367bdd96
+x17: ffff80008ee7d000 x16: ffff800080333fec x15: 0000000000000001
+x14: 1fffe0001abcfe00 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001abcfe01 x10: 0000000000ff0100 x9 : 00003e00037affc0
+x8 : ffffc1ffc0000000 x7 : ffff8000802aabc8 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff800080296e70
+x2 : 0000000000000001 x1 : 0000000000000004 x0 : 000080011ebff75e
+Call trace:
+ virt_to_folio include/linux/mm.h:1304 [inline]
+ kfree+0xbc/0x3e8 mm/slub.c:4382
+ bch2_fs_recovery+0x32c/0x4854 fs/bcachefs/recovery.c:902
+ bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1042
+ bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2101
+ bch2_mount+0x558/0xe10 fs/bcachefs/fs.c:1900
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+ vfs_get_tree+0x90/0x288 fs/super.c:1779
+ do_new_mount+0x278/0x900 fs/namespace.c:3352
+ path_mount+0x590/0xe04 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: 927acd29 f2d83fe8 cb151929 8b080135 (f94006a8) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	927acd29 	and	x9, x9, #0x3ffffffffffffc0
+   4:	f2d83fe8 	movk	x8, #0xc1ff, lsl #32
+   8:	cb151929 	sub	x9, x9, x21, lsl #6
+   c:	8b080135 	add	x21, x9, x8
+* 10:	f94006a8 	ldr	x8, [x21, #8] <-- trapping instruction
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
