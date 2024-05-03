@@ -1,244 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-18678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578DF8BB552
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 23:13:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E5B8BB59C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 23:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B1581C23322
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 21:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC60F1C22AB4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2024 21:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194DE50269;
-	Fri,  3 May 2024 21:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A2658AA7;
+	Fri,  3 May 2024 21:23:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EF041C87
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 21:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726BF56B76
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 May 2024 21:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714770744; cv=none; b=RpApf8FmbN5f/jPW+cHmzQxbaznjPEk3NizD19CVi/8raQdv0XfpSiBNAxGPfcR1/Kn1zuehYdiPVGXcAaPFXdQZFdEcK0A8EFie8/8SIqvgyx494m/HwUlqG3hBusAe/4v5u1rFBWvMWJbNV+tNZhI9aAPBk119VyshOanLZ6o=
+	t=1714771408; cv=none; b=MtkOCFtNmUqdccqsFlIuxtzx/YUklQTPsavu7QkHZRm8GFOAlRyDHHPXPGpKHMrHwPd+6W1tDnqIM2C5j3U1LK0T2RXvr2F7HkXCI9QN5E6BDrtccPi0K4uF/35zlXXAUKIOiQjlczv9pTbf6WAFz+bvlC6Fg0nDeyFwISaW1H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714770744; c=relaxed/simple;
-	bh=ycDghc68qzDwYAQewVv9WPRcdtL4zIPqb42JlXJQlJ8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Y+PnFIu3HzU+NMv7othcgBkHjJZ9qOUkfctSzjUuNuEiphEtORZw9AtEr5/AOcOw/ufdkY22auqUFaIbygQEeWTJJovvfqqvHrYU6o4rmnAWdOQ6fAVXtYjqy9fwoBdNdF2iG7WRVdLHlJO5jqcJTuchKWYNnRDOZHPXntlv+G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	s=arc-20240116; t=1714771408; c=relaxed/simple;
+	bh=0I9HYehUPiTbvcoZm+bi9oIqOfptahzemmvOSF8E9kQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E1P04l1D6qo5ZBwyblDH2gnGcq/FcLq6/oMlbXRR/powG2BJueTjOblRMsYU5ImtSoGpm7OyFlQRyfdpLkMTtWe6sbz76aParCS/sPJ/2qqo4kB8TS1MMQ389ZikeI9GS7Z6zW9H2orGgQpQtK8uDmX38MDH9KWGRh55ZBiYmow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-36b1fda4c6dso1473465ab.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2024 14:12:22 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7da42f683f7so9193539f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2024 14:23:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714770742; x=1715375542;
+        d=1e100.net; s=20230601; t=1714771405; x=1715376205;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7QQ1yqs7rz6ixM8Q6PLgTtJHT4Ut7GB+/Wz+jhLZ1Rk=;
-        b=hrnjJUAO/131VytSCvYN1/YPXgcL2GIWcWcvg1vP3EGW2/uv8bjMOrOXIpy1BZekzK
-         yje0FcF13b+gz5CCizCtw1+WDqBIjvDu1MxT1n923qEPG1CK89NlnqOWK3X0auU1e9+c
-         QyV28piphZa+xMPA/KqfY26uRFRaU4rRSp1u1pLy2g2aL7YOkl+t3aK9YDzzo2eG26mJ
-         2gTjoPhZhXH5t0DttnLX8/DIURUu01q58mJUzibgZWo1tOzdW+qe4S6xeJqgWN9n7Nn3
-         o+jS8e1mICxkrqF7OunQC/nuR4Twb/NAD9Rh491AFSynXfRSOWDQ79xt8zTGG9mHOv6i
-         aMCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpbvvxv7GLssTVJBnmDwsQwPHv9+6sXwfXiGqjPkWosoeiAdOR33XwUi0bNJ1dz3T2E/C4SxcIS8sIC+9S9djR+uXnCsGh+xERbajgFQ==
-X-Gm-Message-State: AOJu0YyWD9iN4VsR5vPN11nwhcPt94svrlEKkthVNtjJpaGUkrRJejN5
-	i/ZYyAnBWTxVGS4RTyG1CAL6lzoYx8Q+SlTGJFntdUUlkfW/pANI4v4xphULTSJyxfccZepp7sw
-	WyVOg/d4XJ2wYu7Ik9d1WCoyLaYjXaN0r4NFWOBHey/u0xmnQDw+xzDo=
-X-Google-Smtp-Source: AGHT+IGwozsz3tqmLYxBXyx9gpKBDwRjL+CDjFgR59GW2XTkvZNO4MP6/g+XMe/zXrELNjI818ssvFVinNSgKcwwSBdXn88yHXyZ
+        bh=x4GbqEKgZuUa1KrnN/Su4ZMPhtfNcJzTLzCPfurOMJw=;
+        b=oatwDi0xrF80lkTEieraKInEqah/drMo+mt5sliRfHwdcIJAjor5hIKrQKwDbMMUfJ
+         T3E/IuU4HryFC+nrlGFILlYsE5u0bBZ0s75TKWPJqwqvk2RFkGPAkYnxAfC2z2Jracj9
+         U1Eg2rTqWrrhLH0V4TmvsCw62Sl2zlv4udUg8/4K+8ue+IQtY91aU6ALG0GfYnm6ZIDq
+         +AVG55hrppJCN2O+AerQv39y8I4+LmQGOJu7V10bXX2TZdjrswOKp5bV7zV6/tuLlVwr
+         /MgTo0z8nBIwsaKiiT5zHPO9T9xeu1D/KmG8OpET9V6rZ0IwLWftuWlmuqM3Q1Qe18F1
+         45Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSi0LvWltaX2E1kc/OvDfzRxErFNNVWMKfGWVIZyYjDkPDHY52JfmYv3fwg1BYZHlHSTMx+sBGJMv4azuqIKy7+T36Az0SMaWtyBePSQ==
+X-Gm-Message-State: AOJu0Yyj9RDy9Etzw+9y/1k7BiFYDosrGwGUw/3qBitbAq45hR/nSC01
+	pQfIReE6eT6osnXsgxTKf4DKdfW5sNsD/PA9uoAu+48rf3lqddvHQWDv6QY/KO7BqD5IOLyIPNc
+	CpYW5pJdkmpjzyjycItuzmS3FDXzuGbDUVXNhsJXik0rJDf9G/dQVF64=
+X-Google-Smtp-Source: AGHT+IESXSSXDGivXRyeDdWZ+LhL6+oKegoJ1a3vEN9LKW76nx/PAeBHz1CdWCfX0td7zXksEE0ZqjkBPLGM3WYb+8lhIzF59bPP
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c3:b0:36b:140e:a4c with SMTP id
- i3-20020a056e0212c300b0036b140e0a4cmr136165ilm.3.1714770742390; Fri, 03 May
- 2024 14:12:22 -0700 (PDT)
-Date: Fri, 03 May 2024 14:12:22 -0700
+X-Received: by 2002:a05:6638:6d12:b0:487:31da:eaf1 with SMTP id
+ he18-20020a0566386d1200b0048731daeaf1mr82103jab.1.1714771405656; Fri, 03 May
+ 2024 14:23:25 -0700 (PDT)
+Date: Fri, 03 May 2024 14:23:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f8c4ed0617932cf8@google.com>
-Subject: [syzbot] [xfs?] possible deadlock in xfs_qm_dqfree_one (2)
-From: syzbot <syzbot+8ff4d7e4aeff9f0a6390@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000008160ad06179354a2@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_recovery
+From: syzbot <syzbot+05c1843ef85da9e52042@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    b947cc5bf6d7 Merge tag 'erofs-for-6.9-rc7-fixes' of git://..
+HEAD commit:    3d25a941ea50 Merge tag 'block-6.9-20240503' of git://git.k..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11806d37180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8a10709e36c02a40
-dashboard link: https://syzkaller.appspot.com/bug?extid=8ff4d7e4aeff9f0a6390
+console output: https://syzkaller.appspot.com/x/log.txt?x=114b39ff180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
+dashboard link: https://syzkaller.appspot.com/bug?extid=05c1843ef85da9e52042
 compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13aed9df180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ac7a28980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/91fab71c3d68/disk-b947cc5b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fec2372d99b3/vmlinux-b947cc5b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cd335eaa33d7/bzImage-b947cc5b.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-3d25a941.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9d8ed74e49f1/vmlinux-3d25a941.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d724e9151b52/bzImage-3d25a941.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/998b7ff57836/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8ff4d7e4aeff9f0a6390@syzkaller.appspotmail.com
+Reported-by: syzbot+05c1843ef85da9e52042@syzkaller.appspotmail.com
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc6-syzkaller-00005-gb947cc5bf6d7 #0 Not tainted
-------------------------------------------------------
-kswapd0/88 is trying to acquire lock:
-ffff88805aa35958 (&qinf->qi_tree_lock){+.+.}-{3:3}, at: xfs_qm_dqfree_one+0x6f/0x1a0 fs/xfs/xfs_qm.c:1654
-
-but task is already holding lock:
-ffffffff8db37c40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x19a0 mm/vmscan.c:6782
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
-       might_alloc include/linux/sched/mm.h:312 [inline]
-       slab_pre_alloc_hook mm/slub.c:3746 [inline]
-       slab_alloc_node mm/slub.c:3827 [inline]
-       kmalloc_trace+0x51/0x330 mm/slub.c:3992
-       kmalloc include/linux/slab.h:628 [inline]
-       add_stack_record_to_list mm/page_owner.c:177 [inline]
-       inc_stack_record_count mm/page_owner.c:219 [inline]
-       __set_page_owner+0x34a/0x560 mm/page_owner.c:334
-       set_page_owner include/linux/page_owner.h:32 [inline]
-       post_alloc_hook+0x2d4/0x350 mm/page_alloc.c:1534
-       prep_new_page mm/page_alloc.c:1541 [inline]
-       get_page_from_freelist+0xa28/0x3780 mm/page_alloc.c:3317
-       __alloc_pages+0x22b/0x2460 mm/page_alloc.c:4575
-       __alloc_pages_bulk+0x742/0x14f0 mm/page_alloc.c:4523
-       alloc_pages_bulk_array include/linux/gfp.h:202 [inline]
-       xfs_buf_alloc_pages+0x20f/0x9d0 fs/xfs/xfs_buf.c:398
-       xfs_buf_find_insert fs/xfs/xfs_buf.c:650 [inline]
-       xfs_buf_get_map+0x1e71/0x30e0 fs/xfs/xfs_buf.c:755
-       xfs_buf_read_map+0xd2/0xb40 fs/xfs/xfs_buf.c:860
-       xfs_trans_read_buf_map+0x352/0x990 fs/xfs/xfs_trans_buf.c:289
-       xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
-       xfs_qm_dqflush+0x224/0x1470 fs/xfs/xfs_dquot.c:1271
-       xfs_qm_flush_one+0x2f7/0x3b0 fs/xfs/xfs_qm.c:1285
-       xfs_qm_dquot_walk.isra.0+0x21a/0x3d0 fs/xfs/xfs_qm.c:88
-       xfs_qm_quotacheck+0x7af/0x920 fs/xfs/xfs_qm.c:1375
-       xfs_qm_mount_quotas+0x11a/0x650 fs/xfs/xfs_qm.c:1488
-       xfs_mountfs+0x1c45/0x1d40 fs/xfs/xfs_mount.c:963
-       xfs_fs_fill_super+0x1424/0x1d80 fs/xfs/xfs_super.c:1730
-       get_tree_bdev+0x372/0x610 fs/super.c:1614
-       vfs_get_tree+0x92/0x380 fs/super.c:1779
-       do_new_mount fs/namespace.c:3352 [inline]
-       path_mount+0x14e6/0x1f20 fs/namespace.c:3679
-       do_mount fs/namespace.c:3692 [inline]
-       __do_sys_mount fs/namespace.c:3898 [inline]
-       __se_sys_mount fs/namespace.c:3875 [inline]
-       __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&xfs_dquot_project_class){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       xfs_dqlock fs/xfs/xfs_dquot.h:125 [inline]
-       xfs_qm_dqget_cache_insert.constprop.0+0xda/0x3d0 fs/xfs/xfs_dquot.c:842
-       xfs_qm_dqget+0x182/0x4a0 fs/xfs/xfs_dquot.c:909
-       xfs_qm_quotacheck_dqadjust+0xb3/0x550 fs/xfs/xfs_qm.c:1096
-       xfs_qm_dqusage_adjust+0x4ef/0x660 fs/xfs/xfs_qm.c:1229
-       xfs_iwalk_ag_recs+0x4d2/0x850 fs/xfs/xfs_iwalk.c:213
-       xfs_iwalk_run_callbacks+0x1f3/0x540 fs/xfs/xfs_iwalk.c:372
-       xfs_iwalk_ag+0x823/0xa60 fs/xfs/xfs_iwalk.c:478
-       xfs_iwalk_ag_work+0x144/0x1c0 fs/xfs/xfs_iwalk.c:620
-       xfs_pwork_work+0x82/0x160 fs/xfs/xfs_pwork.c:47
-       process_one_work+0x9ac/0x1ac0 kernel/workqueue.c:3254
-       process_scheduled_works kernel/workqueue.c:3335 [inline]
-       worker_thread+0x6c8/0xf70 kernel/workqueue.c:3416
-       kthread+0x2c4/0x3a0 kernel/kthread.c:388
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (&qinf->qi_tree_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       xfs_qm_dqfree_one+0x6f/0x1a0 fs/xfs/xfs_qm.c:1654
-       xfs_qm_shrink_scan+0x25c/0x3f0 fs/xfs/xfs_qm.c:531
-       do_shrink_slab+0x452/0x11c0 mm/shrinker.c:435
-       shrink_slab+0x18a/0x1310 mm/shrinker.c:662
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
-       shrink_many mm/vmscan.c:4835 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4935 [inline]
-       shrink_node+0x231f/0x3a80 mm/vmscan.c:5894
-       kswapd_shrink_node mm/vmscan.c:6704 [inline]
-       balance_pgdat+0x9a0/0x19a0 mm/vmscan.c:6895
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
-       kthread+0x2c4/0x3a0 kernel/kthread.c:388
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  &qinf->qi_tree_lock --> &xfs_dquot_project_class --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&xfs_dquot_project_class);
-                               lock(fs_reclaim);
-  lock(&qinf->qi_tree_lock);
-
- *** DEADLOCK ***
-
-1 lock held by kswapd0/88:
- #0: ffffffff8db37c40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x19a0 mm/vmscan.c:6782
-
-stack backtrace:
-CPU: 0 PID: 88 Comm: kswapd0 Not tainted 6.9.0-rc6-syzkaller-00005-gb947cc5bf6d7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq afc6cc17f332ffe0 written 24 min_key POS_MIN durability: 0 (invalid extent entry 0000000000020040)
+  invalid extent entry type (got 6, max 6), shutting down
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 0
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:23!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 2 PID: 5178 Comm: syz-executor317 Not tainted 6.9.0-rc6-syzkaller-00227-g3d25a941ea50 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__phys_addr+0x120/0x150 arch/x86/mm/physaddr.c:23
+Code: 10 00 75 39 48 8b 1d 4f c8 1b 0c 48 89 ee bf ff ff ff 1f e8 72 49 4f 00 48 01 eb 48 81 fd ff ff ff 1f 76 a7 e8 51 4e 4f 00 90 <0f> 0b 48 c7 c7 bd 39 9f 8f e8 b2 99 aa 00 e9 52 ff ff ff 48 c7 c7
+RSP: 0018:ffffc900032ef4a0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 000000007ffff75e RCX: ffffffff813e77ce
+RDX: ffff888011aca440 RSI: ffffffff813e77df RDI: 0000000000000007
+RBP: 000000007ffff75e R08: 0000000000000007 R09: 000000001fffffff
+R10: 000000007ffff75e R11: 0000000000000000 R12: 0000000000000001
+R13: 0000000000000001 R14: 00000000663551f8 R15: ffffed1005ea010e
+FS:  000055557a454380(0000) GS:ffff88806b400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff7a9096410 CR3: 00000000203ec000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- xfs_qm_dqfree_one+0x6f/0x1a0 fs/xfs/xfs_qm.c:1654
- xfs_qm_shrink_scan+0x25c/0x3f0 fs/xfs/xfs_qm.c:531
- do_shrink_slab+0x452/0x11c0 mm/shrinker.c:435
- shrink_slab+0x18a/0x1310 mm/shrinker.c:662
- shrink_one+0x493/0x7c0 mm/vmscan.c:4774
- shrink_many mm/vmscan.c:4835 [inline]
- lru_gen_shrink_node mm/vmscan.c:4935 [inline]
- shrink_node+0x231f/0x3a80 mm/vmscan.c:5894
- kswapd_shrink_node mm/vmscan.c:6704 [inline]
- balance_pgdat+0x9a0/0x19a0 mm/vmscan.c:6895
- kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
- kthread+0x2c4/0x3a0 kernel/kthread.c:388
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ virt_to_folio include/linux/mm.h:1306 [inline]
+ kfree+0x6c/0x390 mm/slub.c:4382
+ bch2_fs_recovery+0xfe9/0x3c40 fs/bcachefs/recovery.c:905
+ bch2_fs_start+0x2e9/0x600 fs/bcachefs/super.c:1043
+ bch2_fs_open+0xf87/0x1110 fs/bcachefs/super.c:2102
+ bch2_mount+0xdcc/0x1130 fs/bcachefs/fs.c:1903
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1779
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1ad400a8fa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd674e3108 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd674e3120 RCX: 00007f1ad400a8fa
+RDX: 0000000020011a00 RSI: 0000000020000080 RDI: 00007ffd674e3120
+RBP: 0000000000000004 R08: 00007ffd674e3160 R09: 00000000000119fd
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffd674e3160 R14: 0000000000000003 R15: 0000000001000000
  </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__phys_addr+0x120/0x150 arch/x86/mm/physaddr.c:23
+Code: 10 00 75 39 48 8b 1d 4f c8 1b 0c 48 89 ee bf ff ff ff 1f e8 72 49 4f 00 48 01 eb 48 81 fd ff ff ff 1f 76 a7 e8 51 4e 4f 00 90 <0f> 0b 48 c7 c7 bd 39 9f 8f e8 b2 99 aa 00 e9 52 ff ff ff 48 c7 c7
+RSP: 0018:ffffc900032ef4a0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 000000007ffff75e RCX: ffffffff813e77ce
+RDX: ffff888011aca440 RSI: ffffffff813e77df RDI: 0000000000000007
+RBP: 000000007ffff75e R08: 0000000000000007 R09: 000000001fffffff
+R10: 000000007ffff75e R11: 0000000000000000 R12: 0000000000000001
+R13: 0000000000000001 R14: 00000000663551f8 R15: ffffed1005ea010e
+FS:  000055557a454380(0000) GS:ffff88806b400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff7a9096410 CR3: 00000000203ec000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
@@ -251,6 +164,10 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
