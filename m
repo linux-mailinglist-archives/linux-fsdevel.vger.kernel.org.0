@@ -1,67 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-18725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BE18BBA90
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 12:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4578BBAAB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 13:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5330E28274A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 10:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 603F9282814
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 11:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383AD1C6A8;
-	Sat,  4 May 2024 10:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90091C6BD;
+	Sat,  4 May 2024 11:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIVHK8rJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3RJ+eD3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8343F18C3D;
-	Sat,  4 May 2024 10:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448554689;
+	Sat,  4 May 2024 11:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714819475; cv=none; b=f9FlggnLAClQYuUGve9GDh9aVbeFY/wd5AcE5/Kri/xHMqsQPDU5rpO4fHJk3F7Ei3cpKwl9q895vRz9ZAkOWN/5IlarNWYLJ+qGn32SSZbgUwEmCxqyppGNISmL9EXa10/tyJv+vGPf7TthJfFt0uvNnsMYO0OZ/ZAlziPt11o=
+	t=1714821869; cv=none; b=DlM4AAeUxlJi5Tuu2OAnNYNmLs/VWCuft4ssb3FntCeZmrn+l84ivgzoUaYEjEKsGt0gx9NyzADWt3dgQ7BgFv5p1tQbRXq9dwCcHIvGBfaYxdV74o0YWBjGTydL+j5bNDvJ7tiwdl2nRe2qaZ3CUn4Bw5rusIADLbxRTTV4mQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714819475; c=relaxed/simple;
-	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
+	s=arc-20240116; t=1714821869; c=relaxed/simple;
+	bh=ZFUN6ZfJJFj019cT3H3F5ftQBbB/jbGfSG3vzZ2bHDY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TemzpVE/UgkgN5DQgxQFuvb96KDELhEpvlfQdVso2SBFgj5XMQ17B+eSLWxCvl3RjepZm8TQ1/paDpdIXdeohFGFQEjeAEEk0qn+OKzDGNLYhb6r1WZF5d6iERXLreqLGcOoXLZM2WRlCCCCmKFBqnxH9xHzSJ1VatCR468qBhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIVHK8rJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3E0C072AA;
-	Sat,  4 May 2024 10:44:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uy+NQcM7o0CNKsHgvXIsjZlUBHZc7wddur1iYYk3dBj2+05oGoXCY2r/TPC7WCuDYYcVSwmbTieBEByDHklGNaj3CrLmc5jBTNCU1QwegR6qILdwQK1JRRNgsoL2jK63JNIz/DjcuOhQa4VPCrBzV5GEjVo7oyNvO4SejWrt26M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3RJ+eD3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00A9C072AA;
+	Sat,  4 May 2024 11:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714819475;
-	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
+	s=k20201202; t=1714821868;
+	bh=ZFUN6ZfJJFj019cT3H3F5ftQBbB/jbGfSG3vzZ2bHDY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gIVHK8rJGTpZuS9PubMDG4bY2YumcGjk6TzRhJqqAh/plbNUsquxQFGCUWECGrJRE
-	 EzEvSIxTo4EYaTNfUE2NBTtvQOeoS6PxKjWcxkktWj4E/WHJr8O8fAnG3sfoTBN/4+
-	 G8i9tDMgpoyUa85xPHmgl+X+CQSc0wuLRN7dziptjOtID8DTpn20rQzI5uVZV/AEjb
-	 4Ape1g8W24bX7M1DAREc4k2jprCEjKPolqNkqjfYm83hFYMcF9DEBJfSs+DW6g3CfW
-	 1/6/xZZebHis+jmMY6X8+A/X1qDg3q6lPjUs79o8NavTNxTFe91+9fo0VupPerS0F3
-	 7PiA+rIodq4lg==
-Date: Sat, 4 May 2024 12:44:28 +0200
+	b=T3RJ+eD3P4krbidA4Ux+D5n2CGZ52JX4U90QOuKkNuirMUx4ftzcL9Zq24mhdBYEk
+	 ic3BoOiWj/dNwNV89puB3YidkIcSOC7UcAU9JGdkmdzgU7pUYfZEzh8PX0cgRUw4lj
+	 0o0Zw1EDkU0R4rYRwSe9Cad/EHVH6N0WhkKnN1HUVRyaCcZinvkHrvemcLzdsn4nvm
+	 2fQythfK+JGXpeCwVuW6wNxQ04MsxSNmJQgPRhIkokdjTqhUBHHVqtoclNUI5Ax9Y5
+	 B2T9wcrvandZRpNJnooCKA0KPITePq8Ae89YJI67TVPOWU1j5QOKn5GCL6cabvx0CL
+	 m0FQi7LDFyd1A==
+Date: Sat, 4 May 2024 13:24:23 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240504-chatten-unbelastet-b308db41727c@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240503214531.GB2118490@ZenIV>
- <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
- <20240503220145.GD2118490@ZenIV>
- <20240503220744.GE2118490@ZenIV>
- <CAHk-=whULchE1i5LA2Fa=ZndSAzPXGWh_e5+a=YV3qT1BEST7w@mail.gmail.com>
- <20240503233900.GG2118490@ZenIV>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	gregkh@linuxfoundation.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/5] ioctl()-based API to query VMAs from /proc/<pid>/maps
+Message-ID: <20240504-rasch-gekrochen-3d577084beda@brauner>
+References: <20240504003006.3303334-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,38 +58,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240503233900.GG2118490@ZenIV>
+In-Reply-To: <20240504003006.3303334-1-andrii@kernel.org>
 
-On Sat, May 04, 2024 at 12:39:00AM +0100, Al Viro wrote:
-> On Fri, May 03, 2024 at 04:16:15PM -0700, Linus Torvalds wrote:
-> > On Fri, 3 May 2024 at 15:07, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > Suppose your program calls select() on a pipe and dmabuf, sees data to be read
-> > > from pipe, reads it, closes both pipe and dmabuf and exits.
-> > >
-> > > Would you expect that dmabuf file would stick around for hell knows how long
-> > > after that?  I would certainly be very surprised by running into that...
-> > 
-> > Why?
-> > 
-> > That's the _point_ of refcounts. They make the thing they refcount
-> > stay around until it's no longer referenced.
-> > 
-> > Now, I agree that dmabuf's are a bit odd in how they use a 'struct
-> > file' *as* their refcount, but hey, it's a specialty use. Unusual
-> > perhaps, but not exactly wrong.
-> > 
-> > I suspect that if you saw a dmabuf just have its own 'refcount_t' and
-> > stay around until it was done, you wouldn't bat an eye at it, and it's
-> > really just the "it uses a struct file for counting" that you are
-> > reacting to.
+On Fri, May 03, 2024 at 05:30:01PM -0700, Andrii Nakryiko wrote:
+> Implement binary ioctl()-based interface to /proc/<pid>/maps file to allow
+> applications to query VMA information more efficiently than through textual
+> processing of /proc/<pid>/maps contents. See patch #2 for the context,
+> justification, and nuances of the API design.
 > 
-> *IF* those files are on purely internal filesystem, that's probably
-> OK; do that with something on something mountable (char device,
-> sysfs file, etc.) and you have a problem with filesystem staying
-> busy.
+> Patch #1 is a refactoring to keep VMA name logic determination in one place.
+> Patch #2 is the meat of kernel-side API.
+> Patch #3 just syncs UAPI header (linux/fs.h) into tools/include.
+> Patch #4 adjusts BPF selftests logic that currently parses /proc/<pid>/maps to
+> optionally use this new ioctl()-based API, if supported.
+> Patch #5 implements a simple C tool to demonstrate intended efficient use (for
+> both textual and binary interfaces) and allows benchmarking them. Patch itself
+> also has performance numbers of a test based on one of the medium-sized
+> internal applications taken from production.
 
-In this instance it is ok because dma-buf is an internal fs. I had the
-exact same reaction you had initially but it doesn't matter for dma-buf
-afaict as that thing can never be unmounted.
+I don't have anything against adding a binary interface for this. But
+it's somewhat odd to do ioctls based on /proc files. I wonder if there
+isn't a more suitable place for this. prctl()? New vmstat() system call
+using a pidfd/pid as reference? ioctl() on fs/pidfs.c?
 
