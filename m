@@ -1,233 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-18708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290348BB918
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 03:31:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5AA8BB921
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 04:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D45BB2117F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 01:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F09B1C214D4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 02:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBD16AC0;
-	Sat,  4 May 2024 01:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BZ9Iyauj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649AEAD2D;
+	Sat,  4 May 2024 02:01:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1267B17E9;
-	Sat,  4 May 2024 01:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3501290F;
+	Sat,  4 May 2024 02:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714786274; cv=none; b=A0mgE+iMVBGogIZoBX6bgl/B+xvBlY2nZNdgzx31IYa7LEhOUwWzDR7lGIOO6I5j3xscD3nqs8FabjuK/2Os1ByGO7F8oTNyPfG5xurhy/78VK7PhKiwRvnnvB1hGOJAZeVQbqEc1a+2y75tWLcjIWuYa7F3RSvp4JduhGrb5zg=
+	t=1714788064; cv=none; b=g9IGJQOONNwtp2qV2mNskizLQ0yvH06oT+xaqcvpdAxif9y54+tE3zqfWAqP2MyiJ33TYd9CtvqUwFaIBb0pYs49yTnBQ0KDCYVFDnsH3ibpNNU9zV2GYz9u0YA5N4SUzFRm8YzwhKsutzesgNlnpTJ8R0PMn10YgecbseTZ6X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714786274; c=relaxed/simple;
-	bh=PyxY0oE69hZ0c4dm+MXzuFqcMWQum1NUbC5k6H+O7Ys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGLrBWGX0vQId1bLwLTambdyz86TxKB3yw4AKjQhEQS0jycEIYOp0hmCmoPNde0DuNx2ktiZTv4EGGb1kUAxgPcJvOAgOoR2a4VYZD0f46yJ1GTtXNVy+5JajmNyDrtRpNOsvTtNMf0gBk+GbAkaeMbCU8jWLzDe0JIZn5qCCtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BZ9Iyauj; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714786273; x=1746322273;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PyxY0oE69hZ0c4dm+MXzuFqcMWQum1NUbC5k6H+O7Ys=;
-  b=BZ9Iyaujr9EgzYodeXUH43MmD/XKHMLWsEycR7p90PImAcY5qtBm7NBL
-   2LSlZ8/wvBA/W2RaY3pylS3/7ipeuGOh3+QnSV9V2QM+vjcrot64llf9C
-   VFIZdkfy7n7eA8nIiISd6QanxZGCLfEy9nrjw31KHbWINmDGGpUHlL/KY
-   kXE28Kbsg64xuP8SH1LyS6457KA9AVn/PzcCBrnMI7H+IFjhLd1p6mVT0
-   jZ4sFrVnJRKQe9LHApdnCU2sXTe50TrqMUhRO6NVhsyVkkeDDnMdQQJcu
-   LWUc0cOqJmWyo/PCaKhrLWZavuaL0C/EO159M3T+KetOElUCnatfHSdNW
-   w==;
-X-CSE-ConnectionGUID: cfegiyrcReq5LJGGyGAuxw==
-X-CSE-MsgGUID: cwYYUCTpTgmMzMUUGbs1DQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="22019866"
-X-IronPort-AV: E=Sophos;i="6.07,252,1708416000"; 
-   d="scan'208";a="22019866"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2024 18:31:12 -0700
-X-CSE-ConnectionGUID: CsKHDJlLRT26MVLiY1ayRA==
-X-CSE-MsgGUID: fosB1S7HTi2Sy+DTtD4eHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,252,1708416000"; 
-   d="scan'208";a="58812264"
-Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 03 May 2024 18:31:09 -0700
-Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s34F0-000CIO-0z;
-	Sat, 04 May 2024 01:31:06 +0000
-Date: Sat, 4 May 2024 09:30:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Allen Pais <apais@linux.microsoft.com>, linux-fsdevel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, keescook@chromium.org, mcgrof@kernel.org,
-	j.granados@samsung.com, allen.lkml@gmail.com
-Subject: Re: [PATCH v3] fs/coredump: Enable dynamic configuration of max file
- note size
-Message-ID: <202405040817.bJeHlwXS-lkp@intel.com>
-References: <20240502235603.19290-1-apais@linux.microsoft.com>
+	s=arc-20240116; t=1714788064; c=relaxed/simple;
+	bh=p/4OKG7IKVhS9/UwA2sss4ACe6shZpxAMFimTuKTqQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=O0cVRhcAsD8RzW0W3BEysgFJDX9Hj4E3+yblJVQif9i/DjbvnCf5+wgJq1TWYjJYoYwUsB/rx74v8S5A+ynOB/7bdcCIYUDtMJD793rVt4NX1vPPVls0zZ8X1vFA459j0EKuJFdtV/V5AcNPTsNY1lm9ir4KJypx2BOCxlpfg6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VWW5V2j5rzxNgY;
+	Sat,  4 May 2024 09:57:34 +0800 (CST)
+Received: from dggpeml500021.china.huawei.com (unknown [7.185.36.21])
+	by mail.maildlp.com (Postfix) with ESMTPS id ADEB0180021;
+	Sat,  4 May 2024 10:00:55 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Sat, 4 May 2024 10:00:54 +0800
+Message-ID: <be5a48e4-c33c-1d0b-18ac-b93da89b354c@huawei.com>
+Date: Sat, 4 May 2024 10:00:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502235603.19290-1-apais@linux.microsoft.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [syzbot] [ext4?] WARNING in mb_cache_destroy
+Content-Language: en-US
+To: Jan Kara <jack@suse.cz>
+CC: <tytso@mit.edu>, syzbot
+	<syzbot+dd43bd0f7474512edc47@syzkaller.appspotmail.com>,
+	<adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, <nathan@kernel.org>, <ndesaulniers@google.com>,
+	<ritesh.list@gmail.com>, <syzkaller-bugs@googlegroups.com>,
+	<trix@redhat.com>, yangerkun <yangerkun@huawei.com>
+References: <00000000000072c6ba06174b30b7@google.com>
+ <0000000000003bf5be061751ae70@google.com>
+ <20240502103341.t53u6ya7ujbzkkxo@quack3>
+ <dca44ba5-5c33-05ef-d9de-21a84f9d7eaa@huawei.com>
+ <20240503102328.cstcauc5qakmk2bg@quack3>
+ <9209062c-fa94-33f3-fd89-834a3314c7ed@huawei.com>
+ <20240503140916.zd33jcev7c6fy254@quack3>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20240503140916.zd33jcev7c6fy254@quack3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
 
-Hi Allen,
+On 2024/5/3 22:09, Jan Kara wrote:
+> On Fri 03-05-24 19:38:21, Baokun Li wrote:
+>> On 2024/5/3 18:23, Jan Kara wrote:
+>>> Hi!
+>>>
+>>> On Fri 03-05-24 17:51:07, Baokun Li wrote:
+>>>> On 2024/5/2 18:33, Jan Kara wrote:
+>>>>> On Tue 30-04-24 08:04:03, syzbot wrote:
+>>>>>> syzbot has bisected this issue to:
+>>>>>>
+>>>>>> commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
+>>>>>> Author: Baokun Li <libaokun1@huawei.com>
+>>>>>> Date:   Thu Jun 16 02:13:56 2022 +0000
+>>>>>>
+>>>>>>        ext4: fix use-after-free in ext4_xattr_set_entry
+>>>>> So I'm not sure the bisect is correct since the change is looking harmless.
+>>>> Yes, the root cause of the problem has nothing to do with this patch,
+>>>> and please see the detailed analysis below.
+>>>>> But it is sufficiently related that there indeed may be some relationship.
+>>>>> Anyway, the kernel log has:
+>>>>>
+>>>>> [   44.932900][ T1063] EXT4-fs warning (device loop0): ext4_evict_inode:297: xattr delete (err -12)
+>>>>> [   44.943316][ T1063] EXT4-fs (loop0): unmounting filesystem.
+>>>>> [   44.949531][ T1063] ------------[ cut here ]------------
+>>>>> [   44.955050][ T1063] WARNING: CPU: 0 PID: 1063 at fs/mbcache.c:409 mb_cache_destroy+0xda/0x110
+>>>>>
+>>>>> So ext4_xattr_delete_inode() called when removing inode has failed with
+>>>>> ENOMEM and later mb_cache_destroy() was eventually complaining about having
+>>>>> mbcache entry with increased refcount. So likely some error cleanup path is
+>>>>> forgetting to drop mbcache entry reference somewhere but at this point I
+>>>>> cannot find where. We'll likely need to play with the reproducer to debug
+>>>>> that. Baokun, any chance for looking into this?
+>>>>>
+>>>>> 								Honza
+>>>> As you guessed, when -ENOMEM is returned in ext4_sb_bread(),
+>>>> the reference count of ce is not properly released, as follows.
+>>>>
+>>>> ext4_create
+>>>>    __ext4_new_inode
+>>>>     security_inode_init_security
+>>>>      ext4_initxattrs
+>>>>       ext4_xattr_set_handle
+>>>>        ext4_xattr_block_find
+>>>>        ext4_xattr_block_set
+>>>>         ext4_xattr_block_cache_find
+>>>>           ce = mb_cache_entry_find_first
+>>>>               __entry_find
+>>>>               atomic_inc_not_zero(&entry->e_refcnt)
+>>>>           bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+>>>>           if (PTR_ERR(bh) == -ENOMEM)
+>>>>               return NULL;
+>>>>
+>>>> Before merging into commit 67d7d8ad99be("ext4: fix use-after-free
+>>>> in ext4_xattr_set_entry"), it will not return early in
+>>>> ext4_xattr_ibody_find(),
+>>>> so it tries to find it in iboy, fails the check in xattr_check_inode() and
+>>>> returns without executing ext4_xattr_block_find(). Thus it will bisect
+>>>> the patch, but actually has nothing to do with it.
+>>>>
+>>>> ext4_xattr_ibody_get
+>>>>    xattr_check_inode
+>>>>     __xattr_check_inode
+>>>>      check_xattrs
+>>>>       if (end - (void *)header < sizeof(*header) + sizeof(u32))
+>>>>         "in-inode xattr block too small"
+>>>>
+>>>> Here's the patch in testing, I'll send it out officially after it is tested.
+>>>> (PS:  I'm not sure if propagating the ext4_xattr_block_cache_find() errors
+>>>> would be better.)
+>>> Great! Thanks for debugging this! Some comments to your fix below:
+>>>
+>>>> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+>>>> index b67a176bfcf9..5c9e751915fd 100644
+>>>> --- a/fs/ext4/xattr.c
+>>>> +++ b/fs/ext4/xattr.c
+>>>> @@ -3113,11 +3113,10 @@ ext4_xattr_block_cache_find(struct inode *inode,
+>>>>
+>>>>            bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
+>>>>            if (IS_ERR(bh)) {
+>>>> -            if (PTR_ERR(bh) == -ENOMEM)
+>>>> -                return NULL;
+>>>> +            if (PTR_ERR(bh) != -ENOMEM)
+>>>> +                EXT4_ERROR_INODE(inode, "block %lu read error",
+>>>> +                         (unsigned long)ce->e_value);
+>>>>                bh = NULL;
+>>>> -            EXT4_ERROR_INODE(inode, "block %lu read error",
+>>>> -                     (unsigned long)ce->e_value);
+>>>>            } else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
+>>>>                *pce = ce;
+>>>>                return bh;
+>>> So if we get the ENOMEM error, continuing the iteration seems to be
+>>> pointless as we'll likely get it for the following entries as well. I think
+>>> the original behavior of aborting the iteration in case of ENOMEM is
+>>> actually better. We just have to do mb_cache_entry_put(ea_block_cache, ce)
+>>> before returning...
+>>>
+>>> 								Honza
+>> Returning NULL here would normally attempt to allocate a new
+>> xattr_block in ext4_xattr_block_set(), and when ext4_sb_bread() fails,
+>> allocating the new block and inserting it would most likely fail as well,
+>> so my initial thought was to propagate the error from ext4_sb_bread()
+>> to also make ext4_xattr_block_set() fail when ext4_sb_bread() fails.
+> Yes, this would be probably even better solution.
+Okay.
+>
+>> But I noticed that before Ted added the special handling for -ENOMEM,
+>> EXT4_ERROR_INODE was called to set the ERROR_FS flag no matter
+>> what error ext4_sb_bread() returned, and after we can distinguish
+>> between -EIO and -ENOMEM, we don't have to set the ERROR_FS flag
+>> in the case of -ENOMEM. So there's this conservative fix now.
+>>
+>> In short, in my personal opinion, for -EIO and -ENOMEM, they should
+>> be the same except whether or not the ERROR_FS flag is set.
+>> Otherwise, I think adding mb_cache_entry_put() directly is the easiest
+>> and most straightforward fix.  Honza, do you have any other thoughts?
+> Yeah. I'd go for adding mb_cache_entry_put() now as a quick fix and then
+> work on propagating the error from ext4_xattr_block_cache_find() as a
+> cleaner solution...
+>
+> 								Honza
+>
+Ok, thank you very much for the suggestion!
+I'll send the quick fix out right away.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on kees/for-next/execve]
-[also build test ERROR on brauner-vfs/vfs.all linus/master v6.9-rc6 next-20240503]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Allen-Pais/fs-coredump-Enable-dynamic-configuration-of-max-file-note-size/20240503-075758
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
-patch link:    https://lore.kernel.org/r/20240502235603.19290-1-apais%40linux.microsoft.com
-patch subject: [PATCH v3] fs/coredump: Enable dynamic configuration of max file note size
-config: powerpc64-randconfig-001-20240504 (https://download.01.org/0day-ci/archive/20240504/202405040817.bJeHlwXS-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 37ae4ad0eef338776c7e2cffb3896153d43dcd90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240504/202405040817.bJeHlwXS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405040817.bJeHlwXS-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/compat_binfmt_elf.c:17:
-   In file included from include/linux/elfcore-compat.h:6:
-   In file included from include/linux/elfcore.h:11:
-   In file included from include/linux/ptrace.h:10:
-   In file included from include/linux/pid_namespace.h:7:
-   In file included from include/linux/mm.h:2208:
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from fs/compat_binfmt_elf.c:144:
->> fs/binfmt_elf.c:1598:14: error: use of undeclared identifier 'core_file_note_size_max'
-    1598 |         if (size >= core_file_note_size_max) {
-         |                     ^
-   1 warning and 1 error generated.
-
-
-vim +/core_file_note_size_max +1598 fs/binfmt_elf.c
-
-  1569	
-  1570	/*
-  1571	 * Format of NT_FILE note:
-  1572	 *
-  1573	 * long count     -- how many files are mapped
-  1574	 * long page_size -- units for file_ofs
-  1575	 * array of [COUNT] elements of
-  1576	 *   long start
-  1577	 *   long end
-  1578	 *   long file_ofs
-  1579	 * followed by COUNT filenames in ASCII: "FILE1" NUL "FILE2" NUL...
-  1580	 */
-  1581	static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm)
-  1582	{
-  1583		unsigned count, size, names_ofs, remaining, n;
-  1584		user_long_t *data;
-  1585		user_long_t *start_end_ofs;
-  1586		char *name_base, *name_curpos;
-  1587		int i;
-  1588	
-  1589		/* *Estimated* file count and total data size needed */
-  1590		count = cprm->vma_count;
-  1591		if (count > UINT_MAX / 64)
-  1592			return -EINVAL;
-  1593		size = count * 64;
-  1594	
-  1595		names_ofs = (2 + 3 * count) * sizeof(data[0]);
-  1596	 alloc:
-  1597		/* paranoia check */
-> 1598		if (size >= core_file_note_size_max) {
-  1599			pr_warn_once("coredump Note size too large: %u "
-  1600			"(does kernel.core_file_note_size_max sysctl need adjustment?)\n",
-  1601			size);
-  1602			return -EINVAL;
-  1603		}
-  1604		size = round_up(size, PAGE_SIZE);
-  1605		/*
-  1606		 * "size" can be 0 here legitimately.
-  1607		 * Let it ENOMEM and omit NT_FILE section which will be empty anyway.
-  1608		 */
-  1609		data = kvmalloc(size, GFP_KERNEL);
-  1610		if (ZERO_OR_NULL_PTR(data))
-  1611			return -ENOMEM;
-  1612	
-  1613		start_end_ofs = data + 2;
-  1614		name_base = name_curpos = ((char *)data) + names_ofs;
-  1615		remaining = size - names_ofs;
-  1616		count = 0;
-  1617		for (i = 0; i < cprm->vma_count; i++) {
-  1618			struct core_vma_metadata *m = &cprm->vma_meta[i];
-  1619			struct file *file;
-  1620			const char *filename;
-  1621	
-  1622			file = m->file;
-  1623			if (!file)
-  1624				continue;
-  1625			filename = file_path(file, name_curpos, remaining);
-  1626			if (IS_ERR(filename)) {
-  1627				if (PTR_ERR(filename) == -ENAMETOOLONG) {
-  1628					kvfree(data);
-  1629					size = size * 5 / 4;
-  1630					goto alloc;
-  1631				}
-  1632				continue;
-  1633			}
-  1634	
-  1635			/* file_path() fills at the end, move name down */
-  1636			/* n = strlen(filename) + 1: */
-  1637			n = (name_curpos + remaining) - filename;
-  1638			remaining = filename - name_curpos;
-  1639			memmove(name_curpos, filename, n);
-  1640			name_curpos += n;
-  1641	
-  1642			*start_end_ofs++ = m->start;
-  1643			*start_end_ofs++ = m->end;
-  1644			*start_end_ofs++ = m->pgoff;
-  1645			count++;
-  1646		}
-  1647	
-  1648		/* Now we know exact count of files, can store it */
-  1649		data[0] = count;
-  1650		data[1] = PAGE_SIZE;
-  1651		/*
-  1652		 * Count usually is less than mm->map_count,
-  1653		 * we need to move filenames down.
-  1654		 */
-  1655		n = cprm->vma_count - count;
-  1656		if (n != 0) {
-  1657			unsigned shift_bytes = n * 3 * sizeof(data[0]);
-  1658			memmove(name_base - shift_bytes, name_base,
-  1659				name_curpos - name_base);
-  1660			name_curpos -= shift_bytes;
-  1661		}
-  1662	
-  1663		size = name_curpos - (char *)data;
-  1664		fill_note(note, "CORE", NT_FILE, size, data);
-  1665		return 0;
-  1666	}
-  1667	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Baokun
 
