@@ -1,141 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-18739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88658BBE19
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 22:51:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319AA8BBE27
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 23:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121451C20ACD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 20:51:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C624B213AA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 21:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F99E83CDB;
-	Sat,  4 May 2024 20:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10884A5C;
+	Sat,  4 May 2024 21:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="slPbuUc2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward501c.mail.yandex.net (forward501c.mail.yandex.net [178.154.239.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640561EB3A;
-	Sat,  4 May 2024 20:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E3B57C9A;
+	Sat,  4 May 2024 21:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714855869; cv=none; b=tvdBguhFc/70ag5AFtRI9MjMNjOFYeRDv104oHxwFjF9sRYd1n8jsL7+JhI1GlhCoRoRQ6tQ+doyJS1S46pc3DjmDMucdXa71ooeXODWR3Vk4WQtPo02kD6bUe8OT5oD8IfBz6Wd8r7SzA8JIDKri4YldSQFSRf9L1whN3MvYSo=
+	t=1714857116; cv=none; b=hNWGGTMnhXk8752WzopOyedofe/sbRtCsk21ZWaDCA8xUn/xL/p94cnF3EaM62VkW+CXBLIbBpKQh6vt9M6h6g0RO7yi8Mc0hAnbB8Fuzzwe23cH/j/5QezpjN1+jKrfBau4D7TRW90OVTsJGvkrjDljKgHo7NW+F3yfWfiGyeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714855869; c=relaxed/simple;
-	bh=9uJfWXMR03eNE2YUUTCfyyDgkZyNICSSak1xKBcsiBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g1Yyv5KQ1okstqZ6cEu2FHGxxHelVHSZwqA2ZblGp0qT6FASL14DAzZnkQ07UuHmIwY+QzdYCK1BnWVUiMaSFdf+T53bXK+tKs2YSPd2RcKMbOqyJeqgLFKgu2IncTtwOPzg4l3awsbKMzEk39/VKuG/+ordpBjc/Z4rN824I/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=valtier.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=valtier.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-deb65b541faso446303276.0;
-        Sat, 04 May 2024 13:51:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714855867; x=1715460667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cPCniJ/STVhyaGQN5FVTwiFqhAYGUie52dbeOASHZFo=;
-        b=l0MYLe+RWP9cDOr0UGDmLaIvteUUCsTe0hH5fxyrEC1KAxVf2e53j34ITV4BeDP+48
-         V49vEX5J/NMvESirG+SRBxKJLo3oeI5rpxmHZSrqERdFl+yVsPbvuY7skt8Kl0YAHw8A
-         w4N9CXufLiQLHK1a7ybjFBgsb12lGT4UiXRJSLub8EHixEqSv3NBn0bgqBfwm4+79FGK
-         fXWtpiWS1tAPSszNlBvdWLSOgZ/wUjN3IP5lmoi+llaRZ2fpwqvZExNm3ALU7eHZ+hwb
-         I56x6h6isAFVV2Uq1oSINAMyQJ8h52Pqj1jnJg32KkGTM4ANHd4au/K6MEklxb45A7se
-         swhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIaq6h9I6/IXp8RHWuJ2m0V6OY19qB8pwbiEkX5nTc8ikR6J53Bc6KHaskO0E9DoDpQM1orcCfssFuy7Bbss/OZ2mNSGgKoyDbjSpdgoey0aL8oetXcmuWeDylQOvKW9mbqeHZIObSGKZg7g==
-X-Gm-Message-State: AOJu0Yw/zci706T3BbvRpnMl4rjpT1LZu4P2KPzpBO2Xp+Vh31PMsE9i
-	3CsPK36CFhB/kgAcWTRLb+PWb0xGD3PGPcNb7PqM1fZz635AJa8xAYa73ePXbNWq940l9TWO+AT
-	EAeuLGLJmelPEXn0LKPknQMZ8lDY=
-X-Google-Smtp-Source: AGHT+IEnoawDU3gTITS5ni/drqQmAdCb0Tjso8UnkpjmJWJSfn9hNs/QIaQvKAZp2IuTz/yro/5XQv2GbRGW9g5y7Ms=
-X-Received: by 2002:a25:d0c9:0:b0:dc3:7041:b81b with SMTP id
- h192-20020a25d0c9000000b00dc37041b81bmr6993350ybg.36.1714855867412; Sat, 04
- May 2024 13:51:07 -0700 (PDT)
+	s=arc-20240116; t=1714857116; c=relaxed/simple;
+	bh=Y46KvSj8aOYClih0SfoEYsp6AkbAmD5E3/REAhbZ5H4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bAzrODzpu0e+xr8RZ4wntDpFfcTtEx/wWtUWvEx58M3aJNF7mgqMfUAvW/1zlfO6US4G/O4d8T4dxS4Pe4car+WUoZo//RHKtvX3dA9dzmxWaNJIMHr+cpGD9snY6WCgUScaOK1VWxmQxx7QRcoXaOJPhO4ITgh/c7JRcpcvd+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=slPbuUc2; arc=none smtp.client-ip=178.154.239.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:39ad:0:640:62fe:0])
+	by forward501c.mail.yandex.net (Yandex) with ESMTPS id 45DEC60AA6;
+	Sun,  5 May 2024 00:11:45 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id gBddwhTxU8c0-DLitvI3Q;
+	Sun, 05 May 2024 00:11:43 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1714857104; bh=qu1Z4qXkl0rii4qXTlrRxPjlamjfNzJe5s7ny/pBNdU=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=slPbuUc2eQYMjsyN99pW1eUKCnq5y3ETZ0tON2j8zhWjy0qQL5ZVcQB9owgDwbqIK
+	 odfKpQnarQBxe/nfTJbo0oUBSzKyGTtHz3PfpGCj5IylE8HVMP/Jvu6NOsmErXzSc2
+	 6h/Cbz0LxmL7Ov4YCkAcmYkItSsdyXl/BQ8dmKvc=
+Authentication-Results: mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <9c043e69-46af-4e21-8d52-4fd8b2e24404@yandex.ru>
+Date: Sun, 5 May 2024 00:11:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAF+WW=oKQak6ktiOH75pHSDe7YEkYD-1ditgcsWB=z+aRKJogQ@mail.gmail.com>
- <CAOQ4uxjh5iQ0_knRebNRS271vR2-2f_9bNZyBG5vUy3rw6xh-g@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjh5iQ0_knRebNRS271vR2-2f_9bNZyBG5vUy3rw6xh-g@mail.gmail.com>
-From: Hugo Valtier <hugo@valtier.fr>
-Date: Sat, 4 May 2024 22:50:35 +0200
-Message-ID: <CAF+WW=rRz0L-P9X2tV9svGdTbhAhpBea=huf-_DDfkz29fXUyQ@mail.gmail.com>
-Subject: Re: bug in may_dedupe_file allows to deduplicate files we aren't
- allowed to write to
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: mfasheh@suse.de, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/3] openat2: add OA2_CRED_INHERIT flag
+Content-Language: en-US
+To: Donald Buczek <buczek@molgen.mpg.de>, linux-kernel@vger.kernel.org
+Cc: Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@ACULAB.COM>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240427112451.1609471-1-stsp2@yandex.ru>
+ <20240427112451.1609471-4-stsp2@yandex.ru>
+ <bf4a737a-0c5b-4349-886d-4013683818ce@molgen.mpg.de>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <bf4a737a-0c5b-4349-886d-4013683818ce@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> My guess is that not many users try to dedupe other users' files,
-> so this feature was never used and nobody complained.
-
-+1
-
-Thx for the answer, I'm new to this to be sure I understood what you meant:
-> You should add an xfstest for this and include a
-> _fixed_by_kernel_commit and that will signal all the distros that
-> care to backport the fix.
-
-So right now I wait for 6.9 to be released soon enough then
-I then submit my patch which invert the condition.
-Once that is merged in some tree (fsdevel I guess ?) I submit a patch for
-xfstest which adds a regression test and has _fixed_by_kernel_commit
-mentioning the commit just merged in the fsdevel linux tree.
-
-Le sam. 4 mai 2024 =C3=A0 11:43, Amir Goldstein <amir73il@gmail.com> a =C3=
-=A9crit :
+04.05.2024 23:38, Donald Buczek пишет:
+> On 4/27/24 13:24, Stas Sergeev wrote:
+>> This flag performs the open operation with the fs credentials
+>> (fsuid, fsgid, group_info) that were in effect when dir_fd was opened.
+>> dir_fd must be opened with O_CRED_ALLOW, or EPERM is returned.
+>>
+>> Selftests are added to check for these properties as well as for
+>> the invalid flag combinations.
+>>
+>> This allows the process to pre-open some directories and then
+>> change eUID (and all other UIDs/GIDs) to a less-privileged user,
+>> retaining the ability to open/create files within these directories.
+>>
+>> Design goal:
+>> The idea is to provide a very light-weight sandboxing, where the
+>> process, without the use of any heavy-weight techniques like chroot
+>> within namespaces, can restrict the access to the set of pre-opened
+>> directories.
+>> This patch is just a first step to such sandboxing. If things go
+>> well, in the future the same extension can be added to more syscalls.
+>> These should include at least unlinkat(), renameat2() and the
+>> not-yet-upstreamed setxattrat().
+>>
+>> Security considerations:
+>> - Only the bare minimal set of credentials is overridden:
+>>    fsuid, fsgid and group_info. The rest, for example capabilities,
+>>    are not overridden to avoid unneeded security risks.
+>> - To avoid sandboxing escape, this patch makes sure the restricted
+>>    lookup modes are used. Namely, RESOLVE_BENEATH or RESOLVE_IN_ROOT.
+>> - Magic /proc symlinks are discarded, as suggested by
+>>    Andy Lutomirski <luto@kernel.org>> - O_CRED_ALLOW fds cannot be 
+>> passed via unix socket and are always
+>>    closed on exec() to prevent "unsuspecting userspace" from not being
+>>    able to fully drop privs.
 >
-> On Sat, May 4, 2024 at 7:49=E2=80=AFAM Hugo Valtier <hugo@valtier.fr> wro=
-te:
-> >
-> > For context I am making a file based deduplication tool.
-> >
-> > I found that in this commit
-> > 5de4480ae7f8 ("vfs: allow dedupe of user owned read-only files")
-> > it states:
-> > > - the process could get write access
-> >
-> > However the behavior added in allow_file_dedupe now may_dedupe_file is =
-opposite:
-> > > +       if (!inode_permission(file_inode(file), MAY_WRITE))
-> > > +               return true
-> >
-> > I've tested that I can create an other readonly file as root and have
-> > my unprivileged user deduplicate it however if I then make the file
-> > other writeable I cannot anymore*.
-> > It doesn't make sense to me why giving write permissions on a file
-> > should remove the permission to deduplicate*.
->
-> True. Here is the discussion about adding "could have been opened w"
-> to allow dedupe:
-> https://lore.kernel.org/linux-fsdevel/20180517230150.GA28045@wotan.suse.d=
-e/
->
-> >
-> > I'm not sure on how to fix this, flipping the condition would work but
-> > that is a breaking change and idk if this is ok here.
-> > Adding a check to also users who have write access to the file would
-> > remove all the logic here since you would always be allowed to dedup
-> > FDs you managed to get your hands on.
-> >
-> > Any input on this welcome, thx
->
-> My guess is that not many users try to dedupe other users' files,
-> so this feature was never used and nobody complained.
-> What use case do you think flipping the condition could break?
-> breaking uapi is not about theoretical use cases and in any
-> case this needs to be marked with Fixes: and can be backported
-> as far as anyone who cares wants to backport.
->
-> You should add an xfstest for this and include a
-> _fixed_by_kernel_commit and that will signal all the distros that
-> care to backport the fix.
->
-> Thanks,
-> Amir.
+> What about hard links?
+Well, you set umask to 0 in your example.
+If you didn't do that, the dir wouldn't have
+0777 perms, and the hard link would not
+be created.
+But yes, that demonstrates the unsafe
+usage scenario, i.e. unsafe directory perms
+immediately lead to a security hole.
+Maybe O_CRED_ALLOW should check for
+safe perms, or maybe it shouldn't... So far
+there are no signs of this patch to ever be
+accepted, so I am not sure if more complexity
+needs to be added to it.
 
