@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-18734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EFD8BBCEA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 17:54:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F9E58BBD9F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 20:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708AB28226C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 15:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0AEC1C20DA1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 18:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB1E56B79;
-	Sat,  4 May 2024 15:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D5571B30;
+	Sat,  4 May 2024 18:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Pk5o2wu6"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dicrVqhN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D616F4502E
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 May 2024 15:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B77125776
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 May 2024 18:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714838048; cv=none; b=fe1HJe8tfDQU7vb4nB+5yL7mGW+J2SBOA/wialIdvlcSFioto1GTZaOp7vel9yVCJ6J4wLOqSozIulv37LBog3FF5Dd5JoiJJ6hFNJnGC5PJQzf44/5qQiHj9KK+5o+2i4gyfxj9ERccVcjHKcVYGR4xu2/upDh7PRaTOENaomI=
+	t=1714847274; cv=none; b=Z2Ipt3Zz9CKOEXkjr8AwlQGTzPcf8TLi5y8XdQi2tJb7U9SQ3bIany2jaGl7IXSYdzj4omx8ncowIw64kTkjbZVdBoWfVNEWefjBg6htHaaLJafpe4oHhAHPQ5Yen5vOsBRGdoUJ/WL9vy14REqD5r6XAQt929VWQMwzRDntSe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714838048; c=relaxed/simple;
-	bh=/aq2jAO4DmSNrNoBrUEE3/qpOKGIfIhWERou7A/I/9o=;
+	s=arc-20240116; t=1714847274; c=relaxed/simple;
+	bh=rAIZu+79Hh8VYj6yqYqrrAzdBZ74FGbLE5oKNi+7r5w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zba09Yfk7aIv86kot/eHguyiJzBbBW8zpe48XfLC636jXkwsgSoM/GdZA1hbBKc+2d48dmc07GbnYRpqR7pUkqUeVU/oi+BEebryIrN6qK6pZlSH2Qfu5YDW+dhy+JV8PQicWAmQ50aOmurLwTKiYTFGZsKE+olLRm4Kdhy3Xzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Pk5o2wu6; arc=none smtp.client-ip=209.85.218.51
+	 To:Cc:Content-Type; b=a9bkOw9WJFIIJOMNpZiXw8lBwo5Pl6p2CV0HIAEXYb48YpjYl2U6jriZBl6Gnv5n+pneMM5D25PnD+HRhr/5dnsqnJvy5ff2cGvTEQuRP9oXqu8z3r2pG2uMXbG15gF7WRdMtd7ZyKzbb2yY1YmfxP9UQKOrVbFlwTg68OTPCKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dicrVqhN; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59a17fcc6bso124464366b.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 May 2024 08:54:06 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a598c8661f0so151952966b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 May 2024 11:27:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1714838045; x=1715442845; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1714847270; x=1715452070; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZo6ArVOf5NVi3NAdVYQGqHRs84wzKq7YB5CfjfJdNw=;
-        b=Pk5o2wu6ylkaml0n6irgR+hnwmSMMhEvT/ppILJjg+eTVkaTgWi4GbkvBuCyg5FnvQ
-         O8VWJuo+jANYfUPXScgrqxsikan+o1pfz9aD8O4Or+rujOgbZBqcd8riHSsK/V7y/Iop
-         K0TzPRQzUEP8vLcZr7iiSwo8fZ/sIFKPykW1U=
+        bh=TbTAb0O3vIVxVEVAX+Kz3ISBhu7sYKvIouph0u6S16I=;
+        b=dicrVqhNJmmzBBCVgIIPZtYwHEUv/FqFBTwzc4vt3jZryOogwugbyf/6uJe04SoTXT
+         g89WmHyZ/BPtuiC2gQuZW3WgpbAuR9Y6eyDZjaTWhg/H87fZ0jlmL4O/5VrC1loURJ7D
+         IQYKR4yk718IxlM7sMjdiyDf83nP5OC3/sjlg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714838045; x=1715442845;
+        d=1e100.net; s=20230601; t=1714847270; x=1715452070;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kZo6ArVOf5NVi3NAdVYQGqHRs84wzKq7YB5CfjfJdNw=;
-        b=Fdau9lvFpLzlZQgJNl1L+7c04bCbMxxLIFkZ8zE0piRh3lGGxDNn6HVuL3Bi68wTFH
-         6LgBxBjTeyhjL6w2dMyQmiGKY/iVk2IMFlh4j4a7jJmzCEBCQoSd/xtcXffXzHq8qYwn
-         31z3dN8qE9IvIGpRccnW97yE9etuTmSfxkDwkQe2wO9ClWp6+OE8Tlk2rsyRoXICror5
-         2lc6YvV4TLYFK7Uq8U7NM41iZ1GMn9YKB1Yi7oB8r+2K4xNJZyPNVoq5jDtkUkEccgob
-         elF75SJOPY/Z12FXuMHlEJd8p1JR8A4mSXHTWsqFKv3FePgefVzuHGdyiBJr8XMTe33V
-         YIBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeYcN5lFKO23C82/AOhLcJf9klKPbl4Q6DtJhiDC6jqJtL5940jFR8cQanFTTFn5SXXKVf6xFAp5Lya9u+lQxFXEV2U+PyMXSa0OIoBw==
-X-Gm-Message-State: AOJu0YzJQEarA44NkYkCZnQ8eFoIFr0piqqS1T0Yv7JTj6VuIb0iXe7h
-	HPnT0srN5P4qqiiqTPtYLdBFc5aTw3pFKc7dEF8j9EPbPklckeiUkdJQBLtyts7N+AydVLUlmwt
-	2ozxO9Q==
-X-Google-Smtp-Source: AGHT+IGeYb8R232OcX99M8oxK/TPQJDwJfu/RtgUSF0er2K7xBi1VCrE+PtLbzAYXFmRzLnpHd/+QA==
-X-Received: by 2002:a17:906:71d2:b0:a58:871f:8eb0 with SMTP id i18-20020a17090671d200b00a58871f8eb0mr4177031ejk.7.1714838045177;
-        Sat, 04 May 2024 08:54:05 -0700 (PDT)
+        bh=TbTAb0O3vIVxVEVAX+Kz3ISBhu7sYKvIouph0u6S16I=;
+        b=GlrXHqY892K2u5SiQc6qTN2SD8tvc9ygN2rrl4NDePUfU80Gknj9AAoANrLfuFHi5W
+         uxCXvxUZ2YN5Y4N1JVlenKC85ie7H+Pa1ukpgH+ezTjOI4iDpyzc/oENbUBbPbswH/d+
+         oBkho4AIM5Yom/b/qTELU2Cy1tsH0YufpowCFZNCN5Fi7mfkadIjRFblaYQJM9oL4Hgy
+         Snh1AtA5EcJqIVfznwM3oaO5vEFnNJhV4UYh5vb7LWQmT7bSo4mEduzG2SJz//Wrmzeb
+         vE/s3i9AJcoZhhym1O3BU8drNbyJo5AVeMZnn5Xz8HO4EoI7JbK2pVMryRA1IphuxKIA
+         CBgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsraN43i5KRjWkH1LimNyf12EvVkyIE6GBU4XV3Ymvg5Dn8A7IiBpwvq0TJVSg7t3YQ1kiHFjOZrJXWisaUSCpgeWqQutXqMLRelNzcw==
+X-Gm-Message-State: AOJu0YxJGNKQKUUf60kBmcmBlcuyaAYzskLArz7tdDnAMRzItt5eH2uM
+	ocsMmF5JFg8VJ5sASG/HI7Ust9LbnBqUUeMlSCLnIx6gSXu95Pe12Rr6nBp7wUf255qlNVItGFO
+	xg9Fh3w==
+X-Google-Smtp-Source: AGHT+IHj6Tw8KkCiM2bNBVPcLyd79iu+IkFOZFq4Ckm4dqdtTELiz8It2JMkmYtvSQQbHXVzQrqM4Q==
+X-Received: by 2002:a17:906:80d4:b0:a52:5925:2a31 with SMTP id a20-20020a17090680d400b00a5259252a31mr3579323ejx.29.1714847270146;
+        Sat, 04 May 2024 11:27:50 -0700 (PDT)
 Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id o3-20020a1709064f8300b00a58ea7cfeedsm3054811eju.62.2024.05.04.08.54.04
+        by smtp.gmail.com with ESMTPSA id p22-20020a1709060e9600b00a5887833da8sm3134797ejf.81.2024.05.04.11.27.49
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 May 2024 08:54:04 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a0e4b773so128276166b.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 May 2024 08:54:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUL3UiddZMuHBvrj8FKl5fCNa0WUBfMQiMLM06EQE3kIPPbYbd63HGsykFS/vcnMAE1Waui8L61zyzrbUVtR70afzBguhxGDq1TFpgD/w==
-X-Received: by 2002:a17:906:a842:b0:a58:5ee1:db43 with SMTP id
- dx2-20020a170906a84200b00a585ee1db43mr3389515ejb.23.1714838043724; Sat, 04
- May 2024 08:54:03 -0700 (PDT)
+        Sat, 04 May 2024 11:27:49 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a598c8661f0so151950366b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 May 2024 11:27:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtsNvdkO8C5HhNalwjaj17qV5sGprzEnID5k63ZoasFIxNYkFcYyEEsZurpU5WWJbloTknyZpZ+jRwLPU9Lp0gGRSE+vsjDZTc0knk+Q==
+X-Received: by 2002:a17:906:e90:b0:a52:1e53:febf with SMTP id
+ p16-20020a1709060e9000b00a521e53febfmr3945377ejf.69.1714846838331; Sat, 04
+ May 2024 11:20:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,12 +80,11 @@ MIME-Version: 1.0
 References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
  <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
  <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
-In-Reply-To: <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+In-Reply-To: <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 4 May 2024 08:53:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
-Message-ID: <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
+Date: Sat, 4 May 2024 11:20:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+Message-ID: <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
 Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
 To: Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
@@ -98,29 +97,45 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk,
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 4 May 2024 at 08:40, Linus Torvalds
+On Sat, 4 May 2024 at 08:32, Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> And maybe it's even *only* dma-buf that does that fget() in its
-> ->poll() function. Even *then* it's not a dma-buf.c bug.
+> Lookie here, the fundamental issue is that epoll can call '->poll()'
+> on a file descriptor that is being closed concurrently.
 
-They all do in the sense that they do
+Thinking some more about this, and replying to myself...
 
-  poll_wait
-    -> __pollwait
-     -> get_file (*boom*)
+Actually, I wonder if we could *really* fix this by simply moving the
+eventpoll_release() to where it really belongs.
 
-but the boom is very small because the poll_wait() will be undone by
-poll_freewait(), and normally poll/select has held the file count
-elevated.
+If we did it in file_close_fd_locked(),  it would actually make a
+*lot* more sense. Particularly since eventpoll actually uses this:
 
-Except for epoll. Which leaves those pollwait entries around until
-it's done - but again will be held up on the ep->mtx before it does
-so.
+    struct epoll_filefd {
+        struct file *file;
+        int fd;
+    } __packed;
 
-So everybody does some f_count games, but possibly dma-buf is the only
-one that ends up expecting to hold on to the f_count for longer
-periods.
+ie it doesn't just use the 'struct file *', it uses the 'fd' itself
+(for ep_find()).
+
+(Strictly speaking, it should also have a pointer to the 'struct
+files_struct' to make the 'int fd' be meaningful).
+
+IOW, eventpoll already considers the file _descriptor_ relevant, not
+just the file pointer, and that's destroyed at *close* time, not at
+'fput()' time.
+
+Yeah, yeah, the locking situation in file_close_fd_locked() is a bit
+inconvenient, but if we can solve that, it would solve the problem in
+a fundamentally different way: remove the ep iterm before the
+file->f_count has actually been decremented, so the whole "race with
+fput()" would just go away entirely.
+
+I dunno. I think that would be the right thing to do, but I wouldn't
+be surprised if some disgusting eventpoll user then might depend on
+the current situation where the eventpoll thing stays around even
+after the close() if you have another copy of the file open.
 
              Linus
 
