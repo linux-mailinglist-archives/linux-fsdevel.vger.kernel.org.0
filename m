@@ -1,189 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-18717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99ECF8BBA58
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 11:45:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A3B8BBA5D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 11:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E411C210C0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 09:45:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6294F1F21FF6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2024 09:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3292317BD3;
-	Sat,  4 May 2024 09:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7yQM5Re"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F96017996;
+	Sat,  4 May 2024 09:48:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1D15258;
-	Sat,  4 May 2024 09:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898641AACA
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 May 2024 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714815926; cv=none; b=KQzqBjohwPJruwlALDYXh14/h7TUN24nfBmyYk0bomYmxmvFwh8cUplHcqcIiqfcoOJY/STjLcqGW4rMfyuD83E3ZvyALo0OhELXXo8XD0benOszosSPr259HvSqj9zjZ7RXWp47f28s1pO08hC6pzpuuUIRg3KaoQzUo3i5rn4=
+	t=1714816085; cv=none; b=PCuHIadxOoqQ5KfKlG+F0g6cZalz04tKLMKChIy8aZm8FGQIAJiq94H4Bht0I1m0Sj6bQ7EYbJrudA5YjqNHvTiMkrfkSZ/GMcxo87OMG73s2Zmn4MjM3sd+8hDlK/XzKs7N0ACZaJQ3HCs1D5+209MdLp8Iw3xr5NDp4mETKrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714815926; c=relaxed/simple;
-	bh=Dwww0zXWAYAhVa6+ZHGyGIVbKmD1FELsGL3H8q7Pkgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pm9ofCu744a0nA+hxfdDONCzU7m5DzeumpeHtLG+EA5qkgAtLMJFpBZ5ahWET5Se4CC5vv5O0mdbPfXuh5JXSnuCGvT3jrarQBrTHWWAyP3qXZqbiE+eabHO/bSmCBZ1PHrojeMuRy8vtpGw6cpB/gGLMlGPKWYUD5/wf1kCe7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7yQM5Re; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 929ADC072AA;
-	Sat,  4 May 2024 09:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714815925;
-	bh=Dwww0zXWAYAhVa6+ZHGyGIVbKmD1FELsGL3H8q7Pkgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I7yQM5RebNDlT6Ji4Q7kQ0rodapj147DZMJO0e3q9vs4a0FEuuwzvWPCeddos+jb9
-	 CMNS7PyASVi4/B/fiubslZEeZZJy44l05u+sxZIBXI8dvkZq7Wzo0+MKNOVEhmpFal
-	 IZkRZpPa+Cz+0zGE7fbC++oIe4AkNyulf6VtYEcuc6kNac7VAVk5h7LwqK7TxOJWNz
-	 xniytCEoIc/KtfMmTtk+LvUErYfMRX4Av8+/MuRhmC/+ULLcIVK5ki98Cyeclwo5qO
-	 kkMzZfvlouzWohIe35FPZb402zKrXCRi1lo8cFgU6LmSW7o5cdzl9BSLwqyNZhG+Sc
-	 qoXDeZj1LZW+A==
-Date: Sat, 4 May 2024 11:45:18 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Bui Quang Minh <minhquangbui99@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, syzbot <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>, 
-	axboe@kernel.dk, io-uring@vger.kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	Laura Abbott <laura@labbott.name>
-Subject: Re: get_file() unsafe under epoll (was Re: [syzbot] [fs?]
- [io-uring?] general protection fault in __ep_remove)
-Message-ID: <20240504-probanden-wahrsagung-f82cddd37718@brauner>
-References: <0000000000002d631f0615918f1e@google.com>
- <7c41cf3c-2a71-4dbb-8f34-0337890906fc@gmail.com>
- <202405031110.6F47982593@keescook>
+	s=arc-20240116; t=1714816085; c=relaxed/simple;
+	bh=mhuJM+GfCQH5IMMrJMXVP9OBz/wYR8fa+oIkbwJ0sFM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fJjNgJiOUUgWXm6egkD8TTSVq2OWMNafIIGYecUjqyaEJNb/isErowWtqUFM2rph1Iy6yPqK5o7KkOqAUBCbeeMm7Bf6J90uoE7DTw16QTJmEBUNl0C1oe7NVl8fK7PMOFn1YgaX8Mj7dShRdyetu06RX38e6qzWIc4CxRvI7Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7dda529a35cso56193739f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 May 2024 02:48:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714816084; x=1715420884;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9vMfvjlUyZ95gb2Bl4Phjw9KVzOE/POZUXc/tMc9CNs=;
+        b=XPjkA5DlLGCeSjUPrVpufEybtsQoVsOlHXuMZQ5s/b+GB5cZzp9pwTQmrVqn7tdSZ+
+         5TVj4zp+L6pPzdenwEJ0dAQUsNu6xfLzEUg7D+/GKyDLbwwvMA3YryYUaXk3bsVuMVfW
+         gvvBX9i7QzYJWe6d8jnzHnNGWil7p+kRfqWAG8mekFDUsuGld6aIUtU4Lu8pHvRxbecg
+         wjsFYwWUM8LxBSGN6UYKBD6WSH7y5trOrfzWKA6/Xn5Ona4OsenfCpqMs+3mYYvgPAke
+         2KaeMGMingWzyz/+9MUgcoC9GGIOGgaukYLlzjf6jb+WbdAwRRRJqKIvBcLix6JVSHp+
+         XsxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdd2GQV26PsR1CkAHs1tjkvMjmwGmBJJ8qlylPgfBAGqGLvmDJHsgDMGSyNKqmiZeC82lBosGWYn/Y9Yt26EP/hAg4Nwj5pxaN6anncQ==
+X-Gm-Message-State: AOJu0YxepRru9Wpcgw96Jo2owMqpDnpZdMOiROBR1XsDLIcBTuJRLfCy
+	YutZfpKaNx/qypJu4RrWuBVo2JNjF8BdGezrSMB09QJ1P3jWs62sdwDvcOph32VUJxo80XXbnMv
+	U7oOR9J3ORj91PJpdcjdshDDbyRHpoYUj76yH9HRHoBVL5upv79/YnJ8=
+X-Google-Smtp-Source: AGHT+IHQXiciJ6Z11FdD4VBp4JCah2SN9/cx2OFqZQ7b69cg3huTCXgpZXSYi/CyAHP6kwLDQ3n7Nn+vJOJX7J3D0KyvntiXiiQT
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202405031110.6F47982593@keescook>
+X-Received: by 2002:a05:6638:a58a:b0:488:59cc:eb41 with SMTP id
+ kd10-20020a056638a58a00b0048859cceb41mr36069jab.3.1714816083873; Sat, 04 May
+ 2024 02:48:03 -0700 (PDT)
+Date: Sat, 04 May 2024 02:48:03 -0700
+In-Reply-To: <00000000000078baec06178e6601@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000088e7bf06179dbbe8@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_trans_srcu_unlock
+From: syzbot <syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 03, 2024 at 11:26:32AM -0700, Kees Cook wrote:
-> On Fri, May 03, 2024 at 06:54:22PM +0700, Bui Quang Minh wrote:
-> > [...]
-> > Root cause:
-> > AFAIK, eventpoll (epoll) does not increase the registered file's reference.
-> > To ensure the safety, when the registered file is deallocated in __fput,
-> > eventpoll_release is called to unregister the file from epoll. When calling
-> > poll on epoll, epoll will loop through registered files and call vfs_poll on
-> > these files. In the file's poll, file is guaranteed to be alive, however, as
-> > epoll does not increase the registered file's reference, the file may be
-> > dying
-> > and it's not safe the get the file for later use. And dma_buf_poll violates
-> > this. In the dma_buf_poll, it tries to get_file to use in the callback. This
-> > leads to a race where the dmabuf->file can be fput twice.
-> > 
-> > Here is the race occurs in the above proof-of-concept
-> > 
-> > close(dmabuf->file)
-> > __fput_sync (f_count == 1, last ref)
-> > f_count-- (f_count == 0 now)
-> > __fput
-> >                                     epoll_wait
-> >                                     vfs_poll(dmabuf->file)
-> >                                     get_file(dmabuf->file)(f_count == 1)
-> > eventpoll_release
-> > dmabuf->file deallocation
-> >                                     fput(dmabuf->file) (f_count == 1)
-> >                                     f_count--
-> >                                     dmabuf->file deallocation
-> > 
-> > I am not familiar with the dma_buf so I don't know the proper fix for the
-> > issue. About the rule that don't get the file for later use in poll callback
-> > of
-> > file, I wonder if it is there when only select/poll exist or just after
-> > epoll
-> > appears.
-> > 
-> > I hope the analysis helps us to fix the issue.
-> 
-> Thanks for doing this analysis! I suspect at least a start of a fix
-> would be this:
-> 
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index 8fe5aa67b167..15e8f74ee0f2 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -267,9 +267,8 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
->  
->  		if (events & EPOLLOUT) {
->  			/* Paired with fput in dma_buf_poll_cb */
-> -			get_file(dmabuf->file);
-> -
-> -			if (!dma_buf_poll_add_cb(resv, true, dcb))
-> +			if (!atomic_long_inc_not_zero(&dmabuf->file) &&
-> +			    !dma_buf_poll_add_cb(resv, true, dcb))
->  				/* No callback queued, wake up any other waiters */
->  				dma_buf_poll_cb(NULL, &dcb->cb);
->  			else
-> @@ -290,9 +289,8 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
->  
->  		if (events & EPOLLIN) {
->  			/* Paired with fput in dma_buf_poll_cb */
-> -			get_file(dmabuf->file);
-> -
-> -			if (!dma_buf_poll_add_cb(resv, false, dcb))
-> +			if (!atomic_long_inc_not_zero(&dmabuf->file) &&
-> +			    !dma_buf_poll_add_cb(resv, false, dcb))
->  				/* No callback queued, wake up any other waiters */
->  				dma_buf_poll_cb(NULL, &dcb->cb);
->  			else
-> 
-> 
-> But this ends up leaving "active" non-zero, and at close time it runs
-> into:
-> 
->         BUG_ON(dmabuf->cb_in.active || dmabuf->cb_out.active);
-> 
-> But the bottom line is that get_file() is unsafe to use in some places,
-> one of which appears to be in the poll handler. There are maybe some
-> other fragile places too, like in drivers/gpu/drm/vmwgfx/ttm_object.c:
-> 
-> static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
-> {
-> 	return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
-> }
-> 
-> Which I also note involves a dmabuf...
-> 
-> Due to this issue I've proposed fixing get_file() to detect pathological states:
-> https://lore.kernel.org/lkml/20240502222252.work.690-kees@kernel.org/
-> 
-> But that has run into some push-back. I'm hoping that seeing this epoll
-> example will help illustrate what needs fixing a little better.
-> 
-> I think the best current proposal is to just WARN sooner instead of a
-> full refcount_t implementation:
-> 
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 8dfd53b52744..e09107d0a3d6 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1040,7 +1040,8 @@ struct file_handle {
->  
->  static inline struct file *get_file(struct file *f)
->  {
-> -	atomic_long_inc(&f->f_count);
-> +	long prior = atomic_long_fetch_inc_relaxed(&f->f_count);
-> +	WARN_ONCE(!prior, "struct file::f_count incremented from zero; use-after-free condition present!\n");
->  	return f;
->  }
->  
-> 
-> 
-> What's the right way to deal with the dmabuf situation? (And I suspect
-> it applies to get_dma_buf_unless_doomed() as well...)
+syzbot has bisected this issue to:
 
-No, it doesn't. That's safe afaict as I've explained at lenght in
-the other thread.
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
+
+    bcachefs: Ignore unknown mount options
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147f3908980000
+start commit:   f03359bca01b Merge tag 'for-6.9-rc6-tag' of git://git.kern..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167f3908980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127f3908980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d42c70980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ce8250980000
+
+Reported-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
