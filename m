@@ -1,185 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-18762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2488BC284
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 18:25:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F658BC291
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 18:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92643281847
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 16:25:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E963F1C208BA
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 16:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77DE3C466;
-	Sun,  5 May 2024 16:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11043FB9D;
+	Sun,  5 May 2024 16:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jh0m25dd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10365E54C
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 16:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A85B28377
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 16:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714926337; cv=none; b=AutzX+zURNBrNCGqcntXqrCs5741M33UrMUPNa4uFyWWAXW7wUgHgav1p8ZlrblsQ5sB3LQAEk2VMq0o+0rBHcGdIAwSJhu17qIKnGWlAn4qDeHPPwwgSoeJymTKXJ7AMeSj/s+dKUuoI4QHkB4TG+5BDCoZLV5hMBA4aBe8zgI=
+	t=1714927588; cv=none; b=da/7es+JYBbrbRtG1tkOHvgVVWKfrSpEs3j5ND/qs2wu9HZKP76mdBQFyLGt6BN+vq6CWE274RujzuXDbmkjq6SyN2yoMk8Hvs4+/A+KzyitKYul8C6mmT374YcMVoKgdcObj9/goEZ7gaw0ENu1i0imTxxFDWm59UIZv+IUhlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714926337; c=relaxed/simple;
-	bh=WafGB8mtAUf+2X8KBmIjuQa4mX+SeYOhgrxiWof2nBM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aUP11vOW7Zw1XAHKK4TWepYryZVCTFdsL5f0/4fw6/XavtkkcL+AnUodmPRTC3H8kToqtpNr4l+XgE8vSGTsXi5GrGYQeIg/t9DqWPpmYAk9pKvoj2avWtBN8JnH9dbNSCP7Qm7VzlPlNwxk8bFeRwO50DV1hd8kbM88znIDYZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7dece1fa472so124585539f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 09:25:35 -0700 (PDT)
+	s=arc-20240116; t=1714927588; c=relaxed/simple;
+	bh=CLhNByDrSyy3KlkeokG4swipYxw1p9LkQ6WM4wj072Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ui1HaqqxnTt3u3uHJN6zWMlVxb/WyRtHrw665z5DlaaS4sm1g+KF7GaUqyHYM7iioNItGzjp8H4s3Qke3wxS3CzYZ7CXCsVJbaC4xGL/+6rFBJAY+qZrQJTD88VnVsPTQJkaaNAIX2e+gAJIvqj4y/4BOleMf6EEKdGXPWXCF/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jh0m25dd; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f3761c96aso1470490e87.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 09:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1714927584; x=1715532384; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aYdtp3YANTth8Vi9S+yHKBJaPcPwhcLOgY9vMAI/QdY=;
+        b=Jh0m25ddNdP2B2AMRer6g2SsW4aWlFV4wvbACB4nQ9lt2L9qHjX30wG6XAmXRJqb9b
+         cnDKyodeqsI4AtByabWH8SPehOzuKTxu659W1aKn8zxvej/pit6U6xPJg7vIiRNCPxJT
+         Pmhip1fNYVkrmjHVLDxwcOUHdbIpck4jh1lVc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714926335; x=1715531135;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k6aMqOmVbrVudevc56fwdC/dJHHqlQVWzywznXvcv84=;
-        b=QnR2K40SXJ+9M44XXgdJVgK+uF0KNjfYPe4kTH5cdgQtLqzST0Kqwflt8sZ5vfDv+p
-         Fj9qskq9QPxX6jsUzuK8JQLrdIkalQisNJTwNCVRVXYjLa54Df/zM0SmXTmcWMbSPWOh
-         tBdDQmxt/PeHjfN6zDzC5LSya9T3Qki2COPJSdAOnzdDqoznapJVZ7DzHDalsx2QjjL/
-         XqSNctM/ZmX23KFY9EellJls6MivjMHIRrA8TLPsGnGKyFc/UcIfKs7f3FwomA8Ccjwv
-         6KYR9eyQbls2kK1b2AyhIK/hsKLwOzjQx29eRHwUpKDmRxpN7nVzqP3weUkxvS/cE004
-         dKtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeaxLP1rM/M3gqly7ZxPRvwrkY9m07JYAUSw6R2mJ7NFY9LelOdrdQwt5Kr+CPhb7fEKjTj9tOabg6ADLRUYFIpIbfhwZhKTf1ZdJsXA==
-X-Gm-Message-State: AOJu0Yw9D+JI4na++NArlvxVALgcwO+PPRFzFGlTGwF0fPnsBEBwCk+R
-	LbqSMm67JwEpq4KUGQHlpwMIKY3OOEn+bdqii5l/PfsfivcBjTTUwcRztdZm4UXWTyllCzA6VU+
-	i1V/26D6Q9hy1BzzOhuFAPJ9vHWiq1ffIH5E3G4GzwKAzuVNt358eTRA=
-X-Google-Smtp-Source: AGHT+IE0SEjwGli+eIPkr3STT2M1V1BaU+RlMwBZA0FgwEZac8R+O6+hyeirl9FzoZWVfDfrOwOC9TPJPBRm3psWHI+MM+xEdiVu
+        d=1e100.net; s=20230601; t=1714927584; x=1715532384;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aYdtp3YANTth8Vi9S+yHKBJaPcPwhcLOgY9vMAI/QdY=;
+        b=GAS0ozaFoNPAuyx4A8dkyKbI2byd73PQFYmNZvJJLs5LB0/R/whN0VX5ZfV3KIPRIg
+         yWO9u68hLzcWqbPQL5xvkaoB4oNO0sLfhOTKwpZpOyPAi5089lryXPRdBxJk1AbYvVS5
+         d/QI+acqnCJxIxjc4CEzLslafr9EUH7xb2dfdoKc/FEE+cAHEvnXYbKyJfaLZZWN9ra5
+         7yXAKKUj9oRHlKqeqBmRIBoG5HOH7/V94ttZuW4hkY/EfuJBLsDirgzIw37iZpxj7Nxi
+         +l/wnxpcBC4TwbHz5c0N8YZ+fDG3TYgnJX6XgddLz7oZtvdpaGI0S8d99Gzg/rdnLDBH
+         AI8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXPwewC5X5tpWERNUug0fEolLQzouuaSeqsVo6dT8Kc3MQpIUrvtIkyWrHhqwz+NNjEto2El67q9JqNb7UkXKs6xy9RymhAvpAmBBoWOQ==
+X-Gm-Message-State: AOJu0YzjFycCNdrj7EDpMP8LS2+2fg1E96S/oSuTCsswpeTECdL/gotw
+	FsIsj84gULclgl3c79I3XfQsHy1Nzwto4bA1eiyn+kOQqGAb9hddhD8s5d1/VIyHO4SonnvIbwV
+	va8sHRw==
+X-Google-Smtp-Source: AGHT+IF7jtqNDZHFUEOsOFbvHN+cTHRmfLvqHJoH1sixO8hUSVKp/dtgwGcSa+tdybjm8apjwwuHpw==
+X-Received: by 2002:a05:6512:310a:b0:51d:a5fb:bfd8 with SMTP id n10-20020a056512310a00b0051da5fbbfd8mr5980149lfb.32.1714927584430;
+        Sun, 05 May 2024 09:46:24 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id fw17-20020a170906c95100b00a59cfc54756sm82976ejb.210.2024.05.05.09.46.22
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 09:46:23 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so212225866b.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 09:46:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXekllREYPzHtaKMZlsOiGV6+WgEXvejgTd/Gx2jcOibeW1isRgtDKUcj7l4Ix9TnikU3z11q9k+g09BXITPmP50BMS7ickMbTKFKH53Q==
+X-Received: by 2002:a17:907:3f9a:b0:a59:c5c2:a31c with SMTP id
+ hr26-20020a1709073f9a00b00a59c5c2a31cmr2077374ejc.33.1714927582181; Sun, 05
+ May 2024 09:46:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8716:b0:488:7f72:b3b0 with SMTP id
- iw22-20020a056638871600b004887f72b3b0mr114504jab.5.1714926335279; Sun, 05 May
- 2024 09:25:35 -0700 (PDT)
-Date: Sun, 05 May 2024 09:25:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000007d2e50617b767a3@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_alloc_v4_invalid
-From: syzbot <syzbot+10827fa6b176e1acf1d0@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com> <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+In-Reply-To: <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 5 May 2024 09:46:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+Message-ID: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Sun, 5 May 2024 at 03:50, Christian Brauner <brauner@kernel.org> wrote:
+>
+> And I agree with you that for some instances it's valid to take another
+> reference to a file from f_op->poll() but then they need to use
+> get_file_active() imho and simply handle the case where f_count is zero.
 
-syzbot found the following issue on:
+I think this is
 
-HEAD commit:    9221b2819b8a Add linux-next specific files for 20240503
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13187c70980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8ab537f51a6a0d98
-dashboard link: https://syzkaller.appspot.com/bug?extid=10827fa6b176e1acf1d0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1250b9ff180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117ea590980000
+ (a) practically impossible to find (since most f_count updates are in
+various random helpers)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3e67dbdc3c37/disk-9221b281.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ade618fa19f8/vmlinux-9221b281.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/df12e5073c97/bzImage-9221b281.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/54baa53b5879/mount_0.gz
+ (b) not tenable in the first place, since *EVERYBODY* does a f_count
+update as part of the bog-standard pollwait
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+10827fa6b176e1acf1d0@syzkaller.appspotmail.com
+So (b) means that the notion of "warn if somebody increments f_count
+from zero" is broken to begin with - but it's doubly broken because it
+wouldn't find anything *anyway*, since this never happens in any
+normal situation.
 
-loop0: detected capacity change from 0 to 32768
-bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=xxhash,str_hash=crc32c,nojournal_transaction_names
-bcachefs (loop0): recovering from clean shutdown, journal seq 10
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/alloc_background.h:166!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 5088 Comm: syz-executor107 Not tainted 6.9.0-rc6-next-20240503-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:alloc_v4_u64s fs/bcachefs/alloc_background.h:166 [inline]
-RIP: 0010:bch2_alloc_v4_invalid+0x9af/0x9c0 fs/bcachefs/alloc_background.c:247
-Code: 47 cf f6 fd e9 d7 fb ff ff 44 89 e9 80 e1 07 38 c1 0f 8c 23 fc ff ff 4c 89 ef e8 cc ce f6 fd e9 16 fc ff ff e8 62 20 91 fd 90 <0f> 0b e8 5a 20 91 fd 90 0f 0b 0f 1f 80 00 00 00 00 90 90 90 90 90
-RSP: 0018:ffffc900035be618 EFLAGS: 00010293
-RAX: ffffffff8404f57e RBX: 00000000000000fd RCX: ffff88807c78bc00
-RDX: 0000000000000000 RSI: 00000000000000fd RDI: 00000000000000fa
-RBP: 000000000000002d R08: ffffffff8404eca5 R09: 0000000000000000
-R10: 0000000000000000 R11: ffffffff8404ebd0 R12: 000000005770f4b6
-R13: ffffc900035beaa0 R14: ffff8880778c06e8 R15: 1ffff920006b7d45
-FS:  000055559514f380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd24b68da8 CR3: 000000002de70000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_btree_node_read_done+0x3e7d/0x5ed0 fs/bcachefs/btree_io.c:1234
- btree_node_read_work+0x665/0x1300 fs/bcachefs/btree_io.c:1345
- bch2_btree_node_read+0x2637/0x2c80 fs/bcachefs/btree_io.c:1730
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1769 [inline]
- bch2_btree_root_read+0x61e/0x970 fs/bcachefs/btree_io.c:1793
- read_btree_roots+0x22d/0x7b0 fs/bcachefs/recovery.c:472
- bch2_fs_recovery+0x2334/0x36e0 fs/bcachefs/recovery.c:800
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1030
- bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2105
- bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1917
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1780
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff34d527a3a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd7ed56fe8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd7ed57000 RCX: 00007ff34d527a3a
-RDX: 0000000020011a00 RSI: 0000000020011a40 RDI: 00007ffd7ed57000
-RBP: 0000000000000004 R08: 00007ffd7ed57040 R09: 00000000000119ee
-R10: 0000000000200014 R11: 0000000000000282 R12: 0000000000200014
-R13: 00007ffd7ed57040 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:alloc_v4_u64s fs/bcachefs/alloc_background.h:166 [inline]
-RIP: 0010:bch2_alloc_v4_invalid+0x9af/0x9c0 fs/bcachefs/alloc_background.c:247
-Code: 47 cf f6 fd e9 d7 fb ff ff 44 89 e9 80 e1 07 38 c1 0f 8c 23 fc ff ff 4c 89 ef e8 cc ce f6 fd e9 16 fc ff ff e8 62 20 91 fd 90 <0f> 0b e8 5a 20 91 fd 90 0f 0b 0f 1f 80 00 00 00 00 90 90 90 90 90
-RSP: 0018:ffffc900035be618 EFLAGS: 00010293
-RAX: ffffffff8404f57e RBX: 00000000000000fd RCX: ffff88807c78bc00
-RDX: 0000000000000000 RSI: 00000000000000fd RDI: 00000000000000fa
-RBP: 000000000000002d R08: ffffffff8404eca5 R09: 0000000000000000
-R10: 0000000000000000 R11: ffffffff8404ebd0 R12: 000000005770f4b6
-R13: ffffc900035beaa0 R14: ffff8880778c06e8 R15: 1ffff920006b7d45
-FS:  000055559514f380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd24b68da8 CR3: 000000002de70000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+And (a) means that any non-automatic finding of this is practically impossible.
 
+> And we need to document that in Documentation/filesystems/file.rst or
+> locking.rst.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+WHY?
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Why cannot you and Al just admit that the problem is in epoll. Always
+has been, always will be.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+The fact is, it's not dma-buf that is violating any rules. It's epoll.
+It's calling out to random driver functions with a file pointer that
+is no longer valid.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+It really is that simple.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+I don't see why you are arguing for "unknown number of drivers - we
+know at least *one* - have to be fixed for a bug that is in epoll".
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+If it was *easy* to fix, and if it was *easy* to validate, then  sure.
+But that just isn't the case.
 
-If you want to undo deduplication, reply with:
-#syz undup
+In contrast, in epoll it's *trivial* to fix the one case where it does
+a VFS call-out, and just say "you have to follow the rules".
+
+So explain to me again why you want to mess up the driver interface
+and everybody who has a '.poll()' function, and not just fix the ONE
+clearly buggy piece of code.
+
+Because dammit,. epoll is clearly buggy. It's not enough to say "the
+file allocation isn't going away", and claim that that means that it's
+not buggy - when the file IS NO LONGER VALID!
+
+                      Linus
 
