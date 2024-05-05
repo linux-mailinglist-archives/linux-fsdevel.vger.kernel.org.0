@@ -1,148 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-18757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37BAE8BC023
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 12:50:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375578BC05D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 14:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE095B20C33
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 10:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFDB9281E06
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 12:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9B614A96;
-	Sun,  5 May 2024 10:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632EA18E3F;
+	Sun,  5 May 2024 12:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5L3jU3F"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HpwKRvwg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696ED6FBE;
-	Sun,  5 May 2024 10:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BAE186A
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 12:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714906229; cv=none; b=soJMdOjZaGwMhR4aqiM5629NXU4eYLHED5bodNQIz69nUENirRuyO0dFVxwgwiijGeJggsyXG5kK4K2/uCuFO//+2bHVSt2w+YFphrPY33Mw2nZOuhycEAAWaeg1KN4QFZI2qS9ql2PKdHZscKenKgE2p7wsJLUWjbCLHAw/gBo=
+	t=1714911969; cv=none; b=jRKCBwEA/gyv3X3hGXBHJ4PjNYEtDFJmtEB4OLMGjIWbKVSaxYYUh5n3vbDSWmr1hXh4SE21UG+nODcD/oTx1kykiBomETSKKba3N5ZzUfESHCaAFBNLMu9+iUxa62H5HgvRiLsRefjBs4lK2t0EzVZoU6RrfSyOT4EN3ikkVZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714906229; c=relaxed/simple;
-	bh=A0pA9gFmx/KX+0Pa4DEPpSZCbQRPr/bicmqz+Fp/D+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vn6SduIsAEwIq2fkHskltkNzBVbzydb3invgGkOlo0yOJYb2GIMcBpODNVNi4YjD8xHoYzY4Z9vuuJpo9Ukzpj0MNi3Hzoc9F4lmXF6U11YQSvJDlX4yB/KW8mlcRBaMb79Gnv00ljRD1/9hX/JqFREx+m7thY9FFHnatZYaCSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5L3jU3F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B1EC113CC;
-	Sun,  5 May 2024 10:50:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714906228;
-	bh=A0pA9gFmx/KX+0Pa4DEPpSZCbQRPr/bicmqz+Fp/D+U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e5L3jU3FZTdPXwhW7v4hVB9ximQhq8UCZ0c9TGS4U1UkDy9SoEAFc5NcwjdpsIkoS
-	 y5500oXQvODSiP70b98akmj6jmj+4sIElipq9Sppz0r6ueMZ5+eoTun24p+V22Tcsc
-	 HaEAjxcM6qfbfzwdvMKKH0Bzaupg7FpgBHRmFAtU8wyAoJkMIQ+EcEkI2ftcOlZkWI
-	 aYekeYbhJGpP03mC0HcdhmtZ5hdyxwJFb24ZNgDWJ/rfxASaSIkLf4OS9WJJBKMSOh
-	 qzzyyX+Lq+QiMQ+t6jgW/KeVXyFOY4AUvFgw8NNBYWWqzu+JmgCOPLMaezQ+o0HooC
-	 CPk8Qe18RVxwQ==
-Date: Sun, 5 May 2024 12:50:21 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240505-gelehnt-anfahren-8250b487da2c@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+	s=arc-20240116; t=1714911969; c=relaxed/simple;
+	bh=SNONyhD1xyP2gU8JXMrGGt/K2nTIsUHjAQGJPXJdLFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rLM4RDDswj8GfYBbbPp83sxb0qPiAOe/redXUI8jAv8Y3LzjXXkN8IC0+jzlOlLO8ChOyoBtTwPlRdUkAP03Yhc20FJowRNfa2gSuJQAtECOX3DEwl29yBWSH38FUIvyPi3h8B5URjdD/EfHNuAKAsSslgWYXnwocJtWNBf7KBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HpwKRvwg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=xgLABeNOKMr2PKC0Jdo0jUUPTZqrLr99KdTRg3trTOI=; b=HpwKRvwg7DMvDV7BUT/XMvPJ7g
+	7lOhO4uCy5d9x5b8XRVjkTjh4R5vWiZmysu8m9PHpP0P6ur/JttByX8WVGlewuSd8uDBGxAvuVH87
+	do0OzQ1Fj9t7XMCtW3dhTXRqN99zzD1BYLN3Qq7nLCf8Q0qVfSP6c9KuVwHxd6tHCFcyolftfNR+S
+	OM3Vpa4XhyKdi1K1LpfAHENPqGlSB7c4a5lSF8jF+FExVh83Zvm8jnbDC8C/yuU9U2nGqOpmrcKUc
+	ni6+tHbI/BS/Rq771wIjdrwDVMqPAq5o6y3Qg8OyurZxxgQOaQIWjpqf7s9XLBtDJhSy7lh33qwXp
+	jMA5CrqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s3awI-00000008ax8-37NF;
+	Sun, 05 May 2024 12:25:58 +0000
+Date: Sun, 5 May 2024 13:25:58 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>,
+	Julia Lawall <julia.lawall@inria.fr>
+Cc: "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org
+Subject: kmap + memmove
+Message-ID: <Zjd61vTCQoDN9tUJ@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
 
-On Sat, May 04, 2024 at 08:40:25AM -0700, Linus Torvalds wrote:
-> On Sat, 4 May 2024 at 08:32, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Now, during this TOTALLY INNOCENT sock_poll(), in another thread, the
-> > file closing completes, eventpoll_release() finishes [..]
-> 
-> Actually, Al is right that ep_item_poll() should be holding the
-> ep->mtx, so eventpoll_release() -> eventpoll_release_file_file() ->
-> mutex_lock(&ep->mtx) should block and the file doesn't actually get
-> released.
+Here's a fun bug that's not obvious:
 
-So I know you've seen it yourself but for my own peace of mind I've said
-that in the other mail and in the other thread already that all callers
-of ep_item_poll() do already hold the ep->mtx:
+hfs_bnode_move:
+                                dst_ptr = kmap_local_page(*dst_page);
+                                src_ptr = kmap_local_page(*src_page);
+                                memmove(dst_ptr, src_ptr, src);
 
-do_epoll_ctl()
--> epoll_mutex_lock(&ep->mtx)
--> ep_insert()
-   -> ep_item_poll()
+If both of the pointers are guaranteed to come from diffeerent calls to
+kmap_local(), memmove() is probably not going to do what you want.
+Worth a smatch or coccinelle rule?
 
-do_epoll_ctl()
--> epoll_mutex_lock(&ep->mtx)
--> ep_modify()
-   -> ep_item_poll()
+The only time that memmove() is going to do something different from
+memcpy() is when src and dst overlap.  But if src and dst both come
+from kmap_local(), they're guaranteed to not overlap.  Even if dst_page
+and src_page were the same.
 
-ep_send_events()
--> mutex_lock(&ep->mtx)
--> ep_item_poll()
+Which means the conversion in 6c3014a67a44 was buggy.  Calling kmap()
+for the same page twice gives you the same address.  Calling kmap_local()
+for the same page twice gives you two different addresses.
 
-/* nested; and all callers of ep_item_poll() already hold ep->mtx */
-__ep_eventpoll_poll()
--> mutex_lock_nested(&ep->mtx, wait)
--> ep_item_poll()
-
-So it's simply not possible to end up with a UAF in f_op->poll() because
-eventpoll_release_file_file() serializes on ep->mtx as well:
-
-__fput()
--> eventpoll_release()
-   -> eventpoll_release_file()
-      {
-              // @file->f_count is zero _but file is not freed_
-              // so taking file->f_lock is absolutely fine
-              spin_lock(&file->f_lock);
-              // mark as dying
-
-              // serialzed on ep->mtx
-              mutex_lock(&ep->mtx);
-              __ep_rmove(ep, epi);
-              ...
-
-      }
-      -> mutex_lock(&ep->mtx)
-
--> f_op->release()
--> kfree(file)
-
-So afaict it's simply not possible to end up with a UAF in f_op->poll().
-
-And I agree with you that for some instances it's valid to take another
-reference to a file from f_op->poll() but then they need to use
-get_file_active() imho and simply handle the case where f_count is zero.
-And we need to document that in Documentation/filesystems/file.rst or
-locking.rst.
-
-But if it's simply just dma buf that cares about that long-term
-reference then really we should just force them to take the reference
-like I suggested but don't penalize everyone else. When I took a glance
-at all f_op->poll() implementations I didn't spot one that did take
-extra references.
-
-But if you absolutely want to have epoll take the reference before it
-calls into f_op->poll() that's fine with me as well. But we might end up
-forcing epoll to do a lot of final fput()s which I'm not sure is all
-that desirable.
+Fabio, how many other times did you create this same bug?  Ira, I'm
+surprised you didn't catch this one; you created the same bug in
+memmove_page() which I got Fabio to delete in 9384d79249d0.
 
