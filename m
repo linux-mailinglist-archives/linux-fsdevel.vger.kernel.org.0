@@ -1,112 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-18752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DA78BBF8D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 09:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12118BBFAB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 10:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB58E281FD3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 07:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672061F2168F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 08:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B406FC7;
-	Sun,  5 May 2024 07:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA256FD3;
+	Sun,  5 May 2024 08:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NsHxNlXI"
+	dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b="ACxoLOHO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5D063AE
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 07:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF861B662
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 08:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714892598; cv=none; b=Ge+amTvJHJ/O6IiMtolQIv/06OHrSamgaVj7TAj4GbE+D9VqPGudQhw1vRkAimUA0qGF7tCwrT1/fELbQGJ9e1Ljnz9Yg4rRa/nXQnAD3CP4Cihey5vQXfq3rt7IFFZ3h72DnnCV4ueaS7Eepdkg/aPxIG/oOQ9TPXkUQwytOIU=
+	t=1714896255; cv=none; b=f+0/+FdxtCZpGGPPnnuDCtKPA4FcjbBlqrdfLTgKDp995Ascch/OmN5BCT2MO8FGGCLzbtMoHHVCOilVYKsWj49oxQntkcd1jknX6TQxHxPyp/Tb3r5x/iW215lBYG0l1LQhYRR2TCEJjd5S4cTFWnk75bNc9ZN6w0AsgR1XyFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714892598; c=relaxed/simple;
-	bh=9hZnRh56Hgq6alvC3MohA6OZF2IYSHDrjE3HGOFKtuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgdTKSyZ5SRyeMymehGrpcoc7SI30ZDQy5fema4GX+OKj75vW48hAp8vmQvoAUfKjV7rRr90ibRiQW0k0Aa62Sxhnv+haP8symnl/ycTTDfeHB59cm0GGG+bZvb0I+6k2xkYylJvUMjnYO28taqqlZBKcRwAu+4zyCuIhAVjIko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NsHxNlXI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714892595;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S52qHVoar7wlTTIceOF47yDBu4Qxt+6rlWLzG9qUz8Q=;
-	b=NsHxNlXIorVvQeCaJpN7+gcKALOqe4xQ0N4wDP/3FF7f8CetlEXFAQjQe7hg4kdva7eQnQ
-	aVgC8ThSx+mWa5oSdNy0IVxNtImDWD4K2CFl+2wPzzKQoL1IRetk4AHXipE9iswWrLjR1j
-	ZxqrDmQTeeH4ePkxyRCQaY6EifqIT8o=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-3gqcqRtTPkC4Q8LzzG5xBQ-1; Sun, 05 May 2024 03:03:11 -0400
-X-MC-Unique: 3gqcqRtTPkC4Q8LzzG5xBQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 74A49101150D;
-	Sun,  5 May 2024 07:03:10 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.31])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 36F65C13FA1;
-	Sun,  5 May 2024 07:03:08 +0000 (UTC)
-Date: Sun, 5 May 2024 15:03:05 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 4/4] crash: Remove duplicate included header
-Message-ID: <ZjcvKd+n74MFCJtj@MiWiFi-R3L-srv>
-References: <20240502212631.110175-1-thorsten.blum@toblux.com>
- <20240502212631.110175-4-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1714896255; c=relaxed/simple;
+	bh=jPpeliNLD3xfpbdvB61oUItob4pmHCdmDr2vaAlfDtQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gKjW3mWCaAiEUj1+QNFB9Sidyn6NihYKP+Xq6ds6YvNQ+GdGWbkEiYUdSMnIHSoS/ShLYb2BKkiH5c7KL3UGikP7MncmpJ2y18gTd2IvcdwTJyRwrAFONrnrPMvb06V5/+JH8vyyyjh9XpU+p0a5n9k2CUWw+znLMErdSCQIFgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b=ACxoLOHO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41ba1ba5592so6747555e9.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 01:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile-fr.20230601.gappssmtp.com; s=20230601; t=1714896249; x=1715501049; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b95b/QlxWUuWxAnCRBIf40ujUjqNzj8rC10ackjOgcI=;
+        b=ACxoLOHOK+1vOI4OFaTcUzykT7jDgg2oZKvu4lgWXZ14MCfsZ4IIsGn8nStjEQHggy
+         swv1CfsBUgGuUZoG4a9xpCmh+nSH64bjbkPNlz383284C+D5eV3re3CNITrpndoAZif5
+         xpV+pZsgg0CFa6Y2fS69QIwoqlWSHMODzroxA0pVuGwpjEZkqGAqYObep1tLxaE2lkyj
+         KFpXncsrPyYGs7I0q/K0fPzCP3z0/zZCQ7PNG7o695upf8OLFHMEYIqtmu3NREqWuviU
+         EXizX2JTfqmFdn4GxLXUTnA4Zdp53r/5qSXN8R2c/mnFBi5GDzbun6p7fg0e4CyjXmHU
+         WPoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714896249; x=1715501049;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b95b/QlxWUuWxAnCRBIf40ujUjqNzj8rC10ackjOgcI=;
+        b=Lt56d1Px5606vO/EUyodpVgpjZJv7WflZ06QTUD1JUOTPXXy98S8kO78ayYGuAc7cr
+         zXFvtxBk4guFpta3KjXhR/SSHH7aY1oHCgqsQCxENlb6bU4Izd5IoJgmPIDszKnJp+My
+         2sEuz37sMwYvRUvlth61yyVTwURvQL6NP9puqOkU5b1ZDIvBXIFX6vGQjIQl1nU6Jh0M
+         l9/mRyZAGjKftZqU4L8HjzPbyqUxWgJ0TXLjULBcRHcGMgpOHvOoxtjBZaF62rBVSAxf
+         vrQ9dd7/2mOKckW4lA/ezaJdUGlvYHf19fSGaXT4g67OUtlc1fOwX7F8RZiuJxxgEOJ6
+         srMw==
+X-Gm-Message-State: AOJu0YwXLwps1Aw9oCjhhNIpWLMRvNPbkKzoxE9mz+PtaTaBhwzwvn7j
+	f7LMlogjlDoLyDmLuyrRxjl7MUO9q64oNmmO5Go+01NdWZs/Gdpr2u0V6zR4ETqFD6PSsFK8dAg
+	qKMvysQ==
+X-Google-Smtp-Source: AGHT+IHt1D4gFk4D/XEDn7s+zC66BZ27KueGAYmrGBC5k+VaalpZvWi2dsxwD0ODrc2TNO+t/78GlA==
+X-Received: by 2002:a05:600c:1386:b0:41b:13d5:7da9 with SMTP id u6-20020a05600c138600b0041b13d57da9mr6611972wmf.38.1714896248940;
+        Sun, 05 May 2024 01:04:08 -0700 (PDT)
+Received: from P-ASN-ECS-830T8C3.local ([89.159.1.53])
+        by smtp.gmail.com with ESMTPSA id s3-20020adfe003000000b0034e8a10039esm4705295wrh.10.2024.05.05.01.04.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 May 2024 01:04:08 -0700 (PDT)
+From: yoann.congal@smile.fr
+To: linux-fsdevel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	x86@kernel.org
+Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Darren Hart <dvhart@infradead.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Yoann Congal <yoann.congal@smile.fr>
+Subject: [PATCH RESEND v6 0/3] printk: CONFIG_BASE_SMALL fix for LOG_CPU_MAX_BUF_SHIFT and removal of CONFIG_BASE_FULL
+Date: Sun,  5 May 2024 10:03:40 +0200
+Message-Id: <20240505080343.1471198-1-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502212631.110175-4-thorsten.blum@toblux.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Transfer-Encoding: 8bit
 
-On 05/02/24 at 11:26pm, Thorsten Blum wrote:
-> Remove duplicate included header file linux/kexec.h
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  kernel/crash_reserve.c | 1 -
->  1 file changed, 1 deletion(-)
+From: Yoann Congal <yoann.congal@smile.fr>
 
-Acked-by: Baoquan He <bhe@redhat.com>
+This series focuses on CONFIG_BASE_SMALL.
+The first patch fixes LOG_CPU_MAX_BUF_SHIFT when CONFIG_BASE_SMALL is
+used.
+The second patch globally changes the type of CONFIG_BASE_SMALL and
+adapts usages.
+The third patch removes the now redundant BASE_FULL, puts BASE_SMALL
+in its place in the config menus and updates usages in defconfigs.
 
-> 
-> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-> index 066668799f75..c460e687edd6 100644
-> --- a/kernel/crash_reserve.c
-> +++ b/kernel/crash_reserve.c
-> @@ -13,7 +13,6 @@
->  #include <linux/memory.h>
->  #include <linux/cpuhotplug.h>
->  #include <linux/memblock.h>
-> -#include <linux/kexec.h>
->  #include <linux/kmemleak.h>
->  
->  #include <asm/page.h>
-> -- 
-> 2.44.0
-> 
+Thanks everyone for your reviews! :)
+
+Patch history:
+v5->v6:
+* Gathered the "Reviewed-by" tags from v4 into the commit messages (no
+  other change)
+
+v5 series: https://lore.kernel.org/lkml/20240207171020.41036-1-yoann.congal@smile.fr/
+
+v4->v5:
+* Applied Petr Mladek's suggestion (Thanks!):
+  * Added defconfig update to patch 3/3
+* Applied Masahiro Yamada's comments (Thanks!):
+  * Shorter form in patch 2/3
+  * Dropped the redundant "default n" in patch 3/3
+
+v4 series:
+https://lore.kernel.org/all/20240206001333.1710070-1-yoann.congal@smile.fr/
+* Patch v4 1/3: (unchanged in v5)
+  * Reviewed-by: Petr Mladek <pmladek@suse.com>
+  * Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+* Patch v4 2/3:
+  * Reviewed-by: Petr Mladek <pmladek@suse.com>
+  * Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  * Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+
+v3->v4: Applied Petr Mladek's suggestion (Thanks!):
+* Keep BASE_SMALL instead of BASE_FULL
+* A patch changing the type of BASE_SMALL was added.
+
+v3 series was named "printk: CONFIG_BASE_SMALL fix for
+LOG_CPU_MAX_BUF_SHIFT and removal"
+https://lore.kernel.org/all/20240204232945.1576403-1-yoann.congal@smile.fr/
+* Patch v3 1/2:
+  * Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+  * Reviewed-by: John Ogness <john.ogness@linutronix.de>
+  * Reviewed-by: Petr Mladek <pmladek@suse.com>
+* Patch v3 2/2:
+  * Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+
+v2 -> v3: Applied Luis Chamberlain's comments (Thanks!):
+* Split the single commit in two : one functional fix, one global
+  removal.
+
+v2 patch was named "printk: Remove redundant CONFIG_BASE_SMALL"
+https://lore.kernel.org/all/20240127220026.1722399-1-yoann.congal@smile.fr/
+* Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+* Reviewed-by: John Ogness <john.ogness@linutronix.de>
+
+v1 -> v2: Applied Masahiro Yamada's comments (Thanks!):
+* Changed from "Change CONFIG_BASE_SMALL to type bool" to
+  "Remove it and switch usage to !CONFIG_BASE_FULL"
+* Fixed "Fixes:" tag and reference to the mailing list thread.
+* Added a note about CONFIG_LOG_CPU_MAX_BUF_SHIFT changing.
+
+v1 patch was named "treewide: Change CONFIG_BASE_SMALL to bool type"
+https://lore.kernel.org/all/20240126163032.1613731-1-yoann.congal@smile.fr/
+
+Yoann Congal (3):
+  printk: Fix LOG_CPU_MAX_BUF_SHIFT when BASE_SMALL is enabled
+  printk: Change type of CONFIG_BASE_SMALL to bool
+  printk: Remove redundant CONFIG_BASE_FULL
+
+ arch/arm/configs/collie_defconfig                  |  2 +-
+ arch/arm/configs/keystone_defconfig                |  2 +-
+ arch/arm/configs/lpc18xx_defconfig                 |  2 +-
+ arch/arm/configs/moxart_defconfig                  |  2 +-
+ arch/arm/configs/mps2_defconfig                    |  2 +-
+ arch/arm/configs/omap1_defconfig                   |  2 +-
+ arch/arm/configs/stm32_defconfig                   |  2 +-
+ arch/microblaze/configs/mmu_defconfig              |  2 +-
+ arch/mips/configs/rs90_defconfig                   |  2 +-
+ arch/powerpc/configs/adder875_defconfig            |  2 +-
+ arch/powerpc/configs/ep88xc_defconfig              |  2 +-
+ arch/powerpc/configs/mpc866_ads_defconfig          |  2 +-
+ arch/powerpc/configs/mpc885_ads_defconfig          |  2 +-
+ arch/powerpc/configs/tqm8xx_defconfig              |  2 +-
+ arch/riscv/configs/nommu_k210_defconfig            |  2 +-
+ arch/riscv/configs/nommu_k210_sdcard_defconfig     |  2 +-
+ arch/riscv/configs/nommu_virt_defconfig            |  2 +-
+ arch/sh/configs/edosk7705_defconfig                |  2 +-
+ arch/sh/configs/se7619_defconfig                   |  2 +-
+ arch/sh/configs/se7712_defconfig                   |  2 +-
+ arch/sh/configs/se7721_defconfig                   |  2 +-
+ arch/sh/configs/shmin_defconfig                    |  2 +-
+ arch/x86/include/asm/mpspec.h                      |  6 +++---
+ drivers/tty/vt/vc_screen.c                         |  2 +-
+ include/linux/threads.h                            |  4 ++--
+ include/linux/udp.h                                |  2 +-
+ include/linux/xarray.h                             |  2 +-
+ init/Kconfig                                       | 14 ++++----------
+ kernel/futex/core.c                                |  2 +-
+ kernel/user.c                                      |  2 +-
+ .../testing/selftests/wireguard/qemu/kernel.config |  1 -
+ 31 files changed, 36 insertions(+), 43 deletions(-)
+
+-- 
+2.39.2
 
 
