@@ -1,216 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-18772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE218BC30A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 20:26:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460478BC355
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 21:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71DE1F2142F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 18:26:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63147B212C5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 19:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA1A6E60F;
-	Sun,  5 May 2024 18:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1E16EB53;
+	Sun,  5 May 2024 19:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WRqMcU/Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA336BFD2
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 18:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7888857C9A;
+	Sun,  5 May 2024 19:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714933591; cv=none; b=DrmvhRLSDVA0XzI4GqF3zJALZdKIJ8CONZJOXCsN1VbjKwFy3zAAc/SvvlP8E7dvIRqmK0L2EFFEvHP4SJs4ffRxFVXQTL3U9nkKqxfTbyHeNzuyAivyThgUcbIwejof9EJybX/tlsKH3V1iYtBL8azAQiVo2wc7Td5Vx3ozHpQ=
+	t=1714938377; cv=none; b=Ap6YuiH/xTMfZ0Ww3tioLkcAYe+x+UNRCAdi+DSNHD36lB4EitdpWzuUjzVMgL0/UjR+s551MpiX3qwOoovqHqyq4Xm4iY45ZuKooJiTw8m4ONaVtr2uILfoBTIUcBelkABi5a+w1UwyzR0vxE3Sz4bukyym9WR3zW4axRe5wyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714933591; c=relaxed/simple;
-	bh=zL4ttq+dTYc2Po+Y/KgYNUEQOWFlVXDeYjMJ6ITXDn8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bBhSFnNetTIuO7OiG2/48PEKSKuxMbcbLgtJcV0nowBFEGmBWOe+7FzWlXYvLefYrcuJy6HzrA0/RhIAzZXznXt84tfNx960s5o2Sx5KNEqxvddLkLh/uZqBnmrtLO60VPANWGWSaA9++CAcQ6wXR71YyYkKUf+p5dxwvh9BWoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-36c5ff9964fso8170985ab.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 11:26:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714933589; x=1715538389;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SjJjtFn5h5ZtaHCuoaDSFOcZypXdldCXXXigcZgDNpk=;
-        b=YhRgkaWwD7XJQsgM2hbI7Cb8Tckni1jjDF/gjeA7zkw5Sucz3F46b6pAHAr0OyJ9IA
-         Ka2arhXp4+v+WrJx9G/T+whgENgVw/coYxEapX89AOrNflAxAJbnbnJxvZYJmm2WRlBv
-         GQiNQKLYbyCM/SisvFQgHKaIwV5e190wo2clmI5fKqQfns4uASsB5kUSxKW5ssbMKqTt
-         1ZPI24s54uAsbCIVVcibreYSZkalNAKLOuE9C6g2Z0aBlj4eSmFwWdSMzIEDVUgcFec2
-         hFPnNWXTxX2imQahP9KgHFZNMdAl+cB86KIZPQR/ZwD2aC0W0oBS6flUY1R1jQZGTTKF
-         ObjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVa2YDLbfAhCvTTkR8M9d/5ElXPDbXYPrdNATRTpfi+qRZoUvBi60BUpYiSoNuqifbW2+aIYOGBoI5QvC5VgdQWIPJAhTob+34TW10NTg==
-X-Gm-Message-State: AOJu0YyKL7L/gxXFLjpIv90tl5fYkojj7tutbN7UAnL+TfdmysURK9QC
-	wXXU4PxiksQ/Jxkix85cneKslEyqyYaE7Xx3aY+5FXkU4lfB+TafGzwpllhWv9vfIgn2WEC4QzK
-	aRW0CwKfDXcp+36Rs10/sd0S3ONQ6ZHDIAda8lm+U/Q1m2BD1WBKj9eY=
-X-Google-Smtp-Source: AGHT+IFABT5H/si6OUrwBZ1qoO06Zf71SLikL60DsieHyjA2Qv4jr4M8juXr4SKmmQnVmFjojW3MDtJ2/MwGKVv00UL7Z9UktdPu
+	s=arc-20240116; t=1714938377; c=relaxed/simple;
+	bh=OIP5hIAEAuqHMAEkhqv8Ti2mYm/houdKEi5ZEixTR0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZSMWaRZZ2nMNLZ9UQEUtrlJ/hxfIpT4Lnbv/6ERgKI0LCPrQCvtWb7u8jbqZNYD8lQaubOMPsD0kNEXVmgUqkrNJ6IdsZ7C+Itof+JZwnR4bRCxY5Nep6b4EnGPC2qbjd8EMB21vy6H9MTOFq0ej/gPvnLU0s+Ltm+03vr54co0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WRqMcU/Z; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CR8HSnmd0wpNYx92D/iUJFVLON8rnjrI0Q5oSHnNFnM=; b=WRqMcU/ZGHTJPWmlNeLfcAzApr
+	RaTueuuX4UcawZAh6Js5j23MefBc0PwL5TSeboB94b+oL1d96HnFLOApzEMQVEGqnmZxdESFBaNTI
+	gRx9uhQrbDV624FRxrN2uwkjDUiob3b11Q3dQS554W0u4b+UDZ2p6h0mqcGpu0KuODkBE3wJFkYrM
+	Ccn0D4iIrdABSC8UQ6CYmaUJHFbMEVzW2eI8nZeDLQIvgBEdtrYLsDAd1QiS6AKOeAbO3cA3jKEtE
+	HFshm2HNHREdy6EkxPFF0mTgymJ16FhUnBVz1pVnHYdV6myF9x5Uw750zSbEqR1U+RqadTs4p7amr
+	uWFRmDTQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s3hoB-00DGHE-1B;
+	Sun, 05 May 2024 19:46:03 +0000
+Date: Sun, 5 May 2024 20:46:03 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <20240505194603.GH2118490@ZenIV>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+ <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c23:b0:36c:5bd2:6b92 with SMTP id
- m3-20020a056e021c2300b0036c5bd26b92mr535175ilh.0.1714933589114; Sun, 05 May
- 2024 11:26:29 -0700 (PDT)
-Date: Sun, 05 May 2024 11:26:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000648e620617b9177a@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_inode_v3_invalid
-From: syzbot <syzbot+d3803303d5b280e059d8@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello,
+On Sat, May 04, 2024 at 08:53:47AM -0700, Linus Torvalds wrote:
 
-syzbot found the following issue on:
+>   poll_wait
+>     -> __pollwait
+>      -> get_file (*boom*)
+> 
+> but the boom is very small because the poll_wait() will be undone by
+> poll_freewait(), and normally poll/select has held the file count
+> elevated.
 
-HEAD commit:    7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ad5e60980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbf567496022057b
-dashboard link: https://syzkaller.appspot.com/bug?extid=d3803303d5b280e059d8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Not quite.  It's not that poll_wait() calls __pollwait(); it calls
+whatever callback that caller of ->poll() has set for it.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+__pollwait users (select(2) and poll(2), currently) must (and do) make
+sure that refcount is elevated; others (and epoll is not the only one)
+need to do whatever's right for their callbacks.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/44fb709c4e9c/disk-7367539a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d25971073eca/vmlinux-7367539a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a327aa91b63e/bzImage-7367539a.xz
+I've no problem with having epoll grab a reference, but if we make that
+a universal requirement ->poll() instances can rely upon, we'd better
+verify that *all* vfs_poll() are OK.  And that ought to go into
+Documentation/filesystems/porting.rst ("callers of vfs_poll() must
+make sure that file is pinned; ->poll() instances may rely upon that,
+but they'd better be very careful about grabbing extra references themselves -
+it's acceptable for files on internal mounts, but *NOT* for anything on
+mountable filesystems.  Any instance that does it needs an explicit
+comment telling not to reuse that blindly." or something along those
+lines).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d3803303d5b280e059d8@syzkaller.appspotmail.com
+Excluding epoll, select/poll and callers that have just done fdget() and will
+do fdput() after vfs_poll(), we have this:
 
-bcachefs (loop2): going read-only
-bcachefs (loop2): finished waiting for writes to stop
-bcachefs (loop2): flushing journal and stopping allocators, journal seq 9
-=====================================================
-BUG: KMSAN: uninit-value in bch2_inode_v3_invalid+0x390/0x520 fs/bcachefs/inode.c:516
- bch2_inode_v3_invalid+0x390/0x520 fs/bcachefs/inode.c:516
- bch2_bkey_val_invalid+0x24f/0x380 fs/bcachefs/bkey_methods.c:140
- bset_key_invalid fs/bcachefs/btree_io.c:831 [inline]
- validate_bset_keys+0x12d8/0x25d0 fs/bcachefs/btree_io.c:904
- validate_bset_for_write+0x1dd/0x340 fs/bcachefs/btree_io.c:1945
- __bch2_btree_node_write+0x5383/0x67c0 fs/bcachefs/btree_io.c:2155
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2288
- btree_node_write_if_need fs/bcachefs/btree_io.h:153 [inline]
- __btree_node_flush+0x4d0/0x640 fs/bcachefs/btree_trans_commit.c:229
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:238
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:553
- journal_flush_done+0x156/0x3f0 fs/bcachefs/journal_reclaim.c:809
- bch2_journal_flush_pins+0xdb/0x3b0 fs/bcachefs/journal_reclaim.c:839
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- __bch2_fs_read_only+0x1b9/0x750 fs/bcachefs/super.c:277
- bch2_fs_read_only+0xcb4/0x1540 fs/bcachefs/super.c:357
- __bch2_fs_stop+0x112/0x6f0 fs/bcachefs/super.c:622
- bch2_put_super+0x3c/0x50 fs/bcachefs/fs.c:1788
- generic_shutdown_super+0x194/0x4c0 fs/super.c:641
- bch2_kill_sb+0x3d/0x70 fs/bcachefs/fs.c:2012
- deactivate_locked_super+0xe0/0x3f0 fs/super.c:472
- deactivate_super+0x14f/0x160 fs/super.c:505
- cleanup_mnt+0x6c6/0x730 fs/namespace.c:1267
- __cleanup_mnt+0x22/0x30 fs/namespace.c:1274
- task_work_run+0x268/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xce/0x160 kernel/entry/common.c:218
- do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+drivers/vhost/vhost.c:213:      mask = vfs_poll(file, &poll->table);
+	vhost_poll_start().  Might get interesting...  Calls working
+with vq->kick as file seem to rely upon vq->mutex, but I'll need to
+refresh my memories of that code to check if that's all we need - and
+then there's vhost_net_enable_vq(), which also needs an audit.
 
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
- bkey_p_copy fs/bcachefs/bkey.h:46 [inline]
- bch2_sort_keys+0x1fdf/0x2cb0 fs/bcachefs/bkey_sort.c:194
- __bch2_btree_node_write+0x3acd/0x67c0 fs/bcachefs/btree_io.c:2100
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2288
- btree_node_write_if_need fs/bcachefs/btree_io.h:153 [inline]
- __btree_node_flush+0x4d0/0x640 fs/bcachefs/btree_trans_commit.c:229
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:238
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:553
- journal_flush_done+0x156/0x3f0 fs/bcachefs/journal_reclaim.c:809
- bch2_journal_flush_pins+0xdb/0x3b0 fs/bcachefs/journal_reclaim.c:839
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- __bch2_fs_read_only+0x1b9/0x750 fs/bcachefs/super.c:277
- bch2_fs_read_only+0xcb4/0x1540 fs/bcachefs/super.c:357
- __bch2_fs_stop+0x112/0x6f0 fs/bcachefs/super.c:622
- bch2_put_super+0x3c/0x50 fs/bcachefs/fs.c:1788
- generic_shutdown_super+0x194/0x4c0 fs/super.c:641
- bch2_kill_sb+0x3d/0x70 fs/bcachefs/fs.c:2012
- deactivate_locked_super+0xe0/0x3f0 fs/super.c:472
- deactivate_super+0x14f/0x160 fs/super.c:505
- cleanup_mnt+0x6c6/0x730 fs/namespace.c:1267
- __cleanup_mnt+0x22/0x30 fs/namespace.c:1274
- task_work_run+0x268/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xce/0x160 kernel/entry/common.c:218
- do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+fs/aio.c:1738:          mask = vfs_poll(req->file, &pt) & req->events;
+fs/aio.c:1932:  mask = vfs_poll(req->file, &apt.pt) & req->events;
+	aio_poll() and aio_poll_wake() resp.  req->file here is actually ->ki_filp
+	of iocb that contains work as iocb->req.work; it get dropped only in
+	iocb_destroy(), which also frees iocb.  Any call that might've run into
+	req->file not pinned is already in UAF land.
 
-Uninit was created at:
- __kmalloc_large_node+0x231/0x370 mm/slub.c:3921
- __do_kmalloc_node mm/slub.c:3954 [inline]
- __kmalloc_node+0xb07/0x1060 mm/slub.c:3973
- kmalloc_node include/linux/slab.h:648 [inline]
- kvmalloc_node+0xc0/0x2d0 mm/util.c:634
- kvmalloc include/linux/slab.h:766 [inline]
- btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
- bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
- btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
- bch2_btree_node_read+0x3d42/0x4b50
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
- bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
- read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
- bch2_fs_recovery+0x7adb/0x9310 fs/bcachefs/recovery.c:785
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
- bch2_fs_open+0x135f/0x1670 fs/bcachefs/super.c:2102
- bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1903
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa7/0x570 fs/super.c:1779
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x742/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
- x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+io_uring/poll.c:303:                    req->cqe.res = vfs_poll(req->file, &pt) & req->apoll_events;
+io_uring/poll.c:622:    mask = vfs_poll(req->file, &ipt->pt) & poll->events;
+	Should have req->file pinned, but I'll need to RTFS a bit for
+details.  That, or ask Jens to confirm...
 
-CPU: 1 PID: 26381 Comm: syz-executor.2 Tainted: G        W          6.9.0-rc6-syzkaller-00234-g7367539ad4b0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+net/9p/trans_fd.c:236:  ret = vfs_poll(ts->rd, pt);
+net/9p/trans_fd.c:238:          ret = (ret & ~EPOLLOUT) | (vfs_poll(ts->wr, pt) & ~EPOLLIN);
+	p9_fd_poll(); ->rd and ->wr are pinned and won't get dropped until
+p9_fd_close(), which frees ts immediately afterwards.  IOW, if we risk
+being called with ->rd or ->wr not pinned, we are in UAF land already.
+Incidentally, what the hell is this in p9_fd_open()?
+         * It's technically possible for userspace or concurrent mounts to
+         * modify this flag concurrently, which will likely result in a
+         * broken filesystem. However, just having bad flags here should
+         * not crash the kernel or cause any other sort of bug, so mark this
+         * particular data race as intentional so that tooling (like KCSAN)
+         * can allow it and detect further problems.
+         */
+Why not simply fix the race instead?  As in
+	spin_lock(&ts->rd->f_lock);
+        ts->rd->f_flags |= O_NONBLOCK;
+	spin_unlock(&ts->rd->f_lock);
+and similar for ts->wr?  Sigh...
 
