@@ -1,94 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-18748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4458BBEEF
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 02:35:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9494F8BBF47
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 07:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF098B20E0A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 00:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD641C20A16
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 05:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2CD15CE;
-	Sun,  5 May 2024 00:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0AC2914;
+	Sun,  5 May 2024 05:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mrn1xhBN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A077FB
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 00:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA5C15A8
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 05:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714869306; cv=none; b=fp4rlGazpPzh5HknXUYKVzNN+SJYxVYcQveYghDsci/udWzOwCTnjaJoqdAVL4YsflXdgIviSUavV6uXwPlB+syQd8VdHyR0UsfrVPYfIASDWLtVJReaEjkaqAxuZaSVYrPSZ44eoqQCxmhxQ+DHAEt8x/2Uj5P/ZhFYB6o1OeM=
+	t=1714885792; cv=none; b=RvqVxdwkqy05hirZYRncrUBvxHF11CUsKSgi3msmxC2HKrBXr84L9u6QV5cIN5m5PsdNP5wJ3fVJzSPsHsaD7NFspaOU0f5VMflKOE4iqRPq3yfy9AuHfjTTavjdQZpYkvzp055m+2oGsGJzg24avK7MVQ4M7zhUGRYwPfZDu4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714869306; c=relaxed/simple;
-	bh=3lWAJAfUZvClkbre3n9Mn5LFR4Th6NocSJxukhF+bcc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aVEzkGPM7Rrue732ZXxCzPsm9bsozO4ui6w3C9xnKO0bAb5D9KxdfJhWNLHFoiKIr5CLCyRYU09q2IB2Id8tFAB37rFs290R6hBib2FbdK7v7ck/CVDFPdF1NWBtcY1y/omGhjn5PtEaC/YCE/7nT+Gepxa2BVLP/6UYXPpTKHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7da41c44e78so94067839f.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 May 2024 17:35:05 -0700 (PDT)
+	s=arc-20240116; t=1714885792; c=relaxed/simple;
+	bh=olH7hQHHDHDp2bsomJmiSdHdXsNU4KXMYOJHnmgtMxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qu0H5qffKLdhw+Q3rJpx/utattk4eFcUKiKxzNyvSAIKTSd/xAFnPRlOY3PqoJi25KvIQRfGoBPfdKpfWI9S1VJR3/yGw+/Q1gMMIeeOAVlPbmDujWWqmHOykay06ICY3m39pp+/vSO7ubVtQ6FG8iqcO6Z7wr9Xxa3OZQSemSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mrn1xhBN; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ec76185cb3so128225ad.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 May 2024 22:09:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1714885791; x=1715490591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+LFEOHbhdT8xlmXAZ79el6d0XvgZNSArYbb5H09rUb4=;
+        b=Mrn1xhBNBqxCE5yPD5OVx+e8FNRV17ekqQA2aKdNnVNULq8zWnwENBgC+uQl92OwtH
+         N8CSJy84/hyjZZjR6nTlf5NZYZVbhQvn0/s2xcrqoxO6hcBF9TVX8NkzWKg8cm25W1+0
+         0boxYbJxSq21MoP1RTNS/2jad52AnDomuT+zNIfSYmC0RsvYFALNXf3ssOYQmEWycu/e
+         65ZT8SB/V25cyTrikHt5DWMwAVwYH6IyNvxza9ZVNbcMQw9AFRxRAhIG+o9VGHsv1vms
+         R1I7anqnYCubCZwrkOusYF3KwLWw5hEqWk5W3DxnebOzRvc3dshcmd4SvE+TLp67Rn1T
+         rG+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714869304; x=1715474104;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GQCgYFbXCI7Q2niaNhE+aI9odULkuIJr2iIWjifovcE=;
-        b=nmoz9CRi0FNfUIsG9svgLNr8TlTlivFHt6nvb+W8Ieqb1pXhlMBhMQ+JXwm9nwxD0J
-         i/mGnP+uPSxS4rDFEUD9Trm0o6U5W2LPHRNMcubEyqfkCAGyWalxyZsx5xIsazF4nZR9
-         pFMzwZrFB9zyMg5wbum27URM7F7knXJ4ld36UFwqv2H8NPMbNDfwecmQEXMrwEvY3jfB
-         URZnVn/vMaMmJqv0SrcPB/Yfox1nKZrKJ7J2EJuFEsDu5yxlvG4a32FCp70qaPhAUoSv
-         JhD/9t7q7cgH72ghTSHVYnoap5irNpWnsjzLzsBTMRDT59xuYr6UbdFkjh1UT5UfdQDj
-         NFDA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3m+rjxs0NkOWrvG7BNXhMmc1KCiw8+FNR/PWlec1P35IjOW+KTz0QMMd1gPzcZV3K9Ssrp0Qn4bQHsgZRM2YQ07UyH6RUzCKwgLK67w==
-X-Gm-Message-State: AOJu0YzOpwXamqVSaCHrqlynyV01JDzPaHXfa4Gj6RgQhGmxrKTlEbAi
-	zuKIQ+0Jsn7M3YUbnUBSrmt83aV2qfr5nxxRzlXWTlSFHmYIO3+QhnBpVh+5zEzw11Wlh0WSktB
-	MQQzx3fg9XKiWS2Y8sHuGpDLav9fErsxFHShQwRsyKwSDVkD7P3ZXsVQ=
-X-Google-Smtp-Source: AGHT+IGh+xKJ+7qu7/Kpc0kJl8tdSzMHzURQUBwlqmWGnbvGT87sd1no6wsbnRY27qj6vprI8ShhDr4RJxAvf8ptQ+TdM8P9qgTW
+        d=1e100.net; s=20230601; t=1714885791; x=1715490591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+LFEOHbhdT8xlmXAZ79el6d0XvgZNSArYbb5H09rUb4=;
+        b=s4rLDSUjXKFnLqNmeeFhReQC4e7D0Ni4WyseKt0EjSJGmOae9kWhBruE0w1/Az89IT
+         kVryYAmNqSKd2sSofnl/dIYiuvkeLVXV6S0C9l6jRYnAKpotnOSCXlJVLZBuhFGE0ZWT
+         /1j2Q3cOuOchjhXczaIZRXrgEJZ3zhnYYHYYk9sx+uVzAdJ5E93++0QoAvp2uXLbv4JJ
+         VNCK958lSBkr5/b5kU70SzLYa2OjyADaFovLYr+T0+P6Voo5yNrPQ1TCkhFI/8NwMiYZ
+         XO6B1NLvTkYa75KcaCHsK8Auq51LnBOeoxDRDYEaXdc5ToawMUbV3IY6ySpxz4jy0+P8
+         xScw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9PM/BQWpPPoYLd1rxyrXVkJdFQus4GnEiCIocG016GWek+Gg+Iinx1gh84BLMLalYG7okQk++2KDu/XN8/zGU3N4TXjZdy/KnZscKmw==
+X-Gm-Message-State: AOJu0YzbfGZCG/DZQ7aI2VSRSwOwOHOi/JN3/moemwQ85v0hMDrcMuZC
+	oSt7sukB9dzxr7XPKBoCHVrEd7jwAua2Ol6Ih577gKdUoL6ESyiSt8m8dztgBGgcuX31IzY+QeY
+	RtA1WEhhOnQVwiUDGS8IYSOTE0IruqPCmdZ6N
+X-Google-Smtp-Source: AGHT+IHGBa7tMMleiZKIyfq04qQxdw3xbaO8yY7nGHAFS1LwAn2FIimhO36Sml74NHR419/S58AeVS848bcSO81YVbs=
+X-Received: by 2002:a17:902:f789:b0:1e0:c571:d652 with SMTP id
+ d9443c01a7336-1ed851171f3mr1404605ad.1.1714885790351; Sat, 04 May 2024
+ 22:09:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:614b:b0:487:cd4:4bda with SMTP id
- ez11-20020a056638614b00b004870cd44bdamr247216jab.4.1714869304673; Sat, 04 May
- 2024 17:35:04 -0700 (PDT)
-Date: Sat, 04 May 2024 17:35:04 -0700
-In-Reply-To: <0000000000003392c606179ddd1a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bdedb60617aa1f12@google.com>
-Subject: Re: [syzbot] [bcachefs] KASAN: use-after-free Read in scatterwalk_copychunks
-From: syzbot <syzbot+8c4acf719c3fc41e8439@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, davem@davemloft.net, herbert@gondor.apana.org.au, 
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
+ <2024050404-rectify-romp-4fdb@gregkh> <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
+In-Reply-To: <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sat, 4 May 2024 22:09:39 -0700
+Message-ID: <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com>
+Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
+ /proc/<pid>/maps APIs
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Sat, May 4, 2024 at 2:57=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Sat, May 4, 2024 at 8:29=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+> >
+> > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
+> > > Implement a simple tool/benchmark for comparing address "resolution"
+> > > logic based on textual /proc/<pid>/maps interface and new binary
+> > > ioctl-based PROCFS_PROCMAP_QUERY command.
+> >
+> > Of course an artificial benchmark of "read a whole file" vs. "a tiny
+> > ioctl" is going to be different, but step back and show how this is
+> > going to be used in the real world overall.  Pounding on this file is
+> > not a normal operation, right?
+> >
+>
+> It's not artificial at all. It's *exactly* what, say, blazesym library
+> is doing (see [0], it's Rust and part of the overall library API, I
+> think C code in this patch is way easier to follow for someone not
+> familiar with implementation of blazesym, but both implementations are
+> doing exactly the same sequence of steps). You can do it even less
+> efficiently by parsing the whole file, building an in-memory lookup
+> table, then looking up addresses one by one. But that's even slower
+> and more memory-hungry. So I didn't even bother implementing that, it
+> would put /proc/<pid>/maps at even more disadvantage.
+>
+> Other applications that deal with stack traces (including perf) would
+> be doing one of those two approaches, depending on circumstances and
+> level of sophistication of code (and sensitivity to performance).
 
-commit dc6f2eb000d76ac8f93f4d59a8012ddfccca927a
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Apr 17 05:26:02 2024 +0000
+The code in perf doing this is here:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
+ls/perf/util/synthetic-events.c#n440
+The code is using the api/io.h code:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
+ls/lib/api/io.h
+Using perf to profile perf it was observed time was spent allocating
+buffers and locale related activities when using stdio, so io is a
+lighter weight alternative, albeit with more verbose code than fscanf.
+You could add this as an alternate /proc/<pid>/maps reader, we have a
+similar benchmark in `perf bench internals synthesize`.
 
-    bcachefs: make btree read errors silent during scan
+Thanks,
+Ian
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16629450980000
-start commit:   9221b2819b8a Add linux-next specific files for 20240503
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15629450980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11629450980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8ab537f51a6a0d98
-dashboard link: https://syzkaller.appspot.com/bug?extid=8c4acf719c3fc41e8439
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111abc97180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10059004980000
-
-Reported-by: syzbot+8c4acf719c3fc41e8439@syzkaller.appspotmail.com
-Fixes: dc6f2eb000d7 ("bcachefs: make btree read errors silent during scan")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>   [0] https://github.com/libbpf/blazesym/blob/ee9b48a80c0b4499118a1e8e5d9=
+01cddb2b33ab1/src/normalize/user.rs#L193
+>
+> > thanks,
+> >
+> > greg k-h
+>
 
