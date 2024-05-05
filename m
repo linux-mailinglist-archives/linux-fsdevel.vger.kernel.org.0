@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-18771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3E98BC307
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 20:26:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA8C8BC308
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 20:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBC1E2817BC
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5DB5B210CD
 	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2024 18:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4F56BFCF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF94D6D1A8;
 	Sun,  5 May 2024 18:26:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1DF6BFC2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517BD6BFA1
 	for <linux-fsdevel@vger.kernel.org>; Sun,  5 May 2024 18:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714933591; cv=none; b=btYiUzuxTUpOWJALL7F7FwtXan05yE2zm+Diirdn8K5KOKtmAv8tTkvASt4v5sYwjNALoULfTLk3Ihkgz9jQcmffYAL7ARNAd04cEugYQw0iiK1wqfMCCSUpfHt/kQanqPY42Up2hJ0zawildTUXnFT3cbf6Rcg9qo1HVhgbut0=
+	t=1714933591; cv=none; b=sV2il2KuqnH6yvUzgl4Gd8ugEXs/kNviXeaNY4eWLhpa1vMdH8iQTk5HfkC/faGjEMPWbLPZoOPrA6dm9Ph5b5NJyfIIqdaEiZIzUTIyksvepMJGjHSeop6PB/0kpvpmrzm1LHdC0oQsb+DtNeoLG3dSbHsS6w3O04xKu6Z5CBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1714933591; c=relaxed/simple;
-	bh=l/S4nQ1pIW2Ij8sC1Uo9tcK0oWrlQ//6XS9mT3J8X74=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IcMOA/eBhBs8iNVGyS3vsfSJtTOdTqCavLzGWkcOCDqM0gi32ZPGypVyaMQbsGoPkeJZhJjcKzRsyUsp49MgSHOmzjd+l2pca7BcuyA0UwbhxDtaaKIyvbRF+K1SWtVkeXgURctOy5Ab5Te3RLYzVKJd+mTZkOkStxxnx2QHgHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+	bh=67CQkFU/JyWNsH/gRbYISWCNgDNk1dIC19djJtO92gk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ss5fH+4N3dZ3+4mbs1ltltv8q5hAlKj3n3X0wVNjMlP6BL7y6ooEdmptDUVne4Lj7sOJLqfMO70sEvUFQqQzAigTGwhG8VvKmmns5/R4s8EzqpMNxp3SIxljZjZ5mQB7W850BwJzdXV+mE0gY7CgFjyKNOVc3HhHGvgGT6wHxP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7dec4e29827so151953339f.2
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7de9cd658acso171314739f.3
         for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 11:26:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714933589; x=1715538389;
+        d=1e100.net; s=20230601; t=1714933588; x=1715538388;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GdYsccC/HNyua52hFYRvexwjK07J9vziqNok1+F3NAA=;
-        b=DfQzjT5au0tSfExsrE6MsWxyTkFiz0JYQFeT0J68hBWNnUtpjuUDau510Wto5Kq4TQ
-         d7p43BMHOUQHqfTGj0YQDWhNm3TBMAdPsuWBu8LknFk1YA6FL95I3KC8cmU6CP8TeonS
-         G8BhbY/a8D/Y3i+/T8toT1O9gcdcFfhlc0gw5C0UDYiOtOEKNzh/INcyHuu39KyTDUyb
-         nI4a0Vh4FkPVBgsMM4MZY30RN1O+tfrWXx0c+htLyeCboaQpdoiC/g44iHdj3HX9coR3
-         yCS1zII9MVsAwauV50FfxA+9FRPo04qIP41Is+amIWiXrt9o99EFc4OySnnabUE1n1HF
-         mdzg==
-X-Forwarded-Encrypted: i=1; AJvYcCURUd1o1CmSvgZwM1q2CbcyjD3dtesy1WVtGnUqJrBXwYi3nf2KlrV28CPsz7SXsR8EWC5vVV/r798sLJRSdkUC1CllXLZNoeJ+yDrt5Q==
-X-Gm-Message-State: AOJu0YzaQDvXAChoC7dGeUnaeK7b6vBlKu5Bvew+6F/s8BnpE14jYyNK
-	rmAaFJlMlnOv3M18VaDpN/9HurGFF2ysG0Qc+B2vmGCq2IYirwysTvC9K6jXEtcQQzXepox+jv/
-	vMXVhFMcMYehyS7nHoDmgyYQnfVA/kbTGUmra4c3CMQHuVA3zPEdf7GU=
-X-Google-Smtp-Source: AGHT+IHh9ROchKz630HeGwxM3ewa1uUyKI9Cmjhs6ZKY2zoApC9TkquDqFWyaxwR7qsy4JY0h+HngpfvljVl154YMjZXzXfJAOnJ
+        bh=fPmsENZX/D4o264mPcbSQSF+NkWk3WeQwVQA3g6gKwM=;
+        b=mcJwFwp6gUrGRk5bXZf+5eeACH/rq0m8SSN37If4eNYDQHk79YK68R95Wwj1nXZ2T5
+         +OsgcxIYJTNzB7xnVQK57EsiOLE4jeIJ1HQIV/36H9/bRK0DvcxcVLpf5cgq+P6A7E+t
+         bnuBKDz2KdQnPWTiBMJ6iA3HB9xbrqioWFz13pXbCnnEELwX1HMz6e6t8dYRNbEcmY9Y
+         9RKmP9jPFHVaGwkpvcbs94d3BEkpketUcpoMPXOdHm4q/jz1YFeR8oRKC+SVgJEAyxT3
+         zH1dRu9UCwi6qflU/ZwYaJtQFNt9pM5kpBGMc5+ZYgvI5t4kGQnMP4jaq1CaOE1KOC66
+         qGpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhkRZZtn9pQltZM366mr3KVJVKRIVK9qfPPpf+kDSs7DGazyuBkmNajOi1WugZAvboLGg6Vt1VOIklaboB2GnwV5r5iQCXxIByfMgJUw==
+X-Gm-Message-State: AOJu0Yzr3c8+KMXvF0++3thU6DoKayg4DdaaBg/SfgH7CvK7zhXb426M
+	LBstlDkNj16A2wUJrhAIWwDLSjjJxFdbCib3dKXaW1kQMW83Y0K1OTz7cbP8hr83+fY4bs+EO1s
+	ojgLysZyVV+dmLloqw09m53CxeVpPp/UnOZeszI+4DoNtpTV3sNOtGbQ=
+X-Google-Smtp-Source: AGHT+IE9mXMO/mn3BtonTNi2PeiSJcQRE4OoZydRYsyfQhKgihEd18c0ezX5OqtAkqABvq7+G7DWmdbwRCtH+bvfob72nrlSSrDr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8419:b0:488:77ea:f191 with SMTP id
- iq25-20020a056638841900b0048877eaf191mr154849jab.2.1714933588861; Sun, 05 May
+X-Received: by 2002:a05:6638:871a:b0:488:7bb2:c9f6 with SMTP id
+ iw26-20020a056638871a00b004887bb2c9f6mr167853jab.3.1714933588571; Sun, 05 May
  2024 11:26:28 -0700 (PDT)
 Date: Sun, 05 May 2024 11:26:28 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060adac0617b917ab@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_inode_unpack
-From: syzbot <syzbot+c123a98c7445baffb168@syzkaller.appspotmail.com>
+Message-ID: <0000000000005c46090617b917e7@google.com>
+Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in __bch2_bkey_invalid
+From: syzbot <syzbot+ae4dc916da3ce51f284f@syzkaller.appspotmail.com>
 To: bfoster@redhat.com, kent.overstreet@linux.dev, 
 	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
@@ -70,118 +70,193 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1553b31f180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbf567496022057b
-dashboard link: https://syzkaller.appspot.com/bug?extid=c123a98c7445baffb168
+HEAD commit:    78186bd77b47 Merge branch 'for-next/mm-ryan-staging' into ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1258e8a7180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5ee4da92608aba71
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae4dc916da3ce51f284f
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1074b908980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156cad60980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/44fb709c4e9c/disk-7367539a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d25971073eca/vmlinux-7367539a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a327aa91b63e/bzImage-7367539a.xz
+disk image: https://storage.googleapis.com/syzbot-assets/6645ec7d501b/disk-78186bd7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0d272001bc0f/vmlinux-78186bd7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/95e2c70cba6e/Image-78186bd7.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/56d58dd39151/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c123a98c7445baffb168@syzkaller.appspotmail.com
+Reported-by: syzbot+ae4dc916da3ce51f284f@syzkaller.appspotmail.com
 
-bcachefs (loop4): done starting filesystem
-=====================================================
-BUG: KMSAN: uninit-value in bch2_inode_unpack_v3 fs/bcachefs/inode.c:270 [inline]
-BUG: KMSAN: uninit-value in bch2_inode_unpack+0xaf0/0x4c40 fs/bcachefs/inode.c:323
- bch2_inode_unpack_v3 fs/bcachefs/inode.c:270 [inline]
- bch2_inode_unpack+0xaf0/0x4c40 fs/bcachefs/inode.c:323
- bch2_inode_peek_nowarn+0x4ec/0x5a0 fs/bcachefs/inode.c:351
- bch2_inode_peek fs/bcachefs/inode.c:366 [inline]
- bch2_inode_find_by_inum_trans+0xb3/0x3d0 fs/bcachefs/inode.c:949
- bch2_inode_find_by_inum+0x17b/0x4f0 fs/bcachefs/inode.c:958
- bchfs_truncate+0x437/0x1420 fs/bcachefs/fs-io.c:421
- bch2_setattr+0x29f/0x2f0 fs/bcachefs/fs.c:882
- notify_change+0x1a07/0x1af0 fs/attr.c:497
- do_truncate+0x22a/0x2b0 fs/open.c:65
- handle_truncate fs/namei.c:3300 [inline]
- do_open fs/namei.c:3646 [inline]
- path_openat+0x50d9/0x5b00 fs/namei.c:3799
- do_filp_open+0x20e/0x590 fs/namei.c:3826
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1406
- do_sys_open fs/open.c:1421 [inline]
- __do_sys_openat fs/open.c:1437 [inline]
- __se_sys_openat fs/open.c:1432 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1432
- x64_sys_call+0x3a64/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
- bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
- btree_key_cache_fill fs/bcachefs/btree_key_cache.c:454 [inline]
- bch2_btree_path_traverse_cached_slowpath+0x5f02/0x79f0 fs/bcachefs/btree_key_cache.c:530
- bch2_btree_path_traverse_cached+0xd1a/0x1140
- bch2_btree_path_traverse_one+0x737/0x5290 fs/bcachefs/btree_iter.c:1155
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:225 [inline]
- bch2_btree_iter_peek_slot+0x128c/0x3840 fs/bcachefs/btree_iter.c:2473
- __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:549 [inline]
- bch2_bkey_get_iter fs/bcachefs/btree_iter.h:563 [inline]
- bch2_inode_peek_nowarn+0x208/0x5a0 fs/bcachefs/inode.c:340
- bch2_inode_peek fs/bcachefs/inode.c:366 [inline]
- bch2_inode_find_by_inum_trans+0xb3/0x3d0 fs/bcachefs/inode.c:949
- bch2_inode_find_by_inum+0x17b/0x4f0 fs/bcachefs/inode.c:958
- bchfs_truncate+0x437/0x1420 fs/bcachefs/fs-io.c:421
- bch2_setattr+0x29f/0x2f0 fs/bcachefs/fs.c:882
- notify_change+0x1a07/0x1af0 fs/attr.c:497
- do_truncate+0x22a/0x2b0 fs/open.c:65
- handle_truncate fs/namei.c:3300 [inline]
- do_open fs/namei.c:3646 [inline]
- path_openat+0x50d9/0x5b00 fs/namei.c:3799
- do_filp_open+0x20e/0x590 fs/namei.c:3826
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1406
- do_sys_open fs/open.c:1421 [inline]
- __do_sys_openat fs/open.c:1437 [inline]
- __se_sys_openat fs/open.c:1432 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1432
- x64_sys_call+0x3a64/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __kmalloc_large_node+0x231/0x370 mm/slub.c:3921
- __do_kmalloc_node mm/slub.c:3954 [inline]
- __kmalloc_node+0xb07/0x1060 mm/slub.c:3973
- kmalloc_node include/linux/slab.h:648 [inline]
- kvmalloc_node+0xc0/0x2d0 mm/util.c:634
- kvmalloc include/linux/slab.h:766 [inline]
- btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
- bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
- btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
- bch2_btree_node_read+0x3d42/0x4b50
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
- bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
- read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
- bch2_fs_recovery+0x7adb/0x9310 fs/bcachefs/recovery.c:785
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
- bch2_fs_open+0x135f/0x1670 fs/bcachefs/super.c:2102
- bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1903
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa7/0x570 fs/super.c:1779
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x742/0x1f20 fs/namespace.c:3679
+loop0: detected capacity change from 0 to 32768
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=none,nojournal_transaction_names
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/bcachefs/bkey_methods.c:174:2
+shift exponent 255 is too large for 64-bit type 'unsigned long long'
+CPU: 1 PID: 6237 Comm: syz-executor106 Not tainted 6.9.0-rc6-syzkaller-g78186bd77b47 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:468
+ __bch2_bkey_invalid+0x630/0x64c fs/bcachefs/bkey_methods.c:174
+ bch2_bkey_invalid+0x58/0x1d8 fs/bcachefs/bkey_methods.c:230
+ journal_validate_key+0x5ec/0xc08 fs/bcachefs/journal_io.c:344
+ journal_entry_btree_root_validate+0x130/0x3c8 fs/bcachefs/journal_io.c:440
+ bch2_journal_entry_validate+0xb8/0xec fs/bcachefs/journal_io.c:823
+ bch2_sb_clean_validate_late fs/bcachefs/sb-clean.c:40 [inline]
+ bch2_read_superblock_clean+0x188/0x414 fs/bcachefs/sb-clean.c:168
+ bch2_fs_recovery+0x1b0/0x4854 fs/bcachefs/recovery.c:573
+ bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1043
+ bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2102
+ bch2_mount+0x558/0xe10 fs/bcachefs/fs.c:1903
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+ vfs_get_tree+0x90/0x288 fs/super.c:1779
+ do_new_mount+0x278/0x900 fs/namespace.c:3352
+ path_mount+0x590/0xe04 fs/namespace.c:3679
  do_mount fs/namespace.c:3692 [inline]
  __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
- x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 PID: 9730 Comm: syz-executor.4 Not tainted 6.9.0-rc6-syzkaller-00234-g7367539ad4b0 #0
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+---[ end trace ]---
+invalid journal entry, version=1.7: mi_btree_bitmap type=btree_root in superblock: 
+  u64s 11 type 255 SPOS_MAX len 0 ver 0: 
+  invalid key type for btree internal btree node ((unknown)), shutting down
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 0
+------------[ cut here ]------------
+virt_to_phys used for non-linear address: fffffffffffff75e (0xfffffffffffff75e)
+WARNING: CPU: 1 PID: 6237 at arch/arm64/mm/physaddr.c:15 __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+Modules linked in:
+CPU: 1 PID: 6237 Comm: syz-executor106 Not tainted 6.9.0-rc6-syzkaller-g78186bd77b47 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-=====================================================
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+lr : __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+sp : ffff80009ad06e00
+x29: ffff80009ad06e00 x28: 1ffff000135a0e02 x27: fffffffffffff75e
+x26: ffff80009ad07010 x25: ffff7000135a0df4 x24: dfff800000000000
+x23: ffff0000df080000 x22: 000f600000000000 x21: 000000000000002d
+x20: fffffffffffff75e x19: 000ffffffffff75e x18: 0000000000000008
+x17: 6666783028206535 x16: ffff80008ae8863c x15: 0000000000000001
+x14: 1fffe000367bd602 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000002 x10: 0000000000ff0100 x9 : 6f3d61fbe7072c00
+x8 : 6f3d61fbe7072c00 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009ad06578 x4 : ffff80008ef850a0 x3 : ffff8000805e8270
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000000
+Call trace:
+ __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+ virt_to_phys arch/arm64/include/asm/memory.h:368 [inline]
+ virt_to_pfn arch/arm64/include/asm/memory.h:382 [inline]
+ virt_to_folio include/linux/mm.h:1306 [inline]
+ kfree+0xa4/0x3e8 mm/slub.c:4382
+ bch2_fs_recovery+0x32c/0x4854 fs/bcachefs/recovery.c:905
+ bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1043
+ bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2102
+ bch2_mount+0x558/0xe10 fs/bcachefs/fs.c:1903
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+ vfs_get_tree+0x90/0x288 fs/super.c:1779
+ do_new_mount+0x278/0x900 fs/namespace.c:3352
+ path_mount+0x590/0xe04 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+irq event stamp: 76314
+hardirqs last  enabled at (76313): [<ffff800080375438>] __up_console_sem kernel/printk/printk.c:341 [inline]
+hardirqs last  enabled at (76313): [<ffff800080375438>] __console_unlock kernel/printk/printk.c:2731 [inline]
+hardirqs last  enabled at (76313): [<ffff800080375438>] console_unlock+0x17c/0x3d4 kernel/printk/printk.c:3050
+hardirqs last disabled at (76314): [<ffff80008ae83a88>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
+softirqs last  enabled at (76276): [<ffff8000800218e4>] softirq_handle_end kernel/softirq.c:400 [inline]
+softirqs last  enabled at (76276): [<ffff8000800218e4>] __do_softirq+0xb10/0xd2c kernel/softirq.c:583
+softirqs last disabled at (76247): [<ffff80008002ad34>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
+---[ end trace 0000000000000000 ]---
+Unable to handle kernel paging request at virtual address ffffffffc37affc8
+KASAN: maybe wild-memory-access in range [0x0003fffe1bd7fe40-0x0003fffe1bd7fe47]
+Mem abort info:
+  ESR = 0x0000000096000006
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001ad5df000
+[ffffffffc37affc8] pgd=0000000000000000, p4d=00000001b0db9003, pud=00000001b0dba003, pmd=0000000000000000
+Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 6237 Comm: syz-executor106 Tainted: G        W          6.9.0-rc6-syzkaller-g78186bd77b47 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : _compound_head include/linux/page-flags.h:246 [inline]
+pc : virt_to_folio include/linux/mm.h:1308 [inline]
+pc : kfree+0xbc/0x3e8 mm/slub.c:4382
+lr : virt_to_phys arch/arm64/include/asm/memory.h:368 [inline]
+lr : virt_to_pfn arch/arm64/include/asm/memory.h:382 [inline]
+lr : virt_to_folio include/linux/mm.h:1306 [inline]
+lr : kfree+0xa4/0x3e8 mm/slub.c:4382
+sp : ffff80009ad06e30
+x29: ffff80009ad06e40 x28: 1ffff000135a0e02 x27: fffffffffffff75e
+x26: ffff80009ad07010 x25: ffff7000135a0df4 x24: dfff800000000000
+x23: ffff0000df080000 x22: 0000000000000001 x21: ffffffffc37affc0
+x20: ffff80008294a5bc x19: fffffffffffff75e x18: 0000000000000008
+x17: 6666783028206535 x16: ffff80008ae8863c x15: 0000000000000001
+x14: 1fffe000367bd602 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000002 x10: 0000000000ff0100 x9 : 00003e00037affc0
+x8 : ffffc1ffc0000000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009ad06578 x4 : ffff80008ef850a0 x3 : ffff8000805e8270
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 000080011ebff75e
+Call trace:
+ virt_to_folio include/linux/mm.h:1306 [inline]
+ kfree+0xbc/0x3e8 mm/slub.c:4382
+ bch2_fs_recovery+0x32c/0x4854 fs/bcachefs/recovery.c:905
+ bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1043
+ bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2102
+ bch2_mount+0x558/0xe10 fs/bcachefs/fs.c:1903
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+ vfs_get_tree+0x90/0x288 fs/super.c:1779
+ do_new_mount+0x278/0x900 fs/namespace.c:3352
+ path_mount+0x590/0xe04 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: 927acd29 f2d83fe8 cb151929 8b080135 (f94006a8) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	927acd29 	and	x9, x9, #0x3ffffffffffffc0
+   4:	f2d83fe8 	movk	x8, #0xc1ff, lsl #32
+   8:	cb151929 	sub	x9, x9, x21, lsl #6
+   c:	8b080135 	add	x21, x9, x8
+* 10:	f94006a8 	ldr	x8, [x21, #8] <-- trapping instruction
 
 
 ---
@@ -194,6 +269,10 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
