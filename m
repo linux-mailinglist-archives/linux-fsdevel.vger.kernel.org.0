@@ -1,93 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-18805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0DA8BC66A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 06:16:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C268BC6A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 07:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72C26B21079
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 04:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7452815B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 05:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E7E446AC;
-	Mon,  6 May 2024 04:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5670E4594E;
+	Mon,  6 May 2024 05:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="atOpKp47"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC95374DB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 04:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019C61EEE9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 05:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714968965; cv=none; b=ia+hXNSN0Xz6WYfoYDkQKGZc3AmlSPl3aUzPg3gNTFKg5lU5oU1ETQItzsMEsG2gKQ3AwkWnEoW8O88XUL6V9tk2w2+CVLbksyUV1ifHySIN+2/UUdW+aroPsrNOf3gmKTo4+aLQq2sLTaURkyt+e16k/R9YqT8BYK79as0aenw=
+	t=1714972511; cv=none; b=uC37lg4QpnXXNA6szun7CPFY18oUqzb3izgK18EGwXAHMy0hPXRPQc1Uusr/lq2I6DEZE2BmVVkP+4tl7ecFducJ3oXRnHPc66eHl5bbKG01XTf+JGDYfkgcad+B/G33h+62A2lOd96fFHNvWMc6mb8I0yK9kZSY5oeaVSKw2hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714968965; c=relaxed/simple;
-	bh=e7d3eUevSjyBi1+UMir/tIUoeUJ0gThJDxFrmjgtjFM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cU6cG+BWo7cWI6ZsVE2jKwWFy02DquEnna6QT5vxCl6GimXLnqp8cFHPzkrlx2PH5kuQyJbC/S8/vHt0ERAbpdPHX96kPgW5/bxI9bkSPiKNX6sqlPBzSZXinTFTlUJjoV8j3y0HSrDKcTHUsTIHRe8stTN9o7pt/fbK6y71qhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7da41c44da7so212729039f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 21:16:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714968963; x=1715573763;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E6sYdOPnTbd11s8yXYICIhsmoL2HnQkl/tBOTzLZOD8=;
-        b=U6oXRlsDLPF9i7PW0f1lQEV2fQiScWT0iNWRudxC/9ikbJ7KVLa4xusBbDi9hgoe9z
-         ZMgivQBiSnFzZh0MLxKx4xKH2R2ZELOdsyKhWmQOg1tUIW+ocb0RBeZN19QEn0Ic1xbM
-         JT9Bh1sB5MT/qtIZU0eHf1rymfeiQPDtarAVSo7lk78ItQGQsok9dEJ5Z+szvSx9rUgg
-         T/3zFEUW1nZ9TS7DlF64YyvHB4cMLyOdwH1nhy8+b4I3CBwxe0hQLvPYu1ixpX1WrW+F
-         eXLplxWCzhc5KgdthrhHyYm3GBHBRb2mg8zmC4WiGdvQSutvp/WZZ2QR1Uz6U/7MYyGX
-         PXTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCeJl6+NhLt4J8Fwu0qTL4DKTWrH//3wUuAgkj6GNfO5sj7d9RlZwEdNRdnWWVu0PR93fyG+tEht2xc3LSGbjVHrOD07VcfcUOhWAgpw==
-X-Gm-Message-State: AOJu0YwTlbDc/LHsywoYWRBvccccmvCu0rvGHM2Xa1Lbp+y/7FhO07P5
-	w3MUbSvEvG0ye4C8wj+uXhLF4am0MPDtDIPqRAWVyp5VOkZc+ic0jGh2RG8tL1RKt8JVSgWnXlT
-	qDo3w+dpxpx6lcY82RCJvk46Hu779FvbTcT2nM0WxPlGkIjgMb5gJ6og=
-X-Google-Smtp-Source: AGHT+IGBk4Y+VQkB5ysWua6toZHslQvpRpftX5qlHvumtyLVnI52zH0H+bBch9oaAmKS7e+ZtCr14q2TWHBub43ps5U79ZwBI6at
+	s=arc-20240116; t=1714972511; c=relaxed/simple;
+	bh=Gofq2CBL6idKc8API8CBphzOlstaemh4KeoiJMfMw4I=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fjRfYJUzGo5BGgwcp8F83XKc+Agwk7cHgbcOHcMZ2w94EeLOE9N228DbHiN0H8EsQeAxApHsBPMHA36LYkcLMiUwAULSzCVTk+hna7jt6C//DWH0ZyPXX3ioRadooJFSf+Z3O76OgBHwxogXPRd73APYNV5JKa3lWmctpx6zalU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=atOpKp47; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=aktIhWgcbAvXeD69g7I04AeTrO2X7tTBMN64YXO5bP8=;
+  b=atOpKp47TM16T3O77it6O0zIyihp28tiESgh+YjRnr3zlld4WPdp59RV
+   6ZQ5LNb/ri+U3yy0xOuHBxt6P+bMGxzY0v3v6M6e51WSxRzeTcL+yqv7b
+   QrSSwQ4blS5ApGtNXbsghNdXmHP4SEiP0oG7uJztJV6cDGF98LxrczG/N
+   o=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.07,257,1708383600"; 
+   d="scan'208";a="164584211"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:15:04 +0200
+Date: Mon, 6 May 2024 07:15:04 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To: Ira Weiny <ira.weiny@intel.com>
+cc: Julia Lawall <julia.lawall@inria.fr>, Matthew Wilcox <willy@infradead.org>, 
+    Dan Carpenter <dan.carpenter@oracle.com>, 
+    "Fabio M. De Francesco" <fmdefrancesco@gmail.com>, 
+    Viacheslav Dubeyko <slava@dubeyko.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Bart Van Assche <bvanassche@acm.org>, Kees Cook <keescook@chromium.org>, 
+    linux-fsdevel@vger.kernel.org
+Subject: Re: kmap + memmove
+In-Reply-To: <6638512f36503_25842129471@iweiny-mobl.notmuch>
+Message-ID: <alpine.DEB.2.22.394.2405060714480.3799@hadrien>
+References: <Zjd61vTCQoDN9tUJ@casper.infradead.org> <alpine.DEB.2.22.394.2405051500030.3397@hadrien> <6638512f36503_25842129471@iweiny-mobl.notmuch>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3e8e:b0:488:5ae4:735c with SMTP id
- ch14-20020a0566383e8e00b004885ae4735cmr440652jab.2.1714968963314; Sun, 05 May
- 2024 21:16:03 -0700 (PDT)
-Date: Sun, 05 May 2024 21:16:03 -0700
-In-Reply-To: <000000000000918c290617b914ba@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dc06ed0617c153e4@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in bch2_sb_clean_to_text
-From: syzbot <syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-syzbot has bisected this issue to:
 
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
 
-    bcachefs: Ignore unknown mount options
+On Sun, 5 May 2024, Ira Weiny wrote:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e58a70980000
-start commit:   7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17e58a70980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e58a70980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-dashboard link: https://syzkaller.appspot.com/bug?extid=c48865e11e7e893ec4ab
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1043897f180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145c078b180000
+> Julia Lawall wrote:
+> >
+> >
+> > On Sun, 5 May 2024, Matthew Wilcox wrote:
+> >
+> > > Here's a fun bug that's not obvious:
+> > >
+> > > hfs_bnode_move:
+> > >                                 dst_ptr = kmap_local_page(*dst_page);
+> > >                                 src_ptr = kmap_local_page(*src_page);
+> > >                                 memmove(dst_ptr, src_ptr, src);
+> > >
+> > > If both of the pointers are guaranteed to come from diffeerent calls to
+> > > kmap_local(), memmove() is probably not going to do what you want.
+> > > Worth a smatch or coccinelle rule?
+> > >
+> > > The only time that memmove() is going to do something different from
+> > > memcpy() is when src and dst overlap.  But if src and dst both come
+> > > from kmap_local(), they're guaranteed to not overlap.  Even if dst_page
+> > > and src_page were the same.
+> > >
+> > > Which means the conversion in 6c3014a67a44 was buggy.  Calling kmap()
+> > > for the same page twice gives you the same address.  Calling kmap_local()
+> > > for the same page twice gives you two different addresses.
+> > >
+> > > Fabio, how many other times did you create this same bug?  Ira, I'm
+> > > surprised you didn't catch this one; you created the same bug in
+> > > memmove_page() which I got Fabio to delete in 9384d79249d0.
+> > >
+> >
+> > I tried the following rule:
+> >
+> > @@
+> > expression dst_ptr, src_ptr, dst_page, src_page, src;
+> > @@
+> >
+> > *                                dst_ptr = kmap_local_page(dst_page);
+> > 				... when any
+> > *                                src_ptr = kmap_local_page(src_page);
+> > 				... when any
+> > *                                memmove(dst_ptr, src_ptr, src);
+> >
+> > That is, basically what you wrote, but with anything in between the lines,
+> > and the various variables being any expression.
+> >
+> > I only got the following results, which I guess are what you are already
+> > looking at:
+> >
+> > @@ -193,9 +193,6 @@ void hfs_bnode_move(struct hfs_bnode *no
+> >
+> >  		if (src == dst) {
+> >  			while (src < len) {
+> > -				dst_ptr = kmap_local_page(*dst_page);
+> > -				src_ptr = kmap_local_page(*src_page);
+> > -				memmove(dst_ptr, src_ptr, src);
+> >  				kunmap_local(src_ptr);
+> >  				set_page_dirty(*dst_page);
+> >  				kunmap_local(dst_ptr);
+> >
+>
+> I'm no expert but this did not catch all theplaces there might be a
+> problem.
+>
+> hfsplus/bnode.c: hfs_bnode_move() also does:
+>
+> 216                                 dst_ptr = kmap_local_page(*dst_page) + dst;
+> 217                                 src_ptr = kmap_local_page(*src_page) + src;
+> ...
+> 228                                 memmove(dst_ptr - l, src_ptr - l, l);
+>
+> ...
+>
+> 247                         dst_ptr = kmap_local_page(*dst_page) + src;
+> 248                         src_ptr = kmap_local_page(*src_page) + src;
+> 249                         memmove(dst_ptr, src_ptr, l);
+>
+> ...
+>
+> 265                                 dst_ptr = kmap_local_page(*dst_page) + dst;
+> 266                                 src_ptr = kmap_local_page(*src_page) + src;
+>
+> ...
+>
+> 278                                 memmove(dst_ptr, src_ptr, l);
+>
+> Can you wildcard the pointer arithmetic?
 
-Reported-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+Yes.  Will try it.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+julia
+
+>
+> Ira
+>
+>
+> > @@ -253,9 +250,6 @@ void hfs_bnode_move(struct hfs_bnode *no
+> >
+> >  			while ((len -= l) != 0) {
+> >  				l = min_t(int, len, PAGE_SIZE);
+> > -				dst_ptr = kmap_local_page(*++dst_page);
+> > -				src_ptr = kmap_local_page(*++src_page);
+> > -				memmove(dst_ptr, src_ptr, l);
+> >  				kunmap_local(src_ptr);
+> >  				set_page_dirty(*dst_page);
+> >  				kunmap_local(dst_ptr);
+> >
+> > julia
+>
+>
+>
 
