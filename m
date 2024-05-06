@@ -1,176 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-18827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A57E8BCD09
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 13:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218948BCDC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 14:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8861C210C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 11:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56702874AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 12:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18792143861;
-	Mon,  6 May 2024 11:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49092143C5B;
+	Mon,  6 May 2024 12:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="J4Sdfzf+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7591DFE4;
-	Mon,  6 May 2024 11:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3290A14389D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 12:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714995893; cv=none; b=ggAvtEKVJB1qdvMZQmsA/ciGoIodb5ni+jkZLikm9pWXiiziyRPYtwArSsvm5L5D9a4nTkY6nCtun2W+bbjkm5tn3jRD18Rcs3oLjwB+hVtehWDrFEJqnojNvDPf9ePa1QrC/s9cfztB6KTfaHehonWriKyz9ej3W2oAUZku4fQ=
+	t=1714998234; cv=none; b=S/8nDHxUo7AeT35gL9jkKaT8iBNM1sQ1P1bkdcLDZ8cQn16NgtzsPTFdTTEJ0M4zCoI3GhSUD8+af+kFne0uTPecHNpblvfzoK6+Qbz7CesZMv+t7KsJDKRjNNXeJoQOMaH5mJqxz41JApyn7qcomNkObDyNoGN/sAam79VpYZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714995893; c=relaxed/simple;
-	bh=vVX8ey54S/LNAFujtNUW9wAhLyLI3G3H+odAJkJ87V0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ueJAM5uhJT284QvF+/j0pKBwJVbWUfznpKgHn6cYRkEzhNtlAAY1hS/XFRd649b60Gvgv9w7uL/DRQLXXFOc307srDel5CTik/hUvaodGkPb83zlQB68nPtDvKO5albCjwaZ6cwbKsNy5Kk0cjm0/USbFrARwkHTa38mOwQwD28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY0215r8Yz4f3m8v;
-	Mon,  6 May 2024 19:44:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 148D51A1072;
-	Mon,  6 May 2024 19:44:47 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDH6w6swjhmHsDLMA--.57384S3;
-	Mon, 06 May 2024 19:44:46 +0800 (CST)
-Subject: Re: [RFC PATCH v4 24/34] ext4: implement buffered write iomap path
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
- hch@infradead.org, djwong@kernel.org, willy@infradead.org,
- zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, wangkefeng.wang@huawei.com
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
- <20240410142948.2817554-25-yi.zhang@huaweicloud.com>
- <ZjH5Ia+dWGss5Duv@dread.disaster.area> <ZjH+QFVXLlcDkSdh@dread.disaster.area>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <96bbdb25-b420-67b1-d4c4-b838a5c70f9f@huaweicloud.com>
-Date: Mon, 6 May 2024 19:44:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1714998234; c=relaxed/simple;
+	bh=lCeN5/qj6q6vJSmEiKVBWOtCMx5sNu2IArRIsx3u2Ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZX8nyCuvVOfJvzExV0jdJ7g6L77fUAez5YG2GhTiD/IuWtpEVKe++8cHnITxEDrBNZc+OsudgI5inTuyGs1nH9K1VSmsrwS/aanz4luU8D894PgJdTQ9jFyQpNlfosB4pgH5nwkelKQ3rRxnbS6s52VM6YpP3G6JJFarAiSr3vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=J4Sdfzf+; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-34cba0d9a3eso137326f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 05:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1714998231; x=1715603031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hJvxbNUxeULloPkLJE9SsjERpdsUIXxRxn2yKsRsSwc=;
+        b=J4Sdfzf+sNHeQZbjLlHQkxe+vBV/CqtEKZIE21zHs5BZaP4fVUooE839QXHepk/ae4
+         POXW3MdM2YM0mL7+kPF0sFDjddZ6ZqJgjPLk5O1FAQ9LQ6NuGoI/6ghK9qafc9p5r5/q
+         eIF9aflCGGZxuDwFxBa6ppO8Igf343ne8trek=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714998231; x=1715603031;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hJvxbNUxeULloPkLJE9SsjERpdsUIXxRxn2yKsRsSwc=;
+        b=HFMuTcM0mvO4iEdMAjpDtFl3IzDhr9GiqW4k6eFi2PitdIxeqw6VSo+sUeCI6ef+Q5
+         hC9i7ZhyJjO3WGgTcZOT4JzsCGJpEsbPk9gLmTeNr158JT96X8gHcXa24HKdAFY/TqG9
+         6WeqvnHLCiXgpv6sv9f95QLbXPVOSmA7yS95tIZko4JhP7rSapzUVVoe7vFYJkJp2Fqq
+         PUSvoQT1CFYDCjYxbJ7XCQaBsLGvyyae2OUD0Xp9Efh37nz1bbJqNXJubHUXdEKuyKKp
+         VMei7sa8NZ1g3+9dIgfrBX4m4qiSm1gbz2Fe3ur8pbKMoXUhr3G+H1LnObmir/RDQLBp
+         wTVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXd3dpWW1Cu4HvVjExI4PhtTvbJnnyZ7FXJl1lheYNTjfBBgBxt5xDqGWqIdLaUl4fnx9ah4I7ni30B2GPuuTk6oQpAmtOVGj6wssDLKQ==
+X-Gm-Message-State: AOJu0Yy8/dFomGPANkIEhD4RVLf2QK+z+MTmbE9Z9LBt2fTW9MfDe0of
+	2/T5Wa9ZMTSz08+Pe6kwe1DLQn6FG7dKKiuWxjo4XFI3uqg6oozlnA8c0JfiyPA=
+X-Google-Smtp-Source: AGHT+IGuUvBtI5rIVLpD2XOZICwCS9IQtrXwLWSsF2oFAMcsXQKy2Upppe1zQ4rIa9wWPmT5P5GIew==
+X-Received: by 2002:a05:600c:3b02:b0:41a:c4fe:b0a5 with SMTP id m2-20020a05600c3b0200b0041ac4feb0a5mr6970105wms.4.1714998231468;
+        Mon, 06 May 2024 05:23:51 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id n17-20020a05600c4f9100b0041668162b45sm19554882wmq.26.2024.05.06.05.23.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 05:23:50 -0700 (PDT)
+Date: Mon, 6 May 2024 14:23:48 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+	Bui Quang Minh <minhquangbui99@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	syzbot <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
+	io-uring@vger.kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, Laura Abbott <laura@labbott.name>
+Subject: Re: get_file() unsafe under epoll (was Re: [syzbot] [fs?]
+ [io-uring?] general protection fault in __ep_remove)
+Message-ID: <ZjjL1GjSMMMcxdsc@phenom.ffwll.local>
+Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+	Bui Quang Minh <minhquangbui99@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	syzbot <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
+	io-uring@vger.kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, Laura Abbott <laura@labbott.name>
+References: <202405031110.6F47982593@keescook>
+ <64b51cc5-9f5b-4160-83f2-6d62175418a2@kernel.dk>
+ <202405031207.9D62DA4973@keescook>
+ <d6285f19-01aa-49c8-8fef-4b5842136215@kernel.dk>
+ <202405031237.B6B8379@keescook>
+ <202405031325.B8979870B@keescook>
+ <20240503211109.GX2118490@ZenIV>
+ <20240503213625.GA2118490@ZenIV>
+ <CAHk-=wgRphONC5NBagypZpgriCUtztU7LCC9BzGZDEjWQbSVWQ@mail.gmail.com>
+ <20240503215303.GC2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZjH+QFVXLlcDkSdh@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDH6w6swjhmHsDLMA--.57384S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFWxCryDXFyDtw17Cry3Jwb_yoWrJw1kpr
-	Z8KFWUKFsrXr18ur1vvF4UWF1Fk3WxGr17Wr45WryqvFZ8ZFySga48GF1Y9FW7Ars2kF10
-	qFWUuFyxZa4Yy37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UZ18PUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503215303.GC2118490@ZenIV>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On 2024/5/1 16:33, Dave Chinner wrote:
-> On Wed, May 01, 2024 at 06:11:13PM +1000, Dave Chinner wrote:
->> On Wed, Apr 10, 2024 at 10:29:38PM +0800, Zhang Yi wrote:
->>> From: Zhang Yi <yi.zhang@huawei.com>
->>>
->>> Implement buffered write iomap path, use ext4_da_map_blocks() to map
->>> delalloc extents and add ext4_iomap_get_blocks() to allocate blocks if
->>> delalloc is disabled or free space is about to run out.
->>>
->>> Note that we always allocate unwritten extents for new blocks in the
->>> iomap write path, this means that the allocation type is no longer
->>> controlled by the dioread_nolock mount option. After that, we could
->>> postpone the i_disksize updating to the writeback path, and drop journal
->>> handle in the buffered dealloc write path completely.
-> .....
->>> +/*
->>> + * Drop the staled delayed allocation range from the write failure,
->>> + * including both start and end blocks. If not, we could leave a range
->>> + * of delayed extents covered by a clean folio, it could lead to
->>> + * inaccurate space reservation.
->>> + */
->>> +static int ext4_iomap_punch_delalloc(struct inode *inode, loff_t offset,
->>> +				     loff_t length)
->>> +{
->>> +	ext4_es_remove_extent(inode, offset >> inode->i_blkbits,
->>> +			DIV_ROUND_UP_ULL(length, EXT4_BLOCK_SIZE(inode->i_sb)));
->>>  	return 0;
->>>  }
->>>  
->>> +static int ext4_iomap_buffered_write_end(struct inode *inode, loff_t offset,
->>> +					 loff_t length, ssize_t written,
->>> +					 unsigned int flags,
->>> +					 struct iomap *iomap)
->>> +{
->>> +	handle_t *handle;
->>> +	loff_t end;
->>> +	int ret = 0, ret2;
->>> +
->>> +	/* delalloc */
->>> +	if (iomap->flags & IOMAP_F_EXT4_DELALLOC) {
->>> +		ret = iomap_file_buffered_write_punch_delalloc(inode, iomap,
->>> +			offset, length, written, ext4_iomap_punch_delalloc);
->>> +		if (ret)
->>> +			ext4_warning(inode->i_sb,
->>> +			     "Failed to clean up delalloc for inode %lu, %d",
->>> +			     inode->i_ino, ret);
->>> +		return ret;
->>> +	}
->>
->> Why are you creating a delalloc extent for the write operation and
->> then immediately deleting it from the extent tree once the write
->> operation is done?
+On Fri, May 03, 2024 at 10:53:03PM +0100, Al Viro wrote:
+> On Fri, May 03, 2024 at 02:42:22PM -0700, Linus Torvalds wrote:
+> > On Fri, 3 May 2024 at 14:36, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > ... the last part is no-go - poll_wait() must be able to grab a reference
+> > > (well, the callback in it must)
+> > 
+> > Yeah. I really think that *poll* itself is doing everything right. It
+> > knows that it's called with a file pointer with a reference, and it
+> > adds its own references as needed.
 > 
-> Ignore this, I mixed up the ext4_iomap_punch_delalloc() code
-> directly above with iomap_file_buffered_write_punch_delalloc().
+> Not really.  Note that select's __pollwait() does *NOT* leave a reference
+> at the mercy of driver - it's stuck into poll_table_entry->filp and
+> the poll_freewait() knows how to take those out.
 > 
-> In hindsight, iomap_file_buffered_write_punch_delalloc() is poorly
-> named, as it is handling a short write situation which requires
-> newly allocated delalloc blocks to be punched.
-> iomap_file_buffered_write_finish() would probably be a better name
-> for it....
 > 
->> Also, why do you need IOMAP_F_EXT4_DELALLOC? Isn't a delalloc iomap
->> set up with iomap->type = IOMAP_DELALLOC? Why can't that be used?
-> 
-> But this still stands - the first thing
-> iomap_file_buffered_write_punch_delalloc() is:
-> 
-> 	if (iomap->type != IOMAP_DELALLOC)
->                 return 0;
-> 
+> dmabuf does something very different - it grabs the damn thing into
+> its private data structures and for all we know it could keep it for
+> a few hours, until some even materializes.
 
-Thanks for the suggestion, the delalloc and non-delalloc write paths
-share the same ->iomap_end() now (i.e. ext4_iomap_buffered_write_end()),
-I use the IOMAP_F_EXT4_DELALLOC to identify the write path. For
-non-delalloc path, If we have allocated more blocks and copied less, we
-should truncate extra blocks that newly allocated by ->iomap_begin().
-If we use IOMAP_DELALLOC, we can't tell if the blocks are pre-existing
-or newly allocated, we can't truncate the pre-existing blocks, so I have
-to introduce IOMAP_F_EXT4_DELALLOC. But if we split the delalloc and
-non-delalloc handler, we could drop IOMAP_F_EXT4_DELALLOC.
+dma_fence must complete in reasonable amount of time, where "reasonable"
+is roughly in line with other i/o (including the option that there's
+timeouts if the hw's gone busted).
 
-I also checked xfs, IIUC, xfs doesn't free the extra blocks beyond EOF
-in xfs_buffered_write_iomap_end() for non-delalloc case since they will
-be freed by xfs_free_eofblocks in some other inactive paths, like
-xfs_release()/xfs_inactive()/..., is that right?
-
-Thanks,
-Yi.
-
+So definitely not hours (aside from driver bugs when things go really
+wrong ofc), but more like a few seconds in a worst case scenario.
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
