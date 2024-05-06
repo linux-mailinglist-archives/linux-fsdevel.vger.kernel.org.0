@@ -1,107 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-18804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070CE8BC668
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 06:14:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0DA8BC66A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 06:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A958C1F21F42
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 04:14:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72C26B21079
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 04:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB9B43AD2;
-	Mon,  6 May 2024 04:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gThsixfF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E7E446AC;
+	Mon,  6 May 2024 04:16:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370581E4BF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 04:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC95374DB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 04:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714968868; cv=none; b=lDBGPkSxY1lWYE33u4sxr/MdZ9OTNDw1ITopQSpoTL81+6vdWx1MP8A9uJlrHHdl80aZiOTm8qRQo/6sKWgwrCbFu2qBiqh3dTM2gbHTA3ZQHq2UlMYR7tybFDVJy1FMK4KDawIf1E7UsOkn5T4Fs8XYGEZRutUuN0cN5nQRAH8=
+	t=1714968965; cv=none; b=ia+hXNSN0Xz6WYfoYDkQKGZc3AmlSPl3aUzPg3gNTFKg5lU5oU1ETQItzsMEsG2gKQ3AwkWnEoW8O88XUL6V9tk2w2+CVLbksyUV1ifHySIN+2/UUdW+aroPsrNOf3gmKTo4+aLQq2sLTaURkyt+e16k/R9YqT8BYK79as0aenw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714968868; c=relaxed/simple;
-	bh=RvWDP43gMdhnBFeEJxEJH4VZAGD6JZqv2ntuua3WXmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECGnGmfw+UFZPIvT+mF3N5IofwVHvR0VaYetGz6O/Bgqie4UQTgmhOoAlKBpIxMecIKoJObZf6hGoUUD4SKSiO+poVdCPo9+d2fl9m/fKnbRh9yxRETy6c4WrdKcPxKkQH317OArlkkp2dq2OdaIJoCfkhknk2gAeCSc5ltdsuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gThsixfF; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1vsnKo1+/OoZ/XI5KuqqPTSsXAHeEJpwputSauE5Lx8=; b=gThsixfFFye1L0UQn3d43iMAR9
-	RtN4K89EC79mTpNZA/hrTHlSmitg4TMpvPnrb5FOMLJNh3K/y16Y26gH4iijcR+Dtq8LHjQGOo6xv
-	WbBh8AITmYXnz7GqbDWrsQPUB0LbYV2XOnxUmj9Uzo+4GhYm8hTkKOetfgf/sqQfADYSkDTWfAgzQ
-	PwjuGRobnQD1cJLFvSAlB8oq35gUJ7DWX8PI4JLOPWfokMu1q7w+mtTVhJrLXMzn0ayQ+lxMIJCmp
-	F/1JjASHzTXUkhUTG9tZQQ36VVz4tRG1xsJmwAKwEsGOSjJjnm03oSMv/YKdeIWwhPzsfNskSVAkX
-	23HV7Q8Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s3pk5-0000000A7VW-0UCr;
-	Mon, 06 May 2024 04:14:21 +0000
-Date: Mon, 6 May 2024 05:14:21 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, Viacheslav Dubeyko <slava@dubeyko.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: kmap + memmove
-Message-ID: <ZjhZHQShGq_LDyDe@casper.infradead.org>
-References: <Zjd61vTCQoDN9tUJ@casper.infradead.org>
+	s=arc-20240116; t=1714968965; c=relaxed/simple;
+	bh=e7d3eUevSjyBi1+UMir/tIUoeUJ0gThJDxFrmjgtjFM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cU6cG+BWo7cWI6ZsVE2jKwWFy02DquEnna6QT5vxCl6GimXLnqp8cFHPzkrlx2PH5kuQyJbC/S8/vHt0ERAbpdPHX96kPgW5/bxI9bkSPiKNX6sqlPBzSZXinTFTlUJjoV8j3y0HSrDKcTHUsTIHRe8stTN9o7pt/fbK6y71qhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7da41c44da7so212729039f.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2024 21:16:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714968963; x=1715573763;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6sYdOPnTbd11s8yXYICIhsmoL2HnQkl/tBOTzLZOD8=;
+        b=U6oXRlsDLPF9i7PW0f1lQEV2fQiScWT0iNWRudxC/9ikbJ7KVLa4xusBbDi9hgoe9z
+         ZMgivQBiSnFzZh0MLxKx4xKH2R2ZELOdsyKhWmQOg1tUIW+ocb0RBeZN19QEn0Ic1xbM
+         JT9Bh1sB5MT/qtIZU0eHf1rymfeiQPDtarAVSo7lk78ItQGQsok9dEJ5Z+szvSx9rUgg
+         T/3zFEUW1nZ9TS7DlF64YyvHB4cMLyOdwH1nhy8+b4I3CBwxe0hQLvPYu1ixpX1WrW+F
+         eXLplxWCzhc5KgdthrhHyYm3GBHBRb2mg8zmC4WiGdvQSutvp/WZZ2QR1Uz6U/7MYyGX
+         PXTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCeJl6+NhLt4J8Fwu0qTL4DKTWrH//3wUuAgkj6GNfO5sj7d9RlZwEdNRdnWWVu0PR93fyG+tEht2xc3LSGbjVHrOD07VcfcUOhWAgpw==
+X-Gm-Message-State: AOJu0YwTlbDc/LHsywoYWRBvccccmvCu0rvGHM2Xa1Lbp+y/7FhO07P5
+	w3MUbSvEvG0ye4C8wj+uXhLF4am0MPDtDIPqRAWVyp5VOkZc+ic0jGh2RG8tL1RKt8JVSgWnXlT
+	qDo3w+dpxpx6lcY82RCJvk46Hu779FvbTcT2nM0WxPlGkIjgMb5gJ6og=
+X-Google-Smtp-Source: AGHT+IGBk4Y+VQkB5ysWua6toZHslQvpRpftX5qlHvumtyLVnI52zH0H+bBch9oaAmKS7e+ZtCr14q2TWHBub43ps5U79ZwBI6at
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zjd61vTCQoDN9tUJ@casper.infradead.org>
+X-Received: by 2002:a05:6638:3e8e:b0:488:5ae4:735c with SMTP id
+ ch14-20020a0566383e8e00b004885ae4735cmr440652jab.2.1714968963314; Sun, 05 May
+ 2024 21:16:03 -0700 (PDT)
+Date: Sun, 05 May 2024 21:16:03 -0700
+In-Reply-To: <000000000000918c290617b914ba@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dc06ed0617c153e4@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in bch2_sb_clean_to_text
+From: syzbot <syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, May 05, 2024 at 01:25:58PM +0100, Matthew Wilcox wrote:
-> Here's a fun bug that's not obvious:
-> 
-> hfs_bnode_move:
->                                 dst_ptr = kmap_local_page(*dst_page);
->                                 src_ptr = kmap_local_page(*src_page);
->                                 memmove(dst_ptr, src_ptr, src);
+syzbot has bisected this issue to:
 
-OK, so now we know this is the only place with this problem, how are we
-going to fix it?
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-I think the obvious thing to do is to revert the kmap -> kmap_local
-conversion in this function.  The other functions look fine.
+    bcachefs: Ignore unknown mount options
 
-Longer term, hfs_bnode_move() makes my eyes bleed.  I really think we
-need to do something stupider.  Something like ...
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e58a70980000
+start commit:   7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17e58a70980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e58a70980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=c48865e11e7e893ec4ab
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1043897f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145c078b180000
 
-void hfs_bnode_move(struct hfs_bnode *node, int dst, int src, int len)
-{
-	void *data;
-	int first, last;
+Reported-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
 
-	if (!len || src == dst)
-		return;
-	if (src < dst && src + len < dst)
-		return hfs_bnode_copy(node, dst, node, src, len);
-	if (dst < src && dst + len < src)
-		return hfs_bnode_copy(node, dst, node, src, len);
-
-	src += node->page_offset;
-	dst += node->page_offset;
-	first = min(dst, src) / PAGE_SIZE;
-	last = max(dst + len, src + len) / PAGE_SIZE;
-	data = vmap_folios(bnode->folios + first, last - first + 1);
-	src -= first * PAGE_SIZE;
-	dst -= first * PAGE_SIZE;
-// maybe an off-by-one in above calculations; check it
-	memmove(data + dst, data + src, len);
-	vunmap(data);
-}
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
