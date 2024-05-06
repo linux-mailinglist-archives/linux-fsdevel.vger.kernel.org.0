@@ -1,93 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-18822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55C58BCAC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 11:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D32518BCB3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 11:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6526B1F23112
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 09:36:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BC2C1F2551A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 09:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189D91428EF;
-	Mon,  6 May 2024 09:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFFC1428F8;
+	Mon,  6 May 2024 09:51:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75723142636
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 09:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFA413FD93
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 09:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714988166; cv=none; b=fGdlnG5HNKA6a4QggwurQ/VIbZ06GmwfbF0r+HIe4xaxdmETNfT6IChgyC2TTlvA3kBbkliW1hOaeWegKsNJXkOLnb+bIKEpwovCa47rNFP3G8bj7sUy7FhADI1hNcnCufE6ZAftdOp1WQAwiLKfzVhWTjW7UjC2zZEqGRA+B+Y=
+	t=1714989090; cv=none; b=ibpCzQm7DZ7Ps9nENt0nj5ESyE48YkB/klnGK5rkXrYFsJLJ2ZNnwstHQPbg6oKs2m87662VYrl2wL8bbMBp6zvqfDvHj4i9cFJAytjjuYYitbIsV7oQvtWyosPmOFvMywZeFA18tFIleoceq5TPYXaeJzJ0HMloCiptwjvsbKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714988166; c=relaxed/simple;
-	bh=AnhUQnMdGrRZOxXZdeozV6MOrXgYCXG31theF87blOg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=czfg8nCHTL/engccWJe/Y77DcjzvZEHWJue1c8ijBpPMcLPXSLd/2nM7zkhRHVoU9Ny6LFlJe+DZ5PZlOn1pck31ZG/LqZkF6Tmu1oW4++df2mhjL6H0HbpXjK15BR9hXgHQ6eTrFc8Ievx1fCIia0LURJqUpwDYKXK3QLfygBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	s=arc-20240116; t=1714989090; c=relaxed/simple;
+	bh=4FSlf26e9rNb8eqHzOX4Rt01U4R+DNZA1vwdPYWm2AU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KbKMyvS8wKc8XL7j3Rl2ObDFnPckVdW1xZ0c2FknagSXIw1H7uWljED9c2v49LyUOu0HXvfcHE1aQf0cqzRY5HrHBgoMKDfAiVjCAO0Mb7InRVSwOeKtAPJ5E7Vvm2byU5IppqP1RnD4lD+YCpGHkecaLlAomO4jl22nEjoW+yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d9913d3174so222550039f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 02:36:05 -0700 (PDT)
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-36c886e1c82so19486585ab.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 02:51:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714988164; x=1715592964;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zv5x6Nmy7t07YX+YnaK0VGIx5sNBuwgtq9Vcfuj51bA=;
-        b=aMLhmmeqaHgQE+KY2FtWJnbhbo28SQgUu7JteofQknaYoBzwp8vp2SaR1oeULcR8tX
-         JwBdtxiDa3kQfISQll8Iq1fcMOKxZ4l5ZcYRw5S2zvW6SLaLALJB6hWCHFxjcjEqRLz2
-         RQOr1/R6Y29K8mKhQWHwZBrJ33/LjlxwmZYfozJ6gCZzRQQxKBfNylhNOS20iE6zkcxe
-         X1JrB71kPulaRlAFtC980MRPvOaNE3Llc3gXSDYI0obu52OVVvK7gmxPTzcYHWkAJKYE
-         MYfnHnXr3JJ1jv+ctfl5nO0gWfxu/leQwavAQF/A+xmY5ukE7FK4Hb5HxJlY/dacT8SN
-         GsFg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9cG+EvCh/Z+smQ1HohYahz61dgRMmXzRMBgFCTwmI44qspTBBAwBJRvJqLZaP0cCUGcd4CHgYmh/8ZKtGbsxSBOl/tjVM7JSLII2RDg==
-X-Gm-Message-State: AOJu0Yy9wNMeBY2Y9ptb+n8acr4CBfTYTP81eNLOICtboKnc/YMksXd6
-	c+xk5hPqXowFINi8vcCNNMj+nT5r6fcH3XAhNl2Q/VXU6JEsJRWJvez9FanZwqCL3+xCW7iQr0F
-	uW2gsv2/WKHMs7inf1Ll6ryL42/xGCj4+CGkgdIx2xAauNtYh6vFm62w=
-X-Google-Smtp-Source: AGHT+IHO4idvgpUvaa9A/19lxtxEAU+Qg+pRM/VhI3hOV9Bck/gnw+u3jLIrwc8UwbOl8L8uFiEpCXGD2usdmZFcNGsYW9LgrsS7
+        d=1e100.net; s=20230601; t=1714989088; x=1715593888;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IvNvu4p143zMW785CGQE8LLYZty5gyzNTmzL35Go5us=;
+        b=d5P69XBxRefiL3ekqVEUUtYBwLc/3aqupIwB6wr9PmNF/eU4f/EqfOd+D54OxKmvXM
+         CEe73AalkYFi/ca0pOrKZYb3+dCAao/u0oJ9i2QQFzp5G1mVaWsiuCIo0wxWavv9KWim
+         t7AFwu/PDkOTJaRa72oTYIOkjAlq4TR04xho4eZluTs1tg+3giiDmgRPDrCEevkHX594
+         xXuKRbzWgjg6NKDoZjzc4mJw8GMJ1A6fCnF9nOTS/XZy/MW4ArpOUd9kdQ6cKG3IXKDH
+         f3/GNo2EstMfMkVaLw+wZWrKcQRzqXsfYegEiLeJIK0qxZhMISAqRVxRbr/uuyv78/Ej
+         vvFA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+lPslN0MUfh47PjaZhdVIM2RNJg75hANgYioiV5u2MzwKi5vL+sztFpdlbtFeIECa21pj6D/ldEyNIudvuOj1UnCtWXHdUdJT9fZSIA==
+X-Gm-Message-State: AOJu0YyRm0v8tDbHRKsqVgLLX2fjhRGgKC45dUGm5HOO69BLvzF86rlr
+	kT/vfJpVA+M4TfRRKSrm4B4HBUtfDna6X/W7q5gZeeusRZE09ZiBbgx6rnWRsTihytM54txqo2l
+	RCm8OelcVjcC22kc1ZNAuIigxCVG0uwLDmXUEkZ97HFF8mTk0G1MJMMs=
+X-Google-Smtp-Source: AGHT+IH3EJUA974MZrHES6Xiz/d5o8oYRGc2Sau85rwgef0z6FVDradIPyKyLr+SDZ4q5YXRcB9424nY+xPc6Y9WDjE5kmHt/PTt
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6414:b0:7da:6916:b435 with SMTP id
- gn20-20020a056602641400b007da6916b435mr353342iob.0.1714988164735; Mon, 06 May
- 2024 02:36:04 -0700 (PDT)
-Date: Mon, 06 May 2024 02:36:04 -0700
-In-Reply-To: <0000000000005c46090617b917e7@google.com>
+X-Received: by 2002:a05:6e02:2197:b0:36b:fbab:9f1a with SMTP id
+ j23-20020a056e02219700b0036bfbab9f1amr391216ila.1.1714989088368; Mon, 06 May
+ 2024 02:51:28 -0700 (PDT)
+Date: Mon, 06 May 2024 02:51:28 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005a730f0617c5cc76@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in __bch2_bkey_invalid
-From: syzbot <syzbot+ae4dc916da3ce51f284f@syzkaller.appspotmail.com>
+Message-ID: <00000000000067ff3c0617c603c2@google.com>
+Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in read_one_super
+From: syzbot <syzbot+a8b0fb419355c91dda7f@syzkaller.appspotmail.com>
 To: bfoster@redhat.com, kent.overstreet@linux.dev, 
 	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+Hello,
 
-commit d789e9a7d5e2799f4d5425b0b620210d2fcad529
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sun Apr 14 03:59:28 2024 +0000
+syzbot found the following issue on:
 
-    bcachefs: Interior known are required to have known key types
+HEAD commit:    78186bd77b47 Merge branch 'for-next/mm-ryan-staging' into ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=177bab54980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5ee4da92608aba71
+dashboard link: https://syzkaller.appspot.com/bug?extid=a8b0fb419355c91dda7f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154d0d1f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12119450980000
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1070e9df180000
-start commit:   b9158815de52 Merge tag 'char-misc-6.9-rc7' of git://git.ke..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1270e9df180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1470e9df180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-dashboard link: https://syzkaller.appspot.com/bug?extid=ae4dc916da3ce51f284f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a910c4980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15490b54980000
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6645ec7d501b/disk-78186bd7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0d272001bc0f/vmlinux-78186bd7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/95e2c70cba6e/Image-78186bd7.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/6679d36fb016/mount_1.gz
 
-Reported-by: syzbot+ae4dc916da3ce51f284f@syzkaller.appspotmail.com
-Fixes: d789e9a7d5e2 ("bcachefs: Interior known are required to have known key types")
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a8b0fb419355c91dda7f@syzkaller.appspotmail.com
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+loop3: detected capacity change from 0 to 32799
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/bcachefs/super-io.c:652:18
+shift exponent 32 is too large for 32-bit type 'int'
+CPU: 1 PID: 7180 Comm: syz-executor245 Not tainted 6.9.0-rc6-syzkaller-g78186bd77b47 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:468
+ read_one_super+0xab8/0x2614 fs/bcachefs/super-io.c:652
+ __bch2_read_super+0x714/0x10a8 fs/bcachefs/super-io.c:750
+ bch2_read_super+0x38/0x4c fs/bcachefs/super-io.c:842
+ bch2_fs_open+0x1e0/0xb64 fs/bcachefs/super.c:2049
+ bch2_mount+0x558/0xe10 fs/bcachefs/fs.c:1903
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+ vfs_get_tree+0x90/0x288 fs/super.c:1779
+ do_new_mount+0x278/0x900 fs/namespace.c:3352
+ path_mount+0x590/0xe04 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+---[ end trace ]---
+bcachefs (/dev/loop3): error reading default superblock: Invalid superblock: too big (got 4696 bytes, layout max 2199023255552)
+bcachefs (/dev/loop3): error reading superblock: Not a bcachefs superblock (got magic 00000000-0000-0000-0000-000000000000)Not a bcachefs superblock (got magic 00000000-0000-0000-0000-000000000000)
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
