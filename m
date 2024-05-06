@@ -1,54 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-18782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD478BC569
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 03:25:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCA78BC577
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 03:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911911C21107
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 01:25:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E3C3B21629
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 01:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C828B3CF6A;
-	Mon,  6 May 2024 01:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBF53D387;
+	Mon,  6 May 2024 01:32:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979106FB2;
-	Mon,  6 May 2024 01:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0557D2FB6;
+	Mon,  6 May 2024 01:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714958710; cv=none; b=b/4CXmHpMXYNxnLsZpq/gF3PZRxhlBpu4LSzSSP7Uik3YFJ9neFfyhP7rP5ebI2wEjec9F/awMB7s/31+iENLZ/fnzCaGi7qoOIt0o/T+Ac+7OyYGb1aiky7ppbo4KPOkH3jQTDItZbRosdahGK0hk/VSHnJ2hBCYM11QCDVdmU=
+	t=1714959168; cv=none; b=Yx2tXpAt8LyZKpRLza1YKodoMwUk9aBR6iUpjadV8IpjCXh0XFhT3rv1GFOcyhIRp3jPUtJwZQsvnsutHsBU0KNodjczliqNWjqb9g/4D+QsC896tR1RoNE3kRVmD/W3TPooBpJQpMeiIbM5ZzlcFlLaB5NqPG9TdZGAhnXvEdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714958710; c=relaxed/simple;
-	bh=yHHt4XFiBmrUD2THHdNuaVbruXG2YIA3ZcGwA7X9bwE=;
+	s=arc-20240116; t=1714959168; c=relaxed/simple;
+	bh=92joqj7g1Iv2mcTw28wf2tJKoXH6csvg7Rci/E/IKr8=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PmGQCJ2OBXMFg+eZKFjEikeqZmJqg6OWEp57W19Et61sx0M4t4PUz4zaOj9rLV/0fKp08rIp1gK8wQ3f0TIi4qoInVEze4H3P2coyyQzVKhRs5TrWrYBDxjFRf7LveorcFDZDZ5y5uLCQNLL1qkWTkFMIdjRqwUA76YtdCJ9dCg=
+	 In-Reply-To:Content-Type; b=ICU8JI1FiJm6u5eb7hmQmD7tQw3SPFrghHqEc/KSqOCSrMdxRiQ1l6wjawl71HXvrHwoIF2i9vCsC9jSt37ZjxwAt5AZ0DcypqUKCE/+cepgPZCS/Rzb/Z0zxppJrIQ3FEd2oIKwVYMrbnFzT8I2rN4Cvd5XVVz3UxXfeNK3Vic=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXkGy3mZyz4f3kpX;
-	Mon,  6 May 2024 09:24:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id BEC1E1A104F;
-	Mon,  6 May 2024 09:25:03 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXkRh3VHxz4f3jLJ;
+	Mon,  6 May 2024 09:32:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3B5D41A0179;
+	Mon,  6 May 2024 09:32:42 +0800 (CST)
 Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP1 (Coremail) with SMTP id cCh0CgDn_AVuMThmCHKBLw--.3757S2;
-	Mon, 06 May 2024 09:25:03 +0800 (CST)
-Subject: Re: [PATCH v2 0/4] Fix and cleanups to page-writeback
+	by APP4 (Coremail) with SMTP id gCh0CgB3fG45MzhmoWpmMA--.42545S2;
+	Mon, 06 May 2024 09:32:42 +0800 (CST)
+Subject: Re: [PATCH 02/10] writeback: add general function domain_dirty_avail
+ to calculate dirty and avail of domain
 To: Tejun Heo <tj@kernel.org>
 Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
- hcochran@kernelspring.com, axboe@kernel.dk, mszeredi@redhat.com,
  linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
-References: <20240425131724.36778-1-shikemeng@huaweicloud.com>
- <ZjJq2uvuXZoZ5aj3@slm.duckdns.org>
+References: <20240429034738.138609-1-shikemeng@huaweicloud.com>
+ <20240429034738.138609-3-shikemeng@huaweicloud.com>
+ <ZjJysTZO6IOpe4BT@slm.duckdns.org>
 From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <55edec09-b54f-d02a-22ac-7ce90cb1e766@huaweicloud.com>
-Date: Mon, 6 May 2024 09:25:01 +0800
+Message-ID: <d69093d9-0786-b16f-1ed9-7cc5e37791d9@huaweicloud.com>
+Date: Mon, 6 May 2024 09:32:41 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 Precedence: bulk
@@ -57,50 +58,65 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZjJq2uvuXZoZ5aj3@slm.duckdns.org>
+In-Reply-To: <ZjJysTZO6IOpe4BT@slm.duckdns.org>
 Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgDn_AVuMThmCHKBLw--.3757S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Wr4xXF4kCr4xZFy8AFWxtFb_yoWfArb_W3
-	yjkayqkFyDJrW2ganFgrs8WF1xCr48J34DJ34rXr1kt34fAF4DXan0kw1rZr1fJayxJr9x
-	GFWqgw43Gwn7ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
-	xUrR6zUUUUU
+X-CM-TRANSID:gCh0CgB3fG45MzhmoWpmMA--.42545S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr4xXw13JFyUXrWUXF43ZFb_yoW8JF4kpF
+	4UtanI9FWkta9rXr1fWr48W3yav3yfWFW5t34vk3sFvr4xuF4DGr93u34rCw1S9r4kJwna
+	kFsrXw4FvF48CFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Hi Tejun,
 
-on 5/2/2024 12:16 AM, Tejun Heo wrote:
-> On Thu, Apr 25, 2024 at 09:17:20PM +0800, Kemeng Shi wrote:
->> v1->v2:
->> -rebase on up-to-date tree.
->> -add test result in "mm: correct calculation of wb's bg_thresh in cgroup
->> domain"
->> -drop "mm: remove redundant check in wb_min_max_ratio"
->> -collect RVB from Matthew to "mm: remove stale comment __folio_mark_dirty"
->>
->> This series contains some random cleanups and a fix to correct
->> calculation of wb's bg_thresh in cgroup domain. More details can
->> be found respective patches. Thanks!
+
+on 5/2/2024 12:49 AM, Tejun Heo wrote:
+> Hello,
 > 
-> Isn't this series already in -mm? Why is this being reposted? What tree is
-> this based on? Please provide more context to help reviewing the patches.
+> On Mon, Apr 29, 2024 at 11:47:30AM +0800, Kemeng Shi wrote:
+>> +/*
+>> + * Dirty background will ignore pages being written as we're trying to
+>> + * decide whether to put more under writeback.
+>> + */
+>> +static void domain_dirty_avail(struct dirty_throttle_control *dtc, bool bg)
 > 
-Sorry for late reply as I was on vacation these days. This series is based
-on mm-unstable and was applied into -mm mm-unstable branch after this v2
-series was posted.
-Thanks
+> I wonder whether it'd be better if the bool arg is flipped to something like
+> `bool include_writeback` so that it's clear what the difference is between
+Sure, I rename 'bool bg' to 'bool include_writeback'.
+> the two. Also, do global_domain_dirty_avail() and wb_domain_dirty_avail()
+> have to be separate functions? They seem trivial enough to include into the
+> body of domain_dirty_avail(). Are they used directly elsewhere?
+I will fold global_domain_dirty_avail() and wb_domain_dirty_avail() and
+just use domain_dirty_avail.
+> 
+>> +{
+>> +	struct dirty_throttle_control *gdtc = mdtc_gdtc(dtc);
+>> +
+>> +	if (gdtc)
+> 
+> I know this test is used elsewhere but it isn't the most intuitive. Would it
+> make sense to add dtc_is_global() (or dtc_is_gdtc()) helper instead?
+Will add helper dtc_is_global().
+
+Thanks.
+Kemeng
+> 
+>> +		wb_domain_dirty_avail(dtc, bg);
+>> +	else
+>> +		global_domain_dirty_avail(dtc, bg);
+>> +}
+> 
 > Thanks.
 > 
 
