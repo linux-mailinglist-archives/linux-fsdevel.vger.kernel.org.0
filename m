@@ -1,120 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-18798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DE18BC64C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 05:48:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33B48BC64F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 05:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433A32815A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 03:48:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 145CEB21A9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 03:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165804316B;
-	Mon,  6 May 2024 03:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68A443AD2;
+	Mon,  6 May 2024 03:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LYa3jz6e"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vekq48yL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176422D044
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 03:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7BE2D044;
+	Mon,  6 May 2024 03:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714967297; cv=none; b=Ugf3ofkuA19JhA3TmQRP8sFv5/WRmZzhZt4RViks9wFoHrqtz76cz539gpWGYftS7qOQQ/2czZn39+6VTdxfx4aj1gjnWGlGUSc27MveTKNQ63j5p2DkKgHcNlYwP23HcAY2V0rlHYgyb4f1xT4X3yaa4Rp1oAu2kGWvI6uDXMA=
+	t=1714967343; cv=none; b=MNdTK8NS+7NgAZR7EI2qCgv7xwp1AXQsf83EaJvQhi3BB5dmZlvtX7cPYZtKQehTTl4lel2/1kAqJ4HS4LOIHjgeRD6s7j4hWREe42yamLjA0M58rdpOpBM6E5MTZWkoHukh85gtVbCWu6xr1vCsjfS84n3NZepntiI/rzsPLlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714967297; c=relaxed/simple;
-	bh=ZIS6oZqV2b+/KX5wFyMwyyEZW0XdrrfioQ0sB8OTW/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEuQenq1g0YosW8Sg0OJsMGm7diz41BomH0sXSspJ8fOBaeIFgJ9wHXnAe1vqSCANrmnU0u7HrmMV3vlHg9AmvJRX/lCkHnbSDw2pKIM+bY8+nt1r16KAabi9ePXAItZWd1o41P9467TS8fsWAi9WDXylDAxNbwFslXiAlLCUEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LYa3jz6e; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ojQO7z2TLG6k00vW5pht3+/QEn5pQrKjR+FNFF7h6O8=; b=LYa3jz6eJr4lWTceO/e0pYazL+
-	t60yAKidJpAZJwELnak9xR+gIaQATECVg+vpsS8TYyoRGOARNxVjCj6ZMZEg4oANs9OXz4UTF6ciC
-	3JQsb6dYjTnf+HgK089lDigWob+S+/6P7teG5dV8usnN2Ib/qn+MmgXlplNo52JWT8j9Lm3fUuR8j
-	hzCEAnIWRRRz+OyfjUXEyTilOb9jsNMTIKwxa2VyTvPghXlJphMcSWyJi8ptSH6i9SAN4szLPGB8N
-	/jQfZuJxt61p1JHcHwOmef1U0bjL8DPKXBJlsp4xeBWqXk5kM7wgwZFnIC7kyDjnJFRbxa5RPCTJB
-	rpLKaVBg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s3pKY-0000000A4WY-2G4U;
-	Mon, 06 May 2024 03:47:58 +0000
-Date: Mon, 6 May 2024 04:47:58 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-	"Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: kmap + memmove
-Message-ID: <ZjhS7sE8chokLFrP@casper.infradead.org>
-References: <Zjd61vTCQoDN9tUJ@casper.infradead.org>
- <alpine.DEB.2.22.394.2405051500030.3397@hadrien>
+	s=arc-20240116; t=1714967343; c=relaxed/simple;
+	bh=kxz8UrFictU+NsZQY7c3vhSPA+qILia20awE6iLFv4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Isvdea/FF8ay1D+b8ivR5zdiXtkzGYqq7QXyOh0JE2MTYWTb7xpRaDMUEsFDz+xrkQfiw4emsqABGhITBc3eVJgGFEEKcsw3IsEbsZKQAoRQm67xW2mozyfyCYHLAfrZS5iwDqw+cGCQctXd4d796su7h/L4Z/daiGxxXZNNTNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vekq48yL; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714967337; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=j3Aqf3b+i7muF6AejD4CXK0yCEDvofmWz+0c/tM9NRY=;
+	b=vekq48yL4AeTVEGP6yhx0BxoVI8nWWG3GGZK0j/IULUNFrC9TUOBDyyG8UptzxzxhufHvq0CISoQE7+TCLMM11fi8idzpRwJFPq4Hm+qrlc4VTHC5rwshQo9AZCB2Nu5ZTPORZUKn3sT1kWJs7PrndGF9Q2dgcmc8fpNnL2LEQA=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W5sGzlR_1714967335;
+Received: from 30.221.146.217(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W5sGzlR_1714967335)
+          by smtp.aliyun-inc.com;
+          Mon, 06 May 2024 11:48:56 +0800
+Message-ID: <6e4a20f7-263a-46be-81cc-2667353c452d@linux.alibaba.com>
+Date: Mon, 6 May 2024 11:48:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.22.394.2405051500030.3397@hadrien>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/12] cachefiles: remove request from xarry during flush
+ requests
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-2-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240424033916.2748488-2-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, May 05, 2024 at 03:01:56PM +0200, Julia Lawall wrote:
-> On Sun, 5 May 2024, Matthew Wilcox wrote:
-> > Here's a fun bug that's not obvious:
-> >
-> > hfs_bnode_move:
-> >                                 dst_ptr = kmap_local_page(*dst_page);
-> >                                 src_ptr = kmap_local_page(*src_page);
-> >                                 memmove(dst_ptr, src_ptr, src);
-> >
-> > If both of the pointers are guaranteed to come from diffeerent calls to
-> > kmap_local(), memmove() is probably not going to do what you want.
-> > Worth a smatch or coccinelle rule?
-> 
-> I tried the following rule:
-> 
-> @@
-> expression dst_ptr, src_ptr, dst_page, src_page, src;
-> @@
-> 
-> *                                dst_ptr = kmap_local_page(dst_page);
-> 				... when any
-> *                                src_ptr = kmap_local_page(src_page);
-> 				... when any
-> *                                memmove(dst_ptr, src_ptr, src);
-> 
-> That is, basically what you wrote, but with anything in between the lines,
-> and the various variables being any expression.
-> 
-> I only got the following results, which I guess are what you are already
-> looking at:
 
-Great, thanks!  I tried something a little more crude:
 
-$ git grep -A10 kmap_local |grep memmove
-fs/erofs/decompressor.c-				memmove(kin + rq->pageofs_out, kin + pi, cur);
-fs/erofs/decompressor.c-				memmove(kin + po,
-fs/hfs/bnode.c-	memmove(ptr + dst, ptr + src, len);
-fs/hfsplus/bnode.c-				memmove(dst_ptr, src_ptr, src);
-fs/hfsplus/bnode.c-			memmove(dst_ptr + src, src_ptr + src, len);
-fs/hfsplus/bnode.c-			memmove(dst_ptr, src_ptr, l);
-fs/hfsplus/bnode.c-				memmove(dst_ptr, src_ptr, l);
+On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> This prevents concurrency from causing access to a freed req.
 
-$ git grep -A10 kmap_atomic |grep memmove
-net/sunrpc/xdr.c-			memmove(vto + pgto_base, vto + pgfrom_base, copy);
-net/sunrpc/xdr.c-			memmove(vto + pgto_base, vto + pgfrom_base, copy);
+Could you give more details on how the concurrent access will happen?
+How could another process access the &cache->reqs xarray after it has
+been flushed?
 
-All of these (other than hfsplus) are "false positives" in that you can
-see the src/dst are from the same call to kmap_local/kmap_atomic.  Glad
-to see there's nothing else.
+> ---
+>  fs/cachefiles/daemon.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
+> index 6465e2574230..ccb7b707ea4b 100644
+> --- a/fs/cachefiles/daemon.c
+> +++ b/fs/cachefiles/daemon.c
+> @@ -159,6 +159,7 @@ static void cachefiles_flush_reqs(struct cachefiles_cache *cache)
+>  	xa_for_each(xa, index, req) {
+>  		req->error = -EIO;
+>  		complete(&req->done);
+> +		__xa_erase(xa, index);
+>  	}
+>  	xa_unlock(xa);
+>  
+
+-- 
+Thanks,
+Jingbo
 
