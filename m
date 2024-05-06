@@ -1,133 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-18803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70F08BC660
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 06:03:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070CE8BC668
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 06:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046241C21633
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 04:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A958C1F21F42
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 04:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363F444391;
-	Mon,  6 May 2024 04:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB9B43AD2;
+	Mon,  6 May 2024 04:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gThsixfF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E9A41A81;
-	Mon,  6 May 2024 04:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370581E4BF
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 04:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714968176; cv=none; b=CGREmJcdkhpxw2p2HBmNJ2cRwxml4awdPVg7CqPj/tbwGb4hkE788GgXMOAwCpJZQqCC6gedXn8kYEJltsVUSRbURa79DL36wPT3focJFIAltL0Cyee5sgeg+gGU21alIuD8LH6ORoHiAoymwYWxgaUkiv49h2ulMAbdi9N7Iac=
+	t=1714968868; cv=none; b=lDBGPkSxY1lWYE33u4sxr/MdZ9OTNDw1ITopQSpoTL81+6vdWx1MP8A9uJlrHHdl80aZiOTm8qRQo/6sKWgwrCbFu2qBiqh3dTM2gbHTA3ZQHq2UlMYR7tybFDVJy1FMK4KDawIf1E7UsOkn5T4Fs8XYGEZRutUuN0cN5nQRAH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714968176; c=relaxed/simple;
-	bh=w2mIEHb1FX0xHYK9nCgdIaQaDhdD7nnojVP4YG3F/dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=loqYZTJmFRxQy1QydGDlA6iSj6qJgsUDJjTJ/u8gMDzIUxgB8AUaendSEDd2polN5sOf5kkM5WD/ya+nApsa7GNpv/vMb00+UF/ipfFwGeUhhHWRUDu6Ue+l1Tm15eKGZ7eRbAUy5a5M62h9dkW9bcB7fNTVQ12FdJyFOroKZnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXnn14b42z4f3kkF;
-	Mon,  6 May 2024 12:02:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id DAD741A016E;
-	Mon,  6 May 2024 12:02:50 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6RFoVjhmHoqLLw--.43088S3;
-	Mon, 06 May 2024 12:02:50 +0800 (CST)
-Message-ID: <aace11c7-d399-6966-02d0-2f08d1fa8b13@huaweicloud.com>
-Date: Mon, 6 May 2024 12:02:48 +0800
+	s=arc-20240116; t=1714968868; c=relaxed/simple;
+	bh=RvWDP43gMdhnBFeEJxEJH4VZAGD6JZqv2ntuua3WXmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECGnGmfw+UFZPIvT+mF3N5IofwVHvR0VaYetGz6O/Bgqie4UQTgmhOoAlKBpIxMecIKoJObZf6hGoUUD4SKSiO+poVdCPo9+d2fl9m/fKnbRh9yxRETy6c4WrdKcPxKkQH317OArlkkp2dq2OdaIJoCfkhknk2gAeCSc5ltdsuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gThsixfF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1vsnKo1+/OoZ/XI5KuqqPTSsXAHeEJpwputSauE5Lx8=; b=gThsixfFFye1L0UQn3d43iMAR9
+	RtN4K89EC79mTpNZA/hrTHlSmitg4TMpvPnrb5FOMLJNh3K/y16Y26gH4iijcR+Dtq8LHjQGOo6xv
+	WbBh8AITmYXnz7GqbDWrsQPUB0LbYV2XOnxUmj9Uzo+4GhYm8hTkKOetfgf/sqQfADYSkDTWfAgzQ
+	PwjuGRobnQD1cJLFvSAlB8oq35gUJ7DWX8PI4JLOPWfokMu1q7w+mtTVhJrLXMzn0ayQ+lxMIJCmp
+	F/1JjASHzTXUkhUTG9tZQQ36VVz4tRG1xsJmwAKwEsGOSjJjnm03oSMv/YKdeIWwhPzsfNskSVAkX
+	23HV7Q8Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s3pk5-0000000A7VW-0UCr;
+	Mon, 06 May 2024 04:14:21 +0000
+Date: Mon, 6 May 2024 05:14:21 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, Viacheslav Dubeyko <slava@dubeyko.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: kmap + memmove
+Message-ID: <ZjhZHQShGq_LDyDe@casper.infradead.org>
+References: <Zjd61vTCQoDN9tUJ@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 02/12] cachefiles: remove err_put_fd tag in
- cachefiles_ondemand_daemon_read()
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
-Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, libaokun@huaweicloud.com,
- yangerkun <yangerkun@huawei.com>
-References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
- <20240424033916.2748488-3-libaokun@huaweicloud.com>
- <795cd804-f7a1-44ba-99ac-01070edd5a9a@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <795cd804-f7a1-44ba-99ac-01070edd5a9a@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAX6RFoVjhmHoqLLw--.43088S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw1kCFW7ur4DCr4kWr13XFb_yoW8Wr4xpF
-	WSya43Kr109F13ur97Aas8X3ySy395JFnrWwnYqws3A3Zagr1rZr48Kw45ZFyDurs3GF4I
-	q3W2gF97G34jy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
-	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zjd61vTCQoDN9tUJ@casper.infradead.org>
 
-On 2024/5/6 11:55, Jingbo Xu wrote:
->
-> On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> The err_put_fd tag is only used once, so remove it to make the code more
->> readable.
-> I think it's a conventional style to put error handling in the bottom of
-> the function so that it could be reused.  Indeed currently err_put_fd
-> has only one caller but IMHO it's only styling issues.
->
-> By the way it seems that this is not needed anymore if patch 9 is applied.
-This is just to make patch 3 look clearer, if you insist on dropping it
-I will drop it in the next revision.
+On Sun, May 05, 2024 at 01:25:58PM +0100, Matthew Wilcox wrote:
+> Here's a fun bug that's not obvious:
+> 
+> hfs_bnode_move:
+>                                 dst_ptr = kmap_local_page(*dst_page);
+>                                 src_ptr = kmap_local_page(*src_page);
+>                                 memmove(dst_ptr, src_ptr, src);
 
-Cheers,
-Baokun
->> ---
->>   fs/cachefiles/ondemand.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index 4ba42f1fa3b4..fd49728d8bae 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -347,7 +347,9 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   
->>   	if (copy_to_user(_buffer, msg, n) != 0) {
->>   		ret = -EFAULT;
->> -		goto err_put_fd;
->> +		if (msg->opcode == CACHEFILES_OP_OPEN)
->> +			close_fd(((struct cachefiles_open *)msg->data)->fd);
->> +		goto error;
->>   	}
->>   
->>   	/* CLOSE request has no reply */
->> @@ -358,9 +360,6 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   
->>   	return n;
->>   
->> -err_put_fd:
->> -	if (msg->opcode == CACHEFILES_OP_OPEN)
->> -		close_fd(((struct cachefiles_open *)msg->data)->fd);
->>   error:
->>   	xa_erase(&cache->reqs, id);
->>   	req->error = ret;
+OK, so now we know this is the only place with this problem, how are we
+going to fix it?
 
+I think the obvious thing to do is to revert the kmap -> kmap_local
+conversion in this function.  The other functions look fine.
 
+Longer term, hfs_bnode_move() makes my eyes bleed.  I really think we
+need to do something stupider.  Something like ...
+
+void hfs_bnode_move(struct hfs_bnode *node, int dst, int src, int len)
+{
+	void *data;
+	int first, last;
+
+	if (!len || src == dst)
+		return;
+	if (src < dst && src + len < dst)
+		return hfs_bnode_copy(node, dst, node, src, len);
+	if (dst < src && dst + len < src)
+		return hfs_bnode_copy(node, dst, node, src, len);
+
+	src += node->page_offset;
+	dst += node->page_offset;
+	first = min(dst, src) / PAGE_SIZE;
+	last = max(dst + len, src + len) / PAGE_SIZE;
+	data = vmap_folios(bnode->folios + first, last - first + 1);
+	src -= first * PAGE_SIZE;
+	dst -= first * PAGE_SIZE;
+// maybe an off-by-one in above calculations; check it
+	memmove(data + dst, data + src, len);
+	vunmap(data);
+}
 
