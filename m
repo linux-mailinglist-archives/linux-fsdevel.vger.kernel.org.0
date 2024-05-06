@@ -1,573 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-18857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC788BD4F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 20:53:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E728BD4F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 20:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24F21C20DE2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 18:53:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EE7DB2175E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 18:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E7B158DBF;
-	Mon,  6 May 2024 18:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A519158D99;
+	Mon,  6 May 2024 18:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4puEBak"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Na8EYDvI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268AE1426F;
-	Mon,  6 May 2024 18:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F29F158DA4
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 18:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715021625; cv=none; b=jp0uhx/KUFsEUzbR9xC8sO31BuwScGRlnzIX9lPjY97LP2zaH2rGYOhEYMZVSO04mSwLPWQ0V/RRJvYOJuqrwd46ZGAffUFl6Pu63TEGnLGMJiULvKdO3Q5Fl9m1pT7JBuLBP/TgqMAsCJuIZhp48j1hAPushf8qiBSDxWvoYp0=
+	t=1715021698; cv=none; b=lvojbW1ySFdjtXute8mTzEb08Rhpqqd5ELzmggCfyxsZFsiGBXjjYQhVuxZfDwXjcuNn1S4h5I18JE8BX1RRH1PNpdCFLUEKKK3FkTen6wqQmWKhxwcc8TGJ3WAjPQHh4/sAfO8aBxsKYN6yGbczLcu9YXuUfhRQmXvcfL08vZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715021625; c=relaxed/simple;
-	bh=GZr+p5TBW31QQMQhi32NoIs4LnmnAqFcXLqfJ3ZnwXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3PTJXci/BrmmCc5njrLeBklZ9sJf1n1jVmYrenJH+FeBiqM03G578pYIdQCdkUFIZKjtn9NdDor8PrWAyqHBFGbA8gDCAr0sLcWGj8HA+E79iogtUiPwdXb0lyQn0RqpM6/5ejJ45wh/89lhk2UWM8I+VPU/Ilnk1sYVKAYz6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4puEBak; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0382DC116B1;
-	Mon,  6 May 2024 18:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715021624;
-	bh=GZr+p5TBW31QQMQhi32NoIs4LnmnAqFcXLqfJ3ZnwXU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e4puEBak3WAa1kzFEkJrSBSJU2y2u1NqdwQX9sOf7uFYjlQEh+ZITLfQklFNifYGb
-	 v96jmgBIGqU1+3jhHcV4a2khe4UP/dDmfqBe5MMO57OVvA05D5jNC+7W3ET4aw7hD5
-	 XyBrOKM4LNUMRN72+NGaf3f0BTWp5K1yAml1LhdJA+eJb2jdjRRBAVC95J8h7bk74h
-	 RDMGaVsAmThZSVg4xb0/KIIhQeo2UAEvAoY6B5OoY/8Zw20Wg5O6OaOPEPH/qSTWxj
-	 6ShriMWzn/ukTZDHxBDCSJaw/5p5zwtyhEc5P7OgbRYwe58+qxypLZOWmgk4Lx7HjC
-	 SLghAt1id7Q9g==
-Date: Mon, 6 May 2024 15:53:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org, viro@zeniv.linux.org.uk,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-mm@kvack.org,
-	Daniel =?iso-8859-1?Q?M=FCller?= <deso@posteo.net>,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for
- /proc/<pid>/maps
-Message-ID: <ZjknNJSFcKaxGDS4@x1>
-References: <20240504003006.3303334-1-andrii@kernel.org>
- <20240504003006.3303334-3-andrii@kernel.org>
- <2024050439-janitor-scoff-be04@gregkh>
- <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
- <ZjjiFnNRbwsMJ3Gj@x1>
- <CAM9d7cgvCB8CBFGhMB_-4tCm6+jzoPBNg4CR7AEyMNo8pF9QKg@mail.gmail.com>
+	s=arc-20240116; t=1715021698; c=relaxed/simple;
+	bh=8QNWl+kq+KG3kN9sHe7MzKaNmeEI1Lwj7OO22VrCnF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S7eKqCoxWWfkN0c/esvihDvfehZy1paGYNbawHgXUU+5wbmOXnIcbQYW32ozObD2XHC/pl4LL8rnejFskrxZqI10RPhDcKf7h3g2vl3RO7C789nZMwefRTjf6d7KZCUywlDaUZe2YXEL+/vioAm7Cqf3g2IrWpsHgB3FR/8bD7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Na8EYDvI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715021695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yZa3ZkGGy+EGoL1mcGuJ1l+5Ncq+o7HM3y58wJO8brs=;
+	b=Na8EYDvILF/kD86LMTeD7nL9usqLkTGAn/iJ/GXEkP9RrtPHFW/uUqqjBdlyvKsy3Spv3w
+	94vaZoLYUwon9uUYrdvwBqwhImy8egexQnevbtA29RfOv7NMqMRsnsw3PGjarh/mu65uZZ
+	OzvYrLZD4eCeAnACbyD1zV3mN4CF6PA=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-vRr7tvt9MXSVt-RCXW223Q-1; Mon,
+ 06 May 2024 14:54:51 -0400
+X-MC-Unique: vRr7tvt9MXSVt-RCXW223Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A8AF629AB427
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 18:54:51 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.32.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 3D5E9200B08F;
+	Mon,  6 May 2024 18:54:51 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+	vgoyal@redhat.com,
+	Stefan Hajnoczi <stefanha@redhat.com>
+Subject: [PATCH v2] virtiofs: use string format specifier for sysfs tag
+Date: Mon,  6 May 2024 14:57:13 -0400
+Message-ID: <20240506185713.58678-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7cgvCB8CBFGhMB_-4tCm6+jzoPBNg4CR7AEyMNo8pF9QKg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Mon, May 06, 2024 at 11:05:17AM -0700, Namhyung Kim wrote:
-> On Mon, May 6, 2024 at 6:58 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
-> > > On Sat, May 4, 2024 at 8:28 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote:
-> > > > > Note also, that fetching VMA name (e.g., backing file path, or special
-> > > > > hard-coded or user-provided names) is optional just like build ID. If
-> > > > > user sets vma_name_size to zero, kernel code won't attempt to retrieve
-> > > > > it, saving resources.
+The existing emit call is a vector for format string injection. Use
+the string format specifier to avoid this problem.
 
-> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Reported-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+---
 
-> > > > Where is the userspace code that uses this new api you have created?
+v2:
+- Drop newline.
+v1: https://lore.kernel.org/linux-fsdevel/20240425104400.30222-1-bfoster@redhat.com/
 
-> > > So I added a faithful comparison of existing /proc/<pid>/maps vs new
-> > > ioctl() API to solve a common problem (as described above) in patch
-> > > #5. The plan is to put it in mentioned blazesym library at the very
-> > > least.
-> > >
-> > > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
-> > > linux-perf-user), as they need to do stack symbolization as well.
+ fs/fuse/virtio_fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 322af827a232..d5cb300367ed 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -170,7 +170,7 @@ static ssize_t tag_show(struct kobject *kobj,
+ {
+ 	struct virtio_fs *fs = container_of(kobj, struct virtio_fs, kobj);
  
-> I think the general use case in perf is different.  This ioctl API is great
-> for live tracing of a single (or a small number of) process(es).  And
-> yes, perf tools have those tracing use cases too.  But I think the
-> major use case of perf tools is system-wide profiling.
+-	return sysfs_emit(buf, fs->tag);
++	return sysfs_emit(buf, "%s", fs->tag);
+ }
  
-> For system-wide profiling, you need to process samples of many
-> different processes at a high frequency.  Now perf record doesn't
-> process them and just save it for offline processing (well, it does
-> at the end to find out build-ID but it can be omitted).
+ static struct kobj_attribute virtio_fs_tag_attr = __ATTR_RO(tag);
+-- 
+2.44.0
 
-Since:
-
-  Author: Jiri Olsa <jolsa@kernel.org>
-  Date:   Mon Dec 14 11:54:49 2020 +0100
-  1ca6e80254141d26 ("perf tools: Store build id when available in PERF_RECORD_MMAP2 metadata events")
-
-We don't need to to process the events to find the build ids. I haven't
-checked if we still do it to find out which DSOs had hits, but we
-shouldn't need to do it for build-ids (unless they were not in memory
-when the kernel tried to stash them in the PERF_RECORD_MMAP2, which I
-haven't checked but IIRC is a possibility if that ELF part isn't in
-memory at the time we want to copy it).
-
-If we're still traversing it like that I guess we can have a knob and
-make it the default to not do that and instead create the perf.data
-build ID header table with all the build-ids we got from
-PERF_RECORD_MMAP2, a (slightly) bigger perf.data file but no event
-processing at the end of a 'perf record' session.
-
-> Doing it online is possible (like perf top) but it would add more
-> overhead during the profiling.  And we cannot move processing
-
-It comes in the PERF_RECORD_MMAP2, filled by the kernel.
-
-> or symbolization to the end of profiling because some (short-
-> lived) tasks can go away.
-
-right
- 
-> Also it should support perf report (offline) on data from a
-> different kernel or even a different machine.
-
-right
- 
-> So it saves the memory map of processes and symbolizes
-> the stack trace with it later.  Of course it needs to be updated
-> as the memory map changes and that's why it tracks mmap
-> or similar syscalls with PERF_RECORD_MMAP[2] records.
- 
-> A problem with this approach is to get the initial state of all
-> (or a target for non-system-wide mode) existing processes.
-> We call it synthesizing, and read /proc/PID/maps to generate
-> the mmap records.
- 
-> I think the below comment from Arnaldo talked about how
-> we can improve the synthesizing (which is sequential access
-> to proc maps) using BPF.
-
-Yes, I wonder how far Jiri went, Jiri?
-
-- Arnaldo
- 
-> Thanks,
-> Namhyung
-> 
-> 
-> >
-> > At some point, when BPF iterators became a thing we thought about, IIRC
-> > Jiri did some experimentation, but I lost track, of using BPF to
-> > synthesize PERF_RECORD_MMAP2 records for pre-existing maps, the layout
-> > as in uapi/linux/perf_event.h:
-> >
-> >         /*
-> >          * The MMAP2 records are an augmented version of MMAP, they add
-> >          * maj, min, ino numbers to be used to uniquely identify each mapping
-> >          *
-> >          * struct {
-> >          *      struct perf_event_header        header;
-> >          *
-> >          *      u32                             pid, tid;
-> >          *      u64                             addr;
-> >          *      u64                             len;
-> >          *      u64                             pgoff;
-> >          *      union {
-> >          *              struct {
-> >          *                      u32             maj;
-> >          *                      u32             min;
-> >          *                      u64             ino;
-> >          *                      u64             ino_generation;
-> >          *              };
-> >          *              struct {
-> >          *                      u8              build_id_size;
-> >          *                      u8              __reserved_1;
-> >          *                      u16             __reserved_2;
-> >          *                      u8              build_id[20];
-> >          *              };
-> >          *      };
-> >          *      u32                             prot, flags;
-> >          *      char                            filename[];
-> >          *      struct sample_id                sample_id;
-> >          * };
-> >          */
-> >         PERF_RECORD_MMAP2                       = 10,
-> >
-> >  *   PERF_RECORD_MISC_MMAP_BUILD_ID      - PERF_RECORD_MMAP2 event
-> >
-> > As perf.data files can be used for many purposes we want them all, so we
-> > setup a meta data perf file descriptor to go on receiving the new mmaps
-> > while we read /proc/<pid>/maps, to reduce the chance of missing maps, do
-> > it in parallel, etc:
-> >
-> > ⬢[acme@toolbox perf-tools-next]$ perf record -h 'event synthesis'
-> >
-> >  Usage: perf record [<options>] [<command>]
-> >     or: perf record [<options>] -- <command> [<options>]
-> >
-> >         --num-thread-synthesize <n>
-> >                           number of threads to run for event synthesis
-> >         --synth <no|all|task|mmap|cgroup>
-> >                           Fine-tune event synthesis: default=all
-> >
-> > ⬢[acme@toolbox perf-tools-next]$
-> >
-> > For this specific initial synthesis of everything the plan, as mentioned
-> > about Jiri's experiments, was to use a BPF iterator to just feed the
-> > perf ring buffer with those events, that way userspace would just
-> > receive the usual records it gets when a new mmap is put in place, the
-> > BPF iterator would just feed the preexisting mmaps, as instructed via
-> > the perf_event_attr for the perf_event_open syscall.
-> >
-> > For people not wanting BPF, i.e. disabling it altogether in perf or
-> > disabling just BPF skels, then we would fallback to the current method,
-> > or to the one being discussed here when it becomes available.
-> >
-> > One thing to have in mind is for this iterator not to generate duplicate
-> > records for non-pre-existing mmaps, i.e. we would need some generation
-> > number that would be bumped when asking for such pre-existing maps
-> > PERF_RECORD_MMAP2 dumps.
-> >
-> > > It will be up to other similar projects to adopt this, but we'll
-> > > definitely get this into blazesym as it is actually a problem for the
-> >
-> > At some point looking at plugging blazesym somehow with perf may be
-> > something to consider, indeed.
-> >
-> > - Arnaldo
-> >
-> > > abovementioned Oculus use case. We already had to make a tradeoff (see
-> > > [2], this wasn't done just because we could, but it was requested by
-> > > Oculus customers) to cache the contents of /proc/<pid>/maps and run
-> > > the risk of missing some shared libraries that can be loaded later. It
-> > > would be great to not have to do this tradeoff, which this new API
-> > > would enable.
-> > >
-> > >   [2] https://github.com/libbpf/blazesym/commit/6b521314126b3ae6f2add43e93234b59fed48ccf
-> > >
-> > > >
-> > > > > ---
-> > > > >  fs/proc/task_mmu.c      | 165 ++++++++++++++++++++++++++++++++++++++++
-> > > > >  include/uapi/linux/fs.h |  32 ++++++++
-> > > > >  2 files changed, 197 insertions(+)
-> > > > >
-> > > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > > > index 8e503a1635b7..cb7b1ff1a144 100644
-> > > > > --- a/fs/proc/task_mmu.c
-> > > > > +++ b/fs/proc/task_mmu.c
-> > > > > @@ -22,6 +22,7 @@
-> > > > >  #include <linux/pkeys.h>
-> > > > >  #include <linux/minmax.h>
-> > > > >  #include <linux/overflow.h>
-> > > > > +#include <linux/buildid.h>
-> > > > >
-> > > > >  #include <asm/elf.h>
-> > > > >  #include <asm/tlb.h>
-> > > > > @@ -375,11 +376,175 @@ static int pid_maps_open(struct inode *inode, struct file *file)
-> > > > >       return do_maps_open(inode, file, &proc_pid_maps_op);
-> > > > >  }
-> > > > >
-> > > > > +static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-> > > > > +{
-> > > > > +     struct procfs_procmap_query karg;
-> > > > > +     struct vma_iterator iter;
-> > > > > +     struct vm_area_struct *vma;
-> > > > > +     struct mm_struct *mm;
-> > > > > +     const char *name = NULL;
-> > > > > +     char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
-> > > > > +     __u64 usize;
-> > > > > +     int err;
-> > > > > +
-> > > > > +     if (copy_from_user(&usize, (void __user *)uarg, sizeof(usize)))
-> > > > > +             return -EFAULT;
-> > > > > +     if (usize > PAGE_SIZE)
-> > > >
-> > > > Nice, where did you document that?  And how is that portable given that
-> > > > PAGE_SIZE can be different on different systems?
-> > >
-> > > I'm happy to document everything, can you please help by pointing
-> > > where this documentation has to live?
-> > >
-> > > This is mostly fool-proofing, though, because the user has to pass
-> > > sizeof(struct procfs_procmap_query), which I don't see ever getting
-> > > close to even 4KB (not even saying about 64KB). This is just to
-> > > prevent copy_struct_from_user() below to do too much zero-checking.
-> > >
-> > > >
-> > > > and why aren't you checking the actual structure size instead?  You can
-> > > > easily run off the end here without knowing it.
-> > >
-> > > See copy_struct_from_user(), it does more checks. This is a helper
-> > > designed specifically to deal with use cases like this where kernel
-> > > struct size can change and user space might be newer or older.
-> > > copy_struct_from_user() has a nice documentation describing all these
-> > > nuances.
-> > >
-> > > >
-> > > > > +             return -E2BIG;
-> > > > > +     if (usize < offsetofend(struct procfs_procmap_query, query_addr))
-> > > > > +             return -EINVAL;
-> > > >
-> > > > Ok, so you have two checks?  How can the first one ever fail?
-> > >
-> > > Hmm.. If usize = 8, copy_from_user() won't fail, usize > PAGE_SIZE
-> > > won't fail, but this one will fail.
-> > >
-> > > The point of this check is that user has to specify at least first
-> > > three fields of procfs_procmap_query (size, query_flags, and
-> > > query_addr), because without those the query is meaningless.
-> > > >
-> > > >
-> > > > > +     err = copy_struct_from_user(&karg, sizeof(karg), uarg, usize);
-> > >
-> > > and this helper does more checks validating that the user either has a
-> > > shorter struct (and then zero-fills the rest of kernel-side struct) or
-> > > has longer (and then the longer part has to be zero filled). Do check
-> > > copy_struct_from_user() documentation, it's great.
-> > >
-> > > > > +     if (err)
-> > > > > +             return err;
-> > > > > +
-> > > > > +     if (karg.query_flags & ~PROCFS_PROCMAP_EXACT_OR_NEXT_VMA)
-> > > > > +             return -EINVAL;
-> > > > > +     if (!!karg.vma_name_size != !!karg.vma_name_addr)
-> > > > > +             return -EINVAL;
-> > > > > +     if (!!karg.build_id_size != !!karg.build_id_addr)
-> > > > > +             return -EINVAL;
-> > > >
-> > > > So you want values to be set, right?
-> > >
-> > > Either both should be set, or neither. It's ok for both size/addr
-> > > fields to be zero, in which case it indicates that the user doesn't
-> > > want this part of information (which is usually a bit more expensive
-> > > to get and might not be necessary for all the cases).
-> > >
-> > > >
-> > > > > +
-> > > > > +     mm = priv->mm;
-> > > > > +     if (!mm || !mmget_not_zero(mm))
-> > > > > +             return -ESRCH;
-> > > >
-> > > > What is this error for?  Where is this documentned?
-> > >
-> > > I copied it from existing /proc/<pid>/maps checks. I presume it's
-> > > guarding the case when mm might be already put. So if the process is
-> > > gone, but we have /proc/<pid>/maps file open?
-> > >
-> > > >
-> > > > > +     if (mmap_read_lock_killable(mm)) {
-> > > > > +             mmput(mm);
-> > > > > +             return -EINTR;
-> > > > > +     }
-> > > > > +
-> > > > > +     vma_iter_init(&iter, mm, karg.query_addr);
-> > > > > +     vma = vma_next(&iter);
-> > > > > +     if (!vma) {
-> > > > > +             err = -ENOENT;
-> > > > > +             goto out;
-> > > > > +     }
-> > > > > +     /* user wants covering VMA, not the closest next one */
-> > > > > +     if (!(karg.query_flags & PROCFS_PROCMAP_EXACT_OR_NEXT_VMA) &&
-> > > > > +         vma->vm_start > karg.query_addr) {
-> > > > > +             err = -ENOENT;
-> > > > > +             goto out;
-> > > > > +     }
-> > > > > +
-> > > > > +     karg.vma_start = vma->vm_start;
-> > > > > +     karg.vma_end = vma->vm_end;
-> > > > > +
-> > > > > +     if (vma->vm_file) {
-> > > > > +             const struct inode *inode = file_user_inode(vma->vm_file);
-> > > > > +
-> > > > > +             karg.vma_offset = ((__u64)vma->vm_pgoff) << PAGE_SHIFT;
-> > > > > +             karg.dev_major = MAJOR(inode->i_sb->s_dev);
-> > > > > +             karg.dev_minor = MINOR(inode->i_sb->s_dev);
-> > > >
-> > > > So the major/minor is that of the file superblock?  Why?
-> > >
-> > > Because inode number is unique only within given super block (and even
-> > > then it's more complicated, e.g., btrfs subvolumes add more headaches,
-> > > I believe). inode + dev maj/min is sometimes used for cache/reuse of
-> > > per-binary information (e.g., pre-processed DWARF information, which
-> > > is *very* expensive, so anything that allows to avoid doing this is
-> > > helpful).
-> > >
-> > > >
-> > > > > +             karg.inode = inode->i_ino;
-> > > >
-> > > > What is userspace going to do with this?
-> > > >
-> > >
-> > > See above.
-> > >
-> > > > > +     } else {
-> > > > > +             karg.vma_offset = 0;
-> > > > > +             karg.dev_major = 0;
-> > > > > +             karg.dev_minor = 0;
-> > > > > +             karg.inode = 0;
-> > > >
-> > > > Why not set everything to 0 up above at the beginning so you never miss
-> > > > anything, and you don't miss any holes accidentally in the future.
-> > > >
-> > >
-> > > Stylistic preference, I find this more explicit, but I don't care much
-> > > one way or another.
-> > >
-> > > > > +     }
-> > > > > +
-> > > > > +     karg.vma_flags = 0;
-> > > > > +     if (vma->vm_flags & VM_READ)
-> > > > > +             karg.vma_flags |= PROCFS_PROCMAP_VMA_READABLE;
-> > > > > +     if (vma->vm_flags & VM_WRITE)
-> > > > > +             karg.vma_flags |= PROCFS_PROCMAP_VMA_WRITABLE;
-> > > > > +     if (vma->vm_flags & VM_EXEC)
-> > > > > +             karg.vma_flags |= PROCFS_PROCMAP_VMA_EXECUTABLE;
-> > > > > +     if (vma->vm_flags & VM_MAYSHARE)
-> > > > > +             karg.vma_flags |= PROCFS_PROCMAP_VMA_SHARED;
-> > > > > +
-> > >
-> > > [...]
-> > >
-> > > > > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > > > > index 45e4e64fd664..fe8924a8d916 100644
-> > > > > --- a/include/uapi/linux/fs.h
-> > > > > +++ b/include/uapi/linux/fs.h
-> > > > > @@ -393,4 +393,36 @@ struct pm_scan_arg {
-> > > > >       __u64 return_mask;
-> > > > >  };
-> > > > >
-> > > > > +/* /proc/<pid>/maps ioctl */
-> > > > > +#define PROCFS_IOCTL_MAGIC 0x9f
-> > > >
-> > > > Don't you need to document this in the proper place?
-> > >
-> > > I probably do, but I'm asking for help in knowing where. procfs is not
-> > > a typical area of kernel I'm working with, so any pointers are highly
-> > > appreciated.
-> > >
-> > > >
-> > > > > +#define PROCFS_PROCMAP_QUERY _IOWR(PROCFS_IOCTL_MAGIC, 1, struct procfs_procmap_query)
-> > > > > +
-> > > > > +enum procmap_query_flags {
-> > > > > +     PROCFS_PROCMAP_EXACT_OR_NEXT_VMA = 0x01,
-> > > > > +};
-> > > > > +
-> > > > > +enum procmap_vma_flags {
-> > > > > +     PROCFS_PROCMAP_VMA_READABLE = 0x01,
-> > > > > +     PROCFS_PROCMAP_VMA_WRITABLE = 0x02,
-> > > > > +     PROCFS_PROCMAP_VMA_EXECUTABLE = 0x04,
-> > > > > +     PROCFS_PROCMAP_VMA_SHARED = 0x08,
-> > > >
-> > > > Are these bits?  If so, please use the bit macro for it to make it
-> > > > obvious.
-> > > >
-> > >
-> > > Yes, they are. When I tried BIT(1), it didn't compile. I chose not to
-> > > add any extra #includes to this UAPI header, but I can figure out the
-> > > necessary dependency and do BIT(), I just didn't feel like BIT() adds
-> > > much here, tbh.
-> > >
-> > > > > +};
-> > > > > +
-> > > > > +struct procfs_procmap_query {
-> > > > > +     __u64 size;
-> > > > > +     __u64 query_flags;              /* in */
-> > > >
-> > > > Does this map to the procmap_vma_flags enum?  if so, please say so.
-> > >
-> > > no, procmap_query_flags, and yes, I will
-> > >
-> > > >
-> > > > > +     __u64 query_addr;               /* in */
-> > > > > +     __u64 vma_start;                /* out */
-> > > > > +     __u64 vma_end;                  /* out */
-> > > > > +     __u64 vma_flags;                /* out */
-> > > > > +     __u64 vma_offset;               /* out */
-> > > > > +     __u64 inode;                    /* out */
-> > > >
-> > > > What is the inode for, you have an inode for the file already, why give
-> > > > it another one?
-> > >
-> > > This is inode of vma's backing file, same as /proc/<pid>/maps' file
-> > > column. What inode of file do I already have here? You mean of
-> > > /proc/<pid>/maps itself? It's useless for the intended purposes.
-> > >
-> > > >
-> > > > > +     __u32 dev_major;                /* out */
-> > > > > +     __u32 dev_minor;                /* out */
-> > > >
-> > > > What is major/minor for?
-> > >
-> > > This is the same information as emitted by /proc/<pid>/maps,
-> > > identifies superblock of vma's backing file. As I mentioned above, it
-> > > can be used for caching per-file (i.e., per-ELF binary) information
-> > > (for example).
-> > >
-> > > >
-> > > > > +     __u32 vma_name_size;            /* in/out */
-> > > > > +     __u32 build_id_size;            /* in/out */
-> > > > > +     __u64 vma_name_addr;            /* in */
-> > > > > +     __u64 build_id_addr;            /* in */
-> > > >
-> > > > Why not document this all using kerneldoc above the structure?
-> > >
-> > > Yes, sorry, I slacked a bit on adding this upfront. I knew we'll be
-> > > figuring out the best place and approach, and so wanted to avoid
-> > > documentation churn.
-> > >
-> > > Would something like what we have for pm_scan_arg and pagemap APIs
-> > > work? I see it added a few simple descriptions for pm_scan_arg struct,
-> > > and there is Documentation/admin-guide/mm/pagemap.rst. Should I add
-> > > Documentation/admin-guide/mm/procmap.rst (admin-guide part feels off,
-> > > though)? Anyways, I'm hoping for pointers where all this should be
-> > > documented. Thank you!
-> > >
-> > > >
-> > > > anyway, I don't like ioctls, but there is a place for them, you just
-> > > > have to actually justify the use for them and not say "not efficient
-> > > > enough" as that normally isn't an issue overall.
-> > >
-> > > I've written a demo tool in patch #5 which performs real-world task:
-> > > mapping addresses to their VMAs (specifically calculating file offset,
-> > > finding vma_start + vma_end range to further access files from
-> > > /proc/<pid>/map_files/<start>-<end>). I did the implementation
-> > > faithfully, doing it in the most optimal way for both APIs. I showed
-> > > that for "typical" (it's hard to specify what typical is, of course,
-> > > too many variables) scenario (it was data collected on a real server
-> > > running real service, 30 seconds of process-specific stack traces were
-> > > captured, if I remember correctly). I showed that doing exactly the
-> > > same amount of work is ~35x times slower with /proc/<pid>/maps.
-> > >
-> > > Take another process, another set of addresses, another anything, and
-> > > the numbers will be different, but I think it gives the right idea.
-> > >
-> > > But I think we are overpivoting on text vs binary distinction here.
-> > > It's the more targeted querying of VMAs that's beneficial here. This
-> > > allows applications to not cache anything and just re-query when doing
-> > > periodic or continuous profiling (where addresses are coming in not as
-> > > one batch, as a sequence of batches extended in time).
-> > >
-> > > /proc/<pid>/maps, for all its usefulness, just can't provide this sort
-> > > of ability, as it wasn't designed to do that and is targeting
-> > > different use cases.
-> > >
-> > > And then, a new ability to request reliable (it's not 100% reliable
-> > > today, I'm going to address that as a follow up) build ID is *crucial*
-> > > for some scenarios. The mentioned Oculus use case, the need to fully
-> > > access underlying ELF binary just to get build ID is frowned upon. And
-> > > for a good reason. Profiler only needs build ID, which is no secret
-> > > and not sensitive information. This new (and binary, yes) API allows
-> > > to add this into an API without breaking any backwards compatibility.
-> > >
-> > > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> >
 
