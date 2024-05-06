@@ -1,204 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-18832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0AD8BCE56
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 14:47:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCC68BCEB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 15:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5021C23DF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 12:47:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBAC282927
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 13:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB8D6BB29;
-	Mon,  6 May 2024 12:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KQu4Z5zN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B175763F0;
+	Mon,  6 May 2024 13:05:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A613C08D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 12:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5B644C66;
+	Mon,  6 May 2024 13:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999649; cv=none; b=I81PcDUg/S7oINpCrtzInV1S6vrPuRPzQQkvrXDIhvBjMvvB0qp4lS9YPNepP4pNM97cprE3iXll8cT+fJQPpaoKM/broOYoRqxrVZzh9zKKfy6wz5edBUtf5JnTRmN2bQOmSwTLfr3iFN/s0QxeNs0v7B3MT8AE6B2wMLZ7uoA=
+	t=1715000732; cv=none; b=rIGRcKfNEHVT2ridJiTzJcvCrruAObbh+uDEMnwWCzP/uerbnlIFxlFCxemF352itBrG23fFCDKsBT4u6/lkQ2J0G4yJXrS1sSRSGmBPsR8nH5nbDB8TJSgVY6XJ/sZzlx/iFGobswHQVC/kkntce9jHiiCQtJeYZ739s11Xvvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999649; c=relaxed/simple;
-	bh=WFB++vRNFt5kSLDzQ1XCDy3jGT+hv6nsVwYz20LDtN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6Xj0p+xR8n5ev3lwi4wplGUzSVV3OiNV3/XW9wTn2l1iAeOwFM86b0+SGnJJnrl2WQSUfVBi0TWilcutv/mkdVRtYLEB1l/97oelcUDH0WtFJiwAidw19Sr5vqtTqBgv9hjYD/hRzml/o1WGiOe6Oq6HBjTmXAmemK8+1st3QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=KQu4Z5zN; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-346407b8c9aso628104f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 05:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1714999646; x=1715604446; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FzcPHN6WlIJ1C164IWBqCbC21dWtLB5dXSLGK/0dvq0=;
-        b=KQu4Z5zNywDwxFsNiTrA2dANGza8Nnel1ABebzYPju1B1u48vqKbIUn/uH4Hsuy47q
-         +sMLWQdp0Lw6ghydYx/bnHaErfAtls1OIzVBxXcpc8D7HX+Jf/ONAZZW9DITmJOf7s60
-         EKMIASncpR9mXywaBd9p6NKJldz71jQg/VfBE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714999646; x=1715604446;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FzcPHN6WlIJ1C164IWBqCbC21dWtLB5dXSLGK/0dvq0=;
-        b=NSdh56Ok+E5jsUp+ed8/6HHhMdGNsqFAWci/kx7N0R+ahNMU2RNrXfRb9v3sUsb7LH
-         oA7wnnqVxSVxOIESq4oknqy3OspuVwLUNXjThwSoZiIs2vgjG1KrrBA5jk1Ryt8odcTc
-         QS2oUcJ2hDTvykeONf9bxFl0DhEcBQiGuZYcA6T1I6FnC3fwAqaVgemlVzOw6lAkmW11
-         9qPHvRUrEhZ4uyJYTgyuQXkq5dOdm3OB0htFREFNVzv/PrWGkrou9VmChSGGc14ahaoe
-         JySxBrwc2if5e16zDa3g30GQ9In/LvZcVkJeQXDT7lJ0g9tMl3867BjfbTxe3eo1jCqZ
-         e3/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXHYZxejPGoGQESnACxSuK76Lg/5IB3mPWffPi6aDzmESUn9xi2tygDMJilHXNAIzlNT1r9evpo7J2jh9pteCusPQ03JdQcEU1Usu+8wQ==
-X-Gm-Message-State: AOJu0YwjXYV3V+EMWCwjRdNDVTa/c42BITKGMsLl37PqvpBR5YLJLmTW
-	GPo8kTlEW53xIDic7X89VLHn2er9C2cA+e69v0HAn6WscHC2RA+3T2ZSxdGagkc=
-X-Google-Smtp-Source: AGHT+IEcjHlHcMPoNa6JKDX9W5QYo0xQvj2/BGYXVfuM3DvK3Nqva0gT+wcQ0vVg5ycmh5nDVF4Cvw==
-X-Received: by 2002:a05:600c:5118:b0:418:9941:ca28 with SMTP id o24-20020a05600c511800b004189941ca28mr7020552wms.2.1714999646201;
-        Mon, 06 May 2024 05:47:26 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id p12-20020a05600c1d8c00b0041bcb898984sm16038937wms.31.2024.05.06.05.47.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 05:47:25 -0700 (PDT)
-Date: Mon, 6 May 2024 14:47:23 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, keescook@chromium.org,
-	axboe@kernel.dk, christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
-	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
-	sumit.semwal@linaro.org,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <ZjjRWybmAmClMMI9@phenom.ffwll.local>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, keescook@chromium.org,
-	axboe@kernel.dk, christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
-	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
-	sumit.semwal@linaro.org,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-References: <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
- <20240505194603.GH2118490@ZenIV>
- <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
- <20240505203052.GJ2118490@ZenIV>
- <CAHk-=whFg8-WyMbVUGW5c0baurGzqmRtzFLoU-gxtRXq2nVZ+w@mail.gmail.com>
+	s=arc-20240116; t=1715000732; c=relaxed/simple;
+	bh=o/sXgNc3t4AhEHZQzACRVWndIPoft8f4vqB8PGglIIo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MaSh/EytpS1MUuZ7I5L+h84RV0eMnIldDzu6OB8PmbvnlkR6qUYGzsSCoCiixCLfl+RHLVNcRAoDSRy/9ZYELugyHedNwABglla1RS2+/RZUucRV7PN2h79SaHr455ydDqe9j5XwesPTf+uwogOzjac9ZaIn9PwvnySM5lqsZaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VY1q04Xwqz4f3jd5;
+	Mon,  6 May 2024 21:05:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id CBBD31A0572;
+	Mon,  6 May 2024 21:05:24 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAuS1ThmXifRMA--.45497S3;
+	Mon, 06 May 2024 21:05:24 +0800 (CST)
+Subject: Re: [RFC PATCH v4 29/34] ext4: fall back to buffer_head path for
+ defrag
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+ hch@infradead.org, djwong@kernel.org, willy@infradead.org,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+ <20240410150313.2820364-1-yi.zhang@huaweicloud.com>
+ <ZjIMQTAtxZ0NhCD2@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <5dbb3021-b92e-2e53-7eee-5a6595a5ad03@huaweicloud.com>
+Date: Mon, 6 May 2024 21:05:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whFg8-WyMbVUGW5c0baurGzqmRtzFLoU-gxtRXq2nVZ+w@mail.gmail.com>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+In-Reply-To: <ZjIMQTAtxZ0NhCD2@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnmAuS1ThmXifRMA--.45497S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jr4kGw4xCryrur4xWFW8Crg_yoWDWwcE9F
+	yrCrWDCw1UJF4xZrsI9rs8KFs2kr4UWr4qqryUXrnFy34FyrZ5XFsYk3yqk34rtFWxuFn0
+	kwn3ZF40vr9rXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUFDGOUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Sun, May 05, 2024 at 01:53:48PM -0700, Linus Torvalds wrote:
-> On Sun, 5 May 2024 at 13:30, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > 0.      special-cased ->f_count rule for ->poll() is a wart and it's
-> > better to get rid of it.
-> >
-> > 1.      fs/eventpoll.c is a steaming pile of shit and I'd be glad to see
-> > git rm taken to it.  Short of that, by all means, let's grab reference
-> > in there around the call of vfs_poll() (see (0)).
+On 2024/5/1 17:32, Dave Chinner wrote:
+> On Wed, Apr 10, 2024 at 11:03:08PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Online defrag doesn't support iomap path yet, we have to fall back to
+>> buffer_head path for the inode which has been using iomap. Changing
+>> active inode is dangerous, before we start, we must hold the inode lock
+>> and the mapping->invalidate_lock, and writeback all dirty folios and
+>> drop the inode's pagecache.
 > 
-> Agreed on 0/1.
+> Even then, I don't think this is obviously safe. We went through
+> this with DAX and we couldn't make it work safely.
 > 
-> > 2.      having ->poll() instances grab extra references to file passed
-> > to them is not something that should be encouraged; there's a plenty
-> > of potential problems, and "caller has it pinned, so we are fine with
-> > grabbing extra refs" is nowhere near enough to eliminate those.
+> Just return EOPNOTSUPP to the online defrag ioctl if iomap is in use
+> - that avoids all the excitement involved in doing dangerous things
+> like swapping aops structures on actively referenced inodes...
 > 
-> So it's not clear why you hate it so much, since those extra
-> references are totally normal in all the other VFS paths.
-> 
-> I mean, they are perhaps not the *common* case, but we have a lot of
-> random get_file() calls sprinkled around in various places when you
-> end up passing a file descriptor off to some asynchronous operation
-> thing.
-> 
-> Yeah, I think most of them tend to be special operations (eg the tty
-> TIOCCONS ioctl to redirect the console), but it's not like vfs_ioctl()
-> is *that* different from vfs_poll. Different operation, not somehow
-> "one is more special than the other".
-> 
-> cachefiles and backing-file does it for regular IO, and drop it at IO
-> completion - not that different from what dma-buf does. It's in
-> ->read_iter() rather than ->poll(), but again: different operations,
-> but not "one of them is somehow fundamentally different".
-> 
-> > 3.      dma-buf uses of get_file() are probably safe (epoll shite aside),
-> > but they do look fishy.  That has nothing to do with epoll.
-> 
-> Now, what dma-buf basically seems to do is to avoid ref-counting its
-> own fundamental data structure, and replaces that by refcounting the
-> 'struct file' that *points* to it instead.
-> 
-> And it is a bit odd, but it actually makes some amount of sense,
-> because then what it passes around is that file pointer (and it allows
-> passing it around from user space *as* that file).
-> 
-> And honestly, if you look at why it then needs to add its refcount to
-> it all, it actually makes sense.  dma-bufs have this notion of
-> "fences" that are basically completion points for the asynchronous
-> DMA. Doing a "poll()" operation will add a note to the fence to get
-> that wakeup when it's done.
-> 
-> And yes, logically it takes a ref to the "struct dma_buf", but because
-> of how the lifetime of the dma_buf is associated with the lifetime of
-> the 'struct file', that then turns into taking a ref on the file.
-> 
-> Unusual? Yes. But not illogical. Not obviously broken. Tying the
-> lifetime of the dma_buf to the lifetime of a file that is passed along
-> makes _sense_ for that use.
-> 
-> I'm sure dma-bufs could add another level of refcounting on the
-> 'struct dma_buf' itself, and not make it be 1:1 with the file, but
-> it's not clear to me what the advantage would really be, or why it
-> would be wrong to re-use a refcount that is already there.
 
-So there is generally another refcount, because dma_buf is just the
-cross-driver interface to some kind of real underlying buffer object from
-the various graphics related subsystems we have.
+Okay, this is just a temporary solution to support defrag. I've been
+looking at how to support defrag for iomap recently, I hope it could
+be supported in the near future, so let's drop this dangerous
+operation.
 
-And since it's a pure file based api thing that ceases to serve any
-function once the fd/file is gone we tied all the dma_buf refcounting to
-the refcount struct file already maintains. But the underlying buffer
-object can easily outlive the dma_buf, and over the lifetime of an
-underlying buffer object you might actually end up creating different
-dma_buf api wrappers for it (but at least in drm we guarantee there's at
-most one, hence why vmwgfx does the atomic_inc_unless_zero trick, which I
-don't particularly like and isn't really needed).
+Thanks,
+Yi.
 
-But we could add another refcount, it just means we have 3 of those then
-when only really 2 are needed.
 
-Also maybe here two: dma_fence are bounded like other disk i/o (including
-the option of timeouts if things go very wrong), so it's very much not
-forever but at most a few seconds worst case (shit hw/driver excluded, as
-usual).
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
 
