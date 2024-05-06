@@ -1,217 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-18825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CDD8BCC35
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 12:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 952F68BCCBF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 13:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98A4C1C21684
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 10:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983781C21DBF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 11:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B650D142E63;
-	Mon,  6 May 2024 10:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149CF143868;
+	Mon,  6 May 2024 11:22:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9B8757EA
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 10:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B477514262C;
+	Mon,  6 May 2024 11:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714992167; cv=none; b=bzHd8Ln2ADXKkS5ytaA6Uu0cJpYlssUCkw3mb/oGs3ke0s+Dz3WJoCsZ5At9gL2OvQgEmzcAHI4qn0aBdpRh/+4Mu24pxKIQVOz0t7/mvNGGiqyEgGWc9ZkPOiAlepHpiAx4o23fg7/4l1JnQG3hLAP5vWmNHNjLQdukqqvsL40=
+	t=1714994520; cv=none; b=An8FmfSTMzt1F5krzRo52X/o2pLuE6a8hg1fTnqQQAT5kIB+cfevDKmVPGJAHO2VW13baFPRxsL+lkmo+SlANP6G1zDoTuJShAgsH4TGpqfSeMhd05fZ5d4kBhjOILhz0JcganL6W0hymy5Vh2BHyJjnX6ijqm+v4YqtXgvWfjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714992167; c=relaxed/simple;
-	bh=FOkc0F168y7Hb3+T+9xBbpPteMZGo/OxA02Dyz4/hj4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LGt2ID0l1VTWaY1ehKI1QwM5vGJU8j/nM/rMYo+zMP8kcqnD8u1a3Huw8mx6aRt5MX1FriqwYSF1QpAsx682XAEkUH5FLJOeZCgPAKpPYpLteIpriy5XQsPr0SfzoOgUhiWUuLYoDTPYQrIxzUj6u7u73TQUbKL+7EG/z6gQd+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.66.0])
-	by sina.com (10.75.12.45) with ESMTP
-	id 6638B3F30000281D; Mon, 6 May 2024 18:41:57 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 73643631457703
-X-SMAIL-UIID: 3117179399554E659D0FA43F880B37D2-20240506-184157-1
-From: Hillf Danton <hdanton@sina.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	Jann Horn <jannh@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] fs: Do not allow get_file() to resurrect 0 f_count
-Date: Mon,  6 May 2024 18:41:47 +0800
-Message-Id: <20240506104147.2139-1-hdanton@sina.com>
-In-Reply-To: <20240503-mitmachen-redakteur-2707ab0cacc3@brauner>
-References: <20240502222252.work.690-kees@kernel.org> <20240502223341.1835070-1-keescook@chromium.org> <CAG48ez0d81xbOHqTUbWcBFWx5WY=RM8MM++ug79wXe0O-NKLig@mail.gmail.com> <202405021600.F5C68084D@keescook>
+	s=arc-20240116; t=1714994520; c=relaxed/simple;
+	bh=DzA1qNG1rre/xnKZN/arluttKfjtjS8U924sZWRNitU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RYdG0+qsDM2PnA2uY6ySSvg2hSOgyhKKxN6QhEnWSkZUhqqdSk2Ez0zB68B817FPwGPGJ57iJQvum3multbFzarwLbKXJ5m82NVCRDNTtDMudskMFguJWOJi0FMBkozNQbEOO10jao8VPUKWFtE4PTUTeI5cRIFICPFcI8CbgW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXzWY1kNdz4f3jR7;
+	Mon,  6 May 2024 19:21:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 69BA61A017D;
+	Mon,  6 May 2024 19:21:53 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgDnCw9PvThmHTPKMA--.36325S3;
+	Mon, 06 May 2024 19:21:53 +0800 (CST)
+Subject: Re: [RFC PATCH v4 24/34] ext4: implement buffered write iomap path
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+ hch@infradead.org, djwong@kernel.org, willy@infradead.org,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+ <20240410142948.2817554-25-yi.zhang@huaweicloud.com>
+ <ZjH5Ia+dWGss5Duv@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <4adbf8aa-e417-1997-c83d-90e7623f2916@huaweicloud.com>
+Date: Mon, 6 May 2024 19:21:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjH5Ia+dWGss5Duv@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgDnCw9PvThmHTPKMA--.36325S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxurW5Gw1UXw48GrW3tF1kKrg_yoW5Kry8pF
+	ZxKF45GF4aqrya9F4fXr48XF1Ska18Jr4UJrWag345ur90yr10gF40gF1Yv3W5Ar4xAF1x
+	ZF4YkF18Gw42yrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Fri, 3 May 2024 11:02:57 +0200 Christian Brauner <brauner@kernel.org>
-> On Thu, May 02, 2024 at 04:03:24PM -0700, Kees Cook wrote:
-> > On Fri, May 03, 2024 at 12:53:56AM +0200, Jann Horn wrote:
-> > > On Fri, May 3, 2024 at 12:34 AM Kees Cook <keescook@chromium.org> wrote:
-> > > > If f_count reaches 0, calling get_file() should be a failure. Adjust to
-> > > > use atomic_long_inc_not_zero() and return NULL on failure. In the future
-> > > > get_file() can be annotated with __must_check, though that is not
-> > > > currently possible.
-> > > [...]
-> > > >  static inline struct file *get_file(struct file *f)
-> > > >  {
-> > > > -       atomic_long_inc(&f->f_count);
-> > > > +       if (unlikely(!atomic_long_inc_not_zero(&f->f_count)))
-> > > > +               return NULL;
-> > > >         return f;
-> > > >  }
-> > > 
-> > > Oh, I really don't like this...
-> > > 
-> > > In most code, if you call get_file() on a file and see refcount zero,
-> > > that basically means you're in a UAF write situation, or that you
-> > > could be in such a situation if you had raced differently. It's
-> > > basically just like refcount_inc() in that regard.
-> > 
-> > Shouldn't the system attempt to not make things worse if it encounters
-> > an inc-from-0 condition? Yes, we've already lost the race for a UaF
-> > condition, but maybe don't continue on.
-> > 
-> > > And get_file() has semantics just like refcount_inc(): The caller
-> > > guarantees that it is already holding a reference to the file; and if
-> > 
-> > Yes, but if that guarantee is violated, we should do something about it.
-> > 
-> > > the caller is wrong about that, their subsequent attempt to clean up
-> > > the reference that they think they were already holding will likely
-> > > lead to UAF too. If get_file() sees a zero refcount, there is no safe
-> > > way to continue. And all existing callers of get_file() expect the
-> > > return value to be the same as the non-NULL pointer they passed in, so
-> > > they'll either ignore the result of this check and barrel on, or oops
-> > > with a NULL deref.
-> > > 
-> > > For callers that want to actually try incrementing file refcounts that
-> > > could be zero, which is only possible under specific circumstances, we
-> > > have helpers like get_file_rcu() and get_file_active().
-> > 
-> > So what's going on in here:
-> > https://lore.kernel.org/linux-hardening/20240502223341.1835070-2-keescook@chromium.org/
+On 2024/5/1 16:11, Dave Chinner wrote:
+> On Wed, Apr 10, 2024 at 10:29:38PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Implement buffered write iomap path, use ext4_da_map_blocks() to map
+>> delalloc extents and add ext4_iomap_get_blocks() to allocate blocks if
+>> delalloc is disabled or free space is about to run out.
+>>
+>> Note that we always allocate unwritten extents for new blocks in the
+>> iomap write path, this means that the allocation type is no longer
+>> controlled by the dioread_nolock mount option. After that, we could
+>> postpone the i_disksize updating to the writeback path, and drop journal
+>> handle in the buffered dealloc write path completely.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/ext4.h  |   3 +
+>>  fs/ext4/file.c  |  19 +++++-
+>>  fs/ext4/inode.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++--
+>>  3 files changed, 183 insertions(+), 7 deletions(-)
+>>
+[...]
+>> +#define IOMAP_F_EXT4_DELALLOC		IOMAP_F_PRIVATE
+>> +
+>> +static int __ext4_iomap_buffered_io_begin(struct inode *inode, loff_t offset,
+>>  				loff_t length, unsigned int iomap_flags,
+>> -				struct iomap *iomap, struct iomap *srcmap)
+>> +				struct iomap *iomap, struct iomap *srcmap,
+>> +				bool delalloc)
+>>  {
+>> -	int ret;
+>> +	int ret, retries = 0;
+>>  	struct ext4_map_blocks map;
+>>  	u8 blkbits = inode->i_blkbits;
+>>  
+>> @@ -3537,20 +3580,133 @@ static int ext4_iomap_buffered_io_begin(struct inode *inode, loff_t offset,
+>>  		return -EINVAL;
+>>  	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
+>>  		return -ERANGE;
+>> -
+>> +retry:
+>>  	/* Calculate the first and last logical blocks respectively. */
+>>  	map.m_lblk = offset >> blkbits;
+>>  	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
+>>  			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
+>> +	if (iomap_flags & IOMAP_WRITE) {
+>> +		if (delalloc)
+>> +			ret = ext4_da_map_blocks(inode, &map);
+>> +		else
+>> +			ret = ext4_iomap_get_blocks(inode, &map);
+>>  
+>> -	ret = ext4_map_blocks(NULL, inode, &map, 0);
+>> +		if (ret == -ENOSPC &&
+>> +		    ext4_should_retry_alloc(inode->i_sb, &retries))
+>> +			goto retry;
+>> +	} else {
+>> +		ret = ext4_map_blocks(NULL, inode, &map, 0);
+>> +	}
+>>  	if (ret < 0)
+>>  		return ret;
+>>  
+>>  	ext4_set_iomap(inode, iomap, &map, offset, length, iomap_flags);
+>> +	if (delalloc)
+>> +		iomap->flags |= IOMAP_F_EXT4_DELALLOC;
+>> +
+>> +	return 0;
+>> +}
 > 
-> Afaict, there's dma_buf_export() that allocates a new file and sets:
+> Why are you implementing both read and write mapping paths in
+> the one function? The whole point of having separate ops vectors for
+> read and write is that it allows a clean separation of the read and
+> write mapping operations. i.e. there is no need to use "if (write)
+> else {do read}" code constructs at all.
 > 
-> file->private_data = dmabuf;
-> dmabuf->file = file;
+> You can even have a different delalloc mapping function so you don't
+> need "if (delalloc) else {do nonda}" branches everiywhere...
 > 
-> The file has f_op->release::dma_buf_file_release() as it's f_op->release
-> method. When that's called the file's refcount is already zero but the
-> file has not been freed yet. This will remove the dmabuf from some
-> public list but it won't free it.
-> 
-> Then we see that any dentry allocated for such a dmabuf file will have
-> dma_buf_dentry_ops which in turn has
-> dentry->d_release::dma_buf_release() which is where the actual release
-> of the dma buffer happens taken from dentry->d_fsdata.
-> 
-> That whole thing calls allocate_file_pseudo() which allocates a new
-> dentry specific to that struct file. That dentry is unhashed (no lookup)
-> and thus isn't retained so when dput() is called and it's the last
-> reference it's immediately followed by
-> dentry->d_release::dma_buf_release() which wipes the dmabuf itself.
-> 
-> The lifetime of the dmabuf is managed via fget()/fput(). So the lifetime
-> of the dmabuf and the lifetime of the file are almost identical afaict:
-> 
-> __fput()
-> -> f_op->release::dma_buf_file_release() // handles file specific freeing
-> -> dput()
->    -> d_op->d_release::dma_buf_release() // handles dmabuf freeing
->                                          // including the driver specific stuff.
-> 
-> If you fput() the file then the dmabuf will be freed as well immediately
-> after it when the dput() happens in __fput() (I struggle to come up with
-> an explanation why the freeing of the dmabuf is moved to
-> dentry->d_release instead of f_op->release itself but that's a separate
-> matter.).
-> 
-> So on the face of it without looking a little closer
-> 
-> static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
-> {
->         return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
-> }
-> 
-> looks wrong or broken. Because if dmabuf->file->f_count is 0 it implies
-> that @dmabuf should have already been freed. So the bug would be in
-> accessing @dmabuf. And if @dmabuf is valid then it automatically means
-> that dmabuf->file->f_count isn't 0. So it looks like it could just use
-> get_file().
-> 
-> _But_ the interesting bits are in ttm_object_device_init(). This steals
-> the dma_buf_ops into tdev->ops. It then takes dma_buf_ops->release and
-> stores it away into tdev->dma_buf_release. Then it overrides the
-> dma_buf_ops->release with ttm_prime_dmabuf_release(). And that's where
-> the very questionable magic happens.
-> 
-> So now let's say the dmabuf is freed because of lat fput(). We now get
-> f_op->release::dma_buf_file_release(). Then it's followed by dput() and
-> ultimately dentry->d_release::dma_buf_release() as mentioned above.
-> 
-> But now when we get:
-> 
-> dentry->d_release::dma_buf_release()
-> -> dmabuf->ops->release::ttm_prime_dmabuf_release()
-> 
-> instead of the original dmabuf->ops->release method that was stolen into
-> tdev->dmabuf_release. And ttm_prime_dmabuf_release() now calls
-> tdev->dma_buf_release() which just frees the data associated with the
-> dmabuf not the dmabuf itself.
-> 
-> ttm_prime_dmabuf_release() then takes prime->mutex_lock replacing
-> prime->dma_buf with NULL.
-> 
-> The same lock is taken in ttm_prime_handle_to_fd() which is picking that
-> dmabuf from prime->dmabuf. So the interesting case is when
-> ttm_prime_dma_buf_release() has called tdev->dmabuf_release() and but
-> someone else maanged to grab prime->mutex_lock before
-> ttm_prime_dma_buf_release() could grab it to NULL prime->dma_buf.
-> 
-> So at that point @dmabuf hasn't been freed yet and is still valid. So
-> dereferencing prime->dma_buf is still valid and by extension
-> dma_buf->file as their lifetimes are tied.
-> 
-> IOW, that should just use get_file_active() which handles that just
-> fine.
-> 
-> And while that get_dma_buf_unless_doomed() thing is safe that whole code
-> reeks of a level of complexity that's asking for trouble.
-> 
-> But that has zero to do with get_file() and it is absolutely not a
-> reason to mess with it's semantics impacting every caller in the tree.
-> 
-> > 
-> > > Can't you throw a CHECK_DATA_CORRUPTION() or something like that in
-> > > there instead?
-> > 
-> > I'm open to suggestions, but given what's happening with struct dma_buf
-> > above, it seems like this is a state worth checking for?
-> 
-> No, it's really not. If you use get_file() you better know that you're
-> already holding a valid reference that's no reason to make it suddenly
-> fail.
-> 
-But the simple question is, why are you asking dma_buf to poll a 0 f_count
-file? All fine if you are not.
+
+Because current ->iomap_begin() for ext4 buffered IO path
+(i.e. __ext4_iomap_buffered_io_begin()) is simple, almost only the map
+blocks handlers are different for read, da write and no da write paths,
+the rest of the function parameter check and inode status check are
+the same, and I noticed that the ->iomap_begin() for direct IO path
+(i.e. ext4_iomap_begin()) also implemented in one function. So I'd
+like to save some code now, and it looks like implement them in one
+function doesn't make this function too complicated, I guess we could
+split them if things change in the future.
+
+But think about it again, split them now could make things more clear,
+it's also fine to me.
+
+Thanks,
+Yi.
+
 
