@@ -1,66 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-18818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581478BC9D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 10:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589E28BCA0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 10:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECEE21F22C23
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 08:45:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ADC31C21033
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 08:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B54F1422A2;
-	Mon,  6 May 2024 08:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589301422D4;
+	Mon,  6 May 2024 08:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WiQEaAXK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WQXl4W/y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B35C6CDAC;
-	Mon,  6 May 2024 08:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256191422CA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 08:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714985135; cv=none; b=lCIbM550VK17YX4egchPYfRsw9cQXAIsl5eFKxsZTALPxKYfGlS5k1c8IIZa1mQZZRSY2b3cbB8MHtHFu3p2rYFwTbIFtKKgqaIxoo/io0orZFAQU2lI+1GXFdMvue6sd4iRalZt6F+0nbi34V8aHImnzzZdbOF2q8A4fDZ0Ato=
+	t=1714985496; cv=none; b=KB9mPtc/taVTPXHwN03qoC2Txw3GXZ9z0uuUsW7dWyC+rk96Js9iKT1gbUye53ga6JrDb8wjHJQW6CAqt4v+gJYi1jNw/pTEU8vIIY2RoH1hI8i7Vqry38cv1u6UeIKKZW6OP8aV3l6fP3zJ41PuDVsoK5Zlx/NoqoJCsDGZ+P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714985135; c=relaxed/simple;
-	bh=dJ9zuyrdQMElrOzde31P4H08+N2W3DV9j7dWCbVqR4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pn0glFOlCOoWG/hthTj35BPtSPdxAb3AHtVAW5MMWdN0kmrCKQuFQ3HMdgy/5SYgu17es+2jzMYz1g9Pjj5+qVYB1YiQ4N0t/Q1oaMc24LqZi2gI0tSiLVsw6pdvgqX2RSOTSR9RFpvjfEanoMRpPNeSIJ/VH7+DsNyXBxrC/oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WiQEaAXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E24BC116B1;
-	Mon,  6 May 2024 08:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714985135;
-	bh=dJ9zuyrdQMElrOzde31P4H08+N2W3DV9j7dWCbVqR4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WiQEaAXK+d3VZO4xZnfaaIE7Sfh/pbjnMpO2gmWdDzHwWYp4rCrmzMwXPbAuSq2D8
-	 fH+uA4HbPL5yqyI2GI4Xc1nJoimiQWf+O2OZbhl4eYWFSaH6g9e91opm+dSgDUUjAo
-	 cG3n3hq8hLlCm6ZsuoLuvkOvcM+NPydIKO2b4EhgiC3t07V0qaT/mPyvfrKo2du0XH
-	 JKiCZbDEcy7JnFsbVJDyor6eEcRM3VC21/p2XQujBcHzxcTTufWj4iOIv1ZXu3TpfD
-	 Gedh6JD88bRDWqWtwfa4IVCiDN3PyGp/pVOTPWZ2724+lohSOjT706b6NsDbMz5iyb
-	 wPCurUHMEdlsw==
-Date: Mon, 6 May 2024 10:45:27 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240506-injizieren-administration-f5900157566a@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <20240505-gelehnt-anfahren-8250b487da2c@brauner>
- <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+	s=arc-20240116; t=1714985496; c=relaxed/simple;
+	bh=zXD4uG0d7VL7thhhnSj6RgZn3W6NzV5zkQXwTee/F/Y=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=B1KdvONsiSbjS2O9+VLfB0MsQSuI+HuKlBNDNyQqO0PxJnlJVJCGpnhFyqFpEPkko0jnjjJ/7FhsuRIY4ZX19u/QBPrYLaMg9twxSLOfUpVf3DYt1YPxcs3a7x0eg+wzZQty/Utptf2n2VvnPU6r5c5hQ5LD3CTFR0FcZuDL/pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WQXl4W/y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714985494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cjwsQqESFSzvvYF2Hsd+siFVp0pIuoP5b/kpWCm10Bw=;
+	b=WQXl4W/y1OR+lyy9037BPYbuXplcUhbYBo99rPI/K2QJbWwDDvot7UZRR/NYGFMAWcj84Y
+	o3uUXuRApecz58FXV5NB/V5kF9gYa9dUyrD48VgA1YCfVGB5AXEWCXPBXrJSK+bvRPAkEB
+	1U5wY0iaQ3wfbpN9/8etKk0obmNmrS8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-196-eViCJPYXM6K_A1rrpjJTuA-1; Mon, 06 May 2024 04:51:30 -0400
+X-MC-Unique: eViCJPYXM6K_A1rrpjJTuA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F08A38943A3;
+	Mon,  6 May 2024 08:51:29 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.224.191])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F002200A390;
+	Mon,  6 May 2024 08:51:29 +0000 (UTC)
+Date: Mon, 6 May 2024 10:51:27 +0200
+From: Karel Zak <kzak@redhat.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux stable v2.40.1
+Message-ID: <20240506085127.ywva7jnimovnnrlm@ws.net.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,25 +68,161 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-> The fact is, it's not dma-buf that is violating any rules. It's epoll.
 
-I agree that epoll() not taking a reference on the file is at least
-unexpected and contradicts the usual code patterns for the sake of
-performance and that it very likely is the case that most callers of
-f_op->poll() don't know this.
+The util-linux maintenance release v2.40.1 is now available at: 
 
-Note, I cleary wrote upthread that I'm ok to do it like you suggested
-but raised two concerns a) there's currently only one instance of
-prolonged @file lifetime in f_op->poll() afaict and b) that there's
-possibly going to be some performance impact on epoll().
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.40/
+ 
+Feedback and bug reports, as always, are welcomed.
 
-So it's at least worth discussing what's more important because epoll()
-is very widely used and it's not that we haven't favored performance
-before.
+  Karel
 
-But you've already said that you aren't concerned with performance on
-epoll() upthread. So afaict then there's really not a lot more to
-discuss other than take the patch and see whether we get any complaints.
+
+util-linux v2.40.1 Release Notes
+================================
+
+Changes between v2.40 and v2.40.1
+---------------------------------
+
+README.licensing/flock:
+   - Add MIT license mention  [Richard Purdie]
+agetty:
+   - Don't override TERM passed by the user  [Daan De Meyer]
+   - fix resource leak  [Karel Zak]
+   - make reload code more robust  [Karel Zak]
+all_syscalls:
+   - don't hardcode AWK invocation  [Thomas Weißschuh]
+   - don't warn during cleanup  [Thomas Weißschuh]
+   - fail if any step fails  [Thomas Weißschuh]
+   - use sed to extract defines from headers  [Thomas Weißschuh]
+autotools:
+   - distribute pam_lastlog2/meson.build  [Thomas Weißschuh]
+bcachefs:
+   - Remove BCACHEFS_SB_MAX_SIZE & check  [Tony Asleson]
+build-sys:
+   - release++ (v2.40.1-rc1)  [Karel Zak]
+cal:
+   - use unsigned int to follow union with unsigned int  [Karel Zak]
+docs:
+   - add COPYING.MIT  [Karel Zak]
+   - fix GPL name typo  [Karel Zak]
+   - update AUTHORS file  [Karel Zak]
+   - update v2.40.1-ReleaseNotes  [Karel Zak]
+findmnt:
+   - always zero-terminate SOURCES data  [Thomas Weißschuh]
+   - revise the code for -I and -D option  [Masatake YAMATO]
+fsck.minix:
+   - fix possible overrun  [Karel Zak]
+getopt:
+   - remove free-before-exit  [Karel Zak]
+hwclock:
+   - free temporary variable before return  [Karel Zak]
+   - initialize parser variables  [Karel Zak]
+lastlog2:
+   - begin descriptions of options with a lowercase letter  [Benno Schulenberg]
+lib/pager:
+libblkid:
+   - Fix segfault when blkid.conf doesn't exist  [Karel Zak]
+   - topology/ioctl  correctly handle kernel types  [Thomas Weißschuh]
+   - topology/ioctl  simplify ioctl handling  [Thomas Weißschuh]
+libfdisk:
+   - add initializer to geometry  [Karel Zak]
+libmount:
+   - Fix access check for utab in context  [Karel Zak]
+   - fix comment typo for mnt_fs_get_comment()  [Tianjia Zhang]
+   - fix possible memory leak  [Karel Zak]
+   - fix umount --read-only  [Karel Zak]
+libsmartcols:
+   - fix column reduction  [Karel Zak]
+   - reset wrap after calculation  [Karel Zak]
+libuuid:
+   - (man) fix function declarations  [CismonX]
+losetup:
+   - losetup.8 Clarify --direct-io  [Colin Walters]
+lsblk:
+   - simplify SOURCES code  [Karel Zak]
+lsclocks:
+   - fix FD leak  [Karel Zak]
+lsfd:
+   - (man) fix license name  [Jakub Wilk]
+   - add LSFD_DEBUG env var for debugging  [Masatake YAMATO]
+lslocks:
+   - don't abort gathering per-process information even if opening a /proc/[0-9]* fails  [Masatake YAMATO]
+   - remove a unused local variable  [Masatake YAMATO]
+lsns:
+   - fix netns use  [Karel Zak]
+   - report with warnx if a namespace related ioctl fails with ENOSYS  [Masatake YAMATO]
+   - tolerate lsns_ioctl(fd, NS_GET_{PARENT,USERNS}) failing with ENOSYS  [Masatake YAMATO]
+meson:
+   - Add build-blkdiscard option  [Jordan Williams]
+   - Add build-blkpr option  [Jordan Williams]
+   - Add build-blkzone option  [Jordan Williams]
+   - Add build-blockdev option  [Jordan Williams]
+   - Add build-chcpu option  [Jordan Williams]
+   - Add build-dmesg option  [Jordan Williams]
+   - Add build-enosys option  [Jordan Williams]
+   - Add build-fadvise option  [Jordan Williams]
+   - Add build-fsfreeze option  [Jordan Williams]
+   - Add build-ipcmk option  [Jordan Williams]
+   - Add build-ldattach option  [Jordan Williams]
+   - Add build-lsclocks option  [Jordan Williams]
+   - Add build-lsfd option and make rt dependency optional  [Jordan Williams]
+   - Add build-rtcwake option  [Jordan Williams]
+   - Add build-script option  [Jordan Williams]
+   - Add build-scriptlive option  [Jordan Williams]
+   - Add build-setarch option  [Jordan Williams]
+   - Add have_pty variable to check if pty is available  [Jordan Williams]
+   - Add missing check for build-ipcrm option  [Jordan Williams]
+   - Define _DARWIN_C_SOURCE on macOS as is done in Autotools  [Jordan Williams]
+   - Don't define HAVE_ENVIRON_DECL when environ is unavailable  [Jordan Williams]
+   - Fix build by default and install behavior for build-pipesz option  [Jordan Williams]
+   - Fix false positive detection of mempcpy on macOS  [Jordan Williams]
+   - Only build libmount when required  [Jordan Williams]
+   - Only pick up the rt library once  [Jordan Williams]
+   - Only require the crypt library when necessary  [Jordan Williams]
+   - Only use the --version-script linker flag where it is supported  [Jordan Williams]
+   - Remove libblkid dependency on libmount  [Jordan Williams]
+   - Remove lingering mq_libs variable  [Jordan Williams]
+   - Require pty for the su and runuser executables  [Jordan Williams]
+   - Require the seminfo type for ipcmk, ipcrm, and ipcs  [Jordan Williams]
+   - Use has_type instead of sizeof to detect cpu_set_t type  [Jordan Williams]
+   - Use libblkid as a dependency  [Jordan Williams]
+   - Use libmount as a dependency  [Jordan Williams]
+   - respect c_args/CFLAGS when generating syscalls  [Karel Zak]
+pam_lastlog2:
+   - link against liblastlog  [Thomas Weißschuh]
+po:
+   - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update ko.po (from translationproject.org)  [Seong-ho Cho]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+po-man:
+   - merge changes  [Karel Zak]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update ko.po (from translationproject.org)  [Seong-ho Cho]
+   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
+strutils.h:
+   - Include strings.h header for strncasecmp function  [Jordan Williams]
+tests:
+   - (lsfd  mkfds-multiplexing) skip if /proc/$pid/syscall is broken  [Masatake YAMATO]
+   - (lsns  ioctl_ns) add more debug print  [Masatake YAMATO]
+   - (lsns  ioctl_ns) record stdout/stderr for debugging the case  [Masatake YAMATO]
+   - (test_mkfds  sockdiag) verify the recieved message to detect whether the socket is usable or not  [Masatake YAMATO]
+textual:
+   - fix some typos and inconsistencies in usage and error messages  [Benno Schulenberg]
+wall:
+   - check sysconf() returnvalue  [Karel Zak]
+   - fix possible memory leak  [Karel Zak]
+   - make sure unsigned variable not underflow  [Karel Zak]
+xalloc.h:
+   - Include stdio.h header for vasprintf function  [Jordan Williams]
+
 
