@@ -1,55 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-18788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ADA18BC5A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 03:54:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6595A8BC5B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 04:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B12B1C213DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 01:54:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A74CCB2152D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 02:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4645C3D967;
-	Mon,  6 May 2024 01:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEB43FB89;
+	Mon,  6 May 2024 02:15:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE767381AA;
-	Mon,  6 May 2024 01:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84215EAD2;
+	Mon,  6 May 2024 02:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714960436; cv=none; b=pM2a2qVYq/jgs4TKd4/kvylO1SeT48DIwZTau1WjB1W7zu87nEMdrkg7s3iPh/7boJHT9VgchEcAWt6WZEO0Zal6f4I0UMlfQbG2JYnPamw8DLCHPJyimc7qf+7wIe2gru0dLcI0YF8pf+dlmeE+Y1OHc17JusL8v8Avha5Xwcc=
+	t=1714961721; cv=none; b=j8vEbYinYUicSawowNgppf5t1pajo/Bbu5JL0+kQIGo1iJAMgR9/EUzKp74idjbz0ExiAQdQ9xEyNIlUYfxUrmQORth3kpwrn8Nakf9S/fsJIRwPrv3CDm+jQH2w74XzPfczkFXkGtjXx3TiKxlVPAGEpU+rOHG8YFN8QibKZJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714960436; c=relaxed/simple;
-	bh=0Um1bTmzq570K8fqlUnlNkRzwnus3K7KRW4iXzYpgLc=;
+	s=arc-20240116; t=1714961721; c=relaxed/simple;
+	bh=mUDIFPzPharsssWisgRYGdsHHuDz5PMIOIZIsfNsDNQ=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Jonz3Set6xJb/Mv9rzyPMlI8n0SeiU+/vBeVZsZHjarwle8BAyWjn7or+FIsNCYFwNQjI+7NRHY7sWqV5MpTJn8KrcZCq5v6QoNMmWTDspcYlcSbp00v6TIDdEkXJyfoViD91t2IoZdE2rwN2VO042mbzVgnnEQRHfJq/1hFIQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 In-Reply-To:Content-Type; b=ET9wJc3qeZRzamk8OhSS7E4rl8RFm75JGrsUFnAxg+5M9LE7rq3ynBrNa8BoSqqDmiq7JYcy4QoxFrM52P1QcgAgyC4kWY8Od3uTnrq9fb+DYWkD9uHx1RQfsKmt3QaCIfu0Js2AVzniJg1Y3+sZS6JIcmrlsruDJl+56OAnrY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXkw65L7Xz4f3kjW;
-	Mon,  6 May 2024 09:53:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id E63811A1013;
-	Mon,  6 May 2024 09:53:50 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXlNt0ByBz4f3lXb;
+	Mon,  6 May 2024 10:15:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 44B631A0572;
+	Mon,  6 May 2024 10:15:15 +0800 (CST)
 Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP3 (Coremail) with SMTP id _Ch0CgDX3JQtODhmtM3MLg--.56156S2;
-	Mon, 06 May 2024 09:53:50 +0800 (CST)
-Subject: Re: [PATCH 07/10] writeback: factor out wb_dirty_freerun to remove
- more repeated freerun code
-To: Tejun Heo <tj@kernel.org>
-Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
+	by APP1 (Coremail) with SMTP id cCh0CgB3jgctPThmL6mELw--.10749S2;
+	Mon, 06 May 2024 10:15:11 +0800 (CST)
+Subject: Re: [PATCH 09/10] writeback: factor out wb_dirty_exceeded to remove
+ repeated code
+To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
+ willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz, tj@kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
-References: <20240429034738.138609-1-shikemeng@huaweicloud.com>
- <20240429034738.138609-8-shikemeng@huaweicloud.com>
- <ZjJ5gfIXBmpKMj9c@slm.duckdns.org>
+References: <6d3471cd-f491-4949-ba75-9fae63198b59@moroto.mountain>
 From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <7fecbde8-d4b8-c733-847e-a760efb41571@huaweicloud.com>
-Date: Mon, 6 May 2024 09:53:49 +0800
+Message-ID: <a86ccc01-dbab-2880-68c3-300c257ce5e4@huaweicloud.com>
+Date: Mon, 6 May 2024 10:15:09 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 Precedence: bulk
@@ -58,58 +57,53 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZjJ5gfIXBmpKMj9c@slm.duckdns.org>
+In-Reply-To: <6d3471cd-f491-4949-ba75-9fae63198b59@moroto.mountain>
 Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgDX3JQtODhmtM3MLg--.56156S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFW3XF4kWFy8AFW5Jr45trb_yoWkWwc_Ca
-	n0gry7C3yUJa1DGa47GFWfZFZ8Wa4xXry7Xr1jqw1DWay8JF4kWa43WrZ5CF1xGw48t3sx
-	Cwnxta1kZ3429jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-TRANSID:cCh0CgB3jgctPThmL6mELw--.10749S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFykXryDWw18uF4DAFy8AFb_yoW8Gw18pF
+	4rua98KF4rXr1xtayDJrW7Za1Yqws5Jw17WwnxWw1fZFW29F9Fgr1I9rWagrsF9rn7KryY
+	yrsIvFyDtw1UK3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUrR6zUUUUU
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
 
-Hello,
-on 5/2/2024 1:18 AM, Tejun Heo wrote:
-> On Mon, Apr 29, 2024 at 11:47:35AM +0800, Kemeng Shi wrote:
-> ...
->> +static void wb_dirty_freerun(struct dirty_throttle_control *dtc,
->> +			     bool strictlimit)
->> +{
-> ...
->> +	/*
->> +	 * LOCAL_THROTTLE tasks must not be throttled when below the per-wb
->> +	 * freerun ceiling.
->> +	 */
->> +	if (!(current->flags & PF_LOCAL_THROTTLE))
->> +		return;
+on 4/30/2024 3:24 PM, Dan Carpenter wrote:
+> Hi Kemeng,
 > 
-> Shouldn't this set free_run to true?
-Originally, we will go freerun if PF_LOCAL_THROTTLE is set and number of dirty
-pages is under freerun ceil. So if PF_LOCAL_THROTTLE is *not* set, freerun
-should be false. Maybe I miss something and please correct me, Thanks.
+> kernel test robot noticed the following build warnings:
 > 
-> Also, wouldn't it be better if these functions return bool instead of
-> recording the result in dtc->freerun?
-As I try to factor out balance_wb_limits to calculate freerun, dirty_exceeded
-and position ratio of wb, so wb_dirty_freerun and wb_dirty_exceeded will be
-called indirectly and balance_dirty_pages has to retrieve freerun and
-dirty_exceeded from somewhere like dtc where position ratio is retrieved.
-Would like to know any better idea.
-Thanks.
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
-> Thanks.
+> url:    https://github.com/intel-lab-lkp/linux/commits/Kemeng-Shi/writeback-factor-out-wb_bg_dirty_limits-to-remove-repeated-code/20240429-114903
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+> patch link:    https://lore.kernel.org/r/20240429034738.138609-10-shikemeng%40huaweicloud.com
+> patch subject: [PATCH 09/10] writeback: factor out wb_dirty_exceeded to remove repeated code
+> config: i386-randconfig-141-20240429 (https://download.01.org/0day-ci/archive/20240430/202404300231.bnb28iB8-lkp@intel.com/config)
+> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
 > 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202404300231.bnb28iB8-lkp@intel.com/
+> 
+> New smatch warnings:
+> mm/page-writeback.c:1903 balance_dirty_pages() error: we previously assumed 'mdtc' could be null (see line 1886)
+Will fix this in next version. Thanks a lot for the report.
+
+Kemeng
 
 
