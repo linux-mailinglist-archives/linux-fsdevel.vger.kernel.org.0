@@ -1,115 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-18833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCC68BCEB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 15:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E778BCED2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 15:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBAC282927
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 13:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE282822C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 13:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B175763F0;
-	Mon,  6 May 2024 13:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7A878C89;
+	Mon,  6 May 2024 13:18:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5B644C66;
-	Mon,  6 May 2024 13:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE9B7641E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 13:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715000732; cv=none; b=rIGRcKfNEHVT2ridJiTzJcvCrruAObbh+uDEMnwWCzP/uerbnlIFxlFCxemF352itBrG23fFCDKsBT4u6/lkQ2J0G4yJXrS1sSRSGmBPsR8nH5nbDB8TJSgVY6XJ/sZzlx/iFGobswHQVC/kkntce9jHiiCQtJeYZ739s11Xvvg=
+	t=1715001515; cv=none; b=otrn5PZJoHAbXdGU3y2JysEEullQ396fM9DlQp2Th9ICInqMXsM45Demd2zewzY8pGUxLM5FWRligJv6SNm1Pav9vs4ZsTVDKlnMaKINelD3pfupJxB2Rgl8a/0BvMhZKeCofC3zabvi7t3VMpQDux9z1lY3/wvwlZwA1C7kqWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715000732; c=relaxed/simple;
-	bh=o/sXgNc3t4AhEHZQzACRVWndIPoft8f4vqB8PGglIIo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MaSh/EytpS1MUuZ7I5L+h84RV0eMnIldDzu6OB8PmbvnlkR6qUYGzsSCoCiixCLfl+RHLVNcRAoDSRy/9ZYELugyHedNwABglla1RS2+/RZUucRV7PN2h79SaHr455ydDqe9j5XwesPTf+uwogOzjac9ZaIn9PwvnySM5lqsZaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VY1q04Xwqz4f3jd5;
-	Mon,  6 May 2024 21:05:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id CBBD31A0572;
-	Mon,  6 May 2024 21:05:24 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAnmAuS1ThmXifRMA--.45497S3;
-	Mon, 06 May 2024 21:05:24 +0800 (CST)
-Subject: Re: [RFC PATCH v4 29/34] ext4: fall back to buffer_head path for
- defrag
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
- hch@infradead.org, djwong@kernel.org, willy@infradead.org,
- zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, wangkefeng.wang@huawei.com
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
- <20240410150313.2820364-1-yi.zhang@huaweicloud.com>
- <ZjIMQTAtxZ0NhCD2@dread.disaster.area>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <5dbb3021-b92e-2e53-7eee-5a6595a5ad03@huaweicloud.com>
-Date: Mon, 6 May 2024 21:05:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715001515; c=relaxed/simple;
+	bh=V/up/2lYtF398jVbxFQpvlOQdOIQO1W2NMWn/hoN80Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=blyxxoNKDryTDp/a3L57ryPCe0ozDH2Kki87o7m1ssARMcvJ5TxHeRqwcrEDKAs5Uech6Vdfv8wcfQNg9Af3G+RpfKBaM9klm/y9oEM/uo4YAHl11EcaJOJoy2UdXtWeXeDJks4hdcDo7BZ46mduMyrwcskeeq3hxHAdMpiYgKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7dee48ec44dso213181039f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 06:18:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715001513; x=1715606313;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YcwKLWuIXegQ7OmHl8ESKsXo8407Y2njqb3uaJ2tHCE=;
+        b=RcGGgp0vFH0uKVnqLKGnl9RKKpnuC0es8ZY5n1FFegaWosHZ4B96UUHnfkO7Wj6wAF
+         CPGLJ23xPxgk3tP0B9oufehL1m5ORNw8JCGRecUumVkpgbH0lvo9USPduHvucJdIl99+
+         13zioqrqRW/m5njeKbZYWJFCbcn7rsZva9k0m3eW+oxGPkh8B9w5oCxg5pkRx82BW4Ti
+         zABorHLgXYoWCd72f5BC5wj7xXSYmq0FMvEMse5CO3atlpV7B4f07yHEYEUBLVI9Am/P
+         CL4RuZSocU+HAQZSvBoc3gUgN8TIP6KSXGUNHKlKymqB7j7KmhjUsL0DZW1G5bMe+aCc
+         F3lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHQGvjk67dhM+mqZT+JPabuO80dlFFsyP7u+v3hkPQOxM25QGjkhMOFQA/VCN/e5OI8wvzqqHIvg7rvTyDlarNJsN+/Dy4dyD4rbr+0w==
+X-Gm-Message-State: AOJu0Yzwq4Xftw0OhAqb3r8ZpgUQinByq4KHOnE9kePGL4MzfVSHYXXt
+	hsLrtE3CdNl7bzQHmL8jPEaaMAIU71DYE89NPAcu5Jav7RC9eJE/R+6xWifLAYDhh4dP8cLEYRe
+	5/dKK1wkpvPSW+rcbIMWgaWbYnPyqG1rwmYrMSvqU2eMuAgxAlAQgWPw=
+X-Google-Smtp-Source: AGHT+IEy2h9Lv/3WyA81977yE/QNPlDFgusZ7+onp68DOwCdTvOR+oQtdUkse+NjyOVDBoqsrIzTSZb3JP8nVs5cajVEaMZcbctg
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZjIMQTAtxZ0NhCD2@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAnmAuS1ThmXifRMA--.45497S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jr4kGw4xCryrur4xWFW8Crg_yoWDWwcE9F
-	yrCrWDCw1UJF4xZrsI9rs8KFs2kr4UWr4qqryUXrnFy34FyrZ5XFsYk3yqk34rtFWxuFn0
-	kwn3ZF40vr9rXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbIAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUFDGOUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6638:2489:b0:488:75e3:f3ce with SMTP id
+ x9-20020a056638248900b0048875e3f3cemr296968jat.0.1715001513464; Mon, 06 May
+ 2024 06:18:33 -0700 (PDT)
+Date: Mon, 06 May 2024 06:18:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ffdf280617c8e726@google.com>
+Subject: [syzbot] Monthly ntfs3 report (May 2024)
+From: syzbot <syzbot+list0a6d53d08fa90971e6a1@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/1 17:32, Dave Chinner wrote:
-> On Wed, Apr 10, 2024 at 11:03:08PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Online defrag doesn't support iomap path yet, we have to fall back to
->> buffer_head path for the inode which has been using iomap. Changing
->> active inode is dangerous, before we start, we must hold the inode lock
->> and the mapping->invalidate_lock, and writeback all dirty folios and
->> drop the inode's pagecache.
-> 
-> Even then, I don't think this is obviously safe. We went through
-> this with DAX and we couldn't make it work safely.
-> 
-> Just return EOPNOTSUPP to the online defrag ioctl if iomap is in use
-> - that avoids all the excitement involved in doing dangerous things
-> like swapping aops structures on actively referenced inodes...
-> 
+Hello ntfs3 maintainers/developers,
 
-Okay, this is just a temporary solution to support defrag. I've been
-looking at how to support defrag for iomap recently, I hope it could
-be supported in the near future, so let's drop this dangerous
-operation.
+This is a 31-day syzbot report for the ntfs3 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ntfs3
 
-Thanks,
-Yi.
+During the period, 7 new issues were detected and 0 were fixed.
+In total, 38 issues are still open and 48 have been fixed so far.
 
+Some of the still happening issues:
 
+Ref  Crashes Repro Title
+<1>  11902   Yes   VFS: Busy inodes after unmount (use-after-free)
+                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
+<2>  5503    Yes   possible deadlock in ntfs_read_folio
+                   https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
+<3>  4669    Yes   KMSAN: uninit-value in longest_match_std (2)
+                   https://syzkaller.appspot.com/bug?extid=08d8956768c96a2c52cf
+<4>  3286    Yes   possible deadlock in mi_read
+                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
+<5>  3080    Yes   possible deadlock in ni_fiemap
+                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
+<6>  2684    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
+                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
+<7>  2085    Yes   possible deadlock in attr_data_get_block
+                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
+<8>  729     Yes   possible deadlock in ntfs_fiemap
+                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
+<9>  723     Yes   kernel BUG in dnotify_free_mark
+                   https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
+<10> 141     Yes   possible deadlock in ntfs_set_state (2)
+                   https://syzkaller.appspot.com/bug?extid=c2ada45c23d98d646118
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
