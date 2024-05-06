@@ -1,109 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-18824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2468BCC1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 12:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CDD8BCC35
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 12:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065841C21B94
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 10:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98A4C1C21684
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 10:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038EC142914;
-	Mon,  6 May 2024 10:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yn+vNPDK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B650D142E63;
+	Mon,  6 May 2024 10:42:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7324204B;
-	Mon,  6 May 2024 10:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9B8757EA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 10:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714991935; cv=none; b=p5vE86fX8JmEAALRWNEWd2GFHm1UHckhutbWyOMZbM6ot8LZ6iAqMC+zTQKSxPxwLH3iJTTdJMr2iQJfD3b9dmuUFZ1NtFJ71JlDTId4dXq8csKz2+ppAeJdWGVXs5hIxfGbb3tXhxVZ5LwMTQk4XbGr9gL7Hez1L9xh10uXHVQ=
+	t=1714992167; cv=none; b=bzHd8Ln2ADXKkS5ytaA6Uu0cJpYlssUCkw3mb/oGs3ke0s+Dz3WJoCsZ5At9gL2OvQgEmzcAHI4qn0aBdpRh/+4Mu24pxKIQVOz0t7/mvNGGiqyEgGWc9ZkPOiAlepHpiAx4o23fg7/4l1JnQG3hLAP5vWmNHNjLQdukqqvsL40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714991935; c=relaxed/simple;
-	bh=02jhnwOiS0QtF/pgwOtieUVchda/o2cZ6028VWK7IZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwtp4ny8Q++yp8KANC2viWr1kzZCZi5mgTbaWVlZjGVziTLc/6QARCowRV6Pe3xVPpUK3MN0xsHHoNnFVadvuVQsZ54d9VSgff3bcJYIvsEAOdoHalF3pSlrQdJ5VlD+2Y3wL9GsNT5+ReSlnq3vUUeX5H+4KH9RZZPt4ZYLi6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yn+vNPDK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C1vNOBcYPu24/KsvOJhsEyUZ+lh1CQwNcPGM2ZQDJdw=; b=Yn+vNPDKwqkHpn+SytUx3aohk3
-	V6AUgZayL5XgR539k2baEwTGggGTOPdp7XT+WqO9+AEDX1JDCrG0pn74gbMc9iqehd4EPQ9D4Kit7
-	Dc2kMXAiJwX+l0hnxn8chx6jtI6Fje92rS8duHVP2WU10yUz/r18pQzxHQ1Q1PjFVzy3rCcc507my
-	E/nlwFj4fCuJ/KAzTZXyJ3uc03f0vB90CRXd+XTR7flyF/oFLFriMfAViQMBgz5lcZbH1/mk7BzQD
-	RrQdJBEdFl/oD9I1YpNJL7InZ3XZ1zfyP143rDERtb9j8IOq38fn4GM75uiSMvImnWWIltQPvSoye
-	ufnBqn/A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s3vk8-0000000AjiN-3zQ6;
-	Mon, 06 May 2024 10:38:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 991FA300362; Mon,  6 May 2024 12:38:48 +0200 (CEST)
-Date: Mon, 6 May 2024 12:38:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Christian Brauner <brauner@kernel.org>,
+	s=arc-20240116; t=1714992167; c=relaxed/simple;
+	bh=FOkc0F168y7Hb3+T+9xBbpPteMZGo/OxA02Dyz4/hj4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LGt2ID0l1VTWaY1ehKI1QwM5vGJU8j/nM/rMYo+zMP8kcqnD8u1a3Huw8mx6aRt5MX1FriqwYSF1QpAsx682XAEkUH5FLJOeZCgPAKpPYpLteIpriy5XQsPr0SfzoOgUhiWUuLYoDTPYQrIxzUj6u7u73TQUbKL+7EG/z6gQd+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.66.0])
+	by sina.com (10.75.12.45) with ESMTP
+	id 6638B3F30000281D; Mon, 6 May 2024 18:41:57 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 73643631457703
+X-SMAIL-UIID: 3117179399554E659D0FA43F880B37D2-20240506-184157-1
+From: Hillf Danton <hdanton@sina.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Jann Horn <jannh@google.com>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] fs: WARN when f_count resurrection is attempted
-Message-ID: <20240506103848.GN40213@noisy.programming.kicks-ass.net>
-References: <20240503201620.work.651-kees@kernel.org>
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] fs: Do not allow get_file() to resurrect 0 f_count
+Date: Mon,  6 May 2024 18:41:47 +0800
+Message-Id: <20240506104147.2139-1-hdanton@sina.com>
+In-Reply-To: <20240503-mitmachen-redakteur-2707ab0cacc3@brauner>
+References: <20240502222252.work.690-kees@kernel.org> <20240502223341.1835070-1-keescook@chromium.org> <CAG48ez0d81xbOHqTUbWcBFWx5WY=RM8MM++ug79wXe0O-NKLig@mail.gmail.com> <202405021600.F5C68084D@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503201620.work.651-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 03, 2024 at 01:16:25PM -0700, Kees Cook wrote:
-> It should never happen that get_file() is called on a file with
-> f_count equal to zero. If this happens, a use-after-free condition
-> has happened[1], and we need to attempt a best-effort reporting of
-> the situation to help find the root cause more easily. Additionally,
-> this serves as a data corruption indicator that system owners using
-> warn_limit or panic_on_warn would like to have detected.
+On Fri, 3 May 2024 11:02:57 +0200 Christian Brauner <brauner@kernel.org>
+> On Thu, May 02, 2024 at 04:03:24PM -0700, Kees Cook wrote:
+> > On Fri, May 03, 2024 at 12:53:56AM +0200, Jann Horn wrote:
+> > > On Fri, May 3, 2024 at 12:34 AM Kees Cook <keescook@chromium.org> wrote:
+> > > > If f_count reaches 0, calling get_file() should be a failure. Adjust to
+> > > > use atomic_long_inc_not_zero() and return NULL on failure. In the future
+> > > > get_file() can be annotated with __must_check, though that is not
+> > > > currently possible.
+> > > [...]
+> > > >  static inline struct file *get_file(struct file *f)
+> > > >  {
+> > > > -       atomic_long_inc(&f->f_count);
+> > > > +       if (unlikely(!atomic_long_inc_not_zero(&f->f_count)))
+> > > > +               return NULL;
+> > > >         return f;
+> > > >  }
+> > > 
+> > > Oh, I really don't like this...
+> > > 
+> > > In most code, if you call get_file() on a file and see refcount zero,
+> > > that basically means you're in a UAF write situation, or that you
+> > > could be in such a situation if you had raced differently. It's
+> > > basically just like refcount_inc() in that regard.
+> > 
+> > Shouldn't the system attempt to not make things worse if it encounters
+> > an inc-from-0 condition? Yes, we've already lost the race for a UaF
+> > condition, but maybe don't continue on.
+> > 
+> > > And get_file() has semantics just like refcount_inc(): The caller
+> > > guarantees that it is already holding a reference to the file; and if
+> > 
+> > Yes, but if that guarantee is violated, we should do something about it.
+> > 
+> > > the caller is wrong about that, their subsequent attempt to clean up
+> > > the reference that they think they were already holding will likely
+> > > lead to UAF too. If get_file() sees a zero refcount, there is no safe
+> > > way to continue. And all existing callers of get_file() expect the
+> > > return value to be the same as the non-NULL pointer they passed in, so
+> > > they'll either ignore the result of this check and barrel on, or oops
+> > > with a NULL deref.
+> > > 
+> > > For callers that want to actually try incrementing file refcounts that
+> > > could be zero, which is only possible under specific circumstances, we
+> > > have helpers like get_file_rcu() and get_file_active().
+> > 
+> > So what's going on in here:
+> > https://lore.kernel.org/linux-hardening/20240502223341.1835070-2-keescook@chromium.org/
 > 
-> Link: https://lore.kernel.org/lkml/7c41cf3c-2a71-4dbb-8f34-0337890906fc@gmail.com/ [1]
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->  include/linux/fs.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Afaict, there's dma_buf_export() that allocates a new file and sets:
 > 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 00fc429b0af0..fa9ea5390f33 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1038,7 +1038,8 @@ struct file_handle {
->  
->  static inline struct file *get_file(struct file *f)
->  {
-> -	atomic_long_inc(&f->f_count);
-> +	long prior = atomic_long_fetch_inc_relaxed(&f->f_count);
-> +	WARN_ONCE(!prior, "struct file::f_count incremented from zero; use-after-free condition present!\n");
-
-This reminds me, I should some day try and fix the horrible code-gen for
-WARN() :/ WARN_ON_*() and friends turn into a single trap instruction,
-but the WARN() and friends thing turns into a horrible piece of crap for
-the printk().
+> file->private_data = dmabuf;
+> dmabuf->file = file;
+> 
+> The file has f_op->release::dma_buf_file_release() as it's f_op->release
+> method. When that's called the file's refcount is already zero but the
+> file has not been freed yet. This will remove the dmabuf from some
+> public list but it won't free it.
+> 
+> Then we see that any dentry allocated for such a dmabuf file will have
+> dma_buf_dentry_ops which in turn has
+> dentry->d_release::dma_buf_release() which is where the actual release
+> of the dma buffer happens taken from dentry->d_fsdata.
+> 
+> That whole thing calls allocate_file_pseudo() which allocates a new
+> dentry specific to that struct file. That dentry is unhashed (no lookup)
+> and thus isn't retained so when dput() is called and it's the last
+> reference it's immediately followed by
+> dentry->d_release::dma_buf_release() which wipes the dmabuf itself.
+> 
+> The lifetime of the dmabuf is managed via fget()/fput(). So the lifetime
+> of the dmabuf and the lifetime of the file are almost identical afaict:
+> 
+> __fput()
+> -> f_op->release::dma_buf_file_release() // handles file specific freeing
+> -> dput()
+>    -> d_op->d_release::dma_buf_release() // handles dmabuf freeing
+>                                          // including the driver specific stuff.
+> 
+> If you fput() the file then the dmabuf will be freed as well immediately
+> after it when the dput() happens in __fput() (I struggle to come up with
+> an explanation why the freeing of the dmabuf is moved to
+> dentry->d_release instead of f_op->release itself but that's a separate
+> matter.).
+> 
+> So on the face of it without looking a little closer
+> 
+> static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
+> {
+>         return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
+> }
+> 
+> looks wrong or broken. Because if dmabuf->file->f_count is 0 it implies
+> that @dmabuf should have already been freed. So the bug would be in
+> accessing @dmabuf. And if @dmabuf is valid then it automatically means
+> that dmabuf->file->f_count isn't 0. So it looks like it could just use
+> get_file().
+> 
+> _But_ the interesting bits are in ttm_object_device_init(). This steals
+> the dma_buf_ops into tdev->ops. It then takes dma_buf_ops->release and
+> stores it away into tdev->dma_buf_release. Then it overrides the
+> dma_buf_ops->release with ttm_prime_dmabuf_release(). And that's where
+> the very questionable magic happens.
+> 
+> So now let's say the dmabuf is freed because of lat fput(). We now get
+> f_op->release::dma_buf_file_release(). Then it's followed by dput() and
+> ultimately dentry->d_release::dma_buf_release() as mentioned above.
+> 
+> But now when we get:
+> 
+> dentry->d_release::dma_buf_release()
+> -> dmabuf->ops->release::ttm_prime_dmabuf_release()
+> 
+> instead of the original dmabuf->ops->release method that was stolen into
+> tdev->dmabuf_release. And ttm_prime_dmabuf_release() now calls
+> tdev->dma_buf_release() which just frees the data associated with the
+> dmabuf not the dmabuf itself.
+> 
+> ttm_prime_dmabuf_release() then takes prime->mutex_lock replacing
+> prime->dma_buf with NULL.
+> 
+> The same lock is taken in ttm_prime_handle_to_fd() which is picking that
+> dmabuf from prime->dmabuf. So the interesting case is when
+> ttm_prime_dma_buf_release() has called tdev->dmabuf_release() and but
+> someone else maanged to grab prime->mutex_lock before
+> ttm_prime_dma_buf_release() could grab it to NULL prime->dma_buf.
+> 
+> So at that point @dmabuf hasn't been freed yet and is still valid. So
+> dereferencing prime->dma_buf is still valid and by extension
+> dma_buf->file as their lifetimes are tied.
+> 
+> IOW, that should just use get_file_active() which handles that just
+> fine.
+> 
+> And while that get_dma_buf_unless_doomed() thing is safe that whole code
+> reeks of a level of complexity that's asking for trouble.
+> 
+> But that has zero to do with get_file() and it is absolutely not a
+> reason to mess with it's semantics impacting every caller in the tree.
+> 
+> > 
+> > > Can't you throw a CHECK_DATA_CORRUPTION() or something like that in
+> > > there instead?
+> > 
+> > I'm open to suggestions, but given what's happening with struct dma_buf
+> > above, it seems like this is a state worth checking for?
+> 
+> No, it's really not. If you use get_file() you better know that you're
+> already holding a valid reference that's no reason to make it suddenly
+> fail.
+> 
+But the simple question is, why are you asking dma_buf to poll a 0 f_count
+file? All fine if you are not.
 
