@@ -1,127 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-18830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876A98BCE01
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 14:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9928BCE11
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 14:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0CA9B24A76
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 12:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB331B2318B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 12:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A333E2744B;
-	Mon,  6 May 2024 12:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207F54084D;
+	Mon,  6 May 2024 12:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FvBv2a8y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980C4748F;
-	Mon,  6 May 2024 12:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BC01DA22
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 12:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714998797; cv=none; b=GrP2ozyHrK5tt22LFqWEZk/5u7QJfgniweu8f8+ebO+ZoL50DDMuZPpXvSA2VJ3FichLBNMKKbLUU+3V3YVbWgwp+IzB3alk8RFc+mgYUyO9DiApWSQDycjZVKN7dg/qqxbtuc3NHv0rIgkWKYcgC31SmDZEELGQwNWGrwqypPQ=
+	t=1714999036; cv=none; b=hfvIvK/oeA8Yse5E6eR9cAaKpTi0skSkojcfHa+oTZWBQiKOidpj7eaX4hKMS02HSSE+Y58nwnh+x+nJDhAp3zWMCWJQQ3LEgcddRBCeRQcO87emN1A8Rh9oyZ9cEfTqg0w9DJBGwTSKfCyboKVOAKN2bhdFXydl/QVBVjiEqR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714998797; c=relaxed/simple;
-	bh=DEA1KM0ghvQd+HuV8xLB5tsfrrm9padoKe5B5fuFlsE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GR6KNQrJLoxZgefgdSmG4YcIsPXsa2v+8rsSGSoHTNnv8pPDPy/jndbPidrM5xMHVcGImZlXD5/Gp8qAsLBDw/MYOJdTPHxB4zkiEU9ZUeXjSVsighvHE6TkJK16iBveieoj157kHbpZLsO6zVQMennsQ/3hwlwHpUk1o+fBPxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY15q13XZz4f3l85;
-	Mon,  6 May 2024 20:33:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 642991A058D;
-	Mon,  6 May 2024 20:33:08 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDH6w4CzjhmXgPPMA--.59039S3;
-	Mon, 06 May 2024 20:33:08 +0800 (CST)
-Subject: Re: [RFC PATCH v4 27/34] ext4: implement zero_range iomap path
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
- hch@infradead.org, djwong@kernel.org, willy@infradead.org,
- zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, wangkefeng.wang@huawei.com
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
- <20240410142948.2817554-28-yi.zhang@huaweicloud.com>
- <ZjIN9nuV6SaNODfE@dread.disaster.area>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <f59c3015-7029-9cd0-f5f0-087dfc1f24d0@huaweicloud.com>
-Date: Mon, 6 May 2024 20:33:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1714999036; c=relaxed/simple;
+	bh=W0ii3TeUy067aqvyqv+adtlSG49/aqc2GUx5qBI/NZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oM2oGAm/QRZyy3lY3dKp/F3Yve0eZMtmXewDaGGDchwrvpBIlByOCWFKib7SXFDR2SXoRGKCjZZgGOFTmzvVBBIcxduQAUbBy/IZ5b5eIlv2dfadXr/c4hvjL8+aRe01+4t8IdGh1qGIuKOHzFGltq/GpLoEVQJyvtfOGdfKyNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=FvBv2a8y; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41ecf80482bso1247275e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 05:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1714999033; x=1715603833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NmNWteJIHVG/FsNg6lLCmILTCJBN+MkrWHLSaZrPJk4=;
+        b=FvBv2a8y7KaPOzeWXOlRwnY4lH1/WLZlQfEApXgvbpTUi6F1uRXzYtzHLxd34xbg1u
+         lzQ4L8SrSgf8fTvp0TUjJwrwNvxd5DfSFpaHbPJ0Vust7ey2Py3OgetloVHthlUVf9qR
+         z3R54uLMsCTneHkdevvCARM3z2xfNRrIIF8DQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714999033; x=1715603833;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NmNWteJIHVG/FsNg6lLCmILTCJBN+MkrWHLSaZrPJk4=;
+        b=Fyp/XFd4yXmZygoMa/m0eVmxQGeoIHhxHQi1Q+pHJLBJsFjBm72ZH9LhIU5cZLni18
+         352MbGuwvgCQI7SZWuWUhofT3LxgRD4KxpuLklFSQWjUeDA6yK5UwmSWV1US+Izg29QH
+         XBHxCtPYSh9H05OqmOVACgBYMmXgmBmn5Cuc8Z7/VoNJzTS7p1Y1zO3a0nBFAzwcsN6z
+         U9asWG+ts0gssJuN38jHBmE6aCVhI6slAr12ZhYcbuXWqlILFngKW6r6oVvb6fWNeRhs
+         v1pUcYMCqJuSuNB7vWPxDZO/eBEgtc/cxe9A/kycPykz6vG5jwfxmA5bL3zshCd1fXhh
+         geog==
+X-Forwarded-Encrypted: i=1; AJvYcCXcmims40++syxP8lQloxHzDuB3QWKrlS8iy2h9V3bxZVNVSqOOjmduX7XLi6gsbVq6hDGW/WYtM3XWoMl5p4nvvc8sQVPrSw+Y3rWPJA==
+X-Gm-Message-State: AOJu0YwGg3OHzmswicocjkmsAYx3SdrTFHr/Fw9Y+lp3gf9Hwnf6bxei
+	E+AHpDeGE5Xb+GBTL7sni5e8LeeHa1c5SK53x+x2SS//i4vY4tYM5POWTyWX7Sw=
+X-Google-Smtp-Source: AGHT+IF4oVKBpTMWMqUQ/dzQ+O/7RQpt5fMGVwZ3eSkPNG4BC5o71WjeNR+MccKjqHnTIbg2KzBZFg==
+X-Received: by 2002:a05:600c:1d25:b0:418:ef65:4b11 with SMTP id l37-20020a05600c1d2500b00418ef654b11mr7944219wms.2.1714999033407;
+        Mon, 06 May 2024 05:37:13 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id je16-20020a05600c1f9000b0041c7ac6b0ffsm19767802wmb.37.2024.05.06.05.37.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 05:37:13 -0700 (PDT)
+Date: Mon, 6 May 2024 14:37:10 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	axboe@kernel.dk, brauner@kernel.org, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <ZjjO9kaRjT48Uyuc@phenom.ffwll.local>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, axboe@kernel.dk,
+	brauner@kernel.org, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240503214531.GB2118490@ZenIV>
+ <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
+ <202405031529.2CD1BFED37@keescook>
+ <20240503230318.GF2118490@ZenIV>
+ <202405031616.793DF7EEE@keescook>
+ <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZjIN9nuV6SaNODfE@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDH6w4CzjhmXgPPMA--.59039S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1ktFWkGF4ktw15AF45Awb_yoW8Grykpr
-	Z5KFy8Kr12gr97uFZ2gFZrXryFya13Gw48WrW3Jrn8Z343WryxKFyjgF1093W8X3y7A340
-	vF1UW34Igw15AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UZ18PUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On 2024/5/1 17:40, Dave Chinner wrote:
-> On Wed, Apr 10, 2024 at 10:29:41PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Add ext4_iomap_zero_range() for the zero_range iomap path, it zero out
->> the mapped blocks, all work have been done in iomap_zero_range(), so
->> call it directly.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/ext4/inode.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 9d694c780007..5af3b8acf1b9 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -4144,6 +4144,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
->>  	return err;
->>  }
->>  
->> +static int ext4_iomap_zero_range(struct inode *inode,
->> +				 loff_t from, loff_t length)
->> +{
->> +	return iomap_zero_range(inode, from, length, NULL,
->> +				&ext4_iomap_buffered_read_ops);
->> +}
+On Fri, May 03, 2024 at 04:41:19PM -0700, Linus Torvalds wrote:
+> On Fri, 3 May 2024 at 16:23, Kees Cook <keescook@chromium.org> wrote:
+> >
+> > static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
+> > {
+> >         return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
+> > }
+> >
+> > If we end up adding epi_fget(), we'll have 2 cases of using
+> > "atomic_long_inc_not_zero" for f_count. Do we need some kind of blessed
+> > helper to live in file.h or something, with appropriate comments?
 > 
-> Zeroing is a buffered write operation, not a buffered read
-> operation. It runs though iomap_write_begin(), so needs all the
-> stale iomap detection stuff to be set up for correct operation.
+> I wonder if we could try to abstract this out a bit more.
 > 
+> These games with non-ref-counted file structures *feel* a bit like the
+> games we play with non-ref-counted (aka "stashed") 'struct dentry'
+> that got fairly recently cleaned up with path_from_stashed() when both
+> nsfs and pidfs started doing the same thing.
+> 
+> I'm not loving the TTM use of this thing, but at least the locking and
+> logic feels a lot more straightforward (ie the
+> atomic_long_inc_not_zero() here is clealy under the 'prime->mutex'
+> lock
 
-Yeah, right, thanks for point this out. Although we can guarantee
-that the zeroing is a partial block overwrite and no need to
-allocate new blocks on ext4, use ext4_iomap_buffered_read_ops is
-not appropriate, I'll use write ops instead.
+The one the vmgfx isn't really needed (I think at least), because all
+other drivers that use gem or ttm use the dma_buf export cache in
+drm/drm_prime.c, which is protected by a bog standard mutex.
 
-Thanks,
-Yi.
+vmwgfx is unfortunately special in a lot of ways due to somewhat parallel
+dev history. So there might be an uapi reason why the weak reference is
+required. I suspect because vmwgfx is reinventing a lot of its own wheels
+it can't play the same tricks as gem_prime.c, which hooks into a few core
+drm cleanup/release functions.
 
+tldr; drm really has no architectural need for a get_file_unless_doomed,
+and I certainly don't want to spread it it further than the vmwgfx
+historical special case that was added in 2013.
+-Sima
+
+> IOW, the tty use looks correct to me, and it has fairly simple locking
+> and is just catching the the race between 'fput()' decrementing the
+> refcount and and 'file->f_op->release()' doing the actual release.
+> 
+> You are right that it's similar to the epoll thing in that sense, it
+> just looks a _lot_ more straightforward to me (and, unlike epoll,
+> doesn't look actively buggy right now).
+> 
+> Could we abstract out this kind of "stashed file pointer" so that we'd
+> have a *common* form for this? Not just the inc_not_zero part, but the
+> locking rule too?
+> 
+>               Linus
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
