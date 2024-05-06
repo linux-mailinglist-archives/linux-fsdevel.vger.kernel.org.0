@@ -1,165 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-18840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A80B8BD0A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 16:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE46B8BD19B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 17:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 784A81C22EAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 14:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 649EF1F22FD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 15:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EDE153BD2;
-	Mon,  6 May 2024 14:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314DA155727;
+	Mon,  6 May 2024 15:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugeRHaDQ"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cQFpOZH5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CB9153560;
-	Mon,  6 May 2024 14:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B64153814
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 15:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006822; cv=none; b=AdN3JtQrb2+u3jez4V8FrP6FQlitnsyl83w+cW7Kf4DatEqz5WiOESjE72xQiVClsWZ+xMjICFmOprava1t00OdptOT1/AdSU/p1WRGOCGekP5Uvn7fHGKPnv7bIMEhqpvmyM/U9B07PaSWUFWD1kWrVt22sAjCWajIw5eyef04=
+	t=1715009797; cv=none; b=RU244Pvm5/9Isbr0sbQic4G8Q433BLC6PgpecHg7qZx/l3s8L6Lt4iRLIlJpuWfK0sey/ZDRjGxJYA2HnvbxXhjrvlD0QhlsJljlH2nn8lgBcexHu1vBVgevJzVkUFxFUf4ZWuj/MEIMfOM5wq790pgU+xkeSn+FBcWcrWAx1Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006822; c=relaxed/simple;
-	bh=TkHZP7XlXFcz7qCoE1negTmOxafh0ALA2JDVAJb16QA=;
+	s=arc-20240116; t=1715009797; c=relaxed/simple;
+	bh=okolZHTegM6x+ttsho59LkzT+8+G6g01I/qGFOeSb1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ni+SdlcvltWDGXUkaUJbajkNxhFvdEVxtZA0FLaw3C6qav8lMVqQaXwM6JKP0BFD9gg6wGLs3v3puTib+bhvXHwHNar5/QxRbvIk8JrUDr0AjV/AAf2mrwva5+0L0DcGRgBfhsFFFh06JlEGQh/QLrzCA9wDL1EIx2wn0g9nNdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugeRHaDQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25F5C116B1;
-	Mon,  6 May 2024 14:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715006822;
-	bh=TkHZP7XlXFcz7qCoE1negTmOxafh0ALA2JDVAJb16QA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ugeRHaDQCUFiLV5e4d8/x3N0vsSrmrK5A01rmHCu51w94by8Xy8aZWz7jObaQTgvD
-	 8UrKKGVuBXjzb8mj5E0rkyY0Xg4XaNXw4RGGbS9f5jMn+6BcYy73eAfb319OPbG2d1
-	 95WBugJ4GbpV0kdvqGsLTaBM47fYtSzOf3YyFJaKvSr0Vqx6H0d4SVv1yjkMSX/Uuo
-	 0RZmvQ1uFmtOrGVtlXSIdipKTneUDjSQdD3Hr7CNoMSkOKTxiW8A9QkeN+FDuAXUUc
-	 IXtadcOYdfzD8Cdo6oyT9DbI9yz+3gNjpTf7nG4+7XvWypQMm8f9tc7dTAglwHDYC3
-	 iWq7zC5dcCWYA==
-Date: Mon, 6 May 2024 16:46:54 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com, 
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240506-zweisamkeit-zinsniveau-615a2e6d7c67@brauner>
-References: <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
- <20240505194603.GH2118490@ZenIV>
- <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
- <20240505203052.GJ2118490@ZenIV>
- <CAHk-=whFg8-WyMbVUGW5c0baurGzqmRtzFLoU-gxtRXq2nVZ+w@mail.gmail.com>
- <ZjjRWybmAmClMMI9@phenom.ffwll.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IAocHagayAPBqk+P08tdc1PWtIpvzLe2XY7nH7S29obYH675dENeeSZ9U7BiKt87Vy1C2yEksAg3zgc1aFRr4AeYwWqPg5h1UbErI5GqPKYach2Gi9m8KpcY0Pr86s1D2e8nR0I+H2YlvDl6z8heDCjUEIFyztxCje/VeCaWryM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cQFpOZH5; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34db6a299b8so1320576f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 08:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715009793; x=1715614593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IgNpmP+KnJqaBxDJdkx9mmwg/WMduzGDywLz1udliyw=;
+        b=cQFpOZH5Xpzym7IOsT74wRI3xbCyAlwMdjKhDrUwSQkh3C6YmrBWl84NQNRZmfINMs
+         JUkE26V2JcrNSE5moXI+qSVg3YcsTvo9jXI6QLvk8FNOuOeAw6A6o+L8HjozxigwyYp/
+         k4k1wYHcFVbmvO0DJlZNG3Q8s8KWLlY5n+MpkhY7lPwIcWlPOixgRrQXxFpnPU7Nburh
+         Gj3SCMhK2k+yLHioZ372OOb43rKXJ8I4nw6RORWJGV1tToFgzHdCLYx5tLw0w+Yj9o4L
+         riur0ex102/RYl7UW8fwIdSUVGbC1GBT10VyLWXDchWzg+ObsTMF8l9HmFXmiyS0PHLp
+         ZDeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715009793; x=1715614593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IgNpmP+KnJqaBxDJdkx9mmwg/WMduzGDywLz1udliyw=;
+        b=V+r3+B1USqaLKgPyefcEkozVL3epltNOIoAnYMKwgFyv70/BdL1cC/GPdgQyWr3csn
+         l7nJo+EW4+jS9bC7UrTrl36iigVweGQe4SNzKZwIG49WyyM0fR49QTapQTg5h3P21Gda
+         fxly1Ahal2dHLKuw9WIID254rMDQB1z9+PCsrqmdiwJ7b4VL4FcUzvQTOaNleO5IeICk
+         Lyewd4Km8IUidLAB7rlgvJU7kvpzod1R8vUzjiPUTeAXrZ6KJt8mvEdAmli9DJ1GZBtb
+         1xuhahGtrEpGejdBUL8WDYEZvnXm+H7diye8skf5TUNMcgO/tT35s926V1vUtbGy1y0k
+         Upcg==
+X-Gm-Message-State: AOJu0YxuW08A10aDJleSOlKTPiRnGhGzq+YeRmExSuKQidlPvhLMmkoy
+	ByCdjTYkqUqU3c5DCmvozr/wjeRwXEVLCGRMC3myYfuKJRvzej0ZiZy9zKPVyo8=
+X-Google-Smtp-Source: AGHT+IGbZTNMLu6hbhyt1bmjEn3Jajf73supUMbIrefeBp7HlOrwI13gU2mgVw4zZHXxgYrif3Od3g==
+X-Received: by 2002:a5d:5742:0:b0:34e:3cb3:6085 with SMTP id q2-20020a5d5742000000b0034e3cb36085mr7080161wrw.62.1715009793016;
+        Mon, 06 May 2024 08:36:33 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id k3-20020adff5c3000000b00349a5b8eba6sm10895265wrp.34.2024.05.06.08.36.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 08:36:32 -0700 (PDT)
+Date: Mon, 6 May 2024 17:36:30 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: yoann.congal@smile.fr
+Cc: linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	x86@kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Borislav Petkov <bp@alien8.de>, Darren Hart <dvhart@infradead.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Subject: Re: [PATCH RESEND v6 3/3] printk: Remove redundant CONFIG_BASE_FULL
+Message-ID: <Zjj4_hWkz9-qHnWe@pathway.suse.cz>
+References: <20240505080343.1471198-1-yoann.congal@smile.fr>
+ <20240505080343.1471198-4-yoann.congal@smile.fr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjjRWybmAmClMMI9@phenom.ffwll.local>
+In-Reply-To: <20240505080343.1471198-4-yoann.congal@smile.fr>
 
-On Mon, May 06, 2024 at 02:47:23PM +0200, Daniel Vetter wrote:
-> On Sun, May 05, 2024 at 01:53:48PM -0700, Linus Torvalds wrote:
-> > On Sun, 5 May 2024 at 13:30, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > 0.      special-cased ->f_count rule for ->poll() is a wart and it's
-> > > better to get rid of it.
-> > >
-> > > 1.      fs/eventpoll.c is a steaming pile of shit and I'd be glad to see
-> > > git rm taken to it.  Short of that, by all means, let's grab reference
-> > > in there around the call of vfs_poll() (see (0)).
-> > 
-> > Agreed on 0/1.
-> > 
-> > > 2.      having ->poll() instances grab extra references to file passed
-> > > to them is not something that should be encouraged; there's a plenty
-> > > of potential problems, and "caller has it pinned, so we are fine with
-> > > grabbing extra refs" is nowhere near enough to eliminate those.
-> > 
-> > So it's not clear why you hate it so much, since those extra
-> > references are totally normal in all the other VFS paths.
-> > 
-> > I mean, they are perhaps not the *common* case, but we have a lot of
-> > random get_file() calls sprinkled around in various places when you
-> > end up passing a file descriptor off to some asynchronous operation
-> > thing.
-> > 
-> > Yeah, I think most of them tend to be special operations (eg the tty
-> > TIOCCONS ioctl to redirect the console), but it's not like vfs_ioctl()
-> > is *that* different from vfs_poll. Different operation, not somehow
-> > "one is more special than the other".
-> > 
-> > cachefiles and backing-file does it for regular IO, and drop it at IO
-> > completion - not that different from what dma-buf does. It's in
-> > ->read_iter() rather than ->poll(), but again: different operations,
-> > but not "one of them is somehow fundamentally different".
-> > 
-> > > 3.      dma-buf uses of get_file() are probably safe (epoll shite aside),
-> > > but they do look fishy.  That has nothing to do with epoll.
-> > 
-> > Now, what dma-buf basically seems to do is to avoid ref-counting its
-> > own fundamental data structure, and replaces that by refcounting the
-> > 'struct file' that *points* to it instead.
-> > 
-> > And it is a bit odd, but it actually makes some amount of sense,
-> > because then what it passes around is that file pointer (and it allows
-> > passing it around from user space *as* that file).
-> > 
-> > And honestly, if you look at why it then needs to add its refcount to
-> > it all, it actually makes sense.  dma-bufs have this notion of
-> > "fences" that are basically completion points for the asynchronous
-> > DMA. Doing a "poll()" operation will add a note to the fence to get
-> > that wakeup when it's done.
-> > 
-> > And yes, logically it takes a ref to the "struct dma_buf", but because
-> > of how the lifetime of the dma_buf is associated with the lifetime of
-> > the 'struct file', that then turns into taking a ref on the file.
-> > 
-> > Unusual? Yes. But not illogical. Not obviously broken. Tying the
-> > lifetime of the dma_buf to the lifetime of a file that is passed along
-> > makes _sense_ for that use.
-> > 
-> > I'm sure dma-bufs could add another level of refcounting on the
-> > 'struct dma_buf' itself, and not make it be 1:1 with the file, but
-> > it's not clear to me what the advantage would really be, or why it
-> > would be wrong to re-use a refcount that is already there.
+On Sun 2024-05-05 10:03:43, yoann.congal@smile.fr wrote:
+> From: Yoann Congal <yoann.congal@smile.fr>
 > 
-> So there is generally another refcount, because dma_buf is just the
-> cross-driver interface to some kind of real underlying buffer object from
-> the various graphics related subsystems we have.
+> CONFIG_BASE_FULL is equivalent to !CONFIG_BASE_SMALL and is enabled by
+> default: CONFIG_BASE_SMALL is the special case to take care of.
+> So, remove CONFIG_BASE_FULL and move the config choice to
+> CONFIG_BASE_SMALL (which defaults to 'n')
 > 
-> And since it's a pure file based api thing that ceases to serve any
-> function once the fd/file is gone we tied all the dma_buf refcounting to
-> the refcount struct file already maintains. But the underlying buffer
-> object can easily outlive the dma_buf, and over the lifetime of an
-> underlying buffer object you might actually end up creating different
-> dma_buf api wrappers for it (but at least in drm we guarantee there's at
-> most one, hence why vmwgfx does the atomic_inc_unless_zero trick, which I
-> don't particularly like and isn't really needed).
+> For defconfigs explicitely disabling BASE_FULL, explicitely enable
+> BASE_SMALL.
+> For defconfigs explicitely enabling BASE_FULL, drop it as it is the
+> default.
 > 
-> But we could add another refcount, it just means we have 3 of those then
-> when only really 2 are needed.
+> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
 
-Fwiw, the TTM thing described upthread and in the other thread really
-tries hard to work around the dma_buf == file lifetime choice by hooking
-into the dma-buf specific release function so it can access the dmabuf
-and then the file. All that seems like a pretty error prone thing to me.
-So a separate refcount for dma_buf wouldn't be the worst as that would
-allow that TTM thing to benefit and remove that nasty hacking into your
-generic dma_buf ops. But maybe I'm the only one who sees it that way and
-I'm certainly not familiar enough with dma-buf.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
+
+PS: I am going to take the series via the printk tree. I am sorry
+    for the delay. I somehow expected that it would go via some
+    arch tree...
+    
 
