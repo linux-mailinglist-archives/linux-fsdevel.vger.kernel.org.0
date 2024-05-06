@@ -1,371 +1,568 @@
-Return-Path: <linux-fsdevel+bounces-18850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183968BD457
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 20:04:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18CA8BD45D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 20:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B11E1C21F0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 18:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55448282B59
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 18:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD50F158A12;
-	Mon,  6 May 2024 18:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IybRH3Bk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777E9158864;
+	Mon,  6 May 2024 18:05:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2F9158858
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 18:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B2F157461;
+	Mon,  6 May 2024 18:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715018649; cv=none; b=OvjfKB3Fno/XU9tyjfgT0++U6WiKVVrbyIYEka86dg2dY6HWicSl+Q0/UxKvDEoLgawN82c31xDA3SSXTTEAr4J4byrvUSPIEAGyStq0aF22erIdMCco0nQm+9WY3bUjzXyjgdLFKwESuJrm8MCJ2qfZcZ8nirzM/WyinD8nJ0A=
+	t=1715018732; cv=none; b=HY4M/X92MF8IeExtLFjF5IYUtDd4xgEjh8BF0Fydtx4xJe//tZQJSmwPehXQjASw8NXew52mglzRkDHGlJopWr1ZrKiQlz7erX7a/xAOpsLyhhMVKIT3NUVnK1It5pnY7h8jqrQTGZWdG4ABFJGFIKrUJolhPKO0kJD7nYm8XVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715018649; c=relaxed/simple;
-	bh=cc0dgGUZ/hvp7voZKbxcv7WPIlbtst12WAtyfGKBIzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iRbqhn27kF3+cfCuYTrl4n9nNnfvVNmgiPzate7vTE06aQY4enX9CUG9cM6wB98ITxCwwSsoUZ7eiCjNTj76Ma8/Esoj/Lgs+ALF7XNCpGZPhCS3LIu/c2QWH1GEJ6EJVsKVa5OEzKcXUprlPtCWHzZbqD89Ih3lu60WCdFWtz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IybRH3Bk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715018646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j1t65TpAxApNWvGUATTUAN4i+2enA4mnbGpByW0FY6g=;
-	b=IybRH3Bkv13w0PywuwTN4w/dQRsp07/clBBZ9lPkhc0qRe04DofOuj8muj2fyhHIKfBg6i
-	TicXyyERwdag49SdUIWIO7YgAWUX0LiC3rz4rbzGL3c62cXlT+b0B0O30H45glIWxocQnp
-	XWOgmiXSGQcHLkXATpRLbIe259ZXAWE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-493-BbtS0UsSPoOQu8bUEI9Fjw-1; Mon, 06 May 2024 14:03:59 -0400
-X-MC-Unique: BbtS0UsSPoOQu8bUEI9Fjw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CEED1800CA2;
-	Mon,  6 May 2024 18:03:58 +0000 (UTC)
-Received: from [10.22.17.85] (unknown [10.22.17.85])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 24C2A40D1E3;
-	Mon,  6 May 2024 18:03:56 +0000 (UTC)
-Message-ID: <e402d623-1875-47a2-9db3-8299a54502ef@redhat.com>
-Date: Mon, 6 May 2024 14:03:55 -0400
+	s=arc-20240116; t=1715018732; c=relaxed/simple;
+	bh=HAweM0HgvqyFvaD/mScF16RtQpGquNuC1nNHgYsJoBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DXzRlNksCRrlPEaUm1NT6aV4wugvoBMpIpnKsMZ5MglwL129pMVFNjocSbax+IT8f64p8e2vJwfmDRBOpSf2Kb25o5Y9WQiHgfkwbn/AH1rqICsdbaxHT4WkP/3htjsDyvWv0Vbnzgrnuymqm5+fcJp0cB80LQY/5gCn8y22rOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2b537cd50f9so1050309a91.3;
+        Mon, 06 May 2024 11:05:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715018729; x=1715623529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EjoAhUIR9ZkGQNMFQcUUvnhFqNKKUEnkKVYMn75r7UQ=;
+        b=pg9oVdefIGnsmtSTXPBwSFve5rSbAu+4jtC3U2XR0Ru4e5CjuG1QvL9XBcQRcFD+YR
+         jalAamIF628bua5dFZAIY7qfmUc8fqG/HaN+uLWTFRKPYtjvudRsbg+AcxFuRMJFDJMx
+         0HFThau936J2AOWGj2SO8XLiydKf7Sqe/H1P+5vzDkieBDpL2Q7XKg08T8ImOtEvvP8d
+         gVp1drWoc6aAEFcoQoZILkH6liWV5qvvPkFcyLPK2qg5YeCLQHicS6aNd+ojJBKg+0AC
+         7rdUaMmNHKVFOhSdPIhrJpWwJCZ7CcnNEA1cEFsBxqAuaoIHtZCKfWvVcBInWKI6LUfl
+         UehQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyyVLRh8lsW9q/zoGZdF3JtXzT44/GM5TaaxcBeCjDM6Y7tSbu8IX1NXXQ570Mc2o4R2PjKo3MOQxf3HetCDYY3w+Ix9/GAoc3VAHZ+vnurCcdSSDSe7/FYNa5Icrb/lggqK0WgeRbfhkaNjj4XeteRjKz6rvpZNy49pRzgVtwXKvxcdHDy6b9Z5Qc957ADL6oZ/zQHqrldTgfDRPmCsxn6CU=
+X-Gm-Message-State: AOJu0Yy+v/1OAzx5j8Nn7ba0EFb+U6Woqc30vYF1NpYAlX9Dm3l/SBIO
+	YSfr10xxm3HkNAJUp8dpeEAkl+rnltGuSXfRrq/Y5nARqPi/IRAzyEtlWMjNRRKgjHQBpjt7SIb
+	XRAticKJsULWsvIMAjfHosgLf92c=
+X-Google-Smtp-Source: AGHT+IG0AJwJ75Dskmt7MNksqyZ7Lr2pYoBn2hi4v3ndqJ6tVk5twLK2cinATJhzuro6OjgcUdApfTCz3OTwnQpLd0w=
+X-Received: by 2002:a17:90b:238f:b0:2b2:1514:b79d with SMTP id
+ mr15-20020a17090b238f00b002b21514b79dmr8341339pjb.31.1715018728945; Mon, 06
+ May 2024 11:05:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/proc: Print user_cpus_ptr for task status
-To: Xuewen Yan <xuewen.yan94@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, akpm@linux-foundation.org,
- oleg@redhat.com, dylanbhatch@google.com, rick.p.edgecombe@intel.com,
- ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20240429084633.9800-1-xuewen.yan@unisoc.com>
- <20240429121000.GA40213@noisy.programming.kicks-ass.net>
- <CAB8ipk831xtAW2+sm-evm-oOsFspL=xSp6hFYYq1uKmWA+porQ@mail.gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <CAB8ipk831xtAW2+sm-evm-oOsFspL=xSp6hFYYq1uKmWA+porQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-3-andrii@kernel.org>
+ <2024050439-janitor-scoff-be04@gregkh> <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
+ <ZjjiFnNRbwsMJ3Gj@x1>
+In-Reply-To: <ZjjiFnNRbwsMJ3Gj@x1>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 6 May 2024 11:05:17 -0700
+Message-ID: <CAM9d7cgvCB8CBFGhMB_-4tCm6+jzoPBNg4CR7AEyMNo8pF9QKg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for /proc/<pid>/maps
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	=?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/6/24 04:04, Xuewen Yan wrote:
-> Hi Peter
->
-> On Mon, Apr 29, 2024 at 8:10 PM Peter Zijlstra <peterz@infradead.org> wrote:
->> On Mon, Apr 29, 2024 at 04:46:33PM +0800, Xuewen Yan wrote:
->>> The commit 851a723e45d1c("sched: Always clear user_cpus_ptr in do_set_cpus_allowed()")
->>> would clear the user_cpus_ptr when call the do_set_cpus_allowed.
->>>
->>> In order to determine whether the user_cpus_ptr is taking effect,
->>> it is better to print the task's user_cpus_ptr.
->> This is an ABI change and would mandate we forever more have this
->> distinction. I don't think your changes justifies things sufficiently
->> for this.
-> I added this mainly because online/offline cpu will produce different
-> results for the !top-cpuset task.
->
-> For example:
->
-> If the task was running, then offline task's cpus, would lead to clear
-> its user-mask.
->
-> unisoc:/ # while true; do sleep 600; done&
-> [1] 6786
-> unisoc:/ # echo 6786 > /dev/cpuset/top-app/tasks
-> unisoc:/ # cat /dev/cpuset/top-app/cpus
-> 0-7
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   ff
-> Cpus_allowed_list:      0-7
-> Cpus_user_allowed:        (null)
-> Cpus_user_allowed_list:   (null)
->
-> unisoc:/ # taskset -p c0 6786
-> pid 6786's current affinity mask: ff
-> pid 6786's new affinity mask: c0
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   c0
-> Cpus_allowed_list:      6-7
-> Cpus_user_allowed:      c0
-> Cpus_user_allowed_list: 6-7
->
-> After offline the cpu6 and cpu7, the user-mask would be cleared:
->
-> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   40
-> Cpus_allowed_list:      6
-> Cpus_user_allowed:      c0
-> Cpus_user_allowed_list: 6-7
-> ums9621_1h10:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
-> ums9621_1h10:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   3f
-> Cpus_allowed_list:      0-5
-> Cpus_user_allowed:        (null)
-> Cpus_user_allowed_list:   (null)
->
-> When online the cpu6/7, the user-mask can not bring back:
->
-> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   7f
-> Cpus_allowed_list:      0-6
-> Cpus_user_allowed:        (null)
-> Cpus_user_allowed_list:   (null)
-> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   ff
-> Cpus_allowed_list:      0-7
-> Cpus_user_allowed:        (null)
-> Cpus_user_allowed_list:   (null)
->
-> However, if we offline the cpu when the task is sleeping, at this
-> time, because would not call the fallback_cpu(), its user-mask will
-> not be cleared.
->
-> unisoc:/ # while true; do sleep 600; done&
-> [1] 5990
-> unisoc:/ # echo 5990 > /dev/cpuset/top-app/tasks
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   ff
-> Cpus_allowed_list:      0-7
-> Cpus_user_allowed:        (null)
-> Cpus_user_allowed_list:   (null)
->
-> unisoc:/ # taskset -p c0 5990
-> pid 5990's current affinity mask: ff
-> pid 5990's new affinity mask: c0
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   c0
-> Cpus_allowed_list:      6-7
-> Cpus_user_allowed:      c0
-> Cpus_user_allowed_list: 6-7
->
-> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   80
-> Cpus_allowed_list:      7
-> Cpus_user_allowed:      c0
-> Cpus_user_allowed_list: 6-7
-> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   3f
-> Cpus_allowed_list:      0-5
-> Cpus_user_allowed:      c0
-> Cpus_user_allowed_list: 6-7
->
->
-> After 10 minutes, it was waked up, it can also keep its user-mask:
-> ums9621_1h10:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   3f
-> Cpus_allowed_list:      0-5
-> Cpus_user_allowed:      c0
-> Cpus_user_allowed_list: 6-7
->
-> In order to solve the above problem, I modified the following patch.
-> At this time, for !top-cpuset, regardless of whether the task is in
-> the running state when offline cpu, its cpu-mask can be maintained.
-> However, this patch may not be perfect yet, so I send the "Print
-> user_cpus_ptr for task status" patch first to debug more conveniently.
->
-> --->
->
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 68cfa656b9b1..00879b6de8d4 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1870,7 +1870,7 @@ extern void dl_bw_free(int cpu, u64 dl_bw);
->   #ifdef CONFIG_SMP
->
->   /* do_set_cpus_allowed() - consider using set_cpus_allowed_ptr() instead */
-> -extern void do_set_cpus_allowed(struct task_struct *p, const struct
-> cpumask *new_mask);
-> +extern void do_set_cpus_allowed(struct task_struct *p, const struct
-> cpumask *new_mask, bool keep_user);
->
->   /**
->    * set_cpus_allowed_ptr - set CPU affinity mask of a task
-> @@ -1886,7 +1886,7 @@ extern int dl_task_check_affinity(struct
-> task_struct *p, const struct cpumask *m
->   extern void force_compatible_cpus_allowed_ptr(struct task_struct *p);
->   extern void relax_compatible_cpus_allowed_ptr(struct task_struct *p);
->   #else
-> -static inline void do_set_cpus_allowed(struct task_struct *p, const
-> struct cpumask *new_mask)
-> +static inline void do_set_cpus_allowed(struct task_struct *p, const
-> struct cpumask *new_mask, bool keep_user)
->   {
->   }
->   static inline int set_cpus_allowed_ptr(struct task_struct *p, const
-> struct cpumask *new_mask)
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 7ee9994aee40..0c448f8a3829 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -4005,9 +4005,14 @@ bool cpuset_cpus_allowed_fallback(struct
-> task_struct *tsk)
->
->          rcu_read_lock();
->          cs_mask = task_cs(tsk)->cpus_allowed;
-> -       if (is_in_v2_mode() && cpumask_subset(cs_mask, possible_mask)) {
-> -               do_set_cpus_allowed(tsk, cs_mask);
-> -               changed = true;
-> +       if (cpumask_subset(cs_mask, possible_mask)) {
-> +               if (is_in_v2_mode()) {
-> +                       do_set_cpus_allowed(tsk, cs_mask, false);
-> +                       changed = true;
-> +               } else if (task_cs(tsk) != &top_cpuset) {
-> +                       do_set_cpus_allowed(tsk, cs_mask, true);
-> +                       changed = true;
-> +               }
->          }
->          rcu_read_unlock();
->
-> diff --git a/kernel/kthread.c b/kernel/kthread.c
-> index 7a7aa5f93c0c..7ede27630088 100644
-> --- a/kernel/kthread.c
-> +++ b/kernel/kthread.c
-> @@ -527,7 +527,7 @@ static void __kthread_bind_mask(struct task_struct
-> *p, const struct cpumask *mas
->
->          /* It's safe because the task is inactive. */
->          raw_spin_lock_irqsave(&p->pi_lock, flags);
-> -       do_set_cpus_allowed(p, mask);
-> +       do_set_cpus_allowed(p, mask, false);
->          p->flags |= PF_NO_SETAFFINITY;
->          raw_spin_unlock_irqrestore(&p->pi_lock, flags);
->   }
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 33cfd522fc7c..623f89e65e6c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2855,18 +2855,21 @@ __do_set_cpus_allowed(struct task_struct *p,
-> struct affinity_context *ctx)
->    * Used for kthread_bind() and select_fallback_rq(), in both cases the user
->    * affinity (if any) should be destroyed too.
->    */
-> -void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
-> +void do_set_cpus_allowed(struct task_struct *p, const struct cpumask
-> *new_mask, bool keep_user)
->   {
->          struct affinity_context ac = {
->                  .new_mask  = new_mask,
->                  .user_mask = NULL,
-> -               .flags     = SCA_USER,  /* clear the user requested mask */
-> +               .flags     = 0, /* clear the user requested mask */
->          };
->          union cpumask_rcuhead {
->                  cpumask_t cpumask;
->                  struct rcu_head rcu;
->          };
->
-> +       if (!keep_user)
-> +               ac.flags = SCA_USER;
-> +
->          __do_set_cpus_allowed(p, &ac);
->
->          /*
-> @@ -2874,7 +2877,8 @@ void do_set_cpus_allowed(struct task_struct *p,
-> const struct cpumask *new_mask)
->           * to use kfree() here (when PREEMPT_RT=y), therefore punt to using
->           * kfree_rcu().
->           */
-> -       kfree_rcu((union cpumask_rcuhead *)ac.user_mask, rcu);
-> +       if (!keep_user)
-> +               kfree_rcu((union cpumask_rcuhead *)ac.user_mask, rcu);
->   }
->
->   static cpumask_t *alloc_user_cpus_ptr(int node)
-> @@ -3664,7 +3668,7 @@ int select_fallback_rq(int cpu, struct task_struct *p)
->                           *
->                           * More yuck to audit.
->                           */
-> -                       do_set_cpus_allowed(p, task_cpu_possible_mask(p));
-> +                       do_set_cpus_allowed(p,
-> task_cpu_possible_mask(p), false);
->                          state = fail;
->                          break;
->                  case fail:
->
-These changes essentially reverts commit 851a723e45d1c("sched: Always 
-clear user_cpus_ptr in do_set_cpus_allowed()") except the additional 
-caller in the cpuset code.
+Hello,
 
-How about the following less invasive change?
+On Mon, May 6, 2024 at 6:58=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
+> > On Sat, May 4, 2024 at 8:28=E2=80=AFAM Greg KH <gregkh@linuxfoundation.=
+org> wrote:
+> > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote:
+> > > > Note also, that fetching VMA name (e.g., backing file path, or spec=
+ial
+> > > > hard-coded or user-provided names) is optional just like build ID. =
+If
+> > > > user sets vma_name_size to zero, kernel code won't attempt to retri=
+eve
+> > > > it, saving resources.
+>
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> > > Where is the userspace code that uses this new api you have created?
+>
+> > So I added a faithful comparison of existing /proc/<pid>/maps vs new
+> > ioctl() API to solve a common problem (as described above) in patch
+> > #5. The plan is to put it in mentioned blazesym library at the very
+> > least.
+> >
+> > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
+> > linux-perf-user), as they need to do stack symbolization as well.
 
-  diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 7019a40457a6..646837eab70c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2796,21 +2796,24 @@ __do_set_cpus_allowed(struct task_struct *p, 
-struct affinity_context *ctx)
-  }
+I think the general use case in perf is different.  This ioctl API is great
+for live tracing of a single (or a small number of) process(es).  And
+yes, perf tools have those tracing use cases too.  But I think the
+major use case of perf tools is system-wide profiling.
 
-  /*
-- * Used for kthread_bind() and select_fallback_rq(), in both cases the user
-- * affinity (if any) should be destroyed too.
-+ * Used for kthread_bind() and select_fallback_rq(). Destroy user affinity
-+ * if no intersection with the new mask.
-   */
-  void do_set_cpus_allowed(struct task_struct *p, const struct cpumask 
-*new_mask)
-  {
-         struct affinity_context ac = {
-                 .new_mask  = new_mask,
-                 .user_mask = NULL,
--               .flags     = SCA_USER,  /* clear the user requested mask */
-+               .flags     = 0,
-         };
-         union cpumask_rcuhead {
-                 cpumask_t cpumask;
-                 struct rcu_head rcu;
-         };
+For system-wide profiling, you need to process samples of many
+different processes at a high frequency.  Now perf record doesn't
+process them and just save it for offline processing (well, it does
+at the end to find out build-ID but it can be omitted).
 
-+       if (current->user_cpus_ptr && 
-!cpumask_intersects(current->user_cpus_ptr, new_mask))
-+               ac.flags = SCA_USER;    /* clear the user requested mask */
-+
-         __do_set_cpus_allowed(p, &ac);
+Doing it online is possible (like perf top) but it would add more
+overhead during the profiling.  And we cannot move processing
+or symbolization to the end of profiling because some (short-
+lived) tasks can go away.
 
-         /*
+Also it should support perf report (offline) on data from a
+different kernel or even a different machine.
 
-No compilation test done. Note that there is a null check inside 
-kfree_rcu() with no need for additional check.
+So it saves the memory map of processes and symbolizes
+the stack trace with it later.  Of course it needs to be updated
+as the memory map changes and that's why it tracks mmap
+or similar syscalls with PERF_RECORD_MMAP[2] records.
 
-Regards,
-Longman
+A problem with this approach is to get the initial state of all
+(or a target for non-system-wide mode) existing processes.
+We call it synthesizing, and read /proc/PID/maps to generate
+the mmap records.
+
+I think the below comment from Arnaldo talked about how
+we can improve the synthesizing (which is sequential access
+to proc maps) using BPF.
+
+Thanks,
+Namhyung
 
 
+>
+> At some point, when BPF iterators became a thing we thought about, IIRC
+> Jiri did some experimentation, but I lost track, of using BPF to
+> synthesize PERF_RECORD_MMAP2 records for pre-existing maps, the layout
+> as in uapi/linux/perf_event.h:
+>
+>         /*
+>          * The MMAP2 records are an augmented version of MMAP, they add
+>          * maj, min, ino numbers to be used to uniquely identify each map=
+ping
+>          *
+>          * struct {
+>          *      struct perf_event_header        header;
+>          *
+>          *      u32                             pid, tid;
+>          *      u64                             addr;
+>          *      u64                             len;
+>          *      u64                             pgoff;
+>          *      union {
+>          *              struct {
+>          *                      u32             maj;
+>          *                      u32             min;
+>          *                      u64             ino;
+>          *                      u64             ino_generation;
+>          *              };
+>          *              struct {
+>          *                      u8              build_id_size;
+>          *                      u8              __reserved_1;
+>          *                      u16             __reserved_2;
+>          *                      u8              build_id[20];
+>          *              };
+>          *      };
+>          *      u32                             prot, flags;
+>          *      char                            filename[];
+>          *      struct sample_id                sample_id;
+>          * };
+>          */
+>         PERF_RECORD_MMAP2                       =3D 10,
+>
+>  *   PERF_RECORD_MISC_MMAP_BUILD_ID      - PERF_RECORD_MMAP2 event
+>
+> As perf.data files can be used for many purposes we want them all, so we
+> setup a meta data perf file descriptor to go on receiving the new mmaps
+> while we read /proc/<pid>/maps, to reduce the chance of missing maps, do
+> it in parallel, etc:
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ perf record -h 'event synthesis'
+>
+>  Usage: perf record [<options>] [<command>]
+>     or: perf record [<options>] -- <command> [<options>]
+>
+>         --num-thread-synthesize <n>
+>                           number of threads to run for event synthesis
+>         --synth <no|all|task|mmap|cgroup>
+>                           Fine-tune event synthesis: default=3Dall
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$
+>
+> For this specific initial synthesis of everything the plan, as mentioned
+> about Jiri's experiments, was to use a BPF iterator to just feed the
+> perf ring buffer with those events, that way userspace would just
+> receive the usual records it gets when a new mmap is put in place, the
+> BPF iterator would just feed the preexisting mmaps, as instructed via
+> the perf_event_attr for the perf_event_open syscall.
+>
+> For people not wanting BPF, i.e. disabling it altogether in perf or
+> disabling just BPF skels, then we would fallback to the current method,
+> or to the one being discussed here when it becomes available.
+>
+> One thing to have in mind is for this iterator not to generate duplicate
+> records for non-pre-existing mmaps, i.e. we would need some generation
+> number that would be bumped when asking for such pre-existing maps
+> PERF_RECORD_MMAP2 dumps.
+>
+> > It will be up to other similar projects to adopt this, but we'll
+> > definitely get this into blazesym as it is actually a problem for the
+>
+> At some point looking at plugging blazesym somehow with perf may be
+> something to consider, indeed.
+>
+> - Arnaldo
+>
+> > abovementioned Oculus use case. We already had to make a tradeoff (see
+> > [2], this wasn't done just because we could, but it was requested by
+> > Oculus customers) to cache the contents of /proc/<pid>/maps and run
+> > the risk of missing some shared libraries that can be loaded later. It
+> > would be great to not have to do this tradeoff, which this new API
+> > would enable.
+> >
+> >   [2] https://github.com/libbpf/blazesym/commit/6b521314126b3ae6f2add43=
+e93234b59fed48ccf
+> >
+> > >
+> > > > ---
+> > > >  fs/proc/task_mmu.c      | 165 ++++++++++++++++++++++++++++++++++++=
+++++
+> > > >  include/uapi/linux/fs.h |  32 ++++++++
+> > > >  2 files changed, 197 insertions(+)
+> > > >
+> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > > index 8e503a1635b7..cb7b1ff1a144 100644
+> > > > --- a/fs/proc/task_mmu.c
+> > > > +++ b/fs/proc/task_mmu.c
+> > > > @@ -22,6 +22,7 @@
+> > > >  #include <linux/pkeys.h>
+> > > >  #include <linux/minmax.h>
+> > > >  #include <linux/overflow.h>
+> > > > +#include <linux/buildid.h>
+> > > >
+> > > >  #include <asm/elf.h>
+> > > >  #include <asm/tlb.h>
+> > > > @@ -375,11 +376,175 @@ static int pid_maps_open(struct inode *inode=
+, struct file *file)
+> > > >       return do_maps_open(inode, file, &proc_pid_maps_op);
+> > > >  }
+> > > >
+> > > > +static int do_procmap_query(struct proc_maps_private *priv, void _=
+_user *uarg)
+> > > > +{
+> > > > +     struct procfs_procmap_query karg;
+> > > > +     struct vma_iterator iter;
+> > > > +     struct vm_area_struct *vma;
+> > > > +     struct mm_struct *mm;
+> > > > +     const char *name =3D NULL;
+> > > > +     char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf =3D NULL;
+> > > > +     __u64 usize;
+> > > > +     int err;
+> > > > +
+> > > > +     if (copy_from_user(&usize, (void __user *)uarg, sizeof(usize)=
+))
+> > > > +             return -EFAULT;
+> > > > +     if (usize > PAGE_SIZE)
+> > >
+> > > Nice, where did you document that?  And how is that portable given th=
+at
+> > > PAGE_SIZE can be different on different systems?
+> >
+> > I'm happy to document everything, can you please help by pointing
+> > where this documentation has to live?
+> >
+> > This is mostly fool-proofing, though, because the user has to pass
+> > sizeof(struct procfs_procmap_query), which I don't see ever getting
+> > close to even 4KB (not even saying about 64KB). This is just to
+> > prevent copy_struct_from_user() below to do too much zero-checking.
+> >
+> > >
+> > > and why aren't you checking the actual structure size instead?  You c=
+an
+> > > easily run off the end here without knowing it.
+> >
+> > See copy_struct_from_user(), it does more checks. This is a helper
+> > designed specifically to deal with use cases like this where kernel
+> > struct size can change and user space might be newer or older.
+> > copy_struct_from_user() has a nice documentation describing all these
+> > nuances.
+> >
+> > >
+> > > > +             return -E2BIG;
+> > > > +     if (usize < offsetofend(struct procfs_procmap_query, query_ad=
+dr))
+> > > > +             return -EINVAL;
+> > >
+> > > Ok, so you have two checks?  How can the first one ever fail?
+> >
+> > Hmm.. If usize =3D 8, copy_from_user() won't fail, usize > PAGE_SIZE
+> > won't fail, but this one will fail.
+> >
+> > The point of this check is that user has to specify at least first
+> > three fields of procfs_procmap_query (size, query_flags, and
+> > query_addr), because without those the query is meaningless.
+> > >
+> > >
+> > > > +     err =3D copy_struct_from_user(&karg, sizeof(karg), uarg, usiz=
+e);
+> >
+> > and this helper does more checks validating that the user either has a
+> > shorter struct (and then zero-fills the rest of kernel-side struct) or
+> > has longer (and then the longer part has to be zero filled). Do check
+> > copy_struct_from_user() documentation, it's great.
+> >
+> > > > +     if (err)
+> > > > +             return err;
+> > > > +
+> > > > +     if (karg.query_flags & ~PROCFS_PROCMAP_EXACT_OR_NEXT_VMA)
+> > > > +             return -EINVAL;
+> > > > +     if (!!karg.vma_name_size !=3D !!karg.vma_name_addr)
+> > > > +             return -EINVAL;
+> > > > +     if (!!karg.build_id_size !=3D !!karg.build_id_addr)
+> > > > +             return -EINVAL;
+> > >
+> > > So you want values to be set, right?
+> >
+> > Either both should be set, or neither. It's ok for both size/addr
+> > fields to be zero, in which case it indicates that the user doesn't
+> > want this part of information (which is usually a bit more expensive
+> > to get and might not be necessary for all the cases).
+> >
+> > >
+> > > > +
+> > > > +     mm =3D priv->mm;
+> > > > +     if (!mm || !mmget_not_zero(mm))
+> > > > +             return -ESRCH;
+> > >
+> > > What is this error for?  Where is this documentned?
+> >
+> > I copied it from existing /proc/<pid>/maps checks. I presume it's
+> > guarding the case when mm might be already put. So if the process is
+> > gone, but we have /proc/<pid>/maps file open?
+> >
+> > >
+> > > > +     if (mmap_read_lock_killable(mm)) {
+> > > > +             mmput(mm);
+> > > > +             return -EINTR;
+> > > > +     }
+> > > > +
+> > > > +     vma_iter_init(&iter, mm, karg.query_addr);
+> > > > +     vma =3D vma_next(&iter);
+> > > > +     if (!vma) {
+> > > > +             err =3D -ENOENT;
+> > > > +             goto out;
+> > > > +     }
+> > > > +     /* user wants covering VMA, not the closest next one */
+> > > > +     if (!(karg.query_flags & PROCFS_PROCMAP_EXACT_OR_NEXT_VMA) &&
+> > > > +         vma->vm_start > karg.query_addr) {
+> > > > +             err =3D -ENOENT;
+> > > > +             goto out;
+> > > > +     }
+> > > > +
+> > > > +     karg.vma_start =3D vma->vm_start;
+> > > > +     karg.vma_end =3D vma->vm_end;
+> > > > +
+> > > > +     if (vma->vm_file) {
+> > > > +             const struct inode *inode =3D file_user_inode(vma->vm=
+_file);
+> > > > +
+> > > > +             karg.vma_offset =3D ((__u64)vma->vm_pgoff) << PAGE_SH=
+IFT;
+> > > > +             karg.dev_major =3D MAJOR(inode->i_sb->s_dev);
+> > > > +             karg.dev_minor =3D MINOR(inode->i_sb->s_dev);
+> > >
+> > > So the major/minor is that of the file superblock?  Why?
+> >
+> > Because inode number is unique only within given super block (and even
+> > then it's more complicated, e.g., btrfs subvolumes add more headaches,
+> > I believe). inode + dev maj/min is sometimes used for cache/reuse of
+> > per-binary information (e.g., pre-processed DWARF information, which
+> > is *very* expensive, so anything that allows to avoid doing this is
+> > helpful).
+> >
+> > >
+> > > > +             karg.inode =3D inode->i_ino;
+> > >
+> > > What is userspace going to do with this?
+> > >
+> >
+> > See above.
+> >
+> > > > +     } else {
+> > > > +             karg.vma_offset =3D 0;
+> > > > +             karg.dev_major =3D 0;
+> > > > +             karg.dev_minor =3D 0;
+> > > > +             karg.inode =3D 0;
+> > >
+> > > Why not set everything to 0 up above at the beginning so you never mi=
+ss
+> > > anything, and you don't miss any holes accidentally in the future.
+> > >
+> >
+> > Stylistic preference, I find this more explicit, but I don't care much
+> > one way or another.
+> >
+> > > > +     }
+> > > > +
+> > > > +     karg.vma_flags =3D 0;
+> > > > +     if (vma->vm_flags & VM_READ)
+> > > > +             karg.vma_flags |=3D PROCFS_PROCMAP_VMA_READABLE;
+> > > > +     if (vma->vm_flags & VM_WRITE)
+> > > > +             karg.vma_flags |=3D PROCFS_PROCMAP_VMA_WRITABLE;
+> > > > +     if (vma->vm_flags & VM_EXEC)
+> > > > +             karg.vma_flags |=3D PROCFS_PROCMAP_VMA_EXECUTABLE;
+> > > > +     if (vma->vm_flags & VM_MAYSHARE)
+> > > > +             karg.vma_flags |=3D PROCFS_PROCMAP_VMA_SHARED;
+> > > > +
+> >
+> > [...]
+> >
+> > > > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > > > index 45e4e64fd664..fe8924a8d916 100644
+> > > > --- a/include/uapi/linux/fs.h
+> > > > +++ b/include/uapi/linux/fs.h
+> > > > @@ -393,4 +393,36 @@ struct pm_scan_arg {
+> > > >       __u64 return_mask;
+> > > >  };
+> > > >
+> > > > +/* /proc/<pid>/maps ioctl */
+> > > > +#define PROCFS_IOCTL_MAGIC 0x9f
+> > >
+> > > Don't you need to document this in the proper place?
+> >
+> > I probably do, but I'm asking for help in knowing where. procfs is not
+> > a typical area of kernel I'm working with, so any pointers are highly
+> > appreciated.
+> >
+> > >
+> > > > +#define PROCFS_PROCMAP_QUERY _IOWR(PROCFS_IOCTL_MAGIC, 1, struct p=
+rocfs_procmap_query)
+> > > > +
+> > > > +enum procmap_query_flags {
+> > > > +     PROCFS_PROCMAP_EXACT_OR_NEXT_VMA =3D 0x01,
+> > > > +};
+> > > > +
+> > > > +enum procmap_vma_flags {
+> > > > +     PROCFS_PROCMAP_VMA_READABLE =3D 0x01,
+> > > > +     PROCFS_PROCMAP_VMA_WRITABLE =3D 0x02,
+> > > > +     PROCFS_PROCMAP_VMA_EXECUTABLE =3D 0x04,
+> > > > +     PROCFS_PROCMAP_VMA_SHARED =3D 0x08,
+> > >
+> > > Are these bits?  If so, please use the bit macro for it to make it
+> > > obvious.
+> > >
+> >
+> > Yes, they are. When I tried BIT(1), it didn't compile. I chose not to
+> > add any extra #includes to this UAPI header, but I can figure out the
+> > necessary dependency and do BIT(), I just didn't feel like BIT() adds
+> > much here, tbh.
+> >
+> > > > +};
+> > > > +
+> > > > +struct procfs_procmap_query {
+> > > > +     __u64 size;
+> > > > +     __u64 query_flags;              /* in */
+> > >
+> > > Does this map to the procmap_vma_flags enum?  if so, please say so.
+> >
+> > no, procmap_query_flags, and yes, I will
+> >
+> > >
+> > > > +     __u64 query_addr;               /* in */
+> > > > +     __u64 vma_start;                /* out */
+> > > > +     __u64 vma_end;                  /* out */
+> > > > +     __u64 vma_flags;                /* out */
+> > > > +     __u64 vma_offset;               /* out */
+> > > > +     __u64 inode;                    /* out */
+> > >
+> > > What is the inode for, you have an inode for the file already, why gi=
+ve
+> > > it another one?
+> >
+> > This is inode of vma's backing file, same as /proc/<pid>/maps' file
+> > column. What inode of file do I already have here? You mean of
+> > /proc/<pid>/maps itself? It's useless for the intended purposes.
+> >
+> > >
+> > > > +     __u32 dev_major;                /* out */
+> > > > +     __u32 dev_minor;                /* out */
+> > >
+> > > What is major/minor for?
+> >
+> > This is the same information as emitted by /proc/<pid>/maps,
+> > identifies superblock of vma's backing file. As I mentioned above, it
+> > can be used for caching per-file (i.e., per-ELF binary) information
+> > (for example).
+> >
+> > >
+> > > > +     __u32 vma_name_size;            /* in/out */
+> > > > +     __u32 build_id_size;            /* in/out */
+> > > > +     __u64 vma_name_addr;            /* in */
+> > > > +     __u64 build_id_addr;            /* in */
+> > >
+> > > Why not document this all using kerneldoc above the structure?
+> >
+> > Yes, sorry, I slacked a bit on adding this upfront. I knew we'll be
+> > figuring out the best place and approach, and so wanted to avoid
+> > documentation churn.
+> >
+> > Would something like what we have for pm_scan_arg and pagemap APIs
+> > work? I see it added a few simple descriptions for pm_scan_arg struct,
+> > and there is Documentation/admin-guide/mm/pagemap.rst. Should I add
+> > Documentation/admin-guide/mm/procmap.rst (admin-guide part feels off,
+> > though)? Anyways, I'm hoping for pointers where all this should be
+> > documented. Thank you!
+> >
+> > >
+> > > anyway, I don't like ioctls, but there is a place for them, you just
+> > > have to actually justify the use for them and not say "not efficient
+> > > enough" as that normally isn't an issue overall.
+> >
+> > I've written a demo tool in patch #5 which performs real-world task:
+> > mapping addresses to their VMAs (specifically calculating file offset,
+> > finding vma_start + vma_end range to further access files from
+> > /proc/<pid>/map_files/<start>-<end>). I did the implementation
+> > faithfully, doing it in the most optimal way for both APIs. I showed
+> > that for "typical" (it's hard to specify what typical is, of course,
+> > too many variables) scenario (it was data collected on a real server
+> > running real service, 30 seconds of process-specific stack traces were
+> > captured, if I remember correctly). I showed that doing exactly the
+> > same amount of work is ~35x times slower with /proc/<pid>/maps.
+> >
+> > Take another process, another set of addresses, another anything, and
+> > the numbers will be different, but I think it gives the right idea.
+> >
+> > But I think we are overpivoting on text vs binary distinction here.
+> > It's the more targeted querying of VMAs that's beneficial here. This
+> > allows applications to not cache anything and just re-query when doing
+> > periodic or continuous profiling (where addresses are coming in not as
+> > one batch, as a sequence of batches extended in time).
+> >
+> > /proc/<pid>/maps, for all its usefulness, just can't provide this sort
+> > of ability, as it wasn't designed to do that and is targeting
+> > different use cases.
+> >
+> > And then, a new ability to request reliable (it's not 100% reliable
+> > today, I'm going to address that as a follow up) build ID is *crucial*
+> > for some scenarios. The mentioned Oculus use case, the need to fully
+> > access underlying ELF binary just to get build ID is frowned upon. And
+> > for a good reason. Profiler only needs build ID, which is no secret
+> > and not sensitive information. This new (and binary, yes) API allows
+> > to add this into an API without breaking any backwards compatibility.
+> >
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+>
 
