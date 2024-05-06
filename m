@@ -1,110 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-18820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFF38BCA1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 10:58:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5A58BCAA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 11:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0881F2102F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 08:58:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63964B22B81
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 09:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3838B1422A8;
-	Mon,  6 May 2024 08:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E895414262C;
+	Mon,  6 May 2024 09:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="gS2TAt28"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJyv7ou5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A481420DE
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 08:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454BF6CDCE;
+	Mon,  6 May 2024 09:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714985866; cv=none; b=s+K+5GLT6uLI2ws51qBn9bY8E6SolPMRf19fR10qpjNuk+zq1RuIyP6+2bL2sPRfl5tdvjG8BJhoWgO6963GABDqqPNkyuUpQ+Xz5Z1i0hwbEiC3Cs0qoJAikfWEUS5G16DFzQvyzhzo2PXwZLIdGI9JVWaKQtCUfFidF4ZnGpw=
+	t=1714987624; cv=none; b=ktOuPd/KLIu9lZ2VPjmkWsUYA9KDdnb8WRsJtTtulXzu4YJfLEhxu5subJgLw8s9yTM16Q2peXkwsycHrZGvH+3ucFlqx38Iq0eF8SkAt0ywRSQ+Ugqf3zb7wq/47YpPJnglk5wArt6dc/MzESc/o0IcxzAUeYA/PQ7JnhoD3EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714985866; c=relaxed/simple;
-	bh=3chMsjDBSVl6/YzmBwyDmo8vb4MCwHLCL/FCQilywTo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NjPdVw26izND5a8tIrjB/zESOJ8WkmsHk4NDGBlErsF1x1N82WZwqn7I30/TFB02GDUHdEIkmms14dXds+l/CQXhZxTTDlMzxL/1GcpOXaLL0QhYh9D97mSgKlYyEiOna/Y/1yG/7KrdHaMeMzH0bgKVlv+QIhS/O6y3WohClKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=gS2TAt28; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1714985861;
-	bh=cckhLARkyb3oh/wDwudJRWGBL6LODBWmZxbKJGkql3o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gS2TAt28hdJp0GVGuxc0GqF0HBwJIIE6g865JbTcDlQ4Bq15z5L2lKpDYOEn9r1ww
-	 hsX15AwxZD1CjOwo4xRbYzBcwoiSq0TNZUiTXUub8V24eZGadzhzkvFJHFFu9oZt3H
-	 QAcIpzLF9IzLL8/RJlkwnpXW7MyeKY0uF2NehUEzm9/Bim0CzqfU9w9cwum+5pGQwF
-	 xSI1GAbrHs1469EaFCgMZwVhfD2AiSCW6nWax66+g5qkjilBF79mQZpSQL5OrQSGXu
-	 e5172dSMmCRQxc4I8MOmnYs1NF2QAnG5NjOlhgW4zHUvQ/3D8+TxMr/9S1YopiTt4Z
-	 JS27CStBxNFLw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VXwKC2cR3z4x12;
-	Mon,  6 May 2024 18:57:35 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: akpm@linux-foundation.org, aneesh.kumar@kernel.org,
- aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
- catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
- dave.hansen@linux.intel.com, hpa@zytor.com, joey.gouly@arm.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
- naveen.n.rao@linux.ibm.com, npiggin@gmail.com, oliver.upton@linux.dev,
- shuah@kernel.org, szabolcs.nagy@arm.com, tglx@linutronix.de,
- will@kernel.org, x86@kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 01/29] powerpc/mm: add ARCH_PKEY_BITS to Kconfig
-In-Reply-To: <20240503130147.1154804-2-joey.gouly@arm.com>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-2-joey.gouly@arm.com>
-Date: Mon, 06 May 2024 18:57:32 +1000
-Message-ID: <8734qvnwqr.fsf@mail.lhotse>
+	s=arc-20240116; t=1714987624; c=relaxed/simple;
+	bh=r9PFC5bu7lmiF9aq5BTi6CEcKoYDbUpyNGKVlEmMpec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVC7NVBhQXkC3+29OTzGxNfz/g9ZcoH9JQ3r3aXeKZG0qp4KwWw+YERDu8NgYCEI8s1oXPfyFUijOBk64XnJPSDTxlcq1Bw/I36e/S8XOWBw85T5tx+nc2dtOfJcCPCTDLwocVDQIPrBu/JRaso9RIlJ49i5Sz2SOnsnkQjz3IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJyv7ou5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE85C116B1;
+	Mon,  6 May 2024 09:26:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714987624;
+	bh=r9PFC5bu7lmiF9aq5BTi6CEcKoYDbUpyNGKVlEmMpec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZJyv7ou5pxTVr+uFQiaUFaf141/cP0PUE3Qwy8Uxt7ca6tziSJAncFT6YoShaa4kG
+	 XcNFv5jUbDNutMUtLFyD7kfwlU3CfLN1mvCWn65w7ZdzuayS3fTQKBSkFuatUdwbGQ
+	 o/AvZTj0GH9CXRl6SIrwcNGc6i63LilJlhGYbJUl6F9jYP0waycKJzZ9bmasukbKf1
+	 U934NoMGZc9+AnQG7WtQzww5nuRY3YSb5P5wGwhZxLA3G14RLSmkpfQLk0ohnNX1HW
+	 w9L7ZrTsbC7mzuhQMjM8CQEhVGab8383AUyX/Xjb9b4SvXj2xQqapcbWmPtO5didMN
+	 H7A9F0KS1jCxw==
+Date: Mon, 6 May 2024 11:26:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <20240506-zweibeinig-mahnen-daa579a233db@brauner>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+ <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+ <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+ <20240506-injizieren-administration-f5900157566a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240506-injizieren-administration-f5900157566a@brauner>
 
-Joey Gouly <joey.gouly@arm.com> writes:
-> The new config option specifies how many bits are in each PKEY.
->
-> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-> Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> ---
->  arch/powerpc/Kconfig | 4 ++++
->  1 file changed, 4 insertions(+)
+On Mon, May 06, 2024 at 10:45:35AM +0200, Christian Brauner wrote:
+> > The fact is, it's not dma-buf that is violating any rules. It's epoll.
+> 
+> I agree that epoll() not taking a reference on the file is at least
+> unexpected and contradicts the usual code patterns for the sake of
+> performance and that it very likely is the case that most callers of
+> f_op->poll() don't know this.
+> 
+> Note, I cleary wrote upthread that I'm ok to do it like you suggested
+> but raised two concerns a) there's currently only one instance of
+> prolonged @file lifetime in f_op->poll() afaict and b) that there's
+> possibly going to be some performance impact on epoll().
+> 
+> So it's at least worth discussing what's more important because epoll()
+> is very widely used and it's not that we haven't favored performance
+> before.
+> 
+> But you've already said that you aren't concerned with performance on
+> epoll() upthread. So afaict then there's really not a lot more to
+> discuss other than take the patch and see whether we get any complaints.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Two closing thoughts:
 
-cheers
+(1) I wonder if this won't cause userspace regressions for the semantics
+    of epoll because dying files are now silently ignored whereas before
+    they'd generated events.
 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 1c4be3373686..6e33e4726856 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -1020,6 +1020,10 @@ config PPC_MEM_KEYS
->  
->  	  If unsure, say y.
->  
-> +config ARCH_PKEY_BITS
-> +	int
-> +	default 5
-> +
->  config PPC_SECURE_BOOT
->  	prompt "Enable secure boot support"
->  	bool
-> -- 
-> 2.25.1
+(2) The other part is that this seems to me that epoll() will now
+    temporarly pin filesystems opening up the possibility for spurious
+    EBUSY errors.
+
+    If you register a file descriptor in an epoll instance and then
+    close it and umount the filesystem but epoll managed to do an fget()
+    on that fd before that close() call then epoll will pin that
+    filesystem.
+
+    If the f_op->poll() method does something that can take a while
+    (blocks on a shared mutex of that subsystem) that umount is very
+    likely going to return EBUSY suddenly.
+
+    Afaict, before that this wouldn't have been an issue at all and is
+    likely more serious than performance.
+
+    (One option would be to only do epi_fget() for stuff like
+    dma-buf that's never unmounted. That'll cover nearly every
+    driver out there. Only "real" filesystems would have to contend with
+    @file count going to zero but honestly they also deal with dentry
+    lookup under RCU which is way more adventurous than this.)
+
+    Maybe I'm barking up the wrong tree though.
 
