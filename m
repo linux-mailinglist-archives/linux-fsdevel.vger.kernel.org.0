@@ -1,125 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-18821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5A58BCAA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 11:27:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C55C58BCAC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 11:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63964B22B81
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 09:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6526B1F23112
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2024 09:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E895414262C;
-	Mon,  6 May 2024 09:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJyv7ou5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189D91428EF;
+	Mon,  6 May 2024 09:36:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454BF6CDCE;
-	Mon,  6 May 2024 09:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75723142636
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 May 2024 09:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714987624; cv=none; b=ktOuPd/KLIu9lZ2VPjmkWsUYA9KDdnb8WRsJtTtulXzu4YJfLEhxu5subJgLw8s9yTM16Q2peXkwsycHrZGvH+3ucFlqx38Iq0eF8SkAt0ywRSQ+Ugqf3zb7wq/47YpPJnglk5wArt6dc/MzESc/o0IcxzAUeYA/PQ7JnhoD3EI=
+	t=1714988166; cv=none; b=fGdlnG5HNKA6a4QggwurQ/VIbZ06GmwfbF0r+HIe4xaxdmETNfT6IChgyC2TTlvA3kBbkliW1hOaeWegKsNJXkOLnb+bIKEpwovCa47rNFP3G8bj7sUy7FhADI1hNcnCufE6ZAftdOp1WQAwiLKfzVhWTjW7UjC2zZEqGRA+B+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714987624; c=relaxed/simple;
-	bh=r9PFC5bu7lmiF9aq5BTi6CEcKoYDbUpyNGKVlEmMpec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVC7NVBhQXkC3+29OTzGxNfz/g9ZcoH9JQ3r3aXeKZG0qp4KwWw+YERDu8NgYCEI8s1oXPfyFUijOBk64XnJPSDTxlcq1Bw/I36e/S8XOWBw85T5tx+nc2dtOfJcCPCTDLwocVDQIPrBu/JRaso9RIlJ49i5Sz2SOnsnkQjz3IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJyv7ou5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE85C116B1;
-	Mon,  6 May 2024 09:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714987624;
-	bh=r9PFC5bu7lmiF9aq5BTi6CEcKoYDbUpyNGKVlEmMpec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZJyv7ou5pxTVr+uFQiaUFaf141/cP0PUE3Qwy8Uxt7ca6tziSJAncFT6YoShaa4kG
-	 XcNFv5jUbDNutMUtLFyD7kfwlU3CfLN1mvCWn65w7ZdzuayS3fTQKBSkFuatUdwbGQ
-	 o/AvZTj0GH9CXRl6SIrwcNGc6i63LilJlhGYbJUl6F9jYP0waycKJzZ9bmasukbKf1
-	 U934NoMGZc9+AnQG7WtQzww5nuRY3YSb5P5wGwhZxLA3G14RLSmkpfQLk0ohnNX1HW
-	 w9L7ZrTsbC7mzuhQMjM8CQEhVGab8383AUyX/Xjb9b4SvXj2xQqapcbWmPtO5didMN
-	 H7A9F0KS1jCxw==
-Date: Mon, 6 May 2024 11:26:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240506-zweibeinig-mahnen-daa579a233db@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <20240505-gelehnt-anfahren-8250b487da2c@brauner>
- <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
- <20240506-injizieren-administration-f5900157566a@brauner>
+	s=arc-20240116; t=1714988166; c=relaxed/simple;
+	bh=AnhUQnMdGrRZOxXZdeozV6MOrXgYCXG31theF87blOg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=czfg8nCHTL/engccWJe/Y77DcjzvZEHWJue1c8ijBpPMcLPXSLd/2nM7zkhRHVoU9Ny6LFlJe+DZ5PZlOn1pck31ZG/LqZkF6Tmu1oW4++df2mhjL6H0HbpXjK15BR9hXgHQ6eTrFc8Ievx1fCIia0LURJqUpwDYKXK3QLfygBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d9913d3174so222550039f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2024 02:36:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714988164; x=1715592964;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zv5x6Nmy7t07YX+YnaK0VGIx5sNBuwgtq9Vcfuj51bA=;
+        b=aMLhmmeqaHgQE+KY2FtWJnbhbo28SQgUu7JteofQknaYoBzwp8vp2SaR1oeULcR8tX
+         JwBdtxiDa3kQfISQll8Iq1fcMOKxZ4l5ZcYRw5S2zvW6SLaLALJB6hWCHFxjcjEqRLz2
+         RQOr1/R6Y29K8mKhQWHwZBrJ33/LjlxwmZYfozJ6gCZzRQQxKBfNylhNOS20iE6zkcxe
+         X1JrB71kPulaRlAFtC980MRPvOaNE3Llc3gXSDYI0obu52OVVvK7gmxPTzcYHWkAJKYE
+         MYfnHnXr3JJ1jv+ctfl5nO0gWfxu/leQwavAQF/A+xmY5ukE7FK4Hb5HxJlY/dacT8SN
+         GsFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9cG+EvCh/Z+smQ1HohYahz61dgRMmXzRMBgFCTwmI44qspTBBAwBJRvJqLZaP0cCUGcd4CHgYmh/8ZKtGbsxSBOl/tjVM7JSLII2RDg==
+X-Gm-Message-State: AOJu0Yy9wNMeBY2Y9ptb+n8acr4CBfTYTP81eNLOICtboKnc/YMksXd6
+	c+xk5hPqXowFINi8vcCNNMj+nT5r6fcH3XAhNl2Q/VXU6JEsJRWJvez9FanZwqCL3+xCW7iQr0F
+	uW2gsv2/WKHMs7inf1Ll6ryL42/xGCj4+CGkgdIx2xAauNtYh6vFm62w=
+X-Google-Smtp-Source: AGHT+IHO4idvgpUvaa9A/19lxtxEAU+Qg+pRM/VhI3hOV9Bck/gnw+u3jLIrwc8UwbOl8L8uFiEpCXGD2usdmZFcNGsYW9LgrsS7
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240506-injizieren-administration-f5900157566a@brauner>
+X-Received: by 2002:a05:6602:6414:b0:7da:6916:b435 with SMTP id
+ gn20-20020a056602641400b007da6916b435mr353342iob.0.1714988164735; Mon, 06 May
+ 2024 02:36:04 -0700 (PDT)
+Date: Mon, 06 May 2024 02:36:04 -0700
+In-Reply-To: <0000000000005c46090617b917e7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005a730f0617c5cc76@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in __bch2_bkey_invalid
+From: syzbot <syzbot+ae4dc916da3ce51f284f@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 06, 2024 at 10:45:35AM +0200, Christian Brauner wrote:
-> > The fact is, it's not dma-buf that is violating any rules. It's epoll.
-> 
-> I agree that epoll() not taking a reference on the file is at least
-> unexpected and contradicts the usual code patterns for the sake of
-> performance and that it very likely is the case that most callers of
-> f_op->poll() don't know this.
-> 
-> Note, I cleary wrote upthread that I'm ok to do it like you suggested
-> but raised two concerns a) there's currently only one instance of
-> prolonged @file lifetime in f_op->poll() afaict and b) that there's
-> possibly going to be some performance impact on epoll().
-> 
-> So it's at least worth discussing what's more important because epoll()
-> is very widely used and it's not that we haven't favored performance
-> before.
-> 
-> But you've already said that you aren't concerned with performance on
-> epoll() upthread. So afaict then there's really not a lot more to
-> discuss other than take the patch and see whether we get any complaints.
+syzbot has bisected this issue to:
 
-Two closing thoughts:
+commit d789e9a7d5e2799f4d5425b0b620210d2fcad529
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sun Apr 14 03:59:28 2024 +0000
 
-(1) I wonder if this won't cause userspace regressions for the semantics
-    of epoll because dying files are now silently ignored whereas before
-    they'd generated events.
+    bcachefs: Interior known are required to have known key types
 
-(2) The other part is that this seems to me that epoll() will now
-    temporarly pin filesystems opening up the possibility for spurious
-    EBUSY errors.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1070e9df180000
+start commit:   b9158815de52 Merge tag 'char-misc-6.9-rc7' of git://git.ke..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1270e9df180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1470e9df180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae4dc916da3ce51f284f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a910c4980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15490b54980000
 
-    If you register a file descriptor in an epoll instance and then
-    close it and umount the filesystem but epoll managed to do an fget()
-    on that fd before that close() call then epoll will pin that
-    filesystem.
+Reported-by: syzbot+ae4dc916da3ce51f284f@syzkaller.appspotmail.com
+Fixes: d789e9a7d5e2 ("bcachefs: Interior known are required to have known key types")
 
-    If the f_op->poll() method does something that can take a while
-    (blocks on a shared mutex of that subsystem) that umount is very
-    likely going to return EBUSY suddenly.
-
-    Afaict, before that this wouldn't have been an issue at all and is
-    likely more serious than performance.
-
-    (One option would be to only do epi_fget() for stuff like
-    dma-buf that's never unmounted. That'll cover nearly every
-    driver out there. Only "real" filesystems would have to contend with
-    @file count going to zero but honestly they also deal with dentry
-    lookup under RCU which is way more adventurous than this.)
-
-    Maybe I'm barking up the wrong tree though.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
