@@ -1,143 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-18877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252388BDCB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:51:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F698BDCC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E9B1C229ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 07:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C59C2814AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 07:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C166413C81A;
-	Tue,  7 May 2024 07:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="dCkyrJBG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6A313C825;
+	Tue,  7 May 2024 07:57:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57F078274;
-	Tue,  7 May 2024 07:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4544D78274
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 07:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715068282; cv=none; b=mo4qSMbCY2q2lLs/SzkmW7vfa2xjFfd6IqBMIa2JRjP0PNju2LKgTdVTwb5mX3ASmWw/Eg3bNWcSffxgVGl/0aUgmB2bwCb6ORA7uey70ubgGve0npIYPnbi3DIGm5SBZI23st8MAcnnouh6M2wkm4LBgIX16viQnX2pZ+yE2fc=
+	t=1715068643; cv=none; b=BT1+WfyDGZo7Sa3pqf+yAPO9zi67zVk17Xy4sr6mEuYX3AwOfSnwGL/ufpHot8tnfwLsy7YEyqG6eOn+nazIRlRU4eEjSRJnzuGCHQynsnQdnFNAA+XtdkuUYJ3qqBIK7MsI/OnI0obfrfQUfqS1xTlwkYuo1H2W1KLwi1Op8OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715068282; c=relaxed/simple;
-	bh=Yt1ERYjJEdTGYm8TRtzABKvuMdbrTzwn9Sc8/9cixag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvESmCZTO1G/FG6foVNfWGZsZNE8einqZMxrYx2RWEgBYOq085KteR1+q6k9nQWZZKZJHw1lGM1ioPKTKz63MbejxJZosmZDm6LK6XSnVkJ7/3ojVt/dgpsh8UqQEr5VHOiYLYZny3thR02QVJaa4ba6B2c2X6OxsF3qU+VvscE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=dCkyrJBG; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VYVpB3Qxsz9sls;
-	Tue,  7 May 2024 09:51:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1715068274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yt1ERYjJEdTGYm8TRtzABKvuMdbrTzwn9Sc8/9cixag=;
-	b=dCkyrJBG5z7WLTGoSi3Di7SZ1dymYcoHun/rKWymCVjq6wOgRGVO65Y12Xt1MWmNUsWezI
-	vV424TbvVZnEV6NCJoGw8WpQTDzyR2gzcIqFjQgiF02bZRQITTXUZiJdWtnttUXuBllZEa
-	UdEWR8Z1jhyjoS9s4BRi49T62IoRQelINWy9jUrMK27lchoPA1wNlXKVPrKdIPwnnbhbXq
-	qXVFeA7Cfozrt36mPhtTahiuEVHo8T2+OLR7uZaYwt/Hqa4/hHhu0X0dTAteABkpx/dPPT
-	bNkw1/ynZ+viD6psUfEgo+W3iz/A/U7bQENQbEUC4ubVUYTFOqgLPxe8Dk+QDA==
-Date: Tue, 7 May 2024 17:50:58 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Stas Sergeev <stsp2@yandex.ru>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Andy Lutomirski <luto@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
-Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Message-ID: <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
-References: <20240427112451.1609471-1-stsp2@yandex.ru>
+	s=arc-20240116; t=1715068643; c=relaxed/simple;
+	bh=UiL0lNsLkBheMrPpfn7tGAXa1d92jQg/501qFzXU8gk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BMTXrInR98zAXvtWfe8XFWasa2FNLbFltyRNLSjcfhlsWmx9j3k2LUSCYCPnyLue1RG9kCbemYSDmUVuKkq2MzSm0x/QjXUDFrkUJ8cScZ/iXt1r7yqa0q6l1C3IIy8CdTn7HHOmrcfIdCXUouGmbBQpybL0+rD5N1sVvpfXAWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-36b1d46700eso21132275ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 00:57:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715068641; x=1715673441;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZidFwnkN6Y7nu+nx4pT0dPd/8UpyGwIteouTtk6ORGA=;
+        b=a8xQ3r+7SAsaZiNtGIudW7hV28JTiecSq3HUKT/bQTCtT8AMXT6iOdmPPD9AhJzHpJ
+         6oOqS/UqG8qpTG7xhC464ooQrLQYLZ4OAtJp7akAUx2QrwFuwSrCDDPpbEKj6ZpmhjvR
+         qShuUeKxZZS5n696BHAUvyP3PaJVEIvng5fKGbu0ngbOjtRWsRH10cKeqhiTlg37xImR
+         vdBspkDyR6bMj2TDtxzDopliyhraaX03JaPgBZOibfY9vq9UzSwHaS6xcQIhSJ5YVg3T
+         3EuU5HuiuqeAz4Uw7OrPd1ek4fgpwBm2ahLb4K7TJj5jgT8xSkEgWcwzEqK4pKWUAPJV
+         p5wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUK7W2Y7SV1++gL2lEsJnVkfY0W6dsorYWj3OubGPcsg6BQLZ44rRfnDnET8EI0RmV/FPORM/AeMLTy8+58DuP23K0yCNbcenPwhrTFsw==
+X-Gm-Message-State: AOJu0Yyn3GxqK8VMrLPyAHClhom3O83s71nxDCm/BXQS73jOCsEuOdUD
+	xUosB02f6dh4qFQzyYm8vmTzEj7bxsVhlvyFIJbJa7E8Ao7aBDC345rjdC4PhJXp/hX4cMY3V1a
+	/zP9EMCLv6U0I+hmhFGezltmcI59wTcUWE3qLhWkTnMbR0HscM0zEiFc=
+X-Google-Smtp-Source: AGHT+IF+gmQQ+Y47r012cbKpIZjJALZDEvS8pq5lcXedbZbB2jBj55ZuxuaQYAKhNik1HGw0X7T6YFqlwcATGTAP2eMLMZQsZdgq
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lyexfaaq2zqn7bci"
-Content-Disposition: inline
-In-Reply-To: <20240427112451.1609471-1-stsp2@yandex.ru>
+X-Received: by 2002:a05:6e02:1c2b:b0:36c:5014:3bf0 with SMTP id
+ m11-20020a056e021c2b00b0036c50143bf0mr625706ilh.3.1715068641622; Tue, 07 May
+ 2024 00:57:21 -0700 (PDT)
+Date: Tue, 07 May 2024 00:57:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000264c0d0617d88912@google.com>
+Subject: [syzbot] [jfs?] KASAN: user-memory-access Read in jfs_statfs
+From: syzbot <syzbot+cea4fad5485bc30243a9@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12fc7570980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+dashboard link: https://syzkaller.appspot.com/bug?extid=cea4fad5485bc30243a9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c07ad4980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ea1961ce01fe/disk-dccb07f2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/445a00347402/vmlinux-dccb07f2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/461aed7c4df3/bzImage-dccb07f2.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/30e39d5c3e2c/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cea4fad5485bc30243a9@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: user-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: user-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: user-memory-access in jfs_statfs+0x20e/0x510 fs/jfs/super.c:140
+Read of size 4 at addr 00000000000050c0 by task syz-executor.1/7188
+
+CPU: 1 PID: 7188 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_report+0xe8/0x550 mm/kasan/report.c:491
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ jfs_statfs+0x20e/0x510 fs/jfs/super.c:140
+ statfs_by_dentry fs/statfs.c:66 [inline]
+ vfs_statfs fs/statfs.c:90 [inline]
+ user_statfs+0x216/0x460 fs/statfs.c:105
+ __do_sys_statfs fs/statfs.c:195 [inline]
+ __se_sys_statfs fs/statfs.c:192 [inline]
+ __x64_sys_statfs+0xe8/0x1a0 fs/statfs.c:192
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff13647dca9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff1371a30c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000089
+RAX: ffffffffffffffda RBX: 00007ff1365abf80 RCX: 00007ff13647dca9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000200000c0
+RBP: 00007ff1364c947e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007ff1365abf80 R15: 00007fffc058c158
+ </TASK>
+==================================================================
 
 
---lyexfaaq2zqn7bci
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 2024-04-27, Stas Sergeev <stsp2@yandex.ru> wrote:
-> This patch-set implements the OA2_CRED_INHERIT flag for openat2() syscall.
-> It is needed to perform an open operation with the creds that were in
-> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLOW
-> flag. This allows the process to pre-open some dirs and switch eUID
-> (and other UIDs/GIDs) to the less-privileged user, while still retaining
-> the possibility to open/create files within the pre-opened directory set.
->=20
-> The sand-boxing is security-oriented: symlinks leading outside of a
-> sand-box are rejected. /proc magic links are rejected. fds opened with
-> O_CRED_ALLOW are always closed on exec() and cannot be passed via unix
-> socket.
-> The more detailed description (including security considerations)
-> is available in the log messages of individual patches.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-(I meant to reply last week but I couldn't get my mail server to send
-mail...)
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-It seems to me that this can already be implemented using
-MOUNT_ATTR_IDMAP, without creating a new form of credential overriding
-within the filesystem (and with such a deceptively simple
-implementation...)
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-If you are a privileged process which plans to change users, you can
-create a detached tree with a user mapping that gives that user access
-to only that tree. This is far more effective at restricting possible
-attacks because id-mapped mounts don't override credentials during VFS
-operations (meaning that if you miss something, you have a big problem),
-instead they only affect uid-related operations within the filesystem
-for that mount. Since this implementation does no inherit
-CAP_DAC_OVERRIDE, being able to rewrite uid/gids is all you need.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-A new attack I just thought of while writing this mail is that because
-there is no RESOLVE_NO_XDEV requirement, it should be possible for the
-process to get an arbitrary write primitive by creating a new
-userns+mountns and then bind-mounting / underneath the directory. Since
-O_CRED_INHERIT uses override_creds, it doesn't care about whether
-something about the O_CRED_ALLOW directory changed afterwards. Yes, you
-can "just fix this" by adding a RESOLVE_NO_XDEV requirement too, but
-given that there have been 2-3 security issues with this design found
-already, it makes me feel really uneasy. Using id-mapped mounts avoids
-this issue because the new mount will not have the id-mapping applied
-and thus there is no security issue.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---lyexfaaq2zqn7bci
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZjndYQAKCRAol/rSt+lE
-b2oOAQCmKy2OE9MgmZTVxlKN+/Sdcj0IpZ+qML12Z2Jmhr8r6QD+JguvCHBD2QUw
-5QTi+WIy7+VPoIpn+aXJKiYsm0xm4AU=
-=VQBl
------END PGP SIGNATURE-----
-
---lyexfaaq2zqn7bci--
+If you want to undo deduplication, reply with:
+#syz undup
 
