@@ -1,65 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-18904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D228BE4EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 15:57:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A42648BE4EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 15:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845221C21F34
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 13:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446BD1F23616
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 13:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FCA165FB7;
-	Tue,  7 May 2024 13:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721A015ECD5;
+	Tue,  7 May 2024 13:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csCA39ST"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RcAOmYu8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B3615E5C1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 13:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F87A161902
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 13:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090065; cv=none; b=Rcjg+/yYJ2NKj8ZA5JuM8xkBRVnOJiK8aj7VU7ePygh8w3tWWqjSjn41HzQStgWNB8MOq3gGkbmbfs0Zmc+6KJglPCMMkOEdHaZkJcVdNtbqE9MBtLltxUhoJucP7H5EOlJ8Xx/NNg0JTYTbV/VhPg15I81aYlJpv4ro1W4OCHw=
+	t=1715090076; cv=none; b=uGWbCwpIVn6RKZcBhjv+6aQqumM+I9+pFJUBmqaQv7LHRZvN52IXsdcpZIMyxlxefB8sV/gY18txSTKdELv5EITgkSJnIdozeVYCEG+vcfCsKULVe34GXqXHqlCiWHEF0drBV8LAEVQRNxBxQicz6+s8Kjqnh6yEFmMdUYJY/40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090065; c=relaxed/simple;
-	bh=ERW5q7wnngZEdZKlqzXvkDU6yQ2Wbilvd1EmCCUY1Fk=;
+	s=arc-20240116; t=1715090076; c=relaxed/simple;
+	bh=yyJxObKOAPxvrLe8uwdtf2/JfAl1PJSbyG/kOEUNzC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feRBMgcCojd5m+Jaz84BBGPbQ6hK/WHXzVvAhjtjVIi+z+roBP+SL7cbpqENhbySGtWyfo+badTlDBZnQ6nPByv31PCFVYVyG3Stn2B6tg0nqwPHci/xk2ttrhDtXcSykC4UeX8lIadSGiCi3tBES/CxCnbp0eQZ5+XSYk2dZJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=csCA39ST; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmLrhJFqALy7LnSL+0zfF3yEOiPGUWjfxWeCo7HKqbD+XQHAC1fjsw6tu6vmtVG5rh+c3j/t+yPSiODr6Ym1SoFKik+JDhGfSTOOX/1ec9MpjIS9rUM7HJgjeRJhr6/qQe6Jd9i6LDKkyjnVNP0st8m7p/IoM7S9an5jYbkvqoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RcAOmYu8; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715090063;
+	s=mimecast20190719; t=1715090071;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sv9p74SCFBlXhAt6IfoxgP71zbImKxKcycl4SsrCyCw=;
-	b=csCA39STdHsKT06I/IEQv4mW731Srewtm2AkPKwaPHYEzFlNNirJe6nORww8eqBANKiaFH
-	61IklHxTcOfzgYgf4WcKY38aYBagNrn5yfWs2GVAfNt+xNvHfgBRciRpo+sWJFQR075FiE
-	wiFxPXkjBxTv+d5iezPp/wGZfSpfuHM=
+	bh=s0imT2gu8FwFPEs6eREVoHmvoP31aEX/ubPvNn826Eo=;
+	b=RcAOmYu8Aqv+Vw7dGTOXNvrUUWARHXDtHXw2AHwe48D3ez9mayogxZqt0z03zkW2YIyrcW
+	LY9TDi7Cd7w68ALR48O5XanFw+jaIntbaqQPcF4d5YbelQ8V/1KIJ/BkUvAVrcX9btGm7/
+	rG6ZJJqTa7ib2EKAavsLkxfwMeHLXxc=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-xaoAMLx6OL2sbI5BQMvi2Q-1; Tue,
- 07 May 2024 09:54:21 -0400
-X-MC-Unique: xaoAMLx6OL2sbI5BQMvi2Q-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-558-9iXKYi4rNuC-PZ2w1DkORg-1; Tue,
+ 07 May 2024 09:54:29 -0400
+X-MC-Unique: 9iXKYi4rNuC-PZ2w1DkORg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 155D13C0DF67
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 13:54:21 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 297071C0C642
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 13:54:29 +0000 (UTC)
 Received: from localhost (unknown [10.39.192.114])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 8CCC040C6EB7;
-	Tue,  7 May 2024 13:54:20 +0000 (UTC)
-Date: Tue, 7 May 2024 09:54:19 -0400
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 8360F1C00B17;
+	Tue,  7 May 2024 13:54:28 +0000 (UTC)
+Date: Tue, 7 May 2024 09:54:26 -0400
 From: Stefan Hajnoczi <stefanha@redhat.com>
-To: mszeredi@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, vgoyal@redhat.com, bfoster@redhat.com
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+	vgoyal@redhat.com
 Subject: Re: [PATCH v2] virtiofs: use string format specifier for sysfs tag
-Message-ID: <20240507135419.GB105913@fedora.redhat.com>
+Message-ID: <20240507135426.GC105913@fedora.redhat.com>
 References: <20240506185713.58678-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -68,13 +69,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ajChN7AjkvtlthX4"
+	protocol="application/pgp-signature"; boundary="FpWHDssK5rWsSVdZ"
 Content-Disposition: inline
 In-Reply-To: <20240506185713.58678-1-bfoster@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
 
---ajChN7AjkvtlthX4
+--FpWHDssK5rWsSVdZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -94,45 +95,24 @@ redhat.com/
 >=20
 >  fs/fuse/virtio_fs.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 322af827a232..d5cb300367ed 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -170,7 +170,7 @@ static ssize_t tag_show(struct kobject *kobj,
->  {
->  	struct virtio_fs *fs =3D container_of(kobj, struct virtio_fs, kobj);
-> =20
-> -	return sysfs_emit(buf, fs->tag);
-> +	return sysfs_emit(buf, "%s", fs->tag);
->  }
 
-Miklos: Would it be possible to change the format string to "%s\n" (with
-a newline) in this patch and merged for v6.9?
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-v6.9 will be the first kernel release with this new sysfs attr and I'd
-like to get the formatting right. Once a kernel is released I would
-rather not change the sysfs attr's format to avoid breaking userspace,
-hence the urgency.
-
-Thank you,
-Stefan
-
---ajChN7AjkvtlthX4
+--FpWHDssK5rWsSVdZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmY6MosACgkQnKSrs4Gr
-c8iocwgAn50+5bE6fNltEElg1i1C4WSgkMLH8TZtnX4W0q5LZQrHLVp1enO/pHH1
-lYCPFIbcoBc2RqJuthXIt0kz5LxTKd6XroMtYPGWpsi1AiBLqeDGBlbXujM0N6zk
-GlDJmFf1Pycw95mvhLooDwDnkaFrann8nY7r5VMNB+ykqDCoij7vngGaNC7h9ZEg
-bPblJasXzmfFCWhwRSxaOan9ry6Fcn0/dqwLKX+QIjDtI0Ckmdv6+AS3NWTJpQzJ
-ASPB9H/HC6V/ZYwu2I+34tt2EEOCsJqvRGSF80sdO0YP+lAXw4XBrDqSenzhzZbf
-vH0gth9686pmyO2nkYm/HD4+IVBSkA==
-=EfGO
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmY6MpIACgkQnKSrs4Gr
+c8gTFAgAutKUh+fpkhbxhxw5ozVu8XtKHyJGVjYrug7d84mBOhqfN/IPOcrjSA2u
+T3DhJgofVtk6B6BnB+tINBtYLF9dQ4jLCL2yRtKvwMAR7F4uJ5sR4Pe6qezZc85B
+NxmeSzaEsCUn1PMqUzAD5plwsBke2sZBQwkbDkFoxDRN6t/1E48JiHPBmrsqupDp
+AcIuitOv4FrSUq3EhLMHJdoyGmTdeFbqrEBdMhQvTup1V0fwJvA+csRV6ke99gpc
+Flo8vhEPdstzKWj7hNbuyH8NO3jt0D0StZCWIPB60tO6vFEo8JvFazFkHAN55EEV
+6M3Y1xDYud26rNYi3g5ul5/Y5fwWeg==
+=pJS7
 -----END PGP SIGNATURE-----
 
---ajChN7AjkvtlthX4--
+--FpWHDssK5rWsSVdZ--
 
 
