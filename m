@@ -1,115 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-18939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D208BEB97
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 20:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F828BEBAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 20:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492FF1F215D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBD171C223D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DD216D4FA;
-	Tue,  7 May 2024 18:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C1216EBE5;
+	Tue,  7 May 2024 18:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjaon+TZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpNd/Ja2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7E64C8A;
-	Tue,  7 May 2024 18:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C03716D9C4;
+	Tue,  7 May 2024 18:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715107146; cv=none; b=CmFGY2GzAmtMX2Pjzdu6u+algxzaLUmrA70ZcjkJpg+ZVmKk85IrKpa/idsNmtHye2q/tQywM2dcaY9QMMaJ6SotnNDsHxTFsKHn0woDphgpO2ACPmdM17UsSeIErF+YMtUboNUz3O4NCr1pHM8sEWip4o7hXfWbV4L7nrlVA64=
+	t=1715107481; cv=none; b=CURbYCpSWlfplWWlxCZc+kwHvYo5lvCRqExny2/ybk5Z4X04N/WxpyDpJ1LQydf6m/WtmJa+DqeO/WEkrpn3qABPS3ctAsSocWr7lFMydcFTNKOFs+iUKWeBKYl5Z2jUehFQEONI+7sJDrEvkjtH074doeh4utRO8q3NSj1RdiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715107146; c=relaxed/simple;
-	bh=+e7JwIYntPd6JoynacX1iCTVqyD9G8I62Q6xeEPQjd8=;
-	h=Date:Message-Id:From:To:Cc:Subject; b=IPVeP1Vx7Bl//uRQfyThzwrLz59YD0dbrgCiuwVkBuOxItoptk8Hs8WMe46eAIHGT7F+EyCXU89mN2XB14fEiwI2CL2tEAWDX2o3BlGAh916uaWZ2IGQO8BBaPwjSa1Gkc6afW8YeKAYVNnm6RDhp6EsblMQmwi8bzL8j1TKVzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjaon+TZ; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f4521ad6c0so2588336b3a.0;
-        Tue, 07 May 2024 11:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715107144; x=1715711944; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vbTvMCqSzr4haV2ycU7qwM3HYG3Vs4AHqnsFnA064zI=;
-        b=bjaon+TZDAvWe3bzhROCKarec18mVKG0P1sCx1v0eOZYvMieiamQ5zE8x9IUJvvTiE
-         SOOrED/bTavznID3+GLY1VTnpvfhoYQaKiGfJlYCUad93ckhE96Hcv6LJEKghJPShLjr
-         cWk/TJraRrmbWF/5ZOzB9l4JdWcziXKXpd9lpcrSyJ+osHCqab0FxZjzGUF7CAe3rKhs
-         x3dJoLG4+vO5uBknwcR9otrLEcmIOmV7FJsuDph1/qUx45vyB2qLmUthvXDZ+1d9I126
-         yaq5gaW05Uf6eIJwNEgrhLtOLw/grIu3u1ay2ZhTRCblAIMn6F1RH+6qkTysqKZ+qtCJ
-         Hcjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715107144; x=1715711944;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vbTvMCqSzr4haV2ycU7qwM3HYG3Vs4AHqnsFnA064zI=;
-        b=CHEdMs1UIkni/NKOBl/TUD0Bsgi/n7Oc1nGrnyAN1WALqDGOey7MzUiU41gjWCqdv/
-         Az6ubqQxxkXWBP0am7m8/d+f1KIOqm4D4BlJwcnFD748npawcG5Dmhm1cwxUd9GeDOTC
-         80nM20mu5XyoFGnRoLB0XE8o8sNWymifvPtCWuEpm+rThv0cNFZZUEsXgvdtqEUkRYIw
-         S5AJhT9EL1mmIBC1f4QMFonkkuy09OsfvLsmOpVEQp+BKfJn17Zrwx2sqai0DNXjkPH7
-         ovd5hBxSnA2mjuTIuSzyQuBNe6uSpADhM1Nw8QmxZf8a0JQpLMBymfVUyV4dYE2Jo5Sc
-         fv/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXa/02PYY6K96IwcRdhHSUY6Kd2MlJAgfgf7/T/tlUOWem/t6F91tz2nJ4HniEztvW7aRspITZpQQpByLUpe2YuQJ+0OmrG5WycfiAjSG80SPk2oUSCnSs/XERpkec59CQyB0eF2KrkjVbhu08ssHr9KqZIPTRD/6NigBYT613lzET0Y1Xr
-X-Gm-Message-State: AOJu0Yz7/hYHK32ltmmYgMUoj9m8+K0CTxt2cam+/EzRPdzTpGqT9YZx
-	ViCY9bOxu/5S0Ahn1MJpeA7qxGXcCf0XPT1GRUtROzVEP1uimkd8
-X-Google-Smtp-Source: AGHT+IG1CoIsZ33D9jBTrdDLGpbQF8WORjgZG8GNes4e13UPyDA8z1xFk6dphfOtkjP9qKAC1oMGtQ==
-X-Received: by 2002:a05:6a00:2f16:b0:6ea:e2fd:6100 with SMTP id d2e1a72fcca58-6f49c2b1cb4mr437440b3a.30.1715107144144;
-        Tue, 07 May 2024 11:39:04 -0700 (PDT)
-Received: from dw-tp ([171.76.81.176])
-        by smtp.gmail.com with ESMTPSA id p38-20020a056a000a2600b006f0da46c019sm9687357pfh.219.2024.05.07.11.38.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 11:39:03 -0700 (PDT)
-Date: Wed, 08 May 2024 00:08:56 +0530
-Message-Id: <87edado4an.fsf@gmail.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: hch@lst.de, willy@infradead.org, mcgrof@kernel.org, akpm@linux-foundation.org, brauner@kernel.org, chandan.babu@oracle.com, david@fromorbit.com, djwong@kernel.org, gost.dev@samsung.com, hare@suse.de, john.g.garry@oracle.com, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, p.raghav@samsung.com, ziy@nvidia.com
-Subject: Re: [RFC] iomap: use huge zero folio in iomap_dio_zero
+	s=arc-20240116; t=1715107481; c=relaxed/simple;
+	bh=E9XMpXDc4GOLixsNa+tnFmNYImN3ywdXtqA8m4WFyPw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=LkiWqLoj8ecazHOVL7wk/9er98Dd623c4o7Cj4lM07m7N7LqTeL9qMdrjhK2HaWX7KK69od4sRBbNFIVBDy64xCzAjStcTRgfWwYRY3FbIr2EtUIHIM58WX+WC2T7qHifck9mJYxHbKqqv7uJGRsS+proWundqdEQWvNpC5chZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MpNd/Ja2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A48ABC4AF63;
+	Tue,  7 May 2024 18:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715107480;
+	bh=E9XMpXDc4GOLixsNa+tnFmNYImN3ywdXtqA8m4WFyPw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=MpNd/Ja2Vh2gjAHIPag6uTHw64TRJyQonnhrzPu5n5tSQjDrrWbOiI5bN0azYmhSW
+	 sKQrP+rmYF3tjbwC6rUIQGwEla3h7yzNk8oMMgDA0gyugo5gHY1NyypBZmuJLl086B
+	 qIHVAaFwwWbhTGiVCUOj1Hk/nUQFR/7hpGuGkFJdaPjUd36m3VWZlFG9B30qsfnrs1
+	 Om/n29YfBxfdiLN2LDlVLWdPzEJOzOiluGEeiWbNhCDuL2KkCYlDtS+Ug8YFLeI/HH
+	 XevNrTboghPqmWMikEFzLTegknE3kIu5EupZDipffwUrLdly+BUH0P6d9d+szc6P17
+	 pjl+tpR4PGFvA==
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34db9a38755so3245600f8f.1;
+        Tue, 07 May 2024 11:44:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWdGcvVs9vFS3uQzyJSvOuAaSkoxtSTWuA47D81248OCnRBfcHfY9F44CZQbHhgmKHn8nj3qAoX8QQcK/7WEj1pkhGx0kq7OiqVNviXgedp+m9qebLZTo2r17bq3rCHfrUQF6ar/jA30g==
+X-Gm-Message-State: AOJu0YxqPOfsxFdrYWc4pyY0AuMs7vkVQB678h5VnZLDyIrT6jNCsc9L
+	V2RGGcPYLNBovTK2jnxY9yESZavMpADfRsifoO6/kDduSoBHhaFIqsReNKXjYSQ5Y4sIFClY6+7
+	JI1CaZL0NFThI/dGgACPsLFQs33E=
+X-Google-Smtp-Source: AGHT+IGHhSVsi6e3fyUfKOWCT5TUwxTG1IqviacHiKVUDhQeNmsktRO8HZtHvMkPNpakpL2fH5o5lva4DU45TSZnZEg=
+X-Received: by 2002:a5d:5288:0:b0:34d:a159:48e6 with SMTP id
+ ffacd0b85a97d-34fc9893babmr655329f8f.0.1715107479251; Tue, 07 May 2024
+ 11:44:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: Luis Chamberlain <mcgrof@kernel.org>
+Date: Tue, 7 May 2024 11:44:26 -0700
+X-Gmail-Original-Message-ID: <CAB=NE6XyLS1TaAcgzSWa=1pgezRjFoy8nuVtSWSfB8Qsdsx_xQ@mail.gmail.com>
+Message-ID: <CAB=NE6XyLS1TaAcgzSWa=1pgezRjFoy8nuVtSWSfB8Qsdsx_xQ@mail.gmail.com>
+Subject: kdevops BoF at LSFMM
+To: lsf-pc@lists.linux-foundation.org
+Cc: kdevops@lists.linux.dev, Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
+	linux-mm <linux-mm@kvack.org>, linux-cxl@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Christoph Hellwig <hch@infradead.org> writes:
+Dear LPC session leads,
 
-> On Tue, May 07, 2024 at 04:58:12PM +0200, Pankaj Raghav (Samsung) wrote:
->> +	if (len > PAGE_SIZE) {
->> +		folio = mm_get_huge_zero_folio(current->mm);
->
-> I don't think the mm_struct based interfaces work well here, as I/O
-> completions don't come in through the same mm.  You'll want to use
+We'd like to gather together and talk about current ongoing
+developments / changes on kdevops at LSFMM. Those interested in
+automation on complex workflows with kdevops are also welcomed. This
+is best addressed informally, but since I see an open slot for at
+10:30am for Tuesday, figured I'd check to see if we can snatch it.
+BoFs for filesystems are scheduled towards the end of the conference
+on Wednesday it seems, so ideally this would just take place then, but
+the last BoF for XFS at Linux Plumbers took... 4 hours, and if such
+filesystem BoFs take place I suspect each FS developer would also want
+to attend their own respective FS BoF... so perhaps best we get a
+kdevops BoF out of the way before the respective filesystem BoFs.
 
-But right now iomap_dio_zero() is only called from the submission
-context right i.e. iomap_dio_bio_iter(). Could you please explain the
-dependency with the completion context to have same mm_struct here?
+Agenda items?
 
-> lower level interfaces like get_huge_zero_page and use them at
-> mount time.
->
+Guestfs migration progress - have we killed vagrant?
+Automation on testing filesystem baselines
+xarray / maple tree testing and userspace testing
+OpenTofu
+kdevops-results-archive split
 
-Even so, should we not check whether allocation of hugepage is of any
-value or not depending upon how large the length or (blocksize in case of
-mount time) really is.
-i.e. say if the len for zeroing is just 2 times the PAGE_SIZE, then it
-doesn't really make sense to allocate a 2MB hugepage and sometimes 16MB
-hugepage on some archs (like Power with hash mmu).
+Any others?
 
-maybe something like if len > 16 * pagesize?
-
->> +		if (!folio)
->> +			folio = zero_page_folio;
->
-> And then don't bother with a fallback.
-
-The hugepage allocation can still fail during mount time (if we mount
-late when the system memory is already fragmented). So we might still
-need a fallback to ZERO_PAGE(0), right?
-
--ritesh
+ Luis
 
