@@ -1,51 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-18884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702058BDDB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:03:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335568BDDC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37758B2182B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:03:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654831C21D84
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA1914D70A;
-	Tue,  7 May 2024 09:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="URRyXl5p"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7924814D6E4;
+	Tue,  7 May 2024 09:07:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward501c.mail.yandex.net (forward501c.mail.yandex.net [178.154.239.209])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A9E14D6EE;
-	Tue,  7 May 2024 09:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCB714D452
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 09:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715072546; cv=none; b=TWAXUz8zqNAhZHgp95M8kxHabFFCbZgjsVKDYFKleYwShkRpvyVPLkdzqgwht05FavkT57C8ReOBJsbkmY7MpUT2rpR9795iCmaoT2jbV5PYWTy32JSGXRYVEooE1puRGHeU4fcEfQ4D2ylEB9SkeI34zmlKsz7AFYyPd++NEJM=
+	t=1715072826; cv=none; b=FKRBvh2A9VP0chOIEGr8NOgo678Nur9C3jWSIGmLH6BrOkhC1hb4+SHM/ybuuMXDdOOiZzfDTf8h28ltP0RBdtYYdftRYbEUugwMPO/Tv/3D5Oy7wiqSGB/0Yi0PMGSjXI9qhTdlGy6zbREoHrX04clz4mErfkjvHohU/9dnJTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715072546; c=relaxed/simple;
-	bh=6uh8ifxHE5uS7W3QOLk171FF199PCmZvPR8VQGKwOU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HgnI+o7nQfDE1WHgbLX3EoAtBu7vLtStwjew/sjFLVVFzUKHkt0KMkrmqxzZM8mCdMYT5S25hmU5ts/NVN/ZFjlc47fc49vzWiytdChCh7hE/rPrYRe50rQrrH7IPH6H0A5sFdAgMbiQ9NHJJnI7GWigpBeMwXuMWYJWU7doeMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=URRyXl5p; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:4a21:0:640:2a87:0])
-	by forward501c.mail.yandex.net (Yandex) with ESMTPS id 5043C60AEF;
-	Tue,  7 May 2024 12:02:13 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id A2UoZZEXmiE0-lvz16yjz;
-	Tue, 07 May 2024 12:02:11 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1715072532; bh=6uh8ifxHE5uS7W3QOLk171FF199PCmZvPR8VQGKwOU4=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=URRyXl5p7TM+JG7sJGaDL948M/XhkeO3pZaPL1fgL8Bjms4MwfqOR33DW3NL9b/Jp
-	 e2vlVjEPAZr4maOPUGUd+3ZvUIX8cJnmKCvHcJg/AjkBn1gKHfkA6pxOgfJCP3zesw
-	 xiFfOVxdUlgsNzfjNv8lr3SbJkq0+lYJg1x/DmeQ=
-Authentication-Results: mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <5b5cc31f-a5be-4f64-a97b-7708466ace82@yandex.ru>
-Date: Tue, 7 May 2024 12:02:10 +0300
+	s=arc-20240116; t=1715072826; c=relaxed/simple;
+	bh=hVFgkrfMqog8kHdMSQOC3KgRp8Jq7BHJ4VHLzN/AxRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CJzltL/arrIFQWWoygGP9kES72o6D9fDHDcpU+N9tcNImn8arOQnBvAP12QYPsnWKvfdW/1E14a2xXmncVe0Cxoo9NOIwq74egyTPWIvO1h+p/oZVZHdyV6skYGxIWsLGv3CGeNwG6cxAaVgEAPjOsxLvRK5XHpJagsSvZQ1QIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VYXPm0YqCz1R8sZ;
+	Tue,  7 May 2024 17:03:40 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 798AA18007B;
+	Tue,  7 May 2024 17:06:58 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 17:06:57 +0800
+Message-ID: <411eb896-56c6-4895-a2ba-6c492f8b51fd@huawei.com>
+Date: Tue, 7 May 2024 17:06:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,40 +48,109 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Subject: Re: [PATCH rfc 4/4] mm: filemap: try to batch lruvec stat updating
 Content-Language: en-US
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>,
- David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-References: <20240427112451.1609471-1-stsp2@yandex.ru>
- <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand
+	<david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko
+	<mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt
+	<shakeel.butt@linux.dev>
+CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, Muchun Song <muchun.song@linux.dev>
+References: <20240429072417.2146732-1-wangkefeng.wang@huawei.com>
+ <20240429072417.2146732-5-wangkefeng.wang@huawei.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240429072417.2146732-5-wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-07.05.2024 10:50, Aleksa Sarai пишет:
-> If you are a privileged process which plans to change users,
++ memcg maintainers and David too, please check all patches from link
 
-Not privileged at all.
-But I think what you say is still possible
-with userns?
+https://lore.kernel.org/linux-mm/20240429072417.2146732-1-wangkefeng.wang@huawei.com/
 
+Thanks
 
-> A new attack I just thought of while writing this mail is that because
-> there is no RESOLVE_NO_XDEV requirement, it should be possible for the
-> process to get an arbitrary write primitive by creating a new
-> userns+mountns and then bind-mounting / underneath the directory.
-Doesn't this need a write perm to a
-directory? In his case this is not a threat,
-because you are not supposed to have a
-write perm to that dir. OA2_CRED_INHERIT
-is the only way to write.
+On 2024/4/29 15:24, Kefeng Wang wrote:
+> The filemap_map_pages() tries to map few pages(eg, 16 pages), but the
+> lruvec stat updating is called on each mapping, since the updating is
+> time-consuming, especially with memcg, so try to batch it when the memcg
+> and pgdat are same during the mapping, if luckily, we could save most of
+> time of lruvec stat updating, the lat_pagefault shows 3~4% improvement.
+> 
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+>   mm/filemap.c | 33 ++++++++++++++++++++++++++++++---
+>   1 file changed, 30 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 3966b6616d02..b27281707098 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3615,6 +3615,20 @@ static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
+>   	return ret;
+>   }
+>   
+> +static void filemap_lruvec_stat_update(struct mem_cgroup *memcg,
+> +				       pg_data_t *pgdat, int nr)
+> +{
+> +	struct lruvec *lruvec;
+> +
+> +	if (!memcg) {
+> +		__mod_node_page_state(pgdat, NR_FILE_MAPPED, nr);
+> +		return;
+> +	}
+> +
+> +	lruvec = mem_cgroup_lruvec(memcg, pgdat);
+> +	__mod_lruvec_state(lruvec, NR_FILE_MAPPED, nr);
+> +}
+> +
+>   vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>   			     pgoff_t start_pgoff, pgoff_t end_pgoff)
+>   {
+> @@ -3628,6 +3642,9 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>   	vm_fault_t ret = 0;
+>   	unsigned long rss = 0;
+>   	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
+> +	struct mem_cgroup *memcg, *memcg_cur;
+> +	pg_data_t *pgdat, *pgdat_cur;
+> +	int nr_mapped = 0;
+>   
+>   	rcu_read_lock();
+>   	folio = next_uptodate_folio(&xas, mapping, end_pgoff);
+> @@ -3648,9 +3665,20 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>   	}
+>   
+>   	folio_type = mm_counter_file(folio);
+> +	memcg = folio_memcg(folio);
+> +	pgdat = folio_pgdat(folio);
+>   	do {
+>   		unsigned long end;
+> -		int nr_mapped = 0;
+> +
+> +		memcg_cur = folio_memcg(folio);
+> +		pgdat_cur = folio_pgdat(folio);
+> +
+> +		if (unlikely(memcg != memcg_cur || pgdat != pgdat_cur)) {
+> +			filemap_lruvec_stat_update(memcg, pgdat, nr_mapped);
+> +			nr_mapped = 0;
+> +			memcg = memcg_cur;
+> +			pgdat = pgdat_cur;
+> +		}
+>   
+>   		addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
+>   		vmf->pte += xas.xa_index - last_pgoff;
+> @@ -3668,11 +3696,10 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>   					nr_pages, &rss, &nr_mapped,
+>   					&mmap_miss);
+>   
+> -		__lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr_mapped);
+> -
+>   		folio_unlock(folio);
+>   		folio_put(folio);
+>   	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+> +	filemap_lruvec_stat_update(memcg, pgdat, nr_mapped);
+>   	add_mm_counter(vma->vm_mm, folio_type, rss);
+>   	pte_unmap_unlock(vmf->pte, vmf->ptl);
+>   out:
 
