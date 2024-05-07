@@ -1,160 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-18970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DD78BF295
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:53:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613D08BF2C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EF81F2115D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F04282A9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDC186655;
-	Tue,  7 May 2024 23:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C5612A175;
+	Tue,  7 May 2024 23:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho3BVj7G"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CzWCw4zl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC2D19D42D;
-	Tue,  7 May 2024 23:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C3180BF5
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 23:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123644; cv=none; b=ZzuAypMzn3SjOoyDnh+DGKp5suV3kEpf6nWofHXTHSwefWkGtwJqtqRyqM7RsTZGk+e755OvBRkMVJDXHAQz+LcsdcSpx19XsxvntwE1O5VcbkRcPcPCeWuw/Kq6NJ9XB8tbj1bb3pOIeknUayzhMc5HyDLMlnOBHmQrZA9NRjA=
+	t=1715123880; cv=none; b=afe+mlfhDqzJIT09bXzZeTb0pxVo2gVBY7qJF987ZeqU9t161U23Qt+/97QpduTu05It8l4SHANZJ4sbqSn57daLdpguVpkZdKM7t/PZBdLy3gKSxaPBDf+z7HtGhjtkrJ03PNBPIHwfOv7JNuGzVOfIY0e2328JHeC4xTD4i0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123644; c=relaxed/simple;
-	bh=Mz8Q6nscvxWSF22rQIxoe3uPByARdyh+B/R4vfV92Ek=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G/rpP6J7FK97QlmAdocVczxrc+FZvG7mVqzbXf80eRYxFTw1tWYIuU4JGEOJBYU1ei2kWS8ynI6Sp3Ykr4iYZQBboEjEduJMXpIS+ZMAmllUElCobUed9d1tSxBR1EoGpgBXJex1Qe9aZEqRQJ4Pl6qArLHlZP6Z1hStC0MP+3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ho3BVj7G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E374C2BBFC;
-	Tue,  7 May 2024 23:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715123644;
-	bh=Mz8Q6nscvxWSF22rQIxoe3uPByARdyh+B/R4vfV92Ek=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ho3BVj7GBbjCRu8g0PoHSsmfYvmHeH7Hc/8zoZjdhJ+X16CvoB4yHRh7/2a51XFJE
-	 wYzMEO9qwqq4yBP45DA91shaYghQOL2mRdyS0MX7Ye5Vk1iA7fJb+QDGWUlq0CWvDD
-	 y/kys3jy1m2T4MuVDqUO3pDo9rU+4Z1PnCeKikjw22dGSr162vrN9QKiw+uuRyR+XC
-	 HJKmnQnN3QYDBCDdbg0ZfUrQpWNhOguUPfI9v+vrC3T1n7qvaP7yEI4GIDwk4jBLSU
-	 MvhV9a5GPHKT5tsU2EsaDUxXGTpczUdcJvGzSpoTg/rPkWXI/4O6lL69oWPUhbG2Is
-	 18C93xvuGmP7w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 15/15] epoll: be better about file lifetimes
-Date: Tue,  7 May 2024 19:13:24 -0400
-Message-ID: <20240507231333.394765-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240507231333.394765-1-sashal@kernel.org>
-References: <20240507231333.394765-1-sashal@kernel.org>
+	s=arc-20240116; t=1715123880; c=relaxed/simple;
+	bh=blSl364swsDcz/ERpxYIrtfmuULQVemGaeVD2pgedbw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WKy2hn6/FKtIcx2F5JhDlZdcgkNvPtSCftkAgJF1d6iokQIZeDpAONdxRPli71JMEdbUCjAKocZPz/aj6WDZ29QlCllYxH1FlyqE/vIYjnjUCs7CcmwVQMwwHOSJqMTZvTt0cuJOPfBrS2iJmtf4pbKe3pDUH/tL0Kj9N0Ps6w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CzWCw4zl; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de59d580f61so6856540276.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 16:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715123878; x=1715728678; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=90t3eEjytmnEM4io+FHTgKxLXZqFJBWBJ/adXIPm22Q=;
+        b=CzWCw4zl0Is6iW5jYXyFfkMlwxZ8o6abzYdSvd/cIb9EqAso6VHMnT83fcO4gseQWl
+         K7QNMHtkT8yK/4mlNFI3ZGXvlNxHO65frLy0uA97HBa9TP47yCiMLMzRmNwv6QqqeTdf
+         m1JvFwjyfS5ZGNIykmreFF27QhcQrRKkQHrAMu5UNh/8PM55nTR6ahBz8Qulx7q/NROC
+         fjxH8vXfNmzb7mpecQLDyZONQDDQSNRDtpflar9OuIeoSrnWqyjs1SoJ7si/UoSNupN5
+         sTW2GsWMTyiifqOtNbLHOVg2xB+iav0oufKx5repAInLa6Mo+e6NFFebNM0j7Dp/w/Q4
+         5dsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715123878; x=1715728678;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=90t3eEjytmnEM4io+FHTgKxLXZqFJBWBJ/adXIPm22Q=;
+        b=kh4TJ61fkvA0ribn5EOt/Zn3UZzYWcFcK5ZqJ7FONMRkVnnZgQMGg4auQPWX4BEOGz
+         kQ8TGtJMQJ26D2+83vqw15s2Tmk1V/3RgYNy6nWa07nkOrAAMPvwZpMiSksFv2vMgNNs
+         F0D2/kbFWFiXcdJTtl92LIDdj+OGvS55aPDVvNQusGT+ZQ8q1Fng3pnLVgcNtGCLG5gD
+         rpf0H94IMJKXUYneUyJKFLfphGNKRrqoo8pTg2rta7IIU8sNPSdv6aEaxxlYlUEsr/T7
+         mpXl4vnaHvKCrRhpLBhfrbz160xXNioD9Cw4wNquyLe069ifq0ERTP3bPyaqyJ2ssZH7
+         jK0Q==
+X-Gm-Message-State: AOJu0YwwdCSCwl7wEY6tUqGfFGsyyrJ2/bB/cSBcmHoK6R2MvyOXF1y3
+	xbV7YjMUajSq7CiKHJKtRxPJsb+WtdGndMffhF9QXkFMip1P8u7uZnGRPDWUY4hEBLXsvIWBPEG
+	bX2xO0U2BV9ufQW2qmE0CmA==
+X-Google-Smtp-Source: AGHT+IGago2GGdxQm89gh39NlH33JmwS6GqCoBfbuogGsvoaLHySBMHGg6BnHjR0lMvUAF6sj1cRWbGYVdT+02bkdg==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a25:44:0:b0:dc2:466a:23c4 with SMTP id
+ 3f1490d57ef6-debb9d86d55mr321974276.4.1715123878004; Tue, 07 May 2024
+ 16:17:58 -0700 (PDT)
+Date: Tue, 07 May 2024 23:17:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.158
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAKS2OmYC/x2MQQqAIBAAvxJ7bkGtKPpKRKy11kJYaEgQ/T3pO
+ DAzD0QOwhH64oHASaIcPoMuC5g38iujLJnBKFOrRrVoa8wOJhcnR/t+zHQxtrYxprJUUachp2d gJ/e/Hcb3/QAwM9kbZgAAAA==
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715123877; l=3920;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=blSl364swsDcz/ERpxYIrtfmuULQVemGaeVD2pgedbw=; b=MLjQXcFsv9K2Tt+v1PmmzhEUpm6om4s2Veu1ZlHay+lCkxT157wDH7v2E6JBghpitVFvli2u2
+ JzL/WgNvUb/DEhYX8FWJxXs8D18zY52t2ZNlH6v1pNeUPgR+Vwdzxvo
+X-Mailer: b4 0.12.3
+Message-ID: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com>
+Subject: [PATCH] fs: remove accidental overflow during wraparound check
+From: Justin Stitt <justinstitt@google.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+Running syzkaller with the newly enabled signed integer overflow
+sanitizer produces this report:
 
-[ Upstream commit 4efaa5acf0a1d2b5947f98abb3acf8bfd966422b ]
+[  195.401651] ------------[ cut here ]------------
+[  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
+[  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
+[  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+[  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  195.425804] Call Trace:
+[  195.427360]  <TASK>
+[  195.428791]  dump_stack_lvl+0x93/0xd0
+[  195.431150]  handle_overflow+0x171/0x1b0
+[  195.433640]  vfs_fallocate+0x459/0x4f0
+...
+[  195.490053] ------------[ cut here ]------------
+[  195.493146] UBSAN: signed-integer-overflow in ../fs/open.c:321:61
+[  195.497030] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long)
+[  195.502940] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+[  195.508395] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  195.514075] Call Trace:
+[  195.515636]  <TASK>
+[  195.517000]  dump_stack_lvl+0x93/0xd0
+[  195.519255]  handle_overflow+0x171/0x1b0
+[  195.521677]  vfs_fallocate+0x4cb/0x4f0
+[  195.524033]  __x64_sys_fallocate+0xb2/0xf0
 
-epoll can call out to vfs_poll() with a file pointer that may race with
-the last 'fput()'. That would make f_count go down to zero, and while
-the ep->mtx locking means that the resulting file pointer tear-down will
-be blocked until the poll returns, it means that f_count is already
-dead, and any use of it won't actually get a reference to the file any
-more: it's dead regardless.
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
 
-Make sure we have a valid ref on the file pointer before we call down to
-vfs_poll() from the epoll routines.
+Let's use the check_add_overflow helper to first verify the addition
+stays within the bounds of its type (long long); then we can use that
+sum for the following check.
 
-Link: https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
-Reported-by: syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/356
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
 ---
- fs/eventpoll.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+I wonder, though, why isn't loff_t an unsigned type? We have plently of
+checks to ensure they are positive:
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 1c254094c4c36..b60edddf17870 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -832,6 +832,34 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- 	return res;
- }
- 
-+/*
-+ * The ffd.file pointer may be in the process of being torn down due to
-+ * being closed, but we may not have finished eventpoll_release() yet.
-+ *
-+ * Normally, even with the atomic_long_inc_not_zero, the file may have
-+ * been free'd and then gotten re-allocated to something else (since
-+ * files are not RCU-delayed, they are SLAB_TYPESAFE_BY_RCU).
-+ *
-+ * But for epoll, users hold the ep->mtx mutex, and as such any file in
-+ * the process of being free'd will block in eventpoll_release_file()
-+ * and thus the underlying file allocation will not be free'd, and the
-+ * file re-use cannot happen.
-+ *
-+ * For the same reason we can avoid a rcu_read_lock() around the
-+ * operation - 'ffd.file' cannot go away even if the refcount has
-+ * reached zero (but we must still not call out to ->poll() functions
-+ * etc).
-+ */
-+static struct file *epi_fget(const struct epitem *epi)
-+{
-+	struct file *file;
-+
-+	file = epi->ffd.file;
-+	if (!atomic_long_inc_not_zero(&file->f_count))
-+		file = NULL;
-+	return file;
-+}
-+
- /*
-  * Differs from ep_eventpoll_poll() in that internal callers already have
-  * the ep->mtx so we need to start from depth=1, such that mutex_lock_nested()
-@@ -840,14 +868,22 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
- 				 int depth)
+	if (offset < 0 || len <= 0)
+		return -EINVAL;
+	...
+	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
+
+... are there ABI concerns?
+
+Here's the syzkaller reproducer:
+r0 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file1\x00', 0x42, 0x0)
+fallocate(r0, 0x10, 0x7fffffffffffffff, 0x2000807fffff7)
+
+... which was used against Kees' tree here (v6.8rc2):
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
+
+... with this config:
+https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+---
+ fs/open.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index ee8460c83c77..d216e69d6872 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -247,6 +247,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
  {
--	struct file *file = epi->ffd.file;
-+	struct file *file = epi_fget(epi);
- 	__poll_t res;
+ 	struct inode *inode = file_inode(file);
+ 	long ret;
++	loff_t sum;
  
-+	/*
-+	 * We could return EPOLLERR | EPOLLHUP or something, but let's
-+	 * treat this more as "file doesn't exist, poll didn't happen".
-+	 */
-+	if (!file)
-+		return 0;
+ 	if (offset < 0 || len <= 0)
+ 		return -EINVAL;
+@@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
+ 		return -ENODEV;
+ 
+-	/* Check for wrap through zero too */
+-	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
++	/* Check for wraparound */
++	if (check_add_overflow(offset, len, &sum))
++		return -EFBIG;
 +
- 	pt->_key = epi->event.events;
- 	if (!is_file_epoll(file))
- 		res = vfs_poll(file, pt);
- 	else
- 		res = __ep_eventpoll_poll(file, pt, depth);
-+	fput(file);
- 	return res & epi->event.events;
- }
++	/* Now, check bounds */
++	if (sum > inode->i_sb->s_maxbytes || sum < 0)
+ 		return -EFBIG;
  
--- 
-2.43.0
+ 	if (!file->f_op->fallocate)
+
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240507-b4-sio-vfs_fallocate-7b5223ba3a81
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
 
 
