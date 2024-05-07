@@ -1,160 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-18935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F4A8BEAE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 19:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600148BEB0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 20:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 772DD1C240C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 17:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1663A2875D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706AF16C871;
-	Tue,  7 May 2024 17:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAD116D31B;
+	Tue,  7 May 2024 18:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCs90TDy"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eo+YnCWO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD0016C857;
-	Tue,  7 May 2024 17:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE1D16C862
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 18:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104575; cv=none; b=gLIuCMFEpN1Cgm6WNdsvOsWv3N5OHtOdTT9ic6DsX4PPMxBKaNkfep535uVQpulXP/LBj1buhnMGhvCsqkh/lu2omrOmAm/rdLJgbZreJxRvo35yrZ9zrz3Cc9whothZAPDHACk+BGw0dUKMPp9+AYZflTMngcSDsNZfwTH5t2E=
+	t=1715105067; cv=none; b=MpwFO99bkYcS04NJh43wo3jWvEJylJ5aoerGGIldBa3hX4RiLdLRbYrxu6NQyHaxOHgfrSvX93Xf3SV5R3x0Lmcis6MNYDqjVGFIgawZeWjPRsehVoPDxx81vSb5m91q7zDfdOdcBEnL/I0wpt9e+LKBTtNA/qcw5327Ggvg2mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104575; c=relaxed/simple;
-	bh=7vP8j6DVRtxLzZgNQl7oooXokBXhH16yTi4+Bilnelo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSVkvMRlipubU7roGxVl/ohSHGQL1hGlwAFYZqwVxhOBUuv5gGLjjyacrqMt9C2zEi77koytvna2lko6drohb+qUYupBrcKinZFJ0kf8SrcHfm6rMA6eG/T0gitYaDAPz1z84m4ZRMDKfU8jpuql0jM5kbN5wkrwERKgCt40btE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCs90TDy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2882DC2BBFC;
-	Tue,  7 May 2024 17:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715104575;
-	bh=7vP8j6DVRtxLzZgNQl7oooXokBXhH16yTi4+Bilnelo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KCs90TDyslyU+o0zAPC/FcymE8ykJh48djflVZPXK/dyFC2AkC1GlOXS1lItHn55y
-	 lqETo8ShtgbldxtGPqr+3BR4+QsxlleaDore6eHTZiOmmYVH/sapZjlb1W9YNJv1az
-	 ZI8Q7i4H142m9nZKsfQE/+eoqJe3UXmg/zzuGdF3Zbcmv1ZH4GnvzAnUTHIqnHbF9T
-	 Kx4yTRx225NL2gMFA95S1Dwhzr/gWcx5a05lEQgbe/otGcd9rykhUizINo1afsOGsu
-	 yQXFii/ahAN1H/zmWE/6fS1PdNe9u1bMsnH+faJHWAR73vA02IMMLYgMRSyiR4f1BH
-	 yWRVf720y6BHw==
-Date: Tue, 7 May 2024 10:56:13 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: tytso@mit.edu, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fscrypto: try to avoid refing parent dentry in
- fscrypt_file_open
-Message-ID: <20240507175613.GA25966@sol.localdomain>
-References: <20240507093653.297402-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1715105067; c=relaxed/simple;
+	bh=bAeC75xvNb+JauaCbjaxHSxSCPq7tnqY5BqL0SZHYRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Id/ecTtLnkDdg46VDhv1Lo/LSKQeHEeT97kFV5aty8G0kvSfmQRe1m1/8XYWJI8zTuu4UiX9QQAb7EGdxkRIf5M2vjhhFwVHGST1nBlFKE44UgAteCOv9m3cRrpAqHB0ONy5sOh7h8LF2zvlVcd5aher6SpqUn7L1OWsLERhzpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=eo+YnCWO; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3c74a49fc4cso125683b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 11:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1715105065; x=1715709865; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmWheXdPpQuPLWl1RiMEbt0Eg1z181/dlD8IMNrkg1o=;
+        b=eo+YnCWOylpYuKvM7GG0ZejU8v4QEDQ1r73vBdA99OHLl2GcaygX80XSd9UDYeJfvk
+         3sDUd7+rkuhuYRoyrZ7S9Gw/e7g3GEgmha28eVvySJRUQiF3GIXqcuEPD2tknRAKTjIV
+         YAuGOVeB9P/q7P5b3e00HC/xqHRlFGb2HMO08=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715105065; x=1715709865;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YmWheXdPpQuPLWl1RiMEbt0Eg1z181/dlD8IMNrkg1o=;
+        b=tvOR7EfsUz4ki+rYUSdkfHXD7ZgOlgEFxzDipNdzTKa0RNYIeDnMzRne0DHhC7hlLk
+         9XUdJ9NXqXb9h1uK4iopUlK9wFDFcIAgnDdXIOBUjtSL28iwO8wRX/5qX0w5RI1pj0gY
+         DEWWeHTA7KAf18wgL+BGvgDyHLpQdF3+CGUDRN+6mQuRG4Mb2hUHCk/PCBP8F/ot86gQ
+         PAXuYKBrhg1nH/5HI6YJtaOkvpWzxBpUSrl9CwlHfpWxlMiuknOtzAC3gA81qud8Xq59
+         HiejNPcQ6ZNbHGai3uXg0s8a6ZWpmcY1FTYzPzeH2t/shir5hpfhX4bHDGXta1zA00HW
+         rWSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDmxlfiPyZfj7NZVfJvC44lKogzdfi0h7XUrb6dSdfHBItGcUyjHUagUL80lUPCLI5z9jPXeGKjw8VrVaB1WWh8N9jCB1iWmxGCDaPRg==
+X-Gm-Message-State: AOJu0Yw6zCtQG9eE9g7dupCGvQJ5lxFKGi5Y0oR67ruYiBkkGuhyRRqT
+	iAHZBNt8H6NIIoQ4mh5rl91elnLx34EAcOFjulmRQNISEFFgO2V5k/jlO9EpzYpIkCAHczPB8K2
+	mpc/U/MZgh2WUqiuJ7vw8WC/aVzLT7sQWIVdTVw==
+X-Google-Smtp-Source: AGHT+IHmrwrHAXCxOJC+DssE4b3IrYE7fedfWDlb1+phM010DsU5X6/lJatnzj106ycVmmtXnenEsbtAWj3Yy2ck3IU=
+X-Received: by 2002:a05:6870:239a:b0:22e:dfbc:4aae with SMTP id
+ 586e51a60fabf-240980ba70cmr376610fac.2.1715105064951; Tue, 07 May 2024
+ 11:04:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507093653.297402-1-mjguzik@gmail.com>
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+In-Reply-To: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Tue, 7 May 2024 20:04:13 +0200
+Message-ID: <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
+ file lifetimes
+To: Linus Torvalds <torvalds@linux-foundation.org>, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <pekka.paalanen@collabora.com>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-[+linux-fsdevel]
+On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
+> On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > It's really annoying that on some distros/builds we don't have that, and
+> > for gpu driver stack reasons we _really_ need to know whether a fd is the
+> > same as another, due to some messy uniqueness requirements on buffer
+> > objects various drivers have.
+>
+> It's sad that such a simple thing would require two other horrid
+> models (EPOLL or KCMP).
+>
+> There'[s a reason that KCMP is a config option - *some* of that is
+> horrible code - but the "compare file descriptors for equality" is not
+> that reason.
+>
+> Note that KCMP really is a broken mess. It's also a potential security
+> hole, even for the simple things, because of how it ends up comparing
+> kernel pointers (ie it doesn't just say "same file descriptor", it
+> gives an ordering of them, so you can use KCMP to sort things in
+> kernel space).
+>
+> And yes, it orders them after obfuscating the pointer, but it's still
+> not something I would consider sane as a baseline interface. It was
+> designed for checkpoint-restore, it's the wrong thing to use for some
+> "are these file descriptors the same".
+>
+> The same argument goes for using EPOLL for that. Disgusting hack.
+>
+> Just what are the requirements for the GPU stack? Is one of the file
+> descriptors "trusted", IOW, you know what kind it is?
+>
+> Because dammit, it's *so* easy to do. You could just add a core DRM
+> ioctl for it. Literally just
+>
+>         struct fd f1 = fdget(fd1);
+>         struct fd f2 = fdget(fd2);
+>         int same;
+>
+>         same = f1.file && f1.file == f2.file;
+>         fdput(fd1);
+>         fdput(fd2);
+>         return same;
+>
+> where the only question is if you also woudl want to deal with O_PATH
+> fd's, in which case the "fdget()" would be "fdget_raw()".
+>
+> Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
+> less hacky than relying on EPOLL or KCMP.
 
-Thanks!  The general concept looks good.  A few nits below:
+Well, in slightly more code (because it's part of the "import this
+dma-buf/dma-fence/whatever fd into a driver object" ioctl) this is what we
+do.
 
-On Tue, May 07, 2024 at 11:36:53AM +0200, Mateusz Guzik wrote:
-> fscrypto: try to avoid refing parent dentry in fscrypt_file_open
+The issue is that there's generic userspace (like compositors) that sees
+these things fly by and would also like to know whether the other side
+they receive them from is doing nasty stuff/buggy/evil. And they don't
+have access to the device drm fd (since those are a handful of layers away
+behind the opengl/vulkan userspace drivers even if the compositor could get
+at them, and in some cases not even that).
 
-fscrypt, not fscrypto
+So if we do this in drm we'd essentially have to create a special
+drm_compare_files chardev, put the ioctl there and then tell everyone to
+make that thing world-accessible.
 
-> Merely checking if the directory is encrypted happens for every open
-> when using ext4, at the moment refing and unrefing the parent, costing 2
-> atomics and serializing opens of different files.
-> 
-> The most common case of encryption not being used can be checked for
-> with RCU instead.
-> 
-> Sample result from open1_processes -t 20 ("Separate file open/close") from
+Which is just too close to a real syscall that it's offensive, and hey
+kcmp does what we want already (but unfortunately also way more). So we
+rejected adding that to drm. But we did think about it.
 
-Overly long line above
+> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
+> too, if this is possibly a more common thing. and not just DRM wants
+> it.
+>
+> Would something like that work for you?
 
-> will-it-scale on Sapphire Rapids (ops/s):
-> before:	12539898
-> after:	25575494 (+103%)
-> 
-> Arguably a vfs helper would be nice here.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  fs/crypto/hooks.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-> index 104771c3d3f6..16328ec14266 100644
-> --- a/fs/crypto/hooks.c
-> +++ b/fs/crypto/hooks.c
-> @@ -30,21 +30,32 @@
->  int fscrypt_file_open(struct inode *inode, struct file *filp)
->  {
->  	int err;
-> -	struct dentry *dir;
-> +	struct dentry *dentry, *dentry_parent;
-> +	struct inode *inode_parent;
->  
->  	err = fscrypt_require_key(inode);
->  	if (err)
->  		return err;
->  
-> -	dir = dget_parent(file_dentry(filp));
-> -	if (IS_ENCRYPTED(d_inode(dir)) &&
-> -	    !fscrypt_has_permitted_context(d_inode(dir), inode)) {
-> +	dentry = file_dentry(filp);
-> +	rcu_read_lock();
-> +	dentry_parent = READ_ONCE(dentry->d_parent);
-> +	inode_parent = d_inode_rcu(dentry_parent);
-> +	if (inode_parent != NULL && !IS_ENCRYPTED(inode_parent)) {
-> +		rcu_read_unlock();
-> +		return 0;
-> +	}
-> +	rcu_read_unlock();
+Yes.
 
-It would be helpful for there to be a comment here that explains the
-optimization.  How about something like the following?
+Adding Simon and Pekka as two of the usual suspects for this kind of
+stuff. Also example code (the int return value is just so that callers know
+when kcmp isn't available, they all only care about equality):
 
-	/*
-	 * Getting a reference to the parent dentry is needed for the actual
-	 * encryption policy comparison, but it's expensive on multi-core
-	 * systems.  Since this function runs on unencrypted files too, start
-	 * with a lightweight RCU-mode check for the parent directory being
-	 * unencrypted (in which case it's fine for the child to be either
-	 * unencrypted, or encrypted with any policy).  Only continue on to the
-	 * full policy check if the parent directory is actually encrypted.
-	 */
+https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
+-Sima
 
-	dentry = file_dentry(filp);
-	rcu_read_lock();
-        ...
-
-> +
-> +	dentry_parent = dget_parent(dentry);
-> +	if (IS_ENCRYPTED(d_inode(dentry_parent)) &&
-> +	    !fscrypt_has_permitted_context(d_inode(dentry_parent), inode)) {
->  		fscrypt_warn(inode,
->  			     "Inconsistent encryption context (parent directory: %lu)",
-> -			     d_inode(dir)->i_ino);
-> +			     d_inode(dentry_parent)->i_ino);
->  		err = -EPERM;
->  	}
-> -	dput(dir);
-> +	dput(dentry_parent);
->  	return err;
-
-The IS_ENCRYPTED() check above can be removed, because it becomes redundant due
-to this patch.  I think it was intended to optimize the case of unencrypted
-files, like your patch does.  But clearly it wasn't too effective, as it was
-after the dget_parent().
-
-- Eric
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
