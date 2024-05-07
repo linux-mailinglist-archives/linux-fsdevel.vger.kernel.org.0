@@ -1,74 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-18891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3D68BE087
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 12:59:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58258BE09C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 13:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAD1C2168F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 10:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F901F25F19
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DCA155734;
-	Tue,  7 May 2024 10:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3051514E7;
+	Tue,  7 May 2024 11:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Qt/CLGYh"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="CDnDjLE5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2368153812
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 10:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B25514F100
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 11:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715079501; cv=none; b=LP/x/Ti+4oF1QgMwEfK8IIZ+gSazwr6zn8ySoJqHnX12jhgEdjTzCufC1XpHa0pUFbz75auDauZO2bYwbVocymc+7aytuwHFmFdx47Iy7nUt2/fcaLwc4UD1mps8h1jNa40v4u/c3e3yB5NBiVoCesrONKnan6vlTe65qPqxEgk=
+	t=1715079782; cv=none; b=EX5sxFBsji6rA9zMDL2mPJpZHINicOFAfr8gu6rjGzbhzH9SYD6TikrfHLk/XaNIcezER2Qz5eqlUeNeJtKZnmCcwcX2SZ5RDLjZOJ1eyk/R/VoMAIyCnFgWSv30cqbFEhiO52KMx7pzfgBZZOPRFWtMsXpfp4/yz1RK/dg8WJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715079501; c=relaxed/simple;
-	bh=HQQCU2SqHpn7oarMB8sAK46Z9lpLwcJtTOH+NSAWM+Q=;
+	s=arc-20240116; t=1715079782; c=relaxed/simple;
+	bh=NYe5+/G+0dLsnUyympMhbfDF1UgMbpQ6AmHg9R3TjSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=daCv6p0eWpUhBAGHYIVCEcOI1SyclvvfCZ8o247Bww4D9uMiIE8S10ImUCbiorhYo0nAbYhZTmt4wNEKnB9bTLdIaNmJjqAo30nqGmSAsYlg1QFDB7oqaVyDClmt0ZH14W21xEPnATJhhwAe01jeI1pzw/m2OLiR4FVh3sq5J1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Qt/CLGYh; arc=none smtp.client-ip=209.85.128.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4n59Hzx8xIadWx8vFIFSrk9LInUMZlCNoyzAYI4RDUdIdRkfVV6jiP96KQ3dan/4WhLK7rPYMeW+A0OgA4/uPeUkbyDivqk90HDw4lUnowDuDjzTYGUJ/l92RSo4J6Tnbhevv0wNFBTaYySKgxm5FnDBebyAFaya9lkrYNGRkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=CDnDjLE5; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-41bd8bdd065so4035805e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 03:58:18 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34aa836b948so711592f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 04:02:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1715079497; x=1715684297; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ViRc7GAJZffBJpcUFJE5upGd7xOjgKlPDNKALV639RY=;
-        b=Qt/CLGYhMHja3Z3BsMvCu5iffoxXDgiITJ0JOohuYDaJ4AM/YaRKd2q5AVG8AVgP8r
-         PFfpZYrRPIkWAvU4irBlp5N1il0NlVoKEE9Z/x401EJhdKy1DtgKci1VeqZFtBMTn28C
-         qQ3I3LCGj9gNyNmFvBosclttGSMpYp2u3WJwg=
+        d=ffwll.ch; s=google; t=1715079778; x=1715684578; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BGTjyA9KJ+ZN6kFiIcuqLZ6W/XXJNW0jRsNPu94ZivE=;
+        b=CDnDjLE5wmxvCz6JRmrpo/FwsU5ZQAEaBFhky1gBjjH0C2XEgePwbGYYKjLNka91pD
+         hrmCD4gtzwpWbSm5h+XoSSWnFLe62YR2KEWqg8eJM7IXx2gBY+T5YQ0rETGtI/kXDBML
+         3CrMmEzPhqjwNHUfCmXyHqulbk+pCpeVelxnk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715079497; x=1715684297;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ViRc7GAJZffBJpcUFJE5upGd7xOjgKlPDNKALV639RY=;
-        b=QE5tZ0+4Go7FGKR8FbbNwZjGbOhvQPk9nVclCaElrJrvCJpxzOaHmIOsfxJ9OOXh/y
-         /3kM3Ab719zDfKGwQg+rKPNV+d35RFmzeCvohawzj2m4HWeINE1hjUQxL6Chx33EsQBK
-         J4/+P8JWJkNQp2jfkX4MfJbz8+6gwy8WNtGNyWHL8MbSbPG+QE511Hb8J0PuAXsj7O5H
-         IpxZDQCKq78rsHpVq/CXi3MMHx0oKXAH/Woni2BO4w76O/H1HTY29Xr4h93Ec03gJLDT
-         YYyQqne307IxlCR8AlXvuJ0pf1uDcHLimXJ8jkWpzV3AuVxLVz514SETuqxetZKPyzIU
-         jH3w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Qm0ToX2FjAUpmpNJt8fQKx7l/zIuItYvRewpzNWGXJAeNDBf9MbOlDDxQyX3xhBvz9UyLIecqHQurvpMIH58rhUWvyzj2eZjyx5uRQ==
-X-Gm-Message-State: AOJu0YwP8sowSb5rg3X7+9KfU/XaaFduuEBn3CBKRwcYc9rv8fAw/HO0
-	Vp2ZlJirrYqD1YZtd/MiOdTYFt5wI4qlyDWMfi7486aSDftHbe6R4kSMD/JIBho=
-X-Google-Smtp-Source: AGHT+IGmmpohUZWli41FI/bjCKJyuoxp80jtwfSXh1Ej1JbzBOZ7sdqvyBNDvL8g4N9bnXZUMYG4Hg==
-X-Received: by 2002:a05:600c:3b21:b0:419:f0a8:9801 with SMTP id m33-20020a05600c3b2100b00419f0a89801mr10223677wms.0.1715079497175;
-        Tue, 07 May 2024 03:58:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715079778; x=1715684578;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BGTjyA9KJ+ZN6kFiIcuqLZ6W/XXJNW0jRsNPu94ZivE=;
+        b=QCXnJvwgDW3MRy9t5U7w+Wkrzt0IocS7DaJuDs5awDouS0/SO8yu+TdtkmjJOTbOB2
+         mDA082CxdzCBbT63dV3uDJxiXgI64Cm0k5tHfTvoNlxcwl5lkJmSZ2ha69TRydR8+Xd1
+         H/A/oqKLXNFpwAvVaHdF3zzXT9qJasNLpBQxD0VH1DrCfmukBxYjKkg57OmC51eq9YRa
+         7jTTwg/GQhjZnwQd6bojL5TX8Ha903UyWRMpHBLQBIOjRYzwj26oZ5qGwFc1qxTMx9VO
+         coS5pIeYMTgH5gGBlzL7pqYd+5/9irE7QhaFo/knr4lpIQLiBLFU2ef8J4fK5tIXuWMe
+         LN5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXVy2Zd6h8Bw+ULqDrunz0FH4TsgjI9C+ZptD0wpP2t6WifVyQe+s/TgsCgMP+mVO7SzZVSUpNILhDSJO41lUZNSYyFImSGz23UXBsJ9A==
+X-Gm-Message-State: AOJu0YyrBtdU29W9Ut/YSaHFFwh8Bs8OYZ76eu/6xFIqhM/epFAX5dPK
+	p15Exke6FKPonQyoALkGO8HL1hvys6OxkLXKgmuf7gce8ipfln6LZa5GpSypDzU=
+X-Google-Smtp-Source: AGHT+IEX2EtqX8oJOpcirgNGAupSfQht9uZGGyEeDzOIFWWprFx1SmPXUeMAhFXKNaku4P+OQUC4Bg==
+X-Received: by 2002:a5d:6409:0:b0:34d:b76c:cff7 with SMTP id z9-20020a5d6409000000b0034db76ccff7mr8695492wru.3.1715079778329;
+        Tue, 07 May 2024 04:02:58 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id j15-20020a05600c190f00b0041bf512f85bsm22775381wmq.14.2024.05.07.03.58.16
+        by smtp.gmail.com with ESMTPSA id t3-20020a05600001c300b0034df7313bf1sm12829804wrx.0.2024.05.07.04.02.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 03:58:16 -0700 (PDT)
-Date: Tue, 7 May 2024 12:58:14 +0200
+        Tue, 07 May 2024 04:02:57 -0700 (PDT)
+Date: Tue, 7 May 2024 13:02:55 +0200
 From: Daniel Vetter <daniel@ffwll.ch>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+To: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
 	axboe@kernel.dk, christian.koenig@amd.com,
 	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
@@ -78,10 +79,12 @@ Cc: Daniel Vetter <daniel@ffwll.ch>,
 	sumit.semwal@linaro.org,
 	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
 	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <ZjoJRs0Svrb9ELDu@phenom.ffwll.local>
-Mail-Followup-To: Christian Brauner <brauner@kernel.org>,
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Message-ID: <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
 	axboe@kernel.dk, christian.koenig@amd.com,
 	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
@@ -91,152 +94,98 @@ Mail-Followup-To: Christian Brauner <brauner@kernel.org>,
 	sumit.semwal@linaro.org,
 	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
 	syzkaller-bugs@googlegroups.com
-References: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
  <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
- <20240505194603.GH2118490@ZenIV>
- <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
- <20240505203052.GJ2118490@ZenIV>
- <CAHk-=whFg8-WyMbVUGW5c0baurGzqmRtzFLoU-gxtRXq2nVZ+w@mail.gmail.com>
- <ZjjRWybmAmClMMI9@phenom.ffwll.local>
- <20240506-zweisamkeit-zinsniveau-615a2e6d7c67@brauner>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240506-zweisamkeit-zinsniveau-615a2e6d7c67@brauner>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
 X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On Mon, May 06, 2024 at 04:46:54PM +0200, Christian Brauner wrote:
-> On Mon, May 06, 2024 at 02:47:23PM +0200, Daniel Vetter wrote:
-> > On Sun, May 05, 2024 at 01:53:48PM -0700, Linus Torvalds wrote:
-> > > On Sun, 5 May 2024 at 13:30, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > >
-> > > > 0.      special-cased ->f_count rule for ->poll() is a wart and it's
-> > > > better to get rid of it.
-> > > >
-> > > > 1.      fs/eventpoll.c is a steaming pile of shit and I'd be glad to see
-> > > > git rm taken to it.  Short of that, by all means, let's grab reference
-> > > > in there around the call of vfs_poll() (see (0)).
-> > > 
-> > > Agreed on 0/1.
-> > > 
-> > > > 2.      having ->poll() instances grab extra references to file passed
-> > > > to them is not something that should be encouraged; there's a plenty
-> > > > of potential problems, and "caller has it pinned, so we are fine with
-> > > > grabbing extra refs" is nowhere near enough to eliminate those.
-> > > 
-> > > So it's not clear why you hate it so much, since those extra
-> > > references are totally normal in all the other VFS paths.
-> > > 
-> > > I mean, they are perhaps not the *common* case, but we have a lot of
-> > > random get_file() calls sprinkled around in various places when you
-> > > end up passing a file descriptor off to some asynchronous operation
-> > > thing.
-> > > 
-> > > Yeah, I think most of them tend to be special operations (eg the tty
-> > > TIOCCONS ioctl to redirect the console), but it's not like vfs_ioctl()
-> > > is *that* different from vfs_poll. Different operation, not somehow
-> > > "one is more special than the other".
-> > > 
-> > > cachefiles and backing-file does it for regular IO, and drop it at IO
-> > > completion - not that different from what dma-buf does. It's in
-> > > ->read_iter() rather than ->poll(), but again: different operations,
-> > > but not "one of them is somehow fundamentally different".
-> > > 
-> > > > 3.      dma-buf uses of get_file() are probably safe (epoll shite aside),
-> > > > but they do look fishy.  That has nothing to do with epoll.
-> > > 
-> > > Now, what dma-buf basically seems to do is to avoid ref-counting its
-> > > own fundamental data structure, and replaces that by refcounting the
-> > > 'struct file' that *points* to it instead.
-> > > 
-> > > And it is a bit odd, but it actually makes some amount of sense,
-> > > because then what it passes around is that file pointer (and it allows
-> > > passing it around from user space *as* that file).
-> > > 
-> > > And honestly, if you look at why it then needs to add its refcount to
-> > > it all, it actually makes sense.  dma-bufs have this notion of
-> > > "fences" that are basically completion points for the asynchronous
-> > > DMA. Doing a "poll()" operation will add a note to the fence to get
-> > > that wakeup when it's done.
-> > > 
-> > > And yes, logically it takes a ref to the "struct dma_buf", but because
-> > > of how the lifetime of the dma_buf is associated with the lifetime of
-> > > the 'struct file', that then turns into taking a ref on the file.
-> > > 
-> > > Unusual? Yes. But not illogical. Not obviously broken. Tying the
-> > > lifetime of the dma_buf to the lifetime of a file that is passed along
-> > > makes _sense_ for that use.
-> > > 
-> > > I'm sure dma-bufs could add another level of refcounting on the
-> > > 'struct dma_buf' itself, and not make it be 1:1 with the file, but
-> > > it's not clear to me what the advantage would really be, or why it
-> > > would be wrong to re-use a refcount that is already there.
+On Mon, May 06, 2024 at 04:29:44PM +0200, Christian König wrote:
+> Am 04.05.24 um 20:20 schrieb Linus Torvalds:
+> > On Sat, 4 May 2024 at 08:32, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > Lookie here, the fundamental issue is that epoll can call '->poll()'
+> > > on a file descriptor that is being closed concurrently.
+> > Thinking some more about this, and replying to myself...
 > > 
-> > So there is generally another refcount, because dma_buf is just the
-> > cross-driver interface to some kind of real underlying buffer object from
-> > the various graphics related subsystems we have.
+> > Actually, I wonder if we could *really* fix this by simply moving the
+> > eventpoll_release() to where it really belongs.
 > > 
-> > And since it's a pure file based api thing that ceases to serve any
-> > function once the fd/file is gone we tied all the dma_buf refcounting to
-> > the refcount struct file already maintains. But the underlying buffer
-> > object can easily outlive the dma_buf, and over the lifetime of an
-> > underlying buffer object you might actually end up creating different
-> > dma_buf api wrappers for it (but at least in drm we guarantee there's at
-> > most one, hence why vmwgfx does the atomic_inc_unless_zero trick, which I
-> > don't particularly like and isn't really needed).
+> > If we did it in file_close_fd_locked(),  it would actually make a
+> > *lot* more sense. Particularly since eventpoll actually uses this:
 > > 
-> > But we could add another refcount, it just means we have 3 of those then
-> > when only really 2 are needed.
+> >      struct epoll_filefd {
+> >          struct file *file;
+> >          int fd;
+> >      } __packed;
+> > 
+> > ie it doesn't just use the 'struct file *', it uses the 'fd' itself
+> > (for ep_find()).
+> > 
+> > (Strictly speaking, it should also have a pointer to the 'struct
+> > files_struct' to make the 'int fd' be meaningful).
 > 
-> Fwiw, the TTM thing described upthread and in the other thread really
-> tries hard to work around the dma_buf == file lifetime choice by hooking
-> into the dma-buf specific release function so it can access the dmabuf
-> and then the file. All that seems like a pretty error prone thing to me.
-> So a separate refcount for dma_buf wouldn't be the worst as that would
-> allow that TTM thing to benefit and remove that nasty hacking into your
-> generic dma_buf ops. But maybe I'm the only one who sees it that way and
-> I'm certainly not familiar enough with dma-buf.
+> While I completely agree on this I unfortunately have to ruin the idea.
+> 
+> Before we had KCMP some people relied on the strange behavior of eventpoll
+> to compare struct files when the fd is the same.
+> 
+> I just recently suggested that solution to somebody at AMD as a workaround
+> when KCMP is disabled because of security hardening and I'm pretty sure I've
+> seen it somewhere else as well.
+> 
+> So when we change that it would break (undocumented?) UAPI behavior.
 
-So the tricky part is the uniqueness requirement drm has for buffer
-objects (and hence dma_buf wrappers), which together with the refcounting
-makes dma_buf quite tricky:
+Uh extremely aside, but doesn't this mean we should just enable kcmp on
+files unconditionally, since there's an alternative? Or a least everywhere
+CONFIG_EPOLL is enabled?
 
-- dma_buf needs to hold some reference onto the underlying object, or it
-  wont work
-
-- but you're not allowed to just create a new dma_buf every time someone
-  exports an underlying object to a dma_buf, because that would break the
-  uniqueness requirement. Which means the underlying object must also hold
-  some kind of reference to its dma_buf, if it exists. So that on buffer
-  export it can just increment the refcount for that and return it,
-  instead of creating a new one.
-
-Which would be a reference loop that never gets freed, so you need one of
-two tricks:
-
-- Either a weak reference, i.e. just a pointer plus
-  atomic_inc_unless_zero trickery like ttm does. Splitting that refcount
-  into more refcounts doesn't fundamentally solve the problem, it just
-  adds even more refcounts.
-
-- Or you do what all other drm drivers do in drm_prime.c do and careful
-  clean up the dma_buf re-export cache when the userspace references (but
-  not all kernel internal ones) disappear, to unbreak that reference loop.
-  This needs to be done with extreme care and took a lot of screaming to
-  get right, because if you have a race you might end up breaking the
-  uniqueness requirement and have two dma_buf floating around.
-
-So neither of these solutions really are simple, but I agree with you that
-the atomic_inc_unless_zero trickery is less simple. It's definitely not
-cool that it's done by digging around in struct file internals.
+It's really annoying that on some distros/builds we don't have that, and
+for gpu driver stack reasons we _really_ need to know whether a fd is the
+same as another, due to some messy uniqueness requirements on buffer
+objects various drivers have.
 -Sima
+
+> 
+> Regards,
+> Christian.
+> 
+> > 
+> > IOW, eventpoll already considers the file _descriptor_ relevant, not
+> > just the file pointer, and that's destroyed at *close* time, not at
+> > 'fput()' time.
+> > 
+> > Yeah, yeah, the locking situation in file_close_fd_locked() is a bit
+> > inconvenient, but if we can solve that, it would solve the problem in
+> > a fundamentally different way: remove the ep iterm before the
+> > file->f_count has actually been decremented, so the whole "race with
+> > fput()" would just go away entirely.
+> > 
+> > I dunno. I think that would be the right thing to do, but I wouldn't
+> > be surprised if some disgusting eventpoll user then might depend on
+> > the current situation where the eventpoll thing stays around even
+> > after the close() if you have another copy of the file open.
+> > 
+> >               Linus
+> > _______________________________________________
+> > Linaro-mm-sig mailing list -- linaro-mm-sig@lists.linaro.org
+> > To unsubscribe send an email to linaro-mm-sig-leave@lists.linaro.org
+> 
+
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
