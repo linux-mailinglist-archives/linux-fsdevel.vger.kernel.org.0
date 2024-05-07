@@ -1,137 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-18876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18548BDC90
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252388BDCB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DB52281D1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 07:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E9B1C229ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 07:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2B013C3F0;
-	Tue,  7 May 2024 07:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C166413C81A;
+	Tue,  7 May 2024 07:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwcYuXFS"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="dCkyrJBG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4AE13BAE9;
-	Tue,  7 May 2024 07:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57F078274;
+	Tue,  7 May 2024 07:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715067769; cv=none; b=VQM3/uMnEcN1k8bymCBresYpX7slGKLr2JZmrM5xouRLDt8TgpiGBn601UIm2u1ZmMubUwEh5AEyFdC7j2uj1eLT1yhviv9JCIdL/MpAAqZR5jknhcqsGVJ8zRw+jZimd4CxIS3kQew1SpR35mMwBm++Fnb3LL0R4Sa9u10psM8=
+	t=1715068282; cv=none; b=mo4qSMbCY2q2lLs/SzkmW7vfa2xjFfd6IqBMIa2JRjP0PNju2LKgTdVTwb5mX3ASmWw/Eg3bNWcSffxgVGl/0aUgmB2bwCb6ORA7uey70ubgGve0npIYPnbi3DIGm5SBZI23st8MAcnnouh6M2wkm4LBgIX16viQnX2pZ+yE2fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715067769; c=relaxed/simple;
-	bh=mi3mXWnBFgpXPxlG257vqa4x77kAtsjGzS+btNQZe28=;
+	s=arc-20240116; t=1715068282; c=relaxed/simple;
+	bh=Yt1ERYjJEdTGYm8TRtzABKvuMdbrTzwn9Sc8/9cixag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaaRfdyJBfddeHBhyeLXAsLWI7N+bI/JJHXzdftJ1kA3LfiRiES1CJQIOdX+UCCNDClsL/bGFYyJWMYYgPHKidWQViUKTXS6rnIdnT43ezOeG0inc1VJo4WdmYjyR58ktrbHoda5LjrpV7aA8IQPhhTIN0FYunIow5FwttEcQuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kwcYuXFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF88C2BBFC;
-	Tue,  7 May 2024 07:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715067769;
-	bh=mi3mXWnBFgpXPxlG257vqa4x77kAtsjGzS+btNQZe28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kwcYuXFS1rY4n6mNBVtmRT1XBNZmpqVk6pq/YRV3g3QbnOM+waK0fNUpKwhFMp+Z2
-	 PYG9wZGheNahTisSY1g61QlJCRDIleNcVsmFhZzM11mmByNjORLiboHISsjU6ZIivQ
-	 8bLkMNw/q9BwtsjCZS7Ye46qhfjzlevAaGhSpDcrJAQhhb4NkT/fngVYcK0esR3D9o
-	 2e/x9FDCPhfzSDwOZusWXq9OBjyvQY3ssjrRF7J5LNMUxC/ypcgPva6uqn203wMT3j
-	 09kyzgrYaM9smHVBcWqiraGg6H9L147uFKvtwqicegDRWd5W0svdf3JajjdVUncd5R
-	 1P8x8QqJ934PA==
-Date: Tue, 7 May 2024 09:42:42 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Stas Sergeev <stsp2@yandex.ru>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	Stefan Metzmacher <metze@samba.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=IvESmCZTO1G/FG6foVNfWGZsZNE8einqZMxrYx2RWEgBYOq085KteR1+q6k9nQWZZKZJHw1lGM1ioPKTKz63MbejxJZosmZDm6LK6XSnVkJ7/3ojVt/dgpsh8UqQEr5VHOiYLYZny3thR02QVJaa4ba6B2c2X6OxsF3qU+VvscE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=dCkyrJBG; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VYVpB3Qxsz9sls;
+	Tue,  7 May 2024 09:51:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1715068274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yt1ERYjJEdTGYm8TRtzABKvuMdbrTzwn9Sc8/9cixag=;
+	b=dCkyrJBG5z7WLTGoSi3Di7SZ1dymYcoHun/rKWymCVjq6wOgRGVO65Y12Xt1MWmNUsWezI
+	vV424TbvVZnEV6NCJoGw8WpQTDzyR2gzcIqFjQgiF02bZRQITTXUZiJdWtnttUXuBllZEa
+	UdEWR8Z1jhyjoS9s4BRi49T62IoRQelINWy9jUrMK27lchoPA1wNlXKVPrKdIPwnnbhbXq
+	qXVFeA7Cfozrt36mPhtTahiuEVHo8T2+OLR7uZaYwt/Hqa4/hHhu0X0dTAteABkpx/dPPT
+	bNkw1/ynZ+viD6psUfEgo+W3iz/A/U7bQENQbEUC4ubVUYTFOqgLPxe8Dk+QDA==
+Date: Tue, 7 May 2024 17:50:58 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Stas Sergeev <stsp2@yandex.ru>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
+	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Andy Lutomirski <luto@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
 	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
 	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
 	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
 	Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
-Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Message-ID: <20240507-verpennen-defekt-b6f2c9a46916@brauner>
-References: <20240426133310.1159976-1-stsp2@yandex.ru>
- <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
- <20240428.171236-tangy.giblet.idle.helpline-y9LqufL7EAAV@cyphar.com>
- <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Message-ID: <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
+References: <20240427112451.1609471-1-stsp2@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lyexfaaq2zqn7bci"
 Content-Disposition: inline
-In-Reply-To: <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
+In-Reply-To: <20240427112451.1609471-1-stsp2@yandex.ru>
 
-> With my kernel hat on, maybe I agree.  But with my *user* hat on, I
-> think I pretty strongly disagree.  Look, idmapis lousy for
-> unprivileged use:
-> 
-> $ install -m 0700 -d test_directory
-> $ echo 'hi there' >test_directory/file
-> $ podman run -it --rm
-> --mount=type=bind,src=test_directory,dst=/tmp,idmap [debian-slim]
 
-$ podman run -it --rm --mount=type=bind,src=test_directory,dst=/tmp,idmap [debian-slim]
+--lyexfaaq2zqn7bci
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-as an unprivileged user doesn't use idmapped mounts at all. So I'm not
-sure what this is showing. I suppose you're talking about idmaps in
-general.
+On 2024-04-27, Stas Sergeev <stsp2@yandex.ru> wrote:
+> This patch-set implements the OA2_CRED_INHERIT flag for openat2() syscall.
+> It is needed to perform an open operation with the creds that were in
+> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLOW
+> flag. This allows the process to pre-open some dirs and switch eUID
+> (and other UIDs/GIDs) to the less-privileged user, while still retaining
+> the possibility to open/create files within the pre-opened directory set.
+>=20
+> The sand-boxing is security-oriented: symlinks leading outside of a
+> sand-box are rejected. /proc magic links are rejected. fds opened with
+> O_CRED_ALLOW are always closed on exec() and cannot be passed via unix
+> socket.
+> The more detailed description (including security considerations)
+> is available in the log messages of individual patches.
 
-> # cat /tmp/file
-> hi there
-> 
-> <-- Hey, look, this kind of works!
-> 
-> # setpriv --reuid=1 ls /tmp
-> ls: cannot open directory '/tmp': Permission denied
-> 
-> <-- Gee, thanks, Linux!
-> 
-> 
-> Obviously this is a made up example.  But it's quite analogous to a
-> real example.  Suppose I want to make a directory that will contain
-> some MySQL data.  I don't want to share this directory with anyone
-> else, so I set its mode to 0700.  Then I want to fire up an
-> unprivileged MySQL container, so I build or download it, and then I
-> run it and bind my directory to /var/lib/mysql and I run it.  I don't
-> need to think about UIDs or anything because it's 2024 and containers
-> just work.  Okay, I need to setenforce 0 because I'm on Fedora and
-> SELinux makes absolutely no sense in a container world, but I can live
-> with that.
-> 
-> Except that it doesn't work!  Because unless I want to manually futz
-> with the idmaps to get mysql to have access to the directory inside
-> the container, only *root* gets to get in.  But I bet that even
-> futzing with the idmap doesn't work, because software like mysql often
-> expects that root *and* a user can access data.  And some software
-> even does privilege separation and uses more than one UID.
+(I meant to reply last week but I couldn't get my mail server to send
+mail...)
 
-If the directory is 700 and it's owned by say root:root on the host and
-you want to share that with arbitrary container users then this isn't
-something you can do today (ignoring group permissions and ACLs for the
-sake of your argument) even on the host so that's not a limitation of
-userns or idmapped mounts. That means many to one mappings of uids/gids.
+It seems to me that this can already be implemented using
+MOUNT_ATTR_IDMAP, without creating a new form of credential overriding
+within the filesystem (and with such a deceptively simple
+implementation...)
 
-> So I want a way to give *an entire container* access to a directory.
-> Classic UNIX DAC is just *wrong* for this use case.  Maybe idmaps
-> could learn a way to squash multiple ids down to one.  Or maybe
+If you are a privileged process which plans to change users, you can
+create a detached tree with a user mapping that gives that user access
+to only that tree. This is far more effective at restricting possible
+attacks because id-mapped mounts don't override credentials during VFS
+operations (meaning that if you miss something, you have a big problem),
+instead they only affect uid-related operations within the filesystem
+for that mount. Since this implementation does no inherit
+CAP_DAC_OVERRIDE, being able to rewrite uid/gids is all you need.
 
-Many idmappings to one is in principle possible and I've noted that idea
-down as a possible extension at
-https://github.com/uapi-group/kernel-features quite a while (2 years?) ago.
+A new attack I just thought of while writing this mail is that because
+there is no RESOLVE_NO_XDEV requirement, it should be possible for the
+process to get an arbitrary write primitive by creating a new
+userns+mountns and then bind-mounting / underneath the directory. Since
+O_CRED_INHERIT uses override_creds, it doesn't care about whether
+something about the O_CRED_ALLOW directory changed afterwards. Yes, you
+can "just fix this" by adding a RESOLVE_NO_XDEV requirement too, but
+given that there have been 2-3 security issues with this design found
+already, it makes me feel really uneasy. Using id-mapped mounts avoids
+this issue because the new mount will not have the id-mapping applied
+and thus there is no security issue.
 
-> I haven't looked at the idmap implementation nearly enough to have any
-> opinion as to whether squashing UID is practical or whether there's
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-It's doable. The interesting bit to me was that if we want to allow
-writes we'd need a way to determine what the uid/gid would be to write
-down. Imho, that's not super difficult to solve though. The most obvious
-one is that userspace can just determine it when creating the idmapped
-mount.
+--lyexfaaq2zqn7bci
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZjndYQAKCRAol/rSt+lE
+b2oOAQCmKy2OE9MgmZTVxlKN+/Sdcj0IpZ+qML12Z2Jmhr8r6QD+JguvCHBD2QUw
+5QTi+WIy7+VPoIpn+aXJKiYsm0xm4AU=
+=VQBl
+-----END PGP SIGNATURE-----
+
+--lyexfaaq2zqn7bci--
 
