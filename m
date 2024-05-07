@@ -1,136 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-18948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E8D8BEE31
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 22:39:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1088BEE85
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66CD81F269FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 20:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF7A1C21FD7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 21:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53C23E476;
-	Tue,  7 May 2024 20:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="ikl29dlD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6514473184;
+	Tue,  7 May 2024 21:03:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C087E8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 20:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55ECD20315
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 21:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715114336; cv=none; b=r0m/Xg5uzJO5HpzYGuEK+uIoMq3SGRHoD4wfYcr6eXJFnMHAGJqeyyVo/otImkatwgCaPHOjxUEM3fQtuajivRhx0JPfaP9LoF7/x3ciA7d1Fyh/IgVm6cJm9upp9jT/Cn0NPF+34IYDQg8lrb7M4JKkyPvPmXRVXWBlMkkyuEg=
+	t=1715115804; cv=none; b=dzwMUgId4nohFciGzSlFwDDyq0JJqUPMTSwm8HnwPhqe9yOLGny7djx1XszLwPBQ62HTKAc3N61UNccJ2qX2RIIxa6aHJxOU0F1l4EmH1DXy4dVeCBZT0pW/C1ewo5rY5bVlZmY6a1E5FFhO1gQXpQktbIw9Bb3WHtPjriGwJeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715114336; c=relaxed/simple;
-	bh=Cd3CA+2L3RKB6jP4ss7YRlrKqmhPE6AGzn1nXgsUr10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFlJ3LqUoqCokMQ6qBqKzCkFfCKa59q//NTIrjHK8qj4kIn6STgUc+0ELJZAuUZidO0v8SR+7QwC8XREJLv3tVjiaXJb6mSboTH/NWXzJ+mHpx7w/tAWXkG9isxJ0059CTcLNGxiY9GPf2EXpCJRr0HXon/0aYuHpI8DE1WEERY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=ikl29dlD; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4dcfba0cf35so1179411e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 13:38:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1715114334; x=1715719134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vnCeIEbMK/S2Q+LWJU/37wK3PlXMM94h7g54EnTFDpw=;
-        b=ikl29dlDaKTt2cZteLe2jQcW0M+pN6/OvAIV8OnoeeLj0RDbcXwv4EUF7b0f4w8wLw
-         AFzjFZrzDnpCNBkkmeY+Dn4jmRTPpVR+INy9jMUA8jkPJAfgI78po2/PhT0SdhsFSpRr
-         FRGrbJq1r78i6e6ffKa9m5x/ilRD1lZ2KS+pGBQIbQGi/f1h8GZ0RcSkbpJo4HrP0HgL
-         Y8l8/MBMgTgUJ3aZEqGTaX8IPtSthIkF4YHYuiCCIdGLogD8D/yCWPi7oZpXqHxTxYM5
-         0m3DoVXtfPr1nkiSMMZ6tp3wRryF9dnghf3CtPeezkKqrvtzOm35sKOH1hwBXcVKa4tU
-         Iu7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715114334; x=1715719134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vnCeIEbMK/S2Q+LWJU/37wK3PlXMM94h7g54EnTFDpw=;
-        b=RuL3Y16aOCSnUURA2NL8wqagoMgSWBPX70vJ0QV0TWfH2I3g3fPWhzkvX6jGy5At0l
-         VcI2ww+9XdHjMWP8sr4dgbcABO6A3ZnHCsFxsB4B6AVY0nFvRZRYGYiMvKVkFSZN+YWZ
-         rJCuxcfplBsX0D/O+1v4f/nqPL/hP2t42Qy+9SziAAHxVG/DtJkReUEZm7WPlYgp1PgT
-         3dmM1dqBU9wCgGleayNj8JjOd+z7ARA1COBeSb9PUOr3f4sVsbgobYD8WLCPBsWD5jge
-         MX/1ervRBUee1lwB/cAS5b4bjmvJV0XV7j1Ax8FwtyzTDeeEjerezkxQsQWdb3wEXkZX
-         X3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVpMqJ3EFzFTxJqPyi+HYVRY9PHcR3erRZMvZ9seAxZkao4BLtBXzF/T6OJ50WoIlii5xK8HpW0NnUG29VCbypn9HXROYil/rxhY7eUtw==
-X-Gm-Message-State: AOJu0YyhWoEbaSwxTpic5N/ObyywR5AdSKo5SZqr+7dXC20SaArZCGqv
-	BibYvUQyAJ0TnRjoQejBaCszogyWYVI56HQaCb3NyPfKyd88J4/NzxEFKc+A5/1FqnCoiPLYuVZ
-	u4XMGtGZYEWjstAhofrZI2vEQ3fKS0usseLXU
-X-Google-Smtp-Source: AGHT+IF96ez/SbaMDabA1CLkv2z7bcOSobqP74IQPnlmx8A0CCKvlSCp89o3qEQzUXeSdxqCn3m43X4JpnhygxR/QKg=
-X-Received: by 2002:a05:6122:7ca:b0:4da:aff6:5eee with SMTP id
- 71dfb90a1353d-4df69399556mr657304e0c.15.1715114333777; Tue, 07 May 2024
- 13:38:53 -0700 (PDT)
+	s=arc-20240116; t=1715115804; c=relaxed/simple;
+	bh=3rX9T5lNLNXBgcO0+M3qrprf2vCsbTOm/nlDTBm/9Cg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=tYEYQaRd1S2eiy+pFfPKAmCKpfH7YXudr00xWlvvSXDPORUc9jQPQxhNa/11bX8uKRmafXClwT7BXz/2cGP7yAuKvfZ04mnTvArnaLCovvDhEIfdqifwa6vlt57eDT6tVzMtx5EccoljzwD/PseQ+uR/F1ESfJXCKlhJAyOAyc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-48-bRehh-PWPia-pmBo6oqoQQ-1; Tue, 07 May 2024 22:03:13 +0100
+X-MC-Unique: bRehh-PWPia-pmBo6oqoQQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 7 May
+ 2024 22:02:42 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Tue, 7 May 2024 22:02:42 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Christian Brauner' <brauner@kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>
+CC: Al Viro <viro@zeniv.linux.org.uk>, "keescook@chromium.org"
+	<keescook@chromium.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "jack@suse.cz"
+	<jack@suse.cz>, "laura@labbott.name" <laura@labbott.name>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"minhquangbui99@gmail.com" <minhquangbui99@gmail.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com"
+	<syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
+	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
+Subject: RE: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Thread-Topic: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Thread-Index: AQHan5G+Cj1Mu87oOkmAjOj4WUTDELGMO/+w
+Date: Tue, 7 May 2024 21:02:41 +0000
+Message-ID: <052a735f433348b48a53b3d15183398a@AcuMS.aculab.com>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+ <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+ <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+ <20240506-injizieren-administration-f5900157566a@brauner>
+In-Reply-To: <20240506-injizieren-administration-f5900157566a@brauner>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240426133310.1159976-1-stsp2@yandex.ru> <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
- <20240428.171236-tangy.giblet.idle.helpline-y9LqufL7EAAV@cyphar.com>
- <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com> <20240507-verpennen-defekt-b6f2c9a46916@brauner>
-In-Reply-To: <20240507-verpennen-defekt-b6f2c9a46916@brauner>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Tue, 7 May 2024 13:38:42 -0700
-Message-ID: <CALCETrWuVQ-ggnak40AX16PUnM43zhogceFN-3c_YAKZGvs5Og@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Stas Sergeev <stsp2@yandex.ru>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	Stefan Metzmacher <metze@samba.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Tue, May 7, 2024 at 12:42=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > With my kernel hat on, maybe I agree.  But with my *user* hat on, I
-> > think I pretty strongly disagree.  Look, idmapis lousy for
-> > unprivileged use:
-> >
-> > $ install -m 0700 -d test_directory
-> > $ echo 'hi there' >test_directory/file
-> > $ podman run -it --rm
-> > --mount=3Dtype=3Dbind,src=3Dtest_directory,dst=3D/tmp,idmap [debian-sli=
-m]
->
-> $ podman run -it --rm --mount=3Dtype=3Dbind,src=3Dtest_directory,dst=3D/t=
-mp,idmap [debian-slim]
->
-> as an unprivileged user doesn't use idmapped mounts at all. So I'm not
-> sure what this is showing. I suppose you're talking about idmaps in
-> general.
+RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMDYgTWF5IDIwMjQgMDk6NDUNCj4gDQo+
+ID4gVGhlIGZhY3QgaXMsIGl0J3Mgbm90IGRtYS1idWYgdGhhdCBpcyB2aW9sYXRpbmcgYW55IHJ1
+bGVzLiBJdCdzIGVwb2xsLg0KPiANCj4gSSBhZ3JlZSB0aGF0IGVwb2xsKCkgbm90IHRha2luZyBh
+IHJlZmVyZW5jZSBvbiB0aGUgZmlsZSBpcyBhdCBsZWFzdA0KPiB1bmV4cGVjdGVkIGFuZCBjb250
+cmFkaWN0cyB0aGUgdXN1YWwgY29kZSBwYXR0ZXJucyBmb3IgdGhlIHNha2Ugb2YNCj4gcGVyZm9y
+bWFuY2UgYW5kIHRoYXQgaXQgdmVyeSBsaWtlbHkgaXMgdGhlIGNhc2UgdGhhdCBtb3N0IGNhbGxl
+cnMgb2YNCj4gZl9vcC0+cG9sbCgpIGRvbid0IGtub3cgdGhpcy4NCj4gDQo+IE5vdGUsIEkgY2xl
+YXJ5IHdyb3RlIHVwdGhyZWFkIHRoYXQgSSdtIG9rIHRvIGRvIGl0IGxpa2UgeW91IHN1Z2dlc3Rl
+ZA0KPiBidXQgcmFpc2VkIHR3byBjb25jZXJucyBhKSB0aGVyZSdzIGN1cnJlbnRseSBvbmx5IG9u
+ZSBpbnN0YW5jZSBvZg0KPiBwcm9sb25nZWQgQGZpbGUgbGlmZXRpbWUgaW4gZl9vcC0+cG9sbCgp
+IGFmYWljdCBhbmQgYikgdGhhdCB0aGVyZSdzDQo+IHBvc3NpYmx5IGdvaW5nIHRvIGJlIHNvbWUg
+cGVyZm9ybWFuY2UgaW1wYWN0IG9uIGVwb2xsKCkuDQo+IA0KPiBTbyBpdCdzIGF0IGxlYXN0IHdv
+cnRoIGRpc2N1c3Npbmcgd2hhdCdzIG1vcmUgaW1wb3J0YW50IGJlY2F1c2UgZXBvbGwoKQ0KPiBp
+cyB2ZXJ5IHdpZGVseSB1c2VkIGFuZCBpdCdzIG5vdCB0aGF0IHdlIGhhdmVuJ3QgZmF2b3JlZCBw
+ZXJmb3JtYW5jZQ0KPiBiZWZvcmUuDQo+IA0KPiBCdXQgeW91J3ZlIGFscmVhZHkgc2FpZCB0aGF0
+IHlvdSBhcmVuJ3QgY29uY2VybmVkIHdpdGggcGVyZm9ybWFuY2Ugb24NCj4gZXBvbGwoKSB1cHRo
+cmVhZC4gU28gYWZhaWN0IHRoZW4gdGhlcmUncyByZWFsbHkgbm90IGEgbG90IG1vcmUgdG8NCj4g
+ZGlzY3VzcyBvdGhlciB0aGFuIHRha2UgdGhlIHBhdGNoIGFuZCBzZWUgd2hldGhlciB3ZSBnZXQg
+YW55IGNvbXBsYWludHMuDQoNClN1cmVseSB0aGVyZSBpc24ndCBhIHByb2JsZW0gd2l0aCBlcG9s
+bCBob2xkaW5nIGEgcmVmZXJlbmNlIHRvIHRoZSBmaWxlDQpzdHJ1Y3R1cmUgLSBpdCBpc24ndCBy
+ZWFsbHkgYW55IGRpZmZlcmVudCB0byBhIGR1cCgpLg0KDQonQWxsJyB0aGF0IG5lZWRzIHRvIGhh
+cHBlbiBpcyB0aGF0IHRoZSAnbWFnaWMnIHRoYXQgbWFrZXMgZXBvbGwoKSByZW1vdmUNCmZpbGVz
+IG9uIHRoZSBsYXN0IGZwdXQgaGFwcGVuIHdoZW4gdGhlIGNsb3NlIGlzIGRvbmUuDQpJJ20gc3Vy
+ZSB0aGVyZSBhcmUgaG9ycmlkIGxvY2tpbmcgaXNzdWVzIGl0IHRoYXQgY29kZSAoc2VwYXJhdGUg
+ZnJvbQ0KaXQgY2FsbGluZyAtPnBvbGwoKSBhZnRlciAtPnJlbGVhc2UoKSkgZWcgaWYgeW91IGNh
+bGwgY2xvc2UoKSBjb25jdXJyZW50bHkNCndpdGggRVBPTExfQ1RMX0FERC4NCg0KSSdtIG5vdCBh
+dCBhbGwgc3VyZSBpdCB3b3VsZCBoYXZlIG1hdHRlcmVkIGlmIGVwb2xsIGtlcHQgdGhlIGZpbGUg
+b3Blbi4NCkJ1dCBpdCBjYW4ndCBkbyB0aGF0IGJlY2F1c2UgaXQgaXMgZG9jdW1lbnRlZCBub3Qg
+dG8uDQpBcyB3ZWxsIGFzIHBvbGwvc2VsZWN0IGhvbGRpbmcgYSByZWZlcmVuY2UgdG8gYWxsIHRo
+ZWlyIGZkIGZvciB0aGUgZHVyYXRpb24NCm9mIHRoZSBzeXN0ZW0gY2FsbCwgYSBzdWNjZXNzZnVs
+IG1tYXAoKSBob2xkcyBhIHJlZmVyZW5jZSB1bnRpbCB0aGUgcGFnZXMNCmFyZSBhbGwgdW5tYXBw
+ZWQgLSB1c3VhbGx5IGJ5IHByb2Nlc3MgZXhpdC4NCg0KV2UgKGRheWpvYikgaGF2ZSBjb2RlIHRo
+YXQgdXNlcyBlcG9sbCgpIHRvIG1vbml0b3IgbGFyZ2UgbnVtYmVycyBvZiBVRFANCnNvY2tldHMu
+IEkgd2FzIGRvaW5nIHNvbWUgdGVzdHMgKHRyeWluZyB0bykgcmVjZWl2ZSBSVFAgKGF1ZGlvKSBk
+YXRhDQpjb25jdXJyZW50bHkgb24gMTAwMDAgc29ja2V0cyB3aXRoIHR5cGljYWxseSBvbmUgcGFj
+a2V0IGV2ZXJ5IDIwbXMuDQpUaGVyZSBhcmUgMTAwMDAgYXNzb2NpYXRlZCBSQ1RQIHNvY2tldHMg
+dGhhdCBhcmUgdXN1YWxseSBpZGxlLg0KQSBtb3JlIG5vcm1hbCBsaW1pdCB3b3VsZCBiZSAxMDAw
+IFJUUCBzb2NrZXRzLg0KQWxsIHRoZSBkYXRhIG5lZWRzIHRvIGdvIGludG8gYSBzaW5nbGUgKG11
+bHRpdGhyZWFkZWQpIHByb2Nlc3MuDQpKdXN0IGdldHRpbmcgYWxsIHRoZSBwYWNrZXRzIHF1ZXVl
+ZCBvbiB0aGUgc29ja2V0cyB3YXMgbm9uLXRyaXZpYWwuDQplcG9sbCBpcyBhYm91dCB0aGUgb25s
+eSB3YXkgdG8gYWN0dWFsbHkgcmVhZCB0aGUgZGF0YS4NCihUaGF0IG5lZWRlZCBtdWx0aXBsZSBl
+cG9sbCBmZCBzbyBlYWNoIHRocmVhZCBjb3VsZCBwcm9jZXNzIGFsbA0KdGhlIGV2ZW50cyBmcm9t
+IG9uZSBlcG9sbCBmZCB0aGVuIGxvb2sgZm9yIGFub3RoZXIgdW5wcm9jZXNzZWQgZmQuKQ0KDQoJ
+RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
+dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
+OTczODYgKFdhbGVzKQ0K
 
-Meh, fair enough.  But I don't think this would have worked any better
-with privilege.
-
-Can idmaps be programmed by an otherwise unprivileged owner of a
-userns and a mountns inside?
-
-> Many idmappings to one is in principle possible and I've noted that idea
-> down as a possible extension at
-> https://github.com/uapi-group/kernel-features quite a while (2 years?) ag=
-o.
->
-> > I haven't looked at the idmap implementation nearly enough to have any
-> > opinion as to whether squashing UID is practical or whether there's
->
-> It's doable. The interesting bit to me was that if we want to allow
-> writes we'd need a way to determine what the uid/gid would be to write
-> down. Imho, that's not super difficult to solve though. The most obvious
-> one is that userspace can just determine it when creating the idmapped
-> mount.
-
-Seems reasonable to me.  If this is set up by someone unprivileged, it
-would need to be that uid/gid.
 
