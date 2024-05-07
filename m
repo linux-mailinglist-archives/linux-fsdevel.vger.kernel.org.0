@@ -1,157 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-18959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7988BEF41
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9683D8BEFB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39994286DAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 21:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F72284C99
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 22:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784E816D324;
-	Tue,  7 May 2024 21:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B5C16D4D2;
+	Tue,  7 May 2024 22:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALbIg50z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64C179CF;
-	Tue,  7 May 2024 21:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF4277658;
+	Tue,  7 May 2024 22:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715118967; cv=none; b=Sn/EJ+YK1AwL+SKrEI6Fvigk9+3q+NUqDhrc4EhDw/mnIj21W3bEbzTU6F27vkqVkm8lGT5vC9lGHRWrliN0nxBtRmEW1b6uH0+xlnbYR/m6SYJaDKs/kaHOnhF/aZ4Ti5BpLQFyvkTOBDKN+x0EC34XNKKWag1q2OcrtC3X11s=
+	t=1715120069; cv=none; b=lgacVGKxIn1Vhv6BpSG7GAfHp8eu5DW6b+PC1fcHsdkk/Bz06hinUxQayZGMjLgIgL7e/+ruyA/p0QbeDXlSaJmIMrQ8vbR5G7DePX6uyBFif71/B7vH7RpDizXORWLkAcI7KI0cZtX4sFvrhXABWn9KYEPtZ5UOnWfaKQW+d6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715118967; c=relaxed/simple;
-	bh=c6YHGEYmPjpO9D/p2b9v83LdrifgicmhUFUwgBtopaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YqB9NJMJed0H5VWmyvBmYQeBPETNrrHfGS6+YvXFhofXbaiMSCaLH3jYaZTs1+6u/FOJkqHMJn6ra3UVJpDOE190kpYaDSDxRxcasKd833pOZa8h6oORUWfLDnOKfqikXwBPaUhPr1AZyI36D6h+Xm+4CMnSopF/vMb1jjv5Lus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-61aef9901deso2510504a12.1;
-        Tue, 07 May 2024 14:56:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715118965; x=1715723765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nXTaPie4n8q7aWd8lKqdehPO2SNuKWmtizpezocD5H4=;
-        b=g9QpDvlOJwdxgjipCk2RplWsuZ+Vn4tRzRNZavLWVZiQ4mUsjpGo14ZsauiboTAuAK
-         aaAPPjWSF+hxSNG2/K/ls/xgrk/e55xXm5tG2Lo84DR0DaLRIZlnPyfsBH+7Yz/frfTC
-         Y4VfYwBf5Dsg5wNlF/LjveB+5FVO4q9b/6/W6WjknS4bHXIewBDTchpFiabzoYOgasJP
-         t765XvcjWLvWy/JKnHmi3OcSOiqEqLeNCVrP9PmdYg2xI2oh7ywtkyvqJ0ImQqV0TeXY
-         BhaNM8H9mrefaByESrkCo8TV8L5veV2Ih0vhvcWP9thVtjvV0sbSSiGSHaDRTgGMMuCb
-         JHCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXH8RFDpuyLH27tlWpjwdQbHU3tDCAPG5DH/MbMV0vIOXTPaUQ+VKgNB6tMyENoYJOt7fg1FYD2rp9OgJiXQJDAj+VB8oyqeirLfUZ0zAbnHO03s83h9GqZkQhhPE8BSn0fvqU3q2ZQbJR7KYWEiUkorQbRqpTTXtliKm9Le+EPqiFAhLxVtb0lvGhHFMKdDTFazLTfqj2UKtdFLBbLRIZZC7o=
-X-Gm-Message-State: AOJu0YxVMaZ4zQXlFdcoZ+Lvh5OhNQ7cOhrpQp4uNs4sgJIFMW+/F11R
-	XOAOkn/x/vVo1HT2vEPMi1uGyq1bAmtkOtyk7Z7NaP1wmyHf/Of6ga0kzBUm89jCcQE4yVi3H59
-	bR8i1PhBpcvMPiSLAvNd+UAS71HI=
-X-Google-Smtp-Source: AGHT+IFXpLdBXP0wh3twnNJnWEDW8JXUqluwb5PZEvCJy86sy4dMIzPSzZ/Bo27vj60SVq+hRMSHToV6/VUrIXVJVlQ=
-X-Received: by 2002:a17:90a:cf14:b0:2b3:ed2:1a91 with SMTP id
- 98e67ed59e1d1-2b616ae2ca0mr732222a91.45.1715118965098; Tue, 07 May 2024
- 14:56:05 -0700 (PDT)
+	s=arc-20240116; t=1715120069; c=relaxed/simple;
+	bh=o0BvgHGmxdYnf92yz4XgS3qkmI6Mq1AJhjPlCvLYTqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiC1Z74epBNUtrO4JjZ/lAojSdkFjldSYM1Uvjgcns4uOFJ7eJm33XD8qB7o9h+yhDNEQ1vUaDtqNzoiCw3nRuHZXTEiM+8nMf45e5N6s+IfoMsZrHWicizVotjxSVwT3ZPG8bgYtfmuvqSBTJhHz9wKNwvBsPpk1aHGi79AeXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALbIg50z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71081C2BBFC;
+	Tue,  7 May 2024 22:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715120068;
+	bh=o0BvgHGmxdYnf92yz4XgS3qkmI6Mq1AJhjPlCvLYTqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ALbIg50zFavQMLf9IBWLbCDyPBBkUPmabZviBbilontbOpQbBGEPA/8RiffCTVnmw
+	 14abzhtHL6UfY/GZe+H2NbVGqswA60zl3HfsmLZsOqE2pi4l/eceT0HzszPfrp6rMR
+	 XJlmweiwQeA+nJGs0fqUDG6AzK1CK5QaqkXgsG7vdjh8NN6TpcTrsodOcXN4O2SRw3
+	 mvyFpQGbKX9RFVO6034bNw7cDbYKgFPYGdUS9GINLbmDBVzShOFTFVvWzx9sbBd9aM
+	 yQ8UKm5EYiWdzTAcM9hgUhP6nYLxyMQ2t+tU7VmqJcGZaa1dJlU0/s1e5gbNkTZV7C
+	 aL2KBEY6eHd5w==
+Date: Tue, 7 May 2024 15:14:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Hugo Valtier <hugo@valtier.fr>, viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Mark Fasheh <mark@fasheh.com>
+Subject: Re: bug in may_dedupe_file allows to deduplicate files we aren't
+ allowed to write to
+Message-ID: <20240507221427.GA2049409@frogsfrogsfrogs>
+References: <CAF+WW=oKQak6ktiOH75pHSDe7YEkYD-1ditgcsWB=z+aRKJogQ@mail.gmail.com>
+ <CAOQ4uxjh5iQ0_knRebNRS271vR2-2f_9bNZyBG5vUy3rw6xh-g@mail.gmail.com>
+ <CAF+WW=rRz0L-P9X2tV9svGdTbhAhpBea=huf-_DDfkz29fXUyQ@mail.gmail.com>
+ <CAOQ4uxiGpShrki9dnJM1hvz1GPPcDos6P8pAkAz_jksy4gJdsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-3-andrii@kernel.org>
- <2024050439-janitor-scoff-be04@gregkh> <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
- <ZjjiFnNRbwsMJ3Gj@x1> <CAM9d7cgvCB8CBFGhMB_-4tCm6+jzoPBNg4CR7AEyMNo8pF9QKg@mail.gmail.com>
- <ZjknNJSFcKaxGDS4@x1> <Zjksc3yqvkocS18M@x1>
-In-Reply-To: <Zjksc3yqvkocS18M@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 7 May 2024 14:55:53 -0700
-Message-ID: <CAM9d7cj=zadZzQakNC7PeKWd5hfL83jvCRu-BuZ4EOzF2WPb-w@mail.gmail.com>
-Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for /proc/<pid>/maps
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Greg KH <gregkh@linuxfoundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-mm@kvack.org, 
-	=?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiGpShrki9dnJM1hvz1GPPcDos6P8pAkAz_jksy4gJdsw@mail.gmail.com>
 
-On Mon, May 6, 2024 at 12:16=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Mon, May 06, 2024 at 03:53:40PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Mon, May 06, 2024 at 11:05:17AM -0700, Namhyung Kim wrote:
-> > > On Mon, May 6, 2024 at 6:58=E2=80=AFAM Arnaldo Carvalho de Melo <acme=
-@kernel.org> wrote:
-> > > > On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
-> > > > > On Sat, May 4, 2024 at 8:28=E2=80=AFAM Greg KH <gregkh@linuxfound=
-ation.org> wrote:
-> > > > > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote=
-:
-> > > > > > > Note also, that fetching VMA name (e.g., backing file path, o=
-r special
-> > > > > > > hard-coded or user-provided names) is optional just like buil=
-d ID. If
-> > > > > > > user sets vma_name_size to zero, kernel code won't attempt to=
- retrieve
-> > > > > > > it, saving resources.
-> >
-> > > > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> >
-> > > > > > Where is the userspace code that uses this new api you have cre=
-ated?
-> >
-> > > > > So I added a faithful comparison of existing /proc/<pid>/maps vs =
-new
-> > > > > ioctl() API to solve a common problem (as described above) in pat=
-ch
-> > > > > #5. The plan is to put it in mentioned blazesym library at the ve=
-ry
-> > > > > least.
-> > > > >
-> > > > > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
-> > > > > linux-perf-user), as they need to do stack symbolization as well.
-> >
-> > > I think the general use case in perf is different.  This ioctl API is=
- great
-> > > for live tracing of a single (or a small number of) process(es).  And
-> > > yes, perf tools have those tracing use cases too.  But I think the
-> > > major use case of perf tools is system-wide profiling.
-> >
-> > > For system-wide profiling, you need to process samples of many
-> > > different processes at a high frequency.  Now perf record doesn't
-> > > process them and just save it for offline processing (well, it does
-> > > at the end to find out build-ID but it can be omitted).
-> >
-> > Since:
-> >
-> >   Author: Jiri Olsa <jolsa@kernel.org>
-> >   Date:   Mon Dec 14 11:54:49 2020 +0100
-> >   1ca6e80254141d26 ("perf tools: Store build id when available in PERF_=
-RECORD_MMAP2 metadata events")
-> >
-> > We don't need to to process the events to find the build ids. I haven't
-> > checked if we still do it to find out which DSOs had hits, but we
-> > shouldn't need to do it for build-ids (unless they were not in memory
-> > when the kernel tried to stash them in the PERF_RECORD_MMAP2, which I
-> > haven't checked but IIRC is a possibility if that ELF part isn't in
-> > memory at the time we want to copy it).
->
-> > If we're still traversing it like that I guess we can have a knob and
-> > make it the default to not do that and instead create the perf.data
-> > build ID header table with all the build-ids we got from
-> > PERF_RECORD_MMAP2, a (slightly) bigger perf.data file but no event
-> > processing at the end of a 'perf record' session.
->
-> But then we don't process the PERF_RECORD_MMAP2 in 'perf record', it
-> just goes on directly to the perf.data file :-\
+[add fsdevel to cc because why not?]
 
-Yep, we don't process build-IDs at the end if --buildid-mmap
-option is given.  It won't have build-ID header table but it's
-not needed anymore and perf report can know build-ID from
-MMAP2 directly.
+On Sun, May 05, 2024 at 09:57:23AM +0300, Amir Goldstein wrote:
+> [change email for Mark Fashe]
+> 
+> On Sat, May 4, 2024 at 11:51 PM Hugo Valtier <hugo@valtier.fr> wrote:
+> >
+> > > My guess is that not many users try to dedupe other users' files,
+> > > so this feature was never used and nobody complained.
+> >
+> > +1
 
-Thanks,
-Namhyung
+So I guess the rest of the thread is here?
+
+https://lore.kernel.org/lkml/CAF+WW=oKQak6ktiOH75pHSDe7YEkYD-1ditgcsWB=z+aRKJogQ@mail.gmail.com/
+
+Which in turn is discussing the change made here?
+
+https://lore.kernel.org/linux-fsdevel/20180511192651.21324-2-mfasheh@suse.de/
+
+Based on the stated intent in the original patch ("process can write
+inode") I do not think Mr. Valtier's patch is correct.
+inode_permission(..., MAY_WRITE) returns 0 if the caller can access the
+file in the given mode, or some negative errno if it cannot.  I don't
+know why he sees the behavior he describes:
+
+"I've tested that I can create an other readonly file as root and have
+my unprivileged user deduplicate it however if I then make the file
+other writeable I cannot anymore*."
+
+Which test exactly is the one that results in a denial?  I don't think I
+can reproduce this:
+
+$ ls /opt/a /opt/b
+-rw-r--r-- 1 root root 65536 May  7 15:09 /opt/a
+-rw-rw-rw- 1 root root 65536 May  7 15:09 /opt/b
+$ xfs_io -r -c 'dedupe /opt/b 4096 4096 4096' /opt/a
+XFS_IOC_FILE_EXTENT_SAME: Operation not permitted
+
+<confused>
+
+> > Thx for the answer, I'm new to this to be sure I understood what you meant:
+> > > You should add an xfstest for this and include a
+> > > _fixed_by_kernel_commit and that will signal all the distros that
+> > > care to backport the fix.
+> >
+> > So right now I wait for 6.9 to be released soon enough then
+> > I then submit my patch which invert the condition.
+> 
+> There is no need to wait for the 6.9 release.
+> Fixes can and should be posted at any time.
+> 
+> > Once that is merged in some tree (fsdevel I guess ?) I submit a patch for
+> 
+> Yes, this is a good candidate for Christian Brauner's vfs tree.
+> Please CC the VFS maintainers (from MAINTAINERS file) and fsdevel.
+> 
+> A note about backporting to stable kernels.
+> stable maintainer bots would do best effort to auto backport
+> patches marked with a Fixes: commit to the supported LTS kernel,
+> once the fix is merged to master,
+> but if the fix does not apply cleanly, you will need to post the
+> backport yourself (if you want the fix backported).
+> 
+> For your case, the fix will not apply cleanly before
+> 4609e1f18e19 ("fs: port ->permission() to pass mnt_idmap")
+> so at lease from 6.1.y and backwards, you will need to post
+a> manual backports if you want the fix in LTS kernels or you can
+> let the distros that find the new xfstest failure take care of that...
+> 
+> > xfstest which adds a regression test and has _fixed_by_kernel_commit
+> > mentioning the commit just merged in the fsdevel linux tree.
+> 
+> Correct.
+> You may take inspiration from existing dedupe tests
+> [CC Darrick who wrote most of them]
+> but I did not find any test coverage for may_dedupe_file() among them.
+> 
+> There is one test that is dealing with permissions that you can
+> use as a template:
+> 
+> $ git grep -w _begin_fstest.*dedupe tests/generic/|grep perms
+> tests/generic/674:_begin_fstest auto clone quick perms dedupe
+> 
+> Hint: use $XFS_IO_PROG -r to open the destination file read only.
+> 
+> Because there is currently no test coverage for read-only dest
+> for the admin and user owned files, I suggest that you start with
+> writing this test, making sure that your fix does not regress it and
+> then add the other writable file case.
+
+...and yes, the unusual permissions behavior of FIDEDUPERANGE should be
+better tested.
+
+--D
+
+> Thanks,
+> Amir.
 
