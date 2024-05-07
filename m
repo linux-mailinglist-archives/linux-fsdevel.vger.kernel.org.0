@@ -1,139 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-18949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1088BEE85
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5648BEEB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF7A1C21FD7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 21:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6704C2867AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 21:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6514473184;
-	Tue,  7 May 2024 21:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA96E14B967;
+	Tue,  7 May 2024 21:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqdrQV8i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55ECD20315
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 21:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2951878C76;
+	Tue,  7 May 2024 21:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115804; cv=none; b=dzwMUgId4nohFciGzSlFwDDyq0JJqUPMTSwm8HnwPhqe9yOLGny7djx1XszLwPBQ62HTKAc3N61UNccJ2qX2RIIxa6aHJxOU0F1l4EmH1DXy4dVeCBZT0pW/C1ewo5rY5bVlZmY6a1E5FFhO1gQXpQktbIw9Bb3WHtPjriGwJeY=
+	t=1715116275; cv=none; b=BGmTTPVlqnJtFd6lYsnJ8iULVrgD19zbJjlIkCmQHtHFAaBIbj0NXjfPh0g+nTa8MZ3DHHUdqTytDeUPNjfSYHjku3rbcoyVi+FgWjWe/x69XAKGbVTlrIvUApBHqtXeYcWU0vdpoZnG67bKlY4UM8MMV90gHgdhMcwOKDkAtUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115804; c=relaxed/simple;
-	bh=3rX9T5lNLNXBgcO0+M3qrprf2vCsbTOm/nlDTBm/9Cg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=tYEYQaRd1S2eiy+pFfPKAmCKpfH7YXudr00xWlvvSXDPORUc9jQPQxhNa/11bX8uKRmafXClwT7BXz/2cGP7yAuKvfZ04mnTvArnaLCovvDhEIfdqifwa6vlt57eDT6tVzMtx5EccoljzwD/PseQ+uR/F1ESfJXCKlhJAyOAyc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-48-bRehh-PWPia-pmBo6oqoQQ-1; Tue, 07 May 2024 22:03:13 +0100
-X-MC-Unique: bRehh-PWPia-pmBo6oqoQQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 7 May
- 2024 22:02:42 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 7 May 2024 22:02:42 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Christian Brauner' <brauner@kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-CC: Al Viro <viro@zeniv.linux.org.uk>, "keescook@chromium.org"
-	<keescook@chromium.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "jack@suse.cz"
-	<jack@suse.cz>, "laura@labbott.name" <laura@labbott.name>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"minhquangbui99@gmail.com" <minhquangbui99@gmail.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com"
-	<syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
-	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-Subject: RE: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Thread-Topic: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Thread-Index: AQHan5G+Cj1Mu87oOkmAjOj4WUTDELGMO/+w
-Date: Tue, 7 May 2024 21:02:41 +0000
-Message-ID: <052a735f433348b48a53b3d15183398a@AcuMS.aculab.com>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <20240505-gelehnt-anfahren-8250b487da2c@brauner>
- <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
- <20240506-injizieren-administration-f5900157566a@brauner>
-In-Reply-To: <20240506-injizieren-administration-f5900157566a@brauner>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1715116275; c=relaxed/simple;
+	bh=N17paVKsvnHlMoVYYbGAwSs5ZZJ5KRuS1vQScRvlcjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oElh/bv3Bg518xCRLBYDdAjMTzCsJrHP5hyY8nSO1KdVCZlyASuPpcWAcb+Gvm6gkqlvmD0JbfsNoCm2e8zitAYgH3M8LN/wFbNjJ+8E3enHdKXKTE3HIL8BHsnWgw5a6QNlGhnvvdM231lJDZs1V7MFYrHpZm2WyRptwzjyqOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqdrQV8i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDFC5C2BBFC;
+	Tue,  7 May 2024 21:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715116275;
+	bh=N17paVKsvnHlMoVYYbGAwSs5ZZJ5KRuS1vQScRvlcjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WqdrQV8insRznhS1yS8bFigi9YWERuZXqwTfAJ03UGBVCbiEEmW/kxgojAjC0agF7
+	 HMb94pFs5CoDoZ4OixNdFLDT4aXt/g/0EFpsaCb982WWXI/RQ+2XLGeyV/Jq1o7H8p
+	 IXLNGPSLcUREpmxiQ6VUM93dnxbl0EIqo2DkVEqTms0gonZRfDCtyaTG2ZBy4vvvu7
+	 ugrLjXODLxx89Znxlv9mxSG042NmyIkvzPsHih6e9KtNmtT5ewUfI7Kd/E2/GIZ1hK
+	 64EN7mqB2nzqljWLrQLfB6gPBELzjcv7N49ukWuSPijpMdkWUsBcY7XKOfnJBSoetb
+	 7xycCDWKc3VHg==
+Date: Tue, 7 May 2024 14:11:14 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCHv2 2/2] iomap: Optimize iomap_read_folio
+Message-ID: <20240507211114.GU360919@frogsfrogsfrogs>
+References: <cover.1715067055.git.ritesh.list@gmail.com>
+ <92ae9f3333c9a7e66214568d08f45664261c899c.1715067055.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <92ae9f3333c9a7e66214568d08f45664261c899c.1715067055.git.ritesh.list@gmail.com>
 
-RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMDYgTWF5IDIwMjQgMDk6NDUNCj4gDQo+
-ID4gVGhlIGZhY3QgaXMsIGl0J3Mgbm90IGRtYS1idWYgdGhhdCBpcyB2aW9sYXRpbmcgYW55IHJ1
-bGVzLiBJdCdzIGVwb2xsLg0KPiANCj4gSSBhZ3JlZSB0aGF0IGVwb2xsKCkgbm90IHRha2luZyBh
-IHJlZmVyZW5jZSBvbiB0aGUgZmlsZSBpcyBhdCBsZWFzdA0KPiB1bmV4cGVjdGVkIGFuZCBjb250
-cmFkaWN0cyB0aGUgdXN1YWwgY29kZSBwYXR0ZXJucyBmb3IgdGhlIHNha2Ugb2YNCj4gcGVyZm9y
-bWFuY2UgYW5kIHRoYXQgaXQgdmVyeSBsaWtlbHkgaXMgdGhlIGNhc2UgdGhhdCBtb3N0IGNhbGxl
-cnMgb2YNCj4gZl9vcC0+cG9sbCgpIGRvbid0IGtub3cgdGhpcy4NCj4gDQo+IE5vdGUsIEkgY2xl
-YXJ5IHdyb3RlIHVwdGhyZWFkIHRoYXQgSSdtIG9rIHRvIGRvIGl0IGxpa2UgeW91IHN1Z2dlc3Rl
-ZA0KPiBidXQgcmFpc2VkIHR3byBjb25jZXJucyBhKSB0aGVyZSdzIGN1cnJlbnRseSBvbmx5IG9u
-ZSBpbnN0YW5jZSBvZg0KPiBwcm9sb25nZWQgQGZpbGUgbGlmZXRpbWUgaW4gZl9vcC0+cG9sbCgp
-IGFmYWljdCBhbmQgYikgdGhhdCB0aGVyZSdzDQo+IHBvc3NpYmx5IGdvaW5nIHRvIGJlIHNvbWUg
-cGVyZm9ybWFuY2UgaW1wYWN0IG9uIGVwb2xsKCkuDQo+IA0KPiBTbyBpdCdzIGF0IGxlYXN0IHdv
-cnRoIGRpc2N1c3Npbmcgd2hhdCdzIG1vcmUgaW1wb3J0YW50IGJlY2F1c2UgZXBvbGwoKQ0KPiBp
-cyB2ZXJ5IHdpZGVseSB1c2VkIGFuZCBpdCdzIG5vdCB0aGF0IHdlIGhhdmVuJ3QgZmF2b3JlZCBw
-ZXJmb3JtYW5jZQ0KPiBiZWZvcmUuDQo+IA0KPiBCdXQgeW91J3ZlIGFscmVhZHkgc2FpZCB0aGF0
-IHlvdSBhcmVuJ3QgY29uY2VybmVkIHdpdGggcGVyZm9ybWFuY2Ugb24NCj4gZXBvbGwoKSB1cHRo
-cmVhZC4gU28gYWZhaWN0IHRoZW4gdGhlcmUncyByZWFsbHkgbm90IGEgbG90IG1vcmUgdG8NCj4g
-ZGlzY3VzcyBvdGhlciB0aGFuIHRha2UgdGhlIHBhdGNoIGFuZCBzZWUgd2hldGhlciB3ZSBnZXQg
-YW55IGNvbXBsYWludHMuDQoNClN1cmVseSB0aGVyZSBpc24ndCBhIHByb2JsZW0gd2l0aCBlcG9s
-bCBob2xkaW5nIGEgcmVmZXJlbmNlIHRvIHRoZSBmaWxlDQpzdHJ1Y3R1cmUgLSBpdCBpc24ndCBy
-ZWFsbHkgYW55IGRpZmZlcmVudCB0byBhIGR1cCgpLg0KDQonQWxsJyB0aGF0IG5lZWRzIHRvIGhh
-cHBlbiBpcyB0aGF0IHRoZSAnbWFnaWMnIHRoYXQgbWFrZXMgZXBvbGwoKSByZW1vdmUNCmZpbGVz
-IG9uIHRoZSBsYXN0IGZwdXQgaGFwcGVuIHdoZW4gdGhlIGNsb3NlIGlzIGRvbmUuDQpJJ20gc3Vy
-ZSB0aGVyZSBhcmUgaG9ycmlkIGxvY2tpbmcgaXNzdWVzIGl0IHRoYXQgY29kZSAoc2VwYXJhdGUg
-ZnJvbQ0KaXQgY2FsbGluZyAtPnBvbGwoKSBhZnRlciAtPnJlbGVhc2UoKSkgZWcgaWYgeW91IGNh
-bGwgY2xvc2UoKSBjb25jdXJyZW50bHkNCndpdGggRVBPTExfQ1RMX0FERC4NCg0KSSdtIG5vdCBh
-dCBhbGwgc3VyZSBpdCB3b3VsZCBoYXZlIG1hdHRlcmVkIGlmIGVwb2xsIGtlcHQgdGhlIGZpbGUg
-b3Blbi4NCkJ1dCBpdCBjYW4ndCBkbyB0aGF0IGJlY2F1c2UgaXQgaXMgZG9jdW1lbnRlZCBub3Qg
-dG8uDQpBcyB3ZWxsIGFzIHBvbGwvc2VsZWN0IGhvbGRpbmcgYSByZWZlcmVuY2UgdG8gYWxsIHRo
-ZWlyIGZkIGZvciB0aGUgZHVyYXRpb24NCm9mIHRoZSBzeXN0ZW0gY2FsbCwgYSBzdWNjZXNzZnVs
-IG1tYXAoKSBob2xkcyBhIHJlZmVyZW5jZSB1bnRpbCB0aGUgcGFnZXMNCmFyZSBhbGwgdW5tYXBw
-ZWQgLSB1c3VhbGx5IGJ5IHByb2Nlc3MgZXhpdC4NCg0KV2UgKGRheWpvYikgaGF2ZSBjb2RlIHRo
-YXQgdXNlcyBlcG9sbCgpIHRvIG1vbml0b3IgbGFyZ2UgbnVtYmVycyBvZiBVRFANCnNvY2tldHMu
-IEkgd2FzIGRvaW5nIHNvbWUgdGVzdHMgKHRyeWluZyB0bykgcmVjZWl2ZSBSVFAgKGF1ZGlvKSBk
-YXRhDQpjb25jdXJyZW50bHkgb24gMTAwMDAgc29ja2V0cyB3aXRoIHR5cGljYWxseSBvbmUgcGFj
-a2V0IGV2ZXJ5IDIwbXMuDQpUaGVyZSBhcmUgMTAwMDAgYXNzb2NpYXRlZCBSQ1RQIHNvY2tldHMg
-dGhhdCBhcmUgdXN1YWxseSBpZGxlLg0KQSBtb3JlIG5vcm1hbCBsaW1pdCB3b3VsZCBiZSAxMDAw
-IFJUUCBzb2NrZXRzLg0KQWxsIHRoZSBkYXRhIG5lZWRzIHRvIGdvIGludG8gYSBzaW5nbGUgKG11
-bHRpdGhyZWFkZWQpIHByb2Nlc3MuDQpKdXN0IGdldHRpbmcgYWxsIHRoZSBwYWNrZXRzIHF1ZXVl
-ZCBvbiB0aGUgc29ja2V0cyB3YXMgbm9uLXRyaXZpYWwuDQplcG9sbCBpcyBhYm91dCB0aGUgb25s
-eSB3YXkgdG8gYWN0dWFsbHkgcmVhZCB0aGUgZGF0YS4NCihUaGF0IG5lZWRlZCBtdWx0aXBsZSBl
-cG9sbCBmZCBzbyBlYWNoIHRocmVhZCBjb3VsZCBwcm9jZXNzIGFsbA0KdGhlIGV2ZW50cyBmcm9t
-IG9uZSBlcG9sbCBmZCB0aGVuIGxvb2sgZm9yIGFub3RoZXIgdW5wcm9jZXNzZWQgZmQuKQ0KDQoJ
-RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
-dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
-OTczODYgKFdhbGVzKQ0K
+On Tue, May 07, 2024 at 02:25:43PM +0530, Ritesh Harjani (IBM) wrote:
+> iomap_readpage_iter() handles "uptodate blocks" and "not uptodate blocks"
+> within a folio separately. This makes iomap_read_folio() to call into
+> ->iomap_begin() to request for extent mapping even though it might already
+> have an extent which is not fully processed.
+> This happens when we either have a large folio or with bs < ps. In these
+> cases we can have sub blocks which can be uptodate (say for e.g. due to
+> previous writes). With iomap_read_folio_iter(), this is handled more
+> efficiently by not calling ->iomap_begin() call until all the sub blocks
+> with the current folio are processed.
+> 
+> iomap_read_folio_iter() handles multiple sub blocks within a given
+> folio but it's implementation logic is similar to how
+> iomap_readahead_iter() handles multiple folios within a single mapped
+> extent. Both of them iterate over a given range of folio/mapped extent
+> and call iomap_readpage_iter() for reading.
+> 
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
+I like this improved changelog, it'e easier to understand why
+_read_folio_iter needs to exist.
+
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/iomap/buffered-io.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 9f79c82d1f73..a9bd74ee7870 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -444,6 +444,24 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+>  	return pos - orig_pos + plen;
+>  }
+> 
+> +static loff_t iomap_read_folio_iter(const struct iomap_iter *iter,
+> +		struct iomap_readpage_ctx *ctx)
+> +{
+> +	struct folio *folio = ctx->cur_folio;
+> +	size_t offset = offset_in_folio(folio, iter->pos);
+> +	loff_t length = min_t(loff_t, folio_size(folio) - offset,
+> +			      iomap_length(iter));
+> +	loff_t done, ret;
+> +
+> +	for (done = 0; done < length; done += ret) {
+> +		ret = iomap_readpage_iter(iter, ctx, done);
+> +		if (ret <= 0)
+> +			return ret;
+> +	}
+> +
+> +	return done;
+> +}
+> +
+>  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
+>  {
+>  	struct iomap_iter iter = {
+> @@ -459,7 +477,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
+>  	trace_iomap_readpage(iter.inode, 1);
+> 
+>  	while ((ret = iomap_iter(&iter, ops)) > 0)
+> -		iter.processed = iomap_readpage_iter(&iter, &ctx, 0);
+> +		iter.processed = iomap_read_folio_iter(&iter, &ctx);
+> 
+>  	if (ret < 0)
+>  		folio_set_error(folio);
+> --
+> 2.44.0
+> 
+> 
 
