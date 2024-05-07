@@ -1,209 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-18887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5038BDE62
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:33:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B4D8BDF32
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A1CB2866DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:33:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01641F22B47
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E9414EC41;
-	Tue,  7 May 2024 09:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBE514EC59;
+	Tue,  7 May 2024 09:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="h0nFIwV0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6FF14E2E4;
-	Tue,  7 May 2024 09:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074370; cv=none; b=ljj0O4Znom4JSJ5ENlfjr9FWpcGKKye/4Fz/J9zvDhlyB0LLp1QIcqf8J5aMwTmUuiSRs4/k7xu/lOXz11Kc/WzF3m/rlNib/L4XjjGASNCG8nOgKZ9XTyE3gSbX64Z/wG7Pm1zL6qN7f+Bm1ymoxgsU0Ywj2bZFhizuox++Z5E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074370; c=relaxed/simple;
-	bh=QWEBtmOnxBgInrUWtYXy54jN0BcfjzLNlCGWLtloyVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LppMt1UTSLaQxtIdZNbi18BY+gjdhuiY27J7gJtyyGtU0iMhX9UW5r7+ZtbVBuc/QPDlv6Etg5KEEWzSP+aE/xVnStPvCEJM/r/VTLEm8+Rr0oLdXKZsuWASRYuDeLvCLXG0Wox8Yi9Sh73AACs5oILkUPC6TWwKIOzv9vnOFv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VYY381TfDz4f3xsJ;
-	Tue,  7 May 2024 17:32:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 77FA51A016E;
-	Tue,  7 May 2024 17:32:41 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgCXaBE19Tlmph79Lw--.16187S3;
-	Tue, 07 May 2024 17:32:41 +0800 (CST)
-Message-ID: <e0c5708c-67c0-770b-6dd4-d85102bf6600@huaweicloud.com>
-Date: Tue, 7 May 2024 17:32:37 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EAA14EC4A;
+	Tue,  7 May 2024 09:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715075925; cv=fail; b=rguts3VjVav/6B2r3v3RS1uychxedcTe/GOdIFip8Um21uoDyzyOEKorZgswgpAiECj5OLq0WHJfz0dHhM933/Vt4sOcARSS5+zM0Io21pMg510BgL3WCfujGptSAldk6vW6GP+Kvk9sFOFlXwLe+6wnwudH4vzy2WdsoW7GkYA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715075925; c=relaxed/simple;
+	bh=dVC/lQiSUYgZdO96VgxSvbek0uXlWsUjbh3YyBxWQBM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pAUzJIbtVYI7GrPOzSPLP7KBKQkMZV+JD0Yv17Uz3B++wdvqiSk+p8z5EQ9MmOVUGoK2edkzI1gpRSomHPhKzOrQ2VjcVREjVza8hAJiaSn52JbKLA5/PbyCD6e+M7jT09KvBOPjoCuLO9UPhK4YEyFxnZkQ2ORSr0rVxdmcvSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=h0nFIwV0; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dg6FgL9bFtYwtBAMsrxeAMvkTmuBrUWWjWuEjHyARgR97PqyIVMxaREar/+Xu5ZyXk6rVro72RKuc8u7kzmD8mOybYNTpDfLCVDb7ZyQDrHp2jsPifuruCfNu1SxKZCOb0TC/NKLuTj+5mYOjZtkt82N+L7yXPxYmmxUybBmtFJWJipWC8NCcErY/vcTGrqtuMzpRTaEK5INh9Ik/xrMeNQumd3BCh8055+vHyWc8tGN+hFIMLCSlyJV90YpnFP9W3TB5n1ETBrBKr6EQoWaV2jxb+ACbIMZlw+qPqOMscS2QLlAYx24kcfcsIlsBhf/nDlFhun4JGKuli/jt/zpCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TcyRbRNnD/AnPAVwbCDZk2vU18J3bztD+p06BpIHkZE=;
+ b=P7Fn3Iuhb46xRmh7vErw/6kqcHPOwzH32IWS+4ChjsagP6WMbeBv9mLkFvmZNtFRu7Qo/yyJF2PLiUFXyrwrefyIeAO+HEnjUeDP6X0LEuJHK0NkoJ+iSnWQfmUsD/JsiEkiXjCuaUQDLt+LqM1aa05ZXV316ZXGGLc8VEEnSL/5a1EXSVy7JxlXlmWqdjhvwnT9T+0ltBBE7ocifwEFzsGndxlp4a664LROJ5XL+MlY0UdQjmWLItkcbptIxcgryMKgfAYnAQ2VvZwfefVFT3wSZsLAEWRT2HCPf1FUBIqkMmNanbcB67fM9lYyGigFbd+JL/mbFVe4+P3yDi15SQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TcyRbRNnD/AnPAVwbCDZk2vU18J3bztD+p06BpIHkZE=;
+ b=h0nFIwV0227otU7T0wKLTqaM6wgyU3bJCARuyeox1nZy2XJJtZ6hoqredGr3O9pX2y9YxrdbD7l85hGCEj50uzMNwIYe5RRAaF6xNHCMJFgH3FY2JPKiLFRTW7nVTyzg5+x0PSACZWmnyMQ7qlrCGEx2OLBGwoRg1iCgIpUvaKE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by LV3PR12MB9267.namprd12.prod.outlook.com (2603:10b6:408:211::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Tue, 7 May
+ 2024 09:58:39 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 09:58:39 +0000
+Message-ID: <eb46f1e3-14ec-491d-b617-086dae1f576c@amd.com>
+Date: Tue, 7 May 2024 11:58:33 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [lvc-project] [PATCH] [RFC] dma-buf: fix race condition between
+ poll and close
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Dmitry Antipov <dmantipov@yandex.ru>
+Cc: lvc-project@linuxtesting.org, dri-devel@lists.freedesktop.org,
+ "T.J. Mercier" <tjmercier@google.com>,
+ syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com,
+ linux-fsdevel@vger.kernel.org, Zhiguo Jiang <justinjiang@vivo.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org
+References: <20240423191310.19437-1-dmantipov@yandex.ru>
+ <85b476cd-3afd-4781-9168-ecc88b6cc837@amd.com>
+ <3a7d0f38-13b9-4e98-a5fa-9a0d775bcf81@yandex.ru>
+ <72f5f1b8-ca5b-4207-9ac9-95b60c607f3a@amd.com>
+ <d5866bd9-299c-45be-93ac-98960de1c91e@yandex.ru>
+ <a87d7ef8-2c59-4dc5-ba0a-b821d1effc72@amd.com>
+ <5c8345ee-011a-4fa7-8326-84f40daf2f2c@yandex.ru>
+ <20240506-6128db77520dbf887927bd4d-pchelkin@ispras.ru>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20240506-6128db77520dbf887927bd4d-pchelkin@ispras.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0249.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:af::15) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 08/12] cachefiles: never get a new anon fd if ondemand_id
- is valid
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
-Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
- libaokun@huaweicloud.com
-References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
- <20240424033916.2748488-9-libaokun@huaweicloud.com>
- <625acc9e-b871-4912-965e-82fe3f9228d7@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <625acc9e-b871-4912-965e-82fe3f9228d7@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgCXaBE19Tlmph79Lw--.16187S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFW5Zr4kXFy8Zw4fZr1fZwb_yoWrur4DpF
-	Way3W3KFyxWF1xWrZ7AFs5WFyFy34kZFnrWa4aga4UArn09r1fZr17trnxZFn8A3s7Wrsr
-	tF4UWr9xKw1qk3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|LV3PR12MB9267:EE_
+X-MS-Office365-Filtering-Correlation-Id: be4a6ec2-1f6c-4d2f-acab-08dc6e7c44f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M2hsUlZKaUFBbGVrYjVXUjl3YVBiT0NTUFU4cWlBa3gwcEtjWUdLbU55dFpl?=
+ =?utf-8?B?MGdiU2hIWVNHRDNBSkNpZDBTUUFnOEs4S1ozT2NSZndsUjJBaVNYRHUrMHpp?=
+ =?utf-8?B?RWkrVkt3UkhpSDdxbTdnbUUwcitZWU55WjYzQWtPcjBVZDU5VmkrOTFadW90?=
+ =?utf-8?B?S0RTMXV6T3paT3hCN21JQmpaSjdZbHNwT052S2xiRkdYQzFNUk1QRDZvNTJE?=
+ =?utf-8?B?d1V0QXJKM2lXVXZXNnVtUnNWWnBCS3UxVFRDZXZIRzdFNENUU2NCc1EyUjNn?=
+ =?utf-8?B?NTc5em4wcXVLeXRYb0V3VjdZVmFFU01PSjhzRGJPN1JpMDRYclpJTUhmbTAr?=
+ =?utf-8?B?cGZiZjJvWFQxVlF3V1BlMVdKOENKWVhFdlBWeXJCVzhyTWtaK2syTUthMmlL?=
+ =?utf-8?B?S2xuZ0haM08xaXpUdFNMa3dmMTBjaVhwR0ZLUUNnMGRsY2tnam1VR3hybm1R?=
+ =?utf-8?B?a2hGTElyQ2lSNW1kZ09pM1RBYkpxSVRLT1orMy8xYUk0UjRHTUk1WVN3ZmxE?=
+ =?utf-8?B?bTZEYnVnaFlGQWRJRytlOE9yWWhyNjF3R2IyalNISWlEenA2TmxJUXlmeWcr?=
+ =?utf-8?B?R3JMNm14TDBISlF2TVNmOHZvWUtDK3g0eHpVL1Z1ejBxZTVCMkcrbmRYZ1V2?=
+ =?utf-8?B?R1d5M0I4TXRoeDc3ekk1dFlXZnE2YXhTYkdxOGVHV252REE2bzlvcnRyL3gr?=
+ =?utf-8?B?OTdyOFIrUEljWjRCMmJSMStXT2VmajFDSGhTcmZwN3puRExPMW4xNXF1UXpQ?=
+ =?utf-8?B?YnFYYU9zWDJFb3piK0o1aDJEV0puRXJ6R3BrZlpqRVMrcVk4cWhZLzhFOHdM?=
+ =?utf-8?B?b1dPOVVycTJ1Z1FFK1dKcVZaTXlkUG1hSmdLNUk5aDA4UzJMeW1OS0J2MXh5?=
+ =?utf-8?B?YUU2amJNZnJRdU9UWkJtYkdGUUUwWVFnUmxPd3JYM3Zoa3p2bXdXd08vRDRh?=
+ =?utf-8?B?cENwd2pIeTNpK2R2c2toWDhQU0RFNHZQR0dDb1hiSnZaRVdOZm9yQU1ISU9h?=
+ =?utf-8?B?YlQwZjFVdElPTFRYRmZZNmlmeldnL1RUcS9VMWsvRkp6N2pFaEgrU21JL2R6?=
+ =?utf-8?B?ZEVoRzltMjErWHRXUWtTa0ZETkkvbVpGenVQc1lueDZoekFRSTRXOE1kL1Fo?=
+ =?utf-8?B?UEdOcllNM3NjbWRWY1U2cTBEUWVRc3QwTDV6RS9NdTVieWkxN0FCSlhGaDQz?=
+ =?utf-8?B?MThOVXp3SmgxT2x0dkkySTh2c0k5Nm8zaXlGODNTR094R2dpek5hQjV6WHlG?=
+ =?utf-8?B?dXlOMmIwYVNOWGx0anNYTFhUZDZWTTY3RlpiSWZmeVNoenk3YUtsT1RaQVZs?=
+ =?utf-8?B?T3dJVURxOXp1elM5N0NnZjVjNHNSdkQzNFVYWDF3SUN6bnpDR1NxemlCTk5h?=
+ =?utf-8?B?VERqRnFLUnpTbjd6Znp2aUs2aDFsSGxXa3JSN3NwNXNlblgxakNxbEtwSmRO?=
+ =?utf-8?B?bFUxT2NXQ2FXTlpjcE5WZm5qZEFtRmlOY0hQVnFsSTdBQlhLZGgrY0JEeFpm?=
+ =?utf-8?B?UUVPYjhBdGErVk5obGU1dnVOYTI4R0tmclp1Uk5xLzZsK3gvN1RGVjBzZVFH?=
+ =?utf-8?B?Q1dadnlmQ1UxQkl1d29yRTc4UnF4ak9qY1d5bGxzRW10M0QrWXBDTEk0Nm80?=
+ =?utf-8?Q?xdEtu+vg8fT4x1LiG7hj+lJpFmKTRoQLf4E43d1fvfbg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Uk90U29lc0ZBdDVRZ0ZWd2Eydk9YU3R2UDBRdFZXVkNCejFaZUJxRzl1UUdy?=
+ =?utf-8?B?VzhJaXUrN3RaUXdvcjF2NW9VczBrb2dJNGJWSEEyaFhmWkxkbnJpVk5rN2NE?=
+ =?utf-8?B?dXBhdEJycTZRSVlNM1k1eHU3allqcGtnM3p2M2dHOTdKVnRiZFFaL3Nib01W?=
+ =?utf-8?B?cXU5Yi9IamYwVjdZNS9nekVNV0REeXVleUp0ajhxQmZBQXNSeCtCRlFNTVVY?=
+ =?utf-8?B?YkJVcTE5Nm1pRCt0NnkrdWNWMERmcnowdVVPK2tDRnJya2l4L1JRS21kb0xr?=
+ =?utf-8?B?ci9LZnM5ZU0yM3gzUm9OdlZLRy9ZQkpoS3RWOWYxUUlUNWRicjc4UU9BeFZn?=
+ =?utf-8?B?d2UxalNvK3dpOGJsY1d3L1lpbnJpdEltR1R1OGZGUExjUTMzUXUrZ0Z0TldI?=
+ =?utf-8?B?TDRDbnVNYzVPNHZHWGNxTnpRSTV3ZWowQUk4SzZ0ZHljbElWSG0yOVJXM2N2?=
+ =?utf-8?B?bDVkMDQ2KzlBemhKSmhUK2hJQ054UTFwbUFoYlI3YTN2OHk0S2VDaTY1WDc0?=
+ =?utf-8?B?YzdJL0wybGJvOUozdG1uTmJISnJTdVlDK2NKdjVtNWUyeDgydEdJT3ZhZ0s1?=
+ =?utf-8?B?WG1QdzBVMVYzRHNwdnFKWk1PVXpFZUhneGlKWkVvQno4Qzd3ZGxVQ3BmWXBq?=
+ =?utf-8?B?MlVUcWhJaXZSVzIrbEhubkhPZ041L3JaVWFiSTgyWW9SdE12S2pQNllWSVdi?=
+ =?utf-8?B?c1IvRDFVaVdzSmpuTGx6ejBsZXZGUVdEMDVwOUNuZHFGTFF5K3loQVRGeWE2?=
+ =?utf-8?B?eVl0Y1M4dXc3TnJGZDFscFpnVmc5MGFQdGREZHdEb0FXaVptRzZYb2FmbXhu?=
+ =?utf-8?B?MjhJTS9jOUNXcTh3M0RiVUZMRmtBUkVMYTRPS0JiOWd2WnRuMUVGWjdRTUZi?=
+ =?utf-8?B?ZHNFN1F4Z3poeklkTUlmNDIxa0JibmJ3WDN4Mi9VS1prU3pBTytXbkhIVGQr?=
+ =?utf-8?B?a2lhWmNZNjBtNE9BWUJoNnk5WlltTEdLWFVGMTRYZE0vOEFrOTBZWWcvdDdq?=
+ =?utf-8?B?Q1FtYlN0NEZ5WFBpS2xPVVBITXZVRUZseCtrSXV4bTNxVFlWSTZ4aDBvUkxz?=
+ =?utf-8?B?TkM0Q0l4VFY4VytJRlpCUHhWeUlGWVdaOTBzOURMOUV5eHVZcG5McXorN0Mx?=
+ =?utf-8?B?TU9nblNyYzZ2bVgzMmVzNDVtelB2bXVWckhzbFFpM2Fpc20reU5YNzYvWEo2?=
+ =?utf-8?B?RjQ4NUFuRUt4RmxERjdEa3FVR3hKQ25WQkErTDBFQ1FTNUNDcHFLUnRod3Ux?=
+ =?utf-8?B?VmVrZmJaY3ZDdWRHZnZ6NnBKOGdTU2J2a21RVDVsVUx2V2JvVVB4TjVDd3FR?=
+ =?utf-8?B?VU5tRFVNZnJXMDA3SGdaSFptR3RmWkkvYmYzSHg0UDlWL0ptNDJLZXo5Z3Rw?=
+ =?utf-8?B?VndOWlgxTFZYWTJORlVRYVMvSWpidUlZNTg0QVdQUW1XbWt6NU5DK05ZelZy?=
+ =?utf-8?B?TGFWZm5nT0EvWUx3ZW04TUdPbVBZUVl2RmxzRzROejRJYnplSnZVazZZUFVw?=
+ =?utf-8?B?SXVtdGFnT0hZakJXZFVxdHkzdGFhSUdtTzlhbmw4eEZOOGhLYTRzSWE3RytF?=
+ =?utf-8?B?U0JIVndCZnhNMTJMMG1wUEZXWWcwbHpNUEM1MGxUOFYrRVlMSFZXU1B2ZzNC?=
+ =?utf-8?B?NGJTUUkrRjd1cG4vUjFycy9rNHhhZ0krazRWb1AwTXpZaCsvT3k4WEZZYnlX?=
+ =?utf-8?B?ZDlhMEdseXY1Q3l6K2hDSCtRKytwYmtxcmUwSjd3cU16alVpUDlTTEE5N0Nq?=
+ =?utf-8?B?cytqbFd2ZmoxL0lISVZLUVNaQWJTVWZidU9mTUFsVFExZDJjRTlXalI2UXQ3?=
+ =?utf-8?B?ZmZQZng1N3YwdnV1OFFEa0NDbVNMbHlwdDdHb1V5emVOR1hibUtISkhtRlBj?=
+ =?utf-8?B?ZmplaDVlRU91anVSS0hlWDZNUWt3dE5JNndPaE9RRFUyRzY4ZFkyaUJIOVhO?=
+ =?utf-8?B?eXFEYzQ3WkFzZW1aNW9HUW42Umo5NGptWGIwM3B1TFFtR1IwamRiNFVtRzRR?=
+ =?utf-8?B?b0dHSXZhT3VYL0szQWozWTdEemxnK2VnWEVySVRjcWExd3hPb1FxaTQwd2ZE?=
+ =?utf-8?B?U0dlcFlJYmJ6My9zWHh3YS9kVm5GM25ISStIRzdCUGRrZENSTXE3SHBmd3hC?=
+ =?utf-8?Q?arO+tXPcxvy4g9rZRZzyBUzoX?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be4a6ec2-1f6c-4d2f-acab-08dc6e7c44f5
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 09:58:39.4366
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 04TnjEc1TNhCiPBVJurPszhm6coxJ6hLpKrvUg8hitKKp0PxiQwdIVoRfZu2iO2Z
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9267
 
-Hi Jingbo,
-
-On 2024/5/6 11:09, Jingbo Xu wrote:
+Am 06.05.24 um 08:52 schrieb Fedor Pchelkin:
+> On Fri, 03. May 14:08, Dmitry Antipov wrote:
+>> On 5/3/24 11:18 AM, Christian König wrote:
+>>
+>>> Attached is a compile only tested patch, please verify if it fixes your problem.
+>> LGTM, and this is similar to get_file() in __pollwait() and fput() in
+>> free_poll_entry() used in implementation of poll(). Please resubmit to
+>> linux-fsdevel@ including the following:
+>>
+>> Reported-by: syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=5d4cb6b4409edfd18646
+>> Tested-by: Dmitry Antipov <dmantipov@yandex.ru>
+> I guess the problem is addressed by commit 4efaa5acf0a1 ("epoll: be better
+> about file lifetimes") which was pushed upstream just before v6.9-rc7.
 >
-> On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> Now every time the daemon reads an open request, it requests a new anon fd
->> and ondemand_id. With the introduction of "restore", it is possible to read
->> the same open request more than once, and therefore have multiple anon fd's
->> for the same object.
->>
->> To avoid this, allocate a new anon fd only if no anon fd has been allocated
->> (ondemand_id == 0) or if the previously allocated anon fd has been closed
->> (ondemand_id == -1). Returns an error if ondemand_id is valid, letting the
->> daemon know that the current userland restore logic is abnormal and needs
->> to be checked.
-> I have no obvious preference on strengthening this on kernel side or
-> not.  Could you explain more about what will happen if the daemon gets
-> several distinct anon fd corresponding to one same object?  IMHO the
-> daemon should expect the side effect if it issues a 'restore' command
-> when the daemon doesn't crash.  IOW, it's something that shall be fixed
-> or managed either on the kernel side, or on the daemon side.
-If the anon_fd is not unique, the daemon will only close the anon_fd
-corresponding to the newest object_id during drop_object, and the
-other anon_fds will not be closed until the daemon exits.
+> Link: https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
 
-However, the anon_fd holds the reference count of the object, so the
-object will not be freed, and the cookie will also not be freed. So
-mounting a same-named image at this point will cause a hung task
-in fscache_hash_cookie() by waiting for the cookie to unhash.
+Yeah, Linus took care of that after convincing Al that this is really a bug.
 
-The object_id and anon_fd of an object are supposed to be unique
-under normal circumstances, this patch just provides that guarantee
-even in the case of an exception.
+They key missing information was that we have a mutex which makes sure 
+that fput() blocks for epoll to stop the polling.
 
-Thank you very much for the review!
+It also means that you should probably re-consider using epoll together 
+with shared DMA-bufs. Background is that when both client and display 
+server try to use epoll the kernel will return an error because there 
+can only be one user of epoll.
 
 Regards,
-Baokun
->> ---
->>   fs/cachefiles/ondemand.c | 34 ++++++++++++++++++++++++++++------
->>   1 file changed, 28 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index b5e6a851ef04..0cf63bfedc9e 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -14,11 +14,18 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
->>   					  struct file *file)
->>   {
->>   	struct cachefiles_object *object = file->private_data;
->> -	struct cachefiles_cache *cache = object->volume->cache;
->> -	struct cachefiles_ondemand_info *info = object->ondemand;
->> +	struct cachefiles_cache *cache;
->> +	struct cachefiles_ondemand_info *info;
->>   	int object_id;
->>   	struct cachefiles_req *req;
->> -	XA_STATE(xas, &cache->reqs, 0);
->> +	XA_STATE(xas, NULL, 0);
->> +
->> +	if (!object)
->> +		return 0;
->> +
->> +	info = object->ondemand;
->> +	cache = object->volume->cache;
->> +	xas.xa = &cache->reqs;
->>   
->>   	xa_lock(&cache->reqs);
->>   	spin_lock(&info->lock);
->> @@ -269,22 +276,39 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   		goto err_put_fd;
->>   	}
->>   
->> +	spin_lock(&object->ondemand->lock);
->> +	if (object->ondemand->ondemand_id > 0) {
->> +		spin_unlock(&object->ondemand->lock);
->> +		ret = -EEXIST;
->> +		/* Avoid performing cachefiles_ondemand_fd_release(). */
->> +		file->private_data = NULL;
->> +		goto err_put_file;
->> +	}
->> +
->>   	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
->>   	fd_install(fd, file);
->>   
->>   	load = (void *)req->msg.data;
->>   	load->fd = fd;
->>   	object->ondemand->ondemand_id = object_id;
->> +	spin_unlock(&object->ondemand->lock);
->>   
->>   	cachefiles_get_unbind_pincount(cache);
->>   	trace_cachefiles_ondemand_open(object, &req->msg, load);
->>   	return 0;
->>   
->> +err_put_file:
->> +	fput(file);
->>   err_put_fd:
->>   	put_unused_fd(fd);
->>   err_free_id:
->>   	xa_erase(&cache->ondemand_ids, object_id);
->>   err:
->> +	spin_lock(&object->ondemand->lock);
->> +	/* Avoid marking an opened object as closed. */
->> +	if (object->ondemand->ondemand_id <= 0)
->> +		cachefiles_ondemand_set_object_close(object);
->> +	spin_unlock(&object->ondemand->lock);
->>   	cachefiles_put_object(object, cachefiles_obj_put_ondemand_fd);
->>   	return ret;
->>   }
->> @@ -367,10 +391,8 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   
->>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
->>   		ret = cachefiles_ondemand_get_fd(req);
->> -		if (ret) {
->> -			cachefiles_ondemand_set_object_close(req->object);
->> +		if (ret)
->>   			goto out;
->> -		}
->>   	}
->>   
->>   	msg->msg_id = xas.xa_index;
-
-
+Christian.
 
