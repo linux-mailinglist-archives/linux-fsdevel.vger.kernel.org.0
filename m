@@ -1,90 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-18966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0B48BF147
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823E48BF1CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C7BB21AF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378121F209B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1177E107;
-	Tue,  7 May 2024 23:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD53148312;
+	Tue,  7 May 2024 23:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="KQp8BrbH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lup6xZXF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFFA12D76F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 23:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1851482FE;
+	Tue,  7 May 2024 23:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123077; cv=none; b=crN9Hbj9PW0Uoc/CDJrx7g5PFwwMJ/MCMS52iZ8YcOD6WTTFjy6ukfVzk0KtjDdSkKV2EXro2rccnZ11t3THVsLHRKn5A2BFyT/KFdJihg083HRJE3i1Nv6bsEOFkCWhZzYrG8b4OOw/teuasjmk/Lde+t+5B/8aUMZaJKNQzj8=
+	t=1715123403; cv=none; b=NrUcI8YXAPwUvffDFcMiMRgKAqJ25WilGppLJ4CIZYt7KNulXL4Rcz3u2fVfDfMj0XqfGOvTDOt9UrrA4Lt//doemNNMdv0XLQv2eBYRpxcTBlEzPRLiFjC8nKC6vhORvpV5LEpwxIhQ82sLtzElbugNZir0ifeF6ezz44XHRx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123077; c=relaxed/simple;
-	bh=4ki02SrhUgGoO2NBs7aSIdob5gBkMpbDm48dELXE9rg=;
+	s=arc-20240116; t=1715123403; c=relaxed/simple;
+	bh=KkfjDOzCjuo4G0ptW4GbKhoE2FZMfGdLBMqlhs1mn80=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K6nY/0YT1qq96adBZC7nCk0MltWdu4cZDeDDQgTsHU+V67irTa6Oif/24w9237h6Ib1PYL/9u6v7bwablNkSL7N/GoiqsLv7Lm1oCMECwGJLfTOSs+ME3jCKoCYvwMRGbnOUFEbqwDVf2KWepOjeGvkbi9QH5xBYPH5H5CMvN48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=KQp8BrbH; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 447N42VB026194
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 May 2024 19:04:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1715123044; bh=E4LG6htVk322z4ErkwjEczI86vSYy/AQbKJj4Rf6hVA=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=KQp8BrbHEqmHhBTAKaEnbeQr8cwLSTiCebA+l4lvrlKAIwZjiGvMZ1GbljpADqKTy
-	 Z/HuFehWcx8N5P0ne/NVNavkMv68l+JJT5m4S/6vVQJpYCaihDDZ7if7GUnXbYrwVS
-	 jPeXZs5F78UIaAxyoOBNGaLk0Qq4Djl85dW/uuAhQUuPxVYgyZpoIFq1jTNt5RlQ1V
-	 Xfbp3oGXjHt++6IBCAPl1vBopOSL4Sz04OTgQ+TMRou4bSi6zZKrsnnp+xZ+h7bhsW
-	 7tJPj5S+rP570/KQ2sD6w/Mz0BlsQla18Rb40hvSdS9/D7OW2pSPSw1cZfJMjJqg0f
-	 YQ0uDA8Gi4bcw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 141C215C02BC; Tue, 07 May 2024 19:04:00 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
-        chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH] ext4: remove the redundant folio_wait_stable()
-Date: Tue,  7 May 2024 19:03:54 -0400
-Message-ID: <171512302199.3602678.2811036632858501777.b4-ty@mit.edu>
+	 MIME-Version; b=WOrBlshnbmYOpFYhmjotHRV+GLa4fbEVpDJSoqIs/scFNlj9jeaMwDkHpOzguB5XbEfhjNhTF3fIWqo18e/o0SqexH+uO1lXhJN20Xdvwhcl9kjrZcRAhbJll1G8TQd2E4Et6fnRvtPjalsAWJm7WG8u+197h49migH5nKDTJ90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lup6xZXF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B9E0C3277B;
+	Tue,  7 May 2024 23:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715123403;
+	bh=KkfjDOzCjuo4G0ptW4GbKhoE2FZMfGdLBMqlhs1mn80=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lup6xZXFfFRqV4DvwMcWc4rYF4KFVPO7epiDhKGLIvp7HgVaFbZCQWaZ83jx+JkyX
+	 OALdDns+oRcFLIftILiSUv+YGoCREn6Bk67VbnouKx4DiQo0wSLZoKE9FWFRYC1bMl
+	 w+qy06ngNlr7dBKYlrkT42KYZFep5/MRxcGA6iZmu7WwJodR6GOKHlU+a0m5AofwlL
+	 X9+Awf2KIG884rUIN6sU4vSpEIMp/tenCI3LRbdxyRqq2B4DPTizRB17o4Gnmz9G1Y
+	 1RfRf/1V7nxJLqckFVd4vhmCqUuKblGkUNnrKSL/xEyPIB962l8tY+w7hiJLNH+52b
+	 wk2RQKsMm7wPQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.8 52/52] epoll: be better about file lifetimes
+Date: Tue,  7 May 2024 19:07:18 -0400
+Message-ID: <20240507230800.392128-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240419023005.2719050-1-yi.zhang@huaweicloud.com>
-References: <20240419023005.2719050-1-yi.zhang@huaweicloud.com>
+In-Reply-To: <20240507230800.392128-1-sashal@kernel.org>
+References: <20240507230800.392128-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.8.9
 Content-Transfer-Encoding: 8bit
 
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-On Fri, 19 Apr 2024 10:30:05 +0800, Zhang Yi wrote:
-> __filemap_get_folio() with FGP_WRITEBEGIN parameter has already wait
-> for stable folio, so remove the redundant folio_wait_stable() in
-> ext4_da_write_begin(), it was left over from the commit cc883236b792
-> ("ext4: drop unnecessary journal handle in delalloc write") that
-> removed the retry getting page logic.
-> 
-> 
-> [...]
+[ Upstream commit 4efaa5acf0a1d2b5947f98abb3acf8bfd966422b ]
 
-Applied, thanks!
+epoll can call out to vfs_poll() with a file pointer that may race with
+the last 'fput()'. That would make f_count go down to zero, and while
+the ep->mtx locking means that the resulting file pointer tear-down will
+be blocked until the poll returns, it means that f_count is already
+dead, and any use of it won't actually get a reference to the file any
+more: it's dead regardless.
 
-[1/1] ext4: remove the redundant folio_wait_stable()
-      commit: df0b5afc62f3368d657a8fe4a8d393ac481474c2
+Make sure we have a valid ref on the file pointer before we call down to
+vfs_poll() from the epoll routines.
 
-Best regards,
+Link: https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
+Reported-by: syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/eventpoll.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 3534d36a14740..c5a9a483fb538 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -875,6 +875,34 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
+ 	return res;
+ }
+ 
++/*
++ * The ffd.file pointer may be in the process of being torn down due to
++ * being closed, but we may not have finished eventpoll_release() yet.
++ *
++ * Normally, even with the atomic_long_inc_not_zero, the file may have
++ * been free'd and then gotten re-allocated to something else (since
++ * files are not RCU-delayed, they are SLAB_TYPESAFE_BY_RCU).
++ *
++ * But for epoll, users hold the ep->mtx mutex, and as such any file in
++ * the process of being free'd will block in eventpoll_release_file()
++ * and thus the underlying file allocation will not be free'd, and the
++ * file re-use cannot happen.
++ *
++ * For the same reason we can avoid a rcu_read_lock() around the
++ * operation - 'ffd.file' cannot go away even if the refcount has
++ * reached zero (but we must still not call out to ->poll() functions
++ * etc).
++ */
++static struct file *epi_fget(const struct epitem *epi)
++{
++	struct file *file;
++
++	file = epi->ffd.file;
++	if (!atomic_long_inc_not_zero(&file->f_count))
++		file = NULL;
++	return file;
++}
++
+ /*
+  * Differs from ep_eventpoll_poll() in that internal callers already have
+  * the ep->mtx so we need to start from depth=1, such that mutex_lock_nested()
+@@ -883,14 +911,22 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
+ static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
+ 				 int depth)
+ {
+-	struct file *file = epi->ffd.file;
++	struct file *file = epi_fget(epi);
+ 	__poll_t res;
+ 
++	/*
++	 * We could return EPOLLERR | EPOLLHUP or something, but let's
++	 * treat this more as "file doesn't exist, poll didn't happen".
++	 */
++	if (!file)
++		return 0;
++
+ 	pt->_key = epi->event.events;
+ 	if (!is_file_epoll(file))
+ 		res = vfs_poll(file, pt);
+ 	else
+ 		res = __ep_eventpoll_poll(file, pt, depth);
++	fput(file);
+ 	return res & epi->event.events;
+ }
+ 
 -- 
-Theodore Ts'o <tytso@mit.edu>
+2.43.0
+
 
