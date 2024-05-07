@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-18969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE1E8BF271
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:49:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DD78BF295
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C5D2855C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:49:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EF81F2115D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F1E200133;
-	Tue,  7 May 2024 23:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDC186655;
+	Tue,  7 May 2024 23:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGRBHtBR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho3BVj7G"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64451200118;
-	Tue,  7 May 2024 23:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC2D19D42D;
+	Tue,  7 May 2024 23:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123604; cv=none; b=HRMm7avJ8ghnKtkCUrlRORFWB1cUZO/nxUl4ju+X0PG2r5wMuQt45Pl0Qn48KHjMpcla1+dfjR3RKrudNjhZWwBDyLvLbRuGIebJaDL/cNvp8AilHqBHAjmNtKe2qpwvp2v5OLzT3wIC7lwWsOozcu4OGU8fl5OWH27rHZYX7Gw=
+	t=1715123644; cv=none; b=ZzuAypMzn3SjOoyDnh+DGKp5suV3kEpf6nWofHXTHSwefWkGtwJqtqRyqM7RsTZGk+e755OvBRkMVJDXHAQz+LcsdcSpx19XsxvntwE1O5VcbkRcPcPCeWuw/Kq6NJ9XB8tbj1bb3pOIeknUayzhMc5HyDLMlnOBHmQrZA9NRjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123604; c=relaxed/simple;
-	bh=Kkn5Q1zAH2ZDxZMDU2NxkdDU68U1JVkpW8MrlekulRU=;
+	s=arc-20240116; t=1715123644; c=relaxed/simple;
+	bh=Mz8Q6nscvxWSF22rQIxoe3uPByARdyh+B/R4vfV92Ek=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jfXXqf7NDUT7wazWs6R+sIIo+YLZC6JFK3PkzU2rznxUSWMb9RhXc+a4u7mDFNkao/8zZn1gJ9zCnfgNdcmp3+515ZHwyytg2GFghNIDXBGLa2UY460bPGHTUEfUrEJ16gpZRSI++bYWuBvxIIxBA7AKrPo/C/wBvD4Oi7SfUNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGRBHtBR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 493FCC3277B;
-	Tue,  7 May 2024 23:13:23 +0000 (UTC)
+	 MIME-Version; b=G/rpP6J7FK97QlmAdocVczxrc+FZvG7mVqzbXf80eRYxFTw1tWYIuU4JGEOJBYU1ei2kWS8ynI6Sp3Ykr4iYZQBboEjEduJMXpIS+ZMAmllUElCobUed9d1tSxBR1EoGpgBXJex1Qe9aZEqRQJ4Pl6qArLHlZP6Z1hStC0MP+3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ho3BVj7G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E374C2BBFC;
+	Tue,  7 May 2024 23:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715123604;
-	bh=Kkn5Q1zAH2ZDxZMDU2NxkdDU68U1JVkpW8MrlekulRU=;
+	s=k20201202; t=1715123644;
+	bh=Mz8Q6nscvxWSF22rQIxoe3uPByARdyh+B/R4vfV92Ek=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FGRBHtBRuQFuWTZm9jwvtJpc0Ia4uqX8TEl0KEzHCHuerBDDSolecjmWuhpdiZMTB
-	 eZbf7lwOkaqqHlAxYz121LUfKFLRJAZ/jNgXIVSXz0TGF9l+tx9vATmt1HglKtOq9q
-	 AJCbN/wCggDDTl+o6HfqxfIkqNNRNXa9HnKuMUGwSokibD4Grvwo1mgElqiBR61enr
-	 SgB9WJ7Je8EVoyLOWEHAza/NTAAJyPgF5DHp7Tt721zZGNtjHeMIdf4tLOylAMolQe
-	 rjIEsvRzVK7ScLazr9A/6t9WtPObdSd4ACfAa/aoQj7tmFxBB5wClGGCZ239Bp5Kt0
-	 ZOlTkQFeVd6AA==
+	b=Ho3BVj7GBbjCRu8g0PoHSsmfYvmHeH7Hc/8zoZjdhJ+X16CvoB4yHRh7/2a51XFJE
+	 wYzMEO9qwqq4yBP45DA91shaYghQOL2mRdyS0MX7Ye5Vk1iA7fJb+QDGWUlq0CWvDD
+	 y/kys3jy1m2T4MuVDqUO3pDo9rU+4Z1PnCeKikjw22dGSr162vrN9QKiw+uuRyR+XC
+	 HJKmnQnN3QYDBCDdbg0ZfUrQpWNhOguUPfI9v+vrC3T1n7qvaP7yEI4GIDwk4jBLSU
+	 MvhV9a5GPHKT5tsU2EsaDUxXGTpczUdcJvGzSpoTg/rPkWXI/4O6lL69oWPUhbG2Is
+	 18C93xvuGmP7w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -51,12 +51,12 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 25/25] epoll: be better about file lifetimes
-Date: Tue,  7 May 2024 19:12:12 -0400
-Message-ID: <20240507231231.394219-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 15/15] epoll: be better about file lifetimes
+Date: Tue,  7 May 2024 19:13:24 -0400
+Message-ID: <20240507231333.394765-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240507231231.394219-1-sashal@kernel.org>
-References: <20240507231231.394219-1-sashal@kernel.org>
+In-Reply-To: <20240507231333.394765-1-sashal@kernel.org>
+References: <20240507231333.394765-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.90
+X-stable-base: Linux 5.15.158
 Content-Transfer-Encoding: 8bit
 
 From: Linus Torvalds <torvalds@linux-foundation.org>
@@ -92,10 +92,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 37 insertions(+), 1 deletion(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index eccecd3fac90c..7221072f39fad 100644
+index 1c254094c4c36..b60edddf17870 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -839,6 +839,34 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
+@@ -832,6 +832,34 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
  	return res;
  }
  
@@ -130,7 +130,7 @@ index eccecd3fac90c..7221072f39fad 100644
  /*
   * Differs from ep_eventpoll_poll() in that internal callers already have
   * the ep->mtx so we need to start from depth=1, such that mutex_lock_nested()
-@@ -847,14 +875,22 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
+@@ -840,14 +868,22 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
  static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
  				 int depth)
  {
