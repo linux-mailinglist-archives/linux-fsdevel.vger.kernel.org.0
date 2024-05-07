@@ -1,239 +1,315 @@
-Return-Path: <linux-fsdevel+bounces-18927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C2C8BE96C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:43:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0E98BE96F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA9F31C2406A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 16:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189131C237F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 16:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05B853E16;
-	Tue,  7 May 2024 16:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDE554BDA;
+	Tue,  7 May 2024 16:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fq1KdaqB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HRUQJpYE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B13524AD;
-	Tue,  7 May 2024 16:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED3D3E48F;
+	Tue,  7 May 2024 16:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099782; cv=none; b=SSFitXLG9+3A3JZMLXAh+ib5DLFPGzmlb+rOcC6irLKB78TwuvmllVegRq3rnHc7+Cp5818Miq2a+u8UDX4sRKQdXZU3oVUuZ1Y+Jb65xpfjQCmGOp07QW860XnVJIHRv04SVKpuUXt9AXhN0MhT/URmWynPw/LxRRq9D/kN5HQ=
+	t=1715099827; cv=none; b=QxdfuW7arm1sXLCyy7DqnUs3Yv+MU/DS8yxLVEtGGYHYuZJfaMfL+xHK8hfhSN8q3RfNPYrCCJAzAA0oMu5ZBBRoVJaUfFTogrOm3JyLkop7N7crnFYQHxMpR5rS/+o589h0BOL1eMy/rd6LaSk7hdHG+Zz1nED4KLFODicLp/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099782; c=relaxed/simple;
-	bh=2Bajx+l3ITU8XWvxfqEXTZnzcts3/3BYXAtY2w1Z04M=;
+	s=arc-20240116; t=1715099827; c=relaxed/simple;
+	bh=qGfJvnfpxxK0Cnb6ZWI/3YT+WlFz4LPSpjpA2+r7j5w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cYzb0PJHn8WJ8D/XJH1vi+FyKVOGp4v83f+M8h6VsV7DK1I7cYcFyMTtoRtzGUpDCZ4rwSsURJyA8untHKtPRD+kkogrOCQ9uls0lKXNOlmhkonFBK4HpUFAt5u1mazKNARebNyU1XJpd0vr3QSze/5dwVWsbOD6Ov3o5MYBsew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fq1KdaqB; arc=none smtp.client-ip=209.85.217.43
+	 To:Cc:Content-Type; b=mKG6Jt5J44DO9UGxygcOiGCRgCA6GAe4evqjdQ+szyssJz+vLpDJ4lRKnrCm2lb3ANEtc9lfgc8L4GipD0kA78pIPME9dMmYegCno6XLiBCQw29ARF59eDsLUMhPHkq9+a9EXKrAXwAmUlg/jrq1jvlqqUMqG3ThZqrrAF4ZMD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HRUQJpYE; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-47f00074f54so648861137.0;
-        Tue, 07 May 2024 09:36:20 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6001399f22bso2490251a12.0;
+        Tue, 07 May 2024 09:37:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715099779; x=1715704579; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OIH6aQmwwJHXxsNaL1gpFbq6JK/4rTlX3KH1VdDetm8=;
-        b=fq1KdaqBRjaz9vMuqxsu8ngutoVW6UxM4O9qQtv51vW4H50H4kOciokC8a4PK4h99y
-         z1DakCkF7HHb+L/5ivh/vQQjGsyr8GT8zqZ31PG+dMezqSYkI0yJC0spjNCK2G65JXlj
-         AUXUJmsm13Exb9ngIKf6Q227Ww1xtQsk6XJ+h5Qn9uTmP4OmZ/Cyfb3s+X2jw082xfZw
-         fqmM9+zZWxyShvsh2hvLpAU8h9+Xw99NZfE5GDy3cPLWLw99HAaZVFN9LmkQbRSMm8Ux
-         zDDdCltgdK2QeQMYBKveHNh+C4jkdS5wXROk5fCY+ubnHmJK3FE7kSA23f2UYHTaBfa5
-         OG3Q==
+        d=gmail.com; s=20230601; t=1715099825; x=1715704625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h4OwR2TgrDTiiCg6OQZ7l2+opI9M0Uh+nYNlleYZodA=;
+        b=HRUQJpYEOVWwbv92ztTsKj20wkRvBjaj70s6Kr+tHRFgOYHd1dwamdvo7oQ243zRph
+         7cSU3KQEWAyunpo4b55PPF6Vgn7fnLQatDHdYgGEMTtxhnkFHmOO2ibwn+PAoVpfX5Ix
+         spK4rnJvmLyzcmDpBStanPG3RYghP3voozGl4UkC4a/EgnGQZ32j8rkZ2kBOenZIpYl/
+         8QIK9gt7y7e960baYQI9zx2xgqb7KsUY19zXIKPSHbPZZilhCm8e/jgG5VxpH7xxjALm
+         8QD8B8VyODLpC9zpTRwmQ3cEFeu4/Tx1QivCOy3vIZ6nONCq4QQaeFBBpEM/w/SSUXdY
+         SeXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715099779; x=1715704579;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OIH6aQmwwJHXxsNaL1gpFbq6JK/4rTlX3KH1VdDetm8=;
-        b=dfd9ZhaSOUR0YgeRlcwj9HVKdLlqw+YohE8i0vXoWCkXTAczu9t92RBVW6gWDsGWtM
-         QCpZXxSpH8YxBNIW1MejGWk3lv+r6b8LMHIfdMQEtAukwts5NMHo+b6CtNE1KLWLTVsw
-         BSoYPZfI/2VAijQM3YsGJtVXN36FmkgTy+2XvQ4jE14dVkT5QjjTc1Q40xeDOhT4GmRr
-         /VOBusaIRrZWXYHo01M3TvnJNcSbKhVuVf4vfS2EH1sxwYGCGeeglznWr5r7SXYbw2MY
-         ybdnaqCq9f4VSLAfHmq00Wlr+dxuHSIm3zvzYXuOJf8EtDR3FFQ3JjCu1ueKcDfQA8PX
-         z3gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtshix/qbkZ+1DPHhJpSO8WyCI3amJrhbcAOWMtM0wXRWw5sRdfikE3CcixQ4Tg39GI3ty5ckIZaMdwnH/cXYaiTw6/NhhGot6ppSecS8Xg+kk4KSKZziHrT/hlrDaxFIhkM4LkNgdQmBJ+A==
-X-Gm-Message-State: AOJu0YyGDUdcSkvEkzUaqZOR4ejCKwO4hqZ7Y5K2bTugHkSThBr3FGwh
-	BZB0PpNA22QoGsC8EElabayEZFvYX3gj5cyBFCLWNfPDU2uQ4feDh9dH99D8F4aQ3yRrOoYP8+K
-	unMaWj3u4o2VmJDaoSymhz5Egeug=
-X-Google-Smtp-Source: AGHT+IFLE7o1q4yIV5QIpQ2zwnryVHkBTr8cvfHOkMi+4EMADqYRYKPCAK7R+jI7/0heAa0+ZJFW6vFupgJDauVUo2c=
-X-Received: by 2002:a67:f2ca:0:b0:47e:bd11:7e5e with SMTP id
- a10-20020a67f2ca000000b0047ebd117e5emr16136515vsn.7.1715099777915; Tue, 07
- May 2024 09:36:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715099825; x=1715704625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h4OwR2TgrDTiiCg6OQZ7l2+opI9M0Uh+nYNlleYZodA=;
+        b=aLGWJhoqBMKqkLH6qUfgyj9RInmzKeJQpY1KHRUNZ8Vl2iujcsHycCIgN2KwQOQfBN
+         +plpTsL4YC810fg1v2fCVIHtivG+TjdbFSyfCpWvADeCpcfL/v45BEBKAEnVfeEhTKD0
+         lrXvtforHtUoaQR0TQCsXHEJDPDCKCH7/JsWv6XHDP4ihGEU5ickh9OQh7LDeAhpCpI6
+         nM0IxMYbzN3jKbaFRG2167IKeCTIHDeZa9xtMpru9BhfHlbKz3s81YJtk+1w08rV4lSd
+         wf8IwpDNzR6KtxOeI/0sbvQld0su6YIMl51IBEyTB51MZmP8GHocELaKM6q/shZc9ZeC
+         oeBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeIRQQ/mqn2L8BblA09mmeSo34SyB3KYxvMrMWHAuAFwLArVjDRpBrS7W0egwuMiKdZVcwZBplEUbikBkfxRy8MCVMn2nwyM8QqNP8A1gYpMKThyTRR35zuU3tGZkCaTKGnP0HQmO/+ZY9po8kwKwx4XrHR9iWzOk1Ewxyh4E/CGLk/t+JKs0kWgCRSvegFgpuz8a0ot65oBtEklgL0BE77rA=
+X-Gm-Message-State: AOJu0Yx4Q5HR8962YA1WN8CJp6Tx7C/8C3giqpLtIsmr91+CJfdrVM58
+	Bc/4vyQx+uJOiXoNSF7eUNVpCMENmNK9T4DmyEi1wsZPPFtDWJjzYVh4HIMDQv6QzppnAtLG2hT
+	gQ0nvt1sQpZRoG3NuJdPhF63uzSk=
+X-Google-Smtp-Source: AGHT+IHJgrwGB4ntGMYQujEHAZAA3qer5jlfBLoOJ9WIa4Ibk405hMwVEWVotrCPoLmMIPRvDSQO5cKYoauW1OsRePs=
+X-Received: by 2002:a17:90a:d14f:b0:2b2:bccc:5681 with SMTP id
+ 98e67ed59e1d1-2b6169e3210mr75104a91.33.1715099825278; Tue, 07 May 2024
+ 09:37:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506193700.7884-1-apais@linux.microsoft.com> <202405072249.fLkavX40-lkp@intel.com>
-In-Reply-To: <202405072249.fLkavX40-lkp@intel.com>
-From: Allen <allen.lkml@gmail.com>
-Date: Tue, 7 May 2024 09:36:06 -0700
-Message-ID: <CAOMdWSLsVXC8TNifYwXPE4O+saxBeG6Koa=MMH3ZUNutBkDVcQ@mail.gmail.com>
-Subject: Re: [PATCH v4] fs/coredump: Enable dynamic configuration of max file
- note size
-To: kernel test robot <lkp@intel.com>
-Cc: Allen Pais <apais@linux.microsoft.com>, linux-fsdevel@vger.kernel.org, 
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	ebiederm@xmission.com, keescook@chromium.org, mcgrof@kernel.org, 
-	j.granados@samsung.com
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-3-andrii@kernel.org>
+ <2024050439-janitor-scoff-be04@gregkh> <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
+ <ZjjiFnNRbwsMJ3Gj@x1> <CAEf4BzZJPY0tfLtvFA4BpQr71wO7iz-1-q16cENOAbuT1EX_og@mail.gmail.com>
+ <Zjk--KLSjdg2kpic@x1>
+In-Reply-To: <Zjk--KLSjdg2kpic@x1>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 7 May 2024 09:36:52 -0700
+Message-ID: <CAEf4BzZfOkw-mep-ox+1q29GTDoNeRAr0p6++7gEkCNn1Cph-g@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for /proc/<pid>/maps
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, =?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, May 6, 2024 at 1:35=E2=80=AFPM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Mon, May 06, 2024 at 11:41:43AM -0700, Andrii Nakryiko wrote:
+> > On Mon, May 6, 2024 at 6:58=E2=80=AFAM Arnaldo Carvalho de Melo <acme@k=
+ernel.org> wrote:
+> > >
+> > > On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
+> > > > On Sat, May 4, 2024 at 8:28=E2=80=AFAM Greg KH <gregkh@linuxfoundat=
+ion.org> wrote:
+> > > > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote:
+> > > > > > Note also, that fetching VMA name (e.g., backing file path, or =
+special
+> > > > > > hard-coded or user-provided names) is optional just like build =
+ID. If
+> > > > > > user sets vma_name_size to zero, kernel code won't attempt to r=
+etrieve
+> > > > > > it, saving resources.
+> > >
+> > > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > >
+> > > > > Where is the userspace code that uses this new api you have creat=
+ed?
+> > >
+> > > > So I added a faithful comparison of existing /proc/<pid>/maps vs ne=
+w
+> > > > ioctl() API to solve a common problem (as described above) in patch
+> > > > #5. The plan is to put it in mentioned blazesym library at the very
+> > > > least.
+> > > >
+> > > > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
+> > > > linux-perf-user), as they need to do stack symbolization as well.
+> > >
+> > > At some point, when BPF iterators became a thing we thought about, II=
+RC
+> > > Jiri did some experimentation, but I lost track, of using BPF to
+> > > synthesize PERF_RECORD_MMAP2 records for pre-existing maps, the layou=
+t
+> > > as in uapi/linux/perf_event.h:
+> > >
+> > >         /*
+> > >          * The MMAP2 records are an augmented version of MMAP, they a=
+dd
+> > >          * maj, min, ino numbers to be used to uniquely identify each=
+ mapping
+> > >          *
+> > >          * struct {
+> > >          *      struct perf_event_header        header;
+> > >          *
+> > >          *      u32                             pid, tid;
+> > >          *      u64                             addr;
+> > >          *      u64                             len;
+> > >          *      u64                             pgoff;
+> > >          *      union {
+> > >          *              struct {
+> > >          *                      u32             maj;
+> > >          *                      u32             min;
+> > >          *                      u64             ino;
+> > >          *                      u64             ino_generation;
+> > >          *              };
+> > >          *              struct {
+> > >          *                      u8              build_id_size;
+> > >          *                      u8              __reserved_1;
+> > >          *                      u16             __reserved_2;
+> > >          *                      u8              build_id[20];
+> > >          *              };
+> > >          *      };
+> > >          *      u32                             prot, flags;
+> > >          *      char                            filename[];
+> > >          *      struct sample_id                sample_id;
+> > >          * };
+> > >          */
+> > >         PERF_RECORD_MMAP2                       =3D 10,
+> > >
+> > >  *   PERF_RECORD_MISC_MMAP_BUILD_ID      - PERF_RECORD_MMAP2 event
+> > >
+> > > As perf.data files can be used for many purposes we want them all, so=
+ we
+> >
+> > ok, so because you want them all and you don't know which VMAs will be
+> > useful or not, it's a different problem. BPF iterators will be faster
+> > purely due to avoiding binary -> text -> binary conversion path, but
+> > other than that you'll still retrieve all VMAs.
+>
+> But not using tons of syscalls to parse text data from /proc.
+
+In terms of syscall *count* you win with 4KB text reads, there are
+fewer syscalls because of this 4KB-based batching. But the cost of
+syscall + amount of user-space processing is a different matter. My
+benchmark in perf (see patch #5 discussion) suggests that even with
+more ioctl() syscalls, perf would win here.
+
+But I also realized that what you really need (I think, correct me if
+I'm wrong) is only file-backed VMAs, because all the other ones are
+not that useful for symbolization. So I'm adding a minimal change to
+my code to allow the user to specify another query flag to only return
+file-backed VMAs. I'm going to try it with perf code and see how that
+helps. I'll post results in patch #5 thread, once I have them.
 
 >
-> kernel test robot noticed the following build errors:
+> > You can still do the same full VMA iteration with this new API, of
+> > course, but advantages are probably smaller as you'll be retrieving a
+> > full set of VMAs regardless (though it would be interesting to compare
+> > anyways).
 >
-> [auto build test ERROR on kees/for-next/execve]
-> [also build test ERROR on brauner-vfs/vfs.all linus/master v6.9-rc7 next-20240507]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Allen-Pais/fs-coredump-Enable-dynamic-configuration-of-max-file-note-size/20240507-033907
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
-> patch link:    https://lore.kernel.org/r/20240506193700.7884-1-apais%40linux.microsoft.com
-> patch subject: [PATCH v4] fs/coredump: Enable dynamic configuration of max file note size
-> config: loongarch-randconfig-001-20240507 (https://download.01.org/0day-ci/archive/20240507/202405072249.fLkavX40-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240507/202405072249.fLkavX40-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405072249.fLkavX40-lkp@intel.com/
->
+> sure, I can't see how it would be faster, but yeah, interesting to see
+> what is the difference.
 
- Thanks for reporting. The kernel builds fine with
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
-for-next/execve.
-The issue is with loongarch-randconfig, which has CONFIG_SYSCTL set to
-"n". It is needed for this patch.
+see patch #5 thread, seems like it's still a bit faster
 
-
-Thanks,
-Allen
-
-> All errors (new ones prefixed by >>):
 >
->    fs/binfmt_elf.c: In function 'fill_files_note':
-> >> fs/binfmt_elf.c:1598:21: error: 'core_file_note_size_min' undeclared (first use in this function)
->     1598 |         if (size >= core_file_note_size_min) {
->          |                     ^~~~~~~~~~~~~~~~~~~~~~~
->    fs/binfmt_elf.c:1598:21: note: each undeclared identifier is reported only once for each function it appears in
+> > > setup a meta data perf file descriptor to go on receiving the new mma=
+ps
+> > > while we read /proc/<pid>/maps, to reduce the chance of missing maps,=
+ do
+> > > it in parallel, etc:
+> > >
+> > > =E2=AC=A2[acme@toolbox perf-tools-next]$ perf record -h 'event synthe=
+sis'
+> > >
+> > >  Usage: perf record [<options>] [<command>]
+> > >     or: perf record [<options>] -- <command> [<options>]
+> > >
+> > >         --num-thread-synthesize <n>
+> > >                           number of threads to run for event synthesi=
+s
+> > >         --synth <no|all|task|mmap|cgroup>
+> > >                           Fine-tune event synthesis: default=3Dall
+> > >
+> > > =E2=AC=A2[acme@toolbox perf-tools-next]$
+> > >
+> > > For this specific initial synthesis of everything the plan, as mentio=
+ned
+> > > about Jiri's experiments, was to use a BPF iterator to just feed the
+> > > perf ring buffer with those events, that way userspace would just
+> > > receive the usual records it gets when a new mmap is put in place, th=
+e
+> > > BPF iterator would just feed the preexisting mmaps, as instructed via
+> > > the perf_event_attr for the perf_event_open syscall.
+> > >
+> > > For people not wanting BPF, i.e. disabling it altogether in perf or
+> > > disabling just BPF skels, then we would fallback to the current metho=
+d,
+> > > or to the one being discussed here when it becomes available.
+> > >
+> > > One thing to have in mind is for this iterator not to generate duplic=
+ate
+> > > records for non-pre-existing mmaps, i.e. we would need some generatio=
+n
+> > > number that would be bumped when asking for such pre-existing maps
+> > > PERF_RECORD_MMAP2 dumps.
+> >
+> > Looking briefly at struct vm_area_struct, it doesn't seems like the
+> > kernel maintains any sort of generation (at least not at
+> > vm_area_struct level), so this would be nice to have, I'm sure, but
 >
->
-> vim +/core_file_note_size_min +1598 fs/binfmt_elf.c
->
->   1569
->   1570  /*
->   1571   * Format of NT_FILE note:
->   1572   *
->   1573   * long count     -- how many files are mapped
->   1574   * long page_size -- units for file_ofs
->   1575   * array of [COUNT] elements of
->   1576   *   long start
->   1577   *   long end
->   1578   *   long file_ofs
->   1579   * followed by COUNT filenames in ASCII: "FILE1" NUL "FILE2" NUL...
->   1580   */
->   1581  static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm)
->   1582  {
->   1583          unsigned count, size, names_ofs, remaining, n;
->   1584          user_long_t *data;
->   1585          user_long_t *start_end_ofs;
->   1586          char *name_base, *name_curpos;
->   1587          int i;
->   1588
->   1589          /* *Estimated* file count and total data size needed */
->   1590          count = cprm->vma_count;
->   1591          if (count > UINT_MAX / 64)
->   1592                  return -EINVAL;
->   1593          size = count * 64;
->   1594
->   1595          names_ofs = (2 + 3 * count) * sizeof(data[0]);
->   1596   alloc:
->   1597          /* paranoia check */
-> > 1598          if (size >= core_file_note_size_min) {
->   1599                  pr_warn_once("coredump Note size too large: %u (does kernel.core_file_note_size_min sysctl need adjustment?\n",
->   1600                                size);
->   1601                  return -EINVAL;
->   1602          }
->   1603          size = round_up(size, PAGE_SIZE);
->   1604          /*
->   1605           * "size" can be 0 here legitimately.
->   1606           * Let it ENOMEM and omit NT_FILE section which will be empty anyway.
->   1607           */
->   1608          data = kvmalloc(size, GFP_KERNEL);
->   1609          if (ZERO_OR_NULL_PTR(data))
->   1610                  return -ENOMEM;
->   1611
->   1612          start_end_ofs = data + 2;
->   1613          name_base = name_curpos = ((char *)data) + names_ofs;
->   1614          remaining = size - names_ofs;
->   1615          count = 0;
->   1616          for (i = 0; i < cprm->vma_count; i++) {
->   1617                  struct core_vma_metadata *m = &cprm->vma_meta[i];
->   1618                  struct file *file;
->   1619                  const char *filename;
->   1620
->   1621                  file = m->file;
->   1622                  if (!file)
->   1623                          continue;
->   1624                  filename = file_path(file, name_curpos, remaining);
->   1625                  if (IS_ERR(filename)) {
->   1626                          if (PTR_ERR(filename) == -ENAMETOOLONG) {
->   1627                                  kvfree(data);
->   1628                                  size = size * 5 / 4;
->   1629                                  goto alloc;
->   1630                          }
->   1631                          continue;
->   1632                  }
->   1633
->   1634                  /* file_path() fills at the end, move name down */
->   1635                  /* n = strlen(filename) + 1: */
->   1636                  n = (name_curpos + remaining) - filename;
->   1637                  remaining = filename - name_curpos;
->   1638                  memmove(name_curpos, filename, n);
->   1639                  name_curpos += n;
->   1640
->   1641                  *start_end_ofs++ = m->start;
->   1642                  *start_end_ofs++ = m->end;
->   1643                  *start_end_ofs++ = m->pgoff;
->   1644                  count++;
->   1645          }
->   1646
->   1647          /* Now we know exact count of files, can store it */
->   1648          data[0] = count;
->   1649          data[1] = PAGE_SIZE;
->   1650          /*
->   1651           * Count usually is less than mm->map_count,
->   1652           * we need to move filenames down.
->   1653           */
->   1654          n = cprm->vma_count - count;
->   1655          if (n != 0) {
->   1656                  unsigned shift_bytes = n * 3 * sizeof(data[0]);
->   1657                  memmove(name_base - shift_bytes, name_base,
->   1658                          name_curpos - name_base);
->   1659                  name_curpos -= shift_bytes;
->   1660          }
->   1661
->   1662          size = name_curpos - (char *)data;
->   1663          fill_note(note, "CORE", NT_FILE, size, data);
->   1664          return 0;
->   1665  }
->   1666
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> Yeah, this would be something specific to the "retrieve me the list of
+> VMAs" bulky thing, i.e. the kernel perf code (or the BPF that would
+> generate the PERF_RECORD_MMAP2 records by using a BPF vma iterator)
+> would bump the generation number and store it to the VMA in
+> perf_event_mmap() so that the iterator doesn't consider it, as it is a
+> new mmap that is being just sent to whoever is listening, and the perf
+> tool that put in place the BPF program to iterate is listening.
 
+Ok, we went on *so many* tangents in emails on this patch set :) Seems
+like there are a bunch of perf-specific improvements possible which
+are completely irrelevant to the API I'm proposing. Let's please keep
+them separate (and you, perf folks, should propose them upstream),
+it's getting hard to see what this patch set is actually about with
+all the tangential emails.
 
-
--- 
-       - Allen
+>
+> > isn't really related to adding this API. Once the kernel does have
+>
+> Well, perf wants to enumerate pre-existing mmaps _and_ after that
+> finishes to know about new mmaps, so we need to know a way to avoid
+> having the BPF program enumerating pre-existing maps sending
+> PERF_RECORD_MMAP2 for maps perf already knows about via a regular
+> PERF_RECORD_MMAP2 sent when a new mmap is put in place.
+>
+> So there is an overlap where perf (or any other tool wanting to
+> enumerate all pre-existing maps and new ones) can receive info for the
+> same map from the enumerator and from the existing mechanism generating
+> PERF_RECORD_MMAP2 records.
+>
+> - Arnaldo
+>
+> > this "VMA generation" counter, it can be trivially added to this
+> > binary interface (which can't be said about /proc/<pid>/maps,
+> > unfortunately).
+> >
+> > >
+> > > > It will be up to other similar projects to adopt this, but we'll
+> > > > definitely get this into blazesym as it is actually a problem for t=
+he
+> > >
+> > > At some point looking at plugging blazesym somehow with perf may be
+> > > something to consider, indeed.
+> >
+> > In the above I meant direct use of this new API in perf code itself,
+> > but yes, blazesym is a generic library for symbolization that handles
+> > ELF/DWARF/GSYM (and I believe more formats), so it indeed might make
+> > sense to use it.
+> >
+> > >
+> > > - Arnaldo
+> > >
+> > > > abovementioned Oculus use case. We already had to make a tradeoff (=
+see
+> > > > [2], this wasn't done just because we could, but it was requested b=
+y
+> > > > Oculus customers) to cache the contents of /proc/<pid>/maps and run
+> > > > the risk of missing some shared libraries that can be loaded later.=
+ It
+> > > > would be great to not have to do this tradeoff, which this new API
+> > > > would enable.
+> > > >
+> > > >   [2] https://github.com/libbpf/blazesym/commit/6b521314126b3ae6f2a=
+dd43e93234b59fed48ccf
+> > > >
+> >
+> > [...]
 
