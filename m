@@ -1,208 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-18924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962F78BE914
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E72398BE93A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81721C23DCC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 16:33:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A3E1C23CAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 16:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178AF16C852;
-	Tue,  7 May 2024 16:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5A016F844;
+	Tue,  7 May 2024 16:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBMwDUYA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MkRg+bwr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3F316C447;
-	Tue,  7 May 2024 16:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C8216F299
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 16:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099283; cv=none; b=fLUIhsFmVC/gSKOO2nDxIBY043tJw93y/ZZrcuFaKkq06OBvfnV+ZAhLw7B9U30+PrJ3rmJ3YFO0h03Xpem4RMvzbnezRQDx0bwHz6Dv2eJqBvXnXf4mDRxkWxTL06ggqBFOkNn8An8qyA+5TNHZy/g9O3YTJVfhYotjQ0IniGY=
+	t=1715099547; cv=none; b=e8/6qidM8Kd00sMbJgPKZCKx5+ndJZC9n+bl24JWkWT9fHwAmA1u3rU+f80+tLCPLM3B+Ans+keKBzwOy8bjAlyOQn2cB1QhOVzEGNm0W/2YqU/Kk3SlqZfe4qCur4LF4nd4dqiJTjExbCC/aPv5lflKhH6aclJzH3cq66noJXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099283; c=relaxed/simple;
-	bh=hD+M8iZyRZ2U9jnt01xrNmHVdD1Kc6oVV4hfl9YcSjg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=r2IdKelf98fJTD4rxOepQwLJtlhRh2Ii59hAO1mAZqmC077Gb9L++NtqLYBHQ0m9SkKqFMU8NWbT45RSl3oodkPuIS3LZFY3K7EfaKGKVocZ/E+dJ3qdfK4o/orC2ACDK3lCp+yMIzUSELi8XDANA0TZl8uqMB0Poxe9rI/XVNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBMwDUYA; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so726402966b.0;
-        Tue, 07 May 2024 09:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715099280; x=1715704080; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rICwxurU6A+ycOmFzrxmjMEY+vAR/gQDdccoIGBtMqA=;
-        b=bBMwDUYAyCNo3SnY7dqiYWGUDAvA5KOLaMSiryJybhsYi6F3uv8Dk1M503llh38mDi
-         HIgw8yvrsBjKH1NCuwmy4VO6VuR1keoV7U0KfmGiM4fcjPwaNyvSi++I7Utb/B8Knpz1
-         n5d1HVwXE4Moa3MzBmlh3nunz1R3I9EDHHlxEQtZejf4zCbGFOMQR0qhVydp9YbSw1qh
-         ++QsvpHuvU2mNYohr+R71VP4K0qusnci6AHhqG4yMKnJX3DzsaJE3gEKuDgGA9ADDTTF
-         NF6cZWDsEOYSz4ul7WzUnSeHxRVwuvHQYaEsFgQobQwmtmNDYhz2+cXxjC4lKvqnSHx+
-         qESQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715099280; x=1715704080;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rICwxurU6A+ycOmFzrxmjMEY+vAR/gQDdccoIGBtMqA=;
-        b=uvjLqg/D1zzLa7UnQK+qUpfKKyW1p6XrvMNCi/egzMMEqF8iVvJjaXFgGrrKyeSDbN
-         jx947CcEYNwBb2zW3+k/oJlW/5j1kk2Wq+jMN4JCZFC4AWfefszUsXlwWe1iOJnMmxkS
-         sq6VEqW2aLE9WEBaaoMdnqwpSyM6s1hAReYig72oV9coPTsddNeN2ILymeW7yxsNe1LB
-         djGaJZl/WuqzhbcYDWYSX0GBQHidEg2J/1//OJW8beQuMXQlNNu7wyrH5ra/x8CvSlSE
-         c41YVN6MHDCSj/3GOQ+0ztRl9uaC6Nt4zyCMszCwSbDpfR77WMI+Hl+jn8Qk7gRK0Lvy
-         uZtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/S9cMRb/1qZlxyNA7JLDHukaAvAecZPcIVUKxj5wAEHfyDeJfhecT7M8OmenhDopbxf072CFSHxnzcE+dRUmnroLe+GNoh7S6clgjR039gxAS76ij57C/qzAJoX9iowlpOfgTNPiO74wcHN5DFxK5mf6igbBBoiPnE+qnfj08GA==
-X-Gm-Message-State: AOJu0YyfMgjkZ6H3IjrIxEAt1oa9K+fij8zYzj0lnjEHTpeBTaj8VJT9
-	Ve+t2L7cZiYlO7KMG9508x0vegDlkrDpaoiZznt4s3oOFQcypwUcRUpvSx61Lx9uzQKixQsSLaL
-	wOECtEdA66lfHU+BJpmyEsIkE7R0=
-X-Google-Smtp-Source: AGHT+IFn3p6+IU8MNAx4QtWppQukiCZTYwwesAVqUICe2KaycZuCykzGNsekqL7kux4xcd7LRFMUFDcyPHBLQ7Tec6w=
-X-Received: by 2002:a17:907:3f9a:b0:a59:c5c2:a31c with SMTP id
- hr26-20020a1709073f9a00b00a59c5c2a31cmr8176135ejc.33.1715099279965; Tue, 07
- May 2024 09:27:59 -0700 (PDT)
+	s=arc-20240116; t=1715099547; c=relaxed/simple;
+	bh=6E+24P5wmvhDAgZ8v3CIPCQcRJi6iUGse3AmHM1NHK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZoc1KIAib8cRxIvFHnwngSJjZzsftoXDeI586PqCFX+bpyw/RlTZBplTBygmxnUPw9ktHznQ1t8XGtxm1338PcBO8/N5X1EAxDHEelMmclARWqXo6EiEXVeUgeso4K8dvzPMgAREecwKx+wZei4j9bhu6ZSciwa5PvfLxLJjJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MkRg+bwr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715099545;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JiyBLJyHU9ak1Riyxp9GKdq0G0Yxbly1rVCUH0ePK7U=;
+	b=MkRg+bwrfB30xIogFd9h8cVGfYYB9s0/MfhpwHeKrtvK5k5QpxgqFCCyMRuvh43TMiDeoY
+	Gondoxx3sGQckCcAI5x3vWu8I4kcgnJ6z3IHEVK7PmMI6H1w1Qu3MzwirLQkJw/nn8lAmL
+	pSKseP+NMMAKxSE9A/grgy2ROoGNByI=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-227-Vy3rIZKFNIKQWpLBtrTD3w-1; Tue,
+ 07 May 2024 12:32:23 -0400
+X-MC-Unique: Vy3rIZKFNIKQWpLBtrTD3w-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4FF091C29EA0
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 16:32:23 +0000 (UTC)
+Received: from bfoster (unknown [10.22.32.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 15062492CAA;
+	Tue,  7 May 2024 16:32:22 +0000 (UTC)
+Date: Tue, 7 May 2024 12:32:41 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+	vgoyal@redhat.com
+Subject: Re: [PATCH] virtiofs: include a newline in sysfs tag
+Message-ID: <ZjpXqTxUge0bg_O3@bfoster>
+References: <20240425104400.30222-1-bfoster@redhat.com>
+ <20240430173431.GA390186@fedora.redhat.com>
+ <ZjkoDqhIti--j1F5@bfoster>
+ <20240507140330.GD105913@fedora.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
- <2024050425-setting-enhance-3bcd@gregkh> <CAEf4BzbiTQk6pLPQj=p9d18YW4fgn9k2V=zk6nUYAOK975J=xg@mail.gmail.com>
- <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
-In-Reply-To: <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 7 May 2024 09:27:44 -0700
-Message-ID: <CAEf4BzZQexjTvROUMkNb2MMB2scmjJHNRunA-NqeNzfo-yYh9g@mail.gmail.com>
-Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
- /proc/<pid>/maps APIs
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, Suren Baghdasaryan <surenb@google.com>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507140330.GD105913@fedora.redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-On Tue, May 7, 2024 at 8:49=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracle=
-.com> wrote:
->
-> .. Adding Suren & Willy to the Cc
->
-> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240504 18:14]:
-> > On Sat, May 4, 2024 at 8:32=E2=80=AFAM Greg KH <gregkh@linuxfoundation.=
-org> wrote:
-> > >
-> > > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
-> > > > I also did an strace run of both cases. In text-based one the tool =
-did
-> > > > 68 read() syscalls, fetching up to 4KB of data in one go.
-> > >
-> > > Why not fetch more at once?
-> > >
-> >
-> > I didn't expect to be interrogated so much on the performance of the
-> > text parsing front, sorry. :) You can probably tune this, but where is
-> > the reasonable limit? 64KB? 256KB? 1MB? See below for some more
-> > production numbers.
->
-> The reason the file reads are limited to 4KB is because this file is
-> used for monitoring processes.  We have a significant number of
-> organisations polling this file so frequently that the mmap lock
-> contention becomes an issue. (reading a file is free, right?)  People
-> also tend to try to figure out why a process is slow by reading this
-> file - which amplifies the lock contention.
->
-> What happens today is that the lock is yielded after 4KB to allow time
-> for mmap writes to happen.  This also means your data may be
-> inconsistent from one 4KB block to the next (the write may be around
-> this boundary).
->
-> This new interface also takes the lock in do_procmap_query() and does
-> the 4kb blocks as well.  Extending this size means more time spent
-> blocking mmap writes, but a more consistent view of the world (less
-> "tearing" of the addresses).
+On Tue, May 07, 2024 at 10:03:30AM -0400, Stefan Hajnoczi wrote:
+> On Mon, May 06, 2024 at 02:57:18PM -0400, Brian Foster wrote:
+> > On Tue, Apr 30, 2024 at 01:34:31PM -0400, Stefan Hajnoczi wrote:
+> > > On Thu, Apr 25, 2024 at 06:44:00AM -0400, Brian Foster wrote:
+> > > > The internal tag string doesn't contain a newline. Append one when
+> > > > emitting the tag via sysfs.
+> > > > 
+> > > > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > > > ---
+> > > > 
+> > > > Hi all,
+> > > > 
+> > > > I just noticed this and it seemed a little odd to me compared to typical
+> > > > sysfs output, but maybe it was intentional..? Easy enough to send a
+> > > > patch either way.. thoughts?
+> > > 
+> > > Hi Brian,
+> > > Orthogonal to the newline issue, sysfs_emit(buf, "%s", fs->tag) is
+> > > needed to prevent format string injection. Please mention this in the
+> > > commit description. I'm afraid I introduced that bug, sorry!
+> > > 
+> > 
+> > Hi Stefan,
+> > 
+> > Ah, thanks. That hadn't crossed my mind.
+> > 
+> > > Regarding newline, I'm concerned that adding a newline might break
+> > > existing programs. Unless there is a concrete need to have the newline,
+> > > I would keep things as they are.
+> > > 
+> > 
+> > Not sure I follow the concern.. wasn't this interface just added? Did
+> > you have certain userspace tools in mind?
+> 
+> v6.9-rc7 has already been tagged and might be the last tag (I'm not
+> sure). If v6.9 is released without the newline, then changing it in the
+> next kernel release could cause breakage. Some ideas on how userspace
+> might break:
+> 
+> - Userspace calls mount(2) with the contents of the sysfs attr as the
+>   source (i.e. "myfs\n" vs "myfs").
+> 
+> - Userspace stores the contents of the sysfs attr in a file and runs
+>   again later on a new kernel after the format has changed, causing tag
+>   comparisons to fail.
+> 
 
-Hold on. There is no 4KB in the new ioctl-based API I'm adding. It
-does a single VMA look up (presumably O(logN) operation) using a
-single vma_iter_init(addr) + vma_next() call on vma_iterator.
+OK, fair points.
 
-As for the mmap_read_lock_killable() (is that what we are talking
-about?), I'm happy to use anything else available, please give me a
-pointer. But I suspect given how fast and small this new API is,
-mmap_read_lock_killable() in it is not comparable to holding it for
-producing /proc/<pid>/maps contents.
+> > FWIW, my reason for posting this was that the first thing I did to try
+> > out this functionality was basically a 'cat /sys/fs/virtiofs/*/tag' to
+> > see what fs' were attached to my vm, and then I got a single line
+> > concatenation of every virtiofs tag and found that pretty annoying. ;)
+> 
+> Understood.
+> 
+> > I don't know that is a concrete need for the newline, but I still find
+> > the current behavior kind of odd. That said, I'll defer to you guys if
+> > you'd prefer to leave it alone. I just posted a v2 for the format
+> > specifier thing as above and you can decide which patch to take or not..
+> 
+> The v6.9 release will happen soon and I'm not sure if we can still get
+> the patch in. I've asked Miklos if your patch can be merged with the
+> newline added for v6.9. That would solve the userspace breakage
+> concerns.
+> 
 
->
-> We are working to reduce these issues by switching the /proc/<pid>/maps
-> file to use rcu lookup.  I would recommend we do not proceed with this
-> interface using the old method and instead, implement it using rcu from
-> the start - if it fits your use case (or we can make it fit your use
-> case).
->
-> At least, for most page faults, we can work around the lock contention
-> (since v6.6), but not all and not on all archs.
->
-> ...
->
-> >
-> > > > In comparison,
-> > > > ioctl-based implementation had to do only 6 ioctl() calls to fetch =
-all
-> > > > relevant VMAs.
-> > > >
-> > > > It is projected that savings from processing big production applica=
-tions
-> > > > would only widen the gap in favor of binary-based querying ioctl AP=
-I, as
-> > > > bigger applications will tend to have even more non-executable VMA
-> > > > mappings relative to executable ones.
-> > >
-> > > Define "bigger applications" please.  Is this some "large database
-> > > company workload" type of thing, or something else?
-> >
-> > I don't have a definition. But I had in mind, as one example, an
-> > ads-serving service we use internally (it's a pretty large application
-> > by pretty much any metric you can come up with). I just randomly
-> > picked one of the production hosts, found one instance of that
-> > service, and looked at its /proc/<pid>/maps file. Hopefully it will
-> > satisfy your need for specifics.
-> >
-> > # cat /proc/1126243/maps | wc -c
-> > 1570178
-> > # cat /proc/1126243/maps | wc -l
-> > 28875
-> > # cat /proc/1126243/maps | grep ' ..x. ' | wc -l
-> > 7347
->
-> We have distributions increasing the map_count to an insane number to
-> allow games to work [1].  It is, unfortunately, only a matter of time unt=
-il
-> this is regularly an issue as it is being normalised and allowed by an
-> increased number of distributions (fedora, arch, ubuntu).  So, despite
-> my email address, I am not talking about large database companies here.
->
-> Also, note that applications that use guard VMAs double the number for
-> the guards.  Fun stuff.
->
-> We are really doing a lot in the VMA area to reduce the mmap locking
-> contention and it seems you have a use case for a new interface that can
-> leverage these changes.
->
-> We have at least two talks around this area at LSF if you are attending.
+IMO, this all seems a little overblown. If the only issue ends up
+missing the release deadline, then I'd say just mark it as a Fixes:
+patch for the original patch in v6.9 (probably should have done that
+anyways, I guess). Odds are anybody who's going to use this will pick it
+up via a stable kernel (through distros and whatnot) anyways. But again
+just my .02. ;)
 
-I am attending LSFMM, yes, I'll try to not miss them.
+Brian
 
->
-> Thanks,
-> Liam
->
-> [1] https://lore.kernel.org/linux-mm/8f6e2d69-b4df-45f3-aed4-5190966e2dea=
-@valvesoftware.com/
->
+> Stefan
+
+
 
