@@ -1,374 +1,488 @@
-Return-Path: <linux-fsdevel+bounces-18963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F458BEFE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BDA8BEFF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF960286592
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 22:38:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05281F235D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 22:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C517F483;
-	Tue,  7 May 2024 22:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7467F476;
+	Tue,  7 May 2024 22:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzecXbN5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZI3TsfW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AAC78C76;
-	Tue,  7 May 2024 22:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EF27C6CE;
+	Tue,  7 May 2024 22:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715121525; cv=none; b=jC/MsOTVt5c3ANjJ31X079GI2iG+7CEQuGjh5qR8no3eYZZe2Qdlyy8vRjOvNZvsvuK793YYkcKXomuWwRlOjpuxXBpjZqY+xp7A7RpE4g282AAceVH/nu1yeTuJFKkvjn1jgxwb3zafpS84JxF8jHsmv3P/qGrWe4+1M0sJEEQ=
+	t=1715122615; cv=none; b=dGkgt/4sOZIsguhUIhnrp1lKBMFxkDaRBfpd62mPptjL8900R8zsTqqbOZ+6CVIbd1WATpXdy2nDUgaiuV95riaAiMYpTJoh0Ul2d3B+Q9puL4zH3UQPGpLLAj2w4e1mixWI32UuFpp2oZCpGzilXllXGsTB9zDZ+h9Hcrw3bdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715121525; c=relaxed/simple;
-	bh=r7nYzwtLtpZilFBSUJuGG5VDQQ6NTdsBK6gY8BnVINo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mBKquzIABU+vBFMPH12seL93g0uhXTrJsyd+sYakb2vAY/xrQZARHU4mhkHp/6EhFGMkqdoVccutlg2JyrpYlNXSqarwZGvNU4Dvln4UVLLob4ghx9KDFP47wOQ0Tk6HiNGHHRDORLhFJh/gmyRXbvuZHvNgZEicQBhwyAKrJKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzecXbN5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DD7C2BBFC;
-	Tue,  7 May 2024 22:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715121524;
-	bh=r7nYzwtLtpZilFBSUJuGG5VDQQ6NTdsBK6gY8BnVINo=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bzecXbN5aDtNAEhSWxdtKdmkSbAAkhjrxUY71lK8wN+gKkGTUDaTwBJWBnjCfKyP1
-	 27QgoFtmy3lICA3OJ78VZPqLMwDG9TcBMIMpZ3KwYXNGqLcATLC5gcHlP+VhEcDXbR
-	 R/vmBS2hjbP8Fkg5oCZidVqNEOyLIfC/BW5PSWJFTm6FdPKOE8FlZAkAvh7GZHg/o6
-	 hlY8qLeJ4Scb24HcdBd8/5fJxvPtgZpFMX9u8mMOPqSXP2Kms/krw8tGWThed7w9yv
-	 59s2zhzWlIf7nr2ByWAIQ3DS1UCG+Tat3VgnaLW42WY6ywgYIWe23I1jQzWYd60wvs
-	 om1y7k4qausfw==
+	s=arc-20240116; t=1715122615; c=relaxed/simple;
+	bh=DB6CYs/TbJkmqwoHdEc+2KU22FBnkouhLCh1VKh1BZw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gMCw/mLDp2iE4kEd4U37jG4AzmSAgT5z6a58m2nLGm5B3DDhndpPJl6cpbmM2cNLU5Z8CTq6H57sFTZ8QlBQB8tjpe+7eCyuSiscifUmeiUZoAkcJgDgEy2YNc5UEj0yRsBW6eFhIqAJ0ylRV4Sp6P9q4hL9o/O9/dvvQEQimYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dZI3TsfW; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b338460546so2813650a91.1;
+        Tue, 07 May 2024 15:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715122613; x=1715727413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nTnwlMlf1lxLsKUFf9+5oGGEtEWV0uSszkxhOIK2hYo=;
+        b=dZI3TsfWaVoDvoxZjN6E5TOca8uE/2QNcdO/NdOZzFYfTjQjwMJboirZDXALBqIifm
+         XRuvVYUy+9c2KIVtwER63sgzXoBSxp7vUEdSDQ5YY9iI6J6egBQcJe3+FaJEvwnZjBrV
+         aSHF/JrRjswCwNxzf0eYqYBbdlpTgweiH55Kofw1xsM2qeMjTGszdMSR4UvDozssfukQ
+         spYe1nqwwUbtFHEWIN6V1Ml9ks1bC58GzrMV5n4kJ6H9/Nb48qKQ4HqcIha1fWwehtAm
+         bMgttaiFcVTI/nScwGAGOYIKCe+jCNL5z5IC9Qr9URVpR0H00bMmzUhlaQQk8neKeIqP
+         R+Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715122613; x=1715727413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nTnwlMlf1lxLsKUFf9+5oGGEtEWV0uSszkxhOIK2hYo=;
+        b=NMmQ4EuumuZoyIVaF3B5fgQ25FQewkXNXzc5MGFLFdoj8JJNnZCC3yFWgaBfSDSkoq
+         HCdSvi6K+BMfZdL/B/ohDTUvfEv4RwOtnO3A0u/lcDh7W7r1gf6dLCOPDoU8pypH47dk
+         HNEzfMJnoMVkYu5xU9zVEpufnV+utLyiv+B1TaNtcLRGT2WBqlrojcJQZlZquG/3cs/a
+         loOsYt/Q1+2WCANoitvlX0NhKi6Aoq17ZFSSKFhZb1okTxnzD/rcCVM3GoFcTL2xSGtz
+         aguhkKvChQ6QyjCGdH9gZ6elfB/N1Zx8QOEiuUq9K9uBg1UZoQKOvmOkLrsEonjman4S
+         2Mrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYOgDBgT1TXOqJWDnk1m7X2IcjsqeC29kEDjPVyR8Tn2DwYTsqYq65ZEi7yD+PHTGf69/QliTvQEuLrS8ZKATxT2ebu5SBz3BwqdC3JDPFlB73qus8H9yg8gZZaBOT+StRr7e6myZDC7/eQcyD6dEnG02MX1qHJBUB9RWvY9mITSXmBadt9/fsjfBGcfGRQ4ev6mxIuI/Phv/jJBCNbJdjuTI=
+X-Gm-Message-State: AOJu0Yxdri5N4lT7KhXeZqW4X9BZkYqjbip2t8tdm1qZmxbvunt8mPQk
+	CJAJsD7LkAHjPWyw/BjK9TdNdGUbIVpMaK0/8pmhYH9kjKISoNgHL2qR85SKPffWHtk0/0nwJTS
+	YLDQGntCbS1+LQNTqLJSoSaNCGEE=
+X-Google-Smtp-Source: AGHT+IFD2nGYIfCipzppGDiFEkV4+NiE2aSKDcClvItcMNd5qPoMJaIJZAfcZPUNRTtOmBzuB230k9rZWkU3ViIjutE=
+X-Received: by 2002:a17:90a:fe06:b0:2a2:f284:5196 with SMTP id
+ 98e67ed59e1d1-2b616aeba34mr828573a91.45.1715122613323; Tue, 07 May 2024
+ 15:56:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
+ <2024050404-rectify-romp-4fdb@gregkh> <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
+ <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com>
+ <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
+ <CAP-5=fXv59EmyM7FNnwAp0JjAZjtYhCj3b3FTH7KsHL=k8C6oQ@mail.gmail.com>
+ <CAEf4BzbdGJzMuRgGJE72VFquXL37rS9Ti__wx4f_+kt3yetkEg@mail.gmail.com>
+ <CAEf4BzYykUsN_Z92cXAh_9+fmN-bzr7xOEBe2v_5xDoXRhijmg@mail.gmail.com> <CAM9d7cg4ErddXRXJWg7sAgSY=wzej8e4SO6NhsXJNDj69DyqCw@mail.gmail.com>
+In-Reply-To: <CAM9d7cg4ErddXRXJWg7sAgSY=wzej8e4SO6NhsXJNDj69DyqCw@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 7 May 2024 15:56:40 -0700
+Message-ID: <CAEf4BzZTRU9CGrcAysLKCCbjUvJZPFaLA122MVo_zKgk8pAUSA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
+ /proc/<pid>/maps APIs
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, "linux-perf-use." <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 08 May 2024 01:38:37 +0300
-Message-Id: <D13RU3UPQVOW.3FM4GX4JHGLJJ@kernel.org>
-Cc: <Liam.Howlett@oracle.com>, <bp@alien8.de>, <bpf@vger.kernel.org>,
- <broonie@kernel.org>, <christophe.leroy@csgroup.eu>,
- <dan.j.williams@intel.com>, <dave.hansen@linux.intel.com>,
- <debug@rivosinc.com>, <hpa@zytor.com>, <io-uring@vger.kernel.org>,
- <keescook@chromium.org>, <kirill.shutemov@linux.intel.com>,
- <linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-s390@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
- <luto@kernel.org>, <mingo@redhat.com>, <nvdimm@lists.linux.dev>,
- <peterz@infradead.org>, <sparclinux@vger.kernel.org>, <tglx@linutronix.de>,
- <x86@kernel.org>
-Subject: Re: [PATCH] mm: Remove mm argument from mm_get_unmapped_area()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Rick Edgecombe" <rick.p.edgecombe@intel.com>,
- <akpm@linux-foundation.org>
-X-Mailer: aerc 0.17.0
-References: <20240506160747.1321726-1-rick.p.edgecombe@intel.com>
-In-Reply-To: <20240506160747.1321726-1-rick.p.edgecombe@intel.com>
 
-On Mon May 6, 2024 at 7:07 PM EEST, Rick Edgecombe wrote:
-> Recently the get_unmapped_area() pointer on mm_struct was removed in
-> favor of direct callable function that can determines which of two
-> handlers to call based on an mm flag. This function,
-> mm_get_unmapped_area(), checks the flag of the mm passed as an argument.
+On Tue, May 7, 2024 at 3:27=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
 >
-> Dan Williams pointed out (see link) that all callers pass curret->mm, so
-> the mm argument is unneeded. It could be conceivable for a caller to want
-> to pass a different mm in the future, but in this case a new helper could
-> easily be added.
+> On Tue, May 7, 2024 at 10:29=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Mon, May 6, 2024 at 10:06=E2=80=AFPM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Mon, May 6, 2024 at 11:43=E2=80=AFAM Ian Rogers <irogers@google.co=
+m> wrote:
+> > > >
+> > > > On Mon, May 6, 2024 at 11:32=E2=80=AFAM Andrii Nakryiko
+> > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > >
+> > > > > On Sat, May 4, 2024 at 10:09=E2=80=AFPM Ian Rogers <irogers@googl=
+e.com> wrote:
+> > > > > >
+> > > > > > On Sat, May 4, 2024 at 2:57=E2=80=AFPM Andrii Nakryiko
+> > > > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > > >
+> > > > > > > On Sat, May 4, 2024 at 8:29=E2=80=AFAM Greg KH <gregkh@linuxf=
+oundation.org> wrote:
+> > > > > > > >
+> > > > > > > > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko w=
+rote:
+> > > > > > > > > Implement a simple tool/benchmark for comparing address "=
+resolution"
+> > > > > > > > > logic based on textual /proc/<pid>/maps interface and new=
+ binary
+> > > > > > > > > ioctl-based PROCFS_PROCMAP_QUERY command.
+> > > > > > > >
+> > > > > > > > Of course an artificial benchmark of "read a whole file" vs=
+. "a tiny
+> > > > > > > > ioctl" is going to be different, but step back and show how=
+ this is
+> > > > > > > > going to be used in the real world overall.  Pounding on th=
+is file is
+> > > > > > > > not a normal operation, right?
+> > > > > > > >
+> > > > > > >
+> > > > > > > It's not artificial at all. It's *exactly* what, say, blazesy=
+m library
+> > > > > > > is doing (see [0], it's Rust and part of the overall library =
+API, I
+> > > > > > > think C code in this patch is way easier to follow for someon=
+e not
+> > > > > > > familiar with implementation of blazesym, but both implementa=
+tions are
+> > > > > > > doing exactly the same sequence of steps). You can do it even=
+ less
+> > > > > > > efficiently by parsing the whole file, building an in-memory =
+lookup
+> > > > > > > table, then looking up addresses one by one. But that's even =
+slower
+> > > > > > > and more memory-hungry. So I didn't even bother implementing =
+that, it
+> > > > > > > would put /proc/<pid>/maps at even more disadvantage.
+> > > > > > >
+> > > > > > > Other applications that deal with stack traces (including per=
+f) would
+> > > > > > > be doing one of those two approaches, depending on circumstan=
+ces and
+> > > > > > > level of sophistication of code (and sensitivity to performan=
+ce).
+> > > > > >
+> > > > > > The code in perf doing this is here:
+> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git/tree/tools/perf/util/synthetic-events.c#n440
+> > > > > > The code is using the api/io.h code:
+> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git/tree/tools/lib/api/io.h
+> > > > > > Using perf to profile perf it was observed time was spent alloc=
+ating
+> > > > > > buffers and locale related activities when using stdio, so io i=
+s a
+> > > > > > lighter weight alternative, albeit with more verbose code than =
+fscanf.
+> > > > > > You could add this as an alternate /proc/<pid>/maps reader, we =
+have a
+> > > > > > similar benchmark in `perf bench internals synthesize`.
+> > > > > >
+> > > > >
+> > > > > If I add a new implementation using this ioctl() into
+> > > > > perf_event__synthesize_mmap_events(), will it be tested from this
+> > > > > `perf bench internals synthesize`? I'm not too familiar with perf=
+ code
+> > > > > organization, sorry if it's a stupid question. If not, where exac=
+tly
+> > > > > is the code that would be triggered from benchmark?
+> > > >
+> > > > Yes it would be triggered :-)
+> > >
+> > > Ok, I don't exactly know how to interpret the results (and what the
+> > > benchmark is doing), but numbers don't seem to be worse. They actuall=
+y
+> > > seem to be a bit better.
+> > >
+> > > I pushed my code that adds perf integration to [0]. That commit has
+> > > results, but I'll post them here (with invocation parameters).
+> > > perf-ioctl is the version with ioctl()-based implementation,
+> > > perf-parse is, logically, text-parsing version. Here are the results
+> > > (and see my notes below the results as well):
+> > >
+> > > TEXT-BASED
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >
+> > > # ./perf-parse bench internals synthesize
+> > > # Running 'internals/synthesize' benchmark:
+> > > Computing performance of single threaded perf event synthesis by
+> > > synthesizing events on the perf process itself:
+> > >   Average synthesis took: 80.311 usec (+- 0.077 usec)
+> > >   Average num. events: 32.000 (+- 0.000)
+> > >   Average time per event 2.510 usec
+> > >   Average data synthesis took: 84.429 usec (+- 0.066 usec)
+> > >   Average num. events: 179.000 (+- 0.000)
+> > >   Average time per event 0.472 usec
+> > >
+> > > # ./perf-parse bench internals synthesize
+> > > # Running 'internals/synthesize' benchmark:
+> > > Computing performance of single threaded perf event synthesis by
+> > > synthesizing events on the perf process itself:
+> > >   Average synthesis took: 79.900 usec (+- 0.077 usec)
+> > >   Average num. events: 32.000 (+- 0.000)
+> > >   Average time per event 2.497 usec
+> > >   Average data synthesis took: 84.832 usec (+- 0.074 usec)
+> > >   Average num. events: 180.000 (+- 0.000)
+> > >   Average time per event 0.471 usec
+> > >
+> > > # ./perf-parse bench internals synthesize --mt -M 8
+> > > # Running 'internals/synthesize' benchmark:
+> > > Computing performance of multi threaded perf event synthesis by
+> > > synthesizing events on CPU 0:
+> > >   Number of synthesis threads: 1
+> > >     Average synthesis took: 36338.100 usec (+- 406.091 usec)
+> > >     Average num. events: 14091.300 (+- 7.433)
+> > >     Average time per event 2.579 usec
+> > >   Number of synthesis threads: 2
+> > >     Average synthesis took: 37071.200 usec (+- 746.498 usec)
+> > >     Average num. events: 14085.900 (+- 1.900)
+> > >     Average time per event 2.632 usec
+> > >   Number of synthesis threads: 3
+> > >     Average synthesis took: 33932.300 usec (+- 626.861 usec)
+> > >     Average num. events: 14085.900 (+- 1.900)
+> > >     Average time per event 2.409 usec
+> > >   Number of synthesis threads: 4
+> > >     Average synthesis took: 33822.700 usec (+- 506.290 usec)
+> > >     Average num. events: 14099.200 (+- 8.761)
+> > >     Average time per event 2.399 usec
+> > >   Number of synthesis threads: 5
+> > >     Average synthesis took: 33348.200 usec (+- 389.771 usec)
+> > >     Average num. events: 14085.900 (+- 1.900)
+> > >     Average time per event 2.367 usec
+> > >   Number of synthesis threads: 6
+> > >     Average synthesis took: 33269.600 usec (+- 350.341 usec)
+> > >     Average num. events: 14084.000 (+- 0.000)
+> > >     Average time per event 2.362 usec
+> > >   Number of synthesis threads: 7
+> > >     Average synthesis took: 32663.900 usec (+- 338.870 usec)
+> > >     Average num. events: 14085.900 (+- 1.900)
+> > >     Average time per event 2.319 usec
+> > >   Number of synthesis threads: 8
+> > >     Average synthesis took: 32748.400 usec (+- 285.450 usec)
+> > >     Average num. events: 14085.900 (+- 1.900)
+> > >     Average time per event 2.325 usec
+> > >
+> > > IOCTL-BASED
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > # ./perf-ioctl bench internals synthesize
+> > > # Running 'internals/synthesize' benchmark:
+> > > Computing performance of single threaded perf event synthesis by
+> > > synthesizing events on the perf process itself:
+> > >   Average synthesis took: 72.996 usec (+- 0.076 usec)
+> > >   Average num. events: 31.000 (+- 0.000)
+> > >   Average time per event 2.355 usec
+> > >   Average data synthesis took: 79.067 usec (+- 0.074 usec)
+> > >   Average num. events: 178.000 (+- 0.000)
+> > >   Average time per event 0.444 usec
+> > >
+> > > # ./perf-ioctl bench internals synthesize
+> > > # Running 'internals/synthesize' benchmark:
+> > > Computing performance of single threaded perf event synthesis by
+> > > synthesizing events on the perf process itself:
+> > >   Average synthesis took: 73.921 usec (+- 0.073 usec)
+> > >   Average num. events: 31.000 (+- 0.000)
+> > >   Average time per event 2.385 usec
+> > >   Average data synthesis took: 80.545 usec (+- 0.070 usec)
+> > >   Average num. events: 178.000 (+- 0.000)
+> > >   Average time per event 0.453 usec
+> > >
+> > > # ./perf-ioctl bench internals synthesize --mt -M 8
+> > > # Running 'internals/synthesize' benchmark:
+> > > Computing performance of multi threaded perf event synthesis by
+> > > synthesizing events on CPU 0:
+> > >   Number of synthesis threads: 1
+> > >     Average synthesis took: 35609.500 usec (+- 428.576 usec)
+> > >     Average num. events: 14040.700 (+- 1.700)
+> > >     Average time per event 2.536 usec
+> > >   Number of synthesis threads: 2
+> > >     Average synthesis took: 34293.800 usec (+- 453.811 usec)
+> > >     Average num. events: 14040.700 (+- 1.700)
+> > >     Average time per event 2.442 usec
+> > >   Number of synthesis threads: 3
+> > >     Average synthesis took: 32385.200 usec (+- 363.106 usec)
+> > >     Average num. events: 14040.700 (+- 1.700)
+> > >     Average time per event 2.307 usec
+> > >   Number of synthesis threads: 4
+> > >     Average synthesis took: 33113.100 usec (+- 553.931 usec)
+> > >     Average num. events: 14054.500 (+- 11.469)
+> > >     Average time per event 2.356 usec
+> > >   Number of synthesis threads: 5
+> > >     Average synthesis took: 31600.600 usec (+- 297.349 usec)
+> > >     Average num. events: 14012.500 (+- 4.590)
+> > >     Average time per event 2.255 usec
+> > >   Number of synthesis threads: 6
+> > >     Average synthesis took: 32309.900 usec (+- 472.225 usec)
+> > >     Average num. events: 14004.000 (+- 0.000)
+> > >     Average time per event 2.307 usec
+> > >   Number of synthesis threads: 7
+> > >     Average synthesis took: 31400.100 usec (+- 206.261 usec)
+> > >     Average num. events: 14004.800 (+- 0.800)
+> > >     Average time per event 2.242 usec
+> > >   Number of synthesis threads: 8
+> > >     Average synthesis took: 31601.400 usec (+- 303.350 usec)
+> > >     Average num. events: 14005.700 (+- 1.700)
+> > >     Average time per event 2.256 usec
+> > >
+> > > I also double-checked (using strace) that it does what it is supposed
+> > > to do, and it seems like everything checks out. Here's text-based
+> > > strace log:
+> > >
+> > > openat(AT_FDCWD, "/proc/35876/task/35876/maps", O_RDONLY) =3D 3
+> > > read(3, "00400000-0040c000 r--p 00000000 "..., 8192) =3D 3997
+> > > read(3, "7f519d4d3000-7f519d516000 r--p 0"..., 8192) =3D 4025
+> > > read(3, "7f519dc3d000-7f519dc44000 r-xp 0"..., 8192) =3D 4048
+> > > read(3, "7f519dd2d000-7f519dd2f000 r--p 0"..., 8192) =3D 4017
+> > > read(3, "7f519dff6000-7f519dff8000 r--p 0"..., 8192) =3D 2744
+> > > read(3, "", 8192)                       =3D 0
+> > > close(3)                                =3D 0
+> > >
+> > >
+> > > BTW, note how the kernel doesn't serve more than 4KB of data, even
+> > > though perf provides 8KB buffer (that's to Greg's question about
+> > > optimizing using bigger buffers, I suspect without seq_file changes,
+> > > it won't work).
+> > >
+> > > And here's an abbreviated log for ioctl version, it has lots more (bu=
+t
+> > > much faster) ioctl() syscalls, given it dumps everything:
+> > >
+> > > openat(AT_FDCWD, "/proc/36380/task/36380/maps", O_RDONLY) =3D 3
+> > > ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x9f, 0x1, 0x60), 0x7fff6b603d50)=
+ =3D 0
+> > > ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x9f, 0x1, 0x60), 0x7fff6b603d50)=
+ =3D 0
+> > >
+> > >  ... 195 ioctl() calls in total ...
+> > >
+> > > ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x9f, 0x1, 0x60), 0x7fff6b603d50)=
+ =3D 0
+> > > ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x9f, 0x1, 0x60), 0x7fff6b603d50)=
+ =3D 0
+> > > ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x9f, 0x1, 0x60), 0x7fff6b603d50)=
+ =3D 0
+> > > ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x9f, 0x1, 0x60), 0x7fff6b603d50)
+> > > =3D -1 ENOENT (No such file or directory)
+> > > close(3)                                =3D 0
+> > >
+> > >
+> > > So, it's not the optimal usage of this API, and yet it's still better
+> > > (or at least not worse) than text-based API.
 >
-> So remove the mm argument, and rename the function
-> current_get_unmapped_area().
->
-> Fixes: 529ce23a764f ("mm: switch mm->get_unmapped_area() to a flag")
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Link: https://lore.kernel.org/lkml/6603bed6662a_4a98a2949e@dwillia2-mobl3=
-.amr.corp.intel.com.notmuch/
-> ---
-> Based on linux-next.
-> ---
->  arch/sparc/kernel/sys_sparc_64.c |  9 +++++----
->  arch/x86/kernel/cpu/sgx/driver.c |  2 +-
->  drivers/char/mem.c               |  2 +-
->  drivers/dax/device.c             |  6 +++---
->  fs/proc/inode.c                  |  2 +-
->  fs/ramfs/file-mmu.c              |  2 +-
->  include/linux/sched/mm.h         |  6 +++---
->  io_uring/memmap.c                |  2 +-
->  kernel/bpf/arena.c               |  2 +-
->  kernel/bpf/syscall.c             |  2 +-
->  mm/mmap.c                        | 11 +++++------
->  mm/shmem.c                       |  9 ++++-----
->  12 files changed, 27 insertions(+), 28 deletions(-)
->
-> diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_spa=
-rc_64.c
-> index d9c3b34ca744..cf0b4ace5bf9 100644
-> --- a/arch/sparc/kernel/sys_sparc_64.c
-> +++ b/arch/sparc/kernel/sys_sparc_64.c
-> @@ -220,7 +220,7 @@ unsigned long get_fb_unmapped_area(struct file *filp,=
- unsigned long orig_addr, u
-> =20
->  	if (flags & MAP_FIXED) {
->  		/* Ok, don't mess with it. */
-> -		return mm_get_unmapped_area(current->mm, NULL, orig_addr, len, pgoff, =
-flags);
-> +		return current_get_unmapped_area(NULL, orig_addr, len, pgoff, flags);
->  	}
->  	flags &=3D ~MAP_SHARED;
-> =20
-> @@ -233,8 +233,9 @@ unsigned long get_fb_unmapped_area(struct file *filp,=
- unsigned long orig_addr, u
->  		align_goal =3D (64UL * 1024);
-> =20
->  	do {
-> -		addr =3D mm_get_unmapped_area(current->mm, NULL, orig_addr,
-> -					    len + (align_goal - PAGE_SIZE), pgoff, flags);
-> +		addr =3D current_get_unmapped_area(NULL, orig_addr,
-> +						 len + (align_goal - PAGE_SIZE),
-> +						 pgoff, flags);
->  		if (!(addr & ~PAGE_MASK)) {
->  			addr =3D (addr + (align_goal - 1UL)) & ~(align_goal - 1UL);
->  			break;
-> @@ -252,7 +253,7 @@ unsigned long get_fb_unmapped_area(struct file *filp,=
- unsigned long orig_addr, u
->  	 * be obtained.
->  	 */
->  	if (addr & ~PAGE_MASK)
-> -		addr =3D mm_get_unmapped_area(current->mm, NULL, orig_addr, len, pgoff=
-, flags);
-> +		addr =3D current_get_unmapped_area(NULL, orig_addr, len, pgoff, flags)=
-;
-> =20
->  	return addr;
->  }
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/d=
-river.c
-> index 22b65a5f5ec6..5f7bfd9035f7 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> @@ -113,7 +113,7 @@ static unsigned long sgx_get_unmapped_area(struct fil=
-e *file,
->  	if (flags & MAP_FIXED)
->  		return addr;
-> =20
-> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
-;
-> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
->  }
-> =20
->  #ifdef CONFIG_COMPAT
-> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> index 7c359cc406d5..a29c4bd506d5 100644
-> --- a/drivers/char/mem.c
-> +++ b/drivers/char/mem.c
-> @@ -546,7 +546,7 @@ static unsigned long get_unmapped_area_zero(struct fi=
-le *file,
->  	}
-> =20
->  	/* Otherwise flags & MAP_PRIVATE: with no shmem object beneath it */
-> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
-;
-> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
->  #else
->  	return -ENOSYS;
->  #endif
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index eb61598247a9..c379902307b7 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -329,14 +329,14 @@ static unsigned long dax_get_unmapped_area(struct f=
-ile *filp,
->  	if ((off + len_align) < off)
->  		goto out;
-> =20
-> -	addr_align =3D mm_get_unmapped_area(current->mm, filp, addr, len_align,
-> -					  pgoff, flags);
-> +	addr_align =3D current_get_unmapped_area(filp, addr, len_align,
-> +					       pgoff, flags);
->  	if (!IS_ERR_VALUE(addr_align)) {
->  		addr_align +=3D (off - addr_align) & (align - 1);
->  		return addr_align;
->  	}
->   out:
-> -	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags)=
-;
-> +	return current_get_unmapped_area(filp, addr, len, pgoff, flags);
->  }
-> =20
->  static const struct address_space_operations dev_dax_aops =3D {
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index d19434e2a58e..24a6aeac3de5 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -455,7 +455,7 @@ pde_get_unmapped_area(struct proc_dir_entry *pde, str=
-uct file *file, unsigned lo
->  		return pde->proc_ops->proc_get_unmapped_area(file, orig_addr, len, pgo=
-ff, flags);
-> =20
->  #ifdef CONFIG_MMU
-> -	return mm_get_unmapped_area(current->mm, file, orig_addr, len, pgoff, f=
-lags);
-> +	return current_get_unmapped_area(file, orig_addr, len, pgoff, flags);
->  #endif
-> =20
->  	return orig_addr;
-> diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
-> index b45c7edc3225..85f57de31102 100644
-> --- a/fs/ramfs/file-mmu.c
-> +++ b/fs/ramfs/file-mmu.c
-> @@ -35,7 +35,7 @@ static unsigned long ramfs_mmu_get_unmapped_area(struct=
- file *file,
->  		unsigned long addr, unsigned long len, unsigned long pgoff,
->  		unsigned long flags)
->  {
-> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
-;
-> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
->  }
-> =20
->  const struct file_operations ramfs_file_operations =3D {
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index 91546493c43d..c67c7de05c7a 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -187,9 +187,9 @@ arch_get_unmapped_area_topdown(struct file *filp, uns=
-igned long addr,
->  			  unsigned long len, unsigned long pgoff,
->  			  unsigned long flags);
-> =20
-> -unsigned long mm_get_unmapped_area(struct mm_struct *mm, struct file *fi=
-lp,
-> -				   unsigned long addr, unsigned long len,
-> -				   unsigned long pgoff, unsigned long flags);
-> +unsigned long current_get_unmapped_area(struct file *filp, unsigned long=
- addr,
-> +					unsigned long len, unsigned long pgoff,
-> +					unsigned long flags);
-> =20
->  unsigned long
->  arch_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
-> diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-> index 4785d6af5fee..1aaea32c797c 100644
-> --- a/io_uring/memmap.c
-> +++ b/io_uring/memmap.c
-> @@ -305,7 +305,7 @@ unsigned long io_uring_get_unmapped_area(struct file =
-*filp, unsigned long addr,
->  #else
->  	addr =3D 0UL;
->  #endif
-> -	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags)=
-;
-> +	return current_get_unmapped_area(filp, addr, len, pgoff, flags);
->  }
-> =20
->  #else /* !CONFIG_MMU */
-> diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
-> index 4a1be699bb82..054486f7c453 100644
-> --- a/kernel/bpf/arena.c
-> +++ b/kernel/bpf/arena.c
-> @@ -314,7 +314,7 @@ static unsigned long arena_get_unmapped_area(struct f=
-ile *filp, unsigned long ad
->  			return -EINVAL;
->  	}
-> =20
-> -	ret =3D mm_get_unmapped_area(current->mm, filp, addr, len * 2, 0, flags=
-);
-> +	ret =3D current_get_unmapped_area(filp, addr, len * 2, 0, flags);
->  	if (IS_ERR_VALUE(ret))
->  		return ret;
->  	if ((ret >> 32) =3D=3D ((ret + len - 1) >> 32))
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 2222c3ff88e7..d9ff2843f6ef 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -992,7 +992,7 @@ static unsigned long bpf_get_unmapped_area(struct fil=
-e *filp, unsigned long addr
->  	if (map->ops->map_get_unmapped_area)
->  		return map->ops->map_get_unmapped_area(filp, addr, len, pgoff, flags);
->  #ifdef CONFIG_MMU
-> -	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags)=
-;
-> +	return current_get_unmapped_area(filp, addr, len, pgoff, flags);
->  #else
->  	return addr;
->  #endif
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 83b4682ec85c..4e98a907c53d 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1901,16 +1901,15 @@ __get_unmapped_area(struct file *file, unsigned l=
-ong addr, unsigned long len,
->  	return error ? error : addr;
->  }
-> =20
-> -unsigned long
-> -mm_get_unmapped_area(struct mm_struct *mm, struct file *file,
-> -		     unsigned long addr, unsigned long len,
-> -		     unsigned long pgoff, unsigned long flags)
-> +unsigned long current_get_unmapped_area(struct file *file, unsigned long=
- addr,
-> +					unsigned long len, unsigned long pgoff,
-> +					unsigned long flags)
->  {
-> -	if (test_bit(MMF_TOPDOWN, &mm->flags))
-> +	if (test_bit(MMF_TOPDOWN, &current->mm->flags))
->  		return arch_get_unmapped_area_topdown(file, addr, len, pgoff, flags);
->  	return arch_get_unmapped_area(file, addr, len, pgoff, flags);
->  }
-> -EXPORT_SYMBOL(mm_get_unmapped_area);
-> +EXPORT_SYMBOL(current_get_unmapped_area);
-> =20
->  /**
->   * find_vma_intersection() - Look up the first VMA which intersects the =
-interval
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index f5d60436b604..c0acd7db93c8 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2276,8 +2276,7 @@ unsigned long shmem_get_unmapped_area(struct file *=
-file,
->  	if (len > TASK_SIZE)
->  		return -ENOMEM;
-> =20
-> -	addr =3D mm_get_unmapped_area(current->mm, file, uaddr, len, pgoff,
-> -				    flags);
-> +	addr =3D current_get_unmapped_area(file, uaddr, len, pgoff, flags);
-> =20
->  	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->  		return addr;
-> @@ -2334,8 +2333,8 @@ unsigned long shmem_get_unmapped_area(struct file *=
-file,
->  	if (inflated_len < len)
->  		return addr;
-> =20
-> -	inflated_addr =3D mm_get_unmapped_area(current->mm, NULL, uaddr,
-> -					     inflated_len, 0, flags);
-> +	inflated_addr =3D current_get_unmapped_area(NULL, uaddr,
-> +						  inflated_len, 0, flags);
->  	if (IS_ERR_VALUE(inflated_addr))
->  		return addr;
->  	if (inflated_addr & ~PAGE_MASK)
-> @@ -4799,7 +4798,7 @@ unsigned long shmem_get_unmapped_area(struct file *=
-file,
->  				      unsigned long addr, unsigned long len,
->  				      unsigned long pgoff, unsigned long flags)
->  {
-> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
-;
-> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
->  }
->  #endif
-> =20
->
-> base-commit: 9221b2819b8a4196eecf5476d66201be60fbcf29
+> It's surprising that more ioctl is cheaper than less read and parse.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+I encourage you to try this locally, just in case I missed something
+([0]). But it does seem this way. I have mitigations and retpoline
+off, so syscall switch is pretty fast (under 0.5 microsecond).
 
-BR, Jarkko
+  [0] https://github.com/anakryiko/linux/tree/procfs-proc-maps-ioctl
+>
+> > >
+> >
+> > In another reply to Arnaldo on patch #2 I mentioned the idea of
+> > allowing to iterate only file-backed VMAs (as it seems like what
+> > symbolizers would only care about, but I might be wrong here). So I
+>
+> Yep, I think it's enough to get file-backed VMAs only.
+>
+
+Ok, I guess I'll keep this functionality for v2 then, it's a pretty
+trivial extension to existing logic.
+
+>
+> > tried that quickly, given it's a trivial addition to my code. See
+> > results below (it is slightly faster, but not much, because most of
+> > VMAs in that benchmark seem to be indeed file-backed anyways), just
+> > for completeness. I'm not sure if that would be useful/used by perf,
+> > so please let me know.
+>
+> Thanks for doing this.  It'd be useful as it provides better synthesizing
+> performance.  The startup latency of perf record is a problem, I need
+> to take a look if it can be improved more.
+>
+> Thanks,
+> Namhyung
+>
+>
+> >
+> > As I mentioned above, it's not radically faster in this perf
+> > benchmark, because we still request about 170 VMAs (vs ~195 if we
+> > iterate *all* of them), so not a big change. The ratio will vary
+> > depending on what the process is doing, of course. Anyways, just for
+> > completeness, I'm not sure if I have to add this "filter" to the
+> > actual implementation.
+> >
+> > # ./perf-filebacked bench internals synthesize
+> > # Running 'internals/synthesize' benchmark:
+> > Computing performance of single threaded perf event synthesis by
+> > synthesizing events on the perf process itself:
+> >   Average synthesis took: 65.759 usec (+- 0.063 usec)
+> >   Average num. events: 30.000 (+- 0.000)
+> >   Average time per event 2.192 usec
+> >   Average data synthesis took: 73.840 usec (+- 0.080 usec)
+> >   Average num. events: 153.000 (+- 0.000)
+> >   Average time per event 0.483 usec
+> >
+> > # ./perf-filebacked bench internals synthesize
+> > # Running 'internals/synthesize' benchmark:
+> > Computing performance of single threaded perf event synthesis by
+> > synthesizing events on the perf process itself:
+> >   Average synthesis took: 66.245 usec (+- 0.059 usec)
+> >   Average num. events: 30.000 (+- 0.000)
+> >   Average time per event 2.208 usec
+> >   Average data synthesis took: 70.627 usec (+- 0.074 usec)
+> >   Average num. events: 153.000 (+- 0.000)
+> >   Average time per event 0.462 usec
+> >
+> > # ./perf-filebacked bench internals synthesize --mt -M 8
+> > # Running 'internals/synthesize' benchmark:
+> > Computing performance of multi threaded perf event synthesis by
+> > synthesizing events on CPU 0:
+> >   Number of synthesis threads: 1
+> >     Average synthesis took: 33477.500 usec (+- 556.102 usec)
+> >     Average num. events: 10125.700 (+- 1.620)
+> >     Average time per event 3.306 usec
+> >   Number of synthesis threads: 2
+> >     Average synthesis took: 30473.700 usec (+- 221.933 usec)
+> >     Average num. events: 10127.000 (+- 0.000)
+> >     Average time per event 3.009 usec
+> >   Number of synthesis threads: 3
+> >     Average synthesis took: 29775.200 usec (+- 315.212 usec)
+> >     Average num. events: 10128.700 (+- 0.667)
+> >     Average time per event 2.940 usec
+> >   Number of synthesis threads: 4
+> >     Average synthesis took: 29477.100 usec (+- 621.258 usec)
+> >     Average num. events: 10129.000 (+- 0.000)
+> >     Average time per event 2.910 usec
+> >   Number of synthesis threads: 5
+> >     Average synthesis took: 29777.900 usec (+- 294.710 usec)
+> >     Average num. events: 10144.700 (+- 11.597)
+> >     Average time per event 2.935 usec
+> >   Number of synthesis threads: 6
+> >     Average synthesis took: 27774.700 usec (+- 357.569 usec)
+> >     Average num. events: 10158.500 (+- 14.710)
+> >     Average time per event 2.734 usec
+> >   Number of synthesis threads: 7
+> >     Average synthesis took: 27437.200 usec (+- 233.626 usec)
+> >     Average num. events: 10135.700 (+- 2.700)
+> >     Average time per event 2.707 usec
+> >   Number of synthesis threads: 8
+> >     Average synthesis took: 28784.600 usec (+- 477.630 usec)
+> >     Average num. events: 10133.000 (+- 0.000)
+> >     Average time per event 2.841 usec
+> >
+> > >   [0] https://github.com/anakryiko/linux/commit/0841fe675ed30f5605c5b=
+228e18f5612ea253b35
+> > >
+> > > >
+> > > > Thanks,
+> > > > Ian
+> > > >
+> > > > > > Thanks,
+> > > > > > Ian
+> > > > > >
+> > > > > > >   [0] https://github.com/libbpf/blazesym/blob/ee9b48a80c0b449=
+9118a1e8e5d901cddb2b33ab1/src/normalize/user.rs#L193
+> > > > > > >
+> > > > > > > > thanks,
+> > > > > > > >
+> > > > > > > > greg k-h
+> > > > > > >
+> >
 
