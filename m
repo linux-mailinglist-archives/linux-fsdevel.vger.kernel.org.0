@@ -1,92 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-18895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72188BE102
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 13:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF25F8BE17E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 13:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DC511C20EC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21881C223E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E1C15252C;
-	Tue,  7 May 2024 11:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCA5156F32;
+	Tue,  7 May 2024 11:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="pww/xPVw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8574E15099F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 11:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77667156C72;
+	Tue,  7 May 2024 11:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715081407; cv=none; b=TVM+yXCo+KuYjKqkStKp7A6xykbzCEATFy0hnWG05IU8EAZHHirrJqpZw1+YFHpPPftdMR7UiAap0J+cQhLImjwcJF0WkddgosqLwST4z6XFfTKZNZUNbHi8U8a1qhf+JmtpEJcE5GkvNiYgcDx8ZZ2HP7M4rCKhJePeq9nBILI=
+	t=1715083125; cv=none; b=e86sAzGQk69FdLDKHtGD3fh0wD9JwzAjSDs3qrPKIyTML5JydtFspR5LaxXm+cF2xrxdRjQTaiOH4N3r3ZGm01Vgs0epQ25dpGPHXjJuHGZla721MTq5mu9V4UAtPdWE+Vj/GccafWuYsXlmXsi8EzcmdeUDFnfwlqFO0A3EzwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715081407; c=relaxed/simple;
-	bh=ouPq1ImQr6BwL9gGhpva3sUJq8ov/1/P2vWzjlb0qCM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AlDp9iAUIOEjN9FoFzuPbVu7VehzvOElQdBYUFEhTmfcv0nbS6eoRjDT6xu0ydO91eGiC4ky1iopyR194q2JL9ueiC2LGSzOJbfkhSnxJD4WE8CbNd2zP1hT2yL+vUd+qlIVHSlMgF+2fJ7IB6NW4EC11AD4aD4mU4sDcaJQmo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36c6b24fd6eso34928045ab.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 04:30:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715081405; x=1715686205;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4GUfzj+cOjI3lTKUNiWMDeoLyX1063O2jyJpXjnx1eU=;
-        b=ageTJ45ZjkiVB9uW7pCN8EIgM7W9lELYnJqIzxgX3qyIWeo8iX3ZBvbnBOTipcVspx
-         2OaSCtpEbhMv58aL+XBSi8MRoh8+BjqtU7XDvgZyqak+foDuNB62n/Pi8Q2IV5q3600e
-         Ewg1DIT+ZeBi8mUpr4RktQzjZvm9YBCPZ/EwwaKuPkS48IWsNCJ4tPfO7pFZ/JT9R80Z
-         WkVeIenWvLwX0NGCM9O2OXFGCL3+v/FFXtjMPDhFCv2kGrNLAqPMdkVx60KV3IFevjk5
-         ZDonBajRZxpPRivNHhcBsXdlEsrSBxQIzY3MwFBzed7jqfJ+IQgVN6mXguPNZu5cyJyd
-         5ZuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5A3gsDpw2xvuuaIvPckLCXWPA464lT3hF5xOCFBMmOEnt9AcAoRFEUO2o+w4IG6QXc/GKzrgosk/EZjvH8bmUhEnlvWmj6M9pD7rHMw==
-X-Gm-Message-State: AOJu0YxYZgHfFyQE8eFftILHKyq2yhYNLftc9qNLofrZwyEbjvU9pvNP
-	110iqLG4gnOWK/jukAXJ2Na+zmJWbmEn4ILbUQ3ukYafSdVs7VbqaVrBYwVGbVXO+yReoKdZhVe
-	sPwTFMwUS40Nu4tR/56kXC6ze+CaHjM2gvn00iMBU70TUNQ1oxrDIlMg=
-X-Google-Smtp-Source: AGHT+IEEu+uyAPb5jfl94XXMEfkVdZKh2KktG1jPdpJKDY6RdnOaOMt++iU0b26vxR+0bwAPkh+Xj0GoymWHrPs9skgHW8bkTELT
+	s=arc-20240116; t=1715083125; c=relaxed/simple;
+	bh=1JLVOeG+T1ele47nAYsMj1m+TdlREm1qkH259oH7ICA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/7zMV7Ji6GxXV6xxBx4SwZYkUI/QRpe2sEXBG4eoJoaMW6mu0h4wq+qgloYUgTp3i2RZuVfTW5tlrWCjsL8mksrd2TX+KiftgfbLTVC3FySoKCj+vJ203rhPh4bHRVBqfuupIafxU389Ee79yZqfF47sbiNCoulYYO+OAuzFHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=pww/xPVw; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VYcHg1Rhbz9t20;
+	Tue,  7 May 2024 13:58:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1715083119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1JLVOeG+T1ele47nAYsMj1m+TdlREm1qkH259oH7ICA=;
+	b=pww/xPVwzAxKY9c+J6AjFCTmE1QyYGSxoX3yWPBl9TzdYgW3yAWivr9neoQpGqjdgdSktC
+	tGOUZdOlran81AEROkYnm+0HXcIi02eEit1thF1eBBQEjNf5+aP9cvldlD3UeNFGOwkjoq
+	WR9CypPZy+0c0+q4wAvysE+Rtyuh32NYsnFv/TyW24tokAtHMLE8Nxt287rmgzUlKv4Dig
+	x8uX7c0MWkWd6KJ9g8wZOK8GL+LAMAWziJqxzIP7pZSFQwF3ltkwHYEi8ZJm1r1fpv/+s+
+	3a7hZ5EwApGMvcVfBB/ZrIzwtNppqHGCzMAtGKcwvL80z+KjTQD2XZm+Fh5m5g==
+Date: Tue, 7 May 2024 21:58:20 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: stsp <stsp2@yandex.ru>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
+	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Andy Lutomirski <luto@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
+Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Message-ID: <20240507.110127-muggy.duff.trained.hobby-u9ZNUZ9CW5k@cyphar.com>
+References: <20240427112451.1609471-1-stsp2@yandex.ru>
+ <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
+ <5b5cc31f-a5be-4f64-a97b-7708466ace82@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216e:b0:36c:4cc9:5923 with SMTP id
- s14-20020a056e02216e00b0036c4cc95923mr740783ilv.2.1715081405751; Tue, 07 May
- 2024 04:30:05 -0700 (PDT)
-Date: Tue, 07 May 2024 04:30:05 -0700
-In-Reply-To: <00000000000067ff3c0617c603c2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f370b30617db817b@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in read_one_super
-From: syzbot <syzbot+a8b0fb419355c91dda7f@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="paylazfw3lu3brm2"
+Content-Disposition: inline
+In-Reply-To: <5b5cc31f-a5be-4f64-a97b-7708466ace82@yandex.ru>
 
-syzbot has bisected this issue to:
 
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
+--paylazfw3lu3brm2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    bcachefs: Ignore unknown mount options
+On 2024-05-07, stsp <stsp2@yandex.ru> wrote:
+> 07.05.2024 10:50, Aleksa Sarai =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > If you are a privileged process which plans to change users,
+>=20
+> Not privileged at all. But I think what you say is still possible with
+> userns?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=149d2fff180000
-start commit:   dd5a440a31fa Linux 6.9-rc7
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=169d2fff180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=129d2fff180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
-dashboard link: https://syzkaller.appspot.com/bug?extid=a8b0fb419355c91dda7f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135bf574980000
+It is possible to configure MOUNT_ATTR_IDMAP in a user namespace but
+there are some restrictions that I suspect will make this complicated.
+If you try to do something with a regular filesystem you'll probably run
+into issues because you won't have CAP_SYS_ADMIN in the super block's
+userns. But you could probably do it with tmpfs.
 
-Reported-by: syzbot+a8b0fb419355c91dda7f@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+> > A new attack I just thought of while writing this mail is that because
+> > there is no RESOLVE_NO_XDEV requirement, it should be possible for the
+> > process to get an arbitrary write primitive by creating a new
+> > userns+mountns and then bind-mounting / underneath the directory.
+> Doesn't this need a write perm to a
+> directory? In his case this is not a threat,
+> because you are not supposed to have a
+> write perm to that dir. OA2_CRED_INHERIT
+> is the only way to write.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+No, bind-mounts don't require write permission. As long as you can
+resolve the target path you can bind-mount on top of it, so if there's a
+subdirectory you can bind-mount / underneath (and if there is only a
+file you can bind-mount any file you want to access/overwrite instead).
+
+There are restrictions on mounting through /proc/self/fd/... but they
+don't apply here (all files opened by a process doing setns/unshare have
+their vfsmounts updated to be from the new mount namespace, meaning you
+can do mounts through them with /proc/self/fd/... without issue.)
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--paylazfw3lu3brm2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZjoXXAAKCRAol/rSt+lE
+bwBpAQDJLvNL6vyCxjxPYD9pP16jEV0rj3t7mnaAuDs1gq4CYwEAgA8SmbRKKmKq
+NYHAIR8GuMIKwyGzCC1o6VMeQ5reHgc=
+=o7No
+-----END PGP SIGNATURE-----
+
+--paylazfw3lu3brm2--
 
