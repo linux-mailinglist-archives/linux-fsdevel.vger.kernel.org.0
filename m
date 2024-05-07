@@ -1,65 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-18919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF738BE864
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4008BE86F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 18:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9BE28FB55
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 16:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107C51F273DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 16:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0097716C454;
-	Tue,  7 May 2024 16:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0227E16ABCE;
+	Tue,  7 May 2024 16:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tMZM8ZA/"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jm+aAaQc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4C215FD19;
-	Tue,  7 May 2024 16:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32466200D2;
+	Tue,  7 May 2024 16:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715098223; cv=none; b=URGcdJAhulCBL7cOBR/cjOgtlg5Grn50xBtQxkadyH0fHeb5CIonEm9qmjdZg939YsGKNDAIkl3N/UmgvzFniiztljq3ueHud6H+w92SQdFflE54jQI+Tl5gzkadBpSeBQmXvsFlPi2M0qgsgZCLNFIpzOxYGOF483SLR3Vkg4c=
+	t=1715098319; cv=none; b=ICzqNN1CaekwnKaakOG5XCoh+8m6vj+6Zc2IHtjkbCgWD2QScgPZrsZuOckg4YtSsIS6G9FrNuj6iTXcyhVx6ZYiJXJqqRKqNcI0S15t8l2R8gop++EDsnNedvAq1kT0sNAH94P9sEeaHR2D7hZGP87b6GXof712fBnDtaTAOn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715098223; c=relaxed/simple;
-	bh=PfuWW8nkjC2NhKo1iSiJto7xu8Aw87jUEKcZAtQ/4TA=;
+	s=arc-20240116; t=1715098319; c=relaxed/simple;
+	bh=OKQV9eQzIRkDPE8N9Xt2w4elQXhWLS0OJgwXDxmyCLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgxlLKMJF3no9pOXjtUJn/YqZUZkpKXZ0WmLmk7RpX00l96pYtO0jsUlYc2w9pCXWbWBpFW7H9mHAVD0JcFuqFX++va5PCOF99XsxcB1mN+hXToohIt/b+xinMrYCRADc+j5GUiAyLdwKx+PrWM9gkgxavdIpV4zCx9r/PvbdNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tMZM8ZA/; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ydc4w+C4B8Tp+xuxTJQCMYGAGGIirhN89b5mH9nQvL8/nAJxmGyUhJDFfWctKJ/zSyM7e6AuHpm3LCFRGfjOTkCzJelcl4N69IEf8DNv/1N4Ymzvq0hLPgxFwquTBC1yV5s6SWoRb6DsJwJGOfUMqd7RHmNnvKHdpAxV/x/EJFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jm+aAaQc; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KKGmBlgIr6xib0UMQFkFjiQCKra12CQXDOsG2WglJjY=; b=tMZM8ZA/9lKOnq5df7Z+oKqFUm
-	8wcysCiLx/JxBoGpf4rcUDVlypAjmG98Q2ZxhxI0PBz/vbpAeqyPShrySIBVq8stKX1b/2ioWy698
-	LyMCK7M0qLjZjjnqjc/PhfliJjfdF5PXQwTQo+A8EdIxWZYRUn+WudCOVKeiG/ePTuzNDzi5q/h+H
-	tww0lMOHyf63V7lxVefKJGeIPt7Sk0kLq9Uq9YFQooxSHeTG03tC03IcgEGSU7N46tgIn3JMfgBBj
-	4sGjHqsDNaoh1c1h9eFC3PskwchtIdeCf1LgyG/sPN0xxNJwy1cQd18AEbPs6JfpE228cwIJi2nL/
-	YMSYc2dA==;
+	bh=gVfMQUZg1wdXjtGTbxuj76HRVAiL9pzO4movtSyOhPc=; b=jm+aAaQcvzxyHGbuXqnxjXzv2z
+	S0wDxO05vQ7d/EkP2IhDFxXgzpXrPMODSEm5QNXQo0OKKzN96XIrUldwY1/r6c7ti4ulq3zyVgXL+
+	7T7vKFPLCl/VxhfGfS7Gv5nPStwZd6zCG12Rrh7CqLMj2dQv2MRcp+QOcIAfS/I3HOox3LTY9M0M2
+	g88CXmkINSESPm6k0RhJDoz8Pc8SISduQr1IO9SeqR03QP66Gdg4wJW1MN0ziVqm4k6i6ExKo1vG+
+	K30YQ4EpXsAIHWUxN9lkHP1nkYQ3vCmk6T2Fe4MC7UeV77ItSdcw0cIPBVe3jfPn0y2QfwvCczCUJ
+	k5q+ay8A==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4NOR-0000000BtsQ-2Lvk;
-	Tue, 07 May 2024 16:10:15 +0000
-Date: Tue, 7 May 2024 09:10:15 -0700
+	id 1s4NPz-0000000BuFy-1Qgs;
+	Tue, 07 May 2024 16:11:51 +0000
+Date: Tue, 7 May 2024 09:11:51 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, akpm@linux-foundation.org,
-	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
-	chandan.babu@oracle.com, hare@suse.de, ritesh.list@gmail.com,
-	john.g.garry@oracle.com, ziy@nvidia.com,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, p.raghav@samsung.com, kernel@pankajraghav.com
-Subject: Re: [PATCH v5 07/11] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <ZjpSZ2KjpUHPs_1Z@infradead.org>
-References: <20240503095353.3798063-1-mcgrof@kernel.org>
- <20240503095353.3798063-8-mcgrof@kernel.org>
- <ZjpQHA1zcLhUZa_D@casper.infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: hch@lst.de, willy@infradead.org, mcgrof@kernel.org,
+	akpm@linux-foundation.org, brauner@kernel.org,
+	chandan.babu@oracle.com, david@fromorbit.com, djwong@kernel.org,
+	gost.dev@samsung.com, hare@suse.de, john.g.garry@oracle.com,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	ritesh.list@gmail.com, ziy@nvidia.com
+Subject: Re: [RFC] iomap: use huge zero folio in iomap_dio_zero
+Message-ID: <ZjpSx7SBvzQI4oRV@infradead.org>
+References: <20240503095353.3798063-8-mcgrof@kernel.org>
+ <20240507145811.52987-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,39 +66,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjpQHA1zcLhUZa_D@casper.infradead.org>
+In-Reply-To: <20240507145811.52987-1-kernel@pankajraghav.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, May 07, 2024 at 05:00:28PM +0100, Matthew Wilcox wrote:
-> If the len is more than PAGE_SIZE * BIO_MAX_VECS, __bio_add_page()
-> will fail silently.  I hate this interface.
+On Tue, May 07, 2024 at 04:58:12PM +0200, Pankaj Raghav (Samsung) wrote:
+> +	if (len > PAGE_SIZE) {
+> +		folio = mm_get_huge_zero_folio(current->mm);
 
-No, it won't.  You can pass an arbitray len to it.
+I don't think the mm_struct based interfaces work well here, as I/O
+completions don't come in through the same mm.  You'll want to use
+lower level interfaces like get_huge_zero_page and use them at
+mount time.
 
-> 
-> You should be doing something like ...
-> 
-> 	while (len) {
-> 		unsigned int io_len = min_t(unsigned int, len, PAGE_SIZE);
-> 
-> 		while (!bio || bio_add_page() < io_len) {
-> 			if (bio)
-> 				iomap_dio_submit_bio(iter, dio, bio, pos);
-> 			bio = iomap_dio_alloc_bio(iter, dio, BIO_MAX_VECS,
-> 					REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-> 		 	fscrypt_set_bio_crypt_ctx(bio, inode,
-> 					pos >> inode->i_blkbits, GFP_KERNEL);
-> 		}
-> 	}
+> +		if (!folio)
+> +			folio = zero_page_folio;
 
-Wee, no.  The right way is:
+And then don't bother with a fallback.
 
-	bio = iomap_dio_alloc_bio(iter, dio, 1,
-			REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-	__bio_add_page(bio, page, len, 0);
-
-	fscrypt_set_bio_crypt_ctx(bio, inode,
-			pos >> inode->i_blkbits, GFP_KERNEL);
-
-(or even better the folio version)
 
