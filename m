@@ -1,187 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-18958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D138BEF2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:48:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7988BEF41
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0A91F2224A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 21:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39994286DAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 21:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE4278B4C;
-	Tue,  7 May 2024 21:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jL8djN5v"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784E816D324;
+	Tue,  7 May 2024 21:56:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E05D77658
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 21:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64C179CF;
+	Tue,  7 May 2024 21:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715118457; cv=none; b=ofQuK0ov7MttmXw6Hb2yNxaVhZPZzasZcJaacBsBf3tHuT9H3C+N9oaCvLhOwdSQywWdFvwzL++FQ43NZrVZ7PYrfWqTZo5eJzp9G5Zkbg2aFwnZVfwUqAENyPfSGQEwj44HPgXVZ5nFbGX4HOJFC2kGTwP5hKQxi1ZxEPCq44o=
+	t=1715118967; cv=none; b=Sn/EJ+YK1AwL+SKrEI6Fvigk9+3q+NUqDhrc4EhDw/mnIj21W3bEbzTU6F27vkqVkm8lGT5vC9lGHRWrliN0nxBtRmEW1b6uH0+xlnbYR/m6SYJaDKs/kaHOnhF/aZ4Ti5BpLQFyvkTOBDKN+x0EC34XNKKWag1q2OcrtC3X11s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715118457; c=relaxed/simple;
-	bh=rWVD3Les6HNzGCMpjrx8KhL3+oCBlnrsvxNQZUeaa0A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=taiCQPoD4u6/hltr71rQ2HlqxAUAic0DZSCTT5hSyWwpU+YDV88Lp24YrmLdrxM3aVMfDhRkmdjoKkG9x2zt7zUYGa4cGdYtLN0EI2h0aRCjrg0KRfhhq+i6iCth8BYgqs2R081OJ00EzXSGmnx2pQYYSf3dONzvhn2s38RJx7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jL8djN5v; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f441afba80so4404481b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 14:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715118454; x=1715723254; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GxXvLzcq9DUcgwih3mSAQ78x/pV85qLBcUXkypaveog=;
-        b=jL8djN5vEO1m7TfEJ+L81YMFiHGDVolLVgM6fa5VYQ5mX/IYtVDh+74U6/qqObTmiJ
-         TGznpSJeelnL0XnJATpD9OKYwW4HcBEy1z6iLfyy4XigP7CDqBXeQVB4iZWUyVAaR8ul
-         HygKiUy+MquSUbKGVV0Yy3+/sjMqKsWKsORp27ZuE5ZT2uCMb7q0Ab+auS1b/Eo4KbxS
-         0VgZyg4Cu3vh+Nud0IkyWZ1h3I5EUMMpbE79VNLZV5bg86NyetkRNO2JGQsA3Mv7Q3CO
-         RQfRjJ43cqv26Y7CDw+l7cn6dUYEdkAnCOIHYaR9Ksq978wQ99DLauRRXD66BI8m90Nr
-         BFHA==
+	s=arc-20240116; t=1715118967; c=relaxed/simple;
+	bh=c6YHGEYmPjpO9D/p2b9v83LdrifgicmhUFUwgBtopaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YqB9NJMJed0H5VWmyvBmYQeBPETNrrHfGS6+YvXFhofXbaiMSCaLH3jYaZTs1+6u/FOJkqHMJn6ra3UVJpDOE190kpYaDSDxRxcasKd833pOZa8h6oORUWfLDnOKfqikXwBPaUhPr1AZyI36D6h+Xm+4CMnSopF/vMb1jjv5Lus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-61aef9901deso2510504a12.1;
+        Tue, 07 May 2024 14:56:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715118454; x=1715723254;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GxXvLzcq9DUcgwih3mSAQ78x/pV85qLBcUXkypaveog=;
-        b=w3owEn/dOb2u9XvOLklR/55JebGMGwZ0wmfQtHT69mWqbrAIV5yZTAKhhc8p3y+Bzd
-         9dCG5cxxR0p6ECQpbWCYUW3PUN5HFqVp1qanf38L8Fii+RyFV8FIa/PwKNL709Ccyyme
-         0e7vj69JEhlROP//xNdps3lCidemaJABXjh1cFa8ETRB6m7m1pdlYjW1W4OOkd7THbex
-         3EXTcWcDTuyDwzT0czzpYqapkqjFYtsW5XoNpnfkfnvJ7Gm++IwLTaMMpoozU0498guL
-         kkvBnfeANjrRIBD83/8B+CPzIy48BP9e73cYAktw2p2gb3KGnA2v2k376lq7kEsCfAwb
-         xIQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUB86/6dawukXNQM+455qna46MPaEc3c13+qPamue3gSLUVVcqCDB9LcTUsG0gt4hoTY2TuXLmdI09blGqS1lcHiUxajVB56yawDhVaqw==
-X-Gm-Message-State: AOJu0YyrZvuQ5XnwU4/u85D98bGFyzPh0VRXgreLa8g2H0bEuSxoN99m
-	ttS8jz+VzOxFE1LwOJpJ4kfu3rSg9n5IobChc3+HoIljH1HzCQmB/lBFximCqzQGhu+pzTMLNMQ
-	Ogw==
-X-Google-Smtp-Source: AGHT+IGyIuHby3YDnVxOzNzbbaEdY9qKdq7MpmWxi3fRJ7Znvf9dmfYdSTbgOYiGfgZmNPwJBeWALvgDPEM=
-X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:6a00:1803:b0:6ec:f406:ab4b with SMTP id
- d2e1a72fcca58-6f49c30a0e9mr48385b3a.4.1715118454141; Tue, 07 May 2024
- 14:47:34 -0700 (PDT)
-Date: Tue,  7 May 2024 21:38:30 +0000
-In-Reply-To: <20240507214254.2787305-1-edliaw@google.com>
+        d=1e100.net; s=20230601; t=1715118965; x=1715723765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nXTaPie4n8q7aWd8lKqdehPO2SNuKWmtizpezocD5H4=;
+        b=g9QpDvlOJwdxgjipCk2RplWsuZ+Vn4tRzRNZavLWVZiQ4mUsjpGo14ZsauiboTAuAK
+         aaAPPjWSF+hxSNG2/K/ls/xgrk/e55xXm5tG2Lo84DR0DaLRIZlnPyfsBH+7Yz/frfTC
+         Y4VfYwBf5Dsg5wNlF/LjveB+5FVO4q9b/6/W6WjknS4bHXIewBDTchpFiabzoYOgasJP
+         t765XvcjWLvWy/JKnHmi3OcSOiqEqLeNCVrP9PmdYg2xI2oh7ywtkyvqJ0ImQqV0TeXY
+         BhaNM8H9mrefaByESrkCo8TV8L5veV2Ih0vhvcWP9thVtjvV0sbSSiGSHaDRTgGMMuCb
+         JHCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXH8RFDpuyLH27tlWpjwdQbHU3tDCAPG5DH/MbMV0vIOXTPaUQ+VKgNB6tMyENoYJOt7fg1FYD2rp9OgJiXQJDAj+VB8oyqeirLfUZ0zAbnHO03s83h9GqZkQhhPE8BSn0fvqU3q2ZQbJR7KYWEiUkorQbRqpTTXtliKm9Le+EPqiFAhLxVtb0lvGhHFMKdDTFazLTfqj2UKtdFLBbLRIZZC7o=
+X-Gm-Message-State: AOJu0YxVMaZ4zQXlFdcoZ+Lvh5OhNQ7cOhrpQp4uNs4sgJIFMW+/F11R
+	XOAOkn/x/vVo1HT2vEPMi1uGyq1bAmtkOtyk7Z7NaP1wmyHf/Of6ga0kzBUm89jCcQE4yVi3H59
+	bR8i1PhBpcvMPiSLAvNd+UAS71HI=
+X-Google-Smtp-Source: AGHT+IFXpLdBXP0wh3twnNJnWEDW8JXUqluwb5PZEvCJy86sy4dMIzPSzZ/Bo27vj60SVq+hRMSHToV6/VUrIXVJVlQ=
+X-Received: by 2002:a17:90a:cf14:b0:2b3:ed2:1a91 with SMTP id
+ 98e67ed59e1d1-2b616ae2ca0mr732222a91.45.1715118965098; Tue, 07 May 2024
+ 14:56:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507214254.2787305-1-edliaw@google.com>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240507214254.2787305-6-edliaw@google.com>
-Subject: [PATCH v2 5/5] selftests: Drop duplicate -D_GNU_SOURCE
-From: Edward Liaw <edliaw@google.com>
-To: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	David Hildenbrand <david@redhat.com>, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <sforshee@kernel.org>, 
-	Bongsu Jeon <bongsu.jeon@samsung.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Edward Liaw <edliaw@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, 
-	linux-input@vger.kernel.org, iommu@lists.linux.dev, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
-	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
+MIME-Version: 1.0
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-3-andrii@kernel.org>
+ <2024050439-janitor-scoff-be04@gregkh> <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
+ <ZjjiFnNRbwsMJ3Gj@x1> <CAM9d7cgvCB8CBFGhMB_-4tCm6+jzoPBNg4CR7AEyMNo8pF9QKg@mail.gmail.com>
+ <ZjknNJSFcKaxGDS4@x1> <Zjksc3yqvkocS18M@x1>
+In-Reply-To: <Zjksc3yqvkocS18M@x1>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 7 May 2024 14:55:53 -0700
+Message-ID: <CAM9d7cj=zadZzQakNC7PeKWd5hfL83jvCRu-BuZ4EOzF2WPb-w@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for /proc/<pid>/maps
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	=?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--D_GNU_SOURCE can be de-duplicated here, as it is added by
-KHDR_INCLUDES.
+On Mon, May 6, 2024 at 12:16=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, May 06, 2024 at 03:53:40PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Mon, May 06, 2024 at 11:05:17AM -0700, Namhyung Kim wrote:
+> > > On Mon, May 6, 2024 at 6:58=E2=80=AFAM Arnaldo Carvalho de Melo <acme=
+@kernel.org> wrote:
+> > > > On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
+> > > > > On Sat, May 4, 2024 at 8:28=E2=80=AFAM Greg KH <gregkh@linuxfound=
+ation.org> wrote:
+> > > > > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote=
+:
+> > > > > > > Note also, that fetching VMA name (e.g., backing file path, o=
+r special
+> > > > > > > hard-coded or user-provided names) is optional just like buil=
+d ID. If
+> > > > > > > user sets vma_name_size to zero, kernel code won't attempt to=
+ retrieve
+> > > > > > > it, saving resources.
+> >
+> > > > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> >
+> > > > > > Where is the userspace code that uses this new api you have cre=
+ated?
+> >
+> > > > > So I added a faithful comparison of existing /proc/<pid>/maps vs =
+new
+> > > > > ioctl() API to solve a common problem (as described above) in pat=
+ch
+> > > > > #5. The plan is to put it in mentioned blazesym library at the ve=
+ry
+> > > > > least.
+> > > > >
+> > > > > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
+> > > > > linux-perf-user), as they need to do stack symbolization as well.
+> >
+> > > I think the general use case in perf is different.  This ioctl API is=
+ great
+> > > for live tracing of a single (or a small number of) process(es).  And
+> > > yes, perf tools have those tracing use cases too.  But I think the
+> > > major use case of perf tools is system-wide profiling.
+> >
+> > > For system-wide profiling, you need to process samples of many
+> > > different processes at a high frequency.  Now perf record doesn't
+> > > process them and just save it for offline processing (well, it does
+> > > at the end to find out build-ID but it can be omitted).
+> >
+> > Since:
+> >
+> >   Author: Jiri Olsa <jolsa@kernel.org>
+> >   Date:   Mon Dec 14 11:54:49 2020 +0100
+> >   1ca6e80254141d26 ("perf tools: Store build id when available in PERF_=
+RECORD_MMAP2 metadata events")
+> >
+> > We don't need to to process the events to find the build ids. I haven't
+> > checked if we still do it to find out which DSOs had hits, but we
+> > shouldn't need to do it for build-ids (unless they were not in memory
+> > when the kernel tried to stash them in the PERF_RECORD_MMAP2, which I
+> > haven't checked but IIRC is a possibility if that ELF part isn't in
+> > memory at the time we want to copy it).
+>
+> > If we're still traversing it like that I guess we can have a knob and
+> > make it the default to not do that and instead create the perf.data
+> > build ID header table with all the build-ids we got from
+> > PERF_RECORD_MMAP2, a (slightly) bigger perf.data file but no event
+> > processing at the end of a 'perf record' session.
+>
+> But then we don't process the PERF_RECORD_MMAP2 in 'perf record', it
+> just goes on directly to the perf.data file :-\
 
-Signed-off-by: Edward Liaw <edliaw@google.com>
----
- tools/testing/selftests/futex/functional/Makefile | 2 +-
- tools/testing/selftests/iommu/Makefile            | 2 --
- tools/testing/selftests/net/tcp_ao/Makefile       | 2 +-
- tools/testing/selftests/resctrl/Makefile          | 2 +-
- 4 files changed, 3 insertions(+), 5 deletions(-)
+Yep, we don't process build-IDs at the end if --buildid-mmap
+option is given.  It won't have build-ID header table but it's
+not needed anymore and perf report can know build-ID from
+MMAP2 directly.
 
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index a392d0917b4e..f79f9bac7918 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- INCLUDES := -I../include -I../../ $(KHDR_INCLUDES)
--CFLAGS := $(CFLAGS) -g -O2 -Wall -D_GNU_SOURCE -pthread $(INCLUDES) $(KHDR_INCLUDES)
-+CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
- LDLIBS := -lpthread -lrt
- 
- LOCAL_HDRS := \
-diff --git a/tools/testing/selftests/iommu/Makefile b/tools/testing/selftests/iommu/Makefile
-index 32c5fdfd0eef..fd6477911f24 100644
---- a/tools/testing/selftests/iommu/Makefile
-+++ b/tools/testing/selftests/iommu/Makefile
-@@ -2,8 +2,6 @@
- CFLAGS += -Wall -O2 -Wno-unused-function
- CFLAGS += $(KHDR_INCLUDES)
- 
--CFLAGS += -D_GNU_SOURCE
--
- TEST_GEN_PROGS :=
- TEST_GEN_PROGS += iommufd
- TEST_GEN_PROGS += iommufd_fail_nth
-diff --git a/tools/testing/selftests/net/tcp_ao/Makefile b/tools/testing/selftests/net/tcp_ao/Makefile
-index 522d991e310e..c608b1ec02e6 100644
---- a/tools/testing/selftests/net/tcp_ao/Makefile
-+++ b/tools/testing/selftests/net/tcp_ao/Makefile
-@@ -26,7 +26,7 @@ LIB	:= $(LIBDIR)/libaotst.a
- LDLIBS	+= $(LIB) -pthread
- LIBDEPS	:= lib/aolib.h Makefile
- 
--CFLAGS	:= -Wall -O2 -g -D_GNU_SOURCE -fno-strict-aliasing
-+CFLAGS	:= -Wall -O2 -g -fno-strict-aliasing
- CFLAGS	+= $(KHDR_INCLUDES)
- CFLAGS	+= -iquote ./lib/ -I ../../../../include/
- 
-diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-index 2deac2031de9..5073dbc96125 100644
---- a/tools/testing/selftests/resctrl/Makefile
-+++ b/tools/testing/selftests/resctrl/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE
-+CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2
- CFLAGS += $(KHDR_INCLUDES)
- 
- TEST_GEN_PROGS := resctrl_tests
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
-
+Thanks,
+Namhyung
 
