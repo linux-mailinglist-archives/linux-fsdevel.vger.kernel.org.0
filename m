@@ -1,156 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-18883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6549E8BDD93
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 10:56:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702058BDDB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 11:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9624D1C21BDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 08:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37758B2182B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 09:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8AF14D708;
-	Tue,  7 May 2024 08:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA1914D70A;
+	Tue,  7 May 2024 09:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajblN9RE"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="URRyXl5p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward501c.mail.yandex.net (forward501c.mail.yandex.net [178.154.239.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3483E10E3;
-	Tue,  7 May 2024 08:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A9E14D6EE;
+	Tue,  7 May 2024 09:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715072161; cv=none; b=m/ypKVGdJ3HqDjf1Hyj/AHPdDWiNwPGwcBqOdYnyRRdfh3u9TfycTawYSIbl2ONLjSamX9Nm5wn5icMzkZGGEtC9iYXgExrmGL8L+yWikWFbvw9uMe5wziN5IaKlTx8WPfFzKI9JbcZbd61aQ6LHI7xMSuoz63okZVNwlwUvtQs=
+	t=1715072546; cv=none; b=TWAXUz8zqNAhZHgp95M8kxHabFFCbZgjsVKDYFKleYwShkRpvyVPLkdzqgwht05FavkT57C8ReOBJsbkmY7MpUT2rpR9795iCmaoT2jbV5PYWTy32JSGXRYVEooE1puRGHeU4fcEfQ4D2ylEB9SkeI34zmlKsz7AFYyPd++NEJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715072161; c=relaxed/simple;
-	bh=Ksf5YxchQflehA0zyL6WfDAHnmrPPcCIXGwNL3c3F50=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qBz26rCKIBR3XabjXVXwO4f2KV40CTonoW1APbUNFVA7A/EMtB35kIn1DT5WhHd4C8MY7ow2PO9nEobwRgZUEShN2v8qDZMsOjtqx1/KM2a31cra1Hh8IL94FDkRVCBVapq0eYkoA0t2Yo/9eyuN4IgXwqRyDT401QqclKYD2uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajblN9RE; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e83a2a4f2cso13466255ad.1;
-        Tue, 07 May 2024 01:56:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715072159; x=1715676959; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BfYxPjYaJ13DzArLzMdBC+xi7YxOzq4F6d2fPzmkmH0=;
-        b=ajblN9RE+4RajUUY0vPep+eM2pJsjtCa69UhcmEQ8Th4tKLG99QYdqC5DIkfWlX0rm
-         i+j2nq4K2O8ZGQRBjvdvQwhLtOTP3RhtwgllA4n2wgZMbmr35/LB9H5opU2ngRblEJy0
-         nExjw3G9YEQZ9A4rYsGTe0fT09CaEMo7n9yomWcITUInSQbxtmy7suoKNyyzJIXGo2VX
-         6/DSpTjPFF0WkjCEoUfY3gAd1Rd15P/yMV+M/pBlQvyiERLKfswRbsyHTbCpzKB3FDh4
-         av5SElzNzGMAJpf9215iRcEcaOoo7vccz6cKU0hJUcqeNBR08mxTnqaw5EPEE0balmkx
-         p9kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715072159; x=1715676959;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BfYxPjYaJ13DzArLzMdBC+xi7YxOzq4F6d2fPzmkmH0=;
-        b=b+0863A7CS9NbazyG7I2xoUqyU63eSl6bEyFWM1JVoc7sWqRXST2x/fs4e5kFJ+KXx
-         2ZeDBZZ+bvbQEDM0fQwLE7Wfz8PS0WlgPv4qAjGb1RQTo6fOx535cDnODFNWKdOHq0GV
-         K/J8UZZMhjWWeGTkZ4xuBaXxEHBDnzvLvomO2vgM25E7Nl+4mkkHDUDnv7+CfvkzQAqg
-         /B387DIqBwMhuPpOXInTFKgYVzmBQ5LUJcBQLh50/m3YaVasIRHCszO204wm+iz/ApRj
-         1PJicxT8PfCVvPzEcGlpqyh4fH2GGeXi0E4a2cT5gqZE4tpb/SnRZEgs2s6rX33goBut
-         Y6GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP6YTvCYcjq0F6FFLIgUAfmJZq1Sv+SJZdHvRShoo2IYPWG4exeY7kxSoHz1xbLdVqSfeHpSvIhQ3mfV9+yT1u9fE+IOOVZu1UKLZsAg==
-X-Gm-Message-State: AOJu0YyeDrnd1SEVpXXygcmJvIh59S+2H7l4WefYoA6iz1F1KHmCJir9
-	1VosKldrjRvEVEQoFAaMMFBCt8V7UMTgptAD3xGMKhDm0lkPT7nfIZepJGqV
-X-Google-Smtp-Source: AGHT+IHaTWBvDoyo/xtxNDfUQqoqzNQbOg2X8VVX3v282s4ra57O97EBh+hzkO2JqQ0kdDYvOFzf9A==
-X-Received: by 2002:a17:902:db0e:b0:1ec:3227:94ea with SMTP id m14-20020a170902db0e00b001ec322794eamr15716088plx.67.1715072159023;
-        Tue, 07 May 2024 01:55:59 -0700 (PDT)
-Received: from dw-tp.ibmuc.com ([171.76.81.176])
-        by smtp.gmail.com with ESMTPSA id kg3-20020a170903060300b001ed53267795sm7262030plb.152.2024.05.07.01.55.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 01:55:58 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-xfs@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCHv2 2/2] iomap: Optimize iomap_read_folio
-Date: Tue,  7 May 2024 14:25:43 +0530
-Message-ID: <92ae9f3333c9a7e66214568d08f45664261c899c.1715067055.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1715067055.git.ritesh.list@gmail.com>
-References: <cover.1715067055.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1715072546; c=relaxed/simple;
+	bh=6uh8ifxHE5uS7W3QOLk171FF199PCmZvPR8VQGKwOU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HgnI+o7nQfDE1WHgbLX3EoAtBu7vLtStwjew/sjFLVVFzUKHkt0KMkrmqxzZM8mCdMYT5S25hmU5ts/NVN/ZFjlc47fc49vzWiytdChCh7hE/rPrYRe50rQrrH7IPH6H0A5sFdAgMbiQ9NHJJnI7GWigpBeMwXuMWYJWU7doeMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=URRyXl5p; arc=none smtp.client-ip=178.154.239.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:4a21:0:640:2a87:0])
+	by forward501c.mail.yandex.net (Yandex) with ESMTPS id 5043C60AEF;
+	Tue,  7 May 2024 12:02:13 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id A2UoZZEXmiE0-lvz16yjz;
+	Tue, 07 May 2024 12:02:11 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1715072532; bh=6uh8ifxHE5uS7W3QOLk171FF199PCmZvPR8VQGKwOU4=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=URRyXl5p7TM+JG7sJGaDL948M/XhkeO3pZaPL1fgL8Bjms4MwfqOR33DW3NL9b/Jp
+	 e2vlVjEPAZr4maOPUGUd+3ZvUIX8cJnmKCvHcJg/AjkBn1gKHfkA6pxOgfJCP3zesw
+	 xiFfOVxdUlgsNzfjNv8lr3SbJkq0+lYJg1x/DmeQ=
+Authentication-Results: mail-nwsmtp-smtp-production-main-45.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <5b5cc31f-a5be-4f64-a97b-7708466ace82@yandex.ru>
+Date: Tue, 7 May 2024 12:02:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Content-Language: en-US
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240427112451.1609471-1-stsp2@yandex.ru>
+ <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-iomap_readpage_iter() handles "uptodate blocks" and "not uptodate blocks"
-within a folio separately. This makes iomap_read_folio() to call into
-->iomap_begin() to request for extent mapping even though it might already
-have an extent which is not fully processed.
-This happens when we either have a large folio or with bs < ps. In these
-cases we can have sub blocks which can be uptodate (say for e.g. due to
-previous writes). With iomap_read_folio_iter(), this is handled more
-efficiently by not calling ->iomap_begin() call until all the sub blocks
-with the current folio are processed.
+07.05.2024 10:50, Aleksa Sarai пишет:
+> If you are a privileged process which plans to change users,
 
-iomap_read_folio_iter() handles multiple sub blocks within a given
-folio but it's implementation logic is similar to how
-iomap_readahead_iter() handles multiple folios within a single mapped
-extent. Both of them iterate over a given range of folio/mapped extent
-and call iomap_readpage_iter() for reading.
+Not privileged at all.
+But I think what you say is still possible
+with userns?
 
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/iomap/buffered-io.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 9f79c82d1f73..a9bd74ee7870 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -444,6 +444,24 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	return pos - orig_pos + plen;
- }
-
-+static loff_t iomap_read_folio_iter(const struct iomap_iter *iter,
-+		struct iomap_readpage_ctx *ctx)
-+{
-+	struct folio *folio = ctx->cur_folio;
-+	size_t offset = offset_in_folio(folio, iter->pos);
-+	loff_t length = min_t(loff_t, folio_size(folio) - offset,
-+			      iomap_length(iter));
-+	loff_t done, ret;
-+
-+	for (done = 0; done < length; done += ret) {
-+		ret = iomap_readpage_iter(iter, ctx, done);
-+		if (ret <= 0)
-+			return ret;
-+	}
-+
-+	return done;
-+}
-+
- int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- {
- 	struct iomap_iter iter = {
-@@ -459,7 +477,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- 	trace_iomap_readpage(iter.inode, 1);
-
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_readpage_iter(&iter, &ctx, 0);
-+		iter.processed = iomap_read_folio_iter(&iter, &ctx);
-
- 	if (ret < 0)
- 		folio_set_error(folio);
---
-2.44.0
-
+> A new attack I just thought of while writing this mail is that because
+> there is no RESOLVE_NO_XDEV requirement, it should be possible for the
+> process to get an arbitrary write primitive by creating a new
+> userns+mountns and then bind-mounting / underneath the directory.
+Doesn't this need a write perm to a
+directory? In his case this is not a threat,
+because you are not supposed to have a
+write perm to that dir. OA2_CRED_INHERIT
+is the only way to write.
 
