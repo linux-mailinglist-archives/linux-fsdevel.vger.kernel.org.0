@@ -1,78 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-18972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18988BF2CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:59:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B768BF2E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 02:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579AF1F21C88
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2024 23:59:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F6B1C22B6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED02712AADE;
-	Tue,  7 May 2024 23:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBAC12BF02;
+	Tue,  7 May 2024 23:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V2FCgb7a"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YSKyRV2q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12D21A2C07;
-	Tue,  7 May 2024 23:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B7B12BF29
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 May 2024 23:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123999; cv=none; b=AamDgmrvgXQQbW10ixN+gh+Ftb4hhEnIm9ACBJ55HWGy8To9OtlpM05jerRD0MdfUAmbV5p97fzgpja60BAtQnaAqyldMhA8Px7Cjwdws7h6K5Il6ROvT/+jq5VYJDCHH/AF2A+VxxLocPGaiPdQGfKxqJIDZR+IVbVRQUKotf0=
+	t=1715124536; cv=none; b=pramuHErbXm5XrUQkS4p0tmKXMvycfzI8XZRdmpKfya7u6MG9okLGJkAFwdn5iBzO6yxGC6CvsPSc3AEFFCwcjgqq0/6dpuPYe94G6H78KrGOTLHnbEm+WxsPfwrKyUdGJCLjOXCtsk4kiLCBceUvopk8XTM94qr0HJTdae8zY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123999; c=relaxed/simple;
-	bh=sEP4iPDmsyjWyHJeI1603Nv4qXSA4IMf9J0xJfpEL7k=;
+	s=arc-20240116; t=1715124536; c=relaxed/simple;
+	bh=JX0XCKXr1thgDPxaTecjtKr6rIsRQAHKTIazy9OBhDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ib1MTDZF6IrVEewrFPqYjZOWA2t8Akij8LBAcx12f9q2XMFMW5aY5hXutkLq9kQOVJO5wBgKDjbXZiWlwEHM+ydVW7E4rmX6tVFP/nLKbz4WKRr20QwbG8fPp3S/9qTSlcvp1KG98/gQggPwYbl/kFwhKLUZU4SdQwZuKWfEelA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V2FCgb7a; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715123998; x=1746659998;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sEP4iPDmsyjWyHJeI1603Nv4qXSA4IMf9J0xJfpEL7k=;
-  b=V2FCgb7afdzL8lX1CIcx+WfsecRePo6gHYmdVqr3YEwe8p8ujSrMlLyq
-   CG9su5K61m5ohzoyhlQkHs8hJ0xZEKpHcUBMDF0Q+OfwemV/VsFZMOp2+
-   ie332dnCN2RTxr1H3FmT0P4MoZp+J9oNrSLViLyH86gGBohYLDHOQZmaK
-   yRAh9nHoTuFx3DAYgMaJoMvVndqRiq6zJSRw4lFf4XcYCLLB9iwtiG95T
-   7unccrIsgK6g0uGUnLBeieAqpJVUlyijHBbPKpWWeMUThCKpLUptqGmEe
-   vhkyr8aHhdS1K0GLRNp3N0lMbTi9Nd+tqpbkd2fDyquKw1rZw5yFVYGX5
-   w==;
-X-CSE-ConnectionGUID: bKrLbyhzRiSArKinGzKxHA==
-X-CSE-MsgGUID: EhWtermERoK/1zSikXy1ww==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="14744903"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="14744903"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:19:57 -0700
-X-CSE-ConnectionGUID: RWIp3qdYRNKzT7LA61w6Rw==
-X-CSE-MsgGUID: tLv2w/CVRwqH9LW0lz7DaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="51886530"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 07 May 2024 16:19:54 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4U6C-0002jk-1t;
-	Tue, 07 May 2024 23:19:52 +0000
-Date: Wed, 8 May 2024 07:18:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, bfoster@redhat.com,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Message-ID: <202405080718.ZRZVFchD-lkp@intel.com>
-References: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7VZsiaWmxh5B8Rd605vpzaee1r33ZLxZ5/x3qAqyUd79CXWFC7MEr43FBEuXqJKE/gaKgfwdY5iEDB1hxWUcauUcGFgpbMQMlRx2nXrp0hScoZPC5YphALsCnAG6jqU/Au9dvxWvTjBkFRKyS9FkKF+qY688aefUf6mDqBl7Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YSKyRV2q; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6f4551f2725so3586893b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2024 16:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715124534; x=1715729334; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tt8XgRQm+eA+VmBxGqEcvvy66oE9R2AfbLeL3WkCPuU=;
+        b=YSKyRV2qjy0ljrYgd0U6Ch3uzgizQZe+4pSJYHsZSP01gcra909Tiz1I1roMahHF4f
+         R02+dz1KaKB4os+ZuM06R3OW4OuuE5O+jtzs5QpwOMbe9ciAbxWjG0HBoTz/GjMb/HTS
+         JZzkAPMzRCPpiJPnaz9ioUHMig2uiUqQfpOOs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715124534; x=1715729334;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tt8XgRQm+eA+VmBxGqEcvvy66oE9R2AfbLeL3WkCPuU=;
+        b=njt7MhONpck1Aa0xHzCBFHj88CfNp0n4zsml4YVsCI0R4T7T6ukbZdylRpnPHPxU23
+         Lu5PmcQykRKjI/3WK+VTSj95Jk0XSv7Zg72CcONi7c5OOWeraW25jFONrLvx1iB8BIvu
+         u0SerQInR3CUZqM/F1iZ07s+aQo2RoSZ7NzrC8SV+0CLxMYz5ymls227qC6IV5S5ZiQY
+         r0ddcihElPan6DChSisk+jMc6QHPUA6gRDxVnARiul4Ac9QB3qLuxm6ahiTXfzBSgUIu
+         cJvIJSNQh/u8FZxIGn3K+qQ2dNTZWrzKElRyXsh8SLAC5LrkX7H1fGmIOjj2Z1Fdrgwv
+         7KHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWybHlehvd/C7wp3BbglTezr54Fwhr11VjO3uozxg3PBy1oW3zQvQwKg4G4CiF2UPAV2T4irOBeunD+DvSNvKZksfcS7DyeaZt89cAcQ==
+X-Gm-Message-State: AOJu0Yy0CmZ8n2JUcvgCHQU3U7nd30Bgj1C/bsi2yHomlYURzkB8l5nw
+	g7AYwou4A+v/ybZsK7KJCH9I4yiBKh4oxMhZ/h/ncwNkGr7aE2js9U3oPB0Jog==
+X-Google-Smtp-Source: AGHT+IElkYKkPF9F5WlZiOfJXRbgeCSMUqbJ3Z1JrZ5HzzcuDvdHCUlR3LVeoTae63dQgTdtTlamYA==
+X-Received: by 2002:a05:6a20:9f88:b0:1ad:6c5:4ea1 with SMTP id adf61e73a8af0-1afc8db5479mr1525582637.41.1715124534335;
+        Tue, 07 May 2024 16:28:54 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id 60-20020a17090a09c200b002b624b0161fsm80422pjo.19.2024.05.07.16.28.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 16:28:53 -0700 (PDT)
+Date: Tue, 7 May 2024 16:28:53 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Seth Forshee <sforshee@kernel.org>,
+	Bongsu Jeon <bongsu.jeon@samsung.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-input@vger.kernel.org, iommu@lists.linux.dev,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
+Message-ID: <202405071628.7F8C3EC@keescook>
+References: <20240507214254.2787305-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,67 +148,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+In-Reply-To: <20240507214254.2787305-1-edliaw@google.com>
 
-Hi Edward,
+On Tue, May 07, 2024 at 09:38:25PM +0000, Edward Liaw wrote:
+> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> asprintf into kselftest_harness.h, which is a GNU extension and needs
+> _GNU_SOURCE to either be defined prior to including headers or with the
+> -D_GNU_SOURCE flag passed to the compiler.
+> 
+> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+> location.  Remove #define _GNU_SOURCE from source code to resolve
+> redefinition warnings.
+> 
+> Edward Liaw (5):
+>   selftests: Compile kselftest headers with -D_GNU_SOURCE
+>   selftests/sgx: Include KHDR_INCLUDES in Makefile
+>   selftests: Include KHDR_INCLUDES in Makefile
+>   selftests: Drop define _GNU_SOURCE
+>   selftests: Drop duplicate -D_GNU_SOURCE
 
-kernel test robot noticed the following build warnings:
+It's a lot of churn, but I don't see a way to do it differently. :)
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.9-rc7 next-20240507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/bcachefs-fix-oob-in-bch2_sb_clean_to_text/20240507-172635
-base:   linus/master
-patch link:    https://lore.kernel.org/r/tencent_816D842DE96C309554E8E2ED9ACC6078120A%40qq.com
-patch subject: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-config: i386-buildonly-randconfig-005-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080718.ZRZVFchD-lkp@intel.com/config)
-compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080718.ZRZVFchD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080718.ZRZVFchD-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> fs/bcachefs/sb-clean.c:296:13: warning: comparison of distinct pointer types ('struct jset_entry *' and 'void *') [-Wcompare-distinct-pointer-types]
-     296 |              entry < vstruct_end(&clean->field);
-         |              ~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +296 fs/bcachefs/sb-clean.c
-
-   283	
-   284	static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
-   285					  struct bch_sb_field *f)
-   286	{
-   287		struct bch_sb_field_clean *clean = field_to_type(f, clean);
-   288		struct jset_entry *entry;
-   289	
-   290		prt_printf(out, "flags:          %x",	le32_to_cpu(clean->flags));
-   291		prt_newline(out);
-   292		prt_printf(out, "journal_seq:    %llu",	le64_to_cpu(clean->journal_seq));
-   293		prt_newline(out);
-   294	
-   295		for (entry = clean->start;
- > 296		     entry < vstruct_end(&clean->field);
-   297		     entry = vstruct_next(entry)) {
-   298			if (entry->type == BCH_JSET_ENTRY_btree_keys &&
-   299			    !entry->u64s)
-   300				continue;
-   301	
-   302			bch2_journal_entry_to_text(out, NULL, entry);
-   303			prt_newline(out);
-   304		}
-   305	}
-   306	
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kees Cook
 
