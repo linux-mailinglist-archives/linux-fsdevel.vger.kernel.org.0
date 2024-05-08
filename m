@@ -1,149 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-18982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20D88BF3EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 03:07:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA208BF3F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 03:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7558285DA2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABBE2854CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C95ECC;
-	Wed,  8 May 2024 01:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F78946C;
+	Wed,  8 May 2024 01:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m4iNpoPA"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jYonm/yn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6BE633;
-	Wed,  8 May 2024 01:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9469179EA;
+	Wed,  8 May 2024 01:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715130425; cv=none; b=UGzW6P5wqFnw0slufOd3AoOmeMZpqz0hls6Hv8pWXLiPImnsLweslXFneHpGVU7yFv+/+4VoWV3ZadhYfBikzv5vcRg4ZguXGCM953W6P4kFRymVGJsSd6vE/vkFULHxvedZwFOB9Dotbv4iwySyOej3Cf9o7csC6uP6NWnaNDE=
+	t=1715131081; cv=none; b=LC5xvg67Yn4vpYKsgtnxdWg5zwGftxDXoZvK3WQk/Lt7VPcLsOjyj05ghoobPnVZK+PLSmG5sNmous/Dva3IS109m7JK0hMZbGrV77D/MXYAM4+Sy1y8ggZQ8LTwkMMbE3LJuGkBC4yy24TWfSVUKT/ss70vQl/D4TAXOEFPj5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715130425; c=relaxed/simple;
-	bh=p5WCLuKt+jPVh7GPjljN8xrAfP7mBESc4n8DNvE7TsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjMc92ZCAFKhB6Q2+TSnouVaF3JHwJGmaIXpK/ifmN+5aadpYafl3eRLSff7or2YmEAXBmCrxbfZebiWaW27eNI8ZAlLA3r+UMMVN0YFMpr+8It9Yw/F04q3ESGv5FSP50hnDpLZUDmcu815c4oh0t+5i4HyVbr9aMm2hQrucaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m4iNpoPA; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715130424; x=1746666424;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p5WCLuKt+jPVh7GPjljN8xrAfP7mBESc4n8DNvE7TsE=;
-  b=m4iNpoPAaalKd7tYmAcFwwshLwlgo7luEGV0xvBFHvTbDHe14WWHg1lN
-   giNKH8J10J9d8Wl63Y/lZydvmlQFHYG1Xj28ty+MKXL/YY7SBAdt5Hhz4
-   lqVIIMBIyqpU9hju49QyY6u5OzBzOrTIahT3lqmlUkxFQrxj5/eidKpkZ
-   REPWnSVCoGgA2fr2rp3xekM1CY4IDJ7XMuhR6kZ45EaqTzLeiZgMcHaQZ
-   55GAS4WEKDOjDNkrbyNQmDy1ANsoQjQGHX1oM5H+FT2a+PwrmmbDaOrgs
-   xuq34Qps+iD3EFsdF+HyulMy/ZSDVQjscCbr1UGbS7tHSqkM9CtDnQs5h
-   A==;
-X-CSE-ConnectionGUID: 5KWel6vPQOCJF8VZKeA5Jg==
-X-CSE-MsgGUID: 9FQXmNVmR3iU1bH8GmM25Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="21523941"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="21523941"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 18:07:04 -0700
-X-CSE-ConnectionGUID: 4YELYJD7TpSSD3sntn6oOw==
-X-CSE-MsgGUID: Ynp4SyJyRGmdjsXeKRFF/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="28579669"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 07 May 2024 18:06:58 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4Vlm-0002nk-3C;
-	Wed, 08 May 2024 01:06:55 +0000
-Date: Wed, 8 May 2024 09:06:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Cc: oe-kbuild-all@lists.linux.dev, bfoster@redhat.com,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1715131081; c=relaxed/simple;
+	bh=jj2KQP2ub0sVi3xfQLP9yZsNYDR+0zm8HmKQaeY8O48=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=OIQkB64FgbLdd6sLPjtNReYJLagGXKrLaaWzHYM6qJNfUy1Slim4t+bOvXOU72l5OdLYVILt/yhv2kU6uSt/IuOzHAJmrYC6lXDyg8jv6VR/39YkeQ/IjL5hRZiNGkRZKstAj3rIXt4/hFEvaB9fqMLONAAAAH3wnlPhulVz8QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jYonm/yn; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1715131069; bh=bXCqxOHnXGAR0rzdG4ht0Yt67x9bWfQlWK66zskQZqM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=jYonm/ynl8I+nvGyIi68cgjeUrXiNx8rpFbas+Yi7licRAKKCKLCVZdtZ7ZUFKqrz
+	 AYArmsgtPNCEojicaLjE3O+ytnYRwmGnnfWU1QvDaOyAEKsmf1olL32GbTvNkVlEtr
+	 hTPth5lJgvLVKEoLBSFtJfxgq3bhepPceWaKwEOQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 2E4340E6; Wed, 08 May 2024 09:11:36 +0800
+X-QQ-mid: xmsmtpt1715130696tuynpi050
+Message-ID: <tencent_CBBB5E331C9E521B014B6C1B9B2576BA8E08@qq.com>
+X-QQ-XMAILINFO: NhpLzBn2I3Xw/Mobo9iGIOo/qTBimLx0Fery84U2qt+xe6wOTv+10vngPKcjAI
+	 IqW1+gezsbiVQYJCRmH7WU9LN0jI4i5k9XEySZ3h1cs3xlUABCpOsjcUL5q3y0FOQy3W7QEjadTi
+	 h/V3x6xxUTJaXiWgvBlMLdGD+waeX/5UpdyXjEECwt+Yqz7y5zSOVQlabIeA8hY0IYT+cUbh3iAZ
+	 7Xn8LDwvy/YCA+9tGqVS7JRjQMtWILKfGrHCp9+iIMU+4NEDz3/nV2I3r5TXzKw0Y18unRavguK9
+	 AUKmTXN5lLdVeAGp4R+ZQEE0sJy2jFoEBY9zTWh/Denj4swhfYb6XGfn6qph/4+ANaSwmY2dWirA
+	 5JyoVeeautia6lKtcPiw7yqhBUBiQkUDV21Y4ZPASASe/rm9CX1zmb7YJaU2b+SLFSfWYUdDoomS
+	 3tIVxMF6rTy5EQlfqqxBmv4KEXUrUvuOwQXWZ1i2qEQyeqdUCs1D5zHm8UOsd/uHG79EjS7DGeFN
+	 0EMN867ULqrbV3BtYC3XEH8fAc60csu83MYr5I0QroOeoQXwceQYuy5I5PCjqFwbYAQdAJSQH2PU
+	 j2+t4RxoXLQXo4zn3K3KaCmH31XyGUy9knOVFDLyixQMi8YMOniBRWe8oyOuCu9UXj1NclWwoZkz
+	 hp2nkDBgP7KNzhBHxvADRsdwCK0swSz3WhWs6yxd5UqXql47ou9zQwq8efNRT5c2pxcl1gKMdhTr
+	 +C30+rLU9BHOtvYART3AYPBZ3vFrIPsDF3VBv4HTtM2ibw4IMved6k4mXyPectNEaf+UjG6FeFYe
+	 F84HxkAhVISuRZR91FcicIx/ZOxGvDbMRrlwGmPapqZyiAw83wJp0sbQC6ji3G22QYKuGPmKwkul
+	 +OrQOsxwPWGvKrgZeLizNu575iZX+wHLFxiq+ThbXSL/WBiYKrKHNii7pFZXGVpo7CbjsYb7M749
+	 EAevEEfno=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: kent.overstreet@linux.dev
+Cc: bfoster@redhat.com,
+	eadavis@qq.com,
+	linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com,
 	syzkaller-bugs@googlegroups.com
 Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Message-ID: <202405080823.um76blCH-lkp@intel.com>
-References: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+Date: Wed,  8 May 2024 09:11:37 +0800
+X-OQ-MSGID: <20240508011136.3227286-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <7chwa5h2y2eotafxfnapxn754n7y3zpze2sm5dif3zyx7hkxcc@2zu6pskc7fbo>
+References: <7chwa5h2y2eotafxfnapxn754n7y3zpze2sm5dif3zyx7hkxcc@2zu6pskc7fbo>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Edward,
+On Tue, 7 May 2024 20:59:14 -0400, Kent Overstreet wrote:
+> > > diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
+> > > index 35ca3f138de6..194e55b11137 100644
+> > > --- a/fs/bcachefs/sb-clean.c
+> > > +++ b/fs/bcachefs/sb-clean.c
+> > > @@ -278,6 +278,17 @@ static int bch2_sb_clean_validate(struct bch_sb *sb,
+> > >  		return -BCH_ERR_invalid_sb_clean;
+> > >  	}
+> > > 
+> > > +	for (struct jset_entry *entry = clean->start;
+> > > +	     entry != vstruct_end(&clean->field);
+> > > +	     entry = vstruct_next(entry)) {
+> > > +		if ((void *) vstruct_next(entry) > vstruct_end(&clean->field)) {
+> > > +			prt_str(err, "entry type ");
+> > > +			bch2_prt_jset_entry_type(err, le16_to_cpu(entry->type));
+> > > +			prt_str(err, " overruns end of section");
+> > > +			return -BCH_ERR_invalid_sb_clean;
+> > > +		}
+> > > +	}
+> > > +
+> > The original judgment here is sufficient, there is no need to add this section of inspection.
+> 
+> No, we need to be able to print things that failed to validate so that
+> we see what went wrong.
+The follow check work fine, why add above check ?
+   1         if (vstruct_bytes(&clean->field) < sizeof(*clean)) {
+  268                 prt_printf(err, "wrong size (got %zu should be %zu)",
+    1                        vstruct_bytes(&clean->field), sizeof(*clean));
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.9-rc7 next-20240507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/bcachefs-fix-oob-in-bch2_sb_clean_to_text/20240507-172635
-base:   linus/master
-patch link:    https://lore.kernel.org/r/tencent_816D842DE96C309554E8E2ED9ACC6078120A%40qq.com
-patch subject: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-config: x86_64-randconfig-121-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080823.um76blCH-lkp@intel.com/config)
-compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080823.um76blCH-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080823.um76blCH-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   fs/bcachefs/sb-clean.c: note: in included file:
-   fs/bcachefs/bcachefs.h:1027:9: sparse: sparse: array of flexible structures
-   fs/bcachefs/sb-clean.c: note: in included file (through fs/bcachefs/bcachefs.h):
-   fs/bcachefs/bcachefs_format.h:794:38: sparse: sparse: array of flexible structures
-   fs/bcachefs/bcachefs_format.h:1453:38: sparse: sparse: array of flexible structures
->> fs/bcachefs/sb-clean.c:296:20: sparse: sparse: incompatible types in comparison expression (different base types):
-   fs/bcachefs/sb-clean.c:296:20: sparse:    struct jset_entry *
-   fs/bcachefs/sb-clean.c:296:20: sparse:    void *
-
-vim +296 fs/bcachefs/sb-clean.c
-
-   283	
-   284	static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
-   285					  struct bch_sb_field *f)
-   286	{
-   287		struct bch_sb_field_clean *clean = field_to_type(f, clean);
-   288		struct jset_entry *entry;
-   289	
-   290		prt_printf(out, "flags:          %x",	le32_to_cpu(clean->flags));
-   291		prt_newline(out);
-   292		prt_printf(out, "journal_seq:    %llu",	le64_to_cpu(clean->journal_seq));
-   293		prt_newline(out);
-   294	
-   295		for (entry = clean->start;
- > 296		     entry < vstruct_end(&clean->field);
-   297		     entry = vstruct_next(entry)) {
-   298			if (entry->type == BCH_JSET_ENTRY_btree_keys &&
-   299			    !entry->u64s)
-   300				continue;
-   301	
-   302			bch2_journal_entry_to_text(out, NULL, entry);
-   303			prt_newline(out);
-   304		}
-   305	}
-   306	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
