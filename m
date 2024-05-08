@@ -1,267 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-19061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFBF8BFA44
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 12:05:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009808BFAAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 12:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552681F24099
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2484F1C22886
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4B584A3B;
-	Wed,  8 May 2024 10:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC1B81AC9;
+	Wed,  8 May 2024 10:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1ElVR4F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE237E798;
-	Wed,  8 May 2024 10:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759F081AA2;
+	Wed,  8 May 2024 10:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162585; cv=none; b=dP40uGGjHnAG9+WWDoVE8FD6i/nm1CUFDFp1I+ov4j7IFuog8eq2JT+yc04tg0ulxqhsZDspMj34fUjgHBIRJpKZmNieW4Zgx7qsCMMWB3s+vh7W08DiQjwHm/RZj+tuLfY4gh6iFDuVxfqSlnjksjrLFv9bA4PfMZD9nu4Ox7g=
+	t=1715162945; cv=none; b=DMufwDfTuz5VSi2fWEAEK8sQ+VGcogoDGtusoCEc6j8gr1CFq54sdexvz17giT53M1K7tYEeuRBNYwp2tiXDUlCIciJgEZElvXxNMx9WdJ3EIBlJkg/ahoHyukAq6c624wrEXzZ181Kpvh9aV4A4YPWoFmfiA5sRKP8c1Opy9jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162585; c=relaxed/simple;
-	bh=ILOiGypKonBszEM01cavkBhnNff7lLqOK+UDeJBRKwI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=eS2SVNf9L06G5r0Lo1KQ/t1JMY19dmgZWNe4HvCdc2+AOz6d36EvJW0H+OIIeBNL1bGDgSYNp6vmzaEjplH9U1Y3mluR4q0r4KJqPB7LGhfINkHHCC+7KksI2zh6QCxncPVTW93EqVaQHMGcCHKZfhtmWZrYdchOCJJrJJo/Wb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-d9-663b4a3c0e6c
-From: Byungchul Park <byungchul@sk.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel_team@skhynix.com,
-	torvalds@linux-foundation.org,
-	damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	will@kernel.org,
-	tglx@linutronix.de,
-	rostedt@goodmis.org,
-	joel@joelfernandes.org,
-	sashal@kernel.org,
-	daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com,
-	johannes.berg@intel.com,
-	tj@kernel.org,
-	tytso@mit.edu,
-	willy@infradead.org,
-	david@fromorbit.com,
-	amir73il@gmail.com,
-	gregkh@linuxfoundation.org,
-	kernel-team@lge.com,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	mhocko@kernel.org,
-	minchan@kernel.org,
-	hannes@cmpxchg.org,
-	vdavydov.dev@gmail.com,
-	sj@kernel.org,
-	jglisse@redhat.com,
-	dennis@kernel.org,
-	cl@linux.com,
-	penberg@kernel.org,
-	rientjes@google.com,
-	vbabka@suse.cz,
-	ngupta@vflare.org,
-	linux-block@vger.kernel.org,
-	josef@toxicpanda.com,
-	linux-fsdevel@vger.kernel.org,
-	jack@suse.cz,
-	jlayton@kernel.org,
-	dan.j.williams@intel.com,
-	hch@infradead.org,
-	djwong@kernel.org,
-	dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com,
-	melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com,
-	42.hyeyoo@gmail.com,
-	chris.p.wilson@intel.com,
-	gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com,
-	boqun.feng@gmail.com,
-	longman@redhat.com,
-	hdanton@sina.com,
-	her0gyugyu@gmail.com
-Subject: [PATCH v14 28/28] dept: Add documentation for Dept's APIs
-Date: Wed,  8 May 2024 18:47:25 +0900
-Message-Id: <20240508094726.35754-29-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240508094726.35754-1-byungchul@sk.com>
-References: <20240508094726.35754-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTYRTHe97rXK5eltCrkdUggsLKyDqVRBTYUxEUXakPNdprG02TmbdA
-	0rxU3khDV9NELdbS1Wzbhy5qa+F0hTbLcuaFNMssLzSbaNplKn45/Pif8/99OiJSaqWDRKro
-	C4ImWq6WMWJKPORfHhK+d1vkemtXMOTnrAfvr6sUlJiMDLgeViEwWlMJGKjfDW1jgwgmm96Q
-	oC10ISjv6SLB6uhGUGu4zMC7vgXQ6h1hwFmYzUDaHRMDLT+mCOgsKiCgyrwfXl+vIMA20U+B
-	doCBYm0a4RvfCJjQV7KgT1kJvQYdC1M9oeDs/kBD7cc1cKu0k4GaWicFjse9BLx7WsJAt/Ef
-	Da8djRS48nNpeDBcwcCPMT0Jeu8IC29tZQRUp/tEmaN/aWjItRGQefcRAa3tzxDUXf1EgNn4
-	gYGX3kECLOZCEn7fq0fQmzfEQkbOBAvFqXkIsjOKKEjvDIPJ8RJmxxb8cnCExOmWBFw7Vkbh
-	VxU8fqLrYnF63UcWl5njsMWwGt+pGSBwucdLY3PlNQabPQUszhpqJfBwczOLG29OUrivVUsc
-	CDohDlcIalW8oFm3/bRYmeFsYGNKZYnVTXEpKH9JFvIT8dxG/vZvDzXHn0tHZ5jhVvFu9wQ5
-	zQHcct6S+5WeZpIbFPN3myOmeRG3k3eMvkfTTHEr+Uxny0xXwm3ibxQ40KxzGV9VbZvx+Pny
-	9v7hmVzKhfHP0nRsFhL7bsZFfNv7Unq2EMi/MLip60hShuZVIqkqOj5KrlJvXKtMilYlrj1z
-	PsqMfL+kT546+Rh5XIfsiBMhmb/EtnhrpJSWx8cmRdkRLyJlAZL6K5sjpRKFPOmioDl/ShOn
-	FmLtaImIki2WbBhLUEi5s/ILwjlBiBE0c1tC5BeUghbWdeh0l1YcW3E4yjQQY+l4eON5VlNa
-	oNq41G21NR9pbDsuDrbYU/ECuX2n64i/OnENV4PF24wJ88e/7/H2L/t1tNPzpd2rLtocv+5+
-	Y9fPlojiP3/CziWHK4cK9yqGtR2mE3k5+9zKgIN1ZGVoiJX793RX7iVTgMKQ3XD/SYhURsUq
-	5aGrSU2s/D9L025kRwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0yMcRzH+36fX9ets2dX41nZ4qYh82sTHw4zjEfGzGxt/UGH53TrKu4q
-	Yua4fqhkLurIlZOcVofcxUJnt9LltE6UiLRKQ6SsuubU0GX+ee+192ef119vESEtokJFqqQU
-	QZOkUMtoMSneKdcvlkfLlct6ateC4dwy8I6dJcF010pD650qBNaa0xgGGrfCm/FBBBMtLwgw
-	FrYiuN77gYAaVzcCR8UZGtr6Z0C7d5gGd2EeDfobd2l4+W0SQ1dRAYYq2w5ovlCGwen7TIJx
-	gIarRj2eii8YfJZKBiy6COirKGZgsnc5uLs7KGgocVPgeLcIrpR20VDncJPgqu3D0PbIREO3
-	9Q8Fza5nJLQa8im4PVRGw7dxCwEW7zADr5xmDNUZU7as0d8UNOU7MWSV38PQ3vkYwZOzPRhs
-	1g4aGryDGOy2QgJ+3WpE0Hf+OwOZ53wMXD19HkFeZhEJGV1RMPHTRG9YwzcMDhN8hv0o7xg3
-	k/zzMo5/WPyB4TOevGN4sy2Vt1dE8jfqBjB/fcRL8bbKHJq3jRQwfO73dswPeTwM/+zyBMn3
-	txvxrrBY8dqDglqVJmiWro8Tx2e6m5jDpbJj1S2pOmQIy0WBIo5dwX0sHSX9TLPzubdvfYSf
-	Q9g5nD3/E+Vngh0Uc+WeLX4OZjdyrtHXyM8kG8FluV9O/0rYldzFAhf65wznqqqd057Aqb7z
-	89B0L2WjuMf6YuYCEptRQCUKUSWlJSpU6qgl2oT49CTVsSUHkhNtaGotlpOThlo01ra1HrEi
-	JAuStNJypZRSpGnTE+sRJyJkIZLG7FVKqeSgIv24oEnep0lVC9p6FCYiZbMk0TFCnJQ9pEgR
-	EgThsKD5f8WiwFAduo+jT62brDPFlji/apqRY6ZhZPX28pBkpUd35URTV9jCH+qle/eXa3cH
-	xW3y3Nx81O7bWLvN2p+84dFs/dwOpTEgRnvtgfip0hTckmBeMOxInRP1/ogqeN7TyEvyrEs1
-	KfNMtj1ljLM6r8cVtG/Px/zeJnN2drhWt+tAjmyd/EyJjNTGK5ZHEhqt4i/zXmBuKQMAAA==
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1715162945; c=relaxed/simple;
+	bh=yrabQPbPYvR+JPoitoyg+9RDRV3056ERK0Y8S6+be2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MP4Kfr7Cq8o8REf3FFAXYolEGs74xDmdSopmZ5QbiyG+fStMHonKdIhOG0xexibBfARno75xqZjqQt3Toz1EXzKm3Y2EGhNZrqfYrjLgF5pC6H/Caq0/QMuxStRA+JAkOzQhP0uhXMcIy6OLMQ/MU/vXpTJg32vdb5Do4lWzb84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1ElVR4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A84C113CC;
+	Wed,  8 May 2024 10:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715162945;
+	bh=yrabQPbPYvR+JPoitoyg+9RDRV3056ERK0Y8S6+be2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g1ElVR4FITT9TalGvuJbfFMESgGVWUWwPh+Jiuy91aSKwAstAfiXyTFlhWpH9rlSj
+	 kfIlOoOJuqfDvOjLN8emFmJHFevm1IH96irYRz+bm+AeV/W55Qd9olPzuGmF9V5muE
+	 pK/1XrE8w15gD5I30PJqCcNALy57CVi2E1HdM889nC0xP/jJoaExLQShGX7lbyi/eh
+	 d+g9d5hbZklc3NXzwARwXdQTzR4cOV7VSYrk3XdlkoSZ9zHOCSHa/wS2X3cAfEkvXt
+	 9fgjkNU9JXabQi2jcGskzOm9saN/97+mE1laXFfa/OtQxkb4aV/+BHhS2K0ZDaDOTM
+	 mD01Fvs9jdnhQ==
+Date: Wed, 8 May 2024 12:08:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com, 
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Message-ID: <20240508-risse-fehlpass-895202f594fd@brauner>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
 
-This document describes the APIs of Dept.
+On Mon, May 06, 2024 at 04:29:44PM +0200, Christian König wrote:
+> Am 04.05.24 um 20:20 schrieb Linus Torvalds:
+> > On Sat, 4 May 2024 at 08:32, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > Lookie here, the fundamental issue is that epoll can call '->poll()'
+> > > on a file descriptor that is being closed concurrently.
+> > Thinking some more about this, and replying to myself...
+> > 
+> > Actually, I wonder if we could *really* fix this by simply moving the
+> > eventpoll_release() to where it really belongs.
+> > 
+> > If we did it in file_close_fd_locked(),  it would actually make a
+> > *lot* more sense. Particularly since eventpoll actually uses this:
+> > 
+> >      struct epoll_filefd {
+> >          struct file *file;
+> >          int fd;
+> >      } __packed;
+> > 
+> > ie it doesn't just use the 'struct file *', it uses the 'fd' itself
+> > (for ep_find()).
+> > 
+> > (Strictly speaking, it should also have a pointer to the 'struct
+> > files_struct' to make the 'int fd' be meaningful).
+> 
+> While I completely agree on this I unfortunately have to ruin the idea.
+> 
+> Before we had KCMP some people relied on the strange behavior of eventpoll
+> to compare struct files when the fd is the same.
+> 
+> I just recently suggested that solution to somebody at AMD as a workaround
+> when KCMP is disabled because of security hardening and I'm pretty sure I've
+> seen it somewhere else as well.
+> 
+> So when we change that it would break (undocumented?) UAPI behavior.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- Documentation/dependency/dept_api.txt | 117 ++++++++++++++++++++++++++
- 1 file changed, 117 insertions(+)
- create mode 100644 Documentation/dependency/dept_api.txt
+I've worked on that a bit yesterday and I learned new things about epoll
+and ran into some limitations.
 
-diff --git a/Documentation/dependency/dept_api.txt b/Documentation/dependency/dept_api.txt
-new file mode 100644
-index 000000000000..8e0d5a118a46
---- /dev/null
-+++ b/Documentation/dependency/dept_api.txt
-@@ -0,0 +1,117 @@
-+DEPT(DEPendency Tracker) APIs
-+=============================
-+
-+Started by Byungchul Park <max.byungchul.park@sk.com>
-+
-+SDT(Single-event Dependency Tracker) APIs
-+-----------------------------------------
-+Use these APIs to annotate on either wait or event.  These have been
-+already applied into the existing synchronization primitives e.g.
-+waitqueue, swait, wait_for_completion(), dma fence and so on.  The basic
-+APIs of SDT are:
-+
-+   /*
-+    * After defining 'struct dept_map map', initialize the instance.
-+    */
-+   sdt_map_init(map);
-+
-+   /*
-+    * Place just before the interesting wait.
-+    */
-+   sdt_wait(map);
-+
-+   /*
-+    * Place just before the interesting event.
-+    */
-+   sdt_event(map);
-+
-+The advanced APIs of SDT are:
-+
-+   /*
-+    * After defining 'struct dept_map map', initialize the instance
-+    * using an external key.
-+    */
-+   sdt_map_init_key(map, key);
-+
-+   /*
-+    * Place just before the interesting timeout wait.
-+    */
-+   sdt_wait_timeout(map, time);
-+
-+   /*
-+    * Use sdt_might_sleep_start() and sdt_might_sleep_end() in pair.
-+    * Place at the start of the interesting section that might enter
-+    * schedule() or its family that needs to be woken up by
-+    * try_to_wake_up().
-+    */
-+   sdt_might_sleep_start(map);
-+
-+   /*
-+    * Use sdt_might_sleep_start_timeout() and sdt_might_sleep_end() in
-+    * pair.  Place at the start of the interesting section that might
-+    * enter schedule_timeout() or its family that needs to be woken up
-+    * by try_to_wake_up().
-+    */
-+   sdt_might_sleep_start_timeout(map, time);
-+
-+   /*
-+    * Use sdt_might_sleep_start() and sdt_might_sleep_end() in pair.
-+    * Place at the end of the interesting section that might enter
-+    * schedule(), schedule_timeout() or its family that needs to be
-+    * woken up by try_to_wake_up().
-+    */
-+   sdt_might_sleep_end();
-+
-+   /*
-+    * Use sdt_ecxt_enter() and sdt_ecxt_exit() in pair.  Place at the
-+    * start of the interesting section where the interesting event might
-+    * be triggered.
-+    */
-+   sdt_ecxt_enter(map);
-+
-+   /*
-+    * Use sdt_ecxt_enter() and sdt_ecxt_exit() in pair.  Place at the
-+    * end of the interesting section where the interesting event might
-+    * be triggered.
-+    */
-+   sdt_ecxt_exit(map);
-+
-+
-+LDT(Lock Dependency Tracker) APIs
-+---------------------------------
-+Do not use these APIs directly.  These are the wrappers for typical
-+locks, that have been already applied into major locks internally e.g.
-+spin lock, mutex, rwlock and so on.  The APIs of LDT are:
-+
-+   ldt_init(map, key, sub, name);
-+   ldt_lock(map, sub_local, try, nest, ip);
-+   ldt_rlock(map, sub_local, try, nest, ip, queued);
-+   ldt_wlock(map, sub_local, try, nest, ip);
-+   ldt_unlock(map, ip);
-+   ldt_downgrade(map, ip);
-+   ldt_set_class(map, name, key, sub_local, ip);
-+
-+
-+Raw APIs
-+--------
-+Do not use these APIs directly.  The raw APIs of dept are:
-+
-+   dept_free_range(start, size);
-+   dept_map_init(map, key, sub, name);
-+   dept_map_reinit(map, key, sub, name);
-+   dept_ext_wgen_init(ext_wgen);
-+   dept_map_copy(map_to, map_from);
-+   dept_wait(map, wait_flags, ip, wait_func, sub_local, time);
-+   dept_stage_wait(map, key, ip, wait_func, time);
-+   dept_request_event_wait_commit();
-+   dept_clean_stage();
-+   dept_stage_event(task, ip);
-+   dept_ecxt_enter(map, evt_flags, ip, ecxt_func, evt_func, sub_local);
-+   dept_ecxt_holding(map, evt_flags);
-+   dept_request_event(map, ext_wgen);
-+   dept_event(map, evt_flags, ip, evt_func, ext_wgen);
-+   dept_ecxt_exit(map, evt_flags, ip);
-+   dept_ecxt_enter_nokeep(map);
-+   dept_key_init(key);
-+   dept_key_destroy(key);
-+   dept_map_ecxt_modify(map, cur_evt_flags, key, evt_flags, ip, ecxt_func, evt_func, sub_local);
--- 
-2.17.1
+Like, what happens if process P1 has a file descriptor registered in an
+epoll instance and now P1 forks and creates P2. So every file that P1
+maintains gets copied into a new file descriptor table for P2. And the
+same file descriptors refer to the same files for both P1 and P2.
 
+So there's two interesting cases here:
+
+(1) P2 explicitly removes the file descriptor from the epoll instance
+    via epoll_ctl(EPOLL_CTL_DEL). That removal affects both P1 and P2
+    since the <fd, file> pair is only registered once and it isn't
+    marked whether it belongs to P1 and P2 fdtable.
+
+    So effectively fork()ing with epoll creates a weird shared state
+    where removal of file descriptors that were registered before the
+    fork() affects both child and parent.
+
+    I found that surprising even though I've worked with epoll quite
+    extensively in low-level userspace.
+
+(2) P2 doesn't close it's file descriptors. It just exits. Since removal
+    of the file descriptor from the epoll instance isn't done during
+    close() but during last fput() P1's epoll state remains unaffected
+    by P2's sloppy exit because P1 still holds references to all files
+    in its fdtable.
+
+    (Sidenote, if one ends up adding every more duped-fds into epoll
+    instance that one doesn't explicitly close and all of them refer to
+    the same file wouldn't one just be allocating new epitems that
+    are kept around for a really long time?)
+
+So if the removal of the fd would now be done during close() or during
+exit_files() when we call close_files() and since there's currently no
+way of differentiating whether P1 or P2 own that fd it would mean that
+(2) collapses into (1) and we'd always alter (1)'s epoll state. That
+would be a UAPI break.
+
+So say we record the fdtable to get ownership of that file descriptor so
+P2 doesn't close anything in (2) that really belongs to P1 to fix that
+problem.
+
+But afaict, that would break another possible use-case. Namely, where P1
+creates an epoll instance and registeres fds and then fork()s to create
+P2. Now P1 can exit and P2 takes over the epoll loop of P1. This
+wouldn't work anymore because P1 would deregister all fds it owns in
+that epoll instance during exit. I didn't see an immediate nice way of
+fixing that issue.
+
+But note that taking over an epoll loop from the parent doesn't work
+reliably for some file descriptors. Consider man signalfd(2):
+
+   epoll(7) semantics
+       If a process adds (via epoll_ctl(2)) a signalfd file descriptor to an epoll(7) instance,
+       then epoll_wait(2) returns events only for signals sent to that process.  In particular,
+       if  the process then uses fork(2) to create a child process, then the child will be able
+       to read(2) signals that  are  sent  to  it  using  the  signalfd  file  descriptor,  but
+       epoll_wait(2)  will  not  indicate  that the signalfd file descriptor is ready.  In this
+       scenario, a possible workaround is that after the fork(2), the child process  can  close
+       the  signalfd  file descriptor that it inherited from the parent process and then create
+       another signalfd file descriptor and add it to the epoll instance.   Alternatively,  the
+       parent and the child could delay creating their (separate) signalfd file descriptors and
+       adding them to the epoll instance until after the call to fork(2).
+
+So effectively P1 opens a signalfd and registers it in an epoll
+instance. Then it fork()s and creates P2. Now both P1 and P2 call
+epoll_wait(). Since signalfds are always relative to the caller and P1
+did call signalfd_poll() to register the callback only P1 can get
+events. So P2 can't take over signalfds in that epoll loop.
+
+Honestly, the inheritance semantics of epoll across fork() seem pretty
+wonky and it would've been better if an epoll fd inherited across
+would've returned ESTALE or EINVAL or something. And if that inheritance
+of epoll instances would really be a big use-case there'd be some
+explicit way to enable this.
 
