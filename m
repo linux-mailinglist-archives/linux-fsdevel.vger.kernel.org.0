@@ -1,270 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-19079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B088BFBA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:16:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C9F8BFBCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547F328417D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:16:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571901C21BE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C5081ABB;
-	Wed,  8 May 2024 11:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AC081AD7;
+	Wed,  8 May 2024 11:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="kwhWSZcq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573887D07F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 11:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE642628B;
+	Wed,  8 May 2024 11:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715166950; cv=none; b=U2GUulL8btQplhJF0nQWcwHdrWpvruX140rzAzY+MiS6fjfCS92OdLvHGMaJF2VF5dB77RK9mClOFiGRXD+nasqiWHsDTZv9CF3alEQ71NoGXp21C0cZS/hBN9IUbIjUfQGWwZJUV4kZQgHvy1Tg74oD+gYK11zoG454pYHhUoA=
+	t=1715167218; cv=none; b=dEg3PbAR0Id0V0ZTIQsC7l84fGuVuVSZ2ILgH+pM43ZcfpXGxwPnD1r7Wu/dPKw4qhzSwiED3+h2Xx0YqH/q1+Fb9i343MylgMUUpoVR5d9TqCNJVkZ2gLlKMHiQ9YagP2pIjzbq8t2IS9mCz3PyUARfyBMppw96Q1sQTJy8EBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715166950; c=relaxed/simple;
-	bh=iw2ELT+liLm2ttqRCmRgZZ7pnxFhRcKSH8O/n7WD6RE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l2BPu0Fi7IcaR5c/Hbb1SZyVK7Q0oE3QmlzZLEk0jTz4h0uHdQssosigRwkJ0FTL0AhlrUBrFq0SIdtxAnFazpMaS62XFtB0fOOw7ta7rqo+adqc5NLmiAIAnErWdtk3Q1oNXh7jlsuFppn9xomES+Ss10xcBhBwgCLS68GCC1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VZCC62DWSzYnXn;
-	Wed,  8 May 2024 19:11:46 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 122831800C9;
-	Wed,  8 May 2024 19:15:37 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 8 May 2024 19:15:36 +0800
-Message-ID: <609abbe8-cf88-4145-b1d0-397c980aff28@huawei.com>
-Date: Wed, 8 May 2024 19:15:36 +0800
+	s=arc-20240116; t=1715167218; c=relaxed/simple;
+	bh=Nu6O2eMAVkIMziV3ZRSR/eCfiqPiKf6sn09cg0ygOoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k+ihHYbo1FvDTuMfW19UajF/5YpasZCNP+0cmdltDCHIHJZ3JPluzM4zWqhvHnVPBMxbFJBDz7ZC58XgGbyl5oyKJS0W9XBQPcPQuE/Xfe/DZjT5GQWDfmWF3IXCJ8icIFC4ncrnZNU/TGs/jFhRoPefiMoOIY5MJOSDodLopsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=kwhWSZcq; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VZCNr6w5lz9sQg;
+	Wed,  8 May 2024 13:20:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1715167213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1un4/swOYqLsaMeeUpem8iiB/EUo0Jbdf4dJTwbApE=;
+	b=kwhWSZcqfxeUqy4w1ehrBrcL7c7QvNY6vH49D8wxGPTQs4HDilQDAovRKcID5Le1IApaTr
+	I1h2y6zMSnT83BwIhGl53JK2STiGOp5vW3tgBVnbl/xxLX3FwAi554PQUW+jvAlVhTJ8s7
+	PRRLTseJatMAldsJZbEkba59lcCay+0jzb9uQwi+e/mVEhkcxv14GmiFmrlb/7Y7Yo+Uaq
+	sDGXNl9aREvM4AXSmkm5Vv3Mxp/IgBTM/vo9Ly2W0zmwWNxinNQDIepQWvNdf/CIH9f/Rn
+	2L6oCVWyobMBGqG24+1bNOaZ9uQftwbST42yyRV3bzFqoFifLmTXnxxyUxk4Hg==
+Date: Wed, 8 May 2024 11:20:05 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, akpm@linux-foundation.org,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandan.babu@oracle.com, hare@suse.de, ritesh.list@gmail.com,
+	john.g.garry@oracle.com, ziy@nvidia.com,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, p.raghav@samsung.com
+Subject: Re: [PATCH v5 07/11] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240508112005.4zhxgcre73omr37s@quentin>
+References: <20240503095353.3798063-1-mcgrof@kernel.org>
+ <20240503095353.3798063-8-mcgrof@kernel.org>
+ <ZjpQHA1zcLhUZa_D@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH rfc 3/4] mm: filemap: move __lruvec_stat_mod_folio() out
- of filemap_set_pte_range()
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>
-CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>
-References: <20240429072417.2146732-1-wangkefeng.wang@huawei.com>
- <20240429072417.2146732-4-wangkefeng.wang@huawei.com>
- <0bf097d2-6d2a-498b-a266-303f168b6221@redhat.com>
- <e1b19d37-82ea-447b-b9da-0a714df2c632@huawei.com>
- <d9190747-953f-4c2a-9729-23d86044fb4d@redhat.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <d9190747-953f-4c2a-9729-23d86044fb4d@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjpQHA1zcLhUZa_D@casper.infradead.org>
 
+On Tue, May 07, 2024 at 05:00:28PM +0100, Matthew Wilcox wrote:
+> On Fri, May 03, 2024 at 02:53:49AM -0700, Luis Chamberlain wrote:
+> > +	bio = iomap_dio_alloc_bio(iter, dio, BIO_MAX_VECS,
+> > +				  REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+> >  	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+> >  				  GFP_KERNEL);
+> > +
+> >  	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
+> >  	bio->bi_private = dio;
+> >  	bio->bi_end_io = iomap_dio_bio_end_io;
+> >  
+> > -	__bio_add_page(bio, page, len, 0);
+> > +	while (len) {
+> > +		unsigned int io_len = min_t(unsigned int, len, PAGE_SIZE);
+> > +
+> > +		__bio_add_page(bio, page, io_len, 0);
+> > +		len -= io_len;
+> > +	}
+> >  	iomap_dio_submit_bio(iter, dio, bio, pos);
+> 
+> If the len is more than PAGE_SIZE * BIO_MAX_VECS, __bio_add_page()
+> will fail silently.  I hate this interface.
 
+I added a WARN_ON_ONCE() at the start of the function so that it does
+not silently fail:
+	WARN_ON_ONCE(len > (BIO_MAX_VECS * PAGE_SIZE));
 
-On 2024/5/8 17:33, David Hildenbrand wrote:
-> On 07.05.24 15:12, Kefeng Wang wrote:
->>
->>
->> On 2024/5/7 19:11, David Hildenbrand wrote:
->>> On 29.04.24 09:24, Kefeng Wang wrote:
->>>> Adding __folio_add_file_rmap_ptes() which don't update lruvec stat, it
->>>> is used in filemap_set_pte_range(), with it, lruvec stat updating is
->>>> moved into the caller, no functional changes.
->>>>
->>>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>> ---
->>>>    include/linux/rmap.h |  2 ++
->>>>    mm/filemap.c         | 27 ++++++++++++++++++---------
->>>>    mm/rmap.c            | 16 ++++++++++++++++
->>>>    3 files changed, 36 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
->>>> index 7229b9baf20d..43014ddd06f9 100644
->>>> --- a/include/linux/rmap.h
->>>> +++ b/include/linux/rmap.h
->>>> @@ -242,6 +242,8 @@ void folio_add_anon_rmap_pmd(struct folio *,
->>>> struct page *,
->>>>            struct vm_area_struct *, unsigned long address, rmap_t 
->>>> flags);
->>>>    void folio_add_new_anon_rmap(struct folio *, struct 
->>>> vm_area_struct *,
->>>>            unsigned long address);
->>>> +int __folio_add_file_rmap_ptes(struct folio *, struct page *, int
->>>> nr_pages,
->>>> +        struct vm_area_struct *);
->>>>    void folio_add_file_rmap_ptes(struct folio *, struct page *, int
->>>> nr_pages,
->>>>            struct vm_area_struct *);
->>>>    #define folio_add_file_rmap_pte(folio, page, vma) \
->>>> diff --git a/mm/filemap.c b/mm/filemap.c
->>>> index 7019692daddd..3966b6616d02 100644
->>>> --- a/mm/filemap.c
->>>> +++ b/mm/filemap.c
->>>> @@ -3501,14 +3501,15 @@ static struct folio
->>>> *next_uptodate_folio(struct xa_state *xas,
->>>>    static void filemap_set_pte_range(struct vm_fault *vmf, struct folio
->>>> *folio,
->>>>                struct page *page, unsigned int nr, unsigned long addr,
->>>> -            unsigned long *rss)
->>>> +            unsigned long *rss, int *nr_mapped)
->>>>    {
->>>>        struct vm_area_struct *vma = vmf->vma;
->>>>        pte_t entry;
->>>>        entry = prepare_range_pte_entry(vmf, false, folio, page, nr, 
->>>> addr);
->>>> -    folio_add_file_rmap_ptes(folio, page, nr, vma);
->>>> +    *nr_mapped += __folio_add_file_rmap_ptes(folio, page, nr, vma);
->>>> +
->>>>        set_ptes(vma->vm_mm, addr, vmf->pte, entry, nr);
->>>>        /* no need to invalidate: a not-present page won't be cached */
->>>> @@ -3525,7 +3526,8 @@ static void filemap_set_pte_range(struct
->>>> vm_fault *vmf, struct folio *folio,
->>>>    static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
->>>>                struct folio *folio, unsigned long start,
->>>>                unsigned long addr, unsigned int nr_pages,
->>>> -            unsigned long *rss, unsigned int *mmap_miss)
->>>> +            unsigned long *rss, int *nr_mapped,
->>>> +            unsigned int *mmap_miss)
->>>>    {
->>>>        vm_fault_t ret = 0;
->>>>        struct page *page = folio_page(folio, start);
->>>> @@ -3558,7 +3560,8 @@ static vm_fault_t filemap_map_folio_range(struct
->>>> vm_fault *vmf,
->>>>            continue;
->>>>    skip:
->>>>            if (count) {
->>>> -            filemap_set_pte_range(vmf, folio, page, count, addr, rss);
->>>> +            filemap_set_pte_range(vmf, folio, page, count, addr,
->>>> +                          rss, nr_mapped);
->>>>                if (in_range(vmf->address, addr, count * PAGE_SIZE))
->>>>                    ret = VM_FAULT_NOPAGE;
->>>>            }
->>>> @@ -3571,7 +3574,8 @@ static vm_fault_t filemap_map_folio_range(struct
->>>> vm_fault *vmf,
->>>>        } while (--nr_pages > 0);
->>>>        if (count) {
->>>> -        filemap_set_pte_range(vmf, folio, page, count, addr, rss);
->>>> +        filemap_set_pte_range(vmf, folio, page, count, addr, rss,
->>>> +                      nr_mapped);
->>>>            if (in_range(vmf->address, addr, count * PAGE_SIZE))
->>>>                ret = VM_FAULT_NOPAGE;
->>>>        }
->>>> @@ -3583,7 +3587,7 @@ static vm_fault_t filemap_map_folio_range(struct
->>>> vm_fault *vmf,
->>>>    static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
->>>>            struct folio *folio, unsigned long addr,
->>>> -        unsigned long *rss, unsigned int *mmap_miss)
->>>> +        unsigned long *rss, int *nr_mapped, unsigned int *mmap_miss)
->>>>    {
->>>>        vm_fault_t ret = 0;
->>>>        struct page *page = &folio->page;
->>>> @@ -3606,7 +3610,7 @@ static vm_fault_t
->>>> filemap_map_order0_folio(struct vm_fault *vmf,
->>>>        if (vmf->address == addr)
->>>>            ret = VM_FAULT_NOPAGE;
->>>> -    filemap_set_pte_range(vmf, folio, page, 1, addr, rss);
->>>> +    filemap_set_pte_range(vmf, folio, page, 1, addr, rss, nr_mapped);
->>>>        return ret;
->>>>    }
->>>> @@ -3646,6 +3650,7 @@ vm_fault_t filemap_map_pages(struct vm_fault 
->>>> *vmf,
->>>>        folio_type = mm_counter_file(folio);
->>>>        do {
->>>>            unsigned long end;
->>>> +        int nr_mapped = 0;
->>>>            addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
->>>>            vmf->pte += xas.xa_index - last_pgoff;
->>>> @@ -3655,11 +3660,15 @@ vm_fault_t filemap_map_pages(struct vm_fault
->>>> *vmf,
->>>>            if (!folio_test_large(folio))
->>>>                ret |= filemap_map_order0_folio(vmf,
->>>> -                    folio, addr, &rss, &mmap_miss);
->>>> +                    folio, addr, &rss, &nr_mapped,
->>>> +                    &mmap_miss);
->>>>            else
->>>>                ret |= filemap_map_folio_range(vmf, folio,
->>>>                        xas.xa_index - folio->index, addr,
->>>> -                    nr_pages, &rss, &mmap_miss);
->>>> +                    nr_pages, &rss, &nr_mapped,
->>>> +                    &mmap_miss);
->>>> +
->>>> +        __lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr_mapped);
->>>>            folio_unlock(folio);
->>>>            folio_put(folio);
->>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>> index 2608c40dffad..55face4024f2 100644
->>>> --- a/mm/rmap.c
->>>> +++ b/mm/rmap.c
->>>> @@ -1452,6 +1452,22 @@ static __always_inline void
->>>> __folio_add_file_rmap(struct folio *folio,
->>>>            mlock_vma_folio(folio, vma);
->>>>    }
->>>> +int __folio_add_file_rmap_ptes(struct folio *folio, struct page *page,
->>>> +        int nr_pages, struct vm_area_struct *vma)
->>>> +{
->>>> +    int nr, nr_pmdmapped = 0;
->>>> +
->>>> +    VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
->>>> +
->>>> +    nr = __folio_add_rmap(folio, page, nr_pages, RMAP_LEVEL_PTE,
->>>> +                  &nr_pmdmapped);
->>>> +
->>>> +    /* See comments in folio_add_anon_rmap_*() */
->>>> +    if (!folio_test_large(folio))
->>>> +        mlock_vma_folio(folio, vma);
->>>> +
->>>> +    return nr;
->>>> +}
->>>
->>> I'm not really a fan :/ It does make the code more complicated, and it
->>> will be harder to extend if we decide to ever account differently (e.g.,
->>> NR_SHMEM_MAPPED, additional tracking for mTHP etc).
->>
->> If more different accounts, this may lead to bad scalability.
-> 
-> We already do it for PMD mappings.
-> 
->>>
->>> With large folios we'll be naturally batching already here, and I do
->>
->> Yes, it is batched with large folios，but our fs is ext4/tmpfs, there
->> are not support large folio or still upstreaming.
-> 
-> Okay, so that will be sorted out sooner or later.
-> 
->>
->>> wonder, if this is really worth for performance, or if we could find
->>> another way of batching (let the caller activate batching and drain
->>> afterwards) without exposing these details to the caller.
->>
->> It does reduce latency when batch lruvec stat updating without large
->> folio, but I can't find better way, or let's wait for the large folio
->> support on ext4/tmpfs, I also Cced memcg maintainers in patch4 to see if
->> there are any other ideas.
-> 
-> I'm not convinced this benefit here is worth making the code more 
-> complicated.
-> 
-> Maybe we can find another way to optimize this batching in rmap code 
-> without having to leak these details to the callers.
-> 
-> For example, we could pass an optional batching structure to all rmap 
-> add/rel functions that would collect these stat updates. Then we could 
-> have one function to flush it and update the counters combined.
-> 
-> Such batching could be beneficial also for page unmapping/zapping where 
-> we might unmap various different folios in one go.
-
-It sounds better and clearer, I will try it and see the results, thanks 
-for your advise!
+This function is used to do only sub block zeroing, and I don't think we will
+cross 1MB block size in the forseeable future, and even if we do, we have
+this to warn us about so that it can be changed?
 
 > 
+> You should be doing something like ...
+> 
+> 	while (len) {
+> 		unsigned int io_len = min_t(unsigned int, len, PAGE_SIZE);
+> 
+> 		while (!bio || bio_add_page() < io_len) {
+> 			if (bio)
+> 				iomap_dio_submit_bio(iter, dio, bio, pos);
+> 			bio = iomap_dio_alloc_bio(iter, dio, BIO_MAX_VECS,
+> 					REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+> 		 	fscrypt_set_bio_crypt_ctx(bio, inode,
+> 					pos >> inode->i_blkbits, GFP_KERNEL);
+> 		}
+> 	}
+
+-- 
+Pankaj Raghav
 
