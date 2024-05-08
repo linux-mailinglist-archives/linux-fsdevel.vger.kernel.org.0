@@ -1,144 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-18992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94FA8BF5C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 07:55:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9528BF625
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 08:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559281F23AAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 05:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DDF31F2373D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 06:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670FC17BCC;
-	Wed,  8 May 2024 05:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyI3Q/ax"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A2447A5C;
+	Wed,  8 May 2024 06:22:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE4514AB0;
-	Wed,  8 May 2024 05:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89542BB0F;
+	Wed,  8 May 2024 06:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715147713; cv=none; b=qLgYvedKfO+uDb9jYN4fHylA7vjKeIi8LZilJPc1xAyn1IOgNv6FtFr7/MxHQAsK2kYQdZV+nvzbkmkXPF8jKsxBZyFd7w6ofnDcYcFMp5LqFhnr17eFum499KoE+2c2PKvcaTloyOWPtlK9yOvWPKUhQ6ixpEnikJCHP96IeIQ=
+	t=1715149369; cv=none; b=UX6B3g340e1fdUxIlIioXXYDJ89iypPn/Qp0BNerpJcx6otAH1s4eyu319xlYD3pVzUHP5C0NBANEpQl8lTn9s/byShpRS1zPTa/c2GlyGVMWGhR4o1KQSULjbp9tQi3A+/asfNXHTs7VxLuhCYAF9iVBahObwBxybZ4qNKW8Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715147713; c=relaxed/simple;
-	bh=lO89aVQfFs/6jUDErPkGkXAH9K4sksZShIR9DhCcgkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8ERk4tuTpXzhE1rxChbn9HTVjBW6sAzcLAoqwDNp+LahrWhXC9o6/SiW/MzOT9SLaaHQedggA3+j4son6fVBJrHgv1vrHOZOmqK4iDeu8kEzYMwxprbexTWF4perfXpnfBnjoNMUvWA7rdZDYRKD2wrmSK0uPy9bvIwWe+QJ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyI3Q/ax; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34da04e44a2so2220844f8f.1;
-        Tue, 07 May 2024 22:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715147710; x=1715752510; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2kECfVH61gVXoLyEKuVmIWZjf9iy/udsb4pKdELyNgI=;
-        b=TyI3Q/axaPMnsKWjrLW1k5s+i7XNf++8A5vw98l7hRFVSEHJclBPqXh3gF2ae4iN8y
-         X6llgcEJpqI+aVujppjMwj4twoMI5TtXBxQMV2J0nnX2wObShvSYk/wPLINjMsSCZIy0
-         lRPlrtQZB5OdN8TbbIeT5injUDcAkYp7zFa/pJEcWzZZbTFrtkMRd1OCIX8ILuLs9ys6
-         IMEATsFeifo/PK2wiORJY3VsCwtM78LIUKvdCEnrtjNbDxiKnuGpcTkz2Dxkgy/zbCgW
-         hHf4TZ8LsDwzCLNSP8hAXuoHvasnwemDFCeRLoOuk0X31x1H7Zz1jRFYceZtiExDRe3A
-         zpbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715147710; x=1715752510;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kECfVH61gVXoLyEKuVmIWZjf9iy/udsb4pKdELyNgI=;
-        b=aZuA6OsLh1yxlQBhwiEJbnzz8Q3CC/ef0ClhaR/hzZQqLcVSgN3lNCZjZmZoDfOpM7
-         JSwnWX9KEDFkHtemw6L9rvCi5KGyozGgiYkE3uCAUQRUv3Q6dxy/C8ZE1J43V2pcL8AE
-         5Q4gZdrcS2oiUO5lXW4hpMtJjYskoz2lqs+Iwid/LDQsGAZyi+23vng08/RK6IkgHVAj
-         h/ic733Mo1rE/CIY3TzUGLoOh8pOb/Q75jV1VCqQvsz1BNrONfodtViSlFcBNyizIVjy
-         x60WHrptoNYwmRmAaZzjSolRWiAioegqzFIVTLfOly7z8OEir0zddSK5dU230p3M1U8F
-         wUQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1A/o+3RGzPCNj1u5vkAz6k2z0VU3LrjfCmua/6s++RXjGrUbrvzSXwW7I+tzZtW5v74eZmxqO8QHq3/uqDFAbGTlVjomFzWzE7rnGsxO1no5QF/57Tas58ZC9ONhMRQ766G0xMmDtTfHN4puQGdqdtbQdefnqWSWNs5JIGFoDPrYdnJ/mn4VMJ8cV8jqSPhnB+jfRQVAqsei22XZwPmI6uE4=
-X-Gm-Message-State: AOJu0Yyy5ToTFjfHvkWiPD20ZN5dhpEpHL5YHMXJ0fos+0bQK6e3iW8F
-	QAhTILDBkfPZlTREGOx6+3CpEfvxN+lcI0/pil2nPq2vedUD/KX8
-X-Google-Smtp-Source: AGHT+IGmRYQwYE5GKCP4nHrkMb9CRMRKCaP4q6oTy76fGgGdxl/Be2mRpgRLYl8OhhNTkkldystArg==
-X-Received: by 2002:adf:f0c8:0:b0:34e:3cb3:6085 with SMTP id ffacd0b85a97d-34fca81043amr1370408f8f.62.1715147710492;
-        Tue, 07 May 2024 22:55:10 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id w6-20020adfcd06000000b0034dcb22d82fsm14415768wrm.20.2024.05.07.22.55.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 22:55:10 -0700 (PDT)
-Message-ID: <040b32b8-c4df-4121-bb0d-f0c6ee9e123d@gmail.com>
-Date: Wed, 8 May 2024 07:55:08 +0200
+	s=arc-20240116; t=1715149369; c=relaxed/simple;
+	bh=6DD/MUNNnaU3ZNGpvaA67ateEJE/cQmliuF+P9E/HAA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MbXigIcQmip9JSmHz2lcHUhQumXW5uHzOXmHqQbyzjzOkPbJFkdUYU9rcSYWMrXFknU/n0k916NaXf1ec4rWh/vrdsUZaFNe8AKqfhYWGEpqlxpoRQs4Xh14fbFs1Nk086gZFV5KWe4ht/YEqTuWiOlvfV4jfSg4qiTLJmGRjLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VZ4nK6BRQz4f3l74;
+	Wed,  8 May 2024 14:22:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 27C641A0DBA;
+	Wed,  8 May 2024 14:22:38 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAX6REbGjtm9_1NMA--.61952S4;
+	Wed, 08 May 2024 14:22:36 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v3 00/10] ext4: support adding multi-delalloc blocks
+Date: Wed,  8 May 2024 14:12:10 +0800
+Message-Id: <20240508061220.967970-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Daniel Vetter <daniel@ffwll.ch>
-Cc: Simon Ser <contact@emersion.fr>,
- Pekka Paalanen <pekka.paalanen@collabora.com>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com,
- dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
- laura@labbott.name, linaro-mm-sig@lists.linaro.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, minhquangbui99@gmail.com,
- sumit.semwal@linaro.org,
- syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX6REbGjtm9_1NMA--.61952S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur4xXFWrtr15CF4xWw13twb_yoW8Kw4kpF
+	WSk3W5Jr4UGr17Ga93Aw47Gr4rX3Z3CFWUG34fXw1UuFWUAFyfXFsrKF1F9FW8XrZagF15
+	ZF17tr18u3Wqka7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UZa9-UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Am 07.05.24 um 21:07 schrieb Linus Torvalds:
-> On Tue, 7 May 2024 at 11:04, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
->>
->>> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
->>> too, if this is possibly a more common thing. and not just DRM wants
->>> it.
->>>
->>> Would something like that work for you?
->> Yes.
->>
->> Adding Simon and Pekka as two of the usual suspects for this kind of
->> stuff. Also example code (the int return value is just so that callers know
->> when kcmp isn't available, they all only care about equality):
->>
->> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
-> That example thing shows that we shouldn't make it a FISAME ioctl - we
-> should make it a fcntl() instead, and it would just be a companion to
-> F_DUPFD.
->
-> Doesn't that strike everybody as a *much* cleaner interface? I think
-> F_ISDUP would work very naturally indeed with F_DUPFD.
->
-> Yes? No?
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Sounds absolutely sane to me.
+Changes since v2:
+ - Improve the commit message in patch 2,4,6 as Ritesh and Jan
+   suggested, makes the changes more clear.
+ - Add patch 3, add a warning if the delalloc counters are still not
+   zero on inactive.
+ - In patch 6, add a WARN in ext4_es_insert_delayed_extent(), strictly
+   requires the end_allocated parameter to be set to false if the
+   inserting extent belongs to one cluster.
+ - In patch 9, modify the reserve blocks math formula as Jan suggested,
+   prevent the count going to be negative.
+ - In patch 10, update the stale ext4_da_map_blocks() function comments.
 
-Christian.
+Hello!
 
->
->                         Linus
+This patch series is the part 2 prepartory changes of the buffered IO
+iomap conversion, I picked them out from my buffered IO iomap conversion
+RFC series v3[1], add a fix for an issue found in current ext4 code, and
+also add bigalloc feature support. Please look the following patches for
+details.
+
+The first 3 patches fix an incorrect delalloc reserved blocks count
+issue and add a warning to make it easy to detect, the second 6 patches
+make ext4_insert_delayed_block() call path support inserting
+multi-delalloc blocks once a time, and the last patch makes
+ext4_da_map_blocks() buffer_head unaware, prepared for iomap.
+
+This patch set has been passed 'kvm-xfstests -g auto' tests, I hope it
+could be reviewed and merged first.
+
+[1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
+
+Thanks,
+Yi.
+
+---
+v2: https://lore.kernel.org/linux-ext4/20240410034203.2188357-1-yi.zhang@huaweicloud.com/
+
+Zhang Yi (10):
+  ext4: factor out a common helper to query extent map
+  ext4: check the extent status again before inserting delalloc block
+  ext4: warn if delalloc counters are not zero on inactive
+  ext4: trim delalloc extent
+  ext4: drop iblock parameter
+  ext4: make ext4_es_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_reserve_space() reserve multi-clusters
+  ext4: factor out check for whether a cluster is allocated
+  ext4: make ext4_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_map_blocks() buffer_head unaware
+
+ fs/ext4/extents_status.c    |  70 +++++++---
+ fs/ext4/extents_status.h    |   5 +-
+ fs/ext4/inode.c             | 248 +++++++++++++++++++++++-------------
+ fs/ext4/super.c             |   6 +-
+ include/trace/events/ext4.h |  26 ++--
+ 5 files changed, 231 insertions(+), 124 deletions(-)
+
+-- 
+2.39.2
 
 
