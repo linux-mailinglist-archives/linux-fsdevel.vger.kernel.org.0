@@ -1,255 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-18999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AF98BF622
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 08:24:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820E78BF640
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 08:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70BB5B226FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 06:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB771C224D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 06:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D463F8E6;
-	Wed,  8 May 2024 06:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403B6182C5;
+	Wed,  8 May 2024 06:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQgn9kBN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE69F22091;
-	Wed,  8 May 2024 06:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D90C384;
+	Wed,  8 May 2024 06:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715149367; cv=none; b=in5sozlrSJgmPg5KpjL5ktjkg3RdLs72bzJDsmzPhDCNaZL1xevUAKIaiPZQPSEy05R6Ja8FFn4B/4E3P5nfcvL1rJ6GyFC1iUrxneq+dDKHFBB2zow8jjy5LB1efQlTiw5ngfSyEpS0+qN+6bjBal/DtEbllwvYdDTwJuqkdv4=
+	t=1715149836; cv=none; b=lMvflIY09WGyG81WKOqpldgWHt7guTyh1CoOAuxkl79hvgv7aiyFqPtPHGmjjkQMDLGQ9d+H6dEXuvAqqqHmgpYcgXpFxcfKWCwbydTBPMvnCAIsNRNhCWc45YqJFAeF91xZyGB8X4Sf9ugGmFxhGmYdHUofOkQ8mVFqt2IkZEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715149367; c=relaxed/simple;
-	bh=Mj6BnHzrxInqGSNem33jYFs8lPS6YifOhW/IZyrskjY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MsaxuegFXfcYEfK3YaSJXkZM1Rc7E1kqaZ36Juht2IdIM68MEsiVYqFys2/Wa8SUhjLq6xqsWnIUG2O1e9xPvyPBdAV9cN83/jhsUDg7r6ASkD6IzjoVEI6ti0vYec5B5dZRMgznD/0UAURDS26CJiikBE3mTEVoGVS734srVHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VZ4nT2GJFz4f3kKX;
-	Wed,  8 May 2024 14:22:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9A5DA1A0179;
-	Wed,  8 May 2024 14:22:42 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6REbGjtm9_1NMA--.61952S14;
-	Wed, 08 May 2024 14:22:42 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v3 10/10] ext4: make ext4_da_map_blocks() buffer_head unaware
-Date: Wed,  8 May 2024 14:12:20 +0800
-Message-Id: <20240508061220.967970-11-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240508061220.967970-1-yi.zhang@huaweicloud.com>
-References: <20240508061220.967970-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1715149836; c=relaxed/simple;
+	bh=5jxRy94UaFRt03ZEYe2d4KvQGZLYJ8qOnRbCZ8mahzk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=amnz5KLsk3hmGjZ3aabQyUxyOLY3xDxLo563Py2rquvi4cBABFaxHds7TaKc6pvg1vdiNnhkiFWNJPZRQ6EmpWAFAcHhX5OclJ7UB53OyCoin8BzVCQdTRq3CA41Dh2NR0xcvd3z6w5zf127qSxayXQBbi5gK31dS6lJx4IeKQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQgn9kBN; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715149835; x=1746685835;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=5jxRy94UaFRt03ZEYe2d4KvQGZLYJ8qOnRbCZ8mahzk=;
+  b=TQgn9kBNX2uiNerJtvLzEymcI8qFf6VKsADBDQIDoV+LOTtimW4NQFB5
+   A/AaUjbMHqURq68G0Znj172BM94zjEzNT2icP6cJTlkYOEXm90QCKdaZn
+   mQAP/iZYyuMIP/TYgeaoW8XDk7PA4/pk1+2SM24Mf+s79tfsPxiMJf7Dr
+   YHmluYgy8qDKy86MnKvlzFujdV1wJQ7/bRrWre49WOGAnB5xVGXGvD6Fg
+   xQeqdsuKREqjczdOQtbUMeqsighoN8PwEiuEZx68GS+BHQ58CVsEcPoIk
+   3e8SK4CaibBkqXlMnWlcb2Br8hKQL4OeiapVAaRyL28CBWHU+pgARCgMh
+   A==;
+X-CSE-ConnectionGUID: 8qyn6g5MRuSkoUTNh7uN7w==
+X-CSE-MsgGUID: t+FF2jRhSwO1XKRot+tMhw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10856015"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="10856015"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:30:34 -0700
+X-CSE-ConnectionGUID: aQ/0s7eNRzG6JHjbKHdLBg==
+X-CSE-MsgGUID: dak9a4neSL+mA6jf6j99og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="33330313"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:30:30 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Matthew Wilcox <willy@infradead.org>,  Chris
+ Li <chrisl@kernel.org>,  Barry Song <v-songbaohua@oppo.com>,  Ryan Roberts
+ <ryan.roberts@arm.com>,  Neil Brown <neilb@suse.de>,  Minchan Kim
+ <minchan@kernel.org>,  Hugh Dickins <hughd@google.com>,  David Hildenbrand
+ <david@redhat.com>,  Yosry Ahmed <yosryahmed@google.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 09/12] mm/swap: get the swap device offset directly
+In-Reply-To: <20240502084939.30250-2-ryncsn@gmail.com> (Kairui Song's message
+	of "Thu, 2 May 2024 16:49:36 +0800")
+References: <20240502084609.28376-1-ryncsn@gmail.com>
+	<20240502084939.30250-2-ryncsn@gmail.com>
+Date: Wed, 08 May 2024 14:28:38 +0800
+Message-ID: <87edaclsvd.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX6REbGjtm9_1NMA--.61952S14
-X-Coremail-Antispam: 1UD129KBjvJXoW3WF4kCw4rGr1fuFWxKFykXwb_yoW7Zw4Upr
-	Z3AF1rGr15Ww18ua1ftr15ZF1fK3WjyFW7Kr93GryrA34DCrn3tF1UJF1avas8trZ7Wr1r
-	XF4jqry8ua1IkrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUA
-	rcfUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=ascii
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Kairui Song <ryncsn@gmail.com> writes:
 
-After calling the ext4_da_map_blocks(), a delalloc extent state could
-be identified through the EXT4_MAP_DELAYED flag in map. So factor out
-buffer_head related handles in ext4_da_map_blocks(), make this function
-buffer_head unaware and becomes a common helper, and also update the
-stale function commtents, preparing for the iomap da write path in the
-future.
+> From: Kairui Song <kasong@tencent.com>
+>
+> folio_file_pos and page_file_offset are for mixed usage of swap cache
+> and page cache, it can't be page cache here, so introduce a new helper
+> to get the swap offset in swap device directly.
+>
+> Need to include swapops.h in mm/swap.h to ensure swp_offset is always
+> defined before use.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 63 ++++++++++++++++++++++++-------------------------
- 1 file changed, 31 insertions(+), 32 deletions(-)
+LGTM!  Thanks!
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index c56386d1b10d..1dba5337382a 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1745,36 +1745,32 @@ static int ext4_insert_delayed_blocks(struct inode *inode, ext4_lblk_t lblk,
- }
- 
- /*
-- * This function is grabs code from the very beginning of
-- * ext4_map_blocks, but assumes that the caller is from delayed write
-- * time. This function looks up the requested blocks and sets the
-- * buffer delay bit under the protection of i_data_sem.
-+ * Looks up the requested blocks and sets the delalloc extent map.
-+ * First try to look up for the extent entry that contains the requested
-+ * blocks in the extent status tree without i_data_sem, then try to look
-+ * up for the ondisk extent mapping with i_data_sem in read mode,
-+ * finally hold i_data_sem in write mode, looks up again and add a
-+ * delalloc extent entry if it still couldn't find any extent. Pass out
-+ * the mapped extent through @map and return 0 on success.
-  */
--static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
--			      struct buffer_head *bh)
-+static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
- {
- 	struct extent_status es;
- 	int retval;
--	sector_t invalid_block = ~((sector_t) 0xffff);
- #ifdef ES_AGGRESSIVE_TEST
- 	struct ext4_map_blocks orig_map;
- 
- 	memcpy(&orig_map, map, sizeof(*map));
- #endif
- 
--	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
--		invalid_block = ~0;
--
- 	map->m_flags = 0;
- 	ext_debug(inode, "max_blocks %u, logical block %lu\n", map->m_len,
- 		  (unsigned long) map->m_lblk);
- 
- 	/* Lookup extent status tree firstly */
- 	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
--		retval = es.es_len - (map->m_lblk - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
-+		map->m_len = min_t(unsigned int, map->m_len,
-+				   es.es_len - (map->m_lblk - es.es_lblk));
- 
- 		if (ext4_es_is_hole(&es))
- 			goto add_delayed;
-@@ -1784,10 +1780,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		 * Delayed extent could be allocated by fallocate.
- 		 * So we need to check it.
- 		 */
--		if (ext4_es_is_delayed(&es) && !ext4_es_is_unwritten(&es)) {
--			map_bh(bh, inode->i_sb, invalid_block);
--			set_buffer_new(bh);
--			set_buffer_delay(bh);
-+		if (ext4_es_is_delonly(&es)) {
-+			map->m_flags |= EXT4_MAP_DELAYED;
- 			return 0;
- 		}
- 
-@@ -1802,7 +1796,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- #ifdef ES_AGGRESSIVE_TEST
- 		ext4_map_blocks_es_recheck(NULL, inode, map, &orig_map, 0);
- #endif
--		return retval;
-+		return 0;
- 	}
- 
- 	/*
-@@ -1816,7 +1810,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		retval = ext4_map_query_blocks(NULL, inode, map);
- 	up_read(&EXT4_I(inode)->i_data_sem);
- 	if (retval)
--		return retval;
-+		return retval < 0 ? retval : 0;
- 
- add_delayed:
- 	down_write(&EXT4_I(inode)->i_data_sem);
-@@ -1828,10 +1822,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 	 * the extent status tree.
- 	 */
- 	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
--		retval = es.es_len - (map->m_lblk - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
-+		map->m_len = min_t(unsigned int, map->m_len,
-+				   es.es_len - (map->m_lblk - es.es_lblk));
- 
- 		if (!ext4_es_is_hole(&es)) {
- 			up_write(&EXT4_I(inode)->i_data_sem);
-@@ -1841,18 +1833,14 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		retval = ext4_map_query_blocks(NULL, inode, map);
- 		if (retval) {
- 			up_write(&EXT4_I(inode)->i_data_sem);
--			return retval;
-+			return retval < 0 ? retval : 0;
- 		}
- 	}
- 
-+	map->m_flags |= EXT4_MAP_DELAYED;
- 	retval = ext4_insert_delayed_blocks(inode, map->m_lblk, map->m_len);
- 	up_write(&EXT4_I(inode)->i_data_sem);
--	if (retval)
--		return retval;
- 
--	map_bh(bh, inode->i_sb, invalid_block);
--	set_buffer_new(bh);
--	set_buffer_delay(bh);
- 	return retval;
- }
- 
-@@ -1872,11 +1860,15 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 			   struct buffer_head *bh, int create)
- {
- 	struct ext4_map_blocks map;
-+	sector_t invalid_block = ~((sector_t) 0xffff);
- 	int ret = 0;
- 
- 	BUG_ON(create == 0);
- 	BUG_ON(bh->b_size != inode->i_sb->s_blocksize);
- 
-+	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
-+		invalid_block = ~0;
-+
- 	map.m_lblk = iblock;
- 	map.m_len = 1;
- 
-@@ -1885,10 +1877,17 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 	 * preallocated blocks are unmapped but should treated
- 	 * the same as allocated blocks.
- 	 */
--	ret = ext4_da_map_blocks(inode, &map, bh);
--	if (ret <= 0)
-+	ret = ext4_da_map_blocks(inode, &map);
-+	if (ret < 0)
- 		return ret;
- 
-+	if (map.m_flags & EXT4_MAP_DELAYED) {
-+		map_bh(bh, inode->i_sb, invalid_block);
-+		set_buffer_new(bh);
-+		set_buffer_delay(bh);
-+		return 0;
-+	}
-+
- 	map_bh(bh, inode->i_sb, map.m_pblk);
- 	ext4_update_bh_state(bh, map.m_flags);
- 
--- 
-2.39.2
+Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
 
+> ---
+>  mm/page_io.c | 6 +++---
+>  mm/swap.h    | 9 +++++++++
+>  2 files changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 46c603dddf04..a360857cf75d 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -280,7 +280,7 @@ static void sio_write_complete(struct kiocb *iocb, long ret)
+>  		 * be temporary.
+>  		 */
+>  		pr_err_ratelimited("Write error %ld on dio swapfile (%llu)\n",
+> -				   ret, page_file_offset(page));
+> +				   ret, swap_dev_pos(page_swap_entry(page)));
+>  		for (p = 0; p < sio->pages; p++) {
+>  			page = sio->bvec[p].bv_page;
+>  			set_page_dirty(page);
+> @@ -299,7 +299,7 @@ static void swap_writepage_fs(struct folio *folio, struct writeback_control *wbc
+>  	struct swap_iocb *sio = NULL;
+>  	struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>  	struct file *swap_file = sis->swap_file;
+> -	loff_t pos = folio_file_pos(folio);
+> +	loff_t pos = swap_dev_pos(folio->swap);
+>  
+>  	count_swpout_vm_event(folio);
+>  	folio_start_writeback(folio);
+> @@ -430,7 +430,7 @@ static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
+>  {
+>  	struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>  	struct swap_iocb *sio = NULL;
+> -	loff_t pos = folio_file_pos(folio);
+> +	loff_t pos = swap_dev_pos(folio->swap);
+>  
+>  	if (plug)
+>  		sio = *plug;
+> diff --git a/mm/swap.h b/mm/swap.h
+> index fc2f6ade7f80..82023ab93205 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -5,6 +5,7 @@
+>  struct mempolicy;
+>  
+>  #ifdef CONFIG_SWAP
+> +#include <linux/swapops.h> /* for swp_offset */
+>  #include <linux/blk_types.h> /* for bio_end_io_t */
+>  
+>  /* linux/mm/page_io.c */
+> @@ -31,6 +32,14 @@ extern struct address_space *swapper_spaces[];
+>  	(&swapper_spaces[swp_type(entry)][swp_offset(entry) \
+>  		>> SWAP_ADDRESS_SPACE_SHIFT])
+>  
+> +/*
+> + * Return the swap device position of the swap entry.
+> + */
+> +static inline loff_t swap_dev_pos(swp_entry_t entry)
+> +{
+> +	return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
+> +}
+> +
+>  void show_swap_cache_info(void);
+>  bool add_to_swap(struct folio *folio);
+>  void *get_shadow_from_swap_cache(swp_entry_t entry);
 
