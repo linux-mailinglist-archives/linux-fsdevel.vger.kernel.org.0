@@ -1,292 +1,341 @@
-Return-Path: <linux-fsdevel+bounces-19043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C487A8BF954
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:11:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915FF8BF994
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753EB283D94
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 09:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48C7E281BCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 09:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468BF745F0;
-	Wed,  8 May 2024 09:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F52E757FF;
+	Wed,  8 May 2024 09:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bX0bqgBf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eZ7gz2c0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038585467A;
-	Wed,  8 May 2024 09:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715159452; cv=fail; b=C3Pp3MJgaZaOL6rk96IF5pH/iNSNOV0Tp5y9j8w+Giohe8yJ3aP7dGeEMKZ2dwrJzqYiwmRPYFJpCkMrWTe2ymSGXtdupXCUShc20KOur2STFZaBeU5OIiX0jMXwQe2iokthGf1z3puwDuehtU5MxBRJ5q6VcPYkqgdcyYckBfA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715159452; c=relaxed/simple;
-	bh=02WweL0DaLOS4y2Bo4Q3EZ8A/11Dlp5zqGur+e0Ashs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kvM8sCGoYLHBW6KR1sgXYJIJp/uXK82Tz5BNQanlnNgQu+hPZY/7UDxvK1wuc6JypMKG7gX6eSAaGpgKDYTAKiDxBHuP/m+Y4qvmOpKkJk7h7fb6FPG234c8pRRJbW+rDUbPKIAjGDHzI/oD3BdTWdy7bUYUCbEMObjPlxgkbag=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bX0bqgBf; arc=fail smtp.client-ip=40.107.220.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=My5qhxAmzVmdgBh79qKVHVfMdJznU7H4jbVf33VvRviwNZasSFZ4kljcBllCYda8j8eQ3X7onCR2xjKB7iJA33MS0ZSFXHwt05q8XUJBF5Q4xXPWF1YzLzYhcsqDbF+2PjOLznUxwDr1R9ZLCDb5ufh7PEq2G91Xqgw/ya8hSMnsa7yQpRiVboQnMQPwHR9d6ngd4HfQLhuzXZv1y2jTQl3b2Gj9cZBhUk/7esOM17nqYXIqoWzzIFp8mjfCWomDmGk5owr+9fokbwdUhNNnnctJA2YFYL3um+vw8toxL2C+LsgAXEIOlORtTRp9t7fOgGx0OaQSN/EkTBGO2LS7Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UU6nmZFAcOIP94F1tbjaYt199MHcED5hdIHfXhKNcMQ=;
- b=IJL8VItat2AzvOlXG0PxNdGucQlU6vpCLAlEoVuHE+Xsi5UDasZ4yk9L2TklnneB4JKgfG70HHL7e9mHcYx8uCcN6WfM5s0JE7KrrSl4vGhbo+CrVU09m5qpBadLGRjP62ae2tE+IXVVJ0TI0ezuupChsrQP39LY9GOk+ZCkzbfMnSf3xsyl8gKXnIXrMJSCLnDg4+W9lvpGJaT+fbnizjPhT6BA4zIHwRQCnnYwkprlduT7OAIYjpTqX0PDngDMp/KnG5RiSvrmBEWsDX0ZKNWBoudCggqoZY7654/3YsndKr0Plis5GaT1ylWkwuTPWbqVyNRR4YWMuBy8K4BWUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UU6nmZFAcOIP94F1tbjaYt199MHcED5hdIHfXhKNcMQ=;
- b=bX0bqgBfVTGRRlZ2VTKzDrxJC7OoAjIDqc8KYgxNblspLyj8fu/q3jsTfSyqnqZ/9AJnyVuxbtucp2vlyns8Ek+skn4KUnYGfKBM3g1m8/2ZatadvPvYYXqrFCUxKWK5nK2h7LWdee0aVDRP45bCkw11P84lOTiAsnMmUBAQ6J4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SJ2PR12MB7823.namprd12.prod.outlook.com (2603:10b6:a03:4c9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Wed, 8 May
- 2024 09:10:46 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7544.041; Wed, 8 May 2024
- 09:10:46 +0000
-Message-ID: <dab85d87-5b4d-400d-bf83-40008f053761@amd.com>
-Date: Wed, 8 May 2024 11:10:38 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Christian Brauner <brauner@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk,
- dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
- laura@labbott.name, linaro-mm-sig@lists.linaro.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, minhquangbui99@gmail.com,
- sumit.semwal@linaro.org,
- syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
- <20240508-unwiederholbar-abmarsch-1813370ad633@brauner>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20240508-unwiederholbar-abmarsch-1813370ad633@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0291.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e7::17) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAF54C3D0
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 09:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715160833; cv=none; b=RWgbUfc6erAt6j32x7O1EoSRwAFMOGmgLG9Og6sSbbvnQQ748bYAo6BRUDUyC+LOyPCNzUrwqLwu/UT1avYQtqsvmRkEOTgD5dv3jd4FKx7JMOl2ZCl1iZsB6irREXiGN3DI3UMWRKIRkv4d2v2f9jRB/zVpnay0QXq4DOVrxG0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715160833; c=relaxed/simple;
+	bh=3JTPFvTi5QNOO57XxP2Zb4zI2DcZkJpc3QoV8uwPi18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qY5KksZZVKGkB4aWdwiquLH/t2Pd7zUM9L2hcYtGqKf/QcCwn2epJHppyRFknU39GLbqT+SjCN+Ua3bwNmD2w9lesy9rvu9w6upxMJQWPpAKQU/bFbrH5A/psyF0IklS8Zyvyc0d3pmCRTweEG31Pei0zCaCaXIjkr7pdaMLhqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eZ7gz2c0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715160830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5BpyKhPhM0bO7gwrTFG/OBZUd+XBwM1xCgdv8wtCkPg=;
+	b=eZ7gz2c0hD6VAlTUJz+FrdAHlCyIjomEvtchE58HmcJZpcQVqN3h7mN5A3gBAiBLJ0X2YV
+	zP0GE5Q+jk3RHdllXX/HePb/GIAc8S2YecfoB89hZAdaDx+coUM53gIMnKgH6BDnY8k+fo
+	0pz07OVfSSJ7QSjLxiN1y5Iz8kGuB7c=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-434-E-FyYoNYOruW75rTK5pIKg-1; Wed, 08 May 2024 05:33:48 -0400
+X-MC-Unique: E-FyYoNYOruW75rTK5pIKg-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-34d99cc6c3dso2519137f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 02:33:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715160827; x=1715765627;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5BpyKhPhM0bO7gwrTFG/OBZUd+XBwM1xCgdv8wtCkPg=;
+        b=O1zCEa625Q9Gii8k+fMPpBlVJeMn+UXNNCCpocl+6Z27Xd1qmmZiIPJzSmDwCipVAN
+         sJ+sVa98+IzcFF/YvTPnis0rBBGe3r/9sAOwcUo3a/WBxdMaviPFWm73dgtBnkjssymA
+         kwWiznhTVmGqD3u4gvFhXM0eC2JjVi+dYHO+MNakpgiqITFSx3z9ZiCLCONiP8+s51lv
+         xEiwxwzzXGl6bqXkezHACBwYCiVNOlRPM8x6zRqPCZcTkDwlHgG9R8n928770Acl04uE
+         PSuXlYdDLv9KwYYaGNVa027HX4r43E6GBkM/4CKEYlR1CNkPBnnmLsakHqGy/s9Nnp6m
+         jJTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbRimCHyLKyd6gK3DYahbZzIyMdl3aEgXRMPkDJIzExAW293V25A37sYli0IpMRGOFDrjFyC1ln7MpxzE00P8Z+9gGcl18c9ApW+Z94Q==
+X-Gm-Message-State: AOJu0Yx3o2VLIt6f7R8fx+x2rZEhupBbXYEIaYvEk/LdzC1exFyNuDX4
+	YRLMXzjMdqhM7t+VYJSExJaS/CUn1r35idk85TNjuQ74qBnfmjcKRblFEpdP54EBfqy5DlRIsDo
+	Ui2bjdqkMVmlvZ+j+ub96xXfX3uqqb2Di4l98mcQ2prKUGf5jhP4pAyCpT8Elfyk=
+X-Received: by 2002:a5d:50ca:0:b0:34d:9ec4:c0fe with SMTP id ffacd0b85a97d-34fcb3abaf8mr1410568f8f.65.1715160827553;
+        Wed, 08 May 2024 02:33:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxEE0fzmn3JfOzg/ln7C3sSzZNNoFoF33hTmyhiMcSiODcxxcUc5ROYugstyDxpKPXQCeFzA==
+X-Received: by 2002:a5d:50ca:0:b0:34d:9ec4:c0fe with SMTP id ffacd0b85a97d-34fcb3abaf8mr1410550f8f.65.1715160827103;
+        Wed, 08 May 2024 02:33:47 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:3100:35c3:fc4b:669f:9ff9? (p200300cbc707310035c3fc4b669f9ff9.dip0.t-ipconnect.de. [2003:cb:c707:3100:35c3:fc4b:669f:9ff9])
+        by smtp.gmail.com with ESMTPSA id n12-20020a5d588c000000b0034cfb79220asm15011924wrf.116.2024.05.08.02.33.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 02:33:46 -0700 (PDT)
+Message-ID: <d9190747-953f-4c2a-9729-23d86044fb4d@redhat.com>
+Date: Wed, 8 May 2024 11:33:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ2PR12MB7823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 838e5af2-23e5-4d11-bab1-08dc6f3ebeca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|366007|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NjZrWkpCL0c1YXBYekpwUkdRRGlkWHRVSFJTMklHVTFJd1piejZZQVVhVlBB?=
- =?utf-8?B?Z1loSXduR1V1R1pXNWJXb3VFdnlnWDZaOGxsUzltWlZyMW5NUEFzWUlIT29a?=
- =?utf-8?B?ekFPa0w4T1hYaURXaFZLd2FUK0lQdm9OU2V6SS8rWVVXQ0hYc2VVNnNwdTBR?=
- =?utf-8?B?bDV3ZUErN2tJWlNkLzNpZC90blhoSmg2Y2xSODdEOWllNWxTaXo2ejU4S3p3?=
- =?utf-8?B?MzNOQU1ISUJFbHBmbjE5UUgzWGswa1EzaEQwWmdqOEIydG9KdGdxWVZ5dW1S?=
- =?utf-8?B?WlMreWUzMzZteEVDbTBZWjI2NGo2RWY5VkFJalg4SU93OGwwL1ZZZWFlN2l0?=
- =?utf-8?B?dDJuRE5nYUZVazErc2g2K3FrMnNWTmg1ZWltd0JyWWtObzZ2dXhObHVoK2sz?=
- =?utf-8?B?YllPbkhURW83bldPWFExVFVzV2lHQ0kycmhvWkZDNDBWSmNZNlpNOWdzZ2ND?=
- =?utf-8?B?YmljeDV2NGpPS3YrMk5LTU1rVUcxUTNScVppRTAzZGxFdzBlRnl1VkptVUo0?=
- =?utf-8?B?Q3BZUjhJT1FKYW1EbkhrbU0zRFhnWm85TVd3aWUvT0xqM21QNmpTRkRZT1dV?=
- =?utf-8?B?QmY4WVhNcHZYV2xWUWhEVHJlKzBMWHV0TFZ0cnJMeUpRdndtNWVBMDdaRHB1?=
- =?utf-8?B?RHVHM2NqVDlSU3ozdTdKak5KV3JlM05lbVNMNm1UTnd6SC8zNmdBWnpBV21n?=
- =?utf-8?B?L2ZMcVpBMTVyZGg2SlJhNUs5bm40bEZYaU1DZm1ub1NTODVyOVk4dFJaZzU3?=
- =?utf-8?B?Nk1MMW8xS1dBa3AxcGpSZlMrZE1FTTN4ays1TWJXd0k1cThwVDhKRVhPNXVs?=
- =?utf-8?B?MmZqcy9KSWxkSGd0UU5yREU3bzZFdW14ZUNEUTNDT3JHbWF2Um42djc1MTN1?=
- =?utf-8?B?YXRvNTVzSW5lSmpLTVdaRnlxeW5EN1d3REwxdlUrUFdkQWdDQmlKZHI2ekFQ?=
- =?utf-8?B?SVdqUVQybzRaU0Y0UCtmdFc0dXVIU3hxeGJFN3ZwTDhlT0Joc1RxczNhKzl5?=
- =?utf-8?B?eU1lWHQraGp3QmJjQ1lTNXFCQnoyZGE2VE1CV3RWODJxSytWVGN1QzdYemhI?=
- =?utf-8?B?UGM1ZllvMDFzUGhVcnNQR0lyNVpSaFZ6aDFmbmVkTnY3RWVwc2MwZC8vUFFL?=
- =?utf-8?B?eEJxNWNVWDBxM3lOblQyMUJzSzBqODRkWkhnejV6TlVkdGgzMUhxdXA2V054?=
- =?utf-8?B?VytvWHh3NmtVVEw3eS81RFhZS2tzRzExWEM1bWJpbHNySklRYUhaaDJQOWVt?=
- =?utf-8?B?R09MN0dXMlVDQ0pxSDh2amVBL0lSTVdvaENLbXFmVjNLbnhGeGhjeWJlaHo3?=
- =?utf-8?B?NzFFckVIR1huWFAwblZmMjhTRitKL2czUHVoSytzOHUrNk9xUDlpMnlsZDhr?=
- =?utf-8?B?UmhPd2ZHQUtzVVBWVlZ3RzFlQ2xVNWlaaS9uVkt1eTdpN2lnamtuMW1YWEZ4?=
- =?utf-8?B?cXpCd2xWVnBrZWNOTDNQWFJOZ1NhOXdqVi83MWVtQUx2WEdzWDRXSVlJblFI?=
- =?utf-8?B?ZHJQbk5HcVpaQXBWZnJSVlhvVFMvVTBjdDV5RHVBMnBYYXA5OXB4RkNndDQ5?=
- =?utf-8?B?VGhndGxpWCtXS01DMU9kbFZiTFNPYXIxemlyaEN1bHNsei8zZkh0Qy8xaVor?=
- =?utf-8?B?TEJRWlRUNk5nMnRpa2V5MHdwcWtjdGVCMXZFZXpJVko4UVNXSzNzdzdWSGxV?=
- =?utf-8?B?Rk5WOGVxYUhmbHVSYU9CUDlhNWVEMEV5UklRMlpJaGo4cm1sejVMM3V3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bVJ1Skt5b3UxU0dsQUZqam5GRC9FWnEvODUxWGR6bFhGMk1pbE5QZkYyb0hY?=
- =?utf-8?B?TmVhRExrMkpIbG1hT2NaWFNsREJJN25HZnJYZWVTNUNlbFVNbkVCNkpEY0wy?=
- =?utf-8?B?YUFxWjc1aUQ1cisxUmxZWHhtTjJjUkFLWVhScFE2NWllOFd5S0tkYUV6TVph?=
- =?utf-8?B?MUlxKzZGUU5KblJrUk1PRVRNMTJ5Z3hUWVA3M1JQcnZZemNWVnp1NmwrNkxC?=
- =?utf-8?B?N1JDZTRzZTdJRFBEYjFObHlhcy95R3gvZWZPMjJ5bGgwSVUxTmk0T0pmaFB1?=
- =?utf-8?B?Y0pXZ1J4TFlnVGRBaVg0RkNGRzhmWHFOS3B0bzM5ekdUdU1UQWlwODlBeFhx?=
- =?utf-8?B?RXhCTXRybHQ4SXBORG11WC9vaW5qYXY3L2gyTVo3V3A4bGdUSTZXTy9OQ1d3?=
- =?utf-8?B?TjhRWDNtREgraTdaNC9SNHZ5VUY4NFk0eEZ6N2J5c0FqdHdmVXMxMjVkbW41?=
- =?utf-8?B?SGg0TlpscUtuMHdPSFU2RzdVUUZkYW5RT29iV0FldlZCYmdnZGRjODhiUDdF?=
- =?utf-8?B?YXFxY2l2RzFkWjJidkxZZXNOYmlLYUJ1ODFrdE0rOEVzdE0vbWtRVVlqb0Fr?=
- =?utf-8?B?M0RIa0crelVsVzdyaWtzdWh4Q1BON1VjZzRlU0ZhOEpueVlFd2FIck1GWUNG?=
- =?utf-8?B?WitFalhjc01YVDB4UWVuTC9TQnZTSVg0eWhKbmJ6TTVtYVhpb2t2SXdoWURu?=
- =?utf-8?B?dXFzREp2UnNNWFRsUko4RGE1LzA5TFkxUTRrVndNNzA5bDI0VEhDN2JhM0d1?=
- =?utf-8?B?TlQ0MXdYL0ZtZHhNS0pqRTJJaXI3S1F4eUhuUUJuZW1sMzA3U2tlTGRmbjM5?=
- =?utf-8?B?NXUvelBpWlYzOFAvZVR2MGZKR25vMzJ5emduU2xPdWZ1Q2NpLzg2SllEcnc0?=
- =?utf-8?B?V05WKzJ0S1pubWdQSi9UNHhYR3RrSGR4THZyRGhEM2psVWViWEFoTlp5UkVC?=
- =?utf-8?B?UkJESUZsOExQS1NZdUtDZ3J5U1A0WEtib0JCK1Y5cTVFYzNYVjZienpINmhM?=
- =?utf-8?B?NWtTTXFxUW1STFFMMXFDcE9YaXF4bjVFUXNBZ2xlL3hvSlZDdURzZU0zekVJ?=
- =?utf-8?B?UkN2dEx5VFc5YTRQU0cwQ0M1VlcvcmNYUFNnTmJpQy8rcktiOW1lZ1czdzZD?=
- =?utf-8?B?ZnpaZERHVDI3bTF1ajBzdXZ6R3FUL1gzNzNhRzhQOTdtSHJWaGpMM3RJOTNR?=
- =?utf-8?B?NCtIalFBclp3Nmh1NXltT2ZjbkQ5R2hrSmYrYkVZd3FXeDdyOHB3TnltUzFm?=
- =?utf-8?B?bWQ2UTZJR1hQT21nU3JHTXZaWERXME04KzRMU0lIU3VxUjhMeEdNWjFsMnNJ?=
- =?utf-8?B?WUphSzFlR0haS09PT3RQRUtHR2FTZXlCMW1mVmVDZGYybFowVEJUOU1VSDlj?=
- =?utf-8?B?MUo4eGFqOEZwZXdadC91SGNVKzBnQ3dtWHdENkR3eFhTQkVKYkZ6YWRaVXk4?=
- =?utf-8?B?R2lxSDlURnZLL29SeUlwTjJ2VjBNU2hSb2NNNTlaemNFdFp4MVd5TC9wdS9B?=
- =?utf-8?B?bTlCVnROV3RFQUxKZStqNG81TEZrNWxrYVVjYTFCNjNsUlFLb0xyUUl4R3Ru?=
- =?utf-8?B?V2Z0MFRDUVZCaTFVSUg5Z1hqczRLcnhBV2xIODdaWW12enJtaWR6dVAraU1D?=
- =?utf-8?B?NU1OUDFmNkx6bk00b0EzUmJDelFKOE9PeW1XN2dWdmF3MXNDNkkvL2U0eCtl?=
- =?utf-8?B?TVVmOGZKaEtrY2FKSjFiSFVCS3B1RER5Z05CR1djRVdyY2Y2eFYxNHE3ckpm?=
- =?utf-8?B?Sndiek01bVladDY1WVoweThqcUpqUDZ2UjIxKzdnTzFvTE8xMjZKV3l2VzZo?=
- =?utf-8?B?dUpzNDZyMnAxVGt6N21jRHlrY3BleCtTSXVsL3pubkZPaFBlbzJaM0lwbnlN?=
- =?utf-8?B?M3RFcFlSVmd0ZVQvQTNVV3R5c2k1a2xIamdxNHQ3NlJuS1VLakJIbXl5UVpa?=
- =?utf-8?B?Qko3TnIzN0s5TWpjSkRLSWFic0V3SGt6VWVnZjBpc1pxbEwwT0dkMXZmQnE3?=
- =?utf-8?B?cUxXUXgzRXNib05HL0VGekt0MVBkZGN4dmRaeDdCVkhxc3IvUlFNZmN6WTRT?=
- =?utf-8?B?Q0djRFdVS1dhU3VwSE51dEFWTzNySUFsMmhrUmxodVEzT1hWVG8zb1l0YUJZ?=
- =?utf-8?Q?muW53MlUTzB9DpdAdoXPoFCDA?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 838e5af2-23e5-4d11-bab1-08dc6f3ebeca
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 09:10:46.0356
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vovw0iRn1C7grfMVmfzmyZUXc6aEup11el3Tw+QGk91mpYGH+aCDh8Gq4Rbc1ksJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7823
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH rfc 3/4] mm: filemap: move __lruvec_stat_mod_folio() out
+ of filemap_set_pte_range()
+To: Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240429072417.2146732-1-wangkefeng.wang@huawei.com>
+ <20240429072417.2146732-4-wangkefeng.wang@huawei.com>
+ <0bf097d2-6d2a-498b-a266-303f168b6221@redhat.com>
+ <e1b19d37-82ea-447b-b9da-0a714df2c632@huawei.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <e1b19d37-82ea-447b-b9da-0a714df2c632@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Am 08.05.24 um 10:23 schrieb Christian Brauner:
-> On Tue, May 07, 2024 at 07:45:02PM +0200, Christian König wrote:
->> Am 07.05.24 um 18:46 schrieb Linus Torvalds:
->>> On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
->>>> It's really annoying that on some distros/builds we don't have that, and
->>>> for gpu driver stack reasons we _really_ need to know whether a fd is the
->>>> same as another, due to some messy uniqueness requirements on buffer
->>>> objects various drivers have.
->>> It's sad that such a simple thing would require two other horrid
->>> models (EPOLL or KCMP).
+On 07.05.24 15:12, Kefeng Wang wrote:
+> 
+> 
+> On 2024/5/7 19:11, David Hildenbrand wrote:
+>> On 29.04.24 09:24, Kefeng Wang wrote:
+>>> Adding __folio_add_file_rmap_ptes() which don't update lruvec stat, it
+>>> is used in filemap_set_pte_range(), with it, lruvec stat updating is
+>>> moved into the caller, no functional changes.
 >>>
->>> There'[s a reason that KCMP is a config option - *some* of that is
->>> horrible code - but the "compare file descriptors for equality" is not
->>> that reason.
+>>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>>> ---
+>>>    include/linux/rmap.h |  2 ++
+>>>    mm/filemap.c         | 27 ++++++++++++++++++---------
+>>>    mm/rmap.c            | 16 ++++++++++++++++
+>>>    3 files changed, 36 insertions(+), 9 deletions(-)
 >>>
->>> Note that KCMP really is a broken mess. It's also a potential security
->>> hole, even for the simple things, because of how it ends up comparing
->>> kernel pointers (ie it doesn't just say "same file descriptor", it
->>> gives an ordering of them, so you can use KCMP to sort things in
->>> kernel space).
->>>
->>> And yes, it orders them after obfuscating the pointer, but it's still
->>> not something I would consider sane as a baseline interface. It was
->>> designed for checkpoint-restore, it's the wrong thing to use for some
->>> "are these file descriptors the same".
->>>
->>> The same argument goes for using EPOLL for that. Disgusting hack.
->>>
->>> Just what are the requirements for the GPU stack? Is one of the file
->>> descriptors "trusted", IOW, you know what kind it is?
->>>
->>> Because dammit, it's *so* easy to do. You could just add a core DRM
->>> ioctl for it. Literally just
->>>
->>>           struct fd f1 = fdget(fd1);
->>>           struct fd f2 = fdget(fd2);
->>>           int same;
->>>
->>>           same = f1.file && f1.file == f2.file;
->>>           fdput(fd1);
->>>           fdput(fd2);
->>>           return same;
->>>
->>> where the only question is if you also woudl want to deal with O_PATH
->>> fd's, in which case the "fdget()" would be "fdget_raw()".
->>>
->>> Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
->>> less hacky than relying on EPOLL or KCMP.
->>>
->>> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
->>> too, if this is possibly a more common thing. and not just DRM wants
->>> it.
->>>
->>> Would something like that work for you?
->> Well the generic approach yes, the DRM specific one maybe. IIRC we need to
->> be able to compare both DRM as well as DMA-buf file descriptors.
+>>> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+>>> index 7229b9baf20d..43014ddd06f9 100644
+>>> --- a/include/linux/rmap.h
+>>> +++ b/include/linux/rmap.h
+>>> @@ -242,6 +242,8 @@ void folio_add_anon_rmap_pmd(struct folio *,
+>>> struct page *,
+>>>            struct vm_area_struct *, unsigned long address, rmap_t flags);
+>>>    void folio_add_new_anon_rmap(struct folio *, struct vm_area_struct *,
+>>>            unsigned long address);
+>>> +int __folio_add_file_rmap_ptes(struct folio *, struct page *, int
+>>> nr_pages,
+>>> +        struct vm_area_struct *);
+>>>    void folio_add_file_rmap_ptes(struct folio *, struct page *, int
+>>> nr_pages,
+>>>            struct vm_area_struct *);
+>>>    #define folio_add_file_rmap_pte(folio, page, vma) \
+>>> diff --git a/mm/filemap.c b/mm/filemap.c
+>>> index 7019692daddd..3966b6616d02 100644
+>>> --- a/mm/filemap.c
+>>> +++ b/mm/filemap.c
+>>> @@ -3501,14 +3501,15 @@ static struct folio
+>>> *next_uptodate_folio(struct xa_state *xas,
+>>>    static void filemap_set_pte_range(struct vm_fault *vmf, struct folio
+>>> *folio,
+>>>                struct page *page, unsigned int nr, unsigned long addr,
+>>> -            unsigned long *rss)
+>>> +            unsigned long *rss, int *nr_mapped)
+>>>    {
+>>>        struct vm_area_struct *vma = vmf->vma;
+>>>        pte_t entry;
+>>>        entry = prepare_range_pte_entry(vmf, false, folio, page, nr, addr);
+>>> -    folio_add_file_rmap_ptes(folio, page, nr, vma);
+>>> +    *nr_mapped += __folio_add_file_rmap_ptes(folio, page, nr, vma);
+>>> +
+>>>        set_ptes(vma->vm_mm, addr, vmf->pte, entry, nr);
+>>>        /* no need to invalidate: a not-present page won't be cached */
+>>> @@ -3525,7 +3526,8 @@ static void filemap_set_pte_range(struct
+>>> vm_fault *vmf, struct folio *folio,
+>>>    static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
+>>>                struct folio *folio, unsigned long start,
+>>>                unsigned long addr, unsigned int nr_pages,
+>>> -            unsigned long *rss, unsigned int *mmap_miss)
+>>> +            unsigned long *rss, int *nr_mapped,
+>>> +            unsigned int *mmap_miss)
+>>>    {
+>>>        vm_fault_t ret = 0;
+>>>        struct page *page = folio_page(folio, start);
+>>> @@ -3558,7 +3560,8 @@ static vm_fault_t filemap_map_folio_range(struct
+>>> vm_fault *vmf,
+>>>            continue;
+>>>    skip:
+>>>            if (count) {
+>>> -            filemap_set_pte_range(vmf, folio, page, count, addr, rss);
+>>> +            filemap_set_pte_range(vmf, folio, page, count, addr,
+>>> +                          rss, nr_mapped);
+>>>                if (in_range(vmf->address, addr, count * PAGE_SIZE))
+>>>                    ret = VM_FAULT_NOPAGE;
+>>>            }
+>>> @@ -3571,7 +3574,8 @@ static vm_fault_t filemap_map_folio_range(struct
+>>> vm_fault *vmf,
+>>>        } while (--nr_pages > 0);
+>>>        if (count) {
+>>> -        filemap_set_pte_range(vmf, folio, page, count, addr, rss);
+>>> +        filemap_set_pte_range(vmf, folio, page, count, addr, rss,
+>>> +                      nr_mapped);
+>>>            if (in_range(vmf->address, addr, count * PAGE_SIZE))
+>>>                ret = VM_FAULT_NOPAGE;
+>>>        }
+>>> @@ -3583,7 +3587,7 @@ static vm_fault_t filemap_map_folio_range(struct
+>>> vm_fault *vmf,
+>>>    static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
+>>>            struct folio *folio, unsigned long addr,
+>>> -        unsigned long *rss, unsigned int *mmap_miss)
+>>> +        unsigned long *rss, int *nr_mapped, unsigned int *mmap_miss)
+>>>    {
+>>>        vm_fault_t ret = 0;
+>>>        struct page *page = &folio->page;
+>>> @@ -3606,7 +3610,7 @@ static vm_fault_t
+>>> filemap_map_order0_folio(struct vm_fault *vmf,
+>>>        if (vmf->address == addr)
+>>>            ret = VM_FAULT_NOPAGE;
+>>> -    filemap_set_pte_range(vmf, folio, page, 1, addr, rss);
+>>> +    filemap_set_pte_range(vmf, folio, page, 1, addr, rss, nr_mapped);
+>>>        return ret;
+>>>    }
+>>> @@ -3646,6 +3650,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>>>        folio_type = mm_counter_file(folio);
+>>>        do {
+>>>            unsigned long end;
+>>> +        int nr_mapped = 0;
+>>>            addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
+>>>            vmf->pte += xas.xa_index - last_pgoff;
+>>> @@ -3655,11 +3660,15 @@ vm_fault_t filemap_map_pages(struct vm_fault
+>>> *vmf,
+>>>            if (!folio_test_large(folio))
+>>>                ret |= filemap_map_order0_folio(vmf,
+>>> -                    folio, addr, &rss, &mmap_miss);
+>>> +                    folio, addr, &rss, &nr_mapped,
+>>> +                    &mmap_miss);
+>>>            else
+>>>                ret |= filemap_map_folio_range(vmf, folio,
+>>>                        xas.xa_index - folio->index, addr,
+>>> -                    nr_pages, &rss, &mmap_miss);
+>>> +                    nr_pages, &rss, &nr_mapped,
+>>> +                    &mmap_miss);
+>>> +
+>>> +        __lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr_mapped);
+>>>            folio_unlock(folio);
+>>>            folio_put(folio);
+>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>> index 2608c40dffad..55face4024f2 100644
+>>> --- a/mm/rmap.c
+>>> +++ b/mm/rmap.c
+>>> @@ -1452,6 +1452,22 @@ static __always_inline void
+>>> __folio_add_file_rmap(struct folio *folio,
+>>>            mlock_vma_folio(folio, vma);
+>>>    }
+>>> +int __folio_add_file_rmap_ptes(struct folio *folio, struct page *page,
+>>> +        int nr_pages, struct vm_area_struct *vma)
+>>> +{
+>>> +    int nr, nr_pmdmapped = 0;
+>>> +
+>>> +    VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
+>>> +
+>>> +    nr = __folio_add_rmap(folio, page, nr_pages, RMAP_LEVEL_PTE,
+>>> +                  &nr_pmdmapped);
+>>> +
+>>> +    /* See comments in folio_add_anon_rmap_*() */
+>>> +    if (!folio_test_large(folio))
+>>> +        mlock_vma_folio(folio, vma);
+>>> +
+>>> +    return nr;
+>>> +}
 >>
->> The basic problem userspace tries to solve is that drivers might get the
->> same fd through two different code paths.
->>
->> For example application using OpenGL/Vulkan for rendering and VA-API for
->> video decoding/encoding at the same time.
->>
->> Both APIs get a fd which identifies the device to use. It can be the same,
->> but it doesn't have to.
->>
->> If it's the same device driver connection (or in kernel speak underlying
->> struct file) then you can optimize away importing and exporting of buffers
->> for example.
->>
->> Additional to that it makes cgroup accounting much easier because you don't
->> count things twice because they are shared etc...
-> One thing to keep in mind is that a generic VFS level comparing function
-> will only catch the obvious case where you have dup() equivalency as
-> outlined above by Linus. That's what most people are interested in and
-> that could easily replace most kcmp() use-cases for comparing fds.
->
-> But, of course there's the case where you have two file descriptors
-> referring to two different files that reference the same underlying
-> object (usually stashed in file->private_data).
->
-> For most cases that problem can ofc be solved by comparing the
-> underlying inode. But that doesn't work for drivers using the generic
-> anonymous inode infrastructure because it uses the same inode for
-> everything or for cases where the same underlying object can even be
-> represented by different inodes.
->
-> So for such cases a driver specific ioctl() to compare two fds will
-> be needed in addition to the generic helper.
+>> I'm not really a fan :/ It does make the code more complicated, and it
+>> will be harder to extend if we decide to ever account differently (e.g.,
+>> NR_SHMEM_MAPPED, additional tracking for mTHP etc).
+> 
+> If more different accounts, this may lead to bad scalability.
 
-At least for the DRM we already have some solution for that, see 
-drmGetPrimaryDeviceNameFromFd() for an example.
+We already do it for PMD mappings.
 
-Basically the file->private_data is still something different, but we 
-use this to figure out if we have two file descriptors (with individual 
-struct files underneath) pointing to the same hw driver.
+>>
+>> With large folios we'll be naturally batching already here, and I do
+> 
+> Yes, it is batched with large folios，but our fs is ext4/tmpfs, there
+> are not support large folio or still upstreaming.
 
-This is important if you need to know if just importing/exporting of 
-DMA-buf handles between the two file descriptors is enough or if you 
-deal with two different hw devices and need to do stuff like format 
-conversion etc...
+Okay, so that will be sorted out sooner or later.
 
-Regards,
-Christian.
+> 
+>> wonder, if this is really worth for performance, or if we could find
+>> another way of batching (let the caller activate batching and drain
+>> afterwards) without exposing these details to the caller.
+> 
+> It does reduce latency when batch lruvec stat updating without large
+> folio, but I can't find better way, or let's wait for the large folio
+> support on ext4/tmpfs, I also Cced memcg maintainers in patch4 to see if
+> there are any other ideas.
+
+I'm not convinced this benefit here is worth making the code more 
+complicated.
+
+Maybe we can find another way to optimize this batching in rmap code 
+without having to leak these details to the callers.
+
+For example, we could pass an optional batching structure to all rmap 
+add/rel functions that would collect these stat updates. Then we could 
+have one function to flush it and update the counters combined.
+
+Such batching could be beneficial also for page unmapping/zapping where 
+we might unmap various different folios in one go.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
