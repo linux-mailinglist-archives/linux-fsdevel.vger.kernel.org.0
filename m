@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-19012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4158BF675
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 08:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCAE8BF672
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 08:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE76E1C2143E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 06:43:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB632821D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 06:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B10286AF;
-	Wed,  8 May 2024 06:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02B024B21;
+	Wed,  8 May 2024 06:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WcPIgnjW"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bHBGh0f5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13771E868
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D682720DCC
 	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 06:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715150586; cv=none; b=UMkrur1scCfVMjOkrh0W5TyOYdb335SQlBY87tnuG+cUb5ApjVciJl6KluPUrggXOFu/8kee9oLpZTc8NB/MThg+xXgELuSutoUqsb6RYyf4j3vse7IehYG1R7cINtS7tvJajdhf9M3wE98TE2Zn5POUJtYuQdTzdAWVm8/eXz4=
+	t=1715150585; cv=none; b=kLgf+Aw44wp8h9mN804zu6T0oNqhPF0N/mMPzJjiaoTqlDWRzaPlRx0zA8yeXhCGOeaeIdMlGhpYKPz5h9K61p6q742KntAswEoh4DhMQVVp+wu7A1G+5gl4Q/EVlWX02KnqhNxm63biY2oU3FNoJKFxzKfzQEklX7q280WRBXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715150586; c=relaxed/simple;
-	bh=c/LfkIG3OKV3mBy7vmW75Qz2v/e3S6TjvRxEBwxCngg=;
+	s=arc-20240116; t=1715150585; c=relaxed/simple;
+	bh=6zGn5vkpjtaojVe8dx4j692J0Ws0QzGVzTmjYahWxKY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z7UK3gpU+BnhHSV9cBGvVKWh2LAF8dXOlzy9jH1W7oK96q1gjiad5kEsM78vO472XX4My5to3Q8FAfQVnEuMFbVBGraZzkAge7YwSbt8vpXavHOtbaqdhWuBwDhuE6Ht/0LiTaDCECo6UGjrk3lpeGdPnW8dZsvLJt4m42YcBNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WcPIgnjW; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=mn0VbgxT/j2bRpljXOtg1bXkS82LICAnZewHRqzuB7EGKtUiPp0Ok12OHse30emPM5jIxjDoGo0J7gWDdZzy8q2g09ObdsFhHLxytr5W8VHMUgB7fSLN2FjcvWGpqrNHZWjP7pKaDQjYnZWKaJl3Y1P2TvdNxlVArzLURNqOM/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bHBGh0f5; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=2BLWewjM35s5NMQmlkBJWYQMcLrPzus45j304Q0c6m0=; b=WcPIgnjWCopFi/mlZeg0ju5qAl
-	xftBUdmbR6rzxBH1U3omp6/ZRdhdX/kHRZzdMGD5r2Qe/uDEPFnWrHd9uOl9VbdfcL1iK4imZKsTU
-	gUSHbp+iDKu8dcXGhAoWMq/W2+ORRHrv2ZwdzFa3M26blB/q7XV+p3Uu4Qw+ctz+oSTZcXdBn6UIR
-	+7QGzjsuC1iW/VfyEVU1XtCnXKLHxWvn0QxYfd9dxPF6c5wHBrd0IiNnbqOFYeG+BPpBX+ExQRX2z
-	q0Lr9ixeawSNxVEUuR0b/346kqvykiTmI06ThyA6q7QP7i+Oz82AHqT6Qyow89Rn93fvDuLGMaJHp
-	C44cRPcQ==;
+	bh=A80ql/fjXXwEvWMM6caYngfY8ceo3/ObTxd/L6fIV3I=; b=bHBGh0f57iuv6877li4O+Upyhm
+	zoXMenlVXohfq/8Jz914iEyR8ctZ98mTXqEOe2H8hlb64EvhyqKxdIwQ2xqmHtv7nwRfAOx3F+ADp
+	G64B1OchgUwNKq82HuN4jA8u7TrHK025YekWHhFfopAgjMCeZp81pe9Qc0jUV7tHbaibPGwSYwNgK
+	zE8YKE978zply3AGnYzIfam4qwME8QWPD1aPvTwhY+ASjutNB8JcmkjUs1kA/XtGhsyxz+RK3+1d4
+	mbAzKFFoiNNfB76KLPCQz4+6TeCX0PjMdVidrT66YbEMzuzj7u6PLFNv860QAGfKikrG04pJRDIaf
+	PjW9J48w==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s4b14-00FvpG-0w;
+	id 1s4b14-00FvpI-1H;
 	Wed, 08 May 2024 06:43:02 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: axboe@kernel.dk,
 	brauner@kernel.org,
 	hch@lst.de
-Subject: [PATCHES part 1 4/7] dm-vdo: use bdev_nr_bytes(bdev) instead of i_size_read(bdev->bd_inode)
-Date: Wed,  8 May 2024 07:42:58 +0100
-Message-Id: <20240508064301.3797191-4-viro@zeniv.linux.org.uk>
+Subject: [PATCHES part 1 5/7] block2mtd: prevent direct access of bd_inode
+Date: Wed,  8 May 2024 07:42:59 +0100
+Message-Id: <20240508064301.3797191-5-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240508064301.3797191-1-viro@zeniv.linux.org.uk>
 References: <20240508063522.GO2118490@ZenIV>
@@ -65,52 +65,51 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-going to be faster, actually - shift is cheaper than dereference...
+From: Yu Kuai <yukuai3@huawei.com>
 
+All we need is size, and that can be obtained via bdev_nr_bytes()
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Link: https://lore.kernel.org/r/20240411145346.2516848-9-viro@zeniv.linux.org.uk
-Reviewed-by: Matthew Sakai <msakai@redhat.com>
+Link: https://lore.kernel.org/r/20240411145346.2516848-11-viro@zeniv.linux.org.uk
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/md/dm-vdo/dm-vdo-target.c      | 4 ++--
- drivers/md/dm-vdo/indexer/io-factory.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/mtd/devices/block2mtd.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-vdo/dm-vdo-target.c b/drivers/md/dm-vdo/dm-vdo-target.c
-index 5a4b0a927f56..b423bec6458b 100644
---- a/drivers/md/dm-vdo/dm-vdo-target.c
-+++ b/drivers/md/dm-vdo/dm-vdo-target.c
-@@ -878,7 +878,7 @@ static int parse_device_config(int argc, char **argv, struct dm_target *ti,
+diff --git a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
+index caacdc0a3819..b06c8dd51562 100644
+--- a/drivers/mtd/devices/block2mtd.c
++++ b/drivers/mtd/devices/block2mtd.c
+@@ -265,6 +265,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
+ 	struct file *bdev_file;
+ 	struct block_device *bdev;
+ 	struct block2mtd_dev *dev;
++	loff_t size;
+ 	char *name;
+ 
+ 	if (!devname)
+@@ -291,7 +292,8 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
+ 		goto err_free_block2mtd;
  	}
  
- 	if (config->version == 0) {
--		u64 device_size = i_size_read(config->owned_device->bdev->bd_inode);
-+		u64 device_size = bdev_nr_bytes(config->owned_device->bdev);
- 
- 		config->physical_blocks = device_size / VDO_BLOCK_SIZE;
+-	if ((long)bdev->bd_inode->i_size % erase_size) {
++	size = bdev_nr_bytes(bdev);
++	if ((long)size % erase_size) {
+ 		pr_err("erasesize must be a divisor of device size\n");
+ 		goto err_free_block2mtd;
  	}
-@@ -1011,7 +1011,7 @@ static void vdo_status(struct dm_target *ti, status_type_t status_type,
+@@ -309,7 +311,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
  
- static block_count_t __must_check get_underlying_device_block_count(const struct vdo *vdo)
- {
--	return i_size_read(vdo_get_backing_device(vdo)->bd_inode) / VDO_BLOCK_SIZE;
-+	return bdev_nr_bytes(vdo_get_backing_device(vdo)) / VDO_BLOCK_SIZE;
- }
+ 	dev->mtd.name = name;
  
- static int __must_check process_vdo_message_locked(struct vdo *vdo, unsigned int argc,
-diff --git a/drivers/md/dm-vdo/indexer/io-factory.c b/drivers/md/dm-vdo/indexer/io-factory.c
-index 515765d35794..1bee9d63dc0a 100644
---- a/drivers/md/dm-vdo/indexer/io-factory.c
-+++ b/drivers/md/dm-vdo/indexer/io-factory.c
-@@ -90,7 +90,7 @@ void uds_put_io_factory(struct io_factory *factory)
- 
- size_t uds_get_writable_size(struct io_factory *factory)
- {
--	return i_size_read(factory->bdev->bd_inode);
-+	return bdev_nr_bytes(factory->bdev);
- }
- 
- /* Create a struct dm_bufio_client for an index region starting at offset. */
+-	dev->mtd.size = bdev->bd_inode->i_size & PAGE_MASK;
++	dev->mtd.size = size & PAGE_MASK;
+ 	dev->mtd.erasesize = erase_size;
+ 	dev->mtd.writesize = 1;
+ 	dev->mtd.writebufsize = PAGE_SIZE;
 -- 
 2.39.2
 
