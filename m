@@ -1,105 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-19039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE7E8BF85E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:21:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38008BF86F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1192F1C22070
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 08:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32AD01F24293
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 08:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E65145BE3;
-	Wed,  8 May 2024 08:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8597247A7D;
+	Wed,  8 May 2024 08:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Rsfkx9LY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gozhegQh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6031DA53
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 08:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABB03FBBD;
+	Wed,  8 May 2024 08:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715156490; cv=none; b=XZfROOIOTjRlVz65DC+dMznWzsjuPRs9LUIIMMJ0eiQpF9/NgWY3LFAGCG2SvzXzsFlrbMRw7YSIAAOX6MjrtwGpBJdhQKUcstYelXBDrR4CONvA+ioQ0mzx0vvpEZHfX42xpwr7vFYZj8Pfz6ov1b2KqZyuyNSVKmFR7LD16qc=
+	t=1715156620; cv=none; b=C2Q+EXcYULVEqj5/n9ipsdtGT+2B5Ms0U50uJKId4gFzjXp95ils/+w1gd8a5somAuYbuo/jTA3GEe6gXGiuVwU2pgx6bTuCApIT4lA+wIxH17mYeBgB58IbXWXNna1yEXtqQ2p/M27T7BR7mC5nf8s+LDz5cqKU2QH1uGTPZdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715156490; c=relaxed/simple;
-	bh=HL7En7OBTcPuMbQQapaF7sp8ONja5eBac9REyP9vuAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jq99jZM59HmwpPFRQSsBo5DulVXsk7MnpSL8/CpzRYnir5aX0tU2N34t4hMgc/rPL+eBe5OigetJoHty7YJiqHRR0+Yea1z9m9guAvvy4HFmrbyV4UNV9p+dSmqbflfm2g9OCEaQRuXfbdvwr77nO1wtmPn/ZxDsSZzKuHRQSak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Rsfkx9LY; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a9d66a51so922018866b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 01:21:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715156486; x=1715761286; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ixA6ZpFhbriwN643+FDPmx+8B3vSAEW3xMrMho4mmU=;
-        b=Rsfkx9LYtrTVtrmzCEStY9k34OZFYmQfzWN8bDhMq5PH2SyXPKkVxKhKfZArDGVyna
-         al/fwPeQqBRvmDVtZ/mBI4gFyeoJTWMdKJ0p9OFY2iKMAcPxYEVVV42NQlSzQKRNxO35
-         dyugODuQnoWWgBhZn84RjeCxi+8ztcSw00WdY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715156486; x=1715761286;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3ixA6ZpFhbriwN643+FDPmx+8B3vSAEW3xMrMho4mmU=;
-        b=WxBMv0SDCAGdsEBmn/maIqRzhb00r3ILYMGVCNqlhW7ZNBDhSKUZbUURDdpeC4nUl/
-         r2xwmIchIIg2wHndYLx4eIl8f6Hp608YBWY+fRotmpGDepz65LRdjwvhL2yRi7eGdGin
-         q8wZHcSljoTvJ8QnfZ+9FBjic+S5n81Vt33LO0AG7cHhT/210069LNYBaCQSrqdCjKZK
-         bSbVX5YYY2eHfeIeUbfQ9FxPke7SGvCtn2F6BJ2yH7iTsgXt085zLisg8esoNTBZHMEd
-         GarcpkLuZn6LH3vCCrYW5xDeq+bt2dgwoULdhJk3aBGvULgZiQ3LJ4EjBSa1jZk4V1md
-         sn0w==
-X-Forwarded-Encrypted: i=1; AJvYcCX3BJi5kaaCW5YVZXSszwyg5cb57M1VAiNJPSQ1wDOBp3wA/xb/8Muv3EibNk78j645Wuz0JXbGNWZDKhP6wYl/l418vRNjUS2Jgdliew==
-X-Gm-Message-State: AOJu0Yz4kXurIDYJrrv5+1zm59E//N57eHIsRvPkuCdFebSFf4X3Q/Hn
-	kZTdslDXr2hJSRNrZ3oXQgHCUvmqtQPiXlD6wyaftY15ROvDr4uwDezv3YnAAd2+4x2L/4PLTBl
-	Z72lTr2hjnWQYnoTbjGYnCJGoxBXSgU0W5Mx9UQ==
-X-Google-Smtp-Source: AGHT+IEUwgNbxTRR94GvmkXfJy+HcI6FvAeWKvWbx/fHAbKjVPAPYyyg84Vq8bpWAtvA2x+cdeFgAm8Ossyl3nHARjc=
-X-Received: by 2002:a17:906:f298:b0:a52:2486:299f with SMTP id
- a640c23a62f3a-a59fb9e9959mr112631066b.71.1715156486167; Wed, 08 May 2024
- 01:21:26 -0700 (PDT)
+	s=arc-20240116; t=1715156620; c=relaxed/simple;
+	bh=K8F6N9JpOlsWc+Jn9CZxhBMEiSzjK/YkQAeLoeEmCRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrbDqnp8I4mpHSuCvXVFHZDl/1nWNinCvZA0sGEpraz0k6n/KQE9m/aA4q2q2EbQFZCYJ6HG6kfvCeypqti/xT+s96RwakGA1ovcqfXV1baVvSpEfpRu8sj8vXgw/thjjLiJFmF8O7xx6PgLzvPa9YAWyVmJ3+Xp7EXsyGzvRDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gozhegQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4618EC113CC;
+	Wed,  8 May 2024 08:23:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715156619;
+	bh=K8F6N9JpOlsWc+Jn9CZxhBMEiSzjK/YkQAeLoeEmCRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gozhegQh/sghCs3jhqNxNQD4Skq7ybLhYA9g5pbCyJMQHdidxIIMKkT+SAQjpOs1x
+	 r/+Pr+7vnfepnVBiy1k08ZJEVDf6YMabkKhnr5O8SeAezRaBUmxQy9Jq3JtOYtfO/2
+	 kUDALdXV0wDWjnHX5PVahvGNt9avtfV2GqzJFqlHX1nvQgyRiEcoJToY9tGhfTLqOu
+	 9LarS55PEg8RvFinUJkd96tqfJD3IBiwjJAH6jRv3I/gNUnOA5ivnIOHWjVPO7kWXc
+	 BpY1cmz3ga0wxomzIhkawH9Aoea71AjfKqY9a7UbKpIGStEvh7fs8DLobBPpwmCjP+
+	 hXaulBCK61CGg==
+Date: Wed, 8 May 2024 10:23:32 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com, 
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Message-ID: <20240508-unwiederholbar-abmarsch-1813370ad633@brauner>
+References: <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+ <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+ <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABOYnLwAe+hVUNe+bsYeKJJQ-G9svs7dR2ymZDh0PsfqFNMm2A@mail.gmail.com>
- <2625b40f-b6c5-2359-33fe-5c81e9a925a9@huaweicloud.com>
-In-Reply-To: <2625b40f-b6c5-2359-33fe-5c81e9a925a9@huaweicloud.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 8 May 2024 10:21:14 +0200
-Message-ID: <CAJfpegvGhtLSxOHUQQ95a3skqEgEPt+MzpBT8vOOdqWcRxPR5Q@mail.gmail.com>
-Subject: Re: WARNING in fuse_request_end
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: lee bruce <xrivendell7@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	yue sun <samsun1006219@gmail.com>, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
 
-On Tue, 7 May 2024 at 15:30, Hou Tao <houtao@huaweicloud.com> wrote:
+On Tue, May 07, 2024 at 07:45:02PM +0200, Christian König wrote:
+> Am 07.05.24 um 18:46 schrieb Linus Torvalds:
+> > On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > It's really annoying that on some distros/builds we don't have that, and
+> > > for gpu driver stack reasons we _really_ need to know whether a fd is the
+> > > same as another, due to some messy uniqueness requirements on buffer
+> > > objects various drivers have.
+> > It's sad that such a simple thing would require two other horrid
+> > models (EPOLL or KCMP).
+> > 
+> > There'[s a reason that KCMP is a config option - *some* of that is
+> > horrible code - but the "compare file descriptors for equality" is not
+> > that reason.
+> > 
+> > Note that KCMP really is a broken mess. It's also a potential security
+> > hole, even for the simple things, because of how it ends up comparing
+> > kernel pointers (ie it doesn't just say "same file descriptor", it
+> > gives an ordering of them, so you can use KCMP to sort things in
+> > kernel space).
+> > 
+> > And yes, it orders them after obfuscating the pointer, but it's still
+> > not something I would consider sane as a baseline interface. It was
+> > designed for checkpoint-restore, it's the wrong thing to use for some
+> > "are these file descriptors the same".
+> > 
+> > The same argument goes for using EPOLL for that. Disgusting hack.
+> > 
+> > Just what are the requirements for the GPU stack? Is one of the file
+> > descriptors "trusted", IOW, you know what kind it is?
+> > 
+> > Because dammit, it's *so* easy to do. You could just add a core DRM
+> > ioctl for it. Literally just
+> > 
+> >          struct fd f1 = fdget(fd1);
+> >          struct fd f2 = fdget(fd2);
+> >          int same;
+> > 
+> >          same = f1.file && f1.file == f2.file;
+> >          fdput(fd1);
+> >          fdput(fd2);
+> >          return same;
+> > 
+> > where the only question is if you also woudl want to deal with O_PATH
+> > fd's, in which case the "fdget()" would be "fdget_raw()".
+> > 
+> > Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
+> > less hacky than relying on EPOLL or KCMP.
+> > 
+> > I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
+> > too, if this is possibly a more common thing. and not just DRM wants
+> > it.
+> > 
+> > Would something like that work for you?
+> 
+> Well the generic approach yes, the DRM specific one maybe. IIRC we need to
+> be able to compare both DRM as well as DMA-buf file descriptors.
+> 
+> The basic problem userspace tries to solve is that drivers might get the
+> same fd through two different code paths.
+> 
+> For example application using OpenGL/Vulkan for rendering and VA-API for
+> video decoding/encoding at the same time.
+> 
+> Both APIs get a fd which identifies the device to use. It can be the same,
+> but it doesn't have to.
+> 
+> If it's the same device driver connection (or in kernel speak underlying
+> struct file) then you can optimize away importing and exporting of buffers
+> for example.
+> 
+> Additional to that it makes cgroup accounting much easier because you don't
+> count things twice because they are shared etc...
 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 3ec8bb5e68ff5..840cefdf24e26 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1814,6 +1814,7 @@ static void fuse_resend(struct fuse_conn *fc)
->
->         list_for_each_entry_safe(req, next, &to_queue, list) {
->                 __set_bit(FR_PENDING, &req->flags);
-> +               clear_bit(FR_SENT, &req->flags);
->                 /* mark the request as resend request */
->                 req->in.h.unique |= FUSE_UNIQUE_RESEND;
->         }
->
+One thing to keep in mind is that a generic VFS level comparing function
+will only catch the obvious case where you have dup() equivalency as
+outlined above by Linus. That's what most people are interested in and
+that could easily replace most kcmp() use-cases for comparing fds.
 
-ACK, fix looks good.
+But, of course there's the case where you have two file descriptors
+referring to two different files that reference the same underlying
+object (usually stashed in file->private_data).
 
-Would you mind resending it as a proper patch?
+For most cases that problem can ofc be solved by comparing the
+underlying inode. But that doesn't work for drivers using the generic
+anonymous inode infrastructure because it uses the same inode for
+everything or for cases where the same underlying object can even be
+represented by different inodes.
 
-Thanks,
-Miklos
+So for such cases a driver specific ioctl() to compare two fds will
+be needed in addition to the generic helper.
 
