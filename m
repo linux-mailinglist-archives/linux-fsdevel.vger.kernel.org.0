@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-19096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B0E8BFF50
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:48:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032A58BFF93
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14B6288139
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:48:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACED2283F22
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB7585627;
-	Wed,  8 May 2024 13:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E423684FAE;
+	Wed,  8 May 2024 13:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bPR2FNMY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sChzYj2r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464C784E0E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 13:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A01047F5B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 13:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715176027; cv=none; b=D2F+oyO8MIanh5tFdbMd7Udec5kXbWAqIh+fa+1pVbFavzmPUoSCIm4ChOWPq/lh3Uq48VuZUWLb99MG4ptkoB7sgcwsq6sTvp6EKdAxzkZaVAm7bLsv1a/W05VX0/FAIM4BTTYm+vaxC0CZaeQJje97DgRfrU8BKnosddfBMwc=
+	t=1715176486; cv=none; b=BXw+1C5KrxN6OB7LpNIx+viqiz3A+k7qGwUR7XL8+e3FRH3KiBnMe89tKvbGiegeT8liFAwKD2u9mbb7R7l/wsYoFoLu3ETyAJnHwMnVHOpXk50iQC0RPit7hxkYnLdlwzz7W37pdCTFMIXrjHDHguaaHkHlKqbQ1V59R2yBg9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715176027; c=relaxed/simple;
-	bh=u6EyzHXd27fFGrN9Et656hCo/08PPyT+hT+CjlkxkTU=;
+	s=arc-20240116; t=1715176486; c=relaxed/simple;
+	bh=c4rrNnRvo0cBlTP42xOOVWUGWry3TUGUYL7wXej88eM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ilLRk3tfjWXSZ785bdz7ERh0jzlT32LyB3dEWbS5a5NG/D7UmJMyufz4ZlCm9CZDsgbdYTaXE+Xc1J6xeRbkfFTo6oEQ6F2IJ7YyYCF76NpK6On75+k4W7ahv+iiew2RsLKiMFXdKt4nfAs3zAkQfNbDzKlpYQs/g50tY8gdbVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bPR2FNMY; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=L3BJCkVtJHNKcIf7tWRVfB56BfMLNXAxkZsBlM0CT6ML6M9AHJ2FE/o4AtRyghBc/Fc1wqRC16onwJdYfW+QTLRdmncxKrILmIS/hRyOqZ43kez/e0k6gRXQglV8UQ0zwll/SZosqAg9jOGINCRrmDwCrV0CDrmqadn4TKnLJ4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sChzYj2r; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2b432dfdcf6so3635765a91.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 06:47:05 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbf618042daso8058016276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 06:54:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715176025; x=1715780825; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715176482; x=1715781282; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Cy96MEbs4JLv+XlnJDrNT2CJ2qEQRDaH5Qu53Pf8ZU=;
-        b=bPR2FNMYRrL08LQZsHzX4L6KUGDoby1D7kq9CdVilnTl6CW9lrBNQYoFJsegU0aGHp
-         4Rvak8c4UmtoXc6S3fFjOZBo01YZflQzqFYbXxLIMfFX6eOvhYD8CtmBrq+Mb4rYJAd4
-         2TsYLBRRZ5lpklLD11TRJUBP059D2HhrmxyI4sMyN7bd6vthUJHtxs4RdEeGguR3wo9D
-         30qJITdawJLGFg0swiui7xrCU72XGr5q34hiCJUVBCjHrubNk4EFfWZpBaPVUzsm1Ifx
-         +T4FgDSpNbi6t6XMJh7DSzyQHM216u9cGZYXYgPB8SaOhyO6WycTJJETY3cK0TX2A9N0
-         gIog==
+        bh=qrxifLi18HwIXN/paZijnWPdESXfJJzxe/+u8UtVff4=;
+        b=sChzYj2rtzH+m82eJTwVi4o6/zZb4Tlo57BCb+n1FPzSPtq6p6xORd6/DYyI7qb5wx
+         UIAsEztjkkh7Kk0ZcUkYVI7Keczqp57Eoy2dlm1HhY+gT7XI9MskBF90x3ohX5x57RMr
+         /K6Em/fk4vBVDRGJLDa1BUOO5qbYbAJqvbq+reXWKTlKMSiyIaiF3vsAJTmdOeaR2wHU
+         1plsfxD3xB3uD6q0MIa/idAEY33bOCWrKRLQylsaNnDzG2mFjvkjkHlW0BU3ZPWU9lcf
+         hAI4kR0t1rm3WCfEMP/R+Doq90LDP6FOZ6/hdOBJRWc/btr+nMEmQ0RQQfu7qVl5XQ0n
+         1k8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715176025; x=1715780825;
+        d=1e100.net; s=20230601; t=1715176482; x=1715781282;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Cy96MEbs4JLv+XlnJDrNT2CJ2qEQRDaH5Qu53Pf8ZU=;
-        b=jseKSN6psJA998YtWFdIYFxg9TW9vraOxDFoQjBPooxCzqvlalJjKHQOFVG2KoEZUT
-         Gu0Zz9nSgkrLuia8cUeI6853746icrQXoCItHdBjgyC2BlmFA91yGtXOWO33EFOoTBil
-         DMmJItvS6b/W8d1vLCvL3wXrMGBItdvR1x3H1vh+TMiyMUzQpNtI8pO6vy8aMXi0Jcyx
-         wydYT4bQcOaAdgY06RaoVH+YVhC0XkHLFT9IgqqFeL8i1ZDThNcrE64r4m3zFQRhR8Y6
-         IoZ0oHj0f30LVLbD0A/PaKwR/wvQeRau0318iU24r0anVNOMUe/WBDeDqaIEZQOA1WZr
-         IYbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrgwkJMNB8VHeqbu+bHRPR6DF1/Xkm2E6nNdvHfOUpiSu07SS8ZD5CzShIro1znD7ud23NfuAkWjbSU/nLQoPoMSqES/ubqL+86a0uNw==
-X-Gm-Message-State: AOJu0Yzii3V2ym0DOL+mXBL6VVQTV6UwU813U1QR7TEQ+vRbEP9LauO4
-	JzAF7oQ8/B9RU8koCmCMj/CsOPzesCHReEYVXLTJcwJJ7FJ8v8ALwWN42fUvUVmljlxZ3blxF3k
-	mag==
-X-Google-Smtp-Source: AGHT+IGkEzt3rrLCYEAc2MIkDJ4rSudkNPJV/ZI7YDr6FjDNwR59XbPWzyPuXmQfxq7n/1Jp45z9S3futCA=
+        bh=qrxifLi18HwIXN/paZijnWPdESXfJJzxe/+u8UtVff4=;
+        b=Y75LZRS07Of1RUt+16XElm4dPljNTCREhAOipIAks23H/vC/lpma1MZ1WLvsQ0JbaC
+         tyxPAJ14m8jADqDEn8nMegUWJlrsXzoGT2KXO5JKkJsKKARAZcv+SoVDhrAcUCHDG7j0
+         7XLYgHeT9SmEIhG2HtB2zqKYIUXwv8wYiryTyxOwbT+EbBq6/vpsyT9iZYejC+CxOuSr
+         6uhMg03M8sjBXXigpQO0NINLoZfee2ccM4Y5zV351l408a0b38C+GhY/jlbsq9UGxAEs
+         9wWq94GmNJ6NDl3wzE4hV7RWmMY7XiIiMbiBfG16DlY9OTlob+RL28YxUg4aScyBLGTC
+         hnIg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+5QBY+4/fwdM8G5B20FRoRFtfl9rM/vjTUszOYUmfQKz4FeONsgXy64eOpk5FWGrNtxKbL98ggHBaDySXMvBOvt8NUTIZEOtl4mK1hQ==
+X-Gm-Message-State: AOJu0Yyd0V60axloCMOBl82Zv3+g2jBu9WnCiDQ43IToJ5Hl1l+qd/yD
+	fKcxB5Xia3tZV6wnWK9BwHv8vKNiA7BzEJ/eY7t9ocA7gB2P4ZjjnD7pgCsxRA4aI9IHJFbPNZT
+	CcQ==
+X-Google-Smtp-Source: AGHT+IGJRBi1UvMX9yVwIeeKPJ5i4MXrMA7fvNEnU0sh0JI0w6+2/9z2FlMIObyx5JUsUOMhiA6kQPpm0zI=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:128d:b0:2b4:32ae:483e with SMTP id
- 98e67ed59e1d1-2b61638c780mr8658a91.2.1715176024465; Wed, 08 May 2024 06:47:04
- -0700 (PDT)
-Date: Wed, 8 May 2024 06:47:03 -0700
-In-Reply-To: <20240507214254.2787305-1-edliaw@google.com>
+ (user=seanjc job=sendgmr) by 2002:a05:6902:18c8:b0:dd9:2789:17fb with SMTP id
+ 3f1490d57ef6-debb9cfd19bmr223701276.3.1715176481930; Wed, 08 May 2024
+ 06:54:41 -0700 (PDT)
+Date: Wed, 8 May 2024 06:54:40 -0700
+In-Reply-To: <20240507214254.2787305-5-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240507214254.2787305-1-edliaw@google.com>
-Message-ID: <ZjuA3aY_iHkjP7bQ@google.com>
-Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
+References: <20240507214254.2787305-1-edliaw@google.com> <20240507214254.2787305-5-edliaw@google.com>
+Message-ID: <ZjuEILj0SZRuTL9I@google.com>
+Subject: Re: [PATCH v2 4/5] selftests: Drop define _GNU_SOURCE
 From: Sean Christopherson <seanjc@google.com>
 To: Edward Liaw <edliaw@google.com>
 Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
@@ -119,35 +119,30 @@ Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@pe
 Content-Type: text/plain; charset="us-ascii"
 
 On Tue, May 07, 2024, Edward Liaw wrote:
-> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> asprintf into kselftest_harness.h, which is a GNU extension and needs
-> _GNU_SOURCE to either be defined prior to including headers or with the
-> -D_GNU_SOURCE flag passed to the compiler.
-> 
-> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
-> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
-> location.  Remove #define _GNU_SOURCE from source code to resolve
-> redefinition warnings.
-> 
-> Edward Liaw (5):
->   selftests: Compile kselftest headers with -D_GNU_SOURCE
->   selftests/sgx: Include KHDR_INCLUDES in Makefile
->   selftests: Include KHDR_INCLUDES in Makefile
->   selftests: Drop define _GNU_SOURCE
->   selftests: Drop duplicate -D_GNU_SOURCE
+> _GNU_SOURCE is provided by KHDR_INCLUDES, so it should be dropped to
+> prevent _GNU_SOURCE redefined warnings.
 
-Can you rebase this on top of linux-next?  I have a conflicting fix[*] for the
-KVM selftests queued for 6.10, and I would prefer not to drop that commit at
-this stage as it would require a rebase of a pile of other commits.
+...
 
-And I doubt KVM is the only subsystem that has a targeted fix for the _GNU_SOURCE
-mess.
+> diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/testing/selftests/x86/test_syscall_vdso.c
+> index 8965c311bd65..5cd13279bba5 100644
+> --- a/tools/testing/selftests/x86/test_syscall_vdso.c
+> +++ b/tools/testing/selftests/x86/test_syscall_vdso.c
+> @@ -8,10 +8,6 @@
+>   * Can be built statically:
+>   * gcc -Os -Wall -static -m32 test_syscall_vdso.c thunks_32.S
+>   */
+> -#undef _GNU_SOURCE
+> -#define _GNU_SOURCE 1
+> -#undef __USE_GNU
+> -#define __USE_GNU 1
 
-If we want/need to get a fix into 6.9, then IMO we should just revert 809216233555
-("selftests/harness: remove use of LINE_MAX"), as that came in quite late in the
-6.9 cycle, and I don't think it's feasible to be 100% confident that globally
-defining _GNU_SOURCE works for all selftests, i.e. we really should have a full
-cycle for folks to test.
+AFAICT, manually defining __USE_GNU is frowned upon, so I'm guessing the __USE_GNU
+stuff is just the result of misguided copy+paste.  But it would be nice to get
+confirmation that this test isn't doing something clever.  Or at the very least,
+explain the removal of __USE_GNU in the changelog.
 
-[*] https://github.com/kvm-x86/linux/commit/730cfa45b5f4
+>  #include <unistd.h>
+>  #include <stdlib.h>
+>  #include <string.h>
 
