@@ -1,152 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-19113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6748C031C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 19:31:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E96A8C0325
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 19:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8E061F22DB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 17:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51F171C227AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 17:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2892D12B153;
-	Wed,  8 May 2024 17:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529E712C48C;
+	Wed,  8 May 2024 17:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="EKOYCDkY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nCM+WFPR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C278A10A28
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 17:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9BD129A69
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 17:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715189465; cv=none; b=lBR01Q3A4DEJxVxUR9GABvl4Z2acB0DraTMtGK+rNBnO9t3h7kNCoBIyRvmG5q4Dmp27p0awEkf3WAS7cBtnYFrEsaT5rFd/8BobGduuM9U9M6eMENMsRSqPoeGs1bd1VRKWyxEfXPpGV6glStzHXZCUdlrFkiYK3e0MNw1ten0=
+	t=1715189516; cv=none; b=ZASVo2iNF+WhoD1ARGmaRLnTP7NIaVdnmlbKob79tReb+MpPgAyEBaNR9/nk21xdoZ7y5BgJSQiLD66tNY8X8TJb/PGc4uNs7z8IY/57Og1s5EE8Yr7Bfmn79pDUfwdT9rt9MQGbOFWfqff7djdYelut+bPI2OLqRynOfIwOM+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715189465; c=relaxed/simple;
-	bh=OfwDpxyqiScR6zhprUMGR6XwrzsPF5VBLMLxJ9wu2Qg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XDI1gVgp9U6yindyXAB2EuX2vrmH5Llal/VVYhwI/VOm58AhYWgHZPIUAGQRU+xdhm5KOYRv10KBa+mjd7Y8oUcyC/g6OtDfvrLPpcczAlCSixCFJHFVLtjc8HGy8/WB+q7ozvCzbT/iMhzwvDCklG3O+vQJU+nu7Y4X6LM2piY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=EKOYCDkY; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4df3d1076b0so8018e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 10:31:03 -0700 (PDT)
+	s=arc-20240116; t=1715189516; c=relaxed/simple;
+	bh=5xDT7DTBCjbbpPDtqZw3zek1av22h4oXew+hsl9hZOU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bk0HrkAsUR6Z0l867Cf33gDSYu1PJkmLSQpw5WM565KV8eQLngGLvmg1hPcUAfQKWbVR56XOfzoHkX6eJkfsXcdRMKIVBBNSBlBjT3XAfCS1WXA1gk1lxHfh75HqgErX95BCZHZSZEN72Z4zaTWmenltnTFeCCFPxtTsUnIJXr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nCM+WFPR; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ee0132a6f3so31998085ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 10:31:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1715189462; x=1715794262; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XYHNs3XK4WCLJlrYLVcrMhCbS8TVZdO8Yn1TsyzQ25I=;
-        b=EKOYCDkYR+0VZlZnP34FuwtcEeQ2YqX8kRDMpHemSBkoBEgX9WrxFa7kNjICDqLSNU
-         hOk7mrxTE8k6Ye7b2S7LoQ8Ouxbm6By30LW2qsv6/lHUN6fyOXBJopCUXFAsRDaR4EZC
-         aQe9CQeJSJyHUTh2Po+BqxotfkItlGiGWvX2QPZcyRVVx81mlUzmgcehf7lfcq96bUAc
-         H90aEc0566xWH/h0Bjare+mYhRtzVXOHc6Kjl17PyRr4kmlYgayiY2+hNEzskQQuppKW
-         wLms70D7PlgzmptN4dj4yL1kFT65vjRtutupPl6bG0GBnqJn1PTC/slhd9YB9f+M3cyr
-         EUUw==
+        d=chromium.org; s=google; t=1715189512; x=1715794312; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LryZi+4xwYKtyQkC5nMcWsfEgNGSH+ki5if1tY9mlg4=;
+        b=nCM+WFPRZqK0n4KYwKTC1b8m6FM5oyeYQZTwxokQ3YCgYXM+mUFSC+4EvK5pOzaXCZ
+         eVQkOcuUr6vvWaWxylVrvp3mYYwm7FHP/DKtbhyfocIN+AoUs3bfGis2eo3an2FMt4ND
+         PaooO3ZMWyXWXvvP+/AIIzWj6/bTVMTZ51qoE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715189462; x=1715794262;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XYHNs3XK4WCLJlrYLVcrMhCbS8TVZdO8Yn1TsyzQ25I=;
-        b=kMKgmsH1rRYLB6A65Lt7HEjpv8pbDjASjJQ+OWKiexLQCtapbSBSp0VlYVDMDX9NBJ
-         bw9UCcH01zH0jitNKFzZ6HMrTFGIBAlQEgeQFS5uGaphMiN0pkWLMAxdRgcxCjqkfW8L
-         W0D+Sn1GgW04YXM6+BKTWVsMG1BdBwDmmheUz98NSzZSjvn4xHpRf8HYeKCi3Wf7kd47
-         FA19siGaZ4PNIXKx+fD6PmY6kvkYFGv6BNqfZGFHSnQaI4D9lPzlBFfSTaMF6fneVQT7
-         kQCB67kvtYAu/DhkZg3a+er1EeAUw+LbYDwXupD+Npha8/8rg+PPVDB7mZGzwinWu+RV
-         YQTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVZ//NfLkmIz14yA8SgjaHQPRe4QPqEfl3GFwJ2IFuwaLd4UesYHx+9CVERNXXPGYvmRhjDaQnQPxyRNPAfCH8Affo+SkK4JN08arm5w==
-X-Gm-Message-State: AOJu0YwC63LkV+x7cgPrdb9zMoHsMzB/HdOTGgb3z1OdIqmkzSBjBdku
-	GtjwFRNtZ0cCyc0ZRMt4v8WCfA98uoFXxFlEFngUHSw1vL7vHVAMoXIqQSDWA5hbJojIHlKEYlf
-	BlscgtwYOBWGQCvm+SodfklikTwdjOHlkFz1/
-X-Google-Smtp-Source: AGHT+IHbsrHY0xfhpaS6MiO5kI6jtwoEYY+goIDARLemeQWPf0CECxDmXAYt4b8xzd2tMYkNUCL0wQWtWqEeqJGtRe0=
-X-Received: by 2002:a05:6122:2a50:b0:4dc:d7b4:5f7d with SMTP id
- 71dfb90a1353d-4df6919da63mr3417762e0c.8.1715189462609; Wed, 08 May 2024
- 10:31:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715189512; x=1715794312;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LryZi+4xwYKtyQkC5nMcWsfEgNGSH+ki5if1tY9mlg4=;
+        b=gFp8LsenbGD+5flslXyfmsUXmGVnR5oXAYBpenHqpem0cHqKR61bdRQuRiSsODEpgD
+         0BrDN60NzK1VorfMRCz5RvTsVCaGBwSebAfvc4xVRsdqeNT+7HKhiXbAzPARlhe9Ocba
+         +XRHM545X1AdYA/RNb98dxI/VCYqzyTVQNSwJPgCCeUF7AhM7S4jiIL+TvCaS3O0isBR
+         Nxl0IuQFWPHcVdShdmFx2BXqSDCDdQaP0+pu30Dawym3Mrcw+nmgYNn+Z9Pe9FH01Z3u
+         A4LaAJXh6HerpFYUEWlRcs4IOKkxrVXnPeFsQJUaVOnAGQM3kB91kJ0lsavpzNleIm3h
+         D3jA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ4TZ/nNzTfFa+RghfziRoI1vFqfkEuuMbwuEhfvkF+FQ/ziXoSASQX1V2fch4ngk7KYA+OZRpHMkehodPH3SaYTc1cFun2X8HAG0kXg==
+X-Gm-Message-State: AOJu0YyQURLLIjcYRuT5kKTU+IFC4o8I0s5TOCRV86tFrwlC6wfaakws
+	DQUtwfDeMuXx92+G8usOYTnSH8jnrVSwJY0F12lm+ntU+GtYN8eY/K5sopQ9RA==
+X-Google-Smtp-Source: AGHT+IEBz3iujEGHUiN6pMwCCHLnL29pazXkZjYSQaEFT4k7Uon0fGO9xIj8pPF7qEuotMY2ECs8Zg==
+X-Received: by 2002:a17:902:f681:b0:1ed:867:9ea0 with SMTP id d9443c01a7336-1eeb09959b0mr33516135ad.57.1715189512079;
+        Wed, 08 May 2024 10:31:52 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id jv21-20020a170903059500b001e0e977f655sm12119608plb.159.2024.05.08.10.31.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 10:31:50 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: "H . J . Lu" <hjl.tools@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Chris Kennelly <ckennelly@google.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Fangrui Song <maskray@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Victor Stinner <vstinner@redhat.com>,
+	Jan Palus <jpalus@fastmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 0/3] binfmt_elf: Honor PT_LOAD alignment for static PIE
+Date: Wed,  8 May 2024 10:31:45 -0700
+Message-Id: <20240508172848.work.131-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240426133310.1159976-1-stsp2@yandex.ru> <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
- <20240428.171236-tangy.giblet.idle.helpline-y9LqufL7EAAV@cyphar.com>
- <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
- <20240507-verpennen-defekt-b6f2c9a46916@brauner> <CALCETrWuVQ-ggnak40AX16PUnM43zhogceFN-3c_YAKZGvs5Og@mail.gmail.com>
- <20240508-flugverbindung-sonnig-dcfa4971152e@brauner>
-In-Reply-To: <20240508-flugverbindung-sonnig-dcfa4971152e@brauner>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Wed, 8 May 2024 10:30:50 -0700
-Message-ID: <CALCETrWEBY6HLyRqgN65YVp0gP0akU_HyVbGctC6sph5NX6RkQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Stas Sergeev <stsp2@yandex.ru>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	Stefan Metzmacher <metze@samba.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=790; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=5xDT7DTBCjbbpPDtqZw3zek1av22h4oXew+hsl9hZOU=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmO7cEADvYffN1IC7/pVMiNzZAqfw7Siu+Vh+L3
+ X1eDIp1zK6JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZju3BAAKCRCJcvTf3G3A
+ JmkbEACfFPYAlzDSyubCWagkKZa2qIhZ6/mp1d3/SgVGYzBvGQnXlJun4QXlTonBEGtFOXgxdpl
+ ZwxYMmMKIVUgMU9c1MH/KPPOBmIaWpU9jjz/QrbWsNuu4VmFN1Gj7nl22S/nVG7HWsVv0jpC4lz
+ 7Sqs1+HpviNBmb8g6pqStPU/D/Yi/UrYqEonlqv1ZwHATGOK38l338xxyK9Z1ojBFHo1X+Qcb7c
+ TabR6GmdvbsmsUrMuBJ+grnobY0qs11GQoQuOcHeLRQ0l8rLh3QC5Byrc4BU/2CiJQ5uschDVvy
+ ZLOgpYnBNtypoT2jgmSYL7W0U3m9Tud5jZMJo3nWeM0SWGFnQxCFIA9/G5yUPoXUDs/ChAO1ZFU
+ WmAvz4xGhA2LFIJew4hyv9djB4hMTzOjgCmEWb5ruq86U/vV5xXGTw6p2XIXfGNmTJQ8A88U+aO
+ DT+IWPlcpvcH2bIaabMPuVsazNTByLLuKaC4hWlxUsbcT2V2sFysugeQmnBu1AkmNPic8F6E0N7
+ m8PIo0vEubdPVFgKmSjqbnq+ggAollnp/GowN9s+7GGpWt8CYdw2JCLUkpz8ZjuqmT4TeBjspib
+ +V6QOz0laYM4paS0xqONSlvrmCyanG2EFHXRFITXzG7F2xE/cH266l5bxOaoZi35b3UzS9Reeop
+ xZN+QDCi hUsCcdA==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 8, 2024 at 12:32=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, May 07, 2024 at 01:38:42PM -0700, Andy Lutomirski wrote:
-> > On Tue, May 7, 2024 at 12:42=E2=80=AFAM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > >
-> > > > With my kernel hat on, maybe I agree.  But with my *user* hat on, I
-> > > > think I pretty strongly disagree.  Look, idmapis lousy for
-> > > > unprivileged use:
-> > > >
-> > > > $ install -m 0700 -d test_directory
-> > > > $ echo 'hi there' >test_directory/file
-> > > > $ podman run -it --rm
-> > > > --mount=3Dtype=3Dbind,src=3Dtest_directory,dst=3D/tmp,idmap [debian=
--slim]
-> > >
-> > > $ podman run -it --rm --mount=3Dtype=3Dbind,src=3Dtest_directory,dst=
-=3D/tmp,idmap [debian-slim]
-> > >
-> > > as an unprivileged user doesn't use idmapped mounts at all. So I'm no=
-t
-> > > sure what this is showing. I suppose you're talking about idmaps in
-> > > general.
-> >
-> > Meh, fair enough.  But I don't think this would have worked any better
-> > with privilege.
-> >
-> > Can idmaps be programmed by an otherwise unprivileged owner of a
-> > userns and a mountns inside?
->
-> Yes, but only for userns mountable filesystems that support idmapped
-> mounts. IOW, you need privilege over the superblock and the idmapping
-> you're trying to use.
+Hi,
 
-Hmm.  Is there a good reason to require privilege over the superblock?
- Obviously creating an idmap that allows one to impersonate someone
-else seems like a problem, but if an unprivileged task already "owns"
-(see below) a UID or GID, then effectively delegating that UID or GID
-is would need caution but is not fundamentally terrible.
+This attempts to implement PT_LOAD p_align support for static PIE builds.
+I intend this to go into -next after the coming merge window so we can
+maximize bake time. In the past we've had regressions with both the
+selftests and the ELF loader. Hopefully we can shake everything out over
+a few months. :)
 
-So, if I'm 1000:1000, then creating an idmap that makes some other
-task (that isn't 1000:1000) get to act as 1000:1000 doesn't grant new
-powers.  But maybe something even more general could be done (although
-I'm not sure this is worthwhile): if I own a userns and that userns
-has an outside UID 1001 mapped (via newuidmap, for example), then
-perhaps letting me configure an idmap that grants UID 1001 seems not
-especially dangerous.  But maybe that particular job should also be
-delegated to newuidmap.
+Thanks!
 
-Out of an abundance of caution, maybe this whole thing should be
-opt-in.  For example, there could be a new CAP_DELEGATE that allows
-delegation of one's own uid and gid.  The idea is that it should be
-safe to grant regular users CAP_DELEGATE as an ambient capability.
+-Kees
 
---Andy
+Kees Cook (3):
+  selftests/exec: Build both static and non-static load_address tests
+  binfmt_elf: Calculate total_size earlier
+  binfmt_elf: Honor PT_LOAD alignment for static PIE
+
+ fs/binfmt_elf.c                             | 94 ++++++++++++++-------
+ tools/testing/selftests/exec/Makefile       | 19 +++--
+ tools/testing/selftests/exec/load_address.c | 67 ++++++++++++---
+ 3 files changed, 130 insertions(+), 50 deletions(-)
+
+-- 
+2.34.1
+
 
