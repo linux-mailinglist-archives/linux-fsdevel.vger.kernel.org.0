@@ -1,71 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-19083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E49D8BFBF9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:28:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476838BFC38
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB361C21786
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:28:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C91E3B219F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F654823CA;
-	Wed,  8 May 2024 11:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ABE82863;
+	Wed,  8 May 2024 11:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="sBAyeqeU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="prTjolwE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108828174F;
-	Wed,  8 May 2024 11:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748FC81AD0;
+	Wed,  8 May 2024 11:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715167701; cv=none; b=A9of4x4FUjTdEfaRZzD8mz7VDKTC/UJm7YSg6DAEK1qG5eyv0/JDK64MVsDkpRs+z3PEbgCy1YEZF1Zmgq9Drhv7xWs+4KCcWV6a3wtxyxQy+6jzvxVeVjgk6bsIQEj7XrR0+OTzICoaJ/1T6CWBDZKJBJHJnd18bAbiBcbjtXg=
+	t=1715168210; cv=none; b=E1i/Ro5FfsMGbMCNe6kfgl3KutPfJwd3i2lIES1ZH7G25x2QBVUHjP3o+epJ3OHEtVrTphtkSZ9I8/ohhQw0ITbVP1zLzgw7srhGUPawKoLDLp9VjyWI45NJKaQv7z2Ezb3gl6NTAK137UN1B6FenECiBcF9s1peFcUwFEelzns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715167701; c=relaxed/simple;
-	bh=RqrS+4cObvr9V80MKpU5viXNMbhNONvo8GIhTJff5Hw=;
+	s=arc-20240116; t=1715168210; c=relaxed/simple;
+	bh=ionXjYKJhrS71F37Lkbw0fk4ODB48gbbt+9RI7m9ppw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VR+wwO5AacwW8htjOZMHqqEv6jRbpKHHz2BK8PwWVFOcSK8+nPCltWEq0S9xdDQBndsJXT4rqGN95IsklmqwPaQ6ukLclAwNgWaoktAjh5/n3Ya+CzstDrx6qV0ffoYZ9wZHHWOCj5wr+7EQF0HdaR79g9h45kvxCwx0WjPhPfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=sBAyeqeU; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VZCZ82xbQz9sQj;
-	Wed,  8 May 2024 13:28:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1715167696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GmBxRb8dEBcO7WysWH5PMmHhfDBaYYsSfX6W/AbeUX4=;
-	b=sBAyeqeUlFS4QzwYGuKS+yNEungmnNd5/z2vu87H1euUwSdm+GZvtR8x5mv5GcQ6Gmt4RK
-	YiGy/9ezRQVznGYXBXRcrdyzIUHoJ0dpc8SNdsjrCMRZbDkuIp/uBHrWlX97IvLh6XN4oQ
-	ud4mPP7Yq89sg38zIJ694p9nvdcwAR3lJmHNfVDowuS6JGahGgfhblNadmgLOWi7bn2T+v
-	QJEArdbRHEdQr6dvc1NnC4MM3MloY3qJot7Bui0hu/BQ/+X1PPkRDdXjFulyygJIP8SD8T
-	EpQf9xGujtM7HvPyPPLufcounzLAEB237NcoTsipuzQFh1QO+3twDhpBfUXRzQ==
-Date: Wed, 8 May 2024 11:28:11 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdOsZO0s1kb/gVl9Sm/R++/HICD3AfrXnspbnpfdcZDztfWZH31aYG7OlhNKIpQQiLEvMke6ZCXs17qu2f0/uwBpq1/45oFff2Qw1wl9Zl/lkTkL+R5k9JQcllx0v1tCMj94K0qnDgG2L3sTfRv5IeKngJJ8az6ZRphmU+YInqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=prTjolwE; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8rBSqqk3Dus3WYu5NpDl6sctlp3PQWFzSKoFRqkHQlo=; b=prTjolwEd1YkvaTflW9dmNx2HO
+	AG2tcaR6q+4iFyte+YucYkOlnUglinvPRfBljqY0fNtFz01mNoVPUbj9gtk5LzZAvKH/9JTj5uHYA
+	w5faiFjWiGstG8W7eN9Yhxv7rpQwD4Lrfxk3HZfYNwoLf/g5xeiGIEiExKRQzGmOa2ODgQf6FvPnJ
+	yWVNvY6pSWwsCDtMsmMeiwqhON68ROokIeRkz+uWMKgpfy+y970j1+I1uDYEfoLB4naHlT8c0cOx4
+	3IZrYCbf76VvU8QVBje3IXfGjZT4w9JjxisZWpBaHyhyXiYeKzo9yDIcxVvXwf2jziTizRfdlBdFb
+	qHrBzCXg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s4fbE-0000000FGOB-1v4V;
+	Wed, 08 May 2024 11:36:40 +0000
+Date: Wed, 8 May 2024 04:36:40 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
 	Luis Chamberlain <mcgrof@kernel.org>, akpm@linux-foundation.org,
-	willy@infradead.org, brauner@kernel.org, david@fromorbit.com,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
 	chandan.babu@oracle.com, hare@suse.de, ritesh.list@gmail.com,
-	ziy@nvidia.com, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	p.raghav@samsung.com
-Subject: Re: [PATCH v5 10/11] xfs: make the calculation generic in
- xfs_sb_validate_fsb_count()
-Message-ID: <20240508112811.lkmlfauztegncj6t@quentin>
+	john.g.garry@oracle.com, ziy@nvidia.com,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, kernel@pankajraghav.com
+Subject: Re: [PATCH v5 07/11] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <ZjtjyM60ebrJfAmM@infradead.org>
 References: <20240503095353.3798063-1-mcgrof@kernel.org>
- <20240503095353.3798063-11-mcgrof@kernel.org>
- <b3a3e9c1-91ca-4c7f-81a7-03f905ee0bd8@oracle.com>
- <20240507211310.GW360919@frogsfrogsfrogs>
+ <20240503095353.3798063-8-mcgrof@kernel.org>
+ <ZjpQHA1zcLhUZa_D@casper.infradead.org>
+ <ZjpSZ2KjpUHPs_1Z@infradead.org>
+ <ZjpSzi-HiZkx_Kdq@casper.infradead.org>
+ <ZjpTHdtPJr1wLZBL@infradead.org>
+ <Zjr-lf2tJAmwLzzu@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,59 +73,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240507211310.GW360919@frogsfrogsfrogs>
-X-Rspamd-Queue-Id: 4VZCZ82xbQz9sQj
+In-Reply-To: <Zjr-lf2tJAmwLzzu@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, May 07, 2024 at 02:13:10PM -0700, Darrick J. Wong wrote:
-> On Tue, May 07, 2024 at 09:40:58AM +0100, John Garry wrote:
-> > On 03/05/2024 10:53, Luis Chamberlain wrote:
-> > > From: Pankaj Raghav <p.raghav@samsung.com>
+On Wed, May 08, 2024 at 05:24:53AM +0100, Matthew Wilcox wrote:
+> On Tue, May 07, 2024 at 09:13:17AM -0700, Christoph Hellwig wrote:
+> > On Tue, May 07, 2024 at 05:11:58PM +0100, Matthew Wilcox wrote:
+> > > > 	__bio_add_page(bio, page, len, 0);
 > > > 
-> > > Instead of assuming that PAGE_SHIFT is always higher than the blocklog,
-> > > make the calculation generic so that page cache count can be calculated
-> > > correctly for LBS.
-> > > 
-> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > ---
-> > >   fs/xfs/xfs_mount.c | 9 ++++++++-
-> > >   1 file changed, 8 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> > > index df370eb5dc15..56d71282972a 100644
-> > > --- a/fs/xfs/xfs_mount.c
-> > > +++ b/fs/xfs/xfs_mount.c
-> > > @@ -133,9 +133,16 @@ xfs_sb_validate_fsb_count(
-> > >   {
-> > >   	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
-> > >   	ASSERT(sbp->sb_blocklog >= BBSHIFT);
-> > > +	uint64_t max_index;
-> > > +	uint64_t max_bytes;
+> > > no?  len can be > PAGE_SIZE.
+> > 
+> > Yes. So what?
 > 
-> Extra nit: the  ^ indentation of the names should have tabs, like the
-> other xfs functions.
-Thanks John and Darrick, I will fold it in the next series.
+> the zero_page is only PAGE_SIZE bytes long.  so you'd be writing
+> from the page that's after the zero page, whatever contents that has.
 
-> 
-> --D
-> 
-> > nit: any other XFS code which I have seen puts the declarations before any
-> > ASSERT() calls
-> > 
-> > > +
-> > > +	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-> > > +		return -EFBIG;
-> > >   	/* Limited by ULONG_MAX of page cache index */
-> > > -	if (nblocks >> (PAGE_SHIFT - sbp->sb_blocklog) > ULONG_MAX)
-> > > +	max_index = max_bytes >> PAGE_SHIFT;
-> > > +
-> > > +	if (max_index > ULONG_MAX)
-> > >   		return -EFBIG;
-> > >   	return 0;
-> > >   }
-> > 
-> > 
+Except that the whole point of the exercise is to use the huge folio
+so that we don't run past the end of the zero page.  Yes, if we use
+ZERO_PAGE we need to chunk things up and use bio_add_page instead
+bio_page, check the return value and potentially deal with multiple
+bios.  I'd rather avoid that, though.
 
--- 
-Pankaj Raghav
 
