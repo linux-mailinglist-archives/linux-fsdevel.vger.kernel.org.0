@@ -1,141 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-18977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615CE8BF3C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 02:36:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3908BF3C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 02:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000DEB23512
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:36:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8209328418A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F781C27;
-	Wed,  8 May 2024 00:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E955B624;
+	Wed,  8 May 2024 00:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQ+H01xI"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hFP6L2Sa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3375B387;
-	Wed,  8 May 2024 00:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2118D621
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 00:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715128578; cv=none; b=VWMe/2qy0XfljBL9d2n5YufX495cbhorKFGab3WxSSpymboUuk570BVtZ4FZJYrT/rWubUUKq4nDI6LUXqwVXa6hzWaXVlHXv2z3cCltrsyKabvilBIdgEWs4F3xGn0CL1rRJmvKSpMiCwtD8n2XVqK2MSsH5ynNLXehSV6FOts=
+	t=1715128877; cv=none; b=GA19+a9GhWceVL4QLH0XhqOAfVNCXxyMd0DIyficKFfaK6JgNInuTA40w1dluKUrQ+yZQlImCOsaLT2VhWQLD9RjcVKyRpXnMOFJ3PPTwqXdYKzwSp8u/K6jhXqAQFjO8Uz4uJfxos7AfFSNRz41AL93tnNLt82Wzvy9KvtMENQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715128578; c=relaxed/simple;
-	bh=yJK99pCXyuoTwOmUw90tjzeWFArr9+bCKIgZP+l1zPg=;
+	s=arc-20240116; t=1715128877; c=relaxed/simple;
+	bh=Vm+TH4xMD3lhFRPq6wwD0pF4XTh2UXa0Vr8eTjFg63M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJI6F6ffXlXzlSBgeWP5K6tY8OXmlgh0DkPRVWylYQumoI+zjOp2PJoPULSY3UFJ4fxyeUcqEhcf+HZHdjhHihqOm31JtR5xZkoeHDw7mhOAsMjCMmh0y9u8UD/cyQ/Vsb0EiSSbkdbceVcDQiKzgitzKise6cnRBxFUEKQ/4oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQ+H01xI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F708C2BBFC;
-	Wed,  8 May 2024 00:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715128577;
-	bh=yJK99pCXyuoTwOmUw90tjzeWFArr9+bCKIgZP+l1zPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OQ+H01xIYPmmknJAvbU3bmScXIpz3vpyzx6ir2u7dmO/Xgg7CKerL+vni4NEyPiTa
-	 a8wiKTeyvMov2m0/C7+OGHAQaYNVL94XFGbCV3qMO/2+OypsUaEKmWahfa6OoMriHO
-	 JOTZzdn6I0qktdd5tcgoxdInIANGoqnVRC4z0sYX3nzUtnjbUu0Tbc5hQWGZCZfQvs
-	 wdi3Gt775bGtTmHcmn/2O3Jm8XyA3P3xzYbbkI0N0cEpl5vBNCEczBFRgUz1M+WrXE
-	 J3ISBLiQ9ZAWlzE0ACJvCZfU5xMQhMYF1U03doKVRPCFuIiN/n15sIq1WRbLmmd7Bm
-	 xWQOzJ05IHqSw==
-Date: Tue, 7 May 2024 21:36:14 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org, viro@zeniv.linux.org.uk,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-mm@kvack.org,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
- /proc/<pid>/maps APIs
-Message-ID: <ZjrI_h7InWYdOBtD@x1>
-References: <20240504003006.3303334-6-andrii@kernel.org>
- <2024050404-rectify-romp-4fdb@gregkh>
- <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
- <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com>
- <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
- <CAP-5=fXv59EmyM7FNnwAp0JjAZjtYhCj3b3FTH7KsHL=k8C6oQ@mail.gmail.com>
- <CAEf4BzbdGJzMuRgGJE72VFquXL37rS9Ti__wx4f_+kt3yetkEg@mail.gmail.com>
- <CAEf4BzYykUsN_Z92cXAh_9+fmN-bzr7xOEBe2v_5xDoXRhijmg@mail.gmail.com>
- <CAM9d7cg4ErddXRXJWg7sAgSY=wzej8e4SO6NhsXJNDj69DyqCw@mail.gmail.com>
- <CAEf4BzZTRU9CGrcAysLKCCbjUvJZPFaLA122MVo_zKgk8pAUSA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ogBg+WphAPGN05UnnXwGTqbkEN4OGljtyugRvn1KgRB38Q7JJFCMd4+8oQ3MP9itIPhbg/65ic06rJxNBlJayRItiFaNmOQDIACQ3aV7Bc/ow2hZCtOQ+j6ARt7kwANx/+DHFCj7BY0rYl/9LrChRQiwho/KgiKB2RZCrcJdCfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hFP6L2Sa; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=C2rDJYIkca/NcI41tVw+tIr8Ki7GXoNfwGHsY8m4FDs=; b=hFP6L2Savc9IbLhJNlHFLlbUZF
+	efrEPdZcyz5wAeEMiPr6iHELaSWNq+1oAurLa4Z8Om5XYWjhDfwkf5YlNy/ILWR+RRs0P6bZubZer
+	jMqNwq6z5/nXlS2GnqN5GZN0wBL1Sjk8buDdNVa9O+P0ZWopI1Ztay9ZFKEatrc/F1JpM2ZGZZ1Rh
+	+n/49lbsfqhcVskBK0G21f6a6iWVAS5uLWzuv5ta9Csn5uw4sKYHM3YYOODMEbLiXpp47yGEtVbS2
+	awPWRv9DjQ4edgMgJvWsLCiBhdwhBVmL26KmQjTfdEXqY21zp7kTH8ESId3ALhf7A40LybrOCQr4v
+	2U2xY3tQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s4VMo-00Fbf2-33;
+	Wed, 08 May 2024 00:41:07 +0000
+Date: Wed, 8 May 2024 01:41:06 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Dawid Osuchowski <linux@osuchow.ski>, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] fs: Create anon_inode_getfile_fmode()
+Message-ID: <20240508004106.GL2118490@ZenIV>
+References: <20240426075854.4723-1-linux@osuchow.ski>
+ <20240426-singt-abgleichen-2c4c879f3808@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZTRU9CGrcAysLKCCbjUvJZPFaLA122MVo_zKgk8pAUSA@mail.gmail.com>
+In-Reply-To: <20240426-singt-abgleichen-2c4c879f3808@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, May 07, 2024 at 03:56:40PM -0700, Andrii Nakryiko wrote:
-> On Tue, May 7, 2024 at 3:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > On Tue, May 7, 2024 at 10:29 AM Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> > > In another reply to Arnaldo on patch #2 I mentioned the idea of
-> > > allowing to iterate only file-backed VMAs (as it seems like what
-> > > symbolizers would only care about, but I might be wrong here). So I
+On Fri, Apr 26, 2024 at 06:05:15PM +0200, Christian Brauner wrote:
+> On Fri, 26 Apr 2024 09:58:54 +0200, Dawid Osuchowski wrote:
+> > Creates an anon_inode_getfile_fmode() function that works similarly to
+> > anon_inode_getfile() with the addition of being able to set the fmode
+> > member.
+> > 
+> > 
+> 
+> Sorry, forgot that I picked this up.
+> 
+> ---
+> 
+> Applied to the vfs.misc branch of the vfs/vfs.git tree.
+> Patches in the vfs.misc branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.misc
+> 
+> [1/1] fs: Create anon_inode_getfile_fmode()
+>       https://git.kernel.org/vfs/vfs/c/55394d29c9e1
 
-> > Yep, I think it's enough to get file-backed VMAs only.
- 
-> Ok, I guess I'll keep this functionality for v2 then, it's a pretty
-> trivial extension to existing logic.
+Umm...  vfs.all contains 386831d0fb42a952afd4b0f862f335a09e911715
+    Merge branch 'vfs.misc' into vfs.all
+which merges e035af9f6ebacd98774b1be2af58a5afd6d0d291 into vfs.all.
 
-Maps for JITed code, for isntance, aren't backed by files:
+55394d29c9e164f2e1991352f1dc8f973c4f1589 "fs: Create anon_inode_getfile_fmode()"
+is e035af9f6ebacd98774b1be2af58a5afd6d0d291^^^ (and thus picked by the merge),
+but your vfs.miss is 652efdeca5b142ee9c5197f45f64fc3d427d4b08, which is
+e035af9f6ebacd98774b1be2af58a5afd6d0d291^^^^.
 
-commit 578c03c86fadcc6fd7319ddf41dd4d1d88aab77a
-Author: Namhyung Kim <namhyung@kernel.org>
-Date:   Thu Jan 16 10:49:31 2014 +0900
-
-    perf symbols: Fix JIT symbol resolution on heap
-    
-    Gaurav reported that perf cannot profile JIT program if it executes the
-    code on heap.  This was because current map__new() only handle JIT on
-    anon mappings - extends it to handle no_dso (heap, stack) case too.
-    
-    This patch assumes JIT profiling only provides dynamic function symbols
-    so check the mapping type to distinguish the case.  It'd provide no
-    symbols for data mapping - if we need to support symbols on data
-    mappings later it should be changed.
-    
-    Reported-by: Gaurav Jain <gjain@fb.com>
-    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-    Tested-by: Gaurav Jain <gjain@fb.com>
-
-⬢[acme@toolbox perf-tools-next]$ git show 89365e6c9ad4c0e090e4c6a4b67a3ce319381d89
-commit 89365e6c9ad4c0e090e4c6a4b67a3ce319381d89
-Author: Andi Kleen <ak@linux.intel.com>
-Date:   Wed Apr 24 17:03:02 2013 -0700
-
-    perf tools: Handle JITed code in shared memory
-    
-    Need to check for /dev/zero.
-    
-    Most likely more strings are missing too.
-    
-    Signed-off-by: Andi Kleen <ak@linux.intel.com>
-    Link: http://lkml.kernel.org/r/1366848182-30449-1-git-send-email-andi@firstfloor.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 6fcb9de623401b8a..8bcdf9e54089acaf 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -21,6 +21,7 @@ const char *map_type__name[MAP__NR_TYPES] = {
- static inline int is_anon_memory(const char *filename)
- {
-        return !strcmp(filename, "//anon") ||
-+              !strcmp(filename, "/dev/zero (deleted)") ||
-               !strcmp(filename, "/anon_hugepage (deleted)");
- }
-
-etc.
-
-- Arnaldo
+So it looks like you forgot to push vfs.misc as well...
 
