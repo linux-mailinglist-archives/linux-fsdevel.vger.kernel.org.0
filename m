@@ -1,56 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-18988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543ED8BF440
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 03:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A2A8BF53D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 06:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F56A2838BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 01:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1411C23E0F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 04:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1460E8F6A;
-	Wed,  8 May 2024 01:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21985171B0;
+	Wed,  8 May 2024 04:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RPktVsdW"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s+ACq4eo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AD21A2C2C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 01:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9795514F68;
+	Wed,  8 May 2024 04:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715132941; cv=none; b=UguegxxiEFihFYWv0KOeFSyGaCwasYZjXcih4QDjWK45KTiRQLzmHD1YyrP/hExfqNUigMQr6mVql6K2cwt5nwOxczVfkPOlVDyfaVqOAUdof72wwx1PXPn+V4Dg1nDTtS6SmNsSZlOg/MFmvMcJaF5U0y8UWgXoLDfGxFuhCVE=
+	t=1715142304; cv=none; b=F8BNwEX+v0Z1gZm79423s87wbT8HdfvwBfhr65hxJfAp5+vqPhQMHPM0tk788WTOGzW6OvYpi/puNlbY5gZnU3ojx/gWzS+xxejMKJDRP555MyNoB1KFKIUW1Oe/VttrAuofHMK/vxHz3ZQFla1UuAHt9gSLY/8Hpgjww3wXpk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715132941; c=relaxed/simple;
-	bh=vB4aAFbIqynhJfjHMP3jKbQOFhqxTGo5YH4GFVn1b5s=;
+	s=arc-20240116; t=1715142304; c=relaxed/simple;
+	bh=c5gTcs72ohynmb6Dnqtw2TG/Hf2n58urvUrAE5Te+94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuqStbjcCLUZFnAP2DxqLmOk5xPPf19I+ZbVgQy2hJQfBSNxyfDQRrgLoJ+VeuEcv9Zkk6cX2sUvMmcKMt9ECHkGh3gH8n7Hl5LlfXzYYOogHe9yAMx25bDry7cz76FO7S8RSSKClxi4UWkZxErJBydoFVmIFZ2VNm02PocIkJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RPktVsdW; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3yad4Qgukn/1fYq7znFO3qBUGhbC5pCvnzIvzB4QaFDsQRLuWthlOHLxn90Kz+0CCOvUFVTiaURTVae1aBrJymRvblgRhmqt0b36UZGkzfKN7LpcxnenJJKd1+7dSC7zqI0lPt2DnN8Y7Zi1RVZKX7Q59TBbued1z5g+sY4fFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s+ACq4eo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tBTlk6OSvFg2fmOi1WySncbsOzcElRbYthnvoXpfERE=; b=RPktVsdWBDX4bGmJ6pLMNZSLfi
-	3ANTVUE7RaDygCR7xWgFRvEfjDMDqhpzXz/Ob/p9Kd1iGgaxXpG9SEJcgIdO8F15atyw6U8KFwt4X
-	zP1cbLiMkyQsJPEUFlOESzWrtPiRGs2UE56+OeCR0ZggiiLLk3LJXKfUJrVDM+FV6vlav7CNxvtW0
-	0eDmp6X8h4MyJqlPJwS49YD8OuX0J7hH1ki/ISY2Gb6UNEIF51JV/3NVkkgDua0f1SzD9dD6ejfe8
-	Fb9U/7E+OwyBnTLe0ymf9NPm6PCGpSxWWcHTGNlZfOw/yY8dK1HBgwtC3B/gz0Kgwcxjy6IJ4SnCF
-	MJTDa5Qw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s4WQR-00FfPH-0P;
-	Wed, 08 May 2024 01:48:55 +0000
-Date: Wed, 8 May 2024 02:48:55 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Dawid Osuchowski <linux@osuchow.ski>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz
-Subject: Re: [PATCH v3] fs: Create anon_inode_getfile_fmode()
-Message-ID: <20240508014855.GN2118490@ZenIV>
-References: <20240426075854.4723-1-linux@osuchow.ski>
+	bh=84ZtBvQ/khWSnQbEsf+haKoET0najOuq14tZKuu3Imk=; b=s+ACq4eozDPnv+dJg0ug0zNJiJ
+	pUo4dOo4SkdW1sY/xWDWEwgbzQFZUVHYBt27fZx8vQTbZPfxwPoR1uBJfGL7d7nkWZR2TYtDWI8wn
+	xJOhrWog/be2TjPlnaz8LPrQiNB56alp4WywKxz1gQc5pEF8d/h3c+GbUATcI+zVPjMCRtdHOL+mp
+	Qz5uGBSbFkmkxrIQVBy7kLsCXLicfFEeidgwehur+2CvLXqPhF+gakpGCXOk/vEoEsbAenOobpNXi
+	0QG7kA95+LsR81+mAlNxbSxbMcmsRIZolR0lN4u2cZdZEksmwQ49nqymVT6bKO31ONbHcd5GwRpoc
+	ysZpz2eA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s4YrN-0000000Eq2c-340Y;
+	Wed, 08 May 2024 04:24:53 +0000
+Date: Wed, 8 May 2024 05:24:53 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, akpm@linux-foundation.org,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandan.babu@oracle.com, hare@suse.de, ritesh.list@gmail.com,
+	john.g.garry@oracle.com, ziy@nvidia.com,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, kernel@pankajraghav.com
+Subject: Re: [PATCH v5 07/11] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <Zjr-lf2tJAmwLzzu@casper.infradead.org>
+References: <20240503095353.3798063-1-mcgrof@kernel.org>
+ <20240503095353.3798063-8-mcgrof@kernel.org>
+ <ZjpQHA1zcLhUZa_D@casper.infradead.org>
+ <ZjpSZ2KjpUHPs_1Z@infradead.org>
+ <ZjpSzi-HiZkx_Kdq@casper.infradead.org>
+ <ZjpTHdtPJr1wLZBL@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,28 +71,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240426075854.4723-1-linux@osuchow.ski>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <ZjpTHdtPJr1wLZBL@infradead.org>
 
-On Fri, Apr 26, 2024 at 09:58:54AM +0200, Dawid Osuchowski wrote:
-> Creates an anon_inode_getfile_fmode() function that works similarly to
-> anon_inode_getfile() with the addition of being able to set the fmode
-> member.
+On Tue, May 07, 2024 at 09:13:17AM -0700, Christoph Hellwig wrote:
+> On Tue, May 07, 2024 at 05:11:58PM +0100, Matthew Wilcox wrote:
+> > > 	__bio_add_page(bio, page, len, 0);
+> > 
+> > no?  len can be > PAGE_SIZE.
+> 
+> Yes. So what?
 
-One note (followup commit fodder, probably in series with conversions to
-that interface):
-
-> + * @f_mode:  [in]    fmode
-
-> + * setup. Allows setting the fmode. Returns the newly created file* or an error
-
-is ambiguous - with no further information it reads as if we passed the value
-to store in ->f_mode, which is not what's going on.
-
-Something along the lines of
-
-'f_mode' argument allows to set additional bits, on top of the ones set by
-anon_inode_getfile() (FMODE_{OPENED,READ,WRITE,LSEEK,CAN_READ,CAN_WRITE}).
-The caller should not pass those in 'f_mode' - they will be set according to
-'flags' and 'fops' in all cases.
+the zero_page is only PAGE_SIZE bytes long.  so you'd be writing
+from the page that's after the zero page, whatever contents that has.
 
