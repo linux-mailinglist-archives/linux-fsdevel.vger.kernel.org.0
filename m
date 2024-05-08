@@ -1,84 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-19102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440098C00D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 17:20:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5B88C00D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 17:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA6A1F272DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:20:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 979A2B23572
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59306127E34;
-	Wed,  8 May 2024 15:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26828126F3A;
+	Wed,  8 May 2024 15:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gbh4kqLN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HtTlwpb3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D67F126F0A;
-	Wed,  8 May 2024 15:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393FB8562E;
+	Wed,  8 May 2024 15:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715181626; cv=none; b=i8Xaiou2Hoy76/fWdEuJmQNo1pdmnDj2zVnyDdhWxv7XmJPWseRzMui9m7eeLSc4lsyID+B6exdZMAUS78urrj+W3iRTQs76p1o7J+eqoiksTycyw3p/bT1QZpNZTt4ZVgMM7Ii7c7cIfgsa9Xn/qTR+t/8M7onkRtGlLVesvz8=
+	t=1715181696; cv=none; b=J2JQNDtfBjWon47aWNkM5QIJtwRB6vLBWhnYeC9ff+mj7XGdvP+thnwLAVZ0dlfx13xW6iMzNZaIfqCgODf5Pqy/y5T7NhtqwLHmfbUdsi/2MZmxvHH3f7wMYgrk1hfKOzyPHt6CcwEQGHfOvrv2rSlKE+ef1e10yOsqqaNc4/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715181626; c=relaxed/simple;
-	bh=RfnuiEkMHZizlL+1XOx2zPuV0PNycPXg1cxvzumtMVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFcDg9yaiAaVRSnes0CI6LobiEFGO8322tMn5BFe3D4KwEIegl+stfhUv+MaycRvrPrERxZJsW7pCqNp3MOPfqI+dJnQ/MUUtjewLLUtAd5H3QK+5JlXNjNhasq786SjYvWan+J6kQNiKQ46Fl5Nd4G/RFgQzWKh8E7ZH6ACyl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gbh4kqLN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e3hS5Fl8mwjnXrAA74G4mvzbNmBfp9o+MHe2MBuH9EA=; b=gbh4kqLN6hHkqAnXPraqwObX/q
-	XH0dpEaHVbIbVyoDUCpU6ZwUJRm9Z5K2MB4FAAi+S++GX9iwBiyRh7KnJD0UNuAd5/mW7T/rAEHFW
-	WIeOdC9ViDfjlbkGituNCsA2qJ4gn3088+BoDuldAcamu6xCxTPViUmJoruKKEF7XQhztRZAr17Tl
-	Q4iHUIZEMg8cH8Hwwb5cdPMhqi0q+Zn09iyPmXIN1uH1ExdCVmo3GDFY6oYeH+zgnDzliR/pUxUvp
-	ROT0Z1Nyn20TGHYTTyGdGapJOgGZySGG4cFnq780gD3HJoUm3QIW0tdjS9u6rwGp+hPuC5xryI9c+
-	um2O+FEg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4j5f-0000000Fueq-43ch;
-	Wed, 08 May 2024 15:20:20 +0000
-Date: Wed, 8 May 2024 16:20:19 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Convert ext4's mballoc to use folios
-Message-ID: <ZjuYM5ElTeBrXW4D@casper.infradead.org>
-References: <20240416172900.244637-1-willy@infradead.org>
- <171512302195.3602678.13595191031798220265.b4-ty@mit.edu>
+	s=arc-20240116; t=1715181696; c=relaxed/simple;
+	bh=wYODmWptbOs8YBeJCa9/Nlhstjn+sSRJZBZLNRuuUW8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r+1BXom9V01NEAXLM4iukPdIUdYGfiP49K1IUT8zPa2REw/NtJdoEv+Q6cYnTXmGJv7WQYNimmiPGbfxPmyMGZnYL64ZWzDx6rQhS7Pm3pouehgDgFNR0VXXPewIWPpLvDuTzF/c08EHKeTwC9VQP4WTcmfbAVoP12kf+AX16fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HtTlwpb3; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715181695; x=1746717695;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wYODmWptbOs8YBeJCa9/Nlhstjn+sSRJZBZLNRuuUW8=;
+  b=HtTlwpb311MgeRgSqJ0UFJeMC0izE7SAqZ2yZiodbKq06pHXfqjpYoNJ
+   4ityX6E8ivy1WGOlSk4OsAUsXfcmOawxFDvBS0wL+STJsLr/Cxy3BjOPV
+   iHJQUzGj084XnoW8LWmJ9tbXC3wP3CbIatYw9J7yZmfQLE9XVgewJZWDP
+   ya7c2js6UdOSimd4eHXFY03fW9hl55tEqx4ex3VKXX7BKOC7vYJzpziz/
+   bUr3TpQTCNqSG677CTB5b5E1D+esuT39B0fVV76hR2hsuipmVBWhXfz1I
+   S4n3VaYEXFgcXHbLOsenauevsfI84MUY0JxyQCBZ4AoY2McJaF/H/zXEx
+   w==;
+X-CSE-ConnectionGUID: UxovCE/vT+im8QaIy2TUKQ==
+X-CSE-MsgGUID: ryqL6BKARoKFP/hgSPRQXA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11210968"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="11210968"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:21:34 -0700
+X-CSE-ConnectionGUID: 1XCXLO1TR++Bj7LD5HJU+A==
+X-CSE-MsgGUID: YTt6qQwBRdqNHdyO8DUC8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="66349865"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 08 May 2024 08:21:33 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id BF5F1109; Wed, 08 May 2024 18:21:31 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>
+Subject: [PATCH v1 1/1] isofs: Use *-y instead of *-objs in Makefile
+Date: Wed,  8 May 2024 18:21:11 +0300
+Message-ID: <20240508152129.1445372-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171512302195.3602678.13595191031798220265.b4-ty@mit.edu>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 07, 2024 at 07:03:53PM -0400, Theodore Ts'o wrote:
-> 
-> On Tue, 16 Apr 2024 18:28:53 +0100, Matthew Wilcox (Oracle) wrote:
-> > These pages are stored in the page cache, so they're really folios.
-> > Convert the whole file from pages to folios.
-> > 
-> > Matthew Wilcox (Oracle) (5):
-> >   ext4: Convert bd_bitmap_page to bd_bitmap_folio
-> >   ext4: Convert bd_buddy_page to bd_buddy_folio
-> >   ext4: Convert ext4_mb_init_cache() to take a folio
-> >   ext4: Convert ac_bitmap_page to ac_bitmap_folio
-> >   ext4: Convert ac_buddy_page to ac_buddy_folio
-> > 
-> > [...]
-> 
-> Applied, thanks!
+*-objs suffix is reserved rather for (user-space) host programs while
+usually *-y suffix is used for kernel drivers (although *-objs works
+for that purpose for now).
 
-Thanks!  Can you also add 20240420025029.2166544-11-willy@infradead.org
+Let's correct the old usages of *-objs in Makefiles.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+Note, the original approach is weirdest from the existing.
+Only a few drivers use this (-objs-y) one most likely by mistake.
+
+ fs/isofs/Makefile | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/fs/isofs/Makefile b/fs/isofs/Makefile
+index 6498fd2b0f60..b25bc542a22b 100644
+--- a/fs/isofs/Makefile
++++ b/fs/isofs/Makefile
+@@ -5,7 +5,6 @@
+ 
+ obj-$(CONFIG_ISO9660_FS) += isofs.o
+ 
+-isofs-objs-y 			:= namei.o inode.o dir.o util.o rock.o export.o
+-isofs-objs-$(CONFIG_JOLIET)	+= joliet.o
+-isofs-objs-$(CONFIG_ZISOFS)	+= compress.o
+-isofs-objs			:= $(isofs-objs-y)
++isofs-y 		:= namei.o inode.o dir.o util.o rock.o export.o
++isofs-$(CONFIG_JOLIET)	+= joliet.o
++isofs-$(CONFIG_ZISOFS)	+= compress.o
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
