@@ -1,123 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-19129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85938C059A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 22:27:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908118C059C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 22:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B10282C21
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 20:27:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03DD0B23046
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 20:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8889E130AFE;
-	Wed,  8 May 2024 20:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D79130E55;
+	Wed,  8 May 2024 20:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKWl4rGy"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NyX9IHCr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15D7128829;
-	Wed,  8 May 2024 20:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEA7130AFA
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 20:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715200014; cv=none; b=ZibldzVxUKJPtET4SdoCYJ6kx99sjt6ymId0J85zmmhZUay/8koI3ZYB/twDCp7llWLkh6CHzjYWucM72MrrMDMrjaMuWtpzO5JMF/tYr7nLSxeMU3zZAfaCUuqubeAN+1W+gJfyDHSNYXgJ/ume158jMUXfGG2HnYpzDbTXrHg=
+	t=1715200091; cv=none; b=ExuEcfR8Brf0sfAsNTc6L3BGjzuNX7PJvRHip/uqBBqBDcXfryogeOM2IHXU0A0HvtOSNp1U7HQxacPSNcztqiGmCR0MCepAf3L+ab/2H4VZFWl6jAxMEwcAvi0YKJ8zHW4Z/O8aIlGPs4C25pLEkQjWZfGJdH90q5rU+YBodDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715200014; c=relaxed/simple;
-	bh=5cplXGTHhLKevBVc9ttRuEVGAVIPeKWSB2YKGZ7YMTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhOe1PdOqt0RgXdTgHOtGha6nlPTw9AopC8sXRSb+2VJ/Fi9lUPneM+rQMjJ/JEQ7IKfSzyhNqGi67lQ+33/w5E5Q9+Nigs0Fr0JS0SwKJPzfInMsO5XcjhmLVZ3M2OvZ7dG+KkMhGLAJN/rzyEXky+p4kBAQYcrdn7gjPYuxew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKWl4rGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59AA5C113CC;
-	Wed,  8 May 2024 20:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715200013;
-	bh=5cplXGTHhLKevBVc9ttRuEVGAVIPeKWSB2YKGZ7YMTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HKWl4rGy/Ywiyz659yIU8m1XShXBzZQIzM+TKinlzUPEWpPzhBsct0X2IEao9jm2+
-	 1fqVrtRkJK2uPXpi/7wQNpYpu0Rml6ZRZ8Vp6BYufhlv7G91DUrSkaQ7xpA8bGIp/f
-	 XoqD3PNVc+VDSgEM0bjuaAt7Q09Gt3O0DPAo1MCixQI4rVi/MwJLZKKioysOX1XGBf
-	 IEQTV+H2ycRA9V63LCvGrKyqnVxQwNp1JY6NOu1aaX00W/d9RpkWMSK58dXkbqOA7T
-	 ZvaRXn6NcaV2EDVd7QpakBV9AYH1FlScXRgRGKJh5YzhHFDztjTubwavc8OcAIkBQ0
-	 TfD/iNzIasCpA==
-Date: Wed, 8 May 2024 13:26:52 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
-	linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
-	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 19/26] xfs: don't bother storing merkle tree blocks for
- zeroed data blocks
-Message-ID: <20240508202652.GD360919@frogsfrogsfrogs>
-References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
- <171444680689.957659.7685497436750551477.stgit@frogsfrogsfrogs>
- <ZjHle-WDezhehB6a@infradead.org>
- <20240501224736.GL360919@frogsfrogsfrogs>
- <20240502000132.GA1853833@google.com>
+	s=arc-20240116; t=1715200091; c=relaxed/simple;
+	bh=o2NLQhPztuDZ4rTiTDFMEINRFzrqOs93EXYAp0RXtiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gBybwW/d/McYnv0EpgHzwB+dDWEFzhydnnrPJxZuG7w+HNR1BeuoTfTOtPcD78Hm7wDM4h7HRyyr5shseImNCr3mPGfFqeYWt1llDblvJ6aUYzKrnkRkRNehulE8k4G3J2C4SiSfQ442FVihzsFENys+X6+iifAfzh+QNIZ6RGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NyX9IHCr; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso3810a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 13:28:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715200088; x=1715804888; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxBCT1ZV/EGWLKjxVs7FXcKu7sqjJfkKsVJ1w+mU1+0=;
+        b=NyX9IHCrSC9Je83Z/MnO8GwYzmpBLZE12Oh7P0WFKvTalU2Ciei+SR4yfrdbmQXps+
+         uWt/vjgQ+p0u6FKAcDDdqRciXtxpn1eAn1RRbxJrfD7/D6dUWWiyHNmgyOHtkeETq02t
+         YGSf7tHygxWbjyaDE4tFQH/tNyN+kiFydGC4Sf/vS3eO7m6sUlailV45R5eKKxcUYq0J
+         aW/UI7mnxqPAUJ+IEgeMuC8o5GtFG8x1++zBxQVDeD5vc9pjheIIRF7IN7vbtVWA/fD2
+         KDdFmbJEMXi4XdMUBM8YFeX7KpKa9V5dExWXQepqMrbkr5Fy3psYGVyoCv4bI3hNGEoQ
+         uD6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715200088; x=1715804888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VxBCT1ZV/EGWLKjxVs7FXcKu7sqjJfkKsVJ1w+mU1+0=;
+        b=Y+MaBNWPJ+bzdxlbuJEv3dZfF3lZXhrjZEG4gYhh4UB4mxtslykpevS7hyA/i3dUMf
+         DY542LN6yo7Rwv8wRelJMvfRjIkH68cQHCTVPBrrp3hbNtk7QN+Ry4bHxJ+lSHvxxAcf
+         UBP0QELNGUnu/lQLB3AWPuoVxwEJCpOi6vfOQbXe7/NNRg4teuGfyoDn5Imb0rVDkqV8
+         7HlFY+WsuB4WLwDyR6G+SE5H/SqPnJDjOksv7dgYKXI1xbaIZhdOcrbFUAyLCpDglrc6
+         tLDFVc0E1pEHLjsitHIPrrBpk0Lk3NbASUN+UsNlc6leztPz0MmmUskaRDgzcWfZl+TS
+         B8pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWluVTsASLhD+EjMDF4jp8JX8Qcpfn0nnec7Bb0HXA8xzlb+JwFnM7L9scA2NNit25kTVGq+VufLGKYLikg0PIqLE8js/sFSRIvrOOK6Q==
+X-Gm-Message-State: AOJu0YxbDzFIdvW2mgKGTQnyD/ZXAL/RVTKFDcXm1enS0cRfkJLopv4l
+	XzSA7FPVhsiuWWZfam34vCrDc5mUr8qjvMyb+oEUOF7s7vTmPin6cjp2D1ec+TA14XrsvEd0Gm2
+	Go8aI/0mi5+HvrVxkPDUH7Oc6zWvomJXLTwzi
+X-Google-Smtp-Source: AGHT+IG0Nkg3RjjAAyj+n+Ew0xyy8RnKsH20og6+OrFEWYycNhxXEo9VK176FECewK/2EQxZ5XFepnMJQqWDZY6gYdE=
+X-Received: by 2002:a05:6402:228b:b0:572:a33d:437f with SMTP id
+ 4fb4d7f45d1cf-573341614e1mr44879a12.2.1715200087751; Wed, 08 May 2024
+ 13:28:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502000132.GA1853833@google.com>
+References: <20240507214254.2787305-1-edliaw@google.com> <20240507214254.2787305-5-edliaw@google.com>
+ <ZjuEILj0SZRuTL9I@google.com>
+In-Reply-To: <ZjuEILj0SZRuTL9I@google.com>
+From: Edward Liaw <edliaw@google.com>
+Date: Wed, 8 May 2024 13:27:39 -0700
+Message-ID: <CAG4es9VWuY4Z5HoU_SQCDaSrDC0s1knDfGvLNEa1YxhC0RZ2ZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] selftests: Drop define _GNU_SOURCE
+To: Sean Christopherson <seanjc@google.com>
+Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	David Hildenbrand <david@redhat.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Seth Forshee <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>, 
+	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 02, 2024 at 12:01:32AM +0000, Eric Biggers wrote:
-> On Wed, May 01, 2024 at 03:47:36PM -0700, Darrick J. Wong wrote:
-> > On Tue, Apr 30, 2024 at 11:47:23PM -0700, Christoph Hellwig wrote:
-> > > On Mon, Apr 29, 2024 at 08:29:03PM -0700, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > > 
-> > > > Now that fsverity tells our merkle tree io functions about what a hash
-> > > > of a data block full of zeroes looks like, we can use this information
-> > > > to avoid writing out merkle tree blocks for sparse regions of the file.
-> > > > For verified gold master images this can save quite a bit of overhead.
-> > > 
-> > > Is this something that fsverity should be doing in a generic way?
-> > 
-> > I don't think it's all that useful for ext4/f2fs because they always
-> > write out full merkle tree blocks even if it's the zerohash over and
-> > over again.  Old kernels aren't going to know how to deal with that.
-> > 
-> > > It feels odd to have XFS behave different from everyone else here,
-> > > even if this does feel useful.  Do we also need any hash validation
-> > > that no one tampered with the metadata and added a new extent, or
-> > > is this out of scope for fsverity?
-> > 
-> > If they wrote a new extent with nonzero contents, then the validation
-> > will fail, right?
-> > 
-> > If they added a new unwritten extent (or a written one full of zeroes),
-> > then the file data hasn't changed and validation would still pass,
-> > correct?
-> 
-> The point of fsverity is to verify that file data is consistent with the
-> top-level file digest.  It doesn't really matter which type of extent the data
-> came from, or if the data got synthesized somehow (e.g. zeroes synthesized from
-> a hole), as long as fsverity still gets invoked to verify the data.  If the data
-> itself passes verification, then it's good.  The same applies to Merkle tree
-> blocks which are an intermediate step in the verification.
+On Wed, May 8, 2024 at 6:54=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Tue, May 07, 2024, Edward Liaw wrote:
+> > _GNU_SOURCE is provided by KHDR_INCLUDES, so it should be dropped to
+> > prevent _GNU_SOURCE redefined warnings.
+>
+> ...
+>
+> > diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/te=
+sting/selftests/x86/test_syscall_vdso.c
+> > index 8965c311bd65..5cd13279bba5 100644
+> > --- a/tools/testing/selftests/x86/test_syscall_vdso.c
+> > +++ b/tools/testing/selftests/x86/test_syscall_vdso.c
+> > @@ -8,10 +8,6 @@
+> >   * Can be built statically:
+> >   * gcc -Os -Wall -static -m32 test_syscall_vdso.c thunks_32.S
+> >   */
+> > -#undef _GNU_SOURCE
+> > -#define _GNU_SOURCE 1
+> > -#undef __USE_GNU
+> > -#define __USE_GNU 1
+>
+> AFAICT, manually defining __USE_GNU is frowned upon, so I'm guessing the =
+__USE_GNU
+> stuff is just the result of misguided copy+paste.  But it would be nice t=
+o get
+> confirmation that this test isn't doing something clever.  Or at the very=
+ least,
+> explain the removal of __USE_GNU in the changelog.
 
-<nod>
+It looks like test_syscall_vdso, test_FCMOV, test_FCOMI, and
+test_FISTTP don't actually use any GNU extensions.  I'll add that to
+the commit message.
 
-> In the Merkle tree, ext4 and f2fs currently just use the same concept of
-> sparsity as the file data, i.e. when a block is unmapped, it is filled in with
-> all zeroes.  As Darrick noticed, this isn't really the right concept of sparsity
-> for the Merkle tree, as a block full of hashes of zeroed blocks should be used,
-> not literally a zeroed block.  I think it makes sense to fix this in XFS, as
-> it's newly adding fsverity support, and this is a filesystem-level
-> implementation detail.  It would be difficult to fix this in ext4 and f2fs since
-> it would be an on-disk format upgrade.  (Existing files should not actually have
-> any sparse Merkle tree blocks, so we probably could redefine what they mean.
-> But even if so, old kernels would not be able to read the new files.)
 
-<nod>
-
---D
-
-> - Eric
-> 
+>
+> >  #include <unistd.h>
+> >  #include <stdlib.h>
+> >  #include <string.h>
 
