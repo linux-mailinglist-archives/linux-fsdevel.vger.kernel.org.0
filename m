@@ -1,148 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-19097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032A58BFF93
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:55:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847748BFF98
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACED2283F22
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BCC289701
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E423684FAE;
-	Wed,  8 May 2024 13:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sChzYj2r"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CF384D30;
+	Wed,  8 May 2024 13:56:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A01047F5B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 13:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F5F47A5C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 13:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715176486; cv=none; b=BXw+1C5KrxN6OB7LpNIx+viqiz3A+k7qGwUR7XL8+e3FRH3KiBnMe89tKvbGiegeT8liFAwKD2u9mbb7R7l/wsYoFoLu3ETyAJnHwMnVHOpXk50iQC0RPit7hxkYnLdlwzz7W37pdCTFMIXrjHDHguaaHkHlKqbQ1V59R2yBg9M=
+	t=1715176592; cv=none; b=YZX/PN9+iV2CzgdrIm3eMh6gDnHyMmnI+cIoJWJKEAnq5Jg7we35DWiB3uWu9MVRZ5z8jrzQDUjN93BmOMQVF8MZcFqJ/++sCUSPcz3ZlvE3XgsW3fgYyXrgfhW3I9s/Lol/jvKsiyVd6TeBmeTaDyclFUXK+IseXBqXbF5sc0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715176486; c=relaxed/simple;
-	bh=c4rrNnRvo0cBlTP42xOOVWUGWry3TUGUYL7wXej88eM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L3BJCkVtJHNKcIf7tWRVfB56BfMLNXAxkZsBlM0CT6ML6M9AHJ2FE/o4AtRyghBc/Fc1wqRC16onwJdYfW+QTLRdmncxKrILmIS/hRyOqZ43kez/e0k6gRXQglV8UQ0zwll/SZosqAg9jOGINCRrmDwCrV0CDrmqadn4TKnLJ4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sChzYj2r; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbf618042daso8058016276.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 06:54:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715176482; x=1715781282; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrxifLi18HwIXN/paZijnWPdESXfJJzxe/+u8UtVff4=;
-        b=sChzYj2rtzH+m82eJTwVi4o6/zZb4Tlo57BCb+n1FPzSPtq6p6xORd6/DYyI7qb5wx
-         UIAsEztjkkh7Kk0ZcUkYVI7Keczqp57Eoy2dlm1HhY+gT7XI9MskBF90x3ohX5x57RMr
-         /K6Em/fk4vBVDRGJLDa1BUOO5qbYbAJqvbq+reXWKTlKMSiyIaiF3vsAJTmdOeaR2wHU
-         1plsfxD3xB3uD6q0MIa/idAEY33bOCWrKRLQylsaNnDzG2mFjvkjkHlW0BU3ZPWU9lcf
-         hAI4kR0t1rm3WCfEMP/R+Doq90LDP6FOZ6/hdOBJRWc/btr+nMEmQ0RQQfu7qVl5XQ0n
-         1k8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715176482; x=1715781282;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrxifLi18HwIXN/paZijnWPdESXfJJzxe/+u8UtVff4=;
-        b=Y75LZRS07Of1RUt+16XElm4dPljNTCREhAOipIAks23H/vC/lpma1MZ1WLvsQ0JbaC
-         tyxPAJ14m8jADqDEn8nMegUWJlrsXzoGT2KXO5JKkJsKKARAZcv+SoVDhrAcUCHDG7j0
-         7XLYgHeT9SmEIhG2HtB2zqKYIUXwv8wYiryTyxOwbT+EbBq6/vpsyT9iZYejC+CxOuSr
-         6uhMg03M8sjBXXigpQO0NINLoZfee2ccM4Y5zV351l408a0b38C+GhY/jlbsq9UGxAEs
-         9wWq94GmNJ6NDl3wzE4hV7RWmMY7XiIiMbiBfG16DlY9OTlob+RL28YxUg4aScyBLGTC
-         hnIg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+5QBY+4/fwdM8G5B20FRoRFtfl9rM/vjTUszOYUmfQKz4FeONsgXy64eOpk5FWGrNtxKbL98ggHBaDySXMvBOvt8NUTIZEOtl4mK1hQ==
-X-Gm-Message-State: AOJu0Yyd0V60axloCMOBl82Zv3+g2jBu9WnCiDQ43IToJ5Hl1l+qd/yD
-	fKcxB5Xia3tZV6wnWK9BwHv8vKNiA7BzEJ/eY7t9ocA7gB2P4ZjjnD7pgCsxRA4aI9IHJFbPNZT
-	CcQ==
-X-Google-Smtp-Source: AGHT+IGJRBi1UvMX9yVwIeeKPJ5i4MXrMA7fvNEnU0sh0JI0w6+2/9z2FlMIObyx5JUsUOMhiA6kQPpm0zI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:18c8:b0:dd9:2789:17fb with SMTP id
- 3f1490d57ef6-debb9cfd19bmr223701276.3.1715176481930; Wed, 08 May 2024
- 06:54:41 -0700 (PDT)
-Date: Wed, 8 May 2024 06:54:40 -0700
-In-Reply-To: <20240507214254.2787305-5-edliaw@google.com>
+	s=arc-20240116; t=1715176592; c=relaxed/simple;
+	bh=9R3fF0MgQKPf5yHVJJQF2tRGcGNE6UsLFm7RlBZdBRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KhyjwyPiwjZ85T1KyBty8CTuAsxlvgY1OBYma6z4tQeoqL+rfAi+Va/F/+RTYZgcyjEA8RRV4i/qO4nKJOVNdebQVvwXcp1XVHx3Roi59xYW6+nBm/GhX5scBAEdVf26AeHNfng2KozuUqSfIB3aCe2yOlngMdVzYiQJktXMhU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VZGn8233Pz1RCch;
+	Wed,  8 May 2024 21:53:00 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 35AD5180AA1;
+	Wed,  8 May 2024 21:56:20 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 8 May 2024 21:56:19 +0800
+Message-ID: <7779878b-3ff5-4b4e-881a-f66426dceb6f@huawei.com>
+Date: Wed, 8 May 2024 21:56:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507214254.2787305-1-edliaw@google.com> <20240507214254.2787305-5-edliaw@google.com>
-Message-ID: <ZjuEILj0SZRuTL9I@google.com>
-Subject: Re: [PATCH v2 4/5] selftests: Drop define _GNU_SOURCE
-From: Sean Christopherson <seanjc@google.com>
-To: Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, "=?utf-8?B?QW5kcsOp?= Almeida" <andrealmeid@igalia.com>, 
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	David Hildenbrand <david@redhat.com>, "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <sforshee@kernel.org>, 
-	Bongsu Jeon <bongsu.jeon@samsung.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"Andreas =?utf-8?Q?F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
-	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH rfc 3/4] mm: filemap: move __lruvec_stat_mod_folio() out
+ of filemap_set_pte_range()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>
+References: <20240429072417.2146732-1-wangkefeng.wang@huawei.com>
+ <20240429072417.2146732-4-wangkefeng.wang@huawei.com>
+ <0bf097d2-6d2a-498b-a266-303f168b6221@redhat.com>
+ <e1b19d37-82ea-447b-b9da-0a714df2c632@huawei.com>
+ <d9190747-953f-4c2a-9729-23d86044fb4d@redhat.com>
+ <609abbe8-cf88-4145-b1d0-397c980aff28@huawei.com>
+ <ecb4f35e-7ead-4674-b934-1de03e1f8c0a@redhat.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <ecb4f35e-7ead-4674-b934-1de03e1f8c0a@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-On Tue, May 07, 2024, Edward Liaw wrote:
-> _GNU_SOURCE is provided by KHDR_INCLUDES, so it should be dropped to
-> prevent _GNU_SOURCE redefined warnings.
 
-...
 
-> diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/testing/selftests/x86/test_syscall_vdso.c
-> index 8965c311bd65..5cd13279bba5 100644
-> --- a/tools/testing/selftests/x86/test_syscall_vdso.c
-> +++ b/tools/testing/selftests/x86/test_syscall_vdso.c
-> @@ -8,10 +8,6 @@
->   * Can be built statically:
->   * gcc -Os -Wall -static -m32 test_syscall_vdso.c thunks_32.S
->   */
-> -#undef _GNU_SOURCE
-> -#define _GNU_SOURCE 1
-> -#undef __USE_GNU
-> -#define __USE_GNU 1
+On 2024/5/8 19:27, David Hildenbrand wrote:
+> On 08.05.24 13:15, Kefeng Wang wrote:
+>>
+>>
+>> On 2024/5/8 17:33, David Hildenbrand wrote:
+>>> On 07.05.24 15:12, Kefeng Wang wrote:
+>>>>
+>>>>
+>>>> On 2024/5/7 19:11, David Hildenbrand wrote:
+>>>>> On 29.04.24 09:24, Kefeng Wang wrote:
+>>>>>> Adding __folio_add_file_rmap_ptes() which don't update lruvec 
+>>>>>> stat, it
+>>>>>> is used in filemap_set_pte_range(), with it, lruvec stat updating is
+>>>>>> moved into the caller, no functional changes.
+>>>>>>
+>>>>>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>>>>>> ---
+>>>>>>     include/linux/rmap.h |  2 ++
+>>>>>>     mm/filemap.c         | 27 ++++++++++++++++++---------
+>>>>>>     mm/rmap.c            | 16 ++++++++++++++++
+>>>>>>     3 files changed, 36 insertions(+), 9 deletions(-)
+>>>>>>
+>>>>>> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+>>>>>> index 7229b9baf20d..43014ddd06f9 100644
+>>>>>> --- a/include/linux/rmap.h
+>>>>>> +++ b/include/linux/rmap.h
+>>>>>> @@ -242,6 +242,8 @@ void folio_add_anon_rmap_pmd(struct folio *,
+>>>>>> struct page *,
+>>>>>>             struct vm_area_struct *, unsigned long address, rmap_t
+>>>>>> flags);
+>>>>>>     void folio_add_new_anon_rmap(struct folio *, struct
+>>>>>> vm_area_struct *,
+>>>>>>             unsigned long address);
+>>>>>> +int __folio_add_file_rmap_ptes(struct folio *, struct page *, int
+>>>>>> nr_pages,
+>>>>>> +        struct vm_area_struct *);
+>>>>>>     void folio_add_file_rmap_ptes(struct folio *, struct page *, int
+>>>>>> nr_pages,
+>>>>>>             struct vm_area_struct *);
+>>>>>>     #define folio_add_file_rmap_pte(folio, page, vma) \
+>>>>>> diff --git a/mm/filemap.c b/mm/filemap.c
+>>>>>> index 7019692daddd..3966b6616d02 100644
+>>>>>> --- a/mm/filemap.c
+>>>>>> +++ b/mm/filemap.c
+>>>>>> @@ -3501,14 +3501,15 @@ static struct folio
+>>>>>> *next_uptodate_folio(struct xa_state *xas,
+>>>>>>     static void filemap_set_pte_range(struct vm_fault *vmf, struct 
+>>>>>> folio
+>>>>>> *folio,
+>>>>>>                 struct page *page, unsigned int nr, unsigned long 
+>>>>>> addr,
+>>>>>> -            unsigned long *rss)
+>>>>>> +            unsigned long *rss, int *nr_mapped)
+>>>>>>     {
+>>>>>>         struct vm_area_struct *vma = vmf->vma;
+>>>>>>         pte_t entry;
+>>>>>>         entry = prepare_range_pte_entry(vmf, false, folio, page, nr,
+>>>>>> addr);
+>>>>>> -    folio_add_file_rmap_ptes(folio, page, nr, vma);
+>>>>>> +    *nr_mapped += __folio_add_file_rmap_ptes(folio, page, nr, vma);
+>>>>>> +
+>>>>>>         set_ptes(vma->vm_mm, addr, vmf->pte, entry, nr);
+>>>>>>         /* no need to invalidate: a not-present page won't be 
+>>>>>> cached */
+>>>>>> @@ -3525,7 +3526,8 @@ static void filemap_set_pte_range(struct
+>>>>>> vm_fault *vmf, struct folio *folio,
+>>>>>>     static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
+>>>>>>                 struct folio *folio, unsigned long start,
+>>>>>>                 unsigned long addr, unsigned int nr_pages,
+>>>>>> -            unsigned long *rss, unsigned int *mmap_miss)
+>>>>>> +            unsigned long *rss, int *nr_mapped,
+>>>>>> +            unsigned int *mmap_miss)
+>>>>>>     {
+>>>>>>         vm_fault_t ret = 0;
+>>>>>>         struct page *page = folio_page(folio, start);
+>>>>>> @@ -3558,7 +3560,8 @@ static vm_fault_t 
+>>>>>> filemap_map_folio_range(struct
+>>>>>> vm_fault *vmf,
+>>>>>>             continue;
+>>>>>>     skip:
+>>>>>>             if (count) {
+>>>>>> -            filemap_set_pte_range(vmf, folio, page, count, addr, 
+>>>>>> rss);
+>>>>>> +            filemap_set_pte_range(vmf, folio, page, count, addr,
+>>>>>> +                          rss, nr_mapped);
+>>>>>>                 if (in_range(vmf->address, addr, count * PAGE_SIZE))
+>>>>>>                     ret = VM_FAULT_NOPAGE;
+>>>>>>             }
+>>>>>> @@ -3571,7 +3574,8 @@ static vm_fault_t 
+>>>>>> filemap_map_folio_range(struct
+>>>>>> vm_fault *vmf,
+>>>>>>         } while (--nr_pages > 0);
+>>>>>>         if (count) {
+>>>>>> -        filemap_set_pte_range(vmf, folio, page, count, addr, rss);
+>>>>>> +        filemap_set_pte_range(vmf, folio, page, count, addr, rss,
+>>>>>> +                      nr_mapped);
+>>>>>>             if (in_range(vmf->address, addr, count * PAGE_SIZE))
+>>>>>>                 ret = VM_FAULT_NOPAGE;
+>>>>>>         }
+>>>>>> @@ -3583,7 +3587,7 @@ static vm_fault_t 
+>>>>>> filemap_map_folio_range(struct
+>>>>>> vm_fault *vmf,
+>>>>>>     static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
+>>>>>>             struct folio *folio, unsigned long addr,
+>>>>>> -        unsigned long *rss, unsigned int *mmap_miss)
+>>>>>> +        unsigned long *rss, int *nr_mapped, unsigned int *mmap_miss)
+>>>>>>     {
+>>>>>>         vm_fault_t ret = 0;
+>>>>>>         struct page *page = &folio->page;
+>>>>>> @@ -3606,7 +3610,7 @@ static vm_fault_t
+>>>>>> filemap_map_order0_folio(struct vm_fault *vmf,
+>>>>>>         if (vmf->address == addr)
+>>>>>>             ret = VM_FAULT_NOPAGE;
+>>>>>> -    filemap_set_pte_range(vmf, folio, page, 1, addr, rss);
+>>>>>> +    filemap_set_pte_range(vmf, folio, page, 1, addr, rss, 
+>>>>>> nr_mapped);
+>>>>>>         return ret;
+>>>>>>     }
+>>>>>> @@ -3646,6 +3650,7 @@ vm_fault_t filemap_map_pages(struct vm_fault
+>>>>>> *vmf,
+>>>>>>         folio_type = mm_counter_file(folio);
+>>>>>>         do {
+>>>>>>             unsigned long end;
+>>>>>> +        int nr_mapped = 0;
+>>>>>>             addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
+>>>>>>             vmf->pte += xas.xa_index - last_pgoff;
+>>>>>> @@ -3655,11 +3660,15 @@ vm_fault_t filemap_map_pages(struct vm_fault
+>>>>>> *vmf,
+>>>>>>             if (!folio_test_large(folio))
+>>>>>>                 ret |= filemap_map_order0_folio(vmf,
+>>>>>> -                    folio, addr, &rss, &mmap_miss);
+>>>>>> +                    folio, addr, &rss, &nr_mapped,
+>>>>>> +                    &mmap_miss);
+>>>>>>             else
+>>>>>>                 ret |= filemap_map_folio_range(vmf, folio,
+>>>>>>                         xas.xa_index - folio->index, addr,
+>>>>>> -                    nr_pages, &rss, &mmap_miss);
+>>>>>> +                    nr_pages, &rss, &nr_mapped,
+>>>>>> +                    &mmap_miss);
+>>>>>> +
+>>>>>> +        __lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr_mapped);
+>>>>>>             folio_unlock(folio);
+>>>>>>             folio_put(folio);
+>>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>>>>> index 2608c40dffad..55face4024f2 100644
+>>>>>> --- a/mm/rmap.c
+>>>>>> +++ b/mm/rmap.c
+>>>>>> @@ -1452,6 +1452,22 @@ static __always_inline void
+>>>>>> __folio_add_file_rmap(struct folio *folio,
+>>>>>>             mlock_vma_folio(folio, vma);
+>>>>>>     }
+>>>>>> +int __folio_add_file_rmap_ptes(struct folio *folio, struct page 
+>>>>>> *page,
+>>>>>> +        int nr_pages, struct vm_area_struct *vma)
+>>>>>> +{
+>>>>>> +    int nr, nr_pmdmapped = 0;
+>>>>>> +
+>>>>>> +    VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
+>>>>>> +
+>>>>>> +    nr = __folio_add_rmap(folio, page, nr_pages, RMAP_LEVEL_PTE,
+>>>>>> +                  &nr_pmdmapped);
+>>>>>> +
+>>>>>> +    /* See comments in folio_add_anon_rmap_*() */
+>>>>>> +    if (!folio_test_large(folio))
+>>>>>> +        mlock_vma_folio(folio, vma);
+>>>>>> +
+>>>>>> +    return nr;
+>>>>>> +}
+>>>>>
+>>>>> I'm not really a fan :/ It does make the code more complicated, and it
+>>>>> will be harder to extend if we decide to ever account differently 
+>>>>> (e.g.,
+>>>>> NR_SHMEM_MAPPED, additional tracking for mTHP etc).
+>>>>
+>>>> If more different accounts, this may lead to bad scalability.
+>>>
+>>> We already do it for PMD mappings.
+>>>
+>>>>>
+>>>>> With large folios we'll be naturally batching already here, and I do
+>>>>
+>>>> Yes, it is batched with large folios，but our fs is ext4/tmpfs, there
+>>>> are not support large folio or still upstreaming.
+>>>
+>>> Okay, so that will be sorted out sooner or later.
+>>>
+>>>>
+>>>>> wonder, if this is really worth for performance, or if we could find
+>>>>> another way of batching (let the caller activate batching and drain
+>>>>> afterwards) without exposing these details to the caller.
+>>>>
+>>>> It does reduce latency when batch lruvec stat updating without large
+>>>> folio, but I can't find better way, or let's wait for the large folio
+>>>> support on ext4/tmpfs, I also Cced memcg maintainers in patch4 to 
+>>>> see if
+>>>> there are any other ideas.
+>>>
+>>> I'm not convinced this benefit here is worth making the code more
+>>> complicated.
+>>>
+>>> Maybe we can find another way to optimize this batching in rmap code
+>>> without having to leak these details to the callers.
+>>>
+>>> For example, we could pass an optional batching structure to all rmap
+>>> add/rel functions that would collect these stat updates. Then we could
+>>> have one function to flush it and update the counters combined.
+>>>
+>>> Such batching could be beneficial also for page unmapping/zapping where
+>>> we might unmap various different folios in one go.
+>>
+>> It sounds better and clearer, I will try it and see the results, thanks
+>> for your advise!
+> 
+> To batch across multiple folios, it might be sufficient to remember in 
+> the batching structure for now:
+> 
+> * folio_memcg(folio)
+> * folio_pgdat(folio)
+> * NR_ANON_MAPPED diff
+> * NR_FILE_MAPPED diff
+> 
+> If the memcg of pgdat would change, we simply flush. Otherwise we batch 
+> and the caller flushes.
 
-AFAICT, manually defining __USE_GNU is frowned upon, so I'm guessing the __USE_GNU
-stuff is just the result of misguided copy+paste.  But it would be nice to get
-confirmation that this test isn't doing something clever.  Or at the very least,
-explain the removal of __USE_GNU in the changelog.
+for memcg = NULL, we need flush when pgdat changed.
 
->  #include <unistd.h>
->  #include <stdlib.h>
->  #include <string.h>
+> 
+> Likely we mapping/unmapping multiple folios they belong to the same 
+> pgdat+memcg.
+
+Yes, the batch should be suitable for mapping/unmapping.
+
+> 
+> The only tricky bit is the rcu_read_lock() around folio_memcg(); that 
+> might require some thought.
+
+Indeed, we need stable folio/memcg bounding.
+
+Thanks.
+> 
+> Hm ....
+> 
 
