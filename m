@@ -1,147 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-18976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-18977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFF18BF360
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 02:14:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615CE8BF3C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 02:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425A81F254DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:14:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000DEB23512
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 00:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F22C7F9;
-	Wed,  8 May 2024 00:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F781C27;
+	Wed,  8 May 2024 00:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e/XH1+Tl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQ+H01xI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EF6380;
-	Wed,  8 May 2024 00:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3375B387;
+	Wed,  8 May 2024 00:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715127240; cv=none; b=aleL/vL6RFxBQAXrnxyJwEa+o5AxWTs3UL9u26XgaV/dy/Y1jeozKy6T80BTV5R/KfdlJDEB5MHGc9LBFbZIRNRQ2HpVsM+10kE2iSklrJR1H7TQLDqJAvyNcaTDhcSmgcdZTQU+AZzAVrcnTSe53ExB2JU5GGdbWfPYeJUvWgM=
+	t=1715128578; cv=none; b=VWMe/2qy0XfljBL9d2n5YufX495cbhorKFGab3WxSSpymboUuk570BVtZ4FZJYrT/rWubUUKq4nDI6LUXqwVXa6hzWaXVlHXv2z3cCltrsyKabvilBIdgEWs4F3xGn0CL1rRJmvKSpMiCwtD8n2XVqK2MSsH5ynNLXehSV6FOts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715127240; c=relaxed/simple;
-	bh=GlCEeAEgLZ6eSEO6V4RcNN3Nxo+5dphEQf9rK5qTLIo=;
+	s=arc-20240116; t=1715128578; c=relaxed/simple;
+	bh=yJK99pCXyuoTwOmUw90tjzeWFArr9+bCKIgZP+l1zPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovZjz6rByjt7vzAaBECCIFpj+p/9XKWXBo5qRjvTG7LJ0PLQMorI9a9FOC3TPoodqc7MF5/bRihVoSUpGMfTp/JCQNuogampanba5M/MqjBv2XKY70Y3MY2CkpUJjW8FZj4ZD+cn9CJ63SJ9wJxzvtctyboV/4Lsmv29Egtbdaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e/XH1+Tl; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715127239; x=1746663239;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GlCEeAEgLZ6eSEO6V4RcNN3Nxo+5dphEQf9rK5qTLIo=;
-  b=e/XH1+Tlh3wBPhWFZQbT3NMkhld9bJkdKhl1YwPGsBTE6XSU6ncAUfEq
-   dX9vgKsxn4aJO28Aj5GdJmEphe5RFRnV6mBeD6skA19zXL12gf9yP9DD/
-   ztHeWP+PN3BRnjXMx5tzPb0ZOsbSO4DeIMs2tqzQipJo/nRwHL9LKy0OW
-   gPtlMDqYbN5SvTfoSOmWeece3Le5Wz0CbNRh/LmV4wyMR4cnwgpEFRAk5
-   rh9WfPP/dao+SsEyFw/2GHIULwimamr1iVyuVCulkLFBwA+omliPtOCqW
-   e2L4yRi4eHWJySL0KGvQzrRvHFIsqeTkiMy5nrd0iRl9rwdXxG6YK6Ulr
-   Q==;
-X-CSE-ConnectionGUID: LoSEYMXmQ7y5Kx2P55Lpdg==
-X-CSE-MsgGUID: Ev6x+5WESRuH9/Db7dXu2Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10899145"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="10899145"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 17:13:58 -0700
-X-CSE-ConnectionGUID: QbTrsSMLROeDSb1g+9WU6Q==
-X-CSE-MsgGUID: 5PFvarIJSgWHv72qUsT3xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="33392980"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 07 May 2024 17:13:57 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4UwT-0002ly-35;
-	Wed, 08 May 2024 00:13:53 +0000
-Date: Wed, 8 May 2024 08:13:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Cc: oe-kbuild-all@lists.linux.dev, bfoster@redhat.com,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Message-ID: <202405080720.SuCCdwWG-lkp@intel.com>
-References: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJI6F6ffXlXzlSBgeWP5K6tY8OXmlgh0DkPRVWylYQumoI+zjOp2PJoPULSY3UFJ4fxyeUcqEhcf+HZHdjhHihqOm31JtR5xZkoeHDw7mhOAsMjCMmh0y9u8UD/cyQ/Vsb0EiSSbkdbceVcDQiKzgitzKise6cnRBxFUEKQ/4oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQ+H01xI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F708C2BBFC;
+	Wed,  8 May 2024 00:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715128577;
+	bh=yJK99pCXyuoTwOmUw90tjzeWFArr9+bCKIgZP+l1zPg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OQ+H01xIYPmmknJAvbU3bmScXIpz3vpyzx6ir2u7dmO/Xgg7CKerL+vni4NEyPiTa
+	 a8wiKTeyvMov2m0/C7+OGHAQaYNVL94XFGbCV3qMO/2+OypsUaEKmWahfa6OoMriHO
+	 JOTZzdn6I0qktdd5tcgoxdInIANGoqnVRC4z0sYX3nzUtnjbUu0Tbc5hQWGZCZfQvs
+	 wdi3Gt775bGtTmHcmn/2O3Jm8XyA3P3xzYbbkI0N0cEpl5vBNCEczBFRgUz1M+WrXE
+	 J3ISBLiQ9ZAWlzE0ACJvCZfU5xMQhMYF1U03doKVRPCFuIiN/n15sIq1WRbLmmd7Bm
+	 xWQOzJ05IHqSw==
+Date: Tue, 7 May 2024 21:36:14 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-mm@kvack.org,
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
+ /proc/<pid>/maps APIs
+Message-ID: <ZjrI_h7InWYdOBtD@x1>
+References: <20240504003006.3303334-6-andrii@kernel.org>
+ <2024050404-rectify-romp-4fdb@gregkh>
+ <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
+ <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com>
+ <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
+ <CAP-5=fXv59EmyM7FNnwAp0JjAZjtYhCj3b3FTH7KsHL=k8C6oQ@mail.gmail.com>
+ <CAEf4BzbdGJzMuRgGJE72VFquXL37rS9Ti__wx4f_+kt3yetkEg@mail.gmail.com>
+ <CAEf4BzYykUsN_Z92cXAh_9+fmN-bzr7xOEBe2v_5xDoXRhijmg@mail.gmail.com>
+ <CAM9d7cg4ErddXRXJWg7sAgSY=wzej8e4SO6NhsXJNDj69DyqCw@mail.gmail.com>
+ <CAEf4BzZTRU9CGrcAysLKCCbjUvJZPFaLA122MVo_zKgk8pAUSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZTRU9CGrcAysLKCCbjUvJZPFaLA122MVo_zKgk8pAUSA@mail.gmail.com>
 
-Hi Edward,
+On Tue, May 07, 2024 at 03:56:40PM -0700, Andrii Nakryiko wrote:
+> On Tue, May 7, 2024 at 3:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > On Tue, May 7, 2024 at 10:29 AM Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+> > > In another reply to Arnaldo on patch #2 I mentioned the idea of
+> > > allowing to iterate only file-backed VMAs (as it seems like what
+> > > symbolizers would only care about, but I might be wrong here). So I
 
-kernel test robot noticed the following build warnings:
+> > Yep, I think it's enough to get file-backed VMAs only.
+ 
+> Ok, I guess I'll keep this functionality for v2 then, it's a pretty
+> trivial extension to existing logic.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.9-rc7 next-20240507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Maps for JITed code, for isntance, aren't backed by files:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/bcachefs-fix-oob-in-bch2_sb_clean_to_text/20240507-172635
-base:   linus/master
-patch link:    https://lore.kernel.org/r/tencent_816D842DE96C309554E8E2ED9ACC6078120A%40qq.com
-patch subject: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-config: i386-buildonly-randconfig-004-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080720.SuCCdwWG-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080720.SuCCdwWG-lkp@intel.com/reproduce)
+commit 578c03c86fadcc6fd7319ddf41dd4d1d88aab77a
+Author: Namhyung Kim <namhyung@kernel.org>
+Date:   Thu Jan 16 10:49:31 2014 +0900
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080720.SuCCdwWG-lkp@intel.com/
+    perf symbols: Fix JIT symbol resolution on heap
+    
+    Gaurav reported that perf cannot profile JIT program if it executes the
+    code on heap.  This was because current map__new() only handle JIT on
+    anon mappings - extends it to handle no_dso (heap, stack) case too.
+    
+    This patch assumes JIT profiling only provides dynamic function symbols
+    so check the mapping type to distinguish the case.  It'd provide no
+    symbols for data mapping - if we need to support symbols on data
+    mappings later it should be changed.
+    
+    Reported-by: Gaurav Jain <gjain@fb.com>
+    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+    Tested-by: Gaurav Jain <gjain@fb.com>
 
-All warnings (new ones prefixed by >>):
+⬢[acme@toolbox perf-tools-next]$ git show 89365e6c9ad4c0e090e4c6a4b67a3ce319381d89
+commit 89365e6c9ad4c0e090e4c6a4b67a3ce319381d89
+Author: Andi Kleen <ak@linux.intel.com>
+Date:   Wed Apr 24 17:03:02 2013 -0700
 
-   fs/bcachefs/sb-clean.c: In function 'bch2_sb_clean_to_text':
->> fs/bcachefs/sb-clean.c:296:20: warning: comparison of distinct pointer types lacks a cast
-     296 |              entry < vstruct_end(&clean->field);
-         |                    ^
+    perf tools: Handle JITed code in shared memory
+    
+    Need to check for /dev/zero.
+    
+    Most likely more strings are missing too.
+    
+    Signed-off-by: Andi Kleen <ak@linux.intel.com>
+    Link: http://lkml.kernel.org/r/1366848182-30449-1-git-send-email-andi@firstfloor.org
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 6fcb9de623401b8a..8bcdf9e54089acaf 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -21,6 +21,7 @@ const char *map_type__name[MAP__NR_TYPES] = {
+ static inline int is_anon_memory(const char *filename)
+ {
+        return !strcmp(filename, "//anon") ||
++              !strcmp(filename, "/dev/zero (deleted)") ||
+               !strcmp(filename, "/anon_hugepage (deleted)");
+ }
 
-vim +296 fs/bcachefs/sb-clean.c
+etc.
 
-   283	
-   284	static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
-   285					  struct bch_sb_field *f)
-   286	{
-   287		struct bch_sb_field_clean *clean = field_to_type(f, clean);
-   288		struct jset_entry *entry;
-   289	
-   290		prt_printf(out, "flags:          %x",	le32_to_cpu(clean->flags));
-   291		prt_newline(out);
-   292		prt_printf(out, "journal_seq:    %llu",	le64_to_cpu(clean->journal_seq));
-   293		prt_newline(out);
-   294	
-   295		for (entry = clean->start;
- > 296		     entry < vstruct_end(&clean->field);
-   297		     entry = vstruct_next(entry)) {
-   298			if (entry->type == BCH_JSET_ENTRY_btree_keys &&
-   299			    !entry->u64s)
-   300				continue;
-   301	
-   302			bch2_journal_entry_to_text(out, NULL, entry);
-   303			prt_newline(out);
-   304		}
-   305	}
-   306	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Arnaldo
 
