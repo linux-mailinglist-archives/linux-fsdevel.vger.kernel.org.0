@@ -1,316 +1,305 @@
-Return-Path: <linux-fsdevel+bounces-19098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 847748BFF98
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A2E8BFFC4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 16:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BCC289701
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FE31C212B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 14:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CF384D30;
-	Wed,  8 May 2024 13:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456378562E;
+	Wed,  8 May 2024 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XDDiS8Ib"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F5F47A5C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 13:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1731B53389
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 14:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715176592; cv=none; b=YZX/PN9+iV2CzgdrIm3eMh6gDnHyMmnI+cIoJWJKEAnq5Jg7we35DWiB3uWu9MVRZ5z8jrzQDUjN93BmOMQVF8MZcFqJ/++sCUSPcz3ZlvE3XgsW3fgYyXrgfhW3I9s/Lol/jvKsiyVd6TeBmeTaDyclFUXK+IseXBqXbF5sc0U=
+	t=1715177497; cv=none; b=e2SqViESrYKAXAjThzolfMxlpVOTFTh7cBPt0tJSvV1xfzBzEJLmJp3xGQbzTArVadMRkMN265icg77p6yNm8e9nd0umMF09JMtquK1vBvbHgc0Mi7uMhlX7Lby6Jlm+N6B6kJaVqQ1vYU+TZrfNx0jrEzxe7bCUASNmx9n0uRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715176592; c=relaxed/simple;
-	bh=9R3fF0MgQKPf5yHVJJQF2tRGcGNE6UsLFm7RlBZdBRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KhyjwyPiwjZ85T1KyBty8CTuAsxlvgY1OBYma6z4tQeoqL+rfAi+Va/F/+RTYZgcyjEA8RRV4i/qO4nKJOVNdebQVvwXcp1XVHx3Roi59xYW6+nBm/GhX5scBAEdVf26AeHNfng2KozuUqSfIB3aCe2yOlngMdVzYiQJktXMhU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VZGn8233Pz1RCch;
-	Wed,  8 May 2024 21:53:00 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 35AD5180AA1;
-	Wed,  8 May 2024 21:56:20 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 8 May 2024 21:56:19 +0800
-Message-ID: <7779878b-3ff5-4b4e-881a-f66426dceb6f@huawei.com>
-Date: Wed, 8 May 2024 21:56:19 +0800
+	s=arc-20240116; t=1715177497; c=relaxed/simple;
+	bh=XzZw7gRdNr2ppc3qtCQVIEFcBheK1Apuh3maVmJsphA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQmmCcPlr6YyIwXNSWwsRkD+lBMXTjFKVJmQ+kcPff38+N/3YUa0/SMBtSKR6H4KbQwmcBjUhorb/2EPDS5wFLDkmMugnROQfcQ4STrj5T6tv0mvwu3TXWcOy/bvAq3USz+G6NxdeFm+0YwMilXfLB6ntaipTxufhnSPVtdWxf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XDDiS8Ib; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715177494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LouKITC6QRBrAfrcPvsZ28+cjHEDkL3qN5SoBHTil54=;
+	b=XDDiS8IbjiVBwCqLSpTClaNHFu9oyEN6kVaIVI2vN7xhqwqqho5HV/kTMceq3d10azUcOe
+	omBEUY1epJSCrV3Ggplbgc9NOsoUsWn7koOmCg1zVHgUy8OB6Ngfi6YUhOAqJczoryyJ+G
+	lVfd+dTrx79RIelsxjAvQ3wdEeovhtI=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-344-rtG82HdoPESeie-HGGXjaQ-1; Wed, 08 May 2024 10:11:32 -0400
+X-MC-Unique: rtG82HdoPESeie-HGGXjaQ-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-43d4e45913cso4090811cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 07:11:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715177492; x=1715782292;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LouKITC6QRBrAfrcPvsZ28+cjHEDkL3qN5SoBHTil54=;
+        b=BHKXgia/lIaySKenpBChK6KiCAgxUK56MdSHrRUR5fNNkPbP7+k5YA2L2pR2zklScT
+         lNKqw76W1YB9oEXmtI+NfPL4odhQXGhiQnJNl12BCqDmc5ReF4r0PJy7xJH3ksFU/5tS
+         vLk1zy5LbXGPD75XIK/oSbolwdLw7PpZg2oZXXBu7IDNL24cddon1VWQcqcZ8VkQNWEM
+         tWu1aYVUc49JelHOfqwPCWZ3OKTUi4TOXiH4zaPg2bZUhMU3oQOOHVsLTEov71T8l0fF
+         MuxoiY9XIEw3p3qLwP+A9vmiqyRB45Id2zN67d3aj5LaVvgqRX8qONXiwpPTjGKf+m5b
+         xqrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkPAUxAgqTRkwXsh6GrbG0/DRh5LLtc3TlPgq1cew/C/XQqLrEiBHQtuSTOwy0LBt5gDpCvGnjBek9+MUnP31hqCR2k6Anw7atNfiftg==
+X-Gm-Message-State: AOJu0Yw9GadgF7B7iIe2/ZCWYakZUGeWntPN0dSt3dNTlKOBCISJbU+q
+	/VIjMK3DwpxiiOjmgC5+dmnjDdTIEacLEJGD5QrB2YvfKEo+UGBI9Mix3lKEneUY0csvm7oV+nN
+	l+AUHGea+8m+PLxRB5/arB5WvojpNlM5Lwp9v4+qiMa7xxGiIfYmuDYkVk58o1RQ=
+X-Received: by 2002:a05:622a:207:b0:439:7147:8f2a with SMTP id d75a77b69052e-43dbf853aaemr32037621cf.4.1715177491975;
+        Wed, 08 May 2024 07:11:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESSbDRF+Xx/7GZj0Uf2SWN1FuveAgOnE76g1/yU6Z39YuOj9CxN4w0SgIfwMX+ddx9hf722Q==
+X-Received: by 2002:a05:622a:207:b0:439:7147:8f2a with SMTP id d75a77b69052e-43dbf853aaemr32036991cf.4.1715177491150;
+        Wed, 08 May 2024 07:11:31 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id f8-20020ac840c8000000b00434c31fa60csm7619810qtm.92.2024.05.08.07.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 07:11:30 -0700 (PDT)
+Date: Wed, 8 May 2024 10:11:28 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Audra Mitchell <audra@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, raquini@redhat.com
+Subject: Re: [PATCH 1/2] Fix userfaultfd_api to return EINVAL as expected
+Message-ID: <ZjuIEH8TW2tWcqXQ@x1n>
+References: <20240507195510.283744-1-audra@redhat.com>
+ <939a16f2-7b66-45a6-a043-4821bd3c71dc@redhat.com>
+ <Zjt3Apr8ILFA4oK_@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH rfc 3/4] mm: filemap: move __lruvec_stat_mod_folio() out
- of filemap_set_pte_range()
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>
-CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>
-References: <20240429072417.2146732-1-wangkefeng.wang@huawei.com>
- <20240429072417.2146732-4-wangkefeng.wang@huawei.com>
- <0bf097d2-6d2a-498b-a266-303f168b6221@redhat.com>
- <e1b19d37-82ea-447b-b9da-0a714df2c632@huawei.com>
- <d9190747-953f-4c2a-9729-23d86044fb4d@redhat.com>
- <609abbe8-cf88-4145-b1d0-397c980aff28@huawei.com>
- <ecb4f35e-7ead-4674-b934-1de03e1f8c0a@redhat.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <ecb4f35e-7ead-4674-b934-1de03e1f8c0a@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zjt3Apr8ILFA4oK_@fedora>
 
-
-
-On 2024/5/8 19:27, David Hildenbrand wrote:
-> On 08.05.24 13:15, Kefeng Wang wrote:
->>
->>
->> On 2024/5/8 17:33, David Hildenbrand wrote:
->>> On 07.05.24 15:12, Kefeng Wang wrote:
->>>>
->>>>
->>>> On 2024/5/7 19:11, David Hildenbrand wrote:
->>>>> On 29.04.24 09:24, Kefeng Wang wrote:
->>>>>> Adding __folio_add_file_rmap_ptes() which don't update lruvec 
->>>>>> stat, it
->>>>>> is used in filemap_set_pte_range(), with it, lruvec stat updating is
->>>>>> moved into the caller, no functional changes.
->>>>>>
->>>>>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>>>> ---
->>>>>>     include/linux/rmap.h |  2 ++
->>>>>>     mm/filemap.c         | 27 ++++++++++++++++++---------
->>>>>>     mm/rmap.c            | 16 ++++++++++++++++
->>>>>>     3 files changed, 36 insertions(+), 9 deletions(-)
->>>>>>
->>>>>> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
->>>>>> index 7229b9baf20d..43014ddd06f9 100644
->>>>>> --- a/include/linux/rmap.h
->>>>>> +++ b/include/linux/rmap.h
->>>>>> @@ -242,6 +242,8 @@ void folio_add_anon_rmap_pmd(struct folio *,
->>>>>> struct page *,
->>>>>>             struct vm_area_struct *, unsigned long address, rmap_t
->>>>>> flags);
->>>>>>     void folio_add_new_anon_rmap(struct folio *, struct
->>>>>> vm_area_struct *,
->>>>>>             unsigned long address);
->>>>>> +int __folio_add_file_rmap_ptes(struct folio *, struct page *, int
->>>>>> nr_pages,
->>>>>> +        struct vm_area_struct *);
->>>>>>     void folio_add_file_rmap_ptes(struct folio *, struct page *, int
->>>>>> nr_pages,
->>>>>>             struct vm_area_struct *);
->>>>>>     #define folio_add_file_rmap_pte(folio, page, vma) \
->>>>>> diff --git a/mm/filemap.c b/mm/filemap.c
->>>>>> index 7019692daddd..3966b6616d02 100644
->>>>>> --- a/mm/filemap.c
->>>>>> +++ b/mm/filemap.c
->>>>>> @@ -3501,14 +3501,15 @@ static struct folio
->>>>>> *next_uptodate_folio(struct xa_state *xas,
->>>>>>     static void filemap_set_pte_range(struct vm_fault *vmf, struct 
->>>>>> folio
->>>>>> *folio,
->>>>>>                 struct page *page, unsigned int nr, unsigned long 
->>>>>> addr,
->>>>>> -            unsigned long *rss)
->>>>>> +            unsigned long *rss, int *nr_mapped)
->>>>>>     {
->>>>>>         struct vm_area_struct *vma = vmf->vma;
->>>>>>         pte_t entry;
->>>>>>         entry = prepare_range_pte_entry(vmf, false, folio, page, nr,
->>>>>> addr);
->>>>>> -    folio_add_file_rmap_ptes(folio, page, nr, vma);
->>>>>> +    *nr_mapped += __folio_add_file_rmap_ptes(folio, page, nr, vma);
->>>>>> +
->>>>>>         set_ptes(vma->vm_mm, addr, vmf->pte, entry, nr);
->>>>>>         /* no need to invalidate: a not-present page won't be 
->>>>>> cached */
->>>>>> @@ -3525,7 +3526,8 @@ static void filemap_set_pte_range(struct
->>>>>> vm_fault *vmf, struct folio *folio,
->>>>>>     static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
->>>>>>                 struct folio *folio, unsigned long start,
->>>>>>                 unsigned long addr, unsigned int nr_pages,
->>>>>> -            unsigned long *rss, unsigned int *mmap_miss)
->>>>>> +            unsigned long *rss, int *nr_mapped,
->>>>>> +            unsigned int *mmap_miss)
->>>>>>     {
->>>>>>         vm_fault_t ret = 0;
->>>>>>         struct page *page = folio_page(folio, start);
->>>>>> @@ -3558,7 +3560,8 @@ static vm_fault_t 
->>>>>> filemap_map_folio_range(struct
->>>>>> vm_fault *vmf,
->>>>>>             continue;
->>>>>>     skip:
->>>>>>             if (count) {
->>>>>> -            filemap_set_pte_range(vmf, folio, page, count, addr, 
->>>>>> rss);
->>>>>> +            filemap_set_pte_range(vmf, folio, page, count, addr,
->>>>>> +                          rss, nr_mapped);
->>>>>>                 if (in_range(vmf->address, addr, count * PAGE_SIZE))
->>>>>>                     ret = VM_FAULT_NOPAGE;
->>>>>>             }
->>>>>> @@ -3571,7 +3574,8 @@ static vm_fault_t 
->>>>>> filemap_map_folio_range(struct
->>>>>> vm_fault *vmf,
->>>>>>         } while (--nr_pages > 0);
->>>>>>         if (count) {
->>>>>> -        filemap_set_pte_range(vmf, folio, page, count, addr, rss);
->>>>>> +        filemap_set_pte_range(vmf, folio, page, count, addr, rss,
->>>>>> +                      nr_mapped);
->>>>>>             if (in_range(vmf->address, addr, count * PAGE_SIZE))
->>>>>>                 ret = VM_FAULT_NOPAGE;
->>>>>>         }
->>>>>> @@ -3583,7 +3587,7 @@ static vm_fault_t 
->>>>>> filemap_map_folio_range(struct
->>>>>> vm_fault *vmf,
->>>>>>     static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
->>>>>>             struct folio *folio, unsigned long addr,
->>>>>> -        unsigned long *rss, unsigned int *mmap_miss)
->>>>>> +        unsigned long *rss, int *nr_mapped, unsigned int *mmap_miss)
->>>>>>     {
->>>>>>         vm_fault_t ret = 0;
->>>>>>         struct page *page = &folio->page;
->>>>>> @@ -3606,7 +3610,7 @@ static vm_fault_t
->>>>>> filemap_map_order0_folio(struct vm_fault *vmf,
->>>>>>         if (vmf->address == addr)
->>>>>>             ret = VM_FAULT_NOPAGE;
->>>>>> -    filemap_set_pte_range(vmf, folio, page, 1, addr, rss);
->>>>>> +    filemap_set_pte_range(vmf, folio, page, 1, addr, rss, 
->>>>>> nr_mapped);
->>>>>>         return ret;
->>>>>>     }
->>>>>> @@ -3646,6 +3650,7 @@ vm_fault_t filemap_map_pages(struct vm_fault
->>>>>> *vmf,
->>>>>>         folio_type = mm_counter_file(folio);
->>>>>>         do {
->>>>>>             unsigned long end;
->>>>>> +        int nr_mapped = 0;
->>>>>>             addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
->>>>>>             vmf->pte += xas.xa_index - last_pgoff;
->>>>>> @@ -3655,11 +3660,15 @@ vm_fault_t filemap_map_pages(struct vm_fault
->>>>>> *vmf,
->>>>>>             if (!folio_test_large(folio))
->>>>>>                 ret |= filemap_map_order0_folio(vmf,
->>>>>> -                    folio, addr, &rss, &mmap_miss);
->>>>>> +                    folio, addr, &rss, &nr_mapped,
->>>>>> +                    &mmap_miss);
->>>>>>             else
->>>>>>                 ret |= filemap_map_folio_range(vmf, folio,
->>>>>>                         xas.xa_index - folio->index, addr,
->>>>>> -                    nr_pages, &rss, &mmap_miss);
->>>>>> +                    nr_pages, &rss, &nr_mapped,
->>>>>> +                    &mmap_miss);
->>>>>> +
->>>>>> +        __lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr_mapped);
->>>>>>             folio_unlock(folio);
->>>>>>             folio_put(folio);
->>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>>>> index 2608c40dffad..55face4024f2 100644
->>>>>> --- a/mm/rmap.c
->>>>>> +++ b/mm/rmap.c
->>>>>> @@ -1452,6 +1452,22 @@ static __always_inline void
->>>>>> __folio_add_file_rmap(struct folio *folio,
->>>>>>             mlock_vma_folio(folio, vma);
->>>>>>     }
->>>>>> +int __folio_add_file_rmap_ptes(struct folio *folio, struct page 
->>>>>> *page,
->>>>>> +        int nr_pages, struct vm_area_struct *vma)
->>>>>> +{
->>>>>> +    int nr, nr_pmdmapped = 0;
->>>>>> +
->>>>>> +    VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
->>>>>> +
->>>>>> +    nr = __folio_add_rmap(folio, page, nr_pages, RMAP_LEVEL_PTE,
->>>>>> +                  &nr_pmdmapped);
->>>>>> +
->>>>>> +    /* See comments in folio_add_anon_rmap_*() */
->>>>>> +    if (!folio_test_large(folio))
->>>>>> +        mlock_vma_folio(folio, vma);
->>>>>> +
->>>>>> +    return nr;
->>>>>> +}
->>>>>
->>>>> I'm not really a fan :/ It does make the code more complicated, and it
->>>>> will be harder to extend if we decide to ever account differently 
->>>>> (e.g.,
->>>>> NR_SHMEM_MAPPED, additional tracking for mTHP etc).
->>>>
->>>> If more different accounts, this may lead to bad scalability.
->>>
->>> We already do it for PMD mappings.
->>>
->>>>>
->>>>> With large folios we'll be naturally batching already here, and I do
->>>>
->>>> Yes, it is batched with large folios，but our fs is ext4/tmpfs, there
->>>> are not support large folio or still upstreaming.
->>>
->>> Okay, so that will be sorted out sooner or later.
->>>
->>>>
->>>>> wonder, if this is really worth for performance, or if we could find
->>>>> another way of batching (let the caller activate batching and drain
->>>>> afterwards) without exposing these details to the caller.
->>>>
->>>> It does reduce latency when batch lruvec stat updating without large
->>>> folio, but I can't find better way, or let's wait for the large folio
->>>> support on ext4/tmpfs, I also Cced memcg maintainers in patch4 to 
->>>> see if
->>>> there are any other ideas.
->>>
->>> I'm not convinced this benefit here is worth making the code more
->>> complicated.
->>>
->>> Maybe we can find another way to optimize this batching in rmap code
->>> without having to leak these details to the callers.
->>>
->>> For example, we could pass an optional batching structure to all rmap
->>> add/rel functions that would collect these stat updates. Then we could
->>> have one function to flush it and update the counters combined.
->>>
->>> Such batching could be beneficial also for page unmapping/zapping where
->>> we might unmap various different folios in one go.
->>
->> It sounds better and clearer, I will try it and see the results, thanks
->> for your advise!
+On Wed, May 08, 2024 at 08:58:42AM -0400, Audra Mitchell wrote:
+> On Wed, May 08, 2024 at 09:39:10AM +0200, David Hildenbrand wrote:
+> > On 07.05.24 21:55, Audra Mitchell wrote:
+> > > Currently if we request a feature that is not set in the Kernel
+> > > config we fail silently and return the available features. However, the
+> > > documentation indicates we should return an EINVAL.
+> > 
+> > I assume you are referencing
+> > 
+> > "EINVAL The API version requested in the api field is not supported by this
+> > kernel, or  the  features  field passed to the kernel includes feature bits
+> > that are not supported by the current kernel version."
+> > 
+> > and
+> > 
+> > "To  enable  userfaultfd features the application should set a bit
+> > corresponding to each feature it wants to enable in the features field. If
+> > the kernel supports all the requested features it will enable them.
+> > Otherwise it will zero out the returned uffdio_api structure and return
+> > EINVAL.
+> > "
+> > 
+> > in which case I agree.
 > 
-> To batch across multiple folios, it might be sufficient to remember in 
-> the batching structure for now:
+> Yep! I'm referencing the man page.
 > 
-> * folio_memcg(folio)
-> * folio_pgdat(folio)
-> * NR_ANON_MAPPED diff
-> * NR_FILE_MAPPED diff
+> > 
+> > > 
+> > > We need to fix this issue since we can end up with a Kernel warning
+> > > should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
+> > > a kernel with the config not set with this feature.
+> > 
+> > Can you mention which exact one? Is it a WARN* or a pr_warn() ?
 > 
-> If the memcg of pgdat would change, we simply flush. Otherwise we batch 
-> and the caller flushes.
+> Here is the kernel warning I get:
+> 
+> [  200.803094] unrecognized swap entry 0x7c00000000000001
+> [  200.808270] ------------[ cut here ]------------
+> [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
+> [  200.820738] Modules linked in: qrtr bridge stp llc rfkill sunrpc amd_atl intel_rapl_msr intel_rapl_common amd64_edac edac_mce_amd kvm_amd kvm ipmi_ssif acpi_ipmi i2c_piix4 ipmi_si wmi_bmof dcdbas dell_smbios dell_wmi_descriptor ptdma ipmi_devintf rapl ipmi_msghandler acpi_power_meter pcspkr k10temp xfs libcrc32c sd_mod t10_pi mgag200 sg drm_kms_helper crct10dif_pclmul i2c_algo_bit ahci crc32_pclmul drm_shmem_helper libahci crc32c_intel drm i40e libata ghash_clmulni_intel tg3 ccp megaraid_sas sp5100_tco wmi dm_mirror dm_region_hash dm_log dm_mod fuse
+> [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
+> [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
+> [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
+> [  200.889595] Code: 83 fa 02 0f 86 44 01 00 00 83 f9 17 0f 84 e1 00 00 00 83 f9 1f 0f 84 d0 00 00 00 48 89 c6 48 c7 c7 00 e4 dd bb e8 73 a2 de ff <0f> 0b e9 44 fd ff ff 45 0f b6 44 24 20 41 f6 c0 f4 75 27 4c 89 ee
+> [  200.908348] RSP: 0018:ffffa18d2e6c37c8 EFLAGS: 00010246
+> [  200.913584] RAX: 000000000000002a RBX: 00007f26d3600000 RCX: 0000000000000000
+> [  200.920730] RDX: 0000000000000000 RSI: ffff93503f9a0bc0 RDI: ffff93503f9a0bc0
+> [  200.927867] RBP: 00007f26d35cc000 R08: 0000000000000000 R09: ffffa18d2e6c3688
+> [  200.935009] R10: ffffa18d2e6c3680 R11: ffffffffbc9de448 R12: ffffa18d2e6c39e8
+> [  200.942149] R13: ffff92d1ebc15b50 R14: ffff93114e0cde60 R15: ffffa18d2e6c3928
+> [  200.949291] FS:  0000000000000000(0000) GS:ffff93503f980000(0000) knlGS:0000000000000000
+> [  200.957384] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  200.963140] CR2: 00007f26b1600658 CR3: 00000040905ba000 CR4: 0000000000350ef0
+> [  200.970283] Call Trace:
+> [  200.972745]  <TASK>
+> [  200.974862]  ? __warn+0x7f/0x130
+> [  200.978108]  ? zap_pte_range+0x43d/0x660
+> [  200.982044]  ? report_bug+0x18a/0x1a0
+> [  200.985720]  ? handle_bug+0x3c/0x70
+> [  200.989219]  ? exc_invalid_op+0x14/0x70
+> [  200.993068]  ? asm_exc_invalid_op+0x16/0x20
+> [  200.997265]  ? zap_pte_range+0x43d/0x660
+> [  201.001199]  ? zap_pte_range+0x43d/0x660
+> [  201.005134]  zap_pmd_range.isra.0+0xf9/0x230
+> [  201.009416]  unmap_page_range+0x2d4/0x4a0
+> [  201.013436]  unmap_vmas+0xa8/0x180
+> [  201.016854]  exit_mmap+0xea/0x3b0
+> [  201.020191]  __mmput+0x43/0x120
+> [  201.023342]  exit_mm+0xb1/0x110
+> [  201.026496]  do_exit+0x270/0x4f0
+> [  201.029739]  do_group_exit+0x2c/0x80
+> [  201.033326]  get_signal+0x886/0x8b0
+> [  201.036828]  ? srso_return_thunk+0x5/0x5f
+> [  201.040848]  arch_do_signal_or_restart+0x25/0x100
+> [  201.045563]  ? srso_return_thunk+0x5/0x5f
+> [  201.049583]  ? vma_set_page_prot+0x5e/0xc0
+> [  201.053692]  ? srso_return_thunk+0x5/0x5f
+> [  201.057713]  ? syscall_exit_work+0xff/0x130
+> [  201.061908]  syscall_exit_to_user_mode+0x1b3/0x200
+> [  201.066712]  do_syscall_64+0x87/0x160
+> [  201.070387]  ? srso_return_thunk+0x5/0x5f
+> [  201.074405]  ? do_mmap+0x416/0x5f0
+> [  201.077821]  ? srso_return_thunk+0x5/0x5f
+> [  201.081840]  ? rseq_get_rseq_cs+0x1d/0x240
+> [  201.085950]  ? srso_return_thunk+0x5/0x5f
+> [  201.089970]  ? rseq_ip_fixup+0x6d/0x1d0
+> [  201.093823]  ? vm_mmap_pgoff+0x117/0x1a0
+> [  201.097755]  ? srso_return_thunk+0x5/0x5f
+> [  201.101776]  ? srso_return_thunk+0x5/0x5f
+> [  201.105795]  ? syscall_exit_to_user_mode+0x78/0x200
+> [  201.110685]  ? srso_return_thunk+0x5/0x5f
+> [  201.114706]  ? do_syscall_64+0x87/0x160
+> [  201.118557]  ? srso_return_thunk+0x5/0x5f
+> [  201.122575]  ? __count_memcg_events+0x49/0xb0
+> [  201.126944]  ? srso_return_thunk+0x5/0x5f
+> [  201.130967]  ? srso_return_thunk+0x5/0x5f
+> [  201.134986]  ? syscall_exit_work+0xff/0x130
+> [  201.139184]  ? srso_return_thunk+0x5/0x5f
+> [  201.143205]  ? syscall_exit_to_user_mode+0x78/0x200
+> [  201.148093]  ? srso_return_thunk+0x5/0x5f
+> [  201.152114]  ? do_syscall_64+0x87/0x160
+> [  201.155960]  ? srso_return_thunk+0x5/0x5f
+> [  201.159984]  ? sched_clock_cpu+0xb/0x190
+> [  201.163916]  ? srso_return_thunk+0x5/0x5f
+> [  201.167939]  ? irqtime_account_irq+0x40/0xc0
+> [  201.172220]  ? srso_return_thunk+0x5/0x5f
+> [  201.176243]  ? srso_return_thunk+0x5/0x5f
+> [  201.180263]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  201.185326] RIP: 0033:0x7f26dfd0735b
+> [  201.188939] Code: Unable to access opcode bytes at 0x7f26dfd07331.
+> [  201.195128] RSP: 002b:00007fffce176868 EFLAGS: 00000206 ORIG_RAX: 000000000000000a
+> [  201.202700] RAX: fffffffffffffffc RBX: 00007f26dfe60000 RCX: 00007f26dfd0735b
+> [  201.209841] RDX: 0000000000000003 RSI: 0000000001000000 RDI: 00007f26af401000
+> [  201.216983] RBP: 00007f26b0400640 R08: 00000000ffffffff R09: 0000000000000000
+> [  201.224127] R10: ffffffffffffffc0 R11: 0000000000000206 R12: 0000000000000000
+> [  201.231267] R13: 000000000040d320 R14: 0000000000000000 R15: 0000000000000000
+> [  201.238413]  </TASK>
+> [  201.240610] ---[ end trace 0000000000000000 ]---
+> [  201.245250] unrecognized swap entry 0x7c00000000000001
+> 
+> 
+> 
+> > 
+> > Likely we want "Fixes:" here.
+> 
+> This could be seen as a continuation of the problem 
+> 2ff559f31a5d Revert "userfaultfd: don't fail on unrecognized features" 
+> was trying to solve. However, this patch only checks to make sure we didnt 
+> ask for a feature outside the possible range of features. We are still missing
+> a check to confirm the requested features are also configured on. So I guess 
+> the "Fixes" tag would be for this patch?
+> 914eedcb9ba0 userfaultfd: don't fail on unrecognized features
 
-for memcg = NULL, we need flush when pgdat changed.
+Even though 914eedcb9ba0 was problematic but it might be innocent in this
+regard, as we miss such check even before that commit.
+
+Perhaps the right Fixes should be when there will be flags that will
+only be supported conditionally, which should be the wp support.  In that
+case, it could be:
+
+Fixes: e06f1e1dd499 ("userfaultfd: wp: enabled write protection in userfaultfd API")
+
+But it's still complicated though even if we want to backport, as this
+specific check for userfault was added later... in:
+
+00b151f21f39 ("mm/userfaultfd: fail uffd-wp registration if not supported")
+
+In summary: I think we can stick with Fixes on e06f1e1dd499, but we don't
+copy stable.  The major reason we don't copy stable here is not only about
+complexity of such backport, but also that there can be apps trying to pass
+in unsupported bits (even if the kernel didn't support it) but keep using
+MISSING mode only, then we shouldn't fail them easily after a stable
+upgrade.  Just smells dangerous to backport.
+
+When at it and repost, would you mind consolidate the two feature list
+check together?  We had the previous check here:
+
+	if (uffdio_api.api != UFFD_API || (features & ~UFFD_API_FEATURES))
+		goto err_out;
+
+If with this patch IIUC this previous check can be removed (still need to
+check UFFD_API).
+
+Thanks,
 
 > 
-> Likely we mapping/unmapping multiple folios they belong to the same 
-> pgdat+memcg.
-
-Yes, the batch should be suitable for mapping/unmapping.
-
+> Happy to get your input here!
 > 
-> The only tricky bit is the rcu_read_lock() around folio_memcg(); that 
-> might require some thought.
-
-Indeed, we need stable folio/memcg bounding.
-
-Thanks.
+> Thanks in advance!
 > 
-> Hm ....
 > 
+> > 
+> > > 
+> > > Signed-off-by: Audra Mitchell <audra@redhat.com>
+> > > ---
+> > >   fs/userfaultfd.c | 5 +++++
+> > >   1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > > index 60dcfafdc11a..17210558de79 100644
+> > > --- a/fs/userfaultfd.c
+> > > +++ b/fs/userfaultfd.c
+> > > @@ -2073,6 +2073,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+> > >   	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+> > >   	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+> > >   #endif
+> > > +
+> > > +	ret = -EINVAL;
+> > > +	if (features & ~uffdio_api.features)
+> > > +		goto err_out;
+> > > +
+> > >   	uffdio_api.ioctls = UFFD_API_IOCTLS;
+> > >   	ret = -EFAULT;
+> > >   	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
+> > 
+> > CCing Peter.
+> > 
+> > -- 
+> > Cheers,
+> > 
+> > David / dhildenb
+> > 
+> 
+
+-- 
+Peter Xu
+
 
