@@ -1,101 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-19107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C8C8C0187
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 17:57:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76D48C01D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 18:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4291F2824B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510C8281EFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 16:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127FC128396;
-	Wed,  8 May 2024 15:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB3212A17B;
+	Wed,  8 May 2024 16:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="191FKoNE"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S8lpRhWx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D528625B;
-	Wed,  8 May 2024 15:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169E5128396
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 16:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715183850; cv=none; b=VHz5c6aDMPvFKlYVcCKIGG0sHh/18SnsDDizXCWzmxAsyHtOpJyUAwUkbhcrrewfmKFtZ+g5zXxo3rbyybK0u3Ki/yWz2l05qpnuup8PMqVeQrDGAAG8lPW1teS/es/NMQBgU8fvhoXTleBWzC8UbZ01Hw/LLKFGnFVx5jQBK8c=
+	t=1715185166; cv=none; b=cy8UeHKXbEgw4llky13x0F7sQJuH0/kM7Pb/wRmm9w1/yRpnUX4foUi7oSgDCkwuK8Qr6xnM1v77Y+Xz+jq+2b8iqR7LBRI773+A5lC11BT331d9tp+0LUc+KVGd4FzN/BJWnTMk/X+qPQJkjJnNxA7axe/XAPAHVt+KGZstoBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715183850; c=relaxed/simple;
-	bh=tPtSEqghp6X+xcXBgf6p9DZmYra2EVVIPkBYbj7ZAe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpNe6kDtDMTQjblzw0mSeyLIfTYuQl7MKT4G5kfYVp2m7ccG4Rrqkb+By6w/Cg+lZfhqibR49B1hjJKYts+qxepvlG6uULfx0JIFtl5gq5tWBYx2HXHscAW8WyaKfI+fREJdeuuxF9lo7nMaqkS5WBtZVzL1E7qIvLXluu9vfO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=191FKoNE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=VgZ2foeBWNFhshAFEh20hHZWiXfRXeW8Nj8zaU2MzqM=; b=191FKoNEnsqepe1oU/+t+ooLkM
-	/0x9s4xT63IOqeine6ftTBG1SVkanLvQXJOJI6MpIEVwMlSGB9d1uzQV/xN9Wh5BGCPqAIcWbmZjf
-	PblqJDctAintRccFGWGq0BuPUqLcjDvsyONtCWiaAdC+YjK6GxMgfuH61nv0A0D38eULdNBesszYI
-	jn0O22MmIGbuZ0mS3MELF4BbpEWyAIkrVYjtlMTiIsV89wL/d/TP99itexld514y03zsy/QUjBmwZ
-	ZpCbD3KY0Zse1talZ7Bw+6C9vKmZxskpYH3IubLD76BEUnjc81jkab2fqlk9JkTU6e7EWx/ZrmvDt
-	uz0jlMqA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4jfQ-0000000G6J3-2Nep;
-	Wed, 08 May 2024 15:57:27 +0000
-Date: Wed, 8 May 2024 08:57:16 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: lsf-pc@lists.linux-foundation.org, kdevops@lists.linux.dev,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, linux-cxl@vger.kernel.org,
-	Jan Kara <jack@suse.cz>
-Subject: Re: kdevops BoF at LSFMM
-Message-ID: <Zjug3BqYyW3hrMdy@bombadil.infradead.org>
-References: <CAB=NE6XyLS1TaAcgzSWa=1pgezRjFoy8nuVtSWSfB8Qsdsx_xQ@mail.gmail.com>
- <CAOQ4uxigKrtZwS4Y0CFow0YWEbusecv2ub=Zm2uqsvdCpDRu1w@mail.gmail.com>
+	s=arc-20240116; t=1715185166; c=relaxed/simple;
+	bh=EBgZslqy6XCFdm2svCR8wdSgwC1c5tdTUgjKXU1N4nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rx/68Rj57/GPF6WN9ScAt5sVGBUpgZpMcOvVqHEp+F/5uW4MnOCOfyJC3e8UZJCapIoq/WgE/cfg6gC0HX+SuXcA6DtK5u1AF15NJ5ILszgn3gx7psO4EWyYtqDfctm8/RNGfVAx1NKA06nId4Owbob4AHkTmBgkkwzS7AoTzcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S8lpRhWx; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59cdd185b9so190583966b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 09:19:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715185162; x=1715789962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GRnWniI6weHLAZe+jcS6e3kntzKq8xydvJSod9mqGMY=;
+        b=S8lpRhWxSbC2lPt9deECHsu3p+I3K+45f3bb40YBkCrupQMsboscLRFdzvWqhaHFtU
+         FnzVbbOhcNlu/NKCeN8G/s41Lcn+mz+QGXBI5GCSmqa6ym2cHX1Toxyg0T807+UCFv8d
+         +LVVNQHGHtzloL6RSRQ0u074eghzOJEm6L7YA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715185162; x=1715789962;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GRnWniI6weHLAZe+jcS6e3kntzKq8xydvJSod9mqGMY=;
+        b=XW29GSL6CESxMD4FIMTroFUpaUbKKfXvSPLWTNyIVvaSGP4GgIWzgBx4Qn+CVlhey1
+         6b6z5G/Qs+X40/lFXuluudyKLegNyUNvgCV8LnnbhSshgilXlj6Hs431HWqKoyUxa0w5
+         a39PdPF3nXpcI7Kxf6E2eAmLDzD5P38NPWt6mdszhfAsamfKcQg3GH12pmVcDJfokMYa
+         ZgaB4Z9nUunl9XfQQAq+WTv1/it0i1dgs6K0nt3BuQwe1qSXMeY4bJUjl6yrYRi2QqPP
+         Wac7hvGiQJFPB9r8pi5Uqgwc+Eui85DVpSx7760yRpSUQwX9i5GhuG/mG8kaF8s6SsF5
+         RCCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUew5x68am6Tstu1HpC388bZ2SR0WXpaPkWWs2FeTN7cNy19kx6VcsNKWhpAKafU9Q9TOW2y9JeJYSUTd6m2UdGE7s2Ly2FeCGYI714cA==
+X-Gm-Message-State: AOJu0Yw2HEaHg2m0Kxror9qS06gtNy/0Bf2LEyrP7aSGRFEr7cf324t2
+	33QCh35NLJv/wToBUzYgOzOR/J3Zh27rGbMHZOH3UF3Vt5hQtwGX07XYqYhfNKnHcg2XeokUwo6
+	i0qsFog==
+X-Google-Smtp-Source: AGHT+IG9IYk9YN6OYsHSHkllQgMFByQpN0yfiliDVTfZuXSTal+jBom4MoJNmPXZdX4Z/bbNwWBqww==
+X-Received: by 2002:a17:906:c081:b0:a5a:c35:3a2 with SMTP id a640c23a62f3a-a5a1177fe36mr7981966b.25.1715185162464;
+        Wed, 08 May 2024 09:19:22 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id rn9-20020a170906d92900b00a59a229564fsm5889822ejb.108.2024.05.08.09.19.21
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 09:19:21 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59ce1e8609so186744866b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 09:19:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUuLGMzPEF0qWyedjfbVeZIqOdm+yoTHyerxofWMYG73+L8ZPvJV0WjXeGSwkp50JVP3zdhOBmHZ21l5FPPHOHzC0nJc2o7BcX2UUOFOw==
+X-Received: by 2002:a17:906:1c10:b0:a59:9c2f:c7d4 with SMTP id
+ a640c23a62f3a-a5a1167be68mr9921366b.19.1715185161053; Wed, 08 May 2024
+ 09:19:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxigKrtZwS4Y0CFow0YWEbusecv2ub=Zm2uqsvdCpDRu1w@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+ <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com> <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
+In-Reply-To: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 8 May 2024 09:19:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
+Message-ID: <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
+ file lifetimes
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Simon Ser <contact@emersion.fr>, Pekka Paalanen <pekka.paalanen@collabora.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="0000000000003fddda0617f3aa7b"
 
-On Wed, May 08, 2024 at 10:45:33AM +0300, Amir Goldstein wrote:
-> On Tue, May 7, 2024 at 9:44 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > Dear LPC session leads,
-> >
-> > We'd like to gather together and talk about current ongoing
-> > developments / changes on kdevops at LSFMM. Those interested in
-> > automation on complex workflows with kdevops are also welcomed. This
-> > is best addressed informally
-> 
-> wouldn't storage/MM people be interested in kdevops?
+--0000000000003fddda0617f3aa7b
+Content-Type: text/plain; charset="UTF-8"
 
-It is up to them, I mean, I've started to work on mmtests integration
-so we can help test memory fragmentation, and plan is to integrate
-automation of maple tree and xarray shortly, mm folks are more than
-welcomed!
+On Tue, 7 May 2024 at 12:07, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> That example thing shows that we shouldn't make it a FISAME ioctl - we
+> should make it a fcntl() instead, and it would just be a companion to
+> F_DUPFD.
+>
+> Doesn't that strike everybody as a *much* cleaner interface? I think
+> F_ISDUP would work very naturally indeed with F_DUPFD.
 
-> I've placed you session instead of the FS lightning talks on Tuesday
-> after Leah's FS testing session.
-> There are enough slots for FS lightning talks.
+So since we already have two versions of F_DUPFD (the other being
+F_DUPFD_CLOEXEC) I decided that the best thing to do is to just extend
+on that existing naming pattern, and called it F_DUPFD_QUERY instead.
 
-That works great, thanks!
+I'm not married to the name, so if somebody hates it, feel free to
+argue otherwise.
 
-> kdevops session is for a very specialized group of developers,
-> so if that group is assembled and decides to use an earlier slot
-> we can do that on the spot.
+But with that, the suggested patch would end up looking something like
+the attached (I also re-ordered the existing "F_LINUX_SPECIFIC_BASE"
+users, since one of them was out of numerical order).
 
-I think the current timing is perfect, and does not even conflict with
-mm folks, if they want to join.
+This really feels like a very natural thing, and yes, the 'same_fd()'
+function in systemd that Christian also pointed at could use this very
+naturally.
 
-  Luis
+Also note that I obviously haven't tested this. Because obviously this
+is trivially correct and cannot possibly have any bugs. Right? RIGHT?
+
+And yes, I did check - despite the odd jump in numbers, we've never
+had anything between F_NOTIFY (+2) and F_CANCELLK (+5).
+
+We added F_SETLEASE (+0) , F_GETLEASE (+1) and F_NOTIFY (+2) in
+2.4.0-test9 (roughly October 2000, I didn't dig deeper).
+
+And then back in 2007 we suddenly jumped to F_CANCELLK (+5) in commit
+9b9d2ab4154a ("locks: add lock cancel command"). I don't know why 3/4
+were shunned.
+
+After that we had 22d2b35b200f ("F_DUPFD_CLOEXEC implementation") add
+F_DUPFD_CLOEXEC (+6).
+
+I'd have loved to put F_DUPFD_QUERY next to it, but +5 and +7 are both used.
+
+                Linus
+
+--0000000000003fddda0617f3aa7b
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lvy090o10>
+X-Attachment-Id: f_lvy090o10
+
+IGZzL2ZjbnRsLmMgICAgICAgICAgICAgICAgIHwgMjMgKysrKysrKysrKysrKysrKysrKysrKysK
+IGluY2x1ZGUvdWFwaS9saW51eC9mY250bC5oIHwgMTQgKysrKysrKystLS0tLS0KIDIgZmlsZXMg
+Y2hhbmdlZCwgMzEgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9m
+cy9mY250bC5jIGIvZnMvZmNudGwuYwppbmRleCA1NGNjODVkMzMzOGUuLjFkZGI2M2Y3MDQ0NSAx
+MDA2NDQKLS0tIGEvZnMvZmNudGwuYworKysgYi9mcy9mY250bC5jCkBAIC0zMjcsNiArMzI3LDI1
+IEBAIHN0YXRpYyBsb25nIGZjbnRsX3NldF9yd19oaW50KHN0cnVjdCBmaWxlICpmaWxlLCB1bnNp
+Z25lZCBpbnQgY21kLAogCXJldHVybiAwOwogfQogCisvKgorICogSXMgdGhlIGZpbGUgZGVzY3Jp
+cHRvciBhIGR1cCBvZiB0aGUgZmlsZT8KKyAqLworc3RhdGljIGxvbmcgZl9kdXBmZF9xdWVyeShp
+bnQgZmQsIHN0cnVjdCBmaWxlICpmaWxwKQoreworCXN0cnVjdCBmZCBmID0gZmRnZXRfcmF3KGZk
+KTsKKworCS8qCisJICogV2UgY2FuIGRvIHRoZSAnZmRwdXQoKScgaW1tZWRpYXRlbHksIGFzIHRo
+ZSBvbmx5IHRoaW5nIHRoYXQKKwkgKiBtYXR0ZXJzIGlzIHRoZSBwb2ludGVyIHZhbHVlIHdoaWNo
+IGlzbid0IGNoYW5nZWQgYnkgdGhlIGZkcHV0LgorCSAqCisJICogVGVjaG5pY2FsbHkgd2UgZGlk
+bid0IG5lZWQgYSByZWYgYXQgYWxsLCBhbmQgJ2ZkZ2V0KCknIHdhcworCSAqIG92ZXJraWxsLCBi
+dXQgZ2l2ZW4gb3VyIGxvY2tsZXNzIGZpbGUgcG9pbnRlciBsb29rdXAsIHRoZQorCSAqIGFsdGVy
+bmF0aXZlcyBhcmUgY29tcGxpY2F0ZWQuCisJICovCisJZmRwdXQoZik7CisJcmV0dXJuIGYuZmls
+ZSA9PSBmaWxwOworfQorCiBzdGF0aWMgbG9uZyBkb19mY250bChpbnQgZmQsIHVuc2lnbmVkIGlu
+dCBjbWQsIHVuc2lnbmVkIGxvbmcgYXJnLAogCQlzdHJ1Y3QgZmlsZSAqZmlscCkKIHsKQEAgLTM0
+Miw2ICszNjEsOSBAQCBzdGF0aWMgbG9uZyBkb19mY250bChpbnQgZmQsIHVuc2lnbmVkIGludCBj
+bWQsIHVuc2lnbmVkIGxvbmcgYXJnLAogCWNhc2UgRl9EVVBGRF9DTE9FWEVDOgogCQllcnIgPSBm
+X2R1cGZkKGFyZ2ksIGZpbHAsIE9fQ0xPRVhFQyk7CiAJCWJyZWFrOworCWNhc2UgRl9EVVBGRF9R
+VUVSWToKKwkJZXJyID0gZl9kdXBmZF9xdWVyeShhcmdpLCBmaWxwKTsKKwkJYnJlYWs7CiAJY2Fz
+ZSBGX0dFVEZEOgogCQllcnIgPSBnZXRfY2xvc2Vfb25fZXhlYyhmZCkgPyBGRF9DTE9FWEVDIDog
+MDsKIAkJYnJlYWs7CkBAIC00NDYsNiArNDY4LDcgQEAgc3RhdGljIGludCBjaGVja19mY250bF9j
+bWQodW5zaWduZWQgY21kKQogCXN3aXRjaCAoY21kKSB7CiAJY2FzZSBGX0RVUEZEOgogCWNhc2Ug
+Rl9EVVBGRF9DTE9FWEVDOgorCWNhc2UgRl9EVVBGRF9RVUVSWToKIAljYXNlIEZfR0VURkQ6CiAJ
+Y2FzZSBGX1NFVEZEOgogCWNhc2UgRl9HRVRGTDoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9s
+aW51eC9mY250bC5oIGIvaW5jbHVkZS91YXBpL2xpbnV4L2ZjbnRsLmgKaW5kZXggMjgyZTkwYWVi
+MTYzLi5jMGJjYzE4NWZhNDggMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvdWFwaS9saW51eC9mY250bC5o
+CisrKyBiL2luY2x1ZGUvdWFwaS9saW51eC9mY250bC5oCkBAIC04LDYgKzgsMTQgQEAKICNkZWZp
+bmUgRl9TRVRMRUFTRQkoRl9MSU5VWF9TUEVDSUZJQ19CQVNFICsgMCkKICNkZWZpbmUgRl9HRVRM
+RUFTRQkoRl9MSU5VWF9TUEVDSUZJQ19CQVNFICsgMSkKIAorLyoKKyAqIFJlcXVlc3Qgbm9maWNh
+dGlvbnMgb24gYSBkaXJlY3RvcnkuCisgKiBTZWUgYmVsb3cgZm9yIGV2ZW50cyB0aGF0IG1heSBi
+ZSBub3RpZmllZC4KKyAqLworI2RlZmluZSBGX05PVElGWQkoRl9MSU5VWF9TUEVDSUZJQ19CQVNF
+ICsgMikKKworI2RlZmluZSBGX0RVUEZEX1FVRVJZCShGX0xJTlVYX1NQRUNJRklDX0JBU0UgKyAz
+KQorCiAvKgogICogQ2FuY2VsIGEgYmxvY2tpbmcgcG9zaXggbG9jazsgaW50ZXJuYWwgdXNlIG9u
+bHkgdW50aWwgd2UgZXhwb3NlIGFuCiAgKiBhc3luY2hyb25vdXMgbG9jayBhcGkgdG8gdXNlcnNw
+YWNlOgpAQCAtMTcsMTIgKzI1LDYgQEAKIC8qIENyZWF0ZSBhIGZpbGUgZGVzY3JpcHRvciB3aXRo
+IEZEX0NMT0VYRUMgc2V0LiAqLwogI2RlZmluZSBGX0RVUEZEX0NMT0VYRUMJKEZfTElOVVhfU1BF
+Q0lGSUNfQkFTRSArIDYpCiAKLS8qCi0gKiBSZXF1ZXN0IG5vZmljYXRpb25zIG9uIGEgZGlyZWN0
+b3J5LgotICogU2VlIGJlbG93IGZvciBldmVudHMgdGhhdCBtYXkgYmUgbm90aWZpZWQuCi0gKi8K
+LSNkZWZpbmUgRl9OT1RJRlkJKEZfTElOVVhfU1BFQ0lGSUNfQkFTRSsyKQotCiAvKgogICogU2V0
+IGFuZCBnZXQgb2YgcGlwZSBwYWdlIHNpemUgYXJyYXkKICAqLwo=
+--0000000000003fddda0617f3aa7b--
 
