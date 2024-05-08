@@ -1,187 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-19105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8C18C010B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 17:34:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33AE8C014A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 17:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15AB31F28A65
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AED6289913
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 15:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7D9128396;
-	Wed,  8 May 2024 15:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA4612839F;
+	Wed,  8 May 2024 15:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GkLCE7sK"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dYcN+kxw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C931272B4;
-	Wed,  8 May 2024 15:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8EE86626
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 15:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715182441; cv=none; b=ob0HH9w67csqi3h17vtkKj696oLy8YA0H7QwTh5Vyd067RzqRlWPnwe3n4+R9KEe8wZKIXLp+l6dVxD/JPpbFsWvmZtQU6slzWMQfnWVzu/g066+b5CdPDAodwUt0fgoIWGex8hFpmx1cmGfW6Kb3pFLON5z/uf3PgtXwyXkzSo=
+	t=1715183143; cv=none; b=qy0i3FSrRcIbi8Ecapo55NwYEIFhwp/esnJO2YuA7p6MzZXj2ki1hj4XMztJ1QmE3zI2EintZ8RjLeGzv0qDrVsnUek54F7M3m2m/KN8CSzMHs1WzDhZrbrp+ZBg64PaZaD6SiRScTJ+uMsVY9Gd/0OhQsQNPnXABiz2CGC5mGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715182441; c=relaxed/simple;
-	bh=cHqIt/5KCdqz0VMsKYMeMP3dgxBzGZKTJJHYdhJdLmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kevgm5lVHJSHvj48AQel9g31hvaxN7zG0xvylSmNjIV4pWfkzLyXMKfplT6nt4CoyV6/ORXRPUT0iI/HjVIMQTBLzarvwT+isMZR3cJu9Dnx/oWOi0vDYAg95F00o2fICryFhvk5p9Jq+rUNG/vzkIaBxJSFRtnoEQSHoc1rhZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GkLCE7sK; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715182440; x=1746718440;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cHqIt/5KCdqz0VMsKYMeMP3dgxBzGZKTJJHYdhJdLmc=;
-  b=GkLCE7sKR9EQiOZDsDyLzgbVTi4Pv3v3bjIeVrCkPFAqnk+SE5BTpuJG
-   Vm7lps9n2ZoubFHL+WhL146RquTUxgzCsDuG07WeKD5vhOmK8DIUN82Bq
-   1dLBmz6nEv8A+U4dIct+4Co+2kOnhQ8HOqm+q60Fsx7LoB3xnT759fpa/
-   qOnCexXoxS8xgWNRtHXB0sCvjQeihKoDhqPoLho10P54QuHj+RysFCwDE
-   Uk0IpA8KJ+NTYUzYEcjr5drXab7yWC+dBQINK9bokWn3NZ4emPU614Lya
-   5KBnxEsc678q5aXouhhpllOUU+qtAlgtekjhc0BMr31Tc4B6qbZXYuN8z
-   Q==;
-X-CSE-ConnectionGUID: W5f42XKUQPuQPC8i1d02vw==
-X-CSE-MsgGUID: Mt6WKblKQcem+s6UbA9RXg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="10922383"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="10922383"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:33:32 -0700
-X-CSE-ConnectionGUID: qWug9sBpQt6NDBOZupjgug==
-X-CSE-MsgGUID: 1hBdEjUbRTeRkYbf89xuGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33760155"
-Received: from hemanthr-mobl.amr.corp.intel.com (HELO [10.209.17.69]) ([10.209.17.69])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:33:31 -0700
-Message-ID: <c3fc5396-bc71-4dee-a3e0-d59dbbc6eda1@intel.com>
-Date: Wed, 8 May 2024 08:33:24 -0700
+	s=arc-20240116; t=1715183143; c=relaxed/simple;
+	bh=Y3tAYnJhvWIsSCmSdE6nAn4Ex+kbs5Wn07R+879JUgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMtp+cX+YoWKiAeQoxZ5m7XWNFgK7AqS4n6J8sinKuLKteUWoig5OfuL6y38b2g7O0JsRDDbWeMNMTqmfCSBZLaXK9tE9ngdeT7y4hmUwSpySvEuBk9V8LKWhQmccPdMftKdFx6G9nFh3q613X8zSrJOJDryBOB+fGlTl2RiCB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=dYcN+kxw; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e2da49e86bso9569761fa.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 08:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1715183140; x=1715787940; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQT930nNUV1vsHVoX3P+3mBNNldXqcqQMqEjZfBnVWc=;
+        b=dYcN+kxwyl/LDgV8q+OrMUejOE3sF4If55u6Q4DDQuO14gEOV55VGR/v3fLGfCE3rl
+         lw2rtPdcATyCKO5vaNaFY08OhDf16opdJ+PsszPFheeppq49YFnXbBqayOigcfrNHsFH
+         s/B6i7hj0yh0wRUjuBjMjimgYxE6AmkVgfGFc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715183140; x=1715787940;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zQT930nNUV1vsHVoX3P+3mBNNldXqcqQMqEjZfBnVWc=;
+        b=EuUreJ7CiQLft2oELPOht1eTh7kKDhoZuVWCC5SFmgP5XXWcugghdgdtsIiQzKsydh
+         eCVbwLpi3UnQBGhhUQ69ECFAcPfSrugYxBfuQn91OzweGuJU4CbmJ61+s3tWfI3pZzAI
+         PEFQhhs12jRk0FkS3jfJq25JZxF4OSwDydPgLanMG88mgAG932qh8KxU9U5jeTBPWSul
+         3cuOim+uNE217ua5ZdtVvNHirPWbGZThhLxYbv8RDZVOXQcwAQOuwFui46qoEcQfLujB
+         6Cii8H2kztEyhGPFRBz9ErosS8CcMuAPSyD0BMNcSZs6LYZ10vRnE13kxow6cYemahTw
+         G7tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrDrIehDxn97s4kz+KXPNX+5nmHK9UjSa5O5yU/8IAKIo5nlPh4fhGUDZlXs1uDEMpEvDuaj0ar7JY1jd8qmNKaIvGpdYl6vd8odjLPg==
+X-Gm-Message-State: AOJu0YztueGI99Ya7pVz6tQg8nZr2pcWybei2sdhfkQwgOfwcjUVgnda
+	xHrdEx+OT1oPqpOGVE8ZjjA2LblZ1704lNievnjJFrj69bOe9vZ9lEj2SNfnll4=
+X-Google-Smtp-Source: AGHT+IElEidDiVjInarsAR7F2JpjTofgrb5PfDM8hUsyo09wsdL7lGXij8WK5Ptcrp9hokZm7DJwxg==
+X-Received: by 2002:ac2:5b84:0:b0:51f:6d6d:57b with SMTP id 2adb3069b0e04-5217d6346e2mr2041007e87.6.1715183139855;
+        Wed, 08 May 2024 08:45:39 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id cq27-20020a056402221b00b005727eb1ed6asm7672318edb.68.2024.05.08.08.45.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 08:45:39 -0700 (PDT)
+Date: Wed, 8 May 2024 17:45:37 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Message-ID: <ZjueITUy0K8TP1WO@phenom.ffwll.local>
+Mail-Followup-To: Christian Brauner <brauner@kernel.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+ <20240508-risse-fehlpass-895202f594fd@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] selftests/sgx: Include KHDR_INCLUDES in Makefile
-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Christian Brauner
- <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <keescook@chromium.org>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>,
- Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Andrew Morton <akpm@linux-foundation.org>, Seth Forshee
- <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
- <afaerber@suse.de>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-sound@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-input@vger.kernel.org, iommu@lists.linux.dev, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
- linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
- linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org,
- kernel test robot <oliver.sang@intel.com>
-References: <20240507214254.2787305-1-edliaw@google.com>
- <20240507214254.2787305-3-edliaw@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240507214254.2787305-3-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240508-risse-fehlpass-895202f594fd@brauner>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On 5/7/24 14:38, Edward Liaw wrote:
-> Add KHDR_INCLUDES to the CFLAGS to pull in the kselftest harness
-> dependencies (-D_GNU_SOURCE).
+On Wed, May 08, 2024 at 12:08:57PM +0200, Christian Brauner wrote:
+> On Mon, May 06, 2024 at 04:29:44PM +0200, Christian König wrote:
+> > Am 04.05.24 um 20:20 schrieb Linus Torvalds:
+> > > On Sat, 4 May 2024 at 08:32, Linus Torvalds
+> > > <torvalds@linux-foundation.org> wrote:
+> > > > Lookie here, the fundamental issue is that epoll can call '->poll()'
+> > > > on a file descriptor that is being closed concurrently.
+> > > Thinking some more about this, and replying to myself...
+> > > 
+> > > Actually, I wonder if we could *really* fix this by simply moving the
+> > > eventpoll_release() to where it really belongs.
+> > > 
+> > > If we did it in file_close_fd_locked(),  it would actually make a
+> > > *lot* more sense. Particularly since eventpoll actually uses this:
+> > > 
+> > >      struct epoll_filefd {
+> > >          struct file *file;
+> > >          int fd;
+> > >      } __packed;
+> > > 
+> > > ie it doesn't just use the 'struct file *', it uses the 'fd' itself
+> > > (for ep_find()).
+> > > 
+> > > (Strictly speaking, it should also have a pointer to the 'struct
+> > > files_struct' to make the 'int fd' be meaningful).
+> > 
+> > While I completely agree on this I unfortunately have to ruin the idea.
+> > 
+> > Before we had KCMP some people relied on the strange behavior of eventpoll
+> > to compare struct files when the fd is the same.
+> > 
+> > I just recently suggested that solution to somebody at AMD as a workaround
+> > when KCMP is disabled because of security hardening and I'm pretty sure I've
+> > seen it somewhere else as well.
+> > 
+> > So when we change that it would break (undocumented?) UAPI behavior.
 > 
-> Also, remove redefinitions of _GNU_SOURCE in the source code.
+> I've worked on that a bit yesterday and I learned new things about epoll
+> and ran into some limitations.
+> 
+> Like, what happens if process P1 has a file descriptor registered in an
+> epoll instance and now P1 forks and creates P2. So every file that P1
+> maintains gets copied into a new file descriptor table for P2. And the
+> same file descriptors refer to the same files for both P1 and P2.
 
-From an x86 and SGX perspective, looks fine.  I assume Shuah is planning
-on taking this pile.
+So this is pretty similar to any other struct file that has resources
+hanging off the struct file instead of the underlying inode. Like drm
+chardev files, where all the buffers, gpu contexts and everything else
+hangs off the file and there's no other way to get at them (except when
+exporting to some explicitly meant-for-sharing file like dma-buf).
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+If you fork() that it's utter hilarity, which is why absolutely everyone
+should set O_CLOEXEC on these. Or EPOLL_CLOEXEC for epoll_create.
+
+For the uapi issue you describe below my take would be that we should just
+try, and hope that everyone's been dutifully using O_CLOEXEC. But maybe
+I'm biased from the gpu world, where we've been hammering it in that
+"O_CLOEXEC or bust" mantra since well over a decade. Really the only valid
+use-case is something like systemd handing open files to a service, where
+it drops priviledges even well before the exec() call. But we can't switch
+around the defaults for any of these special open files with anything more
+than just a current seek position as state, since that breaks uapi.
+-Sima
+
+> 
+> So there's two interesting cases here:
+> 
+> (1) P2 explicitly removes the file descriptor from the epoll instance
+>     via epoll_ctl(EPOLL_CTL_DEL). That removal affects both P1 and P2
+>     since the <fd, file> pair is only registered once and it isn't
+>     marked whether it belongs to P1 and P2 fdtable.
+> 
+>     So effectively fork()ing with epoll creates a weird shared state
+>     where removal of file descriptors that were registered before the
+>     fork() affects both child and parent.
+> 
+>     I found that surprising even though I've worked with epoll quite
+>     extensively in low-level userspace.
+> 
+> (2) P2 doesn't close it's file descriptors. It just exits. Since removal
+>     of the file descriptor from the epoll instance isn't done during
+>     close() but during last fput() P1's epoll state remains unaffected
+>     by P2's sloppy exit because P1 still holds references to all files
+>     in its fdtable.
+> 
+>     (Sidenote, if one ends up adding every more duped-fds into epoll
+>     instance that one doesn't explicitly close and all of them refer to
+>     the same file wouldn't one just be allocating new epitems that
+>     are kept around for a really long time?)
+> 
+> So if the removal of the fd would now be done during close() or during
+> exit_files() when we call close_files() and since there's currently no
+> way of differentiating whether P1 or P2 own that fd it would mean that
+> (2) collapses into (1) and we'd always alter (1)'s epoll state. That
+> would be a UAPI break.
+> 
+> So say we record the fdtable to get ownership of that file descriptor so
+> P2 doesn't close anything in (2) that really belongs to P1 to fix that
+> problem.
+> 
+> But afaict, that would break another possible use-case. Namely, where P1
+> creates an epoll instance and registeres fds and then fork()s to create
+> P2. Now P1 can exit and P2 takes over the epoll loop of P1. This
+> wouldn't work anymore because P1 would deregister all fds it owns in
+> that epoll instance during exit. I didn't see an immediate nice way of
+> fixing that issue.
+> 
+> But note that taking over an epoll loop from the parent doesn't work
+> reliably for some file descriptors. Consider man signalfd(2):
+> 
+>    epoll(7) semantics
+>        If a process adds (via epoll_ctl(2)) a signalfd file descriptor to an epoll(7) instance,
+>        then epoll_wait(2) returns events only for signals sent to that process.  In particular,
+>        if  the process then uses fork(2) to create a child process, then the child will be able
+>        to read(2) signals that  are  sent  to  it  using  the  signalfd  file  descriptor,  but
+>        epoll_wait(2)  will  not  indicate  that the signalfd file descriptor is ready.  In this
+>        scenario, a possible workaround is that after the fork(2), the child process  can  close
+>        the  signalfd  file descriptor that it inherited from the parent process and then create
+>        another signalfd file descriptor and add it to the epoll instance.   Alternatively,  the
+>        parent and the child could delay creating their (separate) signalfd file descriptors and
+>        adding them to the epoll instance until after the call to fork(2).
+> 
+> So effectively P1 opens a signalfd and registers it in an epoll
+> instance. Then it fork()s and creates P2. Now both P1 and P2 call
+> epoll_wait(). Since signalfds are always relative to the caller and P1
+> did call signalfd_poll() to register the callback only P1 can get
+> events. So P2 can't take over signalfds in that epoll loop.
+> 
+> Honestly, the inheritance semantics of epoll across fork() seem pretty
+> wonky and it would've been better if an epoll fd inherited across
+> would've returned ESTALE or EINVAL or something. And if that inheritance
+> of epoll instances would really be a big use-case there'd be some
+> explicit way to enable this.
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
