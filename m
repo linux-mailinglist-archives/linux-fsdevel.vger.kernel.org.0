@@ -1,110 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-19088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582EF8BFC77
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:43:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833968BFC79
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 13:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA171F24F6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3979E1F24F90
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 11:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E4783A18;
-	Wed,  8 May 2024 11:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF72B83CB4;
+	Wed,  8 May 2024 11:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HHbd7SaA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R42QFJlx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4922839FC;
-	Wed,  8 May 2024 11:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F61C823BF
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 11:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168564; cv=none; b=kvRj3AKvuwvvKCHGZlNm7mHvyGKjxN51p59BDvj74TwR/gVmBT+8ORE2X/h7eQjtaZ5hVQ2P1O78cZP7BZ2s6HH5VfFuhYU6OMvwC3Ov9YmY3chMWL1f72KWScgQSDFnmhXVZBoCW+v3CtFFclIFw4z9sreN54w0arJ4OB28Puo=
+	t=1715168573; cv=none; b=usWyJsqBW+7eEH5G8711fTY/Unm/kTtdB6dkLeztCElaTQJEYcYMhXyaVHyJlinkFB/Uq0Hg/1EneNUbxDl0MFLTlRYIHyb9a46RL4u8mQEd1iW2Z2nKl9uVMLMIu6JPH7CZ/vxnFGXkLJwwz7dpxl6S/bSmg09woUxVG6BCMAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168564; c=relaxed/simple;
-	bh=lEmyUHC2s5VhpLeURQHuxXLUIuX5w1xayzBF9k0Bp9A=;
+	s=arc-20240116; t=1715168573; c=relaxed/simple;
+	bh=m1nwS5uoXmDs2WVu9czWgRK84oBrObiNnuoWONh1f3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEMHvyB1cil38tIYYZH9p8yc/iTov2Dujw3QIrnmG3P+wOWOs9b34Hk7pqfpG8RjkMAuDSxHbdCCtnlwmKw0/qXGw003tXrMzT9FaQXYlxbErRAoz0bF+ud4mP55OuPqMW+wb7JnwbfmvfO9xYSyoj+vBwCcnPNkzrDFEGyVvCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HHbd7SaA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BYab8gfnw71vLMZVwC4umL8NG4B6+6Id6Hpb6wOPWjk=; b=HHbd7SaAADfmXktCJOTkLr+66V
-	AkDUd67kmMYelDBlifdDtViqKcxM6NNa0WZuLHAGmLtUB+2WRucyP3b3r63VEauAIsTtmUI1N2g9d
-	j/3ko+aQVQ4UwWEPWLQUGNCQzozSxiX0vC/RoZhoRbmQhWV80UNlKa+Gp3pwQzZNtGQXdlqNMXVF5
-	WYcZRiWIc8T3T7I9H6H8VVTMQMNGEvb+Cf+WamZ70/ZuvvFYk2+Y4c0MhrS3Go1p3PGrlEZmhO4TP
-	ktr9UWzu0LOpDFypvammstDWUzo7p4kSO4X2da1/RQuNqhy46pk1Ro30IaOBxfEh7BkBett3mVBIc
-	eeramhCg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4fgy-0000000FJ7p-0WDT;
-	Wed, 08 May 2024 11:42:36 +0000
-Date: Wed, 8 May 2024 04:42:36 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, hch@lst.de,
-	willy@infradead.org, mcgrof@kernel.org, akpm@linux-foundation.org,
-	brauner@kernel.org, chandan.babu@oracle.com, david@fromorbit.com,
-	djwong@kernel.org, gost.dev@samsung.com, hare@suse.de,
-	john.g.garry@oracle.com, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com, ziy@nvidia.com
-Subject: Re: [RFC] iomap: use huge zero folio in iomap_dio_zero
-Message-ID: <ZjtlLH-y5eBE9W9g@infradead.org>
-References: <87edado4an.fsf@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iRIlcRLqp0G1KafYZmfZU1WNiIIOEsxDqae4nYZnOwRlhGF2CVqCM1GAC2w4HjjTiHMRxf3tenkdKxkwNfPaH5xtPnZBuE/sopCiSBTqIiWMODl8g8dFpW8mZOYupCEEX5FO4sdQuitwA9s63VXfRLpxoJz8cHwLZdha2448xdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R42QFJlx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A680C4AF18;
+	Wed,  8 May 2024 11:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715168573;
+	bh=m1nwS5uoXmDs2WVu9czWgRK84oBrObiNnuoWONh1f3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R42QFJlxXgsKcZfE/p4Wvi9YYiLVjUe5pBL0Rg1BSVJb01yeG+PO1aDEqkcnpJvDF
+	 VOprR4OQpwG6cSV0RiuGHhSssaII01GBzPxFNTWB7DrlZTw4W0OxDcWpm1pKdfNPRY
+	 yXFUWqTIVAWfxEuveLh/GS9ETGlS1DDkNjYT3UDZhHlOuHjKv8zDrtNAzX8xG6sR95
+	 5GddVcIXWG5/Y4120hdz8fTGQlE9m2CqsFlXEUJzgYvFJr1srM1suB21RgYpwengq5
+	 uuMwTb+Vxl6wB0jMLN08Kf7I3JJ7xKW06rqBjzH34cSN9CGEK9QLLusFlv1gq0Pf95
+	 dIngGL7d2II1Q==
+Date: Wed, 8 May 2024 13:42:49 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	lsf-pc <lsf-pc@lists.linux-foundation.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [LSF/MM/BPF TOPIC] finishing up mount API conversions;
+ consistency & logging
+Message-ID: <20240508-zielt-babykleidung-c39d454f2112@brauner>
+References: <12d50bb6-7238-466b-8b67-c4ae42586818@redhat.com>
+ <CAOQ4uxiXrSaDg40hpU=ZDpH3DQ3dbJ1XT_77EmM8_K704PyVCg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87edado4an.fsf@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiXrSaDg40hpU=ZDpH3DQ3dbJ1XT_77EmM8_K704PyVCg@mail.gmail.com>
 
-On Wed, May 08, 2024 at 12:08:56AM +0530, Ritesh Harjani wrote:
-> Christoph Hellwig <hch@infradead.org> writes:
-> 
-> > On Tue, May 07, 2024 at 04:58:12PM +0200, Pankaj Raghav (Samsung) wrote:
-> >> +	if (len > PAGE_SIZE) {
-> >> +		folio = mm_get_huge_zero_folio(current->mm);
+On Wed, May 08, 2024 at 01:32:10PM +0300, Amir Goldstein wrote:
+> On Mon, Apr 15, 2024 at 6:59 PM Eric Sandeen <sandeen@redhat.com> wrote:
 > >
-> > I don't think the mm_struct based interfaces work well here, as I/O
-> > completions don't come in through the same mm.  You'll want to use
+> > In case this is of interest to anyone I'll propose it.
+> >
+> > The "new" mount API was merged about 5 years ago, but not all filesystems
+> > were converted, so we still have the legacy helpers in place. There has been
+> > a slow trickle of conversions, with a renewed interest in completing this
+> > task.
+> >
+> > The remaining conversions are of varying complexity (bcachefs might
+> > be "fun!") but other questions remain around how userspace expects to use
+> > the informational messages the API provides, what types of messages those
+> > should be, and whether those messages should also go to the kernel dmesg.
+> > Last I checked, userspace is not yet doing anything with those messages,
+> > so any inconsistencies probably aren't yet apparent.
+> >
+> > There's also the remaining task of getting the man pages completed.
+> >
+> > There were also some recent questions and suggestions about how to handle
+> > unknown mount options, see Miklos' FSOPEN_REJECT_UNKNOWN suggestion. [1]
+> >
+> > I'm not sure if this warrants a full session, as it's actually quite
+> > an old topic. If nothing else, a BOF for those interested might be
+> > worthwhile.
+> >
 > 
-> But right now iomap_dio_zero() is only called from the submission
-> context right i.e. iomap_dio_bio_iter(). Could you please explain the
-> dependency with the completion context to have same mm_struct here?
+> Christian,
+> 
+> I scheduled a slot for your talk on "Mount API extensions" on Tue 11:30
+> before Eric's Mount API conversions session.
+> 
+> Do you think this is the right order or do you prefer these sessions
+> to be swapped?
+> 
+> Also, this seems like a large topic, so I could try to clear more than
+> 30min in the
+> schedule for it if you like. the buffer_heads session after your talks
+> will probably
+> be removed from there anyway.
+> 
+> I was thinking that we need a followup session for statmount/listmount [1]
+> What's still missing (mount change notifications, fsinfo) and what are
+> the next steps.
+> Are you planning to address those in your session?
 
-mm_get_huge_zero_folio ties the huge folio reference to the mm_struct.
-So when the process that kicked this off exists you lose the reference to
-it.  Which doesn't make sense, we need it as long as the file system
-is mounted.
-
-> Even so, should we not check whether allocation of hugepage is of any
-> value or not depending upon how large the length or (blocksize in case of
-> mount time) really is.
-> i.e. say if the len for zeroing is just 2 times the PAGE_SIZE, then it
-> doesn't really make sense to allocate a 2MB hugepage and sometimes 16MB
-> hugepage on some archs (like Power with hash mmu).
-
-I'd kinda expect we'll just need it for so many other reasons that I
-wouldn't worry.
-
-> The hugepage allocation can still fail during mount time (if we mount
-> late when the system memory is already fragmented). So we might still
-> need a fallback to ZERO_PAGE(0), right?
-
-Memory fragmentation should not prevent the allocation due to
-compaction. And if we're really badly out of memory 2MB isn't going
-to make the difference vs all the other memory used by an XFS file
-system.
-
+Yeah, let's do that in my session. The order is fine by me!
 
