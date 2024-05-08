@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-19066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5248BFA70
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 12:08:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A222B8BFA74
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 12:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A7681F218EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 153F0B24D41
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C692D85953;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E0785959;
 	Wed,  8 May 2024 10:03:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3257E105;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1527E0F2;
 	Wed,  8 May 2024 10:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162586; cv=none; b=RK5zwHzt5ppKDohQa+MpuFKJWPtKeeAtLprn55yajw4Prhdr1nHoVXcyhkI1Di/39zxpKO4tffsoCVz+Yl3US7g1C6jJbLyJYdQpR5+fnz1Vcpi6bdd4KR5T+J0wcWYifVtk+VV8AA66JjeN/HYOHGC4gg5XLGOQKXVE5jhmz5o=
+	t=1715162585; cv=none; b=kbg0LjMj4sBEq0AKiHHKbqKN3Y96DUErXSkJG5YOH49kjBDoPxnF3MP9gnNI3AEBhLpB7Rif30rWBEvBZaPuk1XZgAzfhP1ZslA1ry8hphB2+g+hxnStGzYurCSVx8+tZvrrj4v/SmHfLdTyvok/RHIO0+ighcR5v03lNq1P/lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162586; c=relaxed/simple;
-	bh=l7g7StJKZFZJyNcjPIqxwiunmWh1+xYzmj0s8Awvm9I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=bfCJgWmKfhciDcsS3ausQgxPwYtsrhESY35mLPb/tdYoK/mTAn9BUgQUBRaGV/90jYp7+RF1e/bYhbqb+sb4SJf2nwcWhBLRK07jIGNYnLoVDL9v4kTt+l2jKkwhNNwAoUSypP5uXqIB5X/IEXWj1iGY3L9fF0WVK6PdGkQzoLY=
+	s=arc-20240116; t=1715162585; c=relaxed/simple;
+	bh=37cSYW8WA/TnfUxZD66nhjfMFS+Rdxdh6OVt7EPfSog=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nH1tQt1EaVBNEQ1xPP2N1PnUGdtNI6eRqQt1oL1gumn5ay2PcK74zntMuh6BT4qaxA4O+4CLcZe84j41vQIL+39DKNMYHTsWQXok5RuJZrTLb4J967BVI5TV7FwO1dGA4naVUgSYKxCDySohTUeMqV0IweixU2rHq2TvwCRSTRw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-65-663b4a395a24
+X-AuditID: a67dfc5b-d85ff70000001748-75-663b4a39b220
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -86,44 +86,44 @@ Cc: kernel_team@skhynix.com,
 	longman@redhat.com,
 	hdanton@sina.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v14 05/28] dept: Tie to Lockdep and IRQ tracing
-Date: Wed,  8 May 2024 18:47:02 +0900
-Message-Id: <20240508094726.35754-6-byungchul@sk.com>
+Subject: [PATCH v14 06/28] dept: Add proc knobs to show stats and dependency graph
+Date: Wed,  8 May 2024 18:47:03 +0900
+Message-Id: <20240508094726.35754-7-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240508094726.35754-1-byungchul@sk.com>
 References: <20240508094726.35754-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0yMcRzHfb/Pc89z3Toeh3lkk912WMiPRR8i5g8exsb4w/hDR0+66dfu
-	+h3Wb/RrXXaOutGFc7uiXNdGXXaVSlqJbhQJLf2YflhcnHK5sv757LXP5/15/fUWEpIqgZdQ
-	ERHNKyPkYVJKRIpGPfUbdxwKCNlcUbcS1DmbwfHzKgm68jIKOh6VIiizpGAYbjwA7yZHEEy1
-	vSJAq+lAoP/ykQBLUy+CWmMqBZ39C8HuGKegRZNNQdrdcgpef5vG0HOjAEOp+Qi05pdgsDkH
-	SdAOU1CkTcPuMYTBaTDRYEiWQZ+xkIbpL1ugpfetAGrfr4dbt3sosNa2kND0pA9DZ7WOgt6y
-	GQG0Nr0goUOdK4CHYyUUfJs0EGBwjNPwxlaMoSLdLcr84RJAc64NQ+a9xxjs3TUInl39jMFc
-	9paCBscIhkqzhoA/DxoR9OWN0pCR46ShKCUPQXbGDRLSe7bB1G8dtXcH1zAyTnDplXFc7WQx
-	yb0sYbmnhR9pLv3Ze5orNsdwlUYf7q51GHP6CYeAM5uuUZx5ooDmskbtmBtrb6e5FzenSK7f
-	rsVHvU6JdgXzYYpYXrkpMEgUWuN04aiqpHjLYzVORuqzWchDyDJ+bHdTJprnT63f55hi1rJd
-	XU5ilpcyq9nK3AHBLBPMiIi9175/lpcwe9jvnalze5KRsa6qz+Qsi5lt7J2vVvzf6c2WVtjm
-	PB7MdrZ7cGzOL3FnatIK6SwkcmdmhGyL1kz8f1jB1hm7yHwkLkYLTEiiiIgNlyvC/HxDEyIU
-	8b7nIsPNyF0mw6Xp00/QRMfxesQIkdRTbFu+M0QikMeqEsLrESskpEvFjVf8QyTiYHlCIq+M
-	PKOMCeNV9WilkJQuF2+djAuWMOfl0fwFno/ilfNXLPTwSkZFouNiWfRin+Fj1sSp3YV5dv8Y
-	j/7IReMB4oxN8Q1JKt8PEw1FuhXeQSfW/V2FD59fJ3OaXlubhx5ddJUH3kf+y5rbrqsH6kLG
-	ShXVoiCpUn7qcNyQyaLb/qv7pMnzzvNolHSwYkB/e+GattZ9xpxq/XOZxksTcLn/t6vAsmEJ
-	LSVVofItPoRSJf8Hs2FK9UgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfb+/p+vm7LfT9EsMZ0hGbI4PGTbGbzaP89DM6PCrjiu5q8hj
-	lKfIOtQpJ3W10+pIV216uHarFSdSakWP5LE6ndG1Ti26zD+fvfZ+v/f66yMipDpqqkgZHimo
-	wxUqGS0mxVsC4hau2BQQvHigkwDtjcXgHLhKgj7fREP94zwEpqILGHqqN0LLoB3B8KvXBOiS
-	6xFkfuggoKimE4El5yINjZ8mQZPTQYMt+ToNcVn5NDT0jWBoT7mFIc+8GWqTDBisrq8k6Hpo
-	uKeLw2PnGwaXMZcBY+wc6M5JY2DkwxKwdTZTUHXfRoGldQGkprfTUG6xkVDztBtDY6mehk7T
-	Hwpqa56TUK9NpOBRv4GGvkEjAUang4E31gwMT+LHbJd/jVLwLNGK4XJ2AYamd2UIKq6+x2A2
-	NdNQ5bRjKDQnE/D7YTWC7pvfGbh0w8XAvQs3EVy/lEJCfLschof09NqVfJXdQfDxhSd4y2AG
-	yb8wcHxJWgfDx1e0MnyGOYovzPHjs8p7MJ/500nx5txrNG/+eYvhE743Yb6/ro7hn98dJvlP
-	TTq8zWeveNVhQaWMFtT+q4PEoWWuURxRfPpkUYEWxyLtwQTkIeLYpVxX7Q/kZpqdx7196yLc
-	7MnO5AoTv1BuJli7mMuu2+Dmyewa7kfjxfGcZOdwo8XvSTdLWDn34HM5/uecweU9sY57PNhl
-	3Luv/eN+6dimLC6NSULiDDQhF3kqw6PDFEqVfJHmaGhMuPLkokPHwsxo7F2MZ0e0T9FA48ZK
-	xIqQbKKkng4IllKKaE1MWCXiRITMU1J9ZXmwVHJYEXNKUB87oI5SCZpK5CMiZV6STXuEICkb
-	oogUjgpChKD+32KRx9RY1OZtuX1m2sr8mlQyxLTLVbB/NJ0rjjzfkD1rStLrc/LzQbYpvVXT
-	y4Yde0NKuyOC/H2HJsj613vlpM4+3rur5LOk19cQED3UTBUHPtspN8hezu1j16294pMrMh2p
-	2NHi3H2qJepOF2XX+6k2JOxTeG9Pd+jnh7Gl1NZAq6XkY1usjNSEKpb4EWqN4i/gzh8dKgMA
-	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXSa0xTZxgHcN73nPOeQ0PJsRg54octZY0J3kARH5wxfNITll0ylxhv0UYO
+	0sjFFEHrMgWpCCgOXJAN2FYKVlLwVjBeaLWWgCKhltEwlItAiI5R6IIWrZBhq+HLk1/y/J//
+	p4ejFC1MFKfJPCppM9XpSiKjZVNhtWsSk79MjS3+Vwnl52PB96aIhprrTQRc1xoRNLXkY5ho
+	3w5/z3oQzHU/paCywoWgdnSIgpaOYQS2htMEesfDwe3zEuisOEegoO46gZ7JeQyDly5iaLR8
+	DV1lRgx2/ysaKicIVFcW4MD4B4PfZGbBlKeCsYYqFuZH46BzuI8B2/NV8NsfgwSstk4aOu6M
+	Yei9V0NguGmBga6OxzS4yksZuDptJDA5a6LA5POy8JfdgOGGPlBU+Pp/Bh6V2jEU1t/E4H7W
+	iuB+0QgGS1MfgTafB0OzpYKC91faEYxdmGLhzHk/C9X5FxCcO3OJBv3gRph7V0OSEsU2j5cS
+	9c3HRNusgRafGAXxbtUQK+rvP2dFgyVHbG6IEeusE1isnfExosVcTETLzEVWLJlyY3Ha6WTF
+	x7/O0eK4uxJ/F7VbtiVFStfkStp1Ww/I0vwDPx55knC87JaD5KHG1SUolBP4eOGX+kK8aOvU
+	GBs04VcK/f1+Kuil/OdCc+lLJmiK98iEeue2oCP474W6NvfHPM2rhBejDhK0nN8oFD/9k3zq
+	/ExovGH/2BPKJwjPXk2joBWBTGtBVeBWFsgscIL1bQvz6WC58LChny5DcgMKMSOFJjM3Q61J
+	j1+bpsvUHF97MCvDggK/ZPppfs8dNOPa4UA8h5Rhcnvk5lQFo87N1mU4kMBRyqXy9rObUhXy
+	FLXuhKTN2q/NSZeyHWgFRysj5etnj6Uo+EPqo9JhSToiaRe3mAuNykO6H8xUX45x28hJg77K
+	1p2YfHnD7wOt+5nqEfuBvBLNkgjN1giQ5hJ2qHb9h5OGQNV18oFVlfoy2pxMxXlu9+T3O791
+	FTlNu8K/8oYY0+gkv6BZ1iZf4LxhRLf3C09xb+S+dQMTrrOxTofimxgcnTz58ylF0kzhzuj8
+	R9zecSWdnaaOi6G02eoPVffRMUcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXSe0hTYRgG8L7vnPOduZqcltGpoGLQBSvLSnvLiC6Qh6ILUQRB5KijDqfZ
+	piuLwNq66kwjXekqL7VEV9YssHIxtmbaxSxHZelSM8u8RTlpaRdX9M/LD56H569XQsnzmEkS
+	VVKKqElSqhVESks3ROnnLlkbFTu/4+1oyMmcD76BEzSYK6wEGq6XI7DeOoyhyx0NrwZ7EAw9
+	fUaBKbcBQVFbCwW3arwI7KVHCDR2BIPH10+gLjeDgL6kgsDz7mEMzXlnMJTb1sPj7GIMDv9H
+	GkxdBApMejxyPmHwW8pYsKRPh/bSfBaG28KhzvuSAdeFOgbsb2bD+YvNBKrtdTTUVLVjaLxr
+	JuC1/mbgcU0tDQ05Rgau9RUT6B60UGDx9bPwwlGI4YZhZO3Yt18MPDQ6MBy7fBODp+kegvsn
+	WjHYrC8JuHw9GCptuRT8uOpG0J7Vy8LRTD8LBYezEGQczaPB0BwBQ9/NZMVSwdXTTwmGyn2C
+	fbCQFh4V88Kd/BZWMNx/wwqFtlShsjRUKKnuwkLRVx8j2MpOEsH29QwrnOr1YKGvvp4Vas8N
+	0UKHx4Q3Td4uXbZbVKt0ombe8hhpvP/tweRHkfuzbztJOiqfcwoFSXhuEV/d284GTLiZ/OvX
+	firgEG4aX2nsZAKmuB4pf7l+TcDjuM18icvzt09z0/l3bU4SsIyL4E8+u0T+bU7ly284/u4E
+	cZF808c+FLB8pHNPn89mI2khGlWGQlRJukSlSh0Rpk2IT0tS7Q/btSfRhka+xXJoOKcKDTRG
+	OxEnQYoxsgYSFStnlDptWqIT8RJKESJzH18cK5ftVqYdEDV7dmpS1aLWiSZLaMUE2dptYoyc
+	i1OmiAmimCxq/qdYEjQpHU2dN2Hi6i/2vTtOB3+mQ1Otxic5cbLg/MHxC97rPYYw9aaMzI6K
+	J+6FxHVzVqQiuTTBWrXQ/GBit/fpla0Hb/98kN6amYpiUjq7xzO9adE4xqLQ6fTjjLVV9Ss7
+	m36FD7hn8U1ZX1ZsMRd4W1e1xNEte2c4pqwb03V246KxlnWmDwpaG68MD6U0WuUfFEE9rykD
+	AAA=
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -131,478 +131,251 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-How to place Dept this way looks so ugly. But it's inevitable for now.
-The way should be enhanced gradually.
+It'd be useful to show Dept internal stats and dependency graph on
+runtime via proc for better information. Introduced the knobs.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/irqflags.h            |   7 +-
- include/linux/local_lock_internal.h |   1 +
- include/linux/lockdep.h             | 102 ++++++++++++++++++++++------
- include/linux/lockdep_types.h       |   3 +
- include/linux/mutex.h               |   1 +
- include/linux/percpu-rwsem.h        |   2 +-
- include/linux/rtmutex.h             |   1 +
- include/linux/rwlock_types.h        |   1 +
- include/linux/rwsem.h               |   1 +
- include/linux/seqlock.h             |   2 +-
- include/linux/spinlock_types_raw.h  |   3 +
- include/linux/srcu.h                |   2 +-
- kernel/dependency/dept.c            |   8 +--
- kernel/locking/lockdep.c            |  22 ++++++
- 14 files changed, 127 insertions(+), 29 deletions(-)
+ kernel/dependency/Makefile        |  1 +
+ kernel/dependency/dept.c          | 24 +++-----
+ kernel/dependency/dept_internal.h | 26 +++++++++
+ kernel/dependency/dept_proc.c     | 95 +++++++++++++++++++++++++++++++
+ 4 files changed, 131 insertions(+), 15 deletions(-)
+ create mode 100644 kernel/dependency/dept_internal.h
+ create mode 100644 kernel/dependency/dept_proc.c
 
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 3f003d5fde53..f4506fe08611 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -15,6 +15,7 @@
- #include <linux/irqflags_types.h>
- #include <linux/typecheck.h>
- #include <linux/cleanup.h>
-+#include <linux/dept.h>
- #include <asm/irqflags.h>
- #include <asm/percpu.h>
+diff --git a/kernel/dependency/Makefile b/kernel/dependency/Makefile
+index b5cfb8a03c0c..92f165400187 100644
+--- a/kernel/dependency/Makefile
++++ b/kernel/dependency/Makefile
+@@ -1,3 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
  
-@@ -49,8 +50,10 @@ extern void trace_hardirqs_off(void);
- # define lockdep_softirqs_enabled(p)	((p)->softirqs_enabled)
- # define lockdep_hardirq_enter()			\
- do {							\
--	if (__this_cpu_inc_return(hardirq_context) == 1)\
-+	if (__this_cpu_inc_return(hardirq_context) == 1) { \
- 		current->hardirq_threaded = 0;		\
-+		dept_hardirq_enter();			\
-+	}						\
- } while (0)
- # define lockdep_hardirq_threaded()		\
- do {						\
-@@ -125,6 +128,8 @@ do {						\
- # define lockdep_softirq_enter()		\
- do {						\
- 	current->softirq_context++;		\
-+	if (current->softirq_context == 1)	\
-+		dept_softirq_enter();		\
- } while (0)
- # define lockdep_softirq_exit()			\
- do {						\
-diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock_internal.h
-index 975e33b793a7..39f67788fd95 100644
---- a/include/linux/local_lock_internal.h
-+++ b/include/linux/local_lock_internal.h
-@@ -21,6 +21,7 @@ typedef struct {
- 		.name = #lockname,			\
- 		.wait_type_inner = LD_WAIT_CONFIG,	\
- 		.lock_type = LD_LOCK_PERCPU,		\
-+		.dmap = DEPT_MAP_INITIALIZER(lockname, NULL),\
- 	},						\
- 	.owner = NULL,
- 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 08b0d1d9d78b..4e569b35ff2a 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -12,6 +12,7 @@
- 
- #include <linux/lockdep_types.h>
- #include <linux/smp.h>
-+#include <linux/dept_ldt.h>
- #include <asm/percpu.h>
- 
- struct task_struct;
-@@ -39,6 +40,8 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
- 	 */
- 	for (i = 0; i < NR_LOCKDEP_CACHING_CLASSES; i++)
- 		to->class_cache[i] = NULL;
-+
-+	dept_map_copy(&to->dmap, &from->dmap);
- }
- 
- /*
-@@ -409,7 +412,8 @@ enum xhlock_context_t {
-  * Note that _name must not be NULL.
-  */
- #define STATIC_LOCKDEP_MAP_INIT(_name, _key) \
--	{ .name = (_name), .key = (void *)(_key), }
-+	{ .name = (_name), .key = (void *)(_key), \
-+	  .dmap = DEPT_MAP_INITIALIZER(_name, _key) }
- 
- static inline void lockdep_invariant_state(bool force) {}
- static inline void lockdep_free_task(struct task_struct *task) {}
-@@ -491,33 +495,89 @@ extern bool read_lock_is_recursive(void);
- #define lock_acquire_shared(l, s, t, n, i)		lock_acquire(l, s, t, 1, 1, n, i)
- #define lock_acquire_shared_recursive(l, s, t, n, i)	lock_acquire(l, s, t, 2, 1, n, i)
- 
--#define spin_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, i)
--#define spin_acquire_nest(l, s, t, n, i)	lock_acquire_exclusive(l, s, t, n, i)
--#define spin_release(l, i)			lock_release(l, i)
--
--#define rwlock_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, i)
-+#define spin_acquire(l, s, t, i)					\
-+do {									\
-+	ldt_lock(&(l)->dmap, s, t, NULL, i);				\
-+	lock_acquire_exclusive(l, s, t, NULL, i);			\
-+} while (0)
-+#define spin_acquire_nest(l, s, t, n, i)				\
-+do {									\
-+	ldt_lock(&(l)->dmap, s, t, n, i);				\
-+	lock_acquire_exclusive(l, s, t, n, i);				\
-+} while (0)
-+#define spin_release(l, i)						\
-+do {									\
-+	ldt_unlock(&(l)->dmap, i);					\
-+	lock_release(l, i);						\
-+} while (0)
-+#define rwlock_acquire(l, s, t, i)					\
-+do {									\
-+	ldt_wlock(&(l)->dmap, s, t, NULL, i);				\
-+	lock_acquire_exclusive(l, s, t, NULL, i);			\
-+} while (0)
- #define rwlock_acquire_read(l, s, t, i)					\
- do {									\
-+	ldt_rlock(&(l)->dmap, s, t, NULL, i, !read_lock_is_recursive());\
- 	if (read_lock_is_recursive())					\
- 		lock_acquire_shared_recursive(l, s, t, NULL, i);	\
- 	else								\
- 		lock_acquire_shared(l, s, t, NULL, i);			\
- } while (0)
--
--#define rwlock_release(l, i)			lock_release(l, i)
--
--#define seqcount_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, i)
--#define seqcount_acquire_read(l, s, t, i)	lock_acquire_shared_recursive(l, s, t, NULL, i)
--#define seqcount_release(l, i)			lock_release(l, i)
--
--#define mutex_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, i)
--#define mutex_acquire_nest(l, s, t, n, i)	lock_acquire_exclusive(l, s, t, n, i)
--#define mutex_release(l, i)			lock_release(l, i)
--
--#define rwsem_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, i)
--#define rwsem_acquire_nest(l, s, t, n, i)	lock_acquire_exclusive(l, s, t, n, i)
--#define rwsem_acquire_read(l, s, t, i)		lock_acquire_shared(l, s, t, NULL, i)
--#define rwsem_release(l, i)			lock_release(l, i)
-+#define rwlock_release(l, i)						\
-+do {									\
-+	ldt_unlock(&(l)->dmap, i);					\
-+	lock_release(l, i);						\
-+} while (0)
-+#define seqcount_acquire(l, s, t, i)					\
-+do {									\
-+	ldt_wlock(&(l)->dmap, s, t, NULL, i);				\
-+	lock_acquire_exclusive(l, s, t, NULL, i);			\
-+} while (0)
-+#define seqcount_acquire_read(l, s, t, i)				\
-+do {									\
-+	ldt_rlock(&(l)->dmap, s, t, NULL, i, false);			\
-+	lock_acquire_shared_recursive(l, s, t, NULL, i);		\
-+} while (0)
-+#define seqcount_release(l, i)						\
-+do {									\
-+	ldt_unlock(&(l)->dmap, i);					\
-+	lock_release(l, i);						\
-+} while (0)
-+#define mutex_acquire(l, s, t, i)					\
-+do {									\
-+	ldt_lock(&(l)->dmap, s, t, NULL, i);				\
-+	lock_acquire_exclusive(l, s, t, NULL, i);			\
-+} while (0)
-+#define mutex_acquire_nest(l, s, t, n, i)				\
-+do {									\
-+	ldt_lock(&(l)->dmap, s, t, n, i);				\
-+	lock_acquire_exclusive(l, s, t, n, i);				\
-+} while (0)
-+#define mutex_release(l, i)						\
-+do {									\
-+	ldt_unlock(&(l)->dmap, i);					\
-+	lock_release(l, i);						\
-+} while (0)
-+#define rwsem_acquire(l, s, t, i)					\
-+do {									\
-+	ldt_lock(&(l)->dmap, s, t, NULL, i);				\
-+	lock_acquire_exclusive(l, s, t, NULL, i);			\
-+} while (0)
-+#define rwsem_acquire_nest(l, s, t, n, i)				\
-+do {									\
-+	ldt_lock(&(l)->dmap, s, t, n, i);				\
-+	lock_acquire_exclusive(l, s, t, n, i);				\
-+} while (0)
-+#define rwsem_acquire_read(l, s, t, i)					\
-+do {									\
-+	ldt_lock(&(l)->dmap, s, t, NULL, i);				\
-+	lock_acquire_shared(l, s, t, NULL, i);				\
-+} while (0)
-+#define rwsem_release(l, i)						\
-+do {									\
-+	ldt_unlock(&(l)->dmap, i);					\
-+	lock_release(l, i);						\
-+} while (0)
- 
- #define lock_map_acquire(l)			lock_acquire_exclusive(l, 0, 0, NULL, _THIS_IP_)
- #define lock_map_acquire_try(l)			lock_acquire_exclusive(l, 0, 1, NULL, _THIS_IP_)
-diff --git a/include/linux/lockdep_types.h b/include/linux/lockdep_types.h
-index 70d30d40ea4a..f473fdb8e7d6 100644
---- a/include/linux/lockdep_types.h
-+++ b/include/linux/lockdep_types.h
-@@ -11,6 +11,7 @@
- #define __LINUX_LOCKDEP_TYPES_H
- 
- #include <linux/types.h>
-+#include <linux/dept.h>
- 
- #define MAX_LOCKDEP_SUBCLASSES		8UL
- 
-@@ -77,6 +78,7 @@ struct lock_class_key {
- 		struct hlist_node		hash_entry;
- 		struct lockdep_subclass_key	subkeys[MAX_LOCKDEP_SUBCLASSES];
- 	};
-+	struct dept_key				dkey;
- };
- 
- extern struct lock_class_key __lockdep_no_validate__;
-@@ -194,6 +196,7 @@ struct lockdep_map {
- 	int				cpu;
- 	unsigned long			ip;
- #endif
-+	struct dept_map			dmap;
- };
- 
- struct pin_cookie { unsigned int val; };
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 67edc4ca2bee..179d0ffd0d63 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -27,6 +27,7 @@
- 		, .dep_map = {					\
- 			.name = #lockname,			\
- 			.wait_type_inner = LD_WAIT_SLEEP,	\
-+			.dmap = DEPT_MAP_INITIALIZER(lockname, NULL),\
- 		}
- #else
- # define __DEP_MAP_MUTEX_INITIALIZER(lockname)
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index 36b942b67b7d..e871aca04645 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -21,7 +21,7 @@ struct percpu_rw_semaphore {
- };
- 
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
--#define __PERCPU_RWSEM_DEP_MAP_INIT(lockname)	.dep_map = { .name = #lockname },
-+#define __PERCPU_RWSEM_DEP_MAP_INIT(lockname)	.dep_map = { .name = #lockname, .dmap = DEPT_MAP_INITIALIZER(lockname, NULL) },
- #else
- #define __PERCPU_RWSEM_DEP_MAP_INIT(lockname)
- #endif
-diff --git a/include/linux/rtmutex.h b/include/linux/rtmutex.h
-index 7d049883a08a..35889ac5eeae 100644
---- a/include/linux/rtmutex.h
-+++ b/include/linux/rtmutex.h
-@@ -81,6 +81,7 @@ do { \
- 	.dep_map = {					\
- 		.name = #mutexname,			\
- 		.wait_type_inner = LD_WAIT_SLEEP,	\
-+		.dmap = DEPT_MAP_INITIALIZER(mutexname, NULL),\
- 	}
- #else
- #define __DEP_MAP_RT_MUTEX_INITIALIZER(mutexname)
-diff --git a/include/linux/rwlock_types.h b/include/linux/rwlock_types.h
-index 1948442e7750..6e58dfc84997 100644
---- a/include/linux/rwlock_types.h
-+++ b/include/linux/rwlock_types.h
-@@ -10,6 +10,7 @@
- 	.dep_map = {							\
- 		.name = #lockname,					\
- 		.wait_type_inner = LD_WAIT_CONFIG,			\
-+		.dmap = DEPT_MAP_INITIALIZER(lockname, NULL),		\
- 	}
- #else
- # define RW_DEP_MAP_INIT(lockname)
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index c8b543d428b0..2540b18e3489 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -22,6 +22,7 @@
- 	.dep_map = {					\
- 		.name = #lockname,			\
- 		.wait_type_inner = LD_WAIT_SLEEP,	\
-+		.dmap = DEPT_MAP_INITIALIZER(lockname, NULL),\
- 	},
- #else
- # define __RWSEM_DEP_MAP_INIT(lockname)
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index d90d8ee29d81..803a5a067f07 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -51,7 +51,7 @@ static inline void __seqcount_init(seqcount_t *s, const char *name,
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- 
- # define SEQCOUNT_DEP_MAP_INIT(lockname)				\
--		.dep_map = { .name = #lockname }
-+		.dep_map = { .name = #lockname, .dmap = DEPT_MAP_INITIALIZER(lockname, NULL) }
- 
- /**
-  * seqcount_init() - runtime initializer for seqcount_t
-diff --git a/include/linux/spinlock_types_raw.h b/include/linux/spinlock_types_raw.h
-index 91cb36b65a17..3dcc551ded25 100644
---- a/include/linux/spinlock_types_raw.h
-+++ b/include/linux/spinlock_types_raw.h
-@@ -31,11 +31,13 @@ typedef struct raw_spinlock {
- 	.dep_map = {					\
- 		.name = #lockname,			\
- 		.wait_type_inner = LD_WAIT_SPIN,	\
-+		.dmap = DEPT_MAP_INITIALIZER(lockname, NULL),\
- 	}
- # define SPIN_DEP_MAP_INIT(lockname)			\
- 	.dep_map = {					\
- 		.name = #lockname,			\
- 		.wait_type_inner = LD_WAIT_CONFIG,	\
-+		.dmap = DEPT_MAP_INITIALIZER(lockname, NULL),\
- 	}
- 
- # define LOCAL_SPIN_DEP_MAP_INIT(lockname)		\
-@@ -43,6 +45,7 @@ typedef struct raw_spinlock {
- 		.name = #lockname,			\
- 		.wait_type_inner = LD_WAIT_CONFIG,	\
- 		.lock_type = LD_LOCK_PERCPU,		\
-+		.dmap = DEPT_MAP_INITIALIZER(lockname, NULL),\
- 	}
- #else
- # define RAW_SPIN_DEP_MAP_INIT(lockname)
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 236610e4a8fa..c5e0ae6088c4 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -35,7 +35,7 @@ int __init_srcu_struct(struct srcu_struct *ssp, const char *name,
- 	__init_srcu_struct((ssp), #ssp, &__srcu_key); \
- })
- 
--#define __SRCU_DEP_MAP_INIT(srcu_name)	.dep_map = { .name = #srcu_name },
-+#define __SRCU_DEP_MAP_INIT(srcu_name)	.dep_map = { .name = #srcu_name, .dmap = DEPT_MAP_INITIALIZER(srcu_name, NULL) },
- #else /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
- 
- int init_srcu_struct(struct srcu_struct *ssp);
+ obj-$(CONFIG_DEPT) += dept.o
++obj-$(CONFIG_DEPT) += dept_proc.o
 diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index a3e774479f94..7e12e46dc4b7 100644
+index 7e12e46dc4b7..19406093103e 100644
 --- a/kernel/dependency/dept.c
 +++ b/kernel/dependency/dept.c
-@@ -244,10 +244,10 @@ static bool dept_working(void)
-  * Even k == NULL is considered as a valid key because it would use
-  * &->map_key as the key in that case.
+@@ -74,6 +74,7 @@
+ #include <linux/dept.h>
+ #include <linux/utsname.h>
+ #include <linux/kernel.h>
++#include "dept_internal.h"
+ 
+ static int dept_stop;
+ static int dept_per_cpu_ready;
+@@ -260,20 +261,13 @@ static bool valid_key(struct dept_key *k)
+  *       have been freed will be placed.
   */
--struct dept_key __dept_no_validate__;
-+extern struct lock_class_key __lockdep_no_validate__;
- static bool valid_key(struct dept_key *k)
- {
--	return &__dept_no_validate__ != k;
-+	return &__lockdep_no_validate__.dkey != k;
- }
  
- /*
-@@ -1936,7 +1936,7 @@ void dept_softirqs_off(void)
- 	dept_task()->softirqs_enabled = false;
- }
+-enum object_t {
+-#define OBJECT(id, nr) OBJECT_##id,
+-	#include "dept_object.h"
+-#undef  OBJECT
+-	OBJECT_NR,
+-};
+-
+ #define OBJECT(id, nr)							\
+ static struct dept_##id spool_##id[nr];					\
+ static DEFINE_PER_CPU(struct llist_head, lpool_##id);
+ 	#include "dept_object.h"
+ #undef  OBJECT
  
--void dept_hardirqs_off(void)
-+void noinstr dept_hardirqs_off(void)
- {
+-static struct dept_pool pool[OBJECT_NR] = {
++struct dept_pool dept_pool[OBJECT_NR] = {
+ #define OBJECT(id, nr) {						\
+ 	.name = #id,							\
+ 	.obj_sz = sizeof(struct dept_##id),				\
+@@ -303,7 +297,7 @@ static void *from_pool(enum object_t t)
+ 	if (DEPT_WARN_ON(!irqs_disabled()))
+ 		return NULL;
+ 
+-	p = &pool[t];
++	p = &dept_pool[t];
+ 
  	/*
- 	 * Assumes that it's called with IRQ disabled so that accessing
-@@ -1958,7 +1958,7 @@ void dept_softirq_enter(void)
- /*
-  * Ensure it's the outmost hardirq context.
-  */
--void dept_hardirq_enter(void)
-+void noinstr dept_hardirq_enter(void)
+ 	 * Try local pool first.
+@@ -338,7 +332,7 @@ static void *from_pool(enum object_t t)
+ 
+ static void to_pool(void *o, enum object_t t)
  {
- 	struct dept_task *dt = dept_task();
+-	struct dept_pool *p = &pool[t];
++	struct dept_pool *p = &dept_pool[t];
+ 	struct llist_head *h;
  
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 151bd3de5936..e27cf9d17163 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -1215,6 +1215,8 @@ void lockdep_register_key(struct lock_class_key *key)
- 	struct lock_class_key *k;
- 	unsigned long flags;
+ 	preempt_disable();
+@@ -2092,7 +2086,7 @@ void dept_map_copy(struct dept_map *to, struct dept_map *from)
+ 	clean_classes_cache(&to->map_key);
+ }
  
-+	dept_key_init(&key->dkey);
+-static LIST_HEAD(classes);
++LIST_HEAD(dept_classes);
+ 
+ static bool within(const void *addr, void *start, unsigned long size)
+ {
+@@ -2124,7 +2118,7 @@ void dept_free_range(void *start, unsigned int sz)
+ 	while (unlikely(!dept_lock()))
+ 		cpu_relax();
+ 
+-	list_for_each_entry_safe(c, n, &classes, all_node) {
++	list_for_each_entry_safe(c, n, &dept_classes, all_node) {
+ 		if (!within((void *)c->key, start, sz) &&
+ 		    !within(c->name, start, sz))
+ 			continue;
+@@ -2200,7 +2194,7 @@ static struct dept_class *check_new_class(struct dept_key *local,
+ 	c->sub_id = sub_id;
+ 	c->key = (unsigned long)(k->base + sub_id);
+ 	hash_add_class(c);
+-	list_add(&c->all_node, &classes);
++	list_add(&c->all_node, &dept_classes);
+ unlock:
+ 	dept_unlock();
+ caching:
+@@ -2915,8 +2909,8 @@ static void migrate_per_cpu_pool(void)
+ 		struct llist_head *from;
+ 		struct llist_head *to;
+ 
+-		from = &pool[i].boot_pool;
+-		to = per_cpu_ptr(pool[i].lpool, boot_cpu);
++		from = &dept_pool[i].boot_pool;
++		to = per_cpu_ptr(dept_pool[i].lpool, boot_cpu);
+ 		move_llist(to, from);
+ 	}
+ }
+diff --git a/kernel/dependency/dept_internal.h b/kernel/dependency/dept_internal.h
+new file mode 100644
+index 000000000000..007c1eec6bab
+--- /dev/null
++++ b/kernel/dependency/dept_internal.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Dept(DEPendency Tracker) - runtime dependency tracker internal header
++ *
++ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
++ *
++ *  Copyright (c) 2020 LG Electronics, Inc., Byungchul Park
++ */
 +
- 	if (WARN_ON_ONCE(static_obj(key)))
- 		return;
- 	hash_head = keyhashentry(key);
-@@ -4310,6 +4312,8 @@ static void __trace_hardirqs_on_caller(void)
-  */
- void lockdep_hardirqs_on_prepare(void)
- {
-+	dept_hardirqs_on();
++#ifndef __DEPT_INTERNAL_H
++#define __DEPT_INTERNAL_H
 +
- 	if (unlikely(!debug_locks))
- 		return;
- 
-@@ -4430,6 +4434,8 @@ EXPORT_SYMBOL_GPL(lockdep_hardirqs_on);
-  */
- void noinstr lockdep_hardirqs_off(unsigned long ip)
- {
-+	dept_hardirqs_off();
++#ifdef CONFIG_DEPT
 +
- 	if (unlikely(!debug_locks))
- 		return;
- 
-@@ -4474,6 +4480,8 @@ void lockdep_softirqs_on(unsigned long ip)
- {
- 	struct irqtrace_events *trace = &current->irqtrace;
- 
-+	dept_softirqs_on_ip(ip);
++enum object_t {
++#define OBJECT(id, nr) OBJECT_##id,
++	#include "dept_object.h"
++#undef  OBJECT
++	OBJECT_NR,
++};
 +
- 	if (unlikely(!lockdep_enabled()))
- 		return;
- 
-@@ -4512,6 +4520,8 @@ void lockdep_softirqs_on(unsigned long ip)
-  */
- void lockdep_softirqs_off(unsigned long ip)
- {
-+	dept_softirqs_off();
++extern struct list_head dept_classes;
++extern struct dept_pool dept_pool[];
 +
- 	if (unlikely(!lockdep_enabled()))
- 		return;
- 
-@@ -4859,6 +4869,8 @@ void lockdep_init_map_type(struct lockdep_map *lock, const char *name,
- {
- 	int i;
- 
-+	ldt_init(&lock->dmap, &key->dkey, subclass, name);
++#endif
++#endif /* __DEPT_INTERNAL_H */
+diff --git a/kernel/dependency/dept_proc.c b/kernel/dependency/dept_proc.c
+new file mode 100644
+index 000000000000..7d61dfbc5865
+--- /dev/null
++++ b/kernel/dependency/dept_proc.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Procfs knobs for Dept(DEPendency Tracker)
++ *
++ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
++ *
++ *  Copyright (C) 2021 LG Electronics, Inc. , Byungchul Park
++ */
++#include <linux/proc_fs.h>
++#include <linux/seq_file.h>
++#include <linux/dept.h>
++#include "dept_internal.h"
 +
- 	for (i = 0; i < NR_LOCKDEP_CACHING_CLASSES; i++)
- 		lock->class_cache[i] = NULL;
- 
-@@ -5630,6 +5642,12 @@ void lock_set_class(struct lockdep_map *lock, const char *name,
- {
- 	unsigned long flags;
- 
++static void *l_next(struct seq_file *m, void *v, loff_t *pos)
++{
 +	/*
-+	 * dept_map_(re)init() might be called twice redundantly. But
-+	 * there's no choice as long as Dept relies on Lockdep.
++	 * XXX: Serialize list traversal if needed. The following might
++	 * give a wrong information on contention.
 +	 */
-+	ldt_set_class(&lock->dmap, name, &key->dkey, subclass, ip);
++	return seq_list_next(v, &dept_classes, pos);
++}
 +
- 	if (unlikely(!lockdep_enabled()))
- 		return;
- 
-@@ -5647,6 +5665,8 @@ void lock_downgrade(struct lockdep_map *lock, unsigned long ip)
- {
- 	unsigned long flags;
- 
-+	ldt_downgrade(&lock->dmap, ip);
++static void *l_start(struct seq_file *m, loff_t *pos)
++{
++	/*
++	 * XXX: Serialize list traversal if needed. The following might
++	 * give a wrong information on contention.
++	 */
++	return seq_list_start_head(&dept_classes, *pos);
++}
 +
- 	if (unlikely(!lockdep_enabled()))
- 		return;
- 
-@@ -6447,6 +6467,8 @@ void lockdep_unregister_key(struct lock_class_key *key)
- 	unsigned long flags;
- 	bool found = false;
- 
-+	dept_key_destroy(&key->dkey);
++static void l_stop(struct seq_file *m, void *v)
++{
++}
 +
- 	might_sleep();
- 
- 	if (WARN_ON_ONCE(static_obj(key)))
++static int l_show(struct seq_file *m, void *v)
++{
++	struct dept_class *fc = list_entry(v, struct dept_class, all_node);
++	struct dept_dep *d;
++	const char *prefix;
++
++	if (v == &dept_classes) {
++		seq_puts(m, "All classes:\n\n");
++		return 0;
++	}
++
++	prefix = fc->sched_map ? "<sched> " : "";
++	seq_printf(m, "[%p] %s%s\n", (void *)fc->key, prefix, fc->name);
++
++	/*
++	 * XXX: Serialize list traversal if needed. The following might
++	 * give a wrong information on contention.
++	 */
++	list_for_each_entry(d, &fc->dep_head, dep_node) {
++		struct dept_class *tc = d->wait->class;
++
++		prefix = tc->sched_map ? "<sched> " : "";
++		seq_printf(m, " -> [%p] %s%s\n", (void *)tc->key, prefix, tc->name);
++	}
++	seq_puts(m, "\n");
++
++	return 0;
++}
++
++static const struct seq_operations dept_deps_ops = {
++	.start	= l_start,
++	.next	= l_next,
++	.stop	= l_stop,
++	.show	= l_show,
++};
++
++static int dept_stats_show(struct seq_file *m, void *v)
++{
++	int r;
++
++	seq_puts(m, "Availability in the static pools:\n\n");
++#define OBJECT(id, nr)							\
++	r = atomic_read(&dept_pool[OBJECT_##id].obj_nr);		\
++	if (r < 0)							\
++		r = 0;							\
++	seq_printf(m, "%s\t%d/%d(%d%%)\n", #id, r, nr, (r * 100) / (nr));
++	#include "dept_object.h"
++#undef  OBJECT
++
++	return 0;
++}
++
++static int __init dept_proc_init(void)
++{
++	proc_create_seq("dept_deps", S_IRUSR, NULL, &dept_deps_ops);
++	proc_create_single("dept_stats", S_IRUSR, NULL, dept_stats_show);
++	return 0;
++}
++
++__initcall(dept_proc_init);
 -- 
 2.17.1
 
