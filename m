@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-19049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73928BFA1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 12:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED9F8BFA17
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 12:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB27B23635
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:03:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13895B233C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 10:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774767F7D5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0367F484;
 	Wed,  8 May 2024 10:03:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1EF7E0F6;
-	Wed,  8 May 2024 10:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3DA7E107
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 10:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162582; cv=none; b=Qj+pTILydwKp/Gl16jrnvJTMRTL3om5jW+kXrEEC6Krxs48Y9wb0682ogAi9lhbSJ5/SLWpMhSwTDKOQK2CRKIUgZeGFYXoERGeUEoVlFGI9L6+cHwO40X8VnXXJac/RgEOEQ+2391wzhBAHIgQkB9MO8cI5TGcUx1Bpj5mPw8c=
+	t=1715162581; cv=none; b=O1cRZ2iufCPS5QnipdZMcRrnNTMldkGU9WQC83aYFJpC3d8gqhW9C7G3fF4ywm32eikNq5OO4gNUygt1PtG20530duaY68/s6bg1tiR4c22y1LbqzDrb/DVCblLU/40JhAiGo+6NomYqHLJV/A09GzfJUAKqLHUUD1EcdohTNZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162582; c=relaxed/simple;
-	bh=aEiCt6+kTRnmniXgTYSuIBxuz0W3grKxPwQ3JxQgYb8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Wl0JEslWFUUyHlf/uvkjU3hrZukgihCyzWV7wQkAWlksw3laBnB7IppOSzyNlRcUYy+gOO19SKah49ZsXArHJXsHBfIdAFN182SEyiXR5jzkuYpvprF70A/uIomWGaSTE3yVkW2m9wdgFLT8BJIW70hAacX6cPGAX/ZV3KvIk+4=
+	s=arc-20240116; t=1715162581; c=relaxed/simple;
+	bh=ZnDomY68etRURkOftpc7pgxDDdwCW9QdH8k+FPh35/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=eZ+p3Q01kIwHoy1Oozy14CU9hzlpFzugGH7S8wOwafeTsBkWz1urPS2TIVLJjG5fo2cfG6m3SvOnHuHYQ4AO02dKL1BpUn6BkKrwrxbueN54YNfTj3OjM4YYXobIXekeKpeOuBBg/uI2GvKhyl8LFasOsXD3AsybpJ6tBHVRj8Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-25-663b4a38f818
+X-AuditID: a67dfc5b-d85ff70000001748-55-663b4a39ddb3
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -86,44 +86,44 @@ Cc: kernel_team@skhynix.com,
 	longman@redhat.com,
 	hdanton@sina.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v14 01/28] llist: Move llist_{head,node} definition to types.h
-Date: Wed,  8 May 2024 18:46:58 +0900
-Message-Id: <20240508094726.35754-2-byungchul@sk.com>
+Subject: [PATCH v14 04/28] dept: Add lock dependency tracker APIs
+Date: Wed,  8 May 2024 18:47:01 +0900
+Message-Id: <20240508094726.35754-5-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240508094726.35754-1-byungchul@sk.com>
 References: <20240508094726.35754-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzXSaUxTaRQGYL/v3t57qZZc68IVjUsTRyNRUUGPa/ilXzQak8lMJmPMTMde
-	pJFWLLIZjSgVFQEFZat1wmI6FapoazKCQAqmCCIISrAii6CiaCkGLLEWF+ry5+TJOW/eX4ej
-	5DZJMKfWHhR1WmW0gpHS0qEpRUth6/rI0P9tYZCVHgqe96doMJZbGGi9VobAcvMYhkHHFng8
-	5kLga35AQV5OK4Kivm4Kbtb3IKg2H2fg0YtAaPcMM9CYc4aBlJJyBtrejmPoys3GUGbdDk3n
-	ijHYva9oyBtk4GJeCp4YrzF4TaUsmJIXQr/ZwMJ43wpo7OmQQHVnCBT828VAVXUjDfW3+jE8
-	qjQy0GP5IoGm+gYaWrMyJHDVXczA2zETBSbPMAsP7YUYrusnilJHP0vgboYdQ+rlGxjan9xG
-	UHPqGQarpYOBOx4XBps1h4KP/zkQ9GcOsXAi3cvCxWOZCM6cyKVB3xUOvg9GJmItueMapoje
-	lkCqxwppcq9YIBWGbpboazpZUmiNIzbzElJSNYhJ0YhHQqylpxliHclmSdpQOybulhaWNOT7
-	aPKiPQ/vDP5TukElRqvjRd3yTX9Lox6a71Mxl6SJHe5KJhnVcGkogBP4MKH2Sib70xfyfZTf
-	DL9IcDq93zydny/YMgYkflO8Sypcbtns9zR+h1BR9RylIY6j+YXCy/Kp/rWMDxd69V0/KucJ
-	Zdft32oC+NXCk1du5Ld8InM7xfAj84UTmg2q754l1Jqd9DkkK0STSpFcrY3XKNXRYcuikrTq
-	xGV79musaOKVTEfGd91CI62/1iGeQ4opMnvQuki5RBkfm6SpQwJHKabLHCfXRMplKmXSIVG3
-	/y9dXLQYW4dmc7QiSLZyLEEl5/cqD4r7RDFG1P28Yi4gOBlFnDdWjFfOnWEJmdUJWxfPX/vU
-	uTNol75396rnkyImOxp58o9mjyHQcrp3QX7J4syzib+7HalHU3uY9w3NMNvk2zfncEn6aEub
-	puYlD3Ha3G2/zMha3/2m3JLQFHjJ+O7x+QM3vJ8KVFcGzmaH/qGOaZs5OvCbc+NU/CHRUeVa
-	8xEr6Ngo5YollC5W+RXFi365RgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG+5+7q9lpCZ0sKhbR3QtkvaSEfShPUiJEVwJbdczhJdnMMohm
-	W2VeQsOpeQmbskxX1iaSprY0zWmZ5loXlku7mLQmlJPW7OKKvrz8eJ6H36eXwSVFZCAjT0kT
-	FCmyJCklIkQx4eq1EB0eH5JzfxEU5IaAeyKLgPJ6AwX9t+oQGBoyMRjrjIIXk04E3idPcSjW
-	9iO4NvwGh4auIQStNWcpGHzvD1b3OAUWbQ4F6qp6CgY+T2FgL7qMQZ1xB/Tm6zAwe0YJKB6j
-	oKxYjU2fTxh49LU06FXLYKSmlIap4VCwDNlI6KiwkND6ejVcuWqnoKXVQkDX3REMBpvLKRgy
-	/Caht6ubgP6CPBJuunQUfJ7U46B3j9PwzFyJwW3NtO38t18kPMozY3C++g4G1lf3ELRlvcXA
-	aLBR0OF2YmAyanH4cb0TwcilLzScy/XQUJZ5CUHOuSICNPYw8H4vpyI38h3OcZzXmE7wrZOV
-	BN+j4/im0jc0r2l7TfOVxuO8qWYVX9UyhvHXvrpJ3lh7keKNXy/TfPYXK8a7+vpovrvES/Dv
-	rcVY7IL9oogjQpI8XVAEbzooSnhW8xhPrRCdtLmaKRVqY7KRH8Ox67jCEi/uY4pdzr186fnL
-	AewSzpT3kfQxzjpFXHXfVh/PZWO4ppZ3KBsxDMEu4z7Uz/HFYjaMc2js9D/lYq7utvmvxo9d
-	z70adSEfS6Y399SldD4SVaIZtShAnpKeLJMnhQUpExMyUuQngw4fSzai6W/Rn54quIsmBqPa
-	Ecsg6SxxPxUeLyFl6cqM5HbEMbg0QNx5YUO8RHxElnFKUByLUxxPEpTtaAFDSOeJo/cIByXs
-	UVmakCgIqYLif4sxfoEq5PhocXitZueNi/sYQ2aIbehHWuMDrWvziUJ6VtSZiJXzB5/bujXb
-	Fg5En5WOrg6e6rZtz18T0afbGxl6SL0rsCk6TChDYlNu5MasM0F7vMOzK942bvGfmXq0RStt
-	XhHXOxGy0+GV/HYY9u2OTfMUjh/Q9TxU2Zf+VLVFPG/ojJ8tJZQJstBVuEIp+wPFHbV0KQMA
-	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG+//P2TlztDjMyJNRxsAsK9Our92oPughioryS9HlkEc3vCSb
+	l4wCzdllplmkM5OYZlO8pG1FN2dTcXkhW7VKRVeKeMmpYc0yJZtGX15+vO/zPDwfXjEheyzy
+	Fitj4wVVLB8tpySkZGR+4drgvdsiArsqPeHGtUBw/bhCQkFVBQW2B+UIKh6lYhhqDIVPE04E
+	U6/fEKDLsSEo7Okm4JHVgcBcepGC930LwO4ao6A5J4OCtHtVFLwdnsbQlXsTQ7lxP7RmF2Gw
+	TA6QoBui4I4uDbvHIIZJQxkNhhRf6C3Np2G6JwiaHR9FYO5cDbfvdlFQY24mwfq0F8P75wUU
+	OCpmRNBqbSLBdiNTBJWjRRQMTxgIMLjGaHhn0WOo1riDLn3/I4JXmRYMl4ofYrB3vEBQe+UL
+	BmPFRwoaXE4MJmMOAb9LGhH0Zo3QkH5tkoY7qVkIMtJzSdB0bYKpXwXUrmCuwTlGcBpTEmee
+	0JNcSxHLPcvvpjlNbSfN6Y0JnKnUn7tXM4S5wnGXiDOWXaU44/hNmtOO2DE32tZGc015UyTX
+	Z9fhg95HJdvDhWhloqBat/OURKFxF4sb9Dp735KCUlC5TIs8xCyzkXVZRsj//DN3QDTLFOPH
+	trdPErO8kFnOmjL75/YE45SwxW0hs+zJ7GZrcv7MeUnGl3V8GUSzLGU2sfqZ6/hfpg9bXm2Z
+	y/FgNrMdA6NzGplb8yItn9YiiVszI2YfWlvQP8Nitq60ncxGUj2aV4ZkytjEGF4ZvTFAkRyr
+	PBtw+kyMEbmfyXBh+thTNG47XI8YMZLPl1q8tkbIRHyiOjmmHrFiQr5Q2nh5S4RMGs4nnxNU
+	Z06qEqIFdT1aIiblXtL1E0nhMiaSjxeiBCFOUP2/YrGHdwoKSt8aFh51yKvzm1Z3pDI44GWf
+	vehTCO/Zn6YO6F0a4mdaUbJP0XrqZJD/Kp8ntq/K4yeSTh/20WYcEM6HDPRlf/7qPWj1K67j
+	SxQf4l/XOe3DO+I8arKizJZlRHzH7dCmhoQ9jOBLtYQ1rJCF3U+95djQrele1Pgrck1P/4/I
+	vJVyUq3gg/wJlZr/C/69brJIAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfb+/p+vm7OdkfjLLbszz06Z8yBrN+C0P6x9r8w9Hv6tTd9pd
+	xdlY6YSeKK4j4Qqn1REX5qFrp3QVeqCkqKMW1To16SKl3GX++ey1z+e91z5/vEWE1Ej5iZTq
+	OEGjlsfIaDEp3h2UvBJCgxRrrjs2QFb6GnAPnyEhr8RCQ+PdYgSWB0kY+qq2w/sRF4KxugYC
+	jIZGBPmdHQQ8cDgR2ApP0tDUPQOa3YM01BrSaEi+UULDm/5xDO052RiKrbvg1fkCDPbRHhKM
+	fTRcMSZjz+jFMGouYsCcuAi6CnMZGO9cC7XOFgoqr9ZSYPuwHC5fa6ehzFZLguNxF4amp3k0
+	OC2TFLxy1JDQmJVBwZ2BAhr6R8wEmN2DDLy1mzDc03tsKT8mKKjOsGNIuXkfQ3PbMwTlZz5j
+	sFpaaKh0uzCUWg0E/L5dhaAr8xsDp9JHGbiSlIkg7VQOCfr2ABj7lUdv3shXugYJXl96hLeN
+	mEj+ZQHHP8ntYHh9+QeGN1nj+dLCZfyNsj7M5w+5Kd5adJbmrUPZDJ/6rRnzA/X1DF9zaYzk
+	u5uNOGzeXvGmCCFGmSBoVgfvF0fpPY/F9s45esueiBJRsTQV+Yg4dh33M6eH8jLNLuZaW0cJ
+	L/uyC7jSjK9Te4J1ibmb9du8PIvdwpUZJkgvk+wizvm5F3lZwgZwpslz+J/Tnyu+Z5/y+LCB
+	XFvPwFRG6sk8S85lziOxCU0rQr5KdYJKrowJWKWNjtKplUdXHTyssiJPXczHx7Meo+Gm7RWI
+	FSHZdEkjHaSQUvIErU5VgTgRIfOVVJ1er5BKIuS6Y4Lm8D5NfIygrUDzRKRsjiQ0XNgvZSPl
+	cUK0IMQKmv9XLPLxS0TzU+Mz2yJ3q3dInoc9igy+tLh17gVX9C+V0+/hurDw6tklNUtXH/z+
+	8d2T7ukvst8+HRhO+ap4/V434Y6YDE173rGgLbbhnMJf6W/7w/osXFG+YX3gp5kh9Z2Gh6qK
+	QMnWyiXGL/kndHvs4TmO6iHZiZ2KQ7K6Ax1ESHRCfvBFC4qQykhtlHztMkKjlf8FVpLjJyoD
+	AAA=
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -131,54 +131,97 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-llist_head and llist_node can be used by very primitives. For example,
-Dept for tracking dependency uses llist things in its header. To avoid
-header dependency, move those to types.h.
+Wrapped the base APIs for easier annotation on typical lock.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/llist.h | 8 --------
- include/linux/types.h | 8 ++++++++
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ include/linux/dept_ldt.h | 77 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 include/linux/dept_ldt.h
 
-diff --git a/include/linux/llist.h b/include/linux/llist.h
-index 2c982ff7475a..3ac071857612 100644
---- a/include/linux/llist.h
-+++ b/include/linux/llist.h
-@@ -53,14 +53,6 @@
- #include <linux/stddef.h>
- #include <linux/types.h>
- 
--struct llist_head {
--	struct llist_node *first;
--};
--
--struct llist_node {
--	struct llist_node *next;
--};
--
- #define LLIST_HEAD_INIT(name)	{ NULL }
- #define LLIST_HEAD(name)	struct llist_head name = LLIST_HEAD_INIT(name)
- 
-diff --git a/include/linux/types.h b/include/linux/types.h
-index 2bc8766ba20c..a1e4e046cfa5 100644
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -202,6 +202,14 @@ struct hlist_node {
- 	struct hlist_node *next, **pprev;
- };
- 
-+struct llist_head {
-+	struct llist_node *first;
-+};
+diff --git a/include/linux/dept_ldt.h b/include/linux/dept_ldt.h
+new file mode 100644
+index 000000000000..062613e89fc3
+--- /dev/null
++++ b/include/linux/dept_ldt.h
+@@ -0,0 +1,77 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Lock Dependency Tracker
++ *
++ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
++ *
++ *  Copyright (c) 2020 LG Electronics, Inc., Byungchul Park
++ */
 +
-+struct llist_node {
-+	struct llist_node *next;
-+};
++#ifndef __LINUX_DEPT_LDT_H
++#define __LINUX_DEPT_LDT_H
 +
- struct ustat {
- 	__kernel_daddr_t	f_tfree;
- #ifdef CONFIG_ARCH_32BIT_USTAT_F_TINODE
++#include <linux/dept.h>
++
++#ifdef CONFIG_DEPT
++#define LDT_EVT_L			1UL
++#define LDT_EVT_R			2UL
++#define LDT_EVT_W			1UL
++#define LDT_EVT_RW			(LDT_EVT_R | LDT_EVT_W)
++#define LDT_EVT_ALL			(LDT_EVT_L | LDT_EVT_RW)
++
++#define ldt_init(m, k, su, n)		dept_map_init(m, k, su, n)
++#define ldt_lock(m, sl, t, n, i)					\
++	do {								\
++		if (n)							\
++			dept_ecxt_enter_nokeep(m);			\
++		else if (t)						\
++			dept_ecxt_enter(m, LDT_EVT_L, i, "trylock", "unlock", sl);\
++		else {							\
++			dept_wait(m, LDT_EVT_L, i, "lock", sl);		\
++			dept_ecxt_enter(m, LDT_EVT_L, i, "lock", "unlock", sl);\
++		}							\
++	} while (0)
++
++#define ldt_rlock(m, sl, t, n, i, q)					\
++	do {								\
++		if (n)							\
++			dept_ecxt_enter_nokeep(m);			\
++		else if (t)						\
++			dept_ecxt_enter(m, LDT_EVT_R, i, "read_trylock", "read_unlock", sl);\
++		else {							\
++			dept_wait(m, q ? LDT_EVT_RW : LDT_EVT_W, i, "read_lock", sl);\
++			dept_ecxt_enter(m, LDT_EVT_R, i, "read_lock", "read_unlock", sl);\
++		}							\
++	} while (0)
++
++#define ldt_wlock(m, sl, t, n, i)					\
++	do {								\
++		if (n)							\
++			dept_ecxt_enter_nokeep(m);			\
++		else if (t)						\
++			dept_ecxt_enter(m, LDT_EVT_W, i, "write_trylock", "write_unlock", sl);\
++		else {							\
++			dept_wait(m, LDT_EVT_RW, i, "write_lock", sl);	\
++			dept_ecxt_enter(m, LDT_EVT_W, i, "write_lock", "write_unlock", sl);\
++		}							\
++	} while (0)
++
++#define ldt_unlock(m, i)		dept_ecxt_exit(m, LDT_EVT_ALL, i)
++
++#define ldt_downgrade(m, i)						\
++	do {								\
++		if (dept_ecxt_holding(m, LDT_EVT_W))			\
++			dept_map_ecxt_modify(m, LDT_EVT_W, NULL, LDT_EVT_R, i, "downgrade", "read_unlock", -1);\
++	} while (0)
++
++#define ldt_set_class(m, n, k, sl, i)	dept_map_ecxt_modify(m, LDT_EVT_ALL, k, 0UL, i, "lock_set_class", "(any)unlock", sl)
++#else /* !CONFIG_DEPT */
++#define ldt_init(m, k, su, n)		do { (void)(k); } while (0)
++#define ldt_lock(m, sl, t, n, i)	do { } while (0)
++#define ldt_rlock(m, sl, t, n, i, q)	do { } while (0)
++#define ldt_wlock(m, sl, t, n, i)	do { } while (0)
++#define ldt_unlock(m, i)		do { } while (0)
++#define ldt_downgrade(m, i)		do { } while (0)
++#define ldt_set_class(m, n, k, sl, i)	do { } while (0)
++#endif
++#endif /* __LINUX_DEPT_LDT_H */
 -- 
 2.17.1
 
