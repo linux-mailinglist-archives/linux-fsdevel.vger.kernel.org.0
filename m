@@ -1,205 +1,292 @@
-Return-Path: <linux-fsdevel+bounces-19108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76D48C01D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 18:19:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3446E8C022E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 18:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510C8281EFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 16:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C33281CE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 16:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB3212A17B;
-	Wed,  8 May 2024 16:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADEBD524;
+	Wed,  8 May 2024 16:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S8lpRhWx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eQSbm6dW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169E5128396
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 16:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5338D4C6E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 May 2024 16:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715185166; cv=none; b=cy8UeHKXbEgw4llky13x0F7sQJuH0/kM7Pb/wRmm9w1/yRpnUX4foUi7oSgDCkwuK8Qr6xnM1v77Y+Xz+jq+2b8iqR7LBRI773+A5lC11BT331d9tp+0LUc+KVGd4FzN/BJWnTMk/X+qPQJkjJnNxA7axe/XAPAHVt+KGZstoBc=
+	t=1715186639; cv=none; b=B5ekRiWPL+NyiTRlvC0e865TTDKxouKVouR0JtBfkRRbFY7x33D06uTvn9Z0vA30/ZFG2s9psp+Ph3fZnHZ96hFP4WzRBDywaNUCOJj5jGHmi3wEJBb0gHTVXPLzWD9Pzf8rVDZQYbqg0BNxPs7M65vZSlQELEh7ufnI+EcB/H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715185166; c=relaxed/simple;
-	bh=EBgZslqy6XCFdm2svCR8wdSgwC1c5tdTUgjKXU1N4nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rx/68Rj57/GPF6WN9ScAt5sVGBUpgZpMcOvVqHEp+F/5uW4MnOCOfyJC3e8UZJCapIoq/WgE/cfg6gC0HX+SuXcA6DtK5u1AF15NJ5ILszgn3gx7psO4EWyYtqDfctm8/RNGfVAx1NKA06nId4Owbob4AHkTmBgkkwzS7AoTzcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S8lpRhWx; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59cdd185b9so190583966b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 09:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715185162; x=1715789962; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GRnWniI6weHLAZe+jcS6e3kntzKq8xydvJSod9mqGMY=;
-        b=S8lpRhWxSbC2lPt9deECHsu3p+I3K+45f3bb40YBkCrupQMsboscLRFdzvWqhaHFtU
-         FnzVbbOhcNlu/NKCeN8G/s41Lcn+mz+QGXBI5GCSmqa6ym2cHX1Toxyg0T807+UCFv8d
-         +LVVNQHGHtzloL6RSRQ0u074eghzOJEm6L7YA=
+	s=arc-20240116; t=1715186639; c=relaxed/simple;
+	bh=v2O/JOXhGm7/O6sH0tL56gDuw0iqg3tR8svJJWlpQlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rVEz/YCZ+TR0xixDStswrqthyKccj6nK7jcQKaQME8dnRHZ+r+njAMXFVYp7ZQ9Kec2uCYZNIH9E1QBIOA834Sh44j8usixQt6IS6dWvLFpEZErq/hC7w5lxKtVpkZnthaWC7WrW2HOqhbS6jKoBWRCbVDtgwmM34Lh8xLRpHEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eQSbm6dW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715186635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kfu+kNg5psV0QrTCz/mBUS9Pxutp2X9pNWB5lOfJe8k=;
+	b=eQSbm6dWulaP85Yk5imWXlj7KLLpWy/MACeTusDH+I5aLpvqFrWAoUXi8VTPOSg5uueE+p
+	Ec0jokjalY3vw9fq8+GmrxJ0dOb7j1SQ9HLaovEV4M1/iBxxNPFv7IYRxFcCNLAeVdeAUm
+	/v5ChT2T/1iuWu2sA4n8PazuBlOk5o8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-329-0ayBmFgQM6SP2dAQ07ni8w-1; Wed, 08 May 2024 12:43:52 -0400
+X-MC-Unique: 0ayBmFgQM6SP2dAQ07ni8w-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-418df23b51cso22945465e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 09:43:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715185162; x=1715789962;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GRnWniI6weHLAZe+jcS6e3kntzKq8xydvJSod9mqGMY=;
-        b=XW29GSL6CESxMD4FIMTroFUpaUbKKfXvSPLWTNyIVvaSGP4GgIWzgBx4Qn+CVlhey1
-         6b6z5G/Qs+X40/lFXuluudyKLegNyUNvgCV8LnnbhSshgilXlj6Hs431HWqKoyUxa0w5
-         a39PdPF3nXpcI7Kxf6E2eAmLDzD5P38NPWt6mdszhfAsamfKcQg3GH12pmVcDJfokMYa
-         ZgaB4Z9nUunl9XfQQAq+WTv1/it0i1dgs6K0nt3BuQwe1qSXMeY4bJUjl6yrYRi2QqPP
-         Wac7hvGiQJFPB9r8pi5Uqgwc+Eui85DVpSx7760yRpSUQwX9i5GhuG/mG8kaF8s6SsF5
-         RCCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUew5x68am6Tstu1HpC388bZ2SR0WXpaPkWWs2FeTN7cNy19kx6VcsNKWhpAKafU9Q9TOW2y9JeJYSUTd6m2UdGE7s2Ly2FeCGYI714cA==
-X-Gm-Message-State: AOJu0Yw2HEaHg2m0Kxror9qS06gtNy/0Bf2LEyrP7aSGRFEr7cf324t2
-	33QCh35NLJv/wToBUzYgOzOR/J3Zh27rGbMHZOH3UF3Vt5hQtwGX07XYqYhfNKnHcg2XeokUwo6
-	i0qsFog==
-X-Google-Smtp-Source: AGHT+IG9IYk9YN6OYsHSHkllQgMFByQpN0yfiliDVTfZuXSTal+jBom4MoJNmPXZdX4Z/bbNwWBqww==
-X-Received: by 2002:a17:906:c081:b0:a5a:c35:3a2 with SMTP id a640c23a62f3a-a5a1177fe36mr7981966b.25.1715185162464;
-        Wed, 08 May 2024 09:19:22 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id rn9-20020a170906d92900b00a59a229564fsm5889822ejb.108.2024.05.08.09.19.21
-        for <linux-fsdevel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1715186630; x=1715791430;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kfu+kNg5psV0QrTCz/mBUS9Pxutp2X9pNWB5lOfJe8k=;
+        b=eK5h9swlbcYsbLz0ekx6XooEgm4ZzsoFEd3u+mTi/rwtqqv0IahScfWr9JUv0m0pCN
+         xjeBW0E38w+Eldej+59Jjoy/kGhPi/HsLWUepjCtLHt63z/+HeQIGSdnu/ih+u5HqOrB
+         +6/+SZ1rc9ysT3p3dHkGDdsgKKQYx3dxpBvJlGDjd2VbrlCAA+nC7bQ2u27zD82GuZCx
+         KQm3ZxPcAydnboACgnDnWmsRCjuyyIY2LuEALdoljdzwup8nU4utPRDNf3c6Gw0k2faN
+         hsBX8QKq5SH5H+u9wRtOZxKn/162u2kGN+BzGWzJMy7QUWkeHCjPfSMzNXXUttC0EZ7/
+         KBrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcj264rD05maN6JrcHH6ZrtGb3rrYN0KEnxrumE6NTq06Da7C/+SdkrN72AzUTesQHTBquq7eoM5UEqxxVsxEhVfiUN0andAuUX8TApg==
+X-Gm-Message-State: AOJu0YwP/aPb7sY3PU9dyjgqlk1UyzwNGe6oxO21cOk77CQqwW3qfYir
+	cVenGxhas4MI02tQu8ljPM0Din4N3RBQkg8swkr1DFWc/wCXAUzIGlYUY5NfCJusyO9bWtYvgZB
+	k+zhYvAfa0RTR0tSoerOQ9Ik15DyqdKTT7plOlY57oUPZ6zorECtWpulULiqg5QI=
+X-Received: by 2002:a05:600c:3507:b0:41a:f9db:88ac with SMTP id 5b1f17b1804b1-41f71cc4e9cmr25139285e9.14.1715186630458;
+        Wed, 08 May 2024 09:43:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEiXFhtgFYexLvlE9tUnQOpwikaBE/AJRGx0k+bYeHdn7M9LalM+i8Bs18/sw5TMREw1EkZEA==
+X-Received: by 2002:a05:600c:3507:b0:41a:f9db:88ac with SMTP id 5b1f17b1804b1-41f71cc4e9cmr25139055e9.14.1715186629991;
+        Wed, 08 May 2024 09:43:49 -0700 (PDT)
+Received: from [192.168.3.108] (p5b0c6bc3.dip0.t-ipconnect.de. [91.12.107.195])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f882085dbsm29015445e9.41.2024.05.08.09.43.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 09:19:21 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59ce1e8609so186744866b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 09:19:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuLGMzPEF0qWyedjfbVeZIqOdm+yoTHyerxofWMYG73+L8ZPvJV0WjXeGSwkp50JVP3zdhOBmHZ21l5FPPHOHzC0nJc2o7BcX2UUOFOw==
-X-Received: by 2002:a17:906:1c10:b0:a59:9c2f:c7d4 with SMTP id
- a640c23a62f3a-a5a1167be68mr9921366b.19.1715185161053; Wed, 08 May 2024
- 09:19:21 -0700 (PDT)
+        Wed, 08 May 2024 09:43:49 -0700 (PDT)
+Message-ID: <417e4dc4-ea48-4d68-a441-f782f98a08fe@redhat.com>
+Date: Wed, 8 May 2024 18:43:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com> <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-In-Reply-To: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 May 2024 09:19:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
-Message-ID: <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Simon Ser <contact@emersion.fr>, Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="0000000000003fddda0617f3aa7b"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] Fix userfaultfd_api to return EINVAL as expected
+To: Audra Mitchell <audra@redhat.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org, raquini@redhat.com,
+ Peter Xu <peterx@redhat.com>
+References: <20240507195510.283744-1-audra@redhat.com>
+ <939a16f2-7b66-45a6-a043-4821bd3c71dc@redhat.com> <Zjt3Apr8ILFA4oK_@fedora>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zjt3Apr8ILFA4oK_@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---0000000000003fddda0617f3aa7b
-Content-Type: text/plain; charset="UTF-8"
+On 08.05.24 14:58, Audra Mitchell wrote:
+> On Wed, May 08, 2024 at 09:39:10AM +0200, David Hildenbrand wrote:
+>> On 07.05.24 21:55, Audra Mitchell wrote:
+>>> Currently if we request a feature that is not set in the Kernel
+>>> config we fail silently and return the available features. However, the
+>>> documentation indicates we should return an EINVAL.
+>>
+>> I assume you are referencing
+>>
+>> "EINVAL The API version requested in the api field is not supported by this
+>> kernel, or  the  features  field passed to the kernel includes feature bits
+>> that are not supported by the current kernel version."
+>>
+>> and
+>>
+>> "To  enable  userfaultfd features the application should set a bit
+>> corresponding to each feature it wants to enable in the features field. If
+>> the kernel supports all the requested features it will enable them.
+>> Otherwise it will zero out the returned uffdio_api structure and return
+>> EINVAL.
+>> "
+>>
+>> in which case I agree.
+> 
+> Yep! I'm referencing the man page.
 
-On Tue, 7 May 2024 at 12:07, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> That example thing shows that we shouldn't make it a FISAME ioctl - we
-> should make it a fcntl() instead, and it would just be a companion to
-> F_DUPFD.
->
-> Doesn't that strike everybody as a *much* cleaner interface? I think
-> F_ISDUP would work very naturally indeed with F_DUPFD.
+Might be worth just quoting the man page :)
 
-So since we already have two versions of F_DUPFD (the other being
-F_DUPFD_CLOEXEC) I decided that the best thing to do is to just extend
-on that existing naming pattern, and called it F_DUPFD_QUERY instead.
+>>> We need to fix this issue since we can end up with a Kernel warning
+>>> should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
+>>> a kernel with the config not set with this feature.
+>>
+>> Can you mention which exact one? Is it a WARN* or a pr_warn() ?
+> 
+> Here is the kernel warning I get:
+> 
 
-I'm not married to the name, so if somebody hates it, feel free to
-argue otherwise.
+Thanks, it makes sense to add the first couple of lines of below to the 
+patch description.
 
-But with that, the suggested patch would end up looking something like
-the attached (I also re-ordered the existing "F_LINUX_SPECIFIC_BASE"
-users, since one of them was out of numerical order).
+> [  200.803094] unrecognized swap entry 0x7c00000000000001
+> [  200.808270] ------------[ cut here ]------------
+> [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
+> [  200.820738] Modules linked in: qrtr bridge stp llc rfkill sunrpc amd_atl intel_rapl_msr intel_rapl_common amd64_edac edac_mce_amd kvm_amd kvm ipmi_ssif acpi_ipmi i2c_piix4 ipmi_si wmi_bmof dcdbas dell_smbios dell_wmi_descriptor ptdma ipmi_devintf rapl ipmi_msghandler acpi_power_meter pcspkr k10temp xfs libcrc32c sd_mod t10_pi mgag200 sg drm_kms_helper crct10dif_pclmul i2c_algo_bit ahci crc32_pclmul drm_shmem_helper libahci crc32c_intel drm i40e libata ghash_clmulni_intel tg3 ccp megaraid_sas sp5100_tco wmi dm_mirror dm_region_hash dm_log dm_mod fuse
+> [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
+> [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
+> [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
+> [  200.889595] Code: 83 fa 02 0f 86 44 01 00 00 83 f9 17 0f 84 e1 00 00 00 83 f9 1f 0f 84 d0 00 00 00 48 89 c6 48 c7 c7 00 e4 dd bb e8 73 a2 de ff <0f> 0b e9 44 fd ff ff 45 0f b6 44 24 20 41 f6 c0 f4 75 27 4c 89 ee
+> [  200.908348] RSP: 0018:ffffa18d2e6c37c8 EFLAGS: 00010246
+> [  200.913584] RAX: 000000000000002a RBX: 00007f26d3600000 RCX: 0000000000000000
+> [  200.920730] RDX: 0000000000000000 RSI: ffff93503f9a0bc0 RDI: ffff93503f9a0bc0
+> [  200.927867] RBP: 00007f26d35cc000 R08: 0000000000000000 R09: ffffa18d2e6c3688
+> [  200.935009] R10: ffffa18d2e6c3680 R11: ffffffffbc9de448 R12: ffffa18d2e6c39e8
+> [  200.942149] R13: ffff92d1ebc15b50 R14: ffff93114e0cde60 R15: ffffa18d2e6c3928
+> [  200.949291] FS:  0000000000000000(0000) GS:ffff93503f980000(0000) knlGS:0000000000000000
+> [  200.957384] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  200.963140] CR2: 00007f26b1600658 CR3: 00000040905ba000 CR4: 0000000000350ef0
+> [  200.970283] Call Trace:
+> [  200.972745]  <TASK>
+> [  200.974862]  ? __warn+0x7f/0x130
+> [  200.978108]  ? zap_pte_range+0x43d/0x660
+> [  200.982044]  ? report_bug+0x18a/0x1a0
+> [  200.985720]  ? handle_bug+0x3c/0x70
+> [  200.989219]  ? exc_invalid_op+0x14/0x70
+> [  200.993068]  ? asm_exc_invalid_op+0x16/0x20
+> [  200.997265]  ? zap_pte_range+0x43d/0x660
+> [  201.001199]  ? zap_pte_range+0x43d/0x660
+> [  201.005134]  zap_pmd_range.isra.0+0xf9/0x230
+> [  201.009416]  unmap_page_range+0x2d4/0x4a0
+> [  201.013436]  unmap_vmas+0xa8/0x180
+> [  201.016854]  exit_mmap+0xea/0x3b0
+> [  201.020191]  __mmput+0x43/0x120
+> [  201.023342]  exit_mm+0xb1/0x110
+> [  201.026496]  do_exit+0x270/0x4f0
+> [  201.029739]  do_group_exit+0x2c/0x80
+> [  201.033326]  get_signal+0x886/0x8b0
+> [  201.036828]  ? srso_return_thunk+0x5/0x5f
+> [  201.040848]  arch_do_signal_or_restart+0x25/0x100
+> [  201.045563]  ? srso_return_thunk+0x5/0x5f
+> [  201.049583]  ? vma_set_page_prot+0x5e/0xc0
+> [  201.053692]  ? srso_return_thunk+0x5/0x5f
+> [  201.057713]  ? syscall_exit_work+0xff/0x130
+> [  201.061908]  syscall_exit_to_user_mode+0x1b3/0x200
+> [  201.066712]  do_syscall_64+0x87/0x160
+> [  201.070387]  ? srso_return_thunk+0x5/0x5f
+> [  201.074405]  ? do_mmap+0x416/0x5f0
+> [  201.077821]  ? srso_return_thunk+0x5/0x5f
+> [  201.081840]  ? rseq_get_rseq_cs+0x1d/0x240
+> [  201.085950]  ? srso_return_thunk+0x5/0x5f
+> [  201.089970]  ? rseq_ip_fixup+0x6d/0x1d0
+> [  201.093823]  ? vm_mmap_pgoff+0x117/0x1a0
+> [  201.097755]  ? srso_return_thunk+0x5/0x5f
+> [  201.101776]  ? srso_return_thunk+0x5/0x5f
+> [  201.105795]  ? syscall_exit_to_user_mode+0x78/0x200
+> [  201.110685]  ? srso_return_thunk+0x5/0x5f
+> [  201.114706]  ? do_syscall_64+0x87/0x160
+> [  201.118557]  ? srso_return_thunk+0x5/0x5f
+> [  201.122575]  ? __count_memcg_events+0x49/0xb0
+> [  201.126944]  ? srso_return_thunk+0x5/0x5f
+> [  201.130967]  ? srso_return_thunk+0x5/0x5f
+> [  201.134986]  ? syscall_exit_work+0xff/0x130
+> [  201.139184]  ? srso_return_thunk+0x5/0x5f
+> [  201.143205]  ? syscall_exit_to_user_mode+0x78/0x200
+> [  201.148093]  ? srso_return_thunk+0x5/0x5f
+> [  201.152114]  ? do_syscall_64+0x87/0x160
+> [  201.155960]  ? srso_return_thunk+0x5/0x5f
+> [  201.159984]  ? sched_clock_cpu+0xb/0x190
+> [  201.163916]  ? srso_return_thunk+0x5/0x5f
+> [  201.167939]  ? irqtime_account_irq+0x40/0xc0
+> [  201.172220]  ? srso_return_thunk+0x5/0x5f
+> [  201.176243]  ? srso_return_thunk+0x5/0x5f
+> [  201.180263]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  201.185326] RIP: 0033:0x7f26dfd0735b
+> [  201.188939] Code: Unable to access opcode bytes at 0x7f26dfd07331.
+> [  201.195128] RSP: 002b:00007fffce176868 EFLAGS: 00000206 ORIG_RAX: 000000000000000a
+> [  201.202700] RAX: fffffffffffffffc RBX: 00007f26dfe60000 RCX: 00007f26dfd0735b
+> [  201.209841] RDX: 0000000000000003 RSI: 0000000001000000 RDI: 00007f26af401000
+> [  201.216983] RBP: 00007f26b0400640 R08: 00000000ffffffff R09: 0000000000000000
+> [  201.224127] R10: ffffffffffffffc0 R11: 0000000000000206 R12: 0000000000000000
+> [  201.231267] R13: 000000000040d320 R14: 0000000000000000 R15: 0000000000000000
+> [  201.238413]  </TASK>
+> [  201.240610] ---[ end trace 0000000000000000 ]---
+> [  201.245250] unrecognized swap entry 0x7c00000000000001
+> 
+> 
+> 
+>>
+>> Likely we want "Fixes:" here.
+> 
+> This could be seen as a continuation of the problem
+> 2ff559f31a5d Revert "userfaultfd: don't fail on unrecognized features"
+> was trying to solve. However, this patch only checks to make sure we didnt
+> ask for a feature outside the possible range of features. We are still missing
+> a check to confirm the requested features are also configured on. So I guess
+> the "Fixes" tag would be for this patch?
+> 914eedcb9ba0 userfaultfd: don't fail on unrecognized features
+> 
+> Happy to get your input here!
 
-This really feels like a very natural thing, and yes, the 'same_fd()'
-function in systemd that Christian also pointed at could use this very
-naturally.
+I agree with Peters summary :)
 
-Also note that I obviously haven't tested this. Because obviously this
-is trivially correct and cannot possibly have any bugs. Right? RIGHT?
+-- 
+Cheers,
 
-And yes, I did check - despite the odd jump in numbers, we've never
-had anything between F_NOTIFY (+2) and F_CANCELLK (+5).
+David / dhildenb
 
-We added F_SETLEASE (+0) , F_GETLEASE (+1) and F_NOTIFY (+2) in
-2.4.0-test9 (roughly October 2000, I didn't dig deeper).
-
-And then back in 2007 we suddenly jumped to F_CANCELLK (+5) in commit
-9b9d2ab4154a ("locks: add lock cancel command"). I don't know why 3/4
-were shunned.
-
-After that we had 22d2b35b200f ("F_DUPFD_CLOEXEC implementation") add
-F_DUPFD_CLOEXEC (+6).
-
-I'd have loved to put F_DUPFD_QUERY next to it, but +5 and +7 are both used.
-
-                Linus
-
---0000000000003fddda0617f3aa7b
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lvy090o10>
-X-Attachment-Id: f_lvy090o10
-
-IGZzL2ZjbnRsLmMgICAgICAgICAgICAgICAgIHwgMjMgKysrKysrKysrKysrKysrKysrKysrKysK
-IGluY2x1ZGUvdWFwaS9saW51eC9mY250bC5oIHwgMTQgKysrKysrKystLS0tLS0KIDIgZmlsZXMg
-Y2hhbmdlZCwgMzEgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9m
-cy9mY250bC5jIGIvZnMvZmNudGwuYwppbmRleCA1NGNjODVkMzMzOGUuLjFkZGI2M2Y3MDQ0NSAx
-MDA2NDQKLS0tIGEvZnMvZmNudGwuYworKysgYi9mcy9mY250bC5jCkBAIC0zMjcsNiArMzI3LDI1
-IEBAIHN0YXRpYyBsb25nIGZjbnRsX3NldF9yd19oaW50KHN0cnVjdCBmaWxlICpmaWxlLCB1bnNp
-Z25lZCBpbnQgY21kLAogCXJldHVybiAwOwogfQogCisvKgorICogSXMgdGhlIGZpbGUgZGVzY3Jp
-cHRvciBhIGR1cCBvZiB0aGUgZmlsZT8KKyAqLworc3RhdGljIGxvbmcgZl9kdXBmZF9xdWVyeShp
-bnQgZmQsIHN0cnVjdCBmaWxlICpmaWxwKQoreworCXN0cnVjdCBmZCBmID0gZmRnZXRfcmF3KGZk
-KTsKKworCS8qCisJICogV2UgY2FuIGRvIHRoZSAnZmRwdXQoKScgaW1tZWRpYXRlbHksIGFzIHRo
-ZSBvbmx5IHRoaW5nIHRoYXQKKwkgKiBtYXR0ZXJzIGlzIHRoZSBwb2ludGVyIHZhbHVlIHdoaWNo
-IGlzbid0IGNoYW5nZWQgYnkgdGhlIGZkcHV0LgorCSAqCisJICogVGVjaG5pY2FsbHkgd2UgZGlk
-bid0IG5lZWQgYSByZWYgYXQgYWxsLCBhbmQgJ2ZkZ2V0KCknIHdhcworCSAqIG92ZXJraWxsLCBi
-dXQgZ2l2ZW4gb3VyIGxvY2tsZXNzIGZpbGUgcG9pbnRlciBsb29rdXAsIHRoZQorCSAqIGFsdGVy
-bmF0aXZlcyBhcmUgY29tcGxpY2F0ZWQuCisJICovCisJZmRwdXQoZik7CisJcmV0dXJuIGYuZmls
-ZSA9PSBmaWxwOworfQorCiBzdGF0aWMgbG9uZyBkb19mY250bChpbnQgZmQsIHVuc2lnbmVkIGlu
-dCBjbWQsIHVuc2lnbmVkIGxvbmcgYXJnLAogCQlzdHJ1Y3QgZmlsZSAqZmlscCkKIHsKQEAgLTM0
-Miw2ICszNjEsOSBAQCBzdGF0aWMgbG9uZyBkb19mY250bChpbnQgZmQsIHVuc2lnbmVkIGludCBj
-bWQsIHVuc2lnbmVkIGxvbmcgYXJnLAogCWNhc2UgRl9EVVBGRF9DTE9FWEVDOgogCQllcnIgPSBm
-X2R1cGZkKGFyZ2ksIGZpbHAsIE9fQ0xPRVhFQyk7CiAJCWJyZWFrOworCWNhc2UgRl9EVVBGRF9R
-VUVSWToKKwkJZXJyID0gZl9kdXBmZF9xdWVyeShhcmdpLCBmaWxwKTsKKwkJYnJlYWs7CiAJY2Fz
-ZSBGX0dFVEZEOgogCQllcnIgPSBnZXRfY2xvc2Vfb25fZXhlYyhmZCkgPyBGRF9DTE9FWEVDIDog
-MDsKIAkJYnJlYWs7CkBAIC00NDYsNiArNDY4LDcgQEAgc3RhdGljIGludCBjaGVja19mY250bF9j
-bWQodW5zaWduZWQgY21kKQogCXN3aXRjaCAoY21kKSB7CiAJY2FzZSBGX0RVUEZEOgogCWNhc2Ug
-Rl9EVVBGRF9DTE9FWEVDOgorCWNhc2UgRl9EVVBGRF9RVUVSWToKIAljYXNlIEZfR0VURkQ6CiAJ
-Y2FzZSBGX1NFVEZEOgogCWNhc2UgRl9HRVRGTDoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9s
-aW51eC9mY250bC5oIGIvaW5jbHVkZS91YXBpL2xpbnV4L2ZjbnRsLmgKaW5kZXggMjgyZTkwYWVi
-MTYzLi5jMGJjYzE4NWZhNDggMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvdWFwaS9saW51eC9mY250bC5o
-CisrKyBiL2luY2x1ZGUvdWFwaS9saW51eC9mY250bC5oCkBAIC04LDYgKzgsMTQgQEAKICNkZWZp
-bmUgRl9TRVRMRUFTRQkoRl9MSU5VWF9TUEVDSUZJQ19CQVNFICsgMCkKICNkZWZpbmUgRl9HRVRM
-RUFTRQkoRl9MSU5VWF9TUEVDSUZJQ19CQVNFICsgMSkKIAorLyoKKyAqIFJlcXVlc3Qgbm9maWNh
-dGlvbnMgb24gYSBkaXJlY3RvcnkuCisgKiBTZWUgYmVsb3cgZm9yIGV2ZW50cyB0aGF0IG1heSBi
-ZSBub3RpZmllZC4KKyAqLworI2RlZmluZSBGX05PVElGWQkoRl9MSU5VWF9TUEVDSUZJQ19CQVNF
-ICsgMikKKworI2RlZmluZSBGX0RVUEZEX1FVRVJZCShGX0xJTlVYX1NQRUNJRklDX0JBU0UgKyAz
-KQorCiAvKgogICogQ2FuY2VsIGEgYmxvY2tpbmcgcG9zaXggbG9jazsgaW50ZXJuYWwgdXNlIG9u
-bHkgdW50aWwgd2UgZXhwb3NlIGFuCiAgKiBhc3luY2hyb25vdXMgbG9jayBhcGkgdG8gdXNlcnNw
-YWNlOgpAQCAtMTcsMTIgKzI1LDYgQEAKIC8qIENyZWF0ZSBhIGZpbGUgZGVzY3JpcHRvciB3aXRo
-IEZEX0NMT0VYRUMgc2V0LiAqLwogI2RlZmluZSBGX0RVUEZEX0NMT0VYRUMJKEZfTElOVVhfU1BF
-Q0lGSUNfQkFTRSArIDYpCiAKLS8qCi0gKiBSZXF1ZXN0IG5vZmljYXRpb25zIG9uIGEgZGlyZWN0
-b3J5LgotICogU2VlIGJlbG93IGZvciBldmVudHMgdGhhdCBtYXkgYmUgbm90aWZpZWQuCi0gKi8K
-LSNkZWZpbmUgRl9OT1RJRlkJKEZfTElOVVhfU1BFQ0lGSUNfQkFTRSsyKQotCiAvKgogICogU2V0
-IGFuZCBnZXQgb2YgcGlwZSBwYWdlIHNpemUgYXJyYXkKICAqLwo=
---0000000000003fddda0617f3aa7b--
 
