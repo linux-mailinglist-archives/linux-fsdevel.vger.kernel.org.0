@@ -1,197 +1,432 @@
-Return-Path: <linux-fsdevel+bounces-19028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AFB8BF78D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 09:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDEB8BF79D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 09:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D32C1C20F45
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 07:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7BE6281480
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 07:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAD53EA69;
-	Wed,  8 May 2024 07:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816DD3E49C;
+	Wed,  8 May 2024 07:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MbV/DHwt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZ24DGvq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C3B2C85F;
-	Wed,  8 May 2024 07:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E443E535C4;
+	Wed,  8 May 2024 07:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715154553; cv=none; b=J31IriaSeFLm5YglO/En/6o/Kg7umjTRc7M3sqoqT95r70J36X44spsu8teu+k0qVbQBRdcZgIrMExhJojM8SL4YR9MlfWgTSxcFGBcYxJZHZ5oHje/stggxeh/htEqJNjouBgWMDxUgSceNafHrmoERaELAXA4mahx2QjLFX1Y=
+	t=1715154580; cv=none; b=iBa6iz+ALOiyctJEfIAG7m1VqsPMHnP3JGNk8ZVBD7Dp8OxjJi0MMfG2hxQeyQryIy8h7m1fF8U4aXljttGinoo4sAJdcmTou4DOo9g8BLYiqB2S/WFn+PcmNvhlS4nMZXXVY/85ME3XMvS7yhCmXc9dHUFjKWG4o7nHdT58hWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715154553; c=relaxed/simple;
-	bh=MofcZIwCP6uQfQVp6EE9HurxL3czn6diXGm18p/OF50=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QP8r7FGCEIG9RIPEHrCJr201UpOq8fxdk2dGIGtH485FSZl0SCLcbFaQsRohnC5mV9vR2V+jJTIMKpfb4h9Jv8+Z4lR+4Ho9xY5yp8IEbhuQi1OZpX5aaJnvhz+jvpc1dwlZrJM7qKEpQjKP4MX2Nc7TE8804Qx1YrSNGjMmO1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MbV/DHwt; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715154544;
-	bh=MofcZIwCP6uQfQVp6EE9HurxL3czn6diXGm18p/OF50=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=MbV/DHwtYAujOpXoDCW0s0KB5riHG/p4OMQuvDB00Pz7/gzHkZrQVMbWFe8RMvmKa
-	 E7/eZm+J0KkW6WdglkC3NhaZhrrqLwrLM/rN6pAvFjHBThsazg6zRLYCYBJKWtjUwR
-	 eLafdjBQjRl8tFVMXaPf7ETS5Spz1U0TN2/pXHhbkRMUKnerr3EUzBLw1LELesDSjx
-	 ww1UwcyShSZE5MdiI2h1EXPosoRI0u6sJbDL1yLfBCglfBakx0ihDdtGsu1uPdwGRy
-	 epZ0TaGCSSjrbxIQaccEYwAzomyOHcnd+TiIXNmGJ4FavJjakZ9om8hZy1/HJ08OvK
-	 /vO//iWp1Vbsw==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C668C378107C;
-	Wed,  8 May 2024 07:48:36 +0000 (UTC)
-Message-ID: <546aaaa7-d796-46af-8805-1612759aaaa5@collabora.com>
-Date: Wed, 8 May 2024 12:48:57 +0500
+	s=arc-20240116; t=1715154580; c=relaxed/simple;
+	bh=qgEG3njGDyERCVmpynDvAcQrFyCvvjlb5Ekgf7r5MKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nJJi2mu/F81icSuiaN71qTPx2kU7gMw/qIh2Y8IEBAFn84ykC6Zenm6ibG8nM8q/utj137mz5cXSER96MPHUkw160pPD5G9Ary1AKmx1pfMa+2GLoAf003lR8GlQJmi1O0X8FlxYnDapbXkCm0XHEhlkv9vUNVUoXIqMWTSJrsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZ24DGvq; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2dfb4ea2bbfso44452241fa.2;
+        Wed, 08 May 2024 00:49:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715154577; x=1715759377; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=umTDfnbL/dq64TqBpFCsgOhQUToEayhSSVPwVI4DrpI=;
+        b=cZ24DGvqil+E9XQQ69duFSlLkjpF3irKLa9zMKRafI81g9KnxFJOKMh8BUkOFw6TVW
+         gDqb/ZnNLv6HB+oEwNMbwhRNy5m0e9cT3OvGgb19BDsGlCCFMtKqukpblMFU50bqazPp
+         6oFwoXa/dpmAD6X9OY90M2P7uJ93/MhQc19NB+cCjV6P3ZQiYMNeBG+6Yl5+hRZPsfru
+         Vdcr74LiWe94SAhuABIZuP9HRjEewfq7olMalWGL6TFNBdxrHKSdCmmXj50oF1J8cuX2
+         g7IX5MA9feJHVwuadKhDWkhRx2AibGRG6HFgDS0GUvZomnuI0fiqmXgna8pLY/l8Ja7o
+         ygTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715154577; x=1715759377;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=umTDfnbL/dq64TqBpFCsgOhQUToEayhSSVPwVI4DrpI=;
+        b=jiSI39TpSTaM+mZ+cv6mkv6q1ULlTm08bDmTjiq6MHnFkccTv2O9zzKrpXCiJKui43
+         1z/34O328bgB/7Q1ewXuDhKZGCoMVNuRpxOkyKadwbIHKVTkNii5FYSdi8UeLaNyr5Q0
+         hZKCxdQcaO0OJB3hVD5XMV/gk4OwZccIJ8n3ghd/iHMaDn+K+12MJOEyPz62gR3LFgSe
+         vEFfqpLkPL8fLkHpJsksXeRt0qPNKL7EXmwQHlPNYOqSmNrcNAT7t5b8DU6TQ0pptUNn
+         TNt80Ht8EXLB75rEmecKhODMskaqEwq+8f6QSC2k6Z6bkPYxKEjxHS9u9g7YA2PbF7U2
+         QEvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHglUTOHttUOZ/aRoaX9mjKhrDe3134FVoOBdC7Li2gm2MGhw1M2aMsnw/HdhAkxvcGLzCnGlBpm8f4q8OOT2pAPdyWupPHf/uVG8HFApGDNWDHoXQoAkuTjCyO0u72Bs6+NF9VJJ0CyTGXg==
+X-Gm-Message-State: AOJu0YxQ6D+noz8g64jxVueKm48CfrcfPKwyQApoxblrjTiIv6uuOCgv
+	GlxI1EgfDHKCVaJ2XTI0w24LTyIwoZCozDE9vQM9CVKSDz7qBhpE0Jar8jFKdHF8Xr860M8sMoy
+	+/PkrZeK7QbbbRaHZ/4joZKMy8Qw=
+X-Google-Smtp-Source: AGHT+IGml2LS93vLekvZt0QIqNtoMt+ka3oiN9gq/tinwewdYfgF5mUz5MalXZDDuo0/fCQnO47chT2ANbe8sGK0bxY=
+X-Received: by 2002:a2e:be09:0:b0:2e1:ebec:1ded with SMTP id
+ 38308e7fff4ca-2e447698ccemr11034991fa.25.1715154576730; Wed, 08 May 2024
+ 00:49:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-sound@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-input@vger.kernel.org, iommu@lists.linux.dev, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
- linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
- linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org,
- kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH v2 1/5] selftests: Compile kselftest headers with
- -D_GNU_SOURCE
-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Christian Brauner
- <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <keescook@chromium.org>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>,
- Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Andrew Morton <akpm@linux-foundation.org>, Seth Forshee
- <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
- <afaerber@suse.de>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20240507214254.2787305-1-edliaw@google.com>
- <20240507214254.2787305-2-edliaw@google.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240507214254.2787305-2-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240502084609.28376-1-ryncsn@gmail.com> <20240502084939.30250-5-ryncsn@gmail.com>
+ <874jb8lq8q.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <874jb8lq8q.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 8 May 2024 15:49:20 +0800
+Message-ID: <CAMgjq7C8JCR-4Q0+XmK+JAXi72rNEdFfZvke-TWxuLN1UJBtaw@mail.gmail.com>
+Subject: Re: [PATCH v4 12/12] mm/swap: reduce swap cache search space
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for patches
+On Wed, May 8, 2024 at 3:27=E2=80=AFPM Huang, Ying <ying.huang@intel.com> w=
+rote:
+>
+> Kairui Song <ryncsn@gmail.com> writes:
+>
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Currently we use one swap_address_space for every 64M chunk to reduce l=
+ock
+> > contention, this is like having a set of smaller swap files inside one
+> > swap device. But when doing swap cache look up or insert, we are
+> > still using the offset of the whole large swap device. This is OK for
+> > correctness, as the offset (key) is unique.
+> >
+> > But Xarray is specially optimized for small indexes, it creates the
+> > radix tree levels lazily to be just enough to fit the largest key
+> > stored in one Xarray. So we are wasting tree nodes unnecessarily.
+> >
+> > For 64M chunk it should only take at most 3 levels to contain everythin=
+g. it should only take at most 3 levels to contain everything.
+> > But if we are using the offset from the whole swap device, the offset (=
+key)
+> > value will be way beyond 64M, and so will the tree level.
+> >
+> > Optimize this by using a new helper swap_cache_index to get a swap
+> > entry's unique offset in its own 64M swap_address_space.
+> >
+> > I see a ~1% performance gain in benchmark and actual workload with
+> > high memory pressure.
+> >
+> > Test with `time memhog 128G` inside a 8G memcg using 128G swap (ramdisk
+> > with SWP_SYNCHRONOUS_IO dropped, tested 3 times, results are stable. Th=
+e
+> > test result is similar but the improvement is smaller if SWP_SYNCHRONOU=
+S_IO
+> > is enabled, as swap out path can never skip swap cache):
+> >
+> > Before:
+> > 6.07user 250.74system 4:17.26elapsed 99%CPU (0avgtext+0avgdata 8373376m=
+axresident)k
+> > 0inputs+0outputs (55major+33555018minor)pagefaults 0swaps
+> >
+> > After (1.8% faster):
+> > 6.08user 246.09system 4:12.58elapsed 99%CPU (0avgtext+0avgdata 8373248m=
+axresident)k
+> > 0inputs+0outputs (54major+33555027minor)pagefaults 0swaps
+> >
+> > Similar result with MySQL and sysbench using swap:
+> > Before:
+> > 94055.61 qps
+> >
+> > After (0.8% faster):
+> > 94834.91 qps
+> >
+> > Radix tree slab usage is also very slightly lower.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >  mm/huge_memory.c |  2 +-
+> >  mm/memcontrol.c  |  2 +-
+> >  mm/mincore.c     |  2 +-
+> >  mm/shmem.c       |  2 +-
+> >  mm/swap.h        | 15 +++++++++++++++
+> >  mm/swap_state.c  | 19 ++++++++++---------
+> >  mm/swapfile.c    |  6 +++---
+> >  7 files changed, 32 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index d35d526ed48f..45829cc049d2 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -2918,7 +2918,7 @@ static void __split_huge_page(struct page *page, =
+struct list_head *list,
+> >       split_page_memcg(head, order, new_order);
+> >
+> >       if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
+> > -             offset =3D swp_offset(folio->swap);
+> > +             offset =3D swap_cache_index(folio->swap);
+> >               swap_cache =3D swap_address_space(folio->swap);
+> >               xa_lock(&swap_cache->i_pages);
+> >       }
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index d11536ef59ef..81b005c459cb 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -6165,7 +6165,7 @@ static struct page *mc_handle_swap_pte(struct vm_=
+area_struct *vma,
+> >        * Because swap_cache_get_folio() updates some statistics counter=
+,
+> >        * we call find_get_page() with swapper_space directly.
+> >        */
+> > -     page =3D find_get_page(swap_address_space(ent), swp_offset(ent));
+> > +     page =3D find_get_page(swap_address_space(ent), swap_cache_index(=
+ent));
+> >       entry->val =3D ent.val;
+> >
+> >       return page;
+> > diff --git a/mm/mincore.c b/mm/mincore.c
+> > index dad3622cc963..e31cf1bde614 100644
+> > --- a/mm/mincore.c
+> > +++ b/mm/mincore.c
+> > @@ -139,7 +139,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned l=
+ong addr, unsigned long end,
+> >                       } else {
+> >  #ifdef CONFIG_SWAP
+> >                               *vec =3D mincore_page(swap_address_space(=
+entry),
+> > -                                                 swp_offset(entry));
+> > +                                                 swap_cache_index(entr=
+y));
+> >  #else
+> >                               WARN_ON(1);
+> >                               *vec =3D 1;
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index fa2a0ed97507..326315c12feb 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -1756,7 +1756,7 @@ static int shmem_replace_folio(struct folio **fol=
+iop, gfp_t gfp,
+> >
+> >       old =3D *foliop;
+> >       entry =3D old->swap;
+> > -     swap_index =3D swp_offset(entry);
+> > +     swap_index =3D swap_cache_index(entry);
+> >       swap_mapping =3D swap_address_space(entry);
+> >
+> >       /*
+> > diff --git a/mm/swap.h b/mm/swap.h
+> > index 82023ab93205..93e3e1b58a7f 100644
+> > --- a/mm/swap.h
+> > +++ b/mm/swap.h
+> > @@ -27,6 +27,7 @@ void __swap_writepage(struct folio *folio, struct wri=
+teback_control *wbc);
+> >  /* One swap address space for each 64M swap space */
+> >  #define SWAP_ADDRESS_SPACE_SHIFT     14
+> >  #define SWAP_ADDRESS_SPACE_PAGES     (1 << SWAP_ADDRESS_SPACE_SHIFT)
+> > +#define SWAP_ADDRESS_SPACE_MASK              (BIT(SWAP_ADDRESS_SPACE_S=
+HIFT) - 1)
+>
+> #define SWAP_ADDRESS_SPACE_MASK         (SWAP_ADDRESS_SPACE_PAGES - 1)
+> ?
+>
+> We can use BIT() in SWAP_ADDRESS_SPACE_PAGES definition.
+>
 
-On 5/8/24 2:38 AM, Edward Liaw wrote:
-> Add the -D_GNU_SOURCE flag to KHDR_INCLUDES so that it is defined in a
-> central location.
-> 
-> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> asprintf into kselftest_harness.h, which is a GNU extension and needs
-> _GNU_SOURCE to either be defined prior to including headers or with the
-> -D_GNU_SOURCE flag passed to the compiler.
-> 
-> Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202404301040.3bea5782-oliver.sang@intel.com
-> Signed-off-by: Edward Liaw <edliaw@google.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+I'll just use (SWAP_ADDRESS_SPACE_PAGES - 1) then, I was trying to
+make the changes minimal, but prefered the BIT macro, a trivial
+change.
 
-> ---
->  tools/testing/selftests/Makefile            | 4 ++--
->  tools/testing/selftests/kselftest_harness.h | 2 +-
->  tools/testing/selftests/lib.mk              | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index e1504833654d..ed012a7f0786 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -161,11 +161,11 @@ ifneq ($(KBUILD_OUTPUT),)
->    # $(realpath ...) resolves symlinks
->    abs_objtree := $(realpath $(abs_objtree))
->    BUILD := $(abs_objtree)/kselftest
-> -  KHDR_INCLUDES := -isystem ${abs_objtree}/usr/include
-> +  KHDR_INCLUDES := -D_GNU_SOURCE -isystem ${abs_objtree}/usr/include
->  else
->    BUILD := $(CURDIR)
->    abs_srctree := $(shell cd $(top_srcdir) && pwd)
-> -  KHDR_INCLUDES := -isystem ${abs_srctree}/usr/include
-> +  KHDR_INCLUDES := -D_GNU_SOURCE -isystem ${abs_srctree}/usr/include
->    DEFAULT_INSTALL_HDR_PATH := 1
->  endif
->  
-> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-> index d98702b6955d..b2a1b6343896 100644
-> --- a/tools/testing/selftests/kselftest_harness.h
-> +++ b/tools/testing/selftests/kselftest_harness.h
-> @@ -51,7 +51,7 @@
->  #define __KSELFTEST_HARNESS_H
->  
->  #ifndef _GNU_SOURCE
-> -#define _GNU_SOURCE
-> +static_assert(0, "kselftest harness requires _GNU_SOURCE to be defined");
->  #endif
->  #include <asm/types.h>
->  #include <ctype.h>
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index da2cade3bab0..2503dc732b4d 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -45,7 +45,7 @@ selfdir = $(realpath $(dir $(filter %/lib.mk,$(MAKEFILE_LIST))))
->  top_srcdir = $(selfdir)/../../..
->  
->  ifeq ($(KHDR_INCLUDES),)
-> -KHDR_INCLUDES := -isystem $(top_srcdir)/usr/include
-> +KHDR_INCLUDES := -D_GNU_SOURCE -isystem $(top_srcdir)/usr/include
->  endif
->  
->  # The following are built by lib.mk common compile rules.
+> >  extern struct address_space *swapper_spaces[];
+> >  #define swap_address_space(entry)                        \
+> >       (&swapper_spaces[swp_type(entry)][swp_offset(entry) \
+> > @@ -40,6 +41,15 @@ static inline loff_t swap_dev_pos(swp_entry_t entry)
+> >       return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
+> >  }
+> >
+> > +/*
+> > + * Return the swap cache index of the swap entry.
+> > + */
+> > +static inline pgoff_t swap_cache_index(swp_entry_t entry)
+> > +{
+> > +     BUILD_BUG_ON((SWP_OFFSET_MASK | SWAP_ADDRESS_SPACE_MASK) !=3D SWP=
+_OFFSET_MASK);
+> > +     return swp_offset(entry) & SWAP_ADDRESS_SPACE_MASK;
+> > +}
+> > +
+> >  void show_swap_cache_info(void);
+> >  bool add_to_swap(struct folio *folio);
+> >  void *get_shadow_from_swap_cache(swp_entry_t entry);
+> > @@ -86,6 +96,11 @@ static inline struct address_space *swap_address_spa=
+ce(swp_entry_t entry)
+> >       return NULL;
+> >  }
+> >
+> > +static inline pgoff_t swap_cache_index(swp_entry_t entry)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> >  static inline void show_swap_cache_info(void)
+> >  {
+> >  }
+> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+> > index 642c30d8376c..09415d4c7843 100644
+> > --- a/mm/swap_state.c
+> > +++ b/mm/swap_state.c
+> > @@ -72,7 +72,7 @@ void show_swap_cache_info(void)
+> >  void *get_shadow_from_swap_cache(swp_entry_t entry)
+> >  {
+> >       struct address_space *address_space =3D swap_address_space(entry)=
+;
+> > -     pgoff_t idx =3D swp_offset(entry);
+> > +     pgoff_t idx =3D swap_cache_index(entry);
+> >       void *shadow;
+> >
+> >       shadow =3D xa_load(&address_space->i_pages, idx);
+> > @@ -89,7 +89,7 @@ int add_to_swap_cache(struct folio *folio, swp_entry_=
+t entry,
+> >                       gfp_t gfp, void **shadowp)
+> >  {
+> >       struct address_space *address_space =3D swap_address_space(entry)=
+;
+> > -     pgoff_t idx =3D swp_offset(entry);
+> > +     pgoff_t idx =3D swap_cache_index(entry);
+> >       XA_STATE_ORDER(xas, &address_space->i_pages, idx, folio_order(fol=
+io));
+> >       unsigned long i, nr =3D folio_nr_pages(folio);
+> >       void *old;
+> > @@ -144,7 +144,7 @@ void __delete_from_swap_cache(struct folio *folio,
+> >       struct address_space *address_space =3D swap_address_space(entry)=
+;
+> >       int i;
+> >       long nr =3D folio_nr_pages(folio);
+> > -     pgoff_t idx =3D swp_offset(entry);
+> > +     pgoff_t idx =3D swap_cache_index(entry);
+> >       XA_STATE(xas, &address_space->i_pages, idx);
+> >
+> >       xas_set_update(&xas, workingset_update_node);
+> > @@ -248,18 +248,19 @@ void delete_from_swap_cache(struct folio *folio)
+> >  void clear_shadow_from_swap_cache(int type, unsigned long begin,
+> >                               unsigned long end)
+> >  {
+> > -     unsigned long curr =3D begin;
+> > +     unsigned long curr =3D begin, offset;
+>
+> Better to rename "offset" as "index" to avoid confusion?
 
--- 
-BR,
-Muhammad Usama Anjum
+Good idea.
+
+> >       void *old;
+> >
+> >       for (;;) {
+> > +             offset =3D curr & SWAP_ADDRESS_SPACE_MASK;
+> >               swp_entry_t entry =3D swp_entry(type, curr);
+> >               struct address_space *address_space =3D swap_address_spac=
+e(entry);
+> > -             XA_STATE(xas, &address_space->i_pages, curr);
+> > +             XA_STATE(xas, &address_space->i_pages, offset);
+> >
+> >               xas_set_update(&xas, workingset_update_node);
+> >
+> >               xa_lock_irq(&address_space->i_pages);
+> > -             xas_for_each(&xas, old, end) {
+> > +             xas_for_each(&xas, old, offset + min(end - curr, SWAP_ADD=
+RESS_SPACE_PAGES)) {
+>
+> Is there a bug in the original code?  It doesn't check SWAP_ADDRESS_SPACE=
+_PAGES.
+
+That's OK, if the (end - curr) goes above SWAP_ADDRESS_SPACE_PAGES, it
+means all content in current address_space needs to be purged.
+xas_for_each will stop after it iterated all content in the current
+address space. This is a bit hackish though.
+
+>
+> And should it be changed to
+>
+>         xas_for_each(&xas, old, min(offset + end - curr, SWAP_ADDRESS_SPA=
+CE_PAGES))
+
+It should be equivalent, as described above, but yeah, this looks
+cleaner. I'll use your suggested code.
+
+> ?
+>
+> >                       if (!xa_is_value(old))
+> >                               continue;
+> >                       xas_store(&xas, NULL);
+> > @@ -350,7 +351,7 @@ struct folio *swap_cache_get_folio(swp_entry_t entr=
+y,
+> >  {
+> >       struct folio *folio;
+> >
+> > -     folio =3D filemap_get_folio(swap_address_space(entry), swp_offset=
+(entry));
+> > +     folio =3D filemap_get_folio(swap_address_space(entry), swap_cache=
+_index(entry));
+> >       if (!IS_ERR(folio)) {
+> >               bool vma_ra =3D swap_use_vma_readahead();
+> >               bool readahead;
+> > @@ -420,7 +421,7 @@ struct folio *filemap_get_incore_folio(struct addre=
+ss_space *mapping,
+> >       si =3D get_swap_device(swp);
+> >       if (!si)
+> >               return ERR_PTR(-ENOENT);
+> > -     index =3D swp_offset(swp);
+> > +     index =3D swap_cache_index(swp);
+> >       folio =3D filemap_get_folio(swap_address_space(swp), index);
+> >       put_swap_device(si);
+> >       return folio;
+> > @@ -447,7 +448,7 @@ struct folio *__read_swap_cache_async(swp_entry_t e=
+ntry, gfp_t gfp_mask,
+> >                * that would confuse statistics.
+> >                */
+> >               folio =3D filemap_get_folio(swap_address_space(entry),
+> > -                                             swp_offset(entry));
+> > +                                       swap_cache_index(entry));
+> >               if (!IS_ERR(folio))
+> >                       goto got_folio;
+> >
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 0b0ae6e8c764..4f0e8b2ac8aa 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -142,7 +142,7 @@ static int __try_to_reclaim_swap(struct swap_info_s=
+truct *si,
+> >       struct folio *folio;
+> >       int ret =3D 0;
+> >
+> > -     folio =3D filemap_get_folio(swap_address_space(entry), offset);
+> > +     folio =3D filemap_get_folio(swap_address_space(entry), swap_cache=
+_index(entry));
+> >       if (IS_ERR(folio))
+> >               return 0;
+> >       /*
+> > @@ -2158,7 +2158,7 @@ static int try_to_unuse(unsigned int type)
+> >              (i =3D find_next_to_unuse(si, i)) !=3D 0) {
+> >
+> >               entry =3D swp_entry(type, i);
+> > -             folio =3D filemap_get_folio(swap_address_space(entry), i)=
+;
+> > +             folio =3D filemap_get_folio(swap_address_space(entry), sw=
+ap_cache_index(entry));
+> >               if (IS_ERR(folio))
+> >                       continue;
+> >
+> > @@ -3476,7 +3476,7 @@ EXPORT_SYMBOL_GPL(swapcache_mapping);
+> >
+> >  pgoff_t __folio_swap_cache_index(struct folio *folio)
+> >  {
+> > -     return swp_offset(folio->swap);
+> > +     return swap_cache_index(folio->swap);
+> >  }
+> >  EXPORT_SYMBOL_GPL(__folio_swap_cache_index);
+
+Thanks for the suggestions!
+
+>
+> --
+> Best Regards,
+> Huang, Ying
 
