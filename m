@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-19128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A15E8C0597
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 22:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A85938C059A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 22:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C86282C2E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 20:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B10282C21
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2024 20:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395A3130AFE;
-	Wed,  8 May 2024 20:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8889E130AFE;
+	Wed,  8 May 2024 20:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWeWglbO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKWl4rGy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6AD225D9;
-	Wed,  8 May 2024 20:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15D7128829;
+	Wed,  8 May 2024 20:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715199964; cv=none; b=B7GHgOg/qvXsPoZl2WRtCDavMmzyWDDvegQgnjm5grHc1mdVxWyd6wRdnfejzryiUsupyCMgKgAMCy5vaNc+80RFryGFZ741tsmTr7L155pl1eSOQgEtCdGGT3k4McIBZxZuRDVcwqdCIR8pj//TbnUuyTr1ZlRB307pUHFBrtg=
+	t=1715200014; cv=none; b=ZibldzVxUKJPtET4SdoCYJ6kx99sjt6ymId0J85zmmhZUay/8koI3ZYB/twDCp7llWLkh6CHzjYWucM72MrrMDMrjaMuWtpzO5JMF/tYr7nLSxeMU3zZAfaCUuqubeAN+1W+gJfyDHSNYXgJ/ume158jMUXfGG2HnYpzDbTXrHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715199964; c=relaxed/simple;
-	bh=6M7QmQ2qdk76tVQwOg9zL5ApxEyFjT3pY7zUyU5IX2g=;
+	s=arc-20240116; t=1715200014; c=relaxed/simple;
+	bh=5cplXGTHhLKevBVc9ttRuEVGAVIPeKWSB2YKGZ7YMTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fsj249mHZkz2yUwI68wFMETXDQusvbgs7KnOHXhTkAjt/fcIyVPuf1Vx/B4lhF/FVpRG4shh0mycdggHqcNYnT/Ub65KwYtUHCvTuDNxps3X0yu26Lwg4SEq6cY3jXdkLYwve8/kznfo+gHqhohPGphHnnwG3YN2elH2e/rrA/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWeWglbO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4E3C113CC;
-	Wed,  8 May 2024 20:26:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OhOe1PdOqt0RgXdTgHOtGha6nlPTw9AopC8sXRSb+2VJ/Fi9lUPneM+rQMjJ/JEQ7IKfSzyhNqGi67lQ+33/w5E5Q9+Nigs0Fr0JS0SwKJPzfInMsO5XcjhmLVZ3M2OvZ7dG+KkMhGLAJN/rzyEXky+p4kBAQYcrdn7gjPYuxew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKWl4rGy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59AA5C113CC;
+	Wed,  8 May 2024 20:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715199964;
-	bh=6M7QmQ2qdk76tVQwOg9zL5ApxEyFjT3pY7zUyU5IX2g=;
+	s=k20201202; t=1715200013;
+	bh=5cplXGTHhLKevBVc9ttRuEVGAVIPeKWSB2YKGZ7YMTs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hWeWglbOilt/ShTFpvhe2XS/Cg1aaP6pGL4OzyjbcL6zT6XyPkNmhAUKg3lo1gMvp
-	 3hVVIpCOmnJYkLDMETHp+rbEoGHNmu6ReNBMuChEiYOvp8MFE779IEziZUrd2e/b/z
-	 /mpuq488gBJIqgSGmoikAbUqnGmZsLyy8xinyKv+s5+hdfcjXIm06hQwopAav6FQ2h
-	 s4vWe3DaBFci5EcFr/4jxC6zdSDogvDdPRJk3l8JzZR13QDPhG9AwH8SC54Q/Pd4cB
-	 oXMhIP6cDfAuwQiK7Lv464V1d00fZ+N+WNT+QsktEEd+ifn5euP4UX0M0yQm3sEkRS
-	 X4uonCd3jhd8A==
-Date: Wed, 8 May 2024 13:26:03 -0700
+	b=HKWl4rGy/Ywiyz659yIU8m1XShXBzZQIzM+TKinlzUPEWpPzhBsct0X2IEao9jm2+
+	 1fqVrtRkJK2uPXpi/7wQNpYpu0Rml6ZRZ8Vp6BYufhlv7G91DUrSkaQ7xpA8bGIp/f
+	 XoqD3PNVc+VDSgEM0bjuaAt7Q09Gt3O0DPAo1MCixQI4rVi/MwJLZKKioysOX1XGBf
+	 IEQTV+H2ycRA9V63LCvGrKyqnVxQwNp1JY6NOu1aaX00W/d9RpkWMSK58dXkbqOA7T
+	 ZvaRXn6NcaV2EDVd7QpakBV9AYH1FlScXRgRGKJh5YzhHFDztjTubwavc8OcAIkBQ0
+	 TfD/iNzIasCpA==
+Date: Wed, 8 May 2024 13:26:52 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: aalbersh@redhat.com, ebiggers@kernel.org, linux-xfs@vger.kernel.org,
-	alexl@redhat.com, walters@verbum.org, fsverity@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
-Message-ID: <20240508202603.GC360919@frogsfrogsfrogs>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
+	linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 19/26] xfs: don't bother storing merkle tree blocks for
+ zeroed data blocks
+Message-ID: <20240508202652.GD360919@frogsfrogsfrogs>
 References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
- <171444680671.957659.2149857258719599236.stgit@frogsfrogsfrogs>
- <ZjHmzBRVc3HcyX7-@infradead.org>
- <ZjHt1pSy4FqGWAB6@infradead.org>
- <20240507212454.GX360919@frogsfrogsfrogs>
- <ZjtmVIST_ujh_ld6@infradead.org>
+ <171444680689.957659.7685497436750551477.stgit@frogsfrogsfrogs>
+ <ZjHle-WDezhehB6a@infradead.org>
+ <20240501224736.GL360919@frogsfrogsfrogs>
+ <20240502000132.GA1853833@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,50 +63,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjtmVIST_ujh_ld6@infradead.org>
+In-Reply-To: <20240502000132.GA1853833@google.com>
 
-On Wed, May 08, 2024 at 04:47:32AM -0700, Christoph Hellwig wrote:
-> On Tue, May 07, 2024 at 02:24:54PM -0700, Darrick J. Wong wrote:
-> > Since we know the size of the merkle data ahead of time, we could also
-> > preallocate space in the attr fork and create a remote ATTR_VERITY xattr
-> > named "merkle" that points to the allocated space.  Then we don't have
-> > to have magic meanings for the high bit.
+On Thu, May 02, 2024 at 12:01:32AM +0000, Eric Biggers wrote:
+> On Wed, May 01, 2024 at 03:47:36PM -0700, Darrick J. Wong wrote:
+> > On Tue, Apr 30, 2024 at 11:47:23PM -0700, Christoph Hellwig wrote:
+> > > On Mon, Apr 29, 2024 at 08:29:03PM -0700, Darrick J. Wong wrote:
+> > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > 
+> > > > Now that fsverity tells our merkle tree io functions about what a hash
+> > > > of a data block full of zeroes looks like, we can use this information
+> > > > to avoid writing out merkle tree blocks for sparse regions of the file.
+> > > > For verified gold master images this can save quite a bit of overhead.
+> > > 
+> > > Is this something that fsverity should be doing in a generic way?
+> > 
+> > I don't think it's all that useful for ext4/f2fs because they always
+> > write out full merkle tree blocks even if it's the zerohash over and
+> > over again.  Old kernels aren't going to know how to deal with that.
+> > 
+> > > It feels odd to have XFS behave different from everyone else here,
+> > > even if this does feel useful.  Do we also need any hash validation
+> > > that no one tampered with the metadata and added a new extent, or
+> > > is this out of scope for fsverity?
+> > 
+> > If they wrote a new extent with nonzero contents, then the validation
+> > will fail, right?
+> > 
+> > If they added a new unwritten extent (or a written one full of zeroes),
+> > then the file data hasn't changed and validation would still pass,
+> > correct?
 > 
-> Note that high bit was just an example, a random high offset
-> might be a better choice, sized with some space to spare for the maximum
-> verify data.
+> The point of fsverity is to verify that file data is consistent with the
+> top-level file digest.  It doesn't really matter which type of extent the data
+> came from, or if the data got synthesized somehow (e.g. zeroes synthesized from
+> a hole), as long as fsverity still gets invoked to verify the data.  If the data
+> itself passes verification, then it's good.  The same applies to Merkle tree
+> blocks which are an intermediate step in the verification.
 
-I guess we could make it really obvious by allocating range in the
-mapping starting at MAX_FILEOFF and going downwards.  Chances are pretty
-good that with the xattr info growing upwards they're never going to
-meet.
+<nod>
 
-> > Will we ever have a merkle tree larger than 2^32-1 bytes in length?  If
-> > that's possible, then either we shard the merkle tree, or we have to rev
-> > the ondisk xfs_attr_leaf_name_remote structure.
-> 
-> If we did that would be yet another indicator that they aren't attrs
-> but something else.  But maybe I should stop banging that drum and
-> agree that everything is a nail if all you got is a hammer.. :)
+> In the Merkle tree, ext4 and f2fs currently just use the same concept of
+> sparsity as the file data, i.e. when a block is unmapped, it is filled in with
+> all zeroes.  As Darrick noticed, this isn't really the right concept of sparsity
+> for the Merkle tree, as a block full of hashes of zeroed blocks should be used,
+> not literally a zeroed block.  I think it makes sense to fix this in XFS, as
+> it's newly adding fsverity support, and this is a filesystem-level
+> implementation detail.  It would be difficult to fix this in ext4 and f2fs since
+> it would be an on-disk format upgrade.  (Existing files should not actually have
+> any sparse Merkle tree blocks, so we probably could redefine what they mean.
+> But even if so, old kernels would not be able to read the new files.)
 
-Hammer?  All I've got is a big block of cheese. :P
-
-FWIW the fsverity code seems to cut us off at U32_MAX bytes of merkle
-data so that's going to be the limit until they rev the ondisk format.
-
-> > I think we have to rev the format anyway, since with nrext64==1 we can
-> > have attr fork extents that start above 2^32 blocks, and the codebase
-> > will blindly truncate the 64-bit quantity returned by
-> > xfs_bmap_first_unused.
-> 
-> Or we decide the space above 2^32 blocks can't be used by attrs,
-> and only by other users with other means of discover.  Say the
-> verify hashes..
-
-Well right now they can't be used by attrs because xfs_dablk_t isn't big
-enough to fit a larger value.  The dangerous part here is that the code
-silently truncates the outparam of xfs_bmap_first_unused, so I'll fix
-that too.
+<nod>
 
 --D
+
+> - Eric
+> 
 
