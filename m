@@ -1,93 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-19215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C438C159B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 21:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DA28C1689
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 22:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2C2F1C21E93
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 19:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FC028990F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 20:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2F480022;
-	Thu,  9 May 2024 19:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DCB13CAAC;
+	Thu,  9 May 2024 20:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TNgFNOvU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7117C2ED
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 19:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CAB13C8F7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 20:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284025; cv=none; b=u/KrC5c00AUGezDiqvWUTqR20dYumpjDpe9ZHVPradfak/cRvalO+o29ibZWO1OO32aygLkZvqLkmqwI6/iU80nZv/SE4NPtpCn4JixXSUCFhAmPi5571aIXdufuhQTlTH8tCKwJnK5j/MRb8+Pt4QW5e0vOxV3p4yzvq6V2W+8=
+	t=1715284946; cv=none; b=YYR/hnLgXN6ULGCHJMJ8PXe68xTxT1/Lu6rOBMYscd+P9n4ioc0YZI6VWZtey6cokX0Qt9P/M+MCughekIULKLGf8j7QAao8j7FPD2Z5OO5A1tYwnRLCsOTpF7YO/Q/ubSHb2bXpbOeFiilQwVtmsjuyFjWK3sgLhXiOhi4gVpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284025; c=relaxed/simple;
-	bh=Kc+4KbDEOPf2dGokV72TS0X0dQSm9vXGDWnMVG+oKpg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=upufHGN8dRy20spVO5v6by30D4YJ840/Hs8IGzem4FaqdBYjvM/Te9SMvjm1UxMCeHhM1mDFvV3UwItK16uxEbtirxS2XQTmvfHwHW4aFFlS2wWUtWqOSQGn+Nfr0+Jjp3cRnR4kMcdv1OyfAgGZQd+dGdujXPbtNbfeBM5AfFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7de9c6b7a36so135654739f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 12:47:03 -0700 (PDT)
+	s=arc-20240116; t=1715284946; c=relaxed/simple;
+	bh=XzM7bW4mUcL+MdWLSgy4pPFCyz7AUX0/rTFVbZz4Cks=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=q8xJ8k2Wsrm3tOxCiqKyNGyNpfNO0CufpzGLs2YkyCMFAZfqilTuWVbl1Tupe25kRWvDIC9cHoy0lAiAMulwlbU8Y08A/4NtgNvmyeRMO/HDa0BTE+ynWNKXZ/Ki2wYtOWh+oufveoILHaqChCI++6XpYC5ctfMLcqpfSI/5mHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TNgFNOvU; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1ed941c63b3so11426835ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 13:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715284944; x=1715889744; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibFWC41ZV4jKFs0EDjRGi9eb9rYUWbe9LL5jTVHUEjs=;
+        b=TNgFNOvUDwSzSzaJ4tw+i7vOl78bZqwx798H7mD/omiE83Av15InytXJwanizgjzCC
+         wSNIkuKBojsiBJJ7Y9S68oOPfkmfC3QTjdo91uUzXY8RFQdVfTpfAv0qxTBqCTtNQuko
+         AwYJi5ORP7CeEXT6S53WXagQQElrKDNGlSg4L2Wh5oYtKIAbenVD1k8u6ga/9MYJpgcu
+         zrGPLPVj+GNImrdIbQUCa5OFe0IXRUZaf/aX7dHnONufx2CXNfV0EJUWKQRslIVuOMPO
+         zes7Aj6ZDCaP+3r6bVriUXvwfq0qQXqSPfO6WmhBwFUXgaqb5k/UXZJgptuflN9+y2me
+         eklA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715284023; x=1715888823;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eUpDWeNdwTu/kjq1nCV2ON4vsT4uwa9sN0FBco+5YAA=;
-        b=bNNFYOL1QwM6jW07NARWyFgtGvcZQlxU6MqSL8PwG04hCpmF1AybZiRZh3lxTrLCp2
-         OSTewLHgvGyNxr0iyaBYGREdZeECBb4Yt9fICgfO/gmierLQR+FOJrPCF1rupwXKzyMI
-         DLR9yt+EcNCnvC0/7bAh5o7n1sGJIOyZtbYXu9ojFMwnf/ZvRGgdn+Xv5rjCbZ9us6fl
-         WoBMxh9gfLhQQOaQoqhiTktTfQTBcoZksFRSLpnSZ9PvJYx5bnjBjAyI9V2pyz+BBYJ7
-         guElWL3M/vp3CJf8mlRkqWscfCIsHaJBBNyqBV2VEI6X+2grYrxatHo83Mp1r7wS6W9o
-         gmJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh0LqJk0IkCdDSDPbfTzfqmcrMKSsJvV85OUFVh8ugXYIAei4YKJfG6J7qajGpDzX+FtT9xFZ+uw7vJ/XNMO3E1ZXwDhHi1WSUjSJDkg==
-X-Gm-Message-State: AOJu0Yzq381+kY0K4gi7auQwNkjQ3hMXbaF+SUq4wn0PWK/N8hlEetCb
-	HhqaYGjn129oF5AtHtFuXCuVLAZWgpRn4DeHANfu0RxdSYXvemHp6c+6vq2SdtWS8J8YavUgCw1
-	LnpW1GYpo5jixfO2tUTrFsznYtrkbiNJ9LPt0k85NtzM/xNqZA5TNV9M=
-X-Google-Smtp-Source: AGHT+IFL7mpUk3NvnsMAFAD0opjcqCMStNVhCeAo6AMI+GlYk2KsYMOEnWkz4hm+4MpqDd+OAdaM3pp3FucnoGoAOtmsWL18I/gC
+        d=1e100.net; s=20230601; t=1715284944; x=1715889744;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibFWC41ZV4jKFs0EDjRGi9eb9rYUWbe9LL5jTVHUEjs=;
+        b=YqjMyC4n1n4Tbx+jlokA0rWy7W/4z+/GK2owuvxyukI8o7Yz1rg3gzWsKGOeoNXIpZ
+         aINSVC8pZ9Katyg/ZlwXWw/NgNUExDe7GXa9hBtigHXbrATI3bP3KZ0lsKAB1FpvRSI3
+         a9J4OhAskd3qfhkAGG1cHVSkmfQQhjRWmkTtbHldbSuCCisyPUiSeXbEgNYg/8YlVOn5
+         z2sB3xeCo+VNeFpb0zCaadwHWrC7O0RCI6Xlo+XZGkGKzmZF4beXOXhJgKCpibHXvEx8
+         bn+Zbg/LZve/J8V6FKDoPcP27EDkkpMJIQwxR01JPluaw83cerhmlmkKPWHIgiA/IrGf
+         mP4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQFgC83UIp07BytHzYy0HqwkUytn9WpC+YbYAflbaE7oPm2UMUhtevFgIeRijJ0pXOwNhRZPwlA/QHIbzaxqF5xJQKzyPtMMzX93L4Jg==
+X-Gm-Message-State: AOJu0YzOTtLDL4HE0G7r+Ze6DlM7X+lJvN4P48LtyqQpAai8wz5tqNgk
+	2/sswIODm3HvQoe9OSd9j9Fi9LKc8o4F7l8D/SS0KEnW8ImjU4jsjD/1sBVSNAT7Dx/VKz2aWf4
+	crw==
+X-Google-Smtp-Source: AGHT+IEPkGuNPe4HIZuj85oVFOfPMLkPB6Cm4SK3VLdEwwtMiQwP0MRi57NnzjjqYrYIB2JiEx+9LJND0hk=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a17:902:e549:b0:1e5:e676:4b0d with SMTP id
+ d9443c01a7336-1ef43f4b57cmr17425ad.9.1715284944391; Thu, 09 May 2024 13:02:24
+ -0700 (PDT)
+Date: Thu,  9 May 2024 19:58:26 +0000
+In-Reply-To: <20240509200022.253089-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2727:b0:488:7bb2:c9fd with SMTP id
- 8926c6da1cb9f-48959341c45mr32573173.6.1715284022834; Thu, 09 May 2024
- 12:47:02 -0700 (PDT)
-Date: Thu, 09 May 2024 12:47:02 -0700
-In-Reply-To: <0000000000009f0651061647bd5e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000decb7906180aae28@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in stashed_dentry_prune (2)
-From: syzbot <syzbot+e25ef173c0758ea764de@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Mime-Version: 1.0
+References: <20240509200022.253089-1-edliaw@google.com>
+X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
+Message-ID: <20240509200022.253089-35-edliaw@google.com>
+Subject: [PATCH v3 34/68] selftests/mount_setattr: Drop define _GNU_SOURCE
+From: Edward Liaw <edliaw@google.com>
+To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Seth Forshee <sforshee@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, Edward Liaw <edliaw@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
+	John Hubbard <jhubbard@nvidia.com>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+_GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+redefinition warnings.
 
-commit 2558e3b23112adb82a558bab616890a790a38bc6
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Wed Feb 21 08:59:51 2024 +0000
+Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Signed-off-by: Edward Liaw <edliaw@google.com>
+---
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-    libfs: add stashed_dentry_prune()
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+index c6a8c732b802..d894417134b6 100644
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sched.h>
+ #include <stdio.h>
+ #include <errno.h>
+-- 
+2.45.0.118.g7fe29c98d7-goog
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=111fb9d4980000
-start commit:   443574b03387 riscv, bpf: Fix kfunc parameters incompatibil..
-git tree:       bpf
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=131fb9d4980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=151fb9d4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fb1be60a193d440
-dashboard link: https://syzkaller.appspot.com/bug?extid=e25ef173c0758ea764de
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12fb63f3180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e68f6d180000
-
-Reported-by: syzbot+e25ef173c0758ea764de@syzkaller.appspotmail.com
-Fixes: 2558e3b23112 ("libfs: add stashed_dentry_prune()")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
