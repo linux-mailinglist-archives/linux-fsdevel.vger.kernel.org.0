@@ -1,119 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-19223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7D48C193F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 00:10:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89C68C19DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 01:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6902F1C21D03
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 22:10:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F7E1F23030
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 23:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC84E129E75;
-	Thu,  9 May 2024 22:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05CA12E1E5;
+	Thu,  9 May 2024 23:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="di5Mko6G"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="H2X7NnAr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2062F1292E6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 22:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715292623; cv=none; b=dA34OjpEFSRyddSvNvW2eQbcWDb3M8/aHWY/cTKVWA6tndYMbTSuCidiQQwpzJ/kPOzpc3iJCMwS0ARoQNb+DXBe4ladNhfhKj2D/8WkRrK5y8OSz3VkQfa1//8I47o9hKzOBKkz36MzCxTmITw/8N1mo7iNcotP2A7QNOWzxvE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715292623; c=relaxed/simple;
-	bh=59mEgVC4lkz46VEjh2qNmxWDlTxiAqyCrQSnZR5NBDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dawirr1xBzPnnAejLMCN2tsBfEyz+A5/rhgFvXsmhh91fusF+alZ8oLRzUC9/D2bF3L4sIPlX1+ZYR2OQSWQKMr3lLAcDObetXdbKtwyJ4Gcgc2mlZEI0Ty41AZwh2GrZ5eH9NgyjMTeWbksRBf10+lMf1zYtVqH3O9FfMyZyEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=di5Mko6G; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-47f13801f3aso482147137.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 15:10:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715292620; x=1715897420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MKdICX+lX8CE08nIGqEYXYRJN4FhWDTtg4wUvpl3cAY=;
-        b=di5Mko6GC7T7epR4LNQTDzrknh0xtFQHeQAXuVd9spUmCnpwF/AZHDFEqRR+lW2AJz
-         QEQVTH0+KQXE9z4+MITUgcl21Yw5nSjABKPfQ/GOexgxGBQaDp+Nfi4X2oGcRombOJMZ
-         Bkg609DfQZUQNQj2APCsc0t34flj+rl3fFdd1QvKMI/w+m4wFaB86vDkTSQgF54hRnjJ
-         zgddmDMEjPGwzcRp1XOeiW2H1CcMx/llFwTsSQYBA4qkCP27EUOezHfiwL1lSnkwDfBc
-         XKbZx2TIzujommW622COfx9bohLNHdhyFI4Vi5tulbnJAuASS/M2xyVFHJmRXvFi3kE5
-         qAVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715292620; x=1715897420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MKdICX+lX8CE08nIGqEYXYRJN4FhWDTtg4wUvpl3cAY=;
-        b=nFDbiB+irSj8+lr+H7ne/r1s+VgYBUhTXAVaBrBZvinMRh3zInZ6S4RrTqApKFHwiv
-         m4QSu6C8LYJ1PsnWr+tPewFXOJ7gLo3ihFDEBT088is6hLp5lDOJBVQcKFnCjYVcgACG
-         9DxCNidBOIX/yPADurzExCMWFYw1xN1Td1uGoo9NB8jwJLU2T6icFaC93XgDlwnQZrQk
-         m9OuaAK+8/FhaIkkA4AwBCEKoj5o1xh1xz6qQjce+QSBrP8uNNsc30dSl+HoUag1bbVr
-         UdJnAwDp6Z+l/5pvJaV4ft6cP/5DParuHUaezzO8omoYPlmtAtNlqdI1v/7LLb7LJe7Z
-         IVfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsF1oFNBJJ9wr2KG1uATkEcAm90RhgvUwV1uYZYrfYx6crnMtLUPyvzjtJ2T7d1pszkRxt/S/uxXaDXyrRwVgTILMUvoQfR2PS9745Fw==
-X-Gm-Message-State: AOJu0YwB8ZTI6M6+nKs7ASgulc5yS4t2HlaI2+GvBnGpEs/HF597i8Dp
-	H7ZDYuqZwqguYCAwwSGu/gOaf1VHZCU5PygOpH5cFqdVr1jNMg7G9+KXvXdZZiBiSBmxvlQMPSr
-	PRqWiYe7VTr4Gsq3LNLiKiKc2VByWwmaTkC9T
-X-Google-Smtp-Source: AGHT+IG9UCFfCI7smAQh5zYoU5+Q/8AopDE+XLvDQt4XHypQBrcuB26D5dwcSEX6FTb7qgBIbqU5zgrv8BJ4OSYe5Bc=
-X-Received: by 2002:a05:6102:3053:b0:47a:22cd:9716 with SMTP id
- ada2fe7eead31-48077e07a05mr1112057137.17.1715292619999; Thu, 09 May 2024
- 15:10:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D1A86245;
+	Thu,  9 May 2024 23:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715296636; cv=fail; b=sLID+R5SOaLj2Ba7Q0BeX7W0sGvgx2FRmYXQq3KPfPnAie52AmrdeIppG8G2YX+XxRtxU5ZIF1L34DapGlG2cfhsjiqzsy6wThkd3MuYu2DYSTxlpoj08120XwaQUhksPQE+0VQGlFYhIjrxeDyHhDepmiAi9LViuWH2OLUWrRI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715296636; c=relaxed/simple;
+	bh=UXA0JCyv8OMytZ0H4i06/TD8Z1/xe+Qc6wWGl7au9tk=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=alAt+GOhFt6dO7sAJoCGxOpubvx+QNsnN5rzw95tm/5qSr8dqEfwW/WRfDMViS9DpWziQyvvpnyfFY81rYnofALGs70ZkpY1A2hQq0w3uaQdgpeCw1pNNdsh7Hbqs3zG5i4q7QKYDZqtNuCLlOnVNrNsG1D1KHoeWPC+OE/Svg8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=H2X7NnAr; arc=fail smtp.client-ip=40.107.220.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mv+S4oT5btdaf5NTZadCO5czyKKH9CnUvHSw+u2wuEVqsK2dHTBulOYv6M67KoQwnj1KOnqMJFfMSTMhvdIIUOqTK7KVATe+07mznM3la/bkJQ+YAsVN2CWW4ZyrNeyEVX2DjRCuVd8bnhSFcews4d1a3SUPb5vOno5cJaxc5gFDXAkzRL34kguq32R0Nadx9c9F/EVjy/lH2RjM8UWJwAEvgxmRA55p+h96Gx7TlxWoNO6rVauv+x0SwDNsFXA6MEYeYo0DzSrqf0hiargCaIL0ZDE8BI7v9tK46HlwL3lodeAtY11SI5YFnWtzkVjivfbQjg49lRrvbgn0CVNU5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e/Y5qOLxo/jkhM4Q+Nn05n7/V2zeCTIldtJW8h/fXAE=;
+ b=h4A7E+icJ5sJuuNXwtxVJBSl3I/murR/DNkCPoBQekq00+tZjq88PzHE0oaJQldGaVM4TUQHBP8PwN5RXjoK0I03SucNTiJuA+E9DJmdeeYBupLjS13fK9m9l5PTZJ8L71HkG9k3BsmEe7F99cNgjmMWvKfHb3V/iGrBW8/s+FutZncSPyrSsaiMkgasC9Id+HgtBfAvI7r13gVjGPvN5mgGDb2bVlbn9HFWo76zi0Unrw9Xf77igC/IPPwEbtxF4rUDHRT3Bqgk/Xl3rcJLi8UNqjqfeC7yqA9XPqNFVXgsmyEBGwp7+rZQYrRprS+BDFMdQkCOFk4AIY+EOBSbCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e/Y5qOLxo/jkhM4Q+Nn05n7/V2zeCTIldtJW8h/fXAE=;
+ b=H2X7NnArYlDnzbGwzi5WOGGVX65zMi0Q9462d4EGXv0jKfOyZclar1K1UwXH6VWsZ/scl/+eEYMih6mWxmP232koKHIkyc8YzLB1ybq0d4vGCoczA9nPV4a9kazjMEnmnndnI0fWwRTubgRMnQmruBUtMWgWuIDy0Xv6g9LtH2+/hJ2cJ1D+uEZsYnobfIsr7TV69/64Mmzc/ZoeggyfWthLyRz9APi/FLuJM1FT4p2B+vRL1Ollx8b8ZlVEbuwG7kSlRFC9Vnw+26wHtGc1t3KVErDfZ5iMORK/72ibE2Fby4deaGPjdbRLIOsykphS+qNlCC7NFscVmbM8IqpZYQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ CH3PR12MB9343.namprd12.prod.outlook.com (2603:10b6:610:1c0::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Thu, 9 May
+ 2024 23:17:11 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::80b6:af9b:3a9a:9309]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::80b6:af9b:3a9a:9309%7]) with mapi id 15.20.7544.045; Thu, 9 May 2024
+ 23:17:10 +0000
+References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
+ <a443974e64917824e078485d4e755ef04c89d73f.1712796818.git-series.apopple@nvidia.com>
+ <4393e0d9-28c5-4b85-b603-40e457c9beba@deltatee.com>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-mm@kvack.org, david@fromorbit.com, dan.j.williams@intel.com,
+ jhubbard@nvidia.com, rcampbell@nvidia.com, willy@infradead.org,
+ jgg@nvidia.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+ djwong@kernel.org, hch@lst.de, david@redhat.com, ruansy.fnst@fujitsu.com,
+ nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, jglisse@redhat.com
+Subject: Re: [RFC 03/10] pci/p2pdma: Don't initialise page refcount to one
+Date: Thu, 09 May 2024 16:14:32 -0700
+In-reply-to: <4393e0d9-28c5-4b85-b603-40e457c9beba@deltatee.com>
+Message-ID: <878r0ivamq.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY5P282CA0109.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:20b::17) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com> <20240509155356.w274h4blmcykxej6@quack3>
-In-Reply-To: <20240509155356.w274h4blmcykxej6@quack3>
-From: Justin Stitt <justinstitt@google.com>
-Date: Thu, 9 May 2024 15:10:07 -0700
-Message-ID: <CAFhGd8opxHhTdZhDg_hq7XWQFxJ34nLDxTd-nBBgye9BLohnqw@mail.gmail.com>
-Subject: Re: [PATCH] fs: remove accidental overflow during wraparound check
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH3PR12MB9343:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5175b1aa-c00f-40eb-60c4-08dc707e270a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JewIp9HoBv1Dv5gQsltACQFTfrUxP2II8z5L401H+oHRC2Zreq2+ByR+H1Qp?=
+ =?us-ascii?Q?VS2cWa8YOo/0mYJLlqtk3kSeMtX1gSvfDrmJfsUY/8UPfAyVnp3tEwTTFkbI?=
+ =?us-ascii?Q?xq6yYzz6ded+yNDokjdOnW0FVWSfATdxMkXHgyEXRcIjZSju1swdpmE9gwIn?=
+ =?us-ascii?Q?F9JsIVriIJN/6UGW47LlQFWFo6HXV6BaxGL98HDUfYnQCxl9Q7oPMk4tgNQD?=
+ =?us-ascii?Q?xGNXvJe0CcFFeCSSzsyX9A+jPZMFW+gwb/5WCB0qecIVuxe2CX7miKTcp+LH?=
+ =?us-ascii?Q?cv7Zd+x9r+QmmFBRUkKYi1jofSeAOmAIsTxvlJe/rvf298rAgCFoIBGqHNx3?=
+ =?us-ascii?Q?COffjbuknN8ONKXsIE8KZd7IG2xEPg00iG9qWseHFtcwOc2/WsH4e1heHQOS?=
+ =?us-ascii?Q?BPUpB0PaBqLQMct17J6BueaO+5WTD45KjxuDfUnjF3W+uJstbv5zS7uFvzxr?=
+ =?us-ascii?Q?azLfc7dUzSqNI8Tkoa88OgTCvke0kLPxb7PWb7mi0bJibrgnWdK4dDawQ38z?=
+ =?us-ascii?Q?7BH/FwaEG86zoJ8NKWF+zbsPM2kS/HMmNVggx+SSbGmXm5zoCxAk23g55oFQ?=
+ =?us-ascii?Q?Q2Te/CKL1/sHr96vshTfRAHHHJ1TsfsdLhLcfW68jo7uS6NJvdRAFJInq6kE?=
+ =?us-ascii?Q?fxbzpe9Jsa0uScfgX0hAR/xE85WfxONBGsyvmXuqI68SiiDIzDQdHY4/IQ3R?=
+ =?us-ascii?Q?jCD8D29E/yvgETnLgqCKLHUWX+BgKj8G5CIYxCAsGIgDdNhhLSobP0+4gDT9?=
+ =?us-ascii?Q?w99hrMqBVU2fIb2FX2AoxwnzNdnEykvff6QMoI9op6a0YNONyj5V3RYkRCd2?=
+ =?us-ascii?Q?JArIc2f12WDSEEFvjJoo8HbwnK5WKuI22PPmhL1GnHWKMYpnsHmYBA3+Ip1z?=
+ =?us-ascii?Q?3mZaGHo7O4EK9JWw5JEmk537wMzeUq+O45tNo6g0AhWak2FVeBKXevi4wx3d?=
+ =?us-ascii?Q?7eFPvP6hHtMv2OEXuF85s1lHdIykv75d2JAO2q9nS3FXeUPyyKUQ+9a54XMB?=
+ =?us-ascii?Q?wEKE3EsWCwfxV13bNzvTVKY9E7pdWw7OKG9ZTFcoSYCpjh6mBN9ssNqp6GgO?=
+ =?us-ascii?Q?jQU403Vh9nRWeSB9cjai6D6uJ2za78ZdapQvPXof/wvXLEV3u1N1Qe+lEZtv?=
+ =?us-ascii?Q?DVQZ+67AF9q8JYt2/gWXqQ9vzzwCa1+Eq8l0S6iYHeeHPVds4i5EohVIjPkA?=
+ =?us-ascii?Q?1GfvbGibJn1F0U/I+VotNEw+u5k6a9rY/8dcEsSktho+uQxX3tq12kZICiLO?=
+ =?us-ascii?Q?YAfmzhgj7rEreuj9RtSLeLe8wxpHTJiRfJo1g5YtTQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zMWkF/hsQPKaZmh832wf/RlFtcGW3dYm8B8bh36PnBK01mrUkBE/RbKZQe88?=
+ =?us-ascii?Q?vWROHZVinsGPgoKsWE2W312GVapB7v+04RXtHuwAIennd4MqjA5+/5AbugR+?=
+ =?us-ascii?Q?1eytwh8iB6zp4BCvybMcvTfrXkR77SZdahFibpfKE8/bsMs6XXGBZr+qucjs?=
+ =?us-ascii?Q?w0bntH5jtE8jlJAmbOit4jgysTfaNJa+x0W9gu/gqsctycX0jc5GGV7vFuE6?=
+ =?us-ascii?Q?t2HBd9cqCTaEznatKGCqNm5UlECJq/9u+Xp/bPTOAdoKqqx6++sUrnX31kwj?=
+ =?us-ascii?Q?+pVzYK16gH9NalNhwcRQjapE9N+SQL4imjRUF0WkVHkrvw3KCmt0XCJ+SjBU?=
+ =?us-ascii?Q?fDBoOyvEvGNaOoQZoGScttWQSWxUxIR0FIzLNzSdoEGso96vqSsyYcLONaMD?=
+ =?us-ascii?Q?gx9AKZMNWuNj7vU3JC3Rw6CYzydugXqmdbLHE6AZqLWzNcujdsD4sks086Yn?=
+ =?us-ascii?Q?Y3DeDzBrTTneiA1BRYcVsGjBM9QQ2hdO5z1SMPOjc6Tjjids/ZQKEs1eMZc6?=
+ =?us-ascii?Q?fjy7R+nemNFbX/ItIgQBD7PszprCOQ5+uoG+IMMnIGRhwjmZkkZvnfeBUvT6?=
+ =?us-ascii?Q?vUDHKXaWA43FdNP1hS3XEPw6xDfvUEfet/Tt9an40/BKCv35EPffHdLq73oF?=
+ =?us-ascii?Q?TNzg2/KCmCOWHW/zXZyQuDRIrThlFet+JmF6vGLAkR+PNhBmjb7Du9nAEDc0?=
+ =?us-ascii?Q?hFZWVra6e8CvzqT+ApAu/y6IB2baBTMvwmAcZflrcVHCucshiRp62TWtBXhf?=
+ =?us-ascii?Q?Q5vKvrOouSy9V5vjMMmci4k15bKuEV4dc/hGdbzGzDwOEBCtZQfpM8Ds+pRM?=
+ =?us-ascii?Q?5o5ll23Kiul1s8UJl+yVnHIcXtX1ufuhFNIBwMxDvZCCnq9BhcrMgcDuHOWN?=
+ =?us-ascii?Q?IjUR6v2UBLbRw6SUqomcnGRVCRx/wgr5X2cO57Z40czRG6ivcv+Ap2z4fWGP?=
+ =?us-ascii?Q?Ah/RHCOyMzJI1a/s1bAj2T6LAqkOyrHzUslvpIeFG3pDSaqTOE8oRIFXyl45?=
+ =?us-ascii?Q?Bkser+3WgwF70GUo47CiDqwxwvyNmAP9tER7kfMFv+LHe1pH7rDyFKs2LpgU?=
+ =?us-ascii?Q?zMWB+scq1eOnf9GCcrLHxielZwOPRSukr9ug0+Nv+MztklOErXcPwTvCCsPY?=
+ =?us-ascii?Q?WhjNyAbFeqJ0AU91AM+sitWi4c9qpZUGVF5F0b/Dmm+QT50CP+5EZG1gRa0r?=
+ =?us-ascii?Q?EFkQ0YqppO0sZRnpBVigPxKEv1A5k+U3EMWg34w858KY+VjdXOFdQ4dqIG7w?=
+ =?us-ascii?Q?rZWMTznPR6ew6rkyYQng840HVMy86gOgYMwolbkxaYj4Yrj11xpvBB+fPua1?=
+ =?us-ascii?Q?Xdpw6MyEmsx/QHEn7NZV5jOVOOuU9+j+LFYiGc5OdQw+17oYnzZCPLYmLDGi?=
+ =?us-ascii?Q?tGHivxfKNP1gU2Od0isu2FlyF9tss2Okvm9unG71p3yxyhYIIE/QBg8iBUPv?=
+ =?us-ascii?Q?7sBEIS8Fof2ALcMxQBR4IUxqBnnGiLZr46uqW8VH71trWhJ4/xlEbBdMbqqQ?=
+ =?us-ascii?Q?gcOQ6AijsN+T1rdOe1Mof7p3HE93RV/Db71uDvA32Vl+SjwhyIt2IfP2iS0u?=
+ =?us-ascii?Q?rc/aVVj+btTvHLG/WVNOsEoegyqGWJdZJ057JXYJ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5175b1aa-c00f-40eb-60c4-08dc707e270a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 23:17:10.5071
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O7Kr7ufd8utlvWeAZTDxRUq6fOYV1BGqrI09i9yR/C5HG2I23iqrRibKZo7KX63VAmFgYEdeBbKxb6GqFhVUdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9343
 
-On Thu, May 9, 2024 at 8:53=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
-> > @@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, lof=
-f_t offset, loff_t len)
-> >       if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
-> >               return -ENODEV;
-> >
-> > -     /* Check for wrap through zero too */
-> > -     if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len)=
- < 0))
-> > +     /* Check for wraparound */
-> > +     if (check_add_overflow(offset, len, &sum))
-> > +             return -EFBIG;
-> > +
-> > +     /* Now, check bounds */
-> > +     if (sum > inode->i_sb->s_maxbytes || sum < 0)
-> >               return -EFBIG;
+
+Logan Gunthorpe <logang@deltatee.com> writes:
+
+> Hi Alistair,
 >
-> But why do you check for sum < 0? We know from previous checks offset >=
-=3D 0
-> && len > 0 so unless we overflow, sum is guaranteed to be > 0.
+> I was working on testing your patch set, however I'm dealing with some
+> hardware issues at the moment so I haven't fully tested everything yet.
 
-Fair enough. I suppose with the overflow check in place we can no
-longer have a sum less than zero there. If nothing else, it tells
-readers of this code what the domain of (offset+len) is. I don't mind
-sending a new version, though.
+Oh great. I haven't extensively tested the p2pdma setup yet because I
+rely on a pretty janky qemu setup to do so.
 
+> I managed to find one issue though:
 >
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> On 2024-04-10 18:57, Alistair Popple wrote:
+>> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+>> index fa7370f..ab7ef18 100644
+>> --- a/drivers/pci/p2pdma.c
+>> +++ b/drivers/pci/p2pdma.c
+>> @@ -128,6 +128,8 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
+>>  		goto out;
+>>  	}
+>>  
+>> +	get_page(virt_to_page(kaddr));
+>> +
+>
+> kaddr may represent more than one page, so this will fail to map
+> anything if the mapping size is greater than 4KB. There is a loop just
+> below this that calls vm_insert_page(). Moving a set_page_count() call
+> just before vm_insert_page() fixes the issue.
+
+Good point. I'm in the middle of respinning this (I was hoping to get it
+done before LSF/MM but I suspect my travel will preempt it) so will add
+this fix.
+
+Note that there are problems with both fs-dax and device-dax in this
+version which the next one fixes, but any p2p dma testing would be
+appreciated. Thanks!
+
+> Thanks!
+>
+> Logan
+
 
