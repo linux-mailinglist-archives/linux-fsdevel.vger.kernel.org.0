@@ -1,170 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-19220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37338C1874
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 23:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 308988C18DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 00:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3347B1F22834
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 21:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAE721F22FF1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 22:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A235E12838D;
-	Thu,  9 May 2024 21:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D76129A6B;
+	Thu,  9 May 2024 22:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QK3JNBrc"
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="n+/oc90g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9867182871
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 21:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892991292CC;
+	Thu,  9 May 2024 22:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715290508; cv=none; b=nwtXepgFMYBrT+qqEW/zyWbXpc03jS+JulIDJoPayDSXy4QGChwl3p4iYkbGFErXAFUCUToo1VOjr2GhopMFAXDK9Mx7z1WWbd6uAZeRPrS4VLFvoplzkw/TSxBBWWFVLMCCTOKap4IW95+bmfTFrwKClVlFEUkbOon2Mpa4Rqw=
+	t=1715292007; cv=none; b=Aax4KDamI3X+f9hI0V631I9un9UUupwwpDXJgrb0y0u4yfZY31/84+ADOytPPT5Wg1mdGpsLRc7mzHF2reEwrf7Q7LOmNLwdux/in5qeL5/0awSeRDw9YlCqvzgczMOEFDU2jSClXJT5GLefHMHuN0gJa1z9XdFWJ3cNAwm2qz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715290508; c=relaxed/simple;
-	bh=uv7v4MLGPmkr51z3KG/Rh+hiMOP4ZZ4Gh3YiVTDYvFA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lleVO0NhsG5Tnry9IXQXDAlmYRxqhJja5mkKdxZ1+3u5H2ARKUZTiVCLp0PmD/x3PQ3rarGt2EkB7KeiZ415zM5rfcpzNGIdikwPLRWP51Z6IPzcwOA5WuhFvGnPEe5LE0llO+AfYNmXs2v9qXRiePZ4l2NWJv5SUOwClXxawpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QK3JNBrc; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7de9c6b7a36so146513739f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 14:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715290505; x=1715895305; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3ImQHVo+vcC5MB5qhHl7DBcXB3jiIy8A/c5k1YsEXD8=;
-        b=QK3JNBrcSu/NcL1suArpqCa8gQtQNQR+tgaNL2KSrFscI6VSuhIQ/ttF8JTLC9UC7h
-         A4OIguVzNL/J/qmy5Pjpgq/z7D5XYY82LpOff8nfvYGR2kUkXnYu0vlrgOFa62/2989A
-         RZQkyHGVM4GdVr1bTwsywHUiM7sSwzf1SEEFVVfWOqaQhZzAIZmG21fjMQ7ROlCZLy2s
-         9eIvAZrwKAS+gKyUpPx0nmV/eUY9Iihn2wsHfjAmp+jJs1QR5+kkULhbJS+fFFfl8vWo
-         3+H6cbDX8paWaVIjS0Km+1wlirsvoJI6km313R5hfufBi8/dlBJk/P8ze1MveVy05uiK
-         wHIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715290505; x=1715895305;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ImQHVo+vcC5MB5qhHl7DBcXB3jiIy8A/c5k1YsEXD8=;
-        b=FpKAQ60MksXG4NQTnowGyi+31Swm6SQwRWUEgZB9cBUjimkwdYoDXSpN6mNCgcN8q5
-         qT8La1jPcoWbeNOk+JQHUQX8yK2qFs15CJKVrosskBUXV+PNdzZz4/q+oH5QM+3Y1bk0
-         ZIHj1t4eNuL2VeNJO5S4EEaczFdw2EWKvfmMadiRvIG4by/weWjzjYKF2WgkMsiIC7KN
-         QoIZBCzLvDPTveceicHcRZ48hI+TrIbDxTmPbhIWBk5JAMVcKOLBQ58r9VUCY7PxIuAk
-         4eWK8Ki3AKsNv9QFyV6cF+IrFv2G4B5IlCytEgak0mksGjXm+5Wc64Dn7JwSUF/xtOxY
-         75yQ==
-X-Gm-Message-State: AOJu0YyRPQTKSOei7PSm6ulWIPy7rBJG9CKVttcMb1jKmx07wCg7x/Qz
-	+pzZLFp8g8S1p9BAFAIZ292vyabbRtbx8vYV3zTy/3FTqlddfSN5TJUG+hX5UphAvBnkYDcd0gh
-	Nn9S8HkrBHYSfXNQGjo/NJg==
-X-Google-Smtp-Source: AGHT+IEiRdYq8Wex8h99nh5WydPpX7Vq4lpKhEWtZ+gSr9d2J4XqXwoNHRMO2CMehVVFUu1nF4aO/lTCJhlUg5Bhmg==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a92:d583:0:b0:36c:4844:2836 with SMTP
- id e9e14a558f8ab-36cc13899e6mr147835ab.0.1715290504877; Thu, 09 May 2024
- 14:35:04 -0700 (PDT)
-Date: Thu, 09 May 2024 21:34:58 +0000
+	s=arc-20240116; t=1715292007; c=relaxed/simple;
+	bh=fhTJUGDcdOi43Jnd8puKDUnYXo8xg3dyrBSae3d5BFY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=Yu3Bqywk+2hZ7uXShm7ra3JKsY+bbAB3XP7aPK7vsBF09k5APq0jHRsoGWLWdkgNcZhpo6ESNU6IeFFvQTYFC1P4FZQIji4cIbtoNMOVrKAXCusLVqiqzha6tJRBgqfZANtQDVXaSBHsWzRYNTCnrcPZmWW4m8gAjUir4r9r6rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=n+/oc90g; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=6ReveTWWElOwm+nOGbREtwyDH8pYqac9yedB8poPIGw=; b=n+/oc90gcMIoirqjRPYU5I+I7c
+	jBk0Nz3akXqr9z99aU970UhzNXSLgCnlcK7LnHN+/lW7cpL+5Hiz3MfmYRc6MY55VS71LgnfXZYMy
+	zit14EOdpEv/3Qh9w/CjkjyL8XVSzIFBkWpEAt42olr05QNVrWNQmcv33eddLZG5BCD8kq+lMeg4P
+	lyRU9T5CFUq8vCTh8O6GSTaYD5Xi8MJJQ7ZGjCWfPece1jKNA+2sfHBqjUG/jAAiK7r82JCXHguRg
+	MzUsWIALL2EHT8tx+bKCpU/qj7O1TP0rOm0u2rcm0I3lwI/U+OnKQbsPUDGRMdW05H1VcUKMgvUkG
+	FPrQ88mw==;
+Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.94.2)
+	(envelope-from <logang@deltatee.com>)
+	id 1s5Bnn-00EPCu-8r; Thu, 09 May 2024 15:59:48 -0600
+Message-ID: <4393e0d9-28c5-4b85-b603-40e457c9beba@deltatee.com>
+Date: Thu, 9 May 2024 15:59:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAIFBPWYC/x2M0QpAQBAAf0X7bGtdh/gVScct9gXtCXX5d5fHq
- ZmJEFiFA7RZBOVLguxbgiLPYFrdtjCKTwyGjKWSGhwtJgeVnR9ulZORrCtqb6kyxJC6Q3mW539 2/ft+srErTWMAAAA=
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715290503; l=3178;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=uv7v4MLGPmkr51z3KG/Rh+hiMOP4ZZ4Gh3YiVTDYvFA=; b=moZCMobUhHuu5mlPuDlnNyf1lyGJPFFtu9MPpPL6JANzBLFDu+rnxPw5+YcK4vY3CvBZCb8No
- IgZlxxdOpElBUyRvDC0EZAHJ7C5+t0Jtsl5u7iJZKAXlCc4UzjVKcU4
-X-Mailer: b4 0.12.3
-Message-ID: <20240509-b4-sio-read_write-v1-1-06bec2022697@google.com>
-Subject: [PATCH] fs: fix unintentional arithmetic wraparound in offset calculation
-From: Justin Stitt <justinstitt@google.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
-	Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org
+Cc: david@fromorbit.com, dan.j.williams@intel.com, jhubbard@nvidia.com,
+ rcampbell@nvidia.com, willy@infradead.org, jgg@nvidia.com,
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org, hch@lst.de,
+ david@redhat.com, ruansy.fnst@fujitsu.com, nvdimm@lists.linux.dev,
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, jglisse@redhat.com
+References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
+ <a443974e64917824e078485d4e755ef04c89d73f.1712796818.git-series.apopple@nvidia.com>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <a443974e64917824e078485d4e755ef04c89d73f.1712796818.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 104.157.31.28
+X-SA-Exim-Rcpt-To: apopple@nvidia.com, linux-mm@kvack.org, david@fromorbit.com, dan.j.williams@intel.com, jhubbard@nvidia.com, rcampbell@nvidia.com, willy@infradead.org, jgg@nvidia.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org, hch@lst.de, david@redhat.com, ruansy.fnst@fujitsu.com, nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [RFC 03/10] pci/p2pdma: Don't initialise page refcount to one
+X-SA-Exim-Version: 4.2.1 (built Sat, 13 Feb 2021 17:57:42 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-When running syzkaller with the newly reintroduced signed integer
-overflow sanitizer we encounter this report:
+Hi Alistair,
 
-[   67.991989] ------------[ cut here ]------------
-[   67.995501] UBSAN: signed-integer-overflow in ../fs/read_write.c:91:10
-[   68.000067] 9223372036854775807 + 4096 cannot be represented in type 'loff_t' (aka 'long long')
-[   68.006266] CPU: 4 PID: 10851 Comm: syz-executor.5 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
-[   68.012353] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   68.018983] Call Trace:
-[   68.020803]  <TASK>
-[   68.022540]  dump_stack_lvl+0x93/0xd0
-[   68.025222]  handle_overflow+0x171/0x1b0
-[   68.028053]  generic_file_llseek_size+0x35b/0x380
-...
+I was working on testing your patch set, however I'm dealing with some
+hardware issues at the moment so I haven't fully tested everything yet.
 
-Historically, the signed integer overflow sanitizer did not work in the
-kernel due to its interaction with `-fwrapv` but this has since been
-changed [1] in the newest version of Clang. It was re-enabled in the
-kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-sanitizer").
+I managed to find one issue though:
 
-Since @offset is later limited by @maxsize, we can proactively safeguard
-against exceeding that value and also dodge some accidental overflow
-(which may cause bad file access):
+On 2024-04-10 18:57, Alistair Popple wrote:
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index fa7370f..ab7ef18 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -128,6 +128,8 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
+>  		goto out;
+>  	}
+>  
+> +	get_page(virt_to_page(kaddr));
+> +
 
-	loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize)
-	{
-		if (offset < 0 && !unsigned_offsets(file))
-			return -EINVAL;
-		if (offset > maxsize)
-			return -EINVAL;
-		...
+kaddr may represent more than one page, so this will fail to map
+anything if the mapping size is greater than 4KB. There is a loop just
+below this that calls vm_insert_page(). Moving a set_page_count() call
+just before vm_insert_page() fixes the issue.
 
-Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-Closes: https://github.com/KSPP/linux/issues/358
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
-Here's the syzkaller reproducer:
-| # {Threaded:false Repeat:false RepeatTimes:0 Procs:1 Slowdown:1 Sandbox:
-| # SandboxArg:0 Leak:false NetInjection:false NetDevices:false
-| # NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false KCSAN:false
-| # DevlinkPCI:false NicVF:false USB:false VhciInjection:false Wifi:false
-| # IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
-| # HandleSegv:false Repro:false Trace:false LegacyOptions:{Collide:false
-| # Fault:false FaultCall:0 FaultNth:0}}
-| r0 = openat$sysfs(0xffffffffffffff9c, &(0x7f0000000000)='/sys/kernel/address_bits', 0x0, 0x98)
-| lseek(r0, 0x7fffffffffffffff, 0x2)
+Thanks!
 
-... which was used against Kees' tree here (v6.8rc2):
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
-
-... with this config:
-https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
----
- fs/read_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index d4c036e82b6c..10c3eaa5ef55 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -88,7 +88,7 @@ generic_file_llseek_size(struct file *file, loff_t offset, int whence,
- {
- 	switch (whence) {
- 	case SEEK_END:
--		offset += eof;
-+		offset = min_t(loff_t, offset, maxsize - eof) + eof;
- 		break;
- 	case SEEK_CUR:
- 		/*
-
----
-base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-change-id: 20240509-b4-sio-read_write-04a17d40620e
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
-
+Logan
 
