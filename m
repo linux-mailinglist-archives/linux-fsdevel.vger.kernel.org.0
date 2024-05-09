@@ -1,235 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-19153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE978C0ADD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 07:15:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC4E8C0AEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 07:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE88285B97
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 05:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93806284F09
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 05:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD6E149C47;
-	Thu,  9 May 2024 05:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D03C1494B0;
+	Thu,  9 May 2024 05:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQoywBiy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFkonWA7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F165712BEA4;
-	Thu,  9 May 2024 05:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADA110E5;
+	Thu,  9 May 2024 05:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715231702; cv=none; b=M20wBKv1KmPMI2YetKIHte8XdX1oOsLDwQcAV4/kVjGbt7LgdtZpiYBivxWYM6Mb/cUJEvRi0aY2UUtfDo2etnGZruROxlcL8+l6he8JsrW81V+/STuGay6UFLmYnCDKJuS3ShDNYpnJYmF1wltJI8B7rSDqcZTIoFR/Xw8dj5I=
+	t=1715232219; cv=none; b=EuUheM5qmdtvxZkD4gHGdvXXhCAhyfGD7L4dQH/S8AUplDNxeWCpq/V9Xi9pc+xjgJWormrTJUPZO14RJ5JC1maRpKxKAV8y9X22BCmQTtg+rdaKT2dpp1TnvYHvhlHswMZwkqegzd1+Qf+hU8t32qIT2qOsMdNvMcG5erzixlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715231702; c=relaxed/simple;
-	bh=dgBpxGC9J1WlBSk7j6Dg82LPiieH8ot79JOBQEcnXq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2X0yRfuJgzYC4GSubvuUR/5Mc+Bz/XX8LWsy43oCV78USf9Uh4j92xsVivWX0kqhbj4GJ/BO21C19tiXwk2NykWKbDTZrv1yhi9vB7FfA1jx8/s+s8AyWaOhf/UcAKOxIkaE8Aj7rR2p4Ycj47Tv1oXF0eztuzz2OEIiDcDgZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQoywBiy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8AFC116B1;
-	Thu,  9 May 2024 05:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715231701;
-	bh=dgBpxGC9J1WlBSk7j6Dg82LPiieH8ot79JOBQEcnXq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BQoywBiy+PCheZmKhnImt/9BOTJD7sOxdMdOTlOLCfvXUKjgZOA92aRVR4OmcoxF9
-	 PTbOPGZF15CWvHBVuEwGeUtVVWmwiTb6FfsEOgf/6RkiKxAdRchyA72tARTMQHHS56
-	 7stGdQt7WDteZaEvMke5xN3k6+K3rexu/sDXquvtBr5Y2djj6r0Ay4Odn4nRO45Keu
-	 8+zyLIWzfYoyoPvE3xWjoC9Knv0/BRtHDQXiZtyiizSj8iI/Tmkzv636dmxJZptUSp
-	 6/rG79xlRkSsK2N27OtXiWF1LNTVKFxU0CRMDW0fjxV0VUp1GCtX3Br/Lr+jHOaIOv
-	 Lun/NWWKy0C5Q==
-Date: Thu, 9 May 2024 07:14:58 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Seth Forshee <sforshee@kernel.org>,
-	Bongsu Jeon <bongsu.jeon@samsung.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@android.com, linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linux-input@vger.kernel.org, iommu@lists.linux.dev,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
-	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] selftests: Include KHDR_INCLUDES in Makefile
-Message-ID: <Zjxb0k--qUyZKSg6@finisterre.sirena.org.uk>
-Mail-Followup-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Seth Forshee <sforshee@kernel.org>,
-	Bongsu Jeon <bongsu.jeon@samsung.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@android.com, linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linux-input@vger.kernel.org, iommu@lists.linux.dev,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
-	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org,
-	bpf@vger.kernel.org
-References: <20240507214254.2787305-1-edliaw@google.com>
- <20240507214254.2787305-4-edliaw@google.com>
+	s=arc-20240116; t=1715232219; c=relaxed/simple;
+	bh=A/nS3HEOugLNgKjph8tOEMwkUz1x3qdu92wcdow/m90=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LXmVXBcIkpaGR6FxlH+6u0yTvLafdvUGZiHPFOstk6kvLo+eTvaMo3Tmzo1bNIrLw0l1luDnksPDdJg01JOV8qHW+N1/Z6miC3wBgwacWdDXDkxB7goi8L3XnE1xweyNTCEMHGaIQdj+VJDnajF8UjhH4dm0a0Sd1QLW8GFA+KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFkonWA7; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-69b6d36b71cso3128166d6.3;
+        Wed, 08 May 2024 22:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715232217; x=1715837017; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A/nS3HEOugLNgKjph8tOEMwkUz1x3qdu92wcdow/m90=;
+        b=nFkonWA7VYy2ryh3JzZmyMg5bXH8pWCJxpUDx9KZLfzRenDFndL+SsicUXNZK1KJP9
+         dDGmunnPn+RRE7ulFAhWN46ugCPbBemqmjKYpGCi2ThBcIFf7i5Fye2zvxKFLWY8tI4K
+         AEkBAz1qFGP1iOWDcAOdptfljEDTNS50F5jJ6OvQmnG7YbCMveWQ1vyULlUmqm356ssn
+         GmeIAUqq1vS7TmVXVniFjYXyd1DmsK50xgm4TgEAIwfnUfRiVgVn6i4DzvEVV7ovzUZG
+         W381DJk4D3Bi+/lUwD0P5s6Erd/JRnYj1vZg0wgNyY96KNnRsxEp43m0fkgShh7SAx41
+         8v9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715232217; x=1715837017;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A/nS3HEOugLNgKjph8tOEMwkUz1x3qdu92wcdow/m90=;
+        b=fwZSuhakX+RE5/RFoMZtqY5V2zObntt0rj+EO03EnJwgINp6B96Xdj8ydBtBcXA1kU
+         9/fPM7llLZGz332yej3BsfptzKyX7K5e/rigE/59uuWvWB3nJLr7flEwcLxrNi8DiQE5
+         xd4qk7zQNlEpydnmfE+audFCqotRMXqx2p604gzRB+PHN2ZBpZNdhtNT/VMgdnz+anyH
+         hnKXFb7UXW7hV4Q8HarQoUF9dH2euCKwY+7Yj87976F1Tjma//PVJbKRO0bjW0jGiHcE
+         TuV4OhM4hxdlivc6PtdTyzU8I2yZwA5avzLM+XTY+lLzyBPXxlFvbrplVBv4lK8Co7QX
+         IM/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVn7yV8JFAwwRvO7qVL4zPulbAXVXOyGlpNRhKnhSVwaY9rIVd+LOaQCPJJMg/6Ul+LOnBtnBDSNS23MBH038XRWbMII40aN/lCkCPylDXCbMwE/WgEhraF++Q9YuFx+rduO8zudaR2Cg==
+X-Gm-Message-State: AOJu0YznxU7ZlthlD5gQJaE2kntwbMjPL/rOZOJ4ShuGwCBtB72oO6bZ
+	pwca2azUbnOxntbo41BIfN2bBWeEY60Q1srqbTVhiWqGEwRoWdyh+/W1Sfx/6hH4wHhS4h+hD86
+	CQZy3LB5pk2rmtsmhefZsbuu5NxA=
+X-Google-Smtp-Source: AGHT+IFHax6DPjC4uHCr77vr4oXeNl+kGo4KMIQopk17XCY3WMP9xzHXwDiZSy64nODDp2byf7wFN5LD6FnKjp7gkak=
+X-Received: by 2002:ad4:5dcc:0:b0:6a0:d465:6088 with SMTP id
+ 6a1803df08f44-6a15156da86mr60562636d6.34.1715232216975; Wed, 08 May 2024
+ 22:23:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8TMyWXG1VGLOfNzK"
-Content-Disposition: inline
-In-Reply-To: <20240507214254.2787305-4-edliaw@google.com>
-X-Cookie: Sorry.  Nice try.
+References: <CAB=NE6V_TqhQ0cqSdnDg7AZZQ5ZqzgBJHuHkjKBK0x_buKsgeQ@mail.gmail.com>
+ <CAOQ4uxj8qVpPv=YM5QiV5ryaCmFeCvArFt0Uqf29KodBdnbOaw@mail.gmail.com> <ZjxZttSUzFTd_UWc@infradead.org>
+In-Reply-To: <ZjxZttSUzFTd_UWc@infradead.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 9 May 2024 08:23:25 +0300
+Message-ID: <CAOQ4uxhpZ-+Fgrx_LDAO-K5wHaUghPfvGePLVpNaZZza1Wpvrg@mail.gmail.com>
+Subject: Re: [Lsf-pc] XFS BoF at LSFMM
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>, 
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Chandan Babu R <chandan.babu@oracle.com>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 9, 2024 at 8:06=E2=80=AFAM Christoph Hellwig <hch@infradead.org=
+> wrote:
+>
+> On Thu, May 09, 2024 at 08:01:39AM +0300, Amir Goldstein wrote:
+> >
+> > FYI, I counted more than 10 attendees that are active contributors or
+> > have contributed to xfs in one way or another.
+> > That's roughly a third of the FS track.
+>
+> FYI, I'm flying out at 4:15pm on Wednesday, and while I try to keep my
+> time at the airport short I'd still be gone by 3:30.
 
---8TMyWXG1VGLOfNzK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've penciled XFS BoF at 2:30
 
-On Tue, May 07, 2024 at 09:38:28PM +0000, Edward Liaw wrote:
+>
+> But that will only matter if you make the BOF and actual BOF and not the
+> usual televised crap that happens at LSFMM.
+>
 
->  tools/testing/selftests/arm64/signal/Makefile          | 2 +-
+What happens in XFS BoF is entirely up to the session lead and attendees
+to decide.
 
-This is not really using any of the kselftest framework at all to build
-so I'm not sure the change makes sense for it.  OTOH it does no harm...
+There is video in the room, if that is what you meant so that remote attend=
+ees
+that could not make it in person can be included.
 
---8TMyWXG1VGLOfNzK
-Content-Type: application/pgp-signature; name="signature.asc"
+We did not hand out free virtual invites to anyone who asked to attend.
+Those were sent very selectively.
 
------BEGIN PGP SIGNATURE-----
+Any session lead can request to opt-out from publishing the video of the
+session publicly or to audit the video before it is published.
+This was the same last year and this year this was explicitly mentioned
+in the invitation:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY8W9EACgkQJNaLcl1U
-h9Aa4gf9HY7hIlNAryB75Fb1YdATwSHy7EQyKfWsSaobZtWWwgFh6CF0C6J7Wa0o
-UmFwVoKos72xm0UCKTtuBAxkIxhk1wupw0K6u0fVcraHpDV579RI/BAsIc1cFgf8
-cGvyEy3VRgjGDKorUJnMg9WU7qNTIfRovXGmXewa1WJHz1OFk+ETMSbXQ3rmKPlF
-2epuBPaw7gBN4W1nb9nGpZkG+Ub2hUJTN7nBB0IJ5GD+mrREYXyxAHiEk9AWR1Bb
-nD5tNG9ZWepZSGtR11j3jdPc2XVNksMJyMCuqG4tmIZbjuaS7mu9vvxBoSDxqD9j
-uK6Nqwb0FziTG9MkhW8EMgjvhlCGnA==
-=L/hl
------END PGP SIGNATURE-----
+"Please note: As with previous years there will be an A/V team on-
+site in order to facilitate conferencing and help with virtual
+participants. In order to leave room for off-the-record discussions
+the storage track completely opts out of recordings. For all other
+tracks, please coordinate with your track leads (mentioned below)
+whether a session should explicitly opt-out. This can also be
+coordinated on-site during or after the workshop. The track leads
+then take care that the given session recording will not be
+published."
 
---8TMyWXG1VGLOfNzK--
+I will take a note to keep XFS BoF off the record if that is what you
+want and if the other xfs developers do not object.
+
+Thanks,
+Amir.
 
