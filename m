@@ -1,134 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-19179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5F78C10C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 16:02:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE1C8C10F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 16:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DD01F221F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACAF81C2136B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03C015B98B;
-	Thu,  9 May 2024 14:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F51415E7FB;
+	Thu,  9 May 2024 14:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="RI3TeiEL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="asXUdheg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEAC12E1F6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 14:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2E915E814
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 14:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715263324; cv=none; b=YUPbZKJ/T44q4pz3xoXJ74g0ThfIZF43l5JSJqxmds2d2fwEiMtkIi4vuZBveAX4M+SblrsobKVuCf8jogRetJ2j6Ho0O3cGp07qVKF3GxYaGwtcHzH86wRfyozw7r6K9cMlnAg1GCzK4ADcMnLbfLsTFLoeXuoMSivcGCzw/U0=
+	t=1715263647; cv=none; b=bwEUwuB4Qvxf3b8VPDBDVoz6c7oqtcceoaEXNc+GsuwSWgwcozVk7pJTKks0uhsReaq33zJCRbmAXP0zTkZjGWdJbcs+D9wQd79ceU5Na/2riX5WfehVI8FvX95jPt/j4Fh4vcwMdS+xnqoCYoi7bIKj8LUpYrnh6BJxaInniek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715263324; c=relaxed/simple;
-	bh=M0h7GIYKm5K8c21WGyDVnq1wSfNIwK2dw6Y/cyw2mnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQXHDCaIdmI9XXtdt2X/pJrkD5F05ARQmFgQSj09s7OEpnPyfSiEv+8rQvSkA+Ym6Huwb4wNrdgt91xPDnfY6KvZILNCFklLGBYcM2D4UU90LZtAVBdlzW1glagE1poFFH+q/TKRl3QFc7FNyxug0+xqgueti2lmJCHhKHCPzkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=RI3TeiEL; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43de92e234dso9691421cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 07:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1715263321; x=1715868121; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FxXM07tt0/OK6dXc3DYIRyyq3et18XLiV0rVPn2jyy4=;
-        b=RI3TeiELwkUkaOsDHKhU4Ou7D4m2xNRv5OST5lqJL7ExUXKCUr/dbGGqzth8FzcwSK
-         eMzUf3LjIkFyt8Zczg8ftoP6zotqLjkNuRd0MMS9trfjP9luBIs2nwuZPMDgLoWpGxqW
-         UiLbNd2G6fxAWjSUcGB4ABoydhLsEQ5F5ZXM6hFyiyG1epExNFpqDrPA/URjEXE3qfGV
-         XKKXLlIQ9VsRfsqJbw5mKMZKNU9tGupPCkaowRl+xUo2QfdoqJko9VnsPfyiUYy4IEys
-         g/b3Dmb6ETwOtUGJBN02i6vz7UHQp2cGNAj9bDGXydwR9VPDinEEPbD66JBmUJFsFGx0
-         88DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715263321; x=1715868121;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FxXM07tt0/OK6dXc3DYIRyyq3et18XLiV0rVPn2jyy4=;
-        b=ZKgaZK68qBX/Hj7eSD6PE8ZiR/NLHDb/7c9u6j+IAcdJghL+mfDAQNSyL3Y1W2JXt4
-         7b7sT+1lOFix02ZSjOn1C0ZDf+Ob2W3quX2E2P6vOMlnWxVUvictyTR8sAyRhrNrM5aT
-         pieZrI1uugM0hVPnAN0QTCq7NRmKV28B/35DgKew/D+irEDluKVK5KY8J+bIWCp07Vy9
-         vwZVpqFLZXs/09/v6XoSBMvr9pASu4ehEa/NcHMT3J0LvCSrIKg7q8mi097APJcq3cN7
-         1KYQFhoDkzIvZBgfwNmjWAAjEsMRgP4/Vuy5k+M/AiH5LIn9NK/8lymdpQYXPTZ38quI
-         5YqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuhHW1SwkR1M/ztBfMJmpe5xDOPQR8BicL+VCGXMdJq3oH0vB3bz7XYwzYOXBbHabE6SbMHjzf5TUHe3NZ3Ig8HEy/V3PbposgvK3nUg==
-X-Gm-Message-State: AOJu0Yy9kbZkwJOrIIaDes7Pm/L2PK0c15XV4C2FbDVfaoxJRfoxfwh6
-	7Q6FUDSnmoMedBfE8l9GaVLjSeN+V7XKiFFV9lCZYkht5u83QmWmlc9rlWvG0Hc=
-X-Google-Smtp-Source: AGHT+IHJeZ7OXr4LZ9Z5cUPR+WM0M9J4Pkw7iCipKJxZeay1vOmlP//gFF0u3LftJDLZcU+sbpDopQ==
-X-Received: by 2002:a05:622a:90:b0:43a:b66d:1a67 with SMTP id d75a77b69052e-43dec297526mr39555301cf.29.1715263320889;
-        Thu, 09 May 2024 07:02:00 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54c95c2sm8535041cf.14.2024.05.09.07.01.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 07:01:59 -0700 (PDT)
-Date: Thu, 9 May 2024 10:01:49 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH rfc 4/4] mm: filemap: try to batch lruvec stat updating
-Message-ID: <20240509140149.GA374370@cmpxchg.org>
-References: <20240429072417.2146732-1-wangkefeng.wang@huawei.com>
- <20240429072417.2146732-5-wangkefeng.wang@huawei.com>
- <411eb896-56c6-4895-a2ba-6c492f8b51fd@huawei.com>
+	s=arc-20240116; t=1715263647; c=relaxed/simple;
+	bh=JiFidWgVbo7lpqQfwmJAj0eW1ruWTPsb153Mm5x9pLE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=OCjUmqL5esUkTOQOOL7thX1MbK06OD8tGrjpqmoMI7mSlsEmbk3qH76xpvZvroq1jm6NKpTWp1Cah/dn01+4i9aTY4y38R5/w1NyFlqqz0KeOvBPMRI7wbBjB91/z35UFU9NoQ/ykyfk/Dmb3SS2GnKfymQ4Dxe42o851Q3d3X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=asXUdheg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715263644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JiFidWgVbo7lpqQfwmJAj0eW1ruWTPsb153Mm5x9pLE=;
+	b=asXUdhegS1uXlxgRXX03oE/7cVRMFcQd904/G6UuQxVyhy9iGG7CFr+xHiLnzhRxr9Q6xb
+	Z3oU54SrEC4oSkWeFUd0/cbDeH3c2pN4NnlgZnQ0hKEOGhto+xP9iqJkq4P21UHOaC/kAA
+	lZLFJC0j3aR+i/0wTOZkKtPWrxEc+Rs=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-93-UhHeasztPz2R59_V14Vzyw-1; Thu,
+ 09 May 2024 10:07:20 -0400
+X-MC-Unique: UhHeasztPz2R59_V14Vzyw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 792063C0D7B4;
+	Thu,  9 May 2024 14:07:19 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.34])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 202345AB8CC;
+	Thu,  9 May 2024 14:07:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegtJbDc=uqpP-KKKpP0da=vkxcCExpNDBHwOdGj-+MsowQ@mail.gmail.com>
+References: <CAJfpegtJbDc=uqpP-KKKpP0da=vkxcCExpNDBHwOdGj-+MsowQ@mail.gmail.com> <1553599.1715262072@warthog.procyon.org.uk>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
+    Jan Kara <jack@suse.com>, Christian Brauner <brauner@kernel.org>,
+    linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Don't reduce symlink i_mode by umask if no ACL support
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <411eb896-56c6-4895-a2ba-6c492f8b51fd@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1554508.1715263637.1@warthog.procyon.org.uk>
+Date: Thu, 09 May 2024 15:07:17 +0100
+Message-ID: <1554509.1715263637@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On Tue, May 07, 2024 at 05:06:57PM +0800, Kefeng Wang wrote:
-> > +static void filemap_lruvec_stat_update(struct mem_cgroup *memcg,
-> > +				       pg_data_t *pgdat, int nr)
-> > +{
-> > +	struct lruvec *lruvec;
-> > +
-> > +	if (!memcg) {
-> > +		__mod_node_page_state(pgdat, NR_FILE_MAPPED, nr);
-> > +		return;
-> > +	}
-> > +
-> > +	lruvec = mem_cgroup_lruvec(memcg, pgdat);
-> > +	__mod_lruvec_state(lruvec, NR_FILE_MAPPED, nr);
-> > +}
-> > +
-> >   vm_fault_t filemap_map_pages(struct vm_fault *vmf,
-> >   			     pgoff_t start_pgoff, pgoff_t end_pgoff)
-> >   {
-> > @@ -3628,6 +3642,9 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
-> >   	vm_fault_t ret = 0;
-> >   	unsigned long rss = 0;
-> >   	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
-> > +	struct mem_cgroup *memcg, *memcg_cur;
-> > +	pg_data_t *pgdat, *pgdat_cur;
-> > +	int nr_mapped = 0;
-> >   
-> >   	rcu_read_lock();
-> >   	folio = next_uptodate_folio(&xas, mapping, end_pgoff);
-> > @@ -3648,9 +3665,20 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
-> >   	}
-> >   
-> >   	folio_type = mm_counter_file(folio);
-> > +	memcg = folio_memcg(folio);
-> > +	pgdat = folio_pgdat(folio);
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-You should be able to do:
+> I think this should just be removed unconditionally, since the VFS now
+> takes care of mode masking in vfs_prepare_mode().
 
-	lruvec = folio_lruvec(folio);
+That works for symlinks because the symlink path doesn't call it?
 
-and then pass that directly to filemap_lruvec_stat_update().
+David
+
 
