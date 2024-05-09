@@ -1,96 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-19181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539198C10FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 16:10:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFE28C1131
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 16:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28111F22F31
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:10:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 958C62840DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FCF15E5D7;
-	Thu,  9 May 2024 14:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E421915D5B3;
+	Thu,  9 May 2024 14:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="cFE+pOE9"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="cawJGNe+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31F015DBBB
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 14:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B25115E5C9
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 14:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715263816; cv=none; b=H+4J8rswQu64wK3jci0zLX3y5lqwiCSdUnuaXoZIvwsfuKs/fkt3sGNUlL0++ObgvSSW5MW9UtupVdB7Zpa8M5+nXPZnXYChBUG2y5K6/XvVi7iwb80QrMOvDHWqQPLkjMmk6nR1Ltxag+eVIDyn9u2nxhwWlMzJRpOIQciJAlA=
+	t=1715264897; cv=none; b=EqS3AOLhW5ab2qZP/nsCYXiJ6Ch/+62D7wokgJrnyyt7y0CJB2qV2jiSElzAe06qfgtEy2+Fvp9ogUSis5TNHle9Us6xb61JllROx3PpszxbopiPMVYfNvkKPbYr3Z+2w2lQcfvSf/pDyxy7IUAJ7mEaaszSvwADUh2J1fdhd5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715263816; c=relaxed/simple;
-	bh=y+IeX9NStckPkhxJt4hLlrr6lHDP4HAslq6+x7ejDjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tx6ASinVFrceXmE6AV5uj9UNAwnrBjeMfr6lbutIEIW4/n9wIyWJoQMk+b40uiwKscKI/xoTuDZzNVOTr3mBaUOvhQvknhKAVw1ztqgcE0T6OHn7lX6wr9P9r6HKONxcQRDI8qv03DrtgPYNWmTZSJ4sQ8mnqpyMlZMo6zTcBoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=cFE+pOE9; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59ce1e8609so356771566b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 07:10:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715263813; x=1715868613; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+IeX9NStckPkhxJt4hLlrr6lHDP4HAslq6+x7ejDjU=;
-        b=cFE+pOE9L2Ei7YAn71/VuH8KXU7FP/Z6bGd6Xnp2m00NdiEZzyBen7BnukGvRvxESP
-         pkzik6p9/Gtn0Da51jzaYDUR9Y1vY+SdH+MZeocsKT/xjlTYiDaq9XYOtrjWgyaFwxcz
-         HHh6IYVuB2xU7CeycpjLSqQ974DtcYNhK1PUY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715263813; x=1715868613;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y+IeX9NStckPkhxJt4hLlrr6lHDP4HAslq6+x7ejDjU=;
-        b=venSCD/3sIzji7F4JvwjWq1dgsE7h5PZyn55Ko3WeqkMjKgbxhWnbJ3mnt43KQm/L8
-         2xfgZ90fZtgBsTxeT9/8LAaH86rHlr4PCDx4/lUox4G4YLPOQEU8/NroAAjZ+l5+xM3N
-         2vqyEuxZ/exJVOC+4QR62ncTWC+EhvQr38nuTPAYwe3neeEMQZJUaMp8aBExSSqgwCmq
-         9sqU6Zr64v+Ayy3DWRIR5n6syJm14UQOJlYUjbGC8Km0fZ7EqQIDnhQlqUgrMdkR4Ene
-         cDoPMyLhQbQt4xTfexoOMWML98tc70/Yd9ILeMHgJIX7Q5VSkdWgizU+bewPvoa30G35
-         OB4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU53SQ4LZZ1VbF0DQDQlmgAcDmU20o8zJnpZsm4ZivASKW2jjGx2b6X2wJeEPxihozN0ummaLgcfw3mwkFwqqetKsc84OxmcBg0rz4VoA==
-X-Gm-Message-State: AOJu0YxC1hNS9Qzy8BDEUIYZjibHrrXbs90BpECH85AlDI28Y9NfTEA7
-	1sAoCM5/PoPvKn5f/6NBCNZGffvLoq6i69wQbS63MvuqN8nll6skIatR+uB0ESAdV7tZkmky1u6
-	lXZgsTNvonbmp+Gxw6sHlpOS7ctm8U9CieBpikw==
-X-Google-Smtp-Source: AGHT+IFHGBKuV/1bvWy2Bm+fh2O34AZD8OxihJRS/BuyC/yZLmKQNTC7aP+veqoyaewftuyi1/G/oY1zcT9XdKrL3mE=
-X-Received: by 2002:a17:906:7c4f:b0:a59:c3a7:59d3 with SMTP id
- a640c23a62f3a-a5a1165d1d6mr247358366b.13.1715263813135; Thu, 09 May 2024
- 07:10:13 -0700 (PDT)
+	s=arc-20240116; t=1715264897; c=relaxed/simple;
+	bh=+YPP9+BggJFoYB3OD65EZx6HjxZ1o2jxBDWw0R+cqj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kevR3TnbbBi84g+wbPDKtGSP5i2PPQ7ipUbOM/HMdAs8xbokxN5ZHOJpUd1aNFu4aTWz3O/qgEnrel9GK0YMvOovFOM46xLa8RDMgmolNSKVxHrGBCfKsYEmn3U2mMIpra2nEpxNqM3JffFiVIqnoQxtFf+nISfuK4BMq+5pxgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=cawJGNe+; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 449ERwoB009927
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 9 May 2024 10:27:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1715264880; bh=jq0TZsLOmYSoh8JU0VF8GO2rVGj9OrG945KmZdEE1S0=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=cawJGNe+z/IfsOLNwFcgyS8ipx4KDElwEt9kw+xuqgMqCrQohCvrQanuHF2/zZkQ6
+	 9n9vN2q/VCEfnCl2ex8XgqOxBrZZNL02MYTGhCco/eWvNMCqngXYlAnysWIK4pqX1y
+	 map4HFbDzZDV98i+Y1aG/wqMvhJIH8MTJy7sZPyW866DVJ3ikzgLBd9PTRwBG5Ad6K
+	 Rni94ZWtJcJjNnr2799gE0lUl1LnU0kR4zC/8xVGYAfRJgssJkvhnYZOdrnmS8iJZv
+	 Ah2oHqEbAbtKamUHbchimfQAzocxKGuyi1H2CdEttp/3a92J2N82xFWBldrnww40fm
+	 LaZMYhb2BANXw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 1F5D815C026D; Thu, 09 May 2024 10:27:58 -0400 (EDT)
+Date: Thu, 9 May 2024 10:27:58 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: David Howells <dhowells@redhat.com>,
+        Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.com>,
+        Christian Brauner <brauner@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Don't reduce symlink i_mode by umask if no ACL
+ support
+Message-ID: <20240509142758.GG3620298@mit.edu>
+References: <1553599.1715262072@warthog.procyon.org.uk>
+ <CAJfpegtJbDc=uqpP-KKKpP0da=vkxcCExpNDBHwOdGj-+MsowQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1553599.1715262072@warthog.procyon.org.uk> <CAJfpegtJbDc=uqpP-KKKpP0da=vkxcCExpNDBHwOdGj-+MsowQ@mail.gmail.com>
- <1554509.1715263637@warthog.procyon.org.uk>
-In-Reply-To: <1554509.1715263637@warthog.procyon.org.uk>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 9 May 2024 16:10:01 +0200
-Message-ID: <CAJfpegvc=RsmozZCcp+cqMFxo0qR4vv7xT9owc1Epe9BR+zA3g@mail.gmail.com>
-Subject: Re: [PATCH] ext4: Don't reduce symlink i_mode by umask if no ACL support
-To: David Howells <dhowells@redhat.com>
-Cc: Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtJbDc=uqpP-KKKpP0da=vkxcCExpNDBHwOdGj-+MsowQ@mail.gmail.com>
 
-On Thu, 9 May 2024 at 16:08, David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > I think this should just be removed unconditionally, since the VFS now
-> > takes care of mode masking in vfs_prepare_mode().
->
-> That works for symlinks because the symlink path doesn't call it?
+On Thu, May 09, 2024 at 03:47:27PM +0200, Miklos Szeredi wrote:
+> On Thu, 9 May 2024 at 15:41, David Howells <dhowells@redhat.com> wrote:
+> 
+> > diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
+> > index ef4c19e5f570..566625286442 100644
+> > --- a/fs/ext4/acl.h
+> > +++ b/fs/ext4/acl.h
+> > @@ -71,7 +71,8 @@ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
+> >         /* usually, the umask is applied by posix_acl_create(), but if
+> >            ext4 ACL support is disabled at compile time, we need to do
+> >            it here, because posix_acl_create() will never be called */
+> > -       inode->i_mode &= ~current_umask();
+> > +       if (!S_ISLNK(inode->i_mode))
+> > +               inode->i_mode &= ~current_umask();
+> 
+> I think this should just be removed unconditionally, since the VFS now
+> takes care of mode masking in vfs_prepare_mode().
 
-Yep.
+The following is in the ext4 tree:
 
-Thanks,
-Miklos
+commit c77194965dd0dcc26f9c1671d2e74e4eb1248af5
+Author: Max Kellermann <max.kellermann@ionos.com>
+Date:   Fri Mar 15 15:29:56 2024 +0100
+
+    Revert "ext4: apply umask if ACL support is disabled"
+    
+    This reverts commit 484fd6c1de13b336806a967908a927cc0356e312.  The
+    commit caused a regression because now the umask was applied to
+    symlinks and the fix is unnecessary because the umask/O_TMPFILE bug
+    has been fixed somewhere else already.
+    
+    Fixes: https://lore.kernel.org/lkml/28DSITL9912E1.2LSZUVTGTO52Q@mforney.org/
+    Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+    Reviewed-by: Christian Brauner <brauner@kernel.org>
+    Tested-by: Michael Forney <mforney@mforney.org>
+    Link: https://lore.kernel.org/r/20240315142956.2420360-1-max.kellermann@ionos.com
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+
 
