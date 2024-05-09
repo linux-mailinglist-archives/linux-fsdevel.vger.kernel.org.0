@@ -1,138 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-19154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC4E8C0AEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 07:23:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070C48C0B55
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 08:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93806284F09
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 05:23:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DC87B22E80
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 06:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D03C1494B0;
-	Thu,  9 May 2024 05:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F96D149C56;
+	Thu,  9 May 2024 06:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFkonWA7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WEm/VoPd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADA110E5;
-	Thu,  9 May 2024 05:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E980B1494D0
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 06:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715232219; cv=none; b=EuUheM5qmdtvxZkD4gHGdvXXhCAhyfGD7L4dQH/S8AUplDNxeWCpq/V9Xi9pc+xjgJWormrTJUPZO14RJ5JC1maRpKxKAV8y9X22BCmQTtg+rdaKT2dpp1TnvYHvhlHswMZwkqegzd1+Qf+hU8t32qIT2qOsMdNvMcG5erzixlg=
+	t=1715235262; cv=none; b=JP8rTVVCIoqe02XvKripmxuACeWDAc+VpJ1wguZHnpzC3Smpy9ttW0N54K2h//dzHu4W7WhepHO2llNOt8IpI2rwC9j1NpOUd58SQC+vJSOop/XslysTTv334jI63eHsh/T1eSX/uDQIe2ozV5PBjdRJdpYvLd0PnAlFzXgfwHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715232219; c=relaxed/simple;
-	bh=A/nS3HEOugLNgKjph8tOEMwkUz1x3qdu92wcdow/m90=;
+	s=arc-20240116; t=1715235262; c=relaxed/simple;
+	bh=EL59YAvQ+NejbE+MgsQ0pGcYE6qA6HsEuHDusaEk0N4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LXmVXBcIkpaGR6FxlH+6u0yTvLafdvUGZiHPFOstk6kvLo+eTvaMo3Tmzo1bNIrLw0l1luDnksPDdJg01JOV8qHW+N1/Z6miC3wBgwacWdDXDkxB7goi8L3XnE1xweyNTCEMHGaIQdj+VJDnajF8UjhH4dm0a0Sd1QLW8GFA+KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFkonWA7; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-69b6d36b71cso3128166d6.3;
-        Wed, 08 May 2024 22:23:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=PrjWmM55ddye6/pa6xuI23c0IxDulKYbv+IcpBXJNIJqsOd05p8H19fyUbnj34XlfFXinf4ZKTyIe+6RLL/zJGzXlZEvCug4i+nZ6/oxJ2SDYMj1P3cTRHFIpoi37MDRXijSgavAf7aDVxeUvWK8qdtQh50U5jKhhfk/egcMwkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WEm/VoPd; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5724736770cso4845a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2024 23:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715232217; x=1715837017; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715235259; x=1715840059; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A/nS3HEOugLNgKjph8tOEMwkUz1x3qdu92wcdow/m90=;
-        b=nFkonWA7VYy2ryh3JzZmyMg5bXH8pWCJxpUDx9KZLfzRenDFndL+SsicUXNZK1KJP9
-         dDGmunnPn+RRE7ulFAhWN46ugCPbBemqmjKYpGCi2ThBcIFf7i5Fye2zvxKFLWY8tI4K
-         AEkBAz1qFGP1iOWDcAOdptfljEDTNS50F5jJ6OvQmnG7YbCMveWQ1vyULlUmqm356ssn
-         GmeIAUqq1vS7TmVXVniFjYXyd1DmsK50xgm4TgEAIwfnUfRiVgVn6i4DzvEVV7ovzUZG
-         W381DJk4D3Bi+/lUwD0P5s6Erd/JRnYj1vZg0wgNyY96KNnRsxEp43m0fkgShh7SAx41
-         8v9A==
+        bh=72bWBwjQodIuSi8MsUtQvKNvKwdUWjXGREUei480Xwo=;
+        b=WEm/VoPdoWkj0T759QWiuYvMX4pHXbQGtGV6B8BdS6/Cq0VFDkresAaaMIYb++Xv07
+         NGG+jf4a1dEnvAy0YaC/s7lcBHZYg4XfdFyn0UE/NSSxuV4NI+ONOzRkSN7wuCtF7G6m
+         GTOO87BGuQVGfzWL5T65/lgJj6fjNzyMISuP7RyGnMi7ZT8v5eJ20/bJPOff/6tMEzYf
+         htFF4m10x/m7ACoxg+H+qSKb1axBk/xf7pNTnIFlBhJxau06TJtioZB85NLY3yGUoNGf
+         qsBS4tNQxQMxJEtkUampvrB3zly877wqooUCzxdQkmiqESGQ2AKpeP3mEO/CMSG07Le0
+         wmxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715232217; x=1715837017;
+        d=1e100.net; s=20230601; t=1715235259; x=1715840059;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A/nS3HEOugLNgKjph8tOEMwkUz1x3qdu92wcdow/m90=;
-        b=fwZSuhakX+RE5/RFoMZtqY5V2zObntt0rj+EO03EnJwgINp6B96Xdj8ydBtBcXA1kU
-         9/fPM7llLZGz332yej3BsfptzKyX7K5e/rigE/59uuWvWB3nJLr7flEwcLxrNi8DiQE5
-         xd4qk7zQNlEpydnmfE+audFCqotRMXqx2p604gzRB+PHN2ZBpZNdhtNT/VMgdnz+anyH
-         hnKXFb7UXW7hV4Q8HarQoUF9dH2euCKwY+7Yj87976F1Tjma//PVJbKRO0bjW0jGiHcE
-         TuV4OhM4hxdlivc6PtdTyzU8I2yZwA5avzLM+XTY+lLzyBPXxlFvbrplVBv4lK8Co7QX
-         IM/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVn7yV8JFAwwRvO7qVL4zPulbAXVXOyGlpNRhKnhSVwaY9rIVd+LOaQCPJJMg/6Ul+LOnBtnBDSNS23MBH038XRWbMII40aN/lCkCPylDXCbMwE/WgEhraF++Q9YuFx+rduO8zudaR2Cg==
-X-Gm-Message-State: AOJu0YznxU7ZlthlD5gQJaE2kntwbMjPL/rOZOJ4ShuGwCBtB72oO6bZ
-	pwca2azUbnOxntbo41BIfN2bBWeEY60Q1srqbTVhiWqGEwRoWdyh+/W1Sfx/6hH4wHhS4h+hD86
-	CQZy3LB5pk2rmtsmhefZsbuu5NxA=
-X-Google-Smtp-Source: AGHT+IFHax6DPjC4uHCr77vr4oXeNl+kGo4KMIQopk17XCY3WMP9xzHXwDiZSy64nODDp2byf7wFN5LD6FnKjp7gkak=
-X-Received: by 2002:ad4:5dcc:0:b0:6a0:d465:6088 with SMTP id
- 6a1803df08f44-6a15156da86mr60562636d6.34.1715232216975; Wed, 08 May 2024
- 22:23:36 -0700 (PDT)
+        bh=72bWBwjQodIuSi8MsUtQvKNvKwdUWjXGREUei480Xwo=;
+        b=DAG2SVU1z/uxAQwCwoA48RSKDvy/yXv8jAkVjqlOTdJ5e9rH1EGJoUpdpfteWj6iK2
+         xkqLhTFOE9+CZw1gf4mzX7aaaOjjPqCF/FYLkP7BfBkhR9N0VGagIBErqH/YZFRwTs5Y
+         JJr7OmEZE0M5P2dLU5Esf1WW1QmIHR1HAMPSFmqMCfx7hks8uHUZnBaNXYia6bPGc416
+         141QJvdDcncPPIAQHrGPAxF5zrSHGWhDwFJTgjEVmnQwhduZkXiF9/8+iaWeLc3VaktH
+         LFvm+LG6FlzX3RF91uwbsupDvNBD0PI40maaV+nwCE2uNP0E3nekgmyI6fVHEI6Q9Muh
+         IvIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaioRr9bzOXKK3jPstuEXPyam5qiVyvS3r97AhyE7fqu+gH8pYuoR6UZEt4It3AZslJng/x3oayVH1Q1PDItRrkMUbC/YU6KRlV3I6kw==
+X-Gm-Message-State: AOJu0YzxU+XxsYI46aFpXq61l+IqtSK9yc/MqJDLnGrmBrFHNAjryOzY
+	PGEw39Au3K/L4CvjT2llFj85J/Oe6j5CYAMj8+v8ZNOJdT9N5sxzu4Xf1Rva+ETfAPZ/tyVxi+0
+	wCpQDcv3yt5/R9kAfYLBOIaucAsgbQpSX5mEG
+X-Google-Smtp-Source: AGHT+IHsPAG0LEeM4cJXnAxgH06RrdZlxemOxK5bdPXtb66jyshH3jVsPNC7i5pX8kAB1x6smMgaq3eKTmHMEonCtFw=
+X-Received: by 2002:a05:6402:5206:b0:572:a23b:1d81 with SMTP id
+ 4fb4d7f45d1cf-5733b9d3b3emr79412a12.5.1715235258767; Wed, 08 May 2024
+ 23:14:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAB=NE6V_TqhQ0cqSdnDg7AZZQ5ZqzgBJHuHkjKBK0x_buKsgeQ@mail.gmail.com>
- <CAOQ4uxj8qVpPv=YM5QiV5ryaCmFeCvArFt0Uqf29KodBdnbOaw@mail.gmail.com> <ZjxZttSUzFTd_UWc@infradead.org>
-In-Reply-To: <ZjxZttSUzFTd_UWc@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 9 May 2024 08:23:25 +0300
-Message-ID: <CAOQ4uxhpZ-+Fgrx_LDAO-K5wHaUghPfvGePLVpNaZZza1Wpvrg@mail.gmail.com>
-Subject: Re: [Lsf-pc] XFS BoF at LSFMM
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
-	lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Chandan Babu R <chandan.babu@oracle.com>, Jan Kara <jack@suse.cz>
+References: <20240507214254.2787305-1-edliaw@google.com> <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
+In-Reply-To: <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
+From: Edward Liaw <edliaw@google.com>
+Date: Wed, 8 May 2024 23:13:51 -0700
+Message-ID: <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Seth Forshee <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>, 
+	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 9, 2024 at 8:06=E2=80=AFAM Christoph Hellwig <hch@infradead.org=
-> wrote:
+On Wed, May 8, 2024 at 4:10=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
 >
-> On Thu, May 09, 2024 at 08:01:39AM +0300, Amir Goldstein wrote:
+> On 5/7/24 15:38, Edward Liaw wrote:
+> > 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> > asprintf into kselftest_harness.h, which is a GNU extension and needs
+> > _GNU_SOURCE to either be defined prior to including headers or with the
+> > -D_GNU_SOURCE flag passed to the compiler.
 > >
-> > FYI, I counted more than 10 attendees that are active contributors or
-> > have contributed to xfs in one way or another.
-> > That's roughly a third of the FS track.
+> > v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-ed=
+liaw@google.com/
+> > v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+> > location.  Remove #define _GNU_SOURCE from source code to resolve
+> > redefinition warnings.
+> >
+> > Edward Liaw (5):
+> >    selftests: Compile kselftest headers with -D_GNU_SOURCE
+> >    selftests/sgx: Include KHDR_INCLUDES in Makefile
 >
-> FYI, I'm flying out at 4:15pm on Wednesday, and while I try to keep my
-> time at the airport short I'd still be gone by 3:30.
-
-I've penciled XFS BoF at 2:30
-
+> I appled patches 1/5 and 2.5 - The rest need to be split up.
 >
-> But that will only matter if you make the BOF and actual BOF and not the
-> usual televised crap that happens at LSFMM.
+> >    selftests: Include KHDR_INCLUDES in Makefile
+> >    selftests: Drop define _GNU_SOURCE
+> >    selftests: Drop duplicate -D_GNU_SOURCE
+> >
 >
+> Please split these patches pwe test directory. Otherwise it will
+> cause merge conflicts which can be hard to resolve.
 
-What happens in XFS BoF is entirely up to the session lead and attendees
-to decide.
-
-There is video in the room, if that is what you meant so that remote attend=
-ees
-that could not make it in person can be included.
-
-We did not hand out free virtual invites to anyone who asked to attend.
-Those were sent very selectively.
-
-Any session lead can request to opt-out from publishing the video of the
-session publicly or to audit the video before it is published.
-This was the same last year and this year this was explicitly mentioned
-in the invitation:
-
-"Please note: As with previous years there will be an A/V team on-
-site in order to facilitate conferencing and help with virtual
-participants. In order to leave room for off-the-record discussions
-the storage track completely opts out of recordings. For all other
-tracks, please coordinate with your track leads (mentioned below)
-whether a session should explicitly opt-out. This can also be
-coordinated on-site during or after the workshop. The track leads
-then take care that the given session recording will not be
-published."
-
-I will take a note to keep XFS BoF off the record if that is what you
-want and if the other xfs developers do not object.
-
-Thanks,
-Amir.
+Hi Shuah,
+Sean asked that I rebase the patches on linux-next, and I will need to
+remove additional _GNU_SOURCE defines.  Should I send an unsplit v3 to
+be reviewed, then split it afterwards?  I'm concerned that it will be
+difficult to review with ~70 patches once split.
 
