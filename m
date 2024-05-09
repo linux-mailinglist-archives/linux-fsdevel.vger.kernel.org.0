@@ -1,83 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-19152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8868C0AC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 07:06:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE978C0ADD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 07:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391EE1F23EF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 05:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE88285B97
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 05:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE1E14900A;
-	Thu,  9 May 2024 05:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD6E149C47;
+	Thu,  9 May 2024 05:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bVYEAU2N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQoywBiy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6703710E5;
-	Thu,  9 May 2024 05:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F165712BEA4;
+	Thu,  9 May 2024 05:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715231160; cv=none; b=icYY1VbBvH/MHNsXpfd+jh+OuRBQfVFnGQyg7/yHHdzqOSvFjE97b2WsoZC2QpE36PMG1MD+st419WT0sDxAP3hzqqUYBDwyIxnwKUcQ4RLnV3rbLKtTRlxGA7AWH3AnS4vq3gfvNbKhniaWxs8WZ84Va4PumlfR2+GhLGatAro=
+	t=1715231702; cv=none; b=M20wBKv1KmPMI2YetKIHte8XdX1oOsLDwQcAV4/kVjGbt7LgdtZpiYBivxWYM6Mb/cUJEvRi0aY2UUtfDo2etnGZruROxlcL8+l6he8JsrW81V+/STuGay6UFLmYnCDKJuS3ShDNYpnJYmF1wltJI8B7rSDqcZTIoFR/Xw8dj5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715231160; c=relaxed/simple;
-	bh=cMWq8f4EQ6ITGXaJRXM9W/JwicIuWHoUbHLHX/yiNwE=;
+	s=arc-20240116; t=1715231702; c=relaxed/simple;
+	bh=dgBpxGC9J1WlBSk7j6Dg82LPiieH8ot79JOBQEcnXq0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbbv5lhsJqA1MsjL+ZFcsHSvwYLYyEcMDSFzHlIt1zouyxSz5/iO9L5OuJ8YsRgCbQFD4ehASKXt8Tl+SMiq41magupxcbQ9gY80BCAw3V53Dwti5So8eGr9s9VoD3yzDuYircJEiUMZRnRefdvK/+yWWTRSLUIIbB75v6YpnJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bVYEAU2N; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=F1NX3V4uTye8+jwA+W6eOBhcK78McvSSmZKfhuMjbMc=; b=bVYEAU2N2/734kZtUxxKF3scaY
-	04LfrbgNBDV+c31jWp9vGPalwTmrXuX2ydiiGf1gFuBXP5fcuCEUgFfpAbgSL8WS8XCMf52zGFhEq
-	JHRh6GdkM+XtCBkhfiO0bSv66ohzlR3or+WaoMrufNtvhtjNzlyORl5ylbPlnauz9WijxLVY4U+4W
-	DfcUy3WfAl499WsssAcMOqe0uEvj/ZXWP4HhpBQ1dgUU8L345lMDwOnWXR90Yp8iUrF/mSnRtR1LU
-	fjmWfKBlNBsEqSqbaR/IaziFLBpiLQEaI6U0ZA0pXaHt1BpIXWC2XlTLzLqzksf6zYJGymP0Bg9Sp
-	9hQ2mh9Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4vyg-00000000NP5-1Nc4;
-	Thu, 09 May 2024 05:05:58 +0000
-Date: Wed, 8 May 2024 22:05:58 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Chandan Babu R <chandan.babu@oracle.com>
-Subject: Re: [Lsf-pc] XFS BoF at LSFMM
-Message-ID: <ZjxZttSUzFTd_UWc@infradead.org>
-References: <CAB=NE6V_TqhQ0cqSdnDg7AZZQ5ZqzgBJHuHkjKBK0x_buKsgeQ@mail.gmail.com>
- <CAOQ4uxj8qVpPv=YM5QiV5ryaCmFeCvArFt0Uqf29KodBdnbOaw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2X0yRfuJgzYC4GSubvuUR/5Mc+Bz/XX8LWsy43oCV78USf9Uh4j92xsVivWX0kqhbj4GJ/BO21C19tiXwk2NykWKbDTZrv1yhi9vB7FfA1jx8/s+s8AyWaOhf/UcAKOxIkaE8Aj7rR2p4Ycj47Tv1oXF0eztuzz2OEIiDcDgZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQoywBiy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8AFC116B1;
+	Thu,  9 May 2024 05:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715231701;
+	bh=dgBpxGC9J1WlBSk7j6Dg82LPiieH8ot79JOBQEcnXq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BQoywBiy+PCheZmKhnImt/9BOTJD7sOxdMdOTlOLCfvXUKjgZOA92aRVR4OmcoxF9
+	 PTbOPGZF15CWvHBVuEwGeUtVVWmwiTb6FfsEOgf/6RkiKxAdRchyA72tARTMQHHS56
+	 7stGdQt7WDteZaEvMke5xN3k6+K3rexu/sDXquvtBr5Y2djj6r0Ay4Odn4nRO45Keu
+	 8+zyLIWzfYoyoPvE3xWjoC9Knv0/BRtHDQXiZtyiizSj8iI/Tmkzv636dmxJZptUSp
+	 6/rG79xlRkSsK2N27OtXiWF1LNTVKFxU0CRMDW0fjxV0VUp1GCtX3Br/Lr+jHOaIOv
+	 Lun/NWWKy0C5Q==
+Date: Thu, 9 May 2024 07:14:58 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Seth Forshee <sforshee@kernel.org>,
+	Bongsu Jeon <bongsu.jeon@samsung.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-input@vger.kernel.org, iommu@lists.linux.dev,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] selftests: Include KHDR_INCLUDES in Makefile
+Message-ID: <Zjxb0k--qUyZKSg6@finisterre.sirena.org.uk>
+Mail-Followup-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Seth Forshee <sforshee@kernel.org>,
+	Bongsu Jeon <bongsu.jeon@samsung.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-input@vger.kernel.org, iommu@lists.linux.dev,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org,
+	bpf@vger.kernel.org
+References: <20240507214254.2787305-1-edliaw@google.com>
+ <20240507214254.2787305-4-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8TMyWXG1VGLOfNzK"
+Content-Disposition: inline
+In-Reply-To: <20240507214254.2787305-4-edliaw@google.com>
+X-Cookie: Sorry.  Nice try.
+
+
+--8TMyWXG1VGLOfNzK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxj8qVpPv=YM5QiV5ryaCmFeCvArFt0Uqf29KodBdnbOaw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, May 09, 2024 at 08:01:39AM +0300, Amir Goldstein wrote:
-> 
-> FYI, I counted more than 10 attendees that are active contributors or
-> have contributed to xfs in one way or another.
-> That's roughly a third of the FS track.
+On Tue, May 07, 2024 at 09:38:28PM +0000, Edward Liaw wrote:
 
-FYI, I'm flying out at 4:15pm on Wednesday, and while I try to keep my
-time at the airport short I'd still be gone by 3:30.
+>  tools/testing/selftests/arm64/signal/Makefile          | 2 +-
 
-But that will only matter if you make the BOF and actual BOF and not the
-usual televised crap that happens at LSFMM.
+This is not really using any of the kselftest framework at all to build
+so I'm not sure the change makes sense for it.  OTOH it does no harm...
 
+--8TMyWXG1VGLOfNzK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY8W9EACgkQJNaLcl1U
+h9Aa4gf9HY7hIlNAryB75Fb1YdATwSHy7EQyKfWsSaobZtWWwgFh6CF0C6J7Wa0o
+UmFwVoKos72xm0UCKTtuBAxkIxhk1wupw0K6u0fVcraHpDV579RI/BAsIc1cFgf8
+cGvyEy3VRgjGDKorUJnMg9WU7qNTIfRovXGmXewa1WJHz1OFk+ETMSbXQ3rmKPlF
+2epuBPaw7gBN4W1nb9nGpZkG+Ub2hUJTN7nBB0IJ5GD+mrREYXyxAHiEk9AWR1Bb
+nD5tNG9ZWepZSGtR11j3jdPc2XVNksMJyMCuqG4tmIZbjuaS7mu9vvxBoSDxqD9j
+uK6Nqwb0FziTG9MkhW8EMgjvhlCGnA==
+=L/hl
+-----END PGP SIGNATURE-----
+
+--8TMyWXG1VGLOfNzK--
 
