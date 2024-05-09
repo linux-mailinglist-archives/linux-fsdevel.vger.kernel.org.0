@@ -1,153 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-19174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087748C1005
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:57:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3E38C100A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA1D1C221F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 12:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC761C2082D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 12:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9C13B5B4;
-	Thu,  9 May 2024 12:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8D614C5BE;
+	Thu,  9 May 2024 12:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TS/zwIpI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D793D147C72;
-	Thu,  9 May 2024 12:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EABF13B590;
+	Thu,  9 May 2024 12:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715259446; cv=none; b=cUerYtyR6K9d22ttYGdiYDMmlSG4J/IrW531XpWdsl7ZRUP4zSH+IBtqGcYYvQM3GZ74H5SsGlA900HoQB5pBbdlC6LZWGFugIfqrBRjq5L1MqArxvtZ77LHcHkfbBA+WRBWw7r/7iQJ7QXYoDLbUcui2D35VEqljhgqE3s81mA=
+	t=1715259510; cv=none; b=utdBAJvSakhQvsZ9qniw3YEolmb4cKCZkUa08me0vdV0c2ynRK3XOu3RX6nKeSW8BnADXikcYqQQEPd8C571LAnTmeI+2BlnP9DlqlZHzbt8b+fzFXcFyBARALf1OXTBr+VrFUXukwT+MTq+wIng4UEdtgfwAy7870PZxya4ZRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715259446; c=relaxed/simple;
-	bh=mYMjMEAUKh44Zl6t2hYm68iMO3BZjSBLKzOpqis9l8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gl9VQBe/ciIpzl5YesKNmN7a9TR++OcF/WI6D777896dPTs7HWICihz6CbojSY3XMakrxD+67ma0LsnZ07Pd9lN9BRyYMH4LcTIZE7iRpo7dPwrOfTKo9H+fqy6Fpd9CtUfIWEhVWN5c/wIc5UTBNHT5LuTO0PqBswUN8inm/LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so1538116a12.0;
-        Thu, 09 May 2024 05:57:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715259443; x=1715864243;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8tj5n/47UwDomI75HyIwdPYAf/haThSqq9uY0sQZVmo=;
-        b=WL/msjGFt7tIsnOiVfgbh8fmawJWXJQBVDj/u9EoN0pZpkyj8fJie3ruO9SanMpG6s
-         wptmjNptEdqx8ARVQn6CSCIBf7g5/eedOypirIGVxz/DLNbLGJDPVq9GTyncXtuFJIoS
-         NgWRbO82HaEQBW1JaUMgQZuVYguLF4tVrFMSkit/plHDFgx2WvOFpPywgMeRJvNO+gvd
-         1de0EI+JE1pWsrrbOuT3riWCk0hXXQcNEg2AXO62cBJ/wRl86QlLDHonOhkX4OA5Ezo5
-         ZnRQFJyAmwWYYWQQJ0lQ9dM4u3w/9PPw0W6NhE3iGHM603JnXhDWWnmCEoaY3x+otosh
-         SNfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXEu6fUHTNTgdpBZNv83XN5X+WZ4ydItdtlnCBQ1ExLaWhaFO6my2WCaZOH0Nb5PP73kX/mL5DtvcOrbfbxUGBpWTVXa57jWqax4XpEkHpqwI+hmCQGBUUHKcw3e8R7EVUGjgazSC1iQk4qg==
-X-Gm-Message-State: AOJu0Ywj4mFmjzcHnWeMoK0AL4/yBVCR2B0I34xZC+78RKCzQYpjjAc/
-	0AEQmfkULG833qAWYxdcXvo9WbTBZeRKh3jP2imALi24UzD1YwN+
-X-Google-Smtp-Source: AGHT+IFV2g5bUVgpaI72nMB9ictt4O/7oKOb6bfAnfLncyGvTqLaF03/IMUJiDAiP/OJLecumpuO+A==
-X-Received: by 2002:a05:6402:1487:b0:572:99fa:1095 with SMTP id 4fb4d7f45d1cf-57332949554mr2155993a12.18.1715259443034;
-        Thu, 09 May 2024 05:57:23 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfb83sm672852a12.46.2024.05.09.05.57.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 05:57:22 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: paulmck@kernel.org,
-	linux-fsdevel@vger.kernel.org (open list:FUSE: FILESYSTEM IN USERSPACE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] fuse: annotate potential data-race in num_background
-Date: Thu,  9 May 2024 05:57:15 -0700
-Message-ID: <20240509125716.1268016-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715259510; c=relaxed/simple;
+	bh=MKC9wCjSQVelLnxG27A3NgjqV66DuuMiZIDzudaJX34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgzUocSf3Y/GWFgBQ93Xuh2EDWf3UbIeCAzbdacwBw6PYovfAQKjtaAjnWwqWW+buEg5gPkjMXTH/Z2dOtIgQ1hFm9/FGh7i8PjaF7AfqQpbCxczZ472bKXDMD4bNWmg19ru5kv+n1+oxsNmiXWvR2ZK+0eiwHNX091kvxiWQGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TS/zwIpI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=P8JtwUqTZ5thY5C0o8JQ9jcIA6kib8zFsh+AmPPcQkw=; b=TS/zwIpI/RgjwOZIRNph0V1iPg
+	HFcQKqlkwrUU+z/fSblzUSWWo/CcR1JozYosfXC/3cdu1Krwf7lInvpoP222XBUJKgn7j696Q9aQR
+	oYbe3BcJjc1IykDXgGRB9TPZZTQis23b4wjWRNFOS+7GVflB14MGtUSobZkXZAJfT/EV3/rHtvz/E
+	3DQ1XkVZK7NZoMbuowRbe/cbywe/SgPkRkpu5Jk8VXha4nEGm3JFYGO2luu2m0t5hwwRgwxFAyMLi
+	ElSwArKsC7VSDkGuTwnIvysLt55peuNMyVDcWSnVM7kSpgantdDoj/5YSZIrx6ED4eSteU5z2AGhr
+	aL1XHHdw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s53Lr-00000001VQ2-0TaS;
+	Thu, 09 May 2024 12:58:23 +0000
+Date: Thu, 9 May 2024 05:58:23 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de, willy@infradead.org,
+	mcgrof@kernel.org, akpm@linux-foundation.org, brauner@kernel.org,
+	chandan.babu@oracle.com, david@fromorbit.com, djwong@kernel.org,
+	gost.dev@samsung.com, hare@suse.de, john.g.garry@oracle.com,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	ritesh.list@gmail.com, ziy@nvidia.com
+Subject: Re: [RFC] iomap: use huge zero folio in iomap_dio_zero
+Message-ID: <ZjzIb-xfFgZ4yg0I@infradead.org>
+References: <20240503095353.3798063-8-mcgrof@kernel.org>
+ <20240507145811.52987-1-kernel@pankajraghav.com>
+ <ZjpSx7SBvzQI4oRV@infradead.org>
+ <20240508113949.pwyeavrc2rrwsxw2@quentin>
+ <Zjtlep7rySFJFcik@infradead.org>
+ <20240509123107.hhi3lzjcn5svejvk@quentin>
+ <ZjzFv7cKJcwDRbjQ@infradead.org>
+ <20240509125514.2i3a7yo657frjqwq@quentin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509125514.2i3a7yo657frjqwq@quentin>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-A data race occurs when two concurrent data paths potentially access
-fuse_conn->num_background simultaneously.
+On Thu, May 09, 2024 at 12:55:14PM +0000, Pankaj Raghav (Samsung) wrote:
+> We might still fail here during mount. My question is: do we also fail
+> the mount if folio_alloc fails?
 
-Specifically, fuse_request_end() accesses and modifies ->num_background
-while holding the bg_lock, whereas fuse_readahead() reads
-->num_background without acquiring any lock beforehand. This potential
-data race is flagged by KCSAN:
-
-	BUG: KCSAN: data-race in fuse_readahead [fuse] / fuse_request_end [fuse]
-
-	read-write to 0xffff8883a6666598 of 4 bytes by task 113809 on cpu 39:
-	fuse_request_end (fs/fuse/dev.c:318) fuse
-	fuse_dev_do_write (fs/fuse/dev.c:?) fuse
-	fuse_dev_write (fs/fuse/dev.c:?) fuse
-	...
-
-	read to 0xffff8883a6666598 of 4 bytes by task 113787 on cpu 8:
-	fuse_readahead (fs/fuse/file.c:1005) fuse
-	read_pages (mm/readahead.c:166)
-	page_cache_ra_unbounded (mm/readahead.c:?)
-	...
-
-	value changed: 0x00000001 -> 0x00000000
-
-Annotated the reader with READ_ONCE() and the writer with WRITE_ONCE()
-to avoid such complaint from KCSAN.
-
-Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- fs/fuse/dev.c  | 6 ++++--
- fs/fuse/file.c | 2 +-
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 3ec8bb5e68ff..8e63dba49eff 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -282,6 +282,7 @@ void fuse_request_end(struct fuse_req *req)
- 	struct fuse_mount *fm = req->fm;
- 	struct fuse_conn *fc = fm->fc;
- 	struct fuse_iqueue *fiq = &fc->iq;
-+	unsigned int num_background;
- 
- 	if (test_and_set_bit(FR_FINISHED, &req->flags))
- 		goto put_request;
-@@ -301,7 +302,8 @@ void fuse_request_end(struct fuse_req *req)
- 	if (test_bit(FR_BACKGROUND, &req->flags)) {
- 		spin_lock(&fc->bg_lock);
- 		clear_bit(FR_BACKGROUND, &req->flags);
--		if (fc->num_background == fc->max_background) {
-+		num_background = READ_ONCE(fc->num_background);
-+		if (num_background == fc->max_background) {
- 			fc->blocked = 0;
- 			wake_up(&fc->blocked_waitq);
- 		} else if (!fc->blocked) {
-@@ -315,7 +317,7 @@ void fuse_request_end(struct fuse_req *req)
- 				wake_up(&fc->blocked_waitq);
- 		}
- 
--		fc->num_background--;
-+		WRITE_ONCE(fc->num_background, num_background - 1);
- 		fc->active_background--;
- 		flush_bg_queue(fc);
- 		spin_unlock(&fc->bg_lock);
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index b57ce4157640..07331889bbf3 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1002,7 +1002,7 @@ static void fuse_readahead(struct readahead_control *rac)
- 		struct fuse_io_args *ia;
- 		struct fuse_args_pages *ap;
- 
--		if (fc->num_background >= fc->congestion_threshold &&
-+		if (READ_ONCE(fc->num_background) >= fc->congestion_threshold &&
- 		    rac->ra->async_size >= readahead_count(rac))
- 			/*
- 			 * Congested and only async pages left, so skip the
--- 
-2.43.0
+Yes.  Like any other allocation that fails at mount time.
 
 
