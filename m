@@ -1,128 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-19149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F0A8C0ABD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 07:02:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F98F8C0ABF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 07:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF39B284987
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 05:01:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9991F23E6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 05:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C75149009;
-	Thu,  9 May 2024 05:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC53914900E;
+	Thu,  9 May 2024 05:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsmMdWe8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0NeAc5+4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD42A10E5;
-	Thu,  9 May 2024 05:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8A610E5;
+	Thu,  9 May 2024 05:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715230913; cv=none; b=Opy63bZPixJXLxDoVdZu/S6CRHUd30E3WtBa1/ekH5EltmvYJdgDAFZKp7xYh3/dIMWtJ7wJUtOY9Ts/ehLhp1RYSQcnoY1TV1ihTKZu8v+TqauAoP+hV4mxTQm9bt0+0QdF1g0QjrEGFb2NzmsLdDK2DSeBmnz5eX+uUYOnuJ4=
+	t=1715230975; cv=none; b=G1Wy2YrsZaLzDJVc20zl2IYTYSkWXwJ7ZUta7qnwmb0FTCRvC0jvjLZCOQStvd286cJ4FKJFv6RQxjZYmRzm2fUJ14n2z79/+TSXmPh+hvxczYJcgljKJf1lIQX6bXoSasHAoBF2wPgXEAkbWg9S0bEltMhIa0WtC1QARf5fLdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715230913; c=relaxed/simple;
-	bh=HQYQUufoJUO60eXOEzte39BjvzF1Y6VPrP/1lxXporo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qmbIWKW70sVOUwpk+dgaP5KkOb7tw5WHf31Ir2pt7f1HnpJUlHBMSbeNEXPMOzTjpBlMO9R+5blWaafkfKNikAXihwc083YM5JiXNEE+aMKMN9trAHoiwC1GCmZukz0xbEBsDtyzSlu4vrc9cB2p8jhxM9TyUlp0hCS9ZQ2ocl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PsmMdWe8; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6969388c36fso2402276d6.1;
-        Wed, 08 May 2024 22:01:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715230910; x=1715835710; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HQYQUufoJUO60eXOEzte39BjvzF1Y6VPrP/1lxXporo=;
-        b=PsmMdWe8WYuOabpFpYE7Qr4KKjDLdsL7ZuidPDCmqN5gbKyuvjjgGsTQJxiOGMkN4h
-         I8lWY8RwN/uen9XIkO3A5SS8Wac5mGoVVQ57bcPABjaqoW2aoQqgXCbvAJLsO1+JVMPz
-         ksDkurTRCBNmooMRVeWEVgaiqcRrhwSw0Pvo8TGKvdZG38j62/jMUtYOM0QXoSL9rLI+
-         Y4tdJPLAC27+8UPugN7UewGWUlpMINgH2RGiSfLg0jKO2udbBkvj/OC9I/TQsRQSFxAN
-         YHqY5lIAIqlG//vBg7IYoChqJaHq7t6VVKWRIm2F4nfcchAOLU3yMDHkdXtvX7JbwHmR
-         4Mlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715230910; x=1715835710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HQYQUufoJUO60eXOEzte39BjvzF1Y6VPrP/1lxXporo=;
-        b=dCyXsPZGOjGxsPIax3MIzpXJikKC9e9lhLY/uIqii9+vWh1EV93ya+0DQLf1/8h0u4
-         682/6SDe6nIQwIZpzH2bmhPrhuh4DmedHYh4s+MyPiHlCpYKsiKVpA9LgcasrhhENk2O
-         ZzP5JPMx758aE2PrLlGR70SSrR28Ibs1vC+QPOLhNLz4pR1oUPqYBAapK5kEIOJtrrZF
-         DyacQDeXCGCACWdL+uapJAQ5mjmwpFUtAYxMdMX4JyVoUYlcdtJc+jOszBvqgBnLleQX
-         fsioKKcoCJ5pU1MkE7n33Z+RFO8e52TDi4Ff6RghBmlW0MKvMPRMGCKUJeCSdV6MzDAf
-         fgqg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9yVkdH3xMwzsV6P06zc6hvpb6DB45QZLprXytfzhXXeAt9/ytUt+XDTEW4xOIPM5UoSPaYdyPHlfjCNKmfJPB1DJAQyi340uXn3lm6gMdzPr4OWUmK05E42bH2lj0BO6TH0cJWj5WSg==
-X-Gm-Message-State: AOJu0Yx3s4zCZwASHt5B3WdbsdPczq9q1KezBM1ht6PlwrgjqzAmlM4Y
-	6+PpqZffENqfOy9DHL7ZfYqlWSZ8hQkp18x4UDx3Gm9HXYgXozyhbJhSGPXVWkZncNzT3i903al
-	MZCbrbencIPhjlzec+kSlv46kXXM=
-X-Google-Smtp-Source: AGHT+IG28C8sng3KpIoI9gzACQFN45URoMWK66xDhLR/e+fuOzJZ/XVNeR73Pv/Qv95TtE26L2b+e1wIfstme1CjWZQ=
-X-Received: by 2002:a05:6214:2426:b0:6a0:cd65:5996 with SMTP id
- 6a1803df08f44-6a1514330ecmr71019676d6.8.1715230910676; Wed, 08 May 2024
- 22:01:50 -0700 (PDT)
+	s=arc-20240116; t=1715230975; c=relaxed/simple;
+	bh=Bo7YPrimVLRfu0RC5aBuLe6PQOQORrbE7QsqDdRA97A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBcwk4TIkSHWSrn3nsuFn00jj9qW6WmCTeVp8heltpApIoQ57IcPXH/6uh/yQ5xDog4ZxE73IpOWsuxvOLHEMoIIb9bosLYlyzo1GeOOpy6w9v8J5f/1z7kzvvharLWFUX1mdYkfFxAw8TNPySOYUAOoSYqGbHZK7ltOA9at/gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0NeAc5+4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sIgpUHQJOxrME09BWK1JmkXjNqGRuCrBRP23P5hGmCI=; b=0NeAc5+4JrlPuTchzUKezLX7xZ
+	G1ocSP9t58+IEef/fppdusIWDlMf5oJa3lkY7lQglKl/k3u8zKzS6+LRzydu1jO/vGJ59Y4SkjBAS
+	GlrsyOPHQ3CCwwtv7Y1hWqL/g8vsrouWKUn4VtQe5HdPK0rYoSUNtDWFW6BmhEX0QPJKuNbmIB8vD
+	pnbRpT/F+DxPp7GG+v4RSYMbh89B5Y3KpGtDhSh3CNYtJRZkR+N77ZzvUGiCpR2E7J3F/4GJtoVue
+	djpbbhO1UAHcCBLvkEnED7l1X4MQDJYWtbOBE4UgxLyrz5t4BU7HLZrNCIXkpU5zxIuZ8C0N8tzCf
+	5s1tpJNw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s4vvh-00000000N8d-06ul;
+	Thu, 09 May 2024 05:02:53 +0000
+Date: Wed, 8 May 2024 22:02:52 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
+	ebiggers@kernel.org, linux-xfs@vger.kernel.org, alexl@redhat.com,
+	walters@verbum.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
+Message-ID: <ZjxY_LbTOhv1i24m@infradead.org>
+References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
+ <171444680671.957659.2149857258719599236.stgit@frogsfrogsfrogs>
+ <ZjHmzBRVc3HcyX7-@infradead.org>
+ <ZjHt1pSy4FqGWAB6@infradead.org>
+ <20240507212454.GX360919@frogsfrogsfrogs>
+ <ZjtmVIST_ujh_ld6@infradead.org>
+ <20240508202603.GC360919@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAB=NE6V_TqhQ0cqSdnDg7AZZQ5ZqzgBJHuHkjKBK0x_buKsgeQ@mail.gmail.com>
-In-Reply-To: <CAB=NE6V_TqhQ0cqSdnDg7AZZQ5ZqzgBJHuHkjKBK0x_buKsgeQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 9 May 2024 08:01:39 +0300
-Message-ID: <CAOQ4uxj8qVpPv=YM5QiV5ryaCmFeCvArFt0Uqf29KodBdnbOaw@mail.gmail.com>
-Subject: Re: [Lsf-pc] XFS BoF at LSFMM
-To: Luis Chamberlain <mcgrof@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Chandan Babu R <chandan.babu@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508202603.GC360919@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, May 8, 2024 at 10:42=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
-> wrote:
->
-> How about an XFS BoF at LSFMM?
+On Wed, May 08, 2024 at 01:26:03PM -0700, Darrick J. Wong wrote:
+> I guess we could make it really obvious by allocating range in the
+> mapping starting at MAX_FILEOFF and going downwards.  Chances are pretty
+> good that with the xattr info growing upwards they're never going to
+> meet.
 
-Let me rephrase that.
+Yes, although I'd avoid taking chances.  More below.
 
-Darrick,
+> > Or we decide the space above 2^32 blocks can't be used by attrs,
+> > and only by other users with other means of discover.  Say the
+> > verify hashes..
+> 
+> Well right now they can't be used by attrs because xfs_dablk_t isn't big
+> enough to fit a larger value.
 
-Would you like to list some items for the XFS BoF so I can put it on
-the agenda and link to this thread?
+Yes.
 
-> Would it be good to separate the BoF
-> for XFS and bcachefs so that folks who want to attend both can do so?
+> The dangerous part here is that the code
+> silently truncates the outparam of xfs_bmap_first_unused, so I'll fix
+> that too.
 
-I have set a side 2.5 hours in the schedule on Wed afternoon for per-FS BoF
-3 hours if you include the FS lightning slot afterwards that could be used
-as per-FS lightning updates.
+Well, we should check for that in xfs_attr_rmt_find_hole /
+xfs_da_grow_inode_int, totally independent of the fsverity work.
+The condition is basically impossible to hit right now, but I'd rather
+make sure we do have a solid check.  I'll prepare a patch for it.
 
-> How about Wednesday 15:30? That would allow a full hour for bcachefs.
-
-I have no doubt that people want to be updated about bcaches,
-but a full hour for bcachefs? IDK.
-
-FYI, I counted more than 10 attendees that are active contributors or
-have contributed to xfs in one way or another.
-That's roughly a third of the FS track.
-
-So let's see how much time XFS BoF needs and divide the rest of the
-time among other FS that want to do a BoF in the FS room.
-
-If anyone would like to run a *FS BoF in the FS room please let me know
-and please try to estimate how much time you will need.
-You can also "register" for *FS lightning talk, but we can also arrange thi=
-s
-ad-hoc.
-
-Excited to see you all next week!
-
-Thanks,
-Amir.
 
