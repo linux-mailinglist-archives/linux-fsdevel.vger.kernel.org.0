@@ -1,121 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-19173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6808C0FFC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:55:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087748C1005
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 14:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0ECF282B65
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 12:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA1D1C221F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 12:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E380E14B95C;
-	Thu,  9 May 2024 12:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="xtVL76wK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9C13B5B4;
+	Thu,  9 May 2024 12:57:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DD513B7BD;
-	Thu,  9 May 2024 12:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D793D147C72;
+	Thu,  9 May 2024 12:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715259331; cv=none; b=E8uZKVf3WJx4ERZbj4wNGIidcw2TYhckuroeDS4Haa5+vSbVrdYo/BmoQd7L9cP5YkNfLnJR7NwBtnqI46Iyt0qkEU2dZUa+e//xEzRTJYPDHrUTWA/dd538lLRXvFgTyjXWJCmW0LIjA9B9TiueX7nY0+DmWHlRSkpSPuJxKGM=
+	t=1715259446; cv=none; b=cUerYtyR6K9d22ttYGdiYDMmlSG4J/IrW531XpWdsl7ZRUP4zSH+IBtqGcYYvQM3GZ74H5SsGlA900HoQB5pBbdlC6LZWGFugIfqrBRjq5L1MqArxvtZ77LHcHkfbBA+WRBWw7r/7iQJ7QXYoDLbUcui2D35VEqljhgqE3s81mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715259331; c=relaxed/simple;
-	bh=05QMPNFVypoo7MQhuiVJn5TpAp/gm9r77dINcx5tRVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpHZEyYhB8mq6pUM+KaaQ1+gzLHEsSEeN+6mM3iQnxIcwzmk4D/pMp6E8ZAR5OKHZ70+3uyUy5gcanAe0UYn4OKpN+Ue/6qHQla9CCOtp7jEM7q4QZG7cARAzi/bKh/9fFvK4AVTyFOuhCaWC+v5QVJAE66+GvXTYS1HQy5O9CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=xtVL76wK; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4VZsS858jXz9sSD;
-	Thu,  9 May 2024 14:55:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1715259320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dfpr4O1ruwod+MTm7pGPfWogKD4Gt2EPTVtvHr0sOQs=;
-	b=xtVL76wKt6rG8+F7KEd/puC+S7PZTXghfnlMFu3YrT77cDpYnNDzGw5jHLGr0NA2FLYjvZ
-	84XZgst8xi9n7HvHw96PSpsgatVenbaBdLmPcLUSN9qddu4m9JXEXcE0YDl3owJT7GQD40
-	ENZpttER1BHCfU4k5tDNTPBh2ZufQ8LUguhRhaA0ThPw95B9ZxExViRYb1YLCNXtTDOEve
-	ne3wpNt9JGcTB3A1o8feQV9gj6ba0nTpIdHEO8AqGl/b/yOAztckdz/71iP+M2QmwSL47z
-	j1QB9OujlUyv9iGK6lwnK9AYIXWGHcMi6s2Bn9zbqXBOgP47/SBjrIPnkvHnFw==
-Date: Thu, 9 May 2024 12:55:14 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: hch@lst.de, willy@infradead.org, mcgrof@kernel.org,
-	akpm@linux-foundation.org, brauner@kernel.org,
-	chandan.babu@oracle.com, david@fromorbit.com, djwong@kernel.org,
-	gost.dev@samsung.com, hare@suse.de, john.g.garry@oracle.com,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	ritesh.list@gmail.com, ziy@nvidia.com
-Subject: Re: [RFC] iomap: use huge zero folio in iomap_dio_zero
-Message-ID: <20240509125514.2i3a7yo657frjqwq@quentin>
-References: <20240503095353.3798063-8-mcgrof@kernel.org>
- <20240507145811.52987-1-kernel@pankajraghav.com>
- <ZjpSx7SBvzQI4oRV@infradead.org>
- <20240508113949.pwyeavrc2rrwsxw2@quentin>
- <Zjtlep7rySFJFcik@infradead.org>
- <20240509123107.hhi3lzjcn5svejvk@quentin>
- <ZjzFv7cKJcwDRbjQ@infradead.org>
+	s=arc-20240116; t=1715259446; c=relaxed/simple;
+	bh=mYMjMEAUKh44Zl6t2hYm68iMO3BZjSBLKzOpqis9l8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gl9VQBe/ciIpzl5YesKNmN7a9TR++OcF/WI6D777896dPTs7HWICihz6CbojSY3XMakrxD+67ma0LsnZ07Pd9lN9BRyYMH4LcTIZE7iRpo7dPwrOfTKo9H+fqy6Fpd9CtUfIWEhVWN5c/wIc5UTBNHT5LuTO0PqBswUN8inm/LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so1538116a12.0;
+        Thu, 09 May 2024 05:57:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715259443; x=1715864243;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8tj5n/47UwDomI75HyIwdPYAf/haThSqq9uY0sQZVmo=;
+        b=WL/msjGFt7tIsnOiVfgbh8fmawJWXJQBVDj/u9EoN0pZpkyj8fJie3ruO9SanMpG6s
+         wptmjNptEdqx8ARVQn6CSCIBf7g5/eedOypirIGVxz/DLNbLGJDPVq9GTyncXtuFJIoS
+         NgWRbO82HaEQBW1JaUMgQZuVYguLF4tVrFMSkit/plHDFgx2WvOFpPywgMeRJvNO+gvd
+         1de0EI+JE1pWsrrbOuT3riWCk0hXXQcNEg2AXO62cBJ/wRl86QlLDHonOhkX4OA5Ezo5
+         ZnRQFJyAmwWYYWQQJ0lQ9dM4u3w/9PPw0W6NhE3iGHM603JnXhDWWnmCEoaY3x+otosh
+         SNfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXEu6fUHTNTgdpBZNv83XN5X+WZ4ydItdtlnCBQ1ExLaWhaFO6my2WCaZOH0Nb5PP73kX/mL5DtvcOrbfbxUGBpWTVXa57jWqax4XpEkHpqwI+hmCQGBUUHKcw3e8R7EVUGjgazSC1iQk4qg==
+X-Gm-Message-State: AOJu0Ywj4mFmjzcHnWeMoK0AL4/yBVCR2B0I34xZC+78RKCzQYpjjAc/
+	0AEQmfkULG833qAWYxdcXvo9WbTBZeRKh3jP2imALi24UzD1YwN+
+X-Google-Smtp-Source: AGHT+IFV2g5bUVgpaI72nMB9ictt4O/7oKOb6bfAnfLncyGvTqLaF03/IMUJiDAiP/OJLecumpuO+A==
+X-Received: by 2002:a05:6402:1487:b0:572:99fa:1095 with SMTP id 4fb4d7f45d1cf-57332949554mr2155993a12.18.1715259443034;
+        Thu, 09 May 2024 05:57:23 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfb83sm672852a12.46.2024.05.09.05.57.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 05:57:22 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: paulmck@kernel.org,
+	linux-fsdevel@vger.kernel.org (open list:FUSE: FILESYSTEM IN USERSPACE),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] fuse: annotate potential data-race in num_background
+Date: Thu,  9 May 2024 05:57:15 -0700
+Message-ID: <20240509125716.1268016-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjzFv7cKJcwDRbjQ@infradead.org>
-X-Rspamd-Queue-Id: 4VZsS858jXz9sSD
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 05:46:55AM -0700, Christoph Hellwig wrote:
-> On Thu, May 09, 2024 at 12:31:07PM +0000, Pankaj Raghav (Samsung) wrote:
-> > > Well, that's why I suggest doing it at mount time.  Asking for it deep
-> > > down in the write code is certainly going to be a bit problematic.
-> > 
-> > Makes sense. But failing to mount because we can't get a huge zero folio
-> > seems wrong as we still can't guarantee it even at mount time.
-> > 
-> > With the current infrastructure I don't see anyway of geting a huge zero
-> > folio that is guaranteed so that we don't need any fallback.
-> 
-> You export get_huge_zero_page, put_huge_zero_page (they might need a
-> rename and kerneldoc for the final version) and huge_zero_folio or a
-> wrapper to get it, and then call get_huge_zero_page from mount,
+A data race occurs when two concurrent data paths potentially access
+fuse_conn->num_background simultaneously.
 
-static bool get_huge_zero_page(void)
-{
-	struct folio *zero_folio;
-retry:
-	if (likely(atomic_inc_not_zero(&huge_zero_refcount)))
-		return true;
+Specifically, fuse_request_end() accesses and modifies ->num_background
+while holding the bg_lock, whereas fuse_readahead() reads
+->num_background without acquiring any lock beforehand. This potential
+data race is flagged by KCSAN:
 
-	zero_folio = folio_alloc((GFP_TRANSHUGE | __GFP_ZERO) & ~__GFP_MOVABLE,
-			HPAGE_PMD_ORDER);
-	if (!zero_folio) {
+	BUG: KCSAN: data-race in fuse_readahead [fuse] / fuse_request_end [fuse]
 
-We might still fail here during mount. My question is: do we also fail
-the mount if folio_alloc fails?
+	read-write to 0xffff8883a6666598 of 4 bytes by task 113809 on cpu 39:
+	fuse_request_end (fs/fuse/dev.c:318) fuse
+	fuse_dev_do_write (fs/fuse/dev.c:?) fuse
+	fuse_dev_write (fs/fuse/dev.c:?) fuse
+	...
 
-		count_vm_event(THP_ZERO_PAGE_ALLOC_FAILED);
-		return false;
-	}
+	read to 0xffff8883a6666598 of 4 bytes by task 113787 on cpu 8:
+	fuse_readahead (fs/fuse/file.c:1005) fuse
+	read_pages (mm/readahead.c:166)
+	page_cache_ra_unbounded (mm/readahead.c:?)
+	...
 
-...
-> from unmount and just use huge_zero_folio which is guaranteed to
-> exist once get_huge_zero_page succeeded.
-> 
+	value changed: 0x00000001 -> 0x00000000
 
+Annotated the reader with READ_ONCE() and the writer with WRITE_ONCE()
+to avoid such complaint from KCSAN.
+
+Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ fs/fuse/dev.c  | 6 ++++--
+ fs/fuse/file.c | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 3ec8bb5e68ff..8e63dba49eff 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -282,6 +282,7 @@ void fuse_request_end(struct fuse_req *req)
+ 	struct fuse_mount *fm = req->fm;
+ 	struct fuse_conn *fc = fm->fc;
+ 	struct fuse_iqueue *fiq = &fc->iq;
++	unsigned int num_background;
+ 
+ 	if (test_and_set_bit(FR_FINISHED, &req->flags))
+ 		goto put_request;
+@@ -301,7 +302,8 @@ void fuse_request_end(struct fuse_req *req)
+ 	if (test_bit(FR_BACKGROUND, &req->flags)) {
+ 		spin_lock(&fc->bg_lock);
+ 		clear_bit(FR_BACKGROUND, &req->flags);
+-		if (fc->num_background == fc->max_background) {
++		num_background = READ_ONCE(fc->num_background);
++		if (num_background == fc->max_background) {
+ 			fc->blocked = 0;
+ 			wake_up(&fc->blocked_waitq);
+ 		} else if (!fc->blocked) {
+@@ -315,7 +317,7 @@ void fuse_request_end(struct fuse_req *req)
+ 				wake_up(&fc->blocked_waitq);
+ 		}
+ 
+-		fc->num_background--;
++		WRITE_ONCE(fc->num_background, num_background - 1);
+ 		fc->active_background--;
+ 		flush_bg_queue(fc);
+ 		spin_unlock(&fc->bg_lock);
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index b57ce4157640..07331889bbf3 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1002,7 +1002,7 @@ static void fuse_readahead(struct readahead_control *rac)
+ 		struct fuse_io_args *ia;
+ 		struct fuse_args_pages *ap;
+ 
+-		if (fc->num_background >= fc->congestion_threshold &&
++		if (READ_ONCE(fc->num_background) >= fc->congestion_threshold &&
+ 		    rac->ra->async_size >= readahead_count(rac))
+ 			/*
+ 			 * Congested and only async pages left, so skip the
 -- 
-Pankaj Raghav
+2.43.0
+
 
