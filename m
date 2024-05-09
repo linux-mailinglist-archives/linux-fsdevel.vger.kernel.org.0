@@ -1,91 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-19201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CDA8C1259
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 17:59:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1CB8C126F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 18:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C921C21523
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 15:59:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FBA91F2239F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 16:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9D716F825;
-	Thu,  9 May 2024 15:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0A316F82E;
+	Thu,  9 May 2024 16:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="olNP++PA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us37hta6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B48A15F3E6;
-	Thu,  9 May 2024 15:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47661383BD
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 16:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715270370; cv=none; b=TUEZHUXdYDmIOv3SxA/fd7W6S7xjl4/MySlyEF2RLojle6I14Nr69e4ioeyxpKne7vyHfVdAJv+W02+RQDAmeZmUH/A/iDa9v7MNq7616zJlC2EWE0s9ICDGUQXYKCyjeErAYwqX/izmsdzbiaLqaqwhPTghLT1VTzG/nR/N0A8=
+	t=1715270919; cv=none; b=MD+aj9ht3mOhDLZPZ+JMMLlMNcpXWTp0U42wc84C4EK+TBwcWfHmFa9SvwHLcLU6pXuv9DXF1XgjPh9yzykGafWuDig0bPLrCEmCd7Q93SsEaO10+2I7pdP4DgJm+aB/lJLF2QakaerTEhAveHAHKQeo3NVgFHfXcf4ZY4Qvu+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715270370; c=relaxed/simple;
-	bh=4FZ9KCdwhV378VJePVkML7by6JX1CpOAHNYUyYjZYiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZI7LrgGaq+VAITHY8ptXUs80y7ppZpgJjcqatH0JP4frJMFVU1xypcVoqcrUGCZNPmSip/K1xUR4zvk5lcKn4pXP0pcX4cBV/PD6A/iK0EPuqfdo/Faw7z7UwJOXi7rxsDAVFTGillZHIRrCPkflfwXCqgjVKAkCKBdXAwuotQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=olNP++PA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OA/KerpuD6GFy1MyF9RTN0/KECfL/+yD5F3VNtsdfN4=; b=olNP++PAF4VbAFAgrvp/dplFAi
-	aqTtngcdYzIMYK1thrnhLTt6uqGWAnxFhhAlKIOxpMqPxByeeQ3biiv42jyIHW14MYqgNVx/MKwha
-	oShgzh+fmn6jnMMi4ChPhhnsRMcmPNhYloDBE7mYXy+ao155qUqYpWKryDswS732HRGPjsgCoHiPZ
-	GY5V8nV5GXOBm0L1oQRtiKyVoGJuDpWsUgvyDTFJ8fgvi9sC+OANHl6om3i2yVnGhV09JAqMhhhty
-	S4yGLLJiKFNKyk1y9Hg3lOjpF/g+RqV0JfvA52Gf4YhkhsCV6sTS4Z4JCH7qLz8KKrveeaIL4l4Gs
-	G6XFaz+A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s56B5-00000001xz2-2bpY;
-	Thu, 09 May 2024 15:59:27 +0000
-Date: Thu, 9 May 2024 08:59:27 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Chandan Babu R <chandan.babu@oracle.com>, Jan Kara <jack@suse.cz>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: Re: [Lsf-pc] XFS BoF at LSFMM
-Message-ID: <Zjzy34y7aT0B2J77@infradead.org>
-References: <CAB=NE6V_TqhQ0cqSdnDg7AZZQ5ZqzgBJHuHkjKBK0x_buKsgeQ@mail.gmail.com>
- <CAOQ4uxj8qVpPv=YM5QiV5ryaCmFeCvArFt0Uqf29KodBdnbOaw@mail.gmail.com>
- <ZjxZttSUzFTd_UWc@infradead.org>
- <CAOQ4uxhpZ-+Fgrx_LDAO-K5wHaUghPfvGePLVpNaZZza1Wpvrg@mail.gmail.com>
- <20240509155528.GN360919@frogsfrogsfrogs>
+	s=arc-20240116; t=1715270919; c=relaxed/simple;
+	bh=hFb3V4XfzcQ+cQpXqJhvh1cYNHXm/QDugK2bqpbG/N0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=TjWFeVmKi+b0yqsTW9RKekp48HjTGjBslhiZvY9059GdkfGTjJbOSy0QLyTIyUWUcBXgfivRw4tE+wfywJ/GDESouvNdtxdBDGouTkOUAN3uBErY9ZDsCzVCaQsALzXfZmh3AK5PEcxlIhX+kSST/TAc6ypQpBLUhN7JVobKDhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us37hta6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D0B7BC2BD11;
+	Thu,  9 May 2024 16:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715270918;
+	bh=hFb3V4XfzcQ+cQpXqJhvh1cYNHXm/QDugK2bqpbG/N0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=us37hta61VixfpAzn3FgUG50R1wASeIKGGIKAzOu7UkdFac+mn9YNZeOvnpeZDdSU
+	 9HJuZpUeEUU425c1xHqOlwczMnNT7T3KlcueE4kz/gn4PDqQZRoml5w4YHGfDgHu2H
+	 CM/TuFAAujIr4JNim4mfzwesysnepK2CnaFR/UxHSljQ+oH/D0A8MEMMbaOFCHdbVE
+	 vr2u9yozR5PV2wswIa/fyItEkx60vXa8EonAhGfmO6L5sjL+gOPcIkvzUarW3dTDqx
+	 n94OaYf1UzIFszN350BpyW8TrJXcPjeIt9zXhBilx+HSxxcvV91npqsPSJmH0uBA3z
+	 SV6sQjhfMmsYw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C6F39E7C0E0;
+	Thu,  9 May 2024 16:08:38 +0000 (UTC)
+Subject: Re: [git pull] vfs.git qibfs leak fix
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240509011243.GQ2118490@ZenIV>
+References: <20240509011243.GQ2118490@ZenIV>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240509011243.GQ2118490@ZenIV>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
+X-PR-Tracked-Commit-Id: aa23317d0268b309bb3f0801ddd0d61813ff5afb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1bbc99158504a335cf150d070c76f7edef4ed45d
+Message-Id: <171527091880.25065.14747666871319080115.pr-tracker-bot@kernel.org>
+Date: Thu, 09 May 2024 16:08:38 +0000
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509155528.GN360919@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, May 09, 2024 at 08:55:28AM -0700, Darrick J. Wong wrote:
-> Ritesh and Ted and Jan and I were chatting during the ext4 concall just
-> now.  Could we have a 30 minute iomap bof at 2:30pm followed by the XFS
-> bof after that?  That would give us some time to chat with hch about
-> iomap (and xfs) direction before he has to leave.
+The pull request you sent on Thu, 9 May 2024 02:12:43 +0100:
 
-Well, I probably need to leave at about 3pm if I don't want to push it
-too much.
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
 
-> Alternately, we could announce a lunchtime discussion group on Monday
-> following Ritesh's presentation about iomap.  That could fit everyone's
-> schedule better?  Also everyone's braincaches will likely be warmer.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1bbc99158504a335cf150d070c76f7edef4ed45d
 
-Sounds way more useful.
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
