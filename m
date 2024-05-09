@@ -1,135 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-19205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561438C13A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 19:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4AE8C13F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 19:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8ECD1F21D82
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 17:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28257282E37
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2024 17:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E54134B6;
-	Thu,  9 May 2024 17:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B972D12E4E;
+	Thu,  9 May 2024 17:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jfTDpJk9"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PVQeG805"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947B310A39
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 17:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFB2C2ED
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 17:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715274941; cv=none; b=Q8vtn4f8b/KnBq+4qF0ZBDLky9NxSeuK9zgulAnL6X+MPduygT1ZZ0h/lPeJIreIr9cdMQ1anORWmYmPStWBIA5RXmO1NqG+kr82TuZ4JaZRwJ6ojnhS7FMZlTbsZGyQKnwI4GxmcWyz9fxXe5sQLH9QM+fOXMqw5TOBCl15TEY=
+	t=1715275432; cv=none; b=m0KxWVCnaPHVqUDMkFOI/YkV/JKcdkgRYeUDga7003eZOE24pxYlVhHOJd9zOka19rJZElhOQtEn/pvEQ0hQ48CEzLpX7cWxqH8RrKffB2UI3u64jo2X3OqWSlFJflXU2Yf2Nh9eglstKzjb81eHcvWpraV9HNmY+ZKnvxAOGsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715274941; c=relaxed/simple;
-	bh=I2b3mZDphqAOw1CzA9XXn8owOPYBXLxuDEHOZbykNDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xpmub8P2vKEgWs5gSvSTdGQiILIrpwljYFBo0Og4b4SG2J/JW7TIQJ2hcROtz6T3BuUVOqWlFCz/mPjl+JHjmClfbuIXKdC60tNyENeNuh/3cSTroDeFrr87ytpR2RJJm3qm7uql2GI0G1yZIX50RIwfJ8tkPWt2S+TBHoczr9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jfTDpJk9; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C5431411FC
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 May 2024 17:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715274931;
-	bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=jfTDpJk9q6zsy8oZFwZ7HCMxbqbfLjcGbav/51M9Fm4+eTXRvos2ySsnq89ZXrNNS
-	 1VcvnR7ZJHGaPw5gzygz5GDjkk5zkh4S6a+KiD+kc2SBSk5SAwd+l3mQXIF8iWDoJT
-	 L2PrVEzpj9gjSd4ECS9md71qGtQzzKP+56ndq3PP6iEzNKo55xMwdwpa1EFespM9ni
-	 UfBGS8uzTTJ00eCdW7Jc8j94605ezTLe6iCY10QGNheCFNZbpSHXRN1Oj5OK1Fzall
-	 B+orPH+7QPrJEHyMQbg1cBVzykUyFmo5wl79+wpABZ6dwjVE9+y0U9WJrvLxI5FagB
-	 aekqH4pn1IjYQ==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a59c3cf5f83so72962566b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 10:15:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715274931; x=1715879731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
-        b=oKYWjP9XCq+8P8hAcvwaIqOBgEAvts9LXpGiHwWioeBmMEtJJxZfTIeHHC9uPlvDSm
-         FjwXoyPZr1R7vLxzXmVyGEcLUPAgPozvTkbl8E9oOszBWtzYB9BFg62YEHt4RQKVnGjO
-         27Xzazh/zK0C8L07pAlBDSdqZc5+OtOLAnxkjd4VfBH2Ryg9Eu2tMj816WQrJCxdxnQ6
-         LBR13vqf0tC+uIKoAnPABfEpTJNsINglRCF/GAxqKPV8pa+DlAv4mrzxrFwN/ksKTzWR
-         AV3M9LYFBl9M19R+6+eAfAvGporkggOgFKKT5f++jkk32bL/zvB0YO6EsSySPth6CjvV
-         mMVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUleW1wiGzKHm5gSewmik+drZKxHwEs5GetcWLEC4mpUub3dk9QAisWJZ09YRsN4EIS+DWQW/RSAPQ4AK/fLOvthFNRJMh78TT/M89TyQ==
-X-Gm-Message-State: AOJu0Yx6X9xWjXThkzspdqTIXxwMBVAb21EmbqSLdHUJF+5mnFR7Lu5U
-	CqLVeVhky3+J2X5b29+vv/pdslE+xdkuV26ru7FA38PQcCdP94ZKvHNUhyINCVgUVaXAC6qD51e
-	aSmc87dizOA6JsEnm+xPr7DWnN6NQa+CECJfjX2gm5NPn7kTNdDHy0jIuUu1GcOlU35wNJ68//z
-	SaeoQ=
-X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15004066b.54.1715274930675;
-        Thu, 09 May 2024 10:15:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRId3ZK7jZnEUqxnKrbYMBDrOXsoSZ6C8TgHiChCG3zHZRXUk/mhnLLXZdmjv+NVtyVoseaw==
-X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15001366b.54.1715274929765;
-        Thu, 09 May 2024 10:15:29 -0700 (PDT)
-Received: from localhost (host-82-49-69-7.retail.telecomitalia.it. [82.49.69.7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm93194566b.129.2024.05.09.10.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 10:15:29 -0700 (PDT)
-Date: Thu, 9 May 2024 19:15:27 +0200
-From: Andrea Righi <andrea.righi@canonical.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
-Message-ID: <Zj0ErxVBE3DYT2Ea@gpd>
-References: <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-41-dhowells@redhat.com>
+	s=arc-20240116; t=1715275432; c=relaxed/simple;
+	bh=0ugMAx4PhzHKyv40ZuZGgNyOkcOW1v642VlMhmrdgvY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Jlcmm+3sR8VpXW+8CfvL2wWxtILjHF59xPMDUnuvGQ3Oek9vqiOIR3uCpBc5CUVYYKVHyEycqYq1vMty8WGCNZjTXHa0JAFiYc8NWa/FUTCrQ+YMRIx5VAl39Sy5xlExc642Od4VfuCcXUyfk5rCqAKJvPDXS4jjv0Ws0Oc5fQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PVQeG805; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715275427;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q5NwpyR9OTSf8oGKU+ne7+xoirIi77/iJlT2WIV8ttY=;
+	b=PVQeG805+z+rJd0kTIjdCzK2cBySgUA9thg2xKhNXMZcGZUpBLTZNP3FCARPpKo1Q2tRBR
+	UpdM1F7kDC2VbJ+YFTS7gITG/HiZbizfrTU/PQ+bWzgYoS27DCpOdfcPGCm5AD68HNxTX8
+	WTP771jM/gN3ebtg173XF8De52UvCBo=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Luis Henriques <luis.henriques@linux.dev>,  Zhang Yi
+ <yi.zhang@huaweicloud.com>,  linux-ext4@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  adilger.kernel@dilger.ca,  jack@suse.cz,
+  ritesh.list@gmail.com,  hch@infradead.org,  djwong@kernel.org,
+  willy@infradead.org,  zokeefe@google.com,  yi.zhang@huawei.com,
+  chengzhihao1@huawei.com,  yukuai3@huawei.com,  wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v3 03/26] ext4: correct the hole length returned by
+ ext4_map_blocks()
+In-Reply-To: <20240509163953.GI3620298@mit.edu> (Theodore Ts'o's message of
+	"Thu, 9 May 2024 12:39:53 -0400")
+References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
+	<20240127015825.1608160-4-yi.zhang@huaweicloud.com>
+	<87zfszuib1.fsf@brahms.olymp> <20240509163953.GI3620298@mit.edu>
+Date: Thu, 09 May 2024 18:23:44 +0100
+Message-ID: <87h6f6vqzj.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231221132400.1601991-41-dhowells@redhat.com>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
-> Use netfslib's read and write iteration helpers, allowing netfslib to take
-> over the management of the page cache for 9p files and to manage local disk
-> caching.  In particular, this eliminates write_begin, write_end, writepage
-> and all mentions of struct page and struct folio from 9p.
-> 
-> Note that netfslib now offers the possibility of write-through caching if
-> that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
-> v9inode->netfs.flags in v9fs_set_netfs_context().
-> 
-> Note also this is untested as I can't get ganesha.nfsd to correctly parse
-> the config to turn on 9p support.
+On Thu 09 May 2024 12:39:53 PM -04, Theodore Ts'o wrote;
 
-It looks like this patch has introduced a regression with autopkgtest,
-see: https://bugs.launchpad.net/bugs/2056461
+> On Thu, May 09, 2024 at 04:16:34PM +0100, Luis Henriques wrote:
+>> 
+>> It's looks like it's easy to trigger an infinite loop here using fstest
+>> generic/039.  If I understand it correctly (which doesn't happen as often
+>> as I'd like), this is due to an integer overflow in the 'if' condition,
+>> and should be fixed with the patch below.
+>
+> Thanks for the report.  However, I can't reproduce the failure, and
+> looking at generic/039, I don't see how it could be relevant to the
+> code path in question.  Generic/039 creates a test symlink with two
+> hard links in the same directory, syncs the file system, and then
+> removes one of the hard links, and then drops access to the block
+> device using dmflakey.  So I don't see how the extent code would be
+> involved at all.  Are you sure that you have the correct test listed?
 
-I haven't looked at the details yet, I just did some bisecting and
-apparently reverting this one seems to fix the problem.
+Yep, I just retested and it's definitely generic/039.  I'm using a simple
+test environment, with virtme-ng.
 
-Let me know if you want me to test something in particular or if you
-already have a potential fix. Otherwise I'll take a look.
+> Looking at the code in question in fs/ext4/extents.c:
+>
+> again:
+> 	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, hole_start,
+> 				  hole_start + len - 1, &es);
+> 	if (!es.es_len)
+> 		goto insert_hole;
+>
+>   	 * There's a delalloc extent in the hole, handle it if the delalloc
+>   	 * extent is in front of, behind and straddle the queried range.
+>   	 */
+>  -	if (lblk >= es.es_lblk + es.es_len) {
+>  +	if (lblk >= ((__u64) es.es_lblk) + es.es_len) {
+>   		/*
+>   		 * The delalloc extent is in front of the queried range,
+>   		 * find again from the queried start block.
+> 		len -= lblk - hole_start;
+> 		hole_start = lblk;
+> 		goto again;
+>
+> lblk and es.es_lblk are both __u32.  So the infinite loop is
+> presumably because es.es_lblk + es.es_len has overflowed.  This should
+> never happen(tm), and in fact we have a test for this case which
 
-Thanks,
--Andrea
+If I instrument the code, I can see that es.es_len is definitely set to
+EXT_MAX_BLOCKS, which will overflow.
+
+> *should* have gotten tripped when ext4_es_find_extent_range() calls
+> __es_tree_search() in fs/ext4/extents_status.c:
+>
+> static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
+> {
+> 	BUG_ON(es->es_lblk + es->es_len < es->es_lblk);
+> 	return es->es_lblk + es->es_len - 1;
+> }
+>
+> So the patch is harmless, and I can see how it might fix what you were
+> seeing --- but I'm a bit nervous that I can't reproduce it and the
+> commit description claims that it reproduces easily; and we should
+> have never allowed the entry to have gotten introduced into the
+> extents status tree in the first place, and if it had been introduced,
+> it should have been caught before it was returned by
+> ext4_es_find_extent_range().
+>
+> Can you give more details about the reproducer; can you double check
+> the test id, and how easily you can trigger the failure, and what is
+> the hardware you used to run the test?
+
+So, here's few more details that may clarify, and that I should have added
+to the commit description:
+
+When the test hangs, the test is blocked mounting the flakey device:
+
+   mount -t ext4 -o acl,user_xattr /dev/mapper/flakey-test /mnt/scratch
+
+which will eventually call into ext4_ext_map_blocks(), triggering the bug.
+
+Also, some more code instrumentation shows that after the call to
+ext4_ext_find_hole(), the 'hole_start' will be set to '1' and 'len' to
+'0xfffffffe'.  This '0xfffffffe' value is a bit odd, but it comes from the
+fact that, in ext4_ext_find_hole(), the call to
+ext4_ext_next_allocated_block() will return EXT_MAX_BLOCKS and 'len' will
+thus be set to 'EXT_MAX_BLOCKS - 1'.
+
+Does this make sense?
+
+Cheers,
+-- 
+Luis
 
