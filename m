@@ -1,96 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-19288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349278C2C8A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 00:22:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6B68C2C90
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 00:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9966E1F2389A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 22:22:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625D22833B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 22:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E5C13D250;
-	Fri, 10 May 2024 22:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208BE13D254;
+	Fri, 10 May 2024 22:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Te3Q0ZRD";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="emEr/ln6"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MpHtf2dd";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JqcdKQPX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2598113B597;
-	Fri, 10 May 2024 22:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5938613B597;
+	Fri, 10 May 2024 22:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715379716; cv=fail; b=IrkKcEeas+PTbsCZoKg7dXq9tmi1dXDAJ43CahHhNMNGPO/n2NrRgCXDNG1uwW5D8ei+IGCPg9JQ+luZveUcY8eQxxpGTDKZo5gnVPR4kCjXkQTf06OQtUNxTsQdfT+ZSSZXKa6xWuk8PhXEGNJZ8JJ1p6kBS/j9I/UDpSnLQtQ=
+	t=1715379779; cv=fail; b=bazyJkPMdw99igrXuFHzxR7y65nXUkjI7jEa93bnTYHJjKPDBPJ3JqyvGIoCMcpb4WyiEFMttukkPBH2ujfK3AzBj7tJqmOPPbixabcImH3UD7hZlNzjhOe4rbv5JkYASfDP61/9gUo1C1D5FcPpiJtJaeCjXn0wT2m3hE0qCm4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715379716; c=relaxed/simple;
-	bh=7lQZFLlCQOmo92uygBrIWLV4YDzSgaHLmBapXLwacGo=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=T10jtEw44+I9beRAHSPLT3qZdk8nuYYb6w3m9ePy85Xg8JTKx/DwDyL9BSzMAVYfux/KWaVwAy2a/uMwmeM21zz38zsoTTSsWDu+sL2UWW2JlsTeRph9NHBZCJMXRzeloxCs+Un1AIsZmkia7shUcB2M05h4mkHSEBX2gUXqets=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Te3Q0ZRD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=emEr/ln6; arc=fail smtp.client-ip=205.220.177.32
+	s=arc-20240116; t=1715379779; c=relaxed/simple;
+	bh=2klBj3ps6gMlXFE2g2IeDgWNLra40dYNpe2RdnIoUdM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=r4IANnWS2GdFupg/mO1XFOeJgzoeKpS3IoXfjcvTnco+AAE/S10WqMBqnWqH2tiHtTU3FvW6StmOE2QSsVLq4vfy6zJ7rV2Uy3gL/EynZg6H9eWQO2PZ2edZEFd1aAdXuigTHOZL7hc/WMGOjDvApUmqw7iZfXebwj1jZ2460TE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MpHtf2dd; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JqcdKQPX; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44ALvYfu011345;
-	Fri, 10 May 2024 22:21:49 GMT
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44AMDkPo020096;
+	Fri, 10 May 2024 22:22:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-transfer-encoding : content-type :
- mime-version; s=corp-2023-11-20;
- bh=qtk2SnK65myvCTT1i0kNbId9OSIZ9zBDQlltkDTsTyI=;
- b=Te3Q0ZRDgdjR/t63SK38wVJc2JhcrpDIzv7p/aO4G21tNRIRIstuSG3HiiQXYQbDxAW6
- N74gq8YczGrsSBXNYhVpUgNNmI6vQUkXY4Pv98Cl2cRy78N81cVQyMHfb5lQw+ksoLtX
- VdKFp/1IzRib4v4/hRQrPjJjZwF4/m1kpT23tCbqMUXqxWCgAAQ6uOvjZEXsnjRZ+qxh
- CfEpqaOzijM1KSQUzCAv2MwdF9SJZ8xrVNyKdu5fd2AH/hWh349BhGzDefiwXBduiMgy
- jZcIXEQwQg6Uf73bPnhGanpnMZhXQZyBj+YCcQln2C/lZyRtTEyFTco/Zq5iVmo5OUy5 lg== 
+ subject : date : message-id : in-reply-to : references :
+ content-transfer-encoding : content-type : mime-version;
+ s=corp-2023-11-20; bh=ZmeDUUZCNceW+Uxl5ojGjqrmdGH4I7NqC//E+RH66XA=;
+ b=MpHtf2ddJYob41yQYsdD0gyORceyollZFqVhXdSWc/bu2yDS+5iGB62pifGBSbP/AoYg
+ iwJCwOhEaWw4nyrkhqAh9U3STxY99J2Sp9nfE7T8Le255tI5Z6qazXcOTnTbIGrBpfdc
+ XCWEBVHFY0esaX8DgKJYWmZFT+bE9tUYyvC+IoTQ+nQA4ucSiqCHpRRKcclPas4/EZqV
+ Cy0Af0wnK9HGDr4Cdd+XgrZbAi11tfBJ0JJSqyH9FbwOFSpBabecL9n0OIVrAjRPkSYC
+ SxoNMgMEDq7Z3Es5wIYwEU+gEzTQF8Cqeu0o9Z1iz/ZjObmx7Md5uLJkla0DGe5poOoy GQ== 
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y1uxur0v5-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y1v62r07r-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 22:21:49 +0000
+	Fri, 10 May 2024 22:22:51 +0000
 Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44AK6kKY019342;
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44AK6kKZ019342;
 	Fri, 10 May 2024 22:19:08 GMT
 Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfrpgc1-1
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfrpgc1-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 10 May 2024 22:19:08 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lIR+e58l6CvAOy5H2OEvam+FcVwqzVrj6C2U1l3nzF4gPPyGSyajAflELogOEOyxRIAWf7X2JhkEZQ5Lx8Fa89cvS6GpLRJwoqVv1BRqJVl5nJ6DxiGMRlOt1OjUFdrKYENXExw9WBUNobcKmoRmm9+gY+pwXRrmyCpVwW9lSofLg4mj2shhRuXAk+biCzOtBJzy9Em+tWyWIKR4ENO53ib8V/toCBl0aj7m955ZSgq+ByW1nZ8KG4cDHG5J2YFLyjqV02o90hCkvJkhuutXZSKmR7MVTe+L2lpFeYCZM3PPXZIG2tUZDaj9+SlMmbvNdlLXItvTM0ZVDukhi5IKlQ==
+ b=Geo2T++tbUsj/zjj41U7Ds6Eja1ISsfqwR3s6rlul5w6+W8VdWaFbMot9f7ivEfjSNFf0FnLFouPeGBqBaLPBuACw9ChbQI/+Bbp/N+JHiA9OCniFdnVN4PiMsRjJQ3yysNEjZDZrNmnyHdIMi9NRfN+3VtltEdHG1HsNA6iqdB5GqRyoMM9gpMNGuhM8zlDSZP3HhFjF7LfjQV1NtkEy8Z0ZZqTjSUhTOiJW6CZY3QSwDldzGP7yCa8AuROpi6y1MDoKouFHy3wYNo9Q6PlnfMUhUwubC9GLxJsFXn2Pe3wVWt6txGe9GA3jV+l5+HFxhSeyJ88WqVqOu36GmG4Dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qtk2SnK65myvCTT1i0kNbId9OSIZ9zBDQlltkDTsTyI=;
- b=ansQuOUbD7IUj30iPdvG4+8qDaiAtmqMf2K87VBR9dKt+21YbovDKI3ooi5AdExyKy9Yoq8Ed6bbouJ+kIQxRyy+toZtlG8ozEKNISbJ2P81GPHLtUjjtZcFUdE6BytaN1AtZ1ZTQBKyLr6KzVZSARV63MJlxxEz4KPNclOVPvHhb+Hs0et9UQA5yyWOEaU2pkEHvlhq4OkJhVq8NgQ9JkecBvammiAjVCqh7mLbJMCraU7R2+wycKGx2rHSvp+umz552bduJ5u9PLKslrV/eLKT7QnOdN92RVTHbdf4HkpSVb4Nwl4iZK5zYw/9h7r7L0zUGRgL1WOdvMEvJU/9gw==
+ bh=ZmeDUUZCNceW+Uxl5ojGjqrmdGH4I7NqC//E+RH66XA=;
+ b=XmClALrhkQpxnSAJF2AlkbvkTFztkNe6PIDBl7W+Xeu3jumtEzMUj/7cngG1j7UK2IPyk1MjhZFShuXYirC0uFrP7743nSt5GBM7UIsphNR25vFXoUCdZHcjQGkT5MAnBk+suUgFWQTALodtNJ9TJpMkFpy0cxF+a9IujXIydkAh14hyw5yUZZv6AuvaCL9C63viyLjTKjDeLk8ljttcBaTGM3RF49U0CDGXPXK4tLiuQRHq0tInU9aNfRcDgbwf6fbYs+Uy/b+0xdQJrbT+tb8dfDscxMgAya7/PA3k7SPutAaVOha5sCb8jnvU23zOGRTt/vd87g3h93Z0ixt5Tw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qtk2SnK65myvCTT1i0kNbId9OSIZ9zBDQlltkDTsTyI=;
- b=emEr/ln6p1R6RgwX5Oo6Q/5pWbladTJh2F/zzLVQ6Fl4hunUsj9Qt5P63qlcYt3zMkXgYOfgZRTDU9ErfrYL1wcr/VdqDf0Nv4J/2D59o5rn/CnRZgtR3fNrA/bkY9ExeRHYBD4OPse2KOLM0wT9/oWd7Q85DBJ8jTiJafIICq4=
+ bh=ZmeDUUZCNceW+Uxl5ojGjqrmdGH4I7NqC//E+RH66XA=;
+ b=JqcdKQPX7TgWsX51fdVeHXzg6cwYJlo08RywaPtyU/g83+7rlU37zYx/cChp5gPb+I6knX4yHB2NvBG0m2PXzccNgZmT5kZtOiV/p0MXiCOqNn0iTMKuU1zOIPg33KtWezim609F+j17lq8UX7/ZjCClaYc7BRG7n5x3FhOiSB0=
 Received: from PH8PR10MB6597.namprd10.prod.outlook.com (2603:10b6:510:226::20)
  by MW5PR10MB5762.namprd10.prod.outlook.com (2603:10b6:303:19b::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
- 2024 22:19:05 +0000
+ 2024 22:19:06 +0000
 Received: from PH8PR10MB6597.namprd10.prod.outlook.com
  ([fe80::6874:4af6:bf0a:6ca]) by PH8PR10MB6597.namprd10.prod.outlook.com
  ([fe80::6874:4af6:bf0a:6ca%3]) with mapi id 15.20.7544.047; Fri, 10 May 2024
- 22:19:02 +0000
+ 22:19:06 +0000
 From: Stephen Brennan <stephen.s.brennan@oracle.com>
 To: Jan Kara <jack@suse.cz>
 Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Stephen Brennan <stephen.s.brennan@oracle.com>
-Subject: [PATCH 0/1] fsnotify: clear PARENT_WATCHED flags lazily
-Date: Fri, 10 May 2024 15:18:59 -0700
-Message-ID: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
+Subject: [PATCH 1/1] fsnotify: clear PARENT_WATCHED flags lazily
+Date: Fri, 10 May 2024 15:19:00 -0700
+Message-ID: <20240510221901.520546-2-stephen.s.brennan@oracle.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
+References: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BY5PR16CA0021.namprd16.prod.outlook.com
- (2603:10b6:a03:1a0::34) To PH8PR10MB6597.namprd10.prod.outlook.com
+X-ClientProxiedBy: BYAPR08CA0043.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::20) To PH8PR10MB6597.namprd10.prod.outlook.com
  (2603:10b6:510:226::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -100,145 +103,264 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH8PR10MB6597:EE_|MW5PR10MB5762:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3aab3a6-46d3-4f76-5173-08dc713f3296
+X-MS-Office365-Filtering-Correlation-Id: 285781ec-f032-4d65-42ed-08dc713f3376
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?p0i4sjj1B60TVueq/Lv4Sw/1YUI0IqicXp/OC/iTBKg40w80EdbnOO4wRrXE?=
- =?us-ascii?Q?tofgy5WzYcBzX3JpyB9ULE9K3zdqVWqSi0sR5l6fP/ejyNOl+fS9cHXjVVtc?=
- =?us-ascii?Q?f/CudGyWZFHs8O3kdWcNJ410Fi7KgYTlckxhmYmoDymWgxdtxyxBzxbwA167?=
- =?us-ascii?Q?BOdxgp2NSadMnTqQ6eL8TrxYGnhhn2SPKVFiwqRxvf7kc2dnj60AyL8jmg8R?=
- =?us-ascii?Q?R18gyhtzb6AxUweWFEGJfYDTdIKSekZkeJx7wZ8Us1vtEKPu6fGBIqkJXF98?=
- =?us-ascii?Q?qCVLHc8v9VF+MF+wibA9p72u3/uUUTSbzkN/q/9fo5i2pCUohSfPiwFWlsF8?=
- =?us-ascii?Q?yEZMWykCP5TFoXL4Bp78ZaYecz4vX/9WweIUQrWXeA022NZMRmHg2eY99bVX?=
- =?us-ascii?Q?n3tyaKdJO1D2LGURQKRwzpZeY70DcICjWIos308LVpDFLjI6/cPcLdAD3k5u?=
- =?us-ascii?Q?eU8t2KTPnRe9DqfnhloZXBdk0+r3B3CMEVK6YdLmwk5bsNb2uS8EYJh2gNZw?=
- =?us-ascii?Q?aOQt9yFhCrLJK31qdYUdDZSfllIzzHfAeC2hkGzoTL96rROvgkG8uHioVWLj?=
- =?us-ascii?Q?/YfJsb+z2E+jfa/ZwvnzXRT5ZjDcgVDjm5XcnHurbW5AdpBmPO/z+7k6+gO4?=
- =?us-ascii?Q?sjZwQjq3zVoW6cS57LxgEtFna2zdFBCGVtyWA0JYdKVVc5F53flJCZ2/lF5Q?=
- =?us-ascii?Q?WImwNrFtB2yrVwKy2yloRh7/SxsBVppp6/vaMXMQUrZjaN1CiYtFKtY0+/dw?=
- =?us-ascii?Q?4NyNsl1bcbdtq5EJqXK4zTymkokC9+zSgfA5fXvNGt4SKptvrZsLzvZfvyJH?=
- =?us-ascii?Q?2E02B63bHxKq++nNUjOFEs36VhzxESojxT48O1JbFjK1dF38PKaygm2vviG1?=
- =?us-ascii?Q?DnZjQl39n7w8llRA8qkWK4czQnHk57QabSbO9CqTPKYRUFtcwvdrzFYab4HS?=
- =?us-ascii?Q?Ku16IOsc0jMLDVhfnJXU0/TVmayrvLt4HCkEuRvAxfA59jTyKXJpEwilHsNI?=
- =?us-ascii?Q?zpmS1n5OhS6NE0o6e1MFm6S83hr5Wpv0Wi/M0DIlVfZK+NrCurHhj/8KgLPu?=
- =?us-ascii?Q?OprQxkBecQ981WEC/Pqn1NAQvxXXjpzjB5CSApPvXHLl/gpJ/0b6U1Jaz3Bh?=
- =?us-ascii?Q?8M2tL6l/2CCjx98s5JvfUxOpcV5Mi/b64gKDdYKSr5Fo1UVN7QVRNjMqcyyc?=
- =?us-ascii?Q?J/89MAVobz7flMAlM3uqvJqc78GsYE5F+LdFH3yP4Jtt1iTEOFGRxjDwRCg?=
- =?us-ascii?Q?=3D?=
+	=?us-ascii?Q?EAt6djWGU3MiTbD+4BGSvU646rRemVT7zXQdsAuSPZVsFsCl40SShCjhisjF?=
+ =?us-ascii?Q?uljLXG8wNq1oyaeEqBMbrq2s7+AOc74vGBbvDiQ3GGoktYtcbVXC+Cp9m37/?=
+ =?us-ascii?Q?J7VrBcSEIYmlJNj7rmaEKnk8lS+hJuKfwRU+iBzrgxjfbw0RBK5f6lhlPwNO?=
+ =?us-ascii?Q?6UF43Hfvidy1gTETsAfz87TvBdiY2bOCXIqSA+BESNxFcihcZ0niKlybOkqj?=
+ =?us-ascii?Q?ThcxOTz1AuJrBV4QHyUurG519Rl4N8pJ/qxa2cg3Fq52estTHUKHRfb9xCg0?=
+ =?us-ascii?Q?A+cwuAWhOIUcs+wbvUfcSt9jg4HHXrGnY2tS1k8sYSjcXNHGWgmQhoQE4Xe4?=
+ =?us-ascii?Q?mRym6nBwLnBUtwE3LtZj7Gh7cJ4nuIg0TUdR5zVwnnkUlPKHD8ueymp6h5EP?=
+ =?us-ascii?Q?riq83OZLLUMu7jqNfvMH0Whfyj4miU19GNW9wAwm2ixlJDJoscKm470O4u1q?=
+ =?us-ascii?Q?MVrO4SLUjZP8uwuea56106xGX+a882frqLMR1L6aaLJZEDOvvYpyvUUsu4dA?=
+ =?us-ascii?Q?D3eV1/gf3TFxwrDGD7wEl9jCEEqTz3Sj458AslkBvHMzNjgg3zOCEm6c80Lv?=
+ =?us-ascii?Q?v1JmC0kh+YfdKY+ZRSvRghA3YfRBpw65ZFyvHhHhdcuWcvT5bUtRP5UhzDAH?=
+ =?us-ascii?Q?zw8FbpENr3mSbzWmJbhrrKIt8FERqSgRxpOsF+maHBSEWH+zKgVpIiC06Vv7?=
+ =?us-ascii?Q?LxoDD9xA7QVGr7mZM7LzuMmPynUrI8Z7g7L+vrRb+PilxHSxG8dC3seZKJbJ?=
+ =?us-ascii?Q?X7J0vN04usu5zPbbhduUXlofbdD4MxHE0XfG24p9Q6sltMEMW9jQvkD9B0Iz?=
+ =?us-ascii?Q?lYMKP7oKSiTdWjrPzi8zU63zNJDqT7ZiggiHzGQl/0tuoitL7XOv7n9tHLQh?=
+ =?us-ascii?Q?FqNXR0SCfGo4W10DCA1OF5crAl7jvHiP6EYONHnDsjYJrC33qsPF66kyBH/0?=
+ =?us-ascii?Q?1ZcYjz9R0rWilAInGYIf9xOhq4QJdBLEcuApzCEmKdvAV1p7bTY5pzg/diwi?=
+ =?us-ascii?Q?C9n44BqBvpkaobIexN6zi7OCxdTeaEQXudnvBg7THg5fA2kDUGZKyjsQiM/4?=
+ =?us-ascii?Q?F20eyq4hAhPyikMlw3UwNh0B2Qa6+imOxIAMSSatOC2X6KqLHP6qvZd2r+Np?=
+ =?us-ascii?Q?oPo/UerVsNeopI6XhwM/+CaHumz90jaA8DjyWkjTp/yUL2xBgbTXe9L0WI0U?=
+ =?us-ascii?Q?gfEQQhl7kyofau3Bf7uQy7cNM/bRSi+vnH2PbEFkGLcIyv+lvFu2HfWZme37?=
+ =?us-ascii?Q?uA2fAQLEJHbRDbkP8hu1/QcMeuNw4Fyn9q2XirzPSg=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6597.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?bOCItzT2yg1R0I8JIScUUvAulOtcB487uVNyXfyJa941ks5pTdvVyJGQ32Q3?=
- =?us-ascii?Q?hKg+9s8AkWQuHK82v0JQXaa342t4yRNqacnt/3X8B9j864uBvL2nXqyNRrGX?=
- =?us-ascii?Q?lu5fGuncH/7F71nVPGoLXnMCwpXvHpC/DD5HZ4dw5baZbFOMwph2+hmKQ5eF?=
- =?us-ascii?Q?XJr5HiSl2/DHjnJY9/jZLnN90fech1rIXy1bEBT+rlunMjktCT1NHKJ34Bon?=
- =?us-ascii?Q?wG88BytV4RTKmxZNI8Otjc//DuvGUH0L7hkMkFEzDq0QioP3Zhf4FjscDrA0?=
- =?us-ascii?Q?cBkl/tciPKA8TR1lk/o4rLhS9pEUX8VF/q2TMNtKBwmH/y6lL6n5c3D0CD5m?=
- =?us-ascii?Q?LJJNBW6qZA7HHFxP52HoD1rVhZyGFK5hMlUJlcngtZdPsQu44QD959V558FO?=
- =?us-ascii?Q?J8UnaXrBsFK1m2AQl1zXjVFO1S7ArytrgPWuPcdZBxxd9Q1dBgsXwVejeLLh?=
- =?us-ascii?Q?K2XdhDHdfsYDGa1HUqUT45CEQ/4WkIqgSk4IINjkHEhjRJwy3cGIc9DwhoTi?=
- =?us-ascii?Q?ziRTHLHpyMWx58XbWQAgrTWopAKn56gPJ4PKaw9bDaRwhHCNJ9nZ3/zyr739?=
- =?us-ascii?Q?hZlUA1FijO5kGZAQBlJb9SbS3diIqE+qbzlMuTkExfL0QjSffSV8PenSdIzk?=
- =?us-ascii?Q?uToIv0cDiCGI8Em+n96TEcSpXL/MuQcJW4L3+hH8tpnhxdNX5/KAzPVgoNkw?=
- =?us-ascii?Q?PfTc4GAY5z/I2TuA9xBXQ48oU+HoXcsTqrNvxxJzY09v4XdpHAGMjCpb+vO8?=
- =?us-ascii?Q?CYaduLG7OtsTqV0SubCpZxgbkuTVj1IN93q973BDmUYVp2+fV2DRQt/Gsha/?=
- =?us-ascii?Q?9jn6+R5W+rKCma0/i2EpxJSZLax1yyNK5AzSRCYikEc9wsUV6jqkKcJCwQUW?=
- =?us-ascii?Q?LlfXHHdvGThyWpolepjeFLt8TMBQAf05SJ8o4UP1KdcB9jg1cN5F90X5YN/6?=
- =?us-ascii?Q?E768b6NEK/PPdg8UF2ifRugoaWQUr18NEDKPOwhN5BGXsAbtbRKyFK+Ao2Wa?=
- =?us-ascii?Q?rESnNPbS3E9KFOocNjhHPkSZEDnC+nK9uNXrM9Ge0F8PzfxurtiYy1DhRyLS?=
- =?us-ascii?Q?pO4fh8+grAoZB+XMXq4OUqg9kyMScC2y2ZeH81IU3V2jPXJL9VlcL1mZFm7R?=
- =?us-ascii?Q?57Qg7W52FzuUD8Nf5iHXEmVbXk9oinRJ48Nxd0PCe5jzxpUOYtDkBBlDAxKx?=
- =?us-ascii?Q?WPHEYV0pG2EDgMhSCo/WEMZi12xck16NC8xkSoz/Nr0s9MYpkDq4iEIsPoc3?=
- =?us-ascii?Q?gpzZMYBOC2fFRBp/5OVtDkC1RODr9DWyMMmW/+4xpMnLKgFKFMEOo80ABTA5?=
- =?us-ascii?Q?Phpe/+y1izgZu7n1md/Z1hEIPXpuJjm1qQuBJ9QtNm+GE4lyl8hcxFodtJ7Q?=
- =?us-ascii?Q?wOE+glAGkRN/putT54G1KHGQuRxHyaFKSyg0rBWVl4Mi8f5s35qgYLYeKwso?=
- =?us-ascii?Q?34r86bVwX0Afkx32XhOnLw6P7ulKo3lGjAzBMrUXb9WMeXE1M8oaUT5h/AO/?=
- =?us-ascii?Q?f4sWL0iVoZKXFjaOHKO+QMgY2afcHxkVX3zYNfTFPabpXB/QfYV8OEz+vaXO?=
- =?us-ascii?Q?IfdsFGQbI6WTes4/haZDTFoTG9xav0pnQ8rRYG91DamlCT2Z9kF9gpxFNrrZ?=
- =?us-ascii?Q?Y2besyalRfpVbYLZXRrswAU=3D?=
+	=?us-ascii?Q?MrL7+3PJz0OwgvP8V3CuY1XBxbFjRJCbwgFCKjezaLhktDLbGp7Z2ASmpKoF?=
+ =?us-ascii?Q?YsNmrT8/pHhKZBvauqGbTC51bGz4fii9gL+He5RnYFA7lprHJjz7hegyCYpR?=
+ =?us-ascii?Q?rAoBfYruAxZPtQqZirDLU8npxPyhjQEYhjZUdP3Z4CEFlfY16Bv1hBO25/HT?=
+ =?us-ascii?Q?AUCSp2JqTJxdWxYEWQq7LR/97dobkgPAoVknBvnoO/mfXwyaXt+8qG8UaP/0?=
+ =?us-ascii?Q?puaW45FIytKL77r5lXaoQuVDmOKS1JelUIVZyyKbNp+4/vXC3zJJqW2BEHy7?=
+ =?us-ascii?Q?Kvcb6XpP7S62WtPI/DZ2+ZBBT/dCFLdjRoJOq5TURuAALvCeeNSexpU4PJSf?=
+ =?us-ascii?Q?U+cz7xwK3uEJA8Cz/AIqm+UNBAQpvyK47F3z3367spEcD72SK4KO47+tet8Z?=
+ =?us-ascii?Q?oYy0bMFAsnnst0rt71LxOGUYsEM+BMs+wrUEj6XWKO/66ZTfi1BZtYCbEDR6?=
+ =?us-ascii?Q?LeE9SUIXu+2Uj5LWsh6U+Mejb7YgVHHfWyw5yScFzJP5xCQ6+3ppfGv0lBDG?=
+ =?us-ascii?Q?scbAdId5LC7qgFgaoyex1dlElMpTyr437ShcNN+7hipKKBulg/iYw8YmP0Q2?=
+ =?us-ascii?Q?j5ke+h9M+r+7lKkekZWzh6MkeMxdI41MM4LMM7RJwDfyyEYfRwFXPCp48e7u?=
+ =?us-ascii?Q?mtgN0SBpVM8Q74LfPuAeBe4p1d2B90rdkSQ5rDga9o4yxDN2NVOegq2i1RT6?=
+ =?us-ascii?Q?2FdTMSzdJEslbS/qp3uu2eAQ6qqf2qAx99/jryh+lWYMSBHqFXJ4kTFNv/qT?=
+ =?us-ascii?Q?P4AbbZeFhHvMCov6FbCQMJv992I4sofInCEyBWcTPyJ27NWi96L2qTK0RmTC?=
+ =?us-ascii?Q?RugJ165GzuEjhUEVrRw5f8k37j8tDvrBLHP2HtbbgrwmZn3KAYkDRi1RuXMV?=
+ =?us-ascii?Q?9Z3zQ3kXtrJLiajuRIyOBsYgEmxuekjeXjqTlcw2XJcR+sAOkjvdugrs/RDY?=
+ =?us-ascii?Q?ieJMtjqMrDVfieZnaK2W4PzlKvFFGfKe0jOtmZUxMdOwsg0yyaRWeh/fEFF5?=
+ =?us-ascii?Q?I12EGGW/9sfmPQ9k/fQzI6KM810t+uWTSf53MUq5tS1Dar/v9JIeAyZCL+55?=
+ =?us-ascii?Q?3MkP+TksS8VuiBTNDawNDX6W8mvr/36RarbtwBL+SsogPHAs4Irv7WdzNSM2?=
+ =?us-ascii?Q?f6g8KawVulcCqpPCBWZb1jd4uszJlkCu7RnrrwLhiSi4v82hEZtaShsIIk+P?=
+ =?us-ascii?Q?msDY0PzBswwpQAkeByyzV5l5/BwB3iEtHYvnxi6KIiwf+UH0EDsD0Df5wCM9?=
+ =?us-ascii?Q?Ua5wMQFrdZFRrp5HVdPHhMh5ohee5VmPsSCT42DW8sMQk88o1Pnnoe8NLrD6?=
+ =?us-ascii?Q?Axa6n+H4xP1mHmqozXV+1F48wk3qKwqI3Dl6Zm3kO5+6SQtYrtM8tBHelxS8?=
+ =?us-ascii?Q?Ttn342btO3HsqB7IfGSP/J3tLKFGXBpMPBr7NihTWtGAzMkW27MEnNEItG3M?=
+ =?us-ascii?Q?iEBf77yZg6gS6BJ+ZHt9zAHPMqMFdaudYtn6zAQk2yQdzVfFTXxE9047ouxB?=
+ =?us-ascii?Q?IEWzIdZTV7dpyz894X7vbjxND3lbVZbvcbwxXeOc8Sc9FJROpmTYG6SPNs99?=
+ =?us-ascii?Q?1taUtAxekXyaG+wD45IAmiXiMy74JkHkbrzo5O2j5tVDxcQ5cdMZSeIxsU4x?=
+ =?us-ascii?Q?RXm3Srqrm0NuejfbyLAetcE=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	RGZIlUbCgizVJMlVezX1ykUaMDhgaXn7WGNFgpaP8pvzRYgAf4bQiETVQr9swSg5qULks5oLTDrDoIkLnc5aKLHZk8sq4iFwpQrO78eZ3szukeTYUbKGyYQS+quGS28BoZ2ur8qxKCWqkCwufjxuwJ1kgDK/zBn5gdZwQ3iKulyys2RErk29okb8Nufqor9qTuHFuMGqaYUqenM5g05dVyaeYotEm0gWPfMfaBpehSpGjIFVLjeTx4mfj8XN/8srnXp+xLiK70wIm/LCtiwM3LJ0gUf/p6DptkUuq4RAfUxtHaoXlQDZJq/71lX0m/iA0qJwf9i963YoB571EZu89bMgEu0ZQ2dzn7Ukq6nOPXbcRdRt+aR7pk2ekeIamKq8pRb8oT5WslK0zcC7YtEkN3TUVM+RlC635lmUhsdbB2/JLnO6qfF4XwG+cfPfeudrPtXX0uPdFjP1wNUcMM8YHr91lMf9wSpwmsrI4vEZkrPO3uuaJ6uWVUzyyUXtrwP157n9w/DuvSF6r9krTl88AI+h0durWfKgiLVFdUKC3liEwb0zV4r8IzHE8buNQWMuRJN4jU9wvxgB6lCui8Gnnw/j/+fBinMKjPXSa2V4RVw=
+	DqJvyWqjliBtbxvphWemaGE+rPOjt5i6SFFCJ2gCjnpWyLiyF0JCdrS+ONLJNwpU6rCmWNFbN8d42sc7sbtfoHgU4dbrNm6/C9ZbgaaybAnN6m5hkMaHvGarnOyVHblic7FGnAWtomJdb3WN7H5bgz1RW0jqnchHDknK0bHuE6lIUG+rGtQ/h9JHYdkyiD5MTw2Ohn7Ak4ffFA9tpnKtHcJp6RbJDzM+v2tDA0tcuoGu+YqgXrEoUd1+SMHFcXzHNbFZKhWwYaJdJWkirvUlvySpEscLmb8oskxtyhdCx5tKNZ5f/375aCtBFpCGy4c17w7+2OShsn5qvazZLUOATJyGXEMEM9hbdQNYNR0OSKRX3xVvHQDb3OzcgdzCD1ZxOiY3TmUMq/zz9MRNOUsMYdn/Glcx6ya88BG/ZtkQsEiV+P8+yetyMOCpFk24q3ck0tcbQMrcK9rKvFiLUm91DuCUFEH1o6XXb0gE2UJLft/0ok5B6JOQHbUk7dEzev8fDGcJFcypj6dJZDavCYBX8ZJ6m8TWxYjIfPwaj/icmfGfyYAL1Pg5uYinSVq3h6TtgRnNSCEwmxxFVZdi4o/5qwDtoMeD3pWaiRZjOYtEwYQ=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3aab3a6-46d3-4f76-5173-08dc713f3296
+X-MS-Exchange-CrossTenant-Network-Message-Id: 285781ec-f032-4d65-42ed-08dc713f3376
 X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6597.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 22:19:02.7198
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 22:19:04.1635
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eXggTEOB0jCg/KKvIjK2sagq97/MkJr/Kji9R+kWGztFlBJP4YRTcnvnHuCBcKCoZeVHhkaUinzcfGmAgVeeo4xXSqBCdjT0keyTuqLgPio=
+X-MS-Exchange-CrossTenant-UserPrincipalName: mVnf7t4XVU524dyztU/0fj8B2VGqPJLL3/L3z9wkLuCCN4MmyjBc4z1LB6J4mYld4Y4Pdf0SZfabpff7nCskcNgBhXg7SfAZLX6dHbxBIWk=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR10MB5762
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-05-10_16,2024-05-10_02,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 mlxscore=0
- mlxlogscore=790 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
  definitions=main-2405100161
-X-Proofpoint-GUID: UqdjBcZ4oXmpDUh9zBviTu246PiJ2WGb
-X-Proofpoint-ORIG-GUID: UqdjBcZ4oXmpDUh9zBviTu246PiJ2WGb
+X-Proofpoint-GUID: gKH3L2PVAvJ8HdxrtZOX8h3-I8u8L3Qr
+X-Proofpoint-ORIG-GUID: gKH3L2PVAvJ8HdxrtZOX8h3-I8u8L3Qr
 
-Hi Amir, Jan, et al,
+From: Amir Goldstein <amir73il@gmail.com>
 
-It's been a while since I worked with you on the patch series[1] that aimed to
-make __fsnotify_update_child_dentry_flags() a sleepable function. That work got
-to a point that it was close to ready, but there were some locking issues which
-Jan found, and the kernel test robot reported, and I didn't find myself able to
-tackle them in the amount of time I had.
+Call fsnotify_update_children_dentry_flags() to set PARENT_WATCHED flags
+only when parent starts watching children.
 
-But looking back on that series, I think I threw out the baby with the
-bathwater. While I may not have resolved the locking issues associated with the
-larger change, there was one patch which Amir shared, that probably resolves
-more than 90% of the issues that people may see. I'm sending that here, since it
-still applies to the latest master branch, and I think it's a very good idea.
+When parent stops watching children, clear false positive PARENT_WATCHED
+flags lazily in __fsnotify_parent() for each accessed child.
 
-To refresh you, the underlying issue I was trying to resolve was when
-directories have many dentries (frequently, a ton of negative dentries), the
-__fsnotify_update_child_dentry_flags() operation can take a while, and it
-happens under spinlock.
-
-Case #1 - if the directory has tens of millions of dentries, then you could get
-a soft lockup from a single call to this function. I have seen some cases where
-a single directory had this many dentries, but it's pretty rare.
-
-Case #2 - suppose you have a system with many CPUs and a busy directory. Suppose
-the directory watch is removed. The caller will begin executing
-__fsnotify_update_child_dentry_flags() to clear the PARENT_WATCHED flag, but in
-parallel, many other CPUs could wind up in __fsnotify_parent() and decide that
-they, too, must call __fsnotify_update_child_dentry_flags() to clear the flags.
-These CPUs will all spin waiting their turn, at which point they'll re-do the
-long (and likely, useless) call. Even if the original call only took a second or
-two, if you have a dozen or so CPUs that end up in that call, some CPUs will
-spin a long time.
-
-Amir's patch to clear PARENT_WATCHED flags lazily resolves that easily. In
-__fsnotify_parent(), if callers notice that the parent is no longer watching,
-they merely update the flags for the current dentry (not all the other
-children). The __fsnotify_recalc_mask() function further avoids excess calls by
-only updating children if the parent started watching. This easily handles case
-#2 above. Perhaps case #1 could still cause issues, for the cases of truly huge
-dentry counts, but we shouldn't let "perfect" get in the way of "good enough" :)
-
-
-Thanks,
-Stephen
-
-[1]: https://lore.kernel.org/all/20221013222719.277923-1-stephen.s.brennan@oracle.com/
-
-Amir Goldstein (1):
-  fsnotify: clear PARENT_WATCHED flags lazily
-
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+---
  fs/notify/fsnotify.c             | 26 ++++++++++++++++++++------
  fs/notify/fsnotify.h             |  3 ++-
  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
  include/linux/fsnotify_backend.h |  8 +++++---
  4 files changed, 56 insertions(+), 13 deletions(-)
 
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 2fc105a72a8f6..86d332baaba21 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -103,17 +103,13 @@ void fsnotify_sb_delete(struct super_block *sb)
+  * parent cares.  Thus when an event happens on a child it can quickly tell
+  * if there is a need to find a parent and send the event to the parent.
+  */
+-void __fsnotify_update_child_dentry_flags(struct inode *inode)
++void fsnotify_update_children_dentry_flags(struct inode *inode, bool watched)
+ {
+ 	struct dentry *alias;
+-	int watched;
+ 
+ 	if (!S_ISDIR(inode->i_mode))
+ 		return;
+ 
+-	/* determine if the children should tell inode about their events */
+-	watched = fsnotify_inode_watches_children(inode);
+-
+ 	spin_lock(&inode->i_lock);
+ 	/* run all of the dentries associated with this inode.  Since this is a
+ 	 * directory, there damn well better only be one item on this list */
+@@ -140,6 +136,24 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+ 	spin_unlock(&inode->i_lock);
+ }
+ 
++/*
++ * Lazily clear false positive PARENT_WATCHED flag for child whose parent had
++ * stopped watching children.
++ */
++static void fsnotify_update_child_dentry_flags(struct inode *inode,
++					       struct dentry *dentry)
++{
++	spin_lock(&dentry->d_lock);
++	/*
++	 * d_lock is a sufficient barrier to prevent observing a non-watched
++	 * parent state from before the fsnotify_update_children_dentry_flags()
++	 * or fsnotify_update_flags() call that had set PARENT_WATCHED.
++	 */
++	if (!fsnotify_inode_watches_children(inode))
++		dentry->d_flags &= ~DCACHE_FSNOTIFY_PARENT_WATCHED;
++	spin_unlock(&dentry->d_lock);
++}
++
+ /* Are inode/sb/mount interested in parent and name info with this event? */
+ static bool fsnotify_event_needs_parent(struct inode *inode, __u32 mnt_mask,
+ 					__u32 mask)
+@@ -214,7 +228,7 @@ int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+ 	p_inode = parent->d_inode;
+ 	p_mask = fsnotify_inode_watches_children(p_inode);
+ 	if (unlikely(parent_watched && !p_mask))
+-		__fsnotify_update_child_dentry_flags(p_inode);
++		fsnotify_update_child_dentry_flags(p_inode, dentry);
+ 
+ 	/*
+ 	 * Include parent/name in notification either if some notification
+diff --git a/fs/notify/fsnotify.h b/fs/notify/fsnotify.h
+index fde74eb333cc9..bce9be36d06b5 100644
+--- a/fs/notify/fsnotify.h
++++ b/fs/notify/fsnotify.h
+@@ -74,7 +74,8 @@ static inline void fsnotify_clear_marks_by_sb(struct super_block *sb)
+  * update the dentry->d_flags of all of inode's children to indicate if inode cares
+  * about events that happen to its children.
+  */
+-extern void __fsnotify_update_child_dentry_flags(struct inode *inode);
++extern void fsnotify_update_children_dentry_flags(struct inode *inode,
++						  bool watched);
+ 
+ extern struct kmem_cache *fsnotify_mark_connector_cachep;
+ 
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index d6944ff86ffab..07cd66dc42fd6 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -176,6 +176,24 @@ static void *__fsnotify_recalc_mask(struct fsnotify_mark_connector *conn)
+ 	return fsnotify_update_iref(conn, want_iref);
+ }
+ 
++static bool fsnotify_conn_watches_children(
++					struct fsnotify_mark_connector *conn)
++{
++	if (conn->type != FSNOTIFY_OBJ_TYPE_INODE)
++		return false;
++
++	return fsnotify_inode_watches_children(fsnotify_conn_inode(conn));
++}
++
++static void fsnotify_conn_set_children_dentry_flags(
++					struct fsnotify_mark_connector *conn)
++{
++	if (conn->type != FSNOTIFY_OBJ_TYPE_INODE)
++		return;
++
++	fsnotify_update_children_dentry_flags(fsnotify_conn_inode(conn), true);
++}
++
+ /*
+  * Calculate mask of events for a list of marks. The caller must make sure
+  * connector and connector->obj cannot disappear under us.  Callers achieve
+@@ -184,15 +202,23 @@ static void *__fsnotify_recalc_mask(struct fsnotify_mark_connector *conn)
+  */
+ void fsnotify_recalc_mask(struct fsnotify_mark_connector *conn)
+ {
++	bool update_children;
++
+ 	if (!conn)
+ 		return;
+ 
+ 	spin_lock(&conn->lock);
++	update_children = !fsnotify_conn_watches_children(conn);
+ 	__fsnotify_recalc_mask(conn);
++	update_children &= fsnotify_conn_watches_children(conn);
+ 	spin_unlock(&conn->lock);
+-	if (conn->type == FSNOTIFY_OBJ_TYPE_INODE)
+-		__fsnotify_update_child_dentry_flags(
+-					fsnotify_conn_inode(conn));
++	/*
++	 * Set children's PARENT_WATCHED flags only if parent started watching.
++	 * When parent stops watching, we clear false positive PARENT_WATCHED
++	 * flags lazily in __fsnotify_parent().
++	 */
++	if (update_children)
++		fsnotify_conn_set_children_dentry_flags(conn);
+ }
+ 
+ /* Free all connectors queued for freeing once SRCU period ends */
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 8f40c349b2283..59e6b8e98a4c1 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -563,12 +563,14 @@ static inline __u32 fsnotify_parent_needed_mask(__u32 mask)
+ 
+ static inline int fsnotify_inode_watches_children(struct inode *inode)
+ {
++	__u32 parent_mask = READ_ONCE(inode->i_fsnotify_mask);
++
+ 	/* FS_EVENT_ON_CHILD is set if the inode may care */
+-	if (!(inode->i_fsnotify_mask & FS_EVENT_ON_CHILD))
++	if (!(parent_mask & FS_EVENT_ON_CHILD))
+ 		return 0;
+ 	/* this inode might care about child events, does it care about the
+ 	 * specific set of events that can happen on a child? */
+-	return inode->i_fsnotify_mask & FS_EVENTS_POSS_ON_CHILD;
++	return parent_mask & FS_EVENTS_POSS_ON_CHILD;
+ }
+ 
+ /*
+@@ -582,7 +584,7 @@ static inline void fsnotify_update_flags(struct dentry *dentry)
+ 	/*
+ 	 * Serialisation of setting PARENT_WATCHED on the dentries is provided
+ 	 * by d_lock. If inotify_inode_watched changes after we have taken
+-	 * d_lock, the following __fsnotify_update_child_dentry_flags call will
++	 * d_lock, the following fsnotify_update_children_dentry_flags call will
+ 	 * find our entry, so it will spin until we complete here, and update
+ 	 * us with the new state.
+ 	 */
 -- 
 2.43.0
 
