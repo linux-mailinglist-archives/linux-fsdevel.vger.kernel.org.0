@@ -1,68 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-19248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1798B8C1DFC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 08:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA288C1E20
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 08:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60871F216DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 06:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330CC282F8B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 06:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A321527B2;
-	Fri, 10 May 2024 06:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98431311BA;
+	Fri, 10 May 2024 06:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AIlrARjZ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="o4C5hjbt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077461494DE;
-	Fri, 10 May 2024 06:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E305F1361;
+	Fri, 10 May 2024 06:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715322023; cv=none; b=p/lpnU/AF1Z5/HrmcNvtye04YC+wu3t6+L7po5XJO3OHM5fG/+jWq6fOiMoxuDm9XzYezM2q9uKEHwlo6rmhM3RHv1gfXoOS36A4VL/JCcHoMZxtmnncfDc42NfGpU6mIR1MBRXR5cQxC09BOdmswlCMLWqm+7h04cKSZYp1fKw=
+	t=1715322805; cv=none; b=pOyWhvtTabb0h2rlzerqffCc9J2ZIs4xtC+gbDGpTZOtke5rwQCPPg4r5hFSmh6jWE1xCbq3v3cPSjougbjLr9M9/0Fk2S9IU4uXoIgTyPAuQBbdthI+jbk3RCLW+Gg/j8r9IJKwS3sLe1OhbOV/CwcM9vj2MKpsz9uALUMBy4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715322023; c=relaxed/simple;
-	bh=MXB8yULq8IhEcfPSgfRUb3LoqfN1ihZb5DfjgDQ83ZA=;
+	s=arc-20240116; t=1715322805; c=relaxed/simple;
+	bh=qdVy5lQR/hkHET0xFeljYrMZlyEIN4uWW3qGUTY1qr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdhOOMNBNpTlpIQHdGqU2PzxR6aYlnwZoflTJwLiBonhFyd0LI4srHuFJTpng7yxtZdfZmfFa5CLeqdypByt93uPZnANyHq74O57sQ0NC+w+ChswsX9WVSpsgcZm1swPWf9GyCrmPoXvVuEsbsyWQDIFFoyKPFTj/Z8O+D/jq+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AIlrARjZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=UF4nbbl4a8+PdC7avOTP7gsa17CeOqMZJmF2Mh9ZPjy2uDwbtoji/eo4Y4UWF6TJWRburMNoxsmVV2gbP38JPFWTD+k1AmUD/ZZBb/GwxalFIZZcHdvxG4Q2mAV4mWY+tP2F6hELfKMMrLhPrME1MgibSbSBgTyoMt8j4sZonAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=o4C5hjbt; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tWbLPpe1dxAUAnS/VIXTnCfeoHbQYCROBhp9omQeVas=; b=AIlrARjZRQ5GemdOQ+DXBoAZFM
-	U/d8TrSy87aVZ1nDBjzhYvOZ1KAq/gf/7MfzhCIUFgY3mymY1lQRroEqJ0h35wxP9acMycZ+8kpE8
-	nnBeMpdTPe2sPxxqLkyi0aFDIBcbh20oYX0igwNKPZo8p/Nvi7pZ3vYuC8pTBtLiEvWBYZB8AjoLZ
-	2y5T9ILibr8jTdt0coPaKcZ21oYr6KckIkVYP9ebyZFT/Ns+ErDBpH0Q+ASsp2VSnwQdf8bj92b8Q
-	EeIte/xkPzqr5K8fTTfS+o+axvalsfpNESyVEj/rD3hcLQ+4DywsEIHgN6l+nmzZiyuQIOBu0rFOH
-	NifxF0rQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s5Jc9-00000004Bts-2VHG;
-	Fri, 10 May 2024 06:20:17 +0000
-Date: Thu, 9 May 2024 23:20:17 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
-	ebiggers@kernel.org, linux-xfs@vger.kernel.org, alexl@redhat.com,
-	walters@verbum.org, fsverity@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
-Message-ID: <Zj28oXB6leJGem-9@infradead.org>
-References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
- <171444680671.957659.2149857258719599236.stgit@frogsfrogsfrogs>
- <ZjHmzBRVc3HcyX7-@infradead.org>
- <ZjHt1pSy4FqGWAB6@infradead.org>
- <20240507212454.GX360919@frogsfrogsfrogs>
- <ZjtmVIST_ujh_ld6@infradead.org>
- <20240508202603.GC360919@frogsfrogsfrogs>
- <ZjxY_LbTOhv1i24m@infradead.org>
- <20240509200250.GQ360919@frogsfrogsfrogs>
- <Zj2r0Ewrn-MqNKwc@infradead.org>
+	bh=MKNeISn8K7vuJhQ8g5TvGG841WrKg3O3R8hz7bMsFas=; b=o4C5hjbtyaqXhEkAfrTLLtFIK6
+	bimUmCocM02fBDgO7tK6Ktztj2cTyuH2d5gknANN4i9jY+sj1H1L3gOw4NNjdyUpc/5OxoLl4ieNH
+	B8Vk+r19IZDaLJ89xwnL4yPDFD8EhEtqFe5SA0r8YbaLyMh3drUjZKZqVultnO9EWd1IECsHLVsVN
+	kHgsEGevmmSAbT+DI/vuSh/JZduIJOyq6Wzhw8rZpGdqY0xNn99Adp+BiFPL3eDhX5i6qh3cPPcXp
+	fGHcDgVlflp/1GKo7fQUFLkD7Do2kTbGAlkRWa0Hh29V4EnQbH00p3XjOsKnLVG1/efw86d9eGTna
+	SDuIl6oQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s5Joe-002ACy-2z;
+	Fri, 10 May 2024 06:33:13 +0000
+Date: Fri, 10 May 2024 07:33:12 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] libfs: fix accidental overflow in offset calculation
+Message-ID: <20240510063312.GX2118490@ZenIV>
+References: <20240510-b4-sio-libfs-v1-1-e747affb1da7@google.com>
+ <20240510004906.GU2118490@ZenIV>
+ <20240510010451.GV2118490@ZenIV>
+ <6oq7du4gkj3mvgzgnmqn7x44ccd3go2d22agay36chzvuv3zyt@4fktkazj4cvw>
+ <20240510044805.GW2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,27 +67,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zj2r0Ewrn-MqNKwc@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240510044805.GW2118490@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-FYI, I spent some time looking over the core verity and ext4 code,
-and I can't find anything enforcing any kind of size limit.  Of course
-testing that is kinda hard without taking sparseness into account.
+On Fri, May 10, 2024 at 05:48:05AM +0100, Al Viro wrote:
+> On Fri, May 10, 2024 at 03:26:08AM +0000, Justin Stitt wrote:
+> 
+> > This feels like a case of accidental correctness. You demonstrated that
+> > even with overflow we end up going down a control path that returns an
+> > error code so all is good.
+> 
+> No.  It's about a very simple arithmetical fact: the smallest number that
+> wraps to 0 is 2^N, which is more than twice the maximal signed N-bit
+> value.  So wraparound on adding a signed N-bit to non-negative signed N-bit
+> will always end up with negative result.  That's *NOT* a hard math.  Really.
+> 
+> As for the rest... SEEK_CUR semantics is "seek to current position + offset";
+> just about any ->llseek() instance will have that shape - calculate the
+> position we want to get to, then forget about the difference between
+> SEEK_SET and SEEK_CUR.  So noticing that wraparound ends with negative
+> is enough - we reject straight SEEK_SET to negatives anyway, so no
+> extra logics is needed.
+> 
+> > However, I think finding the solution
+> > shouldn't require as much mental gymnastics. We clearly don't want our
+> > file offsets to wraparound and a plain-and-simple check for that lets
+> > readers of the code understand this.
+> 
+> No comments that would be suitable for any kind of polite company.
 
-Eric, should fsverity or the fs backend check for a max size instead
-od trying to build the merkle tree and evnetually failing to write it
-out?
+FWIW, exchange of nasty cracks aside, I believe that this kind of
+whack-a-mole in ->llseek() instances is just plain wrong.  We have
+80-odd instances in the tree.
 
-An interesting note I found in the ext4 code is:
+Sure, a lot of them a wrappers for standard helpers, but that's
+still way too many places to spill that stuff over.  And just
+about every instance that supports SEEK_CUR has exact same kind
+of logics.
 
-  Note that the verity metadata *must* be encrypted when the file is,
-  since it contains hashes of the plaintext data.
+As the matter of fact, it would be interesting to find out
+which instances, if any, do *not* have that relationship
+between SEEK_CUR and SEEK_SET.  If such are rare, it might
+make sense to mark them as such in file_operations and
+have vfs_llseek() check that - it would've killed a whole
+lot of boilerplate.  And there it a careful handling of
+overflow checks (or a clear comment explaining what's
+going on) would make a lot more sense.
 
-While xfs doesn't currently support fscrypyt it would actually be very
-useful feature, so we're locking us into encrypting attrs or at least
-magic attr fork data if we do our own non-standard fsverity storage.
-I'm getting less and less happy with not just doing the normal post
-i_size storage.  Yes, it's not pretty (so isn't the whole fsverity idea
-of shoehorning the hashes into file systems not built for it), but it
-avoid adding tons of code and beeing very different.
+IF we know that an instance deals with SEEK_CUR as SEEK_SET to
+offset + ->f_pos, we can translate SEEK_CUR into SEEK_SET
+in the caller.
 
