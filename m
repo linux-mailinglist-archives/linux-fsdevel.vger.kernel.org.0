@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-19275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1258C23EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:51:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4F98C23F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6AA1C23773
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1081F258D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A421708B1;
-	Fri, 10 May 2024 11:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C18717108B;
+	Fri, 10 May 2024 11:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7JmxddO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEBnEjv9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8E91708A8;
-	Fri, 10 May 2024 11:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417C316F26B;
+	Fri, 10 May 2024 11:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341809; cv=none; b=SPkt4YBjgCChitNX5Y7ocKIwCz7MIW2+evrweN7OdbOdEqj3ZxyjxEBtSvWbe0H1vOQ/oBrwK+8KZ8Fi+9kEKzjw+sPZXV1ToWIC7Zw8fHFfW0gG2CQ6uIJLCZoa9aIFWGFKXjW7/rAFfXUUZW+81ZE5qaFI5nTSL7trcA9ujbk=
+	t=1715341814; cv=none; b=hXN3airviY4xsmIqVWX5W6/COGTAW9GHIGyKIur0LL2IU/uC4klR+UaukBvEVAhqQBgECH23MfvOYlVhbZqdTsPljgB7cvQe5Uu2mDtqBjYsk/63uiZ5ZPzuhywCmuhHhS3sqzRzwz2ewd0UlztsQCkE7bmJK2PDpGewjWnNeng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341809; c=relaxed/simple;
-	bh=ShAn5fhCYPl8qlhBHZU43ypZj6BFHQvlTb/1BJsqubw=;
+	s=arc-20240116; t=1715341814; c=relaxed/simple;
+	bh=i4h+33ayWNxAxzC4LjdAPn27sgSSgKXxUE3iazZbtVk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TF/knX2Je4hkThBV+YMCux9npwXbwSaFYdSwRD0f7i7fC/VLXjDWdzL0Sm9rtkJtShpwp+TXDgDoqQ0p0wB4+6MMVXU496k5RkfW/3WCgn2vgoptcoRjw4Ixs7x9K53wTFBBp534TasdqqRLANFOHq8DQNpPGmMqTTQbJkU3bF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7JmxddO; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=XvNzzPzvkANKWFJiYckroqJA08hMjipb4jySLmoZfOknbut8uoq9w/ogUcW8wPfSZtTQEq/Uv4hpziFapep8WToSD9jniJ3bhhbNAK79UAgkjipRdCOkeq+ibjlX3lm1IYOjSfBz7omczSXESoP9x7L+I7TqjHwSYUVZEEuX1qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEBnEjv9; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ee5235f5c9so16379115ad.2;
-        Fri, 10 May 2024 04:50:08 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ee38966529so21357635ad.1;
+        Fri, 10 May 2024 04:50:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715341807; x=1715946607; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715341812; x=1715946612; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=T/Y01wUoc8GqRpvXAplln3XTaKFYbBI0hlcfHL66MPg=;
-        b=Z7JmxddOeFmyIqyuuUHxZWbKUBhPVsXdz7rrc/DQO+hWvucrWFEHiiaqMoyIdVkjV/
-         wE74Y6IrgmWARCErVqGjN6F7jEEnAAqU0yf2j2HVyLpJCnIJ9gB3X9UwIyt0YUSN2nXo
-         XNU2TrBvmchACbrP5XPeQpj483FON6xMVm/Xosuk4HXM2XjpMf3fR5TxSHCvdjNgoqsc
-         Sbbs2lmyy6bZU6PUN85/YwNBoWVuoan1TiuBnMXo1WJqKVZT/sqGEQEQlfAHNTkXlYAA
-         IenA9jUydjU/lo42kqtmXC2Z1zM0Pu4VcJzFYRMPTENlwHCGgPCVbtY7wbSZIcvdup6h
-         WB1g==
+        bh=SKkpoPGaGqkRG+GvEkaimZUGHi7Z3i5I8Zq2egM0XJg=;
+        b=cEBnEjv9cMNz+j59pbJ2Ws+rusWfP9epVu9C1Ays6zaqH0HAbHm2CzuK1K18cCpzJl
+         XWLOq4+Bl7evRaj7Nen+1xjWYfgdagcgKIjmerP2Xp58qGNArpEelYNwzPMM2j+cBfju
+         /64A+mr4V4+eujBeWzi4I2qDlrh/brH78ahP8EpJwfze2FSYEL6GMKB1vRw8MBtFqeJh
+         oWx2Oh4CsHfTpsV3JReK20yGzMS++EYGsMzerWyhz+05cPQfFV0NR5NcDL0HVNYMaQYJ
+         snWPEQbm/2ki4YWkbwidKvK0fol9y3nYOMnvyXV81blnbXDPRB/RJAhP2ALRmv0ofllC
+         5ONQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715341807; x=1715946607;
+        d=1e100.net; s=20230601; t=1715341812; x=1715946612;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T/Y01wUoc8GqRpvXAplln3XTaKFYbBI0hlcfHL66MPg=;
-        b=hT3g/y4hGKP67CRcyt9XaGVPILddiI3SpcTEwKlm88HzlredXd73d0oy5FtXjYLyt3
-         tdny78vw9ChAcRHefP7au1l2XT2AWfYZi5aq7Eaa1qzD4CDDlC7yTmld5CjakEkM+Qau
-         44FG3m0aZ7YSVxcf7GJe4TBkBWiksGxMYLr9K2M3K3wTNfMPUnGi4vcDTAsy4cEC+tYh
-         5ob7FzEPF0EU4ptvIRilNDQNHEiELR/naRRlR+Hka+1yp2OylmnxkgGTJUDiL2xALENz
-         /JH8UHxxK2OHQK28kJCMXSruZ+sxhOyTWSin7t+g1vV7QN6iWgX8Gk6/fBW1JgIs2+Aa
-         4R2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUbaodkwUxyOMDpVdgcQtL59/DkrCCLqa9XKRao1KUIjCL1oVH65xixHf4P2RZYLZj7ZdC0yBd7cU3aSSeJSvutlLa7DqxSv81hzQreKSuSv9KDAHD0pF8WyYQUhT5gO4/u6KAeAQL191vuUzs5lsVmiDge0TD3Eu7ULm9Vbb9CIoE6GRMfA==
-X-Gm-Message-State: AOJu0YzPJtL+srdFM6SZLsPAbx5mY/FBFnnQ2OFlVjT36hc1H3w4aa99
-	89MCn5ezKTWw/xRaDvHesmCFZW+e8VHyVkm3bccij56IHHFXJCiT
-X-Google-Smtp-Source: AGHT+IFzfIkLucPk4sXxl+wOh9wZthAGLSllywtwnMpoejVUjDeq2V0rnDLW1ag2irzlv9JXvgqNKA==
-X-Received: by 2002:a17:902:8307:b0:1e7:b7ea:2d61 with SMTP id d9443c01a7336-1ef43e26bc4mr20776495ad.37.1715341807566;
-        Fri, 10 May 2024 04:50:07 -0700 (PDT)
+        bh=SKkpoPGaGqkRG+GvEkaimZUGHi7Z3i5I8Zq2egM0XJg=;
+        b=G4fMOtNbwU/3VTCTy4K9TPey+kkfGLeh6GUwOnHs6AbQKAaELSZrlh205KnNmpquts
+         TuGEUEQphsxaxKYM0tCRVgn4V6hPyH/uMgttccPNAxGrn1nut7Vxsm4rtoypZNJWrWLm
+         sU3P4hcOY62J/iY1iVXHJ0SW+bhd+E6SbXoR/eZa5PXg7hhrzXIVCz8xe1QM6oIds4gP
+         6NF6hvfHBX2vhBy04mT+qKM64pliKKv07Xbg/UJM6LTJv3q/8y9K0CqYUqgmKbjVWfcJ
+         J6Cg6WTYvQPsDgjx0WKgm+6vNw/cabmcsJvReylbShQVRC7BMMIS+LdFTZQYWxpn+FLs
+         Eb9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9vI13eCvSKxqBbSFOTLcScZhyotThnn0r3Ea7aS6jLuPxt1Hp2TIBizllR4Z5VBaj5nV4e1rAOlGiFTswRt0CMCMBNq7SrVRp5WBMH8VwHdJtbNz0qvQnu/rHY2D63BXRdD7Eftb24EE1Bw==
+X-Gm-Message-State: AOJu0Yx4NqOYEmmjrjveB5OaGjkQr3vLVrmWPxqVDEet9jZ8Eh0WjQpE
+	SGFn1kkVcwOQg1OqNkY+ztKaCm9t1AlKNCu6wKB4OEKLmcD1MQP4
+X-Google-Smtp-Source: AGHT+IFQCmuUzZejhKR+NA0CyPkuBm+fZ6cTTLFHyaCrgsSueVY92V2AUpJszgttMrtwpUbv0gZENw==
+X-Received: by 2002:a17:902:cecc:b0:1e5:1041:7ed4 with SMTP id d9443c01a7336-1eefa12f408mr84798105ad.14.1715341812566;
+        Fri, 10 May 2024 04:50:12 -0700 (PDT)
 Received: from KASONG-MC4.tencent.com ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c134155sm30183825ad.231.2024.05.10.04.50.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c134155sm30183825ad.231.2024.05.10.04.50.07
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 10 May 2024 04:50:07 -0700 (PDT)
+        Fri, 10 May 2024 04:50:12 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -83,12 +83,14 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna@kernel.org>,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH v5 04/12] NFS: remove nfs_page_lengthg and usage of page_index
-Date: Fri, 10 May 2024 19:47:39 +0800
-Message-ID: <20240510114747.21548-5-ryncsn@gmail.com>
+	Steve French <stfrench@microsoft.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Bharath SM <bharathsm@microsoft.com>
+Subject: [PATCH v5 05/12] cifs: drop usage of page_file_offset
+Date: Fri, 10 May 2024 19:47:40 +0800
+Message-ID: <20240510114747.21548-6-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240510114747.21548-1-ryncsn@gmail.com>
 References: <20240510114747.21548-1-ryncsn@gmail.com>
@@ -103,49 +105,36 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-This function is no longer used after
-commit 4fa7a717b432 ("NFS: Fix up nfs_vm_page_mkwrite() for folios"),
-all users have been converted to use folio instead, just delete it to
-remove usage of page_index.
+page_file_offset is only needed for mixed usage of page cache and
+swap cache, for pure page cache usage, the caller can just use
+page_offset instead.
+
+It can't be a swap cache page here, so just drop it and convert it to
+use folio.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Anna Schumaker <anna@kernel.org>
-Cc: linux-nfs@vger.kernel.org
+Cc: Steve French <stfrench@microsoft.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Paulo Alcantara <pc@manguebit.com>
+Cc: Shyam Prasad N <sprasad@microsoft.com>
+Cc: Bharath SM <bharathsm@microsoft.com>
 ---
- fs/nfs/internal.h | 19 -------------------
- 1 file changed, 19 deletions(-)
+ fs/smb/client/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 06253695fe53..deac98dce6ac 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -790,25 +790,6 @@ static inline void nfs_folio_mark_unstable(struct folio *folio,
- 	}
- }
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index 9be37d0fe724..388343b0fceb 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -4828,7 +4828,7 @@ static int cifs_readpage_worker(struct file *file, struct page *page,
+ static int cifs_read_folio(struct file *file, struct folio *folio)
+ {
+ 	struct page *page = &folio->page;
+-	loff_t offset = page_file_offset(page);
++	loff_t offset = folio_pos(folio);
+ 	int rc = -EACCES;
+ 	unsigned int xid;
  
--/*
-- * Determine the number of bytes of data the page contains
-- */
--static inline
--unsigned int nfs_page_length(struct page *page)
--{
--	loff_t i_size = i_size_read(page_file_mapping(page)->host);
--
--	if (i_size > 0) {
--		pgoff_t index = page_index(page);
--		pgoff_t end_index = (i_size - 1) >> PAGE_SHIFT;
--		if (index < end_index)
--			return PAGE_SIZE;
--		if (index == end_index)
--			return ((i_size - 1) & ~PAGE_MASK) + 1;
--	}
--	return 0;
--}
--
- /*
-  * Determine the number of bytes of data the page contains
-  */
 -- 
 2.45.0
 
