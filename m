@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-19277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC968C23F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:51:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB3B8C23F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4ED1F22376
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABDCE1C2363D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD315171656;
-	Fri, 10 May 2024 11:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9D4171677;
+	Fri, 10 May 2024 11:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7S6kZ7B"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl41EsBd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F194516F26B;
-	Fri, 10 May 2024 11:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8312171670;
+	Fri, 10 May 2024 11:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341819; cv=none; b=XbRp1Qw4k68mr4F1glwHaFDD+JjUj/jJRrOlh1MruoEg11cIadjBkzlCDJHqjQSj+7JNZAhnFwg/Z61/R1ifVVkKDKIE+pvboN/LWyE3A6qjyBt89/WGsb1Vax1qoLnk3/p2PIj0AjAwIWPBnvM6g3Jrt4/kO0VFgC3Y0dUPY+o=
+	t=1715341824; cv=none; b=HWjhkf1hT42TwqqzLDYat5frjXK0Iyi6cbRFFmdD90peO94wy8MvYyNKPYWLld9dmnYX2OB9hEQggVor71qDfcwTHlDUieyADzU12ikwcSx6C/ZAzjaY5Ux0KMUN90iAxnxaOExXzmMVSwGiYSJoLWpGvj0Op6CYheXho42ZJSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341819; c=relaxed/simple;
-	bh=1MRIiBP0wDFyNfh4532Vxucv6112mEx/goVx7Jaownk=;
+	s=arc-20240116; t=1715341824; c=relaxed/simple;
+	bh=F3EKclujHSSuxRJLJjZWka9tbvl2y2InP9dBBoHDt2s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DTwZYE+HiAvGPWuF0QJwZWmm/2cN0P14eolcGWeTojX6aYdIfuJF4GGzQTBQh18oo5uka6Sf2m4WZzsD7aOGrzGpc6y1OzZAkzkf558M54ifuOgzJZKVf48sq51ZMXtdu8wvEczN61+TkA2XR6phOcT/OgNosd0S/JpcVbSkTRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7S6kZ7B; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version; b=mGCxyAYNd7Ls66sYvHVQFyVSfXP/OwM42pBkhF/u84b0iTbLUda0rt2LePT2jJ2tMe3wIjfkd4UjSoduBWNWtkiCe37X6BsiEfACVQuaG68yyi3It5mqwb334ql9CBZk+TTG6IgbQgAJ+NyceT2KpQPeCJthV1kYJ6rT2hBMYaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl41EsBd; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f44e3fd382so1692418b3a.1;
-        Fri, 10 May 2024 04:50:17 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1edfc57ac0cso15524115ad.3;
+        Fri, 10 May 2024 04:50:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715341817; x=1715946617; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715341822; x=1715946622; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=P42QJurgga8X3tClV+VU5iyd0pTaBz/Ss0EAkzfZsy4=;
-        b=F7S6kZ7Br8XjhqdCitErqbXDQ+GeQ0BadVuNOcCxLvZLCcKYFtmCDbEwTAV3xoVrpv
-         IkCVTAzMXlOhnQqaIzcnfsDcu9ZUFMQauFIbJvQgt+jMjETTArJplzhoqlRxuoVASsbf
-         cmUFRI6mZVxRfCOmMQk8ry+oKL5EUCOvv2AbGoH3dWzl4qRyvqmSgo1/Mq4wMRCs3kWM
-         H81rSZXhjlFnVfFFgDwj+YWCTtksVncbZJNP1lB+H2e7gK7s9aOBrZS1+5pDpJsPPIc/
-         pploIPt6SvA7+XiCUFZiDMqOumvv4f7Bp4YPE7QlzEZxU+1mK79xB7nt36tRZ776XMTg
-         7uxA==
+        bh=r4pI/dLra8+Fx5rO5TUtIiOfN5ranfVQtnPo5N4NowI=;
+        b=kl41EsBdLi4RH2Jm9RI14Xqksuhmb2bqaXkewMKijqQn/Zu3fd8VBNJZZihWTpcWcO
+         CzaI1R0/tBug2AjkX5vqSVNoqHTmIKp4XYqEvfkym5S8RMG+8c4zMH6JHhPdFpk5Sbdz
+         +uVjDPfnm+43yccPl/Mj+/PkJWEC8xSZEbNAMmlmmrB6gcxNl7uErj7UMF+s7XuXzkil
+         arzGZi9FA1AY5TWaYQbvrC4QHcFUHKfyZbOYQ0FXhwgsFYCOWMc6LeaGDtiihecb9+Bq
+         AnhAJwjOm4y9oeUKVKRIYDNGVBvA1/mOLyXk3zqCf7Ztu3as9x88vIuqwl7jcNWVqhpt
+         LTYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715341817; x=1715946617;
+        d=1e100.net; s=20230601; t=1715341822; x=1715946622;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=P42QJurgga8X3tClV+VU5iyd0pTaBz/Ss0EAkzfZsy4=;
-        b=fng64SkjMlzftBfoqOTVqvqrtKT10LHwqX/6VkTKJVwEjH9Ku+MUrntijoD4gjheD4
-         KWNH8tjUB5UZIBi5lLwAba38i8D0uoUSOEa0XSpRDrkVncTquHsdwGx0sDkm30Y+iDug
-         lt6zHi/LJFfhYowpbgn2DDOGwtD3qYwfzWdsRik1qQ2CY4RKw68KLCcRARCSqqeL0VGQ
-         GKrxqp9uwzoyB2vlvVW8QJZr7HLXwbdkwmC3ncLE3Z3NsqYYghpkRL3tF9u2Fdkexcir
-         Atwd1qCHSEhF5qC2hKMNLs7O8XQa/pYBWMyXO8kqz4Uf7YqiB4SPZOnsHurzBHlY5Qxl
-         UFgw==
-X-Forwarded-Encrypted: i=1; AJvYcCW45tSyDld0mij1MGoQgzSxpzNLyibnlhqvbTK/SyXA0aFuGfTDWPtGMfd+m+Rsrwos1cF7H3o0t8OG6RLrVBZmn2/UDD+sWZVlcbpHIS3lqFLMxCw0mRJCNezjr2cuwbh6iZdZWyk7MWMl3g==
-X-Gm-Message-State: AOJu0YzBc197nYnjtcbKeY8rDD+BYPspMA4P6GzjJZHDjQgVW42+yAmq
-	nqzmqNKtDVw4KRi72z27Hy8UxMTIEZuH0HjxH+cX3tpxwjb6B69B
-X-Google-Smtp-Source: AGHT+IG7UAvfga0ZG2yNv2RJVoigr75WJ+wAKzDPiq9W3zLhf2/XYb9zpcIAAYXrq2V/r060tL2Rzw==
-X-Received: by 2002:a05:6a21:3991:b0:1a3:dc61:926a with SMTP id adf61e73a8af0-1afde234e8bmr2652358637.54.1715341817254;
-        Fri, 10 May 2024 04:50:17 -0700 (PDT)
+        bh=r4pI/dLra8+Fx5rO5TUtIiOfN5ranfVQtnPo5N4NowI=;
+        b=ZqySyk590pZn8rVaTqLAERMvjuLjm8J8y0BIVQd18HbMMa6p/nSjDCBgNylrOwikon
+         YllcEEIvHJdirlkJBkVdu7CzZRxk4PbHqALhS38iKXLbG2yNScE1b7zoe2f7Ro79iejd
+         u63NNhPE6dEXVB830eeLPpK1uHdOREfz2Af9BaMC3MMSUhYhRxLpTHcTu2oQ1vg8KxL0
+         2W5bRH4faLzwKG83POu2p6lKfJl/G8j+YfIwkfX60AKQGPqwoIprwYB7CTp2/YE231dX
+         qYkZskZT9WE0z/kmxLQ3vdfdslbBhK6CyhGXOVjv1K7o8EJ+CdzXCtcBzH/zrtBMSkYd
+         +Spw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpED7B+8+xhxEU+7sfoE68FT45rQ/4z0wM2mdw1D3IwMQ0FNToHZh5VNNhfrCsw5M56L8FYVrENpWCUjliV5EIuAGtbYguyHFbA8/UCc3YbR1YX0zvkVFfFzkt618PuNbslD9xgUlJOHz3VA==
+X-Gm-Message-State: AOJu0YyPw+dMFpgVxTu6B6cbLvm+AT+XQlu52ppkRxWmWQGol+cEoK9C
+	w7YB0PY6I9RgUlWUH99ZSL2HTJeYQyRJRnngzSvTM+2clw9zZ2V+
+X-Google-Smtp-Source: AGHT+IHSu4vf1uCLF5qFTJHXuHSvWwDd6wRy4AQCNalBLaHz4N+8wZRkLwQ24nQsMv4SDXunk7nJRA==
+X-Received: by 2002:a17:902:dacd:b0:1e5:62:7aaa with SMTP id d9443c01a7336-1ef43d185e9mr29151095ad.20.1715341821906;
+        Fri, 10 May 2024 04:50:21 -0700 (PDT)
 Received: from KASONG-MC4.tencent.com ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c134155sm30183825ad.231.2024.05.10.04.50.12
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c134155sm30183825ad.231.2024.05.10.04.50.17
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 10 May 2024 04:50:16 -0700 (PDT)
+        Fri, 10 May 2024 04:50:21 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -84,11 +84,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>,
 	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	linux-afs@lists.infradead.org
-Subject: [PATCH v5 06/12] afs: drop usage of folio_file_pos
-Date: Fri, 10 May 2024 19:47:41 +0800
-Message-ID: <20240510114747.21548-7-ryncsn@gmail.com>
+	Jeff Layton <jlayton@kernel.org>,
+	netfs@lists.linux.dev
+Subject: [PATCH v5 07/12] netfs: drop usage of folio_file_pos
+Date: Fri, 10 May 2024 19:47:42 +0800
+Message-ID: <20240510114747.21548-8-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240510114747.21548-1-ryncsn@gmail.com>
 References: <20240510114747.21548-1-ryncsn@gmail.com>
@@ -108,62 +108,53 @@ swap cache, for pure page cache usage, the caller can just use
 folio_pos instead.
 
 It can't be a swap cache page here. Swap mapping may only call into
-fs through swap_rw and that is not supported for afs. So just drop
+fs through swap_rw and that is not supported for netfs. So just drop
 it and use folio_pos instead.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>
-Cc: linux-afs@lists.infradead.org
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: netfs@lists.linux.dev
 ---
- fs/afs/dir.c      | 6 +++---
- fs/afs/dir_edit.c | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/netfs/buffered_read.c  | 4 ++--
+ fs/netfs/buffered_write.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 67afe68972d5..f8622ed72e08 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -533,14 +533,14 @@ static int afs_dir_iterate(struct inode *dir, struct dir_context *ctx,
- 			break;
- 		}
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 3298c29b5548..d3687d81229f 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -255,7 +255,7 @@ int netfs_read_folio(struct file *file, struct folio *folio)
+ 	_enter("%lx", folio->index);
  
--		offset = round_down(ctx->pos, sizeof(*dblock)) - folio_file_pos(folio);
-+		offset = round_down(ctx->pos, sizeof(*dblock)) - folio_pos(folio);
- 		size = min_t(loff_t, folio_size(folio),
--			     req->actual_len - folio_file_pos(folio));
-+			     req->actual_len - folio_pos(folio));
+ 	rreq = netfs_alloc_request(mapping, file,
+-				   folio_file_pos(folio), folio_size(folio),
++				   folio_pos(folio), folio_size(folio),
+ 				   NETFS_READPAGE);
+ 	if (IS_ERR(rreq)) {
+ 		ret = PTR_ERR(rreq);
+@@ -454,7 +454,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	}
  
- 		do {
- 			dblock = kmap_local_folio(folio, offset);
- 			ret = afs_dir_iterate_block(dvnode, ctx, dblock,
--						    folio_file_pos(folio) + offset);
-+						    folio_pos(folio) + offset);
- 			kunmap_local(dblock);
- 			if (ret != 1)
- 				goto out;
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index e2fa577b66fe..a71bff10496b 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -256,7 +256,7 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
- 			folio = folio0;
- 		}
+ 	rreq = netfs_alloc_request(mapping, file,
+-				   folio_file_pos(folio), folio_size(folio),
++				   folio_pos(folio), folio_size(folio),
+ 				   NETFS_READ_FOR_WRITE);
+ 	if (IS_ERR(rreq)) {
+ 		ret = PTR_ERR(rreq);
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index 9a0d32e4b422..859a22a740c3 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -63,7 +63,7 @@ static enum netfs_how_to_modify netfs_how_to_modify(struct netfs_inode *ctx,
+ 						    bool maybe_trouble)
+ {
+ 	struct netfs_folio *finfo = netfs_folio_info(folio);
+-	loff_t pos = folio_file_pos(folio);
++	loff_t pos = folio_pos(folio);
  
--		block = kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE - folio_file_pos(folio));
-+		block = kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE - folio_pos(folio));
+ 	_enter("");
  
- 		/* Abandon the edit if we got a callback break. */
- 		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-@@ -417,7 +417,7 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
- 			folio = folio0;
- 		}
- 
--		block = kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE - folio_file_pos(folio));
-+		block = kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE - folio_pos(folio));
- 
- 		/* Abandon the edit if we got a callback break. */
- 		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
 -- 
 2.45.0
 
