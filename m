@@ -1,136 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-19285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68A88C28A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 18:21:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA6A8C2A1F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 20:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECE0B2437E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 16:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116A31F22907
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 18:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B3E173350;
-	Fri, 10 May 2024 16:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A28F4437A;
+	Fri, 10 May 2024 18:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JVIw+3Sd"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QlT4L3vG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8572F14A4FB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 16:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD7E1BDC8;
+	Fri, 10 May 2024 18:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715358081; cv=none; b=AQCOIsjwY5OdAAdGas0KBx0rCHjMBxT1Xgnbx2t7ABOOgtDn2vyp+O8aWYEgioQQW4rT5OYc2Cwir2qeMTu52kQsSMilQFPzbA/0pa63ESHnjqIsfN9tTr0+2WRbisZLg01oJy1QQ4NFNJCMz/rGBLZwRAchGVAPDOYUZdJDm6o=
+	t=1715367247; cv=none; b=gI9Ih8kW1ddOVECqaQAZ14IN9hRXpFntzSdOK4XJKBa6da98xuDUTMThcIFxv3ZYC+oPIEiHHb6VfLXb+P0xAwmyxFtszFnb6mV2kAshcZjWlqgoAzWUWK40Nd78qt13xQmaqQUb3WefWVGi8x6vhRwImBctq4e4q2Mqve4wXmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715358081; c=relaxed/simple;
-	bh=8aU0aZOb2y9DUg+lZw8BCNxpFVehcs41OsBX/b+s5tA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gdvpAe8HKxr2P3Z1llVj6RwAkIejPItWiE2ExsYZhOxyEldV0407XJ42AvjiNa7ThptmkG0cZs1r8doYzZhnb34knOSHvdBR3wghYJvsvl/aBYMhB38di4Mx7+M0AYDgWyiVav9uDcog7o8ma8irtLDZUlngjRYFEFoazlDWMQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JVIw+3Sd; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dc236729a2bso2221830276.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 09:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715358078; x=1715962878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eFE3n+MZyxeo0bNjBIjsCbl4GDn+4HbpNAkc84Q2m38=;
-        b=JVIw+3SdPraslrAkUD+qP1EL8SvbtmlAA6hZ5bM4Hw8/qeRwI5JrXO2iIcpmaMpgZs
-         Zun4MxTUSoxsj+OY6wfTpiRVvcFwG/VNn/FwP2F/nNraLxBkp44rQmv3eA2pHkfSKtAL
-         7vhxxDi/sAQ1DTbJsLD+xp0e6srravEyfLRnxbzZF2b0VNMivyFLE90e/5HtgUVnpovV
-         gFW6bmVp78XTzYRQNGARB/YWcbQ3v4VntRu5mBCVLfKx0Ap+EQPMWQVPJS1amcWJ7RlS
-         9Ldf9PhdtDUTp98JzMKzKawmmUSSI7IyeZocfMbQtjH3rro+q/77A40a8w6V3KbBXUSu
-         0DQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715358078; x=1715962878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eFE3n+MZyxeo0bNjBIjsCbl4GDn+4HbpNAkc84Q2m38=;
-        b=eEikz9HjXjmyNeAhDEX+GYXgXJyVcW0aT8LoMkEhi5Tg8tBj5/svlvUPNDFk47AsRf
-         A0XNDnU074v7IonsquBLoAAUzNrfNHy4a0ET0Xs8W+1Iopdq+r4hoqz8ALV/5tWgmZJv
-         2Y4MOdAhFM9JWsFKGPe/JtggTfYgYA5ZWsGCjhutDGOXV+Yut5wvcVaSLAQG1CGV8PLD
-         XT7lMv6FYfMlZqVRIZZdAmZRGSrwxcHSKOlFBUqjVGykHE8A7wxBKriLNEK+WxsenjWf
-         fTMed5bsfwHGEeg84rSK11nECzBpZaoRU9iSUguMCFKeuiXpSZu6H+3TN3IjsofHd58j
-         Q+AA==
-X-Forwarded-Encrypted: i=1; AJvYcCWd4gqQVGRU+N3JxVp63Vc+bC+chDbnyu8ziHEoLT17mRXC9Zlwm866m78QHvYGTVRhBLfTA+p7zQNFgdFxugJEwpTT8nspYmZA1tnLaQ==
-X-Gm-Message-State: AOJu0Ywn0EadhUAEBd/lFreDOEL4X8xUFFUc+NienyuVnD6rMeoiQsM3
-	Ko+jbBuZBtqHsROeganu14+Tzx4f5sbbh9rzQ2ViTlm6X6WKmeCKL8ZMWVR0vbIGseiFV8Cd0le
-	gmtsiljlk/d9hhtfuHz7i9diI+riCbvw5jb8Q
-X-Google-Smtp-Source: AGHT+IG1DyUD3fKZKxA634315t5oE5P95Q7TTzvjl87/l/KT7ajBuikVKoMlofkpK08Ducvn1mCsxmnORAB/OPa4VDU=
-X-Received: by 2002:a25:bc8f:0:b0:dee:6346:b856 with SMTP id
- 3f1490d57ef6-dee6346bbaemr42235276.34.1715358077724; Fri, 10 May 2024
- 09:21:17 -0700 (PDT)
+	s=arc-20240116; t=1715367247; c=relaxed/simple;
+	bh=4vpAjobi1YxeVzKhUzPgFAloD1MAKmnN9hswaFis0sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hOMp9U2ZpZ1xi5HmJuDPai+50uu2Pf06gHFLGet5fQE/9DM466+gWwLPRUu1r1chS7uzk/mgtUH31D4DuFchFKPbp3GQu5ZWH0EHADRujugzzuqY/UmQjP9NKKleziy+vGK9puW/9KITQMUUa7icsB8CxM8vWQQ8z3gPXjn0lGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QlT4L3vG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IendhRezRdHkCFfFsZTgYGRwbs6ppEzGZGzENXeNAlY=; b=QlT4L3vGo5BrUtvEY1sfaC06j7
+	To1YWpICqsmeQ609slk/5cgfCAReOS553T/uzYN3F0aMh6cgEm3exzjNMR7B2WFOrXcSYGX+3yB7o
+	r0WqXAinAy3ItWy6mo7YlGNIezhpxG16dFJ3gZh1Y0DEPGv2CyFhyW2mKWCO2k/pfWFGOHIGo10YD
+	ymHGxYCFNEOg2CrRU6zPUNhic1J7oovXxEmJ0nJOo/2W6+ONVa6P+NvbHTkNm6jl82No+JfNjaY/p
+	n9ufYyaf9xxVbyolbD8JeMkS0eQ/X8hSmDt9QNe/jq4wzIRfUp8dRZbZ9IcusIR/OSvaQPfabAKy0
+	dQg5K0Hw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s5VNP-00000006BoA-0F3k;
+	Fri, 10 May 2024 18:53:51 +0000
+Date: Fri, 10 May 2024 11:53:51 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Christoph Lameter <christoph@lameter.com>,
+	Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"hughd@google.com" <hughd@google.com>,
+	"ioworker0@gmail.com" <ioworker0@gmail.com>,
+	"wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
+	"ying.huang@intel.com" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shy828301@gmail.com" <shy828301@gmail.com>,
+	"ziy@nvidia.com" <ziy@nvidia.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
+Message-ID: <Zj5tP7k1muaCDtO_@bombadil.infradead.org>
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <CGME20240508113934eucas1p13a3972f3f9955365f40155e084a7c7d5@eucas1p1.samsung.com>
+ <fqtaxc5pgu3zmvbdad4w6xty5iozye7v5z2b5ckqcjv273nz7b@hhdrjwf6rai3>
+ <f44dc19a-e117-4418-9114-b723c5dc1178@redhat.com>
+ <ZjvRPLaXQewA8K4s@bombadil.infradead.org>
+ <23ea6dbd-1d4e-4aeb-900b-646db880cfb6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509-b4-sio-read_write-v1-1-06bec2022697@google.com> <20240510151508.hajqjxsn7rghk3dj@quack3>
-In-Reply-To: <20240510151508.hajqjxsn7rghk3dj@quack3>
-From: Justin Stitt <justinstitt@google.com>
-Date: Fri, 10 May 2024 09:21:06 -0700
-Message-ID: <CAFhGd8qbUYXmgiFuLGQ7dWXFUtZacvT82wD4jSS-xNTvtzXKGQ@mail.gmail.com>
-Subject: Re: [PATCH] fs: fix unintentional arithmetic wraparound in offset calculation
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23ea6dbd-1d4e-4aeb-900b-646db880cfb6@redhat.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Fri, May 10, 2024 at 8:15=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 09-05-24 21:34:58, Justin Stitt wrote:
-> > ---
-> >  fs/read_write.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/read_write.c b/fs/read_write.c
-> > index d4c036e82b6c..10c3eaa5ef55 100644
-> > --- a/fs/read_write.c
-> > +++ b/fs/read_write.c
-> > @@ -88,7 +88,7 @@ generic_file_llseek_size(struct file *file, loff_t of=
-fset, int whence,
-> >  {
-> >       switch (whence) {
-> >       case SEEK_END:
-> > -             offset +=3D eof;
-> > +             offset =3D min_t(loff_t, offset, maxsize - eof) + eof;
->
-> Well, but by this you change the behavior of seek(2) for huge offsets.
-> Previously we'd return -EINVAL (from following vfs_setpos()), now we set
-> position to maxsize. I don't think that is desirable?
+On Thu, May 09, 2024 at 07:48:46PM +0200, David Hildenbrand wrote:
+> On 08.05.24 21:23, Luis Chamberlain wrote:
+> >  From my perspective the more shared code the better, and the more shared
+> > paths the better. There is a chance to help test swap with large folios
+> > instead of splitting the folios for swap, and that would could be done
+> > first with tmpfs. I have not evaluated the difference in testing or how
+> > we could get the most of shared code if we take a mTHP approach or the
+> > iomap approach for tmpfs, that should be considered.
+> 
+> I don't have a clear picture yet of what might be best for ordinary shmem
+> (IOW, not MAP_SHARED|MAP_PRIVATE), and I'm afraid there is no easy answer.
 
-RIght, we shouldn't change the current behavior. This patch needs rethinkin=
-g.
+OK so it sounds like the different options needs to be thought out and
+reviewed.
 
->
-> Also the addition in SEEK_CUR could overflow in the same way AFAICT so we
-> could treat that in one patch so that the whole function is fixed at once=
-?
+> As long as we don't end up wasting memory, it's not obviously bad.
 
-Yep let's include that one as well. However, I'm going to hold off on
-sending a new version until the discussion about how to handle
-overflow comes to a conclusion; as suggested by Greg [1]. I made too
-many assumptions about how folks want overflow to be handled. In the
-case of this patch, a simple check_add_overflow() should be okay and
-match the behavior, but let's wait and see.
+Sure.
 
->
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> But some
+> things might be tricky (see my example about large folios stranding in shmem
+> and never being able to be really reclaimed+reused for better purposes)
 
-[1]: https://lore.kernel.org/all/2024051039-bankable-liking-e836@gregkh/
+Where is that stated BTW? Could that be resolved?
 
-Thanks
-Justin
+> I'll note that mTHP really is just (supposed to be) a user interface to
+> enable the various folio sizes (well, and to expose better per-size stats),
+> not more.
+
+Sure but given filesystems using large folios don't have silly APIs for
+using which large folios to enable, it just seems odd for tmpfs to take
+a different approach.
+
+> From that point of view, it's just a filter. Enable all, and you get the
+> same behavior as you likely would in the pagecache mode.
+
+Which begs the quesiton, *why* have an API to just constrain to certain
+large folios, which diverges from what filesystems are doing with large
+folios?
+
+> > Are there other things to consider? Does this require some dialog at
+> > LSFMM?
+> 
+> As raised in my reply to Daniel, I'll be at LSF/MM and happy to discuss. I'm
+> also not a SHMEM expert, so I'm hoping at some point we'd get feedback from
+> Hugh.
+
+Hugh, will you be at LSFMM?
+
+  Luis
 
