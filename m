@@ -1,105 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-19247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82B08C1DD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 07:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1798B8C1DFC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 08:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7791F21891
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 05:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60871F216DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 06:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B9115B131;
-	Fri, 10 May 2024 05:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A321527B2;
+	Fri, 10 May 2024 06:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="lc9/js3I"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AIlrARjZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AF0152791
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 05:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077461494DE;
+	Fri, 10 May 2024 06:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715320440; cv=none; b=KOp9R9RrpWewlL+gP8xtYLrnKoNAeOqHXTwKd2p64ff1luneUYfeJ6p4B+tVEFFBB1I/ggBxC0tccmIkf/dihjqKTivmDE476U/xk6a6CzIUMr+sPrDihScdOe0FGogR8UKoSbROsKaDm7pdGYUrdBwEuUKk3TRW5IBCqcIrTJ0=
+	t=1715322023; cv=none; b=p/lpnU/AF1Z5/HrmcNvtye04YC+wu3t6+L7po5XJO3OHM5fG/+jWq6fOiMoxuDm9XzYezM2q9uKEHwlo6rmhM3RHv1gfXoOS36A4VL/JCcHoMZxtmnncfDc42NfGpU6mIR1MBRXR5cQxC09BOdmswlCMLWqm+7h04cKSZYp1fKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715320440; c=relaxed/simple;
-	bh=4PEitjlgb+KO6v9/1VnUNw8pVTM6GDPJ4mUKQsGr/KM=;
+	s=arc-20240116; t=1715322023; c=relaxed/simple;
+	bh=MXB8yULq8IhEcfPSgfRUb3LoqfN1ihZb5DfjgDQ83ZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQLy5eUgbGNlxvpoBancXQezrTV4nZkVgHPFvJUYBL/kgmP5i+4wPZK3PbmWq4gHOLcE4Q6hVVhWxWZAqe5AAbi8yzUkhnSmBjeBSZz4+3W3vzGetsOSdLWIfcXN1PC8depyH+aE3uKmPAZ9SYgL6wGZFRr++skOKYmw1Gd954Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=lc9/js3I; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D8DCB411FB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 05:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715320435;
-	bh=pb53mmGBdA39Om/S6gifWUIT/OZjQtmNrFO1eNmJ+LA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=lc9/js3Igi2d+FF9o7mqGr1bWPXeF+NVTbzNHdvfAMidNges6cXEmNKSGevcQ/4pM
-	 IklAiEzrQGPOwgst6GRSlK9ry19SC9rYeJN/hLFjoD5Xd4nJWICTGO3u0uXpGOzvrc
-	 CiO+K2Kgpnew8vRm8YquRNA5tF4QH8uRYrg50eMkCLVLlfXbR2sJFS7CucTmr6PZgH
-	 Q/D7Cg/uALctuoEDkzFMLWJtJKna0FX93CkJSJ/EV2Zt5iSmb9BQDAq04WJrgnSLso
-	 XwrPCnNEJrkahJN7MjZpcI+xtx0TcKWYBCiqdEijFONaeL9h54EcFs58GUpIUW3tYR
-	 83YAaiON74HbQ==
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-572ef3eb368so635637a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2024 22:53:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715320435; x=1715925235;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pb53mmGBdA39Om/S6gifWUIT/OZjQtmNrFO1eNmJ+LA=;
-        b=Dl47tR/d2GgZckuJLB1uJd33Lnjch4SYLf/0gGE0hWK8gs8tAeBgEL78C2nLdz7j9L
-         AbTpf+rAtjDvsttRZ88ap7ZCc90M22TMrShL9bXlwsKnZ4agxTa9mTgIekUablKQVAqN
-         hAggw9+yQciYBrNqpHdzz3l3u/3c4maX0+AYedAr1OVNCvBD1cHNMQAQeTpDwlJG4Ynw
-         ZmK2rtsbtpnWkHoexAjk5JcRIg66Fhr3oNbYJxCqcu6x+FekRnTW6AdQOKHqB214FFiZ
-         rfEwLDAJ7w0mptU6JrwGERlH4UhRfO6XlE4YGZ+wIKzrIcTQYmw/Ch+p1lbFw919bwrk
-         3sMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVB9VsDfxvSZtwhZ3cRULopRigVNn8DiDowCsa2XPSE2Ohp4nCTmd6bKNb59LQAzjGnk6rtkmfpSiLXGWOjfQTcwY9nO7iKzCqRr0MqOg==
-X-Gm-Message-State: AOJu0Yxih8vBTD8WkHR+qBglabtfK+EZN89CqOCRWT+EwFEqe85tZoy4
-	1ImWcb7xPv4bm0zfVPRoSSs8YH6Hlh7RSz1wxzZcP7BOIesYloSIp/p4UiqVHaBj0DcZEFF3dcy
-	Hj+L5jz6tQUVppeZmB+gLSBAO1RQh6xqdz6D9d/0oJ2JMnCkXQnc6keRXDycyAdyNFE/829g9po
-	I08V0=
-X-Received: by 2002:a50:bb05:0:b0:572:5f28:1f25 with SMTP id 4fb4d7f45d1cf-5734d5c1692mr1161725a12.7.1715320435058;
-        Thu, 09 May 2024 22:53:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUERLBxoc5gVqjALyHDp2f85+2hPeKHWBMU3eKKrua9AkiVLI6CvgwDj1X1kdppOmcHMa0VA==
-X-Received: by 2002:a50:bb05:0:b0:572:5f28:1f25 with SMTP id 4fb4d7f45d1cf-5734d5c1692mr1161698a12.7.1715320434315;
-        Thu, 09 May 2024 22:53:54 -0700 (PDT)
-Received: from localhost (host-82-49-69-7.retail.telecomitalia.it. [82.49.69.7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c3229b5sm1436042a12.79.2024.05.09.22.53.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 22:53:53 -0700 (PDT)
-Date: Fri, 10 May 2024 07:53:52 +0200
-From: Andrea Righi <andrea.righi@canonical.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
-Message-ID: <Zj22cFnMynv_EF8x@gpd>
-References: <Zj0ErxVBE3DYT2Ea@gpd>
- <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-41-dhowells@redhat.com>
- <1567252.1715290417@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YdhOOMNBNpTlpIQHdGqU2PzxR6aYlnwZoflTJwLiBonhFyd0LI4srHuFJTpng7yxtZdfZmfFa5CLeqdypByt93uPZnANyHq74O57sQ0NC+w+ChswsX9WVSpsgcZm1swPWf9GyCrmPoXvVuEsbsyWQDIFFoyKPFTj/Z8O+D/jq+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AIlrARjZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tWbLPpe1dxAUAnS/VIXTnCfeoHbQYCROBhp9omQeVas=; b=AIlrARjZRQ5GemdOQ+DXBoAZFM
+	U/d8TrSy87aVZ1nDBjzhYvOZ1KAq/gf/7MfzhCIUFgY3mymY1lQRroEqJ0h35wxP9acMycZ+8kpE8
+	nnBeMpdTPe2sPxxqLkyi0aFDIBcbh20oYX0igwNKPZo8p/Nvi7pZ3vYuC8pTBtLiEvWBYZB8AjoLZ
+	2y5T9ILibr8jTdt0coPaKcZ21oYr6KckIkVYP9ebyZFT/Ns+ErDBpH0Q+ASsp2VSnwQdf8bj92b8Q
+	EeIte/xkPzqr5K8fTTfS+o+axvalsfpNESyVEj/rD3hcLQ+4DywsEIHgN6l+nmzZiyuQIOBu0rFOH
+	NifxF0rQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s5Jc9-00000004Bts-2VHG;
+	Fri, 10 May 2024 06:20:17 +0000
+Date: Thu, 9 May 2024 23:20:17 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
+	ebiggers@kernel.org, linux-xfs@vger.kernel.org, alexl@redhat.com,
+	walters@verbum.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
+Message-ID: <Zj28oXB6leJGem-9@infradead.org>
+References: <171444680291.957659.15782417454902691461.stgit@frogsfrogsfrogs>
+ <171444680671.957659.2149857258719599236.stgit@frogsfrogsfrogs>
+ <ZjHmzBRVc3HcyX7-@infradead.org>
+ <ZjHt1pSy4FqGWAB6@infradead.org>
+ <20240507212454.GX360919@frogsfrogsfrogs>
+ <ZjtmVIST_ujh_ld6@infradead.org>
+ <20240508202603.GC360919@frogsfrogsfrogs>
+ <ZjxY_LbTOhv1i24m@infradead.org>
+ <20240509200250.GQ360919@frogsfrogsfrogs>
+ <Zj2r0Ewrn-MqNKwc@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -108,48 +71,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1567252.1715290417@warthog.procyon.org.uk>
+In-Reply-To: <Zj2r0Ewrn-MqNKwc@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, May 09, 2024 at 10:33:37PM +0100, David Howells wrote:
-> Andrea Righi <andrea.righi@canonical.com> wrote:
-> 
-> > On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
-> > > Use netfslib's read and write iteration helpers, allowing netfslib to take
-> > > over the management of the page cache for 9p files and to manage local disk
-> > > caching.  In particular, this eliminates write_begin, write_end, writepage
-> > > and all mentions of struct page and struct folio from 9p.
-> > > 
-> > > Note that netfslib now offers the possibility of write-through caching if
-> > > that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
-> > > v9inode->netfs.flags in v9fs_set_netfs_context().
-> > > 
-> > > Note also this is untested as I can't get ganesha.nfsd to correctly parse
-> > > the config to turn on 9p support.
-> > 
-> > It looks like this patch has introduced a regression with autopkgtest,
-> > see: https://bugs.launchpad.net/bugs/2056461
-> > 
-> > I haven't looked at the details yet, I just did some bisecting and
-> > apparently reverting this one seems to fix the problem.
-> > 
-> > Let me know if you want me to test something in particular or if you
-> > already have a potential fix. Otherwise I'll take a look.
-> 
-> Do you have a reproducer?
-> 
-> I'll be at LSF next week, so if I can't fix it tomorrow, I won't be able to
-> poke at it until after that.
-> 
-> David
+FYI, I spent some time looking over the core verity and ext4 code,
+and I can't find anything enforcing any kind of size limit.  Of course
+testing that is kinda hard without taking sparseness into account.
 
-The only reproducer that I have at the moment is the autopkgtest command
-mentioned in the bug, that is a bit convoluted, I'll try to see if I can
-better isolate the problem and find a simpler reproducer, but I'll also
-be travelling next week to a Canonical event.
+Eric, should fsverity or the fs backend check for a max size instead
+od trying to build the merkle tree and evnetually failing to write it
+out?
 
-At the moment I'll temporarily revert the commit (that seems to prevent
-the issue from happening) and I'll keep you posted if I find something.
+An interesting note I found in the ext4 code is:
 
-Thanks,
--Andrea
+  Note that the verity metadata *must* be encrypted when the file is,
+  since it contains hashes of the plaintext data.
+
+While xfs doesn't currently support fscrypyt it would actually be very
+useful feature, so we're locking us into encrypting attrs or at least
+magic attr fork data if we do our own non-standard fsverity storage.
+I'm getting less and less happy with not just doing the normal post
+i_size storage.  Yes, it's not pretty (so isn't the whole fsverity idea
+of shoehorning the hashes into file systems not built for it), but it
+avoid adding tons of code and beeing very different.
 
