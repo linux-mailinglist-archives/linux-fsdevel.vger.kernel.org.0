@@ -1,124 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-19270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874128C23DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159418C23DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8F51F2647B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B032885F6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDE516EC0C;
-	Fri, 10 May 2024 11:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3417616F85D;
+	Fri, 10 May 2024 11:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiwcS3bA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCRZc2s8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362C716EC06;
-	Fri, 10 May 2024 11:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9E216EBE5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 11:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341653; cv=none; b=TAFMwtKZouD/O1IDHG6A2No+GVdgos1qkrPWdSVhXsnB4sWwatsaMjrhvaDApzDzd16XW21YtATDAv7ZfNv7dkhtMRMI8+YO5WvMcHgUEOmFNkYPmQNemsq2NJD14AbvYjxgUDUV78kSmnImW1CkGlkMsrNGxG2Co2eW05+qeIk=
+	t=1715341647; cv=none; b=SMyUr2OWXMxCeosXDKIFPn6zgAZCe+GqXNeSJ774McfzswA9rPdXDPFT5y59ULdkuChexQ+DKtcOibD5bU/6VYeAp124HTuXo1j2ThF2Op/E+Np+Xe9bh9R3wGQRtlFTqSaRfL3jKC9M76ha7VIxTORjEkerSnCND6BWe75FW1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341653; c=relaxed/simple;
-	bh=Oyej1uFTgoe8KBmoJe2HNl27X7MRY9hio+5gYNggqqM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T5CvYomOb6WFrG1wYzFWvPbcaNNJJH8N1HA8Qpe/vQht4P34d/yQIi8z49n7VxaZE0oJbGMLBb+wnampHaF5SGOkQAKvR4MrluJuIWAk284FoPE2LVAgmgRgShPe4/lbvoV9WQ5bhpLdeUhDjjHABVyJ6cWBv7wLIQuoAHSIK6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiwcS3bA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CB95C2BD11;
-	Fri, 10 May 2024 11:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715341652;
-	bh=Oyej1uFTgoe8KBmoJe2HNl27X7MRY9hio+5gYNggqqM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oiwcS3bA8m6K1xyYg0jpRnIqUNrsGaYn8ALoMxw90meKXyDo+uXnuvI8UrjmNS70M
-	 0eMdte84SETJwlOhB2+LoQ/eY5zv+d4evERjaIQmOI/AbRMxsajmd1iev2F/riQ7Mf
-	 haAI2ff9RNqBVvIErNlkJDwT+uowf/PcVMG+3fYn6VWbnW/DGrXskLmvyuglqraHvo
-	 d7F6dFob5hAkddpMduUJAcihMXk5yYQmh4HDZ2LjS2rJbduVYiGPX3XaW2mu6LtcON
-	 rTTY4ls5a0LcMr+tsrc29X+yO5ydR/i5OByr66b6inBzQ9I5adGGD7+aoAuLHGTwVL
-	 xiPIEh6Pp2USA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs rw
-Date: Fri, 10 May 2024 13:47:17 +0200
-Message-ID: <20240510-vfs-rw-332f4a8e1772@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715341647; c=relaxed/simple;
+	bh=JKHp4Rh5kiRcj7JDKcLq7wL0HdW0ZmOA3PpfklMf1Ns=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=hMhpV9MAqwHwJt2/on0FRNCrzSNATFLTFSH2xVCzpIQXSoWhaH64uBADpqh9VJDe9cMOswdU076kaJudNvp2rGB7ZWMG0dbZ03UzhPPLuwY9PfnH3oilRZsjtBiBw3EqIVaewrPJELagNFCihlWK/JYuEr5DFfh+nfQZ808oimA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCRZc2s8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715341645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sd8WPC6FQ4+Bcwqy340NHitlPtCAliqE6vEb39UhEp8=;
+	b=hCRZc2s8bGts+ZIC8sqd5HLvl8RIVA3LBnywqDR83dMDII04kUD8YdW6H1iTEASKmZLm4D
+	7YnjCkKEee0Jy9Xm5xGsLXuriGE26zqTyzN0fIZ0qm4/5tPfWSvT1CU5o+BhZCGDpExStJ
+	JPT4dVgEGbg8pWFwePERnGDuY+Id66Y=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-383-T2OoUr2rMW2tuHOYkkqepg-1; Fri,
+ 10 May 2024 07:47:23 -0400
+X-MC-Unique: T2OoUr2rMW2tuHOYkkqepg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E00429AC02C;
+	Fri, 10 May 2024 11:47:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.34])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 574FAC54BBC;
+	Fri, 10 May 2024 11:47:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.com>
+cc: dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
+    Christian Brauner <brauner@kernel.org>, linux-ext4@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] ext4: Don't reduce symlink i_mode by umask if no ACL support
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2104; i=brauner@kernel.org; h=from:subject:message-id; bh=Oyej1uFTgoe8KBmoJe2HNl27X7MRY9hio+5gYNggqqM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTZcbpus9ZVPPd9jdNDnTlhExtFLl/oW8NzLU+Cy9l16 RVZQaugjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlEz2f4w/9CdF/Eh9gTD9VW tkr/PNRpa5ry47RYlvAyR4HUq7LTexgZ2i6s/J0yU/XKmjvaofFHe7jNmrrX/pwfYHpKYbP5KVU nZgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1586867.1715341641.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 10 May 2024 12:47:21 +0100
+Message-ID: <1586868.1715341641@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-Hey Linus,
+    =
 
-/* Summary */
-The core fs signalfd, userfaultfd, and timerfd subsystems did still use
-f_op->read() instead of f_op->read_iter(). Convert them over since we
-should aim to get rid of f_op->read() at some point.
+If CONFIG_EXT4_FS_POSIX_ACL=3Dn then the fallback version of ext4_init_acl=
+()
+will mask off the umask bits from the new inode's i_mode.  This should not
+be done if the inode is a symlink.  If CONFIG_EXT4_FS_POSIX_ACL=3Dy, then =
+we
+go through posix_acl_create() instead which does the right thing with
+symlinks.
 
-Aside from that io_uring and others want to mark files as FMODE_NOWAIT
-so it can make use of per-IO nonblocking hints to enable more efficient
-IO. Converting those users to f_op->read_iter() allows them to be marked
-with FMODE_NOWAIT.
+However, this is actually unnecessary now as vfs_prepare_mode() has alread=
+y
+done this where appropriate, so fix this by making the fallback version of
+ext4_init_acl() do nothing.
 
-/* Testing */
-clang: Debian clang version 16.0.6 (26)
-gcc: (Debian 13.2.0-24)
+Fixes: 484fd6c1de13 ("ext4: apply umask if ACL support is disabled")
+Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Max Kellermann <max.kellermann@ionos.com>
+cc: Jan Kara <jack@suse.com>
+cc: Christian Brauner <brauner@kernel.org>
+cc: linux-ext4@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/ext4/acl.h |    5 -----
+ 1 file changed, 5 deletions(-)
 
-All patches are based on v6.9-rc3 and have been sitting in linux-next.
-No build failures or warnings were observed.
+diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
+index ef4c19e5f570..0c5a79c3b5d4 100644
+--- a/fs/ext4/acl.h
++++ b/fs/ext4/acl.h
+@@ -68,11 +68,6 @@ extern int ext4_init_acl(handle_t *, struct inode *, st=
+ruct inode *);
+ static inline int
+ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
+ {
+-	/* usually, the umask is applied by posix_acl_create(), but if
+-	   ext4 ACL support is disabled at compile time, we need to do
+-	   it here, because posix_acl_create() will never be called */
+-	inode->i_mode &=3D ~current_umask();
+-
+ 	return 0;
+ }
+ #endif  /* CONFIG_EXT4_FS_POSIX_ACL */
 
-/* Conflicts */
-
-No known conflicts.
-
-The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
-
-  Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10.rw
-
-for you to fetch changes up to 3a93daea2fb27fcefa85662654ba583a5d0c7231:
-
-  Merge branch 'read_iter' of git://git.kernel.dk/linux (2024-04-11 10:06:08 +0200)
-
-Please consider pulling these changes from the signed vfs-6.10.rw tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.10.rw
-
-----------------------------------------------------------------
-Al Viro (1):
-      new helper: copy_to_iter_full()
-
-Christian Brauner (1):
-      Merge branch 'read_iter' of git://git.kernel.dk/linux
-
-Jens Axboe (4):
-      Merge branch 'work.iov_iter' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs into read_iter
-      timerfd: convert to ->read_iter()
-      userfaultfd: convert to ->read_iter()
-      signalfd: convert to ->read_iter()
-
- fs/signalfd.c       | 44 ++++++++++++++++++++++++++++----------------
- fs/timerfd.c        | 36 ++++++++++++++++++++++++++----------
- fs/userfaultfd.c    | 44 ++++++++++++++++++++++++++++----------------
- include/linux/uio.h | 10 ++++++++++
- include/net/udp.h   |  9 +--------
- 5 files changed, 93 insertions(+), 50 deletions(-)
 
