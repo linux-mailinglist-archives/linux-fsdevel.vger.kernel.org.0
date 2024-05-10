@@ -1,119 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-19259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E0A8C23A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:36:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF7A8C23AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 844F51C23C21
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95491288C15
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282B316F8EB;
-	Fri, 10 May 2024 11:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F0617084A;
+	Fri, 10 May 2024 11:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OskplMLl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F8416F296
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 11:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BDA1649CF;
+	Fri, 10 May 2024 11:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715340821; cv=none; b=XrS80yz6sWro/vKsNZRxs+wp1w03PBCg7wcU8gyvp7KctNC5ggKONH/nfOzvHuD/CF1jtd0DTkL74IimIpTAmpJgZ059nF4vOxmZ71TzdNZIl2zIWFRkdVW+XyMQ584XTSBpHH1BKEOmbsaV/+pc2fFVOkSP05wyAC8HTKk3LsY=
+	t=1715340884; cv=none; b=qIXFCvlDqs9LXgjWnfBK6I8NEFSeFk7wJsdg8fPUmpiYupCwIP2xJcKnp2ucGOzeZz9Oo2rsnLRO1Q9hmnaKJ03Q3ShX6bQU4pgANguybddcvPCR+NmswxgDvcDi6SWrTl/DLd5ABHu8U30fQ0tuf015OCOuW8pOeCDYHWUKab8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715340821; c=relaxed/simple;
-	bh=kWpB3hlt/N31SYsdYtQFsLZZ1ccECn5dZ0BwMIjrR7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fcy7GkgILJ6H4gBaXy5Hk8Matf56R+/8qx9y9LbWO+WYAGi8gbFRyKhJ3CnjeRxVG9bAKQ0yT7m0550MBudq8Ea7Qwq7MLjmxztd8yL836MCLqMWo4fLV9kttX/glhMgL/K/sDvqWDc+8xQt8loZD/HJC8mxXpy6RoEtaeybCTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.62])
-	by sina.com (172.16.235.24) with ESMTP
-	id 663E060600000C3E; Fri, 10 May 2024 19:33:28 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 73734345089264
-X-SMAIL-UIID: A9B4E614A6134A958D504D06E0FA46DC-20240510-193328-1
-From: Hillf Danton <hdanton@sina.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: syzbot <syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	linux-pm@vger.kernel.org
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_seq_start
-Date: Fri, 10 May 2024 19:33:17 +0800
-Message-Id: <20240510113317.2573-1-hdanton@sina.com>
-In-Reply-To: <20240509232613.2459-1-hdanton@sina.com>
-References: 
+	s=arc-20240116; t=1715340884; c=relaxed/simple;
+	bh=dSYh0o4FrQWjhbR6gOXgRr+tiUkuUSJQCNgMoK+ri4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNkWbf/s0khulRjg2Y03nar3v0iTLo1W45vb9yhfJtYPi+sBmrkGZcXo6qb04KKDyzjdX1ongmJXb+PJOpWKmIlVOLaBxrihG7mCebuWJCEXULiLv0evqVpcjnyUPR/6M+MYDdYNSq6h9Zz3dlzHtB+e7xUEZ+6JLqAqbvhWhYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OskplMLl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3823C113CC;
+	Fri, 10 May 2024 11:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715340883;
+	bh=dSYh0o4FrQWjhbR6gOXgRr+tiUkuUSJQCNgMoK+ri4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OskplMLlg9XVl8lx2+cIzBGyfVPwM1qV6P4S5ficunln+xZ1XLnRlxALUa13Ijgl5
+	 svPbK/aOTS4MKiA7LMkA8Hk4Xqis68W5zAuCS0lUWMIw98yumRhR0j1YWWWxZoi/sY
+	 0sNauDPfBYRLwXbMDcKs5xiYxDLOd5rsRDdjeXJufUQGqIdrM0H1fBeelMwaX++pt9
+	 xx/zWnlAAJeUa7b2SgmOCK3nh03LXpERaly0i833tidQgA5jqEZYZcWEEc9wpik1Ok
+	 lXSUmRtyh2P25xv6RkiCZmUYTBaJwwNBXw+Desa7xsJ0WYZW0kmcQTL6CHlN/WLigU
+	 hcqYwRwuHPfmw==
+Date: Fri, 10 May 2024 13:34:39 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+e25ef173c0758ea764de@syzkaller.appspotmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [fs?] WARNING in stashed_dentry_prune (2)
+Message-ID: <20240510-blechnapf-bienen-b9b049b1bb28@brauner>
+References: <0000000000009f0651061647bd5e@google.com>
+ <000000000000decb7906180aae28@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <000000000000decb7906180aae28@google.com>
 
-On Fri, 10 May 2024 07:26:13 +0800 Hillf Danton <hdanton@sina.com> wrote:
-> On Thu, 9 May 2024 17:52:21 +0300 Amir Goldstein <amir73il@gmail.com>
-> > On Thu, May 9, 2024 at 1:49 PM Hillf Danton <hdanton@sina.com> wrote:
-> > >
-> > > The correct locking order is
-> > >
-> > >                 sb_writers
-> > 
-> > This is sb of overlayfs
-> > 
-> > >                 inode lock
-> > 
-> > This is real inode
-> > 
-> WRT sb_writers the order
+On Thu, May 09, 2024 at 12:47:02PM -0700, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> 	lock inode parent
-> 	lock inode kid
-> 
-> becomes
-> 	lock inode kid
-> 	sb_writers
-> 	lock inode parent 
-> 
-> given call trace
-> 
-> > -> #2 (sb_writers#4){.+.+}-{0:0}:
-> >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-> >        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-> >        __sb_start_write include/linux/fs.h:1664 [inline]
-> >        sb_start_write+0x4d/0x1c0 include/linux/fs.h:1800
-> >        mnt_want_write+0x3f/0x90 fs/namespace.c:409
-> >        ovl_create_object+0x13b/0x370 fs/overlayfs/dir.c:629
-> >        lookup_open fs/namei.c:3497 [inline]
-> >        open_last_lookups fs/namei.c:3566 [inline]
-> 
-> and code snippet [1]
-> 
-> 	if (open_flag & O_CREAT)
-> 		inode_lock(dir->d_inode);
-> 	else
-> 		inode_lock_shared(dir->d_inode);
-> 	dentry = lookup_open(nd, file, op, got_write);
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/namei.c?id=dccb07f2914c#n3566
+> commit 2558e3b23112adb82a558bab616890a790a38bc6
 
-JFYI simply cutting off mnt_want_write() in ovl_create_object() survived
-the syzpot repro [2], so acquiring sb_writers with inode locked at least
-in the lookup path makes trouble.
+So this sent me on a wild goose chase. In the last couple of weeks I got
+multiple reports from syzbot (3-4, I think) that all reported bugs
+reproduced against trees that were way behind mainline. So in this example:
 
-[2] https://lore.kernel.org/lkml/000000000000975906061817416b@google.com/
+#syz fix: pidfs: remove config option
 
