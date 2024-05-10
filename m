@@ -1,95 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-19258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7880A8C2345
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E0A8C23A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 13:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC681F22437
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 844F51C23C21
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2024 11:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45CC16F82A;
-	Fri, 10 May 2024 11:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JpYLSKGO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282B316F8EB;
+	Fri, 10 May 2024 11:33:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750DB16DEDE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 11:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F8416F296
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 11:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715340241; cv=none; b=UzbpopDh2UPiLNiSKJdoT2oIQCHf5mXPRoTlFxCy0URRELDVQSFlvMzgysA4e9qoAoh0DFUxAXvnIjMU7Nt7xgUuN11dm2S8nCvaLybbXgVl7OIudBiogOh0frG/gdcP+OYffdlyK1T1N/OWoJKSW0FKNqdp817/tgF7EZGcrcU=
+	t=1715340821; cv=none; b=XrS80yz6sWro/vKsNZRxs+wp1w03PBCg7wcU8gyvp7KctNC5ggKONH/nfOzvHuD/CF1jtd0DTkL74IimIpTAmpJgZ059nF4vOxmZ71TzdNZIl2zIWFRkdVW+XyMQ584XTSBpHH1BKEOmbsaV/+pc2fFVOkSP05wyAC8HTKk3LsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715340241; c=relaxed/simple;
-	bh=47x/4Pk6TGycDhdZnlbzTMHVd0iRYhoMxpqaHz5aors=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P0DNZxR9g3K0qNq3ha8RY20E5mKCb0+q1nbU6llNDVskpFHEkPyftUmQCsotB5J5iwQ3q0SJjYnAHUjyEyE04WDqOjR7k34s1USxS3t5ZHxukwh6BjNLNRADkxl+zAosq42cyVquhreBwDQ9wNC3s2FXCoq3UTwCdzEE6CoLX8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JpYLSKGO; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59ad344f7dso398639366b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 04:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715340237; x=1715945037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=47x/4Pk6TGycDhdZnlbzTMHVd0iRYhoMxpqaHz5aors=;
-        b=JpYLSKGOBfaIc5A8kOsi5/Dp2+/FW5QcD3PSDQjxzFhPoThcC9BFnBTZ6bjdLPn1y2
-         H3Ciyfq/DoepN2m57HmuLeQcub49JESXoeDmgeJbyvwVncXszisdoYaiKihDJhidJ0fS
-         guBqjTh2IcbqsTVlhlUJUWjpelIrxQkrhmoR0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715340237; x=1715945037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=47x/4Pk6TGycDhdZnlbzTMHVd0iRYhoMxpqaHz5aors=;
-        b=AdiFL3LsXIoWV7vJbZ1HIZMm7y+SzkcU3QnRp3HUe8j87kZLZ5B2dsWneBdeH0irzH
-         hcGxNIfLSqXqHiMq67cR3W8s44OtmtF8s7kv8HyRA2E+y4F0EHJQOsQqR1PsUeZCvlFi
-         rJrOqy79YYZy2t1weHOb/Cy+vDxEgbZ0t2rScyOMSjPmeT1+MT5reNxXcZPurOd8OVyo
-         iiB0UesSot/EzUymjMbI+lJhPj+UJAeFRiycSFeDkbyYyz4o7ZyTpFK4tCzLq82Gx24k
-         KBpT5wAmh4lTnSV+YNhDFcG4WG/buM4VKqTY/7/0fP/LZfQKr2zfFiItfTgQ6/bA+cl0
-         /7ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUoAGMsjsOZYycpHVcKLMn0ayHlzIfZihH0prP274azYDshqnt4eTjw7Fn4AcqDt4fLyZcvqzMMNIANLvfD0/TvMhCxwX3/MxtFPPfC/A==
-X-Gm-Message-State: AOJu0YyMZu92NMS03yvLls0LxzfSMJGV6CGBt1HlZvLLbORtcvZDww/3
-	cyLo3IvyJwa6ixqVzerF6PRJORaSBKKxMu1McWP+YKSqoLRHZFD88/SDBwZg15EQ5OZnjsnek5v
-	4PagHXRM+9P1Z0HwlX3M+dRRtx5N5OMyrg3TxEA==
-X-Google-Smtp-Source: AGHT+IFz5qP18mAylhBbmtThupMzDKv7Hxf/YKoxmcI8024bWwzwHlVosWJHVpjswkQo1H6JZ+uOIVvInsfVrUzL8aQ=
-X-Received: by 2002:a17:907:26c9:b0:a59:ba2b:5913 with SMTP id
- a640c23a62f3a-a5a2d66b525mr199596766b.62.1715340236873; Fri, 10 May 2024
- 04:23:56 -0700 (PDT)
+	s=arc-20240116; t=1715340821; c=relaxed/simple;
+	bh=kWpB3hlt/N31SYsdYtQFsLZZ1ccECn5dZ0BwMIjrR7Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fcy7GkgILJ6H4gBaXy5Hk8Matf56R+/8qx9y9LbWO+WYAGi8gbFRyKhJ3CnjeRxVG9bAKQ0yT7m0550MBudq8Ea7Qwq7MLjmxztd8yL836MCLqMWo4fLV9kttX/glhMgL/K/sDvqWDc+8xQt8loZD/HJC8mxXpy6RoEtaeybCTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.9.62])
+	by sina.com (172.16.235.24) with ESMTP
+	id 663E060600000C3E; Fri, 10 May 2024 19:33:28 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 73734345089264
+X-SMAIL-UIID: A9B4E614A6134A958D504D06E0FA46DC-20240510-193328-1
+From: Hillf Danton <hdanton@sina.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: syzbot <syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-pm@vger.kernel.org
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_seq_start
+Date: Fri, 10 May 2024 19:33:17 +0800
+Message-Id: <20240510113317.2573-1-hdanton@sina.com>
+In-Reply-To: <20240509232613.2459-1-hdanton@sina.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502212631.110175-1-thorsten.blum@toblux.com> <20240502212631.110175-3-thorsten.blum@toblux.com>
-In-Reply-To: <20240502212631.110175-3-thorsten.blum@toblux.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 10 May 2024 13:23:45 +0200
-Message-ID: <CAJfpegsVWa-fu=DePSC0J1WkfQxhaqs0RTxopMBHduwMANieyQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] overlayfs: Remove duplicate included header
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2 May 2024 at 23:27, Thorsten Blum <thorsten.blum@toblux.com> wrote:
->
-> Remove duplicate included header file linux/posix_acl.h
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+On Fri, 10 May 2024 07:26:13 +0800 Hillf Danton <hdanton@sina.com> wrote:
+> On Thu, 9 May 2024 17:52:21 +0300 Amir Goldstein <amir73il@gmail.com>
+> > On Thu, May 9, 2024 at 1:49 PM Hillf Danton <hdanton@sina.com> wrote:
+> > >
+> > > The correct locking order is
+> > >
+> > >                 sb_writers
+> > 
+> > This is sb of overlayfs
+> > 
+> > >                 inode lock
+> > 
+> > This is real inode
+> > 
+> WRT sb_writers the order
+> 
+> 	lock inode parent
+> 	lock inode kid
+> 
+> becomes
+> 	lock inode kid
+> 	sb_writers
+> 	lock inode parent 
+> 
+> given call trace
+> 
+> > -> #2 (sb_writers#4){.+.+}-{0:0}:
+> >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+> >        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+> >        __sb_start_write include/linux/fs.h:1664 [inline]
+> >        sb_start_write+0x4d/0x1c0 include/linux/fs.h:1800
+> >        mnt_want_write+0x3f/0x90 fs/namespace.c:409
+> >        ovl_create_object+0x13b/0x370 fs/overlayfs/dir.c:629
+> >        lookup_open fs/namei.c:3497 [inline]
+> >        open_last_lookups fs/namei.c:3566 [inline]
+> 
+> and code snippet [1]
+> 
+> 	if (open_flag & O_CREAT)
+> 		inode_lock(dir->d_inode);
+> 	else
+> 		inode_lock_shared(dir->d_inode);
+> 	dentry = lookup_open(nd, file, op, got_write);
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/namei.c?id=dccb07f2914c#n3566
 
-Applied, thanks.
+JFYI simply cutting off mnt_want_write() in ovl_create_object() survived
+the syzpot repro [2], so acquiring sb_writers with inode locked at least
+in the lookup path makes trouble.
 
-Miklos
+[2] https://lore.kernel.org/lkml/000000000000975906061817416b@google.com/
 
