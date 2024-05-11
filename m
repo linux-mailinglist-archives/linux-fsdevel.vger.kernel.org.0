@@ -1,133 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-19330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB128C3338
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 20:43:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1928C3368
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 21:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE171C20D4A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 18:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6541C20DBA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 19:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9221BC4F;
-	Sat, 11 May 2024 18:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IfX9AF+u"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB1D20B04;
+	Sat, 11 May 2024 19:20:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474A2366
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 18:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D751F95E
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 19:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715452976; cv=none; b=INdo3dk4RCh1pzpikDQlrudgvGoLiICfe0/PsPTpNRoVtkH7DG2FSE8JLI4GPKyiXLIFy8BTwVERtNf8kT8h2XNaEmCOBoBoHGY/WaENa1/9y3OwEEQxy03gvlFlrYv/Cra27tex7jPNJL2iUlsmLSVTVdUjdPR+2gnyNnZXZGY=
+	t=1715455207; cv=none; b=QKIcPJ68UA7BKymZ6Jc9hc2xqyxH65PNBpe3DcY3gSudo8Paf9m8775fDShlCrB8eXLpbLXeHN04DHSXf3nwHIwxDNld3v2VAG1rE90lePA9wIMhRRkQpYmf/KjVii+2FM55BKkK/gXapjBZGPgqVWbMl3vsN24oVVvGVUcw9hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715452976; c=relaxed/simple;
-	bh=ApCJCyRs/j1pv1e73Mk2nr2GCEsuTwCexsS/z9hBi/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=apH35OOOGZlaIevw9A3x/p4PJIx54MB0dIothmHxym+8PH7D97KKoOPgVvgiKr7Q9H6ZFYLj/3Pvxa4HHP2jBROuMI+lgDU9J4k/ZnskP7OisG2EgZuR6jW6Fi3s4e6esa/9D/VRSsYU0gAAp3vU5k3TGKzsShPtGwDKrMRc8PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IfX9AF+u; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a4702457ccbso765548366b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 11:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715452972; x=1716057772; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PnMdJnE8yoeGQU4ENYIBNUz2hwuFIS5awXtMxfvXts0=;
-        b=IfX9AF+uXcmRXX/b9U4I5O7U8/HtkNG4w5CctphpmGSWgRRNY7qIf8/DQEbpeLb9F2
-         e/RpUdT6DUFn1U6FF0cFKRgfEUe/Ph6E/yTvU8lPYZ/pb+aqfVnmLWtnkt0MjCx6CQoy
-         PZYJiHWor3GjOKNSmOmyx3DBP07dmxXwBiRI8=
+	s=arc-20240116; t=1715455207; c=relaxed/simple;
+	bh=+qv5reRo74cVbtPewf0lBZ2jqRG2ETEiX81GoJk+c40=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EgTrGFCMw3QNHvCiD+ravj5mZBMrlMZFJBwzDl16fYFiC1iA4HIsmswe1PxIIkpi6bBz3D+9E7+To/40EeqtewjTZpvFI2cApIjHrN031lehXeUGU/vPCXYn5nz09NUN5mnMuvQGwjRYTQQR/HGsmdpmyqL6BF20zrG2ndd+Enk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1be009e6eso219623539f.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 12:20:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715452972; x=1716057772;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PnMdJnE8yoeGQU4ENYIBNUz2hwuFIS5awXtMxfvXts0=;
-        b=N/u9c6Uy62KyAqptpgSPr/7y3vBijNXwMptrFdeiQmTwDGtkZcp4JkYlhRM5nYi+Po
-         GVNGgL6DpSXbFCCeJp26QJI2pJeIws9/FlZ+dybUCETXlqWHjyAyQjozxOnhMz5lVYbD
-         MJYT2ZRfGAZFnrc8cZ06x8STuzs1D3rwzME20aVAHNShN2Tve/oPlzZAffD3Lut4Jls0
-         KAx3znxyMaSfLP+CUC+E/pGMb+wWxEVFCaUJatUvx96miojX095qc9Thby+zSwq8/4VO
-         rjvLva4i/R0/e9eqZ0xID898l4MTWD5neqVwPXdMjaxt4pk0J5opY83g0Rj3mJCGjvsm
-         2DcA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0wHfqXNpIifVT9Uej/7HzVWmPB8QEaYPi6QHlD627dxdWoTGf/p7jAPyWNusSVvKslglufHFnIhBJhCc/F7maCEK5yiy6LFP+Q7p/5g==
-X-Gm-Message-State: AOJu0YyWpW2eoARfOFk+9IijyQOrUsSwjUhS+C3C9/iWjW8lLfrIghd/
-	OqUOmhVRAn0aL6hMj8t5jdS9pt9UVbfEjXjt7DZPAJLR0uv1euWJwFWjl12DIYNYJHAJ7pS4whb
-	m9rLJjg==
-X-Google-Smtp-Source: AGHT+IEbHWHqXVZ3Yj2/WU++BcEiAGcTP6ygVjf0CxpNEMGwgOPtr0kopC4ysdVASvMZozdMmjfdFA==
-X-Received: by 2002:a17:906:d9c2:b0:a59:c2c3:bb45 with SMTP id a640c23a62f3a-a5a2d66aa37mr356702966b.56.1715452972601;
-        Sat, 11 May 2024 11:42:52 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7f32sm361493866b.106.2024.05.11.11.42.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 May 2024 11:42:51 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a4702457ccbso765545866b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 11:42:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXGStHK9JvvUQ0AwSpPHDYz3UARspeUdwR1Or0pTZS/ANfa97mecZ7j5XQxi4VTy4GGdMgyPSlwMH/VYYT+A7+SKh0s1UMHJeIhAihtXA==
-X-Received: by 2002:a17:906:f296:b0:a58:f13d:d378 with SMTP id
- a640c23a62f3a-a5a2d54c5d6mr413536766b.13.1715452971426; Sat, 11 May 2024
- 11:42:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715455205; x=1716060005;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TU8kylx5Gi7UfPvHnXW2cq5h56a8jRhWapkflJkHeLA=;
+        b=cKBY9U4JcuxeC9oNkylbI6mBu4SgpxvIO1Kp11odBhsEAabBTAelEn3rEgbM/ivHsA
+         qXQbY3SOiiVyN8qJBPwnOu+pvhRVi2j4iIKsNG0EMsaU624aTfATqYH/T1UoQM8M3YdO
+         W40y5mYZEnuCQYGgJj8Atus+v4IqbfJpv9SSnHxCmv6nB6G0so30q2yooIRqFOEFlfgA
+         hR28lSEWRJeE9SK4Wehr2ydtsSJH6X8TGvdHod9zJN9QnynkZzMybvx/qsBfTR0/tlRY
+         x3NglqyRHjtJ4byITo92tw95Xw87YDHdWp9r+yxEnpgH953nAq0OApRjQGAUdNOGvsAw
+         9Ojg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/jrOukoMNSPg0XpadvVfHNb5v7bnmbfmPrs0lDBXXMp/p2vmU04pIhfa7d6N6F1tSc/0wPqwZfkPMrK+KVsEfWR04e8lhbd+Tt4m9YQ==
+X-Gm-Message-State: AOJu0YxL4E6FvDIeY4SHin1fqbAJkotKfbIGAbPt8A1Dlr062+b/12IS
+	7VNcT4ZefL1FIY93AUswqVHQBrYCr51Xj796zoIcrf45HBoONsozQrLNfSQapS11N1KFbne/9P2
+	7T6wNxR9feO2fYRqP+5DxgsoVEcp0zZIgQJWXLaYDMg6QPaiLGd2mNb8=
+X-Google-Smtp-Source: AGHT+IFQoLKTR0PomMsJmuoyW7oc8rG6EF2EtPkrDu6jPAscIBpu+Im9GhsGHH7rjpezK+/RJ84N2PgFrVl1yUwIXBxs170Q4cH4
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whvo+r-VZH7Myr9fid=zspMo2-0BUJw5S=VTm72iEXXvQ@mail.gmail.com>
- <20240511182625.6717-2-torvalds@linux-foundation.org>
-In-Reply-To: <20240511182625.6717-2-torvalds@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 11 May 2024 11:42:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wijTRY-72qm02kZAT_Ttua0Qwvfms5m5NbR4EWbS02NqA@mail.gmail.com>
-Message-ID: <CAHk-=wijTRY-72qm02kZAT_Ttua0Qwvfms5m5NbR4EWbS02NqA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: move dentry shrinking outside the inode lock in 'rmdir()'
-To: torvalds@linux-foundation.org
-Cc: brauner@kernel.org, jack@suse.cz, laoar.shao@gmail.com, 
-	linux-fsdevel@vger.kernel.org, longman@redhat.com, viro@zeniv.linux.org.uk, 
-	walters@verbum.org, wangkai86@huawei.com, willy@infradead.org
+X-Received: by 2002:a05:6638:8305:b0:488:e81f:845d with SMTP id
+ 8926c6da1cb9f-48958e18e34mr397992173.4.1715455205110; Sat, 11 May 2024
+ 12:20:05 -0700 (PDT)
+Date: Sat, 11 May 2024 12:20:05 -0700
+In-Reply-To: <000000000000bc3c710617da7605@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002104c60618328a78@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_fs_usage_read_one
+From: syzbot <syzbot+b68fa126ff948672f1fd@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 11 May 2024 at 11:29, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Reorganize the code trivially to just have a separate success path,
-> which simplifies the code (since 'd_delete_notify()' is only called in
-> the success path anyway) and makes it trivial to just move the dentry
-> shrinking outside the inode lock.
+syzbot has bisected this issue to:
 
-Bah.
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-I think this might need more work.
+    bcachefs: Ignore unknown mount options
 
-The *caller* of vfs_rmdir() also holds a lock, ie we have do_rmdir() doing
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154e823f180000
+start commit:   2b84edefcad1 Add linux-next specific files for 20240506
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=174e823f180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=134e823f180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b499929e4aaba1af
+dashboard link: https://syzkaller.appspot.com/bug?extid=b68fa126ff948672f1fd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155c109f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136e52b8980000
 
-        inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-        dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
-        ...
-        error = vfs_rmdir(mnt_idmap(path.mnt), path.dentry->d_inode, dentry);
-        dput(dentry);
-        inode_unlock(path.dentry->d_inode);
+Reported-by: syzbot+b68fa126ff948672f1fd@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
 
-so we have another level of locking going on, and my patch only moved
-the dcache pruning outside the lock of the directory we're removing
-(not outside the lock of the directory that contains the removed
-directory).
-
-And that outside lock is the much more important one, I bet.
-
-So I still think this approach may be the right one, but that patch of
-mine didn't go far enough.
-
-Sadly, while do_rmdir() itself is trivial to fix up to do this, we
-have several other users of vfs_rmdir() (ecryptfs, devtmpfs, overlayfs
-in addition to nfsd and ksmbd), so the more complete patch would be
-noticeably bigger.
-
-My bad.
-
-                  Linus
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
