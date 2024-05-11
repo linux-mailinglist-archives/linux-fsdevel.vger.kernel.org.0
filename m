@@ -1,183 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-19293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB958C2F04
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 04:28:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA198C2F29
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 04:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F091C2122E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 02:28:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F103F1F22826
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 02:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4AB1865A;
-	Sat, 11 May 2024 02:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417E122626;
+	Sat, 11 May 2024 02:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UV0TleTb"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Elj7JVjj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA42E8462
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 02:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8D23BB21
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 02:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715394483; cv=none; b=GhRejXTkda7X5rhQYwk3VS0cPmu5a7WMMp7M2trHJZBvW2+XJ2hXsTKs+aZviN6LBIdTihgJ31jsrrhAFnC5UP2Q/XkKtFnY4WUWl1ldhGjCRUbC3snZTMMte3iQCJjp9/LQe1Djl+3K6zUFqNSQ97UVHAr4Yjxt6tDgnq+A/9Q=
+	t=1715396052; cv=none; b=kHL0axnfXIQM5v0cO+bPyuADrP8wuOBILxbiR01d8JKIXb+GN6hEswfLYJfAoEcILDOHtDRUWI+lvhr3GDuNqMIrlLpvh0C4CLXrmhYMBhQUQl4b67tBqEGLWfaePPRKh2g3R/gi9VOp6nVLl+hm0mpZ4jXE6xf5ot3CyoqVi9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715394483; c=relaxed/simple;
-	bh=JmL6yJOEAslDnFvE2R7aY7gTBLqbGYfzOjGWxdtaaYA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Il5qJLgtVI9E9/Adwj1AM+aPp/VITqE5D/rlGcOCltyUb3Yoh3cl3b8yT+hJaoiR5/br1/AjZEkFyy6vSEXCv5DAS+K1z6+TVzaHe9J/nM7B8XKhGOeWdJkDS7JILZSAIuJH7z1UpLHz1d5FCegtHcyHOnEyUhGuxlZPcqXtgdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UV0TleTb; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b6208c88dcso2112680a91.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 19:28:01 -0700 (PDT)
+	s=arc-20240116; t=1715396052; c=relaxed/simple;
+	bh=id44E801zgAH3sN0vJLEImYtE0eEyuh46SWZ1bDO6s0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T/duXAwXeE7UGfz3XGKNsdkzccqU+RuYKvelQmdILMy6Awv0vF5iI1QpOHVypNdFb0uIENKcA1p3ZI4Kn0uA+N6pmGxfbZfVPq5zvUqqO7+QyYHlSfWD5crqmsRuLntJqxraP0I9WRsv7qU4u4qAm+xqlqYbPyFu9r4TGk7fWtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Elj7JVjj; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e5218112a6so16045781fa.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 19:54:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715394481; x=1715999281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kwHtm1sGUNJLnDAeiauxoLqXXDP64gMW/Aa+gftXnyM=;
-        b=UV0TleTb9XazwLGeVU3N/51qZjyT5gX9TmNFnsy3+B1cP3hicp1y11/onNMKNXmqts
-         t7KZl4gdO88dtBVIaaNrQ5qc6yMCV292kEvTYvw+4ioxOjy+mOm2cChaX+d7S/scjc/o
-         mAQ729qLZYcXC2eJAXBfmoJMS/k6alI5OrkPewBYd9H1U8DcXeXkB07DtG9xIHJdjyIf
-         qkQZ/+j0mYpd8vwY4+/LJaQ0AdjpOqjdNqF0YAdZv/2yFykB3NnBlCsbSYttQY4pW2/X
-         cm61ZEnZaNvC1hjDay8Sc5iKJklLzID+CZbkv0PVWbA1Ex3Omuz+kirfLYdQSIasn4b3
-         Xdbw==
+        d=linux-foundation.org; s=google; t=1715396048; x=1716000848; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uJGkHmSHocvGMhcEph7Jgp+kV1solT4ESqwFZxa39oI=;
+        b=Elj7JVjj94LZF+Kl+l6fHEoypPg3kLmQouNTnxvT8m7g507my2W8/tB7QcIamvZk2B
+         UFSkpRGVOSuPnGGKwJHNYls0uuOkDBDJ462UaL+euDvzLtykqvS5CmxpgP37/2vyX5w9
+         3U4lG5BII7AJeAWsOhCigSOwSdT9LFmfy9Zk0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715394481; x=1715999281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715396048; x=1716000848;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kwHtm1sGUNJLnDAeiauxoLqXXDP64gMW/Aa+gftXnyM=;
-        b=OpJvSKKCzQnWwARry60CuJYfxYqFOzF2W3+jmYj/EZ/Lstn8ZvlX9uOlGHHIhMMpkA
-         z0lvtngkEb0a/BwuHsQtJNKyu0R5eogcfnUr0I8WPKxCMkDOUXgOfdpQf7GYnpt/DPNy
-         4lH3s007Vg1M7rYaDZ4+dQ76SEBlm1YMVi/8FbiEl4ErpXJOeA4JfDgDMlZRLRNloJQZ
-         JuWe5DYfuwlFsjgF97i3FNLHF7tjZHtZh4YjlM5T+1AiAMEyUviWsyjekQ956QZJWfxz
-         VoKj21BJaF9qWJvfnags3vIUrYnorFB8ICkozj1+GUToklABRg0TPdpEhGi0e+JIzzEG
-         +EYg==
-X-Gm-Message-State: AOJu0Yw0h0oqOfHMJwAv4pTnHwO/yyd/XRPklc3HIU8YQHFenepEw1ns
-	/mk1GcQGepRNI+vx6A70OTbOlao7ogrAgnW0WJ3m3Of+sdxJgUrR
-X-Google-Smtp-Source: AGHT+IFPgEfQZRiNW7ttL2gs3fGDKfNGOI4xlqr7/8R/5HSwRYikQrfydhDnAqPcf8I695GoZLYIZg==
-X-Received: by 2002:a17:903:2288:b0:1eb:dae:714f with SMTP id d9443c01a7336-1ef43c0ced6mr51710205ad.9.1715394480984;
-        Fri, 10 May 2024 19:28:00 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.45.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d171esm39332615ad.55.2024.05.10.19.27.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 May 2024 19:28:00 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Wangkai <wangkai86@huawei.com>,
-	Colin Walters <walters@verbum.org>,
-	Waiman Long <longman@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC PATCH] fs: dcache: Delete the associated dentry when deleting a file
-Date: Sat, 11 May 2024 10:27:29 +0800
-Message-Id: <20240511022729.35144-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+        bh=uJGkHmSHocvGMhcEph7Jgp+kV1solT4ESqwFZxa39oI=;
+        b=WkRyxVQtb7UZjnQ4CloCbm3F7rZSakwSocvYB1igeb96W4jknkBNadCyls8veFm7M6
+         Vf1yafD+oqzE6E1+RgKavNYAme3Y9NpYJyqMQadfzIdKfkEzgDYSjruTJiu4Oy+mJnw7
+         26H1UUHVQ57ZgSq1TQ2lWS9ZIRqyBSQPhjuxPQr31K88E29GaSb0LJRlBFlh4ITkeAO4
+         06Q6D4VHfDgvio8tw40IYlJMArEVFZKbfRjhz9xcLfuumDtAdjAcYYHrQORA/jXEz1Qa
+         OoRmSMsqJh6bdkzx7mWKMNV0Iq6GRC7qG5l86AViHnjGK0J///CTl0h+PgORP8SzZBcc
+         R4eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL0VX4Bv15XK6//6QKhCrNPhsjLe63CpLt6/+QV2YDe5OEFG+qz+G9bq+w/gMxZk0nnmKAA0wkcK2MdnKpujfzkPO9VEjbRB2aR9JiYQ==
+X-Gm-Message-State: AOJu0Yzdikopn/GhRMizkYY0ezvVDDPlIo/N9DooKEgAMnmUCIoU9TLR
+	zzfdeGrdEGaC34+CZD8Id563wuMxkhAdgq/d0F8flsKywHBs5FP0ZRNaFx+76+ukNMfu0Mh64Ur
+	bkz821w==
+X-Google-Smtp-Source: AGHT+IGqywU2s5QY7c/0autAJnHK8QLmHcxKHj8lf8raWCzy7inRFzvdlMjp314r+ybyrOFfbzcbmQ==
+X-Received: by 2002:a05:6512:4016:b0:51b:5490:1b3a with SMTP id 2adb3069b0e04-522105792ebmr3850374e87.53.1715396048192;
+        Fri, 10 May 2024 19:54:08 -0700 (PDT)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c322ad9sm2601088a12.81.2024.05.10.19.54.06
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 19:54:07 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-34dc129accaso1879768f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2024 19:54:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVi9ekCobmPhV6YK38lnvWV5h8wrFsfNRWm+T7YNtHzhrGiNWxw1kWYsb42FhO0gCPguFLPKROR7wb45GHGWTCQFNGlIdKrhFyPHvUcbA==
+X-Received: by 2002:adf:eb12:0:b0:347:9bec:9ba3 with SMTP id
+ ffacd0b85a97d-3504aa64997mr3112605f8f.66.1715396046498; Fri, 10 May 2024
+ 19:54:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240511022729.35144-1-laoar.shao@gmail.com>
+In-Reply-To: <20240511022729.35144-1-laoar.shao@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 10 May 2024 19:53:49 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjs8MYigx695jk4dvF2vVPQa92K9fW_e6Li-Czt=wEGYw@mail.gmail.com>
+Message-ID: <CAHk-=wjs8MYigx695jk4dvF2vVPQa92K9fW_e6Li-Czt=wEGYw@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: dcache: Delete the associated dentry when
+ deleting a file
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, Wangkai <wangkai86@huawei.com>, 
+	Colin Walters <walters@verbum.org>, Waiman Long <longman@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Our applications, built on Elasticsearch[0], frequently create and delete
-files. These applications operate within containers, some with a memory
-limit exceeding 100GB. Over prolonged periods, the accumulation of negative
-dentries within these containers can amount to tens of gigabytes.
+On Fri, 10 May 2024 at 19:28, Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> We've devised a solution to address both issues by deleting associated
+> dentry when removing a file.
 
-Upon container exit, directories are deleted. However, due to the numerous
-associated dentries, this process can be time-consuming. Our users have
-expressed frustration with this prolonged exit duration, which constitutes
-our first issue.
+This patch is buggy. You are modifying d_flags outside the locked region.
 
-Simultaneously, other processes may attempt to access the parent directory
-of the Elasticsearch directories. Since the task responsible for deleting
-the dentries holds the inode lock, processes attempting directory lookup
-experience significant delays. This issue, our second problem, is easily
-demonstrated:
+So at a minimum, the DCACHE_FILE_DELETED bit setting would need to
+just go into the
 
-  - Task 1 generates negative dentries: 
-  $ pwd
-  ~/test
-  $ mkdir es && cd es/ && ./create_and_delete_files.sh
+        if (dentry->d_lockref.count == 1) {
 
-  [ After generating tens of GB dentries ]  
+side of the conditional, since the other side of that conditional
+already unhashes the dentry which makes this all moot anyway.
 
-  $ cd ~/test && rm -rf es
+That said, I think it's buggy in another way too: what if somebody
+else looks up the dentry before it actually gets unhashed? Then you
+have another ref to it, and the dentry might live long enough that it
+then gets re-used for a newly created file (which is why we have those
+negative dentries in the first place).
 
-  [ It will take a long duration to finish ]
+So you'd have to clear the DCACHE_FILE_DELETED if the dentry is then
+made live by a file creation or rename or whatever.
 
-  - Task 2 attempts to lookup the 'test/' directory
-  $ pwd
-  ~/test
-  $ ls
+So that d_flags thing is actually pretty complicated.
 
-  The 'ls' command in Task 2 experiences prolonged execution as Task 1
-  is deleting the dentries.
+But since you made all this unconditional anyway, I think having a new
+dentry flag is unnecessary in the first place, and I suspect you are
+better off just unhashing the dentry unconditionally instead.
 
-We've devised a solution to address both issues by deleting associated
-dentry when removing a file. Interestingly, we've noted that a similar
-patch was proposed years ago[1], although it was rejected citing the
-absence of tangible issues caused by negative dentries. Given our current
-challenges, we're resubmitting the proposal. All relevant stakeholders from
-previous discussions have been included for reference.
+IOW, I think the simpler patch is likely just something like this:
 
-[0]. https://github.com/elastic/elasticsearch
-[1]. https://patchwork.kernel.org/project/linux-fsdevel/patch/1502099673-31620-1-git-send-email-wangkai86@huawei.com
+  --- a/fs/dcache.c
+  +++ b/fs/dcache.c
+  @@ -2381,6 +2381,7 @@ void d_delete(struct dentry * dentry)
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Wangkai <wangkai86@huawei.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Colin Walters <walters@verbum.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
----
- fs/dcache.c            | 4 ++++
- include/linux/dcache.h | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+        spin_lock(&inode->i_lock);
+        spin_lock(&dentry->d_lock);
+  +     __d_drop(dentry);
+        /*
+         * Are we the only user?
+         */
+  @@ -2388,7 +2389,6 @@ void d_delete(struct dentry * dentry)
+                dentry->d_flags &= ~DCACHE_CANT_MOUNT;
+                dentry_unlink_inode(dentry);
+        } else {
+  -             __d_drop(dentry);
+                spin_unlock(&dentry->d_lock);
+                spin_unlock(&inode->i_lock);
+        }
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 71a8e943a0fa..4b97f60f0e64 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -701,6 +701,9 @@ static inline bool retain_dentry(struct dentry *dentry, bool locked)
- 	if (unlikely(d_flags & DCACHE_DONTCACHE))
- 		return false;
- 
-+	if (unlikely(dentry->d_flags & DCACHE_FILE_DELETED))
-+		return false;
-+
- 	// At this point it looks like we ought to keep it.  We also might
- 	// need to do something - put it on LRU if it wasn't there already
- 	// and mark it referenced if it was on LRU, but not marked yet.
-@@ -2392,6 +2395,7 @@ void d_delete(struct dentry * dentry)
- 		spin_unlock(&dentry->d_lock);
- 		spin_unlock(&inode->i_lock);
- 	}
-+	dentry->d_flags |= DCACHE_FILE_DELETED;
- }
- EXPORT_SYMBOL(d_delete);
- 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index bf53e3894aae..55a69682918c 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -210,7 +210,7 @@ struct dentry_operations {
- 
- #define DCACHE_NOKEY_NAME		BIT(25) /* Encrypted name encoded without key */
- #define DCACHE_OP_REAL			BIT(26)
--
-+#define DCACHE_FILE_DELETED		BIT(27) /* File is deleted */
- #define DCACHE_PAR_LOOKUP		BIT(28) /* being looked up (with parent locked shared) */
- #define DCACHE_DENTRY_CURSOR		BIT(29)
- #define DCACHE_NORCU			BIT(30) /* No RCU delay for freeing */
--- 
-2.39.1
+although I think Al needs to ACK this, and I suspect that unhashing
+the dentry also makes that
 
+                dentry->d_flags &= ~DCACHE_CANT_MOUNT;
+
+pointless (because the dentry won't be reused, so DCACHE_CANT_MOUNT
+just won't matter).
+
+I do worry that there are loads that actually love our current
+behavior, but maybe it's worth doing the simple unconditional "make
+d_delete() always unhash" and only worry about whether that causes
+performance problems for people who commonly create a new file in its
+place when we get such a report.
+
+IOW, the more complex thing might be to actually take other behavior
+into account (eg "do we have so many negative dentries that we really
+don't want to create new ones").
+
+Al - can you please step in and tell us what else I've missed, and why
+my suggested version of the patch is also broken garbage?
+
+             Linus
 
