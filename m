@@ -1,115 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-19310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04AC8C3074
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 11:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3E38C30F5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 13:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91ACA1F21679
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 09:51:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0D21F217F6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 11:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5494755783;
-	Sat, 11 May 2024 09:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="k56XE3N3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FA063417;
+	Sat, 11 May 2024 11:37:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4881537F5;
-	Sat, 11 May 2024 09:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D69626286;
+	Sat, 11 May 2024 11:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715421082; cv=none; b=hLo1qT7TB6M1I8MXvU4U+q0teDCMTaCT99oP1yXheShClDSEGn2rV4ifefhv/3YO/abP38hBCCzsrcUyArpwKnQONTKXI+RKoIC5VnIahkTw2jq+NK27hcZa61JpOAkVP9bVP1kkw5WYYrGcgCI9k/9+0OPBDERqK0u0+BHgsmc=
+	t=1715427433; cv=none; b=p+r2nNc0cK6DQ82R+V0if+ZiKiyKuZ/gCFH5Mi52Jis2Hlp1FI2cY+TYhr5u8hJDtBxsuY4KZMjCzjKDvIvQoEvAuRt+rv1yIqkS1/ip2JWVxGSsR6rqG6wVlNr1WxvxIoX0KoqAV9W/soc0GBf/XgcFNAVEdnEfHuyQf6oMJXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715421082; c=relaxed/simple;
-	bh=0cJX+ofKilB0YeAddG2Rk34Tcb84daQhOHXhdzx0r3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1Emcb0fYYhIyfj4HDg32a0cLUnd3pWmx0p1eqTDOa+K/dtsGx99nPG6i9Fnxbq0yaMHPghGHN9HnmxE2ySH1nZngEn/mRlDZzJNH3K/XDH5c5MvQZU32BFzpay9cqLlH3U8f6hk+0mwpcNA7zgH/xGNpjc1jvhT2QfLm9mOL2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=k56XE3N3; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715421078;
-	bh=0cJX+ofKilB0YeAddG2Rk34Tcb84daQhOHXhdzx0r3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k56XE3N3d4pgs8RXOwLSnRLB27sLWUfITEgcvrDMjZdmJPa/Ir6S6oi9PpE553jPt
-	 sb7k+FxSLFp8Odclpb2t4vqVdgVnPhAwWUDBH9QwI80jAM7LA7gxjkMhJ80aDoR2yw
-	 DUA3ugAMpnt1Nr9pHpMHzjCRdAMZeTMxIBsCjZb8=
-Date: Sat, 11 May 2024 11:51:18 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Joel Granados <j.granados@samsung.com>, Eric Dumazet <edumazet@google.com>, 
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
-	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
-Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
- of sysctl handlers
-Message-ID: <8d1daa64-3746-46a3-b696-127a70cdf7e7@t-8ch.de>
-References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
- <20240424201234.3cc2b509@kernel.org>
- <202405080959.104A73A914@keescook>
+	s=arc-20240116; t=1715427433; c=relaxed/simple;
+	bh=PjouId2AzqErjWZkW13lZDsDZdGjcpMDFIcPFajXrX0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aU1Px0dONuSC+PFZtrr9ojGOmANjXEh+ScEexw5CWjCpzXtqxZcvIFTuVz5RYyoyM8Rab/XAKUnqArw5sLKuF9QHJgCiTH3RQu01Q4cVMFIL2NeIHzz4rwHGg4KxKY5Pfp2z9bkJf13Ny85BsFlgdV0cWdSmnzsR7ZGBKoxF49k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vc3ck24rkz4f3lVh;
+	Sat, 11 May 2024 19:36:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 46E4B1A0C48;
+	Sat, 11 May 2024 19:37:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxA+WD9mG0B4MQ--.22689S4;
+	Sat, 11 May 2024 19:36:59 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v4 00/10] ext4: support adding multi-delalloc blocks
+Date: Sat, 11 May 2024 19:26:09 +0800
+Message-Id: <20240511112619.3656450-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202405080959.104A73A914@keescook>
+X-CM-TRANSID:cCh0CgDHlxA+WD9mG0B4MQ--.22689S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr1xtw15ArW8KryfAF1fJFb_yoW5GF48pF
+	WSka15Jr4UGr17Wa93Aw47GF1rXa1fGFWUG34fJw1UuFWUZFyfXFsrKF1Y9FWkXrZ3W3W5
+	XF17tr18u3Wqka7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1
+	a9aPUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Kees,
+From: Zhang Yi <yi.zhang@huawei.com>
 
-On 2024-05-08 10:11:35+0000, Kees Cook wrote:
-> On Wed, Apr 24, 2024 at 08:12:34PM -0700, Jakub Kicinski wrote:
-> > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
-> > > The series was split from my larger series sysctl-const series [0].
-> > > It only focusses on the proc_handlers but is an important step to be
-> > > able to move all static definitions of ctl_table into .rodata.
-> > 
-> > Split this per subsystem, please.
-> 
-> I've done a few painful API transitions before, and I don't think the
-> complexity of these changes needs a per-subsystem constification pass. I
-> think this series is the right approach, but that patch 11 will need
-> coordination with Linus. We regularly do system-wide prototype changes
-> like this right at the end of the merge window before -rc1 comes out.
+Changes since v3:
+ - Fix two commit message grammatical issues in patch 2 and 4.
 
-That sounds good.
+Changes since v2:
+ - Improve the commit message in patch 2,4,6 as Ritesh and Jan
+   suggested, makes the changes more clear.
+ - Add patch 3, add a warning if the delalloc counters are still not
+   zero on inactive.
+ - In patch 6, add a WARN in ext4_es_insert_delayed_extent(), strictly
+   requires the end_allocated parameter to be set to false if the
+   inserting extent belongs to one cluster.
+ - In patch 9, modify the reserve blocks math formula as Jan suggested,
+   prevent the count going to be negative.
+ - In patch 10, update the stale ext4_da_map_blocks() function comments.
 
-> The requirements are pretty simple: it needs to be a obvious changes
-> (this certainly is) and as close to 100% mechanical as possible. I think
-> patch 11 easily qualifies. Linus should be able to run the same Coccinelle
-> script and get nearly the same results, etc. And all the other changes
-> need to have landed. This change also has no "silent failure" conditions:
-> anything mismatched will immediately stand out.
+Hello!
 
-Unfortunately coccinelle alone is not sufficient, as some helpers with
-different prototypes are called by handlers and themselves are calling
-handler and therefore need to change in the same commit.
-But if I add a diff for those on top of the coccinelle script to the
-changelog it should be obvious.
+This patch series is the part 2 prepartory changes of the buffered IO
+iomap conversion, I picked them out from my buffered IO iomap conversion
+RFC series v3[1], add a fix for an issue found in current ext4 code, and
+also add bigalloc feature support. Please look the following patches for
+details.
 
-> So, have patches 1-10 go via their respective subsystems, and once all
-> of those are in Linus's tree, send patch 11 as a stand-alone PR.
+The first 3 patches fix an incorrect delalloc reserved blocks count
+issue and add a warning to make it easy to detect, the second 6 patches
+make ext4_insert_delayed_block() call path support inserting
+multi-delalloc blocks once a time, and the last patch makes
+ext4_da_map_blocks() buffer_head unaware, prepared for iomap.
 
-Ack, I'll do that with the cover letter information requested by Joel.
+This patch set has been passed 'kvm-xfstests -g auto' tests, I hope it
+could be reviewed and merged first.
 
-> (From patch 11, it looks like the seccomp read/write function changes
-> could be split out? I'll do that now...)
+[1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
 
-Thanks!
+Thanks,
+Yi.
 
-Thomas
+---
+v2: https://lore.kernel.org/linux-ext4/20240410034203.2188357-1-yi.zhang@huaweicloud.com/
+v3: https://lore.kernel.org/linux-ext4/20240508061220.967970-1-yi.zhang@huaweicloud.com/
+
+Zhang Yi (10):
+  ext4: factor out a common helper to query extent map
+  ext4: check the extent status again before inserting delalloc block
+  ext4: warn if delalloc counters are not zero on inactive
+  ext4: trim delalloc extent
+  ext4: drop iblock parameter
+  ext4: make ext4_es_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_reserve_space() reserve multi-clusters
+  ext4: factor out check for whether a cluster is allocated
+  ext4: make ext4_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_map_blocks() buffer_head unaware
+
+ fs/ext4/extents_status.c    |  70 +++++++---
+ fs/ext4/extents_status.h    |   5 +-
+ fs/ext4/inode.c             | 248 +++++++++++++++++++++++-------------
+ fs/ext4/super.c             |   6 +-
+ include/trace/events/ext4.h |  26 ++--
+ 5 files changed, 231 insertions(+), 124 deletions(-)
+
+-- 
+2.39.2
+
 
