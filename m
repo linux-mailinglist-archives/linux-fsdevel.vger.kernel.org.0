@@ -1,255 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-19321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6412D8C30FF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 13:39:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB128C3242
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 17:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A48C1F21777
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 11:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDE851F21AAF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 15:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410697FBBF;
-	Sat, 11 May 2024 11:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A1456766;
+	Sat, 11 May 2024 15:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AIOfS7zl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02895677C;
-	Sat, 11 May 2024 11:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CAC56759
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 15:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715427434; cv=none; b=oba27AEmNlWXbsImLl5QBz6Z+qLAW/EqAL3VmDAWnZ7gkDRBhR8h5LGiWRvQK66PVTZtmyZ3TiPj998phJRNQrIHBHYI8xVtsWCum98vyhDiPDZIy2xy2rNLQGqh98Yvs/DyO8sM+ermNDDEz6QwlJ5+CSJ3v/l8YzpCk0QsEW0=
+	t=1715443144; cv=none; b=tDCsjoq59VbFeXp6x/pUPawLcrW0xgfNdPXTNelg3z0hJy+S8DHU+zblxeTRWV9iv7rvxFKMswUg92MTIAetFg/WjU5ZzxRhpPFWAsCI3j3na+60dY+U/EZp/TaBRHAyre/LQDBVbsjMYIK4rodmYEGTqjO+9l/1TqBFTrJizyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715427434; c=relaxed/simple;
-	bh=Mj6BnHzrxInqGSNem33jYFs8lPS6YifOhW/IZyrskjY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jHqmlbSg9VEJzdyJIcBmXu5X3FsiQn06RD9z5h9r45vsxPrhQDgYeqCw1bAiW21Q9U+cRqO3BQKA3paS1zIB0XpllMzb+5/zuJcpDYiUnxBlJhMOavnT0BfaBnoW6Y26hXXXdUunJrZcG6jxnH4zL1CZLeHvOmERfFHasCaM3GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vc3cr250Yz4f3jd5;
-	Sat, 11 May 2024 19:37:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B79B71A016E;
-	Sat, 11 May 2024 19:37:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxA+WD9mG0B4MQ--.22689S14;
-	Sat, 11 May 2024 19:37:08 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v4 10/10] ext4: make ext4_da_map_blocks() buffer_head unaware
-Date: Sat, 11 May 2024 19:26:19 +0800
-Message-Id: <20240511112619.3656450-11-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240511112619.3656450-1-yi.zhang@huaweicloud.com>
-References: <20240511112619.3656450-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1715443144; c=relaxed/simple;
+	bh=osrocCXmUNVWie8FlSiyQRe6jjKRwqnpAxJarnfK1q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQwd88sog0tjEu90Pkqj4T+CqUB8gnWZ+vpDUhmqRgKY0ZHb/QxDneSuY3r29DIZS3dEQH4ZFxBYMd0XczUlgRqgOnqGQ//F0AqAQhVxiASSk6dKXMJ99w07DDhdhwaQMNwPh+R1c8we3pfUGqqUS3nV/0oGjzT93rwrQwbNF8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AIOfS7zl; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OZQbE3XQNmN4pJYb6MLugF+03DmcuANWaIMZ5MvlqXc=; b=AIOfS7zlQyUDj9IS8Z2PTS0ZKA
+	2ilUqqA2kZlnlMLsM9ctQExU8+TjAI923Wv7/J1d6bGNhD6goJcrPdnwGqmDzak6sovJ/Q1CP7Dxo
+	eaRdRGL21BjNChJaw0UPBLWuYbG3kwwP9j3ojKlRfINYcwvOxzD4myjjdkGjCzRc7I9442iWt8Xsr
+	1ndOWln/0XK7eFrU+RYz5SeKBmsXaCxN8niKIbcz/DsqCUJniRpDJoaAsnWXLa4/YHbCZhsMmkx0P
+	jn00NzBMYSXVSIbbu8M6H+OBrt2U1mm2vCMcVxIPJ+oCUxL6yrECfksDDhUWNLgh1Ih8fXxhDyvxu
+	MGc2xHbw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s5p7c-00000005cQg-3X45;
+	Sat, 11 May 2024 15:58:52 +0000
+Date: Sat, 11 May 2024 16:58:52 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, Wangkai <wangkai86@huawei.com>,
+	Colin Walters <walters@verbum.org>
+Subject: Re: [RFC PATCH] fs: dcache: Delete the associated dentry when
+ deleting a file
+Message-ID: <Zj-VvK237nNfMgys@casper.infradead.org>
+References: <20240511022729.35144-1-laoar.shao@gmail.com>
+ <CAHk-=wjs8MYigx695jk4dvF2vVPQa92K9fW_e6Li-Czt=wEGYw@mail.gmail.com>
+ <CALOAHbCECWqpFzreANpvQJADicRr=AbP-nAymSEeUzUr3vGZMg@mail.gmail.com>
+ <bed71a80-b701-4d04-bf30-84f189c41b2c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxA+WD9mG0B4MQ--.22689S14
-X-Coremail-Antispam: 1UD129KBjvJXoW3WF4kCw4rGr1fuFWxKFykXwb_yoW7Zw4Upr
-	Z3AF1rGr15Ww18ua1ftr15ZF1fK3WjyFW7Kr93GryrA34DCrn3tF1UJF1avas8trZ7Wr1r
-	XF4jqry8ua1IkrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUA
-	rcfUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bed71a80-b701-4d04-bf30-84f189c41b2c@redhat.com>
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Sat, May 11, 2024 at 12:54:18AM -0400, Waiman Long wrote:
+> I had suggested in the past to have a sysctl parameter to set a threshold on
+> how many negative dentries (as a percentage of total system memory) are
 
-After calling the ext4_da_map_blocks(), a delalloc extent state could
-be identified through the EXT4_MAP_DELAYED flag in map. So factor out
-buffer_head related handles in ext4_da_map_blocks(), make this function
-buffer_head unaware and becomes a common helper, and also update the
-stale function commtents, preparing for the iomap da write path in the
-future.
+Yes, but that's obviously bogus.  System memory is completely
+uncorrelated with the optimum number of negative dentries to keep
+around for workload performance.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 63 ++++++++++++++++++++++++-------------------------
- 1 file changed, 31 insertions(+), 32 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index c56386d1b10d..1dba5337382a 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1745,36 +1745,32 @@ static int ext4_insert_delayed_blocks(struct inode *inode, ext4_lblk_t lblk,
- }
- 
- /*
-- * This function is grabs code from the very beginning of
-- * ext4_map_blocks, but assumes that the caller is from delayed write
-- * time. This function looks up the requested blocks and sets the
-- * buffer delay bit under the protection of i_data_sem.
-+ * Looks up the requested blocks and sets the delalloc extent map.
-+ * First try to look up for the extent entry that contains the requested
-+ * blocks in the extent status tree without i_data_sem, then try to look
-+ * up for the ondisk extent mapping with i_data_sem in read mode,
-+ * finally hold i_data_sem in write mode, looks up again and add a
-+ * delalloc extent entry if it still couldn't find any extent. Pass out
-+ * the mapped extent through @map and return 0 on success.
-  */
--static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
--			      struct buffer_head *bh)
-+static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
- {
- 	struct extent_status es;
- 	int retval;
--	sector_t invalid_block = ~((sector_t) 0xffff);
- #ifdef ES_AGGRESSIVE_TEST
- 	struct ext4_map_blocks orig_map;
- 
- 	memcpy(&orig_map, map, sizeof(*map));
- #endif
- 
--	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
--		invalid_block = ~0;
--
- 	map->m_flags = 0;
- 	ext_debug(inode, "max_blocks %u, logical block %lu\n", map->m_len,
- 		  (unsigned long) map->m_lblk);
- 
- 	/* Lookup extent status tree firstly */
- 	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
--		retval = es.es_len - (map->m_lblk - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
-+		map->m_len = min_t(unsigned int, map->m_len,
-+				   es.es_len - (map->m_lblk - es.es_lblk));
- 
- 		if (ext4_es_is_hole(&es))
- 			goto add_delayed;
-@@ -1784,10 +1780,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		 * Delayed extent could be allocated by fallocate.
- 		 * So we need to check it.
- 		 */
--		if (ext4_es_is_delayed(&es) && !ext4_es_is_unwritten(&es)) {
--			map_bh(bh, inode->i_sb, invalid_block);
--			set_buffer_new(bh);
--			set_buffer_delay(bh);
-+		if (ext4_es_is_delonly(&es)) {
-+			map->m_flags |= EXT4_MAP_DELAYED;
- 			return 0;
- 		}
- 
-@@ -1802,7 +1796,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- #ifdef ES_AGGRESSIVE_TEST
- 		ext4_map_blocks_es_recheck(NULL, inode, map, &orig_map, 0);
- #endif
--		return retval;
-+		return 0;
- 	}
- 
- 	/*
-@@ -1816,7 +1810,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		retval = ext4_map_query_blocks(NULL, inode, map);
- 	up_read(&EXT4_I(inode)->i_data_sem);
- 	if (retval)
--		return retval;
-+		return retval < 0 ? retval : 0;
- 
- add_delayed:
- 	down_write(&EXT4_I(inode)->i_data_sem);
-@@ -1828,10 +1822,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 	 * the extent status tree.
- 	 */
- 	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
--		retval = es.es_len - (map->m_lblk - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
-+		map->m_len = min_t(unsigned int, map->m_len,
-+				   es.es_len - (map->m_lblk - es.es_lblk));
- 
- 		if (!ext4_es_is_hole(&es)) {
- 			up_write(&EXT4_I(inode)->i_data_sem);
-@@ -1841,18 +1833,14 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		retval = ext4_map_query_blocks(NULL, inode, map);
- 		if (retval) {
- 			up_write(&EXT4_I(inode)->i_data_sem);
--			return retval;
-+			return retval < 0 ? retval : 0;
- 		}
- 	}
- 
-+	map->m_flags |= EXT4_MAP_DELAYED;
- 	retval = ext4_insert_delayed_blocks(inode, map->m_lblk, map->m_len);
- 	up_write(&EXT4_I(inode)->i_data_sem);
--	if (retval)
--		return retval;
- 
--	map_bh(bh, inode->i_sb, invalid_block);
--	set_buffer_new(bh);
--	set_buffer_delay(bh);
- 	return retval;
- }
- 
-@@ -1872,11 +1860,15 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 			   struct buffer_head *bh, int create)
- {
- 	struct ext4_map_blocks map;
-+	sector_t invalid_block = ~((sector_t) 0xffff);
- 	int ret = 0;
- 
- 	BUG_ON(create == 0);
- 	BUG_ON(bh->b_size != inode->i_sb->s_blocksize);
- 
-+	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
-+		invalid_block = ~0;
-+
- 	map.m_lblk = iblock;
- 	map.m_len = 1;
- 
-@@ -1885,10 +1877,17 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 	 * preallocated blocks are unmapped but should treated
- 	 * the same as allocated blocks.
- 	 */
--	ret = ext4_da_map_blocks(inode, &map, bh);
--	if (ret <= 0)
-+	ret = ext4_da_map_blocks(inode, &map);
-+	if (ret < 0)
- 		return ret;
- 
-+	if (map.m_flags & EXT4_MAP_DELAYED) {
-+		map_bh(bh, inode->i_sb, invalid_block);
-+		set_buffer_new(bh);
-+		set_buffer_delay(bh);
-+		return 0;
-+	}
-+
- 	map_bh(bh, inode->i_sb, map.m_pblk);
- 	ext4_update_bh_state(bh, map.m_flags);
- 
--- 
-2.39.2
+Some multiple of "number of positive dentries" might make sense.
 
 
