@@ -1,119 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-19324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFEB8C3269
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 18:13:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A498C3309
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 19:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEBA1C20CBA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 16:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C45C1F22446
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 17:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B75F56B89;
-	Sat, 11 May 2024 16:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7A11C698;
+	Sat, 11 May 2024 17:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BuDsSFss"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/P6+3Y3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3E056B7B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 16:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB5ED531;
+	Sat, 11 May 2024 17:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715444018; cv=none; b=CCvgLzmAPEZDT7xTstOeDyvh1OAkL07qr0fFifp8pR8Fs3gxVFgbwNyMLQ0R18ZlM3VoUfhfMNFg2AkU6KfGgYly4QVZSentpM8D7Qt6PEVbFZ8wuQj5KeiILPi8VRyaEnPW78g7fIGCrICuqnf3S6wlfwp2gw/X4dh+rtOSy5E=
+	t=1715450030; cv=none; b=K8krpZq50tm556NCgbn5VQV9mHE6IgszbuC+N8hkmN6qLcN+DTG+U4r6k9b+qvcMbp5C2Es+UY9WEnEN9WpNrsgo3LmQclzoB+j3ftfIh+i9LtIC7qHEzvX+SgB+N8ZzN0nccfee17+EGs/0kxiWot10Eo+0vbUMwcQsXtWevRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715444018; c=relaxed/simple;
-	bh=jykZ/mYa7ixE6v4t65BbdAdaMSLAVDxnQxjNxFE+KWw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=atE+yS3rO+DGBV/wsSqu2aF7BxH7aN2tY04lTeEIX7PymImq+Z4xw5Ied0MdINUepm5HMwGIjLVKNmWXcaLE7T3VrW92qgq6CxCtTTT0BFlritO4p8Fx3RbFQ3RRWjiTKGzy2XNs4QZcaMHVPB/uwzstJ3l1zmihOQmDk5FRK3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BuDsSFss; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a5a4bc9578cso120018566b.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 09:13:36 -0700 (PDT)
+	s=arc-20240116; t=1715450030; c=relaxed/simple;
+	bh=kalldxxxFW5AEoJSmwFR06nrpxFDcgX4HY5+F4DtPuM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=eKb7911W3MbhaRthYds/XGcBGz27287YrNU0LNuNEV90uHuqSmJ2Ya9Dntcer1rEdgEKgYWSvBbgLm5enRAhTPeGhN2Np2p/ydCdXtu5SgdfR9ieMXiOY1BeEn0yMZLj1QmmiBYnj23Ju+JiPyPt8W8kRHHMX/qehJk596MczTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/P6+3Y3; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f57713684so3678430e87.1;
+        Sat, 11 May 2024 10:53:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715444015; x=1716048815; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DRhm3hvEnL7lCfSQZVSi+PZ4tmM+Ns1HKRr+JgA9UZ8=;
-        b=BuDsSFsstN4/FiC795j74NB5AXxgLfIflBuS1/v3+xOfCgr1tzwf4vrOIgZWlzXMLK
-         c8fn2JGKbV+H6ESDGFBJ8V1Ry0EjH5xkcNKb/I5GniDQbH/dgWBwW0oBmN+41DAT7ntI
-         Nqm1bxO4s5YquqIyHxWmyTe1HpafsvDDU/wNA=
+        d=gmail.com; s=20230601; t=1715450027; x=1716054827; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Zx0P8izNU72gstI8gx5ejmZVT9EbRbkJ/pX4W8egZls=;
+        b=N/P6+3Y3iW64ErVeWq9zudyruPIlWdIwzOYe8mptWO/2e6LAt66MmOjWEe1XR1ssqt
+         ro3jBGM7vATVC01ID5zIA88txe/1tvXfDcMMI0sK0zg+eZ2JnhHbEJb0dvxI+Slyrefx
+         Uch7W4Om4iBseMX8pmVoc1VMhCtx/DoWIDD7q2zGTah//t2wUgU2mTyA171ZcpglndZQ
+         G1KP77kURkMSpy7rfzmIyjwB5uEc2yT1NF7WPzw/sr+J8xp9ISxbbUrsW7jNTcPR6OdW
+         i4ZkRtKaATMcPaBG3o2C2cX9w+RN0/ygEoiokuixBJSD4uRGIJbDyehfm5H/fEVPjROW
+         L0Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715444015; x=1716048815;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DRhm3hvEnL7lCfSQZVSi+PZ4tmM+Ns1HKRr+JgA9UZ8=;
-        b=LL9dvsVvvhXjfHWxX/LoqjvP0flwwhVlV2tL+BL5V8Z46GrAspVhmcqXXRunoCC3hi
-         +3iNZjHLFXZFAC2FmRRBgg8S2/HOaNxdhdnvcH1BDJCQ0FEtmbRKloc45SFxIZlYjbb4
-         9kj5CofRT0GOmpl3IIgubKq6abZ81mCHN1dFhDjAm3h02OT5SP66vKqWr8gjChqw5F5E
-         +Zo/o6YAw/6O/qIKaJKXglGOSPcSbcrdMGvH2hXl7cYIPD3dqFY2aa3qHYa1BQITEBCJ
-         jLQll8lUVuBZqKK+n2QBIKeEWnczxSV6M3fY0fDAOQluNJuTA1HKj/jGJjuoIWJ9WEIU
-         7lqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Upcxwm4SCcgU/Jib0j/mdlF/2Y1k6A6qrZBk9NoH/kYMux+hpSoC7yG4OPs+KVZpOdKCJZ/0BVjAWbMuL3Y8lLSFq12PbMBYEZrLzQ==
-X-Gm-Message-State: AOJu0YxJ/1y7i75rb6wlNwAPMMfuwQQ8lv3glm1UgQdJwrQaHbzrTdyY
-	Yk86qwmx/+tNF90yHgYDrU91zzgOPokrGVlyZD7EuTYcgL+Q+AHa/nUx6Zpep19cCdI+XhBL9en
-	QrdktgA==
-X-Google-Smtp-Source: AGHT+IGFsW70E3XobaUtr9gJeHB67o1jvfUBmK6tBbZe7+gXG+UCjGzCd4OBfs97WL7aQKBQ8hyzFQ==
-X-Received: by 2002:a17:906:ca4d:b0:a59:af4c:c7d1 with SMTP id a640c23a62f3a-a5a2d65ecf4mr542699366b.49.1715444014804;
-        Sat, 11 May 2024 09:13:34 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7e9bsm344639666b.134.2024.05.11.09.13.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 May 2024 09:13:33 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59b81d087aso760832666b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2024 09:13:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW81nhxxyl/UCc3ED53Cf4dLKOH17H/lD8mvg2aCG3MJLvA5MJ/ISzU7lNswlfUtLBIFTRRmJlipbJkk6AAAhasAnzalD0XWPoscOkteQ==
-X-Received: by 2002:a17:906:4f83:b0:a59:ea34:fe0d with SMTP id
- a640c23a62f3a-a5a2d65ed4bmr569934366b.47.1715444013245; Sat, 11 May 2024
- 09:13:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715450027; x=1716054827;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zx0P8izNU72gstI8gx5ejmZVT9EbRbkJ/pX4W8egZls=;
+        b=f3lQpDTUC8FQAD5sJMZ2veRdE2Mfj1SlLYehWdk7jIKv+IlqdPDJF/SkrxX/XotZLz
+         tS+iu2QEeDwT/aRPqdv38X14Ygy6rVObJfvosdVRisg1T2L0n0pjO9JqpaJlsiwK9Kxs
+         SFLXDzFuUgGu9keGVDgQPAkucqUVLqhKs8D8hxir5Ar1dqHHNZAJVhOcCnb717vdPOSw
+         sIw0/MHs/1QEUwjl6dtHyMUbDnJ7dA2vcR3WTgAyUD0UwPA1343R6D+oi6tXXjy4YGTh
+         oUsMlOcbzeFa44biNxDE4RuZfWYyGzLT+UZMvm4sbZFtnRB7utfwug3v3hhly8YsNkwk
+         nH7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXlLE0b0i76ynNkmGEMRoaxnQ46GcVJvhuS24x7IMidMtG7D9Q7+l6oQ4iI7zaaPEW8K05ObBDk5Lwk1Tfw5iy5TQ4AaGLPSX1BZC/4bw==
+X-Gm-Message-State: AOJu0Yy5QcJvyuhLZphkfExGCOdChgqLsjXegRpYFbY3gcPeE204VHpE
+	qMNvjAbAWw21gJ9sjUMA3qXW1f6VveNH6+1G2o/vEFYsnEUNQXMm9cb6SXHkXrStlPKnmGW/tw6
+	tZzI8p9KIiv0qv1lQhL0TWqVGbuL+uVXn
+X-Google-Smtp-Source: AGHT+IGiQapXX60FlQzepGQSjOfXD5SSzaSOoG4sUQiEe8sKGoe6T1vqYzp6Aq9xxaayK5K6uOfK729gZWrksKo3piw=
+X-Received: by 2002:a19:5519:0:b0:51f:6324:4b77 with SMTP id
+ 2adb3069b0e04-5220fe79a8dmr3453681e87.49.1715450026365; Sat, 11 May 2024
+ 10:53:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511022729.35144-1-laoar.shao@gmail.com> <CAHk-=wjs8MYigx695jk4dvF2vVPQa92K9fW_e6Li-Czt=wEGYw@mail.gmail.com>
- <CALOAHbCECWqpFzreANpvQJADicRr=AbP-nAymSEeUzUr3vGZMg@mail.gmail.com>
- <bed71a80-b701-4d04-bf30-84f189c41b2c@redhat.com> <Zj-VvK237nNfMgys@casper.infradead.org>
- <CAHk-=wiFU1QEvdba4EUMtb0HXdxwVxqTx-hoBbRd6E4b8JkL+Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wiFU1QEvdba4EUMtb0HXdxwVxqTx-hoBbRd6E4b8JkL+Q@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 11 May 2024 09:13:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg7ofKHALbEqzXCz9YMB5nyCzT8GnBLR+oxLnAAG62QCg@mail.gmail.com>
-Message-ID: <CAHk-=wg7ofKHALbEqzXCz9YMB5nyCzT8GnBLR+oxLnAAG62QCg@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: dcache: Delete the associated dentry when
- deleting a file
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Waiman Long <longman@redhat.com>, Yafang Shao <laoar.shao@gmail.com>, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	Wangkai <wangkai86@huawei.com>, Colin Walters <walters@verbum.org>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 11 May 2024 12:53:34 -0500
+Message-ID: <CAH2r5mvvRFnzYnOM5T7qP+7H2Jetcv4cePhBPRDkd0ZwOGJfvg@mail.gmail.com>
+Subject: cifs
+To: CIFS <linux-cifs@vger.kernel.org>, David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 11 May 2024 at 09:07, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Now, the other option might be to just make the latency concerns
-> smaller. It's not like removing negative dentries is very costly per
-> se. I think the issue has always been the dcache_lock, not the work to
-> remove the dentries themselves.
+Tried running the regression tests against for-next and saw crash
+early in the test run in
 
-Actually, going back to re-read this particular report, at least this
-time it was the inode lock of the parent, not the dcache_lock.
+# FS QA Test No. cifs/006
+#
+# check deferred closes on handles of deleted files
+#
+umount: /mnt/test: not mounted.
+umount: /mnt/test: not mounted.
+umount: /mnt/scratch: not mounted.
+umount: /mnt/scratch: not mounted.
+./run-xfstests.sh: line 25: 4556 Segmentation fault rmmod cifs
+modprobe: ERROR: could not insert 'cifs': Device or resource busy
 
-But the point ends up being the same - lots of negative dentries
-aren't necessarily a problem in themselves, because the common
-operation that matters is the hash lookup, which scales fairly well.
+More information here:
+http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/5/builds/123/steps/14/logs/stdio
 
-They mainly tend to become a problem when they hold up something else.
+Are you also seeing that?  There are not many likely candidates for
+what patch is causing the problem (could be related to the folios
+changes) e.g.
 
-So better batching, or maybe just walking the negative child dentry
-list after having marked the parent dead and then released the lock,
-might also be the solution.
+7c1ac89480e8 cifs: Enable large folio support
+3ee1a1fc3981 cifs: Cut over to using netfslib
+69c3c023af25 cifs: Implement netfslib hooks
+c20c0d7325ab cifs: Make add_credits_and_wake_if() clear deducted credits
+edea94a69730 cifs: Add mempools for cifs_io_request and
+cifs_io_subrequest structs
+3758c485f6c9 cifs: Set zero_point in the copy_file_range() and
+remap_file_range()
+1a5b4edd97ce cifs: Move cifs_loose_read_iter() and
+cifs_file_write_iter() to file.c
+dc5939de82f1 cifs: Replace the writedata replay bool with a netfs sreq flag
+56257334e8e0 cifs: Make wait_mtu_credits take size_t args
+ab58fbdeebc7 cifs: Use more fields from netfs_io_subrequest
+a975a2f22cdc cifs: Replace cifs_writedata with a wrapper around
+netfs_io_subrequest
+753b67eb630d cifs: Replace cifs_readdata with a wrapper around
+netfs_io_subrequest
+0f7c0f3f5150 cifs: Use alternative invalidation to using launder_folio
+2e9d7e4b984a mm: Remove the PG_fscache alias for PG_private_2
 
-                      Linus
+Any ideas?
+
+-- 
+Thanks,
+
+Steve
 
