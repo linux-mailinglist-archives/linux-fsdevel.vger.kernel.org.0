@@ -1,142 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-19309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7758C3030
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 10:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04AC8C3074
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 11:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3046E1F22A14
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 08:12:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91ACA1F21679
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2024 09:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA1D24A0D;
-	Sat, 11 May 2024 08:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5494755783;
+	Sat, 11 May 2024 09:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3wXGJNL"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="k56XE3N3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A653611190;
-	Sat, 11 May 2024 08:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4881537F5;
+	Sat, 11 May 2024 09:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715415149; cv=none; b=I4Ixya/QWfuXcqQQ0jM5Qsegq4BMK49vcWg5H2GaUFGHyCYyl6InUUkspgvimNU3Ko2CKZ4xg56mOGpuyDkQsnSbYh7KJkz929ALDTzt2T6ln/qPNBFwNskC3pcyAOu3n3sAvZo4CUrj8qV2teNxPmrqNAnsTvwzTzVLIaJpKNI=
+	t=1715421082; cv=none; b=hLo1qT7TB6M1I8MXvU4U+q0teDCMTaCT99oP1yXheShClDSEGn2rV4ifefhv/3YO/abP38hBCCzsrcUyArpwKnQONTKXI+RKoIC5VnIahkTw2jq+NK27hcZa61JpOAkVP9bVP1kkw5WYYrGcgCI9k/9+0OPBDERqK0u0+BHgsmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715415149; c=relaxed/simple;
-	bh=+5Xg93Nnj+GcdyudDCY16biOFb/0HIlATV7kqqR0IP8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q7GG93dvDbFHLdGtvVUqlw1Bxrr3XJk6NVy6YgYoI8UBST612Zm99AFRBi9shSMNlhhdKrAa0U+q3atUBqz9hidBj9lQulloWcRqUcKsuJhnpxSiBo+2Kllxj6aKvPUEazQO462SsCt0RRgHstmIQ8qsipjzbCkLkmYQKLHHWKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3wXGJNL; arc=none smtp.client-ip=209.85.215.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-5ff57410ebbso2285528a12.1;
-        Sat, 11 May 2024 01:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715415148; x=1716019948; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9qBbsDAPUy5FGaDuBuioErI1+pT2h8H+WItqDsVZoLo=;
-        b=I3wXGJNLjX1Dr8vRIrA5dUKKjZ2tT+lKamvd9TdKzoiJVa2QB9+W/3SLp5x9rh4G+A
-         xq9ZtEqkzOV25/oOGDsqFR7l65gbcazgE04km9LiLA1hxSnPiwzw/kXtwdD2M5NbM1lO
-         5j5SKqkowPOLmAfARsPXfS4j8cNwkSCEKrhDcb/tdKQtohF6rE2XXyKzpqXCDyWeBEuO
-         P1QYMs753KKjCAav/u0KgTHE5I+k7yGkmTlfuqdn6eH5PXR/XK9EIe/AxUofI/a1k3U5
-         w2LIdjU8z7IQgVmlld46as+hzADzlTb3q3JTEGeR5N55ROZbsT1G2UeLncpe9loVIh55
-         BNFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715415148; x=1716019948;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9qBbsDAPUy5FGaDuBuioErI1+pT2h8H+WItqDsVZoLo=;
-        b=Wg865X0Vcfyr6+tb6/x+zpof6vWVTeykeen1uwsXFAFQwFDRai2ImZGWNfD4Iar6w3
-         TxB3X9L3b801jl/Y26oc3mD+VzIGA+Hx+C89NeFepOmxi6cBDbQYsXt1W0puv0iaRcH/
-         jr2GovWWXyWoqSIibRHYdVGkWm9Q4bRZ5/kBNj+A4FWqtxiElx5+LAfwrP99GKffpVC8
-         V26p8k3bastdY82H6YBEHcYxzbjF38SHBMyqWfC7owqxBaZmoMhhjFPCJBQFt5V+yGUH
-         8ragWmkYoAJfaaq4fYzrvGLo5A3bSaaCQx1JyBBVLBkxZLvqfDeg8HT/JwC9sVFrl/RT
-         4+WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2XHd98f6SHWviT8b1pFRo458bmk5x8K7/zsenl4g7Z88rxfkq43cTWMgPoK6oRpHh3EnkPZcN30NWJZPF+ei541Ho8pkEcsGpZLJb62mCv+3djh20U9Ne70bHOYH8BHOCv275h1Dab/jUfw==
-X-Gm-Message-State: AOJu0YyXL7H62lIBZPpZrxU+pQt/FFV8u0vynQa80h2+l0WJDjevkzLw
-	pBgjk3kk+I+xXu/famtf260TF18G426yumnJEbypEKwp/ZycHX/d
-X-Google-Smtp-Source: AGHT+IFj+AmbXoyzrs6SOrS6H+WnWeXXP/GUqlgiCSGr386jfk1YJXVZaW5eQKEoDtjjDUf9EKr++A==
-X-Received: by 2002:a17:903:22cc:b0:1e5:4f00:3751 with SMTP id d9443c01a7336-1ef43c0cf2amr62507595ad.3.1715415147903;
-        Sat, 11 May 2024 01:12:27 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c256a0csm43968605ad.306.2024.05.11.01.12.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 01:12:27 -0700 (PDT)
-From: xu xin <xu.xin.sc@gmail.com>
-X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shr@devkernel.io,
-	si.hao@zte.com.cn,
-	xu.xin16@zte.com.cn
-Subject: Re: [PATCH linux-next v2] ksm: add ksm involvement information for each process
-Date: Sat, 11 May 2024 08:12:24 +0000
-Message-Id: <20240511081224.637842-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <bc0e1cdd-2d9d-437c-8fc9-4df0e13c48c0@redhat.com>
-References: <bc0e1cdd-2d9d-437c-8fc9-4df0e13c48c0@redhat.com>
+	s=arc-20240116; t=1715421082; c=relaxed/simple;
+	bh=0cJX+ofKilB0YeAddG2Rk34Tcb84daQhOHXhdzx0r3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1Emcb0fYYhIyfj4HDg32a0cLUnd3pWmx0p1eqTDOa+K/dtsGx99nPG6i9Fnxbq0yaMHPghGHN9HnmxE2ySH1nZngEn/mRlDZzJNH3K/XDH5c5MvQZU32BFzpay9cqLlH3U8f6hk+0mwpcNA7zgH/xGNpjc1jvhT2QfLm9mOL2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=k56XE3N3; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715421078;
+	bh=0cJX+ofKilB0YeAddG2Rk34Tcb84daQhOHXhdzx0r3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k56XE3N3d4pgs8RXOwLSnRLB27sLWUfITEgcvrDMjZdmJPa/Ir6S6oi9PpE553jPt
+	 sb7k+FxSLFp8Odclpb2t4vqVdgVnPhAwWUDBH9QwI80jAM7LA7gxjkMhJ80aDoR2yw
+	 DUA3ugAMpnt1Nr9pHpMHzjCRdAMZeTMxIBsCjZb8=
+Date: Sat, 11 May 2024 11:51:18 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Kees Cook <keescook@chromium.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>, Eric Dumazet <edumazet@google.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <8d1daa64-3746-46a3-b696-127a70cdf7e7@t-8ch.de>
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <20240424201234.3cc2b509@kernel.org>
+ <202405080959.104A73A914@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <202405080959.104A73A914@keescook>
 
->> @@ -3217,6 +3217,10 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
->>   		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
->>   		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
->>   		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
->> +		seq_printf(m, "KSM_mergeable: %s\n",
->> +				test_bit(MMF_VM_MERGEABLE, &mm->flags) ? "yes" : "no");
->
->All it *currently* means is "we called __ksm_enter()" once. It does not 
->mean that KSM is still enabled for that process and that any VMA would 
->be considered for merging.
->
->I don't think we should expose this.
->
->That information can be more reliably had by looking at
->
->"/proc/pid/smaps" and looking for "mg".
->
->Which tells you exactly if any VMA (and which) is currently applicable 
->to KSM.
->
->
->> +		seq_printf(m, "KSM_merge_any: %s\n",
->> +				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
->
->This makes more sense to export. It's the same as reading 
->prctl(PR_GET_MEMORY_MERGE).
->
->The man page [1] calls it simply "KSM has been enabled for this 
->process", so process-wide KSM compared to per-VMA KSM.
->
->"KSM_enabled:"
->
->*might* be more reasonable in the context of PR_SET_MEMORY_MERGE.
->
->It wouldn't tell though if KSM is enabled on the system, though.
->
+Hi Kees,
 
-I agree it. But I hope admistrators can tell if the process enabled KSM-scan
-by madvise or prctl. At this point, only "/proc/pid/smaps"  is not enough.
+On 2024-05-08 10:11:35+0000, Kees Cook wrote:
+> On Wed, Apr 24, 2024 at 08:12:34PM -0700, Jakub Kicinski wrote:
+> > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
+> > > The series was split from my larger series sysctl-const series [0].
+> > > It only focusses on the proc_handlers but is an important step to be
+> > > able to move all static definitions of ctl_table into .rodata.
+> > 
+> > Split this per subsystem, please.
+> 
+> I've done a few painful API transitions before, and I don't think the
+> complexity of these changes needs a per-subsystem constification pass. I
+> think this series is the right approach, but that patch 11 will need
+> coordination with Linus. We regularly do system-wide prototype changes
+> like this right at the end of the merge window before -rc1 comes out.
 
-So can we add a item "KSM_enabled" which has three value as follows?
+That sounds good.
 
-1) "prctl": KSM has been fully enabled for this process.
+> The requirements are pretty simple: it needs to be a obvious changes
+> (this certainly is) and as close to 100% mechanical as possible. I think
+> patch 11 easily qualifies. Linus should be able to run the same Coccinelle
+> script and get nearly the same results, etc. And all the other changes
+> need to have landed. This change also has no "silent failure" conditions:
+> anything mismatched will immediately stand out.
 
-2) "madvise": KSM has been enabled on parts of VMA for this process.
+Unfortunately coccinelle alone is not sufficient, as some helpers with
+different prototypes are called by handlers and themselves are calling
+handler and therefore need to change in the same commit.
+But if I add a diff for those on top of the coccinelle script to the
+changelog it should be obvious.
 
-3) "never": KSM has been never enabled for this process.
+> So, have patches 1-10 go via their respective subsystems, and once all
+> of those are in Linus's tree, send patch 11 as a stand-alone PR.
 
-Just refer to the semantics of '/sys/kernel/mm/transparent_hugepage/enabled' 
+Ack, I'll do that with the cover letter information requested by Joel.
+
+> (From patch 11, it looks like the seccomp read/write function changes
+> could be split out? I'll do that now...)
+
+Thanks!
+
+Thomas
 
