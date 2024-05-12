@@ -1,161 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-19349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C666A8C3722
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 17:36:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44898C3726
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 17:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A961F21683
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62561C208E9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071914776A;
-	Sun, 12 May 2024 15:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4684120B;
+	Sun, 12 May 2024 15:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WOq9uKUy"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mdzge4DR";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mdzge4DR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD2446441
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 15:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538FB26AF5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 15:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715528198; cv=none; b=QiHElglZNDma5gkHyTA9HRZ5tVP3i7XeVBlm67zjw+AJVV2ptHAedDMS9hRXZqnW3VKr1PxWvQ/1Z/8hfPVjiFMN9ToTzXLVpQ0BaY9BqEIpx4VbcxLvV/a3fvnkXK4ZyKwvw+1TaIcFtZnFn6xrhRwXEOIpzsFQaFHUito43cs=
+	t=1715528750; cv=none; b=H+TMTI5fYAq7q3aA/jkC6J/+8x4PtLLG4l0NyzbcTGrKR69nFaYWAJT7tgg2uuIyuL/ZyCv4Ycv40D4gGShT/BNrmSWKGZlGfIA6v9W/RrCDUo8pzgz6Nh9V6GPUreXbdtrzt4jpLperHPDWHroygMz6s07yF2K5hYYMOviAA1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715528198; c=relaxed/simple;
-	bh=bgkLgGVBN1X+G4AcO3iprTd4Lp+rZcXDf1rU9vl2ShI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MwFB/NDqAeOCQbIKP8p89Cef37MktK6dJEK2jxaMPj+Jw6xs9pRBmM0swralJ9w7aYXhjJkzU67WmVioxBW+ejca862taKnmZowiLpzek3kJ0eBYkWU546h3BrfoGJ1Tur6Lam9xreqrC/LLV3VrsbsYP0ebYWls1JNjWc89GCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WOq9uKUy; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1715528750; c=relaxed/simple;
+	bh=LpJBs4r0o8CDOQLOIWirpbCl/N8xfuQxPp5O4LbqbPQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QlQFp12WfS+a7uLvvygjH9e585hDeK2+4+ZLzQ1O6dOHtUbmDCb/h/jQvyyiLTuftbbnwSQW7QYxsong2aTSUjE6oh3XxfeVLKcHaJ3xL0EZ0bxD0jYHFiAcdlZ7xm68YX+7qcYR4aqmRHZZ6nAJ1YMgyIQtJ3sGj0gfWvUtz+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mdzge4DR; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mdzge4DR; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715528197; x=1747064197;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bgkLgGVBN1X+G4AcO3iprTd4Lp+rZcXDf1rU9vl2ShI=;
-  b=WOq9uKUyZXvtjWT64wdjR40QgtLyvoRTyKH9b9FxJd4I/PHBNVtYHpkH
-   skePHVCmcpB5v/1XZPwcYTl953F3UyHABpcuFY8OIHA+jnAfHG5/g8JK2
-   CTIjUypTwK4kWz7SoBSPdItmgvWESyl9TtS3mfDpl7/2uINqDifESJA3B
-   BXEo2eemDv+AVKDYgjtDud5aoVv91Imaqq0pkAeagShiyBSlofMm/aJ3B
-   aBCruVHDPI5e7AXqwBsZwQlLjuPYhXHQQAGMCU7KGNMuhkplVfL3cuJ4i
-   PIAa3o+9zTUlU9TSWakN9SRTrpzBR2R3ZPXfPbFnPgh8wuoIO9miub5Ld
-   g==;
-X-CSE-ConnectionGUID: OH6WmiOZTimKewpuagYDvw==
-X-CSE-MsgGUID: ZUV3op1kTfuf5c7HeM/4/A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11403315"
-X-IronPort-AV: E=Sophos;i="6.08,156,1712646000"; 
-   d="scan'208";a="11403315"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 08:36:37 -0700
-X-CSE-ConnectionGUID: m3n46GydTXuj/s+gNmxweg==
-X-CSE-MsgGUID: /j/BC61GQnKijWeCcPqVRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,156,1712646000"; 
-   d="scan'208";a="34976587"
-Received: from mwajdecz-mobl.ger.corp.intel.com ([10.246.25.139])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 08:36:34 -0700
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	John Harrison <John.C.Harrison@Intel.com>,
-	linux-fsdevel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH 4/4] drm/xe/guc: Expose raw access to GuC log over debugfs
-Date: Sun, 12 May 2024 17:36:06 +0200
-Message-Id: <20240512153606.1996-5-michal.wajdeczko@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20240512153606.1996-1-michal.wajdeczko@intel.com>
-References: <20240512153606.1996-1-michal.wajdeczko@intel.com>
+	d=hansenpartnership.com; s=20151216; t=1715528747;
+	bh=LpJBs4r0o8CDOQLOIWirpbCl/N8xfuQxPp5O4LbqbPQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=mdzge4DRowlYxIaqgqT4p3wM28zFshCsyJh9ko8lzoVdaBf/CAvWgxulOK///9njY
+	 PsioDfsJI/3EfhgFga3TAoL51V0j1zAqGO0fJ28Ra5xTVAdhL19sbyD1UYkoF2dxwY
+	 Mh4XpCBXF7E8gqEWgqubUEvEQcyS1tT4OzXpFMDw=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4907F1280EBD;
+	Sun, 12 May 2024 11:45:47 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id o5BlQa29LmoL; Sun, 12 May 2024 11:45:47 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1715528747;
+	bh=LpJBs4r0o8CDOQLOIWirpbCl/N8xfuQxPp5O4LbqbPQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=mdzge4DRowlYxIaqgqT4p3wM28zFshCsyJh9ko8lzoVdaBf/CAvWgxulOK///9njY
+	 PsioDfsJI/3EfhgFga3TAoL51V0j1zAqGO0fJ28Ra5xTVAdhL19sbyD1UYkoF2dxwY
+	 Mh4XpCBXF7E8gqEWgqubUEvEQcyS1tT4OzXpFMDw=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3A81A1280DA8;
+	Sun, 12 May 2024 11:45:46 -0400 (EDT)
+Message-ID: <a4320c051be326ddeaeba44c4d209ccf7c2a3502.camel@HansenPartnership.com>
+Subject: Re: [PATCH] vfs: move dentry shrinking outside the inode lock in
+ 'rmdir()'
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Al Viro <viro@zeniv.linux.org.uk>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: brauner@kernel.org, jack@suse.cz, laoar.shao@gmail.com, 
+	linux-fsdevel@vger.kernel.org, longman@redhat.com, walters@verbum.org, 
+	wangkai86@huawei.com, willy@infradead.org
+Date: Sun, 12 May 2024 11:45:44 -0400
+In-Reply-To: <20240511192824.GC2118490@ZenIV>
+References: 
+	<CAHk-=whvo+r-VZH7Myr9fid=zspMo2-0BUJw5S=VTm72iEXXvQ@mail.gmail.com>
+	 <20240511182625.6717-2-torvalds@linux-foundation.org>
+	 <CAHk-=wijTRY-72qm02kZAT_Ttua0Qwvfms5m5NbR4EWbS02NqA@mail.gmail.com>
+	 <20240511192824.GC2118490@ZenIV>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-We already provide the content of the GuC log in debugsfs, but it
-is in a text format where each log dword is printed as hexadecimal
-number, which does not scale well with large GuC log buffers.
+On Sat, 2024-05-11 at 20:28 +0100, Al Viro wrote:
+> On Sat, May 11, 2024 at 11:42:34AM -0700, Linus Torvalds wrote:
+> 
+> > so we have another level of locking going on, and my patch only
+> > moved
+> > the dcache pruning outside the lock of the directory we're removing
+> > (not outside the lock of the directory that contains the removed
+> > directory).
+> > 
+> > And that outside lock is the much more important one, I bet.
+> 
+> ... and _that_ is where taking d_delete outside of the lock might
+> take an unpleasant analysis of a lot of code.
 
-To allow more efficient access to the GuC log, which could benefit
-our CI systems, expose raw binary log data.  In addition to less
-overhead in preparing text based GuC log file, the new GuC log file
-in binary format is also almost 3x smaller.
+Couldn't you obviate this by doing it from a workqueue?  Even if the
+directory is recreated, the chances are most of the negative dentries
+that were under it will still exist and be removable by the time the
+workqueue runs.
 
-Any existing script that expects the GuC log buffer in text format
-can use command like below to convert from new binary format:
-
-	hexdump -e '4/4 "0x%08x " "\n"'
-
-but this shouldn't be the case as most decoders expect GuC log data
-in binary format.
-
-Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: John Harrison <John.C.Harrison@Intel.com>
----
-Cc: linux-fsdevel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
----
- drivers/gpu/drm/xe/xe_guc_debugfs.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/drivers/gpu/drm/xe/xe_guc_debugfs.c b/drivers/gpu/drm/xe/xe_guc_debugfs.c
-index d3822cbea273..53fea952344d 100644
---- a/drivers/gpu/drm/xe/xe_guc_debugfs.c
-+++ b/drivers/gpu/drm/xe/xe_guc_debugfs.c
-@@ -8,6 +8,7 @@
- #include <drm/drm_debugfs.h>
- #include <drm/drm_managed.h>
- 
-+#include "xe_bo.h"
- #include "xe_device.h"
- #include "xe_gt.h"
- #include "xe_guc.h"
-@@ -52,6 +53,29 @@ static const struct drm_info_list debugfs_list[] = {
- 	{"guc_log", guc_log, 0},
- };
- 
-+static ssize_t guc_log_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
-+{
-+	struct dentry *dent = file_dentry(file);
-+	struct dentry *uc_dent = dent->d_parent;
-+	struct dentry *gt_dent = uc_dent->d_parent;
-+	struct xe_gt *gt = gt_dent->d_inode->i_private;
-+	struct xe_guc_log *log = &gt->uc.guc.log;
-+	struct xe_device *xe = gt_to_xe(gt);
-+	ssize_t ret;
-+
-+	xe_pm_runtime_get(xe);
-+	ret = xe_map_read_from(xe, buf, count, pos, &log->bo->vmap, log->bo->size);
-+	xe_pm_runtime_put(xe);
-+
-+	return ret;
-+}
-+
-+static const struct file_operations guc_log_ops = {
-+	.owner		= THIS_MODULE,
-+	.read		= guc_log_read,
-+	.llseek		= default_llseek,
-+};
-+
- void xe_guc_debugfs_register(struct xe_guc *guc, struct dentry *parent)
- {
- 	struct drm_minor *minor = guc_to_xe(guc)->drm.primary;
-@@ -72,4 +96,6 @@ void xe_guc_debugfs_register(struct xe_guc *guc, struct dentry *parent)
- 	drm_debugfs_create_files(local,
- 				 ARRAY_SIZE(debugfs_list),
- 				 parent, minor);
-+
-+	debugfs_create_file("guc_log_raw", 0600, parent, NULL, &guc_log_ops);
- }
--- 
-2.43.0
+James
 
 
