@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-19342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575708C369C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:14:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131D98C36B6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8AA1C20FD8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 13:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E4DB215B9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 13:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D00224F6;
-	Sun, 12 May 2024 13:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD1425569;
+	Sun, 12 May 2024 13:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NdDkBKbl"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WR1O31Ot"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB93BA53
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 13:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7E6224DC
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 13:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715519639; cv=none; b=HvS2pckLqOXEXZWz+j6u4U4mnOXVUj4B2Mly+bmFYok1uC4wxawif2AoqgFtrvPlylmnI/C43LEs0zmWvrn3u3cWFwt/1GNmGvrBpCrhLuqweHFj1QarzhgdsLnBfYtFzGP2nIC3vtzMxyJqdsy9SJlGhSpo+QNNjpD8plwDE/o=
+	t=1715520419; cv=none; b=qcTwXOqpnrskhXkP36ne2ONC17GYB3Ib6b/vsZMGRZpIh7gIir/ziEoiqLI2XC6MyoWep7GwqX2PtUQ1wINOcCZ+oVLEnvn0nteyTVnSwpgLC5vAmPURKGevNgDecGRIqMH/V+DEl615Rpn7SG0w6fLubRV5x+ovWFNNiuViVdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715519639; c=relaxed/simple;
-	bh=xN/F5Ze5Cl95YILCgoQ8b0+sSruOpV4iQFvCR/+tSNU=;
+	s=arc-20240116; t=1715520419; c=relaxed/simple;
+	bh=6lhFPYt8/zeTGIjtkNtvqZubNUwsxR6OTOZhPP86aUs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4mrJ8cSLpHYOsTJkKyDDBfDbFmtOwrS/IcS7gjL+ABhaAjv4XBChMUG0xoyw4PfgT1PLzeG3L3/V8mzkm/LaoyjKW0uVAUO+OEwa067i+8i7DsOTSFggh8EDOv3Q0hZ+ETAer/WfIe/Wx6J9+Xu1VxUcJemaluMS+REKcXmShQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NdDkBKbl; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=EdTwuPffVtb8Dw3tsxVRFbdOzH4Wee6klZ8jE1rDkmUNxHNtsxt5kwz5qSLWczf1RjpPzb1u2mX5QvwDiuhmJmLJYSRl23mYWLXruNDA78fDDGnztEjQXByPY4UVFhhBKwWYKTAKWuR3GZxC905q0PZkcFqN1UBzPsXDUQY/OQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WR1O31Ot; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715519638; x=1747055638;
+  t=1715520418; x=1747056418;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=xN/F5Ze5Cl95YILCgoQ8b0+sSruOpV4iQFvCR/+tSNU=;
-  b=NdDkBKblTRsOzum2DuBXANSRmYwiW/LfMCR1JBvGnQLw1qsnvzAdDBCQ
-   jdmLzXRafqDZo5Nsy6piWxob+tjDP2oJ+VyC/dXikkgM7wuPr45KAnAqB
-   E7FZYsMiZ1x8HEmyC00UoZrjx6etapqtu8CsV0uuDCRHZOd/rpBdIjSuK
-   LMghWVxLnKKhNtrRMgEkaTlbzpUCtOy+NSXky1eSKD1JPlLk2Sgm7rCgk
-   qX4rVQVcbet0U8sRvRusBTgXmMKi+RS7i8ao1BPekIkogmNiwc/EhBrbo
-   nWALSEkjH3iucZ2CbyNLDQzSt/vilt0LXx94IiwbdIUD0WpH3J/bUU9Jv
-   Q==;
-X-CSE-ConnectionGUID: cJHhLGa3QeKappfe/ImR2Q==
-X-CSE-MsgGUID: rGIc585oTGOveHIthUHm+Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11312817"
+  bh=6lhFPYt8/zeTGIjtkNtvqZubNUwsxR6OTOZhPP86aUs=;
+  b=WR1O31OtUEpuNeh9sLy7MX4zLnxfKa9FJyrUAGrzE4+PC3zfypXhBBiF
+   62fl6Mvx+Cm6OcrmPWX6S2nGPnY7znGeokBjdWGNTUjjOHsaysZr0EGaf
+   bqkK/zDmlDpe9TBrPaT3HgloDEOXMLtKObfT+GuUcp/NDxXHa39EI1Jqc
+   qmOt+gzzkoyOSe5iarhklIwGqBBCWPqlpv1KJIL6XLE/53+pXWx+s/MAl
+   v+HahcBXptRy68uNihC5BBRJi9bBroiUgc2wt3JhBgMNHI8hC2w3CXf2P
+   y1/A5FgQZoD9DuiJD6jFiKnLqD93SgGEg7jkEmTRoEQDhoRrR0cRIFQ9m
+   A==;
+X-CSE-ConnectionGUID: ai7S2aSzQnCHDwioMvgT2g==
+X-CSE-MsgGUID: FEzjI6DYStCrAUhFQEAzMQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11324796"
 X-IronPort-AV: E=Sophos;i="6.08,155,1712646000"; 
-   d="scan'208";a="11312817"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 06:13:57 -0700
-X-CSE-ConnectionGUID: i/HdKxatRjmGF6sToFZSWQ==
-X-CSE-MsgGUID: Z0vcK69dRhK9zVeN5ePG8w==
+   d="scan'208";a="11324796"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 06:26:57 -0700
+X-CSE-ConnectionGUID: LYFt+jBvQZGKqGgJetw7Gw==
+X-CSE-MsgGUID: bnhAmxYsSvCkfo++hOkO0Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,155,1712646000"; 
-   d="scan'208";a="67585285"
+   d="scan'208";a="30106389"
 Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 12 May 2024 06:13:55 -0700
+  by fmviesa009.fm.intel.com with ESMTP; 12 May 2024 06:26:55 -0700
 Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1s691U-0008bj-27;
-	Sun, 12 May 2024 13:13:52 +0000
-Date: Sun, 12 May 2024 21:12:59 +0800
+	id 1s69E5-0008cf-0Y;
+	Sun, 12 May 2024 13:26:53 +0000
+Date: Sun, 12 May 2024 21:25:54 +0800
 From: kernel test robot <lkp@intel.com>
 To: Hongbo Li <lihongbo22@huawei.com>, viro@zeniv.linux.org.uk,
 	brauner@kernel.org, jack@suse.cz
-Cc: oe-kbuild-all@lists.linux.dev, lihongbo22@huawei.com,
-	linux-fsdevel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	lihongbo22@huawei.com, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH -next] fsconfig: intercept for non-new mount API in
  advance for FSCONFIG_CMD_CREATE_EXCL
-Message-ID: <202405122152.lQkWH9DK-lkp@intel.com>
+Message-ID: <202405122155.PQ2zWM25-lkp@intel.com>
 References: <20240511040249.2141380-1-lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -92,23 +92,32 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Hongbo-Li/fsconfig-interc
 base:   next-20240510
 patch link:    https://lore.kernel.org/r/20240511040249.2141380-1-lihongbo22%40huawei.com
 patch subject: [PATCH -next] fsconfig: intercept for non-new mount API in advance for FSCONFIG_CMD_CREATE_EXCL
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240512/202405122152.lQkWH9DK-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240512/202405122152.lQkWH9DK-lkp@intel.com/reproduce)
+config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20240512/202405122155.PQ2zWM25-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project b910bebc300dafb30569cecc3017b446ea8eafa0)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240512/202405122155.PQ2zWM25-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405122152.lQkWH9DK-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405122155.PQ2zWM25-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   fs/fsopen.c: In function '__do_sys_fsconfig':
->> fs/fsopen.c:410:22: error: 'FSCONFIG_CMD_CREATE_EXEC' undeclared (first use in this function); did you mean 'FSCONFIG_CMD_CREATE_EXCL'?
+   In file included from fs/fsopen.c:8:
+   In file included from include/linux/fs_context.h:14:
+   In file included from include/linux/security.h:33:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> fs/fsopen.c:410:8: error: use of undeclared identifier 'FSCONFIG_CMD_CREATE_EXEC'; did you mean 'FSCONFIG_CMD_CREATE_EXCL'?
      410 |                 case FSCONFIG_CMD_CREATE_EXEC:
          |                      ^~~~~~~~~~~~~~~~~~~~~~~~
          |                      FSCONFIG_CMD_CREATE_EXCL
-   fs/fsopen.c:410:22: note: each undeclared identifier is reported only once for each function it appears in
+   include/uapi/linux/mount.h:105:2: note: 'FSCONFIG_CMD_CREATE_EXCL' declared here
+     105 |         FSCONFIG_CMD_CREATE_EXCL = 8,   /* Create new superblock, fail if reusing existing superblock */
+         |         ^
+   1 warning and 1 error generated.
 
 
 vim +410 fs/fsopen.c
