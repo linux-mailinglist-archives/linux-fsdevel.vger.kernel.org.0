@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-19346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09758C371C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 17:36:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FCC8C371E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 17:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6ED31F216B2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98470281457
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DA045BFF;
-	Sun, 12 May 2024 15:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E92544374;
+	Sun, 12 May 2024 15:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEISbIdG"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J/w4m01x"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD3440BE3
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 15:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5940340BE3
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 15:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715528191; cv=none; b=ZL2h16LAPG2rahu/aQ2Epyf3bYR1eAWTno2kDZkDf0NPhbtAP8MCoYTVTcsBbk4DI2WAv5/hQijoDQwt050MIBTfwQFxSWnDCgdvTvDigxzh60hqBIyOz7Gpq1ZZi+ivcwNre1AbfETPNyd/t3SBESrTQGQSaFVFB8Z8JVVA8TA=
+	t=1715528195; cv=none; b=P3Um50Fj/cXAw4OAHop6UiTyRK0/kUvrRB3GL4pPi3cwE0q7j2wO7wWxp0hRqZP6GwrSWEts+XV6Tb716RKXZk3xgaQwwcqGH/cqAsxLbLncbLN/9TWhU7SJK/08IEcafZr6or7XNMVYMLI+x6egZemQMvroHac7vgmN1W1lAss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715528191; c=relaxed/simple;
-	bh=m7b0H2nPMXlW9qzhs8xhiDDvV+7cSUjEnIZn7N+Tdcw=;
+	s=arc-20240116; t=1715528195; c=relaxed/simple;
+	bh=UpBLsNtwkuXGVcD/TaGHbR2icCa517yQEVl4pgTWrf8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HC7N5oHtNKcREnD7R7D3iePOQ0fPBqNptzIxehcETU+VECWHNmS/7FMpa1vW4LfRqBWlxN5BCelGyJ2degGaVJlTbzNmuu6/qaZywcToc/5rBM2oZL9R9Q2kKOYtHm3srhTM2gBv1ztshSa7g6RxrCBdU/r33lK96Xef+Dl7+sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEISbIdG; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version; b=uqAE2m8aoU8WBv70ORnf5kxQdz+46+0kxX7q1KRmJEElkjyba+HyarRrjPcB08FGTWj4x8Qzo+t3lQtkN0oHOnFAO4je9MFEw4Q2sXT3sz8Z4qBveh98+3tU6qBBs5Gb/poppP7TWxqTKqgWi8I/6QBXauaZCtmwAcPTF3Cg8vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J/w4m01x; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715528190; x=1747064190;
+  t=1715528193; x=1747064193;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=m7b0H2nPMXlW9qzhs8xhiDDvV+7cSUjEnIZn7N+Tdcw=;
-  b=jEISbIdGRdVJRRrQwbotD5EgI84JmwBjCe6ZiAYJXcAFnDjjQZjO4Uhx
-   7LvlOyQZUMNWCxxyF1Aq+AbYPHnrlATuYmlefuzXqS5qPrpWEEUXZjg3y
-   E6lVcuTBWVG+R8+oWlnGw9iIZoVtOkNxIQwVYKUeVlRdGZboGXrZaw1SZ
-   KlNpyRPliZTLKE75DcvHetSVgdZIPbt+x48OvUjk2QzaMEaFE3nkNR86x
-   tduaSXYbOeUmOlOgT0lttSj66T6cPCYziphgnGcqiPqDMEVJhtZk/Fp96
-   /iwAnDHt8gWIyHmQ6VfCmtv+Kw8mZQKTBHl4xOzqMJgmWj7K4KcHYtgNe
-   w==;
-X-CSE-ConnectionGUID: QkpWNX7ZRaC/L34WdaqIVQ==
-X-CSE-MsgGUID: 2/5mT4b1RnmetTIL+sryWA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11403302"
+  bh=UpBLsNtwkuXGVcD/TaGHbR2icCa517yQEVl4pgTWrf8=;
+  b=J/w4m01x4FVA+MhFym54jYC3/gZATPi/ti33afaaVNguy2wFJ4Cgp60b
+   4v/2Qbn/rYdPIWsTSJI7sHZWN9IHr6qSia1R7FMYHFG/Av3RIEBkF9J5u
+   lnmK5ZaNuaoxlD5sj8r9RhDxgpP6LGielCMexCyLQrPkgPZgzU0nm+P5E
+   ycELFFZ1vDbcTdn44J0E/d8H1XEhj3GzHtN6njw6Qb7ce4CvKYXTBn5yu
+   HkSPWCVyJzTV7y8OFeSZvStAArTpqGGJg+RNw3p1vOekr4roKHu7PIu3L
+   zjaVMCsJrDOG2u0jcu0VuIt2pnSdXCa7ZjnitEXKr3O5nL4X2AVthYYZz
+   g==;
+X-CSE-ConnectionGUID: LObg3j9IQJGUPgBi9NMt2Q==
+X-CSE-MsgGUID: PRV86HxSTTqfg56+lyBUuA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11403305"
 X-IronPort-AV: E=Sophos;i="6.08,156,1712646000"; 
-   d="scan'208";a="11403302"
+   d="scan'208";a="11403305"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 08:36:29 -0700
-X-CSE-ConnectionGUID: nHVtF9cFQjKA8GWpnQJQgg==
-X-CSE-MsgGUID: HAVA9ftCSMCmQGlQ+KLyxg==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 08:36:33 -0700
+X-CSE-ConnectionGUID: xRUy/3fVTKG3IzZ9/ieCOg==
+X-CSE-MsgGUID: Xe/sFGcnRIubxVaa9acUJQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,156,1712646000"; 
-   d="scan'208";a="34976565"
+   d="scan'208";a="34976572"
 Received: from mwajdecz-mobl.ger.corp.intel.com ([10.246.25.139])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 08:36:27 -0700
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 08:36:29 -0700
 From: Michal Wajdeczko <michal.wajdeczko@intel.com>
 To: intel-xe@lists.freedesktop.org
 Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
 	linux-fsdevel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: [PATCH 1/4] libfs: add simple_read_from_iomem()
-Date: Sun, 12 May 2024 17:36:03 +0200
-Message-Id: <20240512153606.1996-2-michal.wajdeczko@intel.com>
+Subject: [PATCH 2/4] iosys-map: add iosys_map_read_from() helper
+Date: Sun, 12 May 2024 17:36:04 +0200
+Message-Id: <20240512153606.1996-3-michal.wajdeczko@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20240512153606.1996-1-michal.wajdeczko@intel.com>
 References: <20240512153606.1996-1-michal.wajdeczko@intel.com>
@@ -78,8 +78,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It's similar to simple_read_from_buffer() but instead allows to
-copy data from the I/O memory in PAGE_SIZE chunks.
+It allows to copy data from iosys_map into the user memory,
+regardless whether iosys_map points to memory or I/O memory.
 
 Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
 ---
@@ -87,92 +87,51 @@ Cc: linux-fsdevel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org
 Cc: Lucas De Marchi <lucas.demarchi@intel.com>
 ---
- fs/libfs.c         | 50 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  3 +++
- 2 files changed, 53 insertions(+)
+ include/linux/iosys-map.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 3a6f2cb364f8..be8aa42a2f11 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/namei.h>
- #include <linux/exportfs.h>
-+#include <linux/io.h>
- #include <linux/iversion.h>
- #include <linux/writeback.h>
- #include <linux/buffer_head.h> /* sync_mapping_buffers */
-@@ -1040,6 +1041,55 @@ void simple_release_fs(struct vfsmount **mount, int *count)
+diff --git a/include/linux/iosys-map.h b/include/linux/iosys-map.h
+index 4696abfd311c..eb79da976211 100644
+--- a/include/linux/iosys-map.h
++++ b/include/linux/iosys-map.h
+@@ -7,6 +7,7 @@
+ #define __IOSYS_MAP_H__
+ 
+ #include <linux/compiler_types.h>
++#include <linux/fs.h>
+ #include <linux/io.h>
+ #include <linux/string.h>
+ 
+@@ -312,6 +313,29 @@ static inline void iosys_map_memcpy_from(void *dst, const struct iosys_map *src,
+ 		memcpy(dst, src->vaddr + src_offset, len);
  }
- EXPORT_SYMBOL(simple_release_fs);
  
 +/**
-+ * simple_read_from_iomem - copy data from the I/O memory to user space
++ * iosys_map_read_from - Copy data from iosys_map into user memory
 + * @to: the user space buffer to read to
 + * @count: the maximum number of bytes to read
 + * @ppos: the current position in the buffer
-+ * @from: the I/O memory to read from
-+ * @available: the size of the iomem memory
++ * @map: the iosys_map structure to read from
++ * @available: the size of the data in iosys_map
 + *
-+ * The simple_read_from_iomem() function reads up to @count bytes (but no
-+ * more than %PAGE_SIZE bytes) from the I/O memory @from at offset @ppos
-+ * into the user space address starting at @to.
++ * Copies up to @count bytes from a iosys_map @map at offset @ppos into the user
++ * space address starting at @to.
 + *
 + * Return: On success, the number of bytes read is returned and the offset
 + * @ppos is advanced by this number, or negative value is returned on error.
 + */
-+ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
-+			       const volatile void __iomem *from, size_t available)
++static inline ssize_t iosys_map_read_from(void __user *to, size_t count, loff_t *ppos,
++					  const struct iosys_map *map, size_t available)
 +{
-+	loff_t pos = *ppos;
-+	size_t ret;
-+	void *buf;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available || !count)
-+		return 0;
-+	if (count > available - pos)
-+		count = available - pos;
-+	if (count > PAGE_SIZE)
-+		count = PAGE_SIZE;
-+
-+	buf = kmalloc(count, GFP_NOWAIT | __GFP_NOWARN);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	memcpy_fromio(buf, from + pos, count);
-+	ret = copy_to_user(to, buf, count);
-+
-+	kfree(buf);
-+
-+	if (ret == count)
-+		return -EFAULT;
-+
-+	count -= ret;
-+	*ppos = pos + count;
-+	return count;
++	if (map->is_iomem)
++		return simple_read_from_iomem(to, count, ppos, map->vaddr_iomem, available);
++	else
++		return simple_read_from_buffer(to, count, ppos, map->vaddr, available);
 +}
-+EXPORT_SYMBOL(simple_read_from_iomem);
 +
  /**
-  * simple_read_from_buffer - copy data from the buffer to user space
-  * @to: the user space buffer to read to
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8dfd53b52744..eb4a7b10a1a0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3331,6 +3331,9 @@ extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
- 
-+ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
-+			       const volatile void __iomem *from, size_t available);
-+
- struct offset_ctx {
- 	struct maple_tree	mt;
- 	unsigned long		next_offset;
+  * iosys_map_incr - Increments the address stored in a iosys mapping
+  * @map:	The iosys_map structure
 -- 
 2.43.0
 
