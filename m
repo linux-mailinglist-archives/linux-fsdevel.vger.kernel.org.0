@@ -1,239 +1,395 @@
-Return-Path: <linux-fsdevel+bounces-19343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131D98C36B6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:27:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C7B78C36B9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 15:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E4DB215B9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 13:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 647461C2095C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2024 13:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD1425569;
-	Sun, 12 May 2024 13:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WR1O31Ot"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E7B2556E;
+	Sun, 12 May 2024 13:46:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7E6224DC
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 13:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ADF17F3;
+	Sun, 12 May 2024 13:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715520419; cv=none; b=qcTwXOqpnrskhXkP36ne2ONC17GYB3Ib6b/vsZMGRZpIh7gIir/ziEoiqLI2XC6MyoWep7GwqX2PtUQ1wINOcCZ+oVLEnvn0nteyTVnSwpgLC5vAmPURKGevNgDecGRIqMH/V+DEl615Rpn7SG0w6fLubRV5x+ovWFNNiuViVdY=
+	t=1715521572; cv=none; b=u2Yp77GIPzJqO2TQx4FX/N4b2+ap4fDzaRjOUsqQ2PmZh+enT5AQIchqkGJsRVD2HiWJVbieGfGfC/ryzxpmcrP6x6VdGllIiOuyp5uJykbY0p0Mpaf4LAnW/+nK5Y/13bIUIpD5Dz+QdECfizvDlaGoHMvtSGavA/VNXT5UytY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715520419; c=relaxed/simple;
-	bh=6lhFPYt8/zeTGIjtkNtvqZubNUwsxR6OTOZhPP86aUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EdTwuPffVtb8Dw3tsxVRFbdOzH4Wee6klZ8jE1rDkmUNxHNtsxt5kwz5qSLWczf1RjpPzb1u2mX5QvwDiuhmJmLJYSRl23mYWLXruNDA78fDDGnztEjQXByPY4UVFhhBKwWYKTAKWuR3GZxC905q0PZkcFqN1UBzPsXDUQY/OQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WR1O31Ot; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715520418; x=1747056418;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6lhFPYt8/zeTGIjtkNtvqZubNUwsxR6OTOZhPP86aUs=;
-  b=WR1O31OtUEpuNeh9sLy7MX4zLnxfKa9FJyrUAGrzE4+PC3zfypXhBBiF
-   62fl6Mvx+Cm6OcrmPWX6S2nGPnY7znGeokBjdWGNTUjjOHsaysZr0EGaf
-   bqkK/zDmlDpe9TBrPaT3HgloDEOXMLtKObfT+GuUcp/NDxXHa39EI1Jqc
-   qmOt+gzzkoyOSe5iarhklIwGqBBCWPqlpv1KJIL6XLE/53+pXWx+s/MAl
-   v+HahcBXptRy68uNihC5BBRJi9bBroiUgc2wt3JhBgMNHI8hC2w3CXf2P
-   y1/A5FgQZoD9DuiJD6jFiKnLqD93SgGEg7jkEmTRoEQDhoRrR0cRIFQ9m
-   A==;
-X-CSE-ConnectionGUID: ai7S2aSzQnCHDwioMvgT2g==
-X-CSE-MsgGUID: FEzjI6DYStCrAUhFQEAzMQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11324796"
-X-IronPort-AV: E=Sophos;i="6.08,155,1712646000"; 
-   d="scan'208";a="11324796"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 06:26:57 -0700
-X-CSE-ConnectionGUID: LYFt+jBvQZGKqGgJetw7Gw==
-X-CSE-MsgGUID: bnhAmxYsSvCkfo++hOkO0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,155,1712646000"; 
-   d="scan'208";a="30106389"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 12 May 2024 06:26:55 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s69E5-0008cf-0Y;
-	Sun, 12 May 2024 13:26:53 +0000
-Date: Sun, 12 May 2024 21:25:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hongbo Li <lihongbo22@huawei.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	lihongbo22@huawei.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH -next] fsconfig: intercept for non-new mount API in
- advance for FSCONFIG_CMD_CREATE_EXCL
-Message-ID: <202405122155.PQ2zWM25-lkp@intel.com>
-References: <20240511040249.2141380-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1715521572; c=relaxed/simple;
+	bh=FJD0Krw+OCM6lmu/gFtLC4n26kTN+Ci25jvOIpx8y+s=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=AZCj9ozvk6kTiqqgiMsWOy9KUWP8uuuZie+vVExi2r9OiWo8lvFIr9qzBM54TrRKYDilxevCTUCjKIwYGZY2/8FGitXi6aAVJvy5lfmCQON1Ex1KLtP3bIMy7W5IZnoyCF0Q1tgK8QsmtTa8R1/O/VRSxdDxYRmhRYG5qI6yaGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44CDjmL1030377;
+	Sun, 12 May 2024 22:45:48 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
+ Sun, 12 May 2024 22:45:48 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44CDjmfI030374
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 12 May 2024 22:45:48 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b221d2cf-7dc0-4624-a040-85c131ed72a1@I-love.SAKURA.ne.jp>
+Date: Sun, 12 May 2024 22:45:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240511040249.2141380-1-lihongbo22@huawei.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Marco Elver <elver@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [fs] Are you OK with updating "struct file"->f_op value dynamically?
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Hongbo,
+Hello.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on next-20240510]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Hongbo-Li/fsconfig-intercept-for-non-new-mount-API-in-advance-for-FSCONFIG_CMD_CREATE_EXCL/20240511-120353
-base:   next-20240510
-patch link:    https://lore.kernel.org/r/20240511040249.2141380-1-lihongbo22%40huawei.com
-patch subject: [PATCH -next] fsconfig: intercept for non-new mount API in advance for FSCONFIG_CMD_CREATE_EXCL
-config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20240512/202405122155.PQ2zWM25-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project b910bebc300dafb30569cecc3017b446ea8eafa0)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240512/202405122155.PQ2zWM25-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405122155.PQ2zWM25-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/fsopen.c:8:
-   In file included from include/linux/fs_context.h:14:
-   In file included from include/linux/security.h:33:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> fs/fsopen.c:410:8: error: use of undeclared identifier 'FSCONFIG_CMD_CREATE_EXEC'; did you mean 'FSCONFIG_CMD_CREATE_EXCL'?
-     410 |                 case FSCONFIG_CMD_CREATE_EXEC:
-         |                      ^~~~~~~~~~~~~~~~~~~~~~~~
-         |                      FSCONFIG_CMD_CREATE_EXCL
-   include/uapi/linux/mount.h:105:2: note: 'FSCONFIG_CMD_CREATE_EXCL' declared here
-     105 |         FSCONFIG_CMD_CREATE_EXCL = 8,   /* Create new superblock, fail if reusing existing superblock */
-         |         ^
-   1 warning and 1 error generated.
+This is a broadcast for making sure that nobody (especially filesystems
+including out-of-tree proprietary modules) gets trouble with this change.
 
 
-vim +410 fs/fsopen.c
 
-   301	
-   302	/**
-   303	 * sys_fsconfig - Set parameters and trigger actions on a context
-   304	 * @fd: The filesystem context to act upon
-   305	 * @cmd: The action to take
-   306	 * @_key: Where appropriate, the parameter key to set
-   307	 * @_value: Where appropriate, the parameter value to set
-   308	 * @aux: Additional information for the value
-   309	 *
-   310	 * This system call is used to set parameters on a context, including
-   311	 * superblock settings, data source and security labelling.
-   312	 *
-   313	 * Actions include triggering the creation of a superblock and the
-   314	 * reconfiguration of the superblock attached to the specified context.
-   315	 *
-   316	 * When setting a parameter, @cmd indicates the type of value being proposed
-   317	 * and @_key indicates the parameter to be altered.
-   318	 *
-   319	 * @_value and @aux are used to specify the value, should a value be required:
-   320	 *
-   321	 * (*) fsconfig_set_flag: No value is specified.  The parameter must be boolean
-   322	 *     in nature.  The key may be prefixed with "no" to invert the
-   323	 *     setting. @_value must be NULL and @aux must be 0.
-   324	 *
-   325	 * (*) fsconfig_set_string: A string value is specified.  The parameter can be
-   326	 *     expecting boolean, integer, string or take a path.  A conversion to an
-   327	 *     appropriate type will be attempted (which may include looking up as a
-   328	 *     path).  @_value points to a NUL-terminated string and @aux must be 0.
-   329	 *
-   330	 * (*) fsconfig_set_binary: A binary blob is specified.  @_value points to the
-   331	 *     blob and @aux indicates its size.  The parameter must be expecting a
-   332	 *     blob.
-   333	 *
-   334	 * (*) fsconfig_set_path: A non-empty path is specified.  The parameter must be
-   335	 *     expecting a path object.  @_value points to a NUL-terminated string that
-   336	 *     is the path and @aux is a file descriptor at which to start a relative
-   337	 *     lookup or AT_FDCWD.
-   338	 *
-   339	 * (*) fsconfig_set_path_empty: As fsconfig_set_path, but with AT_EMPTY_PATH
-   340	 *     implied.
-   341	 *
-   342	 * (*) fsconfig_set_fd: An open file descriptor is specified.  @_value must be
-   343	 *     NULL and @aux indicates the file descriptor.
-   344	 */
-   345	SYSCALL_DEFINE5(fsconfig,
-   346			int, fd,
-   347			unsigned int, cmd,
-   348			const char __user *, _key,
-   349			const void __user *, _value,
-   350			int, aux)
-   351	{
-   352		struct fs_context *fc;
-   353		struct fd f;
-   354		int ret;
-   355		int lookup_flags = 0;
-   356	
-   357		struct fs_parameter param = {
-   358			.type	= fs_value_is_undefined,
-   359		};
-   360	
-   361		if (fd < 0)
-   362			return -EINVAL;
-   363	
-   364		switch (cmd) {
-   365		case FSCONFIG_SET_FLAG:
-   366			if (!_key || _value || aux)
-   367				return -EINVAL;
-   368			break;
-   369		case FSCONFIG_SET_STRING:
-   370			if (!_key || !_value || aux)
-   371				return -EINVAL;
-   372			break;
-   373		case FSCONFIG_SET_BINARY:
-   374			if (!_key || !_value || aux <= 0 || aux > 1024 * 1024)
-   375				return -EINVAL;
-   376			break;
-   377		case FSCONFIG_SET_PATH:
-   378		case FSCONFIG_SET_PATH_EMPTY:
-   379			if (!_key || !_value || (aux != AT_FDCWD && aux < 0))
-   380				return -EINVAL;
-   381			break;
-   382		case FSCONFIG_SET_FD:
-   383			if (!_key || _value || aux < 0)
-   384				return -EINVAL;
-   385			break;
-   386		case FSCONFIG_CMD_CREATE:
-   387		case FSCONFIG_CMD_CREATE_EXCL:
-   388		case FSCONFIG_CMD_RECONFIGURE:
-   389			if (_key || _value || aux)
-   390				return -EINVAL;
-   391			break;
-   392		default:
-   393			return -EOPNOTSUPP;
-   394		}
-   395	
-   396		f = fdget(fd);
-   397		if (!f.file)
-   398			return -EBADF;
-   399		ret = -EINVAL;
-   400		if (f.file->f_op != &fscontext_fops)
-   401			goto out_f;
-   402	
-   403		fc = f.file->private_data;
-   404		if (fc->ops == &legacy_fs_context_ops) {
-   405			switch (cmd) {
-   406			case FSCONFIG_SET_BINARY:
-   407			case FSCONFIG_SET_PATH:
-   408			case FSCONFIG_SET_PATH_EMPTY:
-   409			case FSCONFIG_SET_FD:
- > 410			case FSCONFIG_CMD_CREATE_EXEC:
+syzbot is reporting data race between __tty_hangup() and __fput() [1], and
+Dmitry Vyukov mentioned that this race has possibility of NULL pointer
+dereference, for tty_fops implements e.g. splice_read callback whereas
+hung_up_tty_fops does not.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  CPU0                                  CPU1
+  ----                                  ----
+  do_splice_read() {
+                                        __tty_hangup() {
+    // f_op->splice_read was copy_splice_read
+    if (unlikely(!in->f_op->splice_read))
+      return warn_unsupported(in, "read");
+                                          filp->f_op = &hung_up_tty_fops;
+    // f_op->splice_read is now NULL
+    return in->f_op->splice_read(in, ppos, pipe, len, flags);
+                                        }
+  }
+
+Therefore, I was proposing a patch that avoids updating
+"struct file"->f_op after "struct file" became visible to others.
+
+ drivers/tty/tty_io.c | 46 +++++++++++++++++++++-----------------------
+ include/linux/tty.h  |  1 +
+ 2 files changed, 23 insertions(+), 24 deletions(-)
+
+ (patch body is shown bottom of this post)
+
+During the discussion, Linus Torvalds commented that we don't want to add
+data_race() annotation for reading "struct file"->f_op value [2], and
+Marco Elver proposed __data_racy qualifier [3] so that we don't need to
+scatter data_race() annotation to "struct file"->f_op readers/updaters.
+
+And now, Linus is expecting a patch that updates "struct file"->f_op
+value dynamically [4].
+
+ drivers/tty/tty_io.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/fs.h   |  2 +-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
+ (patch body is shown bottom of this post)
+
+But I want a confirmation before going that way. If someone is assuming that
+"struct file"->f_op does not change as long as "struct file" is visible to
+others, going that way can break that someone's code. Therefore, if you have
+an assumption that "struct file"->f_op does not change, please be sure to
+respond.
+
+
+Link: https://syzkaller.appspot.com/bug?extid=b7c3ba8cdc2f6cf83c21 [1]
+Link: https://lkml.kernel.org/r/CAHk-=wi3iondeh_9V2g3Qz5oHTRjLsOpoy83hb58MVh=nRZe0A@mail.gmail.com [2]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=31f605a308e627f06e4e6ab77254473f1c90f0bf [3]
+Link: https://lkml.kernel.org/r/CAHk-=wgSOa_g+bxjNi+HQpC=6sHK2yKeoW-xOhb0-FVGMTDWjg@mail.gmail.com [4]
+
+
+
+A patch that avoids updating "struct file"->f_op after "struct file"
+became visible to others:
+
+------------------------------------------------------------
+ drivers/tty/tty_io.c | 46 +++++++++++++++++++++-----------------------
+ include/linux/tty.h  |  1 +
+ 2 files changed, 23 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 407b0d87b7c10..aeea5eb13f48c 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -187,6 +187,7 @@ int tty_alloc_file(struct file *file)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	priv->hung = false;
+ 	file->private_data = priv;
+ 
+ 	return 0;
+@@ -420,35 +421,35 @@ struct tty_driver *tty_find_polling_driver(char *name, int *line)
+ EXPORT_SYMBOL_GPL(tty_find_polling_driver);
+ #endif
+ 
+-static ssize_t hung_up_tty_read(struct kiocb *iocb, struct iov_iter *to)
++static inline ssize_t hung_up_tty_read(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	return 0;
+ }
+ 
+-static ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
++static inline ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	return -EIO;
+ }
+ 
+ /* No kernel lock held - none needed ;) */
+-static __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
++static inline __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
+ {
+ 	return EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP | EPOLLRDNORM | EPOLLWRNORM;
+ }
+ 
+-static long hung_up_tty_ioctl(struct file *file, unsigned int cmd,
++static inline long hung_up_tty_ioctl(struct file *file, unsigned int cmd,
+ 		unsigned long arg)
+ {
+ 	return cmd == TIOCSPGRP ? -ENOTTY : -EIO;
+ }
+ 
+-static long hung_up_tty_compat_ioctl(struct file *file,
++static inline long hung_up_tty_compat_ioctl(struct file *file,
+ 				     unsigned int cmd, unsigned long arg)
+ {
+ 	return cmd == TIOCSPGRP ? -ENOTTY : -EIO;
+ }
+ 
+-static int hung_up_tty_fasync(int fd, struct file *file, int on)
++static inline int hung_up_tty_fasync(int fd, struct file *file, int on)
+ {
+ 	return -ENOTTY;
+ }
+@@ -490,17 +491,6 @@ static const struct file_operations console_fops = {
+ 	.fasync		= tty_fasync,
+ };
+ 
+-static const struct file_operations hung_up_tty_fops = {
+-	.llseek		= no_llseek,
+-	.read_iter	= hung_up_tty_read,
+-	.write_iter	= hung_up_tty_write,
+-	.poll		= hung_up_tty_poll,
+-	.unlocked_ioctl	= hung_up_tty_ioctl,
+-	.compat_ioctl	= hung_up_tty_compat_ioctl,
+-	.release	= tty_release,
+-	.fasync		= hung_up_tty_fasync,
+-};
+-
+ static DEFINE_SPINLOCK(redirect_lock);
+ static struct file *redirect;
+ 
+@@ -618,7 +608,7 @@ static void __tty_hangup(struct tty_struct *tty, int exit_session)
+ 			continue;
+ 		closecount++;
+ 		__tty_fasync(-1, filp, 0);	/* can't block */
+-		filp->f_op = &hung_up_tty_fops;
++		priv->hung = true;
+ 	}
+ 	spin_unlock(&tty->files_lock);
+ 
+@@ -742,7 +732,8 @@ void tty_vhangup_session(struct tty_struct *tty)
+  */
+ int tty_hung_up_p(struct file *filp)
+ {
+-	return (filp && filp->f_op == &hung_up_tty_fops);
++	return filp && filp->f_op == &tty_fops &&
++		((struct tty_file_private *) filp->private_data)->hung;
+ }
+ EXPORT_SYMBOL(tty_hung_up_p);
+ 
+@@ -921,6 +912,8 @@ static ssize_t tty_read(struct kiocb *iocb, struct iov_iter *to)
+ 	struct tty_ldisc *ld;
+ 	ssize_t ret;
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_read(iocb, to);
+ 	if (tty_paranoia_check(tty, inode, "tty_read"))
+ 		return -EIO;
+ 	if (!tty || tty_io_error(tty))
+@@ -1080,6 +1073,8 @@ static ssize_t file_tty_write(struct file *file, struct kiocb *iocb, struct iov_
+ 	struct tty_ldisc *ld;
+ 	ssize_t ret;
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_write(iocb, from);
+ 	if (tty_paranoia_check(tty, file_inode(file), "tty_write"))
+ 		return -EIO;
+ 	if (!tty || !tty->ops->write ||	tty_io_error(tty))
+@@ -2166,11 +2161,6 @@ static int tty_open(struct inode *inode, struct file *filp)
+ 			return retval;
+ 
+ 		schedule();
+-		/*
+-		 * Need to reset f_op in case a hangup happened.
+-		 */
+-		if (tty_hung_up_p(filp))
+-			filp->f_op = &tty_fops;
+ 		goto retry_open;
+ 	}
+ 	clear_bit(TTY_HUPPED, &tty->flags);
+@@ -2204,6 +2194,8 @@ static __poll_t tty_poll(struct file *filp, poll_table *wait)
+ 	struct tty_ldisc *ld;
+ 	__poll_t ret = 0;
+ 
++	if (tty_hung_up_p(filp))
++		return hung_up_tty_poll(filp, wait);
+ 	if (tty_paranoia_check(tty, file_inode(filp), "tty_poll"))
+ 		return 0;
+ 
+@@ -2256,6 +2248,8 @@ static int tty_fasync(int fd, struct file *filp, int on)
+ 	struct tty_struct *tty = file_tty(filp);
+ 	int retval = -ENOTTY;
+ 
++	if (tty_hung_up_p(filp))
++		return hung_up_tty_fasync(fd, filp, on);
+ 	tty_lock(tty);
+ 	if (!tty_hung_up_p(filp))
+ 		retval = __tty_fasync(fd, filp, on);
+@@ -2684,6 +2678,8 @@ long tty_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	int retval;
+ 	struct tty_ldisc *ld;
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_ioctl(file, cmd, arg);
+ 	if (tty_paranoia_check(tty, file_inode(file), "tty_ioctl"))
+ 		return -EINVAL;
+ 
+@@ -2969,6 +2965,8 @@ static long tty_compat_ioctl(struct file *file, unsigned int cmd,
+ 		return tty_ioctl(file, cmd, arg);
+ 	}
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_compat_ioctl(file, cmd, arg);
+ 	if (tty_paranoia_check(tty, file_inode(file), "tty_ioctl"))
+ 		return -EINVAL;
+ 
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index 2372f9357240d..56c250247df9b 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -248,6 +248,7 @@ struct tty_file_private {
+ 	struct tty_struct *tty;
+ 	struct file *file;
+ 	struct list_head list;
++	bool __data_racy hung; /* Whether __tty_hangup() was called or not. */
+ };
+ 
+ /**
+------------------------------------------------------------
+
+A patch that updates "struct file"->f_op value dynamically:
+
+------------------------------------------------------------
+ drivers/tty/tty_io.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/fs.h   |  2 +-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 407b0d87b7c10..16e135687226a 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -430,6 +430,24 @@ static ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
+ 	return -EIO;
+ }
+ 
++static ssize_t hung_up_copy_splice_read(struct file *in, loff_t *ppos,
++					struct pipe_inode_info *pipe,
++					size_t len, unsigned int flags)
++{
++	return -EINVAL;
++}
++
++static ssize_t hung_up_iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
++					      loff_t *ppos, size_t len, unsigned int flags)
++{
++	return -EINVAL;
++}
++
++static int hung_up_no_open(struct inode *inode, struct file *file)
++{
++	return -ENXIO;
++}
++
+ /* No kernel lock held - none needed ;) */
+ static __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
+ {
+@@ -462,6 +480,12 @@ static void tty_show_fdinfo(struct seq_file *m, struct file *file)
+ }
+ 
+ static const struct file_operations tty_fops = {
++	/*
++	 * WARNING: You must implement all callbacks defined in tty_fops in
++	 * hung_up_tty_fops, for tty_fops and hung_up_tty_fops are toggled
++	 * after "struct file" is published. Failure to synchronize has a risk
++	 * of NULL pointer dereference bug.
++	 */
+ 	.llseek		= no_llseek,
+ 	.read_iter	= tty_read,
+ 	.write_iter	= tty_write,
+@@ -491,14 +515,24 @@ static const struct file_operations console_fops = {
+ };
+ 
+ static const struct file_operations hung_up_tty_fops = {
++	/*
++	 * WARNING: You must implement all callbacks defined in hung_up_tty_fops
++	 * in tty_fops, for tty_fops and hung_up_tty_fops are toggled after
++	 * "struct file" is published. Failure to synchronize has a risk of
++	 * NULL pointer dereference bug.
++	 */
+ 	.llseek		= no_llseek,
+ 	.read_iter	= hung_up_tty_read,
+ 	.write_iter	= hung_up_tty_write,
++	.splice_read    = hung_up_copy_splice_read,
++	.splice_write   = hung_up_iter_file_splice_write,
+ 	.poll		= hung_up_tty_poll,
+ 	.unlocked_ioctl	= hung_up_tty_ioctl,
+ 	.compat_ioctl	= hung_up_tty_compat_ioctl,
++	.open           = hung_up_no_open,
+ 	.release	= tty_release,
+ 	.fasync		= hung_up_tty_fasync,
++	.show_fdinfo    = tty_show_fdinfo,
+ };
+ 
+ static DEFINE_SPINLOCK(redirect_lock);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 1394347b4fda5..2d14b26ace792 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1008,7 +1008,7 @@ struct file {
+ 	struct file_ra_state	f_ra;
+ 	struct path		f_path;
+ 	struct inode		*f_inode;	/* cached value */
+-	const struct file_operations	*f_op;
++	const struct file_operations	*__data_racy f_op;
+ 
+ 	u64			f_version;
+ #ifdef CONFIG_SECURITY
+------------------------------------------------------------
 
