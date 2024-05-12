@@ -1,122 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-19374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04ACC8C4237
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 15:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E8F8C424C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 15:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25AA21C21471
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 13:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5B61F21390
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 13:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D65153836;
-	Mon, 13 May 2024 13:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F6015532F;
+	Mon, 13 May 2024 13:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yMHlst5y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C1j0Z/kB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yMHlst5y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C1j0Z/kB"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gCM+EfKK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdyZ2uNi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gCM+EfKK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdyZ2uNi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29822153506;
-	Mon, 13 May 2024 13:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9380C154429;
+	Mon, 13 May 2024 13:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715607698; cv=none; b=gG0HqWROR0KCn2NA3OYjZ7S/+rCqtM8bPRCR/jHIJTYCcAGQWQmR8ZxK6sZ4I7Ul29UMJFQUPc4InqaROHEc9RiQ4YYJ61V3jBZOrCeZAGkFh7lGOaeICNdhNRrIDej4vm33T8Ohuc1QZ5zUuHFneuR9AU9fwTmVY0GAQBbpot4=
+	t=1715607701; cv=none; b=Zoca9JhV8Zp/sAl1PD+I3yjFx5vnWKnLd45CjTO7c3vmTxwoV8D3zpxdqNPhbrRuGwPMwckzOCZSacdTrChbzbAfxiQG/qaJ2QojChKHsKdb7GBhIVD9IJh+1E5U6GoDkOhv90SQ7P9j5ShpsD/feh23K36prwzgBFXc4JsQq/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715607698; c=relaxed/simple;
-	bh=1EI/UcsIVLUr0m8ZrGqAcbzizFxPtEW4md7T6LrXnWE=;
+	s=arc-20240116; t=1715607701; c=relaxed/simple;
+	bh=1vwhNLWQzWOw14LAEZi7EsnlB5e8SqSlplib0RuK460=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EB71WZPX2mw5AjbxKQ1LgfX1CNCfQ9adcwqo+APNmUm3zN48bFOyGlcU8o3xzSTiGs8YCr9LWdue010bA7rITkgcdzCTLBZbRtKPjOlkAxwmRxQQB319E1SJAQha4us5+pqXt87Vz4tRaSooL3SVm97kI31xxeK1E2UgoHhZfj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yMHlst5y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C1j0Z/kB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yMHlst5y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C1j0Z/kB; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTzYvKtbDitg79oEKxgTPT+uoWZRmw3oWhwZZUnL95gj3fl12u+u7/oJzduCRcBR14RAtXi9oBXwx5ccSaeTE6ulOMQ1JVEKEHpZG5RUa0aeAQ+AJB4Dnj/wP5E0uL3QnB9bnH+rYe/KRdWUsnBC18m/F7BflByjuyN2tovrVbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gCM+EfKK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdyZ2uNi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gCM+EfKK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdyZ2uNi; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6B27734A0C;
-	Mon, 13 May 2024 13:41:34 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 740D55C0E0;
+	Mon, 13 May 2024 13:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715607694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1715607697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MpIPmb5o1aje34T/34PjSM4GjKJ+lGMuc0t9GkRWB5U=;
-	b=yMHlst5ypLpWPlkTGlHOSLzZpgmEyvpkEsyZuapj6guclg3FXIou/gOLir/QP/JqWWx7p2
-	yILVUYWdsOvgpLssr7VWWarNztrkDlanMRJO3B3NpiwoLD3+NlQDbl74tBMlP+JujE8d50
-	QYCHtGrbJHyouul739bTlFH71Lpjqas=
+	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
+	b=gCM+EfKK1yd1U9Cibs0FoEYv8srOq28jiH6hSJ+QuuxUWBv9xgN13a6UByPu8WW8TLQjwU
+	sxhU7iki+aUAOqbjOomb+RMN2+gqNPdy6pzSGaboLushNkZXD9IPjVCVaC1IhIpd3KuAA4
+	Jxn73PG5O5eXCf3O6mwDQGtRCMQN+mg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715607694;
+	s=susede2_ed25519; t=1715607697;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MpIPmb5o1aje34T/34PjSM4GjKJ+lGMuc0t9GkRWB5U=;
-	b=C1j0Z/kBmcz4YMn1TbpL8HH7aweTYdWXd0PyiIzCZ6LxnO1+3Kyc3lc+od4ifhIJeYWXZn
-	hwFCLWTH5hWkuqAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yMHlst5y;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="C1j0Z/kB"
+	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
+	b=mdyZ2uNizmupVu8YQ6oQcqJdPVFtl1TN7WgfM4J7HlLXOvR47fENoOylA20z6vyY6hmNmQ
+	82XyVNcmcopduFCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gCM+EfKK;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mdyZ2uNi
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715607694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1715607697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MpIPmb5o1aje34T/34PjSM4GjKJ+lGMuc0t9GkRWB5U=;
-	b=yMHlst5ypLpWPlkTGlHOSLzZpgmEyvpkEsyZuapj6guclg3FXIou/gOLir/QP/JqWWx7p2
-	yILVUYWdsOvgpLssr7VWWarNztrkDlanMRJO3B3NpiwoLD3+NlQDbl74tBMlP+JujE8d50
-	QYCHtGrbJHyouul739bTlFH71Lpjqas=
+	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
+	b=gCM+EfKK1yd1U9Cibs0FoEYv8srOq28jiH6hSJ+QuuxUWBv9xgN13a6UByPu8WW8TLQjwU
+	sxhU7iki+aUAOqbjOomb+RMN2+gqNPdy6pzSGaboLushNkZXD9IPjVCVaC1IhIpd3KuAA4
+	Jxn73PG5O5eXCf3O6mwDQGtRCMQN+mg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715607694;
+	s=susede2_ed25519; t=1715607697;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MpIPmb5o1aje34T/34PjSM4GjKJ+lGMuc0t9GkRWB5U=;
-	b=C1j0Z/kBmcz4YMn1TbpL8HH7aweTYdWXd0PyiIzCZ6LxnO1+3Kyc3lc+od4ifhIJeYWXZn
-	hwFCLWTH5hWkuqAg==
+	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
+	b=mdyZ2uNizmupVu8YQ6oQcqJdPVFtl1TN7WgfM4J7HlLXOvR47fENoOylA20z6vyY6hmNmQ
+	82XyVNcmcopduFCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2384013A67;
-	Mon, 13 May 2024 13:41:34 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44F0E13A69;
+	Mon, 13 May 2024 13:41:37 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +AT8B44YQmYqDwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 13 May 2024 13:41:34 +0000
+	id iJXPEJEYQmabDwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 13 May 2024 13:41:37 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 93F6AA0891; Sun, 12 May 2024 09:38:12 +0200 (CEST)
-Date: Sun, 12 May 2024 09:38:12 +0200
+	id 2ACB1A089F; Sun, 12 May 2024 10:05:11 +0200 (CEST)
+Date: Sun, 12 May 2024 10:05:11 +0200
 From: Jan Kara <jack@suse.cz>
-To: David Howells <dhowells@redhat.com>
-Cc: Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ext4: Don't reduce symlink i_mode by umask if no ACL
- support
-Message-ID: <20240512073812.fkrbriddfvfj3igp@quack3>
-References: <1586868.1715341641@warthog.procyon.org.uk>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] fs: remove accidental overflow during wraparound check
+Message-ID: <20240512080511.yotlypw35qowwjoh@quack3>
+References: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com>
+ <20240509155356.w274h4blmcykxej6@quack3>
+ <CAFhGd8opxHhTdZhDg_hq7XWQFxJ34nLDxTd-nBBgye9BLohnqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1586868.1715341641@warthog.procyon.org.uk>
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 6B27734A0C
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFhGd8opxHhTdZhDg_hq7XWQFxJ34nLDxTd-nBBgye9BLohnqw@mail.gmail.com>
 X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	DATE_IN_PAST(1.00)[30];
+	DATE_IN_PAST(1.00)[29];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
@@ -129,63 +132,51 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_DN_SOME(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 740D55C0E0
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
 
-On Fri 10-05-24 12:47:21, David Howells wrote:
->     
-> If CONFIG_EXT4_FS_POSIX_ACL=n then the fallback version of ext4_init_acl()
-> will mask off the umask bits from the new inode's i_mode.  This should not
-> be done if the inode is a symlink.  If CONFIG_EXT4_FS_POSIX_ACL=y, then we
-> go through posix_acl_create() instead which does the right thing with
-> symlinks.
+On Thu 09-05-24 15:10:07, Justin Stitt wrote:
+> On Thu, May 9, 2024 at 8:53 AM Jan Kara <jack@suse.cz> wrote:
+> > > @@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+> > >       if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
+> > >               return -ENODEV;
+> > >
+> > > -     /* Check for wrap through zero too */
+> > > -     if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
+> > > +     /* Check for wraparound */
+> > > +     if (check_add_overflow(offset, len, &sum))
+> > > +             return -EFBIG;
+> > > +
+> > > +     /* Now, check bounds */
+> > > +     if (sum > inode->i_sb->s_maxbytes || sum < 0)
+> > >               return -EFBIG;
+> >
+> > But why do you check for sum < 0? We know from previous checks offset >= 0
+> > && len > 0 so unless we overflow, sum is guaranteed to be > 0.
 > 
-> However, this is actually unnecessary now as vfs_prepare_mode() has already
-> done this where appropriate, so fix this by making the fallback version of
-> ext4_init_acl() do nothing.
-> 
-> Fixes: 484fd6c1de13 ("ext4: apply umask if ACL support is disabled")
-> Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Max Kellermann <max.kellermann@ionos.com>
-> cc: Jan Kara <jack@suse.com>
-> cc: Christian Brauner <brauner@kernel.org>
-> cc: linux-ext4@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
+> Fair enough. I suppose with the overflow check in place we can no
+> longer have a sum less than zero there. If nothing else, it tells
+> readers of this code what the domain of (offset+len) is. I don't mind
+> sending a new version, though.
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
+Well, for normal readers offset+len is always a positive number. That's
+what you expect. If you see a check for offset+len < 0, you start wondering
+what are you missing... only to find you miss nothing and the check is
+pointless. So yes, please send a version without the pointless check.
 
 								Honza
 
-> ---
->  fs/ext4/acl.h |    5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
-> index ef4c19e5f570..0c5a79c3b5d4 100644
-> --- a/fs/ext4/acl.h
-> +++ b/fs/ext4/acl.h
-> @@ -68,11 +68,6 @@ extern int ext4_init_acl(handle_t *, struct inode *, struct inode *);
->  static inline int
->  ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
->  {
-> -	/* usually, the umask is applied by posix_acl_create(), but if
-> -	   ext4 ACL support is disabled at compile time, we need to do
-> -	   it here, because posix_acl_create() will never be called */
-> -	inode->i_mode &= ~current_umask();
-> -
->  	return 0;
->  }
->  #endif  /* CONFIG_EXT4_FS_POSIX_ACL */
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
