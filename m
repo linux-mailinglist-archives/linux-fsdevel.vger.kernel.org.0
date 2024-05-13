@@ -1,158 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-19367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DA28C4074
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 14:07:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFFE8C40E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 14:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFFD2B222ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 12:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE73D1C21634
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 12:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA4614F121;
-	Mon, 13 May 2024 12:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7sxbp21"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C573114F9C8;
+	Mon, 13 May 2024 12:41:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8C21C683;
-	Mon, 13 May 2024 12:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF47A3F;
+	Mon, 13 May 2024 12:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715602018; cv=none; b=hCRCDTVRnvpCxSfe/9GfIg2nLYn7fDyGjAyW0C2ZOlBIGX6wX6kZKSpj36no8Ro3mDKvIVCWb5JFv1FFJ6Pag4aZ+ZDD2X/iONLGYAN+fYKe9J5CLFhOjnhzq4yej+JYQE2p+k9FCejqGyH3qPUYrBHdXDMLDenGg1kJgNjlz2o=
+	t=1715604096; cv=none; b=PUZ9JNYl+SDWsxvRmybicCyh+xlw82mrwlWxkfCooFK7jenIgbMPPbsDHeNx2ESqzi2FvGEHS9PfxbUakR95k+UyaUJWwkhiS3tVuTH2JBlziRB1NrqRS438SpMJH47m/OkpxSf2mhZHXQyTf9qujeAWB6zam17z2kWc3CPPVow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715602018; c=relaxed/simple;
-	bh=xsGQyMUhP00Zqt+lGxpgG0zKx7Cp/SFFHHzkQaew4Tw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XylMEOPoPIm5NwGGwYEZtWyg5HGkYiO17goYXzfKaDleIm3YqRQqiwV5DEYTdLVGEjLCh4tYnYJLGXsSyNrR8Wn9jMfgVk6lK6asx3PVVJ1purS+NEzx9ezxMxyfEIDip5Qofv7KrwsyvpDjW/C0kzDowsr7fvYCffbIQ31OErg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7sxbp21; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1715604096; c=relaxed/simple;
+	bh=iyglkIQB6KKTyXDEKBd19IqLBit9NFZJ94NAOwpbG6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJCnDWW8OYyj6Nxlbem/glX2j+2DjxgxkASD48lCPgtr51n8Xs9Av5aAGw2GdWoY6TbpCl+u+NASQc7OoU/HRJ/FasEGp5p1nfV7yv7HlLFQmGVemWkbOIKXF1ka7F+6qT/iHF92ArBzQqyoe+gBG4QTO6ep+vlNkfMEUIssAqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f44b390d5fso3636965b3a.3;
-        Mon, 13 May 2024 05:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715602016; x=1716206816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fBSGhcRATGfWqcuw9ROtUQ71vyzWXEjjFm1V6NJTT0Y=;
-        b=G7sxbp21HgY1LTDbcJRH66MKoUEgrpgqH8tR3LAg6xR0iQOLW6PZZDN116bAuwCeE5
-         gzPieBqoi/Oa+yljXYB0TTgBQZPqIZwHMmzos1Enl6B1iARYZfgW+sfNTuTN4qHrbmbE
-         gPTIMxSJImVt+/AXtSlIN2brd9Wuorl5JrcRfbo+sjs+cKoNeNFBQNwBy6eucOVhiVO3
-         Pg5mRDLDZMnI8eEYWguoeiv1b/e36aamx+nISuLBflJg0qMTi/ivlT08ljvI+3IXsmEv
-         lXOJRw28eSH6YULrWQZnYUtgkeWNJKjYyU/oVqBaMwNBUxoa1OZXJ3fZMIofv0k2w+na
-         1f0g==
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ed96772f92so34888895ad.0;
+        Mon, 13 May 2024 05:41:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715602016; x=1716206816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fBSGhcRATGfWqcuw9ROtUQ71vyzWXEjjFm1V6NJTT0Y=;
-        b=N+vXe2ghc2gp8A6i32bTBmpCMshK0BxQxue/YDPRTwx1LTR5Ml0ZYurv16UzTd3Xzb
-         i1ADsiyfZQJ1oeVrGMKg1dfzn2TkxGkcVD2Jjk39RC3jb02RMj8I2Sv6RHPxV2CSC0n5
-         OYqTOjiXPiwGvcZh+x/qwQRRHVcM9Qk9VpvbO4GyNCtlfc9bZ1tU6EyHA74Me8TJFc1T
-         v/GJBZBL2XtZ9ZjoAF3qNMkHE1PGmmIbN6bflNiFB2LfzuvQSifxZR4XM1aVRAPsFeWE
-         Xvo1Z2U6j+FYJxmuumCBXucvL6N6FZogqs+R3h/EB8Lfzc5jk2Rz6VA+Ss1tW7aFTP9l
-         Bzuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtMo4T/1rBNBSJXtdXOT9EjigNUnhJVnheZ+W1J86UPHrVinKjSmZTa/f2KgKttNsetTZeQKggYBgLRMYMZgRnisNBUfKt7OSjpBjGag==
-X-Gm-Message-State: AOJu0YxmJeb+gaWxAOzQNfmv/ED8n3IKnZdiYbICLZunpi2HU1CBr2vw
-	Av+RMRP/bJzO913pOsLnUTspOYKlHE20e6zd+0KGtl/DNzsaRdCG3k8xElJz
-X-Google-Smtp-Source: AGHT+IFiCkyceinqWjKp3qasZ/AZ4ESi/IBe1hBQMdHCVdIO0QRYINlrHJFq9+4IMlcIsS6y2bNYsg==
-X-Received: by 2002:a05:6a20:3c87:b0:1a3:dd15:dacb with SMTP id adf61e73a8af0-1afde1d913cmr12462779637.52.1715602016566;
-        Mon, 13 May 2024 05:06:56 -0700 (PDT)
-Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-204-48.dynamic-ip.hinet.net. [220.143.204.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2b1esm7446131b3a.171.2024.05.13.05.06.54
+        d=1e100.net; s=20230601; t=1715604094; x=1716208894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OZp92t/tgjMWQaWxzSO1yWcazbBOvy/GSBsy+000DoM=;
+        b=o+4gqFsHXRthNNW2yWxpBI+vE6b73PSv3LEBaqoMzU7L0dm/jkqe6v1ajPbtIee5rU
+         rrQcOIO1p+2OytQknvFtlDPjsN7jF4+PVnSmJ2Xo6AYvh2w5CKlmZ4JRS4l2juOvUTdD
+         ZqaGFexrTK5qCECwciTj+TXG0onAcYTUevt0zfLAkx5891meOBriPEmTTBiFLmNxtzUA
+         LRtAYEcUITkWCBe8Vtwx/+pGIdDSdBQQAubekxhuaQpzRPVkWMA8zq8b2Be3zpjLHSdU
+         ShhLO9awz7hv7XncVbpsGCBLdK1iyG3kNdR9LqBG1GxRsRe0Q4E5O439G3xjRHMQrqwS
+         l+Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgGxD/6NZXPlm4eMH+O4E3c0mpeFdmD1WkBI3W0pEzCihH+ssLEUGciw2KAyjOn1ylbI66GxQ1N7OpoRXnbNwwnc8ILAPb0iJgqRIv2Yq9FX6H9HX55oDncqpYamfyulu5V/afDDLpWovNGA==
+X-Gm-Message-State: AOJu0YzWEwekx6gRHr+T/QOy8JCMDbpIYPt0PNyxXK1UDylVm6avqxhh
+	NUWXVBdweM9b+4JUG8+Um4D0NSoJm1Z4nkMWWQ9G8FJnY5RjsDKP+ir73Q==
+X-Google-Smtp-Source: AGHT+IE7aa4u4QpBkiILchc0FDFHWWiO9+3qmI5b1zK7BIR0L0QmBwhkx37Y1en0D0GVN27befm3ag==
+X-Received: by 2002:a17:903:2301:b0:1eb:14e3:5d6e with SMTP id d9443c01a7336-1ef43d2ecbfmr116229015ad.31.1715604094367;
+        Mon, 13 May 2024 05:41:34 -0700 (PDT)
+Received: from gmail.com (c-71-195-205-98.hsd1.ut.comcast.net. [71.195.205.98])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c037520sm78361715ad.194.2024.05.13.05.41.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 05:06:56 -0700 (PDT)
-From: Adrian Huang <adrianhuang0701@gmail.com>
-X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Jiwei Sun <sunjw10@lenovo.com>,
-	Adrian Huang <ahuang12@lenovo.com>
-Subject: [PATCH 2/2] genirq/proc: Refine percpu kstat_irqs access logic
-Date: Mon, 13 May 2024 20:05:48 +0800
-Message-Id: <20240513120548.14046-3-ahuang12@lenovo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240513120548.14046-1-ahuang12@lenovo.com>
-References: <20240513120548.14046-1-ahuang12@lenovo.com>
+        Mon, 13 May 2024 05:41:33 -0700 (PDT)
+Date: Mon, 13 May 2024 13:41:32 +0100
+From: Breno Leitao <leitao@debian.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: paulmck@kernel.org,
+	"open list:FUSE: FILESYSTEM IN USERSPACE" <linux-fsdevel@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fuse: annotate potential data-race in num_background
+Message-ID: <ZkIKfFs-0lfflzV-@gmail.com>
+References: <20240509125716.1268016-1-leitao@debian.org>
+ <CAJfpeguh9upC5uqcb3uetoMm1W7difC86+-BxZZPjkXa-bNqLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguh9upC5uqcb3uetoMm1W7difC86+-BxZZPjkXa-bNqLg@mail.gmail.com>
 
-From: Adrian Huang <ahuang12@lenovo.com>
+Hello Miklos,
 
-There is no need to accumulate all CPUs' kstat_irqs to determine whether
-the corresponding irq should be printed. Instead, stop the iteration
-once one of kstat_irqs is nonzero.
+On Fri, May 10, 2024 at 11:21:19AM +0200, Miklos Szeredi wrote:
+> On Thu, 9 May 2024 at 14:57, Breno Leitao <leitao@debian.org> wrote:
+> 
+> > Annotated the reader with READ_ONCE() and the writer with WRITE_ONCE()
+> > to avoid such complaint from KCSAN.
+> 
+> I'm not sure the write side part is really needed, since the lock is
+> properly protecting against concurrent readers/writers within the
+> locked region.
 
-In addition, no need to check if kstat_irqs address is available
-for each iteration when printing each CPU irq statistic.
+I understand that num_background is read from an unlocked region
+(fuse_readahead()).
 
-Tested-by: Jiwei Sun <sunjw10@lenovo.com>
-Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
----
- kernel/irq/proc.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+> Does KCSAN still complain if you just add the READ_ONCE() to fuse_readahead()?
 
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 623b8136e9af..bfa341fac687 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -461,7 +461,7 @@ int show_interrupts(struct seq_file *p, void *v)
- {
- 	static int prec;
- 
--	unsigned long flags, any_count = 0;
-+	unsigned long flags, print_irq = 1;
- 	int i = *(loff_t *) v, j;
- 	struct irqaction *action;
- 	struct irq_desc *desc;
-@@ -488,18 +488,28 @@ int show_interrupts(struct seq_file *p, void *v)
- 	if (!desc || irq_settings_is_hidden(desc))
- 		goto outsparse;
- 
--	if (desc->kstat_irqs) {
--		for_each_online_cpu(j)
--			any_count |= data_race(*per_cpu_ptr(desc->kstat_irqs, j));
-+	if ((!desc->action || irq_desc_is_chained(desc)) && desc->kstat_irqs) {
-+		print_irq = 0;
-+		for_each_online_cpu(j) {
-+			if (data_race(*per_cpu_ptr(desc->kstat_irqs, j))) {
-+				print_irq = 1;
-+				break;
-+			}
-+		}
- 	}
- 
--	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
-+	if (!print_irq)
- 		goto outsparse;
- 
- 	seq_printf(p, "%*d: ", prec, i);
--	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", desc->kstat_irqs ?
--					*per_cpu_ptr(desc->kstat_irqs, j) : 0);
-+
-+	if (desc->kstat_irqs) {
-+		for_each_online_cpu(j)
-+			seq_printf(p, "%10u ", *per_cpu_ptr(desc->kstat_irqs, j));
-+	} else {
-+		for_each_online_cpu(j)
-+			seq_printf(p, "%10u ", 0);
-+	}
- 
- 	raw_spin_lock_irqsave(&desc->lock, flags);
- 	if (desc->irq_data.chip) {
--- 
-2.25.1
+I haven't checked, but, looking at the documentation it says that both part
+needs to be marked. Here is an example very similar to ours here, from
+tools/memory-model/Documentation/access-marking.txt
 
+	Lock-Protected Writes With Lockless Reads
+	-----------------------------------------
+
+	For another example, suppose a shared variable "foo" is updated only
+	while holding a spinlock, but is read locklessly.  The code might look
+	as follows:
+
+		int foo;
+		DEFINE_SPINLOCK(foo_lock);
+
+		void update_foo(int newval)
+		{
+			spin_lock(&foo_lock);
+			WRITE_ONCE(foo, newval);
+			ASSERT_EXCLUSIVE_WRITER(foo);
+			do_something(newval);
+			spin_unlock(&foo_wlock);
+		}
+
+		int read_foo(void)
+		{
+			do_something_else();
+			return READ_ONCE(foo);
+		}
+
+	Because foo is read locklessly, all accesses are marked.
+
+
+From my understanding, we need a WRITE_ONCE() inside the lock, because
+the bg_lock lock in fuse_request_end() is invisible for fuse_readahead(),
+and fuse_readahead() might read num_backgroud that was writen
+non-atomically/corrupted (if there is no WRITE_ONCE()).
+
+That said, if the reader (fuse_readahead()) can handle possible
+corrupted data, we can mark is with data_race() annotation. Then I
+understand we don't need to mark the write with WRITE_ONCE().
+
+Here is what access-marking.txt says about this case:
+
+	Here are some situations where data_race() should be used instead of
+	READ_ONCE() and WRITE_ONCE():
+
+	1.      Data-racy loads from shared variables whose values are used only
+		for diagnostic purposes.
+
+	2.      Data-racy reads whose values are checked against marked reload.
+
+	3.      Reads whose values feed into error-tolerant heuristics.
+
+	4.      Writes setting values that feed into error-tolerant heuristics.
+
+
+Anyway, I am more than happy to test with only a READ_ONLY() in the
+reader side, if that the approach you prefer.
+
+Thanks!
 
