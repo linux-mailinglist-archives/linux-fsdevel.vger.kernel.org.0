@@ -1,255 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-19382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCBD8C4464
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 17:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0A88C44B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 17:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB3091F2475D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 15:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46F0E1C21690
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 15:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032E2153BF6;
-	Mon, 13 May 2024 15:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5CE155323;
+	Mon, 13 May 2024 15:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IdeoNtpS"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OsAtQRCf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE86153500
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 15:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FCB155322
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 15:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715614665; cv=none; b=i7EVhpEJ0cR34TNoaGcn+ggvPLP10gfblhUURo9JpsL0kP6BSCAiuI7FtkYnVM2/niBAgS768msYHo7lo/lyCXjzpRBYpSiKJuqG/Lfp7eWg2kExZkKOq6noX8hU197/F0r0NfD6T2LZOc/GpkMbCQ3hLcu5D8ZjppkqmK7UhSA=
+	t=1715615935; cv=none; b=FkL6rpyIgwxXgBGoOCgFSELWjN9fE1InOmTGt39jycZCpGtSn7XC2T+4spe2gdc8BdBz8Iuks5ulw+IJm7bkfAiIhaGr3bsjU3BPwsGzMGjpTB0PHeU29k34ylNgi+tZUldn7hlNibdiazJAfbLh62aQtjLtd5pnc8WX9ODtOUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715614665; c=relaxed/simple;
-	bh=uyyw+toTPJDowzp241v5LlMsgBGLrNOoFcg8By35fz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dPKmTympIa3eI19IshJtC5sdb4c4OwAfS/1Dsusuah2Fkytl5xk0RlkX251jergQCQg4DHpECSRFTRCQBadWhYhX4WXkLPCBslBX0XrOxMKxKwuQiLSr4Tj1jbwuc9QlfYVBnQvOpkeradsVasiz5ADRx5uTWCmT+GC0fPruzDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IdeoNtpS; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715614663; x=1747150663;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uyyw+toTPJDowzp241v5LlMsgBGLrNOoFcg8By35fz0=;
-  b=IdeoNtpSdA0mF0Ae3TErnavmw713EGqh1zzmbsvxzBil/AajI/eqMN3h
-   mARoPA89oedC8MVNgP6COCO6qDeOFYm1ZjxUytFeQJvCmF9ebdq8YoUM7
-   kcbnUCxih20/411MmnhbjzBXRrZL/FwkdpAlYG6u6kFxrlgI5SJ3NPqnx
-   JhkRHMofS1NdXUAw1hrV/8R+1xVqcznallk/beasNPa41/NYCMsQhzeqA
-   U1wYuakU3kzk6xL0UN2frDbbwiZb1CDWNI133Y2VIEZo0jTJiNznFXsdj
-   YN9UL7YylMoFnfkfW3N42x6BaGIB1ze2VvpfO3XQal2NZy5ep0PBS4X5V
-   Q==;
-X-CSE-ConnectionGUID: z1GbA3igR22tonY/hDe55Q==
-X-CSE-MsgGUID: uyNc76QrQRudGJUyjIMJmQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11430749"
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="11430749"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 08:37:43 -0700
-X-CSE-ConnectionGUID: 62UIxe0UTxGVBloKJFgdvQ==
-X-CSE-MsgGUID: RPSSrmOaRoqsIbbiYqtiGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="61208577"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 13 May 2024 08:37:40 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s6XkA-000APr-0Q;
-	Mon, 13 May 2024 15:37:38 +0000
-Date: Mon, 13 May 2024 23:37:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hongbo Li <lihongbo22@huawei.com>, richard@nod.at,
-	anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-um@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	lihongbo22@huawei.com
-Subject: Re: [PATCH] hostfs: convert hostfs to use the new mount api
-Message-ID: <202405132349.LJ3Qx7on-lkp@intel.com>
-References: <20240513124141.3788846-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1715615935; c=relaxed/simple;
+	bh=oBJ137LRijXux97+FLE5JyhZTRarw/l53g6qNfP07HY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VKiexcOZNZmA5RimPwen6cGHJkI9E+fAG1hDBuUWUQyj7hft7PYPfD3rK/DaK0amD89LpsmbNTR6LJvGp3+Zd9k7pPQD/Amg1hnM02BRx5NUiku3qw3v8ks1zjb3VfeNCX16M+cFLjyN4HmIsFJdi1cqlme6R8TTO4lXgEmRoW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OsAtQRCf; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59a352bbd9so746905466b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 08:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715615931; x=1716220731; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ypCPkWAVlTZ8y4R+nvEYeO8W5uHWbd8eZTRWk2xCKY=;
+        b=OsAtQRCfbgUr2jWAXf+8Rysk57EZJM1CHqQI2beYLIhK5MRXmpWl00EPOUq9eudV3a
+         grZosT20EWmZE8/OX7q1qdHqeeejRb+N5gawpu2q7go82c50UkrNvdLEt0/CA/6Pl5LA
+         yLz1vWNkrU2oiHc9U4G7NHpQXmKJPTM0yDbmA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715615931; x=1716220731;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ypCPkWAVlTZ8y4R+nvEYeO8W5uHWbd8eZTRWk2xCKY=;
+        b=lG2rrQv9f7djDDvms06MOWzRZH3Uwph7Pyr/uZIDqQWMtudLpgVIT1wjChGcR1Do5k
+         votVjuFR3mRQLEt+2AXoUAELEvsucRsTr1ruKsBm2sIHiVKyoLEeT7CBKyh6CIB1w1MP
+         NXBlrxmW8bhH6mdsOQ+agzNdcuN2WHBBFkrRd9OlLKZbmmw7e8ycijsm/omz6XiyPsLp
+         YWuaWVMQwY3r3JzxFzvFdN8NArw/U89ItszJJOfi3FJxI1bag7/poUI58IUeNxKL1G1P
+         o3ZtdGTWHmqfU+leUV8c+3aNNhdFIgTiezVF27K/crZM4cf/7xvDnRzTVOWZEjL/uK2w
+         33uA==
+X-Forwarded-Encrypted: i=1; AJvYcCVo7Xq0XYuo8Ea5pmvAv50tOB39iYpBcEkuVJnKF4Q6FcBgF+tHVjBymwAOJp4i5RUJFQJiE4SKoJssuojUKpkXNgI0oCwCpVATbjYemQ==
+X-Gm-Message-State: AOJu0YyeyKNM0EkaLAscH8eWfCDxrUR4vuBO6jBaudL5VzvM6it2GbWm
+	cVTaCd3V34wZMN/2aZqQdYgszIhCC5/+lhJKj124Ij0kmJufbKkcsPoF7Vup7Y6mpMp82EtcZZL
+	ZnVs=
+X-Google-Smtp-Source: AGHT+IFTe0HaSJHTCjhTChVQUpp2ApByq9egff8DMzXbK8BWLs8+zcJ34gHOPwZSUaTchriCtxfSLg==
+X-Received: by 2002:a17:906:2845:b0:a59:f2d2:49b1 with SMTP id a640c23a62f3a-a5a2d1b0df0mr835358366b.9.1715615931372;
+        Mon, 13 May 2024 08:58:51 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17891f87sm607100166b.65.2024.05.13.08.58.50
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 08:58:50 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a609dd3fso781441466b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 08:58:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXhqYaZARd0YsR3/OLP/LD13pZ35t3bytP5i48P1wCp4qNYlSZ8+nfC3kJ6P3FuJ6snPPxL/SRdF4+XgLQWyy2OD6Me3kEZPf1MQ0NV2Q==
+X-Received: by 2002:a17:906:2449:b0:a59:9dd7:35fa with SMTP id
+ a640c23a62f3a-a5a2d3177fcmr814409866b.37.1715615929991; Mon, 13 May 2024
+ 08:58:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513124141.3788846-1-lihongbo22@huawei.com>
+References: <CAHk-=whvo+r-VZH7Myr9fid=zspMo2-0BUJw5S=VTm72iEXXvQ@mail.gmail.com>
+ <20240511182625.6717-2-torvalds@linux-foundation.org> <CAHk-=wijTRY-72qm02kZAT_Ttua0Qwvfms5m5NbR4EWbS02NqA@mail.gmail.com>
+ <20240511192824.GC2118490@ZenIV> <a4320c051be326ddeaeba44c4d209ccf7c2a3502.camel@HansenPartnership.com>
+ <20240512161640.GI2118490@ZenIV> <CAHk-=wgU6-AMMJ+fK7yNsrf3AL-eHE=tGd+w54tug8nanScyPQ@mail.gmail.com>
+ <20240513053140.GJ2118490@ZenIV>
+In-Reply-To: <20240513053140.GJ2118490@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 13 May 2024 08:58:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgZU=TFEeiLoBjki1DJZEBWUb00oqJdddTCJxsMZrJUfQ@mail.gmail.com>
+Message-ID: <CAHk-=wgZU=TFEeiLoBjki1DJZEBWUb00oqJdddTCJxsMZrJUfQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: move dentry shrinking outside the inode lock in 'rmdir()'
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, brauner@kernel.org, jack@suse.cz, 
+	laoar.shao@gmail.com, linux-fsdevel@vger.kernel.org, longman@redhat.com, 
+	walters@verbum.org, wangkai86@huawei.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Hongbo,
+On Sun, 12 May 2024 at 22:31, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Recall what d_delete() will do if you have other references.
+> That's why we want shrink_dcache_parent() *before* d_delete().
 
-kernel test robot noticed the following build warnings:
+Ahh. Yes. So with the shrinking done after as my patch, that means
+that now the directory that gets removed is always unhashed.
 
-[auto build test WARNING on uml/next]
-[also build test WARNING on wireless-next/main wireless/main linus/master v6.9 next-20240513]
-[cannot apply to uml/fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> BTW, example of the reasons why d_delete() without directory being locked
+> is painful
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hongbo-Li/hostfs-convert-hostfs-to-use-the-new-mount-api/20240513-204233
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux next
-patch link:    https://lore.kernel.org/r/20240513124141.3788846-1-lihongbo22%40huawei.com
-patch subject: [PATCH] hostfs: convert hostfs to use the new mount api
-config: um-allnoconfig (https://download.01.org/0day-ci/archive/20240513/202405132349.LJ3Qx7on-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240513/202405132349.LJ3Qx7on-lkp@intel.com/reproduce)
+Oh, I would never suggest moving the d_delete() of the directory being
+removed itself outside the lock.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405132349.LJ3Qx7on-lkp@intel.com/
+I agree 100% on that side.
 
-All warnings (new ones prefixed by >>):
+That said, maybe it's ok to just always unhash the directory when
+doing the vfs_rmdir(). I certainly think it's better than unhashing
+all the negative dentries like the original patch did.
 
-   In file included from fs/hostfs/hostfs_kern.c:13:
-   In file included from include/linux/pagemap.h:11:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from fs/hostfs/hostfs_kern.c:13:
-   In file included from include/linux/pagemap.h:11:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from fs/hostfs/hostfs_kern.c:13:
-   In file included from include/linux/pagemap.h:11:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> fs/hostfs/hostfs_kern.c:956:6: warning: variable 'host_root' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     956 |         if (fc->source == NULL)
-         |             ^~~~~~~~~~~~~~~~~~
-   fs/hostfs/hostfs_kern.c:960:44: note: uninitialized use occurs here
-     960 |                 kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
-         |                                                          ^~~~~~~~~
-   fs/hostfs/hostfs_kern.c:956:2: note: remove the 'if' if its condition is always true
-     956 |         if (fc->source == NULL)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-     957 |                 host_root = "";
-   fs/hostfs/hostfs_kern.c:942:17: note: initialize the variable 'host_root' to silence this warning
-     942 |         char *host_root;
-         |                        ^
-         |                         = NULL
-   13 warnings generated.
+Ho humm. Let me think about this some more.
 
+We *could* strive for a hybrid approach, where we handle the common
+case ("not a ton of child dentries") differently, and just get rid of
+them synchronously, and handle the "millions of children" case by
+unhashing the directory and dealing with shrinking the children async.
 
-vim +956 fs/hostfs/hostfs_kern.c
+But now it's the merge window, and I have 60+ pull requests in my
+inbox, so I will have to go back to work on that.
 
-   937	
-   938	static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
-   939	{
-   940		struct hostfs_fs_info *fsi = sb->s_fs_info;
-   941		struct inode *root_inode;
-   942		char *host_root;
-   943		int err;
-   944	
-   945		sb->s_blocksize = 1024;
-   946		sb->s_blocksize_bits = 10;
-   947		sb->s_magic = HOSTFS_SUPER_MAGIC;
-   948		sb->s_op = &hostfs_sbops;
-   949		sb->s_d_op = &simple_dentry_operations;
-   950		sb->s_maxbytes = MAX_LFS_FILESIZE;
-   951		err = super_setup_bdi(sb);
-   952		if (err)
-   953			return err;
-   954	
-   955		/* NULL is printed as '(null)' by printf(): avoid that. */
- > 956		if (fc->source == NULL)
-   957			host_root = "";
-   958	
-   959		fsi->host_root_path =
-   960			kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
-   961		if (fsi->host_root_path == NULL)
-   962			return -ENOMEM;
-   963	
-   964		root_inode = hostfs_iget(sb, fsi->host_root_path);
-   965		if (IS_ERR(root_inode))
-   966			return PTR_ERR(root_inode);
-   967	
-   968		if (S_ISLNK(root_inode->i_mode)) {
-   969			char *name;
-   970	
-   971			iput(root_inode);
-   972			name = follow_link(fsi->host_root_path);
-   973			if (IS_ERR(name))
-   974				return PTR_ERR(name);
-   975	
-   976			root_inode = hostfs_iget(sb, name);
-   977			kfree(name);
-   978			if (IS_ERR(root_inode))
-   979				return PTR_ERR(root_inode);
-   980		}
-   981	
-   982		sb->s_root = d_make_root(root_inode);
-   983		if (sb->s_root == NULL)
-   984			return -ENOMEM;
-   985	
-   986		return 0;
-   987	}
-   988	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+                  Linus
 
