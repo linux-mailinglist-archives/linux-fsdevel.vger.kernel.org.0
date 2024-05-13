@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-19393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5268C47A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 21:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AD98C479E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 21:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA0282867AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 19:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01132286845
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 19:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9477E792;
-	Mon, 13 May 2024 19:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AF57E579;
+	Mon, 13 May 2024 19:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8vkNDMV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzvqKrK4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7455B78C9A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E04977F13;
 	Mon, 13 May 2024 19:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715629081; cv=none; b=rW8j8ndVWPY0iZHPY3P/Jnlq1IZ37OB7JBzf4c/S5jOh/6/oNg+LFIF22YbwJgal/YRsGfq7iTeV2YW+FE9hCBA0mhsYngn1LkGFR4UaPAQxg5GeBxAVaOz7XVG+1tyHrygInQBBgA0tQXdukLttCXFszuI9iDJd7dhIG01WHo4=
+	t=1715629081; cv=none; b=QOTcAGWd5OsPENOpZ/38pmXcSr6lVi3aKdYcpMxc9qg1lD/+FRalo4KU3VCQ+G28cdmA7ZGjDireMQFlYDo/kLS0/h1wZkOQwcKhr3o/9I+I8IOygUS1yKGLyYqNdwJBaxVmPYGD1GnoF0MWf/LiRqpTfIVVxldM+z5EwbdlJe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715629081; c=relaxed/simple;
-	bh=NcE4Nd0uAiimxmylBb4e1zBo6KOSfe1ejzAkLShvFSg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=P9rAjzHIPNHtEafbX1HUnkSHSHhdN357JOYzdcWOsshebRPhiwGQzO4phg2E9nGAAh+yN6u0aD1bWW0eEr36On0O11bV8+nqjghmqHDrLocLknrI8t0xjUzozPeYuFLfm3npjpIYJ7jP98QeOi63Uv3lRvaKbxwRUjlHzX+PBw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8vkNDMV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C1B9C4AF0E;
+	bh=jxNMR4aPWxyI1qydG2otq7UgvsJDosqofpj/0kSuUr8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=SbTuOGmSkzkXTwkmdIGFA92d9hy1o02rjiERHgXa3yuqiwYnEHTLbJGbSLLtjVgu0AxG7A6uhUsZGAGa/qf0pESyT/BjdVAo/rlVBR7wUYjxwA4P3pZJGOkxCp6bA/JuUB8Oyq3C3JAc7tOdIkoQYJsbTnFl5RmUfMVd86Xp2CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzvqKrK4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27B9CC32786;
 	Mon, 13 May 2024 19:38:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715629081;
-	bh=NcE4Nd0uAiimxmylBb4e1zBo6KOSfe1ejzAkLShvFSg=;
+	bh=jxNMR4aPWxyI1qydG2otq7UgvsJDosqofpj/0kSuUr8=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=f8vkNDMVf8e4/KvLJP2grjnkiuOt4S2r68YEGOiIciqBvCZU+3VGsdDuqYRWCDh0R
-	 LEW9h5y92ihWoi+5ej9kDru8gxI4+N6EuB9BPGAgAS8iWjXNGs4FlHJ9B6cFebCmLJ
-	 GtgNtuxKsS+9KfkkTZgHdb+1yncZpkyvLTKB5MkyAUujp5JKWrjminTXfHAx2gc2sz
-	 mDd1vyB7MZbdXSO8zeze0IWYACfkLQzGWpD9Z7kJ0FPVHdYMkEnKMi2SPqL+tIiXNK
-	 M6yU+gO5VDU9P1qhttZIYkr+Lp+IRBLSP0AkWvO6+IcpHzM+D/TnTAtAjo8bTcDH87
-	 zZEvxvDdiFRLw==
+	b=EzvqKrK4B/cBoDv1ERCNg5lb3jmYUqzAEQhz+MYUKovQsKfwMuWi1M7mtkY6SoUWA
+	 RjXJ+I3L7RTb8owBRH2SI0WxmpoKPwzFWx94ezs7HdUd/cJMKReI2GmzQHTCmIy7MF
+	 +Elel7qLCWRH7PHCmg/DUtmPLpNNXkYFYQqGnp3eWhis/eSjfbZ8Fni7yMZbNObSLK
+	 cBhCDddn6OndvB3jhETEfuMrExg6WrcZLsUS2shK+uojOTfdB2m8ZpA8soZzmpVu4M
+	 0+6rXlGtRIziNN/psu2ZsyLoWb6ARh9B4BysMOAZiN6qmVyKRaD835cic5vEPH54eM
+	 Gk5YEiGFV/c+g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 43964C433F2;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1BC03C43443;
 	Mon, 13 May 2024 19:38:01 +0000 (UTC)
-Subject: Re: [GIT PULL] vfs rw
+Subject: Re: [GIT PULL] vfs netfs
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240510-vfs-rw-332f4a8e1772@brauner>
-References: <20240510-vfs-rw-332f4a8e1772@brauner>
+In-Reply-To: <20240510-vfs-netfs-f805bdd4c8ad@brauner>
+References: <20240510-vfs-netfs-f805bdd4c8ad@brauner>
 X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240510-vfs-rw-332f4a8e1772@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10.rw
-X-PR-Tracked-Commit-Id: 3a93daea2fb27fcefa85662654ba583a5d0c7231
+X-PR-Tracked-Message-Id: <20240510-vfs-netfs-f805bdd4c8ad@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10.netfs
+X-PR-Tracked-Commit-Id: e2bc9f6cfbd62c72a93a70068daab8886bec32ce
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f4e8d80292859809ea135e9f4c43bae47e4f58bc
-Message-Id: <171562908127.8710.6703268997469345175.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: ef31ea6c2774c015946d2ffa26795766f7caaa42
+Message-Id: <171562908110.8710.14690901939724304863.pr-tracker-bot@kernel.org>
 Date: Mon, 13 May 2024 19:38:01 +0000
 To: Christian Brauner <brauner@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -64,12 +64,12 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 10 May 2024 13:47:17 +0200:
+The pull request you sent on Fri, 10 May 2024 13:47:02 +0200:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10.rw
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10.netfs
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f4e8d80292859809ea135e9f4c43bae47e4f58bc
+https://git.kernel.org/torvalds/c/ef31ea6c2774c015946d2ffa26795766f7caaa42
 
 Thank you!
 
