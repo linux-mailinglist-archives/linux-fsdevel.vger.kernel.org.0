@@ -1,87 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-19359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3978A8C39F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 03:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E128C8C3A4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 04:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8FC1C20BC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 01:58:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EB0281304
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 02:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC27985C4E;
-	Mon, 13 May 2024 01:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00CF145B3E;
+	Mon, 13 May 2024 02:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BYer6LtP"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cKQHOIMx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4521CD3C;
-	Mon, 13 May 2024 01:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F1A145B05
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 02:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715565502; cv=none; b=tTafVkhvzQgdyzftLKyi3hkl2JL8ZAYSJBMm5e2IKre8Z2kgJEQqmVEXVDYmfE8tDXwnb8sgwSwNIqEi0AVp6z9lW4K007w8zRFsQ11BAAWy3piTr9F6Dy4xNVp7NUu2XFe3KFUT66zpiP88lBAt/4q4aZ77rBxS/mV3EXJnJyk=
+	t=1715569085; cv=none; b=AVG6Hy3/OeMWdZ+4NzK5AKAcs2eJaepvijaDXku10rSX4PCdVDmnzpQZiOxzmO1ykTswzJY7mTqL9uJmAapn6kwKcVRZPnYeGQSd4xRlQvILupc/aGu/uAyjctLx+trN8f/l/2C7ViIgDwjiOHi91lyQ+A4abnpJ2Q6V3SDKwEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715565502; c=relaxed/simple;
-	bh=fyY0P/QS5R7Bfe+5ZcrYudncU7jjbKFsnZi8VgoqjaI=;
+	s=arc-20240116; t=1715569085; c=relaxed/simple;
+	bh=5/Wrwj94XGzMh/USGtQK2NQHsvhIlya9spYECq7GesU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V11ed4SmL0f5MWI1jRqflwgLnGfvMaJXO4LGLLPqsWlOT+++IIMAWAzGteziIY9nymKFAgFxkHJxd8s8T3/vTNNhAYVj1bOpUcS7g48s2qnmEjRMCgNuCohz/SBDQgJx6DJh6ZXMvf5X5kYb/NALEuSA5mjMdEOCrJVRHo5us0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BYer6LtP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+pT0sFnbnn1DgXXIuOY5zjQhw9QepWjWMgcKH5jB72M=; b=BYer6LtPStmT5hBQU5725ABYVc
-	6N70oIDS5bzoIx98v3HsQMBddbfcZkg8eK0HzzJnrSPStqb6vKFrwR9lOdZODBELZl/GkP7UXc4r2
-	x+Mep9WPtYln0ONcqjOfI1Y7T/U4n4TpQQ7lo+VMLaRFrDe9I0VuwrbIarFYKH1kIn6igDb7OWSmW
-	V0BMzTeJGL1wl7WJdEGhiAVwWo8dOxukMZbNY7n0wKQOWABURZ3OJyVg6xcccookXrTToUxsMUVpd
-	Ng7/Q/RI0yYe8sUIT3ApcnU/8LskE/L0lLdOEd6cdC/WMcBdaTp0HurRlKggupc4E/wuHEAT1mK/5
-	DnWqggIQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s6Kx7-00000007XJc-43Y1;
-	Mon, 13 May 2024 01:58:09 +0000
-Date: Mon, 13 May 2024 02:58:09 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, lsf-pc@lists.linux-foundation.org,
-	kdevops@lists.linux.dev,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, linux-cxl@vger.kernel.org,
-	Jan Kara <jack@suse.cz>
-Subject: Re: kdevops BoF at LSFMM
-Message-ID: <ZkFzsT1cEztffVa4@casper.infradead.org>
-References: <CAB=NE6XyLS1TaAcgzSWa=1pgezRjFoy8nuVtSWSfB8Qsdsx_xQ@mail.gmail.com>
- <CAOQ4uxigKrtZwS4Y0CFow0YWEbusecv2ub=Zm2uqsvdCpDRu1w@mail.gmail.com>
- <Zjug3BqYyW3hrMdy@bombadil.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOC/Q8kfqkrkyejMd4YRJ9wbXsxs9qxhpL2ZPY+ppABpeRnXz+Bfh1B/NP630VgKIJtJzykdqWE4qHg1KZzmLZnRdDRvWYd6HDF/TLe6yjfF8x9mnW2EJaPK+X2bEgkBxWKC+lGFMPhzBUOMPIgJO2uLPruOiMsJBy/kZENim4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cKQHOIMx; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f4302187c0so3319568b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2024 19:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715569083; x=1716173883; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Y/lu5TaLovMBUI69zhtefvoAbFIExvkJe/gVrMPa9Rs=;
+        b=cKQHOIMxV78kC1JWKtcW80dRgdB66xbP0vf8dHiMTk2wRECFhIL+vO5Tq5bphu3oa5
+         fe2qdkchDkYkUTXPTMpn+DAmNH0SoCsezfwHGGg/tqTTzJC1wot+R1jQnIXmoZSIFxHX
+         ZKgx13sjqPUHQT1PV04bFxtlUQwIkvEsyIyRA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715569083; x=1716173883;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/lu5TaLovMBUI69zhtefvoAbFIExvkJe/gVrMPa9Rs=;
+        b=oVykwhZ6yGY1fUybVB0l2IEytBLpU1nRBRdrxAmr8iwgd1PBvJ+T+YmeoKb/xnh2Fm
+         76cSGealWYdJo2k0tJjfwUpSf50UhcYSWDjvaV3rEpE0QouZgOEIyF8dRURe6k399meZ
+         OuWnyXnK/PR9uGkP/byjkC9CNchbEsXl22WYlDokE0pvf+lV4xkBbSiwkQhrNOTGpvn9
+         N7KT7iroPJQTihIXOjMn3jYaNJykbSIC9iu7nm2MQNug9YNYbNjA7j6i8bkR2b33m21H
+         j6pVAFM0RcsBWl750Mt462GXnvRWqR3zhfH4e6soYZHZmmlOpgNSKbiuhfx1tqT4a+qg
+         qoFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwrsnBxKjAl4MN9y7OBpPBPKmr/2tPvnr8qJhvJfCrzALiPdSd2c3IH4Ia0qE9h9TSQzcuM/eIDqvkeHbqqnxdGcBFDV9OYt+JWXAwpA==
+X-Gm-Message-State: AOJu0YzED2dUdupx3xBv4oWBNgPR0HOnonWlrBreVNDLd4nPlDOfjPGG
+	oWYJZZA5Ff/LUEDMLgfboCgT+7u/i/G+e3Eq5PjE/pxkcZx0ZuhQ69sXK2s4OA==
+X-Google-Smtp-Source: AGHT+IEKZ/LshmwPejdGxanAmq+x/Okf3LXGs+1GNXJLM4QWlBn90rXQR1Oeyq1KkYKRq0CgAkrYow==
+X-Received: by 2002:a05:6a21:1505:b0:1ad:7e68:570c with SMTP id adf61e73a8af0-1afde07d801mr12977761637.4.1715569082704;
+        Sun, 12 May 2024 19:58:02 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2fa86sm6335827b3a.213.2024.05.12.19.58.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 19:58:00 -0700 (PDT)
+Date: Sun, 12 May 2024 19:57:58 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, kexec@lists.infradead.org,
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev,
+	lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <202405121955.BC922680BA@keescook>
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <20240424201234.3cc2b509@kernel.org>
+ <202405080959.104A73A914@keescook>
+ <CGME20240511095125eucas1p1e6cd077a31c94dcdda88967d4ffc9262@eucas1p1.samsung.com>
+ <8d1daa64-3746-46a3-b696-127a70cdf7e7@t-8ch.de>
+ <20240512193240.kholmilosdqjb52p@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Zjug3BqYyW3hrMdy@bombadil.infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240512193240.kholmilosdqjb52p@joelS2.panther.com>
 
-On Wed, May 08, 2024 at 08:57:16AM -0700, Luis Chamberlain wrote:
-> It is up to them, I mean, I've started to work on mmtests integration
-> so we can help test memory fragmentation, and plan is to integrate
-> automation of maple tree and xarray shortly, mm folks are more than
-> welcomed!
+On Sun, May 12, 2024 at 09:32:40PM +0200, Joel Granados wrote:
+> On Sat, May 11, 2024 at 11:51:18AM +0200, Thomas Weißschuh wrote:
+> > Hi Kees,
+> > 
+> > On 2024-05-08 10:11:35+0000, Kees Cook wrote:
+> > > On Wed, Apr 24, 2024 at 08:12:34PM -0700, Jakub Kicinski wrote:
+> > > > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
+> > > > > The series was split from my larger series sysctl-const series [0].
+> > > > > It only focusses on the proc_handlers but is an important step to be
+> > > > > able to move all static definitions of ctl_table into .rodata.
+> > > > 
+> > > > Split this per subsystem, please.
+> > > 
+> > > I've done a few painful API transitions before, and I don't think the
+> > > complexity of these changes needs a per-subsystem constification pass. I
+> > > think this series is the right approach, but that patch 11 will need
+> > > coordination with Linus. We regularly do system-wide prototype changes
+> > > like this right at the end of the merge window before -rc1 comes out.
+> > 
+> > That sounds good.
+> > 
+> > > The requirements are pretty simple: it needs to be a obvious changes
+> > > (this certainly is) and as close to 100% mechanical as possible. I think
+> > > patch 11 easily qualifies. Linus should be able to run the same Coccinelle
+> > > script and get nearly the same results, etc. And all the other changes
+> > > need to have landed. This change also has no "silent failure" conditions:
+> > > anything mismatched will immediately stand out.
+> > 
+> > Unfortunately coccinelle alone is not sufficient, as some helpers with
+> > different prototypes are called by handlers and themselves are calling
+> > handler and therefore need to change in the same commit.
+> > But if I add a diff for those on top of the coccinelle script to the
+> > changelog it should be obvious.
+> Judging by Kees' comment on "100% mechanical", it might be better just
+> having the diff and have Linus apply than rather than two step process?
+> Have not these types of PRs, so am interested in what folks think.
 
-I don't see how kdevops integration of the radix tree, xarray and maple
-tree test suite is useful.  It's a white-box test suite.  kdevops is
-more suited for black-box testing like xfstests and mmtests.
+I tried to soften it a little with my "*close* to 100%" modifier, and
+I think that patch basically matched that requirement, and where it had
+manual changes it was detailed in the commit log. I only split out the
+seccomp part because it could actually stand alone.
 
-When we find a problem in the various data structures through the black
-box testing of their users (like the page cache or the VMA), it's on us
-to add tests that exercise that functionality.  Like 2a0774c2886d.
+So yeah, let's get the last of the subsystem specific stuff landed after
+-rc1, and it should be possible to finish it all up for 6.11. Yay! :)
 
-The important thing is that the data structures by design don't depend
-on much of the kernel.  So if they work in-and-of themselves, there's
-not much to gain by doing tests in-kernel.
+-Kees
+
+-- 
+Kees Cook
 
