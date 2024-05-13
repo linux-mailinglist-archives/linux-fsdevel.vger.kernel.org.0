@@ -1,103 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-19361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32558C3AFD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 07:32:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB97F8C3C17
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 09:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CB31F21141
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 05:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E52281615
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 07:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B67F146589;
-	Mon, 13 May 2024 05:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NRfwid4r"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169A3146A9B;
+	Mon, 13 May 2024 07:31:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1C6146006
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 05:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB5E1465A7;
+	Mon, 13 May 2024 07:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715578319; cv=none; b=o7xeQwq7n7edSy1nE4NGLtiV0uZ/B/jz4zAcbtLs+iaO7u88AgR+zt4IY5/4jFfNAzMx2zKAIIzTV44E5EgRoZ0lza6Rb4nuFHyQ4lJAZ61YhOHF4txfzOAbzbyTc80pST3ZK8UysxLq5Yz7B+7zfG2giHxOFZImddwD49NF+gA=
+	t=1715585514; cv=none; b=sgk8SZYDtFFUusCza0+dsgLw4mQQgDbdbuyBTOtuuZM7CLe6acjZfqDyruK3HXzgmaXj/DpLYlH4qwngqR32dPXX4SLmW08VZJdPwj1+2LFMDzy9wBmEfxM03CgzjuIEGJ0xZHK41m2wKMDPtgPetCpr0h9NjJj9iWSHDJv3JZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715578319; c=relaxed/simple;
-	bh=ipHZWgR8YhQThgNo5q7IjlhBCukt1ZodEaQ2RyBoDNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrhX/Vqc7nXnR6YkBj3lRvkZxJRyc8nsIc3vZu/fsDqGdSt1S8LGQ8lYcfKNta3m74KSH+TlRVp6F0OmNVl6cI6PU1CwX+xlW+xFdtaOvzC7MAU7OFkszXWmE+YTZBKf7Q5yKnWYddtlA+1W6PoTCrqIQJKsuusSlX96VcPqcuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NRfwid4r; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jGWWLRx0MTjWk3p9JV1lHW3vtOwSJ2pgHLI8n6Oi41A=; b=NRfwid4r4AvyJYnOAnhNrqZWn8
-	hPeVdlWPK07Q8i8NQBdJliKxY8eBR9DHrsGreGtY0An95aw7KK242G9ZGL3dDExOt5N+GY6jEHY8c
-	tb50BU+tXlQGTA4tGrTM7s4Wz3Vwcd8BulUGRK2EjgEnFwu8++f4NuFwIsmfIdk8UEZiofheIw9BD
-	Yaj7D76sIe0WdVm45Ye2bwhvo0RtgeCjnhURLgBO8dgvPq/AJx448ppQv/UshfH689v5jhL7LWPRt
-	Q373AIbGNcxWDKlnOfglKghZ/2AQGkpFL26M4IH0nFa44LKubuh+j171PgYCSxJthrEjat4q7OZnW
-	PD1ANNCw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s6OHk-00595l-05;
-	Mon, 13 May 2024 05:31:40 +0000
-Date: Mon, 13 May 2024 06:31:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	brauner@kernel.org, jack@suse.cz, laoar.shao@gmail.com,
-	linux-fsdevel@vger.kernel.org, longman@redhat.com,
-	walters@verbum.org, wangkai86@huawei.com, willy@infradead.org
-Subject: Re: [PATCH] vfs: move dentry shrinking outside the inode lock in
- 'rmdir()'
-Message-ID: <20240513053140.GJ2118490@ZenIV>
-References: <CAHk-=whvo+r-VZH7Myr9fid=zspMo2-0BUJw5S=VTm72iEXXvQ@mail.gmail.com>
- <20240511182625.6717-2-torvalds@linux-foundation.org>
- <CAHk-=wijTRY-72qm02kZAT_Ttua0Qwvfms5m5NbR4EWbS02NqA@mail.gmail.com>
- <20240511192824.GC2118490@ZenIV>
- <a4320c051be326ddeaeba44c4d209ccf7c2a3502.camel@HansenPartnership.com>
- <20240512161640.GI2118490@ZenIV>
- <CAHk-=wgU6-AMMJ+fK7yNsrf3AL-eHE=tGd+w54tug8nanScyPQ@mail.gmail.com>
+	s=arc-20240116; t=1715585514; c=relaxed/simple;
+	bh=mP89frmnm1S7+Nm2icvcGrXsiMEAppOWG+koyBdlx9Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKcl+i02hlq85xGz+0X/n5OhgSmGuOoTHDyd7cy26FOfhI0ZifXJbpWb6AwOF2EM0P39XfsJTB0frfIw/pwVpSGmZqoqNLHI6/fBUr7I0DoQqNzcOgCuOfpff+hElSjGeIEj0RREaNUYjgEP8jxGVY0dHoHgCu1qrCTDgv6c0fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VdB4k24Pmz4f3jHV;
+	Mon, 13 May 2024 15:31:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id D000D1A0C87;
+	Mon, 13 May 2024 15:31:42 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBHYwUFm_f0hMg--.51716S4;
+	Mon, 13 May 2024 15:31:40 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
+Date: Mon, 13 May 2024 15:21:19 +0800
+Message-Id: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgU6-AMMJ+fK7yNsrf3AL-eHE=tGd+w54tug8nanScyPQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBHYwUFm_f0hMg--.51716S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF4UKFW7Ww15Xw45uryDWrg_yoWrWryfpa
+	95Cr1xCryDZry8uw18Xr48ZFWjva18KayUWrWDC3Z3ta1UJwn2g3yUtw1avFyDtFZ5uw4U
+	XF1ruw4DG34jk37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UZa9-UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Sun, May 12, 2024 at 12:59:57PM -0700, Linus Torvalds wrote:
-> so the removed directory entry itself will have either turned into a
-> negatve dentry or will unhash it (if there are other users).
-> 
-> So the children are already unreachable through that name, and can
-> only be reached through somebody who still has the directory open. And
-> I do not see how "rmdir()" can *possibly* have any valid semantic
-> effect on any user that has that directory as its PWD, so I claim that
-> the dentries that exist at this point must already not be relevant
-> from a semantic standpoint.
-> 
-> So Al, this is my argument: the only dentry that *matters* is the
-> dentry of the removed directory itself, and that's the one that sees
-> the "d_delete()" (and all the noise to make sure you can't do new
-> lookups and can't mount on top of it).
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Recall what d_delete() will do if you have other references.
-That's why we want shrink_dcache_parent() *before* d_delete().
+jbd2_transaction_committed() is used to check whether a transaction with
+the given tid has already committed, it hold j_state_lock in read mode
+and check the tid of current running transaction and committing
+transaction, but holding the j_state_lock is expensive.
 
-BTW, example of the reasons why d_delete() without directory being locked
-is painful: simple_positive() is currently called either under ->d_lock
-on dentry in question or under ->i_rwsem on the parent.  Either is enough
-to stabilize it.  Get d_delete() happening without parent locked and
-all callers of simple_positive() must take ->d_lock.
+We have already stored the sequence number of the most recently
+committed transaction in journal t->j_commit_sequence, we could do this
+check by comparing it with the given tid instead. If the given tid isn't
+smaller than j_commit_sequence, we can ensure that the given transaction
+has been committed. That way we could drop the expensive lock and
+achieve about 10% ~ 20% performance gains in concurrent DIOs on may
+virtual machine with 100G ramdisk.
 
-This one is not hard to adjust, but we need to find all such places.
-Currently positivity of hashed dentry can change only with parent
-held exclusive.  It's going to take some digging...
+fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
+    -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
+    -group_reporting
+
+Before:
+  overwrite       IOPS=88.2k, BW=344MiB/s
+  read            IOPS=95.7k, BW=374MiB/s
+  rand overwrite  IOPS=98.7k, BW=386MiB/s
+  randread        IOPS=102k, BW=397MiB/s
+
+After:
+  verwrite:       IOPS=105k, BW=410MiB/s
+  read:           IOPS=112k, BW=436MiB/s
+  rand overwrite: IOPS=104k, BW=404MiB/s
+  randread:       IOPS=111k, BW=432MiB/s
+
+CC: Dave Chinner <david@fromorbit.com>
+Suggested-by: Dave Chinner <david@fromorbit.com>
+Link: https://lore.kernel.org/linux-ext4/493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com/T/#m6a14df5d085527a188c5a151191e87a3252dc4e2
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ fs/ext4/inode.c      |  4 ++--
+ fs/jbd2/journal.c    | 17 -----------------
+ include/linux/jbd2.h |  1 -
+ 3 files changed, 2 insertions(+), 20 deletions(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 537803250ca9..e8e2865bf9ac 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3199,8 +3199,8 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
+ 	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+ 
+ 	if (journal) {
+-		if (jbd2_transaction_committed(journal,
+-			EXT4_I(inode)->i_datasync_tid))
++		if (tid_geq(journal->j_commit_sequence,
++			    EXT4_I(inode)->i_datasync_tid))
+ 			return false;
+ 		if (test_opt2(inode->i_sb, JOURNAL_FAST_COMMIT))
+ 			return !list_empty(&EXT4_I(inode)->i_fc_list);
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index b6c114c11b97..73737cd1106f 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -786,23 +786,6 @@ int jbd2_fc_end_commit_fallback(journal_t *journal)
+ }
+ EXPORT_SYMBOL(jbd2_fc_end_commit_fallback);
+ 
+-/* Return 1 when transaction with given tid has already committed. */
+-int jbd2_transaction_committed(journal_t *journal, tid_t tid)
+-{
+-	int ret = 1;
+-
+-	read_lock(&journal->j_state_lock);
+-	if (journal->j_running_transaction &&
+-	    journal->j_running_transaction->t_tid == tid)
+-		ret = 0;
+-	if (journal->j_committing_transaction &&
+-	    journal->j_committing_transaction->t_tid == tid)
+-		ret = 0;
+-	read_unlock(&journal->j_state_lock);
+-	return ret;
+-}
+-EXPORT_SYMBOL(jbd2_transaction_committed);
+-
+ /*
+  * When this function returns the transaction corresponding to tid
+  * will be completed.  If the transaction has currently running, start
+diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+index 971f3e826e15..e15ae324169d 100644
+--- a/include/linux/jbd2.h
++++ b/include/linux/jbd2.h
+@@ -1643,7 +1643,6 @@ extern void	jbd2_clear_buffer_revoked_flags(journal_t *journal);
+ int jbd2_log_start_commit(journal_t *journal, tid_t tid);
+ int jbd2_journal_start_commit(journal_t *journal, tid_t *tid);
+ int jbd2_log_wait_commit(journal_t *journal, tid_t tid);
+-int jbd2_transaction_committed(journal_t *journal, tid_t tid);
+ int jbd2_complete_transaction(journal_t *journal, tid_t tid);
+ int jbd2_log_do_checkpoint(journal_t *journal);
+ int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid);
+-- 
+2.39.2
+
 
