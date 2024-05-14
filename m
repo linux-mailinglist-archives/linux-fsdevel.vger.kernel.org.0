@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-19428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7008C56E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2F18C56E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7810BB22334
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D3C1F22D87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E359A146D6A;
-	Tue, 14 May 2024 13:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B27147C79;
+	Tue, 14 May 2024 13:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDshmNRX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K9zodidV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCCB14601C;
-	Tue, 14 May 2024 13:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72D01465B1;
+	Tue, 14 May 2024 13:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692667; cv=none; b=UImMWkN8R6GSPIB5TDFrSYHdrvmjXB6oj2SmTLl5S8hiVW0aWY0nJm1JuLAmpmksB5krXkxBV1MEgiDelvqT78wjX5+RX38h95WTObAMUNTYOlV46nM4ewWboZLPykGv+jiwPIljfNBdxXoOHJM2q/mVOu1AyhKXsJi9/d6JGeI=
+	t=1715692668; cv=none; b=pngYHNj7lO3uiPwyP8ZFz6gkXongHxLQ0dfPaWGMFuBgPfQw5l2gx5JSa2QuYWap7JdQKEvjjX1ittMy9r6LoFsLe/j/CExTX62gTVw9UWZnP2g/Hk1dBBk3c5vXxAR9k1vMrXJAIlblf0EYI6ECIZtu0po4BfEQUcmiwmhNcqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692667; c=relaxed/simple;
-	bh=EwDN7VQvAaW1waEupY0eIODNkceeiT8B7VVRlXG69iw=;
+	s=arc-20240116; t=1715692668; c=relaxed/simple;
+	bh=96ZscxFcekwLOU1G/Ob62zVtXDhnn2IgCI17Vhgumoc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=StuWGDSJMVboPBjXmBDEigvdP5veJPAjSIZSItLPoelN09OXGNcAdaNX0DyWxsN7V9tKWbyHUZ2gR9r/1IBwtHQOZB7vuYuHE24SyFXFN8stE3r4Wk5Mqa0mx0tMqHe1Eb8PcfdUk/p9kQSjrg9hElCKcGZeo9YgDrcpq9UZEyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDshmNRX; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=pd7bVmAF8yXnNTOVOJ+nDkDJfUF//71r/QkDCZS0sz1ev1/M5hKlFKcsHgmFoMnnj7yWhAO5P4py+/xgW9b70EZ6LuAxJvQt8yHpxthOFNg+7PbXAzh06KY7AuUDveqcaNDwCaN9p9AbHyRvfpT549WZto1NuGkbiks940GJ+9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K9zodidV; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ee7963db64so46676105ad.1;
-        Tue, 14 May 2024 06:17:45 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1edfc57ac0cso44971395ad.3;
+        Tue, 14 May 2024 06:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715692665; x=1716297465; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715692666; x=1716297466; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s9qSOOnN3derkGGBY28iQxMG2lMAOqyU86LT6GkN1mg=;
-        b=RDshmNRXgnEROHLdd3yLybzO0Xcsyby590rGDdNUOxNnKUl2QgPrFTfa8XwRWv3ZOH
-         DKV1h+w3eHfXy3jEcihf7Wd90u2LpQCKb/EdbtCH6EPTZAZ6X5txR4h6k/sJVB+PHsiS
-         sUZLG2Clha5him5QSiSfOj+n3Yb44pSm7z6NTzEkOvb5vEUu5dNOMXCbSNcDRa5w+HsV
-         GjT21IOonGIHFDbp55QkAMkl6K2dEYaqOvLlAaJoJkXXu675T0hyjan1idIx9KWbW/68
-         +iwfglg8i51NEd4L3egfzoHL2qDwbJO5rGHaURCJFJHwnNMKbStG6v3uacXQjUCN/pMR
-         zqKA==
+        bh=kOZvxCrC9Itj0+EN+G6LfcoJOefBPRrAg+vdgGoRsY4=;
+        b=K9zodidVLgIpRMccRRzZUClO5LAvknM7h/RX2zX+b253d8TQs3Cs7sTxlFF6o0JyTP
+         dzj12QBckS4CtfecrKk6wapvYTtUQ2ucWdDThql2d4xi/UFUfXcz6Kr6Dh2RJKmGVUxW
+         QOXXYEUwO0EGfHh37L15M/xNSZUDL1TCJzIYc6IBk6wzGgLUQFUtn7aaJ5CIz5gre5nW
+         gZZ+i+BLsDYM7+kVuhFy+sokSOM0kezahnxxRM1u3sYAUTH8xZP+hejQtYRkIGj71doh
+         w1+Yo6Kom2bbxnEAUoI2Og9hBIrs3dSVeYhgayh6WzFySK3YN0zw2KAttawFTCIh2yvj
+         HAjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692665; x=1716297465;
+        d=1e100.net; s=20230601; t=1715692666; x=1716297466;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s9qSOOnN3derkGGBY28iQxMG2lMAOqyU86LT6GkN1mg=;
-        b=dhcGKEI04P84GB7rZ9sA+b50dLPIRpzr12/k6G5/Y+XZ1EtvAFdUvCEi876n+BkO66
-         MX3xu80YSJ71XoD9rvbbaHelxGbTWJF6L3xVdwkmF5VuYZJ98Qivxos5cWtpQUT8TdHy
-         InUB9OqKsSyFW9e2di+zXBMDGov+xHmTViM048C9OupToEF+3xdsYFfDV4E+hVaFw149
-         31voJPnWEQtPKOT4oGI38d+xxkvizpTZnHCxkx+6N4bSwXnSHCysnNop4Fb9zYCIKK6o
-         yZ6AzyFKF5XuQ/xV7lkeTanBLqAnfFqAPRsSPRFXL9LySFUB0j1qSvUoud5PBbX4aO2e
-         vldw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUNvIwTVJBls9BXzFC+R1azCG9Oj91cYNWEqf5j0KGCVhTKG0FHa86dKbSFkJp026DOu3PkMNa3jjbMtYUQ5xaMtYA5M6tSEvOZ/aWsqLOdZR9LKOPPhuDujVi0YqFCB2iungMohs2Xqu/mjUI3lrCxdn9EqmEcYTQ+15sLaoDLc2d7Ukxrtonp4cs
-X-Gm-Message-State: AOJu0YxpY6tnpLpJoEShp/RV1Ts7+QF9qA3CEb2rQ5+q9FkIsKHPIbpV
-	2AGXXd4Wmq2Lm5xnucxAIe+2CFC94bECdFAY5YgXmmLJId5rgQ2c
-X-Google-Smtp-Source: AGHT+IHdW4Whs1GE/MIA4u1iZpDAMjMeTAe0DVQP8NtdsS/SXscTCS8UHeBe22rczXQSRR/PuJjZ5w==
-X-Received: by 2002:a17:902:6b82:b0:1e3:dfdc:6972 with SMTP id d9443c01a7336-1ef43d15755mr136009995ad.9.1715692664910;
-        Tue, 14 May 2024 06:17:44 -0700 (PDT)
+        bh=kOZvxCrC9Itj0+EN+G6LfcoJOefBPRrAg+vdgGoRsY4=;
+        b=nxVgst9HXj8As6a2JilO4OZ6Gk4EIwrkFf8n1mHJja83tZxtxYSGwdQbUg1lIz5vNx
+         WkP4dvhO1e1bpPFMHJopIiNfmPCKyWnpHemZ8jXs6PTLLVEx1pwG6N6KqG/NCpQHWhik
+         /lGD3ErZrrjyECyXQxwF1lVIRm+ggJtiCS1wQWSOQEJn2Tm0COoLhHjm+aeniRmGfuDK
+         H8evdLDG0tT9XZbZE6OjQ7/ckx9MGI1HLkhWkX5oiuzE3u3+Fwws9WgKBa55l/vZyP3o
+         sDr+5lO1oqX7F8XeuRjkLjMJukBrNLSSf12AKgAGbN1jGOgbkAak1YiFQxqm5m5CB6il
+         hONw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPuKweJ+qbWCKJ9eoK0Acw61Ki005I25Y1MWOK2WtHN0u6A0pUesUWSgxh9H87mnfWfEnjotpWtRdmiPDpEv9qcTZgWAAmtbJ7zSKIkqC2YM69FsSD6tifrVjWe+4fm6ebI1sPmdQpzS0g7yfMJ6uyw88a47Z/qquP12Jb4WovPDrt8LfzLMgklyba
+X-Gm-Message-State: AOJu0YzN13I59dcqvA7rbmuc7yO7hT1dgJ2MAK1txrHI5Ltx9XF//lxk
+	DYRHvd8JrUtKdua4m9zUVSrNiEbXajmFPEjfmN6+wWRaB/wDgE7B
+X-Google-Smtp-Source: AGHT+IGyeBYMGLQBdDwZ1lWpcvuan3YvNcfX8WBE9Omp5M7OJ7qekVSXOf7kKkcIZstZ6T6aYUGr+A==
+X-Received: by 2002:a17:902:9a95:b0:1e4:7adf:b855 with SMTP id d9443c01a7336-1ef43e23223mr109980805ad.35.1715692665874;
+        Tue, 14 May 2024 06:17:45 -0700 (PDT)
 Received: from wedsonaf-dev.. ([50.204.89.32])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.17.43
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.17.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 06:17:44 -0700 (PDT)
+        Tue, 14 May 2024 06:17:45 -0700 (PDT)
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -78,9 +78,9 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH v2 06/30] rust: fs: introduce `DEntry<T>`
-Date: Tue, 14 May 2024 10:16:47 -0300
-Message-Id: <20240514131711.379322-7-wedsonaf@gmail.com>
+Subject: [RFC PATCH v2 07/30] rust: fs: introduce `FileSystem::init_root`
+Date: Tue, 14 May 2024 10:16:48 -0300
+Message-Id: <20240514131711.379322-8-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240514131711.379322-1-wedsonaf@gmail.com>
 References: <20240514131711.379322-1-wedsonaf@gmail.com>
@@ -94,200 +94,387 @@ Content-Transfer-Encoding: 8bit
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
+Allow Rust file systems to specify their root directory. Also allow them
+to create (and do cache lookups of) directory inodes. (More types of
+inodes are added in subsequent patches in the series.)
+
+The `inode::New` type ensures that a new inode is properly initialised
+before it is marked so. It also facilitates error paths by automatically
+marking inodes as failed if they're not properly initialised.
+
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- rust/helpers.c           |   6 ++
- rust/kernel/error.rs     |   2 -
- rust/kernel/fs.rs        |   1 +
- rust/kernel/fs/dentry.rs | 137 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 144 insertions(+), 2 deletions(-)
- create mode 100644 rust/kernel/fs/dentry.rs
+ rust/helpers.c            |  11 ++++
+ rust/kernel/fs.rs         |  56 ++++++++-----------
+ rust/kernel/fs/inode.rs   | 111 +++++++++++++++++++++++++++++++++++++-
+ rust/kernel/fs/sb.rs      |  48 ++++++++++++++++-
+ samples/rust/rust_rofs.rs |  25 +++++++--
+ 5 files changed, 211 insertions(+), 40 deletions(-)
 
 diff --git a/rust/helpers.c b/rust/helpers.c
-index c697c1c4c9d7..c7fe6917251e 100644
+index c7fe6917251e..87301e1ace65 100644
 --- a/rust/helpers.c
 +++ b/rust/helpers.c
-@@ -165,6 +165,12 @@ struct file *rust_helper_get_file(struct file *f)
+@@ -164,6 +164,17 @@ struct file *rust_helper_get_file(struct file *f)
+ }
  EXPORT_SYMBOL_GPL(rust_helper_get_file);
  
- 
-+struct dentry *rust_helper_dget(struct dentry *dentry)
++void rust_helper_i_uid_write(struct inode *inode, uid_t uid)
 +{
-+	return dget(dentry);
++	i_uid_write(inode, uid);
 +}
-+EXPORT_SYMBOL_GPL(rust_helper_dget);
++EXPORT_SYMBOL_GPL(rust_helper_i_uid_write);
 +
- loff_t rust_helper_i_size_read(const struct inode *inode)
++void rust_helper_i_gid_write(struct inode *inode, gid_t gid)
++{
++	i_gid_write(inode, gid);
++}
++EXPORT_SYMBOL_GPL(rust_helper_i_gid_write);
+ 
+ struct dentry *rust_helper_dget(struct dentry *dentry)
  {
- 	return i_size_read(inode);
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index f4fa2847e210..bb13bd4a7fa6 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -261,8 +261,6 @@ pub fn to_result(err: core::ffi::c_int) -> Result {
- ///     from_err_ptr(unsafe { bindings::devm_platform_ioremap_resource(pdev.to_ptr(), index) })
- /// }
- /// ```
--// TODO: Remove `dead_code` marker once an in-kernel client is available.
--#[allow(dead_code)]
- pub(crate) fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T> {
-     // CAST: Casting a pointer to `*const core::ffi::c_void` is always valid.
-     let const_ptr: *const core::ffi::c_void = ptr.cast();
 diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
-index 89dcd5537830..4f07da71e1ec 100644
+index 4f07da71e1ec..f32c2f89f781 100644
 --- a/rust/kernel/fs.rs
 +++ b/rust/kernel/fs.rs
-@@ -13,6 +13,7 @@
+@@ -9,7 +9,7 @@
+ use crate::error::{code::*, from_result, to_result, Error, Result};
+ use crate::types::Opaque;
+ use crate::{bindings, init::PinInit, str::CStr, try_pin_init, ThisModule};
+-use core::{ffi, marker::PhantomData, pin::Pin};
++use core::{ffi, marker::PhantomData, mem::ManuallyDrop, pin::Pin, ptr};
  use macros::{pin_data, pinned_drop};
  use sb::SuperBlock;
  
-+pub mod dentry;
- pub mod inode;
- pub mod sb;
+@@ -38,6 +38,12 @@ pub trait FileSystem {
  
-diff --git a/rust/kernel/fs/dentry.rs b/rust/kernel/fs/dentry.rs
-new file mode 100644
-index 000000000000..6a36a48cd28b
---- /dev/null
-+++ b/rust/kernel/fs/dentry.rs
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0
+     /// Initialises the new superblock.
+     fn fill_super(sb: &mut SuperBlock<Self>) -> Result;
 +
-+//! File system directory entries.
-+//!
-+//! This module allows Rust code to use dentries.
-+//!
-+//! C headers: [`include/linux/dcache.h`](srctree/include/linux/dcache.h)
++    /// Initialises and returns the root inode of the given superblock.
++    ///
++    /// This is called during initialisation of a superblock after [`FileSystem::fill_super`] has
++    /// completed successfully.
++    fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>>;
+ }
+ 
+ /// A file system that is unspecified.
+@@ -51,6 +57,10 @@ impl FileSystem for UnspecifiedFS {
+     fn fill_super(_: &mut SuperBlock<Self>) -> Result {
+         Err(ENOTSUPP)
+     }
 +
-+use super::{inode::INode, FileSystem, SuperBlock};
-+use crate::bindings;
-+use crate::error::{code::*, from_err_ptr, Result};
++    fn init_root(_: &SuperBlock<Self>) -> Result<dentry::Root<Self>> {
++        Err(ENOTSUPP)
++    }
+ }
+ 
+ /// A registration of a file system.
+@@ -154,41 +164,18 @@ impl<T: FileSystem + ?Sized> Tables<T> {
+ 
+             T::fill_super(new_sb)?;
+ 
+-            // The following is scaffolding code that will be removed in a subsequent patch. It is
+-            // needed to build a root dentry, otherwise core code will BUG().
+-            // SAFETY: `sb` is the superblock being initialised, it is valid for read and write.
+-            let inode = unsafe { bindings::new_inode(sb) };
+-            if inode.is_null() {
+-                return Err(ENOMEM);
+-            }
+-
+-            // SAFETY: `inode` is valid for write.
+-            unsafe { bindings::set_nlink(inode, 2) };
++            let root = T::init_root(new_sb)?;
+ 
+-            {
+-                // SAFETY: This is a newly-created inode. No other references to it exist, so it is
+-                // safe to mutably dereference it.
+-                let inode = unsafe { &mut *inode };
+-                inode.i_ino = 1;
+-                inode.i_mode = (bindings::S_IFDIR | 0o755) as _;
+-
+-                // SAFETY: `simple_dir_operations` never changes, it's safe to reference it.
+-                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::simple_dir_operations };
+-
+-                // SAFETY: `simple_dir_inode_operations` never changes, it's safe to reference it.
+-                inode.i_op = unsafe { &bindings::simple_dir_inode_operations };
++            // Reject root inode if it belongs to a different superblock.
++            if !ptr::eq(root.super_block(), new_sb) {
++                return Err(EINVAL);
+             }
+ 
+-            // SAFETY: `d_make_root` requires that `inode` be valid and referenced, which is the
+-            // case for this call.
+-            //
+-            // It takes over the inode, even on failure, so we don't need to clean it up.
+-            let dentry = unsafe { bindings::d_make_root(inode) };
+-            if dentry.is_null() {
+-                return Err(ENOMEM);
+-            }
++            let dentry = ManuallyDrop::new(root).0.get();
+ 
+-            sb.s_root = dentry;
++            // SAFETY: The callback contract guarantees that `sb_ptr` is a unique pointer to a
++            // newly-created (and initialised above) superblock.
++            unsafe { (*sb_ptr).s_root = dentry };
+ 
+             Ok(0)
+         })
+@@ -253,7 +240,7 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ ///
+ /// ```
+ /// # mod module_fs_sample {
+-/// use kernel::fs::{sb::SuperBlock, self};
++/// use kernel::fs::{dentry, inode::INode, sb::SuperBlock, self};
+ /// use kernel::prelude::*;
+ ///
+ /// kernel::module_fs! {
+@@ -270,6 +257,9 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ ///     fn fill_super(_: &mut SuperBlock<Self>) -> Result {
+ ///         todo!()
+ ///     }
++///     fn init_root(_sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>> {
++///         todo!()
++///     }
+ /// }
+ /// # }
+ /// ```
+diff --git a/rust/kernel/fs/inode.rs b/rust/kernel/fs/inode.rs
+index bcb9c8ce59a9..4ccbb4145918 100644
+--- a/rust/kernel/fs/inode.rs
++++ b/rust/kernel/fs/inode.rs
+@@ -7,8 +7,10 @@
+ //! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
+ 
+ use super::{sb::SuperBlock, FileSystem, Offset, UnspecifiedFS};
+-use crate::bindings;
+-use crate::types::{AlwaysRefCounted, Opaque};
++use crate::error::Result;
 +use crate::types::{ARef, AlwaysRefCounted, Opaque};
-+use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr};
++use crate::{bindings, block, time::Timespec};
++use core::mem::ManuallyDrop;
+ use core::{marker::PhantomData, ptr};
+ 
+ /// The number of an inode.
+@@ -76,3 +78,108 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+         unsafe { bindings::iput(obj.as_ref().0.get()) }
+     }
+ }
 +
-+/// A directory entry.
-+///
-+/// Wraps the kernel's `struct dentry`.
++/// An inode that is locked and hasn't been initialised yet.
 +///
 +/// # Invariants
 +///
-+/// Instances of this type are always ref-counted, that is, a call to `dget` ensures that the
-+/// allocation remains valid at least until the matching call to `dput`.
-+#[repr(transparent)]
-+pub struct DEntry<T: FileSystem + ?Sized>(pub(crate) Opaque<bindings::dentry>, PhantomData<T>);
++/// The inode is a new one, locked, and valid for write.
++pub struct New<T: FileSystem + ?Sized>(
++    pub(crate) ptr::NonNull<bindings::inode>,
++    pub(crate) PhantomData<T>,
++);
 +
-+// SAFETY: The type invariants guarantee that `DEntry` is always ref-counted.
-+unsafe impl<T: FileSystem + ?Sized> AlwaysRefCounted for DEntry<T> {
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-+        unsafe { bindings::dget(self.0.get()) };
-+    }
++impl<T: FileSystem + ?Sized> New<T> {
++    /// Initialises the new inode with the given parameters.
++    pub fn init(mut self, params: Params) -> Result<ARef<INode<T>>> {
++        // SAFETY: This is a new inode, so it's safe to manipulate it mutably.
++        let inode = unsafe { self.0.as_mut() };
++        let mode = match params.typ {
++            Type::Dir => {
++                // SAFETY: `simple_dir_operations` never changes, it's safe to reference it.
++                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::simple_dir_operations };
 +
-+    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-+        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
-+        unsafe { bindings::dput(obj.as_ref().0.get()) }
-+    }
-+}
++                // SAFETY: `simple_dir_inode_operations` never changes, it's safe to reference it.
++                inode.i_op = unsafe { &bindings::simple_dir_inode_operations };
 +
-+impl<T: FileSystem + ?Sized> DEntry<T> {
-+    /// Creates a new [`DEntry`] from a raw C pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// * `ptr` must be valid for at least the lifetime of the returned reference.
-+    /// * `ptr` has the correct file system type, or `T` is [`super::UnspecifiedFS`].
-+    #[allow(dead_code)]
-+    pub(crate) unsafe fn from_raw<'a>(ptr: *mut bindings::dentry) -> &'a Self {
-+        // SAFETY: The safety requirements guarantee that the reference is and remains valid.
-+        unsafe { &*ptr.cast::<Self>() }
-+    }
-+
-+    /// Returns the superblock of the dentry.
-+    pub fn super_block(&self) -> &SuperBlock<T> {
-+        // `d_sb` is immutable, so it's safe to read it.
-+        unsafe { SuperBlock::from_raw((*self.0.get()).d_sb) }
-+    }
-+}
-+
-+/// A dentry that is known to be unhashed.
-+pub struct Unhashed<'a, T: FileSystem + ?Sized>(pub(crate) &'a DEntry<T>);
-+
-+impl<T: FileSystem + ?Sized> Unhashed<'_, T> {
-+    /// Splices a disconnected dentry into the tree if one exists.
-+    pub fn splice_alias(self, inode: Option<ARef<INode<T>>>) -> Result<Option<ARef<DEntry<T>>>> {
-+        let inode_ptr = if let Some(i) = inode {
-+            // Reject inode if it belongs to a different superblock.
-+            if !ptr::eq(i.super_block(), self.0.super_block()) {
-+                return Err(EINVAL);
++                bindings::S_IFDIR
 +            }
-+
-+            ManuallyDrop::new(i).0.get()
-+        } else {
-+            ptr::null_mut()
 +        };
 +
-+        // SAFETY: Both inode and dentry are known to be valid.
-+        let ptr = from_err_ptr(unsafe { bindings::d_splice_alias(inode_ptr, self.0 .0.get()) })?;
++        inode.i_mode = (params.mode & 0o777) | u16::try_from(mode)?;
++        inode.i_size = params.size;
++        inode.i_blocks = params.blocks;
 +
-+        // SAFETY: The C API guarantees that if a dentry is returned, the refcount has been
-+        // incremented.
-+        Ok(ptr::NonNull::new(ptr).map(|v| unsafe { ARef::from_raw(v.cast::<DEntry<T>>()) }))
++        inode.__i_ctime = params.ctime.into();
++        inode.__i_mtime = params.mtime.into();
++        inode.__i_atime = params.atime.into();
++
++        // SAFETY: inode is a new inode, so it is valid for write.
++        unsafe {
++            bindings::set_nlink(inode, params.nlink);
++            bindings::i_uid_write(inode, params.uid);
++            bindings::i_gid_write(inode, params.gid);
++            bindings::unlock_new_inode(inode);
++        }
++
++        let manual = ManuallyDrop::new(self);
++        // SAFETY: We transferred ownership of the refcount to `ARef` by preventing `drop` from
++        // being called with the `ManuallyDrop` instance created above.
++        Ok(unsafe { ARef::from_raw(manual.0.cast::<INode<T>>()) })
 +    }
++}
 +
-+    /// Returns the name of the dentry.
++impl<T: FileSystem + ?Sized> Drop for New<T> {
++    fn drop(&mut self) {
++        // SAFETY: The new inode failed to be turned into an initialised inode, so it's safe (and
++        // in fact required) to call `iget_failed` on it.
++        unsafe { bindings::iget_failed(self.0.as_ptr()) };
++    }
++}
++
++/// The type of an inode.
++#[derive(Copy, Clone)]
++pub enum Type {
++    /// Directory type.
++    Dir,
++}
++
++/// Required inode parameters.
++///
++/// This is used when creating new inodes.
++pub struct Params {
++    /// The access mode. It's a mask that grants execute (1), write (2) and read (4) access to
++    /// everyone, the owner group, and the owner.
++    pub mode: u16,
++
++    /// Type of inode.
 +    ///
-+    /// Being unhashed guarantees that the name won't change.
-+    pub fn name(&self) -> &[u8] {
-+        // SAFETY: The name is immutable, so it is ok to read it.
-+        let name = unsafe { &*ptr::addr_of!((*self.0 .0.get()).d_name) };
++    /// Also carries additional per-type data.
++    pub typ: Type,
 +
-+        // This ensures that a `u32` is representable in `usize`. If it isn't, we'll get a build
-+        // break.
-+        const _: usize = 0xffffffff;
++    /// Size of the contents of the inode.
++    ///
++    /// Its maximum value is [`super::MAX_LFS_FILESIZE`].
++    pub size: Offset,
 +
-+        // SAFETY: The union is just allow an easy way to get the `hash` and `len` at once. `len`
-+        // is always valid.
-+        let len = unsafe { name.__bindgen_anon_1.__bindgen_anon_1.len } as usize;
++    /// Number of blocks.
++    pub blocks: block::Count,
 +
-+        // SAFETY: The name is immutable, so it is ok to read it.
-+        unsafe { core::slice::from_raw_parts(name.name, len) }
-+    }
++    /// Number of links to the inode.
++    pub nlink: u32,
++
++    /// User id.
++    pub uid: u32,
++
++    /// Group id.
++    pub gid: u32,
++
++    /// Creation time.
++    pub ctime: Timespec,
++
++    /// Last modification time.
++    pub mtime: Timespec,
++
++    /// Last access time.
++    pub atime: Timespec,
 +}
+diff --git a/rust/kernel/fs/sb.rs b/rust/kernel/fs/sb.rs
+index f48e0e2695fa..fa10f3db5593 100644
+--- a/rust/kernel/fs/sb.rs
++++ b/rust/kernel/fs/sb.rs
+@@ -6,9 +6,12 @@
+ //!
+ //! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
+ 
++use super::inode::{self, INode, Ino};
+ use super::FileSystem;
+-use crate::{bindings, types::Opaque};
+-use core::marker::PhantomData;
++use crate::bindings;
++use crate::error::{code::*, Result};
++use crate::types::{ARef, Either, Opaque};
++use core::{marker::PhantomData, ptr};
+ 
+ /// A file system super block.
+ ///
+@@ -60,4 +63,45 @@ pub fn set_magic(&mut self, magic: usize) -> &mut Self {
+         unsafe { (*self.0.get()).s_magic = magic as core::ffi::c_ulong };
+         self
+     }
 +
-+impl<T: FileSystem + ?Sized> Deref for Unhashed<'_, T> {
-+    type Target = DEntry<T>;
++    /// Tries to get an existing inode or create a new one if it doesn't exist yet.
++    pub fn get_or_create_inode(&self, ino: Ino) -> Result<Either<ARef<INode<T>>, inode::New<T>>> {
++        // SAFETY: All superblock-related state needed by `iget_locked` is initialised by C code
++        // before calling `fill_super_callback`, or by `fill_super_callback` itself before calling
++        // `super_params`, which is the first function to see a new superblock.
++        let inode =
++            ptr::NonNull::new(unsafe { bindings::iget_locked(self.0.get(), ino) }).ok_or(ENOMEM)?;
 +
-+    fn deref(&self) -> &Self::Target {
-+        self.0
++        // SAFETY: `inode` is a valid pointer returned by `iget_locked`.
++        unsafe { bindings::spin_lock(ptr::addr_of_mut!((*inode.as_ptr()).i_lock)) };
++
++        // SAFETY: `inode` is valid and was locked by the previous lock.
++        let state = unsafe { *ptr::addr_of!((*inode.as_ptr()).i_state) };
++
++        // SAFETY: `inode` is a valid pointer returned by `iget_locked`.
++        unsafe { bindings::spin_unlock(ptr::addr_of_mut!((*inode.as_ptr()).i_lock)) };
++
++        if state & u64::from(bindings::I_NEW) == 0 {
++            // The inode is cached. Just return it.
++            //
++            // SAFETY: `inode` had its refcount incremented by `iget_locked`; this increment is now
++            // owned by `ARef`.
++            Ok(Either::Left(unsafe { ARef::from_raw(inode.cast()) }))
++        } else {
++            // SAFETY: The new inode is valid but not fully initialised yet, so it's ok to create a
++            // `inode::New`.
++            Ok(Either::Right(inode::New(inode, PhantomData)))
++        }
 +    }
-+}
 +
-+/// A dentry that is meant to be used as the root of a file system.
-+pub struct Root<T: FileSystem + ?Sized>(ARef<DEntry<T>>);
-+
-+impl<T: FileSystem + ?Sized> Root<T> {
-+    /// Creates a root dentry.
-+    pub fn try_new(inode: ARef<INode<T>>) -> Result<Root<T>> {
-+        // SAFETY: `d_make_root` requires that `inode` be valid and referenced, which is the
-+        // case for this call.
-+        //
-+        // It takes over the inode, even on failure, so we don't need to clean it up.
-+        let dentry_ptr = unsafe { bindings::d_make_root(ManuallyDrop::new(inode).0.get()) };
-+        let dentry = ptr::NonNull::new(dentry_ptr).ok_or(ENOMEM)?;
-+
-+        // SAFETY: `dentry` is valid and referenced. It reference ownership is transferred to
-+        // `ARef`.
-+        Ok(Root(unsafe { ARef::from_raw(dentry.cast::<DEntry<T>>()) }))
++    /// Creates an inode with the given inode number.
++    ///
++    /// Fails with `EEXIST` if an inode with the given number already exists.
++    pub fn create_inode(&self, ino: Ino) -> Result<inode::New<T>> {
++        if let Either::Right(new) = self.get_or_create_inode(ino)? {
++            Ok(new)
++        } else {
++            Err(EEXIST)
++        }
 +    }
-+}
+ }
+diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
+index 022addf68891..d32c4645ebe8 100644
+--- a/samples/rust/rust_rofs.rs
++++ b/samples/rust/rust_rofs.rs
+@@ -2,9 +2,9 @@
+ 
+ //! Rust read-only file system sample.
+ 
+-use kernel::fs::sb;
++use kernel::fs::{dentry, inode, sb::SuperBlock};
+ use kernel::prelude::*;
+-use kernel::{c_str, fs};
++use kernel::{c_str, fs, time::UNIX_EPOCH, types::Either};
+ 
+ kernel::module_fs! {
+     type: RoFs,
+@@ -18,8 +18,27 @@
+ impl fs::FileSystem for RoFs {
+     const NAME: &'static CStr = c_str!("rust_rofs");
+ 
+-    fn fill_super(sb: &mut sb::SuperBlock<Self>) -> Result {
++    fn fill_super(sb: &mut SuperBlock<Self>) -> Result {
+         sb.set_magic(0x52555354);
+         Ok(())
+     }
 +
-+impl<T: FileSystem + ?Sized> Deref for Root<T> {
-+    type Target = DEntry<T>;
-+
-+    fn deref(&self) -> &Self::Target {
-+        &self.0
++    fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>> {
++        let inode = match sb.get_or_create_inode(1)? {
++            Either::Left(existing) => existing,
++            Either::Right(new) => new.init(inode::Params {
++                typ: inode::Type::Dir,
++                mode: 0o555,
++                size: 1,
++                blocks: 1,
++                nlink: 2,
++                uid: 0,
++                gid: 0,
++                atime: UNIX_EPOCH,
++                ctime: UNIX_EPOCH,
++                mtime: UNIX_EPOCH,
++            })?,
++        };
++        dentry::Root::try_new(inode)
 +    }
-+}
+ }
 -- 
 2.34.1
 
