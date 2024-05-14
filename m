@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-19451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759688C5716
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:28:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F9F28C5718
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97A31F217F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05243B2355B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E7A16F909;
-	Tue, 14 May 2024 13:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D79416FF59;
+	Tue, 14 May 2024 13:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/Rgps5E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZDBNAZG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A580115FA92;
-	Tue, 14 May 2024 13:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B1516D4D4;
+	Tue, 14 May 2024 13:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692691; cv=none; b=YwRGiYcC+l//Y8WuxzravuMJ+H7Fe5t2zgFqvaUYxpvvnxNL5kga2oBW5P27qcWCTNIIqT4+RB7d0uZrqXDCiKe7GJOK2AhFWNmyA5UgEQ5hkCZ7FU4a/yG03ZUIa5RJYIk1mP2wr8HJ03XdPsOwPofu1E6WEa3ACO+FWT4kGNc=
+	t=1715692692; cv=none; b=Bfprar03YFel2j8RDFwOG1DcQdzXYGxTvvlWhqFh/0vBqMgsDG7iyQLZSEYvtWcJYkUZfHLV2lPPgWYgF870zLQxALaDqMZ4kGXK20BJNJ7u7Cpw3dct6UoXJ7rZEfRe968s2SyfcjIhCKOytkJ3oiTKu2hIK0LY0cwroV1K8zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692691; c=relaxed/simple;
-	bh=NkyBIPvyqKD3QaaIvYVVRWJ6C2c5hVFwRcCGK0ZYyF4=;
+	s=arc-20240116; t=1715692692; c=relaxed/simple;
+	bh=p41Jp5EYVfGBDeVAOVl/zsa3dPK/Cb6MVZmuxA54sNc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P+4/5N6XtrUGJCCVAHG5rF4xxF777tR0F/J0yIxfJ4he8r62ketJ0zar5gcTK+rjKPwKmQWQe3PZo4EK7osbbJHJZeX0yEYPjY9kaFGw/hMZBaia5Lcm8bFSH6FAR7e9+8xb4BngZUEmg1cIU6zYFXV1bW/CXbgiJdAA6wJRawo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/Rgps5E; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=eA/pR8tnEjctvuHaS2woMLWw0qSCWZ49a38YRvAKSnVZmkSBmoOVFHld6sVWU45DnCYHCEpbdwUJ9sNTpAMG2x34WdjNWsdcT+iZI9DPHQfa4Ry905/bpI3Sv7LEOYU/lrHbqKIy8PnLMa+p4twoUrF9Ohw7QvHqKwBLgbomeJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZDBNAZG; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ed96772f92so44798045ad.0;
-        Tue, 14 May 2024 06:18:08 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso43600605ad.0;
+        Tue, 14 May 2024 06:18:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715692688; x=1716297488; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715692689; x=1716297489; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AUAgZILvsJPk3lUOQX5V2zM1SwWQswShe/1otOCn5pk=;
-        b=j/Rgps5EI9HJBZQSLpZEMg5Xy2KWJShM1Z4R5SFZuCYGC4t6NWf5mubWGFtcTRRIhu
-         6xdWm6HhrGPi274IFO5wAfc3uX5x1ILCUa+KU9gWXxx4sPDJts1RcuLZcrN/E1FaBIlc
-         KuAFBBYkHl6e2gzJWVuDzhVHepELbnFKNpgxRz0KsNEfEHkAZDfrJcX8nm8B4AlrdiX+
-         fCFMEPSgmfpNAEcix03ghpz15pKv2zwx9XyWqvu1eRI8wHIHV899pg7xoCoxT/5SfZPU
-         azoB2euhvwzqenQKHbeK2KAZIwYj0NMPoYXQfSgvbyZaFcqUaTsrYJ7nyt5At09vlgMD
-         HiLg==
+        bh=Ac/6w8eF1/WlkpgOl3mXtqTlZQH+FEfp7jqPuIxAGeU=;
+        b=PZDBNAZGGYe4fv1q4qayXccZK8OtiLu4EPRGjN7Ri7eCf6r/hIpUVBykMqz3dX8av0
+         Nvkp9B3HSaLqOo2Kzqt7CgSihHZHQDtpq1V56/+U9doiMw5DUW8Ij3uRsix+HYk3fMjd
+         8cOPEnWTOfi95HKrArNz+rHBaz6/gwD3v2l3WkSQyUpd7tnEMfN++QaVJNkNuvds5Rce
+         zZ+kmaIQF8LiWE1L7kpqzlHpNaQWMvKivfcBLMzi0JZxjLXw2UZx3qUvhME6V2JMhzrU
+         Ihku4vTMeXH9I7sD1qVMphHHYsVTgOCqtEVt17RB5voNXul3LRMpPkcwp4vUXiJxDdcT
+         +DEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692688; x=1716297488;
+        d=1e100.net; s=20230601; t=1715692689; x=1716297489;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AUAgZILvsJPk3lUOQX5V2zM1SwWQswShe/1otOCn5pk=;
-        b=hRGp3issiC7KJvMMwPRJYbAhpkvms96odjHeescHjBAERhW+Cxmuv1EuswJt0Zkh36
-         YFv9qLePx9yr3+14cBj1XMs1+Pf3qqWd7jLLn1Squq5PvwRvVaFMQcAw6NhtuAmImgvO
-         ShMkRQ+RoXfhHc1OO8BzCq+E6yryUBugXlJ7L3xxJ/ygvkrEQdGTInRKefhUloqd5WOz
-         UuENnrcHt2ZYRB08DEAe5xgRIMjoMMlaq4xTXDwhxOXylgQjcAdfx8M8waH68n8iuUF5
-         boOaa16p5rgiN56761ujKBBSP52nT0bQt4HUTwXFLpe7//jUH426Fmr8oMwODyI5ID3I
-         bXpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTNWITev+7CBq9pbN+3LNahg5+miDe9gDdUmFitt/M/QBjwyIeyalhoQdEj7PX+fOQ3uqYqk9F/WvJIomWIL1GMqxfL9Y4UGi9QXK4n5Jz/9N3+VX0TZ4QWHNgkkAb9gCQzPEcEQ2iVytTfqFyJx3jMI+pMXt0SIjwej3ixNTTzp81FKb/foXeqQdn
-X-Gm-Message-State: AOJu0Yy/jhwIx/sAd0RnYZ4yQShwPB2mYmhrUwk6ZouIN2Pv0gG/nFXz
-	d4WtbLKkcu1XWREmiviBD6/Zd1S7CgMaaEmYnYr0IQkLukJzNW5u
-X-Google-Smtp-Source: AGHT+IFpimOtA0H+30BM3dZuOxd//sP8WnqJBhG572jFOU9vsmOgSflGyA3bx+dH4Jc0ddDwLunjPw==
-X-Received: by 2002:a17:903:1ce:b0:1e3:d4eb:a0f2 with SMTP id d9443c01a7336-1ef4404956emr147449585ad.51.1715692687803;
-        Tue, 14 May 2024 06:18:07 -0700 (PDT)
+        bh=Ac/6w8eF1/WlkpgOl3mXtqTlZQH+FEfp7jqPuIxAGeU=;
+        b=wYpghHm7pBNV7PUdjL3GnutAZvCzBWJ//os24e5ChTrW4HHRVsw2xXEDFQLKPyjTZ8
+         YodQtx9OKFMSX90lVAjUmkG11RIKXkxnxmIa7DnHoIAlNCmSy8r9I/sdNpia9VNGGXR1
+         AWc2ZTc12jPl8xLIlj0j0yxE65VIKWJfweBbr3DWGNGVbmJ56BcRDB8N0EyQK+7SQ6rZ
+         VLcdIgqKMmprn5TY3p1iir1X1KSRw7+ENbXsTmWXNxvuT+ep7X+MBTQvvRSktR3GN/nY
+         2xz9HI/FNQanTbwgvBZOpuhoWPtMlgFpwT6AeC7GtfZnAjoQQZ1XBKDHNDfnAv4Cjb9C
+         Vhyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVZgyC+QWAZT19OhI36ak2wyJJMosR262JhldzT4YsaeuhAMgoUCtF6eihMcSuga5iBj+pgXVy1XCspRrq5nu1x7Haz6TkRCl2XQaC2Wg0fmPaLw36Wa90KtC0YcDjuCSBqkMvMG0ti+V/03lrHvIaQ9Rs5esCmeG0/0XddLaFtaM4DNrc1fXubGJN
+X-Gm-Message-State: AOJu0YwDgud/rABgQ8AsBgPCkEkW0b/q6x4oQCdF/5wtKnKidmYvwkBN
+	GrnfBILDkXEirceNjwSUyoWJVHo02sEYthoS637FB6o8kWZkm2I7
+X-Google-Smtp-Source: AGHT+IFUEWOJAbO6+4ufK9Zg10BKKcqWXq5o8D/uKQjVC20XowtdZrymelxo6YOYB03vsfJ+FIXc0A==
+X-Received: by 2002:a17:903:234e:b0:1e3:cdd1:dd80 with SMTP id d9443c01a7336-1ef43c0cba2mr162831555ad.6.1715692688780;
+        Tue, 14 May 2024 06:18:08 -0700 (PDT)
 Received: from wedsonaf-dev.. ([50.204.89.32])
         by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.18.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 06:18:07 -0700 (PDT)
+        Tue, 14 May 2024 06:18:08 -0700 (PDT)
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -78,9 +78,9 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH v2 29/30] tarfs: introduce tar fs
-Date: Tue, 14 May 2024 10:17:10 -0300
-Message-Id: <20240514131711.379322-30-wedsonaf@gmail.com>
+Subject: [RFC PATCH v2 30/30] WIP: fs: ext2: add rust ro ext2 implementation
+Date: Tue, 14 May 2024 10:17:11 -0300
+Message-Id: <20240514131711.379322-31-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240514131711.379322-1-wedsonaf@gmail.com>
 References: <20240514131711.379322-1-wedsonaf@gmail.com>
@@ -94,330 +94,496 @@ Content-Transfer-Encoding: 8bit
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-It is a file system based on tar files and an index appended to them (to
-facilitate finding fs entries without having to traverse the whole tar
-file).
-
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- fs/Kconfig                        |   1 +
- fs/Makefile                       |   1 +
- fs/tarfs/Kconfig                  |  15 ++
- fs/tarfs/Makefile                 |   8 +
- fs/tarfs/defs.rs                  |  80 ++++++
- fs/tarfs/tar.rs                   | 394 ++++++++++++++++++++++++++++++
- scripts/generate_rust_analyzer.py |   2 +-
- 7 files changed, 500 insertions(+), 1 deletion(-)
- create mode 100644 fs/tarfs/Kconfig
- create mode 100644 fs/tarfs/Makefile
- create mode 100644 fs/tarfs/defs.rs
- create mode 100644 fs/tarfs/tar.rs
+ fs/Kconfig            |   1 +
+ fs/Makefile           |   1 +
+ fs/rust-ext2/Kconfig  |  13 +
+ fs/rust-ext2/Makefile |   8 +
+ fs/rust-ext2/defs.rs  | 173 +++++++++++++
+ fs/rust-ext2/ext2.rs  | 551 ++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs    |   3 +
+ 7 files changed, 750 insertions(+)
+ create mode 100644 fs/rust-ext2/Kconfig
+ create mode 100644 fs/rust-ext2/Makefile
+ create mode 100644 fs/rust-ext2/defs.rs
+ create mode 100644 fs/rust-ext2/ext2.rs
 
 diff --git a/fs/Kconfig b/fs/Kconfig
-index a46b0cbc4d8f..2cbd99d6784c 100644
+index 2cbd99d6784c..cf0cac5c5b1e 100644
 --- a/fs/Kconfig
 +++ b/fs/Kconfig
-@@ -337,6 +337,7 @@ source "fs/sysv/Kconfig"
- source "fs/ufs/Kconfig"
+@@ -338,6 +338,7 @@ source "fs/ufs/Kconfig"
  source "fs/erofs/Kconfig"
  source "fs/vboxsf/Kconfig"
-+source "fs/tarfs/Kconfig"
+ source "fs/tarfs/Kconfig"
++source "fs/rust-ext2/Kconfig"
  
  endif # MISC_FILESYSTEMS
  
 diff --git a/fs/Makefile b/fs/Makefile
-index 6ecc9b0a53f2..d8bbda73e3a9 100644
+index d8bbda73e3a9..c1a3007efc7d 100644
 --- a/fs/Makefile
 +++ b/fs/Makefile
-@@ -129,3 +129,4 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
- obj-$(CONFIG_EROFS_FS)		+= erofs/
+@@ -130,3 +130,4 @@ obj-$(CONFIG_EROFS_FS)		+= erofs/
  obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
  obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
-+obj-$(CONFIG_TARFS_FS)		+= tarfs/
-diff --git a/fs/tarfs/Kconfig b/fs/tarfs/Kconfig
+ obj-$(CONFIG_TARFS_FS)		+= tarfs/
++obj-$(CONFIG_RUST_EXT2_FS)	+= rust-ext2/
+diff --git a/fs/rust-ext2/Kconfig b/fs/rust-ext2/Kconfig
 new file mode 100644
-index 000000000000..fd4f1ae0f83d
+index 000000000000..976371655ca6
 --- /dev/null
-+++ b/fs/tarfs/Kconfig
-@@ -0,0 +1,15 @@
++++ b/fs/rust-ext2/Kconfig
+@@ -0,0 +1,13 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +#
 +
-+config TARFS_FS
-+	tristate "TAR file system support"
++config RUST_EXT2_FS
++	tristate "Rust second extended fs support"
 +	depends on RUST && BLOCK
 +	help
-+	  This is a simple read-only file system intended for mounting
-+	  tar files that have had an index appened to them.
++	  Ext2 is a standard Linux file system for hard disks.
 +
 +	  To compile this file system support as a module, choose M here: the
-+	  module will be called tarfs.
++	  module will be called rust_ext2.
 +
-+	  If you don't know whether you need it, then you don't need it:
-+	  answer N.
-diff --git a/fs/tarfs/Makefile b/fs/tarfs/Makefile
++	  If unsure, say Y.
+diff --git a/fs/rust-ext2/Makefile b/fs/rust-ext2/Makefile
 new file mode 100644
-index 000000000000..011c5d64fbe3
+index 000000000000..ac960b5f89d7
 --- /dev/null
-+++ b/fs/tarfs/Makefile
++++ b/fs/rust-ext2/Makefile
 @@ -0,0 +1,8 @@
 +# SPDX-License-Identifier: GPL-2.0
 +#
 +# Makefile for the linux tarfs filesystem routines.
 +#
 +
-+obj-$(CONFIG_TARFS_FS) += tarfs.o
++obj-$(CONFIG_RUST_EXT2_FS) += rust_ext2.o
 +
-+tarfs-y := tar.o
-diff --git a/fs/tarfs/defs.rs b/fs/tarfs/defs.rs
++rust_ext2-y := ext2.o
+diff --git a/fs/rust-ext2/defs.rs b/fs/rust-ext2/defs.rs
 new file mode 100644
-index 000000000000..7481b75aaab2
+index 000000000000..5f84852b4961
 --- /dev/null
-+++ b/fs/tarfs/defs.rs
-@@ -0,0 +1,80 @@
++++ b/fs/rust-ext2/defs.rs
+@@ -0,0 +1,173 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +//! Definitions of tarfs structures.
 +
 +use kernel::types::LE;
 +
-+/// Flags used in [`Inode::flags`].
-+pub mod inode_flags {
-+    /// Indicates that the inode is opaque.
-+    ///
-+    /// When set, inode will have the "trusted.overlay.opaque" set to "y" at runtime.
-+    pub const OPAQUE: u8 = 0x1;
-+}
++pub(crate) const EXT2_SUPER_MAGIC: u16 = 0xEF53;
++
++pub(crate) const EXT2_MAX_BLOCK_LOG_SIZE: u32 = 16;
++
++pub(crate) const EXT2_GOOD_OLD_REV: u32 = 0; /* The good old (original) format */
++pub(crate) const EXT2_DYNAMIC_REV: u32 = 1; /* V2 format w/ dynamic inode sizes */
++
++pub(crate) const EXT2_GOOD_OLD_INODE_SIZE: u16 = 128;
++
++pub(crate) const EXT2_ROOT_INO: u32 = 2; /* Root inode */
++
++/* First non-reserved inode for old ext2 filesystems. */
++pub(crate) const EXT2_GOOD_OLD_FIRST_INO: u32 = 11;
++
++pub(crate) const EXT2_FEATURE_INCOMPAT_FILETYPE: u32 = 0x0002;
++
++/*
++ * Constants relative to the data blocks
++ */
++pub(crate) const EXT2_NDIR_BLOCKS: usize = 12;
++pub(crate) const EXT2_IND_BLOCK: usize = EXT2_NDIR_BLOCKS;
++pub(crate) const EXT2_DIND_BLOCK: usize = EXT2_IND_BLOCK + 1;
++pub(crate) const EXT2_TIND_BLOCK: usize = EXT2_DIND_BLOCK + 1;
++pub(crate) const EXT2_N_BLOCKS: usize = EXT2_TIND_BLOCK + 1;
 +
 +kernel::derive_readable_from_bytes! {
-+    /// An inode in the tarfs inode table.
 +    #[repr(C)]
-+    pub struct Inode {
-+        /// The mode of the inode.
-+        ///
-+        /// The bottom 9 bits are the rwx bits for owner, group, all.
-+        ///
-+        /// The bits in the [`S_IFMT`] mask represent the file mode.
-+        pub mode: LE<u16>,
-+
-+        /// Tarfs flags for the inode.
-+        ///
-+        /// Values are drawn from the [`inode_flags`] module.
-+        pub flags: u8,
-+
-+        /// The bottom 4 bits represent the top 4 bits of mtime.
-+        pub hmtime: u8,
-+
-+        /// The owner of the inode.
-+        pub owner: LE<u32>,
-+
-+        /// The group of the inode.
-+        pub group: LE<u32>,
-+
-+        /// The bottom 32 bits of mtime.
-+        pub lmtime: LE<u32>,
-+
-+        /// Size of the contents of the inode.
-+        pub size: LE<u64>,
-+
-+        /// Either the offset to the data, or the major and minor numbers of a device.
-+        ///
-+        /// For the latter, the 32 LSB are the minor, and the 32 MSB are the major numbers.
-+        pub offset: LE<u64>,
++    pub(crate) struct Super {
++        pub(crate) inodes_count: LE<u32>,
++        pub(crate) blocks_count: LE<u32>,
++        pub(crate) r_blocks_count: LE<u32>,
++        pub(crate) free_blocks_count: LE<u32>, /* Free blocks count */
++        pub(crate) free_inodes_count: LE<u32>, /* Free inodes count */
++        pub(crate) first_data_block: LE<u32>,  /* First Data Block */
++        pub(crate) log_block_size: LE<u32>,    /* Block size */
++        pub(crate) log_frag_size: LE<u32>,     /* Fragment size */
++        pub(crate) blocks_per_group: LE<u32>,  /* # Blocks per group */
++        pub(crate) frags_per_group: LE<u32>,   /* # Fragments per group */
++        pub(crate) inodes_per_group: LE<u32>,  /* # Inodes per group */
++        pub(crate) mtime: LE<u32>,             /* Mount time */
++        pub(crate) wtime: LE<u32>,             /* Write time */
++        pub(crate) mnt_count: LE<u16>,         /* Mount count */
++        pub(crate) max_mnt_count: LE<u16>,     /* Maximal mount count */
++        pub(crate) magic: LE<u16>,             /* Magic signature */
++        pub(crate) state: LE<u16>,             /* File system state */
++        pub(crate) errors: LE<u16>,            /* Behaviour when detecting errors */
++        pub(crate) minor_rev_level: LE<u16>,   /* minor revision level */
++        pub(crate) lastcheck: LE<u32>,         /* time of last check */
++        pub(crate) checkinterval: LE<u32>,     /* max. time between checks */
++        pub(crate) creator_os: LE<u32>,        /* OS */
++        pub(crate) rev_level: LE<u32>,         /* Revision level */
++        pub(crate) def_resuid: LE<u16>,        /* Default uid for reserved blocks */
++        pub(crate) def_resgid: LE<u16>,        /* Default gid for reserved blocks */
++        /*
++         * These fields are for EXT2_DYNAMIC_REV superblocks only.
++         *
++         * Note: the difference between the compatible feature set and
++         * the incompatible feature set is that if there is a bit set
++         * in the incompatible feature set that the kernel doesn't
++         * know about, it should refuse to mount the filesystem.
++         *
++         * e2fsck's requirements are more strict; if it doesn't know
++         * about a feature in either the compatible or incompatible
++         * feature set, it must abort and not try to meddle with
++         * things it doesn't understand...
++         */
++        pub(crate) first_ino: LE<u32>,              /* First non-reserved inode */
++        pub(crate) inode_size: LE<u16>,             /* size of inode structure */
++        pub(crate) block_group_nr: LE<u16>,         /* block group # of this superblock */
++        pub(crate) feature_compat: LE<u32>,         /* compatible feature set */
++        pub(crate) feature_incompat: LE<u32>,       /* incompatible feature set */
++        pub(crate) feature_ro_compat: LE<u32>,      /* readonly-compatible feature set */
++        pub(crate) uuid: [u8; 16],                  /* 128-bit uuid for volume */
++        pub(crate) volume_name: [u8; 16],           /* volume name */
++        pub(crate) last_mounted: [u8; 64],          /* directory where last mounted */
++        pub(crate) algorithm_usage_bitmap: LE<u32>, /* For compression */
++        /*
++         * Performance hints.  Directory preallocation should only
++         * happen if the EXT2_COMPAT_PREALLOC flag is on.
++         */
++        pub(crate) prealloc_blocks: u8,    /* Nr of blocks to try to preallocate*/
++        pub(crate) prealloc_dir_blocks: u8,        /* Nr to preallocate for dirs */
++        padding1: u16,
++        /*
++         * Journaling support valid if EXT3_FEATURE_COMPAT_HAS_JOURNAL set.
++         */
++        pub(crate) journal_uuid: [u8; 16],      /* uuid of journal superblock */
++        pub(crate) journal_inum: u32,           /* inode number of journal file */
++        pub(crate) journal_dev: u32,            /* device number of journal file */
++        pub(crate) last_orphan: u32,            /* start of list of inodes to delete */
++        pub(crate) hash_seed: [u32; 4],         /* HTREE hash seed */
++        pub(crate) def_hash_version: u8,        /* Default hash version to use */
++        pub(crate) reserved_char_pad: u8,
++        pub(crate) reserved_word_pad: u16,
++        pub(crate) default_mount_opts: LE<u32>,
++        pub(crate) first_meta_bg: LE<u32>,      /* First metablock block group */
++        reserved: [u32; 190],                   /* Padding to the end of the block */
 +    }
 +
-+    /// An entry in a tarfs directory entry table.
 +    #[repr(C)]
-+    pub struct DirEntry {
-+        /// The inode number this entry refers to.
-+        pub ino: LE<u64>,
++    #[derive(Clone, Copy)]
++    pub(crate) struct Group {
++        /// Blocks bitmap block.
++        pub block_bitmap: LE<u32>,
 +
-+        /// The offset to the name of the entry.
-+        pub name_offset: LE<u64>,
++        /// Inodes bitmap block.
++        pub inode_bitmap: LE<u32>,
 +
-+        /// The length of the name of the entry.
-+        pub name_len: LE<u64>,
++        /// Inodes table block.
++        pub inode_table: LE<u32>,
 +
-+        /// The type of entry.
-+        pub etype: u8,
++        /// Number of free blocks.
++        pub free_blocks_count: LE<u16>,
 +
-+        /// Unused padding.
-+        pub _padding: [u8; 7],
++        /// Number of free inodes.
++        pub free_inodes_count: LE<u16>,
++
++        /// Number of directories.
++        pub used_dirs_count: LE<u16>,
++
++        pad: LE<u16>,
++        reserved: [u32; 3],
 +    }
 +
-+    /// The super-block of a tarfs instance.
 +    #[repr(C)]
-+    pub struct Header {
-+        /// The offset to the beginning of the inode-table.
-+        pub inode_table_offset: LE<u64>,
++    pub(crate) struct INode {
++        pub mode: LE<u16>,                  /* File mode */
++        pub uid: LE<u16>,                   /* Low 16 bits of Owner Uid */
++        pub size: LE<u32>,                  /* Size in bytes */
++        pub atime: LE<u32>,                 /* Access time */
++        pub ctime: LE<u32>,                 /* Creation time */
++        pub mtime: LE<u32>,                 /* Modification time */
++        pub dtime: LE<u32>,                 /* Deletion Time */
++        pub gid: LE<u16>,                   /* Low 16 bits of Group Id */
++        pub links_count: LE<u16>,           /* Links count */
++        pub blocks: LE<u32>,                /* Blocks count */
++        pub flags: LE<u32>,                 /* File flags */
++        pub reserved1: LE<u32>,
++        pub block: [LE<u32>; EXT2_N_BLOCKS],/* Pointers to blocks */
++        pub generation: LE<u32>,            /* File version (for NFS) */
++        pub file_acl: LE<u32>,              /* File ACL */
++        pub dir_acl: LE<u32>,               /* Directory ACL */
++        pub faddr: LE<u32>,                 /* Fragment address */
++        pub frag: u8,	                    /* Fragment number */
++        pub fsize: u8,	                    /* Fragment size */
++        pub pad1: LE<u16>,
++        pub uid_high: LE<u16>,
++        pub gid_high: LE<u16>,
++        pub reserved2: LE<u32>,
++    }
 +
-+        /// The number of inodes in the file system.
-+        pub inode_count: LE<u64>,
++    #[repr(C)]
++    pub(crate) struct DirEntry {
++        pub(crate) inode: LE<u32>,       /* Inode number */
++        pub(crate) rec_len: LE<u16>,     /* Directory entry length */
++        pub(crate) name_len: u8,         /* Name length */
++        pub(crate) file_type: u8,        /* Only if the "filetype" feature flag is set. */
 +    }
 +}
-diff --git a/fs/tarfs/tar.rs b/fs/tarfs/tar.rs
++
++pub(crate) const FT_REG_FILE: u8 = 1;
++pub(crate) const FT_DIR: u8 = 2;
++pub(crate) const FT_CHRDEV: u8 = 3;
++pub(crate) const FT_BLKDEV: u8 = 4;
++pub(crate) const FT_FIFO: u8 = 5;
++pub(crate) const FT_SOCK: u8 = 6;
++pub(crate) const FT_SYMLINK: u8 = 7;
+diff --git a/fs/rust-ext2/ext2.rs b/fs/rust-ext2/ext2.rs
 new file mode 100644
-index 000000000000..a3f6e468e566
+index 000000000000..2d6b1e7ca156
 --- /dev/null
-+++ b/fs/tarfs/tar.rs
-@@ -0,0 +1,394 @@
++++ b/fs/rust-ext2/ext2.rs
+@@ -0,0 +1,551 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+//! File system based on tar files and an index.
++//! Ext2 file system.
 +
++use alloc::vec::Vec;
 +use core::mem::size_of;
 +use defs::*;
 +use kernel::fs::{
-+    self, address_space, dentry, dentry::DEntry, file, file::File, inode, inode::INode,
-+    inode::Type, iomap, sb, sb::SuperBlock, Offset, Stat,
++    self, address_space, dentry, dentry::DEntry, file, file::File, inode, inode::INode, iomap, sb,
++    sb::SuperBlock, Offset,
 +};
-+use kernel::types::{ARef, Either, FromBytes, Locked};
-+use kernel::{c_str, prelude::*, str::CString, user};
++use kernel::types::{ARef, Either, FromBytes, Locked, LE};
++use kernel::{block, c_str, prelude::*, str::CString, time::Timespec, user, PAGE_SIZE};
 +
 +pub mod defs;
 +
 +kernel::module_fs! {
-+    type: TarFs,
-+    name: "tarfs",
++    type: Ext2Fs,
++    name: "ext2",
 +    author: "Wedson Almeida Filho <walmeida@microsoft.com>",
-+    description: "File system for indexed tar files",
++    description: "ext2 file system",
 +    license: "GPL",
 +}
 +
-+const SECTOR_SIZE: u64 = 512;
-+const TARFS_BSIZE: u64 = 1 << TARFS_BSIZE_BITS;
-+const TARFS_BSIZE_BITS: u8 = 12;
-+const SECTORS_PER_BLOCK: u64 = TARFS_BSIZE / SECTOR_SIZE;
-+const TARFS_MAGIC: usize = 0x54415246;
-+
-+static_assert!(SECTORS_PER_BLOCK > 0);
++const SB_OFFSET: Offset = 1024;
 +
 +struct INodeData {
-+    offset: u64,
-+    flags: u8,
++    data_blocks: [u32; defs::EXT2_N_BLOCKS],
 +}
 +
-+struct TarFs {
-+    data_size: u64,
-+    inode_table_offset: u64,
-+    inode_count: u64,
++struct Ext2Fs {
 +    mapper: inode::Mapper,
++    block_size: u32,
++    has_file_type: bool,
++    _block_size_bits: u32,
++    inodes_per_block: u32,
++    inodes_per_group: u32,
++    inode_count: u32,
++    inode_size: u16,
++    first_ino: u32,
++    group: Vec<defs::Group>,
 +}
 +
-+impl TarFs {
-+    fn iget(sb: &SuperBlock<Self>, ino: u64) -> Result<ARef<INode<Self>>> {
-+        // Check that the inode number is valid.
-+        let h = sb.data();
-+        if ino == 0 || ino > h.inode_count {
++impl Ext2Fs {
++    fn iget(sb: &SuperBlock<Self>, ino: u32) -> Result<ARef<INode<Self>>> {
++        let s = sb.data();
++        if (ino != EXT2_ROOT_INO && ino < s.first_ino) || ino > s.inode_count {
++            return Err(ENOENT);
++        }
++        let group = ((ino - 1) / s.inodes_per_group) as usize;
++        let offset = (ino - 1) % s.inodes_per_group;
++
++        if group >= s.group.len() {
 +            return Err(ENOENT);
 +        }
 +
 +        // Create an inode or find an existing (cached) one.
-+        let mut inode = match sb.get_or_create_inode(ino)? {
++        let mut inode = match sb.get_or_create_inode(ino.into())? {
 +            Either::Left(existing) => return Ok(existing),
 +            Either::Right(new) => new,
 +        };
 +
-+        static_assert!((TARFS_BSIZE as usize) % size_of::<Inode>() == 0);
-+
-+        // Load inode details from storage.
-+        let offset = h.inode_table_offset + (ino - 1) * u64::try_from(size_of::<Inode>())?;
-+        let b = h.mapper.mapped_folio(offset.try_into()?)?;
-+        let idata = Inode::from_bytes(&b, 0).ok_or(EIO)?;
-+
++        let inodes_block = Offset::from(s.group[group].inode_table.value());
++        let inode_block = inodes_block + Offset::from(offset / s.inodes_per_block);
++        let offset = (offset % s.inodes_per_block) as usize;
++        let b = sb
++            .data()
++            .mapper
++            .mapped_folio(inode_block * Offset::from(s.block_size))?;
++        let idata = defs::INode::from_bytes(&b, offset * s.inode_size as usize).ok_or(EIO)?;
 +        let mode = idata.mode.value();
 +
-+        // Ignore inodes that have unknown mode bits.
-+        if (mode & !(fs::mode::S_IFMT | 0o777)) != 0 {
-+            return Err(ENOENT);
++        if idata.links_count.value() == 0 && (mode == 0 || idata.dtime.value() != 0) {
++            return Err(ESTALE);
 +        }
 +
-+        const DIR_FOPS: file::Ops<TarFs> = file::Ops::new::<TarFs>();
-+        const DIR_IOPS: inode::Ops<TarFs> = inode::Ops::new::<TarFs>();
-+        const FILE_AOPS: address_space::Ops<TarFs> = iomap::ro_aops::<TarFs>();
++        const DIR_FOPS: file::Ops<Ext2Fs> = file::Ops::new::<Ext2Fs>();
++        const DIR_IOPS: inode::Ops<Ext2Fs> = inode::Ops::new::<Ext2Fs>();
++        const FILE_AOPS: address_space::Ops<Ext2Fs> = iomap::ro_aops::<Ext2Fs>();
 +
-+        let size = idata.size.value();
-+        let doffset = idata.offset.value();
-+        let secs = u64::from(idata.lmtime.value()) | (u64::from(idata.hmtime & 0xf) << 32);
-+        let ts = kernel::time::Timespec::new(secs, 0)?;
++        let mut size = idata.size.value().into();
 +        let typ = match mode & fs::mode::S_IFMT {
 +            fs::mode::S_IFREG => {
++                size |= Offset::from(idata.dir_acl.value())
++                    .checked_shl(32)
++                    .ok_or(EUCLEAN)?;
 +                inode
-+                    .set_fops(file::Ops::generic_ro_file())
-+                    .set_aops(FILE_AOPS);
-+                Type::Reg
++                    .set_aops(FILE_AOPS)
++                    .set_fops(file::Ops::generic_ro_file());
++                inode::Type::Reg
 +            }
 +            fs::mode::S_IFDIR => {
-+                inode.set_iops(DIR_IOPS).set_fops(DIR_FOPS);
-+                Type::Dir
++                inode
++                    .set_iops(DIR_IOPS)
++                    .set_fops(DIR_FOPS)
++                    .set_aops(FILE_AOPS);
++                inode::Type::Dir
 +            }
 +            fs::mode::S_IFLNK => {
-+                inode.set_iops(inode::Ops::simple_symlink_inode());
-+                Type::Lnk(Some(Self::get_link(sb, doffset, size)?))
++                if idata.blocks.value() == 0 {
++                    const OFFSET: usize = core::mem::offset_of!(defs::INode, block);
++                    let name = &b[offset * usize::from(s.inode_size) + OFFSET..];
++                    let name_len = size as usize;
++                    if name_len > name.len() || name_len == 0 {
++                        return Err(EIO);
++                    }
++                    inode.set_iops(inode::Ops::simple_symlink_inode());
++                    inode::Type::Lnk(Some(CString::try_from(&name[..name_len])?))
++                } else {
++                    inode
++                        .set_aops(FILE_AOPS)
++                        .set_iops(inode::Ops::page_symlink_inode());
++                    inode::Type::Lnk(None)
++                }
 +            }
-+            fs::mode::S_IFSOCK => Type::Sock,
-+            fs::mode::S_IFIFO => Type::Fifo,
-+            fs::mode::S_IFCHR => Type::Chr((doffset >> 32) as u32, doffset as u32),
-+            fs::mode::S_IFBLK => Type::Blk((doffset >> 32) as u32, doffset as u32),
++            fs::mode::S_IFSOCK => inode::Type::Sock,
++            fs::mode::S_IFIFO => inode::Type::Fifo,
++            fs::mode::S_IFCHR => {
++                let (major, minor) = decode_dev(&idata.block);
++                inode::Type::Chr(major, minor)
++            }
++            fs::mode::S_IFBLK => {
++                let (major, minor) = decode_dev(&idata.block);
++                inode::Type::Blk(major, minor)
++            }
 +            _ => return Err(ENOENT),
 +        };
 +        inode.init(inode::Params {
 +            typ,
 +            mode: mode & 0o777,
-+            size: size.try_into()?,
-+            blocks: (idata.size.value() + TARFS_BSIZE - 1) / TARFS_BSIZE,
-+            nlink: 1,
-+            uid: idata.owner.value(),
-+            gid: idata.group.value(),
-+            ctime: ts,
-+            mtime: ts,
-+            atime: ts,
++            size,
++            blocks: idata.blocks.value().into(),
++            nlink: idata.links_count.value().into(),
++            uid: u32::from(idata.uid.value()) | u32::from(idata.uid_high.value()) << 16,
++            gid: u32::from(idata.gid.value()) | u32::from(idata.gid_high.value()) << 16,
++            ctime: Timespec::new(idata.ctime.value().into(), 0)?,
++            mtime: Timespec::new(idata.mtime.value().into(), 0)?,
++            atime: Timespec::new(idata.atime.value().into(), 0)?,
 +            value: INodeData {
-+                offset: doffset,
-+                flags: idata.flags,
++                data_blocks: core::array::from_fn(|i| idata.block[i].value()),
 +            },
 +        })
 +    }
 +
-+    fn name_eq(sb: &SuperBlock<Self>, mut name: &[u8], offset: u64) -> Result<bool> {
-+        let ret =
-+            sb.data()
-+                .mapper
-+                .for_each_page(offset as Offset, name.len().try_into()?, |data| {
-+                    if data != &name[..data.len()] {
-+                        return Ok(Some(()));
-+                    }
-+                    name = &name[data.len()..];
-+                    Ok(None)
-+                })?;
-+        Ok(ret.is_none())
++    fn offsets<'a>(&self, mut block: u64, out: &'a mut [u32]) -> Option<&'a [u32]> {
++        let ptrs = u64::from(self.block_size / size_of::<u32>() as u32);
++        let ptr_mask = ptrs - 1;
++        let ptr_bits = ptrs.trailing_zeros();
++
++        if block < EXT2_NDIR_BLOCKS as u64 {
++            out[0] = block as u32;
++            return Some(&out[..1]);
++        }
++
++        block -= EXT2_NDIR_BLOCKS as u64;
++        if block < ptrs {
++            out[0] = EXT2_IND_BLOCK as u32;
++            out[1] = block as u32;
++            return Some(&out[..2]);
++        }
++
++        block -= ptrs;
++        if block < (1 << (2 * ptr_bits)) {
++            out[0] = EXT2_DIND_BLOCK as u32;
++            out[1] = (block >> ptr_bits) as u32;
++            out[2] = (block & ptr_mask) as u32;
++            return Some(&out[..3]);
++        }
++
++        block -= ptrs * ptrs;
++        if block < ptrs * ptrs * ptrs {
++            out[0] = EXT2_TIND_BLOCK as u32;
++            out[1] = (block >> (2 * ptr_bits)) as u32;
++            out[2] = ((block >> ptr_bits) & ptr_mask) as u32;
++            out[3] = (block & ptr_mask) as u32;
++            return Some(&out[..4]);
++        }
++
++        None
 +    }
 +
-+    fn read_name(sb: &SuperBlock<Self>, name: &mut [u8], offset: u64) -> Result {
-+        let mut copy_to = 0;
-+        sb.data()
-+            .mapper
-+            .for_each_page(offset as Offset, name.len().try_into()?, |data| {
-+                name[copy_to..][..data.len()].copy_from_slice(data);
-+                copy_to += data.len();
-+                Ok(None::<()>)
-+            })?;
++    fn offset_to_block(inode: &INode<Self>, block: Offset) -> Result<u64> {
++        let s = inode.super_block().data();
++        let mut indices = [0u32; 4];
++        let boffsets = s.offsets(block as u64, &mut indices).ok_or(EIO)?;
++        let mut boffset = inode.data().data_blocks[boffsets[0] as usize];
++        let mapper = &s.mapper;
++        for i in &boffsets[1..] {
++            let b = mapper.mapped_folio(Offset::from(boffset) * Offset::from(s.block_size))?;
++            let table = LE::<u32>::from_bytes_to_slice(&b).ok_or(EIO)?;
++            boffset = table[*i as usize].value();
++        }
++        Ok(boffset.into())
++    }
++
++    fn check_descriptors(s: &Super, groups: &[Group]) -> Result {
++        for (i, g) in groups.iter().enumerate() {
++            let first = i as u32 * s.blocks_per_group.value() + s.first_data_block.value();
++            let last = if i == groups.len() - 1 {
++                s.blocks_count.value()
++            } else {
++                first + s.blocks_per_group.value() - 1
++            };
++
++            if g.block_bitmap.value() < first || g.block_bitmap.value() > last {
++                pr_err!(
++                    "Block bitmap for group {i} no in group (block {})\n",
++                    g.block_bitmap.value()
++                );
++                return Err(EINVAL);
++            }
++
++            if g.inode_bitmap.value() < first || g.inode_bitmap.value() > last {
++                pr_err!(
++                    "Inode bitmap for group {i} no in group (block {})\n",
++                    g.inode_bitmap.value()
++                );
++                return Err(EINVAL);
++            }
++
++            if g.inode_table.value() < first || g.inode_table.value() > last {
++                pr_err!(
++                    "Inode table for group {i} no in group (block {})\n",
++                    g.inode_table.value()
++                );
++                return Err(EINVAL);
++            }
++        }
 +        Ok(())
-+    }
-+
-+    fn get_link(sb: &SuperBlock<Self>, offset: u64, len: u64) -> Result<CString> {
-+        let name_len: usize = len.try_into()?;
-+        let alloc_len = name_len.checked_add(1).ok_or(ENOMEM)?;
-+        let mut name = Box::new_slice(alloc_len, b'\0', GFP_NOFS)?;
-+        Self::read_name(sb, &mut name[..name_len], offset)?;
-+        Ok(name.try_into()?)
 +    }
 +}
 +
-+impl fs::FileSystem for TarFs {
++impl fs::FileSystem for Ext2Fs {
 +    type Data = Box<Self>;
 +    type INodeData = INodeData;
-+    const NAME: &'static CStr = c_str!("tar");
++    const NAME: &'static CStr = c_str!("rust-ext2");
 +    const SUPER_TYPE: sb::Type = sb::Type::BlockDev;
 +
 +    fn fill_super(
@@ -428,172 +594,160 @@ index 000000000000..a3f6e468e566
 +            return Err(EINVAL);
 +        };
 +
-+        let scount = sb.sector_count();
-+        if scount < SECTORS_PER_BLOCK {
-+            pr_err!("Block device is too small: sector count={scount}\n");
++        if sb.min_blocksize(PAGE_SIZE as i32) == 0 {
++            pr_err!("Unable to set block size\n");
++            return Err(EINVAL);
++        }
++
++        // Map the super block and check the magic number.
++        let mapped = mapper.mapped_folio(SB_OFFSET)?;
++        let s = Super::from_bytes(&mapped, 0).ok_or(EIO)?;
++
++        if s.magic.value() != EXT2_SUPER_MAGIC {
++            return Err(EINVAL);
++        }
++
++        // Check for unsupported flags.
++        let mut has_file_type = false;
++        if s.rev_level.value() >= EXT2_DYNAMIC_REV {
++            let features = s.feature_incompat.value();
++            if features & !EXT2_FEATURE_INCOMPAT_FILETYPE != 0 {
++                pr_err!("Unsupported incompatible feature: {:x}\n", features);
++                return Err(EINVAL);
++            }
++
++            has_file_type = features & EXT2_FEATURE_INCOMPAT_FILETYPE != 0;
++
++            let features = s.feature_ro_compat.value();
++            if !sb.rdonly() && features != 0 {
++                pr_err!("Unsupported rw incompatible feature: {:x}\n", features);
++                return Err(EINVAL);
++            }
++        }
++
++        // Set the block size.
++        let block_size_bits = s.log_block_size.value();
++        if block_size_bits > EXT2_MAX_BLOCK_LOG_SIZE - 10 {
++            pr_err!("Invalid log block size: {}\n", block_size_bits);
++            return Err(EINVAL);
++        }
++
++        let block_size = 1024u32 << block_size_bits;
++        if sb.min_blocksize(block_size as i32) != block_size as i32 {
++            pr_err!("Bad block size: {}\n", block_size);
 +            return Err(ENXIO);
 +        }
 +
-+        if sb.min_blocksize(SECTOR_SIZE as i32) != SECTOR_SIZE as i32 {
-+            pr_err!("Block size not supported\n");
-+            return Err(EIO);
-+        }
-+
-+        let tarfs = {
-+            let offset = (scount - 1) * SECTOR_SIZE;
-+            let mapped = mapper.mapped_folio(offset.try_into()?)?;
-+            let hdr = Header::from_bytes(&mapped, 0).ok_or(EIO)?;
-+            let inode_table_offset = hdr.inode_table_offset.value();
-+            let inode_count = hdr.inode_count.value();
-+            drop(mapped);
-+            Box::new(
-+                TarFs {
-+                    inode_table_offset,
-+                    inode_count,
-+                    data_size: scount.checked_mul(SECTOR_SIZE).ok_or(ERANGE)?,
-+                    mapper,
-+                },
-+                GFP_KERNEL,
-+            )?
++        // Get the first inode and the inode size.
++        let (inode_size, first_ino) = if s.rev_level.value() == EXT2_GOOD_OLD_REV {
++            (EXT2_GOOD_OLD_INODE_SIZE, EXT2_GOOD_OLD_FIRST_INO)
++        } else {
++            let size = s.inode_size.value();
++            if size < EXT2_GOOD_OLD_INODE_SIZE
++                || !size.is_power_of_two()
++                || u32::from(size) > block_size
++            {
++                pr_err!("Unsupported inode size: {}\n", size);
++                return Err(EINVAL);
++            }
++            (size, s.first_ino.value())
 +        };
 +
-+        // Check that the inode table starts within the device data and is aligned to the block
-+        // size.
-+        if tarfs.inode_table_offset >= tarfs.data_size {
-+            pr_err!(
-+                "inode table offset beyond data size: {} >= {}\n",
-+                tarfs.inode_table_offset,
-+                tarfs.data_size
-+            );
-+            return Err(E2BIG);
++        // Get the number of inodes per group and per block.
++        let inode_count = s.inodes_count.value();
++        let inodes_per_group = s.inodes_per_group.value();
++        let inodes_per_block = block_size / u32::from(inode_size);
++        if inodes_per_group == 0 || inodes_per_block == 0 {
++            return Err(EINVAL);
 +        }
 +
-+        if tarfs.inode_table_offset % SECTOR_SIZE != 0 {
-+            pr_err!(
-+                "inode table offset not aligned to sector size: {}\n",
-+                tarfs.inode_table_offset,
-+            );
-+            return Err(EDOM);
++        if inodes_per_group > block_size * 8 || inodes_per_group < inodes_per_block {
++            pr_err!("Bad inodes per group: {}\n", inodes_per_group);
++            return Err(EINVAL);
 +        }
 +
-+        // Check that the last inode is within bounds (and that there is no overflow when
-+        // calculating its offset).
-+        let offset = tarfs
-+            .inode_count
-+            .checked_mul(u64::try_from(size_of::<Inode>())?)
-+            .ok_or(ERANGE)?
-+            .checked_add(tarfs.inode_table_offset)
-+            .ok_or(ERANGE)?;
-+        if offset > tarfs.data_size {
-+            pr_err!(
-+                "inode table extends beyond the data size : {} > {}\n",
-+                tarfs.inode_table_offset + (tarfs.inode_count * size_of::<Inode>() as u64),
-+                tarfs.data_size,
-+            );
-+            return Err(E2BIG);
++        // Check the size of the groups.
++        let itb_per_group = inodes_per_group / inodes_per_block;
++        let blocks_per_group = s.blocks_per_group.value();
++        if blocks_per_group > block_size * 8 || blocks_per_group <= itb_per_group + 3 {
++            pr_err!("Bad blocks per group: {}\n", blocks_per_group);
++            return Err(EINVAL);
 +        }
 +
-+        sb.set_magic(TARFS_MAGIC);
-+        Ok(tarfs)
++        let blocks_count = s.blocks_count.value();
++        if block::Sector::from(blocks_count) > sb.sector_count() >> (1 + block_size_bits) {
++            pr_err!(
++                "Block count ({blocks_count}) exceeds size of device ({})\n",
++                sb.sector_count() >> (1 + block_size_bits)
++            );
++            return Err(EINVAL);
++        }
++
++        let group_count = (blocks_count - s.first_data_block.value() - 1) / blocks_per_group + 1;
++        if group_count * inodes_per_group != inode_count {
++            pr_err!(
++                "Unexpected inode count: {inode_count} vs {}",
++                group_count * inodes_per_group
++            );
++            return Err(EINVAL);
++        }
++
++        let mut groups = Vec::new();
++        groups.reserve(group_count as usize, GFP_NOFS)?;
++
++        let mut remain = group_count;
++        let mut offset = (SB_OFFSET / Offset::from(block_size) + 1) * Offset::from(block_size);
++        while remain > 0 {
++            let b = mapper.mapped_folio(offset)?;
++            for g in Group::from_bytes_to_slice(&b).ok_or(EIO)? {
++                groups.push(*g, GFP_NOFS)?;
++                remain -= 1;
++                if remain == 0 {
++                    break;
++                }
++            }
++            offset += Offset::try_from(b.len())?;
++        }
++
++        Self::check_descriptors(s, &groups)?;
++
++        sb.set_magic(s.magic.value().into());
++        drop(mapped);
++        Ok(Box::new(
++            Ext2Fs {
++                mapper,
++                block_size,
++                _block_size_bits: block_size_bits,
++                has_file_type,
++                inodes_per_group,
++                inodes_per_block,
++                inode_count,
++                inode_size,
++                first_ino,
++                group: groups,
++            },
++            GFP_KERNEL,
++        )?)
 +    }
 +
 +    fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>> {
-+        let inode = Self::iget(sb, 1)?;
++        let inode = Self::iget(sb, EXT2_ROOT_INO)?;
 +        dentry::Root::try_new(inode)
 +    }
-+
-+    fn read_xattr(
-+        _: &DEntry<Self>,
-+        inode: &INode<Self>,
-+        name: &CStr,
-+        outbuf: &mut [u8],
-+    ) -> Result<usize> {
-+        if inode.data().flags & inode_flags::OPAQUE == 0
-+            || name.as_bytes() != b"trusted.overlay.opaque"
-+        {
-+            return Err(ENODATA);
-+        }
-+
-+        if !outbuf.is_empty() {
-+            outbuf[0] = b'y';
-+        }
-+
-+        Ok(1)
-+    }
-+
-+    fn statfs(dentry: &DEntry<Self>) -> Result<Stat> {
-+        let data = dentry.super_block().data();
-+        Ok(Stat {
-+            magic: TARFS_MAGIC,
-+            namelen: isize::MAX,
-+            bsize: TARFS_BSIZE as _,
-+            blocks: data.inode_table_offset / TARFS_BSIZE,
-+            files: data.inode_count,
-+        })
-+    }
 +}
 +
-+impl iomap::Operations for TarFs {
-+    type FileSystem = Self;
++fn rec_len(d: &DirEntry) -> u32 {
++    let len = d.rec_len.value();
 +
-+    fn begin<'a>(
-+        inode: &'a INode<Self>,
-+        pos: Offset,
-+        length: Offset,
-+        _flags: u32,
-+        map: &mut iomap::Map<'a>,
-+        _srcmap: &mut iomap::Map<'a>,
-+    ) -> Result {
-+        let size = (inode.size() + 511) & !511;
-+        if pos >= size {
-+            map.set_offset(pos)
-+                .set_length(length.try_into()?)
-+                .set_flags(iomap::map_flags::MERGED)
-+                .set_type(iomap::Type::Hole);
-+            return Ok(());
-+        }
-+
-+        map.set_offset(pos)
-+            .set_length(core::cmp::min(length, size - pos) as u64)
-+            .set_flags(iomap::map_flags::MERGED)
-+            .set_type(iomap::Type::Mapped)
-+            .set_bdev(Some(inode.super_block().bdev()))
-+            .set_addr(u64::try_from(pos)? + inode.data().offset);
-+
-+        Ok(())
++    if PAGE_SIZE >= 65536 && len == u16::MAX {
++        1u32 << 16
++    } else {
++        len.into()
 +    }
 +}
 +
 +#[vtable]
-+impl inode::Operations for TarFs {
-+    type FileSystem = Self;
-+
-+    fn lookup(
-+        parent: &Locked<&INode<Self>, inode::ReadSem>,
-+        dentry: dentry::Unhashed<'_, Self>,
-+    ) -> Result<Option<ARef<DEntry<Self>>>> {
-+        let sb = parent.super_block();
-+        let name = dentry.name();
-+
-+        let inode = sb.data().mapper.for_each_page(
-+            parent.data().offset.try_into()?,
-+            parent.size(),
-+            |data| {
-+                for e in DirEntry::from_bytes_to_slice(data).ok_or(EIO)? {
-+                    if Self::name_eq(sb, name, e.name_offset.value())? {
-+                        return Ok(Some(Self::iget(sb, e.ino.value())?));
-+                    }
-+                }
-+                Ok(None)
-+            },
-+        )?;
-+
-+        dentry.splice_alias(inode)
-+    }
-+}
-+
-+#[vtable]
-+impl file::Operations for TarFs {
++impl file::Operations for Ext2Fs {
 +    type FileSystem = Self;
 +
 +    fn seek(file: &File<Self>, offset: Offset, whence: file::Whence) -> Result<Offset> {
@@ -609,65 +763,153 @@ index 000000000000..a3f6e468e566
 +        inode: &Locked<&INode<Self>, inode::ReadSem>,
 +        emitter: &mut file::DirEmitter,
 +    ) -> Result {
-+        let sb = inode.super_block();
-+        let mut name = Vec::<u8>::new();
-+        let pos = emitter.pos();
++        let has_file_type = inode.super_block().data().has_file_type;
 +
-+        if pos < 0 || pos % size_of::<DirEntry>() as i64 != 0 {
-+            return Err(ENOENT);
-+        }
++        inode.for_each_page(emitter.pos(), Offset::MAX, |data| {
++            let mut offset = 0usize;
++            let mut acc: Offset = 0;
++            let limit = data.len().saturating_sub(size_of::<DirEntry>());
++            while offset < limit {
++                let dirent = DirEntry::from_bytes(data, offset).ok_or(EIO)?;
++                offset += size_of::<DirEntry>();
 +
-+        if pos >= inode.size() {
++                let name_len = usize::from(dirent.name_len);
++                if data.len() - offset < name_len {
++                    return Err(EIO);
++                }
++
++                let name = &data[offset..][..name_len];
++                let rec_len = rec_len(dirent);
++                offset = offset - size_of::<DirEntry>() + rec_len as usize;
++                if rec_len == 0 || offset > data.len() {
++                    return Err(EIO);
++                }
++
++                acc += Offset::from(rec_len);
++                let ino = dirent.inode.value();
++                if ino == 0 {
++                    continue;
++                }
++
++                let t = if !has_file_type {
++                    file::DirEntryType::Unknown
++                } else {
++                    match dirent.file_type {
++                        FT_REG_FILE => file::DirEntryType::Reg,
++                        FT_DIR => file::DirEntryType::Dir,
++                        FT_SYMLINK => file::DirEntryType::Lnk,
++                        FT_CHRDEV => file::DirEntryType::Chr,
++                        FT_BLKDEV => file::DirEntryType::Blk,
++                        FT_FIFO => file::DirEntryType::Fifo,
++                        FT_SOCK => file::DirEntryType::Sock,
++                        _ => continue,
++                    }
++                };
++
++                if !emitter.emit(acc, name, ino.into(), t) {
++                    return Ok(Some(()));
++                }
++                acc = 0;
++            }
++            Ok(None)
++        })?;
++        Ok(())
++    }
++}
++
++#[vtable]
++impl inode::Operations for Ext2Fs {
++    type FileSystem = Self;
++
++    fn lookup(
++        parent: &Locked<&INode<Self>, inode::ReadSem>,
++        dentry: dentry::Unhashed<'_, Self>,
++    ) -> Result<Option<ARef<DEntry<Self>>>> {
++        let inode = parent.for_each_page(0, Offset::MAX, |data| {
++            let mut offset = 0usize;
++            while data.len() - offset > size_of::<DirEntry>() {
++                let dirent = DirEntry::from_bytes(data, offset).ok_or(EIO)?;
++                offset += size_of::<DirEntry>();
++
++                let name_len = usize::from(dirent.name_len);
++                if data.len() - offset < name_len {
++                    return Err(EIO);
++                }
++
++                let name = &data[offset..][..name_len];
++
++                offset = offset - size_of::<DirEntry>() + usize::from(dirent.rec_len.value());
++                if offset > data.len() {
++                    return Err(EIO);
++                }
++
++                let ino = dirent.inode.value();
++                if ino != 0 && name == dentry.name() {
++                    return Ok(Some(Self::iget(parent.super_block(), ino)?));
++                }
++            }
++            Ok(None)
++        })?;
++
++        dentry.splice_alias(inode)
++    }
++}
++
++impl iomap::Operations for Ext2Fs {
++    type FileSystem = Self;
++
++    fn begin<'a>(
++        inode: &'a INode<Self>,
++        pos: Offset,
++        length: Offset,
++        _flags: u32,
++        map: &mut iomap::Map<'a>,
++        _srcmap: &mut iomap::Map<'a>,
++    ) -> Result {
++        let size = inode.size();
++        if pos >= size {
++            map.set_offset(pos)
++                .set_length(length.try_into()?)
++                .set_flags(iomap::map_flags::MERGED)
++                .set_type(iomap::Type::Hole);
 +            return Ok(());
 +        }
 +
-+        // Make sure the inode data doesn't overflow the data area.
-+        let sizeu = u64::try_from(inode.size())?;
-+        if inode.data().offset.checked_add(sizeu).ok_or(EIO)? > sb.data().data_size {
-+            return Err(EIO);
-+        }
++        let block_size = inode.super_block().data().block_size as Offset;
++        let block = pos / block_size;
 +
-+        sb.data().mapper.for_each_page(
-+            inode.data().offset as i64 + pos,
-+            inode.size() - pos,
-+            |data| {
-+                for e in DirEntry::from_bytes_to_slice(data).ok_or(EIO)? {
-+                    let name_len = usize::try_from(e.name_len.value())?;
-+                    if name_len > name.len() {
-+                        name.resize(name_len, 0, GFP_NOFS)?;
-+                    }
-+
-+                    Self::read_name(sb, &mut name[..name_len], e.name_offset.value())?;
-+
-+                    if !emitter.emit(
-+                        size_of::<DirEntry>() as i64,
-+                        &name[..name_len],
-+                        e.ino.value(),
-+                        file::DirEntryType::try_from(u32::from(e.etype))?,
-+                    ) {
-+                        return Ok(Some(()));
-+                    }
-+                }
-+                Ok(None)
-+            },
-+        )?;
++        let boffset = Self::offset_to_block(inode, block)?;
++        map.set_offset(block * block_size)
++            .set_length(block_size as u64)
++            .set_flags(iomap::map_flags::MERGED)
++            .set_type(iomap::Type::Mapped)
++            .set_bdev(Some(inode.super_block().bdev()))
++            .set_addr(boffset * block_size as u64);
 +
 +        Ok(())
 +    }
 +}
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index f270c7b0cf34..6985b9e37429 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -116,7 +116,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-     # Then, the rest outside of `rust/`.
-     #
-     # We explicitly mention the top-level folders we want to cover.
--    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers"))
-+    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers", "fs"))
-     if external_src is not None:
-         extra_dirs = [external_src]
-     for folder in extra_dirs:
++
++fn decode_dev(block: &[LE<u32>]) -> (u32, u32) {
++    let v = block[0].value();
++    if v != 0 {
++        ((v >> 8) & 255, v & 255)
++    } else {
++        let v = block[1].value();
++        ((v & 0xfff00) >> 8, (v & 0xff) | ((v >> 12) & 0xfff00))
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 445599d4bff6..732bc9939f7f 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -165,3 +165,6 @@ macro_rules! container_of {
+         ptr.wrapping_sub(offset) as *const $type
+     }}
+ }
++
++/// The size in bytes of a page of memory.
++pub const PAGE_SIZE: usize = bindings::PAGE_SIZE;
 -- 
 2.34.1
 
