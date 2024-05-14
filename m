@@ -1,106 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-19411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A3D8C54FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:54:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834438C5643
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 14:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8102B22079
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 11:54:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F000B22080
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 12:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E0C1292FC;
-	Tue, 14 May 2024 11:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xr3iG3WN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9727E583;
+	Tue, 14 May 2024 12:53:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6035E1CFB2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 11:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96CC47F5D;
+	Tue, 14 May 2024 12:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715687569; cv=none; b=kcxK4FaIc5IpnmZNtHThAIULDjo6n8C3Rqke0h8TBRQ5z8TtLTaG3/fcyTpxHralKwLw9Xoni7XX4slPUAixr0VoI2p68ZeL9lUyYJ4GBV4/C+UpUrkk8YQZwjNHN0e93tmdKd9ojLkWJRFjAa3YP2zm+ByiaCCzna80stbya54=
+	t=1715691217; cv=none; b=Tbxci7uKQHatKrx52qlzGuW+iYTYfxpf3VsmqNJUSzdwbs/pFAdtyfZeauIi7rL0Z97haWDmy9gQoiiFrHg7w/d9Mb+DwrXyUHp5Y04JdylXtrdzKCTXvJOBldpBbdaeJc/7DCptJjEcIWypelsW8/Q8xKnZYnifLaD0DeQRmro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715687569; c=relaxed/simple;
-	bh=HiXwcTk6UFYBZRAuzSGxUc9qpaTdD3aCKv3Rx9j/tAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQ3bvxaYGrEGEb2tZPxOXoQxDXtg0iLhzQc0nxXaF+u3Rrzrl8O6S8+o9I9gKPpnDTPOs0qXu4uiMkxglaYb9kHm0y1cJhSHJlVHVjwJOUSAagDFZBPJEXxFsu1laKxl7UpAuUMQpk9axmW4OAi9HwW6pKbAzs19OWnq6JGo6gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xr3iG3WN; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4MxgHTaCvCMljpk7HMjhLlTKEMZ68z6Aw8VilYkQYs0=; b=xr3iG3WNTrU/FWXOfM/UctFmoI
-	Au/LGMzyvwr4V5pMNi6Ud2wG5JHcVj9vXCg79JL+wOewgDV6str72/oFYIJ4tLfy0mxZ9pFLWt9DW
-	QctpNOcAYCBv3rDOHCq660jGgptgkaUAmG2Ny2Bf+CUe1dlOD6wFs3cpnKERNaoGOTiZ9J2KAn6XX
-	TzRIXLBNfU2f06byL0yJO/rvVlKsEONtzLyfcWcchG6nym7JQsLipKumAIBf8oqauU7/SF/sp7DN9
-	Hme6IgCc+Izjy03HdACFMGaTVVSN/KzaCwhZWtldA5yKNSaFtPfT4RQqSzUk30m3aV0B77GedJyuB
-	GKJFF3Eg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s6qi1-0000000FmIp-2E7x;
-	Tue, 14 May 2024 11:52:41 +0000
-Date: Tue, 14 May 2024 04:52:41 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>,
-	Matthew Wilcox <willy@infradead.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <ZkNQiWpTOZDMp3kS@bombadil.infradead.org>
-References: <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
- <Zds8T9O4AYAmdS9d@casper.infradead.org>
- <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
- <Zduto30LUEqIHg4h@casper.infradead.org>
- <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
- <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
- <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
- <Zdv8dujdOg0dD53k@duke.home>
- <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
- <CAHk-=wjOogaW0yLoUqQ0WfQ=etPA4cOFLy56VYCnHVU_DOMLrg@mail.gmail.com>
+	s=arc-20240116; t=1715691217; c=relaxed/simple;
+	bh=fIt4Cp+Y1kOWl1ERp547eUhh12GLNeZxSmn9AkF26Mo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mPo2gJrwYlay7sUzWmtLWfT8jTn8Sd/KXbSuOQJPnHKn9Aoc92NH8WbClOn57BsCd9TbdSa5UtsvLpCsE7qnDTncG6K0NGGRpArSljvkHFAbQtwTNXjFU2CMxMRK2MTVE3JsUBblmnwAc8pT3W9w+UbhNmkdCJkfuRA2xcPx9mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vdx9X4MrNz4f3kKl;
+	Tue, 14 May 2024 20:53:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 24AB81A0ACF;
+	Tue, 14 May 2024 20:53:26 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP4 (Coremail) with SMTP id gCh0CgDHzG7EXkNmCyyLMw--.6596S2;
+	Tue, 14 May 2024 20:53:25 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: willy@infradead.org,
+	akpm@linux-foundation.org,
+	tj@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] Add helper functions to remove repeated code and improve readability of cgroup writeback
+Date: Tue, 14 May 2024 20:52:46 +0800
+Message-Id: <20240514125254.142203-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjOogaW0yLoUqQ0WfQ=etPA4cOFLy56VYCnHVU_DOMLrg@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHzG7EXkNmCyyLMw--.6596S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr1DuF48Gw1ktry3Jr4ktFb_yoW8ur4DpF
+	Z3Kr1aqr4UJFnxAr9xCay29rySyrZ3JF15t3sxuw4avF4akr12ga42vFyFkFW7AFy3GryY
+	vF4qy34xGF1qkaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUgKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+	AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+	IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s
+	0DMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
+	daVFxhVjvjDU0xZFpf9x07UE-erUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Mon, Feb 26, 2024 at 02:46:56PM -0800, Linus Torvalds wrote:
-> I really haven't tested this AT ALL. I'm much too scared. But I don't
-> actually hate how the code looks nearly as much as I *thought* I'd
-> hate it.
+v1->v2:
+-add dtc_is_global() helper
+-rename "bool bg" to "include_writeback"
+-fold patches using domain_dirty_avail
+-reflow comment to 80col
+-Fix potential NULL deref of mdtc->dirty_exceeded
 
-Thanks for this, obviously those interested in this will have to test
-this and fix the below issues. I've tested for regressions just against
-xfs on 4k reflink profile and detected only two failures, generic/095
-fails with a failure rate of about 1/2 or so:
+This series add a lot of helpers to remove repeated code between domain
+and wb; dirty limit and dirty background; global domain and wb domain.
+The helpers also improve readability. More details can be found on
+respective patches.
+Thanks.
 
-  * generic/095
-  * generic/741
+A simple domain hierarchy is tested:
+global domain (> 20G)
+	|
+cgroup domain1(10G)
+	|
+	wb1
+	|
+	fio
 
-For details refer to the test result archive [0]. To reproduce with
-kdevops:
+Test steps:
+/* make it easy to observe */
+echo 300000 > /proc/sys/vm/dirty_expire_centisecs
+echo 3000 > /proc/sys/vm/dirty_writeback_centisecs
 
-make defconfig-xfs_reflink_4k KDEVOPS_HOSTS_PREFIX=hacks B4_MESSAGE_ID=20240514084221.3664475-1-mcgrof@kernel.org
-make -j $(nproc)
-make bringup
-make fstests
-make linux
-make fstests-baseline TESTS=generic/095 COUNT=10
+/* create cgroup domain */
+cd /sys/fs/cgroup
+echo "+memory +io" > cgroup.subtree_control
+mkdir group1
+cd group1
+echo 10G > memory.high
+echo 10G > memory.max
+echo $$ > cgroup.procs
+mkfs.ext4 -F /dev/vdb
+mount /dev/vdb /bdi1/
 
-[0] https://github.com/linux-kdevops/kdevops-results-archive/commit/27186b2782af4af559524539a2f6058d12361e10
+/* run fio to generate dirty pages */
+fio -name test -filename=/bdi1/file -size=xxx -ioengine=libaio -bs=4K \
+-iodepth=1 -rw=write -direct=0 --time_based -runtime=600 -invalidate=0
 
-  Luis
+When fio size is 1G, the wb is in freerun state and dirty pages are only
+written back when dirty inode is expired after 30 seconds.
+When fio size is 2G, the dirty pages keep being written back and
+bandwidth of fio is limited.
+
+Kemeng Shi (8):
+  writeback: factor out wb_bg_dirty_limits to remove repeated code
+  writeback: add general function domain_dirty_avail to calculate dirty
+    and avail of domain
+  writeback: factor out domain_over_bg_thresh to remove repeated code
+  writeback: Factor out code of freerun to remove repeated code
+  writeback: factor out wb_dirty_freerun to remove more repeated freerun
+    code
+  writeback: factor out balance_domain_limits to remove repeated code
+  writeback: factor out wb_dirty_exceeded to remove repeated code
+  writeback: factor out balance_wb_limits to remove repeated code
+
+ mm/page-writeback.c | 315 ++++++++++++++++++++++++--------------------
+ 1 file changed, 169 insertions(+), 146 deletions(-)
+
+-- 
+2.30.0
+
 
