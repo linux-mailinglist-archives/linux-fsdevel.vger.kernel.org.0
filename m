@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-19418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80A58C564C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 14:55:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0168B8C5649
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 14:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125841C21B85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 12:55:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B081F21E7B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 12:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1B3128375;
-	Tue, 14 May 2024 12:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957FF85C5D;
+	Tue, 14 May 2024 12:53:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72EB7581B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73207581D;
 	Tue, 14 May 2024 12:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715691218; cv=none; b=PzQHCHVKv9zpTzNT1ifLrXdgAGqHpPaAhZKpUaTu5SAXDbiyGanulIEXutYgw54uaLQ+CR2F+PS7iYv/99v9ti/YrdPva6nQnUBGhz6mSGuQDntBApz+kLQELSqj8mq3ksTJB9KlVauk3+DFmm1zuqQNSdcJuTntSIrXuGV934o=
+	t=1715691218; cv=none; b=sIzSAh+n8kO8jap6su++JAS35I4WuHvIBX0tW6Xx2NjCroDLoeGEpS5zz8vqwxa6qo57Kln90g5HoGwhP7K1vfTdnLQqTsvfJrSuNJhvCDq5uvxONFkO2Lz3BTAlK3Xc6eLVbiCf6nW5TRkbZKDA2UDiFHsQZZT5gEjiSVSTgwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715691218; c=relaxed/simple;
-	bh=JieJwHXIHm8GxrRSX0MECA7nb/crEB3vwh7kTMl6aPs=;
+	bh=H1mOSQBLW7TJigyhWTlPTYdU3slPuRIMWzgZfyXylig=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iJFjgVAigr7fPUqEts9y1d06fKT0YZTrjIMXmtdozNL2eIIKWE/Na2NfZUtU82EwHJKExth17IBBTOBpWWyP3QqPXsAmVU+gMG1H6XlWf6uu2x5+4j/U+qI4mEx8U96xecmR5lXkl08SDCQhNFIvKxnYliIa2/u8LlNBSXMhOaE=
+	 MIME-Version; b=debL64ZllUrZeTcAHulZYrSo0Pbkw+RqRfbGorDUvqd1xLatbOzMZ3/7BXW3alwuejEpGB0qnFWGQ2FUQpT964JFt3xqg/XtJXCD5GYE7kX31UrS6oENcK6XG0BKBW9L3gmLHwEVYLm2UMhgAcu09QAmPwZWqiZBgAXx3ME8GIU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vdx9Y1cSpz4f3kKp;
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vdx9Y3hsmz4f3kKy;
 	Tue, 14 May 2024 20:53:21 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B9EB61A0D53;
-	Tue, 14 May 2024 20:53:26 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 0FE981A0D06;
+	Tue, 14 May 2024 20:53:27 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgDHzG7EXkNmCyyLMw--.6596S4;
+	by APP4 (Coremail) with SMTP id gCh0CgDHzG7EXkNmCyyLMw--.6596S5;
 	Tue, 14 May 2024 20:53:26 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: willy@infradead.org,
@@ -45,9 +45,9 @@ To: willy@infradead.org,
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/8] writeback: add general function domain_dirty_avail to calculate dirty and avail of domain
-Date: Tue, 14 May 2024 20:52:48 +0800
-Message-Id: <20240514125254.142203-3-shikemeng@huaweicloud.com>
+Subject: [PATCH v2 3/8] writeback: factor out domain_over_bg_thresh to remove repeated code
+Date: Tue, 14 May 2024 20:52:49 +0800
+Message-Id: <20240514125254.142203-4-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20240514125254.142203-1-shikemeng@huaweicloud.com>
 References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
@@ -58,14 +58,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHzG7EXkNmCyyLMw--.6596S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrW3tFyxGw45Xr47ZFW3Awb_yoWrCrW8pF
-	43Jws0kayUtF47Xrs3AFWq9rW3K397GrW7t34xCaySqFnFkr1UKFyI9ryvvr1xAF97Jry3
-	ArsIvr97Gr40kr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvGb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
+X-CM-TRANSID:gCh0CgDHzG7EXkNmCyyLMw--.6596S5
+X-Coremail-Antispam: 1UD129KBjvJXoW7WrW8CrWxXFykGr4Duw43trb_yoW8tF4rpF
+	4fAw1a9rWUJanrXFnxCFyUur43tFZ7t3yUJ3srCwn3Aw43Cr4UGFy7ArZYvFy8AFy7Xrya
+	vr4ava4xGF10krJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvGb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
 	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
 	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
 	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
 	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
@@ -74,137 +74,80 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxGrW3tFyxGw45Xr47ZFW3Awb_yoWrCrW8pF
 	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
 	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
 	6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjxU2_MaUUUUU
+	73UjIFyTuYvjxU2PEfUUUUU
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Add general function domain_dirty_avail to calculate dirty and avail for
-either dirty limit or background writeback in either global domain or wb
-domain.
+Factor out domain_over_bg_thresh from wb_over_bg_thresh to remove
+repeated code.
 
 Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Acked-by: Tejun Heo <tj@kernel.org>
 ---
- mm/page-writeback.c | 65 ++++++++++++++++++++++++---------------------
- 1 file changed, 34 insertions(+), 31 deletions(-)
+ mm/page-writeback.c | 41 +++++++++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 22 deletions(-)
 
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index e1f73643aca1..16a94c7df260 100644
+index 16a94c7df260..e7c6ad48f738 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -837,6 +837,34 @@ static void mdtc_calc_avail(struct dirty_throttle_control *mdtc,
- 	mdtc->avail = filepages + min(headroom, other_clean);
+@@ -2116,6 +2116,20 @@ static void wb_bg_dirty_limits(struct dirty_throttle_control *dtc)
+ 		dtc->wb_dirty = wb_stat(wb, WB_RECLAIMABLE);
  }
  
-+static inline bool dtc_is_global(struct dirty_throttle_control *dtc)
++static bool domain_over_bg_thresh(struct dirty_throttle_control *dtc)
 +{
-+	return mdtc_gdtc(dtc) == NULL;
-+}
++	domain_dirty_avail(dtc, false);
++	domain_dirty_limits(dtc);
++	if (dtc->dirty > dtc->bg_thresh)
++		return true;
 +
-+/*
-+ * Dirty background will ignore pages being written as we're trying to
-+ * decide whether to put more under writeback.
-+ */
-+static void domain_dirty_avail(struct dirty_throttle_control *dtc,
-+			       bool include_writeback)
-+{
-+	if (dtc_is_global(dtc)) {
-+		dtc->avail = global_dirtyable_memory();
-+		dtc->dirty = global_node_page_state(NR_FILE_DIRTY);
-+		if (include_writeback)
-+			dtc->dirty += global_node_page_state(NR_WRITEBACK);
-+	} else {
-+		unsigned long filepages = 0, headroom = 0, writeback = 0;
++	wb_bg_dirty_limits(dtc);
++	if (dtc->wb_dirty > dtc->wb_bg_thresh)
++		return true;
 +
-+		mem_cgroup_wb_stats(dtc->wb, &filepages, &headroom, &dtc->dirty,
-+				    &writeback);
-+		if (include_writeback)
-+			dtc->dirty += writeback;
-+		mdtc_calc_avail(dtc, filepages, headroom);
-+	}
++	return false;
 +}
 +
  /**
-  * __wb_calc_thresh - @wb's share of dirty threshold
-  * @dtc: dirty_throttle_context of interest
-@@ -899,16 +927,9 @@ unsigned long cgwb_calc_thresh(struct bdi_writeback *wb)
+  * wb_over_bg_thresh - does @wb need to be written back?
+  * @wb: bdi_writeback of interest
+@@ -2127,31 +2141,14 @@ static void wb_bg_dirty_limits(struct dirty_throttle_control *dtc)
+  */
+ bool wb_over_bg_thresh(struct bdi_writeback *wb)
  {
- 	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
- 	struct dirty_throttle_control mdtc = { MDTC_INIT(wb, &gdtc) };
--	unsigned long filepages = 0, headroom = 0, writeback = 0;
- 
--	gdtc.avail = global_dirtyable_memory();
--	gdtc.dirty = global_node_page_state(NR_FILE_DIRTY) +
--		     global_node_page_state(NR_WRITEBACK);
+-	struct dirty_throttle_control gdtc_stor = { GDTC_INIT(wb) };
+-	struct dirty_throttle_control mdtc_stor = { MDTC_INIT(wb, &gdtc_stor) };
+-	struct dirty_throttle_control * const gdtc = &gdtc_stor;
+-	struct dirty_throttle_control * const mdtc = mdtc_valid(&mdtc_stor) ?
+-						     &mdtc_stor : NULL;
 -
--	mem_cgroup_wb_stats(wb, &filepages, &headroom,
--			    &mdtc.dirty, &writeback);
--	mdtc.dirty += writeback;
--	mdtc_calc_avail(&mdtc, filepages, headroom);
-+	domain_dirty_avail(&gdtc, true);
-+	domain_dirty_avail(&mdtc, true);
- 	domain_dirty_limits(&mdtc);
+-	domain_dirty_avail(gdtc, false);
+-	domain_dirty_limits(gdtc);
+-	if (gdtc->dirty > gdtc->bg_thresh)
+-		return true;
++	struct dirty_throttle_control gdtc = { GDTC_INIT(wb) };
++	struct dirty_throttle_control mdtc = { MDTC_INIT(wb, &gdtc) };
  
- 	return __wb_calc_thresh(&mdtc, mdtc.thresh);
-@@ -1719,9 +1740,8 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 		unsigned long m_bg_thresh = 0;
- 
- 		nr_dirty = global_node_page_state(NR_FILE_DIRTY);
--		gdtc->avail = global_dirtyable_memory();
--		gdtc->dirty = nr_dirty + global_node_page_state(NR_WRITEBACK);
- 
-+		domain_dirty_avail(gdtc, true);
- 		domain_dirty_limits(gdtc);
- 
- 		if (unlikely(strictlimit)) {
-@@ -1737,17 +1757,11 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 		}
- 
- 		if (mdtc) {
--			unsigned long filepages, headroom, writeback;
--
- 			/*
- 			 * If @wb belongs to !root memcg, repeat the same
- 			 * basic calculations for the memcg domain.
- 			 */
--			mem_cgroup_wb_stats(wb, &filepages, &headroom,
--					    &mdtc->dirty, &writeback);
--			mdtc->dirty += writeback;
--			mdtc_calc_avail(mdtc, filepages, headroom);
--
-+			domain_dirty_avail(mdtc, true);
- 			domain_dirty_limits(mdtc);
- 
- 			if (unlikely(strictlimit)) {
-@@ -2119,14 +2133,8 @@ bool wb_over_bg_thresh(struct bdi_writeback *wb)
- 	struct dirty_throttle_control * const mdtc = mdtc_valid(&mdtc_stor) ?
- 						     &mdtc_stor : NULL;
- 
--	/*
--	 * Similar to balance_dirty_pages() but ignores pages being written
--	 * as we're trying to decide whether to put more under writeback.
--	 */
--	gdtc->avail = global_dirtyable_memory();
--	gdtc->dirty = global_node_page_state(NR_FILE_DIRTY);
-+	domain_dirty_avail(gdtc, false);
- 	domain_dirty_limits(gdtc);
--
- 	if (gdtc->dirty > gdtc->bg_thresh)
+-	wb_bg_dirty_limits(gdtc);
+-	if (gdtc->wb_dirty > gdtc->wb_bg_thresh)
++	if (domain_over_bg_thresh(&gdtc))
  		return true;
  
-@@ -2135,13 +2143,8 @@ bool wb_over_bg_thresh(struct bdi_writeback *wb)
- 		return true;
- 
- 	if (mdtc) {
--		unsigned long filepages, headroom, writeback;
+-	if (mdtc) {
+-		domain_dirty_avail(mdtc, false);
+-		domain_dirty_limits(mdtc);	/* ditto, ignore writeback */
+-		if (mdtc->dirty > mdtc->bg_thresh)
+-			return true;
 -
--		mem_cgroup_wb_stats(wb, &filepages, &headroom, &mdtc->dirty,
--				    &writeback);
--		mdtc_calc_avail(mdtc, filepages, headroom);
-+		domain_dirty_avail(mdtc, false);
- 		domain_dirty_limits(mdtc);	/* ditto, ignore writeback */
--
- 		if (mdtc->dirty > mdtc->bg_thresh)
- 			return true;
+-		wb_bg_dirty_limits(mdtc);
+-		if (mdtc->wb_dirty > mdtc->wb_bg_thresh)
+-			return true;
+-	}
++	if (mdtc_valid(&mdtc))
++		return domain_over_bg_thresh(&mdtc);
  
+ 	return false;
+ }
 -- 
 2.30.0
 
