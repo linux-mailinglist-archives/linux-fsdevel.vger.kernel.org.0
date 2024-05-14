@@ -1,253 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-19453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D678C5800
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 16:33:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5778C5864
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 16:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB871F20FC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 14:33:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971CCB22C35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 14:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A19517BB27;
-	Tue, 14 May 2024 14:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEABB17EB81;
+	Tue, 14 May 2024 14:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mzL707PF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kjYmueXO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mzL707PF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kjYmueXO"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1x5lk/a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FCD144D01;
-	Tue, 14 May 2024 14:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B062017BB3D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 14:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715697204; cv=none; b=nm23dxwy5kTCXZk98jfahdyHHITrG/qcLbBdjAyVNOp+bIljdxnidjML2D0CWHeuKN8AVcwWy9t3kx5+F0HvHbssrU22lOz5pOneI63JBEUizMRcHwwdy/9v7F2Xeb24uHrCXwQlkuCH2GGOAgnNNl1+rydz7eMwXhRDr+sbmh8=
+	t=1715698715; cv=none; b=nIbz1aRaCYbQYeIxkeWOJ3DFK9+gfTfBoy0iGhw9BH243q5i1B0NSFAtfNDe6TGml55cajbNaEztov6+/xq/fRTCP9FcCQaVpnjYWJbYOXsQzgVqJkEnoF1dMMLW0mw1y4NxIUIO4r4pRhtcY/nQyneQeuyXIOe8/uBI8MMiqz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715697204; c=relaxed/simple;
-	bh=3vP2d1BhUB6PM8bFMgiIuGPsXqeQHZ/ZrrORTNgR7nU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/n/pfiojaH9cRn5g2CRyy1eABClPr+yU4C3kT6D90oJsEBXZc503BA6nxe4TGFiqAdBrEeUoSFmQEHHy5NtGIrMmMLRcs5jRImWHsHxOHsCaCHxViPHg8bdAk0YdBqyiU3b6oJ/THnOh0xFteSzmoES17jcOC0KZ/Ibc0/JWlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mzL707PF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kjYmueXO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mzL707PF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kjYmueXO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 50BB260CF4;
-	Tue, 14 May 2024 14:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715697201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
-	b=mzL707PFlrYZYnKLFGKxpAKro8LpD3geI6XczFCtUyPOgBKl/iQJovqsjRH6r+4xRFN41t
-	6bg5dwiJqHCSbqNPhsu+DiiEtjHTas38WMhbcV6H7EinFNI5BusvnizDAklIrlFtF+5HPh
-	qeq7nTXkCmFY9sU5GXPYiBaEgQbNTsE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715697201;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
-	b=kjYmueXOJbxv7qD9Fkl8UmX2GsjEwxZ3YOwm6VuKYmsn3wCaEO9hP0Gv2DQGFjNqQMNTe3
-	X/4nb7NhXWo+d0Cw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mzL707PF;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kjYmueXO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715697201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
-	b=mzL707PFlrYZYnKLFGKxpAKro8LpD3geI6XczFCtUyPOgBKl/iQJovqsjRH6r+4xRFN41t
-	6bg5dwiJqHCSbqNPhsu+DiiEtjHTas38WMhbcV6H7EinFNI5BusvnizDAklIrlFtF+5HPh
-	qeq7nTXkCmFY9sU5GXPYiBaEgQbNTsE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715697201;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
-	b=kjYmueXOJbxv7qD9Fkl8UmX2GsjEwxZ3YOwm6VuKYmsn3wCaEO9hP0Gv2DQGFjNqQMNTe3
-	X/4nb7NhXWo+d0Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB99A1372E;
-	Tue, 14 May 2024 14:33:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LSt0OTB2Q2Y8PgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 14 May 2024 14:33:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0DB0EA08B5; Tue, 14 May 2024 16:33:15 +0200 (CEST)
-Date: Tue, 14 May 2024 16:33:15 +0200
-From: Jan Kara <jack@suse.cz>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, linux-hardening@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] fs: remove accidental overflow during wraparound check
-Message-ID: <20240514143315.wxs3hnetssth2xt5@quack3>
-References: <20240513-b4-sio-vfs_fallocate-v2-1-db415872fb16@google.com>
+	s=arc-20240116; t=1715698715; c=relaxed/simple;
+	bh=tCIznBYL7VBT3NTFD0EYPgh35OWdYpxDWnE0xEb3Hkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zd4ekCOraO6MIb5ODV4620JcMZfskTJfdIfnmjZw9UPx4QbG4UZyOv8FURihxeWCIbcfGUFMOlHJiifAxQUEaOYGlPFTKRRBAByiHnZ72OURcCPOiTOeRIEQtp8pMQg8wcfdMz71JDfiNKmBHDuTfhHESyf8jumEbg/KG2Q1CFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1x5lk/a; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715698712; x=1747234712;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tCIznBYL7VBT3NTFD0EYPgh35OWdYpxDWnE0xEb3Hkc=;
+  b=F1x5lk/a1FMw5WG0spEztfU9ux1wrDTLcyQzEtppl2FAcibmV5K4rPEK
+   I/SeI4R1jmmWqOona0HpguUZNWFiPMFP0l9MKrtYnNvXEnIabeQoN6yDf
+   I/OpcX9Jt/Fgbf/YOs43OqhCQrbGRTUGIyfvD7nFoPgBJbd5+OJwgbCm/
+   EFY5gMTbZytVw4dTYralzUVUL6YZJ5OcJ0/JG7MKnwwmg+oAaaFCZNyv1
+   m5GhL3ABzya14WzLT2CKXU0RAzscsme4Knwy/Azm+uRAo8uSG04wHoRkF
+   h+GbFCYLM9bEJMsIOIFtH2Z8Pdh6avENKzen+LhXG5RVcwQgX/R8IVc89
+   Q==;
+X-CSE-ConnectionGUID: 8DTd/p5ERUiz5OwUkikEkg==
+X-CSE-MsgGUID: BJUbMVEDS/Gvifu+Q83uRw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="15473695"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="15473695"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 07:58:32 -0700
+X-CSE-ConnectionGUID: xpNCci66RAevQxZWi3/Rog==
+X-CSE-MsgGUID: fw3muRCxQ1edYYMgAtrA5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35173990"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa005.fm.intel.com with ESMTP; 14 May 2024 07:58:28 -0700
+Received: from [10.246.1.253] (mwajdecz-MOBL.ger.corp.intel.com [10.246.1.253])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id B772728775;
+	Tue, 14 May 2024 15:58:26 +0100 (IST)
+Message-ID: <83484000-0716-465a-b55d-70cd07205ae5@intel.com>
+Date: Tue, 14 May 2024 16:58:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513-b4-sio-vfs_fallocate-v2-1-db415872fb16@google.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 50BB260CF4
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] drm/xe/guc: Expose raw access to GuC log over debugfs
+To: John Harrison <john.c.harrison@intel.com>, intel-xe@lists.freedesktop.org
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+ linux-fsdevel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20240512153606.1996-1-michal.wajdeczko@intel.com>
+ <20240512153606.1996-5-michal.wajdeczko@intel.com>
+ <d0fd0b46-a8ac-464b-99e7-0b5384a79bf6@intel.com>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <d0fd0b46-a8ac-464b-99e7-0b5384a79bf6@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon 13-05-24 17:50:30, Justin Stitt wrote:
-> Running syzkaller with the newly enabled signed integer overflow
-> sanitizer produces this report:
-> 
-> [  195.401651] ------------[ cut here ]------------
-> [  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
-> [  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
-> [  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
-> [  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [  195.425804] Call Trace:
-> [  195.427360]  <TASK>
-> [  195.428791]  dump_stack_lvl+0x93/0xd0
-> [  195.431150]  handle_overflow+0x171/0x1b0
-> [  195.433640]  vfs_fallocate+0x459/0x4f0
-> ...
-> [  195.490053] ------------[ cut here ]------------
-> [  195.493146] UBSAN: signed-integer-overflow in ../fs/open.c:321:61
-> [  195.497030] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long)
-> [  195.502940] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
-> [  195.508395] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [  195.514075] Call Trace:
-> [  195.515636]  <TASK>
-> [  195.517000]  dump_stack_lvl+0x93/0xd0
-> [  195.519255]  handle_overflow+0x171/0x1b0
-> [  195.521677]  vfs_fallocate+0x4cb/0x4f0
-> [  195.524033]  __x64_sys_fallocate+0xb2/0xf0
-> 
-> Historically, the signed integer overflow sanitizer did not work in the
-> kernel due to its interaction with `-fwrapv` but this has since been
-> changed [1] in the newest version of Clang. It was re-enabled in the
-> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-> sanitizer").
-> 
-> Let's use the check_add_overflow helper to first verify the addition
-> stays within the bounds of its type (long long); then we can use that
-> sum for the following check.
-> 
-> Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-> Closes: https://github.com/KSPP/linux/issues/356
-> Cc: linux-hardening@vger.kernel.org
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
 
-Looks good. Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On 13.05.2024 18:53, John Harrison wrote:
+> On 5/12/2024 08:36, Michal Wajdeczko wrote:
+>> We already provide the content of the GuC log in debugsfs, but it
+>> is in a text format where each log dword is printed as hexadecimal
+>> number, which does not scale well with large GuC log buffers.
+>>
+>> To allow more efficient access to the GuC log, which could benefit
+>> our CI systems, expose raw binary log data.  In addition to less
+>> overhead in preparing text based GuC log file, the new GuC log file
+>> in binary format is also almost 3x smaller.
+>>
+>> Any existing script that expects the GuC log buffer in text format
+>> can use command like below to convert from new binary format:
+>>
+>>     hexdump -e '4/4 "0x%08x " "\n"'
+>>
+>> but this shouldn't be the case as most decoders expect GuC log data
+>> in binary format.
+> I strongly disagree with this.
+> 
+> Efficiency and file size is not an issue when accessing the GuC log via
+> debugfs on actual hardware. 
 
-								Honza
+to some extend it is as CI team used to refuse to collect GuC logs after
+each executed test just because of it's size
 
-> ---
-> Changes in v2:
-> - drop the sum < 0 check (thanks Jan)
-> - carry along Kees' RB tag
-> - Link to v1: https://lore.kernel.org/r/20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com
-> ---
-> Here's the syzkaller reproducer:
-> r0 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file1\x00', 0x42, 0x0)
-> fallocate(r0, 0x10, 0x7fffffffffffffff, 0x2000807fffff7)
+> It is an issue when dumping via dmesg but
+> you definitely should not be dumping binary data to dmesg. Whereas,
+
+not following here - this is debugfs specific, not a dmesg printer
+
+> dumping in binary data is much more dangerous and liable to corruption
+> because some tool along the way tries to convert to ASCII, or truncates
+> at the first zero, etc. We request GuC logs be sent by end users,
+> customer bug reports, etc. all doing things that we have no control over.
+
+hmm, how "cp gt0/uc/guc_log_raw FILE" could end with a corrupted file ?
+
 > 
-> ... which was used against Kees' tree here (v6.8rc2):
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
+> Converting the hexdump back to binary is trivial for those tools which
+> require it. If you follow the acquisition and decoding instructions on
+> the wiki page then it is all done for you automatically.
+
+I'm afraid I don't know where this wiki page is, but I do know that hex
+conversion dance is not needed for me to get decoded GuC log the way I
+used to do
+
 > 
-> ... with this config:
-> https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
-> ---
->  fs/open.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> These patches are trying to solve a problem which does not exist and are
+> going to make working with GuC logs harder and more error prone.
+
+it at least solves the problem of currently super inefficient way of
+generating the GuC log in text format.
+
+it also opens other opportunities to develop tools that could monitor or
+capture GuC log independently on  top of what driver is able to offer
+today (on i915 there was guc-log-relay, but it was broken for long time,
+not sure what are the plans for Xe)
+
+also still not sure how it can be more error prone.
+
 > 
-> diff --git a/fs/open.c b/fs/open.c
-> index ee8460c83c77..23849d487479 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -247,6 +247,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  {
->  	struct inode *inode = file_inode(file);
->  	long ret;
-> +	loff_t sum;
->  
->  	if (offset < 0 || len <= 0)
->  		return -EINVAL;
-> @@ -319,8 +320,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
->  		return -ENODEV;
->  
-> -	/* Check for wrap through zero too */
-> -	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
-> +	/* Check for wraparound */
-> +	if (check_add_overflow(offset, len, &sum))
-> +		return -EFBIG;
-> +
-> +	if (sum > inode->i_sb->s_maxbytes)
->  		return -EFBIG;
->  
->  	if (!file->f_op->fallocate)
+> On the other hand, there are many other issues with GuC logs that it
+> would be useful to solves - including extra meta data, reliable output
+> via dmesg, continuous streaming, pre-sizing the debugfs file to not have
+> to generate it ~12 times for a single read, etc.
+
+this series actually solves last issue but in a bit different way (we
+even don't need to generate full GuC log dump at all if we would like to
+capture only part of the log if we know where to look)
+
+for reliable output via dmesg - see my proposal at [1]
+
+[1] https://patchwork.freedesktop.org/series/133613/
+
 > 
-> ---
-> base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-> change-id: 20240507-b4-sio-vfs_fallocate-7b5223ba3a81
+> Hmm. Actually, is this interface allowing the filesystem layers to issue
+> multiple read calls to read the buffer out in small chunks? That is also
+> going to break things. If the GuC is still writing to the log as the
+> user is reading from it, there is the opportunity for each chunk to not
+> follow on from the previous chunk because the data has just been
+> overwritten. This is already a problem at the moment that causes issues
+> when decoding the logs, even with an almost atomic copy of the log into
+> a temporary buffer before reading it out. Doing the read in separate
+> chunks is only going to make that problem even worse.
+
+current solution, that converts data into hex numbers, reads log buffer
+in chunks of 128 dwords, how proposed here solution that reads in 4K
+chunks could be "even worse" ?
+
+and in case of some smart tool, that would understands the layout of the
+GuC log buffer, we can even fully eliminate problem of reading stale
+data, so why not to choose a more scalable solution ?
+
 > 
-> Best regards,
-> --
-> Justin Stitt <justinstitt@google.com>
+> John.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>> Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+>> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+>> Cc: John Harrison <John.C.Harrison@Intel.com>
+>> ---
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Cc: dri-devel@lists.freedesktop.org
+>> ---
+>>   drivers/gpu/drm/xe/xe_guc_debugfs.c | 26 ++++++++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/xe/xe_guc_debugfs.c
+>> b/drivers/gpu/drm/xe/xe_guc_debugfs.c
+>> index d3822cbea273..53fea952344d 100644
+>> --- a/drivers/gpu/drm/xe/xe_guc_debugfs.c
+>> +++ b/drivers/gpu/drm/xe/xe_guc_debugfs.c
+>> @@ -8,6 +8,7 @@
+>>   #include <drm/drm_debugfs.h>
+>>   #include <drm/drm_managed.h>
+>>   +#include "xe_bo.h"
+>>   #include "xe_device.h"
+>>   #include "xe_gt.h"
+>>   #include "xe_guc.h"
+>> @@ -52,6 +53,29 @@ static const struct drm_info_list debugfs_list[] = {
+>>       {"guc_log", guc_log, 0},
+>>   };
+>>   +static ssize_t guc_log_read(struct file *file, char __user *buf,
+>> size_t count, loff_t *pos)
+>> +{
+>> +    struct dentry *dent = file_dentry(file);
+>> +    struct dentry *uc_dent = dent->d_parent;
+>> +    struct dentry *gt_dent = uc_dent->d_parent;
+>> +    struct xe_gt *gt = gt_dent->d_inode->i_private;
+>> +    struct xe_guc_log *log = &gt->uc.guc.log;
+>> +    struct xe_device *xe = gt_to_xe(gt);
+>> +    ssize_t ret;
+>> +
+>> +    xe_pm_runtime_get(xe);
+>> +    ret = xe_map_read_from(xe, buf, count, pos, &log->bo->vmap,
+>> log->bo->size);
+>> +    xe_pm_runtime_put(xe);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static const struct file_operations guc_log_ops = {
+>> +    .owner        = THIS_MODULE,
+>> +    .read        = guc_log_read,
+>> +    .llseek        = default_llseek,
+>> +};
+>> +
+>>   void xe_guc_debugfs_register(struct xe_guc *guc, struct dentry *parent)
+>>   {
+>>       struct drm_minor *minor = guc_to_xe(guc)->drm.primary;
+>> @@ -72,4 +96,6 @@ void xe_guc_debugfs_register(struct xe_guc *guc,
+>> struct dentry *parent)
+>>       drm_debugfs_create_files(local,
+>>                    ARRAY_SIZE(debugfs_list),
+>>                    parent, minor);
+>> +
+>> +    debugfs_create_file("guc_log_raw", 0600, parent, NULL,
+>> &guc_log_ops);
+>>   }
+> 
 
