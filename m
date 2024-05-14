@@ -1,430 +1,334 @@
-Return-Path: <linux-fsdevel+bounces-19402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6E18C4A35
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 01:50:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0C28C4A52
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 02:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D8471C210CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2024 23:50:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A78B23C85
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 00:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BF58594C;
-	Mon, 13 May 2024 23:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D65628;
+	Tue, 14 May 2024 00:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EP/a1jCa"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YydNCKcU";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="cvCyhHzH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570AB85923
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 23:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715644228; cv=none; b=XTcTBic364VyXU9/UFUGDGq96COeAf8tvBVmFuZWsmpRB4SBx6C77agD7GY9WB5pgcQMCC/SuWSseH3CemmstpWDdg/y1Ot8LhHJIKrXvWj96F4ZtyJYvA3di3FDPRfJArcrL+tJAKLnvYRL8AQc+RTIt9OUeSY2Hn1LZ9LImIw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715644228; c=relaxed/simple;
-	bh=jabLpUywj9mXHcjULb4WKpzqpVQcaeWIMySbgxjnxi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AEWGaBIQubWRaf8gbOLbFclakfp6+4xVcTj5njsNFpIkUQhsDbqfCScgqyerOWlG7LF4ohhNwpkihaPewc1sJiSdoEARpPaMOlHxjj6aQqKXU38szfxBe3znefVMac354Iy48KJbdvrpxYCIwQtVBzLABT92mU9RYQ8LgLtsVvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EP/a1jCa; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-61eba9f9c5dso3772660a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2024 16:50:26 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF5C8473;
+	Tue, 14 May 2024 00:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715645063; cv=fail; b=j6N+g9xX1AKaQl98AXGFnITsktD/+pk6ufl9nSIp2FaMGAFV9pZAZe0kR29OgobXzOUaQ04N+jW0598N3RHum9tyEMFaiXRtayqR2MfStbNjOy6DIAjSS6RgQm8gmta9QTQVSBYU7D6OyUwg3AVqrYJhLr5M/S73cax0kPSmRj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715645063; c=relaxed/simple;
+	bh=8xUpM5bn33zzA+aHrLuQVDyHisgsVffQRSrA7UXPjjk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=LFxUb1d+HQLc2DSqeMLQ5ddynOIRWWTo+X+XMhSZDz6tSbrq3Wdxf8KPrTz5rroN9iyyM/0h85FDV1O2Lv8A4TiDTt4G1t0uapojhrH3rP4dBoJce0vTzkvW6j4hZIJkLfLaXBt6WViiMWgMRt809tCzOEPDqq/A51A4wWNJmj8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=YydNCKcU; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=cvCyhHzH; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44DNhs02026990;
+	Tue, 14 May 2024 00:04:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=6p3YluQOFlYFKWvfGwfkJV/wINV1i87K9gce7nlmCEQ=;
+ b=YydNCKcUKwGjaNOeU5c6Z8W0dEhMpgSrE+F1Digeani+RW57VAEF6+4obsWHxHTvQ4wB
+ khohH8w30b8K6vDGHmSz+NvXDKxPjSM/GmM0MfE7XsEKszisMBZhGf+U18RV/ZXcWCHk
+ OZ34M6FQ6nrQzaaAlWTwY+gAsRZpZwUQqufVCAau0MTPuNIPVv8TnCtiJe/Mx+PIJM7E
+ hBbRgoFzyj5QRdYYDrbucAFv/XL1xiKZSglFPPLMBUR7HbuJVrSaMkoDkl5+UNOseTp5
+ hVzqUqO6Xkp3Ggv8rfjsHETu0yQmM3gF8At48vUVdMxCiQ+nxdeWfzzMGg2hgZKseHKg 1A== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3t4f88rt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 00:04:16 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44DMFB2C019284;
+	Tue, 14 May 2024 00:04:16 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2041.outbound.protection.outlook.com [104.47.56.41])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y3r842m30-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 00:04:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mwRiqel4LuFbmKP1pY/ZAxDV0AAqGWzcAJZsUQ6tX97J4G4nfuW8X+E+9q6OU3fI4DKvZd8SJbi7bOgiFO8TFi9DNFYNyfDUWJbmghnyLS+22rnoQF/ipH19XKQkl1ijbxCyOHmZ+x5RDh/LDqubD9Pn/yJLvtHS4rEHBgrUzHejmY8qQX74abkXmHkUSQkDoYlp8JFvIMqyBv767Wn+4lYOFgOPELJEJ4Fd8nVw6STx4rU4VVJTmz1qu7eD36l7lbiPUExlR9ZWeK9u4vhJA893G1x6me7mrlQHcnBWEL0cK91yOhqxlyiDPDHqriQlQt8ITErMWZ3Gq4tuNNcRdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6p3YluQOFlYFKWvfGwfkJV/wINV1i87K9gce7nlmCEQ=;
+ b=iTdpagURnbBOLD4oJ5x3meYerM8jKKdiyUn2NmSZ3pR7pYPUEro5Vv32T6tiGnDpugxjl+rXDGFKQVPoz42wDFk+cegELUrapc++6khc4mWB+YzBL58L0PbTF6DlO9CwlVtVsYGPTDQ5wAfonhKURdI1dyMj5Rf5qXqISO6c58Vd5Ehbn/c1pSolIQi1gdHCEpYZy+C0ZvH79GFHfkMg/6sE2njUutCq98PqalEX/rkxbG2C44/DtKYqXJVyXrSi2NLOMkNHc02Y8FfoiuD9qxfpeTyj4Fyecz0GWJIgZ+647nvT5XVG6GSaXfQDOT4OWv9whUTssIuwvUtinTjaCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715644225; x=1716249025; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8HkwG0xAsY0LmcCu7366TLsdMJMye5dnEFWq92mCE/g=;
-        b=EP/a1jCavQP7/vtImxx1GMoFn6hqxJ0lE0ObXSsb+ShWRslI4lafy3cBW49oRol60Z
-         j2S+j4dl5YVWv+EFDDWjdUcVNHrCkLjwLaJttd9v1ydMIkiCWBVuEeEMUnrqVxrQnz9g
-         txPjS/QCxnl61hSlEXYe27BrYlE7xO8njlDjk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715644225; x=1716249025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8HkwG0xAsY0LmcCu7366TLsdMJMye5dnEFWq92mCE/g=;
-        b=wnsY8l0hFiKV1OcyiwqvW0c5+dBCk4Auo0hD8uh7stVtzgRcTXyFqnF5nHURP9Tzqw
-         +mqhjCxeSd4OtQ9gWp5WTguskm01ZnD1pXrhhRBC005bWTvDdM3flA+M+ENhl8rgY7lP
-         0gTWwsT2IcJbY+zGHbhRS6BVgIvvJVOhT5HbkI+7ezG6ywfMgi4/5E1lHVkqWXu5lZPx
-         GKZrZ1jid6CB47QFCw9XT1TRpwNLPxCeMyXmKg5d9VpEZ0gTPF8WykseBdKc9z7TXhxR
-         xEO83+hlQuRt7niuzLZuDYN+ZkVAyJmscrEbUHuswMEjtHYlnbHsfvO4vqJ8eH5E+9yg
-         7bYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjukj8BOmlZ9hbLSP/HKvdo8iYr5ABpDlNBTVYtLhq/Mpc3ZXHg/uXEg8YNniZbmgcnCECz+y71q0F4NFxxmtA0IplbB8L0JfdtQlcNw==
-X-Gm-Message-State: AOJu0YwRf2BsmWJ74Drxt7A83SczraSTX7Rh4OVTcVMA9ioGkjFl3Eng
-	TXakB6oqGHqX+msfYPHMRSLn9fW657JJhuxhXzRZwWF1T88DjkfK9GdxkwgDeA==
-X-Google-Smtp-Source: AGHT+IGYhei7jKQWg3kW4q6ciPLQaYeMlYBwnGN1HFp6GQz0KvB+mNLvPf0P9zQEFJVwFP2dlfQzBA==
-X-Received: by 2002:a17:90a:b796:b0:2b1:dd0e:e20 with SMTP id 98e67ed59e1d1-2b6ccb7e5f8mr9202653a91.38.1715644224543;
-        Mon, 13 May 2024 16:50:24 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b671056613sm9392889a91.4.2024.05.13.16.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 16:50:23 -0700 (PDT)
-Date: Mon, 13 May 2024 16:50:23 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com,
-	inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Mike Frysinger <vapier@chromium.org>
-Subject: Re: [PATCH v3 1/2] proc: restrict /proc/pid/mem access via param
- knobs
-Message-ID: <202405131641.219CD40A62@keescook>
-References: <20240409175750.206445-1-adrian.ratiu@collabora.com>
- <202404261544.1EAD63D@keescook>
- <20240503-nulltarif-karten-82213463dedc@brauner>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6p3YluQOFlYFKWvfGwfkJV/wINV1i87K9gce7nlmCEQ=;
+ b=cvCyhHzHOLniqv+gkDiM4XruM2FkfLQ6LJpK8EOABuoWVOOjVx17y5BWRncdOnyWT383ZBTBnebm1kTI7U9uhTdfh0CWq3DC/L6PRL8tu44Vt7ROJbHC1OBWpgKV3/AUoH4pUOKhMrQX3FkSpA17T0mgZEAov/l9zPKXbE+W/Dk=
+Received: from PH8PR10MB6597.namprd10.prod.outlook.com (2603:10b6:510:226::20)
+ by MW4PR10MB5809.namprd10.prod.outlook.com (2603:10b6:303:185::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
+ 2024 00:04:14 +0000
+Received: from PH8PR10MB6597.namprd10.prod.outlook.com
+ ([fe80::6874:4af6:bf0a:6ca]) by PH8PR10MB6597.namprd10.prod.outlook.com
+ ([fe80::6874:4af6:bf0a:6ca%3]) with mapi id 15.20.7544.052; Tue, 14 May 2024
+ 00:04:14 +0000
+From: Stephen Brennan <stephen.s.brennan@oracle.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] fsnotify: clear PARENT_WATCHED flags lazily
+In-Reply-To: <CAOQ4uxjKdkXLi6w2az9a3dnEkX1-w771ZUz1Lr2ToFFUGvf8Ng@mail.gmail.com>
+References: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
+ <CAOQ4uxjKdkXLi6w2az9a3dnEkX1-w771ZUz1Lr2ToFFUGvf8Ng@mail.gmail.com>
+Date: Mon, 13 May 2024 17:04:12 -0700
+Message-ID: <87bk59gsxv.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BYAPR08CA0061.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::38) To PH8PR10MB6597.namprd10.prod.outlook.com
+ (2603:10b6:510:226::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503-nulltarif-karten-82213463dedc@brauner>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR10MB6597:EE_|MW4PR10MB5809:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb5d8127-69a7-4bb9-3f00-08dc73a963a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?Qzh1bU1IMTJuYXh6VkI4Qyt1alhJQWhOV2VnYjVDd2RTUzhzVHNqTUI5RWV4?=
+ =?utf-8?B?TElFMVBCZVFDbU85V2RJTFlEaFNFbytoNllXMkIxa2ZyRmRXWlIzaU5LVlpP?=
+ =?utf-8?B?MG9GY1NLMVp1TUtkMGpPQi9BNyt6U3gwQ1RFbWphb3RaWHhCLy9vaTc3VEc5?=
+ =?utf-8?B?OHBlU1p5dml2U01QQWNURXBxRGIrb01vWGhTZGxncWVmb1R6S203dG1lRXlI?=
+ =?utf-8?B?ZXJMUVNwcnFYa3VEMk5pMzBrVUVsMkcvYWFOQStwK3NVc3RvbXIwVVorUDVy?=
+ =?utf-8?B?cDJ1VXJCblF4N0JXS3NvblVNMVg1WktoTHZ1aUFRY0lPUmU2YzNWQTVCVzVo?=
+ =?utf-8?B?UEUyakVkcU9PSE1Uc2RrVWlqdFp1SnE4WWQvRktoaFRrR29zMFVSNDJHVktk?=
+ =?utf-8?B?eU1YdzAweXhZYStCbzBNUDJjUU9VUTd1VkJZSHFtbnh2K3BUWTZISE1kaEVr?=
+ =?utf-8?B?aHVaY011S2sxb2FyZWlyekZDcnQranFkekJTYXpaUEI4ODlCb0h3U3BmMVlB?=
+ =?utf-8?B?YjdkUTkyS1NjMFZZRnI5SktUQ1kxcGlPMUVKb2QwTFI4Z3BaalU3LzNYSTBU?=
+ =?utf-8?B?Mm9pUlN4TmFGUHpIdnJkUlZ2VUJrajBNQ3hEczl4d09jbk1Tb0pocEpQV2Rk?=
+ =?utf-8?B?aVlmN1RhQ00xZWVNL2U2aVdIWG50ZjBWR0FDS1lHeUhBUXBrcWQ5c3FOSmNN?=
+ =?utf-8?B?QThsMnpWeW9WTUtoemtlK3pOWHIyQzlVb3FqSXhvekVsOU1TSGFjNFFUZ0tp?=
+ =?utf-8?B?c1gzSncrYTVXZXczalc4ckc4b0FxSmpVd1R3bmowYk5wVFB6QW1TY3VtYjhu?=
+ =?utf-8?B?eWRYSzhQTnVCeWRzR3Fib09TUE5NWDlmVkhCcTlSY3pLUjdWdExyWXhuK1Rj?=
+ =?utf-8?B?WDlZTytrMGk4cDRTRFZrUzllMHFCdkc2UUdoZkl0TkZXSmpudFplY2tERGRE?=
+ =?utf-8?B?OVhpQXpsS2VZeWxaRFpTNmlEMFBVbWtBdXk5eTN1WWJLR0hJeFZ4cXdtLzh3?=
+ =?utf-8?B?YU9PZGJMRzNVT05mQ1lRREFFOFQzZzZXdk5LcWtwNDl1NEduMmFtajJCOUhO?=
+ =?utf-8?B?LzFTUXBWa1RPYUF5d2kvTEJndE5JaFVyNlN3NmZTYTRRMjhYeFNVc3hmNHph?=
+ =?utf-8?B?bDNlQkk2b2tOQytuUVR4L1lJVGJ6L044bS9jL2dYdnVNWk15WFRmWnVqeVZo?=
+ =?utf-8?B?UEZVcElKeWVJU2dVdHVZRTlKY0dJNWhjU2ltU05jWWdFbWZHUXFBV0dRK3dl?=
+ =?utf-8?B?NDRRRVB2bm1uN0huVHZjUmhiWUdUMU5qUGxJcTVQOFdsaDN2TWczMjBmN3hQ?=
+ =?utf-8?B?SXk0Rk9jWUpOZ1pNWjM5bmJmNWJ6ZVRubmF5UFZhc2xvRGlRb2pJTGpXMGx4?=
+ =?utf-8?B?WVIrMHYwMTRpa3FHdkNTOUZra1FLVE05dnBrdTFwT21XamFMS0hiS3NudUI3?=
+ =?utf-8?B?cnFML2t3ZnltR09mU2FOSzI3VXZuQlFUdHFRQnE5NUQyYXlXN0JDRDVkYkV2?=
+ =?utf-8?B?SzkxRVN6M2VMVUhYeTVyU3lHRFczRmgzZzdxQmlLVHRWRnRuRkFhUmJOcjVY?=
+ =?utf-8?B?YXd5MzExQmFtTnRtckNadXFveDk2NzdMRXI4SE44MFBGNU9Ka0JCWXAwRFd6?=
+ =?utf-8?Q?mcDTKMsgSv/nyN3ngLcFv1xA89UyY7D+N6xbgn4Of0Vs=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6597.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?dWF5U3dHenlUaE42OUFsMnNUQzdBeGh6TVprQWt1R1hwMlhMZ0tRUWZ4K0lr?=
+ =?utf-8?B?cGl2OGk3cDcxb3ZDUGdlYm1HdStyMy9oeGVMdDFOQ21ZcG1SWS9JdlRCdUJK?=
+ =?utf-8?B?aFk1enpMUVcrSEg0RFpsd0Q0YVJiRnIrT3djdHV5MkorUXBjMmlKNWZTQkJC?=
+ =?utf-8?B?eDg1WFpUMEo5MlN0b2RqSXROMEdzZzYraWRwT1dOYWEwNWFSNllhOFRaWENP?=
+ =?utf-8?B?bUNwdUhOUlNram1ZUmdGNnhEVVFjd0huMDh5b3BwdTViL0EyWmZCLzRrbXk3?=
+ =?utf-8?B?VndFTzJ3UUEwZUhpR0VsSW80Ym1hYmI1eDFwcjlsd09NR3NycllzaEVZUmRQ?=
+ =?utf-8?B?U2FGekxIK1BrTUV1OWZSN25Od3FIZXNTSGljSzR2Zm1veXYvQ2tFU1dnNCt4?=
+ =?utf-8?B?WnBkKzgyRzc5S3pkSE5JNTJQS29EbDEyamRzZmp6dlNWSFRKWlBSZGptYWJT?=
+ =?utf-8?B?cUZnMFlzV1hmRWZ3aUgxNnlvT0l0WnhVM1lOcHhUTlNNZ01HeFFkaUlhZUFR?=
+ =?utf-8?B?U2x2c3p0bG45c1QvR3pMeWNpT3pKcGF3dDBxR1lDbnhISXBpeDRwekVkdDJt?=
+ =?utf-8?B?SDYzc0lheUFVclRXdmNXRHVrRmhiSXUzN2xiY01VQUYwL0tTOVllam0rSWRq?=
+ =?utf-8?B?NytHeWpuWldndVdiU0J6SjFBQmpyWE1MYmRmdFBOOGI4M3lmOHZZRGVWSGp2?=
+ =?utf-8?B?cXE1RGxKNzBTaVdLVWloQkFEUVVnM1hGcnBvcGdSRTJCdzhCOWhManZnckZJ?=
+ =?utf-8?B?WVdxR0k1UVppTy8vV21iV0t0RDErQU9EbWxoV21JbWlyRi9TdUd3NzVlL3pv?=
+ =?utf-8?B?R1I5c3d5RDRvK2pHSWI2Y3loQTlQRndVOUFOOHJheXJYcUVzSGJNcUtHTWNy?=
+ =?utf-8?B?cXQ2QjBjVUkvVDNUWVZ4Z1g1aTN4MFIzY3VjcGJkdXlsRXkxWTNjM2J3eEgz?=
+ =?utf-8?B?OGwrT0hmd25iRkVMTVlXTWZ2MGlZQXkwS09zT2tWOXk1NnhRbmZEcEJPNWlB?=
+ =?utf-8?B?VUtsVlNHN1RaVDJjZk5wWGI5MDJKUWZqN0daaGQ4TitPQjNoR08zYU5Hc2V0?=
+ =?utf-8?B?aEYzUC9JNDlGYXM5MnRsYTFVYUNkMG9Uc3dDOFg0eXNUVlhUUnZNM1VieDJY?=
+ =?utf-8?B?SENxRm4vaFBrYk9rQTYrdklhdkFpNWZMbENmanlmOFRPcUZQMjRBMnNHS0xr?=
+ =?utf-8?B?NDR1RXJpYTliS2N0WHRheFhBZFpTSXErNXd6VHFSUi9aeEdvM2ZPTlFhaUhr?=
+ =?utf-8?B?Y1dKK0xDalBjVlNldFB3VStsbFF3aXR1M0ZsckJSYjVTNGVHZjk5dGNVOXc4?=
+ =?utf-8?B?SWZIUE1PU1Q4dGFQUWpYL3dNbzI4ZnU4RVRSVFNaNnc3SkZiN290T1hpOXhB?=
+ =?utf-8?B?UzUzTjUyZ3BTNXRoYlJQQzZNZFkyWVVUY3VtL0Y4RmsyUWRhK2YvcjFSNDNm?=
+ =?utf-8?B?L1lIUjZIMURNdVliS2VET1JiTTZDWFJrQzhZTm1MVzlpb0JDVmpBSmxGRFFk?=
+ =?utf-8?B?TW5KQitvUlZkd0t1TXVsZjNoQldYTVhpelA4UFZkeWx5VTJ1RlhVQUVGYXdj?=
+ =?utf-8?B?bGxMRUR3YlYrK1lTb1lQN1daZmtNd0dpdHlkN08vcHQ1dGJzVnhRUHc1dTdZ?=
+ =?utf-8?B?YkxJMWpkN1ZGTThMdGl0eW1JRFViTmlWT0ZFNG5STWpkbHdUYmRUSDNkTHBX?=
+ =?utf-8?B?QUYwaFE5Uk1LU1FucmN4WFhWVElTMzhWSGlJRFUwTEdsbHo5S3ZhK3NtMFFl?=
+ =?utf-8?B?L1U3emVIV3gwZ0lVWFVKYlRvYkUyeTNma0pPR094MUk3WmNOMnFCdnl0Wmd0?=
+ =?utf-8?B?UCtVT1ZWN3Q4NWRkeHNFTVVFY1Z2RElnUG9HWDBPWTRsRlVZcERFZEJkZVFy?=
+ =?utf-8?B?dW5KVjlXL3ZZNDRyMElPbnBhMkF5bXo4VkJIOVRibGNwV0trcXRrNmJaZkwr?=
+ =?utf-8?B?SGw1WG9oRWV0eFRmenp5R0RNNDZpY0Nybnh3SUt6Z1VhcVpRQ2t2SVZJNEdH?=
+ =?utf-8?B?eGVHQllwbnRGMEtERzRkMXNzMGtWcnowOVBBTkpxL3FTT3lYVUJNbkNtN0NV?=
+ =?utf-8?B?T3A4VGlQeHd3bVN5cHdMUmJNYnZ3ZHJCZ1E3Z2RpdFJwRkZTZEZMaHN6bElY?=
+ =?utf-8?B?T1hVUCtBWFJPUjVXdjV0K3NUVldRY1k3NDlXYmVoYkhXUzN2ajkveWNWZGln?=
+ =?utf-8?B?ZVp3c20ybngyejlUZXo5NEpnc0VQM1dpbE85VXlzb2MrNE4xM3d6WjVsSGxJ?=
+ =?utf-8?Q?vTWp5f8fj5Q+yu3ruDj3J649pLKlbYSXfvp8bfMiYE=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	rq2RZO2uXwGH8LxgErjIx/WLHNR81uTmoGVhfw3xGvLIoT75x4ghcMLV06LIYrqoJ6GQ4TzcxGGtbTeqK/yvVZTkTR16tPsjnhzuHOho6IyHdZ1qyuwFQs+ypcHXtqHpbMv6a8vnkpObP43/KRX+7LM5001HrQ2LqUG/TDDUWNcpXqAMemrJtz+QWj47jWQTHMbILQKVLvTRXrPa0EWsrK2TilLIGGLuqBui1Ec9iVaTZORNHXhSkbSeUesOIqAOCZlazq5127Fjun0qkX+dcQZeq4v4Q2fGvH50eQQba6xXqCGI6WjbBajpacCy3g6Z/o0rqMY37i7XWPIOhPbrYSeJWssiqG4wtsLE0Lsvr8xSPw1pjxz9PMhMr/I41uODsGxcod1tHOdCrx3oQVJIBgmyVDVO1kRfneq5bDwVRUaekTt8sR2Xy1Mk8UwwQCDGShjYQBLnBmSaIYYBjsQustAZ5Ik9egKDSyH6hLiXF+fmpf0weehZ784+oUo+3/KjpjnJz9OspP1HG9frzJr4CE1V843hGjM73/iF1/FTIx+g7DaMZ3SIXI0PR4YSHl85NkjVwDyy6warYy6jAlhjVmV9A9vzm9FqDHePnNXbskI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb5d8127-69a7-4bb9-3f00-08dc73a963a9
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6597.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 00:04:13.9697
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5ngM7c8V7mbh8gUDPPuNO1JXMT9vV3lfbt7juBR+iWpoHEimgFL9Su6rl7XnKSIB8LIFPvkTHzbbU4WJmLrbFpr9ybjQAEfmADiNuzY/2j4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5809
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_17,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405130165
+X-Proofpoint-ORIG-GUID: ZAFd65XRq7SPrQ7NUgAQ4wy7FHCP6HLD
+X-Proofpoint-GUID: ZAFd65XRq7SPrQ7NUgAQ4wy7FHCP6HLD
 
-On Fri, May 03, 2024 at 11:57:56AM +0200, Christian Brauner wrote:
-> On Fri, Apr 26, 2024 at 04:10:49PM -0700, Kees Cook wrote:
-> > On Tue, Apr 09, 2024 at 08:57:49PM +0300, Adrian Ratiu wrote:
-> > > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-> > > after which it got allowed in commit 198214a7ee50 ("proc: enable
-> > > writing to /proc/pid/mem"). Famous last words from that patch:
-> > > "no longer a security hazard". :)
-> > > 
-> > > Afterwards exploits started causing drama like [1]. The exploits
-> > > using /proc/*/mem can be rather sophisticated like [2] which
-> > > installed an arbitrary payload from noexec storage into a running
-> > > process then exec'd it, which itself could include an ELF loader
-> > > to run arbitrary code off noexec storage.
-> > > 
-> > > One of the well-known problems with /proc/*/mem writes is they
-> > > ignore page permissions via FOLL_FORCE, as opposed to writes via
-> > > process_vm_writev which respect page permissions. These writes can
-> > > also be used to bypass mode bits.
-> > > 
-> > > To harden against these types of attacks, distrbutions might want
-> > > to restrict /proc/pid/mem accesses, either entirely or partially,
-> > > for eg. to restrict FOLL_FORCE usage.
-> > > 
-> > > Known valid use-cases which still need these accesses are:
-> > > 
-> > > * Debuggers which also have ptrace permissions, so they can access
-> > > memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
-> > > are designed to write /proc/pid/mem for basic functionality.
-> > > 
-> > > * Container supervisors using the seccomp notifier to intercept
-> > > syscalls and rewrite memory of calling processes by passing
-> > > around /proc/pid/mem file descriptors.
-> > > 
-> > > There might be more, that's why these params default to disabled.
-> > > 
-> > > Regarding other mechanisms which can block these accesses:
-> > > 
-> > > * seccomp filters can be used to block mmap/mprotect calls with W|X
-> > > perms, but they often can't block open calls as daemons want to
-> > > read/write their runtime state and seccomp filters cannot check
-> > > file paths, so plain write calls can't be easily blocked.
-> > > 
-> > > * Since the mem file is part of the dynamic /proc/<pid>/ space, we
-> > > can't run chmod once at boot to restrict it (and trying to react
-> > > to every process and run chmod doesn't scale, and the kernel no
-> > > longer allows chmod on any of these paths).
-> > > 
-> > > * SELinux could be used with a rule to cover all /proc/*/mem files,
-> > > but even then having multiple ways to deny an attack is useful in
-> > > case one layer fails.
-> > > 
-> > > Thus we introduce three kernel parameters to restrict /proc/*/mem
-> > > access: read, write and foll_force. All three can be independently
-> > > set to the following values:
-> > > 
-> > > all     => restrict all access unconditionally.
-> > > ptracer => restrict all access except for ptracer processes.
-> > > 
-> > > If left unset, the existing behaviour is preserved, i.e. access
-> > > is governed by basic file permissions.
-> > > 
-> > > Examples which can be passed by bootloaders:
-> > > 
-> > > restrict_proc_mem_foll_force=all
-> > > restrict_proc_mem_write=ptracer
-> > > restrict_proc_mem_read=ptracer
-> > > 
-> > > Each distribution needs to decide what restrictions to apply,
-> > > depending on its use-cases. Embedded systems might want to do
-> > > more, while general-purpouse distros might want a more relaxed
-> > > policy, because for e.g. foll_force=all and write=all both break
-> > > break GDB, so it might be a bit excessive.
-> > > 
-> > > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
-> > 
-> > Thanks for this new version!
-> > 
-> > > 
-> > > Link: https://lwn.net/Articles/476947/ [1]
-> > > Link: https://issues.chromium.org/issues/40089045 [2]
-> > > Cc: Guenter Roeck <groeck@chromium.org>
-> > > Cc: Doug Anderson <dianders@chromium.org>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Jann Horn <jannh@google.com>
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Co-developed-by: Mike Frysinger <vapier@chromium.org>
-> > > Signed-off-by: Mike Frysinger <vapier@chromium.org>
-> > > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> > > ---
-> > >  .../admin-guide/kernel-parameters.txt         |  27 +++++
-> > >  fs/proc/base.c                                | 103 +++++++++++++++++-
-> > >  include/linux/jump_label.h                    |   5 +
-> > >  3 files changed, 133 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > > index 6e62b8cb19c8d..d7f7db41369c7 100644
-> > > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > @@ -5665,6 +5665,33 @@
-> > >  	reset_devices	[KNL] Force drivers to reset the underlying device
-> > >  			during initialization.
-> > >  
-> > > +	restrict_proc_mem_read= [KNL]
-> > > +			Format: {all | ptracer}
-> > > +			Allows restricting read access to /proc/*/mem files.
-> > > +			Depending on restriction level, open for reads return -EACCESS.
-> > > +			Can be one of:
-> > > +			- 'all' restricts all access unconditionally.
-> > > +			- 'ptracer' allows access only for ptracer processes.
-> > > +			If not specified, then basic file permissions continue to apply.
-> > > +
-> > > +	restrict_proc_mem_write= [KNL]
-> > > +			Format: {all | ptracer}
-> > > +			Allows restricting write access to /proc/*/mem files.
-> > > +			Depending on restriction level, open for writes return -EACCESS.
-> > > +			Can be one of:
-> > > +			- 'all' restricts all access unconditionally.
-> > > +			- 'ptracer' allows access only for ptracer processes.
-> > > +			If not specified, then basic file permissions continue to apply.
-> > > +
-> > > +	restrict_proc_mem_foll_force= [KNL]
-> > > +			Format: {all | ptracer}
-> > > +			Restricts the use of the FOLL_FORCE flag for /proc/*/mem access.
-> > > +			If restricted, the FOLL_FORCE flag will not be added to vm accesses.
-> > > +			Can be one of:
-> > > +			- 'all' restricts all access unconditionally.
-> > > +			- 'ptracer' allows access only for ptracer processes.
-> > > +			If not specified, FOLL_FORCE is always used.
-> > 
-> > bike shedding: I wonder if this should be a fake namespace (adding a dot
-> > just to break it up for reading more easily), and have words reordered
-> > to the kernel's more common subject-verb-object: proc_mem.restrict_read=...
-> > 
-> > > +
-> > >  	resume=		[SWSUSP]
-> > >  			Specify the partition device for software suspend
-> > >  			Format:
-> > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > index 18550c071d71c..c733836c42a65 100644
-> > > --- a/fs/proc/base.c
-> > > +++ b/fs/proc/base.c
-> > > @@ -152,6 +152,41 @@ struct pid_entry {
-> > >  		NULL, &proc_pid_attr_operations,	\
-> > >  		{ .lsmid = LSMID })
-> > >  
-> > > +/*
-> > > + * each restrict_proc_mem_* param controls the following static branches:
-> > > + * key[0] = restrict all writes
-> > > + * key[1] = restrict writes except for ptracers
-> > > + * key[2] = restrict all reads
-> > > + * key[3] = restrict reads except for ptracers
-> > > + * key[4] = restrict all FOLL_FORCE usage
-> > > + * key[5] = restrict FOLL_FORCE usage except for ptracers
-> > > + */
-> > > +DEFINE_STATIC_KEY_ARRAY_FALSE_RO(restrict_proc_mem, 6);
-> > 
-> > So, I don't like having open-coded numbers. And I'm not sure there's a
-> > benefit to stuffing these all into an array? So:
-> > 
-> > DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_read);
-> > DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_write);
-> > DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_foll_force);
-> > 
-> > > +
-> > > +static int __init early_restrict_proc_mem(char *buf, int offset)
-> > > +{
-> > > +	if (!buf)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (strncmp(buf, "all", 3) == 0)
-> > 
-> > I'd use strcmp() to get exact matches. That way "allalksdjflas" doesn't
-> > match. :)
-> > 
-> > > +		static_branch_enable(&restrict_proc_mem[offset]);
-> > > +	else if (strncmp(buf, "ptracer", 7) == 0)
-> > > +		static_branch_enable(&restrict_proc_mem[offset + 1]);
-> > > +
-> > > +	return 0;
-> > > +}
-> > 
-> > Then don't bother with a common helper since you've got a macro, and
-> > it'll all get tossed after __init anyway.
-> > 
-> > > +
-> > > +#define DEFINE_EARLY_RESTRICT_PROC_MEM(name, offset)			\
-> > > +static int __init early_restrict_proc_mem_##name(char *buf)		\
-> > > +{									\
-> > > +	return early_restrict_proc_mem(buf, offset);			\
-> > > +}									\
-> > > +early_param("restrict_proc_mem_" #name, early_restrict_proc_mem_##name)
-> > > +
-> > > +DEFINE_EARLY_RESTRICT_PROC_MEM(write, 0);
-> > > +DEFINE_EARLY_RESTRICT_PROC_MEM(read, 2);
-> > > +DEFINE_EARLY_RESTRICT_PROC_MEM(foll_force, 4);
-> > 
-> > #define DEFINE_EARLY_PROC_MEM_RESTRICT(name)				\
-> > static int __init early_proc_mem_restrict_##name(char *buf)		\
-> > {									\
-> > 	if (!buf)							\
-> > 		return -EINVAL;						\
-> > 									\
-> > 	if (strcmp(buf, "all") == 0)					\
-> > 		static_branch_enable(&proc_mem_restrict_##name);	\
-> > 	else if (strcmp(buf, "ptracer") == 0)				\
-> > 		static_branch_enable(&proc_mem_restrict_##name);	\
-> > 									\
-> > 	return 0;							\
-> > }									\
-> > early_param("proc_mem_restrict_" #name, early_proc_mem_restrict_##name)
-> > 
-> > 
-> > > +
-> > >  /*
-> > >   * Count the number of hardlinks for the pid_entry table, excluding the .
-> > >   * and .. links.
-> > > @@ -825,9 +860,58 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +static bool __mem_open_current_is_ptracer(struct file *file)
-> > > +{
-> > > +	struct inode *inode = file_inode(file);
-> > > +	struct task_struct *task = get_proc_task(inode);
-> > > +	int ret = false;
-> > > +
-> > > +	if (task) {
-> > > +		rcu_read_lock();
-> > > +		if (current == ptrace_parent(task))
-> > > +			ret = true;
-> > > +		rcu_read_unlock();
-> > > +		put_task_struct(task);
-> > > +	}
-> > 
-> > This creates a ToCToU race between this check (which releases the task)
-> > and the later memopen which make get a different task (and mm).
-> > 
-> > To deal with this, I think you need to add a new mode flag for
-> > proc_mem_open(), and add the checking there.
-> > 
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static int __mem_open_check_access_restriction(struct file *file)
-> > > +{
-> > > +	if (file->f_mode & FMODE_WRITE) {
-> > > +		/* Deny if writes are unconditionally disabled via param */
-> > > +		if (static_branch_unlikely(&restrict_proc_mem[0]))
-> > > +			return -EACCES;
-> > > +
-> > > +		/* Deny if writes are allowed only for ptracers via param */
-> > > +		if (static_branch_unlikely(&restrict_proc_mem[1]) &&
-> > > +		    !__mem_open_current_is_ptracer(file))
-> > > +			return -EACCES;
-> > > +
-> > > +	} else if (file->f_mode & FMODE_READ) {
-> > 
-> > I think this "else" means that O_RDWR opens will only check the write
-> > flag, so drop the "else".
-> > 
-> > > +		/* Deny if reads are unconditionally disabled via param */
-> > > +		if (static_branch_unlikely(&restrict_proc_mem[2]))
-> > > +			return -EACCES;
-> > > +
-> > > +		/* Deny if reads are allowed only for ptracers via param */
-> > > +		if (static_branch_unlikely(&restrict_proc_mem[3]) &&
-> > > +		    !__mem_open_current_is_ptracer(file))
-> > > +			return -EACCES;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static int mem_open(struct inode *inode, struct file *file)
-> > >  {
-> > > -	int ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
-> > > +	int ret;
-> > > +
-> > > +	ret = __mem_open_check_access_restriction(file);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
-> > >  
-> > >  	/* OK to pass negative loff_t, we can catch out-of-range */
-> > >  	file->f_mode |= FMODE_UNSIGNED_OFFSET;
-> > > @@ -835,6 +919,20 @@ static int mem_open(struct inode *inode, struct file *file)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > +static unsigned int __mem_rw_get_foll_force_flag(struct file *file)
-> > > +{
-> > > +	/* Deny if FOLL_FORCE is disabled via param */
-> > > +	if (static_branch_unlikely(&restrict_proc_mem[4]))
-> > > +		return 0;
-> > > +
-> > > +	/* Deny if FOLL_FORCE is allowed only for ptracers via param */
-> > > +	if (static_branch_unlikely(&restrict_proc_mem[5]) &&
-> > > +	    !__mem_open_current_is_ptracer(file))
-> > 
-> > This is like the ToCToU: the task may have changed out from under us
-> > between the open the read/write.
-> 
-> But why would you care? As long as the task is the ptracer it doesn't
-> really matter afaict.
+Amir Goldstein <amir73il@gmail.com> writes:
 
-Because the mm you're writing to may no longer be associated with the
-task.
+> On Fri, May 10, 2024 at 6:21=E2=80=AFPM Stephen Brennan
+> <stephen.s.brennan@oracle.com> wrote:
+>>
+>> Hi Amir, Jan, et al,
+>
+> Hi Stephen,
+>
+>>
+>> It's been a while since I worked with you on the patch series[1] that ai=
+med to
+>> make __fsnotify_update_child_dentry_flags() a sleepable function. That w=
+ork got
+>> to a point that it was close to ready, but there were some locking issue=
+s which
+>> Jan found, and the kernel test robot reported, and I didn't find myself =
+able to
+>> tackle them in the amount of time I had.
+>>
+>> But looking back on that series, I think I threw out the baby with the
+>> bathwater. While I may not have resolved the locking issues associated w=
+ith the
+>> larger change, there was one patch which Amir shared, that probably reso=
+lves
+>> more than 90% of the issues that people may see. I'm sending that here, =
+since it
+>> still applies to the latest master branch, and I think it's a very good =
+idea.
+>>
+>> To refresh you, the underlying issue I was trying to resolve was when
+>> directories have many dentries (frequently, a ton of negative dentries),=
+ the
+>> __fsnotify_update_child_dentry_flags() operation can take a while, and i=
+t
+>> happens under spinlock.
+>>
+>> Case #1 - if the directory has tens of millions of dentries, then you co=
+uld get
+>> a soft lockup from a single call to this function. I have seen some case=
+s where
+>> a single directory had this many dentries, but it's pretty rare.
+>>
+>> Case #2 - suppose you have a system with many CPUs and a busy directory.=
+ Suppose
+>> the directory watch is removed. The caller will begin executing
+>> __fsnotify_update_child_dentry_flags() to clear the PARENT_WATCHED flag,=
+ but in
+>> parallel, many other CPUs could wind up in __fsnotify_parent() and decid=
+e that
+>> they, too, must call __fsnotify_update_child_dentry_flags() to clear the=
+ flags.
+>> These CPUs will all spin waiting their turn, at which point they'll re-d=
+o the
+>> long (and likely, useless) call. Even if the original call only took a s=
+econd or
+>> two, if you have a dozen or so CPUs that end up in that call, some CPUs =
+will
+>> spin a long time.
+>>
+>> Amir's patch to clear PARENT_WATCHED flags lazily resolves that easily. =
+In
+>> __fsnotify_parent(), if callers notice that the parent is no longer watc=
+hing,
+>> they merely update the flags for the current dentry (not all the other
+>> children). The __fsnotify_recalc_mask() function further avoids excess c=
+alls by
+>> only updating children if the parent started watching. This easily handl=
+es case
+>> #2 above. Perhaps case #1 could still cause issues, for the cases of tru=
+ly huge
+>> dentry counts, but we shouldn't let "perfect" get in the way of "good en=
+ough" :)
+>>
+>
+> The story sounds good :)
+> Only thing I am worried about is: was case #2 tested to prove that
+> the patch really imploves in practice and not only in theory?
+>
+> I am not asking that you write a test for this or even a reproducer
+> just evidence that you collected from a case where improvement is observe=
+d
+> and measurable.
 
-proc_mem_operations.open() will take a reference to the current task's
-mm, via proc_mem_open() through __mem_open():
+I had not done so when you sent this, but I should have done it
+beforehand. In any case, now I have. I got my hands on a 384-CPU machine
+and extended my negative dentry creation tool so that it can run a
+workload in which it constantly runs "open()" followed by "close()" on
+1000 files in the same directory, per thread (so a total of 384,000
+files, a large but not unreasonable amount of dentries).
 
-        struct task_struct *task = get_proc_task(inode);
-	...
-	mm = mm_access(task, mode | PTRACE_MODE_FSCREDS);
-	...
-	file->private_data = mm;
+Then I simply run "inotifywait /path/to/dir" a few times. Without the
+patch, softlockups are easy to reproduce. With the patch, I haven't been
+able to get a single soft lockup.
 
+https://github.com/brenns10/kernel_stuff/tree/master/negdentcreate
 
-And in the proposed check added to mem_rw(), if get_proc_task(inode)
-returns a different task (i.e. the pid got recycled and the original mm
-is still associated with a forked task), then it could write to the
-forked task using the ptrace check against the new task.
+    make
+    mkdir test
 
-Looking at it again now, I think it should be possible to just revalidate
-the mm in __mem_open_current_is_ptracer(), though. i.e. it would be
-allowed if ptrace check passes and file->private_data == mm_access(...),
-for the mem_rw case...
+    # create 384k files inside "test"
+    ./negdentcreate -p test -c 384000 -t 384 -o create
 
--- 
-Kees Cook
+    # start a loop opening and closing those files
+    negdentcreate -p test -c 384000 -t 384 -o open -l
+
+    # in another window:
+    inotifywait test
+
+Stephen
+
+>
+> Thanks,
+> Amir.
+>
+>> [1]: https://lore.kernel.org/all/20221013222719.277923-1-stephen.s.brenn=
+an@oracle.com/
+>>
+>> Amir Goldstein (1):
+>>   fsnotify: clear PARENT_WATCHED flags lazily
+>>
+>>  fs/notify/fsnotify.c             | 26 ++++++++++++++++++++------
+>>  fs/notify/fsnotify.h             |  3 ++-
+>>  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
+>>  include/linux/fsnotify_backend.h |  8 +++++---
+>>  4 files changed, 56 insertions(+), 13 deletions(-)
+>>
+>> --
+>> 2.43.0
+>>
 
