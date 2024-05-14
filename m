@@ -1,190 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-19468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91F68C5B88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 21:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E029F8C5C34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 22:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6321F230A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 19:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973781F23897
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 20:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63D9181302;
-	Tue, 14 May 2024 19:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C43181325;
+	Tue, 14 May 2024 20:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FHv8Qsc5"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0a1zuzJn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE3317EBA5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 19:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7EB180A9C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 20:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715713936; cv=none; b=iYGVG5N2BGr7rXYAWET79QhP1HVHQebXxUK4PjkyjZxTwS/MuzzC638zHmogmPEaJLkauKCe24eF1+yAhKfvcxlmsVEA2sz63gzoVtdCyc62xMwqiyyKHv+WKwUZLlz7oaawVdrwiHwkmdOrtEHuvQi5XbeUO4T8Howaigd5t5A=
+	t=1715717975; cv=none; b=iYmQiAciEnCjezEclAWB8dPwGl5Dgok8/XqoHgM27c+EZ4YTRV7yIis80W//DsRYV9Q4F0d3Hl3u2rOO2zS8k/LJfmFN6BU6DzirU3Wfx1N/A0AyNFwGlxhFDNgZEBbODc15czgHz3pTFhkuvXYuzNTyhMnNLI7eyOfOLak22Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715713936; c=relaxed/simple;
-	bh=GSAh8xbKfCp+tzPmbMgpT8DTFC4Dvnc72BWaMt/Plr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2utmGGRpOa8cAH0bmMwWK0mSGRkxl/nQbI1YPtR9pX+HN9EYL7Dxkb82BeBXhehGa2NUrwsJ6vhCgGeSJ9GY5i602xhpJxydfCRuNZ3yoJPXwB/uUAHR/s8dDttg0GV9p7M7fNtascjnPYlgWIxJSgoDqPWuCsGfEqJPyx0jMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FHv8Qsc5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715713933;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X2iU2/EFLDYYzNrhgJhaZBZTvv5MXAraDW5xCto7BpQ=;
-	b=FHv8Qsc5285O4a4EgJ/CUXNuDhcRsiB1nAXVppdHH1pgM/3P+QR/VyHIEnuP4XsuChaO6d
-	PO9PwXTirG96Lng03urOLBclO8Bq2uIU1ixhOIAEC9F8f7boItmF41sFT1NIBVoLVJDo6E
-	pRrUIvZLHhE9SNbA3ST4qXhEnXJf9PE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-203-3StEfRJWNReZ2nrYnrFi9g-1; Tue, 14 May 2024 15:12:12 -0400
-X-MC-Unique: 3StEfRJWNReZ2nrYnrFi9g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B5EE31848630;
-	Tue, 14 May 2024 19:12:11 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.32.71])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 6ABF24184CC0;
-	Tue, 14 May 2024 19:12:11 +0000 (UTC)
-Date: Tue, 14 May 2024 14:12:09 -0500
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, linux-fsdevel@vger.kernel.org,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH] zonefs: move super block reading from page to folio
-Message-ID: <ZkO3iZFIKQsdIaEY@redhat.com>
-References: <20240514152208.26935-1-jth@kernel.org>
+	s=arc-20240116; t=1715717975; c=relaxed/simple;
+	bh=VaHu7rKqUD82QxgHYz6hkdvHYjYa2IRHOTNhh/K5VCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsyVeSmkOMpWGw33l9Ozc7dWZLC516x8M6S+sMYu4uJ7DpxHCuK3pieI74+RTSHSfJWbB3QTRIzu+EFx4iaGYjg0eL83GxI3HjcbVIpn9vNo02fLeX73tatp4PCIgVXS4VcBkAPhASeri8yOek2RWcnqs0nctGAVzECb7v1lWP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0a1zuzJn; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-61be674f5d1so65536707b3.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 13:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715717973; x=1716322773; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8hb7xfSX/VQFjXuNhYy1AT8FiF40Meq6UrJ0Q9OaWSI=;
+        b=0a1zuzJnVTED5zaBjn+vneejEbKjifynYTHZTlnVvJKgSHH0FmJ1Bkn3TIS+l5/1Fr
+         7NbcjAvEqVEWRplugA6jaRTfJGfPU91IqxQ5ua1BqzAlAnXHIcZeQbwh36eH+HrY/GST
+         kZoW1w7PDM6ndbkwbCdg+S4B9E6WtIyn53TkzQSHwaMIMYnXC80MnnzqZhcWHH9emoyo
+         tE/Y2rNZCaH7VE/zEmxSMNyxI7x+qvLgApVmmo/zHocyfjYSqqNyW6Xnzfkdzi34Kf5+
+         tILMfTM8IjYU5bggzvkRUy7e6LTeKynROC0y2vUCYxU7CkBeXgiJsP2fo5ZBHNle3+Vf
+         lA0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715717973; x=1716322773;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8hb7xfSX/VQFjXuNhYy1AT8FiF40Meq6UrJ0Q9OaWSI=;
+        b=LR+CPu5vGbDDesbxaIOabDGgNXd4t/bIWoQR+cuUNInqSs8s+1qzSegLKeyAeK7hTv
+         kmAe8ZrRP/vho0cA7j9h+6FZZ3RnjHk9PafWEYpr+JEg+NqRf55aPWecJcBrMe5AQii4
+         CCDKfxLDRxzOWwH5SkEfvhLMKbw+GOPxyz9Cbwa3v9T5FGM3VZCdC4bn8QFCq7osZwEw
+         nCUrRHdANmKdEjWFLId83E4YPgSI9+jvzrjZpUVRVsFWjuRL+jbZ1eePeXXf3Mo8Dq2V
+         GMsFBvOoCdNr3tsGqeSfxxbyjmncTaDtfnVm87T6ZMzEDcBfMUErpw0gf+RCPa++2adu
+         Chtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUtars6/APagpuVdpoNIqRcQKJzIpzveR8iqqUfAntdkL15AVM1163jWXXPr+sxTI+07Tht3mQrAsliq7dF2RRdsiuSM2eeB+AbMv+Ug==
+X-Gm-Message-State: AOJu0YzaxO5N5qOjenACQ6vgm4PrP2hfrb9IBqPE8E0coTsk5zHhf0Al
+	yKfqroNZ9MeOefL8k672gyO9Gzm2rVQy4TB4NCPZek+TlVPg/AtD/Fm7J7XaYeyeU50IKtf/OzU
+	d5kQ+B0ML/k1jP/X1FMBNoNfcRL+Z3zkUfF0Z
+X-Google-Smtp-Source: AGHT+IF0OFILt+I7s+gtnueoup30JC7tJkxqSmt1mTfiiTyFdrB2xvE1WcfGDmSBB02xHb0OOmS8gf0eZcoIH22ncJ8=
+X-Received: by 2002:a05:690c:386:b0:614:74ba:f91c with SMTP id
+ 00721157ae682-622aff93dfamr216111377b3.19.1715717972903; Tue, 14 May 2024
+ 13:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514152208.26935-1-jth@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+References: <20240514163128.3662251-1-surenb@google.com> <202405140957.92089A615@keescook>
+In-Reply-To: <202405140957.92089A615@keescook>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 14 May 2024 13:19:19 -0700
+Message-ID: <CAJuCfpGjRtL4nrOp2fLVM2=Yfg2WH4DXjkTK-y_1q4uwAxFDHg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] lib: add version into /proc/allocinfo output
+To: Kees Cook <keescook@chromium.org>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, 
+	pasha.tatashin@soleen.com, vbabka@suse.cz, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 05:22:08PM +0200, Johannes Thumshirn wrote:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
-> Move reading of the on-disk superblock from page to kmalloc()ed memory.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Tue, May 14, 2024 at 9:58=E2=80=AFAM Kees Cook <keescook@chromium.org> w=
+rote:
+>
+> On Tue, May 14, 2024 at 09:31:28AM -0700, Suren Baghdasaryan wrote:
+> > Add version string and a header at the beginning of /proc/allocinfo to
+> > allow later format changes. Example output:
+> >
+> > > head /proc/allocinfo
+> > allocinfo - version: 1.0
+> > #     <size>  <calls> <tag info>
+> >            0        0 init/main.c:1314 func:do_initcalls
+> >            0        0 init/do_mounts.c:353 func:mount_nodev_root
+> >            0        0 init/do_mounts.c:187 func:mount_root_generic
+> >            0        0 init/do_mounts.c:158 func:do_mount_root
+> >            0        0 init/initramfs.c:493 func:unpack_to_rootfs
+> >            0        0 init/initramfs.c:492 func:unpack_to_rootfs
+> >            0        0 init/initramfs.c:491 func:unpack_to_rootfs
+> >          512        1 arch/x86/events/rapl.c:681 func:init_rapl_pmus
+> >          128        1 arch/x86/events/rapl.c:571 func:rapl_cpu_online
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Ah yeah, good idea. (Do we have versioning like this anywhere else in
+> our /proc files? It seems a nice thing to add...)
 
-Looks fine.
-Reviewed-by: Bill O'Donnell <bodonnel@redhat.com>
+Yes, /proc/slabinfo has a similar header that includes a version number.
 
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-> ---
->  fs/zonefs/super.c | 30 +++++++++++++++---------------
->  1 file changed, 15 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index faf1eb87895d..ebea18da6759 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -1111,28 +1111,28 @@ static int zonefs_read_super(struct super_block *sb)
->  	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
->  	struct zonefs_super *super;
->  	u32 crc, stored_crc;
-> -	struct page *page;
->  	struct bio_vec bio_vec;
->  	struct bio bio;
-> +	struct folio *folio;
->  	int ret;
->  
-> -	page = alloc_page(GFP_KERNEL);
-> -	if (!page)
-> +	super = kzalloc(ZONEFS_SUPER_SIZE, GFP_KERNEL);
-> +	if (!super)
->  		return -ENOMEM;
->  
-> +	folio = virt_to_folio(super);
->  	bio_init(&bio, sb->s_bdev, &bio_vec, 1, REQ_OP_READ);
->  	bio.bi_iter.bi_sector = 0;
-> -	__bio_add_page(&bio, page, PAGE_SIZE, 0);
-> +	bio_add_folio_nofail(&bio, folio, ZONEFS_SUPER_SIZE,
-> +			     offset_in_folio(folio, super));
->  
->  	ret = submit_bio_wait(&bio);
->  	if (ret)
-> -		goto free_page;
-> -
-> -	super = page_address(page);
-> +		goto free_super;
->  
->  	ret = -EINVAL;
->  	if (le32_to_cpu(super->s_magic) != ZONEFS_MAGIC)
-> -		goto free_page;
-> +		goto free_super;
->  
->  	stored_crc = le32_to_cpu(super->s_crc);
->  	super->s_crc = 0;
-> @@ -1140,14 +1140,14 @@ static int zonefs_read_super(struct super_block *sb)
->  	if (crc != stored_crc) {
->  		zonefs_err(sb, "Invalid checksum (Expected 0x%08x, got 0x%08x)",
->  			   crc, stored_crc);
-> -		goto free_page;
-> +		goto free_super;
->  	}
->  
->  	sbi->s_features = le64_to_cpu(super->s_features);
->  	if (sbi->s_features & ~ZONEFS_F_DEFINED_FEATURES) {
->  		zonefs_err(sb, "Unknown features set 0x%llx\n",
->  			   sbi->s_features);
-> -		goto free_page;
-> +		goto free_super;
->  	}
->  
->  	if (sbi->s_features & ZONEFS_F_UID) {
-> @@ -1155,7 +1155,7 @@ static int zonefs_read_super(struct super_block *sb)
->  				       le32_to_cpu(super->s_uid));
->  		if (!uid_valid(sbi->s_uid)) {
->  			zonefs_err(sb, "Invalid UID feature\n");
-> -			goto free_page;
-> +			goto free_super;
->  		}
->  	}
->  
-> @@ -1164,7 +1164,7 @@ static int zonefs_read_super(struct super_block *sb)
->  				       le32_to_cpu(super->s_gid));
->  		if (!gid_valid(sbi->s_gid)) {
->  			zonefs_err(sb, "Invalid GID feature\n");
-> -			goto free_page;
-> +			goto free_super;
->  		}
->  	}
->  
-> @@ -1173,14 +1173,14 @@ static int zonefs_read_super(struct super_block *sb)
->  
->  	if (memchr_inv(super->s_reserved, 0, sizeof(super->s_reserved))) {
->  		zonefs_err(sb, "Reserved area is being used\n");
-> -		goto free_page;
-> +		goto free_super;
->  	}
->  
->  	import_uuid(&sbi->s_uuid, super->s_uuid);
->  	ret = 0;
->  
-> -free_page:
-> -	__free_page(page);
-> +free_super:
-> +	kfree(super);
->  
->  	return ret;
->  }
-> -- 
-> 2.35.3
-> 
-> 
+Thanks!
 
+>
+> --
+> Kees Cook
 
