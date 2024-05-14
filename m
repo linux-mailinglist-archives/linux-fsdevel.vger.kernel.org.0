@@ -1,140 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-19420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E2D8C5653
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 14:55:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CF98C56A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE062844F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 12:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7DCD1C21937
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D419A12AAF8;
-	Tue, 14 May 2024 12:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C44F47A57;
+	Tue, 14 May 2024 13:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="qplWiqQe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8018E7EEE1;
-	Tue, 14 May 2024 12:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B77A1411D0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 13:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715691219; cv=none; b=t7qQdXef+YVCw3PqbXno9YkNCf6W5miEnEMZFjjrhUddKpTlr4fQB27X+I3J6HNkMFveO0WQtmWX3lgNmW7iUHKtp2tr7vKqK/GSzFfTmU/6Dn0HeVTsPxQGscmtRvcUq1Jkz7ZEGt/LNLebjxNHXrz9gzM8oJqbHriYoaNgI2U=
+	t=1715692267; cv=none; b=QqcBQy5SlHheUMpxY6HE427XKvpMS1B5XVnXDY3rTkJWdoYnxKVgMUTLo0wwie/VHSmeIYVNgbyFOzJfiiAMYGWXcVxzGfwuXMwfL0h2O9yN7PqYOYtjePlzwf1RnGJLOzleSI6DDOKAJ28qae4K/JZo35zEszlbZ7AMfWmxQ2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715691219; c=relaxed/simple;
-	bh=Se7P5OClo4IT4IEEGW67kvZN2x2arctGyw8vXG+eF3w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IEDRP5kIjGd1BMDNFvRPv6naghQQqszX2BkwDXu/AbLtskZz/CVG4/58VDR4XOlvD/EOmz48Z5F2TpuS8jHiykyQJvBeBcirvNgZb0vVLJ6PMAFoQjbvxAc6JAD73kwD6W6va50DKB5R6qQ4CLadwHfXrC58tDlvcFcTkWVNWxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vdx9V36DYz4f3m78;
-	Tue, 14 May 2024 20:53:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8F19E1A0D6A;
-	Tue, 14 May 2024 20:53:28 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgDHzG7EXkNmCyyLMw--.6596S10;
-	Tue, 14 May 2024 20:53:28 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org,
-	tj@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] writeback: factor out balance_wb_limits to remove repeated code
-Date: Tue, 14 May 2024 20:52:54 +0800
-Message-Id: <20240514125254.142203-9-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240514125254.142203-1-shikemeng@huaweicloud.com>
-References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1715692267; c=relaxed/simple;
+	bh=SBU3Dn+uiffK4cL2FBZejyE3a4P+czn5wzsBjqBLlro=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ukt2XlvDgv97KCuAbaPrUvI/ZLl0dziecvr+rRkxne5Pac9CVbl0E+NXg51MEbiapkFScedYimDWaMXLOqc01d77GHxKbenM8r1P0MrCXkH8TJ0POUfq2nA890XXErHx2BjLC4qdEKemlNSl7jAYAUjTksP4EpkDCU3lEPlnI08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=qplWiqQe; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-792b934de39so486043685a.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 06:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1715692262; x=1716297062; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=x0TOXDRcIcAvX4cL5a1t2CHh3s078BY1DYLliyj4ZeI=;
+        b=qplWiqQe9TXZTm93F/zcbcQAMWmGIE8RgapQiCJocGL8Lc7g1H3WPZRkCoJFKpdWU+
+         CdIXHwUaLLhHbXH0QV6TcQuLnqAMRmTtCujgZf+sh2mQUJU9Q/5ynEOeck4s/QeCzAbc
+         /butmApX6sQ9h5IN00EB8UdSMbfXq3NmIHJWcFmtRLnlldnU2xWM7KpidJCS0HUJiBQF
+         ISYebmXJ5WO0WfHr5hLtf6KQVfVQQTDD4N8dPJj/rhjlsN4luzCzoQ2KOAxygtttNXrM
+         0sRk3odnMo8tA/SehsR4S/5k+GArqwNnaIX+gRFBsmPkhSIhAioB55HNlkOFgUz2HL1S
+         tHXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715692262; x=1716297062;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x0TOXDRcIcAvX4cL5a1t2CHh3s078BY1DYLliyj4ZeI=;
+        b=Wi7bmBKu8/WfemhgKxOXiD8Vat5M9nOLxofTwi65Xa1S9kvv0yM3SEchcrj4vpdePB
+         v34YdxelhxXNQihcsQL9FpRBvTdmUvk9cUsl2gdDWCdd5sz8Y5aROsQ879AU5thZNfbc
+         ma7g2H8oQrCCl1DNPDzZMo9N+u7Wr2+hqtM+/UORuqTPaMO3XmYU8wH8/8lfQi2nxdWH
+         JvgCPUIKJfjxmkorsFtcICR1NvddHaQgFRt/ez1qBYmxLa1ajbCMfRmI1Kk4pi/cS3wA
+         TpLJ6ukBt0UB0/WpHRD3j8mfSBD5vVbIScg65NhW0Ewd8GV8JPwOWC8Rh2ncKD7Ez6Qk
+         D8Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXs/oNU7ajfm5WzVGHMPaQsKWh30fa/VJ8P1wJyPA3G9IoYSVhgt0tgrPLUXsItanmkuT+B7ERc/y0Ln6S9U0qKfM0xP8aA4HxgHSlcEA==
+X-Gm-Message-State: AOJu0YxRe9qyCqrvEBOHcGkc96EFs5/ov5Ff+X5QwdQPvhjlIEp8QEmF
+	hatkXCkxLxzemAtZr3w9nHHiun24duyfOCAwdZWVs8GBNpjQEErSJO4HZ4GU2SZNNxYnJvbu/gi
+	+ynJyxLpuiLE62ZyKUj622AeWLpB+vOyRefgc
+X-Google-Smtp-Source: AGHT+IEaixFVUPMGq2fGQzyMpXTbXALXAEvt+68Fiu+45Ym8lO9CB+yULAWB+qMa23S8LcxRwi+w+H1a7GNgIF3UM2c=
+X-Received: by 2002:a05:620a:5d90:b0:790:a508:ede0 with SMTP id
+ af79cd13be357-792c75ff55emr1332409585a.64.1715692262048; Tue, 14 May 2024
+ 06:11:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHzG7EXkNmCyyLMw--.6596S10
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryxXr4rXFW8CrW8Jr1DJrb_yoW8AFyrpF
-	Z2kw40yr1kJF1IqanayFZF9rWaqrs3tFWfJ348Gws3tF4fKr12gFy2vry0qr17ArnrGrW5
-	Zr4DtF97Gw1rCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIda
-	VFxhVjvjDU0xZFpf9x07UZo7tUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Tue, 14 May 2024 09:10:50 -0400
+Message-ID: <CAOg9mSQBdCRjQYkPEdFFX0Hd43atzOsVALrxa=2NRSGjvkw9Xw@mail.gmail.com>
+Subject: [GIT PULL] orangefs: fix out-of-bounds fsid access
+To: Linus Torvalds <linus971@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Mike Marshall <hubcap@omnibond.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Factor out balance_wb_limits to remove repeated code
+The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- mm/page-writeback.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 0f1f3e179be2..d1d385373c5b 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -1783,6 +1783,17 @@ static inline void wb_dirty_exceeded(struct dirty_throttle_control *dtc,
- 		((dtc->dirty > dtc->thresh) || strictlimit);
- }
- 
-+static void balance_wb_limits(struct dirty_throttle_control *dtc,
-+			      bool strictlimit)
-+{
-+	wb_dirty_freerun(dtc, strictlimit);
-+	if (dtc->freerun)
-+		return;
-+
-+	wb_dirty_exceeded(dtc, strictlimit);
-+	wb_position_ratio(dtc);
-+}
-+
- /*
-  * balance_dirty_pages() must be called by processes which are generating dirty
-  * data.  It looks at the number of dirty pages in the machine and will force
-@@ -1869,12 +1880,9 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 		 * Calculate global domain's pos_ratio and select the
- 		 * global dtc by default.
- 		 */
--		wb_dirty_freerun(gdtc, strictlimit);
-+		balance_wb_limits(gdtc, strictlimit);
- 		if (gdtc->freerun)
- 			goto free_running;
--
--		wb_dirty_exceeded(gdtc, strictlimit);
--		wb_position_ratio(gdtc);
- 		sdtc = gdtc;
- 
- 		if (mdtc) {
-@@ -1884,12 +1892,9 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 			 * both global and memcg domains.  Choose the one
- 			 * w/ lower pos_ratio.
- 			 */
--			wb_dirty_freerun(mdtc, strictlimit);
-+			balance_wb_limits(mdtc, strictlimit);
- 			if (mdtc->freerun)
- 				goto free_running;
--
--			wb_dirty_exceeded(mdtc, strictlimit);
--			wb_position_ratio(mdtc);
- 			if (mdtc->pos_ratio < gdtc->pos_ratio)
- 				sdtc = mdtc;
- 		}
--- 
-2.30.0
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
+tags/for-linus-6.10-ofs1
+
+for you to fetch changes up to 53e4efa470d5fc6a96662d2d3322cfc925818517:
+
+  orangefs: fix out-of-bounds fsid access (2024-05-06 10:10:36 -0400)
+
+----------------------------------------------------------------
+orangefs: fix out-of-bounds fsid access
+
+Small fix to quiet warnings from string fortification helpers,
+suggested by Arnd Bergmann.
+
+----------------------------------------------------------------
+Mike Marshall (1):
+      orangefs: fix out-of-bounds fsid access
+
+ fs/orangefs/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
