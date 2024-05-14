@@ -1,104 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-19421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CF98C56A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:11:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0318C56C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7DCD1C21937
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9166F1C224A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C44F47A57;
-	Tue, 14 May 2024 13:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B242144D13;
+	Tue, 14 May 2024 13:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="qplWiqQe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOxXn9Ny"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B77A1411D0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 13:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246541448ED;
+	Tue, 14 May 2024 13:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692267; cv=none; b=QqcBQy5SlHheUMpxY6HE427XKvpMS1B5XVnXDY3rTkJWdoYnxKVgMUTLo0wwie/VHSmeIYVNgbyFOzJfiiAMYGWXcVxzGfwuXMwfL0h2O9yN7PqYOYtjePlzwf1RnGJLOzleSI6DDOKAJ28qae4K/JZo35zEszlbZ7AMfWmxQ2c=
+	t=1715692655; cv=none; b=ABM6MBmKi6q2j3GenZv5ShrhAZvOsGzhQh3B8elIlB3e2ETjjZkdrKIsX0pLtuxCH8/s311doFQQwaEnGT5Nrch5Wd1+SBoApVr8wazlNz96Fs1V8uFDldZDLEbHfXwRDq7yAGUKWLDAQio1JFO59K8OKhIMh2kVV/TpbYfRfCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692267; c=relaxed/simple;
-	bh=SBU3Dn+uiffK4cL2FBZejyE3a4P+czn5wzsBjqBLlro=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ukt2XlvDgv97KCuAbaPrUvI/ZLl0dziecvr+rRkxne5Pac9CVbl0E+NXg51MEbiapkFScedYimDWaMXLOqc01d77GHxKbenM8r1P0MrCXkH8TJ0POUfq2nA890XXErHx2BjLC4qdEKemlNSl7jAYAUjTksP4EpkDCU3lEPlnI08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=qplWiqQe; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-792b934de39so486043685a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 06:11:02 -0700 (PDT)
+	s=arc-20240116; t=1715692655; c=relaxed/simple;
+	bh=dxfIijSCE4k/vVSJI5jpHtKZm2tg9+OL+IyXy4n8ttk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=risT42oC2b0lQwyifZ0ufSMIeBZiEN1gpsDvYuVqzmWHbTIrYhheoUzlGp1pkc7cXy4FlbIjLM72ZVZVUIYX5gZW+gGOSAbUMJGeaqh45A7VNF7OL1Syd3+ehWRL7KB2mRtfPC/CDQvJpmVooALMu5UiFIGRl6RGPoGaz6kaxp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOxXn9Ny; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1eca195a7c8so45598935ad.2;
+        Tue, 14 May 2024 06:17:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1715692262; x=1716297062; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=x0TOXDRcIcAvX4cL5a1t2CHh3s078BY1DYLliyj4ZeI=;
-        b=qplWiqQe9TXZTm93F/zcbcQAMWmGIE8RgapQiCJocGL8Lc7g1H3WPZRkCoJFKpdWU+
-         CdIXHwUaLLhHbXH0QV6TcQuLnqAMRmTtCujgZf+sh2mQUJU9Q/5ynEOeck4s/QeCzAbc
-         /butmApX6sQ9h5IN00EB8UdSMbfXq3NmIHJWcFmtRLnlldnU2xWM7KpidJCS0HUJiBQF
-         ISYebmXJ5WO0WfHr5hLtf6KQVfVQQTDD4N8dPJj/rhjlsN4luzCzoQ2KOAxygtttNXrM
-         0sRk3odnMo8tA/SehsR4S/5k+GArqwNnaIX+gRFBsmPkhSIhAioB55HNlkOFgUz2HL1S
-         tHXw==
+        d=gmail.com; s=20230601; t=1715692653; x=1716297453; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=exr7aat/FWCYrncbM0fcEUOaeQqr5aYv8sckR5lfn3E=;
+        b=LOxXn9Ny59zLC+DlpwnE8B4hjoR72a45rmJfyYr4AVmWyGmUV//kYAyky3Uf0Pq22a
+         XlgrzAc6j/wm075GHQJvG3bJfjmoBxIU2Tl5XNmMxDqR7fPu4JVKtzQnur+R+zoIsHiW
+         juixBuUJJym6L/O/jc2/VEsVcfc2kEJyu6q1/zd3tC033ZhTdHt3yg8uQaX1mACCoEGu
+         DN/7oWY3vH/sSAav3nL3kX/ffpx7QXlMWUlLBeZQiLZSicepthPePE3/hyqGTB218iEJ
+         rzG9KrGoFbPtoJQ1yUaUd+87We9IGXP5D08DlhlycXGQVSgGacirj5r46sVULhQm1NUu
+         xINA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692262; x=1716297062;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x0TOXDRcIcAvX4cL5a1t2CHh3s078BY1DYLliyj4ZeI=;
-        b=Wi7bmBKu8/WfemhgKxOXiD8Vat5M9nOLxofTwi65Xa1S9kvv0yM3SEchcrj4vpdePB
-         v34YdxelhxXNQihcsQL9FpRBvTdmUvk9cUsl2gdDWCdd5sz8Y5aROsQ879AU5thZNfbc
-         ma7g2H8oQrCCl1DNPDzZMo9N+u7Wr2+hqtM+/UORuqTPaMO3XmYU8wH8/8lfQi2nxdWH
-         JvgCPUIKJfjxmkorsFtcICR1NvddHaQgFRt/ez1qBYmxLa1ajbCMfRmI1Kk4pi/cS3wA
-         TpLJ6ukBt0UB0/WpHRD3j8mfSBD5vVbIScg65NhW0Ewd8GV8JPwOWC8Rh2ncKD7Ez6Qk
-         D8Og==
-X-Forwarded-Encrypted: i=1; AJvYcCXs/oNU7ajfm5WzVGHMPaQsKWh30fa/VJ8P1wJyPA3G9IoYSVhgt0tgrPLUXsItanmkuT+B7ERc/y0Ln6S9U0qKfM0xP8aA4HxgHSlcEA==
-X-Gm-Message-State: AOJu0YxRe9qyCqrvEBOHcGkc96EFs5/ov5Ff+X5QwdQPvhjlIEp8QEmF
-	hatkXCkxLxzemAtZr3w9nHHiun24duyfOCAwdZWVs8GBNpjQEErSJO4HZ4GU2SZNNxYnJvbu/gi
-	+ynJyxLpuiLE62ZyKUj622AeWLpB+vOyRefgc
-X-Google-Smtp-Source: AGHT+IEaixFVUPMGq2fGQzyMpXTbXALXAEvt+68Fiu+45Ym8lO9CB+yULAWB+qMa23S8LcxRwi+w+H1a7GNgIF3UM2c=
-X-Received: by 2002:a05:620a:5d90:b0:790:a508:ede0 with SMTP id
- af79cd13be357-792c75ff55emr1332409585a.64.1715692262048; Tue, 14 May 2024
- 06:11:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715692653; x=1716297453;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=exr7aat/FWCYrncbM0fcEUOaeQqr5aYv8sckR5lfn3E=;
+        b=c/7I4RyDtquJ6EdiGndP6Fn2I/aajYeC+bEysXJODzECrZaIaybgXot0xB3Sg/d+Nh
+         jAduDRocqMvz9EkUi+EjzGS4zTt1OFQwtXNDfk64b0tCl1jGNveBGXn0PCo4EWMKHY0v
+         DAeAdIG7xcEHiiHMJ+HIeRZxFsoAL+AQi3WVavrtY/FaifYor4/yIYHFaC2lZ7qmdQN7
+         k0z7H66T36eQMQCuEpErX/Zk4Cy18fF7Tax0lP2nzNsoM/3PJ1R+c/J2H71pZcfTULj4
+         mzBcr9XenrdhJ7Uo8wGEmqPWu6DivxYbz6jWo5dJ7Lt3AvZ0ZJ1/4T4BeND4HWgt3bzm
+         9/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQXNCi7YrimvK5nqp671WefhZsz6xyHuPDyO8JjLAqcgkp/LdZ1ZDU76eYrUTCrnhBKz4ORV3clB8GOL6w3+rmTxohkpIbMsDBFJFWAIXz36en6P2ihPGXTNe36J6Qn/jmsXKMtj2BE5aJCLdy3t9WrOl/1FHC86p7QOHJrdUufPKGEkpQfOYAlRyp
+X-Gm-Message-State: AOJu0YyS7oyvzoCIMQOANl+bwgxaSO/m0YTS0wpRaKa4f/zLol2js/pX
+	JE1iyFxDTLgGAw1uj4NZ7sgY5/wtWtJ9Dj/qHLCxOz5YptWOz4tL
+X-Google-Smtp-Source: AGHT+IFNUk9FNEeYd3kTqCAwEoYFl8xe6J6nOxovaCuVEKq5dmcbS/qnnHjmFB+qELcW291mGZE4xA==
+X-Received: by 2002:a17:902:efca:b0:1eb:ed2:f74c with SMTP id d9443c01a7336-1ef440596b4mr111334915ad.67.1715692653213;
+        Tue, 14 May 2024 06:17:33 -0700 (PDT)
+Received: from wedsonaf-dev.. ([50.204.89.32])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 06:17:32 -0700 (PDT)
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Subject: [RFC PATCH v2 00/30] Rust abstractions for VFS
+Date: Tue, 14 May 2024 10:16:41 -0300
+Message-Id: <20240514131711.379322-1-wedsonaf@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Tue, 14 May 2024 09:10:50 -0400
-Message-ID: <CAOg9mSQBdCRjQYkPEdFFX0Hd43atzOsVALrxa=2NRSGjvkw9Xw@mail.gmail.com>
-Subject: [GIT PULL] orangefs: fix out-of-bounds fsid access
-To: Linus Torvalds <linus971@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Mike Marshall <hubcap@omnibond.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
+This series introduces Rust abstractions that allow read-only file systems to
+be written in Rust.
 
-  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
+There are three file systems implementations using these abstractions
+abstractions: ext2, tarfs, and puzzlefs. The first two are part of this series.
 
-are available in the Git repository at:
+Rust file system modules can be declared with the `module_fs` macro and are
+required to implement the following functions (which are part of the
+`FileSystem` trait):
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-6.10-ofs1
+    fn fill_super(
+        sb: &mut SuperBlock<Self, sb::New>,
+        mapper: Option<inode::Mapper>,
+    ) -> Result<Self::Data>;
 
-for you to fetch changes up to 53e4efa470d5fc6a96662d2d3322cfc925818517:
+    fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>>;
 
-  orangefs: fix out-of-bounds fsid access (2024-05-06 10:10:36 -0400)
+They can optionally implement the following:
 
-----------------------------------------------------------------
-orangefs: fix out-of-bounds fsid access
+    fn read_xattr(
+        _dentry: &DEntry<Self>,
+        _inode: &INode<Self>,
+        _name: &CStr,
+        _outbuf: &mut [u8],
+    ) -> Result<usize>;
 
-Small fix to quiet warnings from string fortification helpers,
-suggested by Arnd Bergmann.
+    fn statfs(_dentry: &DEntry<Self>) -> Result<Stat>;
 
-----------------------------------------------------------------
-Mike Marshall (1):
-      orangefs: fix out-of-bounds fsid access
+They may also choose the type of the data they can attach to superblocks and/or
+inodes.
 
- fs/orangefs/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Lastly, file systems can implement inode, file, and address space operations
+and attach them to inodes when they're created, similar to how C does it. They
+can get a ro address space operations table from an implementation of iomap
+operations, to be used with generic ro file operations.
+
+A git tree is available here:
+    git://github.com/wedsonaf/linux.git vfs-v2
+
+Web:
+    https://github.com/wedsonaf/linux/commits/vfs-v2
+
+---
+
+Changes in v2:
+
+- Rebased to latest rust-next tree
+- Removed buffer heads
+- Added iomap support
+- Removed `_pin` field from `Registration` as it's not needed anymore
+- Renamed sample filesystem to match the module's name
+- Using typestate instead of a separate type for superblock/new-superblock
+- Created separate submodules for superblocks, inodes, dentries, and files
+- Split out operations from FileSystem to inode/file/address_space ops, similar to how C does it
+- Removed usages of folio_set_error
+- Removed UniqueFolio, for now reading blocks from devices via the pagecache
+- Changed map() to return the entire folio if not in highmem
+- Added support for unlocking the folio asynchronously
+- Added `from_raw` to all new ref-counted types
+- Added explicit types in calls to cast()
+- Added typestate to folio
+- Added support for implementing get_link
+- Fixed data race when reading inode->i_state
+- Added nofs scope support during allocation
+- Link to v1: https://lore.kernel.org/rust-for-linux/20231018122518.128049-1-wedsonaf@gmail.com/
+
+---
+
+Wedson Almeida Filho (30):
+  rust: fs: add registration/unregistration of file systems
+  rust: fs: introduce the `module_fs` macro
+  samples: rust: add initial ro file system sample
+  rust: fs: introduce `FileSystem::fill_super`
+  rust: fs: introduce `INode<T>`
+  rust: fs: introduce `DEntry<T>`
+  rust: fs: introduce `FileSystem::init_root`
+  rust: file: move `kernel::file` to `kernel::fs::file`
+  rust: fs: generalise `File` for different file systems
+  rust: fs: add empty file operations
+  rust: fs: introduce `file::Operations::read_dir`
+  rust: fs: introduce `file::Operations::seek`
+  rust: fs: introduce `file::Operations::read`
+  rust: fs: add empty inode operations
+  rust: fs: introduce `inode::Operations::lookup`
+  rust: folio: introduce basic support for folios
+  rust: fs: add empty address space operations
+  rust: fs: introduce `address_space::Operations::read_folio`
+  rust: fs: introduce `FileSystem::read_xattr`
+  rust: fs: introduce `FileSystem::statfs`
+  rust: fs: introduce more inode types
+  rust: fs: add per-superblock data
+  rust: fs: allow file systems backed by a block device
+  rust: fs: allow per-inode data
+  rust: fs: export file type from mode constants
+  rust: fs: allow populating i_lnk
+  rust: fs: add `iomap` module
+  rust: fs: add memalloc_nofs support
+  tarfs: introduce tar fs
+  WIP: fs: ext2: add rust ro ext2 implementation
+
+ fs/Kconfig                        |   2 +
+ fs/Makefile                       |   2 +
+ fs/rust-ext2/Kconfig              |  13 +
+ fs/rust-ext2/Makefile             |   8 +
+ fs/rust-ext2/defs.rs              | 173 +++++++
+ fs/rust-ext2/ext2.rs              | 551 +++++++++++++++++++++
+ fs/tarfs/Kconfig                  |  15 +
+ fs/tarfs/Makefile                 |   8 +
+ fs/tarfs/defs.rs                  |  80 +++
+ fs/tarfs/tar.rs                   | 394 +++++++++++++++
+ rust/bindings/bindings_helper.h   |  11 +
+ rust/helpers.c                    | 182 +++++++
+ rust/kernel/block.rs              |  10 +-
+ rust/kernel/error.rs              |   8 +-
+ rust/kernel/file.rs               | 251 ----------
+ rust/kernel/folio.rs              | 305 ++++++++++++
+ rust/kernel/fs.rs                 | 492 +++++++++++++++++++
+ rust/kernel/fs/address_space.rs   |  90 ++++
+ rust/kernel/fs/dentry.rs          | 136 ++++++
+ rust/kernel/fs/file.rs            | 607 +++++++++++++++++++++++
+ rust/kernel/fs/inode.rs           | 780 ++++++++++++++++++++++++++++++
+ rust/kernel/fs/iomap.rs           | 281 +++++++++++
+ rust/kernel/fs/sb.rs              | 194 ++++++++
+ rust/kernel/lib.rs                |   6 +-
+ rust/kernel/mem_cache.rs          |   2 -
+ rust/kernel/user.rs               |   1 -
+ samples/rust/Kconfig              |  10 +
+ samples/rust/Makefile             |   1 +
+ samples/rust/rust_rofs.rs         | 202 ++++++++
+ scripts/generate_rust_analyzer.py |   2 +-
+ 30 files changed, 4555 insertions(+), 262 deletions(-)
+ create mode 100644 fs/rust-ext2/Kconfig
+ create mode 100644 fs/rust-ext2/Makefile
+ create mode 100644 fs/rust-ext2/defs.rs
+ create mode 100644 fs/rust-ext2/ext2.rs
+ create mode 100644 fs/tarfs/Kconfig
+ create mode 100644 fs/tarfs/Makefile
+ create mode 100644 fs/tarfs/defs.rs
+ create mode 100644 fs/tarfs/tar.rs
+ delete mode 100644 rust/kernel/file.rs
+ create mode 100644 rust/kernel/folio.rs
+ create mode 100644 rust/kernel/fs.rs
+ create mode 100644 rust/kernel/fs/address_space.rs
+ create mode 100644 rust/kernel/fs/dentry.rs
+ create mode 100644 rust/kernel/fs/file.rs
+ create mode 100644 rust/kernel/fs/inode.rs
+ create mode 100644 rust/kernel/fs/iomap.rs
+ create mode 100644 rust/kernel/fs/sb.rs
+ create mode 100644 samples/rust/rust_rofs.rs
+
+
+base-commit: 183ea65d1fcd71039cf4d111a22d69c337bfd344
+-- 
+2.34.1
+
 
