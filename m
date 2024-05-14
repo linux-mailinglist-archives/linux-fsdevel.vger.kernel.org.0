@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-19443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0540F8C5704
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:25:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D312C8C5707
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C271F228FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:25:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45257B22E5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4320E15AAD3;
-	Tue, 14 May 2024 13:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7871C15B145;
+	Tue, 14 May 2024 13:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5rfFb63"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDD7FM2+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36C7158D71;
-	Tue, 14 May 2024 13:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5814158DC6;
+	Tue, 14 May 2024 13:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692682; cv=none; b=cbQG2e9MUBUSRovx38h+l3QinPxhcFFnzrvL8D5moC6UVb0UYVegxKljq+LN0XO4Mmdl05l33aD6IgWD0dqH/Rn3+inbwm4/YNoL6RsK5ydFy3HM8lfFXo6AJzSR/Eo8lLHMIjiRaHnRijHJRapUaSoFHX8bqCZhCSh6fX58hOA=
+	t=1715692683; cv=none; b=bRhkLNLHVK5EgXdFqLCIF1ElTgh+leRJc0mb0elR4ehG4kEnSllJqaDCxlJEtVR99He0yrKQaCkp3KM4hT7BAWDv1Vt9+85zZxwz9VyQQe4DqwBxu6i996pJCU9XYQRW1pMpYC6sKrJHv3gguw/0WVy7B5sa7si3fQ4oWVPu2cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692682; c=relaxed/simple;
-	bh=RywbUaAT/EYW5MpK30YcRz29IPNhRSI+g/oBxyh8h1E=;
+	s=arc-20240116; t=1715692683; c=relaxed/simple;
+	bh=nqHJIwr5EZghdDpCfTkWNNMp7x4S2W1hE11AYrRKpTg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lwv/Uj0pvYYBABx5Z9Daj8bztWqGdArK/tBwX87QmeKL+hS6GCghEIB8BLa4HM4wfYxKL4JhdgVQfjSu1hTLtTfT40rkSNw9pbsHhLUARaNc38O6r+rUgWKkgiV4xvEvkgN/kAWXrOi31cnvRP48LeBQ00I+ppXNGGGvFR3jjAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5rfFb63; arc=none smtp.client-ip=209.85.214.169
+	 MIME-Version; b=svKVPLAHWgdjSuBBP4QmZ7yPjp9U/qrmU13NQ9M2cKvbVOJyvcPhgC3pBhXgej4uFum42wZDURgWen8RBt3d46I15sV2V+Yry6QeKb5h2opVuFFHnH1aekPUp8fQmNjUe4fY1TH8aNTl1iW5PIOVUAPkNx2fFtptkDRJVE/Ki5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDD7FM2+; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ed835f3c3cso48641165ad.3;
-        Tue, 14 May 2024 06:18:00 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ec41d82b8bso52518125ad.2;
+        Tue, 14 May 2024 06:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715692680; x=1716297480; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715692681; x=1716297481; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hLqaimEXO3VdUIpcOo6tJgmfUsLAFcxXUsmbWwkqX78=;
-        b=H5rfFb63y7MKUvxtVJn9BTTv8Irby+l0QEvHU4HksBEsBK+3s4jTRgG/mEbN4tOYjY
-         m1Xz5xP11oCw0DVek+6tmPEilZC41IqLboqA9oNgwh5qk3leFaSDtEXCCY/RXB1b9rce
-         5FdDrKmbmO/UwrxKqfpia7NPe01qXO2QIYf6k/YKoAsPjoG2V3DVvnnsCF0jZSrZZnWv
-         7WrTH84E4bbDh8SEy3SBdsKNnhcZ9xDl5sT3WTDBv7wSBuynwalV9Ks2GgPg0LMxJG7O
-         i7YbKm7fgPmJkmmwgm/ySUt8ObvuCkmtH4YNS+XkgpfCcQAwB6jFEkIfXIuXcEwWPUyj
-         Qnjw==
+        bh=XQjruP9C1AriCa2NTVu4vY4iAh6hhbFru1ekZHix3gc=;
+        b=VDD7FM2+gjtNrJJFm/DiF5Dlrey3m5D0IXcdOyJnZQa9zMAM0NOGRyq8vQlou20Xk5
+         NWoEpJtN9UHTpyKa3thjpVr0sG8vxW5KJ+6adUO4JDhi9srT9px0iBlQqWyYhp86suJA
+         OaCdhJTEz8W29IEUsyTPbxVMWCgFTT7tQAgLMoGc/03JLz+bB9Byx/GuWTBnCZZnVVJ9
+         BuTtS6IrKhc6av7MnE9YBkqnq6adwDu5viZhnWdjh9SzVrCuScB1eU7488c2HQ7kGJof
+         huejEaMnEotswN40uRid8UpqOgnJTElA9yEI3msJPmeMrwMaNrxRNa6foUgWuo/druZO
+         HYow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692680; x=1716297480;
+        d=1e100.net; s=20230601; t=1715692681; x=1716297481;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hLqaimEXO3VdUIpcOo6tJgmfUsLAFcxXUsmbWwkqX78=;
-        b=k9JWG6IVqxZaztj+rh6sN4RYfW5aJoJN0BkEwRR1VKPjP0dBJ2M+rKFYKVk1PWC8k0
-         RiLhZAUNbsMpC/Eoqke6d6BAyaBoyEjwfBT7cAP3wU7Kbg6kOwSWijG2A/2S/rcjGKwE
-         /lX1ooWZAUENmiXs91D4Sv38o/GeBEa7yhtyOsQZ0idaFp6eLOc30tDYkCdo7TQ7Gocy
-         AdND1UFs8ZEBwmh8VZtEpw0+5U9vv5DulXCszBhp85PYUxGWlVn5LyZ6h3s+08nR/fWi
-         zPdXq3Eiih8VX3c8Q4ABaQwCC0gACtbkOmnNI/vsYDsrrZXOeZ/Qf6mtEfHktz90VLnS
-         pOkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnEwdDEF11XDZ11KNq+tBU2Q7KSSiblJ7Z0FOYeOX7JE5L5xUfbIZF0Y7Pg2o1t7K52K0oARHVTrMw3/qaVTeqfPahMqCJ9CAWQx3HtH4pHZrmHJb2dVAhOdsiG07JXnj9QtCm2QQTDSu/2xmkK0z9yN35S48wlhsW4jhlUBo5ExupkTDT0KntMzfS
-X-Gm-Message-State: AOJu0Yy/K/x+Ce7bRs7c4U+r7zpm9yJf+oolOdbLQshBQGetWh1wjpdA
-	h+lt9KdFYQZm+zAWWOI9CAfAUjtYhVyYfQljVfOphkTopgl3YGKW
-X-Google-Smtp-Source: AGHT+IEqPomU5IXx8ghDZu5aqnLcgRuh9JWmg6bIGejvgyfZYgEwnB3eJghqcnMJ3KiY0LiyUV67FA==
-X-Received: by 2002:a17:902:a514:b0:1ed:8d7c:d58e with SMTP id d9443c01a7336-1ef43e2836emr134109465ad.29.1715692680017;
+        bh=XQjruP9C1AriCa2NTVu4vY4iAh6hhbFru1ekZHix3gc=;
+        b=hG1cRtF8uR8CYOnsI6gyhZFnytogGEqRKiZqbbNM/kgr/XMmoh412OAD75QFTjNeGp
+         5P9NtBasjt0aKj0jM/dADggMxam728cqRVnq/iRlypLq6x4lqyaX+WmpWv+HQoMOD8la
+         /bxB0myqoJLO3aRnohljjjURE04nAIdJZQIFgTqP/IVbgmQBJmCu+rIxcjWHoSDw07vO
+         D3FQV+llogFVCJH7XHziUSVjMJkeN34zy2PfPrsqfPw+DtOrJYOkBC/jptXs/dhoT6Hv
+         tr5YDvgCm2UcdK10yvgIoGd4OsFwyYNvZHIJ5+vh1Z/aTuNHb7pfxjzdDvZV2aW7Zkez
+         zKKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbS+c0bmcnufj4Z253ZSozCe1eCBZADO7nkaXoULUePGoz5GHonvT5C5grqjnJVwi+3LF6116HoomQVNO3JOKrjyGJ5JIgsjHAfdHXFOMguQ2yiPKikQKzyZ8GqaxlCZJvMkyKEapuAJMoR5RMDa8+Xl8hZEMeiAc8vuy6wPflsKD6urZojZTNlq5y
+X-Gm-Message-State: AOJu0YxpDooNfWx9iVw9mkR83yEoABU5AMIXP7z3vgcESBGxQDFkBJeK
+	Yo1hKcOmO9UYOp6ruj+hYfj4SvneUdZcTPL50TsYcEsKTnH7gfku
+X-Google-Smtp-Source: AGHT+IF0ccCnxDgMImegz6x0hQMqkVTDNZ3JGlK9EGVqqovM/HatpeSxdHFfozw6V8+PvA/W2iWdNw==
+X-Received: by 2002:a17:902:e94e:b0:1e2:688e:597d with SMTP id d9443c01a7336-1ef43d29892mr188026885ad.21.1715692680921;
         Tue, 14 May 2024 06:18:00 -0700 (PDT)
 Received: from wedsonaf-dev.. ([50.204.89.32])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.17.59
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.18.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 06:17:59 -0700 (PDT)
+        Tue, 14 May 2024 06:18:00 -0700 (PDT)
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -78,9 +78,9 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH v2 21/30] rust: fs: introduce more inode types
-Date: Tue, 14 May 2024 10:17:02 -0300
-Message-Id: <20240514131711.379322-22-wedsonaf@gmail.com>
+Subject: [RFC PATCH v2 22/30] rust: fs: add per-superblock data
+Date: Tue, 14 May 2024 10:17:03 -0300
+Message-Id: <20240514131711.379322-23-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240514131711.379322-1-wedsonaf@gmail.com>
 References: <20240514131711.379322-1-wedsonaf@gmail.com>
@@ -94,343 +94,254 @@ Content-Transfer-Encoding: 8bit
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-Allow Rust file system modules to create inodes that are symlinks,
-pipes, sockets, char devices and block devices (in addition to the
-already-supported directories and regular files).
+Allow Rust file systems to associate [typed] data to super blocks when
+they're created. Since we only have a pointer-sized field in which to
+store the state, it must implement the `ForeignOwnable` trait.
 
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- rust/helpers.c            |  13 ++++
- rust/kernel/fs/file.rs    |   5 ++
- rust/kernel/fs/inode.rs   | 131 +++++++++++++++++++++++++++++++++++++-
- samples/rust/rust_rofs.rs |  43 ++++++++++++-
- 4 files changed, 187 insertions(+), 5 deletions(-)
+ rust/kernel/fs.rs         | 46 ++++++++++++++++++++++++++++---------
+ rust/kernel/fs/sb.rs      | 48 +++++++++++++++++++++++++++++++++++----
+ samples/rust/rust_rofs.rs |  3 ++-
+ 3 files changed, 81 insertions(+), 16 deletions(-)
 
-diff --git a/rust/helpers.c b/rust/helpers.c
-index 2db5df578df2..360a1d38ac19 100644
---- a/rust/helpers.c
-+++ b/rust/helpers.c
-@@ -288,6 +288,12 @@ void rust_helper_mapping_set_large_folios(struct address_space *mapping)
- }
- EXPORT_SYMBOL_GPL(rust_helper_mapping_set_large_folios);
- 
-+unsigned int rust_helper_MKDEV(unsigned int major, unsigned int minor)
-+{
-+	return MKDEV(major, minor);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_MKDEV);
-+
- unsigned long rust_helper_copy_to_user(void __user *to, const void *from,
- 				       unsigned long n)
- {
-@@ -307,6 +313,13 @@ void rust_helper_inode_unlock_shared(struct inode *inode)
- }
- EXPORT_SYMBOL_GPL(rust_helper_inode_unlock_shared);
- 
-+void rust_helper_set_delayed_call(struct delayed_call *call,
-+				  void (*fn)(void *), void *arg)
-+{
-+	set_delayed_call(call, fn, arg);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_set_delayed_call);
-+
- /*
-  * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
-  * use it in contexts where Rust expects a `usize` like slice (array) indices.
-diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-index 0828676eae1c..a819724b75f8 100644
---- a/rust/kernel/fs/file.rs
-+++ b/rust/kernel/fs/file.rs
-@@ -521,8 +521,13 @@ pub enum DirEntryType {
- impl From<inode::Type> for DirEntryType {
-     fn from(value: inode::Type) -> Self {
-         match value {
-+            inode::Type::Fifo => DirEntryType::Fifo,
-+            inode::Type::Chr(_, _) => DirEntryType::Chr,
-             inode::Type::Dir => DirEntryType::Dir,
-+            inode::Type::Blk(_, _) => DirEntryType::Blk,
-             inode::Type::Reg => DirEntryType::Reg,
-+            inode::Type::Lnk => DirEntryType::Lnk,
-+            inode::Type::Sock => DirEntryType::Sock,
-         }
-     }
- }
-diff --git a/rust/kernel/fs/inode.rs b/rust/kernel/fs/inode.rs
-index 1a41c824d30d..75b68d697a6e 100644
---- a/rust/kernel/fs/inode.rs
-+++ b/rust/kernel/fs/inode.rs
-@@ -10,8 +10,8 @@
-     address_space, dentry, dentry::DEntry, file, sb::SuperBlock, FileSystem, Offset, UnspecifiedFS,
- };
- use crate::error::{code::*, Result};
--use crate::types::{ARef, AlwaysRefCounted, Lockable, Locked, Opaque};
--use crate::{bindings, block, time::Timespec};
-+use crate::types::{ARef, AlwaysRefCounted, Either, ForeignOwnable, Lockable, Locked, Opaque};
-+use crate::{bindings, block, str::CStr, str::CString, time::Timespec};
- use core::mem::ManuallyDrop;
- use core::{marker::PhantomData, ptr};
- use macros::vtable;
-@@ -25,6 +25,18 @@ pub trait Operations {
-     /// File system that these operations are compatible with.
-     type FileSystem: FileSystem + ?Sized;
- 
-+    /// Returns the string that represents the name of the file a symbolic link inode points to.
-+    ///
-+    /// When `dentry` is `None`, `get_link` is called with the RCU read-side lock held, so it may
-+    /// not sleep. Implementations must return `Err(ECHILD)` for it to be called again without
-+    /// holding the RCU lock.
-+    fn get_link<'a>(
-+        _dentry: Option<&DEntry<Self::FileSystem>>,
-+        _inode: &'a INode<Self::FileSystem>,
-+    ) -> Result<Either<CString, &'a CStr>> {
-+        Err(ENOTSUPP)
-+    }
-+
-     /// Returns the inode corresponding to the directory entry with the given name.
-     fn lookup(
-         _parent: &Locked<&INode<Self::FileSystem>, ReadSem>,
-@@ -134,6 +146,52 @@ pub fn init(mut self, params: Params) -> Result<ARef<INode<T>>> {
-                 unsafe { bindings::mapping_set_large_folios(inode.i_mapping) };
-                 bindings::S_IFREG
-             }
-+            Type::Lnk => {
-+                // If we are using `page_get_link`, we need to prevent the use of high mem.
-+                if !inode.i_op.is_null() {
-+                    // SAFETY: We just checked that `i_op` is non-null, and we always just set it
-+                    // to valid values.
-+                    if unsafe {
-+                        (*inode.i_op).get_link == bindings::page_symlink_inode_operations.get_link
-+                    } {
-+                        // SAFETY: `inode` is valid for write as it's a new inode.
-+                        unsafe { bindings::inode_nohighmem(inode) };
-+                    }
-+                }
-+                bindings::S_IFLNK
-+            }
-+            Type::Fifo => {
-+                // SAFETY: `inode` is valid for write as it's a new inode.
-+                unsafe { bindings::init_special_inode(inode, bindings::S_IFIFO as _, 0) };
-+                bindings::S_IFIFO
-+            }
-+            Type::Sock => {
-+                // SAFETY: `inode` is valid for write as it's a new inode.
-+                unsafe { bindings::init_special_inode(inode, bindings::S_IFSOCK as _, 0) };
-+                bindings::S_IFSOCK
-+            }
-+            Type::Chr(major, minor) => {
-+                // SAFETY: `inode` is valid for write as it's a new inode.
-+                unsafe {
-+                    bindings::init_special_inode(
-+                        inode,
-+                        bindings::S_IFCHR as _,
-+                        bindings::MKDEV(major, minor & bindings::MINORMASK),
-+                    )
-+                };
-+                bindings::S_IFCHR
-+            }
-+            Type::Blk(major, minor) => {
-+                // SAFETY: `inode` is valid for write as it's a new inode.
-+                unsafe {
-+                    bindings::init_special_inode(
-+                        inode,
-+                        bindings::S_IFBLK as _,
-+                        bindings::MKDEV(major, minor & bindings::MINORMASK),
-+                    )
-+                };
-+                bindings::S_IFBLK
-+            }
-         };
- 
-         inode.i_mode = (params.mode & 0o777) | u16::try_from(mode)?;
-@@ -194,11 +252,26 @@ fn drop(&mut self) {
- /// The type of an inode.
- #[derive(Copy, Clone)]
- pub enum Type {
-+    /// Named pipe (first-in, first-out) type.
-+    Fifo,
-+
-+    /// Character device type.
-+    Chr(u32, u32),
-+
-     /// Directory type.
-     Dir,
- 
-+    /// Block device type.
-+    Blk(u32, u32),
-+
-     /// Regular file type.
-     Reg,
-+
-+    /// Symbolic link type.
-+    Lnk,
-+
-+    /// Named unix-domain socket type.
-+    Sock,
- }
- 
- /// Required inode parameters.
-@@ -245,6 +318,15 @@ pub struct Params {
- pub struct Ops<T: FileSystem + ?Sized>(*const bindings::inode_operations, PhantomData<T>);
- 
- impl<T: FileSystem + ?Sized> Ops<T> {
-+    /// Returns inode operations for symbolic links that are stored in a single page.
-+    pub fn page_symlink_inode() -> Self {
-+        // SAFETY: This is a constant in C, it never changes.
-+        Self(
-+            unsafe { &bindings::page_symlink_inode_operations },
-+            PhantomData,
-+        )
-+    }
-+
-     /// Creates the inode operations from a type that implements the [`Operations`] trait.
-     pub const fn new<U: Operations<FileSystem = T> + ?Sized>() -> Self {
-         struct Table<T: Operations + ?Sized>(PhantomData<T>);
-@@ -255,7 +337,11 @@ impl<T: Operations + ?Sized> Table<T> {
-                 } else {
-                     None
-                 },
--                get_link: None,
-+                get_link: if T::HAS_GET_LINK {
-+                    Some(Self::get_link_callback)
-+                } else {
-+                    None
-+                },
-                 permission: None,
-                 get_inode_acl: None,
-                 readlink: None,
-@@ -303,6 +389,45 @@ extern "C" fn lookup_callback(
-                     Ok(Some(ret)) => ManuallyDrop::new(ret).0.get(),
-                 }
-             }
-+
-+            extern "C" fn get_link_callback(
-+                dentry_ptr: *mut bindings::dentry,
-+                inode_ptr: *mut bindings::inode,
-+                delayed_call: *mut bindings::delayed_call,
-+            ) -> *const core::ffi::c_char {
-+                extern "C" fn drop_cstring(ptr: *mut core::ffi::c_void) {
-+                    // SAFETY: The argument came from a previous call to `into_foreign` below.
-+                    unsafe { CString::from_foreign(ptr) };
-+                }
-+
-+                let dentry = if dentry_ptr.is_null() {
-+                    None
-+                } else {
-+                    // SAFETY: The C API guarantees that `dentry_ptr` is a valid dentry when it's
-+                    // non-null.
-+                    Some(unsafe { DEntry::from_raw(dentry_ptr) })
-+                };
-+
-+                // SAFETY: The C API guarantees that `parent_ptr` is a valid inode.
-+                let inode = unsafe { INode::from_raw(inode_ptr) };
-+
-+                match T::get_link(dentry, inode) {
-+                    Err(e) => e.to_ptr::<core::ffi::c_char>(),
-+                    Ok(Either::Right(str)) => str.as_char_ptr(),
-+                    Ok(Either::Left(str)) => {
-+                        let ptr = str.into_foreign();
-+                        unsafe {
-+                            bindings::set_delayed_call(
-+                                delayed_call,
-+                                Some(drop_cstring),
-+                                ptr.cast_mut(),
-+                            )
-+                        };
-+
-+                        ptr.cast::<core::ffi::c_char>()
-+                    }
-+                }
-+            }
-         }
-         Self(&Table::<U>::TABLE, PhantomData)
-     }
-diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
-index 8005fd14b2e1..7a09e2db878d 100644
---- a/samples/rust/rust_rofs.rs
-+++ b/samples/rust/rust_rofs.rs
+diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
+index 51de73008857..387e87e3edaf 100644
+--- a/rust/kernel/fs.rs
++++ b/rust/kernel/fs.rs
 @@ -7,7 +7,7 @@
- };
- use kernel::prelude::*;
- use kernel::types::{ARef, Either, Locked};
--use kernel::{c_str, folio::Folio, folio::PageCache, fs, time::UNIX_EPOCH, user};
-+use kernel::{c_str, folio::Folio, folio::PageCache, fs, str::CString, time::UNIX_EPOCH, user};
+ //! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
  
- kernel::module_fs! {
-     type: RoFs,
-@@ -24,7 +24,7 @@ struct Entry {
-     contents: &'static [u8],
- }
+ use crate::error::{code::*, from_result, to_result, Error, Result};
+-use crate::types::Opaque;
++use crate::types::{ForeignOwnable, Opaque};
+ use crate::{bindings, init::PinInit, str::CStr, try_pin_init, ThisModule};
+ use core::{ffi, marker::PhantomData, mem::ManuallyDrop, pin::Pin, ptr};
+ use dentry::DEntry;
+@@ -31,6 +31,9 @@
  
--const ENTRIES: [Entry; 3] = [
-+const ENTRIES: [Entry; 4] = [
-     Entry {
-         name: b".",
-         ino: 1,
-@@ -43,11 +43,18 @@ struct Entry {
-         etype: inode::Type::Reg,
-         contents: b"hello world\n",
-     },
-+    Entry {
-+        name: b"link.txt",
-+        ino: 3,
-+        etype: inode::Type::Lnk,
-+        contents: b"./test.txt",
-+    },
- ];
+ /// A file system type.
+ pub trait FileSystem {
++    /// Data associated with each file system instance (super-block).
++    type Data: ForeignOwnable + Send + Sync;
++
+     /// The name of the file system type.
+     const NAME: &'static CStr;
  
- const DIR_FOPS: file::Ops<RoFs> = file::Ops::new::<RoFs>();
- const DIR_IOPS: inode::Ops<RoFs> = inode::Ops::new::<RoFs>();
- const FILE_AOPS: address_space::Ops<RoFs> = address_space::Ops::new::<RoFs>();
-+const LNK_IOPS: inode::Ops<RoFs> = inode::Ops::new::<Link>();
+@@ -40,8 +43,8 @@ pub trait FileSystem {
+     #[doc(hidden)]
+     const IS_UNSPECIFIED: bool = false;
  
- struct RoFs;
+-    /// Initialises the new superblock.
+-    fn fill_super(sb: &mut SuperBlock<Self>) -> Result;
++    /// Initialises the new superblock and returns the data to attach to it.
++    fn fill_super(sb: &mut SuperBlock<Self, sb::New>) -> Result<Self::Data>;
  
-@@ -68,6 +75,11 @@ fn iget(sb: &sb::SuperBlock<Self>, e: &'static Entry) -> Result<ARef<INode<Self>
-                     .set_aops(FILE_AOPS);
-                 (0o444, 1, e.contents.len().try_into()?)
-             }
-+            inode::Type::Lnk => {
-+                new.set_iops(LNK_IOPS);
-+                (0o444, 1, e.contents.len().try_into()?)
-+            }
-+            _ => return Err(ENOENT),
-         };
+     /// Initialises and returns the root inode of the given superblock.
+     ///
+@@ -94,9 +97,10 @@ pub struct Stat {
+ pub struct UnspecifiedFS;
  
-         new.init(inode::Params {
-@@ -123,6 +135,33 @@ fn lookup(
+ impl FileSystem for UnspecifiedFS {
++    type Data = ();
+     const NAME: &'static CStr = crate::c_str!("unspecified");
+     const IS_UNSPECIFIED: bool = true;
+-    fn fill_super(_: &mut SuperBlock<Self>) -> Result {
++    fn fill_super(_: &mut SuperBlock<Self, sb::New>) -> Result {
+         Err(ENOTSUPP)
+     }
+ 
+@@ -134,7 +138,7 @@ pub fn new<T: FileSystem + ?Sized>(module: &'static ThisModule) -> impl PinInit<
+                 fs.owner = module.0;
+                 fs.name = T::NAME.as_char_ptr();
+                 fs.init_fs_context = Some(Self::init_fs_context_callback::<T>);
+-                fs.kill_sb = Some(Self::kill_sb_callback);
++                fs.kill_sb = Some(Self::kill_sb_callback::<T>);
+                 fs.fs_flags = 0;
+ 
+                 // SAFETY: Pointers stored in `fs` are static so will live for as long as the
+@@ -155,10 +159,22 @@ pub fn new<T: FileSystem + ?Sized>(module: &'static ThisModule) -> impl PinInit<
+         })
+     }
+ 
+-    unsafe extern "C" fn kill_sb_callback(sb_ptr: *mut bindings::super_block) {
++    unsafe extern "C" fn kill_sb_callback<T: FileSystem + ?Sized>(
++        sb_ptr: *mut bindings::super_block,
++    ) {
+         // SAFETY: In `get_tree_callback` we always call `get_tree_nodev`, so `kill_anon_super` is
+         // the appropriate function to call for cleanup.
+         unsafe { bindings::kill_anon_super(sb_ptr) };
++
++        // SAFETY: The C API contract guarantees that `sb_ptr` is valid for read.
++        let ptr = unsafe { (*sb_ptr).s_fs_info };
++        if !ptr.is_null() {
++            // SAFETY: The only place where `s_fs_info` is assigned is `NewSuperBlock::init`, where
++            // it's initialised with the result of an `into_foreign` call. We checked above that
++            // `ptr` is non-null because it would be null if we never reached the point where we
++            // init the field.
++            unsafe { T::Data::from_foreign(ptr) };
++        }
      }
  }
  
-+struct Link;
-+#[vtable]
-+impl inode::Operations for Link {
-+    type FileSystem = RoFs;
+@@ -205,12 +221,19 @@ impl<T: FileSystem + ?Sized> Tables<T> {
+             sb.s_xattr = &Tables::<T>::XATTR_HANDLERS[0];
+             sb.s_flags |= bindings::SB_RDONLY;
+ 
+-            T::fill_super(new_sb)?;
++            let data = T::fill_super(new_sb)?;
 +
-+    fn get_link<'a>(
-+        dentry: Option<&DEntry<RoFs>>,
-+        inode: &'a INode<RoFs>,
-+    ) -> Result<Either<CString, &'a CStr>> {
-+        if dentry.is_none() {
-+            return Err(ECHILD);
++            // N.B.: Even on failure, `kill_sb` is called and frees the data.
++            sb.s_fs_info = data.into_foreign().cast_mut();
+ 
+-            let root = T::init_root(new_sb)?;
++            // SAFETY: The callback contract guarantees that `sb_ptr` is a unique pointer to a
++            // newly-created (and initialised above) superblock. And we have just initialised
++            // `s_fs_info`.
++            let sb = unsafe { SuperBlock::from_raw(sb_ptr) };
++            let root = T::init_root(sb)?;
+ 
+             // Reject root inode if it belongs to a different superblock.
+-            if !ptr::eq(root.super_block(), new_sb) {
++            if !ptr::eq(root.super_block(), sb) {
+                 return Err(EINVAL);
+             }
+ 
+@@ -346,7 +369,7 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ ///
+ /// ```
+ /// # mod module_fs_sample {
+-/// use kernel::fs::{dentry, inode::INode, sb::SuperBlock, self};
++/// use kernel::fs::{dentry, inode::INode, sb, sb::SuperBlock, self};
+ /// use kernel::prelude::*;
+ ///
+ /// kernel::module_fs! {
+@@ -359,8 +382,9 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ ///
+ /// struct MyFs;
+ /// impl fs::FileSystem for MyFs {
++///     type Data = ();
+ ///     const NAME: &'static CStr = kernel::c_str!("myfs");
+-///     fn fill_super(_: &mut SuperBlock<Self>) -> Result {
++///     fn fill_super(_: &mut SuperBlock<Self, sb::New>) -> Result {
+ ///         todo!()
+ ///     }
+ ///     fn init_root(_sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>> {
+diff --git a/rust/kernel/fs/sb.rs b/rust/kernel/fs/sb.rs
+index fa10f3db5593..7c0c52e6da0a 100644
+--- a/rust/kernel/fs/sb.rs
++++ b/rust/kernel/fs/sb.rs
+@@ -10,19 +10,37 @@
+ use super::FileSystem;
+ use crate::bindings;
+ use crate::error::{code::*, Result};
+-use crate::types::{ARef, Either, Opaque};
++use crate::types::{ARef, Either, ForeignOwnable, Opaque};
+ use core::{marker::PhantomData, ptr};
+ 
++/// A typestate for [`SuperBlock`] that indicates that it's a new one, so not fully initialized
++/// yet.
++pub struct New;
++
++/// A typestate for [`SuperBlock`] that indicates that it's ready to be used.
++pub struct Ready;
++
++// SAFETY: Instances of `SuperBlock<T, Ready>` are only created after initialising the data.
++unsafe impl DataInited for Ready {}
++
++/// Indicates that a superblock in this typestate has data initialized.
++///
++/// # Safety
++///
++/// Implementers must ensure that `s_fs_info` is properly initialised in this state.
++#[doc(hidden)]
++pub unsafe trait DataInited {}
++
+ /// A file system super block.
+ ///
+ /// Wraps the kernel's `struct super_block`.
+ #[repr(transparent)]
+-pub struct SuperBlock<T: FileSystem + ?Sized>(
++pub struct SuperBlock<T: FileSystem + ?Sized, S = Ready>(
+     pub(crate) Opaque<bindings::super_block>,
+-    PhantomData<T>,
++    PhantomData<(S, T)>,
+ );
+ 
+-impl<T: FileSystem + ?Sized> SuperBlock<T> {
++impl<T: FileSystem + ?Sized, S> SuperBlock<T, S> {
+     /// Creates a new superblock reference from the given raw pointer.
+     ///
+     /// # Safety
+@@ -31,6 +49,7 @@ impl<T: FileSystem + ?Sized> SuperBlock<T> {
+     ///
+     /// * `ptr` is valid and remains so for the lifetime of the returned object.
+     /// * `ptr` has the correct file system type, or `T` is [`super::UnspecifiedFS`].
++    /// * `ptr` in the right typestate.
+     pub(crate) unsafe fn from_raw<'a>(ptr: *mut bindings::super_block) -> &'a Self {
+         // SAFETY: The safety requirements guarantee that the cast below is ok.
+         unsafe { &*ptr.cast::<Self>() }
+@@ -44,6 +63,7 @@ pub(crate) unsafe fn from_raw<'a>(ptr: *mut bindings::super_block) -> &'a Self {
+     ///
+     /// * `ptr` is valid and remains so for the lifetime of the returned object.
+     /// * `ptr` has the correct file system type, or `T` is [`super::UnspecifiedFS`].
++    /// * `ptr` in the right typestate.
+     /// * `ptr` is the only active pointer to the superblock.
+     pub(crate) unsafe fn from_raw_mut<'a>(ptr: *mut bindings::super_block) -> &'a mut Self {
+         // SAFETY: The safety requirements guarantee that the cast below is ok.
+@@ -55,7 +75,9 @@ pub fn rdonly(&self) -> bool {
+         // SAFETY: `s_flags` only changes during init, so it is safe to read it.
+         unsafe { (*self.0.get()).s_flags & bindings::SB_RDONLY != 0 }
+     }
++}
+ 
++impl<T: FileSystem + ?Sized> SuperBlock<T, New> {
+     /// Sets the magic number of the superblock.
+     pub fn set_magic(&mut self, magic: usize) -> &mut Self {
+         // SAFETY: This is a new superblock that is being initialised, so it's ok to write to its
+@@ -63,8 +85,26 @@ pub fn set_magic(&mut self, magic: usize) -> &mut Self {
+         unsafe { (*self.0.get()).s_magic = magic as core::ffi::c_ulong };
+         self
+     }
++}
++
++impl<T: FileSystem + ?Sized, S: DataInited> SuperBlock<T, S> {
++    /// Returns the data associated with the superblock.
++    pub fn data(&self) -> <T::Data as ForeignOwnable>::Borrowed<'_> {
++        if T::IS_UNSPECIFIED {
++            crate::build_error!("super block data type is unspecified");
 +        }
 +
-+        let name_buf = match inode.ino() {
-+            3 => ENTRIES[3].contents,
-+            _ => return Err(EINVAL),
-+        };
-+        let mut name = Box::new_slice(
-+            name_buf.len().checked_add(1).ok_or(ENOMEM)?,
-+            b'\0',
-+            GFP_NOFS,
-+        )?;
-+        name[..name_buf.len()].copy_from_slice(name_buf);
-+        Ok(Either::Left(name.try_into()?))
++        // SAFETY: This method is only available if the typestate implements `DataInited`, whose
++        // safety requirements include `s_fs_info` being properly initialised.
++        let ptr = unsafe { (*self.0.get()).s_fs_info };
++        unsafe { T::Data::borrow(ptr) }
 +    }
-+}
-+
- #[vtable]
- impl address_space::Operations for RoFs {
-     type FileSystem = Self;
+ 
+     /// Tries to get an existing inode or create a new one if it doesn't exist yet.
++    ///
++    /// This method is not callable from a superblock where data isn't inited yet because it would
++    /// allow one to get access to the uninited data via `inode::New::init()` ->
++    /// `INode::super_block()` -> `SuperBlock::data()`.
+     pub fn get_or_create_inode(&self, ino: Ino) -> Result<Either<ARef<INode<T>>, inode::New<T>>> {
+         // SAFETY: All superblock-related state needed by `iget_locked` is initialised by C code
+         // before calling `fill_super_callback`, or by `fill_super_callback` itself before calling
+diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
+index 7a09e2db878d..7027ca067f8f 100644
+--- a/samples/rust/rust_rofs.rs
++++ b/samples/rust/rust_rofs.rs
+@@ -98,9 +98,10 @@ fn iget(sb: &sb::SuperBlock<Self>, e: &'static Entry) -> Result<ARef<INode<Self>
+ }
+ 
+ impl fs::FileSystem for RoFs {
++    type Data = ();
+     const NAME: &'static CStr = c_str!("rust_rofs");
+ 
+-    fn fill_super(sb: &mut sb::SuperBlock<Self>) -> Result {
++    fn fill_super(sb: &mut sb::SuperBlock<Self, sb::New>) -> Result {
+         sb.set_magic(0x52555354);
+         Ok(())
+     }
 -- 
 2.34.1
 
