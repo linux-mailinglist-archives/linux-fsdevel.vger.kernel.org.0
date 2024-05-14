@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-19424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2D58C56C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:18:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE258C56D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 15:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A0E1F237EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:18:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17CBCB22647
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 13:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286FD145354;
-	Tue, 14 May 2024 13:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC30145A0F;
+	Tue, 14 May 2024 13:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYOSYhLo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQ4H+8lq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397C9144D3A;
-	Tue, 14 May 2024 13:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B501459ED;
+	Tue, 14 May 2024 13:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692658; cv=none; b=jIK8Dei5oeY9B/p4bRHnkWhr0nt7lcMoP0XeSwVXx5w7IaJGxaadB4C37/0qh7oFrGkmRzNVXrVJlxfLvRkfpSEOzw7raZAWzaqYUehYgReaLKqrWm7XyTETX24kA/VLUjg0tDuN9WwiPm8vjzfQYTY7zCh/KQUcSWqZwjdBmBU=
+	t=1715692661; cv=none; b=czNNg2Eki24jnT4Nkqu1hmOj+Mh0M//BlK2z9cQeE7ULuf9kg4Qx1cDdPrE8GbGslr6uVB2zD6eGa9tW425/7lijd0TjA9Xe3HH9XxUgdl9xUG6iC/Tz1pCbNXfLX1ykgRmxRll4PtlfCT86IbddjLpHHkK5sqh6OMnG99CR8k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692658; c=relaxed/simple;
-	bh=FnRY1u4YwwnOW6PD08/fpU/dFshvY9j1Vl1jbm0E9ig=;
+	s=arc-20240116; t=1715692661; c=relaxed/simple;
+	bh=DBzT/f9hz5kzEs1Lm2UwR9EBpOc9RzF/B/rScSdn5yk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uaGT7y8obV6ThHrJ6I6Nj1GrREuS5S52F5IfOCUn5cutpO0BW/LRFhtSKBIPfWcEJ0BWA0pCcEye7BY53ocNEN9FYLjqNIPeMGBx+3ukyzZ4zslKCdCcEnx9R0MElgaO89tUU7Z6BnCHau52+RS7/UOHRqDPJSd2CwcOnQqdavs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYOSYhLo; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=hVTC1eZ90m/DwMjla8Su0aWJRTixuHbAtul/CaReg+rVUhD3awBpARdqoE7I+2t0hyyD3kpyA3lK6HMh19YDiFPS4MgZhb/fBlqHb4+f8TsTjBIpBB8QUORnyPooBSN/yRIfhCww/CVYhVVH/CLjlmDUCf3Rxeh1Z+sOlCme6UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQ4H+8lq; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ec92e355bfso52579165ad.3;
-        Tue, 14 May 2024 06:17:37 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso43594535ad.0;
+        Tue, 14 May 2024 06:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715692656; x=1716297456; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715692659; x=1716297459; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rGJsPpk+V4pg7g+WZPwCWfXSyJlMwREYYXFaZU3M6G8=;
-        b=RYOSYhLoKJEpE4Df0CLYiu02f0X6POzYBIGjHnzBqaiuoVT5tCMOzRUqfuHd+j9DqH
-         ykoT2WNJ8f9CXr21VKrCENsf8XYDntp0Y/piWSCEcizpza2o8El2i8WAuDTMq2YhPoDE
-         0xkDZjq+W3FmQrzH55R2N5JQ+MQD16PFSS3sCwyf1rzNhNF05BG1zN36eS/4HbGR5BW5
-         IuEcMBMJ7QQgsE4vT5q3wEUjze3lCSp+N7IcSsVD/18FULZAE/Si8HRy1oAhlk2Opqof
-         MYqTsoFeNPCE8hJX4oo6LXAVLZYOxCEuApxInqCgOAQgNbGZqmaF+FvhICha6sDuCgG8
-         GDOg==
+        bh=RB+WIMSatnqqUVhcX1WxfgkTneiX5pxrA/ncOnhz7vc=;
+        b=eQ4H+8lq+XpOKKs5qjYNn1SNVLKvcFRfTVSse9ZvoNlpqeIRAzDHyln4F8sNrcHued
+         L971ZrIZr/G9rijh/2s7pS6wglVWL0YjaSe4aniWd5ovLpbvpPDOEZuveCM5jxZAXK4A
+         7Wvf3PfGhwABqvzIiTtZK3whukTHw0eKu57+Zwlv4l+m661fc8Ek26vJJiS29caQ5Yt+
+         PWI9+1t0WG4nDOgYPQ+vRLB60fCAZNIMkX1qe+Z/DvsBPOtEfQnbJ06NL9ZwOHRhlYQ0
+         5koTUdWtI8f5rWEWsI9jgGUyeNX74QXyyesAIXZhA22xyeaYP/OkwkZfholQcK977NZe
+         Sh9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692656; x=1716297456;
+        d=1e100.net; s=20230601; t=1715692659; x=1716297459;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rGJsPpk+V4pg7g+WZPwCWfXSyJlMwREYYXFaZU3M6G8=;
-        b=bjfG4ODxqBZtKjRnz5DbdNiv42UAqutgIXqrWsa+HPuI7CX1DRkyDkn5OBCxBendVX
-         vX4Lu4vTWyoUGqr77z52Gy/5iZFJ23EyvVeOdeAzZtxjiDrYfu/ODnPQjy+Pprhj2CK0
-         TFSebRrHMBBm4y+XU6vSGSX6kU7Ku/JdTGmxhNjVLmQrVjM2m4JVjHQ/53AYJDbZNYKl
-         Rn5M/WUxHlo0cUo7a7SGoMLYZIaGpweKlLUNLRH0veJY3xwgEqTXtIBvuDrJ8Jhzm7zD
-         /vJTIr7E9M1Q4g1M3YZRbtE5KD0hg+sDRb2TRDPLrbSV6WYpfGLOkpZWNhc1DKbr+8P9
-         z0bw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnybLwGZtMlOD25okeK8eH0TdH5cUxsExv1t/LcPjMzcFGN1ls9VHZi0EZG0OQOwUBUqIq+AOywIvn1FmbOjezAZaRW3zMeuEZ5THyRAf0ypzfdNnuwsiV66PHY/Dib0uGb9CEECVO49G6FP9njcYEg7fjeMpJuABZ1ZO4pg42tAOmrvQMp17QWyMm
-X-Gm-Message-State: AOJu0YycHY3W9kqiUavZPC7FfiOSQJJ091BVtXcp+jprVJoEFD8uZPSz
-	o71r2bt8Zp2MMVA3Ku9mKIJ1WVnZ1Li/tyIKcepYwHYRmianCmFu
-X-Google-Smtp-Source: AGHT+IGvQohBR+X3oXCSN6bsf4d42+dJ3p18mG6Ty4uUDbTdiA3IVkQ43Vq6nCxoQQUWu4dQl6VUSw==
-X-Received: by 2002:a17:902:aa03:b0:1ec:5f64:6e74 with SMTP id d9443c01a7336-1ef43d29b65mr141454895ad.23.1715692656519;
-        Tue, 14 May 2024 06:17:36 -0700 (PDT)
+        bh=RB+WIMSatnqqUVhcX1WxfgkTneiX5pxrA/ncOnhz7vc=;
+        b=Gjeh2exRrCt+q5ohkpKiun+qfuwg3zgopngrkWUyvWqT3DZ/fSY2NmTe49Jot+Oq/V
+         DN7nkke32iQoL+lq+EeTR5jKeE89ToU8azKAlKWkei1MapXYPCVTOj4RtforIqbjekIt
+         vKTxELaGPJtp+xJCohkcwIHalVDYui80N3fL/kT1iJCQDFC8Ak1Ef1grz83xrsN7oYxu
+         vIJ0tsU3q5pZEgOxqcgv/s1uDv0dyGLFXr2bFXAxfo6C3q9l0/6xKA4bOJeq77pzft9R
+         yOUiBfmnWKbPfKozmz64DCt4GzoamlnSdOf9TmyPSB97nD1M36wjMejQGmvHHVyvs7zC
+         udxA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/km0a13R3Hkv5f4MQPd81NzKKP5HgbcOQuD8dLj+se9V28tq+N+yU0LDxlB3nTIfRh6kDs/ldV1EyQLJBB69wFZUL5G5dpjZ1OkJc5rzrStgMCsc1l0XUzgO0uO663fTufR3v5SLSnqNLseLBq3F8UPfLk7kGE2zspRk/FlIICo9w+duGxEyhEQ7k
+X-Gm-Message-State: AOJu0YwDYkTS2iXIByJxsyrpWHp+c14wEY70w96+tWi3HWbHsUixT2Vd
+	D6/DTZbHXdbupnPK++/wC1SVEVBkjjH+brXmK7fIEqMDTN15WVLP
+X-Google-Smtp-Source: AGHT+IE0XbCRPPJ26mkbp8Q1xkHdIdFzDb4rGbrIWWlGfet7iN0OnUqPUqA0afyCPKhWnRhWgAL1oQ==
+X-Received: by 2002:a17:902:bf04:b0:1e2:1df:449b with SMTP id d9443c01a7336-1ef44182635mr121080315ad.69.1715692659332;
+        Tue, 14 May 2024 06:17:39 -0700 (PDT)
 Received: from wedsonaf-dev.. ([50.204.89.32])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.17.35
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.17.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 06:17:36 -0700 (PDT)
+        Tue, 14 May 2024 06:17:39 -0700 (PDT)
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -78,9 +78,9 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH v2 02/30] rust: fs: introduce the `module_fs` macro
-Date: Tue, 14 May 2024 10:16:43 -0300
-Message-Id: <20240514131711.379322-3-wedsonaf@gmail.com>
+Subject: [RFC PATCH v2 03/30] samples: rust: add initial ro file system sample
+Date: Tue, 14 May 2024 10:16:44 -0300
+Message-Id: <20240514131711.379322-4-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240514131711.379322-1-wedsonaf@gmail.com>
 References: <20240514131711.379322-1-wedsonaf@gmail.com>
@@ -94,84 +94,75 @@ Content-Transfer-Encoding: 8bit
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-Simplify the declaration of modules that only expose a file system type.
-They can now do it using the `module_fs` macro.
+Introduce a basic sample that for now only registers the file system and
+doesn't really provide any functionality beyond having it listed in
+`/proc/filesystems`. New functionality will be added to the sample in
+subsequent patches as their abstractions are introduced.
 
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- rust/kernel/fs.rs | 56 ++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+ samples/rust/Kconfig      | 10 ++++++++++
+ samples/rust/Makefile     |  1 +
+ samples/rust/rust_rofs.rs | 19 +++++++++++++++++++
+ 3 files changed, 30 insertions(+)
+ create mode 100644 samples/rust/rust_rofs.rs
 
-diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
-index cc1ed7ed2f54..fb7a9b200b85 100644
---- a/rust/kernel/fs.rs
-+++ b/rust/kernel/fs.rs
-@@ -9,7 +9,7 @@
- use crate::error::{code::*, from_result, to_result, Error};
- use crate::types::Opaque;
- use crate::{bindings, init::PinInit, str::CStr, try_pin_init, ThisModule};
--use core::{ffi, pin::Pin};
-+use core::{ffi, marker::PhantomData, pin::Pin};
- use macros::{pin_data, pinned_drop};
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 59f44a8b6958..2f26c5c52813 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -41,6 +41,16 @@ config SAMPLE_RUST_PRINT
  
- /// A file system type.
-@@ -73,3 +73,57 @@ fn drop(self: Pin<&mut Self>) {
-         unsafe { bindings::unregister_filesystem(self.fs.get()) };
-     }
- }
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_ROFS
++	tristate "Read-only file system"
++	help
++	  This option builds the Rust read-only file system sample.
 +
-+/// Kernel module that exposes a single file system implemented by `T`.
-+#[pin_data]
-+pub struct Module<T: FileSystem + ?Sized> {
-+    #[pin]
-+    fs_reg: Registration,
-+    _p: PhantomData<T>,
++	  To compile this as a module, choose M here:
++	  the module will be called rust_rofs.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_HOSTPROGS
+ 	bool "Host programs"
+ 	help
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index 791fc18180e9..df1e4341ae95 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -3,5 +3,6 @@
+ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+ obj-$(CONFIG_SAMPLE_RUST_INPLACE)		+= rust_inplace.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
++obj-$(CONFIG_SAMPLE_RUST_ROFS)			+= rust_rofs.o
+ 
+ subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)		+= hostprogs
+diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
+new file mode 100644
+index 000000000000..d465b107a07d
+--- /dev/null
++++ b/samples/rust/rust_rofs.rs
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Rust read-only file system sample.
++
++use kernel::prelude::*;
++use kernel::{c_str, fs};
++
++kernel::module_fs! {
++    type: RoFs,
++    name: "rust_rofs",
++    author: "Rust for Linux Contributors",
++    description: "Rust read-only file system sample",
++    license: "GPL",
 +}
 +
-+impl<T: FileSystem + ?Sized + Sync + Send> crate::InPlaceModule for Module<T> {
-+    fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self {
-+            fs_reg <- Registration::new::<T>(module),
-+            _p: PhantomData,
-+        })
-+    }
-+}
-+
-+/// Declares a kernel module that exposes a single file system.
-+///
-+/// The `type` argument must be a type which implements the [`FileSystem`] trait. Also accepts
-+/// various forms of kernel metadata.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// # mod module_fs_sample {
-+/// use kernel::fs;
-+/// use kernel::prelude::*;
-+///
-+/// kernel::module_fs! {
-+///     type: MyFs,
-+///     name: "myfs",
-+///     author: "Rust for Linux Contributors",
-+///     description: "My Rust fs",
-+///     license: "GPL",
-+/// }
-+///
-+/// struct MyFs;
-+/// impl fs::FileSystem for MyFs {
-+///     const NAME: &'static CStr = kernel::c_str!("myfs");
-+/// }
-+/// # }
-+/// ```
-+#[macro_export]
-+macro_rules! module_fs {
-+    (type: $type:ty, $($f:tt)*) => {
-+        type ModuleType = $crate::fs::Module<$type>;
-+        $crate::macros::module! {
-+            type: ModuleType,
-+            $($f)*
-+        }
-+    }
++struct RoFs;
++impl fs::FileSystem for RoFs {
++    const NAME: &'static CStr = c_str!("rust_rofs");
 +}
 -- 
 2.34.1
