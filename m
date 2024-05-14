@@ -1,146 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-19458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378018C5942
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 18:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C581A8C59BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 18:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A9BA1C21E2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 16:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A8A1F23758
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2024 16:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0872017F36C;
-	Tue, 14 May 2024 16:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C3C51C42;
+	Tue, 14 May 2024 16:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y1SrnPTH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Todc5KTi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6721F17EBB3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 16:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F731E51E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 16:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715702678; cv=none; b=dFT2XLJjVTl0PCjKE1gHHoYAbZzBBDTWMoy357pXxZImHp+eIl8JpAUlhIDu7GNzdVZfJgG6VfLa8E7mumCxoLJURqmZApBWKA9cdOk1YunLQ3tFklkQv7yD8sYW0tEpDwTD/uLeEqW65sjS+dUG/QMJUZVF5vkvyLzOZ9Q7Ps8=
+	t=1715704294; cv=none; b=Pud/awaDPM2g7M5i80O3F6r9DdYQ1S7xLOBkwKLIO3MFppL2E6SHpFqdhg/ohir+JHvQi6vjo4xy3jb7szaz8RDvfrTwwzyhvblZzk/6Ka6nVLZJjeK4ltNZrXkvoK4VlTCH7C459KmRnycV1Zvqps8dAwGQuHuq7u7+1ab6BjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715702678; c=relaxed/simple;
-	bh=rhheKrC5UqwGfzlHmmzvDF6q/Ca5re/Q43B50P5u1WA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCnlzyqwEkcqcqpTprK5dJZtXLE+iQfwhJwZGXpVFiYoMEGmR/cnxDrhXlUKJaNpwpg25Ib7sxxrWdbN/sFVbjE4t11lv3DRbexe0hng39wx9TRZ0fSNVn0SWF1Ui0ds2W8nVPBItUEVz/7g5MSOVqam3wzuVubFaMAafBWCTTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Y1SrnPTH; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59cf8140d0so34796266b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 09:04:36 -0700 (PDT)
+	s=arc-20240116; t=1715704294; c=relaxed/simple;
+	bh=rE7C4vtwa8/uDMo2Wgp+2p9AlpJrvqpyAqwxVawPprQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qRmhEugRtxwlO+pMIaGzjVBiGTquVPgkQhlNKpJ9zsD4x2XiVMpNVncYPurwcYBg4s3IHNG8WKx8xyuJwCL997lzQ/+dLR/HCixGCIOo+UtUpyvXFfgKkfrlU6Ej9kmKNiSVN3QsVc/IrEqDghcqDvVcNuGztbLyvSXZMNX8MdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Todc5KTi; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de615257412so10201049276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 09:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715702674; x=1716307474; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qi9NdQSYjzvcYW1qTjhLADvpJxotWIcZlhNFh3W+v4A=;
-        b=Y1SrnPTHceqOa5/5UZ1BZfYe3/38wmVC2i2ZjxzB4b2RqJfWUlSyYatHIAk91bfNYD
-         JYoru11TEk1wSm3w1jx90Q/rAyXqDOdjAEwBAf4x68D/DUMUydKaQZUVh4L51ZQTREQ3
-         L9krat8MuS7PqQvOIldMTtKCYMxfu+oLfU4bU=
+        d=google.com; s=20230601; t=1715704292; x=1716309092; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FYV+SMOQiamlhj9PR1ancAtyOBQwhK6fsau38j27Dhw=;
+        b=Todc5KTihZbph7wGN7+EnC/oJvpH7BkmfRT8iTk/Ap5UvYSnXjPPUDmxE54hV1Jbhe
+         8W4Hwl5EdYRTxiaAcPkYK7Z8d8kvraM5XdqmUliW+O3QqHiUF8Nzbe2QmeIynzRWdHNg
+         kIBWxMdF7PjQ6a9Z8fazRXPxbf5RaAIh1viOrBaCRIgDE9358MsQSRgze+QCbPnw7QgS
+         uA214fe2KQ9oZhcn1RoF1NdItswFBZXhghsGs58V5Hk5rwdKzUbbjCyGMWEkDMafc2/O
+         ihMA03I2EtzCntjST0QwDZEqVo08Y1YKOoAeS6qtj9CT9uVVxg1XEsFQEFo39melG9UR
+         DDww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715702674; x=1716307474;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qi9NdQSYjzvcYW1qTjhLADvpJxotWIcZlhNFh3W+v4A=;
-        b=UYuWxnbZ9rA861H3CIODhiMbaGJDYcojvwtKLmYDEn5zSemBQGG5FeEX0HTFNqGfxR
-         zjVUQxZBoqtBvwbNdnFvJBOvfB/G3MB2zBoOPUtffhqRVIXhWrY3qlg2Xa234mYfF4R5
-         xSBqqJS1y9crEnj/YA3n3y7HSVY9zonxPAITTh1OW+nV1DL3LdXppwr+5Tri2t8lSdeT
-         7+XDXz1cLf2AUl/MbbVofGKNbfGndWV0DjtpQpUpFOFzPr/g2uWyX6ce8PRTIy/GgmBk
-         YsA/fC4uwBMUESS9/FJwXm/hAjUpLt0ZGguKDF3u2PpWc4HEezSUnb5KPv+VJmOOchNt
-         ruWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiz0AgNPGni6uJr2eOElD+4NDrC0QrIX3y5tilcyrPC/0/OXguRHyFwjqx0cdOp/n6PKCvVbxZV9ASi1QHAhfQLA7PK4bQTNVJAgeBZw==
-X-Gm-Message-State: AOJu0Yyps/ohJ4JS0v9ayNURjf07WYd8MUXi4EdRYwetJFqEuKRN5Nnk
-	KP7vG1okYslsMnmRj41MPW+nyz2GUf9atoVNF7eId03m+UFp3tG/MVAavnoanN7UpydAVvLXXqO
-	ne2MJQQ==
-X-Google-Smtp-Source: AGHT+IF0hwpGVBuf3mQVs8I5pVTJicBKAHXZXxRhWF5qHHGapiMY80RU+pVzXpLyF2l3R8x9sAU+WQ==
-X-Received: by 2002:a17:906:3618:b0:a59:9c14:a774 with SMTP id a640c23a62f3a-a5a2d680d90mr863778766b.74.1715702674568;
-        Tue, 14 May 2024 09:04:34 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17a06sm728482166b.219.2024.05.14.09.04.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 09:04:33 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a5a89787ea4so38909866b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 09:04:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXiIrQdc1WKRecEjmLxV2fRMLgCSW/sZQYwccl5yDPzLdagbwX/CELvt8JPY5ulvTgKgVKaR710V68mMiWoMC73CGS/UZq9QYt5c+wLCg==
-X-Received: by 2002:a17:906:81cf:b0:a59:a7b7:2b8e with SMTP id
- a640c23a62f3a-a5a2d5853b3mr843134566b.29.1715702673387; Tue, 14 May 2024
- 09:04:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715704292; x=1716309092;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FYV+SMOQiamlhj9PR1ancAtyOBQwhK6fsau38j27Dhw=;
+        b=BbM88QqNpxxv4dHWDlXDgsisox9SrjFAI9MWOB9RQV5NaYqoaiAhzYAc1qarUvB3jL
+         9+7iNddNBMRsNjztzcG2l+oFXrWubSE+x1gGB0TzXlRQ2TcBPn3BH3zRPJ3FzWnuE2L9
+         gTDTNO7Njas5+gAGQ6LUN5iZ0pHEzB+L0pXMLq8Zl2lmOJ94ZvdyYcPQsDIKrBB+2EdB
+         adrSfmoFEl5bnlg30RWlH+hqiY3hpHToP8jvGZNGE3m4bOxa7ul2TVel4YJ30//GvVL5
+         ty9q6os1JLWuj0VqRkTgpEB7psC+6NBFSAlu6QKo8ceNro2/oW75lPNFR7MRmnXwSkUO
+         BRzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYE/H833Nx5uWIj4DGomRNMlT5lDNs4DeWb3r2OJy9fGqdNCOKQSf4RBdifHyCvYS1w/hJs9UKcG7xgfXBucg4hE9uLztFaZDk1aO3cg==
+X-Gm-Message-State: AOJu0YzksletlQo0xUSuS2TfVjx1TcC546OrkRyA/nTTn0zvwSATClvJ
+	e1YfeyMdl/yNCPUkXJ4juwUXJdyfBUQuEjqeCRvfKIfw/56r0K4ZbPEEnhCO3hGk6UOBKMS0cgO
+	YUQ==
+X-Google-Smtp-Source: AGHT+IH8tWOuykXAgU5Pee8JW3hexeYZkHO8+gPnARCp67pA23h8mZSsUc7ypioRDnfO1jlvRbsOhwVLSfc=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:e8f6:c5d2:b646:f90d])
+ (user=surenb job=sendgmr) by 2002:a05:6902:1027:b0:dcc:c57c:8873 with SMTP id
+ 3f1490d57ef6-dee4f3659c5mr3649331276.9.1715704292212; Tue, 14 May 2024
+ 09:31:32 -0700 (PDT)
+Date: Tue, 14 May 2024 09:31:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
- <Zds8T9O4AYAmdS9d@casper.infradead.org> <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
- <Zduto30LUEqIHg4h@casper.infradead.org> <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
- <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
- <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
- <Zdv8dujdOg0dD53k@duke.home> <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
- <CAHk-=wjOogaW0yLoUqQ0WfQ=etPA4cOFLy56VYCnHVU_DOMLrg@mail.gmail.com> <ZkNQiWpTOZDMp3kS@bombadil.infradead.org>
-In-Reply-To: <ZkNQiWpTOZDMp3kS@bombadil.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 14 May 2024 09:04:15 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whob6O3m8KUJjnGzFDVHwb_PLueMP-YMtX1PxE9awTxcw@mail.gmail.com>
-Message-ID: <CAHk-=whob6O3m8KUJjnGzFDVHwb_PLueMP-YMtX1PxE9awTxcw@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Al Viro <viro@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Matthew Wilcox <willy@infradead.org>, lsf-pc@lists.linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
-	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
-	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, 
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Message-ID: <20240514163128.3662251-1-surenb@google.com>
+Subject: [PATCH v2 1/1] lib: add version into /proc/allocinfo output
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, pasha.tatashin@soleen.com, vbabka@suse.cz, 
+	keescook@chromium.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 14 May 2024 at 04:52, Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Mon, Feb 26, 2024 at 02:46:56PM -0800, Linus Torvalds wrote:
-> > I really haven't tested this AT ALL. I'm much too scared. But I don't
-> > actually hate how the code looks nearly as much as I *thought* I'd
-> > hate it.
->
-> Thanks for this, obviously those interested in this will have to test
-> this and fix the below issues. I've tested for regressions just against
-> xfs on 4k reflink profile and detected only two failures, generic/095
-> fails with a failure rate of about 1/2 or so:
->
->   * generic/095
->   * generic/741
+Add version string and a header at the beginning of /proc/allocinfo to
+allow later format changes. Example output:
 
-Funky.
+> head /proc/allocinfo
+allocinfo - version: 1.0
+#     <size>  <calls> <tag info>
+           0        0 init/main.c:1314 func:do_initcalls
+           0        0 init/do_mounts.c:353 func:mount_nodev_root
+           0        0 init/do_mounts.c:187 func:mount_root_generic
+           0        0 init/do_mounts.c:158 func:do_mount_root
+           0        0 init/initramfs.c:493 func:unpack_to_rootfs
+           0        0 init/initramfs.c:492 func:unpack_to_rootfs
+           0        0 init/initramfs.c:491 func:unpack_to_rootfs
+         512        1 arch/x86/events/rapl.c:681 func:init_rapl_pmus
+         128        1 arch/x86/events/rapl.c:571 func:rapl_cpu_online
 
-I do *not* see how those can fail due to the change, but that's the
-point of testing.
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+Changes since v1 [1]:
+- Added header with field names, per Pasha Tatashin
+- Fixed a spelling error in the changelog
 
-Somebody who knows those two tests better, and figures out what the
-difference is would have to get involved.
+[1] https://lore.kernel.org/all/20240514153532.3622371-1-surenb@google.com/
 
-One different thing that my fast-read case does is that it does *NOT*
-do the crazy dcache coherency thing that the "full" case does, ie the
+ Documentation/filesystems/proc.rst |  5 ++--
+ lib/alloc_tag.c                    | 48 ++++++++++++++++++++----------
+ 2 files changed, 36 insertions(+), 17 deletions(-)
 
-                writably_mapped = mapping_writably_mapped(mapping);
-                ...
-                        /*
-                         * If users can be writing to this folio using arbitrary
-                         * virtual addresses, take care of potential aliasing
-                         * before reading the folio on the kernel side.
-                         */
-                        if (writably_mapped)
-                                flush_dcache_folio(folio);
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 245269dd6e02..4b71b3903d46 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -961,13 +961,14 @@ Provides information about memory allocations at all locations in the code
+ base. Each allocation in the code is identified by its source file, line
+ number, module (if originates from a loadable module) and the function calling
+ the allocation. The number of bytes allocated and number of calls at each
+-location are reported.
++location are reported. The first line indicates the version of the file, the
++second line is the header listing fields in the file.
+ 
+ Example output.
+ 
+ ::
+ 
+-    > sort -rn /proc/allocinfo
++    > tail -n +3 /proc/allocinfo | sort -rn
+    127664128    31168 mm/page_ext.c:270 func:alloc_page_ext
+     56373248     4737 mm/slub.c:2259 func:alloc_slab_page
+     14880768     3633 mm/readahead.c:247 func:page_cache_ra_unbounded
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index 531dbe2f5456..cbe93939332d 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -16,47 +16,61 @@ EXPORT_SYMBOL(_shared_alloc_tag);
+ DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
+ 			mem_alloc_profiling_key);
+ 
++struct allocinfo_private {
++	struct codetag_iterator iter;
++	bool print_header;
++
++};
++
+ static void *allocinfo_start(struct seq_file *m, loff_t *pos)
+ {
+-	struct codetag_iterator *iter;
++	struct allocinfo_private *priv;
+ 	struct codetag *ct;
+ 	loff_t node = *pos;
+ 
+-	iter = kzalloc(sizeof(*iter), GFP_KERNEL);
+-	m->private = iter;
+-	if (!iter)
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	m->private = priv;
++	if (!priv)
+ 		return NULL;
+ 
++	priv->print_header = (node == 0);
+ 	codetag_lock_module_list(alloc_tag_cttype, true);
+-	*iter = codetag_get_ct_iter(alloc_tag_cttype);
+-	while ((ct = codetag_next_ct(iter)) != NULL && node)
++	priv->iter = codetag_get_ct_iter(alloc_tag_cttype);
++	while ((ct = codetag_next_ct(&priv->iter)) != NULL && node)
+ 		node--;
+ 
+-	return ct ? iter : NULL;
++	return ct ? priv : NULL;
+ }
+ 
+ static void *allocinfo_next(struct seq_file *m, void *arg, loff_t *pos)
+ {
+-	struct codetag_iterator *iter = (struct codetag_iterator *)arg;
+-	struct codetag *ct = codetag_next_ct(iter);
++	struct allocinfo_private *priv = (struct allocinfo_private *)arg;
++	struct codetag *ct = codetag_next_ct(&priv->iter);
+ 
+ 	(*pos)++;
+ 	if (!ct)
+ 		return NULL;
+ 
+-	return iter;
++	return priv;
+ }
+ 
+ static void allocinfo_stop(struct seq_file *m, void *arg)
+ {
+-	struct codetag_iterator *iter = (struct codetag_iterator *)m->private;
++	struct allocinfo_private *priv = (struct allocinfo_private *)m->private;
+ 
+-	if (iter) {
++	if (priv) {
+ 		codetag_lock_module_list(alloc_tag_cttype, false);
+-		kfree(iter);
++		kfree(priv);
+ 	}
+ }
+ 
++static void print_allocinfo_header(struct seq_buf *buf)
++{
++	/* Output format version, so we can change it. */
++	seq_buf_printf(buf, "allocinfo - version: 1.0\n");
++	seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
++}
++
+ static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
+ {
+ 	struct alloc_tag *tag = ct_to_alloc_tag(ct);
+@@ -71,13 +85,17 @@ static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
+ 
+ static int allocinfo_show(struct seq_file *m, void *arg)
+ {
+-	struct codetag_iterator *iter = (struct codetag_iterator *)arg;
++	struct allocinfo_private *priv = (struct allocinfo_private *)arg;
+ 	char *bufp;
+ 	size_t n = seq_get_buf(m, &bufp);
+ 	struct seq_buf buf;
+ 
+ 	seq_buf_init(&buf, bufp, n);
+-	alloc_tag_to_text(&buf, iter->ct);
++	if (priv->print_header) {
++		print_allocinfo_header(&buf);
++		priv->print_header = false;
++	}
++	alloc_tag_to_text(&buf, priv->iter.ct);
+ 	seq_commit(m, seq_buf_used(&buf));
+ 	return 0;
+ }
 
-but that shouldn't matter on any sane architecture. Sadly, even arm64
-counts as "insane" here, because it does the I$ sync using
-flush_dcache_folio().
+base-commit: 7e8aafe0636cdcc5c9699ced05ff1f8ffcb937e2
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
-I can't tell what architecture the testing was done on, but I assume
-it was x86, and I assume the above detail is _not_ the cause.
-
-               Linus
 
