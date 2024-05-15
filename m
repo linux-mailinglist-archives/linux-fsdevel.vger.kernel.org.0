@@ -1,65 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-19512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6DB8C633D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 10:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A7D8C6383
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 11:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9884B2319A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 08:59:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000F01C20FAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 09:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBEB74E0C;
-	Wed, 15 May 2024 08:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111D557CB5;
+	Wed, 15 May 2024 09:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJ6ceIxw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C5C5C61C;
-	Wed, 15 May 2024 08:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5804157C8D;
+	Wed, 15 May 2024 09:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715763406; cv=none; b=Sg8rHDz7DTsyfcVj/NiPIkaecal34xLn13n4YafaF6a/kvIt1/uWfQMvlkBOHEJAOid/0AP+h5rLV2O2YrtLUe2ppUH434ikFjKP4mDDJ9b5883PIGC37Rgc0KGzZR+Fy/+rl5Lh75I7sLmaW5V/+OMnHGlxMAkTIwwe5bhs+vk=
+	t=1715764667; cv=none; b=X4hy3rf7+5z/ZTlAqUQsXsKwYcJ7T2nqavmN6Z1FoiOOXMqrQBE2ttVgo8NhTre7/3dimq09FeByWfA7vQ69ZimQ4jdIy2AfZQ4XRqJZx7VJ5wZbOKOexWc9YM6YawzJ0Zv8dlJy6KZHqrp8GLLFH+JIsd70J7yLJMlWQhxZ/wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715763406; c=relaxed/simple;
-	bh=G9boZV469M2gzuvk6RuMnXNIMZ3C4lSeJalJhuS4ul8=;
+	s=arc-20240116; t=1715764667; c=relaxed/simple;
+	bh=97fJlRl8dJOpcgfN1cVebIQsfS1pVOcf9fB3mVSPx5Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Rjh5UH1EeQltc4lQXTQdzVZHj+34DGjMP6vQ2k6dLxpVLqTzKj6Vs7LjukmZ9wCyHRD0Ohrtp9m/kfpRu0eKm4DyYRPV7ukZ7hdx1tPv99aQXcUqeatz5tRaQTQMKpH8jMQpGRDaw7kj06egkIc3++YT0yXCB1pBs9rRzMrGJL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VfRsm3hffz4f3jXJ;
-	Wed, 15 May 2024 16:56:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 2D4DC1A0FE5;
-	Wed, 15 May 2024 16:56:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxC7eERm68LgMg--.42328S16;
-	Wed, 15 May 2024 16:56:36 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: netfs@lists.linux.dev,
-	dhowells@redhat.com,
-	jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com,
-	jefflexu@linux.alibaba.com,
-	zhujia.zj@bytedance.com,
-	linux-erofs@lists.ozlabs.org,
+	 MIME-Version; b=swnr3r+xtWMvlOmLUlXPgyNrx+jYATMDbULCKgqmUR/6eHkssxhkLF3oDQhFWGUFLEzr4KmW9sgctOw05hIo0gj/asWh2pRg6ifaRKHydrcWr4B6IBcarLm7LvLOhFm1urP6D9XkT5Zh8tfcMoV3HOTnB5RZx+Cl8sTPyyxB2Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJ6ceIxw; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ed835f3c3cso57207185ad.3;
+        Wed, 15 May 2024 02:17:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715764665; x=1716369465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Wv8rV2tKPThsseCMW82u6ARIGWeqVn1KtBaNU4oLcc=;
+        b=KJ6ceIxw6eDuVGLik8cMQCftF/XcDBDwtVe/ffdaxPmRVfMq+tLDtoCaALSnxw0Z6m
+         ZWTAwzfwS753qSETjfTwZCQp2gqju4Vqor5nlRMabAp1+cHJ237EzQWDARmOLPQG/ui8
+         6Uw6J/WZslyiDhv1Z0oKUaJGO2K6GgstHhWkZIYT+oYHp3KrrKAr7kelVmuWKtAmPncR
+         +SPC1Fk6VBbhcBsVUdWX9aWDBSMwd49TeEf7LjUA9jFsTaOc1S7s+N4idQbm/ByzyygZ
+         +AmL8rHGL072ljSzcAn6RbUj/Q9fp+09RXucO2M3l/w4/LbD/R6pnJxX2K7L/7oqNg4e
+         D5wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715764665; x=1716369465;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Wv8rV2tKPThsseCMW82u6ARIGWeqVn1KtBaNU4oLcc=;
+        b=Qpe9g3jUDDNq9Z6e++IRhU4yI364ZmRpAx3qa7PZURLs3/9Jj/OSXtAZu/2vV9QNEj
+         8u1gBskuuXyldmnvijuMHCeBju9xMtA8il7zhid2sab/tkhn5TwiYEoxTppzyxDnZCHF
+         xM0XlYzNv1UKI/xaW/wOoNcygmk+xZUO/mxjoRCYUJfTubPd/QfWibThqd7wTwIpHdkX
+         Z8DKZjovLhkgmYxelwivVzjvSo7D/frSu+GMdisf0TQnZMAaGXsL1i9EqsUOhV7fNl1w
+         RGeBWYUzMaWTSkadq0J9cwP/PXkCsT6YpbvCSWyZq+rPtLuJdqJpN1lpYIcaP/7dx28r
+         Tvaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu5feVg8knOSRGsxQrt45s2UBjpWl0B9B8UAL83FMI+79X5DrsEZyTrFsMDCtBqyYHr4ClzCqBFtT+p1yO/igPBpxY3jTT64WDvM5CwE1aim+H+D8nI0dNwoHcuKZRucxppcWHyzTuSteT3Q==
+X-Gm-Message-State: AOJu0YxDBV1Xm506XiCYCSFkikwwi9stbDNK1XFcPZTWl07bOch2Q3Ib
+	N4v9zhjnLSMKB5WCQ1zjAdbBcIseZLERWmv3ahAbqnALv9HUUMj0
+X-Google-Smtp-Source: AGHT+IFtmVf7oEws1uF1l3m/5X3gzrEYi5mE17gV2Q6owMBXhDKxbWShPbXhK8zPO76YBGJxCnbDkQ==
+X-Received: by 2002:a17:902:ec8b:b0:1eb:1129:7f15 with SMTP id d9443c01a7336-1ef4404a272mr202174455ad.46.1715764664621;
+        Wed, 15 May 2024 02:17:44 -0700 (PDT)
+Received: from localhost.localdomain ([39.144.45.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30fb1sm113304135ad.177.2024.05.15.02.17.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2024 02:17:44 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	laoar.shao@gmail.com,
 	linux-fsdevel@vger.kernel.org,
+	longman@redhat.com,
+	viro@zeniv.linux.org.uk,
+	walters@verbum.org,
+	wangkai86@huawei.com,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	libaokun@huaweicloud.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com,
-	wozizhi@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: [PATCH v2 12/12] cachefiles: make on-demand read killable
-Date: Wed, 15 May 2024 16:46:01 +0800
-Message-Id: <20240515084601.3240503-13-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240515084601.3240503-1-libaokun@huaweicloud.com>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] vfs: Delete the associated dentry when deleting a file
+Date: Wed, 15 May 2024 17:17:27 +0800
+Message-Id: <20240515091727.22034-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+In-Reply-To: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
+References: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,80 +93,119 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxC7eERm68LgMg--.42328S16
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFW7JryDCF4DJr4kXFy7Jrb_yoW8WF45pF
-	Waka45KFykuF4I9r93J3WUX34Sy3ykAFnrWrySqrW3AwsIqrnYvr18t3WYqF43A395WrW3
-	tr95KFyxK3Wjq3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwAKzVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0
-	I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjfUYGYpUUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-From: Baokun Li <libaokun1@huawei.com>
+Our applications, built on Elasticsearch[0], frequently create and delete
+files. These applications operate within containers, some with a memory
+limit exceeding 100GB. Over prolonged periods, the accumulation of negative
+dentries within these containers can amount to tens of gigabytes.
 
-Replacing wait_for_completion() with wait_for_completion_killable() in
-cachefiles_ondemand_send_req() allows us to kill processes that might
-trigger a hunk_task if the daemon is abnormal.
+Upon container exit, directories are deleted. However, due to the numerous
+associated dentries, this process can be time-consuming. Our users have
+expressed frustration with this prolonged exit duration, which constitutes
+our first issue.
 
-But now only CACHEFILES_OP_READ is killable, because OP_CLOSE and OP_OPEN
-is initiated from kworker context and the signal is prohibited in these
-kworker.
+Simultaneously, other processes may attempt to access the parent directory
+of the Elasticsearch directories. Since the task responsible for deleting
+the dentries holds the inode lock, processes attempting directory lookup
+experience significant delays. This issue, our second problem, is easily
+demonstrated:
 
-Note that when the req in xas changes, i.e. xas_load(&xas) != req, it
-means that a process will complete the current request soon, so wait
-again for the request to be completed.
+  - Task 1 generates negative dentries:
+  $ pwd
+  ~/test
+  $ mkdir es && cd es/ && ./create_and_delete_files.sh
 
-Suggested-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
+  [ After generating tens of GB dentries ]
+
+  $ cd ~/test && rm -rf es
+
+  [ It will take a long duration to finish ]
+
+  - Task 2 attempts to lookup the 'test/' directory
+  $ pwd
+  ~/test
+  $ ls
+
+  The 'ls' command in Task 2 experiences prolonged execution as Task 1
+  is deleting the dentries.
+
+We've devised a solution to address both issues by deleting associated
+dentry when removing a file. Interestingly, we've noted that a similar
+patch was proposed years ago[1], although it was rejected citing the
+absence of tangible issues caused by negative dentries. Given our current
+challenges, we're resubmitting the proposal. All relevant stakeholders from
+previous discussions have been included for reference.
+
+Some alternative solutions are also under discussion[2][3], such as
+shrinking child dentries outside of the parent inode lock or even
+asynchronously shrinking child dentries. However, given the straightforward
+nature of the current solution, I believe this approach is still necessary.
+
+[0]. https://github.com/elastic/elasticsearch
+[1]. https://patchwork.kernel.org/project/linux-fsdevel/patch/1502099673-31620-1-git-send-email-wangkai86@huawei.com
+[2]. https://lore.kernel.org/linux-fsdevel/20240511200240.6354-2-torvalds@linux-foundation.org/
+[3]. https://lore.kernel.org/linux-fsdevel/CAHk-=wjEMf8Du4UFzxuToGDnF3yLaMcrYeyNAaH1NJWa6fwcNQ@mail.gmail.com/
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Wangkai <wangkai86@huawei.com>
+Cc: Colin Walters <walters@verbum.org>
 ---
- fs/cachefiles/ondemand.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ fs/dcache.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-index a511d0a89109..bdc2d6dbadce 100644
---- a/fs/cachefiles/ondemand.c
-+++ b/fs/cachefiles/ondemand.c
-@@ -544,8 +544,25 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
- 		goto out;
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 71a8e943a0fa..2ffdb98e9166 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2360,19 +2360,17 @@ EXPORT_SYMBOL(d_hash_and_lookup);
+  * - unhash this dentry and free it.
+  *
+  * Usually, we want to just turn this into
+- * a negative dentry, but if anybody else is
+- * currently using the dentry or the inode
+- * we can't do that and we fall back on removing
+- * it from the hash queues and waiting for
+- * it to be deleted later when it has no users
++ * a negative dentry, but certain workloads can
++ * generate a large number of negative dentries.
++ * Therefore, it would be better to simply
++ * unhash it.
+  */
+  
+ /**
+  * d_delete - delete a dentry
+  * @dentry: The dentry to delete
+  *
+- * Turn the dentry into a negative dentry if possible, otherwise
+- * remove it from the hash queues so it can be deleted later
++ * Remove the dentry from the hash queues so it can be deleted later.
+  */
+  
+ void d_delete(struct dentry * dentry)
+@@ -2381,14 +2379,14 @@ void d_delete(struct dentry * dentry)
  
- 	wake_up_all(&cache->daemon_pollwq);
--	wait_for_completion(&req->done);
--	ret = req->error;
-+wait:
-+	ret = wait_for_completion_killable(&req->done);
-+	if (!ret) {
-+		ret = req->error;
-+	} else {
-+		xas_reset(&xas);
-+		xas_lock(&xas);
-+		if (xas_load(&xas) == req) {
-+			xas_store(&xas, NULL);
-+			ret = -EINTR;
-+		}
-+		xas_unlock(&xas);
+ 	spin_lock(&inode->i_lock);
+ 	spin_lock(&dentry->d_lock);
++	__d_drop(dentry);
 +
-+		/* Someone will complete it soon. */
-+		if (ret != -EINTR) {
-+			cpu_relax();
-+			goto wait;
-+		}
-+	}
- 	cachefiles_req_put(req);
- 	return ret;
- out:
+ 	/*
+ 	 * Are we the only user?
+ 	 */
+ 	if (dentry->d_lockref.count == 1) {
+-		dentry->d_flags &= ~DCACHE_CANT_MOUNT;
+ 		dentry_unlink_inode(dentry);
+ 	} else {
+-		__d_drop(dentry);
+ 		spin_unlock(&dentry->d_lock);
+ 		spin_unlock(&inode->i_lock);
+ 	}
 -- 
-2.39.2
+2.30.1 (Apple Git-130)
 
 
