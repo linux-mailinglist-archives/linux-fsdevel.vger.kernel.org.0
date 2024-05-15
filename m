@@ -1,148 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-19514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C248C64C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 12:07:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA618C64F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 12:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FFDDB22BAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 10:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72EEC1F250B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 10:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3543D5A79B;
-	Wed, 15 May 2024 10:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300115EE82;
+	Wed, 15 May 2024 10:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7CxKjwu"
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="PrYT6QxD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5681C2AC29;
-	Wed, 15 May 2024 10:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BDF3EA7B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 10:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715767654; cv=none; b=i8rUH4Jxcw4pLpsCUimtW8G5AbV+x3usxKShJMQgeqTcD+vXoBm3hUS9coCg1szGcAo0MNIgfslfDUSVl/sfbui1ElrOR6nKeiajo1B/If7bFfFWXiGJseI+kdclcRJ+CdPViQJVlVSW1vbvqaTHKbiwac/rCAc/Hp10Di4KLiE=
+	t=1715769084; cv=none; b=KzY00/fbMDiZHrweeBcte0mWtFMAskcWGbdh1+jYV0/ikK9A7o+DdNOQX1PhUl93bJAnSz+Fdm7RDLPtjFM100xt6NpaZoHgMcFdy7U+RR5KJvo1g6oJbvn4esN2GQXk9Zxs48nuBxUV3nxKebDEN/8YXrq7wyLz/pqcDj2UgxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715767654; c=relaxed/simple;
-	bh=Lojht7Xjnj67v23RYwEiN4Oi8cjL16M1wOq/ga0DAco=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j70F1+xAljmucwWp0jfLswVpZ02pR1QKnvtyg8lGg35oXYVK65KC/+DpRkJAl82LJ/X4b5Ni7Q/NAgf79TqtWSHpkh0bKuvFXP2LMN1NhkgIu8/+3CNu5cHWTgJDvUP0+Xhc+aMn2Kzncpg5dltRp9RBtfqV461z+VzRS0bkqZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7CxKjwu; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f6765226d0so382763b3a.3;
-        Wed, 15 May 2024 03:07:33 -0700 (PDT)
+	s=arc-20240116; t=1715769084; c=relaxed/simple;
+	bh=ZFdFfOpGktquqXyWz6tLLfSfinPgS2/HBD5fwMfexpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVhfmkG4+NmUcaAC1zJsfNaFsxvNepgpxf1+PSyBKHuvT9JcpPBszqnszDaI1zNiy9KgWn2fFAwTPkHXljI3GjvW44EZQPuoNphzISOCz3PwegyrTMBPXlzbNpl5lz1tjVXxJOSAFl7rEh2WHIfR3ACXTwq4+g/TogzLwsze8A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=PrYT6QxD; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42016c8daa7so20433455e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 03:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715767652; x=1716372452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Smjmp3PZxXRa4Z/icpgGYu/3oa70ypICQV2SCcf0T8=;
-        b=e7CxKjwuL8Q2E/95ZbAdsORS9HDrVCx2M9eR7ylsr/JdIfQcXdJd2SdfbXprQKxypT
-         azxNEs47qecxDufA69o1kMEdfni2/ECn1TA2bS95SbNiibamDazfuDzGVFfKp0gzPTsM
-         8oPT9U8+3fHOC27Byj7knmE9jIXWFgBVG1YkXrsZ4bIVwt8Y2MDql/QYSn5MO/PQsQpA
-         Pj504U/H7yAGVWJQFGnoGaJQKOFhpZw/huXE9m2YnmHD7bDs03DSOkDe1ZBH1ySPX5ig
-         vXKjX9tG3bneS4QLau7EVUiakiu5as7LB/5Iyz1tmjFDUcMp1Xz/WyAhyiFMfOwhlwcv
-         ZJ3Q==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1715769081; x=1716373881; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZG5zBn5o6j3jWJFkBRDbSpLzfISGJr4t+twnkK5Jmvo=;
+        b=PrYT6QxDeJFMOwrOXbfz850MqMTQFlMFpDCYyMtNBDP1Q3Nn+wKWJUPclfNSLApAqr
+         BfR9w6Dh8A4F+vK2BlYk3CU3ohcJeReYnmzegTRCufeWRDKgaM3XSPJ2syZhSAkezfb3
+         P5CoS1H3yq3zOD6Rp/wkWUHnaaVt/lskOq8xa+ongFFK0Ki6WQGpDJv5/vHL48ogId/f
+         SmGrT/alXYOEwEeDoPwKjNvoVtBGHSbfdZgSfZvPbmj7cRA4q4abwoiVMWDxabQWg14+
+         GtoVqsEv0dBA8x0OH6Gj0joZrtqvr/xG+CDwpcBAaRPtEmRVxnlwvJS9cxvEOKkvncc0
+         XwUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715767652; x=1716372452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4Smjmp3PZxXRa4Z/icpgGYu/3oa70ypICQV2SCcf0T8=;
-        b=FQ2NdtGfUwYBydxjU+5VC42osC6C0VR4m6fmmHql9lSRDs/wvisLg4P0ghD+Ks5yU9
-         qyKWcKfH0yjP4g25iYH1/30WtvMmvVsF+dczR3guSV3TT1N28K0qRfIuFWcWcISu2vbH
-         p1d50JQeL31eOKsSSkGF6bWRo8zw6KDrbc7GJYEHN/DQu+BY/DSk2VVcqpBAcv1dN079
-         AsDVS6GzZ/7QoqZm9ExaI9garw9VWgBhG73DeYbPlRmwX30I7nTDrqnKH9+jyOIjlGRs
-         Fk7ridnCJOVg+x+X13VZwb4AYfGP0VLXbn2lgBjZ00AL1ExG2MyARtmaLBqS2T9SMLgY
-         O8Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdH/bPKX5VYwKRZFOShJUa5KgAqiBWOQogRzGNnGcEkHJMj+wl/0P4pVfEXI7fkacnJBh4T1Uf2BDIyNFOB3vaEPfPBnyS6xc5/nfYoA==
-X-Gm-Message-State: AOJu0Yxvva0ZZMm3HicyRXFp9/P7G4mmFaYCEykDv/25YrI3DPkTgf30
-	a77yJWaDvEV9xCMo4K2v/lU4EdVeK4fZqw0RiK8ZnJ4+3q7NjTHa
-X-Google-Smtp-Source: AGHT+IHu8ud56F2dFyxL0lKuNw7iN1lRrHXWphyMV556F3uBB6P/FLw0jTJ3cF74MdCQGbTkqTa0SA==
-X-Received: by 2002:a05:6a20:dc94:b0:1af:a9ad:fbb9 with SMTP id adf61e73a8af0-1afde1c5dcemr11873054637.59.1715767652516;
-        Wed, 15 May 2024 03:07:32 -0700 (PDT)
-Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-177-168.dynamic-ip.hinet.net. [220.143.177.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade27fsm10687222b3a.108.2024.05.15.03.07.30
+        d=1e100.net; s=20230601; t=1715769081; x=1716373881;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZG5zBn5o6j3jWJFkBRDbSpLzfISGJr4t+twnkK5Jmvo=;
+        b=My36901nGxEY+sJYdSb3NiiEyoW8HbAmVxEFiYnRFiWS3O03Ew2c78GqcSk1gNzcVB
+         VO020I6vU5QERJXvdCXmykymKI1XsR9V+zim9DbjmbbU6lePk6XFjvvao2sPfPDZVWJF
+         gdBlLSAPNX/NKjFbTURCcjauwhoN1rtBRGswFKq0HTUMZkHLlIm1hfh5sjOUT0DJpIWg
+         Hnr9bB+Wif9Nkp97+3TuCEBaWxw1StGf+f04hN0Sk4CB9lMQg7k4ekv1OqQD41nW5hfi
+         qPJcqXRXtTwjAREulYKZEMuL5a4MnioA4dvsZT5S77q6rWSK5Ce45Ix7M5758FnY7A7o
+         B7Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVu4jsonpYdVEVHylb03Mi9x7ctjy1zmVnklpZSE6iTTc+zX3vf2eAG0/ibP29QNmdhezXSANaqbyHSDs9rrhIkfn88mkVqiA7ruwcpwQ==
+X-Gm-Message-State: AOJu0YxN6/qpRdbrkJGColS6Ij47zH/p3URXrg/lX1hILmcsOAyEa+T6
+	GbgnNuBqI4D8x/4+LjWLZzV2fOp1kHzA6eD5BPFwp9CsWbcpVPWeJzKn3fgQg/Y=
+X-Google-Smtp-Source: AGHT+IHbRa4f6a0OPIXc+X3mZ/XaiasEuZZegiJVELTp+PTvnfGjOfFYQYTXxfiYT/De51423cv9fw==
+X-Received: by 2002:a05:600c:310d:b0:416:605b:5868 with SMTP id 5b1f17b1804b1-41fead696bbmr107457525e9.35.1715769081002;
+        Wed, 15 May 2024 03:31:21 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8f74sm229578795e9.8.2024.05.15.03.31.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 03:07:32 -0700 (PDT)
-From: Adrian Huang <adrianhuang0701@gmail.com>
-X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Adrian Huang <ahuang12@lenovo.com>,
-	Jiwei Sun <sunjw10@lenovo.com>
-Subject: [PATCH v2 2/2] genirq/proc: Refine percpu kstat_irqs access logic
-Date: Wed, 15 May 2024 18:06:32 +0800
-Message-Id: <20240515100632.1419-1-ahuang12@lenovo.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 15 May 2024 03:31:20 -0700 (PDT)
+Date: Wed, 15 May 2024 11:31:18 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] sched/rt: Clean up usage of rt_task()
+Message-ID: <20240515103118.qc76v55x4ylqhd52@airbuntu>
+References: <20240514234112.792989-1-qyousef@layalina.io>
+ <20240514235851.GA6845@lorien.usersys.redhat.com>
+ <20240515083238.GA40213@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240515083238.GA40213@noisy.programming.kicks-ass.net>
 
-From: Adrian Huang <ahuang12@lenovo.com>
+On 05/15/24 10:32, Peter Zijlstra wrote:
+> On Tue, May 14, 2024 at 07:58:51PM -0400, Phil Auld wrote:
+> > 
+> > Hi Qais,
+> > 
+> > On Wed, May 15, 2024 at 12:41:12AM +0100 Qais Yousef wrote:
+> > > rt_task() checks if a task has RT priority. But depends on your
+> > > dictionary, this could mean it belongs to RT class, or is a 'realtime'
+> > > task, which includes RT and DL classes.
+> > > 
+> > > Since this has caused some confusion already on discussion [1], it
+> > > seemed a clean up is due.
+> > > 
+> > > I define the usage of rt_task() to be tasks that belong to RT class.
+> > > Make sure that it returns true only for RT class and audit the users and
+> > > replace them with the new realtime_task() which returns true for RT and
+> > > DL classes - the old behavior. Introduce similar realtime_prio() to
+> > > create similar distinction to rt_prio() and update the users.
+> > 
+> > I think making the difference clear is good. However, I think rt_task() is
+> > a better name. We have dl_task() still.  And rt tasks are things managed
+> > by rt.c, basically. Not realtime.c :)  I know that doesn't work for deadline.c
+> > and dl_ but this change would be the reverse of that pattern.
+> 
+> It's going to be a mess either way around, but I think rt_task() and
+> dl_task() being distinct is more sensible than the current overlap.
 
-Interrupts which have no action and chained interrupts can be
-ignored due to the following reasons (as per tglx's comment):
+Judging by some of the users I've seen, I think there were some users not
+expecting they're not distinct as they were checking for !dl_task() &&
+!rt_task() which I replaced with !realtime_task(). Similar users checking for
+dl_prio() and rt_prio() in places, and others using rt_prio() to encompass
+dl_prio(). There were BUG_ON(!rt_task())/WARN_ON(!rt_prio()) in rt.c which
+I don't think it in intended to encompass dl there.
 
-  1) Interrupts which have no action are completely uninteresting as
-     there is no real information attached.
+> 
+> > > Move MAX_DL_PRIO to prio.h so it can be used in the new definitions.
+> > > 
+> > > Document the functions to make it more obvious what is the difference
+> > > between them. PI-boosted tasks is a factor that must be taken into
+> > > account when choosing which function to use.
+> > > 
+> > > Rename task_is_realtime() to task_has_realtime_policy() as the old name
+> > > is confusing against the new realtime_task().
+> 
+> realtime_task_policy() perhaps?
 
-  2) Chained interrupts do not have a count at all.
+Better yes. Updated.
 
-Refine the condition statement, and convert the access of kstat_irqs
-into the unconditional statement.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/lkml/87h6f0knau.ffs@tglx/
-Tested-by: Jiwei Sun <sunjw10@lenovo.com>
-Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
----
- kernel/irq/proc.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 623b8136e9af..e3d03103522c 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -461,10 +461,10 @@ int show_interrupts(struct seq_file *p, void *v)
- {
- 	static int prec;
- 
--	unsigned long flags, any_count = 0;
- 	int i = *(loff_t *) v, j;
- 	struct irqaction *action;
- 	struct irq_desc *desc;
-+	unsigned long flags;
- 
- 	if (i > ACTUAL_NR_IRQS)
- 		return 0;
-@@ -488,18 +488,12 @@ int show_interrupts(struct seq_file *p, void *v)
- 	if (!desc || irq_settings_is_hidden(desc))
- 		goto outsparse;
- 
--	if (desc->kstat_irqs) {
--		for_each_online_cpu(j)
--			any_count |= data_race(*per_cpu_ptr(desc->kstat_irqs, j));
--	}
--
--	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
-+	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
- 		goto outsparse;
- 
- 	seq_printf(p, "%*d: ", prec, i);
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", desc->kstat_irqs ?
--					*per_cpu_ptr(desc->kstat_irqs, j) : 0);
-+		seq_printf(p, "%10u ", *per_cpu_ptr(desc->kstat_irqs, j));
- 
- 	raw_spin_lock_irqsave(&desc->lock, flags);
- 	if (desc->irq_data.chip) {
--- 
-2.25.1
-
+Thanks!
 
