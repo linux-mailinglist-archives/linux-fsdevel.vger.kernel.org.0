@@ -1,80 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-19537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958418C6A1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 18:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A1C8C6A2B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 18:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5061C28385C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 16:01:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85D91F234D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 16:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76DE156248;
-	Wed, 15 May 2024 16:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5289415624D;
+	Wed, 15 May 2024 16:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="J9El22d1"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IiIT5gZQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BEC155A53;
-	Wed, 15 May 2024 16:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038C115531A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 16:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715788856; cv=none; b=EOUCJdkWk7gq9+tsmXZZUTJGoREFVo1fmVeBojv498d0fcv160AkrYZ+0OaT6O47MoHZFV5w0YAgeg4cOzx1ucM527oLKP9qxEr0nxYHCQcJohjhaSXZbQVq30Q3OR27LOG6bMmEDpjMMCqhyiR/qxVgT8df1FXDT5pG3gwQ4IM=
+	t=1715789145; cv=none; b=EMgw2N3jWGPPaC6oT/wlrSjf4p1Iv1FObVtdYcrQemERYTxWan1/flxTPabOy7hu2pKSuuf+wrdJhII7a/ywi/FYLS/E9EKp/xRq7Cy1SMv5l4yUw+SdfzwhRjm507OvEKMQ1IpfqnhLzlb5aMRKlJJEjdarBx7ZODmjodlBL+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715788856; c=relaxed/simple;
-	bh=k/puBfybqGdRr3s0WvxOTD3Uq//G7F2oQm8GUykR+Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHOYF7PalhZ6ym+wNvh1HeRYlspn4FK9wBIcC/mDrCvGM95JkRbEdXqBRfqexBRsDqPK9TDeGkNCQjFv/yPmJ3EpQPcX0fiDnKIAvmhpRCnd0IAymfQeEyKSVnjOdsA5xWY5NG1H6n/1IuNPQq6r1OT8uheeqyRtpDkiXIwsNL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=J9El22d1; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=k/puBfybqGdRr3s0WvxOTD3Uq//G7F2oQm8GUykR+Bg=; b=J9El22d1eLEvXYRqeMrIo/on1Y
-	xKAb0pZjsq5PVXgThiBl41GRr0BHp7i/pJK9+wlrkWI+MAcv1d+GKcDZVno/b2lv6J2dz7dJMq0u5
-	f8aZB4jeZrAZ0qKTW0uP49kEVwMib1KR8qHxsb7MGaFUZaLHzGRhlzolaD99EYQZiqoumUb4381bY
-	wlzvjyoBK+eA3eO87XiJlOudtLYFK0MLsM/7QMVXaeI7gxX5hevKWaQyUIiaCCwHaqVXhEatxH7IX
-	KcIPWfR59DT3w66YccTf+I1Xx3Ai30S0Md1p32AxY0vqhjS51mW4xTPXQ1+1kdJ8aWMY192U2kBPj
-	WItA821Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s7H3Y-007XlO-0F;
-	Wed, 15 May 2024 16:00:40 +0000
-Date: Wed, 15 May 2024 17:00:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jiasheng Jiang <jiashengjiangcool@outlook.com>
-Cc: brauner@kernel.org, jack@suse.cz, arnd@arndb.de, gregkh@suse.de,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libfs: fix implicitly cast in simple_attr_write_xsigned()
-Message-ID: <20240515160040.GL2118490@ZenIV>
-References: <BYAPR03MB41685A92DCDD499A2B1369F0ADEC2@BYAPR03MB4168.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1715789145; c=relaxed/simple;
+	bh=hJHrdHj0cikWqaVWvyi6gHT8PuTbJVo4o4T87OWEoW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ub2PkuMTthvON8iIioFjmVqCx3k2xqfqqt3NbF1YoSYk3IZZT4MZPK8zC78DmcovCaLWPtLZ8K38PNfjuK4J6fsVtjs/WWH8N201FePfwLlr6+1O/Lxj9i/bh0bvFPZuJK6NRI9gpj597c/4j3VezwID7MAq7uRqeIJCIUFxqlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IiIT5gZQ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a609dd3fso256980566b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 09:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715789142; x=1716393942; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=u2ehF00UkFVYae8eoKheTBkPEUp/ENYAZ+/DySjcSWU=;
+        b=IiIT5gZQcqzKMHpc/5W2YcOOu4OfnKolvmspj74yxAWqNITkfbkalSasme1ro4Y04/
+         XpW7WdYlyE51aHYUmCcNtloejCVXx/NJLDaWYO0Ja/fGofbf0QzrZlCp1xvk52trxioP
+         sDmCwmUj60J2pm5tTtb6kow47ES9pMVF005Lk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715789142; x=1716393942;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u2ehF00UkFVYae8eoKheTBkPEUp/ENYAZ+/DySjcSWU=;
+        b=iJcM5k8JojgdC4KSeoDPHdCdu38/oUqXzFWdHFIhr0FQ9WQ5Z/5ySibCVZdziVr4Rn
+         3+eAUwUc0yfLoWKXrygT5PRHrDH2CLFWH/P/5xfF+isZNvpsGZsPfHNZQHyFtYgEa+0i
+         KXokRnNeFzw8mMCtfJHC7RWFbfROW7IaNCf0HyUcck4cuko8nwZVoiKdZGVpxNTumjCa
+         Xut+not2C1YPrI/UrMWhdVTL3Ezi+Yt73K/xKrJwPoOyb9tTXZz7A1uTyAF9WbVLZzVd
+         n8U4IdB1eQ0c8YEQwwnGLeKMIahMSigpruR5QxJ45fl9mlwBijJunIY2bifE6tlQdMud
+         fl0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVUdGnQKl4I5agwlNF8/RAO1MfK920wCeNAQUQyuhA1n/0obg/XEL8h9wOPnXG4kOCvdWGNqMoWO7sDyjRjYuRZ5WFGiIEJuN96OGTOhw==
+X-Gm-Message-State: AOJu0YzKjspuo/D7owGjX1+CBPme8pfH+RAbxYqxwRwW+hPvVi6N0o7B
+	5j19F/k0G2lCnaPcC0ZYuQn9Eka2sXuRIpJUsIcrZEVG7/ULqeYqJ15VOWdFtd/jIf/L56g0K9m
+	9PtWFng==
+X-Google-Smtp-Source: AGHT+IF5XQEc2EelFtzKhAj0P3XDMncnwJkrTMeco1l26rJilVrxlsNfn94G+0oM0zELYUGFA2EOYw==
+X-Received: by 2002:a17:907:720f:b0:a59:9ed5:eefc with SMTP id a640c23a62f3a-a5a2d30ba12mr1870953666b.32.1715789142241;
+        Wed, 15 May 2024 09:05:42 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01797sm888460266b.176.2024.05.15.09.05.41
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 09:05:41 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59cdd185b9so270432366b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 09:05:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXkmUoBiGAAO9Jjb9lb9iRU/BoPOdR5e7x3Xb5j3GGKXug2ctZJhrazUeLXllfQq42yHs/Cp7qdZBHJf4E/ozAWpeMkDq6gmV8GQXn5fg==
+X-Received: by 2002:a17:907:25c1:b0:a59:9eee:b1cb with SMTP id
+ a640c23a62f3a-a5a2d30be86mr1715412166b.35.1715789140754; Wed, 15 May 2024
+ 09:05:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BYAPR03MB41685A92DCDD499A2B1369F0ADEC2@BYAPR03MB4168.namprd03.prod.outlook.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
+ <20240515091727.22034-1-laoar.shao@gmail.com>
+In-Reply-To: <20240515091727.22034-1-laoar.shao@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 15 May 2024 09:05:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgcnsjRvJ3d_Pm6HZ+0Pf_er4Zt2T04E1TSCDywECSJJQ@mail.gmail.com>
+Message-ID: <CAHk-=wgcnsjRvJ3d_Pm6HZ+0Pf_er4Zt2T04E1TSCDywECSJJQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Delete the associated dentry when deleting a file
+To: Yafang Shao <laoar.shao@gmail.com>, kernel test robot <oliver.sang@intel.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	longman@redhat.com, viro@zeniv.linux.org.uk, walters@verbum.org, 
+	wangkai86@huawei.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 15, 2024 at 03:17:25PM +0000, Jiasheng Jiang wrote:
-> Return 0 to indicate failure and return "len" to indicate success.
-> It was hard to distinguish success or failure if "len" equals the error
-> code after the implicit cast.
-> Moreover, eliminating implicit cast is a better practice.
+Oliver,
+ is there any chance you could run this through the test robot
+performance suite? The original full patch at
 
-According to whom?
+    https://lore.kernel.org/all/20240515091727.22034-1-laoar.shao@gmail.com/
 
-Merits of your ex cathedra claims aside, you do realize that functions
-have calling conventions because they are, well, called, right?
-And changing the value returned in such and such case should be
-accompanied with the corresponding change in the _callers_.
+and it would be interesting if the test robot could see if the patch
+makes any difference on any other loads?
 
-Al, wondering if somebody had decided to play with LLM...
+Thanks,
+                     Linus
+
+On Wed, 15 May 2024 at 02:17, Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> Our applications, built on Elasticsearch[0], frequently create and delete
+> files. These applications operate within containers, some with a memory
+> limit exceeding 100GB. Over prolonged periods, the accumulation of negative
+> dentries within these containers can amount to tens of gigabytes.
+>
+> Upon container exit, directories are deleted. However, due to the numerous
+> associated dentries, this process can be time-consuming. Our users have
+> expressed frustration with this prolonged exit duration, which constitutes
+> our first issue.
 
