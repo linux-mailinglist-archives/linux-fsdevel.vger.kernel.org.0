@@ -1,164 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-19542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0080C8C6AC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 18:37:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1A08C6AC6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 18:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B68E1F238F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 16:37:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A509B213C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 16:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F4F23776;
-	Wed, 15 May 2024 16:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D213AF2;
+	Wed, 15 May 2024 16:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOHfFBOK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Had3bBPe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOHfFBOK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Had3bBPe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3cLrDZt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43AF1392;
-	Wed, 15 May 2024 16:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70753182D2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 16:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715791010; cv=none; b=e4Mkv/2bgFSHGMVaQJZkVcernd+JE+Qk802wUezroXRDF+XEACazl4GXxTKZdoEekyinl/re6bb/WmVY2CStWP347rJv07eWWYopP74MZ8Te7EI1NUBsVigblSZSDUm6iCPttfOjHS/ALU+jxbnlGZGQyU3WIqQ4JFqs9jxUu/I=
+	t=1715791176; cv=none; b=hjhtrep12t7UN8jihnJS9umfT0x3fwLhscs2uXWpwFb+fn8AlllBInd2DutMUK1gcUWPUTC3RXsAonewTButEMCVgUazxrMg2/dTy9E3g1kV4BLtUgtF4AskNfp7YL75HoD8ZULlEPfJ23OfUoAiZkjpZnF2Q9vdByyjlWj9Wwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715791010; c=relaxed/simple;
-	bh=5cYTWTUqYGK9Lsmtgex2ufr1zilkF/fgbuIddliU2eI=;
+	s=arc-20240116; t=1715791176; c=relaxed/simple;
+	bh=bnayU8m1sDLm6kdssSAK4LUwezHcTHIIDp7UzD0NHJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pB/8wCyo3BXdKPkkOrGT5XmxUUe9ydZ/vzfkg95wJ/q5724RNeRu950HvpsZM6WydcbTRhIh9qr+xc+sY7vnF79hXV1GwzTHdjbc2k4yxw/F420mriU8NU1H2Q6jdlRnBlNLovgUx+ZxDsY6Zd0rrKaHmvBJ4TATPRbbi4qzFHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOHfFBOK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Had3bBPe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOHfFBOK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Had3bBPe; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D06333D5F;
-	Wed, 15 May 2024 16:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715791007;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
-	b=LOHfFBOKWrsRaYqT8+TT0cBmr77VY7wrW8IqkCyFNH3j6sqhuFE3DZsBwTF/Ggi2k7ABAP
-	+C5RtiT77YduzRCJPTVbYfqcaajCTRSvKR651OOSKp3JDuG93csf4bqAURLPJtLAopTbIC
-	yPo1GgLWUa8w98jEigA3fS+ii+8FvV4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715791007;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
-	b=Had3bBPeqHgjP38nE6OY8jdPc5wF4L8kmzpQ9FZZk6Q68Y8iFV7GrgZP590jlZ2ToOA7q0
-	7IwjYdB5FHfeTbAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715791007;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
-	b=LOHfFBOKWrsRaYqT8+TT0cBmr77VY7wrW8IqkCyFNH3j6sqhuFE3DZsBwTF/Ggi2k7ABAP
-	+C5RtiT77YduzRCJPTVbYfqcaajCTRSvKR651OOSKp3JDuG93csf4bqAURLPJtLAopTbIC
-	yPo1GgLWUa8w98jEigA3fS+ii+8FvV4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715791007;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
-	b=Had3bBPeqHgjP38nE6OY8jdPc5wF4L8kmzpQ9FZZk6Q68Y8iFV7GrgZP590jlZ2ToOA7q0
-	7IwjYdB5FHfeTbAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E714A1372E;
-	Wed, 15 May 2024 16:36:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id u7suOJ7kRGZdIgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 15 May 2024 16:36:46 +0000
-Date: Wed, 15 May 2024 18:36:45 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+06006fc4a90bff8e8f17@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io
-Message-ID: <20240515163645.GR4449@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <000000000000169326060971d07a@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=An+CZzsZhmijW7PEtEaUOZZyQyuaKkNQncqvWt/d4NGRA9KGE/1opdKVshTmCI1BY7HL75vHt5xonbbfKslotluczBAx7TGV7uaWfagj5BM/pGS/96VshufBzg9valDjEfrTtjSmqxmuvNm9Un6xvFY1PiRGzT4Fps+Tf8dFICY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3cLrDZt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 796ADC116B1;
+	Wed, 15 May 2024 16:39:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715791176;
+	bh=bnayU8m1sDLm6kdssSAK4LUwezHcTHIIDp7UzD0NHJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I3cLrDZt1GFkbOfS2vkcFQjUewsUt8sa4v+t286jEVTnVLbhrPZs2LtP7PZ51E1sL
+	 zp2PYCmKZw9m67g1ZMk5DGgPEGM8pEzb+D/GftBg79PJ6h/q82Dyf9ApMqONcFxkSF
+	 YMC0xcdL7dx52iEd3C+tfn7V3m8fV+dksoLHUNhoS8DxdM5JnZA4UbmmJ/f+N2d14k
+	 8vmR4bHwhJbO83CAVgBhAOqilFG/Ne0sx+jk6P3CqzJV8krUbCuagXDoFVzFyv6Z9w
+	 Es8cxglE08Q3IIAEI8Lfiil/JdUAaGZmLJ02vOQHhvmvU87+1vqy5tY0aS5Pxt53cd
+	 Ig7WPpkO6jO3g==
+Date: Wed, 15 May 2024 18:39:34 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+Message-ID: <20240515-anklopfen-ausgleichen-0d7c220b16f4@brauner>
+References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
+ <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
+ <210098f9-1e71-48c9-be08-7e8074ec33c1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <000000000000169326060971d07a@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Flag: NO
-X-Spam-Score: 0.53
-X-Spam-Level: 
-X-Spamd-Result: default: False [0.53 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=c3aadb4391bbacce];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	BAYES_HAM(-0.97)[86.80%];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[06006fc4a90bff8e8f17];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
+In-Reply-To: <210098f9-1e71-48c9-be08-7e8074ec33c1@kernel.org>
 
-On Sun, Nov 05, 2023 at 05:31:27PM -0800, syzbot wrote:
-> Hello,
+On Wed, May 15, 2024 at 01:10:49PM +0200, Jiri Slaby wrote:
+> On 13. 02. 24, 17:45, Christian Brauner wrote:
+> > This moves pidfds from the anonymous inode infrastructure to a tiny
+> > pseudo filesystem. This has been on my todo for quite a while as it will
+> > unblock further work that we weren't able to do simply because of the
+> > very justified limitations of anonymous inodes. Moving pidfds to a tiny
+> > pseudo filesystem allows:
+> > 
+> > * statx() on pidfds becomes useful for the first time.
+> > * pidfds can be compared simply via statx() and then comparing inode
+> >    numbers.
+> > * pidfds have unique inode numbers for the system lifetime.
+> > * struct pid is now stashed in inode->i_private instead of
+> >    file->private_data. This means it is now possible to introduce
+> >    concepts that operate on a process once all file descriptors have been
+> >    closed. A concrete example is kill-on-last-close.
+> > * file->private_data is freed up for per-file options for pidfds.
+> > * Each struct pid will refer to a different inode but the same struct
+> >    pid will refer to the same inode if it's opened multiple times. In
+> >    contrast to now where each struct pid refers to the same inode. Even
+> >    if we were to move to anon_inode_create_getfile() which creates new
+> >    inodes we'd still be associating the same struct pid with multiple
+> >    different inodes.
+> > * Pidfds now go through the regular dentry_open() path which means that
+> >    all security hooks are called unblocking proper LSM management for
+> >    pidfds. In addition fsnotify hooks are called and allow for listening
+> >    to open events on pidfds.
+> > 
+> > The tiny pseudo filesystem is not visible anywhere in userspace exactly
+> > like e.g., pipefs and sockfs. There's no lookup, there's no complex
+> > inode operations, nothing. Dentries and inodes are always deleted when
+> > the last pidfd is closed.
 > 
-> syzbot found the following issue on:
+> This breaks lsof and util-linux.
 > 
-> HEAD commit:    8bc9e6515183 Merge tag 'devicetree-for-6.7' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10e087a0e80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c3aadb4391bbacce
-> dashboard link: https://syzkaller.appspot.com/bug?extid=06006fc4a90bff8e8f17
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> Without the commit, lsof shows:
+> systemd      ... 59 [pidfd:899]
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6c9b9f6781b1/disk-8bc9e651.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/44acae63a945/vmlinux-8bc9e651.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/f0058df8ab69/bzImage-8bc9e651.xz
+> With the commit:
+> systemd      ... 1187 pidfd
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+06006fc4a90bff8e8f17@syzkaller.appspotmail.com
+> 
+> And that user-visible change breaks a lot of stuff, incl. lsof tests.
+> 
+> For util-linux, its test fail with:
+> 
+> > [  125s] --- tests/expected/lsfd/column-name-pidfd	2024-05-06 07:20:54.655845940 +0000
+> > [  125s] +++ tests/output/lsfd/column-name-pidfd	2024-05-15 01:04:15.406666666 +0000
+> > [  125s] @@ -1,2 +1,2 @@
+> > [  125s] -3 anon_inode:[pidfd] pid=1 comm= nspid=1
+> > [  125s] +3 pidfd:[INODENUM] pidfd:[INODENUM]
+> > [  125s]  pidfd:ASSOC,KNAME,NAME: 0
+> > [  125s]          lsfd: NAME and KNAME column: [02] pidfd             ... FAILED (lsfd/column-name-pidfd)
+> 
+> And:
+> > [  125s] --- tests/expected/lsfd/column-type-pidfd	2024-05-06 07:20:54.655845940 +0000
+> > [  125s] +++ tests/output/lsfd/column-type-pidfd	2024-05-15 01:04:15.573333333 +0000
+> > [  125s] @@ -1,2 +1,2 @@
+> > [  125s] -3 UNKN pidfd
+> > [  125s] +3 REG REG
+> > [  125s]  pidfd:ASSOC,STTYPE,TYPE: 0
+> > [  125s]          lsfd: TYPE and STTYPE column: [02] pidfd            ... FAILED (lsfd/column-type-pidfd)
+> 
+> Any ideas?
 
-#syz fix: btrfs: don't drop extent_map for free space inode on write error
+util-linux upstream is already handling that correctly now but it seems that
+lsof is not. To fix this in the kernel we'll need something like. If you could
+test this it'd be great as I'm currently traveling:
 
-We were not aware that syzbot also hit the problem, we got report from
-our CI so the auto close tags was missing.
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index a63d5d24aa02..3da848a8a95e 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -201,10 +201,8 @@ static const struct super_operations pidfs_sops = {
+
+ static char *pidfs_dname(struct dentry *dentry, char *buffer, int buflen)
+ {
+-       struct inode *inode = d_inode(dentry);
+-       struct pid *pid = inode->i_private;
+-
+-       return dynamic_dname(buffer, buflen, "pidfd:[%llu]", pid->ino);
++       /* Fake the old name as some userspace seems to rely on this. */
++       return dynamic_dname(buffer, buflen, "anon_inode:[pidfd]");
+ }
+
+ static const struct dentry_operations pidfs_dentry_operations = {
+
 
