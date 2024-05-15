@@ -1,122 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-19489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41FF8C5F1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 04:37:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122E08C5F4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 04:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD1F1F2223C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 02:37:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6443281D4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2024 02:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5102E83F;
-	Wed, 15 May 2024 02:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XJ8h8vQp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3C3374C3;
+	Wed, 15 May 2024 02:55:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5141F19A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 02:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DD836AFB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2024 02:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715740625; cv=none; b=M6B3c3pLKFdegRYJdjPwlelwdZu5I7ImW62gPP4HhJeIKWoFXDuvKMHR5LfpXWcKcS0i/M8p54J1P3VKdo6lAISFlPIwxaDCHDAj3qSStXuxerIDtkPnlkkyygP+MssGsSOLXC3uX71POXglNqxXu2KaV0YohquEG8zsiEASFDQ=
+	t=1715741745; cv=none; b=gT1EL5vuYNnyf3XpDh2zNQra24++0Acs3q4Ul04lH8hn1EoRpkivoTXUHP6cTpmAXOW5ejSRUFOJvIgptXoARVy5mMCD3js1CAPUiw8zGf3scJSPYvjc9xntcTxVIUC19ZGdBwAcPDp7z75LqfDlTG0p42qetU28VTzCgHajs3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715740625; c=relaxed/simple;
-	bh=anaYlj5uyzV/yorOyeMGx6FlIcI1J0+ASb7d/ruGMs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KLj0rnzkx0UYJ62iV63JIydc7e02hoyi+JL34iDXxE0lFBuEd9smt7MvNz15vFtSud0F3zHyJUeJ4O7dnD4BqwMM4o/Oqzw6/vA8uKDPUR/VPzWXxRLnQX/FvqCc0T8zmhTc0pRl4g8b8J1ZKKvrqO8gjbOr4PqnnB9766YV7sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XJ8h8vQp; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52192578b95so7394919e87.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 19:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715740621; x=1716345421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ubGmKRp1xaYVLJwscmD9+YdbS90Exthgnbyo4BQtCwc=;
-        b=XJ8h8vQp79a4o8sKqbqdR3xIrX6lJkLSm8OypdpfwyRbexczGoVXWNm6an5K4DtYyT
-         ETMDbydHWhj+7H5zdd0/GGmzQ3o3bFYK7cGxJ9bZYtXxIsV1lf6Q1iho/7faOrhGsB3U
-         gI6vIVpR0s62rLo4HVX4gahAJI/CxtQ2Lm1FU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715740621; x=1716345421;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ubGmKRp1xaYVLJwscmD9+YdbS90Exthgnbyo4BQtCwc=;
-        b=UOQvDSX3BBWxroUce1z5EIqqqIkB6zlMHv02JkUEjEpFi6frkYyGXNZzZYT3MQpLq6
-         y0/fAfxvIWeChO+jFev6J24hcEmhN0+SYPGJxUYlArO/occn9IfUWxycXGSWlmpPqL9W
-         NS1yx0vyEhqwjVDQ/LAMKLduPNRHEP8Xc9WB8/mEfJa8lMdeXlmVt19nkGLoJNvC2sgh
-         7Ki31V3n62xpAJdOT+PwiLcXfjtTX5fBmOfbaiGGRvpzeOywj+hl77L4U11O8/A7UfxR
-         CUig4GLq/BMKN7eDxDk7huYi+qC+V5fk5Tkb4xf7rVARP7kiAi54JPMtfZ7vQdHhPiJz
-         N7eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtEVQQUf+3HPQa7oaE/KuOf3ku0RYot60c860W19PNht/U5vC0Fb2aLpgiWDDpqeA8LPed3RIt6JaTG9qxEVXSstBcq46p9nI7UcSlsQ==
-X-Gm-Message-State: AOJu0YygtlEtyjooev0V0uCZPs1h6FO+hl6G+uWgAB5ehdYDtOllYJ4H
-	rQEsdAmb3GAeJsPv9J0DG7194lCyz9OChmqnFoheRB5TAKcyCJfcEVCFLyATsSURxHMX2jsUAKh
-	d7/E5sQ==
-X-Google-Smtp-Source: AGHT+IEolow1PQOmzTPx5pG9gN4eXKFF3HucU/n7u6maYIoGix6OX4VxkQx/UQ1ljB5fAyiQg3W3Ug==
-X-Received: by 2002:ac2:5931:0:b0:51c:1fb4:2329 with SMTP id 2adb3069b0e04-5220ff74c2fmr8764238e87.65.1715740621239;
-        Tue, 14 May 2024 19:37:01 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f39d2cc6sm2347281e87.261.2024.05.14.19.37.00
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 19:37:00 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f57713684so7971222e87.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2024 19:37:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXf4KAQhlDqLCDWEvRMjpnmdDTnTp+OFZxtzZ9bTPQlZozVhEBGssr6oeb8FrcjATtKSxp88WJBpJYfPKhCYXvxHeoDI6XKrM9U36u/gg==
-X-Received: by 2002:a05:6512:238e:b0:523:8cc2:e01a with SMTP id
- 2adb3069b0e04-5238cc2e125mr729591e87.2.1715740619970; Tue, 14 May 2024
- 19:36:59 -0700 (PDT)
+	s=arc-20240116; t=1715741745; c=relaxed/simple;
+	bh=9YlK5frvXl8OuvwM/Y7zEIInO59Tb3ub852E8hMSGH0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gFMIvviiSVIPUiQEmR6hhiX7smRhGN0ixGu/Y8jSP6WxoXD0HXfvhVEInO64dqp3XUgNRIS3CYkwdVE7NbvhSvzAXGJdNheMmITAbINqW0Xx+SkLcqZTfoyWXJ/20v/OpDLJQJHFCgfkyXYgOmouF6QWRn/+KYLvbmb6XwILvg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VfHnP6mcYzvYkZ;
+	Wed, 15 May 2024 10:52:09 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9D8C5180060;
+	Wed, 15 May 2024 10:55:38 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 15 May
+ 2024 10:55:38 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <richard@nod.at>, <anton.ivanov@cambridgegreys.com>,
+	<johannes@sipsolutions.net>
+CC: <linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+	<lihongbo22@huawei.com>
+Subject: [PATCH] hostfs: convert hostfs to use the new mount API
+Date: Wed, 15 May 2024 10:55:36 +0800
+Message-ID: <20240515025536.3667017-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511022729.35144-1-laoar.shao@gmail.com> <CAHk-=wjs8MYigx695jk4dvF2vVPQa92K9fW_e6Li-Czt=wEGYw@mail.gmail.com>
- <CALOAHbCECWqpFzreANpvQJADicRr=AbP-nAymSEeUzUr3vGZMg@mail.gmail.com> <CALOAHbCgMvZR-YCJEpEHDCZVwvgASAenoCOOTTX76B_z-jasfw@mail.gmail.com>
-In-Reply-To: <CALOAHbCgMvZR-YCJEpEHDCZVwvgASAenoCOOTTX76B_z-jasfw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 14 May 2024 19:36:43 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
-Message-ID: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: dcache: Delete the associated dentry when
- deleting a file
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, Wangkai <wangkai86@huawei.com>, 
-	Colin Walters <walters@verbum.org>, Waiman Long <longman@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Tue, 14 May 2024 at 19:19, Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> I believe this change is still necessary. Would you prefer to commit
-> it directly, or should I send an official patch?
+Convert the hostfs filesystem to the new internal mount API as the old
+one will be obsoleted and removed.  This allows greater flexibility in
+communication of mount parameters between userspace, the VFS and the
+filesystem.
 
-Sending an official patch just for people to try out sounds good
-regardless, but I'd really like some real performance testing on other
-loads too before just taking it.
+See Documentation/filesystems/mount_api.txt for more information.
 
-It *may* be acceptable, and it's certainly simple. It's also almost
-certainly safe from a correctness angle.
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ fs/hostfs/hostfs_kern.c | 83 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 62 insertions(+), 21 deletions(-)
 
-But it might regress performance on other important loads even if it
-fixes an issue on your load.
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index a73d27c4dd58..6ec3c368d7bf 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -16,11 +16,16 @@
+ #include <linux/seq_file.h>
+ #include <linux/writeback.h>
+ #include <linux/mount.h>
++#include <linux/fs_context.h>
+ #include <linux/namei.h>
+ #include "hostfs.h"
+ #include <init.h>
+ #include <kern.h>
+ 
++struct hostfs_fs_info {
++	char *host_root_path;
++};
++
+ struct hostfs_inode_info {
+ 	int fd;
+ 	fmode_t mode;
+@@ -90,8 +95,10 @@ static char *__dentry_name(struct dentry *dentry, char *name)
+ 	char *p = dentry_path_raw(dentry, name, PATH_MAX);
+ 	char *root;
+ 	size_t len;
++	struct hostfs_fs_info *fsi;
+ 
+-	root = dentry->d_sb->s_fs_info;
++	fsi = dentry->d_sb->s_fs_info;
++	root = fsi->host_root_path;
+ 	len = strlen(root);
+ 	if (IS_ERR(p)) {
+ 		__putname(name);
+@@ -196,8 +203,10 @@ static int hostfs_statfs(struct dentry *dentry, struct kstatfs *sf)
+ 	long long f_bavail;
+ 	long long f_files;
+ 	long long f_ffree;
++	struct hostfs_fs_info *fsi;
+ 
+-	err = do_statfs(dentry->d_sb->s_fs_info,
++	fsi = dentry->d_sb->s_fs_info;
++	err = do_statfs(fsi->host_root_path,
+ 			&sf->f_bsize, &f_blocks, &f_bfree, &f_bavail, &f_files,
+ 			&f_ffree, &sf->f_fsid, sizeof(sf->f_fsid),
+ 			&sf->f_namelen);
+@@ -245,7 +254,11 @@ static void hostfs_free_inode(struct inode *inode)
+ 
+ static int hostfs_show_options(struct seq_file *seq, struct dentry *root)
+ {
+-	const char *root_path = root->d_sb->s_fs_info;
++	struct hostfs_fs_info *fsi;
++	const char *root_path;
++
++	fsi = root->d_sb->s_fs_info;
++	root_path = fsi->host_root_path;
+ 	size_t offset = strlen(root_ino) + 1;
+ 
+ 	if (strlen(root_path) > offset)
+@@ -922,10 +935,11 @@ static const struct inode_operations hostfs_link_iops = {
+ 	.get_link	= hostfs_get_link,
+ };
+ 
+-static int hostfs_fill_sb_common(struct super_block *sb, void *d, int silent)
++static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
++	struct hostfs_fs_info *fsi = sb->s_fs_info;
+ 	struct inode *root_inode;
+-	char *host_root_path, *req_root = d;
++	char *host_root = fc->source;
+ 	int err;
+ 
+ 	sb->s_blocksize = 1024;
+@@ -939,15 +953,15 @@ static int hostfs_fill_sb_common(struct super_block *sb, void *d, int silent)
+ 		return err;
+ 
+ 	/* NULL is printed as '(null)' by printf(): avoid that. */
+-	if (req_root == NULL)
+-		req_root = "";
++	if (fc->source == NULL)
++		host_root = "";
+ 
+-	sb->s_fs_info = host_root_path =
+-		kasprintf(GFP_KERNEL, "%s/%s", root_ino, req_root);
+-	if (host_root_path == NULL)
++	fsi->host_root_path =
++		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
++	if (fsi->host_root_path == NULL)
+ 		return -ENOMEM;
+ 
+-	root_inode = hostfs_iget(sb, host_root_path);
++	root_inode = hostfs_iget(sb, fsi->host_root_path);
+ 	if (IS_ERR(root_inode))
+ 		return PTR_ERR(root_inode);
+ 
+@@ -955,7 +969,7 @@ static int hostfs_fill_sb_common(struct super_block *sb, void *d, int silent)
+ 		char *name;
+ 
+ 		iput(root_inode);
+-		name = follow_link(host_root_path);
++		name = follow_link(fsi->host_root_path);
+ 		if (IS_ERR(name))
+ 			return PTR_ERR(name);
+ 
+@@ -972,11 +986,38 @@ static int hostfs_fill_sb_common(struct super_block *sb, void *d, int silent)
+ 	return 0;
+ }
+ 
+-static struct dentry *hostfs_read_sb(struct file_system_type *type,
+-			  int flags, const char *dev_name,
+-			  void *data)
++static int hostfs_fc_get_tree(struct fs_context *fc)
+ {
+-	return mount_nodev(type, flags, data, hostfs_fill_sb_common);
++	return get_tree_nodev(fc, hostfs_fill_super);
++}
++
++static void hostfs_fc_free(struct fs_context *fc)
++{
++	struct hostfs_fs_info *fsi = fc->s_fs_info;
++
++	if (!fsi)
++		return;
++
++	kfree(fsi->host_root_path);
++	kfree(fsi);
++}
++
++static const struct fs_context_operations hostfs_context_ops = {
++	.get_tree	= hostfs_fc_get_tree,
++	.free		= hostfs_fc_free,
++};
++
++static int hostfs_init_fs_context(struct fs_context *fc)
++{
++	struct hostfs_fs_info *fsi;
++
++	fsi = kzalloc(sizeof(*fsi), GFP_KERNEL);
++	if (!fsi)
++		return -ENOMEM;
++
++	fc->s_fs_info = fsi;
++	fc->ops = &hostfs_context_ops;
++	return 0;
+ }
+ 
+ static void hostfs_kill_sb(struct super_block *s)
+@@ -986,11 +1027,11 @@ static void hostfs_kill_sb(struct super_block *s)
+ }
+ 
+ static struct file_system_type hostfs_type = {
+-	.owner 		= THIS_MODULE,
+-	.name 		= "hostfs",
+-	.mount	 	= hostfs_read_sb,
+-	.kill_sb	= hostfs_kill_sb,
+-	.fs_flags 	= 0,
++	.owner			= THIS_MODULE,
++	.name			= "hostfs",
++	.init_fs_context	= hostfs_init_fs_context,
++	.kill_sb		= hostfs_kill_sb,
++	.fs_flags		= 0,
+ };
+ MODULE_ALIAS_FS("hostfs");
+ 
+-- 
+2.34.1
 
-That's why we had the whole discussion about alternatives.
-
-I'm still of the opinion that we should probably *try* this simple
-approach, but I really would hope we could have some test tree that
-people run a lot of benchmarks on.
-
-Does anybody do filesystem benchmarking on the mm tree? Or do we have
-some good tree to just give it a good testing? It feels a bit
-excessive to put it in my development tree just to get some
-performance testing coverage, but maybe that's what we have to do..
-
-                 Linus
 
