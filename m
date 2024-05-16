@@ -1,191 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-19569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7908C722B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 09:41:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211E68C720F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 09:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4023F1F213F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 07:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97230282812
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 07:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F0A12E1C0;
-	Thu, 16 May 2024 07:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596AF71739;
+	Thu, 16 May 2024 07:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="B5JTPmYD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883DC3C473;
-	Thu, 16 May 2024 07:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ABA3E49E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2024 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715845241; cv=none; b=c+BICnZOGyKTvj2r0jNyEjy0+GeDanfnuRy6QDxgxcVzejqMedEITOesqT/2HSeK9JML6lHbhSvosZKpaRtx/ndhfblmi8GpE0KrikKcQ7Au7OTDGR4OsDJAM1oHtR7pdj67lJUAMOBWfdICImw9uVHAm/EQlVKVgR+RtZgMV8A=
+	t=1715844693; cv=none; b=C+aIkCY5vkMnaCkU2XQtuH42AJlwdVkYv/JvbaOSzZGdgovnB9U48bw57GYmecEKU3WFKpGYOtYlwUHrUkoTjDEngIYsmQ/4y8KNUrogI2GPitkGueC9gBqJagTRDhEoTvGw0+odKEEpb9Z16h97wtbFxfwAWbwA8cTkGID2xz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715845241; c=relaxed/simple;
-	bh=xuIlfY/3HVCtD8t5rWUv44jPGANtnz30uK1KfBywpWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=le51SH+20yIOaK4Sj4aed9D4IyqvzDN4GmpcODTTyh3QIETdIwv0DVqisiCSOgwQ75yutuQatE1IOe4HpP1Z2h6tpiaL4a+O5axPFkFRiBu+JH4avclzqhVPtiTagd+y0BekGTAAFauZmDE7ZBvzBJdEDchzWa/Rqv+cv7X74w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vg27b58l0z4f3jYW;
-	Thu, 16 May 2024 15:40:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 677D51A0847;
-	Thu, 16 May 2024 15:40:36 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBFtuEVmQuY4Mw--.31554S7;
-	Thu, 16 May 2024 15:40:36 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v2 3/3] xfs: correct the zeroing truncate range
-Date: Thu, 16 May 2024 15:30:01 +0800
-Message-Id: <20240516073001.1066373-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240516073001.1066373-1-yi.zhang@huaweicloud.com>
-References: <20240516073001.1066373-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1715844693; c=relaxed/simple;
+	bh=9MX6D9IimpJEieWy+a37mRcw4wRyMKCNdxMccONZOQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhaDjJ4qW7GmwVW/YIKYmvBCIEUSPTF6DKEwXKjRsvhyD/8kk1m90/2wnpdCAoTm6eDu8DWWHiDM7wBVepBM+PDuS+mMNHWkUMwaPOlcGB0vhB+o2g8FH66i96X9BPbxv6T0q3u6uh8hahzQ865cxkeiy6EuoUFr5ue1YBhUvdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=B5JTPmYD; arc=none smtp.client-ip=83.166.143.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Vg1x372gXzpYl;
+	Thu, 16 May 2024 09:31:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1715844679;
+	bh=x9B4v71FSOB+lN5lTjfx2Ss5JuMCQaPevVVCYis5sJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B5JTPmYDKDwqWT+JiXH4f2GatEcocJ1C8JDnJeJ9gqsn/yfFly9tcNzg2QJKG3DQ9
+	 Gw7NsOMqiFucb2I5qBqnE6X9zG4CrXZBliDiSC6vNAUbYqYX6UJb9RRM+kSziJm8vS
+	 RfP6PaTCVrAemYjkl4JoQlWctAe5AnSC2EFvED/0=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Vg1x25SDhzXZs;
+	Thu, 16 May 2024 09:31:18 +0200 (CEST)
+Date: Thu, 16 May 2024 09:31:20 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Cc: syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240516.doyox6Iengou@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXKBFtuEVmQuY4Mw--.31554S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrW7uF4UAw1DCr4fGFW8Xrb_yoWrGry5pr
-	s7K3Z8CrsrK347ZF1kXF1jvw1Fy3WrAF409ryfGrn7Za4DXr1Iyrn2gF4rKa1Utr4DXw4Y
-	qFs5tayUuas5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUFfHUDUUU
-	U
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+In-Reply-To: <20240515.Yoo5chaiNai9@digikod.net>
+X-Infomaniak-Routing: alpha
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Adding membarrier experts.
 
-When truncating a realtime file unaligned to a shorter size,
-xfs_setattr_size() only flush the EOF page before zeroing out, and
-xfs_truncate_page() also only zeros the EOF block. This could expose
-stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
-a write operation").
-
-If the sb_rextsize is bigger than one block, and we have a realtime
-inode that contains a long enough written extent. If we unaligned
-truncate into the middle of this extent, xfs_itruncate_extents() could
-split the extent and align the it's tail to sb_rextsize, there maybe
-have more than one blocks more between the end of the file. Since
-xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
-value, so it may leftover some blocks contains stale data that could be
-exposed if we append write it over a long enough distance later.
-
-xfs_truncate_page() should flush, zeros out the entire rtextsize range,
-and make sure the entire zeroed range have been flushed to disk before
-updating the inode size.
-
-Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
-Reported-by: Chandan Babu R <chandanbabu@kernel.org>
-Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
- fs/xfs/xfs_iops.c  | 10 ----------
- 2 files changed, 31 insertions(+), 14 deletions(-)
-
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 4958cc3337bc..fc379450fe74 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1466,12 +1466,39 @@ xfs_truncate_page(
- 	loff_t			pos,
- 	bool			*did_zero)
- {
-+	struct xfs_mount	*mp = ip->i_mount;
- 	struct inode		*inode = VFS_I(ip);
- 	unsigned int		blocksize = i_blocksize(inode);
-+	int			error;
-+
-+	if (XFS_IS_REALTIME_INODE(ip))
-+		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
-+
-+	/*
-+	 * iomap won't detect a dirty page over an unwritten block (or a
-+	 * cow block over a hole) and subsequently skips zeroing the
-+	 * newly post-EOF portion of the page. Flush the new EOF to
-+	 * convert the block before the pagecache truncate.
-+	 */
-+	error = filemap_write_and_wait_range(inode->i_mapping, pos,
-+					     roundup_64(pos, blocksize));
-+	if (error)
-+		return error;
- 
- 	if (IS_DAX(inode))
--		return dax_truncate_page(inode, pos, blocksize, did_zero,
--					&xfs_dax_write_iomap_ops);
--	return iomap_truncate_page(inode, pos, blocksize, did_zero,
--				   &xfs_buffered_write_iomap_ops);
-+		error = dax_truncate_page(inode, pos, blocksize, did_zero,
-+					  &xfs_dax_write_iomap_ops);
-+	else
-+		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
-+					    &xfs_buffered_write_iomap_ops);
-+	if (error)
-+		return error;
-+
-+	/*
-+	 * Write back path won't write dirty blocks post EOF folio,
-+	 * flush the entire zeroed range before updating the inode
-+	 * size.
-+	 */
-+	return filemap_write_and_wait_range(inode->i_mapping, pos,
-+					    roundup_64(pos, blocksize));
- }
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 66f8c47642e8..baeeddf4a6bb 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -845,16 +845,6 @@ xfs_setattr_size(
- 		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
- 				&did_zeroing);
- 	} else {
--		/*
--		 * iomap won't detect a dirty page over an unwritten block (or a
--		 * cow block over a hole) and subsequently skips zeroing the
--		 * newly post-EOF portion of the page. Flush the new EOF to
--		 * convert the block before the pagecache truncate.
--		 */
--		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
--						     newsize);
--		if (error)
--			return error;
- 		error = xfs_truncate_page(ip, newsize, &did_zeroing);
- 	}
- 
--- 
-2.39.2
-
+On Wed, May 15, 2024 at 05:12:58PM +0200, Mickaël Salaün wrote:
+> On Thu, May 09, 2024 at 08:01:49PM -0400, Paul Moore wrote:
+> > On Wed, May 8, 2024 at 3:32 PM syzbot
+> > <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
+> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > >
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+> > >
+> > > general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > > KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
+> > > CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> > > RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
+> > 
+> > Possibly a Landlock issue, Mickaël?
+> 
+> It looks like security_inode_free() is called two times on the same
+> inode.  This could happen if an inode labeled by Landlock is put
+> concurrently with release_inode() for a closed ruleset or with
+> hook_sb_delete().  I didn't find any race condition that could lead to
+> two calls to iput() though.  Could WRITE_ONCE(object->underobj, NULL)
+> change anything even if object->lock is locked?
+> 
+> A bit unrelated but looking at the SELinux code, I see that selinux_inode()
+> checks `!inode->i_security`.  In which case could this happen?
+> 
+> > 
+> > > Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> > > RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> > > RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> > > RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> > > RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> > > R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> > > R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> > > FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> > > Call Trace:
+> > >  <TASK>
+> > >  security_inode_free+0x4a/0xd0 security/security.c:1613
+> > >  __destroy_inode+0x2d9/0x650 fs/inode.c:286
+> > >  destroy_inode fs/inode.c:309 [inline]
+> > >  evict+0x521/0x630 fs/inode.c:682
+> > >  dispose_list fs/inode.c:700 [inline]
+> > >  evict_inodes+0x5f9/0x690 fs/inode.c:750
+> > >  generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+> > >  kill_block_super+0x44/0x90 fs/super.c:1675
+> > >  deactivate_locked_super+0xc6/0x130 fs/super.c:472
+> > >  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+> > >  task_work_run+0x251/0x310 kernel/task_work.c:180
+> > >  exit_task_work include/linux/task_work.h:38 [inline]
+> > >  do_exit+0xa1b/0x27e0 kernel/exit.c:878
+> > >  do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+> > >  __do_sys_exit_group kernel/exit.c:1038 [inline]
+> > >  __se_sys_exit_group kernel/exit.c:1036 [inline]
+> > >  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > RIP: 0033:0x7f731567dd69
+> > > Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> > > RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > > RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> > > R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+> > >  </TASK>
+> > > Modules linked in:
+> > > ---[ end trace 0000000000000000 ]---
+> > 
+> > -- 
+> > paul-moore.com
+> > 
 
