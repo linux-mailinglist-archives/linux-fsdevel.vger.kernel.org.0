@@ -1,154 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-19571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3434F8C72C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 10:27:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D028E8C73A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 11:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E88281EC9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 08:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841DD283F5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 09:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BE212EBFE;
-	Thu, 16 May 2024 08:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8040D14389E;
+	Thu, 16 May 2024 09:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="vfGCEB+3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JzWG76IW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BFE76C76;
-	Thu, 16 May 2024 08:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21E2142E98;
+	Thu, 16 May 2024 09:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848055; cv=none; b=k6VBcxmthZa6n8HHxFU/5joIrZwcb04pXZ0vsSaB69CYP9m8rdLlxTBKIgEu5KpgIkEoG5NifCnrE0FbWimNC/1B8jF8VvhL4LpH9OmSvI1wtSvlmaFD2odvFqbu6lqVPDLh77i+ht1wREgACaM+U4lrz1Wq4VH1dELX7yKuTa0=
+	t=1715851275; cv=none; b=i1IsjE7aAX1c32xbxqOTCnKq5FOVn6WY+TDYLFqyUfnDNZacq98UFNNHOJiE1oo9L+ao7poHUqa4NukmMYlUV/R2aahjAVOIkrAwiMrxgH0R4P8xLtsAw81C5qhuFiWeLpUGjs6T5yTwzaZUcYlxe25Cj9p8+QWSnwBOD4VS3PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848055; c=relaxed/simple;
-	bh=Fa3tCa+nHTX5GaUek5DQjejgVE5UyfDOFzTBnbAZZgQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WYd1o5mteRp6hPuHUxqGHvKtTvmibBGabvja/ZMUscaNboOa1GEBO/2wazSZFvdK6MsI6FpFBNE7CKv6YnGzuJRD3OKIXda6L4nsTQXfMNIpDOXLye0lAoB4570oyWx/+c71BR/HEAlKygPT7WnFcj1W9WlrNRMiybkKZ/vJd1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vg39h3dg3z4f3jYN;
-	Thu, 16 May 2024 16:27:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 381E41A10BC;
-	Thu, 16 May 2024 16:27:29 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAnmAttw0VmcIZ6NA--.39916S3;
-	Thu, 16 May 2024 16:27:27 +0800 (CST)
-Subject: Re: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
- <20240515002513.yaglghza4i4ldmr5@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <f0eb115d-dd10-e156-9aed-65b7f479f008@huaweicloud.com>
-Date: Thu, 16 May 2024 16:27:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715851275; c=relaxed/simple;
+	bh=WlFpsPSmyjZIBGHuDRdxoUw1jX7zjzbZNZ4acDEAtqA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=War/u7N5xhb5E7GeJQxxOGB99p5dsvDfopSpII11BEfxyzZi+Ir3Mz1JI4hOhDtvOL4AUGEJwA13/08qXFbXm2w2AO/J8QibAlJjWOZwAwwQGbwTgBhXGa4N4Kk6DgvjhTUYKK7QLrvVa5MT56PnNaVXRlRkhCFZYuobfCmfKm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=vfGCEB+3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JzWG76IW; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 1CEFA2005EA;
+	Thu, 16 May 2024 05:21:13 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 16 May 2024 05:21:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1715851273; x=1715854873; bh=Cs
+	PwxtNEboc97nItRTvXzU9jOSiXL4Xlxrbhmp4vl5I=; b=vfGCEB+3HkxMxLp9FO
+	ipmSzmXydZqFu1zVtJKehBPGsoVPOpBt7iJY2K72FdMMy3GPgrhwsTgSdJdhl/Wm
+	hufbpODk7CL30uk43gFZz7HMHQnmo9zaSDiOv2gO1o//Zxp6ljpeQwxIdNewmuKj
+	q+IbHE3E0IkZJ4lxfJulTMROPt43AlVGy5WXi+6Zst/KcoXtCxo39BklTb4Xj6nI
+	BJ76+5aSPBHiQqcpfxRZCl2rpl/UqhWvfl49Oqd2dMSgdhr8zpR3FrNcDnwpxW08
+	wSiyggz5KPuBWT8z/5vdteJvMAGcphPeTq7sqqT5g61HnTZ1PwQQRwGWtFm/0bLg
+	WfDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=i76614979.fm3; t=1715851273; x=1715854873; bh=CsP
+	wxtNEboc97nItRTvXzU9jOSiXL4Xlxrbhmp4vl5I=; b=JzWG76IW4ZLozth+n20
+	1az3Ny4Xt2CyZqw499vfBo2mgA6JRYjUEJ3Xajb4U+gOERt0glG0G18M5+6AspZK
+	CmeOYDM2e/PQ8d3ebrGYF979HJReR4jmEKZ2UB9h10vm1aESDbdKltbCp3oQyV3t
+	E0fuf6DhmTBYS8uXJkA3oDlQD+7M8kQcjBya8xEVhyzgRtjsXvXVowVbnSAUBxYB
+	/qeVi9jQxoBFtgRXaGY04xurE2QPbARUodbw4OKxUjaRhRe32n3yrTFO+uXQEjK+
+	IZNDEhuOGW4C64/2HyFOAHl9s+jQB3B31bxh0TLeNHrOjHL5dhwJKdcn+/pc2DZB
+	ZSw==
+X-ME-Sender: <xms:B9BFZiHJqT7YDFHlGCDvq2lu4QdBaXJ4RldxzRx62U8QJfl_tfV-5Q>
+    <xme:B9BFZjVlYImEY28SX9dDH7XrMAdfDHqUth9nh2yD8e-5j4Qgixf5-33nqCVj6CkKl
+    2NkXge0KOIos24aQGY>
+X-ME-Received: <xmr:B9BFZsINNVN0FqQuhAljpd7Yhu8F9XPPgkU03J9vNNrv-YiTdQ1b9JJMRn0-rYMWZp4ezJtXBcMDQFuxWZU3az18aWqCbwaV_yZV9IDeAjocyA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehuddgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpeflohhnrght
+    hhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenucggtf
+    frrghtthgvrhhnpeeugeehkeegteeugfekkeehgfejvdetueelffeluddutefhiedvudel
+    heehheegjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehjtggrlhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:B9BFZsGTrkdQfNOM7eYbvwjTc3LANegLpivoWFttOnQtjxWutNIuVQ>
+    <xmx:B9BFZoUTRC4raHIE87jjZB5fc17SWlBQUe7dhSaN3c5GBSmTso0_0Q>
+    <xmx:B9BFZvNpCLLkHwv8gfJDMVkREq0eQ6cXyQgX6t6VnIQUs-ZNjjhtVg>
+    <xmx:B9BFZv3_ZjXZBmyvvzoKl702p9Sgs5Jceedvn2QDpcmhgszehQpFcg>
+    <xmx:CdBFZpUEL0BCn81TtsDEabx4MVf0uLOLvuvIC1yEAnuTiLIiOx_cuTCI>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 May 2024 05:21:10 -0400 (EDT)
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: brauner@kernel.org,
+	ebiederm@xmission.com,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: containers@lists.linux.dev,
+	Jonathan Calmels <jcalmels@3xx0.net>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	keyrings@vger.kernel.org
+Subject: [PATCH 0/3] Introduce user namespace capabilities
+Date: Thu, 16 May 2024 02:22:02 -0700
+Message-ID: <20240516092213.6799-1-jcalmels@3xx0.net>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240515002513.yaglghza4i4ldmr5@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAnmAttw0VmcIZ6NA--.39916S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxArWxCw4fAr1xXry8Jw47Arb_yoW5Aw43pF
-	W0k3W2gr4kZ34I9r40qa17ZFW0yws5Ja48XrsxXwsaga1UG3s7KrW7tFyavFyDtFs5Ww4U
-	XF4S9rn7Kryj937anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/15 8:25, Jan Kara wrote:
-> On Mon 13-05-24 15:21:19, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> jbd2_transaction_committed() is used to check whether a transaction with
->> the given tid has already committed, it hold j_state_lock in read mode
->> and check the tid of current running transaction and committing
->> transaction, but holding the j_state_lock is expensive.
->>
->> We have already stored the sequence number of the most recently
->> committed transaction in journal t->j_commit_sequence, we could do this
->> check by comparing it with the given tid instead. If the given tid isn't
->> smaller than j_commit_sequence, we can ensure that the given transaction
->> has been committed. That way we could drop the expensive lock and
->> achieve about 10% ~ 20% performance gains in concurrent DIOs on may
->> virtual machine with 100G ramdisk.
->>
->> fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
->>     -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
->>     -group_reporting
->>
->> Before:
->>   overwrite       IOPS=88.2k, BW=344MiB/s
->>   read            IOPS=95.7k, BW=374MiB/s
->>   rand overwrite  IOPS=98.7k, BW=386MiB/s
->>   randread        IOPS=102k, BW=397MiB/s
->>
->> After:
->>   verwrite:       IOPS=105k, BW=410MiB/s
->>   read:           IOPS=112k, BW=436MiB/s
->>   rand overwrite: IOPS=104k, BW=404MiB/s
->>   randread:       IOPS=111k, BW=432MiB/s
->>
->> CC: Dave Chinner <david@fromorbit.com>
->> Suggested-by: Dave Chinner <david@fromorbit.com>
->> Link: https://lore.kernel.org/linux-ext4/493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com/T/#m6a14df5d085527a188c5a151191e87a3252dc4e2
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> I agree this is workable solution and the performance benefits are nice. But
-> I have some comments regarding the implementation:
-> 
->> @@ -3199,8 +3199,8 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
->>  	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
->>  
->>  	if (journal) {
->> -		if (jbd2_transaction_committed(journal,
->> -			EXT4_I(inode)->i_datasync_tid))
->> +		if (tid_geq(journal->j_commit_sequence,
->> +			    EXT4_I(inode)->i_datasync_tid))
-> 
-> Please leave the helper jbd2_transaction_committed(), just make the
-> implementation more efficient. 
+It's that time of the year again where we debate security settings for user
+namespaces ;)
 
-Sure.
+I’ve been experimenting with different approaches to address the gripe
+around user namespaces being used as attack vectors.
+After invaluable feedback from Serge and Christian offline, this is what I
+came up with.
 
-> Also accessing j_commit_sequence without any
-> lock is theoretically problematic wrt compiler optimization. You should have
-> READ_ONCE() there and the places modifying j_commit_sequence need to use
-> WRITE_ONCE().
-> 
+There are obviously a lot of things we could do differently but I feel this
+is the right balance between functionality, simplicity and security. This
+also serves as a good foundation and could always be extended if the need
+arises in the future.
 
-Thanks for pointing this out, but I'm not sure if we have to need READ_ONCE()
-here. IIUC, if we add READ_ONCE(), we could make sure to get the latest
-j_commit_sequence, if not, there is a window (it might becomes larger) that
-we could get the old value and jbd2_transaction_committed() could return false
-even if the given transaction was just committed, but I think the window is
-always there, so it looks like it is not a big problem, is that right?
+Notes:
 
-Thanks,
-Yi.
+- Adding a new capability set is far from ideal, but trying to reuse the
+  existing capability framework was deemed both impractical and
+  questionable security-wise, so here we are.
+
+- We might want to add new capabilities for some of the checks instead of
+  reusing CAP_SETPCAP every time. Serge mentioned something like
+  CAP_SYS_LIMIT?
+
+- In the last patch, we could decide to have stronger requirements and
+  perform checks inside cap_capable() in case we want to retroactively
+  prevent capabilities in old namespaces, this might be an overreach though
+  so I left it out.
+
+  I'm also not fond of the ulong logic for setting the sysctl parameter, on
+  the other hand, the usermodhelper code always uses two u32s which makes it
+  very confusing to set in userspace.
+
+
+Jonathan Calmels (3):
+  capabilities: user namespace capabilities
+  capabilities: add securebit for strict userns caps
+  capabilities: add cap userns sysctl mask
+
+ fs/proc/array.c                 |  9 ++++
+ include/linux/cred.h            |  3 ++
+ include/linux/securebits.h      |  1 +
+ include/linux/user_namespace.h  |  7 +++
+ include/uapi/linux/prctl.h      |  7 +++
+ include/uapi/linux/securebits.h | 11 ++++-
+ kernel/cred.c                   |  3 ++
+ kernel/sysctl.c                 | 10 ++++
+ kernel/umh.c                    | 16 +++++++
+ kernel/user_namespace.c         | 83 ++++++++++++++++++++++++++++++---
+ security/commoncap.c            | 59 +++++++++++++++++++++++
+ security/keys/process_keys.c    |  3 ++
+ 12 files changed, 204 insertions(+), 8 deletions(-)
+
+-- 
+2.45.0
 
 
