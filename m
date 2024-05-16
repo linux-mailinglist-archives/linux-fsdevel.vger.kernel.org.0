@@ -1,73 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-19588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E69D8C78DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 17:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488928C78E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 17:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3351F241D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 15:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0023F281FE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 15:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8635F14D444;
-	Thu, 16 May 2024 15:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D0314BFAB;
+	Thu, 16 May 2024 15:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="o7RyCWrg"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fztK2EiO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fu0W55kc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fztK2EiO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fu0W55kc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E9314B971;
-	Thu, 16 May 2024 15:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6364C146D7F;
+	Thu, 16 May 2024 15:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715871746; cv=none; b=Vj/bKM9bDlzi40DJQ4ZPXA2MrMEyH+l1Ryo9HJ5v3glLuLgBlSO+axgsRpaeJWELGHerswE8DkdO1itnW89Uttyq99MZbmngrv1mr3xvQEGEhsvrlVbUxVenTjplJlTSuknyWhyEgNsg/geYI7DWupfuGYCgmCNYeDM5cI9jDJg=
+	t=1715871908; cv=none; b=TmKBfZ1HXy9YnJdAqeH5NPqYFBL9Y2pwkZxB5vxcnm5ODBOeADKCZfL8m71xf86wecYw8kCSnldTDLZh1Yw5Hpkl0I/J5xek+nsHkD+fOtN71sHGUN3VY2HY0IVoqVwkjuQVRNNV1Isfz8dq81LF66394N7RCgQXczR1Bau5xRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715871746; c=relaxed/simple;
-	bh=NdRI/Y36TueoklqIJdLfj5Gr6dkrpxBWjR7/vkP2/QQ=;
+	s=arc-20240116; t=1715871908; c=relaxed/simple;
+	bh=LW40CIlbMTKDUSpREPl3MGLSPFjJOFqK/CYmT7n1/KM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h37pobWFaIDBsh/XEQXIEijOMSpQ5gYNBwghB6d1vT6ZxA9I413pBc9Vc/5TUpmykSz2sqP4uZvgofm2L9Uzp4OmfNNqFzDc9QeUQvPUx7inLJCGp369Vy75RkSHDd3o1dN02SSbp1yZmmS31y7yNmP6VcEG4qjv8BoYm85QJG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=o7RyCWrg; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwVEyqquX5Ok1bgCdn4EGsDvK2mosVhGO325v/ARRsFB9jeWfQBL0ZDlLKxF3xsLonaXTyAOUJwQAt2WCrNGmlKgc3oWm8V8BSrp6z60EIe5pdCvJsdWTWNGEK6glldKz83B8kIySnbtGOKPkZjsyr/hnk2JaNKG0i4Jc+W5HSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fztK2EiO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fu0W55kc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fztK2EiO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fu0W55kc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VgCxS6Pcdz9sHh;
-	Thu, 16 May 2024 17:02:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1715871740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 887BC5C5BF;
+	Thu, 16 May 2024 15:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715871904;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WxNAEyW9ggRd+sEfela/enfZjPtD+w15s4sCnmMcAME=;
-	b=o7RyCWrgTggNBmoO3IGUfYqLO6BZRxxScT26H5+As2pU3NVo+pQT/GHYEQUIjtpNlNEHJA
-	fWDQuVcDQie2arLUzDbZKnj3gUnWiGXphVcTqTb02eXTT2wFEzFmP3ivkCQi//nvQyuQdS
-	aizIQkT9OuyBBX6hd1phh5L7w7gpHLbPLRurQVTpr3vxzslPEQB2gIdn87cql+fLA+ZE3+
-	+7SN8ru4NNTXE8MkXE2lwCpTQF/HKOlx91tX5Hc1U9TxgQ+hOq4/WYfPzVWwRRFPX53K3m
-	PmQEh31fMQpGg3t89QINzdUQ29WDq5GXl+t2RSPkdWK3k4XFZRmHmkZpDi7OkQ==
-Date: Thu, 16 May 2024 15:02:06 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, djwong@kernel.org, hch@lst.de,
-	Keith Busch <kbusch@kernel.org>, mcgrof@kernel.org,
-	akpm@linux-foundation.org, brauner@kernel.org,
-	chandan.babu@oracle.com, gost.dev@samsung.com, hare@suse.de,
-	john.g.garry@oracle.com, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	ritesh.list@gmail.com, ziy@nvidia.com
-Subject: Re: [RFC] iomap: use huge zero folio in iomap_dio_zero
-Message-ID: <20240516150206.d64eezbj3waieef5@quentin>
-References: <20240503095353.3798063-8-mcgrof@kernel.org>
- <20240507145811.52987-1-kernel@pankajraghav.com>
- <ZkQG7bdFStBLFv3g@casper.infradead.org>
- <ZkQfId5IdKFRigy2@kbusch-mbp>
- <ZkQ0Pj26H81HxQ_4@casper.infradead.org>
- <20240515155943.2uaa23nvddmgtkul@quentin>
- <ZkT46AsZ3WghOArL@casper.infradead.org>
+	bh=vl8867/EB6hcGN7QQaR2OYX9pnZOjnhcKwMi97OTjQk=;
+	b=fztK2EiOnb7G1g2Eru30uB6WCsNzzNr+uuWZb7uVlcHXLrzQRQv1J+Diq8bHuARxR9OFRp
+	teU4Qa1j2SVhQ963vEktr/N9UuWVB6NhrjOg/znu569C+eE2QUeIaKH36Ro60dFe5vZM9i
+	9g1S94m0MuqARUK5RHMm4pmBFt84XZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715871904;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vl8867/EB6hcGN7QQaR2OYX9pnZOjnhcKwMi97OTjQk=;
+	b=fu0W55kcHK1TNvDG1fpNERRqUDt/cxvCmqklfg7UQsd3xgh3ZU4b0UVUZI//+EMg78etkV
+	bwcmOeMmMUa9WfDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fztK2EiO;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=fu0W55kc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715871904;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vl8867/EB6hcGN7QQaR2OYX9pnZOjnhcKwMi97OTjQk=;
+	b=fztK2EiOnb7G1g2Eru30uB6WCsNzzNr+uuWZb7uVlcHXLrzQRQv1J+Diq8bHuARxR9OFRp
+	teU4Qa1j2SVhQ963vEktr/N9UuWVB6NhrjOg/znu569C+eE2QUeIaKH36Ro60dFe5vZM9i
+	9g1S94m0MuqARUK5RHMm4pmBFt84XZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715871904;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vl8867/EB6hcGN7QQaR2OYX9pnZOjnhcKwMi97OTjQk=;
+	b=fu0W55kcHK1TNvDG1fpNERRqUDt/cxvCmqklfg7UQsd3xgh3ZU4b0UVUZI//+EMg78etkV
+	bwcmOeMmMUa9WfDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 77459137C3;
+	Thu, 16 May 2024 15:05:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cXf2HKAgRmaKCQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:05:04 +0000
+Date: Thu, 16 May 2024 17:04:58 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] WARNING in emit_fiemap_extent
+Message-ID: <20240516150458.GZ4449@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <00000000000091164305fe966bdd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,120 +105,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZkT46AsZ3WghOArL@casper.infradead.org>
+In-Reply-To: <00000000000091164305fe966bdd@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.01 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	BAYES_HAM(-1.28)[89.93%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[9992306148b06272f3bb];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 887BC5C5BF
+X-Spam-Flag: NO
+X-Spam-Score: 0.01
+X-Spamd-Bar: /
 
-On Wed, May 15, 2024 at 07:03:20PM +0100, Matthew Wilcox wrote:
-> On Wed, May 15, 2024 at 03:59:43PM +0000, Pankaj Raghav (Samsung) wrote:
-> >  static int __init iomap_init(void)
-> >  {
-> > +       void            *addr = kzalloc(16 * PAGE_SIZE, GFP_KERNEL);
+On Tue, Jun 20, 2023 at 02:34:46PM -0700, syzbot wrote:
+> Hello,
 > 
-> Don't use XFS coding style outside XFS.
+> syzbot found the following issue on:
 > 
-> kzalloc() does not guarantee page alignment much less alignment to
-> a folio.  It happens to work today, but that is an implementation
-> artefact.
+> HEAD commit:    40f71e7cd3c6 Merge tag 'net-6.4-rc7' of git://git.kernel.o..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=166d2acf280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9992306148b06272f3bb
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c65e87280000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1094a78b280000
 > 
-> > +
-> > +       if (!addr)
-> > +               return -ENOMEM;
-> > +
-> > +       zero_fsb_folio = virt_to_folio(addr);
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/2dc89d5fee38/disk-40f71e7c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/0ced5a475218/vmlinux-40f71e7c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d543a4f69684/bzImage-40f71e7c.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/7cde8d2312ae/mount_0.gz
 > 
-> We also don't guarantee that calling kzalloc() gives you a virtual
-> address that can be converted to a folio.  You need to allocate a folio
-> to be sure that you get a folio.
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com
 > 
-> Of course, you don't actually need a folio.  You don't need any of the
-> folio metadata and can just use raw pages.
-> 
-> > +       /*
-> > +        * The zero folio used is 64k.
-> > +        */
-> > +       WARN_ON_ONCE(len > (16 * PAGE_SIZE));
-> 
-> PAGE_SIZE is not necessarily 4KiB.
-> 
-> > +       bio = iomap_dio_alloc_bio(iter, dio, BIO_MAX_VECS,
-> > +                                 REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-> 
-> The point was that we now only need one biovec, not MAX.
-> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 5351 at fs/btrfs/extent_io.c:2824 emit_fiemap_extent+0xee/0x410
 
-Thanks for the comments. I think it all makes sense:
-
-diff --git a/fs/internal.h b/fs/internal.h
-index 7ca738904e34..e152b77a77e4 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -35,6 +35,14 @@ static inline void bdev_cache_init(void)
- int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
-                get_block_t *get_block, const struct iomap *iomap);
- 
-+/*
-+ * iomap/buffered-io.c
-+ */
-+
-+#define ZERO_FSB_SIZE (65536)
-+#define ZERO_FSB_ORDER (get_order(ZERO_FSB_SIZE))
-+extern struct page *zero_fs_block;
-+
- /*
-  * char_dev.c
-  */
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4e8e41c8b3c0..36d2f7edd310 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -42,6 +42,7 @@ struct iomap_folio_state {
- };
- 
- static struct bio_set iomap_ioend_bioset;
-+struct page *zero_fs_block;
- 
- static inline bool ifs_is_fully_uptodate(struct folio *folio,
-                struct iomap_folio_state *ifs)
-@@ -1985,8 +1986,13 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
- }
- EXPORT_SYMBOL_GPL(iomap_writepages);
- 
-+
- static int __init iomap_init(void)
- {
-+       zero_fs_block = alloc_pages(GFP_KERNEL | __GFP_ZERO, ZERO_FSB_ORDER);
-+       if (!zero_fs_block)
-+               return -ENOMEM;
-+
-        return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-                           offsetof(struct iomap_ioend, io_bio),
-                           BIOSET_NEED_BVECS);
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index f3b43d223a46..50c2bca8a347 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -236,17 +236,22 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-                loff_t pos, unsigned len)
- {
-        struct inode *inode = file_inode(dio->iocb->ki_filp);
--       struct page *page = ZERO_PAGE(0);
-        struct bio *bio;
- 
-+       /*
-+        * Max block size supported is 64k
-+        */
-+       WARN_ON_ONCE(len > ZERO_FSB_SIZE);
-+
-        bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-        fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
-                                  GFP_KERNEL);
-+
-        bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
-        bio->bi_private = dio;
-        bio->bi_end_io = iomap_dio_bio_end_io;
- 
--       __bio_add_page(bio, page, len, 0);
-+       __bio_add_page(bio, zero_fs_block, len, 0);
-        iomap_dio_submit_bio(iter, dio, bio, pos);
- }
-
+#syx fix: btrfs: fix race between ordered extent completion and fiemap
 
