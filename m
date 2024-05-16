@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-19603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5623E8C7CD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 21:06:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C4A8C7CD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 21:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAAD51F21FB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 19:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3243D2833C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 19:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF58158D80;
-	Thu, 16 May 2024 19:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BCE15920B;
+	Thu, 16 May 2024 19:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="dUPwJ5TY"
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ZHbCJ+XJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from aer-iport-2.cisco.com (aer-iport-2.cisco.com [173.38.203.52])
+Received: from aer-iport-4.cisco.com (aer-iport-4.cisco.com [173.38.203.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4F7158A3F;
-	Thu, 16 May 2024 19:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.38.203.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8C0158D77;
+	Thu, 16 May 2024 19:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.38.203.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715886270; cv=none; b=kv7b1ntAi6VHK/Q9junrNo9Y/1Y11HLd6xx65ljgizvY4ZilOa02XtK+UpYdpogOKRrcNKXd7z9siYOaclweQ6r3zBNk0CbjBSwrL1UElqFctJiFgCfVxIkFy7jLcm/g/ODWYUXuGqd64UmWHvAEeUFWSO81//iXtD+nOcWIaX0=
+	t=1715886272; cv=none; b=e+ufxdwX3I/GwA3G1hNabAlhoGE4yKSgNWKXXOEXn65/TO62O+q7K8O1Welkm+P3w5vJTYqC9xaRoX3h2oqLWYFtKtkZ0fzVe2+w8HPlG76yIYZ1SXatuRqSD0qqjilqitSsTSHhe59gyvc6V7WuS0SbwR5GMPA9Jq+vK7WnwT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715886270; c=relaxed/simple;
-	bh=gaUlXe3wl+xDisP3R5K2Iyajwf5YxKCnqADsnqyc3AA=;
+	s=arc-20240116; t=1715886272; c=relaxed/simple;
+	bh=YVkKY+DVfu3Ns5YhZFxnBhlRk3J/PwOtX93n3BmC/r0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cjGki1yXGFN48nX41A9DkRdXotiYW/1dm5FIxHAHeCVYZuVlJmEuAEpUdk9TOBhE1M1IQNtbw8sdAL9OlR+/nWRBEJORvRo+n4W7Y1KSOtDwLQQFEV9tGfsgXDaRWfSNIKya/bedVwDNCzLuRu4v4FpXNdWy+ihf5qINi6DeiRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=dUPwJ5TY; arc=none smtp.client-ip=173.38.203.52
+	 MIME-Version; b=rNKOdhjSll4kayBYjVd+RwlxhHcTp+tERECLsTX2Pb7heCjzREbiN5SgzCh+7DqAFc9iBc7nMb61gqdHTbhdx/igjjynJ1y+BZqoIGgMPbYFkEz8S9eFXPT+6bFoXab43eRmQBPc8398qs2P4K4E12jRABlzpJzH9iOrdDmqBCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=ZHbCJ+XJ; arc=none smtp.client-ip=173.38.203.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=3172; q=dns/txt; s=iport;
-  t=1715886268; x=1717095868;
+  d=cisco.com; i=@cisco.com; l=3251; q=dns/txt; s=iport;
+  t=1715886271; x=1717095871;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=IARrAtPjZ/35pawnxYHHtgxzlwcbQQF1QO5K+2KrZxI=;
-  b=dUPwJ5TYSyd3zrKRdVr/TyawxPyId7HaqccKDALdMnwLH0SWmXvHfOk0
-   cAlWOt8KL5C2aQelfp5e5IJzH4R5hw0GXQJMkRPOF3ok4QBBOpMC77nTj
-   mVKfBYeD3mQBnoFe0tKoY/g8NPBHCab9qXIKHdnhNqWz7xfRv00ZSuHMi
-   I=;
-X-CSE-ConnectionGUID: qsVxvoxXTpyKGT09HZsAmA==
-X-CSE-MsgGUID: KUvDbz8ZSTyJr2NeFTsIAQ==
+  bh=+pfayBA377Ipl2qQGaCZtcT9bhjEsaDIsf91AaD2x7E=;
+  b=ZHbCJ+XJHSms5kH0i4Px/dU5jPf2aFyMfpSdlDBfOX0G1R2HWtveJ3lu
+   epg4ZTnecHPCu/rt7QHo6i/j98sxghOkaBU2w2nSHqvK8+eyFT16uUx8t
+   i+VJ4pG/jRaLEtEKF/42xlVl3TYjFNZ+eyCwnDolqtArxV1eXARBYXW1d
+   M=;
+X-CSE-ConnectionGUID: IN3ktra0TnyQzrIlWsIUSA==
+X-CSE-MsgGUID: MVb2X31TSLeouobFH9aTTA==
 X-IronPort-AV: E=Sophos;i="6.08,165,1712620800"; 
-   d="scan'208";a="12416992"
-Received: from aer-iport-nat.cisco.com (HELO aer-core-9.cisco.com) ([173.38.203.22])
-  by aer-iport-2.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 19:04:27 +0000
+   d="scan'208";a="12379876"
+Received: from aer-iport-nat.cisco.com (HELO aer-core-10.cisco.com) ([173.38.203.22])
+  by aer-iport-4.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 19:04:28 +0000
 Received: from localhost (ams3-vpn-dhcp4879.cisco.com [10.61.83.14])
 	(authenticated bits=0)
-	by aer-core-9.cisco.com (8.15.2/8.15.2) with ESMTPSA id 44GJ4QU3032847
+	by aer-core-10.cisco.com (8.15.2/8.15.2) with ESMTPSA id 44GJ4RKW101499
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 16 May 2024 19:04:27 GMT
+	Thu, 16 May 2024 19:04:28 GMT
 From: Ariel Miculas <amiculas@cisco.com>
 To: rust-for-linux@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
         ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
         shallyn@cisco.com, Ariel Miculas <amiculas@cisco.com>
-Subject: [RFC PATCH v3 21/22] fs: puzzlefs: add oci_root_dir and image_manifest mount parameters
-Date: Thu, 16 May 2024 22:03:44 +0300
-Message-Id: <20240516190345.957477-22-amiculas@cisco.com>
+Subject: [RFC PATCH v3 22/22] fs: puzzlefs: implement statfs for puzzlefs
+Date: Thu, 16 May 2024 22:03:45 +0300
+Message-Id: <20240516190345.957477-23-amiculas@cisco.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240516190345.957477-1-amiculas@cisco.com>
 References: <20240516190345.957477-1-amiculas@cisco.com>
@@ -73,110 +73,119 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Authenticated-User: amiculas@cisco.com
 X-Outbound-SMTP-Client: 10.61.83.14, ams3-vpn-dhcp4879.cisco.com
-X-Outbound-Node: aer-core-9.cisco.com
+X-Outbound-Node: aer-core-10.cisco.com
 
-These parameters are passed when mounting puzzlefs using '-o' option of
-mount:
--o oci_root_dir="/path/to/oci/dir"
--o image_manifest="root_hash_of_image_manifest"
-
-For a particular manifest in the manifests array in index.json (located
-in the oci_root_dir), the root hash of the image manifest is found in
-the digest field.
-
-It would be nicer if we could pass the tag, but we don't support json
-deserialization.
-
-Example of mount:
-mount -t puzzlefs -o oci_root_dir="/home/puzzlefs_oci" -o \
-image_manifest="2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297bcffdcae901b" \
-none /mnt
+In order to use a filesystem as a lower filesystem in an overlay, it
+must implement statfs.
 
 Signed-off-by: Ariel Miculas <amiculas@cisco.com>
 ---
- fs/puzzlefs/puzzlefs.rs | 49 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 44 insertions(+), 5 deletions(-)
+ fs/puzzlefs/puzzle/inode.rs | 26 ++++++++++++++++++++++++--
+ fs/puzzlefs/puzzlefs.rs     | 21 +++++++++++++++++++--
+ 2 files changed, 43 insertions(+), 4 deletions(-)
 
-diff --git a/fs/puzzlefs/puzzlefs.rs b/fs/puzzlefs/puzzlefs.rs
-index f4e94568c9cc..932f31917992 100644
---- a/fs/puzzlefs/puzzlefs.rs
-+++ b/fs/puzzlefs/puzzlefs.rs
-@@ -36,6 +36,32 @@ fn mode_to_fs_type(inode: &Inode) -> Result<DirEntryType> {
-     })
+diff --git a/fs/puzzlefs/puzzle/inode.rs b/fs/puzzlefs/puzzle/inode.rs
+index 318edbdc5163..a34f1064b632 100644
+--- a/fs/puzzlefs/puzzle/inode.rs
++++ b/fs/puzzlefs/puzzle/inode.rs
+@@ -14,6 +14,8 @@
+ pub(crate) struct PuzzleFS {
+     pub(crate) oci: Image,
+     layers: Vec<format::MetadataBlob>,
++    pub(crate) total_inodes: u64,
++    pub(crate) total_block_size: u64,
  }
  
-+#[derive(Default)]
-+struct PuzzleFsParams {
-+    oci_root_dir: Option<CString>,
-+    image_manifest: Option<CString>,
-+}
-+
-+#[vtable]
-+impl fs::Context<Self> for PuzzleFsModule {
-+    type Data = Box<PuzzleFsParams>;
-+
-+    kernel::define_fs_params! {Box<PuzzleFsParams>,
-+        {string, "oci_root_dir", |s, v| {
-+                                      s.oci_root_dir = Some(CString::try_from_fmt(format_args!("{v}"))?);
-+                                      Ok(())
-+                                  }},
-+        {string, "image_manifest", |s, v| {
-+                                      s.image_manifest = Some(CString::try_from_fmt(format_args!("{v}"))?);
-+                                      Ok(())
-+                                  }},
-+    }
-+
-+    fn try_new() -> Result<Self::Data> {
-+        Ok(Box::new(PuzzleFsParams::default(), GFP_KERNEL)?)
-+    }
-+}
-+
- const DIR_FOPS: file::Ops<PuzzleFsModule> = file::Ops::new::<PuzzleFsModule>();
- const DIR_IOPS: inode::Ops<PuzzleFsModule> = inode::Ops::new::<PuzzleFsModule>();
- const FILE_AOPS: address_space::Ops<PuzzleFsModule> = address_space::Ops::new::<PuzzleFsModule>();
-@@ -98,24 +124,37 @@ fn iget(sb: &sb::SuperBlock<Self>, ino: u64) -> Result<ARef<INode<Self>>> {
- }
+ impl PuzzleFS {
+@@ -22,13 +24,33 @@ pub(crate) fn open(oci_root_dir: &CStr, rootfs_path: &CStr) -> Result<PuzzleFS>
+         let oci = Image::open(vfs_mount)?;
+         let rootfs = oci.open_rootfs_blob(rootfs_path)?;
  
- impl fs::FileSystem for PuzzleFsModule {
-+    type Context = Self;
-     type Data = Box<PuzzleFS>;
-     type INodeData = Inode;
-     const NAME: &'static CStr = c_str!("puzzlefs");
- 
-     fn fill_super(
--        _data: (),
-+        data: Box<PuzzleFsParams>,
-         sb: &mut sb::SuperBlock<Self, sb::New>,
-         _: Option<inode::Mapper>,
-     ) -> Result<Box<PuzzleFS>> {
--        let puzzlefs = PuzzleFS::open(
--            c_str!("/home/puzzlefs_xattr"),
--            c_str!("ed63ace21eccceabab08d89afb75e94dae47973f82a17a172396a19ea953c8ab"),
--        );
-+        let Some(oci_root_dir) = data.oci_root_dir else {
-+            pr_err!("missing oci_root_dir parameter!\n");
-+            return Err(ENOTSUPP);
-+        };
- 
-+        let Some(image_manifest) = data.image_manifest else {
-+            pr_err!("missing image_manifest parameter!\n");
-+            return Err(ENOTSUPP);
-+        };
++        let mut total_block_size = 0;
++        let mut total_inodes: u64 = 0;
+         let mut layers = Vec::new();
+         for md in rootfs.metadatas.iter() {
+             let digest = Digest::try_from(md)?;
+-            layers.push(oci.open_metadata_blob(&digest)?, GFP_KERNEL)?;
++            let layer = oci.open_metadata_blob(&digest)?;
 +
-+        let puzzlefs = PuzzleFS::open(&oci_root_dir, &image_manifest);
-         if let Err(ref e) = puzzlefs {
-             pr_info!("error opening puzzlefs {e}\n");
++            // This may take up too much time, but we need to implement statfs if we want to use
++            // puzzlefs as a lower filesystem in overlayfs
++            let inodes = layer.get_inode_vector()?;
++            total_inodes += u64::from(inodes.len());
++            for inode_number in 0..inodes.len() {
++                let inode = Inode::from_capnp(inodes.get(inode_number))?;
++                if let InodeMode::File { chunks } = inode.mode {
++                    total_block_size += chunks.iter().map(|chunk| chunk.len).sum::<u64>();
++                }
++            }
++
++            layers.push(layer, GFP_KERNEL)?;
          }
  
-+        pr_info!(
-+            "opened puzzlefs [{}]:[{}]\n",
-+            &*oci_root_dir,
-+            &*image_manifest
-+        );
+-        Ok(PuzzleFS { oci, layers })
++        Ok(PuzzleFS {
++            oci,
++            layers,
++            total_inodes,
++            total_block_size,
++        })
+     }
+ 
+     pub(crate) fn find_inode(&self, ino: u64) -> Result<Inode> {
+diff --git a/fs/puzzlefs/puzzlefs.rs b/fs/puzzlefs/puzzlefs.rs
+index 932f31917992..633f60983849 100644
+--- a/fs/puzzlefs/puzzlefs.rs
++++ b/fs/puzzlefs/puzzlefs.rs
+@@ -4,7 +4,7 @@
+ 
+ use kernel::fs::{
+     address_space, dentry, dentry::DEntry, file, file::DirEntryType, file::File, inode,
+-    inode::INode, sb, Offset,
++    inode::INode, sb, Offset, Stat,
+ };
+ use kernel::prelude::*;
+ use kernel::types::{ARef, Either, Locked};
+@@ -23,6 +23,10 @@
+     license: "GPL",
+ }
+ 
++const PUZZLEFS_BSIZE: u64 = 1 << PUZZLEFS_BSIZE_BITS;
++const PUZZLEFS_BSIZE_BITS: u8 = 12;
++const PUZZLEFS_MAGIC: usize = 0x7a7a7570;
 +
+ fn mode_to_fs_type(inode: &Inode) -> Result<DirEntryType> {
+     Ok(match inode.mode {
+         InodeMode::File { .. } => DirEntryType::Reg,
+@@ -156,7 +160,7 @@ fn fill_super(
+         );
+ 
          let puzzlefs = puzzlefs?;
-         sb.set_magic(0x7a7a7570);
+-        sb.set_magic(0x7a7a7570);
++        sb.set_magic(PUZZLEFS_MAGIC);
          Ok(Box::new(puzzlefs, GFP_KERNEL)?)
+     }
+ 
+@@ -194,6 +198,19 @@ fn read_xattr(
+         }
+         Err(ENODATA)
+     }
++
++    fn statfs(dentry: &DEntry<Self>) -> Result<Stat> {
++        let puzzlefs = dentry.super_block().data();
++
++        Ok(Stat {
++            magic: PUZZLEFS_MAGIC,
++            namelen: isize::MAX,
++            bsize: PUZZLEFS_BSIZE as _,
++            // Round total_block_size up
++            blocks: (puzzlefs.total_block_size + PUZZLEFS_BSIZE - 1) / PUZZLEFS_BSIZE,
++            files: puzzlefs.total_inodes,
++        })
++    }
+ }
+ 
+ #[vtable]
 -- 
 2.34.1
 
