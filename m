@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-19574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D248C73B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 11:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A6F8C73B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 11:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C9C283645
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 09:22:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E744284251
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 09:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBF2143C60;
-	Thu, 16 May 2024 09:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA9514389A;
+	Thu, 16 May 2024 09:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="UA73pc/O";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jMQGshpO"
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="lm26UlGB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S5bgLvXi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6F14388C;
-	Thu, 16 May 2024 09:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F277143C6F;
+	Thu, 16 May 2024 09:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715851296; cv=none; b=HkmfgW5eOxPxQ0kR0DQzM36WyNKKVQUJx0iLLA+nKUuA2cc0/Yd2xrPk08OHh6p6o3we+6mLO0jOXzAj1zODnRTYZScB9hrY+6GSsSVZfmWul0PEtDYRSkqM3KWLRH5IeIyRap0t/zXOceQWko2GX8xfnFbXK9yKZuObsxEFMUo=
+	t=1715851303; cv=none; b=DDqvDiSU/YZZVBhuxZvu20GFW7CPEVx40QJyQ3i9KgywhgsXkgT+nE9AV48xy1633tgYvjMzUJdnTCtL9SX5zGKEOtMhVXLfIM+1cOkv8zlBETfoMAIYZmHchCNDDFQ5tl6Gdob49si8hq3AUeblY+6Wpm3kAgI1RUq0MkhlAE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715851296; c=relaxed/simple;
-	bh=6O1ofNJUy0gHxkhdD5Q09AwNTpUXElwnupKCEglOSCw=;
+	s=arc-20240116; t=1715851303; c=relaxed/simple;
+	bh=1H97K6DDCaTu5wDYD3cSAAS1gqyXZ1uuZ0c3//v/g1c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uTuMJpZDdiNnhRHI7IalyEH+szOO6nLu7otpmTh9Yt27EbBe7LLliSduLWkj1ZFzJh/6Zirq/UVLYu1wGz/bp5sXNbdu5PcTNiyjWYz1JySVRjHuZHaFaFrNqecCWkXjLNzYnzkxxj7bMTUbzpOQ7BCIhjNBXXPjosJkjYTlDec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=UA73pc/O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jMQGshpO; arc=none smtp.client-ip=103.168.172.142
+	 MIME-Version; b=JehMs0DYc8kelipPuJ6NRaWZEBLG+qxIiFyt/lC5EkZQc+A+Z11oGrfPqKNadFVfSp1PqE1iUOHmkPDDBs8wY2WU9qDaU/qf3JCRC+kyUhgzLmsk4C8mJahApeCO8kilvfUDn7+M+C+a8cViWl2BXFdK0OGuEgMdTO+nHQDEAdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=lm26UlGB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S5bgLvXi; arc=none smtp.client-ip=103.168.172.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 836752005AF;
-	Thu, 16 May 2024 05:21:33 -0400 (EDT)
+	by mailflow.nyi.internal (Postfix) with ESMTP id AF4252005EF;
+	Thu, 16 May 2024 05:21:39 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 16 May 2024 05:21:33 -0400
+  by compute4.internal (MEProxy); Thu, 16 May 2024 05:21:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1715851293;
-	 x=1715854893; bh=HAPFKHfyGQbSeGmKfPdaAPtnhg6SRuYQe6Dc6y43qhQ=; b=
-	UA73pc/OZj0YmV+zhOjcamXvQzJJ5N4fuyV89JobU6APEbh3YxSpSZ9SZmzmS94G
-	rMh36GIb308syuhVcPjzaefRcxakmw+Hju6JVck7oXFoE/hbwWnZ5OJk6ZhC/UOe
-	s3bU+U5i7eb3MOT9xFPu4a9FVA8Q7HCqJ44eYDSYNn8GvtHNMWK0MjN9FL0gHkVs
-	sBGyDG36b2NmJwtsBkRqJ7sswWf4c4wJjf65YaEOWAxpRfVAajhHmiZLFm54AxZN
-	nQxYnr4PMZ+PSk4uXC9gOAxaDcEv3YaXx1LxKtt/9WFN9uOn0vZ6feamqDAJ2DDs
-	g0kJO06+fxzabNaaiWQLRQ==
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1715851299; x=
+	1715854899; bh=YH9uRR3GuhjkujujI5PhznoSSSyCvnA2D5Rmli2gZ7Q=; b=l
+	m26UlGBhBiCx888VFeVOM8jT9aNAxyzXZPXIUO/EXzIcak0AEL4Ao4UTtM4YeKQ4
+	BzT7attEDfga4PAJ4Oy15kdsKCXPgNMkkAkbkKJY7xhIw9x3/P55xamNgkRh8HPu
+	Ad0D5hPdRsXzSayLcDAPMQQEOqJ+BkuXQncl4VNRIjWEMVoSZNqPTGS7QkRbuNwi
+	cDhPRwRGVm63IzReLKAOqG3imG2kzMXgt1TReNdm4K6QN3MUG+vxAvVKneVv1jTu
+	1ZzKJeelfeSp3psKfiSc1K2guqgFc+ziuIXtrRRM6DriPB7QyB7xbIVclO+x4tlP
+	jbmohhCBuk6emLZy0X2AQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
 	:x-me-sender:x-me-sender:x-sasl-enc; s=i76614979.fm3; t=
-	1715851293; x=1715854893; bh=HAPFKHfyGQbSeGmKfPdaAPtnhg6SRuYQe6D
-	c6y43qhQ=; b=jMQGshpO5p6HAlkOptaqnbv/v3o1Fgscrcpf48aYl4AVGKxR4L6
-	8zEPNQlL6ri9lnVlANsBBv8D+FJnFi6i425cf32wSc4EyT877h8IxsYo2r5sL168
-	96HpaVCq6DHVjOHBF/VmjEEAAM5tbwHM8cz+xMkkilU+eZN81M1kuPhiX7O1gkHe
-	7JoQ3gSX9hklFZq4Zjvzdbfd6nUDF1EOVRl8sVX1mbJjFgmhBFsBBKnJYJUH/38d
-	xUXZmazej721K9huD6abFj4IS5SaX2SyHmqHSP9ONtb7gf3fRg1Oi5IL18ZrmfUj
-	p+MtIswlKMhDIWfaWJn+T/B5ZcZTq9mHAdg==
-X-ME-Sender: <xms:HdBFZqyvuyRdmB1CW91K-6PnHVo0loFztRKW8V8KaFawvvicRU36NQ>
-    <xme:HdBFZmRwRKYmAGtOJjH7u1_Fy_zYIYXGIlmkJTiIiVV1sq0J7INrHcyvy3eZxNbHQ
-    R6MzTqdSGZTzhEtQ5Y>
-X-ME-Received: <xmr:HdBFZsUKrpO4yUT7QmrO4SDVB5wGml7jtEg5tHshIXOn5wCPxCx7GIVEsRe6Ok6eTicpscMnWM25bsArw3DOaxSDBa8hkHn3FRoS0w1C_NbbSg>
+	1715851299; x=1715854899; bh=YH9uRR3GuhjkujujI5PhznoSSSyCvnA2D5R
+	mli2gZ7Q=; b=S5bgLvXiwr8TAV15qprOcH4koPv7SPeHXu36AOyjHHLxnv2ppzZ
+	WZIKwVa3RPUA2hT7LPVf/sOPyig+bJCudix5scNQyZRrSTnd6xszvqi4oI1R1hjb
+	D13WkecJLif7pkUMzbZ2dfYguGFOSmvs+NJwn/gpabQSOgLBdPhw0fl/JCF3Qnee
+	xote0eSdwlQpN7UAf81k1XOtv5ErXRS9bRz1JX5aY9qiqSL+yleuZIPJiKbcJTqC
+	XAMZFgjnadXCgtKZ+dUeUUF8aMQysNQqvT9dij0lu/Fq/Q6a6W7/25Gm25/lrX3k
+	Iqz4PQXLQWsy2ZdB7IcTrrbnKauNEqUMPng==
+X-ME-Sender: <xms:I9BFZkGc7_yK7jvCoL_ebntmvFiXvwtx4fksxHZQVAQa8KlFRnFJyw>
+    <xme:I9BFZtUJSqokIiySAM_9bMj1tYtmBtXji5SeZQ6jcQy8iVmeMso1815Kl0vXTgyOu
+    RcLbg10rk6BD6iLx-k>
+X-ME-Received: <xmr:I9BFZuLlF8Tzxd3qmB_uIevMKQxd_hYkLi_TUpN0KXu5fI6-kaCYrK36V4uCUQtbnFWmAnG9zHoNX5dhc0Taiv0fovJyTVYOhKl_XpAue8Gwbg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehuddgudefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeflohhn
-    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpeeiueeukeeitddvheeiveeiiedvhfeljeeiteeggedtteeiueet
-    iefhudfgvddvleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:HdBFZggAR0eUt8H-DocPRkHJsgUH2KuvqrsXeCaZfpDDsXFsVbDCKw>
-    <xmx:HdBFZsD35VbCqb4BtgWhj1Q3p6KNkKFeRIa3P0_Xs4zwTAe3TrH-9Q>
-    <xmx:HdBFZhKZZwLugSFzgrvtShHWcV_TOxdBapDdIw0tbHKn9SmtQikaUg>
-    <xmx:HdBFZjDq10R7dgQBIUrmJDRz7r6dzgKtuH2AI9O9uz4mUfZsEMcY8w>
-    <xmx:HdBFZgxqEhFm4GKewHns_lpm7LjbShMHuZDefVV8aPz1EjMXs0W3tY4x>
+    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomheplfhonhgr
+    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
+    ftrfgrthhtvghrnheptdejhfelheejfeeutdekgeevueetkedtgfelkeejgfffhefgveet
+    teffueegvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
+X-ME-Proxy: <xmx:I9BFZmFZ8SNcAY_AZaIvZuwNPjGuUQaE4nxedyWRmrlI3I8lgP4_Sg>
+    <xmx:I9BFZqX4v-M2rzmIJwYSZFxt30D3C269724SYzsaAZFHhGOR8g7XTg>
+    <xmx:I9BFZpO4I0G4XVqvRJwqPPvoBXOFy4Jwko9uLHdpx1MkmDGQJLjgXw>
+    <xmx:I9BFZh06K-hKvAfraDg57OQAbs8WXCZStl0jgvdTj3ekHmQ0eGimxA>
+    <xmx:I9BFZjWsUzCQQQ6S1L6lHCPF9qEzj685mXM0N_lX7jMI-bNRL-9c4jId>
 Feedback-ID: i76614979:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 May 2024 05:21:31 -0400 (EDT)
+ 16 May 2024 05:21:37 -0400 (EDT)
 From: Jonathan Calmels <jcalmels@3xx0.net>
 To: brauner@kernel.org,
 	ebiederm@xmission.com,
@@ -98,9 +98,9 @@ Cc: containers@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	keyrings@vger.kernel.org
-Subject: [PATCH 2/3] capabilities: add securebit for strict userns caps
-Date: Thu, 16 May 2024 02:22:04 -0700
-Message-ID: <20240516092213.6799-3-jcalmels@3xx0.net>
+Subject: [PATCH 3/3] capabilities: add cap userns sysctl mask
+Date: Thu, 16 May 2024 02:22:05 -0700
+Message-ID: <20240516092213.6799-4-jcalmels@3xx0.net>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240516092213.6799-1-jcalmels@3xx0.net>
 References: <20240516092213.6799-1-jcalmels@3xx0.net>
@@ -110,23 +110,23 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch adds a new capability security bit designed to constrain a
-task’s userns capability set to its bounding set. The reason for this is
-twofold:
+This patch adds a new system-wide userns capability mask designed to mask
+off capabilities in user namespaces.
 
-- This serves as a quick and easy way to lock down a set of capabilities
-  for a task, thus ensuring that any namespace it creates will never be
-  more privileged than itself is.
-- This helps userspace transition to more secure defaults by not requiring
-  specific logic for the userns capability set, or libcap support.
+This mask is controlled through a sysctl and can be set early in the boot
+process or on the kernel command line to exclude known capabilities from
+ever being gained in namespaces. Once set, it can be further restricted to
+exert dynamic policies on the system (e.g. ward off a potential exploit).
+
+Changing this mask requires privileges over CAP_SYS_ADMIN and CAP_SETPCAP
+in the initial user namespace.
 
 Example:
 
-    # capsh --secbits=$((1 << 8)) --drop=cap_sys_rawio -- \
-            -c 'unshare -r grep Cap /proc/self/status'
+    # sysctl -qw kernel.cap_userns_mask=0x1fffffdffff && \
+      unshare -r grep Cap /proc/self/status
     CapInh: 0000000000000000
     CapPrm: 000001fffffdffff
     CapEff: 000001fffffdffff
@@ -136,69 +136,148 @@ Example:
 
 Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
 ---
- include/linux/securebits.h      |  1 +
- include/uapi/linux/securebits.h | 11 ++++++++++-
- kernel/user_namespace.c         |  5 +++++
- 3 files changed, 16 insertions(+), 1 deletion(-)
+ include/linux/user_namespace.h |  7 ++++
+ kernel/sysctl.c                | 10 ++++++
+ kernel/user_namespace.c        | 66 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 83 insertions(+)
 
-diff --git a/include/linux/securebits.h b/include/linux/securebits.h
-index 656528673983..5f9d85cd69c3 100644
---- a/include/linux/securebits.h
-+++ b/include/linux/securebits.h
-@@ -5,4 +5,5 @@
- #include <uapi/linux/securebits.h>
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index 6030a8235617..e3478bd54ee5 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -2,6 +2,7 @@
+ #ifndef _LINUX_USER_NAMESPACE_H
+ #define _LINUX_USER_NAMESPACE_H
  
- #define issecure(X)		(issecure_mask(X) & current_cred_xxx(securebits))
-+#define iscredsecure(cred, X)	(issecure_mask(X) & cred->securebits)
- #endif /* !_LINUX_SECUREBITS_H */
-diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
-index d6d98877ff1a..2da3f4be4531 100644
---- a/include/uapi/linux/securebits.h
-+++ b/include/uapi/linux/securebits.h
-@@ -52,10 +52,19 @@
- #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
- 			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
++#include <linux/capability.h>
+ #include <linux/kref.h>
+ #include <linux/nsproxy.h>
+ #include <linux/ns_common.h>
+@@ -14,6 +15,12 @@
+ #define UID_GID_MAP_MAX_BASE_EXTENTS 5
+ #define UID_GID_MAP_MAX_EXTENTS 340
  
-+/* When set, user namespace capabilities are restricted to their parent's bounding set. */
-+#define SECURE_USERNS_STRICT_CAPS			8
-+#define SECURE_USERNS_STRICT_CAPS_LOCKED		9  /* make bit-8 immutable */
++#ifdef CONFIG_SYSCTL
++extern kernel_cap_t cap_userns_mask;
++int proc_cap_userns_handler(struct ctl_table *table, int write,
++			    void *buffer, size_t *lenp, loff_t *ppos);
++#endif
 +
-+#define SECBIT_USERNS_STRICT_CAPS (issecure_mask(SECURE_USERNS_STRICT_CAPS))
-+#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
-+			(issecure_mask(SECURE_USERNS_STRICT_CAPS_LOCKED))
-+
- #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
- 				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
- 				 issecure_mask(SECURE_KEEP_CAPS) | \
--				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
-+				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
-+				 issecure_mask(SECURE_USERNS_STRICT_CAPS))
- #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
+ struct uid_gid_extent {
+ 	u32 first;
+ 	u32 lower_first;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 81cc974913bb..1546eebd6aea 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -62,6 +62,7 @@
+ #include <linux/sched/sysctl.h>
+ #include <linux/mount.h>
+ #include <linux/userfaultfd_k.h>
++#include <linux/user_namespace.h>
+ #include <linux/pid.h>
  
- #endif /* _UAPI_LINUX_SECUREBITS_H */
+ #include "../lib/kstrtox.h"
+@@ -1846,6 +1847,15 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0444,
+ 		.proc_handler	= proc_dointvec,
+ 	},
++#ifdef CONFIG_USER_NS
++	{
++		.procname	= "cap_userns_mask",
++		.data		= &cap_userns_mask,
++		.maxlen		= sizeof(kernel_cap_t),
++		.mode		= 0644,
++		.proc_handler	= proc_cap_userns_handler,
++	},
++#endif
+ #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
+ 	{
+ 		.procname       = "unknown_nmi_panic",
 diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 7e624607330b..53848e2b68cd 100644
+index 53848e2b68cd..e0cf606e9140 100644
 --- a/kernel/user_namespace.c
 +++ b/kernel/user_namespace.c
-@@ -10,6 +10,7 @@
- #include <linux/cred.h>
- #include <linux/securebits.h>
- #include <linux/security.h>
-+#include <linux/capability.h>
- #include <linux/keyctl.h>
- #include <linux/key-type.h>
- #include <keys/user-type.h>
-@@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts *ucounts)
+@@ -26,6 +26,66 @@
+ static struct kmem_cache *user_ns_cachep __ro_after_init;
+ static DEFINE_MUTEX(userns_state_mutex);
  
- static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
- {
-+	/* Limit userns capabilities to our parent's bounding set. */
-+	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
-+		cred->cap_userns = cap_intersect(cred->cap_userns, cred->cap_bset);
++#ifdef CONFIG_SYSCTL
++static DEFINE_SPINLOCK(cap_userns_lock);
++kernel_cap_t cap_userns_mask = CAP_FULL_SET;
 +
++int proc_cap_userns_handler(struct ctl_table *table, int write,
++			    void *buffer, size_t *lenp, loff_t *ppos)
++{
++	struct ctl_table t;
++	unsigned long mask_array[2];
++	kernel_cap_t new_mask, *mask;
++	int err;
++
++	if (write && (!capable(CAP_SETPCAP) ||
++		      !capable(CAP_SYS_ADMIN)))
++		return -EPERM;
++
++	/*
++	 * convert from the global kernel_cap_t to the ulong array to print to
++	 * userspace if this is a read.
++	 *
++	 * capabilities are exposed as one 64-bit value or two 32-bit values
++	 * depending on the architecture
++	 */
++	mask = table->data;
++	spin_lock(&cap_userns_lock);
++	mask_array[0] = (unsigned long) mask->val;
++#if BITS_PER_LONG != 64
++	mask_array[1] = mask->val >> BITS_PER_LONG;
++#endif
++	spin_unlock(&cap_userns_lock);
++
++	t = *table;
++	t.data = &mask_array;
++
++	/*
++	 * actually read or write and array of ulongs from userspace.  Remember
++	 * these are least significant bits first
++	 */
++	err = proc_doulongvec_minmax(&t, write, buffer, lenp, ppos);
++	if (err < 0)
++		return err;
++
++	new_mask.val = mask_array[0];
++#if BITS_PER_LONG != 64
++	new_mask.val += (u64)mask_array[1] << BITS_PER_LONG;
++#endif
++
++	/*
++	 * Drop everything not in the new_mask (but don't add things)
++	 */
++	if (write) {
++		spin_lock(&cap_userns_lock);
++		*mask = cap_intersect(*mask, new_mask);
++		spin_unlock(&cap_userns_lock);
++	}
++
++	return 0;
++}
++#endif
++
+ static bool new_idmap_permitted(const struct file *file,
+ 				struct user_namespace *ns, int cap_setid,
+ 				struct uid_gid_map *map);
+@@ -46,6 +106,12 @@ static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
+ 	/* Limit userns capabilities to our parent's bounding set. */
+ 	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
+ 		cred->cap_userns = cap_intersect(cred->cap_userns, cred->cap_bset);
++#ifdef CONFIG_SYSCTL
++	/* Mask off userns capabilities that are not permitted by the system-wide mask. */
++	spin_lock(&cap_userns_lock);
++	cred->cap_userns = cap_intersect(cred->cap_userns, cap_userns_mask);
++	spin_unlock(&cap_userns_lock);
++#endif
+ 
  	/* Start with the capabilities defined in the userns set. */
  	cred->cap_bset = cred->cap_userns;
- 	cred->cap_permitted = cred->cap_userns;
 -- 
 2.45.0
 
