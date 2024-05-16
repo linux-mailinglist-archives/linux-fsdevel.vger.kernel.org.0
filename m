@@ -1,66 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-19602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64338C7CCF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 21:05:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5C28C7CEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 21:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450F91F2200D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 19:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 512821C231C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 19:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB02158A33;
-	Thu, 16 May 2024 19:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7868415E5A7;
+	Thu, 16 May 2024 19:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="YCUgijMb"
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="QeEAS47O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from aer-iport-5.cisco.com (aer-iport-5.cisco.com [173.38.203.67])
+Received: from aer-iport-6.cisco.com (aer-iport-6.cisco.com [173.38.203.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A401581E6;
-	Thu, 16 May 2024 19:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.38.203.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484D41586DB;
+	Thu, 16 May 2024 19:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.38.203.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715886266; cv=none; b=MzpdQkD54KrVq7YOuo+EzawfPvAZvewIezSrVUhUIlkCe6FAlLSsWIvr5PHU1Wm/4nohxfwIKwPYbn9pRIXygoeM/AEDwvkl2WYH5YLR2EB2C8HoRDnZ97V67kyU3aglp0ZXkJset0LymjrpCyAj1PqmKBnK42hIyRsnYqSi4cE=
+	t=1715886328; cv=none; b=VpeRX2+8Y68W97H1DJzVB1FgZRForVf3dYAm2Y/l79aGXf03WOWWbQUuWzr2mxIKlqJRzXPUjfVcbiLzA4jtiF85+m71F3zvKTlSAdDKIPR8Eyvys7oBYfIju5QFpxIzzW0Hw6MHhhIArDkRc4XM0SP58Izx1Bbj5FpMtApnp50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715886266; c=relaxed/simple;
-	bh=14cppHrxJNO2k5SkDzm3ABrvDJviaSVFS2X9pDuyXsE=;
+	s=arc-20240116; t=1715886328; c=relaxed/simple;
+	bh=ivMYgIYWIJYUOpRQp9sC48jKIyVBnsdndwyo/5V1fdw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gx8x1PTg6zHCCk1DrOgZe6T3/RNTOOnLnfHA/Nj53tiYv2vBI+MWTxSwFEi2TgYFxK3IZ/3jaDReTHtXzw0HSA9sbxy+xNkDJk0yEjwijscj+mYa98/RDMZo0NkTi2R4JTB9T0Xd6dnbRMoqzkhTLT7rWk4gK0ZVERVG5gGKA0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=YCUgijMb; arc=none smtp.client-ip=173.38.203.67
+	 MIME-Version; b=ZY0qpLU8OBym6+EbGpX8HxS7uuEuHsWGWCteR4S6Cwx0VS2kosGGUshvfJmpgcwoodcooIHlDy+KkPSCfUDK2es3Lq8oXLdsN+Kaji7qNI2kbc1R1LpPHotJhedXd8GV9Sb9t6QCtODoYcE/j472f6MZfATKLT3RVw767mB7XGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=QeEAS47O; arc=none smtp.client-ip=173.38.203.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=5421; q=dns/txt; s=iport;
-  t=1715886265; x=1717095865;
+  d=cisco.com; i=@cisco.com; l=10222; q=dns/txt;
+  s=iport; t=1715886326; x=1717095926;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=2VScZVKYmKMf1+GFQpbDD6K0vkZQjVRPPErj0F66jK0=;
-  b=YCUgijMbi7LkTk/ljMIQwSGDmTcJDydJT5NnlR2sSuBOgbiWEVWct9Ce
-   8qcvSnjwwAIP6XOrBQU9dBFkzDURJZFeJ4lUxX1XfGBGKe/izJR7wiNdA
-   mqg4/q653Uz1r5p9W2gWHIsHlm4oquUzUYyX10rwhbtRC9+24FkGn4npV
-   s=;
-X-CSE-ConnectionGUID: PVvKQ4oGQgiG0wFAL2j9fA==
-X-CSE-MsgGUID: iJUPC6w/SzyZrLVpmc525w==
+  bh=r1r9rd3KeEvtlJHyqBIHLSruG9tMof1Km6W29D4ICag=;
+  b=QeEAS47ObBHz5ssKohIDUcnuIoi36QTrVGYGOTnnlgzy1lCZ1biXDbsB
+   aImmhATQcpLfuo84Ot9yeKSkh057dQg7knAYNCqreT8x/UG9djRCjbHsF
+   QgGCzm4M4J27gDedopZocUFcSBfv3l0gtIQz1Dy310Sjho2SCeMqUnRW+
+   0=;
+X-CSE-ConnectionGUID: RoOBx6bTTeS67jNRJTcCCg==
+X-CSE-MsgGUID: SM4doMEZR8O+f5sjHbTXBQ==
 X-IronPort-AV: E=Sophos;i="6.08,165,1712620800"; 
-   d="scan'208";a="9839853"
-Received: from aer-iport-nat.cisco.com (HELO aer-core-2.cisco.com) ([173.38.203.22])
-  by aer-iport-5.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 19:04:22 +0000
+   d="scan'208";a="10016315"
+Received: from aer-iport-nat.cisco.com (HELO aer-core-3.cisco.com) ([173.38.203.22])
+  by aer-iport-6.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 19:04:23 +0000
 Received: from localhost (ams3-vpn-dhcp4879.cisco.com [10.61.83.14])
 	(authenticated bits=0)
-	by aer-core-2.cisco.com (8.15.2/8.15.2) with ESMTPSA id 44GJ4L0j007823
+	by aer-core-3.cisco.com (8.15.2/8.15.2) with ESMTPSA id 44GJ4Nig017911
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 16 May 2024 19:04:22 GMT
+	Thu, 16 May 2024 19:04:23 GMT
 From: Ariel Miculas <amiculas@cisco.com>
 To: rust-for-linux@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
         ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-        shallyn@cisco.com, Ariel Miculas <amiculas@cisco.com>
-Subject: [RFC PATCH v3 17/22] fs: puzzlefs: add extended attributes support
-Date: Thu, 16 May 2024 22:03:40 +0300
-Message-Id: <20240516190345.957477-18-amiculas@cisco.com>
+        shallyn@cisco.com, Alice Ryhl <aliceryhl@google.com>,
+        Benno Lossin <benno.lossin@proton.me>,
+        Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Ariel Miculas <amiculas@cisco.com>
+Subject: [RFC PATCH v3 18/22] rust: add improved version of `ForeignOwnable::borrow_mut`
+Date: Thu, 16 May 2024 22:03:41 +0300
+Message-Id: <20240516190345.957477-19-amiculas@cisco.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240516190345.957477-1-amiculas@cisco.com>
 References: <20240516190345.957477-1-amiculas@cisco.com>
@@ -73,190 +76,237 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Authenticated-User: amiculas@cisco.com
 X-Outbound-SMTP-Client: 10.61.83.14, ams3-vpn-dhcp4879.cisco.com
-X-Outbound-Node: aer-core-2.cisco.com
+X-Outbound-Node: aer-core-3.cisco.com
 
-Implement the listxattr callback in the filesystem abstractions.
-Implement both read_xattr and listxattr for PuzzleFS.
+From: Alice Ryhl <aliceryhl@google.com>
 
+Previously, the `ForeignOwnable` trait had a method called `borrow_mut`
+that was intended to provide mutable access to the inner value. However,
+the method accidentally made it possible to change the address of the
+object being modified, which usually isn't what we want. (And when we
+want that, it can be done by calling `from_foreign` and `into_foreign`,
+like how the old `borrow_mut` was implemented.)
+
+In this patch, we introduce an alternate definition of `borrow_mut` that
+solves the previous problem. Conceptually, given a pointer type `P` that
+implements `ForeignOwnable`, the `borrow_mut` method gives you the same
+kind of access as an `&mut P` would, except that it does not let you
+change the pointer `P` itself.
+
+This is analogous to how the existing `borrow` method provides the same
+kind of access to the inner value as an `&P`.
+
+Note that for types like `Arc`, having an `&mut Arc<T>` only gives you
+immutable access to the inner `T`. This is because mutable references
+assume exclusive access, but there might be other handles to the same
+reference counted value, so the access isn't exclusive. The `Arc` type
+implements this by making `borrow_mut` return the same type as `borrow`.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Link: https://lore.kernel.org/r/20230710074642.683831-1-aliceryhl@google.com
 Signed-off-by: Ariel Miculas <amiculas@cisco.com>
 ---
- fs/puzzlefs/puzzlefs.rs | 50 +++++++++++++++++++++++++++++--
- rust/kernel/fs/inode.rs | 66 +++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 112 insertions(+), 4 deletions(-)
+ rust/kernel/sync/arc.rs | 25 +++++++----
+ rust/kernel/types.rs    | 93 ++++++++++++++++++++++++++++++-----------
+ 2 files changed, 86 insertions(+), 32 deletions(-)
 
-diff --git a/fs/puzzlefs/puzzlefs.rs b/fs/puzzlefs/puzzlefs.rs
-index a062bf0249f6..9622ea71eda0 100644
---- a/fs/puzzlefs/puzzlefs.rs
-+++ b/fs/puzzlefs/puzzlefs.rs
-@@ -107,8 +107,8 @@ fn fill_super(
-         _: Option<inode::Mapper>,
-     ) -> Result<Box<PuzzleFS>> {
-         let puzzlefs = PuzzleFS::open(
--            c_str!("/home/puzzlefs_oci"),
--            c_str!("83aa96c40a20671edc4490cfefadbb487b2ab23dfc0570049b56f0cc49b56eaf"),
-+            c_str!("/home/puzzlefs_xattr"),
-+            c_str!("ed63ace21eccceabab08d89afb75e94dae47973f82a17a172396a19ea953c8ab"),
-         );
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 3673496c2363..9023479281f0 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -356,26 +356,35 @@ pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
  
-         if let Err(ref e) = puzzlefs {
-@@ -124,6 +124,36 @@ fn init_root(sb: &sb::SuperBlock<Self>) -> Result<dentry::Root<Self>> {
-         let inode = Self::iget(sb, 1)?;
-         dentry::Root::try_new(inode)
+ impl<T: 'static> ForeignOwnable for Arc<T> {
+     type Borrowed<'a> = ArcBorrow<'a, T>;
++    // Mutable access to the `Arc` does not give any extra abilities over
++    // immutable access.
++    type BorrowedMut<'a> = ArcBorrow<'a, T>;
+ 
+     fn into_foreign(self) -> *const core::ffi::c_void {
+         ManuallyDrop::new(self).ptr.as_ptr() as _
+     }
+ 
++    unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
++        // SAFETY: By the safety requirement of this function, we know that `ptr` came from
++        // a previous call to `Arc::into_foreign`, which guarantees that `ptr` is valid and
++        // holds a reference count increment that is transferrable to us.
++        unsafe { Self::from_inner(NonNull::new_unchecked(ptr as _)) }
++    }
++
+     unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> ArcBorrow<'a, T> {
+         // SAFETY: By the safety requirement of this function, we know that `ptr` came from
+         // a previous call to `Arc::into_foreign`.
+-        let inner = NonNull::new(ptr as *mut ArcInner<T>).unwrap();
++        let inner = unsafe { NonNull::new_unchecked(ptr as *mut ArcInner<T>) };
+ 
+-        // SAFETY: The safety requirements of `from_foreign` ensure that the object remains alive
+-        // for the lifetime of the returned value.
++        // SAFETY: The safety requirements ensure that we will not give up our
++        // foreign-owned refcount while the `ArcBorrow` is still live.
+         unsafe { ArcBorrow::new(inner) }
+     }
+ 
+-    unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
+-        // SAFETY: By the safety requirement of this function, we know that `ptr` came from
+-        // a previous call to `Arc::into_foreign`, which guarantees that `ptr` is valid and
+-        // holds a reference count increment that is transferrable to us.
+-        unsafe { Self::from_inner(NonNull::new(ptr as _).unwrap()) }
++    unsafe fn borrow_mut<'a>(ptr: *const core::ffi::c_void) -> ArcBorrow<'a, T> {
++        // SAFETY: The safety requirements for `borrow_mut` are a superset of the safety
++        // requirements for `borrow`.
++        unsafe { Self::borrow(ptr) }
+     }
+ }
+ 
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 4d8f02671e0b..17b66d6187ae 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -20,31 +20,25 @@
+ /// This trait is meant to be used in cases when Rust objects are stored in C objects and
+ /// eventually "freed" back to Rust.
+ pub trait ForeignOwnable: Sized {
+-    /// Type of values borrowed between calls to [`ForeignOwnable::into_foreign`] and
+-    /// [`ForeignOwnable::from_foreign`].
++    /// Type used to immutably borrow a value that is currently foreign-owned.
+     type Borrowed<'a>;
+ 
++    /// Type used to mutably borrow a value that is currently foreign-owned.
++    type BorrowedMut<'a>;
++
+     /// Converts a Rust-owned object to a foreign-owned one.
+     ///
+     /// The foreign representation is a pointer to void.
+     fn into_foreign(self) -> *const core::ffi::c_void;
+ 
+-    /// Borrows a foreign-owned object.
+-    ///
+-    /// # Safety
+-    ///
+-    /// `ptr` must have been returned by a previous call to [`ForeignOwnable::into_foreign`] for
+-    /// which a previous matching [`ForeignOwnable::from_foreign`] hasn't been called yet.
+-    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> Self::Borrowed<'a>;
+-
+     /// Converts a foreign-owned object back to a Rust-owned one.
+     ///
+     /// # Safety
+     ///
+-    /// `ptr` must have been returned by a previous call to [`ForeignOwnable::into_foreign`] for
+-    /// which a previous matching [`ForeignOwnable::from_foreign`] hasn't been called yet.
+-    /// Additionally, all instances (if any) of values returned by [`ForeignOwnable::borrow`] for
+-    /// this object must have been dropped.
++    /// The provided pointer must have been returned by a previous call to [`into_foreign`], and it
++    /// must not be passed to `from_foreign` more than once.
++    ///
++    /// [`into_foreign`]: Self::into_foreign
+     unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self;
+ 
+     /// Tries to convert a foreign-owned object back to a Rust-owned one.
+@@ -65,40 +59,91 @@ unsafe fn try_from_foreign(ptr: *const core::ffi::c_void) -> Option<Self> {
+             unsafe { Some(Self::from_foreign(ptr)) }
+         }
      }
 +
-+    fn read_xattr(
-+        _dentry: &DEntry<Self>,
-+        inode: &INode<Self>,
-+        name: &CStr,
-+        outbuf: &mut [u8],
-+    ) -> Result<usize> {
-+        let inode = inode.data();
-+        let readonly = outbuf.len() == 0;
-+        // pr_info!("outbuf len {}\n", outbuf.len());
++    /// Borrows a foreign-owned object immutably.
++    ///
++    /// This method provides a way to access a foreign-owned value from Rust immutably. It provides
++    /// you with exactly the same abilities as an `&Self` when the value is Rust-owned.
++    ///
++    /// # Safety
++    ///
++    /// The provided pointer must have been returned by a previous call to [`into_foreign`], and if
++    /// the pointer is ever passed to [`from_foreign`], then that call must happen after the end of
++    /// the lifetime 'a.
++    ///
++    /// [`into_foreign`]: Self::into_foreign
++    /// [`from_foreign`]: Self::from_foreign
++    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> Self::Borrowed<'a>;
 +
-+        if let Some(add) = &inode.additional {
-+            let xattr = add
-+                .xattrs
-+                .iter()
-+                .find(|elem| elem.key == name.as_bytes())
-+                .ok_or(ENODATA)?;
-+            if readonly {
-+                return Ok(xattr.val.len());
-+            }
++    /// Borrows a foreign-owned object mutably.
++    ///
++    /// This method provides a way to access a foreign-owned value from Rust mutably. It provides
++    /// you with exactly the same abilities as an `&mut Self` when the value is Rust-owned, except
++    /// that this method does not let you swap the foreign-owned object for another. (That is, it
++    /// does not let you change the address of the void pointer that the foreign code is storing.)
++    ///
++    /// Note that for types like [`Arc`], an `&mut Arc<T>` only gives you immutable access to the
++    /// inner value, so this method also only provides immutable access in that case.
++    ///
++    /// In the case of `Box<T>`, this method gives you the ability to modify the inner `T`, but it
++    /// does not let you change the box itself. That is, you cannot change which allocation the box
++    /// points at.
++    ///
++    /// # Safety
++    ///
++    /// The provided pointer must have been returned by a previous call to [`into_foreign`], and if
++    /// the pointer is ever passed to [`from_foreign`], then that call must happen after the end of
++    /// the lifetime 'a.
++    ///
++    /// The lifetime 'a must not overlap with the lifetime of any other call to [`borrow`] or
++    /// `borrow_mut` on the same object.
++    ///
++    /// [`into_foreign`]: Self::into_foreign
++    /// [`from_foreign`]: Self::from_foreign
++    /// [`borrow`]: Self::borrow
++    /// [`Arc`]: crate::sync::Arc
++    unsafe fn borrow_mut<'a>(ptr: *const core::ffi::c_void) -> Self::BorrowedMut<'a>;
+ }
+ 
+ impl<T: 'static> ForeignOwnable for Box<T> {
+     type Borrowed<'a> = &'a T;
++    type BorrowedMut<'a> = &'a mut T;
+ 
+     fn into_foreign(self) -> *const core::ffi::c_void {
+         Box::into_raw(self) as _
+     }
+ 
+-    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> &'a T {
+-        // SAFETY: The safety requirements for this function ensure that the object is still alive,
+-        // so it is safe to dereference the raw pointer.
+-        // The safety requirements of `from_foreign` also ensure that the object remains alive for
+-        // the lifetime of the returned value.
+-        unsafe { &*ptr.cast() }
+-    }
+-
+     unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
+         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+         // call to `Self::into_foreign`.
+         unsafe { Box::from_raw(ptr as _) }
+     }
 +
-+            if xattr.val.len() > outbuf.len() {
-+                return Err(ERANGE);
-+            }
++    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> &'a T {
++        // SAFETY: The safety requirements of this method ensure that the object remains alive and
++        // immutable for the duration of 'a.
++        unsafe { &*ptr.cast() }
++    }
 +
-+            outbuf[0..xattr.val.len()].copy_from_slice(xattr.val.as_slice());
-+            return Ok(xattr.val.len());
-+        }
-+        Err(ENODATA)
++    unsafe fn borrow_mut<'a>(ptr: *const core::ffi::c_void) -> &'a mut T {
++        // SAFETY: The safety requirements of this method ensure that the pointer is valid and that
++        // nothing else will access the value for the duration of 'a.
++        unsafe { &mut *ptr.cast_mut().cast() }
 +    }
  }
  
- #[vtable]
-@@ -143,6 +173,22 @@ fn lookup(
-         }
+ impl ForeignOwnable for () {
+     type Borrowed<'a> = ();
++    type BorrowedMut<'a> = ();
+ 
+     fn into_foreign(self) -> *const core::ffi::c_void {
+         core::ptr::NonNull::dangling().as_ptr()
      }
  
-+    fn listxattr(
-+        inode: &INode<Self>,
-+        mut add_entry: impl FnMut(&[i8]) -> Result<()>,
-+    ) -> Result<()> {
-+        let inode = inode.data();
+-    unsafe fn borrow<'a>(_: *const core::ffi::c_void) -> Self::Borrowed<'a> {}
+-
+     unsafe fn from_foreign(_: *const core::ffi::c_void) -> Self {}
 +
-+        if let Some(add) = &inode.additional {
-+            for xattr in &add.xattrs {
-+                // convert a u8 slice into an i8 slice
-+                let i8slice = unsafe { &*(xattr.key.as_slice() as *const _ as *const [i8]) };
-+                add_entry(i8slice)?;
-+            }
-+        }
-+        Ok(())
-+    }
-+
-     fn get_link<'a>(
-         dentry: Option<&DEntry<PuzzleFsModule>>,
-         inode: &'a INode<PuzzleFsModule>,
-diff --git a/rust/kernel/fs/inode.rs b/rust/kernel/fs/inode.rs
-index b2b7d000080e..a092ee150d43 100644
---- a/rust/kernel/fs/inode.rs
-+++ b/rust/kernel/fs/inode.rs
-@@ -10,7 +10,7 @@
-     address_space, dentry, dentry::DEntry, file, mode, sb::SuperBlock, FileSystem, Offset,
-     PageOffset, UnspecifiedFS,
- };
--use crate::error::{code::*, from_err_ptr, Result};
-+use crate::error::{code::*, from_err_ptr, from_result, Result};
- use crate::types::{ARef, AlwaysRefCounted, Either, ForeignOwnable, Lockable, Locked, Opaque};
- use crate::{
-     bindings, block, build_error, container_of, folio, folio::Folio, mem_cache::MemCache,
-@@ -48,6 +48,14 @@ fn lookup(
-     ) -> Result<Option<ARef<DEntry<Self::FileSystem>>>> {
-         Err(ENOTSUPP)
-     }
-+
-+    /// Get extended attributes list
-+    fn listxattr<'a>(
-+        _inode: &'a INode<Self::FileSystem>,
-+        mut _add_entry: impl FnMut(&[i8]) -> Result<()>,
-+    ) -> Result<()> {
-+        Err(ENOSYS)
-+    }
++    unsafe fn borrow<'a>(_: *const core::ffi::c_void) -> Self::Borrowed<'a> {}
++    unsafe fn borrow_mut<'a>(_: *const core::ffi::c_void) -> Self::BorrowedMut<'a> {}
  }
  
- /// A node (inode) in the file index.
-@@ -615,7 +623,7 @@ impl<T: Operations + ?Sized> Table<T> {
-                 rename: None,
-                 setattr: None,
-                 getattr: None,
--                listxattr: None,
-+                listxattr: Some(Self::listxattr_callback),
-                 fiemap: None,
-                 update_time: None,
-                 atomic_open: None,
-@@ -688,6 +696,60 @@ extern "C" fn drop_cstring(ptr: *mut core::ffi::c_void) {
-                     }
-                 }
-             }
-+
-+            extern "C" fn listxattr_callback(
-+                dentry: *mut bindings::dentry,
-+                buffer: *mut core::ffi::c_char,
-+                buffer_size: usize,
-+            ) -> isize {
-+                from_result(|| {
-+                    // SAFETY: The C API guarantees that `dentry` is valid for read.
-+                    let inode = unsafe { bindings::d_inode(dentry) };
-+                    // SAFETY: The C API guarantees that `d_inode` inside `dentry` is valid for read.
-+                    let inode = unsafe { INode::from_raw(inode) };
-+
-+                    // `buffer_size` should be 0 when `buffer` is NULL, but we enforce it
-+                    let (mut buffer_ptr, buffer_size) = match ptr::NonNull::new(buffer) {
-+                        Some(buf) => (buf, buffer_size),
-+                        None => (ptr::NonNull::dangling(), 0),
-+                    };
-+
-+                    // SAFETY: The C API guarantees that `buffer` is at least `buffer_size` bytes in
-+                    // length. Also, when `buffer_size` is 0, `buffer_ptr` is NonNull::dangling, as
-+                    // suggested by `from_raw_parts_mut` documentation
-+                    let outbuf = unsafe {
-+                        core::slice::from_raw_parts_mut(buffer_ptr.as_mut(), buffer_size)
-+                    };
-+
-+                    let mut offset = 0;
-+                    let mut total_len = 0;
-+
-+                    //  The extended attributes keys must be placed into the output buffer sequentially,
-+                    //  separated by the NUL character. We do this in the callback because it simplifies
-+                    //  the implementation of the `listxattr` abstraction: the user just calls the
-+                    //  add_entry function for each extended attribute key, passing a slice.
-+                    T::listxattr(inode, |xattr_key| {
-+                        let len = xattr_key.len();
-+                        total_len += isize::try_from(len)? + 1;
-+
-+                        if buffer_size == 0 {
-+                            return Ok(());
-+                        }
-+
-+                        let max = offset + len + 1;
-+                        if max > buffer_size {
-+                            return Err(ERANGE);
-+                        }
-+
-+                        outbuf[offset..max - 1].copy_from_slice(xattr_key);
-+                        outbuf[max - 1] = 0;
-+                        offset = max;
-+                        Ok(())
-+                    })?;
-+
-+                    Ok(total_len)
-+                })
-+            }
-         }
-         Self(&Table::<U>::TABLE, PhantomData)
-     }
+ /// Runs a cleanup function/closure when dropped.
 -- 
 2.34.1
 
