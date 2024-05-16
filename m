@@ -1,47 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-19596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094E58C7BC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 20:17:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83908C7BC9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 20:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766A6283813
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 18:17:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24F851C2237A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 18:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7079E156F24;
-	Thu, 16 May 2024 18:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441BA156F41;
+	Thu, 16 May 2024 18:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="anPjU8zL"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GlOPIfUc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E7C156642;
-	Thu, 16 May 2024 18:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26593156642;
+	Thu, 16 May 2024 18:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715883416; cv=none; b=FLVsLq2fHNsMbIYtaBL7W6vqIXTvdb91Buhd4F9qNcvOwSRwAXXb8i0/uGNXlJKf2DnP+r5GCEpNR+cDDqFSukwgkvsj6PSSAHo4qGLuK/zs3YQD+MuFUhGzipdfVHvF5+e3znd9GCmR2hj5OvLL8zLlC/Xn0QnZXlCW+ZTJ574=
+	t=1715883419; cv=none; b=fE1ubDD3KubSbWv0dES/0no81Bl7L36QuX8E+pi0yN0SR7gSxmpJ8CDfwiyy2eDH0nYpNOArK3C+Cyzo9Zzbz99F+rO7vO1FqQwEp0gYnbVhjfXdbHDP1PDaxk6yyleg2hvZSCaz/q5LvBu8MEUUi4KqUMIgf3eKCZyYvMGLOEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715883416; c=relaxed/simple;
-	bh=IaEjMgOVijGUZoGyXC7Q6OgPYaSmUBlPNgF4/dQAhoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a8ZrcLgr5+7fRpYa0o/rydNbDCk0OwrbI85e0AB3u4KC9lYBicxq3p/n52scwudkwkC17aHbRToEUo+snsHoWSQEc/6R10jQ8/55upDUrru5bulOCDLDXaCYnqejDNxJ41AsH/qJe/EFkq7Xm4Yvzw7rGBHAcS3H3+moRP4Kj5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=anPjU8zL; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1715883419; c=relaxed/simple;
+	bh=euT+T82A22i2OFu5wfGFK62YgbYU4tPN5+GtgGpwi5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=I6EVqOzDuF97DBo59YXppG8FWHPh7e1bM9MldFS7Jo0C2ethurRunamcFNFos86wZNYgH7aR1/B36O89iKzDg5SdwIkIe/DpYOiPmTEgXfX4G2B0nNOeXt1EEn1cVx+lrzfRl7UJMLcD7ZiA3peCgK94dW2+TBF4fDu3twuO52I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GlOPIfUc; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=Y/edxhwNxm+fnNhJDhofEY2JZfiUKbns0R5IrxVHBQ0=; b=anPjU8zL5WYWX4jBhpypmYYAdb
-	fZ/Ywc4jDb1syTNzS6y2yn7wgzguG9yRkt1KckNb+eXmjVs6W+kCo/B1MvTyQkAeMO5nd7uK5Nldu
-	jaFjppwCxjJyFWxPZwCIXKv02tdkELcdVRQ8cSGSK9pyWEjQSWr0hPuhlI5FxPON9xq8Xm+fZJ8SJ
-	xHrxps2wBsp4M433u5NUF3eortZ/QtTlfflYxeWFhafWdA/FE742KWcbcWEpAx76qW0ihbNXk7wJA
-	cwAWFgsdooM0hK2kLt78Dkr6bPb8qYNpeRsvCheOaGCBEiHLPvZ/srL5D39RANa1PtWp5WrP0w7Kl
-	L91EaeHg==;
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=i3kQ7stC3DK9CVJmM0bmn2z8NO/OC1l78IADZjYM0RU=; b=GlOPIfUc1touMc81UhO++/bJUP
+	S7YIahFaVtgxyRpv+tC38Co5tGvAPe2u+Wj6cWSuj8zQ4wamy+3ijF4oGvDas/I04P7uvdSXJe7Si
+	hRYMu5O8D4GPro3VxnFw+r74SV/pbGfS/fXD56FNHAplnFKgfIUgAKy2yx82ahd8wbO1v265lU8mE
+	UuboK54JAsT23TblYysqRS9et9xqV8r+8iJJydiHg1pYfzJVW8ad3PH2CCWYc/3Mi3/mM3raNvqlf
+	xbW0JSbABy6TQXo9yeyhpkZ6D6gPTV6KoXpW4bUFrXADXr6Aau6jcS2QJyk/1mtBPzLU3LR5W6Iu3
+	zOYmutzg==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7fet-0000000C5A9-32Ko;
+	id 1s7fet-0000000C5AB-3er9;
 	Thu, 16 May 2024 18:16:51 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: "Theodore Ts'o" <tytso@mit.edu>,
@@ -50,10 +51,12 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-ext4@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Hannes Reinecke <hare@suse.com>
-Subject: [PATCH 1/2] ext4: Reduce stack usage in ext4_mpage_readpages()
-Date: Thu, 16 May 2024 19:16:50 +0100
-Message-ID: <20240516181651.2879778-1-willy@infradead.org>
+Subject: [PATCH 2/2] ext4: Remove array of buffer_heads from mext_page_mkuptodate()
+Date: Thu, 16 May 2024 19:16:51 +0100
+Message-ID: <20240516181651.2879778-2-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240516181651.2879778-1-willy@infradead.org>
+References: <20240516181651.2879778-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,92 +65,101 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This function is very similar to do_mpage_readpage() and a similar
-approach to that taken in commit 12ac5a65cb56 will work.  As in
-do_mpage_readpage(), we only use this array for checking block contiguity
-and we can do that more efficiently with a little arithmetic.
+The current code iterates over the list of buffer_heads, finds the
+!uptodate ones and reads them, waiting for each one before submitting
+the next one.  Instead, submit all the read requests before waiting
+for each of the needed ones.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/readpage.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/ext4/move_extent.c | 45 ++++++++++++++++++++++++-------------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
 
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index 21e8f0aebb3c..fe29fb23a1d0 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -221,7 +221,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 	sector_t block_in_file;
- 	sector_t last_block;
- 	sector_t last_block_in_file;
--	sector_t blocks[MAX_BUF_PER_PAGE];
-+	sector_t first_block;
- 	unsigned page_block;
- 	struct block_device *bdev = inode->i_sb->s_bdev;
- 	int length;
-@@ -263,6 +263,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 			unsigned map_offset = block_in_file - map.m_lblk;
- 			unsigned last = map.m_len - map_offset;
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index 7cd4afa4de1d..529061fa3fbf 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -166,15 +166,16 @@ mext_folio_double_lock(struct inode *inode1, struct inode *inode2,
+ 	return 0;
+ }
  
-+			first_block = map.m_pblk + map_offset;
- 			for (relative_block = 0; ; relative_block++) {
- 				if (relative_block == last) {
- 					/* needed? */
-@@ -271,8 +272,6 @@ int ext4_mpage_readpages(struct inode *inode,
- 				}
- 				if (page_block == blocks_per_page)
- 					break;
--				blocks[page_block] = map.m_pblk + map_offset +
--					relative_block;
- 				page_block++;
- 				block_in_file++;
- 			}
-@@ -308,7 +307,9 @@ int ext4_mpage_readpages(struct inode *inode,
- 				goto confused;		/* hole -> non-hole */
+-/* Force page buffers uptodate w/o dropping page's lock */
+-static int
+-mext_page_mkuptodate(struct folio *folio, unsigned from, unsigned to)
++/* Force folio buffers uptodate w/o dropping folio's lock */
++static int mext_page_mkuptodate(struct folio *folio, size_t from, size_t to)
+ {
+ 	struct inode *inode = folio->mapping->host;
+ 	sector_t block;
+-	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
++	struct buffer_head *bh, *head;
+ 	unsigned int blocksize, block_start, block_end;
+-	int i, err,  nr = 0, partial = 0;
++	int err = 0,  nr = 0;
++	bool partial = false;
++
+ 	BUG_ON(!folio_test_locked(folio));
+ 	BUG_ON(folio_test_writeback(folio));
  
- 			/* Contiguous blocks? */
--			if (page_block && blocks[page_block-1] != map.m_pblk-1)
-+			if (!page_block)
-+			       	first_block = map.m_pblk;
-+			else if (first_block + page_block != map.m_pblk)
- 				goto confused;
- 			for (relative_block = 0; ; relative_block++) {
- 				if (relative_block == map.m_len) {
-@@ -317,7 +318,6 @@ int ext4_mpage_readpages(struct inode *inode,
- 					break;
- 				} else if (page_block == blocks_per_page)
- 					break;
--				blocks[page_block] = map.m_pblk+relative_block;
- 				page_block++;
- 				block_in_file++;
+@@ -186,13 +187,14 @@ mext_page_mkuptodate(struct folio *folio, unsigned from, unsigned to)
+ 	if (!head)
+ 		head = create_empty_buffers(folio, blocksize, 0);
+ 
+-	block = (sector_t)folio->index << (PAGE_SHIFT - inode->i_blkbits);
+-	for (bh = head, block_start = 0; bh != head || !block_start;
+-	     block++, block_start = block_end, bh = bh->b_this_page) {
++	block = folio_pos(folio) >> inode->i_blkbits;
++	block_end = 0;
++	for (bh = head; bh != head; block++, bh = bh->b_this_page) {
++		block_start = block_end;
+ 		block_end = block_start + blocksize;
+ 		if (block_end <= from || block_start >= to) {
+ 			if (!buffer_uptodate(bh))
+-				partial = 1;
++				partial = true;
+ 			continue;
+ 		}
+ 		if (buffer_uptodate(bh))
+@@ -209,25 +211,28 @@ mext_page_mkuptodate(struct folio *folio, unsigned from, unsigned to)
+ 				continue;
  			}
-@@ -340,7 +340,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 		 * This folio will go to BIO.  Do we need to send this
- 		 * BIO off first?
- 		 */
--		if (bio && (last_block_in_bio != blocks[0] - 1 ||
-+		if (bio && (last_block_in_bio != first_block - 1 ||
- 			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
- 		submit_and_realloc:
- 			submit_bio(bio);
-@@ -356,7 +356,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
- 						  GFP_KERNEL);
- 			ext4_set_bio_post_read_ctx(bio, inode, folio->index);
--			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
-+			bio->bi_iter.bi_sector = first_block << (blkbits - 9);
- 			bio->bi_end_io = mpage_end_io;
- 			if (rac)
- 				bio->bi_opf |= REQ_RAHEAD;
-@@ -372,7 +372,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 			submit_bio(bio);
- 			bio = NULL;
- 		} else
--			last_block_in_bio = blocks[blocks_per_page - 1];
-+			last_block_in_bio = first_block + blocks_per_page - 1;
- 		continue;
- 	confused:
- 		if (bio) {
+ 		}
+-		BUG_ON(nr >= MAX_BUF_PER_PAGE);
+-		arr[nr++] = bh;
++		ext4_read_bh_nowait(bh, 0, NULL);
++		nr++;
+ 	}
+ 	/* No io required */
+ 	if (!nr)
+ 		goto out;
+ 
+-	for (i = 0; i < nr; i++) {
+-		bh = arr[i];
+-		if (!bh_uptodate_or_lock(bh)) {
+-			err = ext4_read_bh(bh, 0, NULL);
+-			if (err)
+-				return err;
+-		}
++	for (bh = head; bh != head; bh = bh->b_this_page) {
++		if (bh_offset(bh) + blocksize <= from)
++			continue;
++		if (bh_offset(bh) > to)
++			break;
++		wait_on_buffer(bh);
++		if (buffer_uptodate(bh))
++			continue;
++		err = -EIO;
++		break;
+ 	}
+ out:
+-	if (!partial)
++	if (!err && !partial)
+ 		folio_mark_uptodate(folio);
+-	return 0;
++	return err;
+ }
+ 
+ /**
 -- 
 2.43.0
 
