@@ -1,167 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-19566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211E68C720F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 09:31:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3434F8C72C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 10:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97230282812
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 07:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E88281EC9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2024 08:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596AF71739;
-	Thu, 16 May 2024 07:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="B5JTPmYD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BE212EBFE;
+	Thu, 16 May 2024 08:27:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ABA3E49E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2024 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BFE76C76;
+	Thu, 16 May 2024 08:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715844693; cv=none; b=C+aIkCY5vkMnaCkU2XQtuH42AJlwdVkYv/JvbaOSzZGdgovnB9U48bw57GYmecEKU3WFKpGYOtYlwUHrUkoTjDEngIYsmQ/4y8KNUrogI2GPitkGueC9gBqJagTRDhEoTvGw0+odKEEpb9Z16h97wtbFxfwAWbwA8cTkGID2xz0=
+	t=1715848055; cv=none; b=k6VBcxmthZa6n8HHxFU/5joIrZwcb04pXZ0vsSaB69CYP9m8rdLlxTBKIgEu5KpgIkEoG5NifCnrE0FbWimNC/1B8jF8VvhL4LpH9OmSvI1wtSvlmaFD2odvFqbu6lqVPDLh77i+ht1wREgACaM+U4lrz1Wq4VH1dELX7yKuTa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715844693; c=relaxed/simple;
-	bh=9MX6D9IimpJEieWy+a37mRcw4wRyMKCNdxMccONZOQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhaDjJ4qW7GmwVW/YIKYmvBCIEUSPTF6DKEwXKjRsvhyD/8kk1m90/2wnpdCAoTm6eDu8DWWHiDM7wBVepBM+PDuS+mMNHWkUMwaPOlcGB0vhB+o2g8FH66i96X9BPbxv6T0q3u6uh8hahzQ865cxkeiy6EuoUFr5ue1YBhUvdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=B5JTPmYD; arc=none smtp.client-ip=83.166.143.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Vg1x372gXzpYl;
-	Thu, 16 May 2024 09:31:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1715844679;
-	bh=x9B4v71FSOB+lN5lTjfx2Ss5JuMCQaPevVVCYis5sJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B5JTPmYDKDwqWT+JiXH4f2GatEcocJ1C8JDnJeJ9gqsn/yfFly9tcNzg2QJKG3DQ9
-	 Gw7NsOMqiFucb2I5qBqnE6X9zG4CrXZBliDiSC6vNAUbYqYX6UJb9RRM+kSziJm8vS
-	 RfP6PaTCVrAemYjkl4JoQlWctAe5AnSC2EFvED/0=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Vg1x25SDhzXZs;
-	Thu, 16 May 2024 09:31:18 +0200 (CEST)
-Date: Thu, 16 May 2024 09:31:20 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Cc: syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
-	jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [syzbot] [lsm?] general protection fault in
- hook_inode_free_security
-Message-ID: <20240516.doyox6Iengou@digikod.net>
-References: <00000000000076ba3b0617f65cc8@google.com>
- <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
- <20240515.Yoo5chaiNai9@digikod.net>
+	s=arc-20240116; t=1715848055; c=relaxed/simple;
+	bh=Fa3tCa+nHTX5GaUek5DQjejgVE5UyfDOFzTBnbAZZgQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WYd1o5mteRp6hPuHUxqGHvKtTvmibBGabvja/ZMUscaNboOa1GEBO/2wazSZFvdK6MsI6FpFBNE7CKv6YnGzuJRD3OKIXda6L4nsTQXfMNIpDOXLye0lAoB4570oyWx/+c71BR/HEAlKygPT7WnFcj1W9WlrNRMiybkKZ/vJd1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vg39h3dg3z4f3jYN;
+	Thu, 16 May 2024 16:27:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 381E41A10BC;
+	Thu, 16 May 2024 16:27:29 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAttw0VmcIZ6NA--.39916S3;
+	Thu, 16 May 2024 16:27:27 +0800 (CST)
+Subject: Re: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
+ <20240515002513.yaglghza4i4ldmr5@quack3>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <f0eb115d-dd10-e156-9aed-65b7f479f008@huaweicloud.com>
+Date: Thu, 16 May 2024 16:27:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240515002513.yaglghza4i4ldmr5@quack3>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240515.Yoo5chaiNai9@digikod.net>
-X-Infomaniak-Routing: alpha
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnmAttw0VmcIZ6NA--.39916S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxArWxCw4fAr1xXry8Jw47Arb_yoW5Aw43pF
+	W0k3W2gr4kZ34I9r40qa17ZFW0yws5Ja48XrsxXwsaga1UG3s7KrW7tFyavFyDtFs5Ww4U
+	XF4S9rn7Kryj937anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUrR6zUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Adding membarrier experts.
+On 2024/5/15 8:25, Jan Kara wrote:
+> On Mon 13-05-24 15:21:19, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> jbd2_transaction_committed() is used to check whether a transaction with
+>> the given tid has already committed, it hold j_state_lock in read mode
+>> and check the tid of current running transaction and committing
+>> transaction, but holding the j_state_lock is expensive.
+>>
+>> We have already stored the sequence number of the most recently
+>> committed transaction in journal t->j_commit_sequence, we could do this
+>> check by comparing it with the given tid instead. If the given tid isn't
+>> smaller than j_commit_sequence, we can ensure that the given transaction
+>> has been committed. That way we could drop the expensive lock and
+>> achieve about 10% ~ 20% performance gains in concurrent DIOs on may
+>> virtual machine with 100G ramdisk.
+>>
+>> fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
+>>     -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
+>>     -group_reporting
+>>
+>> Before:
+>>   overwrite       IOPS=88.2k, BW=344MiB/s
+>>   read            IOPS=95.7k, BW=374MiB/s
+>>   rand overwrite  IOPS=98.7k, BW=386MiB/s
+>>   randread        IOPS=102k, BW=397MiB/s
+>>
+>> After:
+>>   verwrite:       IOPS=105k, BW=410MiB/s
+>>   read:           IOPS=112k, BW=436MiB/s
+>>   rand overwrite: IOPS=104k, BW=404MiB/s
+>>   randread:       IOPS=111k, BW=432MiB/s
+>>
+>> CC: Dave Chinner <david@fromorbit.com>
+>> Suggested-by: Dave Chinner <david@fromorbit.com>
+>> Link: https://lore.kernel.org/linux-ext4/493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com/T/#m6a14df5d085527a188c5a151191e87a3252dc4e2
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> I agree this is workable solution and the performance benefits are nice. But
+> I have some comments regarding the implementation:
+> 
+>> @@ -3199,8 +3199,8 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
+>>  	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+>>  
+>>  	if (journal) {
+>> -		if (jbd2_transaction_committed(journal,
+>> -			EXT4_I(inode)->i_datasync_tid))
+>> +		if (tid_geq(journal->j_commit_sequence,
+>> +			    EXT4_I(inode)->i_datasync_tid))
+> 
+> Please leave the helper jbd2_transaction_committed(), just make the
+> implementation more efficient. 
 
-On Wed, May 15, 2024 at 05:12:58PM +0200, Mickaël Salaün wrote:
-> On Thu, May 09, 2024 at 08:01:49PM -0400, Paul Moore wrote:
-> > On Wed, May 8, 2024 at 3:32 PM syzbot
-> > <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > >
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > >
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
-> > >
-> > > general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> > > KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
-> > > CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-> > > RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
-> > 
-> > Possibly a Landlock issue, Mickaël?
+Sure.
+
+> Also accessing j_commit_sequence without any
+> lock is theoretically problematic wrt compiler optimization. You should have
+> READ_ONCE() there and the places modifying j_commit_sequence need to use
+> WRITE_ONCE().
 > 
-> It looks like security_inode_free() is called two times on the same
-> inode.  This could happen if an inode labeled by Landlock is put
-> concurrently with release_inode() for a closed ruleset or with
-> hook_sb_delete().  I didn't find any race condition that could lead to
-> two calls to iput() though.  Could WRITE_ONCE(object->underobj, NULL)
-> change anything even if object->lock is locked?
-> 
-> A bit unrelated but looking at the SELinux code, I see that selinux_inode()
-> checks `!inode->i_security`.  In which case could this happen?
-> 
-> > 
-> > > Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
-> > > RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
-> > > RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
-> > > RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
-> > > RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
-> > > R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
-> > > R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
-> > > FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
-> > > Call Trace:
-> > >  <TASK>
-> > >  security_inode_free+0x4a/0xd0 security/security.c:1613
-> > >  __destroy_inode+0x2d9/0x650 fs/inode.c:286
-> > >  destroy_inode fs/inode.c:309 [inline]
-> > >  evict+0x521/0x630 fs/inode.c:682
-> > >  dispose_list fs/inode.c:700 [inline]
-> > >  evict_inodes+0x5f9/0x690 fs/inode.c:750
-> > >  generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
-> > >  kill_block_super+0x44/0x90 fs/super.c:1675
-> > >  deactivate_locked_super+0xc6/0x130 fs/super.c:472
-> > >  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
-> > >  task_work_run+0x251/0x310 kernel/task_work.c:180
-> > >  exit_task_work include/linux/task_work.h:38 [inline]
-> > >  do_exit+0xa1b/0x27e0 kernel/exit.c:878
-> > >  do_group_exit+0x207/0x2c0 kernel/exit.c:1027
-> > >  __do_sys_exit_group kernel/exit.c:1038 [inline]
-> > >  __se_sys_exit_group kernel/exit.c:1036 [inline]
-> > >  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
-> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > RIP: 0033:0x7f731567dd69
-> > > Code: Unable to access opcode bytes at 0x7f731567dd3f.
-> > > RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> > > RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
-> > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> > > RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
-> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
-> > > R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
-> > >  </TASK>
-> > > Modules linked in:
-> > > ---[ end trace 0000000000000000 ]---
-> > 
-> > -- 
-> > paul-moore.com
-> > 
+
+Thanks for pointing this out, but I'm not sure if we have to need READ_ONCE()
+here. IIUC, if we add READ_ONCE(), we could make sure to get the latest
+j_commit_sequence, if not, there is a window (it might becomes larger) that
+we could get the old value and jbd2_transaction_committed() could return false
+even if the given transaction was just committed, but I think the window is
+always there, so it looks like it is not a big problem, is that right?
+
+Thanks,
+Yi.
+
 
