@@ -1,101 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-19685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3445B8C8949
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 17:24:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3008C89A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 17:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69801F230A1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 15:24:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F059DB217E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 15:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4B712D212;
-	Fri, 17 May 2024 15:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C6F12F5A7;
+	Fri, 17 May 2024 15:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OPGnQRbz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUNgytXP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B334EB36
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 May 2024 15:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB29C399;
+	Fri, 17 May 2024 15:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715959451; cv=none; b=ADfiae9nMcrzdQLwfW0s7fXfl4apzi1fU6fDOdRCNLrz8OLdOG6Wiba8N3EtZj7Bys8bsFbBocZxYxug9aDW/9ILly+UgvlCPAgL8BhNnXlPHZhL3OUDEAmG2Yvw38ELdp/32QyORUJ8bo6lRWHY0JekWYsuJAlApzQs3DFNgfs=
+	t=1715961390; cv=none; b=bGVCBrqTrzrjltDV1F33DqQPkjof5TxBzr5UpsQM5xKCtF6ane0rbhpmnSXjmGJBmli5CqJ0y+0BdUAECiNW4AKgw02+DT3FpIj7xxEO5xVKyjaG6ncwNnaqnINMjRY5S5H63AJjEwm3PmTpQYI/BxZkOG/TeKPNeyRmPLhdMIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715959451; c=relaxed/simple;
-	bh=QXdfDXnhNP+XPVRy8IxZ7g7dZ6J4mPy+Da5kke7S0oc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tvzzf2gJE0FyFbeWeAjWSyjCgvxj4YPhyGOB9zo7/K+CVtgIUS+YGY1rfppXY302Mq67imnw9LBJF6z2P24EHPCPK3Y4QqORCFzuzefRXGDRsKlYKg4vvWHgK2VBJvl3jgsAWnZ/6Bgx/aM2spL4hklg3R2AZx9m5H27qLIikM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OPGnQRbz; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-572e48f91e9so5490569a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 May 2024 08:24:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715959448; x=1716564248; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CchMDZ298/IGI6kE9eLIhV6PqN0AhAFW2cfstX4Dhf0=;
-        b=OPGnQRbzHLytCqVvmwp4DGYAWhMcQagGHAn1CLe7oZfPCz3/jXnAbbgtiflL7fT8w4
-         q0fkXQ6ph4SDdb7+HY6Ilr9/YD6zjr1I2w5pbVP+/yRS0VAp0fPMTMm2DvGGYuDxVq5Y
-         ggLvFjDBep1N2SSVaVF9Hwx/yqIhK+VpYrM9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715959448; x=1716564248;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CchMDZ298/IGI6kE9eLIhV6PqN0AhAFW2cfstX4Dhf0=;
-        b=Km8vcu001p5Uo14wy0szmfcZz2Hbg/pcWyVBDsWfnqjkv7+V8OvpP2IcSpKbVmCZ9W
-         nBpKoMNN8IJCX8QQZQNo0LQr39FQbm2ie16vFk6CpIeezhtRRMhQehJEbD1aMDOIhXvs
-         EG0t/YutgIKA2cfgBCUEXIgQnOQYxS1izMyGOghSyhEfNrFwdSAlCNivdnd8Jsb9r6VV
-         wCQOXQnSNXUWYx0GbqxtTdAgXBHFabSLClkpYF0qIsBmdUTjVmx2CRZOTtwFA9pYddlj
-         quEuuocALwCgzS3rVdq1LCYRoG851jBBrvJnEF3GsNutqLJOQRc5uGYyFnAljUj3u3yf
-         lUCw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9ve5nTUS83jRTwXCoWMIUQdIltc7Isj68yCoPeZNJlU1huDiXji2GLUOQyxaFt1Yco2ST6mwgZlIhTA0yyD9UM9IvkZylIuWnaxni9A==
-X-Gm-Message-State: AOJu0Yyp5muqf+oOlsyNP7puptAv767LPt1Raieekynj3TdV6WwkdeGW
-	lwHnkMwIfZPdYYMCbJBeUbjeGVqJ4EhD5/0cp0e6SeI4MciKYSl5rq7rsN1FWyMA252nCW7yogW
-	BIUQTNnOV4i1r8svK2Eq6ZXBLbTM+3Bo3RJyfVg==
-X-Google-Smtp-Source: AGHT+IFiAkBo67FgjDFTRG6mQd98TKYWCrHgCGz/lmkQLZy75bavfdElw4HfutKdjY2fPP553NTo7I8eOEq/o0H1GVQ=
-X-Received: by 2002:a17:906:da8b:b0:a59:bdb7:73f8 with SMTP id
- a640c23a62f3a-a5a2d66a3b4mr1968036666b.47.1715959448089; Fri, 17 May 2024
- 08:24:08 -0700 (PDT)
+	s=arc-20240116; t=1715961390; c=relaxed/simple;
+	bh=nd1PdYlGsC/QzJZOWPgYLrKd4b9pdsPDAgH20vsDd2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dosnj8Jrt+eNtRQ+9cvr0ScwmJMgGMi6p1AQhiri9ANdGPNQXfUX4aHErj2Bkg14/IWqwp/3U73VPnrb1wjJnoTqtREfNuvO1Ru/06DHp303jRyzo8oZhlcMVyfIs8fTUy74ibVzhOnAx+9fcyEu8ZpfHPpFRbws0pDLJJmDi9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUNgytXP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E924C2BD10;
+	Fri, 17 May 2024 15:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715961390;
+	bh=nd1PdYlGsC/QzJZOWPgYLrKd4b9pdsPDAgH20vsDd2c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kUNgytXPDsJDnd36NEfB6qy3xgyzJoQXnX2qjM9AfXMRmisYE9datL2emeAW+89V2
+	 MmmjVsRYaSK/EEQrCRCpdf+WDpBtRCjB/iEQ8UpqO/NxJgKQZaLn07pK7PMz3wtNT6
+	 LBxWPiR4x7fag8RQdmfDMMrANKAmO3Aue4ta45ZZoNQgnRFKTmsXvSgHIjava7Hcq1
+	 vVZ7D8ShM9O2keL/o19P/tV/hLD6bdkzf8aMFbxmHnZAaSqQRPF9ZHfgsU5u8gzESw
+	 PgRePemdmycWjy8QjoKUGTKyaY9q+DPySoYQhkS/OiP5jdpSOLIdhc+GP7eqe5Q4tW
+	 Q9dERIVXoylLA==
+Date: Fri, 17 May 2024 08:56:29 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zorro Lang <zlang@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, fstests@vger.kernel.org
+Subject: Re: [PATCHSET v5.6] fstests: fs-verity support for XFS
+Message-ID: <20240517155629.GL360908@frogsfrogsfrogs>
+References: <20240430031134.GH360919@frogsfrogsfrogs>
+ <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
+ <20240511050146.vc4jr2gagwjwwhdp@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509125716.1268016-1-leitao@debian.org> <CAJfpeguh9upC5uqcb3uetoMm1W7difC86+-BxZZPjkXa-bNqLg@mail.gmail.com>
- <ZkIKfFs-0lfflzV-@gmail.com>
-In-Reply-To: <ZkIKfFs-0lfflzV-@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 17 May 2024 17:23:56 +0200
-Message-ID: <CAJfpegvr9Ufqg4oe7BnL2Kjsa6M_A-LTyZ9LdvbjnG0GVN_jdw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: annotate potential data-race in num_background
-To: Breno Leitao <leitao@debian.org>
-Cc: paulmck@kernel.org, 
-	"open list:FUSE: FILESYSTEM IN USERSPACE" <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511050146.vc4jr2gagwjwwhdp@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 
-On Mon, 13 May 2024 at 14:41, Breno Leitao <leitao@debian.org> wrote:
+On Sat, May 11, 2024 at 01:01:46PM +0800, Zorro Lang wrote:
+> Hi Darrick,
+> 
+> Due to only half of this patchset got reviewed, so I'd like to wait for your
+> later version. I won't pick up part of this patchset to merge this time, I
+> think better to merge it as an integrated patchset.
 
-> That said, if the reader (fuse_readahead()) can handle possible
-> corrupted data, we can mark is with data_race() annotation. Then I
-> understand we don't need to mark the write with WRITE_ONCE().
+Christoph and I talked about the future of this patchset at LSF and
+there are some file format changes in store, so please hold off on
+analyzing this patchset for now.
 
-Adding Willy, since the readahead code in fuse is fairly special.
+--D
 
-I don't think it actually matters if  "fc->num_background >=
-fc->congestion_threshold" returns false positive or false negative,
-but I don't have a full understanding of how readahead works.
-
-Willy, can you please look at fuse_readahead() to confirm that
-breaking out of the loop is okay if (rac->ra->async_size >=
-readahead_count(rac)) no mater what?
-
-Thanks,
-Miklos
+> Thanks,
+> Zorro
+> 
+> On Mon, Apr 29, 2024 at 08:19:24PM -0700, Darrick J. Wong wrote:
+> > Hi all,
+> > 
+> > This patchset adds support for fsverity to XFS.  In keeping with
+> > Andrey's original design, XFS stores all fsverity metadata in the
+> > extended attribute data.  However, I've made a few changes to the code:
+> > First, it now caches merkle tree blocks directly instead of abusing the
+> > buffer cache.  This reduces lookup overhead quite a bit, at a cost of
+> > needing a new shrinker for cached merkle tree blocks.
+> > 
+> > To reduce the ondisk footprint further, I also made the verity
+> > enablement code detect trailing zeroes whenever fsverity tells us to
+> > write a buffer, and elide storing the zeroes.  To further reduce the
+> > footprint of sparse files, I also skip writing merkle tree blocks if the
+> > block contents are entirely hashes of zeroes.
+> > 
+> > Next, I implemented more of the tooling around verity, such as debugger
+> > support, as much fsck support as I can manage without knowing the
+> > internal format of the fsverity information; and added support for
+> > xfs_scrub to read fsverity files to validate the consistency of the data
+> > against the merkle tree.
+> > 
+> > Finally, I add the ability for administrators to turn off fsverity,
+> > which might help recovering damaged data from an inconsistent file.
+> > 
+> > From Andrey Albershteyn:
+> > 
+> > Here's v5 of my patchset of adding fs-verity support to XFS.
+> > 
+> > This implementation uses extended attributes to store fs-verity
+> > metadata. The Merkle tree blocks are stored in the remote extended
+> > attributes. The names are offsets into the tree.
+> > From Darrick J. Wong:
+> > 
+> > This v5.3 patchset builds upon v5.2 of Andrey's patchset to implement
+> > fsverity for XFS.
+> > 
+> > The biggest thing that I didn't like in the v5 patchset is the abuse of
+> > the data device's buffer cache to store the incore version of the merkle
+> > tree blocks.  Not only do verity state flags end up in xfs_buf, but the
+> > double-alloc flag wastes memory and doesn't remain internally consistent
+> > if the xattrs shift around.
+> > 
+> > I replaced all of that with a per-inode xarray that indexes incore
+> > merkle tree blocks.  For cache hits, this dramatically reduces the
+> > amount of work that xfs has to do to feed fsverity.  The per-block
+> > overhead is much lower (8 bytes instead of ~300 for xfs_bufs), and we no
+> > longer have to entertain layering violations in the buffer cache.  I
+> > also added a per-filesystem shrinker so that reclaim can cull cached
+> > merkle tree blocks, starting with the leaf tree nodes.
+> > 
+> > I've also rolled in some changes recommended by the fsverity maintainer,
+> > fixed some organization and naming problems in the xfs code, fixed a
+> > collision in the xfs_inode iflags, and improved dead merkle tree cleanup
+> > per the discussion of the v5 series.  At this point I'm happy enough
+> > with this code to start integrating and testing it in my trees, so it's
+> > time to send it out a coherent patchset for comments.
+> > 
+> > For v5.3, I've added bits and pieces of online and offline repair
+> > support, reduced the size of partially filled merkle tree blocks by
+> > removing trailing zeroes, changed the xattr hash function to better
+> > avoid collisions between merkle tree keys, made the fsverity
+> > invalidation bitmap unnecessary, and made it so that we can save space
+> > on sparse verity files by not storing merkle tree blocks that hash
+> > totally zeroed data blocks.
+> > 
+> > From Andrey Albershteyn:
+> > 
+> > Here's v5 of my patchset of adding fs-verity support to XFS.
+> > 
+> > This implementation uses extended attributes to store fs-verity
+> > metadata. The Merkle tree blocks are stored in the remote extended
+> > attributes. The names are offsets into the tree.
+> > 
+> > If you're going to start using this code, I strongly recommend pulling
+> > from my git trees, which are linked below.
+> > 
+> > This has been running on the djcloud for months with no problems.  Enjoy!
+> > Comments and questions are, as always, welcome.
+> > 
+> > --D
+> > 
+> > kernel git tree:
+> > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity
+> > 
+> > xfsprogs git tree:
+> > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=fsverity
+> > 
+> > fstests git tree:
+> > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity
+> > ---
+> > Commits in this patchset:
+> >  * common/verity: enable fsverity for XFS
+> >  * xfs/{021,122}: adapt to fsverity xattrs
+> >  * xfs/122: adapt to fsverity
+> >  * xfs: test xfs_scrub detection and correction of corrupt fsverity metadata
+> >  * xfs: test disabling fsverity
+> >  * common/populate: add verity files to populate xfs images
+> > ---
+> >  common/populate    |   24 +++++++++
+> >  common/verity      |   39 ++++++++++++++-
+> >  tests/xfs/021      |    3 +
+> >  tests/xfs/122.out  |    3 +
+> >  tests/xfs/1880     |  135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tests/xfs/1880.out |   37 ++++++++++++++
+> >  tests/xfs/1881     |  111 +++++++++++++++++++++++++++++++++++++++++++
+> >  tests/xfs/1881.out |   28 +++++++++++
+> >  8 files changed, 378 insertions(+), 2 deletions(-)
+> >  create mode 100755 tests/xfs/1880
+> >  create mode 100644 tests/xfs/1880.out
+> >  create mode 100755 tests/xfs/1881
+> >  create mode 100644 tests/xfs/1881.out
+> > 
+> 
+> 
 
