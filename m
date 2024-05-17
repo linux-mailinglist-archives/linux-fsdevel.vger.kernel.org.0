@@ -1,63 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-19631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB408C7F6F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 03:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D185C8C7F84
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 03:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D92B1F22384
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 01:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F190282DFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 01:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF4B10F9;
-	Fri, 17 May 2024 01:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89B51854;
+	Fri, 17 May 2024 01:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A7704XwV"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VX9NvMkO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79073622;
-	Fri, 17 May 2024 01:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D8817D2;
+	Fri, 17 May 2024 01:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715908421; cv=none; b=CPo26vxIWBBQIDBCczBkdb0kmKFHsiI+sh3cz2EOg++e+qRD1I6iuFYUHUc2gcUu+TYYcYAPo2afsTryaisTcV+3ZFQdFQUfTl55gV501aQdfpPhAQVIXiyQKnFeXQJBVUXw8JbSXIuJnySSPvAzUPGdFpGZhxFB1IGS5Zn3Q+g=
+	t=1715909225; cv=none; b=FUikKiX5Ju5yWf3qYfOcnZuNs9tyT8Fng4bnSaDV6WacbGQUJ5J+p6ZwguYz0Y9JVSoBpAngrdIwiRgQqBmusj6hoU7NtSWc3+knKSL6Q6oHq38Rf7gHexm7884S4ls7yuG3OtW8sHHn7yzNjbBgjQsNMsBTb0U/tcHYjJHFFuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715908421; c=relaxed/simple;
-	bh=/vvsswAoAmgw2yBWUNu63T1F+yzlmKWlMthqEIrZGhg=;
+	s=arc-20240116; t=1715909225; c=relaxed/simple;
+	bh=ci2vKGYJPkUX5heEMris7S868/NN3z7NYkLJCN0lrYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dRviwlOHwYfAov46QCIfGVBHyuqNUHdKk0f3ZwTsqowpsi66iEUFbbGOa0c/3Yv8YoGr4K2/baDrbBTGbG1LsqtRfHJ6bvC8MVJWPcKJjHvfsmUHcXzWH2ABkJjWMvaNRCyivTf9JcuBGqpoTGCZdkFy3tkZCuHKnzG/7nSWDus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A7704XwV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+uhBMdvnYaQc7//7Wk76DIeu8yrb9wknTGKJ1KlNmznGA1ZTXWaZ1+T9uAR9w7b7vUQci+/0oNe9YwjPA+LVau1OkD2D6zWfKhZWN7evjNFzvYSyoQ9aWqowVGF/50hp8R5/mG8xLS5qY5To8jaF5PCxGcmSviP+IYHrZbwZbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VX9NvMkO; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bAaTm4i8GbKAujXZw/Nj794uuuDBMkfyY62rPnCcTt4=; b=A7704XwVQCJKlO1iLZQaTR2qje
-	EiMO3ljg1j6WybniFFv/rcE8vASAIHIhyyHefq4J3zxkct5KzEbth8Huy7neQoSfIjxpyyif1c/lp
-	eHBV0OS/yk8sWPrm/TfbZ+1n17Yl2ZNwCok56KL5MulmWYGI6EJNYlIrRG2mVXEmikpODYJDl/NUl
-	ATNntx+hFn1MQfqUDKsSONlTGnEwiXVSN1RaNzXCo19AUpMkWKuBLH7XB7CHj5h5j+47EKAahS1qf
-	iEpTdS+FCwQMQij6LjOcxrncpS94Z1a/TB6uphrr954Va2B3fAdKCrTYtP5Jq9JbK+n9iW8wteePr
-	HhONV66w==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7m9y-0000000CRRv-2uiS;
-	Fri, 17 May 2024 01:13:22 +0000
-Date: Fri, 17 May 2024 02:13:22 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	bh=kdToEKd/rzCQk35x9OVJLQQsAOBHBkPUX9V4xj54vVo=; b=VX9NvMkOl/J6GUN8DUit3GIplH
+	x6WZog9uIBbJ2XpWOLJnpePQzNcYB3nWqHxPnnMwPpPA7bU/RSMXSpIpOkEDIUDzRqrqFGIU5kY0L
+	snktPKMO8EzTIicEdxEpMdhjz+TEIDk8hU+cUni37PoOnI78YpZiZ2G2FRswcYqkY2j/irsLT7Z7K
+	XwMW5wClkEmUgAFcCZKIVlhNQRjOG4VV6c9E6P25cJBDm+RNtjFGgapE7SmPUbe5RWnSr8P46aJ52
+	LZzBruBsu5t27Ix+QEscMyuHerdhGcarAdiTlcHCwsZ+TZkOOfrjXnRqN1/Vixz9xapu67Y1f/DK1
+	QfcxISjQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s7mMx-008cYd-0U;
+	Fri, 17 May 2024 01:26:47 +0000
+Date: Fri, 17 May 2024 02:26:47 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Justin Stitt <justinstitt@google.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	Nick Desaulniers <ndesaulniers@google.com>,
 	Nathan Chancellor <nathan@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
 	linux-hardening@vger.kernel.org
 Subject: Re: [PATCH v3] fs: fix unintentional arithmetic wraparound in offset
  calculation
-Message-ID: <ZkavMgtP2IQFGCoQ@casper.infradead.org>
+Message-ID: <20240517012647.GN2118490@ZenIV>
 References: <20240517-b4-sio-read_write-v3-1-f180df0a19e6@google.com>
+ <ZkavMgtP2IQFGCoQ@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,11 +67,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240517-b4-sio-read_write-v3-1-f180df0a19e6@google.com>
+In-Reply-To: <ZkavMgtP2IQFGCoQ@casper.infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, May 17, 2024 at 12:29:06AM +0000, Justin Stitt wrote:
-> When running syzkaller with the newly reintroduced signed integer
-> overflow sanitizer we encounter this report:
+On Fri, May 17, 2024 at 02:13:22AM +0100, Matthew Wilcox wrote:
+> On Fri, May 17, 2024 at 12:29:06AM +0000, Justin Stitt wrote:
+> > When running syzkaller with the newly reintroduced signed integer
+> > overflow sanitizer we encounter this report:
+> 
+> why do you keep saying it's unintentional?  it's clearly intended.
 
-why do you keep saying it's unintentional?  it's clearly intended.
+Because they are short on actual bugs to be found by their tooling
+and attempt to inflate the sound/noise rate; therefore, every time
+when overflow _IS_ handled correctly, it must have been an accident -
+we couldn't have possibly done the analysis correctly.  And if somebody
+insists that they _are_ capable of basic math, they must be dishonest.
+So... "unintentional" it's going to be.
+
+<southpark> Math is hard, mmkay?  </southpark>
+
+Al, more than slightly annoyed by that aspect of the entire thing...
 
