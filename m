@@ -1,195 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-19686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3008C89A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 17:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF0C8C89D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 18:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F059DB217E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 15:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59A328191A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 16:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C6F12F5A7;
-	Fri, 17 May 2024 15:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C74512FB01;
+	Fri, 17 May 2024 16:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUNgytXP"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bWR7JMxy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2049.outbound.protection.outlook.com [40.107.220.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB29C399;
-	Fri, 17 May 2024 15:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715961390; cv=none; b=bGVCBrqTrzrjltDV1F33DqQPkjof5TxBzr5UpsQM5xKCtF6ane0rbhpmnSXjmGJBmli5CqJ0y+0BdUAECiNW4AKgw02+DT3FpIj7xxEO5xVKyjaG6ncwNnaqnINMjRY5S5H63AJjEwm3PmTpQYI/BxZkOG/TeKPNeyRmPLhdMIs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715961390; c=relaxed/simple;
-	bh=nd1PdYlGsC/QzJZOWPgYLrKd4b9pdsPDAgH20vsDd2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dosnj8Jrt+eNtRQ+9cvr0ScwmJMgGMi6p1AQhiri9ANdGPNQXfUX4aHErj2Bkg14/IWqwp/3U73VPnrb1wjJnoTqtREfNuvO1Ru/06DHp303jRyzo8oZhlcMVyfIs8fTUy74ibVzhOnAx+9fcyEu8ZpfHPpFRbws0pDLJJmDi9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUNgytXP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E924C2BD10;
-	Fri, 17 May 2024 15:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715961390;
-	bh=nd1PdYlGsC/QzJZOWPgYLrKd4b9pdsPDAgH20vsDd2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kUNgytXPDsJDnd36NEfB6qy3xgyzJoQXnX2qjM9AfXMRmisYE9datL2emeAW+89V2
-	 MmmjVsRYaSK/EEQrCRCpdf+WDpBtRCjB/iEQ8UpqO/NxJgKQZaLn07pK7PMz3wtNT6
-	 LBxWPiR4x7fag8RQdmfDMMrANKAmO3Aue4ta45ZZoNQgnRFKTmsXvSgHIjava7Hcq1
-	 vVZ7D8ShM9O2keL/o19P/tV/hLD6bdkzf8aMFbxmHnZAaSqQRPF9ZHfgsU5u8gzESw
-	 PgRePemdmycWjy8QjoKUGTKyaY9q+DPySoYQhkS/OiP5jdpSOLIdhc+GP7eqe5Q4tW
-	 Q9dERIVXoylLA==
-Date: Fri, 17 May 2024 08:56:29 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zorro Lang <zlang@redhat.com>
-Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCHSET v5.6] fstests: fs-verity support for XFS
-Message-ID: <20240517155629.GL360908@frogsfrogsfrogs>
-References: <20240430031134.GH360919@frogsfrogsfrogs>
- <171444687971.962488.18035230926224414854.stgit@frogsfrogsfrogs>
- <20240511050146.vc4jr2gagwjwwhdp@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD11F27471;
+	Fri, 17 May 2024 16:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715962247; cv=fail; b=AskJNsACTPkSZVdVR3k3TrTB2y76soeOYnI3fyWt1OgSaCeHocX1BU6CNorUxRJz+aVO/TGVz8h0SX6hzl9az9UvZosH5EjP8Asc2agrSERZ6tb63XAe4Jx5oSa6AhrQsHO8l3H9CgKmzYS/IlF4w2dSPP7qPbR1l5yAJx6pauI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715962247; c=relaxed/simple;
+	bh=rPRTXZNb30JEv7FzpX8AgQnzAGs/cA5CpzaiIhCMvTU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=E4gc6Rt4To+FWEHJz/6EC4zR2Svz/6g1Y6FdAZU5pe0kJVvc6eNIbLQuPic8uOvA40XLtcKic/SxpxM4NHc7pEqa9q8IF6PAWHhJWFw147dLBYDyzNRvnk/2/Kmwip8NLLLVHi5eS30riCmKqIknKvYLMZKoHpUs9ffZRwDBbRs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bWR7JMxy; arc=fail smtp.client-ip=40.107.220.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mV6z/s0XczA6TlvgM0EVoAO1TkbVBBIXbK5my1cOG59kMA2vYy2QwLkhFBBDYQ4/itASPxVXz7/R7XZjoocrdvL2GulNyIqBPcihgVxUN7CfPADWgOCJ/bAEdiB1G8OtMoUQhXVMIva+g2nxzOuHZ3eL8okNm/+HnPyBV1ZZGNnHtpdgFMWsTWihQXxctXKZXCSMu5t6ms9PAYYhhU9RV/XYmWvi5VoWhC0K2a0VSsL4hGfn7yWYBpqMfN+2nu3qrD1TVFg19fSrOMAbiMENIh732LiiCR2jPLSnAmeZ+DSbfpPwDopwSTusFaW0DaxIsiAsO+Fu7zGwLzFu7YAYqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B044GXw6NmQNvtOuRI2bQwLvZ+g1/AUdWnT6BXpL6C4=;
+ b=Wshs40GdqYgZ/cPdEwBD3Imyl65dUUmu0bNbBtxBwkieYlKWxmCEKxjb3DdVRStD4Wmor9eDXXCgUJJGDZ0jLkDGUt0c7Ad9Jf9AtQACURe+JdOIo36nWyecIKSlANsptNmQNIqxp7QKm7I9FO6FnEAoXoQxQe3EdMNZ5+zzEJQoqqVG6XwBIMTTif98bNuxHM/jvNsBhjbRZplsoa7aOZXMD3YPOlNJ5ttFKu4tFwYHHDXYA/t0Q5xMKjFUzbeivtusnXFnuTSX9Zkxiqb/qYuzsPzMLS8Z2/kpHA98uj8jKF2t/3DuavF0Pque08rFWg4ahMzl+FiiAEhQU92KfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B044GXw6NmQNvtOuRI2bQwLvZ+g1/AUdWnT6BXpL6C4=;
+ b=bWR7JMxyZQOL2Lq8s4Ne9IjuA9y0DlwMEPnLQTsisGgpAS1IPHtyvWi7/BsCSh1QyqV1Yv0wEip31m8o8ZPb/0NQCvApMN1A5EsaFElXrtXB9Tbtk2Dks5doS8QAZ3pxiv+iiKrbOFkomVgpzscrR9fMFn/aVbWBKkgkwU9qKk5jmLR8zRcn/sP8LXCmG6LFGDq4NcIZVlUS7Dkir6DDD3jIqO/Iyk4TxqQvV4EZYJh9Y220k+0ija5lgcqndXVR/a/Ew5Afkg/1AOq3tFMMfSW42FwJ8Xo+Izx9JPYzLK610i82yvt2PC4R87AGReAPy4KGTVJ4KJnWA7cDG79TTA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ1PR12MB6075.namprd12.prod.outlook.com (2603:10b6:a03:45e::8)
+ by LV3PR12MB9119.namprd12.prod.outlook.com (2603:10b6:408:1a2::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.30; Fri, 17 May
+ 2024 16:10:41 +0000
+Received: from SJ1PR12MB6075.namprd12.prod.outlook.com
+ ([fe80::3715:9750:b92c:7bee]) by SJ1PR12MB6075.namprd12.prod.outlook.com
+ ([fe80::3715:9750:b92c:7bee%6]) with mapi id 15.20.7544.052; Fri, 17 May 2024
+ 16:10:41 +0000
+From: Aurelien Aptel <aaptel@nvidia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aurelien Aptel <aaptel@nvidia.com>
+Subject: [PATCH] fs/fuse: use correct name fuse_conn_list in docstring
+Date: Fri, 17 May 2024 16:10:28 +0000
+Message-Id: <20240517161028.7046-1-aaptel@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P265CA0134.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9f::26) To SJ1PR12MB6075.namprd12.prod.outlook.com
+ (2603:10b6:a03:45e::8)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240511050146.vc4jr2gagwjwwhdp@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR12MB6075:EE_|LV3PR12MB9119:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb7d90d9-cee5-44eb-d7ba-08dc768be633
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?acD3uGnuzfPm8sgu1fTpv6Bs9VDi1N+7xViCky2JtFvrYkwx0e/cX6ZkOjVL?=
+ =?us-ascii?Q?UcXxYZeKu/5qA9SiermjLkDsvFmCkoQZUT9IuOH8HlVNTNK3xhF8jg4BK2YJ?=
+ =?us-ascii?Q?ynpJA1QAXRRlYarrAOtF6DXkWrbFETXYrX98eRc+6q1DHgv26U7i11CumwOT?=
+ =?us-ascii?Q?pascLNJvNbhGg18RdWxo9zQQtLvrgBKNoJeSEWT22cRPSGL8ToGaOW8yq1zS?=
+ =?us-ascii?Q?C4tcCpXN0yjMisvv5C3+4zECta4DQnNv93yyfaDJErmTvt0dYJ0uF+ApSXoL?=
+ =?us-ascii?Q?I0hYNZrX0xu7kAiuQNvYt3OLBPjJlf1bdE2N1yZP5zNXwcMzF9+n9j7gC6+N?=
+ =?us-ascii?Q?kmTd3E9ZEFrhZmopXmUP6pYVAiRO52XUNSKsdhBcAnp2fIf6PE5XblBAedDB?=
+ =?us-ascii?Q?VpybBU+kGk1QNPlKQvQRKC2jTAmfN+rvqhNWe8ml92WG7htG6Ps6Ou4PF+L8?=
+ =?us-ascii?Q?1IHhoSV5P733NRpq2e7EUZ8mDguNBuiqYeYEc7AwKNUQMLBrIc52AkGL3EAM?=
+ =?us-ascii?Q?Vj3TV/OHBaAwrOoB2yc6rmxQFa/UzGSCEj3g2MfD7jnNsxDHqE/DV9vkXdG8?=
+ =?us-ascii?Q?U1pXPXa7ZJgnCcSQct+KOBQcod4tSpy2VR+T9UJBAjBh9h7/9wkWs6XwMEvx?=
+ =?us-ascii?Q?FmZ93VlwZmtnQj1GPDwFS4CXcvpaU52Csjw3du6yZ7p9lNyKq9fc/HdoKv+/?=
+ =?us-ascii?Q?26gR8v0nRXUKWZ58zkmJj/H2EOXW6y4fVnY8bPpvr26KXO2nKH0Zv466Uy4j?=
+ =?us-ascii?Q?CiE67aJZtad1YVcqZHSV483CfW+GxWrh/sR1Gpfj919ougDt0f7qR0YsCCae?=
+ =?us-ascii?Q?atQM0+OHXwlKhYTKyFD29xDLmvYauZzLefOGvhyg/U3sY6Cblg+uSJ89RXEa?=
+ =?us-ascii?Q?bhc7doy6U8y/cWqlY6qAKJLMAIfXSaFGBv1kwElbZaQZjYZd0fzkNdL8CK2Q?=
+ =?us-ascii?Q?msjbKa182VqH+RQJgSTe2k1YtuzsAcG+mwuejUVYqyaCPXMcAUkLw1S9iqem?=
+ =?us-ascii?Q?Hv3N/A1KvKVnsltpJA08XkzNAn4X3lxsDB3YlvM5HgLerJrcIH9l4CfmRhbA?=
+ =?us-ascii?Q?D/3LHoZ3ca7WeM0TAMeK8Z4+fdaMcdD0yhsOQaUo8uGzfuSPWhTjqevNxxLD?=
+ =?us-ascii?Q?eMJY6hSb/lK22zwQDqZX6ASVfbQkO2H6LNegaEQ2960su7NIEgtx3yGJ3Xrk?=
+ =?us-ascii?Q?ccDnrY+udBsfjP4rPh01DisPu6zVdyr2uiPATi/ONw2OzXwl/0yeYzvrl/sq?=
+ =?us-ascii?Q?NQy7gpNe5vNRrWi6wC4BUWDn6mb2+xtYXq1VzeuaBA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6075.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vmiMTBx40zOlCoXjpiaOze3ysBGxOsbKt6Gx+ZF/tcWwAnSi3KSMigFsYo2B?=
+ =?us-ascii?Q?uP/GSVbs8z+gS6Dz1wtBuYSs/RFJvKwUcipHn4ogJVMUxKEA+LsEvBbP7ddX?=
+ =?us-ascii?Q?t/cpattE7v3M0NZqaAOoLYfsNhP+O/sCN5aNV21uApcyreGALCRrZKTCFPTy?=
+ =?us-ascii?Q?flAR3GMbE57t5nYEsXH1lPgi7wMjSOUCOFXzSvoot4po3w6lL1h5cTO1RF1N?=
+ =?us-ascii?Q?IDPDL+3uUiTUbKm2ypFIvwj+7Vat0eFa0jloY5qTwHQIcRHYR7jFHym8V1gB?=
+ =?us-ascii?Q?uv4UqAbf+jbAVrlK+vTyi+EoqxEW+yV/V5a6CaRa2CheQHiuwlLjmlU9KcaZ?=
+ =?us-ascii?Q?b+7C1/OnbQG/WPMQl/3KP4bZBogR4S+/Emo2Wd+pVXfqTfa3P4Gm4kLOsL0K?=
+ =?us-ascii?Q?OxZX4n1+aKZfyYPrXNsfM7Snk9cmcFBcxTaR4NHaxbHDcDdN8XZZfgWoLyhS?=
+ =?us-ascii?Q?dFSyn4bnlwJW3deb2KzLzKTGJo+5PTp4t9eJPh6hn4uBnrKUIh+nZNaHpryp?=
+ =?us-ascii?Q?mekb77ifXWycYLGupG9MdpskmPNGaKdzJOjQGlZ675CvD2p+i7rDRql+++zh?=
+ =?us-ascii?Q?yFg7vmIHidsEDz28TY7GmAmCvzPMO2pQ5qpEi2/HhYSZ7ajp3+1ZhfGX+tr8?=
+ =?us-ascii?Q?wUzRtBaITp44W+j6KR+OwkV5O087+axeKmtxPJHrZWg7cnh+/mDiWOIHWuBa?=
+ =?us-ascii?Q?x/v3FKvwXXn8676w9yJG5eXbQVKWU62C+5hylhOAPkvaAxVIeOo/CiPW6qes?=
+ =?us-ascii?Q?CMvjqw/CH6xl6UGzSm9pauJwQu4FkXmeT6ST+khPFYqX8gjpXWMeg7NzDW7m?=
+ =?us-ascii?Q?6dxrFWbNUsahMmaZ6GHO1VoEOcI3Ljs5/nKVXUQl/t1RSQ623niJb6p9z3EN?=
+ =?us-ascii?Q?VC8NH+F14HKXhtpgYa7e1d3Xq7pqo/w5jn4POtXNMsMFLxGCbGRFYnBoHr32?=
+ =?us-ascii?Q?oTkbVToaDS2c+rqpvnyKKtRHnHfF0iy6EQT4V7hzSiVF235zrfx3zbGw0pB/?=
+ =?us-ascii?Q?/cWybMwPDPIGE+I8atBu1AHnd2xN6HT05gjehQjqvKpBBDLB0h+7BgXN1QwN?=
+ =?us-ascii?Q?lUpA7wP0ARB4f69U4z6hlMRwbOYvhJUKRNtK9A4urqUwHvake7K85X89RqmX?=
+ =?us-ascii?Q?kGt4MhX/Tv72QFJDrcRQZcwGcEqNjFQEIgXoqyxTgbpJfEcX0gCDbKWn3ZG1?=
+ =?us-ascii?Q?ZsPyRbggfpvo/lnjBl2hLASKprkT0wcwT5VriMRppSE8hegF+v7lXx3bFvDc?=
+ =?us-ascii?Q?mS+s7Tp1btQ/j8S2GThbpXioVvi1Kl+zjySIWUc7aDpMk8Vr3CDPA2WMNJ+/?=
+ =?us-ascii?Q?cP8oE4Jcc6bzi7tB5tcHapcTfamOV4TZmf6V3S4kSidMmAXEiRyHBa64WfLE?=
+ =?us-ascii?Q?+1+lck8jeUP49p5LnOJMT4ebjTtXx3HTO1zAPX1HDGxsHH2D/W7rf6FNPLEc?=
+ =?us-ascii?Q?FP3A4sEg+vQPECn21H6/We02yFSl0lhfmQCuzv2SGW1nNW1yseXfLmBmQeAb?=
+ =?us-ascii?Q?6zAZqiBQvEhKGECPfNwEmdLQ36pXTxSve/z4e0v2dbPwEpYFMwlrTLaakI4L?=
+ =?us-ascii?Q?YmpRIpGwqsVQ851Vc/32HvzHU5+ftr/jmZQGMzBM?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb7d90d9-cee5-44eb-d7ba-08dc768be633
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6075.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 16:10:41.5736
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t1N/5d0uOhoJ4QDnXGswBQamCw29j4/H3StP0ABu7xeMtdobX+alNM9AIIQYBgqlocuGoryQCKliXTURkyefIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9119
 
-On Sat, May 11, 2024 at 01:01:46PM +0800, Zorro Lang wrote:
-> Hi Darrick,
-> 
-> Due to only half of this patchset got reviewed, so I'd like to wait for your
-> later version. I won't pick up part of this patchset to merge this time, I
-> think better to merge it as an integrated patchset.
+fuse_mount_list doesn't exist, use fuse_conn_list.
 
-Christoph and I talked about the future of this patchset at LSF and
-there are some file format changes in store, so please hold off on
-analyzing this patchset for now.
+Signed-off-by: Aurelien Aptel <aaptel@nvidia.com>
+---
+ fs/fuse/fuse_i.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---D
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index b24084b60864..bd2ae3748d37 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -869,7 +869,7 @@ struct fuse_conn {
+ 	/** Negotiated minor version */
+ 	unsigned minor;
+ 
+-	/** Entry on the fuse_mount_list */
++	/** Entry on the fuse_conn_list */
+ 	struct list_head entry;
+ 
+ 	/** Device ID from the root super block */
+-- 
+2.34.1
 
-> Thanks,
-> Zorro
-> 
-> On Mon, Apr 29, 2024 at 08:19:24PM -0700, Darrick J. Wong wrote:
-> > Hi all,
-> > 
-> > This patchset adds support for fsverity to XFS.  In keeping with
-> > Andrey's original design, XFS stores all fsverity metadata in the
-> > extended attribute data.  However, I've made a few changes to the code:
-> > First, it now caches merkle tree blocks directly instead of abusing the
-> > buffer cache.  This reduces lookup overhead quite a bit, at a cost of
-> > needing a new shrinker for cached merkle tree blocks.
-> > 
-> > To reduce the ondisk footprint further, I also made the verity
-> > enablement code detect trailing zeroes whenever fsverity tells us to
-> > write a buffer, and elide storing the zeroes.  To further reduce the
-> > footprint of sparse files, I also skip writing merkle tree blocks if the
-> > block contents are entirely hashes of zeroes.
-> > 
-> > Next, I implemented more of the tooling around verity, such as debugger
-> > support, as much fsck support as I can manage without knowing the
-> > internal format of the fsverity information; and added support for
-> > xfs_scrub to read fsverity files to validate the consistency of the data
-> > against the merkle tree.
-> > 
-> > Finally, I add the ability for administrators to turn off fsverity,
-> > which might help recovering damaged data from an inconsistent file.
-> > 
-> > From Andrey Albershteyn:
-> > 
-> > Here's v5 of my patchset of adding fs-verity support to XFS.
-> > 
-> > This implementation uses extended attributes to store fs-verity
-> > metadata. The Merkle tree blocks are stored in the remote extended
-> > attributes. The names are offsets into the tree.
-> > From Darrick J. Wong:
-> > 
-> > This v5.3 patchset builds upon v5.2 of Andrey's patchset to implement
-> > fsverity for XFS.
-> > 
-> > The biggest thing that I didn't like in the v5 patchset is the abuse of
-> > the data device's buffer cache to store the incore version of the merkle
-> > tree blocks.  Not only do verity state flags end up in xfs_buf, but the
-> > double-alloc flag wastes memory and doesn't remain internally consistent
-> > if the xattrs shift around.
-> > 
-> > I replaced all of that with a per-inode xarray that indexes incore
-> > merkle tree blocks.  For cache hits, this dramatically reduces the
-> > amount of work that xfs has to do to feed fsverity.  The per-block
-> > overhead is much lower (8 bytes instead of ~300 for xfs_bufs), and we no
-> > longer have to entertain layering violations in the buffer cache.  I
-> > also added a per-filesystem shrinker so that reclaim can cull cached
-> > merkle tree blocks, starting with the leaf tree nodes.
-> > 
-> > I've also rolled in some changes recommended by the fsverity maintainer,
-> > fixed some organization and naming problems in the xfs code, fixed a
-> > collision in the xfs_inode iflags, and improved dead merkle tree cleanup
-> > per the discussion of the v5 series.  At this point I'm happy enough
-> > with this code to start integrating and testing it in my trees, so it's
-> > time to send it out a coherent patchset for comments.
-> > 
-> > For v5.3, I've added bits and pieces of online and offline repair
-> > support, reduced the size of partially filled merkle tree blocks by
-> > removing trailing zeroes, changed the xattr hash function to better
-> > avoid collisions between merkle tree keys, made the fsverity
-> > invalidation bitmap unnecessary, and made it so that we can save space
-> > on sparse verity files by not storing merkle tree blocks that hash
-> > totally zeroed data blocks.
-> > 
-> > From Andrey Albershteyn:
-> > 
-> > Here's v5 of my patchset of adding fs-verity support to XFS.
-> > 
-> > This implementation uses extended attributes to store fs-verity
-> > metadata. The Merkle tree blocks are stored in the remote extended
-> > attributes. The names are offsets into the tree.
-> > 
-> > If you're going to start using this code, I strongly recommend pulling
-> > from my git trees, which are linked below.
-> > 
-> > This has been running on the djcloud for months with no problems.  Enjoy!
-> > Comments and questions are, as always, welcome.
-> > 
-> > --D
-> > 
-> > kernel git tree:
-> > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity
-> > 
-> > xfsprogs git tree:
-> > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=fsverity
-> > 
-> > fstests git tree:
-> > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity
-> > ---
-> > Commits in this patchset:
-> >  * common/verity: enable fsverity for XFS
-> >  * xfs/{021,122}: adapt to fsverity xattrs
-> >  * xfs/122: adapt to fsverity
-> >  * xfs: test xfs_scrub detection and correction of corrupt fsverity metadata
-> >  * xfs: test disabling fsverity
-> >  * common/populate: add verity files to populate xfs images
-> > ---
-> >  common/populate    |   24 +++++++++
-> >  common/verity      |   39 ++++++++++++++-
-> >  tests/xfs/021      |    3 +
-> >  tests/xfs/122.out  |    3 +
-> >  tests/xfs/1880     |  135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  tests/xfs/1880.out |   37 ++++++++++++++
-> >  tests/xfs/1881     |  111 +++++++++++++++++++++++++++++++++++++++++++
-> >  tests/xfs/1881.out |   28 +++++++++++
-> >  8 files changed, 378 insertions(+), 2 deletions(-)
-> >  create mode 100755 tests/xfs/1880
-> >  create mode 100644 tests/xfs/1880.out
-> >  create mode 100755 tests/xfs/1881
-> >  create mode 100644 tests/xfs/1881.out
-> > 
-> 
-> 
 
