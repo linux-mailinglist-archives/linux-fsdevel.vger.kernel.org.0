@@ -1,59 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-19682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591128C882A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 16:38:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4A58C890B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 17:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1459228806C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 14:38:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDA8CB21DF9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 15:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EA1651A4;
-	Fri, 17 May 2024 14:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97DF6A008;
+	Fri, 17 May 2024 15:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hVx3hBPw"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="gi+I/uwM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3475163417;
-	Fri, 17 May 2024 14:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE0169953
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 May 2024 15:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956693; cv=none; b=eERJ3ao0652ppMHWm2NPHW1t+iGymnUF2hYCnrPpMGaaUZbggrKwrAmv3REcwkc9ND+9URytWkOmPFZ12f7DtIaaAQRPcBERS9zBPoPo+rCX/B1M+mA0ZYN+ncqA9pOFkaVM1htwdXGZ4URRLHBj2gLuRerLBMxbsAb+80VM80Y=
+	t=1715958666; cv=none; b=FlIi7z0t6y7RMH3lU4gow6ba5htRIXzpjIVu3gNH4IgB/AOCYt2PYXjmpR233v12bJ63Sc+iKA8YUqJmmseffG5jaZldl43JDsDvURx7Kdr3NVye35JbN2lIp8SO9LIUJDI+A8LXBKxObcFFKrWaf5HZPfv5qDtOaJHFx44IgK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956693; c=relaxed/simple;
-	bh=5gi+DTUzW3YPqxeZIoVVNsfDihx3SAkeEccu9TVI4Go=;
+	s=arc-20240116; t=1715958666; c=relaxed/simple;
+	bh=0U3sf8Hc8uG0pt5j1TXMHSmEl5W5zQP3g9W1tgxp3YM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZ1f0J/9Do+ewgsGePubAjAhI/51nKh4sGEdjCBbnk9Uve+ibN9lrMdTfEyKUcdl3IYcwMBCa33+Czq9kmYJ7sHA4pw1quisxj1sZaF0cxvjMJzabL9ZLgpGxhuELki7XfuIdhTrhc2LiwsnrjDzIgqfrlvB3Zb6mm7jtj7NaAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hVx3hBPw; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=t0Wr/sZLtXSS6zurWWrrdIcft16mGA/DRVSd5xr7vII=; b=hVx3hBPwm9fQ5/u8awj4CICYli
-	K4QOH/Owqr4rm+oXUxqPkaZjEijVGPDi99pUTsHfbQl50tDa2QNmeXQMnqqDFp3ZzOCSLsihLrO1S
-	MqxFaZCqoKspZqlFaSELPiZpllWJLzy8+Fr8pqjQfF5aCtUcCvfC+ik7mSXtr6bQHL3jzKfEcbKpj
-	agSafCDqhOwfi/MDyksmQMk9b6fDJ2oIS8Ll7kkaJM45FlznFgsachU/BHQg/OQttPir+F0n9FlM4
-	5OyTwvcMv2BgX+bcZ7uOz2Ldzpo7i1Qjh++3pUpHuQHN1ShaCh9uMXeGY48/c1t/YMn7CtPsGpyU2
-	z8jMOD5Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7yik-0000000D2Of-3u8U;
-	Fri, 17 May 2024 14:38:06 +0000
-Date: Fri, 17 May 2024 15:38:06 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: brauner@kernel.org, djwong@kernel.org, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	jun.li@nxp.com
-Subject: Re: [PATCH v2] iomap: avoid redundant fault_in_iov_iter_readable()
- judgement when use larger chunks
-Message-ID: <ZkdrzlM8d_GowdSO@casper.infradead.org>
-References: <20240517201407.2144528-1-xu.yang_2@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQOl12dpFRJtBTfvCT42Lu8BzZDOVM14M73vi3PIw/k0u6WlFE17A2gtaQmUjPBJW0zMapg9058xR1z45zf0GQl1/CNU3B3TNeTO0p/SdnPfbNA3ncEZaksjYda4rBhETAx8QFaocnFr98ShT+6/ArteMqAhMLYaCM4WGRTgpYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=gi+I/uwM; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44HFAfIg005865
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 11:10:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1715958645; bh=53gt3U+FPEO+PUBC7Ra4RhW5FF25V+xJNdlek+/C4FM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=gi+I/uwMs8AWOIZoVgSpzp1LTjUsBsgcufR8K4dcGGobk03DWYCSMIAX2XXIMSuUG
+	 IMrBAkasJnfWWkcczcF6xvzajb6fj/yiJ3pvmgQl96LxNnrcKasqkILq8Tm2dmxpfg
+	 wrJ0M28N0WKdPhUL4sKblaLS2as1zpWW6aIxJxX2U4TRdp1HUbKkMQXYp1ym18pdI4
+	 u0OH9N1LyyWIOvzAlJzH0NqLH5LpF4UJ7Pc30JoHemfw0Umsexai0kzBgOADkLdKEY
+	 Pusxqpf6O8Npax2VByBowDCN7YmLDseO0R3jr5+JILbaXlrSlb1vekr8NnhO4sNYj8
+	 JxChXbyt5Zp+A==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 20A1F15C00DC; Fri, 17 May 2024 11:10:41 -0400 (EDT)
+Date: Fri, 17 May 2024 11:10:41 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: David Howells <dhowells@redhat.com>
+Cc: Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ext4: Don't reduce symlink i_mode by umask if no ACL
+ support
+Message-ID: <20240517151041.GB10730@mit.edu>
+References: <1586868.1715341641@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,54 +67,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240517201407.2144528-1-xu.yang_2@nxp.com>
+In-Reply-To: <1586868.1715341641@warthog.procyon.org.uk>
 
-On Sat, May 18, 2024 at 04:14:07AM +0800, Xu Yang wrote:
-> Since commit (5d8edfb900d5 "iomap: Copy larger chunks from userspace"),
-> iomap will try to copy in larger chunks than PAGE_SIZE. However, if the
-> mapping doesn't support large folio, only one page of maximum 4KB will
-> be created and 4KB data will be writen to pagecache each time. Then,
-> next 4KB will be handled in next iteration.
+On Fri, May 10, 2024 at 12:47:21PM +0100, David Howells wrote:
+>     
+> If CONFIG_EXT4_FS_POSIX_ACL=n then the fallback version of ext4_init_acl()
+> will mask off the umask bits from the new inode's i_mode.  This should not
+> be done if the inode is a symlink.  If CONFIG_EXT4_FS_POSIX_ACL=y, then we
+> go through posix_acl_create() instead which does the right thing with
+> symlinks.
 > 
-> If chunk is 2MB, total 512 pages need to be handled finally. During this
-> period, fault_in_iov_iter_readable() is called to check iov_iter readable
-> validity. Since only 4KB will be handled each time, below address space
-> will be checked over and over again:
-> 
-> start         	end
-> -
-> buf,    	buf+2MB
-> buf+4KB, 	buf+2MB
-> buf+8KB, 	buf+2MB
-> ...
-> buf+2044KB 	buf+2MB
-> 
-> Obviously the checking size is wrong since only 4KB will be handled each
-> time. So this will get a correct bytes before fault_in_iov_iter_readable()
-> to let iomap work well in non-large folio case.
+> However, this is actually unnecessary now as vfs_prepare_mode() has already
+> done this where appropriate, so fix this by making the fallback version of
+> ext4_init_acl() do nothing.
 
-You haven't talked at all about why this is important.  Is it a
-performance problem?  If so, numbers please.  Particularly if you want
-this backported to stable.
+Thanks for this patch; however, as I had mentioned in the discussion
+of the v1 version the patch, this change is already in the ext4 tree
+and linux-next in commit c77194965dd0 ('Revert "ext4: apply umask if
+ACL support is disabled"').
 
-I alos think this is the wrong way to solve the problem.  We should
-instead adjust 'chunk'.  Given everything else going on, I think we
-want:
-
-(in filemap.h):
-
-static inline size_t mapping_max_folio_size(struct address_space *mapping)
-{
-	if (mapping_large_folio_support(mapping))
-		return PAGE_SIZE << MAX_PAGECACHE_ORDER;
-	return PAGE_SIZE;
-}
-
-and then in iomap,
-
--	size_t chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
-+	size_t chunk = mapping_max_folio_size(mapping);
-
-(and move the initialisation of 'mapping' to before this)
-
+						- Ted
 
