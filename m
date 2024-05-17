@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-19692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4BF8C8BE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 19:58:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCDE8C8C97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 21:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5A928791F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 17:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12D0AB23C86
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 19:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D22613E05B;
-	Fri, 17 May 2024 17:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B19413E890;
+	Fri, 17 May 2024 19:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="uMfGVJkU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TDNEW63p"
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="nk1YlmOw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GuOIWxak"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wflow2-smtp.messagingengine.com (wflow2-smtp.messagingengine.com [64.147.123.137])
+Received: from flow4-smtp.messagingengine.com (flow4-smtp.messagingengine.com [103.168.172.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3852B13DDCA;
-	Fri, 17 May 2024 17:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAF56A005;
+	Fri, 17 May 2024 19:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715968648; cv=none; b=nIrom0Z2xz7JRQxQxCl5TtU2iuO1Edqt/bKFh/QoeQvFMCtIO3qKv9vmxnso8cVJjcGVrhU1m8bIaxyY+fDE85jWnuX1IroS2yZZQbbFGOMZ5sROoMRecAtNBr7lL2Bk26prs7TYD+0bl5O45Iw4FszoWLkWZ1cJ+kpcEnXC5Q0=
+	t=1715972817; cv=none; b=apw6ydUW7H+rScpL8+9/y/Gcl99LZ0wFPKxsnhXws7hURA630rv25HLuvXbQU2vdA5vOM5i12j6uEISyNbzfyIHVlKNWZ4dk07/GQxGcMe7a1SQu41w5CP0UlyGIM9HTqBi1TKYvj0xngOcj129zIsWu5NkDzLdTA+KssbwNI6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715968648; c=relaxed/simple;
-	bh=I2w45PghcaqjI+y7WfkIeFOVTyWdnhXIf4c8rZ8OaJw=;
+	s=arc-20240116; t=1715972817; c=relaxed/simple;
+	bh=04rcN74LRVOgvg1Pgpl2S95I7nmZQRd+3n8EVCIHMLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KnIDRhrQfP7T8N2nKCGyXi5RNUnz8pF8ACH3RTkFbJOnbzG1phL52NNPOnJf+O6B8W0HELQ/VhVgFAoG3Z779J1FvSFStRrul9eepvTX6R5VyC9SHHxFPpECA+wSFgvVDVnYKXAtiV4vib4eGQ6HgICwMZWY8YRFPaHWttBtfu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=uMfGVJkU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TDNEW63p; arc=none smtp.client-ip=64.147.123.137
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUmc6/KnOxzFw93tdzTYRtvSYqpNZgomR5duxCioZ3vIvmdHsuLyySaVUadyO4vU9V9QgpSG0NrvUnPav6piN7cKwaUrI9KzhLWDhwQLBtzsoJtT+ztrxVYnYP6d5d5v50yM9VvCL8kZfaF5mTk4uhjtTsu1xfXs8S8sjRQ24co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=nk1YlmOw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GuOIWxak; arc=none smtp.client-ip=103.168.172.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailflow.west.internal (Postfix) with ESMTP id 7886D2CC010B;
-	Fri, 17 May 2024 13:57:25 -0400 (EDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 406B520011D;
+	Fri, 17 May 2024 15:06:55 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Fri, 17 May 2024 13:57:26 -0400
+  by compute2.internal (MEProxy); Fri, 17 May 2024 15:06:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
 	:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1715968645; x=1715972245; bh=DG6bdjmTz4
-	bBiRVx5vRqnyJGZODkSyHM0WPBKPD11vg=; b=uMfGVJkUQVRfm1T4SuQfg81+Vd
-	5+EwSSzA1veRwFXODlGOsYMfbC5e9PDXupLK9HyaH/xalBd1s2kzVUiWMT2yQzvw
-	hwRQ1fjYhfph5jS6R/35a6KtY34plcZMeR9Ze6xsvaXAZmSVgYgDUo2CD8pKLFPo
-	Xy/T7Yx76YZjEUvdKWTQ/L8b+RH71BSELaxN8E1DA4gdeovy8JQ/GaJdIRS7/+JU
-	nOR9kD+ElEjP9xlmH0WurtQuTo73SZegb2IizZ8K96HXLon2ZWd8yjQxXX9/jyWV
-	LYzWnUzZv2IlDZ6c/LFUuMihTF52VWHKB3S26Kahi3BE/rYv+w/AkiBW4sjQ==
+	:subject:to:to; s=fm1; t=1715972815; x=1715976415; bh=MolZk3aDwQ
+	5AXPmBxbzqYEOhzXdd2allt5iM66ZHWGU=; b=nk1YlmOwRf47RW6Xl0ocg8hbPh
+	vhEG6vO5uradKBG1r0JN72SiAT7soy6dE4iT37d72v42/tyPA/Ju8NEZIeW6vMi2
+	lHNtPudTnfQrDUl1dsqt9+Sw3UeyAPiOMWguSjMv7jcD3UJLuZsGcirL8EOaJxUU
+	lWHTk7rqcxM5rzVMK51IqjOHzWzh6aCw1lWXde2H9ZsAlbwAtzRVOHJRAqn3lgH3
+	DDFXS5Pu8V6lfj1beydisMASxr+JqcmVmRf9H0i0xNdEssVvuCK8JiBW6zE/dROG
+	ZSGlnM4Z0hdc2hw0caXycrppcFYniN44Z20nw3rrhl7rCUr1MHiDgdMySKPQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	i76614979.fm3; t=1715968645; x=1715972245; bh=DG6bdjmTz4bBiRVx5v
-	RqnyJGZODkSyHM0WPBKPD11vg=; b=TDNEW63pXqb2VU0CcKW4l1HzhcHIdknUB/
-	pz14lQW13kC6oa25PaUJ3EtzVqxHTnNRnTjcdfH+8czm5HMuaNUoZJNfrrzALEjj
-	BhXP3yluNNAc75YUSlp2g1JKsDbzm4O1ZNjegjBzQEutxAV2qwhBA+PiVAl2qSTD
-	wcvi2l7YIS6ZSe/e860AJvkLBo69+YWUv9s79bv4P/X0XeFjuMU/7FXm6jZHziD5
-	dV8pUspsjHJiSbf/yF1J/558iKeCjLZNiZRLmWuEOFh+rxdDTbikzjB/nf4RuUcS
-	9zUWeQhZVMpSt+DZfp2vzbU8AQQhAgnJoJrumNrLMdK5EsRfgtng==
-X-ME-Sender: <xms:hJpHZgt-DnLYAP4XfCB3f4QDQ4JOhbJ0kjv4C7wIKndVKYrK6cgIIQ>
-    <xme:hJpHZteog5l-85Pkdhrlk26_ZDbUVd1ZBbQGP0nfgODF4pJa5auMVRXbP8aJJU3Up
-    NcIi4mMySIixXSafOo>
-X-ME-Received: <xmr:hJpHZrxlVLZZGOGFQfKZBifYj11s-ibw1SC9sayyin6qUTgQyif-0J2hn7vqmYdM9hEJR-MQ_giyQTDryczmkrI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehgedgvdehucetufdoteggodetrfdotf
+	i76614979.fm3; t=1715972815; x=1715976415; bh=MolZk3aDwQ5AXPmBxb
+	zqYEOhzXdd2allt5iM66ZHWGU=; b=GuOIWxakWky6eQrMiU9frb/EQ+8OXJvLTS
+	jQeeA/nMKbaNfGCRm4Ga0A7jyDdpc3mkXngButmYaeKsELqqNBUZT1KpggexHykl
+	Yxlt/7kLgTBFoRrEq35CmHN7m0XNvcn2j5ADurM66M4ZmJVXZK187q5ZnaeAfA6t
+	z3fNq6hvufYtd3+S41FIRa6hMjn7eEGGWj4qaCZQ74eaK/MKdlB5kxNZLSkt2zqr
+	+NDwBmERl/8PQExnYlDUCFFd+HKmkdif4t5FrmUelZD+02OWC18UTQbK3iiZH+31
+	563Tt7QfsqEImoiAkhKYrRtlH3s2zzJI3pHtlv7tlQe8CM3XddDg==
+X-ME-Sender: <xms:zapHZs3lYqgCs0EsLnDkWXwPs-8TF5Ovcf5Jtl9oUQS5YfAyX-NBoQ>
+    <xme:zapHZnEihHPBIwfTw4V_eI-difhVnimEsF1wygWaTIFxdAcKvTWwOHPijwr9Na4iy
+    gBGsuJytrbUE6ZCk6Q>
+X-ME-Received: <xmr:zapHZk6IwJsdzwfa8H38LsSG5xchGVIVjy_fXAqGiXonmC4AJTLaLuOzzXoMvhymmSA3fZWX_EasQNCWs1y25ts>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehgedggedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
@@ -71,30 +71,33 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehgedgvdehucetufdoteggod
     ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
     leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
     homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:hJpHZjOliYt1B30kBgmlLYDz3U_k0ILR04enLwlswHtl81Hc9_tOOw>
-    <xmx:hJpHZg_tTtVt17uZ85S7l8qt2ezP1HcqKp8HG_d_HTVqD7c6KaT-Cg>
-    <xmx:hJpHZrUFUcj0c_VL6ZrIN41Q8tSZ2WWCOA-aRCVfDXmGeifvQPDOGA>
-    <xmx:hJpHZpedGcEgWYQAWwY_aGP7jCPuyq_4VonVfo014ODZjsk29EXztw>
-    <xmx:hZpHZrUx1OlgTMngfhQPqJ-LWsX64N4U3yZMVc9MloMg7FfoIwLl0U3_>
+X-ME-Proxy: <xmx:zapHZl2JO9xI6FAz3XkByw8qXGqXoU5jkK9sWhzRrlO5DZehXTNWRQ>
+    <xmx:zapHZvHOwsbVuSoQreaaGgRSmXDIIT4TMhHqlc9jFIAiP1d27E23_w>
+    <xmx:zapHZu8-8ev1Z5q5SruSKb4zjQrPU4FKFe4x7DODb-X3qw4P2VEVCQ>
+    <xmx:zapHZkkXNO2jAFjPA4OrQ8YuxJKnBEP3Sztr6gtPlRruh64vvYVmAg>
+    <xmx:z6pHZvHG42Nog5HimWwH-lSGc2XcplGXHnhwSBXRBQtB0QKYfr2Pmgtf>
 Feedback-ID: i76614979:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 May 2024 13:57:22 -0400 (EDT)
-Date: Fri, 17 May 2024 11:02:23 -0700
+ 17 May 2024 15:06:50 -0400 (EDT)
+Date: Fri, 17 May 2024 12:11:52 -0700
 From: Jonathan Calmels <jcalmels@3xx0.net>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: brauner@kernel.org, Luis Chamberlain <mcgrof@kernel.org>, 
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, brauner@kernel.org, 
+	ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>, 
 	Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>, 
 	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-Message-ID: <mya7cjq5yzf4xc53un65zia2bwp45mbrt5ys67mgr4azn3phet@o54svegibxze>
+	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+Message-ID: <vhpmew3kyay3xq4h3di3euauo43an22josvvz6assex4op3gzw@xeq63mqb2lmh>
 References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-2-jcalmels@3xx0.net>
- <878r08brmp.fsf@email.froward.int.ebiederm.org>
- <xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
- <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
+ <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
+ <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
+ <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
+ <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
+ <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
+ <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,46 +106,80 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
 
-> > On Fri, May 17, 2024 at 06:32:46AM GMT, Eric W. Biederman wrote:
-> As I read your introduction you were justifying the introduction
-> of a new security mechanism with the observation that distributions
-> were carrying distribution specific patches.
+On Fri, May 17, 2024 at 10:53:24AM GMT, Casey Schaufler wrote:
+> Of course they do. I have been following the use of capabilities
+> in Linux since before they were implemented. The uptake has been
+> disappointing in all use cases.
+
+Why "Of course"?
+What if they should not get *all* privileges?
+
+> Yes. The problems of a single, all powerful root privilege scheme are
+> well documented.
+
+That's my point, it doesn't have to be this way.
+
+> Hardly.
+
+Maybe I'm missing something, then.
+How do I restrict my users from gaining say CAP_NET_ADMIN in their
+userns today?
+
+> If you're going to run userspace that *requires* privilege, you have
+> to have a way to *allow* privilege. If the userspace insists on a root
+> based privilege model, you're stuck supporting it. Regardless of your
+> principles.
+
+I want *some* privileges, not *all* of them.
+
+> Which is a really, really bad idea. The equation for calculating effective
+> privilege is already more complicated than userspace developers are generally
+> willing to put up with.
+
+This is generally true, but this set is way more straightforward than
+the other sets, it's always:
+
+pU = pP = pE = X
+
+If you look at the patch, there is no transition logic or anything
+complicated, it's just a set of caps behind inherited.
+
+> I would not expect container developers to be eager to learn how to use
+> this facility.
+
+And they probably wouldn't.
+For most use cases it's going to be enforced through system policies
+(init, pam, etc). Other than that, usage won't change, you will run your
+usual `docker run --cap-add ...` to get caps, except now it works in
+userns.
+
+> I'm sorry, but this makes no sense to me whatsoever. You want to introduce
+> a capability set explicitly for namespaces in order to make them less
+> special? Maybe I'm just old and cranky.
 > 
-> To the best of my knowledge distribution specific patches and
-> distributions disabling user namespaces have been gone for quite a
-> while.  So if that has changed recently I would like to know.
+> >   They now work the same way as say a transition to root does with
+> >   inheritable caps.
+> 
+> That needs some explanation.
 
-On the top of my head:
+From man capabilities(7):
 
-- RHEL based:
-  namespace.unpriv_enable
-  user_namespace.enable
+In  order  to  mirror traditional UNIX semantics, the kernel performs
+special treatment of file capabilities when a process with UID 0 (root)
+executes a program [...]
 
-- Arch/Debian based:
-  kernel.unprivileged_userns_clone
+Thus,  when [...] a process whose real and effective UIDs are
+zero execve(2)s a program, the calculation of the process's new
+permitted capabilities simplifies to:
 
-- Ubuntu based:
-  kernel.apparmor_restrict_unprivileged_userns
+   P'(permitted)   = P(inheritable) | P(bounding)
 
-I'm not sure which exact version those apply to, but it's definitely
-still out there.
+   P'(effective)   = P'(permitted)
 
-The observation is that while you can disable namespaces today, in
-practice it breaks userspace in various ways. Hence, being able to
-control capabilities is a better way to approach it.
 
-For example, today's big hammer to prevent CAP_NET_ADMIN in userns:
-
-# sysctl -qw user.max_net_namespaces=0
-
-$ unshare -U -r -n ip tuntap add mode tap tap0 && echo OK
-unshare: unshare failed: No space left on device
-
-With patch, this becomes manageable:
-
-# capsh --drop=cap_net_admin --secbits=$((1 << 8)) --user=$USER -- \
-        -c 'unshare -U -r -n ip tuntap add mode tap tap0 && echo OK'
-ioctl(TUNSETIFF): Operation not permitted
+So, the same way a root process is bounded by its inheritable set when
+it execs, a "rootless" process is bounded by its userns set when it
+unshares.
 
