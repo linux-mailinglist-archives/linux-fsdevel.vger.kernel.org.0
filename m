@@ -1,203 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-19694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C63A8C8C0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 20:03:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A88C8BE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 19:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9221F22A18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 18:03:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1771C22713
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 17:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6977A13E02C;
-	Fri, 17 May 2024 18:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D7013E038;
+	Fri, 17 May 2024 17:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="I99dfBZT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U31g4s4X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0A613DDB1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 May 2024 18:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43E512C492;
+	Fri, 17 May 2024 17:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715969021; cv=none; b=nIfyAWkG7Q7bNFT5rFkcXOELBSao3STC73d7HuF+sSPXxf4dRmpTmUOu/R6o/8lnnbxu90Z4BMhz7wMsYwGEyWJ5baDFsZ20BECFkI2PG0C/RnHsh2qvsXBd2jSvtnVXGcH1kMZLIIjPCgrgxj7pAKUIBv1H/tTLspGaVzVch9Q=
+	t=1715968741; cv=none; b=I0cXRAJTmLDyanMdmvTql6U9gviqXhg3PR98I7dsteuqZHzD6PjuJeVXE1akTXKpliB4o13FWnEYh7uiP8N2eyEEQIDu37oITh6Ut5qorl0gTZfSfqhw0M44JyRolmLO3Wt7Z5D74Ra1xmxpSZVphGifqcCk9xsDUzK7yNYwUwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715969021; c=relaxed/simple;
-	bh=put+y5/J/5Kd8zNeqN0yRq4nqLEYAbVcLkKYZS8ZTpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q07E8pqi60L0Fiy7ZjjGpBC0eS1wZZJX74P0CwJf4g5OL7uHGFuHH0zSbkI2kf7/WHQ8yOxDeJLsdjPUAkGzKYKOKbs/LCWcD1rewiUQudFuj73t7TI30h8Wy6VeCEi4wdiAEGCTbef8I7d0t5jz7z2oEUP4KDZUaYXnlqVSjUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=I99dfBZT; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715969013; bh=tIio+RNaO0tAS6S6sNhPnuxF8pniQ2kOR7PgXrhSanY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=I99dfBZTAVyK79PgRmMSitiYrjnn8kKfu37Rir+0a1JW1RYRHogzoPEvKoRg9wavq8hKJk4x2oFvg3AFpVbWCJtrB8gk4dVSTpa3+62nHRWHCrWS57b/BhdmWD/7xC/HuCeI7cx+Yjtmpgre1Od8zIzwOEeH3w2rVdrR9yNYxn4TSSNkb76n9ILzMFikzdYQLN/Hg5gG2E9jtQYArDZEXK4FG/LR+etV5dkER/rW4tp4MjD3xfT5Oo+mjZcQ4sf4Vs5ESq+o+ihywhgQn60CipQiKgG2jkc6KUvF6LsjW3xpzkxJQySsHRhOTuGuYzvVPdr52DqckyfVcx9L1vXDcQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715969013; bh=reJ8gkdODiTX3NrjrGXK3m52amLUvRumUSUQQCZ3IZN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VUsXvQ9BgF6NoqCG8Ltu1DwMZMiQG4MXr0slPKQNhggWrJrUFtajnKinsR86UX71oHI1W3qLI2Pj1oApjJMruuBftJAqlFRoTaKbbX/N16i27pL3Cvf4L+M12R5vZRgmlJU+6iVWYu/jyveVvtM5Q8TA4VDhe4aGsp0XKe9YwcqK/jtzR6tmkppThTslERIPocq8T4Kd2ooiaEmgwGbbr0Ep6lJYifVQ9GXf6nkIf3pBjNnL7H58tv2z2GxgPF1711LlU4ybAXitd1IY7PcI4hkZKOaNqDqKcg2YaKw3cYrM93BN5HBX7h7evtt4RMIDy+KM3uRNTkWYFHFU1buWpQ==
-X-YMail-OSG: C7dBFvcVM1nvSlNii7HUHZPruZOa8MBqqQnwNdj.jpeoRy.bsooKqqN6CofU7jF
- AL8YqbhgKh5BrdysJb4mCaBoMtviW_OVszlUtSUG0oKLtiK.exYzsRMm9DYYpvPVRu.nwayzcMxa
- 84uWJP4uTL_kv9PTKZ1s.a812AFkOYGjvLUU4IhV52xweas1AptPzJ0REbAEP5WgZgUMKEJfSZyK
- F3TTo3mLHvVjoHsCqlBW4Z6hTP5L8wmhY0OuDSpYmGfdw8GjWoVIhR3sYHs.HHD2f4mvqKT1.6mR
- 2fB9SoGaYaufCWqr4dk9wsrnZIBjmTxs0oyDazXsymW_8iyw9Oft.qtK_RTgFQvBVdkUi_MnjWJP
- 8AVC5wdGXnG4kbyZ8_CSAyB6aH6d4QHE80kIjRXxpOZbMW8xHa0cq64Nbr7gGyR9.j4fkVVRLZcs
- 7Zf1.pQ4p5BEN9uy5YxZlzZb9JA_hYBgdACt0yKhyyu7Z5RfxkLxrz.KNFGuBiyN4mUxAwIDwdP5
- iAPdb0YIuwXp2yQbeazRld2gbzZotLyq1ICxsQjq3UxkUu0uwILGk7StrenoXALkeuEo0esyt1T8
- Q8K.JrNmwZTlAE71jNUvd5Y7Cwi6wHG0bQDT5QZz.PeCqeG1aQUpYJnu0t549jFa05e3got8_B_E
- wtxLYHLutEmGYYXfcCWRopzQgbirFf0XVQ8vh.NiR46Ggo.lq2fviMCrSyxsLj2aNa6XyzEoWaMw
- HifUO2MOiQDi8pFXDUmN..rfWf9d47G2R50Xzorexpbf8bXy0XY1wB7O8DLprNBARiOKsO6.A5_O
- YIVzmby4uix8812HeZc.YG9dFXsmq7P7eX33gTpaCwX7OLAqQ8Rlw7xbL8VNspsCOQv2Uk7Gc6p3
- 12uRD0w5e5EMYiHMES76sGjqnZPkNn_Vc8ndMJYOdzx6aHSaemFtrWe4.nzwWZ9L.dnGDyRbXsZI
- vZxUVNCOQnF3qAcvVq1.nEL_b6eaW65KATQkW4GQ6t2J4NO7mFixnVRh0w.Fh.8vZiLagUNaJTqz
- QVARDPvGlekmwCVhHDEkX5ytWFOQiJ6N0ItESgkPylM2h3YrIvlYtV0rlbGGa0S_.oRXMPRS2Rr9
- Fnsneaar9MxjrrahilxhtAX9nPB0wnvQPiOy__hz8XoX1mZ.8aqHIqplyMzqZPwQEM_zgzp_YamZ
- YXhZ1WWNFPW.Q_qFhSWTj0AELMIXtopd0gpk_oDz3jCnjpMHYzTVHT_V_dguwuoEswZFTzfMzjcj
- Fcg_Bn2v34qDNVCbz1I9zo14svkrDxB2DM38jZbFl1AJleAeulpBnFypKlaNR_bRzpEHwz6bwdmq
- CRvX3kouezgM5_UBFEFCiku8qCIruPUjzlXixde_bZUsS1DygFnc7rl7I2CSXK8.1iD4aYEjtieq
- WHchfHDOPE4xl1V57emQyQtMifa_zh5YbxPe7CEg9djhT6EKtWN6FnNBhl6KOPpjEy1xLaW5097W
- wqhBLRA3mQehTBP_N5HZIKCw_MmWChwwGGSAu0x5tUuB1WaNkPBA..gjkb_YsSLdEh66vtIdohJl
- F88kBpQ_ApaIwcGLs2746VxCHy1PFyqpu4tsZ2kMT4c9zogKaj5yiW5vekRNhSj9HaAQoR23JgEg
- ertRf13zJsneAph2CkqKEw2n28vhn3hqC_hkpXA5_nsXSIwdaAoykUcgxN.S.Mf0v6.CYQlkq1mh
- qxvvIk5pRZ2oQW_ppDrbYtk_fxjbdxjc10ZZ8X9Kf9ljq6uLTo8lCS8MVlltVV6dfOq_.mX4Cj9V
- wKGQtCucyyV6Oo44sD194MDzeot23oJ6aXqjvb9FdouIDF7acea8atdmlua21fPZ3UJ799xwjfvm
- Drsuukqbvp5Wak0N7epSJK_5fxu1VO38qglUK0LYxmKjDscuJbnYkticBqsDt7Zp6xt53Slewtuh
- 1Q7uZQYD4qKe5lyFBl40Fi1AtErRwkx.Wt.B8LdcS.y2RJo26gGghATmbSQ5dM6MggFPPHOorRsa
- ktUTGesdXhUe_i9C6gbe6ykKqMV0nu9yWBgImM7t13zhqGifcmkBFj4MrH8m5MZeouHhJx5qH8aS
- YJ8Ntzi8MbEYXSEYhmX2dQ_xJxc.naYxUVCQPW4zDKkOD7aKg7.PGM7voSR4k3oQPhHoluFwLXR7
- 6ZrS50QFr6Y_2ZkxSbfJZ29X8xQUzPEHoX9STDWOLEf_mJOOOVbbKjk2pQAOBUwS0SXcqi6tEuMQ
- kCwJUstfbt94VqML5Vg.RrNI5rTuk5.3BZsfl2VEEvGxAc_VRJnqeLKOyFERetBj1D54Q2B8yNDg
- dqoXhAm8elfHwXw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 85153b7f-4c11-4fca-84a2-cca4d0413b58
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Fri, 17 May 2024 18:03:33 +0000
-Received: by hermes--production-gq1-59c575df44-f4snh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8b429e65f2d60a3193676eb029935f6a;
-          Fri, 17 May 2024 17:53:25 +0000 (UTC)
-Message-ID: <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
-Date: Fri, 17 May 2024 10:53:24 -0700
+	s=arc-20240116; t=1715968741; c=relaxed/simple;
+	bh=pKB07h4tYYQycvmYl0AAJgDHfhFWfWr/tJd2D4E2uEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UA0SL4ByrqYVSMkfjEaM3LqxVEwU0aim4ke/Cf6zUqotUV4RpuA+CRX8YXSk7s/WISO3R/S2VitbT6OPVgWrrwDC23osQjDs18iftq/+21dY6D0wwUVVL/nqHP2Co34Kq3uxBIeoJ8GhXaz9/fsZg5xObZjC7Qtj0WA01VkNZtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U31g4s4X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A92C2BD10;
+	Fri, 17 May 2024 17:59:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715968741;
+	bh=pKB07h4tYYQycvmYl0AAJgDHfhFWfWr/tJd2D4E2uEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U31g4s4XCO5YTLBcwQ7q82QmZmEBAxjcSq8FwCtOiIhJOR8Q/dnJJEzFeFly6SwKA
+	 qF0AwCq+MLkmsGGcbjv+QQu3P8Ndj3wob1NKChP9+LqBP3ne+1gcliI+Qx5kmmlFI8
+	 sYPpqr5StZ+FfHsRAQA5gi7aWfF3Q8G/QdWZsbkcYMGz7Q6UMrHwSIVkjoI934ICt2
+	 InEamXPV/GYar8V5FatSI4kb+Pm9WRNLmJvdg1319diM+wZbl6BfegwT3fwzQ6T7wK
+	 eKHVzxhUwD9NbQmuki4gf+3sgQT9q4TXBV26tiigDFVxGg7+X1s92jvOv3oqqdano9
+	 XCnak9gvigYyQ==
+Date: Fri, 17 May 2024 10:59:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	hch@infradead.org, brauner@kernel.org, david@fromorbit.com,
+	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
+Message-ID: <20240517175900.GC360919@frogsfrogsfrogs>
+References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
+ <20240517111355.233085-4-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-To: Jonathan Calmels <jcalmels@3xx0.net>, Jarkko Sakkinen <jarkko@kernel.org>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
- Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- David Howells <dhowells@redhat.com>, containers@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
- <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
- <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
- <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
- <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22356 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517111355.233085-4-yi.zhang@huaweicloud.com>
 
-On 5/17/2024 4:42 AM, Jonathan Calmels wrote:
->>>> On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
->>>>> I suggest that adding a capability set for user namespaces is a bad idea:
->>>>> 	- It is in no way obvious what problem it solves
->>>>> 	- It is not obvious how it solves any problem
->>>>> 	- The capability mechanism has not been popular, and relying on a
->>>>> 	  community (e.g. container developers) to embrace it based on this
->>>>> 	  enhancement is a recipe for failure
->>>>> 	- Capabilities are already more complicated than modern developers
->>>>> 	  want to deal with. Adding another, special purpose set, is going
->>>>> 	  to make them even more difficult to use.
-> Sorry if the commit wasn't clear enough.
+On Fri, May 17, 2024 at 07:13:55PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When truncating a realtime file unaligned to a shorter size,
+> xfs_setattr_size() only flush the EOF page before zeroing out, and
+> xfs_truncate_page() also only zeros the EOF block. This could expose
+> stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
+> a write operation").
+> 
+> If the sb_rextsize is bigger than one block, and we have a realtime
+> inode that contains a long enough written extent. If we unaligned
+> truncate into the middle of this extent, xfs_itruncate_extents() could
+> split the extent and align the it's tail to sb_rextsize, there maybe
+> have more than one blocks more between the end of the file. Since
+> xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
+> value, so it may leftover some blocks contains stale data that could be
+> exposed if we append write it over a long enough distance later.
 
-While, as others have pointed out, the commit description left
-much to be desired, that isn't the biggest problem with the change
-you're proposing.
+IOWs, any time we truncate down, we need to zero every byte from the new
+EOF all the way to the end of the allocation unit, correct?
 
->  Basically:
->
-> - Today user namespaces grant full capabilities.
+Maybe pictures would be easier to reason with.  Say you have
+rextsize=30 and a partially written rtextent; each 'W' is a written
+fsblock and 'u' is an unwritten fsblock:
 
-Of course they do. I have been following the use of capabilities
-in Linux since before they were implemented. The uptake has been
-disappointing in all use cases.
+WWWWWWWWWWWWWWWWWWWWWuuuuuuuuu
+                    ^ old EOF
 
->   This behavior is often abused to attack various kernel subsystems.
+Now you want to truncate down:
 
-Yes. The problems of a single, all powerful root privilege scheme are
-well documented.
+WWWWWWWWWWWWWWWWWWWWWuuuuuuuuu
+     ^ new EOF      ^ old EOF
 
->   Only option
+Currently, iomap_truncate_blocks only zeroes up to the next i_blocksize,
+so the truncate leaves the file in this state:
 
-Hardly.
+WWWWWzWWWWWWWWWWWWWWWuuuuuuuuu
+     ^ new EOF      ^ old EOF
 
->  is to disable them altogether which breaks a lot of
->   userspace stuff.
+(where 'z' is a written block with zeroes after EOF)
 
-Updating userspace components to behave properly in a capabilities
-environment has never been a popular activity, but is the right way
-to address this issue. And before you start on the "no one can do that,
-it's too hard", I'll point out that multiple UNIX systems supported
-rootless, all capabilities based systems back in the day. 
+This is bad because the "W"s between the new and old EOF still contain
+old credit card info or whatever.  Now if we mmap the file or whatever,
+we can access those old contents.
 
->   This goes against the least privilege principle.
+So your new patch amends iomap_truncate_page so that it'll zero all the
+way to the end of the @blocksize parameter.  That fixes the exposure by 
+writing zeroes to the pagecache before we truncate down:
 
-If you're going to run userspace that *requires* privilege, you have
-to have a way to *allow* privilege. If the userspace insists on a root
-based privilege model, you're stuck supporting it. Regardless of your
-principles.
+WWWWWzzzzzzzzzzzzzzzzuuuuuuuuu
+     ^ new EOF      ^ old EOF
 
->
-> - It adds a new capability set.
+Is that correct?
 
-Which is a really, really bad idea. The equation for calculating effective
-privilege is already more complicated than userspace developers are generally
-willing to put up with.
+If so, then why don't we make xfs_truncate_page convert the post-eof
+rtextent blocks back to unwritten status:
 
->   This set dictates what capabilities are granted in namespaces (instead
->   of always getting full caps).
+WWWWWzuuuuuuuuuuuuuuuuuuuuuuuu
+     ^ new EOF      ^ old EOF
 
-I would not expect container developers to be eager to learn how to use
-this facility.
+If we can do that, then do we need the changes to iomap_truncate_page?
+Converting the mapping should be much faster than dirtying potentially
+a lot of data (rt extents can be 1GB in size).
 
->   This brings namespaces in line with the rest of the system, user
->   namespaces are no more "special".
+> xfs_truncate_page() should flush, zeros out the entire rtextsize range,
+> and make sure the entire zeroed range have been flushed to disk before
+> updating the inode size.
+> 
+> Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
+> Reported-by: Chandan Babu R <chandanbabu@kernel.org>
+> Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
+>  fs/xfs/xfs_iops.c  | 10 ----------
+>  2 files changed, 31 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 4958cc3337bc..fc379450fe74 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1466,12 +1466,39 @@ xfs_truncate_page(
+>  	loff_t			pos,
+>  	bool			*did_zero)
+>  {
+> +	struct xfs_mount	*mp = ip->i_mount;
+>  	struct inode		*inode = VFS_I(ip);
+>  	unsigned int		blocksize = i_blocksize(inode);
+> +	int			error;
+> +
+> +	if (XFS_IS_REALTIME_INODE(ip))
+> +		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
 
-I'm sorry, but this makes no sense to me whatsoever. You want to introduce
-a capability set explicitly for namespaces in order to make them less
-special? Maybe I'm just old and cranky.
+Don't opencode xfs_inode_alloc_unitsize, please.
 
->   They now work the same way as say a transition to root does with
->   inheritable caps.
+> +
+> +	/*
+> +	 * iomap won't detect a dirty page over an unwritten block (or a
+> +	 * cow block over a hole) and subsequently skips zeroing the
+> +	 * newly post-EOF portion of the page. Flush the new EOF to
+> +	 * convert the block before the pagecache truncate.
+> +	 */
+> +	error = filemap_write_and_wait_range(inode->i_mapping, pos,
+> +					     roundup_64(pos, blocksize));
+> +	if (error)
+> +		return error;pos_in_block
 
-That needs some explanation.
+Ok so this is hoisting the filemap_write_and_wait_range call from
+xfs_setattr_size.  It's curious that we need to need to twiddle anything
+other than the EOF block itself though?
 
->
-> - This isn't intended to be used by end users per se (although they could).
->   This would be used at the same places where existing capabalities are
->   used today (e.g. init system, pam, container runtime, browser
->   sandbox), or by system administrators.
+>  
+>  	if (IS_DAX(inode))
+> -		return dax_truncate_page(inode, pos, blocksize, did_zero,
+> -					&xfs_dax_write_iomap_ops);
+> -	return iomap_truncate_page(inode, pos, blocksize, did_zero,
+> -				   &xfs_buffered_write_iomap_ops);
+> +		error = dax_truncate_page(inode, pos, blocksize, did_zero,
+> +					  &xfs_dax_write_iomap_ops);
+> +	else
+> +		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
+> +					    &xfs_buffered_write_iomap_ops);
+> +	if (error)
+> +		return error;
+> +
+> +	/*
+> +	 * Write back path won't write dirty blocks post EOF folio,
+> +	 * flush the entire zeroed range before updating the inode
+> +	 * size.
+> +	 */
+> +	return filemap_write_and_wait_range(inode->i_mapping, pos,
+> +					    roundup_64(pos, blocksize));
 
-I understand that. It is for containers. Containers are not kernel entities.
+...but what is the purpose of the second filemap_write_and_wait_range
+call?  Is that to flush the bytes between new and old EOF to disk before
+truncate_setsize invalidates the (zeroed) pagecache?
 
->
-> To give you some ideas of things you could do:
->
-> # E.g. prevent alice from getting CAP_NET_ADMIN in user namespaces under SSH
-> echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
-> echo "!cap_net_admin alice" >> /etc/security/capability.conf.
->
-> # E.g. prevent any Docker container from ever getting CAP_DAC_OVERRIDE
-> systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
->             -p SecureBits=userns-strict-caps \
->             /usr/bin/dockerd
->
-> # E.g. kernel could be vulnerable to CAP_SYS_RAWIO exploits
-> # Prevent users from ever gaining it
-> sysctl -w cap_bound_userns_mask=0x1fffffdffff
+--D
+
+>  }
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 66f8c47642e8..baeeddf4a6bb 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -845,16 +845,6 @@ xfs_setattr_size(
+>  		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
+>  				&did_zeroing);
+>  	} else {
+> -		/*
+> -		 * iomap won't detect a dirty page over an unwritten block (or a
+> -		 * cow block over a hole) and subsequently skips zeroing the
+> -		 * newly post-EOF portion of the page. Flush the new EOF to
+> -		 * convert the block before the pagecache truncate.
+> -		 */
+> -		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
+> -						     newsize);
+> -		if (error)
+> -			return error;
+>  		error = xfs_truncate_page(ip, newsize, &did_zeroing);
+>  	}
+>  
+> -- 
+> 2.39.2
+> 
+> 
 
