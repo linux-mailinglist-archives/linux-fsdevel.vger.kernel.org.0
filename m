@@ -1,55 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-19668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3AE8C867F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 14:49:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E128C86B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 14:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24B71C2130B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 12:49:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7393FB21180
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 12:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8DA4F208;
-	Fri, 17 May 2024 12:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E2A4F608;
+	Fri, 17 May 2024 12:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="H7DpfFPO"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w1cp1FNV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9sLrQzGJ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w1cp1FNV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9sLrQzGJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85435381BB;
-	Fri, 17 May 2024 12:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714F43D546;
+	Fri, 17 May 2024 12:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715950140; cv=none; b=ea5fFBQ1KvTTc8Sw1pjWGKHJ4xVKmQ4pHwhAel+FR3FZ49oE6OAqI87Jkf1T19+7XV7hwBnNxiIjwZXToFyZwM3dEScOVabJTtCnaxV5Ho3V7iNSdiAdGL3WR7iOXIXrAUvr4lsKkE4Mp68VBw6FL9dBQ3J31h9XgNNH99enBFo=
+	t=1715950577; cv=none; b=h/w62xuUwFD327ZcPhdkOpM+yro6rWfpNDeiKjI4E9X8tIAzuFaOjPPKodwxEbzwrqVEW57RDK8u5FebMegp833r2O3CMElopQY4J9gUL8vG3n/ij8JeHX1JwaN+DHGqE311vo4Bm6V4HZGqjnN6haR9dCCQ2dOrYsiNUn8SnGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715950140; c=relaxed/simple;
-	bh=dilVB45lPcfOkXyvcYAE9pscecJkRbRB9Uy91f480o0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gsfZEQHn00R9QCwaZooqqn5JCo5XGRjt0kyihW3rzu6V97VH3NLQNSAnadM+P2+5OKKcexQczBKjNNbCKLU9NZxHDYJCSyYWEvszzKcD13uVPfKi5SFYPtiQHTcG2f3O18I3rPIY+bFvTEsJj/0YLmgWyKOwwdR2Nr4+xbxyMCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=H7DpfFPO; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.55.0.156] (unknown [149.11.192.251])
+	s=arc-20240116; t=1715950577; c=relaxed/simple;
+	bh=e9oH/dFJNymwnP2+/bICLJ3w2u+V9W0KpOSWMqRvKaM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=g39wIvP5uR6g0EdZ9+Vq/yLmkONwHgkFTZtM3Ryo6F/vEOWotlroTYZpwFoDeknE2ur2GahlHL6aprPqlMFcaveB78hTH3ZPgt57VXVJI0gMQh4YRDwskOvsOHcYFuOFTcguRRGb+TJTUA3CGX3hMTUYGmnp1V3Oaxsswzo1KDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w1cp1FNV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9sLrQzGJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w1cp1FNV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9sLrQzGJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EEF253FCF2;
-	Fri, 17 May 2024 12:48:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715950136;
-	bh=RrZY6xn2FaPVT1bsWbKMdNB1yTcqmVSQiHKHdrREhK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=H7DpfFPO84G33pIPBpvf9XnQF3WoqQifAarZzqebIybaM5RN400Nk3FwTOySoGMQi
-	 yz5pZLJ964kfyU6elP8eykZQ5oIu0ezioNPiEb8tIeXrf16hxB2ijmi9GUzfmFwz71
-	 KGrzcJcBdeGGExf8o0u4kiDfD3BECOrM+tJ5Qcqv1EY7bc2YFyH2CTh9k3X0GddNMh
-	 gPQ5fyzVo+7P5JTIYsHrQ/8sy1b9zvzjXXUitoK3EiuH39e2WxXFCix6lLf6d5OD5j
-	 yoy9gp0s9z2Os2upcr21+wvTBmiM8sWoDxldD/GiHY2an20NVrD2noRIIp+MiHmWod
-	 mEVVMIDu3VxCg==
-Message-ID: <ddf0f90e-e55d-47ce-a5ba-fb99289abe29@canonical.com>
-Date: Fri, 17 May 2024 05:48:55 -0700
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 63C285D39D;
+	Fri, 17 May 2024 12:56:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715950573; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cby//ih+NMEN3e6wlO01IS8t6sJXDU+AyZekjPzlkn8=;
+	b=w1cp1FNVIuKA1qfXgHtz6MXzAE1rPbnAHQccBwH4oB7Q+CrjyPZsMG7Wp8Ya4tDl7CQuER
+	xX4JvXXjBTp5W00aHF9ztIsp2raHdoqrAy8wEXdXt5mFE7vJISMFXvzITzFC0PmQE69otW
+	gG4KtRXzF+bI5qBh04YXuxdSED1F4kI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715950573;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cby//ih+NMEN3e6wlO01IS8t6sJXDU+AyZekjPzlkn8=;
+	b=9sLrQzGJXcLCz+kbnFtXjYOZNr26jZNpYG6JbjKJvbAvv3XSzRr/sAU1rApxjsN3VnakKG
+	bxdHBUX9hPyG2yAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715950573; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cby//ih+NMEN3e6wlO01IS8t6sJXDU+AyZekjPzlkn8=;
+	b=w1cp1FNVIuKA1qfXgHtz6MXzAE1rPbnAHQccBwH4oB7Q+CrjyPZsMG7Wp8Ya4tDl7CQuER
+	xX4JvXXjBTp5W00aHF9ztIsp2raHdoqrAy8wEXdXt5mFE7vJISMFXvzITzFC0PmQE69otW
+	gG4KtRXzF+bI5qBh04YXuxdSED1F4kI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715950573;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cby//ih+NMEN3e6wlO01IS8t6sJXDU+AyZekjPzlkn8=;
+	b=9sLrQzGJXcLCz+kbnFtXjYOZNr26jZNpYG6JbjKJvbAvv3XSzRr/sAU1rApxjsN3VnakKG
+	bxdHBUX9hPyG2yAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6E8013991;
+	Fri, 17 May 2024 12:56:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nkfnJuxTR2ZhQQAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 17 May 2024 12:56:12 +0000
+Message-ID: <c7ace4b0-4f88-4a2d-8f0c-fcc1e2e618ba@suse.de>
+Date: Fri, 17 May 2024 14:56:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,97 +97,136 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-To: Jonathan Calmels <jcalmels@3xx0.net>,
- "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: brauner@kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>,
- Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-2-jcalmels@3xx0.net>
- <878r08brmp.fsf@email.froward.int.ebiederm.org>
- <xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
+Subject: Re: [RFC] iomap: use huge zero folio in iomap_dio_zero
 Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
+From: Hannes Reinecke <hare@suse.de>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: david@fromorbit.com, djwong@kernel.org, hch@lst.de,
+ Keith Busch <kbusch@kernel.org>, mcgrof@kernel.org,
+ akpm@linux-foundation.org, brauner@kernel.org, chandan.babu@oracle.com,
+ gost.dev@samsung.com, john.g.garry@oracle.com, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-xfs@vger.kernel.org, p.raghav@samsung.com, ritesh.list@gmail.com,
+ ziy@nvidia.com
+References: <20240503095353.3798063-8-mcgrof@kernel.org>
+ <20240507145811.52987-1-kernel@pankajraghav.com>
+ <ZkQG7bdFStBLFv3g@casper.infradead.org> <ZkQfId5IdKFRigy2@kbusch-mbp>
+ <ZkQ0Pj26H81HxQ_4@casper.infradead.org>
+ <20240515155943.2uaa23nvddmgtkul@quentin>
+ <ZkT46AsZ3WghOArL@casper.infradead.org>
+ <20240516150206.d64eezbj3waieef5@quentin>
+ <ef22fc06-0227-419c-8f25-38aff7f5e3eb@suse.de>
+In-Reply-To: <ef22fc06-0227-419c-8f25-38aff7f5e3eb@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -2.79
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[fromorbit.com,kernel.org,lst.de,linux-foundation.org,oracle.com,samsung.com,vger.kernel.org,kvack.org,gmail.com,nvidia.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
 
-On 5/17/24 04:55, Jonathan Calmels wrote:
-> On Fri, May 17, 2024 at 06:32:46AM GMT, Eric W. Biederman wrote:
+On 5/17/24 14:36, Hannes Reinecke wrote:
+> On 5/16/24 17:02, Pankaj Raghav (Samsung) wrote:
+>> On Wed, May 15, 2024 at 07:03:20PM +0100, Matthew Wilcox wrote:
+>>> On Wed, May 15, 2024 at 03:59:43PM +0000, Pankaj Raghav (Samsung) wrote:
+>>>>   static int __init iomap_init(void)
+>>>>   {
+>>>> +       void            *addr = kzalloc(16 * PAGE_SIZE, GFP_KERNEL);
+>>>
+>>> Don't use XFS coding style outside XFS.
+>>>
+>>> kzalloc() does not guarantee page alignment much less alignment to
+>>> a folio.  It happens to work today, but that is an implementation
+>>> artefact.
+>>>
+>>>> +
+>>>> +       if (!addr)
+>>>> +               return -ENOMEM;
+>>>> +
+>>>> +       zero_fsb_folio = virt_to_folio(addr);
+>>>
+>>> We also don't guarantee that calling kzalloc() gives you a virtual
+>>> address that can be converted to a folio.  You need to allocate a folio
+>>> to be sure that you get a folio.
+>>>
+>>> Of course, you don't actually need a folio.  You don't need any of the
+>>> folio metadata and can just use raw pages.
+>>>
+>>>> +       /*
+>>>> +        * The zero folio used is 64k.
+>>>> +        */
+>>>> +       WARN_ON_ONCE(len > (16 * PAGE_SIZE));
+>>>
+>>> PAGE_SIZE is not necessarily 4KiB.
+>>>
+>>>> +       bio = iomap_dio_alloc_bio(iter, dio, BIO_MAX_VECS,
+>>>> +                                 REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+>>>
+>>> The point was that we now only need one biovec, not MAX.
+>>>
 >>
->> Pointers please?
+>> Thanks for the comments. I think it all makes sense:
 >>
->> That sentence sounds about 5 years out of date.
-> 
-> The link referenced is from last year.
-> Here are some others often cited by distributions:
-> 
-> https://nvd.nist.gov/vuln/detail/CVE-2022-0185
-> https://nvd.nist.gov/vuln/detail/CVE-2022-1015
-> https://nvd.nist.gov/vuln/detail/CVE-2022-2078
-> https://nvd.nist.gov/vuln/detail/CVE-2022-24122
-> https://nvd.nist.gov/vuln/detail/CVE-2022-25636
-> 
-> Recent thread discussing this too:
-> https://seclists.org/oss-sec/2024/q2/128
-> 
+>> diff --git a/fs/internal.h b/fs/internal.h
+>> index 7ca738904e34..e152b77a77e4 100644
+>> --- a/fs/internal.h
+>> +++ b/fs/internal.h
+>> @@ -35,6 +35,14 @@ static inline void bdev_cache_init(void)
+>>   int __block_write_begin_int(struct folio *folio, loff_t pos, 
+>> unsigned len,
+>>                  get_block_t *get_block, const struct iomap *iomap);
+>> +/*
+>> + * iomap/buffered-io.c
+>> + */
+>> +
+>> +#define ZERO_FSB_SIZE (65536)
+>> +#define ZERO_FSB_ORDER (get_order(ZERO_FSB_SIZE))
+>> +extern struct page *zero_fs_block;
+>> +
+>>   /*
+>>    * char_dev.c
+>>    */
+> But why?
+> We already have a perfectly fine hugepage zero page in huge_memory.c. 
+> Shouldn't we rather export that one and use it?
+> (Actually I have some patches for doing so...)
+> We might allocate folios
 
-they were used in 2020, 2021, and 2022 pwn2own exploits. Sorry I don't remember the exact numbers and will have to dig.
+Bah. Hit 'enter' too soon.
 
-pwn2own 2023 4/5 hacks used them
-https://www.zerodayinitiative.com/blog/2023/3/23/pwn2own-vancouver-2023-day-two-results
-I will need to dig to find the CVEs associated with them.
+We might allocate a zero folio as a fallback if the huge zero page is 
+not available, but first we should try to use that.
 
-pwn2own 2024 I can not discuss atm
+Cheers,
 
-but its not just pwn2own, the actual list of kernel CVEs that unprivileged user namespaces make exploitable is much larger.
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
