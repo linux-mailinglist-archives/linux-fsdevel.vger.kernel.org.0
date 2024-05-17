@@ -1,269 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-19663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812A98C8619
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 14:02:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E4F8C85E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 13:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EF1286A72
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 12:02:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCF7DB2125E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2024 11:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACC841C87;
-	Fri, 17 May 2024 11:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9813FBAE;
+	Fri, 17 May 2024 11:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ECINu236"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qZ+tC0pT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2040.outbound.protection.outlook.com [40.107.7.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDB05FDA5;
-	Fri, 17 May 2024 11:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715947187; cv=none; b=Zb7I0mOVofy2OzP8j/Wh8PzwHeZxIk8yNu1YPwx++Ba9mVOtoo6cCTvX/HpJM6EkMVYY9JuWEl4NW3bE3m28WnayuiaLwp1mXxzSlui6fGIDSAJipiKj/6z2YsictySreKMgHLm6GLDyJuCm6g8UMQHyFOchghuTf0/PUJdor5Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715947187; c=relaxed/simple;
-	bh=TvBGTTdVnDV+b4Yl5iLq0qnZcplU/ybcNrcwUEiKzbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uNGSBT7MyFewiPvla+nYVp9uLGbXF/He9CEZA8CAJcSSiPziJoeFvFFfx32YG+gkiSDC4BsTPGMvsxtGkL2s7GmsY5ueIpynsQsA+bPValzLBgFK2qntjs/qvLwMDswzeSs8MTT8C6YcLc1vheaFSUW3zbf/QQdxiwJbZi7QV34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ECINu236; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.55.0.156] (unknown [149.11.192.251])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 301E83F764;
-	Fri, 17 May 2024 11:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715947183;
-	bh=bxYKAh9DncLSWIwt/nYavWMG6zn2ybxfgSMkcb9j328=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=ECINu236ay7xBFBlcVmlIC1CgdSi1M4l4lYbYap+wZHovT8tQshlPPOG0CVdzKzoi
-	 OkUEpJj/Yw4/3qYL6xhLAQwjyGg5tDmNrgX/Ok30KFWImXulxHmVao6JuaVJZtKIn1
-	 09aktOgrmwqJNe/crDjO2WArcPfFYraPZXIparu72+PIdLFsUBStuEnRiCPAQTDGTy
-	 rnx7he7GUB0nYZYNGetqeR+RwRFleUkx3PiSXa44mLpK0qL9dvC8qFnbGkwz6aZnJI
-	 dlZlwDiOio6x+A08xjckndaIhar7btulg86/vj6MMCFc6a7BHfT0UazPOsUs+F64Zb
-	 VyebFN8ATw7yQ==
-Message-ID: <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
-Date: Fri, 17 May 2024 04:59:41 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92883DBB3;
+	Fri, 17 May 2024 11:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715946985; cv=fail; b=SWLTVdL/vxNf7Elu3PlOgDyV0Gi/YDGi+50oFDqcrNIlDoICvpxg3qQ0RIbG9LBJvdyIKZ0z/6JnsrNuwl8abI9IrKSAix15+5RLlt74xw2Jf25HpmVBafRga8XncVKGhw9eNIj1p72SUbP9P+Sdzx8ZsgIbEShNuif6RXba5cc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715946985; c=relaxed/simple;
+	bh=wSZ+TJAJf6my7sO7HnDxfasZJ48RvuI2zdDVtcO08+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=hkyxog+7CzhZdExHzmYALBwsLDsP1BY3WckDfiMGPjJxggPvPHIYycFRue2TVmKbl7ZIjJJSP5MhJiOJxny5DteTi/v74ZQBaOx2Yj9Sk5rVoeziKTUK6c0YiqmJkrW4DmtcZGsk5SYx+biqZ+62pxSCjboBPAcDFlyfZRAWT88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=qZ+tC0pT; arc=fail smtp.client-ip=40.107.7.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VKAOSlB6ysRPO3zoiZyM/YVHWLKfIOgRh74bAAtJ6Iu9QNZzagCE1nWnyaLu2g9YmfA/OBuaGadFIzJxwsL4pD9Hfvi7KdrK6So2A6XWoaTE2PJ4qKV8LkJhhgLvXFvFNcCeBXB87Ck2+jafKHC1OA/ybtscNQeVeW4qJ8MrfhQ/kDQ2WlTXWeBd8dfGh4Cia6AySCZp+DuwwC1if4O1+UFMqxUf/PEV2E+CDGKm00qLSzYcv2YZ1NDXpGLkXRZtY1vtMDjzK7SE2YW6lzLcD2d8HlKUPeD0t6R58DHuLOOqzCsf4TZv2Ui2d7LIDFH70wD2Qc0HQqcfijOiva1ndg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JfrCk/kb3JzeC6qyeK76h/PziCXFxegdfQMNgeDOIe8=;
+ b=Nz9DqnrMJ4LafmDGO8l1y5b15u/HmXrpfanzZw1FFSxoZknSgKFhutuAErji3ITjZ6L8IY3Ef8aymI6/XeaBeFqbTFX5a0/oFWhTBQWuQeKj7bTLC0Q2nE1HPysA68Kltzg+kK2cdQRSIUCaNxSwTB85Qe2s56tFRUOG8Bu6Rfiz3FkJVRJO0t5b50PgIyTU7DRUHAoPB3xbK1Jgw7wej1ElJVtfKlaH6lL7OKMN3l0thyefu7fYBMAS/qxpHenpT3P+ASnI/wH8/7P/oFAsSnx6Khr4YL7iCaXUKThD1g3+Uenolr4VhqtJ3gKGyXfq5QcVWokBakz89WxeVM0jYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JfrCk/kb3JzeC6qyeK76h/PziCXFxegdfQMNgeDOIe8=;
+ b=qZ+tC0pTCWoIk2X/0WSE+WW7bfAVOvizwvTwn/UcEojWh7oZJNbZxpvFKy+EFiUOa4oEsLgZVhyFz1uaOT/YFouj7SKkAAJ33v2/0GC8Rs9e0YZIHmre+q4blQDAo2/85Xax4ndxTBNEhqnbLIt8QS7UFN4fvk8iP4xb6F+7LEM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
+ by VI2PR04MB10883.eurprd04.prod.outlook.com (2603:10a6:800:27f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Fri, 17 May
+ 2024 11:56:20 +0000
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::8d2f:ac7e:966a:2f5f]) by DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::8d2f:ac7e:966a:2f5f%6]) with mapi id 15.20.7587.028; Fri, 17 May 2024
+ 11:56:20 +0000
+From: Xu Yang <xu.yang_2@nxp.com>
+To: brauner@kernel.org,
+	djwong@kernel.org,
+	willy@infradead.org,
+	hch@lst.de
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	jun.li@nxp.com
+Subject: [PATCH] iomap: avoid redundant fault_in_iov_iter_readable() judgement when use larger chunks
+Date: Sat, 18 May 2024 04:04:20 +0800
+Message-Id: <20240517200420.2144011-1-xu.yang_2@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0216.apcprd04.prod.outlook.com
+ (2603:1096:4:187::18) To DU2PR04MB8822.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::11)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
- Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- containers@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- keyrings@vger.kernel.org
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-2-jcalmels@3xx0.net>
- <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
- <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|VI2PR04MB10883:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebea04e7-771f-497e-0942-08dc76685d83
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|1800799015|376005|52116005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Wfc4X/ty8htB5ZyzFzE9e9BygqNs3rRNIACAy8p4FUKPZVujSC6DV10PdKTn?=
+ =?us-ascii?Q?UgqWSE/Dq/WlMfun35ckhDdwR3fywrmMPsCYScEDHkd9MTv9c7DKOdH8iijG?=
+ =?us-ascii?Q?96vYgWoO/y/DLmNXYFy27ikUcsGzw/6CvOJwkfMHPg0qW/zwRlAURHJWvmlj?=
+ =?us-ascii?Q?Fn2kszSaJ/OOxeBGgKjM6ek36ukmMnYAqPz7Yzo10eJnXoHCAHmBpGmMlcej?=
+ =?us-ascii?Q?d1wy+HMaM+NAWjNiuZPq3l3gSbDWKHb9xvUd4cchdPUKWgsPs39N/1VIsg2E?=
+ =?us-ascii?Q?gxVHPyj/NflpjyyJQ7kDa4uqs95e79nGJg5ccZqCQkX3w9hABDJ2eKdUAdv3?=
+ =?us-ascii?Q?nIvSFonSpE8P3aLpp7bayjyots3eoQb1p+AegNOwKYEmcOPKx7R27ANJoLa5?=
+ =?us-ascii?Q?gKSjPQQB6olILcb2jfME7qd3Hq9wnOsRRQlRXLvYvyBbtavihBFCQYxI9+PL?=
+ =?us-ascii?Q?RcO5SzIrjnq2PWNMPieRpm8XE8Gm4/MY+7dQuyZ+FPfBojfe6p4AzfUSxt5T?=
+ =?us-ascii?Q?xHDQnghQKeL+K0GbafD1A+6hP3qh6rhrWOaQ7REkP4Id1//nZgpoQSeZL2/I?=
+ =?us-ascii?Q?Ky0bhrbsFwNaFPMDp/b2Gcz3CIV5PlMIO2RFZhlgVHqR82twwLVQkUD0zwcA?=
+ =?us-ascii?Q?InYFy0MS2bp+jTe86zCO1t+OQXTbjMUGv5lz/UhHXhDwI0sBA6+jTy33KAhV?=
+ =?us-ascii?Q?6gTBv9GeQVDgnFcqKAXfutUmY7+VxdpFGE4aOaOLN8QAEv2EIUFj/UAsCLuB?=
+ =?us-ascii?Q?b4D4J54e0TT9D8jUaJ973dJQdsejPOd/JDMD7eZ/3AaGD30frnf1+NU2VsLU?=
+ =?us-ascii?Q?fl0EMP7LdJm0+a72MAcGmE4MFMVwSBc/rXYaijbGnaA85LdCrRDhNHR4cv+Z?=
+ =?us-ascii?Q?yraIrsqvp+BAW87chEKIbd0hCMnS+Og0jgwr6zhz4wus8hveZglsWdtT0jKu?=
+ =?us-ascii?Q?MjzrQtB/NLfjPOEpAtOJEncmCeFEU8+f+QWQF4/fLmewvL3NkiySyebmPh/p?=
+ =?us-ascii?Q?QlK9wzB3Rl7zQk26ux2SBkMPTTs+5OQdxt6ZTwnbRdEeSCDjssMrtC7yYoAT?=
+ =?us-ascii?Q?jSbxp92af2D70x07+cfcVzOVU68k0hMJ3pf50ka6etBGCp9aYu13A41j8YTw?=
+ =?us-ascii?Q?lGVbFUFjWbY8M2TCmPSc9n9M8TiCpLg62EmUzyB5TGrSCWfzbj43Xr7NLMpd?=
+ =?us-ascii?Q?3o4YmT4rLjVfRT9foFLqyKQijIhgrHi/SlaU8ZfMxj/5pwk0Q41q0sXLiJBh?=
+ =?us-ascii?Q?uGWxhj/nxD0kTroVK0rTSy4j8m+KgHBLqfvEBORvg8iT2GbjZiaSnIN08+Xc?=
+ =?us-ascii?Q?V7ZwQ1TTTqaHhHCB3aLETse2L3Zg6WTnHBc4ijjQujQDWg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(52116005)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bW9EeupDjQMnFf4SXGFj4ECwpx83eo2IeIo1TPUsq+frVGVXrh7f49tnz0Pe?=
+ =?us-ascii?Q?u+nW0FAWNe7TtBB+WR2FBGsCoUJslrcGby1pL7JqLOw8A+QeeLx4hG6Z0E96?=
+ =?us-ascii?Q?hkxUe6qYw+RLZiUcbchlYQabIoknC3uh18VmgnG52kJOVABtJxghFo05v4Bk?=
+ =?us-ascii?Q?0B+KfQ4dQwnEpf72l8vBajgX2nSx+jAHnCGWlw2IVCkFx1X6tFVM9wGKGB0P?=
+ =?us-ascii?Q?8ut1+AB2PxKLdUVd8nzKv4xcBxXd+zw6EUfpfaEKxr8HdhVwRQPKLzLtdLYR?=
+ =?us-ascii?Q?M3P1KEvVu/j12Mz5jh2s/jGiv0tESOJCKnt4Br43xqsz1qb+1LZH5/ZO116R?=
+ =?us-ascii?Q?2Jt3Bh+FX+ftC5sRpm3GJExXkIgcDakO2PePNYWK9+9rz6sV17nXOVhT7eMS?=
+ =?us-ascii?Q?uuAlzdxhKqptdrfec11tmeBcbs89xGBhZeLZpwzfGaycU3EC9g+A2JgsrVVC?=
+ =?us-ascii?Q?S/uEdXBTikUCUDyPW8opbqB3FkuSzVrVP5wK/rXlTbdzaUT4gnnQBAwUOA25?=
+ =?us-ascii?Q?nx804LXVWVvf0G7kU9WSraTKkpYIWNWy3HbVdBc9juqR0oLWWMfWSvQV3zK4?=
+ =?us-ascii?Q?MhJHBFn3ulZdBx4ayhGWsaXNA6TEVSKwHnPvTEQdKn/v2Z5+FOEgdmudjvlP?=
+ =?us-ascii?Q?pLsOVVqUF7NvB2hTL2U/LFoFrV+Qt0w2ZZ/8X+SPZrXAo5ynbwDFC2XsjYRu?=
+ =?us-ascii?Q?q7Kod7V+y5+OEDDg+uJxNVrUN5XJ3Vlf+SrzOCGU3QzDq2jWwKMWveiSapLT?=
+ =?us-ascii?Q?1WMLqsHserJtKbxGM7eawnivzGDBbWofCJjiesUSPNYzjdldUbvRmkFOpIp1?=
+ =?us-ascii?Q?Oh6Y293jLv2vw8ojm2V4Im4dZSYBMwn0TUedFMT2dgdW5nIWyOk4ml1zpKns?=
+ =?us-ascii?Q?WP9YvtjOZP9+/C1xyfHJDbdAfgazw9EFR+QhXcuDp7EhotyL4nuKncg5msYm?=
+ =?us-ascii?Q?+isGK7JpySM2b06tPSS7Y6FUEKU/Y6B0Y/dDYIms87lTO+WSDpbZ0g0qDO9W?=
+ =?us-ascii?Q?cKcNlexzKxTW14pMUTFmv+CkL0+2xVll8wTZlQGFNrB29N/rYkt7GZdRa25D?=
+ =?us-ascii?Q?gYXVcMWf/KAcg/w/GeP32/+PFzhadf9ftsomdBG6WG0HjmIqWUosG8VXYIdd?=
+ =?us-ascii?Q?Shs07Be5L0bSWvT6gCzW8kqdm76TFurLlorbwo9YAe5hT0A7dfZBFrBRhXXP?=
+ =?us-ascii?Q?HriaDaLp6YeDksKLPYsbXYFY582CcS0B7dZC57aunzLDF/t0M0xCYRy0my5c?=
+ =?us-ascii?Q?SrKH0QMXFay+Gfr9Qh1d6YvQbzsx3lZQ4+wgpPqi2OssRC0SAUGGfHgwDX16?=
+ =?us-ascii?Q?3xhg5OFfqKu9dgkOCwOuk8SPvyU4GZEx/s5VObuclsf5/zXJXMQ5OdrMqavF?=
+ =?us-ascii?Q?0sgjmxbusm6lwrumgnrpkO3KgmHxcpAyDUwhCmfFuTQLqYQp6CFHp8xZUSKy?=
+ =?us-ascii?Q?1nCGmnYwgAevuimWbjzcl+XOU6BFJAMM9LbFqVfkr69vBPgcRRRwWN8BY5nq?=
+ =?us-ascii?Q?EVlgc1GmjJDM7Y9h6FIAQn0ZI78Pr/I0SnGs61eUUmkmFs0F31h+0QOf9CKr?=
+ =?us-ascii?Q?6fw+TzT2HNRPbNXooPnr45QYl6+ONqJq3BZsAvMM?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebea04e7-771f-497e-0942-08dc76685d83
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 11:56:20.0065
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4IxICLRaAL6wP1VEUX67FCV/nQX1uisYIBYo4KFrMHVjVEaTEacGQhjhyb13olIEjFZVMaORSGw9A1JGX6aujg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10883
 
-On 5/17/24 03:51, Jonathan Calmels wrote:
-> On Thu, May 16, 2024 at 03:07:28PM GMT, John Johansen wrote:
->> agreed, though it really is application dependent. Some applications handle
->> the denial at userns creation better, than the capability after. Others
->> like anything based on QTWebEngine will crash on denial of userns creation
->> but handle denial of the capability within the userns just fine, and some
->> applications just crash regardless.
-> 
-> Yes this is application specific, but I would argue that the latter is
-> much more preferable. For example, having one application crash in a
-> container is probably ok, but not being able to start the container in
-> the first place is probably not. Similarly, preventing the network
-> namespace creation breaks services which rely on systemd’s
-> PrivateNetwork, even though they most likely use it to prevent any
-> networking from being done.
-> 
-Agred the solution has to be application/usage model specific. Some of
-them are easy, and others not so much.
+Since commit (5d8edfb900d5 "iomap: Copy larger chunks from userspace"),
+iomap will try to copy in larger chunks than PAGE_SIZE. However, if the
+mapping doesn't support large folio, only one page of maximum 4KB will
+be created and 4KB data will be writen to pagecache each time. Then,
+next 4KB will be handled in next iteration.
 
->> The userns cred from the LSM hook can be modified, yes it is currently
->> specified as const but is still under construction so it can be safely
->> modified the LSM hook just needs a small update.
->>
->> The advantage of doing it under the LSM is an LSM can have a richer policy
->> around what can use them and tracking of what is allowed. That is to say the
->> LSM has the capability of being finer grained than doing it via capabilities.
-> 
-> Sure, we could modify the LSM hook to do all sorts of things, but
-> leveraging it would be quite cumbersome, will take time to show up in
-> userspace, or simply never be adopted.
-> We’re already seeing it in Ubuntu which started requiring Apparmor profiles.
-> 
+If chunk is 2MB, total 512 pages need to be handled finally. During this
+period, fault_in_iov_iter_readable() is called to check iov_iter readable
+validity. Since only 4KB will be handled each time, below address space
+will be checked over and over again:
 
-yes, I would argue that is a metric of adoption.
+pos         	len
+-
+start,    	2MB
+start+4KB, 	2MB
+start+8KB, 	2MB
+...
+start+2044KB 	2MB
 
-> This new capability set would be a universal thing that could be
-> leveraged today without modification to userspace. Moreover, it’s a
-> simple framework that can be extended.
+Obviously the checking size is wrong since only 4KB will be handled each
+time. So this will get a correct bytes before fault_in_iov_iter_readable()
+to let iomap work well in non-large folio case.
 
-I would argue that is a problem. Userspace has to change for this to be
-secure. Is it an improvement over the current state yes.
+Fixes: 5d8edfb900d5 ("iomap: Copy larger chunks from userspace")
+Cc: stable@vger.kernel.org
+Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+---
+ fs/iomap/buffered-io.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> As you mentioned, LSMs are even finer grained, and that’s the idea,
-> those could be used hand in hand eventually. You could envision LSM
-> hooks controlling the userns capability set, and thus enforce policies
-> on the creation of nested namespaces without limiting the other tasks’
-> capabilities.
-> 
->> I am not opposed to adding another mechanism to control user namespaces,
->> I am just not currently convinced that capabilities are the right
->> mechanism.
-> 
-> Well that’s the thing, from past conversations, there is a lot of
-> disagreement about restricting namespaces. By restricting the
-> capabilities granted by namespaces instead, we’re actually treating the
-> root cause of most concerns.
-> 
-no disagreement there. This is actually Ubuntu's posture with user namespaces
-atm. Where the user namespace is allowed but the capabilities within it
-are denied.
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 41c8f0c68ef5..51ca31cd94ae 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -925,6 +925,9 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 		if (bytes > length)
+ 			bytes = length;
+ 
++		if (!mapping_large_folio_support(iter->inode->i_mapping))
++			bytes = min_t(size_t, bytes, PAGE_SIZE - offset_in_page(pos));
++
+ 		/*
+ 		 * Bring in the user page that we'll copy from _first_.
+ 		 * Otherwise there's a nasty deadlock on copying from the
+-- 
+2.34.1
 
-It does however when not handled correctly result in some very odd failures
-and would be easier to debug if the use of user namespaces were just
-cleanly denied.
-
-> Today user namespaces are "special" and always grant full caps. Adding a
-> new capability set to limit this behavior is logical; same way it's done
-> for usual process transitions.
-> Essentially this set is to namespaces what the inheritable set is to
-> root.
-> 
-its not so much the capabilities set as the inheritable part that is
-problematic. Yes I am well aware of where that is required but I question
-that capabilities provides the needed controls here.
-
->> this should be bounded by the creating task's bounding set, other wise
->> the capability model's bounding invariant will be broken, but having the
->> capabilities that the userns want to access in the task's bounding set is
->> a problem for all the unprivileged processes wanting access to user
->> namespaces.
-> 
-> This is possible with the security bit introduced in the second patch.
-> The idea of having those separate is that a service which has dropped
-> its capabilities can still create a fully privileged user namespace.
-
-yes, which is the problem. Not that we don't do that with say setuid
-applications, but the difference is that they were known to be doing
-something dangerous and took measures around that.
-
-We are starting from a different posture here. Where applications have
-assumed that user namespaces where safe and no measures were needed.
-Tools like unshare and bwrap if set to allow user namespaces in their
-fcaps will allow exploits a trivial by-pass.
-
-> For example, systemd’s machined drops capabilities from its bounding set,
-> yet it should be able to create unprivileged containers.
-> The invariant is sound because a child userns can never regain what it
-> doesn’t have in its bounding set. If it helps you can view the userns
-> set as a “namespace bounding set” since it defines the future bounding
-> sets of namespaced tasks.
-> 
-sure I get it, some of the use cases work, some not so well
-
->> If I am reading this right for unprivileged processes the capabilities in
->> the userns are bounded by the processes permitted set before the userns is
->> created?
-> 
-> Yes, unprivileged processes that want to raise a capability in their
-> userns set need it in their permitted set (as well as their bounding
-> set). This is similar to inheritable capabilities.
-
-Right.
-
-> Recall that processes start with a full set of userns capabilities, so
-> if you drop a userns capability (or something else did, e.g.
-> init/pam/sysctl/parent) you will never be able to regain it, and
-> namespaces you create won't have it included.
-
-sure, that part of the behavior is fine
-
-> Now, if you’re root (or cap privileged) you can always regain it.
-> 
-yes
-
-What I was trying to get at is two points.
-1. The written description wasn't clear enough, leaving room for
-    ambiguity.
-2. That I quest that the behavior should be allowed given the
-    current set of tools that use user namespaces. It reduces exploit
-    codes ability to directly use unprivileged user namespaces but
-    makes it all to easy to by-pass the restriction because of the
-    behavior of the current tool set. ie. user space has to change.
-
->> This is only being respected in PR_CTL, the user mode helper is straight
->> setting the caps.
-> 
-> Usermod helper requires CAP_SYS_MODULE and CAP_SETPCAP in the initns so
-> the permitted set is irrelevant there. It starts with a full set but from
-> there you can only lower caps, so the invariant holds.
-> 
-sure, I get what is happening. Again the description needs work. It was
-ambiguous as to whether it was applying to the fcaps or only the pcaps.
-
-But again, I believe the fcaps behavior is wrong, because of the state of
-current software. If this had been a proposal where there was no existing
-software infrastructure I would be starting from a different stance.
 
