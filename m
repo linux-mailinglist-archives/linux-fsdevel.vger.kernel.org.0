@@ -1,577 +1,451 @@
-Return-Path: <linux-fsdevel+bounces-19723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F70F8C9511
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 16:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8238C953E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 18:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9EA91C212C9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 14:42:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E771C21236
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 16:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B894CE1F;
-	Sun, 19 May 2024 14:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D534D584;
+	Sun, 19 May 2024 16:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VDSlK/20"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J3pmek+u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929B487BE
-	for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2024 14:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461323FB87
+	for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2024 16:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716129735; cv=none; b=rjJiab+88sA1IPyHS3phhSZuDNCzRMHRPZQL+zhjtlQzVHe53qAm5f0fJ8D4nIju/6ZdOGrChse0zILxT48ePEciD4y95w6mLtMD9D+KLv1ZB+f4+/Ue5em5dPZfai3+5ZeZ4pcThhi27cwLXS1dAt+qkbOQnz9gmurD9HYn4Tw=
+	t=1716135285; cv=none; b=h8fq8pLcKxwj+gaprT2CmrFLGEhZ6Dy2vndIogej9GGpll2s2djThHYPvtl1XaVD1BXKMLWbP6AIAYK66vkNNY6rNtf4gx5Vw5VOCfGz6ttWFvlnBG/84sGGymhkxbkcUOmLwCFDaS6hpEHIKcwYYi+mLGVHbFDhpf/GwJ116d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716129735; c=relaxed/simple;
-	bh=E75jFge/GzqhVsGi7jPxeT/w8jQuLY5NF9aWJFFxy74=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o0z52tO/OVae6N2Lq6lWlpPg2NvTOxbDP0A38XTJGiJ+hZbynd1bgZuvPfR/oLKEfEuz/jkeF8RSN0yPHsEsf0IxWf0JMWlHUn12tUfizgi2iJGL3xkeQmUhNUsfFw8kENoccMUwddwypRfECNkErQjQQJOUb5zlyRt+GUIkpRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VDSlK/20; arc=none smtp.client-ip=91.218.175.177
+	s=arc-20240116; t=1716135285; c=relaxed/simple;
+	bh=qZoQ6UyjODTd1TmCcMMSUfCORrz/Mx5vHmcsbyNJSF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AFdV17ZvCV2LVRIvVTQl8l1/uF4a8we/5RbLpvWuqhhIlZgfXs6lgS6Mf3TD/gUx40dQ/9YjInR7scQ3/Up7k7IXRqxX3u6b/SzXrVES5yUfuSsX/CSXU62H4RxsuvVO8eHFD3XWJ9+eeEETst0XC7QfkmTSjmKIahgKfHX8w5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J3pmek+u; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: brauner@kernel.org
+X-Envelope-To: torvalds@linux-foundation.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716129729;
+	t=1716135279;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EtgtQfktrQLAaJG+xJoihlDHzI6jBIATNPCsqNmNMrw=;
-	b=VDSlK/20z29VkP4LHFRSuDbW0FF8IBPs5P330iBRgIp2gmmONxmg5OMp8SRLLvUEHD5k7T
-	D8mKrveIU+boobVLI9Ig6yTnuBFslPEGmuTNfnG9k+z71WedYleMBAOdqiPGPMPm7fy+IN
-	3lrczVfemNNA90ue26lq/83V60u429A=
-X-Envelope-To: jack@suse.cz
-X-Envelope-To: viro@zeniv.linux.org.uk
-X-Envelope-To: wen.yang@linux.dev
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: hch@lst.de
-X-Envelope-To: dylany@fb.com
-X-Envelope-To: dwmw@amazon.co.uk
-X-Envelope-To: pbonzini@redhat.com
-X-Envelope-To: dyoung@redhat.com
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=u8813BbjKlDpJU/WAcwRmww702c8DRufK65oabK/ChY=;
+	b=J3pmek+uAbWmpCoBVdBrXg0zcMZ0FhFAwi7wwA7jCHZaTs8gy27z7uL07XcBqakTw1zA2I
+	M9fVDHp6e43MJIYFlfuD2q2J0OE2BB1rhaKX6G5lJdnFWqAzTG2Z3q08sChvKW7XbtPC2+
+	7L4BGq5+dWNSZuBL5LIN0m31hg41Sq0=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
 X-Envelope-To: linux-fsdevel@vger.kernel.org
 X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Sun, 19 May 2024 12:14:34 -0400
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-To: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Wen Yang <wen.yang@linux.dev>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Dylan Yudaken <dylany@fb.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Dave Young <dyoung@redhat.com>,
-	linux-fsdevel@vger.kernel.org,
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore eventfd
-Date: Sun, 19 May 2024 22:41:24 +0800
-Message-Id: <20240519144124.4429-1-wen.yang@linux.dev>
+Subject: [GIT PULL] bcachefs updates fro 6.10-rc1
+Message-ID: <zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-Migadu-Flow: FLOW_OUT
 
-For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
-value provided in its buffer to the counter, while a read (2) returns the
-8-byte value containing the value and resetting the counter value to 0.
-Therefore, the accumulated counter values of multiple eventfd_write can be
-read out by a single eventfd_read. Therefore, the accumulated value of
-multiple writes can be retrieved by a single read.
 
-However, the current code immediately wakes up the read thread after
-writing a NON-SEMAPHORE eventfd, thus increasing unnecessary CPU overhead.
 
-By introducing a configurable ratelimit mechanism in eventfd_write, these
-unnecessary wakeup operations are reduced, thereby reducing CPU overhead.
+The following changes since commit 6e297a73bccf852e7716207caa8eb868737c7155:
 
-We may the following test code:
-	#define _GNU_SOURCE
-	#include <assert.h>
-	#include <err.h>
-	#include <errno.h>
-	#include <getopt.h>
-	#include <pthread.h>
-	#include <poll.h>
-	#include <stdlib.h>
-	#include <stdio.h>
-	#include <unistd.h>
-	#include <string.h>
-	#include <sys/eventfd.h>
-	#include <sys/prctl.h>
-	#include <sys/ioctl.h>
+  bcachefs: Add missing sched_annotate_sleep() in bch2_journal_flush_seq_async() (2024-05-07 11:02:37 -0400)
 
-	struct eventfd_qos {
-		__u32 token_capacity;
-		__u32 token_rate;
-	};
+are available in the Git repository at:
 
-	#define EFD_IOC_SET_QOS        _IOW('E', 0, struct eventfd_qos)
-	#define EFD_IOC_GET_QOS        _IOR('E', 0, struct eventfd_qos)
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-05-19
 
-	struct pub_param {
-		int fd;
-		int cpu;
-		struct eventfd_qos *qos;
-	};
+for you to fetch changes up to 07f9a27f1969764d11374942961d51fee0ab628f:
 
-	struct sub_param {
-		int fd;
-		int cpu;
-	};
+  bcachefs: add no_invalid_checks flag (2024-05-09 16:24:30 -0400)
 
-	static void publish(void *data)
-	{
-		struct pub_param * param = (struct pub_param *)data;
-		unsigned long long value = 1;
-		cpu_set_t cpuset;
-		int ret;
+----------------------------------------------------------------
+bcachefs changes for 6.10-rc1
 
-		prctl(PR_SET_NAME,"publish");
+- More safety fixes, primarily found by syzbot
 
-		CPU_ZERO(&cpuset);
-		CPU_SET(param->cpu, &cpuset);
-		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+- Run the upgrade/downgrade paths in nochnages mode. Nochanges mode is
+  primarily for testing fsck/recovery in dry run mode, so it shouldn't
+  change anything besides disabling writes and holding dirty metadata in
+  memory.
 
-		if (param->qos) {
-			ret = ioctl(param->fd, EFD_IOC_SET_QOS, param->qos);
-			if (ret == -1) {
-				printf("ioctl failed, error=%s\n",
-					strerror(errno));
-				return;
-			}
-		}
+  The idea here was to reduce the amount of activity if we can't write
+  anything out, so that bringing up a filesystem in "super ro" mode
+  would be more lilkely to work for data recovery - but norecovery is
+  the correct option for this.
 
-		while (1) {
-			ret = eventfd_write(param->fd, value);
-			if (ret < 0)
-				printf("XXX: write failed, %s\n",
-				       	strerror(errno));
-		}
-	}
+- btree_trans->locked; we now track whether a btree_trans has any btree
+  nodes locked, and this is used for improved assertions related to
+  trans_unlock() and trans_relock(). We'll also be using it for
+  improving how we work with lockdep in the future: we don't want
+  lockdep to be tracking individual btree node locks because we take too
+  many for lockdep to track, and it's not necessary since we have a
+  cycle detector.
 
-	static void subscribe(void *data)
-	{
-		struct sub_param *param = (struct sub_param *)data;
-		unsigned long long value = 0;
-		struct pollfd pfds[1];
-		cpu_set_t cpuset;
+- Trigger improvements that are prep work for online fsck
 
-		prctl(PR_SET_NAME,"subscribe");
-		CPU_ZERO(&cpuset);
-		CPU_SET(param->cpu, &cpuset);
-		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+- BTREE_TRIGGER_check_repair; this regularizes how we do some repair
+  work for extents that goes with running triggers in fsck, and fixes
+  some subtle issues with transaction restarts there.
 
-		pfds[0].fd = param->fd;
-		pfds[0].events = POLLIN;
+- bch2_snapshot_equiv() has now been ripped out of fsck.c; snapshot
+  equivalence classes are for when snapshot deletion leaves behind
+  redundant snapshot nodes, but snapshot deletion now cleans this up
+  right away, so the abstraction doesn't need to leak.
 
-		while(1) {
-			poll(pfds, 1, -1);
-			if(pfds[0].revents & POLLIN) {
-				read(param->fd, &value, sizeof(value));
-			}
-		}
-	}
+- Improvements to how we resume writing to the journal in recovery. The
+  code for picking the new place to write when reading the journal is
+  greatly simplified and we also store the position in the superblock
+  for when we don't read the journal; this means that we preserve more
+  of the journal for list_journal debugging.
 
-	static void usage(void)
-	{
-		printf("Usage: \n");
-		printf("\t");
-		printf("<-p cpuid> <-s cpuid > [ -r rate ] [ -c capacity ] \n");
-	}
+- Improvements to sysfs btree_cache and btree_node_cache, for debugging
+  memory reclaim.
 
-	int main(int argc, char *argv[])
-	{
-		char *optstr = "p:s:r::c::";
-		struct sub_param sub_param = {0};
-		struct pub_param pub_param = {0};
-		struct eventfd_qos qos = {0};
-		pid_t pid;
-		int fd;
-		int opt;
+- We now detect when we've blocked for 10 seconds on the allocator in
+  the write path and dump some useful info.
 
-		if (argc < 3) {
-			usage();
-			return 1;
-		}
+- Safety fixes for devices references: this is a big series that changes
+  almost all device lookups to properly check if the device exists and
+  take a reference to it.
 
-		while((opt = getopt(argc, argv, optstr)) != -1){
-			switch(opt) {
-				case 'p':
-					pub_param.cpu = atoi(optarg);
-					break;
-				case 's':
-					sub_param.cpu = atoi(optarg);
-					break;
-				case 'r':
-					qos.token_rate = atoi(optarg);
-					break;
-				case 'c':
-					qos.token_capacity = atoi(optarg);
-					break;
-				case '?':
-					usage();
-					return 1;
-			}
-		}
+  Previously we assumed that if a bkey exists that references a device
+  then the device must exist, and this was enforced in .invalid methods,
+  but this was incorrect because it meant device removal relied on
+  accounting being correct to not leave keys pointing to invalid
+  devices, and that's not something we can assume.
 
-		fd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK | EFD_NONBLOCK);
-		assert(fd);
+  Getting the "pointer to invalid device" checks out of our .invalid()
+  methods fixes some long standing device removal bugs; the only
+  outstanding bug with device removal now is a race between the discard
+  path and deleting alloc info, which should be easily fixed.
 
-		sub_param.fd = fd;
-		pub_param.fd = fd;
-		pub_param.qos = (qos.token_capacity && qos.token_rate) ? &qos : NULL;
+- The allocator now prefers not to expand the new
+  member_info.btree_allocated bitmap, meaning if repair ever requires
+  scanning for btree nodes (because of a corrupt interior nodes) we
+  won't have to scan the whole device(s).
 
-		pid = fork();
-		if (pid == 0)
-			subscribe(&sub_param);
-		else if (pid > 0)
-			publish(&pub_param);
-		else {
-			printf("XXX: fork error!\n");
-			return -1;
-		}
+- New coding style document, which among other things talks about the
+  correct usage of assertions
 
-		return 0;
-	}
+----------------------------------------------------------------
+Daniel Hill (1):
+      bcachefs: add counters for failed shrinker reclaim
 
-	# ./a.out  -p 2 -s 3
-	The original cpu usage is as follows:
-09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+Hongbo Li (1):
+      bcachefs: eliminate the uninitialized compilation warning in bch2_reconstruct_snapshots
 
-09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+Kent Overstreet (142):
+      bcachefs: Fix sb_clean_validate endianness conversion
+      bcachefs: Fix needs_whiteout BUG_ON() in bkey_sort()
+      bcachefs: bch2_bkey_format_field_overflows()
+      bcachefs: Fix xattr_to_text() unsafety
+      bcachefs: Better write_super() error messages
+      bcachefs: Run upgrade/downgrade even in -o nochanges mode
+      bcachefs: printbuf improvements
+      bcachefs: printbufs: prt_printf() now handles \t\r\n
+      bcachefs: prt_printf() now respects \r\n\t
+      bcachefs: bch2_btree_node_header_to_text()
+      bcachefs: bch2_journal_keys_dump()
+      bcachefs: bch2_hash_lookup() now returns bkey_s_c
+      bcachefs: add btree_node_merging_disabled debug param
+      bcachefs: bch2_btree_path_to_text()
+      bcachefs: New assertion for writing to the journal after shutdown
+      bcachefs: allow for custom action in fsck error messages
+      bcachefs: Don't read journal just for fsck
+      bcachefs: When traversing to interior nodes, propagate result to paths to same leaf node
+      bcachefs: kill for_each_btree_key_old()
+      bcachefs: for_each_btree_key_continue()
+      bcachefs: bch2_gc() is now private to btree_gc.c
+      bcachefs: Finish converting reconstruct_alloc to errors_silent
+      bcachefs: kill metadata only gc
+      bcachefs: move topology repair kick to gc_btrees()
+      bcachefs: move root node topo checks to node_check_topology()
+      bcachefs: gc_btree_init_recurse() uses gc_mark_node()
+      bcachefs: mark_superblock cleanup
+      bcachefs: __BTREE_ITER_ALL_SNAPSHOTS -> BTREE_ITER_SNAPSHOT_FIELD
+      bcachefs: iter/update/trigger/str_hash flag cleanup
+      bcachefs: bch2_btree_insert_trans() no longer specifies BTREE_ITER_cached
+      bcachefs: bch2_dir_emit() - drop_locks_do() conversion
+      bcachefs: bch2_trans_relock_fail() - factor out slowpath
+      bcachefs: bucket_valid()
+      bcachefs: member helper cleanups
+      bcachefs: get_unlocked_mut_path -> bch2_path_get_unlocked_mut
+      bcachefs: prefer drop_locks_do()
+      bcachefs: bch2_trans_commit_flags_to_text()
+      bcachefs: maintain lock invariants in btree_iter_next_node()
+      bcachefs: bch2_btree_path_upgrade() checks nodes_locked, not uptodate
+      bcachefs: Use bch2_btree_path_upgrade() in key cache traverse
+      bcachefs: bch2_trans_unlock() must always be followed by relock() or begin()
+      bcachefs: bch2_btree_root_alloc_fake_trans()
+      bcachefs: trans->locked
+      bcachefs: bch2_btree_path_can_relock()
+      bcachefs: bch2_trans_verify_not_unlocked()
+      bcachefs: assert that online_reserved == 0 on shutdown
+      bcachefs: fs_alloc_debug_to_text()
+      bcachefs: Add asserts to bch2_dev_btree_bitmap_marked_sectors()
+      bcachefs: Check for writing btree_ptr_v2.sectors_written == 0
+      bcachefs: Rip bch2_snapshot_equiv() out of fsck
+      bcachefs: make btree read errors silent during scan
+      bcachefs: Sync journal when we complete a recovery pass
+      bcachefs: fix flag printing in journal_buf_to_text()
+      bcachefs: Move gc of bucket.oldest_gen to workqueue
+      bcachefs: Btree key cache instrumentation
+      bcachefs: Add btree_allocated_bitmap to member_to_text()
+      bcachefs: plumb data_type into bch2_bucket_alloc_trans()
+      bcachefs: journal seq blacklist gc no longer has to walk btree
+      bcachefs: Clean up inode alloc
+      bcachefs: bucket_data_type_mismatch()
+      bcachefs: mark_stripe_bucket cleanup
+      bcachefs: Consolidate mark_stripe_bucket() and trans_mark_stripe_bucket()
+      bcachefs: bch2_bucket_ref_update()
+      bcachefs: kill gc looping for bucket gens
+      bcachefs: Run bch2_check_fix_ptrs() via triggers
+      bcachefs: do reflink_p repair from BTREE_TRIGGER_check_repair
+      bcachefs: Kill gc_init_recurse()
+      bcachefs: fix btree_path_clone() ip_allocated
+      bcachefs: uninline set_btree_iter_dontneed()
+      bcachefs: bch_member.last_journal_bucket
+      bcachefs: check for inodes that should have backpointers in fsck
+      bcachefs: check inode backpointer in bch2_lookup()
+      bcachefs: Simplify resuming of journal position
+      bcachefs: delete old gen check bch2_alloc_write_key()
+      bcachefs: dirty_sectors -> replicas_sectors
+      bcachefs: alloc_data_type_set()
+      bcachefs: kill bch2_dev_usage_update_m()
+      bcachefs: __mark_pointer now takes bch_alloc_v4
+      bcachefs: __mark_stripe_bucket() now takes bch_alloc_v4
+      bcachefs: simplify bch2_trans_start_alloc_update()
+      bcachefs: CodingStyle
+      bcachefs: Kill opts.buckets_nouse
+      bcachefs: On device add, prefer unused slots
+      bcachefs: x-macroize journal flags enums
+      bcachefs: bch2_bkey_drop_ptrs() declares loop iter
+      closures: closure_sync_timeout()
+      bcachefs: bch2_print_allocator_stuck()
+      bcachefs: New helpers for device refcounts
+      bcachefs: Debug asserts for ca->ref
+      bcachefs: bch2_dev_safe() -> bch2_dev_rcu()
+      bcachefs: Pass device to bch2_alloc_write_key()
+      bcachefs: Pass device to bch2_bucket_do_index()
+      bcachefs: bch2_dev_btree_bitmap_marked() -> bch2_dev_rcu()
+      bcachefs: journal_replay_entry_early() checks for nonexistent device
+      bcachefs: bch2_have_enough_devs() checks for nonexistent device
+      bcachefs: bch2_dev_tryget()
+      bcachefs: Convert to bch2_dev_tryget_noerror()
+      bcachefs: bch2_check_alloc_key() -> bch2_dev_tryget_noerror()
+      bcachefs: bch2_trigger_alloc() -> bch2_dev_tryget()
+      bcachefs: bch2_bucket_ref_update() now takes bch_dev
+      bcachefs: bch2_evacuate_bucket() -> bch2_dev_tryget()
+      bcachefs: bch2_dev_iterate()
+      bcachefs: PTR_BUCKET_POS() now takes bch_dev
+      bcachefs: Kill bch2_dev_bkey_exists() in backpointer code
+      bcachefs: move replica_set from bch_dev to bch_fs
+      bcachefs: ob_dev()
+      bcachefs: ec_validate_checksums() -> bch2_dev_tryget()
+      bcachefs: bch2_extent_merge() -> bch2_dev_rcu()
+      bcachefs: extent_ptr_durability() -> bch2_dev_rcu()
+      bcachefs: ptr_stale() -> dev_ptr_stale()
+      bcachefs: extent_ptr_invalid() -> bch2_dev_rcu()
+      bcachefs: bch2_bkey_has_target() -> bch2_dev_rcu()
+      bcachefs: bch2_extent_normalize() -> bch2_dev_rcu()
+      bcachefs: kill bch2_dev_bkey_exists() in btree_gc.c
+      bcachefs: bch2_dev_bucket_exists() uses bch2_dev_rcu()
+      bcachefs: pass bch_dev to read_from_stale_dirty_pointer()
+      bcachefs: kill bch2_dev_bkey_exists() in bkey_pick_read_device()
+      bcachefs: kill bch2_dev_bkey_exists() in data_update_init()
+      bcachefs: bch2_dev_have_ref()
+      bcachefs: kill bch2_dev_bkey_exists() in check_alloc_info()
+      bcachefs: kill bch2_dev_bkey_exists() in discard_one_bucket_fast()
+      bcachefs: kill bch2_dev_bkey_exists() in journal_ptrs_to_text()
+      bcachefs: Move nocow unlock to bch2_write_endio()
+      bcachefs: Better bucket alloc tracepoints
+      bcachefs: Allocator prefers not to expand mi.btree_allocated bitmap
+      bcachefs: Improve sysfs internal/btree_cache
+      bcachefs: for_each_bset() declares loop iter
+      bcachefs: bch2_dev_get_ioref2(); alloc_background.c
+      bcachefs: bch2_dev_get_ioref2(); backpointers.c
+      bcachefs: bch2_dev_get_ioref2(); btree_io.c
+      bcachefs: bch2_dev_get_ioref2(); io_write.c
+      bcachefs: bch2_dev_get_ioref2(); journal_io.c
+      bcachefs: bch2_dev_get_ioref2(); debug.c
+      bcachefs: bch2_dev_get_ioref2(); io_read.c
+      bcachefs: bch2_dev_get_ioref() checks for device not present
+      bcachefs: kill bch2_dev_bkey_exists() in bch2_read_endio()
+      bcachefs: kill bch2_dev_bkey_exists() in bch2_check_fix_ptrs()
+      bcachefs: Invalid devices are now checked for by fsck, not .invalid methods
+      bcachefs: fsync() should not return -EROFS
+      bcachefs: s/bkey_invalid_flags/bch_validate_flags
+      bcachefs: Plumb bch_validate_flags to sb_field_ops.validate()
+      bcachefs: Fix sb_field_downgrade validation
 
-09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+Kuan-Wei Chiu (1):
+      bcachefs: Optimize eytzinger0_sort() with bottom-up heapsort
 
-Then enable the ratelimited wakeup, eg:
-	# ./a.out  -p 2 -s 3  -r1000 -c2
+Lukas Bulwahn (1):
+      bcachefs: fix typo in reference to BCACHEFS_DEBUG
 
-Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
-10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
+Matthew Wilcox (Oracle) (1):
+      bcachefs: Remove calls to folio_set_error
 
-10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
+Nathan Chancellor (2):
+      bcachefs: Fix type of flags parameter for some ->trigger() implementations
+      bcachefs: Fix format specifiers in bch2_btree_key_cache_to_text()
 
-10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
+Petr Vorel (1):
+      bcachefs: Move BCACHEFS_STATFS_MAGIC value to UAPI magic.h
 
-Signed-off-by: Wen Yang <wen.yang@linux.dev>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dylan Yudaken <dylany@fb.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/eventfd.c                 | 188 ++++++++++++++++++++++++++++++++++-
- include/uapi/linux/eventfd.h |   8 ++
- init/Kconfig                 |  18 ++++
- 3 files changed, 213 insertions(+), 1 deletion(-)
+Ricardo B. Marliere (1):
+      bcachefs: chardev: make bch_chardev_class constant
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 9afdb722fa92..28754d9952a7 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -27,6 +27,15 @@
- 
- static DEFINE_IDA(eventfd_ida);
- 
-+#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
-+struct eventfd_bucket {
-+	struct eventfd_qos qos;
-+	struct hrtimer timer;
-+	u64 timestamp;
-+	u64 tokens;
-+};
-+#endif
-+
- struct eventfd_ctx {
- 	struct kref kref;
- 	wait_queue_head_t wqh;
-@@ -41,8 +50,97 @@ struct eventfd_ctx {
- 	__u64 count;
- 	unsigned int flags;
- 	int id;
-+#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
-+	struct eventfd_bucket bucket;
-+#endif
- };
- 
-+#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
-+
-+static void eventfd_refill_tokens(struct eventfd_bucket *bucket)
-+{
-+	unsigned int rate = bucket->qos.token_rate;
-+	u64 now = ktime_get_ns();
-+	u64 tokens;
-+
-+	tokens = ktime_sub(now, bucket->timestamp) * rate;
-+	tokens /= NSEC_PER_SEC;
-+	if (tokens > 0) {
-+		tokens += bucket->tokens;
-+		bucket->tokens = (tokens > bucket->qos.token_capacity) ?
-+				 tokens : bucket->qos.token_capacity;
-+	}
-+	bucket->timestamp = now;
-+}
-+
-+static int eventfd_consume_tokens(struct eventfd_bucket *bucket)
-+{
-+	if (bucket->tokens > 0) {
-+		bucket->tokens--;
-+		return 1;
-+	} else
-+		return 0;
-+}
-+
-+static bool eventfd_detect_storm(struct eventfd_ctx *ctx)
-+{
-+	u32 rate = ctx->bucket.qos.token_rate;
-+
-+	if (rate == 0)
-+		return false;
-+
-+	eventfd_refill_tokens(&ctx->bucket);
-+	return !eventfd_consume_tokens(&ctx->bucket);
-+}
-+
-+static enum hrtimer_restart eventfd_timer_handler(struct hrtimer *timer)
-+{
-+	struct eventfd_ctx *ctx;
-+	unsigned long flags;
-+
-+	ctx = container_of(timer, struct eventfd_ctx, bucket.timer);
-+	spin_lock_irqsave(&ctx->wqh.lock, flags);
-+
-+	/*
-+	 * Checking for locked entry and wake_up_locked_poll() happens
-+	 * under the ctx->wqh.lock lock spinlock
-+	 */
-+	if (waitqueue_active(&ctx->wqh))
-+		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+
-+	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
-+	eventfd_ctx_put(ctx);
-+
-+	return HRTIMER_NORESTART;
-+}
-+
-+static void eventfd_ratelimited_wake_up(struct eventfd_ctx *ctx)
-+{
-+	u32 rate = ctx->bucket.qos.token_rate;
-+	u64 now = ktime_get_ns();
-+	u64 slack_ns;
-+	u64 expires;
-+
-+	if (likely(rate)) {
-+		slack_ns = NSEC_PER_SEC/rate;
-+	} else {
-+		WARN_ON_ONCE("fallback to the default NSEC_PER_SEC.");
-+		slack_ns = NSEC_PER_MSEC;
-+	}
-+
-+	/* if already queued, don't bother */
-+	if (hrtimer_is_queued(&ctx->bucket.timer))
-+		return;
-+
-+	/* determine next wakeup, add a timer margin */
-+	expires = now + slack_ns;
-+
-+	kref_get(&ctx->kref);
-+	hrtimer_start(&ctx->bucket.timer, expires, HRTIMER_MODE_ABS);
-+}
-+
-+#endif
-+
- /**
-  * eventfd_signal_mask - Increment the event counter
-  * @ctx: [in] Pointer to the eventfd context.
-@@ -270,8 +368,23 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 	if (likely(res > 0)) {
- 		ctx->count += ucnt;
- 		current->in_eventfd = 1;
--		if (waitqueue_active(&ctx->wqh))
-+
-+		/*
-+		 * Checking for locked entry and wake_up_locked_poll() happens
-+		 * under the ctx->wqh.lock spinlock
-+		 */
-+		if (waitqueue_active(&ctx->wqh)) {
-+#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
-+			if ((ctx->flags & EFD_SEMAPHORE) || !eventfd_detect_storm(ctx))
-+				wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+			else
-+				eventfd_ratelimited_wake_up(ctx);
-+
-+#else
- 			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+#endif
-+		}
-+
- 		current->in_eventfd = 0;
- 	}
- 	spin_unlock_irq(&ctx->wqh.lock);
-@@ -299,6 +412,66 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
- }
- #endif
- 
-+#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
-+static long eventfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	struct eventfd_ctx *ctx = file->private_data;
-+	void __user *uaddr = (void __user *)arg;
-+	struct eventfd_qos qos;
-+
-+	if (ctx->flags & EFD_SEMAPHORE)
-+		return -EINVAL;
-+	if (!uaddr)
-+		return -EINVAL;
-+
-+	switch (cmd) {
-+	case EFD_IOC_SET_QOS:
-+		if (copy_from_user(&qos, uaddr, sizeof(qos)))
-+			return -EFAULT;
-+		if (qos.token_rate > NSEC_PER_SEC)
-+			return -EINVAL;
-+
-+		for (;;) {
-+			spin_lock_irq(&ctx->wqh.lock);
-+			if (hrtimer_try_to_cancel(&ctx->bucket.timer) >= 0) {
-+				spin_unlock_irq(&ctx->wqh.lock);
-+				break;
-+			}
-+			spin_unlock_irq(&ctx->wqh.lock);
-+			hrtimer_cancel_wait_running(&ctx->bucket.timer);
-+		}
-+
-+		spin_lock_irq(&ctx->wqh.lock);
-+		ctx->bucket.timestamp = ktime_get_ns();
-+		ctx->bucket.qos = qos;
-+		ctx->bucket.tokens = qos.token_capacity;
-+
-+		current->in_eventfd = 1;
-+		/*
-+		 * Checking for locked entry and wake_up_locked_poll() happens
-+		 * under the ctx->wqh.lock lock spinlock
-+		 */
-+		if ((!ctx->count) && (waitqueue_active(&ctx->wqh)))
-+			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+		current->in_eventfd = 0;
-+
-+		spin_unlock_irq(&ctx->wqh.lock);
-+		return 0;
-+
-+	case EFD_IOC_GET_QOS:
-+		qos = READ_ONCE(ctx->bucket.qos);
-+		if (copy_to_user(uaddr, &qos, sizeof(qos)))
-+			return -EFAULT;
-+		return 0;
-+
-+	default:
-+		return -ENOENT;
-+	}
-+
-+	return -EINVAL;
-+}
-+#endif
-+
- static const struct file_operations eventfd_fops = {
- #ifdef CONFIG_PROC_FS
- 	.show_fdinfo	= eventfd_show_fdinfo,
-@@ -308,6 +481,10 @@ static const struct file_operations eventfd_fops = {
- 	.read_iter	= eventfd_read,
- 	.write		= eventfd_write,
- 	.llseek		= noop_llseek,
-+#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
-+	.unlocked_ioctl	= eventfd_ioctl,
-+	.compat_ioctl	= eventfd_ioctl,
-+#endif
- };
- 
- /**
-@@ -403,6 +580,15 @@ static int do_eventfd(unsigned int count, int flags)
- 	ctx->flags = flags;
- 	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
- 
-+#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
-+	ctx->bucket.qos.token_rate = 0;
-+	ctx->bucket.qos.token_capacity = 0;
-+	ctx->bucket.tokens = 0;
-+	ctx->bucket.timestamp = ktime_get_ns();
-+	hrtimer_init(&ctx->bucket.timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+	ctx->bucket.timer.function = eventfd_timer_handler;
-+#endif
-+
- 	flags &= EFD_SHARED_FCNTL_FLAGS;
- 	flags |= O_RDWR;
- 	fd = get_unused_fd_flags(flags);
-diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
-index 2eb9ab6c32f3..8e9d5361ec6a 100644
---- a/include/uapi/linux/eventfd.h
-+++ b/include/uapi/linux/eventfd.h
-@@ -8,4 +8,12 @@
- #define EFD_CLOEXEC O_CLOEXEC
- #define EFD_NONBLOCK O_NONBLOCK
- 
-+struct eventfd_qos {
-+	__u32 token_capacity;
-+	__u32 token_rate;
-+};
-+
-+#define EFD_IOC_SET_QOS	_IOW('E', 0, struct eventfd_qos)
-+#define EFD_IOC_GET_QOS	_IOR('E', 0, struct eventfd_qos)
-+
- #endif /* _UAPI_LINUX_EVENTFD_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index 0a021d6b4939..ebfc79ff34ca 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1646,6 +1646,24 @@ config EVENTFD
- 
- 	  If unsure, say Y.
- 
-+config EVENTFD_RATELIMITED_WAKEUP
-+	bool "support ratelimited wakeups for the NON-SEMAPHORE eventfd" if EXPERT
-+	default n
-+	depends on EVENTFD
-+	help
-+	  This option enables the ratelimited wakeups for the non-semaphore
-+	  eventfd. Frequent writing to an eventfd can lead to frequent wakeup
-+	  of processes waiting for reading on this eventfd, resulting in
-+	  significant overhead. However, for the NON-SEMAPHORE eventfd, if its
-+	  counter has a non-zero value, read (2) returns 8 bytes containing
-+	  that value, and the counter value is reset to zero. This means that
-+	  a read operation can retrieve the accumulated value caused by
-+	  multiple write operations.
-+	  By introducing the ratelimited wakeups for the NON-SEMAPHORE eventfd,
-+	  these CPU overhead can be reduced.
-+
-+	  If unsure, say N.
-+
- config SHMEM
- 	bool "Use full shmem filesystem" if EXPERT
- 	default y
--- 
-2.25.1
+Thomas Bertschinger (1):
+      bcachefs: add no_invalid_checks flag
 
+Youling Tang (3):
+      bcachefs: Change destroy_inode to free_inode
+      bcachefs: Fix error path of bch2_link_trans()
+      bcachefs: Correct the FS_IOC_GETFLAGS to FS_IOC32_GETFLAGS in bch2_compat_fs_ioctl()
+
+ Documentation/filesystems/bcachefs/CodingStyle.rst |  186 ++++
+ Documentation/filesystems/bcachefs/index.rst       |    1 +
+ fs/bcachefs/acl.c                                  |   41 +-
+ fs/bcachefs/alloc_background.c                     |  337 ++++---
+ fs/bcachefs/alloc_background.h                     |  109 ++-
+ fs/bcachefs/alloc_foreground.c                     |  304 ++++--
+ fs/bcachefs/alloc_foreground.h                     |   15 +-
+ fs/bcachefs/alloc_types.h                          |    7 +
+ fs/bcachefs/backpointers.c                         |  158 +--
+ fs/bcachefs/backpointers.h                         |   43 +-
+ fs/bcachefs/bcachefs.h                             |   34 +-
+ fs/bcachefs/bcachefs_format.h                      |   10 +-
+ fs/bcachefs/bkey.c                                 |   15 +-
+ fs/bcachefs/bkey.h                                 |   33 +-
+ fs/bcachefs/bkey_methods.c                         |   22 +-
+ fs/bcachefs/bkey_methods.h                         |   73 +-
+ fs/bcachefs/bkey_sort.c                            |   79 +-
+ fs/bcachefs/bkey_sort.h                            |    4 +-
+ fs/bcachefs/bset.c                                 |   29 +-
+ fs/bcachefs/bset.h                                 |    6 +-
+ fs/bcachefs/btree_cache.c                          |  149 ++-
+ fs/bcachefs/btree_cache.h                          |    5 +-
+ fs/bcachefs/btree_gc.c                             | 1032 ++++----------------
+ fs/bcachefs/btree_gc.h                             |   44 +-
+ fs/bcachefs/btree_io.c                             |  117 +--
+ fs/bcachefs/btree_io.h                             |    2 -
+ fs/bcachefs/btree_iter.c                           |  347 ++++---
+ fs/bcachefs/btree_iter.h                           |   95 +-
+ fs/bcachefs/btree_journal_iter.c                   |   17 +
+ fs/bcachefs/btree_journal_iter.h                   |    2 +
+ fs/bcachefs/btree_key_cache.c                      |  107 +-
+ fs/bcachefs/btree_key_cache_types.h                |    8 +
+ fs/bcachefs/btree_locking.c                        |  179 ++--
+ fs/bcachefs/btree_locking.h                        |    4 +-
+ fs/bcachefs/btree_trans_commit.c                   |   70 +-
+ fs/bcachefs/btree_types.h                          |  127 ++-
+ fs/bcachefs/btree_update.c                         |   95 +-
+ fs/bcachefs/btree_update.h                         |   14 +-
+ fs/bcachefs/btree_update_interior.c                |   95 +-
+ fs/bcachefs/btree_update_interior.h                |    7 +-
+ fs/bcachefs/btree_write_buffer.c                   |    8 +-
+ fs/bcachefs/buckets.c                              |  693 ++++++++-----
+ fs/bcachefs/buckets.h                              |   70 +-
+ fs/bcachefs/chardev.c                              |   66 +-
+ fs/bcachefs/checksum.c                             |   17 +-
+ fs/bcachefs/data_update.c                          |   54 +-
+ fs/bcachefs/debug.c                                |   80 +-
+ fs/bcachefs/dirent.c                               |   97 +-
+ fs/bcachefs/dirent.h                               |    8 +-
+ fs/bcachefs/disk_groups.c                          |   11 +-
+ fs/bcachefs/ec.c                                   |  369 +++----
+ fs/bcachefs/ec.h                                   |    7 +-
+ fs/bcachefs/error.c                                |   59 +-
+ fs/bcachefs/extent_update.c                        |    2 +-
+ fs/bcachefs/extents.c                              |  151 +--
+ fs/bcachefs/extents.h                              |   12 +-
+ fs/bcachefs/eytzinger.c                            |  105 +-
+ fs/bcachefs/fs-common.c                            |   38 +-
+ fs/bcachefs/fs-io-buffered.c                       |   14 +-
+ fs/bcachefs/fs-io-direct.c                         |    2 +-
+ fs/bcachefs/fs-io-pagecache.c                      |    2 +-
+ fs/bcachefs/fs-io.c                                |    9 +-
+ fs/bcachefs/fs-ioctl.c                             |    2 +-
+ fs/bcachefs/fs.c                                   |  109 ++-
+ fs/bcachefs/fsck.c                                 |  212 ++--
+ fs/bcachefs/inode.c                                |   64 +-
+ fs/bcachefs/inode.h                                |   23 +-
+ fs/bcachefs/io_misc.c                              |   10 +-
+ fs/bcachefs/io_read.c                              |   68 +-
+ fs/bcachefs/io_write.c                             |   95 +-
+ fs/bcachefs/io_write_types.h                       |    1 +
+ fs/bcachefs/journal.c                              |  131 ++-
+ fs/bcachefs/journal.h                              |    6 +-
+ fs/bcachefs/journal_io.c                           |  163 ++--
+ fs/bcachefs/journal_io.h                           |    5 +-
+ fs/bcachefs/journal_reclaim.c                      |   10 +-
+ fs/bcachefs/journal_sb.c                           |   10 +-
+ fs/bcachefs/journal_seq_blacklist.c                |   77 +-
+ fs/bcachefs/journal_seq_blacklist.h                |    2 +-
+ fs/bcachefs/journal_types.h                        |   17 +-
+ fs/bcachefs/logged_ops.c                           |    2 +-
+ fs/bcachefs/lru.c                                  |    4 +-
+ fs/bcachefs/lru.h                                  |    2 +-
+ fs/bcachefs/migrate.c                              |    8 +-
+ fs/bcachefs/move.c                                 |   82 +-
+ fs/bcachefs/movinggc.c                             |    4 +-
+ fs/bcachefs/opts.h                                 |    7 +-
+ fs/bcachefs/printbuf.c                             |  232 +++--
+ fs/bcachefs/printbuf.h                             |   53 +-
+ fs/bcachefs/quota.c                                |  123 +--
+ fs/bcachefs/quota.h                                |    4 +-
+ fs/bcachefs/rebalance.c                            |   10 +-
+ fs/bcachefs/recovery.c                             |  142 +--
+ fs/bcachefs/recovery_passes.c                      |    8 +-
+ fs/bcachefs/reflink.c                              |   72 +-
+ fs/bcachefs/reflink.h                              |   16 +-
+ fs/bcachefs/replicas.c                             |   20 +-
+ fs/bcachefs/sb-clean.c                             |   15 +-
+ fs/bcachefs/sb-counters.c                          |   20 +-
+ fs/bcachefs/sb-downgrade.c                         |   25 +-
+ fs/bcachefs/sb-errors.c                            |    2 +-
+ fs/bcachefs/sb-errors_types.h                      |    3 +-
+ fs/bcachefs/sb-members.c                           |  149 ++-
+ fs/bcachefs/sb-members.h                           |  165 +++-
+ fs/bcachefs/sb-members_types.h                     |   21 +
+ fs/bcachefs/snapshot.c                             |   53 +-
+ fs/bcachefs/snapshot.h                             |   16 +-
+ fs/bcachefs/str_hash.h                             |   70 +-
+ fs/bcachefs/subvolume.c                            |   22 +-
+ fs/bcachefs/subvolume.h                            |    7 +-
+ fs/bcachefs/super-io.c                             |  117 +--
+ fs/bcachefs/super-io.h                             |    3 +-
+ fs/bcachefs/super.c                                |  112 ++-
+ fs/bcachefs/super_types.h                          |   15 -
+ fs/bcachefs/sysfs.c                                |  178 +---
+ fs/bcachefs/tests.c                                |   16 +-
+ fs/bcachefs/trace.h                                |   97 +-
+ fs/bcachefs/util.c                                 |   61 +-
+ fs/bcachefs/xattr.c                                |   47 +-
+ fs/bcachefs/xattr.h                                |    2 +-
+ include/linux/closure.h                            |   12 +
+ include/uapi/linux/magic.h                         |    1 +
+ lib/closure.c                                      |   37 +
+ 123 files changed, 4632 insertions(+), 4324 deletions(-)
+ create mode 100644 Documentation/filesystems/bcachefs/CodingStyle.rst
+ create mode 100644 fs/bcachefs/sb-members_types.h
 
