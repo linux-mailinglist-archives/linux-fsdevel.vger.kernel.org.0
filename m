@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-19721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6D18C9454
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 12:56:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE818C9459
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 13:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9721F21980
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 10:56:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BC42B213C1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 11:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B433A3D556;
-	Sun, 19 May 2024 10:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B815F3F9D5;
+	Sun, 19 May 2024 11:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXBKl/gL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGYVME3Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16400DF58;
-	Sun, 19 May 2024 10:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969FDF53;
+	Sun, 19 May 2024 11:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716116211; cv=none; b=erzMtwXFl9HCNtlG9LinDWKjScY8MaVe2P6rHTgCoXvejMWPCBGob4nUZm47wLkCu/kffq5S8AJsBM3N4W9FK/Eea2rA1u8onXuYuQkArxDSJi1HESBNNz9qFy7s1qa7aSIrGysR9U16gYQGVxbTsP+smil4dVYfbLpDBI6ApJw=
+	t=1716117066; cv=none; b=SqG/+AYSyMDOcu5vo057r/U/VYD6rPOs9y/G/BSAzdMZvO1OMWebkpph3O2WvIp0M3+8ck4tFGvuvFIqnpKwNZsC1XgkIF/h/7enRFR1KKve1f/aVpIZ9+3LXb58TlpifmMY3h3ZEiz2ndVqG1g8pLo3kHmDlM4C/PPbXtKwLmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716116211; c=relaxed/simple;
-	bh=bndxxlNRDwfu/tAOxMOMuVdP3bxe7xVVIEPdY9q5hyQ=;
+	s=arc-20240116; t=1716117066; c=relaxed/simple;
+	bh=8c34tyntDhSdH/Vd+jkad9fyz1axqN94hQ/hMWPdPVQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ncyN+9ntgUdLPS24X/78Tpo1E0aVZH7bPNeNe0inLI89mI6ApgxRig0QIvYRhSSwQmGrcgFtkoyBFKL2HtU20IGKHWvEEyrMuyfvxIk90Kbt2ErsfTYUpY7MT+f6Ih1KdTzLodFg5uqyR0sXX3vijuqIiCl/WX8WlyDwKnfHMSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXBKl/gL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC0AC32781;
-	Sun, 19 May 2024 10:56:49 +0000 (UTC)
+	 Content-Type:MIME-Version; b=E+5+Io0YVWm54pZCeDCDSGOgBnhH5K6M71Otohk+KkFRz+SBa3wUBoVVQr8aLc4kKyUgsgDZSJI/iIcuKWICUp4VcZ6JwnvOp5tyk5ju8darZfs/4mkQpqf+KDvTlMAevhAokGxeiRFZ1tCQT1Z4qUtmHjhrPaEvGBsp5AWO1SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGYVME3Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944B8C32781;
+	Sun, 19 May 2024 11:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716116210;
-	bh=bndxxlNRDwfu/tAOxMOMuVdP3bxe7xVVIEPdY9q5hyQ=;
+	s=k20201202; t=1716117065;
+	bh=8c34tyntDhSdH/Vd+jkad9fyz1axqN94hQ/hMWPdPVQ=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=oXBKl/gLTNlcDG3OweJbg9UNd39Wc1crl7Mp7jWFpg3nF9t4zPxC7SbLCPakiXMyZ
-	 m9W7cGF6gyH8Ft+lNWTGD8Y+5eXcIp8GxI9LwVlMdII8sO99JqAOmNU50zswV3Mj2U
-	 yP4LC/5qzcPKwfWgNRQkGAKtnXi9ioUoUSfzqX/V1nyzH5g04uzZYg1CxV6Z2IcgpY
-	 aIfS1BYPPrPDeEAyuJebGN6vA2GX9vI15/PENMGm3tT89L1ZYAkpsra5Qg6SC0W2sE
-	 nOoTJvLFTkDFL1fDEAq6P7G8hF040o8XZ150meS1io6yhOeqYT+RhKGd65uJekNwvc
-	 EfbtA+zB+htjQ==
-Message-ID: <4a1bcb698b4dc6eeca2816528e5dd9a3bae53af0.camel@kernel.org>
-Subject: Re: [PATCH v2 00/12] cachefiles: some bugfixes and cleanups for
- ondemand requests
+	b=vGYVME3Y2JOKejqMJIlYra2qojUxJPjiKM10Rh6Mbe28kzq14YlYyOAln6eW8fXG8
+	 qVNKdBIRibJM3et8fNIjSplWmUXy57+vYfbOF8WEHvgL2mhh/1ey8ADwPAp6SdJbJd
+	 ngY5W3cK6hkPUW2RK3sxbPkowOiCrYC6/On9bxbv/MjD0QhhxtfjqtrlKksDKUkR8/
+	 zmFw04GlJ/dT4T1kQ0cU464fy6O2SnbqA60/iv31yxiVhOWkWPoOszErbGfN6cwab/
+	 1UuTI6eQ8eDSaakv+aH84Uqwq+ZM/DnLa+PEUpHJKjba2VvSIgZT4h2bcrN8pgOOby
+	 L7VqTYn5NC10w==
+Message-ID: <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
+Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
+ reuse
 From: Jeff Layton <jlayton@kernel.org>
 To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com
 Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com, 
@@ -51,9 +51,10 @@ Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
  yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
  wozizhi@huawei.com,  Baokun Li <libaokun1@huawei.com>
-Date: Sun, 19 May 2024 06:56:04 -0400
-In-Reply-To: <20240515084601.3240503-1-libaokun@huaweicloud.com>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+Date: Sun, 19 May 2024 07:11:03 -0400
+In-Reply-To: <20240515125136.3714580-5-libaokun@huaweicloud.com>
+References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
+	 <20240515125136.3714580-5-libaokun@huaweicloud.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,74 +139,126 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2024-05-15 at 16:45 +0800, libaokun@huaweicloud.com wrote:
+On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
 > From: Baokun Li <libaokun1@huawei.com>
 >=20
-> Hi all!
+> Reusing the msg_id after a maliciously completed reopen request may cause
+> a read request to remain unprocessed and result in a hung, as shown below=
+:
 >=20
-> This is the second version of this patch series. Thank you, Jia Zhu and
-> Jingbo Xu, for the feedback in the previous version.
+>        t1       |      t2       |      t3
+> -------------------------------------------------
+> cachefiles_ondemand_select_req
+>  cachefiles_ondemand_object_is_close(A)
+>  cachefiles_ondemand_set_object_reopening(A)
+>  queue_work(fscache_object_wq, &info->work)
+>                 ondemand_object_worker
+>                  cachefiles_ondemand_init_object(A)
+>                   cachefiles_ondemand_send_req(OPEN)
+>                     // get msg_id 6
+>                     wait_for_completion(&req_A->done)
+> cachefiles_ondemand_daemon_read
+>  // read msg_id 6 req_A
+>  cachefiles_ondemand_get_fd
+>  copy_to_user
+>                                 // Malicious completion msg_id 6
+>                                 copen 6,-1
+>                                 cachefiles_ondemand_copen
+>                                  complete(&req_A->done)
+>                                  // will not set the object to close
+>                                  // because ondemand_id && fd is valid.
 >=20
-> We've been testing ondemand mode for cachefiles since January, and we're
-> almost done. We hit a lot of issues during the testing period, and this
-> patch set fixes some of the issues related to ondemand requests.
-> The patches have passed internal testing without regression.
+>                 // ondemand_object_worker() is done
+>                 // but the object is still reopening.
 >=20
-> The following is a brief overview of the patches, see the patches for
-> more details.
+>                                 // new open req_B
+>                                 cachefiles_ondemand_init_object(B)
+>                                  cachefiles_ondemand_send_req(OPEN)
+>                                  // reuse msg_id 6
+> process_open_req
+>  copen 6,A.size
+>  // The expected failed copen was executed successfully
 >=20
-> Patch 1-5: Holding reference counts of reqs and objects on read requests
-> to avoid malicious restore leading to use-after-free.
+> Expect copen to fail, and when it does, it closes fd, which sets the
+> object to close, and then close triggers reopen again. However, due to
+> msg_id reuse resulting in a successful copen, the anonymous fd is not
+> closed until the daemon exits. Therefore read requests waiting for reopen
+> to complete may trigger hung task.
 >=20
-> Patch 6-10: Add some consistency checks to copen/cread/get_fd to avoid
-> malicious copen/cread/close fd injections causing use-after-free or hung.
+> To avoid this issue, allocate the msg_id cyclically to avoid reusing the
+> msg_id for a very short duration of time.
 >=20
-> Patch 11: When cache is marked as CACHEFILES_DEAD, flush all requests,
-> otherwise the kernel may be hung. since this state is irreversible, the
-> daemon can read open requests but cannot copen.
+> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up =
+cookie")
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  fs/cachefiles/internal.h |  1 +
+>  fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
+>  2 files changed, 17 insertions(+), 4 deletions(-)
 >=20
-> Patch 12: Allow interrupting a read request being processed by killing
-> the read process as a way of avoiding hung in some special cases.
->=20
-> Comments and questions are, as always, welcome.
-> Please let me know what you think.
->=20
-> Thanks,
-> Baokun
->=20
-> Changes since v1:
->   * Collect RVB from Jia Zhu and Jingbo Xu.(Thanks for your review!)
->   * Pathch 1: Add Fixes tag and enrich the commit message.
->   * Pathch 7: Add function graph comments.
->   * Pathch 8: Update commit message and comments.
->   * Pathch 9: Enriched commit msg.
->=20
-> Baokun Li (11):
->   cachefiles: remove request from xarry during flush requests
->   cachefiles: remove err_put_fd tag in cachefiles_ondemand_daemon_read()
->   cachefiles: fix slab-use-after-free in cachefiles_ondemand_get_fd()
->   cachefiles: fix slab-use-after-free in
->     cachefiles_ondemand_daemon_read()
->   cachefiles: add output string to cachefiles_obj_[get|put]_ondemand_fd
->   cachefiles: add consistency check for copen/cread
->   cachefiles: add spin_lock for cachefiles_ondemand_info
->   cachefiles: never get a new anonymous fd if ondemand_id is valid
->   cachefiles: defer exposing anon_fd until after copy_to_user() succeeds
->   cachefiles: flush all requests after setting CACHEFILES_DEAD
->   cachefiles: make on-demand read killable
->=20
-> Zizhi Wo (1):
->   cachefiles: Set object to close if ondemand_id < 0 in copen
->=20
->  fs/cachefiles/daemon.c            |   3 +-
->  fs/cachefiles/internal.h          |   5 +
->  fs/cachefiles/ondemand.c          | 218 ++++++++++++++++++++++--------
->  include/trace/events/cachefiles.h |   8 +-
->  4 files changed, 177 insertions(+), 57 deletions(-)
->=20
+> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+> index 8ecd296cc1c4..9200c00f3e98 100644
+> --- a/fs/cachefiles/internal.h
+> +++ b/fs/cachefiles/internal.h
+> @@ -128,6 +128,7 @@ struct cachefiles_cache {
+>  	unsigned long			req_id_next;
+>  	struct xarray			ondemand_ids;	/* xarray for ondemand_id allocation */
+>  	u32				ondemand_id_next;
+> +	u32				msg_id_next;
+>  };
+> =20
+>  static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *=
+cache)
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index f6440b3e7368..b10952f77472 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -433,20 +433,32 @@ static int cachefiles_ondemand_send_req(struct cach=
+efiles_object *object,
+>  		smp_mb();
+> =20
+>  		if (opcode =3D=3D CACHEFILES_OP_CLOSE &&
+> -			!cachefiles_ondemand_object_is_open(object)) {
+> +		    !cachefiles_ondemand_object_is_open(object)) {
+>  			WARN_ON_ONCE(object->ondemand->ondemand_id =3D=3D 0);
+>  			xas_unlock(&xas);
+>  			ret =3D -EIO;
+>  			goto out;
+>  		}
+> =20
+> -		xas.xa_index =3D 0;
+> +		/*
+> +		 * Cyclically find a free xas to avoid msg_id reuse that would
+> +		 * cause the daemon to successfully copen a stale msg_id.
+> +		 */
+> +		xas.xa_index =3D cache->msg_id_next;
+>  		xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
+> +		if (xas.xa_node =3D=3D XAS_RESTART) {
+> +			xas.xa_index =3D 0;
+> +			xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
+> +		}
+>  		if (xas.xa_node =3D=3D XAS_RESTART)
+>  			xas_set_err(&xas, -EBUSY);
+> +
+>  		xas_store(&xas, req);
+> -		xas_clear_mark(&xas, XA_FREE_MARK);
+> -		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+> +		if (xas_valid(&xas)) {
+> +			cache->msg_id_next =3D xas.xa_index + 1;
 
-Looks like most of these are fixes inside the ondemand code, which I
-don't have the greatest grasp of, so...
+If you have a long-standing stuck request, could this counter wrap
+around and you still end up with reuse? Maybe this should be using
+ida_alloc/free instead, which would prevent that too?
 
-Acked-by: Jeff Layton <jlayton@kernel.org>
+
+
+> +			xas_clear_mark(&xas, XA_FREE_MARK);
+> +			xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+> +		}
+>  		xas_unlock(&xas);
+>  	} while (xas_nomem(&xas, GFP_KERNEL));
+> =20
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
