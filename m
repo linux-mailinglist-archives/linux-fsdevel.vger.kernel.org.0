@@ -1,451 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-19724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8238C953E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 18:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986468C9570
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 19:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E771C21236
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 16:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284811F21AF9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 17:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D534D584;
-	Sun, 19 May 2024 16:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FCF4E1CE;
+	Sun, 19 May 2024 17:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J3pmek+u"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="q1zu7ii7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461323FB87
-	for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2024 16:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1BB4C627
+	for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2024 17:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716135285; cv=none; b=h8fq8pLcKxwj+gaprT2CmrFLGEhZ6Dy2vndIogej9GGpll2s2djThHYPvtl1XaVD1BXKMLWbP6AIAYK66vkNNY6rNtf4gx5Vw5VOCfGz6ttWFvlnBG/84sGGymhkxbkcUOmLwCFDaS6hpEHIKcwYYi+mLGVHbFDhpf/GwJ116d0=
+	t=1716138223; cv=none; b=kPR1cEu8gGOxuXT1PzK7qJAtH+nHuHcbVn4Q8CTpwhW/ok1y5EnY45j2mbzzr6jzwCXsy/hgvZlhlMDv6ZE4dSkE2fzhT1+o1YDpzdGUzpoLC52hXSRMy4KXVGzfvdZIQeXmjpslFHZTUDOcgIxjNmceDQfCb9QfkSEXUzCK4pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716135285; c=relaxed/simple;
-	bh=qZoQ6UyjODTd1TmCcMMSUfCORrz/Mx5vHmcsbyNJSF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AFdV17ZvCV2LVRIvVTQl8l1/uF4a8we/5RbLpvWuqhhIlZgfXs6lgS6Mf3TD/gUx40dQ/9YjInR7scQ3/Up7k7IXRqxX3u6b/SzXrVES5yUfuSsX/CSXU62H4RxsuvVO8eHFD3XWJ9+eeEETst0XC7QfkmTSjmKIahgKfHX8w5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J3pmek+u; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: torvalds@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716135279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=u8813BbjKlDpJU/WAcwRmww702c8DRufK65oabK/ChY=;
-	b=J3pmek+uAbWmpCoBVdBrXg0zcMZ0FhFAwi7wwA7jCHZaTs8gy27z7uL07XcBqakTw1zA2I
-	M9fVDHp6e43MJIYFlfuD2q2J0OE2BB1rhaKX6G5lJdnFWqAzTG2Z3q08sChvKW7XbtPC2+
-	7L4BGq5+dWNSZuBL5LIN0m31hg41Sq0=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Sun, 19 May 2024 12:14:34 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs updates fro 6.10-rc1
-Message-ID: <zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
+	s=arc-20240116; t=1716138223; c=relaxed/simple;
+	bh=IIIQWDyY02fuOATschViKWXO1zp50Kj/DmwFCAdFY4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aAkTymzGwF2hEM6QNm3UiGlgNlbi1/kQ7yrJtyB7o8B8QSxeZQhH5MGBFudEFvmUPKX6qHrn/Pf2b1ymLyn7rj7wZFQjQcVKzksgJL+NM+Ld6fvogG3ziabzYxt+pEqPoQjPsRfekIM5id57q24K20my0oJPeEaaHdAOVO75EgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=q1zu7ii7; arc=none smtp.client-ip=66.163.184.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1716138215; bh=9Tmk45Zq8sa/lWYfQzgYaSCGFJCTICz+mmDIEDX1RwY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=q1zu7ii7xexouho3rPi7m6sr8WWMn5yws2S4CjqceC6HfsZY//WtNBtTBMJ/oyuVHvZhEHGJrEHwtQ7aO7/PuW6OWya6gUnYD5/qUZjdaS/2afbbVjDKDHDUU52I9xBss/FZvWncahWMgo1rdarVBJ4u9PEHue2gq4vv+tukfigTn9rSqUgBIwZIfdPG+PHHKyhdjFnCeeI141TPH1hxSKcZ0vAeunmmhPBVka7YElbfs2P/Qnwrr24WG1op+kqpVPqu6Qmb3c9Lidl9WX+K4+hJithuEqOedx6Hi+RDgyLrAO/l/GSR9OpDCIgWkg9HhwRhekN4Gatm1hAftznXFg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1716138215; bh=bBL4r1YJviNTsDpboPEJVzbvQsf1X4dHWx+2zc84AtK=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HNI2tYoWssy7QdE+h8gjIAL6/QB5KtQ71K6Tj8xVDfvgLslTo+tZjquur9Ul6He/sopw/NvHHwqE/+STfnrLbk8GXpwqfPwwI4JcJPZ3Kz5r7PcZozsHhDc/snF5vrp8h9iQArH7fg9V+6jW0ES95XIpyXOE8mbD4ukkC1ryK30n6enoFtCiAEyH5135ye/URksp2gA0IyDqkxKmlrgwxzJGDm6DfTaRdkAesSIpPN8sfJ7LTy8/4pPEw3N0oV+3lNyZbkCE0VenYeQohXI2hvf5v0jR4Hr9KglLZFPkz6MZKikfpnqFMDie0xusek2mo/9ldr8tnAwql6dgFAAR/g==
+X-YMail-OSG: VSKph8IVM1lbJ926igj_led9qPaxbsVrBMugFBvdZCM.41CC1senLRpkImrk0zF
+ e3UJkwbfeWZ7mhSfT0CQqJU8_rFGbeyOmaA9YrQhtznipSSlfm0AWtaCncKlJZf8dTl1hgG8JsNr
+ wgRVIJinVg7RjWluEY0nT_GUysybEbEIWvC1A1bD8ajGMN41PWE2h2nm6U_mqA2VPVLjLAK9qsID
+ ctW.rWZoEaXl_ZWhMlDJW7cw5mD37PWuKBWIAr2Yjg6UoR2iIfg2zFaPpbmWax_a_wyZHEJcqalF
+ .Madiyq30Tj.WT5Xk.guGsB6xdKPtiVNuyivAD9AthDbWCZTuYJ.z4EAtFHtFJ8jOVxREupY.OIl
+ PLFef1K0POq.kPJgN7qNdRxKoW3m1TZscQnZmznJrY1FxcKF1xBQDTPso7rEA.wImAP4t82451Bl
+ jTJ68rr.VI_qVlJNH_HCZEywIRpXfUViJ5LPIfBEXbs9xZgtFd_m40HqEnKvR0xb4oGj7g01Z.IS
+ 8AeQ199rTtBrk6O0fDfR6Axnt8dQFxH2gzi7KCgibbpQuQYzLIgCbQZTVRRmeD1umbFRiKk8KCQ5
+ MuAFWvJ44mmy43_5brELLC0L7_JX0ITaUvTFBhBP4GABcbuFAcbwrjkGVleGwCg0tLB8wF.71LPL
+ vXJnrqDgdrO_5pJGfxa2249zgGJXPY6P_WrC85eTvAbsM2vmrsNOuf7kJ7I_8De4wzhfNGi1quD7
+ TdePMeP7qJgosI1xsCeYs1pG1WJ56T2TbQ5d4wp5fcxeG5rVX7VHXdA_V39olwXCrD3HY5_IKzz1
+ K8zHK_TS8nv9yCoBmdlKIYduWuTnI4sDYmwk9cEnbUupm392o8.5Ma1fqO5WK5ZWmWYgq65DW9bl
+ 9kDDtdXgToJ1o9nJ_PqelRmHq1bgdmtc.wyo.77IjMCR8BrxStfYQMSbzNwUUbebSN_9Lrx_Y52C
+ sBh.D.GB8js5Nld_wl.lQJPg92Xh23K3C1SaMT9EJYOVW_nfidD2rzAspkv9HGx0E4MCkFZtxtqz
+ uclMEUOGdPZVkcg03wJzVKZ0xgdnCZx3s_ubrulNVGHA57G4bTGKfBdVPl.zJvui8jI7W8GsXdKd
+ jrWUmPjqmCqW4cnzAPUpytPMLgDniD7ymXuwJwheH5rbT9BZsTgegspZnilSoHdBAsga3VuPxu5O
+ 4Z37kfXGzsqEE.s3ZUtLX8BaHdTiaxJ7UDGOG386ZFNnxxuQ18LSOLmp1IZ9g94bvtSTscb81c3b
+ .Z15hCRaisXW2O6oUsOrv2_uMvb2PSb6w.RrHF8AqHFgzzG1e7MPhR69sOkFVZDYzJajYfpSv4qW
+ l.YzJ7KAj.CsVKM_BGwPs5sgh58z0MPlFKkfxBFYkAEyJPZaNLQm4X7jV65.KCHwTBq_A3BWvFwt
+ r7VEn_RlVtYyIxcb3Q35LL6V3cKuPQvZzF.gGu7SI5WSzKQbjjABPu8Z6o3683PpBZzo3T3CetsW
+ wAlH3YGY6DedTaA4YOfI8FNa68gKMSeNR3wvLa.nLRowu7bR9z5AxLtxJALEx95_6RINcAa8zqxR
+ 7IrIUD8.HXtpVBc_lnMLbxLbcM1QdE3Bmo2IlsLFVVsOAa8lgoiI3D5AXutJ5BLISkS4BJDiPKrA
+ ms3y_kgRg2IYhTRgROAmFbyu9a7LVIA9S_Yc43af0UGdSL_4e8.eSmearQApKJuIeYSggNBPG8jV
+ TSNco8QbooUmQYjI1OhaxGYTOPBDAoX72kLr51faQyjQ9TC425QZ6YY_ZIQSTnn6iuUNoBkst6qc
+ eTgVxoG84GIC9L_k1naQE.eBRZah1IxoOt53Ihz7u87.C7H3H8QlUiTh4RwR5mZjFkt4r_8wsb8a
+ W.87EhxBfMciMLgWeEgPNpX8nxRgmB3221nRA3GSXK_j74YL5AtMBwO92Jk8OUQY3tXUfm8QyGbs
+ X6hW6eaL7hHjFhlKcFFgMM_d6812OyqhcN0dw6qQHM0FoyXxrGCbLy1Z3o94XbpX4TA7NUFtYXuV
+ 5MBQZgRazuUbPbIAwyGN8WsMB611VXg_DSzhSjqt.1PtFO5_Kzc2XPWMDmMkqrU5D3C6xKPB1XwN
+ G2Q.YpJnYWcrD4wSd9pMobIT.dLFYuyQPskyauV84vcV3Ha8ONL3jtk1jFkD6HCCFJUCccCuwQCL
+ yRvAXkxXTFTDD5AWiqgQOFm7F6V1Ubpjb_5NW8HEdNF4o0rn3qQsxkrpQlNcb_BeRzurJsB3C2ur
+ iJX_t4YMUETClZnL1LcNPjT1s9BfRcA1w22m2pFlFJe0X.dKjV99W5py.rFKbjb5D7wlng7uDE6A
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 052a17f7-6c89-4ae5-a1e9-4fdf598d91e8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Sun, 19 May 2024 17:03:35 +0000
+Received: by hermes--production-gq1-59c575df44-cc288 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a9b3cf1df92256c8fc12f4b75065caa2;
+          Sun, 19 May 2024 17:03:31 +0000 (UTC)
+Message-ID: <799f3963-1f24-47a1-9e19-8d0ad3a49e45@schaufler-ca.com>
+Date: Sun, 19 May 2024 10:03:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+To: Serge Hallyn <serge@hallyn.com>
+Cc: Jonathan Calmels <jcalmels@3xx0.net>, Jarkko Sakkinen
+ <jarkko@kernel.org>, brauner@kernel.org, ebiederm@xmission.com,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Joel Granados <j.granados@samsung.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>,
+ containers@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ keyrings@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
+ <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
+ <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
+ <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
+ <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
+ <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
+ <ZkidDlJwTrUXsYi9@serge-l-PF3DENS3>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <ZkidDlJwTrUXsYi9@serge-l-PF3DENS3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22356 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
+On 5/18/2024 5:20 AM, Serge Hallyn wrote:
+> On Fri, May 17, 2024 at 10:53:24AM -0700, Casey Schaufler wrote:
+>> On 5/17/2024 4:42 AM, Jonathan Calmels wrote:
+>>>>>> On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
+>>>>>>> I suggest that adding a capability set for user namespaces is a bad idea:
+>>>>>>> 	- It is in no way obvious what problem it solves
+>>>>>>> 	- It is not obvious how it solves any problem
+>>>>>>> 	- The capability mechanism has not been popular, and relying on a
+>>>>>>> 	  community (e.g. container developers) to embrace it based on this
+>>>>>>> 	  enhancement is a recipe for failure
+>>>>>>> 	- Capabilities are already more complicated than modern developers
+>>>>>>> 	  want to deal with. Adding another, special purpose set, is going
+>>>>>>> 	  to make them even more difficult to use.
+>>> Sorry if the commit wasn't clear enough.
+>> While, as others have pointed out, the commit description left
+>> much to be desired, that isn't the biggest problem with the change
+>> you're proposing.
+>>
+>>>  Basically:
+>>>
+>>> - Today user namespaces grant full capabilities.
+>> Of course they do. I have been following the use of capabilities
+>> in Linux since before they were implemented. The uptake has been
+>> disappointing in all use cases.
+>>
+>>>   This behavior is often abused to attack various kernel subsystems.
+>> Yes. The problems of a single, all powerful root privilege scheme are
+>> well documented.
+>>
+>>>   Only option
+>> Hardly.
+>>
+>>>  is to disable them altogether which breaks a lot of
+>>>   userspace stuff.
+>> Updating userspace components to behave properly in a capabilities
+>> environment has never been a popular activity, but is the right way
+>> to address this issue. And before you start on the "no one can do that,
+>> it's too hard", I'll point out that multiple UNIX systems supported
+>> rootless, all capabilities based systems back in the day. 
+>>
+>>>   This goes against the least privilege principle.
+>> If you're going to run userspace that *requires* privilege, you have
+>> to have a way to *allow* privilege. If the userspace insists on a root
+>> based privilege model, you're stuck supporting it. Regardless of your
+>> principles.
+> Casey,
+>
+> I might be wrong, but I think you're misreading this patchset.  It is not
+> about limiting capabilities in the init user ns at all.  It's about limiting
+> the capabilities which a process in a child userns can get.
 
+I do understand that. My objection is not to the intent, but to the approach.
+Adding a capability set to the general mechanism in support of a limited, specific
+use case seems wrong to me. I would rather see a mechanism in userns to limit
+the capabilities in a user namespace than a mechanism in capabilities that is
+specific to user namespaces.
 
-The following changes since commit 6e297a73bccf852e7716207caa8eb868737c7155:
+> Any unprivileged task can create a new userns, and get a process with
+> all capabilities in that namespace.  Always.  User namespaces were a
+> great success in that we can do this without any resulting privilege
+> against host owned resources.  The unaddressed issue is the expanded
+> kernel code surface area.
 
-  bcachefs: Add missing sched_annotate_sleep() in bch2_journal_flush_seq_async() (2024-05-07 11:02:37 -0400)
+An option to clone() then, to limit the capabilities available?
+I honestly can't recall if that has been suggested elsewhere, and
+apologize if it's already been dismissed as a stoopid idea.
 
-are available in the Git repository at:
+>
+> You say, above, (quoting out of place here)
+>
+>> Updating userspace components to behave properly in a capabilities
+>> environment has never been a popular activity, but is the right way
+>> to address this issue. And before you start on the "no one can do that,
+>> it's too hard", I'll point out that multiple UNIX systems supported
+> He's not saying no one can do that.  He's saying, correctly, that the
+> kernel currently offers no way for userspace to do this limiting.  His
+> patchset offers two ways: one system wide capability mask (which applies
+> only to non-initial user namespaces) and on per-process inherited one
+> which - yay - userspace can use to limit what its children will be
+> able to get if they unshare a user namespace.
+>
+>>> - It adds a new capability set.
+>> Which is a really, really bad idea. The equation for calculating effective
+>> privilege is already more complicated than userspace developers are generally
+>> willing to put up with.
+> This is somewhat true, but I think the semantics of what is proposed here are
+> about as straightforward as you could hope for, and you can basically reason
+> about them completely independently of the other sets.  Only when reasoning
+> about the correctness of this code do you need to consider the other sets.  Not
+> when administering a system.
+>
+> If you want root in a child user namespace to not have CAP_MAC_ADMIN, you drop
+> it from your pU.  Simple as that.
+>
+>>>   This set dictates what capabilities are granted in namespaces (instead
+>>>   of always getting full caps).
+>> I would not expect container developers to be eager to learn how to use
+>> this facility.
+> I'm a container developer, and I'm excited about it :)
 
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-05-19
+OK, well, I'm wrong. It's happened before and will happen again.
 
-for you to fetch changes up to 07f9a27f1969764d11374942961d51fee0ab628f:
+>
+>>>   This brings namespaces in line with the rest of the system, user
+>>>   namespaces are no more "special".
+>> I'm sorry, but this makes no sense to me whatsoever. You want to introduce
+>> a capability set explicitly for namespaces in order to make them less
+>> special?
+> Yes, exactly.
 
-  bcachefs: add no_invalid_checks flag (2024-05-09 16:24:30 -0400)
+Hmm. I can't say I buy that. It makes a whole lot more sense to me to
+change userns than to change capabilities.
 
-----------------------------------------------------------------
-bcachefs changes for 6.10-rc1
+>
+>> Maybe I'm just old and cranky.
+> That's fine.
+>
+>>>   They now work the same way as say a transition to root does with
+>>>   inheritable caps.
+>> That needs some explanation.
+>>
+>>> - This isn't intended to be used by end users per se (although they could).
+>>>   This would be used at the same places where existing capabalities are
+>>>   used today (e.g. init system, pam, container runtime, browser
+>>>   sandbox), or by system administrators.
+>> I understand that. It is for containers. Containers are not kernel entities.
+> User namespaces are.
+>
+> This patch set provides userspace a way of limiting the kernel code exposed
+> to untrusted children, which currently does not exist.
 
-- More safety fixes, primarily found by syzbot
+Yes, I understand. I would rather see a change to userns in support of a userns
+specific need than a change to capabilities for a userns specific need.
 
-- Run the upgrade/downgrade paths in nochnages mode. Nochanges mode is
-  primarily for testing fsck/recovery in dry run mode, so it shouldn't
-  change anything besides disabling writes and holding dirty metadata in
-  memory.
-
-  The idea here was to reduce the amount of activity if we can't write
-  anything out, so that bringing up a filesystem in "super ro" mode
-  would be more lilkely to work for data recovery - but norecovery is
-  the correct option for this.
-
-- btree_trans->locked; we now track whether a btree_trans has any btree
-  nodes locked, and this is used for improved assertions related to
-  trans_unlock() and trans_relock(). We'll also be using it for
-  improving how we work with lockdep in the future: we don't want
-  lockdep to be tracking individual btree node locks because we take too
-  many for lockdep to track, and it's not necessary since we have a
-  cycle detector.
-
-- Trigger improvements that are prep work for online fsck
-
-- BTREE_TRIGGER_check_repair; this regularizes how we do some repair
-  work for extents that goes with running triggers in fsck, and fixes
-  some subtle issues with transaction restarts there.
-
-- bch2_snapshot_equiv() has now been ripped out of fsck.c; snapshot
-  equivalence classes are for when snapshot deletion leaves behind
-  redundant snapshot nodes, but snapshot deletion now cleans this up
-  right away, so the abstraction doesn't need to leak.
-
-- Improvements to how we resume writing to the journal in recovery. The
-  code for picking the new place to write when reading the journal is
-  greatly simplified and we also store the position in the superblock
-  for when we don't read the journal; this means that we preserve more
-  of the journal for list_journal debugging.
-
-- Improvements to sysfs btree_cache and btree_node_cache, for debugging
-  memory reclaim.
-
-- We now detect when we've blocked for 10 seconds on the allocator in
-  the write path and dump some useful info.
-
-- Safety fixes for devices references: this is a big series that changes
-  almost all device lookups to properly check if the device exists and
-  take a reference to it.
-
-  Previously we assumed that if a bkey exists that references a device
-  then the device must exist, and this was enforced in .invalid methods,
-  but this was incorrect because it meant device removal relied on
-  accounting being correct to not leave keys pointing to invalid
-  devices, and that's not something we can assume.
-
-  Getting the "pointer to invalid device" checks out of our .invalid()
-  methods fixes some long standing device removal bugs; the only
-  outstanding bug with device removal now is a race between the discard
-  path and deleting alloc info, which should be easily fixed.
-
-- The allocator now prefers not to expand the new
-  member_info.btree_allocated bitmap, meaning if repair ever requires
-  scanning for btree nodes (because of a corrupt interior nodes) we
-  won't have to scan the whole device(s).
-
-- New coding style document, which among other things talks about the
-  correct usage of assertions
-
-----------------------------------------------------------------
-Daniel Hill (1):
-      bcachefs: add counters for failed shrinker reclaim
-
-Hongbo Li (1):
-      bcachefs: eliminate the uninitialized compilation warning in bch2_reconstruct_snapshots
-
-Kent Overstreet (142):
-      bcachefs: Fix sb_clean_validate endianness conversion
-      bcachefs: Fix needs_whiteout BUG_ON() in bkey_sort()
-      bcachefs: bch2_bkey_format_field_overflows()
-      bcachefs: Fix xattr_to_text() unsafety
-      bcachefs: Better write_super() error messages
-      bcachefs: Run upgrade/downgrade even in -o nochanges mode
-      bcachefs: printbuf improvements
-      bcachefs: printbufs: prt_printf() now handles \t\r\n
-      bcachefs: prt_printf() now respects \r\n\t
-      bcachefs: bch2_btree_node_header_to_text()
-      bcachefs: bch2_journal_keys_dump()
-      bcachefs: bch2_hash_lookup() now returns bkey_s_c
-      bcachefs: add btree_node_merging_disabled debug param
-      bcachefs: bch2_btree_path_to_text()
-      bcachefs: New assertion for writing to the journal after shutdown
-      bcachefs: allow for custom action in fsck error messages
-      bcachefs: Don't read journal just for fsck
-      bcachefs: When traversing to interior nodes, propagate result to paths to same leaf node
-      bcachefs: kill for_each_btree_key_old()
-      bcachefs: for_each_btree_key_continue()
-      bcachefs: bch2_gc() is now private to btree_gc.c
-      bcachefs: Finish converting reconstruct_alloc to errors_silent
-      bcachefs: kill metadata only gc
-      bcachefs: move topology repair kick to gc_btrees()
-      bcachefs: move root node topo checks to node_check_topology()
-      bcachefs: gc_btree_init_recurse() uses gc_mark_node()
-      bcachefs: mark_superblock cleanup
-      bcachefs: __BTREE_ITER_ALL_SNAPSHOTS -> BTREE_ITER_SNAPSHOT_FIELD
-      bcachefs: iter/update/trigger/str_hash flag cleanup
-      bcachefs: bch2_btree_insert_trans() no longer specifies BTREE_ITER_cached
-      bcachefs: bch2_dir_emit() - drop_locks_do() conversion
-      bcachefs: bch2_trans_relock_fail() - factor out slowpath
-      bcachefs: bucket_valid()
-      bcachefs: member helper cleanups
-      bcachefs: get_unlocked_mut_path -> bch2_path_get_unlocked_mut
-      bcachefs: prefer drop_locks_do()
-      bcachefs: bch2_trans_commit_flags_to_text()
-      bcachefs: maintain lock invariants in btree_iter_next_node()
-      bcachefs: bch2_btree_path_upgrade() checks nodes_locked, not uptodate
-      bcachefs: Use bch2_btree_path_upgrade() in key cache traverse
-      bcachefs: bch2_trans_unlock() must always be followed by relock() or begin()
-      bcachefs: bch2_btree_root_alloc_fake_trans()
-      bcachefs: trans->locked
-      bcachefs: bch2_btree_path_can_relock()
-      bcachefs: bch2_trans_verify_not_unlocked()
-      bcachefs: assert that online_reserved == 0 on shutdown
-      bcachefs: fs_alloc_debug_to_text()
-      bcachefs: Add asserts to bch2_dev_btree_bitmap_marked_sectors()
-      bcachefs: Check for writing btree_ptr_v2.sectors_written == 0
-      bcachefs: Rip bch2_snapshot_equiv() out of fsck
-      bcachefs: make btree read errors silent during scan
-      bcachefs: Sync journal when we complete a recovery pass
-      bcachefs: fix flag printing in journal_buf_to_text()
-      bcachefs: Move gc of bucket.oldest_gen to workqueue
-      bcachefs: Btree key cache instrumentation
-      bcachefs: Add btree_allocated_bitmap to member_to_text()
-      bcachefs: plumb data_type into bch2_bucket_alloc_trans()
-      bcachefs: journal seq blacklist gc no longer has to walk btree
-      bcachefs: Clean up inode alloc
-      bcachefs: bucket_data_type_mismatch()
-      bcachefs: mark_stripe_bucket cleanup
-      bcachefs: Consolidate mark_stripe_bucket() and trans_mark_stripe_bucket()
-      bcachefs: bch2_bucket_ref_update()
-      bcachefs: kill gc looping for bucket gens
-      bcachefs: Run bch2_check_fix_ptrs() via triggers
-      bcachefs: do reflink_p repair from BTREE_TRIGGER_check_repair
-      bcachefs: Kill gc_init_recurse()
-      bcachefs: fix btree_path_clone() ip_allocated
-      bcachefs: uninline set_btree_iter_dontneed()
-      bcachefs: bch_member.last_journal_bucket
-      bcachefs: check for inodes that should have backpointers in fsck
-      bcachefs: check inode backpointer in bch2_lookup()
-      bcachefs: Simplify resuming of journal position
-      bcachefs: delete old gen check bch2_alloc_write_key()
-      bcachefs: dirty_sectors -> replicas_sectors
-      bcachefs: alloc_data_type_set()
-      bcachefs: kill bch2_dev_usage_update_m()
-      bcachefs: __mark_pointer now takes bch_alloc_v4
-      bcachefs: __mark_stripe_bucket() now takes bch_alloc_v4
-      bcachefs: simplify bch2_trans_start_alloc_update()
-      bcachefs: CodingStyle
-      bcachefs: Kill opts.buckets_nouse
-      bcachefs: On device add, prefer unused slots
-      bcachefs: x-macroize journal flags enums
-      bcachefs: bch2_bkey_drop_ptrs() declares loop iter
-      closures: closure_sync_timeout()
-      bcachefs: bch2_print_allocator_stuck()
-      bcachefs: New helpers for device refcounts
-      bcachefs: Debug asserts for ca->ref
-      bcachefs: bch2_dev_safe() -> bch2_dev_rcu()
-      bcachefs: Pass device to bch2_alloc_write_key()
-      bcachefs: Pass device to bch2_bucket_do_index()
-      bcachefs: bch2_dev_btree_bitmap_marked() -> bch2_dev_rcu()
-      bcachefs: journal_replay_entry_early() checks for nonexistent device
-      bcachefs: bch2_have_enough_devs() checks for nonexistent device
-      bcachefs: bch2_dev_tryget()
-      bcachefs: Convert to bch2_dev_tryget_noerror()
-      bcachefs: bch2_check_alloc_key() -> bch2_dev_tryget_noerror()
-      bcachefs: bch2_trigger_alloc() -> bch2_dev_tryget()
-      bcachefs: bch2_bucket_ref_update() now takes bch_dev
-      bcachefs: bch2_evacuate_bucket() -> bch2_dev_tryget()
-      bcachefs: bch2_dev_iterate()
-      bcachefs: PTR_BUCKET_POS() now takes bch_dev
-      bcachefs: Kill bch2_dev_bkey_exists() in backpointer code
-      bcachefs: move replica_set from bch_dev to bch_fs
-      bcachefs: ob_dev()
-      bcachefs: ec_validate_checksums() -> bch2_dev_tryget()
-      bcachefs: bch2_extent_merge() -> bch2_dev_rcu()
-      bcachefs: extent_ptr_durability() -> bch2_dev_rcu()
-      bcachefs: ptr_stale() -> dev_ptr_stale()
-      bcachefs: extent_ptr_invalid() -> bch2_dev_rcu()
-      bcachefs: bch2_bkey_has_target() -> bch2_dev_rcu()
-      bcachefs: bch2_extent_normalize() -> bch2_dev_rcu()
-      bcachefs: kill bch2_dev_bkey_exists() in btree_gc.c
-      bcachefs: bch2_dev_bucket_exists() uses bch2_dev_rcu()
-      bcachefs: pass bch_dev to read_from_stale_dirty_pointer()
-      bcachefs: kill bch2_dev_bkey_exists() in bkey_pick_read_device()
-      bcachefs: kill bch2_dev_bkey_exists() in data_update_init()
-      bcachefs: bch2_dev_have_ref()
-      bcachefs: kill bch2_dev_bkey_exists() in check_alloc_info()
-      bcachefs: kill bch2_dev_bkey_exists() in discard_one_bucket_fast()
-      bcachefs: kill bch2_dev_bkey_exists() in journal_ptrs_to_text()
-      bcachefs: Move nocow unlock to bch2_write_endio()
-      bcachefs: Better bucket alloc tracepoints
-      bcachefs: Allocator prefers not to expand mi.btree_allocated bitmap
-      bcachefs: Improve sysfs internal/btree_cache
-      bcachefs: for_each_bset() declares loop iter
-      bcachefs: bch2_dev_get_ioref2(); alloc_background.c
-      bcachefs: bch2_dev_get_ioref2(); backpointers.c
-      bcachefs: bch2_dev_get_ioref2(); btree_io.c
-      bcachefs: bch2_dev_get_ioref2(); io_write.c
-      bcachefs: bch2_dev_get_ioref2(); journal_io.c
-      bcachefs: bch2_dev_get_ioref2(); debug.c
-      bcachefs: bch2_dev_get_ioref2(); io_read.c
-      bcachefs: bch2_dev_get_ioref() checks for device not present
-      bcachefs: kill bch2_dev_bkey_exists() in bch2_read_endio()
-      bcachefs: kill bch2_dev_bkey_exists() in bch2_check_fix_ptrs()
-      bcachefs: Invalid devices are now checked for by fsck, not .invalid methods
-      bcachefs: fsync() should not return -EROFS
-      bcachefs: s/bkey_invalid_flags/bch_validate_flags
-      bcachefs: Plumb bch_validate_flags to sb_field_ops.validate()
-      bcachefs: Fix sb_field_downgrade validation
-
-Kuan-Wei Chiu (1):
-      bcachefs: Optimize eytzinger0_sort() with bottom-up heapsort
-
-Lukas Bulwahn (1):
-      bcachefs: fix typo in reference to BCACHEFS_DEBUG
-
-Matthew Wilcox (Oracle) (1):
-      bcachefs: Remove calls to folio_set_error
-
-Nathan Chancellor (2):
-      bcachefs: Fix type of flags parameter for some ->trigger() implementations
-      bcachefs: Fix format specifiers in bch2_btree_key_cache_to_text()
-
-Petr Vorel (1):
-      bcachefs: Move BCACHEFS_STATFS_MAGIC value to UAPI magic.h
-
-Ricardo B. Marliere (1):
-      bcachefs: chardev: make bch_chardev_class constant
-
-Thomas Bertschinger (1):
-      bcachefs: add no_invalid_checks flag
-
-Youling Tang (3):
-      bcachefs: Change destroy_inode to free_inode
-      bcachefs: Fix error path of bch2_link_trans()
-      bcachefs: Correct the FS_IOC_GETFLAGS to FS_IOC32_GETFLAGS in bch2_compat_fs_ioctl()
-
- Documentation/filesystems/bcachefs/CodingStyle.rst |  186 ++++
- Documentation/filesystems/bcachefs/index.rst       |    1 +
- fs/bcachefs/acl.c                                  |   41 +-
- fs/bcachefs/alloc_background.c                     |  337 ++++---
- fs/bcachefs/alloc_background.h                     |  109 ++-
- fs/bcachefs/alloc_foreground.c                     |  304 ++++--
- fs/bcachefs/alloc_foreground.h                     |   15 +-
- fs/bcachefs/alloc_types.h                          |    7 +
- fs/bcachefs/backpointers.c                         |  158 +--
- fs/bcachefs/backpointers.h                         |   43 +-
- fs/bcachefs/bcachefs.h                             |   34 +-
- fs/bcachefs/bcachefs_format.h                      |   10 +-
- fs/bcachefs/bkey.c                                 |   15 +-
- fs/bcachefs/bkey.h                                 |   33 +-
- fs/bcachefs/bkey_methods.c                         |   22 +-
- fs/bcachefs/bkey_methods.h                         |   73 +-
- fs/bcachefs/bkey_sort.c                            |   79 +-
- fs/bcachefs/bkey_sort.h                            |    4 +-
- fs/bcachefs/bset.c                                 |   29 +-
- fs/bcachefs/bset.h                                 |    6 +-
- fs/bcachefs/btree_cache.c                          |  149 ++-
- fs/bcachefs/btree_cache.h                          |    5 +-
- fs/bcachefs/btree_gc.c                             | 1032 ++++----------------
- fs/bcachefs/btree_gc.h                             |   44 +-
- fs/bcachefs/btree_io.c                             |  117 +--
- fs/bcachefs/btree_io.h                             |    2 -
- fs/bcachefs/btree_iter.c                           |  347 ++++---
- fs/bcachefs/btree_iter.h                           |   95 +-
- fs/bcachefs/btree_journal_iter.c                   |   17 +
- fs/bcachefs/btree_journal_iter.h                   |    2 +
- fs/bcachefs/btree_key_cache.c                      |  107 +-
- fs/bcachefs/btree_key_cache_types.h                |    8 +
- fs/bcachefs/btree_locking.c                        |  179 ++--
- fs/bcachefs/btree_locking.h                        |    4 +-
- fs/bcachefs/btree_trans_commit.c                   |   70 +-
- fs/bcachefs/btree_types.h                          |  127 ++-
- fs/bcachefs/btree_update.c                         |   95 +-
- fs/bcachefs/btree_update.h                         |   14 +-
- fs/bcachefs/btree_update_interior.c                |   95 +-
- fs/bcachefs/btree_update_interior.h                |    7 +-
- fs/bcachefs/btree_write_buffer.c                   |    8 +-
- fs/bcachefs/buckets.c                              |  693 ++++++++-----
- fs/bcachefs/buckets.h                              |   70 +-
- fs/bcachefs/chardev.c                              |   66 +-
- fs/bcachefs/checksum.c                             |   17 +-
- fs/bcachefs/data_update.c                          |   54 +-
- fs/bcachefs/debug.c                                |   80 +-
- fs/bcachefs/dirent.c                               |   97 +-
- fs/bcachefs/dirent.h                               |    8 +-
- fs/bcachefs/disk_groups.c                          |   11 +-
- fs/bcachefs/ec.c                                   |  369 +++----
- fs/bcachefs/ec.h                                   |    7 +-
- fs/bcachefs/error.c                                |   59 +-
- fs/bcachefs/extent_update.c                        |    2 +-
- fs/bcachefs/extents.c                              |  151 +--
- fs/bcachefs/extents.h                              |   12 +-
- fs/bcachefs/eytzinger.c                            |  105 +-
- fs/bcachefs/fs-common.c                            |   38 +-
- fs/bcachefs/fs-io-buffered.c                       |   14 +-
- fs/bcachefs/fs-io-direct.c                         |    2 +-
- fs/bcachefs/fs-io-pagecache.c                      |    2 +-
- fs/bcachefs/fs-io.c                                |    9 +-
- fs/bcachefs/fs-ioctl.c                             |    2 +-
- fs/bcachefs/fs.c                                   |  109 ++-
- fs/bcachefs/fsck.c                                 |  212 ++--
- fs/bcachefs/inode.c                                |   64 +-
- fs/bcachefs/inode.h                                |   23 +-
- fs/bcachefs/io_misc.c                              |   10 +-
- fs/bcachefs/io_read.c                              |   68 +-
- fs/bcachefs/io_write.c                             |   95 +-
- fs/bcachefs/io_write_types.h                       |    1 +
- fs/bcachefs/journal.c                              |  131 ++-
- fs/bcachefs/journal.h                              |    6 +-
- fs/bcachefs/journal_io.c                           |  163 ++--
- fs/bcachefs/journal_io.h                           |    5 +-
- fs/bcachefs/journal_reclaim.c                      |   10 +-
- fs/bcachefs/journal_sb.c                           |   10 +-
- fs/bcachefs/journal_seq_blacklist.c                |   77 +-
- fs/bcachefs/journal_seq_blacklist.h                |    2 +-
- fs/bcachefs/journal_types.h                        |   17 +-
- fs/bcachefs/logged_ops.c                           |    2 +-
- fs/bcachefs/lru.c                                  |    4 +-
- fs/bcachefs/lru.h                                  |    2 +-
- fs/bcachefs/migrate.c                              |    8 +-
- fs/bcachefs/move.c                                 |   82 +-
- fs/bcachefs/movinggc.c                             |    4 +-
- fs/bcachefs/opts.h                                 |    7 +-
- fs/bcachefs/printbuf.c                             |  232 +++--
- fs/bcachefs/printbuf.h                             |   53 +-
- fs/bcachefs/quota.c                                |  123 +--
- fs/bcachefs/quota.h                                |    4 +-
- fs/bcachefs/rebalance.c                            |   10 +-
- fs/bcachefs/recovery.c                             |  142 +--
- fs/bcachefs/recovery_passes.c                      |    8 +-
- fs/bcachefs/reflink.c                              |   72 +-
- fs/bcachefs/reflink.h                              |   16 +-
- fs/bcachefs/replicas.c                             |   20 +-
- fs/bcachefs/sb-clean.c                             |   15 +-
- fs/bcachefs/sb-counters.c                          |   20 +-
- fs/bcachefs/sb-downgrade.c                         |   25 +-
- fs/bcachefs/sb-errors.c                            |    2 +-
- fs/bcachefs/sb-errors_types.h                      |    3 +-
- fs/bcachefs/sb-members.c                           |  149 ++-
- fs/bcachefs/sb-members.h                           |  165 +++-
- fs/bcachefs/sb-members_types.h                     |   21 +
- fs/bcachefs/snapshot.c                             |   53 +-
- fs/bcachefs/snapshot.h                             |   16 +-
- fs/bcachefs/str_hash.h                             |   70 +-
- fs/bcachefs/subvolume.c                            |   22 +-
- fs/bcachefs/subvolume.h                            |    7 +-
- fs/bcachefs/super-io.c                             |  117 +--
- fs/bcachefs/super-io.h                             |    3 +-
- fs/bcachefs/super.c                                |  112 ++-
- fs/bcachefs/super_types.h                          |   15 -
- fs/bcachefs/sysfs.c                                |  178 +---
- fs/bcachefs/tests.c                                |   16 +-
- fs/bcachefs/trace.h                                |   97 +-
- fs/bcachefs/util.c                                 |   61 +-
- fs/bcachefs/xattr.c                                |   47 +-
- fs/bcachefs/xattr.h                                |    2 +-
- include/linux/closure.h                            |   12 +
- include/uapi/linux/magic.h                         |    1 +
- lib/closure.c                                      |   37 +
- 123 files changed, 4632 insertions(+), 4324 deletions(-)
- create mode 100644 Documentation/filesystems/bcachefs/CodingStyle.rst
- create mode 100644 fs/bcachefs/sb-members_types.h
+>>> To give you some ideas of things you could do:
+>>>
+>>> # E.g. prevent alice from getting CAP_NET_ADMIN in user namespaces under SSH
+>>> echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
+>>> echo "!cap_net_admin alice" >> /etc/security/capability.conf.
+>>>
+>>> # E.g. prevent any Docker container from ever getting CAP_DAC_OVERRIDE
+>>> systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
+>>>             -p SecureBits=userns-strict-caps \
+>>>             /usr/bin/dockerd
+>>>
+>>> # E.g. kernel could be vulnerable to CAP_SYS_RAWIO exploits
+>>> # Prevent users from ever gaining it
+>>> sysctl -w cap_bound_userns_mask=0x1fffffdffff
 
