@@ -1,176 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-19719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8AB8C9346
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 03:28:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D6C8C938C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 07:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B3B1F214B7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 01:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEF8281768
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 May 2024 05:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003348BE8;
-	Sun, 19 May 2024 01:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F7512E5D;
+	Sun, 19 May 2024 05:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="LBQjTwYS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DWCOv+tG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbFqS1BM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow6-smtp.messagingengine.com (flow6-smtp.messagingengine.com [103.168.172.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAA839B;
-	Sun, 19 May 2024 01:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D805FC01;
+	Sun, 19 May 2024 05:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716082121; cv=none; b=dhJXJtwRxX0PMqeehBIoikpEyygq6pUi+rRn3ztmsP6v/2swfBr8gY+IY60DN+YSgHUsC1m46ukzlPivoAi466YrqbpjEy7lghMt2Bi12egr7nZjrT3cjPZRwQVuQaIQAtDTK00t4DOIFMAeL45Os76czncyHsg8wZnVJpr5sk0=
+	t=1716098370; cv=none; b=DebI9mkb7VbXECcTaOqYeNfBsSN9K9j3qlvpMCUz00X+fI4HTYKvLrLP4mds/1jX5uMfKcUnOzZ9PXGbInJgUHAe/qQkg7W4H93trU6SF5KXysBZE22XM0chhXjnkL333dsz8QirjntOEG1+JV1Tw5WjXcC7pKeMc5l0CyuVVeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716082121; c=relaxed/simple;
-	bh=cx8p0aOrLv2aKH95V35JoNaCc3yz4DZ2hH/JWbzkDI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdaLxY9oY2AOek0aJ1swgEbuTDmHpr2tuN24hihKZEYYKP/tuq5jaqAl9Ttf6aTc4Xdll7yyc+mx3ag3Ss9HAuEpwyAtW52UbrP64bTlMMzhgDxLF6mu0PKEB3V8cloofrMOLFfJABYtRKc81HAJUAnO92/G0QxQAWCVA9RdYM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=LBQjTwYS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DWCOv+tG; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 9272720031D;
-	Sat, 18 May 2024 21:28:38 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Sat, 18 May 2024 21:28:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1716082118; x=1716085718; bh=okNdeP1Ev4
-	hSO4ZAkeKtTmX/46s631+dJ7jzdCCcfBw=; b=LBQjTwYSdvWxEy5IFww/witrrq
-	f2zthnzYB98kLozA7r0nGJJPOqFkmd8+O7xTujRohXJkGn4QHL0//h0jom2SHrlT
-	kGS1fzNhTrNVEG6QKmHyxgYxFGkTRX4LKmVILsXNsFPLbYQ8oL8klyfVE51GxFwH
-	91+VFOk8f8ChW5fgn1OCmRCnen6fzkCIWA3FMuGSCtOxpGNjL/nzDAmL7kM9eNCs
-	lfwif7rtZayFkiEJbRUGwNdJU8vffhsUtYBG9wDUNVRA0t5kmRZmm7VhuD+LiUEt
-	nvjA7AIKQ0qblHu/IHNcS1ui2BwYowDvaUVgJc3e/10jbXQTO8cer7m4Ls0g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	i76614979.fm1; t=1716082118; x=1716085718; bh=okNdeP1Ev4hSO4ZAke
-	KtTmX/46s631+dJ7jzdCCcfBw=; b=DWCOv+tGUkL/OxqC8+UmzU3Ust/5P3jJ5O
-	pC2Umtldj+oCgfK+mqPhvZF7koo5yAVhfwcHI6rB/MFVMzrsEzR7ttp5uZh3TKSq
-	mpbaLGIWQ1awSobD1os4Uq32YCMe0PoqQg3EvHuhGEL6svO6KRFgveyDWaOLVj1c
-	a0isprNF7bEtsUG9MMe5GtJU6OmFveZhpa7andcVpohFezE/n1zdonoEz8D7Mddw
-	zIJdXlNw44MNv+uKiQ4WTNQseY51GPtgK+K6YeqP8lrnof33THj+4PGF5VHYyYKH
-	6sCw0w5s5l2PLeeNLkTXhiV7kSaWCUizJNr05LqHdJbEspxt7Njg==
-X-ME-Sender: <xms:xVVJZv74evkjotdRBDX1zrz-PumOreh-i-IvvjVGffQkGOQu0y3ivA>
-    <xme:xVVJZk5ULstTlD242G-3brBInrnxvME7tEwiaT6r_ypMywW5Y_5snCST5rVcPIPvz
-    3Un7aRsqRHRbnWQV3M>
-X-ME-Received: <xmr:xVVJZmdRwHVQfepxZ978pYHQ8-XIdewXzY0dL2xlZkxflW0hjQGNsKO6hhKlDtfvOJGXJrwAlGlplgRYOP7xoQg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehjedggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:xVVJZgKf3I0H6Jn0qAQaigXjJvz3SfXRta1ugGWMqhPoFjHQfhyJcg>
-    <xmx:xVVJZjJE5ytCRj7y5766qKnSNriYrsDxgpmPvST-0h76o_DwXkRB9w>
-    <xmx:xVVJZpyRuzOf-lJ_Cjk8k6tbiWHDPj16hkdLYK642JjtZRLZoKFdNA>
-    <xmx:xVVJZvK4HIJWvjuFlNfr6LvzXYoDnGwrJOGmkSH4anh1iVf_ktlGrw>
-    <xmx:xlVJZiYZ_2usNuHhsJzmD3dcDmdtjx9hEZI9ANvSgQTZ82yq7TyvExAk>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 18 May 2024 21:28:35 -0400 (EDT)
-Date: Sat, 18 May 2024 18:33:37 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: John Johansen <john.johansen@canonical.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-Message-ID: <aiqls6f5bte6ncoomz3etrzwtnq5tuznlaz66w7bvhrnmpgg6w@ahnsazch5gfo>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-2-jcalmels@3xx0.net>
- <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
- <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
- <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
- <txmrzwf2kr6devb5iqghctgvtbccjaspf44entk4fopjbaet2j@zqdfxiy6y6ej>
- <7f94cb03-d573-4cc5-b288-038e44bc1318@canonical.com>
+	s=arc-20240116; t=1716098370; c=relaxed/simple;
+	bh=NmN54ee38hsuoKztnpSGK2jQepru5rXH4Gp4EPxGG/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6qe+lmgLHOuwBTN9KCazQ99nHQSL+rAIKhFsuqRLYoV+SvwOIwb3pPrbRtMt4EyAophut0uFJaB/b2fhfr37FT2T8QNqN9HHEJFaVoNHe+aT9nRI0dixSKGKDXsUx2M9Sn88tTc/qQZDB1AoC4O7c4+GXfpX0gRm6SeoCeUC/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbFqS1BM; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-792ce7a2025so52296385a.0;
+        Sat, 18 May 2024 22:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716098367; x=1716703167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l9NrPccSk3dxue6yKBry7lygPcaCTpzVb/uwrQLilDQ=;
+        b=UbFqS1BMC7a831CbLauUqd6ER0ywFqSa/ltBqGHB5qhkJdcfvfINXTcK8nJEqppPen
+         Juwjmb2iJ+bbsTrn1irzkU0eISVv84mc+l3E2WekNYVBXeNJdtXhm8RBH75DLB7ATlRH
+         qk3IH2YHNGYddUO2BLMajH5Q24jG2ySvY1q5rUwIJ/vrtK6yzL6qpqFDl41tPBa4IilF
+         60O+9ZrlFzfAAlAlsQSPMqLXS+euTo8NGxIMeSIWu4DSsxaHZu2PaOTU38XDKRSNn6sL
+         +fftRoKwGTXnkXnflldGiFrsVM+Q3eHpk/IGGCI7pgZkqtg3puGhtnyPRPTz0HMP7B3r
+         xKMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716098367; x=1716703167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l9NrPccSk3dxue6yKBry7lygPcaCTpzVb/uwrQLilDQ=;
+        b=cVcPXKzdQrsBHj0qrzhKlgFxIMJ3sbP1kOKQiYtzxNpTbT3qw/lDgIJ0rZQyhQriXc
+         Ytrnt3xbP5bUo6xD45AqUmWVfkSPeNX1vFrCW0ne6Tp/P1bHg//vyblEFP+wYv7/5Bib
+         xcyL52WDQMoYnDs3VZaP2lFRP5r/IDVqIONYWH8XctabUVbpqBRo9n0JLs25dlxX0hEF
+         yM6uEwqdUZ7QeNp3jE6CQpIX5AXdk8WF6LEl1T0zTFqnNmLttrvYwK/iTRUnlIfDFtfz
+         W7vjeWCS3osRboAphj8utHSfjPifm3GbNtlpkpFvf+mgu+97toGNQFUfmoWsOBRZyr7r
+         1k8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUyTrTurj0C539WqrifVStZ+ga6aJiTYpQpe/I1eH4shRyte8nCmm7Atp/FvO00iPf4D/P55iQXTQShPM+bZBtqh2nnzGZ6/ltWtA57WXxWGx/9ifXO382w1PwkhV5KtW6gCFEYBrYbr6gToJkj2YaP3wqN+YQu8uzgELWB+sTtEKv0bs9HNbVjvCGSCQPJJMqNUy0Ro1+SdshUIbZOxO04QA==
+X-Gm-Message-State: AOJu0YyVO6s8d3F+rx3UN92sjdtOcKAyBEfNH3Z7nzV31/kzJU9COAgk
+	GkwCGPyWme3p67Z0tM3aL62Fp/mR+iPui15nOsCd8iQl4rZll4aBZwi222Oy0djEOJSU8dQN5G4
+	sjtLWP/UIQ4h9I2ycNZjCvpzAGt0=
+X-Google-Smtp-Source: AGHT+IH3KgC5/5RTYZFFyAgi3gGOQGkSBTIG6FnrvcN+/pNJE8X5PHNe6d/ZdqiUCwpFLg5jGKiFsKPx3NTMctwKRHM=
+X-Received: by 2002:a37:c44c:0:b0:793:343:6db5 with SMTP id
+ af79cd13be357-79303437020mr998126385a.11.1716098367007; Sat, 18 May 2024
+ 22:59:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7f94cb03-d573-4cc5-b288-038e44bc1318@canonical.com>
+References: <cover.1708709155.git.john@groves.net> <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
+ <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
+In-Reply-To: <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 19 May 2024 08:59:15 +0300
+Message-ID: <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
+To: Miklos Szeredi <miklos@szeredi.hu>, John Groves <john@groves.net>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, john@jagalactic.com, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, 
+	gregory.price@memverge.com, Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 18, 2024 at 05:27:27AM GMT, John Johansen wrote:
-> On 5/17/24 20:50, Jonathan Calmels wrote:
-> > As mentioned above, userspace doesn't necessarily have to change. I'm
-> > also not sure what you mean by easy to by-pass? If I mask off some
-> > capabilities system wide or in a given process tree, I know for a fact
-> > that no namespace will ever get those capabilities.
-> 
-> so by-pass will very much depend on the system but from a distro pov
-> we pretty much have to have bwrap enabled if users want to use flatpaks
-> (and they do), same story for several other tools. Since this basically
-> means said tools need to be available by default, most systems the
-> distro is installed on are vulnerable by default. The trivial by-pass
-> then becomes the exploit running its payload through one of these tools,
-> and yes I have tested it.
-> 
-> Could a distro disable these tools by default, and require the user/admin
-> to enable them, yes though there would be a lot of friction, push back,
-> and in the end most systems would still end up with them enabled.
-> 
-> With the capibilities approach can a user/admin make their system
-> more secure than the current situation, absolutely.
-> 
-> Note, that regardless of what happens with patch 1, and 2. I think we
-> either need the big sysctl toggle, or a version of your patch 3
+On Fri, May 17, 2024 at 12:55=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
+ wrote:
+>
+> On Thu, 29 Feb 2024 at 07:52, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > I'm not virtiofs expert, but I don't think that you are wrong about thi=
+s.
+> > IIUC, virtiofsd could map arbitrary memory region to any fuse file mmap=
+ed
+> > by virtiofs client.
+> >
+> > So what are the gaps between virtiofs and famfs that justify a new file=
+system
+> > driver and new userspace API?
+>
+> Let me try to fill in some gaps.  I've looked at the famfs driver
+> (even tried to set it up in a VM, but got stuck with the EFI stuff).
+>
+> - famfs has an extent list per file that indicates how each page
+> within the file should be mapped onto the dax device, IOW it has the
+> following mapping:
+>
+>   [famfs file, offset] -> [offset, length]
+>
+> - fuse can currently map a fuse file onto a backing file:
+>
+>   [fuse file] -> [backing file]
+>
+> The interface for the latter is
+>
+>    backing_id =3D ioctl(dev_fuse_fd, FUSE_DEV_IOC_BACKING_OPEN, backing_m=
+ap);
+> ...
+>    fuse_open_out.flags |=3D FOPEN_PASSTHROUGH;
+>    fuse_open_out.backing_id =3D backing_id;
 
-Ah ok, I get you concerns. Unfortunately, I can't really speak for
-distros or tooling about how this gets leveraged.
-I've never claimed this was going to be bulletproof day 1.
-All I'm saying is that they now have the option to do so.
+FYI, library and example code was recently merged to libfuse:
+https://github.com/libfuse/libfuse/pull/919
 
-As you pointed out, we're coming from a model where today it's open-bar.
-Only now they can put a bouncer in front of it, so to speak :)
+>
+> This looks suitable for doing the famfs file - > dax device mapping as
+> well.  I wouldn't extend the ioctl with extent information, since
+> famfs can just use FUSE_DEV_IOC_BACKING_OPEN once to register the dax
+> device.  The flags field could be used to tell the kernel to treat
+> this fd as a dax device instead of a a regular file.
+>
+> Letter, when the file is opened the extent list could be sent in the
+> open reply together with the backing id.  The fuse_ext_header
+> mechanism seems suitable for this.
+>
+> And I think that's it as far as API's are concerned.
+>
+> Note: this is already more generic than the current famfs prototype,
+> since multiple dax devices could be used as backing for famfs files,
+> with the constraint that a single file can only map data from a single
+> dax device.
+>
+> As for implementing dax passthrough, I think that needs a separate
+> source file, the one used by virtiofs (fs/fuse/dax.c) does not appear
+> to have many commonalities with this one.  That could be renamed to
+> virtiofs_dax.c as it's pretty much virtiofs specific, AFAICT.
+>
+> Comments?
 
-Regarding distros:
+Would probably also need to decouple CONFIG_FUSE_DAX
+from CONFIG_FUSE_VIRTIO_DAX.
 
-    Maybe they ship with an empty userns mask by default and admins have
-    to tweak it, understanding full well the consequences of doing so.
+What about fc->dax_mode (i.e. dax=3D mount option)?
 
-    Maybe they ship with a conservative mask and use pam rules to
-    adjust it.
+What about FUSE_IS_DAX()? does it apply to both dax implementations?
 
-    Maybe they introduce something like a wheel/sudo group that you need
-    to be part of to gain extra privileges in your userns.
+Sounds like a decent plan.
+John, let us know if you need help understanding the details.
 
-    Maybe only some system services (e.g. dockerd, lxd/incusd, machined)
-    get confined.
+> Am I missing something significant?
 
-    Maybe they need highly specific policies, and this is where you'll
-    would want LSM support. Say an Apparmor profile targetting
-    unshare(1) specifically.
+Would we need to set IS_DAX() on inode init time or can we set it
+later on first file open?
 
-Regarding tools:
+Currently, iomodes enforces that all opens are either
+mapped to same backing file or none mapped to backing file:
 
-    Maybe bwrap has its own group you need to be part of to get full
-    caps.
+fuse_inode_uncached_io_start()
+{
+...
+        /* deny conflicting backing files on same fuse inode */
 
-    Maybe docker uses this set behind `--cap-add` `--cap-drop`.
+The iomodes rules will need to be amended to verify that:
+- IS_DAX() inode open is always mapped to backing dax device
+- All files of the same fuse inode are mapped to the same range
+  of backing file/dax device.
 
-    Maybe lxd/incusd imlement ACL restricting who can do what.
-
-    Maybe steam always drops everything it doesn't need,
-
-I'm sure this won't cover every single corner cases, but as stated in
-the headline, this is a start, a simple framework we can always
-extend if needed in the future.
+Thanks,
+Amir.
 
