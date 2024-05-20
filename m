@@ -1,320 +1,445 @@
-Return-Path: <linux-fsdevel+bounces-19775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E138C9AEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 12:04:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E85F8C9C4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48821C20A87
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 10:04:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8145282FFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF154D11D;
-	Mon, 20 May 2024 10:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18CA53E05;
+	Mon, 20 May 2024 11:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/h1rBjS"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SD54xgsc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818AD210E7;
-	Mon, 20 May 2024 10:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3CF36134
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716199453; cv=none; b=uCIpFyBxZmx32z8t38uleQ1f5/rWj7WFFcqfMajBGsaxqZEuFXHumXFybXZxvo/SnK80mxnm7keuRcytkEyJLKJkM8gl1/GpO4iGuZg8P9PoBDx2umC+B2RLvC6IhGuENcvL7GP8E+1CFZHYoYjecX3k37u5lzmEoSMOsjlp5kw=
+	t=1716205480; cv=none; b=AntluHkeQg86mprtjhhwz/U2UZPsQlV6ZjHcUpiAu8XggPO7RsbHHIvJer28fn9RyENA0c5MBl7ki7e6hIGOGhKC10dKBTaCIy96NG+iKb3faTHI/tge7Rk589wRhehY+X4KIRdhZQXOBywi2HylYUP/L2i0Hdxnte3eqyv9oUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716199453; c=relaxed/simple;
-	bh=pEMdYb6oVlwhGnEI+Y6x4TkIYwX5Qmfs20rTTu91xJs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YzOMuYQAEvdFNNguVcHpUV0maH7GgTSipFKJ0u/OEKg5KvOI78JwnChtWmyUekxz7YZYvDTbhh295SvBSVvoaHKCSL6WnVkPrU2oB8PitpguFX7tlWEi/nvL67xmctejwzUomkry0E9ssxGdKLy13yfoKLPqSy0clZKt1xpDDe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/h1rBjS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C73C2BD10;
-	Mon, 20 May 2024 10:04:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716199453;
-	bh=pEMdYb6oVlwhGnEI+Y6x4TkIYwX5Qmfs20rTTu91xJs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=g/h1rBjSdThs0rr5JPaGozrvm+umPhRvS99VprkqO0xusHtuLMJMa1Swaedrdw0F2
-	 fc9dfTsiR2BGBIZ7jPV8HEvOfLse/EuEtBk2wfDxtjg587VjBguOLqmrPWvt1CwyhE
-	 rEEwvYs2e7spyivvKpVdNcCq50NVMZFza3yw0R/LYCTp1f6VKYNTf88HGiLaU/Hm5p
-	 kgL/p3VgkGbIvyWBoYRZ9e6D6Vb1Q36usuomPNklAssW5dRtex75N9n7TQf5ioC6Fw
-	 AsKjbeR9dyE1wM7nxVK7gXEEqXsYB/7VU/CU/andwwwLHTmrEeodAdei7jaKdkxJ9m
-	 DgxP0J8QJ3GmQ==
-Message-ID: <4b1584787dd54bb95d700feae1ca498c40429551.camel@kernel.org>
-Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
- reuse
-From: Jeff Layton <jlayton@kernel.org>
-To: Baokun Li <libaokun@huaweicloud.com>, netfs@lists.linux.dev, 
-	dhowells@redhat.com
-Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com, 
- zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com,  Baokun Li <libaokun1@huawei.com>
-Date: Mon, 20 May 2024 06:04:10 -0400
-In-Reply-To: <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
-	 <20240515125136.3714580-5-libaokun@huaweicloud.com>
-	 <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
-	 <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40app1) 
+	s=arc-20240116; t=1716205480; c=relaxed/simple;
+	bh=F5oidIO6CFr95P1rfEJcdvU4uIMr6DxXCHRj+ysqgX0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=O951zRK6tTM+NY9jUzx8pmcmLaHQNYYL0NsrHOdpPVCabTHi00SEuenZgCte49gDS3AmhZ0Xour9EsX6+6zf7XIQNRu9u5ZF66ov3BE1Dmi6BZg7kHb/fLIgm+woIfwfA0TTXYTZqj4aBzBm2iweJcv/tpwSMucJ9n3UxtesOKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SD54xgsc; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240520114435epoutp038cb36ea7c5daaabfcffe9d420f715127~RL8lygZCm1613216132epoutp03r
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:44:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240520114435epoutp038cb36ea7c5daaabfcffe9d420f715127~RL8lygZCm1613216132epoutp03r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716205475;
+	bh=nZvkHT1lt0LzNUEo2BHBiYOt4MxSs+BxljLweoio5BU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=SD54xgsc7+STLFpzyfieySy0tbEMnd6HjmxdrNH3gxkLmvrft1r/KVKy6phhaXE3N
+	 qUsZ3ZeXWXhY0Cb8ZwktCdG74ptmfd/JgLB0dz4DihFZgs7NzgcE8NzZdVpVi7HZH2
+	 usDhvtpl54kSk5RWH0xuH3Gl6285iQMAXaUS+pig=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240520114434epcas5p1af2b69d9501ee06c7e2a923eb13bf1ce~RL8koQKSJ2914429144epcas5p1-;
+	Mon, 20 May 2024 11:44:34 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VjbMN64ZZz4x9Pw; Mon, 20 May
+	2024 11:44:32 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6E.42.09688.0A73B466; Mon, 20 May 2024 20:44:32 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240520102747epcas5p33497a911ca70c991e5da8e22c5d1336b~RK5i6gl6F1861718617epcas5p3D;
+	Mon, 20 May 2024 10:27:47 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240520102747epsmtrp2694085b28c6a2bd03317edc7b8dee140~RK5i5ZN542052720527epsmtrp2a;
+	Mon, 20 May 2024 10:27:47 +0000 (GMT)
+X-AuditID: b6c32a4a-5dbff700000025d8-11-664b37a04b2e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FA.CD.09238.3A52B466; Mon, 20 May 2024 19:27:47 +0900 (KST)
+Received: from green245.sa.corp.samsungelectronics.net (unknown
+	[107.99.41.245]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240520102743epsmtip28b6e7e61d17179c33f29dc63d637a33f~RK5fGWBoW2185521855epsmtip2U;
+	Mon, 20 May 2024 10:27:43 +0000 (GMT)
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
+	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+	hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com, Nitesh
+	Shetty <nj.shetty@samsung.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v20 00/12] Implement copy offload support
+Date: Mon, 20 May 2024 15:50:13 +0530
+Message-Id: <20240520102033.9361-1-nj.shetty@samsung.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TazBcZxjud85xrKhks2g+pCWbZhqMy4rLp0U7YvSkMiHTmcyknUTO2BOU
+	vWR3Bc1k4hJ1SQgaxKK7wUSDkqI71qVlxW3JmFZEUEG7MhJFSiaaMaK7dtPm3/M87/c+7+Wb
+	l4VzlOb2rFihjJEI6XguuYNQ9Tg7uyn9ws56qqdcUKO2D0dp+Zs4qpu+RqLFnlWAip+9xJGu
+	KxOgjXsjOGrpewSQsrKCQBNdagx1VBZi6HZdL4bKStIx1Lu1RKJCzQOA5sfkGOqcdEU3v6km
+	UEfnIIFG28pJpLg1b45q+l9hqCBrDEOtulSAVBsKHDUsrhBoYNIBjWz2m32ylxq9H0ZpKyGl
+	lk+bUyOPfiSo0XsJVFNtNkk1V1+iFppLAdU+kUJSVXnfmlG56cskpc6YMaP+np8kqJWfx0gq
+	r6UWUMPKu+YR1l/EBcQwNJ+RODHCKBE/VhgdyA37PPJwpI+vJ8+N54/8uE5CWsAEckOORriF
+	xsbrN8R1Ok/HJ+ilCFoq5XoEBUhECTLGKUYklQVyGTE/XuwtdpfSAmmCMNpdyMg+5Hl6evno
+	H56Ji5lYWyDFitNJNf0PiRTQF5IDWCzI9oZyhU8O2MHisNsBTPkjx9xIVgF8WP/ERF4AqJWn
+	6InFdoauTYsbA50ADqfNAiPJwGDbr1ozgy/JdoVDWyyDbsOuw+GV5gLCQHB2Mw5Te7owg5U1
+	2x/eKK82M2CCfQA+VT0HBmyl13UdQ6SxnCOsu9OFG/XdcLBURxgwrtfTfyrbbgOy2y3gzbkK
+	wpgQAlfquzEjtoZP+1tMfdvDteVOk2kivH39e9KYfBlA+bgcGAMfwwztNdwwAs52ho1tHkb5
+	XVikbcCMhXfC3A2dyd8Ktn73Gu+H9Y1Kk78dfLCeasIU/EddvN0bh30K9tS/APnAUf7GPPI3
+	5pH/X1kJ8Fpgx4ilgmhG6iP2EjKJ/31tlEjQBLZPxeWzVjA3+8xdAzAW0ADIwrk2Vk0tR85y
+	rPh08teMRBQpSYhnpBrgo19yAW5vGyXS35pQFsnz9vf09vX19fY/5Mvj7rFazKjgc9jRtIyJ
+	YxgxI3mdh7Es7FMwW5e7V4LKRBqhY7Ei83RuZmC2a+lE3Ez6NAj+/UJgsvrxpfE9lkEnxn/p
+	JVVH5QOiwVR6qWHC7quTXl6C5nALm4LMqYM2K10u5aLhc6XUhf2SBjUvsXT2YnVJQ+HqZn7n
+	albxIc/5KiLgz51XsVzVbwqOR9RWuK1g99s1wdFJTgv5azdA8vrL653OSfssQ3cRtKp7Pe95
+	0eidgqt1HyTSc1Gusz+cKdIIDjiUX/Y9F7rPdepkITf7/dXxY8dHvG+d73uLFb73vYuf2mQd
+	e9Vf4VfrP2Q3s3VqtPuvLjq/pmSp/p32MJtd94N7lr8s5195PPqRre2J9icDaRl9a8ePVFke
+	XHfgEtIYmueCS6T0v7fYHqqzBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe897djwuRqfN8M0iY7EKNWsU8na1ouioRPUhgshs6dGsqWNz
+	doWW62LLtBulU5uX5ZiLSl1eSmvMNm+JmRlNcAVtdCNt3SjyUmtFffvxf37P//ny0FD4ggyj
+	0zOzOWWmTC6m+GRDmzh8QZUkIXVRflEUvtnlhDj33BjElqFCCr9r+wjw5Q/fIfbYTgH8o6cX
+	YqvTDXB5ZRmJXbZmArdUXiCw2eIgcMkVLYEdE+8pfMH+FGDvgJ7ArYORuOKkkcQtrZ0k7r9T
+	SmFDtTcIm9rHCXw+b4DATZ5jADf8MEB8490IiTsGZ+DesXbe6pls/5MEtqsSsc36oSC2111L
+	sv09arau5jTF1huPsq/riwF716Wh2KqCizz2rHaYYptPPOexPu8gyY7cG6DYAmsNYB+WPwja
+	LNrOX5HCydNzOOXCVbv4e1yfXlMKw84DpvZnpAY41+lAMI2YJchzpwvqAJ8WMncB8tSXw8Bg
+	Oqoee/CHRcg8/iooIGkJ5NDYCB2gaYqJRN0TtD8PYRoh8mnPEP4FyDggenQd+1nELEVFpUae
+	n0lGgt42fAZ+FvzKPS3dVOBAOLLcssFAPhV1FntIfz9k5qGbV4WBynCkvV0Cz4Ep+v8s/T9L
+	/59VDmANmM4pVBlpGclShTST2x+tkmWo1Jlp0clZGXXg9xNEzG8CbsN4tB0QNLADRENxiKDO
+	GpcqFKTIDh7ilFlJSrWcU9nBDJoUhwqkRSUpQiZNls3t4zgFp/w7JejgMA2h1TZpvoXETMw9
+	nPR23fWmavP6E58E/bc75utWFXi7+deoxXufRcpPaSocm1ySI/d8LcSa6r7IacFhW/MOH5ty
+	XtJ4xHtx0ubOS4/fbKjNGciPzWpebbof+9ld69nO31LcY7ZFBctGc63gy3h8WoN9+e7O9DAi
+	Ptficli+jO5IVBcqpPohiSFp7qjVvK1meC+IcvaVyUXmUbTR3VjsjsMoLyZiTrxN6VML45Zp
+	C6tCt+RM7hjeugO08etNb0hj66LlZbMTlyScmZVteXnr65yV3YPJr/qKKKs031egO65m1sY4
+	TT2JMam8Q3Zd6KZt0ZUw6XiscuSr2mc8yFSIxKRqj0waAZUq2U/hf3iAcwMAAA==
+X-CMS-MailID: 20240520102747epcas5p33497a911ca70c991e5da8e22c5d1336b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520102747epcas5p33497a911ca70c991e5da8e22c5d1336b
+References: <CGME20240520102747epcas5p33497a911ca70c991e5da8e22c5d1336b@epcas5p3.samsung.com>
 
-On Mon, 2024-05-20 at 12:06 +0800, Baokun Li wrote:
-> Hi Jeff,
->=20
-> Thank you very much for your review!
->=20
-> On 2024/5/19 19:11, Jeff Layton wrote:
-> > On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
-> > > From: Baokun Li <libaokun1@huawei.com>
-> > >=20
-> > > Reusing the msg_id after a maliciously completed reopen request may c=
-ause
-> > > a read request to remain unprocessed and result in a hung, as shown b=
-elow:
-> > >=20
-> > >         t1       |      t2       |      t3
-> > > -------------------------------------------------
-> > > cachefiles_ondemand_select_req
-> > >   cachefiles_ondemand_object_is_close(A)
-> > >   cachefiles_ondemand_set_object_reopening(A)
-> > >   queue_work(fscache_object_wq, &info->work)
-> > >                  ondemand_object_worker
-> > >                   cachefiles_ondemand_init_object(A)
-> > >                    cachefiles_ondemand_send_req(OPEN)
-> > >                      // get msg_id 6
-> > >                      wait_for_completion(&req_A->done)
-> > > cachefiles_ondemand_daemon_read
-> > >   // read msg_id 6 req_A
-> > >   cachefiles_ondemand_get_fd
-> > >   copy_to_user
-> > >                                  // Malicious completion msg_id 6
-> > >                                  copen 6,-1
-> > >                                  cachefiles_ondemand_copen
-> > >                                   complete(&req_A->done)
-> > >                                   // will not set the object to close
-> > >                                   // because ondemand_id && fd is val=
-id.
-> > >=20
-> > >                  // ondemand_object_worker() is done
-> > >                  // but the object is still reopening.
-> > >=20
-> > >                                  // new open req_B
-> > >                                  cachefiles_ondemand_init_object(B)
-> > >                                   cachefiles_ondemand_send_req(OPEN)
-> > >                                   // reuse msg_id 6
-> > > process_open_req
-> > >   copen 6,A.size
-> > >   // The expected failed copen was executed successfully
-> > >=20
-> > > Expect copen to fail, and when it does, it closes fd, which sets the
-> > > object to close, and then close triggers reopen again. However, due t=
-o
-> > > msg_id reuse resulting in a successful copen, the anonymous fd is not
-> > > closed until the daemon exits. Therefore read requests waiting for re=
-open
-> > > to complete may trigger hung task.
-> > >=20
-> > > To avoid this issue, allocate the msg_id cyclically to avoid reusing =
-the
-> > > msg_id for a very short duration of time.
-> > >=20
-> > > Fixes: c8383054506c ("cachefiles: notify the user daemon when looking=
- up cookie")
-> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > > ---
-> > >   fs/cachefiles/internal.h |  1 +
-> > >   fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
-> > >   2 files changed, 17 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-> > > index 8ecd296cc1c4..9200c00f3e98 100644
-> > > --- a/fs/cachefiles/internal.h
-> > > +++ b/fs/cachefiles/internal.h
-> > > @@ -128,6 +128,7 @@ struct cachefiles_cache {
-> > >   	unsigned long			req_id_next;
-> > >   	struct xarray			ondemand_ids;	/* xarray for ondemand_id allocation=
- */
-> > >   	u32				ondemand_id_next;
-> > > +	u32				msg_id_next;
-> > >   };
-> > >  =20
-> > >   static inline bool cachefiles_in_ondemand_mode(struct cachefiles_ca=
-che *cache)
-> > > diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-> > > index f6440b3e7368..b10952f77472 100644
-> > > --- a/fs/cachefiles/ondemand.c
-> > > +++ b/fs/cachefiles/ondemand.c
-> > > @@ -433,20 +433,32 @@ static int cachefiles_ondemand_send_req(struct =
-cachefiles_object *object,
-> > >   		smp_mb();
-> > >  =20
-> > >   		if (opcode =3D=3D CACHEFILES_OP_CLOSE &&
-> > > -			!cachefiles_ondemand_object_is_open(object)) {
-> > > +		    !cachefiles_ondemand_object_is_open(object)) {
-> > >   			WARN_ON_ONCE(object->ondemand->ondemand_id =3D=3D 0);
-> > >   			xas_unlock(&xas);
-> > >   			ret =3D -EIO;
-> > >   			goto out;
-> > >   		}
-> > >  =20
-> > > -		xas.xa_index =3D 0;
-> > > +		/*
-> > > +		 * Cyclically find a free xas to avoid msg_id reuse that would
-> > > +		 * cause the daemon to successfully copen a stale msg_id.
-> > > +		 */
-> > > +		xas.xa_index =3D cache->msg_id_next;
-> > >   		xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
-> > > +		if (xas.xa_node =3D=3D XAS_RESTART) {
-> > > +			xas.xa_index =3D 0;
-> > > +			xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
-> > > +		}
-> > >   		if (xas.xa_node =3D=3D XAS_RESTART)
-> > >   			xas_set_err(&xas, -EBUSY);
-> > > +
-> > >   		xas_store(&xas, req);
-> > > -		xas_clear_mark(&xas, XA_FREE_MARK);
-> > > -		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
-> > > +		if (xas_valid(&xas)) {
-> > > +			cache->msg_id_next =3D xas.xa_index + 1;
-> > If you have a long-standing stuck request, could this counter wrap
-> > around and you still end up with reuse?
-> Yes, msg_id_next is declared to be of type u32 in the hope that when
-> xa_index =3D=3D UINT_MAX, a wrap around occurs so that msg_id_next
-> goes to zero. Limiting xa_index to no more than UINT_MAX is to avoid
-> the xarry being too deep.
->=20
-> If msg_id_next is equal to the id of a long-standing stuck request
-> after the wrap-around, it is true that the reuse in the above problem
-> may also occur.
->=20
-> But I feel that a long stuck request is problematic in itself, it means
-> that after we have sent 4294967295 requests, the first one has not
-> been processed yet, and even if we send a million requests per
-> second, this one hasn't been completed for more than an hour.
->=20
-> We have a keep-alive process that pulls the daemon back up as
-> soon as it exits, and there is a timeout mechanism for requests in
-> the daemon to prevent the kernel from waiting for long periods
-> of time. In other words, we should avoid the situation where
-> a request is stuck for a long period of time.
->=20
-> If you think UINT_MAX is not enough, perhaps we could raise
-> the maximum value of msg_id_next to ULONG_MAX?
-> > Maybe this should be using
-> > ida_alloc/free instead, which would prevent that too?
-> >=20
-> The id reuse here is that the kernel has finished the open request
-> req_A and freed its id_A and used it again when sending the open
-> request req_B, but the daemon is still working on req_A, so the
-> copen id_A succeeds but operates on req_B.
->=20
-> The id that is being used by the kernel will not be allocated here
-> so it seems that ida _alloc/free does not prevent reuse either,
-> could you elaborate a bit more how this works?
->=20
+The patch series covers the points discussed in the past and most recently
+in LSFMM'24[0].
+We have covered the initial agreed requirements in this patch set and
+further additional features suggested by the community.
 
-ida_alloc and free absolutely prevent reuse while the id is in use.
-That's sort of the point of those functions. Basically it uses a set of
-bitmaps in an xarray to track which IDs are in use, so ida_alloc only
-hands out values which are not in use. See the comments over
-ida_alloc_range() in lib/idr.c.
+This is next iteration of our previous patch set v19[1].
+Copy offload is performed using two bio's -
+1. Take a plug
+2. The first bio containing destination info is prepared and sent,
+        a request is formed.
+3. This is followed by preparing and sending the second bio containing the
+        source info.
+4. This bio is merged with the request containing the destination info.
+5. The plug is released, and the request containing source and destination
+        bio's is sent to the driver.
+This design helps to avoid putting payload (token) in the request,
+as sending payload that is not data to the device is considered a bad
+approach.
+
+So copy offload works only for request based storage drivers.
+We can make use of copy emulation in case copy offload capability is
+absent.
+
+Overall series supports:
+========================
+	1. Driver
+		- NVMe Copy command (single NS, TP 4065), including support
+		in nvme-target (for block and file back end).
+
+	2. Block layer
+		- Block-generic copy (REQ_OP_COPY_DST/SRC), operation with
+                  interface accommodating two block-devs
+                - Merging copy requests in request layer
+		- Emulation, for in-kernel user when offload is natively
+                absent
+		- dm-linear support (for cases not requiring split)
+
+	3. User-interface
+		- copy_file_range
+
+Testing
+=======
+	Copy offload can be tested on:
+	a. QEMU: NVME simple copy (TP 4065). By setting nvme-ns
+		parameters mssrl,mcl, msrc. For more info [2].
+	b. Null block device
+        c. NVMe Fabrics loopback.
+	d. blktests[3]
+
+	Emulation can be tested on any device.
+
+	fio[4].
+
+Infra and plumbing:
+===================
+        We populate copy_file_range callback in def_blk_fops.
+        For devices that support copy-offload, use blkdev_copy_offload to
+        achieve in-device copy.
+        However for cases, where device doesn't support offload,
+        use splice_copy_file_range.
+        For in-kernel users (like NVMe fabrics), use blkdev_copy_offload
+        if device is copy offload capable or else use emulation
+        using blkdev_copy_emulation.
+        Modify checks in copy_file_range to support block-device.
+
+Blktests[3]
+======================
+	tests/block/035-040: Runs copy offload and emulation on null
+                              block device.
+	tests/block/050,055: Runs copy offload and emulation on test
+                              nvme block device.
+        tests/nvme/056-067: Create a loop backed fabrics device and
+                              run copy offload and emulation.
+
+Future Work
+===========
+	- loopback device copy offload support
+	- upstream fio to use copy offload
+	- upstream blktest to test copy offload
+        - update man pages for copy_file_range
+        - expand in-kernel users of copy offload
+
+	These are to be taken up after this minimal series is agreed upon.
+
+Additional links:
+=================
+	[0] https://lore.kernel.org/linux-nvme/CA+1E3rJ7BZ7LjQXXTdX+-0Edz=zT14mmPGMiVCzUgB33C60tbQ@mail.gmail.com/
+            https://lore.kernel.org/linux-nvme/f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com/
+            https://lore.kernel.org/linux-nvme/20230113094648.15614-1-nj.shetty@samsung.com/
+	[1] https://lore.kernel.org/linux-nvme/20231222061313.12260-1-nj.shetty@samsung.com/
+	[2] https://qemu-project.gitlab.io/qemu/system/devices/nvme.html#simple-copy
+	[3] https://github.com/nitesh-shetty/blktests/tree/feat/copy_offload/v19
+	[4] https://github.com/SamsungDS/fio/tree/copyoffload-3.35-v14
+
+Changes since v19:
+=================
+        - block, nvme: update queue limits atomically
+                Also remove reviewed by tag from Hannes and Luis for
+                these patches. As we feel these patches changed
+                significantly from the previous one.
+        - vfs: generic_copy_file_range to splice_file_range
+        - rebased to latest linux-next
+
+Changes since v18:
+=================
+        - block, nvmet, null: change of copy dst/src request opcodes form
+            19,21 to 18,19 (Keith Busch)
+            Change the copy bio submission order to destination copy bio
+            first, followed by source copy bio.
+
+Changes since v17:
+=================
+        - block, nvmet: static error fixes (Dan Carpenter, kernel test robot)
+        - nvmet: pass COPY_FILE_SPLICE flag for vfs_copy_file_range in case
+                        file backed nvmet device
+
+Changes since v16:
+=================
+        - block: fixed memory leaks and renamed function (Jinyoung Choi)
+        - nvmet: static error fixes (kernel test robot)
+
+Changes since v15:
+=================
+        - fs, nvmet: don't fallback to copy emulation for copy offload IO
+                    failure, user can still use emulation by disabling
+                    device offload (Hannes)
+        - block: patch,function description changes (Hannes)
+        - added Reviewed-by from Hannes and Luis.
+
+Changes since v14:
+=================
+        - block: (Bart Van Assche)
+            1. BLK_ prefix addition to COPY_MAX_BYES and COPY_MAX_SEGMENTS
+            2. Improved function,patch,cover-letter description
+            3. Simplified refcount updating.
+        - null-blk, nvme:
+            4. static warning fixes (kernel test robot)
+
+Changes since v13:
+=================
+        - block:
+            1. Simplified copy offload and emulation helpers, now
+                  caller needs to decide between offload/emulation fallback
+            2. src,dst bio order change (Christoph Hellwig)
+            3. refcount changes similar to dio (Christoph Hellwig)
+            4. Single outstanding IO for copy emulation (Christoph Hellwig)
+            5. use copy_max_sectors to identify copy offload
+                  capability and other reviews (Damien, Christoph)
+            6. Return status in endio handler (Christoph Hellwig)
+        - nvme-fabrics: fallback to emulation in case of partial
+          offload completion
+        - in kernel user addition (Ming lei)
+        - indentation, documentation, minor fixes, misc changes (Damien,
+          Christoph)
+        - blktests changes to test kernel changes
+
+Changes since v12:
+=================
+        - block,nvme: Replaced token based approach with request based
+          single namespace capable approach (Christoph Hellwig)
+
+Changes since v11:
+=================
+        - Documentation: Improved documentation (Damien Le Moal)
+        - block,nvme: ssize_t return values (Darrick J. Wong)
+        - block: token is allocated to SECTOR_SIZE (Matthew Wilcox)
+        - block: mem leak fix (Maurizio Lombardi)
+
+Changes since v10:
+=================
+        - NVMeOF: optimization in NVMe fabrics (Chaitanya Kulkarni)
+        - NVMeOF: sparse warnings (kernel test robot)
+
+Changes since v9:
+=================
+        - null_blk, improved documentation, minor fixes(Chaitanya Kulkarni)
+        - fio, expanded testing and minor fixes (Vincent Fu)
+
+Changes since v8:
+=================
+        - null_blk, copy_max_bytes_hw is made config fs parameter
+          (Damien Le Moal)
+        - Negative error handling in copy_file_range (Christian Brauner)
+        - minor fixes, better documentation (Damien Le Moal)
+        - fio upgraded to 3.34 (Vincent Fu)
+
+Changes since v7:
+=================
+        - null block copy offload support for testing (Damien Le Moal)
+        - adding direct flag check for copy offload to block device,
+	  as we are using generic_copy_file_range for cached cases.
+        - Minor fixes
+
+Changes since v6:
+=================
+        - copy_file_range instead of ioctl for direct block device
+        - Remove support for multi range (vectored) copy
+        - Remove ioctl interface for copy.
+        - Remove offload support in dm kcopyd.
+
+Changes since v5:
+=================
+	- Addition of blktests (Chaitanya Kulkarni)
+        - Minor fix for fabrics file backed path
+        - Remove buggy zonefs copy file range implementation.
+
+Changes since v4:
+=================
+	- make the offload and emulation design asynchronous (Hannes
+	  Reinecke)
+	- fabrics loopback support
+	- sysfs naming improvements (Damien Le Moal)
+	- use kfree() instead of kvfree() in cio_await_completion
+	  (Damien Le Moal)
+	- use ranges instead of rlist to represent range_entry (Damien
+	  Le Moal)
+	- change argument ordering in blk_copy_offload suggested (Damien
+	  Le Moal)
+	- removed multiple copy limit and merged into only one limit
+	  (Damien Le Moal)
+	- wrap overly long lines (Damien Le Moal)
+	- other naming improvements and cleanups (Damien Le Moal)
+	- correctly format the code example in description (Damien Le
+	  Moal)
+	- mark blk_copy_offload as static (kernel test robot)
+
+Changes since v3:
+=================
+	- added copy_file_range support for zonefs
+	- added documentation about new sysfs entries
+	- incorporated review comments on v3
+	- minor fixes
+
+Changes since v2:
+=================
+	- fixed possible race condition reported by Damien Le Moal
+	- new sysfs controls as suggested by Damien Le Moal
+	- fixed possible memory leak reported by Dan Carpenter, lkp
+	- minor fixes
+
+Changes since v1:
+=================
+	- sysfs documentation (Greg KH)
+        - 2 bios for copy operation (Bart Van Assche, Mikulas Patocka,
+          Martin K. Petersen, Douglas Gilbert)
+        - better payload design (Darrick J. Wong)
+
+Anuj Gupta (1):
+  fs/read_write: Enable copy_file_range for block device.
+
+Nitesh Shetty (11):
+  block: Introduce queue limits and sysfs for copy-offload support
+  Add infrastructure for copy offload in block and request layer.
+  block: add copy offload support
+  block: add emulation for copy
+  fs, block: copy_file_range for def_blk_ops for direct block device
+  nvme: add copy offload support
+  nvmet: add copy command support for bdev and file ns
+  dm: Add support for copy offload
+  dm: Enable copy offload for dm-linear target
+  null: Enable trace capability for null block
+  null_blk: add support for copy offload
+
+ Documentation/ABI/stable/sysfs-block |  23 ++
+ Documentation/block/null_blk.rst     |   5 +
+ block/blk-core.c                     |   7 +
+ block/blk-lib.c                      | 427 +++++++++++++++++++++++++++
+ block/blk-merge.c                    |  41 +++
+ block/blk-settings.c                 |  34 ++-
+ block/blk-sysfs.c                    |  43 +++
+ block/blk.h                          |  16 +
+ block/elevator.h                     |   1 +
+ block/fops.c                         |  26 ++
+ drivers/block/null_blk/Makefile      |   2 -
+ drivers/block/null_blk/main.c        | 105 ++++++-
+ drivers/block/null_blk/null_blk.h    |   1 +
+ drivers/block/null_blk/trace.h       |  25 ++
+ drivers/block/null_blk/zoned.c       |   1 -
+ drivers/md/dm-linear.c               |   1 +
+ drivers/md/dm-table.c                |  37 +++
+ drivers/md/dm.c                      |   7 +
+ drivers/nvme/host/constants.c        |   1 +
+ drivers/nvme/host/core.c             |  81 ++++-
+ drivers/nvme/host/trace.c            |  19 ++
+ drivers/nvme/target/admin-cmd.c      |   9 +-
+ drivers/nvme/target/io-cmd-bdev.c    |  71 +++++
+ drivers/nvme/target/io-cmd-file.c    |  50 ++++
+ drivers/nvme/target/nvmet.h          |   1 +
+ drivers/nvme/target/trace.c          |  19 ++
+ fs/read_write.c                      |   8 +-
+ include/linux/bio.h                  |   6 +-
+ include/linux/blk_types.h            |  10 +
+ include/linux/blkdev.h               |  23 ++
+ include/linux/device-mapper.h        |   3 +
+ include/linux/nvme.h                 |  43 ++-
+ 32 files changed, 1124 insertions(+), 22 deletions(-)
 
 
-> >=20
-> > > +			xas_clear_mark(&xas, XA_FREE_MARK);
-> > > +			xas_set_mark(&xas, CACHEFILES_REQ_NEW);
-> > > +		}
-> > >   		xas_unlock(&xas);
-> > >   	} while (xas_nomem(&xas, GFP_KERNEL));
-> > >  =20
->=20
-> Thanks again!
->=20
+base-commit: dbd9e2e056d8577375ae4b31ada94f8aa3769e8a
+-- 
+2.17.1
 
---=20
-Jeff Layton <jlayton@kernel.org>
 
