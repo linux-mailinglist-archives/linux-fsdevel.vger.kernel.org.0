@@ -1,268 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-19782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E4B8C9C2A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:37:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4928C9CCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0083A1C20BA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8AAD1F2108C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540A453E26;
-	Mon, 20 May 2024 11:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2CB53E1A;
+	Mon, 20 May 2024 11:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fsUmlYuo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6EKitTSP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KZ5b86gE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3XhpOVOA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A62535DB;
-	Mon, 20 May 2024 11:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6A71B960;
+	Mon, 20 May 2024 11:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716205017; cv=none; b=kqDGS6vT1uS+Fq59oc9cuoJsJDi3l9YQwIuN0npu0sEaeuagwbwWG8kFqcl+TZFb35eijtbAzI0k6CQ+SpY50FJVFuH+EaC2Abh9vJgxqELeoFc6IDInAJHgoscTqMI37i46scOUohRKP8LjAdgVlUIJt7rYBIa6Y43yJSVarQE=
+	t=1716206335; cv=none; b=FSmjl9oyaUMdsvKP65KVkzbUY91ykhVGW+qwPgpwJYkaK5TbwCHRXMjQcveJAGwCSzJHkJHHz0uGX+7vAy3+tC8lsBRY2McUHeCTq6ABH/q6X+jAHscion41oac9J1w4L9jQpTzAoGzLAW2FbFlIgnoqSdfeAWTEa6wiiIWXVCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716205017; c=relaxed/simple;
-	bh=te1EYIMSjDa2AtN2JbBQlKLLglOCxloo3WN9EZTPmf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NKZGnY0ufusU1C+7XdesGz+3kQbbRop2tUqNJbRAsHHlQYyFL7TKhpmN2e+NK0pEQUdqyhffsNN6tnjzlzWvqdrc9q59ooatfNev6ruoHOX4q2OfynSUssI0WY3F++JCAhtSzBIHGeVg9TwJwTac7GMfxlopnCbHF8wdtEvPf8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjbBP3KRYz4f3jkL;
-	Mon, 20 May 2024 19:36:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 307E21A0C4C;
-	Mon, 20 May 2024 19:36:51 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g7PNUtm6nK8NA--.6529S3;
-	Mon, 20 May 2024 19:36:50 +0800 (CST)
-Message-ID: <a9e39b5f-4397-056e-7f6c-b1a1847429dd@huaweicloud.com>
-Date: Mon, 20 May 2024 19:36:47 +0800
+	s=arc-20240116; t=1716206335; c=relaxed/simple;
+	bh=bHNHl9JcLOSKGTPq7jvpEWQfUxyRDiDCngPc1F2Y4h8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/ImfIGUNGzeLZYPnAfBR+ylt6yKfuruZlOEyDId+omTY+WPA97aIuWcHwRQ7lY/AFFRufVEm/OfB2V2TzgK8tGGgVo79Uv0fwiC9IbC0J0a/R3wcTCLVt/GLEaQYCKCJFm5UemohG7pAV9bAfD7rNzpdp5C8iHWlvmbDXxs0oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fsUmlYuo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6EKitTSP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KZ5b86gE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3XhpOVOA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E847E20CBB;
+	Mon, 20 May 2024 11:58:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716206332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
+	b=fsUmlYuoYYddvJ7cs0YoGabDIp5ofkSffhBkM/sYifMORlwhS2rMb24AuMZSx81AAiYG1c
+	b2ZqyHRBDNBKBrkFr08SfYHMpqRC5VgYBIyqjQKWVfvrjAgj7uHTfjk9NmmNWbXSs2EGKd
+	exU9ARjDeCA63yXc3X5OwDZk+LfPG0I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716206332;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
+	b=6EKitTSPmN7XLWrVvRRWnBAo6dHpgTGe7Bj1R1Z8VainveiJBvxV/BWjGX8BFHecApfzeF
+	lgE1+l78EUQzIVCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KZ5b86gE;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3XhpOVOA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716206331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
+	b=KZ5b86gEJ4Ml/imRWLmSSHHasp1i7AXhSLcXjO5y/Y18zv6ZGmPcoX0pZpiKBq/lx7xuXo
+	tXsG2IDB3QanEKNwrVG2QJ7xQj7n25DDRGQ85tR0LshrO7IZfbKZllw9SNmEiPnhGcg6xc
+	p7qFzY+vNm32pV/P0iJGcWjS/sQSrEU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716206331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
+	b=3XhpOVOAADnPbdL/pAVyLGDYnXa6G6dD60Zjq5x8BRZQgxyjn+cEJU1M+Oc82dKbSjZMfa
+	UIoAgRchQEQeVHBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4AD313A6B;
+	Mon, 20 May 2024 11:58:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mvPaM/s6S2ZaWgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 May 2024 11:58:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5A29CA08D8; Mon, 20 May 2024 13:58:51 +0200 (CEST)
+Date: Mon, 20 May 2024 13:58:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3] fs: fix unintentional arithmetic wraparound in offset
+ calculation
+Message-ID: <20240520115851.gcwj3nwicvr2c4j3@quack3>
+References: <20240517-b4-sio-read_write-v3-1-f180df0a19e6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH v2 09/12] cachefiles: defer exposing anon_fd until after
- copy_to_user() succeeds
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- libaokun@huaweicloud.com
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-10-libaokun@huaweicloud.com>
- <db7ae78c-857b-45ba-94dc-63c02757e0b2@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <db7ae78c-857b-45ba-94dc-63c02757e0b2@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAn9g7PNUtm6nK8NA--.6529S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww43ur4fZw43CFW5XF1fJFb_yoWxJr1kpF
-	WakFW3KFy8WFW8urn7AFZ8XFySy3y8A3ZrW34Fga4rArnFgryF9r1jkr98uF15Ar97Grs3
-	tF4UCr97Gr1jy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3
-	Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUq38nUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517-b4-sio-read_write-v3-1-f180df0a19e6@google.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: E847E20CBB
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-On 2024/5/20 17:39, Jingbo Xu wrote:
->
-> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> After installing the anonymous fd, we can now see it in userland and close
->> it. However, at this point we may not have gotten the reference count of
->> the cache, but we will put it during colse fd, so this may cause a cache
->> UAF.
->>
->> So grab the cache reference count before fd_install(). In addition, by
->> kernel convention, fd is taken over by the user land after fd_install(),
->> and the kernel should not call close_fd() after that, i.e., it should call
->> fd_install() after everything is ready, thus fd_install() is called after
->> copy_to_user() succeeds.
->>
->> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
->> Suggested-by: Hou Tao <houtao1@huawei.com>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> ---
->>   fs/cachefiles/ondemand.c | 53 +++++++++++++++++++++++++---------------
->>   1 file changed, 33 insertions(+), 20 deletions(-)
->>
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index d2d4e27fca6f..3a36613e00a7 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -4,6 +4,11 @@
->>   #include <linux/uio.h>
->>   #include "internal.h"
->>   
->> +struct anon_file {
->> +	struct file *file;
->> +	int fd;
->> +};
->> +
->>   static inline void cachefiles_req_put(struct cachefiles_req *req)
->>   {
->>   	if (refcount_dec_and_test(&req->ref))
->> @@ -263,14 +268,14 @@ int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
->>   	return 0;
->>   }
->>   
->
->> -static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->> +static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
->> +				      struct anon_file *anon_file)
->
-> How about:
->
-> int cachefiles_ondemand_get_fd(struct cachefiles_req *req, int *fd,
-> struct file *file) ?
->
-> It isn't worth introducing a new structure as it is used only for
-> parameter passing.
->
-It's just a different code style preference, and internally we think
+On Fri 17-05-24 00:29:06, Justin Stitt wrote:
+> When running syzkaller with the newly reintroduced signed integer
+> overflow sanitizer we encounter this report:
+> 
+> UBSAN: signed-integer-overflow in ../fs/read_write.c:91:10
+> 9223372036854775807 + 4096 cannot be represented in type 'loff_t' (aka 'long long')
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x93/0xd0
+>  handle_overflow+0x171/0x1b0
+>  generic_file_llseek_size+0x35b/0x380
+> 
+> ... amongst others:
+> UBSAN: signed-integer-overflow in ../fs/read_write.c:1657:12
+> 142606336 - -9223372036854775807 cannot be represented in type 'loff_t' (aka 'long long')
+> ...
+> UBSAN: signed-integer-overflow in ../fs/read_write.c:1666:11
+> 9223372036854775807 - -9223231299366420479 cannot be represented in type 'loff_t' (aka 'long long')
+> 
+> Fix the accidental overflow in these position and offset calculations
+> by checking for negative position values, using check_add_overflow()
+> helpers and clamping values to expected ranges.
+> 
+> Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+> Closes: https://github.com/KSPP/linux/issues/358
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
 
-it makes the code look clearer when encapsulated this way.
+Except for the unfortunate wording in the changelog, the code actually
+looks easier to grasp to me and if it helps the compiler as well, I'm in
+favor of this change (but I definitely don't want to overrule Al if he
+hates it ;)).
 
->>   {
->>   	struct cachefiles_object *object;
->>   	struct cachefiles_cache *cache;
->>   	struct cachefiles_open *load;
->> -	struct file *file;
->>   	u32 object_id;
->> -	int ret, fd;
->> +	int ret;
->>   
->>   	object = cachefiles_grab_object(req->object,
->>   			cachefiles_obj_get_ondemand_fd);
->> @@ -282,16 +287,16 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   	if (ret < 0)
->>   		goto err;
->>   
->> -	fd = get_unused_fd_flags(O_WRONLY);
->> -	if (fd < 0) {
->> -		ret = fd;
->> +	anon_file->fd = get_unused_fd_flags(O_WRONLY);
->> +	if (anon_file->fd < 0) {
->> +		ret = anon_file->fd;
->>   		goto err_free_id;
->>   	}
->>   
->> -	file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
->> -				  object, O_WRONLY);
->> -	if (IS_ERR(file)) {
->> -		ret = PTR_ERR(file);
->> +	anon_file->file = anon_inode_getfile("[cachefiles]",
->> +				&cachefiles_ondemand_fd_fops, object, O_WRONLY);
->> +	if (IS_ERR(anon_file->file)) {
->> +		ret = PTR_ERR(anon_file->file);
->>   		goto err_put_fd;
->>   	}
->>   
->> @@ -299,16 +304,15 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   	if (object->ondemand->ondemand_id > 0) {
->>   		spin_unlock(&object->ondemand->lock);
->>   		/* Pair with check in cachefiles_ondemand_fd_release(). */
->> -		file->private_data = NULL;
->> +		anon_file->file->private_data = NULL;
->>   		ret = -EEXIST;
->>   		goto err_put_file;
->>   	}
->>   
->> -	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
->> -	fd_install(fd, file);
->> +	anon_file->file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
->>   
->>   	load = (void *)req->msg.data;
->> -	load->fd = fd;
->> +	load->fd = anon_file->fd;
->>   	object->ondemand->ondemand_id = object_id;
->>   	spin_unlock(&object->ondemand->lock);
->>   
->> @@ -317,9 +321,11 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   	return 0;
->>   
->>   err_put_file:
->> -	fput(file);
->> +	fput(anon_file->file);
->> +	anon_file->file = NULL;
-> When cachefiles_ondemand_get_fd() returns failure, anon_file->file is
-> not used, and thus I don't think it is worth resetting anon_file->file
-> to NULL. Or we could assign fd and struct file at the very end when all
-> succeed.
-Nulling pointers that are no longer in use is a safer coding convention,
-which goes some way to avoiding double free or use-after-free.
-Moreover it's in the error branch, so it doesn't cost anything.
->>   err_put_fd:
->> -	put_unused_fd(fd);
->> +	put_unused_fd(anon_file->fd);
->> +	anon_file->fd = ret;
-> Ditto.
->
->>   err_free_id:
->>   	xa_erase(&cache->ondemand_ids, object_id);
->>   err:
->> @@ -376,6 +382,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   	struct cachefiles_msg *msg;
->>   	size_t n;
->>   	int ret = 0;
->> +	struct anon_file anon_file;
->>   	XA_STATE(xas, &cache->reqs, cache->req_id_next);
->>   
->>   	xa_lock(&cache->reqs);
->> @@ -409,7 +416,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   	xa_unlock(&cache->reqs);
->>   
->>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
->> -		ret = cachefiles_ondemand_get_fd(req);
->> +		ret = cachefiles_ondemand_get_fd(req, &anon_file);
->>   		if (ret)
->>   			goto out;
->>   	}
->> @@ -417,10 +424,16 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   	msg->msg_id = xas.xa_index;
->>   	msg->object_id = req->object->ondemand->ondemand_id;
->>   
->> -	if (copy_to_user(_buffer, msg, n) != 0) {
->> +	if (copy_to_user(_buffer, msg, n) != 0)
->>   		ret = -EFAULT;
->> -		if (msg->opcode == CACHEFILES_OP_OPEN)
->> -			close_fd(((struct cachefiles_open *)msg->data)->fd);
->> +
->> +	if (msg->opcode == CACHEFILES_OP_OPEN) {
->> +		if (ret < 0) {
->> +			fput(anon_file.file);
->> +			put_unused_fd(anon_file.fd);
->> +			goto out;
->> +		}
->> +		fd_install(anon_file.fd, anon_file.file);
->>   	}
->>   out:
->>   	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
+Regarding the code:
 
+> @@ -1467,8 +1470,8 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+>  
+>  	/* Don't allow overlapped copying within the same file. */
+>  	if (inode_in == inode_out &&
+> -	    pos_out + count > pos_in &&
+> -	    pos_out < pos_in + count)
+> +	    out_sum > pos_in &&
+> +	    pos_out < in_sum)
+>  		return -EINVAL;
 
+This is actually subtly wrong becaue 'count' could have been updated
+(shrinked) between the check_add_overflow() and this place. So please keep
+the old checks here.
+
+> @@ -1649,6 +1652,9 @@ int generic_write_check_limits(struct file *file, loff_t pos, loff_t *count)
+>  	loff_t max_size = inode->i_sb->s_maxbytes;
+>  	loff_t limit = rlimit(RLIMIT_FSIZE);
+>  
+> +	if (pos < 0)
+> +		return -EINVAL;
+> +
+>  	if (limit != RLIM_INFINITY) {
+>  		if (pos >= limit) {
+>  			send_sig(SIGXFSZ, current, 0);
+
+Here I'm a bit confused. How is this related to the signed overflow
+handling?
+
+								Honza
 -- 
-With Best Regards,
-Baokun Li
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
