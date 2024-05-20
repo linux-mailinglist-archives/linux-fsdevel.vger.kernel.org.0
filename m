@@ -1,48 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-19814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A208C9EDA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 16:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBE28C9F21
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 16:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5631C21222
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 14:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5F61F22331
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 14:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51072136E26;
-	Mon, 20 May 2024 14:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61786136E23;
+	Mon, 20 May 2024 14:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggletEnJ"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cOVuLHw2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622E7C0B2;
-	Mon, 20 May 2024 14:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289A6136E17;
+	Mon, 20 May 2024 14:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716215604; cv=none; b=ZehN82VuTMLd0hMvUz7U2bvMLBcCHTkkVCe0mw0ULMXKYZKqKtw+DVYIFAsIC7yCA96Byaxdqdva+BeQwGGuqEaP6G5HsrRFFfCl6Fm1PkueKJxAOaW1bwqFrne2HDdvVk3JCI9mCqIaQfh7AXmTZtkla6TL49cDJM5wGc7ChOI=
+	t=1716216992; cv=none; b=T4rJy0odEnjvBJaH1ZluXkHwQu8PsMRT+MHLCFJ38F3qkai/XOo+goPu+L2Nz+tTFZSCwkouaBzrkKzYUTp4X0sNSaGHcagr/QNledeoFQbTOWtW4szSY0bearbY6ezcpyAh+hgZfG+wBBrTa6EimtbPStlDZR5reDvXvNh7QdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716215604; c=relaxed/simple;
-	bh=xciCHReFFZlVddQDu0g7FFTsuuoF7H/QKFVGKEg8Gc4=;
+	s=arc-20240116; t=1716216992; c=relaxed/simple;
+	bh=3euA/B2Ndw3+UOUm+1CJ/b2zdJ4byzsMpwVOLQCS0wE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZEqlV5guO/Ct8vqbCOTk5eiTvEjLIiJPon8L5Gty0iWGAivT9MuvzSn9oKK53gtc7vKbxMzBljdZcAkwY7t5ZZovx1WKUTz6GJrNElDJXrIvn6FCLdWhBZnReaKob+33gi/mJpSLEp8TNsQIt1T6J7AYKW/jDUFl9SpdlIyXnEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggletEnJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D3EC2BD10;
-	Mon, 20 May 2024 14:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716215604;
-	bh=xciCHReFFZlVddQDu0g7FFTsuuoF7H/QKFVGKEg8Gc4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ggletEnJVNvT+XMfBN6K1gVjC0KEbb4ExeLzLf0vbaRRHkZ7IEvEOZKQ/PDc2oi8E
-	 pXage4QdiC0oUqSrpJiUeB0dKqWhB9I2hK5C8yyHuxu3ceh9gv3Z3LhdYf2h19+aDY
-	 oFvXuSOCMpaBZfU2sTrfs2yKp2E1sJ2bpIDWvK9q4yAf2KdBD459pZm2g4WzKYdPaZ
-	 9LKPkZgdyYVLe5mOYkhyVJZG4nDEp5EiHkvCVT78MBz3DJ+jvCWsC1a70wZeVO+0qJ
-	 P7lIZ7Cvagfs8b82Dg3wnyXYXdq61GunvMX/02kzLwD+9UncB7By2qWgOYlHFsdMqd
-	 ZZ624nKVYYE4w==
-Message-ID: <c31f663f-36c0-4db2-8bf6-8e3c699073ca@kernel.org>
-Date: Mon, 20 May 2024 16:33:15 +0200
+	 In-Reply-To:Content-Type; b=LzyXgA8MyyywySTSCo9fG9/dkf7FyD0A9vzbAEnz8X+axiN+c0ROhpV6WDnjohfMWMh304dOOPcqRskMAAJWAe9BArUTcKyBJJf8S/53tqPH+/5HiLUs13fVrpinMO5ABfrxta9ghVChWtH61dmCSuPmSkU7kj3pEwlqO2341Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cOVuLHw2; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716216986; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=woW0egPVHo7vV4ioncHQH2/4MJ0iNGLsOFQNC6nWlWc=;
+	b=cOVuLHw2kUK5kBghXYJu0fH5hYx8XEvFaBp8SYquOQSvudnuTpQ+glrWs/j7/79M09Gn1EP4KAMWZmLwGTylld1kUUEUTVp6vd12x1cdS567bDrujR9jJTXby7FuYNmyHJyL9IoUBXvp6Vpuq15Fu+Ghkf7CYuFFlNHhF7bqhb8=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R821e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6ulvwZ_1716216984;
+Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W6ulvwZ_1716216984)
+          by smtp.aliyun-inc.com;
+          Mon, 20 May 2024 22:56:25 +0800
+Message-ID: <b75ec357-4189-4ea6-8f16-b0e2923921fd@linux.alibaba.com>
+Date: Mon, 20 May 2024 22:56:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,301 +49,266 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 01/12] block: Introduce queue limits and sysfs for
- copy-offload support
-To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
- hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
- joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520102830epcas5p27274901f3d0c2738c515709890b1dec4@epcas5p2.samsung.com>
- <20240520102033.9361-2-nj.shetty@samsung.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240520102033.9361-2-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
+ reuse
+To: Baokun Li <libaokun@huaweicloud.com>, Jeff Layton <jlayton@kernel.org>,
+ netfs@lists.linux.dev, dhowells@redhat.com
+Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
+References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
+ <20240515125136.3714580-5-libaokun@huaweicloud.com>
+ <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
+ <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
+ <4b1584787dd54bb95d700feae1ca498c40429551.camel@kernel.org>
+ <a4d57830-2bde-901f-72c4-e1a3f714faa5@huaweicloud.com>
+ <d82277a4-aeab-4eb7-bdfd-377edd8b8737@linux.alibaba.com>
+ <bc76e529-7904-0650-7fa9-dc5561ff6668@huaweicloud.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <bc76e529-7904-0650-7fa9-dc5561ff6668@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024/05/20 12:20, Nitesh Shetty wrote:
-> Add device limits as sysfs entries,
-> 	- copy_max_bytes (RW)
-> 	- copy_max_hw_bytes (RO)
+Hi Baokun,
+
+On 2024/5/20 21:24, Baokun Li wrote:
+> On 2024/5/20 20:54, Gao Xiang wrote:
+>>
+>>
+>> On 2024/5/20 20:42, Baokun Li wrote:
+>>> On 2024/5/20 18:04, Jeff Layton wrote:
+>>>> On Mon, 2024-05-20 at 12:06 +0800, Baokun Li wrote:
+>>>>> Hi Jeff,
+>>>>>
+>>>>> Thank you very much for your review!
+>>>>>
+>>>>> On 2024/5/19 19:11, Jeff Layton wrote:
+>>>>>> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
+>>>>>>> From: Baokun Li <libaokun1@huawei.com>
+>>>>>>>
+>>>>>>> Reusing the msg_id after a maliciously completed reopen request may cause
+>>>>>>> a read request to remain unprocessed and result in a hung, as shown below:
+>>>>>>>
+>>>>>>>          t1       |      t2       |      t3
+>>>>>>> -------------------------------------------------
+>>>>>>> cachefiles_ondemand_select_req
+>>>>>>>    cachefiles_ondemand_object_is_close(A)
+>>>>>>>    cachefiles_ondemand_set_object_reopening(A)
+>>>>>>>    queue_work(fscache_object_wq, &info->work)
+>>>>>>>                   ondemand_object_worker
+>>>>>>>                    cachefiles_ondemand_init_object(A)
+>>>>>>>                     cachefiles_ondemand_send_req(OPEN)
+>>>>>>>                       // get msg_id 6
+>>>>>>> wait_for_completion(&req_A->done)
+>>>>>>> cachefiles_ondemand_daemon_read
+>>>>>>>    // read msg_id 6 req_A
+>>>>>>>    cachefiles_ondemand_get_fd
+>>>>>>>    copy_to_user
+>>>>>>>                                   // Malicious completion msg_id 6
+>>>>>>>                                   copen 6,-1
+>>>>>>> cachefiles_ondemand_copen
+>>>>>>> complete(&req_A->done)
+>>>>>>>                                    // will not set the object to close
+>>>>>>>                                    // because ondemand_id && fd is valid.
+>>>>>>>
+>>>>>>>                   // ondemand_object_worker() is done
+>>>>>>>                   // but the object is still reopening.
+>>>>>>>
+>>>>>>>                                   // new open req_B
+>>>>>>> cachefiles_ondemand_init_object(B)
+>>>>>>> cachefiles_ondemand_send_req(OPEN)
+>>>>>>>                                    // reuse msg_id 6
+>>>>>>> process_open_req
+>>>>>>>    copen 6,A.size
+>>>>>>>    // The expected failed copen was executed successfully
+>>>>>>>
+>>>>>>> Expect copen to fail, and when it does, it closes fd, which sets the
+>>>>>>> object to close, and then close triggers reopen again. However, due to
+>>>>>>> msg_id reuse resulting in a successful copen, the anonymous fd is not
+>>>>>>> closed until the daemon exits. Therefore read requests waiting for reopen
+>>>>>>> to complete may trigger hung task.
+>>>>>>>
+>>>>>>> To avoid this issue, allocate the msg_id cyclically to avoid reusing the
+>>>>>>> msg_id for a very short duration of time.
+>>>>>>>
+>>>>>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+>>>>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>>>>>> ---
+>>>>>>>    fs/cachefiles/internal.h |  1 +
+>>>>>>>    fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
+>>>>>>>    2 files changed, 17 insertions(+), 4 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+>>>>>>> index 8ecd296cc1c4..9200c00f3e98 100644
+>>>>>>> --- a/fs/cachefiles/internal.h
+>>>>>>> +++ b/fs/cachefiles/internal.h
+>>>>>>> @@ -128,6 +128,7 @@ struct cachefiles_cache {
+>>>>>>>        unsigned long            req_id_next;
+>>>>>>>        struct xarray            ondemand_ids;    /* xarray for ondemand_id allocation */
+>>>>>>>        u32                ondemand_id_next;
+>>>>>>> +    u32                msg_id_next;
+>>>>>>>    };
+>>>>>>>    static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
+>>>>>>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>>>>>>> index f6440b3e7368..b10952f77472 100644
+>>>>>>> --- a/fs/cachefiles/ondemand.c
+>>>>>>> +++ b/fs/cachefiles/ondemand.c
+>>>>>>> @@ -433,20 +433,32 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
+>>>>>>>            smp_mb();
+>>>>>>>            if (opcode == CACHEFILES_OP_CLOSE &&
+>>>>>>> - !cachefiles_ondemand_object_is_open(object)) {
+>>>>>>> + !cachefiles_ondemand_object_is_open(object)) {
+>>>>>>> WARN_ON_ONCE(object->ondemand->ondemand_id == 0);
+>>>>>>>                xas_unlock(&xas);
+>>>>>>>                ret = -EIO;
+>>>>>>>                goto out;
+>>>>>>>            }
+>>>>>>> -        xas.xa_index = 0;
+>>>>>>> +        /*
+>>>>>>> +         * Cyclically find a free xas to avoid msg_id reuse that would
+>>>>>>> +         * cause the daemon to successfully copen a stale msg_id.
+>>>>>>> +         */
+>>>>>>> +        xas.xa_index = cache->msg_id_next;
+>>>>>>>            xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
+>>>>>>> +        if (xas.xa_node == XAS_RESTART) {
+>>>>>>> +            xas.xa_index = 0;
+>>>>>>> +            xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
+>>>>>>> +        }
+>>>>>>>            if (xas.xa_node == XAS_RESTART)
+>>>>>>>                xas_set_err(&xas, -EBUSY);
+>>>>>>> +
+>>>>>>>            xas_store(&xas, req);
+>>>>>>> -        xas_clear_mark(&xas, XA_FREE_MARK);
+>>>>>>> -        xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+>>>>>>> +        if (xas_valid(&xas)) {
+>>>>>>> +            cache->msg_id_next = xas.xa_index + 1;
+>>>>>> If you have a long-standing stuck request, could this counter wrap
+>>>>>> around and you still end up with reuse?
+>>>>> Yes, msg_id_next is declared to be of type u32 in the hope that when
+>>>>> xa_index == UINT_MAX, a wrap around occurs so that msg_id_next
+>>>>> goes to zero. Limiting xa_index to no more than UINT_MAX is to avoid
+>>>>> the xarry being too deep.
+>>>>>
+>>>>> If msg_id_next is equal to the id of a long-standing stuck request
+>>>>> after the wrap-around, it is true that the reuse in the above problem
+>>>>> may also occur.
+>>>>>
+>>>>> But I feel that a long stuck request is problematic in itself, it means
+>>>>> that after we have sent 4294967295 requests, the first one has not
+>>>>> been processed yet, and even if we send a million requests per
+>>>>> second, this one hasn't been completed for more than an hour.
+>>>>>
+>>>>> We have a keep-alive process that pulls the daemon back up as
+>>>>> soon as it exits, and there is a timeout mechanism for requests in
+>>>>> the daemon to prevent the kernel from waiting for long periods
+>>>>> of time. In other words, we should avoid the situation where
+>>>>> a request is stuck for a long period of time.
+>>>>>
+>>>>> If you think UINT_MAX is not enough, perhaps we could raise
+>>>>> the maximum value of msg_id_next to ULONG_MAX?
+>>>>>> Maybe this should be using
+>>>>>> ida_alloc/free instead, which would prevent that too?
+>>>>>>
+>>>>> The id reuse here is that the kernel has finished the open request
+>>>>> req_A and freed its id_A and used it again when sending the open
+>>>>> request req_B, but the daemon is still working on req_A, so the
+>>>>> copen id_A succeeds but operates on req_B.
+>>>>>
+>>>>> The id that is being used by the kernel will not be allocated here
+>>>>> so it seems that ida _alloc/free does not prevent reuse either,
+>>>>> could you elaborate a bit more how this works?
+>>>>>
+>>>> ida_alloc and free absolutely prevent reuse while the id is in use.
+>>>> That's sort of the point of those functions. Basically it uses a set of
+>>>> bitmaps in an xarray to track which IDs are in use, so ida_alloc only
+>>>> hands out values which are not in use. See the comments over
+>>>> ida_alloc_range() in lib/idr.c.
+>>>>
+>>> Thank you for the explanation!
+>>>
+>>> The logic now provides the same guarantees as ida_alloc/free.
+>>> The "reused" id, indeed, is no longer in use in the kernel, but it is still
+>>> in use in the userland, so a multi-threaded daemon could be handling
+>>> two different requests for the same msg_id at the same time.
+>>>
+>>> Previously, the logic for allocating msg_ids was to start at 0 and look
+>>> for a free xas.index, so it was possible for an id to be allocated to a
+>>> new request just as the id was being freed.
+>>>
+>>> With the change to cyclic allocation, the kernel will not use the same
+>>> id again until INT_MAX requests have been sent, and during the time
+>>> it takes to send requests, the daemon has enough time to process
+>>> requests whose ids are still in use by the daemon, but have already
+>>> been freed in the kernel.
+>>
+>> Again, If I understand correctly, I think the main point
+>> here is
+>>
+>> wait_for_completion(&req_A->done)
+>>
+>> which could hang due to some malicious deamon.  But I think it
+>> should be switched to wait_for_completion_killable() instead. *
+>> It's up to users to kill the mount instance if there is a
+>> malicious user daemon.
+>>
+>> So in that case, hung task will not be triggered anymore, and
+>> you don't need to care about cyclic allocation too.
+>>
+>> Thanks,
+>> Gao Xiang
+> Hi Xiang,
 > 
-> Above limits help to split the copy payload in block layer.
-> copy_max_bytes: maximum total length of copy in single payload.
-> copy_max_hw_bytes: Reflects the device supported maximum limit.
+> The problem is not as simple as you think.
 > 
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> ---
->  Documentation/ABI/stable/sysfs-block | 23 +++++++++++++++
->  block/blk-settings.c                 | 34 ++++++++++++++++++++--
->  block/blk-sysfs.c                    | 43 ++++++++++++++++++++++++++++
->  include/linux/blkdev.h               | 14 +++++++++
->  4 files changed, 112 insertions(+), 2 deletions(-)
+> If you make it killable, it just won't trigger a hung task in
+> cachefiles_ondemand_send_req(), and the process waiting for the
+> resource in question will also be hung.
 > 
-> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-> index 831f19a32e08..52d8a253bf8e 100644
-> --- a/Documentation/ABI/stable/sysfs-block
-> +++ b/Documentation/ABI/stable/sysfs-block
-> @@ -165,6 +165,29 @@ Description:
->  		last zone of the device which may be smaller.
->  
->  
-> +What:		/sys/block/<disk>/queue/copy_max_bytes
-> +Date:		May 2024
-> +Contact:	linux-block@vger.kernel.org
-> +Description:
-> +		[RW] This is the maximum number of bytes that the block layer
-> +		will allow for a copy request. This is always smaller or
-> +		equal to the maximum size allowed by the hardware, indicated by
-> +		'copy_max_hw_bytes'. An attempt to set a value higher than
-> +		'copy_max_hw_bytes' will truncate this to 'copy_max_hw_bytes'.
-> +		Writing '0' to this file will disable offloading copies for this
-> +		device, instead copy is done via emulation.
-> +
-> +
-> +What:		/sys/block/<disk>/queue/copy_max_hw_bytes
-> +Date:		May 2024
-> +Contact:	linux-block@vger.kernel.org
-> +Description:
-> +		[RO] This is the maximum number of bytes that the hardware
-> +		will allow for single data copy request.
-> +		A value of 0 means that the device does not support
-> +		copy offload.
-> +
-> +
->  What:		/sys/block/<disk>/queue/crypto/
->  Date:		February 2022
->  Contact:	linux-block@vger.kernel.org
-> diff --git a/block/blk-settings.c b/block/blk-settings.c
-> index a7fe8e90240a..67010ed82422 100644
-> --- a/block/blk-settings.c
-> +++ b/block/blk-settings.c
-> @@ -52,6 +52,9 @@ void blk_set_stacking_limits(struct queue_limits *lim)
->  	lim->max_write_zeroes_sectors = UINT_MAX;
->  	lim->max_zone_append_sectors = UINT_MAX;
->  	lim->max_user_discard_sectors = UINT_MAX;
-> +	lim->max_copy_hw_sectors = UINT_MAX;
-> +	lim->max_copy_sectors = UINT_MAX;
-> +	lim->max_user_copy_sectors = UINT_MAX;
->  }
->  EXPORT_SYMBOL(blk_set_stacking_limits);
->  
-> @@ -219,6 +222,9 @@ static int blk_validate_limits(struct queue_limits *lim)
->  		lim->misaligned = 0;
->  	}
->  
-> +	lim->max_copy_sectors =
-> +		min(lim->max_copy_hw_sectors, lim->max_user_copy_sectors);
-> +
->  	return blk_validate_zoned_limits(lim);
->  }
->  
-> @@ -231,10 +237,11 @@ int blk_set_default_limits(struct queue_limits *lim)
->  {
->  	/*
->  	 * Most defaults are set by capping the bounds in blk_validate_limits,
-> -	 * but max_user_discard_sectors is special and needs an explicit
-> -	 * initialization to the max value here.
-> +	 * but max_user_discard_sectors and max_user_copy_sectors are special
-> +	 * and needs an explicit initialization to the max value here.
+> * When the open/read request in the mount process gets stuck,
+>    the sync/drop cache will trigger a hung task panic in iterate_supers()
+>    as it waits for sb->umount to be unlocked.
+> * After umount, anonymous fd is not closed causing a hung task panic
+>    in fscache_hash_cookie() because of waiting for cookie unhash.
+> * The dentry is in a loop up state, because the read request is not being
+>    processed, another process looking for the same dentry is waiting for
+>    the previous lookup to finish, which triggers a hung task panic in
+>    d_alloc_parallel().
 
-s/needs/need
 
->  	 */
->  	lim->max_user_discard_sectors = UINT_MAX;
-> +	lim->max_user_copy_sectors = UINT_MAX;
->  	return blk_validate_limits(lim);
->  }
->  
-> @@ -316,6 +323,25 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
->  }
->  EXPORT_SYMBOL(blk_queue_max_discard_sectors);
->  
-> +/*
-> + * blk_queue_max_copy_hw_sectors - set max sectors for a single copy payload
-> + * @q:	the request queue for the device
-> + * @max_copy_sectors: maximum number of sectors to copy
-> + */
-> +void blk_queue_max_copy_hw_sectors(struct request_queue *q,
-> +				   unsigned int max_copy_sectors)
-> +{
-> +	struct queue_limits *lim = &q->limits;
-> +
-> +	if (max_copy_sectors > (BLK_COPY_MAX_BYTES >> SECTOR_SHIFT))
-> +		max_copy_sectors = BLK_COPY_MAX_BYTES >> SECTOR_SHIFT;
-> +
-> +	lim->max_copy_hw_sectors = max_copy_sectors;
-> +	lim->max_copy_sectors =
-> +		min(max_copy_sectors, lim->max_user_copy_sectors);
-> +}
-> +EXPORT_SYMBOL_GPL(blk_queue_max_copy_hw_sectors);
+As for your sb->umount, d_alloc_parallel() or even i_rwsem,
+which are all currently unkillable, also see some previous
+threads like:
 
-Hmm... Such helper seems to not fit with Christoph's changes of the limits
-initialization as that is not necessarily done using &q->limits but depending on
-the driver, a different limit structure. So shouldn't this function be passed a
-queue_limits struct pointer instead of the request queue pointer ?
+https://lore.kernel.org/linux-fsdevel/CAJfpegu6v1fRAyLvFLOPUSAhx5aAGvPGjBWv-TDQjugqjUA_hQ@mail.gmail.com/T/#u
 
-> +
->  /**
->   * blk_queue_max_secure_erase_sectors - set max sectors for a secure erase
->   * @q:  the request queue for the device
-> @@ -633,6 +659,10 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
->  	t->max_segment_size = min_not_zero(t->max_segment_size,
->  					   b->max_segment_size);
->  
-> +	t->max_copy_sectors = min(t->max_copy_sectors, b->max_copy_sectors);
-> +	t->max_copy_hw_sectors = min(t->max_copy_hw_sectors,
-> +				     b->max_copy_hw_sectors);
-> +
->  	t->misaligned |= b->misaligned;
->  
->  	alignment = queue_limit_alignment_offset(b, start);
-> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> index f0f9314ab65c..805c2b6b0393 100644
-> --- a/block/blk-sysfs.c
-> +++ b/block/blk-sysfs.c
-> @@ -205,6 +205,44 @@ static ssize_t queue_discard_zeroes_data_show(struct request_queue *q, char *pag
->  	return queue_var_show(0, page);
->  }
->  
-> +static ssize_t queue_copy_hw_max_show(struct request_queue *q, char *page)
-> +{
-> +	return sprintf(page, "%llu\n", (unsigned long long)
-> +		       q->limits.max_copy_hw_sectors << SECTOR_SHIFT);
-> +}
-> +
-> +static ssize_t queue_copy_max_show(struct request_queue *q, char *page)
-> +{
-> +	return sprintf(page, "%llu\n", (unsigned long long)
-> +		       q->limits.max_copy_sectors << SECTOR_SHIFT);
-> +}
+I don't think it's the issue of on-demand cachefiles, even
+NVMe or virtio-blk or networking can be stuck in
+.lookup, fill_sb or whatever.
 
-Given that you repeat the same pattern twice, may be add a queue_var64_show()
-helper ? (naming can be changed).
+Which can makes sb->umount, d_alloc_parallel() or even
+i_rwsem unkillable.
 
-> +
-> +static ssize_t queue_copy_max_store(struct request_queue *q, const char *page,
-> +				    size_t count)
-> +{
-> +	unsigned long max_copy_bytes;
-> +	struct queue_limits lim;
-> +	ssize_t ret;
-> +	int err;
-> +
-> +	ret = queue_var_store(&max_copy_bytes, page, count);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (max_copy_bytes & (queue_logical_block_size(q) - 1))
-> +		return -EINVAL;
-> +
-> +	blk_mq_freeze_queue(q);
-> +	lim = queue_limits_start_update(q);
-> +	lim.max_user_copy_sectors = max_copy_bytes >> SECTOR_SHIFT;
+> 
+> Can all this be made killable?
 
-max_copy_bytes is an unsigned long, so 64 bits on 64-bit arch and
-max_user_copy_sectors is an unsigned int, so 32-bits. There are thus no
-guarantees that this will not overflow. A check is needed.
+I can understand your hung_task_panic concern but it
+sounds like a workaround to me anyway.
 
-> +	err = queue_limits_commit_update(q, &lim);
-> +	blk_mq_unfreeze_queue(q);
-> +
-> +	if (err)
+Thanks,
+Gao Xiang
 
-You can reuse ret here. No need for adding the err variable.
-
-> +		return err;
-> +	return count;
-> +}
-> +
->  static ssize_t queue_write_same_max_show(struct request_queue *q, char *page)
->  {
->  	return queue_var_show(0, page);
-> @@ -505,6 +543,9 @@ QUEUE_RO_ENTRY(queue_nr_zones, "nr_zones");
->  QUEUE_RO_ENTRY(queue_max_open_zones, "max_open_zones");
->  QUEUE_RO_ENTRY(queue_max_active_zones, "max_active_zones");
->  
-> +QUEUE_RO_ENTRY(queue_copy_hw_max, "copy_max_hw_bytes");
-> +QUEUE_RW_ENTRY(queue_copy_max, "copy_max_bytes");
-> +
->  QUEUE_RW_ENTRY(queue_nomerges, "nomerges");
->  QUEUE_RW_ENTRY(queue_rq_affinity, "rq_affinity");
->  QUEUE_RW_ENTRY(queue_poll, "io_poll");
-> @@ -618,6 +659,8 @@ static struct attribute *queue_attrs[] = {
->  	&queue_discard_max_entry.attr,
->  	&queue_discard_max_hw_entry.attr,
->  	&queue_discard_zeroes_data_entry.attr,
-> +	&queue_copy_hw_max_entry.attr,
-> +	&queue_copy_max_entry.attr,
->  	&queue_write_same_max_entry.attr,
->  	&queue_write_zeroes_max_entry.attr,
->  	&queue_zone_append_max_entry.attr,
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index aefdda9f4ec7..109d9f905c3c 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -309,6 +309,10 @@ struct queue_limits {
->  	unsigned int		discard_alignment;
->  	unsigned int		zone_write_granularity;
->  
-> +	unsigned int		max_copy_hw_sectors;
-> +	unsigned int		max_copy_sectors;
-> +	unsigned int		max_user_copy_sectors;
-> +
->  	unsigned short		max_segments;
->  	unsigned short		max_integrity_segments;
->  	unsigned short		max_discard_segments;
-> @@ -933,6 +937,8 @@ void blk_queue_max_secure_erase_sectors(struct request_queue *q,
->  		unsigned int max_sectors);
->  extern void blk_queue_max_discard_sectors(struct request_queue *q,
->  		unsigned int max_discard_sectors);
-> +extern void blk_queue_max_copy_hw_sectors(struct request_queue *q,
-> +					  unsigned int max_copy_sectors);
->  extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
->  		unsigned int max_write_same_sectors);
->  extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
-> @@ -1271,6 +1277,14 @@ static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
->  	return bdev_get_queue(bdev)->limits.discard_granularity;
->  }
->  
-> +/* maximum copy offload length, this is set to 128MB based on current testing */
-
-Current testing will not be current in a while... So may be simply say
-"arbitrary" or something. Also please capitalize the first letter of the
-comment. So something like:
-
-/* Arbitrary absolute limit of 128 MB for copy offload. */
-
-> +#define BLK_COPY_MAX_BYTES		(1 << 27)
-
-Also, it is not clear from the name if this is a soft limit or a cap on the
-hardware limit... So at least please adjust the comment to say which one it is.
-
-> +
-> +static inline unsigned int bdev_max_copy_sectors(struct block_device *bdev)
-> +{
-> +	return bdev_get_queue(bdev)->limits.max_copy_sectors;
-> +}
-> +
->  static inline unsigned int
->  bdev_max_secure_erase_sectors(struct block_device *bdev)
->  {
-
--- 
-Damien Le Moal
-Western Digital Research
-
+> 
+> Thanks,
+> Baokun
+>>
+>>>
+>>> Regards,
+>>> Baokun
+>>>>>>> + xas_clear_mark(&xas, XA_FREE_MARK);
+>>>>>>> +            xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+>>>>>>> +        }
+>>>>>>>            xas_unlock(&xas);
+>>>>>>>        } while (xas_nomem(&xas, GFP_KERNEL));
+>>>>>>>
 
