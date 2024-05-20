@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-19741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AAC8C9849
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 05:31:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF4B8C986F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 05:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9791C218F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 03:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DBBEB22462
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 03:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5906A10958;
-	Mon, 20 May 2024 03:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED38125B9;
+	Mon, 20 May 2024 03:36:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C185107A9;
-	Mon, 20 May 2024 03:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F510788;
+	Mon, 20 May 2024 03:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716175869; cv=none; b=qeJSj7sH+3BkZRwwjSevhvK/+/+b6lm4GZmV16VzvHYWaErd0tJ5fIqU1m0qZVWNpAOZlRvu+AOB0dtgCbsdR1founw69UNtRYALxuWb+K2EPdOV8F1IMIcoi5r3A05HksO3Tx2jLtz8XUUrW+E2njRxILuerETbsITWlAmFy0o=
+	t=1716176170; cv=none; b=i81DvYzt44KWQ2q/HyRH5pifOqnWWoZVIk4BGgl0ocejt6RMm+rH74Q7bmNpkHbtCbgjYoGszz5A5kfMu6O53/ZgucuX88Ih2AOGkLSmAlQ5p1NI6IQQIxMY8oiRKQ5ahHgmY3HkjowswR0iweUiHr6vb2UqX9+W0nqBSPXVQ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716175869; c=relaxed/simple;
-	bh=bWi6GM1ZjfN+LLbqPY6EwmWWTad8t0Sg2YE6Pjjdm7w=;
+	s=arc-20240116; t=1716176170; c=relaxed/simple;
+	bh=PIs4LUEKCFOJyswjkLdkDsO6mzjKvTZTaV1HUiKSfVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXi+paxHgq4evF2VLJcL8Z4XvYFHtPkqSZu4wheWh2gtjYf3OBzZ2ZWo3co3w4px2F6cmES1p86MB2jsVCyjXiMZbT1hKY+SrwIOJfPCs8t7+dlm5/g6BooS68UGxEzsTLuXUkWTmhsygkYsB/7f73oDAqZaGKpOdkUfVTLiHxU=
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2Q90mDi5gQtWMQmXUlrWFGezqx+C4484CGDmey8Jt2O7y8Z0p+/nOadezRiADR4ezu807hf7vKFEVA/bH6OP7jh9GZ8Fkm+cOP2u34djvMDSmdF0G6drMTxHg0Vxb6HZ66gYK3xX+Sc0HvP8CqphBQXk1N12F+KU4toH1pRjEY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 94ABE46C; Sun, 19 May 2024 22:30:58 -0500 (CDT)
-Date: Sun, 19 May 2024 22:30:58 -0500
+	id 3A7FA176A; Sun, 19 May 2024 22:36:05 -0500 (CDT)
+Date: Sun, 19 May 2024 22:36:05 -0500
 From: "Serge E. Hallyn" <serge@hallyn.com>
 To: Jonathan Calmels <jcalmels@3xx0.net>
 Cc: brauner@kernel.org, ebiederm@xmission.com,
@@ -45,7 +45,7 @@ Cc: brauner@kernel.org, ebiederm@xmission.com,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
 Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-Message-ID: <20240520033058.GA1815759@mail.hallyn.com>
+Message-ID: <20240520033605.GB1815759@mail.hallyn.com>
 References: <20240516092213.6799-1-jcalmels@3xx0.net>
  <20240516092213.6799-2-jcalmels@3xx0.net>
 Precedence: bulk
@@ -131,12 +131,6 @@ On Thu, May 16, 2024 at 02:22:03AM -0700, Jonathan Calmels wrote:
 > Link: https://lore.kernel.org/containers/168547265011.24337.4306067683997517082-0@git.sr.ht
 > 
 > Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-
-Thanks! Of course we'llnsee how the conversations fall out, but
-
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
-
 > ---
 >  fs/proc/array.c              |  9 ++++++
 >  include/linux/cred.h         |  3 ++
@@ -353,6 +347,10 @@ Reviewed-by: Serge Hallyn <serge@hallyn.com>
 > +			   arg2 != PR_CAP_USERNS_LOWER) {
 > +			return -EINVAL;
 > +		} else {
+
+Sorry, I meabt to say, one nit would be that this next block
+does not need to be in an else, since every other condition returns.
+
 > +			if (arg2 == PR_CAP_USERNS_RAISE &&
 > +			    !cap_uns_is_raiseable(arg3))
 > +				return -EPERM;
