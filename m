@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-19746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF078C9897
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 06:07:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540D78C989A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 06:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66E41C218AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 04:07:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC18C1F21DC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 04:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B167911CAB;
-	Mon, 20 May 2024 04:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9802511CAB;
+	Mon, 20 May 2024 04:11:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902DC33D1;
-	Mon, 20 May 2024 04:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657E58BEA;
+	Mon, 20 May 2024 04:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716178021; cv=none; b=UQrq0iIwLxvHdxV9y4gvPokBOC5oGEJ+zNmNVhJP6/QY2gl6Cxgq7eRXG9Kqe52/9PVXEqwN0aDlkntwQLZFsqrD8VVkjiu4NJZhJibafdHd/aqKVRuL9nLQfi4ykdNuKnnpLM1QVVJ5o09dBdURnihRSEa5Vsi//TwGN2/KdX8=
+	t=1716178304; cv=none; b=TpOb5OIF9hnIUyIbRV/aqrWqDcAukLynUH3sbcx1GwWRtpCJHW8gv/JUcUwAilDcGDoC8JHF9BmTe8ibd7iRkqLeGU0eOzxV7UfnBOnSFbvDFV8J85dllxWVBX/jYq8fRyFtiXT3B+nv3xwvfMoeJg/imhZ5T+9d7+oxs6V1C+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716178021; c=relaxed/simple;
-	bh=L9/g3v/mYqx49IvYx5/NZpYemwvAs6qX12fd/huMKoA=;
+	s=arc-20240116; t=1716178304; c=relaxed/simple;
+	bh=tC9LDlard4zMxRtR34xcZn5d3Ak4zn3+EvL0kLQG+Dw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qxL/uhGbqPBRioeiS2qtNkrRiu79I/s4g26LXxwrfjSUjviLvLPGhm9aHvQmE7pc3jfHdco7dGGpmbH5ne+sil0L5NpoEWvwaNAlS3a44AIWgJbAczRIJ9wxExs6efAA9DQz8ONGFkfoEM6io72+Ss8YeCUN4e+hk38tAVYC+y4=
+	 In-Reply-To:Content-Type; b=HSgF1e/4Qy+AQXMxqHfn5akoM1uYS5mj0mW8NM1phe0/Tm2d6ypPTzVX61yKx6aI9XnqcxYoyaA+guAT4LMfbXY6CI1GutpOGFca3FxVCuwMq7NsjKyL+LH6O9BjwvgwB0u0NzkofYHUDzqUJgzIPObgstFfnoukBYtvWPB3t0o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjPCC1mN7z4f3jLL;
-	Mon, 20 May 2024 12:06:47 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjPJj0JWMz4f3jLf;
+	Mon, 20 May 2024 12:11:33 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id EB4CF1A0181;
-	Mon, 20 May 2024 12:06:52 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id BA2751A0C77;
+	Mon, 20 May 2024 12:11:38 +0800 (CST)
 Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6RFWzEpmwZWfNA--.8326S3;
-	Mon, 20 May 2024 12:06:50 +0800 (CST)
-Message-ID: <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
-Date: Mon, 20 May 2024 12:06:46 +0800
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBF3zUpmeOWfNA--.60503S3;
+	Mon, 20 May 2024 12:11:38 +0800 (CST)
+Message-ID: <0867a1de-12c5-5e0f-c9e9-0d24cab37512@huaweicloud.com>
+Date: Mon, 20 May 2024 12:11:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,195 +48,109 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.1.2
-Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
- reuse
+Subject: Re: [PATCH v2 01/12] cachefiles: remove request from xarry during
+ flush requests
 Content-Language: en-US
-To: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
- dhowells@redhat.com
-Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
- zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
  libaokun@huaweicloud.com
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
- <20240515125136.3714580-5-libaokun@huaweicloud.com>
- <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
+References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+ <20240515084601.3240503-2-libaokun@huaweicloud.com>
+ <a440cd35-18ce-4943-b370-c92f761d9bcf@linux.alibaba.com>
 From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
+In-Reply-To: <a440cd35-18ce-4943-b370-c92f761d9bcf@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAX6RFWzEpmwZWfNA--.8326S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF1fJr4UGrWxWry5WryfJFb_yoW7uw17pF
-	WakFy7KFy8WF12krZ7ZF4UJrW8K34DZFnrWrWFqry0ywn0vr1Fvryjgr1YgFyUArWxWr42
-	qF48uasIyw12yaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBF3zUpmeOWfNA--.60503S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw4kuF1DXr4fKrW5XF45GFg_yoW5Gw1rpF
+	WSyFy7Gry8Wr1kGr1DJF1UJry8J348J3WUXr1UXF18Jr4DAr1Yqr47Xr10gryUJrW8Jr4U
+	Jr1UGr9rZryUJw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
 	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
 	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
 	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
 	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
 	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
 	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWU
+	JwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUF9a9DUUUU
 X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-Hi Jeff,
-
-Thank you very much for your review!
-
-On 2024/5/19 19:11, Jeff Layton wrote:
-> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
+On 2024/5/20 10:20, Gao Xiang wrote:
+>
+>
+> On 2024/5/15 16:45, libaokun@huaweicloud.com wrote:
 >> From: Baokun Li <libaokun1@huawei.com>
+>
+>
+> The subject line can be
+> "cachefiles: remove requests from xarray during flushing requests"
+Thank you very much for the correction! I will update my patch.
+>
 >>
->> Reusing the msg_id after a maliciously completed reopen request may cause
->> a read request to remain unprocessed and result in a hung, as shown below:
+>> Even with CACHEFILES_DEAD set, we can still read the requests, so in the
+>> following concurrency the request may be used after it has been freed:
 >>
->>         t1       |      t2       |      t3
->> -------------------------------------------------
->> cachefiles_ondemand_select_req
->>   cachefiles_ondemand_object_is_close(A)
->>   cachefiles_ondemand_set_object_reopening(A)
->>   queue_work(fscache_object_wq, &info->work)
->>                  ondemand_object_worker
->>                   cachefiles_ondemand_init_object(A)
->>                    cachefiles_ondemand_send_req(OPEN)
->>                      // get msg_id 6
->>                      wait_for_completion(&req_A->done)
->> cachefiles_ondemand_daemon_read
->>   // read msg_id 6 req_A
->>   cachefiles_ondemand_get_fd
->>   copy_to_user
->>                                  // Malicious completion msg_id 6
->>                                  copen 6,-1
->>                                  cachefiles_ondemand_copen
->>                                   complete(&req_A->done)
->>                                   // will not set the object to close
->>                                   // because ondemand_id && fd is valid.
+>>       mount  |   daemon_thread1    |    daemon_thread2
+>> ------------------------------------------------------------
+>>   cachefiles_ondemand_init_object
+>>    cachefiles_ondemand_send_req
+>>     REQ_A = kzalloc(sizeof(*req) + data_len)
+>>     wait_for_completion(&REQ_A->done)
+>>              cachefiles_daemon_read
+>>               cachefiles_ondemand_daemon_read
+>>                                    // close dev fd
+>>                                    cachefiles_flush_reqs
+>> complete(&REQ_A->done)
+>>     kfree(REQ_A)
+>>                xa_lock(&cache->reqs);
+>>                cachefiles_ondemand_select_req
+>>                  req->msg.opcode != CACHEFILES_OP_READ
+>>                  // req use-after-free !!!
+>>                xa_unlock(&cache->reqs);
+>> xa_destroy(&cache->reqs)
 >>
->>                  // ondemand_object_worker() is done
->>                  // but the object is still reopening.
+>> Hence remove requests from cache->reqs when flushing them to avoid
+>> accessing freed requests.
 >>
->>                                  // new open req_B
->>                                  cachefiles_ondemand_init_object(B)
->>                                   cachefiles_ondemand_send_req(OPEN)
->>                                   // reuse msg_id 6
->> process_open_req
->>   copen 6,A.size
->>   // The expected failed copen was executed successfully
->>
->> Expect copen to fail, and when it does, it closes fd, which sets the
->> object to close, and then close triggers reopen again. However, due to
->> msg_id reuse resulting in a successful copen, the anonymous fd is not
->> closed until the daemon exits. Therefore read requests waiting for reopen
->> to complete may trigger hung task.
->>
->> To avoid this issue, allocate the msg_id cyclically to avoid reusing the
->> msg_id for a very short duration of time.
->>
->> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking 
+>> up cookie")
 >> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
+>
+> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+>
+> Thanks,
+> Gao Xiang
+Thanks a lot for the review!
+
+Cheers,
+Baokun
+>
 >> ---
->>   fs/cachefiles/internal.h |  1 +
->>   fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
->>   2 files changed, 17 insertions(+), 4 deletions(-)
+>>   fs/cachefiles/daemon.c | 1 +
+>>   1 file changed, 1 insertion(+)
 >>
->> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
->> index 8ecd296cc1c4..9200c00f3e98 100644
->> --- a/fs/cachefiles/internal.h
->> +++ b/fs/cachefiles/internal.h
->> @@ -128,6 +128,7 @@ struct cachefiles_cache {
->>   	unsigned long			req_id_next;
->>   	struct xarray			ondemand_ids;	/* xarray for ondemand_id allocation */
->>   	u32				ondemand_id_next;
->> +	u32				msg_id_next;
->>   };
->>   
->>   static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index f6440b3e7368..b10952f77472 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -433,20 +433,32 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
->>   		smp_mb();
->>   
->>   		if (opcode == CACHEFILES_OP_CLOSE &&
->> -			!cachefiles_ondemand_object_is_open(object)) {
->> +		    !cachefiles_ondemand_object_is_open(object)) {
->>   			WARN_ON_ONCE(object->ondemand->ondemand_id == 0);
->>   			xas_unlock(&xas);
->>   			ret = -EIO;
->>   			goto out;
->>   		}
->>   
->> -		xas.xa_index = 0;
->> +		/*
->> +		 * Cyclically find a free xas to avoid msg_id reuse that would
->> +		 * cause the daemon to successfully copen a stale msg_id.
->> +		 */
->> +		xas.xa_index = cache->msg_id_next;
->>   		xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
->> +		if (xas.xa_node == XAS_RESTART) {
->> +			xas.xa_index = 0;
->> +			xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
->> +		}
->>   		if (xas.xa_node == XAS_RESTART)
->>   			xas_set_err(&xas, -EBUSY);
->> +
->>   		xas_store(&xas, req);
->> -		xas_clear_mark(&xas, XA_FREE_MARK);
->> -		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->> +		if (xas_valid(&xas)) {
->> +			cache->msg_id_next = xas.xa_index + 1;
-> If you have a long-standing stuck request, could this counter wrap
-> around and you still end up with reuse?
-Yes, msg_id_next is declared to be of type u32 in the hope that when
-xa_index == UINT_MAX, a wrap around occurs so that msg_id_next
-goes to zero. Limiting xa_index to no more than UINT_MAX is to avoid
-the xarry being too deep.
-
-If msg_id_next is equal to the id of a long-standing stuck request
-after the wrap-around, it is true that the reuse in the above problem
-may also occur.
-
-But I feel that a long stuck request is problematic in itself, it means
-that after we have sent 4294967295 requests, the first one has not
-been processed yet, and even if we send a million requests per
-second, this one hasn't been completed for more than an hour.
-
-We have a keep-alive process that pulls the daemon back up as
-soon as it exits, and there is a timeout mechanism for requests in
-the daemon to prevent the kernel from waiting for long periods
-of time. In other words, we should avoid the situation where
-a request is stuck for a long period of time.
-
-If you think UINT_MAX is not enough, perhaps we could raise
-the maximum value of msg_id_next to ULONG_MAX?
-> Maybe this should be using
-> ida_alloc/free instead, which would prevent that too?
->
-The id reuse here is that the kernel has finished the open request
-req_A and freed its id_A and used it again when sending the open
-request req_B, but the daemon is still working on req_A, so the
-copen id_A succeeds but operates on req_B.
-
-The id that is being used by the kernel will not be allocated here
-so it seems that ida _alloc/free does not prevent reuse either,
-could you elaborate a bit more how this works?
-
->
->> +			xas_clear_mark(&xas, XA_FREE_MARK);
->> +			xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->> +		}
->>   		xas_unlock(&xas);
->>   	} while (xas_nomem(&xas, GFP_KERNEL));
->>   
-
-Thanks again!
+>> diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
+>> index 6465e2574230..ccb7b707ea4b 100644
+>> --- a/fs/cachefiles/daemon.c
+>> +++ b/fs/cachefiles/daemon.c
+>> @@ -159,6 +159,7 @@ static void cachefiles_flush_reqs(struct 
+>> cachefiles_cache *cache)
+>>       xa_for_each(xa, index, req) {
+>>           req->error = -EIO;
+>>           complete(&req->done);
+>> +        __xa_erase(xa, index);
+>>       }
+>>       xa_unlock(xa);
 
 -- 
 With Best Regards,
