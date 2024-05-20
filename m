@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-19793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91B08C9C83
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6B78C9C88
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189801C21F6D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F3641C21F4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCE1763FC;
-	Mon, 20 May 2024 11:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3231E53E02;
+	Mon, 20 May 2024 11:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OtDYruN7"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vbItXjMb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAE476045
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044F4770E9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716205530; cv=none; b=eYHrH2JidBxfXbvHbcIALLdWkPgojSDmRQvZncQ9AMXMTef2NVRVq+2oAxEM7yRoJqRkuKvrnKry+KlMehW0WuZJJtfdsmo9a4sP0AMBRhzDyLWrfSm9fJz9jkHU7VPvmPZgw8JC6McNbpOhwxPw1PmwyL0WoouHO1qIKFq6+Ck=
+	t=1716205536; cv=none; b=FQYqBPsFnQp6DG94iJI39AYgo5OtfFFGZVGLddl65xegW/KeLzqqDEpge37/AWg+cTaiE4RNE3+XPXhnpkh17g8J4r2JAI1PULEpPHPpv1NgkiNVZM54/MJxYedNtO6GiFdWx3qkLiYSw/yeWYzVdaBKWGsyu2AbdEjPHEiMCh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716205530; c=relaxed/simple;
-	bh=WbpYhsR869XNt+4RG+0RSqan1Uuxl6RdgoojeeVxnzQ=;
+	s=arc-20240116; t=1716205536; c=relaxed/simple;
+	bh=cAuZ44MnfXumddyGNuhSAEOj8RADCvGvGuZ/6MB2xIQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=Hk6gHkJIrJ/Fuzi1C8ErX2lHwgCFVFn5VSeiK6/rHAjrgMc6Hx6H+DHC4dFf+rKm7nfU9bTKyEq41ljywB/dm6WILoECFFrly8KvdBt53xxggAylUx+qJJ+/PWPaCp2Mu9TKThoag+NuX1EgjI7nZZVe0RvM/3rynxBc/I+NEU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OtDYruN7; arc=none smtp.client-ip=203.254.224.25
+	 References; b=OCRPYfvuTRJaoliGItpndt17w+thG0Qke2Yd03v8MJETY5gHvnDw+NI8Vu91drqqhqhs8SUhqiCl7AWi6+MFKz+/EfPL0xRpPAb0FTZxYKWZNcyd249zxt+SM7M7t0Qbm94qi9bWUfBbxdW9PEN/yJ1Z5vyr7ca43Cx3HVudrdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vbItXjMb; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240520114527epoutp029514ae2bb70b93e0f2017e013cf8df5b~RL9WF_9HH1003610036epoutp02H
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:45:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240520114527epoutp029514ae2bb70b93e0f2017e013cf8df5b~RL9WF_9HH1003610036epoutp02H
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240520114533epoutp01f9d47d46d62d8214f8924f83b3941f9e~RL9b2bQfm2046720467epoutp01a
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:45:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240520114533epoutp01f9d47d46d62d8214f8924f83b3941f9e~RL9b2bQfm2046720467epoutp01a
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716205527;
-	bh=0x72vxug1sX4QFwBsS/SRZ9PFW1UoWmnX4+Nx/d4D4A=;
+	s=mail20170921; t=1716205533;
+	bh=bSZUkbC/ZQpCoDZSpk6xHyDNFo0X+YS5ZTMJ5s/Gxic=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OtDYruN7a+CXF1yrOw7nRlb/Znsu5nQpn9bKaQuqoGkWKgKpgJ/zoT5lwFFkEwQPT
-	 Q8C6jrLqbrFE8g0HC3SrDJFvKXBYyg/j86kFNng86FgDYsUfPyDtAWB8yLWkhEhrug
-	 2Qn4NypVNHh1LCthgLtFQ7BqnH4Ra6od6SMuRvgg=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240520114526epcas5p4b6cc85b882bf26f20984f380972d0676~RL9Viu-MD2411824118epcas5p4X;
-	Mon, 20 May 2024 11:45:26 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VjbNN63L9z4x9Pw; Mon, 20 May
-	2024 11:45:24 +0000 (GMT)
+	b=vbItXjMbSQNjCPdJ6bCxcJgvxWcRhv6Q2KjgWtfraq6Df6HoplhOcqKsxEkpUpLg4
+	 xkhWvzhHhLJsjDuj2AtKMvdPSmMXsHEYI7wGNAHrXNKnGvxwwMtClCmI06X8fXYb8P
+	 pVwf63mK3N2zXX9r+E1RZJMqrxQIt59rIFc1olcQ=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240520114532epcas5p3f34132c23d11b79ee9843c7df5910da8~RL9bL1Wrp0451804518epcas5p3n;
+	Mon, 20 May 2024 11:45:32 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4VjbNV3HLrz4x9Pp; Mon, 20 May
+	2024 11:45:30 +0000 (GMT)
 Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
 	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C3.80.19431.4D73B466; Mon, 20 May 2024 20:45:24 +0900 (KST)
+	F5.80.19431.AD73B466; Mon, 20 May 2024 20:45:30 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240520103016epcas5p31b9a0f3637959626d49763609ebda6ef~RK7tKInxL0624906249epcas5p3_;
-	Mon, 20 May 2024 10:30:16 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240520103027epcas5p4789defe8ab3bff23bd2abcf019689fa2~RK737w-oH1831418314epcas5p46;
+	Mon, 20 May 2024 10:30:27 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240520103016epsmtrp16603da3cc6bfd283061b5195588c54c3~RK7tInXSj2227122271epsmtrp13;
-	Mon, 20 May 2024 10:30:16 +0000 (GMT)
-X-AuditID: b6c32a50-ccbff70000004be7-ad-664b37d4050f
+	20240520103027epsmtrp1946a4d61e2ae40463c15065f4c80c842~RK735Xxv22229722297epsmtrp1e;
+	Mon, 20 May 2024 10:30:27 +0000 (GMT)
+X-AuditID: b6c32a50-ccbff70000004be7-b5-664b37dab6c6
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	38.0E.09238.8362B466; Mon, 20 May 2024 19:30:16 +0900 (KST)
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A3.37.19234.3462B466; Mon, 20 May 2024 19:30:27 +0900 (KST)
 Received: from green245.sa.corp.samsungelectronics.net (unknown
 	[107.99.41.245]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240520103012epsmtip2bd5849ea7ca94911fcfed243fd15de18~RK7pfge6T2119121191epsmtip2V;
-	Mon, 20 May 2024 10:30:12 +0000 (GMT)
+	20240520103024epsmtip228edfc3ec310b9b2361e5df416cb9fa3~RK70S6Ven2512325123epsmtip2H;
+	Mon, 20 May 2024 10:30:23 +0000 (GMT)
 From: Nitesh Shetty <nj.shetty@samsung.com>
 To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
 	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
@@ -82,84 +82,136 @@ Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
 	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
 	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v20 10/12] dm: Enable copy offload for dm-linear target
-Date: Mon, 20 May 2024 15:50:23 +0530
-Message-Id: <20240520102033.9361-11-nj.shetty@samsung.com>
+Subject: [PATCH v20 11/12] null: Enable trace capability for null block
+Date: Mon, 20 May 2024 15:50:24 +0530
+Message-Id: <20240520102033.9361-12-nj.shetty@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240520102033.9361-1-nj.shetty@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VTe1BUZRSf797l7kKgdxbUL6qFWUsFBXaTxwdJGJreghp6wcA0wA5cAYHd
-	nX1I7lQuS2CAgEBQ8pCXlbLCEgvy3HUHWDCMgeJRbkGRMIEmGE46SkC77FL//c7vnN/5ne98
-	c1g4e51wZaUIZbREKEjjEg6Ma/0e+7wmAsJO8Nr/9kSa4UEcqc6v4Ug9XUSgu/0rAJXff4yj
-	OcNZgFZHRnHUNjgDUG19NQPdMnRhqLe+BENX1EYMVX6ehSHjxj0ClfRNATQ/WYEhnWk/qsu5
-	xEC9um8ZaLy7ikA1X80z0ddD6xgq/nQSQ51zmQBdW63BUfPdZQa6YXoGja4N2R1+lhqfCKOG
-	6yHVVTHNpEZnvmFQ4yNyqrUxl6C0l85QC9oLgOq5pSSohsJSO6oga4mgurJ/taP+mjcxqGX9
-	JEEVtjUC6rvaAWaEc0zqoWRakEhL3GlhgigxRZgUzA17J+5InJ8/j+/FD0QBXHehIJ0O5h4N
-	j/A6lpJm3hDX/ZQgTW6mIgRSKdfn5UMSkVxGuyeLpLJgLi1OTBP7ir2lgnSpXJjkLaRlQXwe
-	70U/c2F8avLKdC8hvmj3wcONIkwJWhh5wJ4FSV+oW69k5gEHFpvsBbC0/k/MGqwAWNabT1iD
-	hwA+yKrDtiRN5UqmBbNJHYD9F4TWomwMzjwascsDLBZB7oc3N1gW3oVU4zBfW8ywBDipxWFm
-	v2GzkzN5HM4va3ELZpAvQPXA2OZQTmQQVBp/Ylrd3KC6xbBZY2/mDe33gaURJNX2sKCx0zbS
-	UaiZ19te5AzvDLXZxK5wsSjHhjPglc8uE1bxJwBW/FgBrIkQmD1chFvGxkkPqOn2sdLPwbLh
-	5s3+OLkNFqzO2bycYOfFLbwbXtXUElb8NJx6lGnDFFSpxmyLLACwvayHOA84Ff9b1ALQCFxp
-	sTQ9iU7wE/O9hHTGfx+XIEpvBZuH4BnRCdQta959AGOBPgBZONfFqbXttRNsp0TBaQUtEcVJ
-	5Gm0tA/4mVdYjLvuSBCZL0koi+P7BvJ8/f39fQMP+vO5u5zuZlcnsskkgYxOpWkxLdnSYSx7
-	VyXG4jSrHGs4DkfWyonoaNW9DmSadtRXZT52K/jCVCbXd/iYDsYvrSTM5oJQYPwh6P3rHhk/
-	P+92jmO8XbW9bOG2bncUu2pv24GoV31AR8+eur7p4IkQQ0yeQfFxQ6xSn+8YcyyUrYiPPRlw
-	vdQY2f7UEyLnw6bjydzs2OruhtxtjlJhqcZh3yu1JRxF5R9Tql2ePYdnlG+3V78RvpM/c6aQ
-	84uqZPa3yyHRAxHq4g4x/1TUu4oDuqSTD7ThbxV1fO8y+9Ge02fr/1krf2+wGpe9PlSsSFcs
-	Nj1ZL3Gv3BlgdLwaGb1j++96zmJ87kt7/aril6JvDt8IYdyJHFv4khflrXkzlMuQJgv4nrhE
-	KvgXJ30+SZEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRf0yMcRzHfZ/n6bmnm8vjMj2ptJ2xVhwJ+4aZH5mv3RhtamPDqcdpupy7
-	TpQfl+jI1AkhUlKZrri60HHldl0uKUVFpTsbneRHd2GmpUs/5r/X3p/35/N+bx8K51cQs6i4
-	hERWniCOF5Bc4mGdIHABnCfau+jvFx683/gMhyc1IzjU2rJI+LXuB4A5riEc9prUAA43t+Cw
-	6pkdwILCPAJ2mQwYNBZmY/Cuth6D16+kYbB+9DsJs81vAHR05GKwpjsE3kovIqCx5jkB2x7f
-	IGF+iYMD71jdGLxwpgOD1b2pAD4czsfhva9OAjZ0+8GWEavHan/U1i5CjYUMMuTaOKjFXkGg
-	tmYlqiw9SyJ90Qn0WX8NoCddKhLdzrzogc6nDZDIcPq9Bxp0dBPIWdtBosyqUoCaCiycLd7b
-	uStj2fi4Q6x84ard3H0/bEZSdtPj8O/RLEwFdEQG8KQYeglTnqPijDOffgKYHsueSd2XKRmx
-	4JPszdx19415uGOeNIz59scIMgBFkXQI82KUGtdn0I9wZjDtHDa+gNP1ONNaBsfZm97AOJz6
-	iUMEPZfRWlongnn0ckZV38mZDAhktDrThMdzTDc9cIHJQuGM7a2L1ACvAjClFPiyMoVUIo0J
-	lYUmsElChViqUCZIhDEHpJVg4qvBQdXAnu8WmgFGATNgKFwwg1dZtXEvnxcrPpLMyg/skivj
-	WYUZ+FGEwIcXevV6LJ+WiBPZ/SwrY+X/pxjlOUuFyWTBAT/bp+W5+iusW2vDkoTla2yasgXJ
-	kbr5r/xGg6KUznWPwaaPyqU9pssPyPWqkEIfNJQS3nWDn14wzzKc8fzYGihVD9jDNhsNYfaf
-	0RpHlKusc/HFaMtiw0zieLGuP+XOnKR3L0dq4i75XliemrtSKJ3u/3Gt1dyX7KmPvhp4qke3
-	o1wToIzcMySqeEH37vLKiEzUVzc221Wl5D02NfjlXHXTsk+ZFkm69YgzXHv+VH+ITvRhxTYv
-	fYSgoTb+ZnaT+7c979fOQa5w062Bg6+1U9Ut2a/Uziz37JiGlC9LWger/Tc+Lfa5ciZiVcmQ
-	NegpKD68pabxxFFJX+rJOgGh2CcODcblCvE/Zzp3o0QDAAA=
-X-CMS-MailID: 20240520103016epcas5p31b9a0f3637959626d49763609ebda6ef
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WTe1BUdRTH+91797LLuM1tgennGkqLTAHDY21ZfjggFD6ugQPlP5kVbssV
+	CNhd9i6RphNPSeTpo3IDIUB5LAnyCghs2w0QhGhal4RBSWItJAGxxogB22XR/vuc7+98zzlz
+	fnO4uGCFFHITFBpGrZAliUhHot3o+bLPeGDEYf+TCwLUONiHo8ziFRzpbhWRaNa4CNBnC0s4
+	mtbnArQ8PIKj1r7bAFVUlhFoTN+Joe7K0xiq0/Vi6MvPszDU+/g+iU4bRgGymLUY6hn3Rl+d
+	qCZQd88AgUxdpSQqv2RxQDX9qxgq+dSMoY7pDIDal8txdHl2nkDXxjehkZV+TtgLtOlGBD1Y
+	CelO7S0HeuT2FYI2DafSzfUnSbql+hP6j5bzgP52LJ2kqwrPcOiCrDmS7syZ5NAPLOMEPX/V
+	TNKFrfWAHqr4wSHa6e3E4HhGFsuo3RiFXBmboIgLEUXsjwmPCZD6i33EQShQ5KaQJTMhop2R
+	0T67E5KsGxK5fShLSrVK0TKWFfntCFYrUzWMW7yS1YSIGFVskkqi8mVlyWyqIs5XwWi2i/39
+	twVYEw8lxo8ZHnJUjwQfme4a8HSQTeUBHhdSEtiW8Q0nDzhyBVQ3gAOWK6Q9WARwPlOPPQ2y
+	akdBHuCuWf7+zdeud1qTqvvWHTkYrM7WO9iSSMobXn/MtenOlA6Hp1pKCFuAUy04zDDayvK4
+	TtQeePF6DbAxQXnA1eFujs3Mp7ZDc228fb4tUNekx23Ms8r6tgVgqwMpHQ/W3Wzg2JN2wgbt
+	EGFnJ3ivv9XBzkI4U3RindNg3dla0m7OBlD7ixbYH0JhzmARbmuMU56wscvPLrvCc4OX1+bE
+	qWdhwfI0Ztf5sOPCE3aHDY0VpJ03wtFHGetMw6Xp3PWlFgB4wTyGF4PN2v9bVABQD4SMik2O
+	Y+QBKrGPgkl7+m9yZXIzWLsDr+gOoGta8TUAjAsMAHJxkTO/uXXvYQE/VnbkKKNWxqhTkxjW
+	AAKsGyzBhS5ypfWQFJoYsSTIXyKVSiVBr0jFouf5szllsQIqTqZhEhlGxaif+DAuT5iOtd7Y
+	3Wt86YF8lzIz8GvzRKRlZulAd8lscPieyhdfy//LZavu9QIX+mOj8k2yh1foqTs6V/PdzGbL
+	u6vytMr7UdBVvhi98nDhfCgMuFvt+GPYF2drXALYgT+f+Scv1Oxt6j53c9NV15S9x76vcXdf
+	nLpokjKX3tuaNDdTqO06FTZ1POXQ8bKffEIG8pQupbvyJ6vKO7F9Byu3qX9/66Db8juR4WXX
+	+qv2HxsiDDuIRUcjD5tqINK6nO9E5Cee2RdxoO3Vsoktsg1YbhFKidyg9KKhX6jHv79KIL/q
+	iHsP0ZQZymJRQz9jRjZ/WWt8Lqr4jcmJO70baz+4V/q+sH3UwxxlUYkINl4m9sLVrOw/6406
+	/JAEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSvK6zmneawYwXxhbrTx1jtmia8JfZ
+	YvXdfjaL14c/MVpM+/CT2eLJgXZGi99nzzNbbDl2j9FiwaK5LBY3D+xkstizaBKTxcrVR5ks
+	Zk9vZrI4+v8tm8WkQ9cYLZ5encVksfeWtsXCtiUsFnv2nmSxuLxrDpvF/GVP2S2WH//HZDGx
+	4yqTxY4njYwW237PZ7ZY9/o9i8WJW9IW5/8eZ3WQ8bh8xdvj1CIJj52z7rJ7nL+3kcXj8tlS
+	j02rOtk8Ni+p93ixeSajx+6bDWwei/sms3r0Nr9j89jZep/V4+PTWywe7/ddZfPo27KK0ePM
+	giPsAcJRXDYpqTmZZalF+nYJXBk3D31mLfguVHH52SHmBsYWgS5GDg4JAROJr4/1uhi5OIQE
+	tjNKXDjwgKWLkRMoLimx7O8RZghbWGLlv+fsEEXNTBJXTtxmB2lmE9CWOP2fAyQuIrCdWeJj
+	czcTSAOzwFFmiQtrLEBsYQF3iaWnlzOC2CwCqhL/zu5hBenlFbCSuLoiA2K+vMTqDQfAdnEC
+	hQ9s/QBWLiRgKXH3+ge2CYx8CxgZVjGKphYU56bnJhcY6hUn5haX5qXrJefnbmIER6hW0A7G
+	Zev/6h1iZOJgPMQowcGsJMK7aYtnmhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe5ZzOFCGB9MSS
+	1OzU1ILUIpgsEwenVANT0ObT0idPVk6euerWpKztq3Kn3opyVyhcEp0r37H+2FutzrkVfRMe
+	F3Hs35r56Xbc0dV/e7lYp37jaZYQuBefyBZy/N/HvmxhCYNAptbnu49zWqhI3grw41av1quK
+	zla02//S6bXwNStvZymvuD7z8zLdu4/5Z8U8Lvi+ti/0f7fY2cQXSoYd12U2Py0zWrxL0cVT
+	MbRqoqNOaDNj3Fs94XXT+k09wmxLLRaLH/0w8zDzYu0DWQ233HhP7vqhdkLvtoF/otGSF0rJ
+	E1YbaHdvsTUxf/zzvq3VDsWa/b63p2WuUVmZsfTxXdltBiFne9z3b12Se8z2Z4tE45+KEw/5
+	oq5WsfXdf+hiWyZ3+aMSS3FGoqEWc1FxIgBOVbFnPwMAAA==
+X-CMS-MailID: 20240520103027epcas5p4789defe8ab3bff23bd2abcf019689fa2
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520103016epcas5p31b9a0f3637959626d49763609ebda6ef
+X-CMS-RootMailID: 20240520103027epcas5p4789defe8ab3bff23bd2abcf019689fa2
 References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520103016epcas5p31b9a0f3637959626d49763609ebda6ef@epcas5p3.samsung.com>
+	<CGME20240520103027epcas5p4789defe8ab3bff23bd2abcf019689fa2@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-Setting copy_offload_supported flag to enable offload.
+This is a prep patch to enable copy trace capability.
+At present only zoned null_block is using trace, so we decoupled trace
+and zoned dependency to make it usable in null_blk driver also.
 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- drivers/md/dm-linear.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/null_blk/Makefile | 2 --
+ drivers/block/null_blk/main.c   | 3 +++
+ drivers/block/null_blk/trace.h  | 2 ++
+ drivers/block/null_blk/zoned.c  | 1 -
+ 4 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
-index 2d3e186ca87e..cfec2fac28e1 100644
---- a/drivers/md/dm-linear.c
-+++ b/drivers/md/dm-linear.c
-@@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	ti->num_discard_bios = 1;
- 	ti->num_secure_erase_bios = 1;
- 	ti->num_write_zeroes_bios = 1;
-+	ti->copy_offload_supported = 1;
- 	ti->private = lc;
- 	return 0;
+diff --git a/drivers/block/null_blk/Makefile b/drivers/block/null_blk/Makefile
+index 84c36e512ab8..672adcf0ad24 100644
+--- a/drivers/block/null_blk/Makefile
++++ b/drivers/block/null_blk/Makefile
+@@ -5,7 +5,5 @@ ccflags-y			+= -I$(src)
  
+ obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk.o
+ null_blk-objs			:= main.o
+-ifeq ($(CONFIG_BLK_DEV_ZONED), y)
+ null_blk-$(CONFIG_TRACING) 	+= trace.o
+-endif
+ null_blk-$(CONFIG_BLK_DEV_ZONED) += zoned.o
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index 5d56ad4ce01a..b33b9ebfebd2 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -11,6 +11,9 @@
+ #include <linux/init.h>
+ #include "null_blk.h"
+ 
++#define CREATE_TRACE_POINTS
++#include "trace.h"
++
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"null_blk: " fmt
+ 
+diff --git a/drivers/block/null_blk/trace.h b/drivers/block/null_blk/trace.h
+index 82b8f6a5e5f0..f9eadac6b22f 100644
+--- a/drivers/block/null_blk/trace.h
++++ b/drivers/block/null_blk/trace.h
+@@ -30,6 +30,7 @@ static inline void __assign_disk_name(char *name, struct gendisk *disk)
+ }
+ #endif
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
+ TRACE_EVENT(nullb_zone_op,
+ 	    TP_PROTO(struct nullb_cmd *cmd, unsigned int zone_no,
+ 		     unsigned int zone_cond),
+@@ -73,6 +74,7 @@ TRACE_EVENT(nullb_report_zones,
+ 	    TP_printk("%s nr_zones=%u",
+ 		      __print_disk_name(__entry->disk), __entry->nr_zones)
+ );
++#endif /* CONFIG_BLK_DEV_ZONED */
+ 
+ #endif /* _TRACE_NULLB_H */
+ 
+diff --git a/drivers/block/null_blk/zoned.c b/drivers/block/null_blk/zoned.c
+index 5b5a63adacc1..47470a732d21 100644
+--- a/drivers/block/null_blk/zoned.c
++++ b/drivers/block/null_blk/zoned.c
+@@ -3,7 +3,6 @@
+ #include <linux/bitmap.h>
+ #include "null_blk.h"
+ 
+-#define CREATE_TRACE_POINTS
+ #include "trace.h"
+ 
+ #undef pr_fmt
 -- 
 2.17.1
 
