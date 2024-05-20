@@ -1,150 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-19829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9958CA2A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 21:16:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A44C8CA2A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 21:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC4B1F220E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 19:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3623281747
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 19:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604C9137916;
-	Mon, 20 May 2024 19:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF281386B3;
+	Mon, 20 May 2024 19:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YpNgXxt9"
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="PcnX9rzu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RLa1niyU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wflow5-smtp.messagingengine.com (wflow5-smtp.messagingengine.com [64.147.123.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8951E50B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 19:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60911137935;
+	Mon, 20 May 2024 19:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716232568; cv=none; b=vGtIJfvMjiiA7cW3i6h5ol173KzO1gka+butWoVr8ebnY7SRRGBbv0JCM3J3jhPM0Z5gUavCjopFBXzf4X5jnDRgIAX+e4zzhb3aZDvUEp/vSdeO+ahoyc3BXiiLbT9p+P+z9Udjw+QI+DVfaKeXTsfiEDsZYm2G4LR5ndde8JI=
+	t=1716232831; cv=none; b=fh2cOb0V47mT9I3m3QeKQPzcIHNkVD5nYeEMkendmCbQqwI+0EduAOLPyEOCEpKZSexFszt7KYfR5N6d/bSuk3+3YCviFFJC/6iz6fMqnasgUk2hNCNOssmuvyXcJKseK6AnGvmO0VUiUYHk2fQ3+uAAQLNGk/SJsbNFHwQEKng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716232568; c=relaxed/simple;
-	bh=am9u1eaLSO3aSauXxoMDKEYYgovThj9rArG1s1A/pFQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gnNf2E45sZM5LDtfaolbveADvfKei5VBgROKOHm58xmNc5u8e44GhA4rRRrQq2TH4YpFF2Otctji5gCRBu7MZsSa4e8aMy3rnSjuakhk63/X4AcnUqyQTvJjFM3lf9/OfS1X1dHz2y0CY9BXnOIv4igUV2etqVMcC7SOckCwP/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YpNgXxt9; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so31493071fa.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 12:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716232565; x=1716837365; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jjH5iZLI8vPvy1/UIw5FKExe8077SOb+cb7LYS9cHpQ=;
-        b=YpNgXxt9rI9o9+Erv110Hgxt26PlipfzdKNMdAYNs1wCg/NbcfQjnPdWePwu/4zHVw
-         LiOJsNqZLdyGj1Yc3jaTUUhudVLuJ0n92MBv24CcOB0QvftoH4jNzdgB8tFQd2WWzkCc
-         VUEXev/bUjIfjrCbFpYHH+nJsHVQwPekUEdoA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716232565; x=1716837365;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jjH5iZLI8vPvy1/UIw5FKExe8077SOb+cb7LYS9cHpQ=;
-        b=YaBu22a4QjqWcEI5h0kbMKKIGHtHV7W6UCag9AJ192f3Ze0WMcqntu4Bqs2nCGZxRt
-         4aLBekQY1uECHEg+IW4wNUhFE35f+Y1fEtgLBLydwje9XZwkyPJsEEhKiFclDwnggfPP
-         jm2y0Gq5ovfpHzvb7jSGt8cZExs1/Hd+4517tls02atZY2ZmepKhDnzkPJllpC1l9qab
-         fnnATMhrHtGIHU0GsSbMIv391k2JxQiEw08OCr4h+1235wwzfDYwDdx2n/sOHn5HZQlz
-         m87fqiSxEGsoKAO3n1iUy8C0HxzkSLeKPKpHSA+TJ3TJYW2uOxD0r63SLYUR3dj7o4LL
-         ZrhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtZD/VCXGjlKoASaYHKu7CqyUK6z4Nhh9h69Pt15fIbgd+8BfW1jOcMRrhQX2VbJbghjIuMSx1SJt1IExl7y8CKuYQ7rs/b05Lh5oIRw==
-X-Gm-Message-State: AOJu0YzOTZxaSKRvddC0lqEoxymw0rul0UvYeUOQJ0HxKiMmpeFZ7iIw
-	/m60Fq3AxTZBnvy+RgDpYBl8sLl4dCP0lrqrcDpCqfwMmb9cDOx44CLPqnvsk/4/y/+628nu6lK
-	Rn/2fcg==
-X-Google-Smtp-Source: AGHT+IGmgW7TYhQog0y0t5ax++Yg4LmzPTDzTw6Yq0lvBkXTmkODz3RYU/PuGBMfJwjNITBdRIBQSw==
-X-Received: by 2002:a2e:8054:0:b0:2e7:19ba:b84e with SMTP id 38308e7fff4ca-2e719bab928mr40693641fa.20.1716232564584;
-        Mon, 20 May 2024 12:16:04 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574e5340d12sm8774792a12.3.2024.05.20.12.16.03
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 12:16:03 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a599c55055dso738583266b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 12:16:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWwJQHcIknN9R2X0NTfDS8ZdhjTk66dTQ8XdgGWgmAzywj/hUFyIvaA+IgQWFn8J98+ZhSrt+NqzjYwbFp5+wmKPbHI3gk5EA+Zke+zeA==
-X-Received: by 2002:a17:907:2d86:b0:a5a:423:a69f with SMTP id
- a640c23a62f3a-a5a2d53b9bemr2304418966b.9.1716232563459; Mon, 20 May 2024
- 12:16:03 -0700 (PDT)
+	s=arc-20240116; t=1716232831; c=relaxed/simple;
+	bh=oBHEUgxuOy3Gb3SSjzvFEwOATEjDLoQFe4gPk/cU3Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sSmAmvDdteswSKSOZw5qrdGPXYv+u8lj6SEaimd2PUUR+e8/vq09dOjE4awjaypL3fnn0WbkpJh0qAkB/HQVd8gugkTj00GrdFUAEQ5JchS6xhv27pzAKsVqhOMx2Qa/6WV/H7Pajm+GbSNNEFJ7smPFs7a8aE8pHH9GIMv5czw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=PcnX9rzu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RLa1niyU; arc=none smtp.client-ip=64.147.123.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailflow.west.internal (Postfix) with ESMTP id 959502CC023E;
+	Mon, 20 May 2024 15:20:28 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 20 May 2024 15:20:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1716232828; x=1716236428; bh=mO0EedKpcd
+	HIsso5KUGd6iDgcS2AGEPXGB8hV4/SyCk=; b=PcnX9rzubBrca97DZrsVgCICWa
+	JuiSf1k6djT2sFikn6eAuRpbOZU5lv5Bj1KvcUQAFi1pKJ706kRS0yGwhnGaglUp
+	Q5Gw9xY5u6i3SgySAUVERfFcr7KQzVCCo3GhWOhYJAF8EFACZssHggqNs6MXa75H
+	jG8ybiPYenaaz/geBonOqtTnd3jpjaIn0DVcaX6hspR6jyHYNGzRop+7cJhJAKCF
+	a/vnSlOb8M+GNxyhXHt7PqgSfRkwYay4QFdDh4YlRrxN8m4UGYHCTSBDH2BEw3Wz
+	q9mhqOUE98+dEnicxF/AXmtYshKzNmHJ0c0YAF3A5gW2kjlTWEMG8shAepQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716232828; x=1716236428; bh=mO0EedKpcdHIsso5KUGd6iDgcS2A
+	GEPXGB8hV4/SyCk=; b=RLa1niyUuqomipMH6wH8n5ZPTPzAUDg26M3+U8ZJ3gKk
+	frG9wr7yyFYQhg92xcqHHOy2kb7yqd4GqpWgl2dxppyYmws07gtgS8aVCNNduP/4
+	G6ep8zG3tGKUxab1vECr7uefbgvO1uX5Az/YEj+ocAXD7m0Dc4wcAs20tpuu6X/A
+	eCGB401w53Y4ui+5MM5ciJLIKNmIeuT8pIGpnIgtiGkOMjlGWD/iDI5JKgmA9lF0
+	yOKhDRxQYMBRl6QknG8izF2gsIwsiJpw0ehYT6ZdxPh2RubGF+ijT0MVSNAG8Nc4
+	Wl0S9T9Y/XQ2iQobpRojjP5FRcV2DcMxUjGlZjpBHA==
+X-ME-Sender: <xms:e6JLZqL3F3B2aRCJ4w1S9WRH9slbVS04Anuc3Mq4dVF0uFsSre9bwA>
+    <xme:e6JLZiIY_k-ZDk7QL_-QBKTGCi4lkqtA31fORwgqNxil4r9Jp9Y3zvFfgVuzNJX-A
+    3-wDoQWoF_ozipb2vQ>
+X-ME-Received: <xmr:e6JLZqsqlwtMoI0P81WwiLaEuT2yOboTSj1LwLg-zsZgJgbT0qxMktr2CeY8-tPlWjQ3GnGl1Vy6_ap5KNOU8ss>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddgudduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttdejnecuhfhrohhmpeflohhn
+    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpeekkeetgeefgfdvfefgfeffueefffejvdduieejheejheffkeej
+    keelffeulefggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:e6JLZvY4OqRPmhLDbSoNBf9SaSnyJhxd3ipvV7YA-JVJX_8F5wtRbQ>
+    <xmx:e6JLZhYJA0-Y4UiDfcKcdBM3JdCdCTyL5lAtnDmC8vj7X55i9IPQ4g>
+    <xmx:e6JLZrA-o1NbLbBFxj_rl6jjY8fNsBfo-ozmgIL2il_amxjjZDfpUw>
+    <xmx:e6JLZnZisSO1vb5NFiGJfxQHXjZLXuo3uRGN8amQ8DjLajlWAl-eKQ>
+    <xmx:fKJLZlqTk4UcPirAK9O5Z2cBz4ms-BwgWtuD-EK2p5_O71z9bjoeav0X>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 May 2024 15:20:25 -0400 (EDT)
+Date: Mon, 20 May 2024 12:25:27 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: brauner@kernel.org, ebiederm@xmission.com, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
+Message-ID: <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-4-jcalmels@3xx0.net>
+ <ZktQZi5iCwxcU0qs@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
- <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org> <210098f9-1e71-48c9-be08-7e8074ec33c1@kernel.org>
- <20240515-anklopfen-ausgleichen-0d7c220b16f4@brauner> <a15b1050-4b52-4740-a122-a4d055c17f11@kernel.org>
- <a65b573a-8573-4a17-a918-b5cf358c17d6@kernel.org> <84bc442d-c4dd-418e-8020-e1ff987cad13@kernel.org>
- <CAHk-=whMVsvYD4-OZx20ZR6zkOPoeMckxETxtqeJP2AAhd=Lcg@mail.gmail.com>
- <d2805915-5cf0-412e-a8e3-04ff1b18b315@kernel.org> <CAHk-=wh68QbOZi_rYaKiydsRDnYHEaCsvK6FD83-vfE6SXg5UA@mail.gmail.com>
-In-Reply-To: <CAHk-=wh68QbOZi_rYaKiydsRDnYHEaCsvK6FD83-vfE6SXg5UA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 20 May 2024 12:15:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whgMGb0qM638KfBaa2AA9TR95D3oHJTu6=5YtRoBVWa3g@mail.gmail.com>
-Message-ID: <CAHk-=whgMGb0qM638KfBaa2AA9TR95D3oHJTu6=5YtRoBVWa3g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Seth Forshee <sforshee@kernel.org>, 
-	Tycho Andersen <tycho@tycho.pizza>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZktQZi5iCwxcU0qs@tycho.pizza>
 
-On Mon, 20 May 2024 at 12:01, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> So how about just a patch like this?  It doesn't do anything
-> *internally* to the inodes, but it fixes up what we expose to user
-> level to make it look like lsof expects.
+On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
+> there is an ongoing effort (started at [0]) to constify the first arg
+> here, since you're not supposed to write to it. Your usage looks
+> correct to me, so I think all it needs is a literal "const" here.
 
-Note that the historical dname for those pidfs files was
-"anon_inode:[pidfd]", and that patch still kept the inode number in
-there, so now it's "anon_inode:[pidfd-XYZ]", but I think lsof is still
-happy with that.
+Will do, along with the suggestions from Jarkko
 
-Somebody should check.
+> > +	struct ctl_table t;
+> > +	unsigned long mask_array[2];
+> > +	kernel_cap_t new_mask, *mask;
+> > +	int err;
+> > +
+> > +	if (write && (!capable(CAP_SETPCAP) ||
+> > +		      !capable(CAP_SYS_ADMIN)))
+> > +		return -EPERM;
+> 
+> ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
+> explain why.
 
-I also wrote some kind of tentative commit log for this:
-
-    fs/pidfs: make 'lsof' happy with our inode changes
-
-    pidfs started using much saner inodes in commit b28ddcc32d8f ("pidfs:
-    convert to path_from_stashed() helper"), but that exposed the fact that
-    lsof had some knowledge of just how odd our old anon_inode usage was.
-
-    For example, legacy anon_inodes hadn't even initialized the inode type
-    in the inode mode, so everything had a type of zero.
-
-    So sane tools like 'stat' would report these files as "weird file", but
-    'lsof' instead used that (together with the name of the link in proc) to
-    notice that it's an anonymous inode, and used it to detect pidfd files.
-
-    Let's keep our internal new sane inode model, but mask the file type
-    bits at 'stat()' time in the getattr() function we already have, and by
-    making the dentry name match what lsof expects too.
-
-    This keeps our internal models sane, but should make user space see the
-    same old odd behavior.
-
-    Reported-by: Jiri Slaby <jirislaby@kernel.org>
-    Link: https://lore.kernel.org/all/a15b1050-4b52-4740-a122-a4d055c17f11@kernel.org/
-    Link: https://github.com/lsof-org/lsof/issues/317
-    Cc: Christian Brauner <brauner@kernel.org>
-    Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-    Cc: Seth Forshee <sforshee@kernel.org>
-    Cc: Tycho Andersen <tycho@tycho.pizza>
-    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-but I haven't actually committed it to my main tree, since I'd hope to
-get Ack's for it (and testing).
-
-Or does somebody have any other ideas? I think that patch is fairly
-clean, even if the *reason* for the patch is odd as heck.
-
-           Linus
+No reason really, I was hoping we could decide what we want here.
+UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
 
