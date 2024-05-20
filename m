@@ -1,56 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-19817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7D08C9F55
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 17:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EFC8C9F5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 17:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A326E280F5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 15:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01AB81F21BFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 15:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D571369B5;
-	Mon, 20 May 2024 15:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A76136E18;
+	Mon, 20 May 2024 15:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qP17BERw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BF/4T0Rx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4040328E7;
-	Mon, 20 May 2024 15:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9674F28E7;
+	Mon, 20 May 2024 15:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217704; cv=none; b=P0xnJO20ivxEBKWFXBP3OvLcgvnxmwjegf86IWVRjhVSZrBHEn6JZrpqBQOvOnKjUsaFunGwYrsBw0gnXhXz6Jos1ERC53OI5OR64nTuSIH2rmixem+DHNU1rfPEvNYVXWxqIKc7qRdEGRuVa1gx83/qHnUskvKkeOJgReQdYgs=
+	t=1716217789; cv=none; b=CfszjD/bn76U3tEEEOiB3OH+DYzhYJ78EIrx5jgUCvR2oJlOH1nyCSDrzqW2NZfGJuFLaam5r1prK+9AyhkyF5Z70oyvDDXYyQUuDeROYMn5K6rZ90ZG+tKI4cMmN8D3kUqHx3osa3ICH+skdhxf3G1kDhgcrIwqJ8w5W2kC378=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217704; c=relaxed/simple;
-	bh=Oi/RYQGscIAWIJG1eFtbKOigRW+SxycxdQRM4QDt/nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYi9selkrWrLh+hY8CZjFUR/x0kIsFMtnxijcF1Tnh0cirR63/q3sVxNr/iFueNYD0dzMkVDyp3Bx/J4eMO8f4ModHYpW5AnZVftsgd3/jkNxowSq3t+cVA9Z0E5okvP7lVsf+nVXEVjPlNzPyKHZB759xNnLx3oLFCaUtIMdVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qP17BERw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3D4C32786;
-	Mon, 20 May 2024 15:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716217703;
-	bh=Oi/RYQGscIAWIJG1eFtbKOigRW+SxycxdQRM4QDt/nw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qP17BERwdasNFuOebOeiXdQ+ao4yA6ICyEMCHEoZWX3xoujZjQiho2X1thydTC6+r
-	 K49zgkTAs6y3H0iqBUnjJY7lpklsF7bhYYPpc7cyRNekYfr8G/5Bb4a4C9mpX+WDl4
-	 B0Bv8T8dGWyP7kld47/MKyVDXRj6ppWfkE4flZcWdGbJrAHIbv/wz16PK1fahD/8Pa
-	 HrxeBpN2Y0eLuEYFknht5CFsTuGvZ+DWH3s0m43AKio63Atshr5cO5cvTCplG+8rhA
-	 sZHEPylznKO6vVv0B5iRciSzWgbg7Y2sMD9iZeR+sknLTHSRmxOUIZ0OuEkZA4lCme
-	 GYzaGKmLVPx4A==
-Date: Mon, 20 May 2024 08:08:23 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: brauner@kernel.org, willy@infradead.org, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	jun.li@nxp.com
-Subject: Re: [PATCH v3] iomap: avoid redundant fault_in_iov_iter_readable()
- judgement when use larger chunks
-Message-ID: <20240520150823.GA25518@frogsfrogsfrogs>
-References: <20240520105525.2176322-1-xu.yang_2@nxp.com>
+	s=arc-20240116; t=1716217789; c=relaxed/simple;
+	bh=3ZPzTccGxeYiZ3UCRWcRKYqjZ6SNEtUDp0r4ooVJnSg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZsVZc2ZpJaFhP4PacuARu9hcRRxLanUvGRljdFdrzdmxS9ADpIDZFotdB0scT/d+TA+3r/WFTPbcWHPnQca3m77M2DLtOEjsa8SzW2iND9eDtHQeXqdoo4vYRdcdYO6+MFomQKDQeJBlIYQPBmMswI3763ge7+skP6ywyI8sTe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BF/4T0Rx; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-23d1c4c14ceso1440709fac.0;
+        Mon, 20 May 2024 08:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716217788; x=1716822588; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZPzTccGxeYiZ3UCRWcRKYqjZ6SNEtUDp0r4ooVJnSg=;
+        b=BF/4T0Rxls8Bhm4YqXf6pHPnHuaLO3lm2MWs/ZDcelKiAy7gRpA324g8DU4sGfGQqy
+         nwPTcNIPfSn80Op0vCPXywUF4PeJjPx4muTfMQ7AHmHLYuBB3A6pMG+xS+k0nla5oqSk
+         nj8gkSWCHudBPPus5Mr7RWNRPktzIqUHZHZCVoTb2t9QVczU0+eE4xAw59Gh9/9X/UHS
+         OWxa90j6dE2L71iJ6il8Q6vGIdNYTgTCwLMM2KGo05IuV5sheW6QEEzSTikrp2IbKjc/
+         TEuQgi5Y1f37NQLKKzQidHmCy6yqT+niBUb/zxD8ZDieZGsP1K/QCOB34eeFQC4i6SK/
+         OLuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716217788; x=1716822588;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZPzTccGxeYiZ3UCRWcRKYqjZ6SNEtUDp0r4ooVJnSg=;
+        b=nRh4M+Rvab291VayoHkIO5ACZtzYMCpT6nemD+xzBVF/Z0DK0HaxoxZJqoglGGijF+
+         JeAQmDLHeWC8y5UoWOaKzq8VlJ9ZFkZxBchr2UrAnnFSR40wypjE3J70LNeq+RgSvzaf
+         9sjEVJGHHxCzC1XmWqCpZiYTHjYv2sYSvC+oe+MH/ZeDe4HldcNJWHE13cCcAcUuQ2xK
+         0DlZzA6wGCkJAzex+xdKmDSWyN3fac9pheHpgZFXZNCQYnOXHsRMZZ/RJOYLdwlgd1DC
+         VGy7ATdTP/nB6E72PGrl48OS8FrOdcnXbGewBuGNJwFKOf3M33n65AIS0NdWjV7FOT5I
+         Zffw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB8GCUDSaplHHU0dcDzHvduewx7ORZkgyTgvUlpvd570lV7cZ7RbE4cafj/M/tX7gFoQXdI+UFegf7qWVSyd6hTOlo8Z1avhIqDf3Yd+6MYQKKsYc8cCNC+ONNhZ2cp1aoMumwl5hLH5++BwL/IFQMucBsXg+KbKNR+R+BhUSMhcqpUiP7tINgp5AdaQ==
+X-Gm-Message-State: AOJu0YxO9fU0XqXdgc0gD5hRi8f3/S2re3DeXzke7oOmuE5q9ja3f3d3
+	GPZ7q7iSmoMBTxH8RyFokWaLDGtlFsOlXSrAPa1JqyjvS4yJKlXD
+X-Google-Smtp-Source: AGHT+IEEwTNwDG/5OWJKkrOQ+QtpD76b+5Ie4/DQJOETwsN4jDmj2Z5/18baOTuuE1EhEH6prG8TgQ==
+X-Received: by 2002:a05:6870:5246:b0:23b:b0fd:47f4 with SMTP id 586e51a60fabf-24172a8b902mr33765767fac.18.1716217787405;
+        Mon, 20 May 2024 08:09:47 -0700 (PDT)
+Received: from arch (recod-gw.ic.unicamp.br. [143.106.7.151])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4df85902f10sm2923274e0c.54.2024.05.20.08.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 08:09:46 -0700 (PDT)
+Date: Mon, 20 May 2024 12:09:43 -0300
+From: Artur A C de Barros <arturacb@gmail.com>
+To: willy@infradead.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: First Contributions for KUnit
+Message-ID: <Zktnt7rjKryTh9-N@arch>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,162 +80,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240520105525.2176322-1-xu.yang_2@nxp.com>
 
-On Mon, May 20, 2024 at 06:55:25PM +0800, Xu Yang wrote:
-> Since commit (5d8edfb900d5 "iomap: Copy larger chunks from userspace"),
-> iomap will try to copy in larger chunks than PAGE_SIZE. However, if the
-> mapping doesn't support large folio, only one page of maximum 4KB will
-> be created and 4KB data will be writen to pagecache each time. Then,
-> next 4KB will be handled in next iteration. This will cause potential
-> write performance problem.
-> 
-> If chunk is 2MB, total 512 pages need to be handled finally. During this
-> period, fault_in_iov_iter_readable() is called to check iov_iter readable
-> validity. Since only 4KB will be handled each time, below address space
-> will be checked over and over again:
-> 
-> start         	end
-> -
-> buf,    	buf+2MB
-> buf+4KB, 	buf+2MB
-> buf+8KB, 	buf+2MB
-> ...
-> buf+2044KB 	buf+2MB
-> 
-> Obviously the checking size is wrong since only 4KB will be handled each
-> time. So this will get a correct chunk to let iomap work well in non-large
-> folio case.
-> 
-> With this change, the write speed will be stable. Tested on ARM64 device.
-> 
-> Before:
-> 
->  - dd if=/dev/zero of=/dev/sda bs=400K  count=10485  (334 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=800K  count=5242   (278 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=1600K count=2621   (204 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=2200K count=1906   (170 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=3000K count=1398   (150 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=4500K count=932    (139 MB/s)
-> 
-> After:
-> 
->  - dd if=/dev/zero of=/dev/sda bs=400K  count=10485  (339 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=800K  count=5242   (330 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=1600K count=2621   (332 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=2200K count=1906   (333 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=3000K count=1398   (333 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=4500K count=932    (333 MB/s)
-> 
-> Fixes: 5d8edfb900d5 ("iomap: Copy larger chunks from userspace")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> 
-> ---
-> Changes in v2:
->  - fix address space description in message
-> Changes in v3:
->  - adjust 'chunk' and add mapping_max_folio_size() in header file
->    as suggested by Matthew
->  - add write performance results in commit message
-> ---
->  fs/iomap/buffered-io.c  |  2 +-
->  include/linux/pagemap.h | 37 ++++++++++++++++++++++++-------------
->  2 files changed, 25 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 41c8f0c68ef5..c5802a459334 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -898,11 +898,11 @@ static bool iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
->  static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
->  {
->  	loff_t length = iomap_length(iter);
-> -	size_t chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
->  	loff_t pos = iter->pos;
->  	ssize_t total_written = 0;
->  	long status = 0;
->  	struct address_space *mapping = iter->inode->i_mapping;
-> +	size_t chunk = mapping_max_folio_size(mapping);
->  	unsigned int bdp_flags = (iter->flags & IOMAP_NOWAIT) ? BDP_ASYNC : 0;
->  
->  	do {
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index c5e33e2ca48a..6be8e22360f1 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -346,6 +346,19 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->  	m->gfp_mask = mask;
->  }
->  
-> +/*
-> + * There are some parts of the kernel which assume that PMD entries
-> + * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
-> + * limit the maximum allocation order to PMD size.  I'm not aware of any
-> + * assumptions about maximum order if THP are disabled, but 8 seems like
-> + * a good order (that's 1MB if you're using 4kB pages)
-> + */
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-> +#else
-> +#define MAX_PAGECACHE_ORDER	8
-> +#endif
-> +
->  /**
->   * mapping_set_large_folios() - Indicate the file supports large folios.
->   * @mapping: The file.
-> @@ -372,6 +385,17 @@ static inline bool mapping_large_folio_support(struct address_space *mapping)
->  		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
->  }
->  
-> +/*
-> + * Get max folio size in case of supporting large folio, otherwise return
-> + * PAGE_SIZE.
+Hi all,
 
-Minor quibble -- the comment doesn't need to restate what the function
-does because we can see that in the code below.
+We are students from the State University of Campinas with an interest in contributing to the kernel. We are part of LKCAMP, a student group that focuses on researching and contributing to open source software. Our group has organized kernel hackathons in the past [1] that resulted in sucessful contributions, and we would like to continue the effort this year.
 
-/* Return the maximum folio size for this pagecache mapping, in bytes. */
+This time, we were thinking about writing KUnit tests for data structures in `lib/` (or converting existing lib test code), similarly to our previous hackathon. We are currently considering a few candidates:
 
-With that fixed,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+- lib/kfifo.c
+- lib/llist.c
+- tools/testing/scatterlist
+- tools/testing/radix-tree
 
---D
+We would like to know if these are good candidates, and also ask for suggestions of other code that could benefit from having KUnit tests.
 
+Thanks!
+Artur Alves
 
-> + */
-> +static inline size_t mapping_max_folio_size(struct address_space *mapping)
-> +{
-> +	if (mapping_large_folio_support(mapping))
-> +		return PAGE_SIZE << MAX_PAGECACHE_ORDER;
-> +	return PAGE_SIZE;
-> +}
-> +
->  static inline int filemap_nr_thps(struct address_space *mapping)
->  {
->  #ifdef CONFIG_READ_ONLY_THP_FOR_FS
-> @@ -530,19 +554,6 @@ static inline void *detach_page_private(struct page *page)
->  	return folio_detach_private(page_folio(page));
->  }
->  
-> -/*
-> - * There are some parts of the kernel which assume that PMD entries
-> - * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
-> - * limit the maximum allocation order to PMD size.  I'm not aware of any
-> - * assumptions about maximum order if THP are disabled, but 8 seems like
-> - * a good order (that's 1MB if you're using 4kB pages)
-> - */
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-> -#else
-> -#define MAX_PAGECACHE_ORDER	8
-> -#endif
-> -
->  #ifdef CONFIG_NUMA
->  struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order);
->  #else
-> -- 
-> 2.34.1
-> 
-> 
+[1] https://lore.kernel.org/dri-devel/20211011152333.gm5jkaog6b6nbv5w@notapiano/
 
