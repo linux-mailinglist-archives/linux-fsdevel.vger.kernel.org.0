@@ -1,47 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-19815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBE28C9F21
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 16:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5188C9F2C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 17:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5F61F22331
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 14:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C6D1F21A6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 15:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61786136E23;
-	Mon, 20 May 2024 14:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7EB136E26;
+	Mon, 20 May 2024 15:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cOVuLHw2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oF28tbLn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289A6136E17;
-	Mon, 20 May 2024 14:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44ECF28E7;
+	Mon, 20 May 2024 15:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716216992; cv=none; b=T4rJy0odEnjvBJaH1ZluXkHwQu8PsMRT+MHLCFJ38F3qkai/XOo+goPu+L2Nz+tTFZSCwkouaBzrkKzYUTp4X0sNSaGHcagr/QNledeoFQbTOWtW4szSY0bearbY6ezcpyAh+hgZfG+wBBrTa6EimtbPStlDZR5reDvXvNh7QdY=
+	t=1716217211; cv=none; b=o16U9RWi3Yw+1yYU1MiVXS6FlYkICFJ6dGWfyNzDYolzcUT1L9EAzJ3Thac0M+hJYmF+ZDeegpB9P+SCU24sH71QwE90aPGRfyhj6SIBFdFiDTG7rTnA6EpwVe68A6RuhBMeoyR1v6xloqMH65Y3dBMXpkO/NVa+VE/qpWbGOvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716216992; c=relaxed/simple;
-	bh=3euA/B2Ndw3+UOUm+1CJ/b2zdJ4byzsMpwVOLQCS0wE=;
+	s=arc-20240116; t=1716217211; c=relaxed/simple;
+	bh=6RnVIwxpdPu2quHrapU91k6GMCQR93bNvVmrk8LVkS0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LzyXgA8MyyywySTSCo9fG9/dkf7FyD0A9vzbAEnz8X+axiN+c0ROhpV6WDnjohfMWMh304dOOPcqRskMAAJWAe9BArUTcKyBJJf8S/53tqPH+/5HiLUs13fVrpinMO5ABfrxta9ghVChWtH61dmCSuPmSkU7kj3pEwlqO2341Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cOVuLHw2; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716216986; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=woW0egPVHo7vV4ioncHQH2/4MJ0iNGLsOFQNC6nWlWc=;
-	b=cOVuLHw2kUK5kBghXYJu0fH5hYx8XEvFaBp8SYquOQSvudnuTpQ+glrWs/j7/79M09Gn1EP4KAMWZmLwGTylld1kUUEUTVp6vd12x1cdS567bDrujR9jJTXby7FuYNmyHJyL9IoUBXvp6Vpuq15Fu+Ghkf7CYuFFlNHhF7bqhb8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R821e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6ulvwZ_1716216984;
-Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W6ulvwZ_1716216984)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 22:56:25 +0800
-Message-ID: <b75ec357-4189-4ea6-8f16-b0e2923921fd@linux.alibaba.com>
-Date: Mon, 20 May 2024 22:56:23 +0800
+	 In-Reply-To:Content-Type; b=AkYHCH1Moa0kiqP9zxJ70pusqJiZcZifYy+cC4n34WuLkrxHb+Rf7raEFAksfh25HBkWhcADc+0ZryKfnPMJfjsnSq/fqXwow0Wu2P0hZBFMB2op2GVcQHCk5xHml3bhp2ioQf+xdI0aXCE6bxrGuIfc5Dg2wL4d8gEqhn4jy6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oF28tbLn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE63C2BD10;
+	Mon, 20 May 2024 15:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716217210;
+	bh=6RnVIwxpdPu2quHrapU91k6GMCQR93bNvVmrk8LVkS0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oF28tbLntmCzHKO6rQoXTZ3wKS2octb5Jh6K7EmZBCBXNUFfb9Nz1Ajdy2nO9Hg6i
+	 XH7BjC2Ird+JGwRVmNhYqZy92ZhQbsr0HNPXjFb0fZLNNC41MVNmz3haLdyF98Qnzj
+	 7RIeTux/Yy0jcBFDHe5A9TzSj/0iWQ9kiXWX0kmAFy12DYxTuJdfnfaIIIoDgrdMzd
+	 ROqbDuj7O5sFlDYxBNYp4yVwskKIQr9qUQc3Bnz14LyBtSwhMAesbcDurXhZ+CwrKz
+	 bMxZchDGqjooqICZYNYs/QGUCBjCyX7PXC5YqgnAi5/S/iRCxQ99JjQCCqClqOpfm4
+	 MoZvH6ZaVtHFA==
+Message-ID: <8f60ed88-1978-4d7c-9149-aee672aa1b09@kernel.org>
+Date: Mon, 20 May 2024 17:00:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,266 +50,327 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
- reuse
-To: Baokun Li <libaokun@huaweicloud.com>, Jeff Layton <jlayton@kernel.org>,
- netfs@lists.linux.dev, dhowells@redhat.com
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
- <20240515125136.3714580-5-libaokun@huaweicloud.com>
- <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
- <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
- <4b1584787dd54bb95d700feae1ca498c40429551.camel@kernel.org>
- <a4d57830-2bde-901f-72c4-e1a3f714faa5@huaweicloud.com>
- <d82277a4-aeab-4eb7-bdfd-377edd8b8737@linux.alibaba.com>
- <bc76e529-7904-0650-7fa9-dc5561ff6668@huaweicloud.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <bc76e529-7904-0650-7fa9-dc5561ff6668@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240520102033.9361-3-nj.shetty@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Baokun,
+On 2024/05/20 12:20, Nitesh Shetty wrote:
+> We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
+> Since copy is a composite operation involving src and dst sectors/lba,
+> each needs to be represented by a separate bio to make it compatible
+> with device mapper.
 
-On 2024/5/20 21:24, Baokun Li wrote:
-> On 2024/5/20 20:54, Gao Xiang wrote:
->>
->>
->> On 2024/5/20 20:42, Baokun Li wrote:
->>> On 2024/5/20 18:04, Jeff Layton wrote:
->>>> On Mon, 2024-05-20 at 12:06 +0800, Baokun Li wrote:
->>>>> Hi Jeff,
->>>>>
->>>>> Thank you very much for your review!
->>>>>
->>>>> On 2024/5/19 19:11, Jeff Layton wrote:
->>>>>> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
->>>>>>> From: Baokun Li <libaokun1@huawei.com>
->>>>>>>
->>>>>>> Reusing the msg_id after a maliciously completed reopen request may cause
->>>>>>> a read request to remain unprocessed and result in a hung, as shown below:
->>>>>>>
->>>>>>>          t1       |      t2       |      t3
->>>>>>> -------------------------------------------------
->>>>>>> cachefiles_ondemand_select_req
->>>>>>>    cachefiles_ondemand_object_is_close(A)
->>>>>>>    cachefiles_ondemand_set_object_reopening(A)
->>>>>>>    queue_work(fscache_object_wq, &info->work)
->>>>>>>                   ondemand_object_worker
->>>>>>>                    cachefiles_ondemand_init_object(A)
->>>>>>>                     cachefiles_ondemand_send_req(OPEN)
->>>>>>>                       // get msg_id 6
->>>>>>> wait_for_completion(&req_A->done)
->>>>>>> cachefiles_ondemand_daemon_read
->>>>>>>    // read msg_id 6 req_A
->>>>>>>    cachefiles_ondemand_get_fd
->>>>>>>    copy_to_user
->>>>>>>                                   // Malicious completion msg_id 6
->>>>>>>                                   copen 6,-1
->>>>>>> cachefiles_ondemand_copen
->>>>>>> complete(&req_A->done)
->>>>>>>                                    // will not set the object to close
->>>>>>>                                    // because ondemand_id && fd is valid.
->>>>>>>
->>>>>>>                   // ondemand_object_worker() is done
->>>>>>>                   // but the object is still reopening.
->>>>>>>
->>>>>>>                                   // new open req_B
->>>>>>> cachefiles_ondemand_init_object(B)
->>>>>>> cachefiles_ondemand_send_req(OPEN)
->>>>>>>                                    // reuse msg_id 6
->>>>>>> process_open_req
->>>>>>>    copen 6,A.size
->>>>>>>    // The expected failed copen was executed successfully
->>>>>>>
->>>>>>> Expect copen to fail, and when it does, it closes fd, which sets the
->>>>>>> object to close, and then close triggers reopen again. However, due to
->>>>>>> msg_id reuse resulting in a successful copen, the anonymous fd is not
->>>>>>> closed until the daemon exits. Therefore read requests waiting for reopen
->>>>>>> to complete may trigger hung task.
->>>>>>>
->>>>>>> To avoid this issue, allocate the msg_id cyclically to avoid reusing the
->>>>>>> msg_id for a very short duration of time.
->>>>>>>
->>>>>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
->>>>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>>>>>> ---
->>>>>>>    fs/cachefiles/internal.h |  1 +
->>>>>>>    fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
->>>>>>>    2 files changed, 17 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
->>>>>>> index 8ecd296cc1c4..9200c00f3e98 100644
->>>>>>> --- a/fs/cachefiles/internal.h
->>>>>>> +++ b/fs/cachefiles/internal.h
->>>>>>> @@ -128,6 +128,7 @@ struct cachefiles_cache {
->>>>>>>        unsigned long            req_id_next;
->>>>>>>        struct xarray            ondemand_ids;    /* xarray for ondemand_id allocation */
->>>>>>>        u32                ondemand_id_next;
->>>>>>> +    u32                msg_id_next;
->>>>>>>    };
->>>>>>>    static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
->>>>>>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->>>>>>> index f6440b3e7368..b10952f77472 100644
->>>>>>> --- a/fs/cachefiles/ondemand.c
->>>>>>> +++ b/fs/cachefiles/ondemand.c
->>>>>>> @@ -433,20 +433,32 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
->>>>>>>            smp_mb();
->>>>>>>            if (opcode == CACHEFILES_OP_CLOSE &&
->>>>>>> - !cachefiles_ondemand_object_is_open(object)) {
->>>>>>> + !cachefiles_ondemand_object_is_open(object)) {
->>>>>>> WARN_ON_ONCE(object->ondemand->ondemand_id == 0);
->>>>>>>                xas_unlock(&xas);
->>>>>>>                ret = -EIO;
->>>>>>>                goto out;
->>>>>>>            }
->>>>>>> -        xas.xa_index = 0;
->>>>>>> +        /*
->>>>>>> +         * Cyclically find a free xas to avoid msg_id reuse that would
->>>>>>> +         * cause the daemon to successfully copen a stale msg_id.
->>>>>>> +         */
->>>>>>> +        xas.xa_index = cache->msg_id_next;
->>>>>>>            xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
->>>>>>> +        if (xas.xa_node == XAS_RESTART) {
->>>>>>> +            xas.xa_index = 0;
->>>>>>> +            xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
->>>>>>> +        }
->>>>>>>            if (xas.xa_node == XAS_RESTART)
->>>>>>>                xas_set_err(&xas, -EBUSY);
->>>>>>> +
->>>>>>>            xas_store(&xas, req);
->>>>>>> -        xas_clear_mark(&xas, XA_FREE_MARK);
->>>>>>> -        xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->>>>>>> +        if (xas_valid(&xas)) {
->>>>>>> +            cache->msg_id_next = xas.xa_index + 1;
->>>>>> If you have a long-standing stuck request, could this counter wrap
->>>>>> around and you still end up with reuse?
->>>>> Yes, msg_id_next is declared to be of type u32 in the hope that when
->>>>> xa_index == UINT_MAX, a wrap around occurs so that msg_id_next
->>>>> goes to zero. Limiting xa_index to no more than UINT_MAX is to avoid
->>>>> the xarry being too deep.
->>>>>
->>>>> If msg_id_next is equal to the id of a long-standing stuck request
->>>>> after the wrap-around, it is true that the reuse in the above problem
->>>>> may also occur.
->>>>>
->>>>> But I feel that a long stuck request is problematic in itself, it means
->>>>> that after we have sent 4294967295 requests, the first one has not
->>>>> been processed yet, and even if we send a million requests per
->>>>> second, this one hasn't been completed for more than an hour.
->>>>>
->>>>> We have a keep-alive process that pulls the daemon back up as
->>>>> soon as it exits, and there is a timeout mechanism for requests in
->>>>> the daemon to prevent the kernel from waiting for long periods
->>>>> of time. In other words, we should avoid the situation where
->>>>> a request is stuck for a long period of time.
->>>>>
->>>>> If you think UINT_MAX is not enough, perhaps we could raise
->>>>> the maximum value of msg_id_next to ULONG_MAX?
->>>>>> Maybe this should be using
->>>>>> ida_alloc/free instead, which would prevent that too?
->>>>>>
->>>>> The id reuse here is that the kernel has finished the open request
->>>>> req_A and freed its id_A and used it again when sending the open
->>>>> request req_B, but the daemon is still working on req_A, so the
->>>>> copen id_A succeeds but operates on req_B.
->>>>>
->>>>> The id that is being used by the kernel will not be allocated here
->>>>> so it seems that ida _alloc/free does not prevent reuse either,
->>>>> could you elaborate a bit more how this works?
->>>>>
->>>> ida_alloc and free absolutely prevent reuse while the id is in use.
->>>> That's sort of the point of those functions. Basically it uses a set of
->>>> bitmaps in an xarray to track which IDs are in use, so ida_alloc only
->>>> hands out values which are not in use. See the comments over
->>>> ida_alloc_range() in lib/idr.c.
->>>>
->>> Thank you for the explanation!
->>>
->>> The logic now provides the same guarantees as ida_alloc/free.
->>> The "reused" id, indeed, is no longer in use in the kernel, but it is still
->>> in use in the userland, so a multi-threaded daemon could be handling
->>> two different requests for the same msg_id at the same time.
->>>
->>> Previously, the logic for allocating msg_ids was to start at 0 and look
->>> for a free xas.index, so it was possible for an id to be allocated to a
->>> new request just as the id was being freed.
->>>
->>> With the change to cyclic allocation, the kernel will not use the same
->>> id again until INT_MAX requests have been sent, and during the time
->>> it takes to send requests, the daemon has enough time to process
->>> requests whose ids are still in use by the daemon, but have already
->>> been freed in the kernel.
->>
->> Again, If I understand correctly, I think the main point
->> here is
->>
->> wait_for_completion(&req_A->done)
->>
->> which could hang due to some malicious deamon.  But I think it
->> should be switched to wait_for_completion_killable() instead. *
->> It's up to users to kill the mount instance if there is a
->> malicious user daemon.
->>
->> So in that case, hung task will not be triggered anymore, and
->> you don't need to care about cyclic allocation too.
->>
->> Thanks,
->> Gao Xiang
-> Hi Xiang,
-> 
-> The problem is not as simple as you think.
-> 
-> If you make it killable, it just won't trigger a hung task in
-> cachefiles_ondemand_send_req(), and the process waiting for the
-> resource in question will also be hung.
-> 
-> * When the open/read request in the mount process gets stuck,
->    the sync/drop cache will trigger a hung task panic in iterate_supers()
->    as it waits for sb->umount to be unlocked.
-> * After umount, anonymous fd is not closed causing a hung task panic
->    in fscache_hash_cookie() because of waiting for cookie unhash.
-> * The dentry is in a loop up state, because the read request is not being
->    processed, another process looking for the same dentry is waiting for
->    the previous lookup to finish, which triggers a hung task panic in
->    d_alloc_parallel().
+Why ? The beginning of the sentence isn't justification enough for the two new
+operation codes ? The 2 sentences should be reversed for easier reading:
+justification first naturally leads to the reader understanding why the codes
+are needed.
+
+Also: s/opcode/operations
 
 
-As for your sb->umount, d_alloc_parallel() or even i_rwsem,
-which are all currently unkillable, also see some previous
-threads like:
+> We expect caller to take a plug and send bio with destination information,
+> followed by bio with source information.
 
-https://lore.kernel.org/linux-fsdevel/CAJfpegu6v1fRAyLvFLOPUSAhx5aAGvPGjBWv-TDQjugqjUA_hQ@mail.gmail.com/T/#u
+expect ? Plugging is optional. Does copy offload require it ? Please clarify this.
 
-I don't think it's the issue of on-demand cachefiles, even
-NVMe or virtio-blk or networking can be stuck in
-.lookup, fill_sb or whatever.
+> Once the dst bio arrives we form a request and wait for source
 
-Which can makes sb->umount, d_alloc_parallel() or even
-i_rwsem unkillable.
+arrives ? You mean "is submitted" ?
+
+s/and wait for/and wait for the
+
+> bio. Upon arrival of source bio we merge these two bio's and send
+
+s/arrival/submission ?
+
+s/of/of the
+s/bio's/BIOs
+s/and send/and send the
+s/down to/down to the
+
+> corresponding request down to device driver.
+> Merging non copy offload bio is avoided by checking for copy specific
+> opcodes in merge function.
+
+Super unclear... What are you trying to say here ? That merging copy offload
+BIOs with other BIOs is not allowed ? That is already handled. Only BIOs &
+requests with the same operation can be merged. The code below also suggests
+that you allow merging copy offloads... So I really do not understand this.
 
 > 
-> Can all this be made killable?
-
-I can understand your hung_task_panic concern but it
-sounds like a workaround to me anyway.
-
-Thanks,
-Gao Xiang
-
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> ---
+>  block/blk-core.c          |  7 +++++++
+>  block/blk-merge.c         | 41 +++++++++++++++++++++++++++++++++++++++
+>  block/blk.h               | 16 +++++++++++++++
+>  block/elevator.h          |  1 +
+>  include/linux/bio.h       |  6 +-----
+>  include/linux/blk_types.h | 10 ++++++++++
+>  6 files changed, 76 insertions(+), 5 deletions(-)
 > 
-> Thanks,
-> Baokun
->>
->>>
->>> Regards,
->>> Baokun
->>>>>>> + xas_clear_mark(&xas, XA_FREE_MARK);
->>>>>>> +            xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->>>>>>> +        }
->>>>>>>            xas_unlock(&xas);
->>>>>>>        } while (xas_nomem(&xas, GFP_KERNEL));
->>>>>>>
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index ea44b13af9af..f18ee5f709c0 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -122,6 +122,8 @@ static const char *const blk_op_name[] = {
+>  	REQ_OP_NAME(ZONE_FINISH),
+>  	REQ_OP_NAME(ZONE_APPEND),
+>  	REQ_OP_NAME(WRITE_ZEROES),
+> +	REQ_OP_NAME(COPY_SRC),
+> +	REQ_OP_NAME(COPY_DST),
+>  	REQ_OP_NAME(DRV_IN),
+>  	REQ_OP_NAME(DRV_OUT),
+>  };
+> @@ -838,6 +840,11 @@ void submit_bio_noacct(struct bio *bio)
+>  		 * requests.
+>  		 */
+>  		fallthrough;
+> +	case REQ_OP_COPY_SRC:
+> +	case REQ_OP_COPY_DST:
+> +		if (!q->limits.max_copy_sectors)
+> +			goto not_supported;
+> +		break;
+>  	default:
+>  		goto not_supported;
+>  	}
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 8534c35e0497..f8dc48a03379 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -154,6 +154,20 @@ static struct bio *bio_split_write_zeroes(struct bio *bio,
+>  	return bio_split(bio, lim->max_write_zeroes_sectors, GFP_NOIO, bs);
+>  }
+>  
+> +static struct bio *bio_split_copy(struct bio *bio,
+> +				  const struct queue_limits *lim,
+> +				  unsigned int *nsegs)
+> +{
+> +	*nsegs = 1;
+> +	if (bio_sectors(bio) <= lim->max_copy_sectors)
+> +		return NULL;
+> +	/*
+> +	 * We don't support splitting for a copy bio. End it with EIO if
+> +	 * splitting is required and return an error pointer.
+> +	 */
+> +	return ERR_PTR(-EIO);
+> +}
+
+Hmm... Why not check that the copy request is small enough and will not be split
+when it is submitted ? Something like blk_check_zone_append() does with
+REQ_OP_ZONE_APPEND ? So adding a blk_check_copy_offload(). That would also
+include the limits check from the previous hunk.
+
+> +
+>  /*
+>   * Return the maximum number of sectors from the start of a bio that may be
+>   * submitted as a single request to a block device. If enough sectors remain,
+> @@ -362,6 +376,12 @@ struct bio *__bio_split_to_limits(struct bio *bio,
+>  	case REQ_OP_WRITE_ZEROES:
+>  		split = bio_split_write_zeroes(bio, lim, nr_segs, bs);
+>  		break;
+> +	case REQ_OP_COPY_SRC:
+> +	case REQ_OP_COPY_DST:
+> +		split = bio_split_copy(bio, lim, nr_segs);
+> +		if (IS_ERR(split))
+> +			return NULL;
+> +		break;
+
+See above.
+
+>  	default:
+>  		split = bio_split_rw(bio, lim, nr_segs, bs,
+>  				get_max_io_size(bio, lim) << SECTOR_SHIFT);
+> @@ -925,6 +945,9 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
+>  	if (!rq_mergeable(rq) || !bio_mergeable(bio))
+>  		return false;
+>  
+> +	if (blk_copy_offload_mergable(rq, bio))
+> +		return true;
+> +
+>  	if (req_op(rq) != bio_op(bio))
+>  		return false;
+>  
+> @@ -958,6 +981,8 @@ enum elv_merge blk_try_merge(struct request *rq, struct bio *bio)
+>  {
+>  	if (blk_discard_mergable(rq))
+>  		return ELEVATOR_DISCARD_MERGE;
+> +	else if (blk_copy_offload_mergable(rq, bio))
+> +		return ELEVATOR_COPY_OFFLOAD_MERGE;
+>  	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) == bio->bi_iter.bi_sector)
+>  		return ELEVATOR_BACK_MERGE;
+>  	else if (blk_rq_pos(rq) - bio_sectors(bio) == bio->bi_iter.bi_sector)
+> @@ -1065,6 +1090,20 @@ static enum bio_merge_status bio_attempt_discard_merge(struct request_queue *q,
+>  	return BIO_MERGE_FAILED;
+>  }
+>  
+> +static enum bio_merge_status bio_attempt_copy_offload_merge(struct request *req,
+> +							    struct bio *bio)
+> +{
+> +	if (req->__data_len != bio->bi_iter.bi_size)
+> +		return BIO_MERGE_FAILED;
+> +
+> +	req->biotail->bi_next = bio;
+> +	req->biotail = bio;
+> +	req->nr_phys_segments++;
+> +	req->__data_len += bio->bi_iter.bi_size;
+
+Arg... You seem to be assuming that the source BIO always comes right after the
+destination request... What if copy offloads are being concurrently issued ?
+Shouldn't you check somehow that the pair is a match ? Or are you relying on the
+per-context plugging which prevents that from happening in the first place ? But
+that would assumes that you never ever sleep trying to allocate the source BIO
+after the destination BIO/request are prepared and plugged.
+
+> +
+> +	return BIO_MERGE_OK;
+> +}
+> +
+>  static enum bio_merge_status blk_attempt_bio_merge(struct request_queue *q,
+>  						   struct request *rq,
+>  						   struct bio *bio,
+> @@ -1085,6 +1124,8 @@ static enum bio_merge_status blk_attempt_bio_merge(struct request_queue *q,
+>  		break;
+>  	case ELEVATOR_DISCARD_MERGE:
+>  		return bio_attempt_discard_merge(q, rq, bio);
+> +	case ELEVATOR_COPY_OFFLOAD_MERGE:
+> +		return bio_attempt_copy_offload_merge(rq, bio);
+>  	default:
+>  		return BIO_MERGE_NONE;
+>  	}
+> diff --git a/block/blk.h b/block/blk.h
+> index 189bc25beb50..6528a2779b84 100644
+> --- a/block/blk.h
+> +++ b/block/blk.h
+> @@ -174,6 +174,20 @@ static inline bool blk_discard_mergable(struct request *req)
+>  	return false;
+>  }
+>  
+> +/*
+> + * Copy offload sends a pair of bio with REQ_OP_COPY_DST and REQ_OP_COPY_SRC
+> + * operation by taking a plug.
+> + * Initially DST bio is sent which forms a request and
+> + * waits for SRC bio to arrive. Once SRC bio arrives
+> + * we merge it and send request down to driver.
+> + */
+> +static inline bool blk_copy_offload_mergable(struct request *req,
+> +					     struct bio *bio)
+> +{
+> +	return (req_op(req) == REQ_OP_COPY_DST &&
+> +		bio_op(bio) == REQ_OP_COPY_SRC);
+> +}
+
+This function is really not needed at all (used in one place only).
+
+> +
+>  static inline unsigned int blk_rq_get_max_segments(struct request *rq)
+>  {
+>  	if (req_op(rq) == REQ_OP_DISCARD)
+> @@ -323,6 +337,8 @@ static inline bool bio_may_exceed_limits(struct bio *bio,
+>  	case REQ_OP_DISCARD:
+>  	case REQ_OP_SECURE_ERASE:
+>  	case REQ_OP_WRITE_ZEROES:
+> +	case REQ_OP_COPY_SRC:
+> +	case REQ_OP_COPY_DST:
+>  		return true; /* non-trivial splitting decisions */
+
+See above. Limits should be checked on submission.
+
+>  	default:
+>  		break;
+> diff --git a/block/elevator.h b/block/elevator.h
+> index e9a050a96e53..c7a45c1f4156 100644
+> --- a/block/elevator.h
+> +++ b/block/elevator.h
+> @@ -18,6 +18,7 @@ enum elv_merge {
+>  	ELEVATOR_FRONT_MERGE	= 1,
+>  	ELEVATOR_BACK_MERGE	= 2,
+>  	ELEVATOR_DISCARD_MERGE	= 3,
+> +	ELEVATOR_COPY_OFFLOAD_MERGE	= 4,
+>  };
+>  
+>  struct blk_mq_alloc_data;
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index d5379548d684..528ef22dd65b 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -53,11 +53,7 @@ static inline unsigned int bio_max_segs(unsigned int nr_segs)
+>   */
+>  static inline bool bio_has_data(struct bio *bio)
+>  {
+> -	if (bio &&
+> -	    bio->bi_iter.bi_size &&
+> -	    bio_op(bio) != REQ_OP_DISCARD &&
+> -	    bio_op(bio) != REQ_OP_SECURE_ERASE &&
+> -	    bio_op(bio) != REQ_OP_WRITE_ZEROES)
+> +	if (bio && (bio_op(bio) == REQ_OP_READ || bio_op(bio) == REQ_OP_WRITE))
+>  		return true;
+
+This change seems completely broken and out of place. This would cause a return
+of false for zone append operations.
+
+>  
+>  	return false;
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index 781c4500491b..7f692bade271 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -342,6 +342,10 @@ enum req_op {
+>  	/* reset all the zone present on the device */
+>  	REQ_OP_ZONE_RESET_ALL	= (__force blk_opf_t)15,
+>  
+> +	/* copy offload src and dst operation */
+
+s/src/source
+s/dst/destination
+s/operation/operations
+
+> +	REQ_OP_COPY_SRC		= (__force blk_opf_t)18,
+> +	REQ_OP_COPY_DST		= (__force blk_opf_t)19,
+> +
+>  	/* Driver private requests */
+>  	REQ_OP_DRV_IN		= (__force blk_opf_t)34,
+>  	REQ_OP_DRV_OUT		= (__force blk_opf_t)35,
+> @@ -430,6 +434,12 @@ static inline bool op_is_write(blk_opf_t op)
+>  	return !!(op & (__force blk_opf_t)1);
+>  }
+>  
+> +static inline bool op_is_copy(blk_opf_t op)
+> +{
+> +	return ((op & REQ_OP_MASK) == REQ_OP_COPY_SRC ||
+> +		(op & REQ_OP_MASK) == REQ_OP_COPY_DST);
+> +}
+
+May be use a switch here to avoid the double masking of op ?
+
+> +
+>  /*
+>   * Check if the bio or request is one that needs special treatment in the
+>   * flush state machine.
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
