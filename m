@@ -1,322 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-19760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31EFA8C99EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 10:46:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B988C99F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 10:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEEEF1F21A10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 08:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DBB61F219F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 08:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08801C2AF;
-	Mon, 20 May 2024 08:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BE91CA85;
+	Mon, 20 May 2024 08:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cReYhNtU"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ebsu/ASE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CxenKFac";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ebsu/ASE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CxenKFac"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9443FA2D;
-	Mon, 20 May 2024 08:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FBFA2D;
+	Mon, 20 May 2024 08:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716194753; cv=none; b=mPlNivY24yR64enJw/uxkMP56Xu136gFTi1B9vqqfhYt05vuYhPcGXvfPUKWAUjnL6eMEz/hDtCyIZdW5AhZhcjxK/ziORaEWFrZzu+gzmWTGLqht7aFWqWUcKN7SOyQbDIGjbp2ty31eg1wv5glxJ9fa+pUjssum5/jBdxYZII=
+	t=1716194950; cv=none; b=TJkCguxq1+20v6HpOurytyuu9w60KiWDc3q5cht+We8f4ZsUbUtQFcVubEJ9768nIi62/NFDO5QwENcKy9zsnMS610PiOtivzur6F8Bl3yYWfmAsDbEPodmgZHEG7fvNuD8arVJ1VWXWow7T0jLgK/vm19Xcve73jo0UvJL2kmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716194753; c=relaxed/simple;
-	bh=dyWHdQIOPf5ByBFIrrYhjIszG4FrJ8Kbt+apgc27Vko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e10lohq1U0Wr6nXX1PRcyGz5SJDoO81llpXS0+w5EBDdcX3B4rOvh+F3wGrSbbw8oopPdJgiPgfDSF32pcJhXcWc28YQslu5VbKSUhFIqE6I4Iuuq5ChncH7OoQLU4S5adbvDG2qeqObcK2hUR4jTQKDtHlQizBjtKKGiTQvELM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cReYhNtU; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716194748; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=mOJbLoDEbhw+IxO8LnZ1BgN4WgsSHktGATTpcwnHMYE=;
-	b=cReYhNtUy2Yxus6nMerbMxc89CPPee1+g25mOrMhte5MqdHHC/qcNA1iFDOccpsaE8n0pUGUBRgKtQ61v/DoSqGDG3BHr5Cxlfb4dSo1gyoQGduPBDcqzs6nmymguiYGfYhmLOxSRUhwwpIzV6QPnLTyMWF5btSuR2IrfKTFd8U=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6pD40v_1716194745;
-Received: from 30.97.48.204(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W6pD40v_1716194745)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 16:45:47 +0800
-Message-ID: <cd7fe397-9785-42f3-b05f-39ab90ba6a9a@linux.alibaba.com>
-Date: Mon, 20 May 2024 16:45:45 +0800
+	s=arc-20240116; t=1716194950; c=relaxed/simple;
+	bh=2m8/0Wpgypww/qVvVssQsZJ3ugL36NGsxAEznLE8o6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwnQehlH1wtcas6v3XPYmsgoEU3tTDWFpoQ37L2KzKv2uzxz+iGiwRE3XGzQDMkypOKBg0lVnAABuK0LwSw8fTXpFGG56KK13ZjMC4YVhCBPYMvo6S83MGxShum6gE11iaTC9hDM5mK4RqllH/S2YijcbUZd8FhQGcUP7pl8AyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ebsu/ASE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CxenKFac; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ebsu/ASE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CxenKFac; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 88F4620396;
+	Mon, 20 May 2024 08:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716194946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xmN+qMxf6btR4ij7xXK5Fa3M1JEpt2XRh4mZOWfFXOw=;
+	b=Ebsu/ASE8JIhICjFkD6q9253i4A2t9ZNhIyWW3JuWbBKKKSlgL8EmmJ/3vzafglqe30eAZ
+	PWbLVQW8MKA/P8xyG2Nu47PMOIUfI1Ej2SYpdbtusDu4HnXNZtw0c/mn/tvKYzBfqGn4L4
+	j61C72ELZcQSVvvx+kZ82TO6XrAVMcw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716194946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xmN+qMxf6btR4ij7xXK5Fa3M1JEpt2XRh4mZOWfFXOw=;
+	b=CxenKFacN8a9bLYZBO4ZhrYcBIc+iqsWZWwix31LIvZr75XMK+MC0SeLMBpCYMX/ZIjDYD
+	vHTuqv1XKif4EaBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716194946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xmN+qMxf6btR4ij7xXK5Fa3M1JEpt2XRh4mZOWfFXOw=;
+	b=Ebsu/ASE8JIhICjFkD6q9253i4A2t9ZNhIyWW3JuWbBKKKSlgL8EmmJ/3vzafglqe30eAZ
+	PWbLVQW8MKA/P8xyG2Nu47PMOIUfI1Ej2SYpdbtusDu4HnXNZtw0c/mn/tvKYzBfqGn4L4
+	j61C72ELZcQSVvvx+kZ82TO6XrAVMcw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716194946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xmN+qMxf6btR4ij7xXK5Fa3M1JEpt2XRh4mZOWfFXOw=;
+	b=CxenKFacN8a9bLYZBO4ZhrYcBIc+iqsWZWwix31LIvZr75XMK+MC0SeLMBpCYMX/ZIjDYD
+	vHTuqv1XKif4EaBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7AF1E13A21;
+	Mon, 20 May 2024 08:49:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P4P2HYIOS2Y+AQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 May 2024 08:49:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 251A2A0888; Mon, 20 May 2024 10:49:06 +0200 (CEST)
+Date: Mon, 20 May 2024 10:49:06 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
+Message-ID: <20240520084906.ejykv3xwn7l36jbg@quack3>
+References: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
+ <20240515002513.yaglghza4i4ldmr5@quack3>
+ <f0eb115d-dd10-e156-9aed-65b7f479f008@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/12] cachefiles: fix slab-use-after-free in
- cachefiles_ondemand_get_fd()
-To: Baokun Li <libaokun@huaweicloud.com>,
- Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
-Cc: zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-4-libaokun@huaweicloud.com>
- <35561c99-c978-4cf6-82e9-d1308c82a7ff@linux.alibaba.com>
- <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0eb115d-dd10-e156-9aed-65b7f479f008@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
+On Thu 16-05-24 16:27:25, Zhang Yi wrote:
+> On 2024/5/15 8:25, Jan Kara wrote:
+> > On Mon 13-05-24 15:21:19, Zhang Yi wrote:
+> > Also accessing j_commit_sequence without any
+> > lock is theoretically problematic wrt compiler optimization. You should have
+> > READ_ONCE() there and the places modifying j_commit_sequence need to use
+> > WRITE_ONCE().
+> > 
+> 
+> Thanks for pointing this out, but I'm not sure if we have to need READ_ONCE()
+> here. IIUC, if we add READ_ONCE(), we could make sure to get the latest
+> j_commit_sequence, if not, there is a window (it might becomes larger) that
+> we could get the old value and jbd2_transaction_committed() could return false
+> even if the given transaction was just committed, but I think the window is
+> always there, so it looks like it is not a big problem, is that right?
 
+Well, all accesses to any memory should use READ_ONCE(), be protected by a
+lock, or use types that handle atomicity on assembly level (like atomic_t,
+or atomic bit operations and similar). Otherwise the compiler is free to
+assume the underlying memory cannot change and generate potentionally
+invalid code. In this case, I don't think realistically any compiler will
+do it but still it is a good practice and also it saves us from KCSAN
+warnings. If you want to know more details about possible problems, see
 
-On 2024/5/20 16:38, Baokun Li wrote:
-> Hi Jingbo,
-> 
-> Thanks for your review!
-> 
-> On 2024/5/20 15:24, Jingbo Xu wrote:
->>
->> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->>> From: Baokun Li <libaokun1@huawei.com>
->>>
->>> We got the following issue in a fuzz test of randomly issuing the restore
->>> command:
->>>
->>> ==================================================================
->>> BUG: KASAN: slab-use-after-free in cachefiles_ondemand_daemon_read+0x609/0xab0
->>> Write of size 4 at addr ffff888109164a80 by task ondemand-04-dae/4962
->>>
->>> CPU: 11 PID: 4962 Comm: ondemand-04-dae Not tainted 6.8.0-rc7-dirty #542
->>> Call Trace:
->>>   kasan_report+0x94/0xc0
->>>   cachefiles_ondemand_daemon_read+0x609/0xab0
->>>   vfs_read+0x169/0xb50
->>>   ksys_read+0xf5/0x1e0
->>>
->>> Allocated by task 626:
->>>   __kmalloc+0x1df/0x4b0
->>>   cachefiles_ondemand_send_req+0x24d/0x690
->>>   cachefiles_create_tmpfile+0x249/0xb30
->>>   cachefiles_create_file+0x6f/0x140
->>>   cachefiles_look_up_object+0x29c/0xa60
->>>   cachefiles_lookup_cookie+0x37d/0xca0
->>>   fscache_cookie_state_machine+0x43c/0x1230
->>>   [...]
->>>
->>> Freed by task 626:
->>>   kfree+0xf1/0x2c0
->>>   cachefiles_ondemand_send_req+0x568/0x690
->>>   cachefiles_create_tmpfile+0x249/0xb30
->>>   cachefiles_create_file+0x6f/0x140
->>>   cachefiles_look_up_object+0x29c/0xa60
->>>   cachefiles_lookup_cookie+0x37d/0xca0
->>>   fscache_cookie_state_machine+0x43c/0x1230
->>>   [...]
->>> ==================================================================
->>>
->>> Following is the process that triggers the issue:
->>>
->>>       mount  |   daemon_thread1    |    daemon_thread2
->>> ------------------------------------------------------------
->>>   cachefiles_ondemand_init_object
->>>    cachefiles_ondemand_send_req
->>>     REQ_A = kzalloc(sizeof(*req) + data_len)
->>>     wait_for_completion(&REQ_A->done)
->>>
->>>              cachefiles_daemon_read
->>>               cachefiles_ondemand_daemon_read
->>>                REQ_A = cachefiles_ondemand_select_req
->>>                cachefiles_ondemand_get_fd
->>>                copy_to_user(_buffer, msg, n)
->>>              process_open_req(REQ_A)
->>>                                    ------ restore ------
->>>                                    cachefiles_ondemand_restore
->>>                                    xas_for_each(&xas, req, ULONG_MAX)
->>>                                     xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->>>
->>>                                    cachefiles_daemon_read
->>>                                     cachefiles_ondemand_daemon_read
->>>                                      REQ_A = cachefiles_ondemand_select_req
->>>
->>>               write(devfd, ("copen %u,%llu", msg->msg_id, size));
->>>               cachefiles_ondemand_copen
->>>                xa_erase(&cache->reqs, id)
->>>                complete(&REQ_A->done)
->>>     kfree(REQ_A)
->>>                                      cachefiles_ondemand_get_fd(REQ_A)
->>>                                       fd = get_unused_fd_flags
->>>                                       file = anon_inode_getfile
->>>                                       fd_install(fd, file)
->>>                                       load = (void *)REQ_A->msg.data;
->>>                                       load->fd = fd;
->>>                                       // load UAF !!!
->>>
->>> This issue is caused by issuing a restore command when the daemon is still
->>> alive, which results in a request being processed multiple times thus
->>> triggering a UAF. So to avoid this problem, add an additional reference
->>> count to cachefiles_req, which is held while waiting and reading, and then
->>> released when the waiting and reading is over.
->>>
->>>
->>> Note that since there is only one reference count for waiting, we need to
->>> avoid the same request being completed multiple times, so we can only
->>> complete the request if it is successfully removed from the xarray.
->> Sorry the above description makes me confused.  As the same request may
->> be got by different daemon threads multiple times, the introduced
->> refcount mechanism can't protect it from being completed multiple times
->> (which is expected).  The refcount only protects it from being freed
->> multiple times.
-> The idea here is that because the wait only holds one reference count,
-> complete(&req->done) can only be called when the req has been
-> successfully removed from the xarry, otherwise the following UAF may
-> occur:
-> 
->     daemon_thread1    |    daemon_thread2
-> -------------------------------------------
-> cachefiles_ondemand_daemon_read
->   xa_lock(&cache->reqs)
->   // select req_A
->   xa_unlock(&cache->reqs)
->                      // restore req_A and read again
->                      cachefiles_ondemand_daemon_read
->                      xa_lock(&cache->reqs)
->                      // select req_A
->                      xa_unlock(&cache->reqs)
-> // goto error, erase success
-> xa_erase(&cache->reqs, id)
-> complete(&req_A->done)
-> // free req_A
->                      // goto error, erase failed
->                      complete(&req_A->done)
->                      // req_A use-after-free
-> 
-> This is also why error requests and CLOSE requests are handled
-> together and why xas_load(&xas) == req is checked.
->>> Fixes: e73fa11a356c ("cachefiles: add restore command to recover inflight ondemand read requests")
->>> Suggested-by: Hou Tao <houtao1@huawei.com>
->>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
->>> ---
->>>   fs/cachefiles/internal.h |  1 +
->>>   fs/cachefiles/ondemand.c | 44 ++++++++++++++++++++++------------------
->>>   2 files changed, 25 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
->>> index d33169f0018b..7745b8abc3aa 100644
->>> --- a/fs/cachefiles/internal.h
->>> +++ b/fs/cachefiles/internal.h
->>> @@ -138,6 +138,7 @@ static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
->>>   struct cachefiles_req {
->>>       struct cachefiles_object *object;
->>>       struct completion done;
->>> +    refcount_t ref;
->>>       int error;
->>>       struct cachefiles_msg msg;
->>>   };
->>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->>> index fd49728d8bae..56d12fe4bf73 100644
->>> --- a/fs/cachefiles/ondemand.c
->>> +++ b/fs/cachefiles/ondemand.c
->>> @@ -4,6 +4,12 @@
->>>   #include <linux/uio.h>
->>>   #include "internal.h"
->>> +static inline void cachefiles_req_put(struct cachefiles_req *req)
->>> +{
->>> +    if (refcount_dec_and_test(&req->ref))
->>> +        kfree(req);
->>> +}
->>> +
->>>   static int cachefiles_ondemand_fd_release(struct inode *inode,
->>>                         struct file *file)
->>>   {
->>> @@ -299,7 +305,6 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>>   {
->>>       struct cachefiles_req *req;
->>>       struct cachefiles_msg *msg;
->>> -    unsigned long id = 0;
->>>       size_t n;
->>>       int ret = 0;
->>>       XA_STATE(xas, &cache->reqs, cache->req_id_next);
->>> @@ -330,41 +335,39 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>>       xas_clear_mark(&xas, CACHEFILES_REQ_NEW);
->>>       cache->req_id_next = xas.xa_index + 1;
->>> +    refcount_inc(&req->ref);
->>>       xa_unlock(&cache->reqs);
->>> -    id = xas.xa_index;
->>> -
->>>       if (msg->opcode == CACHEFILES_OP_OPEN) {
->>>           ret = cachefiles_ondemand_get_fd(req);
->>>           if (ret) {
->>>               cachefiles_ondemand_set_object_close(req->object);
->>> -            goto error;
->>> +            goto out;
->>>           }
->>>       }
->>> -    msg->msg_id = id;
->>> +    msg->msg_id = xas.xa_index;
->>>       msg->object_id = req->object->ondemand->ondemand_id;
->>>       if (copy_to_user(_buffer, msg, n) != 0) {
->>>           ret = -EFAULT;
->>>           if (msg->opcode == CACHEFILES_OP_OPEN)
->>>               close_fd(((struct cachefiles_open *)msg->data)->fd);
->>> -        goto error;
->>>       }
->>> -
->>> -    /* CLOSE request has no reply */
->>> -    if (msg->opcode == CACHEFILES_OP_CLOSE) {
->>> -        xa_erase(&cache->reqs, id);
->>> -        complete(&req->done);
->>> +out:
->>> +    /* Remove error request and CLOSE request has no reply */
->>> +    if (ret || msg->opcode == CACHEFILES_OP_CLOSE) {
->>> +        xas_reset(&xas);
->>> +        xas_lock(&xas);
->>> +        if (xas_load(&xas) == req) {
->> Just out of curiosity... How could xas_load(&xas) doesn't equal to req?
-> 
-> As mentioned above, the req may have been deleted or even the id
-> 
-> may have been reused.
-> 
->>
->>> +            req->error = ret;
->>> +            complete(&req->done);
->>> +            xas_store(&xas, NULL);
->>> +        }
->>> +        xas_unlock(&xas);
->>>       }
->>> -
->>> -    return n;
->>> -
->>> -error:
->>> -    xa_erase(&cache->reqs, id);
->>> -    req->error = ret;
->>> -    complete(&req->done);
->>> -    return ret;
->>> +    cachefiles_req_put(req);
->>> +    return ret ? ret : n;
->>>   }
->> This is actually a combination of a fix and a cleanup which combines the
->> logic of removing error request and the CLOSE requests into one place.
->> Also it relies on the cleanup made in patch 2 ("cachefiles: remove
->> err_put_fd tag in cachefiles_ondemand_daemon_read()"), making it
->> difficult to be atomatically back ported to the stable (as patch 2 is
->> not marked as "Fixes").
->>
->> Thus could we make the fix first, and then make the cleanup.
-> I don't think that's necessary, stable automatically backports the
-> relevant dependency patches in case of backport patch conflicts,
-> and later patches modify the logic here as well.
-> Or add Fixes tag for patch 2?
+  tools/memory-model/Documentation/explanation.txt
 
-I think we might better to avoid unnecessary dependencies
-since it relies on some "AI" magic and often mis-backportes
-real dependencies.
+chapter "PLAIN ACCESSES AND DATA RACES".
 
-I tend to leave real bugfixes first, and do cleanup next.
-But please don't leave cleanup patches with "Fixes:" tags
-anyway since it just misleads people.
-
-Thanks,
-Gao Xiang
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
