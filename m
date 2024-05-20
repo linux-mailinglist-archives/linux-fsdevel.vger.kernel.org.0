@@ -1,126 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-19778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358AB8C9C04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:14:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115DA8C9C11
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D8A282FEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:14:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BF411C21D8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D87A5339E;
-	Mon, 20 May 2024 11:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331BE5337F;
+	Mon, 20 May 2024 11:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zJUwLbd+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ww99VMJm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zJUwLbd+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ww99VMJm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409705337E;
-	Mon, 20 May 2024 11:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DEB20EB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716203667; cv=none; b=phclC8ZtJzRX0RQmpOO2jQ0Owji1O2Ee4WHECp7NUV7lRva0UBXFYRHha0VP257inJBerBmBLTxTCMs4y527llH4rvFaQJx7vjiXKYYQF7bdoQ/3eg2fLRO01cSMGnlSv1bX5ciUid6OjwJxLHM5KsMRzdtTipUmTj4LJVSE9MY=
+	t=1716204163; cv=none; b=frDlrWXA6tBua+THaFBLGQxs0+f9QFiVHcO+WWS4gFgY6U+T/wzBEV+ew/Pwyt5zgWk95FqWDc+Y4Rz2YjLeNFnP8JrFtdFU7jeF2g8aG/e/kalhBAtj55SOhwZqjKxGa51cvNNuJlgSNUj112eB97je0ArYUJ6xCD473moXMSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716203667; c=relaxed/simple;
-	bh=w6EWHG/7umfYX85hJzKNaeqWOnb01B251xQqu8FXNag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=citahhZn34nyjGqbrXXI9xAoEVs0G4/CHJFwF+3LrM48ir4q3pz1A76rXpMlXakUia9WRjy384dO8+QbkJqMG7PoWrSRMyIchy2QYXCNmk6joVZkSgb5w3awXlcM4ti++oXbc2JeHrqhHxzEfFrsB9SfFCrZcsfAiVDjMiNUplc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjZhL0Jmlz4f3mJD;
-	Mon, 20 May 2024 19:14:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 6CF731A016E;
-	Mon, 20 May 2024 19:14:20 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g6IMEtmiAG7NA--.5841S3;
-	Mon, 20 May 2024 19:14:20 +0800 (CST)
-Message-ID: <5b1b2719-2123-9218-97b4-ccda8b5cb3b4@huaweicloud.com>
-Date: Mon, 20 May 2024 19:14:16 +0800
+	s=arc-20240116; t=1716204163; c=relaxed/simple;
+	bh=R/LD8gK9RWotORZUfYxsKtoiglZt5RAwomEx6sxmEVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rtFXy5lF7icS2SHx8Oa1UDoMV21V2RwTMArELRWwbX8AZAK5DLEjeand2Gc7iwIu2d7m0dCDeILC8AcCUlZzEWFNbsXRqUyJQRE0p4GaWl/Clue4rVJitD7v6/2d9yiK+Rb0m+o5vIsyTTE0wPc1emQ3bh0kStp67LScQIXkEtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zJUwLbd+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ww99VMJm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zJUwLbd+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ww99VMJm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BECF220C81;
+	Mon, 20 May 2024 11:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716204159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=f0+cBerWqFxMH69QswKQxemn6zOKtGX+ctf6Z9sepiE=;
+	b=zJUwLbd+zwOCTSPJyWC+sX0jNVysVH9fmC8GIWdmDb9uLy61UxE07WoZVjRCSgNYBNtRdV
+	qC9TupPLR3YKJtjCrM9TGDuME9XVTWmXbsAqABrxl/FOGUs0J7ebrkzT3OENAIk37pRQl9
+	5zjl2fe5wAIwMjuNeroZh2KJJNzEisQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716204159;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=f0+cBerWqFxMH69QswKQxemn6zOKtGX+ctf6Z9sepiE=;
+	b=ww99VMJmzbEsB8/YLJQke9qnmuVx551Ga92JnQezMg25CAk70R73lUmGGxLWRFng50v2vv
+	LOUBcyITOAaiINAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zJUwLbd+;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ww99VMJm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716204159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=f0+cBerWqFxMH69QswKQxemn6zOKtGX+ctf6Z9sepiE=;
+	b=zJUwLbd+zwOCTSPJyWC+sX0jNVysVH9fmC8GIWdmDb9uLy61UxE07WoZVjRCSgNYBNtRdV
+	qC9TupPLR3YKJtjCrM9TGDuME9XVTWmXbsAqABrxl/FOGUs0J7ebrkzT3OENAIk37pRQl9
+	5zjl2fe5wAIwMjuNeroZh2KJJNzEisQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716204159;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=f0+cBerWqFxMH69QswKQxemn6zOKtGX+ctf6Z9sepiE=;
+	b=ww99VMJmzbEsB8/YLJQke9qnmuVx551Ga92JnQezMg25CAk70R73lUmGGxLWRFng50v2vv
+	LOUBcyITOAaiINAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B39C713A6B;
+	Mon, 20 May 2024 11:22:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KjjPK38yS2byNAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 May 2024 11:22:39 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 63565A08D8; Mon, 20 May 2024 13:22:39 +0200 (CEST)
+Date: Mon, 20 May 2024 13:22:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fsnotify changes for 6.10-rc1
+Message-ID: <20240520112239.pz35myprqju2gzo6@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH v2 08/12] cachefiles: never get a new anonymous fd if
- ondemand_id is valid
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- libaokun@huaweicloud.com
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-9-libaokun@huaweicloud.com>
- <f4d24738-76a2-4998-9a28-493599cd7eae@linux.alibaba.com>
- <d62b162d-acb3-2fa7-085e-79da3278091a@huaweicloud.com>
- <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g6IMEtmiAG7NA--.5841S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFy7Wr1ktw4rCryUZrW5Wrg_yoW8XFyDpF
-	WxWa4rKF1vqFW0vr9Fvr9xXryjyay7J3WUXrs7Kw1UJr98Zr15Cr4xJr4jgas8A39ava1I
-	yF12q3srZa4UA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUq38nUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: BECF220C81
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_THREE(0.00)[3];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.cz:+]
 
-On 2024/5/20 17:24, Jingbo Xu wrote:
->
-> On 5/20/24 5:07 PM, Baokun Li wrote:
->> On 2024/5/20 16:43, Jingbo Xu wrote:
->>> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->>>> From: Baokun Li <libaokun1@huawei.com>
->>>>
-SNIP
->>>>
->>>> To avoid this, allocate a new anonymous fd only if no anonymous fd has
->>>> been allocated (ondemand_id == 0) or if the previously allocated
->>>> anonymous
->>>> fd has been closed (ondemand_id == -1). Moreover, returns an error if
->>>> ondemand_id is valid, letting the daemon know that the current userland
->>>> restore logic is abnormal and needs to be checked.
->>>>
->>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking
->>>> up cookie")
->>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> The LOCs of this fix is quite under control.  But still it seems that
->>> the worst consequence is that the (potential) malicious daemon gets
->>> hung.  No more effect to the system or other processes.  Or does a
->>> non-malicious daemon have any chance having the same issue?
->> If we enable hung_task_panic, it may cause panic to crash the server.
-> Then this issue has nothing to do with this patch?  As long as a
-> malicious daemon doesn't close the anonymous fd after umounting, then I
-> guess a following attempt of mounting cookie with the same name will
-> also wait and hung there?
->
-Yes, a daemon that only reads requests but doesn't process them will
-cause hung，but the daemon will obey the basic constraints when we
-test it.
+  Hello Linus,
+
+  could you please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.10-rc1
+
+The pull contains:
+  * Changes to reduce overhead of fsnotify infrastructure when no
+    permission events are in use
+  * A few small cleanups
+
+Top of the tree is 795bb82d12a1. The full shortlog is:
+
+Amir Goldstein (11):
+      fsnotify: rename fsnotify_{get,put}_sb_connectors()
+      fsnotify: create helpers to get sb and connp from object
+      fsnotify: create a wrapper fsnotify_find_inode_mark()
+      fanotify: merge two checks regarding add of ignore mark
+      fsnotify: pass object pointer and type to fsnotify mark helpers
+      fsnotify: create helper fsnotify_update_sb_watchers()
+      fsnotify: lazy attach fsnotify_sb_info state to sb
+      fsnotify: move s_fsnotify_connectors into fsnotify_sb_info
+      fsnotify: use an enum for group priority constants
+      fsnotify: optimize the case of no permission event watchers
+      fsnotify: fix UAF from FS_ERROR event on a shutting down filesystem
+
+Gustavo A. R. Silva (1):
+      fsnotify: Avoid -Wflex-array-member-not-at-end warning
+
+Nikita Kiryushin (1):
+      fanotify: remove unneeded sub-zero check for unsigned value
+
+The diffstat is
+
+ fs/nfsd/filecache.c                |   4 +-
+ fs/notify/dnotify/dnotify.c        |   4 +-
+ fs/notify/fanotify/fanotify_user.c | 143 +++++++++---------------------
+ fs/notify/fdinfo.c                 |  20 ++---
+ fs/notify/fsnotify.c               |  27 ++++--
+ fs/notify/fsnotify.h               |  39 ++++++---
+ fs/notify/inotify/inotify_user.c   |   2 +-
+ fs/notify/mark.c                   | 174 ++++++++++++++++++++++++++++---------
+ fs/super.c                         |   1 +
+ include/linux/fs.h                 |  14 +--
+ include/linux/fsnotify.h           |  21 ++++-
+ include/linux/fsnotify_backend.h   |  97 ++++++++++++++-------
+ kernel/audit_tree.c                |   2 +-
+ kernel/audit_watch.c               |   2 +-
+ 14 files changed, 334 insertions(+), 216 deletions(-)
+
+							Thanks
+								Honza
 
 -- 
-With Best Regards,
-Baokun Li
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
