@@ -1,205 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-19781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69448C9C1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:34:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E4B8C9C2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4DC1F2271E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:34:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0083A1C20BA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 11:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304E5535CE;
-	Mon, 20 May 2024 11:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="N2uJWFXI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D8HOPDJP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="N2uJWFXI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D8HOPDJP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540A453E26;
+	Mon, 20 May 2024 11:36:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CB8468E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 11:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A62535DB;
+	Mon, 20 May 2024 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716204878; cv=none; b=C+ze8zAKlQ9y5Qkn5s9OLiOskwM1UM7+2mBp3/VtdzXxV4Mr6s4u3zd7Gw2hGlH3R/NXMnHyRtWV8WkXSpvimUG6m5kXBvGkLsztOk0GJXTt3LEpENqdiQA2GXwnofZ+dyu4Qqkhv+Ob6eNCEEm1gfltNkqHpt2LCmvrMxqsfGE=
+	t=1716205017; cv=none; b=kqDGS6vT1uS+Fq59oc9cuoJsJDi3l9YQwIuN0npu0sEaeuagwbwWG8kFqcl+TZFb35eijtbAzI0k6CQ+SpY50FJVFuH+EaC2Abh9vJgxqELeoFc6IDInAJHgoscTqMI37i46scOUohRKP8LjAdgVlUIJt7rYBIa6Y43yJSVarQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716204878; c=relaxed/simple;
-	bh=HU9TqxO7BFqfmTPxWvzSVnKjDqbqFcHwyZ6N5kXXslw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YBTkPeb9i7Oj7tiahYdtDSSbLNaw2LQ+0kYqpbwZLPjf9EEfA30HCKXp/H69SPYZgwAw+5chFo1zZS9nwrgO1tWTv3l37B39w5pWhj3nu86hUiEL3Yte5ywitqF5hxGP3Jt/h1Wd9FK+93EtDm9JE743PJhAA/ZbsWeQHvePBjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=N2uJWFXI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D8HOPDJP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=N2uJWFXI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D8HOPDJP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 21B2021F6B;
-	Mon, 20 May 2024 11:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716204869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ZO800y7trylKMlLQA3CCho/tm3q0KH+Te9WvrLzIBeI=;
-	b=N2uJWFXInHjLuWsNAwLearvKlQYqqdgAvJlYPSfiMkInyJEXS6A/Ie7mS1QFB7vxrULcyn
-	64y4Zo2oU4O4Hc8Rtbbt1EZ3oGoxEDCjQy3vk3/OblNQnnsdm7OGQyoyPAtM5I5ZRpEXxb
-	yuTyMn3NAby5qPBhfkkmXQ0ux79+Q8g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716204869;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ZO800y7trylKMlLQA3CCho/tm3q0KH+Te9WvrLzIBeI=;
-	b=D8HOPDJPuDQeQplCtv+LSCqTkcDf46mrTFcPvh6SQcZKr6YlEhYa8Pcg0FXxS3MXcW8omd
-	PVxVLxBRhUpPFABQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716204869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ZO800y7trylKMlLQA3CCho/tm3q0KH+Te9WvrLzIBeI=;
-	b=N2uJWFXInHjLuWsNAwLearvKlQYqqdgAvJlYPSfiMkInyJEXS6A/Ie7mS1QFB7vxrULcyn
-	64y4Zo2oU4O4Hc8Rtbbt1EZ3oGoxEDCjQy3vk3/OblNQnnsdm7OGQyoyPAtM5I5ZRpEXxb
-	yuTyMn3NAby5qPBhfkkmXQ0ux79+Q8g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716204869;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ZO800y7trylKMlLQA3CCho/tm3q0KH+Te9WvrLzIBeI=;
-	b=D8HOPDJPuDQeQplCtv+LSCqTkcDf46mrTFcPvh6SQcZKr6YlEhYa8Pcg0FXxS3MXcW8omd
-	PVxVLxBRhUpPFABQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17C6F13A6B;
-	Mon, 20 May 2024 11:34:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pT/OBUU1S2a7EgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 20 May 2024 11:34:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B6E17A08D8; Mon, 20 May 2024 13:34:28 +0200 (CEST)
-Date: Mon, 20 May 2024 13:34:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] isofs, udf, quota, ext2, reiserfs changes for 6.10-rc1
-Message-ID: <20240520113428.ckwzn5kh75mmjxo3@quack3>
+	s=arc-20240116; t=1716205017; c=relaxed/simple;
+	bh=te1EYIMSjDa2AtN2JbBQlKLLglOCxloo3WN9EZTPmf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NKZGnY0ufusU1C+7XdesGz+3kQbbRop2tUqNJbRAsHHlQYyFL7TKhpmN2e+NK0pEQUdqyhffsNN6tnjzlzWvqdrc9q59ooatfNev6ruoHOX4q2OfynSUssI0WY3F++JCAhtSzBIHGeVg9TwJwTac7GMfxlopnCbHF8wdtEvPf8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjbBP3KRYz4f3jkL;
+	Mon, 20 May 2024 19:36:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 307E21A0C4C;
+	Mon, 20 May 2024 19:36:51 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g7PNUtm6nK8NA--.6529S3;
+	Mon, 20 May 2024 19:36:50 +0800 (CST)
+Message-ID: <a9e39b5f-4397-056e-7f6c-b1a1847429dd@huaweicloud.com>
+Date: Mon, 20 May 2024 19:36:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWO(0.00)[2];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v2 09/12] cachefiles: defer exposing anon_fd until after
+ copy_to_user() succeeds
+Content-Language: en-US
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+ <20240515084601.3240503-10-libaokun@huaweicloud.com>
+ <db7ae78c-857b-45ba-94dc-63c02757e0b2@linux.alibaba.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <db7ae78c-857b-45ba-94dc-63c02757e0b2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgAn9g7PNUtm6nK8NA--.6529S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww43ur4fZw43CFW5XF1fJFb_yoWxJr1kpF
+	WakFW3KFy8WFW8urn7AFZ8XFySy3y8A3ZrW34Fga4rArnFgryF9r1jkr98uF15Ar97Grs3
+	tF4UCr97Gr1jy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3
+	Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUq38nUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-  Hello Linus,
+On 2024/5/20 17:39, Jingbo Xu wrote:
+>
+> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> After installing the anonymous fd, we can now see it in userland and close
+>> it. However, at this point we may not have gotten the reference count of
+>> the cache, but we will put it during colse fd, so this may cause a cache
+>> UAF.
+>>
+>> So grab the cache reference count before fd_install(). In addition, by
+>> kernel convention, fd is taken over by the user land after fd_install(),
+>> and the kernel should not call close_fd() after that, i.e., it should call
+>> fd_install() after everything is ready, thus fd_install() is called after
+>> copy_to_user() succeeds.
+>>
+>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+>> Suggested-by: Hou Tao <houtao1@huawei.com>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> ---
+>>   fs/cachefiles/ondemand.c | 53 +++++++++++++++++++++++++---------------
+>>   1 file changed, 33 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>> index d2d4e27fca6f..3a36613e00a7 100644
+>> --- a/fs/cachefiles/ondemand.c
+>> +++ b/fs/cachefiles/ondemand.c
+>> @@ -4,6 +4,11 @@
+>>   #include <linux/uio.h>
+>>   #include "internal.h"
+>>   
+>> +struct anon_file {
+>> +	struct file *file;
+>> +	int fd;
+>> +};
+>> +
+>>   static inline void cachefiles_req_put(struct cachefiles_req *req)
+>>   {
+>>   	if (refcount_dec_and_test(&req->ref))
+>> @@ -263,14 +268,14 @@ int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
+>>   	return 0;
+>>   }
+>>   
+>
+>> -static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>> +static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
+>> +				      struct anon_file *anon_file)
+>
+> How about:
+>
+> int cachefiles_ondemand_get_fd(struct cachefiles_req *req, int *fd,
+> struct file *file) ?
+>
+> It isn't worth introducing a new structure as it is used only for
+> parameter passing.
+>
+It's just a different code style preference, and internally we think
 
-  could you please pull from
+it makes the code look clearer when encapsulated this way.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v6.10-rc1
+>>   {
+>>   	struct cachefiles_object *object;
+>>   	struct cachefiles_cache *cache;
+>>   	struct cachefiles_open *load;
+>> -	struct file *file;
+>>   	u32 object_id;
+>> -	int ret, fd;
+>> +	int ret;
+>>   
+>>   	object = cachefiles_grab_object(req->object,
+>>   			cachefiles_obj_get_ondemand_fd);
+>> @@ -282,16 +287,16 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>>   	if (ret < 0)
+>>   		goto err;
+>>   
+>> -	fd = get_unused_fd_flags(O_WRONLY);
+>> -	if (fd < 0) {
+>> -		ret = fd;
+>> +	anon_file->fd = get_unused_fd_flags(O_WRONLY);
+>> +	if (anon_file->fd < 0) {
+>> +		ret = anon_file->fd;
+>>   		goto err_free_id;
+>>   	}
+>>   
+>> -	file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
+>> -				  object, O_WRONLY);
+>> -	if (IS_ERR(file)) {
+>> -		ret = PTR_ERR(file);
+>> +	anon_file->file = anon_inode_getfile("[cachefiles]",
+>> +				&cachefiles_ondemand_fd_fops, object, O_WRONLY);
+>> +	if (IS_ERR(anon_file->file)) {
+>> +		ret = PTR_ERR(anon_file->file);
+>>   		goto err_put_fd;
+>>   	}
+>>   
+>> @@ -299,16 +304,15 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>>   	if (object->ondemand->ondemand_id > 0) {
+>>   		spin_unlock(&object->ondemand->lock);
+>>   		/* Pair with check in cachefiles_ondemand_fd_release(). */
+>> -		file->private_data = NULL;
+>> +		anon_file->file->private_data = NULL;
+>>   		ret = -EEXIST;
+>>   		goto err_put_file;
+>>   	}
+>>   
+>> -	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+>> -	fd_install(fd, file);
+>> +	anon_file->file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+>>   
+>>   	load = (void *)req->msg.data;
+>> -	load->fd = fd;
+>> +	load->fd = anon_file->fd;
+>>   	object->ondemand->ondemand_id = object_id;
+>>   	spin_unlock(&object->ondemand->lock);
+>>   
+>> @@ -317,9 +321,11 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>>   	return 0;
+>>   
+>>   err_put_file:
+>> -	fput(file);
+>> +	fput(anon_file->file);
+>> +	anon_file->file = NULL;
+> When cachefiles_ondemand_get_fd() returns failure, anon_file->file is
+> not used, and thus I don't think it is worth resetting anon_file->file
+> to NULL. Or we could assign fd and struct file at the very end when all
+> succeed.
+Nulling pointers that are no longer in use is a safer coding convention,
+which goes some way to avoiding double free or use-after-free.
+Moreover it's in the error branch, so it doesn't cost anything.
+>>   err_put_fd:
+>> -	put_unused_fd(fd);
+>> +	put_unused_fd(anon_file->fd);
+>> +	anon_file->fd = ret;
+> Ditto.
+>
+>>   err_free_id:
+>>   	xa_erase(&cache->ondemand_ids, object_id);
+>>   err:
+>> @@ -376,6 +382,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   	struct cachefiles_msg *msg;
+>>   	size_t n;
+>>   	int ret = 0;
+>> +	struct anon_file anon_file;
+>>   	XA_STATE(xas, &cache->reqs, cache->req_id_next);
+>>   
+>>   	xa_lock(&cache->reqs);
+>> @@ -409,7 +416,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   	xa_unlock(&cache->reqs);
+>>   
+>>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>> -		ret = cachefiles_ondemand_get_fd(req);
+>> +		ret = cachefiles_ondemand_get_fd(req, &anon_file);
+>>   		if (ret)
+>>   			goto out;
+>>   	}
+>> @@ -417,10 +424,16 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   	msg->msg_id = xas.xa_index;
+>>   	msg->object_id = req->object->ondemand->ondemand_id;
+>>   
+>> -	if (copy_to_user(_buffer, msg, n) != 0) {
+>> +	if (copy_to_user(_buffer, msg, n) != 0)
+>>   		ret = -EFAULT;
+>> -		if (msg->opcode == CACHEFILES_OP_OPEN)
+>> -			close_fd(((struct cachefiles_open *)msg->data)->fd);
+>> +
+>> +	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>> +		if (ret < 0) {
+>> +			fput(anon_file.file);
+>> +			put_unused_fd(anon_file.fd);
+>> +			goto out;
+>> +		}
+>> +		fd_install(anon_file.fd, anon_file.file);
+>>   	}
+>>   out:
+>>   	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
 
-to get:
-  * convertion of isofs to the new mount API
-  * cleanup of isofs Makefile
-  * udf conversion to folios
-  * some other small udf cleanups and fixes
-  * ext2 cleanups
-  * removal of reiserfs .writepage method
-  * update reiserfs README file
-
-Top of the tree is 1dd719a95979. The full shortlog is:
-
-Andy Shevchenko (1):
-      isofs: Use *-y instead of *-objs in Makefile
-
-Chao Yu (1):
-      quota: fix to propagate error of mark_dquot_dirty() to caller
-
-Colin Ian King (1):
-      udf: Remove second semicolon
-
-Eric Sandeen (1):
-      isofs: convert isofs to use the new mount API
-
-Jan Kara (1):
-      reiserfs: Trim some README bits
-
-Justin Stitt (1):
-      udf: replace deprecated strncpy/strcpy with strscpy
-
-Kefeng Wang (1):
-      fs: quota: use group allocation of per-cpu counters API
-
-Matthew Wilcox (Oracle) (10):
-      reiserfs: Convert to writepages
-      udf: Convert udf_symlink_filler() to use a folio
-      udf: Convert udf_write_begin() to use a folio
-      udf: Convert udf_expand_file_adinicb() to use a folio
-      udf: Convert udf_adinicb_readpage() to udf_adinicb_read_folio()
-      udf: Convert udf_symlink_getattr() to use a folio
-      udf: Convert udf_page_mkwrite() to use a folio
-      udf: Use a folio in udf_write_end()
-      ext2: Remove call to folio_set_error()
-      isofs: Remove calls to set/clear the error flag
-
-Ritesh Harjani (IBM) (2):
-      ext2: set FMODE_CAN_ODIRECT instead of a dummy direct_IO method
-      ext2: Remove LEGACY_DIRECT_IO dependency
-
-Roman Smirnov (1):
-      udf: udftime: prevent overflow in udf_disk_stamp_to_time()
-
-The diffstat is
-
- fs/ext2/Kconfig     |   1 -
- fs/ext2/dir.c       |   1 -
- fs/ext2/file.c      |   8 +-
- fs/ext2/inode.c     |   2 -
- fs/isofs/Makefile   |   7 +-
- fs/isofs/compress.c |   4 -
- fs/isofs/inode.c    | 473 ++++++++++++++++++++++++++--------------------------
- fs/quota/dquot.c    |  33 ++--
- fs/reiserfs/README  |  16 +-
- fs/reiserfs/inode.c |  16 +-
- fs/udf/file.c       |  20 +--
- fs/udf/inode.c      |  65 ++++----
- fs/udf/super.c      |   8 +-
- fs/udf/symlink.c    |  34 ++--
- fs/udf/udftime.c    |  11 +-
- 15 files changed, 346 insertions(+), 353 deletions(-)
-
-							Thanks
-								Honza
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With Best Regards,
+Baokun Li
+
 
