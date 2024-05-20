@@ -1,264 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-19842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD16A8CA402
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 23:53:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A478CA460
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 00:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 224341F22754
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 21:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908C128235C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 22:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0471E13A242;
-	Mon, 20 May 2024 21:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1363139D1A;
+	Mon, 20 May 2024 22:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s22ZlR8h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jv+Yqjwe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A10137C49;
-	Mon, 20 May 2024 21:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1891CD3B;
+	Mon, 20 May 2024 22:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716241993; cv=none; b=Mj/3hJCv5VCdEF5HU1MbTE8QDrI42fKHSQ4OWpmNqrP+HMGezpW/A6CDiT9P1ed9WIXbytwykdKkwgGtmq6nlGzgvU0Wc8acnjVpPY5DSkpQsS+tsxufvlFH/X2yjqM1hcUq47veARuUO1IU4R4sP1NLUvq5F9L79QGs+yQzDHI=
+	t=1716243183; cv=none; b=qXHoj6ujtHrjTKaqWp2TQFFdanDdL49QX2etbyd1CoD7NpIJ9JKCHroSB0wLwYLXuxHn75P+UWHtGDo7PhgWVxeh4qfNQINeHidJkAd0PGPX0Tt5BOrfTsep4GZUZ3QgLYiUP5uPGIWeVS/bVUBsJQHZ/MELJInnHv3gXSrAAXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716241993; c=relaxed/simple;
-	bh=lnx5+PIMY2icAbJBhnZGXHlHDjdlauJqRhyy1vRkvuI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cufYB6EumDpFByproSYjgShndOdvkmWHTw6++EtLhIjA8ZrSJkARC03i4YhdbfmPp/jEV7Im76CilRV5n9Evw8ctJeQ/aqap1s0qmTIA3C5KQbirLbFK/bN566yq2iGQnTt3gSjxR4JHRuQ/TaxfHDtnKc37W6S6X6hA6zETwG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s22ZlR8h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EB4C2BD10;
-	Mon, 20 May 2024 21:53:12 +0000 (UTC)
+	s=arc-20240116; t=1716243183; c=relaxed/simple;
+	bh=g67Au3Gl3mqSp0DalxfSQ7ydt1TQGOl6Vi8oRqoOvyE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=IfSGOjk8znDm4ZX9aDMqdZx8t3pKgqWga28Z/D3mq2NesX72w4EEcjOjpe5Z3axkgbTpyeViREAhx58khXaCjsb0Fg0PfFGMBKWXKGhBzlQ2LgHsSdz4er2RBwui2dKGguCVlxIrNCrh/QNMs9XydF5A09icmuVInY8pvoqZz7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jv+Yqjwe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D6AC2BD10;
+	Mon, 20 May 2024 22:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716241993;
-	bh=lnx5+PIMY2icAbJBhnZGXHlHDjdlauJqRhyy1vRkvuI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=s22ZlR8h9p4V+GXTJV89VB4/uTKthI596ATjdgbCqWp3xfzAkzEfEltD9Rht+/h4F
-	 SJVmKFZB8kcTUKyN3eaDrXURYnaAWt4iVlbzMKM/pCjQvM+7zUzyIpQAkulHcg7AVe
-	 ss6DInbUGRpNcaC3A9HkV7Vk7MVfBGR+9/HdJ+n0qIhux7qYZwXiZ5+Ska9JrLMx5Q
-	 AhNbF0D3AHT2ZLxE0dxj3SBFSaN+3tfo65Ey8aTM44D8z7i21kz+fEMYQeR7vM0eZo
-	 3OMD8GI5T9UEzFPrChq5Zvthc8z4Km+Mr882M4ELyjlwps9XfEHICbU06mo/sf8Kue
-	 rgORcOSd7sMSA==
-Message-ID: <f51a4bf68289268206475e3af226994607222be4.camel@kernel.org>
-Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
-From: Jeff Layton <jlayton@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, Amir Goldstein
- <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 20 May 2024 17:53:10 -0400
-In-Reply-To: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
-References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40app1) 
+	s=k20201202; t=1716243182;
+	bh=g67Au3Gl3mqSp0DalxfSQ7ydt1TQGOl6Vi8oRqoOvyE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jv+YqjweWfOJ58Q3rWlPlQFpRXdnf0erK6kTjwm69gsovWdMmwxN9rknV5ZxWSN6B
+	 Fqs8WiDOHc9qevF1/3ks8cLHz5bTvsGWiabm9jjGikcvnZZG1qt/aDXy8jxdg4uG4c
+	 z1WKhAGZceld4lkmUZbrOQKQJqV+ed++z5zKsq63KAs98UAwUtpJ5ALf4kCvQnVLuH
+	 iFAoYHnk66FrFIo3UhnKZKeGaFUfJvXUnMuZH2soK+u2t7rJxRqxV2iqQEemdJT6BQ
+	 uLCZIxjwrjwVmECgZ02bXTlOH/TcfCevAYf2khb2XBVuWXd0po3UYUMOSBHAy6kQ9L
+	 aWJlEPVroniqQ==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 May 2024 01:12:57 +0300
+Message-Id: <D1ETFJFE9Y48.1T8I7SIPGFMQ2@kernel.org>
+Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
+ <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
+ <dhowells@redhat.com>, <containers@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
+Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Tycho Andersen" <tycho@tycho.pizza>, "Jonathan Calmels"
+ <jcalmels@3xx0.net>
+X-Mailer: aerc 0.17.0
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-4-jcalmels@3xx0.net> <ZktQZi5iCwxcU0qs@tycho.pizza>
+ <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
+ <Zku8839xgFRAEcl+@tycho.pizza>
+In-Reply-To: <Zku8839xgFRAEcl+@tycho.pizza>
 
-On Mon, 2024-05-20 at 17:35 -0400, Aleksa Sarai wrote:
-> Now that we have stabilised the unique 64-bit mount ID interface in
-> statx, we can now provide a race-free way for name_to_handle_at(2) to
-> provide a file handle and corresponding mount without needing to worry
-> about racing with /proc/mountinfo parsing.
->=20
-> As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bit
-> that doesn't make sense for name_to_handle_at(2).
->=20
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  fs/fhandle.c               | 27 +++++++++++++++++++--------
->  include/uapi/linux/fcntl.h |  2 ++
->  2 files changed, 21 insertions(+), 8 deletions(-)
->=20
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 8a7f86c2139a..6bc7ffccff8c 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -16,7 +16,8 @@
-> =20
->  static long do_sys_name_to_handle(const struct path *path,
->  				  struct file_handle __user *ufh,
-> -				  int __user *mnt_id, int fh_flags)
-> +				  void __user *mnt_id, bool unique_mntid,
-> +				  int fh_flags)
->  {
->  	long retval;
->  	struct file_handle f_handle;
-> @@ -69,10 +70,16 @@ static long do_sys_name_to_handle(const struct path *=
-path,
->  	} else
->  		retval =3D 0;
->  	/* copy the mount id */
-> -	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
-> -	    copy_to_user(ufh, handle,
-> -			 struct_size(handle, f_handle, handle_bytes)))
-> -		retval =3D -EFAULT;
-> +	if (unique_mntid)
-> +		retval =3D put_user(real_mount(path->mnt)->mnt_id_unique,
-> +				  (u64 __user *) mnt_id);
-> +	else
-> +		retval =3D put_user(real_mount(path->mnt)->mnt_id,
-> +				  (int __user *) mnt_id);
-> +	/* copy the handle */
-> +	if (!retval)
-> +		retval =3D copy_to_user(ufh, handle,
-> +				struct_size(handle, f_handle, handle_bytes));
->  	kfree(handle);
->  	return retval;
->  }
-> @@ -83,6 +90,7 @@ static long do_sys_name_to_handle(const struct path *pa=
-th,
->   * @name: name that should be converted to handle.
->   * @handle: resulting file handle
->   * @mnt_id: mount id of the file system containing the file
-> + *          (u64 if AT_HANDLE_UNIQUE_MNT_ID, otherwise int)
->   * @flag: flag value to indicate whether to follow symlink or not
->   *        and whether a decodable file handle is required.
->   *
-> @@ -92,7 +100,7 @@ static long do_sys_name_to_handle(const struct path *p=
-ath,
->   * value required.
->   */
->  SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
-> -		struct file_handle __user *, handle, int __user *, mnt_id,
-> +		struct file_handle __user *, handle, void __user *, mnt_id,
->=20
+On Tue May 21, 2024 at 12:13 AM EEST, Tycho Andersen wrote:
+> On Mon, May 20, 2024 at 12:25:27PM -0700, Jonathan Calmels wrote:
+> > On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
+> > > there is an ongoing effort (started at [0]) to constify the first arg
+> > > here, since you're not supposed to write to it. Your usage looks
+> > > correct to me, so I think all it needs is a literal "const" here.
+> >=20
+> > Will do, along with the suggestions from Jarkko
+> >=20
+> > > > +	struct ctl_table t;
+> > > > +	unsigned long mask_array[2];
+> > > > +	kernel_cap_t new_mask, *mask;
+> > > > +	int err;
+> > > > +
+> > > > +	if (write && (!capable(CAP_SETPCAP) ||
+> > > > +		      !capable(CAP_SYS_ADMIN)))
+> > > > +		return -EPERM;
+> > >=20
+> > > ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
+> > > explain why.
+> >=20
+> > No reason really, I was hoping we could decide what we want here.
+> > UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
+>
+> I don't have a strong preference between SETPCAP and a new capability,
+> but I do think it should be just one. SYS_ADMIN is already god mode
+> enough, IMO.
 
-Changing the syscall signature like this is rather nasty. The new flag
-seems like it should safely gate the difference, but I still have some
-concerns about misuse and people passing in too small a buffer for the
-mnt_id.
+Sometimes I think would it make more sense to invent something
+completely new like capabilities but more modern and robust, instead of
+increasing complexity of a broken mechanism (especially thanks to
+CAP_MAC_ADMIN).
 
+I kind of liked the idea of privilege tokens both in Symbian and Maemo
+(have been involved professionally in both). Emphasis on the idea not
+necessarily on implementation.
 
->  		int, flag)
->  {
->  	struct path path;
-> @@ -100,7 +108,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const ch=
-ar __user *, name,
->  	int fh_flags;
->  	int err;
-> =20
-> -	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
-> +	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
-> +		     AT_HANDLE_UNIQUE_MNT_ID))
->  		return -EINVAL;
-> =20
->  	lookup_flags =3D (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
-> @@ -109,7 +118,9 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const ch=
-ar __user *, name,
->  		lookup_flags |=3D LOOKUP_EMPTY;
->  	err =3D user_path_at(dfd, name, lookup_flags, &path);
->  	if (!err) {
-> -		err =3D do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
-> +		err =3D do_sys_name_to_handle(&path, handle, mnt_id,
-> +					    flag & AT_HANDLE_UNIQUE_MNT_ID,
-> +					    fh_flags);
->  		path_put(&path);
->  	}
->  	return err;
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index c0bcc185fa48..fda970f92fba 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -118,6 +118,8 @@
->  #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
->  					compare object identity and may not
->  					be usable to open_by_handle_at(2) */
-> +#define AT_HANDLE_UNIQUE_MNT_ID	AT_STATX_FORCE_SYNC /* returned mount id=
- is
-> +					the u64 unique mount id */
->  #if defined(__KERNEL__)
->  #define AT_GETATTR_NOSEC	0x80000000
->  #endif
->=20
-> ---
-> base-commit: 584bbf439d0fa83d728ec49f3a38c581bdc828b4
-> change-id: 20240515-exportfs-u64-mount-id-9ebb5c58b53c
->=20
-> Best regards,
+Not an LSM but like something that you could use in the place of POSIX
+caps. Probably quite tedious effort tho because you would need to pull
+the whole industry with the new thing...
 
---=20
-Jeff Layton <jlayton@kernel.org>
+BR, Jarkko
 
