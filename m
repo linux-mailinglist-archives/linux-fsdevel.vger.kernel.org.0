@@ -1,136 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-19807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AA78C9E30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 15:30:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487C68C9E41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 15:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2791A287B63
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:30:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBBFBB22355
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 13:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6B413664E;
-	Mon, 20 May 2024 13:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE1B13666D;
+	Mon, 20 May 2024 13:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="KngA7ggd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jcQS+Dwp"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QVpUy6j/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A411E87C;
-	Mon, 20 May 2024 13:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6CA1CABA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 13:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211822; cv=none; b=p0MPhX5oNiIQmb1+rjH0R3wHUc1fuOreiL6aWLaM1tHLEwS4HjkEmlxc4fTi2w/HYuN3hYmFi3YJWSdS5kkxIgTdHZtma6kEE2+QxPfikpX/BRyBku6MbFpOOwc9TpRGcmIYm3F7UD84LOgv+SoMHr/g5uMG4391l7LnQ33Se1Y=
+	t=1716212108; cv=none; b=aqcXB953BoxOEwvixSwg2FZUeZlB8MURq+F4/z7Z8N++X7WjVnPKhBXyCZvAhtSVxyIp3dJO7xWqMa7cAkNciuTtMmDmxivBtLThRUpDX8nxVBUwl26pEdWEMcxpz85nUEUiHQq57EG7t0TkHURJT6ETv6QBlGiYl/d2MJOIrb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211822; c=relaxed/simple;
-	bh=qfvNWKn/CQRVv/+cpmMCpprLiCzOA6G5IF/qyBsiOO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gpk8NCBnmy1GBPYQRAc1znoPkHSW2KmH1tZLOc58kqa2YU6bVP4/2kw7ey2HgFm4DazYPXW1PcfcyA461AoJ0768c2h7fpx+r0/oqYpuwlb+u8RA933G+TcET83gV1rpXB9zzKds6malH8azet8lEpfVzywomU+erHRWimHDrRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=KngA7ggd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jcQS+Dwp; arc=none smtp.client-ip=64.147.123.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 1F8EC1800113;
-	Mon, 20 May 2024 09:30:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 20 May 2024 09:30:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716211818; x=1716298218; bh=oa2W4qjwd3
-	7BEc4YnG8uAq9YoHRdThoet19LMJypOJk=; b=KngA7ggdi0drYPof5o7hwmTHRG
-	S1IU/jqt9f39+LLVVayq0jCaruRqJLTNA7Ks8icMsmbv0cfVRKGccFi1pljVa866
-	SYJhvYcWV71/wPhdtsupKguUSphYy8FMJmGL+5CUUFDCMZuKdCPQj2IYpCuetuId
-	Ng4rjvr5M8VMsDg73uJZbUx7uiSmEl3qt2cXtvH0vlyNJsSJNqzIt2nw6mWG3ueS
-	S3bBtq351+HqbQaocyOy1b5Kkgu/XtWYxn0VotlTQg9VSZ25xjNw+EzqymjBmTTS
-	5jPxtYWLB11th1PnC8tJJ65cUBo/TnEkX2taPHdxyflnBj/zCniAj+McRJxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716211818; x=1716298218; bh=oa2W4qjwd37BEc4YnG8uAq9YoHRd
-	Thoet19LMJypOJk=; b=jcQS+DwpjR6VeZzuQ0pdwmbkcf2+ELvd20o2DZOzD9JW
-	K1Ouc82eECZh2CUyAZmcpgiJ7Aj+RGF+radye4kAqANBgqeSFC5Kc2RS6r73Qq78
-	wQavmUkdh4ZZyLtkeXSLaEfd/rnlxvhQ4uOL9a+JLfA5zqGV6o/L9jVXO/oK0LQx
-	bcN0cQZ5j0UEtgvbU4c3Qm2USaSBWjT68DDFLctcd6yIURrxVx1cxwHiBjvS0/2V
-	AXPv1wbwPmFkFQ8Xz7F5VxiJnuNqQrcN4kcGxKU6hstqC/KeJC34xetLKaWaTR8n
-	0zOYgO/KgxUDu+2UCJP2h3fO5zWI+MJIk5LWg8D3Qw==
-X-ME-Sender: <xms:aVBLZgSicgZjJPlIVVmqiGzabXmY7U6W-0cf6XlPPGb9FjAoRo3i3Q>
-    <xme:aVBLZtyvBNjibT9OIXMtuxSODDNt60MW4Zx1rQGGupWpM5STLV47xJdGO5ceQHoNp
-    Hn6WzBjyUeeWu9cDQM>
-X-ME-Received: <xmr:aVBLZt3gLg6GCxVnil1t54Zgi9M7nf9iJDLZJfgCKaz2OGOO9cDYTRLuhNRlBinQj-htlu-2o_0zCBcSoxwySoI5og>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddggeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepleevudetgefhheekueekhfduffethfehteeftdfhvefgteelvedvudev
-    teeufeehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:aVBLZkC4m14s5n4tEp3avfH807qvPwncZ2I4Y8fgrQLUIdPf_FIzKA>
-    <xmx:aVBLZpi3GscB2ljoVCtHmBhYuWCIGQjJd8VIwqqSfz5mb8dIqOnIjg>
-    <xmx:aVBLZgpYWVjDC5IVwGQHAI3G5RpzgHOfzQpd-FVNiarwtvRY71MrWQ>
-    <xmx:aVBLZsgJ-Srgc7YF2SLDksEcZPHG5z1ImBm8SgQp1vv6jyTYTnoSJQ>
-    <xmx:alBLZoT0XhJL2dv8tXkxE_p1f3DxUlYY4oWx8zECBUg_U-dVblg9I4z5>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 May 2024 09:30:15 -0400 (EDT)
-Date: Mon, 20 May 2024 07:30:14 -0600
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-Message-ID: <ZktQZi5iCwxcU0qs@tycho.pizza>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net>
+	s=arc-20240116; t=1716212108; c=relaxed/simple;
+	bh=R/0zG6yLUYRJaCSaEdvkdqZcg4FkuA6onh3IU8OmRfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pIv2hjIqTLl3Wfi2uVfRrnnxGSh3vkogS5YQFscTcBL7NkX0VWAPDv4j3+EnB2p1gh4DXRItNGrJYgeV/z7v1WBjuB48A6g6z5nIQjafZbO+2wbKbZDaiAu6udHoTTgkYIeauUbPjdv79qv2/Eg3BPWI4R8yWG7DP69fgVdWEqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QVpUy6j/; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: lkp@intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716212103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gyw5WnWHpJz6E3Mc68G1X1pQFAugA2g3tSqbvj80T9o=;
+	b=QVpUy6j/slpeF+8hheYUC0ArIclrwUJUOcg0BMYheBc3WY9jbEzvl8u3m4pJk/cVpU3t0Z
+	u3v8gM+fsA8apsOwRvDm0Gz6yNeY4WnNfPQRjo79/+0fs9mbm8be4lf1ywSU7VlAFCWziE
+	/VUBDF3ygfeGR5X9TuyANXi8Q6BKEmU=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: viro@zeniv.linux.org.uk
+X-Envelope-To: oe-kbuild-all@lists.linux.dev
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: hch@lst.de
+X-Envelope-To: dylany@fb.com
+X-Envelope-To: dwmw@amazon.co.uk
+X-Envelope-To: pbonzini@redhat.com
+X-Envelope-To: dyoung@redhat.com
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <18ef03df-8313-432f-bf24-aa685d099f3e@linux.dev>
+Date: Mon, 20 May 2024 21:34:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516092213.6799-4-jcalmels@3xx0.net>
+Subject: Re: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore
+ eventfd
+To: kernel test robot <lkp@intel.com>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+ David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>,
+ Dave Young <dyoung@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240519144124.4429-1-wen.yang@linux.dev>
+ <202405200456.29VvtOKg-lkp@intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <202405200456.29VvtOKg-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jonathan,
 
-On Thu, May 16, 2024 at 02:22:05AM -0700, Jonathan Calmels wrote:
-> +int proc_cap_userns_handler(struct ctl_table *table, int write,
-> +			    void *buffer, size_t *lenp, loff_t *ppos)
-> +{
 
-there is an ongoing effort (started at [0]) to constify the first arg
-here, since you're not supposed to write to it. Your usage looks
-correct to me, so I think all it needs is a literal "const" here.
+On 2024/5/20 05:18, kernel test robot wrote:
+> Hi Wen,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on brauner-vfs/vfs.all]
+> [also build test ERROR on linus/master v6.9 next-20240517]
+> [cannot apply to vfs-idmapping/for-next hch-configfs/for-next]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Wen-Yang/eventfd-introduce-ratelimited-wakeup-for-non-semaphore-eventfd/20240519-224440
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+> patch link:    https://lore.kernel.org/r/20240519144124.4429-1-wen.yang%40linux.dev
+> patch subject: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore eventfd
+> config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20240520/202405200456.29VvtOKg-lkp@intel.com/config)
+> compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405200456.29VvtOKg-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202405200456.29VvtOKg-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     arm-linux-gnueabi-ld: fs/eventfd.o: in function `eventfd_write':
+>>> eventfd.c:(.text+0x1740): undefined reference to `__aeabi_uldivmod'
+> 
 
-[0]: https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
+Thanks, we will fix it soon and then send v2.
 
-> +	struct ctl_table t;
-> +	unsigned long mask_array[2];
-> +	kernel_cap_t new_mask, *mask;
-> +	int err;
-> +
-> +	if (write && (!capable(CAP_SETPCAP) ||
-> +		      !capable(CAP_SYS_ADMIN)))
-> +		return -EPERM;
-
-...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
-explain why.
-
-Tycho
+--
+Best wishes,
+Wen
 
