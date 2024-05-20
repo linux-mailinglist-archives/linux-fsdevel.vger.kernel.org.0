@@ -1,174 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-19729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E6E8C9796
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 02:49:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E45DD8C97B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 03:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E209CB20DF8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 00:49:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D222C1C21235
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 01:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11087610B;
-	Mon, 20 May 2024 00:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="klpf68pR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eSww0ioe"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6819F8F6E;
+	Mon, 20 May 2024 01:52:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wflow3-smtp.messagingengine.com (wflow3-smtp.messagingengine.com [64.147.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F544431;
-	Mon, 20 May 2024 00:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33E4A28
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 01:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716166174; cv=none; b=cIKujs99xzhrh3EBUvYH0EOHVeXo6uEUQC9eVDXRX2fg8pQ7OvipksMqarb/YTkhWewhSGk4WmpGcXlPDXas6QnPsgWgnAg593L5H2Jjs6XkyjARDAfM6PAokrinilIZBgqQDxGkYHJLaZ926GYfdWKiD99lpAGdR96poghMNEE=
+	t=1716169948; cv=none; b=EMDFaq4S9He9ZeKOrYsxSefdKjAmaSmA6bQcP6PIaMhfbzAQXbPk+fQ8Es0N8PlWgYuBsiF1CedcOxnlzCDRf4Jryc0Un4lHi7gy6iQiLh7KXVlqOpLVRlBajdjKiYtGgai1Gt1FdgYooMTOtbMTSzWY1zcuzkaXF3tloWl17SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716166174; c=relaxed/simple;
-	bh=CyRV9ILozf4Lntq5G/bNlTgHb6HrAA/zKXB/WqFeBT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dBf6yj8lCYIfx7dvWnNFqGWvS9XIa2VwnU8F4fGDkizLR54li8rm4GwM1M9Y+nQ5g31LGEnPivuA4Pm1uGi2tsldyEWwehs/a0oGX0rOQ5j5C0+1kHT0ibwwOvtqE25HxkAhOzEo6463EDZZrx64Tvee1G6MlYC8dCwxthD/6ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=klpf68pR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eSww0ioe; arc=none smtp.client-ip=64.147.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailflow.west.internal (Postfix) with ESMTP id B54C52CC015A;
-	Sun, 19 May 2024 20:49:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sun, 19 May 2024 20:49:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1716166170; x=1716169770; bh=CyRV9ILozf
-	4Lntq5G/bNlTgHb6HrAA/zKXB/WqFeBT4=; b=klpf68pR983Umz/iMgT4y+ak04
-	n8kwlI8xnnbrnJaKaPnN8jzHHCo870IYXfQdY5ovbS5nfN8+SoAyY1omj9fYWYxy
-	9h9hZGEUAWUNMpao+N0biLGN9dU7EiGBneK0jiTywGV0Td0bREhUOpNmsYWCabOD
-	KgLdZgCbLsgq9pbhd+cfZYVkecyFKBqAv1NxWcrxpYiAFyhJ2MIxpCX3MFWD4hFG
-	leq5CoxnGSkT1yVtIiALfsBK14Bz6uRkvoFCEW/ZIeuoWpOw48FyS28BWCnWN+Zp
-	ykXXRqXE2kFJSHpFwfhRAmo8mmxSL3q6OZOFNt7IhKLWnughIBAmhqJtX+1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	i76614979.fm1; t=1716166170; x=1716169770; bh=CyRV9ILozf4Lntq5G/
-	bNlTgHb6HrAA/zKXB/WqFeBT4=; b=eSww0ioeIWbQ0Sk25DnYNgGXUAyXLvIvxl
-	KsVsfen8yaGLUrUGKnsSVL9xuDZ8WH3zrh+L9Oh+3oCouC/+/GyrltOWzFQSr9VN
-	+FzrjWTZU4FzaNNNtaPLsX5sOLezJMQ3nEIkPaQkj+QHjJnQGvcBtvZL44ADt8N/
-	e93HP14LmO5DN8yIlOr0bbD4IdQu9Q8QFtzCAUATUsjayWibc+mF6c0au/88nmm4
-	u1IC/k7OIXYQnw71EsRdiOCgw2Ze+UpI/lgIW9F8w/3FvXPIoBZCJo4TwXi7PzWj
-	xRq3z5k3k9ND/dZ0AcRDdhRQV7ZbN9Bge4W08KhAtCt8lrojJmzQ==
-X-ME-Sender: <xms:GJ5KZqRwF-Hmrd_yns_Mk6Mx7Xd4pz1klZb8lQd5YR1_KVDVtqzWVA>
-    <xme:GJ5KZvxpVD0vBJtI6bIvKlzINXnQlBMjfmffdDJ3fjqPTv539QfgCn6-l3CfL49Kg
-    PniH2dcBJXyVAHmQNc>
-X-ME-Received: <xmr:GJ5KZn3g2SePJsmPjv_lL1o9JiTGL3jepRa2FNBvw3l_7BFIYW9-HBms3Mv9trDWGvoA22v28letiaQsofVjBk4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehledgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:GJ5KZmBPlFW2A-8gZTo0fZw_4OAm5z68khPRoHSXKN0PpurrtTYZbQ>
-    <xmx:GJ5KZjjQOVhrXpqMIu3qX8sA9OHU9wc-gzKYThConkTcb7Hv3agYMA>
-    <xmx:GJ5KZiqUNoZd9eA-_Koz0muherzhe6-eI1CqTzfbj729hJJ64GC9BQ>
-    <xmx:GJ5KZmhjsKPJdXKBIG_jz_nLPQfr4LYRx_iGFZJREt9FKM_xhsv3zg>
-    <xmx:Gp5KZuQ8e6YZc8xP1W7wHecBEsVSVBdrx2L-LybB3XCoxVjdDmmvGXj_>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 19 May 2024 20:49:27 -0400 (EDT)
-Date: Sun, 19 May 2024 17:54:29 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Serge Hallyn <serge@hallyn.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	brauner@kernel.org, ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-Message-ID: <r44h5pcqg7rh6sbd2yohjrqz2lwaakth7bshmu6qnut3mju6tl@tb5hsz5cdc42>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
- <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
- <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
- <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
- <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
- <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
- <ZkidDlJwTrUXsYi9@serge-l-PF3DENS3>
- <799f3963-1f24-47a1-9e19-8d0ad3a49e45@schaufler-ca.com>
+	s=arc-20240116; t=1716169948; c=relaxed/simple;
+	bh=HsQV4Ltggy6Aey7CF0suvofOohFBFlsZ5EqjOonqp6c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ces+zmMwmPJ6mYsKN1VCLxxQ4l5m+wAGipNxRW57WVF1fy6Gns4vQVzbhgiQR3mqI2guiAFY2ZhPzDtrxoGqrUnWEVDZnW/dR61MlD349eE2PAIsDv4a4uRBgvXdKyn7oHSAyf3AFJXrP8abyMkjwU3nNXBIQ7i5k1ed32Dqp5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7da52a99cbdso1243919939f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2024 18:52:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716169946; x=1716774746;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k++fI0WKokHitI27fX8ZAGJFInOOijXTOw3x+5jhqLg=;
+        b=LUaSZS/maSHxorK4c33GSuOT97XIXWAJo9ZOqtlRs421VC6kWdjpvyjcsj3rUXUG/b
+         dFCdsreMayNsKeAH5/FrnGXzG6gWDv74tXeMWghk+32FzEDyssvQrDbCVm73tkANrQRl
+         4kyXqmdl/rovNLvjBvh6spJSaZXGC7BsU2KnDLdRc2NE256KpBJhMZ86sN9OkgXZGxOP
+         m2UsANNMVfgHVCr7U667KLf4+ohrcmk+UKQMyGTUGNTAWJ+ooUn1Y78yF3NlN2rAMZqR
+         LPW6iKEXPtKE/vaCRZ8uUE3AxMTPXpgSUY62N68LpG7S4rjBlqui2Z9SQKX70KgvH7Wf
+         VDpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWEMVeNVveo9ZSKLITo/skEvNy4LuYZ+YHp/HDqHM519B1zeZxVr6QfJ+ar8hpouohv5aoRKTkDRYU5fMt37ZaPy48OVjujthD92EPkQ==
+X-Gm-Message-State: AOJu0YwU1NfNG6K6ulV1aDYSHAdFn/cD+dKQ5YdOM33VFR42rFvuqYhS
+	zBBSDchSPJMSMYGc7gi7V6QBQ8CcmyyC12Oe1IHAF+ETx7AKraP1nEzh0NilfjaMioy7fDrAdPn
+	d2xL2qwbrnKow6yN8IWcUv2cuMCbTMgvYk/3FVgRK4R1XryogNzPLhuM=
+X-Google-Smtp-Source: AGHT+IHfDk7mUTbbI/3N8CUKQkG0KRS2hg0WW5QlxyVMk7+oinsyJd/sju8KYYQgN0slGoVobo/Iaff4pwYsacf+PjdZ+Kp67gC/
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <799f3963-1f24-47a1-9e19-8d0ad3a49e45@schaufler-ca.com>
+X-Received: by 2002:a05:6638:8725:b0:488:5e26:ffb5 with SMTP id
+ 8926c6da1cb9f-48958694bafmr1963185173.2.1716169945846; Sun, 19 May 2024
+ 18:52:25 -0700 (PDT)
+Date: Sun, 19 May 2024 18:52:25 -0700
+In-Reply-To: <000000000000f19a1406109eb5c5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ff23a10618d8f3b5@google.com>
+Subject: Re: [syzbot] [ext4?] general protection fault in __block_commit_write
+From: syzbot <syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, May 19, 2024 at 10:03:29AM GMT, Casey Schaufler wrote:
-> I do understand that. My objection is not to the intent, but to the approach.
-> Adding a capability set to the general mechanism in support of a limited, specific
-> use case seems wrong to me. I would rather see a mechanism in userns to limit
-> the capabilities in a user namespace than a mechanism in capabilities that is
-> specific to user namespaces.
+syzbot has found a reproducer for the following issue on:
 
-> An option to clone() then, to limit the capabilities available?
-> I honestly can't recall if that has been suggested elsewhere, and
-> apologize if it's already been dismissed as a stoopid idea.
+HEAD commit:    fda5695d692c Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1624be58980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
+dashboard link: https://syzkaller.appspot.com/bug?extid=18df508cf00a0598d9a6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bef634980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b68242980000
 
-No and you're right, this would also make sense. This was considered as
-well as things like ioctl_ns() (basically introducing the concept of
-capabilities in the user_namespace struct). I also considered reusing
-the existing sets with various schemes to no avail.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/07f3214ff0d9/disk-fda5695d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/70e2e2c864e8/vmlinux-fda5695d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b259942a16dc/Image-fda5695d.gz.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/5853ffd99deb/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/8d78b07027fb/mount_5.gz
 
-The main issue with this approach is that you've to consider how this is
-going to be used. This ties into the other thread we've had with John
-and Eric.
-Basically, we're coming from a model where things are wide open and
-we're trying to tighten things down.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com
 
-Quoting John here:
+Unable to handle kernel paging request at virtual address dfff800000000004
+KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[dfff800000000004] address between user and kernel address ranges
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 20274 Comm: syz-executor185 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
+lr : __block_commit_write+0x3c/0x2b0 fs/buffer.c:2160
+sp : ffff8000a1957600
+x29: ffff8000a1957610 x28: dfff800000000000 x27: ffff0000e30e34b0
+x26: 0000000000000000 x25: dfff800000000000 x24: dfff800000000000
+x23: fffffdffc397c9e0 x22: 0000000000000020 x21: 0000000000000020
+x20: 0000000000000040 x19: fffffdffc397c9c0 x18: 1fffe000367bd196
+x17: ffff80008eead000 x16: ffff80008ae89e3c x15: 00000000200000c0
+x14: 1fffe0001cbe4e04 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : 0000000000000004 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : fffffdffc397c9c0 x4 : 0000000000000020 x3 : 0000000000000020
+x2 : 0000000000000040 x1 : 0000000000000020 x0 : fffffdffc397c9c0
+Call trace:
+ __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
+ block_write_end+0xb4/0x104 fs/buffer.c:2253
+ ext4_da_do_write_end fs/ext4/inode.c:2955 [inline]
+ ext4_da_write_end+0x2c4/0xa40 fs/ext4/inode.c:3028
+ generic_perform_write+0x394/0x588 mm/filemap.c:3985
+ ext4_buffered_write_iter+0x2c0/0x4ec fs/ext4/file.c:299
+ ext4_file_write_iter+0x188/0x1780
+ call_write_iter include/linux/fs.h:2110 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x968/0xc3c fs/read_write.c:590
+ ksys_write+0x15c/0x26c fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:652
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: 97f85911 f94002da 91008356 d343fec8 (38796908) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	97f85911 	bl	0xffffffffffe16444
+   4:	f94002da 	ldr	x26, [x22]
+   8:	91008356 	add	x22, x26, #0x20
+   c:	d343fec8 	lsr	x8, x22, #3
+* 10:	38796908 	ldrb	w8, [x8, x25] <-- trapping instruction
 
-> We are starting from a different posture here. Where applications have
-> assumed that user namespaces where safe and no measures were needed.
-> Tools like unshare and bwrap if set to allow user namespaces in their
-> fcaps will allow exploits a trivial by-pass.
 
-We can't really expect userspace to patch every single userns callsite
-and opt-in this new security mechanism.
-You said it well yourself:
-
-> Capabilities are already more complicated than modern developers
-> want to deal with.
-
-Moreover, policies are not necessarily enforced at said callsites. Take
-for example a service like systemd-machined, or a PAM session. Those
-need to be able to place restrictions on any processes spawned under
-them.
-
-If we do this in clone() (or similar), we'll also need to come up with
-inheritance rules, being able to query capabilities, etc.
-At this point we're just reinventing capability sets.
-
-Finally the nice thing about having it as a capability set, is that we
-can easily define rules between them. Patch 2 is a good example of this.
-It constrains the userns set to the bounding set of a task. Thus,
-requiring minimal/no change to userspace, and helping with adoption.
-
-> Yes, I understand. I would rather see a change to userns in support of a userns
-> specific need than a change to capabilities for a userns specific need.
-
-Valid point, but at the end of the day, those are really just tasks'
-capabilities. The unshare() just happens to trigger specific rules when it
-comes to the tasks' creds. This isn't so different than the other sets
-and their specific rules for execve() or UID 0.
-
-This could also be reframed as:
-
-Why would setting capabilities on taks in a userns be so different than
-tasks outside of it?
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
