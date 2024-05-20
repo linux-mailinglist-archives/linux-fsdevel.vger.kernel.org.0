@@ -1,161 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-19730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45DD8C97B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 03:52:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EF98C97C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 04:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D222C1C21235
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 01:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 933891C2146A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2024 02:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6819F8F6E;
-	Mon, 20 May 2024 01:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BDFCA4E;
+	Mon, 20 May 2024 02:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oQ0s/cO+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33E4A28
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 01:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0995D847A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2024 02:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716169948; cv=none; b=EMDFaq4S9He9ZeKOrYsxSefdKjAmaSmA6bQcP6PIaMhfbzAQXbPk+fQ8Es0N8PlWgYuBsiF1CedcOxnlzCDRf4Jryc0Un4lHi7gy6iQiLh7KXVlqOpLVRlBajdjKiYtGgai1Gt1FdgYooMTOtbMTSzWY1zcuzkaXF3tloWl17SY=
+	t=1716171379; cv=none; b=B/ElUNuJaKEXPloOmdWq4EctQ3sUBuL60aVij5kOOzSSWZGj3yB4kCLPOKH00nTynwi/q2Z9hUVES8EYh5ADbhp1vwl9M1asUR7e0WcDnrsPgtf0kKuygq52Nuo/RHVBcZ0B98hAh9UW6NWBqms+KWNmMm2NSqUizbfO5L+GnBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716169948; c=relaxed/simple;
-	bh=HsQV4Ltggy6Aey7CF0suvofOohFBFlsZ5EqjOonqp6c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ces+zmMwmPJ6mYsKN1VCLxxQ4l5m+wAGipNxRW57WVF1fy6Gns4vQVzbhgiQR3mqI2guiAFY2ZhPzDtrxoGqrUnWEVDZnW/dR61MlD349eE2PAIsDv4a4uRBgvXdKyn7oHSAyf3AFJXrP8abyMkjwU3nNXBIQ7i5k1ed32Dqp5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7da52a99cbdso1243919939f.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2024 18:52:26 -0700 (PDT)
+	s=arc-20240116; t=1716171379; c=relaxed/simple;
+	bh=k5lb3KexDXe66sBBkZldL+OZ64rstu4w/axQqkMX4Js=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OGfOQcy8yJIlxEMJ3Hjm0cDSbvZ4zNo9DAy0RSbkIaqs+g73gUcaHhlB8g2Nblh1i41+JObKK2kARf6I5tQnv6MT15Lz8Hde5ikGsf2ve32EY8OsRHoiNnhT9XUxYWXCJeq5SwXhid+Ug6EXgnEU5nki3k1IHX2pI3wQaz2DhPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oQ0s/cO+; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-663d2e6a3d7so943907a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2024 19:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716171377; x=1716776177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YE4ucDs9bqpCnHq3oUgTivRFQ/nTE3BF0FzqbWtaKfY=;
+        b=oQ0s/cO+9DKklSRPhLMVg6Oofm9b83/Lbgx3SGavcwW9ePYRaZm/sbPmVy+gm7Gw/O
+         Ie2AT4aTBHtpRNWhhDo8un6H/1ZbOiX6k9dgrdhkOPmQ1fTyb5AWeTR3yXnPo7EgEsJ0
+         jVzvIhlde5zcn/2aZ07BfL4mPLC2rT86M4PMk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716169946; x=1716774746;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k++fI0WKokHitI27fX8ZAGJFInOOijXTOw3x+5jhqLg=;
-        b=LUaSZS/maSHxorK4c33GSuOT97XIXWAJo9ZOqtlRs421VC6kWdjpvyjcsj3rUXUG/b
-         dFCdsreMayNsKeAH5/FrnGXzG6gWDv74tXeMWghk+32FzEDyssvQrDbCVm73tkANrQRl
-         4kyXqmdl/rovNLvjBvh6spJSaZXGC7BsU2KnDLdRc2NE256KpBJhMZ86sN9OkgXZGxOP
-         m2UsANNMVfgHVCr7U667KLf4+ohrcmk+UKQMyGTUGNTAWJ+ooUn1Y78yF3NlN2rAMZqR
-         LPW6iKEXPtKE/vaCRZ8uUE3AxMTPXpgSUY62N68LpG7S4rjBlqui2Z9SQKX70KgvH7Wf
-         VDpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWEMVeNVveo9ZSKLITo/skEvNy4LuYZ+YHp/HDqHM519B1zeZxVr6QfJ+ar8hpouohv5aoRKTkDRYU5fMt37ZaPy48OVjujthD92EPkQ==
-X-Gm-Message-State: AOJu0YwU1NfNG6K6ulV1aDYSHAdFn/cD+dKQ5YdOM33VFR42rFvuqYhS
-	zBBSDchSPJMSMYGc7gi7V6QBQ8CcmyyC12Oe1IHAF+ETx7AKraP1nEzh0NilfjaMioy7fDrAdPn
-	d2xL2qwbrnKow6yN8IWcUv2cuMCbTMgvYk/3FVgRK4R1XryogNzPLhuM=
-X-Google-Smtp-Source: AGHT+IHfDk7mUTbbI/3N8CUKQkG0KRS2hg0WW5QlxyVMk7+oinsyJd/sju8KYYQgN0slGoVobo/Iaff4pwYsacf+PjdZ+Kp67gC/
+        d=1e100.net; s=20230601; t=1716171377; x=1716776177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YE4ucDs9bqpCnHq3oUgTivRFQ/nTE3BF0FzqbWtaKfY=;
+        b=qyAdHOYlXJ1Gj3917anYzmMRuWQTLR7ex/jNI/173WoncPiVZc4hFnabqK7JDfaLpz
+         trhF086rMH4hQKWwnrQZnZPX8iLkK6l7K3gF9wR+3b+4v0xb6LnZ9UvjK8x1bvQJfqyU
+         vXdbg6uogEzUZAhYETA4BMvsqIXhpneMLU/7YHlZNPYASLZYpiqt4wXYn0n193PRqm0X
+         Fpd5c6DkObyb3sU8mIFR8+nWVJu0wvWL9M3TpUnraCo33IfiYoXK4ARzjSkY/pTSf+9w
+         xmpCbhNqHr6AmToceFp0Vd2qG4xI+nI6kc7uLCwxCsXi+R8Cqnf75hhZjemD2cq4CVZ9
+         /tpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCGeOfQdn6GkivLiVTGcSmD56+Ubw9IqKKWmLClLHdWueknmoJ/WUnuU4EA1PKb/ZB6qum5O2jNX9vVUl3361a/+9an5SO88HLFrUz+A==
+X-Gm-Message-State: AOJu0YwmlfKOPWcZB1XiRNOjDUJy6VFtEiRvrk/CckPYcOjpGA+ZkDsz
+	m5czNiPwSualRetOGp+TgH9oM+ds65Uq1XcvRRPVklmOc1xcgsrHyqr1MAxr5g==
+X-Google-Smtp-Source: AGHT+IGlmg2Db2n2jC83SuJ/euH+lWUD88AE94T/zbSsqm5Y0IM2QGpn7oCJ4Kl9duCwOUaZbJJobQ==
+X-Received: by 2002:a05:6a20:9696:b0:1af:4fa3:30c2 with SMTP id adf61e73a8af0-1b1ca45c914mr5637698637.20.1716171377141;
+        Sun, 19 May 2024 19:16:17 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a9107f3sm18518349a12.9.2024.05.19.19.16.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 May 2024 19:16:16 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 0/2] exec: Add KUnit test for bprm_stack_limits()
+Date: Sun, 19 May 2024 19:16:10 -0700
+Message-Id: <20240520021337.work.198-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8725:b0:488:5e26:ffb5 with SMTP id
- 8926c6da1cb9f-48958694bafmr1963185173.2.1716169945846; Sun, 19 May 2024
- 18:52:25 -0700 (PDT)
-Date: Sun, 19 May 2024 18:52:25 -0700
-In-Reply-To: <000000000000f19a1406109eb5c5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ff23a10618d8f3b5@google.com>
-Subject: Re: [syzbot] [ext4?] general protection fault in __block_commit_write
-From: syzbot <syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=800; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=k5lb3KexDXe66sBBkZldL+OZ64rstu4w/axQqkMX4Js=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmSrJrWE8uIm/m6QvBW42tgwzmZT5aSDXKKKp9q
+ ZrpvWpZHWqJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZkqyawAKCRCJcvTf3G3A
+ Jm2PEACicbwCbc6OZnHBIcUUFcyBjlf/4v+fHpVGZ9x6gjGoLiaNNzSux1Yt5JsshKg1JSrKaUk
+ kuwBy5cP7Wd1dPijGg1mmRphZ+4IlFvzRrJdV7kssCixOfU6FtSV3Z57lrbjvvyP8HHzedtpUEK
+ 1yWzY2CSboSPLgs+vdL24sCO6N5A0fM4nPaXhMJVpZbmiiaU2w+t4R+CbiMTLUfvxHhh70wgbcb
+ 31ctRRBnXXJiv0X6Noy+6hyd11W3mG18VH6cMEhncRxY8+O5gvEkhS7e9LUnAtB7+VACvUknFrj
+ lD9AsbARrigjh9odISpN5HjThC567f+OvosQSoO3K/la5Yrw3INvPzoS2Y1/xslqszpZr3xlxPT
+ foiHcGM05pEJ3c/fzvDF+Eqe80hxDr9m9vt3MLb742NAq51+rJUuBQ/WQJSCMuI4XpjnKGR6t3g
+ dlq/1cdQVlvi5myH8cCuE58CIMYkiCNwVw241Xz3XRRKcmqKdyK0+fNLvD8Y73jUM9QOLixb5Qv
+ yV70c8ZgrF46lDeClXpyRchoMZzfQrie5TK1WjbGBI2N6AT77vLlSVhoYrCPJJX98yNuXY3Fp2w
+ eIANrxNFwd5Yi30KSmuHd3ssO10sVZK125bhTFDM+1hkoWH11nyVYsBqHfVIVXU/SkgIT6dvlc/
+ kHPdLM3h 3fmwu7w==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+Hi,
 
-HEAD commit:    fda5695d692c Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1624be58980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
-dashboard link: https://syzkaller.appspot.com/bug?extid=18df508cf00a0598d9a6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bef634980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b68242980000
+This adds a first KUnit test to the core exec code. With the ability to
+manipulate userspace memory from KUnit coming[1], I wanted to at least
+get the KUnit framework in place in exec.c. Most of the coming tests
+will likely be to binfmt_elf.c, but still, this serves as a reasonable
+first step.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/07f3214ff0d9/disk-fda5695d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/70e2e2c864e8/vmlinux-fda5695d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b259942a16dc/Image-fda5695d.gz.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/5853ffd99deb/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/8d78b07027fb/mount_5.gz
+-Kees
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com
+[1] https://lore.kernel.org/linux-hardening/20240519190422.work.715-kees@kernel.org/
 
-Unable to handle kernel paging request at virtual address dfff800000000004
-KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
-Mem abort info:
-  ESR = 0x0000000096000005
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x05: level 1 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[dfff800000000004] address between user and kernel address ranges
-Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 20274 Comm: syz-executor185 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
-lr : __block_commit_write+0x3c/0x2b0 fs/buffer.c:2160
-sp : ffff8000a1957600
-x29: ffff8000a1957610 x28: dfff800000000000 x27: ffff0000e30e34b0
-x26: 0000000000000000 x25: dfff800000000000 x24: dfff800000000000
-x23: fffffdffc397c9e0 x22: 0000000000000020 x21: 0000000000000020
-x20: 0000000000000040 x19: fffffdffc397c9c0 x18: 1fffe000367bd196
-x17: ffff80008eead000 x16: ffff80008ae89e3c x15: 00000000200000c0
-x14: 1fffe0001cbe4e04 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : 0000000000000004 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : fffffdffc397c9c0 x4 : 0000000000000020 x3 : 0000000000000020
-x2 : 0000000000000040 x1 : 0000000000000020 x0 : fffffdffc397c9c0
-Call trace:
- __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
- block_write_end+0xb4/0x104 fs/buffer.c:2253
- ext4_da_do_write_end fs/ext4/inode.c:2955 [inline]
- ext4_da_write_end+0x2c4/0xa40 fs/ext4/inode.c:3028
- generic_perform_write+0x394/0x588 mm/filemap.c:3985
- ext4_buffered_write_iter+0x2c0/0x4ec fs/ext4/file.c:299
- ext4_file_write_iter+0x188/0x1780
- call_write_iter include/linux/fs.h:2110 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0x968/0xc3c fs/read_write.c:590
- ksys_write+0x15c/0x26c fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __arm64_sys_write+0x7c/0x90 fs/read_write.c:652
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-Code: 97f85911 f94002da 91008356 d343fec8 (38796908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	97f85911 	bl	0xffffffffffe16444
-   4:	f94002da 	ldr	x26, [x22]
-   8:	91008356 	add	x22, x26, #0x20
-   c:	d343fec8 	lsr	x8, x22, #3
-* 10:	38796908 	ldrb	w8, [x8, x25] <-- trapping instruction
+Kees Cook (2):
+  exec: Add KUnit test for bprm_stack_limits()
+  exec: Avoid pathological argc, envc, and bprm->p values
 
+ MAINTAINERS       |   2 +
+ fs/Kconfig.binfmt |   8 +++
+ fs/exec.c         |  24 +++++++-
+ fs/exec_test.c    | 137 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 170 insertions(+), 1 deletion(-)
+ create mode 100644 fs/exec_test.c
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+2.34.1
+
 
