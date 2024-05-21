@@ -1,128 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-19908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BA68CB1AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 17:50:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955728CB1B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 17:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A161F234D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 15:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F7871C22159
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 15:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16D014291B;
-	Tue, 21 May 2024 15:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCA11482EA;
+	Tue, 21 May 2024 15:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ckgc987g"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kMcu2v9y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC741FBB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 15:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBB414291B;
+	Tue, 21 May 2024 15:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306596; cv=none; b=IfaBvaHGAeK7D9Ap8Eja1/by9nmdsiFQPWR08StNoYWq5fG0L29OFtS5EfnirRBByheXWPFmC2MYO/UNsNdBmVbABjVbPNi8i5FwNGhqnw24SDN/GI5ebKSZACyVToGTra8HzVMqTNnLbsVIawbVwJUOkv1Iv/FVQgHTBtSY0io=
+	t=1716306742; cv=none; b=n5Vc5DMInNGDY66awJPM/EKKPzPI5myyG3E329pTcb78lRGjTXwyicNDbQaldL7/HHiuA92++3clg+rFX9misNH18GJEAisjCbuiaLN+UnBlyBTAsVPZzEO62QIl5aQeelHpKh8vrqxrGPQazMpSD66KBqRCWPAGXw2QlpNiKGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306596; c=relaxed/simple;
-	bh=EsNjHQD8onwzJqeFZmAIuXFOW2blNrOa1Rp4vndUGRU=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tqgLtX3QZcqy+9FgCVDs9VUidpXP2iRO15DESBN0pVxirTAorP7Qy0dI8MS1emIXrkS4zbYRjQdIH55X8pbOfFUudnWjJjAwFM+PIh8WfqPV9fWpibp5aM2/0mKp7H7/Kgr7jBbFnetk+UxeWlzlknwfuR7+uwIMFRExFHAkj0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ckgc987g; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716306593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3JK4qzqYYZMoo+8Y+hbMdVVgqmEeOKBQ3rxyZn96arA=;
-	b=Ckgc987gBwtPPfApHYh9s2wTnff+01pteXqgUpxW3ZyjNcRenXdpX38pFasQusx/WpQLKa
-	eRy4ANoqV4143xxt+t+HQZWoCR8FZZgNfacCfHm1iMh2Svzc7fr/5REGGye7miAFKxl6pP
-	YOGcvjT+EKB8WcVNMg+PCAUUgiLrNRc=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-q3c8SPE5M_WT51A7n4paVw-1; Tue,
- 21 May 2024 11:49:50 -0400
-X-MC-Unique: q3c8SPE5M_WT51A7n4paVw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	s=arc-20240116; t=1716306742; c=relaxed/simple;
+	bh=D8ut8wqbZAYfrDBXoK5kyNG9XiWyMeVsnRjM5LnSrQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uaps6HTT7Po8KU+UyxHarECh3QFWpz4f/R7/kiGG5kOwdumZH6RNkr9tL5hmTT+hPlMlfU4yq0ruNKSfenOv1K5OHt1rmOYtXvx1Eu+eIn1tYg9aXV71Wzw2ObolmT+z5UzAIVk24KJcgZ9ugM2V84fEwh4on0egBMKM69/wFRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kMcu2v9y; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.85] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B3CE41C05129;
-	Tue, 21 May 2024 15:49:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 97E4F21EE56B;
-	Tue, 21 May 2024 15:49:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <stfrench@microsoft.com>
-cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>, Jens Axboe <axboe@kernel.dk>,
-    Matthew Wilcox <willy@infradead.org>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 22E7E3F0F9;
+	Tue, 21 May 2024 15:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1716306738;
+	bh=kP6z+DgiQqeq0wyqIVgMsy730UPQ746toRzBhfDapGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=kMcu2v9yvdgcUxVHB1Kpdbwzw8q7gSGQfjE1PBDO4xt4g+Amp6IJnDkf9OWns7AQj
+	 HNQrMg0L4kD52GR7f6mDYiDJUh3AmW2nlHCbUcUiMWWu6rG+fpU38vFXgsyCMpWOLA
+	 kr+FcUvjO7mxCjuXNKBFJu4ZPZK+fpb0Veu8o5OcakBbuLGJCxxWz1vYbjMBUCizzn
+	 VPKOGxzwVcPExIsYKHwRZJb4I+XDEbOOSr9dKbzNNqKjZK7vCXs0IuBmh53MUC/W1e
+	 k5xvs+wSuOMD/X34oszUtV2iLN1PWvQQ+8mdqhJabPOErUFaCXr1AFBJCdFerQ1XdM
+	 vPv7FUMVAJTWA==
+Message-ID: <145e7c2c-4490-4066-9a80-bbaf04b70c16@canonical.com>
+Date: Tue, 21 May 2024 08:52:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <316305.1716306586.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 21 May 2024 16:49:46 +0100
-Message-ID: <316306.1716306586@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+ Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>,
+ Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-2-jcalmels@3xx0.net>
+ <878r08brmp.fsf@email.froward.int.ebiederm.org>
+ <xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
+ <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix netfs_perform_write() to set BDP_ASYNC if IOCB_NOWAIT is set rather
-than if IOCB_SYNC is not set.  It reflects asynchronicity in the sense of
-not waiting rather than synchronicity in the sense of not returning until
-the op is complete.
+On 5/17/24 07:22, Eric W. Biederman wrote:
+> Jonathan Calmels <jcalmels@3xx0.net> writes:
+> 
+>> On Fri, May 17, 2024 at 06:32:46AM GMT, Eric W. Biederman wrote:
+>>>
+>>> Pointers please?
+>>>
+>>> That sentence sounds about 5 years out of date.
+>>
+>> The link referenced is from last year.
+>> Here are some others often cited by distributions:
+>>
+>> https://nvd.nist.gov/vuln/detail/CVE-2022-0185
+>> https://nvd.nist.gov/vuln/detail/CVE-2022-1015
+>> https://nvd.nist.gov/vuln/detail/CVE-2022-2078
+>> https://nvd.nist.gov/vuln/detail/CVE-2022-24122
+>> https://nvd.nist.gov/vuln/detail/CVE-2022-25636
+>>
+>> Recent thread discussing this too:
+>> https://seclists.org/oss-sec/2024/q2/128
+> 
+> My apologies perhaps I trimmed too much.
+> 
+> I know that user namespaces enlarge the attack surface.
+> How much and how serious could be debated but for unprivileged
+> users the attack surface is undoubtedly enlarged.
+> 
+> As I read your introduction you were justifying the introduction
+> of a new security mechanism with the observation that distributions
+> were carrying distribution specific patches.
+> 
+> To the best of my knowledge distribution specific patches and
+> distributions disabling user namespaces have been gone for quite a
+> while.  So if that has changed recently I would like to know.
+> 
 
-Without this, generic/590 fails on cifs in strict caching mode with a
-complaint that one of the writes fails with EAGAIN.  The test can be
-distilled down to:
-
-        mount -t cifs /my/share /mnt -ostuff
-        xfs_io -i -c 'falloc 0 8191M -c fsync -f /mnt/file
-        xfs_io -i -c 'pwrite -b 1M -W 0 8191M' /mnt/file
-
-Fixes: c38f4e96e605 ("netfs: Provide func to copy data to pagecache for bu=
-ffered write")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: netfs@lists.linux.dev
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/buffered_write.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index 1121601536d1..07bc1fd43530 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -181,7 +181,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct=
- iov_iter *iter,
- 	struct folio *folio, *writethrough =3D NULL;
- 	enum netfs_how_to_modify howto;
- 	enum netfs_folio_trace trace;
--	unsigned int bdp_flags =3D (iocb->ki_flags & IOCB_SYNC) ? 0: BDP_ASYNC;
-+	unsigned int bdp_flags =3D (iocb->ki_flags & IOCB_NOWAIT) ? BDP_ASYNC : =
-0;
- 	ssize_t written =3D 0, ret, ret2;
- 	loff_t i_size, pos =3D iocb->ki_pos, from, to;
- 	size_t max_chunk =3D PAGE_SIZE << MAX_PAGECACHE_ORDER;
+almost all the distros are carrying the out of try sysctl to disable
+user namepsaces. Its disabled by default but is available. Ubuntu in
+its 24.04 release is now limiting unprivileged use of user namespaces
+to known code. At a generic code level they are allowed but with no
+capabilities within the user namespace.
 
 
