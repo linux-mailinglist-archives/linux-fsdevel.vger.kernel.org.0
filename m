@@ -1,358 +1,310 @@
-Return-Path: <linux-fsdevel+bounces-19931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7098CB344
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 20:02:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61F58CB375
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 20:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5041F2253B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 18:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1498A1C21555
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 18:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616DF148843;
-	Tue, 21 May 2024 17:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50648148318;
+	Tue, 21 May 2024 18:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ke1Bi5bD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFxNiiyv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C0E14A638;
-	Tue, 21 May 2024 17:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141C27F7CE;
+	Tue, 21 May 2024 18:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716314393; cv=none; b=JemiOJ/Olegs0cJ96ix4BWGofKl02WdYViu7oDPrFmhhbVMLLJqrwFgdKCEcbdawRa/4VrrVoXuSHWzEpVEQ3tEbJCsB0h+eeA0LkBn0uzEbUk5WYKKJwi/IRHi/HjbexVncL6X4a7X5y8xRGQC8WQVeKAjz4hUFdLLpPbDgyrc=
+	t=1716315776; cv=none; b=KKYwcf+wD1qAmDjmHQOZPgW65Huy9ldPCcInb0CgnAtHLc59Pre11kkD4+q6IK2up9ZVwRIABBXz29l5p/2+Q5AQrDHA7oytXKVXUIZz3JaNw4pYskQllidISgg2gvWTWUWlEjZmuiJiUk0oD6vij1ETZ1lGTKnc1sO+4uK4VJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716314393; c=relaxed/simple;
-	bh=61MriWGtPLPpZsrO73fCBAhdwQo0/XaJgc8eagLcVXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DRDidvLU26GJ+Y67lt1o/AW7tYxGC7Yq3Sa+d9GnmU+9gS2ZB+AwUMVBaVwqk1BsIv+rQ0BMslVBq6WdCSVxv5+vh/BSZLtK2VcgCoIGYR4dZV05V8zyqylkQuz60hDZCIUPA67ejNsxjx2mZTFMGqaU6Exq5Yw2/wPYwB2wapI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ke1Bi5bD; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1716315776; c=relaxed/simple;
+	bh=Q1eSSACPrLt9AikA9Wp5pxYtzBBHmnJxep7VNgvdAfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P+x5HbXNKoAqbNHuWkngiZRd1bs+CnF1nzZK4NESxyKlxcAqFrPQi3IrRUDjna62RcukoXusjkLzb8Qt98vXWWITCKYy3Y9lF/o/BTDV3M3klcq1N6dFpN+ijIt0xhEASqTBZAmwoaAJvrdhOhnA4/6Q4UH9bGA0AmOpyxR+AVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFxNiiyv; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ed904c2280so3304305ad.2;
-        Tue, 21 May 2024 10:59:51 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-69b6c2e9ed9so15232786d6.1;
+        Tue, 21 May 2024 11:22:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716314391; x=1716919191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jX6zUCloIMLeC0AtUUIo54oV7OGNQUUzaEpWo4Ucc+8=;
-        b=ke1Bi5bDcBWNP3Nf3MDgLLxSoGYKpmrBe6HYtKvwgJguKqRmSAOb5hsHK/Ci5+umRf
-         eqK357InbnULcr3Y6ON3lCa6yp8WWAxYuaj5DGPb3TzKoRn2QNqxqq7EsfXHX2mfYLY/
-         5z0g7Cw5Da/Rhac8kwpACW2zoNYTFvSVt5z0VbS1gB1Ci1uPjPdZlO571uB2hR229i1y
-         QD7M4sj57sSNXh0WnUpn08tE//Qws4pqkM/p4S7Ku7z6UccFYbTMXxQTM2tWI5DqSeIb
-         /nN/dhx6m+HEkBXccQIa7QXBxjeQOou5YUzRSpQhqUvvSIJINCmyCfRhyD2ACgwv3IAy
-         4Efg==
+        d=gmail.com; s=20230601; t=1716315774; x=1716920574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2phjhcA1LF6qdjoEbuyC81vJIuXI9sEaOs7PMDVYOQM=;
+        b=CFxNiiyvTdeXf0CZhcQPR7ZiGcrBWeTyifZtxISHUcLtYPCL0jHwUD/H+r0ySvHwQk
+         zzzaf6sLGTl3+HzxrxXWdqYyAicRx7YyyafuJl6KUQGaee7hvYLYPyDrHjoKMEn4MXPo
+         R7/JocTKRcL6Nt4gIr4swuuiiwmM4Qx1dTvDy0VQ+40ndTd488NV/f1P24ZRC75XRHIP
+         DH/xG5mIBIhjKR0VPNFrm4arwqQl5unG902/BZCMncUg6tZgxAyArr5++i02gg4bC6Zf
+         FsyQgRXWA1wMcTYf7oqZGqIVjpbdSBq4qunMZlrl3qmiQwxtbSrq4rCZm5UShBUdKESj
+         uPsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716314391; x=1716919191;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jX6zUCloIMLeC0AtUUIo54oV7OGNQUUzaEpWo4Ucc+8=;
-        b=W7FEMkxH9qjt/RLq4QAsNpC1/0Pqhu+HRzf+COH6FiegMI8csVdu2osrY17EKjfsye
-         aGUZqAKUU+uWp6Kl6vrzPk+d8xFFumaaPekZqv7PJxhVvqeK6CeIILwnlsPMKJo5TDRa
-         I6wNlDIoJhYoWxuUnMdnzV9KJzIHE1kHsoYNZ1K7AREypksLlX++UjjASnAxVrPEEMb5
-         pgn40JsvIMnzlEXfQlkX5+i0rkqT0CWPzQDISG4mFH648MuBURmq4AX/THGrryA8FmnF
-         VbvzknDNtRfE7R2DKhrQdoUNEBQJ9LYkotkogRnS4zL5Uu2kZxK/q9GsehOjVIPE7040
-         GD0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUK0FeFEM3lR9cebua1hGlCGavCy65WUbmOavtwwWvP16hQ8tHUs8eIJfbmj2hPQlEmQS0lz6nQOOL2jOUNlddEk8dUIBRGMCEfCtVPwubpoUTFovEO/qQuJAPxIktNcse8WGkf95eqnwTVPQ==
-X-Gm-Message-State: AOJu0Ywx0osXnJAzMDDbiS48bpSqNnViLWle0MZsiaDu0wYrpzuSfaqB
-	s5p0FCcbLvRlhHbz5kQrAgb4IrVF0InWYSVejk3fScQMue+BOdaF
-X-Google-Smtp-Source: AGHT+IExAfgsIwWGDABBN/J81IQxzi7Xmus1MnTq7EO1h5SpSUKVtCl9UBUAT3KpqGVr3jZT+Cbd4w==
-X-Received: by 2002:a17:902:bb17:b0:1e0:115c:e03c with SMTP id d9443c01a7336-1ef43f4ce9fmr320876095ad.53.1716314391332;
-        Tue, 21 May 2024 10:59:51 -0700 (PDT)
-Received: from localhost.localdomain ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2fcdf87besm44646935ad.105.2024.05.21.10.59.47
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 21 May 2024 10:59:50 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v6 11/11] mm/swap: reduce swap cache search space
-Date: Wed, 22 May 2024 01:58:53 +0800
-Message-ID: <20240521175854.96038-12-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240521175854.96038-1-ryncsn@gmail.com>
-References: <20240521175854.96038-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+        d=1e100.net; s=20230601; t=1716315774; x=1716920574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2phjhcA1LF6qdjoEbuyC81vJIuXI9sEaOs7PMDVYOQM=;
+        b=htGG/x4MN1cEY80Lt5obRgZrtzJqV/21lo7x+WhtAkXWG06ymhS5QNLmSz+6IAtQT1
+         Ltx1/RKDmaGplBWM02J12Wfqf/TRt5tNhe/lKXuqH5anBchMScijxpD+0WhDy79xTIYm
+         E8DTp/CB9gP5qCv4PWPHBXpVWRznjtje1viwBx8HmCPG0HL03yEJlklUvBpEeBz9n8Wh
+         iZtWDEoNHlY/CZMcXjsjy1aR7ppKtqGsmPN9qjVZJF5+gAxQz5hjJ/b0A4Fhvf0eqdOz
+         eZfG2xxsCXZF0p3VZW70B642+n7/mpQHid1HUzRWVNcpTXxsF7DQYZfSUHEgN13n5x0q
+         uAxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY0dvXAlKRa2dPVRkXn2mHQ86ha/vG+5BXsab77paWxsK0DQua+CM39joqraZIWF6Ie2n52j3NTy0qCdee0iEPpPE/On4Gjk7g
+X-Gm-Message-State: AOJu0Yxi4Hi2b2EDULzy7y5OOCyPGXVcMoiR6Y3LobJ78Aqf4H70Sz3x
+	pfyOxvZdgrNsb2pgjXd1YYbtJxd3aoTXIck2WPuvMYXg569xOobY8c6XLR1XNNSpt6CKjNQT7YP
+	BfyR/BmCxg1XhHjMYufCOoNLqamLuaQzo
+X-Google-Smtp-Source: AGHT+IEOfvvLVIbJowOBkYP5nuidQjPgdN55js9yNZKVyww9rX9ppgBwK2ZshJMa2xZgmhw28WA7s3cuNV3JHQ7XB4g=
+X-Received: by 2002:a05:6214:bd0:b0:6a3:4bbc:9b66 with SMTP id
+ 6a1803df08f44-6a34bbca59amr172565536d6.10.1716315773844; Tue, 21 May 2024
+ 11:22:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240520164624.665269-2-aalbersh@redhat.com> <20240520164624.665269-4-aalbersh@redhat.com>
+ <CAOQ4uxikMjmAkXwGk3d9897622JfkeE8LXaT9PBrtTiR5y3=Rg@mail.gmail.com> <z6ctkxtwhwioc5a5kzisjxffkde6xpchstrr3zlflh4bsz4mpd@5z2s2d7lbje5>
+In-Reply-To: <z6ctkxtwhwioc5a5kzisjxffkde6xpchstrr3zlflh4bsz4mpd@5z2s2d7lbje5>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 21 May 2024 21:22:41 +0300
+Message-ID: <CAOQ4uxjaLbrmSDk_a_M6YDT5tQoHO=dXTDsHVOSYcMxeQnpP1w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and FS_IOC_FSGETXATTRAT
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Miklos Szeredi <miklos@szeredi.hu>, "Darrick J. Wong" <djwong@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kairui Song <kasong@tencent.com>
+On Tue, May 21, 2024 at 7:34=E2=80=AFPM Andrey Albershteyn <aalbersh@redhat=
+.com> wrote:
+>
+> On 2024-05-20 22:03:43, Amir Goldstein wrote:
+> > On Mon, May 20, 2024 at 7:46=E2=80=AFPM Andrey Albershteyn <aalbersh@re=
+dhat.com> wrote:
+> > >
+> > > XFS has project quotas which could be attached to a directory. All
+> > > new inodes in these directories inherit project ID set on parent
+> > > directory.
+> > >
+> > > The project is created from userspace by opening and calling
+> > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
+> > > files such as FIFO, SOCK, BLK etc. as opening them returns a special
+> > > inode from VFS. Therefore, some inodes are left with empty project
+> > > ID. Those inodes then are not shown in the quota accounting but
+> > > still exist in the directory.
+> > >
+> > > This patch adds two new ioctls which allows userspace, such as
+> > > xfs_quota, to set project ID on special files by using parent
+> > > directory to open FS inode. This will let xfs_quota set ID on all
+> > > inodes and also reset it when project is removed. Also, as
+> > > vfs_fileattr_set() is now will called on special files too, let's
+> > > forbid any other attributes except projid and nextents (symlink can
+> > > have one).
+> > >
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > ---
+> > >  fs/ioctl.c              | 93 +++++++++++++++++++++++++++++++++++++++=
+++
+> > >  include/uapi/linux/fs.h | 11 +++++
+> > >  2 files changed, 104 insertions(+)
+> > >
+> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > > index 1d5abfdf0f22..3e3aacb6ea6e 100644
+> > > --- a/fs/ioctl.c
+> > > +++ b/fs/ioctl.c
+> > > @@ -22,6 +22,7 @@
+> > >  #include <linux/mount.h>
+> > >  #include <linux/fscrypt.h>
+> > >  #include <linux/fileattr.h>
+> > > +#include <linux/namei.h>
+> > >
+> > >  #include "internal.h"
+> > >
+> > > @@ -647,6 +648,19 @@ static int fileattr_set_prepare(struct inode *in=
+ode,
+> > >         if (fa->fsx_cowextsize =3D=3D 0)
+> > >                 fa->fsx_xflags &=3D ~FS_XFLAG_COWEXTSIZE;
+> > >
+> > > +       /*
+> > > +        * The only use case for special files is to set project ID, =
+forbid any
+> > > +        * other attributes
+> > > +        */
+> > > +       if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
+> > > +               if (fa->fsx_xflags & ~FS_XFLAG_PROJINHERIT)
+> > > +                       return -EINVAL;
+> > > +               if (!S_ISLNK(inode->i_mode) && fa->fsx_nextents)
+> > > +                       return -EINVAL;
+> > > +               if (fa->fsx_extsize || fa->fsx_cowextsize)
+> > > +                       return -EINVAL;
+> > > +       }
+> > > +
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -763,6 +777,79 @@ static int ioctl_fssetxattr(struct file *file, v=
+oid __user *argp)
+> > >         return err;
+> > >  }
+> > >
+> > > +static int ioctl_fsgetxattrat(struct file *file, void __user *argp)
+> > > +{
+> > > +       struct path filepath;
+> > > +       struct fsxattrat fsxat;
+> > > +       struct fileattr fa;
+> > > +       int error;
+> > > +
+> > > +       if (!S_ISDIR(file_inode(file)->i_mode))
+> > > +               return -EBADF;
+> >
+> > So the *only* thing that is done with the fd of the ioctl is to verify
+> > that it is a directory fd - there is no verification that this fd is on=
+ the
+> > same sb as the path to act on.
+> >
+> > Was this the intention? It does not make a lot of sense to me
+> > and AFAIK there is no precedent to an API like this.
+>
+> yeah, as we want to set xattrs on that inode the path is pointing
+> to, so, VFS will call to the FS under that sb.
+>
+> >
+> > There are ioctls that operate on the filesystem using any
+> > fd on that fs, such as FS_IOC_GETFS{UUID,SYSFSPATH}
+> > and maybe the closest example to what you are trying to add
+> > XFS_IOC_BULKSTAT.
+>
+> Not sure that I get what you mean here, the *at() part is to get
+> around VFS special inodes and call vfs_fileattr_set/get on FS inodes.
+>
 
-Currently we use one swap_address_space for every 64M chunk to reduce lock
-contention, this is like having a set of smaller swap files inside one
-swap device. But when doing swap cache look up or insert, we are
-still using the offset of the whole large swap device. This is OK for
-correctness, as the offset (key) is unique.
+My point was that with your proposed API the fd argument to
+ioctl() can be a directory from a completely arbitrary filesystem
+with nothing to do with the filesystem where fsxat.dfd is from
+and that makes very little sense from API POV.
 
-But Xarray is specially optimized for small indexes, it creates the
-radix tree levels lazily to be just enough to fit the largest key
-stored in one Xarray. So we are wasting tree nodes unnecessarily.
+> >
+> > Trying to think of a saner API for this - perhaps pass an O_PATH
+> > fd without any filename in struct fsxattrat, saving you also the
+> > headache of passing a variable length string in an ioctl.
+> >
+> > Then atfile =3D fdget_raw(fsxat.atfd) and verify that atfile->f_path
+> > and file->f_path are on the same sb before proceeding to operate
+> > on atfile->f_path.dentry.
+>
+> Thanks! Didn't know about O_PATH that seems to be a way to get rid
+> of the path passing.
+>
 
-For 64M chunk it should only take at most 3 levels to contain everything.
-But if we are using the offset from the whole swap device, the offset (key)
-value will be way beyond 64M, and so will the tree level.
+I found one precedent of this pattern with XFS_IOC_FD_TO_HANDLE,
+but keep in mind that this is quite an old legacy XFS API.
 
-Optimize this by using a new helper swap_cache_index to get a swap
-entry's unique offset in its own 64M swap_address_space.
+This ioctl is performed on an "fshandle", which is an open fd to any
+object in the filesystem, but typically the mount root dir.
+The ioctl gets a structure xfs_fsop_handlereq_t which contains an
+fd member pointing to another object within an XFS filesystem.
 
-I see a ~1% performance gain in benchmark and actual workload with
-high memory pressure.
+Actually, AFAICS, this code does not verify that the object and fshandle
+are on the same XFS filesystem, but only that both are on XFS filesystems:
 
-Test with `time memhog 128G` inside a 8G memcg using 128G swap (ramdisk
-with SWP_SYNCHRONOUS_IO dropped, tested 3 times, results are stable. The
-test result is similar but the improvement is smaller if SWP_SYNCHRONOUS_IO
-is enabled, as swap out path can never skip swap cache):
+        /*
+         * We can only generate handles for inodes residing on a XFS filesy=
+stem,
+         * and only for regular files, directories or symbolic links.
+         */
+        error =3D -EINVAL;
+        if (inode->i_sb->s_magic !=3D XFS_SB_MAGIC)
+                goto out_put;
 
-Before:
-6.07user 250.74system 4:17.26elapsed 99%CPU (0avgtext+0avgdata 8373376maxresident)k
-0inputs+0outputs (55major+33555018minor)pagefaults 0swaps
+I don't know what's the best thing to do is, but I think that verifying
+that the ioctl fd and the O_PATH fd are on the same sb is the least
+controversial option for the first version - if needed that could be
+relaxed later on.
 
-After (1.8% faster):
-6.08user 246.09system 4:12.58elapsed 99%CPU (0avgtext+0avgdata 8373248maxresident)k
-0inputs+0outputs (54major+33555027minor)pagefaults 0swaps
+Another alternative which is simpler from API POV would be to allow
+selective ioctl() commands on an O_PATH fd, but I think that is going
+to be more controversial.
 
-Similar result with MySQL and sysbench using swap:
-Before:
-94055.61 qps
+Something along those lines (completely untested):
 
-After (0.8% faster):
-94834.91 qps
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 45e4e64fd664..562f8bff91d2 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -241,6 +241,13 @@ struct fsxattr {
+  */
+ #define FS_IOC_GETFSSYSFSPATH          _IOR(0x15, 1, struct fs_sysfs_path)
 
-Radix tree slab usage is also very slightly lower.
++#define _IOC_AT                                (0x100)
++#define FS_IOC_AT(nr)                  (_IOC_TYPE(nr) =3D=3D _IOC_AT)
++
++/* The following ioctls can be operated on an O_PATH fd */
++#define FS_IOC_FSGETXATTRAT            _IOR(_IOC_AT, 31, struct fsxattr)
++#define FS_IOC_FSSETXATTRAT            _IOW(_IOC_AT, 32, struct fsxattr)
++
+ /*
+  * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
+  *
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 1d5abfdf0f22..f720500c705b 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -867,9 +867,11 @@ static int do_vfs_ioctl(struct file *filp, unsigned in=
+t fd,
+                return ioctl_setflags(filp, argp);
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+        case FS_IOC_FSGETXATTR:
++       case FS_IOC_FSGETXATTRAT:
+                return ioctl_fsgetxattr(filp, argp);
+
+        case FS_IOC_FSSETXATTR:
++       case FS_IOC_FSSETXATTRAT:
+                return ioctl_fssetxattr(filp, argp);
+
+        case FS_IOC_GETFSUUID:
+@@ -879,7 +881,7 @@ static int do_vfs_ioctl(struct file *filp, unsigned int=
+ fd,
+                return ioctl_get_fs_sysfs_path(filp, argp);
+
+        default:
+-               if (S_ISREG(inode->i_mode))
++               if (!FS_IOC_AT(cmd) && S_ISREG(inode->i_mode))
+                        return file_ioctl(filp, cmd, argp);
+                break;
+        }
+@@ -889,7 +891,8 @@ static int do_vfs_ioctl(struct file *filp, unsigned int=
+ fd,
+
+ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long,=
+ arg)
+ {
+-       struct fd f =3D fdget(fd);
++       bool ioc_at =3D FS_IOC_AT(cmd);
++       struct fd f =3D ioc_at ? fdget_raw(fd) : fdget(fd);
+        int error;
+
+        if (!f.file)
+@@ -900,7 +903,7 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned
+int, cmd, unsigned long, arg)
+                goto out;
+
+        error =3D do_vfs_ioctl(f.file, fd, cmd, arg);
+-       if (error =3D=3D -ENOIOCTLCMD)
++       if (!ioc_at && error =3D=3D -ENOIOCTLCMD)
+                error =3D vfs_ioctl(f.file, cmd, arg);
+
 ---
- mm/huge_memory.c |  2 +-
- mm/memcontrol.c  |  2 +-
- mm/mincore.c     |  2 +-
- mm/shmem.c       |  2 +-
- mm/swap.h        | 15 +++++++++++++++
- mm/swap_state.c  | 17 +++++++++--------
- mm/swapfile.c    |  6 +++---
- 7 files changed, 31 insertions(+), 15 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 317de2afd371..fcc0e86a2589 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2838,7 +2838,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 	split_page_memcg(head, order, new_order);
- 
- 	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
--		offset = swp_offset(folio->swap);
-+		offset = swap_cache_index(folio->swap);
- 		swap_cache = swap_address_space(folio->swap);
- 		xa_lock(&swap_cache->i_pages);
- 	}
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7fad15b2290c..cee66c30d31e 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -6148,7 +6148,7 @@ static struct page *mc_handle_swap_pte(struct vm_area_struct *vma,
- 	 * Because swap_cache_get_folio() updates some statistics counter,
- 	 * we call find_get_page() with swapper_space directly.
- 	 */
--	page = find_get_page(swap_address_space(ent), swp_offset(ent));
-+	page = find_get_page(swap_address_space(ent), swap_cache_index(ent));
- 	entry->val = ent.val;
- 
- 	return page;
-diff --git a/mm/mincore.c b/mm/mincore.c
-index dad3622cc963..e31cf1bde614 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -139,7 +139,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 			} else {
- #ifdef CONFIG_SWAP
- 				*vec = mincore_page(swap_address_space(entry),
--						    swp_offset(entry));
-+						    swap_cache_index(entry));
- #else
- 				WARN_ON(1);
- 				*vec = 1;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index f5d60436b604..f9b0c34c435a 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1756,7 +1756,7 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
- 
- 	old = *foliop;
- 	entry = old->swap;
--	swap_index = swp_offset(entry);
-+	swap_index = swap_cache_index(entry);
- 	swap_mapping = swap_address_space(entry);
- 
- 	/*
-diff --git a/mm/swap.h b/mm/swap.h
-index 82023ab93205..2c0e96272d49 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -27,6 +27,7 @@ void __swap_writepage(struct folio *folio, struct writeback_control *wbc);
- /* One swap address space for each 64M swap space */
- #define SWAP_ADDRESS_SPACE_SHIFT	14
- #define SWAP_ADDRESS_SPACE_PAGES	(1 << SWAP_ADDRESS_SPACE_SHIFT)
-+#define SWAP_ADDRESS_SPACE_MASK		(SWAP_ADDRESS_SPACE_PAGES - 1)
- extern struct address_space *swapper_spaces[];
- #define swap_address_space(entry)			    \
- 	(&swapper_spaces[swp_type(entry)][swp_offset(entry) \
-@@ -40,6 +41,15 @@ static inline loff_t swap_dev_pos(swp_entry_t entry)
- 	return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
- }
- 
-+/*
-+ * Return the swap cache index of the swap entry.
-+ */
-+static inline pgoff_t swap_cache_index(swp_entry_t entry)
-+{
-+	BUILD_BUG_ON((SWP_OFFSET_MASK | SWAP_ADDRESS_SPACE_MASK) != SWP_OFFSET_MASK);
-+	return swp_offset(entry) & SWAP_ADDRESS_SPACE_MASK;
-+}
-+
- void show_swap_cache_info(void);
- bool add_to_swap(struct folio *folio);
- void *get_shadow_from_swap_cache(swp_entry_t entry);
-@@ -86,6 +96,11 @@ static inline struct address_space *swap_address_space(swp_entry_t entry)
- 	return NULL;
- }
- 
-+static inline pgoff_t swap_cache_index(swp_entry_t entry)
-+{
-+	return 0;
-+}
-+
- static inline void show_swap_cache_info(void)
- {
- }
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 642c30d8376c..6e86c759dc1d 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -72,7 +72,7 @@ void show_swap_cache_info(void)
- void *get_shadow_from_swap_cache(swp_entry_t entry)
- {
- 	struct address_space *address_space = swap_address_space(entry);
--	pgoff_t idx = swp_offset(entry);
-+	pgoff_t idx = swap_cache_index(entry);
- 	void *shadow;
- 
- 	shadow = xa_load(&address_space->i_pages, idx);
-@@ -89,7 +89,7 @@ int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
- 			gfp_t gfp, void **shadowp)
- {
- 	struct address_space *address_space = swap_address_space(entry);
--	pgoff_t idx = swp_offset(entry);
-+	pgoff_t idx = swap_cache_index(entry);
- 	XA_STATE_ORDER(xas, &address_space->i_pages, idx, folio_order(folio));
- 	unsigned long i, nr = folio_nr_pages(folio);
- 	void *old;
-@@ -144,7 +144,7 @@ void __delete_from_swap_cache(struct folio *folio,
- 	struct address_space *address_space = swap_address_space(entry);
- 	int i;
- 	long nr = folio_nr_pages(folio);
--	pgoff_t idx = swp_offset(entry);
-+	pgoff_t idx = swap_cache_index(entry);
- 	XA_STATE(xas, &address_space->i_pages, idx);
- 
- 	xas_set_update(&xas, workingset_update_node);
-@@ -253,13 +253,14 @@ void clear_shadow_from_swap_cache(int type, unsigned long begin,
- 
- 	for (;;) {
- 		swp_entry_t entry = swp_entry(type, curr);
-+		unsigned long index = curr & SWAP_ADDRESS_SPACE_MASK;
- 		struct address_space *address_space = swap_address_space(entry);
--		XA_STATE(xas, &address_space->i_pages, curr);
-+		XA_STATE(xas, &address_space->i_pages, index);
- 
- 		xas_set_update(&xas, workingset_update_node);
- 
- 		xa_lock_irq(&address_space->i_pages);
--		xas_for_each(&xas, old, end) {
-+		xas_for_each(&xas, old, min(index + (end - curr), SWAP_ADDRESS_SPACE_PAGES)) {
- 			if (!xa_is_value(old))
- 				continue;
- 			xas_store(&xas, NULL);
-@@ -350,7 +351,7 @@ struct folio *swap_cache_get_folio(swp_entry_t entry,
- {
- 	struct folio *folio;
- 
--	folio = filemap_get_folio(swap_address_space(entry), swp_offset(entry));
-+	folio = filemap_get_folio(swap_address_space(entry), swap_cache_index(entry));
- 	if (!IS_ERR(folio)) {
- 		bool vma_ra = swap_use_vma_readahead();
- 		bool readahead;
-@@ -420,7 +421,7 @@ struct folio *filemap_get_incore_folio(struct address_space *mapping,
- 	si = get_swap_device(swp);
- 	if (!si)
- 		return ERR_PTR(-ENOENT);
--	index = swp_offset(swp);
-+	index = swap_cache_index(swp);
- 	folio = filemap_get_folio(swap_address_space(swp), index);
- 	put_swap_device(si);
- 	return folio;
-@@ -447,7 +448,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		 * that would confuse statistics.
- 		 */
- 		folio = filemap_get_folio(swap_address_space(entry),
--						swp_offset(entry));
-+					  swap_cache_index(entry));
- 		if (!IS_ERR(folio))
- 			goto got_folio;
- 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 0b0ae6e8c764..4f0e8b2ac8aa 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -142,7 +142,7 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 	struct folio *folio;
- 	int ret = 0;
- 
--	folio = filemap_get_folio(swap_address_space(entry), offset);
-+	folio = filemap_get_folio(swap_address_space(entry), swap_cache_index(entry));
- 	if (IS_ERR(folio))
- 		return 0;
- 	/*
-@@ -2158,7 +2158,7 @@ static int try_to_unuse(unsigned int type)
- 	       (i = find_next_to_unuse(si, i)) != 0) {
- 
- 		entry = swp_entry(type, i);
--		folio = filemap_get_folio(swap_address_space(entry), i);
-+		folio = filemap_get_folio(swap_address_space(entry), swap_cache_index(entry));
- 		if (IS_ERR(folio))
- 			continue;
- 
-@@ -3476,7 +3476,7 @@ EXPORT_SYMBOL_GPL(swapcache_mapping);
- 
- pgoff_t __folio_swap_cache_index(struct folio *folio)
- {
--	return swp_offset(folio->swap);
-+	return swap_cache_index(folio->swap);
- }
- EXPORT_SYMBOL_GPL(__folio_swap_cache_index);
- 
--- 
-2.45.0
-
+Thanks,
+Amir.
 
