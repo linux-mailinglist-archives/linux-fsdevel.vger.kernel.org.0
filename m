@@ -1,231 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-19884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8AD28CAF02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 15:08:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F339E8CAF07
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 15:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE841C21B69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 13:08:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62422B210A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 13:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C979DDB;
-	Tue, 21 May 2024 13:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61227C6C9;
+	Tue, 21 May 2024 13:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ETuRVkyS"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="doeRCQVb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CC378C7F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 13:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E43779945
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 13:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716296895; cv=none; b=kWOWoKt/xj4ZiJiFaPmcjTwXHVoC8sVu0jBLIb5xjdtSjv5Ww+Fw6W0AM3hjbc5VLtjmds9GJxyzj45HL9rCK0rHE2/qi6nl9NVQnNrR9nuohqp535ZdNleO0h39BOhWnbx9F0/GmBXTwv2h9VVwIQNTpNxo1iULYOAgG/2hP9c=
+	t=1716296898; cv=none; b=fvwhgCaEWpmEo5kBVvr9MySg8Y+z+OXXIrX6f65Hj8inmqySyG+xZVhNtyJWfJXF4RBMV1fngOgio8y8N5zxsUxI5R5uN4lo9F3XX2hFQWi0EhOmTV5YOdbO42UVzmN/e7nQeexSusV4LOy7mKJWmmFXnjSQbk/5784E9wm2GVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716296895; c=relaxed/simple;
-	bh=9zPFf0Squvi1mogXdW3GaYX5jzlFVa4hNNRrNLBWF0M=;
+	s=arc-20240116; t=1716296898; c=relaxed/simple;
+	bh=w4IzJBQom6e/eg+5ubWFpWqhEhfye03AL1iiFU9y0lM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=SAGXseUl2hmhMNgomX+PG8rs7Nx1AGdODORK4HIxAQZ21pSYAF9tdlZUhgGIIEuItmcDzTmNMFB/QpILXD6alxg6rIa07AmTyIq/MMwl3/q/yzVFTXqgOk088CNafHwYagITh+WZTyW/2Zk6BLBvh3NqVWuRaxNH9ug2mIK+PXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ETuRVkyS; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=fCDXVIlARkI97U7MTkHfONFBlv30AFDMcSPt+HX14KSi4OhScjkMkuiwstcFMARjnvSfqFk+DhUOCn0IxwRblU+ywXRmlpmtdcc/ORZyQdqU4BHGrQX5PpXrDZvGi4INcXTif4az5wv5AckPSb7yJVfLIfL0g1Z7ZNAMc+Ln6Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=doeRCQVb; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240521130809epoutp02b1aaf2867b6d61c60cb0e3492301d24a~Rgu1_d4Yz1155511555epoutp02V
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 13:08:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240521130809epoutp02b1aaf2867b6d61c60cb0e3492301d24a~Rgu1_d4Yz1155511555epoutp02V
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240521130814epoutp04e93c789b077133271e325753ff58682b~Rgu6NK22L2499724997epoutp04W
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 13:08:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240521130814epoutp04e93c789b077133271e325753ff58682b~Rgu6NK22L2499724997epoutp04W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716296889;
-	bh=68M8UQdBQ84meqytW018nu4+AHUsAxOzbElXzqhsHvM=;
+	s=mail20170921; t=1716296894;
+	bh=CUX2VqrjfI/EEDqyZU4uVkkHPh5azdlSMuCxpIfmh70=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ETuRVkySJlalDf75vQvztLjWmhXg9wimNdvuJKwVGRm6eXZHU46lN/F7Ts83lcBxQ
-	 Xhij3mw3Aa3mdM+oukSyrGDGbxwoBbI7VhmxX6MJL/NbN+CYwNenlnkvfIXzySiDtE
-	 VKYeyWxX/sXDu48YL25++zDo58X7TenbnIiuidio=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240521130808epcas5p339c7e9e25274e9e8056c6fae9f3fb3b6~Rgu1Tc04o1587915879epcas5p3m;
-	Tue, 21 May 2024 13:08:08 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VkF9M0B8dz4x9Pp; Tue, 21 May
-	2024 13:08:07 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D0.32.08600.6BC9C466; Tue, 21 May 2024 22:08:06 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240521112458epcas5p2bb85b9c58a58dc4eaecf66adc74872bd~RfUweDbmn2405124051epcas5p27;
-	Tue, 21 May 2024 11:24:58 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240521112458epsmtrp1d2bcb3f0c350e3b251bfb770bdcdeb76~RfUwdFIUi3228932289epsmtrp1-;
-	Tue, 21 May 2024 11:24:58 +0000 (GMT)
-X-AuditID: b6c32a44-921fa70000002198-d1-664c9cb627b4
+	b=doeRCQVbnOIa2lzDpkAPTeARfiVfov5TkfHQYT5U8PQlcv79cBywDooEV3FKi7dUr
+	 CKyrhdn7KnfZsgCKbGhDkxkMJaIy1ezXABEkOLqxIC/+HsnCCkY0CFK0fDmvzsFfC/
+	 cL1kkhZt5GrA5PQhw484fri4pwPCf03SGCHiBcgA=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240521130813epcas5p4f33cd571cfdf2daa8ee1663f270202e2~Rgu5nUAr31546115461epcas5p4o;
+	Tue, 21 May 2024 13:08:13 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VkF9R4XwQz4x9Pv; Tue, 21 May
+	2024 13:08:11 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	94.0C.09666.BBC9C466; Tue, 21 May 2024 22:08:11 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240521113644epcas5p49bfa818b6040f17bad23f24e303ad269~RffB5Asan0500905009epcas5p4Q;
+	Tue, 21 May 2024 11:36:44 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240521113644epsmtrp264154696bb143f8efc50b183487f8be0~RffB3y50X0882408824epsmtrp20;
+	Tue, 21 May 2024 11:36:44 +0000 (GMT)
+X-AuditID: b6c32a49-f53fa700000025c2-46-664c9cbb21d8
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E7.3E.19234.A848C466; Tue, 21 May 2024 20:24:58 +0900 (KST)
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	66.AF.08390.C478C466; Tue, 21 May 2024 20:36:44 +0900 (KST)
 Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20240521112454epsmtip22650eeb9186dbced84f491fa532014b1~RfUsmvBOT0276702767epsmtip2G;
-	Tue, 21 May 2024 11:24:54 +0000 (GMT)
-Date: Tue, 21 May 2024 16:47:56 +0530
+	20240521113640epsmtip2581da03f3a550f38dd151415706754e9~Rfe_OwQgG1086110861epsmtip2B;
+	Tue, 21 May 2024 11:36:40 +0000 (GMT)
+Date: Tue, 21 May 2024 16:59:42 +0530
 From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>
+To: Hannes Reinecke <hare@suse.de>
 Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
 	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
 	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
 	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
 	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
 	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
+	martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
 	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+	nitheshshetty@gmail.com, gost.dev@samsung.com, Vincent Fu
+	<vincent.fu@samsung.com>, linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
 	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <20240521111756.w4xckwbecfyjtez7@green245>
+Subject: Re: [PATCH v20 04/12] block: add emulation for copy
+Message-ID: <20240521112942.f23aael3qehi4gww@green245>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <086804a4-daa4-48a3-a7db-1d38385df0c1@acm.org>
+In-Reply-To: <cf6929e1-0dea-4216-bbc5-c00d963372f7@suse.de>
 User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TezBcZxTvd++6u2Q2vZaMDymyeRNiPTafCO0M07kSndGmMtNMM5sde1nF
-	7s4+SkRbETRMEY80zWa9tkSCUrJVr5RSBE1NZkuRoDU2LUYkJogI6a4lk/9+53fO73y/75w5
-	LJxTy3RgRUuUtFwijOUSVoyGzoP73Rs0oZGeaU+9UG1fN45SLq/hqGosh0CznQsAfftkBUdT
-	7V8DtHpvAEe67nGASrSFDDTS3oShVm0ehm5VdWHo+tWLGOp6NUegvI4hgAyDagzdGXVDpell
-	DNR6p5eB9M0aAhXfMDBRRc86hnIvDWKoceoCQDWz8wx0d9QRDaz1WLznSOn/PEH1aSHVpB5j
-	UgPjdQxKf09F1VdmENTtsq+o/25fA1TLSDJBfZ+db0FlXXxMUE1pExbUU8Mog5r/ZZCgsnWV
-	gPq95DdmmM3pmGNiWiii5S60JEIqipZEBXBPnBQECXz5njx3nh86wnWRCOPoAG5waJj7+9Gx
-	xuFwXT4XxqqMVJhQoeAeDjwml6qUtItYqlAGcGmZKFbmI/NQCOMUKkmUh4RWHuV5enr5GgvP
-	xogb0rWY7IVtwlJzLpYMdNaZwJIFSR84cv8HPBOwWByyBUDtvkxgZYQLANbq9eB10J9TwdwS
-	PLs0yTAnmgAcXL5JmINHAD6sS96oYpB7YftLjYWpLUG6wf5XLBNtSx6AS39XbIhxspSAD4ef
-	46aEDXkWzvXlbtSzST7MNahMNJu0hr3XphgmbEn6w67Gn4AJ7yB3wu/KF3FTH0iOW8LyuVXM
-	pIVkMKwYcjUbtYEzPbpN0w5wOid9E8fDWwVmz5BMBVD9lxqYE+/CtL6cDT84KYbLdSWbgnfg
-	lb4azMxvh1mrU5iZZ8PGoi28G1bXlhBmbA+Hli8QZj8UfFDtbJ7PYwDTim7gl4Gz+o2/qd94
-	zoyPwownKRZqoxwnHWHFOssMD8La5sMlwKIS2NMyRVwUHeEr40no+NfrjpDG1YONy3ENbgTD
-	xeseHQBjgQ4AWTjXll2vC4nksEXCc4m0XCqQq2JpRQfwNa4qF3fYESE1np5EKeD5+Hn68Pl8
-	Hz9vPo9rx55NKxRxyCihko6haRkt39JhLEuHZIzfvFqlSSp0qVyDqdVlnCqmR37U6b2tgfuP
-	g+lsg2/3yc/KLBuV4SvlTG+Ok/dKzJ7yL/91cPfek/dHz+6iTu1L6uf56qQZ5WrWoYKF/n/a
-	4lKqEiWfVEhSd82keHzoE6wN+TEkoqAlQbUsU3zTGx1PT1x1WqHFtpM1utKMR0vDxasfV2k8
-	u88ovzhklxb9YNyvXLr4UV3g9HDm5M0sgRNbwFfqE069uPLMP9+yfx+9bSTcOYgnKr3+/NOA
-	SEmQ1+DOzhr13U4rx8Vx+wNvjYlweGpb5PnQ44lM2bm2wdld1vftDL/KGIY8/xwP/7dnRUma
-	I7LzArh9wi2cZLatcz44w2UoxEKeKy5XCP8HvMe4lsIEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsWy7bCSvG5Xi0+aQe99PYv1p44xWzRN+Mts
-	sfpuP5vF68OfGC2mffjJbPHkQDujxe+z55ktthy7x2ixYNFcFoubB3YyWexZNInJYuXqo0wW
-	s6c3M1kc/f+WzWLSoWuMFk+vzmKy2HtL22Jh2xIWiz17T7JYXN41h81i/rKn7BbLj/9jspjY
-	cZXJYseTRkaLda/fs1icuCVtcf7vcVYHaY/LV7w9Ti2S8Ng56y67x/l7G1k8Lp8t9di0qpPN
-	Y/OSeo8Xm2cyeuy+2cDmsbhvMqtHb/M7No+drfdZPT4+vcXi8X7fVTaPvi2rGD3OLDjCHiAc
-	xWWTkpqTWZZapG+XwJXxseE7a8EaoYoF83ayNDA28HcxcnJICJhIfOl4xNLFyMUhJLCdUaLx
-	ehsTREJSYtnfI8wQtrDEyn/P2SGKnjBK3F7RC1bEIqAqceDPHNYuRg4ONgFtidP/OUDCIgIa
-	Et8eLAcbyiywlE3i4v7f7CAJYYEEibenJoLV8wqYSUx8Wgox8x2jxIy929hAangFBCVOznzC
-	AmIzA9XM2/yQGaSeWUBaYvk/sPmcAtYSR3dsZQSxRQVkJGYs/co8gVFwFpLuWUi6ZyF0L2Bk
-	XsUomlpQnJuem1xgqFecmFtcmpeul5yfu4kRnCa0gnYwLlv/V+8QIxMH4yFGCQ5mJRHeTVs8
-	04R4UxIrq1KL8uOLSnNSiw8xSnOwKInzKud0pggJpCeWpGanphakFsFkmTg4pRqY4o5ummdb
-	u4zl7uk9GxfpLt/u4eenaWH692rU6sXfVOfMV9/PMevXmWXLD/NKVaZ3estc1qyIVDrzZfWG
-	qVP8DoWvUnCfdkfkyJwDJ/NOi2dt39r8U+E0X/L1478Xcpnk1R05H67zaDmT9oKl3DXfLWe0
-	WBrYvTq4U+W4SnD1t0Xbl7rIfTwswL69fWH16oeuj6avbOo7q5hevHr3wfQ3kf+yMjl3sD+8
-	pf9YKv/sO/XukDUu8+flTy9zMw/+Yt+ler5R0Ku7e973iKl63a+OlC68Ot98WZDyxX195u83
-	Ol0XObgi1ov5zvmsn89c3Y8WGHYx7CvdqL1YXFJvUfuCtQ+lN8dOvhes067T+pSn6oQSS3FG
-	oqEWc1FxIgCBWrltggMAAA==
-X-CMS-MailID: 20240521112458epcas5p2bb85b9c58a58dc4eaecf66adc74872bd
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TezBcZxT33bvuLtOVazE+guimnUTEYxO2n9SjUya9Bo2ZzLQNTXWH6zHW
+	7nbXIzE19ah6ZKzH5mUjraiWoMQjSjyarghWlVRIV0oy8RhliEeSFrWptWTy3+/8vt/vnPOd
+	M4eFc5qZ1qwYUTwtFQmEXMKY0dzl4ODUVhIY6VqwZIvq1HdxlF6wiaPq8XwCzXetAHRxaQ1H
+	U7ezANoYGMRR090JgErLrjKQ5nYrhtrLijB0vbobQ1cuZWCo++UCgYpUowBNjygx1DHmiK59
+	U85A7R19DDR8q4RA3/04zUQVPVoMFWaPYKhlKg2g2vmnDNQ7thdNnssGaHCzx/A9G2r4fgCl
+	LoNUq3KcSQ1O1DOo4YEEqqEqh6Aay7+iZhuLAdWmSSWo7+UKQyovY5GgWjMfGVLL02MM6mnn
+	CEHJm6oA9VvpHWawWUisZzQtiKCl9rQoXBwRI4ry4gacDPMNc+e78px4Hugdrr1IEEd7cf0C
+	g52Oxwi3JsS1TxQIE7aoYIFMxnXx9pSKE+Jp+2ixLN6LS0sihBI3ibNMECdLEEU5i+j4YzxX
+	1yPuW8LPY6OfKRS4ZIU8s/ZMwUgFV0xygRELkm7wz5liIhcYszhkG4DrqfWYPlgB8OHQBtCp
+	OOQLAFtnXznU5y7uiDoAfNQ4sBPMAPjTrAbTqRjk2zC3P5uZC1gsgnSE/S9ZOtqc5MLlLBVT
+	p8fJ3wmoqWjarmBGekJtxZNtzCb5UK44z9RjU9hXPMXQ5TEi34XDqx/qaAvSBl7+4TmuywPJ
+	CSNYsdBJ6Lvzg/eqd7EZnOtpYuqxNVxd7Njhk+D185WE3vw1gMoHSqB/8IGZ6nxch3EyGs6u
+	lOJ63hZeUNdiet4E5m1MYXqeDVu+3cX7YU1d6U4BKzj6TxqhaxqSFCysCdUPaBHA2aJsZgHY
+	p3ztb8rXyunxMZizlG6o3LLj5F5YoWXpoQOsu+VSCgyrgBUtkcVF0TJ3CU9EJ71aeLg4rgFs
+	H9Ah/xYw/njJWQUwFlAByMK55uyGJv9IDjtCcDaZlorDpAlCWqYC7lu7KsStLcLFWxcoig/j
+	uXm4uvH5fDePo3we15I9n3k1gkNGCeLpWJqW0NJdH8Yysk7FYo7u37zz5OSnv9jUlsRqQrRx
+	gkitKvig7VJe/yXtvsS1DxbfsGIP7UkKlf83Y/AgJsgxXzqigZV2g6PPB1bvvdnnNff3xycs
+	T7mY/So+m2LCyfGWj5oW35BXlR/2+cLloLzd0umvwMqaM1KxhVGEMcuA/yWOi5M37dZH/MW8
+	zy505uKJ5ZM32el7hKcOzI5HfTLeHNrX2UPdNAsJTgujsxcyFadfaPqvLXdYdJ1Qd8OaoAPF
+	FaNqXpbv4Q1nk8eqI3O8P9LzMjhFgpSw6p/HeydTmEGJ7cLkaFdT7Ud19x8OuXfHWq//62Pg
+	m1Ps5w3fUklu9HofL7ftqw+wu/y++emBIi5DFi3gHcKlMsH/dMWR5MkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7bCSvK5Pu0+awYxf6hbrTx1jtmia8JfZ
+	YvXdfjaL14c/MVpM+/CT2eLJgXZGi99nzzNbbDl2j9FiwaK5LBY3D+xkstizaBKTxcrVR5ks
+	Zk9vZrI4+v8tm8WkQ9cYLZ5encVksfeWtsXCtiUsFnv2nmSxuLxrDpvF/GVP2S2WH//HZDGx
+	4yqTxY4njYwW616/Z7E4cUva4nF3B6PF+b/HWR1kPC5f8fY4tUjCY+esu+we5+9tZPG4fLbU
+	Y9OqTjaPzUvqPV5snsnosftmA5vH4r7JrB69ze/YPHa23mf1+Pj0FovH+31X2Tz6tqxi9Diz
+	4Ah7gHAUl01Kak5mWWqRvl0CV8aUxq/sBUv4Kg5tKG9gfM7dxcjJISFgInGqexpTFyMXh5DA
+	bkaJVVc/sEAkJCWW/T3CDGELS6z895wdougJo8T0V2vYQRIsAqoSXac7gGwODjYBbYnT/zlA
+	wiICShIf2w+B1TMLXGKTWL5wN9ggYQEbiX/LHzGC2LwCZhJ9k6dADX3HKNF8ZjsrREJQ4uTM
+	J2BXMAMVzdv8kBlkAbOAtMTyfxwgJqeAtcTlz34gFaICMhIzln5lnsAoOAtJ8ywkzbMQmhcw
+	Mq9ilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAhOG1paOxj3rPqgd4iRiYPxEKMEB7OS
+	CO+mLZ5pQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJzU5NLUgtgskycXBKNTCV
+	+51k8X2sq169+fjktuiPcRIfOu96K9Qejnr0yG+ZI9/N1MgDEtcXXXApTZmxs+7TV36RzyGz
+	Q0L+BE+I/NIzaa6Au3GGSNTich6Lg1Pedl5dJTx9p8yLXD33niC5Dz+Tsy1DytvK9bpsdr/f
+	0KClNanQNMt6f47bn9kb9TyFJogU+M0q+DCl8cH5w20vWVMjUzTXr616qFPZ3+8YZF6p+NKW
+	v2HeZv5lxVOYGZSdfWsfB1Uanjy29ULul2fzIysFE0x4mNbN2lbTXfLBefHz2Yf1A4Qfzw7c
+	1bR8aVWJTVv20/Ul8mkLb8S9mPmHjXP6J042xrozYXv/X8zSjHtX4PxEdpml8lwt39+H05VY
+	ijMSDbWYi4oTAVGa+qWKAwAA
+X-CMS-MailID: 20240521113644epcas5p49bfa818b6040f17bad23f24e303ad269
 X-Msg-Generator: CA
 Content-Type: multipart/mixed;
-	boundary="----Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_15778_"
+	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102842epcas5p4949334c2587a15b8adab2c913daa622f
+X-CMS-RootMailID: 20240520102906epcas5p15b5a0b3c8edd0bf3073030a792a328bb
 References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
-	<20240520102033.9361-3-nj.shetty@samsung.com>
-	<086804a4-daa4-48a3-a7db-1d38385df0c1@acm.org>
+	<CGME20240520102906epcas5p15b5a0b3c8edd0bf3073030a792a328bb@epcas5p1.samsung.com>
+	<20240520102033.9361-5-nj.shetty@samsung.com>
+	<cf6929e1-0dea-4216-bbc5-c00d963372f7@suse.de>
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_15778_
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_
 Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
 
-On 20/05/24 04:00PM, Bart Van Assche wrote:
->On 5/20/24 03:20, Nitesh Shetty wrote:
->>Upon arrival of source bio we merge these two bio's and send
->>corresponding request down to device driver.
+On 21/05/24 09:06AM, Hannes Reinecke wrote:
+>On 5/20/24 12:20, Nitesh Shetty wrote:
+>>For the devices which does not support copy, copy emulation is added.
+>>It is required for in-kernel users like fabrics, where file descriptor is
+>>not available and hence they can't use copy_file_range.
+>>Copy-emulation is implemented by reading from source into memory and
+>>writing to the corresponding destination.
+>>At present in kernel user of emulation is fabrics.
+>>
+>>Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+>>Signed-off-by: Vincent Fu <vincent.fu@samsung.com>
+>>Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+>>---
+>>  block/blk-lib.c        | 223 +++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/blkdev.h |   4 +
+>>  2 files changed, 227 insertions(+)
+>>
+>Again, I'm not sure if we need this.
+>After all, copy offload _is_optional, so we need to be prepared to 
+>handle systems where it's not supported. In the end, the caller might
+>decide to do something else entirely; having an in-kernel emulation 
+>would defeat that.
+>And with adding an emulation to nullblk we already have an emulation
+>target to try if people will want to start experimenting.
+>So I'd rather not have this but rather let the caller deal with the
+>fact that copy offload is optional.
 >
->bios with different operation types must not be merged.
->
-Copy is a composite operation which has two operation read and
-write combined, so we chose two operation types which reflects that.
+Unlike previous iteration, blkdev_copy_offload doesn't fallback to emulation
+incase offload fails.
+This is one more option caller/user can leverage, if for some reason
+device copy offload is not supported/optimal.
+It is upto to the caller to decide, if it wants to use copy emulation.
+Moreover we found this is very useful for fabrics scenario, where this saves
+the network bandwidth, by sending offload over the network rather than
+read+write(when target doesn't support offload).
 
->>+static enum bio_merge_status bio_attempt_copy_offload_merge(struct request *req,
->>+							    struct bio *bio)
->>+{
->>+	if (req->__data_len != bio->bi_iter.bi_size)
->>+		return BIO_MERGE_FAILED;
->>+
->>+	req->biotail->bi_next = bio;
->>+	req->biotail = bio;
->>+	req->nr_phys_segments++;
->>+	req->__data_len += bio->bi_iter.bi_size;
->>+
->>+	return BIO_MERGE_OK;
->>+}
->
->This function appends a bio to a request. Hence, the name of this function is
->wrong.
->
-We followed the naming convention from discard(bio_attempt_discard_merge)
-which does similar thing.
-But we are open to renaming, if overall community also feels the same.
-
->>@@ -1085,6 +1124,8 @@ static enum bio_merge_status blk_attempt_bio_merge(struct request_queue *q,
->>  		break;
->>  	case ELEVATOR_DISCARD_MERGE:
->>  		return bio_attempt_discard_merge(q, rq, bio);
->>+	case ELEVATOR_COPY_OFFLOAD_MERGE:
->>+		return bio_attempt_copy_offload_merge(rq, bio);
->>  	default:
->>  		return BIO_MERGE_NONE;
->>  	}
->
->Is any code added in this patch series that causes an I/O scheduler to return
->ELEVATOR_COPY_OFFLOAD_MERGE?
->
-yes, blk_try_merge returns ELEVATOR_COPY_OFFLOAD_MERGE.
-
->>+static inline bool blk_copy_offload_mergable(struct request *req,
->>+					     struct bio *bio)
->>+{
->>+	return (req_op(req) == REQ_OP_COPY_DST &&
->>+		bio_op(bio) == REQ_OP_COPY_SRC);
->>+}
->
->bios with different operation types must not be merged. Please rename this function.
->
-As described above we need two different opcodes.
-As far as function renaming, we followed discard's naming. But open to
-any suggestion.
-
->>+static inline bool op_is_copy(blk_opf_t op)
->>+{
->>+	return ((op & REQ_OP_MASK) == REQ_OP_COPY_SRC ||
->>+		(op & REQ_OP_MASK) == REQ_OP_COPY_DST);
->>+}
->
->The above function is not used in this patch. Please introduce new functions in the
->patch in which these are used for the first time.
->
-Acked
-
-Thank You
+Thank you
 Nitesh Shetty
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_15778_
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_
 Content-Type: text/plain; charset="utf-8"
 
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_15778_--
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_--
 
