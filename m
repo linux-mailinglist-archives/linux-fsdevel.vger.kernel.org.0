@@ -1,56 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-19933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2892B8CB38C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 20:35:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9688CB3C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 20:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAF31F2196F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 18:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDB81C20E3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 18:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EC31487F7;
-	Tue, 21 May 2024 18:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D92148FFE;
+	Tue, 21 May 2024 18:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="r/Rnhh2t"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="D4AnLMwV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7119C2B9A7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 18:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D77A148FEC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 18:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716316530; cv=none; b=mli5NLvjRsj3vCuddoQ6OFPvCyhdoDjrcKnON2uIthgNe2rfzhLM3YOPC7I49K4KM+V0GCh+CxvIjGH2MqGhvXPhGindTbG1wWckKNhTYd4UQk8ubkfRlVKCSBqUQviQP2bqg2kCM2b6f5l2M5NYhx21jjUa5ByrQYhTmb0hnRE=
+	t=1716317044; cv=none; b=UpetCk1tXp9Y4xUsbchITtjFN9f/DSlaCXe+pEbr1A0dnOiSNFOyVRRjq36LDuFnIngkv4j1NuXVT8WQMvAiDbyncGtXaIEhbi0IEdwXS6cYgs/L7V3QZnCCO5XTZLHVQtP9LaxOqULZM9kBuzU6Jbwdkr1umy97R/Tl0MarMxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716316530; c=relaxed/simple;
-	bh=q5xr3TZCnUhp5u+RIeVoi5bxokVuZtYnTZOdqiaTpzc=;
+	s=arc-20240116; t=1716317044; c=relaxed/simple;
+	bh=PXHsMsPE2xx/n+2w5D6ApBwcu+LDA3PzrdBQxd5CGpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pgvdmloCnNZ64Bt70WBDllbU0hpzIld8gtTLpStA+SyfSxYvlDoWOn4XLBqNzWy/EKF9BRBclbaDIRkCm6URMYPO9L71GyQPvUYdfdHeib6qRe756CaLwtq+JYQ2IyE+LbBPEKRYA9Njy7VlW84XCakB9jZ5excmhDYcLQES2x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=r/Rnhh2t; arc=none smtp.client-ip=62.89.141.173
+	 Content-Disposition; b=Bdr72Egl4545gYeD7EC84wwR12u6cU5my4LlmSsF81YFcn4dUSmR6SBt/j6aGPw15rCAiN8iRG7YjXLS5Rnxnw6Sz0naAOA+f5j37wEGD1eBEPD88yLMCg5MdfvIAX1jpUdurIfsBU3t+KMv2Q2tYx9dpLDehbcP61V4D9x3jRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=D4AnLMwV; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=Hq2MADPhwPt7G/wMZILLbhikX6P6yDoF3w4pQm3OHOI=; b=r/Rnhh2to+mpfZqfIFJMayB73u
-	l6CjrvJYZje9YAZvZuAPn3veAcDWry48zMcwBbBpthlCl164Tdji5vU8IMjaNE/ygc62atMJTpfXb
-	4QAfYJaySn6G+LXky/XoPMAnjeakcozbvbDLo9Ox+uXZIDWp6q44rdWdgtpK5A1ctP86iSB9jaCl5
-	xJ0T2+al13wPw5BleYOwvYczT379TdPXMAss3bYxGa822YS1iwzdUDUS9ko0rpDN4NKeSHoDSeR8u
-	qpb9wQVzSb0ChEQhlw1WBuN9acpSCPrvfUqRjxDWNPZlbni1vKNGWeVJnlAL2hgX09+fvhrWq+Q1s
-	k2atH3qw==;
+	bh=EqKeww21i2+UfHcKL21ydpcQf1JC5Knv/WgG50vquWc=; b=D4AnLMwVl1w2kWp4zz00UVADOb
+	1n2jyLQ2j4+UiTrQPtPq4fPyYYhiAHkJ6HzfK0iXCPBs5dkzr0sgVCADVbqx+5vllvL1BNxvLfdzN
+	J4llOFB4srhijanJ/E49pIs6hGuVjE5ryQmnQa0noctDJEDxYKzWi04VRbNOuQWeauIQUw/JsbL+I
+	z1UYHcMsthCA1Mzj8hhiQ8zDaeTzMi4YHGHF+mZr2qhcf8VmEnIXENjCtvxBgPrh8DMQlKXvtCWDX
+	py2nGImhGxhSEKPmeB3neEwWJAecex/snIHUJb1hZStx3HGCewASwvGFyIz9m4tCbXtKGkQqQnjW6
+	usW/ZSPQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s9UKa-00Fc0v-1s;
-	Tue, 21 May 2024 18:35:24 +0000
-Date: Tue, 21 May 2024 19:35:24 +0100
+	id 1s9USt-00FdAG-1I;
+	Tue, 21 May 2024 18:43:59 +0000
+Date: Tue, 21 May 2024 19:43:59 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Subject: [git pull] vfs.git last bdev series
-Message-ID: <20240521183524.GQ2118490@ZenIV>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [git pull] vfs.git misc stuff
+Message-ID: <20240521184359.GR2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,14 +60,11 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	bdev flags pile.  Two trivial conflicts (block/bdev.c and block/blk-core.c)
-and one place block/blk-zoned.c where git does not detect a conflict between
-the access to ->bd_has_submit_bio added in mainline and switch of ->bd_has_submit_bio
-checks to bdev_test_flag() in this branch.  #merge-candidate contains proposed
-resolution.  So does (tree-identical) #pull-bd_flags-3, with the branch rebased
-on top of bd_inode-1 merge - same resulting tree, easier on git blame, but that
-one does have a rebase.  If you would prefer a pull request for that one, just
-say so...
+	Stuff that should've been pushed in the last merge window,
+but had fallen through the cracks ;-/
+
+	One trivial conflict in io_uring.c/rw.c:io_write()
+(with removal of call_write_iter()).
 
 The following changes since commit 39cd87c4eb2b893354f3b850f916353f2658ae6f:
 
@@ -76,40 +72,38 @@ The following changes since commit 39cd87c4eb2b893354f3b850f916353f2658ae6f:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-bd_flags-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-misc
 
-for you to fetch changes up to 811ba89a8838e7c43ff46b6210ba1878bfe4437e:
+for you to fetch changes up to 7c98f7cb8fda964fbc60b9307ad35e94735fa35f:
 
-  bdev: move ->bd_make_it_fail to ->__bd_flags (2024-05-02 20:04:18 -0400)
-
-----------------------------------------------------------------
-	Compactifying bdev flags
-
-We can easily have up to 24 flags with sane
-atomicity, _without_ pushing anything out
-of the first cacheline of struct block_device.
+  remove call_{read,write}_iter() functions (2024-04-15 16:03:25 -0400)
 
 ----------------------------------------------------------------
-Al Viro (8):
-      Use bdev_is_paritition() instead of open-coding it
-      wrapper for access to ->bd_partno
-      bdev: infrastructure for flags
-      bdev: move ->bd_read_only to ->__bd_flags
-      bdev: move ->bd_write_holder into ->__bd_flags
-      bdev: move ->bd_has_subit_bio to ->__bd_flags
-      bdev: move ->bd_ro_warned to ->__bd_flags
-      bdev: move ->bd_make_it_fail to ->__bd_flags
+Assorted commits that had missed the last merge window...
 
- block/bdev.c              | 17 ++++++++---------
- block/blk-core.c          | 17 ++++++++++-------
- block/blk-mq.c            |  2 +-
- block/early-lookup.c      |  2 +-
- block/genhd.c             | 15 ++++++++++-----
- block/ioctl.c             |  5 ++++-
- block/partitions/core.c   | 12 ++++++------
- include/linux/blk_types.h | 17 +++++++++--------
- include/linux/blkdev.h    | 26 +++++++++++++++++++++++---
- include/linux/part_stat.h |  2 +-
- lib/vsprintf.c            |  4 ++--
- 11 files changed, 75 insertions(+), 44 deletions(-)
+----------------------------------------------------------------
+Al Viro (5):
+      close_on_exec(): pass files_struct instead of fdtable
+      fd_is_open(): move to fs/file.c
+      get_file_rcu(): no need to check for NULL separately
+      kernel_file_open(): get rid of inode argument
+      do_dentry_open(): kill inode argument
+
+Miklos Szeredi (1):
+      remove call_{read,write}_iter() functions
+
+ drivers/block/loop.c              |  4 ++--
+ drivers/target/target_core_file.c |  4 ++--
+ fs/aio.c                          |  4 ++--
+ fs/cachefiles/namei.c             |  3 +--
+ fs/file.c                         | 19 ++++++++-----------
+ fs/open.c                         | 11 +++++------
+ fs/overlayfs/util.c               |  2 +-
+ fs/proc/fd.c                      |  4 +---
+ fs/read_write.c                   | 12 ++++++------
+ fs/splice.c                       |  4 ++--
+ include/linux/fdtable.h           | 15 +++++----------
+ include/linux/fs.h                | 14 +-------------
+ io_uring/rw.c                     |  4 ++--
+ 13 files changed, 38 insertions(+), 62 deletions(-)
 
