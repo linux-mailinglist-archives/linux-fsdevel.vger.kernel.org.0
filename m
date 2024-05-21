@@ -1,119 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-19892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D249A8CB01B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 16:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA278CB02E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 16:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE83285D44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:12:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFECC284A1A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2977FBB6;
-	Tue, 21 May 2024 14:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CE17FBBE;
+	Tue, 21 May 2024 14:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrIGLAzs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouUbzHOi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0101535B7;
-	Tue, 21 May 2024 14:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E621271B48;
+	Tue, 21 May 2024 14:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716300741; cv=none; b=fHj0uaLMQMl2o4N53p1mO6+YyiEOpRux3snY/tdnNUwRr8M5/vtC/Ta0oRTC7k2UcrwdF80G537hvChQibTeQ2i0W1YuV3ZapZRyDc+fGn3bSuEvEKjY/o22QHttQ0ZyAIt8cgwjzBPfO1smtJKx5zEPYtOXTPoveOZx+zkhw6c=
+	t=1716300972; cv=none; b=Ob0rv9PASElMpzaOHAWJ6uLmXz4JEFAaEhnLyidTM2BFSbLPUp7u3Fae5xw+mfbWYG5baD/v51kLWd6JOTcByhoK4U7394rjvGX8F9J8KsQ9alnMcmPlNXVgc8XF1erN34Ht9wevBkE1+yi8Ol56yYKkDQfsVSksAG5W8+CNT0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716300741; c=relaxed/simple;
-	bh=wZtYXcGZzSQS0F0yeoqFidLr8irNWnwUfGi6pl/72k0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=HKzj1dAdA+A05Da6DHMKKKZVa2IkuEOTbPegyHUP1pMHEKj0gBRdbaofDNineRcU5MgMRKGy5NT7qgeS5nlCOz9YgP5S2h/gDnZicdNDyHBlKEf9gs2ls5RfQQ6Qwgvijd0y+3ZJCDpQVRnBMPtzutvcimw5HgG8Z0uw4WP3edM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrIGLAzs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFCC9C4AF13;
-	Tue, 21 May 2024 14:12:17 +0000 (UTC)
+	s=arc-20240116; t=1716300972; c=relaxed/simple;
+	bh=QzfF+EFnCDCxFr4kbXOmJ2u12v1wZA/7KB6nqUZ27qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ahQtoKfnFW0fu7xaI/56v+CxTX+74hFhe45lu4p325yMyxSRc45fElxdyvGoHIDOwPvSOeXNDxPWeTLh/QSsSvUdxsb++2rFqg8UjeBHDCcclQlIeV6rQUInFkLZLdcrzRcY2tNoMlnNSFA2yqyI5mslnk1h06nV03HT9KMFT68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouUbzHOi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A19CC2BD11;
+	Tue, 21 May 2024 14:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716300741;
-	bh=wZtYXcGZzSQS0F0yeoqFidLr8irNWnwUfGi6pl/72k0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=JrIGLAzsfEwXHnF4TBlNEh/ojwF8O6M+gyeuZLu8pnogmhiVqczyd7u/A7hVRG3HL
-	 9FDZ72VEm/uTsI8XttNZIju+adLcvpkyMfgClLZurMViRZSj+uvSzHljqQtjk5jLQh
-	 amVhBSlxMZrElIq7BOOIPkur1EnDRbdpFPOB5woC/ssmfnV18pD1A0zc/N5krICMPi
-	 fE9ad7Q4eGkZWX26254cX5t3pSPmuLWHmTpWOR4dFInouPY3VvanxNZNHR1EAmO7mU
-	 YmT7N8bI7Xp0164viij+Sx42F9xeET58DuFwWTzzpppKKpNT9xxLC6Qhfrn/DYPFsf
-	 PmbD5t4MPiJ3Q==
+	s=k20201202; t=1716300971;
+	bh=QzfF+EFnCDCxFr4kbXOmJ2u12v1wZA/7KB6nqUZ27qc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ouUbzHOiGuwDb7dxQAPrA0+vH+s2nu6ziinxfrQwSpKu/ViJUOJ7AmC1QKr6FlCzS
+	 cODYGRQLPduIqIox2nNxLvgLpKcuWHFUIBQNTpBG2ImM0SdxQ2iHWvgNkWdTC2PDTI
+	 8iLCRm81GUvbxilTftjxKr86rFugqE5hQqQtWK7AAvqZuUYy5QLfc1CyB7Lp+ruVqi
+	 Rf9TvORajynsPXbNAS6bubeL7C4/QPXJg6mHdOEeCbXqitr160MZgZPrDLks6BVt33
+	 IP4UhT9Ah/J6yi181U8/scaP3MnVsEPapipX4EkqFA0wppUmYD32e3mttlupgMHzFi
+	 GjPXrYD/0nDKQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Steve French <stfrench@microsoft.com>,
+	David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Enzo Matsumiya <ematsumiya@suse.de>,
+	netfs@lists.linux.dev,
+	v9fs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix io_uring based write-through
+Date: Tue, 21 May 2024 16:15:59 +0200
+Message-ID: <20240521-teigwaren-gehindert-316a25d666fb@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <295086.1716298663@warthog.procyon.org.uk>
+References: <295086.1716298663@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 17:12:16 +0300
-Message-Id: <D1FDU1C3W974.2BXBDS10OB8CB@kernel.org>
-Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
- <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
- <dhowells@redhat.com>, <containers@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "John Johansen" <john.johansen@canonical.com>, "Jonathan Calmels"
- <jcalmels@3xx0.net>, "Casey Schaufler" <casey@schaufler-ca.com>
-X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
- <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
- <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
- <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
- <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
- <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
- <vhpmew3kyay3xq4h3di3euauo43an22josvvz6assex4op3gzw@xeq63mqb2lmh>
- <D1CQ1FZ72NIW.2U7ZH0GU6C5W5@kernel.org>
- <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
- <D1CQC0PTK1G0.124QCO3S041Q@kernel.org>
- <1b0d222a-b556-48b0-913f-cdd5c30f8d27@canonical.com>
-In-Reply-To: <1b0d222a-b556-48b0-913f-cdd5c30f8d27@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1116; i=brauner@kernel.org; h=from:subject:message-id; bh=QzfF+EFnCDCxFr4kbXOmJ2u12v1wZA/7KB6nqUZ27qc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5rFnE4m8x45/62gSOdNld15xUDxTflL8eOu/uQo9J0 5keLp97tKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiWQ4Mv5jPHN/z8/PNp+9n lJ/faN5zQWrViSXb43a4nuZvWGqi9TKV4Z9uXuCTO+9PdT/K4b4vxXPkQpXOo5THz5254pYn6QV OXcwHAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue May 21, 2024 at 4:57 PM EEST, John Johansen wrote:
-> > One tip: I think this is wrong forum to present namespace ideas in the
-> > first place. It would be probably better to talk about this with e.g.
-> > systemd or podman developers, and similar groups. There's zero evidence
-> > of the usefulness. Then when you go that route and come back with actua=
-l
-> > users, things click much more easily. Now this is all in the void.
-> >=20
-> > BR, Jarkko
->
-> Jarkko,
->
-> this is very much the right forum. User namespaces exist today. This
-> is a discussion around trying to reduce the exposed kernel surface
-> that is being used to attack the kernel.
+On Tue, 21 May 2024 14:37:43 +0100, David Howells wrote:
+> This can be triggered by mounting a cifs filesystem with a cache=strict
+> mount option and then, using the fsx program from xfstests, doing:
+> 
+>         ltp/fsx -A -d -N 1000 -S 11463 -P /tmp /cifs-mount/foo \
+>           --replay-ops=gen112-fsxops
+> 
+> Where gen112-fsxops holds:
+> 
+> [...]
 
-Agreed, that was harsh way to put it. What I mean is that if this
-feature was included, would it be enabled by distributions?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-This user base part or potential user space part is not very well
-described in the cover letter. I.e. "motivation" to put it short.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-I mean the technical details are really in detail in this patch set but
-it would help to digest them if there was some even rough description
-how this would be deployed.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-If the motivation should be obvious, then it is beyond me, and thus
-would be nice if that obvious thing was stated that everyone else gets.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-E.g. I like to sometimes just test quite alien patch sets for the sake
-of learning and fun (or not so fun, depends) but this patch set does not
-deliver enough information to do anything at all.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-Hope this clears a bit where I stand. IMHO a good patch set should bring
-the details to the specialists on the topic but also have some wider
-audience motivational stuff in order to make clear where it fits in this
-world :-)
-
-BR, Jarkko
+[1/1] netfs: Fix io_uring based write-through
+      https://git.kernel.org/vfs/vfs/c/c51124cbc622
 
