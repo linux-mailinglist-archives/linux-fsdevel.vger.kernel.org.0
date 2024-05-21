@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-19896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854328CB04E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 16:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EFF8CB05A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 16:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAF72812EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73433284D2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED18612F5BF;
-	Tue, 21 May 2024 14:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98C81304BF;
+	Tue, 21 May 2024 14:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUaUlTBc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulH9wtsf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5625812FB26;
-	Tue, 21 May 2024 14:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304E012FF91;
+	Tue, 21 May 2024 14:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301350; cv=none; b=gFoRcpxDjyXf62X5eiLxCQm7EbhfofRjFp5J/EEkqpEFKLfF1BrPueOD6w5vihEx/vzhbDyWOBJc60hjFfd6LG21E+lXI2RpOR0/3IsrjkjlaQKM9dlDT/H44fSRVWyjxpE9b4PrNtRxq2EY950JkdBVE451OqI4ukyq7ihCa6A=
+	t=1716301448; cv=none; b=euVJnpAG8zWrdxHS/A+rSGVf4GvIs9dRH7hNeJxxlT70PQo39EKv0bAgB86lx+5FTtLKietGEK6dmCEnJKwtowc5+rLVERx5n/mJV9Hkpbl2/jUjEVmM6ReSPsy4AkfLtVJjFL1K72KrqeVHr4ydbCew/wTYeZXkkfrfCn3AsRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301350; c=relaxed/simple;
-	bh=m86SWA58UTFLl7ZY4hpk8foqwuUbo2R0FmBExAclAag=;
+	s=arc-20240116; t=1716301448; c=relaxed/simple;
+	bh=UYG+Mo/SlKwLkAr3mfG47g2wcUb2YUUolbRO3KgUlg8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ahxJer0bxkXvJWXTx+v1G7Ftm4g+UtGzWn0LzROG20L+0JrwWDQmJOohgfMFqUlHoTbzetRPNu5GL6ZtcBef9aPPLL2rJ7AUv/HLU0J+kiUNdkPmHL37N6FEKudOzJp3uKZaiySlxQLbcbxM/OIW/QDOiJXt1AbRA3mmXkdWkic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUaUlTBc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B9AC32786;
-	Tue, 21 May 2024 14:22:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=E6QTijuvwBACO10MAzH3JQfzusSdOYW+2KkK5dBByTOc9aG/ABk4eWLNFre83yXVx+9U8nXW/q/oWQWn0T0HHYDwnTzAvDseObHafOIwceseq/wLYN/5h0mixndbJ79kI6rtNi+l6DwyjS/6lYaFcwooBmOQgsTcf+OajgaO2Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulH9wtsf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8599C32786;
+	Tue, 21 May 2024 14:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716301350;
-	bh=m86SWA58UTFLl7ZY4hpk8foqwuUbo2R0FmBExAclAag=;
+	s=k20201202; t=1716301448;
+	bh=UYG+Mo/SlKwLkAr3mfG47g2wcUb2YUUolbRO3KgUlg8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QUaUlTBc1VsKj7bwgdrOzuFXuO7FQO9kqcKQYdZPWiNLY4zHCBaJGic5AWF9uqFtX
-	 wpa34BPk0C/WRm8PlD6WBQjvZqJW0zZiWpJ01dlmRd+ItB9AFLL3nxctmGg7DAPP+z
-	 JU+HPV5NYKR7b0EbJBQ6jbREle9FJHl10qJLxikL+N2qX1DrzNOimt79ZeLVX2VuAH
-	 BjEpH7BAsgH9XjHYq5aX8P5SobNukH/zLHQbu3OdXxgYwanY6K0y/5kBi+ApCN/kfr
-	 EKGof5/vvg8BWTe52SWmeCC78Mh8YcFEoOnAQoKoZA6mYd/T3qnDh3l7xYqne2Oaq9
-	 euoh0avu0yJ9w==
+	b=ulH9wtsfTkUy1lUxilIe3+S9Uje8kA0uChlBdcDylLyjHjD02MfrFXVijDoePdXn1
+	 w7IHqLCCVMEVsY/ykz1Zk2cZ7SYg5fObUzOyOTf7oCcffNK7UhblCyfjnzZ4LaloLH
+	 nHTCTS3I0Qnpav3BXPvEkfUz0OynBJOyUP6oexUk0JIu8qK8D7Js/b1dS/4sBihO/7
+	 uStjCW70e5lsYI2jwxGO/G6vEqVtLxDB7Wn9F9phb4fxuj0Jqll/AMonMUsOvjCJXG
+	 SsI0uwznFuueAX4Hjn0B7fxpuBL59hueZ6FKv5bDGtodYw+JDGTdroba1AD9DjnsnR
+	 xPtXlNaotxbPw==
 From: Christian Brauner <brauner@kernel.org>
-To: Xu Yang <xu.yang_2@nxp.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Fedor Pchelkin <pchelkin@ispras.ru>
 Cc: Christian Brauner <brauner@kernel.org>,
-	linux-xfs@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	jun.li@nxp.com,
-	djwong@kernel.org,
-	willy@infradead.org,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH v5 1/2] filemap: add helper mapping_max_folio_size()
-Date: Tue, 21 May 2024 16:22:09 +0200
-Message-ID: <20240521-beinbruch-kabine-0f83d1eab5e6@brauner>
+	linux-kernel@vger.kernel.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH 1/2] signalfd: fix error return code
+Date: Tue, 21 May 2024 16:23:58 +0200
+Message-ID: <20240521-hausarbeit-angekauft-974dea89dcce@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240521114939.2541461-1-xu.yang_2@nxp.com>
-References: <20240521114939.2541461-1-xu.yang_2@nxp.com>
+In-Reply-To: <20240520090819.76342-1-pchelkin@ispras.ru>
+References: <20240520090819.76342-1-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,15 +64,19 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1032; i=brauner@kernel.org; h=from:subject:message-id; bh=m86SWA58UTFLl7ZY4hpk8foqwuUbo2R0FmBExAclAag=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5rJMTrP3SwyFx8WJB2eu+GQvy9LmO8fv3ep0rUrt3q L48+vr2jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImctGH4wzk1P2P7Q0O/7G5W 3c7LvYbPFUKF1RsMX3+IzDzas4aZh5Hh3EEB+8bbdpffvLKS6bZ0/y+clPjmwfvKjMN/JswSzTn ADwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1143; i=brauner@kernel.org; h=from:subject:message-id; bh=UYG+Mo/SlKwLkAr3mfG47g2wcUb2YUUolbRO3KgUlg8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5rGuMO/KM9SNPdPuj9W5uvYG93BqWt6Xfilx5r2zZ/ +6K041tHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM52cvI0L9ognbLrqNLNqp9 2Td9n9XWlEef7eMefjEJepVs5aRvcJSRoePWigXv1IN2/dff5Ht5E9uahu2Kecpim5z07uhKNtl nsAAA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 21 May 2024 19:49:38 +0800, Xu Yang wrote:
-> Add mapping_max_folio_size() to get the maximum folio size for this
-> pagecache mapping.
+On Mon, 20 May 2024 12:08:18 +0300, Fedor Pchelkin wrote:
+> If anon_inode_getfile() fails, return appropriate error code. This looks
+> like a single typo: the similar code changes in timerfd and userfaultfd
+> are okay.
+> 
+> Found by Linux Verification Center (linuxtesting.org).
 > 
 > 
+> [...]
 
 Applied to the vfs.fixes branch of the vfs/vfs.git tree.
 Patches in the vfs.fixes branch should appear in linux-next soon.
@@ -89,8 +93,8 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/2] filemap: add helper mapping_max_folio_size()
-      https://git.kernel.org/vfs/vfs/c/0c31d63eebdd
-[2/2] iomap: fault in smaller chunks for non-large folio mappings
-      https://git.kernel.org/vfs/vfs/c/63ba6f07d115
+[1/2] signalfd: fix error return code
+      https://git.kernel.org/vfs/vfs/c/e8df0c67191f
+[2/2] signalfd: drop an obsolete comment
+      https://git.kernel.org/vfs/vfs/c/0dda1466f355
 
