@@ -1,62 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-19881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567058CAE05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BAD8CAE5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5A21F236DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 12:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4901A1F22207
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 12:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D25C763F1;
-	Tue, 21 May 2024 12:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7515F524C9;
+	Tue, 21 May 2024 12:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+HMpBh/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VK77Pmi1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084E275817
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 12:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D395928E7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 12:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716293774; cv=none; b=dD6wy52ekGSeeZ0+4OgVk/KLjBjYbg7BB5a5HkRU+cH1Ydc4ipeizfjBhO81vAU4zAzw8QgA2F5OW4U6hhdk6LLEIQFzPSDy0zfM/B1jdC25cVqbJb8u3gkDSZLLifosW6Zi+pgCudzYg1zTcdZG7s2nd0xTspMPgGIQWpSHoEA=
+	t=1716294803; cv=none; b=bd8/Hf2txJyiB2bnb9S1J6Q0GzeTdHsP9P41Hlsylw3+peM4SPHYoAngqc41p1EMcvJ+qti4glXKABvnNGFrZjxNyJYr8AbL7YBdRKK3mNxb0LF9XeKurHcmYEt0fCYzLZ5uDBiwyl3RI5U1f7GJ7Xo/HR5OxGRlQwrXUbPc2bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716293774; c=relaxed/simple;
-	bh=AYUDW7gKCj2tScxPw+ctm51rzLfE/5y1iZjAvPSWOVE=;
+	s=arc-20240116; t=1716294803; c=relaxed/simple;
+	bh=9LsLMivTSIbclkqpmoK1e2OrvZHNdkyH4684hJ5NY8c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNLbEzqMekenp1Doo5sgWWIy/zTLvCb/DbM1lG4RCfn7loY7kosHhIVWNbvDiRSKakUqVxcB57vdfFqwv0NADlqcNkxkC1i+QDlIshipyV33PE4FvfmE88n33PZhXOT/kOa3+vUhbb4cynFr8JZQIAb6z0HdTRuNrzuEzluJSAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+HMpBh/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D705C32786;
-	Tue, 21 May 2024 12:16:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/TPIQnME5txYpzBNSgK8E5zEQtBx/fzJD4DXALr1mrFsDxoVfG9tKCRVyeiqWq1F6z4rN67Munvtf6D9CPTSgrQrZ+IH1w3GYKOrWZmydgartgCQ16y6PhUJnFux2eytfgqXHmNI7IKMyntAm5d3aCOEsyO7wceZIkMojRfwmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VK77Pmi1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D66C32786;
+	Tue, 21 May 2024 12:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716293773;
-	bh=AYUDW7gKCj2tScxPw+ctm51rzLfE/5y1iZjAvPSWOVE=;
+	s=k20201202; t=1716294803;
+	bh=9LsLMivTSIbclkqpmoK1e2OrvZHNdkyH4684hJ5NY8c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l+HMpBh/WMt9fPO2J+2ePM+30KDoPtjDyOoKmTDz2YBwdPMwIHTokKNVQmoKH8Tf7
-	 I8CgQro5KeBkzEMhlr+EmJBvLL5RGDKp0MLxqnUPe8odxG79rIE3prfdjk0wlP+dX9
-	 FRoLtWssphKhES9Z9M7B/5yYbDna3Zt10oWdDOTlH18TV303a7HJ9C5rl9fCvP/Xjj
-	 jY4kV6DG4/iGzIsVa4wMoFPJYaj9YvnG/jkzuSaPJNHNBkLP8D2D+CvHR+on34Slzw
-	 pGBAaYM+64sJBi4z3kOTrZFp8YG6LfSmg/Oeko3VtvMf0yPuKXU5axx+Bm9gFN+L9Q
-	 zbPVVRyjbnS+A==
-Date: Tue, 21 May 2024 14:16:09 +0200
+	b=VK77Pmi1jap8EVPR3kdTzHSrvvCtepGbITWpgITv0c2z9dv+M6TRZJJR64kFWDKUr
+	 vat95jHtW5WImqDoBQQmgjNSnzD3LEdacpCHXzb24n2tTYFwy2wptHPsPbvuxUTzkW
+	 afATpMsABfUdNIIWe3V5afRzO82jSgbJQryGDPgyULRciM2r/qj+ydUNqWHbEgfPnl
+	 9ntYKr4/XtjifGdQOGx3pRs9eU8Nx7jEJQ3sz4EJr6hiUqMu92iDrWkbkR6FuZY7Dq
+	 nFpwnBN3WLMCZLPeQxzac7GAASsTn9QNRaZsxM2c+Bs1+DB1mJyDr/fZpN1/JX8pDa
+	 0JJgguYkR7c5A==
+Date: Tue, 21 May 2024 14:33:19 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>, linux-fsdevel@vger.kernel.org, 
+To: Jiri Slaby <jirislaby@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, 
 	Alexander Viro <viro@zeniv.linux.org.uk>, Seth Forshee <sforshee@kernel.org>, 
 	Tycho Andersen <tycho@tycho.pizza>
 Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
-Message-ID: <20240521-haarscharf-liebt-ccf94a240c32@brauner>
-References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
- <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
- <210098f9-1e71-48c9-be08-7e8074ec33c1@kernel.org>
- <20240515-anklopfen-ausgleichen-0d7c220b16f4@brauner>
+Message-ID: <20240521-ambitioniert-alias-35c21f740dba@brauner>
+References: <20240515-anklopfen-ausgleichen-0d7c220b16f4@brauner>
  <a15b1050-4b52-4740-a122-a4d055c17f11@kernel.org>
  <a65b573a-8573-4a17-a918-b5cf358c17d6@kernel.org>
  <84bc442d-c4dd-418e-8020-e1ff987cad13@kernel.org>
  <CAHk-=whMVsvYD4-OZx20ZR6zkOPoeMckxETxtqeJP2AAhd=Lcg@mail.gmail.com>
+ <d2805915-5cf0-412e-a8e3-04ff1b18b315@kernel.org>
+ <CAHk-=wh68QbOZi_rYaKiydsRDnYHEaCsvK6FD83-vfE6SXg5UA@mail.gmail.com>
+ <CAHk-=whgMGb0qM638KfBaa2AA9TR95D3oHJTu6=5YtRoBVWa3g@mail.gmail.com>
+ <e983a37b-9eb3-4b53-8f02-d671281f82f9@kernel.org>
+ <0bbf8e1d-0590-4e42-91b2-7a35614319d3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,89 +68,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whMVsvYD4-OZx20ZR6zkOPoeMckxETxtqeJP2AAhd=Lcg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0bbf8e1d-0590-4e42-91b2-7a35614319d3@kernel.org>
 
-Sorry for the delayed reply. I was attending LSFMM last week. Including
-travel that basically amounted to a week of limited email time. Catching
-up on things now.
+On Tue, May 21, 2024 at 08:13:08AM +0200, Jiri Slaby wrote:
+> On 21. 05. 24, 8:07, Jiri Slaby wrote:
+> > On 20. 05. 24, 21:15, Linus Torvalds wrote:
+> > > On Mon, 20 May 2024 at 12:01, Linus Torvalds
+> > > <torvalds@linux-foundation.org> wrote:
+> > > > 
+> > > > So how about just a patch like this?  It doesn't do anything
+> > > > *internally* to the inodes, but it fixes up what we expose to user
+> > > > level to make it look like lsof expects.
+> > > 
+> > > Note that the historical dname for those pidfs files was
+> > > "anon_inode:[pidfd]", and that patch still kept the inode number in
+> > > there, so now it's "anon_inode:[pidfd-XYZ]", but I think lsof is still
+> > > happy with that.
+> > 
+> > Now the last column of lsof still differs from 6.8:
+> > -[pidfd:1234]
+> > +[pidfd-4321]
+> > 
+> > And lsof tests still fail, as "lsof -F pfn" is checked against:
+> >      if ! fgrep -q "p${pid} f${fd} n[pidfd:$pid]" <<<"$line"; then
+> > 
+> > Where $line is:
+> > p1015 f3 n[pidfd-1315]
+> > 
+> > Wait, even if I change that minus to a colon, the inner pid (1315)
+> > differs from the outer (1015), but it should not (according to the
+> > test).
+> 
+> This fixes the test (meaning literally "it shuts up the test", but I have no
+> idea if it is correct thing to do at all):
+> -       return dynamic_dname(buffer, buflen, "anon_inode:[pidfd-%llu]",
+> pid->ino);
+> +       return dynamic_dname(buffer, buflen, "anon_inode:[pidfd:%d]",
+> pid_nr(pid));
+> 
+> Maybe pid_vnr() would be more appropriate, I have no idea either.
 
-On Fri, May 17, 2024 at 01:07:43PM -0700, Linus Torvalds wrote:
-> On Fri, 17 May 2024 at 00:54, Jiri Slaby <jirislaby@kernel.org> wrote:
-> >
-> >          inode->i_private = data;
-> >          inode->i_flags |= S_PRIVATE;
-> > +       inode->i_mode &= ~S_IFREG;
-> 
-> That is not a sensible operation. S_IFREG isn't a bit mask.
-> 
-> But it looks like 'anon_inode' traditionally had *no* type bytes at
-> all. That's literally crazy.
+So as pointed out the legacy format for pidfds is:
 
-Yes, it's pretty wild and I had long discussions about this before when
-people told me it's impossible for st_mode to have no type. A lot of
-low-level software isn't aware of this quirk and it's not something I
-particularly enjoy.
+lrwx------ 1 root root  64 21. Mai 14:24 39 -> 'anon_inode:[pidfd]'
 
-> Doing a 'stat -L' on one in /proc/X/fd/Y will correctly say "weird
-> file" about them.
+So it's neither showing inode number nor pid.
 
-Oh yes, it also broke assumptions in systemd and some other software
-which had code related to stat() that assumed it could never see an
-empty file type in st_mode.
+The problem with showing the pid unconditionally like that in
+dynamic_dname() is that it's wrong in various circumstances. For
+example, when the pidfd is sent into a pid namespace outside the it's
+pid namespace hierarchy (e.g., into a sibling pid namespace or when the
+task has already been reaped.
 
-> What a crock. That's horrible, and we apparently never noticed how
-> broken anon_inodes were because nobody really cared. But then lsof
-> seems to have done the *opposite* and just said (for unfathomable
-> reasons) "this can't be a normal regular file".
-> 
-> But I can't actually find that code in lsof. I see
-> 
->                  if (rest && rest[0] == '[' && rest[1] == 'p')
->                      fdinfo_mask |= FDINFO_PID;
-> 
-> which only checks that the name starts with '[p'. Hmm.
-> 
-> [ Time passes, I go looking ]
-> 
-> Oh Christ. It's process_proc_node:
-> 
->         type = s->st_mode & S_IFMT;
->         switch (type) {
->         ...
->         case 0:
->             if (!strcmp(p, "anon_inode"))
->                 Lf->ntype = Ntype = N_ANON_INODE;
->             break;
-> 
-> so yes, process_proc_node() really seems to have intentionally noticed
-> that our anon inodes forgot to put a file type in the st_mode, and
-> together with the path from readlink matching 'anon_inode' is how lsof
-> determines it's one of the special inodes.
-
-strace does that too but strace updated it's code fairly early on to
-accommodate pidfs. I had searched github to check that
-anon_inode:[pidfd] wasn't something that userspace relied on and other
-than strace it didn't yield any meaningful results and didn't surface
-lsof unfortunately.
-
-> 
-> So yeah, we made a mistake, and then lsof decided that mistake was a feature.
-> 
-> But that does mean that we probably just have to live in the bed we made.
-
-Yes, we likely do.
-
-> 
-> But that
-> 
-> > +       inode->i_mode &= ~S_IFREG;
-> 
-> is still very very wrong. It should use the proper bit mask: S_IFMT.
-> 
-> And we'd have to add a big comment about our historical stupidity that
-> we are perpetuating.
-> 
-> Oh well.
-> 
->                Linus
+Imho, showing the pid is more work than it's worth especially because we
+expose that info in fdinfo/<nr> anyway. So let's just do the simple thing.
 
