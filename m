@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-19901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE398CB082
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 16:30:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F708CB0A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 16:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFD5286634
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13431C21709
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 14:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ACD130481;
-	Tue, 21 May 2024 14:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668A5142E8A;
+	Tue, 21 May 2024 14:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="mDR1yYAw"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="j739Smyr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1F912FF97;
-	Tue, 21 May 2024 14:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E05130A49;
+	Tue, 21 May 2024 14:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301799; cv=none; b=n2UKm68cjwK595Sy+fvSo45SaHQMbfgTZfa4bc8Kslij6O2fcEUQPgf9kj0fe2AvzFvcPtj3JZ4uZ73TGV78bc1GCRycVP4I9fUMNVEHOF57gS8fO93B0YOpspeGsMy2U8BRqdPiOrDSpsC0iwfjJnFWO8NWol9GXgTnzzCUcKQ=
+	t=1716302728; cv=none; b=tHAYad1jF99VT1knL/lBM6FDTTKYRKgdQiTjk9W2GxPz/hyS+7OEZQnjMicAn/JnGR9lSDoQwms5LnEfpXrXY3hnOXpS9GrveJbzgxTQutCCisyfq+HI73xl787K67lwg5Q8rmZGmyNRvVBMCegI8WyU71z7pR5QVh47AFhHym4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301799; c=relaxed/simple;
-	bh=fOzx5pPgs4TLf88Kym4fSMFzoteMrSMW5sS/xigO9PU=;
+	s=arc-20240116; t=1716302728; c=relaxed/simple;
+	bh=ba8IClSGXDmwtOrGY8WCuVYk3WR+xkp8rtmLePbuqnk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=roVucNcWygHI0f4bhCUdj8hvjxllUOpNnHXeEaFIUvCnTty0IkTowavCYPXmYRiiZqZ4aLgA23uscaW21u7qkN/pvLAEJUNqJlKWIc9AsWq02K/sCKRydNF50D4oJ+8By+dXZ9rGuJnlJZUJ5Y24Gy0flE5vjrctC5E/pKZ2tXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=mDR1yYAw; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=b9qePBEE6za0yJJkUvudxOhQowmqLvcftzWtOrxoBjUJ+tR/EJExlTwPr9v0rUd3nOTw5S+P1FhkaUOZQYbYfYlrnab3WjYw3Qbp89LxdB9mKAHqd379bdEGPJ66UgSBhLil7xR8aMUQ92S6/nmANYL09e4FccRVqFDGPEhqowQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=j739Smyr; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Received: from [192.168.192.85] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 89D463F1C7;
-	Tue, 21 May 2024 14:29:52 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 2C1963F10D;
+	Tue, 21 May 2024 14:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1716301795;
-	bh=E+n+dPajliecQhWLmYeM1VpvL8BlnUE3CWeiaeuVm/g=;
+	s=20210705; t=1716302724;
+	bh=2/f8CW90WtkYIp1uOhHP9FS9HVKaNs6eGe6DqfQe0Ic=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=mDR1yYAwtthcAxMJ3ggsqdymxw105v3cYkv9tisX4muomyBsGOnR+SBGEb9KK8On6
-	 88ui9wBmRAwlYxm/Fwx3UeP3hlIvqWPEA+z30+IrzCNw2tsa2CBtd23CWbqq8rMM0T
-	 Msgyf5EwGxn/ScFYH+7hNCuKbmoDnqHfXaoB+h19wD/2JvVzwPaH6lifXLRcUMqz4H
-	 2COyEMl2rFn0KpdgOj/p7E/0IFFU8t+1hO6uzpzCGorcbwrze+9HVZ6/EfbsntnJSU
-	 TfwHXfaaxAl6oPJerwu4DBmPxHC91zL5OB0fX8wJGCUCUZdrvbofNSDRyUksRH0UmP
-	 50t7c5/9KsBww==
-Message-ID: <74480773-79e7-4b4f-bd1e-1424f5110119@canonical.com>
-Date: Tue, 21 May 2024 07:29:50 -0700
+	b=j739SmyrOi9HazlxeyULiMQAHJdRP/m97YgR/MextstArAMTaOPfX0kTkZGinsKBl
+	 a2m1E363E2+dvqri4yUAUtxHEFkEbNu30VVI7D933YgBKEccLdKiZYIGizUYcEeTZ5
+	 YGCGUFdULlQqzJM8uZa42CW5rRO4QxrFBnc4PbWABVUyBjsyJPxRt/D2FdMdwmc49S
+	 DuzsY3p9CCjTl/uPr1pKiXlIHJI6qyaQFHgumkhy8ukP07UGV8jKqm/gvo7UY9BvcM
+	 9G2cSrd2kiyJ8sF8pOFQoSaU1rSFF1k25nMYuxPjoT1ILmfY2P+VPDfAL0BuHlau+l
+	 9rY0yrp3ExwXA==
+Message-ID: <872c8eb0-894b-413a-8e35-130984a87bba@canonical.com>
+Date: Tue, 21 May 2024 07:45:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,15 +58,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-To: Serge Hallyn <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: Jonathan Calmels <jcalmels@3xx0.net>, Jarkko Sakkinen
- <jarkko@kernel.org>, brauner@kernel.org, ebiederm@xmission.com,
+To: Jarkko Sakkinen <jarkko@kernel.org>, Jonathan Calmels
+ <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
  Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
- Joel Granados <j.granados@samsung.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>,
- containers@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- keyrings@vger.kernel.org
+ Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ David Howells <dhowells@redhat.com>, containers@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
 References: <20240516092213.6799-1-jcalmels@3xx0.net>
  <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
  <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
@@ -74,7 +74,12 @@ References: <20240516092213.6799-1-jcalmels@3xx0.net>
  <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
  <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
  <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
- <ZkidDlJwTrUXsYi9@serge-l-PF3DENS3>
+ <vhpmew3kyay3xq4h3di3euauo43an22josvvz6assex4op3gzw@xeq63mqb2lmh>
+ <D1CQ1FZ72NIW.2U7ZH0GU6C5W5@kernel.org>
+ <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
+ <D1CQC0PTK1G0.124QCO3S041Q@kernel.org>
+ <1b0d222a-b556-48b0-913f-cdd5c30f8d27@canonical.com>
+ <D1FDU1C3W974.2BXBDS10OB8CB@kernel.org>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -120,156 +125,83 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <ZkidDlJwTrUXsYi9@serge-l-PF3DENS3>
+In-Reply-To: <D1FDU1C3W974.2BXBDS10OB8CB@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/18/24 05:20, Serge Hallyn wrote:
-> On Fri, May 17, 2024 at 10:53:24AM -0700, Casey Schaufler wrote:
->> On 5/17/2024 4:42 AM, Jonathan Calmels wrote:
->>>>>> On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
->>>>>>> I suggest that adding a capability set for user namespaces is a bad idea:
->>>>>>> 	- It is in no way obvious what problem it solves
->>>>>>> 	- It is not obvious how it solves any problem
->>>>>>> 	- The capability mechanism has not been popular, and relying on a
->>>>>>> 	  community (e.g. container developers) to embrace it based on this
->>>>>>> 	  enhancement is a recipe for failure
->>>>>>> 	- Capabilities are already more complicated than modern developers
->>>>>>> 	  want to deal with. Adding another, special purpose set, is going
->>>>>>> 	  to make them even more difficult to use.
->>> Sorry if the commit wasn't clear enough.
->>
->> While, as others have pointed out, the commit description left
->> much to be desired, that isn't the biggest problem with the change
->> you're proposing.
->>
->>>   Basically:
+On 5/21/24 07:12, Jarkko Sakkinen wrote:
+> On Tue May 21, 2024 at 4:57 PM EEST, John Johansen wrote:
+>>> One tip: I think this is wrong forum to present namespace ideas in the
+>>> first place. It would be probably better to talk about this with e.g.
+>>> systemd or podman developers, and similar groups. There's zero evidence
+>>> of the usefulness. Then when you go that route and come back with actual
+>>> users, things click much more easily. Now this is all in the void.
 >>>
->>> - Today user namespaces grant full capabilities.
+>>> BR, Jarkko
 >>
->> Of course they do. I have been following the use of capabilities
->> in Linux since before they were implemented. The uptake has been
->> disappointing in all use cases.
+>> Jarkko,
 >>
->>>    This behavior is often abused to attack various kernel subsystems.
->>
->> Yes. The problems of a single, all powerful root privilege scheme are
->> well documented.
->>
->>>    Only option
->>
->> Hardly.
->>
->>>   is to disable them altogether which breaks a lot of
->>>    userspace stuff.
->>
->> Updating userspace components to behave properly in a capabilities
->> environment has never been a popular activity, but is the right way
->> to address this issue. And before you start on the "no one can do that,
->> it's too hard", I'll point out that multiple UNIX systems supported
->> rootless, all capabilities based systems back in the day.
->>
->>>    This goes against the least privilege principle.
->>
->> If you're going to run userspace that *requires* privilege, you have
->> to have a way to *allow* privilege. If the userspace insists on a root
->> based privilege model, you're stuck supporting it. Regardless of your
->> principles.
+>> this is very much the right forum. User namespaces exist today. This
+>> is a discussion around trying to reduce the exposed kernel surface
+>> that is being used to attack the kernel.
 > 
-> Casey,
+> Agreed, that was harsh way to put it. What I mean is that if this
+> feature was included, would it be enabled by distributions?
 > 
-> I might be wrong, but I think you're misreading this patchset.  It is not
-> about limiting capabilities in the init user ns at all.  It's about limiting
-> the capabilities which a process in a child userns can get.
-> 
-> Any unprivileged task can create a new userns, and get a process with
-> all capabilities in that namespace.  Always.  User namespaces were a
-> great success in that we can do this without any resulting privilege
-> against host owned resources.  The unaddressed issue is the expanded
-> kernel code surface area.
-> 
-> You say, above, (quoting out of place here)
-> 
->> Updating userspace components to behave properly in a capabilities
->> environment has never been a popular activity, but is the right way
->> to address this issue. And before you start on the "no one can do that,
->> it's too hard", I'll point out that multiple UNIX systems supported
-> 
-> He's not saying no one can do that.  He's saying, correctly, that the
-> kernel currently offers no way for userspace to do this limiting.  His
-> patchset offers two ways: one system wide capability mask (which applies
-> only to non-initial user namespaces) and on per-process inherited one
-> which - yay - userspace can use to limit what its children will be
-> able to get if they unshare a user namespace.
-> 
->>> - It adds a new capability set.
->>
->> Which is a really, really bad idea. The equation for calculating effective
->> privilege is already more complicated than userspace developers are generally
->> willing to put up with.
-> 
-> This is somewhat true, but I think the semantics of what is proposed here are
-> about as straightforward as you could hope for, and you can basically reason
-> about them completely independently of the other sets.  Only when reasoning
-> about the correctness of this code do you need to consider the other sets.  Not
-> when administering a system.
-> 
-> If you want root in a child user namespace to not have CAP_MAC_ADMIN, you drop
-> it from your pU.  Simple as that.
-> 
->>>    This set dictates what capabilities are granted in namespaces (instead
->>>    of always getting full caps).
->>
->> I would not expect container developers to be eager to learn how to use
->> this facility.
-> 
-> I'm a container developer, and I'm excited about it :)
-> 
->>>    This brings namespaces in line with the rest of the system, user
->>>    namespaces are no more "special".
->>
->> I'm sorry, but this makes no sense to me whatsoever. You want to introduce
->> a capability set explicitly for namespaces in order to make them less
->> special?
-> 
-> Yes, exactly.
-> 
->> Maybe I'm just old and cranky.
-> 
-> That's fine.
-> 
->>>    They now work the same way as say a transition to root does with
->>>    inheritable caps.
->>
->> That needs some explanation.
->>
->>>
->>> - This isn't intended to be used by end users per se (although they could).
->>>    This would be used at the same places where existing capabalities are
->>>    used today (e.g. init system, pam, container runtime, browser
->>>    sandbox), or by system administrators.
->>
->> I understand that. It is for containers. Containers are not kernel entities.
-> 
-> User namespaces are.
-> 
-> This patch set provides userspace a way of limiting the kernel code exposed
-> to untrusted children, which currently does not exist.
-> 
-theoretically, I am worried that in practice the existing utils allow
-untrusted code to still access user namespaces.
+Enabled, maybe? It requires the debian distros to make sure their
+packaging supports xattrs correctly. It should be good but it isn't
+well exercised. It also requires the work to set these on multiple
+applications. From experience we are talking 100s.
 
-In practice we have found that we need to allow a different set of capabilities
-when bwrap is called from flatpak than when called on its own etc. We see the
-same pattern with unshare and other utilities around launching applications
-in user namespaces.
+It will break out of repo applications, and require an extra step for
+users to enable. Ubuntu is already breaking these but for many, of the
+more popular ones they are shipping profiles so the users don't have
+to take an extra step. Things like appimages remain broken and wil
+require an approach similar to the Mac with unverified software
+downloaded from the internet.
 
-In practice at the distro level I don't see this approach actually helping.
-Because we have so many uses that require exposing close to the full capabilities
-set in multiple utilities that are required by many different applications.
+Nor does this fix the bwrap, unshare, ... use case. Which means the
+distro is going to have to continue shipping an alternate solution
+that covers those. For Ubuntu atm this is just an extra point of
+friction but I expect we would still end up enabling it to tick the
+checkbox at some point if it goes into the upstream kernel.
 
-To be clear this doesn't stop distros from doing something more, but is it
-worth the added complexity if in practice it can't be used effectively.
-I really don't have the answer.
+> This user base part or potential user space part is not very well
+> described in the cover letter. I.e. "motivation" to put it short.
+> 
+yes the cover letter needs work
+
+> I mean the technical details are really in detail in this patch set but
+> it would help to digest them if there was some even rough description
+> how this would be deployed.
+> 
+yes
+
+> If the motivation should be obvious, then it is beyond me, and thus
+> would be nice if that obvious thing was stated that everyone else gets.
+> 
+sure. The cover letter will get updated with this. Seeing as I have been
+dealing with this a lot lately. It comes down to user namespaces allow
+unprivileged code to access kernel surface area that is usually protected
+behind capabilities. This has been leveraged as part of the exploit chain
+in the majority of kernel exploits we are seeing.
+
+> E.g. I like to sometimes just test quite alien patch sets for the sake
+> of learning and fun (or not so fun, depends) but this patch set does not
+> deliver enough information to do anything at all.
+> 
+under stood, I am playing devils advocate here. Its not that I don't see
+value in the proposal, but that I am not sure I see enough value with
+the current situation, where so much code has been written around the
+assumption that unprivileged user namespaces are safe. Trying to fix
+the situation without breaking everything is complicated.
+
+> Hope this clears a bit where I stand. IMHO a good patch set should bring
+> the details to the specialists on the topic but also have some wider
+> audience motivational stuff in order to make clear where it fits in this
+> world :-)
+> 
+> BR, Jarkko
+> 
 
 
