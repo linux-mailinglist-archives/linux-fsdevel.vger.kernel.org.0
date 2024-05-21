@@ -1,327 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-19876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E728CACAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 12:53:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BF58CACFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 13:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C331F22C77
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 10:53:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70735B2244D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 11:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E85C74BE0;
-	Tue, 21 May 2024 10:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A2A6D1A3;
+	Tue, 21 May 2024 11:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d/t8tJEh"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FRQFlY5f";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6JINQMdp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEE1481B9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 10:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EEB28F0;
+	Tue, 21 May 2024 11:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716288770; cv=none; b=lcot4C0ExSBZK4oqMaApSXI7g7THxS57z/rWj9UEhzU99z8x2nKUn1HB6pW1c/L7Zm1fP6FXknnq4AUl9Hp8HJten0foE3hnN8pG719Q71ydvQonQKe5/yMgs3L9E6G/BCMfxrBfRMQ+X4gcvY6H6aURnI2+6OT1Rs0cGzI9udo=
+	t=1716289241; cv=none; b=WMA3fs1vqeQs29HZSfsXipCvyCT/du+044EpNUJHGt3BOLbun3eYwWUTB9AKEeutwsY+0mNWGbjwxIZHxgfuSuX9Azn3jVywgpK3lnY6fT8qdhOArS4Wntcbt1ujF6I9vNiO9RmaXKNzF0eVaa3hUG3evfT5SGIItsMlsy6ILsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716288770; c=relaxed/simple;
-	bh=e9/Jn1k9vV9epBJrZXg4uSK4RPSRoT+u0KqFE5tpxA8=;
+	s=arc-20240116; t=1716289241; c=relaxed/simple;
+	bh=xpW8cWC8VndEV56VMUUuteKJq55p9xa45elyZ7RSY7M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYbVZKjPxGRugEhwqsfxOchfgyc7ff6Nc0fjX4PytLlDy7ey45Gfyv7xsJAxN/mwWEkZEc7QFYOYOM01ettOVLnzsb1So7Trr82ql8fR3HN1XlBLwuzyNMNkPd1DriDtHvQfH2FKN6osmWeJb2NMMOo+s60jbdVMyqMdRvsmyTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d/t8tJEh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716288767;
+	 Content-Type:Content-Disposition:In-Reply-To; b=tug+Y8y+/P11qZk+ajxUnVZbZ7VLKzxoUe2wq77TMzWZOBz1muu3wt447pGjEZ0qzRr/lybKr6WxC2eP4EOdkt9P2FwpBKZJaAbYPCNpSqcJywqmM451sFIrYh8jmKMVEPOIiwbIbHta5XZgv/b2VP4cxCjk6mn0S5QIT5tavOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FRQFlY5f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6JINQMdp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 21 May 2024 13:00:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716289236;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=56nvd/3MP7DtivfrraZ2mnUYGxV4GioUyzj3puEJA5Q=;
-	b=d/t8tJEhd1qSdfx0fE+vYgRYteBzzJW1BDrT7Hf7vE1Bnn+5zefoTmcIC/5gJnT11FhZFI
-	cmHRDCHeO9mBkpNLB4FPC61hWSTno5Ia9k9bGlCVJ8VSo33uKBdwHAFDpWP1pynRJ/3Zs9
-	11J6WublJk1ZvBrXK5Eb8TLbbeSvS3A=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-3rHgQ66BM1CCzNX5hWspDg-1; Tue, 21 May 2024 06:52:44 -0400
-X-MC-Unique: 3rHgQ66BM1CCzNX5hWspDg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-354c7c04325so1084771f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 03:52:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716288763; x=1716893563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=56nvd/3MP7DtivfrraZ2mnUYGxV4GioUyzj3puEJA5Q=;
-        b=MP7nxdO0yDzgaQHsIfETvcKqVLTpSOh3Pw7YocbIOntmuqVKDiW4NAZWbUr5kFqliy
-         SQrS+OHHe5BSlyOIxWV63eGawgM4qI/Qe+9hmwwbvNE0clUVr2TYpR2x48vj3V7A7BhJ
-         QVwR/TzHs8v020KLzq6u4s5BsvZopaX31U9tRBPVKwXxpHe/znhH+Td/2fcFuzpndqxi
-         XPk699u+neDgdVl3+KnQ5hkm0hfcrSCswNHBiFN+4SUvrCkyZhgBfxOcD7NFoZLvlEZN
-         F0R3yT3GmsTe7IgX22UvsRHks5Cg7pa2jLe8yAzweUH7eHvc0i9SEq0cLGHlDX7y8bvG
-         FgwA==
-X-Gm-Message-State: AOJu0YxO9P71z/wWQBCapYzSty1ntiwaGgoXudWqriUGvcUE0f4CXUUm
-	8O2Lt7qpA3pbks2FHPk19sIDXxwFEiwlG7w6LctvUMxZvqr//UBcNbtrz5IEcLx2dWlE6Y7Q9Gy
-	2hyaeWmwvQsWhdi6p0wbATD46dzdQMIxfodLTQWX00YzCrm7nWrb5bq0Q+DP1ig==
-X-Received: by 2002:a05:6000:367:b0:34c:7ed4:55a with SMTP id ffacd0b85a97d-354b9068ef6mr7201737f8f.33.1716288763164;
-        Tue, 21 May 2024 03:52:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8X3T5ls2zvNTQPr42SEqp90ElmOB3G+kJaiypVEcci2UquiYpUqBaQ4MQm5HfBGvyHnDrDw==
-X-Received: by 2002:a05:6000:367:b0:34c:7ed4:55a with SMTP id ffacd0b85a97d-354b9068ef6mr7201703f8f.33.1716288762574;
-        Tue, 21 May 2024 03:52:42 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacfc6sm31803283f8f.72.2024.05.21.03.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 03:52:42 -0700 (PDT)
-Date: Tue, 21 May 2024 12:52:41 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and
- FS_IOC_FSGETXATTRAT
-Message-ID: <wetpv5posln2xv5dy26a7ohrsrcr6yi3lr6qrpbtjf3ymiilxy@ohukv2n3do6t>
-References: <20240520164624.665269-2-aalbersh@redhat.com>
- <20240520164624.665269-4-aalbersh@redhat.com>
- <20240520175159.GD25518@frogsfrogsfrogs>
+	bh=/SKqiKY3fPfFrak3zoFgzP4YhDQY8tnNkx/mXavMpSw=;
+	b=FRQFlY5ffVxx8kUFmC0jx5rMqBpFzKeZH41Rq+N8SgCWVWEyt1zyWLKwZeKbBLRZckUHxP
+	3ZecqZU/4oAZPmzLmFjWAymZK5GmmDbQ9ZUaSFLxijU5FeSNJ78QPknI8k8SYSUIvCTVKH
+	Z7GP4piQL3qIMOrpguhh45A5lD2rDfi/7Ll9EujkhRxmilGycuQatQX9pSAUN2Kscgr3ab
+	OCLCV8NyrT1rNT2nuJYVE/ZVuwM465v+Cnd288JvHFu+ayaUrWpJDPn0kQsAFe8VClF5Gt
+	RgyYimqytc+W9AhUH1eFwVYf/Bx4N9w3/7laag/KIvkhm7YT61swbU4b0z/h+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716289236;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/SKqiKY3fPfFrak3zoFgzP4YhDQY8tnNkx/mXavMpSw=;
+	b=6JINQMdpOPpHBR1iFBmVIaq+lA45HD37UNR4XddxkdAxN5OycpjJSBl/4PhNdTDmrOJ0SB
+	ZyMpkCCSdbU4tQBA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH v2] sched/rt: Clean up usage of rt_task()
+Message-ID: <20240521110035.KRIwllGe@linutronix.de>
+References: <20240515220536.823145-1-qyousef@layalina.io>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240520175159.GD25518@frogsfrogsfrogs>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240515220536.823145-1-qyousef@layalina.io>
 
-On 2024-05-20 10:51:59, Darrick J. Wong wrote:
-> On Mon, May 20, 2024 at 06:46:21PM +0200, Andrey Albershteyn wrote:
-> > XFS has project quotas which could be attached to a directory. All
-> > new inodes in these directories inherit project ID set on parent
-> > directory.
-> > 
-> > The project is created from userspace by opening and calling
-> > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > files such as FIFO, SOCK, BLK etc. as opening them returns a special
-> > inode from VFS. Therefore, some inodes are left with empty project
-> > ID. Those inodes then are not shown in the quota accounting but
-> > still exist in the directory.
-> > 
-> > This patch adds two new ioctls which allows userspace, such as
-> > xfs_quota, to set project ID on special files by using parent
-> > directory to open FS inode. This will let xfs_quota set ID on all
-> > inodes and also reset it when project is removed. Also, as
-> > vfs_fileattr_set() is now will called on special files too, let's
-> > forbid any other attributes except projid and nextents (symlink can
-> > have one).
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > ---
-> >  fs/ioctl.c              | 93 +++++++++++++++++++++++++++++++++++++++++
-> >  include/uapi/linux/fs.h | 11 +++++
-> >  2 files changed, 104 insertions(+)
-> > 
-> > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > index 1d5abfdf0f22..3e3aacb6ea6e 100644
-> > --- a/fs/ioctl.c
-> > +++ b/fs/ioctl.c
-> > @@ -22,6 +22,7 @@
-> >  #include <linux/mount.h>
-> >  #include <linux/fscrypt.h>
-> >  #include <linux/fileattr.h>
-> > +#include <linux/namei.h>
-> >  
-> >  #include "internal.h"
-> >  
-> > @@ -647,6 +648,19 @@ static int fileattr_set_prepare(struct inode *inode,
-> >  	if (fa->fsx_cowextsize == 0)
-> >  		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
-> >  
-> > +	/*
-> > +	 * The only use case for special files is to set project ID, forbid any
-> > +	 * other attributes
-> > +	 */
-> > +	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
-> > +		if (fa->fsx_xflags & ~FS_XFLAG_PROJINHERIT)
-> 
-> When would PROJINHERIT be set on a non-reg/non-dir file?
+On 2024-05-15 23:05:36 [+0100], Qais Yousef wrote:
+> rt_task() checks if a task has RT priority. But depends on your
+> dictionary, this could mean it belongs to RT class, or is a 'realtime'
+> task, which includes RT and DL classes.
+>=20
+> Since this has caused some confusion already on discussion [1], it
+> seemed a clean up is due.
+>=20
+> I define the usage of rt_task() to be tasks that belong to RT class.
+> Make sure that it returns true only for RT class and audit the users and
+> replace the ones required the old behavior with the new realtime_task()
+> which returns true for RT and DL classes. Introduce similar
+> realtime_prio() to create similar distinction to rt_prio() and update
+> the users that required the old behavior to use the new function.
+>=20
+> Move MAX_DL_PRIO to prio.h so it can be used in the new definitions.
+>=20
+> Document the functions to make it more obvious what is the difference
+> between them. PI-boosted tasks is a factor that must be taken into
+> account when choosing which function to use.
+>=20
+> Rename task_is_realtime() to realtime_task_policy() as the old name is
+> confusing against the new realtime_task().
 
-Oh I thought it's set on all inodes in projects anyway, but looks
-like it's dropped for files in xfs_flags2diflags(). The xfs_quota
-just set it for each inode so I just haven't checked it. I will drop
-this check and change xfs_quota to not set PROJINHERIT for special
-files.
+I *think* everyone using rt_task() means to include DL tasks. And
+everyone means !SCHED-people since they know when the difference matters.
 
-> > +			return -EINVAL;
-> > +		if (!S_ISLNK(inode->i_mode) && fa->fsx_nextents)
-> 
-> FS_IOC_FSSETXATTR doesn't enforce anything for fsx_nextents for any
-> other type of file, does it?
+> No functional changes were intended.
+>=20
+> [1] https://lore.kernel.org/lkml/20240506100509.GL40213@noisy.programming=
+=2Ekicks-ass.net/
+>=20
+> Reviewed-by: Phil Auld <pauld@redhat.com>
+> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> ---
+>=20
+> Changes since v1:
+>=20
+> 	* Use realtime_task_policy() instead task_has_realtime_policy() (Peter)
+> 	* Improve commit message readability about replace some rt_task()
+> 	  users.
+>=20
+> v1 discussion: https://lore.kernel.org/lkml/20240514234112.792989-1-qyous=
+ef@layalina.io/
+>=20
+>  fs/select.c                       |  2 +-
 
-yes, it doesn't enforce anything, as I described in the comment I
-tried to reject any other uses. But symlink has fsx_nextents == 1 so
-get + set call will fail.
+fs/bcachefs/six.c
+six_owner_running() has rt_task(). But imho should have realtime_task()
+to consider DL. But I think it is way worse that it has its own locking
+rather than using what everyone else but then again it wouldn't be the
+new hot thing=E2=80=A6
 
-> 
-> > +			return -EINVAL;
-> > +		if (fa->fsx_extsize || fa->fsx_cowextsize)
-> > +			return -EINVAL;
-> > +	}
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > @@ -763,6 +777,79 @@ static int ioctl_fssetxattr(struct file *file, void __user *argp)
-> >  	return err;
-> >  }
-> >  
-> > +static int ioctl_fsgetxattrat(struct file *file, void __user *argp)
-> > +{
-> > +	struct path filepath;
-> > +	struct fsxattrat fsxat;
-> > +	struct fileattr fa;
-> > +	int error;
-> > +
-> > +	if (!S_ISDIR(file_inode(file)->i_mode))
-> > +		return -EBADF;
-> > +
-> > +	if (copy_from_user(&fsxat, argp, sizeof(struct fsxattrat)))
-> > +		return -EFAULT;
-> > +
-> > +	error = user_path_at(fsxat.dfd, fsxat.path, 0, &filepath);
-> > +	if (error)
-> > +		return error;
-> > +
-> > +	error = vfs_fileattr_get(filepath.dentry, &fa);
-> > +	if (error) {
-> > +		path_put(&filepath);
-> > +		return error;
-> > +	}
-> > +
-> > +	fsxat.fsx.fsx_xflags = fa.fsx_xflags;
-> > +	fsxat.fsx.fsx_extsize = fa.fsx_extsize;
-> > +	fsxat.fsx.fsx_nextents = fa.fsx_nextents;
-> > +	fsxat.fsx.fsx_projid = fa.fsx_projid;
-> > +	fsxat.fsx.fsx_cowextsize = fa.fsx_cowextsize;
-> > +
-> > +	if (copy_to_user(argp, &fsxat, sizeof(struct fsxattrat)))
-> > +		error = -EFAULT;
-> > +
-> > +	path_put(&filepath);
-> > +	return error;
-> > +}
-> > +
-> > +static int ioctl_fssetxattrat(struct file *file, void __user *argp)
-> > +{
-> > +	struct mnt_idmap *idmap = file_mnt_idmap(file);
-> > +	struct fsxattrat fsxat;
-> > +	struct path filepath;
-> > +	struct fileattr fa;
-> > +	int error;
-> > +
-> > +	if (!S_ISDIR(file_inode(file)->i_mode))
-> > +		return -EBADF;
-> > +
-> > +	if (copy_from_user(&fsxat, argp, sizeof(struct fsxattrat)))
-> > +		return -EFAULT;
-> > +
-> > +	error = user_path_at(fsxat.dfd, fsxat.path, 0, &filepath);
-> > +	if (error)
-> > +		return error;
-> > +
-> > +	error = mnt_want_write(filepath.mnt);
-> > +	if (error) {
-> > +		path_put(&filepath);
-> > +		return error;
-> 
-> This could be a goto to the path_put below.
-> 
-> > +	}
-> > +
-> > +	fileattr_fill_xflags(&fa, fsxat.fsx.fsx_xflags);
-> > +	fa.fsx_extsize = fsxat.fsx.fsx_extsize;
-> > +	fa.fsx_nextents = fsxat.fsx.fsx_nextents;
-> > +	fa.fsx_projid = fsxat.fsx.fsx_projid;
-> > +	fa.fsx_cowextsize = fsxat.fsx.fsx_cowextsize;
-> > +	fa.fsx_valid = true;
-> > +
-> > +	error = vfs_fileattr_set(idmap, filepath.dentry, &fa);
-> 
-> Why not pass &fsxat.fsx directly to vfs_fileattr_set?
+>  include/linux/ioprio.h            |  2 +-
+>  include/linux/sched/deadline.h    |  6 ++++--
+>  include/linux/sched/prio.h        |  1 +
+>  include/linux/sched/rt.h          | 27 ++++++++++++++++++++++++++-
+>  kernel/locking/rtmutex.c          |  4 ++--
+>  kernel/locking/rwsem.c            |  4 ++--
+>  kernel/locking/ww_mutex.h         |  2 +-
+>  kernel/sched/core.c               |  6 +++---
+>  kernel/time/hrtimer.c             |  6 +++---
+>  kernel/trace/trace_sched_wakeup.c |  2 +-
+>  mm/page-writeback.c               |  4 ++--
+>  mm/page_alloc.c                   |  2 +-
+>  13 files changed, 48 insertions(+), 20 deletions(-)
+=E2=80=A6
+> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+> index 70625dff62ce..08b95e0a41ab 100644
+> --- a/kernel/time/hrtimer.c
+> +++ b/kernel/time/hrtimer.c
+> @@ -1996,7 +1996,7 @@ static void __hrtimer_init_sleeper(struct hrtimer_s=
+leeper *sl,
+>  	 * expiry.
+>  	 */
+>  	if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> -		if (task_is_realtime(current) && !(mode & HRTIMER_MODE_SOFT))
+> +		if (realtime_task_policy(current) && !(mode & HRTIMER_MODE_SOFT))
+>  			mode |=3D HRTIMER_MODE_HARD;
+>  	}
+> =20
+> @@ -2096,7 +2096,7 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrt=
+imer_mode mode,
+>  	u64 slack;
+> =20
+>  	slack =3D current->timer_slack_ns;
+> -	if (rt_task(current))
+> +	if (realtime_task(current))
+>  		slack =3D 0;
+> =20
+>  	hrtimer_init_sleeper_on_stack(&t, clockid, mode);
+> @@ -2301,7 +2301,7 @@ schedule_hrtimeout_range_clock(ktime_t *expires, u6=
+4 delta,
+>  	 * Override any slack passed by the user if under
+>  	 * rt contraints.
+>  	 */
+> -	if (rt_task(current))
+> +	if (realtime_task(current))
+>  		delta =3D 0;
 
-vfs_fileattr_set() takes fileattr and there won't be fsx_valid, no? I
-suppose they aren't aligned
+I know this is just converting what is already here but=E2=80=A6
+__hrtimer_init_sleeper() looks at the policy to figure out if the task
+is realtime do decide if should expire in HARD-IRQ context. This is
+correct, a boosted task should not sleep.
 
-> 
-> > +	mnt_drop_write(filepath.mnt);
-> > +	path_put(&filepath);
-> > +	return error;
-> > +}
-> > +
-> >  static int ioctl_getfsuuid(struct file *file, void __user *argp)
-> >  {
-> >  	struct super_block *sb = file_inode(file)->i_sb;
-> > @@ -872,6 +959,12 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-> >  	case FS_IOC_FSSETXATTR:
-> >  		return ioctl_fssetxattr(filp, argp);
-> >  
-> > +	case FS_IOC_FSGETXATTRAT:
-> > +		return ioctl_fsgetxattrat(filp, argp);
-> > +
-> > +	case FS_IOC_FSSETXATTRAT:
-> > +		return ioctl_fssetxattrat(filp, argp);
-> > +
-> >  	case FS_IOC_GETFSUUID:
-> >  		return ioctl_getfsuuid(filp, argp);
-> >  
-> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > index 45e4e64fd664..f8cd8d7bf35d 100644
-> > --- a/include/uapi/linux/fs.h
-> > +++ b/include/uapi/linux/fs.h
-> > @@ -139,6 +139,15 @@ struct fsxattr {
-> >  	unsigned char	fsx_pad[8];
-> >  };
-> >  
-> > +/*
-> > + * Structure passed to FS_IOC_FSGETXATTRAT/FS_IOC_FSSETXATTRAT
-> > + */
-> > +struct fsxattrat {
-> > +	struct fsxattr	fsx;		/* XATTR to get/set */
-> > +	__u32		dfd;		/* parent dir */
-> > +	const char	__user *path;
-> 
-> As I mentioned last time[1], embedding a pointer in an ioctl structure
-> creates porting problems because pointer sizes vary between process
-> personalities, so the size of struct fsxattrat will vary and lead to
-> copy_to/from_user overflows.
+hrtimer_nanosleep() + schedule_hrtimeout_range_clock() is looking at
+priority to decide if slack should be removed. This should also look at
+policy since a boosted task shouldn't sleep.
 
-Oh right, sorry, totally forgot about that
+In order to be PI-boosted you need to acquire a lock and the only lock
+you can sleep while acquired without generating a warning is a mutex_t
+(or equivalent sleeping lock) on PREEMPT_RT.=20
 
-> 
-> 
-> [1] https://lore.kernel.org/linux-xfs/20240509232517.GR360919@frogsfrogsfrogs/
-> 
-> --D
-> 
-> > +};
-> > +
-> >  /*
-> >   * Flags for the fsx_xflags field
-> >   */
-> > @@ -231,6 +240,8 @@ struct fsxattr {
-> >  #define FS_IOC32_SETVERSION		_IOW('v', 2, int)
-> >  #define FS_IOC_FSGETXATTR		_IOR('X', 31, struct fsxattr)
-> >  #define FS_IOC_FSSETXATTR		_IOW('X', 32, struct fsxattr)
-> > +#define FS_IOC_FSGETXATTRAT		_IOR('X', 33, struct fsxattrat)
-> > +#define FS_IOC_FSSETXATTRAT		_IOW('X', 34, struct fsxattrat)
-> >  #define FS_IOC_GETFSLABEL		_IOR(0x94, 49, char[FSLABEL_MAX])
-> >  #define FS_IOC_SETFSLABEL		_IOW(0x94, 50, char[FSLABEL_MAX])
-> >  /* Returns the external filesystem UUID, the same one blkid returns */
-> > -- 
-> > 2.42.0
-> > 
-> > 
-> 
+>  	hrtimer_init_sleeper_on_stack(&t, clock_id, mode);
+> diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched=
+_wakeup.c
+> index 0469a04a355f..19d737742e29 100644
+> --- a/kernel/trace/trace_sched_wakeup.c
+> +++ b/kernel/trace/trace_sched_wakeup.c
+> @@ -545,7 +545,7 @@ probe_wakeup(void *ignore, struct task_struct *p)
+>  	 *  - wakeup_dl handles tasks belonging to sched_dl class only.
+>  	 */
+>  	if (tracing_dl || (wakeup_dl && !dl_task(p)) ||
+> -	    (wakeup_rt && !dl_task(p) && !rt_task(p)) ||
+> +	    (wakeup_rt && !realtime_task(p)) ||
+>  	    (!dl_task(p) && (p->prio >=3D wakeup_prio || p->prio >=3D current->=
+prio)))
+>  		return;
+> =20
 
--- 
-- Andrey
-
+Sebastian
 
