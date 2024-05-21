@@ -1,106 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-19935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5C48CB3F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 21:01:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D87A8CB487
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 22:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830D41F22B1A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 19:01:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50924282EBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 20:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987C214901F;
-	Tue, 21 May 2024 19:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21438149C57;
+	Tue, 21 May 2024 20:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MY8IaQyA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d5YSTfTV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6208D142910
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 19:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5E91494D6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 20:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716318104; cv=none; b=Kd3FRKsZMjx5s6WfbkL/GwqwYTYMRnLzEoU5hGYCGF8lyZVvHHDCFI8l3uET1aPE7z+ty7Nauo+1aTc8XkZa+9mWdVKXtG88geKICOi3GSp3chrs0K/1bUl0d6upTpDq+mL0lR/6cS1/a99KNlTUBzPrs3bniLKd0CapIQwcJcQ=
+	t=1716321960; cv=none; b=FulTuPjzdxT2XcQS+mVMhcDuOuJ9WiYbhV76XQUh1v6VqiVjNFFFJb6+TwJRnoIjD/YrTEeKIdqm7Y2va8fKc5L4Z5r+i+BbI1NsD9aCTEvpm4aD1kiE8lrd83EpPrTGzIiG3d+BmyK7A4C2WKWjweiFGl2W5tHWNhyaqy+hj9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716318104; c=relaxed/simple;
-	bh=8ix/SXPQG+wpfYFllBOv3clmJtpOeRZmoQkniDsFhak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pKmXPuz0gPDepRUszyEnWS8RGYbjcX2DcL3YDjrLch9OpVHypAG4qP4DZd8QWsG7H8ExNLVpB97qOmvR3Zo+DyJG4nleD1dpOYH8NXEfjqJPCtbltGH3ut9cdpSNtHVTcXBvgB8Les7l6E5KwGepeiphJiOylm5qn06vi9q49ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MY8IaQyA; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572a1b3d6baso2462a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 12:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716318101; x=1716922901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ix/SXPQG+wpfYFllBOv3clmJtpOeRZmoQkniDsFhak=;
-        b=MY8IaQyAFt2/cSwIUVwocQeGFOQ997oO8BDpQP18iW2Oq2Mmq4AURBfi7nrJtIKKOm
-         imlZqPQpfpwY7WUQ7bCw095vWRkIGXPuIUbTPsRdTYPPwAUh6FwJMgoMYYJ+9SrLiH3H
-         d1E/QSCgowrw2PFb4gfcEJnndvndIadzWLimPcjoCKbb4MOpyL0f+zO4R6zAqDV/EV85
-         TFqAEXrdszqND+CEF7XKQINn7t6gf+/IcDBNJD9Hr3P45tVHYvvY50rpuSvbwY/gZwkF
-         sn6bRrjCvrSWs80jSoGrLiPpHjYljdc3MOzAGXVJ492kFKhU39jrnPch+KR/uvRQyHYj
-         uPiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716318101; x=1716922901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8ix/SXPQG+wpfYFllBOv3clmJtpOeRZmoQkniDsFhak=;
-        b=Iq/DjgcbTyt0LGezcgGyq7K4Xwvq2lcN4IqW/nXpkchug7QsHFXonGT9fiRzN8IPm1
-         pNRgGlKR5H5kd9Kl4rdXdebicIhe/yFIUFvtfewDQ+F5VCpYl7MBLTv2iqNOICiR687/
-         cQVWXYcGtC6gfEHyRTy2vTlPr+wRbjN+s/ircSQ1yHFI9x4oZlB3bIzNpyL450/mN+IU
-         pR8HR+2bkZKLkE/OihCJmbI94eICAcgO8sYlaWbAv/UWnl2Tv/awkOMfGfwNuqA4vtVR
-         mH4FVcL5PExROEDIZmxmxodwC19etX5qwls27N9rA0NR6IjWFvLFHxWE8Vnr7HybLGRH
-         Qh8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUrGklcwFSRfVpOJ9kfoojV+lQ7fN4Kh6eEN2/1ciGAxVtS1YF3idtAEe9h3V3K16KoEbzYWXVVsAx4w8Wsgv9IWJTF6zqL9SCAegPs3g==
-X-Gm-Message-State: AOJu0YwLA5zQh0T05cKPDinXk8159iA/WClUNaiDm05QdISrQ1XB2/13
-	oEi5pZY1mNzaDY/XOGfx+0NPpIsqzdYyGQh83AciLo6bUeAZ7vBUBBPcBQr1ExTNMEwuAdnmEUt
-	Ztbfr73ODtnUSWXlbvPw29vkuUOce1GR988+3
-X-Google-Smtp-Source: AGHT+IGsZHMYwB17/rHm2GPw8sDf3nKxTSkcIsaApOp5bux/QDPAPBCrzCKud52Dm0FNps4wM/XTSDtjC7pz3lXd3Qs=
-X-Received: by 2002:a05:6402:3594:b0:572:a154:7081 with SMTP id
- 4fb4d7f45d1cf-5782fc1d68amr18531a12.4.1716318100237; Tue, 21 May 2024
- 12:01:40 -0700 (PDT)
+	s=arc-20240116; t=1716321960; c=relaxed/simple;
+	bh=n1XYT0f8NZ7GY+qdmS7k5N3aMcsAOCFt6lECER9tD1I=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ljZzgyvJ7+W2e3SN18qWExI3umZaSSKrTN4ZLWUOb7EL197606kcEBidXZ4MpVSBioDOEj71Jz4Ph9/laFawYv1Dt+vffI5EhR8h1BI6vWS3scb5gLaGUw+YtVhWL0aLISIT+p/V7XjIFWJbJv2Hz+PYO2UVkRMkQGAWlW5aGDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d5YSTfTV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716321958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kUcZx+GYvnpd0qagpN08S3w0mckRV0Hazws3JBEBOHw=;
+	b=d5YSTfTVzhaJoo0tL2mNOjDElb3fFzZin/ECfjbTDr1lUn6gtDSZmFOPBIDANwGxJqiP7K
+	QyOKtP8yX3y+4nsNcXgoNoj1wVP68s4009un7kjR7ws9HFn8JojNB6X01/nguhMWUcsVnO
+	1greULb3Rd7kZD+hcRQO95HRtPaImps=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504-g-ZkIjQxPvWuKP4dSTmyWw-1; Tue, 21 May 2024 16:05:52 -0400
+X-MC-Unique: g-ZkIjQxPvWuKP4dSTmyWw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BB112101A52C;
+	Tue, 21 May 2024 20:05:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 6178A51BF;
+	Tue, 21 May 2024 20:05:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk>
+References: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk> <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk> <316306.1716306586@warthog.procyon.org.uk> <316428.1716306899@warthog.procyon.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Enzo Matsumiya <ematsumiya@suse.de>,
+    Matthew Wilcox <willy@infradead.org>,
+    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240427112451.1609471-1-stsp2@yandex.ru>
-In-Reply-To: <20240427112451.1609471-1-stsp2@yandex.ru>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 21 May 2024 21:01:02 +0200
-Message-ID: <CAG48ez0rOch3wemsmrL-ocadG1YeJ6Lyhz1uLxJod22Unbb_GA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
-To: Stas Sergeev <stsp2@yandex.ru>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Andy Lutomirski <luto@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <322228.1716321947.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Tue, 21 May 2024 21:05:47 +0100
+Message-ID: <322229.1716321947@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Sat, Apr 27, 2024 at 1:24=E2=80=AFPM Stas Sergeev <stsp2@yandex.ru> wrot=
-e:
-> This patch-set implements the OA2_CRED_INHERIT flag for openat2() syscall=
-.
-> It is needed to perform an open operation with the creds that were in
-> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLO=
-W
-> flag. This allows the process to pre-open some dirs and switch eUID
-> (and other UIDs/GIDs) to the less-privileged user, while still retaining
-> the possibility to open/create files within the pre-opened directory set.
+Jens Axboe <axboe@kernel.dk> wrote:
 
-As Andy Lutomirski mentioned before, Linux already has Landlock
-(https://docs.kernel.org/userspace-api/landlock.html) for unprivileged
-filesystem sandboxing. What benefits does OA2_CRED_INHERIT have
-compared to Landlock?
+> On 5/21/24 9:54 AM, David Howells wrote:
+> > Jens Axboe <axboe@kernel.dk> wrote:
+> > =
+
+> >> However, I'll note that BDP_ASYNC is horribly named, it should be
+> >> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
+> >> as-is.
+> > =
+
+> > I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not fr=
+om the
+> > code.
+> =
+
+> It is, something submitted with RWF_NOWAIT should have IOCB_NOWAIT set.
+> But RWF_NOWAIT isn't the sole user of IOCB_NOWAIT, and no assumptions
+> should be made about whether something is sync or async based on whether
+> or not RWF_NOWAIT is set. Those aren't related other than _some_ proper
+> async IO will have IOCB_NOWAIT set, and others will not.
+
+Are you sure?  RWF_NOWAIT seems to set IOCB_NOIO.
+
+David
+
 
