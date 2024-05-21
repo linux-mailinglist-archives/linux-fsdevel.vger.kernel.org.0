@@ -1,97 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-19911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01228CB1C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 17:55:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172788CB1DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 18:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C257284446
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 15:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39B4C1C2202D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2024 16:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A788C1482ED;
-	Tue, 21 May 2024 15:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BE01BF37;
+	Tue, 21 May 2024 16:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hFIBaauq"
+	dkim=pass (1024-bit key) header.d=deltaq.org header.i=@deltaq.org header.b="IOOpDAay"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC39014291B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 15:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA2E17BB5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 16:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306908; cv=none; b=a0ctoh0xfY5Jc4zlSrySRd867INCb8glxp8F8RaGwPblLEHmTULACmhzTTQrGZc81aHXOsHkK1Pt1D3b4YvHDdRcnvTWuCBmcJIoNdEecxRl2NJOVYEky/CpC7f2Ou62SeuQUbl32S4Dw/s7qhJHKo8H/ozwqnu2whkQNHUg86I=
+	t=1716307443; cv=none; b=LWBkFMNAffR1qxXCvVSPfb/pvnkAJXjqtL14P7W1vpBk8gUKN9XWZONxYEWnNOiqSRR2fwmytZw4AeEJR+MG+FYbYOmY9Qc6FzkJNF9rYnJW3l0JGZSho/C8Hl9e86S+59h5aAM3jSuftzpYWCrfOfZjPPaeNG8jxQqejvYWGl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306908; c=relaxed/simple;
-	bh=ETMyAjhAyjRrYjH6gWRvwzWDDJXx1j3zk86x7NvOJmw=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=YVBTz+DkVvOBMCnw8kHI0/oqdmJcv+2SA2YcW3o3dyM5mfA//xmLhRB8HHqHxUkldzJYPhAZid3BNOCDbmomggTkzLXwZp2zC/4IwhMnDbwh2IisNUWE0PYcRGxL2mX6I5SXa5gvOsshUM2fASe+s/bsFB6ocNQhScmCRBLHKOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hFIBaauq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716306905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ETMyAjhAyjRrYjH6gWRvwzWDDJXx1j3zk86x7NvOJmw=;
-	b=hFIBaauq2MEJFyaLOnRAeC68qhJJxwLBZEyqIxThxlm+z9f75RihebkKaErk8jT1i5vP4I
-	ZpeVNtwpjkxdyOr2q9EeZoG/HboLHVClx9DC3stYp/al5O0swGnG5SS1tGZP44MYJBWNcF
-	H3p2OWxce4x4RNUlDhaDkxqwnR7ZQdU=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-l7H-i_idMlq5SSTveGjq1Q-1; Tue,
- 21 May 2024 11:55:02 -0400
-X-MC-Unique: l7H-i_idMlq5SSTveGjq1Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7132329AB3E2;
-	Tue, 21 May 2024 15:55:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 0CB731C09481;
-	Tue, 21 May 2024 15:54:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk>
-References: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk> <316306.1716306586@warthog.procyon.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>,
-    Matthew Wilcox <willy@infradead.org>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
+	s=arc-20240116; t=1716307443; c=relaxed/simple;
+	bh=PiO4piuZ8WM1XFgbVNVEn0WUAY5AbEIxNnZT9JE1Dqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=Fmuod+zgEFoqWgYmDgM0pir/5pUq9bLBxHykL17v5OcxmG4+X4yx0YCQu2orl1yvb8yddugdAUKINT8EWAf8m4oXYNx/Dz7IM8iQ00x2VXDuxjQifHjyp9v0mvLulMYCsYH+KSBuVKEVjJ5CKe9alDMuHmvzV1PcIXm7RX6F5gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deltaq.org; spf=pass smtp.mailfrom=deltaq.org; dkim=pass (1024-bit key) header.d=deltaq.org header.i=@deltaq.org header.b=IOOpDAay; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deltaq.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltaq.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a5a4bc9578cso846166566b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 09:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=deltaq.org; s=deltaq; t=1716307439; x=1716912239; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PiO4piuZ8WM1XFgbVNVEn0WUAY5AbEIxNnZT9JE1Dqw=;
+        b=IOOpDAayG2laoib/oMkRatgDbpT2N4dWTawzxdv2oxvE7xU5l3joy21G1SMqLcAsbG
+         AjhV/j6pIImimDiZkr0uWEywPSJpf8fMwyEvVISdvEqLRQijX1lzlMMUKoxCCL4aD1cd
+         LNKDLM9b/TUCUXRI1gN4ZvN4U1JjxadlqGCBc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716307439; x=1716912239;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PiO4piuZ8WM1XFgbVNVEn0WUAY5AbEIxNnZT9JE1Dqw=;
+        b=SNoXpR3le5ybED2/ORWb/mjmNuv5OVu4cACeC6WWDWdCn61AQy3ImGv3dfdRaowvsV
+         bnXR3CgCQ/vDuvD4uHUtmLPUmRPqKMPuGaA8yC6LgNvWLNzwJdvt7dY8GzzTRaJDt/J6
+         1j+qkHHzjKrFjz6lLJB5IsAlnBT/ynn+tfxOQET33XjrHKMaWeBBnMRbk6y8/HHRkyVz
+         REI2iSHxd0GO26LgFvUNb/tWD8LK5rdpNy93Xqr39kUbEC4z3FjPZ5V20wWN9xamXvzX
+         MZxo+i9/c1Xh6nI6Mxzyz0iHA+L/Hfl23ff0joEyOEQ8zapR+mTv3+X2xeF6mopa9rFS
+         p23w==
+X-Gm-Message-State: AOJu0YyuK5XzFk8HXpgvdJkmRKx0FhQ4OG6XvRg8UUlqC9IxJfGagIFQ
+	7TPG4g3cDuKB47d7YIb3vTE5x2esRDoiDKkYEeOeteUmT+MkQWfEFAPAeSU9n4loIk6Y55kicGV
+	F4v5GoOE4w4taaG3CNSWsyXx/DTx6dHwCXuMmVrIlEgYh7KEDMHZiaQ==
+X-Google-Smtp-Source: AGHT+IHsNHg21ImQa03KFoFyXT64KVn9v6I0YXd2SjgNkVaFDrPOgImJ8AHGS0NnxlpdoQuNM2Zc8fZ8E1psZ8koLjc=
+X-Received: by 2002:a17:906:66ca:b0:a59:c2c3:bb4c with SMTP id
+ a640c23a62f3a-a5a2d675a9dmr2746587666b.70.1716307438701; Tue, 21 May 2024
+ 09:03:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <316427.1716306899.1@warthog.procyon.org.uk>
-Date: Tue, 21 May 2024 16:54:59 +0100
-Message-ID: <316428.1716306899@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+References: <CAPSOpYs6Axo03bKGP1=zaJ9+f=boHvpmYj2GmQL1M3wUQnkyPw@mail.gmail.com>
+ <CAOQ4uxjCaCJKOYrgY31+4=EiEVh3TZS2mAgSkNz746b-2Yh0Lw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjCaCJKOYrgY31+4=EiEVh3TZS2mAgSkNz746b-2Yh0Lw@mail.gmail.com>
+From: Jonathan Gilbert <logic@deltaq.org>
+Date: Tue, 21 May 2024 11:03:42 -0500
+Message-ID: <CAPSOpYsZCw_HJhskzfe3L9OHBZHm0x=P0hDsiNuFB6Lz_huHzw@mail.gmail.com>
+Subject: Re: fanotify and files being moved or deleted
+To: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jens Axboe <axboe@kernel.dk> wrote:
+Hmm, okay. In earlier testing, I must have had a bug because I wasn't
+seeing filenames for FAN_MOVE or FAN_DELETE. But, my code is more
+robust now, and when I switch it to those events I do see filenames --
+but not paths. Looks like I can do the open_by_handle_at trick on the
+fd in the main FAN_MOVED_FROM, FAN_MOVED_TO and FAN_DELETE event and
+that'll give me the directory path and then I can combine it with the
+file name in the info structure?
 
-> However, I'll note that BDP_ASYNC is horribly named, it should be
-> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
-> as-is.
+Are FAN_MOVED_FROM and FAN_MOVED_TO guaranteed to be emitted
+atomically, or is there a possibility they could be split up by other
+events? If so, could there be multiple overlapping
+FAN_MOVED_FROM/FAN_MOVED_TO pairs under the right circumstances??
 
-I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not from the
-code.
+One other thing I'm seeing is that in enumerating the mount table in
+order to mark things, I find multiple entries with the same fsid.
+These seem to be cases where an item _inside another mount_ has been
+used as the device for a mount. One example is /boot/grub, which is
+mounted from /boot/efi/grub, where /boot/efi is itself mounted from a
+physical device. When enumerating the mounts, both of these return the
+same fsid from fstatfs. There is at least one other with such a
+collision, though it does not appear in fstab. Both the root
+filesystem / and a filesystem mounted at
+/var/snap/firefox/common/host-unspell return the same fsid. Does this
+mean that there is simply a category of event that cannot be
+guaranteed to return the correct path, because the only identifying
+information, the fsid, isn't guaranteed to be unique? Or is there a
+way to resolve this?
 
-David
+Thanks,
 
+Jonathan Gilbert
+
+On Mon, May 20, 2024 at 10:58=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> On Tue, May 21, 2024 at 4:04=E2=80=AFAM Jonathan Gilbert <logic@deltaq.or=
+g> wrote:
+> >
+> > Hello :-)
+> >
+> > I want to use fanotify to construct a best-effort log of changes to
+> > the filesystem over time. It would be super useful if events like
+> > FAN_MOVE_SELF and FAN_DELETE_SELF could report the path that the file
+> > _was_ at just prior to the event. Reporting an FID value is of limited
+> > use, because even if it still exists, looking up the name (e.g. by
+> > open_by_handle_at, the way fatrace does) will only reveal the new name
+> > after a FAN_MOVE_SELF -- and after a FAN_DELETE_SELF, the file no
+> > longer has any path!
+> >
+> > I understand that in terms of a strictly accurate reconstruction of
+> > changes over time, fanotify events are of limited use, because they
+> > aren't guaranteed to be ordered and from what I have read it seems it
+> > is possible for some changes to "slip through" from time to time. But,
+> > this is not a problem for my use case.
+> >
+> > I have no idea what things are available where in the kernel code that
+> > generates these events, but in the course of writing the code that
+> > reads the event data that gets sent to an fanotify fd, I was thinking
+> > that the simplest way to achieve this would be for FAN_MOVE_SELF and
+> > FAN_DELETE_SELF events to have associated info structures with paths
+> > in them. FAN_DELETE_SELF could provide an info structure with the path
+> > that just got unlinked, and FAN_MOVE_SELF could provide two info
+> > structures, one for the old path and one for the new.
+> >
+> > Of course, it is possible that this information isn't currently
+> > available at the spot where the events are being generated!
+>
+> This statement is correct for FAN_DELETE_SELF.
+>
+> >
+> > But, this would be immensely useful to my use case. Any possibility?
+> >
+>
+> FAN_DELETE emitted for every unlink() has the unlinked file name -
+> a file can have many names (i.e. hardlinks) will almost always come
+> before the final FAN_DELETE_SELF, which is emitted only when st_nlink
+> drops to zero.and last file reference is closed.
+>
+> I say almost always, because moving over a file, can also unlink it,
+> so either FAN_DELETE or FAN_RENAME should be observed
+> before FAN_DELETE_SELF and those should be enough for your
+> purpose.
+>
+> FAN_MOVE_SELF could in theory have info about source and target
+> file names, same as FAN_RENAME because it is being generated
+> within the exact same fsnotify_move() hook, but that's the reason
+> that FAN_RENAME is enough for your purpose.
+>
+> FAN_MOVE_SELF intentionally does not carry this information
+> so that watchers of FAN_MOVE_SELF could get all the move events
+> merged and get a single move event with the FID after a series of
+> many renames.
+>
+> Thanks,
+> Amir.
 
