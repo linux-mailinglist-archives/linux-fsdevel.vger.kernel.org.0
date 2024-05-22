@@ -1,113 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-20023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5BD8CC801
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 23:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5E08CC85F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 23:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5531C20BE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 21:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB14F282459
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 21:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D24146D4A;
-	Wed, 22 May 2024 21:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C96149DEC;
+	Wed, 22 May 2024 21:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JvPsrKl5"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PAgB0mL+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7557E146A6F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 21:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6531149DE6;
+	Wed, 22 May 2024 21:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716412344; cv=none; b=kW+xUuDbKpMS9QoGIwrxdA41CtWAVPt6cVXSiURKpbH6KEGMRay8vMk+k10j2aR2CkL2WKjUL2/UMJcTI3f9Bdz5XikJQfWazaAqIflVQTLisg7su4995QublilO1gNCJ+UmncAQSn1UnlQiCLkMGcTW2JxJBuFoQp6FX/ITDEk=
+	t=1716415022; cv=none; b=FY8wqosP/XHU0g4rPhEZ6EzIYPSzAdmCSj/8r/qW8dC3mx5nYhe1A7XPw1O7FsJR9vGqHRJ6chH+UnpdaQ0ZOnjqNYeg7zHvSUJ24eRhGEHPJjqv2H2vh4xrRlIzpMb+WWKD2aawxgVol+Gvp6zo0M83ZCw4QYioyghREV5r0Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716412344; c=relaxed/simple;
-	bh=DYwtOowSorQf8W/s1eRFLYfspBNq5BINeak1ohYZ0f0=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=rh8PPcxsPwpGsCjEerkpFETJme6I9G9xIV7YZEvdf4IDr5Lrrxl6XPZyqcb9j3H1DAXPezjezssVRief5NjMxP8Hl9z+OY2Nz9VPkHtjkdZn8SaTK7CqNUKomjc3DytYwVjigAQK69Gxzk0Yh5FhEANo+uf/Ed26exwZaxS4hw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JvPsrKl5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716412342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=e5HgR1UJJHE4pqNLP7HJRqo1yRZdPdGaAXEqWOstEzk=;
-	b=JvPsrKl5v+Mv0QG3qrvWPDvLnwhJ8tZzY3XBmEZWycWfbE6dMBtyWU+pVw6Tw/7DfHu1H9
-	HNuOh3ybHG366/lway1mSqHXO94pT/0n89UEi0+TGJt8DDAjBtxSWUgNzklBD/0hnjTGZV
-	22rUuq3EiqsWiXjadQsWetGW2Y88SEg=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-142-jD23OcejMCWzTI9Q9-d0Eg-1; Wed,
- 22 May 2024 17:12:17 -0400
-X-MC-Unique: jD23OcejMCWzTI9Q9-d0Eg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8B79A3C025BA;
-	Wed, 22 May 2024 21:12:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 44C0E100046D;
-	Wed, 22 May 2024 21:12:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    Dominique Martinet <asmadeus@codewreck.org>
-cc: dhowells@redhat.com, Christian Schoenebeck <linux_oss@crudebyte.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>, v9fs@lists.linux.dev,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] 9p: Enable multipage folios
+	s=arc-20240116; t=1716415022; c=relaxed/simple;
+	bh=N4qVpG58VKqKgZKyTkTeB1CudfqXIits3TVA1PWshf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KjSYJ+J6pKShJXKnIg6IqQSRt7WHNjhyCoOZsn+GCdMtotQzSv2EAgD3TXfVbggzj/yQWwSmFU/XmqtZvn7xCcVDxRl0Dk950XBKiLiZ/rsnBY80Ev6b46TMhjoNb5uqta9tzStOCZc+PzfdDEdGD5594JB4HtHPyebRNCpoeII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PAgB0mL+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OtlyxkkzB2BjgfYbFdYm1Yvm8zkHcVIsiDANoj0QdIg=; b=PAgB0mL+L3w4fZSyf1x7yDLl/w
+	+XtXEAgSQ4Tp3RSWdju1UUHftUS3ScXd+YO2y8ICZNubA8jiygpNZYPP4ifan1zfHWc6Oj42FOUaA
+	Z+r37SPbuTaiUZJuJOMpRCg2qanunYYdB52ph2jlnVZV2OitmJcT9kRTL2G26gwEqk/W58rt77zbh
+	Kfaky9WKflalU3s1Kt60l0flCR5WID5qeaFV0QD0b4MQRoHGN07fI6+XM6lfGVoNIK2Tx/iThycfT
+	yySypAeMLhYtTGqSZnqa7fcHroQWlnNj7WPUHCpXCTiKohr3eyXOdSvjowd6VQvQgBnuQOCNG4kh8
+	9HiVCYlQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s9txB-00000004Cgh-2a85;
+	Wed, 22 May 2024 21:56:57 +0000
+Date: Wed, 22 May 2024 14:56:57 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: John Garry <john.g.garry@oracle.com>, David Bueso <dave@stgolabs.net>
+Cc: Theodore Ts'o <tytso@mit.edu>, lsf-pc@lists.linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
+Message-ID: <Zk5qKUJUOjGXEWus@bombadil.infradead.org>
+References: <20240228061257.GA106651@mit.edu>
+ <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <463765.1716412334.1@warthog.procyon.org.uk>
-Date: Wed, 22 May 2024 22:12:14 +0100
-Message-ID: <463766.1716412334@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-    
-Enable support for multipage folios on the 9P filesystem.  This is all
-handled through netfslib and is already enabled on AFS and CIFS also.
+On Wed, May 15, 2024 at 01:54:39PM -0600, John Garry wrote:
+> On 27/02/2024 23:12, Theodore Ts'o wrote:
+> > Last year, I talked about an interest to provide database such as
+> > MySQL with the ability to issue writes that would not be torn as they
+> > write 16k database pages[1].
+> > 
+> > [1] https://urldefense.com/v3/__https://lwn.net/Articles/932900/__;!!ACWV5N9M2RV99hQ!Ij_ZeSZrJ4uPL94Im73udLMjqpkcZwHmuNnznogL68ehu6TDTXqbMsC4xLUqh18hq2Ib77p1D8_4mV5Q$
+> > 
+> 
+> After discussing this topic earlier this week, I would like to know if there
+> are still objections or concerns with the untorn-writes userspace API
+> proposed in https://lore.kernel.org/linux-block/20240326133813.3224593-1-john.g.garry@oracle.com/
+> 
+> I feel that the series for supporting direct-IO only, above, is stuck
+> because of this topic of buffered IO.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: v9fs@lists.linux.dev
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/9p/vfs_inode.c |    1 +
- 1 file changed, 1 insertion(+)
+I think it was good we had the discussions at LSFMM over it, however
+I personally don't percieve it as stuck, however without any consensus
+being obviated or written down anywhere it would not be clear to anyone
+that we did reach any consensus at all. Hope is that lwn captures any
+consensus if any was indeed reached as you're not making it clear any
+was.
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 7a3308d77606..8c9a896d691e 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -295,6 +295,7 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
- 			inode->i_op = &v9fs_file_inode_operations;
- 			inode->i_fop = &v9fs_file_operations;
- 		}
-+		mapping_set_large_folios(inode->i_mapping);
- 
- 		break;
- 	case S_IFLNK:
+In case it helps, as we did with the LBS effort it may also be useful to
+put together bi-monthly cabals to follow up progress, and divide and
+conquer any pending work items.
 
+> So I sent an RFC for buffered untorn-writes last month in https://lore.kernel.org/linux-fsdevel/20240422143923.3927601-1-john.g.garry@oracle.com/,
+> which did leverage the bs > ps effort. Maybe it did not get noticed due to
+> being an RFC. It works on the following principles:
+> 
+> - A buffered atomic write requires RWF_ATOMIC flag be set, same as
+>   direct IO. The same other atomic writes rules apply.
+> - For an inode, only a single size of buffered write is allowed. So for
+>   statx, atomic_write_unit_min = atomic_write_unit_max always for
+>   buffered atomic writes.
+> - A single folio maps to an atomic write in the pagecache. So inode
+>   address_space folio min order = max order = atomic_write_unit_min/max
+> - A folio is tagged as "atomic" when atomically written and written back
+>   to storage "atomically", same as direct-IO method would do for an
+>   atomic write.
+> - If userspace wants to guarantee a buffered atomic write is written to
+>   storage atomically after the write syscall returns, it must use
+>   RWF_SYNC or similar (along with RWF_ATOMIC).
+
+From my perspective the above just needs the IOCB atomic support, and
+the pending long term work item there is the near-write-through buffered
+IO support. We could just wait for buffered-IO support until we have
+support for that. I can't think of anying blocking DIO support though,
+now that we at least have a mental model of how buffered IO *should*
+work.
+
+What about testing? Are you extending fstests, blktests?
+
+  Luis
 
