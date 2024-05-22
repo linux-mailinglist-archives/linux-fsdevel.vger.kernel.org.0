@@ -1,137 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-20017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BF08CC621
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 20:12:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F5E8CC654
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 20:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 687D8B20B91
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 18:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8A72819EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 18:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34CD145B33;
-	Wed, 22 May 2024 18:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A493145B33;
+	Wed, 22 May 2024 18:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Q5/wOZXM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHVTH4FA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA228003B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 18:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93898D51E;
+	Wed, 22 May 2024 18:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716401536; cv=none; b=D+DUpZMibzqnj8SeCTyhb5QMJbTZ/pe7tzlwSchHxie9yAfzlErhfGTPhO2mUMIg17QeoW8TL2nQgJCBE7gdHV0uR50eufqJ7VkeCEDnqr8iBRItc2LLufQkH5Gye2/sA8Qg67b+gbnmui9ojfXv1x3ALZ7z0I3xMYOeSNz/ocU=
+	t=1716402542; cv=none; b=DcMpjHZQeszURWCnqMbV4dMd1DIQbM2ivmeFQZ+MF9lMIbMQ3zNL/z98wxOs8SpkqtT8iNARnus+XTLCx38AB2+xelSsR6/GylgS1SeQx8uSp/YPG65DZyV2GS+9Rz7IZ4MOG+psgdyE0+JpHkp3PSbuP9vwJjKAxSmSWYnTHio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716401536; c=relaxed/simple;
-	bh=ayimWCKkgfYo+0x6XeVSOVgCcBa5dhPMekRUmdgIThw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=less80FqskwangWwAQ2E9cvvNSh3fTMXM/Ac8KBL8smJSweY7LjPEiccDBtLP8Ay4n4k3kA64Wft36QoJ1KRVp/BYunwF8fESDroVMhOhJBpBm9TaFKi1c3gNfEFB6Qu6y/Jd5rFa+YIuvc+eExa0o2Ynnr5flbxbV+nd76a/Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Q5/wOZXM; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so914316866b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 11:12:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716401533; x=1717006333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AugUKhaYwKDJ/9b03MK/LG9RwwxS/6pxd40CuSzPjmc=;
-        b=Q5/wOZXMiRbWA/fXG8dJVdto9U/Ie+P3carHPQskZPGO1ElvZRq6YhRMc/1jBm5fZ7
-         qiVW2a5ptIBDqiVxZ3MeWuuJTn+665wXlemiqWV4a9DqabA9m6+DTDAniPO7NGYyKxm/
-         hqySYUKvI3OxoVuRNS03/K7pqI+xchyOu2Fms=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716401533; x=1717006333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AugUKhaYwKDJ/9b03MK/LG9RwwxS/6pxd40CuSzPjmc=;
-        b=UBbPJkNu2h7iptu+MHN8jQC2cNP/N6IuraLmynS4E/fvsDEYVytBNAQWsPUt1fTp/y
-         yjonj1EbB2nXoExWSLKoEV4vr54jLrKGKQd5QfVTccykRTJebjBEVhz0A8dyMMOAehMq
-         1V47qdlX4KuB72I1ZDYEZqSgWeSwapk9TNJJfWOgm6zETWswEUO9qAHWnONgHTjdrRa0
-         8r7+aEjynKFIiQLMxsfSQ7mvBxUh6uvVDQ+C0fCtPxUq3wtBFXi5R1ULWd+mMv5Qfp7H
-         vbTPDNISD6DwTJjIhtoWJ1nKfvSD92f2PNmzE7v4YNcT4cbIQ08Pu1V+099br5rWJCbU
-         NhRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8O5XdAkiyIbGjtorFS0McKgQvz2i6fV0D4qMdhpFYKkR/tUOHUyO0WM+PcG28A2TBWRmd5WCE/fkWmnF/fQLxFffdNRcvTNW3Ayj1uQ==
-X-Gm-Message-State: AOJu0YxPgNc/jwQvW4WCYYCadChxx9LZvTsM37hZMNGZAzvtEV71VJ/L
-	etpWPu5f51GLjgGpgsuHpfSaTr1GoKfw+xZfRUWxy8r65Z0qO5IAJoIyI/XYb8o2NhR4jCK5Nn+
-	zOBCR2g==
-X-Google-Smtp-Source: AGHT+IEJLOjViWGbztG4aClH5HeOj8ntbXL4TXNBzpiGqd0vz2baSYtt3xGY9ymD8gO2yJ5qYWun8w==
-X-Received: by 2002:a17:906:3ac1:b0:a59:bae0:b12c with SMTP id a640c23a62f3a-a62281e18cdmr229141766b.48.1716401532747;
-        Wed, 22 May 2024 11:12:12 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5cec3d9b5csm900344666b.16.2024.05.22.11.12.10
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 11:12:11 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-56e1bbdb362so8522343a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 11:12:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMNA88MQzP4NE9coXwOYeirSmmjDsyaKyw24ulkxhltiGRW57jIvzZpMFam1JtAlwWrwnt/9N7wIT1/m5TTccu1j9pGuERCxs/TXz0gA==
-X-Received: by 2002:a17:906:488:b0:a59:b1cf:fea0 with SMTP id
- a640c23a62f3a-a62280d5059mr234104266b.19.1716401530325; Wed, 22 May 2024
- 11:12:10 -0700 (PDT)
+	s=arc-20240116; t=1716402542; c=relaxed/simple;
+	bh=QBh+Kz0JP4xQ7T1N7vHv392YPIHKOlcyxs7oMAFk2W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiozQ50Y0Ze/e5OJQU7jbg+5Q8eh8iFivbh0j6Tp94XowQOm6ZhENQTYqAoymG5nM0um/TIjfq1ndaNNkt7gBpc8baIS3UszMQSkXdf1GV1sh+PWOClkkMNxvZpt1WXcPlxlwuG2lgFYjlmQFGm/8floi6FLeEEhQS2QsZG3Ld0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHVTH4FA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF9ADC2BBFC;
+	Wed, 22 May 2024 18:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716402542;
+	bh=QBh+Kz0JP4xQ7T1N7vHv392YPIHKOlcyxs7oMAFk2W8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dHVTH4FA89qy6c6HJ0vV3TddtRd86Ev3fQYWaFgB9YvcOU4CZvUk24rop1UU3KouI
+	 yR6R6QOFfzz5p8YORvkpEBBAFiXnuPKiTls3MLZnbMKDNgsHsnUSHdbOCc9DRsC0al
+	 T6BgXWrxqAhKuIHfTcnIo/gmrakgfgm09AvfS13Z1cNCQ0Trk/oQBj8hJiQEzC2V1S
+	 Jbej9YV5lSVcpdaXMp4GGeMmWabCfWBES5rx5Mcb7bxxujG3XuE1mzJTx36mztiVAq
+	 qIdZNoksOWGRS92i9g0KUNOqKnPLN8SHj5jlDEZObW2c9aLFoFrnBqbKZfH96goIkO
+	 uVn4TebZ49y6A==
+Date: Wed, 22 May 2024 11:29:00 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, aalbersh@redhat.com,
+	linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
+Message-ID: <20240522182900.GB1789@sol.localdomain>
+References: <ZjtmVIST_ujh_ld6@infradead.org>
+ <20240508202603.GC360919@frogsfrogsfrogs>
+ <ZjxY_LbTOhv1i24m@infradead.org>
+ <20240509200250.GQ360919@frogsfrogsfrogs>
+ <Zj2r0Ewrn-MqNKwc@infradead.org>
+ <Zj28oXB6leJGem-9@infradead.org>
+ <20240517171720.GA360919@frogsfrogsfrogs>
+ <ZktEn5KOZTiy42c8@infradead.org>
+ <20240520160259.GA25546@frogsfrogsfrogs>
+ <Zk4DIzXJX_gVoj2-@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515091727.22034-1-laoar.shao@gmail.com> <202405221518.ecea2810-oliver.sang@intel.com>
- <CAHk-=wg2jGRLWhT1-Od3A74Cr4cSM9H+UhOD46b3_-mAfyf1gw@mail.gmail.com> <Zk4n1eXLXkbKWFs2@casper.infradead.org>
-In-Reply-To: <Zk4n1eXLXkbKWFs2@casper.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 22 May 2024 11:11:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgdm4SN_ofM1gFuF7CTRgVcbAGuopgS3NWP04zRCn_SKw@mail.gmail.com>
-Message-ID: <CAHk-=wgdm4SN_ofM1gFuF7CTRgVcbAGuopgS3NWP04zRCn_SKw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: Delete the associated dentry when deleting a file
-To: Matthew Wilcox <willy@infradead.org>
-Cc: kernel test robot <oliver.sang@intel.com>, Yafang Shao <laoar.shao@gmail.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Waiman Long <longman@redhat.com>, 
-	Wangkai <wangkai86@huawei.com>, Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org, 
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zk4DIzXJX_gVoj2-@infradead.org>
 
-On Wed, 22 May 2024 at 10:14, Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, May 22, 2024 at 09:00:03AM -0700, Linus Torvalds wrote:
-> > Of course, if you do billions of lookups of different files that do
-> > not exist in the same directory, I suspect you just have yourself to
-> > blame, so the "lots of negative lookups" load doesn't sound
-> > particularly realistic.
->
-> Oh no.  We have real customers that this hits and it's not even stupid.
+On Wed, May 22, 2024 at 07:37:23AM -0700, Christoph Hellwig wrote:
+> On Mon, May 20, 2024 at 09:02:59AM -0700, Darrick J. Wong wrote:
+> > On Mon, May 20, 2024 at 05:39:59AM -0700, Christoph Hellwig wrote:
+> > > On Fri, May 17, 2024 at 10:17:20AM -0700, Darrick J. Wong wrote:
+> > > > >   Note that the verity metadata *must* be encrypted when the file is,
+> > > > >   since it contains hashes of the plaintext data.
+> > > > 
+> > > > Refresh my memory of fscrypt -- does it encrypt directory names, xattr
+> > > > names, and xattr values too?  Or does it only do that to file data?
+> > > 
+> > > It does encrypt the file names in the directories, but nothing in
+> > > xattrs as far as I can tell.
+> > 
+> > Do we want that for user.* attrs?  That seems like quite an omission.
+> 
+> I'll let Eric answer that.  Btw, is the threat model for fscrypt written
+> down somewhere?
 
-Oh, negative dentries exist, and yes, they are a major feature on some
-loads. Exactly because of the kinds of situations you describe.
+See https://www.kernel.org/doc/html/latest/filesystems/fscrypt.html?highlight=fscrypt#threat-model
 
-In fact, that's the _point_. Things like PATH lookup require negative
-dentries for good performance, because otherwise all the missed cases
-would force a lookup all the way out to the filesystem.
+As for why it stopped at file contents and names (and fsverity Merkle tree
+blocks which ext4 and f2fs encrypt in the same way as contents), it's just
+because it's very difficult to add more, and file contents and names alone were
+enough for parity with most other file-level encryption systems.  That's just
+the nature of file-level encryption.  For each additional type of data or
+metadata that's encrypted, there are a huge number of things that need to be
+resolved including algorithm selection, key derivation, IV selection, on-disk
+format, padding, UAPI for enabling the feature, userspace tool support including
+fsck and debugging tools, access semantics without the key, etc...
 
-So having thousands of negative dentries is normal and expected. And
-it will grow for bigger machines and loads, of course.
+xattr encryption is definitely something that people have thought about, and it
+probably would be the next thing to consider after the existing contents and
+names.  Encrypting the exact file sizes is also something to consider.  But it's
+not something that someone has volunteered to do all the work for (yet).  If you
+restricted it to the contents of user xattrs only (not other xattrs, and not
+xattr names), it would be more feasible than trying to encrypt the names and
+values of all xattrs, though it would still be difficult.
 
-That said, I don't think we've had people on real loads complain about
-them being in the hundreds of millions like Yafang's case.
+Of course, generally speaking, when adding fscrypt support to a filesystem, it's
+going to be much easier to just target the existing feature set, and not try to
+include new, unproven features too.  (FWIW, this also applies to fsverity.)  If
+someone is interested in taking on an experimental project add xattr encryption
+support, I'd be glad to try to provide guidance, but it probably should be
+separated out from adding fscrypt support in the first place.
 
-> plan9 handles this so much better because it has that union-mount stuff
-> instead of search paths.  So it creates one dentry that tells it which of
-> those directories it actually exists in.  But we're stuck with unix-style
-> search paths, so life is pain.
+> > > > And if we copy the ext4 method of putting the merkle data after eof and
+> > > > loading it into the pagecache, how much of the generic fs/verity cleanup
+> > > > patches do we really need?
+> > > 
+> > > We shouldn't need anything.  A bunch of cleanup
+> > 
+> > Should we do the read/drop_merkle_tree_block cleanup anyway?
+> 
+> To me the block based interface seems a lot cleaner, but Eric has some
+> reservations due to the added indirect call on the drop side.
 
-I suspect you are just not as aware of the downsides of the plan9 models.
+The point of the block based interface is really so that filesystems could
+actually do the block-based caching.  If XFS isn't going to end up using that
+after all, I think we should just stay with ->read_merkle_tree_page for now.
 
-People tend to think plan9 was great. It had huge and fundamental
-design mistakes.
+> > One of the advantages of xfs caching merkle tree blocks ourselves
+> > is that we neither extend the usage of PageChecked when merkle blocksize
+> > == pagesize nor become subject to the 1-million merkle block limit when
+> > merkle blocksize < pagesize.  There's a tripping hazard if you mount a 4k
+> > merkle block filesystem on a computer with 64k pages -- now you can't
+> > open 6T verity files.
+> > 
+> > That said, it also sounds dumb to maintain a separate index for
+> > pagecache pages to track a single bit.
+> 
+> Yeah.  As I mentioned earlier I think fsverify really should enforce
+> a size limit.  Right now it will simply run out space eventually which
+> doesn't seem like a nice failure mode.
 
-Union mounts =C3=A0 la plan9 aren't hugely wonderful, and there's a reason
-overlayfs does things differently (not that that is hugely wonderful
-either).
+You could enforce the limit of 1 << 23 Merkle tree blocks regardless of whether
+the block size and page size are equal, if you want.  This probably would need
+to be specific to XFS, though, as it would be a breaking change for other
+filesystems.
 
-             Linus
+As for ext4 and f2fs failing with EFBIG in the middle of building the Merkle
+tree due to it exceeding s_maxbytes, yes that could be detected at the beginning
+of building the tree to get the error right away.  This just isn't done
+currently because the current way is simpler, and this case isn't really
+encountered in practice so there isn't too much reason to optimize it.
+
+- Eric
 
