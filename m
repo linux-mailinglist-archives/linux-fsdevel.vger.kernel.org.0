@@ -1,109 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-19997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98748CC035
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 13:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8445C8CC220
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 15:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26151F2187D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 11:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC621F238AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 13:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E072F8287E;
-	Wed, 22 May 2024 11:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D801411C5;
+	Wed, 22 May 2024 13:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="eN/G7J8C"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="eNfUi+JD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB9E824BC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 11:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2AA140E30
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 13:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377337; cv=none; b=UxIbqLtnzfd9Gikok0fuJfHdy4i1jqHOXdxKnLLcC/GPZq0RBdptAuMQJEBjuI4UXsBx7ZnaYCi+UDDfWRScDc+KtlVe96zr847DJXPJ5gMEzKkyvvnuLjHM/idCfWGlj0fGqswkD8LF9sflFZrXKjCOM3UW8IFPQfBGLAyNOEI=
+	t=1716384557; cv=none; b=X1M+gPO0ZdxhzFsDJ2iOFvE06F0GgkWPrcg0/S4zZ/I3LdIon1bbazSxCf6qYq7DY/TiFpFd2OcSDHirP55PCCKLbUYy003OHQpF2p2f1e2BP5nG/Flv/JXHq8OpDhlyLder2rPaaHqG093TQFYMIew5nl5wlCb8Emj9HD5Jz/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377337; c=relaxed/simple;
-	bh=3bJdJ8HW1Na5LLk+AGH4z17x+8X++BBtE11tCH2eQoc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y0vSd0rrHsoMypJuPQozIHIestbcST8i92/gDOX359TKgoaCwPLeHGJi7c9bqmQrHr19niQC2hN76A1AGWHf98HLyoQLFxQ4/dh9n/utPC+ue7BrCez2hMnXM0efE/9Je6BYfGs2qwbyC2M/tY6vB8qe/KZEmNrcDxCs/TyxBfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=eN/G7J8C; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1716384557; c=relaxed/simple;
+	bh=61mO5+snMGsz2ee+TFdxLBoONuQxJeAcSO8S6crnAK8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=HcjpfKBDuhf6XuOC9qb0X2NfhqPXSr0Ezt9B3eZTUHq5+e+50J7OK6LNFOzZGy283iRqG88Fq1sdpUdMrc8yc7jgINov9UPYlVagxrApcnOQX1ZUBsDASoIIBu2mqgrTYZ0mznNRArs/SpvjfS86wwIkKCCn0cLWtM1EQnB8qdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=eNfUi+JD; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59e4136010so1028739666b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 04:28:55 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572af0b12b8so9974256a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 06:29:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1716377334; x=1716982134; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KNstTbNFBCd+HhKurLCnuPWR0z0UVPvAuThP/LhWOd0=;
-        b=eN/G7J8C84raWniw310y1EpLoZrKwLRk8mgg2G7az7jscCt1S0EKldbn0KOnIM0Wig
-         FckEbk4wH6bxTI7stUKHNpy1VZ90169MBrB3fc/d0orV8/chSi6s1MkQCehitRS8qO95
-         M49TXOAMAZwn+PCAl7RfhPgx4AH39pdgIndIg=
+        d=szeredi.hu; s=google; t=1716384554; x=1716989354; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fcAnLjMIMbITY++kSDoM1eUoNeGeLxhIN5O6O+u3md8=;
+        b=eNfUi+JD5hCg56yJHaoYPZ74COFIf6NnI0qH9nL6BI8IxXaugOw9AW3WDE/g7eQcPq
+         RTx94BQ/2OyeqmBZKoYXaGYV3g5OCVoTPNNg3hzW4oFWz36j3evrjcYaF7mINHHgHdPo
+         0/kzMaf4396YboZdIHbbKGcEAJW0lSVIbfk00=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716377334; x=1716982134;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KNstTbNFBCd+HhKurLCnuPWR0z0UVPvAuThP/LhWOd0=;
-        b=YEm6ETgVvE8mYGQYUsEIHxyvt7z3WqM+dimgoA06qXY62i/ylxMuAQ1/ecl0bFaAci
-         Gfa31fz2K3q5YQHLD5EaW/5WY/wFqMUqDGMjSzjNxZD1fYogt3QrhticzFq76DmPHgaj
-         HeRhLyvYMt+hTKyzrV4Ij0wwtmUmDwJiqKew7BPj7dgv55YYONHI5rhWpOBaCK+x4svJ
-         nYVU0gKJ0+EL7VJH8bNIDo0A3c85imDsDOwBFDn5R9gjOgkHhYBxc23qx/+sfSwZQQDs
-         9k1yTqqogJ+s4fie0h/c4f1wHqmTwBh5FSgG0nuBiELQjKx8dYnihFaS+k/PG1TfGGoQ
-         oaLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSttpm0M80dXrJLI9QXgps6MhoHhy0AK3IwwFhOXAZIu5Sefntz7P8OzprPbtYZIfkHL9XqZZuGRwKUza/4TubM0QMw946ZYIbALdB0Q==
-X-Gm-Message-State: AOJu0YwrHCoO98uLuq6lTY/aBfJwfR9irdtF6cKI2Ea1twEjDjTVMWP4
-	JSeqqb1/F8GpeDEelS0vCy2U5gD1EJ54nV0p3bi9fKlBTQ6Q7MTpnnPjzlNPAeSnAwk+6eUt73u
-	577CT7QdWzJfbm7O2J7pWf03nPPiEwB3lYhpfDw==
-X-Google-Smtp-Source: AGHT+IE5WaF87K/wVsaT0a6gSy0rGBzZLsdh108SeEf5aQ3zolCWJBW1NV7c9ET+Od7JRp7Fevvf53iJJIu4qKo7s5M=
-X-Received: by 2002:a17:906:1589:b0:a59:c52b:993c with SMTP id
- a640c23a62f3a-a62281fc3b7mr84214066b.77.1716377334095; Wed, 22 May 2024
- 04:28:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716384554; x=1716989354;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fcAnLjMIMbITY++kSDoM1eUoNeGeLxhIN5O6O+u3md8=;
+        b=igWUDwrpTG6Ja1LJm9ROOr1zfY+1BKQK5P5cCgAyC6/GOMD0709bdtrdFCpEyG9Tu+
+         9ny+fE7V34qMDRlcoPXMVZIgLzgMpGoMBkjTkbutVCMD9I267rlV4uc4gG+VmxLXv8Od
+         g+eG1PZoxxPLNnIjkpEHGorslhUybKIvWoqrPjZ9qoRRV4iwf3FVOdHekWPWd6ucGCXA
+         cqhSMgXnqZH9xU2NvURErKl5kBbkXAdLjdwZeZtX+Gnuzp7tNebz8QHt1DQU5ODL9T1d
+         QgTRdBDG822QcSgmTztJ1pJics7DrVWgJBlrJHg4uKekoBz2GLiIiPYlt6fxDLSVWoXq
+         Se/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVWNst8IlKydVYBwR5PU3cVUh4lBP7rght0EffJxy/8nq00WOi+N2FNJofeVIroU8ldHRYetKZoBV/2BjUeccb9NB2rr6TJAMLr8ho3JQ==
+X-Gm-Message-State: AOJu0YywjTlbgY+qIaibAJzN2uT0h562M7O0amrzCCu2Yf+qVsR40rvy
+	SsT57E+WLtyceZpgjJG65hidtjKO0ShFUT9pmn8XbnEhjr3044rJdZ0YQdUE2H/L29MELpHJHtu
+	RFIOI897zuSmXAjytcLWzVaaKJyV7enQ+etzpyRdCDLUtZ5cBYiM=
+X-Google-Smtp-Source: AGHT+IEkcTSyEUkeYpXWY+h3epaoj2bcPKEEthTvq9ZR3Kgjf4O9kooRyINxL3rDCrzwmh3KjLFlaI17FCigLPEni+M=
+X-Received: by 2002:a17:906:6884:b0:a59:9e01:e787 with SMTP id
+ a640c23a62f3a-a62280a0e9emr136501566b.34.1716384554522; Wed, 22 May 2024
+ 06:29:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1708709155.git.john@groves.net> <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
- <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
- <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
- <kejfka5wyedm76eofoziluzl7pq3prys2utvespsiqzs3uxgom@66z2vs4pe22v>
- <CAJfpegvQefgKOKMWC8qGTDAY=qRmxPvWkg2QKzNUiag1+q5L+Q@mail.gmail.com> <CAOQ4uxiY-qHSssaX82_LmFdjp5=mqgAhGgbkjAPSXcZ+yRecKw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiY-qHSssaX82_LmFdjp5=mqgAhGgbkjAPSXcZ+yRecKw@mail.gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 22 May 2024 13:28:42 +0200
-Message-ID: <CAJfpegvAuPtKzR1A4GdaZTB_EDqPu53wUf97D1QOUo9VKkTV9Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: John Groves <John@groves.net>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, 
-	gregory.price@memverge.com, Vivek Goyal <vgoyal@redhat.com>, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
+Date: Wed, 22 May 2024 15:29:02 +0200
+Message-ID: <CAJfpegu93nZEeEJhepnDhzHO7khEmXkP1UssKNErqXFFUw-8uA@mail.gmail.com>
+Subject: [GIT PULL] overlayfs update for 6.10
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 22 May 2024 at 12:16, Amir Goldstein <amir73il@gmail.com> wrote:
+Hi Linus,
 
-> The first open would cache the extent list in fuse_inode and
-> second open would verify that the extent list matches.
->
-> Last file close could clean the cache extent list or not - that
-> is an API decision.
+Please pull from:
 
-Well, current API clears the mapping, and I would treat the fi->fb as
-a just a special case of the extent list.  So by default I'd keep this
-behavior, but perhaps it would make sense to optionally allow the
-mapping to remain after the last close.  For now this is probably not
-relevant...
+git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git
+tags/ovl-update-6.10
+
+- Add tmpfile support
+
+- Clean up include
 
 Thanks,
 Miklos
+
+---
+Miklos Szeredi (2):
+      ovl: implement tmpfile
+      ovl: remove upper umask handling from ovl_create_upper()
+
+Thorsten Blum (1):
+      ovl: remove duplicate included header
+
+---
+ fs/backing-file.c            |  23 +++++++
+ fs/internal.h                |   3 +
+ fs/namei.c                   |   6 +-
+ fs/overlayfs/dir.c           | 152 ++++++++++++++++++++++++++++++++++++-------
+ fs/overlayfs/file.c          |   3 -
+ fs/overlayfs/inode.c         |   1 -
+ fs/overlayfs/overlayfs.h     |   3 +
+ include/linux/backing-file.h |   3 +
+ 8 files changed, 165 insertions(+), 29 deletions(-)
 
