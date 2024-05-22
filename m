@@ -1,153 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-19943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB39D8CB6C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 02:38:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C038CB6CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 02:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4711F22E65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 00:38:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CCF8B23B28
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 00:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1964A1C;
-	Wed, 22 May 2024 00:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BF14C62;
+	Wed, 22 May 2024 00:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BL0kEqqg"
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="YhB228Mc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SdbLII0G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from wflow8-smtp.messagingengine.com (wflow8-smtp.messagingengine.com [64.147.123.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01635211C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 00:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7153A1FA1;
+	Wed, 22 May 2024 00:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716338285; cv=none; b=nIv5M4ZifVQQ/vEDGdxYC6sl/swKBp+nEpK2C6W3ol/dJEuQPaW/rSNR70kB1bYwwXOvRIaYrl9LPgQrDiOCKCeb2Kqtvd/sLSAoj6scxTUQYCDcfiRBPoHhjeu3TR3R5Txz1SQEUjELs/qZoyP9SDvR5nO+TOEPj5CRCFDp2kE=
+	t=1716338414; cv=none; b=Wm+0iaOlzc+MERH5Qf4cnycrYLJ5oKwpVvefUTeyHuu0lfBGxYfBnrx6pVtr9FslsyYtwczNVPFYpklEM3Xsv+Bwl0T7+rrkzjFxB93zeTlsKE5emQWU7E+nXFpF4xvWgo90rd+iyURNM94wamaPLLcCi76Jc4G5exFYHVrbt9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716338285; c=relaxed/simple;
-	bh=LAj1b+bnCms4/xk1W3Z5rJaeVNK1RzfKlW1mijUnq80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HfRhmW1jDztLbGEPv8h2Z2Z+M5hHTErKFEAsjOfnlbPYpNQuCjqYFIojKiPfRmAqO9SqIexY7DylMUt4Fh6GhzsPrWZ4ozKO3dirIzn44AS4mDsIUzSPV365EvvAzKQRCgVJUGsufjgYlP0AQ5nJXGzeKXpFSBhvCwYG9CMjngk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BL0kEqqg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716338282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z5+Ml59SARQSuVhVqvLQWFYKARbZIUTwBnysaBLWgyU=;
-	b=BL0kEqqgPxvC/qKElxaY4ensU9xUectRs0VwJYY2kvftfGkha68v4JOPB/or0EYwfLzrON
-	X64qrcChwis+6Cghqm00relrOwpQz8gZeCNMm4wGdyT9zL4tBsKnakBz4e6/++yAE2ZYnk
-	Fjt6kQYtUHpv9GrIi10DuFzlEU4nXJk=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-kJvQRi3VPoiE0uKULhcT0Q-1; Tue, 21 May 2024 20:38:01 -0400
-X-MC-Unique: kJvQRi3VPoiE0uKULhcT0Q-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6f6a41800baso319114b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 17:38:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716338280; x=1716943080;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5+Ml59SARQSuVhVqvLQWFYKARbZIUTwBnysaBLWgyU=;
-        b=GuWamTU4WvzR29xT7KtBaRc5N+dvK5zFDKzOXzJMvIyWLXbyLCjTsbeWV5pcwRP7aN
-         YiaDPPfM8UenxDB7BgOt86ZUAOA2wDRHXuR73Dj1oHke1PkT7qUDhnFMXy1dgCncbnUE
-         lnVzy+GtR1hxh8zsp4ICEGiDCHGgxd4cGLxA2A3ZAwGzBXlYk9Emr+CzoLbEo2NQFyOO
-         2RovEbNxM3fXNiL/IbLt2MUFsdIfE0kY4doGYO4ElKJVXtgHLEfqvXwFbuLFxNkoP9kI
-         X/X/cnEHeOuapGzPvvg3VP6/pMVb58FCLIHue6NhYJqdV8JYfunk2ZNrMfSfnf0M+IaT
-         TjWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhqy4HZh9bYQ9gOJCQpjyf8WCRkdFw6g4f2jvfal4Eky97NLmSLWGMJeVB68Wml401JEaPUFWVQpQ3dcTWaS6Ef6R5yEou6s2cGi73vw==
-X-Gm-Message-State: AOJu0YxETOoy43qrvY61LSxk90zQxBoqCP2kZtlex3tHjsaXWN+KTMbm
-	AXDa+SofwoB0MhMUzjcgI31k5MWg5JLfOF+UROxl9jlNFCl/1Rc/YyAR0lAF6F1TV9UZ0rxvxvA
-	nKJQkGdIRX8TH1MeDFaoa5q/IQpI9mMs+EcOHFWQqmsVc0RB91aMtVCC8Bgal2Ls=
-X-Received: by 2002:a05:6a00:2e02:b0:6f4:9fc7:d239 with SMTP id d2e1a72fcca58-6f69fc6d156mr18259133b3a.14.1716338280044;
-        Tue, 21 May 2024 17:38:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8g4v0rGDxwPSEFVgieLMxzSKkG2WDTV5Q9c2aX+9gur91SnL1iT4TrvoZ73SO1oZm9pnZtw==
-X-Received: by 2002:a05:6a00:2e02:b0:6f4:9fc7:d239 with SMTP id d2e1a72fcca58-6f69fc6d156mr18259049b3a.14.1716338278556;
-        Tue, 21 May 2024 17:37:58 -0700 (PDT)
-Received: from [10.72.116.32] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d6b71760sm21601587b3a.97.2024.05.21.17.37.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 17:37:58 -0700 (PDT)
-Message-ID: <d8d3eeea-5425-48d4-ab80-a37cc340e8d2@redhat.com>
-Date: Wed, 22 May 2024 08:37:51 +0800
+	s=arc-20240116; t=1716338414; c=relaxed/simple;
+	bh=8B0pyok8glyBoi2CMBAzxoUXPEO9Y2mHnaBCbVJXa9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JdAxtaksL6VXT9/PfRffcFWLOmyCtRkOPro7uu9vrkYsvWQWN7bx6sRwmdJdA0D/8kuJs+9a4sN+rHE9SLFzRxtMnhW71jtX1w6YWT2aqZr3dASetGn7/Qr9EhtzCVwEwaDYIIfV0QP+KmCUFE2+KQb06MSBgxvVimyVERpE6Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=YhB228Mc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SdbLII0G; arc=none smtp.client-ip=64.147.123.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailflow.west.internal (Postfix) with ESMTP id 850A22CC01E9;
+	Tue, 21 May 2024 20:40:10 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Tue, 21 May 2024 20:40:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1716338410; x=1716342010; bh=wE/C8/1cu4
+	wwG5XhDNZrp3sPxcam/hgaOM+3UxWxSUs=; b=YhB228Mcku29ocsPUmPJmLg9vF
+	XeW7+tphU59T5T7cGn8/QXcCHE53htbcynBc4aCoqn7vGXJCIMHECrHP7eLx23nI
+	XNLLGHHHCT2pigTnlz0ODOu+jNyCr8bcxMsAjDvey53IfkbmKsc2dP4Z+YioptXD
+	bSg+YW2Zl8K795G7NiglmOUICkj82swIWC932d0OxoFnoOkQuxsX+q/UmUigXUKw
+	zgR9ofJBCQjBJRhGp/uJ3yaQkr129Y+NUo8LT4Gl2JIwIbVSLtMBD/8TytsWwFwR
+	eMQAuBKea6LdWqcKUPaNuedHb5Ed9XyOZsFBMqKuoS2+YQqBlL0hHlVr9dEg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716338410; x=1716342010; bh=wE/C8/1cu4wwG5XhDNZrp3sPxcam
+	/hgaOM+3UxWxSUs=; b=SdbLII0GpoeZf4KddZQYQrcPPYidHnoZdi6KNEL/pZHa
+	be5aofGXMiVk6GpJ2AsG2ULTN8BIox7XKFHC0PiyfsL7JVAZIhU0evBh6aZhzbIF
+	2A2RlNZRstJpAit5kxlkaIWH2YLHbX5ALzFlEZ+XKMvPxBbDM9zeudBVZSuDghC/
+	8NXh35WtWQpwoBhxh1vxEA+VQfCufVrOQZ60r1+585MTxXTDhDs+9FO51NQQzUAJ
+	1kcmz8No0WgBeum+rWGwRk2luvjAJ9aQCg3HFEHFS1ZxsrVxGimgV7BHYFtC/yEN
+	tYe6GSL55G9owj0JSk1AJ1ma+lIKDrGbE9Cgq5VNlA==
+X-ME-Sender: <xms:6T5NZhx3rpiM1DavGQ6oUv8KDfdUkEerMFTp3xRQfD_5tE2BBNfquA>
+    <xme:6T5NZhT7ER-XROBTSVDqM4l0VBZ1slq3N-wnu0TuHosDDTQzvpMTjxFxL-BvqS7rZ
+    523FuD2VUIN-D8HWwI>
+X-ME-Received: <xmr:6T5NZrU3DCjTRvhUtKgGK0YGuCY-8mSgP5QzMYJ3RuC-QgVhuvNea4QABfbqWEDINpi35VM6jpQh7CpSoEtJjYs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeifedgfeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
+    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
+    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
+    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
+X-ME-Proxy: <xmx:6T5NZjjC_5ygO2oCudKGq4Ly4ife-SK1kOEExJqOzI95Yf0WsleoPQ>
+    <xmx:6T5NZjDGR3mnfpCzMoV3FpZP5lLBmhLkBLMSgM3KLtgPa3fxUZEGmA>
+    <xmx:6T5NZsIexfSMHxg5n9cqGJwoKgMyFOiQS0oziWMn4DSjveI0nke13A>
+    <xmx:6T5NZiD2BVvYhVoNaOapkIY5GvRKkk1NITZfUZCODC34MGf4eDJcrw>
+    <xmx:6j5NZrbx9SZxUZBpnfDmq-nHMs8jjVUBo4dCv2Z-dKNO_Edb_KcWyTKt>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 May 2024 20:40:06 -0400 (EDT)
+Date: Tue, 21 May 2024 17:45:07 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, brauner@kernel.org, ebiederm@xmission.com, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	David Howells <dhowells@redhat.com>, containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+Message-ID: <7psuqchpr5njlcqb3koeyqz3y2jhuc44vfeockygdarqyc3eyu@qpmujctxfmak>
+References: <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
+ <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
+ <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
+ <vhpmew3kyay3xq4h3di3euauo43an22josvvz6assex4op3gzw@xeq63mqb2lmh>
+ <D1CQ1FZ72NIW.2U7ZH0GU6C5W5@kernel.org>
+ <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
+ <D1CQC0PTK1G0.124QCO3S041Q@kernel.org>
+ <1b0d222a-b556-48b0-913f-cdd5c30f8d27@canonical.com>
+ <D1FDU1C3W974.2BXBDS10OB8CB@kernel.org>
+ <872c8eb0-894b-413a-8e35-130984a87bba@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/11] ceph: drop usage of page_index
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>,
- Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
- Minchan Kim <minchan@kernel.org>, David Hildenbrand <david@redhat.com>,
- Hugh Dickins <hughd@google.com>, Yosry Ahmed <yosryahmed@google.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
- ceph-devel@vger.kernel.org
-References: <20240521175854.96038-1-ryncsn@gmail.com>
- <20240521175854.96038-4-ryncsn@gmail.com>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20240521175854.96038-4-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <872c8eb0-894b-413a-8e35-130984a87bba@canonical.com>
 
+On Tue, May 21, 2024 at 07:45:20AM GMT, John Johansen wrote:
+> On 5/21/24 07:12, Jarkko Sakkinen wrote:
+> > On Tue May 21, 2024 at 4:57 PM EEST, John Johansen wrote:
+> > > > One tip: I think this is wrong forum to present namespace ideas in the
+> > > > first place. It would be probably better to talk about this with e.g.
+> > > > systemd or podman developers, and similar groups. There's zero evidence
+> > > > of the usefulness. Then when you go that route and come back with actual
+> > > > users, things click much more easily. Now this is all in the void.
+> > > > 
+> > > > BR, Jarkko
+> > > 
+> > > Jarkko,
+> > > 
+> > > this is very much the right forum. User namespaces exist today. This
+> > > is a discussion around trying to reduce the exposed kernel surface
+> > > that is being used to attack the kernel.
+> > 
+> > Agreed, that was harsh way to put it. What I mean is that if this
+> > feature was included, would it be enabled by distributions?
+> > 
+> Enabled, maybe? It requires the debian distros to make sure their
+> packaging supports xattrs correctly. It should be good but it isn't
+> well exercised. It also requires the work to set these on multiple
+> applications. From experience we are talking 100s.
+> 
+> It will break out of repo applications, and require an extra step for
+> users to enable. Ubuntu is already breaking these but for many, of the
+> more popular ones they are shipping profiles so the users don't have
+> to take an extra step. Things like appimages remain broken and wil
+> require an approach similar to the Mac with unverified software
+> downloaded from the internet.
+> 
+> Nor does this fix the bwrap, unshare, ... use case. Which means the
+> distro is going to have to continue shipping an alternate solution
+> that covers those. For Ubuntu atm this is just an extra point of
+> friction but I expect we would still end up enabling it to tick the
+> checkbox at some point if it goes into the upstream kernel.
 
-On 5/22/24 01:58, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
->
-> page_index is needed for mixed usage of page cache and swap cache,
-> for pure page cache usage, the caller can just use page->index instead.
->
-> It can't be a swap cache page here, so just drop it.
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Cc: Xiubo Li <xiubli@redhat.com>
-> Cc: Ilya Dryomov <idryomov@gmail.com>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: ceph-devel@vger.kernel.org
-> ---
->   fs/ceph/dir.c   | 2 +-
->   fs/ceph/inode.c | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 0e9f56eaba1e..570a9d634cc5 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -141,7 +141,7 @@ __dcache_find_get_entry(struct dentry *parent, u64 idx,
->   	if (ptr_pos >= i_size_read(dir))
->   		return NULL;
->   
-> -	if (!cache_ctl->page || ptr_pgoff != page_index(cache_ctl->page)) {
-> +	if (!cache_ctl->page || ptr_pgoff != cache_ctl->page->index) {
->   		ceph_readdir_cache_release(cache_ctl);
->   		cache_ctl->page = find_lock_page(&dir->i_data, ptr_pgoff);
->   		if (!cache_ctl->page) {
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 99561fddcb38..a69570ea2c19 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -1863,7 +1863,7 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
->   	unsigned idx = ctl->index % nsize;
->   	pgoff_t pgoff = ctl->index / nsize;
->   
-> -	if (!ctl->page || pgoff != page_index(ctl->page)) {
-> +	if (!ctl->page || pgoff != ctl->page->index) {
->   		ceph_readdir_cache_release(ctl);
->   		if (idx == 0)
->   			ctl->page = grab_cache_page(&dir->i_data, pgoff);
+I'm not sure I understand your point here and how this relates to xattrs.
+This patchset has nothing to do with file capabilities. The userns
+capability set is purely a process based capability set and in no way
+influenced by file attributes.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+> > This user base part or potential user space part is not very well
+> > described in the cover letter. I.e. "motivation" to put it short.
+> > 
+> yes the cover letter needs work
 
+Yes, it's been mentioned several times already.
+While not in the cover letter, the motivation is stated in the first
+patch and provides several references to past discussions on the topic.
 
+This is nothing new, this subject has been contentious for years now and
+discussed over and over on these lists (Eric would know :)). As
+mentioned in the patch also, this recently warranted the inclusion of
+new LSM hooks.
+
+But again, I wrongfully assumed that this problem was well understood
+and still relatively fresh, that's my bad.
+
+> > I mean the technical details are really in detail in this patch set but
+> > it would help to digest them if there was some even rough description
+> > how this would be deployed.
+> > 
+> yes
+
+Yes, this was purposefully left out so as not to influence any specific
+implementation. There is a mention of where this could be done (i.e.
+init, pam), but at the end of the day, this is going to depend on each
+use case.
+Having said that, since it appears to be confusing, maybe we could add
+some of the examples I sent out in this thread or the other ones.
+
+I want to reiterate that this is a generic capability set, this is not
+magic switch you turn on to secure the whole system.
+Its implementation is going to vary across environments and it is going
+to be dictated by your threat model.
+
+For example, John's threat model of securing a multi-user Ubuntu Desktop
+is going to be very different than say securing a server where all the
+userspace is fixed and known.
+The former might require additional integration with the LSM subsystem.
+Thankfully, this patch should synergize well with it.
+
+Fundamentally, and at its core, it's very simple. Serge put it nicely:
+
+> If you want root in a child user namespace to not have CAP_MAC_ADMIN,
+> you drop it from your pU.  Simple as that.
+
+From there, you can imagine any integration you want in userspace and
+ways to enforce your own policies.
+
+TLDR, this is a first step towards empowering userspace with control
+over capabilities granted by a userns. At present, the kernel does not
+offer ways to do this. By itself, it is not a comprehensive solution
+designed to thwart threat actors. However, it gives userspace the option
+to do so.
 
