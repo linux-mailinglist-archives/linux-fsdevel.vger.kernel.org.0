@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-19961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0988CBA04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 05:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1DC8CBA06
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 05:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E99DE280DA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 03:51:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F0E1C21B6F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 03:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4453A7E0E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8B7E58D;
 	Wed, 22 May 2024 03:50:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FBF78C83;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D52A78C9C;
 	Wed, 22 May 2024 03:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716349806; cv=none; b=G7tHAK2fYG6faZbaqlq3MtguMJVuKWnHgUed5cxdrdG8p3FqHDHYjasNyz1AG+nZfODyjdGAl0YdyH3KUPVeMJ0MiCrEfSi3BVnIumpXcweTxiooULXbk8mBMJu0Eb0FTBqkjiHroP/xicTkA7s9V4TLwEc7kB572Yw7R0pPDvc=
+	t=1716349807; cv=none; b=B5BOTAklpPFlLU39YmJ+da8nnzqCyVdHBDyUTELuXMhNyhILRLamAUP26Fra6icHPkgQBwfgwUZCbLUZXdUMO+hQx1r94EdBmQxTv1pmP17DfkVLFof/teC7ScpnCa93ygKx2hJywgW8GlZAkkiJTtw1SMl/iUQhUYJx6/xqzjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716349806; c=relaxed/simple;
-	bh=kWxVJ/dGHXmL6Pb3y1v6dGD5eivC2kR2xmKgb20co9U=;
+	s=arc-20240116; t=1716349807; c=relaxed/simple;
+	bh=xFIWIQs94nRiioTsqRVAvGLFuymDOqizWvscX/cU7L0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=L6AHkx4ZvxUwmT66xbUAteGhfbN/3Oi2YnD0YuN2MYJzAcCRkJAwkBJXOo8RNvZ6cNI/LYm7pDyEB3J1diqycnL95CEI/AIjVuQTHLdMQT2j1k8h6gKZ+ZFxspshv3juoJlyl1YVDOIjrC4JAr/mr2eNKVm83F6iorLRmse2ZQM=
+	 MIME-Version; b=Mk+eAADe4TTHdHbRgVd3QYQWVSxGkL3eDkDoJroB5VzadgJMOS1+YKUKqJb3d6ohnpGJpcGx4Ub7fMeW6s18v2duL7S2RX/DFeMzC7whUXYTWGzri2H6S+BnhTnDI5zXZkDOYFB9j5dKjsfXxJ0xotLgiCvd23hDq9+CUc6VkNE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vkckl0Sj3z4f3m7R;
-	Wed, 22 May 2024 11:49:51 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vkckr2SHwz4f3jkV;
+	Wed, 22 May 2024 11:49:56 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 84BDE1A016E;
-	Wed, 22 May 2024 11:50:01 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 237181A0199;
+	Wed, 22 May 2024 11:50:02 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBFea01mxlBXNQ--.57627S15;
+	by APP1 (Coremail) with SMTP id cCh0CgBHGBFea01mxlBXNQ--.57627S16;
 	Wed, 22 May 2024 11:50:01 +0800 (CST)
 From: libaokun@huaweicloud.com
 To: netfs@lists.linux.dev,
@@ -54,9 +54,9 @@ Cc: hsiangkao@linux.alibaba.com,
 	yukuai3@huawei.com,
 	wozizhi@huawei.com,
 	Baokun Li <libaokun1@huawei.com>
-Subject: [PATCH v3 11/12] cachefiles: flush all requests after setting CACHEFILES_DEAD
-Date: Wed, 22 May 2024 19:43:07 +0800
-Message-Id: <20240522114308.2402121-12-libaokun@huaweicloud.com>
+Subject: [PATCH v3 12/12] cachefiles: make on-demand read killable
+Date: Wed, 22 May 2024 19:43:08 +0800
+Message-Id: <20240522114308.2402121-13-libaokun@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240522114308.2402121-1-libaokun@huaweicloud.com>
 References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
@@ -67,10 +67,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBFea01mxlBXNQ--.57627S15
-X-Coremail-Antispam: 1UD129KBjvJXoWxurykGw4fJw1rAw4UArW5Jrb_yoW5Jw4DpF
-	Way3WUGry09r4qgw1kArZ8A34rt3sxJF4DWw1UX3s5Arn0vr15Xr1IyryY9r15JrWrGa13
-	tr1jgFy7Z34jyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgBHGBFea01mxlBXNQ--.57627S16
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrWUJry5tw4ruw48KFW7Arb_yoW5Ar1rpF
+	Waya45KrykWF4Ikrn3Aw4UX34Sy3y8AFZrWrySqw1fAFnIqr1rZr1Ut3WYvF15A34jgrZx
+	tw48uFWxK34jv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUQS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2048vs2IY02
 	0E87I2jVAFwI0_JF0E3s1l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0
@@ -89,62 +89,94 @@ X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
 From: Baokun Li <libaokun1@huawei.com>
 
-In ondemand mode, when the daemon is processing an open request, if the
-kernel flags the cache as CACHEFILES_DEAD, the cachefiles_daemon_write()
-will always return -EIO, so the daemon can't pass the copen to the kernel.
-Then the kernel process that is waiting for the copen triggers a hung_task.
+Replacing wait_for_completion() with wait_for_completion_killable() in
+cachefiles_ondemand_send_req() allows us to kill processes that might
+trigger a hunk_task if the daemon is abnormal.
 
-Since the DEAD state is irreversible, it can only be exited by closing
-/dev/cachefiles. Therefore, after calling cachefiles_io_error() to mark
-the cache as CACHEFILES_DEAD, if in ondemand mode, flush all requests to
-avoid the above hungtask. We may still be able to read some of the cached
-data before closing the fd of /dev/cachefiles.
+But now only CACHEFILES_OP_READ is killable, because OP_CLOSE and OP_OPEN
+is initiated from kworker context and the signal is prohibited in these
+kworker.
 
-Note that this relies on the patch that adds reference counting to the req,
-otherwise it may UAF.
+Note that when the req in xas changes, i.e. xas_load(&xas) != req, it
+means that a process will complete the current request soon, so wait
+again for the request to be completed.
 
-Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+In addition, add the cachefiles_ondemand_finish_req() helper function to
+simplify the code.
+
+Suggested-by: Hou Tao <houtao1@huawei.com>
 Signed-off-by: Baokun Li <libaokun1@huawei.com>
 Acked-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
 ---
- fs/cachefiles/daemon.c   | 2 +-
- fs/cachefiles/internal.h | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ fs/cachefiles/ondemand.c | 40 ++++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
-diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
-index ccb7b707ea4b..06cdf1a8a16f 100644
---- a/fs/cachefiles/daemon.c
-+++ b/fs/cachefiles/daemon.c
-@@ -133,7 +133,7 @@ static int cachefiles_daemon_open(struct inode *inode, struct file *file)
- 	return 0;
+diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+index 922cab1a314b..58bd80956c5a 100644
+--- a/fs/cachefiles/ondemand.c
++++ b/fs/cachefiles/ondemand.c
+@@ -380,6 +380,20 @@ static struct cachefiles_req *cachefiles_ondemand_select_req(struct xa_state *xa
+ 	return NULL;
  }
  
--static void cachefiles_flush_reqs(struct cachefiles_cache *cache)
-+void cachefiles_flush_reqs(struct cachefiles_cache *cache)
++static inline bool cachefiles_ondemand_finish_req(struct cachefiles_req *req,
++						  struct xa_state *xas, int err)
++{
++	if (unlikely(!xas || !req))
++		return false;
++
++	if (xa_cmpxchg(xas->xa, xas->xa_index, req, NULL, 0) != req)
++		return false;
++
++	req->error = err;
++	complete(&req->done);
++	return true;
++}
++
+ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+ 					char __user *_buffer, size_t buflen)
  {
- 	struct xarray *xa = &cache->reqs;
- 	struct cachefiles_req *req;
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 45c8bed60538..6845a90cdfcc 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -188,6 +188,7 @@ extern int cachefiles_has_space(struct cachefiles_cache *cache,
-  * daemon.c
-  */
- extern const struct file_operations cachefiles_daemon_fops;
-+extern void cachefiles_flush_reqs(struct cachefiles_cache *cache);
- extern void cachefiles_get_unbind_pincount(struct cachefiles_cache *cache);
- extern void cachefiles_put_unbind_pincount(struct cachefiles_cache *cache);
+@@ -443,16 +457,8 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+ out:
+ 	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
+ 	/* Remove error request and CLOSE request has no reply */
+-	if (ret || msg->opcode == CACHEFILES_OP_CLOSE) {
+-		xas_reset(&xas);
+-		xas_lock(&xas);
+-		if (xas_load(&xas) == req) {
+-			req->error = ret;
+-			complete(&req->done);
+-			xas_store(&xas, NULL);
+-		}
+-		xas_unlock(&xas);
+-	}
++	if (ret || msg->opcode == CACHEFILES_OP_CLOSE)
++		cachefiles_ondemand_finish_req(req, &xas, ret);
+ 	cachefiles_req_put(req);
+ 	return ret ? ret : n;
+ }
+@@ -544,8 +550,18 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
+ 		goto out;
  
-@@ -426,6 +427,8 @@ do {							\
- 	pr_err("I/O Error: " FMT"\n", ##__VA_ARGS__);	\
- 	fscache_io_error((___cache)->cache);		\
- 	set_bit(CACHEFILES_DEAD, &(___cache)->flags);	\
-+	if (cachefiles_in_ondemand_mode(___cache))	\
-+		cachefiles_flush_reqs(___cache);	\
- } while (0)
- 
- #define cachefiles_io_error_obj(object, FMT, ...)			\
+ 	wake_up_all(&cache->daemon_pollwq);
+-	wait_for_completion(&req->done);
+-	ret = req->error;
++wait:
++	ret = wait_for_completion_killable(&req->done);
++	if (!ret) {
++		ret = req->error;
++	} else {
++		ret = -EINTR;
++		if (!cachefiles_ondemand_finish_req(req, &xas, ret)) {
++			/* Someone will complete it soon. */
++			cpu_relax();
++			goto wait;
++		}
++	}
+ 	cachefiles_req_put(req);
+ 	return ret;
+ out:
 -- 
 2.39.2
 
