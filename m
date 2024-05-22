@@ -1,119 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-19978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697B88CBAA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 07:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B53F78CBA2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 06:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4060AB207E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 05:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47C84B20370
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 04:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7019D55E53;
-	Wed, 22 May 2024 05:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUtyHVIt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F27377F13;
+	Wed, 22 May 2024 04:06:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F25746BF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 05:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE8E29CA;
+	Wed, 22 May 2024 04:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716355576; cv=none; b=f4C1mkR+4mPsOWcuEuIqp2W6PNCoUOZSvGI59amq2cCTgtzMWjxxV7FwjKtXtOdl3aWrUikC/1Kxi6obrFX58yi2SDLyIanw3d3NLFo7abgmwlZAlNl33AXK1YZXuBaIKtg7sitgbeXZFrPbpmelLV0qwz8/dg1di4RFUhpqYkw=
+	t=1716350762; cv=none; b=TFOq5xZH4Av2VCo85Z3ES5A/MV/WpsVLtrqfvJnMazQKNFeOZFwC/FaKJWU/y3mGYns2nbH8OCKMz00dP1IhoDPHilgexiFMM7T2s4GHly2Z7QdWMbZc0PNuZHhwkP4LhbxEKzaomiqDYxvKYrvswxK0OgjI/teRsUTqMjMzcqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716355576; c=relaxed/simple;
-	bh=mRHWU+QVqWic6ek3cPYHxhjIuOZJrBHZXf7AogPN+eY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OWEO9T2oShtzxy9wU/qRaFeaHcZor+EnzFLvvmr8JMKbUUgQvB8fRlAPmpF5i3ay4a4tF/awWDo0GUYAmEkJbJDgNwUFO13PAicu517nu8VVtkZ9a5uHdjQv+CcZxm74rYmPHmL+wiDXKtic+QEbGRJz1xvVFr/YJit0bg8YMpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUtyHVIt; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-792bcfde2baso72888085a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 22:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716355574; x=1716960374; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRHWU+QVqWic6ek3cPYHxhjIuOZJrBHZXf7AogPN+eY=;
-        b=eUtyHVItUGVv7sL48gdcz4cjNE0/BkhDE9Yxuz20kNsSTFp2e9qBWrb1/n7YP/yxg1
-         0616xyDitCxR5iw36pCqG70K0ixRTBThS4Sax+6soj23LHQAUhpVqyTTyq5+tIBry3Ir
-         6gGb6px7qDEfpTFrhXzIk2+J7WvRUZrjkFMx1veyGM1fg20KVfiiADj/LusWo9ZfAXzy
-         PLCXZAXJbu+Sqa7X2gOJ/4SyDAdrudHjfSAmcJ9AJ3SBwsFU0Djelsmcchu+NCO9g09u
-         Xn6VE6V6HYuhHEzh7s7YJKiYvuHBSrKfKU3cmCjN4RFeCirLrTvI0t67xfNWCagOI0DO
-         AAeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716355574; x=1716960374;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mRHWU+QVqWic6ek3cPYHxhjIuOZJrBHZXf7AogPN+eY=;
-        b=TQ4PXnbwd5TfbkZ7FxWQOVAyd8lavbr9CFvYtReWmfk8Lqx7x2QZMe484ThPu22nGY
-         MydUgFAR+lHLh2gwbiaXbArSJ46Uc3IlAKeSmfSV6UnZZApCgOHLyTN796pOPjF9BAO4
-         DCqT0r+sYhNRnGB0W4KM3aIwROwy2wL5fmoPUtRJqGj/99yu1rfKGBgFVOo4SI4+ckAz
-         xHSSXtBfuVkP7s7O1xb3uVha+NbrFGFy+phwPE5gf7UIMi4OvTKoP3/sOI5iiMrQYbnH
-         +DqcspvEhkKz8j4zm+avaamQ2OQMTQFZKoQv/0P+BTKucCYBegQRIuJXUaEIRyHiFQPK
-         rfeA==
-X-Gm-Message-State: AOJu0Yz97Ev+pLCtsocTNAk51IJppr2C95lHL1AGeV1owwWXuac8bpre
-	q3GNsnwMt5jMZMwck1snQsdIXqx4QcOusp5ruDxnWozGd7I0bAPXcxU26nMYZWZ9mZtvU2l4jEh
-	iQvz38zuFLNi5E1IZ1yJZ7HowcT55Fw==
-X-Google-Smtp-Source: AGHT+IGAZMeB1KfhYTmKD+gzaNopBBopBg7WCw12IKVHdNwvYaJ1a5P4X91+OY2ZxcKsEI4DVZLRnB9cvfYIzvVrdf4=
-X-Received: by 2002:a05:620a:558d:b0:792:f87c:7eb5 with SMTP id
- af79cd13be357-794994b6803mr97483685a.57.1716355574424; Tue, 21 May 2024
- 22:26:14 -0700 (PDT)
+	s=arc-20240116; t=1716350762; c=relaxed/simple;
+	bh=ChxVf4FnXZilWSTRkjIB2ZHFv7JVFX1ZGcQCv3Sbf1c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GZJbNZJM1AEZrHrOC/SXZ0pTYIJ7pSIeoGLANCjSK5C2XFiYU5JHUhP6GxqlK/6g3xw5wc1sxXqcPhQiBmynFjmJabYueMA6naPL9ZVRXb3qjefidhcDE2PZorELtJ6fy6zsrdSSY4i5BP5NSqJ1bFIRy4dX7PLy0+q2qjOQ6lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vkd560tQRz4f3m6r;
+	Wed, 22 May 2024 12:05:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 94F5B1A01B9;
+	Wed, 22 May 2024 12:05:56 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgBHZQ4ib01ms1VYNQ--.24441S4;
+	Wed, 22 May 2024 12:05:56 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com,
+	jefflexu@linux.alibaba.com,
+	zhujia.zj@bytedance.com,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	libaokun@huaweicloud.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	wozizhi@huawei.com,
+	Baokun Li <libaokun1@huawei.com>
+Subject: [PATCH RESEND 0/5] cachefiles: some bugfixes for withdraw and xattr
+Date: Wed, 22 May 2024 19:59:06 +0800
+Message-Id: <20240522115911.2403021-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPSOpYs6Axo03bKGP1=zaJ9+f=boHvpmYj2GmQL1M3wUQnkyPw@mail.gmail.com>
- <CAOQ4uxjCaCJKOYrgY31+4=EiEVh3TZS2mAgSkNz746b-2Yh0Lw@mail.gmail.com>
- <CAPSOpYsZCw_HJhskzfe3L9OHBZHm0x=P0hDsiNuFB6Lz_huHzw@mail.gmail.com>
- <CAOQ4uxhM-KTafejKZOFmE9+REpYXqVcv_72d67qL-j6yHUriEw@mail.gmail.com>
- <CAPSOpYuroNYUpK1LSnmfwOqWdGg0dxO8WZE4oFzWowdodwTYGg@mail.gmail.com> <CAOQ4uxgOmJjJT=mX96-AwWY_p9fHXtvNZFUcPgqggKgGtpsq9A@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgOmJjJT=mX96-AwWY_p9fHXtvNZFUcPgqggKgGtpsq9A@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 22 May 2024 08:26:03 +0300
-Message-ID: <CAOQ4uxiMtd80k9N93wjkO13vmmSt5s1333WdSrauGD_-b+rsRQ@mail.gmail.com>
-Subject: Re: fanotify and files being moved or deleted
-To: Jonathan Gilbert <logic@deltaq.org>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBHZQ4ib01ms1VYNQ--.24441S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFWxuF1xtw13Ar4ktFyDGFg_yoW8Xr47pF
+	WakF13JrykW39rGw4fAw15Xr1fA3yfGF4vg347Wr18Awn5Xr1YvF4Iyw15ZFy5Cr17tws2
+	v3WUKFy7Wr1Yy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
+	YI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pR6wZ7UUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-> > > If /home is a bind mount from, say, /data/home/ and you are watching
-> > > both /home and /data, you will need to figure out that they are the same
-> > > underlying fs and use a mount_fd of /data.
-> >
-> > My current plan is to discard any mounts which specify a root that is
-> > a subpath of another mount, and in the case of multiple mounts of the
-> > same root, pick one to move forward with (with hints from
-> > configuration) and only mark that one.
-> >
->
-> You can also use open_by_handle() to determine if one mount
-> is a subtree of another.
->
-> if you have two fds and two different fhandles from the root of two mounts
-> of the same fsid, only one of these commands will result in an fd with
-> non empty path:
-> fd2inmount1 = open_by_handle_at(mount1_fd, fhandle2, O_PATH);
-> fd1inmount2 = open_by_handle_at(mount2_fd, fhandle1, O_PATH);
->
-> So you can throw away subtree mounts of the same fsid keeping
-> only one mount_fd per fsid as you traverse the mounts.
->
+From: Baokun Li <libaokun1@huawei.com>
 
-Well ,that's incorrect.
-You may have bind mount of non-overlapping subtrees
-and you may not have the root mount at all in your mount namespace.
+Hi all!
 
-In that case, you can always keep all mount_fd's of a certain fsid and try to
-resolve the file handles in each one. Not optimal, but this is the information
-we have in events at the moment.
+There are some fixes for some cachefiles generic processes. We found these
+issues when testing the on-demand mode, but the non-on-demand mode is also
+involved. The following is a brief overview of the patches, see the patches
+for more details.
+
+Patch 1-2: Add fscache_try_get_volume() helper function to avoid
+fscache_volume use-after-free on cache withdrawal.
+
+Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
+concurrency causing cachefiles_volume use-after-free.
+
+Patch 4-5: Propagate error codes returned by vfs_getxattr() to avoid
+endless loops.
+
+Comments and questions are, as always, welcome.
 
 Thanks,
-Amir.
+Baokun
+
+Baokun Li (5):
+  netfs, fscache: export fscache_put_volume() and add
+    fscache_try_get_volume()
+  cachefiles: fix slab-use-after-free in fscache_withdraw_volume()
+  cachefiles: fix slab-use-after-free in cachefiles_withdraw_cookie()
+  cachefiles: correct the return value of
+    cachefiles_check_volume_xattr()
+  cachefiles: correct the return value of cachefiles_check_auxdata()
+
+ fs/cachefiles/cache.c          | 45 +++++++++++++++++++++++++++++++++-
+ fs/cachefiles/volume.c         |  1 -
+ fs/cachefiles/xattr.c          |  5 +++-
+ fs/netfs/fscache_volume.c      | 14 +++++++++++
+ fs/netfs/internal.h            |  2 --
+ include/linux/fscache-cache.h  |  6 +++++
+ include/trace/events/fscache.h |  4 +++
+ 7 files changed, 72 insertions(+), 5 deletions(-)
+
+-- 
+2.39.2
+
 
