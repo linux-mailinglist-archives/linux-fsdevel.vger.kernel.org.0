@@ -1,104 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-19982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52078CBBC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 09:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DEC78CBC6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 09:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8E11C2173A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 07:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEE151C2160D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 07:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCE07C6D4;
-	Wed, 22 May 2024 07:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640678002A;
+	Wed, 22 May 2024 07:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxUDh4A7"
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="WwyV/xR4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD47D7BAF7;
-	Wed, 22 May 2024 07:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D467FBA3;
+	Wed, 22 May 2024 07:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362072; cv=none; b=OtynCIumofW9ft4nVC+2Zv8t+gBnAsSErWvhhP4Z1Wk39znpjNAhfYbMw0uJUFo8/tHvOSajaFzFde3Bp4qxJAdjquI1qK+2mHbL4TRXjSnbgYyd76jw+f9CXqKXiHWIyUCmXixjowAaLX/UjF/jWcmThd4TiB68BlCu9VjdU6c=
+	t=1716364382; cv=none; b=FLK2EZrTwA89kOXuFfZg7M7l7QFzFIW7hdPqn9c3fM3LUnAZ7ZKx4CKcA/4o9UKQJiS+S5nMDo/vsYhZ+b6LFQn2CR/WAgKZnrRXhSr/8tgJf2tCdk+tVgjVjwvIyru7AxubJVdk1sHaqQxWsp/Yni9TYAfk4VEizvMZHB+W3wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362072; c=relaxed/simple;
-	bh=o7FelwEYe06bUj5gigSKOWEN1hyHxbXUGTMgm7PhL9Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h1O/f4ypO85NuEnv9Q6up9NtvMkJ1HkNgqo+WbDIBHyo7FoU1u6QnN9XGupjfsdi3UXw4537iE9SEn6LRxUfMIe4i1F5TDQlcNhHLU7jeHRJKMhsctgtyRYMfEUEVMrbWYoS7HQdA89hm3YT9OMPoiRK/jlDOAju4G8/WJyEf9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxUDh4A7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8693DC2BD11;
-	Wed, 22 May 2024 07:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716362071;
-	bh=o7FelwEYe06bUj5gigSKOWEN1hyHxbXUGTMgm7PhL9Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KxUDh4A73NHTC6Uo8h5Ypzmu20FS3YX6acckvMWdiTXlPRBjHCRk0EBbJl9S64aw7
-	 fvi2zjqqoHjbD8jQyI1RMGX+yQx0yPJAEnWSLlpK9yTT0aatU/SRonCaKuyKmVGbNH
-	 3HqrddQuCxvyfWafJoMknIMWKMebVIPmr5pz3n4sa9urXda/xmbnk9J8jWy3L7ypdD
-	 V1UvaZyoATvDw+yBeJObfOx70Af9oi6mTC5NVQw+byDXa4FRe2gG5/Hu+oF/RQiMBr
-	 aYar/GPGVKNDfbmSkaX4NWa83bKOiAMWu4xVSJI4C1GotroqgvH+ILaWPJpAEHlyM1
-	 es738P4O+j5QQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Steve French <stfrench@microsoft.com>,
-	David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Enzo Matsumiya <ematsumiya@suse.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	v9fs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
+	s=arc-20240116; t=1716364382; c=relaxed/simple;
+	bh=7hh+JKNoOSYUXcr16/GBfPDuDDEZW0YlbjXrngNmoH4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OohshTE6jkkqis6Nm2c8DU4JiXo0xpDGwT+XUQxkEPbrWH/ZlcirOS0b8FziU9sFCPwP/Mxm5s0/GAHrlh5dN+EYyg6oHABRKdNuI4VnWff/EAADHyupnExxMCVuH9d7Oal5M/eWaAm6+19EuI0wifAi/xjxDNcvT56lQ9EXWkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=WwyV/xR4; arc=none smtp.client-ip=211.125.140.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1716364381; x=1747900381;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AIWEN8D6NjuFU1bmJszkWUHQ/Up5x+riI0D821zKlIY=;
+  b=WwyV/xR4c75UOFx+GWT2T38o/ljVHJ5fchnxWh+NHsZDuOQ5zOExLujA
+   RW09m+6KapekXKJ6Rz+EOM2AWvh5/D+fP7CVA2oMNYzZT3ZZjT0wA0xtm
+   CkKFjcJV0FZsONrNgDtDUpOc1asPwPDlnboa/r3eiDKsWanQLOiF1qM1R
+   33pYdwL1solHzWvy29DC3h5k5MkkoZMymGx4dTSFV2JSUUnRvedj2DszP
+   zTZmgiIHMLgSvblXz93m43zmnh8+hePJtAqJkfJrcMW1YKXFbA/hEz4IR
+   Ncs0sx/YsTaw/tqjGRYUuOAxid96sn57poiq0hSIfWqzQnv2x9yjzEdBG
+   A==;
+Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
+  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 16:42:51 +0900
+X-IronPort-AV: E=Sophos;i="6.08,179,1712588400"; 
+   d="scan'208";a="415026695"
+Received: from unknown (HELO OptiPlex-7080..) ([IPv6:2001:cf8:1:5f1:0:dddd:6fe5:f4d0])
+  by jpmta-ob1.noc.sony.co.jp with ESMTP; 22 May 2024 16:42:51 +0900
+From: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-xfs@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
-Date: Wed, 22 May 2024 09:14:20 +0200
-Message-ID: <20240522-weltmeere-rammt-70f03e24b8b4@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <316306.1716306586@warthog.procyon.org.uk>
-References: <316306.1716306586@warthog.procyon.org.uk>
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Sukrit.Bhatnagar@sony.com
+Subject: [PATCH 0/2] Improve dmesg output for swapfile+hibernation
+Date: Wed, 22 May 2024 16:46:56 +0900
+Message-Id: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1256; i=brauner@kernel.org; h=from:subject:message-id; bh=o7FelwEYe06bUj5gigSKOWEN1hyHxbXUGTMgm7PhL9Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5zvZ/VJrSsYxv51y3TfmcQte5fa4UZafWckj9j9mw2 PJaYfO/jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlUrWD4n5pi88L397Z6Xbv2 O1r3t/Z9dXA+H9T4a6/78o9nxIPZgxkZWj89LFFMex2/tuIsx+tL+ZE/tl/mFI60cZxvEvT/lTY 7AwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 21 May 2024 16:49:46 +0100, David Howells wrote:
-> Fix netfs_perform_write() to set BDP_ASYNC if IOCB_NOWAIT is set rather
-> than if IOCB_SYNC is not set.  It reflects asynchronicity in the sense of
-> not waiting rather than synchronicity in the sense of not returning until
-> the op is complete.
-> 
-> Without this, generic/590 fails on cifs in strict caching mode with a
-> complaint that one of the writes fails with EAGAIN.  The test can be
-> distilled down to:
-> 
-> [...]
+While trying to use a swapfile for hibernation, I noticed that the suspend
+process was failing when it tried to search for the swap to use for snapshot.
+I had created the swapfile on ext4 and got the starting physical block offset
+using the filefrag command.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Upon looking at the swap activation code, I realized that the iomap part is
+doing some rounding up for the physical offset of the swapfile.
+Then I checked the block size of the filesystem, which was actually set to
+1KB by default in my environment.
+(This was in buildroot, using the genimage utility to create the VM disk
+partitions, filesystems etc.)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The block offset is rounded-up and stored in the swap extents metadata by
+iomap code, but as the exact value is lost for 1KB-block filesystem, hibernate
+cannot read back the swap header after it finishes writing data pages to swap.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Note that this is not a bug in my understanding. Both swapfile and hibernate
+subsystems have the correct handling of this edge case, individually.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Another observation was that we need to rely on external commands, such as
+filefrag for getting the swapfile offset value. This value can be conveniently
+printed in dmesg output when doing swapon.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+Sukrit Bhatnagar (2):
+  iomap: swap: print warning for unaligned swapfile
+  mm: swap: print starting physical block offset in swapon
 
-[1/1] netfs: Fix setting of BDP_ASYNC from iocb flags
-      https://git.kernel.org/vfs/vfs/c/33c9d7477ef1
+ fs/iomap/swapfile.c | 10 ++++++++++
+ mm/swapfile.c       |  3 ++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
