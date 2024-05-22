@@ -1,161 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-20000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865028CC2BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 16:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1358CC354
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 16:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41800282152
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 14:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 982E2281886
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 14:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6BD13E40F;
-	Wed, 22 May 2024 14:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B274C17C95;
+	Wed, 22 May 2024 14:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RzWT3O3N"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pIEJ0Wpi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467B6AB9;
-	Wed, 22 May 2024 14:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF65E17550;
+	Wed, 22 May 2024 14:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716386580; cv=none; b=CHLhs1Z1sx4JQUnY9zAk5/SXwJzUxCT4RRxexy8DCuV8W3ex12rNi3RbT6KlgWcZlIrIyuo0eXxUUdJRQT+ZvgQ74aBByGIOt5FkqedpptGU14xBLF1YOFWxkxzknPYxfJInP47Y8Z5KxyLdzmyTvMNWbVVVvlD/99CIGYvIlkU=
+	t=1716388647; cv=none; b=Qtp+NRRFjp6WFBcy3IC9pBBzKPGqhdA0E8wcpZArO07707LGP8MmxyBbTC6eG6ysRWmm2HS0LpNwlVmh1EHRadcw87zOzmstVrcVVXKPUNUPNzrhz79AK/bQd7xVL1RgaBjzBdMNzMYbhUQmWI7DdUmI9hkcbOBM/6Mdm/XcUTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716386580; c=relaxed/simple;
-	bh=7kTG5ts3OQOCh1/2XvqX0aVjJCkbUUXFDVmo08IThCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RN9i224W7/nO0zPkOONx4qcvOQfzCY0Pk+9rg7BnU8hXlz3Ud+6oPEYf4Rd8Rlv4MMzZqL2TtKpCDJCSx7IFlCa7ARMFsgRXZZrUqscDu5sZYtk+bwhqfEA/u6QA1/FUeo733IHTlT3RI5DZcrFPIvsCtBHUqE2wFC9qg8PqORM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RzWT3O3N; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716386575;
-	bh=7kTG5ts3OQOCh1/2XvqX0aVjJCkbUUXFDVmo08IThCA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RzWT3O3NZ1dwV9M2JHbVSngE4q1VPMGXCXBpUQq11qZ2XeiDQmS47vXNKh45ByruT
-	 Cm7JT6sfDFXS8Fa1W3bTnt3tZ9zNI/4VVsOPEWAheGA84yHB0+QR9/vD8ZNCY2muQ/
-	 v20AlPXWqnAAZMWBoRd+unQh0zXE48VBkyjei/Zf3ZYkSL3XFlGcPWwHE8Ok//AO6Q
-	 EPl3BQhtDjJXhDQI8sWI8BAIxBLQHJBirIfmH+vA9Mkyzu/ded0oeTF8nT7FYY4Trp
-	 PMDbOHmF6JipmDBsBTOZtMmW4ktp9wbt35v3TgXmqkNsRi9LocM4J3Mc0RmJzFxtxt
-	 SKCoSTO0+zKlA==
-Received: from [100.90.194.27] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4991137821B3;
-	Wed, 22 May 2024 14:02:54 +0000 (UTC)
-Message-ID: <9afebadd-765f-42f3-a80b-366dd749bf48@collabora.com>
-Date: Wed, 22 May 2024 17:02:53 +0300
+	s=arc-20240116; t=1716388647; c=relaxed/simple;
+	bh=hxmhP567s4dSC9jpCW+zdbc4PJzsQqx6YlXvRACd2is=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvBh2FrSN1lAcLCCill1tZp02ZFLwISaV9ccCHKVslw+BhReywdYHfgTkO6fuClmn7MWxgrLVp2D9oEaQUmVkK8kDqBui+Hbl5D9lgglV9HeK728LmzHINHZOB+kWVdCkk0GHnE36ZOXjZUwAE6cSXV8fAMt1vT3MNC2LdSKRp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pIEJ0Wpi; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=I8E1hYnWG4Q3QnCoU6Xf7Jd0qzrKBRB6EdoIRleFSv8=; b=pIEJ0WpiPen6MsG0bCFP7QKQfi
+	1jyJCsEWaTO0vqdgEVHEDEYA5cdYX0mqfEuG7vivgDpcFYEfp0aU7EZEcjv/bgH0CVozHq0y9bV8h
+	Y4HCuGVuJzjsWBsgZLf+0VH1jhi8V/ykqSUm9BssvrmWWJDne2hgWYb56UUqhE0HwLtphv1CS05y4
+	okWbseLm13A8IZi6nK1xu2VE1UgXnighmjqOW9EJHG623gjjX13jmQvKqYlzZ9oXVQiFj42hsokdD
+	hsacBYeoJ2LyOI23NP4ippDnfNCxRNrwPWiDfal92qwbc+raAu80aoa/B4Yy2KGLry+6AfW8VBcT9
+	fpY86kMQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s9n5n-00000003EKQ-39ku;
+	Wed, 22 May 2024 14:37:23 +0000
+Date: Wed, 22 May 2024 07:37:23 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
+	ebiggers@kernel.org, linux-xfs@vger.kernel.org, alexl@redhat.com,
+	walters@verbum.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
+Message-ID: <Zk4DIzXJX_gVoj2-@infradead.org>
+References: <20240507212454.GX360919@frogsfrogsfrogs>
+ <ZjtmVIST_ujh_ld6@infradead.org>
+ <20240508202603.GC360919@frogsfrogsfrogs>
+ <ZjxY_LbTOhv1i24m@infradead.org>
+ <20240509200250.GQ360919@frogsfrogsfrogs>
+ <Zj2r0Ewrn-MqNKwc@infradead.org>
+ <Zj28oXB6leJGem-9@infradead.org>
+ <20240517171720.GA360919@frogsfrogsfrogs>
+ <ZktEn5KOZTiy42c8@infradead.org>
+ <20240520160259.GA25546@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
- comparison helper
-To: Gabriel Krisman Bertazi <krisman@suse.de>,
- Eric Biggers <ebiggers@kernel.org>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
- jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, Gabriel Krisman Bertazi <krisman@collabora.com>
-References: <20240405121332.689228-1-eugen.hristev@collabora.com>
- <20240405121332.689228-4-eugen.hristev@collabora.com>
- <20240510013330.GI1110919@google.com> <875xviyb3f.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@collabora.com>
-In-Reply-To: <875xviyb3f.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520160259.GA25546@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 5/13/24 00:27, Gabriel Krisman Bertazi wrote:
-> Eric Biggers <ebiggers@kernel.org> writes:
+On Mon, May 20, 2024 at 09:02:59AM -0700, Darrick J. Wong wrote:
+> On Mon, May 20, 2024 at 05:39:59AM -0700, Christoph Hellwig wrote:
+> > On Fri, May 17, 2024 at 10:17:20AM -0700, Darrick J. Wong wrote:
+> > > >   Note that the verity metadata *must* be encrypted when the file is,
+> > > >   since it contains hashes of the plaintext data.
+> > > 
+> > > Refresh my memory of fscrypt -- does it encrypt directory names, xattr
+> > > names, and xattr values too?  Or does it only do that to file data?
+> > 
+> > It does encrypt the file names in the directories, but nothing in
+> > xattrs as far as I can tell.
 > 
->> On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
-> 
->>> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
->>> +			return -EINVAL;
->>> +
->>> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
->>> +		if (!decrypted_name.name)
->>> +			return -ENOMEM;
->>> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
->>> +						&decrypted_name);
->>> +		if (res < 0)
->>> +			goto out;
->>
->> If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
->> then this function returns 0 (indicating no match) instead of the error code
->> (indicating an error).  Is that the correct behavior?  I would think that
->> strict_encoding should only have an effect on the actual name
->> comparison.
-> 
-> No. we *want* this return code to be propagated back to f2fs.  In ext4 it
-> wouldn't matter since the error is not visible outside of ext4_match,
-> but f2fs does the right thing and stops the lookup.
+> Do we want that for user.* attrs?  That seems like quite an omission.
 
-In the previous version which I sent, you told me that the error should be
-propagated only in strict_mode, and if !strict_mode, it should just return no match.
-Originally I did not understand that this should be done only for utf8_strncasecmp
-errors, and not for all the errors. I will change it here to fix that.
+I'll let Eric answer that.  Btw, is the threat model for fscrypt written
+down somewhere?
 
+> > > And if we copy the ext4 method of putting the merkle data after eof and
+> > > loading it into the pagecache, how much of the generic fs/verity cleanup
+> > > patches do we really need?
+> > 
+> > We shouldn't need anything.  A bunch of cleanup
 > 
-> Thinking about it, there is a second problem with this series.
-> Currently, if we are on strict_mode, f2fs_match_ci_name does not
-> propagate unicode errors back to f2fs. So, once a utf8 invalid sequence
-> is found during lookup, it will be considered not-a-match but the lookup
-> will continue.  This allows some lookups to succeed even in a corrupted
-> directory.  With this patch, we will abort the lookup on the first
-> error, breaking existing semantics.  Note that these are different from
-> memory allocation failure and fscrypt_fname_disk_to_usr. For those, it
-> makes sense to abort.
+> Should we do the read/drop_merkle_tree_block cleanup anyway?
 
-So , in the case of f2fs , we must not propagate utf8 errors ? It should just
-return no match even in strict mode ?
-If this helper is common for both f2fs and ext4, we have to do the same for ext4 ?
-Or we are no longer able to commonize the code altogether ?
-> 
-> Also, once patch 6 and 7 are added, if fscrypt fails with -EINVAL for
-> any reason unrelated to unicode (like in the WARN_ON above), we will
-> incorrectly print the error message saying there is a bad UTF8 string.
-> 
-> My suggestion would be to keep the current behavior.  Make
-> generic_ci_match only propagate non-unicode related errors back to the
-> filesystem.  This means that we need to move the error messages in patch
-> 6 and 7 into this function, so they only trigger when utf8_strncasecmp*
-> itself fails.
-> 
+To me the block based interface seems a lot cleaner, but Eric has some
+reservations due to the added indirect call on the drop side.
 
-So basically unicode errors stop here, and print the error message here in that case.
-Am I understanding it correctly ?
->>> +	/*
->>> +	 * Attempt a case-sensitive match first. It is cheaper and
->>> +	 * should cover most lookups, including all the sane
->>> +	 * applications that expect a case-sensitive filesystem.
->>> +	 */
->>> +	if (folded_name->name) {
->>> +		if (dirent.len == folded_name->len &&
->>> +		    !memcmp(folded_name->name, dirent.name, dirent.len))
->>> +			goto out;
->>> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
->>
->> Shouldn't the memcmp be done with the original user-specified name, not the
->> casefolded name?  I would think that the user-specified name is the one that's
->> more likely to match the on-disk name, because of case preservation.  In most
->> cases users will specify the same case on both file creation and later access.
+> One of the advantages of xfs caching merkle tree blocks ourselves
+> is that we neither extend the usage of PageChecked when merkle blocksize
+> == pagesize nor become subject to the 1-million merkle block limit when
+> merkle blocksize < pagesize.  There's a tripping hazard if you mount a 4k
+> merkle block filesystem on a computer with 64k pages -- now you can't
+> open 6T verity files.
 > 
-> Yes.
-> 
-so the utf8_strncasecmp_folded call here must use name->name instead of folded_name ?
+> That said, it also sounds dumb to maintain a separate index for
+> pagecache pages to track a single bit.
 
-Thanks for the review
-Eugen
+Yeah.  As I mentioned earlier I think fsverify really should enforce
+a size limit.  Right now it will simply run out space eventually which
+doesn't seem like a nice failure mode.
+
+> Maybe we should port verity to
+> use xbitmap64 from xfs instead of single static buffer?
+
+The seems like a bit of overkill for the current use cases.
 
 
