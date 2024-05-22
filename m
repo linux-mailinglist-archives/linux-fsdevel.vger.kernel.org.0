@@ -1,215 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-19942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A574D8CB66F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 02:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB39D8CB6C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 02:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110531F22016
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 00:02:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4711F22E65
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 00:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAA72C9D;
-	Wed, 22 May 2024 00:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1964A1C;
+	Wed, 22 May 2024 00:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VOq4aALs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BL0kEqqg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C728629
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 00:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01635211C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 00:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716336159; cv=none; b=itxP5AUeahdei6SOpiJj/Tls1v+W2/24jydGBIbLvqS+3Ts6zInCtmgyNWlnU5GF8tO9ny2SifPiFQOkNRsPYZGYdJUeLrnNAsz77WQCEYKM7Gm8vlnXFecYCzDUoQ9l2Rf/gI10mEcvEo0Q8I/1ZvdmWg8fU0sPbxNnwZxhaIU=
+	t=1716338285; cv=none; b=nIv5M4ZifVQQ/vEDGdxYC6sl/swKBp+nEpK2C6W3ol/dJEuQPaW/rSNR70kB1bYwwXOvRIaYrl9LPgQrDiOCKCeb2Kqtvd/sLSAoj6scxTUQYCDcfiRBPoHhjeu3TR3R5Txz1SQEUjELs/qZoyP9SDvR5nO+TOEPj5CRCFDp2kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716336159; c=relaxed/simple;
-	bh=mFQLmK0u0L6PeEG0M4FAs/47qdfzUrU/wDLiUWnZizc=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tQuqhZwaA5g9b0JCwIOM+0qKlmKIEbW8x0zV85hCoHOz22+cUnyLYt9UnRAJOqnX4HhZe8FdPZMMWXORzH+5KVX9LwkfJbtRonaNG3AuBvlHgB/EGDjy+YaL0pbWKKvHb3BL4YCn7Xdp5zNgwPcDQ81qvD1tY3OUWssM0kGB188=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VOq4aALs; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1716338285; c=relaxed/simple;
+	bh=LAj1b+bnCms4/xk1W3Z5rJaeVNK1RzfKlW1mijUnq80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfRhmW1jDztLbGEPv8h2Z2Z+M5hHTErKFEAsjOfnlbPYpNQuCjqYFIojKiPfRmAqO9SqIexY7DylMUt4Fh6GhzsPrWZ4ozKO3dirIzn44AS4mDsIUzSPV365EvvAzKQRCgVJUGsufjgYlP0AQ5nJXGzeKXpFSBhvCwYG9CMjngk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BL0kEqqg; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716336156;
+	s=mimecast20190719; t=1716338282;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oDcaJ/Lp2AwW/U3NTUWORaonQ76tpE8JccALy7WD+Ks=;
-	b=VOq4aALsL1HASHQNGbfGCMkM3w+WtgG8nfK3at0YKSk+PRkRyosJl9Kj62K6v78YOmZhbr
-	bJNkFR9ReQlpl5kbYhasc+Ny9BWbEarNhqmuOupo7hWoDtxcRZYGDLR+cMPpZ2cCSr+4yw
-	54pkFiogBNPSReCrwkvWJXBWV9FFwo4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z5+Ml59SARQSuVhVqvLQWFYKARbZIUTwBnysaBLWgyU=;
+	b=BL0kEqqgPxvC/qKElxaY4ensU9xUectRs0VwJYY2kvftfGkha68v4JOPB/or0EYwfLzrON
+	X64qrcChwis+6Cghqm00relrOwpQz8gZeCNMm4wGdyT9zL4tBsKnakBz4e6/++yAE2ZYnk
+	Fjt6kQYtUHpv9GrIi10DuFzlEU4nXJk=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-CnM72DXNOiq9R9tznT5T_A-1; Tue, 21 May 2024 20:02:32 -0400
-X-MC-Unique: CnM72DXNOiq9R9tznT5T_A-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 52DEC812296;
-	Wed, 22 May 2024 00:02:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 03A3C492BC6;
-	Wed, 22 May 2024 00:02:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <stfrench@microsoft.com>
-cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v2] netfs: Fix io_uring based write-through
+ us-mta-5-kJvQRi3VPoiE0uKULhcT0Q-1; Tue, 21 May 2024 20:38:01 -0400
+X-MC-Unique: kJvQRi3VPoiE0uKULhcT0Q-1
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6f6a41800baso319114b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 17:38:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716338280; x=1716943080;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5+Ml59SARQSuVhVqvLQWFYKARbZIUTwBnysaBLWgyU=;
+        b=GuWamTU4WvzR29xT7KtBaRc5N+dvK5zFDKzOXzJMvIyWLXbyLCjTsbeWV5pcwRP7aN
+         YiaDPPfM8UenxDB7BgOt86ZUAOA2wDRHXuR73Dj1oHke1PkT7qUDhnFMXy1dgCncbnUE
+         lnVzy+GtR1hxh8zsp4ICEGiDCHGgxd4cGLxA2A3ZAwGzBXlYk9Emr+CzoLbEo2NQFyOO
+         2RovEbNxM3fXNiL/IbLt2MUFsdIfE0kY4doGYO4ElKJVXtgHLEfqvXwFbuLFxNkoP9kI
+         X/X/cnEHeOuapGzPvvg3VP6/pMVb58FCLIHue6NhYJqdV8JYfunk2ZNrMfSfnf0M+IaT
+         TjWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhqy4HZh9bYQ9gOJCQpjyf8WCRkdFw6g4f2jvfal4Eky97NLmSLWGMJeVB68Wml401JEaPUFWVQpQ3dcTWaS6Ef6R5yEou6s2cGi73vw==
+X-Gm-Message-State: AOJu0YxETOoy43qrvY61LSxk90zQxBoqCP2kZtlex3tHjsaXWN+KTMbm
+	AXDa+SofwoB0MhMUzjcgI31k5MWg5JLfOF+UROxl9jlNFCl/1Rc/YyAR0lAF6F1TV9UZ0rxvxvA
+	nKJQkGdIRX8TH1MeDFaoa5q/IQpI9mMs+EcOHFWQqmsVc0RB91aMtVCC8Bgal2Ls=
+X-Received: by 2002:a05:6a00:2e02:b0:6f4:9fc7:d239 with SMTP id d2e1a72fcca58-6f69fc6d156mr18259133b3a.14.1716338280044;
+        Tue, 21 May 2024 17:38:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8g4v0rGDxwPSEFVgieLMxzSKkG2WDTV5Q9c2aX+9gur91SnL1iT4TrvoZ73SO1oZm9pnZtw==
+X-Received: by 2002:a05:6a00:2e02:b0:6f4:9fc7:d239 with SMTP id d2e1a72fcca58-6f69fc6d156mr18259049b3a.14.1716338278556;
+        Tue, 21 May 2024 17:37:58 -0700 (PDT)
+Received: from [10.72.116.32] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d6b71760sm21601587b3a.97.2024.05.21.17.37.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 17:37:58 -0700 (PDT)
+Message-ID: <d8d3eeea-5425-48d4-ab80-a37cc340e8d2@redhat.com>
+Date: Wed, 22 May 2024 08:37:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <351481.1716336150.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 22 May 2024 01:02:30 +0100
-Message-ID: <351482.1716336150@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 03/11] ceph: drop usage of page_index
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>,
+ Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
+ Minchan Kim <minchan@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Hugh Dickins <hughd@google.com>, Yosry Ahmed <yosryahmed@google.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+ ceph-devel@vger.kernel.org
+References: <20240521175854.96038-1-ryncsn@gmail.com>
+ <20240521175854.96038-4-ryncsn@gmail.com>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20240521175854.96038-4-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This can be triggered by mounting a cifs filesystem with a cache=3Dstrict
-mount option and then, using the fsx program from xfstests, doing:
 
-        ltp/fsx -A -d -N 1000 -S 11463 -P /tmp /cifs-mount/foo \
-          --replay-ops=3Dgen112-fsxops
+On 5/22/24 01:58, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+>
+> page_index is needed for mixed usage of page cache and swap cache,
+> for pure page cache usage, the caller can just use page->index instead.
+>
+> It can't be a swap cache page here, so just drop it.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Cc: Xiubo Li <xiubli@redhat.com>
+> Cc: Ilya Dryomov <idryomov@gmail.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: ceph-devel@vger.kernel.org
+> ---
+>   fs/ceph/dir.c   | 2 +-
+>   fs/ceph/inode.c | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 0e9f56eaba1e..570a9d634cc5 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -141,7 +141,7 @@ __dcache_find_get_entry(struct dentry *parent, u64 idx,
+>   	if (ptr_pos >= i_size_read(dir))
+>   		return NULL;
+>   
+> -	if (!cache_ctl->page || ptr_pgoff != page_index(cache_ctl->page)) {
+> +	if (!cache_ctl->page || ptr_pgoff != cache_ctl->page->index) {
+>   		ceph_readdir_cache_release(cache_ctl);
+>   		cache_ctl->page = find_lock_page(&dir->i_data, ptr_pgoff);
+>   		if (!cache_ctl->page) {
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 99561fddcb38..a69570ea2c19 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -1863,7 +1863,7 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
+>   	unsigned idx = ctl->index % nsize;
+>   	pgoff_t pgoff = ctl->index / nsize;
+>   
+> -	if (!ctl->page || pgoff != page_index(ctl->page)) {
+> +	if (!ctl->page || pgoff != ctl->page->index) {
+>   		ceph_readdir_cache_release(ctl);
+>   		if (idx == 0)
+>   			ctl->page = grab_cache_page(&dir->i_data, pgoff);
 
-Where gen112-fsxops holds:
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-        fallocate 0x6be7 0x8fc5 0x377d3
-        copy_range 0x9c71 0x77e8 0x2edaf 0x377d3
-        write 0x2776d 0x8f65 0x377d3
-
-The problem is that netfs_io_request::len is being used for two purposes
-and ends up getting set to the amount of data we transferred, not the
-amount of data the caller asked to be transferred (for various reasons,
-such as mmap'd writes, we might end up rounding out the data written to th=
-e
-server to include the entire folio at each end).
-
-Fix this by keeping the amount we were asked to write in ->len and using
-->submitted to track what we issued ops for.  Then, when we come to callin=
-g
-->ki_complete(), ->len is the right size.
-
-This also required netfs_cleanup_dio_write() to change since we're no
-longer advancing wreq->len.  Use wreq->transferred instead as we might hav=
-e
-done a short read and wreq->len must be set when setting up a direct write=
-.
-
-With this, the generic/112 xfstest passes if cifs is forced to put all
-non-DIO opens into write-through mode.
-
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Steve French <stfrench@microsoft.com>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: netfs@lists.linux.dev
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/295086.1716298663@warthog.procyon.org.uk/ =
-# v1
----
- Changes
- =3D=3D=3D=3D=3D=3D=3D
- ver #2)
-  - Set wreq->len when doing direct writes.
-
- fs/netfs/direct_write.c  |    5 +++--
- fs/netfs/write_collect.c |    7 ++++---
- fs/netfs/write_issue.c   |    2 +-
- 3 files changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index 608ba6416919..93b41e121042 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -12,7 +12,7 @@
- static void netfs_cleanup_dio_write(struct netfs_io_request *wreq)
- {
- 	struct inode *inode =3D wreq->inode;
--	unsigned long long end =3D wreq->start + wreq->len;
-+	unsigned long long end =3D wreq->start + wreq->transferred;
- =
-
- 	if (!wreq->error &&
- 	    i_size_read(inode) < end) {
-@@ -92,8 +92,9 @@ static ssize_t netfs_unbuffered_write_iter_locked(struct=
- kiocb *iocb, struct iov
- 	__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
- 	if (async)
- 		wreq->iocb =3D iocb;
-+	wreq->len =3D iov_iter_count(&wreq->io_iter);
- 	wreq->cleanup =3D netfs_cleanup_dio_write;
--	ret =3D netfs_unbuffered_write(wreq, is_sync_kiocb(iocb), iov_iter_count=
-(&wreq->io_iter));
-+	ret =3D netfs_unbuffered_write(wreq, is_sync_kiocb(iocb), wreq->len);
- 	if (ret < 0) {
- 		_debug("begin =3D %zd", ret);
- 		goto out;
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 60112e4b2c5e..426cf87aaf2e 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -510,7 +510,7 @@ static void netfs_collect_write_results(struct netfs_i=
-o_request *wreq)
- 	 * stream has a gap that can be jumped.
- 	 */
- 	if (notes & SOME_EMPTY) {
--		unsigned long long jump_to =3D wreq->start + wreq->len;
-+		unsigned long long jump_to =3D wreq->start + READ_ONCE(wreq->submitted)=
-;
- =
-
- 		for (s =3D 0; s < NR_IO_STREAMS; s++) {
- 			stream =3D &wreq->io_streams[s];
-@@ -690,10 +690,11 @@ void netfs_write_collection_worker(struct work_struc=
-t *work)
- 	wake_up_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS);
- =
-
- 	if (wreq->iocb) {
--		wreq->iocb->ki_pos +=3D wreq->transferred;
-+		size_t written =3D min(wreq->transferred, wreq->len);
-+		wreq->iocb->ki_pos +=3D written;
- 		if (wreq->iocb->ki_complete)
- 			wreq->iocb->ki_complete(
--				wreq->iocb, wreq->error ? wreq->error : wreq->transferred);
-+				wreq->iocb, wreq->error ? wreq->error : written);
- 		wreq->iocb =3D VFS_PTR_POISON;
- 	}
- =
-
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index acbfd1f5ee9d..3aa86e268f40 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -254,7 +254,7 @@ static void netfs_issue_write(struct netfs_io_request =
-*wreq,
- 	stream->construct =3D NULL;
- =
-
- 	if (subreq->start + subreq->len > wreq->start + wreq->submitted)
--		wreq->len =3D wreq->submitted =3D subreq->start + subreq->len - wreq->s=
-tart;
-+		WRITE_ONCE(wreq->submitted, subreq->start + subreq->len - wreq->start);
- 	netfs_do_issue_write(stream, subreq);
- }
- =
 
 
