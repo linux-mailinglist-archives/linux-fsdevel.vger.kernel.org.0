@@ -1,68 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-20001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1358CC354
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 16:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 391758CC398
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 16:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 982E2281886
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 14:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C9F283999
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 14:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B274C17C95;
-	Wed, 22 May 2024 14:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712F120DC3;
+	Wed, 22 May 2024 14:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pIEJ0Wpi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sOGTz7oy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF65E17550;
-	Wed, 22 May 2024 14:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4831C683;
+	Wed, 22 May 2024 14:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716388647; cv=none; b=Qtp+NRRFjp6WFBcy3IC9pBBzKPGqhdA0E8wcpZArO07707LGP8MmxyBbTC6eG6ysRWmm2HS0LpNwlVmh1EHRadcw87zOzmstVrcVVXKPUNUPNzrhz79AK/bQd7xVL1RgaBjzBdMNzMYbhUQmWI7DdUmI9hkcbOBM/6Mdm/XcUTQ=
+	t=1716389798; cv=none; b=Az2Pr0oDNEi61pJhYTOvY5y+yYZdEJYRKHGSpMoogNePyNqKmczi8xFa5CIUFOv8bcyjt6wCLNqvxwV93bY0Jhd38p5GRj4KcWN/NuAziEd6ReZ/U464SuvKKh2e1OYjsNPKQZwQCYHKxTfnBy7s1xgpjjnS8zM/G9QLmFZhGQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716388647; c=relaxed/simple;
-	bh=hxmhP567s4dSC9jpCW+zdbc4PJzsQqx6YlXvRACd2is=;
+	s=arc-20240116; t=1716389798; c=relaxed/simple;
+	bh=zWm8NiSY2+aawW2KRUHKXAJ/95lx4gCIUjpIrTP/ufc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvBh2FrSN1lAcLCCill1tZp02ZFLwISaV9ccCHKVslw+BhReywdYHfgTkO6fuClmn7MWxgrLVp2D9oEaQUmVkK8kDqBui+Hbl5D9lgglV9HeK728LmzHINHZOB+kWVdCkk0GHnE36ZOXjZUwAE6cSXV8fAMt1vT3MNC2LdSKRp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pIEJ0Wpi; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=I8E1hYnWG4Q3QnCoU6Xf7Jd0qzrKBRB6EdoIRleFSv8=; b=pIEJ0WpiPen6MsG0bCFP7QKQfi
-	1jyJCsEWaTO0vqdgEVHEDEYA5cdYX0mqfEuG7vivgDpcFYEfp0aU7EZEcjv/bgH0CVozHq0y9bV8h
-	Y4HCuGVuJzjsWBsgZLf+0VH1jhi8V/ykqSUm9BssvrmWWJDne2hgWYb56UUqhE0HwLtphv1CS05y4
-	okWbseLm13A8IZi6nK1xu2VE1UgXnighmjqOW9EJHG623gjjX13jmQvKqYlzZ9oXVQiFj42hsokdD
-	hsacBYeoJ2LyOI23NP4ippDnfNCxRNrwPWiDfal92qwbc+raAu80aoa/B4Yy2KGLry+6AfW8VBcT9
-	fpY86kMQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s9n5n-00000003EKQ-39ku;
-	Wed, 22 May 2024 14:37:23 +0000
-Date: Wed, 22 May 2024 07:37:23 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
-	ebiggers@kernel.org, linux-xfs@vger.kernel.org, alexl@redhat.com,
-	walters@verbum.org, fsverity@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
-Message-ID: <Zk4DIzXJX_gVoj2-@infradead.org>
-References: <20240507212454.GX360919@frogsfrogsfrogs>
- <ZjtmVIST_ujh_ld6@infradead.org>
- <20240508202603.GC360919@frogsfrogsfrogs>
- <ZjxY_LbTOhv1i24m@infradead.org>
- <20240509200250.GQ360919@frogsfrogsfrogs>
- <Zj2r0Ewrn-MqNKwc@infradead.org>
- <Zj28oXB6leJGem-9@infradead.org>
- <20240517171720.GA360919@frogsfrogsfrogs>
- <ZktEn5KOZTiy42c8@infradead.org>
- <20240520160259.GA25546@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpsbRBpFn1DdU6Z8C8EFWjiCeF1mqpDuqKtURQKNujy2nmvr5oRpqWxBG9ZkxWltaw5pLdaQXDwXUS1yuwyVQJPf84tP4sYoP+PCpfh7LpMI0VvE5Pn0kQTd6OoxY1anCsHJgvFx8F+qHP7PRyeyKQMGRPPWv10XFu87haNn1N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sOGTz7oy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 415E3C2BBFC;
+	Wed, 22 May 2024 14:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716389798;
+	bh=zWm8NiSY2+aawW2KRUHKXAJ/95lx4gCIUjpIrTP/ufc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sOGTz7oynf65RXL6PVaStX562gyTyqhuRcDAIstxAgUBzOyhuqL9yJvvd1on9/nyv
+	 2POi+KESaZ7+I1qt3oo8po9UUfh1Y1clhy+vtovEWSrXmtX4ORJHWVQE1abZ+SdTHd
+	 qv2umpzSHjBXMTTiGYbq4lJ1r6e8+l/Cek2UlHdoca/16QAn0WPvI7VxA9PymwLMpt
+	 q/Vu7I5TUwCiScpmepGhVnIRhRJonYO2/e4jwzh7aEFTRkGV32sjmW2Epfk9gASBdi
+	 90yeF0mQGFjHZpttSXuC0+gC6dXSrB1UzV4Q1iUDrf13hGLkjWhW+35KEY/mzNUkU3
+	 /NZbFLelIBbnQ==
+Date: Wed, 22 May 2024 07:56:37 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] mm: swap: print starting physical block offset in
+ swapon
+Message-ID: <20240522145637.GV25518@frogsfrogsfrogs>
+References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
+ <20240522074658.2420468-3-Sukrit.Bhatnagar@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,54 +63,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240520160259.GA25546@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240522074658.2420468-3-Sukrit.Bhatnagar@sony.com>
 
-On Mon, May 20, 2024 at 09:02:59AM -0700, Darrick J. Wong wrote:
-> On Mon, May 20, 2024 at 05:39:59AM -0700, Christoph Hellwig wrote:
-> > On Fri, May 17, 2024 at 10:17:20AM -0700, Darrick J. Wong wrote:
-> > > >   Note that the verity metadata *must* be encrypted when the file is,
-> > > >   since it contains hashes of the plaintext data.
-> > > 
-> > > Refresh my memory of fscrypt -- does it encrypt directory names, xattr
-> > > names, and xattr values too?  Or does it only do that to file data?
-> > 
-> > It does encrypt the file names in the directories, but nothing in
-> > xattrs as far as I can tell.
+On Wed, May 22, 2024 at 04:46:58PM +0900, Sukrit Bhatnagar wrote:
+> When a swapfile is created for hibernation purposes, we always need
+> the starting physical block offset, which is usually determined using
+> userspace commands such as filefrag.
+
+If you always need this value, then shouldn't it be exported via sysfs
+or somewhere so that you can always get to it?  The kernel ringbuffer
+can overwrite log messages, swapfiles can get disabled, etc.
+
+> It would be good to have that value printed when we do swapon and get
+> that value directly from dmesg.
 > 
-> Do we want that for user.* attrs?  That seems like quite an omission.
-
-I'll let Eric answer that.  Btw, is the threat model for fscrypt written
-down somewhere?
-
-> > > And if we copy the ext4 method of putting the merkle data after eof and
-> > > loading it into the pagecache, how much of the generic fs/verity cleanup
-> > > patches do we really need?
-> > 
-> > We shouldn't need anything.  A bunch of cleanup
+> Signed-off-by: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
+> ---
+>  mm/swapfile.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Should we do the read/drop_merkle_tree_block cleanup anyway?
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index f6ca215fb92f..53c9187d5fbe 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -3264,8 +3264,9 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+>  		  (swap_flags & SWAP_FLAG_PRIO_MASK) >> SWAP_FLAG_PRIO_SHIFT;
+>  	enable_swap_info(p, prio, swap_map, cluster_info);
+>  
+> -	pr_info("Adding %uk swap on %s.  Priority:%d extents:%d across:%lluk %s%s%s%s\n",
+> +	pr_info("Adding %uk swap on %s. Priority:%d extents:%d start:%llu across:%lluk %s%s%s%s\n",
+>  		K(p->pages), name->name, p->prio, nr_extents,
+> +		(unsigned long long)first_se(p)->start_block,
 
-To me the block based interface seems a lot cleaner, but Eric has some
-reservations due to the added indirect call on the drop side.
+Last time I looked, start_block was in units of PAGE_SIZE, despite
+add_swap_extent confusingly (ab)using the sector_t type.  Wherever you
+end up reporting this value, it ought to be converted to something more
+common (like byte offset or 512b-block offset).
 
-> One of the advantages of xfs caching merkle tree blocks ourselves
-> is that we neither extend the usage of PageChecked when merkle blocksize
-> == pagesize nor become subject to the 1-million merkle block limit when
-> merkle blocksize < pagesize.  There's a tripping hazard if you mount a 4k
-> merkle block filesystem on a computer with 64k pages -- now you can't
-> open 6T verity files.
+Also ... if this is a swap *file* then reporting the path and the
+physical storage device address is not that helpful.  Exposing the block
+device major/minor and block device address would be much more useful,
+wouldn't it?
+
+(Not that I have any idea what the "suspend process" in the cover letter
+refers to -- suspend and hibernate have been broken on xfs forever...)
+
+--D
+
+>  		K((unsigned long long)span),
+>  		(p->flags & SWP_SOLIDSTATE) ? "SS" : "",
+>  		(p->flags & SWP_DISCARDABLE) ? "D" : "",
+> -- 
+> 2.34.1
 > 
-> That said, it also sounds dumb to maintain a separate index for
-> pagecache pages to track a single bit.
-
-Yeah.  As I mentioned earlier I think fsverify really should enforce
-a size limit.  Right now it will simply run out space eventually which
-doesn't seem like a nice failure mode.
-
-> Maybe we should port verity to
-> use xbitmap64 from xfs instead of single static buffer?
-
-The seems like a bit of overkill for the current use cases.
-
+> 
 
