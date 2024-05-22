@@ -1,96 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-20022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A26D8CC7C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 22:41:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5BD8CC801
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 23:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B490B1F20FF1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 20:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5531C20BE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 21:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F0E146001;
-	Wed, 22 May 2024 20:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D24146D4A;
+	Wed, 22 May 2024 21:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IdFLD86Q"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JvPsrKl5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54AF41A80;
-	Wed, 22 May 2024 20:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7557E146A6F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 21:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716410475; cv=none; b=r8HQgtxzPLWkkIKBo4tGaxB589jSwSHxq66VqSSuZDVpl1N53n0DiAbTfPH+w4wYxdcHEWNj7olGu+TxIjLOB2t8ZEfGa8JoAX16Ol0Rdyqo85YrzCpU0/0b8SmliSvGFWohp//L4nCm0hz8/A1Ef0E5idcICqPt4X0E6J8klns=
+	t=1716412344; cv=none; b=kW+xUuDbKpMS9QoGIwrxdA41CtWAVPt6cVXSiURKpbH6KEGMRay8vMk+k10j2aR2CkL2WKjUL2/UMJcTI3f9Bdz5XikJQfWazaAqIflVQTLisg7su4995QublilO1gNCJ+UmncAQSn1UnlQiCLkMGcTW2JxJBuFoQp6FX/ITDEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716410475; c=relaxed/simple;
-	bh=NZsrz9PLoulYtLMOSlsyCu3RUdCjnta2LLVxU7X+m6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5RJDDIOcU32HP0DuikJ0pTdRyxCe7QHMkpdFM5zhYMSKUAXNIz6FDuoAhC4lm08oKzQ6aayGCmve5JNSIvYOtqOf/G3UxK/aRXDb304piCrU+lrq+9d9BrXehgVKMNNMKmbNtSFwIZUQAWscsEa4ETv15J/XghQ9DotkOmH8+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IdFLD86Q; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JhVTKxKlyu0H6sYvRMYXIsYgq8stj205p+1EbJBz9Nk=; b=IdFLD86QKk36M995cjI8dOgkGL
-	6MIp10Gj2YVuZ9ZDsjGB/QjgajsSalXLRME3uzWHLJyw6us6C/H+n3/7VX+qh1/VVxs5E3upOXoA9
-	rYREYxGPwRumC+sjsnZJCAdiMaPvVFQBTBeCZOilk8hHrK1tQAdsLCEhSaeK/k6CCg5xpGqzZ8JFJ
-	31sH51odVPgs+Nc0CED1/i/GjyMWfQUelirmNX8Z1O+8t7e+YHS10ONd4wDcALqhrxCAtw2iDzlMf
-	sViRcIXjWhXewgWq86ryYosRaARYBwN9f+fXJyRHh0nfzPhMf1veUXZqVVo5taBAOaWdePeJVBOBc
-	XKztxpbA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s9slq-000000010ny-1ySA;
-	Wed, 22 May 2024 20:41:10 +0000
-Date: Wed, 22 May 2024 21:41:10 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: trondmy@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] filemap: Return the error in do_read_cache_page()
-Message-ID: <Zk5YZqwrBptULWO0@casper.infradead.org>
-References: <20240522203115.27252-1-trondmy@kernel.org>
+	s=arc-20240116; t=1716412344; c=relaxed/simple;
+	bh=DYwtOowSorQf8W/s1eRFLYfspBNq5BINeak1ohYZ0f0=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=rh8PPcxsPwpGsCjEerkpFETJme6I9G9xIV7YZEvdf4IDr5Lrrxl6XPZyqcb9j3H1DAXPezjezssVRief5NjMxP8Hl9z+OY2Nz9VPkHtjkdZn8SaTK7CqNUKomjc3DytYwVjigAQK69Gxzk0Yh5FhEANo+uf/Ed26exwZaxS4hw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JvPsrKl5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716412342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=e5HgR1UJJHE4pqNLP7HJRqo1yRZdPdGaAXEqWOstEzk=;
+	b=JvPsrKl5v+Mv0QG3qrvWPDvLnwhJ8tZzY3XBmEZWycWfbE6dMBtyWU+pVw6Tw/7DfHu1H9
+	HNuOh3ybHG366/lway1mSqHXO94pT/0n89UEi0+TGJt8DDAjBtxSWUgNzklBD/0hnjTGZV
+	22rUuq3EiqsWiXjadQsWetGW2Y88SEg=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-142-jD23OcejMCWzTI9Q9-d0Eg-1; Wed,
+ 22 May 2024 17:12:17 -0400
+X-MC-Unique: jD23OcejMCWzTI9Q9-d0Eg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8B79A3C025BA;
+	Wed, 22 May 2024 21:12:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 44C0E100046D;
+	Wed, 22 May 2024 21:12:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    Dominique Martinet <asmadeus@codewreck.org>
+cc: dhowells@redhat.com, Christian Schoenebeck <linux_oss@crudebyte.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>, v9fs@lists.linux.dev,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] 9p: Enable multipage folios
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522203115.27252-1-trondmy@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <463765.1716412334.1@warthog.procyon.org.uk>
+Date: Wed, 22 May 2024 22:12:14 +0100
+Message-ID: <463766.1716412334@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On Wed, May 22, 2024 at 04:31:14PM -0400, trondmy@kernel.org wrote:
-> From: Trond Myklebust <trond.myklebust@hammerspace.com>
-> 
-> If the call to do_read_cache_folio() returns an error, then we should
-> pass that back to the caller of do_read_cache_page().
+    
+Enable support for multipage folios on the 9P filesystem.  This is all
+handled through netfslib and is already enabled on AFS and CIFS also.
 
-this patch is a no-op.  it generates exactly the same code.
-only now it doesn't have the '&folio->page' signature that lets everyone
-know it's part of the compat code.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Eric Van Hensbergen <ericvh@kernel.org>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: v9fs@lists.linux.dev
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+---
+ fs/9p/vfs_inode.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-> Fixes: 539a3322f208 ("filemap: Add read_cache_folio and read_mapping_folio")
-> Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> ---
->  mm/filemap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 30de18c4fd28..8f3b3604f73b 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3812,7 +3812,7 @@ static struct page *do_read_cache_page(struct address_space *mapping,
->  
->  	folio = do_read_cache_folio(mapping, index, filler, file, gfp);
->  	if (IS_ERR(folio))
-> -		return &folio->page;
-> +		return ERR_CAST(folio);
->  	return folio_file_page(folio, index);
->  }
->  
-> -- 
-> 2.45.1
-> 
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 7a3308d77606..8c9a896d691e 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -295,6 +295,7 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
+ 			inode->i_op = &v9fs_file_inode_operations;
+ 			inode->i_fop = &v9fs_file_operations;
+ 		}
++		mapping_set_large_folios(inode->i_mapping);
+ 
+ 		break;
+ 	case S_IFLNK:
+
 
