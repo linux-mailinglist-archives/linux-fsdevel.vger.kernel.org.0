@@ -1,147 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-20013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C658CC5FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 20:03:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AD88CC604
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 20:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907BD28660E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 18:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1891C21428
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 18:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13987145B1F;
-	Wed, 22 May 2024 18:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC87146A63;
+	Wed, 22 May 2024 18:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqnG3Bur"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNPy/Ezx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631FF182B9;
-	Wed, 22 May 2024 18:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33295146013;
+	Wed, 22 May 2024 18:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716400993; cv=none; b=DrByRj+AZIfFSSUuWMBU00OO1QxOrVpash5YWPiY9ni9ifVctxuVEz+YO9ZMA4YC92WjEDhUPrcbyhm6huph9yyHHt1a2cteUwbk9qADCfYvMBJfh4XFBMtr2BMP+oZnZoCIgYOGhvhn8WXeZhw5JXPtfaBvP/lPzGNx93VzoB8=
+	t=1716401120; cv=none; b=iuiNJ3jexchV96IXcfyz6xTOqGhe214yZG2+wgW4rtdGdHB20GS6gO7Eyeh7tfra6DcSzbc2U9E+cSGQt36DOEnjrDEgzb3w4wL0vIjpP99zikObUch4QfNVBLe/3fLSqfOJE3jUrt5wH7of2jxj3aMSgdE468QKQXegDVzPYVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716400993; c=relaxed/simple;
-	bh=EgqUgI0H7TNae0QKJUbfzzMgFbTC81vHTSiEYGcj1Kc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T3p1Df0swB4XkKeUOI8KMG7sDgB2WyNY9In7TbfSeBpyDwA/7HmV3RaJ1T+TI4Ev036UQRM6RYR1NprHzEfUhF6AjBo2PrUJ6JD7hA4DlZbqWgsg+DFGwzez1cJO/4grO0EggZoCOCIam0tnMN5PO0dHbt/kHxsDzn82oFi74E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqnG3Bur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17E8C4AF09;
-	Wed, 22 May 2024 18:03:12 +0000 (UTC)
+	s=arc-20240116; t=1716401120; c=relaxed/simple;
+	bh=1lacsQyR4j52HqJr1m92NS6XwhJgS7D/XuViCf53rlg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=L8UCDwuhNI/G1Z+AhdmWQ5PUEUinU0MvQYhvIxVeGgUZ/s7zfzH0+4o5uRC7AB/9h4BlR8MZimWgZwzCbSlexwAeDTgALlxtzSz8DMG1+t90C4KVuYuHLkUuxj8c352IBorq8dcVdteMaqEVsd7AE4XgJ1bLkFU1R1usmfWPBdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BNPy/Ezx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0FD74C4AF09;
+	Wed, 22 May 2024 18:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716400993;
-	bh=EgqUgI0H7TNae0QKJUbfzzMgFbTC81vHTSiEYGcj1Kc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eqnG3BurugA8eP+sBdeowbE+tTl1ziDioTAU76vCtcnMRell+SQ6FCr0wmO56ZbyF
-	 04BXP1XMFrNHmKIrorHpFHirI7Y8+eTSXKUpfM+ivhMr6ZIVSJMxan9pJ33UMWwLuz
-	 pRMurL9vRHaVw4lvUASCjD/KLQALbHF42X8Z4NWprQpZTuvBuTO9DY0fSST7idEF7S
-	 c7PSRjLHs/w4uOsQK2ImVFG1o1D0g9RrmSYjK3tdmYnnifuFPrTXidirpg4HI8syja
-	 TRAFUi8ts/h3esYVg+R10zYSnYf1TqAHyf4hfdgyoZszcPzTHfuk/WLvKXBx80xtwj
-	 1lW5FYanDiNcA==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e1fa824504so65411741fa.0;
-        Wed, 22 May 2024 11:03:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX5syn8iZtyEwb+Ocr0CIqpotitMw+84IR1sLoV01S1mPzwoMUnhqdidQiCH9Kjf5XgXJ9fq2XT+ns4Z2JknPSkq1Wx9xR8L5DPQQIZcG0leOBfntPpxPx0LG9iqVVQ9mTMCX5KfO3Xhib1/2xK0QuWfz8yvscRzVUc0O9oe3XcpthkF5isvq4IF4ReblQgnuMHzU8C9KW4KDfrQ3XZaEGY
-X-Gm-Message-State: AOJu0YyijETD19m/3iL/jJ4Xl71X/WnpPxluAV5FWi8s4ZZX5FfmNPfA
-	0FZKxzvIH9uXaxqiXiYasuwyVaxQrpebRMw0/KLPXwS808UhtMphYpfcERSN3q5PXLyxbNQRew6
-	YxB3yguRZn4/KVraKmml/ANvLvg==
-X-Google-Smtp-Source: AGHT+IHwAu69YuO1Nh3RQD2Pvp4YaJq25imcdHx3Dm0uO3K69AKZ/92diCIr1s9eL3l/QWkXG2g3XsBaE4fqA9npTO0=
-X-Received: by 2002:a19:9143:0:b0:51d:1830:8380 with SMTP id
- 2adb3069b0e04-526bebb4d43mr1337039e87.8.1716400991593; Wed, 22 May 2024
- 11:03:11 -0700 (PDT)
+	s=k20201202; t=1716401120;
+	bh=1lacsQyR4j52HqJr1m92NS6XwhJgS7D/XuViCf53rlg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=BNPy/Ezxnt3QnV0BmepnFcupEqdqiGMyCPS74It1z3+xLV/jjAw/njPXHKX4/5gS1
+	 edwYzcTPP4kpbFJj3cbSVzqHqIqSh02iEKDYlMGyU0E9mOmkX4zr1Qzr0+j3BUhf+V
+	 HlySS1PeS9oGUNnxStKVuiePi/VpDp0Wz7OIfMzv8UspR70+eAjsG0KIVRsenr9L//
+	 Y5Udf3FzAoyTKHeZ0yIYGsHT0SRoNlGXa42ntw8tIt7jXsqM+aPIN0VAUGqNMbwPfw
+	 FSyFTLwRp+WADrG0Osks/0ccORswJgOUx774EnyLBJCyz+w6eyArNyb1AY87knOBtd
+	 pfc7tMqoqIajQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 066E8C43618;
+	Wed, 22 May 2024 18:05:20 +0000 (UTC)
+Subject: Re: [GIT PULL] fuse update for 6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJfpegs9w+yNAvFCj9Ne54H6WMCJ9T16CrNDO-NRJwb9V5ieTw@mail.gmail.com>
+References: <CAJfpegs9w+yNAvFCj9Ne54H6WMCJ9T16CrNDO-NRJwb9V5ieTw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJfpegs9w+yNAvFCj9Ne54H6WMCJ9T16CrNDO-NRJwb9V5ieTw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.10
+X-PR-Tracked-Commit-Id: 529395d2ae6456c556405016ea0c43081fe607f3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4f2d34b65b40937b43c38ba34ece5aa3bc210e0d
+Message-Id: <171640112001.25247.15882612239209450060.pr-tracker-bot@kernel.org>
+Date: Wed, 22 May 2024 18:05:20 +0000
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com> <20240522074658.2420468-2-Sukrit.Bhatnagar@sony.com>
-In-Reply-To: <20240522074658.2420468-2-Sukrit.Bhatnagar@sony.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 22 May 2024 11:02:59 -0700
-X-Gmail-Original-Message-ID: <CANeU7Qn5KmdA2bVmEMjFtxcP+WnE174VgtkXZEHX82fc-gxXhg@mail.gmail.com>
-Message-ID: <CANeU7Qn5KmdA2bVmEMjFtxcP+WnE174VgtkXZEHX82fc-gxXhg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] iomap: swap: print warning for unaligned swapfile
-To: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-xfs@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sukrit,
+The pull request you sent on Wed, 22 May 2024 12:07:06 +0200:
 
-It seems that you need the swap file block start address to read the
-swap file headers.
-This warning still requires the user to read the dmesg. The kernel
-still does not have the swapfile header at resume. In other words, it
-does not fix the issue.
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.10
 
-I don't know the suspend/resume code enough, will adding recording the
-physical start address of the swapfile in swap_info_struct help you
-address this problem? The suspend code can write that value to
-"somewhere* for resume to pick it up.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4f2d34b65b40937b43c38ba34ece5aa3bc210e0d
 
-Let's find a proper way to fix this issue rather than just warning on it.
+Thank you!
 
-Chris
-
-On Wed, May 22, 2024 at 12:42=E2=80=AFAM Sukrit Bhatnagar
-<Sukrit.Bhatnagar@sony.com> wrote:
->
-> When creating a swapfile on a filesystem with block size less than the
-> PAGE_SIZE, there is a possibility that the starting physical block is not
-> page-aligned, which results in rounding up that value before setting it
-> in the first swap extent. But now that the value is rounded up, we have
-> lost the actual offset location of the first physical block.
->
-> The starting physical block value is needed in hibernation when using a
-> swapfile, i.e., the resume_offset. After we have written the snapshot
-> pages, some values will be set in the swap header which is accessed using
-> that offset location. However, it will not find the swap header if the
-> offset value was rounded up and results in an error.
->
-> The swapfile offset being unaligned should not fail the swapon activation
-> as the swap extents will always have the alignment.
->
-> Therefore, just print a warning if an unaligned swapfile is activated
-> when hibernation is enabled.
->
-> Signed-off-by: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
-> ---
->  fs/iomap/swapfile.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-> index 5fc0ac36dee3..1f7b189089dd 100644
-> --- a/fs/iomap/swapfile.c
-> +++ b/fs/iomap/swapfile.c
-> @@ -49,6 +49,16 @@ static int iomap_swapfile_add_extent(struct iomap_swap=
-file_info *isi)
->         next_ppage =3D ALIGN_DOWN(iomap->addr + iomap->length, PAGE_SIZE)=
- >>
->                         PAGE_SHIFT;
->
-> +#ifdef CONFIG_HIBERNATION
-> +       /*
-> +        * Print a warning if the starting physical block is not aligned
-> +        * to PAGE_SIZE (for filesystems using smaller block sizes).
-> +        * This will fail the hibernation suspend as we need to read
-> +        * the swap header later using the starting block offset.
-> +        */
-> +       if (!iomap->offset && iomap->addr & PAGE_MASK)
-> +               pr_warn("swapon: starting physical offset not page-aligne=
-d\n");
-> +#endif
->         /* Skip too-short physical extents. */
->         if (first_ppage >=3D next_ppage)
->                 return 0;
-> --
-> 2.34.1
->
->
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
