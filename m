@@ -1,169 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-19976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-19977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6342C8CBA98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 07:03:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1B68CBAA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 07:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E64C21F23863
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 05:03:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECEE72830D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2024 05:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6EF7C6C9;
-	Wed, 22 May 2024 05:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE63E55E53;
+	Wed, 22 May 2024 05:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bIGEBkUr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gY3ss0tt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BB879B87
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 05:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38D346BF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 05:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716354118; cv=none; b=spMPdZ0sEdBu9IDlx2FVa6LcKboIDIOlJeMitc8LlFAp6QmnvDOqN7CHcBH/ZQ98wz0/fejEoEkRDjv3+QrtKEfnwyYHof/8VXRYsqxzLydvVlHInT4hv8HzAjIUlXODv+vkvrcCZ3azLm9dajB7J54vqHz2rdDddKy8pV02Alc=
+	t=1716355280; cv=none; b=ZK3atOGRM/lFM7t/HQeaAyFMIGGcPi2o/pCc44h7pmrYgIKVBUEuKBoA5SPgRpFvgY7I8tIE7K3H7zeJp6djwNO4gOa04ECdzfcjQus7gHE2oKYx1W/z87KPWqpraTzaGE2cBjzPqpgMYceRb2MYckKEqUjzyWlHdOyOaZCwHfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716354118; c=relaxed/simple;
-	bh=v+UZFDGcIplCeWgyOKOk7LUl/tgd1hVNH/BQuH7kVhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=eOSguS9mdJE97Qrn73bQLnzd9ClZN2BxRbSKTY059GGiGG9N9fzv9UANLGqcV+btg1mWXA3loeWXYqw/9RIXSYTPwYC9w81oJHpq+hNh/b5HOxeUB4lfhiiUjeXhcAyemoMZeO03ilxjsZ8flo5F+zTWAzj3n9kAhi0donakQ7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bIGEBkUr; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240522050154epoutp0194fc2ef74733d5950da5d4470dbca11f~RtvlKhCjt0716007160epoutp01A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2024 05:01:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240522050154epoutp0194fc2ef74733d5950da5d4470dbca11f~RtvlKhCjt0716007160epoutp01A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716354114;
-	bh=v+UZFDGcIplCeWgyOKOk7LUl/tgd1hVNH/BQuH7kVhM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bIGEBkUrTINXnyvIkKFop6jbt0P5KHa++22msGRYVEie0tGoOFaivH4E435CCl+qQ
-	 Zj5Olfmm5M8sW3N9fYsFSNXs0F08ad1IjMplZ8NTj1n6o3lfSQbGnupYuKtQjakOmt
-	 apiVSG5uBi2SRMh94ChbmA3fspJYBX7kagibTrZM=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240522050153epcas5p4c49060d71c380fd1a311b8ef4f7dc111~RtvkWJubf0799007990epcas5p4K;
-	Wed, 22 May 2024 05:01:53 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4VkfKr2wQcz4x9QH; Wed, 22 May
-	2024 05:01:52 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DB.81.08600.E3C7D466; Wed, 22 May 2024 14:01:50 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240521145521epcas5p3085c3982fb14dab0709d493d3e1b941b~RiMcb82eq2206322063epcas5p3P;
-	Tue, 21 May 2024 14:55:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240521145521epsmtrp1967b56785c8cc04ff0efd8e503c27f9c~RiMcZUDzh2227322273epsmtrp1W;
-	Tue, 21 May 2024 14:55:21 +0000 (GMT)
-X-AuditID: b6c32a44-6c3ff70000002198-e8-664d7c3e8a2b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3E.1C.08924.9D5BC466; Tue, 21 May 2024 23:55:21 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240521145517epsmtip26cc224d597e605d820abffa401131a56~RiMY8JjcX2617526175epsmtip2_;
-	Tue, 21 May 2024 14:55:17 +0000 (GMT)
-Date: Tue, 21 May 2024 20:18:19 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
-	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
-	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
-	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 10/12] dm: Enable copy offload for dm-linear target
-Message-ID: <20240521144819.nm25c4txfhwggfae@green245>
+	s=arc-20240116; t=1716355280; c=relaxed/simple;
+	bh=kukcvZgl7f3XRk6gkoIjN7Po872SObVN477KLfpuGW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oqA+j6gAtMqWnjexcO0cMPczQHp5TyH6ncgA9SI3jOQdoABJgfDPsOdS+EJIKM/kmTSS5fpcTjRT25uAZJvf3PIQHktB6WJsHDBqYaOCspt0XIRlPf9bX52fkYZqIXnWrcHynuc150LbVAgWDEPDl4pC/Sp1Cz6r7+7IbtQqt6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gY3ss0tt; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6a0ffaa079dso3963636d6.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2024 22:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716355277; x=1716960077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cHqthuSHpbhdrYmPpGzlBssCJ4rO2VRux0c66MiPxEo=;
+        b=gY3ss0ttIuMvu2huQqHZOIOsXphDm8lSDTWnOboF1FFvzJtoj4RSYr3cZw7aXgkzC+
+         AFM+XFbeObOeaNHPCNaCu2PefGSS8jGlPADZpkX4M/lomX3zAuoGwD0Vf+/IOINbbn4F
+         uOI/0VFRZy7ugoN/dZgY36NhdyzVT2PkQMfVz8gZbaQ882eboBG7IEhtM8MeH3iNcZWF
+         +8ro2zRXV4Vn2VO7eYTJqq0gUCPVtKSK+TzEqRVdU0uxLWauTV0OL+FDQeLgaZspibXj
+         OAeM9vGBAYFzZbc17tHL5qIu19qdFtQrx9zU+K/H2HhJZlR4vYcAZrSCSrdGa/31vuOJ
+         BlDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716355277; x=1716960077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cHqthuSHpbhdrYmPpGzlBssCJ4rO2VRux0c66MiPxEo=;
+        b=YPRyxPDX8HpvkOwkObdiPRmGUkHMMy4qZRrxpO2EAk2WdI71QWjrhLL6oUabeAXdNj
+         e1m9ikTUzW6rqoiQVMpY/lGmFo0TJckVfVyQ2VyKQNX+0tO3aCo0kbHAAZmflmVdsuXn
+         2dtz4I03MDF003mV40K89757AWooVnB5eVYYZujlmmOwSlToUjf0EU81gH51RPQ5fv31
+         V5m+SaNA3VoXU8SogYqfm4tDW9p80Zsbd+YJKwY3KXXtk+IcQFz94TNVAum+fOJ+XrGq
+         X5z7ZjXRevQE7Ao/YXt0GOfWmon/OGOmveS177SIhKB6K8xHMc7rjGkHfZuox9AExxRi
+         e3Qg==
+X-Gm-Message-State: AOJu0Yz2ESwFU5ImJ1/gbDoJwieGV3l7BczR2emEu0y7UOuJiWNgdZKn
+	6FuvbzOaT0n1BVtLUd48B8y2pbGzfiFhlMIJXgjZO+Z286RKY2bYKVkd0fEO3rQnao2zcenDM/m
+	994rhQsV4b6XNML2W2sQlgiDOgSWB0e0h
+X-Google-Smtp-Source: AGHT+IG0Oyeq2vgBZYq1W7xnFere/8ellyDFiPVIgXqYW3EipHP6uPPGBxDeWEyYJzcJyLNc+L0be0rJoX7KY5umn+4=
+X-Received: by 2002:a05:6214:4410:b0:6a0:6e42:601b with SMTP id
+ 6a1803df08f44-6ab7c8f6fd4mr17283496d6.8.1716355277516; Tue, 21 May 2024
+ 22:21:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <017a9853-6e42-4250-9cfa-1d6ad5786556@acm.org>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TeVATdxTH+9vdbDZMocuh/gQ7pam2AoKJTfCHcmildR3KDDN2pjO1iClZ
-	gSGETBLqRStCsQgTQNFSYpVTLq1UQGsQxeEQxFJsI3c5tIk90IajUJGCjdnQ8b/P+773fu+a
-	H4W71PHdqTilllUrZQoh6UBcafFa6xucHL5X1Dfqg2o6b+EoNXcBR+eHc0g03jIF0FcTczgy
-	3fwSoPmubhzV3xoBqKjkDIEGbhow1FhyAkNV59swdDo/DUNtzx6T6ERzL0DmHj2Grg/6oOKj
-	ZQRqvH6bQMaGb0hUWG7mo4r2RQwdz+jB0FXTEYAujlsI1DHogboX2nlbPBjjvTCmswQyBv0w
-	n+keuUQwxq4kprb6GMnUlR1mfq8rAMy1gRSSKc3O4zG6tL9IxpA+ymMmzYMEY7nRQzLZ9dWA
-	+aGolR/h+lF8YCwrk7NqT1YZnSiPU8YECcN2Rm2LkvqLxL7iALRR6KmUJbBBwtD3I3zfi1NY
-	lyP0/FSmSLJKETKNRrg+OFCdmKRlPWMTNdogIauSK1QSlZ9GlqBJUsb4KVntJrFItEFqDdwT
-	H/tTxkm+qpW3/1pFDpECHhKZQEBBWgIf6Br4mcCBcqGvAdh0egxwxhSAj4oLSc6YBbBtbBYs
-	paQ0XiY4x3UAz347iHHGQwCNDeW2KIJeA8+Xf2dliiJpH3jnGfVcdqPXwtmxClsyTheT8Jf+
-	J/hzhysdBmuzDbamHGl/2PHjBMaxM7xdYLLpAnozzDfk2/Rl9Cr49bkZnOuoVwANjRTHofDK
-	v/Ukx67wz/Z6Psfu8I+co3beB6tOVtpGg/QXAOr79PbRQmB6Z47tUZyOhd3jc/aEV+GpzosY
-	pztB3bwJ43RHePXsEr8BL9QU2QuvhL3/HLEzA1NT79o3ZAEwrdKA5YLX9C8Mp3+hHseb4LGJ
-	VJ7eujyc9oAVixSHXrCmYX0R4FWDlaxKkxDDRktVYiW77/+TRycm1ALb7/EOvQr6Cxf9mgFG
-	gWYAKVzo5lhbv2Ovi6NcduAgq06MUicpWE0zkFqPdRx3XxadaP1+Sm2UWBIgkvj7+0sC3vYX
-	C1c4jqefkbvQMTItG8+yKla9lIdRAvcUjNxpFBTg9JNMGPgYNza5FokUFpMgq9hl6MN1TYJR
-	b/OVOXPZSPieJwc6V8W3qp29Dh9yUyTfSqgIz5rJnLmctGv51OPW8r9PObW92TSWXhZ5aM32
-	36TavsiIlruX3EMidYTwaQjhta11wkHk/FYbNdn+uXnxg64gv6frGF3VjZaMHZW7f97tNBtw
-	Q7e1yWICv95xvMBbeOeEa+n9Z7tSzBFZ8xcH80HfZNr38YPTnuDdRxvah85tqVw9nyPx+exe
-	yPZXVMm5H2dMNxwsrs57XXbUqH7JdFm9TV4aPDDsfd+3b/XG5bXTK0pmpUPt3g6fqHa+bPHq
-	zwtUdFCbJaKmB0PB+9cJCU2sTOyNqzWy/wA12b2dxgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzHfX+/X7/7lZ39Kulbx8wRPRBt4rtpZlrz5fIwMyzzcOl3XXQ5
-	d/I4ykXprCTmrhNOD5dqSlceTnW48lC5TksoU0xNip4sj6vobsZ/n31e74d9tg9Dun2hvJmY
-	uH2cIk4cK6RdqFs1wunzWm+GSxY0qmaj0vpHJFJljJCo+M0ZGvXWDAF0YeAHiTrvpwD0y2oj
-	UcWjdoD0OZco1HrfRKCqnEwCFRY/JNBFTRKBHo59plGm5QVAXS06AlW3BaCryXkUqqquo1Dz
-	3WwaXTF08VDB41ECnT3VQqA7nccBKuntp9CTNgGyjTx2WibAzc9FuD4HYpPuDQ/b2sso3GyN
-	x8aiVBqX5yXg7vIsgCtbE2mcm37OCacl9dHYdLLDCQ92tVG439xC4/SKIoCf6mt569wjXEKi
-	uNiY/Zxi/tIdLtITP7D8K3Ewu1JLJwIjoQbODGQXwsSqm5QauDBubCWAVwxllAN4QcNILemY
-	3WHh6AeeQ9QJ4LfqfjugWB9YbLgB1IBhaDYANowx4+vJrC/8+rbAHkqy+TRsuveLNw7cWRE0
-	ppvsBXx2EXzSOEA4QvsB1Dy1AAdwhXVZnXYR+Ud0ufwdOV5AsgJYMGovcGaXQI1JY7/Ag50K
-	tfnDZAZw1f3n1v3n1v1z6wFZBLw4uVIWLVMGyYPiuAOBSrFMGR8XHbhzj8wI7H/h73cH3C4a
-	CLQAggEWABlSOJlvrFgpceNHiQ8d5hR7tiviYzmlBQgYSujJ9+xOi3Jjo8X7uN0cJ+cUfynB
-	OHsnEodUG9abpJsCzouGbZlp3LEQ/cwt+jBrfEKP/9oO3KpNkAfPfdY3Z3vwvfklW1Wfzpf5
-	+e2uyPoeOiFVsNGzg2v3SpIsqbMOiQJyaY8Ugr9gzWBEN1np+jJl7HVt2EqbMCVP7nlaN2to
-	4WBoRmNI4a4Xhoj05b7+cxte1U80XF99/f0qjynFx3dqws09+Wd7fDMj98pym35+xNcmLJar
-	GyLDlaWTNn96mbxi7zO8wSt5ZHZvaGpa0yT10W20Odj1mI9MUpptvWw+fUB6ZGlI+4c1tTM9
-	gmYM1ZOryl6FCcrDp62PzJaIzLuk2pLkqBrV4S0+fUe0w7ZF3g+q6rS3N44OxggppVQc5E8q
-	lOLfWU2MeoYDAAA=
-X-CMS-MailID: 20240521145521epcas5p3085c3982fb14dab0709d493d3e1b941b
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_161fe_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520103016epcas5p31b9a0f3637959626d49763609ebda6ef
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520103016epcas5p31b9a0f3637959626d49763609ebda6ef@epcas5p3.samsung.com>
-	<20240520102033.9361-11-nj.shetty@samsung.com>
-	<017a9853-6e42-4250-9cfa-1d6ad5786556@acm.org>
+References: <CAPSOpYs6Axo03bKGP1=zaJ9+f=boHvpmYj2GmQL1M3wUQnkyPw@mail.gmail.com>
+ <CAOQ4uxjCaCJKOYrgY31+4=EiEVh3TZS2mAgSkNz746b-2Yh0Lw@mail.gmail.com>
+ <CAPSOpYsZCw_HJhskzfe3L9OHBZHm0x=P0hDsiNuFB6Lz_huHzw@mail.gmail.com>
+ <CAOQ4uxhM-KTafejKZOFmE9+REpYXqVcv_72d67qL-j6yHUriEw@mail.gmail.com> <CAPSOpYuroNYUpK1LSnmfwOqWdGg0dxO8WZE4oFzWowdodwTYGg@mail.gmail.com>
+In-Reply-To: <CAPSOpYuroNYUpK1LSnmfwOqWdGg0dxO8WZE4oFzWowdodwTYGg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 22 May 2024 08:21:06 +0300
+Message-ID: <CAOQ4uxgOmJjJT=mX96-AwWY_p9fHXtvNZFUcPgqggKgGtpsq9A@mail.gmail.com>
+Subject: Re: fanotify and files being moved or deleted
+To: Jonathan Gilbert <logic@deltaq.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_161fe_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 20/05/24 04:25PM, Bart Van Assche wrote:
->On 5/20/24 03:20, Nitesh Shetty wrote:
->>Setting copy_offload_supported flag to enable offload.
+On Wed, May 22, 2024 at 12:09=E2=80=AFAM Jonathan Gilbert <logic@deltaq.org=
+> wrote:
 >
->I think that the description of this patch should explain why it is safe
->to set the 'copy_offload_supported' flag for the dm-linear driver.
+> On Tue, May 21, 2024 at 12:13=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+> > Note that you will be combining the *current* directory path with the *=
+past*
+> > filename, so you may get a path that never existed in reality, but as y=
+ou wrote
+> > fanotify is not meant for keeping historical records of the filesystem
+> > namespace.
 >
-Acked, will add more description in next version.
+> And, in practice, this is almost certainly an edge case, because the
+> vast majority of user-driven activity will be on a time scale such
+> that the directory path hasn't had a chance to change since the file
+> event was generated, I think? It's more a, "You can't technically
+> guarantee 100% consistency", than a, "You should expect consistency
+> errors regularly," sort of thing?
+>
 
-Thank You,
-Nitesh Shetty
+I guess so, but I would not call this "consistency errors", because
+fanotify does not claim to report a "consistent" state or a snapshot,
+although it could be used to construct an "eventual consistent" state
+by examining the information in the events.
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_161fe_
-Content-Type: text/plain; charset="utf-8"
+- You should expect out of order events.
+- You should expect that the object information in the event
+   that is described with dfid+name+fid may not exist with the
+   same description at the time that the event is reported.
+
+> > > Are FAN_MOVED_FROM and FAN_MOVED_TO guaranteed to be emitted
+> > > atomically, or is there a possibility they could be split up by other
+> > > events? If so, could there be multiple overlapping
+> > > FAN_MOVED_FROM/FAN_MOVED_TO pairs under the right circumstances??
+> >
+> > You are looking for FAN_RENAME, the new event that combines
+> > information from FAN_MOVED_FROM/FAN_MOVED_TO.
+>
+> Ah, excellent, this is in fact exactly what I needed.
+>
+> > > One other thing I'm seeing is that in enumerating the mount table in
+> > > order to mark things, I find multiple entries with the same fsid.
+> > > These seem to be cases where an item _inside another mount_ has been
+> > > used as the device for a mount. One example is /boot/grub, which is
+> > > mounted from /boot/efi/grub, where /boot/efi is itself mounted from a
+> > > physical device.
+> >
+> > Yes, this is called a bind mount, which can be generated using
+> > mount --bind /boot/efi/grub /boot/grub
+>
+> Huh, okay. I did some reading about this, and it seems that regardless
+> of the order in which things are done, quite simply it is always
+> possible for the same underlying filesystem to be mounted in multiple
+> places. When this happens, there's no way to tell which mount changes
+> were made through, but also, it isn't relevant because the same change
+> is visible through all such overlapping mounts simultaneously. So,
+> depending on the exact semantics I need, I need to either decide which
+> mount I'm going to pick as being the most meaningful for the event, or
+> alternately figure out *all* of the mounts to which the event applies.
+>
+> > > When enumerating the mounts, both of these return the
+> > > same fsid from fstatfs. There is at least one other with such a
+> > > collision, though it does not appear in fstab. Both the root
+> > > filesystem / and a filesystem mounted at
+> > > /var/snap/firefox/common/host-unspell return the same fsid. Does this
+> > > mean that there is simply a category of event that cannot be
+> > > guaranteed to return the correct path, because the only identifying
+> > > information, the fsid, isn't guaranteed to be unique? Or is there a
+> > > way to resolve this?
+> >
+> > That depends on how you are setting up your watches.
+> > Are you setting up FAN_MARK_FILESYSTEM watches on all
+> > mounted filesystem?
+>
+> That is the intent, yep.
+>
+> > Note that not all filesystems support NFS export file handles,
+> > so not all filesystem support being watched with FAN_REPORT_FID and
+> > FAN_MARK_FILESYSTEM.
+>
+> Good to know. My initial use case for the code is on my own personal
+> machine, which is a pretty much stock Ubuntu 24.04 LTS system with the
+> default ZFS layout. In my testing thus far, it looks like the kinds of
+> events I'm looking for are in fact captured.
+>
+
+It's good to know that someone is testing fanotify on ZFS ;-)
+
+> > If, for example you care about reconstructing changing over certain
+> > paths (e.g. /home), you can keep an open mount_fd of that path when you
+> > start watching it and keep it in a hash table with fsid as the key
+> > (that is how fsnotifywatch does it [1]) and then use that mount_fd when=
+ever
+> > you want to decode the path from a parent file handle.
+>
+> Yeah, my starting point for development was the fatrace source code
+> which also does this.
+>
+
+Cool. I wasn't aware that fatrace has adopted FAN_REPORT_FID a long time
+before I added support to inotify-tools :)
 
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_161fe_--
+> > If /home is a bind mount from, say, /data/home/ and you are watching
+> > both /home and /data, you will need to figure out that they are the sam=
+e
+> > underlying fs and use a mount_fd of /data.
+>
+> My current plan is to discard any mounts which specify a root that is
+> a subpath of another mount, and in the case of multiple mounts of the
+> same root, pick one to move forward with (with hints from
+> configuration) and only mark that one.
+>
+
+You can also use open_by_handle() to determine if one mount
+is a subtree of another.
+
+if you have two fds and two different fhandles from the root of two mounts
+of the same fsid, only one of these commands will result in an fd with
+non empty path:
+fd2inmount1 =3D open_by_handle_at(mount1_fd, fhandle2, O_PATH);
+fd1inmount2 =3D open_by_handle_at(mount2_fd, fhandle1, O_PATH);
+
+So you can throw away subtree mounts of the same fsid keeping
+only one mount_fd per fsid as you traverse the mounts.
+
+> This is starting to feel like all the bits are coming together. Thanks
+> so much for your insight and input :-)
+>
+
+You're welcome.
+
+Thanks,
+Amir.
 
