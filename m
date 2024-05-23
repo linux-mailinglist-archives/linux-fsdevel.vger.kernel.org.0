@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-20058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D138CD595
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 16:21:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E11C8CD5BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 16:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0244E1C21C14
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 14:21:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C20FFB20B75
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 14:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CC414B95B;
-	Thu, 23 May 2024 14:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E112614BF92;
+	Thu, 23 May 2024 14:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oFTNxQVK"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pqlvxgCI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325F21DFF0;
-	Thu, 23 May 2024 14:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B784813DBA0;
+	Thu, 23 May 2024 14:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474094; cv=none; b=Kq0mAuB8h/p5D5O4tU80IH7C/Wp1D9qCfgJdJOod12JiAacnnL5oQY7ao4epuIvdHzwRzh12WWugUuqFkaVcHzuxas0hDRRuCt6/WP0vCQN0Kdn9Ang+qqy0qR15VDOagvt3J3yhg9FspyPS41IQaNPtq+OCGHLNXvQc0iMX5Dk=
+	t=1716474535; cv=none; b=qswdAMVKmGstkZkWe8821x82ZKln7AiC/rEQWlxtpoACUu1Zr6qMMXFOzUs1nVX7rEzryV0teXHMbNL7iJNcBViYUol3w3nXbd4BhC3hodDRiBmrMMpURLrSTtdCxHP5RWbEhX/oVNTPJF7WLGlucOxhZqrUTVk+S6qrwpaX1Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474094; c=relaxed/simple;
-	bh=FThYKozjn//4H2MpuuNRgDAHcvOBXsbMlqwA0ybup00=;
+	s=arc-20240116; t=1716474535; c=relaxed/simple;
+	bh=YRzIZV+8IYLn+F4nAiVNJuRhYPZ1yBzoJnVmLoTmfFI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B6m+AJMXqjbfYz2A1xb14fS8Ce3uhM6WN1+phfa8LzvIGQE28NaPtdewxThgNjbn0OBEpf3YPWKScC7XmlxxwD72vDCkmuFrdXOTxByykuEnsFnAsR/B4qy8SgGSPJGgf8hF7sUsDyKCNdYuzNOVbQciLRaiopC+aJ8wFijpBZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oFTNxQVK; arc=none smtp.client-ip=115.124.30.101
+	 In-Reply-To:Content-Type; b=EcO9x1cUlRjH0/gzvTBB9uZy8iTaHe8by9mftFgNl4jc3mBUZjLGRkenSt/pZtuk0i+Vvt7zrdQOpFfIzTWMFm45I1MFSnc6TyZoJPDUmwjTxaQJD8pM6fc3YFZ1xMcfIMV+bi5Sq+CyMSvr1aabMC5dZUHNPflTtDo+h03dle0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pqlvxgCI; arc=none smtp.client-ip=115.124.30.100
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1716474088; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=P7HnNkBnQuCqmu8zTIccJJaTZgTQr1fKN1BShJAXcUA=;
-	b=oFTNxQVKXbIitYgvQgV4eyRK+sreKUySjtNe67CyaLI+yH5EDpimOIdC0/LommVVFVR9gRXYRyoV4WCpKm0TH7RskaIyEYu1AOFjktlmqP/x43q8AJGFh1yLlIZQ43e8v5TIfPXiROVqEPYqEdv0Dzs8xZ6PwmPj0cf5vh8bWR4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W739MMQ_1716474086;
-Received: from 30.39.171.189(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W739MMQ_1716474086)
+	t=1716474523; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=9wPJMsA7uUhGJBy9UQb2/zbE2MRvDozVPDCHZoma3hs=;
+	b=pqlvxgCIOI5o9dB3XK5gyt1UAyhflc3P2qlqzJRGsSBghtHe9YD/DfvD4Mmwk+0Q4uOj6dJ0SnxpzQ6ANrV6TrWYXHwpm2E7HFkNAwMi+DToyV3pZV/YGlHodpWmJh4Up3ManIdoarILHggZYdSvQOImrZKM6lOzsPGrT3YPBZQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W739OVi_1716474521;
+Received: from 30.39.171.189(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W739OVi_1716474521)
           by smtp.aliyun-inc.com;
-          Thu, 23 May 2024 22:21:27 +0800
-Message-ID: <9945b390-3572-4808-b08f-56af9cd3918e@linux.alibaba.com>
-Date: Thu, 23 May 2024 22:21:25 +0800
+          Thu, 23 May 2024 22:28:43 +0800
+Message-ID: <11f10862-9149-49c7-bac4-f0c1e0601b23@linux.alibaba.com>
+Date: Thu, 23 May 2024 22:28:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/12] cachefiles: remove err_put_fd label in
- cachefiles_ondemand_daemon_read()
+Subject: Re: [PATCH v3 06/12] cachefiles: add consistency check for
+ copen/cread
 To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
  jlayton@kernel.org
 Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
@@ -58,10 +58,10 @@ Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
  linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
  yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
 References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
- <20240522114308.2402121-6-libaokun@huaweicloud.com>
+ <20240522114308.2402121-7-libaokun@huaweicloud.com>
 Content-Language: en-US
 From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240522114308.2402121-6-libaokun@huaweicloud.com>
+In-Reply-To: <20240522114308.2402121-7-libaokun@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -70,102 +70,85 @@ Content-Transfer-Encoding: 7bit
 On 5/22/24 7:43 PM, libaokun@huaweicloud.com wrote:
 > From: Baokun Li <libaokun1@huawei.com>
 > 
-> The err_put_fd label is only used once, so remove it to make the code
-> more readable. In addition, the logic for deleting error request and
-> CLOSE request is merged to simplify the code.
+> This prevents malicious processes from completing random copen/cread
+> requests and crashing the system. Added checks are listed below:
+> 
+>   * Generic, copen can only complete open requests, and cread can only
+>     complete read requests.
+>   * For copen, ondemand_id must not be 0, because this indicates that the
+>     request has not been read by the daemon.
+>   * For cread, the object corresponding to fd and req should be the same.
 > 
 > Signed-off-by: Baokun Li <libaokun1@huawei.com>
 > Acked-by: Jeff Layton <jlayton@kernel.org>
-> Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
-> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-
-LGTM.
-
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-
-
 > ---
->  fs/cachefiles/ondemand.c | 45 ++++++++++++++--------------------------
->  1 file changed, 16 insertions(+), 29 deletions(-)
+>  fs/cachefiles/ondemand.c | 27 ++++++++++++++++++++-------
+>  1 file changed, 20 insertions(+), 7 deletions(-)
 > 
 > diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-> index 3dd002108a87..bb94ef6a6f61 100644
+> index bb94ef6a6f61..898fab68332b 100644
 > --- a/fs/cachefiles/ondemand.c
 > +++ b/fs/cachefiles/ondemand.c
-> @@ -305,7 +305,6 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->  {
->  	struct cachefiles_req *req;
->  	struct cachefiles_msg *msg;
-> -	unsigned long id = 0;
->  	size_t n;
->  	int ret = 0;
->  	XA_STATE(xas, &cache->reqs, cache->req_id_next);
-> @@ -340,49 +339,37 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->  	cachefiles_grab_object(req->object, cachefiles_obj_get_read_req);
->  	xa_unlock(&cache->reqs);
->  
-> -	id = xas.xa_index;
-> -
->  	if (msg->opcode == CACHEFILES_OP_OPEN) {
->  		ret = cachefiles_ondemand_get_fd(req);
->  		if (ret) {
->  			cachefiles_ondemand_set_object_close(req->object);
-> -			goto error;
-> +			goto out;
->  		}
->  	}
->  
-> -	msg->msg_id = id;
-> +	msg->msg_id = xas.xa_index;
->  	msg->object_id = req->object->ondemand->ondemand_id;
->  
->  	if (copy_to_user(_buffer, msg, n) != 0) {
->  		ret = -EFAULT;
-> -		goto err_put_fd;
-> -	}
-> -
-> -	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
-> -	/* CLOSE request has no reply */
-> -	if (msg->opcode == CACHEFILES_OP_CLOSE) {
-> -		xa_erase(&cache->reqs, id);
-> -		complete(&req->done);
-> +		if (msg->opcode == CACHEFILES_OP_OPEN)
-> +			close_fd(((struct cachefiles_open *)msg->data)->fd);
->  	}
-> -
-> -	cachefiles_req_put(req);
-> -	return n;
-> -
-> -err_put_fd:
-> -	if (msg->opcode == CACHEFILES_OP_OPEN)
-> -		close_fd(((struct cachefiles_open *)msg->data)->fd);
-> -error:
-> +out:
->  	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
-> -	xas_reset(&xas);
-> -	xas_lock(&xas);
-> -	if (xas_load(&xas) == req) {
-> -		req->error = ret;
-> -		complete(&req->done);
-> -		xas_store(&xas, NULL);
-> +	/* Remove error request and CLOSE request has no reply */
-> +	if (ret || msg->opcode == CACHEFILES_OP_CLOSE) {
-> +		xas_reset(&xas);
-> +		xas_lock(&xas);
-> +		if (xas_load(&xas) == req) {
-> +			req->error = ret;
-> +			complete(&req->done);
-> +			xas_store(&xas, NULL);
-> +		}
-> +		xas_unlock(&xas);
->  	}
-> -	xas_unlock(&xas);
->  	cachefiles_req_put(req);
-> -	return ret;
-> +	return ret ? ret : n;
+> @@ -82,12 +82,12 @@ static loff_t cachefiles_ondemand_fd_llseek(struct file *filp, loff_t pos,
 >  }
 >  
->  typedef int (*init_req_fn)(struct cachefiles_req *req, void *private);
+>  static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+> -					 unsigned long arg)
+> +					 unsigned long id)
+>  {
+>  	struct cachefiles_object *object = filp->private_data;
+>  	struct cachefiles_cache *cache = object->volume->cache;
+>  	struct cachefiles_req *req;
+> -	unsigned long id;
+> +	XA_STATE(xas, &cache->reqs, id);
+>  
+>  	if (ioctl != CACHEFILES_IOC_READ_COMPLETE)
+>  		return -EINVAL;
+> @@ -95,10 +95,15 @@ static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+>  	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>  		return -EOPNOTSUPP;
+>  
+> -	id = arg;
+> -	req = xa_erase(&cache->reqs, id);
+> -	if (!req)
+> +	xa_lock(&cache->reqs);
+> +	req = xas_load(&xas);
+> +	if (!req || req->msg.opcode != CACHEFILES_OP_READ ||
+> +	    req->object != object) {
+> +		xa_unlock(&cache->reqs);
+>  		return -EINVAL;
+> +	}
+> +	xas_store(&xas, NULL);
+> +	xa_unlock(&cache->reqs);
+>  
+>  	trace_cachefiles_ondemand_cread(object, id);
+>  	complete(&req->done);
+> @@ -126,6 +131,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	unsigned long id;
+>  	long size;
+>  	int ret;
+> +	XA_STATE(xas, &cache->reqs, 0);
+>  
+>  	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>  		return -EOPNOTSUPP;
+> @@ -149,9 +155,16 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	if (ret)
+>  		return ret;
+>  
+> -	req = xa_erase(&cache->reqs, id);
+> -	if (!req)
+> +	xa_lock(&cache->reqs);
+> +	xas.xa_index = id;
+> +	req = xas_load(&xas);
+> +	if (!req || req->msg.opcode != CACHEFILES_OP_OPEN ||
+> +	    !req->object->ondemand->ondemand_id) {
+
+For a valid opened object, I think ondemand_id shall > 0.  When the
+copen is for the object which is in the reopening state, ondemand_id can
+be CACHEFILES_ONDEMAND_ID_CLOSED (actually -1)?
+
+Otherwise looks good to me.
+
 
 -- 
 Thanks,
