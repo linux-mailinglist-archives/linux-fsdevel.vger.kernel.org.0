@@ -1,148 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-20079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B4A8CDEFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 02:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B45708CDFDC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 05:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143FB1C211DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 00:47:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86A11C222FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 03:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935B4749C;
-	Fri, 24 May 2024 00:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724063A1B0;
+	Fri, 24 May 2024 03:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZZpTA8t"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oO8pl/Rp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DB2EDF;
-	Fri, 24 May 2024 00:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0111F38F98
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 03:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716511633; cv=none; b=bY6Azhazi5zIiXBsN/qdXPTpJEXkz/3IbWiO9lL/mnMng4ZPlokqzbNZZNUWtfFIIRIDkCcgYwGPE81oqcCyW994Lb+pXUVMFL4tfsg3HulgoTOzOgQPc2Xk1HKhBCVm3LwXzq0QDFlUokTWIof9VK3QxC7JBiJVaVOH5RJaIqA=
+	t=1716521943; cv=none; b=knhjqqUNVeDtM/567oECFKXk9tHfqZiJXWSF2BaeqVCA+decKGESUY3PPJO0yzZD7aVssW4ga1FceW0Eh5AWkvBfKCcaVwXckq1kIwc7MNGr8qcKxr+ZbD2ajiU9VMApmfL1wsj3arX4InHJnhubOZLUQelPNfDd6SEkvV2RbJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716511633; c=relaxed/simple;
-	bh=KLMnBc+W7brKUXqt0eZU0uMPzeOY+z6lS4AmDmnWoLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LG3dE2i9zPXQSmnqlfao1p6pH5Jz2HyE0pSD2WCiN0gtHYSrFHvgeiMPh50clqqNp73wEikXidFYi1tL4YLYKY6RaFFEidiRQFcaSTotLHjpEBmW4qOEBjt1+PiBw4OeIHZBEBl4qIkEMeH3P1G6tTXCRxyGtkz6UHc+eAAVOBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZZpTA8t; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f12171523eso3725349a34.1;
-        Thu, 23 May 2024 17:47:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716511630; x=1717116430; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xhHs76QOp2MGGcphbew3t/rK2bfPPoj+eZPq3AAV6vg=;
-        b=UZZpTA8tGkooj7W/X1zLm/t/2aATszHLo7mIqQhbObnPLa5c0Xt8UlSZTh+UDvyG5A
-         USk9azCux1IF+JXBNgB1yAkJ8eX1oZwdvFC85nnxLSpuSZJYJmaaB+leWaLPRhf2Oa1k
-         pMgZLaA+qeQuFyIWQVZvniNWmYbRCRdaDXrT5aIQ79BOTxkyK1oeZCZsQA5/BWw0XbM1
-         xv63NfTQuSs6C5JCyd0CqJouyNaEAPQ/eNN+qTIx8D9kcpsFrXA3n1PlWhG1SrEDWlMv
-         GzxNLC3QA10hkvJKizsjS/ZJBTSBRnEkc76BbnHEvZzDWiQMfW189PHqibSAMyrr43Uw
-         cVpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716511630; x=1717116430;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xhHs76QOp2MGGcphbew3t/rK2bfPPoj+eZPq3AAV6vg=;
-        b=SuBukYzLzHCK74qGAHH9rpnkkg/HR+LaTQLW+y+toffgcsxvaQoEAByZnw6XAcSs10
-         PzSGLsAjjFIAdlGMvT7x6yBF6oQV/UEaAdHI70BpT1YEDaCRodKso/xwLTnSPqtnkA9V
-         IlU6ATGwE70KCptrCjbZ0viCSzsiHkTEO34v1NOR9//ZgV0BEpDGWe3jtjUNr2DpEqlo
-         s9eSmfzMsSahf5VAjDIPAj9axygxGNdjdmTWG3EDOTPWHy55C9WtJwcxr0k4IzUASxDL
-         pKSA2+KxjgiARmk16Op/MIWMWPRypIVLU4l0wbFR9qTGAFGJYLlMM85jepaMr3kF6Bne
-         gtTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfHk8kZ/cEaFJGToW48XL7k/m5XI3thQw0oxbD9kvaY4vCIveyWaRkXEIZ2p4eANrFgbd0aI78wbB6iN/ZDND0iwUieLZH3wW75H+g+hhKe08SmjoPG++vUehwQmfl3tcdc94CAfTCgJocJw==
-X-Gm-Message-State: AOJu0Yw2ZuRt6rfyfsdQ4Ql7U6+PFiUSegqR6evca+8beX5dTkb3p84X
-	fuPKBu8AR211Xdy1nWkCGmTzRVxE9LJ4zIltPEnc8Nqz9rEheq/98l83J14l
-X-Google-Smtp-Source: AGHT+IFfirIf8OFRPb3WySkQ+KDQray5kCg1lM30f03akhL+f1lZdNnquwHvOD0fvvHmBd3Df7O8bw==
-X-Received: by 2002:a05:6830:121a:b0:6f0:9b4c:9aea with SMTP id 46e09a7af769-6f8d0a99ea4mr931418a34.16.1716511630224;
-        Thu, 23 May 2024 17:47:10 -0700 (PDT)
-Received: from Borg-10.local (syn-070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f8d0daf4a4sm119022a34.28.2024.05.23.17.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 17:47:09 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Thu, 23 May 2024 19:47:08 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-Message-ID: <sq6fbx5jpzkjw43wyr7zmfnvcw45ah5f4vtz6wtanjai3t4cvk@awxlk72xzzkm>
-References: <cover.1708709155.git.john@groves.net>
- <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
- <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
- <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
- <kejfka5wyedm76eofoziluzl7pq3prys2utvespsiqzs3uxgom@66z2vs4pe22v>
- <CAJfpegvQefgKOKMWC8qGTDAY=qRmxPvWkg2QKzNUiag1+q5L+Q@mail.gmail.com>
- <l2zbsuyxzwcozrozzk2ywem7beafmidzp545knnrnkxlqxd73u@itmqyy4ao43i>
- <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
+	s=arc-20240116; t=1716521943; c=relaxed/simple;
+	bh=Rs8KfzPFWT1KO+9dMU8ukzxtSitXVwFhV5/HmJwGcis=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=hc+pvvZuAx8T+zTSWEFwXcRg58ZHJa7Rw2haSjv/G0aQAWOhNrmKZnkZdVvPW+/2SkCxtRwvFZKpplfq/2ouhqVOPgcPbBFl63dxfyLEvUBRGxSt0cracXLAP/MEMHoSP82srlf6lurMc/Xc5LipayHLC6rA8HWk5c0hX1CCx5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oO8pl/Rp; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240524033859epoutp0460ee606c85b08ae75b2b3866604da04a~ST5wP60HT2913429134epoutp04e
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 03:38:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240524033859epoutp0460ee606c85b08ae75b2b3866604da04a~ST5wP60HT2913429134epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716521939;
+	bh=kEUNE5DDBugp0ptyOjlNvhJs+4yUfxAjHQz7sOYY5ZI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oO8pl/RpKAB+7hnb8+/HuUwu4GfoNyg9mfIlRSee1S4yn6MftXaxZVI9095j+T5Z7
+	 QYkRsH0CwLC2tlealGyxh9oldqrKWLLlRR/kOzKUC2lMEYqkIaJT3LWUrLvUfQlh9r
+	 q5nzNSzwGv/rvY9089VVkDawhsd5EJ79MaECwTLQ=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240524033859epcas5p3ab5fb4a491caf8ca91d3b7f32528fa36~ST5vooHaQ0531105311epcas5p3S;
+	Fri, 24 May 2024 03:38:59 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VlrPF0SpVz4x9Pq; Fri, 24 May
+	2024 03:38:57 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	77.94.19431.0DB00566; Fri, 24 May 2024 12:38:56 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240523114201epcas5p35636ecdb5665cc3d792c120f43e67d96~SG2NGF_tW0305503055epcas5p30;
+	Thu, 23 May 2024 11:42:01 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240523114201epsmtrp18a825758bc171b7a412521bf53c949f7~SG2NE_PA90370403704epsmtrp1T;
+	Thu, 23 May 2024 11:42:01 +0000 (GMT)
+X-AuditID: b6c32a50-ccbff70000004be7-5d-66500bd0a7cf
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	33.F1.08924.98B2F466; Thu, 23 May 2024 20:42:01 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240523114157epsmtip2db1c50506ea74d1d9e6f9373973e76e2~SG2JoFU973178131781epsmtip2B;
+	Thu, 23 May 2024 11:41:57 +0000 (GMT)
+Date: Thu, 23 May 2024 11:34:54 +0000
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
+	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
+	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+Message-ID: <20240523113454.6mwg6xnrkscu6yps@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <97966085-d7a4-4238-a413-4cdac77af8bd@acm.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHd+69vRQEcwfqDrANVtzC23YUdkBwCyLezC3pZuYSCasNvUAD
+	tF1bpjPZeIkKCyAoFKqM93gKExCBAZIiVqqMbTyGKNoZWCaMhxAVwmsthcX/Pr/H95zfIz82
+	blth4cCWSFWMQiqK5ZBWREuPm6vXbzsEkdyiov2oQX8bR8kX1nBUO55FoumeBYDy5pdxNNF9
+	DqCV/gEcNd9+BFBxaSGB7ne3YaijNAdD1bW9GLqsTsFQ78YMiXK0IwBNDmsw1DnmgUrOlhOo
+	o7OPQIPtV0hU9NOkBarUrWMo+/wwhlonkgCqn54j0J0xRzSwpmN95EgPDh2h9aWQbtOMW9AD
+	j64R9GB/PN1Yk0bSTeUJ9D9NBYD+5X4iSZdlXmTRGSmzJN2W+phFP5scI+i5rmGSzmyuAfS9
+	4lsWArvjMYHRjEjMKJwZaYRMLJFGBXGOHBUeFPr6cXlePH/0AcdZKopjgjghnwi8QiWxxuFw
+	nL8RxcYbXQKRUsnZdyBQIYtXMc7RMqUqiMPIxbFyvtxbKYpTxkujvKWMKoDH5b7va0w8EROt
+	Tu6ykK/sPLVa8xgkgkbrdGDJhhQfXlPPYia2pToAnBv1SQdWRl4AMOP875jZeAGgdkZrsa2o
+	6snGzYFOAKsbG4HZWATQ8EM/mQ7YbIJ6Fy5XuZqQpDzg3Q22SbuLcoUvDJWEKR2nSkj4cHQJ
+	NwXsqBNwRp/NMrENdRCOdDZt8euwr2CCML1jSe2HZdXeJi2kfrWELUlXcXNBIbBvKGeL7eCU
+	rnmrUAf4NOvsFp+E1ZeqSLP4DICaPzXAHPgQpuqzNsU4FQ3VN/O3HnoL5urrMbN/J8xYmcDM
+	fhvY+uM2u8C6hmLSzPZw5GXSZu+QouGDOifzTGYBbFheABfA25pX+tG88p2ZA2DafDJLY5Tj
+	lCOsXGeb0Q02tO8rBqwa4MDIlXFRTISvnOclZU7+v+QIWVwj2LwXd0ErqP15zVsLMDbQAsjG
+	Obtswqo/jbS1EYu+Pc0oZEJFfCyj1AJf436ycYfdETLjwUlVQh7fn8v38/Pj+/v48Thv2Eyn
+	FoptqSiRiolhGDmj2NZhbEuHREz2fRDKbedH5gsKNAkp34lOCz/7ePCer1NFl6WLRjwa0bRj
+	MF+x5+q6k7D7HUOq5Oszt8J1oZkuVVdiDO56Z4MTdmjBsuHO5Sd3XS+Fo7a8orFOn4oWu4Ki
+	ynMX1Q8VebqARY77tPdyvpXulL5ZObNiO+5oWLoZyG05+vde3bpV2vVpz9U3j/H7+Sp1tt3M
+	X32LY7rVYN0xNydB+wPn1/zL53enpQ3vfc5Kee+Ll/btxGpOcLjcvr421POrtLV/b7g9nRrv
+	qCsNOxydI2nJ9Esecv9jqkQaLDy84S8J8XxSkm+dB6xuJITtIaybrHI9Pa4Tnzv2HniWuzT5
+	/MvC41ENsjIOoYwW8dxxhVL0H2e3GjK4BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTURSGc2em02kFHAHlQnFJY92IRQKYqyIQl2QSo7gkJi4JVjsgkVZs
+	pYhBpSqLFbFg3KoIgrIUNygqiwgCIqsEsC5EERSUCKWAxo20aG2Mvn0n3/+f83Io3PkD4UFF
+	yPezCrkkUkjyiXu1wpkLT3iFhC0qL+Sg2031ODqqteCo8M1pEg3WjgF0buQHjvqqkwAab23D
+	UUl9N0BZ2RkEelVdhqEH2ekYKih8jKFL549h6PGEiUTpNc8B6jfqMFTZ5YWuJl4j0IPKRgJ1
+	ll8mUWZuPxflPbFiKC3ZiKHSPjVAtwbNBGroEqA2yxNOsIDpfLaGacqGTJnuDZdp6y4imM7W
+	aKZYf4JkDNeOMAOGi4CpeBVPMjmpZzjMqWPDJFOW8JbDjPZ3EYz5oZFkUkv0gGnJquOud9nK
+	D5CykREqVuEduIO/e8CcQkTddDiQZjlPxgMrTwN4FKT9YH5tGq4BfMqZrgDw4btOzC7cYa6l
+	DrezCyywfuTaQ6MAZuYk/B4oiqBF8Ef+PBuStBdsnqBscVd6Hvzak0fY4jh9nYTtVeNcm3Ch
+	d0BTUxrHxo70Svi80sCx7xwGsOpjK2EXU2Djxb4/jNOL4RVDL247gNMCmGelbMijl8GcArEW
+	0Lr/Crr/Crp/hSyA64E7G6WUhcuUPlE+cjZGrJTIlNHycPGuvbJi8OcVFswvBff1I+IagFGg
+	BkAKF7o6bitYG+bsKJXEHmQVe0MV0ZGssgYIKELo5ug2cErqTIdL9rN7WDaKVfy1GMXziMdE
+	usmbzJ/N06wHeoMSUjwfreYHjQnmxqkPeXYH61SXQuLOjlqWjs8IMZY/UwXO8u3xvxL/s1L0
+	tLhEXWbJzwlZKOo++/JGwGL3oobcI++1a9GAdO6t9AumVDg81OipaR/+HpshS2px0/g2zY7e
+	5RehHfJ7EbpFl97b8dUhmO6Yrj/tyavQnPQKXGJQjVmSt08KytxZNxLzKUtlvrNH1OhW2kD5
+	D81ZJ94n6Q1OXNXitHlFs+Fo4UvlhtL13skz1C3H61MmFGpj82sn74qSqqldsaYhf2Oih5T4
+	/EW7MeDwi6TB7zuXhi3PiKuWR2TkZb53zd9w2XTX6Hsm8qrT9ZhvciQklLslPgtwhVLyCyPH
+	J1t5AwAA
+X-CMS-MailID: 20240523114201epcas5p35636ecdb5665cc3d792c120f43e67d96
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_20cab_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520102842epcas5p4949334c2587a15b8adab2c913daa622f
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+	<CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+	<20240520102033.9361-3-nj.shetty@samsung.com>
+	<97966085-d7a4-4238-a413-4cdac77af8bd@acm.org>
+
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_20cab_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
 
-On 24/05/23 03:57PM, Miklos Szeredi wrote:
-> [trimming CC list]
-> 
-> On Thu, 23 May 2024 at 04:49, John Groves <John@groves.net> wrote:
-> 
-> > - memmap=<size>!<hpa_offset> will reserve a pretend pmem device at <hpa_offset>
-> > - memmap=<size>$<hpa_offset> will reserve a pretend dax device at <hpa_offset>
-> 
-> Doesn't get me a /dev/dax or /dev/pmem
-> 
-> Complete qemu command line:
-> 
-> qemu-kvm -s -serial none -parallel none -kernel
-> /home/mszeredi/git/linux/arch/x86/boot/bzImage -drive
-> format=raw,file=/home/mszeredi/root_fs,index=0,if=virtio -drive
-> format=raw,file=/home/mszeredi/images/ubd1,index=1,if=virtio -chardev
-> stdio,id=virtiocon0,signal=off -device virtio-serial -device
-> virtconsole,chardev=virtiocon0 -cpu host -m 8G -net user -net
-> nic,model=virtio -fsdev local,security_model=none,id=fsdev0,path=/home
-> -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare -device
-> virtio-rng-pci -smp 4 -append 'root=/dev/vda console=hvc0
-> memmap=4G$4G'
-> 
-> root@kvm:~/famfs# scripts/chk_efi.sh
-> This system is neither Ubuntu nor Fedora. It is identified as debian.
-> /sys/firmware/efi not found; probably not efi
->  not found; probably nof efi
-> /boot/efi/EFI not found; probably not efi
-> /boot/efi/EFI/BOOT not found; probably not efi
-> /boot/efi/EFI/ not found; probably not efi
-> /boot/efi/EFI//grub.cfg not found; probably nof efi
-> Probably not efi; errs=6
-> 
-> Thanks,
-> Miklos
+On 22/05/24 11:05AM, Bart Van Assche wrote:
+>On 5/20/24 03:20, Nitesh Shetty wrote:
+>>We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
+>>Since copy is a composite operation involving src and dst sectors/lba,
+>>each needs to be represented by a separate bio to make it compatible
+>>with device mapper.
+>>We expect caller to take a plug and send bio with destination information,
+>>followed by bio with source information.
+>>Once the dst bio arrives we form a request and wait for source
+>>bio. Upon arrival of source bio we merge these two bio's and send
+>>corresponding request down to device driver.
+>>Merging non copy offload bio is avoided by checking for copy specific
+>>opcodes in merge function.
+>
+>Plugs are per task. Can the following happen?
+We rely on per-context plugging to avoid this.
+>* Task A calls blk_start_plug()
+>* Task B calls blk_start_plug()
+>* Task A submits a REQ_OP_COPY_DST bio and a REQ_OP_COPY_SRC bio.
+Lets say this forms request A and stored in plug A
+>* Task B submits a REQ_OP_COPY_DST bio and a REQ_OP_COPY_SRC bio.
+Lets say this forms request B and stored in plug B
+>* Task A calls blk_finish_plug()
+>* Task B calls blk_finish_plug()
+>* The REQ_OP_COPY_DST bio from task A and the REQ_OP_COPY_SRC bio from
+>  task B are combined into a single request.
+Here task A picks plug A and hence request A
+>* The REQ_OP_COPY_DST bio from task B and the REQ_OP_COPY_SRC bio from
+>  task A are combined into a single request.
+same as above, request B
+
+So we expect this case not to happen.
+
+Thank you,
+Nitesh Shetty
+
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_20cab_
+Content-Type: text/plain; charset="utf-8"
 
 
-Apologies, but I'm short on time at the moment - going into a long holiday
-weekend in the US with family plans. I should be focused again by middle of
-next week.
-
-But can you check /proc/cmdline to see of the memmap arg got through without
-getting mangled? The '$' tends to get fubar'd. You might need \$, or I've seen
-the need for \\\$. If it's un-mangled, there should be a dax device.
-
-If that doesn't work, it's worth trying '!' instead, which I think would give
-you a pmem device - if the arg gets through (but ! is less likely to get
-horked). That pmem device can be converted to devdax...
-
-Regards,
-John
-
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_20cab_--
 
