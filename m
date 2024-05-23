@@ -1,96 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-20035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601758CCCD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 09:18:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B36C8CCD17
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 09:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6782817E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 07:18:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69246B21747
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 07:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D76A13B5AD;
-	Thu, 23 May 2024 07:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA8F13CF89;
+	Thu, 23 May 2024 07:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="U/+pp9O3"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dkKSJ4z3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0sO68rL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LRIoinol";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zKz5+Tuc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4543B29D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2024 07:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD233A1BF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2024 07:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716448727; cv=none; b=IjKyNxgZ7LKcCv44BN57g1BeAAkV6pAViQGzkhnjQHHW5mjRUYw9qM0D2VPySRlwB4msSWc/vA9GPdxhWrQzraH2IaSpMpOYcNcAfn5jzrTNFlbbCnREKUAoIhNLghqTsOaHvlIF3qpzeGwf9242iWIgAYzYn8ujAXRHE88wWXE=
+	t=1716449760; cv=none; b=A2VV42EZdlCh3uipCup88hN5ZpuXzR7iwx4JkwWN0cAoqBvBrRApuZGSdPhTu71ogLHE5lb2gRA3NvbcARycLRS8/G7cUbAEO+Q/bbblgUoAL2VNrTHj3jrcSafdZFQTyR3KsodDFKPwgLhrJt72683OvFhYENSmXC3sRdLXXz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716448727; c=relaxed/simple;
-	bh=/icM3O7GAxvCO8V0cILBlcRIF2jH1xDM8t7fKPxNgys=;
+	s=arc-20240116; t=1716449760; c=relaxed/simple;
+	bh=WrL1EvlCJrNkv9ASTnMORSkXxvFhzf/9d++DYMsYLtY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3RqE/WQJf7nxO3h0/BD/qCmnrDp6I3J8I3y7M8wPw2uy3BxKQROZONhE52p2SoclIy501SjbhVy8kn7JbIMoXeGAKtcsQler5eVM8nUsVp4CbYiycRE6UrooOPWEeuCEXbvxJ3kwm6wSOMUYhO3HKQwyXWCKI93jwvTP19mEEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=U/+pp9O3; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so2720541a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2024 00:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716448725; x=1717053525; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WHVpOWiuchpA4qG0ZowU3b187JgmRat2AqSceusHQQI=;
-        b=U/+pp9O3AfyT6BjNmrFZnbdPyZ/HENT/5QZXjBHHSh5ZbXtZN0uWkNFy+RAhEemRPF
-         CuhZd2nKPxQFfvl9Lx7dizO/o9pyKxbq8sdDIPS/KUu5/Uj3nlk1gcrhDKSPhlKln02e
-         MzqGlFUvcUtTV9FR8nYlGDdmQbcwghsAsuCO+9kqk/hxZzqmGwi0we59k0JzRgvI7POE
-         gv3oHqmfFXe8vm+8/SDIMim9yFZCmEwSrFlEtIpp2D0RpQm6J0UvzJWOIU27BYIbQJPB
-         /7FQO/n1Om+T+auMsqU1cUlWWLznRtWFELt1dPDvIjxgQrGE90zCfZlo+a0yPRceZpLM
-         mOEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716448725; x=1717053525;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WHVpOWiuchpA4qG0ZowU3b187JgmRat2AqSceusHQQI=;
-        b=oyI/4D20GAo3B+KeWxbM4UBSP2K69oqz6yM1YSNDk86efB+At6MSJJWVy9eFTUHR2a
-         enGKNxYakAk7nS+sTS/feHzhn5wysJw54pNAw5Yfsj9Su2NwSRMWtjGJ3K6r4CZjFhM1
-         36w6OAqGI/M1Qvec1/8rHqs4+0Co+VNQ6Iw3gR/HgJhx4zcrKC8nP/9rFmntyiZ5WKZn
-         n+kJo8urYcTIaPqDp4+CPsJURODSQ22lr+Fl8O0PrAiynE7zQeCVk2ogJ8IqZdHHhjyF
-         wnIU3I3G55ejUMYNPaghGBoH4oGDZmOAaFSxcZJOXjeS524u8S8+cjkbL2cJRw2T//Fr
-         nppQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0bpqK0SPtp2jXK6LALJgTQ+pius+nSUMelIQ6VrbPZcIFG/4yLdo3hhv2VF8onTxoL7Jw6j1qWW1+Y/TlNbw0wc4o3c3VNEfe/05QSg==
-X-Gm-Message-State: AOJu0YwOwAWpaiZmfcBU+OlJvfksd/+nfsduZCfY+kA6NpKXll8bhWQu
-	TjB20pO/wHXxxortB8M8UWC5/4A3zwkGA174OHxPDumFn7HlDEVmZLsIViqyMQU=
-X-Google-Smtp-Source: AGHT+IHMEnFT+ifYQxq03p3yQuztKQ2dE25qirVhPJ8G9AWbQ0zmKn18yB2GA+24QDyQAZx0Sl8mtg==
-X-Received: by 2002:a17:902:c948:b0:1f3:126b:76bd with SMTP id d9443c01a7336-1f31c964aa8mr54669165ad.3.1716448725262;
-        Thu, 23 May 2024 00:18:45 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad86ffsm250431185ad.101.2024.05.23.00.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 00:18:44 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sA2in-007PNO-2x;
-	Thu, 23 May 2024 17:18:41 +1000
-Date: Thu, 23 May 2024 17:18:41 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	brauner@kernel.org, jack@suse.cz, laoar.shao@gmail.com,
-	linux-fsdevel@vger.kernel.org, longman@redhat.com,
-	walters@verbum.org, wangkai86@huawei.com, willy@infradead.org
-Subject: Re: [PATCH] vfs: move dentry shrinking outside the inode lock in
- 'rmdir()'
-Message-ID: <Zk7t0WdpHE24UNDG@dread.disaster.area>
-References: <CAHk-=whvo+r-VZH7Myr9fid=zspMo2-0BUJw5S=VTm72iEXXvQ@mail.gmail.com>
- <20240511182625.6717-2-torvalds@linux-foundation.org>
- <CAHk-=wijTRY-72qm02kZAT_Ttua0Qwvfms5m5NbR4EWbS02NqA@mail.gmail.com>
- <20240511192824.GC2118490@ZenIV>
- <a4320c051be326ddeaeba44c4d209ccf7c2a3502.camel@HansenPartnership.com>
- <20240512161640.GI2118490@ZenIV>
- <CAHk-=wgU6-AMMJ+fK7yNsrf3AL-eHE=tGd+w54tug8nanScyPQ@mail.gmail.com>
- <20240513053140.GJ2118490@ZenIV>
- <CAHk-=wgZU=TFEeiLoBjki1DJZEBWUb00oqJdddTCJxsMZrJUfQ@mail.gmail.com>
- <20240513163332.GK2118490@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MmTfrPDZSWD97uiLrK+KJywU7tPZ+RRufqMceORNIKgn3/OVARuqHiMrnGuvuRMStGwfkJIpfuV9Nx1nUUY8fzLDObfg/kpVpp3B7FBOCjlS4Cf679CJXxTp4F95yDLLym7oGIiH0hsKnZ5cSQmtQ0LZ8b0FEjvL1X2bu70TLyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dkKSJ4z3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0sO68rL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LRIoinol; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zKz5+Tuc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A08131FFAA;
+	Thu, 23 May 2024 07:35:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716449754; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rerjGir8dZ1THcCx+R0zRqJlZz+ZHBoLVD+uT8yKmkc=;
+	b=dkKSJ4z3hXj3E3AvRB/qGforsyeu3YrpFaAUA+C9rsrQw0YlluX9S/Vq0ryIZcLSL+tK11
+	4N8zulDgDkQEquOz+FYKCGayWqD3ZiPk57k/pzUAoe7qxv9/GgepV3Tyn81GKFjmxcDuih
+	RdtIW10iFJHQTVQNewUkdLbu73swZuQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716449754;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rerjGir8dZ1THcCx+R0zRqJlZz+ZHBoLVD+uT8yKmkc=;
+	b=r0sO68rL2dVJJ6nigj2vPgTbJNnWPVgwElZn5suwEFSNENT8G89rYnPSO7P4b6TEEVNNxZ
+	iu0M6GCFkPRg85BQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716449753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rerjGir8dZ1THcCx+R0zRqJlZz+ZHBoLVD+uT8yKmkc=;
+	b=LRIoinolPgEEZeM1o90usvkH99IY3vKcW8BBKTCmwTFyCyVpe8VE5ew6mpxZeXCaGNb9qq
+	SaEEb6I2RXtC4qKZnu2XKi0P3lgihXdXw6vGvKAK6aU8Az8HTpNm/3WyTcoPi1yrJxpULw
+	rHbJAyFr9pc6QYx0Bnq6Uiuel4RSD74=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716449753;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rerjGir8dZ1THcCx+R0zRqJlZz+ZHBoLVD+uT8yKmkc=;
+	b=zKz5+TucePihV8Rom0Mx5dhUvFTyVvKqGjtw/VXpVlcQMnNaJ41mV4QP6LGLgx2wUFM6C7
+	3vZUdwFTlyrMXpDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BD3E13A6C;
+	Thu, 23 May 2024 07:35:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lPkeItnxTmalJAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 23 May 2024 07:35:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2DC07A0770; Thu, 23 May 2024 09:35:53 +0200 (CEST)
+Date: Thu, 23 May 2024 09:35:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: fsconfig: intercept non-new mount API in advance
+ for FSCONFIG_CMD_CREATE_EXCL command
+Message-ID: <20240523073553.llh6es6zlecblcsh@quack3>
+References: <20240522030422.315892-1-lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,61 +103,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240513163332.GK2118490@ZenIV>
+In-Reply-To: <20240522030422.315892-1-lihongbo22@huawei.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email,suse.cz:email]
 
-On Mon, May 13, 2024 at 05:33:32PM +0100, Al Viro wrote:
-> On Mon, May 13, 2024 at 08:58:33AM -0700, Linus Torvalds wrote:
+On Wed 22-05-24 11:04:22, Hongbo Li wrote:
+> fsconfig with FSCONFIG_CMD_CREATE_EXCL command requires the new mount api,
+> here we should return -EOPNOTSUPP in advance to avoid extra procedure.
+> 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> v2:
+>   - Fix misspelling and change the target branch.
+> 
+> v1: https://lore.kernel.org/all/20240511062147.3312801-1-lihongbo22@huawei.com/T/
+> ---
+>  fs/fsopen.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/fs/fsopen.c b/fs/fsopen.c
+> index 6593ae518115..18fe979da7e2 100644
+> --- a/fs/fsopen.c
+> +++ b/fs/fsopen.c
+> @@ -220,10 +220,6 @@ static int vfs_cmd_create(struct fs_context *fc, bool exclusive)
+>  	if (!mount_capable(fc))
+>  		return -EPERM;
 >  
-> > We *could* strive for a hybrid approach, where we handle the common
-> > case ("not a ton of child dentries") differently, and just get rid of
-> > them synchronously, and handle the "millions of children" case by
-> > unhashing the directory and dealing with shrinking the children async.
+> -	/* require the new mount api */
+> -	if (exclusive && fc->ops == &legacy_fs_context_ops)
+> -		return -EOPNOTSUPP;
+> -
+>  	fc->phase = FS_CONTEXT_CREATING;
+>  	fc->exclusive = exclusive;
+>  
+> @@ -411,6 +407,7 @@ SYSCALL_DEFINE5(fsconfig,
+>  		case FSCONFIG_SET_PATH:
+>  		case FSCONFIG_SET_PATH_EMPTY:
+>  		case FSCONFIG_SET_FD:
+> +		case FSCONFIG_CMD_CREATE_EXCL:
+>  			ret = -EOPNOTSUPP;
+>  			goto out_f;
+>  		}
+> -- 
+> 2.34.1
 > 
-> try_to_shrink_children()?  Doable, and not even that hard to do, but
-> as for shrinking async...  We can easily move it out of inode_lock
-> on parent, but doing that really async would either need to be
-> tied into e.g. remount r/o logics or we'd get userland regressions.
-> 
-> I mean, "I have an opened unlinked file, can't remount r/o" is one
-> thing, but "I've done rm -rf ~luser, can't remount r/o for a while"
-> when all luser's processes had been killed and nothing is holding
-> any of that opened... ouch.
-
-There is no ouch for the vast majority of users: XFS has been doing
-background async inode unlink processing since 5.14 (i.e. for almost
-3 years now). See commit ab23a7768739 ("xfs: per-cpu deferred inode
-inactivation queues") for more of the background on this change - it
-was implemented because we needed to allow the scrub code to drop
-inode references from within transaction contexts, and evict()
-processing could run a nested transaction which could then deadlock
-the filesystem.
-
-Hence XFS offloads the inode freeing half of the unlink operation
-(i.e. the bit that happens in evict() context) to per-cpu workqueues
-instead of doing the work directly in evict() context. We allow
-evict() to completely tear down the VFS inode context, but don't
-free it in ->destroy_inode() because we still have work to do on it.
-XFS doesn't need an active VFS inode context to do the internal
-metadata updates needed to free an inode, so it's trivial to defer
-this work to a background context outside the VFS inode life cycle.
-
-Hence over half the processing work of every unlink() operation on
-XFS is now done in kworker threads rather than via the unlink()
-syscall context.
-
-Yes, that means freeze, remount r/o and unmount will block in
-xfs_inodegc_stop() waiting for these async inode freeing operations
-to be flushed and completed.
-
-However, there have been very few reported issues with freeze,
-remount r/o or unmount being significantly delayed - there's an
-occasional report of an inodes with tens of millions of extents to
-free delaying an operation, but that's no change from unlink()
-taking minutes to run and delaying the operation that way,
-anyway....
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
