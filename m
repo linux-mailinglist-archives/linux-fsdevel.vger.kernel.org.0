@@ -1,342 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-20074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85078CDBAC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 22:58:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FF38CDBBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 23:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5FD1F23AD0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 20:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52BA01C2048C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 21:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE07127B7D;
-	Thu, 23 May 2024 20:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B762127E06;
+	Thu, 23 May 2024 21:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Kdh1MfS+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rMjxjrtH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD62126F36;
-	Thu, 23 May 2024 20:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A7B84D04;
+	Thu, 23 May 2024 21:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716497873; cv=none; b=jLV0GiOIeMVkIjWg7K0a8IkgQsRx07JHg1Rvx6zlzFo4KtbKLtHULwitUNLPUUY1gn/BpmOhhU8GhNLxEvsnqvqL7+4roLoFys1/mxyslzFZNZi4Q6TVmqFpzMW/dy3nAommzxZ5n1KQFrVp1reTpvdQYjMn4e1/RIu/mvsnBrE=
+	t=1716498547; cv=none; b=iGPMLIRVqxK69h8geOiezgMrndccsY2wrbhEq+9jYnBg9JIrm2wHFKsmXlZKmilcgdY0HvdXid3ZaANt8r67AqOdPqunDr2GfbgS1nJEvWcb2qQZEULdFvPU34RfrSQOQh3LDTnPfu6mkepX3tmx/tNvXPf6oZvpoEi9Qkw0kbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716497873; c=relaxed/simple;
-	bh=NJn6MLTQTNErU5Eoq/tTA+6eCKCQ76jbApbAUWEdt38=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nrsRwgxyQDBMkYj/HNBdIrdOdk1BEJHaDSM+TcDsi6utUwggjiIGgq0mUmFynadp6PU34OximdQ0akWMr3AEAAimHemxm3aXnTTNDMah24zrRDaE6SWPx/e1bA66ZhEr8kqXB0fbo0/ARK69sHSWS2MkozPT1w2ujlQbUr/bsfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Kdh1MfS+; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VlgVL0y0Xz9t3R;
-	Thu, 23 May 2024 22:57:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1716497866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=j36WhCaHkgE+WBH+Nt4uVRki6lOiFluehQWImsMWgQo=;
-	b=Kdh1MfS+Kb2/2U1LiBiac3zEN5sl86RNy2HME1Y5FoPzgldMlicPycWr5TN7otkIi2iQjd
-	LulPtryGb8sy7nguE2yDZSFefxvu2aKRbNW1IWIe8mqbKin4GcYcTY0LfVjt+N93nDnb3g
-	l0TS7HVHrx+Redy12UEndNp+dQ2gLFZUmuBaken+I8oy9tD57ePnXTp0UuD5ghxSrIzAfi
-	S8lk7M5Rd4Oub9ps245oZ4o+e5aJ3QVHKSZStOosxShe6jus66vaLljvSWtg9fXmXYD3FW
-	lVenUeE2QWUXeOoc1nXWr2DCnlwoY+hC332lqcWnzJgxDayjVFjT8ABLyFMIyQ==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Thu, 23 May 2024 13:57:32 -0700
-Subject: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
+	s=arc-20240116; t=1716498547; c=relaxed/simple;
+	bh=CuLd6TYGiS2+rBvn4z08Wn3+YNLIR/6ODCNpJdMqEg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMltebJN6H63TqZTl/xP3hBF/LP+2zMS1/2sp1+vKGj5FQQDtmLHnaI5LIp17w03F8gzcPZndBCYgjJBt6nwNT9x85RFApTOO7qR/ZxnTGOqj1m0N1o1tu30AdKAqAOo3yFNuPSFDndIAeboalh0uuhZ39NtrMLNMY9wCREXipQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rMjxjrtH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kfXLI35AfLCSFV6qQpB+s4UJzywNe6zaOkdmoMWLhoA=; b=rMjxjrtHoKYBcGVQ1mLGX02Da9
+	MhBSwsAUQz8UyEwOojru4LeYNEf9ECbRJHigOYDGFkoOutPwb5OD7MzcAH0D/wRqzwmQ6ZC4znrAY
+	BsqS4JEms1QSmWH+SHakY/tLJjsKiLFL1ruP/8BTGu+tjyVi8wGgNUbxGODtUvxPQzggDDM9I/UC6
+	783sO5NBSp44JcRpEpq34873WCE0VME4hQqZW9RXBXSi/EcCwlItSaPkjoPTy7HQncXWcJwM0N2oi
+	iWFUAKV1hXtWwuog8XFzgRfMb7hPHCH2+2nZmpJ9pkrCrhjRamU06UWQd3jaiZpqximFG34AuMiE0
+	/t/t7t8g==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sAFgJ-00000002690-3zOP;
+	Thu, 23 May 2024 21:09:00 +0000
+Date: Thu, 23 May 2024 22:08:59 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Liu Wei <liuwei09@cestc.cn>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when
+ io with IOCB_NOWAIT
+Message-ID: <Zk-wa_GvvrxpX9kn@casper.infradead.org>
+References: <20240513132339.26269-1-liuwei09@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
-X-B4-Tracking: v=1; b=H4sIALutT2YC/3WNTQ6CMBCFr0Jm7RhaGQOuTEw8gFvDgpapdAElL
- RAI6d1tcO3y/X1vh8DecoBbtoPnxQbrhiTkKQPdNcOH0bZJg8xlkZMg5HV0fjIB52uBvZuHKTW
- wYqVIU6nooiFtR8/Grgf3Da/nA+pkdjZMzm/H1yKO6IeV+R/sIlCgITJtJQWpku96G7vGn7Xro
- Y4xfgHGHbgjwAAAAA==
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
- Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11473; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=NJn6MLTQTNErU5Eoq/tTA+6eCKCQ76jbApbAUWEdt38=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaT5rz3qMXWbGefBtRoVvDsyVmalsy/49Djvx6qql+47Q
- z2nXJQW6ShlYRDjYpAVU2TZ5ucZumn+4ivJn1aywcxhZQIZwsDFKQAT+eHCyPAnqCTSa4Oo0qPC
- uV9+FDTve3yr+Vn1jo9+17sVV4R8iMxkZLjvdNO/o3iNraTqpKd7HA7UVspLLmAxX/P1tPQ6lrP
- pmiwA
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4VlgVL0y0Xz9t3R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513132339.26269-1-liuwei09@cestc.cn>
 
-Now that we provide a unique 64-bit mount ID interface in statx, we can
-now provide a race-free way for name_to_handle_at(2) to provide a file
-handle and corresponding mount without needing to worry about racing
-with /proc/mountinfo parsing.
+On Mon, May 13, 2024 at 09:23:39PM +0800, Liu Wei wrote:
+> After commit (6be96d3ad3 fs: return if direct I/O will trigger writeback),
 
-While this is not necessary if you are using AT_EMPTY_PATH and don't
-care about an extra statx(2) call, users that pass full paths into
-name_to_handle_at(2) need to know which mount the file handle comes from
-(to make sure they don't try to open_by_handle_at a file handle from a
-different filesystem) and switching to AT_EMPTY_PATH would require
-allocating a file for every name_to_handle_at(2) call, turning
+If you're reporting problems with a particular commit, it's good form
+to cc the people who actually wrote that commit.
 
-  err = name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
-                          AT_HANDLE_MNT_ID_UNIQUE);
-
-into
-
-  int fd = openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
-  err1 = name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_PATH);
-  err2 = statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
-  mntid = statxbuf.stx_mnt_id;
-  close(fd);
-
-Unlike AT_HANDLE_FID, as per Amir's suggestion, AT_HANDLE_MNT_ID_UNIQUE
-uses a new AT_* bit from the historically-unused 0xFF range (which we
-now define as being the "per-syscall" range for AT_* bits).
-
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
-Changes in v2:
-- Fixed a few minor compiler warnings and a buggy copy_to_user() check.
-- Rename AT_HANDLE_UNIQUE_MOUNT_ID -> AT_HANDLE_MNT_ID_UNIQUE to match statx.
-- Switched to using an AT_* bit from 0xFF and defining that range as
-  being "per-syscall" for future usage.
-- Sync tools/ copy of <linux/fcntl.h> to include changes.
-- v1: <https://lore.kernel.org/r/20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
----
- fs/fhandle.c                     | 29 ++++++++++++++++++++++-------
- include/linux/syscalls.h         |  2 +-
- include/uapi/linux/fcntl.h       | 28 +++++++++++++++++++++-------
- tools/include/uapi/linux/fcntl.h | 28 +++++++++++++++++++++-------
- 4 files changed, 65 insertions(+), 22 deletions(-)
-
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 8a7f86c2139a..c6e90161b900 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -16,7 +16,8 @@
- 
- static long do_sys_name_to_handle(const struct path *path,
- 				  struct file_handle __user *ufh,
--				  int __user *mnt_id, int fh_flags)
-+				  void __user *mnt_id, bool unique_mntid,
-+				  int fh_flags)
- {
- 	long retval;
- 	struct file_handle f_handle;
-@@ -69,9 +70,19 @@ static long do_sys_name_to_handle(const struct path *path,
- 	} else
- 		retval = 0;
- 	/* copy the mount id */
--	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
--	    copy_to_user(ufh, handle,
--			 struct_size(handle, f_handle, handle_bytes)))
-+	if (unique_mntid) {
-+		if (put_user(real_mount(path->mnt)->mnt_id_unique,
-+			     (u64 __user *) mnt_id))
-+			retval = -EFAULT;
-+	} else {
-+		if (put_user(real_mount(path->mnt)->mnt_id,
-+			     (int __user *) mnt_id))
-+			retval = -EFAULT;
-+	}
-+	/* copy the handle */
-+	if (retval != -EFAULT &&
-+		copy_to_user(ufh, handle,
-+			     struct_size(handle, f_handle, handle_bytes)))
- 		retval = -EFAULT;
- 	kfree(handle);
- 	return retval;
-@@ -83,6 +94,7 @@ static long do_sys_name_to_handle(const struct path *path,
-  * @name: name that should be converted to handle.
-  * @handle: resulting file handle
-  * @mnt_id: mount id of the file system containing the file
-+ *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
-  * @flag: flag value to indicate whether to follow symlink or not
-  *        and whether a decodable file handle is required.
-  *
-@@ -92,7 +104,7 @@ static long do_sys_name_to_handle(const struct path *path,
-  * value required.
-  */
- SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
--		struct file_handle __user *, handle, int __user *, mnt_id,
-+		struct file_handle __user *, handle, void __user *, mnt_id,
- 		int, flag)
- {
- 	struct path path;
-@@ -100,7 +112,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 	int fh_flags;
- 	int err;
- 
--	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
-+	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
-+		     AT_HANDLE_MNT_ID_UNIQUE))
- 		return -EINVAL;
- 
- 	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
-@@ -109,7 +122,9 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 		lookup_flags |= LOOKUP_EMPTY;
- 	err = user_path_at(dfd, name, lookup_flags, &path);
- 	if (!err) {
--		err = do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
-+		err = do_sys_name_to_handle(&path, handle, mnt_id,
-+					    flag & AT_HANDLE_MNT_ID_UNIQUE,
-+					    fh_flags);
- 		path_put(&path);
- 	}
- 	return err;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index e619ac10cd23..99c5a783a01e 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -863,7 +863,7 @@ asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
- 				  const char  __user *pathname);
- asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name,
- 				      struct file_handle __user *handle,
--				      int __user *mnt_id, int flag);
-+				      void __user *mnt_id, int flag);
- asmlinkage long sys_open_by_handle_at(int mountdirfd,
- 				      struct file_handle __user *handle,
- 				      int flags);
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index c0bcc185fa48..9ed9d65842c1 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -87,22 +87,24 @@
- #define DN_ATTRIB	0x00000020	/* File changed attibutes */
- #define DN_MULTISHOT	0x80000000	/* Don't remove notifier */
- 
-+#define AT_FDCWD		-100    /* Special value used to indicate
-+                                           openat should use the current
-+                                           working directory. */
-+#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
-+
- /*
-- * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EACCESS is
-- * meaningful only to faccessat, while AT_REMOVEDIR is meaningful only to
-+ * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EACCESS
-+ * is meaningful only to faccessat, while AT_REMOVEDIR is meaningful only to
-  * unlinkat.  The two functions do completely different things and therefore,
-  * the flags can be allowed to overlap.  For example, passing AT_REMOVEDIR to
-  * faccessat would be undefined behavior and thus treating it equivalent to
-  * AT_EACCESS is valid undefined behavior.
-  */
--#define AT_FDCWD		-100    /* Special value used to indicate
--                                           openat should use the current
--                                           working directory. */
--#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
- #define AT_EACCESS		0x200	/* Test access permitted for
-                                            effective IDs, not real IDs.  */
- #define AT_REMOVEDIR		0x200   /* Remove directory instead of
-                                            unlinking file.  */
-+
- #define AT_SYMLINK_FOLLOW	0x400   /* Follow symbolic links.  */
- #define AT_NO_AUTOMOUNT		0x800	/* Suppress terminal automount traversal */
- #define AT_EMPTY_PATH		0x1000	/* Allow empty relative pathname */
-@@ -114,10 +116,22 @@
- 
- #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
- 
--/* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
-+/*
-+ * All new purely-syscall-specific AT_* flags should consider using bits from
-+ * 0xFF, but the bits used by RENAME_* (0x7) should be avoided in case users
-+ * decide to pass AT_* flags to renameat2() by accident. These flag bits are
-+ * free for re-use by other syscall's syscall-specific flags without worry.
-+ */
-+
-+/*
-+ * Flags for name_to_handle_at(2). To save AT_ flag space we re-use the
-+ * AT_EACCESS/AT_REMOVEDIR bit for AT_HANDLE_FID.
-+ */
- #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
- 					compare object identity and may not
- 					be usable to open_by_handle_at(2) */
-+#define AT_HANDLE_MNT_ID_UNIQUE	0x80	/* return the u64 unique mount id */
-+
- #if defined(__KERNEL__)
- #define AT_GETATTR_NOSEC	0x80000000
- #endif
-diff --git a/tools/include/uapi/linux/fcntl.h b/tools/include/uapi/linux/fcntl.h
-index 282e90aeb163..f671312ca481 100644
---- a/tools/include/uapi/linux/fcntl.h
-+++ b/tools/include/uapi/linux/fcntl.h
-@@ -85,22 +85,24 @@
- #define DN_ATTRIB	0x00000020	/* File changed attibutes */
- #define DN_MULTISHOT	0x80000000	/* Don't remove notifier */
- 
-+#define AT_FDCWD		-100    /* Special value used to indicate
-+                                           openat should use the current
-+                                           working directory. */
-+#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
-+
- /*
-- * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EACCESS is
-- * meaningful only to faccessat, while AT_REMOVEDIR is meaningful only to
-+ * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EACCESS
-+ * is meaningful only to faccessat, while AT_REMOVEDIR is meaningful only to
-  * unlinkat.  The two functions do completely different things and therefore,
-  * the flags can be allowed to overlap.  For example, passing AT_REMOVEDIR to
-  * faccessat would be undefined behavior and thus treating it equivalent to
-  * AT_EACCESS is valid undefined behavior.
-  */
--#define AT_FDCWD		-100    /* Special value used to indicate
--                                           openat should use the current
--                                           working directory. */
--#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
- #define AT_EACCESS		0x200	/* Test access permitted for
-                                            effective IDs, not real IDs.  */
- #define AT_REMOVEDIR		0x200   /* Remove directory instead of
-                                            unlinking file.  */
-+
- #define AT_SYMLINK_FOLLOW	0x400   /* Follow symbolic links.  */
- #define AT_NO_AUTOMOUNT		0x800	/* Suppress terminal automount traversal */
- #define AT_EMPTY_PATH		0x1000	/* Allow empty relative pathname */
-@@ -112,10 +114,22 @@
- 
- #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
- 
--/* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
-+/*
-+ * All new purely-syscall-specific AT_* flags should consider using bits from
-+ * 0xFF, but the bits used by RENAME_* (0x7) should be avoided in case users
-+ * decide to pass AT_* flags to renameat2() by accident. These flag bits are
-+ * free for re-use by other syscall's syscall-specific flags without worry.
-+ */
-+
-+/*
-+ * Flags for name_to_handle_at(2). To save AT_ flag space we re-use the
-+ * AT_EACCESS/AT_REMOVEDIR bit for AT_HANDLE_FID.
-+ */
- #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
- 					compare object identity and may not
- 					be usable to open_by_handle_at(2) */
-+#define AT_HANDLE_MNT_ID_UNIQUE	0x80 /* returned mount id is the u64 unique mount id */
-+
- #if defined(__KERNEL__)
- #define AT_GETATTR_NOSEC	0x80000000
- #endif
-
----
-base-commit: 584bbf439d0fa83d728ec49f3a38c581bdc828b4
-change-id: 20240515-exportfs-u64-mount-id-9ebb5c58b53c
-
-Best regards,
--- 
-Aleksa Sarai <cyphar@cyphar.com>
-
+> when we issuing AIO with direct I/O and IOCB_NOWAIT on a block device, the
+> process context will not be blocked.
+> 
+> However, if the device already has page cache in memory, EAGAIN will be
+> returned. And even when trying to reissue the AIO with direct I/O and
+> IOCB_NOWAIT again, we consistently receive EAGAIN.
+> 
+> Maybe a better way to deal with it: filemap_fdatawrite_range dirty pages
+> with WB_SYNC_NONE flag, and invalidate_mapping_pages unmapped pages at
+> the same time.
+> 
+> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+> ---
+>  mm/filemap.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 30de18c4fd28..1852a00caf31 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2697,8 +2697,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
+>  
+>  	if (iocb->ki_flags & IOCB_NOWAIT) {
+>  		/* we could block if there are any pages in the range */
+> -		if (filemap_range_has_page(mapping, pos, end))
+> +		if (filemap_range_has_page(mapping, pos, end)) {
+> +			if (mapping_needs_writeback(mapping)) {
+> +				__filemap_fdatawrite_range(mapping,
+> +						pos, end, WB_SYNC_NONE);
+> +			}
+> +			invalidate_mapping_pages(mapping,
+> +					pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+>  			return -EAGAIN;
+> +		}
+>  	} else {
+>  		ret = filemap_write_and_wait_range(mapping, pos, end);
+>  		if (ret)
+> -- 
+> 2.42.1
+> 
+> 
+> 
 
