@@ -1,160 +1,307 @@
-Return-Path: <linux-fsdevel+bounces-20032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B478CCA8D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 04:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E46D88CCAAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 04:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20558282459
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 02:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92669280DBB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2024 02:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B502C4685;
-	Thu, 23 May 2024 02:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BAC4C9F;
+	Thu, 23 May 2024 02:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XySX8E8L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CECD6FB9;
-	Thu, 23 May 2024 02:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D764687;
+	Thu, 23 May 2024 02:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716429611; cv=none; b=O002i80YUmthVFMHIxCnArDud8l6unHvgL6afQwx1sZPmqDEnSuMhlj6gSj5naJyFtsEqBTj1u8S/p8Kbma36a94wf6pQVmRAR4LMxYtLQaSBeVfaxQwPYZjq9/3dFINccCQnD4TDR0lFTnc3L8clz4ZqYHsK+6BPfibbsP68cs=
+	t=1716430938; cv=none; b=MkZsLd+l9uc7IkJ0ibsPqwJN/TPM4zrhifLNjVWATwjva9pZnSFnIrLsOYjo+barfHmAhYewzWMuNKzfft/KdqRQ5s1pzP6C37eufHEWB6FpG00EwBYAez7yQeAMlC5FXJy7bdj7QAVBqhF4mhAECEC9fFBMV4xcMyLAW5RoJPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716429611; c=relaxed/simple;
-	bh=nhCPewS1z5PaPTyemrch/Z3VzSgGoYpoFUicHPWxQVY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=H0t5zkbJI8FVlKV6zWEzxI0l6qrGSW+aJ13OuVQ5p0DObiTHfNud9oLgzkq7mj/0mZ2MdzMg2SPqSIPLMXBroaxs+1SxQedrM1mNns1lrfNItyaej+bQ9jQhIavMmED6Mu1DjhDd4uqXTawSgf6O7zDz22OTofKcm/zDfgU+nKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VlBFV2NwWz4f3jQd;
-	Thu, 23 May 2024 09:59:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 255B11A0CD9;
-	Thu, 23 May 2024 10:00:04 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgCnyw4io05myMQANw--.37203S3;
-	Thu, 23 May 2024 10:00:03 +0800 (CST)
-Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, djwong@kernel.org,
- hch@infradead.org, brauner@kernel.org, chandanbabu@kernel.org, jack@suse.cz,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
- <20240517111355.233085-4-yi.zhang@huaweicloud.com>
- <ZkwJJuFCV+WQLl40@dread.disaster.area>
- <122ab6ed-147b-517c-148d-7cb35f7f888b@huaweicloud.com>
- <Zk6XqIcO+7+VPn35@dread.disaster.area>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <92cec08a-7fe7-1cc7-7a39-7f3d5fbc087b@huaweicloud.com>
-Date: Thu, 23 May 2024 10:00:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1716430938; c=relaxed/simple;
+	bh=n6S3d3rjzLN89lrRlWOEeom2CR+3xxp0nmbZn5Tlv8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t/S/Gn9eeA2YsGGPGgxUi/60m02SkUF9Oqgaza/P/r/zN+vp1YXEKSuY6Az1FwFNfa5u6RatA18Hqm2MTArxyLswDQ1eSMTCr20+DdWQCDQynEH7+/B02Mjd/4b/ZWk5iDobDPGmqcjBRxjgfVjiR6Kxw/D7Nm2aKxcmtLPxBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XySX8E8L; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-df4d60c59f7so1661561276.3;
+        Wed, 22 May 2024 19:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716430936; x=1717035736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NQDfZ0LPwhJX3/QNF0EEJO3WCRe9zAijIGwiWSjHPuo=;
+        b=XySX8E8LxDGOI/tor9LveyTBVtjIitEuX3O+5BtUaH2V8HHRRFM4USmAZnq7J1AQig
+         scTFtx8v463Wxqn6DNwUdr7BmOSL0VOpNwfDrI8RzpIdBVBTYuqigW1DUvvADkYHgHRD
+         O8ZlLZTyJV6OA18jaMPeW+JVrNzgJow2KuEeoc9GynLo4vicv4BYgzgIrSaHna8pT2tz
+         m+XUW36ZZ7nPmH+GEO9fQ/TzX92o5GlzqCy/UJzoOlovxCfUcuGit8TvQwnMn748GDXx
+         epQJmmond7IJjMRrjQGc7LhuW8DtWOvZ16LX5Kr5K29o0vtKqcPBP1HUoUtj/khiawwY
+         gOxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716430936; x=1717035736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NQDfZ0LPwhJX3/QNF0EEJO3WCRe9zAijIGwiWSjHPuo=;
+        b=Hd3wqLQKSedAMgHclZFOQM10dIGgJJvo7ZB9pXEaZixy9DL1YLxt3sDEc8roEJl7j1
+         W7abs8CXP786R3boW85on3EYorSR0cxvOWEN9lc6eCpBIyH0oVl1M+dcgBRn3StrWM4k
+         3bC+VovWBzLhTgiEGmlEwZ3u33qL8qUKAvuWsS4jYFdNF+KGKBpCobeTTJSw/BZTeICy
+         RCzsDqURn9tNED7w17CSLd7td949ugEsUppUz2sKhDPGARrrVYGzROwVafd3p3pqeYAk
+         dtbnvs565m8mbP8ZjVsge1EToSBv41DoGj1PwuB+sRl4ECZddjP9LOyIeCoA29ZOmZ5u
+         nbFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSNayr8L7qSsLToACZ/0XtI2xWWcSqLjQrIN05ctJrUPf4E/wmOCM7sjuWcFWJlF9f5lvxmfFggIM80JE7RgDZnHy0pOrAjsCfM8XOdVjtizb9Kx3ypYnOR2uUIBVZoq+Vkqb+3bTY9HFnMw==
+X-Gm-Message-State: AOJu0YyvYC+xLiNfCqFM0emoz6cJCxgiuCX4i+QOpgrIzTGre1eXGTLX
+	AHwSsXmX6HcCg5cfsehFVPV0c0QbooRT/ouON5ffV9OKph+tI6iWuaufq7M1PkEQU12+OlL2/9M
+	MqOnVda15eT+aKZlYqqXLbI8sIoo=
+X-Google-Smtp-Source: AGHT+IGIrKWhqy/R8UjLEd99c1CXhskhEggyC5D4DvABYvRnP5ifskPb85lAwQfQ0fLDLvAUpyNvgP63eumMfAsRfuk=
+X-Received: by 2002:a25:d090:0:b0:de5:8290:35b8 with SMTP id
+ 3f1490d57ef6-df4e0ad024cmr4216897276.32.1716430935914; Wed, 22 May 2024
+ 19:22:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zk6XqIcO+7+VPn35@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgCnyw4io05myMQANw--.37203S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr13urW3Cw1xAr45Wr1Utrb_yoW5Cry8pF
-	WUGa4UKr4kA3yDC34IyFn2qw1Fyw1rJrW8uryrtw12kas8X342yFyjgFWFkFyUuFZ3Gr12
-	vF4jy3y3Zwn5A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
+ <20240515091727.22034-1-laoar.shao@gmail.com> <CAHk-=wgcnsjRvJ3d_Pm6HZ+0Pf_er4Zt2T04E1TSCDywECSJJQ@mail.gmail.com>
+ <Zk2x+WmxndbwjxQ4@xsang-OptiPlex-9020>
+In-Reply-To: <Zk2x+WmxndbwjxQ4@xsang-OptiPlex-9020>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 23 May 2024 10:21:39 +0800
+Message-ID: <CALOAHbD7x_QCyPTy8M7KXddEdLK6vQhg8kv=U2bPucgV0-pN-Q@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Delete the associated dentry when deleting a file
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, longman@redhat.com, viro@zeniv.linux.org.uk, 
+	walters@verbum.org, wangkai86@huawei.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com, philip.li@intel.com, 
+	yujie.liu@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/23 9:11, Dave Chinner wrote:
-> On Wed, May 22, 2024 at 09:57:13AM +0800, Zhang Yi wrote:
->> On 2024/5/21 10:38, Dave Chinner wrote:
->>> We can do all this with a single writeback operation if we are a
->>> little bit smarter about the order of operations we perform and we
->>> are a little bit smarter in iomap about zeroing dirty pages in the
->>> page cache:
->>>
->>> 	1. change iomap_zero_range() to do the right thing with
->>> 	dirty unwritten and cow extents (the patch I've been working
->>> 	on).
->>>
->>> 	2. pass the range to be zeroed into iomap_truncate_page()
->>> 	(the fundamental change being made here).
->>>
->>> 	3. zero the required range *through the page cache*
->>> 	(iomap_zero_range() already does this).
->>>
->>> 	4. write back the XFS inode from ip->i_disk_size to the end
->>> 	of the range zeroed by iomap_truncate_page()
->>> 	(xfs_setattr_size() already does this).
->>>
->>> 	5. i_size_write(newsize);
->>>
->>> 	6. invalidate_inode_pages2_range(newsize, -1) to trash all
->>> 	the page cache beyond the new EOF without doing any zeroing
->>> 	as we've already done all the zeroing needed to the page
->>> 	cache through iomap_truncate_page().
->>>
->>>
->>> The patch I'm working on for step 1 is below. It still needs to be
->>> extended to handle the cow case, but I'm unclear on how to exercise
->>> that case so I haven't written the code to do it. The rest of it is
->>> just rearranging the code that we already use just to get the order
->>> of operations right. The only notable change in behaviour is using
->>> invalidate_inode_pages2_range() instead of truncate_pagecache(),
->>> because we don't want the EOF page to be dirtied again once we've
->>> already written zeroes to disk....
->>>
->>
->> Indeed, this sounds like the best solution. Since Darrick recommended
->> that we could fix the stale data exposure on realtime inode issue by
->> convert the tail extent to unwritten, I suppose we could do this after
->> fixing the problem.
-> 
-> We also need to fix the truncate issue for the upcoming forced
-> alignment feature (for atomic writes), and in that case we are
-> required to write zeroes to the entire tail extent. i.e. forced
-> alignment does not allow partial unwritten extent conversion of
-> the EOF extent.
-> 
+On Wed, May 22, 2024 at 4:51=E2=80=AFPM Oliver Sang <oliver.sang@intel.com>=
+ wrote:
+>
+>
+> hi, Linus, hi, Yafang Shao,
+>
+>
+> On Wed, May 15, 2024 at 09:05:24AM -0700, Linus Torvalds wrote:
+> > Oliver,
+> >  is there any chance you could run this through the test robot
+> > performance suite? The original full patch at
+> >
+> >     https://lore.kernel.org/all/20240515091727.22034-1-laoar.shao@gmail=
+.com/
+> >
+> > and it would be interesting if the test robot could see if the patch
+> > makes any difference on any other loads?
+> >
+>
+> we just reported a stress-ng performance improvement by this patch [1]
 
-Yes, right. I noticed that feature also needs to fix.
+Awesome!
 
-> Hence I think we want to fix the problem by zeroing the entire EOF
-> extent first, then optimise the large rtextsize case to use
-> unwritten extents if that tail zeroing proves to be a performance
-> issue.
-> 
-> I say "if" because the large rtextsize case will still need to write
-> zeroes for the fsb that spans EOF. Adding conversion of the rest of
-> the extent to unwritten may well be more expensive (in terms of both
-> CPU and IO requirements for the transactional metadata updates) than
-> just submitting a slightly larger IO containing real zeroes and
-> leaving it as a written extent....
-> 
+>
+> test robot applied this patch upon
+>   3c999d1ae3 ("Merge tag 'wq-for-6.10' of git://git.kernel.org/pub/scm/li=
+nux/kernel/git/tj/wq")
+>
+> filesystem is not our team's major domain, so we just made some limited r=
+eview
+> of the results, and decided to send out the report FYI.
+>
+> at first stage, we decided to check below catagories of tests as priority=
+:
+>
+> stress-ng filesystem
+> filebench mailserver
+> reaim fileserver
+>
+> we also pick sysbench-fileio, blogbench into coverage.
+>
+> here is a summary.
+>
+> for stress-ng, besided [1] which was reported, we got below data that are
+> about this patch comparing to 3c999d1ae3.
+>
+> either there is no significant performance change, or the change is small=
+er
+> than the noise which will make test robot's bisect fail, so these informa=
+tion
+> is just FYI. and if you have any doubt about any subtests, could you let =
+us know
+> then we could check further?
+>
+> (also included some net test results)
+>
+>       12.87 =C4=85  6%      -0.6%      12.79        stress-ng.xattr.ops_p=
+er_sec
+>        6721 =C4=85  5%      +7.5%       7224 =C4=85 27%  stress-ng.rawdev=
+.ops_per_sec
+>        9002 =C4=85  7%      -8.7%       8217        stress-ng.dirmany.ops=
+_per_sec
+>     8594743 =C4=85  4%      -3.0%    8337417        stress-ng.rawsock.ops=
+_per_sec
+>        2056 =C4=85  3%      +2.9%       2116        stress-ng.dirdeep.ops=
+_per_sec
+>        4307 =C4=85 21%      -6.9%       4009        stress-ng.dir.ops_per=
+_sec
+>      137946 =C4=85 18%      +5.8%     145942        stress-ng.fiemap.ops_=
+per_sec
+>    22413006 =C4=85  2%      +2.5%   22982512 =C4=85  2%  stress-ng.sockdi=
+ag.ops_per_sec
+>      286714 =C4=85  2%      -3.8%     275876 =C4=85  5%  stress-ng.udp-fl=
+ood.ops_per_sec
+>       82904 =C4=85 46%     -31.6%      56716        stress-ng.sctp.ops_pe=
+r_sec
+>     9853408            -0.3%    9826387        stress-ng.ping-sock.ops_pe=
+r_sec
+>       84667 =C4=85 12%     -26.7%      62050 =C4=85 17%  stress-ng.dccp.o=
+ps_per_sec
+>       61750 =C4=85 25%     -24.2%      46821 =C4=85 38%  stress-ng.open.o=
+ps_per_sec
+>      583443 =C4=85  3%      -3.4%     563822        stress-ng.file-ioctl.=
+ops_per_sec
+>       11919 =C4=85 28%     -34.3%       7833        stress-ng.dentry.ops_=
+per_sec
+>       18.59 =C4=85 12%     -23.9%      14.15 =C4=85 27%  stress-ng.swap.o=
+ps_per_sec
+>      246.37 =C4=85  2%     +15.9%     285.58 =C4=85 12%  stress-ng.aiol.o=
+ps_per_sec
+>        7.45            -4.8%       7.10 =C4=85  7%  stress-ng.fallocate.o=
+ps_per_sec
+>      207.97 =C4=85  7%      +5.2%     218.70        stress-ng.copy-file.o=
+ps_per_sec
+>       69.87 =C4=85  7%      +5.8%      73.93 =C4=85  5%  stress-ng.fpunch=
+.ops_per_sec
+>        0.25 =C4=85 21%     +24.0%       0.31        stress-ng.inode-flags=
+.ops_per_sec
+>      849.35 =C4=85  6%      +1.4%     861.51        stress-ng.mknod.ops_p=
+er_sec
+>      926144 =C4=85  4%      -5.2%     877558        stress-ng.lease.ops_p=
+er_sec
+>       82924            -2.1%      81220        stress-ng.fcntl.ops_per_se=
+c
+>        6.19 =C4=85124%     -50.7%       3.05        stress-ng.chattr.ops_=
+per_sec
+>      676.90 =C4=85  4%      -1.9%     663.94 =C4=85  5%  stress-ng.iomix.=
+ops_per_sec
+>        0.93 =C4=85  6%      +5.6%       0.98 =C4=85  7%  stress-ng.symlin=
+k.ops_per_sec
+>     1703608            -3.8%    1639057 =C4=85  3%  stress-ng.eventfd.ops=
+_per_sec
+>     1735861            -0.6%    1726072        stress-ng.sockpair.ops_per=
+_sec
+>       85440            -2.0%      83705        stress-ng.rawudp.ops_per_s=
+ec
+>        6198            +0.6%       6236        stress-ng.sockabuse.ops_pe=
+r_sec
+>       39226            +0.0%      39234        stress-ng.sock.ops_per_sec
+>        1358            +0.3%       1363        stress-ng.tun.ops_per_sec
+>     9794021            -1.7%    9623340        stress-ng.icmp-flood.ops_p=
+er_sec
+>     1324728            +0.3%    1328244        stress-ng.epoll.ops_per_se=
+c
+>      146150            -2.0%     143231        stress-ng.rawpkt.ops_per_s=
+ec
+>     6381112            -0.4%    6352696        stress-ng.udp.ops_per_sec
+>     1234258            +0.2%    1236738        stress-ng.sockfd.ops_per_s=
+ec
+>       23954            -0.1%      23932        stress-ng.sockmany.ops_per=
+_sec
+>      257030            -0.1%     256860        stress-ng.netdev.ops_per_s=
+ec
+>     6337097            +0.1%    6341130        stress-ng.flock.ops_per_se=
+c
+>      173212            -0.3%     172728        stress-ng.rename.ops_per_s=
+ec
+>      199.69            +0.6%     200.82        stress-ng.sync-file.ops_pe=
+r_sec
+>      606.57            +0.8%     611.53        stress-ng.chown.ops_per_se=
+c
+>      183549            -0.9%     181975        stress-ng.handle.ops_per_s=
+ec
+>        1299            +0.0%       1299        stress-ng.hdd.ops_per_sec
+>    98371066            +0.2%   98571113        stress-ng.lockofd.ops_per_=
+sec
+>       25.49            -4.3%      24.39        stress-ng.ioprio.ops_per_s=
+ec
+>    96745191            -1.5%   95333632        stress-ng.locka.ops_per_se=
+c
+>      582.35            +0.1%     582.86        stress-ng.chmod.ops_per_se=
+c
+>     2075897            -2.2%    2029552        stress-ng.getdent.ops_per_=
+sec
+>       60.47            -1.9%      59.34        stress-ng.metamix.ops_per_=
+sec
+>       14161            -0.3%      14123        stress-ng.io.ops_per_sec
+>       23.98            -1.5%      23.61        stress-ng.link.ops_per_sec
+>       27514            +0.0%      27528        stress-ng.filename.ops_per=
+_sec
+>       44955            +1.6%      45678        stress-ng.dnotify.ops_per_=
+sec
+>      160.94            +0.4%     161.51        stress-ng.inotify.ops_per_=
+sec
+>     2452224            +4.0%    2549607        stress-ng.lockf.ops_per_se=
+c
+>        6761            +0.3%       6779        stress-ng.fsize.ops_per_se=
+c
+>      775083            -1.5%     763487        stress-ng.fanotify.ops_per=
+_sec
+>      309124            -4.2%     296285        stress-ng.utime.ops_per_se=
+c
+>       25567            -0.1%      25530        stress-ng.dup.ops_per_sec
+>        1858            +0.9%       1876        stress-ng.procfs.ops_per_s=
+ec
+>      105804            -3.9%     101658        stress-ng.access.ops_per_s=
+ec
+>        1.04            -1.9%       1.02        stress-ng.chdir.ops_per_se=
+c
+>       82753            -0.3%      82480        stress-ng.fstat.ops_per_se=
+c
+>      681128            +3.7%     706375        stress-ng.acl.ops_per_sec
+>       11892            -0.1%      11875        stress-ng.bind-mount.ops_p=
+er_sec
+>
+>
+> for filebench, similar results, but data is less unstable than stress-ng,=
+ which
+> means for most of them, we regarded them as that they should not be impac=
+ted by
+> this patch.
+>
+> for reaim/sysbench-fileio/blogbench, the data are quite stable, and we di=
+dn't
+> notice any significant performance changes. we even doubt whether they go
+> through the code path changed by this patch.
+>
+> so for these, we don't list full results here.
+>
+> BTW, besides filesystem tests, this patch is also piped into other perfor=
+mance
+> test categories such like net, scheduler, mm and others, and since it als=
+o goes
+> into our so-called hourly kernels, it could run by full other performance=
+ test
+> suites which test robot supports. so in following 2-3 weeks, it's still p=
+ossible
+> for us to report other results including regression.
+>
 
-Yeah, if the rtextsize if not large (in most cases), I'm pretty sure
-that writing zeros would better. If the rtextsize is large enough, I
-think it deserves a performance test.
+That's great. Many thanks for your help.
 
-Thanks,
-Yi.
-
+--=20
+Regards
+Yafang
 
