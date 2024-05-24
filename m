@@ -1,119 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-20109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3ECD8CE521
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 14:18:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5E38CE54A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 14:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3153F1C214AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 12:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86F81F214DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 12:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0B486267;
-	Fri, 24 May 2024 12:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5203512A152;
+	Fri, 24 May 2024 12:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lepPuE9q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkW0tr5R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923DF83CCC;
-	Fri, 24 May 2024 12:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D37E129E8C;
+	Fri, 24 May 2024 12:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716553124; cv=none; b=awCYFAlhdJYAS4r9laLNuH97PF3SVZ9pB1IgP6QCyWh1wynYgr/83TixPTLGdwUd6lxcqQGDEAsbupYQSfXn5r24V1UlYDyDpEXEMGuq52d/PHNcz21tu6WD8J88UYv5xtfuh2worvXk9haDGQTwaxBTDV1Ffi64Q3WPJ08KTPc=
+	t=1716553535; cv=none; b=In3o9OG/IpI0hIV2LNanjiZzJKgIloC9+GuCdVl+/rKcMfS8g6ZbAkIbK8XG1GlaRxVUWONxnYgmTjFLQp9jDlVV45B/+cBEsjCPmhnhUpjxO/FLlTwnF2Vfi3fBT1RkFEJ5kQi8RZM46VjeoWPTR5/U3oMK2xluc0NTc9lihlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716553124; c=relaxed/simple;
-	bh=7lqilfxHEeNt7OyvbNoz9CUGiZAgzoC5RAd+VQwnTuI=;
+	s=arc-20240116; t=1716553535; c=relaxed/simple;
+	bh=ZxYHa51J4F5219O37AqS4VcEPL/q/VMQFkZNaNvxL90=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PF7d1UR4/wfZd8QcnXpCLv21IVAoKIHwSZW5TxPo36QbThlWWFVzhw+9YPQolBDHJD8LQmXO6qlLfts39KV/aurSV3JIFVMJJxwuRlConacc5VzLIC1B5zti3XHLFSyLgZsk9H26V5CWqAIlivSPRGHgNMjCPfJ9Ns5ZO1nD4tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lepPuE9q; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vbEsMDh+E9GqojdWiKM6c4copHUEF+ZhaKXyW3Xhetg=; b=lepPuE9qDtPJho7Qxv+ml69iYD
-	wqnNO1/3aCN7fNuLsBd8G0XhyWdw4M2ziQxVY5tnpCy2WZKPGpDleB/ZH19zsCAVu8t+zSv5oYHoi
-	wS/D2d1niHKRzC1x8CIdC1V99uG9jWbAoGVrMDRCIuBJA3W+qyDKmcpLA/eKI4JV94hQGdH8BQEwl
-	KkID2EDDDMlVWh40oHOZBw0NHzL14zga0Bfcy1iYkjcEQ5APE1K53L7MBN2+prAeu78BVaQyqNene
-	urU4eZx4ZtLhE1Y6LJebQj+F+ZKBdOgQrM1opPychQlvObh07XyEdMfBmaYetiFOaYu0c4YavDAUh
-	Q/AoXQUw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sATsc-00000002eqS-2EiW;
-	Fri, 24 May 2024 12:18:38 +0000
-Date: Fri, 24 May 2024 13:18:38 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: brauner@kernel.org, djwong@kernel.org, akpm@linux-foundation.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, jun.li@nxp.com
-Subject: Re: [PATCH v5 2/2] iomap: fault in smaller chunks for non-large
- folio mappings
-Message-ID: <ZlCFnlXPPUo_0mYX@casper.infradead.org>
-References: <20240521114939.2541461-1-xu.yang_2@nxp.com>
- <20240521114939.2541461-2-xu.yang_2@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i09h36bHNBK+/EZcV0BhKHjTYp7vAP7KABdgm5CpaR1Lwf4GiLtPbZjiwFDvzLwY/J1HVbmj+N+8zI3L/mrR0INoq6/58h2lBoR2JDYsjyOryAKFOdVPcb91ZaFwWtYJD6yfKc0988wh5L4Zb1qUqVnETkpw9ImScsAeOUGO9uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkW0tr5R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D97DC3277B;
+	Fri, 24 May 2024 12:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716553535;
+	bh=ZxYHa51J4F5219O37AqS4VcEPL/q/VMQFkZNaNvxL90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CkW0tr5R8netKj3H1R0ye6wSoxVxKRlZiTiwB5ukR9z1c7TP8OAWTNPe+H9EmVF22
+	 iKkCl70NzB7uaY8AfBcCaRKbTyGTfdFg1jHihFJZ5Uoy8R+aVDuz0tNO8q75mlh7us
+	 Xy8VhegHlVFdHiVLAf9zzcRCH1bsnEs7SXkm37EWKHiVieSVPSCoghLYqr24+y78kR
+	 38s1l2TmBykYbhZ+4vsqtYBw2j6ggNFV733hpo7KUxTw41ziOyxLOi2+wHF+Xw4hRh
+	 mTzxV/l6+7NC5VCV6V/NgIBNtmyoV/WvvdqAmM9xUOaFZhSEqiakJdZ+TbeZxHQOKe
+	 M1jgxSlGK77Ng==
+Date: Fri, 24 May 2024 14:25:30 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
+Message-ID: <20240524-ahnden-danken-02a2e9b87190@brauner>
+References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
+ <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
+ <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240521114939.2541461-2-xu.yang_2@nxp.com>
+In-Reply-To: <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
 
-On Tue, May 21, 2024 at 07:49:39PM +0800, Xu Yang wrote:
-> Since commit (5d8edfb900d5 "iomap: Copy larger chunks from userspace"),
-> iomap will try to copy in larger chunks than PAGE_SIZE. However, if the
-> mapping doesn't support large folio, only one page of maximum 4KB will
-> be created and 4KB data will be writen to pagecache each time. Then,
-> next 4KB will be handled in next iteration. This will cause potential
-> write performance problem.
+On Thu, May 23, 2024 at 09:52:20AM -0600, Aleksa Sarai wrote:
+> On 2024-05-21, Christian Brauner <brauner@kernel.org> wrote:
+> > On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
+> > > Now that we have stabilised the unique 64-bit mount ID interface in
+> > > statx, we can now provide a race-free way for name_to_handle_at(2) to
+> > > provide a file handle and corresponding mount without needing to worry
+> > > about racing with /proc/mountinfo parsing.
+> > > 
+> > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bit
+> > > that doesn't make sense for name_to_handle_at(2).
+> > > 
+> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > ---
+> > 
+> > So I think overall this is probably fine (famous last words). If it's
+> > just about being able to retrieve the new mount id without having to
+> > take the hit of another statx system call it's indeed a bit much to
+> > add a revised system call for this. Althoug I did say earlier that I
+> > wouldn't rule that out.
+> > 
+> > But if we'd that then it'll be a long discussion on the form of the new
+> > system call and the information it exposes.
+> > 
+> > For example, I lack the grey hair needed to understand why
+> > name_to_handle_at() returns a mount id at all. The pitch in commit
+> > 990d6c2d7aee ("vfs: Add name to file handle conversion support") is that
+> > the (old) mount id can be used to "lookup file system specific
+> > information [...] in /proc/<pid>/mountinfo".
 > 
-> If chunk is 2MB, total 512 pages need to be handled finally. During this
-> period, fault_in_iov_iter_readable() is called to check iov_iter readable
-> validity. Since only 4KB will be handled each time, below address space
-> will be checked over and over again:
+> The logic was presumably to allow you to know what mount the resolved
+> file handle came from. If you use AT_EMPTY_PATH this is not needed
+> because you could just fstatfs (and now statx(AT_EMPTY_PATH)), but if
+> you just give name_to_handle_at() almost any path, there is no race-free
+> way to make sure that you know which filesystem the file handle came
+> from.
 > 
-> start         	end
-> -
-> buf,    	buf+2MB
-> buf+4KB, 	buf+2MB
-> buf+8KB, 	buf+2MB
-> ...
-> buf+2044KB 	buf+2MB
-> 
-> Obviously the checking size is wrong since only 4KB will be handled each
-> time. So this will get a correct chunk to let iomap work well in non-large
-> folio case.
-> 
-> With this change, the write speed will be stable. Tested on ARM64 device.
-> 
-> Before:
-> 
->  - dd if=/dev/zero of=/dev/sda bs=400K  count=10485  (334 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=800K  count=5242   (278 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=1600K count=2621   (204 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=2200K count=1906   (170 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=3000K count=1398   (150 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=4500K count=932    (139 MB/s)
-> 
-> After:
-> 
->  - dd if=/dev/zero of=/dev/sda bs=400K  count=10485  (339 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=800K  count=5242   (330 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=1600K count=2621   (332 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=2200K count=1906   (333 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=3000K count=1398   (333 MB/s)
->  - dd if=/dev/zero of=/dev/sda bs=4500K count=932    (333 MB/s)
-> 
-> Fixes: 5d8edfb900d5 ("iomap: Copy larger chunks from userspace")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+> I don't know if that could lead to security issues (I guess an attacker
+> could find a way to try to manipulate the file handle you get back, and
+> then try to trick you into operating on the wrong filesystem with
+> open_by_handle_at()) but it is definitely something you'd want to avoid.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+So the following paragraphs are prefaced with: I'm not an expert on file
+handle encoding and so might be totally wrong.
+
+Afaiu, the uniqueness guarantee of the file handle mostly depends on:
+
+(1) the filesystem
+(2) the actual file handling encoding
+
+Looking at file handle encoding to me it looks like it's fairly easy to
+fake them in userspace (I guess that's ok if you think about them like a
+path but with a weird permission model built around them.) for quite a
+few filesystems.
+
+For example, for anything that uses fs/libfs.c:generic_encode_ino32_fh()
+it's easy to construct a file handle by retrieving the inode number via
+stat and the generation number via FS_IOC_GETVERSION.
+
+Encoding using the inode number and the inode generation number is
+probably not very strong so it's not impossible to generate a file
+handle that is not unique without knowing in which filesystem to
+interpret it in.
+
+The problem is with what name_to_handle_at() returns imho. A mnt_id
+doesn't pin the filesystem and the old mnt_id isn't unique. That means
+the filesystem can be unmounted and go away and the mnt_id can be
+recycled almost immediately for another mount but the file handle is
+still there.
+
+So to guarantee that a (weakly encoded) file handle is interpreted in
+the right filesystem the file handle must either be accompanied by a
+file descriptor that pins the relevant mount or have any other guarantee
+that the filesystem doesn't go away (Or of course, the file handle
+encodes the uuid of the filesystem or something or uses some sort of
+hashing scheme.).
+
+One of the features of file handles is that they're globally usable so
+they're interesting to use as handles that can be shared. IOW, one can
+send around a file handle to another process without having to pin
+anything or have a file descriptor open that needs to be sent via
+AF_UNIX.
+
+But as stated above that's potentially risky so one might still have to
+send around an fd together with the file handle if sender and receiver
+don't share the filesystem for the handle.
+
+However, with the unique mount id things improve quite a bit. Because
+now it's possible to send around the unique mount id and the file
+handle. Then one can use statmount() to figure out which filesystem this
+file handle needs to be interpreted in.
+
+> 
+> > Granted, that's doable but it'll mean a lot of careful checking to avoid
+> > races for mount id recycling because they're not even allocated
+> > cyclically. With lots of containers it becomes even more of an issue. So
+> > it's doubtful whether exposing the mount id through name_to_handle_at()
+> > would be something that we'd still do.
+> > 
+> > So really, if this is just about a use-case where you want to spare the
+> > additional system call for statx() and you need the mnt_id then
+> > overloading is probably ok.
+> > 
+> > But it remains an unpleasant thing to look at.
+> > 
+> 
+> Yeah, I agree it's ugly.
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
+
+
 
