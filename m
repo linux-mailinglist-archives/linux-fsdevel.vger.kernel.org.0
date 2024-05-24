@@ -1,137 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-20125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C51C8CE88D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 18:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 048098CE8DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 18:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A80281DD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 16:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21CA2831FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 16:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC0312E1CE;
-	Fri, 24 May 2024 16:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AF81304AF;
+	Fri, 24 May 2024 16:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RlxLGnNr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGwcRzyE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C585C58
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 16:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4586712FB38;
+	Fri, 24 May 2024 16:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716567484; cv=none; b=ND23dcNtXloOSXb76KXKm5Wl1c9s9Wfy4/P/fdQwI7x1AMVmbLJHoMDQAHOONStqCX7OcQCPypVjVp1exWwjSgEDCL7XSZishXyYL5OcZv6vXGmu3ZetUX2Em1OwQVT7+drdnsl3Gmlh4RfoWfkikst6F9XvguE+c4Y2IoExjBk=
+	t=1716569127; cv=none; b=F5Swjm3TprmNHE/2hyGBMmn59Kjdok7RdtmZj+U87ptlYLjCDacyNO9HEw0tuh55CCgt71WXtSUZEkZlGjlCnojg/ae/Yi8zZ7BlIrw7OFM8GfjQG4gcEOeeQb/np7h2seqQUGtCUA3NNwopScc83A09J2zVei2EZ1qPos0u4Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716567484; c=relaxed/simple;
-	bh=omAssB6I02yj+x+pz+EEXEalHt+q5NCe67eht1huW5c=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=H3/cc77yrF8HhByriCyLk/RfTMcBiyaiKhWRZVG43HiJam9LRePQ/RGZGBxn0VaVwiRwM4UOdYx5H/wncUARlDwXOX3r3u9cTMitV/3HfTkINrGPEqUz3QABi0ub2ohK4aEyEr3IK6m9YTdhXQVNuPEpC7U9J/NF4pCftpZ9UsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RlxLGnNr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716567481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vHjClk8E6ZL5CAwbbjUXeTWTpXpzXKPzMEFy1g+hdPs=;
-	b=RlxLGnNrHVjQ1qzah9EWwYi595MzfXQPeE2gyD2LJGbN6kGwh/y2ESm1Y0nS2N5nkFOyug
-	k7I1g9AoQnlBUOi/pDrg7idZPQSBMP+ew/WHjGWa1huwHq6GsY/Xk+DwZ46aZ9S/N7pU4d
-	jZtYaLB6c7suH1YCdeHYzMmwP2urL68=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-163-Y4ybQU0dP5WtwdLUCHbt2Q-1; Fri, 24 May 2024 12:17:58 -0400
-X-MC-Unique: Y4ybQU0dP5WtwdLUCHbt2Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73C5C101A52C;
-	Fri, 24 May 2024 16:17:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 3D22F2026D68;
-	Fri, 24 May 2024 16:17:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com,
-    Jan Henrik Sylvester <jan.henrik.sylvester@uni-hamburg.de>,
-    Markus Suvanto <markus.suvanto@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Jeffrey Altman <jaltman@auristor.com>, linux-afs@lists.infradead.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Don't cross .backup mountpoint from backup volume
+	s=arc-20240116; t=1716569127; c=relaxed/simple;
+	bh=bUw8BS8/xhlmX2EUf0rH0EijEEuNZE5I8+apsmK9gpg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=SeWek1VgbVEF5Hu3yxanqaNwc9/1MClhJ+m3h/gZ+LxV9RoWaKHu8lwuHYKenqiuMa0MAuacgjeqbBQRGeiP8uCaGCi4nu1+McDkjep9TLnW9bFjEHW/6f48p5HOGmVpoIgpqjtH5y5Csjqt3vJ2zfhEjdh3oRf8P1lCdO00iq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGwcRzyE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27394C4AF0D;
+	Fri, 24 May 2024 16:45:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716569127;
+	bh=bUw8BS8/xhlmX2EUf0rH0EijEEuNZE5I8+apsmK9gpg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=fGwcRzyEB6nXFwwm+F5cWs5D5WZgarza2TTHhOFovKj4I7ZyhfhME7868yooy65K2
+	 btrPeMavsfYgRvQCxa+GBobRLn6RGMHxO1yaw5nronNQYs3hbf091c3LeHZTPLSrNb
+	 hgL5/RWGuT9TgAOSqAcm1NzL+cHiKc9lOUwxnO/qoT7+9XNjLPGP47mGSsd4AaDZNr
+	 jebOirbKGHRHs7NJ2Dny74fVntWtkJIbxG8RjEf7PMU7tu5Dh9De/7Mo852MkUD69i
+	 tCfkHrMeLTqRKU8pAf9hqLRP6esZeNIuJtUPraed34VQe7pe2mgtTBkbHolH8lorSo
+	 IfJoh1NGxI3hw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1AB8FC32766;
+	Fri, 24 May 2024 16:45:27 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs fixes for 6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <34o5tkmaecep7kccwzgwe4yzbkayhb5wkqukthj5may75yvqgn@43rljzrmlmmn>
+References: <34o5tkmaecep7kccwzgwe4yzbkayhb5wkqukthj5may75yvqgn@43rljzrmlmmn>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <34o5tkmaecep7kccwzgwe4yzbkayhb5wkqukthj5may75yvqgn@43rljzrmlmmn>
+X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-05-24
+X-PR-Tracked-Commit-Id: d93ff5fa40b9db5f505d508336bc171f54db862e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c40b1994b9ffb45e19e6d83b7655d7b9db0174c3
+Message-Id: <171656912710.29701.14407442674141724774.pr-tracker-bot@kernel.org>
+Date: Fri, 24 May 2024 16:45:27 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <768759.1716567475.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 May 2024 17:17:55 +0100
-Message-ID: <768760.1716567475@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-Hi Christian,
+The pull request you sent on Fri, 24 May 2024 09:23:41 -0400:
 
-Can you pick this up, please?
+> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-05-24
 
-Thanks,
-David
----
-From: Marc Dionne <marc.dionne@auristor.com>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c40b1994b9ffb45e19e6d83b7655d7b9db0174c3
 
-afs: Don't cross .backup mountpoint from backup volume
+Thank you!
 
-Don't cross a mountpoint that explicitly specifies a backup volume
-(target is <vol>.backup) when starting from a backup volume.
-
-It it not uncommon to mount a volume's backup directly in the volume
-itself.  This can cause tools that are not paying attention to get
-into a loop mounting the volume onto itself as they attempt to
-traverse the tree, leading to a variety of problems.
-
-This doesn't prevent the general case of loops in a sequence of
-mountpoints, but addresses a common special case in the same way
-as other afs clients.
-
-Reported-by: Jan Henrik Sylvester <jan.henrik.sylvester@uni-hamburg.de>
-Link: http://lists.infradead.org/pipermail/linux-afs/2024-May/008454.html
-Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
-Link: http://lists.infradead.org/pipermail/linux-afs/2024-February/008074.=
-html
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-cc: linux-afs@lists.infradead.org
----
- fs/afs/mntpt.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
-index 97f50e9fd9eb..297487ee8323 100644
---- a/fs/afs/mntpt.c
-+++ b/fs/afs/mntpt.c
-@@ -140,6 +140,11 @@ static int afs_mntpt_set_params(struct fs_context *fc=
-, struct dentry *mntpt)
- 		put_page(page);
- 		if (ret < 0)
- 			return ret;
-+
-+		/* Don't cross a backup volume mountpoint from a backup volume */
-+		if (src_as->volume && src_as->volume->type =3D=3D AFSVL_BACKVOL &&
-+		    ctx->type =3D=3D AFSVL_BACKVOL)
-+			return -ENODEV;
- 	}
- =
-
- 	return 0;
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
