@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-20090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825298CE03E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 06:12:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3202C8CE041
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 06:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E5E1F2342C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 04:12:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1121F23414
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 04:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BA5433C9;
-	Fri, 24 May 2024 04:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E744AECA;
+	Fri, 24 May 2024 04:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGF0nsJ4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGDSyMA0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4764A40875;
-	Fri, 24 May 2024 04:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6A14A990;
+	Fri, 24 May 2024 04:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716523851; cv=none; b=c5PjbQ60ATgEI/XQcAe7KSnkO7u8Nu0DxJI2A8mb17gPpY9nPaodFp77OkCFFJBc5fZDGrJ9GwVtFIvDHIfacTSbStBxBk8WxxKkz65QQE/26oGTKIzXd4Z5U3pMCVPS9W3PSj4WU1L9iFATl/Wb5i2BWdP8ZV6OheMmpl8Gj4Y=
+	t=1716523854; cv=none; b=Aubdhee2C0LhQP11kTc6QmNY8RFDSEA23blpmcemdt3QgSRCRwzRPBbzowWO7/r0LvCziJIWbMC8jtGryGhSbop8Yk6Y9a0A9OqM7xdzR51I2GUsMg/14tNcGJOfrg3N2dbmfqp7n1DUHyNyPJ34DOR5AuyzmU/oHFW/GeYvUtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716523851; c=relaxed/simple;
-	bh=zTCFNBXKntn3uKNCfQDhX1RMYgRb96MCd/HOF52B5+s=;
+	s=arc-20240116; t=1716523854; c=relaxed/simple;
+	bh=/x/7qV6pswSalCbC6o7pTWU/vn1XS+egPb3p7SBL30Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PAEyJtV54aIEGXw29uL21VfJ8cdV8SfRRHJJMZ4gjeeDwAlU0PiMO48L1wDVSwk1K/zFc2q9sSB5WZvmbju2uh/NdVYx54zubxltNrVuDiKATDv3aWI6uzJ/XfcyqoXvaUZRDgL7znHB6B3YuxsDbDlDEVoUGDbcdAs33ERHtxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGF0nsJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F30C7C2BD11;
-	Fri, 24 May 2024 04:10:50 +0000 (UTC)
+	 MIME-Version; b=Uux39UYjw2RgpDOsF4LlxwRWpx/y5uUJDFn199b44AwQHtgEcD3AcAPHK9ePSVofdMBuD1YC0QEODht/XsArZG+MdqGfDDy7rpyG4hfHjQpnZU+YbsESz8Yz8wEyG2k7psQYf5EjSDxoFGAUajC8EhYZ/pR/bfX6z6rMb4c2Vv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGDSyMA0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402F6C2BD11;
+	Fri, 24 May 2024 04:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716523851;
-	bh=zTCFNBXKntn3uKNCfQDhX1RMYgRb96MCd/HOF52B5+s=;
+	s=k20201202; t=1716523854;
+	bh=/x/7qV6pswSalCbC6o7pTWU/vn1XS+egPb3p7SBL30Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oGF0nsJ4lWUgidH6hqxg85XT6O9QU7bGEJNrb3GUoUgXu3YNA/gte/0Anz3cym+fi
-	 RLnmgOxqPJE9j1T9j9iHMwPsG8FCKPMvhH4phSmQFfIL5nzXbogzdgDcVqz9vgnJP6
-	 /BxeoQL47G/TpCJLKoQqdpfxx97EPTB4ZRk/4Od/AHkjZlSecdlSR6s336gRHM/XMT
-	 echfa9RMAX8053WZ2GLw2zDVLtprp8Fa3/UsIwDd3+P0CPT9OwxEkmGn4O3UGLjIlC
-	 //fdBmcelA5uhED0h0hVtCoQIPvYIUDySrU1awCDh7hfPfntgo1ndJkaNdCjhCB0bS
-	 6JJ8I/ed7K09w==
+	b=SGDSyMA05INCp7JaIvbBjPly0Su26/b3/n57wy76Zk8EtpSuYXONCHkI5yDyrHt3i
+	 79oEGExT1NXwBUpgfHlOlB+iWQqoa+Iojo+GCwsTDhTETd5+G5UVnSXBh53ZzdTrgq
+	 mqU3Ky7I2ej1qtcyUVko64q2SrVSIY789f/yinONQ2/ueHET64sa6BKLp32vhSjw2l
+	 9bNrpNNGXd9W/KpwmVrPOUsLcZlYOazYsR/YkiqdVu6KZZV+17VGpb2aPEr964gZi2
+	 FNvZC2ND4seohJSb1WkKM9FQe/zocDvY2SUDe114ejqoDzfbvY7VC6g0/VG7nZeuwj
+	 o+voZvJS/t1Ig==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
@@ -54,9 +54,9 @@ Cc: linux-kernel@vger.kernel.org,
 	surenb@google.com,
 	rppt@kernel.org,
 	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v2 4/9] fs/procfs: use per-VMA RCU-protected locking in PROCMAP_QUERY API
-Date: Thu, 23 May 2024 21:10:26 -0700
-Message-ID: <20240524041032.1048094-5-andrii@kernel.org>
+Subject: [PATCH v2 5/9] fs/procfs: add build ID fetching to PROCMAP_QUERY API
+Date: Thu, 23 May 2024 21:10:27 -0700
+Message-ID: <20240524041032.1048094-6-andrii@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240524041032.1048094-1-andrii@kernel.org>
 References: <20240524041032.1048094-1-andrii@kernel.org>
@@ -68,120 +68,169 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Attempt to use RCU-protected per-VAM lock when looking up requested VMA
-as much as possible, only falling back to mmap_lock if per-VMA lock
-failed. This is done so that querying of VMAs doesn't interfere with
-other critical tasks, like page fault handling.
+The need to get ELF build ID reliably is an important aspect when
+dealing with profiling and stack trace symbolization, and
+/proc/<pid>/maps textual representation doesn't help with this.
 
-This has been suggested by mm folks, and we make use of a newly added
-internal API that works like find_vma(), but tries to use per-VMA lock.
+To get backing file's ELF build ID, application has to first resolve
+VMA, then use it's start/end address range to follow a special
+/proc/<pid>/map_files/<start>-<end> symlink to open the ELF file (this
+is necessary because backing file might have been removed from the disk
+or was already replaced with another binary in the same file path.
+
+Such approach, beyond just adding complexity of having to do a bunch of
+extra work, has extra security implications. Because application opens
+underlying ELF file and needs read access to its entire contents (as far
+as kernel is concerned), kernel puts additional capable() checks on
+following /proc/<pid>/map_files/<start>-<end> symlink. And that makes
+sense in general.
+
+But in the case of build ID, profiler/symbolizer doesn't need the
+contents of ELF file, per se. It's only build ID that is of interest,
+and ELF build ID itself doesn't provide any sensitive information.
+
+So this patch adds a way to request backing file's ELF build ID along
+the rest of VMA information in the same API. User has control over
+whether this piece of information is requested or not by either setting
+build_id_size field to zero or non-zero maximum buffer size they
+provided through build_id_addr field (which encodes user pointer as
+__u64 field). This is a completely optional piece of information, and so
+has no performance implications for user cases that don't care about
+build ID, while improving performance and simplifying the setup for
+those application that do need it.
+
+Kernel already implements build ID fetching, which is used from BPF
+subsystem. We are reusing this code here, but plan a follow up changes
+to make it work better under more relaxed assumption (compared to what
+existing code assumes) of being called from user process context, in
+which page faults are allowed. BPF-specific implementation currently
+bails out if necessary part of ELF file is not paged in, all due to
+extra BPF-specific restrictions (like the need to fetch build ID in
+restrictive contexts such as NMI handler).
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- fs/proc/task_mmu.c | 42 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 8 deletions(-)
+ fs/proc/task_mmu.c      | 25 ++++++++++++++++++++++++-
+ include/uapi/linux/fs.h | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 1 deletion(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 8ad547efd38d..2b14d06d1def 100644
+index 2b14d06d1def..c8f783644d36 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -389,12 +389,30 @@ static int pid_maps_open(struct inode *inode, struct file *file)
- )
+@@ -22,6 +22,7 @@
+ #include <linux/pkeys.h>
+ #include <linux/minmax.h>
+ #include <linux/overflow.h>
++#include <linux/buildid.h>
  
- static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
--						 unsigned long addr, u32 flags)
-+						 unsigned long addr, u32 flags,
-+						 bool *mm_locked)
- {
- 	struct vm_area_struct *vma;
-+	bool mmap_locked;
-+
-+	*mm_locked = mmap_locked = false;
- 
- next_vma:
--	vma = find_vma(mm, addr);
-+	if (!mmap_locked) {
-+		/* if we haven't yet acquired mmap_lock, try to use less disruptive per-VMA */
-+		vma = find_and_lock_vma_rcu(mm, addr);
-+		if (IS_ERR(vma)) {
-+			/* failed to take per-VMA lock, fallback to mmap_lock */
-+			if (mmap_read_lock_killable(mm))
-+				return ERR_PTR(-EINTR);
-+
-+			*mm_locked = mmap_locked = true;
-+			vma = find_vma(mm, addr);
-+		}
-+	} else {
-+		/* if we have mmap_lock, get through the search as fast as possible */
-+		vma = find_vma(mm, addr);
-+	}
- 
- 	/* no VMA found */
- 	if (!vma)
-@@ -428,18 +446,25 @@ static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
- skip_vma:
- 	/*
- 	 * If the user needs closest matching VMA, keep iterating.
-+	 * But before we proceed we might need to unlock current VMA.
- 	 */
- 	addr = vma->vm_end;
-+	if (!mmap_locked)
-+		vma_end_read(vma);
+ #include <asm/elf.h>
+ #include <asm/tlb.h>
+@@ -453,6 +454,7 @@ static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
+ 		vma_end_read(vma);
  	if (flags & PROCMAP_QUERY_COVERING_OR_NEXT_VMA)
  		goto next_vma;
++
  no_vma:
--	mmap_read_unlock(mm);
-+	if (mmap_locked)
-+		mmap_read_unlock(mm);
- 	return ERR_PTR(-ENOENT);
- }
- 
--static void unlock_vma(struct vm_area_struct *vma)
-+static void unlock_vma(struct vm_area_struct *vma, bool mm_locked)
- {
--	mmap_read_unlock(vma->vm_mm);
-+	if (mm_locked)
-+		mmap_read_unlock(vma->vm_mm);
-+	else
-+		vma_end_read(vma);
- }
- 
- static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-@@ -447,6 +472,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	struct procmap_query karg;
- 	struct vm_area_struct *vma;
+ 	if (mmap_locked)
+ 		mmap_read_unlock(mm);
+@@ -474,7 +476,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
  	struct mm_struct *mm;
-+	bool mm_locked;
+ 	bool mm_locked;
  	const char *name = NULL;
- 	char *name_buf = NULL;
+-	char *name_buf = NULL;
++	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
  	__u64 usize;
-@@ -475,7 +501,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ 	int err;
+ 
+@@ -496,6 +498,8 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ 	/* either both buffer address and size are set, or both should be zero */
+ 	if (!!karg.vma_name_size != !!karg.vma_name_addr)
+ 		return -EINVAL;
++	if (!!karg.build_id_size != !!karg.build_id_addr)
++		return -EINVAL;
+ 
+ 	mm = priv->mm;
  	if (!mm || !mmget_not_zero(mm))
- 		return -ESRCH;
+@@ -534,6 +538,21 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ 	if (vma->vm_flags & VM_MAYSHARE)
+ 		karg.vma_flags |= PROCMAP_QUERY_VMA_SHARED;
  
--	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
-+	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags, &mm_locked);
- 	if (IS_ERR(vma)) {
- 		mmput(mm);
- 		return PTR_ERR(vma);
-@@ -542,7 +568,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
++	if (karg.build_id_size) {
++		__u32 build_id_sz;
++
++		err = build_id_parse(vma, build_id_buf, &build_id_sz);
++		if (err) {
++			karg.build_id_size = 0;
++		} else {
++			if (karg.build_id_size < build_id_sz) {
++				err = -ENAMETOOLONG;
++				goto out;
++			}
++			karg.build_id_size = build_id_sz;
++		}
++	}
++
+ 	if (karg.vma_name_size) {
+ 		size_t name_buf_sz = min_t(size_t, PATH_MAX, karg.vma_name_size);
+ 		const struct path *path;
+@@ -578,6 +597,10 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
  	}
- 
- 	/* unlock vma/mm_struct and put mm_struct before copying data to user */
--	unlock_vma(vma);
-+	unlock_vma(vma, mm_locked);
- 	mmput(mm);
- 
- 	if (karg.vma_name_size && copy_to_user((void __user *)karg.vma_name_addr,
-@@ -558,7 +584,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	return 0;
- 
- out:
--	unlock_vma(vma);
-+	unlock_vma(vma, mm_locked);
- 	mmput(mm);
  	kfree(name_buf);
- 	return err;
+ 
++	if (karg.build_id_size && copy_to_user((void __user *)karg.build_id_addr,
++					       build_id_buf, karg.build_id_size))
++		return -EFAULT;
++
+ 	if (copy_to_user(uarg, &karg, min_t(size_t, sizeof(karg), usize)))
+ 		return -EFAULT;
+ 
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index f25e7004972d..7306022780d3 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -509,6 +509,26 @@ struct procmap_query {
+ 	 * If set to zero, vma_name_addr should be set to zero as well
+ 	 */
+ 	__u32 vma_name_size;		/* in/out */
++	/*
++	 * If set to non-zero value, signals the request to extract and return
++	 * VMA's backing file's build ID, if the backing file is an ELF file
++	 * and it contains embedded build ID.
++	 *
++	 * Kernel will set this field to zero, if VMA has no backing file,
++	 * backing file is not an ELF file, or ELF file has no build ID
++	 * embedded.
++	 *
++	 * Build ID is a binary value (not a string). Kernel will set
++	 * build_id_size field to exact number of bytes used for build ID.
++	 * If build ID is requested and present, but needs more bytes than
++	 * user-supplied maximum buffer size (see build_id_addr field below),
++	 * -E2BIG error will be returned.
++	 *
++	 * If this field is set to non-zero value, build_id_addr should point
++	 * to valid user space memory buffer of at least build_id_size bytes.
++	 * If set to zero, build_id_addr should be set to zero as well
++	 */
++	__u32 build_id_size;		/* in/out */
+ 	/*
+ 	 * User-supplied address of a buffer of at least vma_name_size bytes
+ 	 * for kernel to fill with matched VMA's name (see vma_name_size field
+@@ -517,6 +537,14 @@ struct procmap_query {
+ 	 * Should be set to zero if VMA name should not be returned.
+ 	 */
+ 	__u64 vma_name_addr;		/* in */
++	/*
++	 * User-supplied address of a buffer of at least build_id_size bytes
++	 * for kernel to fill with matched VMA's ELF build ID, if available
++	 * (see build_id_size field description above for details).
++	 *
++	 * Should be set to zero if build ID should not be returned.
++	 */
++	__u64 build_id_addr;		/* in */
+ };
+ 
+ #endif /* _UAPI_LINUX_FS_H */
 -- 
 2.43.0
 
