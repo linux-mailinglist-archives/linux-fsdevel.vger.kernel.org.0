@@ -1,126 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-20132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC2A8CEA4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 21:30:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 752FF8CEA63
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 21:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC651F21B08
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 19:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31484283871
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 19:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FFF5F47D;
-	Fri, 24 May 2024 19:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588785D903;
+	Fri, 24 May 2024 19:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ulzdx/3z"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rPMFhge0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CEE5CDE9;
-	Fri, 24 May 2024 19:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5814F5CDF0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 19:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716579033; cv=none; b=HBJOpjZQkMdylN7GT4CYxrdU7z+OgnAgsLD4QIuh7kV7lA5ADmjKlTSuTdrZWnVdZwaHUM8zSzIiMMDi/AbtOnVtgchopkMyygaJCqD7Oft22pEuC7R7v09u8DHHo8qtPuRbZqcPwPhCGks9b47XMtjDAueMC4gpzip4xfTEPn8=
+	t=1716579350; cv=none; b=hiG3GYVPbWWl2Pc6oLRUKeID7DMRP+5GtKV2hog3DFsx6NiFqPiTWiqCNnmX5ZQtHnXhuxXH32Oyx+ZYm9KHD594Bsddi7pmvageY2ml5jaodwi3FXBTRMxArSFAS4AKNa2CeWtXFic6EW3GmDPfXJTmvwaRKkGJcAR2p2TPX5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716579033; c=relaxed/simple;
-	bh=dzHU3P7qRxjg2ho0r9MNensCeoxNpPcQCmFpOL/oYJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fnqtJfzBRM5QCN/b9OWVfYHSKuZ8rQwZ+ynWgzbPISlelMN/uW2gg60rwlxwYmMkYunzlXaBhpsIH3wVBB+g8CPtrM2do/IzwXbCGCd12ShpA5fpMqpl5iDvoGGah/7uO5lhYI9jjCiCknLmW9KElgIQ38UFlO5kRDD3cGM+0z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ulzdx/3z; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f32b1b5429so21791305ad.2;
-        Fri, 24 May 2024 12:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716579031; x=1717183831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dzHU3P7qRxjg2ho0r9MNensCeoxNpPcQCmFpOL/oYJM=;
-        b=Ulzdx/3zkLYBhCIXLDCB3IAMbe0FHGpUsNyY/BosEydFd5j+G8yMgXmY17JwvNBYGt
-         7m3v+dBkQDUOQSxRP+KbfKg2NazeMeFPNFKJp9icZKsVuqSt4mNdp8wZsiCOyTU1XLjf
-         pTx6hE77O7JG51cvDVf1WITsVYvWZunVDRpifVhHobzwyo4y2zl8ETcPkc6dtN+UHJPh
-         Ih3sdiO3ddxJclK9+KU1f/yjpT3dZSEucBd2luExtUNtIxMh1hXNH6ix7SJj/YnzOwcV
-         e4ZkjDPw4ZYIATY4/6TkkQw8sOs8iVlvjZuAuMWtMdAtodh4/35oM28oaAoEc62VCMy4
-         y1rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716579031; x=1717183831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dzHU3P7qRxjg2ho0r9MNensCeoxNpPcQCmFpOL/oYJM=;
-        b=PV6zHif/uRqu2XwnoBMWQmff7A1Ilf+b3l0deaCpXQ4Pm+ZL1+vAFb7ilmJ37n+IL7
-         8UJuI+kEJE7YvKDET15e2Yy0jzY+Sy6mM7tQe3ShU1H89T7ESpO8lDFy/hKINjdxAE4J
-         HNE5YQd8yXzydm8qh0eFfv7li7IupViKV9Oo4jOHjaXCtFm5e+Fig6U6nQp3Ov5ypoZH
-         hNQrsui0qPy5pCIRl91ZHKDIYwGsW8fdtmD2+dh0l+0SQ7jW9vBqWIuJXxkgNiVLgk00
-         5BDKw/5D/wf4ZXY5xUJj/aa14FrGpkBBSqCbEASd7XLofyXpWECFkM4JVXuo4e+LQP44
-         4oaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWp11Cw/58Rz5v8bmNjrD2S9apEhtC74GTxEacIOzfY3WbdHvfb/MDnuY98P+jbnLVzJ1YMTLKH6tVZ5ZEcIOgQ9lBZhD2UESvTtCGgx+LF9mhuSUIMf9IOOe7miITJpPVGx4HXjKj7bxFvWmeN/d27Oiivy2CuWL8Ew3g6uSYJSQ==
-X-Gm-Message-State: AOJu0Yx/yxdvV0WCDwhPeDBJc1wAO646U5woOsg+7hnVi/TkM5NuBpBD
-	7K3l6Z0+eF7oWYro01m6zbzUXaRxof45ExxzitfJ6wprkbvXIQG0E8nnjRvV6D9UjIVqapVAPdf
-	nM6ug/k5L2jTbvQen3sz09UNdJ2Q=
-X-Google-Smtp-Source: AGHT+IErPGmKm79ivkmkKeo0JgNi86h6exL4rS7HdkRJQeYCQL17fT0j3PSVuuXjGNENXBV8IjvDmTQR0TXeOsBeJjw=
-X-Received: by 2002:a17:902:ecc6:b0:1f3:4348:15ca with SMTP id
- d9443c01a7336-1f4486f294bmr43420585ad.25.1716579031155; Fri, 24 May 2024
- 12:30:31 -0700 (PDT)
+	s=arc-20240116; t=1716579350; c=relaxed/simple;
+	bh=24/lwouqRsEp7nneCQc6V04pBZKF65XYqcfL437L/8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+dcSMqaPRczdCOV9Uh1kPbxGXCGvE89X6FIAqLuzAZR7hB45HsiXN9d9qQkJOhYOq8NKKKJEcqpwg3/sv4UIXl1p+PjiFhp1Ybv4qpgla6C281bQlyoXq4f+bNQglXHtzQFZnhvEEDJxtuGSvuhPv4wtBwhhy+SK2pmguRm7n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rPMFhge0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AyyjBRM/oGbKwS/F1k3nCZ4DCLqWSP9z6Y1OTn0tq60=; b=rPMFhge0ahdl71ZsNYTzvVrhSy
+	/vtyHGQDDNmVjNyZsFZ53I2pL7aA26sFwNXh0U4kSbhu/+M674TesodD2y4fRjF+Spq8nHtCpIGrs
+	XIQvFWdrGhwkJgBxlA8+yW53ZtkpudzGOlrZ/FyoYQIBRzIhi2V5ew8jao0zTCxVTq3JJuqxf0a+i
+	i39blRb3kd8B9aX0QyHWT/0uujokWPRVlE8Q2kehh0Oj3O190bjuSvbQGnc1wZrnKnn1LLDdAtHe4
+	ilSHf/ORZLziiJDeGhwzoGsxzjZpijjdM3bf/3L5L/AXLjEYwnMmFapZnWwDjU9xlqayogyuwVvkf
+	OsmatEqg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sAahb-00000002ymJ-0BSN;
+	Fri, 24 May 2024 19:35:43 +0000
+Date: Fri, 24 May 2024 20:35:42 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, Viacheslav Dubeyko <slava@dubeyko.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: kmap + memmove
+Message-ID: <ZlDsDifoQJM5RDy_@casper.infradead.org>
+References: <Zjd61vTCQoDN9tUJ@casper.infradead.org>
+ <ZjhZHQShGq_LDyDe@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524041032.1048094-1-andrii@kernel.org> <20240524103212.382d10aed85f2e843e86febb@linux-foundation.org>
-In-Reply-To: <20240524103212.382d10aed85f2e843e86febb@linux-foundation.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 24 May 2024 12:30:18 -0700
-Message-ID: <CAEf4BzaT0yVenLQWc7Be+Y+yYhrfUR=gi-PyzVarQam9WqzESw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] ioctl()-based API to query VMAs from /proc/<pid>/maps
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	gregkh@linuxfoundation.org, linux-mm@kvack.org, liam.howlett@oracle.com, 
-	surenb@google.com, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjhZHQShGq_LDyDe@casper.infradead.org>
 
-On Fri, May 24, 2024 at 10:32=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Thu, 23 May 2024 21:10:22 -0700 Andrii Nakryiko <andrii@kernel.org> wr=
-ote:
->
-> > Implement binary ioctl()-based interface to /proc/<pid>/maps file
->
-> Why an ioctl rather than a read() of (say) a sysfs file?
+On Mon, May 06, 2024 at 05:14:21AM +0100, Matthew Wilcox wrote:
+> On Sun, May 05, 2024 at 01:25:58PM +0100, Matthew Wilcox wrote:
+> > Here's a fun bug that's not obvious:
+> > 
+> > hfs_bnode_move:
+> >                                 dst_ptr = kmap_local_page(*dst_page);
+> >                                 src_ptr = kmap_local_page(*src_page);
+> >                                 memmove(dst_ptr, src_ptr, src);
+> 
+> OK, so now we know this is the only place with this problem, how are we
+> going to fix it?
 
-This is effectively a request/response kind of API. User provides at
-least address and a set of flags (that determine what subset of VMAs
-are of interest), and optionally could provide buffer pointers for
-extra variable-length data (e.g., VMA name). I'm not sure how to
-achieve this with read() syscall.
+Fabio?
 
-Kernel has already established an approach to support these
-input/output binary-based protocols and how to handle extensibility
-and backwards/forward compatibility. And so we are using that here as
-well. ioctl() is just an existing mechanism for passing a pointer to
-such binary request/response structure in the context of some process
-(also note that normally it will be a different process from the
-actual user process that is using this API, that's always the case for
-profiling, for example).
-
-As for the sysfs as a location for this file. It doesn't matter much
-to me where to open some file, but it has to be a per-PID file,
-because each process has its own set of VMAs. Applications often will
-be querying VMAs across many processes, depending on incoming data (in
-our cases, profiling stack trace address data). So this eliminates
-something like prctl().
-
-Does sysfs have an existing per-process hierarchy of files or
-directories that would be a natural match here? As I mentioned,
-/proc/PID/maps does seem like a natural fit in this case, because it
-represents the set of VMAs of a specified process. And this new API is
-just an alternative (to text-based read() protocol) way of querying
-this set of VMAs.
+> I think the obvious thing to do is to revert the kmap -> kmap_local
+> conversion in this function.  The other functions look fine.
+> 
+> Longer term, hfs_bnode_move() makes my eyes bleed.  I really think we
+> need to do something stupider.  Something like ...
+> 
+> void hfs_bnode_move(struct hfs_bnode *node, int dst, int src, int len)
+> {
+> 	void *data;
+> 	int first, last;
+> 
+> 	if (!len || src == dst)
+> 		return;
+> 	if (src < dst && src + len < dst)
+> 		return hfs_bnode_copy(node, dst, node, src, len);
+> 	if (dst < src && dst + len < src)
+> 		return hfs_bnode_copy(node, dst, node, src, len);
+> 
+> 	src += node->page_offset;
+> 	dst += node->page_offset;
+> 	first = min(dst, src) / PAGE_SIZE;
+> 	last = max(dst + len, src + len) / PAGE_SIZE;
+> 	data = vmap_folios(bnode->folios + first, last - first + 1);
+> 	src -= first * PAGE_SIZE;
+> 	dst -= first * PAGE_SIZE;
+> // maybe an off-by-one in above calculations; check it
+> 	memmove(data + dst, data + src, len);
+> 	vunmap(data);
+> }
+> 
 
