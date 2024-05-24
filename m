@@ -1,172 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-20116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AAF8CE67B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 15:58:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94508CE6EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 16:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE561C21BD5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 13:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCC791C221A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 14:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1349212C522;
-	Fri, 24 May 2024 13:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80F086643;
+	Fri, 24 May 2024 14:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wi9X/RH7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CbyVneke"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7161112C46A;
-	Fri, 24 May 2024 13:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C911986279
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 14:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559099; cv=none; b=TODwvzKQ5m+qxZi2ruGWOYCGPTC4ja5RjuuiDOlrsENM5UGIRRgTpBcsATd4eHJNEqCijkdZTxZLndcapvfqqeoTk5TtoKTZRklt1G7XVdGSdlyjQncRGFRHl0Ik1wkUqhj0bBRjwYAM2yq5D4tgvYGZb4BIdCg1BcJnJjc8n74=
+	t=1716560633; cv=none; b=nAfbK1extyYgct0KKIJlg7PZR4v0WaTODCM2kNmptAur9N3SuEm9JBsd8X5hlHW10j4SPcGR8REcnXUtt6JZ/uXBI9cEqw5MetFXWK3BAmIXLGgO6nLfg8klrHGFsqOU75/ReKvmew3/ithvxJ33UHI8kGUNodKbvnGhr4RKKEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559099; c=relaxed/simple;
-	bh=mqPylF2rRM5owpQNuZHbnBucyf7nC9Xrf+5RTVBCbnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NPQLY9kxNm515z9b89IT6m5UXbLOzWD+SyStsX3TMxPGjVznIL8dGpFD8uhUnzbMIbz96V3WgvTTAOcyYzttU7uxXun9aW+BCV0q3DhmmVfnhqNdInk8ekoWQALNN1ywLusEZSWpgwcVobZQbeHuVc1SQDpYSTB3RChKAB6JMZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wi9X/RH7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6999CC2BBFC;
-	Fri, 24 May 2024 13:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716559099;
-	bh=mqPylF2rRM5owpQNuZHbnBucyf7nC9Xrf+5RTVBCbnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wi9X/RH7QM8gTaEFnb72tkCiXB3tnr64Om3+92ksSghga+iThD3AVElMaCAG+POCK
-	 s7bgveHVSibeuvz8rOp0r6duXSdFiaL9Ws56oE4WsgR7DG3NUwf3ioAWLO01EoR+wF
-	 ag1qPcD/II5B5seX2QP6YyC98rTkqX8gVeT8SxsYEUZJhDD8uvUORRbsoESucUZmNw
-	 K6s1NAs+I0UtwvAdrdgBr/VwMO3gcoPrH42vTfUWQyfC0F3NlJMkO+2mXy7sFaOfd0
-	 bN6kOOocUDGyljDkr+70mPKPVCPPeRUL1qB/kNeX/s4osqOQQ1n4b8w/I1JlxTCOPa
-	 ozDBwSC6icq8Q==
-Date: Fri, 24 May 2024 15:58:15 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Michael Jeanson <mjeanson@efficios.com>, 
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: linux-kernel@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>, 
-	Sungjong Seo <sj1557.seo@samsung.com>, Seth Forshee <sforshee@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] exfat: handle idmapped mounts
-Message-ID: <20240524-verordnen-exhumieren-2ea2e8bc2d08@brauner>
-References: <20240523011007.40649-1-mjeanson@efficios.com>
+	s=arc-20240116; t=1716560633; c=relaxed/simple;
+	bh=EpoHsjB4EOCos3U2u+XvJyYSt6At/bEiZlRNqBU3718=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=JZS4OvPQaVmNb9TmUEvBdQNAaSmVtscxZrH+asDTFj/4kfMpNnZZc1OFwMLtdoxL4QobepTXCPuhzhmnvjsgmzuQ+Qj4rWNthJcYJ/pwHlte16+28cw+U55L20rRBkauf45uzkhqltPzCLQEc1yChOQwSLUJtOpcwDIByrz/jtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CbyVneke; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716560630;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0AzS/2TqPoHiXyqv0zYxlSb1DTSMYdwN2BmrfNFCiwg=;
+	b=CbyVnekenaMJ3+2WR4gB7VHudtSnKjNScN1/Yn0HlwjiM7T9vOOM++JuKNYbY98wcv0GIh
+	enMP8KUtGX9aXSCeE9Lm5am6c5jMrTafonriY4f/JKfvmhy2nZiI5tv/2J8e4PHXAlallf
+	Se8Blisi9bOS951+wxmJ3LBoCKLUW3w=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-136-yPthP4h7N7-bmYUuQbCbkQ-1; Fri, 24 May 2024 10:23:45 -0400
+X-MC-Unique: yPthP4h7N7-bmYUuQbCbkQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B384881227E;
+	Fri, 24 May 2024 14:23:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 8B0D740C6EB7;
+	Fri, 24 May 2024 14:23:39 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <nspmangalore@gmail.com>,
+    Rohith Surabattula <rohiths.msft@gmail.com>,
+    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Fix missing set of remote_i_size
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240523011007.40649-1-mjeanson@efficios.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <755786.1716560616.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 24 May 2024 15:23:36 +0100
+Message-ID: <755787.1716560616@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-[Cc: Alex]
+Occasionally, the generic/001 xfstest will fail indicating corruption in
+one of the copy chains when run on cifs against a server that supports
+FSCTL_DUPLICATE_EXTENTS_TO_FILE (eg. Samba with a share on btrfs).  The
+problem is that the remote_i_size value isn't updated by cifs_setsize()
+when called by smb2_duplicate_extents(), but i_size *is*.
 
-On Wed, May 22, 2024 at 09:10:07PM -0400, Michael Jeanson wrote:
-> Pass the idmapped mount information to the different helper
-> functions. Adapt the uid/gid checks in exfat_setattr to use the
-> vfsuid/vfsgid helpers.
-> 
-> Based on the fat implementation in commit 4b7899368108
-> ("fat: handle idmapped mounts") by Christian Brauner.
-> 
-> Cc: Namjae Jeon <linkinjeon@kernel.org>
-> Cc: Sungjong Seo <sj1557.seo@samsung.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Seth Forshee <sforshee@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
-> ---
+This may cause cifs_remap_file_range() to then skip the bit after calling
+->duplicate_extents() that sets sizes.
 
-Looks good to me but maybe Alex sees some issues I dont,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Fix this by calling netfs_resize_file() in smb2_duplicate_extents() before
+calling cifs_setsize() to set i_size.
 
->  fs/exfat/file.c  | 22 +++++++++++++---------
->  fs/exfat/super.c |  2 +-
->  2 files changed, 14 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> index 9adfc38ca7da..64c31867bc76 100644
-> --- a/fs/exfat/file.c
-> +++ b/fs/exfat/file.c
-> @@ -89,12 +89,14 @@ static int exfat_cont_expand(struct inode *inode, loff_t size)
->  	return -EIO;
->  }
->  
-> -static bool exfat_allow_set_time(struct exfat_sb_info *sbi, struct inode *inode)
-> +static bool exfat_allow_set_time(struct mnt_idmap *idmap,
-> +				 struct exfat_sb_info *sbi, struct inode *inode)
->  {
->  	mode_t allow_utime = sbi->options.allow_utime;
->  
-> -	if (!uid_eq(current_fsuid(), inode->i_uid)) {
-> -		if (in_group_p(inode->i_gid))
-> +	if (!vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode),
-> +			    current_fsuid())) {
-> +		if (vfsgid_in_group_p(i_gid_into_vfsgid(idmap, inode)))
->  			allow_utime >>= 3;
->  		if (allow_utime & MAY_WRITE)
->  			return true;
-> @@ -283,7 +285,7 @@ int exfat_getattr(struct mnt_idmap *idmap, const struct path *path,
->  	struct inode *inode = d_backing_inode(path->dentry);
->  	struct exfat_inode_info *ei = EXFAT_I(inode);
->  
-> -	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
-> +	generic_fillattr(idmap, request_mask, inode, stat);
->  	exfat_truncate_atime(&stat->atime);
->  	stat->result_mask |= STATX_BTIME;
->  	stat->btime.tv_sec = ei->i_crtime.tv_sec;
-> @@ -311,20 +313,22 @@ int exfat_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  	/* Check for setting the inode time. */
->  	ia_valid = attr->ia_valid;
->  	if ((ia_valid & (ATTR_MTIME_SET | ATTR_ATIME_SET | ATTR_TIMES_SET)) &&
-> -	    exfat_allow_set_time(sbi, inode)) {
-> +	    exfat_allow_set_time(idmap, sbi, inode)) {
->  		attr->ia_valid &= ~(ATTR_MTIME_SET | ATTR_ATIME_SET |
->  				ATTR_TIMES_SET);
->  	}
->  
-> -	error = setattr_prepare(&nop_mnt_idmap, dentry, attr);
-> +	error = setattr_prepare(idmap, dentry, attr);
->  	attr->ia_valid = ia_valid;
->  	if (error)
->  		goto out;
->  
->  	if (((attr->ia_valid & ATTR_UID) &&
-> -	     !uid_eq(attr->ia_uid, sbi->options.fs_uid)) ||
-> +	      (!uid_eq(from_vfsuid(idmap, i_user_ns(inode), attr->ia_vfsuid),
-> +	       sbi->options.fs_uid))) ||
->  	    ((attr->ia_valid & ATTR_GID) &&
-> -	     !gid_eq(attr->ia_gid, sbi->options.fs_gid)) ||
-> +	      (!gid_eq(from_vfsgid(idmap, i_user_ns(inode), attr->ia_vfsgid),
-> +	       sbi->options.fs_gid))) ||
->  	    ((attr->ia_valid & ATTR_MODE) &&
->  	     (attr->ia_mode & ~(S_IFREG | S_IFLNK | S_IFDIR | 0777)))) {
->  		error = -EPERM;
-> @@ -343,7 +347,7 @@ int exfat_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  	if (attr->ia_valid & ATTR_SIZE)
->  		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
->  
-> -	setattr_copy(&nop_mnt_idmap, inode, attr);
-> +	setattr_copy(idmap, inode, attr);
->  	exfat_truncate_inode_atime(inode);
->  
->  	if (attr->ia_valid & ATTR_SIZE) {
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> index 3d5ea2cfad66..1f2b3b0c4923 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -788,7 +788,7 @@ static struct file_system_type exfat_fs_type = {
->  	.init_fs_context	= exfat_init_fs_context,
->  	.parameters		= exfat_parameters,
->  	.kill_sb		= exfat_kill_sb,
-> -	.fs_flags		= FS_REQUIRES_DEV,
-> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
->  };
->  
->  static void exfat_inode_init_once(void *foo)
-> -- 
-> 2.45.1
-> 
+This means we don't then need to call netfs_resize_file() upon return from
+->duplicate_extents(), but we also fix the test to compare against the pre=
+-dup
+inode size.
+
+[Note that this goes back before the addition of remote_i_size with the
+netfs_inode struct.  It should probably have been setting cifsi->server_eo=
+f
+previously.]
+
+Fixes: cfc63fc8126a ("smb3: fix cached file size problems in duplicate ext=
+ents (reflink)")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+---
+ fs/smb/client/cifsfs.c  |    6 +++---
+ fs/smb/client/smb2ops.c |    1 +
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index 14810ffd15c8..bb86fc0641d8 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -1227,7 +1227,7 @@ static loff_t cifs_remap_file_range(struct file *src=
+_file, loff_t off,
+ 	struct cifsFileInfo *smb_file_src =3D src_file->private_data;
+ 	struct cifsFileInfo *smb_file_target =3D dst_file->private_data;
+ 	struct cifs_tcon *target_tcon, *src_tcon;
+-	unsigned long long destend, fstart, fend, new_size;
++	unsigned long long destend, fstart, fend, old_size, new_size;
+ 	unsigned int xid;
+ 	int rc;
+ =
+
+@@ -1294,6 +1294,7 @@ static loff_t cifs_remap_file_range(struct file *src=
+_file, loff_t off,
+ 		goto unlock;
+ 	if (fend > target_cifsi->netfs.zero_point)
+ 		target_cifsi->netfs.zero_point =3D fend + 1;
++	old_size =3D target_cifsi->netfs.remote_i_size;
+ =
+
+ 	/* Discard all the folios that overlap the destination region. */
+ 	cifs_dbg(FYI, "about to discard pages %llx-%llx\n", fstart, fend);
+@@ -1306,9 +1307,8 @@ static loff_t cifs_remap_file_range(struct file *src=
+_file, loff_t off,
+ 	if (target_tcon->ses->server->ops->duplicate_extents) {
+ 		rc =3D target_tcon->ses->server->ops->duplicate_extents(xid,
+ 			smb_file_src, smb_file_target, off, len, destoff);
+-		if (rc =3D=3D 0 && new_size > i_size_read(target_inode)) {
++		if (rc =3D=3D 0 && new_size > old_size) {
+ 			truncate_setsize(target_inode, new_size);
+-			netfs_resize_file(&target_cifsi->netfs, new_size, true);
+ 			fscache_resize_cookie(cifs_inode_cookie(target_inode),
+ 					      new_size);
+ 		}
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index b87b70edd0be..4ce6c3121a7e 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -2028,6 +2028,7 @@ smb2_duplicate_extents(const unsigned int xid,
+ 		 * size will be queried on next revalidate, but it is important
+ 		 * to make sure that file's cached size is updated immediately
+ 		 */
++		netfs_resize_file(netfs_inode(inode), dest_off + len, true);
+ 		cifs_setsize(inode, dest_off + len);
+ 	}
+ 	rc =3D SMB2_ioctl(xid, tcon, trgtfile->fid.persistent_fid,
+
 
