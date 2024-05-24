@@ -1,202 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-20102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA568CE148
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 09:03:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A928C8CE183
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 09:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265B62827A0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 07:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BFF5281F5A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 07:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20A612881C;
-	Fri, 24 May 2024 07:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GqL9tjnZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4D01292E4;
+	Fri, 24 May 2024 07:31:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E3A127B73
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 07:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8847233985
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 07:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716534217; cv=none; b=bdBwsasq0wQCil8iM75v2G7I+4CAwHrHU34MUzvmDP6nICM5PqEjIdPPkw6dq/ZISEK7AceBi7B8tzHfoJ/30XIhzpzeU18FLBz9AUVdFosx6vhJKXJjDMhWPlBrLpzJid75heRysJJa+t5MoaFHaTrjVDwjZOHp7gqjgE69nIY=
+	t=1716535892; cv=none; b=fDV5y5oJkg4d6HRMnM72zkkTZU/8ypJk9+QvI1fPTgZ27rOil0mwbaTxf8PsrZrRBRRkhc9MyWANXZKO3gWKoYElnHHl07Gnf+uBYLsv1Xip+zOXslOp99WMVp7Uq6VfvFmTulXhvu6U7tP72AY6pT5S7J/oTohGKh9WHpSGnSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716534217; c=relaxed/simple;
-	bh=F2JL3Tk4mSGuw62JqOU9hci9zTtERlsnAZex134S9BI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=UBk3418zkvsjFrCVpbFsCCqj8YaxPaiyFyx+4AwZemjm4kZ8ZtZmx4c9q7BXF3rrHEL8Qz+Gwas1gZ3T0VPApnTegcX5RG2TSjVP/9h7RuMdyDBv+rC9tQMNXFT+sd9Y4lm1YZSuDKBw4+AN/gT4OGWr7LIzbmYwGuNQbOnUo0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GqL9tjnZ; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240524070331epoutp03ae79acbb2ca85b0d2193503007a74be4~SWsVI-60r0181101811epoutp03H
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 07:03:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240524070331epoutp03ae79acbb2ca85b0d2193503007a74be4~SWsVI-60r0181101811epoutp03H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716534211;
-	bh=fcrs1hfVkjlHVW7bOXNOC8znpYsTD2JmXRZJGVnZaTg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GqL9tjnZZt8X6EigF1/D5trSRVqa3CmecAJbL891GseVyUaF5ibFdJ6syZS7PAjWU
-	 EMQbagZf+nBm810/AshsWNVSYa4JK3qP+RV2Qdc7UKloK5ak50urZ1nqY2pkPP4P/i
-	 /1nMD2xnS7YlMQmDNGP+DUD4UDSHLAc1Svfk5Wa4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240524070330epcas5p193140b9e9c3ca20ce1044b5e97e16cc7~SWsUYtv1G2043720437epcas5p18;
-	Fri, 24 May 2024 07:03:30 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VlwxD29VZz4x9Q6; Fri, 24 May
-	2024 07:03:28 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	43.35.09665.0CB30566; Fri, 24 May 2024 16:03:28 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240524070201epcas5p3a398a82835799d0956448c3590544c0a~SWrBgm2e33040130401epcas5p3j;
-	Fri, 24 May 2024 07:02:01 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240524070201epsmtrp27d72daa4f932ba34758cd2fa2e31a2ba~SWrBfF5Gm1951119511epsmtrp2S;
-	Fri, 24 May 2024 07:02:01 +0000 (GMT)
-X-AuditID: b6c32a4b-829fa700000025c1-6d-66503bc0b68a
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BA.14.19234.96B30566; Fri, 24 May 2024 16:02:01 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240524070157epsmtip26fdc4027c3bba14725ebb809cd21c241~SWq93B5fC0925409254epsmtip2m;
-	Fri, 24 May 2024 07:01:57 +0000 (GMT)
-Date: Fri, 24 May 2024 06:54:49 +0000
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
-	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
-	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
-	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <20240524065449.ydfracefq77urii4@nj.shetty@samsung.com>
+	s=arc-20240116; t=1716535892; c=relaxed/simple;
+	bh=ozhzQiDNEqcLvCSVKgQ5UNJluQO4Pa/883Qnf2UXauQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aI80O3PGG+wnKu9ypjX0JQ2SbSX+YCN4YumGHpNKneGWKxP57rNwR89oeUZLWcMwLKvs9zUbMOBo8laL2z2q6WpbUKYVFSFO+zGQTsex2xApKncOeH5mkwv9lNA3QdqijW6RWWwzGpHXSqscmK2zgQqpDrLzoijeGFVwY6kQFWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1b65780b7so261621939f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 00:31:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716535890; x=1717140690;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rAfbATsxMggfjxWxGQDWpN8gRwXVENntTbK+GLf4oBU=;
+        b=ndVaw6+4vPaI3w3/geFBh/aJ1BzanCKN9p5v1SduDMf8WB3qmBDZzQqQHcuimAVQve
+         QhOHc3rDRg61B3T6n0u9C7iwAFd/cOtaF/SsLly4xPqsEQz3H1qDBMRp2wZVVFU8mzT9
+         lI3H2IrJxsS5+JhGLVN6WYVxCpSVDb6RZjB/OLR2cNsztO5XoKntn2xu/pj5mV7gjwRM
+         d9roGDz6yHWY9EcLnGg4WEISgw7lmVGesHMhBqxVK84chb1xI0YoqdnBWOMNvaIcS98H
+         00Ex5XGMvgvTVxn/1Dk+o1eR54my1LGsvL4AmP9pKiqFFL68xD0NOQt5PDa7qnElxU8z
+         jVcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVS21DzCzGZxgX/11qqZDJyOeQguc6jRBCAGRoJOg6CPUH5Ohfi+Pg3Fdx7tDD/BKBfgDvf2U07R25vcPSvJ29GwLIamdCG85zCjFAx8w==
+X-Gm-Message-State: AOJu0YzI5QudbXIHNst9As++ZqyqO5pHFf7hflVjECZeL+Z6VyhWhVE2
+	FP8EYPoOclDtPiYlLJpCYuC2Wn+lkU8XM8vZgZD9DGozHnmuoMKL2ioV9Gau5s2g7wXO0iH2AIe
+	KAQtbsngVc65mWheKEgOw7Y/oDjGlLY8uezTjLu+hrs+BlqRYfYw3NTc=
+X-Google-Smtp-Source: AGHT+IHsHlyneuLNkN6uX357N7ttSvzkkHuqacjKuqKrp+lTpWI1Wzw2RMB+il1sJRJkWPq2JP7Is2uYIp4ZOZKvo1pOGNhyRqdK
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f54c770c-9a14-44d3-9949-37c4a08777e7@suse.de>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTH97u3vS1EyLXg/FmiwzKzVMKjUNgPBcYmIdegjOwRM9wGd/QK
-	SGlry0uSKRQZoCIFEUMRQYbykIECIyCgrPKQqquGhwFE3psTeQiLZkFhrQXjf5/zPeeb8/ud
-	k8PFeVc4fG6ULJZRymipgLBkNd4WCp3adwcfcv2rcgOq1XfhSK15g6OrI9kEmrm9CFD+wn84
-	mmpPB2j5vgFHDV1PACopLWKhwfZmDLWW5mKo8monhgrPp2Koc3WWQLm6AYCm+7UYahtyRJd+
-	KWOh1rYeFuq9cYFAxVemOai8ewVDORn9GGqaSgGoZmaehe4M2SHDm262nx3V2xdI6Ush1awd
-	4VCGJ9dZVO/9OKquKpOg6suOU0/rCwDVMphMUL+eOcumslLnCKo5bZRNvZgeYlHzN/sJ6kxD
-	FaDulXRwgm1Cor0jGVrCKO0ZWbhcEiWL8BEEfh26J9TD01XkJPJCnwrsZXQM4yPw3xfsFBAl
-	NQ5HYB9PS+OMUjCtUglcfL2V8rhYxj5Sror1ETAKiVQhVjir6BhVnCzCWcbE7hK5urp5GAvD
-	oiNPZTcSiqWNiU2neclgwPoksOBCUgyzz/WzTwJLLo9sAfBpURFhDhYBPG2YZL0LJrIvYuuW
-	S6vFmDnRDODD4fE1/xKAdeNDwFTFInfA/L6zRjuXS5CO8O4q1yTbkgL4Il3HMdXjZDkBX6+O
-	sE0JGzIMzupz3rIVuQcuFtzkmHkj7CmYYpnYgtwNX3cM4iYzJP+0gPc6KzjmJ/lD7cuutefZ
-	wGfdDWs6Hy7NtRFmToCVeRWE2XwCQO0jLTAnPoNp+mzcxDgZCccznuNmfSs8p6/BzLo1zFqe
-	WmtgBZsurrMDrK4tWWuwBQ68SiFMP4YkBYerPzJPZQ7AxjsaTAO2ad/7kPa9dmbeBTMX1Gyt
-	0Y6TdrB8hWtGIay94VIC2FVgC6NQxUQwKg+Fu4xJeLflcHlMHXh7MDsDm8DE2IKzDmBcoAOQ
-	iwtsrQ5W7j/Es5LQR5MYpTxUGSdlVDrgYVxQDs7fFC43XpwsNlQk9nIVe3p6ir3cPUWCzVYz
-	aUUSHhlBxzLRDKNglOs+jGvBT8YO9vsdzg0ytAZ8KFsaqcMffuk7KdKceukU4mi937JxyeDw
-	+NXzI0sq4e8h+em3Wr9tlz7wn8u5npJE8KU1YTwgTOXrkv7OczhOb6hUu0xW3JJEz//Raqt+
-	sCeRxIJTBgK1GX0XMqPVLQe+yNn6cdpPY9cCyo7urfNiUmd+Ezf6eyc8/mqH/bP87SEBMZfz
-	/o3//oPZyw5jpT88ovJP7EWhhcMzGb4en0xOB23PCDpg4zH18+fx85K+CfpuvU/Q4ZaF6k3F
-	x+QdWVN9bpoaZ99j2470i1cCu5KD/imUlwj97N2+0Y8lFvwY3rhZGdpjqcaCNXmC72rTLbuW
-	z48S5LUkd9A8KmCpImnRTlypov8HtDMqBbkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUxTWRiGOfdcbi9V9Fq2A3UZ6xZlqHZCyFGMkmgmJ1FiXWaMEpVGLrUj
-	UGwtihpBiQI1OkhRhyrKZrHgEgou7FoBBSXNTAGljogB4oLC4MTEra0pxOi/J+/zvt+vj4Wi
-	fjqEVSXt5jVJigQJI6Rv3JXMCFNFyuMXXT4lxtfaWyE+nOOEuOLpnwweuvsO4NP/fYR44HYm
-	wJ87bBBXt/YCXFhcQOOe2zUUri/OpbC5ooXCZ89kULjF/ZbBudZugAe7jBRucITioqOlNK5v
-	aKOxvfYcgy+YBgW47J6Lwiezuih8a+AQwFeHRmh83yHGNuc97ygxsXeuIu3FiNQYnwqIrbeS
-	JvYOHbGUZzOkqjSNvKzKB6SuJ50hJScM3uR4xjBDao488yajgw6ajDR2MeREdTkgDwubBXK/
-	zcKlcXyCKoXXLFwWK9zxvP9/Kvni5L3mjGMgHRRP1AMfFnHhqMh9gdIDISvibgKUZ6tkxkUw
-	Mjmb4Tj7IbPrhWC8NApQ15k6yiNobg463Wmg9YBlGS4UPXCzntifk6DRTOtYH3IVDKq1lgCP
-	8ONi0dv2k94e9uVWoHf5jQIPi7hhgJoy8Hg+BbXlD9AehlwEOl/1HHruQ06Mylxj9324SPSl
-	uQfmAM74w8L4w8L4fVEIYDkI4JO1icrE7ckyqVaRqNUlKaXb1YkWMPYHC9bdAqZrTqkVUCyw
-	AsRCib9vjDk6XuQbp0jdx2vU2zS6BF5rBWKWlgT5zkrIjhNxSsVufifPJ/Oab5ZifULSqWAe
-	TvUP/2NGgfD99NcGNTJPCI+rXViwZfmNpE2m89X2ol8OdM9c9rLaK2vpb+KYL4P/9jmalmyU
-	VjwJ2Leh744+8mBglt7vYVPdSNimna4J8o8H3N0tlr8i4q/EtslyyNyo8Murjz6bZ3ZC+YM9
-	G6JWWGbTaatjU4Tq6JDfg9fCF+v3/zRla9ixv1+nqHNRb6rpVWpgzeNHWfOvXwk6lFOy0r72
-	UkraK0NMr2SNrd9ryCJzX4/p3lUipbb8k2dV1S4Wq0vrJ+taQ6O9+JDswMrhaR1ElRe0X9pA
-	lmf+PEn/qw41KvvqlR3kzQel7smlTsPiN4fL5LJPAeoInw8OZb7rvoTW7lDIFkCNVvEVtAjO
-	T3YDAAA=
-X-CMS-MailID: 20240524070201epcas5p3a398a82835799d0956448c3590544c0a
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_250cc_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102842epcas5p4949334c2587a15b8adab2c913daa622f
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
-	<20240520102033.9361-3-nj.shetty@samsung.com>
-	<f54c770c-9a14-44d3-9949-37c4a08777e7@suse.de>
+X-Received: by 2002:a02:cd0a:0:b0:488:f465:f4cd with SMTP id
+ 8926c6da1cb9f-4b03f520d78mr25929173.1.1716535889773; Fri, 24 May 2024
+ 00:31:29 -0700 (PDT)
+Date: Fri, 24 May 2024 00:31:29 -0700
+In-Reply-To: <000000000000849b0606179c33b7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f456d406192e275b@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in bchfs_truncate
+From: syzbot <syzbot+247ac87eabcb1f8fa990@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-------0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_250cc_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+syzbot has found a reproducer for the following issue on:
 
-On 21/05/24 09:01AM, Hannes Reinecke wrote:
->On 5/20/24 12:20, Nitesh Shetty wrote:
->>We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
->>Since copy is a composite operation involving src and dst sectors/lba,
->>each needs to be represented by a separate bio to make it compatible
->>with device mapper.
->>We expect caller to take a plug and send bio with destination information,
->>followed by bio with source information.
->>Once the dst bio arrives we form a request and wait for source
->>bio. Upon arrival of source bio we merge these two bio's and send
->>corresponding request down to device driver.
->>Merging non copy offload bio is avoided by checking for copy specific
->>opcodes in merge function.
->>
->>Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->>Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
->>---
->>  block/blk-core.c          |  7 +++++++
->>  block/blk-merge.c         | 41 +++++++++++++++++++++++++++++++++++++++
->>  block/blk.h               | 16 +++++++++++++++
->>  block/elevator.h          |  1 +
->>  include/linux/bio.h       |  6 +-----
->>  include/linux/blk_types.h | 10 ++++++++++
->>  6 files changed, 76 insertions(+), 5 deletions(-)
->>
->I am a bit unsure about leveraging 'merge' here. As Bart pointed out, 
->this is arguably as mis-use of the 'merge' functionality as we don't
->actually merge bios, but rather use the information from these bios to
->form the actual request.
->Wouldn't it be better to use bio_chain here, and send out the eventual
->request from the end_io function of the bio chain?
->
-With above bio chain approach, I see a difficulty while dealing with
-stacked/partitioned devices, as they might get remapped.
-Or am I missing something here ?
+HEAD commit:    b6394d6f7159 Merge tag 'pull-misc' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=159d0210980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=713476114e57eef3
+dashboard link: https://syzkaller.appspot.com/bug?extid=247ac87eabcb1f8fa990
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c61a0c980000
 
-Bart, Hannes,
-Regarding merge, does it looks any better, if we use single request
-operation such as REQ_OP_COPY and use op_flags(REQ_COPY_DST/REQ_COPY_SRC)
-to identify dst and src bios ?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e8e1377d4772/disk-b6394d6f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/19fbbb3b6dd5/vmlinux-b6394d6f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4dcce16af95d/bzImage-b6394d6f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/fea098faf1eb/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+247ac87eabcb1f8fa990@syzkaller.appspotmail.com
+
+bcachefs (loop2): resume_logged_ops... done
+bcachefs (loop2): going read-write
+bcachefs (loop2): done starting filesystem
+------------[ cut here ]------------
+truncate spotted in mem i_size < btree i_size: 1 < 33554432
+WARNING: CPU: 0 PID: 15517 at fs/bcachefs/fs-io.c:440 bchfs_truncate+0xb79/0xc80 fs/bcachefs/fs-io.c:437
+Modules linked in:
+CPU: 0 PID: 15517 Comm: syz-executor.2 Not tainted 6.9.0-syzkaller-10729-gb6394d6f7159 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:bchfs_truncate+0xb79/0xc80 fs/bcachefs/fs-io.c:437
+Code: 00 fc ff df 80 3c 03 00 74 08 4c 89 e7 e8 ff 28 d2 fd 48 8b 94 24 f8 00 00 00 48 c7 c7 00 98 12 8c 4c 89 f6 e8 38 b9 31 fd 90 <0f> 0b 90 90 e9 8c f9 ff ff e8 39 9f 6f fd 48 8b 5c 24 60 48 89 df
+RSP: 0018:ffffc900038c7520 EFLAGS: 00010246
+RAX: c2b55e02655caf00 RBX: 1ffff92000718ec3 RCX: ffff88807bd6da00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc900038c7758 R08: ffffffff815856f2 R09: fffffbfff1c3996c
+R10: dffffc0000000000 R11: fffffbfff1c3996c R12: ffffc900038c7618
+R13: ffff8880772676d0 R14: 0000000000000001 R15: ffff888077267bc8
+FS:  00007f7f358766c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe610e2e6c0 CR3: 00000000ac338000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ notify_change+0xb9d/0xe70 fs/attr.c:497
+ do_truncate+0x220/0x310 fs/open.c:65
+ handle_truncate fs/namei.c:3308 [inline]
+ do_open fs/namei.c:3654 [inline]
+ path_openat+0x2a3d/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7f34a7cee9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7f358760c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f7f34babf80 RCX: 00007f7f34a7cee9
+RDX: 000000000000275a RSI: 0000000020000280 RDI: ffffffffffffff9c
+RBP: 00007f7f34ac949e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f7f34babf80 R15: 00007ffcb18bb738
+ </TASK>
 
 
-Regards,
-Nitesh Shetty
-
-------0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_250cc_
-Content-Type: text/plain; charset="utf-8"
-
-
-------0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_250cc_--
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
