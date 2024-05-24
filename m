@@ -1,106 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-20114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CEE8CE660
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 15:53:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370BA8CE66F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 15:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB1851C21AF1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 13:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FE31F240BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 13:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133B612C470;
-	Fri, 24 May 2024 13:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB0612C469;
+	Fri, 24 May 2024 13:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="YVdOKINE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UekWVpFU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2195B86651;
-	Fri, 24 May 2024 13:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0CF8624B;
+	Fri, 24 May 2024 13:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716558782; cv=none; b=SQqllyvcEr4pVyQCyJjaPC/684PP2zJ6UAn1AR/oewnM6U3b6CEoRnak6YiSwpIZhb2EJZ0C6yTCQQt8VvIo5CtB0M2sYOyLpVRQFJXMDlyolbZg1zi6PowSMn/XzRS1YVP4itq82TkOg6y72i7+11by5Hdf4DtonsYRlFGHqZA=
+	t=1716558916; cv=none; b=EwI5dShjQIiCnMYjfom8pNwDz3UG0CuSMUPJpbAkAyIjN5T6dK+yBs/psv+iEicHMyEFxkZ5ovRi7T1cDqwUkQ9K++ztNft3wvrheh4jIbctlLjuHo7E7Ruah4DL9mpj3UEWGlUPJz15tqI+jEv7qqBN6LFF37ZN3siYefjeSW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716558782; c=relaxed/simple;
-	bh=2rXmAoTx3CNlh/GGc7KRf6DwDOKO0u6bWqKxzMYf8jk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D2uv1afxbC90d/+oGzSBXZ7snV6GMiNxkTZX2/HiOtZe2DyxfpIybl+STfqVOBDz9pJDe5JNn5hU876bFPSeWWqYT5AUzZ/MFkyff+480PRhcp5P4EHvzzXLTJ5MlgYBkkG64obUZYh1yNrzcaUp350Gwh5NnINT5qdHVVleRUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=YVdOKINE; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Vm61m2xr9zlgMVR;
-	Fri, 24 May 2024 13:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716558774; x=1719150775; bh=2rXmAoTx3CNlh/GGc7KRf6Dw
-	DOKO0u6bWqKxzMYf8jk=; b=YVdOKINEcaBAiCvlkuTSwdmRd4IpR916nbHNtrWY
-	5T2+ihVtDJKqlKwmp55t4ZGsaAzSwT8N3iUuthzOrGokFyOvHHHwoPanRwsFqJ3L
-	3v2Tf12D8XdQq//ARpexroy8PAQc3DvIPAo1doOavE1SyJ7oHv4W9OV2603l0oco
-	7zFScfLDbfWVFi/uA43qiK6iKKSKOEcdEHdyd7YLIsf2nNPig8QWNBxvW+wBDWpB
-	pbjSBfk2Fl1FpSrXDsqy4y/4rKohiQq0aoPcAgDKotDRQNQ449I/UEpVFtqL/lsU
-	q8KrTHUOkpAz2XpNOWt/hyTOKKxQkQz9q/Wy8v7/RNAGKQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id IazCX3NYb6ZA; Fri, 24 May 2024 13:52:54 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vm61V3wB5zlgMVP;
-	Fri, 24 May 2024 13:52:46 +0000 (UTC)
-Message-ID: <144e9e03-d16d-4158-a9eb-177a53b67c6c@acm.org>
-Date: Fri, 24 May 2024 06:52:44 -0700
+	s=arc-20240116; t=1716558916; c=relaxed/simple;
+	bh=0qKlbT0Sn7O74uZtM5dWU/MMQ2oUn8jK5z/BM5idXoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XEIhSxRu2fIUoJEbjD9Y38B6Hyxx26zzpOIKLDHKoVt9osvh5ialp8BtD7bP/UKf/FeL3aoyCUotOrK7P4z2yh9GOLXl/Gp3N5tc6y3wsRUcqldgJaeSb3q7mFr1Srjb1m+jRUq6HciWJKsoByNxMbOHkEm8NdY7ZckCXJQkBt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UekWVpFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FCADC2BBFC;
+	Fri, 24 May 2024 13:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716558915;
+	bh=0qKlbT0Sn7O74uZtM5dWU/MMQ2oUn8jK5z/BM5idXoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UekWVpFUw3upX1JQ1MZv9Onlexv40qPeMFBZnwqf83OSThzcSZNNldlCTtINstVMf
+	 F/Jr5xkWyAtA/slMrsm9dFRe0zL5zsmi4Y9ZVuohSudfBa7nzp/gK6pm9Q+4R6EP8o
+	 U1k94vuHk/wWnAEPyYZ2sOeUVjJcrToUqHmWSH6S/bKADQIj9Cd8G7ncZ/7F+aIVW2
+	 EapRj0dUu2nQbNk0lnUz0z3J9TPVPOO6Oyp/LiBgDQoQwA3+9sEnzs3MdHSx/d/cIX
+	 Qq4BYgkPdsQf8mTSGmJ+YbbNK9NdsWDdvT8BKCV6Afe6bPlM/OVcEDvOkx+4BfMvYJ
+	 Yy4FSS6Sp2YTw==
+Date: Fri, 24 May 2024 15:55:10 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Eric Sandeen <sandeen@redhat.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
+Message-ID: <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
+References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-To: Nitesh Shetty <nj.shetty@samsung.com>, Hannes Reinecke <hare@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
- damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
- nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
- <20240520102033.9361-3-nj.shetty@samsung.com>
- <f54c770c-9a14-44d3-9949-37c4a08777e7@suse.de>
- <66503bc7.630a0220.56c85.8b9dSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <66503bc7.630a0220.56c85.8b9dSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
 
-On 5/23/24 23:54, Nitesh Shetty wrote:
-> Regarding merge, does it looks any better, if we use single request
-> operation such as REQ_OP_COPY and use op_flags(REQ_COPY_DST/REQ_COPY_SRC)
-> to identify dst and src bios ?
+On Wed, May 22, 2024 at 10:38:51AM +0200, Wolfram Sang wrote:
+> The 'noauto' and 'auto' options were missed when migrating to the new
+> mount API. As a result, users with these in their fstab mount options
+> are now unable to mount debugfs filesystems, as they'll receive an
+> "Unknown parameter" error.
+> 
+> This restores the old behaviour of ignoring noauto and auto if they're
+> given.
+> 
+> Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> With current top-of-tree, debugfs remained empty on my boards triggering
+> the message "debugfs: Unknown parameter 'auto'". I applied a similar fix
+> which CIFS got and largely reused the commit message from 19d51588125f
+> ("cifs: ignore auto and noauto options if given").
+> 
+> Given the comment in debugfs_parse_param(), I am not sure if this patch
+> is a complete fix or if there are more options to be ignored. This patch
+> makes it work for me(tm), however.
+> 
+> From my light research, tracefs (which was converted to new mount API
+> together with debugfs) doesn't need the same fixing. But I am not
+> super-sure about that.
 
-I prefer to keep the current approach (REQ_COPY_DST/REQ_COPY_SRC) and to
-use a more appropriate verb than "merge", e.g. "combine".
+Afaict, the "auto" option has either never existent or it was removed before
+the new mount api conversion time ago for debugfs. In any case, the root of the
+issue is that we used to ignore unknown mount options in the old mount api so
+you could pass anything that you would've wanted in there:
 
-Thanks,
+/*
+ * We might like to report bad mount options here;
+ * but traditionally debugfs has ignored all mount options
+ */
 
-Bart.
+So there's two ways to fix this:
 
+(1) We continue ignoring mount options completely when they're coming
+    from the new mount api.
+(2) We continue ignoring mount options toto caelo.
+
+The advantage of (1) is that we gain the liberty to report errors to
+users on unknown mount options in the future but it will break on
+mount(8) from util-linux that relies on the new mount api by default. So
+I think what we need is (2) so something like:
+
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index dc51df0b118d..713b6f76e75d 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -107,8 +107,16 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param
+        int opt;
+
+        opt = fs_parse(fc, debugfs_param_specs, param, &result);
+-       if (opt < 0)
++       if (opt < 0) {
++               /*
++                * We might like to report bad mount options here; but
++                * traditionally debugfs has ignored all mount options
++                */
++               if (opt == -ENOPARAM)
++                       return 0;
++
+                return opt;
++       }
+
+        switch (opt) {
+        case Opt_uid:
+
+
+Does that fix it for you?
 
