@@ -1,132 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-20121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B898CE826
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 17:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E24F88CE85A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 17:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0889282170
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 15:37:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96E4328191C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 15:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1631304B5;
-	Fri, 24 May 2024 15:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372A812E1E9;
+	Fri, 24 May 2024 15:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPzh8gYs"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="UCbuK3h7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86F31EA80;
-	Fri, 24 May 2024 15:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E240126F04;
+	Fri, 24 May 2024 15:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716564826; cv=none; b=Nhbg4/9EkE68Ix81dr+x0h1RapsO4ozmWUxSYbq6VCqhj0owywA4Ut2QL7mfG2siAVX0FVPcLzxN0uDvry31QngnDoz3+b6TEmoEF4r6jyWMh9/UykoPVWkTOb2vvyZ0c5Wi5uWk67r9dp/+cCzKFOcHv3yYdFyurVpwPaFIxuM=
+	t=1716566356; cv=none; b=Tied/aAfgTVzkhfJU6br5yCMKXyIDhNnWx7+lYLFZgNftg4QyjCApMavnERhMDhE25SJStnSBm2vWGYr1owgPsvt05jByYZIurrQT6Gvxc8oupj8y+wi3EZLsYs2ZMyVAXmjLGp8O4+cobQVavvJzFkyG5nYeAcMGc3pBp5o73g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716564826; c=relaxed/simple;
-	bh=7I+MlrFIcsAFr6aFArGk9/6RkVyXb9ZMH8J1XJK4E5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nn9gFszrrYRZ/O+0ulYK020yEWkXBvGosWdBHwZCZO650wDh9TsxQAJed0+Qy0Dskvi1mO+AghBBq+vviUFwnxbtuH+2JtS7liHk982Nhn0bbXTkyH8pXO1qgn10S3PL0+wjedr0LgWylANdwJXjXNaqQ0R6u003NLgF3NiUHDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPzh8gYs; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51fcb7dc722so3116185e87.1;
-        Fri, 24 May 2024 08:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716564823; x=1717169623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ptPH/gKMj44mK+DBZPwcDgch/F6jOYOlhSFCQQooJI=;
-        b=WPzh8gYsnBy5ouBlo23jem7S8OBcC8h/JTC/WCYwVkEXQhp7opsDCFmjHXXrYmrN0w
-         ClTJL0X7838GY6TZLjdwUY2fKlU7sBWJh4r1VmSftEi8Kf/hC2Y2rLfed8wROoZXTRa4
-         Ax2amyQBSGjm7BvDpqItT78OBOEEYaATxi+llC1Py4DCRnFFEs0du8XmL29+saqBA/mB
-         fDBwizbnUGJwgqF2MXYBV/W159tAAIXWDi3g8hkeLDhST2LSsd+9j8eTJq7d9XHDKR9A
-         ZL3JaxiVOGCLUa/9batPitQa1STEE5vPGM16wDFjz9jEvJnPpMiB1tpbzLkJHBZl1dUu
-         I9ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716564823; x=1717169623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9ptPH/gKMj44mK+DBZPwcDgch/F6jOYOlhSFCQQooJI=;
-        b=dE/oVJi6PAsV1KlbCCChNRoP/PrR8S9tyibPxYda0KuZaUe21VsBZfb74YVj53KdNo
-         5WhA52KvW0e2I4R+bHnwZC20DbydG+eVy9sLI8oOLgNUmAOSdnrwRS3itMGR6sjL/Pwe
-         4EAtTOdKk2IAh9xvrdBxc0+c1a9lBeJIZLaeb8USC+rDDVKNRBB7pFW4YVkOrKsJXAfR
-         m1JQtuQA1GOYQ8pgaxRTq87FAHfvYW03HKGfDtauYV4tis7zdOMgjJ3Wq2iNGuQ3kC9F
-         b+z7FPwNowiffkPusRRrWIWGUJObO05BMcYo3pvE+w570orXW2nfG/gWOZEZbfEaGEk2
-         YRfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcSqczi/cPlwGV/U2lQ2Ne+m1h5id2xNtZsUjH4Gsi/yEs97hFb0gEot8jGlXFXAKKVhzgdyhY4KppE/msQpWEE++U1Rkaybl7KDyTyYRrM4QN7LpRwCY94qjY0gu3RMaBVBVDHHDhmSaq3ddatVKOEOlLsjbGBPn4uoi1BIrJd8IR5cjuhAQ=
-X-Gm-Message-State: AOJu0YzUt09m0eqDTZfOb+G98a6eGjLHcLLLVjDD3/V3FdtfWS7YfTu/
-	pnT7leuPUEqMZDCKRLqxKYblQAXmPGm7H7oBiSnvg2twVvRR7IIjqNyxpICH5lOT1AIim3yWlEE
-	TQ0YcEwgDci1lAz+B+GVi/AoPaew=
-X-Google-Smtp-Source: AGHT+IGO93Mz5Yrq+Ung6+leuBDTr4dzk2/EKk5O5ykcgv0u3qZGH81F4jSxktWUki8wPKCwF3dvIKKj5fHssSz6q3E=
-X-Received: by 2002:a05:6512:3e1f:b0:529:a161:4781 with SMTP id
- 2adb3069b0e04-529a16149a0mr734837e87.7.1716564823004; Fri, 24 May 2024
- 08:33:43 -0700 (PDT)
+	s=arc-20240116; t=1716566356; c=relaxed/simple;
+	bh=9DkMa3xjypHWNGLkI7x7YKTlF3sCNONyXQIuF+js6Hs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rV2qx3zNRv7g+9KH3j4l2sEZzfw00g7NEm9usWPI60cQ7GmLDXtSJbbkW4PcTuWVpIQ1IwNmwIwRtT5AKKK6Ssr+3I1KfDsMlWF5mBum7f7dE3qfNTTlHWJq8D6RnX+HqJTXI3sO6v5+hg7wxhMnjuWvFdrYEGDYQC5GNgGJlj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=UCbuK3h7; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Vm8qC2L04z9srG;
+	Fri, 24 May 2024 17:59:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1716566343;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CB5bRg0Ig+nbCG1HCGM8uXKXoWP9XmiqwyR59+Aaey8=;
+	b=UCbuK3h7jT3JhXxq9YGbX0UqakWkClSfpy8CNTKubRJyedEMcP3AaRri/1HV6bv7Zci84m
+	2dLCwK4mgRyy0WIHM6mIetJ0C2ExGZE+njTAGvDCMzjPmSRKEY0FOoo210Zi86vlWuXatN
+	j94wJ2JYNlCwCfYNU0bSLZIt9Db60I+6bUX24JgYxDIU6crn2doCHg8DeYRHUMZQPoqH9O
+	ffFsUJVLH4T0xTtIhx6166L0ro4efL1Q3w4bcUmovVw11oYjQhn1n9+JVaiQzlTnUq+scV
+	8cpAiTnqpbCEQzQq8MXBhAKWtaYWMfA6xLWBTZH7Z/jsjceJjfgABJtQXrwcbA==
+Date: Fri, 24 May 2024 08:58:55 -0700
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
+Message-ID: <20240524.154429-smoked.node.sleepy.dragster-w2EokFBsl7RC@cyphar.com>
+References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
+ <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
+ <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
+ <20240524-ahnden-danken-02a2e9b87190@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <316306.1716306586@warthog.procyon.org.uk> <20240522-weltmeere-rammt-70f03e24b8b4@brauner>
-In-Reply-To: <20240522-weltmeere-rammt-70f03e24b8b4@brauner>
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 24 May 2024 10:33:31 -0500
-Message-ID: <CAH2r5mv0x=PT-nfWbybkC5HiKHKN+-KS+Quk81_MEpnY4dpsVQ@mail.gmail.com>
-Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
-To: Christian Brauner <brauner@kernel.org>
-Cc: Steve French <stfrench@microsoft.com>, David Howells <dhowells@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, Enzo Matsumiya <ematsumiya@suse.de>, Jens Axboe <axboe@kernel.dk>, 
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="64k4h5bta2vrchdk"
+Content-Disposition: inline
+In-Reply-To: <20240524-ahnden-danken-02a2e9b87190@brauner>
+X-Rspamd-Queue-Id: 4Vm8qC2L04z9srG
+
+
+--64k4h5bta2vrchdk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-You can add my Tested-by if you would like
+On 2024-05-24, Christian Brauner <brauner@kernel.org> wrote:
+> On Thu, May 23, 2024 at 09:52:20AM -0600, Aleksa Sarai wrote:
+> > On 2024-05-21, Christian Brauner <brauner@kernel.org> wrote:
+> > > On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
+> > > > Now that we have stabilised the unique 64-bit mount ID interface in
+> > > > statx, we can now provide a race-free way for name_to_handle_at(2) =
+to
+> > > > provide a file handle and corresponding mount without needing to wo=
+rry
+> > > > about racing with /proc/mountinfo parsing.
+> > > >=20
+> > > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* =
+bit
+> > > > that doesn't make sense for name_to_handle_at(2).
+> > > >=20
+> > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > > ---
+> > >=20
+> > > So I think overall this is probably fine (famous last words). If it's
+> > > just about being able to retrieve the new mount id without having to
+> > > take the hit of another statx system call it's indeed a bit much to
+> > > add a revised system call for this. Althoug I did say earlier that I
+> > > wouldn't rule that out.
+> > >=20
+> > > But if we'd that then it'll be a long discussion on the form of the n=
+ew
+> > > system call and the information it exposes.
+> > >=20
+> > > For example, I lack the grey hair needed to understand why
+> > > name_to_handle_at() returns a mount id at all. The pitch in commit
+> > > 990d6c2d7aee ("vfs: Add name to file handle conversion support") is t=
+hat
+> > > the (old) mount id can be used to "lookup file system specific
+> > > information [...] in /proc/<pid>/mountinfo".
+> >=20
+> > The logic was presumably to allow you to know what mount the resolved
+> > file handle came from. If you use AT_EMPTY_PATH this is not needed
+> > because you could just fstatfs (and now statx(AT_EMPTY_PATH)), but if
+> > you just give name_to_handle_at() almost any path, there is no race-free
+> > way to make sure that you know which filesystem the file handle came
+> > from.
+> >=20
+> > I don't know if that could lead to security issues (I guess an attacker
+> > could find a way to try to manipulate the file handle you get back, and
+> > then try to trick you into operating on the wrong filesystem with
+> > open_by_handle_at()) but it is definitely something you'd want to avoid.
+>=20
+> So the following paragraphs are prefaced with: I'm not an expert on file
+> handle encoding and so might be totally wrong.
+>=20
+> Afaiu, the uniqueness guarantee of the file handle mostly depends on:
+>=20
+> (1) the filesystem
+> (2) the actual file handling encoding
+>=20
+> Looking at file handle encoding to me it looks like it's fairly easy to
+> fake them in userspace (I guess that's ok if you think about them like a
+> path but with a weird permission model built around them.) for quite a
+> few filesystems.
 
-On Wed, May 22, 2024 at 2:14=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, 21 May 2024 16:49:46 +0100, David Howells wrote:
-> > Fix netfs_perform_write() to set BDP_ASYNC if IOCB_NOWAIT is set rather
-> > than if IOCB_SYNC is not set.  It reflects asynchronicity in the sense =
-of
-> > not waiting rather than synchronicity in the sense of not returning unt=
-il
-> > the op is complete.
-> >
-> > Without this, generic/590 fails on cifs in strict caching mode with a
-> > complaint that one of the writes fails with EAGAIN.  The test can be
-> > distilled down to:
-> >
-> > [...]
->
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
->
-> [1/1] netfs: Fix setting of BDP_ASYNC from iocb flags
->       https://git.kernel.org/vfs/vfs/c/33c9d7477ef1
->
+The old Docker breakout attack did brute-force the fhandle for the root
+directory of the host filesystem, so it is entirely possible.
 
+However, the attack I was thinking of was whether a directory tree that
+an attacker had mount permissions over could be manipulated such that a
+privileged process doing name_to_handle_at() on a path within the tree
+would get a file handle that open_by_handle_at() on a different
+filesystem would result in a potentially dangerous path being opened.
+
+For instance (M is management process, C is the malicious container
+process):
+
+ C: Bind-mounts the root of the container filesystem at /foo.
+ M: name_to_handle_at($CONTAINER/foo)
+     -> gets an fhandle of / of the container filesystem
+     -> stores a copy of the (recycled) mount id
+ C: Swaps /foo with a bind-mount of the host root filesystem such that
+    the mount id is recycled, before M can scan /proc/self/mountinfo.
+ C: Triggers M to try to use the filehandle for some administrative
+    process.
+ M: open_by_handle_at(...) on the wrong mount id, getting an fd of the
+    host / directory. Possibly does something bad to this directory
+    (deleting files, passing the fd back to the container, etc).
+
+It seems possible that this could happen, so having a unique mount id is
+kind of important if you plan to use open_by_handle_at() with malicious
+actors in control of the target filesystem tree.
+
+Though, regardless of the attack you are worried about, I guess we are
+in agreement that a unique mount id from name_to_handle_at() would be a
+good idea if we are planning for userspace to use file handles for
+everything.
+
+> For example, for anything that uses fs/libfs.c:generic_encode_ino32_fh()
+> it's easy to construct a file handle by retrieving the inode number via
+> stat and the generation number via FS_IOC_GETVERSION.
+>=20
+> Encoding using the inode number and the inode generation number is
+> probably not very strong so it's not impossible to generate a file
+> handle that is not unique without knowing in which filesystem to
+> interpret it in.
+>=20
+> The problem is with what name_to_handle_at() returns imho. A mnt_id
+> doesn't pin the filesystem and the old mnt_id isn't unique. That means
+> the filesystem can be unmounted and go away and the mnt_id can be
+> recycled almost immediately for another mount but the file handle is
+> still there.
+>=20
+> So to guarantee that a (weakly encoded) file handle is interpreted in
+> the right filesystem the file handle must either be accompanied by a
+> file descriptor that pins the relevant mount or have any other guarantee
+> that the filesystem doesn't go away (Or of course, the file handle
+> encodes the uuid of the filesystem or something or uses some sort of
+> hashing scheme.).
+>=20
+> One of the features of file handles is that they're globally usable so
+> they're interesting to use as handles that can be shared. IOW, one can
+> send around a file handle to another process without having to pin
+> anything or have a file descriptor open that needs to be sent via
+> AF_UNIX.
+>=20
+> But as stated above that's potentially risky so one might still have to
+> send around an fd together with the file handle if sender and receiver
+> don't share the filesystem for the handle.
+>=20
+> However, with the unique mount id things improve quite a bit. Because
+> now it's possible to send around the unique mount id and the file
+> handle. Then one can use statmount() to figure out which filesystem this
+> file handle needs to be interpreted in.
 
 --=20
-Thanks,
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-Steve
+--64k4h5bta2vrchdk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZlC5OwAKCRAol/rSt+lE
+b1v+AQDmuUTvZAruF22prlCyJw0a0qvY5B8B/IHl/ZTRHN+prAEA7QWCtrGO3Hwh
+lC9Q1xwungvgtxehxX5VlCMpxWo28wA=
+=O40w
+-----END PGP SIGNATURE-----
+
+--64k4h5bta2vrchdk--
 
