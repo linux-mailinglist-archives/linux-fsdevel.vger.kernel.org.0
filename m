@@ -1,120 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-20143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C138CEC8C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 00:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E078CED06
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 01:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97151F21EFA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 22:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74C51F218DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 23:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68DA12DDAD;
-	Fri, 24 May 2024 22:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCF615887D;
+	Fri, 24 May 2024 23:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bfVqHYkv"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cEwZWUb6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA60D7E792;
-	Fri, 24 May 2024 22:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11FF127E1E;
+	Fri, 24 May 2024 23:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716591430; cv=none; b=dJa9TpOK/QXT2o/QgTxqTLfARjlN8anDrAwoOkZSfbrQIVVO0hT3JqWjpGmMdDHcztMEwq6SgI3J0s1YBaLUZC319621oo2MVJKJ2Nh7N2/vty0X92bA+C19GX/UmlEXchkTLmO0Yp6xV/tRMK9Z1MZUvlZgZ1vBgNymEpCnrNI=
+	t=1716594308; cv=none; b=VOet4F9ThGQuWBksLd+pWzzLzbUvUJ5ZsgbKT4yveE+gOebtn0vq1OEPDIfxweEU8UvS+bVuDNJVwlwXhuAtx1lMTfjD/ohhla1BEKoELFJekwcPOby9KuaPUUG4atgW3FxHwEinICu+qDvNrb+vsDBM6cUsrLDC9OZkSzwfwkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716591430; c=relaxed/simple;
-	bh=DNccZvpZOFVPzw5iv19JSrpXebrRznjN6qDOBxwfpcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZP+5A8oe56uhTAiGMSfkxvOkfb1cHpT5omE4BhHr7bX96KG1NoIRRr9x5wnfvncOETS5ZGPacMs/d/nR8hJ6iA7GD5g3cTAR4urSfnogONZQRSb3BrqgZEERblASzQRXX3ZESsptUd+uwva6DVWLK6tHcaNuPWJDisol66Tf5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bfVqHYkv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hYs4ZKXmk7I4+l7YLdpq+LGHLH6EgJ2slOFrsMAyMtQ=; b=bfVqHYkvIy4chaOmDU6p5KXBo9
-	GL65kr85GH6v92B82mGjxB/vH8Jwa0z6xdFdaNcg6RwDtP/nC+AlGdoEhTn2b8GlLrf8l/oBCug0b
-	Es7Zn9jOxyXdDGY5rjqtnVbTXx0vg7tNlepGd95a9NHUipsU8fk/4lcfJs5mTGNswjY6z+jZOxa1+
-	/IbCbAa/1uwJjTmPFX0r52Jtz4U4ONljXN5l377WCMKfm4C3365Mejrt3sQqz7Deeql5CYk2XVQOJ
-	pxlqtWRPb76zPO2YrEqlUB1m5oEW0jKAaH1R2ozRQl3D6XWcYY3h681APuDlpRQXo8tr5EMJUppye
-	A8M4T1Wg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sAdq4-005yAP-1R;
-	Fri, 24 May 2024 22:56:40 +0000
-Date: Fri, 24 May 2024 23:56:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: brauner@kernel.org, a.hindborg@samsung.com, alex.gaynor@gmail.com,
-	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com,
-	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org,
-	joel@joelfernandes.org, keescook@chromium.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
-	rust-for-linux@vger.kernel.org, surenb@google.com,
-	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu,
-	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
-Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
-Message-ID: <20240524225640.GU2118490@ZenIV>
-References: <20240524-anhieb-bundesweit-e1b0227fd3ed@brauner>
- <20240524191714.2950286-1-aliceryhl@google.com>
+	s=arc-20240116; t=1716594308; c=relaxed/simple;
+	bh=z/c1pH9qfJ0Qgl4zIa+H+u9yEECjhMkbLYfD/6viTDk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=E/BZzp4ceKTBKcNjP1rZZztGLCoQ5eSoabpeTLKE9Jp6DNY03ygg90dWexctxxYO2zxJJlcV5/fYv8By8TedqB7iE6eUP6A3ORWS0PvtxjNC38FWpxfFlsiwyDxLlTaYO3lP7qBffGD3PX746AtbWQH07N2QWfUfdCxNcK27hgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cEwZWUb6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44ONN0LA016796;
+	Fri, 24 May 2024 23:45:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=y5GPD/awB1Lj7SRaGStjnA
+	WaGzPJXkqOnktpur/zvmA=; b=cEwZWUb6J5GAxt6XLQGDT4ZAKSnqT3hqSwVgVA
+	hur0z1nqLhgh9KT+cbuK8voSmjeinYm4FV1SCHdOYelhY89LIvlAJVguP8PRKuL5
+	w4NX0I4S9zYebiwPJGThlAsSF0plENjYzc+rLLIcwH4gcpyPV7nAJYn3kp6jKEEs
+	jAzJdy0ky1lJhIqorOiolrm1o0xV6HeAWo6XIc6L8rn91FBhHHTSnZi5bu/6tpyt
+	IM5GU/8Y7MYvlmEvln14+mB9Qd1BWoz4PBKycHm0UipnlRl1z4RxyskVMomRi8Sh
+	RlwLSQi+DOOmQjcp7YxTEj4ZzQLq85TqscuX/IScUAN2f6Xg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa96kp33-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 23:45:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44ONj1Xc018792
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 23:45:01 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
+ 2024 16:45:00 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 24 May 2024 16:45:00 -0700
+Subject: [PATCH] fs: efs: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524191714.2950286-1-aliceryhl@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240524-md-fs-efs-v1-1-1729726e494f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHsmUWYC/x2MQQrCQAwAv1JyNrAuqVC/Ih52u6kN2LUkKi2lf
+ 2/0MIeBYTYwVmGDa7OB8ldMXtXlfGqgH1N9MEpxhxgihTYSTgUHQ3a6zF1LTBQuBbyflQdZ/q/
+ b3T0nY8yaaj/+Dk+pnwWnZG9WnFdPYd8PmLSKNYAAAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner
+	<brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OjdhZgIu48ltmE8Gz4vaJdaHd_LtXELT
+X-Proofpoint-ORIG-GUID: OjdhZgIu48ltmE8Gz4vaJdaHd_LtXELT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_08,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxlogscore=811 spamscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2405240172
 
-On Fri, May 24, 2024 at 07:17:13PM +0000, Alice Ryhl wrote:
-> > And then those both implement a get_file() method so the caller can take
-> > an explicit long-term reference to the file.
-> 
-> Even if you call `get_file` to get a long-term reference from something
-> you have an fdget_pos reference to, that doesn't necessarily mean that
-> you can share that long-term reference with other threads. You would
-> need to release the fdget_pos reference first. For that reason, the
-> long-term reference returned by `get_file` would still need to have the
-> `File<MaybeFdgetPos>` type.
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/efs/efs.o
 
-Why would you want such a bizarre requirement?
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/efs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Note that since it forgets which fd and fd table it came from, calls to
-> `fdget` are actually not a problem for sending our long-term references
-> across threads. The `fdget` requirements only care about things that
-> touch the entry in the file descriptor table, such as closing the fd.
-> The `ARef<File>` type does not provide any methods that could lead to
-> that happening, so sharing it across threads is okay *even if* there is
-> an light reference. That's why I have an `MaybeFdgetPos` but no
-> `MaybeFdget`.
+diff --git a/fs/efs/inode.c b/fs/efs/inode.c
+index 7844ab24b813..462619e59766 100644
+--- a/fs/efs/inode.c
++++ b/fs/efs/inode.c
+@@ -311,4 +311,5 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
+ 	return 0;
+ }  
+ 
++MODULE_DESCRIPTION("Extent File System (efs)");
+ MODULE_LICENSE("GPL");
 
-Huh?
+---
+base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+change-id: 20240524-md-fs-efs-9be954e4406d
 
-What is "the entry in the file descriptor table"?  Which one and in which one?
-
-> 	let file = File::fget(my_fd)?;
-> 	// SAFETY: We know that there are no active `fdget_pos` calls on
-> 	// the current thread, since this is an ioctl and we have not
-> 	// called `fdget_pos` inside the Binder driver.
-> 	let thread_safe_file = unsafe { file.assume_no_fdget_pos() };
-> 
-> (search for File::from_fd in the RFC to find where this would go)
-> 
-> The `assume_no_fdget_pos` call has no effect at runtime - it is purely a
-> compile-time thing to force the user to use unsafe to "promise" that
-> there aren't any `fdget_pos` calls on the same fd.
-
-Why does fdget_pos() even matter?  The above makes no sense...
-
-Again, cloning a reference and sending it to another thread is perfectly
-fine.  And what's so special about fdget_pos()/fdput_pos() compared to
-fdget()/fdput()?
-
-_What_ memory safety issues are you talking about?
 
