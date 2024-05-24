@@ -1,129 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-20113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA3E8CE61E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 15:23:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CEE8CE660
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 15:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB4D1C21B8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 13:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB1851C21AF1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2024 13:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E2812BEAE;
-	Fri, 24 May 2024 13:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133B612C470;
+	Fri, 24 May 2024 13:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aL5TcvMd"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="YVdOKINE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93231272DC
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2024 13:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2195B86651;
+	Fri, 24 May 2024 13:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716557029; cv=none; b=JpEZWl2eKhnqof5DJU8cgj+zBThSdpHsgZhCJBcuRL+SkV/ENeH97N9bshbiM+mN46UapIdgdLGt2gG6gjMlve0xP6lGE9uSlnXOWpDYpcmlX349mSolwWkyrXwaxGAWyZtzxO3lgaEGJLH/KSxYGzSPEd4/Rc1Vgd09GwAIXbI=
+	t=1716558782; cv=none; b=SQqllyvcEr4pVyQCyJjaPC/684PP2zJ6UAn1AR/oewnM6U3b6CEoRnak6YiSwpIZhb2EJZ0C6yTCQQt8VvIo5CtB0M2sYOyLpVRQFJXMDlyolbZg1zi6PowSMn/XzRS1YVP4itq82TkOg6y72i7+11by5Hdf4DtonsYRlFGHqZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716557029; c=relaxed/simple;
-	bh=9M+Jfutkj+3xFQXRZrdiDpsrzCMNEVrBpKHHCVV94K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qs0pinT4bAtgKgZSCDuyVYroQNeM2Rg7ji/I3Mx6UTC+Nn1dP+eODLTw36dlkBCjHNOxsHkDSCtvY9mzPKIKJ8IHu2k5MC/fHDq1qdExekjzyKMVuZ68B9zTxQf2d6mLkSLEvIpBiWCifzVyTd8ETSwAO1LDUuE6PWK53DWqFfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aL5TcvMd; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: torvalds@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716557024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=yawCa/zMhfVB+WtgnLQ25RsWeDGEuNkEkDSE1kcE66E=;
-	b=aL5TcvMd3lk5CCclv+OGux6AYuDyhaKI02HIqsrrBlyd/bdEwwPLhrCAA4Aab0bq8KUcPD
-	FZSjyQqBDEKX3WvJ2HDTOdEulj9D3eBd/IDUoaf6nfM6rOSeiLmNRVxPNUzwRsggVIwFV5
-	MoWfoglS2UxtpTrEdfyjAgXzQvQhK5Q=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Fri, 24 May 2024 09:23:41 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.10-rc1
-Message-ID: <34o5tkmaecep7kccwzgwe4yzbkayhb5wkqukthj5may75yvqgn@43rljzrmlmmn>
+	s=arc-20240116; t=1716558782; c=relaxed/simple;
+	bh=2rXmAoTx3CNlh/GGc7KRf6DwDOKO0u6bWqKxzMYf8jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D2uv1afxbC90d/+oGzSBXZ7snV6GMiNxkTZX2/HiOtZe2DyxfpIybl+STfqVOBDz9pJDe5JNn5hU876bFPSeWWqYT5AUzZ/MFkyff+480PRhcp5P4EHvzzXLTJ5MlgYBkkG64obUZYh1yNrzcaUp350Gwh5NnINT5qdHVVleRUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=YVdOKINE; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Vm61m2xr9zlgMVR;
+	Fri, 24 May 2024 13:53:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1716558774; x=1719150775; bh=2rXmAoTx3CNlh/GGc7KRf6Dw
+	DOKO0u6bWqKxzMYf8jk=; b=YVdOKINEcaBAiCvlkuTSwdmRd4IpR916nbHNtrWY
+	5T2+ihVtDJKqlKwmp55t4ZGsaAzSwT8N3iUuthzOrGokFyOvHHHwoPanRwsFqJ3L
+	3v2Tf12D8XdQq//ARpexroy8PAQc3DvIPAo1doOavE1SyJ7oHv4W9OV2603l0oco
+	7zFScfLDbfWVFi/uA43qiK6iKKSKOEcdEHdyd7YLIsf2nNPig8QWNBxvW+wBDWpB
+	pbjSBfk2Fl1FpSrXDsqy4y/4rKohiQq0aoPcAgDKotDRQNQ449I/UEpVFtqL/lsU
+	q8KrTHUOkpAz2XpNOWt/hyTOKKxQkQz9q/Wy8v7/RNAGKQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id IazCX3NYb6ZA; Fri, 24 May 2024 13:52:54 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vm61V3wB5zlgMVP;
+	Fri, 24 May 2024 13:52:46 +0000 (UTC)
+Message-ID: <144e9e03-d16d-4158-a9eb-177a53b67c6c@acm.org>
+Date: Fri, 24 May 2024 06:52:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Nitesh Shetty <nj.shetty@samsung.com>, Hannes Reinecke <hare@suse.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+ <f54c770c-9a14-44d3-9949-37c4a08777e7@suse.de>
+ <66503bc7.630a0220.56c85.8b9dSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <66503bc7.630a0220.56c85.8b9dSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Nothing exciting, just syzbot fixes (except for the one
-FMODE_CAN_ODIRECT patch).
+On 5/23/24 23:54, Nitesh Shetty wrote:
+> Regarding merge, does it looks any better, if we use single request
+> operation such as REQ_OP_COPY and use op_flags(REQ_COPY_DST/REQ_COPY_SRC)
+> to identify dst and src bios ?
 
-Looks like syzbot reports have slowed down; this is all catch up from
-two weeks of conferences.
+I prefer to keep the current approach (REQ_COPY_DST/REQ_COPY_SRC) and to
+use a more appropriate verb than "merge", e.g. "combine".
 
-Next hardening project is using Thomas's error injection tooling to
-torture test repair.
+Thanks,
 
-The following changes since commit eb6a9339efeb6f3d2b5c86fdf2382cdc293eca2c:
+Bart.
 
-  Merge tag 'mm-nonmm-stable-2024-05-19-11-56' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2024-05-19 14:02:03 -0700)
-
-are available in the Git repository at:
-
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-05-24
-
-for you to fetch changes up to d93ff5fa40b9db5f505d508336bc171f54db862e:
-
-  bcachefs: Fix race path in bch2_inode_insert() (2024-05-22 20:37:47 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.10-rc1
-
-Just a few syzbot fixes
-
-----------------------------------------------------------------
-Kent Overstreet (17):
-      bcachefs: Fix rcu splat in check_fix_ptrs()
-      bcachefs: Fix ref in trans_mark_dev_sbs() error path
-      bcachefs: Fix shift overflow in btree_lost_data()
-      bcachefs: Fix shift overflows in replicas.c
-      bcachefs: Improve bch2_assert_pos_locked()
-      bcachefs: Fix missing parens in drop_locks_do()
-      bcachefs: Add missing guard in bch2_snapshot_has_children()
-      bcachefs: Fix bch2_alloc_ciphers()
-      bcachefs: bch2_checksum() returns 0 for unknown checksum type
-      bcachefs: Check for subvolues with bogus snapshot/inode fields
-      bcachefs: Fix bogus verify_replicas_entry() assert
-      bcachefs: Fix btree_trans leak in bch2_readahead()
-      bcachefs: Fix stack oob in __bch2_encrypt_bio()
-      bcachefs: Fix unsafety in bch2_dirent_name_bytes()
-      bcachefs: Fix shutdown ordering
-      bcachefs: Ensure we're RW before journalling
-      bcachefs: Fix race path in bch2_inode_insert()
-
-Youling Tang (1):
-      bcachefs: set FMODE_CAN_ODIRECT instead of a dummy direct_IO method
-
- fs/bcachefs/bcachefs_format.h |  6 ++++++
- fs/bcachefs/btree_iter.c      |  2 ++
- fs/bcachefs/btree_iter.h      |  2 +-
- fs/bcachefs/buckets.c         | 13 +++++++------
- fs/bcachefs/checksum.c        | 37 ++++++++++++++++++++----------------
- fs/bcachefs/dirent.c          |  3 +++
- fs/bcachefs/fs-io-buffered.c  |  4 ++--
- fs/bcachefs/fs.c              |  6 +++---
- fs/bcachefs/printbuf.c        |  7 +++++++
- fs/bcachefs/recovery.c        |  7 ++++++-
- fs/bcachefs/replicas.c        | 44 ++++++++++++++++++++++---------------------
- fs/bcachefs/sb-errors_types.h |  4 +++-
- fs/bcachefs/snapshot.h        |  7 ++-----
- fs/bcachefs/subvolume.c       |  9 +++++++++
- fs/bcachefs/super.c           |  2 +-
- 15 files changed, 96 insertions(+), 57 deletions(-)
 
