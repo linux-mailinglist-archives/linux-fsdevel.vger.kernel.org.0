@@ -1,199 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-20149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238348CEE01
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 08:00:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6268CEE1C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 09:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917B21F21C19
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 06:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED88281FA2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 07:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99571BE4B;
-	Sat, 25 May 2024 06:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E80611CA0;
+	Sat, 25 May 2024 07:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uu/i44jE"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="R1XLHEd8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F112F34;
-	Sat, 25 May 2024 06:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5757BE55;
+	Sat, 25 May 2024 07:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716616830; cv=none; b=Ztix4/5RveczowSHG6t1DE1ouelnjdc82HsUgLR02FHaTtQdFF+TAsdI0tHoLXcBbhHUFLp1zleU6GBYQRvyFrgHSbs0GVY66ecAmCuPieQdPX8BXI61pyORDzgsT0nWduLMciZ3MP8QCk2xkRZjI+KSyGI13SXoCdGSO7eHgoM=
+	t=1716621070; cv=none; b=T6dIBAiu+LOYE1roqxTwfyW/WK1qyyYpa44ye73zdDL0ccnVdkKVRg4ch332VuUyIZ/Re4bIKu9njYiHlqGthiD5wvR52yK3etUhMmMd2neX8e52QPsPbpICpn1d2v45Nvx9fagcLYMtT5wAcI8SIr751bpUaK1Pd12m1kiS4yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716616830; c=relaxed/simple;
-	bh=AnekiBv9zIubqiPFYx5uilOBhpRrN04OgwZv6c9MNxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ThO6q6768VDVQ0EXXiKCUlJaGfrZu8MmkU7MY+0HnB9xJFyxv/CJY3SogSBkaxSEnGhuDnHsHqvqNXq8zpkaKD0gBLTFs7z6N/x68CujlWthCbqOyrQB8+9he7OmpZVNT2W2DrVmqdTKZ0EBm7jpC2dX0v4uysRXRh5i0yZYbgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uu/i44jE; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e564cad1f1so109399291fa.0;
-        Fri, 24 May 2024 23:00:28 -0700 (PDT)
+	s=arc-20240116; t=1716621070; c=relaxed/simple;
+	bh=lbX4qDZgejEpytYpq0C8e8qHHrz0f/oVYAcVWcvT//I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dHDzQ0tvbRBIcxeBPj2ILGVd8sUDt7/JIOqZ9dBdztqJ999ncectX7n5/oe8OaoxczqOgH4heZVjllzFbH4Gg4O5K1Dm60ShFAEgOBJXQ9l0yMqFvEc5JQ6NYw0jDhphclwLKD4aZA9i+QQgM8z35jivRI7QYoPlX38NmJfzG5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=R1XLHEd8; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 0716B21E0;
+	Sat, 25 May 2024 06:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716616826; x=1717221626; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vXlAZP8x0WQzs+EYMU7oj8EUjhwn4wx4bFOBWXPpDO8=;
-        b=Uu/i44jEzItjcJuWUVBo9RxB3QwbBYLFEmrXu/vY4XOBBCP1oBFBlzlifS0HnzoLcI
-         DIT0WkXyCBrdVn/woBFlyygmV+HO8ruW+ixfsCfq0fk72h6/KVVm/aqYfGNgpvA/Te87
-         RyFrxlJf54JQiPvRN788VfysgGmirEVV4hHEcbtIwHY6dm+J5he2oNnxOdPfD99Tooaj
-         WfbkNa97McIB4AiN/nuwnUAjIQ2C5caW6cYV7yegZxSNKTBTLDIMltonfPIDXDNsDlQd
-         GvLOeKq7UgsM5UJPyiMcDFY4ynVfEqSTOOlXuklRfV6+U0pPKqr7YiNN9lfo1nkL5Mud
-         fPVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716616826; x=1717221626;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vXlAZP8x0WQzs+EYMU7oj8EUjhwn4wx4bFOBWXPpDO8=;
-        b=h+zl7ftXn8zV8IAXM3mJ3PS0bySykDePW5p1qQfrVSFTT3x1g/xlF+cStpBUU0I1E6
-         k/UJNYR87dH/PC4sW1tS7yXGdyeCwhbsmXwC9dTT5Iz7dqN0j/02IbvotaxTz/VzZ8BL
-         N4glhAa0BFFsvq8XUao9g+duxDwzVKDCplJDjoNq23un3kAbeukhkiyMArfM7g6JVQn+
-         MUiC08qsXi3zpkRYrk+AVdlSEpoWt7lzuZLvSOY+0t+9BEffjMKRwk/ONnwZTpIVW8rv
-         iCwHvW9wWXGi3cpQKoxB6kQRDjTiQn1kZthBG7eOSa4oDBJn+ZXx+REH3TwMTT5xPVpA
-         /sMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoEgRy0W/Ne1325vv7WeSVVeiH2HGzXp2c2flYsD4DjoBRgs8veJiEadfwvmCiiqVMqRPzSvnl1qE8y/1RmKabEdP2asUxxAIaw13LWzeAG63tOso+wa+AVSlHKLoHBiAYej5AYAxguAabiQ==
-X-Gm-Message-State: AOJu0YxBjLYjJaIHTAie6/L3i3Ww5amfgtwF8QrprFEZdMqSSsb13qZ/
-	jikVP8c1bOtiHfFl7BWTOXOB/2ICZiiHbh3Laor03ZKpPsUyb7O3
-X-Google-Smtp-Source: AGHT+IGoYiPjOhvAnWGMO936kkEj53fcyZhFTMUeyGzjE5/9IMlhqyNx1wEvsi9lMDhBq/CFNmEr4w==
-X-Received: by 2002:a2e:8054:0:b0:2e1:aa94:cf48 with SMTP id 38308e7fff4ca-2e95b096c3dmr22772131fa.20.1716616826164;
-        Fri, 24 May 2024 23:00:26 -0700 (PDT)
-Received: from f (cst-prg-19-178.cust.vodafone.cz. [46.135.19.178])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579c004108esm55388a12.23.2024.05.24.23.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 23:00:25 -0700 (PDT)
-Date: Sat, 25 May 2024 08:00:15 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Tim Chen <tim.c.chen@intel.com>, Dave Chinner <dchinner@redhat.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Maiolino <cem@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>, 
-	Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCH 8/8] shmem,percpu_counter: add _limited_add(fbc, limit,
- amount)
-Message-ID: <jh3yqdz43c24ur7w2jjutyvwodsdccefo6ycmtmjyvh25hojn4@aysycyla6pom>
-References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
- <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com>
+	d=paragon-software.com; s=mail; t=1716620148;
+	bh=wAw8ojUEEw2Xao242PKV2SRrDojzhXxyksnFr9vSu20=;
+	h=From:To:CC:Subject:Date;
+	b=R1XLHEd8tmYjPbegYdniTMPyhN02afp2CBkM5p1wu5a9Z0uOjVm3UL42461NdEWw7
+	 z731GZOb3bz/pCl+mIKEDknWzSkNMKVUURTscRcpR9LCixgeTWn6F0Nfda79cLHtPc
+	 fDb5un0GdngbMIQ8MkSw4nCXCHqz9Sr3d2MrXfLg=
+Received: from ntfs3vm.paragon-software.com (192.168.211.122) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Sat, 25 May 2024 10:03:35 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <torvalds@linux-foundation.org>
+CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] ntfs3: bugfixes for 6.10
+Date: Sat, 25 May 2024 10:03:23 +0300
+Message-ID: <20240525070323.6106-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Fri, Sep 29, 2023 at 08:42:45PM -0700, Hugh Dickins wrote:
-> Percpu counter's compare and add are separate functions: without locking
-> around them (which would defeat their purpose), it has been possible to
-> overflow the intended limit.  Imagine all the other CPUs fallocating
-> tmpfs huge pages to the limit, in between this CPU's compare and its add.
-> 
-> I have not seen reports of that happening; but tmpfs's recent addition
-> of dquot_alloc_block_nodirty() in between the compare and the add makes
-> it even more likely, and I'd be uncomfortable to leave it unfixed.
-> 
-> Introduce percpu_counter_limited_add(fbc, limit, amount) to prevent it.
-> 
+Please pull this branch containing ntfs3 code for 6.10.
 
-I think the posted (and by now landed) code is racy.
+Fixed:
+- reusing of the file index (could cause the file to be trimmed) [1];
+- infinite dir enumeration [2];
+- taking DOS names into account during link counting;
+- le32_to_cpu conversion, 32 bit overflow, NULL check;
+- some code was refactored.
 
-I had seen there was a follow up patch which further augmented the
-routine, but it did not alter the issue below so I'm responding to this
-thread.
+Changed:
+- removed max link count info display during driver init.
 
-> +/*
-> + * Compare counter, and add amount if the total is within limit.
-> + * Return true if amount was added, false if it would exceed limit.
-> + */
-> +bool __percpu_counter_limited_add(struct percpu_counter *fbc,
-> +				  s64 limit, s64 amount, s32 batch)
-> +{
-> +	s64 count;
-> +	s64 unknown;
-> +	unsigned long flags;
-> +	bool good;
-> +
-> +	if (amount > limit)
-> +		return false;
-> +
-> +	local_irq_save(flags);
-> +	unknown = batch * num_online_cpus();
-> +	count = __this_cpu_read(*fbc->counters);
-> +
-> +	/* Skip taking the lock when safe */
-> +	if (abs(count + amount) <= batch &&
-> +	    fbc->count + unknown <= limit) {
-> +		this_cpu_add(*fbc->counters, amount);
-> +		local_irq_restore(flags);
-> +		return true;
-> +	}
-> +
+Removed:
+- atomic_open has been removed for lack of use.
 
-Note the value of fbc->count is *not* stabilized.
+All changed code (except [1] and [2]) was in linux-next branch for several weeks.
 
-> +	raw_spin_lock(&fbc->lock);
-> +	count = fbc->count + amount;
-> +
-> +	/* Skip percpu_counter_sum() when safe */
-> +	if (count + unknown > limit) {
-> +		s32 *pcount;
-> +		int cpu;
-> +
-> +		for_each_cpu_or(cpu, cpu_online_mask, cpu_dying_mask) {
-> +			pcount = per_cpu_ptr(fbc->counters, cpu);
-> +			count += *pcount;
-> +		}
-> +	}
-> +
-> +	good = count <= limit;
-> +	if (good) {
-> +		count = __this_cpu_read(*fbc->counters);
-> +		fbc->count += count + amount;
-> +		__this_cpu_sub(*fbc->counters, count);
-> +	}
-> +
-> +	raw_spin_unlock(&fbc->lock);
-> +	local_irq_restore(flags);
-> +	return good;
-> +}
-> +
+[1] https://lore.kernel.org/ntfs3/20240516122041.5759-1-almaz.alexandrovich@paragon-software.com/
+[2] https://lore.kernel.org/ntfs3/20240516120029.5113-1-almaz.alexandrovich@paragon-software.com/
+These two patches fix a critical bug, so I've added them to this request.
 
-Consider 2 cpus executing the func at the same time, where one is
-updating fbc->counter in the slow path while the other is testing it in
-the fast path.
+Regards,
+Konstantin
 
-cpu0						cpu1
-						if (abs(count + amount) <= batch &&				
-						    fbc->count + unknown <= limit)
-/* gets past the per-cpu traversal */
-/* at this point cpu0 decided to bump fbc->count, while cpu1 decided to
- * bump the local counter */
-							this_cpu_add(*fbc->counters, amount);
-fbc->count += count + amount;
+----------------------------------------------------------------
 
-Suppose fbc->count update puts it close enough to the limit that an
-addition from cpu1 would put the entire thing over said limit.
+The following changes since commit 0bbac3facb5d6cc0171c45c9873a2dc96bea9680:
 
-Since the 2 operations are not synchronized cpu1 can observe fbc->count
-prior to the bump and update it's local counter, resulting in
-aforementioned overflow.
+  Linux 6.9-rc4 (2024-04-14 13:38:39 -0700)
 
-Am I misreading something here? Is this prevented?
+are available in the Git repository at:
 
-To my grep the only user is quotas in shmem and I wonder if that use is
-even justified. I am aware of performance realities of atomics. However,
-it very well may be that whatever codepaths which exercise the counter
-are suffering multicore issues elsewhere, making an atomic (in a
-dedicated cacheline) a perfectly sane choice for the foreseeable future.
-Should this be true there would be 0 rush working out a fixed variant of
-the routine.
+  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.10
+
+for you to fetch changes up to 302e9dca8428979c9c99f2dbb44dc1783f5011c3:
+
+  fs/ntfs3: Break dir enumeration if directory contents error (2024-05-24 12:50:12 +0300)
+
+----------------------------------------------------------------
+
+Jeff Layton (1):
+      fs/ntfs3: remove atomic_open
+
+Konstantin Komarov (11):
+      fs/ntfs3: Taking DOS names into account during link counting
+      fs/ntfs3: Remove max link count info display during driver init
+      fs/ntfs3: Missed le32_to_cpu conversion
+      fs/ntfs3: Check 'folio' pointer for NULL
+      fs/ntfs3: Use 64 bit variable to avoid 32 bit overflow
+      fs/ntfs3: Use variable length array instead of fixed size
+      fs/ntfs3: Redesign ntfs_create_inode to return error code instead of inode
+      fs/ntfs3: Always make file nonresident on fallocate call
+      fs/ntfs3: Mark volume as dirty if xattr is broken
+      fs/ntfs3: Fix case when index is reused during tree transformation
+      fs/ntfs3: Break dir enumeration if directory contents error
+
+Lenko Donchev (1):
+      fs/ntfs3: use kcalloc() instead of kzalloc()
+
+ fs/ntfs3/attrib.c  |  32 ++++++++++++++
+ fs/ntfs3/dir.c     |   1 +
+ fs/ntfs3/file.c    |   9 ++++
+ fs/ntfs3/frecord.c |   2 +-
+ fs/ntfs3/fslog.c   |   5 ++-
+ fs/ntfs3/index.c   |   6 +++
+ fs/ntfs3/inode.c   |  46 +++++++++++---------
+ fs/ntfs3/namei.c   | 121 ++++-------------------------------------------------
+ fs/ntfs3/ntfs.h    |   2 +-
+ fs/ntfs3/ntfs_fs.h |  10 ++---
+ fs/ntfs3/record.c  |  11 +----
+ fs/ntfs3/super.c   |   2 -
+ fs/ntfs3/xattr.c   |   5 ++-
+ 13 files changed, 98 insertions(+), 154 deletions(-)
 
