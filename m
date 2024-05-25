@@ -1,173 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-20157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3B98CF00F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 18:16:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B0C8CF125
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 21:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7E9281B30
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 16:16:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 896941F21527
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 19:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B6085942;
-	Sat, 25 May 2024 16:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FC7128374;
+	Sat, 25 May 2024 19:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="mHu9h5b3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JAeJcGYh"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="h5VjKQYf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04olkn2053.outbound.protection.outlook.com [40.92.47.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DFF85297
-	for <linux-fsdevel@vger.kernel.org>; Sat, 25 May 2024 16:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716653784; cv=none; b=D9mvPEX2OwTHfpFiZRifMzb94mVZkB5RffiiGmyJ53kdd5LKpKz5Ri8SBBs3EXNNd7x0yFnfsooyESSoqr9Y2R/pWMtNgZkajwDkRTxxBVTFbgCB9QrwE7ubrLhrHOTcS0UQ5PuyP5wcR5wAi8Pa4knRd0pSSB4OttnknMb82a8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716653784; c=relaxed/simple;
-	bh=DmIhXaOQYDQI5uTth1MAR3L9gq+Q0dJmO8lVk0MMN8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5H+AbiGp84U0s6L1RB7ovIrImKj6XocK5v5ND5gEtVjVD6ZH6/EuMIOzMj96UJw7gVil0hsXcbTmP6Sn0Mg8xiQL+SKjhcE94rqYxEB3AWjtTHdI9zCNi4s5EK1BK357WtEe9a6pH29SRPGwCT1rgE/wdc+Gcwk7JQlUqesMKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=mHu9h5b3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JAeJcGYh; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 0264C13800D1;
-	Sat, 25 May 2024 12:16:21 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 25 May 2024 12:16:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1716653780;
-	 x=1716740180; bh=vo5cESYwtJO3692S7y2PJx/93ELiW5zdblFNPAgtTNM=; b=
-	mHu9h5b3/z4GqM1LqKLshch5ob/XVeGvliatfei9kwEAFLAIcmpF4N/cqMqUDyW7
-	onrQVAdn931/bxV6cIKF9j4zeMK+FbxKn7Q5fUnKwLL2K90tY8OJwMcbZLr/rXGf
-	KpGiH2iTo/zXiJdiown5314JCr6mIpCuiFq1bkUx2qw5+YjSX3R5N7w67KHRTwPu
-	TuyPF/j+G/P8AHi8F9tvbRbK08xfwscOB268IzjHkf8+j1JuUaSRSdnJFWph5Jxq
-	RHWltWrBrvjQjVjsP+LjJy2Fv2VBlri56W/vlOB97fJI7Mi2zXrefHagkogBKeEo
-	svwqcRDsoEjFnhK22aZ9Lw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716653780; x=
-	1716740180; bh=vo5cESYwtJO3692S7y2PJx/93ELiW5zdblFNPAgtTNM=; b=J
-	AeJcGYhFUjr2kUTyz/dqMj4rjYkGeK9OByeRbc7O+kHG/30Am+LZ5hxq5R+2hmUD
-	YG+aTIWj2D7+IOMnm0NjKYK71EzbRSuKEY9DTfLq9Zn8iIpxUqX+Co/HEkHXNj8A
-	jyhEhPMAeHX7yo0//f+oyf3ukUeTZ5yiuTWgK2hOTd3/xwJaaQPvDl/hxmggdCh1
-	DXtZilzXAlz7V/pxthCYLZ71xgXon0frYw/+CUbgI6AOJn2r8EV5zdb1MhpQLl6v
-	oSSs3rfGN1Ws8PhgLxVR51HB5BUFCGy5nYZKWK4wdHcuZoubRU7ToUBMGjpAkyNs
-	HzmIb0u77FbBIkF2EYsLw==
-X-ME-Sender: <xms:1A5SZsuO_tI7HKkwdURP4inKZ5YFfIJQrGHr9ErHE2rXaaW35kueyQ>
-    <xme:1A5SZpdKx38dQaOZ1ERlnLoof8p4pNqrXlRMyQHHw4i668FojyC5HzlQ-N6MBDyC_
-    rgPWY60w39LRNih>
-X-ME-Received: <xmr:1A5SZnzEciFzTiV53MBPaU7-saeFgmiP40VIQrB62y_IKvNSEv91PPYCgjAUhM5nGk9jtatwG_n_nZ8zrBEoFcRL-oeVVYhwLbsOQ5NdQXtqEkKONAgQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejtddgleehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudevleegleffffekudekgeev
-    lefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:1A5SZvN8mEk_G7vf6hp8sXSfNvairT72XvtOcZGxF0yw2QOZ3MkefA>
-    <xmx:1A5SZs9Jd3xorHGquOCaiL6CDaLSp8JGWhZQP4weKUzKXLSvyPzsjA>
-    <xmx:1A5SZnUD1TgmDr3Vd2PN75ubrFjPdh7hJI16fVhErgb3A-xo-2P24Q>
-    <xmx:1A5SZlcoR6yBnBhAW6-Q5-jMNLFmptkfDvceQZ6JbdEvSsFE_gToQA>
-    <xmx:1A5SZraCLLGo2eomrzi0XQdvh-Iun96fI78wofOVAQIMRcvruNdNZRSq>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 25 May 2024 12:16:20 -0400 (EDT)
-Message-ID: <42b358bd-b7c9-48fa-bfcf-5f71b14a92fb@fastmail.fm>
-Date: Sat, 25 May 2024 18:16:18 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B94171AF;
+	Sat, 25 May 2024 19:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.47.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716666970; cv=fail; b=PNCsbFxq1wfhjkoRqr9olBIRze2g208FFNrKtVxGO3BEp+7lbbyaFTM8ukI+5i/i3aUjHYrLlomstpUUm3B9ynMLfM7izfkzpLFMydcxcf4er8c6YONs71EX0nqHKYhuYcDeDXJhzpvLe8JOmn6x549bEpN7RtE6POFnUH1gbHs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716666970; c=relaxed/simple;
+	bh=ctgyF2VcEvsTxaxhfcYBangfvhE8tgP+7LFgA4eoazc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RsAelUmZaeSV0Jr5lDlF3DYYlUJhAu3zYlUQbqMG1cp8RD5SwtcXrk4Y1JzLnoxZdczYlfDc/3PAyaLwI6nXwr1phwNRupxO1wzc6p6P6fly7CUwc2T3SuXpMRrNfS7+U6cCUkx1TQbYDRxKkRNyq+G9r7jZByQ3M1IFn+9knOM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=h5VjKQYf; arc=fail smtp.client-ip=40.92.47.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QHX1FkfxaitylIqPYuColA0rgzlM3yb6KEyfPMSzESmgUx+8aLAYJXbbDHXDpzr9mQGFR3hRuoiSowDNwphzwHfPfJdtHVZgZQJx4fibzu/68JqEIhiXuG1Ioki1nTPRuotsd9NDQiaVQy+HfdtNAOiIyScus+6k0OXmO1pLdC+sraXHw24kfA+8uo2TYoLx2HjPwWPsfeIEzZBnDUEM1xlJeJduHDq4d7qV105fUhUFlfDPyEp2OJB9Ei3bPTX+STbw93OKaLR8Rsnu3J6cocN354ysYjxI/C6x/A0ONcxSXBP7eGx2zD9PpLc+UQo0aK4nBERkmmnpmCPbwlzRww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZFFGHZfSXjUjLGWLTB29119AwgZ7BDKkGImqR3jmaTU=;
+ b=Lh0uxCwFS9xBZJ1eAB5+Zph0KgKyAskxOqSeddF4iSmXJ++28nWHOZ/bRDcmp7tW0TAgCITamrTq5zlq73VacwgLeVaKmghZL86yRJ3/iPMMJWe8fH3tfMLeGV+i5P79f2BF2BHBqdB1xoqdgwoNe139rCqZTG//9yLbCUGMd5JGe+0MZnBv/BG4ien/76UTbvey/hQgoUXJKXcfWFCghHrds7yydgrRMOX7VsxW2Bb6yWGxlNgwAMrxrqRSFJXJV/U5oY3tmK/w/Q+luj3zb7Gwrxrvw2Jke3tg1IM5TIIpjJPngM/BWap5M9Zp0bcNEsPNA9kH7buxd7o1zGxTHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZFFGHZfSXjUjLGWLTB29119AwgZ7BDKkGImqR3jmaTU=;
+ b=h5VjKQYfeJXaL7ur7afPmz5MbIy83crOq1krA9iqbUX2GtKxc9HppdSEno0mM+AUUe0XlgO0CWc9ox+RLyP5vYqSxsEe1lLdClMWw9hn7hrqUwyfW5cxycuufCvoMfPvjDJURZ8RIffKE+e4Dd4sJ3izs4SHGM/tc249nqO5rmuPH6fcfU0GUGz1t+cHiOT80iqhMdwtr1/uDoLA+FIH2c8C6EoL93YGN/aoV8SZiF5WkkRggYQ2ha8c7AldATFRZT+VW1f10DqsaexyrqeawrhubEVEyRxtNdOGpneyxO90YM7SrpZYDFf76q1fcjk6IpoRPrcU5VI0541794N/1A==
+Received: from BL0PR03MB4161.namprd03.prod.outlook.com (2603:10b6:208:6e::27)
+ by MN2PR03MB5295.namprd03.prod.outlook.com (2603:10b6:208:1e7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.28; Sat, 25 May
+ 2024 19:56:04 +0000
+Received: from BL0PR03MB4161.namprd03.prod.outlook.com
+ ([fe80::c5d3:dd2:eb42:c5d7]) by BL0PR03MB4161.namprd03.prod.outlook.com
+ ([fe80::c5d3:dd2:eb42:c5d7%6]) with mapi id 15.20.7611.025; Sat, 25 May 2024
+ 19:56:04 +0000
+From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	arnd@arndb.de,
+	gregkh@suse.de,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@outlook.com>
+Subject: Re: [PATCH] libfs: fix implicitly cast in simple_attr_write_xsigned()
+Date: Sat, 25 May 2024 19:55:52 +0000
+Message-ID:
+ <BL0PR03MB41610A9302ADA6A5022A306BADF62@BL0PR03MB4161.namprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [ve1WjD7VnkK03IAOTDzKeXdaYxLFSL7J]
+X-ClientProxiedBy: CH0PR03CA0036.namprd03.prod.outlook.com
+ (2603:10b6:610:b3::11) To BL0PR03MB4161.namprd03.prod.outlook.com
+ (2603:10b6:208:6e::27)
+X-Microsoft-Original-Message-ID:
+ <20240525195552.8750-1-jiashengjiangcool@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fuse passthrough related circular locking dependency
-To: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <e67b7351-1739-437c-bea4-bb9373463339@fastmail.fm>
- <CAOQ4uxiObdGjKoNx2o2kXzbBKPc9EKRa6K7cQ0ny0P4LN_UuWw@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAOQ4uxiObdGjKoNx2o2kXzbBKPc9EKRa6K7cQ0ny0P4LN_UuWw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL0PR03MB4161:EE_|MN2PR03MB5295:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94f7d27e-fffe-4824-31ed-08dc7cf4b2fc
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|4295299012|3420499023|3430499023|440099019|3412199016|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	tY0ucaV94BG6iio5V/Hc6VqoU20f4lJdEekWRdvy8XdA+lsrlKP2t0+Q27vPQl6MaxLJDHpp/pENhYI+ywINzIiksvgAtA+OrWPQHbhad7gsMEdU84IlmxHjndq3bNP4/QSSOZpiInCYyEqXvfnJIASpMvONbwDbep61hRqYCWopNIj091NnzTpIcKVjamahsaQFo4UOX7l5MJdZr5HF8cmbiDMajNCoe/KqnApXxlxrkRGDvROJSicbobnYkzji4yn9+dJDfs+dRiThzhQELo11/muEMvw3/z3W3f5rNiesV/EAFCzIA1XQ3g9iFUWiCP1ioqsgMZXFmv+EYLSEIQW9E+fMaOONHJplqEaQWrTQZ5Fzj+yanQRoVYDIIoBMHzroIRl/BTQReuxjQ97jeCsY+8yznJrgkGodCjlZyo7CM/u2y1Y7nj4HGndtqwTTmxWG2nwVoTltkhRzVPu11NxKorBhAxtTyGbx22OeqnYmVi8dFCcVYkufoo/UERvb6xI2VSB9/O310AqxtohC83fy+3hl5Cne0eeVxnq+FwXPXWI5L4NWUjHDF6QAWwrAEE5hAhTeZARHuLQDVvv7TdWcyKkvEoit5H8Uz9NOnAQsbC6VNQDa3WWNecI8rJcT
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4Vy9FI1VGFkEJewJA4aRy/ifcirjw+QxM557Z5Fli2g1rTY59tYn83g/JJie?=
+ =?us-ascii?Q?SvGq9yLbynv7n7ZGPo3JOcVc0mLAIrNDS3Kcp6SX0Ad85wz0zm9RuNDtxY/Q?=
+ =?us-ascii?Q?IQll+UyYAUqZKHARYvNWkewZIVB1U4grWfpQD/hYzqBUn+ExS2SfTaM7KEel?=
+ =?us-ascii?Q?dHanXklum1ewQ5041VRDfWFcDez8BB/KTIzM90yDajZVH8VC3UrmcnKRL1+1?=
+ =?us-ascii?Q?8CVnadv33M50YXFdeO986hGTTTip+0xTWt/S8ZDTcsvOK3WRPldXYGG//Byk?=
+ =?us-ascii?Q?uY5hftnd4KXgvUfxuD8DOBUHDv2I1pTucJTkYs+FtGzf30Zh9Wa55qbeMAgK?=
+ =?us-ascii?Q?PhxBulyUqYZl53O4milT3vsP+AaEmk3GauHLWUkvnVE2qb4Ijkzorh1hV1Kx?=
+ =?us-ascii?Q?KRP0MMp//9i+7TdwwZa6KJwooQFgbfpNKkY30zTrg8OTQ6El8zI0RuMIgbpU?=
+ =?us-ascii?Q?20yoX4g9ntZv4tQvC4+0dhjrVjFM8RXr6Py6sEmtFvaeSFYns2t/1fVMyTHS?=
+ =?us-ascii?Q?+Bu6xpvAkVFDcHBqf8tY72YQso0PqfiBmUrJ3qw2/3hCFuhGIrO4DDfX6KHk?=
+ =?us-ascii?Q?lkqrUUtkrnM0hzdm4z74958WnWVZpX4RI7az2gRZYmborQIGBOkYulQJyQxp?=
+ =?us-ascii?Q?bl3P6dXtNS0YjpBrfq9Y3s/s/Lw5i1sFmPgxxpyV/SdzXTbBlyKXLiz5cyLs?=
+ =?us-ascii?Q?vyX9k/woYv0TObuyIMGQkkl52R4S9JR0jRrdINJQbixZYjsHM8V5NfzVx4iR?=
+ =?us-ascii?Q?emPPhxZiLsF7cfPp1sd/l1/QEnMatxvBa1uwPWSi0eSWymotPbRE4mP1ufLp?=
+ =?us-ascii?Q?9ZGnG80Wa0BKH5g3dFQULIQ2SzIHdVcgAEYPXRI4OLFW5lqBwlCIcPfvehNc?=
+ =?us-ascii?Q?uy1hRZWXWhfc0rgge5LrZ39WY5DjuCzYdB2yJPt7TfbVBICz+6c8wjAYHCmo?=
+ =?us-ascii?Q?oO96RsA17WXRG8fEfJ6lGoIue0TpSk95ou9zQ5YEHXo03mqcRfyjYPFmiIEv?=
+ =?us-ascii?Q?FnrJWjn91UgbUcQYSdOPxxMk+0ZWvC+OIsg5mCKvkcB+fRYbx6saYC8dk2cb?=
+ =?us-ascii?Q?WY3yCCwZQwEckw9G9/+fklllYZtsb0mEIqQCdSr4mkSfqi7St8lLO3PElB8X?=
+ =?us-ascii?Q?WCwnqIOKeGs7bYzBlGbdIbIuMSLEsEeDF4ponu9jDNKusBYAmdrtZo+x/jMb?=
+ =?us-ascii?Q?/PzQTP+v4YLnoiJMfdRGCh2gjyuf2DVjyMYkay23Z7OVlN8EfEK1ihKg/2P1?=
+ =?us-ascii?Q?Mn2Kumr+O7NlktjhW8qS?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94f7d27e-fffe-4824-31ed-08dc7cf4b2fc
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR03MB4161.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2024 19:56:04.8225
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR03MB5295
 
-
-
-On 5/25/24 17:40, Amir Goldstein wrote:
-> On Thu, May 23, 2024 at 12:59 AM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->>
->> Amir, Miklos,
->>
->> I'm preparing fuse-over-io-uring RFC2 and running xfstests on
->> 6.9. First run is without io-uring (patches applied, though) and
->> generic/095 reports a circular lock dependency.
->>
->> (I probably should disable passthrough in my uring patches
->> or add an iteration without it).
->>
->> iter_file_splice_write
->>     pipe_lock(pipe)                    --> pipe first
->>     ...
->>     call_write_iter / fuse_file_write_iter
->>     fuse_file_write_iter
->>         fuse_direct_write_iter
->>            fuse_dio_lock
->>               inode_lock_shared        --> then inode lock
->>
->>
->> and
->>
->> do_splice
->>    fuse_passthrough_splice_write       --> inode lock first
->>        backing_file_splice_write
->>            iter_file_splice_write
->>                pipe_lock(pipe);        --> then pipe lock
->>
->>
+> On Wed, May 15, 2024 at 03:17:25PM +0000, Jiasheng Jiang wrote:
+>> Return 0 to indicate failure and return "len" to indicate success.
+>> It was hard to distinguish success or failure if "len" equals the error
+>> code after the implicit cast.
+>> Moreover, eliminating implicit cast is a better practice.
 > 
-> Not sure, but this looks like the reason that ovl_splice_write() was added
-> (see comment above it).
+> According to whom?
 > 
-> I think that fuse_passthrough_splice_write() and
-> fuse_passthrough_write_iter() are probably deadlock safe against each other,
-> so I guess we could teach lockdep that passthrough inodes are a different class
-> than non-passthrough inodes, but I think that is not easy to change
-> mid inode lifetime.
-> 
-> Also, I think that mixed passthrough/dio mode may be breaking this
-> order for a given
-> inode - I cannot wrap my head around it. Will need Miklos here.
-> 
-> Question:
-> mmap+dio does not make sense so we let passthrough overrule dio for
-> mmap in mixed mode.
-> Does splice+dio make sense? or can we also force passthrough splice
-> when inode has a backing file?
-> 
-> Another thing that we will need to do is annotate different lockdep class
-> for nested fuse passthrough as we did in ovl_lockdep_annotate_inode_mutex_key().
-> Lots of fun...
 
-I'm just in the middle of other code - I don't want to get distracted
-too much right now, will look at it in more detail later.
-My test had totally locked up up - lock annotation is not enough here.
-From the traces and from the test this is mixed dio/page cache IO - I
-think that is the same test that had found issues with mmap and
-FOPEN_DIRECT_IO in winter.
+Programmers can easily overlook implicit casts, leading to unknown
+behavior (e.g., this bug).
+Converting implicit casts to explicit casts can help prevent future
+errors.
 
+> Merits of your ex cathedra claims aside, you do realize that functions
+> have calling conventions because they are, well, called, right?
+> And changing the value returned in such and such case should be
+> accompanied with the corresponding change in the _callers_.
+> 
+> Al, wondering if somebody had decided to play with LLM...
 
-Thanks,
-Bernd
+As the comment shows that "ret = len; /* on success, claim we got the
+whole input */", the return value should be checked to determine whether
+it equals "len".
+
+Moreover, if "len" is 0, the previous copy_from_user() will fail and
+return an error.
+Therefore, 0 is an illegal value for "len". Besides, in the linux kernel,
+all the callers of simple_attr_write_xsigned() return the return value of
+simple_attr_write_xsigned().
+
+-Jiasheng
 
