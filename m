@@ -1,586 +1,823 @@
-Return-Path: <linux-fsdevel+bounces-20151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9478CEE98
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 12:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1773A8CEEC8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 13:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2BC281B8E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 10:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917F21F21112
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2024 11:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26E42AF16;
-	Sat, 25 May 2024 10:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34083CF4E;
+	Sat, 25 May 2024 11:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfuAd0mS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Piwu36B0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF518F66
-	for <linux-fsdevel@vger.kernel.org>; Sat, 25 May 2024 10:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E64B660;
+	Sat, 25 May 2024 11:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716634536; cv=none; b=pcGni19NwoG5U+2ur+nbmHJ3ZLaKaBiXlM5U9V5AX6ukdx0xhhPYLuEw+AMAMdlxWl3ZA9OMYOFsDwiWNRgJwwN+/n1xcTsNVo4uu13gHVJJbHM3SNtMumjN8k/wt+DbqgxuXq11B5t8SugWp5qv4rsRoAhEEXkBep+35lN5MZw=
+	t=1716638038; cv=none; b=qYwZ1c/FpkdUiMKRjScSWJ59PgxpRiixAx/6hzttYGllyfXc6ddDOclJPYixCIfDZk4nmMCSbID6FZqrhdITNCmQwVay+wt8dVMVCKt+s5UZYsAZnMJOKsVyp0VzOyEv+FFm/IIxsd1/qU9Gz8jdsKNTy0HLFToL/EfqblZ94Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716634536; c=relaxed/simple;
-	bh=S4inY98R2DeNuNeO3Ebz00g8xb+whkQdpc+NSAAwYoA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qrhmvDFYsk6lVkhOrcZmmquLx1tDiaSCN6iC6uSG5XJa7S4xe4A2ICOfTtrGoRKD9yyCoZGLUSDhsfiDNuE8q1rPklItWQ/VodolARdSHCWPdXqtQE6zjP/jsgO9E3FI9YUTdO6sFJSQfdp253zIVSKgpAbA88S9aD2pZcXP4mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfuAd0mS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 608D2C2BD11;
-	Sat, 25 May 2024 10:55:35 +0000 (UTC)
+	s=arc-20240116; t=1716638038; c=relaxed/simple;
+	bh=iffO3tGrRnH2Mjp2Mx8aBI94e5YrL+GUBGqMm/x9HY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Db8gMnGzPw0/CpQ2uRzoBbqKYDF1RJQ/VLx0XWVE0eVvn8Nz0LcOvGLevrqMoH4nHll8wsXTixz4aZy7Ryzt+bxNhbJjDifHrWAdDmvEiBfVNXDBggurYQKxdXwPuDn5qsLXWLtAOoQ5tKLZUrE5JgJxOz4Aj+vQDMKThvcMh7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Piwu36B0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C2F0C2BD11;
+	Sat, 25 May 2024 11:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716634535;
-	bh=S4inY98R2DeNuNeO3Ebz00g8xb+whkQdpc+NSAAwYoA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SfuAd0mSs7oUeUb+j8KUt1agd6BRZZeyKv3o01mfeAa6qvIF/IEn2dqYbY5we/oo5
-	 eN+P3bsvqzKWaVaMsT6crMZIihnqddoJMal3QLPNooUYXSKbC+GxqZ7uBQvp/V+1wf
-	 6gyiLRjhLL3BQupQQXpwVk46pbb9N3vU30Raj/0z0aXPKSM7r/E7jeMubmOBhgWr3U
-	 XT2QbCk7dEO5++HUKUHNoaYyk7VrG+umkfZiOvQGaphZcaWYS6zEzwfPP6vR6x9YJ0
-	 nG3PsoGXDrIA2XjCpVJJD0kA99IiXq14CVSucD/pFWFBTKiU6zocfe5UktG1mt3tmn
-	 mdnKH2Ext1nDQ==
-Message-ID: <fc137092da8d872454df475d900d94ea6823f6da.camel@kernel.org>
-Subject: Re: [PATCH RFC] : fhandle: relax open_by_handle_at() permission
- checks
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Amir Goldstein
- <amir73il@gmail.com>,  Chuck Lever <chuck.lever@oracle.com>, Aleksa Sarai
- <cyphar@cyphar.com>
-Cc: linux-fsdevel@vger.kernel.org
-Date: Sat, 25 May 2024 06:55:34 -0400
-In-Reply-To: <20240524-vfs-open_by_handle_at-v1-1-3d4b7d22736b@kernel.org>
-References: <20240524-vfs-open_by_handle_at-v1-1-3d4b7d22736b@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40app1) 
+	s=k20201202; t=1716638037;
+	bh=iffO3tGrRnH2Mjp2Mx8aBI94e5YrL+GUBGqMm/x9HY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Piwu36B0Ah/xr/Ig09HnNZqF4bthUF9Mb64hdSTKR/fCEQJf1rTqnGhTAnJv8r03L
+	 dIor2EqqKOTUVhWD5m2ir7+I6JMsI47PXm+RlKISE2Pjy1owKyeJI/Z6xaGSgPUFBH
+	 Yb7HLP0m1ZfprBeIeZumYXWylPMMnpqMamlS+WitzKsKlnyLS8qa5z4WuPW2aSE3s/
+	 n6uvyr1t6bIjPq+GA1mcDlxruQ9X6AdYCfbBD03ytA2TRothsM3z/aKqQnsCQiIj5G
+	 BLqy88E7bOG33pcr7y+bTnI6v8mrMYWj8OfxpB3CySzmnuklTW9ZhS+Rm/X48zB4zy
+	 Yjhkn8cRJzdSw==
+Date: Sat, 25 May 2024 13:53:49 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, gary@garyguo.net, 
+	gregkh@linuxfoundation.org, joel@joelfernandes.org, keescook@chromium.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, viro@zeniv.linux.org.uk, 
+	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
+Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
+Message-ID: <20240525-dompteur-darfst-79a1b275e7f3@brauner>
+References: <20240524-anhieb-bundesweit-e1b0227fd3ed@brauner>
+ <20240524191714.2950286-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240524191714.2950286-1-aliceryhl@google.com>
 
-On Fri, 2024-05-24 at 12:19 +0200, Christian Brauner wrote:
-> A current limitation of open_by_handle_at() is that it's currently not po=
-ssible
-> to use it from within containers at all because we require CAP_DAC_READ_S=
-EARCH
-> in the initial namespace. That's unfortunate because there are scenarios =
-where
-> using open_by_handle_at() from within containers.
->=20
-> Two examples:
->=20
-> (1) cgroupfs allows to encode cgroups to file handles and reopen them wit=
-h
->     open_by_handle_at().
-> (2) Fanotify allows placing filesystem watches they currently aren't usab=
-le in
->     containers because the returned file handles cannot be used.
->=20
-> Here's a proposal for relaxing the permission check for open_by_handle_at=
-().
->=20
-> (1) Opening file handles when the caller has privileges over the filesyst=
-em
->     (1.1) The caller has an unobstructed view of the filesystem.
->     (1.2) The caller has permissions to follow a path to the file handle.
->=20
-> This doesn't address the problem of opening a file handle when only a por=
-tion
-> of a filesystem is exposed as is common in containers by e.g., bind-mount=
-ing a
-> subtree. The proposal to solve this use-case is:
->=20
-> (2) Opening file handles when the caller has privileges over a subtree
->     (2.1) The caller is able to reach the file from the provided mount fd=
-.
->     (2.2) The caller has permissions to construct an unobstructed path to=
- the
->           file handle.
->     (2.3) The caller has permissions to follow a path to the file handle.
->
-> The relaxed permission checks are currently restricted to directory file
-> handles which are what both cgroupfs and fanotify need. Handling disconne=
-cted
-> non-directory file handles would lead to a potentially non-deterministic =
-api.
-> If a disconnected non-directory file handle is provided we may fail to de=
-code
-> a valid path that we could use for permission checking. That in itself is=
-n't a
-> problem as we would just return EACCES in that case. However, confusion m=
-ay
-> arise if a non-disconnected dentry ends up in the cache later and those o=
-pening
-> the file handle would suddenly succeed.
->=20
+On Fri, May 24, 2024 at 07:17:13PM +0000, Alice Ryhl wrote:
+> On Fri, May 24, 2024 at 6:12 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, May 17, 2024 at 09:30:36AM +0000, Alice Ryhl wrote:
+> > > From: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > >
+> > > This abstraction makes it possible to manipulate the open files for a
+> > > process. The new `File` struct wraps the C `struct file`. When accessing
+> > > it using the smart pointer `ARef<File>`, the pointer will own a
+> > > reference count to the file. When accessing it as `&File`, then the
+> > > reference does not own a refcount, but the borrow checker will ensure
+> > > that the reference count does not hit zero while the `&File` is live.
+> > >
+> > > Since this is intended to manipulate the open files of a process, we
+> > > introduce an `fget` constructor that corresponds to the C `fget`
+> > > method. In future patches, it will become possible to create a new fd in
+> > > a process and bind it to a `File`. Rust Binder will use these to send
+> > > fds from one process to another.
+> > >
+> > > We also provide a method for accessing the file's flags. Rust Binder
+> > > will use this to access the flags of the Binder fd to check whether the
+> > > non-blocking flag is set, which affects what the Binder ioctl does.
+> > >
+> > > This introduces a struct for the EBADF error type, rather than just
+> > > using the Error type directly. This has two advantages:
+> > > * `File::fget` returns a `Result<ARef<File>, BadFdError>`, which the
+> > >   compiler will represent as a single pointer, with null being an error.
+> > >   This is possible because the compiler understands that `BadFdError`
+> > >   has only one possible value, and it also understands that the
+> > >   `ARef<File>` smart pointer is guaranteed non-null.
+> > > * Additionally, we promise to users of the method that the method can
+> > >   only fail with EBADF, which means that they can rely on this promise
+> > >   without having to inspect its implementation.
+> > > That said, there are also two disadvantages:
+> > > * Defining additional error types involves boilerplate.
+> > > * The question mark operator will only utilize the `From` trait once,
+> > >   which prevents you from using the question mark operator on
+> > >   `BadFdError` in methods that return some third error type that the
+> > >   kernel `Error` is convertible into. (However, it works fine in methods
+> > >   that return `Error`.)
+> > >
+> > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> > > Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+> > > Reviewed-by: Trevor Gross <tmgross@umich.edu>
+> > > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > ---
+> > >  fs/file.c                       |   7 +
+> > >  rust/bindings/bindings_helper.h |   2 +
+> > >  rust/helpers.c                  |   7 +
+> > >  rust/kernel/file.rs             | 330 ++++++++++++++++++++++++++++++++++++++++
+> > >  rust/kernel/lib.rs              |   1 +
+> > >  rust/kernel/types.rs            |   8 +
+> > >  6 files changed, 355 insertions(+)
+> > >
+> > > diff --git a/fs/file.c b/fs/file.c
+> > > index 3b683b9101d8..f2eab5fcb87f 100644
+> > > --- a/fs/file.c
+> > > +++ b/fs/file.c
+> > > @@ -1127,6 +1127,13 @@ EXPORT_SYMBOL(task_lookup_next_fdget_rcu);
+> > >   *
+> > >   * The fput_needed flag returned by fget_light should be passed to the
+> > >   * corresponding fput_light.
+> > > + *
+> > > + * (As an exception to rule 2, you can call filp_close between fget_light and
+> > > + * fput_light provided that you capture a real refcount with get_file before
+> > > + * the call to filp_close, and ensure that this real refcount is fput *after*
+> > > + * the fput_light call.)
+> > > + *
+> > > + * See also the documentation in rust/kernel/file.rs.
+> > >   */
+> > >  static unsigned long __fget_light(unsigned int fd, fmode_t mask)
+> > >  {
+> > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> > > index ddb5644d4fd9..541afef7ddc4 100644
+> > > --- a/rust/bindings/bindings_helper.h
+> > > +++ b/rust/bindings/bindings_helper.h
+> > > @@ -9,6 +9,8 @@
+> > >  #include <kunit/test.h>
+> > >  #include <linux/errname.h>
+> > >  #include <linux/ethtool.h>
+> > > +#include <linux/file.h>
+> > > +#include <linux/fs.h>
+> > >  #include <linux/jiffies.h>
+> > >  #include <linux/mdio.h>
+> > >  #include <linux/phy.h>
+> > > diff --git a/rust/helpers.c b/rust/helpers.c
+> > > index 4c8b7b92a4f4..5545a00560d1 100644
+> > > --- a/rust/helpers.c
+> > > +++ b/rust/helpers.c
+> > > @@ -25,6 +25,7 @@
+> > >  #include <linux/build_bug.h>
+> > >  #include <linux/err.h>
+> > >  #include <linux/errname.h>
+> > > +#include <linux/fs.h>
+> > >  #include <linux/mutex.h>
+> > >  #include <linux/refcount.h>
+> > >  #include <linux/sched/signal.h>
+> > > @@ -157,6 +158,12 @@ void rust_helper_init_work_with_key(struct work_struct *work, work_func_t func,
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(rust_helper_init_work_with_key);
+> > >
+> > > +struct file *rust_helper_get_file(struct file *f)
+> > > +{
+> > > +     return get_file(f);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(rust_helper_get_file);
+> > > +
+> > >  /*
+> > >   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
+> > >   * use it in contexts where Rust expects a `usize` like slice (array) indices.
+> > > diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+> > > new file mode 100644
+> > > index 000000000000..ad881e67084c
+> > > --- /dev/null
+> > > +++ b/rust/kernel/file.rs
+> > > @@ -0,0 +1,330 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +//! Files and file descriptors.
+> > > +//!
+> > > +//! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h) and
+> > > +//! [`include/linux/file.h`](srctree/include/linux/file.h)
+> > > +
+> > > +use crate::{
+> > > +    bindings,
+> > > +    error::{code::*, Error, Result},
+> > > +    types::{ARef, AlwaysRefCounted, Opaque},
+> > > +};
+> > > +use core::{marker::PhantomData, ptr};
+> > > +
+> > > +/// Flags associated with a [`File`].
+> > > +pub mod flags {
+> > > +    /// File is opened in append mode.
+> > > +    pub const O_APPEND: u32 = bindings::O_APPEND;
+> > > +
+> > > +    /// Signal-driven I/O is enabled.
+> > > +    pub const O_ASYNC: u32 = bindings::FASYNC;
+> > > +
+> > > +    /// Close-on-exec flag is set.
+> > > +    pub const O_CLOEXEC: u32 = bindings::O_CLOEXEC;
+> > > +
+> > > +    /// File was created if it didn't already exist.
+> > > +    pub const O_CREAT: u32 = bindings::O_CREAT;
+> > > +
+> > > +    /// Direct I/O is enabled for this file.
+> > > +    pub const O_DIRECT: u32 = bindings::O_DIRECT;
+> > > +
+> > > +    /// File must be a directory.
+> > > +    pub const O_DIRECTORY: u32 = bindings::O_DIRECTORY;
+> > > +
+> > > +    /// Like [`O_SYNC`] except metadata is not synced.
+> > > +    pub const O_DSYNC: u32 = bindings::O_DSYNC;
+> > > +
+> > > +    /// Ensure that this file is created with the `open(2)` call.
+> > > +    pub const O_EXCL: u32 = bindings::O_EXCL;
+> > > +
+> > > +    /// Large file size enabled (`off64_t` over `off_t`).
+> > > +    pub const O_LARGEFILE: u32 = bindings::O_LARGEFILE;
+> > > +
+> > > +    /// Do not update the file last access time.
+> > > +    pub const O_NOATIME: u32 = bindings::O_NOATIME;
+> > > +
+> > > +    /// File should not be used as process's controlling terminal.
+> > > +    pub const O_NOCTTY: u32 = bindings::O_NOCTTY;
+> > > +
+> > > +    /// If basename of path is a symbolic link, fail open.
+> > > +    pub const O_NOFOLLOW: u32 = bindings::O_NOFOLLOW;
+> > > +
+> > > +    /// File is using nonblocking I/O.
+> > > +    pub const O_NONBLOCK: u32 = bindings::O_NONBLOCK;
+> > > +
+> > > +    /// File is using nonblocking I/O.
+> > > +    ///
+> > > +    /// This is effectively the same flag as [`O_NONBLOCK`] on all architectures
+> > > +    /// except SPARC64.
+> > > +    pub const O_NDELAY: u32 = bindings::O_NDELAY;
+> > > +
+> > > +    /// Used to obtain a path file descriptor.
+> > > +    pub const O_PATH: u32 = bindings::O_PATH;
+> > > +
+> > > +    /// Write operations on this file will flush data and metadata.
+> > > +    pub const O_SYNC: u32 = bindings::O_SYNC;
+> > > +
+> > > +    /// This file is an unnamed temporary regular file.
+> > > +    pub const O_TMPFILE: u32 = bindings::O_TMPFILE;
+> > > +
+> > > +    /// File should be truncated to length 0.
+> > > +    pub const O_TRUNC: u32 = bindings::O_TRUNC;
+> > > +
+> > > +    /// Bitmask for access mode flags.
+> > > +    ///
+> > > +    /// # Examples
+> > > +    ///
+> > > +    /// ```
+> > > +    /// use kernel::file;
+> > > +    /// # fn do_something() {}
+> > > +    /// # let flags = 0;
+> > > +    /// if (flags & file::flags::O_ACCMODE) == file::flags::O_RDONLY {
+> > > +    ///     do_something();
+> > > +    /// }
+> > > +    /// ```
+> > > +    pub const O_ACCMODE: u32 = bindings::O_ACCMODE;
+> > > +
+> > > +    /// File is read only.
+> > > +    pub const O_RDONLY: u32 = bindings::O_RDONLY;
+> > > +
+> > > +    /// File is write only.
+> > > +    pub const O_WRONLY: u32 = bindings::O_WRONLY;
+> > > +
+> > > +    /// File can be both read and written.
+> > > +    pub const O_RDWR: u32 = bindings::O_RDWR;
+> > > +}
+> > > +
+> > > +/// Compile-time information for keeping track of how a [`File`] is shared.
+> > > +///
+> > > +/// The `fdget_pos` method can be used to access the file's position without taking `f_pos_lock`,
+> > > +/// as long as the file is not shared with any other threads. During such calls to `fdget_pos`, the
+> > > +/// file must remain non-shared, so it must not be possible to move the file to another thread. For
+> > > +/// example, if the file is moved to another thread, then it could be passed to `fd_install`, at
+> > > +/// which point the remote process could touch the file position.
+> > > +///
+> > > +/// The share mode only keeps track of whether there are active `fdget_pos` calls that did not take
+> > > +/// the `f_pos_lock`, and does not keep track of `fdget` calls. This is okay because `fdget` does
+> > > +/// not care about the refcount of the underlying `struct file`; as long as the entry in the
+> > > +/// current thread's fd table does not get removed, it's okay to share the file. For example,
+> > > +/// `fd_install`ing the `struct file` into another process is okay during an `fdget` call, because
+> > > +/// the other process can't touch the fd table of the original process.
+> > > +mod share_mode {
+> > > +    /// Trait implemented by the two sharing modes that a file might have.
+> > > +    pub trait FileShareMode {}
+> > > +
+> > > +    /// Represents a file for which there might be an active call to `fdget_pos` that did not take
+> > > +    /// the `f_pos_lock` lock.
+> > > +    pub enum MaybeFdgetPos {}
+> > > +
+> > > +    /// Represents a file for which it is known that all active calls to `fdget_pos` (if any) took
+> > > +    /// the `f_pos_lock` lock.
+> > > +    pub enum NoFdgetPos {}
+> > > +
+> > > +    impl FileShareMode for MaybeFdgetPos {}
+> > > +    impl FileShareMode for NoFdgetPos {}
+> > > +}
+> > > +pub use self::share_mode::{FileShareMode, MaybeFdgetPos, NoFdgetPos};
+> > > +
+> > > +/// Wraps the kernel's `struct file`.
+> > > +///
+> > > +/// This represents an open file rather than a file on a filesystem. Processes generally reference
+> > > +/// open files using file descriptors. However, file descriptors are not the same as files. A file
+> > > +/// descriptor is just an integer that corresponds to a file, and a single file may be referenced
+> > > +/// by multiple file descriptors.
+> > > +///
+> > > +/// # Refcounting
+> > > +///
+> > > +/// Instances of this type are reference-counted. The reference count is incremented by the
+> > > +/// `fget`/`get_file` functions and decremented by `fput`. The Rust type `ARef<File>` represents a
+> > > +/// pointer that owns a reference count on the file.
+> > > +///
+> > > +/// Whenever a process opens a file descriptor (fd), it stores a pointer to the file in its fd
+> > > +/// table (`struct files_struct`). This pointer owns a reference count to the file, ensuring the
+> > > +/// file isn't prematurely deleted while the file descriptor is open. In Rust terminology, the
+> > > +/// pointers in `struct files_struct` are `ARef<File>` pointers.
+> > > +///
+> > > +/// ## Light refcounts
+> > > +///
+> > > +/// Whenever a process has an fd to a file, it may use something called a "light refcount" as a
+> > > +/// performance optimization. Light refcounts are acquired by calling `fdget` and released with
+> > > +/// `fdput`. The idea behind light refcounts is that if the fd is not closed between the calls to
+> > > +/// `fdget` and `fdput`, then the refcount cannot hit zero during that time, as the `struct
+> > > +/// files_struct` holds a reference until the fd is closed. This means that it's safe to access the
+> > > +/// file even if `fdget` does not increment the refcount.
+> > > +///
+> > > +/// The requirement that the fd is not closed during a light refcount applies globally across all
+> > > +/// threads - not just on the thread using the light refcount. For this reason, light refcounts are
+> > > +/// only used when the `struct files_struct` is not shared with other threads, since this ensures
+> > > +/// that other unrelated threads cannot suddenly start using the fd and close it. Therefore,
+> > > +/// calling `fdget` on a shared `struct files_struct` creates a normal refcount instead of a light
+> > > +/// refcount.
+> > > +///
+> > > +/// Light reference counts must be released with `fdput` before the system call returns to
+> > > +/// userspace. This means that if you wait until the current system call returns to userspace, then
+> > > +/// all light refcounts that existed at the time have gone away.
+> >
+> > You obviously are aware of this but I'm just spelling it out. Iirc,
+> > there will practically only ever be one light refcount per file.
+> >
+> > For a light refcount to be used we know that the file descriptor table
+> > isn't shared with any other task. So there are no threads that could
+> > concurrently access the file descriptor table. We also know that the
+> > file descriptor table cannot become shared while we're in system call
+> > context because the caller can't create new threads and they can't
+> > unshare the file descriptor table.
+> >
+> > So there's only one fdget() caller (Yes, they could call fdget()
+> > multiple times and then have to do fdput() multiple times but that's a
+> > level of weirdness that we don't need to worry about.).
+> 
+> Hmm. Is it not the case that different processes with different file
+> descriptor tables could reference the same underlying `struct file` and
+> both use light refcounts to do so, as long as each fd table is not
+> shared? So there could be multiple light refcounts to the same `struct
+> file` at the same time on different threads.
 
-The rules here seem sane to me, and I support making it simpler for
-unprivileged users to figure out filehandles.
+That's correct.
+But I misread what you were trying to say then. I thought you were
+talking about multiple light references from the same thread which is
+rather rare and should only happen in system calls that take two fds.
 
-> * It's potentially possible to use timing information (side-channel) to i=
-nfer
->   whether a given inode exists. I don't think that's particularly
->   problematic. Thanks to Jann for bringing this to my attention.
->=20
-> * An unrelated note (IOW, these are thoughts that apply to
->   open_by_handle_at() generically and are unrelated to the changes here):
->   Jann pointed out that we should verify whether deleted files could
->   potentially be reopened through open_by_handle_at(). I don't think that=
-'s
->   possible though.
->=20
->   Another potential thing to check is whether open_by_handle_at() could b=
-e
->   abused to open internal stuff like memfds or gpu stuff. I don't think s=
-o
->   but I haven't had the time to completely verify this.
->=20
-> This dates back to discussions Amir and I had quite some time ago and tha=
-nks to
-> him for providing a lot of details around the export code and related pat=
-ches!
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/exportfs/expfs.c      |   9 ++-
->  fs/fhandle.c             | 162 ++++++++++++++++++++++++++++++++++++-----=
-------
->  fs/mount.h               |   1 +
->  fs/namespace.c           |   2 +-
->  fs/nfsd/nfsfh.c          |   2 +-
->  include/linux/exportfs.h |   1 +
->  6 files changed, 137 insertions(+), 40 deletions(-)
->=20
-> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-> index 07ea3d62b298..b23b052df715 100644
-> --- a/fs/exportfs/expfs.c
-> +++ b/fs/exportfs/expfs.c
-> @@ -427,7 +427,7 @@ EXPORT_SYMBOL_GPL(exportfs_encode_fh);
-> =20
->  struct dentry *
->  exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len=
-,
-> -		       int fileid_type,
-> +		       int fileid_type, bool directory,
->  		       int (*acceptable)(void *, struct dentry *),
->  		       void *context)
->  {
-> @@ -445,6 +445,11 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct =
-fid *fid, int fh_len,
->  	if (IS_ERR_OR_NULL(result))
->  		return result;
-> =20
-> +	if (directory && !d_is_dir(result)) {
-> +		err =3D -ENOTDIR;
-> +		goto err_result;
-> +	}
-> +
->  	/*
->  	 * If no acceptance criteria was specified by caller, a disconnected
->  	 * dentry is also accepatable. Callers may use this mode to query if
-> @@ -581,7 +586,7 @@ struct dentry *exportfs_decode_fh(struct vfsmount *mn=
-t, struct fid *fid,
->  {
->  	struct dentry *ret;
-> =20
-> -	ret =3D exportfs_decode_fh_raw(mnt, fid, fh_len, fileid_type,
-> +	ret =3D exportfs_decode_fh_raw(mnt, fid, fh_len, fileid_type, false,
->  				     acceptable, context);
->  	if (IS_ERR_OR_NULL(ret)) {
->  		if (ret =3D=3D ERR_PTR(-ENOMEM))
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 8a7f86c2139a..c6ed832ddbb8 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -115,88 +115,174 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const=
- char __user *, name,
->  	return err;
->  }
-> =20
-> -static struct vfsmount *get_vfsmount_from_fd(int fd)
-> +static int get_path_from_fd(int fd, struct path *root)
+But what you're talking about is the same struct file being present in
+separate file descriptor tables and referenced multiple times from
+different threads so in that sense we have multiple light references.
+And that's obviously correct.
 
-nit: you could return struct path here and just return an ERR_PTR if
-there is an error.
+> 
+> And this does *not* apply to `fdget_pos`, which checks the refcount of
+> the `struct file` instead of the refcount of the fd table.
 
->  {
-> -	struct vfsmount *mnt;
-> -
->  	if (fd =3D=3D AT_FDCWD) {
->  		struct fs_struct *fs =3D current->fs;
->  		spin_lock(&fs->lock);
-> -		mnt =3D mntget(fs->pwd.mnt);
-> +		*root =3D fs->pwd;
-> +		path_get(root);
->  		spin_unlock(&fs->lock);
->  	} else {
->  		struct fd f =3D fdget(fd);
->  		if (!f.file)
-> -			return ERR_PTR(-EBADF);
-> -		mnt =3D mntget(f.file->f_path.mnt);
-> +			return -EBADF;
-> +		*root =3D f.file->f_path;
-> +		path_get(root);
->  		fdput(f);
->  	}
-> -	return mnt;
-> +
-> +	return 0;
->  }
-> =20
-> +enum handle_to_path_flags {
-> +	HANDLE_CHECK_PERMS   =3D (1 << 0),
-> +	HANDLE_CHECK_SUBTREE =3D (1 << 1),
-> +};
-> +
-> +struct handle_to_path_ctx {
-> +	struct path root;
-> +	enum handle_to_path_flags flags;
-> +	bool directory;
-> +};
-> +
->  static int vfs_dentry_acceptable(void *context, struct dentry *dentry)
->  {
-> -	return 1;
-> +	struct handle_to_path_ctx *ctx =3D context;
-> +	struct user_namespace *user_ns =3D current_user_ns();
-> +	struct dentry *d, *root =3D ctx->root.dentry;
-> +	struct mnt_idmap *idmap =3D mnt_idmap(ctx->root.mnt);
-> +	int retval =3D 0;
-> +
-> +	if (!root)
-> +		return 1;
-> +
-> +	/* Old permission model with global CAP_DAC_READ_SEARCH. */
-> +	if (!ctx->flags)
-> +		return 1;
-> +
-> +	/*
-> +	 * It's racy as we're not taking rename_lock but we're able to ignore
-> +	 * permissions and we just need an approximation whether we were able
-> +	 * to follow a path to the file.
-> +	 */
-> +	d =3D dget(dentry);
-> +	while (d !=3D root && !IS_ROOT(d)) {
-> +		struct dentry *parent =3D dget_parent(d);
-> +
-> +		/*
-> +		 * We know that we have the ability to override DAC permissions
-> +		 * as we've verified this earlier via CAP_DAC_READ_SEARCH. But
-> +		 * we also need to make sure that there aren't any unmapped
-> +		 * inodes in the path that would prevent us from reaching the
-> +		 * file.
-> +		 */
-> +		if (!privileged_wrt_inode_uidgid(user_ns, idmap,
-> +						 d_inode(parent))) {
-> +			dput(d);
-> +			dput(parent);
-> +			return retval;
-> +		}
-> +
-> +		dput(d);
-> +		d =3D parent;
-> +	}
+I have only skimmed the replies down thread so far but I saw that this
+has mostly been clarified. The reference counting between fdget() and
+fdget_pos() is identical. fdget_pos() calls fdget() after all.
 
-Note that the above will be quite expensive on some filesystems,
-particularly if there is a deep path. We've done a similar sort of
-checking for a long time in NFS-land, and we really try to avoid it
-when possible. Of course there, we do have to also check that the
-relevant dentry is exported, which is a bit more costly.
+What's different is that if the file is already shared among different
+processes then even if a light reference was taken by the caller because
+it doesn't share the file descriptor table fdget_pos() may still acquire
+the f_pos_lock because the struct file is referenced by multiple
+processes.
 
-> +
-> +	if (!(ctx->flags & HANDLE_CHECK_SUBTREE) || d =3D=3D root)
-> +		retval =3D 1;
-> +
-> +	dput(d);
-> +	return retval;
->  }
-> =20
->  static int do_handle_to_path(int mountdirfd, struct file_handle *handle,
-> -			     struct path *path)
-> +			     struct path *path, struct handle_to_path_ctx *ctx)
->  {
-> -	int retval =3D 0;
->  	int handle_dwords;
-> +	struct vfsmount *mnt =3D ctx->root.mnt;
-> =20
-> -	path->mnt =3D get_vfsmount_from_fd(mountdirfd);
-> -	if (IS_ERR(path->mnt)) {
-> -		retval =3D PTR_ERR(path->mnt);
-> -		goto out_err;
-> -	}
->  	/* change the handle size to multiple of sizeof(u32) */
->  	handle_dwords =3D handle->handle_bytes >> 2;
-> -	path->dentry =3D exportfs_decode_fh(path->mnt,
-> +	path->dentry =3D exportfs_decode_fh_raw(mnt,
->  					  (struct fid *)handle->f_handle,
->  					  handle_dwords, handle->handle_type,
-> -					  vfs_dentry_acceptable, NULL);
-> -	if (IS_ERR(path->dentry)) {
-> -		retval =3D PTR_ERR(path->dentry);
-> -		goto out_mnt;
-> +					  ctx->directory,
-> +					  vfs_dentry_acceptable, ctx);
-> +	if (IS_ERR_OR_NULL(path->dentry)) {
-> +		if (path->dentry =3D=3D ERR_PTR(-ENOMEM))
-> +			return -ENOMEM;
-> +		return -ESTALE;
->  	}
-> +	path->mnt =3D mntget(mnt);
->  	return 0;
-> -out_mnt:
-> -	mntput(path->mnt);
-> -out_err:
-> -	return retval;
->  }
-> =20
->  static int handle_to_path(int mountdirfd, struct file_handle __user *ufh=
-,
-> -		   struct path *path)
-> +		   struct path *path, unsigned int o_flags)
->  {
->  	int retval =3D 0;
->  	struct file_handle f_handle;
->  	struct file_handle *handle =3D NULL;
-> +	struct handle_to_path_ctx ctx =3D {};
-> +
-> +	retval =3D get_path_from_fd(mountdirfd, &ctx.root);
-> +	if (retval)
-> +		goto out_err;
-> =20
-> -	/*
-> -	 * With handle we don't look at the execute bit on the
-> -	 * directory. Ideally we would like CAP_DAC_SEARCH.
-> -	 * But we don't have that
-> -	 */
->  	if (!capable(CAP_DAC_READ_SEARCH)) {
-> +		/*
-> +		 * Allow relaxed permissions of file handles if the caller has
-> +		 * the ability to mount the filesystem or create a bind-mount
-> +		 * of the provided @mountdirfd.
-> +		 *
-> +		 * In both cases the caller may be able to get an unobstructed
-> +		 * way to the encoded file handle. If the caller is only able
-> +		 * to create a bind-mount we need to verify that there are no
-> +		 * locked mounts on top of it that could prevent us from
-> +		 * getting to the encoded file.
-> +		 *
-> +		 * In principle, locked mounts can prevent the caller from
-> +		 * mounting the filesystem but that only applies to procfs and
-> +		 * sysfs neither of which support decoding file handles.
-> +		 *
-> +		 * This is currently restricted to O_DIRECTORY to provide a
-> +		 * deterministic API that avoids a confusing api in the face of
-> +		 * disconnected non-dir dentries.
-> +		 */
-> +
->  		retval =3D -EPERM;
-> -		goto out_err;
-> +		if (!(o_flags & O_DIRECTORY))
-> +			goto out_path;
-> +
-> +		if (ns_capable(ctx.root.mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
-> +			ctx.flags =3D HANDLE_CHECK_PERMS;
-> +		else if (ns_capable(real_mount(ctx.root.mnt)->mnt_ns->user_ns, CAP_SYS=
-_ADMIN) &&
-> +			   !has_locked_children(real_mount(ctx.root.mnt), ctx.root.dentry))
-> +			ctx.flags =3D HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
-> +		else
-> +			goto out_path;
-> +
-> +		/* Are we able to override DAC permissions? */
-> +		if (!ns_capable(current_user_ns(), CAP_DAC_READ_SEARCH))
-> +			goto out_path;
-> +
-> +		ctx.directory =3D true;
->  	}
-> +
->  	if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle))) {
->  		retval =3D -EFAULT;
-> -		goto out_err;
-> +		goto out_path;
->  	}
->  	if ((f_handle.handle_bytes > MAX_HANDLE_SZ) ||
->  	    (f_handle.handle_bytes =3D=3D 0)) {
->  		retval =3D -EINVAL;
-> -		goto out_err;
-> +		goto out_path;
->  	}
->  	handle =3D kmalloc(struct_size(handle, f_handle, f_handle.handle_bytes)=
-,
->  			 GFP_KERNEL);
->  	if (!handle) {
->  		retval =3D -ENOMEM;
-> -		goto out_err;
-> +		goto out_path;
->  	}
->  	/* copy the full handle */
->  	*handle =3D f_handle;
-> @@ -207,10 +293,14 @@ static int handle_to_path(int mountdirfd, struct fi=
-le_handle __user *ufh,
->  		goto out_handle;
->  	}
-> =20
-> -	retval =3D do_handle_to_path(mountdirfd, handle, path);
-> +	retval =3D do_handle_to_path(mountdirfd, handle, path, &ctx);
-> +	if (retval)
-> +		goto out_handle;
-> =20
->  out_handle:
->  	kfree(handle);
-> +out_path:
-> +	path_put(&ctx.root);
->  out_err:
->  	return retval;
->  }
-> @@ -223,7 +313,7 @@ static long do_handle_open(int mountdirfd, struct fil=
-e_handle __user *ufh,
->  	struct file *file;
->  	int fd;
-> =20
-> -	retval =3D handle_to_path(mountdirfd, ufh, &path);
-> +	retval =3D handle_to_path(mountdirfd, ufh, &path, open_flag);
->  	if (retval)
->  		return retval;
-> =20
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 4a42fc68f4cc..4adce73211ae 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -152,3 +152,4 @@ static inline void move_from_ns(struct mount *mnt, st=
-ruct list_head *dt_list)
->  }
-> =20
->  extern void mnt_cursor_del(struct mnt_namespace *ns, struct mount *curso=
-r);
-> +bool has_locked_children(struct mount *mnt, struct dentry *dentry);
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 5a51315c6678..4386787210c7 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2078,7 +2078,7 @@ void drop_collected_mounts(struct vfsmount *mnt)
->  	namespace_unlock();
->  }
-> =20
-> -static bool has_locked_children(struct mount *mnt, struct dentry *dentry=
-)
-> +bool has_locked_children(struct mount *mnt, struct dentry *dentry)
->  {
->  	struct mount *child;
-> =20
-> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> index 0b75305fb5f5..3e7f81eb2818 100644
-> --- a/fs/nfsd/nfsfh.c
-> +++ b/fs/nfsd/nfsfh.c
-> @@ -247,7 +247,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqs=
-tp, struct svc_fh *fhp)
->  		dentry =3D dget(exp->ex_path.dentry);
->  	else {
->  		dentry =3D exportfs_decode_fh_raw(exp->ex_path.mnt, fid,
-> -						data_left, fileid_type,
-> +						data_left, fileid_type, false,
->  						nfsd_acceptable, exp);
->  		if (IS_ERR_OR_NULL(dentry)) {
->  			trace_nfsd_set_fh_dentry_badhandle(rqstp, fhp,
-> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> index bb37ad5cc954..90c4b0111218 100644
-> --- a/include/linux/exportfs.h
-> +++ b/include/linux/exportfs.h
-> @@ -305,6 +305,7 @@ static inline int exportfs_encode_fid(struct inode *i=
-node, struct fid *fid,
->  extern struct dentry *exportfs_decode_fh_raw(struct vfsmount *mnt,
->  					     struct fid *fid, int fh_len,
->  					     int fileid_type,
-> +					     bool directory,
->  					     int (*acceptable)(void *, struct dentry *),
->  					     void *context);
->  extern struct dentry *exportfs_decode_fh(struct vfsmount *mnt, struct fi=
-d *fid,
->=20
-> ---
-> base-commit: 8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6
-> change-id: 20240524-vfs-open_by_handle_at-73c20767eb4e
->=20
+IOW, you could have the same struct file in the file descriptor tables
+of 10 processes. So the f_count would be 10. Assume all of them
+concurrently call read(), then none of them will bump f_count because
+fdget() sees that the file descriptor tables aren't shared.
 
-Otherwise, this seems rather sane. Let's see what breaks!
+But all 10 of them will serialize on f_pos_lock. So that's really
+separate from light refcounting. If you have to acquire f_pos_lock from
+within the same thread then fdget*() always take normal reference
+counts.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> 
+> > > +///
+> > > +/// ### The file position
+> > > +///
+> > > +/// Each `struct file` has a position integer, which is protected by the `f_pos_lock` mutex.
+> > > +/// However, if the `struct file` is not shared, then the kernel may avoid taking the lock as a
+> > > +/// performance optimization.
+> > > +///
+> > > +/// The condition for avoiding the `f_pos_lock` mutex is different from the condition for using
+> > > +/// `fdget`. With `fdget`, you may avoid incrementing the refcount as long as the current fd table
+> > > +/// is not shared; it is okay if there are other fd tables that also reference the same `struct
+> > > +/// file`. However, `fdget_pos` can only avoid taking the `f_pos_lock` if the entire `struct file`
+> > > +/// is not shared, as different processes with an fd to the same `struct file` share the same
+> > > +/// position.
+> > > +///
+> > > +/// ## Rust references
+> > > +///
+> > > +/// The reference type `&File` is similar to light refcounts:
+> > > +///
+> > > +/// * `&File` references don't own a reference count. They can only exist as long as the reference
+> > > +///   count stays positive, and can only be created when there is some mechanism in place to ensure
+> > > +///   this.
+> > > +///
+> > > +/// * The Rust borrow-checker normally ensures this by enforcing that the `ARef<File>` from which
+> > > +///   a `&File` is created outlives the `&File`.
+> > > +///
+> > > +/// * Using the unsafe [`File::from_ptr`] means that it is up to the caller to ensure that the
+> > > +///   `&File` only exists while the reference count is positive.
+> > > +///
+> > > +/// * You can think of `fdget` as using an fd to look up an `ARef<File>` in the `struct
+> > > +///   files_struct` and create an `&File` from it. The "fd cannot be closed" rule is like the Rust
+> > > +///   rule "the `ARef<File>` must outlive the `&File`".
+> > > +///
+> > > +/// # Invariants
+> > > +///
+> > > +/// * All instances of this type are refcounted using the `f_count` field.
+> > > +/// * If the file sharing mode is `MaybeFdgetPos`, then all active calls to `fdget_pos` that did
+> > > +///   not take the `f_pos_lock` mutex must be on the same thread as this `File`.
+> > > +/// * If the file sharing mode is `NoFdgetPos`, then there must not be active calls to `fdget_pos`
+> > > +///   that did not take the `f_pos_lock` mutex.
+> > > +#[repr(transparent)]
+> > > +pub struct File<S: FileShareMode> {
+> > > +    inner: Opaque<bindings::file>,
+> > > +    _share_mode: PhantomData<S>,
+> > > +}
+> > > +
+> > > +// SAFETY: This file is known to not have any local active `fdget_pos` calls, so it is safe to
+> > > +// transfer it between threads.
+> > > +unsafe impl Send for File<NoFdgetPos> {}
+> > > +
+> > > +// SAFETY: This file is known to not have any local active `fdget_pos` calls, so it is safe to
+> > > +// access its methods from several threads in parallel.
+> > > +unsafe impl Sync for File<NoFdgetPos> {}
+> > > +
+> > > +/// File methods that only exist under the [`MaybeFdgetPos`] sharing mode.
+> > > +impl File<MaybeFdgetPos> {
+> > > +    /// Constructs a new `struct file` wrapper from a file descriptor.
+> > > +    ///
+> > > +    /// The file descriptor belongs to the current process, and there might be active local calls
+> > > +    /// to `fdget_pos`.
+> > > +    pub fn fget(fd: u32) -> Result<ARef<File<MaybeFdgetPos>>, BadFdError> {
+> > > +        // SAFETY: FFI call, there are no requirements on `fd`.
+> > > +        let ptr = ptr::NonNull::new(unsafe { bindings::fget(fd) }).ok_or(BadFdError)?;
+> > > +
+> > > +        // SAFETY: `bindings::fget` created a refcount, and we pass ownership of it to the `ARef`.
+> > > +        //
+> > > +        // INVARIANT: This file is in the fd table on this thread, so either all `fdget_pos` calls
+> > > +        // are on this thread, or the file is shared, in which case `fdget_pos` calls took the
+> > > +        // `f_pos_lock` mutex.
+> > > +        Ok(unsafe { ARef::from_raw(ptr.cast()) })
+> > > +    }
+> >
+> > I'm a little unclear how this is supposed to be used. What I
+> > specifically struggle with is what function does one have to call to
+> > translate from a file descriptor to a file? IOW, where are the actual
+> > entry points for turning fds into files? That's what I want to see and
+> > that's what we need to make this interface usable generically.
+> 
+> That is File::fget. It takes a file descriptor and returns a long-term
+> reference to a file.
+
+Ok.
+
+> 
+> > Because naively, what I'm looking for is a Rust version of fdget() and
+> > fdget_pos() that give me back a File<MaybeFdget> or a
+> > File<MaybeFdgetPos>.
+> >
+> > And then those both implement a get_file() method so the caller can take
+> > an explicit long-term reference to the file.
+> 
+> Even if you call `get_file` to get a long-term reference from something
+> you have an fdget_pos reference to, that doesn't necessarily mean that
+> you can share that long-term reference with other threads. You would
+> need to release the fdget_pos reference first. For that reason, the
+> long-term reference returned by `get_file` would still need to have the
+> `File<MaybeFdgetPos>` type.
+
+So what you're getting at seems to be that some process has a private
+file descriptor table and an just opened @fd to a @file that isn't
+shared.
+
+	fd = open("/my/file");
+
+and then let's say has a random ioctl(fd, SOMETHING_SOMETHING) that
+somehow does:
+
+	struct fd fd = fdget_pos();
+	if (!fd.file)
+		return -EBADF;
+
+We know that process has used a light reference count and that it didn't
+acquire f_pos_lock.
+
+Your whole approach seems to assume that after something like this has
+happened the same process now offloads that struct file to another
+process that somehow ends up doing some other operation on the file that
+would also require f_pos_lock to be taken but it doesn't like a read or
+something.
+
+To share a file between multiple processes would normally always require
+that the process sends that file to another process. That process then
+install that fd into its file descriptor table and then later accesses
+that file via fdget() again. That's the standard way of doing it -
+binder does it that way too. And that's all perfectly fine.
+
+What you would need for this to be a problem is for a process be sent a
+struct file from a process that is in the middle of an f_pos_lock scope
+and for the receiving process to immediately start doing stuff that
+would normally require f_pos_lock.
+
+Like, idk vfs_read(file, ...).
+
+If that's what this is about then yes, there's a close-to-zero but
+non-zero possibility that some really stupid code could end up doing
+something like this.
+
+Basically, that scenario doesn't exist (as I've mentioned before)
+currently. It only exists in a single instance and that's when
+pidfd_getfd() is used to steal a file from another task while that task
+is in the middle of an f_pos_lock section (I said it before we don't
+care about that because non-POSIX interface anyway and we have ptrace
+rights anyway. And iiuc that wouldn't even be preventable in your
+current scheme because you would need to have the information available
+that the struct file you're about to steal from the file descriptor
+table is currently within an f_pos_lock section.).
+
+Is it honestly worth encoding all that complexity into rust's file
+implementation itself right now? It's barely understandable to
+non-rust experts as it is right now. :)
+
+Imho, it would seem a lot more prudent to just have something simpler
+for now.
+
+> 
+> (But you could convert it to a `File<NoFdgetPos>` afterwards. The
+> `assume_no_fdget_pos` method performs that conversion.)
+> 
+> As a sidenote, the reason that this patchset does not implement `fdget`
+> or `fdget_pos` is that Rust Binder does not use them. Like C Binder, it
+
+Yes, you mentioned.
+
+> just uses `fget` to immediately obtain a long-term reference. I was told
+
+Right and that's why I'm confused why that whole shared_state
+machinery is needed in the first place. Because binder does do it
+correctly:
+
+* sender registers a bunch of fds to use and takes fget() reference
+  All other processes that use the same file in their fdtable and rely
+  on fdget_pos() will see the elevated reference count and acquire
+  f_pos_lock.
+* receiver installs stuff into their fdtable
+  Receiver can now use fdget_pos() to do reads/writes. Everything's in
+  order as well.
+
+> that as an exception, Rust code can be merged *before* its user, but
+> that we couldn't merge Rust code with no upcoming user. However, I can
+> include implementations of `fdget` and `fdget_pos` in the next version
+> if you prefer that. After all, it seems rather likely that we will
+> eventually have a user for fdget.
+> 
+> > The fget() above is really confusing to me because it always takes a
+> > reference on the file that's pointed to by the fd and then it returns a
+> > MaybeFdgetPos because presumably you want to indicate that the file
+> > descriptor may refer to a file that may or may not be referenced by
+> > another thread via fdget()/fdget_pos() already.
+> 
+> No, not another thread. It is because it may or may not be referenced by
+> fdget_pos by *the same* thread already.
+> 
+> Here's how I think of it: The `fget` method takes a file descriptor and
+> returns a long term reference (an ARef) to a `struct file`. It does not
+> return a file descriptor, since it doesn't store anywhere which fd it
+> came from.
+> 
+> The `File::fget` method returns a `File<MaybeFdgetPos>` in case *the
+> same thread* is also using `fdget_pos` on the same file descriptor. It's
+> okay if other threads are using `fdget_pos` because in that case the
+> file is already shared, so those other `fdget_pos` calls necessarily the
+> f_pos_lock mutex.
+> 
+> Note that since it forgets which fd and fd table it came from, calls to
+> `fdget` are actually not a problem for sending our long-term references
+> across threads. The `fdget` requirements only care about things that
+> touch the entry in the file descriptor table, such as closing the fd.
+> The `ARef<File>` type does not provide any methods that could lead to
+> that happening, so sharing it across threads is okay *even if* there is
+> an light reference. That's why I have an `MaybeFdgetPos` but no
+> `MaybeFdget`.
+> 
+> > So I've _skimmed_ the binder RFC and looked at:
+> > 20231101-rust-binder-v1-13-08ba9197f637@google.com
+> > which states:
+> >
+> >         Add support for sending fds over binder.
+> >
+> >         Unlike the other object types, file descriptors are not translated until
+> >         the transaction is actually received by the recipient. Until that
+> >         happens, we store `u32::MAX` as the fd.
+> >
+> >         Translating fds is done in a two-phase process. First, the file
+> >         descriptors are allocated and written to the allocation. Then, once we
+> >         have allocated all of them, we commit them to the files in question.
+> >         Using this strategy, we are able to guarantee that we either send all of
+> >         the fds, or none of them.
+> >
+> > So I'm curious. How does the binder fd sending work exactly? Because I
+> > feel that this is crucial to understand here. Some specific questions:
+> >
+> > * When file descriptors are passed the reference to these files via
+> >   fget() are taken _synchronously_, i.e., by the sending task, not the
+> >   receiver? IOW, is binder_translate_fd() called in the context of the
+> >   sender or the receiver. I assume it must be the sender because
+> >   otherwise the sender and receiver must share a file descriptor table
+> >   in order for the receiver to call fget().
+> 
+> binder_translate_fd is called in the context of the sender.
+> 
+> > * The receiving task then allocates new file descriptors and installs
+> >   the received files into its file descriptor table?
+> 
+> That happens in binder_apply_fd_fixups, which is called in the context
+> of the receiver.
+
+Yes, that's what I thought.
+
+> 
+> I can see how the sentence "Until that happens, we store `u32::MAX` as
+> the fd." is really confusing here. What happens when you send a fd is
+> this:
+> 
+> In the sender's ioctl:
+> 1. The sender wishes to send a byte array to the recipient. The sender
+>    tells the kernel that at specific offsets in this array, there are
+>    some file descriptors that it wishes to send.
+> 
+> 2. The kernel copies the byte array directly into the recipient's
+>    address space. The offsets in the byte array with file descriptors
+>    are not copied - instead u32::MAX is written temporarily at those
+>    offsets.
+> 
+> 3. For each fd being sent, the kernel uses fget to obtain a reference to
+>    the underlying `struct file`. These pointers are stored in an array.
+> 
+> In the receiver's ioctl:
+> 1. Go through the list of `struct file` pointers and create a
+>    `FileDescriptorReservation` for each.
+> 
+> 2. Go through the list of `struct file` pointers again and `fd_install`
+>    them into the current thread's fd table. This is infallible due to
+>    the reservations we just made.
+> 
+> 3. Finally, overwrite the u32::MAX values in the byte array with the
+>    actual file descriptors that the files were assigned.
+> 
+> This is the same as how it works in C Binder.
+
+Yes, that all seems fine.
+
+> 
+> > And so basically, what I'm after here is that the binder_translate_fd()
+> > that calls fget() is done in the context of the sender and we _know_
+> > that the fds can't have light references. Because if they did it could
+> > only be by the calling task but they don't since the calling task uses
+> > fget() on them. And if the calling task is multi-threaded and another
+> > thread has called fdget() or fdget_pos() we know that they have taken
+> > their own reference because the file descriptor table is shared.
+> >
+> > So why is that fget() in here returning a File<MaybeFdgetPos>? This
+> > doesn't make sense to me at first glance.
+> 
+> Because when you call `File::fget`, then there could also be a different
+> call to `fdget_pos` on the same thread on the same file descriptor.
+> 
+> 	fdget_pos(my_fd);
+> 	let my_file = File::fget(my_fd)?;
+> 	// oh no!
+> 	send_to_another_thread(my_file);
+
+Ok, that's basically my above example.
+
+> 
+> In the above code, the file becomes shared even though `fdget_pos` might
+> not have taken the `f_pos_lock` mutex. That's not okay. We could end up
+> with a data race on the file position.
+
+But a race on f_pos isn't a memory safety issue it's just a POSIX
+ordering requirement.
+
+> 
+> One of the primary design principles of Rust is that, if the user of our
+> API has *any* way of using it that could trigger a memory safety
+> problem, then we must be able to point at an unsafe block *in the user's
+> code* that is at fault. This must be the case no matter how contrived
+> the use of the API is.
+> 
+> As a corollary, if the user can trigger memory safety problems with our
+> API without using any unsafe blocks, then that is a bug in the API.
+> We cannot assign the blame to an unsafe block in the user's code, so the
+> blame *must* lie with an unsafe block inside the API.
+> 
+> So, to follow that design principle, I have designed the API in a way
+> that prevents the above data race. Concretely, because the
+> `File<MaybeFdgetPos>` type is not thread safe (or in Rust terms "is not
+> Send"), it's not possible to send values of that type across thread
+> boundaries. E.g., our `send_to_another_thread` would have a requirement
+> in its signature saying that it can only be called with types that are
+> thread safe, so calling it with a type that isn't results in a type
+> error.
+> 
+> 
+> 
+> Now, what if you *want* to send it to another thread? Let's consider
+> Rust Binder, which needs to do exactly that. The relevant code in Rust
+> Binder would need to be updated to look like this:
+> 
+> 	let file = File::fget(my_fd)?;
+> 	// SAFETY: We know that there are no active `fdget_pos` calls on
+> 	// the current thread, since this is an ioctl and we have not
+> 	// called `fdget_pos` inside the Binder driver.
+> 	let thread_safe_file = unsafe { file.assume_no_fdget_pos() };
+> 
+> (search for File::from_fd in the RFC to find where this would go)
+> 
+> The `assume_no_fdget_pos` call has no effect at runtime - it is purely a
+> compile-time thing to force the user to use unsafe to "promise" that
+> there aren't any `fdget_pos` calls on the same fd.
+> 
+> If Rust Binder uses `assume_no_fdget_pos` and ends up triggering memory
+> unsafety because it sent a file to another thread, then we can point to
+> the unsafe block that calls `assume_no_fdget_pos` and say "that unsafe
+> block is at fault because it assumed that there was no `fdget_pos` call,
+> but that assumption was false."
+> 
+> > > +    /// Assume that there are no active `fdget_pos` calls that prevent us from sharing this file.
+> > > +    ///
+> > > +    /// This makes it safe to transfer this file to other threads. No checks are performed, and
+> > > +    /// using it incorrectly may lead to a data race on the file position if the file is shared
+> > > +    /// with another thread.
+> > > +    ///
+> > > +    /// This method is intended to be used together with [`File::fget`] when the caller knows
+> > > +    /// statically that there are no `fdget_pos` calls on the current thread. For example, you
+> > > +    /// might use it when calling `fget` from an ioctl, since ioctls usually do not touch the file
+> > > +    /// position.
+> > > +    ///
+> > > +    /// # Safety
+> > > +    ///
+> > > +    /// There must not be any active `fdget_pos` calls on the current thread.
+> > > +    pub unsafe fn assume_no_fdget_pos(me: ARef<Self>) -> ARef<File<NoFdgetPos>> {
+> > > +        // INVARIANT: There are no `fdget_pos` calls on the current thread, and by the type
+> > > +        // invariants, if there is a `fdget_pos` call on another thread, then it took the
+> > > +        // `f_pos_lock` mutex.
+> > > +        //
+> > > +        // SAFETY: `File<MaybeFdgetPos>` and `File<NoFdgetPos>` have the same layout.
+> > > +        unsafe { ARef::from_raw(ARef::into_raw(me).cast()) }
+> > > +    }
+> > > +}
+> > > +
+> > > +/// File methods that exist under all sharing modes.
+> > > +impl<S: FileShareMode> File<S> {
+> > > +    /// Creates a reference to a [`File`] from a valid pointer.
+> > > +    ///
+> > > +    /// # Safety
+> > > +    ///
+> > > +    /// * The caller must ensure that `ptr` points at a valid file and that the file's refcount is
+> > > +    ///   positive for the duration of 'a.
+> > > +    /// * The caller must ensure that the requirements for using the chosen file sharing mode are
+> > > +    ///   upheld.
+> > > +    pub unsafe fn from_ptr<'a>(ptr: *const bindings::file) -> &'a File<S> {
+> >
+> > I think I requested from_raw_file() in the last revision?
+> 
+> Ah, yeah, I totally forgot about this. I'll make the change in the next
+> version.
+> 
+> > > +    /// Returns a raw pointer to the inner C struct.
+> > > +    #[inline]
+> > > +    pub fn as_ptr(&self) -> *mut bindings::file {
+> >
+> > And that was supposed to be into_raw_file() or as_raw_file()?
+> 
+> Per the Rust API guidelines [1], this should be `as_raw_file`. The
+> `into_*` prefix is for conversions that destroy the object you call it
+> on. (E.g., because it takes ownership of the underlying allocation or
+> refcount.)
+> 
+> As always, thank you for the very detailed questions!
+> 
+> Alice
+> 
+> [1]: https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversions-follow-as_-to_-into_-conventions-c-conv
 
