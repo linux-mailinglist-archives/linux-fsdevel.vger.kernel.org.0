@@ -1,58 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-20170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DE28CF32E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 11:42:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F05DB8CF34C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 11:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F4D1F21EA4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 09:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC00B2820CB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 09:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F475AD51;
-	Sun, 26 May 2024 09:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD282941F;
+	Sun, 26 May 2024 09:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7bArF6+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyiIzPDD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D598BFA;
-	Sun, 26 May 2024 09:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BA628383;
+	Sun, 26 May 2024 09:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716716515; cv=none; b=hme4FW92LhWL0Y5uwRBeO13CVloAIMMvNHw1XsDUE1NjhmPRkO5VIsvVC3n7hWlgisLE1eu54BPaW9bTXVOwNvyA7eZnEWLuAk/L/LMV4J5XnDl0GrYvzrppxjvlOrrOBR5fSLOvb9R+2GthhaMv+aZw9s+K92lrG3pqONmxINQ=
+	t=1716716531; cv=none; b=fQm5sYtf1FSgC/dlmUH2ZKhK9Qdvbgevi1d5kYEDKZibQ9a4/9wJLuVhn2gzX0DUS26kCUE5tdRtkwIET/5lH8v1RHUR/zl31qpKOon2KQTBT2uOzJaMpilxDdeMrPOFciFKcbQWBAwV2co+JXqNUXap/k1124xoehRReho0VGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716716515; c=relaxed/simple;
-	bh=S2RStSnL+ZuHwDxLhADz//Rm4j2YtGbAYc1Mf+XV6h4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n+BBeVOqaTsWZ2T++GIwgsBbZI+RIuvs96RXgUdOZzDnerGxtQilAfm1D6kISdHpOSJGpDFOdU3zlBkBqwNhs9Y0XzOPvpww7gXG8+TeLD2KUd9th0u744wXxGPLvZe8WSwyYmCRkYaPPfWWFAhvFyIjxXdXV5yjEabraqXyySY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7bArF6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D3EC2BD10;
-	Sun, 26 May 2024 09:41:54 +0000 (UTC)
+	s=arc-20240116; t=1716716531; c=relaxed/simple;
+	bh=OQ+fq/qWEXzONvHCfi5eHyNulhHelfhdcuRZeYfz8DA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=I/cUIXQG9dz+M6y2E6seBTBLUfomeVbQMYwf1HyNw2xxKtbBpDMLmaiA/Cc+WkrNYfwGLST2CHfiXcQL75MKPK8NLh9BXkUbbdcebfo1pEBKDoX467WHmj2KM700Q1ue4dtkbIkIZ7jwqx0xH9rpyeMs8jCy4attfeLfgGhHsYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyiIzPDD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE27C32781;
+	Sun, 26 May 2024 09:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716716515;
-	bh=S2RStSnL+ZuHwDxLhADz//Rm4j2YtGbAYc1Mf+XV6h4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=t7bArF6+fz5WHREY17OYj1k9bzGreSUbXzp6njZaSmYo7AeZCUwqxgfEY6Z0DVqBP
-	 3iACUF854xcRz0v9DJzX07EWeu5xFfWAv5TuQtDVpnraPJCYJtU667+cEuAM2QLI3+
-	 MhtrJYmJrP6lQk6DlNleBR6C0iHbjkXWLfSUmFNzMZK+Qqv2iWXVslWmCaxUyVgmpM
-	 uI+kBhjnqY5HXbKNsfakZlLiuMQtCYG7xFqdQC1jwQAGUUjMOZghxekHCFbOEcNOI+
-	 8mRxRtot7J6Vzv6RtZl/eohmy8DkDsbyMJcpNa9fh4PbT7pIRDQLAYC8W9WzwvckLY
-	 MNgBdnaD1EzRw==
+	s=k20201202; t=1716716531;
+	bh=OQ+fq/qWEXzONvHCfi5eHyNulhHelfhdcuRZeYfz8DA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZyiIzPDDsTGz8jRFgYVCd8PtAL85Ywt244irg6bdyodQlFbHKBQ84PKRpcMvJDBM5
+	 VGe6eSVwYNDSeaY5q5nDwUb4GZ3B23dr9j0Saejy5GKMIn4uXHj6M/dLih2F9FLKJN
+	 aAMCFCh0MsTwNWcE3pz2rLAgOUUReuLnahbU++Hs4qIPe9fcuIsdnPxKD+YeoypaQQ
+	 wfKqSXu79h66zGuv0gv07Xx+s2rXmAnFg6MedPf9mzM4LuHqzmV1rsIfp7vCvcTbOe
+	 j81KeM4C7y1tsZv46vZDq46jygicUY/8rkO0lLEXOSJWLfJWCpEhVAojHPdtNol++k
+	 68FWqzAe1JOsw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Kemeng Shi <shikemeng@huaweicloud.com>,
-	Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
+Cc: Kees Cook <keescook@chromium.org>,
+	y0un9n132@gmail.com,
 	Sasha Levin <sashal@kernel.org>,
 	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 01/15] fs/writeback: bail out if there is no more inodes for IO and queued once
-Date: Sun, 26 May 2024 05:41:33 -0400
-Message-ID: <20240526094152.3412316-1-sashal@kernel.org>
+	brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 6.9 12/15] binfmt_elf: Leave a gap between .bss and brk
+Date: Sun, 26 May 2024 05:41:44 -0400
+Message-ID: <20240526094152.3412316-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240526094152.3412316-1-sashal@kernel.org>
+References: <20240526094152.3412316-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,60 +68,39 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.9.1
 Content-Transfer-Encoding: 8bit
 
-From: Kemeng Shi <shikemeng@huaweicloud.com>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit d92109891f21cf367caa2cc6dff11a4411d917f4 ]
+[ Upstream commit 2a5eb9995528441447d33838727f6ec1caf08139 ]
 
-For case there is no more inodes for IO in io list from last wb_writeback,
-We may bail out early even there is inode in dirty list should be written
-back. Only bail out when we queued once to avoid missing dirtied inode.
+Currently the brk starts its randomization immediately after .bss,
+which means there is a chance that when the random offset is 0, linear
+overflows from .bss can reach into the brk area. Leave at least a single
+page gap between .bss and brk (when it has not already been explicitly
+relocated into the mmap range).
 
-This is from code reading...
-
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Link: https://lore.kernel.org/r/20240228091958.288260-3-shikemeng@huaweicloud.com
-Reviewed-by: Jan Kara <jack@suse.cz>
-[brauner@kernel.org: fold in memory corruption fix from Jan in [1]]
-Link: https://lore.kernel.org/r/20240405132346.bid7gibby3lxxhez@quack3 [1]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Reported-by:  <y0un9n132@gmail.com>
+Closes: https://lore.kernel.org/linux-hardening/CA+2EKTVLvc8hDZc+2Yhwmus=dzOUG5E4gV7ayCbu0MPJTZzWkw@mail.gmail.com/
+Link: https://lore.kernel.org/r/20240217062545.1631668-2-keescook@chromium.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fs-writeback.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/binfmt_elf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index e4f17c53ddfcf..d31853032a931 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2069,6 +2069,7 @@ static long wb_writeback(struct bdi_writeback *wb,
- 	struct inode *inode;
- 	long progress;
- 	struct blk_plug plug;
-+	bool queued = false;
- 
- 	blk_start_plug(&plug);
- 	for (;;) {
-@@ -2111,8 +2112,10 @@ static long wb_writeback(struct bdi_writeback *wb,
- 			dirtied_before = jiffies;
- 
- 		trace_writeback_start(wb, work);
--		if (list_empty(&wb->b_io))
-+		if (list_empty(&wb->b_io)) {
- 			queue_io(wb, work, dirtied_before);
-+			queued = true;
-+		}
- 		if (work->sb)
- 			progress = writeback_sb_inodes(work->sb, wb, work);
- 		else
-@@ -2127,7 +2130,7 @@ static long wb_writeback(struct bdi_writeback *wb,
- 		 * mean the overall work is done. So we keep looping as long
- 		 * as made some progress on cleaning pages or inodes.
- 		 */
--		if (progress) {
-+		if (progress || !queued) {
- 			spin_unlock(&wb->list_lock);
- 			continue;
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 5397b552fbeb5..7862962f7a859 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1262,6 +1262,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+ 		    elf_ex->e_type == ET_DYN && !interpreter) {
+ 			mm->brk = mm->start_brk = ELF_ET_DYN_BASE;
++		} else {
++			/* Otherwise leave a gap between .bss and brk. */
++			mm->brk = mm->start_brk = mm->brk + PAGE_SIZE;
  		}
+ 
+ 		mm->brk = mm->start_brk = arch_randomize_brk(mm);
 -- 
 2.43.0
 
