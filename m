@@ -1,684 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-20184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BB78CF503
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 19:22:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B5C8CF596
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 21:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10CB1F211CD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 17:21:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1B671F21166
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 19:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CC5481A6;
-	Sun, 26 May 2024 17:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDC112BEAB;
+	Sun, 26 May 2024 19:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXGshB+n"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="fkbI9bRf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97B94500F;
-	Sun, 26 May 2024 17:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B171DA5F;
+	Sun, 26 May 2024 19:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716744112; cv=none; b=i8ZKqpkxrcysH0tecoDBs3G5C1zs9fFQTg3aNWcxlnknETLBEoFSDsmh3PNsc4mXm0lUNjV3QirpxvrGQ2xRVZPF40/7LJgb72HN1xE+M9EZavBzUYABZGSQ17v8uZq34o7fvZ4vdPIfiwC9Q65um2H4KH4kPncFP8AyrNOHWrY=
+	t=1716750671; cv=none; b=iv6i8e+vgrm8otFI3+PfsvrW1XZTgB9SGPZVrYmuYMbMdnHrcEXfmouvGdcNU04MJdsRccnmaASWAsiLQYQNL/xg9ujYfe6gnGRqATZ/qtIPY7Jmhft68gYB1SvNo6Rupa78OHxevyi3sTBveUFkRpPSlRN/m+euJR7fU0nG5yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716744112; c=relaxed/simple;
-	bh=CR9FZ3Qqia02gJrHRe3NHuKQqIrn0P4KSejrZ6RcshY=;
+	s=arc-20240116; t=1716750671; c=relaxed/simple;
+	bh=V6pWRl5/R829vCPQdCBHueI2AkDTCJb53fNdMCXSLVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxVn7L8poPFIIVI57M6cM8jrMzd9bj2TC2fvhkSv0FUFvCAaRStb8/IG3AJMh98B5gJXKl1YjJyBKz0n4Q07g6Lx0nuspuMVldLukswxW31qkOtENH9K+Gazp1td5dj8enVmvGgBIpbGMiUUW82ySQc2m/PRPacHmR53uaqD1EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXGshB+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB3DC32786;
-	Sun, 26 May 2024 17:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716744112;
-	bh=CR9FZ3Qqia02gJrHRe3NHuKQqIrn0P4KSejrZ6RcshY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=WXGshB+noTsON5VPmlGkJK0QA4x8ilE1eh/VK4mmDzcEFDfulN38VKy5h9k/WbvCz
-	 AUMbHB7sBxaylQhcv/frouGhzDKBe42GI5/gXd10725OyMP2XAJ9sd6EI+tVJL1ONR
-	 ELN/1F/DS7HLNKdPzM2SNnQjZM1JOsAZFRnklLOYSrk+EXNWehQK0osB2Yfg3j5xEa
-	 OyfwygyUHCkPojrvo1UMgZm1RC1jOWG+nJYn7uwWKWWJkIOxxV41BdJiWM6hQhSyqv
-	 cNIi5fEQFYNZ5bBTJyI25NZMxAyoRnQGQ0ytE1SfE2SpXrcM2Y/XLDckxtV+ZQio/W
-	 PwL3y8IO5byIw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 340A9CE1A87; Sun, 26 May 2024 10:21:52 -0700 (PDT)
-Date: Sun, 26 May 2024 10:21:52 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: raven@themaw.net, alexjlzheng@tencent.com, bfoster@redhat.com,
-	david@fromorbit.com, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	rcu@vger.kernel.org
-Subject: Re: About the conflict between XFS inode recycle and VFS rcu-walk
-Message-ID: <3d7074a2-83e9-4282-8c8a-d90176653868@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <dd7cdc06-9829-4519-9873-ea9d661a8c45@themaw.net>
- <20240526150414.1419898-1-alexjlzheng@tencent.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3GNuF+4urxAL06SeE9OYaxn/IfqIr6kHwbN4PON75MzcBYjnqphSMFWqrLELWjFnrkXZwMvNEZSqaCSbkH71p5cXGDSUOHXu05Nqwo2Osmp4GepTRX4TF5zq8INLC+wCj51tTZ2JPhBf7ImlS9lMRedGuw+QobCeLielGrnnMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=fkbI9bRf; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VnSmn5LbQz9srB;
+	Sun, 26 May 2024 21:01:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1716750089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r9cppxWmIe0VMvcGEUiv0Uu8DZiQtFpwpAKbCgnUVyg=;
+	b=fkbI9bRf/v/PG60NTXoiBFnGW5PQxoNWMLCvvN7rODxFDwx6ejMnjC9KwgfkpALWziWwaR
+	PDci3KZIGuSNuO/8QY+KkOQ3EDD0JSRLI2UOK7pZpOFEJx3jJAcYN9g8msXO/Zn1YK8Wt9
+	ZttMp8XBMWyX44zD2lk1aTuNNEf9DBEwkxGx458+K234gn22VwJ2KLGnY34uJ9/ASqfHhH
+	/Sa2c8xo3APTm4DQbujnAyZuT+1NDou7/yDDCgqpjb/83Db9rPLRB5Z3WvcW33k510oszj
+	E3jo6rKtWo5vyKnIoGnTb+r6GGHr2FUuALlyN/BfjHpHwLpAU5d3+o4cHYk+fg==
+Date: Sun, 26 May 2024 12:01:08 -0700
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
+References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+ <ZlMADupKkN0ITgG5@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3co2dmrrdjgd6wv5"
+Content-Disposition: inline
+In-Reply-To: <ZlMADupKkN0ITgG5@infradead.org>
+
+
+--3co2dmrrdjgd6wv5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240526150414.1419898-1-alexjlzheng@tencent.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 26, 2024 at 11:04:14PM +0800, Jinliang Zheng wrote:
-> On Tue, 21 May 2024 at 10:13:38 +0800, Ian Kent wrote:
-> > On 21/5/24 09:35, Ian Kent wrote:
-> > > On 21/5/24 01:36, Darrick J. Wong wrote:
-> > >> On Thu, May 16, 2024 at 03:23:40PM +0800, Ian Kent wrote:
-> > >>> On 16/5/24 15:08, Ian Kent wrote:
-> > >>>> On 16/5/24 12:56, Jinliang Zheng wrote:
-> > >>>>> On Wed, 15 May 2024 at 23:54:41 +0800, Jinliang Zheng wrote:
-> > >>>>>> On Wed, 31 Jan 2024 at 11:30:18 -0800, djwong@kernel.org wrote:
-> > >>>>>>> On Wed, Jan 31, 2024 at 02:35:17PM +0800, Jinliang Zheng wrote:
-> > >>>>>>>> On Fri, 8 Dec 2023 11:14:32 +1100, david@fromorbit.com wrote:
-> > >>>>>>>>> On Tue, Dec 05, 2023 at 07:38:33PM +0800,
-> > >>>>>>>>> alexjlzheng@gmail.com wrote:
-> > >>>>>>>>>> Hi, all
-> > >>>>>>>>>>
-> > >>>>>>>>>> I would like to ask if the conflict between xfs
-> > >>>>>>>>>> inode recycle and vfs rcu-walk
-> > >>>>>>>>>> which can lead to null pointer references has been resolved?
-> > >>>>>>>>>>
-> > >>>>>>>>>> I browsed through emails about the following
-> > >>>>>>>>>> patches and their discussions:
-> > >>>>>>>>>> - 
-> > >>>>>>>>>> https://lore.kernel.org/linux-xfs/20220217172518.3842951-2-bfoster@redhat.com/
-> > >>>>>>>>>> - 
-> > >>>>>>>>>> https://lore.kernel.org/linux-xfs/20220121142454.1994916-1-bfoster@redhat.com/
-> > >>>>>>>>>> - 
-> > >>>>>>>>>> https://lore.kernel.org/linux-xfs/164180589176.86426.501271559065590169.stgit@mickey.themaw.net/
-> > >>>>>>>>>>
-> > >>>>>>>>>> And then came to the conclusion that this
-> > >>>>>>>>>> problem has not been solved, am I
-> > >>>>>>>>>> right? Did I miss some patch that could solve this problem?
-> > >>>>>>>>> We fixed the known problems this caused by turning off the VFS
-> > >>>>>>>>> functionality that the rcu pathwalks kept tripping over. See 
-> > >>>>>>>>> commit
-> > >>>>>>>>> 7b7820b83f23 ("xfs: don't expose internal symlink
-> > >>>>>>>>> metadata buffers to
-> > >>>>>>>>> the vfs").
-> > >>>>>>>> Sorry for the delay.
-> > >>>>>>>>
-> > >>>>>>>> The problem I encountered in the production environment
-> > >>>>>>>> was that during the
-> > >>>>>>>> rcu walk process the ->get_link() pointer was NULL,
-> > >>>>>>>> which caused a crash.
-> > >>>>>>>>
-> > >>>>>>>> As far as I know, commit 7b7820b83f23 ("xfs: don't
-> > >>>>>>>> expose internal symlink
-> > >>>>>>>> metadata buffers to the vfs") first appeared in:
-> > >>>>>>>> - 
-> > >>>>>>>> https://lore.kernel.org/linux-fsdevel/YZvvP9RFXi3%2FjX0q@bfoster/
-> > >>>>>>>>
-> > >>>>>>>> Does this commit solve the problem of NULL ->get_link()? And how?
-> > >>>>>>> I suggest reading the call stack from wherever the VFS enters 
-> > >>>>>>> the XFS
-> > >>>>>>> readlink code.  If you have a reliable reproducer, then
-> > >>>>>>> apply this patch
-> > >>>>>>> to your kernel (you haven't mentioned which one it is) and see 
-> > >>>>>>> if the
-> > >>>>>>> bad dereference goes away.
-> > >>>>>>>
-> > >>>>>>> --D
-> > >>>>>> Sorry for the delay.
-> > >>>>>>
-> > >>>>>> I encountered the following calltrace:
-> > >>>>>>
-> > >>>>>> [20213.578756] BUG: kernel NULL pointer dereference, address:
-> > >>>>>> 0000000000000000
-> > >>>>>> [20213.578785] #PF: supervisor instruction fetch in kernel mode
-> > >>>>>> [20213.578799] #PF: error_code(0x0010) - not-present page
-> > >>>>>> [20213.578812] PGD 3f01d64067 P4D 3f01d64067 PUD 3f01d65067 PMD 0
-> > >>>>>> [20213.578828] Oops: 0010 [#1] SMP NOPTI
-> > >>>>>> [20213.578839] CPU: 92 PID: 766 Comm: /usr/local/serv Kdump:
-> > >>>>>> loaded Not tainted 5.4.241-1-tlinux4-0017.3 #1
-> > >>>>>> [20213.578860] Hardware name: New H3C Technologies Co., Ltd.
-> > >>>>>> UniServer R4900 G3/RS33M2C9SA, BIOS 2.00.38P02 04/14/2020
-> > >>>>>> [20213.578884] RIP: 0010:0x0
-> > >>>>>> [20213.578894] Code: Bad RIP value.
-> > >>>>>> [20213.578903] RSP: 0018:ffffc90021ebfc38 EFLAGS: 00010246
-> > >>>>>> [20213.578916] RAX: ffffffff82081f40 RBX: ffffc90021ebfce0 RCX:
-> > >>>>>> 0000000000000000
-> > >>>>>> [20213.578932] RDX: ffffc90021ebfd48 RSI: ffff88bfad8d3890 RDI:
-> > >>>>>> 0000000000000000
-> > >>>>>> [20213.578948] RBP: ffffc90021ebfc70 R08: 0000000000000001 R09:
-> > >>>>>> ffff889b9eeae380
-> > >>>>>> [20213.578965] R10: 302d343200000067 R11: 0000000000000001 R12:
-> > >>>>>> 0000000000000000
-> > >>>>>> [20213.578981] R13: ffff88bfad8d3890 R14: ffff889b9eeae380 R15:
-> > >>>>>> ffffc90021ebfd48
-> > >>>>>> [20213.578998] FS:  00007f89c534e740(0000)
-> > >>>>>> GS:ffff88c07fd00000(0000) knlGS:0000000000000000
-> > >>>>>> [20213.579016] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > >>>>>> [20213.579030] CR2: ffffffffffffffd6 CR3: 0000003f01d90001 CR4:
-> > >>>>>> 00000000007706e0
-> > >>>>>> [20213.579046] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> > >>>>>> 0000000000000000
-> > >>>>>> [20213.579062] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> > >>>>>> 0000000000000400
-> > >>>>>> [20213.579079] PKRU: 55555554
-> > >>>>>> [20213.579087] Call Trace:
-> > >>>>>> [20213.579099]  trailing_symlink+0x1da/0x260
-> > >>>>>> [20213.579112]  path_lookupat.isra.53+0x79/0x220
-> > >>>>>> [20213.579125]  filename_lookup.part.69+0xa0/0x170
-> > >>>>>> [20213.579138]  ? kmem_cache_alloc+0x3f/0x3f0
-> > >>>>>> [20213.579151]  ? getname_flags+0x4f/0x1e0
-> > >>>>>> [20213.579161]  user_path_at_empty+0x3e/0x50
-> > >>>>>> [20213.579172]  vfs_statx+0x76/0xe0
-> > >>>>>> [20213.579182]  __do_sys_newstat+0x3d/0x70
-> > >>>>>> [20213.579194]  ? fput+0x13/0x20
-> > >>>>>> [20213.579203]  ? ksys_ioctl+0xb0/0x300
-> > >>>>>> [20213.579213]  ? generic_file_llseek+0x24/0x30
-> > >>>>>> [20213.579225]  ? fput+0x13/0x20
-> > >>>>>> [20213.579233]  ? ksys_lseek+0x8d/0xb0
-> > >>>>>> [20213.579243]  __x64_sys_newstat+0x16/0x20
-> > >>>>>> [20213.579256]  do_syscall_64+0x4d/0x140
-> > >>>>>> [20213.579268]  entry_SYSCALL_64_after_hwframe+0x5c/0xc1
-> > >>>>>>
-> > >>>>>> <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
-> > >>>>>>
-> > >>>>>>
-> > >>>>> Please note that the kernel version I use is the one maintained by
-> > >>>>> Tencent.Inc,
-> > >>>>> and the baseline is v5.4. But in fact, in the latest upstream source
-> > >>>>> tree,
-> > >>>>> although the trailing_symlink() function has been removed, its logic
-> > >>>>> has been
-> > >>>>> moved to pick_link(), so the problem still exists.
-> > >>>>>
-> > >>>>> Ian Kent pointed out that try_to_unlazy() was introduced in
-> > >>>>> pick_link() in the
-> > >>>>> latest upstream source tree, but I don't understand why this can
-> > >>>>> solve the NULL
-> > >>>>> ->get_link pointer dereference problem, because ->get_link pointer
-> > >>>>> will be
-> > >>>>> dereferenced before try_to_unlazy().
-> > >>>>>
-> > >>>>> (I don't understand why Ian Kent's email didn't appear on the
-> > >>>>> mailing list.)
-> > >>>> It was something about html mail and I think my mail client was at 
-> > >>>> fault.
-> > >>>>
-> > >>>> In any case what you say is indeed correct, so the comment isn't
-> > >>>> important.
-> > >>>>
-> > >>>>
-> > >>>> Fact is it is still a race between the lockless path walk and inode
-> > >>>> eviction
-> > >>>>
-> > >>>> and xfs recycling. I believe that the xfs recycling code is very 
-> > >>>> hard to
-> > >>>> fix.
-> > >>>>
-> > >>>>
-> > >>>> IIRC correctly putting a NULL check in pick_link() was not considered
-> > >>>> acceptable
-> > >>>>
-> > >>>> but there must be a way that is acceptable to check this and 
-> > >>>> restart the
-> > >>>> walk.
-> > >>>>
-> > >>>> Maybe there was a reluctance to suffer the overhead of restarting the
-> > >>>> walk when
-> > >>>>
-> > >>>> it shouldn't be needed.
-> > >>> Or perhaps the worry was that if it can become NULL it could also 
-> > >>> become a
-> > >>> pointer to a
-> > >>>
-> > >>> different (incorrect) link altogether which could have really 
-> > >>> odd/unpleasant
-> > >>> outcomes.
-> > >> Yuck.  I think that means that we can't reallocate freed inodes until
-> > >> the rcu grace period expires.  For inodes that haven't been evicted, I
-> > >> think that also means we cannot recycle cached inodes until after an rcu
-> > >> grace period expires; or maybe that we cannot reset i_op/i_fop and must
-> > >> not leave the incore state in an inconsistent format?
-> > >
-> > > Yeah, not pretty!
-> > >
-> > > But shouldn't this case occur only occasionally?
-> > >
-> > >
-> > > So issuing a cache miss shouldn't impact performance too much that was,
-> > >
-> > > I believe, the concern with waiting for the rcu grace period.
-> > >
-> > >
-> > > Identifying it's happening should be possible, the vfs legitimize_*()
-> > >
-> > > has this job for various objects but maybe it's using vfs private info.
-> > >
-> > > (certainly it uses nameidata struct with a seq lock sequence number in
-> > >
-> > > it) but I assume it can be done somehow.
-> > 
-> > Unfortunately, when you start trying to work out how to do this, it 
-> > isn't at all
-> > 
-> > obvious how to do it ...
-> 
-> How about adding a synchronize_rcu() in front of xfs_reinit_inode()?
-> 
-> Maybe this will affect performance, but compared to crashing the kernel, this
-> performance penalty is completely worth it.
+On 2024-05-26, Christoph Hellwig <hch@infradead.org> wrote:
+> On Thu, May 23, 2024 at 01:57:32PM -0700, Aleksa Sarai wrote:
+> > Now that we provide a unique 64-bit mount ID interface in statx, we can
+> > now provide a race-free way for name_to_handle_at(2) to provide a file
+> > handle and corresponding mount without needing to worry about racing
+> > with /proc/mountinfo parsing.
+>=20
+> file handles are not tied to mounts, they are tied to super_blocks,
+> and they can survive reboots or (less relevant) remounts.  This thus
+> seems like a very confusing if not wrong interfaces.
 
-There is always synchronize_rcu_expedited(), especially if this is a
-relatively rare operation.  The typical synchronize_rcu() delay is tens
-of milliseconds, while the typical synchronize_rcu_expedited() delay is
-tens to hundreds of microseconds.
+The existing interface already provides a mount ID which is not even
+safe without rebooting.
 
-The downside of synchronize_rcu_expedited() is higher per-RCU-update
-CPU utilization.  Plus added IPIs.
+The purpose of the mount ID (in the existing API) is to allow userspace
+to make sure they know which filesystem mount the file handle came from
+so they can store the relevant information (fsid, etc) to make sure they
+know which superblock the mount came from when it comes to doing
+open_by_handle_at(2). However, there is a race between getting the mount
+ID from name_to_handle_at() and parsing /proc/self/mountinfo, which
+means that userspace cannot ever be sure that they know the correct
+mount the file handle came from (the man page for open_by_handle_at
+mentions this issue explicitly).
 
-> And, perhaps we can gradually take some optimization measures, such as:
-> https://lore.kernel.org/linux-xfs/20220217172518.3842951-2-bfoster@redhat.com/
+Getting the ability to get a 64-bit mount ID would allow userspace to
+use statmount(2) directly, avoiding this race. You're quite right that
+obviously you wouldn't want to just store the mount ID.
 
-I cannot claim to fully understand this code, but I do agree that the use
-of things like poll_state_synchronize_rcu() and cond_synchronize_rcu()
-could greatly reduce the number of grace-period waits.  In recent kernels,
-there is cond_synchronize_rcu_expedited() as well.
+An alternative would be to return something unique to the filesystem
+superblock, but as far as I can tell there is no guarantee that every
+Linux filesystem's fsid is sufficiently unique to act as a globally
+unique identifier. At least with a 64-bit mount ID and statmount(2),
+userspace can decide what information is needed to get sufficiently
+unique information about the source filesystem.
 
-							Thanx, Paul
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-> Best Regards,
-> Jinliang Zheng
-> 
-> > 
-> > 
-> > >
-> > >
-> > > My question then becomes is it viable/straight forward to not recycle 
-> > > such
-> > >
-> > > an inode and discard it instead so it gets re-created, I guess it's 
-> > > essentially
-> > >
-> > > a cache miss?
-> > >
-> > >
-> > > Ian
-> > >
-> > >>
-> > >> --D
-> > >>
-> > >>>>
-> > >>>> The alternative would be to find some way to identify when it's unsafe
-> > >>>> to reuse
-> > >>>>
-> > >>>> an inode marked for re-cycle before dropping rcu read, perhaps with 
-> > >>>> the
-> > >>>> reference
-> > >>>>
-> > >>>> count plus the seqlock. Basically, to reuse inodes xfs will need to
-> > >>>> identify when
-> > >>>>
-> > >>>> the race occurs and let the inode go away under rcu and create a 
-> > >>>> new one
-> > >>>> if a race
-> > >>>>
-> > >>>> is detected. But possibly that isn't nearly as simple as it sounds?
-> > >>>>
-> > >>>>
-> > >>>>> Thanks,
-> > >>>>> Jinliang Zheng
-> > >>>>>
-> > >>>>>> And I analyzed the disassembly of trailing_symlink() and
-> > >>>>>> confirmed that a NULL
-> > >>>>>> ->get_link() happened here:
-> > >>>>>>
-> > >>>>>> 0xffffffff812e4850 <trailing_symlink>:    nopl 0x0(%rax,%rax,1)
-> > >>>>>> [FTRACE NOP]
-> > >>>>>> 0xffffffff812e4855 <trailing_symlink+0x5>:    push %rbp
-> > >>>>>> 0xffffffff812e4856 <trailing_symlink+0x6>:    mov %rsp,%rbp
-> > >>>>>> 0xffffffff812e4859 <trailing_symlink+0x9>:    push %r15
-> > >>>>>> 0xffffffff812e485b <trailing_symlink+0xb>:    push %r14
-> > >>>>>> 0xffffffff812e485d <trailing_symlink+0xd>:    push %r13
-> > >>>>>> 0xffffffff812e485f <trailing_symlink+0xf>:    push %r12
-> > >>>>>> 0xffffffff812e4861 <trailing_symlink+0x11>: push %rbx
-> > >>>>>> 0xffffffff812e4862 <trailing_symlink+0x12>:    mov
-> > >>>>>> %rdi,%rbx        # rbx = &nameidate
-> > >>>>>> 0xffffffff812e4865 <trailing_symlink+0x15>:    sub $0x8,%rsp
-> > >>>>>> 0xffffffff812e4869 <trailing_symlink+0x19>:    mov
-> > >>>>>> 0x1765845(%rip),%edx     # 0xffffffff82a4a0b4
-> > >>>>>> <sysctl_protected_symlinks>
-> > >>>>>> 0xffffffff812e486f <trailing_symlink+0x1f>:    mov 0x38(%rdi),%eax
-> > >>>>>> 0xffffffff812e4872 <trailing_symlink+0x22>: test %edx,%edx
-> > >>>>>> 0xffffffff812e4874 <trailing_symlink+0x24>:    je
-> > >>>>>> 0xffffffff812e48ac <trailing_symlink+0x5c>
-> > >>>>>> 0xffffffff812e4876 <trailing_symlink+0x26>:    mov %gs:0x1ad00,%rdx
-> > >>>>>> 0xffffffff812e487f <trailing_symlink+0x2f>:    mov
-> > >>>>>> 0xc8(%rdi),%rcx        # rcx = nameidata->link_inode
-> > >>>>>> 0xffffffff812e4886 <trailing_symlink+0x36>:    mov 0xc18(%rdx),%rdx
-> > >>>>>> 0xffffffff812e488d <trailing_symlink+0x3d>:    mov
-> > >>>>>> 0x4(%rcx),%ecx        # ecx = link_inode->uid
-> > >>>>>> 0xffffffff812e4890 <trailing_symlink+0x40>:    cmp %ecx,0x1c(%rdx)
-> > >>>>>> 0xffffffff812e4893 <trailing_symlink+0x43>:    je
-> > >>>>>> 0xffffffff812e48ac <trailing_symlink+0x5c>
-> > >>>>>> 0xffffffff812e4895 <trailing_symlink+0x45>:    mov 0x30(%rdi),%rsi
-> > >>>>>> 0xffffffff812e4899 <trailing_symlink+0x49>: movzwl (%rsi),%edx
-> > >>>>>> 0xffffffff812e489c <trailing_symlink+0x4c>:    and $0x202,%dx
-> > >>>>>> 0xffffffff812e48a1 <trailing_symlink+0x51>:    cmp $0x202,%dx
-> > >>>>>> 0xffffffff812e48a6 <trailing_symlink+0x56>:    je
-> > >>>>>> 0xffffffff812e495f <trailing_symlink+0x10f>
-> > >>>>>> 0xffffffff812e48ac <trailing_symlink+0x5c>:    or $0x10,%eax
-> > >>>>>> 0xffffffff812e48af <trailing_symlink+0x5f>:    mov
-> > >>>>>> %eax,0x38(%rbx)        # nd->flags |= LOOKUP_PARENT
-> > >>>>>> 0xffffffff812e48b2 <trailing_symlink+0x62>:    mov
-> > >>>>>> 0x50(%rbx),%rax        # rax = nd->stack
-> > >>>>>> 0xffffffff812e48b6 <trailing_symlink+0x66>: movq
-> > >>>>>> $0x0,0x20(%rax)        # stack[0].name = NULL
-> > >>>>>> 0xffffffff812e48be <trailing_symlink+0x6e>:    mov
-> > >>>>>> 0x48(%rbx),%eax        # nd->depth
-> > >>>>>> 0xffffffff812e48c1 <trailing_symlink+0x71>:    mov
-> > >>>>>> 0x50(%rbx),%rdx        # nd->stack
-> > >>>>>> 0xffffffff812e48c5 <trailing_symlink+0x75>:    mov
-> > >>>>>> 0xc8(%rbx),%r13        # nd->link_inode
-> > >>>>>> 0xffffffff812e48cc <trailing_symlink+0x7c>:    lea
-> > >>>>>> (%rax,%rax,2),%rax    # rax = depth * 3
-> > >>>>>> 0xffffffff812e48d0 <trailing_symlink+0x80>:    shl
-> > >>>>>> $0x4,%rax        # rax = rax << 4, sizeof(saved):0x30
-> > >>>>>> 0xffffffff812e48d4 <trailing_symlink+0x84>:    lea
-> > >>>>>> -0x30(%rdx,%rax,1),%r15    # r15 = last
-> > >>>>>> 0xffffffff812e48d9 <trailing_symlink+0x89>:    mov
-> > >>>>>> 0x8(%r15),%r14        # r14 = last->link.dentry
-> > >>>>>> 0xffffffff812e48dd <trailing_symlink+0x8d>: testb $0x40,0x38(%rbx)
-> > >>>>>> 0xffffffff812e48e1 <trailing_symlink+0x91>:    je
-> > >>>>>> 0xffffffff812e4950 <trailing_symlink+0x100>
-> > >>>>>> 0xffffffff812e48e3 <trailing_symlink+0x93>:    mov %r13,%rsi
-> > >>>>>> 0xffffffff812e48e6 <trailing_symlink+0x96>:    mov %r15,%rdi
-> > >>>>>> 0xffffffff812e48e9 <trailing_symlink+0x99>: callq
-> > >>>>>> 0xffffffff812f8a00 <atime_needs_update>
-> > >>>>>> 0xffffffff812e48ee <trailing_symlink+0x9e>: test %al,%al
-> > >>>>>> 0xffffffff812e48f0 <trailing_symlink+0xa0>:    jne
-> > >>>>>> 0xffffffff812e4a56 <trailing_symlink+0x206>
-> > >>>>>> 0xffffffff812e48f6 <trailing_symlink+0xa6>:    mov 0x38(%rbx),%edx
-> > >>>>>> 0xffffffff812e48f9 <trailing_symlink+0xa9>:    mov %r13,%rsi
-> > >>>>>> 0xffffffff812e48fc <trailing_symlink+0xac>:    mov %r14,%rdi
-> > >>>>>> 0xffffffff812e48ff <trailing_symlink+0xaf>:    shr $0x6,%edx
-> > >>>>>> 0xffffffff812e4902 <trailing_symlink+0xb2>:    and $0x1,%edx
-> > >>>>>> 0xffffffff812e4905 <trailing_symlink+0xb5>: callq
-> > >>>>>> 0xffffffff81424310 <security_inode_follow_link>
-> > >>>>>> 0xffffffff812e490a <trailing_symlink+0xba>: movslq %eax,%r12
-> > >>>>>> 0xffffffff812e490d <trailing_symlink+0xbd>: test %eax,%eax
-> > >>>>>> 0xffffffff812e490f <trailing_symlink+0xbf>:    jne
-> > >>>>>> 0xffffffff812e4939 <trailing_symlink+0xe9>
-> > >>>>>> 0xffffffff812e4911 <trailing_symlink+0xc1>: movl $0x4,0x44(%rbx)
-> > >>>>>> 0xffffffff812e4918 <trailing_symlink+0xc8>:    mov 0x248(%r13),%r12
-> > >>>>>> 0xffffffff812e491f <trailing_symlink+0xcf>: test %r12,%r12
-> > >>>>>> 0xffffffff812e4922 <trailing_symlink+0xd2>:    je
-> > >>>>>> 0xffffffff812e49e5 <trailing_symlink+0x195>
-> > >>>>>> 0xffffffff812e4928 <trailing_symlink+0xd8>: movzbl (%r12),%eax
-> > >>>>>> 0xffffffff812e492d <trailing_symlink+0xdd>:    cmp $0x2f,%al
-> > >>>>>> 0xffffffff812e492f <trailing_symlink+0xdf>:    je
-> > >>>>>> 0xffffffff812e49b7 <trailing_symlink+0x167>
-> > >>>>>> 0xffffffff812e4935 <trailing_symlink+0xe5>: test %al,%al
-> > >>>>>> 0xffffffff812e4937 <trailing_symlink+0xe7>:    je
-> > >>>>>> 0xffffffff812e49ae <trailing_symlink+0x15e>
-> > >>>>>> 0xffffffff812e4939 <trailing_symlink+0xe9>: test %r12,%r12
-> > >>>>>> 0xffffffff812e493c <trailing_symlink+0xec>:    je
-> > >>>>>> 0xffffffff812e49ae <trailing_symlink+0x15e>
-> > >>>>>> 0xffffffff812e493e <trailing_symlink+0xee>:    add $0x8,%rsp
-> > >>>>>> 0xffffffff812e4942 <trailing_symlink+0xf2>:    mov %r12,%rax
-> > >>>>>> 0xffffffff812e4945 <trailing_symlink+0xf5>:    pop %rbx
-> > >>>>>> 0xffffffff812e4946 <trailing_symlink+0xf6>:    pop %r12
-> > >>>>>> 0xffffffff812e4948 <trailing_symlink+0xf8>:    pop %r13
-> > >>>>>> 0xffffffff812e494a <trailing_symlink+0xfa>:    pop %r14
-> > >>>>>> 0xffffffff812e494c <trailing_symlink+0xfc>:    pop %r15
-> > >>>>>> 0xffffffff812e494e <trailing_symlink+0xfe>:    pop %rbp
-> > >>>>>> 0xffffffff812e494f <trailing_symlink+0xff>: retq
-> > >>>>>> 0xffffffff812e4950 <trailing_symlink+0x100>: mov %r15,%rdi
-> > >>>>>> 0xffffffff812e4953 <trailing_symlink+0x103>: callq
-> > >>>>>> 0xffffffff812f8ae0 <touch_atime>
-> > >>>>>> 0xffffffff812e4958 <trailing_symlink+0x108>: callq
-> > >>>>>> 0xffffffff81a26410 <_cond_resched>
-> > >>>>>> 0xffffffff812e495d <trailing_symlink+0x10d>: jmp
-> > >>>>>> 0xffffffff812e48f6 <trailing_symlink+0xa6>
-> > >>>>>> 0xffffffff812e495f <trailing_symlink+0x10f>: mov 0x4(%rsi),%edx
-> > >>>>>> 0xffffffff812e4962 <trailing_symlink+0x112>: cmp $0xffffffff,%edx
-> > >>>>>> 0xffffffff812e4965 <trailing_symlink+0x115>:    je
-> > >>>>>> 0xffffffff812e496f <trailing_symlink+0x11f>
-> > >>>>>> 0xffffffff812e4967 <trailing_symlink+0x117>: cmp %edx,%ecx
-> > >>>>>> 0xffffffff812e4969 <trailing_symlink+0x119>:    je
-> > >>>>>> 0xffffffff812e48ac <trailing_symlink+0x5c>
-> > >>>>>> 0xffffffff812e496f <trailing_symlink+0x11f>: mov
-> > >>>>>> $0xfffffffffffffff6,%r12
-> > >>>>>> 0xffffffff812e4976 <trailing_symlink+0x126>: test $0x40,%al
-> > >>>>>> 0xffffffff812e4978 <trailing_symlink+0x128>: jne
-> > >>>>>> 0xffffffff812e493e <trailing_symlink+0xee>
-> > >>>>>> 0xffffffff812e497a <trailing_symlink+0x12a>: mov %gs:0x1ad00,%rax
-> > >>>>>> 0xffffffff812e4983 <trailing_symlink+0x133>: mov 0xce0(%rax),%rax
-> > >>>>>> 0xffffffff812e498a <trailing_symlink+0x13a>: test %rax,%rax
-> > >>>>>> 0xffffffff812e498d <trailing_symlink+0x13d>:    je
-> > >>>>>> 0xffffffff812e4999 <trailing_symlink+0x149>
-> > >>>>>> 0xffffffff812e498f <trailing_symlink+0x13f>: mov (%rax),%eax
-> > >>>>>> 0xffffffff812e4991 <trailing_symlink+0x141>: test %eax,%eax
-> > >>>>>> 0xffffffff812e4993 <trailing_symlink+0x143>:    je
-> > >>>>>> 0xffffffff812e4a6f <trailing_symlink+0x21f>
-> > >>>>>> 0xffffffff812e4999 <trailing_symlink+0x149>: mov
-> > >>>>>> $0xffffffff82319b4f,%rdi
-> > >>>>>> 0xffffffff812e49a0 <trailing_symlink+0x150>: mov
-> > >>>>>> $0xfffffffffffffff3,%r12
-> > >>>>>> 0xffffffff812e49a7 <trailing_symlink+0x157>: callq
-> > >>>>>> 0xffffffff81161310 <audit_log_link_denied>
-> > >>>>>> 0xffffffff812e49ac <trailing_symlink+0x15c>: jmp
-> > >>>>>> 0xffffffff812e493e <trailing_symlink+0xee>
-> > >>>>>> 0xffffffff812e49ae <trailing_symlink+0x15e>: mov
-> > >>>>>> $0xffffffff8230164d,%r12
-> > >>>>>> 0xffffffff812e49b5 <trailing_symlink+0x165>: jmp
-> > >>>>>> 0xffffffff812e493e <trailing_symlink+0xee>
-> > >>>>>> 0xffffffff812e49b7 <trailing_symlink+0x167>: cmpq $0x0,0x20(%rbx)
-> > >>>>>> 0xffffffff812e49bc <trailing_symlink+0x16c>:    je
-> > >>>>>> 0xffffffff812e4a8a <trailing_symlink+0x23a>
-> > >>>>>> 0xffffffff812e49c2 <trailing_symlink+0x172>: mov %rbx,%rdi
-> > >>>>>> 0xffffffff812e49c5 <trailing_symlink+0x175>: callq
-> > >>>>>> 0xffffffff812e2da0 <nd_jump_root>
-> > >>>>>> 0xffffffff812e49ca <trailing_symlink+0x17a>: test %eax,%eax
-> > >>>>>> 0xffffffff812e49cc <trailing_symlink+0x17c>: jne
-> > >>>>>> 0xffffffff812e4a97 <trailing_symlink+0x247>
-> > >>>>>> 0xffffffff812e49d2 <trailing_symlink+0x182>: add $0x1,%r12
-> > >>>>>> 0xffffffff812e49d6 <trailing_symlink+0x186>: movzbl (%r12),%eax
-> > >>>>>> 0xffffffff812e49db <trailing_symlink+0x18b>: cmp $0x2f,%al
-> > >>>>>> 0xffffffff812e49dd <trailing_symlink+0x18d>: jne
-> > >>>>>> 0xffffffff812e4935 <trailing_symlink+0xe5>
-> > >>>>>> 0xffffffff812e49e3 <trailing_symlink+0x193>: jmp
-> > >>>>>> 0xffffffff812e49d2 <trailing_symlink+0x182>
-> > >>>>>> 0xffffffff812e49e5 <trailing_symlink+0x195>: mov
-> > >>>>>> 0x20(%r13),%rax        # inode->i_op
-> > >>>>>> 0xffffffff812e49e9 <trailing_symlink+0x199>: add $0x10,%r15
-> > >>>>>> 0xffffffff812e49ed <trailing_symlink+0x19d>: mov %r13,%rsi
-> > >>>>>> 0xffffffff812e49f0 <trailing_symlink+0x1a0>: mov %r15,%rdx
-> > >>>>>> 0xffffffff812e49f3 <trailing_symlink+0x1a3>: mov
-> > >>>>>> 0x8(%rax),%rcx        # inode_operations->get_link
-> > >>>>>> 0xffffffff812e49f7 <trailing_symlink+0x1a7>: testb $0x40,0x38(%rbx)
-> > >>>>>> 0xffffffff812e49fb <trailing_symlink+0x1ab>: jne
-> > >>>>>> 0xffffffff812e4a1f <trailing_symlink+0x1cf>
-> > >>>>>> 0xffffffff812e49fd <trailing_symlink+0x1ad>: mov
-> > >>>>>> %r14,%rdi        # nd->flags & LOOKUP_RCU == 0
-> > >>>>>> 0xffffffff812e4a00 <trailing_symlink+0x1b0>: callq
-> > >>>>>> 0xffffffff81e00f70 <__x86_indirect_thunk_rcx> # jmpq *%rcx
-> > >>>>>> 0xffffffff812e4a05 <trailing_symlink+0x1b5>: mov %rax,%r12
-> > >>>>>> 0xffffffff812e4a08 <trailing_symlink+0x1b8>: test %r12,%r12
-> > >>>>>> 0xffffffff812e4a0b <trailing_symlink+0x1bb>:    je
-> > >>>>>> 0xffffffff812e49ae <trailing_symlink+0x15e>
-> > >>>>>> 0xffffffff812e4a0d <trailing_symlink+0x1bd>: cmp
-> > >>>>>> $0xfffffffffffff000,%r12
-> > >>>>>> 0xffffffff812e4a14 <trailing_symlink+0x1c4>: jbe
-> > >>>>>> 0xffffffff812e4928 <trailing_symlink+0xd8>
-> > >>>>>> 0xffffffff812e4a1a <trailing_symlink+0x1ca>: jmpq
-> > >>>>>> 0xffffffff812e493e <trailing_symlink+0xee>
-> > >>>>>> 0xffffffff812e4a1f <trailing_symlink+0x1cf>: xor
-> > >>>>>> %edi,%edi        # nd->flags & LOOKUP_RCU != 0
-> > >>>>>> 0xffffffff812e4a21 <trailing_symlink+0x1d1>: mov %rcx,-0x30(%rbp)
-> > >>>>>> 0xffffffff812e4a25 <trailing_symlink+0x1d5>: callq
-> > >>>>>> 0xffffffff81e00f70 <__x86_indirect_thunk_rcx> # jmpq *%rcx
-> > >>>>>> 0xffffffff812e4a2a <trailing_symlink+0x1da>: mov %rax,%r12
-> > >>>>>> 0xffffffff812e4a2d <trailing_symlink+0x1dd>: cmp
-> > >>>>>> $0xfffffffffffffff6,%rax
-> > >>>>>> 0xffffffff812e4a31 <trailing_symlink+0x1e1>: jne
-> > >>>>>> 0xffffffff812e4a08 <trailing_symlink+0x1b8>
-> > >>>>>> 0xffffffff812e4a33 <trailing_symlink+0x1e3>: mov %rbx,%rdi
-> > >>>>>> 0xffffffff812e4a36 <trailing_symlink+0x1e6>: callq
-> > >>>>>> 0xffffffff812e3840 <unlazy_walk>
-> > >>>>>> 0xffffffff812e4a3b <trailing_symlink+0x1eb>: test %eax,%eax
-> > >>>>>> 0xffffffff812e4a3d <trailing_symlink+0x1ed>: jne
-> > >>>>>> 0xffffffff812e4a97 <trailing_symlink+0x247>
-> > >>>>>> 0xffffffff812e4a3f <trailing_symlink+0x1ef>: mov %r15,%rdx
-> > >>>>>> 0xffffffff812e4a42 <trailing_symlink+0x1f2>: mov %r13,%rsi
-> > >>>>>> 0xffffffff812e4a45 <trailing_symlink+0x1f5>: mov %r14,%rdi
-> > >>>>>> 0xffffffff812e4a48 <trailing_symlink+0x1f8>: mov -0x30(%rbp),%rcx
-> > >>>>>> 0xffffffff812e4a4c <trailing_symlink+0x1fc>: callq
-> > >>>>>> 0xffffffff81e00f70 <__x86_indirect_thunk_rcx>
-> > >>>>>> 0xffffffff812e4a51 <trailing_symlink+0x201>: mov %rax,%r12
-> > >>>>>> 0xffffffff812e4a54 <trailing_symlink+0x204>: jmp
-> > >>>>>> 0xffffffff812e4a08 <trailing_symlink+0x1b8>
-> > >>>>>> 0xffffffff812e4a56 <trailing_symlink+0x206>: mov %rbx,%rdi
-> > >>>>>> 0xffffffff812e4a59 <trailing_symlink+0x209>: callq
-> > >>>>>> 0xffffffff812e3840 <unlazy_walk>
-> > >>>>>> 0xffffffff812e4a5e <trailing_symlink+0x20e>: test %eax,%eax
-> > >>>>>> 0xffffffff812e4a60 <trailing_symlink+0x210>: jne
-> > >>>>>> 0xffffffff812e4a97 <trailing_symlink+0x247>
-> > >>>>>> 0xffffffff812e4a62 <trailing_symlink+0x212>: mov %r15,%rdi
-> > >>>>>> 0xffffffff812e4a65 <trailing_symlink+0x215>: callq
-> > >>>>>> 0xffffffff812f8ae0 <touch_atime>
-> > >>>>>> 0xffffffff812e4a6a <trailing_symlink+0x21a>: jmpq
-> > >>>>>> 0xffffffff812e48f6 <trailing_symlink+0xa6>
-> > >>>>>> 0xffffffff812e4a6f <trailing_symlink+0x21f>: mov 0x50(%rbx),%rax
-> > >>>>>> 0xffffffff812e4a73 <trailing_symlink+0x223>: mov 0xb8(%rbx),%rdi
-> > >>>>>> 0xffffffff812e4a7a <trailing_symlink+0x22a>: xor %edx,%edx
-> > >>>>>> 0xffffffff812e4a7c <trailing_symlink+0x22c>: mov 0x8(%rax),%rsi
-> > >>>>>> 0xffffffff812e4a80 <trailing_symlink+0x230>: callq
-> > >>>>>> 0xffffffff811673f0 <__audit_inode>
-> > >>>>>> 0xffffffff812e4a85 <trailing_symlink+0x235>: jmpq
-> > >>>>>> 0xffffffff812e4999 <trailing_symlink+0x149>
-> > >>>>>> 0xffffffff812e4a8a <trailing_symlink+0x23a>: mov %rbx,%rdi
-> > >>>>>> 0xffffffff812e4a8d <trailing_symlink+0x23d>: callq
-> > >>>>>> 0xffffffff812e4790 <set_root>
-> > >>>>>> 0xffffffff812e4a92 <trailing_symlink+0x242>: jmpq
-> > >>>>>> 0xffffffff812e49c2 <trailing_symlink+0x172>
-> > >>>>>> 0xffffffff812e4a97 <trailing_symlink+0x247>: mov
-> > >>>>>> $0xfffffffffffffff6,%r12
-> > >>>>>> 0xffffffff812e4a9e <trailing_symlink+0x24e>: jmpq
-> > >>>>>> 0xffffffff812e493e <trailing_symlink+0xee>
-> > >>>>>>
-> > >>>>>> <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
-> > >>>>>>
-> > >>>>>>
-> > >>>>>>
-> > >>>>>> According to my understanding, the problem solved by commit
-> > >>>>>> 7b7820b83f23 ("xfs:
-> > >>>>>> don't expose internal symlink metadata buffers to the vfs") is a
-> > >>>>>> data NULL
-> > >>>>>> pointer dereference, but the problem here is an instruction NULL
-> > >>>>>> pointer
-> > >>>>>> dereference.
-> > >>>>>>
-> > >>>>>> Further, I analyzed the possible triggering process as follows:
-> > >>>>>>
-> > >>>>>> rcu_walk            do_unlinkat ~~> prune_dcache_sb create
-> > >>>>>> rcu_read_lock
-> > >>>>>> read_seqcount_retry
-> > >>>>>> (the last check)      iput_final
-> > >>>>>>                           evict
-> > >>>>>>                             destroy_inode
-> > >>>>>>                               xfs_fs_destroy_inode
-> > >>>>>> xfs_inode_set_reclaim_tag xfs_ialloc
-> > >>>>>> spin_lock(ip->i_flags_lock)     xfs_dialloc
-> > >>>>>>                                   set(ip, XFS_IRECLAIMABLE)
-> > >>>>>> xfs_iget
-> > >>>>>> wakeup(xfs_reclaim_worker)        rcu_read_lock
-> > >>>>>> spin_unlock(ip->i_flags_lock)     xfs_iget_cache_hit
-> > >>>>>> spin_lock(ip->i_flags_lock)
-> > >>>>>>                                                                      
-> > >>>>>> if (XFS_IRECLAIMABLE && !XFS_IRECLAIM)
-> > >>>>>> set(ip, XFS_IRECLAIM)
-> > >>>>>> spin_unlock(ip->i_flags_lock)
-> > >>>>>> rcu_read_unlock
-> > >>>>>> < ------------ >
-> > >>>>>>                                                                      
-> > >>>>>> // miss synchronize_rcu()
-> > >>>>>> xfs_reinit_inode
-> > >>>>>> ->get_link = NULL
-> > >>>>>> get_link() // NULL
-> > >>>>>>
-> > >>>>>> rcu_read_unlock
-> > >>>>>>
-> > >>>>>> <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
-> > >>>>>>
-> > >>>>>>
-> > >>>>>>
-> > >>>>>> Therefore, I think that after commit 7b7820b83f23 ("xfs: don't
-> > >>>>>> expose internal
-> > >>>>>> symlink metadata buffers to the vfs"), we should start
-> > >>>>>> processing this NULL
-> > >>>>>> ->get_link pointer dereference.
-> > >>>>>>
-> > >>>>>> Or, am I thinking wrong somewhere?
-> > >>>>>>
-> > >>>>>> Thanks,
-> > >>>>>> Jinliang Zheng
-> > >>>>>>
-> > >>>>>>>>> Apart from that issue, I'm not aware of any other issues that the
-> > >>>>>>>>> XFS inode recycling directly exposes.
-> > >>>>>>>>>
-> > >>>>>>>>>> According to my understanding, the essence of
-> > >>>>>>>>>> this problem is that XFS reuses
-> > >>>>>>>>>> the inode evicted by VFS, but VFS rcu-walk
-> > >>>>>>>>>> assumes that this will not happen.
-> > >>>>>>>>> It assumes that the inode will not change identity during the RCU
-> > >>>>>>>>> grace period after the inode has been evicted from cache. We can
-> > >>>>>>>>> safely reinstantiate an evicted inode without waiting for an RCU
-> > >>>>>>>>> grace period as long as it is the same inode with the same 
-> > >>>>>>>>> content
-> > >>>>>>>>> and same state.
-> > >>>>>>>>>
-> > >>>>>>>>> Problems *may* arise when we unlink the inode, then evict it, 
-> > >>>>>>>>> then a
-> > >>>>>>>>> new file is created and the old slab cache memory address is used
-> > >>>>>>>>> for the new inode. I describe the issue here:
-> > >>>>>>>>>
-> > >>>>>>>>> https://lore.kernel.org/linux-xfs/20220118232547.GD59729@dread.disaster.area/ 
-> > >>>>>>>>>
-> > >>>>>>>>>
-> > >>>>>>>> And judging from the relevant emails, the main reason
-> > >>>>>>>> why ->get_link() is set
-> > >>>>>>>> to NULL should be the lack of synchronize_rcu() before
-> > >>>>>>>> xfs_reinit_inode() when
-> > >>>>>>>> the inode is chosen to be reused.
-> > >>>>>>>>
-> > >>>>>>>> However, perhaps due to performance reasons, this
-> > >>>>>>>> solution has not been merged
-> > >>>>>>>> for a long time. How is it now?
-> > >>>>>>>>
-> > >>>>>>>> Maybe I am missing something in the threads of mail?
-> > >>>>>>>>
-> > >>>>>>>> Thank you very much. :)
-> > >>>>>>>> Jinliang Zheng
-> > >>>>>>>>
-> > >>>>>>>>> That said, we have exactly zero evidence that this is actually a
-> > >>>>>>>>> problem in production systems. We did get systems tripping 
-> > >>>>>>>>> over the
-> > >>>>>>>>> symlink issue, but there's no evidence that the
-> > >>>>>>>>> unlink->close->open(O_CREAT) issues are manifesting in the 
-> > >>>>>>>>> wild and
-> > >>>>>>>>> hence there hasn't been any particular urgency to address it.
-> > >>>>>>>>>
-> > >>>>>>>>>> Are there any recommended workarounds until an
-> > >>>>>>>>>> elegant and efficient solution
-> > >>>>>>>>>> can be proposed? After all, causing a crash is
-> > >>>>>>>>>> extremely unacceptable in a
-> > >>>>>>>>>> production environment.
-> > >>>>>>>>> What crashes are you seeing in your production environment?
-> > >>>>>>>>>
-> > >>>>>>>>> -Dave.
-> > >>>>>>>>> -- 
-> > >>>>>>>>> Dave Chinner
-> > >>>>>>>>> david@fromorbit.com
-> > >
-> 
+--3co2dmrrdjgd6wv5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZlOG8AAKCRAol/rSt+lE
+b8uGAP9d019CDlw84s9QU6/eCUdNT1w0Lk0Ce3UIIdsD8vPxHgD/Xj44w2qaMngH
+r0EgXJWO83ghM64/Bg7QGygzx48oNQU=
+=/g8f
+-----END PGP SIGNATURE-----
+
+--3co2dmrrdjgd6wv5--
 
