@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-20164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14F78CF27B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 05:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FE08CF27C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 05:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E740D280A7C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 03:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8091C209C0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 03:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2511849;
-	Sun, 26 May 2024 03:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A4F20E3;
+	Sun, 26 May 2024 03:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="AXWTIgun"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IjgU3WCY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAB8A23
-	for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2024 03:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DA417FD;
+	Sun, 26 May 2024 03:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716694840; cv=none; b=t4YsqkhvLtqmmRVLP3UO7v96HOKC98+7PWimLojxL2GH/5/I0bm9vY2sFt6/7NT4O/HyS1FkFKZ7Bl88D3S0mQekQoflsvpNLNPsC8KdDLmolaT7Ob476NKoNK2vN6wWJK2ri2OkD+2Tvh/tSFHV7smM1gzh21jl+InSs4n6v3M=
+	t=1716695111; cv=none; b=Zq7dPtHQ/Va7tq7YZzhR4OLFj/sNqpRJZ2p8160UDLc6bB44rySnlVbTtzCJaLyJ8UtHFF+M4MCYABPRSKPZJwJcFzARgkcqx/GW280/QGWfPQZ0a1JJLvrmyg1u9uncVykkQOk+Zvzr2lY9jhadC0ykFIbIlLsRX+FNdfFxuc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716694840; c=relaxed/simple;
-	bh=UBeEo19PnGH8BwQR+3p0VdXZjOqWrvXmB9lyb4NWwsE=;
+	s=arc-20240116; t=1716695111; c=relaxed/simple;
+	bh=v6ga54XOMhDDCkZelbSbtrRAUVdrPRA/h/veEvBOWEE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kXb0dbUbc9Q/BMhipttNHaWcWTP02y/K1uffwDPBAkSbiOp9/fPSf2qNggAETiC5fV3LZVKwHExmUPr4PVVgZQ8owdImzUn+3k0Qo6QB+ZzdK4XIrZiXXPbY/Z12mVRFIsXqR7fPj6Alih58CUeK/IOiPyVKhfRI7V9Os2aZNlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=AXWTIgun; arc=none smtp.client-ip=62.89.141.173
+	 Content-Disposition; b=QPfScvq6LGh/tUw4Oi9GIxVgldtyLul8jXApE6MpxNRq9SCjtQYCkufsNbkAe9/5F2+J7EnHwroSeHkfTY606X2DruMinW00YYq0KoQ6poAbm24j6pvoLv382gktsCm+ItymRJ29nlbHSuadilfrCFgwMY7jGFqkRzxf34Uy0Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IjgU3WCY; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=NfCYUe40AdCYwKuccwX2638d1xgr7NzQtVlkdQSqdlY=; b=AXWTIgun+y8MAhR/p3DLkBR5Cj
-	9NCZAvRWA0nJL3IDSvsyToEPX3x+woUiWzZhh/tkG2RlSRTdKOAXNBaR/a0rLuySUjcVwBXMuIMOe
-	guC6+s8mjT3wbOFd56IiHqHwR3ZvtZVvmtFUe8H9XBXsbnoqzREtEapGakTvUI+sZpXJzzQL0Os8I
-	QES+yGrEkackdVma3k5i9bkcKhr5O19qhBpRYr5XCgx9I6gGnsyFEnkWI7Tm6hO6ldj6n+AxfLbKz
-	Wee+sfibdKxyj73JyeAv8dcVESP/y8l3AUZzGcfQQwsB9aqd5B5Tihrx4M6VJmW0NTywJZzQ6K89j
-	iZDRnbnA==;
+	bh=IhL+jFM/wX/L/MvTf1JnufvuZG20cRDnV+CfXhNU93U=; b=IjgU3WCYrSpIljliUAZb81ujxf
+	gnNQX2hVQp59w9RTxngJAW3jpWz4Z89K+PELV+iE/QOBxa5M/55CkL9fBMqGEwGQICDxtXR0NuV06
+	W27xGRvs63FQI1+WYK3rXxvUWibjRvhnLZaW4PLwux8q0IdEiE/TBym5KYRLJAuSwdjhNwN3xD6vt
+	wAU3i4uljzpqdd/Hw2BfspZpO0Ti6GsL3uLJg2hyvvU/R+ycq3ULIKunwy83nWKgeKQGWtGmELcbx
+	he65btpbF2j9lzGzgtpaBr54bLSAo8Riy7rKWKgi3r2cYPoM77uwpZfeYW2Odmo9E2Yzp/8X1nJGu
+	UXqnG44g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sB4kK-008n0R-3D;
-	Sun, 26 May 2024 03:40:33 +0000
-Date: Sun, 26 May 2024 04:40:32 +0100
+	id 1sB4ok-008n9U-0o;
+	Sun, 26 May 2024 03:45:06 +0000
+Date: Sun, 26 May 2024 04:45:06 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: netdev@zeniv.linux.org.uk
+To: netdev@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
 	Linus Torvalds <torvalds@linux-foundation.org>
 Subject: [PATCH][CFT][experimental] net/socket.c: use straight fdget/fdput
-Message-ID: <20240526034032.GY2118490@ZenIV>
+ (resend)
+Message-ID: <20240526034506.GZ2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,6 +61,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Sender: Al Viro <viro@ftp.linux.org.uk>
+
+[sigh... turns out that my .muttrc had no netdev alias ;-/]
 
 Checking the theory that the important part in sockfd_lookup_light() is
 avoiding needless file refcount operations, not the marginal reduction
@@ -684,4 +687,7 @@ index e416920e9399..297293797df2 100644
  	return datagrams;
  }
  
+
+
+----- End forwarded message -----
 
