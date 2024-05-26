@@ -1,693 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-20165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FE08CF27C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 05:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CDB8CF290
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 07:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8091C209C0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 03:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A97EE1F2126B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 05:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A4F20E3;
-	Sun, 26 May 2024 03:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE0D1FA5;
+	Sun, 26 May 2024 05:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IjgU3WCY"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Q04vE/Nn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DA417FD;
-	Sun, 26 May 2024 03:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCCC1A2C1D
+	for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2024 05:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716695111; cv=none; b=Zq7dPtHQ/Va7tq7YZzhR4OLFj/sNqpRJZ2p8160UDLc6bB44rySnlVbTtzCJaLyJ8UtHFF+M4MCYABPRSKPZJwJcFzARgkcqx/GW280/QGWfPQZ0a1JJLvrmyg1u9uncVykkQOk+Zvzr2lY9jhadC0ykFIbIlLsRX+FNdfFxuc8=
+	t=1716700083; cv=none; b=jLNFHhJ7R2EqYRXbiC6icQFDqEhcWXnLun5eIIO6eadTl6GW9YGUv3DIVG8vheFbAZWaPJvNcI9N/cFI9BAi8afKT7IHulFwDl2PoWE0uzhkWu+I/wRUXfUivRjyuWkcIVd9DrI4rVVugoE1DOXBU7r9NLkkyJb65/UE9F8Ejck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716695111; c=relaxed/simple;
-	bh=v6ga54XOMhDDCkZelbSbtrRAUVdrPRA/h/veEvBOWEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QPfScvq6LGh/tUw4Oi9GIxVgldtyLul8jXApE6MpxNRq9SCjtQYCkufsNbkAe9/5F2+J7EnHwroSeHkfTY606X2DruMinW00YYq0KoQ6poAbm24j6pvoLv382gktsCm+ItymRJ29nlbHSuadilfrCFgwMY7jGFqkRzxf34Uy0Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IjgU3WCY; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=IhL+jFM/wX/L/MvTf1JnufvuZG20cRDnV+CfXhNU93U=; b=IjgU3WCYrSpIljliUAZb81ujxf
-	gnNQX2hVQp59w9RTxngJAW3jpWz4Z89K+PELV+iE/QOBxa5M/55CkL9fBMqGEwGQICDxtXR0NuV06
-	W27xGRvs63FQI1+WYK3rXxvUWibjRvhnLZaW4PLwux8q0IdEiE/TBym5KYRLJAuSwdjhNwN3xD6vt
-	wAU3i4uljzpqdd/Hw2BfspZpO0Ti6GsL3uLJg2hyvvU/R+ycq3ULIKunwy83nWKgeKQGWtGmELcbx
-	he65btpbF2j9lzGzgtpaBr54bLSAo8Riy7rKWKgi3r2cYPoM77uwpZfeYW2Odmo9E2Yzp/8X1nJGu
-	UXqnG44g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sB4ok-008n9U-0o;
-	Sun, 26 May 2024 03:45:06 +0000
-Date: Sun, 26 May 2024 04:45:06 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: netdev@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH][CFT][experimental] net/socket.c: use straight fdget/fdput
- (resend)
-Message-ID: <20240526034506.GZ2118490@ZenIV>
+	s=arc-20240116; t=1716700083; c=relaxed/simple;
+	bh=6TpbQGOzm1TK1AWkb7x1al1XxOWPdbLNGq+G4FKAa2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LhZMm5Fw2Un9/HZ1MpjUCQ2fx8hTe/uLeFubwCe0UccKdiivIiNf2P5gVJUluHQMz58x7wGq8Mth9+Zx7ZBYvzIfuxDzJt6sEtDRbGBUn4TqP2wJbopXLXmaSDgAtXxjLFcb5EaQL0rvBQO9W94cl5JOMRY3KSlp5t8ww4z7s+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Q04vE/Nn; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5788eaf5320so848632a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 May 2024 22:08:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1716700079; x=1717304879; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=W9v3n21tw1t78rmDeyKZUV+aOEclcFgn/2PUfzT+BoM=;
+        b=Q04vE/Nnj+16ipLa2upSwj47oto6kxUqiM1xNpD3IZSWAr/H3Cta7/l4WI2M+rSDhB
+         gf2OHUXLUkGtY17Kb/eglxxJy+0+0WwCNdXUaM99+f5NUuUfp+0hzmTyoGNfqsHoa9JM
+         pq/69JS9lIA0eojHNZBDviceiL6lI9G8UbKjE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716700079; x=1717304879;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W9v3n21tw1t78rmDeyKZUV+aOEclcFgn/2PUfzT+BoM=;
+        b=xBY794Jt71I5Q4/NXD8shQeVUz+HXNQqK+ItQUkwC1Ki+YLzXIvXBQxaxuayk49uTB
+         xwjrN8icjBxwROj6M5xVBzCJeVw1FAyOEGLdydNbmwdE5A2pOeaqAET7b+Td68vBDeDV
+         wzttNzT6CXrV9PEqX+QOpRPQlenEQUg07jrDfpLPQV+1c9PsDzIHd+XyXwonuD0hgBoy
+         nSrRC5bDkPeOUGSfdS8FWRrfskJwJPSa11Har+W4VRIwwCoZQMRrVM7qipRf1kAHnrU3
+         wFUZ68o8NwE9OobeTapK3UbNKKQKSOyjnx8EYbaW+u9UbV0CfP4nRm6Zf0sZe4fFYn+Q
+         //qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUU5wD5+y1YjHtMvTXxaScwPUy/s6KwoRWMRWtU+zFFGwp/Rnn8BatpwJcN3eQ/btGqHex+TbaDIhfESekJJWZ+JRBm5swAZiKbCu0o6g==
+X-Gm-Message-State: AOJu0YxMVwg9MZ76sqA5TNMUC1XkYBK8oshdvpzEnZmBMsQBYyT2htQ2
+	lskEYJMnm5xUrfcn900x3d6lZPrHJu2umCIB1omZ+2ihfivqKsekD4FIZGNeQwFlafx7504etLA
+	r93q+RA==
+X-Google-Smtp-Source: AGHT+IFYRxflNaGlDuvPwe5mN0FSxy7xsX9LuPQ60aN7AbFcPqtraf9qeYkKhBZRHwgZh73ghfuv/A==
+X-Received: by 2002:a17:906:f9c9:b0:a5a:f16:32b1 with SMTP id a640c23a62f3a-a62641cfb1dmr432232266b.31.1716700078644;
+        Sat, 25 May 2024 22:07:58 -0700 (PDT)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817357sm332127566b.44.2024.05.25.22.07.57
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 May 2024 22:07:57 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5785d466c82so2253652a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 May 2024 22:07:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUBOMtFFFfKAO1J5t3ExKFptRoOFVuYLxo4K4EuDJxKrPqo99UhlfFbF5UHfBS8qCokwydHPb3zSHL4AnzdCWR1sUNdgBrjIKvTViLoA==
+X-Received: by 2002:a17:906:d18d:b0:a59:ab57:741e with SMTP id
+ a640c23a62f3a-a6265112305mr426487966b.76.1716700077223; Sat, 25 May 2024
+ 22:07:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240526034506.GZ2118490@ZenIV>
+In-Reply-To: <20240526034506.GZ2118490@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 25 May 2024 22:07:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjWFM9iPa8a+0apgvBoLv5PsYeQPViuf-zmkLiCGVQEww@mail.gmail.com>
+Message-ID: <CAHk-=wjWFM9iPa8a+0apgvBoLv5PsYeQPViuf-zmkLiCGVQEww@mail.gmail.com>
+Subject: Re: [PATCH][CFT][experimental] net/socket.c: use straight fdget/fdput (resend)
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="0000000000004a2ad90619546221"
 
-[sigh... turns out that my .muttrc had no netdev alias ;-/]
+--0000000000004a2ad90619546221
+Content-Type: text/plain; charset="UTF-8"
 
-Checking the theory that the important part in sockfd_lookup_light() is
-avoiding needless file refcount operations, not the marginal reduction
-of the register pressure from not keeping a struct file pointer in the
-caller.
+On Sat, 25 May 2024 at 20:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Checking the theory that the important part in sockfd_lookup_light() is
+> avoiding needless file refcount operations, not the marginal reduction
+> of the register pressure from not keeping a struct file pointer in the
+> caller.
 
-If that's true, we should get the same benefits from straight fdget()/fdput().
-And AFAICS with sane use of CLASS(fd) we can get a better code generation...
+Yeah, the register pressure thing is not likely an issue. That said, I
+think we can fix it.
 
-Would be nice if somebody tested it on networking test suites (including
-benchmarks)...
+> If that's true, we should get the same benefits from straight fdget()/fdput().
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 45d0f4800abd..831fda778e23 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -29,12 +29,6 @@ extern struct file *alloc_file_pseudo_noaccount(struct inode *, struct vfsmount
- extern struct file *alloc_file_clone(struct file *, int flags,
- 	const struct file_operations *);
- 
--static inline void fput_light(struct file *file, int fput_needed)
--{
--	if (fput_needed)
--		fput(file);
--}
--
- struct fd {
- 	struct file *file;
- 	unsigned int flags;
-@@ -76,6 +70,12 @@ static inline struct fd fdget_pos(int fd)
- 	return __to_fd(__fdget_pos(fd));
- }
- 
-+static inline bool fd_empty(struct fd f)
-+{
-+	// better code with gcc that way
-+	return unlikely(!(f.flags | (unsigned long)f.file));
-+}
-+
- static inline void fdput_pos(struct fd f)
- {
- 	if (f.flags & FDPUT_POS_UNLOCK)
-diff --git a/net/socket.c b/net/socket.c
-index e416920e9399..297293797df2 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -510,7 +510,7 @@ static int sock_map_fd(struct socket *sock, int flags)
- 
- struct socket *sock_from_file(struct file *file)
- {
--	if (file->f_op == &socket_file_ops)
-+	if (likely(file->f_op == &socket_file_ops))
- 		return file->private_data;	/* set in sock_alloc_file */
- 
- 	return NULL;
-@@ -550,24 +550,6 @@ struct socket *sockfd_lookup(int fd, int *err)
- }
- EXPORT_SYMBOL(sockfd_lookup);
- 
--static struct socket *sockfd_lookup_light(int fd, int *err, int *fput_needed)
--{
--	struct fd f = fdget(fd);
--	struct socket *sock;
--
--	*err = -EBADF;
--	if (f.file) {
--		sock = sock_from_file(f.file);
--		if (likely(sock)) {
--			*fput_needed = f.flags & FDPUT_FPUT;
--			return sock;
--		}
--		*err = -ENOTSOCK;
--		fdput(f);
--	}
--	return NULL;
--}
--
- static ssize_t sockfs_listxattr(struct dentry *dentry, char *buffer,
- 				size_t size)
- {
-@@ -1834,23 +1816,25 @@ int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen)
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
--	int err, fput_needed;
--
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock) {
--		err = move_addr_to_kernel(umyaddr, addrlen, &address);
--		if (!err) {
--			err = security_socket_bind(sock,
--						   (struct sockaddr *)&address,
--						   addrlen);
--			if (!err)
--				err = READ_ONCE(sock->ops)->bind(sock,
--						      (struct sockaddr *)
--						      &address, addrlen);
--		}
--		fput_light(sock->file, fput_needed);
--	}
--	return err;
-+	CLASS(fd, f)(fd);
-+	int err;
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
-+
-+	err = move_addr_to_kernel(umyaddr, addrlen, &address);
-+	if (unlikely(err))
-+		return err;
-+
-+	err = security_socket_bind(sock, (struct sockaddr *)&address, addrlen);
-+	if (unlikely(err))
-+		return err;
-+
-+	return READ_ONCE(sock->ops)->bind(sock,
-+					  (struct sockaddr *)&address, addrlen);
- }
- 
- SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
-@@ -1867,21 +1851,24 @@ SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
- int __sys_listen(int fd, int backlog)
- {
- 	struct socket *sock;
--	int err, fput_needed;
-+	CLASS(fd, f)(fd);
- 	int somaxconn;
-+	int err;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock) {
--		somaxconn = READ_ONCE(sock_net(sock->sk)->core.sysctl_somaxconn);
--		if ((unsigned int)backlog > somaxconn)
--			backlog = somaxconn;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--		err = security_socket_listen(sock, backlog);
--		if (!err)
--			err = READ_ONCE(sock->ops)->listen(sock, backlog);
-+	somaxconn = READ_ONCE(sock_net(sock->sk)->core.sysctl_somaxconn);
-+	if ((unsigned int)backlog > somaxconn)
-+		backlog = somaxconn;
-+
-+	err = security_socket_listen(sock, backlog);
-+	if (!err)
-+		err = READ_ONCE(sock->ops)->listen(sock, backlog);
- 
--		fput_light(sock->file, fput_needed);
--	}
- 	return err;
- }
- 
-@@ -1992,17 +1979,12 @@ static int __sys_accept4_file(struct file *file, struct sockaddr __user *upeer_s
- int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
- 		  int __user *upeer_addrlen, int flags)
- {
--	int ret = -EBADF;
--	struct fd f;
-+	CLASS(fd, f)(fd);
- 
--	f = fdget(fd);
--	if (f.file) {
--		ret = __sys_accept4_file(f.file, upeer_sockaddr,
-+	if (fd_empty(f))
-+		return -EBADF;
-+	return __sys_accept4_file(f.file, upeer_sockaddr,
- 					 upeer_addrlen, flags);
--		fdput(f);
--	}
--
--	return ret;
- }
- 
- SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
-@@ -2054,20 +2036,18 @@ int __sys_connect_file(struct file *file, struct sockaddr_storage *address,
- 
- int __sys_connect(int fd, struct sockaddr __user *uservaddr, int addrlen)
- {
--	int ret = -EBADF;
--	struct fd f;
-+	struct sockaddr_storage address;
-+	CLASS(fd, f)(fd);
-+	int ret;
- 
--	f = fdget(fd);
--	if (f.file) {
--		struct sockaddr_storage address;
-+	if (fd_empty(f))
-+		return -EBADF;
- 
--		ret = move_addr_to_kernel(uservaddr, addrlen, &address);
--		if (!ret)
--			ret = __sys_connect_file(f.file, &address, addrlen, 0);
--		fdput(f);
--	}
-+	ret = move_addr_to_kernel(uservaddr, addrlen, &address);
-+	if (ret)
-+		return ret;
- 
--	return ret;
-+	return __sys_connect_file(f.file, &address, addrlen, 0);
- }
- 
- SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
-@@ -2086,26 +2066,25 @@ int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
--	int err, fput_needed;
-+	CLASS(fd, f)(fd);
-+	int err;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	err = security_socket_getsockname(sock);
- 	if (err)
--		goto out_put;
-+		return err;
- 
- 	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 0);
- 	if (err < 0)
--		goto out_put;
--	/* "err" is actually length in this case */
--	err = move_addr_to_user(&address, err, usockaddr, usockaddr_len);
-+		return err;
- 
--out_put:
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	/* "err" is actually length in this case */
-+	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
- }
- 
- SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
-@@ -2124,26 +2103,25 @@ int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
--	int err, fput_needed;
-+	CLASS(fd, f)(fd);
-+	int err;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock != NULL) {
--		const struct proto_ops *ops = READ_ONCE(sock->ops);
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--		err = security_socket_getpeername(sock);
--		if (err) {
--			fput_light(sock->file, fput_needed);
--			return err;
--		}
-+	err = security_socket_getpeername(sock);
-+	if (err)
-+		return err;
- 
--		err = ops->getname(sock, (struct sockaddr *)&address, 1);
--		if (err >= 0)
--			/* "err" is actually length in this case */
--			err = move_addr_to_user(&address, err, usockaddr,
--						usockaddr_len);
--		fput_light(sock->file, fput_needed);
--	}
--	return err;
-+	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 1);
-+	if (err < 0)
-+		return err;
-+
-+	/* "err" is actually length in this case */
-+	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
- }
- 
- SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
-@@ -2162,16 +2140,13 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
--	int err;
- 	struct msghdr msg;
--	int fput_needed;
-+	CLASS(fd, f)(fd);
-+	int err;
- 
- 	err = import_ubuf(ITER_SOURCE, buff, len, &msg.msg_iter);
- 	if (unlikely(err))
- 		return err;
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
- 
- 	msg.msg_name = NULL;
- 	msg.msg_control = NULL;
-@@ -2181,20 +2156,22 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
- 	if (addr) {
- 		err = move_addr_to_kernel(addr, addr_len, &address);
- 		if (err < 0)
--			goto out_put;
-+			return err;
- 		msg.msg_name = (struct sockaddr *)&address;
- 		msg.msg_namelen = addr_len;
- 	}
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
-+
- 	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	if (sock->file->f_flags & O_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
- 	msg.msg_flags = flags;
--	err = __sock_sendmsg(sock, &msg);
--
--out_put:
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	return __sock_sendmsg(sock, &msg);
- }
- 
- SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
-@@ -2229,14 +2206,17 @@ int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
- 	};
- 	struct socket *sock;
- 	int err, err2;
--	int fput_needed;
-+	CLASS(fd, f)(fd);
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	err = import_ubuf(ITER_DEST, ubuf, size, &msg.msg_iter);
- 	if (unlikely(err))
- 		return err;
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
- 
- 	if (sock->file->f_flags & O_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
-@@ -2248,9 +2228,6 @@ int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
- 		if (err2 < 0)
- 			err = err2;
- 	}
--
--	fput_light(sock->file, fput_needed);
--out:
- 	return err;
- }
- 
-@@ -2325,17 +2302,16 @@ int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
- {
- 	sockptr_t optval = USER_SOCKPTR(user_optval);
- 	bool compat = in_compat_syscall();
--	int err, fput_needed;
- 	struct socket *sock;
-+	CLASS(fd, f)(fd);
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--	err = do_sock_setsockopt(sock, compat, level, optname, optval, optlen);
--
--	fput_light(sock->file, fput_needed);
--	return err;
-+	return do_sock_setsockopt(sock, compat, level, optname, optval, optlen);
- }
- 
- SYSCALL_DEFINE5(setsockopt, int, fd, int, level, int, optname,
-@@ -2391,20 +2367,17 @@ EXPORT_SYMBOL(do_sock_getsockopt);
- int __sys_getsockopt(int fd, int level, int optname, char __user *optval,
- 		int __user *optlen)
- {
--	int err, fput_needed;
- 	struct socket *sock;
--	bool compat;
-+	CLASS(fd, f)(fd);
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--	compat = in_compat_syscall();
--	err = do_sock_getsockopt(sock, compat, level, optname,
-+	return do_sock_getsockopt(sock, in_compat_syscall(), level, optname,
- 				 USER_SOCKPTR(optval), USER_SOCKPTR(optlen));
--
--	fput_light(sock->file, fput_needed);
--	return err;
- }
- 
- SYSCALL_DEFINE5(getsockopt, int, fd, int, level, int, optname,
-@@ -2430,15 +2403,16 @@ int __sys_shutdown_sock(struct socket *sock, int how)
- 
- int __sys_shutdown(int fd, int how)
- {
--	int err, fput_needed;
- 	struct socket *sock;
-+	CLASS(fd, f)(fd);
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock != NULL) {
--		err = __sys_shutdown_sock(sock, how);
--		fput_light(sock->file, fput_needed);
--	}
--	return err;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
-+
-+	return __sys_shutdown_sock(sock, how);
- }
- 
- SYSCALL_DEFINE2(shutdown, int, fd, int, how)
-@@ -2654,22 +2628,20 @@ long __sys_sendmsg_sock(struct socket *sock, struct msghdr *msg,
- long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
- 		   bool forbid_cmsg_compat)
- {
--	int fput_needed, err;
- 	struct msghdr msg_sys;
- 	struct socket *sock;
-+	CLASS(fd, f)(fd);
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
- 		return -EINVAL;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
--
--	err = ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
--
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	return ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
- }
- 
- SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int, flags)
-@@ -2684,13 +2656,20 @@ SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int
- int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 		   unsigned int flags, bool forbid_cmsg_compat)
- {
--	int fput_needed, err, datagrams;
-+	int err, datagrams;
- 	struct socket *sock;
- 	struct mmsghdr __user *entry;
- 	struct compat_mmsghdr __user *compat_entry;
- 	struct msghdr msg_sys;
- 	struct used_address used_address;
- 	unsigned int oflags = flags;
-+	CLASS(fd, f)(fd);
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
- 		return -EINVAL;
-@@ -2700,10 +2679,6 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 
- 	datagrams = 0;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
--
- 	used_address.name_len = UINT_MAX;
- 	entry = mmsg;
- 	compat_entry = (struct compat_mmsghdr __user *)mmsg;
-@@ -2739,8 +2714,6 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 		cond_resched();
- 	}
- 
--	fput_light(sock->file, fput_needed);
--
- 	/* We only return an error if no datagrams were able to be sent */
- 	if (datagrams != 0)
- 		return datagrams;
-@@ -2862,22 +2835,20 @@ long __sys_recvmsg_sock(struct socket *sock, struct msghdr *msg,
- long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
- 		   bool forbid_cmsg_compat)
- {
--	int fput_needed, err;
- 	struct msghdr msg_sys;
- 	struct socket *sock;
-+	CLASS(fd, f)(fd);
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
- 		return -EINVAL;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
--
--	err = ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
--
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	return ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
- }
- 
- SYSCALL_DEFINE3(recvmsg, int, fd, struct user_msghdr __user *, msg,
-@@ -2894,31 +2865,32 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
- 			  unsigned int vlen, unsigned int flags,
- 			  struct timespec64 *timeout)
- {
--	int fput_needed, err, datagrams;
-+	int err, datagrams;
- 	struct socket *sock;
- 	struct mmsghdr __user *entry;
- 	struct compat_mmsghdr __user *compat_entry;
- 	struct msghdr msg_sys;
- 	struct timespec64 end_time;
- 	struct timespec64 timeout64;
-+	CLASS(fd, f)(fd);
- 
- 	if (timeout &&
- 	    poll_select_set_timeout(&end_time, timeout->tv_sec,
- 				    timeout->tv_nsec))
- 		return -EINVAL;
- 
--	datagrams = 0;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(f.file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
-+	datagrams = 0;
- 
- 	if (likely(!(flags & MSG_ERRQUEUE))) {
- 		err = sock_error(sock->sk);
--		if (err) {
--			datagrams = err;
--			goto out_put;
--		}
-+		if (err)
-+			return err;
- 	}
- 
- 	entry = mmsg;
-@@ -2975,12 +2947,10 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
- 	}
- 
- 	if (err == 0)
--		goto out_put;
-+		return datagrams;
- 
--	if (datagrams == 0) {
--		datagrams = err;
--		goto out_put;
--	}
-+	if (datagrams == 0)
-+		return err;
- 
- 	/*
- 	 * We may return less entries than requested (vlen) if the
-@@ -2995,9 +2965,6 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
- 		 */
- 		WRITE_ONCE(sock->sk->sk_err, -err);
- 	}
--out_put:
--	fput_light(sock->file, fput_needed);
--
- 	return datagrams;
- }
- 
+Agreed.
 
+That said, your patch is just horrendous.
 
------ End forwarded message -----
+> +static inline bool fd_empty(struct fd f)
+> +{
+> +       // better code with gcc that way
+> +       return unlikely(!(f.flags | (unsigned long)f.file));
+> +}
+
+Ok, this is disgusting. I went all "WTF?"
+
+And then looked at why you would say that testing two different fields
+in a 'struct fd' would possibly be better than just checking one.
+
+And I see why that's the case - it basically short-circuits the
+(inlined) __to_fd() logic, and the compiler can undo it and look at
+the original single-word value.
+
+But it's still disgusting. If there is anything else in between, the
+compiler wouldn't then notice any more.
+
+What we *really* should do is have 'struct fd' just *be* that
+single-word value, never expand it to two words at all, and instead of
+doing "fd.file" we'd do "fd_file(fd)" and "fd_flags(fd)".
+
+Maybe it's not too late to do that?
+
+This is *particularly* true for the socket code that doesn't even want
+the 'struct file *' at all outside of that "check that it's a socket,
+then turn it into a socket pointer". So _particularly_ in that
+context, having a "fd_file()" helper to do the (trivial) unpacking
+would work very well.
+
+But even without changing 'struct fd', maybe we could just have
+"__fdget()" and friends not return a "unsigned long", but a "struct
+rawfd".
+
+Which would is a struct with an unsigned long.
+
+There's actually a possible future standard C++ extension for what we
+want to do ("C++ tagged pointers") and while it might make it into C
+eventually, we'd have to do it manully with ugly inline helpers (LLVM
+does it manually in C++ with a PointerIntPair class).
+
+IOW, we could do something like the attached. I think it's actually
+almost a cleanup, and now your socket things can use "struct rawfd"
+and that fd_empty() becomes
+
+   static inline bool rawfd_empty(struct rawfd raw)
+   { return !raw.word; }
+
+instead. Still somewhat disgusting, but now it's a "C doesn't have
+tagged pointers, so we do this by hand" _understandable_ disgusting.
+
+Hmm? The attached patch compiles. It looks "ObviouslyCorrect(tm)". But
+it might be "TotallyBroken(tm)". You get the idea.
+
+               Linus
+
+--0000000000004a2ad90619546221
+Content-Type: application/x-patch; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lwn2kuaq0>
+X-Attachment-Id: f_lwn2kuaq0
+
+IGZzL2ZpbGUuYyAgICAgICAgICAgIHwgMjIgKysrKysrKysrKystLS0tLS0tLS0tLQogaW5jbHVk
+ZS9saW51eC9maWxlLmggfCAyMiArKysrKysrKysrKysrKysrKy0tLS0tCiAyIGZpbGVzIGNoYW5n
+ZWQsIDI4IGluc2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2Zp
+bGUuYyBiL2ZzL2ZpbGUuYwppbmRleCA4MDc2YWVmOWMyMTAuLmExZjQ0NzYwZGRiZiAxMDA2NDQK
+LS0tIGEvZnMvZmlsZS5jCisrKyBiL2ZzL2ZpbGUuYwpAQCAtMTEyOCw3ICsxMTI4LDcgQEAgRVhQ
+T1JUX1NZTUJPTCh0YXNrX2xvb2t1cF9uZXh0X2ZkZ2V0X3JjdSk7CiAgKiBUaGUgZnB1dF9uZWVk
+ZWQgZmxhZyByZXR1cm5lZCBieSBmZ2V0X2xpZ2h0IHNob3VsZCBiZSBwYXNzZWQgdG8gdGhlCiAg
+KiBjb3JyZXNwb25kaW5nIGZwdXRfbGlnaHQuCiAgKi8KLXN0YXRpYyB1bnNpZ25lZCBsb25nIF9f
+ZmdldF9saWdodCh1bnNpZ25lZCBpbnQgZmQsIGZtb2RlX3QgbWFzaykKK3N0YXRpYyBzdHJ1Y3Qg
+cmF3ZmQgX19mZ2V0X2xpZ2h0KHVuc2lnbmVkIGludCBmZCwgZm1vZGVfdCBtYXNrKQogewogCXN0
+cnVjdCBmaWxlc19zdHJ1Y3QgKmZpbGVzID0gY3VycmVudC0+ZmlsZXM7CiAJc3RydWN0IGZpbGUg
+KmZpbGU7CkBAIC0xMTQ1LDIyICsxMTQ1LDIyIEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIF9fZmdl
+dF9saWdodCh1bnNpZ25lZCBpbnQgZmQsIGZtb2RlX3QgbWFzaykKIAlpZiAobGlrZWx5KGF0b21p
+Y19yZWFkX2FjcXVpcmUoJmZpbGVzLT5jb3VudCkgPT0gMSkpIHsKIAkJZmlsZSA9IGZpbGVzX2xv
+b2t1cF9mZF9yYXcoZmlsZXMsIGZkKTsKIAkJaWYgKCFmaWxlIHx8IHVubGlrZWx5KGZpbGUtPmZf
+bW9kZSAmIG1hc2spKQotCQkJcmV0dXJuIDA7Ci0JCXJldHVybiAodW5zaWduZWQgbG9uZylmaWxl
+OworCQkJcmV0dXJuIEVNUFRZX1JBV0ZEOworCQlyZXR1cm4gKHN0cnVjdCByYXdmZCkgeyAodW5z
+aWduZWQgbG9uZylmaWxlIH07CiAJfSBlbHNlIHsKIAkJZmlsZSA9IF9fZmdldF9maWxlcyhmaWxl
+cywgZmQsIG1hc2spOwogCQlpZiAoIWZpbGUpCi0JCQlyZXR1cm4gMDsKLQkJcmV0dXJuIEZEUFVU
+X0ZQVVQgfCAodW5zaWduZWQgbG9uZylmaWxlOworCQkJcmV0dXJuIEVNUFRZX1JBV0ZEOworCQly
+ZXR1cm4gKHN0cnVjdCByYXdmZCkgeyBGRFBVVF9GUFVUIHwgKHVuc2lnbmVkIGxvbmcpZmlsZSB9
+OwogCX0KIH0KLXVuc2lnbmVkIGxvbmcgX19mZGdldCh1bnNpZ25lZCBpbnQgZmQpCitzdHJ1Y3Qg
+cmF3ZmQgX19mZGdldCh1bnNpZ25lZCBpbnQgZmQpCiB7CiAJcmV0dXJuIF9fZmdldF9saWdodChm
+ZCwgRk1PREVfUEFUSCk7CiB9CiBFWFBPUlRfU1lNQk9MKF9fZmRnZXQpOwogCi11bnNpZ25lZCBs
+b25nIF9fZmRnZXRfcmF3KHVuc2lnbmVkIGludCBmZCkKK3N0cnVjdCByYXdmZCBfX2ZkZ2V0X3Jh
+dyh1bnNpZ25lZCBpbnQgZmQpCiB7CiAJcmV0dXJuIF9fZmdldF9saWdodChmZCwgMCk7CiB9CkBA
+IC0xMTgxLDEzICsxMTgxLDEzIEBAIHN0YXRpYyBpbmxpbmUgYm9vbCBmaWxlX25lZWRzX2ZfcG9z
+X2xvY2soc3RydWN0IGZpbGUgKmZpbGUpCiAJCShmaWxlX2NvdW50KGZpbGUpID4gMSB8fCBmaWxl
+LT5mX29wLT5pdGVyYXRlX3NoYXJlZCk7CiB9CiAKLXVuc2lnbmVkIGxvbmcgX19mZGdldF9wb3Mo
+dW5zaWduZWQgaW50IGZkKQorc3RydWN0IHJhd2ZkIF9fZmRnZXRfcG9zKHVuc2lnbmVkIGludCBm
+ZCkKIHsKLQl1bnNpZ25lZCBsb25nIHYgPSBfX2ZkZ2V0KGZkKTsKLQlzdHJ1Y3QgZmlsZSAqZmls
+ZSA9IChzdHJ1Y3QgZmlsZSAqKSh2ICYgfjMpOworCXN0cnVjdCByYXdmZCB2ID0gX19mZGdldChm
+ZCk7CisJc3RydWN0IGZpbGUgKmZpbGUgPSBmZGZpbGUodik7CiAKIAlpZiAoZmlsZSAmJiBmaWxl
+X25lZWRzX2ZfcG9zX2xvY2soZmlsZSkpIHsKLQkJdiB8PSBGRFBVVF9QT1NfVU5MT0NLOworCQl2
+LndvcmQgfD0gRkRQVVRfUE9TX1VOTE9DSzsKIAkJbXV0ZXhfbG9jaygmZmlsZS0+Zl9wb3NfbG9j
+ayk7CiAJfQogCXJldHVybiB2OwpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9maWxlLmggYi9p
+bmNsdWRlL2xpbnV4L2ZpbGUuaAppbmRleCA0NWQwZjQ4MDBhYmQuLjYwM2FhMzJmOTg1YyAxMDA2
+NDQKLS0tIGEvaW5jbHVkZS9saW51eC9maWxlLmgKKysrIGIvaW5jbHVkZS9saW51eC9maWxlLmgK
+QEAgLTQyLDYgKzQyLDE4IEBAIHN0cnVjdCBmZCB7CiAjZGVmaW5lIEZEUFVUX0ZQVVQgICAgICAg
+MQogI2RlZmluZSBGRFBVVF9QT1NfVU5MT0NLIDIKIAorLyogIlRhZ2dlZCBmaWxlIHBvaW50ZXIi
+ICovCitzdHJ1Y3QgcmF3ZmQgeworCXVuc2lnbmVkIGxvbmcgd29yZDsKK307CisjZGVmaW5lIEVN
+UFRZX1JBV0ZEIChzdHJ1Y3QgcmF3ZmQpIHsgMCB9CisKK3N0YXRpYyBpbmxpbmUgc3RydWN0IGZp
+bGUgKmZkZmlsZShzdHJ1Y3QgcmF3ZmQgcmF3KQoreyByZXR1cm4gKHN0cnVjdCBmaWxlICopIChy
+YXcud29yZCAmIH4zKTsgfQorCitzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGludCBmZGZsYWdzKHN0
+cnVjdCByYXdmZCByYXcpCit7IHJldHVybiByYXcud29yZCAmIDM7IH0KKwogc3RhdGljIGlubGlu
+ZSB2b2lkIGZkcHV0KHN0cnVjdCBmZCBmZCkKIHsKIAlpZiAoZmQuZmxhZ3MgJiBGRFBVVF9GUFVU
+KQpAQCAtNTEsMTQgKzYzLDE0IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBmZHB1dChzdHJ1Y3QgZmQg
+ZmQpCiBleHRlcm4gc3RydWN0IGZpbGUgKmZnZXQodW5zaWduZWQgaW50IGZkKTsKIGV4dGVybiBz
+dHJ1Y3QgZmlsZSAqZmdldF9yYXcodW5zaWduZWQgaW50IGZkKTsKIGV4dGVybiBzdHJ1Y3QgZmls
+ZSAqZmdldF90YXNrKHN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzaywgdW5zaWduZWQgaW50IGZkKTsK
+LWV4dGVybiB1bnNpZ25lZCBsb25nIF9fZmRnZXQodW5zaWduZWQgaW50IGZkKTsKLWV4dGVybiB1
+bnNpZ25lZCBsb25nIF9fZmRnZXRfcmF3KHVuc2lnbmVkIGludCBmZCk7Ci1leHRlcm4gdW5zaWdu
+ZWQgbG9uZyBfX2ZkZ2V0X3Bvcyh1bnNpZ25lZCBpbnQgZmQpOworZXh0ZXJuIHN0cnVjdCByYXdm
+ZCBfX2ZkZ2V0KHVuc2lnbmVkIGludCBmZCk7CitleHRlcm4gc3RydWN0IHJhd2ZkIF9fZmRnZXRf
+cmF3KHVuc2lnbmVkIGludCBmZCk7CitleHRlcm4gc3RydWN0IHJhd2ZkIF9fZmRnZXRfcG9zKHVu
+c2lnbmVkIGludCBmZCk7CiBleHRlcm4gdm9pZCBfX2ZfdW5sb2NrX3BvcyhzdHJ1Y3QgZmlsZSAq
+KTsKIAotc3RhdGljIGlubGluZSBzdHJ1Y3QgZmQgX190b19mZCh1bnNpZ25lZCBsb25nIHYpCitz
+dGF0aWMgaW5saW5lIHN0cnVjdCBmZCBfX3RvX2ZkKHN0cnVjdCByYXdmZCByYXcpCiB7Ci0JcmV0
+dXJuIChzdHJ1Y3QgZmQpeyhzdHJ1Y3QgZmlsZSAqKSh2ICYgfjMpLHYgJiAzfTsKKwlyZXR1cm4g
+KHN0cnVjdCBmZCl7ZmRmaWxlKHJhdyksZmRmbGFncyhyYXcpfTsKIH0KIAogc3RhdGljIGlubGlu
+ZSBzdHJ1Y3QgZmQgZmRnZXQodW5zaWduZWQgaW50IGZkKQo=
+--0000000000004a2ad90619546221--
 
