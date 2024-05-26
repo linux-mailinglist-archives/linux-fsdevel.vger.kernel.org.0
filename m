@@ -1,191 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-20179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E128CF422
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 13:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BE18CF433
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 14:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27DA41F215EB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 11:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9CE1F217E5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 12:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A749BDF43;
-	Sun, 26 May 2024 11:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6026EDDDC;
+	Sun, 26 May 2024 12:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PvQfWxwo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVfmAuCT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C909D524;
-	Sun, 26 May 2024 11:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF356C2D6;
+	Sun, 26 May 2024 12:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716724193; cv=none; b=Cc2nKutOia+gnwuO/xmcgTuv9/dquCRGCskbzu+f4zX9Q6Z8ADMXspp+xWg/+mUiN1+w0AP3ym3tMD0wT0uKZWx5hTPQ2+wvxT21aLW5bM0Kft8uRD+j7PShCLVXFklQo47VjLZjGh3rYrVMcgXfCdga0ryw01198nYx8mYZE+M=
+	t=1716726023; cv=none; b=h9iJ+r00cUOrrB0T5/yJWDd1PYYjF0n0l7zj6qy5PjNKbailO3wScb18TP9o3R+JDBT95nnKaLUx3HN0bDeNILM8lKbwdCmXGciswC6PC9mgNU8wr2qo31QSnw6hrWFwrPAPPSxxoOWvTFpYJtJLhzDbaZUwohlzu0UxHV3wRmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716724193; c=relaxed/simple;
-	bh=1S0uRH1NaKnSxVqVxh5XtY1K+ZMfNCChicbaWsjdybQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UQDbkPrivWn9QXS6CVjzMLf0sTKGlWfNquorRiUGK66FssqoXXyEpTA+ev13o5QK0SuQd/B1W/GQK2RvkOBWOZ5JpykMBOw6oyqqNtwRTBqkZHnW/7hzcMaqoLyvujuHVEcyJb4kc2aHFDxj0iwWiJ9jnDD8vwdvFv6qKDimGLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PvQfWxwo; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716724184;
-	bh=1S0uRH1NaKnSxVqVxh5XtY1K+ZMfNCChicbaWsjdybQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PvQfWxwoCB7XIL21b8WzaTfH0XQ+gByaa24MXwOZukjodY2BWD6OXLZBvnWa805qu
-	 /pR5DOVorSNfn1Bey+XyNrWMN5aPl+v3VDKAlXB9MlGIB7GdC+iL5y/wgi3OXRXFz6
-	 qoJku+/A7YM+OzCFAFVlwTzbGU++fen1hal4iSJLDNKe3OfzkBGQbtiGEbEj+59vnI
-	 QSXzR6WcA0/z4S6z/tzhqFva7g3G+P/yi+3zfpGdcVF7dVVoVFrGylBh697csYLVqC
-	 agw9eJ26k6vAZUz48IejLXyMJXaY99juVMJfTYxnFNibP1XNycSX8NfDkTXibRwjHU
-	 VBewwGss/zwRg==
-Received: from [100.90.194.27] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 236B5378000A;
-	Sun, 26 May 2024 11:49:43 +0000 (UTC)
-Message-ID: <92b56554-3415-46fe-99b4-99258d8a496c@collabora.com>
-Date: Sun, 26 May 2024 14:49:42 +0300
+	s=arc-20240116; t=1716726023; c=relaxed/simple;
+	bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IZtGDx6T/vvJolazyCisJnJkINiPcFcv9YaSubjl8jU6KIZhZVWu7XLAPT9A8XxC2vY8OtUEoeLZ/zv6xhRNq2LjkvwR073qLqkrQa1iUyqyIi8QZ+uIfnyrNbL8HcBC+1mj7CDVgsWY0wF+jS0QtBJSzjuqSuaGgsnOQYeuneA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVfmAuCT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFF2C2BD10;
+	Sun, 26 May 2024 12:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716726023;
+	bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GVfmAuCTDm2k7wjoJMrE/Y5Jx3RFofSI/A+9FRFhlJFDYROLSINICrlsTJ/rMvE+2
+	 lvPQXx7zZCVnPBdPZDcXEZPPGCrp9L6OzLNI5R1M2ScsUHYtd/4PMc1C9snikOf8Jp
+	 6/cxSJ2gj42idZlhbPDuF/w+LkhNkpp4ScGsACqtgEdROOT10FDv6OystyBirh2kPM
+	 CN6bCdTgU1cuUMSg2zJjHX23hNFRC9pgSprAVNNy/6KwpzFk8Z2XmRu51NH4RJQOYd
+	 4JxK7muJMc5tiuqu0Q78IAVCm5gf6jwMJw9Er5kj2OApfIJo8sZnQtUkJGgtVPGmDd
+	 ansdfY1fT1AeA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Sun, 26 May 2024 08:20:16 -0400
+Subject: [PATCH RFC] fs: turn inode->i_ctime into a ktime_t
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
- comparison helper
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, tytso@mit.edu,
- adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, jaegeuk@kernel.org,
- chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, Gabriel Krisman Bertazi <krisman@collabora.com>
-References: <20240405121332.689228-1-eugen.hristev@collabora.com>
- <20240405121332.689228-4-eugen.hristev@collabora.com>
- <20240510013330.GI1110919@google.com> <875xviyb3f.fsf@mailhost.krisman.be>
- <9afebadd-765f-42f3-a80b-366dd749bf48@collabora.com>
- <87ttipqwfn.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@collabora.com>
-In-Reply-To: <87ttipqwfn.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240526-ctime-ktime-v1-1-016ca6c1e19a@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAP8oU2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyMz3eSSzNxU3WwwmWJiaGqUkmphaGhqrATUUVCUmpZZATYtWinIzVk
+ ptrYWADLB4TZiAAAA
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+ Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3692; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmUykFGfWXjogqlx0kTGbCIxPDMLJ/+LnSVWox/
+ /9P0qRBgruJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZlMpBQAKCRAADmhBGVaC
+ FZg/D/9Ouih6Qb8A825LnXh8eyDl7mGgk/t1bSuTnuW7mlJ52hqLVDyFfOS6PsxuBsj/4qJUsmT
+ I15VLG2/i0mfOLWEQfxyPScT9L8HKuVHbd0iZsqV2SLboBjuDvc7kTHYv9IIChhRW0YZMrIPRLN
+ 6g5wXq58I+SHciw5eo/hAmGlNwL787u8dQTVQg+vhsP0M25+4vt40NwptD/cLbMBlbFoUsg8Xpx
+ exSNPoFU46sE1draokpTL7nlujNc9O/Gi75s+k34U7v03SVSJekzPMsLXIikF424FnBuoCRwc/I
+ y7KF8kjMWSqhUoL8y5lD4XU84iYhNiT2PzKXsgWRmYQQcS95Z+iA69S2E1nycoYGqZK3b3A2mbp
+ hXs9qGgz671EGpDkfTtr26ZBgN90QWjkwMfxqmcFtDSSQClwwjX3QNbrQ2goPYGREmk52S05eVL
+ j4KGiF2SSFEMuiROqgphZG/9YnPlr0sxtwMVxM8tf+Ns2hlu3Lo1uwXaoA2BF/7q1+XQjO9qcJU
+ WV2tqBDtHfZ/v1v/DF65sVQubkRnRx7WXMISBtUiLNH8us0LNXf8OKOdMslAuEWagYJuvLxAqbh
+ gOx9x96EoVQXd3XAx1H5haoYKGzBMOJCagjWjAKrbnwUgqkAU8oeqOZgzyb6IdP8uEQV8+SpmW5
+ oqxkcvGLCLcPasw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 5/23/24 02:05, Gabriel Krisman Bertazi wrote:
-> Eugen Hristev <eugen.hristev@collabora.com> writes:
-> 
->> On 5/13/24 00:27, Gabriel Krisman Bertazi wrote:
->>> Eric Biggers <ebiggers@kernel.org> writes:
->>>
->>>> On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
->>>
->>>>> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
->>>>> +			return -EINVAL;
->>>>> +
->>>>> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
->>>>> +		if (!decrypted_name.name)
->>>>> +			return -ENOMEM;
->>>>> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
->>>>> +						&decrypted_name);
->>>>> +		if (res < 0)
->>>>> +			goto out;
->>>>
->>>> If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
->>>> then this function returns 0 (indicating no match) instead of the error code
->>>> (indicating an error).  Is that the correct behavior?  I would think that
->>>> strict_encoding should only have an effect on the actual name
->>>> comparison.
->>>
->>> No. we *want* this return code to be propagated back to f2fs.  In ext4 it
->>> wouldn't matter since the error is not visible outside of ext4_match,
->>> but f2fs does the right thing and stops the lookup.
->>
->> In the previous version which I sent, you told me that the error should be
->> propagated only in strict_mode, and if !strict_mode, it should just return no match.
->> Originally I did not understand that this should be done only for utf8_strncasecmp
->> errors, and not for all the errors. I will change it here to fix that.
-> 
-> Yes, it depends on which error we are talking about. For ENOMEM and
-> whatever error fscrypt_fname_disk_to_usr returns, we surely want to send
-> that back, such that f2fs can handle it (i.e abort the lookup).  Unicode
-> casefolding errors don't need to stop the lookup.
-> 
-> 
->>> Thinking about it, there is a second problem with this series.
->>> Currently, if we are on strict_mode, f2fs_match_ci_name does not
->>> propagate unicode errors back to f2fs. So, once a utf8 invalid sequence
->>> is found during lookup, it will be considered not-a-match but the lookup
->>> will continue.  This allows some lookups to succeed even in a corrupted
->>> directory.  With this patch, we will abort the lookup on the first
->>> error, breaking existing semantics.  Note that these are different from
->>> memory allocation failure and fscrypt_fname_disk_to_usr. For those, it
->>> makes sense to abort.
->>
->> So , in the case of f2fs , we must not propagate utf8 errors ? It should just
->> return no match even in strict mode ?
->> If this helper is common for both f2fs and ext4, we have to do the same for ext4 ?
->> Or we are no longer able to commonize the code altogether ?
-> 
-> We can have a common handler.  It doesn't matter for Ext4 because it
-> ignores all errors. Perhaps ext4 can be improved too in a different
-> patchset.
-> 
->>> My suggestion would be to keep the current behavior.  Make
->>> generic_ci_match only propagate non-unicode related errors back to the
->>> filesystem.  This means that we need to move the error messages in patch
->>> 6 and 7 into this function, so they only trigger when utf8_strncasecmp*
->>> itself fails.
->>>
->>
->> So basically unicode errors stop here, and print the error message here in that case.
->> Am I understanding it correctly ?
-> 
-> Yes, that is it.  print the error message - only in strict mode - and
-> return not-a-match.
-> 
-> Is there any problem with this approach that I'm missing?
+The ctime is not settable to arbitrary values. It always comes from the
+system clock, so we'll never stamp an inode with a value that can't be
+represented there. If we disregard people setting their system clock
+past the year 2262, there is no reason we can't replace the ctime fields
+with a ktime_t.
 
-As the printing is moved here, in the common code, we cannot use either of
-f2fs_warn nor EXT4_ERROR_INODE . Any suggestion ? Would have to be something
-meaningful for the user and ratelimited I guess.
+Switch the __i_ctime fields to a single ktime_t. Move the i_generation
+down above i_fsnotify_mask and then move the i_version into the
+resulting 8 byte hole. This shrinks struct inode by 8 bytes total, and
+should improve the cache footprint as the i_version and __i_ctime are
+usually updated together.
 
-Thanks for the explanations !
+The one downside I can see to switching to a ktime_t is that if someone
+has a filesystem with files on it that has ctimes outside the ktime_t
+range (before ~1678 AD or after ~2262 AD), we won't be able to display
+them properly in stat() without some special treatment. I'm operating
+under the assumption that this is not a practical problem.
 
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+I've been looking at this as part of trying to resurrect the multigrain
+timestamp work, as Linus mentioned it in passing in an earlier
+discussion, but then Willy threw down the gauntlet.
 
-> 
->>>>> +	/*
->>>>> +	 * Attempt a case-sensitive match first. It is cheaper and
->>>>> +	 * should cover most lookups, including all the sane
->>>>> +	 * applications that expect a case-sensitive filesystem.
->>>>> +	 */
->>>>> +	if (folded_name->name) {
->>>>> +		if (dirent.len == folded_name->len &&
->>>>> +		    !memcmp(folded_name->name, dirent.name, dirent.len))
->>>>> +			goto out;
->>>>> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
->>>>
->>>> Shouldn't the memcmp be done with the original user-specified name, not the
->>>> casefolded name?  I would think that the user-specified name is the one that's
->>>> more likely to match the on-disk name, because of case preservation.  In most
->>>> cases users will specify the same case on both file creation and later access.
->>>
->>> Yes.
->>>
->> so the utf8_strncasecmp_folded call here must use name->name instead of folded_name ?
-> 
-> No, utf8_strncasecmp_folded requires a casefolded name.  Eric's point is
-> that the *memcmp* should always compare against name->name since it's more
-> likely to match the name on disk than the folded version because the user
-> is probably doing a case-exact lookup.
-> 
-> This also means the memcmp can be moved outside the "if (folded_name->name)",
-> simplifying the patch!
-> 
+Thoughts?
+---
+ include/linux/fs.h | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 639885621608..6b9ed7dff6d5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -662,11 +662,10 @@ struct inode {
+ 	loff_t			i_size;
+ 	time64_t		i_atime_sec;
+ 	time64_t		i_mtime_sec;
+-	time64_t		i_ctime_sec;
+ 	u32			i_atime_nsec;
+ 	u32			i_mtime_nsec;
+-	u32			i_ctime_nsec;
+-	u32			i_generation;
++	ktime_t			__i_ctime;
++	atomic64_t		i_version;
+ 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
+ 	unsigned short          i_bytes;
+ 	u8			i_blkbits;
+@@ -701,7 +700,6 @@ struct inode {
+ 		struct hlist_head	i_dentry;
+ 		struct rcu_head		i_rcu;
+ 	};
+-	atomic64_t		i_version;
+ 	atomic64_t		i_sequence; /* see futex */
+ 	atomic_t		i_count;
+ 	atomic_t		i_dio_count;
+@@ -724,6 +722,8 @@ struct inode {
+ 	};
+ 
+ 
++	u32			i_generation;
++
+ #ifdef CONFIG_FSNOTIFY
+ 	__u32			i_fsnotify_mask; /* all events this inode cares about */
+ 	/* 32-bit hole reserved for expanding i_fsnotify_mask */
+@@ -1608,29 +1608,25 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
+ 	return inode_set_mtime_to_ts(inode, ts);
+ }
+ 
+-static inline time64_t inode_get_ctime_sec(const struct inode *inode)
++static inline struct timespec64 inode_get_ctime(const struct inode *inode)
+ {
+-	return inode->i_ctime_sec;
++	return ktime_to_timespec64(inode->__i_ctime);
+ }
+ 
+-static inline long inode_get_ctime_nsec(const struct inode *inode)
++static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+ {
+-	return inode->i_ctime_nsec;
++	return inode_get_ctime(inode).tv_sec;
+ }
+ 
+-static inline struct timespec64 inode_get_ctime(const struct inode *inode)
++static inline long inode_get_ctime_nsec(const struct inode *inode)
+ {
+-	struct timespec64 ts = { .tv_sec  = inode_get_ctime_sec(inode),
+-				 .tv_nsec = inode_get_ctime_nsec(inode) };
+-
+-	return ts;
++	return inode_get_ctime(inode).tv_nsec;
+ }
+ 
+ static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
+ 						      struct timespec64 ts)
+ {
+-	inode->i_ctime_sec = ts.tv_sec;
+-	inode->i_ctime_nsec = ts.tv_nsec;
++	inode->__i_ctime = ktime_set(ts.tv_sec, ts.tv_nsec);
+ 	return ts;
+ }
+ 
+
+---
+base-commit: a6f48ee9b741a6da6a939aa5c58d879327f452e1
+change-id: 20240526-ctime-ktime-d4152de81153
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
