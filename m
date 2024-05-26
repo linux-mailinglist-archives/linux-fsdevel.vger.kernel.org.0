@@ -1,125 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-20189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45FA8CF618
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 23:23:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796DB8CF682
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 00:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484671F21626
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 21:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBF81F21929
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2024 22:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA913A25C;
-	Sun, 26 May 2024 21:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50E6139D07;
+	Sun, 26 May 2024 22:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="XmjO/I9h"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PaJeakmI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304631304A3
-	for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2024 21:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C56C15D
+	for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2024 22:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716758621; cv=none; b=O+RtvpIjZyHHOUHBy0rzmKLX0kMp4csOCcC/+n5bmirgpXlglOfiyP99CY55Gn6uwG2w/1UM9ip3AeUN3LeONHevcQfwPOsVwWRo2zTVxhiabL7RYUbffiU4y1WBAKp5naLu+znrhvtMHgH2w4MOZWQjolAdwO4TJN9aqy3/m90=
+	t=1716761819; cv=none; b=qT5Kf86y9yh5tU35uQYtsdbRL/134ZDpWz4t3QUH+CmBo1LnzkW3oODD68AfzG5LtiBeYo6ltstQO7hS4W++U9xyolV5lbRAR5AG/IyleElyJq5QBEv1SbNHZ4bqkx6Camsud+n1yEK3tE2FYgkhxGTc8gA6GCLRsqIZgWGD6ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716758621; c=relaxed/simple;
-	bh=4br1+bsqarhpsUSUDMHnPY9ItAu5sQzF64WsQKB/4Bg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VAkMWAoYnt6ZqBFWb7eU7kEP4J1JXbZLCzkBdidGqYafAiFelhckk3t2ZFCVtX08UiwbrzPTjBmxoAq6JDC71QAJXyeZIIa+KoHHZwZfRG8WycO6YwgbmRzX7vo6VolcflEx2bqsqafsIWyGERBls5w7GPLzb4dd0z1nYyfek1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=XmjO/I9h; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-354de97586cso5789787f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2024 14:23:39 -0700 (PDT)
+	s=arc-20240116; t=1716761819; c=relaxed/simple;
+	bh=cJJPOPhaSnsG9a5ZvYQMl/CwRR+CoGzIrsqGAa81OUE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gYL0whDHqsmlyHDnO3WeIwRPEyRekplTK8wxycUY3J5FidHYS9ti6ZfjDMuwYYTo1cJaDmtc2QvKU4trloNGOfFFESUsvgc9dy6UxYm+xTEye6YiKm21Km37/1vvhSZVmlg+tshYwOOFE7dCO1t1ReZbpJTvTuo+5znTaUjL1C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PaJeakmI; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-529597d77b4so2602940e87.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2024 15:16:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716758618; x=1717363418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qbk0UNvpsQrSUqN6RzC4hENS9R3C9NfeLNOx5djjey0=;
-        b=XmjO/I9haUhiyklbPuZ9WpTglsUZdxk9OmWkuSxY6sNAUOyzp/IR/oUhSthm6XcE3L
-         wJmuerQQprftAOKfkl9baTQLYH6T36DkBMkmyNLzzcVNizzheJu/zoe/hqGeLvGM4xFJ
-         +cFcNtMMWq1Kj2gQpoXAFFWhodzuiJHLp4gFEOJ35YagajD7/2Ky23oABy5shch5Hkm9
-         RxcXrW93bZepY62gWQnbwK4z89bXIhXdoRgtHoM8OICVbw4qnEX+D06h9U6TwFC+OLbD
-         fxE7V63w6kBqOWvtS1En49gwNijuIOJEWyzOK8Jbn4eDETFSKXIwNYRkjgPlpgSrCJNd
-         ff7w==
+        d=linux-foundation.org; s=google; t=1716761815; x=1717366615; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yj9aRr4TiFbyRovrKUlKbqQvT+nJ7qhCAc9UhOWM9Fs=;
+        b=PaJeakmIFTdhRWC6J9Rt7vJ+Aczv/UQEDHDnyMVtGc0853FDzG6UuXmzgi7/KP9ZHq
+         nYlkW5sbSLFaBak5tcmsnkI8vivH2oELrVclXlA9Z+9E7a2xnk8mz4/sVs1J/Nv7lKap
+         m64v88Y1qgEUFVHZiudcFpv1w4QmfnGAu3M9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716758618; x=1717363418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qbk0UNvpsQrSUqN6RzC4hENS9R3C9NfeLNOx5djjey0=;
-        b=T7rFPFN16Fi9buTMiJnDa4s4CLQ36QWiLSvszYlrCrcqGLfMMBQJgOTrkrbFWLrbSV
-         tjnrnei/ZwIuOrWwKd/18ytoDtqvo0tSZ7LCrrnDlnGl7bxOgDakY/KvIgeWGWGKaw+3
-         31DBw53wJ7Q2WywfGuYjhRmsdmRmcJ7zCoDFr4cfmnFCZlIGAHorv+3fazbAbspzjmAB
-         KtoUseNitG/G0Jq04EuNbXduocYiYtadiWr93mpDg25Pmr4ghplkT6qOejicwS+7/LUU
-         bMqD5eReu0ZJa4wpn89E0OZi3lgc+YlLXTYez9q47Mo5J5I5GyCkfuNUuqgiE78w9huV
-         t9FA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMSY+5PKtnSu3E79Vx8pgYg4Xh4TGr/htDpuAwI1H/ZLxkO116zbIFAOixz3wUW39zn65k2P5OY4LMcwaIV8wtla56lFCQtVUY3NxOFw==
-X-Gm-Message-State: AOJu0Yx+p6sKV0TBS+S5xqYGTyyX9afdxm6xgFeshI9BYZ9QLFNAMDcn
-	FC0lH52KQizgC0aYb7/bzVY9uURyjEekmhIuM6cj4A2PSzGMSVBhMAqMNcgSvvc=
-X-Google-Smtp-Source: AGHT+IFy5L/fF6HnmYmy15FzQ2I5Aj94AJhD6S8HOgJeCGnH2efGYlzLjxrfvdfR5wJ4GRUcUbR/8g==
-X-Received: by 2002:a5d:4e01:0:b0:354:f1de:33eb with SMTP id ffacd0b85a97d-3552f4fd249mr5166115f8f.26.1716758618179;
-        Sun, 26 May 2024 14:23:38 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7de1bsm7224197f8f.13.2024.05.26.14.23.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 14:23:37 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: bhe@redhat.com
-Cc: amir73il@gmail.com,
-	clm@fb.com,
-	dhowells@redhat.com,
-	dsterba@suse.com,
-	dyoung@redhat.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	kexec@lists.infradead.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	miklos@szeredi.hu,
-	netfs@lists.linux.dev,
-	thorsten.blum@toblux.com,
-	vgoyal@redhat.com
-Subject: [RESEND PATCH 4/4] crash: Remove duplicate included header
-Date: Sun, 26 May 2024 23:23:10 +0200
-Message-ID: <20240526212309.1586-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <ZjcvKd+n74MFCJtj@MiWiFi-R3L-srv>
-References: <ZjcvKd+n74MFCJtj@MiWiFi-R3L-srv>
+        d=1e100.net; s=20230601; t=1716761815; x=1717366615;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yj9aRr4TiFbyRovrKUlKbqQvT+nJ7qhCAc9UhOWM9Fs=;
+        b=ZzT+qDc9K6RQIgaXdwBgciG56m56d7bT5goT/tTDPHeft+KA5YY887NiWNJCwW0OMt
+         5H6U1dcnEh7hu9tqx911RDrEfMVjkPNvMR/3absdMS2JUYf8Kp5Y099kphpRY/OBwhuo
+         omHBGkM7Zr6E3g7fShOl1m2FkTQd8eAn21T1/5VQHuly7fMtQQfVfV+TT91XSdaj4R/K
+         cbeN3vHeNcLEV9tekJU58YbOciqY5VgnNzuZBCTJ2RB0CSkUIYPTB62YLfBLQOfv804e
+         uO3jMV4cg8oc3vjPro1Xo8+wDrIZGwo80lXp6YPivoLBz6qSzPHe+68+hR4J9Ggu+EsY
+         oLww==
+X-Forwarded-Encrypted: i=1; AJvYcCUVKHmSUrQI8rCRBhotIiLageAUgxM8jIVfk2yCfWGIfp7TCcrRvecbc5yaobwucz5CQWyokgrSkI+TwhhzODKS+cR+4Qd13ASSyLpdSw==
+X-Gm-Message-State: AOJu0Yy9xdhI9mgGZuOanvIneYumR0UeWUsLHIML8BBTVWP6IUer8K11
+	XQtqJOI+6wlen+g8WVtUO4oKImFOBSPr2gvyWWQJuN4F9xi0g7pZ4jF8XEh4ZXdwa+QzOE6U9uW
+	IkRSgEg==
+X-Google-Smtp-Source: AGHT+IGP4lLSGuXnMD9ydbuP+697Sjr4V8QotQ2hMwDHvHln2yPf6VMakschlP9yTPR9wTR7uplJng==
+X-Received: by 2002:a19:2d06:0:b0:51d:70d9:f6ce with SMTP id 2adb3069b0e04-529668c4c8emr4855028e87.53.1716761814859;
+        Sun, 26 May 2024 15:16:54 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57852495debsm5018286a12.69.2024.05.26.15.16.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 May 2024 15:16:54 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6267778b3aso164254766b.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2024 15:16:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX8PTdXtaX+qStw5azP8tcb0jzGw59hBkRhY/ZkgSlptnSoipbJHnWL51KtuJikHwY1RkRPV8zgHpS1e0hamKvHkt11BUlztX4fPysElA==
+X-Received: by 2002:a17:906:48d8:b0:a59:a7b7:2b8e with SMTP id
+ a640c23a62f3a-a62643e0787mr526403766b.29.1716761813805; Sun, 26 May 2024
+ 15:16:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240526034506.GZ2118490@ZenIV> <CAHk-=wjWFM9iPa8a+0apgvBoLv5PsYeQPViuf-zmkLiCGVQEww@mail.gmail.com>
+ <20240526192721.GA2118490@ZenIV>
+In-Reply-To: <20240526192721.GA2118490@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 26 May 2024 15:16:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wixYUyQcS9tDNVvnCvEi37puqqpQ=CN+zP=a9Q9Fp5e-Q@mail.gmail.com>
+Message-ID: <CAHk-=wixYUyQcS9tDNVvnCvEi37puqqpQ=CN+zP=a9Q9Fp5e-Q@mail.gmail.com>
+Subject: Re: [PATCH][CFT][experimental] net/socket.c: use straight fdget/fdput (resend)
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Remove duplicate included header file linux/kexec.h
+On Sun, 26 May 2024 at 12:27, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Not really.  The real reason is different - there is a constraint on
+> possible values of struct fd.  No valid instance can ever have NULL
+> file and non-zero flags.
+>
+> The usual pattern is this:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Acked-by: Baoquan He <bhe@redhat.com>
----
- kernel/crash_reserve.c | 1 -
- 1 file changed, 1 deletion(-)
+[ snip snip ]
 
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index 5b2722a93a48..d3b4cd12bdd1 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -13,7 +13,6 @@
- #include <linux/memory.h>
- #include <linux/cpuhotplug.h>
- #include <linux/memblock.h>
--#include <linux/kexec.h>
- #include <linux/kmemleak.h>
- 
- #include <asm/page.h>
--- 
-2.45.1
+Ugh. I still hate it, including your new version. I suspect it will
+easily generate the extra test at fd_empty() time, and your new
+version would instead just move that extra test at fdput() time
+instead.
 
+Hopefully in most cases the compiler sees the previous test for
+fd.file, realizes the new test is unnecessary and optimizes it away.
+
+Except we most definitely pass around 'struct fd *' in some places (at
+least ovlfs), so I doubt that  will be the case everywhere.
+
+What would make more sense is if you make the "fd_empty()" test be
+about the _flags_, and then both the fp_empty() test and the test
+inside fdput() would be testing the same things.
+
+Sadly, we'd need another bit in the flags. One option is easy enough -
+we'd just have to make 'struct file' always be 8-byte aligned, which
+it effectively always is.
+
+Or we'd need to make the rule be that FDPUT_POS_UNLOCK only gets set
+if FDPUT_FPUT is set.
+
+Because I think we could have even a two-bit tag value have that "no fd" case:
+
+ 00 - no fd
+ 01 - fd but no need for fput
+ 10 - fd needs fput
+ 11 - fd needs pos unlock and fput
+
+but as it is, that's not what we have. Right now we have
+
+  00 - no fd or fd with no need for fput ("look at fd.file to decide")
+  01 - fd needs fput
+  10 - fd pos unlock but no fput
+  11 - fd pos unlock and fput
+
+but that 10 case looks odd to me. Why would we ever need a pos unlock
+but no fput? The reason we don't need an fput is that we're the only
+thread that has access to the file pointer, but that also implies that
+we shouldn't need to lock the position.
+
+So now I've just confused myself. Why *do* we have that 10 pattern?
+
+Adding a separate bit would certainly avoid any complexity, and then
+you'd have "flags==0 means no file pointer" and the "fd_empty()" test
+would then make the fdput) test obviously unnecessary in the usual
+pattern.
+
+             Linus
 
