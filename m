@@ -1,60 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-20278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA908D0EB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 22:41:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7468D0ECB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 22:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A480D28306E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 20:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EEC282520
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 20:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AF516132E;
-	Mon, 27 May 2024 20:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5FE161338;
+	Mon, 27 May 2024 20:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="SQy5Nhjr"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MgT3Hug8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SA5aB+ZS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MgT3Hug8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SA5aB+ZS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D68161306;
-	Mon, 27 May 2024 20:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7304C1DA58;
+	Mon, 27 May 2024 20:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716842467; cv=none; b=CaoNmuA3Qkj0BXtc+lNbi59dAB8/KaQ8SU49aD6umpNQ3Ff9Z0LRnNIahd8/gGSJkwYv3gJPm8JVcNFAAZYGxsAYfBH0bbBBZrbEgHcYiptJPhNngW2CuGzbQ3UOtn+wfcJ4CKcXVw+Kv+MO3LdmcKLstQJKQYDyuWN69o5dlVc=
+	t=1716843303; cv=none; b=Y72VuEVhedgKoRx7hdfWfThICLpdZvahf5Swxebxtb6KKVtaFCVtfUDvQsbwhDxydlgALGtOs6cVafsj86eq/HG6BlkhBFnGNo4YDxRLSPaN/d6YHhk4daMBe3C943jGmisqN/rwISJivLK2PJ5hmV8aNVOcELE1uU8tHGrtESM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716842467; c=relaxed/simple;
-	bh=NbXY2Kk4FGwSPszns2tNOssIhDlhmg+90rK9jIm+aWE=;
+	s=arc-20240116; t=1716843303; c=relaxed/simple;
+	bh=PeTQPue/126RRk2XEbMW7nbOvogEjizFdhoD4CmtnVg=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y2E8Z5lLGjGRnfP9oTqF4+gdCjriWvSTZx8XBKQlmBKEQItS9sHJ7x0dlubnuW+2XBadjsRDsuVT/2KLl/M1xjQmRtD8RsTb4l/7BiALMnAe3jC+gG4a9vtrnKYG7OfgJHQ3OTJmDigwKaXHoY/sCPwaqa5OwofqMt+zwkNV7wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=SQy5Nhjr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 58AB11C0002;
-	Mon, 27 May 2024 20:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1716842460;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 MIME-Version:Content-Type; b=p/BPaSnRNm10wDWjv5ZEefiRAIqqFU9A9kJMmQ67zmG4aJwOJpPJASxuw6RoqgYdInuBXyIfUqX4wjhiVyw6SAZRSKtn391nxn4RD9JEpjscdU8Kh8JTPafJcc9ks/ybTGuwwYbaoEzq3tTkzwI9Y+s2wmCM5glsHqOxaWAK7j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MgT3Hug8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SA5aB+ZS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MgT3Hug8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SA5aB+ZS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 49DC3221BE;
+	Mon, 27 May 2024 20:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716843299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nfH6b5pwYJEOTT3sLSjSrRNYvJ7fdHrC/cOseFcXPFE=;
-	b=SQy5NhjrknphnSRui48ouVOppbA5yPQyJceM4GNRtWRx8km0pI4ni/fN8rt7xB+jSThrGd
-	VsB42Z4aZU5hlx4SN5aCESYYaIrnGobEq6fWLhOTACQQHKzcAZUMQ15MaaqjpqSQhtmYa+
-	fDfJpdZGgQrM9SJCvif4Hf6+7qKADy7Oc1wvkqnlS4psCsVn/Xc/LmrHirx2R5xpJqlLyj
-	4ThlDYLuzkaOg7Al0UTJRuHFRXlqw6lUt699TnIcwudJo8uIAkQ7WGGGzI0J3hK+g5XkFL
-	CAHWnlLn0qPJTX7sT+fsEuLlbjbkgaaoXCNSGyQyR3SW4Mk0Tw0Gb1poA3vnsw==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,
-  <linux-fsdevel@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
-In-Reply-To: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com> (Jeff
-	Johnson's message of "Fri, 24 May 2024 11:48:09 -0700")
-References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
-Date: Mon, 27 May 2024 16:40:47 -0400
-Message-ID: <87y17vng34.fsf@mailhost.krisman.be>
+	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
+	b=MgT3Hug8e+KVU6O4LMN/a0d3ULjFYJIS6qIFRuvLdwgwMve5voXhllyWCKVR1BCCex9LiK
+	VY9CxK3g0JtRjfOFKogaXimv8HWCuBoExAXI44uI6IE84HE3+Ofq+nFLueuKNCPST+9k12
+	LIoN3elEntuU4dSw4nDsQT2cJ5Fh/rc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716843299;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
+	b=SA5aB+ZSsX4CYLFpeEMg4W4HMB5T2Ew9XdF4wVMMMr+fuexZ9VunrqaH9Lk51EVj3UAqM9
+	pztfQZtu9Syu52DA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716843299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
+	b=MgT3Hug8e+KVU6O4LMN/a0d3ULjFYJIS6qIFRuvLdwgwMve5voXhllyWCKVR1BCCex9LiK
+	VY9CxK3g0JtRjfOFKogaXimv8HWCuBoExAXI44uI6IE84HE3+Ofq+nFLueuKNCPST+9k12
+	LIoN3elEntuU4dSw4nDsQT2cJ5Fh/rc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716843299;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
+	b=SA5aB+ZSsX4CYLFpeEMg4W4HMB5T2Ew9XdF4wVMMMr+fuexZ9VunrqaH9Lk51EVj3UAqM9
+	pztfQZtu9Syu52DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 05BE313A6B;
+	Mon, 27 May 2024 20:54:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NsewNiLzVGY2SQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 27 May 2024 20:54:58 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: Eric Biggers <ebiggers@kernel.org>,  tytso@mit.edu,
+  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
+  jaegeuk@kernel.org,  chao@kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel@collabora.com,
+  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
+ Krisman Bertazi <krisman@collabora.com>
+Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
+ comparison helper
+In-Reply-To: <92b56554-3415-46fe-99b4-99258d8a496c@collabora.com> (Eugen
+	Hristev's message of "Sun, 26 May 2024 14:49:42 +0300")
+References: <20240405121332.689228-1-eugen.hristev@collabora.com>
+	<20240405121332.689228-4-eugen.hristev@collabora.com>
+	<20240510013330.GI1110919@google.com>
+	<875xviyb3f.fsf@mailhost.krisman.be>
+	<9afebadd-765f-42f3-a80b-366dd749bf48@collabora.com>
+	<87ttipqwfn.fsf@mailhost.krisman.be>
+	<92b56554-3415-46fe-99b4-99258d8a496c@collabora.com>
+Date: Mon, 27 May 2024 16:54:53 -0400
+Message-ID: <87ttijnffm.fsf@mailhost.krisman.be>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -63,74 +114,116 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+Eugen Hristev <eugen.hristev@collabora.com> writes:
 
-> Currently 'make W=1' reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+> On 5/23/24 02:05, Gabriel Krisman Bertazi wrote:
+>> Eugen Hristev <eugen.hristev@collabora.com> writes:
+>> 
+>>> On 5/13/24 00:27, Gabriel Krisman Bertazi wrote:
+>>>> Eric Biggers <ebiggers@kernel.org> writes:
+>>>>
+>>>>> On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
+>>>>
+>>>>>> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
+>>>>>> +			return -EINVAL;
+>>>>>> +
+>>>>>> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
+>>>>>> +		if (!decrypted_name.name)
+>>>>>> +			return -ENOMEM;
+>>>>>> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
+>>>>>> +						&decrypted_name);
+>>>>>> +		if (res < 0)
+>>>>>> +			goto out;
+>>>>>
+>>>>> If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
+>>>>> then this function returns 0 (indicating no match) instead of the error code
+>>>>> (indicating an error).  Is that the correct behavior?  I would think that
+>>>>> strict_encoding should only have an effect on the actual name
+>>>>> comparison.
+>>>>
+>>>> No. we *want* this return code to be propagated back to f2fs.  In ext4 it
+>>>> wouldn't matter since the error is not visible outside of ext4_match,
+>>>> but f2fs does the right thing and stops the lookup.
+>>>
+>>> In the previous version which I sent, you told me that the error should be
+>>> propagated only in strict_mode, and if !strict_mode, it should just return no match.
+>>> Originally I did not understand that this should be done only for utf8_strncasecmp
+>>> errors, and not for all the errors. I will change it here to fix that.
+>> 
+>> Yes, it depends on which error we are talking about. For ENOMEM and
+>> whatever error fscrypt_fname_disk_to_usr returns, we surely want to send
+>> that back, such that f2fs can handle it (i.e abort the lookup).  Unicode
+>> casefolding errors don't need to stop the lookup.
+>> 
+>> 
+>>>> Thinking about it, there is a second problem with this series.
+>>>> Currently, if we are on strict_mode, f2fs_match_ci_name does not
+>>>> propagate unicode errors back to f2fs. So, once a utf8 invalid sequence
+>>>> is found during lookup, it will be considered not-a-match but the lookup
+>>>> will continue.  This allows some lookups to succeed even in a corrupted
+>>>> directory.  With this patch, we will abort the lookup on the first
+>>>> error, breaking existing semantics.  Note that these are different from
+>>>> memory allocation failure and fscrypt_fname_disk_to_usr. For those, it
+>>>> makes sense to abort.
+>>>
+>>> So , in the case of f2fs , we must not propagate utf8 errors ? It should just
+>>> return no match even in strict mode ?
+>>> If this helper is common for both f2fs and ext4, we have to do the same for ext4 ?
+>>> Or we are no longer able to commonize the code altogether ?
+>> 
+>> We can have a common handler.  It doesn't matter for Ext4 because it
+>> ignores all errors. Perhaps ext4 can be improved too in a different
+>> patchset.
+>> 
+>>>> My suggestion would be to keep the current behavior.  Make
+>>>> generic_ci_match only propagate non-unicode related errors back to the
+>>>> filesystem.  This means that we need to move the error messages in patch
+>>>> 6 and 7 into this function, so they only trigger when utf8_strncasecmp*
+>>>> itself fails.
+>>>>
+>>>
+>>> So basically unicode errors stop here, and print the error message here in that case.
+>>> Am I understanding it correctly ?
+>> 
+>> Yes, that is it.  print the error message - only in strict mode - and
+>> return not-a-match.
+>> 
+>> Is there any problem with this approach that I'm missing?
 >
-> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
-> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
-> generated utf8data file.
+> As the printing is moved here, in the common code, we cannot use either of
+> f2fs_warn nor EXT4_ERROR_INODE . Any suggestion ? Would have to be something
+> meaningful for the user and ratelimited I guess.
 >
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Note that I verified that REGENERATE_UTF8DATA creates a file with
-> the correct MODULE_DESCRIPTION(), but that file has significantly
-> different contents than utf8data.c_shipped using the current:
-> https://www.unicode.org/Public/UNIDATA/UCD.zip
 
-Thanks for reporting this.  I'll investigate and definitely regenerate
-the file.
+Ah, that is not great, since EXT4_ERROR_INODE does more things like
+annotating the error in the sb and sending a FAN_FS_ERROR to any
+watchers. But still, this is a rare error and I'm not really sure we
+care, nor that it should gate the rest of the series.
 
-The patch is good, I'll apply it to the unicode code tree
-following the fix to the above issue.
+I'd say just use pr_err and be done with it.
 
-> ---
->  fs/unicode/mkutf8data.c       | 1 +
->  fs/unicode/utf8-selftest.c    | 1 +
->  fs/unicode/utf8data.c_shipped | 1 +
->  3 files changed, 3 insertions(+)
->
-> diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
-> index bc1a7c8b5c8d..77b685db8275 100644
-> --- a/fs/unicode/mkutf8data.c
-> +++ b/fs/unicode/mkutf8data.c
-> @@ -3352,6 +3352,7 @@ static void write_file(void)
->  	fprintf(file, "};\n");
->  	fprintf(file, "EXPORT_SYMBOL_GPL(utf8_data_table);");
->  	fprintf(file, "\n");
-> +	fprintf(file, "MODULE_DESCRIPTION(\"UTF8 data table\");\n");
->  	fprintf(file, "MODULE_LICENSE(\"GPL v2\");\n");
->  	fclose(file);
->  }
-> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
-> index eb2bbdd688d7..f955dfcaba8c 100644
-> --- a/fs/unicode/utf8-selftest.c
-> +++ b/fs/unicode/utf8-selftest.c
-> @@ -307,4 +307,5 @@ module_init(init_test_ucd);
->  module_exit(exit_test_ucd);
->  
->  MODULE_AUTHOR("Gabriel Krisman Bertazi <krisman@collabora.co.uk>");
-> +MODULE_DESCRIPTION("Kernel module for testing utf-8 support");
->  MODULE_LICENSE("GPL");
-> diff --git a/fs/unicode/utf8data.c_shipped b/fs/unicode/utf8data.c_shipped
-> index d9b62901aa96..dafa5fed761d 100644
-> --- a/fs/unicode/utf8data.c_shipped
-> +++ b/fs/unicode/utf8data.c_shipped
-> @@ -4120,4 +4120,5 @@ struct utf8data_table utf8_data_table = {
->  	.utf8data = utf8data,
->  };
->  EXPORT_SYMBOL_GPL(utf8_data_table);
-> +MODULE_DESCRIPTION("UTF8 data table");
->  MODULE_LICENSE("GPL v2");
->
-> ---
-> base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
-> change-id: 20240524-md-unicode-48357fb5cd99
->
 
 -- 
 Gabriel Krisman Bertazi
