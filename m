@@ -1,207 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-20249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB288D0779
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 18:05:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE0B8D07DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 18:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7831DB27EF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 15:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070A81C21CD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 16:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A6C535A4;
-	Mon, 27 May 2024 15:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E114315A841;
+	Mon, 27 May 2024 16:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="aEGgUda3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H1M6ni55"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2127.outbound.protection.outlook.com [40.107.223.127])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928EC61FC0;
-	Mon, 27 May 2024 15:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.127
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716824327; cv=fail; b=K6aoxPECx9bEt3dZMgtx34D+z6mjhArzJo/Yt6FbGAufTRWteftDPCfvmjETYZCyrNldEGnl/HaLwcPlfqRYZ2Vm/yUrQ1/xXPTOm8dL1UdAYZqDvuJKiK5f0Ds163slPFAjpXp8dMNekhZhfSym2cVpCHec9iix4uIg4642VgM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716824327; c=relaxed/simple;
-	bh=EO88UrOMAa9PhQZgj8BlHMBFiYAm7YASy4LLKzVG/kE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AebxhBMGptE/K+HgHWziqkJsv5fkmqK068HPYHZeK+6ei0ga0qDmmtDM00z8l8qmPZuforLH9aFQJNwwn/qMX4u6nEbberOHYCcwpCUc0MYPIydvp3QrQCFhiG/lkFrifBAJOWCtJmGEwHDEqUImUwsDI4Anc3zsA3hoX/9iDTw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=aEGgUda3; arc=fail smtp.client-ip=40.107.223.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DYIqy/4Ytq4qcMRcpezFJHcoGkEeSwoshm8zm/QvLXzhDafUxWKuLsKRpNZBlb3fyxWAF548tZEUl/74v4/XIn8zl1Ix/fHVy8YfQiOgL6tOHFT6wzpAqrrM8iY/09MOkXg0Z1B8sHAQYzkb5N2031Fr22ROi71x/zXnZTt3P+Lfpfw8/FmSDiYfqkOWr8HKue243pWbUHyFwVWPbnt5x473+1cGcloPRsVig+BLh0VX5tcCVm1elPP+RCDj2RRWKqhM92YXY54/5wB8mlKKEgzkb5uD1U0oqL8x8lUWl00hCYn8WpWCF4z5vkFqS2+OEB/c8Sw9guC+k8kt3jNx7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EO88UrOMAa9PhQZgj8BlHMBFiYAm7YASy4LLKzVG/kE=;
- b=BZHJh7jk9Bbm5HNslndDimP/cvQSBdvYKCRT4Z/Z+PspQ4prrqHqxtm+HgbbaJl3paGoZo93xmoGNQ/HUdYLOkD7rVuo9wa0CWUgnd+2ou8XFRx8kqvjpR2dX1kYG+KG0i5MKDUpUki5l6f1sKGvskQGQ8xBFnxbQVia4cNN+wggES7UGpN+XFTOq6z214UfXY1w9hy0FGBlkJlWuZhI4SOwhXGc6vbMXpSJ2j9OzgKydmk5ex3gqEHxZx/VRHzxSaMNcYx1kbWoWIzg3pwHC0HahsZiLKwL+nz/c3zz+IlzR/kgUNQkyTb4IXHVCI+NEIyHNHjNqSEihN/eGC4zKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EO88UrOMAa9PhQZgj8BlHMBFiYAm7YASy4LLKzVG/kE=;
- b=aEGgUda3umH2pXSkrc+z8dHzjGjhvT3iIDPMM5Klz74g+z6QUa49R4CxlO5/iQGBWClCKTda0h1qofFMy6ci1SXVoGCaAFBWKxBcl8lnrwU/l3e4QLwqOdOqRolwjl4e3Y6yZRvHF8JRulsb1cy9vFW62X/nYaq96fWF5oJ85q0=
-Received: from DM8PR13MB5079.namprd13.prod.outlook.com (2603:10b6:8:22::9) by
- SN4PR13MB5294.namprd13.prod.outlook.com (2603:10b6:806:205::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.17; Mon, 27 May 2024 15:38:41 +0000
-Received: from DM8PR13MB5079.namprd13.prod.outlook.com
- ([fe80::3312:9d7:60a8:e871]) by DM8PR13MB5079.namprd13.prod.outlook.com
- ([fe80::3312:9d7:60a8:e871%6]) with mapi id 15.20.7633.001; Mon, 27 May 2024
- 15:38:40 +0000
-From: Trond Myklebust <trondmy@hammerspace.com>
-To: "hch@infradead.org" <hch@infradead.org>
-CC: "jack@suse.cz" <jack@suse.cz>, "chuck.lever@oracle.com"
-	<chuck.lever@oracle.com>, "linux-api@vger.kernel.org"
-	<linux-api@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"alex.aring@gmail.com" <alex.aring@gmail.com>, "cyphar@cyphar.com"
-	<cyphar@cyphar.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jlayton@kernel.org" <jlayton@kernel.org>, "amir73il@gmail.com"
-	<amir73il@gmail.com>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Thread-Topic: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Thread-Index: AQHarVPtSe6qdv/lgk2vl1eWJoqLMLGpQqoAgADb5wCAAN6NAIAAQB6A
-Date: Mon, 27 May 2024 15:38:40 +0000
-Message-ID: <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
-	 <ZlMADupKkN0ITgG5@infradead.org>
-	 <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
-	 <ZlRzNquWNalhYtux@infradead.org>
-In-Reply-To: <ZlRzNquWNalhYtux@infradead.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=hammerspace.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR13MB5079:EE_|SN4PR13MB5294:EE_
-x-ms-office365-filtering-correlation-id: 259e8b4e-8f68-4d33-a9a4-08dc7e631590
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|1800799015|7416005|376005|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bkpoVGViN29EL3JKT0pjMDBXdnJtVWhwU2xHZjliMFpuWHBHMVVlWHRrS0xF?=
- =?utf-8?B?WE1MeGRJZU1ZZ2xTd0dqNkVQZWI1cFFKVWJDQkhTdTdFVkhGeGlGVXZzZmFw?=
- =?utf-8?B?eGYvWmZqVlZxUDFwMFJHMUNUSnM2eXM3cUw2YTI3MlVjck5IQkJScTZZcmUv?=
- =?utf-8?B?VThRYkdiR1BEMXZmUjR0UkZtc2FnNEs5UU0zdGJ2M21Cc0xRdjhmclA2ZkU3?=
- =?utf-8?B?d3JQaFZBR0Z2YXRsQ3EzR1pzbnpjaUtHS0R1MXdvT2tGd0JoY3lwZXk2NUc4?=
- =?utf-8?B?SUxhN3J6M2gzV1htdEhEREZWQlRyWld5RDhBa01BdHpobnU0bmxROFVnUllJ?=
- =?utf-8?B?ZWN0akpQMDFpMllpY0w2ZkNTcHd5NTNIV3NoUkg3MzlHYkJOak5JRUpFSnJO?=
- =?utf-8?B?d25mTlptVGNCR2I2ckdWYTNWRDVaS0REM0h4RzNpMGZEazFweFlJMTBGMWtE?=
- =?utf-8?B?ZGF5dVNiTWJnSk91NVM4NU1OYjVMMUJZMGZFS29ueFVwRjhBNnF3QjJ0K0pH?=
- =?utf-8?B?ekFLdzBJVjNEck0zb1ZoWlg0ZHNpQ2FOanRCRWhUWFJGY3ZlNksrS3dudlFr?=
- =?utf-8?B?Ykx4cHhjOFVxRTJQUnYrREplL203STB6aDg3eWZ2NXhITmlndE9hOUhWOXpD?=
- =?utf-8?B?Z201UFhXWlFZN2dkYVJmY1NQbDUwWjg0R21rdm1TdlRzbnNEc2d4UzhwZFJm?=
- =?utf-8?B?SXhxZTFDL2lqL3JEVlRuVStqNTNsTHNEQVpJbURwTW85Mkl1NklCNjBmbXBk?=
- =?utf-8?B?V2Fqd3Z1SWgxb3FrZk1jclpXODZNQW5FNmZiazFZSlE1K2J6VVNvMHNUNGpQ?=
- =?utf-8?B?akJLQVlqMFNWcy9PejcrRVNPVnUzalJFNTBLWmZ2WmpqUEhTS2UwUGFiUDB6?=
- =?utf-8?B?c0IyZ0dCWkMyZEFMTUFJVFR1dmpuMkhnR1hldmd3aG5ZN3UwMEVQWTVNZC8w?=
- =?utf-8?B?UkpNWFNwTlVhaVhFT3VZamZqM1ZQWVc5UGJKeUFrRnhqNjdDdU9ZUGU3YU9B?=
- =?utf-8?B?TWZIdy9xaGpGbysyay9DWEdmMjNHTXB3aURMeFVxRTMvOW9yZVVpMmFlWEtz?=
- =?utf-8?B?WmgyUlp2akpjWUZYQ004bFlYUG5mdmJqQzNlckd4TkxobFc1T0crd0FKazdu?=
- =?utf-8?B?RmQvUm1CZGt6anZNUFplZm1rbVdyM0NmVmNsWHV4T0VCdmwzdmxZZTREZlFz?=
- =?utf-8?B?cWN0L3ZENG52VVkyeFlIdjljME5LbU1hMVVndUZSQnk2cXM5VXBIZmpBTi90?=
- =?utf-8?B?ZlRvOVorVXlhOVZWNTZJcGJXWlRRQ2dIVmsyenJYazltcEpmNDdoanZRSWNl?=
- =?utf-8?B?Nzl3cEtJajBPcHVjcDVqY1h4eHAxazd1OXd3QU5xcmNzdzdBZFhqTEVROHN6?=
- =?utf-8?B?T3ZoYm9ndEp2MU8yazlaTXF3YytQY3c1bERKckRwaVNmUGdqOTBPSmJOdk1v?=
- =?utf-8?B?RVpZeUc4LzlERExieGtYUnUyYTBBeXBmUDdaK2NSZ2FwcjVRWUl2R2ErL2FY?=
- =?utf-8?B?RDdNek5YV25taXRuYVlSMzRpNksxYkh0cnpVaHgwNU9uUjJZNzJ0ZGJWQm5Z?=
- =?utf-8?B?SExXRDBJQUxVQ0o2bUd1aHRJWTF1TC8vaXBHeTZqY1hzVkMvWUlSOEM1Sjgv?=
- =?utf-8?B?MHlFWXhhUzJUZkhrZkVsM3gwRDQ1U3lOT2YvamNsWDJPWUJKMTYxQ3NmdnNv?=
- =?utf-8?B?Y0tFOUVQQW9tb3BLdlFNNXpsbzhiT3hDRG1Hc2FmeUxGSkU5RVBLVUt0KzBq?=
- =?utf-8?B?L2s2RzFNSzBOYnZWOGxzdXRWQ2JkTVBGclZLaGk4Y3BQUXRBalJyODZQS3Aw?=
- =?utf-8?B?b1puVmxNUjNrbDlHZU1CZz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR13MB5079.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?TG9uaXg3Vk5BaGtwN2Jqc0RINno0TVk5Z2tKS0hsTTZ6Nk1UdXNobmJaSGR5?=
- =?utf-8?B?Sms4UStlbWdGUnBoMk5sMDZmekRiOURYYmNlQ2wyL3lIYUtQYkZTSXZEcnRh?=
- =?utf-8?B?OXRyMGkwajV5OFdEbzh3VldTOEhPMlUrY2hMeFBLWGZUN3JIZ3MzakpZOGdu?=
- =?utf-8?B?Vm9xUy9rMHljMk1WQWFmayt0UXRBcTVYa28rb2lGVzRxZ2ROSnZGYStnZGEz?=
- =?utf-8?B?TVJ4eitHZ3Rnd0JnS1kwVkNtQVhhWlBVN0tnTERwaHRQQ0Q0bDYwWk9jWlNv?=
- =?utf-8?B?U0xkRnhoc2g1a3Vndk5VT1JCN1JtOTlpWlFpYzFPRmdCdVhKS1UzNG13elE0?=
- =?utf-8?B?QjlsTDZFbEFDRHZsazY2elRzTmxqQXcwY3Ezb1didVN0aXRGbzYzQjA0NHY3?=
- =?utf-8?B?REY0Z2FORFpibkVUS2hRdkg5ZjNRcmorR2ZFUEp2bEpHR2ZsWDVTd05DcS9G?=
- =?utf-8?B?Vm9JUFNCYXJCS1JOMHpBVC9ZZUs5aVZCdEFHRC9maVFMdlFWb010dnRvRHkv?=
- =?utf-8?B?TzhMaHBmMlJyT1Zac0xMMDNjT3d4aW5SUnNrL3paM2VIb1J4VzNiY21ZN0Qr?=
- =?utf-8?B?UFFFTHdQeHRZSG9waXJhL013bTZWUWRaRERSZVp4ZDhRdWxrOWhHUkxXQVRn?=
- =?utf-8?B?OEN6QVc0OFNsOFRETzNjOU9tSWxZVUJwVEN4WmlkUmovLzlUODVZU200cWNw?=
- =?utf-8?B?YkZzSEVLR29mNG4wTHVrVFN5UVpTY1Rpazl6KzYzZjNFVXFkb0RTWFg4YVg3?=
- =?utf-8?B?WTlrc2YxT2diQ2pSdGpxWG9YV3V3UmJTSnVwLzY3UlhiUFp6TXQ0V05ia01p?=
- =?utf-8?B?ZFpvd2hNUURLRVJFYzdjek8zbmt0alo3dEUxdlBLMHIwSXBXOEJ5NzY2UGU5?=
- =?utf-8?B?MnBPUDBEV0I3ODhVYUV2NnErYWdseVZiM0JVVk1acFR5alhFZGlyNi9JN0pG?=
- =?utf-8?B?K3o4d1R1clhvcWdhNVREMXNCL3J6R0p2b3lqNjMwK2EyS011cU55UWt4bUpX?=
- =?utf-8?B?bjFtdENHbnBVbEwrYTllRnhueUJBbVZ4UjIrM3FaTE9TZ3IyaEM2OXdNSHBv?=
- =?utf-8?B?ckFjNFNoeVp6ZHVkV0xSRnhoc0o1cXR5ZkQybHJjalNWblJHVWxMbTc0eGR0?=
- =?utf-8?B?L2dFbWxQeXBpL01aWnhpVDRRaVJUcjBLOU12S2J3YmErVTZtYlpaVUhpWnBC?=
- =?utf-8?B?bHkyc2RRekFNdnBHdkZqMjlMRFR3dDJUSnFDMkRZZlhrcHRNb1JFMVp3VHRC?=
- =?utf-8?B?ckJUUWdHRXNObFZmN3B5SlpjT0hlc2J0UHR0ZGg2Z3dXQ0N4SGtMMWxtdlk1?=
- =?utf-8?B?RDBhUThrQ2JrcS9ONzFQMkF1SjRROU5NTmtSc0NBVDVYL1llcXI0aU85Q3NY?=
- =?utf-8?B?NVZRZGdpNDlNUUhyL28wMEdmbStSQzZleTNpd1lCMExIQU5Udkw0WkRFVWZo?=
- =?utf-8?B?bVp6bTdUYjY2enEwcW9tU1lycmlYYUZsaE8rZTdVV0h3NFpaRVYrUXI3bG1Y?=
- =?utf-8?B?OGtkUzZWZ3A4TnNZTWh5ZWpWK3d2bzRMMlRwTU5BZWJGVHY2SlZBNndJZkJE?=
- =?utf-8?B?YzhjbStzb2RHU2owcVhHaUhUNjNrMTFYdHhiMkprdFBSRkJ1d1N0OFdLUWtG?=
- =?utf-8?B?WmdJNkY1d1NESXFWbFBMcXdjQ0dmRUh0MmV4ai9FR2xFcWVySG03NlNuTHVv?=
- =?utf-8?B?Y25SNXBCZVloRE52RFBnQVBSYnZMK2d6MjVQWGw4aEJFWGFQcWtuWlBtQkRP?=
- =?utf-8?B?TWVUT294UmJYTmhRKzZZTkRpejlSRldGVWlZNUhYSXdJVXVNcmY5cnFGNDl3?=
- =?utf-8?B?MlQxL3VSWXhXM3JqM0xBWUdXOVhIRU4yNytadnpYZUNqSWV0cjZydWs5Unly?=
- =?utf-8?B?dCtTUzV1OTZ3QnI2amhuVnlUSm1DUDJ0am8wMitpVnByTU9HQWNnUjJPdUx6?=
- =?utf-8?B?ZmE1NXVqZDNWZW9ubENMUmpscmRnb2ZaSm41THUrcS9PSElqeHE0N3JrNnI3?=
- =?utf-8?B?bnR2TFdPYWV6MlY3NVhIU0k3TStNM1NDOWNuejdwM3J0WlFvSE9nb3A4bTdE?=
- =?utf-8?B?SXIxYlUwcE1kZWEvZnhhU1k3TE1HUUxlNVdYT0I0a09UVzJoa01IbXM0RlZC?=
- =?utf-8?B?Q09YTSt2YVhBeWhtUHF2M2tuZjFmU041SDVITEVxejkzSkNBaUJCZVFrRmJG?=
- =?utf-8?B?M0Judll4empoVnAxQ0RVcW5FcjQrVWw1N3QwSXdCcXBab0Q3OG9jYWx2dGt3?=
- =?utf-8?B?SmlIcVZPT1d0S2RJei81QmEyMXRRPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2D4372EBFD71EF429CDE0D2B08EA8307@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B3D73470
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 16:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716825843; cv=none; b=dVBtQmGmQ/k019cjIdBRXRnW2s80IV7o+kpnlcyk+lX97bYBIetnc2qT+iJoVg8uCZ5LHzxJAny8nlySQNBO36/yILFbeugBH8n0ee2tmCEtkeVXq++hPwYaMO8DfDgIHWpEwO8MZ/cC+w/dmau7NHdL/75/2Kw2Pv33Fkn7X+A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716825843; c=relaxed/simple;
+	bh=4EmFyncAhhLiKY+1D8a0clxDIqQWULOdjf0ovBAqZOg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hwScvf5SwXgm+4eiN1VMiQMtyHUTn35/cZiyhtgKDXIw+4u4MAYBpk13Isu5NoSftKH2qTqqz1G7G0785wQpX/zBchObIT4acI5BzMhW3RkFCuP3RskRI/1+gOjLiUyrAsURQLSSed9F6Hs7GomtBonQL3lZhhxzl8RO0O9xIYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H1M6ni55; arc=none smtp.client-ip=209.85.208.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-2e95aba2b88so24927421fa.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 09:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716825840; x=1717430640; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJWqJxrkn9eN5G99j0riJdNLIsQh7HlIjrBMGMc+Qc0=;
+        b=H1M6ni55WKT5hNa6QGjItDS8EnlyiMwcMYm7r0Yar834aTI/MhAr6DAUme4y9CkPmX
+         E/GW1CJ2ChhAKqHMwykpg1e9cV4bw9dxdn5o7LBK/ghdDjfZRk5mXeCmn3nipmw/gi2g
+         bfH/oYsFqgLgyODVKHvW8H4shJqDjBcfwzaj7wLUGdiYS5j5riuO3rsaWQSc7L7iFtWz
+         B1HC09oQXUGxNLy/8demm/W6OmZR9k4H0NV7pIxwttu9bPHDDPLSvbdXivNJxarp0M/F
+         ePEyDQCV2QE0IV4vk/TZL/TutSEehNP1wjboQQ2L/c48NmTXEsXay2fsW+dMNG1Fyfm1
+         Temw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716825840; x=1717430640;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJWqJxrkn9eN5G99j0riJdNLIsQh7HlIjrBMGMc+Qc0=;
+        b=NU6/0dnZAdXaWHqpzgAwUqx4w6BHYfLWXDoknRgOJMxKhOd1FLs5SJq5+j4G8wQpCT
+         4CzYQ5a95MhOSCL3NXXXo3i0ekBxWGm78Xo3XQsd7DFRmaT68G5/5sNLTUkfVd0wgdz2
+         OkW/KW8qem7f7GVJFqL6Q3dRQdQOYJSzWc5FmWLB9ll0wFqR/vgtFAmBWjQbs2pE3vYX
+         OZUZXh3F+TpPAWAs9NG1U8SwGMPRdsNsdhTmsJQJVuh3rwuhhw9E3D2jGJPU7KMd7OBI
+         ZXPoR9GNA6m9Pcv7vhceaZS5ifLA6LeWAkUXVppgKd/cLQqS6cTGN6ysH+hbWs+d/+yj
+         p97w==
+X-Forwarded-Encrypted: i=1; AJvYcCWXDSiVFm2xgJzrtEWLAh6ZA77jH2pVdlxEBX9cFjlP3ZDFrAznkpC2fOUZ+9quEEHboXswIyGhOChv1bTQQ9t4i5hKKDI+uTwJgDz9lg==
+X-Gm-Message-State: AOJu0YyyygweVAInw26nkgwy18GSBhTHdcAgczcbvD9LfNbOoZGyuFO0
+	XkQGzk3l2tftZkduQWS2yaWV8RgZdS54cQIeeAcykaUe7+FHpid/+f/UsSWLPTtL/xgSPywrGC9
+	MzexCgdCHpU1mqQ==
+X-Google-Smtp-Source: AGHT+IF3eJeOUIBjEjZ9ZRQCMvF3qFkK/+/n2pG/a8Q4YqeNxCsqp6O78uLUaBfl65HTl/3GKm7277j1vlQVAB8=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a2e:9155:0:b0:2e2:a6dc:8289 with SMTP id
+ 38308e7fff4ca-2e95b25667emr88131fa.7.1716825839717; Mon, 27 May 2024 09:03:59
+ -0700 (PDT)
+Date: Mon, 27 May 2024 16:03:56 +0000
+In-Reply-To: <20240524213245.GT2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR13MB5079.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 259e8b4e-8f68-4d33-a9a4-08dc7e631590
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2024 15:38:40.8162
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4wVSQFRqBiBzcamGpnGjQwo4Ak/QMZ4hFFK7LItjZDq4HrDuwENHqXgA6k5KMi9LwAuJwttkcpWWU5r8yRzmhQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR13MB5294
+Mime-Version: 1.0
+References: <20240524213245.GT2118490@ZenIV>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240527160356.3909000-1-aliceryhl@google.com>
+Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
+From: Alice Ryhl <aliceryhl@google.com>
+To: viro@zeniv.linux.org.uk
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, brauner@kernel.org, cmllamas@google.com, 
+	dan.j.williams@intel.com, dxu@dxuuu.xyz, gary@garyguo.net, 
+	gregkh@linuxfoundation.org, joel@joelfernandes.org, keescook@chromium.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, maco@android.com, 
+	ojeda@kernel.org, peterz@infradead.org, rust-for-linux@vger.kernel.org, 
+	surenb@google.com, tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
+	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
+Content-Type: text/plain; charset="utf-8"
 
-T24gTW9uLCAyMDI0LTA1LTI3IGF0IDA0OjQ5IC0wNzAwLCBoY2hAaW5mcmFkZWFkLm9yZyB3cm90
-ZToNCj4gT24gU3VuLCBNYXkgMjYsIDIwMjQgYXQgMTA6MzI6MzlQTSArMDAwMCwgVHJvbmQgTXlr
-bGVidXN0IHdyb3RlOg0KPiA+IEkgYXNzdW1lIHRoZSByZWFzb24gaXMgdG8gZ2l2ZSB0aGUgY2Fs
-bGVyIGEgcmFjZSBmcmVlIHdheSB0byBmaWd1cmUNCj4gPiBvdXQNCj4gPiB3aGljaCBzdWJtb3Vu
-dCB0aGUgcGF0aCByZXNvbHZlcyB0by4NCj4gDQo+IEJ1dCB0aGUgaGFuZGxlIG9wIGFyZSBnbG9i
-YWwgdG8gdGhlIGZpbGUgc3lzdGVtcyAoYWthIHN1cGVyX2Jsb2NrKS7CoA0KPiBJdA0KPiBkb2Vz
-IG5vdCBtYXR0ZXIgd2hhdCBtb3VudCB5b3UgdXNlIHRvIGFjY2VzcyBpdC4NCg0KU3VyZS4gSG93
-ZXZlciBpZiB5b3UgYXJlIHByb3ZpZGluZyBhIHBhdGggYXJndW1lbnQsIHRoZW4gcHJlc3VtYWJs
-eSB5b3UNCm5lZWQgdG8ga25vdyB3aGljaCBmaWxlIHN5c3RlbSAoYWthIHN1cGVyX2Jsb2NrKSBp
-dCBldmVudHVhbGx5IHJlc29sdmVzDQp0by4NCg0KPiANCj4gU25pcCByYW5kb20gdGhpbmdzIGFi
-b3V0IHVzZXJsYW5kIE5GUyBzZXJ2ZXJzIEkgY291bGRuJ3QgY2FyZSBsZXNzDQo+IGFib3V0Li4N
-Cj4gDQoNCk15IHBvaW50IHdhcyB0aGF0IGF0IGxlYXN0IGZvciB0aGF0IGNhc2UsIHlvdSBhcmUg
-YmV0dGVyIG9mZiB1c2luZyBhDQpmaWxlIGRlc2NyaXB0b3IgYW5kIG5vdCBoYXZpbmcgdG8gY2Fy
-ZSBhYm91dCB0aGUgbW91bnQgaWQuDQoNCklmIHlvdXIgdXNlIGNhc2UgaXNuJ3QgTkZTIHNlcnZl
-cnMsIHRoZW4gd2hhdCB1c2UgY2FzZSBhcmUgeW91DQp0YXJnZXRpbmcsIGFuZCBob3cgZG8geW91
-IGV4cGVjdCB0aG9zZSBhcHBsaWNhdGlvbnMgdG8gdXNlIHRoaXMgQVBJPw0KDQotLSANClRyb25k
-IE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJv
-bmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
+Al Viro <viro@zeniv.linux.org.uk> writes:
+> > > You obviously are aware of this but I'm just spelling it out. Iirc,
+> > > there will practically only ever be one light refcount per file.
+> > >
+> > > For a light refcount to be used we know that the file descriptor table
+> > > isn't shared with any other task. So there are no threads that could
+> > > concurrently access the file descriptor table. We also know that the
+> > > file descriptor table cannot become shared while we're in system call
+> > > context because the caller can't create new threads and they can't
+> > > unshare the file descriptor table.
+> > >
+> > > So there's only one fdget() caller (Yes, they could call fdget()
+> > > multiple times and then have to do fdput() multiple times but that's a
+> > > level of weirdness that we don't need to worry about.).
+> > 
+> > Hmm. Is it not the case that different processes with different file
+> > descriptor tables could reference the same underlying `struct file` and
+> > both use light refcounts to do so, as long as each fd table is not
+> > shared? So there could be multiple light refcounts to the same `struct
+> > file` at the same time on different threads.
+> 
+> Relevant rules:
+> 
+> 	* Each file pointer in any descriptor table contributes to refcount
+> of file.
+> 
+> 	* All assignments to task->files are done by the task itself or,
+> during task creation, by its parent The latter happens before the task
+> runs for the first time.  The former is done with task_lock(current)
+> held.
+> 
+> 	* current->files is always stable.  The object it points to
+> is guaranteed to stay alive at least until you explicitly change
+> current->files.
+> 	* task->files is stable while you are holding task_lock(task).
+> The object it points to is guaranteed to stay alive until you release
+> task_lock(task).
+> 	* task->files MAY be fetched (racily) without either of the
+> above, but it should not be dereferenced - the memory may be freed
+> and reused right after you've fetched the pointer.
+> 
+> 	* descriptor tables are refcounted by table->count.
+> 	* descriptor table is created with ->count equal to 1 and
+> destroyed when its ->count reaches 0.
+> 	* each task with task->files == table contributes to table->count.
+> 	* before the task dies, its ->files becomes NULL (see exit_files()).
+> 	* when task is born (see copy_process() and copy_files())) the parent
+> is responsible for setting the value of task->files and making sure that
+> refcounts are correct; that's the only case where one is allowed to acquire
+> an extra reference to existing table (handling of clone(2) with COPY_FILES).
+> 
+> 	* the only descriptor table one may modify is that pointed to
+> by current->files.  Any access to other threads' descriptor tables is
+> read-only.
+> 
+> 	* struct fd is fundamentally thread-local.  It should never be
+> passed around, put into shared data structures, etc.
+> 
+> 	* if you have done fdget(N), the matching fdput() MUST be done
+> before the caller modifies the Nth slot of its descriptor table,
+> spawns children that would share the descriptor table.
+> 
+> 	* fdget() MAY borrow a reference from caller's descriptor table.
+> That can be done if current->files->count is equal to 1.
+> In that case we can be certain that the file reference we fetched from
+> our descriptor table will remain unchanged (and thus contributing to refcount
+> of file) until fdput().  Indeed,
+> 	+ at the time of fdget() no other thread has task->files pointing
+> to our table (otherwise ->count would be greater than 1).
+> 	+ our thread will remain the sole owner of descriptor table at
+> least until fdput().  Indeed, the first additional thread with task->files
+> pointing to our table would have to have been spawned by us and we are
+> forbidden to do that (rules for fdget() use)
+> 	+ no other thread could modify our descriptor table (they would
+> have to share it first).
+> 	+ we are allowed to modify our table, but we are forbidden to touch
+> the slot we'd copied from (rules for fdget() use).
+> 
+> In other words, if current->files->count is equal to 1 at fdget() time
+> we can skip incrementing refcount.  Matching fdput() would need to
+> skip decrement, of course.  Note that we must record that (borrowed
+> vs. cloned) in struct fd - the condition cannot be rechecked at fdput()
+> time, since the table that had been shared at fdget() time might no longer
+> be shared by the time of fdput().
+
+This is great! It matches my understanding. I didn't know the details
+about current->files and task->files.
+
+You should copy this to the kernel documentation somewhere. :)
+
+> > And this does *not* apply to `fdget_pos`, which checks the refcount of
+> > the `struct file` instead of the refcount of the fd table.
+> 
+> False.  fdget_pos() is identical to fdget() as far as file refcount
+> handling goes.  The part that is different is that grabbing ->f_pos_lock
+> is sensitive to file refcount in some cases.  This is orthogonal to
+> "does this struct fd contribute to file refcount".
+
+Sorry, I see now that I didn't phrase that quite right. What I meant is
+that there are ways of sharing a `struct file` reference during an fdget
+scope that are not dangerous, but where it *would be* dangerous if it
+was an fdget_pos scope instead. Specifically, the reason they are
+dangerous is that they can lead to a data race on the file position if
+the fdget_pos scope did not take the f_pos_lock mutex.
+
+For example, during an `fdget(N)` scope, you can always do a `get_file`
+and then send it to another process and `fd_install` it into that other
+process. There's no way that this could result in the deletion of the
+Nth entry of `current->files`.
+
+However, during an `fdget_pos(N)` scope, then it is *not* the case that
+it's always okay to send a `get_file` reference to another thread and
+`fd_install` it. Because after the remote process returns from the
+syscall in which we `fd_install`ed the file, the remote process could
+proceed to call another syscall that in turn modifies the file position.
+And if the original `fdget_pos(N)` scope modifies the file position
+after sending the `get_file` reference, then that could be a data race
+on f_pos.
+
+> Again, "light" references are tied to thread; they can only be created
+> if we are guaranteed that descriptor table's slot they came from will
+> remain unchanged for as long as the reference is used.
+> 
+> And yes, there may be several light references to the same file - both
+> in different processes that do not share descriptor table *and* in the
+> same thread, if e.g. sendfile(in_fd, out_fd, ...) is called with
+> in_fd == out_fd.
+
+Thanks for confirming this!
+
+
+
+
+
+I hope this reply along with my reply to Christian Brauner also
+addresses your other thread. Let me know if it doesn't.
+
+Alice
 
