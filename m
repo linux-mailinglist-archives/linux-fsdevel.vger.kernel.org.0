@@ -1,152 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-20216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6F18CFDDC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 12:07:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B7A8CFDF1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 12:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B655B23034
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 10:07:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B191C20DF3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 10:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7685013BACD;
-	Mon, 27 May 2024 10:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Rh2ndBRu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0CA13AD1C;
+	Mon, 27 May 2024 10:15:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AC813AD0E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 10:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+Received: from smtp.cecloud.com (unknown [1.203.97.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7A913AD34;
+	Mon, 27 May 2024 10:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716804391; cv=none; b=T/uPoi1Y9TSCkAFXlJ1h7e3dq2qh/SKLFNuKsD9d9R1N2gZLEp93jZwhYf/siwIhT/ZYd6XwDB0o7/EEerk8Lt+MBxFEtgMeEfZHGeyG/TWmENHUhJQlIOf4PAVBQ6hIXWkCt6ecShXAdQ0tQ8Qjc6IZEg0PuYNA3BABi44kAGU=
+	t=1716804909; cv=none; b=utJbKqmwmbGZyNcA+1anEXKtmnf7hZIC/mMOLH99/WifiYqCP0vmS2TjDxIp09SiFwMTBUybe+RTTtgIOJd/e0dE7eSoBsgBMMw1ENwVVTU9iD8eNka9uEZRpJt7G4Vb2fIG28xDzUNXC64UqUQDXQ7Ug41oEDfmP6czUjowwcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716804391; c=relaxed/simple;
-	bh=Kr4l0x8PNw4zSltcIYoL7UZLHPCeyGC4FnJ3t4A/OAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYZlao4Flls8BpyiK/YqdbRP0vgpufmZ2Dc7DoYnsTb996ATWIKqkcuyKeQFaBRaS0TPe/YJaHWcyRv/qJMpKibEz/cmREiqP4B6NOBoMK/cNKGPXEKNavFgi4//mLIjfW1hkoBH8uKUdOXmene2QuEowWoIqCPxLrabeTLALhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Rh2ndBRu; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=0t+T
-	7WHX4la5LMrFE6PjVGCaYFT0TyBcOR1BCAmjNmg=; b=Rh2ndBRu/UYt67O8euVq
-	I7mDDOnIbKTIiLnGjO5pr+HfBMP+h0HL53Rh972C+BQ0PLkM2HMYRhO46crrR0Bv
-	pOPhFS55VMJeD+jzg4YWwbT2xT5KDcqqdWncTlNlbUl0TFis8TcJ+PmgSE7HPWgd
-	4vlVW4abPpJyH45xpvX4e88xpsWq7i/U/kCEAOxmMUNw73caWvD389YsO5wZwmns
-	NJmel8JE+ZJVww+Yp9d2xaqsHA+MQNwldBawEhLgGlojsyKsGrxw8j0k+WDR5K5i
-	9s+mbx2Ouxdroh6X7h1u3Ge1PZrktmHlUmOrULheQ/GoerhEtFykfwigFy2CKAOY
-	4w==
-Received: (qmail 2284887 invoked from network); 27 May 2024 12:06:19 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 May 2024 12:06:19 +0200
-X-UD-Smtp-Session: l3s3148p1@XEQoq2wZvLoujntm
-Date: Mon, 27 May 2024 12:06:18 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1716804909; c=relaxed/simple;
+	bh=t4855T7zRAAyXJTGdNBnjyzLLE/1b84BjFAew89mgrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IiX0C7q/8CJOoNw8dP7WxVoCCSCCam3JmO6RJcPJCetcZbrCmtbPAhgy11uhQFvQ9ioBaOfg7pPdIvf3HLzMYCHMbt5iA7ybzpZbbJsN4SfXOUq0FsCf6GBWI7hT7tqNCQZ7vIzBEvQKoIUtdLF8bHSC7lGGDHwFGSyYqf0JsRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id 24381900112;
+	Mon, 27 May 2024 18:09:10 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-ANTISPAM-LEVEL:2
+X-ABS-CHECKED:0
+Received: from localhost.localdomain (unknown [111.48.58.12])
+	by smtp.cecloud.com (postfix) whith ESMTP id P894637T281473226436976S1716804548742756_;
+	Mon, 27 May 2024 18:09:10 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:liuwei09@cestc.cn
+X-SENDER:liuwei09@cestc.cn
+X-LOGIN-NAME:liuwei09@cestc.cn
+X-FST-TO:axboe@kernel.dk
+X-RCPT-COUNT:9
+X-LOCAL-RCPT-COUNT:1
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:111.48.58.12
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<acfc3dfd82f899d0dbff6eb8768ac03f>
+X-System-Flag:0
+From: Liu Wei <liuwei09@cestc.cn>
+To: axboe@kernel.dk
+Cc: akpm@linux-foundation.org,
+	hch@lst.de,
+	jack@suse.cz,
 	linux-fsdevel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <20240527100618.np2wqiw5mz7as3vk@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Eric Sandeen <sandeen@redhat.com>,
-	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
+	linux-kernel@vger.kernel.org,
+	liuwei09@cestc.cn,
+	rgoldwyn@suse.com,
+	willy@infradead.org
+Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when io with IOCB_NOWAIT
+Date: Mon, 27 May 2024 18:09:08 +0800
+Message-ID: <20240527100908.49913-1-liuwei09@cestc.cn>
+X-Mailer: git-send-email 2.42.1
+In-Reply-To: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk>
+References: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hqjbo2nzioraqstx"
-Content-Disposition: inline
-In-Reply-To: <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
+Content-Transfer-Encoding: 8bit
+
+I am a newer, thanks for the reminder.
+
+> 
+> >> when we issuing AIO with direct I/O and IOCB_NOWAIT on a block device, the
+> >> process context will not be blocked.
+> >>
+> >> However, if the device already has page cache in memory, EAGAIN will be
+> >> returned. And even when trying to reissue the AIO with direct I/O and
+> >> IOCB_NOWAIT again, we consistently receive EAGAIN.
+> 
+> -EAGAIN doesn't mean "just try again and it'll work".
+> 
+> >> Maybe a better way to deal with it: filemap_fdatawrite_range dirty pages
+> >> with WB_SYNC_NONE flag, and invalidate_mapping_pages unmapped pages at
+> >> the same time.
+> >>
+> >> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+> >> ---
+> >>  mm/filemap.c | 9 ++++++++-
+> >>  1 file changed, 8 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/mm/filemap.c b/mm/filemap.c
+> >> index 30de18c4fd28..1852a00caf31 100644
+> >> --- a/mm/filemap.c
+> >> +++ b/mm/filemap.c
+> >> @@ -2697,8 +2697,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
+> >>  
+> >>  	if (iocb->ki_flags & IOCB_NOWAIT) {
+> >>  		/* we could block if there are any pages in the range */
+> >> -		if (filemap_range_has_page(mapping, pos, end))
+> >> +		if (filemap_range_has_page(mapping, pos, end)) {
+> >> +			if (mapping_needs_writeback(mapping)) {
+> >> +				__filemap_fdatawrite_range(mapping,
+> >> +						pos, end, WB_SYNC_NONE);
+> >> +			}
+> 
+> I don't think WB_SYNC_NONE tells it not to block, it just says not to
+> wait for it... So this won't work as-is.
+
+Yes, but I think an asynchronous writex-back is better than simply return EAGAIN.
+By using __filemap_fdatawrite_range to trigger a writeback, subsequent retries
+may have a higher chance of success. 
+
+> 
+> >> +			invalidate_mapping_pages(mapping,
+> >> +					pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> >>  			return -EAGAIN;
+> >> +		}
+> >>  	} else {
+> >>  		ret = filemap_write_and_wait_range(mapping, pos, end);
+> >>  		if (ret)
+> >> -- 
+> >> 2.42.1
+> >>
+> >>
+> >>
 
 
---hqjbo2nzioraqstx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Christian,
-
-> Afaict, the "auto" option has either never existent or it was removed bef=
-ore
-> the new mount api conversion time ago for debugfs.
-
-Frankly, I have no idea why I put this 'auto' in my fstab ages ago. But
-it seems, I am not the only one[1].
-
-[1] https://www.ibm.com/docs/en/linux-on-systems?topic=3Dassumptions-debugfs
-
-> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> index dc51df0b118d..713b6f76e75d 100644
-> --- a/fs/debugfs/inode.c
-> +++ b/fs/debugfs/inode.c
-> @@ -107,8 +107,16 @@ static int debugfs_parse_param(struct fs_context *fc=
-, struct fs_parameter *param
->         int opt;
->=20
->         opt =3D fs_parse(fc, debugfs_param_specs, param, &result);
-> -       if (opt < 0)
-> +       if (opt < 0) {
-> +               /*
-> +                * We might like to report bad mount options here; but
-> +                * traditionally debugfs has ignored all mount options
-> +                */
-> +               if (opt =3D=3D -ENOPARAM)
-> +                       return 0;
-> +
->                 return opt;
-> +       }
->=20
->         switch (opt) {
->         case Opt_uid:
->=20
->=20
-> Does that fix it for you?
-
-Yes, it does, thank you.
-
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Happy hacking,
-
-   Wolfram
-
-
---hqjbo2nzioraqstx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZUWxYACgkQFA3kzBSg
-KbYn7BAAgjXXfe6438wgV+D2SvJ7lziQ32oC2AKs/kiVtJYHQ6vmj9M5fCgIfuNG
-5kSvB/KAwYsMIZrEtYmAWJRJAlpUz4PQHxCEGCgD4QktsUTZW8I+7Y4uwI33D+Sf
-BbkGsv2sDvTV+LfVp7VSmQRuMHUkJaSYkpDLEpI2I5NRL99KnqplLSuxJi7VtAoJ
-sVw4AFj48H3Ea1L78YW7CGUUVE2j9s98NQzKHyBHl4ZALfIvJAvfpJn5LgMOhHEU
-C5w0MzKnIh1iUovzqnTVJVok7LpPrVE3pk7KkScGl/0XkKn3AEdegjk4ydf1+9TI
-2i5EKQdFyRv1WqsN3HYuRRyaZOhu1HobWpQcBeJ6yZht/OawnopjiQe8CvkJF23p
-Dndc97Mc3inp6U03l9gq4zhjMqVzhQQnPp78HXTLUVppxDlfHeMAkxtz0PC/7vQ3
-jM4nysaIwvYPItDjVFNyvGMUhdnPb0lKM1gGl5IVnVu7qhsSR5Myx0qwr8XJ6sRV
-sSggapJDx0Otpt/M1Rdav3jdHUJvBXAnYTCfOe+x2T2eQLizBp+BY+u6oSbAqpbs
-5G34N/rVjerSlrgEqVgK5RRsXu8xxdKdyMxNhKJltAz8oMYOvwuWTKq5NeaCauLf
-KOIyxgdi5MP49mjs2CVvnuqoH60dPU0QyPLPJUtwWRhNKn2/Y7s=
-=GJ16
------END PGP SIGNATURE-----
-
---hqjbo2nzioraqstx--
 
