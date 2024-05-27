@@ -1,119 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-20259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A198D08D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 18:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFB88D08C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 18:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D30BB28BD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 16:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C61EB28F1C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 16:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0AB155C94;
-	Mon, 27 May 2024 16:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B55155C98;
+	Mon, 27 May 2024 16:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAZ5gP7L"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DJ/FbSdF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394C061FE5;
-	Mon, 27 May 2024 16:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C714061FDB;
+	Mon, 27 May 2024 16:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716827533; cv=none; b=YvVfwsffydLU2zhVzdTd8cUPOrSA9vZ8gXQIEvjGttKUw7GanHcHjuHw6ZcU19vL3SG7bg+MiNl5/Rb+jiE+WUlpohI7ISGkXkHKBwjNG4jaF4170L7l6NoNdbPCLYDe0yiLEuWc6xbmFAYe3ZA/NbwtGVR0ijKIWu/tDqajoJA=
+	t=1716827783; cv=none; b=TGtqT4JXayeueEIImpJT4QE/Wy9LUOtzSEicfjiTsV/NcGE2RTcbIdkF0GIdUgo2/8hwdHuIajBfQyP0SBM7IRmyjc/s26wEP4bf3/YqC+XMq9zu35GZn/8VazB6sGAvXovmyRf6NbsFqoKaphn5I+YZqtpCYs7GvN1L4QmYpIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716827533; c=relaxed/simple;
-	bh=DNt0Dh22pTekgmdMN3R8pCvCQ6794P7yP++KToqrJ6c=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=i+v5MsiRKI9dYR7aK5l2dMwEDvDzhpDYd5plShxWslHQpa8DEe3kOkDPjlRQwZ5/hxPJ2rJEzr3I5gge1Y67qasGRL3mLmEI/76XxNyEEFJu7GjLsqvQ64rxbPrLfHahVQD5Uki2FN7bQT4fd34xa7Qf0+CX78N4uEZOhAxX/s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAZ5gP7L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D35A0C2BBFC;
-	Mon, 27 May 2024 16:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716827532;
-	bh=DNt0Dh22pTekgmdMN3R8pCvCQ6794P7yP++KToqrJ6c=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=fAZ5gP7L/bpEQiNYnCKxA1zrJPwpwbz+r2vt/Uuid0n//IqCLA+IkAacwVu/pH+EL
-	 54TvL7f1Hm+t93mVqp7u59XUA6NFVbeekNtOjh2ZhuepAVtTZFhChJ3GwD1ogeZzHF
-	 B90lfC/mSPDnw4hJdy206TP4rl0+i2oLIMq85/G1KxhxzLyRpi5KCIUNhwFvpKOYuG
-	 fhVxnO5HXwncThmL/AdIfiPqRc/gJYlQ7M8Vn7edHKuJsTTeiia2JmBFa/67PpyTWD
-	 mhVzTBGkNimvk39hKaNZjO2XKROrgOzhIwT+3f10abKo2laedmIlDAwHcMCtD2ml5E
-	 KtIdN/f0XfX8g==
-Date: Mon, 27 May 2024 09:32:13 -0700
-From: Kees Cook <kees@kernel.org>
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-CC: Kees Cook <keescook@chromium.org>, y0un9n132@gmail.com,
- viro@zeniv.linux.org.uk, brauner@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_AUTOSEL_6=2E9_12/15=5D_binfmt=5F?=
- =?US-ASCII?Q?elf=3A_Leave_a_gap_between_=2Ebss_and_brk?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240526094152.3412316-12-sashal@kernel.org>
-References: <20240526094152.3412316-1-sashal@kernel.org> <20240526094152.3412316-12-sashal@kernel.org>
-Message-ID: <B4568D76-34A6-40F2-936A-000F29BC42B1@kernel.org>
+	s=arc-20240116; t=1716827783; c=relaxed/simple;
+	bh=p/AcaZr6TQ0ufKxEuDnUWDVfPD8xmPPtDJJOswjtURc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qeCq838CoPKJHkC7Cm4P9zZlly1tXoEgrKrFo7ye+KlCcpbMYRnVf1TVc0tOcLKmKkK4oeflO5IBsSLkkx3y6QbJtxSyXE4bxmTiKooYPHdhclJz21sC4LN5PKaG/toOCjN0x7hvVINJOWHjlAfrwdLTgq+UHQezppRgrihMCK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DJ/FbSdF; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=8EKRG22z1xnqyUg5G8bRLOhT2RWzJZUcC73o1Yr1tDo=; b=DJ/FbSdF9ms7pCqDA3oiKoFFIp
+	GuXHVsBBtYTej2LgFzqL9+NQ8Sm1ny6A2lIhJHwWOCNU6RQAa6idFA3VgYFJkVkUa2kuY6FdT++3E
+	U1RtI0LKO7l0KdNmAgyf2UpjbR/LKxgeJ2ZVNnClTIzhBrldGXJ+qXpm1CP6DqvHu+KqDGFhw430i
+	uMwuMTejBrNN7t4wCI+vgmfgGWbYgoD6V7JKukSemnloWJh91Vy4zS/kE789mAUYQL1MSkxRH0m69
+	BA/GWDcN+98vfpxrDXrH5GuL5SjTMH2CkfSpJtr7WN5bjzCVv1RF/uGqp8qPATND0IK1n5csSnOgW
+	SpW9CAoQ==;
+Received: from 2a02-8389-2341-5b80-3177-e4c1-2108-f294.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:3177:e4c1:2108:f294] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sBdKd-0000000Ft6E-38vQ;
+	Mon, 27 May 2024 16:36:20 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: support large folios for NFS
+Date: Mon, 27 May 2024 18:36:07 +0200
+Message-ID: <20240527163616.1135968-1-hch@lst.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi,
+Hi all,
 
-Please don't backport this change=2E While it has been tested, it's a proc=
-ess memory layout change, and I'd like to be as conservative as possible ab=
-out it=2E If there is fall-out, I'd prefer to keep it limited to 6=2E10+=2E=
- :)
+this series adds large folio support to NFS, and almost doubles the
+buffered write throughput from the previous bottleneck of ~2.5GB/s
+(just like for other file systems).
 
--Kees
+The first patch is an old one from willy that I've updated very slightly.
+Note that this update now requires the mapping_max_folio_size helper
+merged into Linus' tree only a few minutes ago.
 
-
-
-On May 26, 2024 2:41:44 AM PDT, Sasha Levin <sashal@kernel=2Eorg> wrote:
->From: Kees Cook <keescook@chromium=2Eorg>
->
->[ Upstream commit 2a5eb9995528441447d33838727f6ec1caf08139 ]
->
->Currently the brk starts its randomization immediately after =2Ebss,
->which means there is a chance that when the random offset is 0, linear
->overflows from =2Ebss can reach into the brk area=2E Leave at least a sin=
-gle
->page gap between =2Ebss and brk (when it has not already been explicitly
->relocated into the mmap range)=2E
->
->Reported-by:  <y0un9n132@gmail=2Ecom>
->Closes: https://lore=2Ekernel=2Eorg/linux-hardening/CA+2EKTVLvc8hDZc+2Yhw=
-mus=3DdzOUG5E4gV7ayCbu0MPJTZzWkw@mail=2Egmail=2Ecom/
->Link: https://lore=2Ekernel=2Eorg/r/20240217062545=2E1631668-2-keescook@c=
-hromium=2Eorg
->Signed-off-by: Kees Cook <keescook@chromium=2Eorg>
->Signed-off-by: Sasha Levin <sashal@kernel=2Eorg>
->---
-> fs/binfmt_elf=2Ec | 3 +++
-> 1 file changed, 3 insertions(+)
->
->diff --git a/fs/binfmt_elf=2Ec b/fs/binfmt_elf=2Ec
->index 5397b552fbeb5=2E=2E7862962f7a859 100644
->--- a/fs/binfmt_elf=2Ec
->+++ b/fs/binfmt_elf=2Ec
->@@ -1262,6 +1262,9 @@ static int load_elf_binary(struct linux_binprm *bpr=
-m)
-> 		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
-> 		    elf_ex->e_type =3D=3D ET_DYN && !interpreter) {
-> 			mm->brk =3D mm->start_brk =3D ELF_ET_DYN_BASE;
->+		} else {
->+			/* Otherwise leave a gap between =2Ebss and brk=2E */
->+			mm->brk =3D mm->start_brk =3D mm->brk + PAGE_SIZE;
-> 		}
->=20
-> 		mm->brk =3D mm->start_brk =3D arch_randomize_brk(mm);
-
---=20
-Kees Cook
+Diffstat:
+ fs/nfs/file.c  |    4 +++-
+ fs/nfs/inode.c |    1 +
+ mm/filemap.c   |   40 +++++++++++++++++++++++++---------------
+ 3 files changed, 29 insertions(+), 16 deletions(-)
 
