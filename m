@@ -1,158 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-20248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2348D073C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 18:00:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFD38D065A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 17:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17985B25E10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 15:36:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A40F0320070
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 15:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB8B79E1;
-	Mon, 27 May 2024 15:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913521E4AE;
+	Mon, 27 May 2024 15:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F9BvcxNL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZkxbGUE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCDE17E8E0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 15:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB7717E919;
+	Mon, 27 May 2024 15:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716824190; cv=none; b=qyxws6mjKoQ6okArGcumB6NSs+IDVopKAuDuNLjH4t8lI2lPPKlDLsLCofSGm0Uu15IW90WF3h566FHwwMWeqDrVZxfl/5Ow7mFVs9pkMP0tecfkyERj541IJcIFCGhZ3sHEACqGttyFf5vIYEgILIPw/f0hz7UEBIIGji5kBxI=
+	t=1716824403; cv=none; b=D4ptkac96LujE8jbyVcU5gIJYxuBCfH7aO0tBKwg2wDDGBACSB3ctvZRjbcHdURFKRilzcPbJZKAdnqj3TIaadqcS5OxP3Oypn9xLPusTUpOxU6d8BN3x2gKc5iBN67aRWfxtQM2DX7SoLsX5VRnlifwgoQ9Ne8aD8LNKPsHmIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716824190; c=relaxed/simple;
-	bh=tL9SRFm+QXGfjo5/k/kK7X/HFQKtJRXpCoX7gFPiXKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kxfttBMJ5IcvSXx6+BkI2uAF1FxXJ4jouFAq8wt38qP2MuiGrnBWPxu4L16pkCVGKlPFehBLAPGaPSLLTgeLGRP7az4cmRCEchFu52FPcfsvkOIxsDlHySM+HNEeqQ0EWHaBHqlPjQBp2qPt15+tGg9YQlgRBYa2cMyGmlpQy/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F9BvcxNL; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f4850918d0so46975ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 08:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716824187; x=1717428987; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=;
-        b=F9BvcxNLHbFCL5XfHLnGTxQs/kbGpALZnSl2DYjNA/21xx0FBmmySwAJN/5dtkPhZV
-         IwwKjcqRB9pV10OOLL6wHdu5znp/6PE86Vas57cBS/wuAbBw2UZndM8t2ducr7YYWm6Y
-         qK9hMREyXKjeBhZWSjTI2InCbzAtbz3PLAwXmX2LUbmD27CV84Ld62XttJh+nGQRapAs
-         b070pptuUluTj7BrbyTY7tkobVJKFo/9qxvErZHnOMlm8wItNpZuLUNC8RDdtzThAB2N
-         KMJsW+YN/2uWpInjYvnpvDqSoW6Kn8DylQoMu4CqVNrueusLUWYFZNSZk1pdxY03zMc1
-         k2IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716824187; x=1717428987;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=;
-        b=rU51NnvjUMB8Ylwmf4/WPR+FrkZjL+p+QmTH1wTHFepnx4gcMZhZmmohDZuhP+oFy+
-         M5U0LJ1sHlFUzaIuczaFgtqWamTvvJ15mINvZwUEYH99Ay2wjUZ9Zb4r54+7ecB6pBXI
-         LU5UoY//kTRr/tGR/ob2hz4fiSRRGmw198fntpD4ELZIEznokN+NMUus0W4LOj+krv7w
-         Qm8dSZV+TR3cw+pHlB4ZYEko17z9hcx39xYIy9MhwnxOEt3AHrLhF5u0EPUj3rMmWjeh
-         IH0rL6t+3/rgpLNRKLd6dpZ9kQZtSSYQsuAzjaQR4Op5/athESsrJrlZ1QvyxNXf/X7K
-         uO+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXWYO2KBjXCIxr10lCERn+9bCsdkNDZYUZP9EsgP18dvdOPCQGAwuHQkxDybt3lpO4p8yUcRCV+jX079lDbfTMqsAHZgW94hnUIguIlzQ==
-X-Gm-Message-State: AOJu0Yzi8FLBWrV9HTHCA+0C46vPGHPjT9PIV7BQ6YQcSlWVWvSoAtpT
-	y67znfommHuIPK7L5F4KjW4po4huzqkqV6xsstohYTVTLsmjORW0FCnFAXqvS8Y=
-X-Google-Smtp-Source: AGHT+IHTxIPNAK3HsNoC9uItVsCnZCK8MD3ThRKVvVNi4TwdQa2YRFJqyU+MaLPmqStXfF6Dl3dotQ==
-X-Received: by 2002:a17:902:e810:b0:1f2:fd9a:dbf8 with SMTP id d9443c01a7336-1f449907a09mr116945035ad.5.1716824186842;
-        Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c970058sm64280955ad.121.2024.05.27.08.36.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Message-ID: <c66ca795-da93-437c-bb11-718801f8114a@kernel.dk>
-Date: Mon, 27 May 2024 09:36:24 -0600
+	s=arc-20240116; t=1716824403; c=relaxed/simple;
+	bh=U/g2DlIQlcN9KM28tlaBFcTUIku1RJL52DS6Riw5pGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0+tFjzlV32vNPmiTiv3DTgLrHr/2GCzGqMrX82eJL0ns79gmyy20gDeYsbiRtkqZPmRBqWR8wK1vf2F9SQn+4HydHCziatXC2rtMM50OvHAdX3W1pn2oMt3gVgy2VBnWdM/EK2nmIFXy/m29a/BdjngEAfOzNG926bgHgCqL9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZkxbGUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F363DC2BBFC;
+	Mon, 27 May 2024 15:39:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716824402;
+	bh=U/g2DlIQlcN9KM28tlaBFcTUIku1RJL52DS6Riw5pGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NZkxbGUEzWW4IU2cD8eb2PfKo00X9sAUgjNEP+Q8Zwcx4Cqu8u5bRvXMrKFIXGc9R
+	 EspAQY85IXTJkz/oWqjRtma98LfFaB7VWROXD0DWpkOwNVHoChwAqkP25DI32zPgkk
+	 OfRnzG5CHFe3k2uSh1Hs3BL8ITxxTdXx7fiZftZIBCJCJ3GrDDMeV5aSutjMtbrFni
+	 F4ajetsvbQDxM8f8pmsSPIi2byYHPdSeAoHzsL80HxbRR17PTjRiPfy7Jll2CQ1LwQ
+	 jzupLCx8w8GueVuUo0kjrpcBbgalNdatEnyms9DAOehyQFpbMWRI7OgOrZVU94Almb
+	 AhXY38oz7C7xg==
+Date: Mon, 27 May 2024 17:39:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, lczerner@redhat.com, cmaiolino@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, yi.zhang@huawei.com
+Subject: Re: [PATCH v2 3/4] fs: ext4: support relative path for
+ `journal_path` in mount option.
+Message-ID: <20240527-mahlen-packung-3fe035ab390d@brauner>
+References: <20240527075854.1260981-1-lihongbo22@huawei.com>
+ <20240527075854.1260981-4-lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when io
- with IOCB_NOWAIT
-To: Liu Wei <liuwei09@cestc.cn>
-Cc: akpm@linux-foundation.org, hch@lst.de, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- rgoldwyn@suse.com, willy@infradead.org
-References: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk>
- <20240527100908.49913-1-liuwei09@cestc.cn>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240527100908.49913-1-liuwei09@cestc.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240527075854.1260981-4-lihongbo22@huawei.com>
 
-On 5/27/24 4:09 AM, Liu Wei wrote:
-> I am a newer, thanks for the reminder.
+On Mon, May 27, 2024 at 03:58:53PM +0800, Hongbo Li wrote:
+> After `fs_param_is_blockdev` is implemented(in fs: add blockdev parser
+> for filesystem mount option.), `journal_devnum` can be obtained from
+> `result.uint_32` directly.
 > 
->>
->>>> when we issuing AIO with direct I/O and IOCB_NOWAIT on a block device, the
->>>> process context will not be blocked.
->>>>
->>>> However, if the device already has page cache in memory, EAGAIN will be
->>>> returned. And even when trying to reissue the AIO with direct I/O and
->>>> IOCB_NOWAIT again, we consistently receive EAGAIN.
->>
->> -EAGAIN doesn't mean "just try again and it'll work".
->>
->>>> Maybe a better way to deal with it: filemap_fdatawrite_range dirty pages
->>>> with WB_SYNC_NONE flag, and invalidate_mapping_pages unmapped pages at
->>>> the same time.
->>>>
->>>> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
->>>> ---
->>>>  mm/filemap.c | 9 ++++++++-
->>>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/filemap.c b/mm/filemap.c
->>>> index 30de18c4fd28..1852a00caf31 100644
->>>> --- a/mm/filemap.c
->>>> +++ b/mm/filemap.c
->>>> @@ -2697,8 +2697,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
->>>>  
->>>>  	if (iocb->ki_flags & IOCB_NOWAIT) {
->>>>  		/* we could block if there are any pages in the range */
->>>> -		if (filemap_range_has_page(mapping, pos, end))
->>>> +		if (filemap_range_has_page(mapping, pos, end)) {
->>>> +			if (mapping_needs_writeback(mapping)) {
->>>> +				__filemap_fdatawrite_range(mapping,
->>>> +						pos, end, WB_SYNC_NONE);
->>>> +			}
->>
->> I don't think WB_SYNC_NONE tells it not to block, it just says not to
->> wait for it... So this won't work as-is.
+> Additionally, the `fs_lookup_param` did not consider the relative path
+> for block device. When we mount ext4 with `journal_path` option using
+> relative path, `param->dirfd` was not set which will cause mounting
+> error.
+
+That's a failure in userspace though. If a relative pathname is provided
+then AT_FDCWD or a valid file descriptor must be provided:
+
+fsconfig(fd_fs, FSCONFIG_SET_PATH, "journal_path", "relative/path", AT_FDCWD);
+
+But if you're seeing this from mount(8) then util-linux very likely
+does (cf. [1]):
+
+fsconfig(fd_fs, FSCONFIG_SET_STRING, "journal_path", "relative/path", 0);
+
+So mount(8) is passing that as a string as it has no way to figure out
+that this should be passed as FSCONFIG_SET_PATH. So to allow relative
+paths in string options we'd need something (untested) like:
+
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index a4d6ca0b8971..18ca40408e91 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -156,6 +156,9 @@ int fs_lookup_param(struct fs_context *fc,
+                f = getname_kernel(param->string);
+                if (IS_ERR(f))
+                        return PTR_ERR(f);
++               /* relative path */
++               if (*f->name[0] != '/')
++                       param->dirfd = AT_FDCWD;
+                put_f = true;
+                break;
+        case fs_value_is_filename:
+
+https://github.com/util-linux/util-linux/blob/55ca447a6a95226fd031a126fb48b01b3efd6284/libmount/src/hook_mount.c#L178
+
 > 
-> Yes, but I think an asynchronous writex-back is better than simply
-> return EAGAIN. By using __filemap_fdatawrite_range to trigger a
-> writeback, subsequent retries may have a higher chance of success. 
+> This can be reproduced easily like this:
+> 
+> mke2fs -F -O journal_dev $JOURNAL_DEV -b 4096 100M
+> mkfs.ext4 -F -J device=$JOURNAL_DEV -b 4096 $FS_DEV
+> cd /dev; mount -t ext4 -o journal_path=`basename $JOURNAL_DEV` $FS_DEV $MNT
+> 
+> Fixes: 461c3af045d3 ("ext4: Change handle_mount_opt() to use fs_parameter")
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+>  fs/ext4/super.c | 26 +-------------------------
+>  1 file changed, 1 insertion(+), 25 deletions(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index c682fb927b64..94b39bcae99d 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -2290,39 +2290,15 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx->spec |= EXT4_SPEC_s_resgid;
+>  		return 0;
+>  	case Opt_journal_dev:
+> -		if (is_remount) {
+> -			ext4_msg(NULL, KERN_ERR,
+> -				 "Cannot specify journal on remount");
+> -			return -EINVAL;
+> -		}
+> -		ctx->journal_devnum = result.uint_32;
+> -		ctx->spec |= EXT4_SPEC_JOURNAL_DEV;
+> -		return 0;
+>  	case Opt_journal_path:
+> -	{
+> -		struct inode *journal_inode;
+> -		struct path path;
+> -		int error;
+> -
+>  		if (is_remount) {
+>  			ext4_msg(NULL, KERN_ERR,
+>  				 "Cannot specify journal on remount");
+>  			return -EINVAL;
+>  		}
 
-And what's the application supposed to do, just hammer on the same
-IOCB_NOWAIT submission until it then succeeds? The only way this can
-reasonably work for that would be if yo can do:
-
-1) Issue IOCB_NOWAIT IO
-2) Get -EAGAIN
-3) Sync kick off writeback, wait for it to be done
-4) Issue IOCB_NOWAIT IO again
-5) Success
-
-If you just kick it off, then you'd repeat steps 1..2 ad nauseam until
-it works out, not tenable.
-
-And this doesn't even include the other point I mentioned, which is
-__filemap_fdatawrite_range() IO issue blocking in the first place.
-
-So no, NAK on this patch.
-
--- 
-Jens Axboe
-
+This would cause a path lookup in the VFS layer only to immediately
+reject it on remount.
 
