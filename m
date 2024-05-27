@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-20210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFC08CFABA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 09:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB9C8CFABC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 09:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A591F22DAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 07:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56201F22E7B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 07:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8433D3AC;
-	Mon, 27 May 2024 07:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E3144C68;
+	Mon, 27 May 2024 07:58:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947A65787B;
-	Mon, 27 May 2024 07:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CBA3B298;
+	Mon, 27 May 2024 07:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716796700; cv=none; b=mvqZPHaapw/HcOhJ6Iy0teJGJa4rTxxcY72yuoMDmd3IDGJiTWpWUkAmGvfpskd0653suUDA5OygK1PSFtG3b4LYuB7MqV6sIIjlZwMhE82YoVirJVsbjgN7ctRGsg+sAMTN4BDrKHIHOU3F5ict6tcc+AS91IZgA8phOWnLO3M=
+	t=1716796701; cv=none; b=GSLx6xnFLGDrY+66njteBWhQZhxRCcspvwqa7ichaEvgWAyEw3h6duv4+X+VtFtPq4a+ubXLmaUHomc9+/tMY/RQ0bDqxYgjWyQdjjzG+u9GH/0VzNKeXTeYOymHQlsFW97niU5Sw9v3Dd2NeyFns3aqtRm/XSW7zSIS9vs0c+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716796700; c=relaxed/simple;
-	bh=1V35Xtl9Gabc3cCpj/uZzgPUaqJp0QIJ5zZaPmom+dA=;
+	s=arc-20240116; t=1716796701; c=relaxed/simple;
+	bh=4XOH+KIQn0yMccABDFAN4+JzP4A4dRp1QiXB4Ol3pCc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f0hA0pkWDUqTHV48QQ/iXYVKaEGJagBwXyYRuziP9JvSFSXDIgS9pVMTJ4om20Us5EAo7+RR8BhNY5Lmnqueoxxfc+SmdcIjftf7mObmxEh2YnofCy9edxbO94SBjaEE2c+LX8kPQInX/NpgY6CztuWV3YakVZkckVDEYUX71dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+	 MIME-Version:Content-Type; b=ACz9Vmez19oxnGPqDhlZ0HMoA/in2/sPAJKCc5nTmmJjiREZXDcjalvKzhxOWLVov0UeCV9fKSWP6USvEzWOJiuYuheFegckTn5FHv+QG1Cxe1MTDfSMzFsCLW/IR3ChL6VpHSJAJXRbay0ujjJJD8hnhL6VbLIod6ROFhiPBB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VnnzW28rFz1wwV7;
-	Mon, 27 May 2024 15:56:55 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VnnxQ1JyJz1ysW0;
+	Mon, 27 May 2024 15:55:06 +0800 (CST)
 Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 70B741400FD;
-	Mon, 27 May 2024 15:58:11 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 2BC2C14037F;
+	Mon, 27 May 2024 15:58:13 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
  (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 27 May
- 2024 15:58:11 +0800
+ 2024 15:58:12 +0800
 From: Hongbo Li <lihongbo22@huawei.com>
 To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
 	<tytso@mit.edu>, <adilger.kernel@dilger.ca>
 CC: <lczerner@redhat.com>, <cmaiolino@redhat.com>,
 	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
 	<yi.zhang@huawei.com>, <lihongbo22@huawei.com>
-Subject: [PATCH v2 1/4] fs: add blockdev parser for filesystem mount option.
-Date: Mon, 27 May 2024 15:58:51 +0800
-Message-ID: <20240527075854.1260981-2-lihongbo22@huawei.com>
+Subject: [PATCH v2 2/4] fs: add path parser for filesystem mount option.
+Date: Mon, 27 May 2024 15:58:52 +0800
+Message-ID: <20240527075854.1260981-3-lihongbo22@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240527075854.1260981-1-lihongbo22@huawei.com>
 References: <20240527075854.1260981-1-lihongbo22@huawei.com>
@@ -62,79 +62,59 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  dggpeml500022.china.huawei.com (7.185.36.66)
 
-`fsparam_bdev` uses `fs_param_is_blockdev` to parse the option, but it
-is currently empty. Filesystems like ext4 use the `fsparam_bdev` to
-parse `journal_path` into the block device. This general logic should
-be moved to the vfs layer, not the specific filesystem. Therefore, we
-implement block device parser in `fs_param_is_blockdev`. And the logic
-is similar with `fs_lookup_param`.
+`fsparam_path` uses `fs_param_is_path` to parse the option, but it
+is currently empty. The new mount api has considered this option in
+`fsconfig`(that is FSCONFIG_SET_PATH). Here we add general path parser
+in filesystem layer. Currently, no filesystem uses this function to
+parse parameters, we add `void *ptr` in `fs_parse_result` to point to
+the target structure(such as `struct inode *`).
 
 Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
 ---
- fs/fs_parser.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+ fs/fs_parser.c            | 18 ++++++++++++++++++
+ include/linux/fs_parser.h |  1 +
+ 2 files changed, 19 insertions(+)
 
 diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index a4d6ca0b8971..2aa208cf2027 100644
+index 2aa208cf2027..5d0adcc514d8 100644
 --- a/fs/fs_parser.c
 +++ b/fs/fs_parser.c
-@@ -311,7 +311,56 @@ EXPORT_SYMBOL(fs_param_is_fd);
- int fs_param_is_blockdev(struct p_log *log, const struct fs_parameter_spec *p,
- 		  struct fs_parameter *param, struct fs_parse_result *result)
+@@ -367,6 +367,24 @@ EXPORT_SYMBOL(fs_param_is_blockdev);
+ int fs_param_is_path(struct p_log *log, const struct fs_parameter_spec *p,
+ 		     struct fs_parameter *param, struct fs_parse_result *result)
  {
--	return 0;
 +	int ret;
-+	int dfd;
 +	struct filename *f;
-+	struct inode *dev_inode;
 +	struct path path;
-+	bool put_f;
 +
-+	switch (param->type) {
-+	case fs_value_is_string:
-+		if (!*param->string) {
-+			if (p->flags & fs_param_can_be_empty)
-+				return 0;
-+			return fs_param_bad_value(log, param);
-+		}
-+		f = getname_kernel(param->string);
-+		if (IS_ERR(f))
-+			return fs_param_bad_value(log, param);
-+		dfd = AT_FDCWD;
-+		put_f = true;
-+		break;
-+	case fs_value_is_filename:
-+		f = param->name;
-+		dfd = param->dirfd;
-+		put_f = false;
-+		break;
-+	default:
++	if (param->type != fs_value_is_filename)
 +		return fs_param_bad_value(log, param);
-+	}
++	if (!*param->string && (p->flags & fs_param_can_be_empty))
++		return 0;
 +
-+	ret = filename_lookup(dfd, f, LOOKUP_FOLLOW, &path, NULL);
++	f = param->name;
++	ret = filename_lookup(param->dirfd, f, LOOKUP_FOLLOW, &path, NULL);
 +	if (ret < 0) {
 +		error_plog(log, "%s: Lookup failure for '%s'", param->key, f->name);
-+		goto out_putname;
++		return fs_param_bad_value(log, param);
 +	}
-+
-+	dev_inode = d_backing_inode(path.dentry);
-+	if (!S_ISBLK(dev_inode->i_mode)) {
-+		error_plog(log, "%s: Non-blockdev passed as '%s'", param->key, f->name);
-+		ret = -1;
-+		goto out_putpath;
-+	}
-+	result->uint_32 = new_encode_dev(dev_inode->i_rdev);
-+
-+out_putpath:
++	result->ptr = d_backing_inode(path.dentry);
 +	path_put(&path);
-+out_putname:
-+	if (put_f)
-+		putname(f);
 +
-+	return (ret < 0) ? fs_param_bad_value(log, param) : 0;
+ 	return 0;
  }
- EXPORT_SYMBOL(fs_param_is_blockdev);
+ EXPORT_SYMBOL(fs_param_is_path);
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index d3350979115f..489c71d06a5f 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -57,6 +57,7 @@ struct fs_parse_result {
+ 		int		int_32;		/* For spec_s32/spec_enum */
+ 		unsigned int	uint_32;	/* For spec_u32{,_octal,_hex}/spec_enum */
+ 		u64		uint_64;	/* For spec_u64 */
++		const void	*ptr;		/* For spec_ptr */
+ 	};
+ };
  
 -- 
 2.34.1
