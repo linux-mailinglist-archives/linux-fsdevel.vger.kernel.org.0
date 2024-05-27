@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-20243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604818D0513
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 17:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7B98D05D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 17:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9293C1C21944
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 15:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB18E1F24D61
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 15:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2487F16C45E;
-	Mon, 27 May 2024 14:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A0E61FEA;
+	Mon, 27 May 2024 15:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amW0V4La"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+2mgekG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF3316C451;
-	Mon, 27 May 2024 14:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E80161FC4;
+	Mon, 27 May 2024 15:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716820326; cv=none; b=MjMjF3X5hdtWB9qem2iKmgWWvl9E1nqM+kWVTvqXzgx68FM1f3UpPr541oI0s3JVQsX58twttort2RQhgIMIW+A9KvalIe6E3rp80/3pjCigvXWdsHcpEUvou6BBFnXwmDMAmgvxOYO9TihByrZYfv8yAYDTEzbhUZOVZCpvNpY=
+	t=1716822499; cv=none; b=RZvDzqVGJwSqtNwNQqTge9CJ5iV7tWtDV4bWqFbWdPDIizP29KlxeT2QaFQzs3z4/zP3CLIS9aAn62MAj5vplRAJCxDpU9k+r0Ud+K13kOxMMc+BgzMl7E/8Pyp7OyfHhbMeF5UMT1gBpSmLylSz+awBNph2eKap3f8rI3LXAd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716820326; c=relaxed/simple;
-	bh=B2/Yvpu3lTcYaIYRID1VS9dR4on3H8GQNYqMd3PwIPo=;
+	s=arc-20240116; t=1716822499; c=relaxed/simple;
+	bh=c8xepSsNCw/pDJJ6ZpKZr2E007AqDxm7P8aGHdNNlWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCKGgFH7Gsk97kHup1w/YzIODBVRXWCPYN35QIfXFA+pUE1exASzHpQfJdsXerohysBWpTBg3fKu4T48eIDH+gUhDSWZQpD6q/16D77AFarr/ZCcizvWojw7+ZGMoOYKufEdkRtAwLm7SvVrGHKgXa7D45d+/eDUqspVdNAp83I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amW0V4La; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A4EC32781;
-	Mon, 27 May 2024 14:32:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQJmo4SC+RRxOE7jr/56jN9XZ7vF7k5itFHbyRQ+K4s3tx5Z7i3m9y8PTKufKDvn4rpTmfCnCMRRrp/fkxnlIMWpYpu/T2gjrRCaxJYJzTYbSfFO3cC2vUc5JY1M56Fqm/kqg7huWQpclzqwDpkojalz9xBFfjEHjr63anrjsfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+2mgekG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3890EC2BBFC;
+	Mon, 27 May 2024 15:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716820326;
-	bh=B2/Yvpu3lTcYaIYRID1VS9dR4on3H8GQNYqMd3PwIPo=;
+	s=k20201202; t=1716822498;
+	bh=c8xepSsNCw/pDJJ6ZpKZr2E007AqDxm7P8aGHdNNlWU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=amW0V4La5Lk+nOQaRuEglYwpsivvj5lAvv6YV85kriBK04+xrx4A3BjM7J3o2Odpy
-	 /2z3/jXr5oMo5H6fn59rgni7yLCbOff7eCfVjgaetIxk2O9wCBbGiNR0CI6bhA81Bd
-	 ++mEz47jVATIXVDfc1LiUM5hepyQkWxYhcQGgBS5ozczyx7fvxeiq7OYjwdUkuudid
-	 zhro1ODBYti+hnOgR//S/k7/4Q6O0zdMw/sppG05WBYFgiuDNSgev9NWfZdM8pzVPj
-	 61UWRgx2HzZaPJSBkwZ23xzEPNQMKXQ5wkgQhnAMZpVd+ybbTWvtz656oYMvY8SfIw
-	 chEFTUfYieD/w==
-Date: Mon, 27 May 2024 16:32:00 +0200
+	b=U+2mgekG8EG7qFU35dLx7XPdRV+vcKLDci2ly228W8Jr7SkmM0oKeENutlqXL3sS9
+	 dz2zH/b6QeQJs1ZJ3+vW5t/jPS28sqrjUmFOqmZF3/JucX0WRVr1AGwlzYkpcZRF4Z
+	 QdQkLY69z6yXqf/vWtJrg26kEw11t/47XdA1jQV/gT52NXhthGBN9MS+CnmtBfjEXL
+	 TgYi4XHSRQVevrRD7/H6MQzgr9bNO96EFDBaGEXSONh3E9rl8bPquIf+cSJYR5222Q
+	 gORkkbN2WjhCRbrYmfZwr5duCHdJ/qUcszrbw8Z6XWh+em2TRz5yRQQNkrHCBHm9cT
+	 kkpYRi8pwZ27A==
+Date: Mon, 27 May 2024 17:08:13 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Hongbo Li <lihongbo22@huawei.com>
 Cc: viro@zeniv.linux.org.uk, jack@suse.cz, tytso@mit.edu, 
 	adilger.kernel@dilger.ca, lczerner@redhat.com, cmaiolino@redhat.com, 
 	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, yi.zhang@huawei.com
-Subject: Re: [PATCH v2 2/4] fs: add path parser for filesystem mount option.
-Message-ID: <20240527-groll-mythisch-8580c32ab296@brauner>
+Subject: Re: [PATCH v2 0/4] enhance the path resolution capability in
+ fs_parser
+Message-ID: <20240527-armut-blechnapf-086b9166728e@brauner>
 References: <20240527075854.1260981-1-lihongbo22@huawei.com>
- <20240527075854.1260981-3-lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,56 +59,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240527075854.1260981-3-lihongbo22@huawei.com>
+In-Reply-To: <20240527075854.1260981-1-lihongbo22@huawei.com>
 
-On Mon, May 27, 2024 at 03:58:52PM +0800, Hongbo Li wrote:
-> `fsparam_path` uses `fs_param_is_path` to parse the option, but it
-> is currently empty. The new mount api has considered this option in
-> `fsconfig`(that is FSCONFIG_SET_PATH). Here we add general path parser
-> in filesystem layer. Currently, no filesystem uses this function to
-> parse parameters, we add `void *ptr` in `fs_parse_result` to point to
-> the target structure(such as `struct inode *`).
-> 
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->  fs/fs_parser.c            | 18 ++++++++++++++++++
->  include/linux/fs_parser.h |  1 +
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> index 2aa208cf2027..5d0adcc514d8 100644
-> --- a/fs/fs_parser.c
-> +++ b/fs/fs_parser.c
-> @@ -367,6 +367,24 @@ EXPORT_SYMBOL(fs_param_is_blockdev);
->  int fs_param_is_path(struct p_log *log, const struct fs_parameter_spec *p,
->  		     struct fs_parameter *param, struct fs_parse_result *result)
->  {
-> +	int ret;
-> +	struct filename *f;
-> +	struct path path;
-> +
-> +	if (param->type != fs_value_is_filename)
-> +		return fs_param_bad_value(log, param);
-> +	if (!*param->string && (p->flags & fs_param_can_be_empty))
-> +		return 0;
-> +
-> +	f = param->name;
-> +	ret = filename_lookup(param->dirfd, f, LOOKUP_FOLLOW, &path, NULL);
-> +	if (ret < 0) {
-> +		error_plog(log, "%s: Lookup failure for '%s'", param->key, f->name);
-> +		return fs_param_bad_value(log, param);
-> +	}
-> +	result->ptr = d_backing_inode(path.dentry);
-> +	path_put(&path);
+On Mon, May 27, 2024 at 03:58:50PM +0800, Hongbo Li wrote:
+> Mount options with path should be parsed into block device or inode. As
+> the new mount API provides a serial of parsers, path should also be 
+> looked up into block device within these parsers, not in each specific
+> filesystem.
 
-That smells like a UAF:
+The problem is that by moving those options into the VFS layer we're
+dictating when and with what permissions paths are resolved.
 
-dfd = open("/bla");
-fsconfig(FSCONFIG_SET_PATH, dfd, "blub", 0);
-close(dfd);
-umount("/bla");
+Parsing of parameters via fsconfig(FSCONFIG_SET_*) and superblock
+creation via fsconfig(FSCONFIG_CMD_CREAT) can happen in different
+contexts.
 
-and that result->ptr now has a dangling pointer which will be triggered by:
+It's entirely possible that the parameter is set by an unprivileged task
+that cannot open the provided path while the task that actually creates
+the superblock does have the permission to resolve the path.
 
-fsconfig(FSCONFIG_CMD_CREATE);
+It's also legitimate that a filesystem may want to explicitly delay all
+path resolution until the superblock is created and not resolve the path
+right when it's passed.
+
+That wouldn't be possible anymore after your changes. So this is a more
+subtle change than it seems and I'm not sure it's worth it.
 
