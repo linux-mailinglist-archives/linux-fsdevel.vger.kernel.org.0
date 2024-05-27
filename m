@@ -1,138 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-20275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199608D0DF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 21:35:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D194A8D0E58
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 21:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C961D281630
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 19:35:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F4F91C210F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 19:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D2F15FD0F;
-	Mon, 27 May 2024 19:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LjxmE6kq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D84F160887;
+	Mon, 27 May 2024 19:43:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DA01EEF7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 19:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645A217E8FC;
+	Mon, 27 May 2024 19:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716838533; cv=none; b=WTuEVGEHP8PDqRZabQuzNbzAzAI6m7retJ/Hu4MiAeyyHgphZYesmmn7uZvJ1XcwkP6YuRUZ/4dxECWnLodOTuLoiudQ4WWe2HM7kfCDM6aT9T7ZJzs8W2daX8pZ7hVPeNSgz+VN5RjW0iQTbVtgDLxSqojPbvPo2O/3Q5ezFi0=
+	t=1716838994; cv=none; b=uOU/JElTTW6BhU9v4HUuUt0Ky21W9sthj6L7rvJzrV3QeeZvTaF4OBCP8C9C/x2/H8d3BC9CVvgBD6yBBW6hC1Tlzr6GKmPqfhRoWFfmDmUlZwFb3zWax4o+tT6ZRCZ4Tye1qTal0oBtcd0F1xBH0QX7PeK4uk2xSXX0WWeDU3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716838533; c=relaxed/simple;
-	bh=ZAC9dibzZkUV27AOfCm+HmzKUnlE6D9L0M0AmO6yPKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YVrr+QfiLvoRg3gsrYIVTg0jXQRXwww0bnmnNjpxqehvXadLnsx5D2LRc7M5tYKV6l+9njHAJt6y1sWPPFCsjObuNFkQ7uUCmtKMUsIx/mPlc4kQqpuHXbBqe328zfeSSckhhympCz+Rn5fV2MjMrBnkXUwNIIYJNNJg57ayWBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LjxmE6kq; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-578676a1b57so22689a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 12:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716838530; x=1717443330; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YkZYHxtJS2xHnOCsSRDKNUe9pZJf/wZ8lc/xWYyje1g=;
-        b=LjxmE6kqLHwFEJ091HnhXeOMbBXkl8JChT2fW1woYY7kN03fF7wVF2FVETAZJB26vM
-         yjkgEgpSm3v8Q22XHnrB62iZWQlQ5QHmBvQmlSFmma3L6+sYyPIWWGWXoC3BomNxzs/t
-         HyiWLGX0A2XY6c2omgWIQQ7XPfRGb8eSWz85s=
+	s=arc-20240116; t=1716838994; c=relaxed/simple;
+	bh=Q6guQNGi0jjNGbWxILSZGcvVmCxeCsFldicxz8i+EQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fEfWs4x+prred9zZ8rV+KtvvE6t7lR05xA2Trju0MEnT3lSOx8mm0kRxHgYH7w9DL8Bl3dpuUVk1BJKLxabSsloCzYRIW/LCdes+XsxZL1YP1uUgf5HbfbBMSwuNQFuiZ45VpuYrYGKfdZT5RUAbNWfJRmyb0y9wQAz+826/5c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4210d426325so74555e9.2;
+        Mon, 27 May 2024 12:43:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716838530; x=1717443330;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YkZYHxtJS2xHnOCsSRDKNUe9pZJf/wZ8lc/xWYyje1g=;
-        b=lryUQXGiJvK+XWfYOSPumJGopo0Y1ucDQ86v+3JZKCbGF8c7yKK8FF8HlqVKk7mpHk
-         8bEhGwsqIcDTloKHmvjlqnL9tOGGzDggn57+FNtdxUkEORDFQ6PP6ebvJdOxUrz/jxnO
-         WrI1/kCS7IzM6DqJCrfLk5iQXXcnoBU06nWqjcOLhuL4hpfMSOGKmgHBz1mG9ZzArhy7
-         fRUEm2GFqH8sDpzGVdibWZkjdew2sC/qL1aixVPx9JuQsxDQ46b9an9sv0nRZfdgdM0A
-         n0xeO9pU6M2X9+O0lvhxrtSd9ZvpdhG6HozuyLjEVh4LmEPhaqToxnInVmAoqnyYyCvu
-         MrCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7MvCGgyY3veMRgte5xcvIfA2G3aBgwJISnIGwKWCt2bxgKdlXtx8hmF0DOeJkkM3SME0Db5CH3O20qk04w7Bc203Gg0s9gY85JFwbDQ==
-X-Gm-Message-State: AOJu0Yx3NKhGcmVXtTDObhd/nzhuI6ZahKmEbM9XTEuE+PHGKAjG10C3
-	G0AUkaNNtC2wNzBqeZtX/xTy74uk8fOBvw1j+Q406x3EsPbnS8vs5fc7mH2hTtNatnC+tCRZqPv
-	3yi0V2A==
-X-Google-Smtp-Source: AGHT+IHvgSlZrOafEWy31LVFbRrnhWHlvP/nppD7w0r+okG3jU7Hy/d3VtIsrP7iMx25ZoCFfU+YnQ==
-X-Received: by 2002:a50:cc43:0:b0:579:c460:67d4 with SMTP id 4fb4d7f45d1cf-579c460a72cmr4652167a12.7.1716838529635;
-        Mon, 27 May 2024 12:35:29 -0700 (PDT)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785241268esm6176964a12.58.2024.05.27.12.35.29
-        for <linux-fsdevel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1716838992; x=1717443792;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6guQNGi0jjNGbWxILSZGcvVmCxeCsFldicxz8i+EQI=;
+        b=Vr8eFrWgEHMoH8MkxNsZO2saW3JeLWAM2Q7hNG6SNRT0pDxkChem2q7sSxJlTPpkVH
+         lz8hLucevEvjhmuzgW1CGE2yxlvVSVsQ7NLCjYVovnWZt6tnktjAz8gGXDcumaufa855
+         A7vmyZf7FpgABbvEdByhUQzL/EjSmd2B/mO4VzWQhMtV7lXB1rI1Zyo6fXCab0QYB0Ow
+         ubxZTdb2T01QbWSHjmcBtmlj8N5yS7IKCYjXzoIsUE1tDeLgEMV25TDlHy/OSKCJk8Fd
+         R1Z6TffBSqcnmfTMlXAmNzzcR2+of/I7lzvm0lcw9j1Tr4MtCsbwwjXqEWd5/EVITtWd
+         rVGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXsWL/rLqCNVltasIIRQvN995NigLujjg49EovZHH3fvVhAMK7arPorIvEHkm+Y90c07FG/3bCZd/j2kz7VH5DkpVEu6gOzY8+rJ5VeQ==
+X-Gm-Message-State: AOJu0YwTKU6R7aHRy6mOwwSKxe+QfEY+hFoeFBMfPR13XZM+ukpWzaMU
+	II7CoKRx4/u5NZE/xde86x04WX8izohIEbkW9ARQoPYXjFwI7KN0
+X-Google-Smtp-Source: AGHT+IHPpw7qo8lDaUi+gojHWCq+4MY4MZPDTmB5gouehAe6kc+Tq5kiaXOSCym3aYXo9LOBLKqsmg==
+X-Received: by 2002:adf:f9ce:0:b0:356:7963:fe9e with SMTP id ffacd0b85a97d-3567963ffb8mr5148264f8f.6.1716838991524;
+        Mon, 27 May 2024 12:43:11 -0700 (PDT)
+Received: from [10.100.102.74] (85.65.193.189.dynamic.barak-online.net. [85.65.193.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7ed6fsm9840902f8f.9.2024.05.27.12.43.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 12:35:29 -0700 (PDT)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-354faf5f1b4so46022f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 12:35:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXHEksem7Xb8rU+XKlMoeyx99TM6x8BOzXX6vL9sa+o09wks8OksOd8ttpJSPxr5jDRVACKOytlJ35/tkOKyd85qWJ6o9FIUozyaXm4BA==
-X-Received: by 2002:a05:6000:1742:b0:34f:41e7:eb37 with SMTP id
- ffacd0b85a97d-3552fda7295mr8768323f8f.30.1716838528781; Mon, 27 May 2024
- 12:35:28 -0700 (PDT)
+        Mon, 27 May 2024 12:43:11 -0700 (PDT)
+Message-ID: <68098d8a-0193-4bb0-8cee-e72e7442c661@grimberg.me>
+Date: Mon, 27 May 2024 22:43:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240526034506.GZ2118490@ZenIV> <CAHk-=wjWFM9iPa8a+0apgvBoLv5PsYeQPViuf-zmkLiCGVQEww@mail.gmail.com>
- <20240526192721.GA2118490@ZenIV> <CAHk-=wixYUyQcS9tDNVvnCvEi37puqqpQ=CN+zP=a9Q9Fp5e-Q@mail.gmail.com>
- <20240526231641.GB2118490@ZenIV> <20240527163116.GD2118490@ZenIV> <CAHk-=wj2VS-ZYPGARrdYVKdexcC1DsERgG1duPojtc0R92w7CA@mail.gmail.com>
-In-Reply-To: <CAHk-=wj2VS-ZYPGARrdYVKdexcC1DsERgG1duPojtc0R92w7CA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 27 May 2024 12:35:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjojZuj_it97tBRZiHm-9bP1zUbmVs-g=M2+=DP-kF8EQ@mail.gmail.com>
-Message-ID: <CAHk-=wjojZuj_it97tBRZiHm-9bP1zUbmVs-g=M2+=DP-kF8EQ@mail.gmail.com>
-Subject: Re: [PATCH][CFT][experimental] net/socket.c: use straight fdget/fdput (resend)
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: support large folios for NFS
+To: Christoph Hellwig <hch@lst.de>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Anna Schumaker <anna@kernel.org>, Matthew Wilcox <willy@infradead.org>
+Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240527163616.1135968-1-hch@lst.de>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240527163616.1135968-1-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 27 May 2024 at 12:20, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+
+
+On 27/05/2024 19:36, Christoph Hellwig wrote:
+> Hi all,
 >
-> With just a couple of helpers it would be mostly a cleanup.
+> this series adds large folio support to NFS, and almost doubles the
+> buffered write throughput from the previous bottleneck of ~2.5GB/s
+> (just like for other file systems).
+>
+> The first patch is an old one from willy that I've updated very slightly.
+> Note that this update now requires the mapping_max_folio_size helper
+> merged into Linus' tree only a few minutes ago.
 
-Looking around, I think we could even take four bits. Without any
-debugging, 'struct file' is 160 bytes on 32-bit, it would not hurt at
-all to just force a 16-byte alignment.
+I'll confirm that NFS buffered writes saw a dramatic >2x improvement
+against my test system.
 
-In fact, in practice it is aligned more than that - we already use
-SLAB_HWCACHE_ALIGN, which in most cases means that it's 64-byte
-aligned.
+For the series:
+Tested-by: Sagi Grimberg <sagi@grimberg.me>
 
-But to be safe, we should specify the 16 bytes in the
-kmem_cache_create() call, and we should just make this all very
-explicit:
 
-  --- a/fs/file_table.c
-  +++ b/fs/file_table.c
-  @@ -512,7 +512,7 @@ EXPORT_SYMBOL(__fput_sync);
 
-   void __init files_init(void)
-   {
-  -     filp_cachep = kmem_cache_create("filp", sizeof(struct file), 0,
-  +     filp_cachep = kmem_cache_create("filp", sizeof(struct file), 16,
-                                SLAB_TYPESAFE_BY_RCU | SLAB_HWCACHE_ALIGN |
-                                SLAB_PANIC | SLAB_ACCOUNT, NULL);
-        percpu_counter_init(&nr_files, 0, GFP_KERNEL);
-  --- a/include/linux/fs.h
-  +++ b/include/linux/fs.h
-  @@ -1025,7 +1025,7 @@ struct file {
-        errseq_t                f_wb_err;
-        errseq_t                f_sb_err; /* for syncfs */
-   } __randomize_layout
-  -  __attribute__((aligned(4)));       /* lest something weird
-decides that 2 is OK */
-  +  __attribute__((aligned(16))); /* Up to four tag bits */
-
-   struct file_handle {
-        __u32 handle_bytes;
-
-and while four tag bits isn't something to waste, it looks pretty
-reasonable here.
-
-               Linus
 
