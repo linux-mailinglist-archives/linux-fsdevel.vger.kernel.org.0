@@ -1,106 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-20273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3D38D0C8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 21:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8882C8D0CB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 21:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB1411C2121F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 19:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F127E1F2290F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 19:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113B91607A4;
-	Mon, 27 May 2024 19:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5D31607A4;
+	Mon, 27 May 2024 19:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XJYmeRAg"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HRMsubYG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D0A15EFC3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 19:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832A5168C4;
+	Mon, 27 May 2024 19:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716837646; cv=none; b=koeL/jfRMk97SzMCn/rTen0bRt61yOz1N6QxoHMjILzbnNG96x/clax/Yrz/ogfCQw7ZeqweX2QXQiiPDW+F+lg+4tpJrivthN2m7+b5yvrus4Rd3hrOopekxfpCkSD7fNnFRhB/TdxYRfpLAUslE3EFWZVgJOKXh797qX26kIk=
+	t=1716837745; cv=none; b=nZMLvo/xrWBRTkhA0YZ2v0yF9lNLJBuouu5lZbUHNVjnAygv8RAkD2sy6xEq4RON8Uc8y7Lvi/gkOVJUOhh7jiPTRoyNOUonn1L0mnGSFLcsJcsedhbNAHjWs+aVGUGtrAOux9S4q8b+edjBnQ12NOU7UVoTqbr9jDOUh6nb0zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716837646; c=relaxed/simple;
-	bh=4EkNz74OlBGEC6z1YuEiLXE4v6QZ8njYb41SVknyWCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JLqYPVARwNe/dsLTv2NjOdDmgYyxF6Wq9Mqy7Y90zkGocEkMDNwpT6Lkh+ug88x6EN6LhyiPo79rkzAu6CiwESigYixzk9/zLHdXlhEg8dzKiBv67xmg5XfNJLUv/89WCNA0gQLziGfRoceAUVdBltqzFuDjXBOSIFvSRpsrD1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XJYmeRAg; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5241b49c0daso108684e87.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 12:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716837643; x=1717442443; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=av+hI6RrZwvLerv2odhQfSwHlj6qlp1CeMI357Hz1qc=;
-        b=XJYmeRAgGhO/FdmBIejtcsjHCys8YVC1ZdXwgNSjd7pDJD8nskptMptyt2ajPt5xjP
-         U1cmGmtbE+gKw+OcqThwgTq5nqf/ocItEhOxwPpd2PSeF7ZVP8boch6QcTxsEnSy+nIf
-         6mf99+t/O3dYgajoB+9hcs4dJn8bE2r4Vj+Ls=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716837643; x=1717442443;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=av+hI6RrZwvLerv2odhQfSwHlj6qlp1CeMI357Hz1qc=;
-        b=hF+wAodcLWs6RycWcHFnNJUpccLvedokqdoJF/7BOT9jRTFZbxtmN/Z01cT4UhQH8l
-         jVSx372hlOPgafSy+DAeA8gZT5TvfNJoDJbHbfwUrRD0YmRbGfEMuC2gH1KEXC5PTxnZ
-         zFiweHTC1AOyqNmt/+nT4YEVzsFR3Ns/aeI8E8pzkL8U+nT6wbRPIp0kctXB9Qa8CSiv
-         cm6ohSSUPnIxONNgigwBmB0RWCkWueZe6KjUxKsaqP50o2Y/voNVaXFL2KHnDLI1bOdW
-         VJw2eNO/Ed2FDAQabOSsDoX1uKpy0FA+p3+tp+lNBEX9O4mjxgGFNkVxC/hHZkz6LD2d
-         x+Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWISmB7BnVk1UpVF+DfMpV++BH1/u9a/qKNTOx3BAQXQ2x8dIZ8ih/DM08tLZQL93IpcMRlvHiwqOlqf98nwtHzNP8tV+VdoaM5JRgkUA==
-X-Gm-Message-State: AOJu0YwUVnC+URVW1MEV7ZLc5v9GYaCBxOPfjIVAxyPuTFVIq6rwms8r
-	PWLDZGYWaW5mg2t477u8lutT4jb2s3J3rkj4CjxO6gY0BlQKyL+TWXJUm0eLFb2sTo1z1407r/h
-	JQp5C8w==
-X-Google-Smtp-Source: AGHT+IGY4oG2g4cU1t5nZyYpoGQBdx0ZP0FPTXJ7ggvRT5I/9CkReTRSQXUqe8ix1AwDQBRHtn+wNw==
-X-Received: by 2002:ac2:4d8b:0:b0:521:cc8a:46db with SMTP id 2adb3069b0e04-5296519a4dfmr6544379e87.37.1716837641900;
-        Mon, 27 May 2024 12:20:41 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296ee4a645sm687130e87.68.2024.05.27.12.20.41
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 12:20:41 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52962423ed8so76941e87.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 12:20:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcWcnavyC0vvUcFo7ipozGVBE1pm9aEo7dY4KgKED8fjhF7qdAKkNGTVCwgIDHwY6iTBlEe6CxMtID1tYMLNsas/rfL91h+WCaHh9SjQ==
-X-Received: by 2002:a05:6512:224c:b0:51f:d989:18f6 with SMTP id
- 2adb3069b0e04-529645e230emr9748602e87.13.1716837640937; Mon, 27 May 2024
- 12:20:40 -0700 (PDT)
+	s=arc-20240116; t=1716837745; c=relaxed/simple;
+	bh=kRjyh3oVDFHZzlBJvCjPHdot1YuoXmIouFWC6CTwPJ0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tIIqV1w5z9gHSzedzFScVfMMA845WtqPpshH+voTIDTbGLyffgz/UfwHFspK3CKmWUODTxm/Zy/o3dB83ccFqB6Q9tl454uoTUiL+DT4cXll+iXgsK/rxyzEzVYRWz5QXRqwXQ2QvXGaZBsypDFnQQF9blJiWuR5rFzvSkLxjuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HRMsubYG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RB5iAb011373;
+	Mon, 27 May 2024 19:22:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=uigtUjAeyX0roe9lGMfghP
+	X4bcugzbG6bapakn4jByw=; b=HRMsubYGJfCaf5sR3VYKV02iFhdRl4LeY8c6zz
+	Mf9qdyDwa/JR5QVO2J/hS1sbJYgR1QfvF1NIjMFCiqjlC3+IUmCKMvNeAFre5WDr
+	DyBlNLuQXNmUEgKYtJ1sXLc1sr0ji88xoM/Cbcdu9jfHYkfUZP0tSnqL6/FaKdLS
+	1oIFGBXRSEramOURRDhMHSyYpsn28BzMWnOMVfIPSS0+6k6lCCQJ5yfuOxG5LHox
+	RyZwDXFXOc9/RqR1dNDM+5MPakp9JUorj5mZgjqqYC7cF4mnKphg13RmkjRL/47C
+	59ttesy+pDYmJ5xdtGqPMUi83Lfjjd3UOMqKSDrEfUQvjK4A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k4g7n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 19:22:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44RJMIER020640
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 19:22:18 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
+ 2024 12:22:17 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 27 May 2024 12:22:16 -0700
+Subject: [PATCH] fs: autofs: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240526034506.GZ2118490@ZenIV> <CAHk-=wjWFM9iPa8a+0apgvBoLv5PsYeQPViuf-zmkLiCGVQEww@mail.gmail.com>
- <20240526192721.GA2118490@ZenIV> <CAHk-=wixYUyQcS9tDNVvnCvEi37puqqpQ=CN+zP=a9Q9Fp5e-Q@mail.gmail.com>
- <20240526231641.GB2118490@ZenIV> <20240527163116.GD2118490@ZenIV>
-In-Reply-To: <20240527163116.GD2118490@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 27 May 2024 12:20:23 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj2VS-ZYPGARrdYVKdexcC1DsERgG1duPojtc0R92w7CA@mail.gmail.com>
-Message-ID: <CAHk-=wj2VS-ZYPGARrdYVKdexcC1DsERgG1duPojtc0R92w7CA@mail.gmail.com>
-Subject: Re: [PATCH][CFT][experimental] net/socket.c: use straight fdget/fdput (resend)
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGfdVGYC/x2MQQqDQAxFryJZN2BDZ4RepXQxo7EG6lgSFUG8e
+ 6Orz+Pz3g7GKmzwrHZQXsVkKg73WwXtkMqHUTpnoJoedaAGxw57w7TMk0+kSCH6EZoMrvyUe9m
+ u3OvtnJMxZk2lHc7IV8qy4ZhsZoXj+ANfkFCMfQAAAA==
+To: Ian Kent <raven@themaw.net>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <autofs@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: CvnCgo5XStgD70_VHR9EQR6Gj2C_lBf9
+X-Proofpoint-GUID: CvnCgo5XStgD70_VHR9EQR6Gj2C_lBf9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-27_05,2024-05-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=729 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405270159
 
-On Mon, 27 May 2024 at 09:31, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Alternatively, with a sane set of helpers we could actually _replace_
-> struct fd definition without a huge flagday commit
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
 
-It wouldn't even be all that huge. We've got less than 200 of those
-'struct fd' users, and some of them hardly even look at the result,
-but just pass it off to other helpers (ie the kernel/bpf/syscalls.c
-pattern).
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/autofs/init.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-With just a couple of helpers it would be mostly a cleanup.
+diff --git a/fs/autofs/init.c b/fs/autofs/init.c
+index b5e4dfa04ed0..1d644a35ffa0 100644
+--- a/fs/autofs/init.c
++++ b/fs/autofs/init.c
+@@ -38,4 +38,5 @@ static void __exit exit_autofs_fs(void)
+ 
+ module_init(init_autofs_fs)
+ module_exit(exit_autofs_fs)
++MODULE_DESCRIPTION("Kernel automounter support");
+ MODULE_LICENSE("GPL");
 
-               Linus
+---
+base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+change-id: 20240527-md-fs-autofs-62625640557b
+
 
