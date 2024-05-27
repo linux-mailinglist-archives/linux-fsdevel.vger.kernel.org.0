@@ -1,129 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-20287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9248D107E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 01:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A368D109A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 01:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296172825C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 23:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DFC71C2131B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 23:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308B9167260;
-	Mon, 27 May 2024 23:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D17713C3F3;
+	Mon, 27 May 2024 23:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LicOQLVt"
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="zi77ixl2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F5341C79
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 23:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3302561D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 23:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716851795; cv=none; b=c/GgwqIVajTIpvHTj3cSX+DniYC/TDEapldnGTqa5Cb56eXGfsR9GYa0xSBeIGiOMCVnwbCaIBFZi/IyzjO64XQzltFoT9WT6oNV91XFys3cSO3BaCpxTeqKjSCACskDNgo4OZFyrqMJMSaQDzeEOq7gWY5C3Nj1ewf3lX0/k8A=
+	t=1716853521; cv=none; b=OpiWlobaGqFuVqVqQ6XCumtqJhrGhFQecWd7qhbd8qRbm3MwtxYgae+d4lsETwVG5yCmA0gvMuqamY/pj/AJ0g7VJGPGB9Nqk4Zv84axIZCuS+EW7Kdabs3i8O9Vosa4bwUBHSRAjB9Mdg9t147G7LOQh/pd6DnM1iEoZ2WTejk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716851795; c=relaxed/simple;
-	bh=NyqdcGQz8Lf2o5CehreUDY8O3qP94BaSHhCWI2DGl1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XqtCQSmZux8i993SHtWmRyHRQs7D62F2G/Z9z3fQJ/QyHnMa10ny2FyoZOegXpNf/KtzpjWQU6Ji9u8NBRv9/ELWlTwK6nrJPzsQxVxfM7Ys1biuv+vxFU08Qdz5MhdHnGsIlL9rHnE4AEmLyLSDS9z2/npftB+lqgHw3M5Aw40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LicOQLVt; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1716851790;
-	bh=AL229ncjoHm5OCDMrhxmaMNhHBdr5oSca2LMJo55Th4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LicOQLVtyYHpoIaIQsXeO0l/Y3HxYrA4AAEnwR9IwgvSeS0FjoCKdVjZspT+0G/Wi
-	 6SxwcdLcNrvWdOrynpREtxVmCmkUmVozI5umNDmn8mQFLqV8sk+SjpcaLLg9WLCxjD
-	 AeMJYdlmpuciE8FRJVA1wGZ3xiud8NK3Ku7iL20KWLbEwy5al5V0IY+8RLt4TshhsE
-	 ukRpaUAZ6NYU5j2dUv4uGs7V80tH7HuEQYT1opY+gcl5nYUW5i7bFcGyB4isssQ1er
-	 mjSrPrWJR4HY6hv6LZScNie/sqpuQrIc0pwwiaxZPYZXMORc8W7S+ItQu9LXQNyPlM
-	 D/7Er5qCbTHig==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpBNZ0RNpz4wx6;
-	Tue, 28 May 2024 09:16:30 +1000 (AEST)
-Date: Tue, 28 May 2024 09:16:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: A fs-next branch
-Message-ID: <20240528091629.3b8de7e0@canb.auug.org.au>
-In-Reply-To: <ZkvCyB1-WpxH7512@casper.infradead.org>
-References: <ZkPsYPX2gzWpy2Sw@casper.infradead.org>
-	<20240520132326.52392f8d@canb.auug.org.au>
-	<ZkvCyB1-WpxH7512@casper.infradead.org>
+	s=arc-20240116; t=1716853521; c=relaxed/simple;
+	bh=ilnFqztr6YvKOP1wiWFQn72ziqayuZkyKp9feAbsV5Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ezxU0lQQWfWNjjJc9gqqf6OCmkmdt0lF26T0HEZt4Np79b4jmncJlmr70Jwc2KH0/uN/rNc6SPMKc3u1lDXs/MOH3GJrN/gHoLGZgVCOYaXoDkiq2sQi9QiHP4/cdK/kRvWRCkaDHfHAo7uafcYqFOCQZ9+8vWBEaxgsV5vcQ20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=zi77ixl2; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4202dd90dcfso1592765e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 16:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1716853517; x=1717458317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sRO/CnRPtpBsbl7nBhwPcIaynZHQudWyGgLN4ebnUfQ=;
+        b=zi77ixl2RElbuX0WbF4Yz3H/D0XISXLJIh7v0bUM8mDk8K7gUaIlsNk+wG+CeoIc+i
+         HZuO8hKnRr7arFfxPo+/KGIq/EJeJ8KJnsIye1XqISfn9SfFo2U+uw/re6ceeHVekQx2
+         d/yJsVbBNxatKEZ5ot/gJP5Zncn+bkIQrCUmoc5zTvTNUNq7l0eBEnSHmQPBYVd1VDHw
+         3KV+aYaR09ptHGgGvRu6lVw12cecdMdWSFHu2LioFVJwI8WpyQj+v2uadESWA8ySo1Ub
+         9Tf/9vfIA8knJto9G2xmoGxBoayMXSrW0c59xAdv2Z7BNTW0xxYxxICnlW2xLMY43N5J
+         mXCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716853517; x=1717458317;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sRO/CnRPtpBsbl7nBhwPcIaynZHQudWyGgLN4ebnUfQ=;
+        b=xOWJjne3P2IaH5QQ2VSovpqr6JqwBCNYYJ+nzc87SKzhKEBLLozjTTTnAOX6X/00Dz
+         8jJGwcMWFztUJgX+aAQPjKhNzXvsBl7YetOg3cFfzzu1VQVA2f6wT7wmxAgFC01M/Ey/
+         bOths9sMxTKSAk8q7vobqI6GjS8/lo7/9x+m2c1c4xSsPGnDOA5G4Sl0/EUc2eT7au9h
+         AsGe24LVgDX4pfi/Gr7wpAlZHmM1uYiUgKEr1rSaJDK6jKqe0nTEI5sjNdYpec2H5ERo
+         yy93MYVI1H679xSOMSt6hrLgjr74no4rprP9p1A4YtJgPeJc5Svaa7NM/8cRX0bsjhlb
+         AYxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBzRJ2wjBe68eR2XtIxZve2WrfgAGdVdXRlbCO3B/xtyZ89JGGsgq2xGLRluS9FevJJ8RJ3iczLRXn6yW46iArAbJ4oUBSQs2DZ45PiQ==
+X-Gm-Message-State: AOJu0YxXI2UtIv/aMLQB1NISPTvJOZ1O+ZV01SAzG6XCoSEQaA1YR9Nj
+	l6uahf7rL/WHkYJB8djVHpBu28dc3A0WVNb7vEfZW5HZEpYKVe+hWOQwCzNl990=
+X-Google-Smtp-Source: AGHT+IH9cpBoOavUU39BKyiX5ZVVtYqsyiD57pc9wsnRSAnUTzf+Xg02xdlAzGi0KOkEJdwOY+claQ==
+X-Received: by 2002:a05:600c:6b04:b0:41f:e7ac:cc72 with SMTP id 5b1f17b1804b1-421089f9a09mr75891875e9.40.1716853516966;
+        Mon, 27 May 2024 16:45:16 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108970967sm123535515e9.17.2024.05.27.16.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 16:45:16 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH v3 0/3] Clean up usage of rt_task()
+Date: Tue, 28 May 2024 00:45:05 +0100
+Message-Id: <20240527234508.1062360-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2kE=BnM5Yw6aYuLIEYm3CkX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/2kE=BnM5Yw6aYuLIEYm3CkX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Make rt_task() return true only for RT class and add new realtime_task() to
+return true for RT and DL classes to avoid some confusion the old API can
+cause.
 
-Hi Matthew,
+No functional changes intended in patch 1. Patch 2 changes hrtimer users as
+suggested by Sebastian. Patch 3 cleans up the return type as suggested by
+Steve.
 
-On Mon, 20 May 2024 22:38:16 +0100 Matthew Wilcox <willy@infradead.org> wro=
-te:
->
-> As I understand the structure of linux-next right now, you merge one
-> tree after another in some order which isn't relevant to me, so I have no
-> idea what it is.  What we're asking for is that we end up with a branch
-> in your tree called fs-next that is:
->=20
->  - Linus's tree as of that day
->  - plus the vfs trees
->  - plus xfs, btrfs, ext4, nfs, cifs, ...
->=20
-> but not, eg, graphics, i2c, tip, networking, etc
->=20
-> How we get that branch is really up to you; if you want to start by
-> merging all the filesystem trees, tag that, then continue merging all the
-> other trees, that would work.  If you want to merge all the filesystem
-> trees to fs-next, then merge the fs-next tree at some point in your list
-> of trees, that would work too.
->=20
-> Also, I don't think we care if it's a branch or a tag.  Just something
-> we can call fs-next to all test against and submit patches against.
-> The important thing is that we get your resolution of any conflicts.
->=20
-> There was debate about whether we wanted to include mm-stable in this
-> tree, and I think that debate will continue, but I don't think it'll be
-> a big difference to you whether we ask you to include it or not?
+Changes since v2:
 
-OK, I can see how to do that.  I will start on it tomorrow.  The plan
-is that you will end up with a branch (fs-next) in the linux-next tree
-that will be a merge of the above trees each day and I will merge it
-into the -next tree as well.
+	* Fix one user that should use realtime_task() but remained using
+	  rt_task() (Sebastian)
+	* New patch to convert all hrtimer users to use realtime_task_policy()
+	  (Sebastian)
+	* Add a new patch to convert return type to bool (Steve)
+	* Rebase on tip/sched/core and handle a conflict with code shuffle to
+	  syscalls.c
+	* Add Reviewed-by Steve
 
---=20
-Cheers,
-Stephen Rothwell
+Changes since v1:
 
---Sig_/2kE=BnM5Yw6aYuLIEYm3CkX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	* Use realtime_task_policy() instead task_has_realtime_policy() (Peter)
+	* Improve commit message readability about replace some rt_task()
+	  users.
 
------BEGIN PGP SIGNATURE-----
+v1 discussion: https://lore.kernel.org/lkml/20240514234112.792989-1-qyousef@layalina.io/
+v2 discussion: https://lore.kernel.org/lkml/20240515220536.823145-1-qyousef@layalina.io/
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZVFE0ACgkQAVBC80lX
-0GzMogf/aMbRTE2wlHoiRl1BQ3FYDIhXHR+0j5PwWjnjwuTLk2T+Ty6WodiS+0oU
-PqsIkBBeBbVYvSUiaCUahHHvrvR/lAepRZCXM3sDdvkZbtaf/hFwiSR2ln4z27b0
-N2pHPAqsUUnZ0Q2/J5XTfk5nlVCMiJEKRke8lesjyQaAG6D4D75uPf61/mOWaOzd
-qY7x/KtutvBPyBbdlbkWRrE1jRFpVQUduVk9Pe1r3yLMZa+wS4lYxq+6a9PP7VH5
-XCgK8rXQVq0oG2UwBYXpviqfuyNLUGfiblOHI/pjhkaMzUjgiF0RL3liI3FuFgD9
-YICoL4JZ6qHmXNLAzsjBzQLNJOKrlA==
-=Ot1N
------END PGP SIGNATURE-----
+Qais Yousef (3):
+  sched/rt: Clean up usage of rt_task()
+  hrtimer: Convert realtime_task() to realtime_task_policy()
+  sched/rt, dl: Convert functions to return bool
 
---Sig_/2kE=BnM5Yw6aYuLIEYm3CkX--
+ fs/bcachefs/six.c                 |  2 +-
+ fs/select.c                       |  2 +-
+ include/linux/ioprio.h            |  2 +-
+ include/linux/sched/deadline.h    | 10 ++++++----
+ include/linux/sched/prio.h        |  1 +
+ include/linux/sched/rt.h          | 31 ++++++++++++++++++++++++++++---
+ kernel/locking/rtmutex.c          |  4 ++--
+ kernel/locking/rwsem.c            |  4 ++--
+ kernel/locking/ww_mutex.h         |  2 +-
+ kernel/sched/core.c               |  4 ++--
+ kernel/sched/syscalls.c           |  2 +-
+ kernel/time/hrtimer.c             |  6 +++---
+ kernel/trace/trace_sched_wakeup.c |  2 +-
+ mm/page-writeback.c               |  4 ++--
+ mm/page_alloc.c                   |  2 +-
+ 15 files changed, 53 insertions(+), 25 deletions(-)
+
+-- 
+2.34.1
+
 
