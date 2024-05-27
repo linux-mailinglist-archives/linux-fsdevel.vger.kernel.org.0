@@ -1,87 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-20244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7B98D05D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 17:19:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD2D8D05EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 17:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB18E1F24D61
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 15:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E261F22BA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 15:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A0E61FEA;
-	Mon, 27 May 2024 15:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C194F17E8EF;
+	Mon, 27 May 2024 15:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+2mgekG"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OAXObq4y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E80161FC4;
-	Mon, 27 May 2024 15:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE7417E8E1
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 15:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716822499; cv=none; b=RZvDzqVGJwSqtNwNQqTge9CJ5iV7tWtDV4bWqFbWdPDIizP29KlxeT2QaFQzs3z4/zP3CLIS9aAn62MAj5vplRAJCxDpU9k+r0Ud+K13kOxMMc+BgzMl7E/8Pyp7OyfHhbMeF5UMT1gBpSmLylSz+awBNph2eKap3f8rI3LXAd4=
+	t=1716822978; cv=none; b=Wc63YDXykO2ANDPBxrufQYqw6s3KSaIm84hnAo1HTpoYQ7oSMdfn1Gx8xgFmekx8ZJOJeHq75dm8GT/v37zElGq5nsfE1EvLFhCBLQxbdcvbeZq4C4vej8jHpkdPYzvIvdov4jQCKRzWNUYrKXQCJxIeojwquxdDHmIhUeDrnXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716822499; c=relaxed/simple;
-	bh=c8xepSsNCw/pDJJ6ZpKZr2E007AqDxm7P8aGHdNNlWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQJmo4SC+RRxOE7jr/56jN9XZ7vF7k5itFHbyRQ+K4s3tx5Z7i3m9y8PTKufKDvn4rpTmfCnCMRRrp/fkxnlIMWpYpu/T2gjrRCaxJYJzTYbSfFO3cC2vUc5JY1M56Fqm/kqg7huWQpclzqwDpkojalz9xBFfjEHjr63anrjsfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+2mgekG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3890EC2BBFC;
-	Mon, 27 May 2024 15:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716822498;
-	bh=c8xepSsNCw/pDJJ6ZpKZr2E007AqDxm7P8aGHdNNlWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U+2mgekG8EG7qFU35dLx7XPdRV+vcKLDci2ly228W8Jr7SkmM0oKeENutlqXL3sS9
-	 dz2zH/b6QeQJs1ZJ3+vW5t/jPS28sqrjUmFOqmZF3/JucX0WRVr1AGwlzYkpcZRF4Z
-	 QdQkLY69z6yXqf/vWtJrg26kEw11t/47XdA1jQV/gT52NXhthGBN9MS+CnmtBfjEXL
-	 TgYi4XHSRQVevrRD7/H6MQzgr9bNO96EFDBaGEXSONh3E9rl8bPquIf+cSJYR5222Q
-	 gORkkbN2WjhCRbrYmfZwr5duCHdJ/qUcszrbw8Z6XWh+em2TRz5yRQQNkrHCBHm9cT
-	 kkpYRi8pwZ27A==
-Date: Mon, 27 May 2024 17:08:13 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, lczerner@redhat.com, cmaiolino@redhat.com, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, yi.zhang@huawei.com
-Subject: Re: [PATCH v2 0/4] enhance the path resolution capability in
- fs_parser
-Message-ID: <20240527-armut-blechnapf-086b9166728e@brauner>
-References: <20240527075854.1260981-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1716822978; c=relaxed/simple;
+	bh=Mfab1wlTcrfHOq4QzyYKutCzme+N546cG/tVBwzXKqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N/5ZHpuUczhuylAA14AS8/+FhSoqxk9ZNrQSIFmVEXgHpV59Ny/240hmBPXpcUreVqQLEOdayAkqB5OOiatRvfgngPYVgdYVXrJbor04ovn2lJO4OWyD0UablPgrIh9fMF0upiZlfbMbYxsQ4RW3F5bmBpCd4GBxiiL6esUup1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OAXObq4y; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a609dd3fso952849366b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2024 08:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1716822975; x=1717427775; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BvC1zfg/fxrPixz1lr0GqEGtLQO3D5juXBD24V7rLZE=;
+        b=OAXObq4yMeP/YlzcAXdA7AcoASOTWQFhSq57tLua6Qbcl+NH8o6OG286T/27/O9ll3
+         OHd0cKDTZ4SBl02JqndcSpv/L6C2oeoVvwuwf46EQzyE1h5qUH3Lnkg76dcA+5PLaJCB
+         WSPL1uEzMNPDqVHGHTQlneisY6vsJJmn68/AY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716822975; x=1717427775;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BvC1zfg/fxrPixz1lr0GqEGtLQO3D5juXBD24V7rLZE=;
+        b=GSA4veDAZw0Gr/x1E9TZ8M6xxV8CLNaY3Huooao5Vl/IilY6sekME/T9PqANpBJ+0C
+         dmoLhC/5ua+kEJu3IMMQ7SakNgzMy6DaPgGnaYL4Q1DCKMiPRWCrK4z+ksR8xWUSCBJn
+         IJU3/fh6AyYtl8usc/5mLlZs8AZZdKeQyOm3ZVRjZ2+ZNPsoI7J6okNVLP/dpMGygrbq
+         AiQlpt3XHK9xRBJ42lLdRyDJDS8uOjqEVpR6GU/6gEzBWoX2KYQYAdgnVJzl6ortu3oh
+         i4uBLyx1WegOEuv8pFvAzD57PwHShVEt2N5KxwzaR15eU3pjCnVjUOZOaTrlzx71M/8R
+         YUjw==
+X-Gm-Message-State: AOJu0YyQnCnTRevRtKlYll6CV1BE8VVjw84e/W23xXQnlgoDiiDO/yI7
+	/BBtf86whLZoM6wvy/XKknVPiCN2PnuIiVojIMmGoL6qwx/XMfV35Hc0QZwhYaha+mXmyzXyDVW
+	WZc1a8LgBNnWS9yQO4RwbNxDShLPNedsP0qIRpw==
+X-Google-Smtp-Source: AGHT+IGgODC8mk6Jfe7HWAhEsx6JCqwEkT7y/qw9TTzaX7m6hiD0fbq7AAPet1JF1Iesky9CRfTe08RoJsHUtxihnhs=
+X-Received: by 2002:a17:906:2342:b0:a5a:7a1:5da3 with SMTP id
+ a640c23a62f3a-a62608a271bmr867614966b.0.1716822975029; Mon, 27 May 2024
+ 08:16:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240527075854.1260981-1-lihongbo22@huawei.com>
+References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+In-Reply-To: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 27 May 2024 17:16:03 +0200
+Message-ID: <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com>
+Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	winters.zc@antgroup.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 27, 2024 at 03:58:50PM +0800, Hongbo Li wrote:
-> Mount options with path should be parsed into block device or inode. As
-> the new mount API provides a serial of parsers, path should also be 
-> looked up into block device within these parsers, not in each specific
-> filesystem.
+On Fri, 24 May 2024 at 08:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
 
-The problem is that by moving those options into the VFS layer we're
-dictating when and with what permissions paths are resolved.
+> 3. I don't know if a kernel based recovery mechanism is welcome on the
+> community side.  Any comment is welcome.  Thanks!
 
-Parsing of parameters via fsconfig(FSCONFIG_SET_*) and superblock
-creation via fsconfig(FSCONFIG_CMD_CREAT) can happen in different
-contexts.
+I'd prefer something external to fuse.
 
-It's entirely possible that the parameter is set by an unprivileged task
-that cannot open the provided path while the task that actually creates
-the superblock does have the permission to resolve the path.
+Maybe a kernel based fdstore (lifetime connected to that of the
+container) would a useful service more generally?
 
-It's also legitimate that a filesystem may want to explicitly delay all
-path resolution until the superblock is created and not resolve the path
-right when it's passed.
-
-That wouldn't be possible anymore after your changes. So this is a more
-subtle change than it seems and I'm not sure it's worth it.
+Thanks,
+Miklos
 
