@@ -1,230 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-20279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7468D0ECB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 22:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5448D0EF3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 23:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EEC282520
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 20:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE43E282A63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 21:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5FE161338;
-	Mon, 27 May 2024 20:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E695D1649C8;
+	Mon, 27 May 2024 21:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MgT3Hug8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SA5aB+ZS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MgT3Hug8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SA5aB+ZS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XsuVjs01"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7304C1DA58;
-	Mon, 27 May 2024 20:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35B316191B;
+	Mon, 27 May 2024 21:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716843303; cv=none; b=Y72VuEVhedgKoRx7hdfWfThICLpdZvahf5Swxebxtb6KKVtaFCVtfUDvQsbwhDxydlgALGtOs6cVafsj86eq/HG6BlkhBFnGNo4YDxRLSPaN/d6YHhk4daMBe3C943jGmisqN/rwISJivLK2PJ5hmV8aNVOcELE1uU8tHGrtESM=
+	t=1716843704; cv=none; b=tc6MUZE7VUrt8/jqbJ8Jcn++xdRmJ0ZMjqI2CES08DMk/T91aapLN3AXj6d1P6zXvoq5PX3IvfPmpO9nbcyCJjW0craLhoU3ocK+ucYL71Dewhkfis1qgVGtJX+oG3cXkDPwm3NjCyp1g621hNho8ONAdyMrZv0ZSby5pOQbmVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716843303; c=relaxed/simple;
-	bh=PeTQPue/126RRk2XEbMW7nbOvogEjizFdhoD4CmtnVg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=p/BPaSnRNm10wDWjv5ZEefiRAIqqFU9A9kJMmQ67zmG4aJwOJpPJASxuw6RoqgYdInuBXyIfUqX4wjhiVyw6SAZRSKtn391nxn4RD9JEpjscdU8Kh8JTPafJcc9ks/ybTGuwwYbaoEzq3tTkzwI9Y+s2wmCM5glsHqOxaWAK7j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MgT3Hug8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SA5aB+ZS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MgT3Hug8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SA5aB+ZS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 49DC3221BE;
-	Mon, 27 May 2024 20:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716843299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=MgT3Hug8e+KVU6O4LMN/a0d3ULjFYJIS6qIFRuvLdwgwMve5voXhllyWCKVR1BCCex9LiK
-	VY9CxK3g0JtRjfOFKogaXimv8HWCuBoExAXI44uI6IE84HE3+Ofq+nFLueuKNCPST+9k12
-	LIoN3elEntuU4dSw4nDsQT2cJ5Fh/rc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716843299;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=SA5aB+ZSsX4CYLFpeEMg4W4HMB5T2Ew9XdF4wVMMMr+fuexZ9VunrqaH9Lk51EVj3UAqM9
-	pztfQZtu9Syu52DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716843299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=MgT3Hug8e+KVU6O4LMN/a0d3ULjFYJIS6qIFRuvLdwgwMve5voXhllyWCKVR1BCCex9LiK
-	VY9CxK3g0JtRjfOFKogaXimv8HWCuBoExAXI44uI6IE84HE3+Ofq+nFLueuKNCPST+9k12
-	LIoN3elEntuU4dSw4nDsQT2cJ5Fh/rc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716843299;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=SA5aB+ZSsX4CYLFpeEMg4W4HMB5T2Ew9XdF4wVMMMr+fuexZ9VunrqaH9Lk51EVj3UAqM9
-	pztfQZtu9Syu52DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 05BE313A6B;
-	Mon, 27 May 2024 20:54:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NsewNiLzVGY2SQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 27 May 2024 20:54:58 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,  tytso@mit.edu,
-  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
-  jaegeuk@kernel.org,  chao@kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel@collabora.com,
-  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
- comparison helper
-In-Reply-To: <92b56554-3415-46fe-99b4-99258d8a496c@collabora.com> (Eugen
-	Hristev's message of "Sun, 26 May 2024 14:49:42 +0300")
-References: <20240405121332.689228-1-eugen.hristev@collabora.com>
-	<20240405121332.689228-4-eugen.hristev@collabora.com>
-	<20240510013330.GI1110919@google.com>
-	<875xviyb3f.fsf@mailhost.krisman.be>
-	<9afebadd-765f-42f3-a80b-366dd749bf48@collabora.com>
-	<87ttipqwfn.fsf@mailhost.krisman.be>
-	<92b56554-3415-46fe-99b4-99258d8a496c@collabora.com>
-Date: Mon, 27 May 2024 16:54:53 -0400
-Message-ID: <87ttijnffm.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716843704; c=relaxed/simple;
+	bh=d0tVjBIZ50XMn1Z2omCL0kJaG42f2EEBao3K7MDcvwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QyFrVJdt3Bk2dooQBHw4M658+Ns5xp5G+ur3Uc957OZN8YmwsiehCGvc3mPIPPsDUWc3JPP8jZJ3EQOYs77Q7FtPySwHilHgzgIPaOm7IOfnn6FZECmdd7XMyuKlmLdnaeJmYwO8r/Y6MtT4y5LFUSR+XSWS8FBVOX6b5IjMWAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XsuVjs01; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=HDLaoQD7cnvad9Y4kohJVJq8Wi/o15RfSw0EInJn85g=; b=XsuVjs01D2A4snvIOF0Tkf2krm
+	Bd4zzZilKsucxO4d0BOVKcbaDAHrIdKrC/JQdKnTEZWBcLQe/jL2CmpPN5agCqjD8lfKIv3ilZs0v
+	0ZmkrbK8cmhLjJBoRa8kajFepFpRSjfrB5F68CezJOH4HNlVkbUKv0PaeYUOi7B2rA2W3ahfig8U2
+	0aC3Q35KhX4zT8Zy5RNW67HYbTMe3p8hh1+cYcVjiCHu8mud1r97EcMZCALq8Mp7BkUGpnEmnXEK6
+	Bw7dE+mGrKkk/Qj7GcnhQpb2qQiFIQyajYIblqZ2/a8+4hT90E46rkoMyQrEzzDf/TYszEv8N1GGy
+	W3n+g2Lg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sBhTJ-00000007zjV-12Yd;
+	Mon, 27 May 2024 21:01:33 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: akpm@linux-foundation.org,
+	willy@infradead.org,
+	djwong@kernel.org,
+	brauner@kernel.org,
+	david@fromorbit.com,
+	chandan.babu@oracle.com
+Cc: hare@suse.de,
+	ritesh.list@gmail.com,
+	john.g.garry@oracle.com,
+	ziy@nvidia.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-block@vger.kernel.org,
+	gost.dev@samsung.com,
+	p.raghav@samsung.com,
+	kernel@pankajraghav.com,
+	mcgrof@kernel.org
+Subject: [PATCH v5.1] fs: Allow fine-grained control of folio sizes
+Date: Mon, 27 May 2024 22:01:23 +0100
+Message-ID: <20240527210125.1905586-1-willy@infradead.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+We need filesystems to be able to communicate acceptable folio sizes
+to the pagecache for a variety of uses (e.g. large block sizes).
+Support a range of folio sizes between order-0 and order-31.
 
-> On 5/23/24 02:05, Gabriel Krisman Bertazi wrote:
->> Eugen Hristev <eugen.hristev@collabora.com> writes:
->> 
->>> On 5/13/24 00:27, Gabriel Krisman Bertazi wrote:
->>>> Eric Biggers <ebiggers@kernel.org> writes:
->>>>
->>>>> On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
->>>>
->>>>>> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
->>>>>> +			return -EINVAL;
->>>>>> +
->>>>>> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
->>>>>> +		if (!decrypted_name.name)
->>>>>> +			return -ENOMEM;
->>>>>> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
->>>>>> +						&decrypted_name);
->>>>>> +		if (res < 0)
->>>>>> +			goto out;
->>>>>
->>>>> If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
->>>>> then this function returns 0 (indicating no match) instead of the error code
->>>>> (indicating an error).  Is that the correct behavior?  I would think that
->>>>> strict_encoding should only have an effect on the actual name
->>>>> comparison.
->>>>
->>>> No. we *want* this return code to be propagated back to f2fs.  In ext4 it
->>>> wouldn't matter since the error is not visible outside of ext4_match,
->>>> but f2fs does the right thing and stops the lookup.
->>>
->>> In the previous version which I sent, you told me that the error should be
->>> propagated only in strict_mode, and if !strict_mode, it should just return no match.
->>> Originally I did not understand that this should be done only for utf8_strncasecmp
->>> errors, and not for all the errors. I will change it here to fix that.
->> 
->> Yes, it depends on which error we are talking about. For ENOMEM and
->> whatever error fscrypt_fname_disk_to_usr returns, we surely want to send
->> that back, such that f2fs can handle it (i.e abort the lookup).  Unicode
->> casefolding errors don't need to stop the lookup.
->> 
->> 
->>>> Thinking about it, there is a second problem with this series.
->>>> Currently, if we are on strict_mode, f2fs_match_ci_name does not
->>>> propagate unicode errors back to f2fs. So, once a utf8 invalid sequence
->>>> is found during lookup, it will be considered not-a-match but the lookup
->>>> will continue.  This allows some lookups to succeed even in a corrupted
->>>> directory.  With this patch, we will abort the lookup on the first
->>>> error, breaking existing semantics.  Note that these are different from
->>>> memory allocation failure and fscrypt_fname_disk_to_usr. For those, it
->>>> makes sense to abort.
->>>
->>> So , in the case of f2fs , we must not propagate utf8 errors ? It should just
->>> return no match even in strict mode ?
->>> If this helper is common for both f2fs and ext4, we have to do the same for ext4 ?
->>> Or we are no longer able to commonize the code altogether ?
->> 
->> We can have a common handler.  It doesn't matter for Ext4 because it
->> ignores all errors. Perhaps ext4 can be improved too in a different
->> patchset.
->> 
->>>> My suggestion would be to keep the current behavior.  Make
->>>> generic_ci_match only propagate non-unicode related errors back to the
->>>> filesystem.  This means that we need to move the error messages in patch
->>>> 6 and 7 into this function, so they only trigger when utf8_strncasecmp*
->>>> itself fails.
->>>>
->>>
->>> So basically unicode errors stop here, and print the error message here in that case.
->>> Am I understanding it correctly ?
->> 
->> Yes, that is it.  print the error message - only in strict mode - and
->> return not-a-match.
->> 
->> Is there any problem with this approach that I'm missing?
->
-> As the printing is moved here, in the common code, we cannot use either of
-> f2fs_warn nor EXT4_ERROR_INODE . Any suggestion ? Would have to be something
-> meaningful for the user and ratelimited I guess.
->
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+---
+For this version, I fixed the TODO that the maximum folio size was not
+being honoured.  I made some other changes too like adding const, moving
+the location of the constants, checking CONFIG_TRANSPARENT_HUGEPAGE, and
+dropping some of the functions which aren't needed until later patches.
+(They can be added in the commits that need them).  Also rebased against
+current Linus tree, so MAX_PAGECACHE_ORDER no longer needs to be moved).
 
-Ah, that is not great, since EXT4_ERROR_INODE does more things like
-annotating the error in the sb and sending a FAN_FS_ERROR to any
-watchers. But still, this is a rare error and I'm not really sure we
-care, nor that it should gate the rest of the series.
+ include/linux/pagemap.h | 81 +++++++++++++++++++++++++++++++++++------
+ mm/filemap.c            |  6 +--
+ mm/readahead.c          |  4 +-
+ 3 files changed, 73 insertions(+), 18 deletions(-)
 
-I'd say just use pr_err and be done with it.
-
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 1ed9274a0deb..c6aaceed0de6 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -204,13 +204,18 @@ enum mapping_flags {
+ 	AS_EXITING	= 4, 	/* final truncate in progress */
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
+-	AS_LARGE_FOLIO_SUPPORT = 6,
+-	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+-	AS_STABLE_WRITES,	/* must wait for writeback before modifying
++	AS_RELEASE_ALWAYS = 6,	/* Call ->release_folio(), even if no private data */
++	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
+ 				   folio contents */
+-	AS_UNMOVABLE,		/* The mapping cannot be moved, ever */
++	AS_UNMOVABLE = 8,	/* The mapping cannot be moved, ever */
++	AS_FOLIO_ORDER_MIN = 16,
++	AS_FOLIO_ORDER_MAX = 21, /* Bits 16-25 are used for FOLIO_ORDER */
+ };
+ 
++#define AS_FOLIO_ORDER_MIN_MASK 0x001f0000
++#define AS_FOLIO_ORDER_MAX_MASK 0x03e00000
++#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
++
+ /**
+  * mapping_set_error - record a writeback error in the address_space
+  * @mapping: the mapping in which an error should be set
+@@ -359,9 +364,48 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ #define MAX_PAGECACHE_ORDER	8
+ #endif
+ 
++/*
++ * mapping_set_folio_order_range() - Set the orders supported by a file.
++ * @mapping: The address space of the file.
++ * @min: Minimum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
++ * @max: Maximum folio order (between @min-MAX_PAGECACHE_ORDER inclusive).
++ *
++ * The filesystem should call this function in its inode constructor to
++ * indicate which base size (min) and maximum size (max) of folio the VFS
++ * can use to cache the contents of the file.  This should only be used
++ * if the filesystem needs special handling of folio sizes (ie there is
++ * something the core cannot know).
++ * Do not tune it based on, eg, i_size.
++ *
++ * Context: This should not be called while the inode is active as it
++ * is non-atomic.
++ */
++static inline void mapping_set_folio_order_range(struct address_space *mapping,
++		unsigned int min, unsigned int max)
++{
++	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
++		return;
++
++	if (min > MAX_PAGECACHE_ORDER)
++		min = MAX_PAGECACHE_ORDER;
++	if (max > MAX_PAGECACHE_ORDER)
++		max = MAX_PAGECACHE_ORDER;
++	if (max < min)
++		max = min;
++
++	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
++		(min << AS_FOLIO_ORDER_MIN) | (max << AS_FOLIO_ORDER_MAX);
++}
++
++static inline void mapping_set_folio_min_order(struct address_space *mapping,
++		unsigned int min)
++{
++	mapping_set_folio_order_range(mapping, min, MAX_PAGECACHE_ORDER);
++}
++
+ /**
+  * mapping_set_large_folios() - Indicate the file supports large folios.
+- * @mapping: The file.
++ * @mapping: The address space of the file.
+  *
+  * The filesystem should call this function in its inode constructor to
+  * indicate that the VFS can use large folios to cache the contents of
+@@ -372,7 +416,23 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+  */
+ static inline void mapping_set_large_folios(struct address_space *mapping)
+ {
+-	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	mapping_set_folio_order_range(mapping, 0, MAX_PAGECACHE_ORDER);
++}
++
++static inline
++unsigned int mapping_max_folio_order(const struct address_space *mapping)
++{
++	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
++		return 0;
++	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
++}
++
++static inline
++unsigned int mapping_min_folio_order(const struct address_space *mapping)
++{
++	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
++		return 0;
++	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
+ }
+ 
+ /*
+@@ -381,16 +441,13 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
+  */
+ static inline bool mapping_large_folio_support(struct address_space *mapping)
+ {
+-	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+-		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	return mapping_max_folio_order(mapping) > 0;
+ }
+ 
+ /* Return the maximum folio size for this pagecache mapping, in bytes. */
+-static inline size_t mapping_max_folio_size(struct address_space *mapping)
++static inline size_t mapping_max_folio_size(const struct address_space *mapping)
+ {
+-	if (mapping_large_folio_support(mapping))
+-		return PAGE_SIZE << MAX_PAGECACHE_ORDER;
+-	return PAGE_SIZE;
++	return PAGE_SIZE << mapping_max_folio_order(mapping);
+ }
+ 
+ static inline int filemap_nr_thps(struct address_space *mapping)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 382c3d06bfb1..0557020f130e 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1933,10 +1933,8 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+ 		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
+ 			fgp_flags |= FGP_LOCK;
+ 
+-		if (!mapping_large_folio_support(mapping))
+-			order = 0;
+-		if (order > MAX_PAGECACHE_ORDER)
+-			order = MAX_PAGECACHE_ORDER;
++		if (order > mapping_max_folio_order(mapping))
++			order = mapping_max_folio_order(mapping);
+ 		/* If we're not aligned, allocate a smaller folio */
+ 		if (index & ((1UL << order) - 1))
+ 			order = __ffs(index);
+diff --git a/mm/readahead.c b/mm/readahead.c
+index c1b23989d9ca..66058ae02f2e 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -503,9 +503,9 @@ void page_cache_ra_order(struct readahead_control *ractl,
+ 
+ 	limit = min(limit, index + ra->size - 1);
+ 
+-	if (new_order < MAX_PAGECACHE_ORDER) {
++	if (new_order < mapping_max_folio_order(mapping)) {
+ 		new_order += 2;
+-		new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
++		new_order = min(mapping_max_folio_order(mapping), new_order);
+ 		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
+ 	}
+ 
 -- 
-Gabriel Krisman Bertazi
+2.43.0
+
 
