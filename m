@@ -1,85 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-20222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37828CFEBC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 13:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 515FC8CFECF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 13:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435B21F22635
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 11:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85931F229DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 11:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978CF13C3E7;
-	Mon, 27 May 2024 11:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NPwvttZ8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266A313C830;
+	Mon, 27 May 2024 11:21:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A810750263;
-	Mon, 27 May 2024 11:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13ED013C699;
+	Mon, 27 May 2024 11:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716808828; cv=none; b=ZH1vsdAEkn+GuITigPMUe8RqwS7q8/Mj/0Db4WXvsX3rCA0Qd4BRPX0HvCvkSZaE+qxX00+5OpAMajQnBsgFQ4WIurJk36Yqw998yM/WyY0u5dKIS4JLgxwubLkM+zAZiB7eyvb7d0A6EW1Ojlp/qvVJ+JKL109mhYFQUHpMmMk=
+	t=1716808875; cv=none; b=dOZ647q54GHxpwtpfxCbN1YIwt5UiQ/ElOPuhXOeu/IU+JGPDyJ0XRqz7/MZZZL5GBPCySYZj55I16jaLwMTCfjxIvJnwyI3k97ldZkHhjOIVeoB+IddqAAOJmEe1pAMi8vFcBSVLK7IdWmTgrUiDV4pwqRKDYq5pH1DoueQobE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716808828; c=relaxed/simple;
-	bh=C4ig7pnNrD9KcVWPBjfpkf9cRRDu3PvbceAHNo/SBOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWzuUyJvIIIA5n17S1nG2QQJFi3JSOXxS/MJsim5VvZJw1Jj/74Ex3edZXohI0kWjy5v5r8PzcJwauzJc4tsiBzifgvPZWvLkfRTYdTY3wkGysBOMje74PdzztpmVwSRPJTDyQyCeGrPJHcNtcYdNPUT3ZINQW5COth3Z6MDaGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NPwvttZ8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C4ig7pnNrD9KcVWPBjfpkf9cRRDu3PvbceAHNo/SBOI=; b=NPwvttZ8eDpxEUbhRJDhlBIIBj
-	V0yGbg0E4vxxLEbKCrQIeZKct0O9VJSECzafm7cOIsXdmiFvVuAy6+gGGwxLqbXpfZ+XMLgJSl7Xh
-	xN2klJWVa2G9F7khhGESraR+33z9l2hSfSPDvv4yqJzsF8oEPOyFowQ2QJW/bk9nufw5vGkFIxtdP
-	0aEctTtYreiUqTv7lWDBIrgdoNfLxsmNcYi+obl7Q8Z6YMOtY6z3FgJ3YuV9jRP6pz9K95BgZi6On
-	eYdoHr+QAaNweRPrx3j0IDHLQEBnDA1eIHkIJN6V5AJYkxAhynxLXHP+Pp9eX5xGNV1UEC8dGpkH3
-	Ya7DCiig==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBYOu-0000000Egcm-1G5Q;
-	Mon, 27 May 2024 11:20:24 +0000
-Date: Mon, 27 May 2024 04:20:24 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Sukrit.Bhatnagar@sony.com" <Sukrit.Bhatnagar@sony.com>
-Cc: Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 0/2] Improve dmesg output for swapfile+hibernation
-Message-ID: <ZlRseMV1HgI4zXNJ@infradead.org>
-References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
- <Zk+c532nfSCcjx+u@duo.ucw.cz>
- <TYAPR01MB4048D805BA4F8DEC1A12374DF6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1716808875; c=relaxed/simple;
+	bh=VbfpEmXuaAG7nWKQNcVSqAIJl4e4QDZ7FZgYw5QlnDI=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=jHO8EKY/oOJDYUfMGyctwtJdW9/JUJ2VWeVKAM/0JdT8YCdbC7T28rtmDAfes0ZhcEVp1pPNcDkeMohzm1PioQQoW+c30BrZKSNhkQ128/qtoNfMLf13Lu/ioOfCvlz4JU+Cyudwu0aq2xdKxfKbkoWUK1em6jh/bO44QdDJxik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id C9C2E378143B;
+	Mon, 27 May 2024 11:21:10 +0000 (UTC)
+From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
+In-Reply-To: <9ce0c222-c80c-4049-8746-d74e612c3030@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240524192858.3206-1-adrian.ratiu@collabora.com>
+ <20240524192858.3206-2-adrian.ratiu@collabora.com> <9ce0c222-c80c-4049-8746-d74e612c3030@infradead.org>
+Date: Mon, 27 May 2024 12:21:10 +0100
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Kees Cook" <keescook@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Christian Brauner" <brauner@kernel.org>, "Mike Frysinger" <vapier@chromium.org>
+To: "Randy Dunlap" <rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYAPR01MB4048D805BA4F8DEC1A12374DF6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Message-ID: <1cc802-66546c80-1-65440180@177937837>
+Subject: =?utf-8?q?Re=3A?= [PATCH v4 2/2] =?utf-8?q?proc=3A?= restrict /proc/pid/mem
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 11:06:11AM +0000, Sukrit.Bhatnagar@sony.com wrote:
-> We can pass the starting physical block offset of a swapfile into
-> /sys/power/resume_offset, and hibernate can directly read/write
-> into it using the swap extents information created by iomap during
-> swapon. On resume, the kernel would read this offset value from
-> the commandline parameters, and then access the swapfile.
+On Saturday, May 25, 2024 08:49 EEST, Randy Dunlap <rdunlap@infradead.o=
+rg> wrote:
 
-Reading a physical address from userspace is not a proper interface.
-What is this code even trying to do with it?
+> Hi--
+>=20
+> On 5/24/24 12:28 PM, Adrian Ratiu wrote:
+> > diff --git a/security/Kconfig b/security/Kconfig
+> > index 412e76f1575d..0cd73f848b5a 100644
+> > --- a/security/Kconfig
+> > +++ b/security/Kconfig
+> > @@ -183,6 +183,74 @@ config STATIC=5FUSERMODEHELPER=5FPATH
+> >  	  If you wish for all usermode helper programs to be disabled,
+> >  	  specify an empty string here (i.e. "").
+> > =20
+> > +menu "Procfs mem restriction options"
+> > +
+> > +config PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FDEFAULT
+> > +	bool "Restrict all FOLL=5FFORCE flag usage"
+> > +	default n
+> > +	help
+> > +	  Restrict all FOLL=5FFORCE usage during /proc/*/mem RW.
+> > +	  Debuggerg like GDB require using FOLL=5FFORCE for basic
+>=20
+> 	  Debuggers
+
+Hello and thank you for the feedback!
+
+I'll fix these typos in a v5 together with the kernel test robot failur=
+es.
+
+I'll give v4 a bit more time in case other people have more feedback,
+so I can address them all in one go.
 
 
