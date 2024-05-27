@@ -1,89 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-20227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798D98CFF58
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 13:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C708CFF72
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 13:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184B8B214ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 11:51:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C8A7B21C61
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2024 11:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1FC15E5D3;
-	Mon, 27 May 2024 11:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B801215DBC1;
+	Mon, 27 May 2024 11:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tm3ERKhK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p87k6Xro"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CA4152DF2;
-	Mon, 27 May 2024 11:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECB313AA31;
+	Mon, 27 May 2024 11:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716810555; cv=none; b=EgUikl6We4iJbD6NLOFrm5jR56T1HbqjVfMwMMUYk0nvoo6Ht1+tL7W00AKXJd35GGggPGHZP65zThW10wViRnqbjngJ/iCmv7YaXGytBn8RL7nCiEgFjTbKmU+keDm4rkxCVbkP0B956bEN+zRuu5cL2mEpaZNJOedZd9H1q98=
+	t=1716810986; cv=none; b=kGa+yhOlZXkYEPa/0RBjxYraZ2GCMvcP5guPeTW3Nw/PbK9Pa1y3pFoaHxeMyFllx0Ps+4C+0Gbat+BdKAdn+oEnsOhhNgy0m7BnfEi6PAgobK9ZmiBHgmBwL9Gdw4Rv8vwH9RBLRKGVwoNWmNMSftjmw89fJTHjNJ5IkT7+gM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716810555; c=relaxed/simple;
-	bh=S9iEtbcbQ6v8JNb1XyAe+4akSByNCrDVjasdUAlfmI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m299429O67LjZSuUJKlz5KhKwzRPWpHqg0j8VG5oovsEKAdI+4dB/p4scbfDlHF3C3jOKbziqbkcO6l+FlewZfI1lphgqWSwmziNtCFUmxMV+mBBwldO+4oblKtxvPlrMWydemRQf4ryDjVZ95OfQ4K06Par0sNZ0Pu8HEDA2ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Tm3ERKhK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wOXMdt3Ms8hhij4gL90hWlwMFeUe+WZXW6F2hZtmtd4=; b=Tm3ERKhKPEr55SUkifTtJi4YaA
-	Lymh32H6OdTm09tutGPkpCx3vk9ZaoLjojkPSW62G5ivIfGS5S6wCcbWGXBYUa/v8Uecaaek2vOoK
-	CTK1v/Hz8FsaL8/m92oNO1kMdY5SE4cD0tZnLkwQckXeyyWBILO8Aiyk6clmNO3uiWhqVFzRY0oCc
-	thLGqIOgwJ1LXFx2/XelFS7W8NrkMX0SdAVlcbSsg7dHkYESjacr/jAvf+tr+XArqs7ufEHZGhvWu
-	MClZXr2omkgvnfuDHzGpPGfetH09eemjm10RYaapxjjknllMva+wFiZ0y0spoonI2W9cufvxdIzbR
-	BnQSgmLA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBYqk-0000000Ek5f-3xs8;
-	Mon, 27 May 2024 11:49:10 +0000
-Date: Mon, 27 May 2024 04:49:10 -0700
-From: "hch@infradead.org" <hch@infradead.org>
-To: Trond Myklebust <trondmy@hammerspace.com>
-Cc: "cyphar@cyphar.com" <cyphar@cyphar.com>,
-	"hch@infradead.org" <hch@infradead.org>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-	"alex.aring@gmail.com" <alex.aring@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jlayton@kernel.org" <jlayton@kernel.org>,
-	"amir73il@gmail.com" <amir73il@gmail.com>,
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <ZlRzNquWNalhYtux@infradead.org>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org>
- <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
+	s=arc-20240116; t=1716810986; c=relaxed/simple;
+	bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tR7QwZScSbvzw06KGGnNCFrtPxPTZDmbpH0Nt8pj7WP6P+4DCIig9SoGjPqegChLlwm9z51QgIilBE+sqcVW6gtezaEuBMfoYqN5LYfKGneQWxayFVw6s2f36FwY1UEzpqYEK4zu2WcJhzS3PWtkqgJmpDsBpFggmsjGWVvzdfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p87k6Xro; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB89C2BBFC;
+	Mon, 27 May 2024 11:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716810985;
+	bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p87k6XroMqATDsUBvJyUqe9q5lavadM/gv1KHuYzxpMfiUkGCe8jSrkO56TiVtXMH
+	 ZJ6KUkXLl9hVz2/xzrPLirHk7IfDWZnGbCaZZ8kvB8KUfDw5j+VIl+g0CyE8a0vLk5
+	 ZPvAo2fiVb7MV9cR8hYrcM1Qm77UMKbO8vAJ/tdg8IfN9vcDUGuiFC10ZVA139be+U
+	 5mjx0nMrVZl0pW1HZS3hpihNooBpeiN5TRbgFeUxANxOKsxyY23Ej1Xv67XJYG6vp/
+	 p/w28ym6kLVKIwOde7ZyQOMTXciQkmIx6YZJWssG69RRzPCAkGmpAsqMJUV31lxT5l
+	 OeXtGPugeBzPg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon, 27 May 2024 13:55:56 +0200
+Message-ID: <20240527-vfs-fixes-96860426ed27@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3021; i=brauner@kernel.org; h=from:subject:message-id; bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFlJwPvfXEoezmieigy2xbxXrc332x31mft05U3oP9r ZHnUpeNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5dI3hD9dZkbx3E+/smhly 2PHn33lfz4QUXPmtWD1h/yJlxVkWXpUM/7Qcptu6L3r/XCZxl926sE8zXi0tXT/1t83s/Mk7nj9 ynswGAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 26, 2024 at 10:32:39PM +0000, Trond Myklebust wrote:
-> I assume the reason is to give the caller a race free way to figure out
-> which submount the path resolves to.
+Hey Linus,
 
-But the handle op are global to the file systems (aka super_block).  It
-does not matter what mount you use to access it.
+/* Summary */
+This contains a few small fixes for this merge window:
 
-Snip random things about userland NFS servers I couldn't care less
-about..
+* Fix io_uring based write-through after converting cifs to use the netfs
+  library.
+* Fix aio error handling when doing write-through via netfs library.
+* Fix performance regression in iomap when used with non-large folio mappings.
+* Fix signalfd error code.
+* Remove obsolete comment in signalfd code.
+* Fix async request indication in netfs_perform_write() by raising BDP_ASYNC
+  when IOCB_NOWAIT is set.
+* Yield swap device immediately to prevent spurious EBUSY errors.
+* Don't cross a .backup mountpoint from backup volumes in afs to avoid infinite
+  loops.
+* Fix a race between umount and async request completion in 9p after 9p was
+  converted to use the netfs library.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (27)
+gcc: (Debian 13.2.0-25) 13.2.0
+
+All patches are based on mainline. No build failures or warnings were observed.
+
+/* Conflicts */
+No known conflicts.
+
+The following changes since commit 8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6:
+
+  Merge tag 'cocci-for-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/jlawall/linux (2024-05-20 16:00:04 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc2.fixes
+
+for you to fetch changes up to f89ea63f1c65d3e93b255f14f9d9e05df87955fa:
+
+  netfs, 9p: Fix race between umount and async request completion (2024-05-27 13:12:13 +0200)
+
+Please consider pulling these changes from the signed vfs-6.10-rc2.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.10-rc2.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      swap: yield device immediately
+
+David Howells (4):
+      netfs: Fix io_uring based write-through
+      netfs: Fix AIO error handling when doing write-through
+      netfs: Fix setting of BDP_ASYNC from iocb flags
+      netfs, 9p: Fix race between umount and async request completion
+
+Fedor Pchelkin (2):
+      signalfd: fix error return code
+      signalfd: drop an obsolete comment
+
+Marc Dionne (1):
+      afs: Don't cross .backup mountpoint from backup volume
+
+Xu Yang (2):
+      filemap: add helper mapping_max_folio_size()
+      iomap: fault in smaller chunks for non-large folio mappings
+
+ fs/9p/vfs_inode.c         |  1 +
+ fs/afs/inode.c            |  1 +
+ fs/afs/mntpt.c            |  5 +++++
+ fs/iomap/buffered-io.c    |  2 +-
+ fs/netfs/buffered_write.c |  2 +-
+ fs/netfs/direct_write.c   |  2 +-
+ fs/netfs/objects.c        |  5 +++++
+ fs/netfs/write_collect.c  |  7 ++++---
+ fs/netfs/write_issue.c    |  9 +++++++--
+ fs/signalfd.c             |  6 +-----
+ fs/smb/client/cifsfs.c    |  1 +
+ include/linux/netfs.h     | 18 ++++++++++++++++++
+ include/linux/pagemap.h   | 34 +++++++++++++++++++++-------------
+ kernel/power/swap.c       |  2 +-
+ 14 files changed, 68 insertions(+), 27 deletions(-)
 
