@@ -1,226 +1,445 @@
-Return-Path: <linux-fsdevel+bounces-20337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78EA8D1922
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:09:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8948D1961
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7EB288FBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:09:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8AC6B21782
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D573216C455;
-	Tue, 28 May 2024 11:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E1616C69D;
+	Tue, 28 May 2024 11:26:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70B113E039;
-	Tue, 28 May 2024 11:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716894574; cv=fail; b=OImM6wK+BaFHQjhXZexv41MF+BL1FH1FXaF3tNjKPO5xEpluHTYq3ar2YF82Hilkwxp+1QAb1TEFvsrGnammK4z7J5yznITt0Bq2vMPn6KRTKspG6dPYT9lAg377JJ9z8IEohM8DDs200Holf4/6LkIVMSZu6N3oWJ7d+fD7K9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716894574; c=relaxed/simple;
-	bh=+ny/DxeIfcLAY1nG5YvT2ZYMqQaqzbuSvpG4ggEv0vA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tXs65YRXeQiETjolfynVkqratqLW7hXeYbgpXFVsB07tHFTxECt+7cmZhSl8tTFjylLTAMv8idDX9O14PGVgIJXiUc11vfieJ3LYun6Pcpqvpzyi7OVM4Drsa1bLMgMfRNVz5DhFgZMwnzKQuFagnDluEqrNJgyLeKHRqzGqIUM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44S7xHoC003476;
-	Tue, 28 May 2024 11:09:17 GMT
-DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
- =?UTF-8?Q?=3Dcc:content-transfer-encoding:content-type:date:from:in-reply?=
- =?UTF-8?Q?-to:message-id:mime-version:references:subject:to;_s=3Dcorp-202?=
- =?UTF-8?Q?3-11-20;_bh=3DcuY5/1wM2KWvOgpMHx7qyelT1QbiE0LvxX6O+e3xnYI=3D;_b?=
- =?UTF-8?Q?=3DgKo5U1sFZeqwP7UVz/Q0zFWHFRIIIIo7eWJ7R2s3+M4/0PM8rsi0sSgVHRzx?=
- =?UTF-8?Q?3EXk2lHY_x3dQkFL95uvYB178bSsvnC5PKwqbrMxhvcyYZN7ngoKVCrcUXuwR2d?=
- =?UTF-8?Q?g5fb7j7kD+EHh5_3lntKofo6wZRSqYwFEycx6V5Vv9TRzge/Obh5JEp/IbX2pLM?=
- =?UTF-8?Q?GvaZXqIzRwo/1BsVbFan_pzLG3n+aVKyyf1WMFC0YUGlBve+vfz0P6IrAjhBMpp?=
- =?UTF-8?Q?FLhvcLoEPXRb70rAHWdUoitwTJ_n0/s8FcN4gpMMPQZOrW6zNk5D6R6NhDr2D0j?=
- =?UTF-8?Q?7iS9Aa95sp5wiD1SYBhbcMrTTKZlt3Ok_yA=3D=3D_?=
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8g9m39w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 11:09:17 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44SB1Xgj036785;
-	Tue, 28 May 2024 11:09:16 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50wqm2v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 11:09:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ht9AHqbK5nWXZ4FJClSG5v1xDfIwiVuVfqfAi9VMSj/RhkCKBAe0FxpkzZ3cfEq8GoQiP09i70ekIqsYc6fGlS6JUDhcrCqZQFm/uWtdK7Ca5eoqlbveyBWpwfMmqwM5asyOtFaibIvQ4UIlHI1RA6dR1S+ESra+z381A1St4bG1hGVMoAraSPG9UHk8bw+t/7HvSJXFHeTc+zVRfDX/pqWTt7Tq8wTzll8py5XywDv2ZkMhbrnwuGDUY+sPVyUNIXmqrSctclbNAi/ZdcsnmJhEY028XLWwOtj8ns5gh34zQJzTCbzJWX0dGgVk2cBrUomPzoWU7QaA/TeqVaWr2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cuY5/1wM2KWvOgpMHx7qyelT1QbiE0LvxX6O+e3xnYI=;
- b=bflzRcj4TlcheCAAe07zSPMEKT2h/OnmzZV6T5GL0SjTQ8qNSk2cIln+/WtXzoTbNSx5TmGcN8RKMqI7BPpHANTji3gfggUEBUpwXzEDyAS9BSw4y44qbLN1+Rn3sedF5+erxcqbjEwz1I663BmqPv3kpH/Bgsfhib3n2zZdIeovFXPxZbl9ciWONXcMNNh+pgApMbvRLkAFAE7bB9dpD7PeO4gjoP41o5LJEZbQ5pFEyrhACL+O4inbFTwuR3R7ekKP+NdQmhCnAq3S2P/KgmXESFIqovda2ZYsIKfT+uDHcNd27NO8QxQLLdBVJxDoYFTOCEG7OYTP+1gsppQdIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cuY5/1wM2KWvOgpMHx7qyelT1QbiE0LvxX6O+e3xnYI=;
- b=aKt6i9ugFObw60haHq2wCq+CLGRCTz5bLg3f2+1ZxJyOIGGhcpiY75wigXxaP5Lb8Vs7/vq3dB72l0uRtsstOzdosmYaGZrrD/8RjdThj8KDxP+LIJrVscADBOWOsK6lHfVgxnCPqwnopvm4CZZMyTFZAnoZ5Dkl+RFLaWOrmps=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH7PR10MB6530.namprd10.prod.outlook.com (2603:10b6:510:201::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Tue, 28 May
- 2024 11:09:14 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.7611.030; Tue, 28 May 2024
- 11:09:14 +0000
-Message-ID: <0b65cccc-b39a-4121-ac0d-52d49c85632b@oracle.com>
-Date: Tue, 28 May 2024 12:09:02 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org
-References: <20240228061257.GA106651@mit.edu>
- <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
- <Zk89vBVAeny6v13q@infradead.org>
- <4c68c88d-496c-4294-95a8-d2384d380fd3@oracle.com>
- <ZlW4o4O9saBw5Xjr@infradead.org>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <ZlW4o4O9saBw5Xjr@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGXP274CA0004.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::16)
- To DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC40182B3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 11:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716895593; cv=none; b=QM9IY/f5+HbVXRYGoauLpqlsdXjxP43cMUYQGNrqgA/eJ0EYw8s/Fo7FedmN5r4H2R9QLTBayickARn6VNhVblHeTN740yMitb1aZoThdZvLO4iMhhTsvLR4V7K7lu+bT4+sGvMEM98RgwLPNEE7AS5PX3aXjxYC2kmL4S8/xV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716895593; c=relaxed/simple;
+	bh=WPJeLoTFVOJ8aZfnYP+GrmD0EfUdf+fJiVPnwye1o4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSiwwAeiO8/0aPCvqjTYmV/eDFZm+2q7MnjMb6mwZSty27xBHzZcRcNnOwLnTJGePcrWGA6kvbOIZ2pXRGTP/KSqAYsE+RW1lpjeBQ0y44OmTARVwP6chN1hT5s6B7+CIaezaVt2WLfRz09g2vX89bVVsAQxPepLPvMHZ5CzPwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A3FB339;
+	Tue, 28 May 2024 04:26:53 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 719FD3F762;
+	Tue, 28 May 2024 04:26:26 -0700 (PDT)
+Date: Tue, 28 May 2024 12:26:19 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Amit Daniel Kachhap <amitdaniel.kachhap@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	broonie@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 17/29] arm64: implement PKEYS support
+Message-ID: <20240528112619.GA1072039@e124191.cambridge.arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-18-joey.gouly@arm.com>
+ <48b56552-98dd-4b14-8f0c-6cd3a38ded39@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB6530:EE_
-X-MS-Office365-Filtering-Correlation-Id: bdd700ad-f0f4-486e-41e0-08dc7f069bc2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?UVFHTjFuTmdqbTRob3dpM3V0TnJ6aFlFelNLMWN0ZmY5RU9oWkxNUng5Zjlm?=
- =?utf-8?B?QXhaWjQ3azk1WEhqa1pGbTVNVjV1OFhFOFhRQWJrWFV5SG9DcjA4ekFVamRS?=
- =?utf-8?B?NWVoSGRZUnJScmQzTStPQTUyQWdySmhhZVkwK0dFdmdyc0cxRWZVL3YzQWZn?=
- =?utf-8?B?bWRyMnhSZmhMNzFoV0t4UER5Z1daQXhldVVsbEd2SHNXSTEraVZKUm9kcTdG?=
- =?utf-8?B?cFk1U0lpNzc3Z3kyZGg0U0FTbXgrWFpISTMwM0s2WG9vOGJJb2UxTXdjbFQr?=
- =?utf-8?B?bE1KZE5Ram91eEpJVVA5SVJPL1g2cUxPQ01OUWpMdTZoSDlMcEFUekFrdVYx?=
- =?utf-8?B?S3FLR2ZoSlVpa2Q3SW5SZnZ5Wi9OVnFpVUJkUWpoV2JjVkJiTXNJamdXaVQz?=
- =?utf-8?B?d1h2dkNNVFVjWkg0bnpndnd1bUlST3IzSjBGTWljRHB6ZEV0aCtpUjV5Skh6?=
- =?utf-8?B?RURIWlUzbkZPSFpaVnZsTmZHWGVhNGpXdzlaOGhaT1I1c0swZUdhaFVIcnFD?=
- =?utf-8?B?TC82aVRQMFVnTW9BQ1hJakV5MXRRU05scUhMeHFPOVhPaW5MaVpCeFhXKzk0?=
- =?utf-8?B?YldUOVhia0RxNG1GYzg4Tkh6eDZHMFNKaGtoelp4dHFtNk1ZUFFVWkNRbFo2?=
- =?utf-8?B?T1NGQzJXQzNlWmxNWWdjUUlZaTZSSDJjWDZwVWZUM2pReVhjY2xDMTU5aHBh?=
- =?utf-8?B?RTFhNm9yaE0rSVY2T2tIaFpGRG9CTFY3QjlRTXJseHFGd3hYbHZIQ2NmeThS?=
- =?utf-8?B?QU5la09SMDB6V3hKcTdBNHh5NmUxR20wSXY2WkpMbnNtdGNSY2FBTGErZW9G?=
- =?utf-8?B?VWt0L3BJZ2hNZGpPUlpPOUQraDNKc1NpeGx1TmVvcjVQL0RndWNSYjkxRE8x?=
- =?utf-8?B?ZlRMS0szcjZXRkZUanRwZzFmUVNxZGhXaGdXR3k0d2xSZjNoWFI4QzJVeFRl?=
- =?utf-8?B?RENCamU3bmpwdnVrakFESlQ2M3RONTZRcmE5VGt5dE4reVFlR2x0STlNejRa?=
- =?utf-8?B?Y1QxZjRSMjJCNFhESzFqcCtvekpleUdKTys1SXk4Z2FIaUc2MlFYOG12NDcz?=
- =?utf-8?B?RkY1UFdpWCtaZ2pOTnBsUnpKSU1HT1E4SnhNeW5uSFNhVE5WR292UWdJcGNS?=
- =?utf-8?B?dWlkaU5TMksrLzdkcHlwTkJCWVQySUJRMWJ0Z1Vad25GTEFNeFJUbHduZUd1?=
- =?utf-8?B?ZGl5RFprZmlSNG5xM2dMQ0ROdjlRWkJXMGYyVEdwWlBPbWIyZHRibmlZS01I?=
- =?utf-8?B?NVZQRHp5cXk4em9RNjEwSXMwOU1Nd2RjQXJoOGZYeXdQY0tqQjJGVlJReG0x?=
- =?utf-8?B?QXNhV3FudnltaVRwWjN0NHRmdHdjaFcyTWhJNHJZN2lYSFl6VEU2UHNFTUR6?=
- =?utf-8?B?ano0VFRRZGlPTGtzRmYwK2pBZDdSTnNvQXlKTEhDSVdrOHVaeFl2RFJvQW5z?=
- =?utf-8?B?ZDhteklLRVVLNXpCTEQwRkZIUGg3TkhzUkQzbHV5YzBJYWpYdTVkc0RicEJr?=
- =?utf-8?B?Q3hFZ1Fyb0g1VG13bUtZUk1TTm1tWWZKSWxWWXM5eHVFVGppaWhJMXNqcUow?=
- =?utf-8?B?R01ZU2Rid3NkL0pMVDJGRjVlNTBKMWVSOTFuWVpXMXJWa3cwTXFNYnErNmNT?=
- =?utf-8?B?Q3JWUEVWTUtQNHIyTXdjK1pHWXRFTkRVS2NHT2plTEVVY2NOTmx5UFlXYVFn?=
- =?utf-8?B?MWRzYytweXgzZWo3b01selU0SVFuakFMeDN3Mk1kTmVzUmxLSmpNNkRRPT0=?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?YmpTT3FLNW13SGUzZW14emxQdGxmQVBVVVA4MzJsZEUwMkNzTlhSRlVKZDRm?=
- =?utf-8?B?WStUOTcvYksySUFnVERiVFhSNDBTVE5WUzhWZHVyZjdmVHlTQTQveTRWZTlZ?=
- =?utf-8?B?TnJXSkQ2VVJ5eUZrbDZ2VWdUK1YydTZ2RGUwNHNCZW5BcVhCZDVRaFY1RW1Z?=
- =?utf-8?B?eHZpQktTYUIwbXROeCtQSFY1VDc4QzNMbVpkTkhuUzBiVHRpVzZ3K1RwUXNN?=
- =?utf-8?B?WWFMZlV2SDVyY3A3L0FJYmZMZGNKdGwzOUFFTXFwSDlJWVp5cER1ZVo1WCtC?=
- =?utf-8?B?bHZzcG1KaUc5bTlaRHFnUGQ3TjBpSTVDSFpON0ZOci9XbWxPQjdlWUoralVJ?=
- =?utf-8?B?YjB2UlhLeldOZVgxNEkzbnVaVzhiVDNUUk5WczlMeVhsTXNya0poSmhkSzdL?=
- =?utf-8?B?UXJNaDduSllVYTdScDNSaW03MTYxc01EdTNEa0srcC8vcXNzNUQvekMvZ3c1?=
- =?utf-8?B?WkQ0UXE3eUkvTWE5aTYzcitQcjRqYjN2ODVKbXZpekp5VUtWZ2hSRkJqcVdi?=
- =?utf-8?B?bXlGWkxuY2JzZVhvWi9VT1RhYVFucmJ2dW1TNGV4RlB0ald0b05lR01pcXY4?=
- =?utf-8?B?dkxkeTAvOVI5TjZjL2l3VGxUZ1FIV3g0SzY3NncySHYra2xIS2E0bVJRWXN3?=
- =?utf-8?B?ME42SWFXMGJmSWUwUCtWVmp3N1psNEZYaVdGQnI1aDR5ZmVxUklJNkZlcTVh?=
- =?utf-8?B?STZkazJyNWk4NEtQSkRPYXJQaDdiZmd5Z1NYYWowNlQ1bG9obWNZNVp2am1V?=
- =?utf-8?B?Y0xwakRLRWVNRHVWb0o3VGMwTDBuN2hDb3pHODRaR3lOUWlkVFNubXZmeDBK?=
- =?utf-8?B?OGc2ckoyVm42d2IwVnlhV3NJQmFIdFprL0tjemxqbEhUbzJSQWFUdXhaMWhD?=
- =?utf-8?B?NGtCdU42d3dvUkVITHhaMnllQWRQSVladSs0SGNuaWo3UHhNajBleStBTjR4?=
- =?utf-8?B?d2J0Uk1tVXgrL1ZvNFlpUlhoelBJaUNFTUV2MkFRY2ZGcVFCUms3d0h2MExW?=
- =?utf-8?B?WEhJaThHUHdxWXVUaUpmenc1UkZuT0hnSm5uamNwNmIyZ0NYbm1hTTljR25h?=
- =?utf-8?B?RDFIWFRhU0xZbVUwQUNJYWJBdGxIQTRLak1DK3lYYjJ2NHZsaDV5aXRPbi9C?=
- =?utf-8?B?Yjk2a2grV0lyZ3FiTmg5V2FhSW1Oek1GK2JYWVYvRHB0NjJGMEZmNlBadE5I?=
- =?utf-8?B?K0VNSGZkaVFrRkFTaytmdlRiZlZ2VGZqb3ZCbFM1aFppdHlKdkpZYzhQWXR4?=
- =?utf-8?B?VVh3S1I2cUhhNnRLWXVwSnNKMzhJdi9lZUkzNWVRa0E1NTBqZERtb29EUnpH?=
- =?utf-8?B?Rlhvb3BSSjRTL0ZKcHZoK2V5UjI5ekJpbHJ3MUViWjVoak1DMEJTcmcyRllD?=
- =?utf-8?B?QjVsc3dLdWRsenRlemlnV1Q4b0w2RWpBWklBakk4L0UydFQwZ3pqeWlrZkxF?=
- =?utf-8?B?NUZuSTd5Q0tzL0NHWXlSUFlid29kek1McENWcjVaazJxcTI4bkxvbzMrcUFB?=
- =?utf-8?B?TG1yemplVTVnVCtJSDZvcHpWU0ZRUjRSdVZ2OEx0TXlhZ1ZrOG1ZWlI5SS9C?=
- =?utf-8?B?dDBRUnZzMittY2ZIajhhWlQyRHJsQ21oSWNybFo0U2xveGRhVkhpdnVaS0x3?=
- =?utf-8?B?QldkL0t0OThRclF5TGlwQ3BreHRDL0E2dDBBVlFtOWdkWHlzZE1FUS8xYmtt?=
- =?utf-8?B?WjdlMTgvZncvSklkUHErV05hOGlsUXNIL3NabEZvc2dXOUVOVDRqWStmM1Q2?=
- =?utf-8?B?Vy9NbEhtN2ZFdVlKODJYdzI2bjJ4OU1PRjZLYXRldm1nRjB0TkZyeHg3NTU5?=
- =?utf-8?B?allWKysxeXNKUkRIRTFqOEdwSFZ2MXN3dkZXMWp0cVV3MHIzLyttZDZvRUdP?=
- =?utf-8?B?andwM0swV29VUk5GcmM3amxuY242WlVURmFRd1J4L3paK3JSbS9lb0hoN1Ju?=
- =?utf-8?B?eDZ6Skx4Q0ppOUgzS3g5bHZUUnJYZzhwVWo0WlpjTmUwN01pdFd1aHNBaTY2?=
- =?utf-8?B?QmtReE9adDM1OVRIajNUYjh2RW1iMW04YnFXV2VOWTFmTFk0YzhWZ1V4WmNt?=
- =?utf-8?B?SDc2YTdnM3ZhVUx5Y0VaQmQ1L01iYjczMUZnWk9GeVljR0ZHK1cvM2lKcVpY?=
- =?utf-8?B?SGMyUzFNaHVaZUdoWU4rSGFrU1l3d2ZiQitNQUU5MnE1RGswK1BHYWQ2YVFD?=
- =?utf-8?B?TXc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	PxfGa/G53XRUV0inI4PAszP5CLQ5RN3oWTjIb/ZKTMOWGkUxpnSKOJN1kO9OmX7RrX6vYRWZ9ETlsGQ90ZUIzn/EY93Br583JYBFHMt7yKAQt79/IEoD232kXwjUUrx2e3UQ9xqJ3wEzLvcoiDCr4fIgqj647ynwJ7CdZ1uckEgfr7v5tsf+AOnzJU2ys+IeZ2NfGZUKjdo/y4MqNN01Wees/lEwJ+Y7Bm8mBqBepxhnAoLyRuCfSPcmYr/zEdUs5a9dv1cOVaoJOu1mC+NKw6BKW8e4H6fuBtC86nOOLORc1vH9BHovkjEG/r/XCVYKjmd/JoEekVwMncPPnjmaEjr5ErDVinLP6QLHM7Tg1hgTt9m3umvxxUJtEn5ZIbjebByVu9UCGJw+UrYE4cgVcMH6SbsuB127LcoD0yvCw3L2NfZ4e6WoZcKyyJKzcNyHN9xH2YOhosghOfgzX/YSTCSLdYVvoyBvEK2suVrH7Wv2s9KxkLJeZJ5kysYU2HoXW5gGlM7K5iE3qmIy7X0PqbIvxaWmpggRWczxSBXl+dMVRqXx6/jjpgn5phUN4wFh+qJtIyk6O6vMNbdq3Mw4pIJTWjFWplNP5EK/rm/0Bm4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdd700ad-f0f4-486e-41e0-08dc7f069bc2
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 11:09:14.2454
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cmjciTmXh6UE5bUZnte2EhWT4MXb+tl3jD8fsvn8kIyFGsJkOFVIc4lJVJrSaTMeNqieYjpJDs6oyUrgBgf4Sg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6530
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- spamscore=0 adultscore=0 mlxscore=0 phishscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405280084
-X-Proofpoint-GUID: qAEU5tOMbd6iKkLY5Jnlk0O_ZAuQBrCA
-X-Proofpoint-ORIG-GUID: qAEU5tOMbd6iKkLY5Jnlk0O_ZAuQBrCA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48b56552-98dd-4b14-8f0c-6cd3a38ded39@arm.com>
 
-On 28/05/2024 11:57, Christoph Hellwig wrote:
-> On Tue, May 28, 2024 at 10:21:15AM +0100, John Garry wrote:
->> If so, I am not sure if a mmap interface would work for DB usecase, like
->> PostgreSQL. I can ask.
-> Databases really should be using direct I/O for various reasons.  And if
-> Postgres still isn't doing that we shouldn't work around that in the
-> kernel.
+Hi Amit,
 
-As I understand, direct IO support for that DB is a work-in-progress, 
-but if and ever it is completed I don't know.
+Thanks for taking a look!
 
-Regardless, my plan is to work towards direct IO kernel support now.
+On Tue, May 28, 2024 at 12:25:58PM +0530, Amit Daniel Kachhap wrote:
+> 
+> 
+> On 5/3/24 18:31, Joey Gouly wrote:
+> > Implement the PKEYS interface, using the Permission Overlay Extension.
+> > 
+> > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > ---
+> >   arch/arm64/include/asm/mmu.h         |   1 +
+> >   arch/arm64/include/asm/mmu_context.h |  51 ++++++++++++-
+> >   arch/arm64/include/asm/pgtable.h     |  22 +++++-
+> >   arch/arm64/include/asm/pkeys.h       | 110 +++++++++++++++++++++++++++
+> >   arch/arm64/include/asm/por.h         |  33 ++++++++
+> >   arch/arm64/mm/mmu.c                  |  40 ++++++++++
+> >   6 files changed, 255 insertions(+), 2 deletions(-)
+> >   create mode 100644 arch/arm64/include/asm/pkeys.h
+> >   create mode 100644 arch/arm64/include/asm/por.h
+> > 
+> > diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+> > index 65977c7783c5..983afeb4eba5 100644
+> > --- a/arch/arm64/include/asm/mmu.h
+> > +++ b/arch/arm64/include/asm/mmu.h
+> > @@ -25,6 +25,7 @@ typedef struct {
+> >   	refcount_t	pinned;
+> >   	void		*vdso;
+> >   	unsigned long	flags;
+> > +	u8		pkey_allocation_map;
+> >   } mm_context_t;
+> >   /*
+> > diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
+> > index c768d16b81a4..cb499db7a97b 100644
+> > --- a/arch/arm64/include/asm/mmu_context.h
+> > +++ b/arch/arm64/include/asm/mmu_context.h
+> > @@ -15,12 +15,12 @@
+> >   #include <linux/sched/hotplug.h>
+> >   #include <linux/mm_types.h>
+> >   #include <linux/pgtable.h>
+> > +#include <linux/pkeys.h>
+> >   #include <asm/cacheflush.h>
+> >   #include <asm/cpufeature.h>
+> >   #include <asm/daifflags.h>
+> >   #include <asm/proc-fns.h>
+> > -#include <asm-generic/mm_hooks.h>
+> >   #include <asm/cputype.h>
+> >   #include <asm/sysreg.h>
+> >   #include <asm/tlbflush.h>
+> > @@ -175,9 +175,36 @@ init_new_context(struct task_struct *tsk, struct mm_struct *mm)
+> >   {
+> >   	atomic64_set(&mm->context.id, 0);
+> >   	refcount_set(&mm->context.pinned, 0);
+> > +
+> > +	/* pkey 0 is the default, so always reserve it. */
+> > +	mm->context.pkey_allocation_map = 0x1;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static inline void arch_dup_pkeys(struct mm_struct *oldmm,
+> > +				  struct mm_struct *mm)
+> > +{
+> > +	/* Duplicate the oldmm pkey state in mm: */
+> > +	mm->context.pkey_allocation_map = oldmm->context.pkey_allocation_map;
+> > +}
+> > +
+> > +static inline int arch_dup_mmap(struct mm_struct *oldmm, struct mm_struct *mm)
+> > +{
+> > +	arch_dup_pkeys(oldmm, mm);
+> > +
+> >   	return 0;
+> >   }
+> > +static inline void arch_exit_mmap(struct mm_struct *mm)
+> > +{
+> > +}
+> > +
+> > +static inline void arch_unmap(struct mm_struct *mm,
+> > +			unsigned long start, unsigned long end)
+> > +{
+> > +}
+> > +
+> >   #ifdef CONFIG_ARM64_SW_TTBR0_PAN
+> >   static inline void update_saved_ttbr0(struct task_struct *tsk,
+> >   				      struct mm_struct *mm)
+> > @@ -267,6 +294,28 @@ static inline unsigned long mm_untag_mask(struct mm_struct *mm)
+> >   	return -1UL >> 8;
+> >   }
+> > +/*
+> > + * We only want to enforce protection keys on the current process
+> > + * because we effectively have no access to POR_EL0 for other
+> > + * processes or any way to tell *which * POR_EL0 in a threaded
+> > + * process we could use.
+> > + *
+> > + * So do not enforce things if the VMA is not from the current
+> > + * mm, or if we are in a kernel thread.
+> > + */
+> > +static inline bool arch_vma_access_permitted(struct vm_area_struct *vma,
+> > +		bool write, bool execute, bool foreign)
+> > +{
+> > +	if (!arch_pkeys_enabled())
+> > +		return true;
+> 
+> The above check can be dropped as the caller of this function
+> fault_from_pkey() does the same check.
 
+arch_vma_access_permitted() is called by other places in the kernel, so I need to leave that check in.
 
+Thanks,
+Joey
 
+> 
+> Thanks,
+> Amit
+> 
+> > +
+> > +	/* allow access if the VMA is not one from this process */
+> > +	if (foreign || vma_is_foreign(vma))
+> > +		return true;
+> > +
+> > +	return por_el0_allows_pkey(vma_pkey(vma), write, execute);
+> > +}
+> > +
+> >   #include <asm-generic/mmu_context.h>
+> >   #endif /* !__ASSEMBLY__ */
+> > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> > index 2449e4e27ea6..8ee68ff03016 100644
+> > --- a/arch/arm64/include/asm/pgtable.h
+> > +++ b/arch/arm64/include/asm/pgtable.h
+> > @@ -34,6 +34,7 @@
+> >   #include <asm/cmpxchg.h>
+> >   #include <asm/fixmap.h>
+> > +#include <asm/por.h>
+> >   #include <linux/mmdebug.h>
+> >   #include <linux/mm_types.h>
+> >   #include <linux/sched.h>
+> > @@ -153,6 +154,24 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
+> >   #define pte_accessible(mm, pte)	\
+> >   	(mm_tlb_flush_pending(mm) ? pte_present(pte) : pte_valid(pte))
+> > +static inline bool por_el0_allows_pkey(u8 pkey, bool write, bool execute)
+> > +{
+> > +	u64 por;
+> > +
+> > +	if (!system_supports_poe())
+> > +		return true;
+> > +
+> > +	por = read_sysreg_s(SYS_POR_EL0);
+> > +
+> > +	if (write)
+> > +		return por_elx_allows_write(por, pkey);
+> > +
+> > +	if (execute)
+> > +		return por_elx_allows_exec(por, pkey);
+> > +
+> > +	return por_elx_allows_read(por, pkey);
+> > +}
+> > +
+> >   /*
+> >    * p??_access_permitted() is true for valid user mappings (PTE_USER
+> >    * bit set, subject to the write permission check). For execute-only
+> > @@ -163,7 +182,8 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
+> >   #define pte_access_permitted_no_overlay(pte, write) \
+> >   	(((pte_val(pte) & (PTE_VALID | PTE_USER)) == (PTE_VALID | PTE_USER)) && (!(write) || pte_write(pte)))
+> >   #define pte_access_permitted(pte, write) \
+> > -	pte_access_permitted_no_overlay(pte, write)
+> > +	(pte_access_permitted_no_overlay(pte, write) && \
+> > +	por_el0_allows_pkey(FIELD_GET(PTE_PO_IDX_MASK, pte_val(pte)), write, false))
+> >   #define pmd_access_permitted(pmd, write) \
+> >   	(pte_access_permitted(pmd_pte(pmd), (write)))
+> >   #define pud_access_permitted(pud, write) \
+> > diff --git a/arch/arm64/include/asm/pkeys.h b/arch/arm64/include/asm/pkeys.h
+> > new file mode 100644
+> > index 000000000000..a284508a4d02
+> > --- /dev/null
+> > +++ b/arch/arm64/include/asm/pkeys.h
+> > @@ -0,0 +1,110 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (C) 2023 Arm Ltd.
+> > + *
+> > + * Based on arch/x86/include/asm/pkeys.h
+> > + */
+> > +
+> > +#ifndef _ASM_ARM64_PKEYS_H
+> > +#define _ASM_ARM64_PKEYS_H
+> > +
+> > +#define ARCH_VM_PKEY_FLAGS (VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2)
+> > +
+> > +#define arch_max_pkey() 7
+> > +
+> > +int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+> > +		unsigned long init_val);
+> > +
+> > +static inline bool arch_pkeys_enabled(void)
+> > +{
+> > +	return false;
+> > +}
+> > +
+> > +static inline int vma_pkey(struct vm_area_struct *vma)
+> > +{
+> > +	return (vma->vm_flags & ARCH_VM_PKEY_FLAGS) >> VM_PKEY_SHIFT;
+> > +}
+> > +
+> > +static inline int arch_override_mprotect_pkey(struct vm_area_struct *vma,
+> > +		int prot, int pkey)
+> > +{
+> > +	if (pkey != -1)
+> > +		return pkey;
+> > +
+> > +	return vma_pkey(vma);
+> > +}
+> > +
+> > +static inline int execute_only_pkey(struct mm_struct *mm)
+> > +{
+> > +	// Execute-only mappings are handled by EPAN/FEAT_PAN3.
+> > +	WARN_ON_ONCE(!cpus_have_final_cap(ARM64_HAS_EPAN));
+> > +
+> > +	return -1;
+> > +}
+> > +
+> > +#define mm_pkey_allocation_map(mm)	(mm->context.pkey_allocation_map)
+> > +#define mm_set_pkey_allocated(mm, pkey) do {		\
+> > +	mm_pkey_allocation_map(mm) |= (1U << pkey);	\
+> > +} while (0)
+> > +#define mm_set_pkey_free(mm, pkey) do {			\
+> > +	mm_pkey_allocation_map(mm) &= ~(1U << pkey);	\
+> > +} while (0)
+> > +
+> > +static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
+> > +{
+> > +	/*
+> > +	 * "Allocated" pkeys are those that have been returned
+> > +	 * from pkey_alloc() or pkey 0 which is allocated
+> > +	 * implicitly when the mm is created.
+> > +	 */
+> > +	if (pkey < 0)
+> > +		return false;
+> > +	if (pkey >= arch_max_pkey())
+> > +		return false;
+> > +
+> > +	return mm_pkey_allocation_map(mm) & (1U << pkey);
+> > +}
+> > +
+> > +/*
+> > + * Returns a positive, 3-bit key on success, or -1 on failure.
+> > + */
+> > +static inline int mm_pkey_alloc(struct mm_struct *mm)
+> > +{
+> > +	/*
+> > +	 * Note: this is the one and only place we make sure
+> > +	 * that the pkey is valid as far as the hardware is
+> > +	 * concerned.  The rest of the kernel trusts that
+> > +	 * only good, valid pkeys come out of here.
+> > +	 */
+> > +	u8 all_pkeys_mask = ((1U << arch_max_pkey()) - 1);
+> > +	int ret;
+> > +
+> > +	if (!arch_pkeys_enabled())
+> > +		return -1;
+> > +
+> > +	/*
+> > +	 * Are we out of pkeys?  We must handle this specially
+> > +	 * because ffz() behavior is undefined if there are no
+> > +	 * zeros.
+> > +	 */
+> > +	if (mm_pkey_allocation_map(mm) == all_pkeys_mask)
+> > +		return -1;
+> > +
+> > +	ret = ffz(mm_pkey_allocation_map(mm));
+> > +
+> > +	mm_set_pkey_allocated(mm, ret);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static inline int mm_pkey_free(struct mm_struct *mm, int pkey)
+> > +{
+> > +	if (!mm_pkey_is_allocated(mm, pkey))
+> > +		return -EINVAL;
+> > +
+> > +	mm_set_pkey_free(mm, pkey);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +#endif /* _ASM_ARM64_PKEYS_H */
+> > diff --git a/arch/arm64/include/asm/por.h b/arch/arm64/include/asm/por.h
+> > new file mode 100644
+> > index 000000000000..d6604e0c5c54
+> > --- /dev/null
+> > +++ b/arch/arm64/include/asm/por.h
+> > @@ -0,0 +1,33 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (C) 2023 Arm Ltd.
+> > + */
+> > +
+> > +#ifndef _ASM_ARM64_POR_H
+> > +#define _ASM_ARM64_POR_H
+> > +
+> > +#define POR_BITS_PER_PKEY		4
+> > +#define POR_ELx_IDX(por_elx, idx)	(((por_elx) >> (idx * POR_BITS_PER_PKEY)) & 0xf)
+> > +
+> > +static inline bool por_elx_allows_read(u64 por, u8 pkey)
+> > +{
+> > +	u8 perm = POR_ELx_IDX(por, pkey);
+> > +
+> > +	return perm & POE_R;
+> > +}
+> > +
+> > +static inline bool por_elx_allows_write(u64 por, u8 pkey)
+> > +{
+> > +	u8 perm = POR_ELx_IDX(por, pkey);
+> > +
+> > +	return perm & POE_W;
+> > +}
+> > +
+> > +static inline bool por_elx_allows_exec(u64 por, u8 pkey)
+> > +{
+> > +	u8 perm = POR_ELx_IDX(por, pkey);
+> > +
+> > +	return perm & POE_X;
+> > +}
+> > +
+> > +#endif /* _ASM_ARM64_POR_H */
+> > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> > index 495b732d5af3..e50ccc86d150 100644
+> > --- a/arch/arm64/mm/mmu.c
+> > +++ b/arch/arm64/mm/mmu.c
+> > @@ -25,6 +25,7 @@
+> >   #include <linux/vmalloc.h>
+> >   #include <linux/set_memory.h>
+> >   #include <linux/kfence.h>
+> > +#include <linux/pkeys.h>
+> >   #include <asm/barrier.h>
+> >   #include <asm/cputype.h>
+> > @@ -1535,3 +1536,42 @@ void __cpu_replace_ttbr1(pgd_t *pgdp, bool cnp)
+> >   	cpu_uninstall_idmap();
+> >   }
+> > +
+> > +#ifdef CONFIG_ARCH_HAS_PKEYS
+> > +int arch_set_user_pkey_access(struct task_struct *tsk, int pkey, unsigned long init_val)
+> > +{
+> > +	u64 new_por = POE_RXW;
+> > +	u64 old_por;
+> > +	u64 pkey_shift;
+> > +
+> > +	if (!arch_pkeys_enabled())
+> > +		return -ENOSPC;
+> > +
+> > +	/*
+> > +	 * This code should only be called with valid 'pkey'
+> > +	 * values originating from in-kernel users.  Complain
+> > +	 * if a bad value is observed.
+> > +	 */
+> > +	if (WARN_ON_ONCE(pkey >= arch_max_pkey()))
+> > +		return -EINVAL;
+> > +
+> > +	/* Set the bits we need in POR:  */
+> > +	if (init_val & PKEY_DISABLE_ACCESS)
+> > +		new_por = POE_X;
+> > +	else if (init_val & PKEY_DISABLE_WRITE)
+> > +		new_por = POE_RX;
+> > +
+> > +	/* Shift the bits in to the correct place in POR for pkey: */
+> > +	pkey_shift = pkey * POR_BITS_PER_PKEY;
+> > +	new_por <<= pkey_shift;
+> > +
+> > +	/* Get old POR and mask off any old bits in place: */
+> > +	old_por = read_sysreg_s(SYS_POR_EL0);
+> > +	old_por &= ~(POE_MASK << pkey_shift);
+> > +
+> > +	/* Write old part along with new part: */
+> > +	write_sysreg_s(old_por | new_por, SYS_POR_EL0);
+> > +
+> > +	return 0;
+> > +}
+> > +#endif
 
