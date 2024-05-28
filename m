@@ -1,193 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-20339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B274E8D196F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:30:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCF68D19AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12921C22442
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED3B0280F95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4134D16C69F;
-	Tue, 28 May 2024 11:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AA516C879;
+	Tue, 28 May 2024 11:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqZiX/QN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466087D07D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 11:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881BE16C85B;
+	Tue, 28 May 2024 11:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716895814; cv=none; b=C5EX6ae+gBtLzEa1H9rtwJVtilwcNa5J4wdV84LWPiKkeSc8qC0tdjMq1BiQh7mON9x8kuRLCpPYCSSw4YDAGKDzX96wIeDQxrfnMRjJqI8R/e4m1RI2WFS6qvdpRA9n6QKh6QjLl7LW3RetJ9mPhidD/Ymgq0yB5WqivMVYFxA=
+	t=1716896082; cv=none; b=j5tPMZkSxnPxBHn/N9VN9DlWjHUmuDtJ7GlYsyDPE3lhjxCN2xZyUTm4WjsLyi3SUYXCNHN570fbX9j4R+4XDElDb8l6cF1/TG6XeT6bJi95efeS3WgCtikAQTiy2qE7W7Q/CMDkJ2tLpmEnkTqEGf0l8hhOs2wkeqt/INEPfyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716895814; c=relaxed/simple;
-	bh=tNzj5MSVMtVZK1ImbyC1fO6YkaN9GMfR5eWEI6xs5oc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHJvlDaYqosgYtjKMN43p3oJmRX31FnehipIoiY5beHyyc6eH1QgK+XRB0KUvK2TPXwMusCTsP5lII925mP4Oit/pXnK3hmuI6XCMGumskD0315FQqABwfMzVHjWlpf6pQ+zKMPdvKj0qdWLY/Ce+SWlbdXu55mrpxBsmF2dodE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDA14339;
-	Tue, 28 May 2024 04:30:36 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C08213F762;
-	Tue, 28 May 2024 04:30:09 -0700 (PDT)
-Date: Tue, 28 May 2024 12:30:07 +0100
-From: Joey Gouly <joey.gouly@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
-	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
-	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 00/29] arm64: Permission Overlay Extension
-Message-ID: <20240528113007.GB1072039@e124191.cambridge.arm.com>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
+	s=arc-20240116; t=1716896082; c=relaxed/simple;
+	bh=9wGuHehGZ7Wo4wMIu99WxMw87OmZSZO2EPyqVpgkf2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qlxWMCR6bDf0pdcmdcYfZfGaPASier2rd51kHFVOxlWAgTPWHVZJI89zd07LpxObIfuxSpk7LoHkEy6db6D9UUgQJHS7r6rknwZEgOGX8yCyMMqK2WvSqsoY3mwh30iPLdd7uOrGKzE+9dXO/SgheoR3gVU0nAul1A9baegTxGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqZiX/QN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F1BC3277B;
+	Tue, 28 May 2024 11:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716896082;
+	bh=9wGuHehGZ7Wo4wMIu99WxMw87OmZSZO2EPyqVpgkf2I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jqZiX/QNADwaqFb4PkQw2ythPLEnt9ZL4nNfdZGbgR0GeGXOMGktu2ZN4MSQm++M8
+	 uSx9ev6S/3odjVwcqsNXBLB9CNI/BrSVPYQZ2sHrCJUkOyh+cqINKUKJmxvyPdXL/N
+	 v8xqxexxvZDIoLF28NW8VMS4QvYsF0typq5soeZfSs331sA0//32qdXban1M/slOmN
+	 zJenUlKiGPg18WUCbtnc/TK17IwnWstvFQ+lz723oBPOclJ1/QBPu+0lPRfSmZAFEZ
+	 BPzLi60+mu4L73AGDPy2uql0M0U/kxp0/P3m1zMk/mjPjftKsHpFUTgmx3lSgRz9E3
+	 FUTDMW4aVot/w==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: fat: add missing MODULE_DESCRIPTION() macros
+Date: Tue, 28 May 2024 13:34:27 +0200
+Message-ID: <20240528-februar-astronaut-3908de3fa2c4@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com>
+References: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503130147.1154804-1-joey.gouly@arm.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=997; i=brauner@kernel.org; h=from:subject:message-id; bh=9wGuHehGZ7Wo4wMIu99WxMw87OmZSZO2EPyqVpgkf2I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHvS8GG/KVnP4X+v7OYuFWu4fmsOQk/543/G9zf/dt 6btieVa2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRTT2MDCfXTncMu/Tkypev 8ucEtR1kUuZ+9e659euEotCx7d0zQkUYfjF/PF4X5jyL786a8NTiXLtPe7fyaP5u/pCkwZdz8HV lHAMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 03, 2024 at 02:01:18PM +0100, Joey Gouly wrote:
-> Hi all,
+On Mon, 27 May 2024 11:00:40 -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warnings:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
 > 
-> This series implements the Permission Overlay Extension introduced in 2022
-> VMSA enhancements [1]. It is based on v6.9-rc5.
 > 
-> One possible issue with this version, I took the last bit of HWCAP2.
-> 
-> Changes since v3[2]:
-> 	- Moved Kconfig to nearer the end of the series
-> 	- Reworked MMU Fault path, to check for POE faults earlier, under the mm lock
-> 	- Rework VM_FLAGS to use Kconfig option
-> 	- Don't check POR_EL0 in MTE sync tags function
-> 	- Reworked KVM to fit into VNCR/VM configuration changes
-> 	- Use new AT instruction in KVM
-> 	- Rebase onto v6.9-rc5
-> 
-> The Permission Overlay Extension allows to constrain permissions on memory
-> regions. This can be used from userspace (EL0) without a system call or TLB
-> invalidation.
-> 
-> POE is used to implement the Memory Protection Keys [3] Linux syscall.
-> 
-> The first few patches add the basic framework, then the PKEYS interface is
-> implemented, and then the selftests are made to work on arm64.
-> 
-> I have tested the modified protection_keys test on x86_64, but not PPC.
-> I haven't build tested the x86/ppc arch changes.
-> 
-> Thanks,
-> Joey
 
-I found a silly off by one error, so I will be sending a v5 at some point.
+Applied to the v6.10-rc1 branch of the vfs/vfs.git tree.
+Patches in the v6.10-rc1 branch should appear in linux-next soon.
 
-> 
-> Joey Gouly (29):
->   powerpc/mm: add ARCH_PKEY_BITS to Kconfig
->   x86/mm: add ARCH_PKEY_BITS to Kconfig
->   mm: use ARCH_PKEY_BITS to define VM_PKEY_BITN
->   arm64: disable trapping of POR_EL0 to EL2
->   arm64: cpufeature: add Permission Overlay Extension cpucap
->   arm64: context switch POR_EL0 register
->   KVM: arm64: Save/restore POE registers
->   KVM: arm64: make kvm_at() take an OP_AT_*
->   KVM: arm64: use `at s1e1a` for POE
->   arm64: enable the Permission Overlay Extension for EL0
->   arm64: re-order MTE VM_ flags
->   arm64: add POIndex defines
->   arm64: convert protection key into vm_flags and pgprot values
->   arm64: mask out POIndex when modifying a PTE
->   arm64: handle PKEY/POE faults
->   arm64: add pte_access_permitted_no_overlay()
->   arm64: implement PKEYS support
->   arm64: add POE signal support
->   arm64: enable PKEY support for CPUs with S1POE
->   arm64: enable POE and PIE to coexist
->   arm64/ptrace: add support for FEAT_POE
->   arm64: add Permission Overlay Extension Kconfig
->   kselftest/arm64: move get_header()
->   selftests: mm: move fpregs printing
->   selftests: mm: make protection_keys test work on arm64
->   kselftest/arm64: add HWCAP test for FEAT_S1POE
->   kselftest/arm64: parse POE_MAGIC in a signal frame
->   kselftest/arm64: Add test case for POR_EL0 signal frame records
->   KVM: selftests: get-reg-list: add Permission Overlay registers
-> 
->  Documentation/arch/arm64/elf_hwcaps.rst       |   2 +
->  arch/arm64/Kconfig                            |  22 +++
->  arch/arm64/include/asm/cpufeature.h           |   6 +
->  arch/arm64/include/asm/el2_setup.h            |  10 +-
->  arch/arm64/include/asm/hwcap.h                |   1 +
->  arch/arm64/include/asm/kvm_asm.h              |   3 +-
->  arch/arm64/include/asm/kvm_host.h             |   4 +
->  arch/arm64/include/asm/mman.h                 |   8 +-
->  arch/arm64/include/asm/mmu.h                  |   1 +
->  arch/arm64/include/asm/mmu_context.h          |  51 ++++++-
->  arch/arm64/include/asm/pgtable-hwdef.h        |  10 ++
->  arch/arm64/include/asm/pgtable-prot.h         |   8 +-
->  arch/arm64/include/asm/pgtable.h              |  34 ++++-
->  arch/arm64/include/asm/pkeys.h                | 110 ++++++++++++++
->  arch/arm64/include/asm/por.h                  |  33 +++++
->  arch/arm64/include/asm/processor.h            |   1 +
->  arch/arm64/include/asm/sysreg.h               |   3 +
->  arch/arm64/include/asm/traps.h                |   1 +
->  arch/arm64/include/asm/vncr_mapping.h         |   1 +
->  arch/arm64/include/uapi/asm/hwcap.h           |   1 +
->  arch/arm64/include/uapi/asm/sigcontext.h      |   7 +
->  arch/arm64/kernel/cpufeature.c                |  23 +++
->  arch/arm64/kernel/cpuinfo.c                   |   1 +
->  arch/arm64/kernel/process.c                   |  28 ++++
->  arch/arm64/kernel/ptrace.c                    |  46 ++++++
->  arch/arm64/kernel/signal.c                    |  52 +++++++
->  arch/arm64/kernel/traps.c                     |  12 +-
->  arch/arm64/kvm/hyp/include/hyp/fault.h        |   5 +-
->  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h    |  29 ++++
->  arch/arm64/kvm/sys_regs.c                     |   8 +-
->  arch/arm64/mm/fault.c                         |  56 ++++++-
->  arch/arm64/mm/mmap.c                          |   9 ++
->  arch/arm64/mm/mmu.c                           |  40 +++++
->  arch/arm64/tools/cpucaps                      |   1 +
->  arch/powerpc/Kconfig                          |   4 +
->  arch/x86/Kconfig                              |   4 +
->  fs/proc/task_mmu.c                            |   2 +
->  include/linux/mm.h                            |  20 ++-
->  include/uapi/linux/elf.h                      |   1 +
->  tools/testing/selftests/arm64/abi/hwcap.c     |  14 ++
->  .../testing/selftests/arm64/signal/.gitignore |   1 +
->  .../arm64/signal/testcases/poe_siginfo.c      |  86 +++++++++++
->  .../arm64/signal/testcases/testcases.c        |  27 +---
->  .../arm64/signal/testcases/testcases.h        |  28 +++-
->  .../selftests/kvm/aarch64/get-reg-list.c      |  14 ++
->  tools/testing/selftests/mm/Makefile           |   2 +-
->  tools/testing/selftests/mm/pkey-arm64.h       | 139 ++++++++++++++++++
->  tools/testing/selftests/mm/pkey-helpers.h     |   8 +
->  tools/testing/selftests/mm/pkey-powerpc.h     |   3 +
->  tools/testing/selftests/mm/pkey-x86.h         |   4 +
->  tools/testing/selftests/mm/protection_keys.c  | 109 ++++++++++++--
->  51 files changed, 1027 insertions(+), 66 deletions(-)
->  create mode 100644 arch/arm64/include/asm/pkeys.h
->  create mode 100644 arch/arm64/include/asm/por.h
->  create mode 100644 tools/testing/selftests/arm64/signal/testcases/poe_siginfo.c
->  create mode 100644 tools/testing/selftests/mm/pkey-arm64.h
-> 
-> -- 
-> 2.25.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: v6.10-rc1
+
+[1/1] fs: fat: add missing MODULE_DESCRIPTION() macros
+      https://git.kernel.org/vfs/vfs/c/9101026fc35c
 
