@@ -1,63 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-20345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D49E8D19DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:41:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7687E8D19E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3B028D889
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:41:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8961F23584
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E5916C87C;
-	Tue, 28 May 2024 11:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7370016C879;
+	Tue, 28 May 2024 11:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qU1qW8o3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZr8Fovm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C09A16C855;
-	Tue, 28 May 2024 11:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA11D16ABEA;
+	Tue, 28 May 2024 11:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896433; cv=none; b=dFAMIUEH1+6q4lq8PTOnDfq2Qawr4qddE45h9YcSShVTtpFoJayGu3YoAR/3NvhTfnZzT0rTbADQUxDVG26Zuv/EyfcLvxmlMcJ0eFxgOr7GolOGqDjeqS5dFwKq7IfSxZk+35q34m/zFtW5O/wzvI+teoJZbR7ZFbXLBqsMSHA=
+	t=1716896461; cv=none; b=r4LhWewKvKzb0qu4YZ4NvvesGZEmBIAwJmku9PyaFWxS9O3DPZMXA3cMDsP0GZAu5fmze6cs7V0A04t7ksiWYbVPGHDfHgj0oXhAslz5nAqOaALf+H+6uMDyxWlEtkFkp2SVkV0Tv+5eTv+pojJ9N+wt5KToeiWyoqaXdPkC5yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896433; c=relaxed/simple;
-	bh=uNv7NHqHzFgggcdb6PDv5TvU8eZ5Ipnraxm/zrZyFoc=;
+	s=arc-20240116; t=1716896461; c=relaxed/simple;
+	bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BxUapD2bMxpeSndNj0L8BKrgcLwTyyWCZc+XMqksnpwZbIceB33GJ7c707A3QwNuRB2Wlcd1sv7Dd1IdIwrvxiMUyPy/Rl5nivdCUU8lVX5MSpgJ7VeGm+5dFUyvw01Sf7rYWcUMyFudjCZ2rJIa4toOzX/U7IfxmbFjrUM1Tyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qU1qW8o3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AECDC32781;
-	Tue, 28 May 2024 11:40:30 +0000 (UTC)
+	 MIME-Version:Content-Type; b=QAPvD2KNsaYY8bx3duTSiTEijzQpHJ89m1OuU5x5JIPTGVGTXacvujighx65rIFJk9XXaAuOefO76VGbikyt3Y0aI/+beSkXHrtyIrko0ZxlnS6ci8OZ5PdKZwodq8Yr/1iiseFOyRxnQ+jQQ3w2TmZd/IPbzWq+mSD3EpvrtLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZr8Fovm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57B10C3277B;
+	Tue, 28 May 2024 11:40:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716896433;
-	bh=uNv7NHqHzFgggcdb6PDv5TvU8eZ5Ipnraxm/zrZyFoc=;
+	s=k20201202; t=1716896461;
+	bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qU1qW8o3T8zvR1NXO5EGznMdlG+EeLaNjTZHhqTlW9UEbOOyKb+Z1u0OnmBemKlq9
-	 MhUSRfI0Q97c3JezYxQ6cT6rtWvf+6Lh0EYn7Q8KaVZnLRc3Q8Hi98PMGEDVF74qoH
-	 TOJg0+dCBXz4F92eGIq8LYJGFaBiplOAIaGsb42FE42XIG62dlAi+9HVu1JclDmChe
-	 CF4jLLxWJEcFva4MD9I3aesfpx3F6bTWU/BLVk/v+nZxbFMCzPKynWHeC+/m25hN6K
-	 y1WtMUtJyK870PHjqnkSsITQ4T7mGbAXUobSYMx6ZNOy1FFGOc93N6Bf4T+OU3BQQj
-	 kE+4L03tymiGA==
+	b=UZr8FovmS/oz14uLYlsog1dq/IVopZHHLKcV8JaTHcDNSah+0mVTqL2UyZDJlRi1e
+	 w1j0n+1xQTvoR7lxMWzcddVY2NQ5wjwYlrSX9uMB4rZlhoc90fn/RRvQF28YJgMi63
+	 014eO+1e6j5uln2HzSl6xCoHiDX5iqQ4Y9Iq2/B5YLMcDBPuSzaQzAkwUFQ8sNzfb1
+	 dE0R7PLssMexeZdyLPaB8trqnD6ztT9TAqi7+vk86IhAx+Pzl/CjKjRxv9JI7vK1pt
+	 eG3DmbhOQnkGatkw7Piou1TsK+UmxNAGNNBNJJOBb1azXlOIH/i7ZpZvcav1gNUhKb
+	 /t/Q+ayaNRtsw==
 From: Christian Brauner <brauner@kernel.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] fs: binfmt: add missing MODULE_DESCRIPTION() macros
-Date: Tue, 28 May 2024 13:40:24 +0200
-Message-ID: <20240528-boote-neuauflage-38effd449864@brauner>
+	linux-kernel@vger.kernel.org,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: cramfs: add MODULE_DESCRIPTION()
+Date: Tue, 28 May 2024 13:40:42 +0200
+Message-ID: <20240528-genutzt-wohnprojekt-74654ae5d3ab@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527-md-fs-binfmt-v1-1-f9dc1745cb67@quicinc.com>
-References: <20240527-md-fs-binfmt-v1-1-f9dc1745cb67@quicinc.com>
+In-Reply-To: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
+References: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,14 +62,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1005; i=brauner@kernel.org; h=from:subject:message-id; bh=uNv7NHqHzFgggcdb6PDv5TvU8eZ5Ipnraxm/zrZyFoc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHlqZpxFvxnhBb6170h6HxE07fnZGMskE1L6uF/l1U Ov09eo3HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNxOczIMHej2L/GZfZC92xu 7/lwd753q8cFE6b6C7rnnOTbbDaHrWRkmKQXca/CoHZJ4rlDDVtkqoQmM9SyRNjqnvNd7bqsTO0 ACwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=919; i=brauner@kernel.org; h=from:subject:message-id; bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHjqyeNb3mNpvoturfPjXMExPePn4IfvJ/3Jfja5f/ ly8xvfk4o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJKG1m+O+su+Zewe89k9bv v3v1ZmulZd+hY/JsxvX6pborVdo3iexlZGjt2Z6akG78oLDmMmuiZ7Pe/kJhvk3snrsLuzp6XKf e5QIA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 27 May 2024 11:57:52 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warnings:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_misc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_script.o
+On Mon, 27 May 2024 10:55:02 -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
 > 
 > 
 
@@ -91,6 +87,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: v6.10-rc1
 
-[1/1] fs: binfmt: add missing MODULE_DESCRIPTION() macros
-      https://git.kernel.org/vfs/vfs/c/d60efd521448
+[1/1] fs: cramfs: add MODULE_DESCRIPTION()
+      https://git.kernel.org/vfs/vfs/c/9149a57dd525
 
