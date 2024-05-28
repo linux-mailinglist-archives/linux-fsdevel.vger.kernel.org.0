@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-20378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FED8D27FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 00:25:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F308D2873
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 00:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC1A21C20BBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 22:24:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738061C26A0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 22:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B52D13F447;
-	Tue, 28 May 2024 22:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5A213E8BF;
+	Tue, 28 May 2024 22:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m6DeYh3K"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OvZynLnc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6661B13DDC7;
-	Tue, 28 May 2024 22:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C91913E883;
+	Tue, 28 May 2024 22:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716935037; cv=none; b=R/0ufSndIOuH7O10ToBLiw/0lYDHehdxViof3I0fqWV4G6KScMNrwTa3o/I8XWc4Zyf/8J98S9rtLyzp1F0DynOnZq3pG3pnaFeMJle6ZBx6tVp6k3RFR16AUolWKbtarUGF6Ie5ckv/0n5ANCc5M99AtQqyyL8mekHfJH7GAQI=
+	t=1716937114; cv=none; b=QTxKFvtqoYa9x8n+Uf87NoUqUOwLEZ7ed0UvC0cmfQN3mabPEFhh7PkBpwVXo6jDsBYu+BwDAG3w3+VvXmeNSvcdfPH/NJuALYlLhvrXqN4vtrANftpLaq2xxY6axwYUuv71CuJxeRV5Cz7MNI5g2eVwlHVmt7+dO7Ig7CjFiVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716935037; c=relaxed/simple;
-	bh=G3YierNArA4BFLLcWX+JHQ7e9EYFI0xTNkmufDNDMug=;
+	s=arc-20240116; t=1716937114; c=relaxed/simple;
+	bh=/mRakvpmO/pRhLpTx6MV8+Lfo6YDYZ2R1zmXM5ZX7AM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMOXLOq3Rt+3wEIvgZ7CxWD5LM+ztPtYEZGYU76sXG1liV9YPqP2/zi0KbhlArN9CqIJRgnLiBBc0lGhsLNfR/+pXdPMKf3Yx70A45z4yfmcxqbKxWFYC542kTc620PAPqZfGQVkb4fqnkZ6I//SmdHs0GEnmqGUjR4Osfbd4pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m6DeYh3K; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qk+72avzkCzpH1zxY60ltG2NCo+j1NKVQi23UXpzbqxJrN6kFGrh/nJgn0/12L1xXKdTXQf0+BdctjPsWP5c1/bfOGeu/b1N3wy9AAzy/Ggxy/F82Z2H+tNkU0aOL2xvAFd52BbkNlZb80br9xsl+daPZVo6zd3bSX4qzKKtJns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OvZynLnc; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sOt3kmCrcl0gPb1/Ru/FCAYrnK6kWas/sJfOYmKK23Q=; b=m6DeYh3KLu18Fl4IPvC4OVLaOx
-	CfP/wQPOg8HhGZyGGqTCCKii7vC3gWhWLwaD20m6nrDWd8b8Sv3aaPuaF/N+Yc0lPysT6Vm94T/Dm
-	wkEfOMigPKpenFE+ZBpFeCorM3pVEZnuQUZhkJ+mAOUKQdQhEBZPF3NzKyrbvSfOpx7Ym8WsCqa5C
-	MjpKk+LAlM8RWXSVty4+SEgsKAY2BbW37aWAu1WtoLGEL6JA0unyuvXa7cjVz95gfs5O8stA2o1l+
-	6DKBjqN5rQ9mgY4PMrQr8qVDfnN251LhbNStR5C6N5O+I23smWixeIoW2d2YewQ0PMNG9/fe6uNHr
-	apii4wYw==;
+	bh=bW2TjyT/Ytf/0wT7lSjDyMyqeXrZTTm63r54kD0Yl8c=; b=OvZynLnchxaco6BaSURLwCQf9I
+	qE2RxRCGxeiVbd6af0v7HT6vOSaXjebaeqiA3Dwokmgk2HlFsxZqHDHkzS8xbXpEqPaVBIRVNoEEZ
+	PE8O75ixoWeTDB52eAN7yTvWQsiIeCDbsW5Va92wtGCsj8fqAogh0DyzSJgdGKfNtsQYWwPOvuDIf
+	FQd04lFTa+56lBHfxq0EWRGKNvwtrY2tufnBO6l/JhWn7o8Pf3UjiuRLmyTxteU+nh1CLDCca4IOK
+	c9CIcsztY9HVB3oRdj7wJCgfMRZ9HoiG29B4uMs6UU0zlA/JtVqpa/3414na07egeQoKrhjXlIPr6
+	xrNMXgxA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sC5EY-00000002CII-2jKi;
-	Tue, 28 May 2024 22:23:54 +0000
-Date: Tue, 28 May 2024 15:23:54 -0700
+	id 1sC5m1-00000002Gul-2mFx;
+	Tue, 28 May 2024 22:58:29 +0000
+Date: Tue, 28 May 2024 15:58:29 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
 To: Zorro Lang <zlang@redhat.com>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	willy@infradead.org, p.raghav@samsung.com, da.gomez@samsung.com,
-	hare@suse.de, john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [RFC] fstests: add mmap page boundary tests
-Message-ID: <ZlZZeksxGmXuTGpU@bombadil.infradead.org>
-References: <20240415081054.1782715-1-mcgrof@kernel.org>
- <20240415200542.bww7gupflrq3mqoo@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+Cc: fstests@vger.kernel.org, kdevops@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, willy@infradead.org,
+	david@redhat.com, linmiaohe@huawei.com, muchun.song@linux.dev,
+	osalvador@suse.de
+Subject: Re: [PATCH] fstests: add fsstress + compaction test
+Message-ID: <ZlZhlQ1ES-mPqaif@bombadil.infradead.org>
+References: <20240418001356.95857-1-mcgrof@kernel.org>
+ <20240420140241.wez2x3zoirzlmat6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,36 +64,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240415200542.bww7gupflrq3mqoo@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+In-Reply-To: <20240420140241.wez2x3zoirzlmat6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Tue, Apr 16, 2024 at 04:05:42AM +0800, Zorro Lang wrote:
-> On Mon, Apr 15, 2024 at 01:10:54AM -0700, Luis Chamberlain wrote:
-> > diff --git a/common/filter b/common/filter
-> > index 36d51bd957dd..d7add06f3be7 100644
-> > --- a/common/filter
-> > +++ b/common/filter
-> > @@ -194,6 +194,12 @@ _filter_xfs_io_unique()
-> >      common_line_filter | _filter_xfs_io
-> >  }
-> >  
-> > +_filter_xfs_io_data_unique()
-> > +{
-> > +    _filter_xfs_io_offset | sed -e 's| |\n|g' | egrep -v "\.|XX|\*" | \
+On Sat, Apr 20, 2024 at 10:02:41PM +0800, Zorro Lang wrote:
+> On Wed, Apr 17, 2024 at 05:13:56PM -0700, Luis Chamberlain wrote:
+> > +_require_compaction()
 > 
-> The egrep is deprecated, please use 'grep -E'.
+> I'm not sure if we should name it as "_require_vm_compaction", does linux
+> have other "compaction" or only memory compaction?
+
+I'll color bike shed with "memory compaction" although I am not aware of
+other compaction types. However making it clear helps.
+
+> > +++ b/tests/generic/744
+> > @@ -0,0 +1,56 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2024 Luis Chamberlain.  All Rights Reserved.
+> > +#
+> > +# FS QA Test 744
+> > +#
+> > +# fsstress + compaction test
 > 
-> > +	sort | uniq | tr -d '\n'
-> 
-> Isn't "sort | uniq" equal to "sort -u" ?
+> fsstress + memory compaction ?
 
-I'll try both suggestions.
+Sure.
 
-> Do we need this filter to be a common helper? Will it be used widely? If not,
-> this can be a local function of below single test case.
+> Looks like this case is copied from g/476, just add memory_compaction
+> test. That makes sense to me from the test side.
 
-I suspect it will be but its OK I can stuff it alone, same as for
-_mwrite() too then.
+It's a generic fsstress + compaction, right.
+
+> you just found. Looks like you're reporting a bug, and provide a test
+> case to fstests@ by the way.
+
+This case is hard to reproduce, and so instead of waiting for compaction
+to trigger we force it now.
+
+> Anyway, I think there's not objection on
+> this test itself, right? And is this test for someone known bug or not?
+
+This reproduces a known kernel bug for which we have a fix now merged,
+at the time this test was written it was not even merged on v6.9-rc4.
+The fix was merged on v6.9-rc6.
+
+I can now add this to the test:
+
+_fixed_by_git_commit kernel d99e3140a4d3 \                                       
+        "mm: turn folio_test_hugetlb into a PageType"
+
+However I also ran into some *other* issues even after that patch was
+applied. Now that v6.10-rc1 is out I will retest to clarify the
+situation and see if new issues are still lingering with this test.
 
   Luis
 
