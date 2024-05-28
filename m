@@ -1,183 +1,311 @@
-Return-Path: <linux-fsdevel+bounces-20371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC708D25D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 22:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172CD8D2604
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 22:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432501C23332
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 20:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AF0F1C245DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 20:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EA4179202;
-	Tue, 28 May 2024 20:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F59179202;
+	Tue, 28 May 2024 20:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vQEgrJ5o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bk5SsJiQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B62178CCD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 20:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0923675809;
+	Tue, 28 May 2024 20:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716928160; cv=none; b=L7BVFuHm0+UDyyBacdLfWlsXJ/jRhTLjCVVhNkiKd+U02/nl2ShneEgfIqlwbXj1NqeMbpugGoftOeq1OyRScFdXCIjDnWSgo1TpiGT/R09gNyg+VLfi40AUlgk0Q2P+HU0qUS2w7fzJt/DLngw6OYEzBMePQ/Fwmy+iTQ4PAzo=
+	t=1716928617; cv=none; b=G8Bs6J0CKXAaJX0kUdQGZ9NpjI8F7M410vxd+o+qlWU239LHc+Q71AImUItYVH/6y5r53Mdi8g7JTV7xSbBBOB74yqJ49gjRSiJjKqPw6wVGL4F96rXo4I8/YUu2s2qV2GVl+bvma9ywRnEob0T9w2SUq8QhJixUybV3FKWFUV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716928160; c=relaxed/simple;
-	bh=6mb+AyKCcY2yNuBAEwVmrS9m/hjPvJbxv0Y2vkU0eXg=;
+	s=arc-20240116; t=1716928617; c=relaxed/simple;
+	bh=ulwdA7kgSS1yzkdDFfJhanLMiaSrjQN9Ozxf+YqYC8E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aGSoG69d6f0vu69524sWjNWEH3jlIODUtB3gk+ScsiycRfJBD+Iqc6RawnzZ7pPW6WMJJDkO41WMk0w/Cd7idXNhgNsPVzlgufDFR4Kt3ONut9XUfF/MPeViOl4kte7fMFPGQfOv7iI2R7cSECfg5BHsT+vRO+jsI3Jg0NBRoCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vQEgrJ5o; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35507e3a5deso116061f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 13:29:18 -0700 (PDT)
+	 To:Content-Type; b=P6T1TlUHfJE4lrFLVj5lwGOEt0bYJzy0qghTrUD/VzkJjDkuhljVVMbj6GkLB8DDLtKCJNi59ZD6DwrxEsnJ/UtI0ZEmBq4jRaW7owyFCDfS2tk9ujaptPVpI0rIhuZmOrwK7LfYRoPDSHLE4VEUYL8I8n11z5MHfYyHlfa1wbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bk5SsJiQ; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2bdf446f3d1so1042997a91.3;
+        Tue, 28 May 2024 13:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716928157; x=1717532957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1716928615; x=1717533415; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xWLV/WrhUMfC/WxnYGeBUOyuFt9nvr3SPEDSWekunHA=;
-        b=vQEgrJ5oro4nmI9+hjVPG2UIZHvHzAEHnkjdRD7NxzL05rtGwVliFSIlHdykElMQ61
-         iEh+Wchf4k3cKU+3JQiirH8AJW8dBSUwtYahL2hgM0xqLu30U1lxlPzwAXJJrM+6xl4K
-         uUmqmFRUvRfcnQko/6VH1hg9VbZBei1P5MCit0FExIWnXz1a00RWEzRsmPqDudDNcRYD
-         yuBdPLyRf0I7XnvW90Ov+kOYefP+LgHEhPh6Y8IQezaZhjnRLy0bZ+paaulByUYH8CrU
-         1eMNwW4y0FhPieEAFi+SmYsNZVhWO8+AFLCoPJCeWe7l98wL32jd5tnklvw3Y9Zo1fGg
-         wsFA==
+        bh=ShhpbTYkbNzOOiZyKHXPgvAm+XC4MBjMN7onACro4uw=;
+        b=Bk5SsJiQbnW99BgJWl7ZkuCHXroexP17FP+ctUFEso78D+2G7tHSnTyN29F8RG1pTv
+         H3mON5dgA3o1TfwQoKe4RNe5K36X7EtV828O8cBskeBBRexYRnbrxmGFKSSgQe6e9t88
+         TBmrq5ObmQ6NX3aJjWnq33K3zR5+7uDMbf6BGyhufBpTQT3abpsDBVwHahc3X6Q11qot
+         kDUXuP5TUFc/qg9P0svaz3d/44wbjYiGPxBjoAF0qzeSsXAW5fmu3hYS+vVJxRWcGr4o
+         +MwvV/Q7jL7oVZTii02bg8sYEDhxFSyHZgmboj5LsuNqYfYFTO3RGjs7tO/fU5g3UA3G
+         RGRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716928157; x=1717532957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1716928615; x=1717533415;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xWLV/WrhUMfC/WxnYGeBUOyuFt9nvr3SPEDSWekunHA=;
-        b=puCmJOUSfYHwIaNa6qSOzwcrKnghSuDjwBc4Lkisbvn3P+fUJBTZSjTUFIQt/jYAgD
-         TSF2LsN8modrV5byUkusLSlxdaNoUrk/0jYsoDcy5DndYinrMofHbFD8/urJSWozMGLK
-         rRtUyWqIJSeYyU9Ff12Q4qK8Kmd0C+UrxLp6GU5uaJEWb9uAFLON/mPGhv69eHDZTYt+
-         oktI6uHvhVRMi98q6PjghNOBI44GnouQn7QhH4o5h9Z67LjomAHY1M8HsoB8dhlumVjR
-         aJL7eEI/2JHc/xW3w1vau6Fl11ClBwHjbPoWojlSrZStBxBJlUey5WYbK9+KJJp6cU8b
-         QiQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnvKkT6w5di6a3YVHJGF4V3bgd3aatxIoOehNZdVhyvXgAKRIm+oRdIUAOFxjUfap2/L0cGWYwhXBGxpC/R9we9L2wiOxE+MuiMHbazw==
-X-Gm-Message-State: AOJu0Yxqygs9IRUOUDUKiwQ5iy/f9DLxOSI81+dJVqkd7urMIaHMM6ry
-	jl086W3Q37Djd876LnWgfn/OA2DdL5+svI1sqxm/taezsGwkbPijfu+sh+w/nUpU05hi6jln6V9
-	OXdnNKpR1nufLWctpvdAjN+F/vQQbhSly5XYp
-X-Google-Smtp-Source: AGHT+IEGxKcuSL6tu+YpaC13+aXQYCbazR2E3yf3HXMyqQoskNTQuhpwbnAmxzVmJsQhaAH7f1bayXZQoH5qexT1beA=
-X-Received: by 2002:a5d:68d0:0:b0:34d:b0bf:f1b5 with SMTP id
- ffacd0b85a97d-35c7c6988c7mr88083f8f.35.1716928156588; Tue, 28 May 2024
- 13:29:16 -0700 (PDT)
+        bh=ShhpbTYkbNzOOiZyKHXPgvAm+XC4MBjMN7onACro4uw=;
+        b=wq9vCDxxIbxMsKowYhg5kVX5jUrO1nVpOJGSFxcgo36ZLRjCHuXktT44rXBDpmP/YD
+         tOBSraOrMvkY6rLl4iXIMlyamyRMz827OWOu9Hf9ntnWIGdl6J1vs5OCRqlVS2FSvDGN
+         9sd+vlZoNTewcuuHrt1NTsmv7ZBUxm4yH4zMcrrI61K9ZzuUfE0Dq7hTb7gE1jtH0rpv
+         47YykV0LCfIuGo8FA24ToyqoSRrckdLqbUadkpZ5RQiWu4/cqyb9hfnJb7YJErOtqGz+
+         3dL59QmaFOaaiEZhyqtx9WfyItcr7EHP+Q/Ca50L8ji4YlqGYIrWpNsGbYcfFQnh4QGc
+         6CbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmsILGQ2C8WYxM2dtbF3vUUcFLk0hUEAnaD6PGacLVh/iSA0PaTfHc/yyXHgKw0mZ3gj++19+Ra2Hkj+xRhnOqstOgSD3AtNJT0s84gpwiUfjWYdDvaJHvQMwYMBGrWschck5hAj0GenXIxiLKSAKLPU17g1opzlr5/tOAfrwf5g==
+X-Gm-Message-State: AOJu0YydlPrMksJReHJYWJ3YEFwjSy7zmRxwP1YERfTFHJebKNV69pIR
+	Sw6CC5E0BMQOmfXvI0lExkAyHHNzfVZvd5yxxasbg5vIYiKadN/NXScpSgIcu2go57nZmHjh2yY
+	Wlc5IgoZOxaCUmxMdIiMmE17a9P0=
+X-Google-Smtp-Source: AGHT+IHCnozhEFi9S2dOEuRQWFG1HUI+x08ibqkACVSV+SfjqJkUqAwwhGL/3AemhXz6T/B8lXbnqnpNdb9tuIv4TSs=
+X-Received: by 2002:a17:90a:f684:b0:2b4:32ae:8d29 with SMTP id
+ 98e67ed59e1d1-2bf5f754e0dmr10595116a91.45.1716928615104; Tue, 28 May 2024
+ 13:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524213245.GT2118490@ZenIV> <20240527160356.3909000-1-aliceryhl@google.com>
- <20240528193624.GH2118490@ZenIV>
-In-Reply-To: <20240528193624.GH2118490@ZenIV>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 28 May 2024 22:29:03 +0200
-Message-ID: <CAH5fLgiD_x3OVSc_JVK43BoNY4SeFt01siT32w2gQy_Ae_awrA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, 
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	brauner@kernel.org, cmllamas@google.com, dan.j.williams@intel.com, 
-	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
-	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
-	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
-	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, wedsonaf@gmail.com, 
-	willy@infradead.org, yakoyoku@gmail.com, 
-	Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240524041032.1048094-1-andrii@kernel.org> <20240524041032.1048094-5-andrii@kernel.org>
+ <eciqv22jtpw6uveqih3jarjqulm5g3nxhlec5ytk2pltlltxnw@47agja2den2b>
+In-Reply-To: <eciqv22jtpw6uveqih3jarjqulm5g3nxhlec5ytk2pltlltxnw@47agja2den2b>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 28 May 2024 13:36:42 -0700
+Message-ID: <CAEf4BzbphUBPnA7iDz5pis17GRwzpqsduftV_JHyf1Ce0MMqzw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] fs/procfs: use per-VMA RCU-protected locking in
+ PROCMAP_QUERY API
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	gregkh@linuxfoundation.org, linux-mm@kvack.org, surenb@google.com, 
+	rppt@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 9:36=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
+On Fri, May 24, 2024 at 12:48=E2=80=AFPM Liam R. Howlett
+<Liam.Howlett@oracle.com> wrote:
 >
-> On Mon, May 27, 2024 at 04:03:56PM +0000, Alice Ryhl wrote:
->
-> > > In other words, if current->files->count is equal to 1 at fdget() tim=
-e
-> > > we can skip incrementing refcount.  Matching fdput() would need to
-> > > skip decrement, of course.  Note that we must record that (borrowed
-> > > vs. cloned) in struct fd - the condition cannot be rechecked at fdput=
-()
-> > > time, since the table that had been shared at fdget() time might no l=
-onger
-> > > be shared by the time of fdput().
+> * Andrii Nakryiko <andrii@kernel.org> [240524 00:10]:
+> > Attempt to use RCU-protected per-VAM lock when looking up requested VMA
+> > as much as possible, only falling back to mmap_lock if per-VMA lock
+> > failed. This is done so that querying of VMAs doesn't interfere with
+> > other critical tasks, like page fault handling.
 > >
-> > This is great! It matches my understanding. I didn't know the details
-> > about current->files and task->files.
+> > This has been suggested by mm folks, and we make use of a newly added
+> > internal API that works like find_vma(), but tries to use per-VMA lock.
+>
+> Thanks for doing this.
+>
 > >
-> > You should copy this to the kernel documentation somewhere. :)
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  fs/proc/task_mmu.c | 42 ++++++++++++++++++++++++++++++++++--------
+> >  1 file changed, 34 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index 8ad547efd38d..2b14d06d1def 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -389,12 +389,30 @@ static int pid_maps_open(struct inode *inode, str=
+uct file *file)
+> >  )
+> >
+> >  static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
+> > -                                              unsigned long addr, u32 =
+flags)
+> > +                                              unsigned long addr, u32 =
+flags,
+> > +                                              bool *mm_locked)
+> >  {
+> >       struct vm_area_struct *vma;
+> > +     bool mmap_locked;
+> > +
+> > +     *mm_locked =3D mmap_locked =3D false;
+> >
+> >  next_vma:
+> > -     vma =3D find_vma(mm, addr);
+> > +     if (!mmap_locked) {
+> > +             /* if we haven't yet acquired mmap_lock, try to use less =
+disruptive per-VMA */
+> > +             vma =3D find_and_lock_vma_rcu(mm, addr);
+> > +             if (IS_ERR(vma)) {
 >
-> Probably, after it's turned into something more coherent - and after
-> the description of struct fd scope rules is corrected ;-/
+> There is a chance that find_and_lock_vma_rcu() will return NULL when
+> there should never be a NULL.
 >
-> Correction in question: you _are_ allowed to move reference from
-> descriptor table while in scope of struct fd; what you are not allowed
-> is dropping that reference until the end of scope.
-
-The patch you are commenting on contains a change to fs/file.c with
-exactly that correction. I'm not sure if you noticed it - I should
-probably have put it in its own commit to make it more obvious.
-
-> That's what binder_do_fd_close() is about - binder_deferred_fd_close()
-> is called in a struct fd scope (anything called from ->unlocked_ioctl()
-> instances is).  It *does* remove a struct file reference from
-> descriptor table:
->         twcb->file =3D file_close_fd(fd);
-> moves that reference to twcb->file, and subsequent
->                 get_file(twcb->file);
->                 filp_close(twcb->file, current->files);
-> completes detaching it from the table[*] and the reference itself
-> is dropped via task_work, which is going to be executed on the
-> way out to userland, definitely after we leave the scope of
-> struct fd.
-
-Yeah. If you look at previous versions of this patchset, it contains
-Rust code for performing exactly that dance. I was asked to drop it
-from the patch series, though.
-
-> Incidentally, I'm very tempted to unexport close_fd(); in addition to
-> being a source of bugs when called from ioctl on user-supplied descriptor
-> it encourages racy crap - just look at e.g. 1819200166ce
-> "drm/amdkfd: Export DMABufs from KFD using GEM handles", where we
-> call drm_gem_prime_handle_to_fd(), immediately followed by
->                 dmabuf =3D dma_buf_get(fd);
->                 close_fd(fd);
-> dup2() from another thread with guessed descriptor number as target and
-> you've got a problem...  It's not a violation of fdget() use rules
-> (it is called from ioctl, but descriptor is guaranteed to be different
-> from the one passed to ioctl(2)), but it's still wrong.  Would take
-> some work, though...
-
-Wait, what's going on there? It adds the fd and then immediately
-removes it again, or?
-
-> "Detaching from the table" bit also needs documenting, BTW.  If you look
-> at that thing, you'll see that current->files is converted to fl_owner_t,
-> which is an opaque pointer.  What happens is that dnotify and POSIX lock
-> use current->files as opaque tags (->dn_owner and ->flc_owner resp.) and
-> filp_close() (well, filp_flush() these days) needs to be called to
-> purge all of those associated with given struct file and given tag value.
-
-Ah, yes, fl_owner_t being a void pointer rather than having a proper
-type caused a bug in an early version of Rust Binder ...
-
-Alice
-
-> That needs to be done between removal of file reference from table and
-> destruction of the table itself and it guarantees that those opaque refer=
-ences
-> won't outlive the table (more importantly, don't survive until a differen=
-t
-> files_struct instance is allocated at the same address).
+> If you follow the MAP_FIXED call to mmap(), you'll land in map_region()
+> which does two operations: munmap(), then the mmap().  Since this was
+> behind a lock, it was fine.  Now that we're transitioning to rcu
+> readers, it's less ideal.  We have a race where we will see that gap.
+> In this implementation we may return NULL if the MAP_FIXED is at the end
+> of the address space.
 >
-> [*] NB: might make sense to export filp_flush(), since that's what this
-> sequence boils down to.  We really need a better identifier, though -
-> "filp" part is a leftover from OSDI, AFAICT; that's a hungarism for
-> "file pointer" and it makes no sense.  file_flush() would be better,
-> IMO - or flush_file(), for that matter.
+> It might also cause issues if we are searching for a specific address
+> and we will skip a VMA that is currently being inserted by MAP_FIXED.
+>
+> The page fault handler doesn't have this issue as it looks for a
+> specific address then falls back to the lock if one is not found.
+>
+> This problem needs to be fixed prior to shifting the existing proc maps
+> file to using rcu read locks as well.  We have a solution that isn't
+> upstream or on the ML, but is being tested and will go upstream.
+
+Ok, any ETA for that? Can it be retrofitted into
+find_and_lock_vma_rcu() once the fix lands? It's not ideal, but I
+think it's acceptable (for now) for this new API to have this race,
+given it seems quite unlikely to be hit in practice.
+
+Worst case, we can leave the per-VMA RCU-protected bits out until we
+have this solution in place, and then add it back when ready.
+
+>
+> > +                     /* failed to take per-VMA lock, fallback to mmap_=
+lock */
+> > +                     if (mmap_read_lock_killable(mm))
+> > +                             return ERR_PTR(-EINTR);
+> > +
+> > +                     *mm_locked =3D mmap_locked =3D true;
+> > +                     vma =3D find_vma(mm, addr);
+>
+> If you lock the vma here then drop the mmap lock, then you should be
+> able to simplify the code by avoiding the passing of the mmap_locked
+> variable around.
+>
+> It also means we don't need to do an unlokc_vma() call, which indicates
+> we are going to end the vma read but actually may be unlocking the mm.
+>
+> This is exactly why I think we need a common pattern and infrastructure
+> to do this sort of walking.
+>
+> Please have a look at userfaultfd patches here [1].  Note that
+> vma_start_read() cannot be used in the mmap_read_lock() critical
+> section.
+
+Ok, so you'd like me to do something like below, right?
+
+vma =3D find_vma(mm, addr);
+if (vma)
+    down_read(&vma->vm_lock->lock)
+mmap_read_unlock(mm);
+
+... and for the rest of logic always assume having per-VMA lock. ...
+
+
+The problem here is that I think we can't assume per-VMA lock, because
+it's gated by CONFIG_PER_VMA_LOCK, so I think we'll have to deal with
+this mmap_locked flag either way. Or am I missing anything?
+
+I don't think the flag makes things that much worse, tbh, but I'm
+happy to accommodate any better solution that would work regardless of
+CONFIG_PER_VMA_LOCK.
+
+>
+> > +             }
+> > +     } else {
+> > +             /* if we have mmap_lock, get through the search as fast a=
+s possible */
+> > +             vma =3D find_vma(mm, addr);
+>
+> I think the only way we get here is if we are contending on the mmap
+> lock.  This is actually where we should try to avoid holding the lock?
+>
+> > +     }
+> >
+> >       /* no VMA found */
+> >       if (!vma)
+> > @@ -428,18 +446,25 @@ static struct vm_area_struct *query_matching_vma(=
+struct mm_struct *mm,
+> >  skip_vma:
+> >       /*
+> >        * If the user needs closest matching VMA, keep iterating.
+> > +      * But before we proceed we might need to unlock current VMA.
+> >        */
+> >       addr =3D vma->vm_end;
+> > +     if (!mmap_locked)
+> > +             vma_end_read(vma);
+> >       if (flags & PROCMAP_QUERY_COVERING_OR_NEXT_VMA)
+> >               goto next_vma;
+> >  no_vma:
+> > -     mmap_read_unlock(mm);
+> > +     if (mmap_locked)
+> > +             mmap_read_unlock(mm);
+> >       return ERR_PTR(-ENOENT);
+> >  }
+> >
+> > -static void unlock_vma(struct vm_area_struct *vma)
+> > +static void unlock_vma(struct vm_area_struct *vma, bool mm_locked)
+>
+> Confusing function name, since it may not be doing anything with the
+> vma lock.
+
+Would "unlock_vma_or_mm()" be ok?
+
+>
+> >  {
+> > -     mmap_read_unlock(vma->vm_mm);
+> > +     if (mm_locked)
+> > +             mmap_read_unlock(vma->vm_mm);
+> > +     else
+> > +             vma_end_read(vma);
+> >  }
+> >
+> >  static int do_procmap_query(struct proc_maps_private *priv, void __use=
+r *uarg)
+> > @@ -447,6 +472,7 @@ static int do_procmap_query(struct proc_maps_privat=
+e *priv, void __user *uarg)
+> >       struct procmap_query karg;
+> >       struct vm_area_struct *vma;
+> >       struct mm_struct *mm;
+> > +     bool mm_locked;
+> >       const char *name =3D NULL;
+> >       char *name_buf =3D NULL;
+> >       __u64 usize;
+> > @@ -475,7 +501,7 @@ static int do_procmap_query(struct proc_maps_privat=
+e *priv, void __user *uarg)
+> >       if (!mm || !mmget_not_zero(mm))
+> >               return -ESRCH;
+> >
+> > -     vma =3D query_matching_vma(mm, karg.query_addr, karg.query_flags)=
+;
+> > +     vma =3D query_matching_vma(mm, karg.query_addr, karg.query_flags,=
+ &mm_locked);
+> >       if (IS_ERR(vma)) {
+> >               mmput(mm);
+> >               return PTR_ERR(vma);
+> > @@ -542,7 +568,7 @@ static int do_procmap_query(struct proc_maps_privat=
+e *priv, void __user *uarg)
+> >       }
+> >
+> >       /* unlock vma/mm_struct and put mm_struct before copying data to =
+user */
+> > -     unlock_vma(vma);
+> > +     unlock_vma(vma, mm_locked);
+> >       mmput(mm);
+> >
+> >       if (karg.vma_name_size && copy_to_user((void __user *)karg.vma_na=
+me_addr,
+> > @@ -558,7 +584,7 @@ static int do_procmap_query(struct proc_maps_privat=
+e *priv, void __user *uarg)
+> >       return 0;
+> >
+> >  out:
+> > -     unlock_vma(vma);
+> > +     unlock_vma(vma, mm_locked);
+> >       mmput(mm);
+> >       kfree(name_buf);
+> >       return err;
+> > --
+> > 2.43.0
+> >
+>
+> [1]. https://lore.kernel.org/linux-mm/20240215182756.3448972-5-lokeshgidr=
+a@google.com/
+>
+> Thanks,
+> Liam
 
