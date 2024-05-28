@@ -1,188 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-20364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F778D21F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 18:49:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F37C8D21FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 18:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4862F1F20FD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 16:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04A02865B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 16:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB8C172BCE;
-	Tue, 28 May 2024 16:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA9A173342;
+	Tue, 28 May 2024 16:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gdTXZ+oy"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eXSHGh1p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889E117332C;
-	Tue, 28 May 2024 16:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33DC173320;
+	Tue, 28 May 2024 16:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716914915; cv=none; b=GumrZuQMY0r4vjrmxyOVmzYamSknDncPDEOpWMenf+PTCPTu/NFlEiOsOW5EeEQBLPt7OKstdSVPJsMNvIBaSUiou9ekbjO4tnKnL+tOq3jkGhNc2qEsXeps8JEGhnvcmx/Ut56Y9Qrt25/aw3MrD6zNmoICNwCSj94CvMLfu5I=
+	t=1716915051; cv=none; b=M7Hv3WjoWDqvGQ6O9qLTJiw7JUCDlAX7pwBjeza++vQBKMfNprHmh0sQYjfiZzVIPOM5fwot0XHM4gt2bs2q8AiAehkXhvJcp4zMnD4k5ksqxORClD1q1/Q+oTuBfxDkaH/aHswRi5h9G969cj6OQhVvSMX64MnDyHYqlfsbYes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716914915; c=relaxed/simple;
-	bh=Dil7xzG+ttigVw3JOerhKg5KhObdBN2RvBBGIV6q2Qc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cHxwXlQDFVeNMsNKFZ7WnlVBvnKDhlZzQNhQDj2mmEGci0seNgwqQoewKYzVkKLqABfutgsQpKzvHIuvuw0fBjTFsB0EdkfC5xgLtBb9ma0bgRPMrZKySOk+tPA4bJYT8W+USWFPPymbIkpTkB6dCXX13zvuICsbVDzHKAsie1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gdTXZ+oy; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1716915051; c=relaxed/simple;
+	bh=JAzCKYhJiRdsOP574Hm7UVE9hmhk0rucPt/WJiZzrX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWzJhF7OtERUJOhbma7FnYjHZj1+46H/t2Hco9Beud8SUaXsTwNX9yv+y+vYsp2bCC9iB17qmCuzZ5cQvVTnXiczPBKrnJ5fChP2F89OteS40BoRwbR9MA1RGGG70Pso+Z/T85kCQ/F+T0jJD8tS6xFBvyQtEoibdPkQWO1Eh0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eXSHGh1p; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=qY7bQ3bEFdsUe0XNsM+uQnYMcwBOs7nZbaHEVgrB6fE=; b=gdTXZ+oy++Hq5yYLrcC3UcQSzv
-	c0S8TD47Vw+ylUM9IUjWhu7PAovNnw0nG7DR6I4J3hf9TwGvcHWWYC6x4/qoyMuPaWfCoKMqr+w1g
-	mmuLcYynwLehc8SjXv4mOHafIVivroMrV/NPv+/QYAL2Lz/mdbPZ1QqlTa2SXOOWZRa/NCdGWQoeF
-	NgnZyp/HKMdhuSdINow5/S9TCdvxfE9kSgat+TgwWiyD3sllFM6a2GlZ4cWTTqAccMOyMIpaa7XWy
-	3yBSs+Bln25TVufrMdOZ3WSjNoagA6vJ4nKWgST7A/WvI++fxgnphG852wsFUoLfMOpUSSNZcggcK
-	QR0F7pCA==;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lNjknxnwxTUc0vLbaKhHCJ/HfoVv19mC8Y/io4dSkrM=; b=eXSHGh1pu3Y0oVrjs+ehYMr+Vn
+	3SNZe7TkBOw8HLw2mwAHG0EhgvKhX9KaJoPbU9WPleYnq6Fl+mdPBuFCoZ4pAft4Iqc/jlUoM9kMs
+	nZHMZIz7/tv2t4U5qe7H7jCDwFSQ6D1aTFv+PsJA0jYvE6j3aM4LK16bZ9lV69cfwgvHT0Kc0bug2
+	Y+AeBLKIkUZaQzSt47EOX0yicsdNlR92uWYzZjbDA4HfSZpv/xMrpKdOWTzKfu7u70+0MIcpkdRe2
+	wnozIUyx6q3GVNoQx4MDeGFJP4DUePcnAnDOOCHx7xi1iV3WLelNMb7CKYDEO6VoWGDiW/nrHZSBY
+	fbwEjUXw==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBzzz-00000008pjd-3xRQ;
-	Tue, 28 May 2024 16:48:31 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH 7/7] iomap: Return the folio from iomap_write_begin()
-Date: Tue, 28 May 2024 17:48:28 +0100
-Message-ID: <20240528164829.2105447-8-willy@infradead.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240528164829.2105447-1-willy@infradead.org>
-References: <20240528164829.2105447-1-willy@infradead.org>
+	id 1sC028-00000008poX-0yzU;
+	Tue, 28 May 2024 16:50:44 +0000
+Date: Tue, 28 May 2024 17:50:44 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] filemap: Convert generic_perform_write() to support
+ large folios
+Message-ID: <ZlYLZDG_D74AtW5M@casper.infradead.org>
+References: <20240527163616.1135968-1-hch@lst.de>
+ <20240527163616.1135968-2-hch@lst.de>
+ <CGME20240528152340eucas1p17ba2ad78d8ea869ef44cdeedb2601f80@eucas1p1.samsung.com>
+ <gh7wdpeqorbtvbywigkzy3fakb7a4e46y6h6nrusn6rmup6yfm@2rjq4ltwmdq4>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <gh7wdpeqorbtvbywigkzy3fakb7a4e46y6h6nrusn6rmup6yfm@2rjq4ltwmdq4>
 
-Use an ERR_PTR to return any error that may have occurred, otherwise
-return the folio directly instead of returning it by reference.  This
-mirrors changes which are going into the filemap ->write_begin callbacks.
+On Tue, May 28, 2024 at 03:23:39PM +0000, Daniel Gomez wrote:
+> I have the same patch for shmem and large folios tree. That was the last piece
+> needed for getting better performance results. However, it is also needed to
+> support folios in the write_begin() and write_end() callbacks.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/iomap/buffered-io.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+I don't think it's *needed*.  It's nice!  But clearly not necessary
+since Christoph made nfs work without doing that.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index c5802a459334..f0c40ac425ce 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -764,27 +764,27 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
- 	return iomap_read_inline_data(iter, folio);
- }
- 
--static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
--		size_t len, struct folio **foliop)
-+static struct folio *iomap_write_begin(struct iomap_iter *iter, loff_t pos,
-+		size_t len)
- {
- 	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	struct folio *folio;
--	int status = 0;
-+	int status;
- 
- 	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
- 	if (srcmap != &iter->iomap)
- 		BUG_ON(pos + len > srcmap->offset + srcmap->length);
- 
- 	if (fatal_signal_pending(current))
--		return -EINTR;
-+		return ERR_PTR(-EINTR);
- 
- 	if (!mapping_large_folio_support(iter->inode->i_mapping))
- 		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
- 
- 	folio = __iomap_get_folio(iter, pos, len);
- 	if (IS_ERR(folio))
--		return PTR_ERR(folio);
-+		return folio;
- 
- 	/*
- 	 * Now we have a locked folio, before we do anything with it we need to
-@@ -801,7 +801,6 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
- 							 &iter->iomap);
- 		if (!iomap_valid) {
- 			iter->iomap.flags |= IOMAP_F_STALE;
--			status = 0;
- 			goto out_unlock;
- 		}
- 	}
-@@ -819,13 +818,12 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
- 	if (unlikely(status))
- 		goto out_unlock;
- 
--	*foliop = folio;
--	return 0;
-+	return folio;
- 
- out_unlock:
- 	__iomap_put_folio(iter, pos, 0, folio);
- 
--	return status;
-+	return ERR_PTR(status);
- }
- 
- static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
-@@ -940,9 +938,10 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 			break;
- 		}
- 
--		status = iomap_write_begin(iter, pos, bytes, &folio);
--		if (unlikely(status)) {
-+		folio = iomap_write_begin(iter, pos, bytes);
-+		if (IS_ERR(folio)) {
- 			iomap_write_failed(iter->inode, pos, bytes);
-+			status = PTR_ERR(folio);
- 			break;
- 		}
- 		if (iter->iomap.flags & IOMAP_F_STALE)
-@@ -1330,14 +1329,13 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
- 
- 	do {
- 		struct folio *folio;
--		int status;
- 		size_t offset;
- 		size_t bytes = min_t(u64, SIZE_MAX, length);
- 		bool ret;
- 
--		status = iomap_write_begin(iter, pos, bytes, &folio);
--		if (unlikely(status))
--			return status;
-+		folio = iomap_write_begin(iter, pos, bytes);
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
- 		if (iomap->flags & IOMAP_F_STALE)
- 			break;
- 
-@@ -1393,14 +1391,13 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 
- 	do {
- 		struct folio *folio;
--		int status;
- 		size_t offset;
- 		size_t bytes = min_t(u64, SIZE_MAX, length);
- 		bool ret;
- 
--		status = iomap_write_begin(iter, pos, bytes, &folio);
--		if (status)
--			return status;
-+		folio = iomap_write_begin(iter, pos, bytes);
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
- 		if (iter->iomap.flags & IOMAP_F_STALE)
- 			break;
- 
--- 
-2.43.0
+> In order to avoid
+> making them local to shmem, how should we do the transition to folios in these
+> 2 callbacks? I was looking into aops->read_folio approach but what do you think?
 
+See the v2 of buffer_write_operations that I just posted.  I was waiting
+for feedback from Christoph on the revised method for passing fsdata
+around, but I may as well just post a v2 and see what happens.
 
