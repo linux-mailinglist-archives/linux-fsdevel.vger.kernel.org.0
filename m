@@ -1,147 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-20324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5FC8D1749
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:32:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E394D8D1779
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 374AD1C230CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 09:32:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54CC8B21C50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 09:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1846916936C;
-	Tue, 28 May 2024 09:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760BB155A4F;
+	Tue, 28 May 2024 09:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcjdhOqQ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="grNfTieT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9E2168C1B;
-	Tue, 28 May 2024 09:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78825155C8F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 09:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716888760; cv=none; b=Aqeaiz8o0CSgBKZAWs82N0rqARq5WlQB3K21+Ou1AkL9/xi2lxnHK2A1GQ07/4v6wl4gxVRKIZF16VM1wP82kUFs6bGqLl66XmVw6g9WB9VFPRt6XcTvFxWrAdkYW2XGB7KSvzWKmhRLy2sML47j5s1AhtVwTUMXQSU9eTCQz74=
+	t=1716889520; cv=none; b=smE4xOrnjAZs7CXwbxywRgW7NyIlniQJDEqyNpRgSzIgmRTCy2VutAWXb8xES2g4PTI+LwblYHRR/XZlp5ndNIuokCzfwU2/48VPYoKABs/U2ojgsS9LZUFO0g0CiWe+pxwBviaWN3s2zuy9Rqf+z9DRuFtnhWM9izD68SEMRqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716888760; c=relaxed/simple;
-	bh=MLCV/GoLW702KDu+5Ueva+3+7n52QjbISOAF+ycWG5E=;
+	s=arc-20240116; t=1716889520; c=relaxed/simple;
+	bh=nfVZoECiu21SbnQns93xMAJk8jPOEkArHUrOO7sZ98o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lwl9Z6aga4HY6ayHlvGSFNNB+hHi0b8yymS+Sgk8mlwv6IcDM0mZPDJQhUbp6IfRqIoQ/cxMMJq8BOUMXSw3AFkZWy9FfCudH8VAAqUEw/3wq4MzcR42G6Hg9jZ23sSqIEqm3NcefX+dniRgSRmjT8Ui0F/q8hx4b+8+WAy2N18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcjdhOqQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 377D0C3277B;
-	Tue, 28 May 2024 09:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716888759;
-	bh=MLCV/GoLW702KDu+5Ueva+3+7n52QjbISOAF+ycWG5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BcjdhOqQsWMN764HX66Q2RhSFagJr70TDktgFRzSepPEsgcX6/t1mWUtZnADSaOUx
-	 geNHpfGDeJPV5r0j9iI34l2j4o3DvxA1xA3C9pW07lVHhMTFiefAQq41DvQiXURqkY
-	 s0bRs3SWyzYiCI8ai/qPFfybOilESLt3nI/Svh/KtE//i/vRR4tKLgc6eHxyr/5tSB
-	 iDYwOApDVIzQTkVk1tjbqIonGsvU7GOfmzQB6kMGedwUWiUB4VCJdK3+gAOKZOfJLD
-	 QqH3fQnbpuITgI4gihQt0UkSDD1t0fMu3mBcjz25x56PNGF1dlktVNIayKigdK0sfC
-	 2efNyffZLC3Vg==
-Date: Tue, 28 May 2024 11:32:35 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	winters.zc@antgroup.com
-Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
-Message-ID: <20240528-umstritten-liedchen-30e6ca6632b2@brauner>
-References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
- <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com>
- <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
- <6a3c3035-b4c4-41d9-a7b0-65f72f479571@linux.alibaba.com>
- <ce886be9-41d3-47b6-82e9-57d8f1f3421f@linux.alibaba.com>
- <20240528-pegel-karpfen-fd16814adc50@brauner>
- <36c14658-2c38-4515-92e1-839553971477@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOEL+mGIx6pd28D+CI6qgEr4UUTWbE951YGqUOovgYZttREZLA+UqhVyjblKGUNj/8kfUJnyHN/fcAIF6Th7Apc/gZ9gIJOYUSOPTdDbok0ILsFjNVMj7O4a0T/WPWknYLlQI6PHjvHU7OMDvayB7PFUcq3Y9WzS+mMhtOLUeVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=grNfTieT; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f693306b7cso520209b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 02:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716889519; x=1717494319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mSaikuAEE1TmRWmTPr+CsdopaGULdY/HVZMAQhbHYwc=;
+        b=grNfTieTrRGwevSntA7MPXhCRrXTu/OGLUG9NtE1LQ9CFjbzRvh6WalZV8FHXa0m4a
+         3HZd+MyDEF+vFFWniCBXMPUr8zv2XiAryzGYijBRhnuq7P/+JL0nTeW0XP8xkjQF/1ab
+         j1j1jfy4gN+2vzqbWaN+oO0111QlywCJdRtSlYrNLwKj/rIAWy5hVJsB976RFZW1ioCh
+         diNtDcLZVAaYWGLg/KjrBeZxDL0M53Hf8M/7zdygvlSp4dndBu8wtuXVoBPHohenZTVk
+         dZNTbsyZ3wp2g989D3el9i5+VQ/zmWCllVaW3+TYhEjDW+PVE8/qMEGPSPL2fsi6NGnh
+         nfPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716889519; x=1717494319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mSaikuAEE1TmRWmTPr+CsdopaGULdY/HVZMAQhbHYwc=;
+        b=Ub7DBHWIMu/+CvBPCyAded0H/FdsdAl2qMl+2Wl4iBtuH60d4v48Q15PxGFa0/U7gh
+         bhzKnSVp+ufDO4gnWfW01Rx4UW+rmN3DW3dCN6qkYxjGipWll43inWh7T2JYxvKsndw3
+         hxuu67t0PQu0QaVj9U49SZl+WzKwIchB9ia3/5Qgt2pe3ujC6mnrapz0GuLOcooyW6XR
+         D7IO6eyd6VEke2jw0873wr+0iZM9cKjAz4X3nZrsjkHwJ76RYJZ3Z7ChpawijcWcwu4Q
+         zuFcoftvWraY8ukfXd4yk/OVnasqMAgmpQePMoxxw8C36Yj7f7vl9hJEMEYI9Y+nHGMw
+         KRig==
+X-Forwarded-Encrypted: i=1; AJvYcCUQd8afzwsf8W23QbQTsuMNmHp6Iv+x6HNJDYCOBEgtEWZyOmLVUFNXJNNf4MqcmktWSiD1oLpftGR9txQRgeqpCHuQXnCbY9dreEoK2g==
+X-Gm-Message-State: AOJu0Yxf8oY3RuQ6aUMDuIRes/eBuhjga0YetFHqA459A/rH4vetNDOT
+	+qWlzcP8xh4VVnsGglxiaDmSuhatJwQ/msywenBztA6LMkbStsYHR/kUHxRnBds=
+X-Google-Smtp-Source: AGHT+IF5RgW5VSoTNNLwvOASd+BGDj5dWiaubF8Oqrmvn2nbTRNTa88hfPX0xKeu1Haa6CBW/oCfgw==
+X-Received: by 2002:a05:6a20:a10c:b0:1af:d1f3:2cb5 with SMTP id adf61e73a8af0-1b212ce1f49mr14193215637.8.1716889518533;
+        Tue, 28 May 2024 02:45:18 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9d89b3sm75760405ad.292.2024.05.28.02.45.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 02:45:18 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sBtON-00DKcW-0N;
+	Tue, 28 May 2024 19:45:15 +1000
+Date: Tue, 28 May 2024 19:45:15 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+	djwong@kernel.org, brauner@kernel.org, chandan.babu@oracle.com,
+	hare@suse.de, ritesh.list@gmail.com, john.g.garry@oracle.com,
+	ziy@nvidia.com, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com, mcgrof@kernel.org
+Subject: Re: [PATCH v5.1] fs: Allow fine-grained control of folio sizes
+Message-ID: <ZlWnqztSjDdbqDcB@dread.disaster.area>
+References: <20240527210125.1905586-1-willy@infradead.org>
+ <20240527220926.3zh2rv43w7763d2y@quentin>
+ <ZlULs_hAKMmasUR8@casper.infradead.org>
+ <ZlUMnx-6N1J6ZR4i@casper.infradead.org>
+ <ZlUQcEaP3FDXpCge@dread.disaster.area>
+ <20240528091202.qevisz7zr6n5ouj7@quentin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <36c14658-2c38-4515-92e1-839553971477@linux.alibaba.com>
+In-Reply-To: <20240528091202.qevisz7zr6n5ouj7@quentin>
 
-On Tue, May 28, 2024 at 05:13:04PM +0800, Gao Xiang wrote:
-> Hi Christian,
-> 
-> On 2024/5/28 16:43, Christian Brauner wrote:
-> > On Tue, May 28, 2024 at 12:02:46PM +0800, Gao Xiang wrote:
-> > > 
-> > > 
-> > > On 2024/5/28 11:08, Jingbo Xu wrote:
+On Tue, May 28, 2024 at 09:12:02AM +0000, Pankaj Raghav (Samsung) wrote:
+> On Tue, May 28, 2024 at 09:00:00AM +1000, Dave Chinner wrote:
+> > On Mon, May 27, 2024 at 11:43:43PM +0100, Matthew Wilcox wrote:
+> > > On Mon, May 27, 2024 at 11:39:47PM +0100, Matthew Wilcox wrote:
+> > > > > > +	AS_FOLIO_ORDER_MIN = 16,
+> > > > > > +	AS_FOLIO_ORDER_MAX = 21, /* Bits 16-25 are used for FOLIO_ORDER */
+> > > > > >  };
+> > > > > >  
+> > > > > > +#define AS_FOLIO_ORDER_MIN_MASK 0x001f0000
+> > > > > > +#define AS_FOLIO_ORDER_MAX_MASK 0x03e00000
+> > > > > 
+> > > > > As you changed the mapping flag offset, these masks also needs to be
+> > > > > changed accordingly.
 > > > > 
-> > > > 
-> > > > On 5/28/24 10:45 AM, Jingbo Xu wrote:
-> > > > > 
-> > > > > 
-> > > > > On 5/27/24 11:16 PM, Miklos Szeredi wrote:
-> > > > > > On Fri, 24 May 2024 at 08:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
-> > > > > > 
-> > > > > > > 3. I don't know if a kernel based recovery mechanism is welcome on the
-> > > > > > > community side.  Any comment is welcome.  Thanks!
-> > > > > > 
-> > > > > > I'd prefer something external to fuse.
-> > > > > 
-> > > > > Okay, understood.
-> > > > > 
-> > > > > > 
-> > > > > > Maybe a kernel based fdstore (lifetime connected to that of the
-> > > > > > container) would a useful service more generally?
-> > > > > 
-> > > > > Yeah I indeed had considered this, but I'm afraid VFS guys would be
-> > > > > concerned about why we do this on kernel side rather than in user space.
+> > > > That's why I did change them?
 > > > 
-> > > Just from my own perspective, even if it's in FUSE, the concern is
-> > > almost the same.
+> > > How about:
 > > > 
-> > > I wonder if on-demand cachefiles can keep fds too in the future
-> > > (thus e.g. daemonless feature could even be implemented entirely
-> > > with kernel fdstore) but it still has the same concern or it's
-> > > a source of duplication.
-> > > 
-> > > Thanks,
-> > > Gao Xiang
-> > > 
-> > > > > 
-> > > > > I'm not sure what the VFS guys think about this and if the kernel side
-> > > > > shall care about this.
+> > > -#define AS_FOLIO_ORDER_MIN_MASK 0x001f0000
+> > > -#define AS_FOLIO_ORDER_MAX_MASK 0x03e00000
+> > > +#define AS_FOLIO_ORDER_MIN_MASK (31 << AS_FOLIO_ORDER_MIN)
+> > > +#define AS_FOLIO_ORDER_MAX_MASK (31 << AS_FOLIO_ORDER_MAX)
 > > 
-> > Fwiw, I'm not convinced and I think that's a big can of worms security
-> > wise and semantics wise. I have discussed whether a kernel-side fdstore
-> > would be something that systemd would use if available multiple times
-> > and they wouldn't use it because it provides them with no benefits over
-> > having it in userspace.
+> > Lots of magic numbers based on the order having only having 5 bits
+> > of resolution. Removing that magic looks like this:
+> > 
+> > 	AS_FOLIO_ORDER_BITS = 5,
 > 
-> As far as I know, currently there are approximately two ways to do
-> failover mechanisms in kernel.
-> 
-> The first model much like a fuse-like model: in this mode, we should
-> keep and pass fd to maintain the active state.  And currently,
-> userspace should be responsible for the permission/security issues
-> when doing something like passing fds.
-> 
-> The second model is like one device-one instance model, for example
-> ublk (If I understand correctly): each active instance (/dev/ublkbX)
-> has their own unique control device (/dev/ublkcX).  Users could
-> assign/change DAC/MAC for each control device.  And failover
-> recovery just needs to reopen the control device with proper
-> permission and do recovery.
-> 
-> So just my own thought, kernel-side fdstore pseudo filesystem may
-> provide a DAC/MAC mechanism for the first model.  That is a much
-> cleaner way than doing some similar thing independently in each
-> subsystem which may need DAC/MAC-like mechanism.  But that is
-> just my own thought.
+> I think this needs to be defined outside of the enum as 5 is already
+> taken by AS_NO_WRITEBACK_TAGS? But I like the idea of making it generic
+> like this.
 
-The failover mechanism for /dev/ublkcX could easily be implemented using
-the fdstore. The fact that they rolled their own thing is orthogonal to
-this imho. Implementing retrieval policies like this in the kernel is
-slowly advancing into /proc/$pid/fd/ levels of complexity. That's all
-better handled with appropriate policies in userspace. And cachefilesd
-can similarly just stash their fds in the fdstore.
+Duplicate values in assigned enums are legal and fairly common.
+This:
+
+enum {
+        FOO = 1,
+        BAR = 2,
+        BAZ = 1,
+};
+
+int main(int argc, char *argv[])
+{
+        printf("foo %d, bar %d, baz %d\n", FOO, BAR, BAZ);
+}
+
+compiles without warnings or errors and gives the output:
+
+foo 1, bar 2, baz 1
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
