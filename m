@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-20326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75778D177A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1440E8D17E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 12:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83471C213BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 09:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 128261C2493C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 10:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D5916ABDE;
-	Tue, 28 May 2024 09:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD12516B729;
+	Tue, 28 May 2024 09:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AlVD+CyP"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Cl7TD5xg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF59155C8F;
-	Tue, 28 May 2024 09:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EEF16B72D;
+	Tue, 28 May 2024 09:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716889524; cv=none; b=PUesc+3jGGsidogL63lWQ5jhkFiD2B0tS56r+zNo/YEOMvMembn/dtcLTGCO6pI9aVdjdjn9ZL84z2x6gMllSRnnlik9c5OUHa/CKoMwKxXjsK13eum7OtpeGNZDp28t6xaG0gcz4nHkmXtsJOtaanFsIMlooeUvcaJQ/3Nz1DE=
+	t=1716890297; cv=none; b=Cg8E8JldQK/YcIVsJnUQlcjqjq5FKIBshjRiH2JvlQ/RCHX2aX21IvC7BSOii5kGRaKLY2kd3KJFYGVRiAOYwsRTGxN13bi5KPeGZ+hpqNuTedduNqPx2w1Ojm3oHl2DUxPeP3C5hrigi7UIj4FKPUi3SjzFCHRkPbUiA5G2zr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716889524; c=relaxed/simple;
-	bh=UGQfz+RIjFLy/PjRAKDnS1o4zUhUG9NZtpBCzO6xlFk=;
+	s=arc-20240116; t=1716890297; c=relaxed/simple;
+	bh=6hx438n+um4riiI14Idj1dDSnLV0yA9H9UwD+GzRrc0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EYBit63BWxJVzyfzh6CqVQvfmCRlH/OrNl2dhHa2ZK4u6glew2lxU24abpD20qI+vJjnTmS6kXlAe8SpcOeKitzDbYj48SRcCFmg8Ynbuej0uwhMYlDuNKbQ4NlCUL6EGCaTNUYFrtUEHYL5FS8O3+rrO8aLRrMVTKzKDeF1KeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AlVD+CyP; arc=none smtp.client-ip=115.124.30.100
+	 In-Reply-To:Content-Type; b=RRYheXCShhGEg87BVCxkai7hjtFvQcfHTctCIzypIuUpWPfOSz+bLoDCnlT2LE5Re0ALujfI2HelXYV1c2tHeZ4m+E+8D/bFI1zhaOxB9yWUqert+3lShOK0AY/DOQGeKwETpcnNn9zUTYJC4o/YOSTx+vJ2zA3PzXGsf+iJTao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Cl7TD5xg; arc=none smtp.client-ip=115.124.30.119
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1716889519; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=iCvwyX9e33nD2Ny1HnKr50ExkwS6rywvhg/eC24fyVY=;
-	b=AlVD+CyPTQUztA44Ap3llMlkqtzLu6T3YJEGsgsw6MWIq7D8Ni9dD3dDCDlzcuhXVv8ooRsyOBOY4ltbAwIE3+Yvv6Nyyr0/tIn8BI2VduRu/g5EIjZ7taaA2rvh8Ga/sLK+6Mqh161gxsrNWVhrAOHrNTs2hpWf8mzC6E4UJUI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7PHPTi_1716889517;
-Received: from 30.221.144.199(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7PHPTi_1716889517)
+	t=1716890291; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GXy9MUCK5VGEeup/BbpcBg8zahF6no6zu65zqg0I4xs=;
+	b=Cl7TD5xgG7SNnKhwCtrYG9xMqUBYe8wDcdEjxE36Cqe15bMVQr2EAj+CWNQ1ZVUxrGU/EGBOE8vA7N4Iv85LWxWa9mrPv/u+w3EX/DzqtEgF8aUZHKHndoQylAIghY8loYz+nxxEBUv7yL4/wCgw/DLgXmM45xteQWLOdJa6rg8=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W7PIbQB_1716890289;
+Received: from 30.97.48.200(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7PIbQB_1716890289)
           by smtp.aliyun-inc.com;
-          Tue, 28 May 2024 17:45:19 +0800
-Message-ID: <ba6ed143-95c3-41fd-b31c-37e94fc98840@linux.alibaba.com>
-Date: Tue, 28 May 2024 17:45:16 +0800
+          Tue, 28 May 2024 17:58:11 +0800
+Message-ID: <9666141f-ad0f-4224-ac48-eba63145c61e@linux.alibaba.com>
+Date: Tue, 28 May 2024 17:58:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,86 +51,113 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
 To: Christian Brauner <brauner@kernel.org>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi
+ <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, winters.zc@antgroup.com
 References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
- <20240528-jucken-inkonsequent-60b0a15d7ede@brauner>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240528-jucken-inkonsequent-60b0a15d7ede@brauner>
-Content-Type: text/plain; charset=UTF-8
+ <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com>
+ <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
+ <6a3c3035-b4c4-41d9-a7b0-65f72f479571@linux.alibaba.com>
+ <ce886be9-41d3-47b6-82e9-57d8f1f3421f@linux.alibaba.com>
+ <20240528-pegel-karpfen-fd16814adc50@brauner>
+ <36c14658-2c38-4515-92e1-839553971477@linux.alibaba.com>
+ <20240528-umstritten-liedchen-30e6ca6632b2@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240528-umstritten-liedchen-30e6ca6632b2@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, Christian,
-
-Thanks for the review.
 
 
-On 5/28/24 4:38 PM, Christian Brauner wrote:
-> On Fri, May 24, 2024 at 02:40:28PM +0800, Jingbo Xu wrote:
->> Background
->> ==========
->> The fd of '/dev/fuse' serves as a message transmission channel between
->> FUSE filesystem (kernel space) and fuse server (user space). Once the
->> fd gets closed (intentionally or unintentionally), the FUSE filesystem
->> gets aborted, and any attempt of filesystem access gets -ECONNABORTED
->> error until the FUSE filesystem finally umounted.
+On 2024/5/28 17:32, Christian Brauner wrote:
+> On Tue, May 28, 2024 at 05:13:04PM +0800, Gao Xiang wrote:
+>> Hi Christian,
 >>
->> It is one of the requisites in production environment to provide
->> uninterruptible filesystem service.  The most straightforward way, and
->> maybe the most widely used way, is that make another dedicated user
->> daemon (similar to systemd fdstore) keep the device fd open.  When the
->> fuse daemon recovers from a crash, it can retrieve the device fd from the
->> fdstore daemon through socket takeover (Unix domain socket) method [1]
->> or pidfd_getfd() syscall [2].  In this way, as long as the fdstore
->> daemon doesn't exit, the FUSE filesystem won't get aborted once the fuse
->> daemon crashes, though the filesystem service may hang there for a while
->> when the fuse daemon gets restarted and has not been completely
->> recovered yet.
+>> On 2024/5/28 16:43, Christian Brauner wrote:
+>>> On Tue, May 28, 2024 at 12:02:46PM +0800, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2024/5/28 11:08, Jingbo Xu wrote:
+>>>>>
+>>>>>
+>>>>> On 5/28/24 10:45 AM, Jingbo Xu wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 5/27/24 11:16 PM, Miklos Szeredi wrote:
+>>>>>>> On Fri, 24 May 2024 at 08:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>>>
+>>>>>>>> 3. I don't know if a kernel based recovery mechanism is welcome on the
+>>>>>>>> community side.  Any comment is welcome.  Thanks!
+>>>>>>>
+>>>>>>> I'd prefer something external to fuse.
+>>>>>>
+>>>>>> Okay, understood.
+>>>>>>
+>>>>>>>
+>>>>>>> Maybe a kernel based fdstore (lifetime connected to that of the
+>>>>>>> container) would a useful service more generally?
+>>>>>>
+>>>>>> Yeah I indeed had considered this, but I'm afraid VFS guys would be
+>>>>>> concerned about why we do this on kernel side rather than in user space.
+>>>>
+>>>> Just from my own perspective, even if it's in FUSE, the concern is
+>>>> almost the same.
+>>>>
+>>>> I wonder if on-demand cachefiles can keep fds too in the future
+>>>> (thus e.g. daemonless feature could even be implemented entirely
+>>>> with kernel fdstore) but it still has the same concern or it's
+>>>> a source of duplication.
+>>>>
+>>>> Thanks,
+>>>> Gao Xiang
+>>>>
+>>>>>>
+>>>>>> I'm not sure what the VFS guys think about this and if the kernel side
+>>>>>> shall care about this.
+>>>
+>>> Fwiw, I'm not convinced and I think that's a big can of worms security
+>>> wise and semantics wise. I have discussed whether a kernel-side fdstore
+>>> would be something that systemd would use if available multiple times
+>>> and they wouldn't use it because it provides them with no benefits over
+>>> having it in userspace.
 >>
->> This picture indeed works and has been deployed in our internal
->> production environment until the following issues are encountered:
+>> As far as I know, currently there are approximately two ways to do
+>> failover mechanisms in kernel.
 >>
->> 1. The fdstore daemon may be killed by mistake, in which case the FUSE
->> filesystem gets aborted and irrecoverable.
+>> The first model much like a fuse-like model: in this mode, we should
+>> keep and pass fd to maintain the active state.  And currently,
+>> userspace should be responsible for the permission/security issues
+>> when doing something like passing fds.
+>>
+>> The second model is like one device-one instance model, for example
+>> ublk (If I understand correctly): each active instance (/dev/ublkbX)
+>> has their own unique control device (/dev/ublkcX).  Users could
+>> assign/change DAC/MAC for each control device.  And failover
+>> recovery just needs to reopen the control device with proper
+>> permission and do recovery.
+>>
+>> So just my own thought, kernel-side fdstore pseudo filesystem may
+>> provide a DAC/MAC mechanism for the first model.  That is a much
+>> cleaner way than doing some similar thing independently in each
+>> subsystem which may need DAC/MAC-like mechanism.  But that is
+>> just my own thought.
 > 
-> That's only a problem if you use the fdstore of the per-user instance.
-> The main fdstore is part of PID 1 and you can't kill that. So really,
-> systemd needs to hand the fds from the per-user instance to the main
-> fdstore.
+> The failover mechanism for /dev/ublkcX could easily be implemented using
+> the fdstore. The fact that they rolled their own thing is orthogonal to
+> this imho. Implementing retrieval policies like this in the kernel is
+> slowly advancing into /proc/$pid/fd/ levels of complexity. That's all
+> better handled with appropriate policies in userspace. And cachefilesd
+> can similarly just stash their fds in the fdstore.
 
-Systemd indeed has implemented its own fdstore mechanism in the user space.
+Ok, got it.  I just would like to know what kernel fdstore
+currently sounds like (since Miklos mentioned it so I wonder
+if it's feasible since it can benefit to non-fuse cases).
+I think userspace fdstore works for me (unless some other
+interesting use cases for evaluation later).
 
-Nowadays more and more fuse daemons are running inside containers, but a
-container generally has no systemd inside it.
-> 
->> 2. In scenarios of containerized deployment, the fuse daemon is deployed
->> in a container POD, and a dedicated fdstore daemon needs to be deployed
->> for each fuse daemon.  The fdstore daemon could consume a amount of
->> resources (e.g. memory footprint), which is not conducive to the dense
->> container deployment.
->>
->> 3. Each fuse daemon implementation needs to implement its own fdstore
->> daemon.  If we implement the fuse recovery mechanism on the kernel side,
->> all fuse daemon implementations could reuse this mechanism.
-> 
-> You can just the global fdstore. That is a design limitation not an
-> inherent limitation.
+Jingbo has an internal requirement for fuse, that is a pure
+fuse stuff, and that is out of my scope though.
 
-What I initially mean is that each fuse daemon implementation (e.g.
-s3fs, ossfs, and other vendors) needs to make its own but similar
-mechanism for daemon failover.  There has not been a common component
-for fdstore in container scenarios just like systemd fdstore.
-
-
-I'd admit that it's controversial to implement a kernel-side fdstore.
-Thus I only implement a failover mechanism for fuse server in this RFC
-patch.  But I also understand Miklos's concern as what we really need to
-support daemon failover is just something like fdstore to keep the
-device fd alive.
-
-
--- 
 Thanks,
-Jingbo
+Gao Xiang
 
