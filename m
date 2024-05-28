@@ -1,91 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-20341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED5CD8D19B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0248D19C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9FA287AB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA22528A690
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF0116D317;
-	Tue, 28 May 2024 11:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F6216C847;
+	Tue, 28 May 2024 11:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW7XZVeg"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Zm9g0deC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF33B16C87C;
-	Tue, 28 May 2024 11:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9619182B3;
+	Tue, 28 May 2024 11:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896164; cv=none; b=fVKn/y43/Vp42jEmejAB8M7WxTzYbsB1sTN1acamIrvSW1nrJXsAPnCgjJllVVXXfd2M6vxUKRdhP7GyInZad42ZyfCP2pfHFzGsXynqfA7oVaCe6d31CIfgwozDLkn/d1cu053DJ5DdxJ45WLxGbvEXhvzRGNd00VA7tucegOU=
+	t=1716896275; cv=none; b=t/03ntKfMqKWGGeOzETsidPEA3HxsRfYqEtodff3OXWQWBwLqBAUL57X4vqIvMOmcZA5yUT/jdDmd9XSC46AZZcqf7jqNGe19UxwoUkE6oHJJlOvKEwhHX4TugfBoFHbQTo0AB8rs1LtNIaVL4voRIWCwt9xzeBXwnaTE7OOLow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896164; c=relaxed/simple;
-	bh=U9gFCkMWya+ry4Kiu+T18mTeq5AtTLdpRjpaXQOZEes=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=heGMoSMk+nHWntia7PAi4aB0KD8Qu9ZFpgjTeCswymLmcb0tbNg0O5V3TCkdAci9x4YsF/muY1L8gF1RHxnmMVBhtealelJod8kSeiJOsbQhuSysMQSq0JrJblce+WvzfL7Fzg3wykpvu59GQSEdNTbAW9VMZQI2cW8ZFAj54xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW7XZVeg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADCDC32781;
-	Tue, 28 May 2024 11:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716896163;
-	bh=U9gFCkMWya+ry4Kiu+T18mTeq5AtTLdpRjpaXQOZEes=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VW7XZVegE8FtPMBbS75NLk8DYqs++BK4z91RrBoZR9Xu7fd2gDOrZ8olygjjXfqEV
-	 sxcNWBPYymECHRNz3We2E8ap3gjbikMQw1RdblIXZeW1M6D8Q7Bx+PTo6xqtS34Uxz
-	 hyk6GXMoFOtBU1GDEJcWLnPM4I4wNMxuH64+V2v2w6dO7hhZfjw2LpoLN1M24KNjr1
-	 kzhu+7wpluYL4eRLHNq+26YLOsm19KEo/wSSFK6ADmrGGxq/jn0dNnOVZf1T62VE2a
-	 CqJX2dbCBLwARc8HaamWR6iLkVir4XVnTr1mu+T7g7xQOSbusSCPaLA/pZxlDPbMdN
-	 jQZrjunq5fPCg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: hfs: add MODULE_DESCRIPTION()
-Date: Tue, 28 May 2024 13:35:47 +0200
-Message-ID: <20240528-massieren-rekord-0836253ed999@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527-md-fs-hfs-v1-1-4be79ef7e187@quicinc.com>
-References: <20240527-md-fs-hfs-v1-1-4be79ef7e187@quicinc.com>
+	s=arc-20240116; t=1716896275; c=relaxed/simple;
+	bh=BPx3/5wdXsJGI4AJO7t/7IynKbNRWk2jWU84tK70+xM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ul0ybJJNzIcbAEi8CWvjd24DjlGJiM2pIFj89Kk//60kMhV1mi+qdLiHbIe7TgLXZW/s2jRvH1WrK2AgCBPebKrrpbWmFXGynq5ZfAV6Gf+LzoYYv2PK08cUXkgRO1W4AWVyFweEPDtyB3VqOI+OCIvXDwvsZYBDpzS351ZDmVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Zm9g0deC; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VpVqx5SJ3z9sp7;
+	Tue, 28 May 2024 13:37:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1716896269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GTsatAjEP5Z8hfmSAf2UWHF4m9F5ZsKNkIun34OCiBY=;
+	b=Zm9g0deCam8+HbkRh/fSgRnY4JWMb05jZLjC2f/Wj9SYi6E7+mdZHPZs6SyE3htSRNERjr
+	EqWEYEei5jTbvWfIRzj3W4Dyy/SZLUSn+Y91W5exEERsSL5YFWLhWc8thlSck/DA0PYmcA
+	9fFjW3mdubYrMh+MeQaOTFQQGi6Lf6AMvxfCGEeX481BV9rhpMFhHmf+vTPXAlzDY8ogAO
+	sx9EkNDYfLn6Ehjusk6t8lpVDy0c69VK4gkXaCv0cqsdyGtB3rESCkBGS7KeLR0hXfHSmS
+	H5yu/mKg6imqOJy7btrNknjLhd4bbmbju763kIgEm1TpZ1fcJ1kN/+6+ael63Q==
+Date: Tue, 28 May 2024 11:37:43 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Hannes Reinecke <hare@suse.de>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	akpm@linux-foundation.org, djwong@kernel.org, brauner@kernel.org,
+	david@fromorbit.com, chandan.babu@oracle.com, ritesh.list@gmail.com,
+	john.g.garry@oracle.com, ziy@nvidia.com,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, mcgrof@kernel.org
+Subject: Re: [PATCH v5.1] fs: Allow fine-grained control of folio sizes
+Message-ID: <20240528113743.7bpg2kgeirwysmoa@quentin>
+References: <20240527210125.1905586-1-willy@infradead.org>
+ <e732a6ea-ade2-4398-b1ac-9e552fd365f5@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=910; i=brauner@kernel.org; h=from:subject:message-id; bh=U9gFCkMWya+ry4Kiu+T18mTeq5AtTLdpRjpaXQOZEes=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHpyzzqf5kvO5+6a2Zzf/c3x8u/ORntnfypBjcp6eq g+UgtKndpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE4wTD/6qXRb5TvzdsvXL9 h3OtcabJy4Mqk0vKvUsYzix1/rWnu5Dhf+lhyYOLp3rM4q0Tl3juV1Ny2SLYMLzniM1p9vq7RaJ 32AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e732a6ea-ade2-4398-b1ac-9e552fd365f5@suse.de>
 
-On Mon, 27 May 2024 10:53:08 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/hfs/hfs.o
+> > + * is non-atomic.
+> > + */
+> > +static inline void mapping_set_folio_order_range(struct address_space *mapping,
+> > +		unsigned int min, unsigned int max)
+> > +{
+> > +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> > +		return;
+> > +
+> Errm. Sure? When transparent hugepages are _enabled_ we don't support this
+> feature?
+> Confused.
+
+I think large folio support depends on THP, at least for now. I remember
+willy mentioning that in a thread. The future plan is to get rid of
+this dependency.
+
 > 
+> Cheers,
+> 
+> Hannes
+> -- 
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+> HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 > 
 
-Applied to the v6.10-rc1 branch of the vfs/vfs.git tree.
-Patches in the v6.10-rc1 branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: v6.10-rc1
-
-[1/1] fs: hfs: add MODULE_DESCRIPTION()
-      https://git.kernel.org/vfs/vfs/c/7c50209f1e6a
+-- 
+Pankaj Raghav
 
