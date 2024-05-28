@@ -1,108 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-20351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208AB8D1CF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 15:28:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7FC8D1D54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 15:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B729E1F224C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:28:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 124501C22593
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 13:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E5D16E896;
-	Tue, 28 May 2024 13:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18AD16F832;
+	Tue, 28 May 2024 13:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Wm1QN3Ry"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDODKE0/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC3B16EBF7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 13:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A74816F0F9;
+	Tue, 28 May 2024 13:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716902913; cv=none; b=SnG7bFyf3HMVMONH7iIvRh9d51zlxOQUaWXmiH5yrZgyo4qcdxDDSmNBbiOpqi9+rd+yUcoJIReUoJecjyRouvb/QuDcOmS/SVhcb/HzvawPFrO0oVfUw4NfhiS/enAe1MuOLz4hYIlFXaceZQMV7ImydvzIyjLaVSg6OdBxocw=
+	t=1716903975; cv=none; b=eBFsVK8TUM8KLt6Pjk88c5lmJ0GNCmnbr914IDyC0LLPQoU3FfGS53HCt7WGCVx8P1CZ27YS2kE99+z95k6+jeCRTJy8B8FURv9gBHx+t7sxTTCvhTlFABK88mUgkdpWvZp46y8htw439l4PY9MDSkjZgmnBU9nHeXOBDXok5b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716902913; c=relaxed/simple;
-	bh=PBBLOV4U2IFgFSKdFT4Y43aEoeT6Ow1hJwKRcZckZ7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AI/v1+qhLXZSuHiL+dI3xBlo+TPMGpfWeWQuCgJBQvseSJR18q4TPkptYonDvjLavklzumeDqABLo/yYA8MpnD5vBlPXSqKPFLTaqhjaiTWsNhoFGt5MPtAFuq6d+TUVwBWp/fOsLiRZSa1KnzT4cdMT5jyUMqLQ1ebwX4yTLCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Wm1QN3Ry; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a63359aaacaso104440866b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 06:28:31 -0700 (PDT)
+	s=arc-20240116; t=1716903975; c=relaxed/simple;
+	bh=iAe9634y6mwsByWHP2Co4adLQb1gGBm5cDhpRhEEFzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cCg/w7DKVHVnCvJV99fH5bCECmo4h2DiPdkkXondSHLZ4xGMTwWM2/qsOwXP1feNZ/Wh+d5FMXwAF2mq+2D31N9Vf4Xqd+whTSJ6I3JXXIJV/FE0lWxXEmQV9I1aIf+nyVnezr8bz5wftpRveUugOREPQ+1UxFdZTubCo1fA9ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDODKE0/; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-420180b5898so5767505e9.2;
+        Tue, 28 May 2024 06:46:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1716902910; x=1717507710; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PBBLOV4U2IFgFSKdFT4Y43aEoeT6Ow1hJwKRcZckZ7w=;
-        b=Wm1QN3RyfSowp3OP685y93x0QSYnT927aLF6A0cd+Dr/PPr3kY9GeQaKnWyWwIqKEi
-         kSOmSfvQGe/RlzTCV8BXz1hM78yQtJgcvRvsgU73ezbBBMY2GvU/lxelFVGj8Hm3F8R2
-         WtI+cRhoXatHfGMVm6zMu6kO2ofAGu6bZ0Hos=
+        d=gmail.com; s=20230601; t=1716903972; x=1717508772; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=30xqSKjOjXw7Y7njzyhoanyTf4RRJTROvAjzt4LX46I=;
+        b=lDODKE0/RelM5Xch6rIXaRAgivGMsrcVaN1wN1v5U6EGVaJDaO+zCz0ImnxdXgxXDL
+         l4trMOLc340LA+QBmMQZP3DinivK3VjQQTOBEmuZkrDxD3U9J/j1u+k5uLylin4JYdFx
+         ft0mqThoXveE7PL9T7+FwTu4kykHPItE+lS8/rwDcXcKb5Y28y843LX1yek2vHdJXkby
+         QNMSleNBQssFdSB6qhqADTsz9psc+EvtjNQe3Tn7zgqzbUCYWXipvZiPJei9wlYFcjcR
+         UvQ6UOFaJnfjLvjAzTcQPyfiFy71Hqe6d45C0laja/LWh4Zhrhu5iH/XULK0pNBNjo9N
+         0qRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716902910; x=1717507710;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PBBLOV4U2IFgFSKdFT4Y43aEoeT6Ow1hJwKRcZckZ7w=;
-        b=MZqkiuy1/aPu/qqP3mGhid90CW7bPOaV59n5qWGrSW7zgiYm0MpnjP5eJz1eEweDzx
-         F/KbmU4OQlX14m3kBxvq6fRZGwWxa3l1UKDzShTZEm/G2iPHRXMYHXKtBrhU4XKQGs0q
-         HF6TEt+h2yBcaXlieD8f541o2bkCIvGV+lV7JiITyxfdEdj/Nba1XVCGbCM+1TKsgZo1
-         bk57k0wH89La7g7Ooa/sjrvTa1l+1rWEPO/5QKyXRNz4PMK9Kt4EzGtHuf7NiwQ/ZJBe
-         Oj6GX7hP6lm72znfdJeYDqOESwKEQKHRmI+zynSpgtpR9KqP91KUPtCn6SoBk9hxa9Dh
-         S5+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Uwzb6NkGgAQGfP2meJ05NHRc9rTSUoLU8Ttf07TcrqY+z0pcnzjOvQB1rAZu45/Vm/uYmFBTXS4wQVa2jJq5bgec/Ekc7FSOC1WXyQ==
-X-Gm-Message-State: AOJu0YxTCzUVwbtlDrW0kD89HMLo0gu3obRMhE3dlVg7RadcTmGMrtjB
-	jUA0BAaDue0SLmYC4L2rLetayPVBLavkbSJLNnTSGiqSnvoEbxWq59FFGViwc6YvvFnBAWNA1+r
-	pkMJ0vD8Pzj/Z0LdGuMi9kNWWvcXREoH32gqrbA==
-X-Google-Smtp-Source: AGHT+IET1YleTWVR5AXg8CRN1Esbkyz90K8kriJOg4HbyfAsDwmoVK/cGg98h3bhg32ByJBXHFEIavMxNd8QwGr8f7g=
-X-Received: by 2002:a17:906:788:b0:a59:adf8:a6e1 with SMTP id
- a640c23a62f3a-a62651144f1mr794014566b.47.1716902909983; Tue, 28 May 2024
- 06:28:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716903972; x=1717508772;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30xqSKjOjXw7Y7njzyhoanyTf4RRJTROvAjzt4LX46I=;
+        b=F4KZKpjk54eJ0AeNevV9U/I+w9owQni210C6AbrohcNikanFyfyZxVVBbbIj6m7Oik
+         TnRpvqry75ZJWtpJi06ECjYqSYO5zxzeQhpsyNwH01xqSfiWful3c9w5HqcEAknas2vq
+         3tWxOrIHdZ6zVXmuPkreropZW9FCmsgW/AivV/awzevmP8QRjN9gvSTRwKOwST6SPyDU
+         VgDbHhLJB5Aff3PO5/Un13MtnxXxbYh4FN2XdAv0r7Uo//EOSIqiLijqKmpsTyQfXqYg
+         JQqjzJv1cSOTf6XpU1UhIQoipY6og5js01IOSoNK0BF/WYDzL9hq99yt7WpuCFvvjq1z
+         JHGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCiPEu3pv37ZM+GOLpRpU/O4RsvaIeL1hMy1fVtNqZ24lxmc1zDLp2wCyw0Fexx4FFB6KIMnwWN7lZjo5QJqz02GDFp9X3YZJy9nvp6Phz5WoQISjQt7vUEk080pSBzMSbm1CMvcmRPY7JdA==
+X-Gm-Message-State: AOJu0YwPyInNwhqHcMlwjTNxp69fl6v+Fms7udxzlBxaVw7PlNISVchf
+	RVM5LV0t6iwBVOWO1zBgG+XWib7xjsrnEq6XogxD822Be2HKeagI
+X-Google-Smtp-Source: AGHT+IEngAtN70Li5molD+j7snS98JGFYbHNecNTW6v/xiqDVGMoFnXuoLD/EeV3zEBe4zC4g9taDA==
+X-Received: by 2002:a1c:7902:0:b0:41b:c024:8e88 with SMTP id 5b1f17b1804b1-42108a0dc79mr77304435e9.33.1716903971518;
+        Tue, 28 May 2024 06:46:11 -0700 (PDT)
+Received: from f (cst-prg-92-138.cust.vodafone.cz. [46.135.92.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ae960sm142726565e9.31.2024.05.28.06.46.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 06:46:09 -0700 (PDT)
+Date: Tue, 28 May 2024 15:44:44 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Tim Chen <tim.c.chen@intel.com>, Dave Chinner <dchinner@redhat.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Maiolino <cem@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCH 8/8] shmem,percpu_counter: add _limited_add(fbc, limit,
+ amount)
+Message-ID: <5eemkb4lo5eefp7ijgncgogwmadyzmvjfjmmmvfiki6cwdskfs@hi2z4drqeuz6>
+References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
+ <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com>
+ <jh3yqdz43c24ur7w2jjutyvwodsdccefo6ycmtmjyvh25hojn4@aysycyla6pom>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZlMADupKkN0ITgG5@infradead.org> <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
- <ZlRy7EBaV04F2UaI@infradead.org> <20240527133430.ifjo2kksoehtuwrn@quack3>
- <ZlSzotIrVPGrC6vt@infradead.org> <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
- <ZlWVkJwwJ0-B-Zyl@infradead.org> <20240528-gesell-evakuieren-899c08cbfa06@brauner>
- <ZlW4IWMYxtwbeI7I@infradead.org> <20240528-gipfel-dilemma-948a590a36fd@brauner>
- <ZlXaj9Qv0bm9PAjX@infradead.org>
-In-Reply-To: <ZlXaj9Qv0bm9PAjX@infradead.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 28 May 2024 15:28:18 +0200
-Message-ID: <CAJfpegvznUGTYxxTzB5QQHWtNrCfSkWvGscacfZ67Gn+6XoD8w@mail.gmail.com>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to name_to_handle_at(2)
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <jh3yqdz43c24ur7w2jjutyvwodsdccefo6ycmtmjyvh25hojn4@aysycyla6pom>
 
-On Tue, 28 May 2024 at 15:24, Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Tue, May 28, 2024 at 02:04:16PM +0200, Christian Brauner wrote:
-> > Can you please explain how opening an fd based on a handle returned from
-> > name_to_handle_at() and not using a mount file descriptor for
-> > open_by_handle_at() would work?
->
-> Same as NFS file handles:
->
-> name_to_handle_at returns a handle that includes a file system
-> identifier.
->
-> open_by_handle_at looks up the superblock based on that identifier.
+On Sat, May 25, 2024 at 08:00:15AM +0200, Mateusz Guzik wrote:
+> On Fri, Sep 29, 2023 at 08:42:45PM -0700, Hugh Dickins wrote:
+> > Percpu counter's compare and add are separate functions: without locking
+> > around them (which would defeat their purpose), it has been possible to
+> > overflow the intended limit.  Imagine all the other CPUs fallocating
+> > tmpfs huge pages to the limit, in between this CPU's compare and its add.
+> > 
+> > I have not seen reports of that happening; but tmpfs's recent addition
+> > of dquot_alloc_block_nodirty() in between the compare and the add makes
+> > it even more likely, and I'd be uncomfortable to leave it unfixed.
+> > 
+> > Introduce percpu_counter_limited_add(fbc, limit, amount) to prevent it.
+> > 
+> 
+> I think the posted (and by now landed) code is racy.
+> 
+> I had seen there was a follow up patch which further augmented the
+> routine, but it did not alter the issue below so I'm responding to this
+> thread.
+> 
+> > +/*
+> > + * Compare counter, and add amount if the total is within limit.
+> > + * Return true if amount was added, false if it would exceed limit.
+> > + */
+> > +bool __percpu_counter_limited_add(struct percpu_counter *fbc,
+> > +				  s64 limit, s64 amount, s32 batch)
+> > +{
+> > +	s64 count;
+> > +	s64 unknown;
+> > +	unsigned long flags;
+> > +	bool good;
+> > +
+> > +	if (amount > limit)
+> > +		return false;
+> > +
+> > +	local_irq_save(flags);
+> > +	unknown = batch * num_online_cpus();
+> > +	count = __this_cpu_read(*fbc->counters);
+> > +
+> > +	/* Skip taking the lock when safe */
+> > +	if (abs(count + amount) <= batch &&
+> > +	    fbc->count + unknown <= limit) {
+> > +		this_cpu_add(*fbc->counters, amount);
+> > +		local_irq_restore(flags);
+> > +		return true;
+> > +	}
+> > +
+> 
+> Note the value of fbc->count is *not* stabilized.
+> 
+> > +	raw_spin_lock(&fbc->lock);
+> > +	count = fbc->count + amount;
+> > +
+> > +	/* Skip percpu_counter_sum() when safe */
+> > +	if (count + unknown > limit) {
+> > +		s32 *pcount;
+> > +		int cpu;
+> > +
+> > +		for_each_cpu_or(cpu, cpu_online_mask, cpu_dying_mask) {
+> > +			pcount = per_cpu_ptr(fbc->counters, cpu);
+> > +			count += *pcount;
+> > +		}
+> > +	}
+> > +
+> > +	good = count <= limit;
+> > +	if (good) {
+> > +		count = __this_cpu_read(*fbc->counters);
+> > +		fbc->count += count + amount;
+> > +		__this_cpu_sub(*fbc->counters, count);
+> > +	}
+> > +
+> > +	raw_spin_unlock(&fbc->lock);
+> > +	local_irq_restore(flags);
+> > +	return good;
+> > +}
+> > +
+> 
+> Consider 2 cpus executing the func at the same time, where one is
+> updating fbc->counter in the slow path while the other is testing it in
+> the fast path.
+> 
+> cpu0						cpu1
+> 						if (abs(count + amount) <= batch &&				
+> 						    fbc->count + unknown <= limit)
+> /* gets past the per-cpu traversal */
+> /* at this point cpu0 decided to bump fbc->count, while cpu1 decided to
+>  * bump the local counter */
+> 							this_cpu_add(*fbc->counters, amount);
+> fbc->count += count + amount;
+> 
+> Suppose fbc->count update puts it close enough to the limit that an
+> addition from cpu1 would put the entire thing over said limit.
+> 
+> Since the 2 operations are not synchronized cpu1 can observe fbc->count
+> prior to the bump and update it's local counter, resulting in
+> aforementioned overflow.
+> 
+> Am I misreading something here? Is this prevented?
+> 
+> To my grep the only user is quotas in shmem and I wonder if that use is
+> even justified. I am aware of performance realities of atomics. However,
+> it very well may be that whatever codepaths which exercise the counter
+> are suffering multicore issues elsewhere, making an atomic (in a
+> dedicated cacheline) a perfectly sane choice for the foreseeable future.
+> Should this be true there would be 0 rush working out a fixed variant of
+> the routine.
 
-The open file needs a specific mount, holding the superblock is not sufficient.
+So I tried it out and I don't believe a per-cpu counter for mem usage of
+shmem is warranted at this time. In a setting where usage keeps changing
+there is a massive bottleneck around folio_lruvec_lock.
 
-Thanks,
-Miklos
+The rare case where a bunch of memory is just populated one off on a
+tmpfs mount can probably suffer the atomic, it can only go so far up
+before you are out of memory.
+
+For the value to keep changing some of the pages will have to be
+released and this is what I'm testing below by slapping ftruncate on a
+test doing 1MB file writes in a loop (in will-it-scale):
+
+diff --git a/tests/write1.c b/tests/write1.c
+index d860904..790ddb3 100644
+--- a/tests/write1.c
++++ b/tests/write1.c
+@@ -28,6 +28,7 @@ void testcase(unsigned long long *iterations, unsigned long nr)
+                        size = 0;
+                        lseek(fd, 0, SEEK_SET);
+                }
++               ftruncate(fd, 0);
+
+                (*iterations)++;
+        }
+
+That this is allocates pages for 1MB size and releases them continously.
+
+When mounting tmpfs on /tmp and benching with "./write1_processes -t 20"
+(20 workers) I see almost all of the time spent spinning in
+__pv_queued_spin_lock_slowpath.
+
+As such I don't believe the per-cpu split buys anything in terms of
+scalability and as I explained in the previous mail I think the routine
+used here is buggy, while shmem is the only user. Should this switch to
+a centralized atomic (either cmpxchg loop or xadd + backpedal) there
+should be no loss in scalability given the lruvec problem. Then the
+routine could be commented out or whacked for the time being.
+
+backtraces for interested:
+
+bpftrace -e 'kprobe:__pv_queued_spin_lock_slowpath { @[kstack()] = count(); }'
+
+@[
+    __pv_queued_spin_lock_slowpath+5
+    _raw_spin_lock_irqsave+61
+    folio_lruvec_lock_irqsave+95
+    __page_cache_release+130
+    folios_put_refs+139
+    shmem_undo_range+702
+    shmem_setattr+983
+    notify_change+556
+    do_truncate+131
+    do_ftruncate+254
+    __x64_sys_ftruncate+62
+    do_syscall_64+87
+    entry_SYSCALL_64_after_hwframe+118
+]: 4750931
+@[
+    __pv_queued_spin_lock_slowpath+5
+    _raw_spin_lock_irqsave+61
+    folio_lruvec_lock_irqsave+95
+    folio_batch_move_lru+139
+    lru_add_drain_cpu+141
+    __folio_batch_release+49
+    shmem_undo_range+702
+    shmem_setattr+983
+    notify_change+556
+    do_truncate+131
+    do_ftruncate+254
+    __x64_sys_ftruncate+62
+    do_syscall_64+87
+    entry_SYSCALL_64_after_hwframe+118
+]: 4761483
+
 
