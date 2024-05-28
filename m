@@ -1,156 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-20320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CB08D16F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2308D16F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 11:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49CF1F24483
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 09:12:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424291F2373C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 09:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EEB13D52A;
-	Tue, 28 May 2024 09:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2039413D52A;
+	Tue, 28 May 2024 09:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="K92MUdTJ"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EewEnhWt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03AA4594A;
-	Tue, 28 May 2024 09:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3AE4594A;
+	Tue, 28 May 2024 09:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716887539; cv=none; b=Hy0BLBIZfevByWi9loA+w4TqzTtlt4/5Zuzv83WcFsTPcSVt5zOf7OHKE9VnMxNXLlp7MxCkJqcyr2mxiraWwLuHB+xjRQJLmJQ3cEEvXfb3RTfxfsRL4/gD9Uugmp48j8wWPlgMVbB0dS79P9K9qcX+P578/X1OKs51Q+WZIdw=
+	t=1716887593; cv=none; b=qf0huSNedkpQUjSibBXfnjbhxGb8DnkeQgc52pzqB/bI3/LGSgF8Qba/apqDcqwtupo5lEXOg0MJjwiTAFRihGr5QxCLXWY8syaQ0b0GGDFHrhIMitx0felBJrf+APmZhhwEsBhbs6G00jV65WeSz/1hxQWpqf245Aibqjem5CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716887539; c=relaxed/simple;
-	bh=MaP+gw6+Rx0wtt7NrugZhOZGAKPibK0Pozj5+E663jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSmQuGT4AIqpJpV6rBYzYzeBb1srgirtWsTIjG3J0G68jqEruaDkjjHOOcC3mihENfTgSpPSlhrmQhH1SqqLUJaOjRpFsoD7mCOcyt4nEDVujJ6CU2dG70asKU00TrRg8XguOXzQQuBoOtmqgJqDQuNfKwRPpHMKBvxO7jTS118=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=K92MUdTJ; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VpRbq2GZhz9sXg;
-	Tue, 28 May 2024 11:12:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1716887527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+6dkW93DnVACbslfNzCM4QmzlxV8HYGQZLUz4MDWvU4=;
-	b=K92MUdTJL75TcWOfAZGx+lSgP/CSVK3fRy6W0PEiHaXLvkZEnU2e5ME2bZWJijEije8631
-	IYXkXRyiC1fo4CPrma1zhSw+veppPMZRr3+rpFU/gtOlpawwq2TgTnEeLo3qwNzlKb7UvD
-	d5LHVMpLvMgodvKF3MgXchJg/vsUEOA4lPU3cjKkzON6tLVzujiY79BllXTb0aVskEV9/5
-	g4SwZU+mayqJedRswSDABP9WWTMD7iigfUKvgnxBBKX+DkVOKvm+Su2A+hoHOZfRT1MVJW
-	rsyNGz0+Am5TaXPqnwAGNSbKIZHcvzn/NeSomiLXJS2BuScHVmbfoo/3wIGX+A==
-Date: Tue, 28 May 2024 09:12:02 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
-	djwong@kernel.org, brauner@kernel.org, chandan.babu@oracle.com,
-	hare@suse.de, ritesh.list@gmail.com, john.g.garry@oracle.com,
-	ziy@nvidia.com, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	p.raghav@samsung.com, mcgrof@kernel.org
-Subject: Re: [PATCH v5.1] fs: Allow fine-grained control of folio sizes
-Message-ID: <20240528091202.qevisz7zr6n5ouj7@quentin>
-References: <20240527210125.1905586-1-willy@infradead.org>
- <20240527220926.3zh2rv43w7763d2y@quentin>
- <ZlULs_hAKMmasUR8@casper.infradead.org>
- <ZlUMnx-6N1J6ZR4i@casper.infradead.org>
- <ZlUQcEaP3FDXpCge@dread.disaster.area>
+	s=arc-20240116; t=1716887593; c=relaxed/simple;
+	bh=VZyli5BDb0C7SpDT6Pbwmvg/7m3zh4VbxAZv0BGVJiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s9xpGFLREsWc03PSiWFDwV08cvz8pv75/ET5KqoiSNWsnx1cD4O2+8TbVPp1Gb8oPGcIzywwIOTrm+AAFUnEb/j4CCi0ybGyd1UJGxEC1+5Lq4gjABJVQ+jGJDmdvMA4l6cLoXIdQa2zVFOOjne4jDScJxQSJKF9pnmU+iHfyVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EewEnhWt; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716887587; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=LGdTH9CYlq+eD3X+u8Vp575bSvRHvT7qvTa1TOKVCPY=;
+	b=EewEnhWtqPik1CPlbQK//lnQT/J3FURYJuTWw8fyRLNjFK2gtVlieGYAdjQ2MnwEFncBnB9J/a0rvJuX6lxLWAHrClnPYqB4G7qpiCJgFDCZtYMXOqZefojbHM7eVDl2Jv7IuFjHxI45I8IMMGBRd8zRoy5cp+fQEDRoSaKOfXg=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W7P7ceH_1716887585;
+Received: from 30.97.48.200(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7P7ceH_1716887585)
+          by smtp.aliyun-inc.com;
+          Tue, 28 May 2024 17:13:06 +0800
+Message-ID: <36c14658-2c38-4515-92e1-839553971477@linux.alibaba.com>
+Date: Tue, 28 May 2024 17:13:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlUQcEaP3FDXpCge@dread.disaster.area>
-X-Rspamd-Queue-Id: 4VpRbq2GZhz9sXg
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi
+ <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, winters.zc@antgroup.com
+References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com>
+ <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
+ <6a3c3035-b4c4-41d9-a7b0-65f72f479571@linux.alibaba.com>
+ <ce886be9-41d3-47b6-82e9-57d8f1f3421f@linux.alibaba.com>
+ <20240528-pegel-karpfen-fd16814adc50@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240528-pegel-karpfen-fd16814adc50@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 28, 2024 at 09:00:00AM +1000, Dave Chinner wrote:
-> On Mon, May 27, 2024 at 11:43:43PM +0100, Matthew Wilcox wrote:
-> > On Mon, May 27, 2024 at 11:39:47PM +0100, Matthew Wilcox wrote:
-> > > > > +	AS_FOLIO_ORDER_MIN = 16,
-> > > > > +	AS_FOLIO_ORDER_MAX = 21, /* Bits 16-25 are used for FOLIO_ORDER */
-> > > > >  };
-> > > > >  
-> > > > > +#define AS_FOLIO_ORDER_MIN_MASK 0x001f0000
-> > > > > +#define AS_FOLIO_ORDER_MAX_MASK 0x03e00000
-> > > > 
-> > > > As you changed the mapping flag offset, these masks also needs to be
-> > > > changed accordingly.
-> > > 
-> > > That's why I did change them?
-> > 
-> > How about:
-> > 
-> > -#define AS_FOLIO_ORDER_MIN_MASK 0x001f0000
-> > -#define AS_FOLIO_ORDER_MAX_MASK 0x03e00000
-> > +#define AS_FOLIO_ORDER_MIN_MASK (31 << AS_FOLIO_ORDER_MIN)
-> > +#define AS_FOLIO_ORDER_MAX_MASK (31 << AS_FOLIO_ORDER_MAX)
-> 
-> Lots of magic numbers based on the order having only having 5 bits
-> of resolution. Removing that magic looks like this:
-> 
-> 	AS_FOLIO_ORDER_BITS = 5,
+Hi Christian,
 
-I think this needs to be defined outside of the enum as 5 is already
-taken by AS_NO_WRITEBACK_TAGS? But I like the idea of making it generic
-like this.
-
-Something like this?
-
-#define AS_FOLIO_ORDER_BITS 5
-/*
- * Bits in mapping->flags.
- */
-enum mapping_flags {
-	AS_EIO		= 0,	/* IO error on async write */
-	AS_ENOSPC	= 1,	/* ENOSPC on async write */
-	AS_MM_ALL_LOCKS	= 2,	/* under mm_take_all_locks() */
-	AS_UNEVICTABLE	= 3,	/* e.g., ramdisk, SHM_LOCK */
-	AS_EXITING	= 4, 	/* final truncate in progress */
-	/* writeback related tags are not used */
-	AS_NO_WRITEBACK_TAGS = 5,
-	AS_RELEASE_ALWAYS = 6,	/* Call ->release_folio(), even if no private data */
-	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
-				   folio contents */
-	AS_UNMOVABLE = 8,	 /* The mapping cannot be moved, ever */
-	/* Bit 16-21 are used for FOLIO_ORDER */
-	AS_FOLIO_ORDER_MIN = 16,
-	AS_FOLIO_ORDER_MAX = AS_FOLIO_ORDER_MIN + AS_FOLIO_ORDER_BITS, 
-};
-
-@willy: I can fold this change that Chinner is proposing if you are fine
-with this.
-
-> 	AS_FOLIO_ORDER_MIN = 16,
-> 	AS_FOLIO_ORDER_MAX = AS_FOLIO_ORDER_MIN + AS_FOLIO_ORDER_BITS,
-> };
+On 2024/5/28 16:43, Christian Brauner wrote:
+> On Tue, May 28, 2024 at 12:02:46PM +0800, Gao Xiang wrote:
+>>
+>>
+>> On 2024/5/28 11:08, Jingbo Xu wrote:
+>>>
+>>>
+>>> On 5/28/24 10:45 AM, Jingbo Xu wrote:
+>>>>
+>>>>
+>>>> On 5/27/24 11:16 PM, Miklos Szeredi wrote:
+>>>>> On Fri, 24 May 2024 at 08:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>
+>>>>>> 3. I don't know if a kernel based recovery mechanism is welcome on the
+>>>>>> community side.  Any comment is welcome.  Thanks!
+>>>>>
+>>>>> I'd prefer something external to fuse.
+>>>>
+>>>> Okay, understood.
+>>>>
+>>>>>
+>>>>> Maybe a kernel based fdstore (lifetime connected to that of the
+>>>>> container) would a useful service more generally?
+>>>>
+>>>> Yeah I indeed had considered this, but I'm afraid VFS guys would be
+>>>> concerned about why we do this on kernel side rather than in user space.
+>>
+>> Just from my own perspective, even if it's in FUSE, the concern is
+>> almost the same.
+>>
+>> I wonder if on-demand cachefiles can keep fds too in the future
+>> (thus e.g. daemonless feature could even be implemented entirely
+>> with kernel fdstore) but it still has the same concern or it's
+>> a source of duplication.
+>>
+>> Thanks,
+>> Gao Xiang
+>>
+>>>>
+>>>> I'm not sure what the VFS guys think about this and if the kernel side
+>>>> shall care about this.
 > 
-> #define AS_FOLIO_ORDER_MASK	((1u << AS_FOLIO_ORDER_BITS) - 1)
-> #define AS_FOLIO_ORDER_MIN_MASK	(AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MIN)
-> #define AS_FOLIO_ORDER_MAX_MASK	(AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MAX)
+> Fwiw, I'm not convinced and I think that's a big can of worms security
+> wise and semantics wise. I have discussed whether a kernel-side fdstore
+> would be something that systemd would use if available multiple times
+> and they wouldn't use it because it provides them with no benefits over
+> having it in userspace.
+
+As far as I know, currently there are approximately two ways to do
+failover mechanisms in kernel.
+
+The first model much like a fuse-like model: in this mode, we should
+keep and pass fd to maintain the active state.  And currently,
+userspace should be responsible for the permission/security issues
+when doing something like passing fds.
+
+The second model is like one device-one instance model, for example
+ublk (If I understand correctly): each active instance (/dev/ublkbX)
+has their own unique control device (/dev/ublkcX).  Users could
+assign/change DAC/MAC for each control device.  And failover
+recovery just needs to reopen the control device with proper
+permission and do recovery.
+
+So just my own thought, kernel-side fdstore pseudo filesystem may
+provide a DAC/MAC mechanism for the first model.  That is a much
+cleaner way than doing some similar thing independently in each
+subsystem which may need DAC/MAC-like mechanism.  But that is
+just my own thought.
+
+Thanks,
+Gao Xiang
+
 > 
-> This way if we want to increase the order mask, we only need to
-> change AS_FOLIO_ORDER_BITS and everything else automatically
-> recalculates.
-> 
-> Doing this means We could also easily use the high bits of the flag
-> word for the folio orders, rather than putting them in the middle of
-> the flag space...
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> Especially since it implements a lot of special semantics and policy
+> that we really don't want in the kernel. I think that's just not
+> something we should do. We should give userspace all the means to
+> implement fdstores in userspace but not hold fds ourselves.
 
