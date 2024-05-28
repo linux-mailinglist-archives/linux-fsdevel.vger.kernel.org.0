@@ -1,102 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-20294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364048D126D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 05:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455178D12F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 05:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD1228382C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 03:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEE31F22F1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 03:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AF2182B3;
-	Tue, 28 May 2024 03:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vfItW0BZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DF117BD8;
+	Tue, 28 May 2024 03:45:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7573217C68;
-	Tue, 28 May 2024 03:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7186417E8E4;
+	Tue, 28 May 2024 03:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716865707; cv=none; b=rafL2Y3VAyjtN8TqDF1wOYs+ROaz76pTv906eK4oBdHTp0ZZQbVCHWLs11CzYxJtN1X9i6mjUyLFWm09pSw1zaiLAL2NG4aryAfB82eWO389I0R2uRn6kAT8l3CBQU0dL17XZ4zYByegDzl+cg8yw/p7s+7voHh0SWikOCCF9Y4=
+	t=1716867950; cv=none; b=K3L0sKEMpRBdCQhFKHhjwE7V4t3mlXJPzO+0UsFcyN6YfvYmP/EGXsWmFDHXdlb2NuStt0yU9YnGnmwwGLIoNcHHK718cMaWK6fXGB/bHvltsKInp5G6qRCSKZLagFk5dWNiv7YIkES86v2n38QXq0zTk2M8sdEUDuvAtffRHeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716865707; c=relaxed/simple;
-	bh=roCSdQxbUY29rDE38xzKqghaprNify5fn1VLno9bEVU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jiFXe/RlaMyTwvhdZvWrhOEiLMe33BCjWnhPy8KFVXXMtVK69CE+bgYH6JBhSvUBuyhGTGWXNSoHLpsW9W5o9ur2svKPTcViHzSbMUTaYkfJPqb85D6pVZ1XEehn8ikMBJZc1yD1QQseAKSVk6qVEUQJfaY75vj5EHWL3fBgmIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vfItW0BZ; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716865702; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=0Pw1BUiofgno3cSLLGLqrBjiIZ9UhCXpPdHKClzv11Q=;
-	b=vfItW0BZML/SURhR9K3Fv/tGopu80c1gS0ykbC6ehSX2y3NGT4dO6gSwtEy6rUpNsSa0OV725kHX1sfJiF8E5fk05cGnjyb7L4SN2aDnm/V4qWCe8LifNCQ4MLYUItAyFoXXmN/u0v4dkRzuH08JxZlGO+h3nM8IZfJ1YKchyvE=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R901e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W7O7xhR_1716865700;
-Received: from 30.221.144.199(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7O7xhR_1716865700)
-          by smtp.aliyun-inc.com;
-          Tue, 28 May 2024 11:08:21 +0800
-Message-ID: <6a3c3035-b4c4-41d9-a7b0-65f72f479571@linux.alibaba.com>
-Date: Tue, 28 May 2024 11:08:19 +0800
+	s=arc-20240116; t=1716867950; c=relaxed/simple;
+	bh=8Wbp2Csk20jRbXt47bxwNrTOIr9WdTkbi2J4gtJqvXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EOwNrpOAt3MWhfwaELGqL1jYY7XzzXk4XpNhcmt4XMPWHTcMMabTD2K1BIDxkEznGKiZwhkcStu7EZON/Kg8GHEJ7oFuko9lc89S66t4NPwqegE0QD6/2kZ4vKGq5viKBHYsEpwtW3hoSCZKWgVy7E7mLLHkqawJXRhWJ/rcsSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 186DC205DB9A;
+	Tue, 28 May 2024 12:39:29 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-3) with ESMTPS id 44S3dRkS081341
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 12:39:28 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-3) with ESMTPS id 44S3dRBl828125
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 12:39:27 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 44S3dRPC828124;
+	Tue, 28 May 2024 12:39:27 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro
+ <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] fs: fat: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com> (Jeff
+	Johnson's message of "Mon, 27 May 2024 11:00:40 -0700")
+References: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com>
+Date: Tue, 28 May 2024 12:39:27 +0900
+Message-ID: <87v82yzjtc.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- winters.zc@antgroup.com
-References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
- <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com>
- <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
-Content-Language: en-US
-In-Reply-To: <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+Jeff Johnson <quic_jjohnson@quicinc.com> writes:
 
+> Fix the 'make W=1' warnings:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-On 5/28/24 10:45 AM, Jingbo Xu wrote:
-> 
-> 
-> On 5/27/24 11:16 PM, Miklos Szeredi wrote:
->> On Fri, 24 May 2024 at 08:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>
->>> 3. I don't know if a kernel based recovery mechanism is welcome on the
->>> community side.  Any comment is welcome.  Thanks!
->>
->> I'd prefer something external to fuse.
-> 
-> Okay, understood.
-> 
->>
->> Maybe a kernel based fdstore (lifetime connected to that of the
->> container) would a useful service more generally?
-> 
-> Yeah I indeed had considered this, but I'm afraid VFS guys would be
-> concerned about why we do this on kernel side rather than in user space.
-> 
-> I'm not sure what the VFS guys think about this and if the kernel side
-> shall care about this.
-> 
+Looks good.
 
-There was an RFC for kernel-side fdstore [1], though it's also
-implemented upon FUSE.
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-[1]
-https://lore.kernel.org/all/CA+a=Yy5rnqLqH2iR-ZY6AUkNJy48mroVV3Exmhmt-pfTi82kXA@mail.gmail.com/T/
+Thanks.
 
-
+> ---
+>  fs/fat/fat_test.c | 1 +
+>  fs/fat/inode.c    | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/fs/fat/fat_test.c b/fs/fat/fat_test.c
+> index 2dab4ca1d0d8..1f0062659067 100644
+> --- a/fs/fat/fat_test.c
+> +++ b/fs/fat/fat_test.c
+> @@ -193,4 +193,5 @@ static struct kunit_suite fat_test_suite = {
+>  
+>  kunit_test_suites(&fat_test_suite);
+>  
+> +MODULE_DESCRIPTION("KUnit tests for FAT filesystems");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+> index d9e6fbb6f246..3027d275dbf1 100644
+> --- a/fs/fat/inode.c
+> +++ b/fs/fat/inode.c
+> @@ -1978,4 +1978,5 @@ static void __exit exit_fat_fs(void)
+>  module_init(init_fat_fs)
+>  module_exit(exit_fat_fs)
+>  
+> +MODULE_DESCRIPTION("Core FAT filesystem support");
+>  MODULE_LICENSE("GPL");
+>
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-fat-bea9424c9303
+>
 
 -- 
-Thanks,
-Jingbo
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
