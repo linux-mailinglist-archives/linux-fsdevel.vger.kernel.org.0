@@ -1,161 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-20413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41FD8D30FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 10:22:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA30B8D3147
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 10:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC7F81C20B83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 08:22:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960D8294DED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 08:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CEC174EE3;
-	Wed, 29 May 2024 08:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C0816A374;
+	Wed, 29 May 2024 08:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+XxuPtV"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qh6rb3WP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844AC168C3D;
-	Wed, 29 May 2024 08:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF22215B0E0;
+	Wed, 29 May 2024 08:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970667; cv=none; b=P9RrUU+UWJ7TZw/ZT3pywBA3SvEmOF7iAKkYLwxA7RNnINmuNaIeQpXIWyCcvXzPVrpxuPBco+C8/07WtgoqlIBA3clt1t8vRk6meBUKjuq2PWbXJFB7KZn1kzqjkJsz3Frr5JR5BFTst9sixfONoIfU4MI35i+6H/8Yip+auas=
+	t=1716971209; cv=none; b=ABSAhqlEx+tXrUr2sxCNEIps5OKEE66STgKRBSkozkm8Z2z/OdSs6o7N0v4Y3vGBq/TdrYZOUhRlZF2QCSEJ/TVsABaOext3yNdvCNCT83RaOvpXfqT3ND2waC9grAdHLFtBvWmkjVvoXoZp8ajF4YKCcccCuI0NunU0IL8VhDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970667; c=relaxed/simple;
-	bh=aex72zuj9Ceu5xpqhciQKKCLeAJCuCEnMMtr7+earFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6pVAH4vVFNoRYhiMHPrILPsEoTAdJNVo2lXtSrUB8SueQAxfxtkhk7UxnUV88DiSbN+EY/9hMNLIuZLfQc0/VPVEWsdX72WS37XmWD1WNpYdqKQOrcCZZPskH7+gt1OYumJS+MEEJ9kOEuTvrYkD0cvwDwtWQjJUhZqieWV6Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+XxuPtV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B7EC32786;
-	Wed, 29 May 2024 08:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716970665;
-	bh=aex72zuj9Ceu5xpqhciQKKCLeAJCuCEnMMtr7+earFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e+XxuPtV4QUkDBG2igGuGESMzKco6PB+FxfuvH7AEA2uGr6gCnclN0M3Fi6ITvU1P
-	 MJQUKfeHle/7jVVwHopdRdBrgWTDCyRNiOt3WtY5LazUrmuJYD6zySctiK1kpcQRJq
-	 8Pq4YPBYzzSlzn0npedFaS4msMQN3v/xaDAmgJeCQcMge7vcqXxrbK+fsxGBDlaoQr
-	 kUVg0pFfzsyIjqMV5o8fACgWyNBsmoaZB/IbgfPDqDm/aSxt4mC1vlD4leDztsuWKW
-	 Q6S1TyuGcIZNO9vnhTIyNyP05sQZ+4e217JU8KzmmpFEp5CHM4Q9cyVPlOVxsqh9p3
-	 do7l1e7KsAbAA==
-Date: Wed, 29 May 2024 10:17:36 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, 
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, gary@garyguo.net, 
-	gregkh@linuxfoundation.org, joel@joelfernandes.org, keescook@chromium.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
-	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
-	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, viro@zeniv.linux.org.uk, 
-	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
-Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
-Message-ID: <20240529-muskatnuss-jubel-489aaf93fc0b@brauner>
-References: <20240525-dompteur-darfst-79a1b275e7f3@brauner>
- <20240527160514.3909734-1-aliceryhl@google.com>
+	s=arc-20240116; t=1716971209; c=relaxed/simple;
+	bh=8DvYsg/j4JRyj6ZyJVoopmP3oTEFO0NjYisKzyNxqSI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KjsQe6qN0JKzdP+knb6W9wxEWJmfrc4cqgO5SiOiJnc7TXdtq/OnE/yur/nBuEuEVGkfkDm6cYLWWCXUM7XlWOJn+6kYTScf0urvANc6TuzbbyJEpTfWPeZxx8HO0vPRQrLpsfZgkEbzNJTKcHiRqPZ5nR38+ehYc+H6zzu82uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qh6rb3WP; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716971205;
+	bh=8DvYsg/j4JRyj6ZyJVoopmP3oTEFO0NjYisKzyNxqSI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qh6rb3WPLPrJoI4vPSUcHSsfx4xXvHSNZE78X2QGYjPweOAkLp+9FK1WwovZCoNZR
+	 TGwMK4TPCngnbTlRB/taqO5ZaWl0ec/oJDJvyAU4FNF569nO5XE6A10S3qWdcsZjCw
+	 Q3fnc7G85Pm8X004BLEyY/JZdfXQo1QeplmvUHrosA3DXMtsqkpfrBk1HoYAMIzmqM
+	 Vih5bf1TNOzMRZkf2kunuQGXTt82Qv0PQLYWCcji0LqnVHIhjbOo1US9bimQDy99wi
+	 hQH52+ruIctn0Fd9np2EWN4zsjZltxr4bbD/RDHxGv4+Zh5TU5Zo0e0AYHZhMHOe1R
+	 og081qT8b8zQw==
+Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ehristev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C7FC5378000A;
+	Wed, 29 May 2024 08:26:44 +0000 (UTC)
+From: Eugen Hristev <eugen.hristev@collabora.com>
+To: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	jaegeuk@kernel.org,
+	adilger.kernel@dilger.ca,
+	tytso@mit.edu
+Cc: chao@kernel.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	ebiggers@google.com,
+	krisman@suse.de,
+	kernel@collabora.com,
+	Eugen Hristev <eugen.hristev@collabora.com>
+Subject: [PATCH v17 0/7] Case insensitive cleanup for ext4/f2fs
+Date: Wed, 29 May 2024 11:26:27 +0300
+Message-Id: <20240529082634.141286-1-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240527160514.3909734-1-aliceryhl@google.com>
+Content-Transfer-Encoding: 8bit
 
-> > So what you're getting at seems to be that some process has a private
-> > file descriptor table and an just opened @fd to a @file that isn't
-> > shared.
-> > 
-> > 	fd = open("/my/file");
-> > 
-> > and then let's say has a random ioctl(fd, SOMETHING_SOMETHING) that
-> > somehow does:
-> > 
-> > 	struct fd fd = fdget_pos();
-> > 	if (!fd.file)
-> > 		return -EBADF;
-> > 
-> > We know that process has used a light reference count and that it didn't
-> > acquire f_pos_lock.
-> > 
-> > Your whole approach seems to assume that after something like this has
-> > happened the same process now offloads that struct file to another
-> > process that somehow ends up doing some other operation on the file that
-> > would also require f_pos_lock to be taken but it doesn't like a read or
-> > something.
-> 
-> Can we not have a data race even if the other process *does* take the
-> f_pos_lock mutex? The current thread did not take the mutex, so if the
-> current thread touches the file position after sending the file
-> reference, then that could race with the other process even if the
-> other process takes f_pos_lock.
+Hello,
 
-Yes, for that the original sender would have to have taken a light
-reference, and the file mustn't have been in any other file descriptor
-table and then the original opener must've sent it while in fdget_pos
-scope and remain in that scope while the receiver installs the fd into
-their fd table and then leaves and reenters the kernel to e.g., read.
+I am trying to respin the series here :
+https://www.spinics.net/lists/linux-ext4/msg85081.html
 
-> > To share a file between multiple processes would normally always require
-> > that the process sends that file to another process. That process then
-> > install that fd into its file descriptor table and then later accesses
-> > that file via fdget() again. That's the standard way of doing it -
-> > binder does it that way too. And that's all perfectly fine.
-> 
-> And similarly, if the remote process installs the file, returns to
-> userspace, and then userspace calls back into the kernel, which enters
-> an fdget_pos scope and modifies the file position. Then this can also
-> race on the file position if the original process changes the file
-> position it after sending the file reference.
+I resent some of the v9 patches and got some reviews from Gabriel,
+I did changes as requested and here is v17.
 
-If that process were to send it from within an fdget_pos scope then yes. 
+Changes in v17:
+- in patch 2/7 the case insensitive match helper, I modified the logic a bit,
+memcmp params, and return errors properly, also removed patches for logging
+errors as the message is now included in the helper itself.
 
-> *That's* the data race that this is trying to prevent.
-> 
-> > What you would need for this to be a problem is for a process be sent a
-> > struct file from a process that is in the middle of an f_pos_lock scope
-> > and for the receiving process to immediately start doing stuff that
-> > would normally require f_pos_lock.
-> > 
-> > Like, idk vfs_read(file, ...).
-> > 
-> > If that's what this is about then yes, there's a close-to-zero but
-> > non-zero possibility that some really stupid code could end up doing
-> > something like this.
-> > 
-> > Basically, that scenario doesn't exist (as I've mentioned before)
-> > currently. It only exists in a single instance and that's when
-> > pidfd_getfd() is used to steal a file from another task while that task
-> > is in the middle of an f_pos_lock section (I said it before we don't
-> > care about that because non-POSIX interface anyway and we have ptrace
-> > rights anyway. And iiuc that wouldn't even be preventable in your
-> > current scheme because you would need to have the information available
-> > that the struct file you're about to steal from the file descriptor
-> > table is currently within an f_pos_lock section.).
-> > 
-> > Is it honestly worth encoding all that complexity into rust's file
-> > implementation itself right now? It's barely understandable to
-> > non-rust experts as it is right now. :)
-> > 
-> > Imho, it would seem a lot more prudent to just have something simpler
-> > for now.
-> 
-> The purpose of the changes I've made are to prevent data races on the
-> file position. If we go back to what we had before, then the API does
-> not make it impossible for users of the API to cause such data races.
-> 
-> That is the tradeoff.
+Changes in v16:
+- rewrote patch 2/9 without `match`
+- changed to return value in generic_ci_match coming from utf8 compare only in
+strict mode.
+- changed f2fs_warn to *_ratelimited in 7/9
+- removed the declaration of f2fs_cf_name_slab in recovery.c as it's no longer
+needed.
 
-Right. Sorry, there's some back and forth here. But we're all navigating
-this new territory here and it's not always trivial to see what the
-correct approach is.
+Changes in v15:
+- fix wrong check `ret<0` in 7/9
+- fix memleak reintroduced in 8/9
 
-I wonder what's better for now. It seems that the binder code isn't
-really subject to the races we discussed. So maybe we should start with
-the simpler approach for now to not get bogged down in encoding all
-subtle details into rust's file wrapper just yet?
+Changes in v14:
+- fix wrong kfree unchecked call
+- changed the return code in 3/8
+
+Changes in v13:
+- removed stray wrong line in 2/8
+- removed old R-b as it's too long since they were given
+- removed check for null buff in 2/8
+- added new patch `f2fs: Log error when lookup of encoded dentry fails` as suggested
+- rebased on unicode.git for-next branch
+
+Changes in v12:
+- revert to v10 comparison with propagating the error code from utf comparison
+
+Changes in v11:
+- revert to the original v9 implementation for the comparison helper.
+
+Changes in v10:
+- reworked a bit the comparison helper to improve performance by
+first performing the exact lookup.
+
+
+* Original commit letter
+
+The case-insensitive implementations in f2fs and ext4 have quite a bit
+of duplicated code.  This series simplifies the ext4 version, with the
+goal of extracting ext4_ci_compare into a helper library that can be
+used by both filesystems.  It also reduces the clutter from many
+codeguards for CONFIG_UNICODE; as requested by Linus, they are part of
+the codeflow now.
+
+While there, I noticed we can leverage the utf8 functions to detect
+encoded names that are corrupted in the filesystem. Therefore, it also
+adds an ext4 error on that scenario, to mark the filesystem as
+corrupted.
+
+This series survived passes of xfstests -g quick.
+
+Gabriel Krisman Bertazi (7):
+  ext4: Simplify the handling of cached casefolded names
+  f2fs: Simplify the handling of cached casefolded names
+  libfs: Introduce case-insensitive string comparison helper
+  ext4: Reuse generic_ci_match for ci comparisons
+  f2fs: Reuse generic_ci_match for ci comparisons
+  ext4: Move CONFIG_UNICODE defguards into the code flow
+  f2fs: Move CONFIG_UNICODE defguards into the code flow
+
+ fs/ext4/crypto.c   |  10 +---
+ fs/ext4/ext4.h     |  35 ++++++++-----
+ fs/ext4/namei.c    | 126 +++++++++++++++------------------------------
+ fs/ext4/super.c    |   4 +-
+ fs/f2fs/dir.c      | 105 +++++++++++--------------------------
+ fs/f2fs/f2fs.h     |  16 +++++-
+ fs/f2fs/namei.c    |  10 ++--
+ fs/f2fs/recovery.c |   9 +---
+ fs/f2fs/super.c    |   8 +--
+ fs/libfs.c         |  74 ++++++++++++++++++++++++++
+ include/linux/fs.h |   4 ++
+ 11 files changed, 200 insertions(+), 201 deletions(-)
+
+-- 
+2.34.1
+
 
