@@ -1,157 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-20451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9898D3B51
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 17:46:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C3B8D3B59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 17:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267501C22DA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55071C21F22
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E488B181D1B;
-	Wed, 29 May 2024 15:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC33181CEF;
+	Wed, 29 May 2024 15:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1HcRd4F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDY5ndPa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0A71386C6;
-	Wed, 29 May 2024 15:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E6B15ADAA;
+	Wed, 29 May 2024 15:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716997586; cv=none; b=K2GpBDHK5DZ33YyGUbONGay/rcpqLesF3PjVlyGhM+5lEjOAAxg7euTecWyjnu52jCSsruMdON8sSJcmEz95k2Ygk+1QwmOIj3Lx4+HEjQHxERkykRz1De+StMy7sw/q6AZOj3XN5UwCIkvq+PnyyXVM+ox4n2rxG/xr85vTT2I=
+	t=1716997770; cv=none; b=UPYv9f1ho+3FjF2haPbYjeI2RP7RwjaXsvaU+MZF0B2dp8fHZsWyjogOnJRxb8F9EzHp3ypmkFHDDljcsIOZSvwllYQ2xot3KpFQB9QMFGTEHObyIptvZyEZZe7Wf83i4bvBm0P1B7esiyptE+ETi2NWpl8nHOxRuMbbhTdJ6+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716997586; c=relaxed/simple;
-	bh=5H/9tAGxhCnQIdq/gPNT2uQTCgvD6jAZwCxyBBdjciY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pTXU4Gf0jOK9W6oTvBxsHcb0u0OnVUy7B5Sgr6UPfnRJfAJYSWKGw2oNH2hsXiNX5R9wNTFd0j6RgOOAe6FVoosszNUFLCnRCKUNmxc3buNjvBQEqEcTnWK5xIrHHNj6hm8Xvc/5CZouTA2j5ix+YnWJDRVZXOTO7zc4AaIeOU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1HcRd4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC9CC116B1;
-	Wed, 29 May 2024 15:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716997585;
-	bh=5H/9tAGxhCnQIdq/gPNT2uQTCgvD6jAZwCxyBBdjciY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b1HcRd4FyRr1Fgr8KI7GaMOYM54DLB/kJz++0sBj9koRiH1ImimLxCkncD3DWiJb4
-	 NDH8P+IaKPe1VLQGZJP5nf9t3/ZSchz0OAJ4mpGWs1V3Apgz6CUNpTj4p22M34KEtD
-	 loH1/x5pPy2LnldfHajuPt15CKIwbllYL7rKylFdmMpIBBgYHlG/x0E6Prqo4VLR5F
-	 BXQc7DRs+e2H+ZvsNZNJqBI82iorAnwgpyaXrvj8xDcNrsvMLpbDse62m0cMekjJFE
-	 qRxhbulfJVSoPdv1Pix0R7Pb3LaMDPnYzIDyrfMx4qLrotZZidXBLndgigIRuAscB0
-	 vdOTG32dAyCcw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sCLVP-00Gfog-PN;
-	Wed, 29 May 2024 16:46:23 +0100
-Date: Wed, 29 May 2024 16:46:23 +0100
-Message-ID: <8634q0mxio.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com,
-	bp@alien8.de,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
+	s=arc-20240116; t=1716997770; c=relaxed/simple;
+	bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y8YAJl766Ju3Dn2gmeX8Klon32LynA3G2owXaeXYToRt21DOr+MAbNH0RR2l80VkTVxXz7S0ctsOLVNvUUPtw3TqWp8dFjTu2YrF4KoZWoaNYIPTc6UrDh0hC0h6jV+X04r0regyKctbXHSeDXm3RbRGLTqcFFQhMDpMoSKhxZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDY5ndPa; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b59f77670so818965e87.2;
+        Wed, 29 May 2024 08:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716997767; x=1717602567; darn=vger.kernel.org;
+        h=content-transfer-encoding:tested-by:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
+        b=CDY5ndPavxtl/NIVZi+9htvJetk8Xqg0oyoIlCj2Z7GLstlz7eGyM0DMZBSqYPa165
+         6y/S/Varbu8lWetkXbVDjRCyw/z5YatkoSOJk3wIzo95slXB/GBIpnb1Bxkibja0L++Q
+         DFy2u1x9tJbVf2NkGuGipfHu9ACEhM71rueDYlS5GMk+EN+6PqMUv6lvoTMRq9ggDSJj
+         tDWWXP2mlNCllPfSZDVMMvl59Q8MtVShPWu0Im8dxNWR0Ze814ji08LfhtoZI60JoYDt
+         ZdLXA4KnKs/VQdITvFEuut2zH6P3kjJBHQ4kA5IE+kbkDWBAPLrMuEHFYubHo1ZRJ5II
+         I06g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716997767; x=1717602567;
+        h=content-transfer-encoding:tested-by:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
+        b=Vscys7psr62OTqvrscgg7wDR/wM0VOmBKvPqPBCkEroHCGTPyeYyAuP7W+CGnRQIxh
+         fxaqYOEh7vYyEYqe/lgi0muqBDg3gwGq12HYvFcWZE97g5fEqUrQOX5mBdknDzjkHj9p
+         LoorrXt9eOwThOFeygMvCglLTRE25vA1ECZRFmj9Mbk57TOXvigXvXWyVrYRnzDMu8is
+         sOsOI66Pfoj8FYgehB67MBygrMMllwlvsCDzlrWEth0RZxLFlvawFQiEsjaxYa/G6DsF
+         SR18/1NqVzcvqFzKKZ9uJpHCe3SY0XBZhRepsquMNct0SakHascqMVoj2i85zH8y+sAz
+         yrJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfh27CFDuKfOdH5/UFiJEQJHwnUF5a74J3Ud0hXg8KpAm4m+433riYGqIAdbfb+bOhWTomUy6sF1goQp6JxtMmlhk836sP1J6+5MJ33qWhRI8N7nh0na56Rn+G875lhGEH16KSCskd/84pCOX7MqWuzHCrGnD1E9sq5kgaEC3iFSt0y/Rt7Ek=
+X-Gm-Message-State: AOJu0YyTK78H0EtufHQqAy65JeZLc3NVQQ4Cv5PXt6/S+ngow7lTuP2n
+	WpmmFdrJtCvXy9RnBop/bmuhsCK+hptBPsciPFZ/cRwQC0abnbcN
+X-Google-Smtp-Source: AGHT+IFW79OSamdw/XK/8vhe8hHK9amSGndta1cSuOjiNUAIf5VvMhVDXfV0WLFvZeruXCBTBCr2fg==
+X-Received: by 2002:ac2:5a5e:0:b0:52a:f478:a3fb with SMTP id 2adb3069b0e04-52af478a4e3mr1906096e87.61.1716997767216;
+        Wed, 29 May 2024 08:49:27 -0700 (PDT)
+Received: from michal-Latitude-5420.. ([88.220.73.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c8176c6sm743302366b.18.2024.05.29.08.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 08:49:26 -0700 (PDT)
+From: =?UTF-8?q?Sebastian=20=C5=BB=C3=B3=C5=82tek?= <sebek.zoltek@gmail.com>
+To: syzbot+9a3a26ce3bf119f0190b@syzkaller.appspotmail.com
+Cc: jack@suse.com,
+	linux-ext4@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	mingo@redhat.com,
-	mpe@ellerman.id.au,
-	naveen.n.rao@linux.ibm.com,
-	npiggin@gmail.com,
-	oliver.upton@linux.dev,
-	shuah@kernel.org,
-	szabolcs.nagy@arm.com,
-	tglx@linutronix.de,
-	will@kernel.org,
-	x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 08/29] KVM: arm64: make kvm_at() take an OP_AT_*
-In-Reply-To: <20240503130147.1154804-9-joey.gouly@arm.com>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
-	<20240503130147.1154804-9-joey.gouly@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	tytso@mit.edu
+Subject: Testing if issue still reproduces
+Date: Wed, 29 May 2024 17:49:14 +0200
+Message-ID: <20240529154914.2008561-1-sebek.zoltek@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007010c50616e169f4@google.com>
+References: <0000000000007010c50616e169f4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Tested-by: Sebastian Zoltek sebek.zoltek@gmail.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, 03 May 2024 14:01:26 +0100,
-Joey Gouly <joey.gouly@arm.com> wrote:
-> 
-> To allow using newer instructions that current assemblers don't know about,
-> replace the `at` instruction with the underlying SYS instruction.
-> 
-> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> ---
->  arch/arm64/include/asm/kvm_asm.h       | 3 ++-
->  arch/arm64/kvm/hyp/include/hyp/fault.h | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index 24b5e6b23417..ce65fd0f01b0 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -10,6 +10,7 @@
->  #include <asm/hyp_image.h>
->  #include <asm/insn.h>
->  #include <asm/virt.h>
-> +#include <asm/sysreg.h>
-
-nit: include order.
-
->  
->  #define ARM_EXIT_WITH_SERROR_BIT  31
->  #define ARM_EXCEPTION_CODE(x)	  ((x) & ~(1U << ARM_EXIT_WITH_SERROR_BIT))
-> @@ -261,7 +262,7 @@ extern u64 __kvm_get_mdcr_el2(void);
->  	asm volatile(							\
->  	"	mrs	%1, spsr_el2\n"					\
->  	"	mrs	%2, elr_el2\n"					\
-> -	"1:	at	"at_op", %3\n"					\
-> +	"1:	" __msr_s(at_op, "%3") "\n"				\
->  	"	isb\n"							\
->  	"	b	9f\n"						\
->  	"2:	msr	spsr_el2, %1\n"					\
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/fault.h b/arch/arm64/kvm/hyp/include/hyp/fault.h
-> index 9e13c1bc2ad5..487c06099d6f 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/fault.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/fault.h
-> @@ -27,7 +27,7 @@ static inline bool __translate_far_to_hpfar(u64 far, u64 *hpfar)
->  	 * saved the guest context yet, and we may return early...
->  	 */
->  	par = read_sysreg_par();
-> -	if (!__kvm_at("s1e1r", far))
-> +	if (!__kvm_at(OP_AT_S1E1R, far))
->  		tmp = read_sysreg_par();
->  	else
->  		tmp = SYS_PAR_EL1_F; /* back to the guest */
-
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+#syzbot test
 
