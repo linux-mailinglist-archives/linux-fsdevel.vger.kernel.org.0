@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-20487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A638D400D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 23:09:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9328D400E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 23:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E43228872D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 21:09:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317A61F23C73
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 21:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7DC1C8FC7;
-	Wed, 29 May 2024 21:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA321C8FBB;
+	Wed, 29 May 2024 21:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="rDT+dDr/"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="F/VqQU3q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D994F16937B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2024 21:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A7C15CD77
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2024 21:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717016970; cv=none; b=PehbiFzpcZXjZ/kPKP9SLTerwh0IRc7Ai+pf73p/wXeKGx2uqFzQZKmiZjVUXBbWK1AbuLPCnDjQFi8JR1NkQXfmfuGcyeilsNl90eAaYi/hwtVrzVyc6MmEDg49FB7+FJL/kKVLhilhjc+RMsSm9mNB6XFU1psZvtsQ97xSi40=
+	t=1717016988; cv=none; b=HWOrKb7uhbOVz3GGaaE2YWmU7u7Qs8aZiT1SbvNMw1ypO15AFXe3pWVyR/mpFIgW/VliflcIZm9bQuotHRViK3Fj9ttrEq9ZjIUhESuUa0UnQxeB1ayVfxVBFLfa5foDFbrBVg666xOMTlDuM9zH/LoieNtOMTbhYxzJwteRZi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717016970; c=relaxed/simple;
-	bh=+g7pnhoqp9imQ85u2efPA5UpNgCf5e2YCm5QJNP0Qjc=;
+	s=arc-20240116; t=1717016988; c=relaxed/simple;
+	bh=BwFRQB1IU49nLODXCDo4FzTZgyGXGhzcn3EiwT9Yul4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjfA7eKbVVLS5/oBxchNGtCLNV93Z1cQMmjTbTTPO3tdjFwT/TcXpGxeQDrhSkw9eAL4Z0EdnwDrjQPisBkBEe25xVVhc9y/91dHCM9qW8SFwJH9/nQEiBIaf9YcZ2CMjQi2mNP1DSC1bmj78PL8vJ/Dp9VLJLXA2ptDz8yIa30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=rDT+dDr/; arc=none smtp.client-ip=209.85.219.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMJrJpEyO8BN6hgNnvrx9W7ebexTuB/1H0vZV+8c+jrIyY6sPVuGzXkZtnC5smZiyW2nd6xf9cuU3a6wGDNdyZE0oVPbA9cudskj4vRCNM7fMEUMlG5ZkeHzyT4NP18LN700tXtm7VLGGZ3cauC7ITtyoP5sfPkXjGcM6XTbbXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=F/VqQU3q; arc=none smtp.client-ip=209.85.210.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ad7d743147so939536d6.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2024 14:09:28 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6f8d2ec8652so143332a34.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2024 14:09:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717016968; x=1717621768; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717016986; x=1717621786; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OREcrVpZfXSItf7Gog4GNRWigmZXNALdZxAR5NkPqaQ=;
-        b=rDT+dDr/XZDmLrPxDkpJG9nEMIinSYna9TunTR4b+C+FeVZfEfczZlGBTv1TZPlP2d
-         faQk3UsmB/6I5hxgNHXg8N5sMSODJ1jAe34fC9R4tnipn/+7Lkfgj6RsIYBWCg7+Vw5N
-         RktOKCa/ntghy6/4PCs1i1GlWLgh2gM6YLds2uiNzlgsrETftP+z9STyIUOSCTJM5Bh+
-         E8sUdT7JYZs7UDKI5F13ktI4hd2nbsDqWmUEQGG4bGV+2cpwIoqqHkXh34vomqBYypY+
-         7LwZsnmfkupFuNzCLj0pdtKuCxJ2w9QcPIRNvLBNGOXlwk0CYhehYQHTcK8FVvIVyxaB
-         /PgA==
+        bh=VWq8w3qc/kXXTnLkQayM+DHDwqCB3WUN1BUOcsWdHqE=;
+        b=F/VqQU3q4D0BeiHMnRo1uEzNdCj5dXwtR3MGdiIMOJic9VnGtbkmrd/boGrIB4/y1z
+         xkVs+y3ZsF512m5vm/YvtEzQ03W2MQf7Mxd5IkwBu0ceLesndIjU6VPAxNhpIIfbselh
+         1eG1PdOSjM23uO3ND9Vl92gyZREp0Xu+EVoHwWwOudRGx+5Qv7qCSPNZsH47b98v8pPY
+         GYzs8r3u9HflmT04CndBUrMpngdhOf1t0qM50kbxAZTdJAQsUp3jWIrK6AxgItywJsqD
+         CHr6y00YCiVfx4n+35+PNk+0um7gQ1gV2gdHC6ZZF5NjleBtLeFYz9BtdEptdKOxlxJv
+         YJ/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717016968; x=1717621768;
+        d=1e100.net; s=20230601; t=1717016986; x=1717621786;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OREcrVpZfXSItf7Gog4GNRWigmZXNALdZxAR5NkPqaQ=;
-        b=sn5iQ1X/17hsj1ua8BwMKBfa0uN36lNTi0B5YhogSV4rupCozw/XSz7ALb5h/wA1X7
-         gA1E9YICIhawMoIPr4Q6ZLpmUpTvNfD9phiXJZVIMjh038hLB7WWIWAd+CgLZjbdxQ0Q
-         5i2cwWnlNglfWU9BlAJ79jSkAwuU8N2WP12KK1/Ibo0fAlC+jKNINdLkq10MW1MsLxHc
-         3p29Q/+jGaikoDYt/NQdarn4UyrwClhFqTybjufzlrQ4VO6wJGJZYocEj7KzF0GA2u8n
-         Jokn3Ru0jxUMVhlaxn5WLS9a8TjsQXe1baRGUjfIuVr2Vr7GIdrrJOyl2qbfCFqqTjdo
-         t8Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWF6HHcBsD8G+F7qkgz5llghCvdO1hE5qtn26e754orioUp8NGa/lx5mQXscJhJ2WJPEmN4sckZeTLHAYaTjKUjuaLoQNmIldcetAqfeQ==
-X-Gm-Message-State: AOJu0Yzy2hVRxxDpdoNt5CGBY/T7/ZMcccMJq+RsIUaXrJRcBnazeNX6
-	P0RDjuv2u1FaAp6NoWUOtNKGTiNcjf7DkomUoXXumZHUx4eXD0SeVWIxugHl6mU=
-X-Google-Smtp-Source: AGHT+IH6t1YRmTmlEUO9J2qzCyOqaw3TIWNR3q3wh6++2A+q5ysjfbVDcz+6Hm5CrEy44nB95Hz+Tg==
-X-Received: by 2002:a05:6214:450b:b0:6ad:79d7:a1a4 with SMTP id 6a1803df08f44-6ae0cce2c8emr2486266d6.65.1717016967695;
-        Wed, 29 May 2024 14:09:27 -0700 (PDT)
+        bh=VWq8w3qc/kXXTnLkQayM+DHDwqCB3WUN1BUOcsWdHqE=;
+        b=lbKzDbIrb+sK53HDWzvekran9oVV1WJ7xEYXx626yrQTmnjWHZnOk4R3EGGN0x8iXx
+         XwVsrQdMzs2Y3Rh8Hn5oUbCV8O395SwA52PvhKUCzWQmw22sIkp+mCfalHzcJaP2VesI
+         fu35ObkpTRlLOIGHbHqfXu0KmQOOYJmpuJOIppJVm7LGBnV/pNhmjLFxnO5jcpuuWzTR
+         qxRFFaLlunIwz2z51+suEgsbxubPIe+Wn4+YFEO6+s4XXAAvKYcJfbhKHZVkIYIRcaFZ
+         2bZLHGbtsSFv0nGMlXqk3ks7OpHSe450qMk9oZG3nw//whzTEo0jQPiIy5BVubLYVaVf
+         D0Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ4vWEn61wtjGEutIGAWcx1hViPGbKKUuSEF8Mgxrk3KDtvjw9pJyR9Wi3mWrqG+8eKOubRzafLaFxz2bskL+MhgbQubwFd8fxqpu4HQ==
+X-Gm-Message-State: AOJu0YwIFlHh3B4ZRhe2V6FBxW0IZu0pEGFJzwHjLXIIYgJ3BOE32ycq
+	8NoDCHvAAkjDBb5fmrNMx1vqwt+dRBuGjmiadzJE9rk+kI4qwPOKl8Afy1i7Xe6UOBFv/q//55A
+	K
+X-Google-Smtp-Source: AGHT+IH+uO6X0szNur8p2/FVnrWmQniuPdtewTRJQ2shHZQ3lxuq07DbPO+w2ojMtzoDjUXPj1otvg==
+X-Received: by 2002:a05:6870:c18d:b0:250:14b8:4030 with SMTP id 586e51a60fabf-25060b6f823mr514044fac.20.1717016986486;
+        Wed, 29 May 2024 14:09:46 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ad7850b408sm39251546d6.58.2024.05.29.14.09.27
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb18b0e3bsm57699251cf.68.2024.05.29.14.09.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 14:09:27 -0700 (PDT)
-Date: Wed, 29 May 2024 17:09:26 -0400
+        Wed, 29 May 2024 14:09:46 -0700 (PDT)
+Date: Wed, 29 May 2024 17:09:45 -0400
 From: Josef Bacik <josef@toxicpanda.com>
 To: Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
 	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm
-Subject: Re: [PATCH RFC v2 01/19] fuse: rename to fuse_dev_end_requests and
- make non-static
-Message-ID: <20240529210926.GA2182086@perftesting>
+Subject: Re: [PATCH RFC v2 02/19] fuse: Move fuse_get_dev to header file
+Message-ID: <20240529210945.GB2182086@perftesting>
 References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-1-d149476b1d65@ddn.com>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-2-d149476b1d65@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,12 +84,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-1-d149476b1d65@ddn.com>
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-2-d149476b1d65@ddn.com>
 
-On Wed, May 29, 2024 at 08:00:36PM +0200, Bernd Schubert wrote:
-> This function is needed by fuse_uring.c to clean ring queues,
-> so make it non static. Especially in non-static mode the function
-> name 'end_requests' should be prefixed with fuse_
+On Wed, May 29, 2024 at 08:00:37PM +0200, Bernd Schubert wrote:
+> Another preparation patch, as this function will be needed by
+> fuse/dev.c and fuse/dev_uring.c.
 > 
 > Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 
