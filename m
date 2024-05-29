@@ -1,196 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-20384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257CB8D28D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 01:45:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529198D2999
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 02:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F71F22ECA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2024 23:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A9A287E1F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 00:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FC713F45D;
-	Tue, 28 May 2024 23:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934C615A851;
+	Wed, 29 May 2024 00:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="nqrMqUvk"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="jzfEwTP/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WSS9pTAc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B6713F437
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 23:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38741F176;
+	Wed, 29 May 2024 00:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716939902; cv=none; b=Z1ts8Gg5D2oPMY3oLFJg4vMW0/M2O2/i9QzytgHXjEliWiC6S2HyaeyMzwW0MEBV7sWc9CUZUzKfZkiCx4IiChH5mSG+v+V9cCV2PRBlqpQzr8ukAMMak90XWjmPP/yDyA/ClayOMrOvBHDrvoK1Ss14iP/ZLxD+P+bik/+U0FQ=
+	t=1716943745; cv=none; b=JaEnCPGqzFdu3/O7WHwS3NngMdv8gkorYf+vbKUd6KpSpabg46yBqENdKoPs0zeN8sCg1I0xTvkjzfhHBssXjek7f5GRsqnBgetA9KY7+qb5Y+FHPBmtEc1TMWtWnC6Qiu/UrMcidmSgt47re/FKRvr3e/rkSoNnaepJFMbmCf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716939902; c=relaxed/simple;
-	bh=mr/MO+fNkNgg4F8Y4uGadmn2Vsgt2BU9+rJyJC9Z5Jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNiGVt5jpDmSlRvbjKYPNq/LAi9ksJRctxrbvFhXf1D27cavCmEGjO/unCi5+zbLdwne+noc/IBSDyJvu4agvOxHzi7J73v1pURqEaJQpMWf1QexbKr00ToxuxUHO9qxpCAReBCgYrsrq4VEd+JnjXmKLl/zX7dtfNFG9ORZauI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=nqrMqUvk; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f4a52b9589so13091495ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2024 16:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716939900; x=1717544700; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rV73vuix245isCSLYh7PCMFUHcN9E8Ebwy5VWHsQjBI=;
-        b=nqrMqUvk0OEq/fR+nSJe1stpa6ot3Xx+lSa1FZibFHxkduO0xh9yIIx0IShzKNxYEu
-         h9nGaXsvpV8ewA3iuKCJvXIpVmvxkhQabFsqSFmN0oaG5pEjrOlsGnQ76vLB9ZNUTnM/
-         XxCNU3gYVlkJM4f6Std82HOTyKGm2mnnxn+xHdISqmHTD/BL4x+qmJZ4AhzfEFcgDeCM
-         sUTbS8OHUJGnucJmrMdJXfe3nDUvLSlHUTf1YYpQfRarmUebAfl1FBdyHFx0Qg/p2sGn
-         8jReFVVJ0Tp3seM1zsk8ST1NuuoYUXoj3BVTl9MWhTT90/91uoXRqmsEOf5FK9cIFuM9
-         wGfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716939900; x=1717544700;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rV73vuix245isCSLYh7PCMFUHcN9E8Ebwy5VWHsQjBI=;
-        b=vW3IRwYzDPBaDftL66eoly7gNXuYeMM1e0fbVmCQFTZI/1K1Lzc3UEEEY1OGrX5aD6
-         Lk9L1JGXZhTtWAwmjs/1Fw0pzDQlCVfJy4nCZCBRoEYMCzjjSy//OoazWTi/D8+QDHRD
-         UJw7YPi4imaBmMYR/AzqHcXbS70yOOddAE5Xbenynj71Rul0G5aG6g1HfBCP3b8POuAk
-         j5O/nxo5J9NEsA3v/ROD20LUPuX3dAKuxkRCVMi2/edXOKre1pXKSbh3niJfhG4rg+ku
-         kgUf4ylkbGalq4hXZeVMibHG7j8iOM0YWby+4/oLbiUQJZAPI9PYNSyMlP5BmA53xdnW
-         tRFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfVxgPHrZXdzj9S1Ka26IFopfbA+vNnPnbj9veyzVfsd0W+uHYnHE6utvbE0zTyNF+RnxJtn8UAeNFqFxJHmxY6aFFGQ90GJfRXfDDoA==
-X-Gm-Message-State: AOJu0YxoMS0oCeKPYfA0JhnXBgJDQ78YsBd9ET+RSERF2PDX3UxAdJuQ
-	Mdkfkn5wS6EihpVB19/Ald4816SHxMZe9bw6E1ovyJG9iqbGUn2wLORqfRCGWGk=
-X-Google-Smtp-Source: AGHT+IGz85Svjfg+B724cWX5DrqXY9hBYAD5efVSdGipF1RKxUjlbPVtp2UHcihevi1+D2sE20yrCw==
-X-Received: by 2002:a17:902:f788:b0:1f4:26e1:56d2 with SMTP id d9443c01a7336-1f4497d7a4emr136998195ad.45.1716939900168;
-        Tue, 28 May 2024 16:45:00 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9bb73asm85705415ad.267.2024.05.28.16.44.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 16:44:59 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sC6Uy-00E0l3-0j;
-	Wed, 29 May 2024 09:44:56 +1000
-Date: Wed, 29 May 2024 09:44:56 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 7/7] iomap: Return the folio from iomap_write_begin()
-Message-ID: <ZlZseEfwzD0m7bOC@dread.disaster.area>
-References: <20240528164829.2105447-1-willy@infradead.org>
- <20240528164829.2105447-8-willy@infradead.org>
+	s=arc-20240116; t=1716943745; c=relaxed/simple;
+	bh=bgIEuVK50e0M341nriPYsSyg1MHxN/drqYZF32jYgCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RZIyQdz5VDVFpZ5SGddh3jilUYoHQFg8oEgZf8zC6MdlzLiYrM6KwkTOmnY5IY9T+Jke05iGV1VH6hokYDwYab9y7aMcCvb6almtwWTt9P67SdCV54Rh4d3pPKAbhkeU9yfDQaDTRVirhjAQiFTBlhP7Jf5HdVjJDZg76QZ7XSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=jzfEwTP/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WSS9pTAc; arc=none smtp.client-ip=64.147.123.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id C62B11C0016A;
+	Tue, 28 May 2024 20:49:02 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 28 May 2024 20:49:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1716943742;
+	 x=1717030142; bh=Rjchn31EWNLaPBTnuCkNHo37bS2rZlgzRtco4dQJSis=; b=
+	jzfEwTP/2aaVBieOXB2dUgb5z3RWWDwiFutlGB4h9IAf3GOqgDvIG7VGEDEzTsf/
+	P+LjLfyMDyh1tXzgHLp1AbYBzu6VsURPKwgQnFLjbVg+3Ve9kustCLuQNLM6gEce
+	RWvZmV1xBEiydGkevadh3mMT5RqFHG1uRINLboZ0RPjaqWW9I7i39WFWlEI6MKks
+	uwE6veRbCYvcYqw4fpT1QSZIaq+KsJS14qQL1ktdQmNdlFHeESE7iqtc6a573p1Y
+	wKcEP/Hcg6TZRxuFoqVt2AdVZ5gJP+Q6LjAywnXqwiFbdKJ8DkUvSyMhbaS6qP9x
+	X6fD7AgCPnIla0PH4F4Mrg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716943742; x=
+	1717030142; bh=Rjchn31EWNLaPBTnuCkNHo37bS2rZlgzRtco4dQJSis=; b=W
+	SS9pTAcLHlT+zR+lITK8yHxiOPwCwWmmSj+BuN3LNsE2QMbo0G93bFKI7nlebn3k
+	JVD7Ty1cdRl+/tgBokZQxd/1yx6Fp7ioXvWfJPrAuEN5WWQ2Gms4njphowMrGSIa
+	UJb53se0vmESVnoVpVxErqRKdLfNWqLh2/MaNbxNdTfFeunDCvlU2KzkqA6tHkzT
+	YYbe/TZMjm3HvnFmgKpRx5+fLDx5zF4hzt6DDavz0FrU1IavKCCUOqujqipPx1Ew
+	X98n0Rb29NEsAHuamHPh8nKZIoehYXhA97kRFb1fFoDAFV7mLRQFkzQpd2L5sIC5
+	2EG42fceX4MJOoNcZBCNw==
+X-ME-Sender: <xms:fXtWZgyYhdBnc6LeAHWEOteIjXrYjnnhGg-GnW9-5as8nUxbq6U6fg>
+    <xme:fXtWZkShgqrhpq4YVih2j_Jqp_5XsZfRbbJcCqbrvRFDaRcmEKuAKXMWxcr2lH_9T
+    KGnUGvcMk6s>
+X-ME-Received: <xmr:fXtWZiUakpA1fMnV3tTLBFuaEvoPG70eVDKq6hituZYWhVOQukC0QvzyF5OWJIReGx_YiXfjmX72Vs4Q3SU9tOv6vp7LBCzdwDeD65wXRNukiEv3gNx75j89>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejledgfeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epfeekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:fntWZujLsUYHF7JHKK8Pyq_eCY6ti5qIfts3ulV7GwRPbqng42ox6g>
+    <xmx:fntWZiAGCj0b8bWBXDe46pyL4UpPiQj4Myr6ZWtLRgv3E4bwExGQew>
+    <xmx:fntWZvL3K-WclgGUL0OMD3SBdJkIxNmaVfkSUsrMLbc75eq1dtx1-w>
+    <xmx:fntWZpCPMfZlQ4DF-Dm5a3SduiY8rwuGGa_ZpeM-l7sVyG7hlOHR5Q>
+    <xmx:fntWZk0Y-Q3xoYuEosaikpQ2mLDyrRWG2_AqsSy7UfT8wNcdKZApQUrJ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 May 2024 20:48:59 -0400 (EDT)
+Message-ID: <7b4f0e3d-9c37-476e-bc83-087db8f964ca@themaw.net>
+Date: Wed, 29 May 2024 08:48:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528164829.2105447-8-willy@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: autofs: add MODULE_DESCRIPTION()
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, autofs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 28, 2024 at 05:48:28PM +0100, Matthew Wilcox (Oracle) wrote:
-> Use an ERR_PTR to return any error that may have occurred, otherwise
-> return the folio directly instead of returning it by reference.  This
-> mirrors changes which are going into the filemap ->write_begin callbacks.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+On 28/5/24 03:22, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  fs/iomap/buffered-io.c | 35 ++++++++++++++++-------------------
->  1 file changed, 16 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index c5802a459334..f0c40ac425ce 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -764,27 +764,27 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
->  	return iomap_read_inline_data(iter, folio);
->  }
->  
-> -static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
-> -		size_t len, struct folio **foliop)
-> +static struct folio *iomap_write_begin(struct iomap_iter *iter, loff_t pos,
-> +		size_t len)
->  {
->  	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
->  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	struct folio *folio;
-> -	int status = 0;
-> +	int status;
+>   fs/autofs/init.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/autofs/init.c b/fs/autofs/init.c
+> index b5e4dfa04ed0..1d644a35ffa0 100644
+> --- a/fs/autofs/init.c
+> +++ b/fs/autofs/init.c
+> @@ -38,4 +38,5 @@ static void __exit exit_autofs_fs(void)
+>   
+>   module_init(init_autofs_fs)
+>   module_exit(exit_autofs_fs)
+> +MODULE_DESCRIPTION("Kernel automounter support");
+>   MODULE_LICENSE("GPL");
+>
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-autofs-62625640557b
+>
 
-Uninitialised return value.
+Acked-by: Ian Kent <raven@themaw.net>
 
->  
->  	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
->  	if (srcmap != &iter->iomap)
->  		BUG_ON(pos + len > srcmap->offset + srcmap->length);
->  
->  	if (fatal_signal_pending(current))
-> -		return -EINTR;
-> +		return ERR_PTR(-EINTR);
->  
->  	if (!mapping_large_folio_support(iter->inode->i_mapping))
->  		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
->  
->  	folio = __iomap_get_folio(iter, pos, len);
->  	if (IS_ERR(folio))
-> -		return PTR_ERR(folio);
-> +		return folio;
->  
->  	/*
->  	 * Now we have a locked folio, before we do anything with it we need to
-> @@ -801,7 +801,6 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
->  							 &iter->iomap);
->  		if (!iomap_valid) {
->  			iter->iomap.flags |= IOMAP_F_STALE;
-> -			status = 0;
->  			goto out_unlock;
->  		}
->  	}
 
-That looks wrong - status is now uninitialised when we jump to
-the error handling. This case needs to return "no error, no folio"
-so that the caller can detect the IOMAP_F_STALE flag and do the
-right thing....
+Ian
 
-> @@ -819,13 +818,12 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
->  	if (unlikely(status))
->  		goto out_unlock;
->  
-> -	*foliop = folio;
-> -	return 0;
-> +	return folio;
->  
->  out_unlock:
->  	__iomap_put_folio(iter, pos, 0, folio);
->  
-> -	return status;
-> +	return ERR_PTR(status);
-
-This returns the uninitialised status value....
-
->  }
->  
->  static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
-> @@ -940,9 +938,10 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
->  			break;
->  		}
->  
-> -		status = iomap_write_begin(iter, pos, bytes, &folio);
-> -		if (unlikely(status)) {
-> +		folio = iomap_write_begin(iter, pos, bytes);
-> +		if (IS_ERR(folio)) {
->  			iomap_write_failed(iter->inode, pos, bytes);
-> +			status = PTR_ERR(folio);
->  			break;
->  		}
->  		if (iter->iomap.flags & IOMAP_F_STALE)
-
-So this will now fail the write rather than iterating again at the
-same offset with a new iomap.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
