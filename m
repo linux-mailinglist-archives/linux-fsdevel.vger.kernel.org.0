@@ -1,75 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-20409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D41D8D2E52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 09:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477128D2E7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 09:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39453289E93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 07:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1891F22DFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 07:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C616729D;
-	Wed, 29 May 2024 07:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD87169363;
+	Wed, 29 May 2024 07:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DkWAFrkW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="18aBzXJk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSIW1bsK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F7E1E86E;
-	Wed, 29 May 2024 07:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432D167D82;
+	Wed, 29 May 2024 07:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968096; cv=none; b=qflAifSJRwp5aLaBbPuK53rNhd53eSFGwwP2G2BVo833ntWxqgRDKV9gG8Afc1Ff8pMIr6nTHgd4yJSQuB5IPqyVhBzynWFcHf6TQiYSGf3loADM3THuMrKH7VxbD9VEqXWUaTd2LOsn2vYF+sOZXMc3il1jJ046WP90MzP8gWE=
+	t=1716968408; cv=none; b=LSb3NmkJVXP24vd65VULe/SQGFmEBz4MuLFBrnUyOkfzRFbowSOeEg9x2EwZ65gPGuZ2Nn3jGFnsSqTDCmcHviIswJYi0ENhdrGlsRAXW4v7iV5NUYUM8gHSUEzVoddKAZIcFvfkwyMQpWZRkcx06tGV0Uio/zYjWUk/U3oDHxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968096; c=relaxed/simple;
-	bh=J3pSsWUPvYQZmX6tPmgdskzDWH8jsyiuRbZHnmaPwGA=;
+	s=arc-20240116; t=1716968408; c=relaxed/simple;
+	bh=fYdRJDyAIc+5o5Dbk1DjBWhpxgCjUP+fOk/zHS1zwnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u0Nf8NOf9saz8QGYlRdND3IlcWdbA2fZn9CYO4n8UAfwqoVgIDgte9MYKWWopYJOu/SVW446gwA6MIEZrYj7YjfF9GzVNpYit+YzewyZku3tm4li2T5H+EccOHDtczUaXFw4Wnq1eDvK6gHrVxSuuL1NxXC5w3riJCBNBl/wlfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DkWAFrkW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=18aBzXJk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 29 May 2024 09:34:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716968093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X7mHIbpcdtYFJ1w3GFH1CGLaSQctBjceRPKxBiR4wnc=;
-	b=DkWAFrkW5M0eSiId0W/ZyzPB1JiACgJRIL1zt7m8JNJToCpGV8MBJQ+jiLRYS2+KhHmLO4
-	rhJAwxZz8u9XkmekBs+Aa/seNB9I4XvwLVy9l1BTX8V29jR+ibsPTFKxnTNbZ9+lyiX+IW
-	Ayn1wBjwX0HjidnIaPTOp/DykOv2df/KpVInqAwPDqvS5SNqf0vc05B47vHt2JE/8jtCnY
-	iflxRoxi8yc30HnEjz8DKOWeOIzHj9qvsApb4qh9IZ171mV/cE9xw3n5SEoFHHa6qbjwU0
-	IwSxwEAQb3RMLTBQ+jWx9Z4DpzCkYH7O8/dBUs3gfBj2OGsd7+JdfiufrOQYlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716968093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X7mHIbpcdtYFJ1w3GFH1CGLaSQctBjceRPKxBiR4wnc=;
-	b=18aBzXJkU20fSjBtZe7CRO+mWR20Y2UL/579NdAL4djPY5KIoJsQOKxIEs0Wx08v7/NZ7K
-	twlzQPpM1esmKvAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 3/3] sched/rt, dl: Convert functions to return bool
-Message-ID: <20240529073451.IIA7HXMj@linutronix.de>
-References: <20240527234508.1062360-1-qyousef@layalina.io>
- <20240527234508.1062360-4-qyousef@layalina.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPrZOu5YmbJHc4NYNoCTL0TG4PoNK45Z4mDG5dPRYOmXRZs4anGsCBUOS17jv5qpsQIjuW1zhC7YDYbiedYUPYq/707D787fVEq3UTW8TL8y0OCbXy6SWnDQllaVjm8NHnWvIvQp8Qek8Znq6Wg/vnQUDCTj9WMlMdq5ML1VjPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSIW1bsK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E99C2BD10;
+	Wed, 29 May 2024 07:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716968407;
+	bh=fYdRJDyAIc+5o5Dbk1DjBWhpxgCjUP+fOk/zHS1zwnc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oSIW1bsKD/EAqn+s8PblXjVl3IuvA6Y/+Dquf8C9YubXIElluFUBcOh+88Dgjzrhy
+	 ElRMC+w1kRG/i1gN7A6CAxlRfcsScnfOpPgCh61hrT6lRRPLUgRux8txeNv2FHLA1L
+	 GDazokt0/5OANj2uuFXH48I/Ddx4hOxxRh5lrYO6m8RLwGcXAp1U9ttcmuXPE8/fTL
+	 k+f7YGUO/BgCulmeNnA7WVTM84Of+1x24JzSSbeeGPEyiSM2T92cssnTl2POyZrY7D
+	 p1ni0u9m0i9JYBZZM9WacOw+5LXLnNGnOJhJwv9dJgNFr0wyUN0veMYTL0k7fr8VFF
+	 3NH+V2AcRCfcA==
+Date: Wed, 29 May 2024 09:40:01 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240529-marzipan-verspannungen-48b760c2f66b@brauner>
+References: <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
+ <ZlRy7EBaV04F2UaI@infradead.org>
+ <20240527133430.ifjo2kksoehtuwrn@quack3>
+ <ZlSzotIrVPGrC6vt@infradead.org>
+ <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
+ <ZlWVkJwwJ0-B-Zyl@infradead.org>
+ <20240528-gesell-evakuieren-899c08cbfa06@brauner>
+ <ZlW4IWMYxtwbeI7I@infradead.org>
+ <20240528-gipfel-dilemma-948a590a36fd@brauner>
+ <ZlXaj9Qv0bm9PAjX@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,24 +70,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240527234508.1062360-4-qyousef@layalina.io>
+In-Reply-To: <ZlXaj9Qv0bm9PAjX@infradead.org>
 
-On 2024-05-28 00:45:08 [+0100], Qais Yousef wrote:
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 5cb88b748ad6..87d2370dd3db 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -10,7 +10,7 @@
->  
->  #include <linux/sched.h>
->  
-> -static inline int dl_prio(int prio)
-> +static inline bool dl_prio(int prio)
->  {
->  	if (unlikely(prio < MAX_DL_PRIO))
->  		return 1;
+On Tue, May 28, 2024 at 06:22:23AM -0700, Christoph Hellwig wrote:
+> On Tue, May 28, 2024 at 02:04:16PM +0200, Christian Brauner wrote:
+> > Can you please explain how opening an fd based on a handle returned from
+> > name_to_handle_at() and not using a mount file descriptor for
+> > open_by_handle_at() would work?
+> 
+> Same as NFS file handles:
+> 
+> name_to_handle_at returns a handle that includes a file system
+> identifier.
+> 
+> open_by_handle_at looks up the superblock based on that identifier.
+> 
+> For the identifier I could imagin three choices:
+> 
+>  1) use the fsid as returned in statfs and returned by fsnotify.
+>     The downside is that it is "only" 64-bit.  The upside is that
+>     we have a lot of plumbing for it
+>  2) fixed 128-bit identifier to provide more entropy
+>  3) a variable length identifier, which is more similar to NFS,
+>     but also a lot more complicated
+> 
+> We'd need a global lookup structure to find the sb by id.  The simplest
+> one would be a simple linear loop over super_blocks which isn't terribly
+> efficient, but probably better than whatever userspace is doing to
+> find a mount fd right now.
+> 
+> Let me cook up a simple prototype for 1) as it shouldn't be more than
+> a few hundred lines of code.
 
-if we return a bool we should return true/ false.
+Yeah, that's exactly what I figured and no that's not something we
+should do.
 
-Sebastian
+Not just can have a really large number of superblocks if you have mount
+namespaces and large container workloads that interface also needs to be
+highly privileged.
+
+Plus, you do have filesystems like btrfs that can be mounted multiple
+times with the same uuid.
+
+And in general users will still need to be able to legitimately use a
+mount fd and not care about the handle type used with it.
 
