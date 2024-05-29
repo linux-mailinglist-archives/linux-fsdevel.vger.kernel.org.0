@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-20442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3098D3843
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009F78D383F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DE2DB2683B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 13:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A868228B7E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 13:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544A94AEE3;
-	Wed, 29 May 2024 13:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6974F446D2;
+	Wed, 29 May 2024 13:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="lpGPvRj2"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="TqtfP3YU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF64545C16;
-	Wed, 29 May 2024 13:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660D61BDDB;
+	Wed, 29 May 2024 13:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716990351; cv=none; b=putIDcFiMUMroiUX0ileKKEmcN44HwSjmxznq74W6Vp8RzLBQ5mTwuVdUJ3NHe3qgLIiAOvWV/OJogCpjH0cS84X0qJU1y/C6arDkJwB14XcFf7ltSdxS6eNZRn2lv55P0Bwd2shmAT+OPkBULlwbl3X9EykiXdYNHAXyMwjo78=
+	t=1716990348; cv=none; b=Nj/ANMJMdC2RUwYoqAciB37OTgXPl4xB0NSCaHB3P779h3BrFUCVK4ZIvWPHaozKcmlxoIeKm6cmk7ovGy5J6XsyIpch+/eLHyF2J4c6ykxA0TF2wQRHSkExvBXapk1a+IaC8nC1dJhx7ZlEdyvozQ4p2dDHZxpbFKT3FSK5SAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716990351; c=relaxed/simple;
-	bh=d9iFG0ipK3d+e72AE66uRgp3hbM35NdTTI6TRZD1s1c=;
+	s=arc-20240116; t=1716990348; c=relaxed/simple;
+	bh=PikEFdPsSj7PpNKfl3VotL5mNxNQN3UX8dWKhVBFbfE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OKU9ICLBmDGv/n64H87P+QnxxFaThMWQvNFIQfASm+HsV0vPrih/c+xTcWhJ9ZEmJS3NVfeZX47I2Ir+rCtK+Dz8JVzVNb9+o0EbUaNbdDfxQIx+RPd8qcnP7bOMnyhN4OmJuPdIlzbYzbb7Jn4+gD+X2nFmfJVCbflTzjy7ryk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=lpGPvRj2; arc=none smtp.client-ip=80.241.56.152
+	 MIME-Version; b=KcuMpHX00OgCvP4n7CkTt1OxrRnEYZURtDXCywRl6r3CQXzneMYQFxG8jZnfZNmnrDNEl4JwE0tDsf1C+Zq3luJVU+UdXqUzDuZDNELXl8poWul5EdVwx1SJ/3Or8jLAbuDCqNo8TJyXnTANX9rnrF0PEuy0i1F8nqy9i2JngGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=TqtfP3YU; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Vq9d02DnJz9scZ;
-	Wed, 29 May 2024 15:45:40 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Vq9d35L8bz9sSV;
+	Wed, 29 May 2024 15:45:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1716990340;
+	s=MBO0001; t=1716990343;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d3bvvOpkVjx29wta03S/fuMORRSyW24WVI14FdYTCO8=;
-	b=lpGPvRj2tehBGHLKZ8b2ytls560fWEEb9wcfaMKxHsz7x8C+lL7v89ixRoeBklbysRPhHx
-	hyCihbar79d/eNslfUcZZ2yFnKD5stVWQ9p8OXKnhHV6LZzltAocguLTAJyz5O7k4p+8lW
-	+3tMoVkrudSht2hZ63gvhUzglKMgzz1/erTdfUQYBwcRm65h/WNlMmMazDoMCoLu4kOcKp
-	vxT6GAP4aAy5Sq0eC4PghGeSx7p/6jX+N7wZPuVDq1vRSe7pXuLq7Lu8hfPWjrBhUjb7o6
-	Q+nE5x0yH3WLxkcY/nxlcL8l1cruvHxEkhgjV8bLclRotJEe1B7BcGJTnFotCQ==
+	bh=IMIZWzID8Oa4XZs06SFDXCAlixk5rrqjrLjasnPiZuM=;
+	b=TqtfP3YUwosVu7v0T47uciWkMe74vRAl8UvhaEbvYSJvKjyU80QI/rlEdo79J3hwSsOL+x
+	XAzNTXip1JSRvFThNu6Ij0FFS31H5OKr3oEJjrdHGPRKRjrm7oADrjwiTliDERUr8dSzFr
+	397nhNEFSnybU26IOcKwVIlESyW3YXW3YHAGH8Xd5nDsexhkoksr/o9c6fRoDoDoluWCQQ
+	dwmCJitjxvFOnbeJObIQDmb4xY7dATIx7ePqyMFspsBtIjcLi7pq4LGt4Onfz+1kklSG/M
+	bZkjJPooW+suPUUkKtzq00x8pQ7Oo0j5Yh2i5xT/Tb9Y5zNSh0CxI/KsvapQNQ==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: david@fromorbit.com,
 	chandan.babu@oracle.com,
@@ -68,9 +68,9 @@ Cc: linux-kernel@vger.kernel.org,
 	mcgrof@kernel.org,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 05/11] mm: split a folio in minimum folio order chunks
-Date: Wed, 29 May 2024 15:45:03 +0200
-Message-Id: <20240529134509.120826-6-kernel@pankajraghav.com>
+Subject: [PATCH v6 06/11] filemap: cap PTE range to be created to allowed zero fill in folio_map_range()
+Date: Wed, 29 May 2024 15:45:04 +0200
+Message-Id: <20240529134509.120826-7-kernel@pankajraghav.com>
 In-Reply-To: <20240529134509.120826-1-kernel@pankajraghav.com>
 References: <20240529134509.120826-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -80,192 +80,52 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4Vq9d02DnJz9scZ
+X-Rspamd-Queue-Id: 4Vq9d35L8bz9sSV
 
-From: Luis Chamberlain <mcgrof@kernel.org>
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-split_folio() and split_folio_to_list() assume order 0, to support
-minorder we must expand these to check the folio mapping order and use
-that.
+Usually the page cache does not extend beyond the size of the inode,
+therefore, no PTEs are created for folios that extend beyond the size.
 
-Set new_order to be at least minimum folio order if it is set in
-split_huge_page_to_list() so that we can maintain minimum folio order
-requirement in the page cache.
+But with LBS support, we might extend page cache beyond the size of the
+inode as we need to guarantee folios of minimum order. Cap the PTE range
+to be created for the page cache up to the max allowed zero-fill file
+end, which is aligned to the PAGE_SIZE.
 
-Update the debugfs write files used for testing to ensure the order
-is respected as well. We simply enforce the min order when a file
-mapping is used.
+An fstests test has been created to trigger this edge case [0].
+
+[0] https://lore.kernel.org/fstests/20240415081054.1782715-1-mcgrof@kernel.org/
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- include/linux/huge_mm.h | 14 ++++++++----
- mm/huge_memory.c        | 50 ++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 57 insertions(+), 7 deletions(-)
+ mm/filemap.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 87682498a5af..6a8e527b78a2 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -88,6 +88,8 @@ extern struct kobj_attribute shmem_enabled_attr;
- #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
- 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 0914ef2e8256..e398fa7b2ef6 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3610,7 +3610,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct file *file = vma->vm_file;
+ 	struct address_space *mapping = file->f_mapping;
+-	pgoff_t last_pgoff = start_pgoff;
++	pgoff_t file_end, last_pgoff = start_pgoff;
+ 	unsigned long addr;
+ 	XA_STATE(xas, &mapping->i_pages, start_pgoff);
+ 	struct folio *folio;
+@@ -3636,6 +3636,10 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 		goto out;
+ 	}
  
-+#define split_folio(f) split_folio_to_list(f, NULL)
++	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
++	if (end_pgoff > file_end)
++		end_pgoff = file_end;
 +
- #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
- #define HPAGE_PMD_SHIFT PMD_SHIFT
- #define HPAGE_PUD_SHIFT PUD_SHIFT
-@@ -307,9 +309,10 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
- bool can_split_folio(struct folio *folio, int *pextra_pins);
- int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		unsigned int new_order);
-+int split_folio_to_list(struct folio *folio, struct list_head *list);
- static inline int split_huge_page(struct page *page)
- {
--	return split_huge_page_to_list_to_order(page, NULL, 0);
-+	return split_folio(page_folio(page));
- }
- void deferred_split_folio(struct folio *folio);
- 
-@@ -474,6 +477,12 @@ static inline int split_huge_page(struct page *page)
- {
- 	return 0;
- }
-+
-+static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
-+{
-+	return 0;
-+}
-+
- static inline void deferred_split_folio(struct folio *folio) {}
- #define split_huge_pmd(__vma, __pmd, __address)	\
- 	do { } while (0)
-@@ -578,7 +587,4 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
- 	return split_folio_to_list_to_order(folio, NULL, new_order);
- }
- 
--#define split_folio_to_list(f, l) split_folio_to_list_to_order(f, l, 0)
--#define split_folio(f) split_folio_to_order(f, 0)
--
- #endif /* _LINUX_HUGE_MM_H */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index cf9ead052d2a..e4e0b3431dc6 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3068,6 +3068,9 @@ bool can_split_folio(struct folio *folio, int *pextra_pins)
-  * released, or if some unexpected race happened (e.g., anon VMA disappeared,
-  * truncation).
-  *
-+ * Callers should ensure that the order respects the address space mapping
-+ * min-order if one is set.
-+ *
-  * Returns -EINVAL when trying to split to an order that is incompatible
-  * with the folio. Splitting to order 0 is compatible with all folios.
-  */
-@@ -3143,6 +3146,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		mapping = NULL;
- 		anon_vma_lock_write(anon_vma);
- 	} else {
-+		unsigned int min_order;
- 		gfp_t gfp;
- 
- 		mapping = folio->mapping;
-@@ -3153,6 +3157,14 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 			goto out;
- 		}
- 
-+		min_order = mapping_min_folio_order(folio->mapping);
-+		if (new_order < min_order) {
-+			VM_WARN_ONCE(1, "Cannot split mapped folio below min-order: %u",
-+				     min_order);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
- 		gfp = current_gfp_context(mapping_gfp_mask(mapping) &
- 							GFP_RECLAIM_MASK);
- 
-@@ -3264,6 +3276,21 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 	return ret;
- }
- 
-+int split_folio_to_list(struct folio *folio, struct list_head *list)
-+{
-+	unsigned int min_order = 0;
-+
-+	if (!folio_test_anon(folio)) {
-+		if (!folio->mapping) {
-+			count_vm_event(THP_SPLIT_PAGE_FAILED);
-+			return -EBUSY;
-+		}
-+		min_order = mapping_min_folio_order(folio->mapping);
-+	}
-+
-+	return split_huge_page_to_list_to_order(&folio->page, list, min_order);
-+}
-+
- void __folio_undo_large_rmappable(struct folio *folio)
- {
- 	struct deferred_split *ds_queue;
-@@ -3493,6 +3520,7 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
- 		struct vm_area_struct *vma = vma_lookup(mm, addr);
- 		struct page *page;
- 		struct folio *folio;
-+		unsigned int target_order = new_order;
- 
- 		if (!vma)
- 			break;
-@@ -3529,7 +3557,7 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
- 		if (!folio_trylock(folio))
- 			goto next;
- 
--		if (!split_folio_to_order(folio, new_order))
-+		if (!split_folio_to_order(folio, target_order))
- 			split++;
- 
- 		folio_unlock(folio);
-@@ -3572,14 +3600,19 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
- 
- 	for (index = off_start; index < off_end; index += nr_pages) {
- 		struct folio *folio = filemap_get_folio(mapping, index);
-+		unsigned int min_order, target_order = new_order;
- 
- 		nr_pages = 1;
- 		if (IS_ERR(folio))
- 			continue;
- 
--		if (!folio_test_large(folio))
-+		if (!folio->mapping || !folio_test_large(folio))
- 			goto next;
- 
-+		min_order = mapping_min_folio_order(mapping);
-+		if (new_order < min_order)
-+			target_order = min_order;
-+
- 		total++;
- 		nr_pages = folio_nr_pages(folio);
- 
-@@ -3589,7 +3622,18 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
- 		if (!folio_trylock(folio))
- 			goto next;
- 
--		if (!split_folio_to_order(folio, new_order))
-+		if (!folio_test_anon(folio)) {
-+			unsigned int min_order;
-+
-+			if (!folio->mapping)
-+				goto next;
-+
-+			min_order = mapping_min_folio_order(folio->mapping);
-+			if (new_order < target_order)
-+				target_order = min_order;
-+		}
-+
-+		if (!split_folio_to_order(folio, target_order))
- 			split++;
- 
- 		folio_unlock(folio);
+ 	folio_type = mm_counter_file(folio);
+ 	do {
+ 		unsigned long end;
 -- 
 2.34.1
 
