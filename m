@@ -1,94 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-20452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C3B8D3B59
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 17:49:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D9E8D3B64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 17:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55071C21F22
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:49:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E018D1C22984
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC33181CEF;
-	Wed, 29 May 2024 15:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45093181BBB;
+	Wed, 29 May 2024 15:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDY5ndPa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWw6eJ+Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E6B15ADAA;
-	Wed, 29 May 2024 15:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CD015B115;
+	Wed, 29 May 2024 15:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716997770; cv=none; b=UPYv9f1ho+3FjF2haPbYjeI2RP7RwjaXsvaU+MZF0B2dp8fHZsWyjogOnJRxb8F9EzHp3ypmkFHDDljcsIOZSvwllYQ2xot3KpFQB9QMFGTEHObyIptvZyEZZe7Wf83i4bvBm0P1B7esiyptE+ETi2NWpl8nHOxRuMbbhTdJ6+8=
+	t=1716997849; cv=none; b=sIsHQZUcS+w6N1jk/2A2HRMSM4h333KCrGY7KjsHWfBQEdWZkFL0l4nadaaVSKw2XLaFt8yxoGUDB7jr+pw4orDh5scj57XPvZO5AMAKium3gaPSNj+Z17Ph6TLBavX76AnoWYrhJZjxwKDWx2buIK3eRioHwf4DqLCJ0HvwW34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716997770; c=relaxed/simple;
-	bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y8YAJl766Ju3Dn2gmeX8Klon32LynA3G2owXaeXYToRt21DOr+MAbNH0RR2l80VkTVxXz7S0ctsOLVNvUUPtw3TqWp8dFjTu2YrF4KoZWoaNYIPTc6UrDh0hC0h6jV+X04r0regyKctbXHSeDXm3RbRGLTqcFFQhMDpMoSKhxZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDY5ndPa; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b59f77670so818965e87.2;
-        Wed, 29 May 2024 08:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716997767; x=1717602567; darn=vger.kernel.org;
-        h=content-transfer-encoding:tested-by:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
-        b=CDY5ndPavxtl/NIVZi+9htvJetk8Xqg0oyoIlCj2Z7GLstlz7eGyM0DMZBSqYPa165
-         6y/S/Varbu8lWetkXbVDjRCyw/z5YatkoSOJk3wIzo95slXB/GBIpnb1Bxkibja0L++Q
-         DFy2u1x9tJbVf2NkGuGipfHu9ACEhM71rueDYlS5GMk+EN+6PqMUv6lvoTMRq9ggDSJj
-         tDWWXP2mlNCllPfSZDVMMvl59Q8MtVShPWu0Im8dxNWR0Ze814ji08LfhtoZI60JoYDt
-         ZdLXA4KnKs/VQdITvFEuut2zH6P3kjJBHQ4kA5IE+kbkDWBAPLrMuEHFYubHo1ZRJ5II
-         I06g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716997767; x=1717602567;
-        h=content-transfer-encoding:tested-by:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
-        b=Vscys7psr62OTqvrscgg7wDR/wM0VOmBKvPqPBCkEroHCGTPyeYyAuP7W+CGnRQIxh
-         fxaqYOEh7vYyEYqe/lgi0muqBDg3gwGq12HYvFcWZE97g5fEqUrQOX5mBdknDzjkHj9p
-         LoorrXt9eOwThOFeygMvCglLTRE25vA1ECZRFmj9Mbk57TOXvigXvXWyVrYRnzDMu8is
-         sOsOI66Pfoj8FYgehB67MBygrMMllwlvsCDzlrWEth0RZxLFlvawFQiEsjaxYa/G6DsF
-         SR18/1NqVzcvqFzKKZ9uJpHCe3SY0XBZhRepsquMNct0SakHascqMVoj2i85zH8y+sAz
-         yrJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfh27CFDuKfOdH5/UFiJEQJHwnUF5a74J3Ud0hXg8KpAm4m+433riYGqIAdbfb+bOhWTomUy6sF1goQp6JxtMmlhk836sP1J6+5MJ33qWhRI8N7nh0na56Rn+G875lhGEH16KSCskd/84pCOX7MqWuzHCrGnD1E9sq5kgaEC3iFSt0y/Rt7Ek=
-X-Gm-Message-State: AOJu0YyTK78H0EtufHQqAy65JeZLc3NVQQ4Cv5PXt6/S+ngow7lTuP2n
-	WpmmFdrJtCvXy9RnBop/bmuhsCK+hptBPsciPFZ/cRwQC0abnbcN
-X-Google-Smtp-Source: AGHT+IFW79OSamdw/XK/8vhe8hHK9amSGndta1cSuOjiNUAIf5VvMhVDXfV0WLFvZeruXCBTBCr2fg==
-X-Received: by 2002:ac2:5a5e:0:b0:52a:f478:a3fb with SMTP id 2adb3069b0e04-52af478a4e3mr1906096e87.61.1716997767216;
-        Wed, 29 May 2024 08:49:27 -0700 (PDT)
-Received: from michal-Latitude-5420.. ([88.220.73.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c8176c6sm743302366b.18.2024.05.29.08.49.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 08:49:26 -0700 (PDT)
-From: =?UTF-8?q?Sebastian=20=C5=BB=C3=B3=C5=82tek?= <sebek.zoltek@gmail.com>
-To: syzbot+9a3a26ce3bf119f0190b@syzkaller.appspotmail.com
-Cc: jack@suse.com,
-	linux-ext4@vger.kernel.org,
+	s=arc-20240116; t=1716997849; c=relaxed/simple;
+	bh=M6v4So8qJJ9yRxrCHyNBpJWbsn6zaiePqJdDikIffcg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AnGNRt8fDOsTj5+miIr5q817bTxwYrGewj2BOSm0FQE/ZP1BwcLC7TEttt0Aul5cOMytcgfb3s3SRzRt5wNFSp3Ll5Sev3k6v3eCRbpdmihGWXkyJAezpOe3jP48TF297LfEihQwoBI+e84vPL9+ySsgxBejYcGE4ydqPOmBeGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWw6eJ+Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF38C113CC;
+	Wed, 29 May 2024 15:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716997849;
+	bh=M6v4So8qJJ9yRxrCHyNBpJWbsn6zaiePqJdDikIffcg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qWw6eJ+YExFmA+CUVsPa5hU36SjXwo7pr3BiEUL9LJ+67Mqr4Hrd8Lb5wuOzXl0Fm
+	 nI3vNanpRAlmhPs6BppfD9kAAZhjDwpCigABTY5SaKmAqOylHLpQzBfCguH/o4b8S8
+	 YPV9miKGauAOMN9X1G4xOo46q/Yzw93gtZT+WAmAezRXD1RlgfpLkSSoyDFSnU61ty
+	 6aPxG74jhZyUFRj1HhBkmlehlAaxUnrTlDpxqIF4h0eKjAxsv6z1r7TvK+b5uIX2fS
+	 dedMJ7ZJ0jZ4xFgolUqJUwJkCxgxaJwwNZMeATlivPYwbanZDUFYha2eT0G73m5Tr0
+	 nRv3RlWSK8qhg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sCLZe-00GfsI-V4;
+	Wed, 29 May 2024 16:50:47 +0100
+Date: Wed, 29 May 2024 16:50:46 +0100
+Message-ID: <861q5kmxbd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com,
+	bp@alien8.de,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: Testing if issue still reproduces
-Date: Wed, 29 May 2024 17:49:14 +0200
-Message-ID: <20240529154914.2008561-1-sebek.zoltek@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007010c50616e169f4@google.com>
-References: <0000000000007010c50616e169f4@google.com>
+	linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org,
+	mingo@redhat.com,
+	mpe@ellerman.id.au,
+	naveen.n.rao@linux.ibm.com,
+	npiggin@gmail.com,
+	oliver.upton@linux.dev,
+	shuah@kernel.org,
+	szabolcs.nagy@arm.com,
+	tglx@linutronix.de,
+	will@kernel.org,
+	x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 09/29] KVM: arm64: use `at s1e1a` for POE
+In-Reply-To: <20240503130147.1154804-10-joey.gouly@arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+	<20240503130147.1154804-10-joey.gouly@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Tested-by: Sebastian Zoltek sebek.zoltek@gmail.com
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-#syzbot test
+On Fri, 03 May 2024 14:01:27 +0100,
+Joey Gouly <joey.gouly@arm.com> wrote:
+> 
+> FEAT_ATS1E1A introduces a new instruction: `at s1e1a`.
+> This is an address translation, without permission checks.
+> 
+> POE allows read permissions to be removed from S1 by the guest.  This means
+> that an `at` instruction could fail, and not get the IPA.
+> 
+> Switch to using `at s1e1a` so that KVM can get the IPA regardless of S1
+> permissions.
+> 
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> ---
+>  arch/arm64/kvm/hyp/include/hyp/fault.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/fault.h b/arch/arm64/kvm/hyp/include/hyp/fault.h
+> index 487c06099d6f..17df94570f03 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/fault.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/fault.h
+> @@ -14,6 +14,7 @@
+>  
+>  static inline bool __translate_far_to_hpfar(u64 far, u64 *hpfar)
+>  {
+> +	int ret;
+>  	u64 par, tmp;
+>  
+>  	/*
+> @@ -27,7 +28,9 @@ static inline bool __translate_far_to_hpfar(u64 far, u64 *hpfar)
+>  	 * saved the guest context yet, and we may return early...
+>  	 */
+>  	par = read_sysreg_par();
+> -	if (!__kvm_at(OP_AT_S1E1R, far))
+> +	ret = system_supports_poe() ? __kvm_at(OP_AT_S1E1A, far) :
+> +	                              __kvm_at(OP_AT_S1E1R, far);
+> +	if (!ret)
+>  		tmp = read_sysreg_par();
+>  	else
+>  		tmp = SYS_PAR_EL1_F; /* back to the guest */
+
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
