@@ -1,183 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-20394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FFE8D2A46
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 04:01:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226B08D2BC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 06:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED07C1C23BE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 02:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A6F61F23A1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 04:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1415E15AAD3;
-	Wed, 29 May 2024 01:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB9F15B11E;
+	Wed, 29 May 2024 04:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g/x/3/ID"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D850415B133;
-	Wed, 29 May 2024 01:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE1E13D899
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2024 04:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716947966; cv=none; b=erMads7Ne+vnuT437dKvz5x6SCa3cWcP2KK6hcpklOv0CrELLCvyiElMVt7K9RitpJK4k29fjtLIimvrREXb9LsS4uYodxOlRt8CeuR893kWak2OjpRhKKmtl6rmk5yEfFE5KtqtoMinRdWUEyt8moUXo2LajgCSzB5V71xMZKY=
+	t=1716957364; cv=none; b=MaVJnMjzTKoJxxwVivVbQCIF5EcDt5HtAQ/IN0yhSSuN05jG5765HtP8pcwkPUQzT11Dx+E3UtdE3M+gFaruz4GWUHA4fAibzZ2PQqlJrDAAMECd3boqHM8/GZQcNEOpQh5S1si0tr13NoK3pIYMIDyiUn+QSS9mibNjEfKzWYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716947966; c=relaxed/simple;
-	bh=VGPSucUzbA/c3S9u7oVAQpYgV06MZBi1HmmrATX/mE8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n3MUwbIq0txjRfrOqisLSEW8/9vF3E+qrZ/RKrL6vm/YO0Dj4qq/77C3w/hic2gfGuVWqcx539wMM3ud7fVmLur6/3BBzOf7jhcCnMXPYrVkTR7ReJMWdHSFEcdLwA2sK1MoZ1M/hrrL04aC5vGJINiLY8HQoduesKye5ZF8xg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vpsxv0V0Jz4f3m8h;
-	Wed, 29 May 2024 09:59:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 1EE1B1A01B9;
-	Wed, 29 May 2024 09:59:21 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g7wi1Zmr3XbNw--.12147S12;
-	Wed, 29 May 2024 09:59:20 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	willy@infradead.org,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [RFC PATCH v4 8/8] xfs: improve truncate on a realtime inode with huge extsize
-Date: Wed, 29 May 2024 17:52:06 +0800
-Message-Id: <20240529095206.2568162-9-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1716957364; c=relaxed/simple;
+	bh=5KTfUHI0jDcwa34YJd3Ur7D8+vfTOuG6wlcWa9tNFxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kw1+oZJq6VffXMmF/YMtpzQZvBXJAmdH1QC4ZTNeGIr9WPBUOt4KeTfh67odRHQrzlljZ7aRqLzEihBR44IW4AtcSX/L/8av7tnWfX3Q3xzunDaNy8lYYTPSCLzOe9rozseV1ZrR5RGITEU1Y+lv8BEVXFD1Ydolkt5I8IYX7vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=g/x/3/ID; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716957358;
+	bh=FwLxyjdpQGT0Jy+ZsUM+Aj6l1hXJ7c+T8bFBkmWjYhY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=g/x/3/IDvLEvTYZCVLShVod/Eut8uVJruE3cSl2Rla087pG8Sv8ixQWWVktq8KAxr
+	 +pPj7hfNhE3abo11qdGGiD4SVfGxw5vLDbvyfsPmEMqhmWG6wOw/BAR60C38HXkSEg
+	 DMeIIfRXtaazcBeXyTvpEj+tH7mjBGbP4mGf5+9k0twMG0yFS0L5/LHl786n8A7QCG
+	 oG4RqQctAuBq6ymb0roKJYdX5Os3JCp+L+86mfh2i/NWLwS/7uSPzJosgrzIcJb7H6
+	 9WGRwxIVa2lJrBfu7jWmn6WVOlLthScmeR40RAQ305s5Uj2giyRgUHGKlF/NRjlKCX
+	 Vl7ZffbbNZiLg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpxQk68vrz4wqK;
+	Wed, 29 May 2024 14:35:58 +1000 (AEST)
+Date: Wed, 29 May 2024 14:35:58 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: A fs-next branch
+Message-ID: <20240529143558.4e1fc740@canb.auug.org.au>
+In-Reply-To: <20240528091629.3b8de7e0@canb.auug.org.au>
+References: <ZkPsYPX2gzWpy2Sw@casper.infradead.org>
+	<20240520132326.52392f8d@canb.auug.org.au>
+	<ZkvCyB1-WpxH7512@casper.infradead.org>
+	<20240528091629.3b8de7e0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g7wi1Zmr3XbNw--.12147S12
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFy8AryDtw43JF47urW5trb_yoW5Zr4DpF
-	Z7J3WrGr4kG342kayvvF4jqw1akas2kr4UCFWrXr17Zwn8Jr1ftrn7t34rWw4Utr40ga90
-	gFn8C3y7Z3W3AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2048vs2IY02
-	0E87I2jVAFwI0_JF0E3s1l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0
-	rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6x
-	IIjxv20xvEc7CjxVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK
-	6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4
-	xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8
-	JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20V
-	AGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
-	c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4U
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUv
-	cSsGvfC2KfnxnUUI43ZEXa7sRilksDUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; boundary="Sig_/W+6VDACPlRiJlp2vAc1E+cp";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Zhang Yi <yi.zhang@huawei.com>
+--Sig_/W+6VDACPlRiJlp2vAc1E+cp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If we truncate down a realtime inode which extsize is too large, zeroing
-out the entire aligned EOF extent could be very slow. Fortunately,
-__xfs_bunmapi() would align the unmapped range to rtextsize, split and
-convert the extra blocks to unwritten state. So, adjust the blocksize to
-the filesystem blocksize if the rtextsize is large enough, let
-__xfs_bunmapi() to convert the tail blocks to unwritten, this could
-improve the truncate performance significantly.
+Hi all,
 
- # mkfs.xfs -f -rrtdev=/dev/pmem1s -f -m reflink=0,rmapbt=0, \
-            -d rtinherit=1 -r extsize=1G /dev/pmem2s
- # for i in {1..5}; \
-   do dd if=/dev/zero of=/mnt/scratch/$i bs=1M count=1024; done
- # sync
- # time for i in {1..5}; \
-   do xfs_io -c "truncate 4k" /mnt/scratch/$i; done
+On Tue, 28 May 2024 09:16:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 20 May 2024 22:38:16 +0100 Matthew Wilcox <willy@infradead.org> w=
+rote:
+> >
+> > As I understand the structure of linux-next right now, you merge one
+> > tree after another in some order which isn't relevant to me, so I have =
+no
+> > idea what it is.  What we're asking for is that we end up with a branch
+> > in your tree called fs-next that is:
+> >=20
+> >  - Linus's tree as of that day
+> >  - plus the vfs trees
+> >  - plus xfs, btrfs, ext4, nfs, cifs, ...
+> >=20
+> > but not, eg, graphics, i2c, tip, networking, etc
+> >=20
+> > How we get that branch is really up to you; if you want to start by
+> > merging all the filesystem trees, tag that, then continue merging all t=
+he
+> > other trees, that would work.  If you want to merge all the filesystem
+> > trees to fs-next, then merge the fs-next tree at some point in your list
+> > of trees, that would work too.
+> >=20
+> > Also, I don't think we care if it's a branch or a tag.  Just something
+> > we can call fs-next to all test against and submit patches against.
+> > The important thing is that we get your resolution of any conflicts.
+> >=20
+> > There was debate about whether we wanted to include mm-stable in this
+> > tree, and I think that debate will continue, but I don't think it'll be
+> > a big difference to you whether we ask you to include it or not? =20
+>=20
+> OK, I can see how to do that.  I will start on it tomorrow.  The plan
+> is that you will end up with a branch (fs-next) in the linux-next tree
+> that will be a merge of the above trees each day and I will merge it
+> into the -next tree as well.
 
-Before:
- real    0m16.762s
- user    0m0.008s
- sys     0m16.750s
+OK, this is what I have done today:
 
-After:
- real    0m0.076s
- user    0m0.010s
- sys     0m0.069s
+I have created 2 new branches local to linux-next - fs-current and fs-next.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/xfs/xfs_inode.c |  2 +-
- fs/xfs/xfs_inode.h | 12 ++++++++++++
- fs/xfs/xfs_iops.c  |  9 +++++++++
- 3 files changed, 22 insertions(+), 1 deletion(-)
+fs-current is based on Linus' tree of the day and contains the
+following trees (name, contacts, URL, branch):
 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index db35167acef6..c0c1ab310aae 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -1513,7 +1513,7 @@ xfs_itruncate_extents_flags(
- 	 * the page cache can't scale that far.
- 	 */
- 	first_unmap_block = XFS_B_TO_FSB(mp, (xfs_ufsize_t)new_size);
--	if (xfs_inode_has_bigrtalloc(ip))
-+	if (xfs_inode_has_bigrtalloc(ip) && !xfs_inode_has_hugertalloc(ip))
- 		first_unmap_block = xfs_rtb_roundup_rtx(mp, first_unmap_block);
- 	if (!xfs_verify_fileoff(mp, first_unmap_block)) {
- 		WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 292b90b5f2ac..4eed5b0c57c0 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -320,6 +320,18 @@ static inline bool xfs_inode_has_bigrtalloc(struct xfs_inode *ip)
- 	return XFS_IS_REALTIME_INODE(ip) && ip->i_mount->m_sb.sb_rextsize > 1;
- }
- 
-+/*
-+ * Decide if this file is a realtime file whose data allocation unit is larger
-+ * than default.
-+ */
-+static inline bool xfs_inode_has_hugertalloc(struct xfs_inode *ip)
-+{
-+	struct xfs_mount *mp = ip->i_mount;
-+
-+	return XFS_IS_REALTIME_INODE(ip) &&
-+	       mp->m_sb.sb_rextsize > XFS_B_TO_FSB(mp, XFS_DFL_RTEXTSIZE);
-+}
-+
- /*
-  * Return the buftarg used for data allocations on a given inode.
-  */
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index c53de5e6ef66..d5fc84e5a37c 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -870,6 +870,15 @@ xfs_setattr_size(
- 	if (newsize < oldsize) {
- 		unsigned int blocksize = xfs_inode_alloc_unitsize(ip);
- 
-+		/*
-+		 * If the extsize is too large on a realtime inode, zeroing
-+		 * out the entire aligned EOF extent could be slow, adjust the
-+		 * blocksize to the filesystem blocksize, let __xfs_bunmapi()
-+		 * to convert the tail blocks to unwritten.
-+		 */
-+		if (xfs_inode_has_hugertalloc(ip))
-+			blocksize = i_blocksize(inode);
-+
- 		/*
- 		 * Zeroing out the partial EOF block and the rest of the extra
- 		 * aligned blocks on a downward truncate.
--- 
-2.39.2
+fscrypt-current	Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mi=
+t.edu>, Jaegeuk Kim <jaegeuk@kernel.org>	git://git.kernel.org/pub/scm/fs/fs=
+crypt/linux.git	for-current
+fsverity-current	Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@m=
+it.edu>	git://git.kernel.org/pub/scm/fs/fsverity/linux.git	for-current
+btrfs-fixes	David Sterba <dsterba@suse.cz>	git://git.kernel.org/pub/scm/lin=
+ux/kernel/git/kdave/linux.git	next-fixes
+vfs-fixes	Al Viro <viro@ZenIV.linux.org.uk>	git://git.kernel.org/pub/scm/li=
+nux/kernel/git/viro/vfs.git	fixes
+erofs-fixes	Gao Xiang <xiang@kernel.org>	git://git.kernel.org/pub/scm/linux=
+/kernel/git/xiang/erofs.git	fixes
+nfsd-fixes	Chuck Lever <chuck.lever@oracle.com>	git://git.kernel.org/pub/sc=
+m/linux/kernel/git/cel/linux	nfsd-fixes
+v9fs-fixes	Eric Van Hensbergen <ericvh@gmail.com>	git://git.kernel.org/pub/=
+scm/linux/kernel/git/ericvh/v9fs.git	fixes/next
+overlayfs-fixes	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73i=
+l@gmail.com>	git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.gi=
+t	ovl-fixes
 
+
+The fs-next tree is based on fs-current and contains these trees:
+
+bcachefs	Kent Overstreet <kent.overstreet@linux.dev>	https://evilpiepirate.=
+org/git/bcachefs.git	for-next
+pidfd	Christian Brauner <brauner@kernel.org>	git://git.kernel.org/pub/scm/l=
+inux/kernel/git/brauner/linux.git	for-next
+fscrypt	Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mit.edu>, =
+Jaegeuk Kim <jaegeuk@kernel.org>	git://git.kernel.org/pub/scm/fs/fscrypt/li=
+nux.git	for-next
+afs	David Howells <dhowells@redhat.com>	git://git.kernel.org/pub/scm/linux/=
+kernel/git/dhowells/linux-fs.git	afs-next
+btrfs	David Sterba <dsterba@suse.cz>	git://git.kernel.org/pub/scm/linux/ker=
+nel/git/kdave/linux.git	for-next
+ceph	Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>	gi=
+t://github.com/ceph/ceph-client.git	master
+cifs	Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>	g=
+it://git.samba.org/sfrench/cifs-2.6.git	for-next
+configfs	Christoph Hellwig <hch@lst.de>	git://git.infradead.org/users/hch/c=
+onfigfs.git	for-next
+erofs	Gao Xiang <xiang@kernel.org>	git://git.kernel.org/pub/scm/linux/kerne=
+l/git/xiang/erofs.git	dev
+exfat	Namjae Jeon <linkinjeon@kernel.org>	git://git.kernel.org/pub/scm/linu=
+x/kernel/git/linkinjeon/exfat.git	dev
+exportfs	Chuck Lever <chuck.lever@oracle.com>	git://git.kernel.org/pub/scm/=
+linux/kernel/git/cel/linux	exportfs-next
+ext3	Jan Kara <jack@suse.cz>	git://git.kernel.org/pub/scm/linux/kernel/git/=
+jack/linux-fs.git	for_next
+ext4	Theodore Ts'o <tytso@mit.edu>	git://git.kernel.org/pub/scm/linux/kerne=
+l/git/tytso/ext4.git	dev
+f2fs	Jaegeuk Kim <jaegeuk@kernel.org>	git://git.kernel.org/pub/scm/linux/ke=
+rnel/git/jaegeuk/f2fs.git	dev
+fsverity	Eric Biggers <ebiggers@kernel.org>, Theodore Y. Ts'o <tytso@mit.ed=
+u>	git://git.kernel.org/pub/scm/fs/fsverity/linux.git	for-next
+fuse	Miklos Szeredi <miklos@szeredi.hu>	git://git.kernel.org/pub/scm/linux/=
+kernel/git/mszeredi/fuse.git	for-next
+gfs2	Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat=
+.com>	git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git	for=
+-next
+jfs	Dave Kleikamp <dave.kleikamp@oracle.com>	git://github.com/kleikamp/linu=
+x-shaggy.git	jfs-next
+ksmbd	Steve French <smfrench@gmail.com>	https://github.com/smfrench/smb3-ke=
+rnel.git	ksmbd-for-next
+nfs	Trond Myklebust <trondmy@gmail.com>	git://git.linux-nfs.org/projects/tr=
+ondmy/nfs-2.6.git	linux-next
+nfs-anna	Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@gmail.c=
+om>, NFS Mailing List <linux-nfs@vger.kernel.org>	git://git.linux-nfs.org/p=
+rojects/anna/linux-nfs.git	linux-next
+nfsd	Chuck Lever <chuck.lever@oracle.com>	git://git.kernel.org/pub/scm/linu=
+x/kernel/git/cel/linux	nfsd-next
+ntfs3	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>	https:/=
+/github.com/Paragon-Software-Group/linux-ntfs3.git	master
+orangefs	Mike Marshall <hubcap@omnibond.com>	git://git.kernel.org/pub/scm/l=
+inux/kernel/git/hubcap/linux	for-next
+overlayfs	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmai=
+l.com>	git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git	over=
+layfs-next
+ubifs	Richard Weinberger <richard@nod.at>	git://git.kernel.org/pub/scm/linu=
+x/kernel/git/rw/ubifs.git	next
+v9fs	Dominique Martinet <asmadeus@codewreck.org>	git://github.com/martinetd=
+/linux	9p-next
+v9fs-ericvh	Eric Van Hensbergen <ericvh@gmail.com>	git://git.kernel.org/pub=
+/scm/linux/kernel/git/ericvh/v9fs.git	ericvh/for-next
+xfs	Darrick J. Wong <djwong@kernel.org>, David Chinner <david@fromorbit.com=
+>, <linux-xfs@vger.kernel.org>	git://git.kernel.org/pub/scm/fs/xfs/xfs-linu=
+x.git	for-next
+zonefs	Damien Le Moal <Damien.LeMoal@wdc.com>	git://git.kernel.org/pub/scm/=
+linux/kernel/git/dlemoal/zonefs.git	for-next
+iomap	Darrick J. Wong <djwong@kernel.org>	git://git.kernel.org/pub/scm/fs/x=
+fs/xfs-linux.git	iomap-for-next
+djw-vfs	Darrick J. Wong <djwong@kernel.org>	git://git.kernel.org/pub/scm/fs=
+/xfs/xfs-linux.git	vfs-for-next
+file-locks	Jeff Layton <jlayton@kernel.org>	git://git.kernel.org/pub/scm/li=
+nux/kernel/git/jlayton/linux.git	locks-next
+iversion	Jeff Layton <jlayton@kernel.org>	git://git.kernel.org/pub/scm/linu=
+x/kernel/git/jlayton/linux.git	iversion-next
+vfs-brauner	Christian Brauner <brauner@kernel.org>	git://git.kernel.org/pub=
+/scm/linux/kernel/git/vfs/vfs.git	vfs.all
+vfs	Al Viro <viro@ZenIV.linux.org.uk>	git://git.kernel.org/pub/scm/linux/ke=
+rnel/git/viro/vfs.git	for-next
+
+
+Please let me know if you want them reordered or some removed/added.
+
+Both these branches will be exported with the linux-next tree each day.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/W+6VDACPlRiJlp2vAc1E+cp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZWsK4ACgkQAVBC80lX
+0GzNDwf/XLRKgeDO1tyeiNrcwQrsMuPNJPLJNNhB5D5088qQY5qV0ZZeQ+xDBimX
+jMSyYVVl2yMH8QmGKTUeShwnOUHEK04RRXD7P2U0THYEO7Ong6JvfGID5K3R+nct
+Uj9xO4a+9dS0ZOn0iMthP1q0sFbKKYBpUegaXJdtrNfoxkJxJUPghFIz5H06GE4x
+quMbCCY9vZOZvG7wPtZoh2TY59Zb6qH5ZAGuouN3+XyOqdItyhUGpxBZxxVhVl7V
+cPb22KPLrGATnu6ovm9d1ys6zgKpptqgc3NLefqVklcZXVcx5BtYK+BHC6hPAWCU
+AxG8+7vldh08xVe66ZdtJgOIyrfgtw==
+=+pA9
+-----END PGP SIGNATURE-----
+
+--Sig_/W+6VDACPlRiJlp2vAc1E+cp--
 
