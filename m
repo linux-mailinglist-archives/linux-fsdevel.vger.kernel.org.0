@@ -1,77 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-20402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700278D2D28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 08:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B3A8D2D4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 08:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A200C1C212BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 06:24:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833A11C22A02
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 06:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB6A15FCE8;
-	Wed, 29 May 2024 06:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6911816132F;
+	Wed, 29 May 2024 06:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0xSCbsz6"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0/O9HICj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E315F3F3;
-	Wed, 29 May 2024 06:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9244115ECD9;
+	Wed, 29 May 2024 06:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716963862; cv=none; b=hVCzmQc8piphhmG4VHAjczv3DE9J4VNzQEvv9+rBU1nE6JuSA4IJWsBJ4nYzCTbk7FX8Y3Ftf6NKLJVL6IbhKIJ/g1OHHQT4o8cXGO99nyiw48rAJg/DS07KO+unEd9hXxvKT849B0jG03UxapNIfIznReknpaBxGDCUi+31uiM=
+	t=1716964230; cv=none; b=X+wwfn5M3ubmPudPGEperwxNowBFGM9aZ3ZXC7JvdYfndg+nfcoF0M3OtnoqQwqSpfpig6lgT2YScpW4bsZLnpOy/TerSAy4hLnOTjkcS3AVsD3K2esz0jVq4jHFiYV0UsT85hh9dOhKOJi2b35s+uyh41FBdbTfRpcYCzB8jIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716963862; c=relaxed/simple;
-	bh=pPM9ny+kNaumhJIGu8VXl7ieb63WgdrNQQ2r3r86KrU=;
+	s=arc-20240116; t=1716964230; c=relaxed/simple;
+	bh=vbOpXjr9ktrBqJmgy29H0fW1gFoPJnwby3srd/a1Ovw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DdX1Mj5XTaavgOOPFoMOGPw81qR9hNb2GMN+BGc5WsTeJqZ9fDIY2TxvuqYSsPikSLeE/pagbKcrAGyBYRt+TBRUsH75W3ijhUG/vCYfTiTcB3bc+R06kM8Um76QToW0YQmslJpg3kupXC9fDi5gjdhd5bj1/R01p1HFNB95zAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0xSCbsz6; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjhY+9PCdwbxsaE6ZYXuF6cDx6LJtEITFR4JGWF7M95jp21OwpGfIE2p0wIWOCHJD+1DggxnKfNdwSCExbMQfzyZ555aScxM/z8bVulnVC7jtO0LFoF+b8IyYMVH7VvYTr2Aer7fTcihedy6sik5/EOZ6GjtzHqNBBwVEcVhdkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0/O9HICj; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pPM9ny+kNaumhJIGu8VXl7ieb63WgdrNQQ2r3r86KrU=; b=0xSCbsz68/CidLV/kgNWdm4vmd
-	DcnHmjJHBjSaNDwa/7FUP0m+3soqGA6wk+873Rz5SWPyQWnEI7EN29rP3kiCiGHApMqCzQX/seZvu
-	CXlg1l52hShvokbOux46Z1WneHxAEN3EIkXY7xwtt7smMWt9uFUz8ce/yF09LPAuQomDg1MqWJPrY
-	Noom52EDsVmhX/jDbfsU2tYaP3iV2+Xs11XVxaEv1MSI83BkG0Tog5UknTKEsvRVq4oiYSSfjPdWO
-	x3/Pc+ifQSc/kuzL5jEBbm+66V2MPFr0NeZumYqgKKijtP3hGo6XGtPZGdZLa4Zh3k9XAetf8yHuF
-	Nnlq5K3Q==;
+	bh=swhdXQitouWfbVXir6mhHWJzgMgXKEdt21ahanEqPYc=; b=0/O9HICjMZQG8h/QX2ISQgQO/F
+	wl8GRapTie3htc2Zbdq96Y1xYo4fxKcdhycF+nKul+yk89xz2g3RLB3Mj4IXkO5FLq9nIbBI43I9k
+	mL34hTZxOqFK5u9WNg3HG4kGGAfAobnDkja0co5/s70Zmzh46HI2dFPYo9EZNyS+hYDPe25XfY19q
+	iLpcFArPOrCQ8fdveltf/DybiegRLqBS83s5mbgwFDTuZ3JVTfCKSw1mv+2/Fs2uNBHIhr/YfnFp6
+	KDNiLOunrZ4MYQqxEVvMUIXP98Jwht1LjTF0Y10Yc/Elc+YXpN3J84rBPfXAg5uUugGM4md52UWe+
+	4C0j3jzQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCCjS-00000002zuE-2aAy;
-	Wed, 29 May 2024 06:24:18 +0000
-Date: Tue, 28 May 2024 23:24:18 -0700
-From: "hch@infradead.org" <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: "hch@infradead.org" <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	"chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"alex.aring@gmail.com" <alex.aring@gmail.com>,
-	"cyphar@cyphar.com" <cyphar@cyphar.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jlayton@kernel.org" <jlayton@kernel.org>,
-	"amir73il@gmail.com" <amir73il@gmail.com>,
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <ZlbKEr15IXO2jxXd@infradead.org>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org>
- <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
- <ZlRzNquWNalhYtux@infradead.org>
- <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
- <ZlS0_DWzGk24GYZA@infradead.org>
- <20240528101152.kyvtx623djnxwonm@quack3>
- <ZlW4a6Zdt9SPTt80@infradead.org>
- <ZlZn/fcphsx8u/Ph@dread.disaster.area>
+	id 1sCCpQ-000000030zs-38CI;
+	Wed, 29 May 2024 06:30:28 +0000
+Date: Tue, 28 May 2024 23:30:28 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <Anna.Schumaker@netapp.com>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] nfs: Fix misuses of folio_shift() and folio_order()
+Message-ID: <ZlbLhHB4vucmIRgR@infradead.org>
+References: <20240527163616.1135968-1-hch@lst.de>
+ <20240528210407.2158964-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,19 +63,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZlZn/fcphsx8u/Ph@dread.disaster.area>
+In-Reply-To: <20240528210407.2158964-1-willy@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, May 29, 2024 at 09:25:49AM +1000, Dave Chinner wrote:
-> But no-one has bothered to reply or acknowledge my comments so I'll
-> point them out again and repeat: Filehandles generated by
-> the kernel for unprivileged use *must* be self describing and self
-> validating as the kernel must be able to detect and prevent
-> unprivelged users from generating custom filehandles that can be
-> used to access files outside the restricted scope of their
-> container.
+On Tue, May 28, 2024 at 10:03:15PM +0100, Matthew Wilcox (Oracle) wrote:
+> Page cache indices are in units of PAGE_SIZE, not in units of
+> the folio size.  Revert the change in nfs_grow_file(), and
+> pass the inode to nfs_folio_length() so it can be reimplemented
+> in terms of folio_mkwrite_check_truncate() which handles this
+> correctly.
 
-We must not generate file handle for unprivileged use at all, as they
-bypass all the path based access controls.
+I had to apply the incremental patch below to make the change compile.
+With that it causes a new xfstests failure in generic/127 that I haven't
+looked into yet.  The mm-level bugs I've seen even with baseline
+Linus' tree also happened more often than in my previous tests, but
+that might just be coincidence.
 
+
+diff --git a/fs/nfs/nfstrace.h b/fs/nfs/nfstrace.h
+index 1e710654af1173..0a5d5fa9513735 100644
+--- a/fs/nfs/nfstrace.h
++++ b/fs/nfs/nfstrace.h
+@@ -938,7 +938,7 @@ TRACE_EVENT(nfs_sillyrename_unlink,
+ 
+ DECLARE_EVENT_CLASS(nfs_folio_event,
+ 		TP_PROTO(
+-			const struct inode *inode,
++			struct inode *inode,
+ 			struct folio *folio
+ 		),
+ 
+@@ -954,14 +954,14 @@ DECLARE_EVENT_CLASS(nfs_folio_event,
+ 		),
+ 
+ 		TP_fast_assign(
+-			const struct nfs_inode *nfsi = NFS_I(inode);
++			struct nfs_inode *nfsi = NFS_I(inode);
+ 
+ 			__entry->dev = inode->i_sb->s_dev;
+ 			__entry->fileid = nfsi->fileid;
+ 			__entry->fhandle = nfs_fhandle_hash(&nfsi->fh);
+ 			__entry->version = inode_peek_iversion_raw(inode);
+ 			__entry->offset = folio_file_pos(folio);
+-			__entry->count = nfs_folio_length(folio);
++			__entry->count = nfs_folio_length(folio, inode);
+ 		),
+ 
+ 		TP_printk(
+@@ -977,14 +977,14 @@ DECLARE_EVENT_CLASS(nfs_folio_event,
+ #define DEFINE_NFS_FOLIO_EVENT(name) \
+ 	DEFINE_EVENT(nfs_folio_event, name, \
+ 			TP_PROTO( \
+-				const struct inode *inode, \
++				struct inode *inode, \
+ 				struct folio *folio \
+ 			), \
+ 			TP_ARGS(inode, folio))
+ 
+ DECLARE_EVENT_CLASS(nfs_folio_event_done,
+ 		TP_PROTO(
+-			const struct inode *inode,
++			struct inode *inode,
+ 			struct folio *folio,
+ 			int ret
+ 		),
+@@ -1002,14 +1002,14 @@ DECLARE_EVENT_CLASS(nfs_folio_event_done,
+ 		),
+ 
+ 		TP_fast_assign(
+-			const struct nfs_inode *nfsi = NFS_I(inode);
++			struct nfs_inode *nfsi = NFS_I(inode);
+ 
+ 			__entry->dev = inode->i_sb->s_dev;
+ 			__entry->fileid = nfsi->fileid;
+ 			__entry->fhandle = nfs_fhandle_hash(&nfsi->fh);
+ 			__entry->version = inode_peek_iversion_raw(inode);
+ 			__entry->offset = folio_file_pos(folio);
+-			__entry->count = nfs_folio_length(folio);
++			__entry->count = nfs_folio_length(folio, inode);
+ 			__entry->ret = ret;
+ 		),
+ 
+@@ -1026,7 +1026,7 @@ DECLARE_EVENT_CLASS(nfs_folio_event_done,
+ #define DEFINE_NFS_FOLIO_EVENT_DONE(name) \
+ 	DEFINE_EVENT(nfs_folio_event_done, name, \
+ 			TP_PROTO( \
+-				const struct inode *inode, \
++				struct inode *inode, \
+ 				struct folio *folio, \
+ 				int ret \
+ 			), \
 
