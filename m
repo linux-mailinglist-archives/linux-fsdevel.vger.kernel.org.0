@@ -1,296 +1,428 @@
-Return-Path: <linux-fsdevel+bounces-20431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3338D3588
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 13:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331D88D35C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 13:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50DFA1C22F66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 11:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89331F22E55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 11:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3105D17B51C;
-	Wed, 29 May 2024 11:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fvb/KCdo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA1E1802DE;
+	Wed, 29 May 2024 11:48:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE7714B973;
-	Wed, 29 May 2024 11:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C8613DDAE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2024 11:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981993; cv=none; b=R/8GZctHDH1ZT9m0Gy31Ryxyf3UGYir5JvI/SkcemhJ1SOsb0j1iAdRdjiU8zgC8oJRXA2FaoZxZxJUNs8eb0UyC82kpiQhFu9ur4eKbHZWTVaJ2KBFJiqHHFAlDGaHsh7Z41Kn0VmQvB/Ri9TllbC5bGGq9bKf/tSAUf+dQ7ZI=
+	t=1716983284; cv=none; b=GPQv16BFyIBq/PywHC6mrbi1URz2TJ64lPM/5PvlB5kT420rXMFNz6Rrcn07LvTkUcDH/um1ZS26yWp27DLhk0EekgJYsqQYpJOcCJphms+FJPseWz/VZsUxqkqTAWLOOsNuMe/+1Y3WKg3m7GLJlZq/ZGGTw/f/xCRkIWtraI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981993; c=relaxed/simple;
-	bh=fQ/W/XQvxztVD+KL+K6E/rTOhhZdplFlq7iK6NNvaf8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gB9Q0Pl3OxbKGpc+nbkWMI/Ji9tlV6HbBYGIEu68l1NkwqxIH254X8ZZ2vrFCO25hzmXN/0r8j0lSf/+21yncq5N6Nlwu8T4mLtzjsGtAlNSmuoBtJhMbYFoWixlbiA+yiSWzrwRI9jhzwMADA27D7ZJVB7khTJZVNauw7+VpXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fvb/KCdo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9139CC2BD10;
-	Wed, 29 May 2024 11:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716981993;
-	bh=fQ/W/XQvxztVD+KL+K6E/rTOhhZdplFlq7iK6NNvaf8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Fvb/KCdoPztX6z+7ql5DcFANYWdm5gb9goBNnMwmbGHzTlSl/+eyRFqBZnirh9xRj
-	 ID7aXWhvqx+Rh8Yq6w+OO1yF1klvQIsHAicsPP3V+2Oj9wK9RtaRFQkWxo20fEeyzJ
-	 ILjpt/fL24z/2y3gqaeNIINGn/xD10ssKAH/20rsCWO9o7sEQnxUmTKXyPLrP+SHyp
-	 MR9l8/VPL6S2tWUZVNK5wUYZud+Q9hWGj8KCVnyWZQCw+MEwfswVNsIRZ+2JmblzSh
-	 tZSb7KniBGi9boYWfS+wA8OnIKe6mHWbUyM1ro7t4qIh73w+wxUNzpBFk388vnJ3E3
-	 6LD4ST2hhik+A==
-Message-ID: <1f177444-0613-4843-98fe-bcdca2538a07@kernel.org>
-Date: Wed, 29 May 2024 19:26:29 +0800
+	s=arc-20240116; t=1716983284; c=relaxed/simple;
+	bh=tJI7W6PBiymQn7VUzsTFy3GXjIpWqqV3HphE4UEyXLM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A4Rc8Z+JVHWy6MJBoVfDVPHRm+UDZTxSfo43EyniICaCgo3Ik458iv+3BwoMccFUYwV3H4XRHz7sb8a0H9GIy762flsKqwy8jnpBofht3ZI9qmx50OymhbAiR/meSrEWHKV7xSeh+q5lq3B2mPvEw3mfPJs6DZEsC0bEXs2z9Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3744edd84b1so20333495ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2024 04:48:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716983281; x=1717588081;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7que1wCcQSg2LMiw0l1rpP/+1+zrMnwXWbUoNws8Zak=;
+        b=kCkm1BbKGUKevPGEmbs5tjZheSl6fbFCZSBcmXr/qGYO9WkuanFIzjNU54T0axUNZE
+         uokn7UXqqz/5dAd162277FgtiB5hanzXtqj0efX4yjSSKFEheaSUax2XWwfB1Rw/yVjK
+         AeFieLyphHOhK75+jM0onK9IcQKiU0cWW+IVOIhvYm0SDXhVIiXrAqkjhoauRlJydj7n
+         8VwEbcCFPXnikL2qrppw5MbVsDD60+TFhrvJ5mTi1Tnx4Gq2ReEJEMAJkMHIdHcSKfth
+         ZVJAeG+hV2JjpwZulkJSJn02Dea3HkRqCbac1Fq7ujU2nW8GSSKrJt3Yu9BGnAFKVQDy
+         xpSA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9x1TnvEvju2RXb5+B/LRrsNVGI9B2+fHbqoWe4+Cizcl+mDBs1xdLcdJ7FOdaKd1IqW1HlrJvx3OrcHAdTuKeXUP6a/E0oDZZEjV0Eg==
+X-Gm-Message-State: AOJu0YxhCv+vEDnMzQnzbneG9ExiklohSno58rw+htZSRrzozz3HH99R
+	1pCUu7fP4deueIeID2fOaw3AshyM2p46TvqZlbN/laVidqmC1NVOITSXsHoV5w8GqIJ6nmQf/MU
+	796rG0VsU0Wz4xfqGigRRC4xFKaI2Va9tZEsyc+ZR6h18KGnGybHvSeA=
+X-Google-Smtp-Source: AGHT+IGV3pkoeHq2JLojbo7MaYprtJGxEmcl7RRlayhH/M3kW4v5OUCXHAXiDd8NFtiIotxOrYmhhxSVXNADfuHSqkFJ75s/u8Cr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [syzbot] [f2fs?] KASAN: slab-use-after-free Read in
- sanity_check_extent_cache
-To: syzbot <syzbot+74ebe2104433e9dc610d@syzkaller.appspotmail.com>,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <00000000000009beea061740a531@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <00000000000009beea061740a531@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2196:b0:374:598b:3fec with SMTP id
+ e9e14a558f8ab-374598b4269mr5048615ab.5.1716983281767; Wed, 29 May 2024
+ 04:48:01 -0700 (PDT)
+Date: Wed, 29 May 2024 04:48:01 -0700
+In-Reply-To: <1f177444-0613-4843-98fe-bcdca2538a07@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000098718506199652db@google.com>
+Subject: Re: [syzbot] [f2fs?] KASAN: slab-use-after-free Read in sanity_check_extent_cache
+From: syzbot <syzbot+74ebe2104433e9dc610d@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
+Hello,
 
-On 2024/4/30 2:44, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e67572cd2204 Linux 6.9-rc6
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13724f0f180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-> dashboard link: https://syzkaller.appspot.com/bug?extid=74ebe2104433e9dc610d
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16938440980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ae8517180000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/526d150815dd/disk-e67572cd.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/03cba3db92e8/vmlinux-e67572cd.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/ec3f54fc8985/bzImage-e67572cd.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/21aa65da230a/mount_0.gz
-> 
-> The issue was bisected to:
-> 
-> commit a53936361330e4c55c0654605178281387d9c761
-> Author: Chao Yu <chao@kernel.org>
-> Date:   Sun Dec 10 09:20:35 2023 +0000
-> 
->      f2fs: delete obsolete FI_FIRST_BLOCK_WRITTEN
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11b78440980000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=13b78440980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15b78440980000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+74ebe2104433e9dc610d@syzkaller.appspotmail.com
-> Fixes: a53936361330 ("f2fs: delete obsolete FI_FIRST_BLOCK_WRITTEN")
-> 
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3b853316dc
-> R13: 00007f3b852f8160 R14: 0030656c69662f2e R15: 00007ffdc8faca88
->   </TASK>
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
-> Read of size 4 at addr ffff8880739ab220 by task syz-executor200/5097
-> 
-> CPU: 0 PID: 5097 Comm: syz-executor200 Not tainted 6.9.0-rc6-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:88 [inline]
->   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->   print_address_description mm/kasan/report.c:377 [inline]
->   print_report+0x169/0x550 mm/kasan/report.c:488
->   kasan_report+0x143/0x180 mm/kasan/report.c:601
->   sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
->   do_read_inode fs/f2fs/inode.c:509 [inline]
->   f2fs_iget+0x33e1/0x46e0 fs/f2fs/inode.c:560
->   f2fs_nfs_get_inode+0x74/0x100 fs/f2fs/super.c:3237
->   generic_fh_to_dentry+0x9f/0xf0 fs/libfs.c:1413
->   exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x495/0x650 fs/fhandle.c:226
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f3b852ab889
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f3b85239228 EFLAGS: 00000246 ORIG_RAX: 0000000000000130
-> RAX: ffffffffffffffda RBX: 00007f3b853316d8 RCX: 00007f3b852ab889
-> RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000004
-> RBP: 00007f3b853316d0 R08: 00007ffdc8faca87 R09: 00007f3b852396c0
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3b853316dc
-> R13: 00007f3b852f8160 R14: 0030656c69662f2e R15: 00007ffdc8faca88
->   </TASK>
-> 
-> Allocated by task 5092:
->   kasan_save_stack mm/kasan/common.c:47 [inline]
->   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->   unpoison_slab_object mm/kasan/common.c:312 [inline]
->   __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
->   kasan_slab_alloc include/linux/kasan.h:201 [inline]
->   slab_post_alloc_hook mm/slub.c:3798 [inline]
->   slab_alloc_node mm/slub.c:3845 [inline]
->   kmem_cache_alloc+0x174/0x340 mm/slub.c:3852
->   f2fs_kmem_cache_alloc_nofail fs/f2fs/f2fs.h:2817 [inline]
->   f2fs_kmem_cache_alloc fs/f2fs/f2fs.h:2827 [inline]
->   __grab_extent_tree+0x183/0x400 fs/f2fs/extent_cache.c:334
->   f2fs_init_read_extent_tree+0x455/0x910 fs/f2fs/extent_cache.c:405
->   do_read_inode fs/f2fs/inode.c:506 [inline]
->   f2fs_iget+0x33d1/0x46e0 fs/f2fs/inode.c:560
->   f2fs_nfs_get_inode+0x74/0x100 fs/f2fs/super.c:3237
->   generic_fh_to_dentry+0x9f/0xf0 fs/libfs.c:1413
->   exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x495/0x650 fs/fhandle.c:226
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Freed by task 5092:
->   kasan_save_stack mm/kasan/common.c:47 [inline]
->   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->   kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
->   poison_slab_object+0xa6/0xe0 mm/kasan/common.c:240
->   __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
->   kasan_slab_free include/linux/kasan.h:184 [inline]
->   slab_free_hook mm/slub.c:2106 [inline]
->   slab_free mm/slub.c:4280 [inline]
->   kmem_cache_free+0x10b/0x2c0 mm/slub.c:4344
->   __destroy_extent_tree+0x307/0x600 fs/f2fs/extent_cache.c:1132
->   f2fs_destroy_extent_tree+0x17/0x30 fs/f2fs/extent_cache.c:1143
->   f2fs_evict_inode+0x44d/0x1550 fs/f2fs/inode.c:831
->   evict+0x2a8/0x630 fs/inode.c:667
->   f2fs_iget+0x1a68/0x46e0 fs/f2fs/inode.c:621
->   f2fs_nfs_get_inode+0x74/0x100 fs/f2fs/super.c:3237
->   generic_fh_to_dentry+0x9f/0xf0 fs/libfs.c:1413
->   exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x495/0x650 fs/fhandle.c:226
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> The buggy address belongs to the object at ffff8880739ab1a0
->   which belongs to the cache f2fs_extent_tree of size 144
-> The buggy address is located 128 bytes inside of
->   freed 144-byte region [ffff8880739ab1a0, ffff8880739ab230)
-> 
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x739ab
-> flags: 0xfff80000000800(slab|node=0|zone=1|lastcpupid=0xfff)
-> page_type: 0xffffffff()
-> raw: 00fff80000000800 ffff88801afb08c0 dead000000000122 0000000000000000
-> raw: 0000000000000000 0000000080130013 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Reclaimable, gfp_mask 0x12c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_RECLAIMABLE), pid 5076, tgid -326355158 (syz-executor200), ts 5083, free_ts 26740999480
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
->   prep_new_page mm/page_alloc.c:1541 [inline]
->   get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
->   __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
->   __alloc_pages_node include/linux/gfp.h:238 [inline]
->   alloc_pages_node include/linux/gfp.h:261 [inline]
->   alloc_slab_page+0x5f/0x160 mm/slub.c:2175
->   allocate_slab mm/slub.c:2338 [inline]
->   new_slab+0x84/0x2f0 mm/slub.c:2391
->   ___slab_alloc+0xc73/0x1260 mm/slub.c:3525
->   __slab_alloc mm/slub.c:3610 [inline]
->   __slab_alloc_node mm/slub.c:3663 [inline]
->   slab_alloc_node mm/slub.c:3835 [inline]
->   kmem_cache_alloc+0x252/0x340 mm/slub.c:3852
->   f2fs_kmem_cache_alloc_nofail fs/f2fs/f2fs.h:2817 [inline]
->   f2fs_kmem_cache_alloc fs/f2fs/f2fs.h:2827 [inline]
->   __grab_extent_tree+0x183/0x400 fs/f2fs/extent_cache.c:334
->   f2fs_init_read_extent_tree+0x455/0x910 fs/f2fs/extent_cache.c:405
->   do_read_inode fs/f2fs/inode.c:506 [inline]
->   f2fs_iget+0x33d1/0x46e0 fs/f2fs/inode.c:560
->   f2fs_nfs_get_inode+0x74/0x100 fs/f2fs/super.c:3237
->   generic_fh_to_dentry+0x9f/0xf0 fs/libfs.c:1413
->   exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x495/0x650 fs/fhandle.c:226
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
-> page last free pid 1 tgid 1 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1141 [inline]
->   free_unref_page_prepare+0x97b/0xaa0 mm/page_alloc.c:2347
->   free_unref_page+0x37/0x3f0 mm/page_alloc.c:2487
->   free_contig_range+0x9e/0x160 mm/page_alloc.c:6572
->   destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1036
->   debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1416
->   do_one_initcall+0x248/0x880 init/main.c:1245
->   do_initcall_level+0x157/0x210 init/main.c:1307
->   do_initcalls+0x3f/0x80 init/main.c:1323
->   kernel_init_freeable+0x435/0x5d0 init/main.c:1555
->   kernel_init+0x1d/0x2b0 init/main.c:1444
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> 
-> Memory state around the buggy address:
->   ffff8880739ab100: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->   ffff8880739ab180: fc fc fc fc fa fb fb fb fb fb fb fb fb fb fb fb
->> ffff8880739ab200: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
->                                 ^
->   ffff8880739ab280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8880739ab300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+syzbot tried to test the proposed patch but the build/boot failed:
+
+42][    T1] usbcore: registered new interface driver dln2
+[    7.576709][    T1] usbcore: registered new interface driver pn533_usb
+[    7.583988][    T1] nfcsim 0.2 initialized
+[    7.586139][    T1] usbcore: registered new interface driver port100
+[    7.587701][    T1] usbcore: registered new interface driver nfcmrvl
+[    7.594256][    T1] Loading iSCSI transport class v2.0-870.
+[    7.612218][    T1] virtio_scsi virtio0: 1/0/0 default/read/poll queues
+[    7.621827][    T1] ------------[ cut here ]------------
+[    7.622778][    T1] refcount_t: decrement hit 0; leaking memory.
+[    7.626782][    T1] WARNING: CPU: 0 PID: 1 at lib/refcount.c:31 refcount=
+_warn_saturate+0xfa/0x1d0
+[    7.628293][    T1] Modules linked in:
+[    7.628860][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc1-=
+syzkaller-00060-g889914b5c209 #0
+[    7.630401][    T1] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 04/02/2024
+[    7.632495][    T1] RIP: 0010:refcount_warn_saturate+0xfa/0x1d0
+[    7.634119][    T1] Code: b2 00 00 00 e8 67 52 f2 fc 5b 5d c3 cc cc cc c=
+c e8 5b 52 f2 fc c6 05 51 cc ce 0a 01 90 48 c7 c7 a0 54 fe 8b e8 b7 d0 b4 f=
+c 90 <0f> 0b 90 90 eb d9 e8 3b 52 f2 fc c6 05 2e cc ce 0a 01 90 48 c7 c7
+[    7.638094][    T1] RSP: 0000:ffffc90000066e18 EFLAGS: 00010246
+[    7.639044][    T1] RAX: 343580cc97689700 RBX: ffff8881401bf06c RCX: fff=
+f8880166c8000
+[    7.640552][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000000
+[    7.642175][    T1] RBP: 0000000000000004 R08: ffffffff8157ffe2 R09: fff=
+ffbfff1bf96e0
+[    7.643575][    T1] R10: dffffc0000000000 R11: fffffbfff1bf96e0 R12: fff=
+fea000501cdc0
+[    7.645089][    T1] R13: ffffea000501cdc8 R14: 1ffffd4000a039b9 R15: 000=
+0000000000000
+[    7.646458][    T1] FS:  0000000000000000(0000) GS:ffff8880b9400000(0000=
+) knlGS:0000000000000000
+[    7.647850][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.648816][    T1] CR2: ffff88823ffff000 CR3: 000000000df32000 CR4: 000=
+00000003506f0
+[    7.650069][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
+0000000000000
+[    7.651660][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
+0000000000400
+[    7.653255][    T1] Call Trace:
+[    7.653955][    T1]  <TASK>
+[    7.655231][    T1]  ? __warn+0x163/0x4e0
+[    7.656060][    T1]  ? refcount_warn_saturate+0xfa/0x1d0
+[    7.657004][    T1]  ? report_bug+0x2b3/0x500
+[    7.657697][    T1]  ? refcount_warn_saturate+0xfa/0x1d0
+[    7.658659][    T1]  ? handle_bug+0x3e/0x70
+[    7.659735][    T1]  ? exc_invalid_op+0x1a/0x50
+[    7.660993][    T1]  ? asm_exc_invalid_op+0x1a/0x20
+[    7.661819][    T1]  ? __warn_printk+0x292/0x360
+[    7.662573][    T1]  ? refcount_warn_saturate+0xfa/0x1d0
+[    7.663589][    T1]  ? refcount_warn_saturate+0xf9/0x1d0
+[    7.664642][    T1]  __free_pages_ok+0xc54/0xd80
+[    7.665381][    T1]  make_alloc_exact+0xa3/0xf0
+[    7.666771][    T1]  vring_alloc_queue_split+0x20a/0x600
+[    7.667714][    T1]  ? __pfx_vring_alloc_queue_split+0x10/0x10
+[    7.668766][    T1]  ? vp_find_vqs+0x4c/0x4e0
+[    7.669540][    T1]  ? virtscsi_probe+0x3ea/0xf60
+[    7.670758][    T1]  ? virtio_dev_probe+0x991/0xaf0
+[    7.671577][    T1]  ? really_probe+0x2b8/0xad0
+[    7.672570][    T1]  ? driver_probe_device+0x50/0x430
+[    7.673427][    T1]  vring_create_virtqueue_split+0xc6/0x310
+[    7.674713][    T1]  ? ret_from_fork+0x4b/0x80
+[    7.675577][    T1]  ? __pfx_vring_create_virtqueue_split+0x10/0x10
+[    7.676513][    T1]  vring_create_virtqueue+0xca/0x110
+[    7.677483][    T1]  ? __pfx_vp_notify+0x10/0x10
+[    7.678536][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.679645][    T1]  setup_vq+0xe9/0x2d0
+[    7.680389][    T1]  ? __pfx_vp_notify+0x10/0x10
+[    7.681211][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.682323][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.683391][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.684728][    T1]  vp_setup_vq+0xbf/0x330
+[    7.685412][    T1]  ? __pfx_vp_config_changed+0x10/0x10
+[    7.686599][    T1]  ? ioread16+0x2f/0x90
+[    7.687219][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.688543][    T1]  vp_find_vqs_msix+0x8b2/0xc80
+[    7.689396][    T1]  vp_find_vqs+0x4c/0x4e0
+[    7.690066][    T1]  virtscsi_init+0x8db/0xd00
+[    7.690768][    T1]  ? __pfx_virtscsi_init+0x10/0x10
+[    7.691800][    T1]  ? __pfx_default_calc_sets+0x10/0x10
+[    7.692645][    T1]  ? scsi_host_alloc+0xa57/0xea0
+[    7.693496][    T1]  ? vp_get+0xfd/0x140
+[    7.694109][    T1]  virtscsi_probe+0x3ea/0xf60
+[    7.695276][    T1]  ? __pfx_virtscsi_probe+0x10/0x10
+[    7.696256][    T1]  ? kernfs_add_one+0x156/0x8b0
+[    7.697276][    T1]  ? virtio_no_restricted_mem_acc+0x9/0x10
+[    7.698400][    T1]  ? virtio_features_ok+0x10c/0x270
+[    7.699300][    T1]  virtio_dev_probe+0x991/0xaf0
+[    7.700143][    T1]  ? __pfx_virtio_dev_probe+0x10/0x10
+[    7.700985][    T1]  really_probe+0x2b8/0xad0
+[    7.702196][    T1]  __driver_probe_device+0x1a2/0x390
+[    7.703259][    T1]  driver_probe_device+0x50/0x430
+[    7.704075][    T1]  __driver_attach+0x45f/0x710
+[    7.704819][    T1]  ? __pfx___driver_attach+0x10/0x10
+[    7.705601][    T1]  bus_for_each_dev+0x239/0x2b0
+[    7.706514][    T1]  ? __pfx___driver_attach+0x10/0x10
+[    7.707442][    T1]  ? __pfx_bus_for_each_dev+0x10/0x10
+[    7.708680][    T1]  ? do_raw_spin_unlock+0x13c/0x8b0
+[    7.710058][    T1]  bus_add_driver+0x347/0x620
+[    7.711073][    T1]  driver_register+0x23a/0x320
+[    7.712178][    T1]  ? __pfx_virtio_scsi_init+0x10/0x10
+[    7.713450][    T1]  virtio_scsi_init+0x65/0xe0
+[    7.714571][    T1]  ? __pfx_virtio_scsi_init+0x10/0x10
+[    7.715692][    T1]  do_one_initcall+0x248/0x880
+[    7.716533][    T1]  ? __pfx_virtio_scsi_init+0x10/0x10
+[    7.717409][    T1]  ? __pfx_do_one_initcall+0x10/0x10
+[    7.718599][    T1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[    7.719639][    T1]  ? __pfx_parse_args+0x10/0x10
+[    7.720523][    T1]  ? do_initcalls+0x1c/0x80
+[    7.721261][    T1]  ? rcu_is_watching+0x15/0xb0
+[    7.722428][    T1]  do_initcall_level+0x157/0x210
+[    7.723278][    T1]  do_initcalls+0x3f/0x80
+[    7.723962][    T1]  kernel_init_freeable+0x435/0x5d0
+[    7.725035][    T1]  ? __pfx_kernel_init_freeable+0x10/0x10
+[    7.726103][    T1]  ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
+[    7.727205][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.728033][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.729046][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.729731][    T1]  kernel_init+0x1d/0x2b0
+[    7.730411][    T1]  ret_from_fork+0x4b/0x80
+[    7.731117][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.731836][    T1]  ret_from_fork_asm+0x1a/0x30
+[    7.732580][    T1]  </TASK>
+[    7.733103][    T1] Kernel panic - not syncing: kernel: panic_on_warn se=
+t ...
+[    7.734198][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc1-=
+syzkaller-00060-g889914b5c209 #0
+[    7.734971][    T1] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 04/02/2024
+[    7.734971][    T1] Call Trace:
+[    7.734971][    T1]  <TASK>
+[    7.734971][    T1]  dump_stack_lvl+0x241/0x360
+[    7.734971][    T1]  ? __pfx_dump_stack_lvl+0x10/0x10
+[    7.734971][    T1]  ? __pfx__printk+0x10/0x10
+[    7.734971][    T1]  ? _printk+0xd5/0x120
+[    7.734971][    T1]  ? vscnprintf+0x5d/0x90
+[    7.734971][    T1]  panic+0x349/0x860
+[    7.734971][    T1]  ? __warn+0x172/0x4e0
+[    7.734971][    T1]  ? __pfx_panic+0x10/0x10
+[    7.734971][    T1]  ? show_trace_log_lvl+0x4e6/0x520
+[    7.734971][    T1]  ? ret_from_fork_asm+0x1a/0x30
+[    7.734971][    T1]  __warn+0x346/0x4e0
+[    7.734971][    T1]  ? refcount_warn_saturate+0xfa/0x1d0
+[    7.734971][    T1]  report_bug+0x2b3/0x500
+[    7.734971][    T1]  ? refcount_warn_saturate+0xfa/0x1d0
+[    7.734971][    T1]  handle_bug+0x3e/0x70
+[    7.734971][    T1]  exc_invalid_op+0x1a/0x50
+[    7.734971][    T1]  asm_exc_invalid_op+0x1a/0x20
+[    7.734971][    T1] RIP: 0010:refcount_warn_saturate+0xfa/0x1d0
+[    7.734971][    T1] Code: b2 00 00 00 e8 67 52 f2 fc 5b 5d c3 cc cc cc c=
+c e8 5b 52 f2 fc c6 05 51 cc ce 0a 01 90 48 c7 c7 a0 54 fe 8b e8 b7 d0 b4 f=
+c 90 <0f> 0b 90 90 eb d9 e8 3b 52 f2 fc c6 05 2e cc ce 0a 01 90 48 c7 c7
+[    7.734971][    T1] RSP: 0000:ffffc90000066e18 EFLAGS: 00010246
+[    7.734971][    T1] RAX: 343580cc97689700 RBX: ffff8881401bf06c RCX: fff=
+f8880166c8000
+[    7.734971][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000000
+[    7.734971][    T1] RBP: 0000000000000004 R08: ffffffff8157ffe2 R09: fff=
+ffbfff1bf96e0
+[    7.734971][    T1] R10: dffffc0000000000 R11: fffffbfff1bf96e0 R12: fff=
+fea000501cdc0
+[    7.734971][    T1] R13: ffffea000501cdc8 R14: 1ffffd4000a039b9 R15: 000=
+0000000000000
+[    7.734971][    T1]  ? __warn_printk+0x292/0x360
+[    7.734971][    T1]  ? refcount_warn_saturate+0xf9/0x1d0
+[    7.734971][    T1]  __free_pages_ok+0xc54/0xd80
+[    7.734971][    T1]  make_alloc_exact+0xa3/0xf0
+[    7.734971][    T1]  vring_alloc_queue_split+0x20a/0x600
+[    7.734971][    T1]  ? __pfx_vring_alloc_queue_split+0x10/0x10
+[    7.734971][    T1]  ? vp_find_vqs+0x4c/0x4e0
+[    7.734971][    T1]  ? virtscsi_probe+0x3ea/0xf60
+[    7.734971][    T1]  ? virtio_dev_probe+0x991/0xaf0
+[    7.734971][    T1]  ? really_probe+0x2b8/0xad0
+[    7.734971][    T1]  ? driver_probe_device+0x50/0x430
+[    7.734971][    T1]  vring_create_virtqueue_split+0xc6/0x310
+[    7.734971][    T1]  ? ret_from_fork+0x4b/0x80
+[    7.734971][    T1]  ? __pfx_vring_create_virtqueue_split+0x10/0x10
+[    7.734971][    T1]  vring_create_virtqueue+0xca/0x110
+[    7.734971][    T1]  ? __pfx_vp_notify+0x10/0x10
+[    7.734971][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.734971][    T1]  setup_vq+0xe9/0x2d0
+[    7.734971][    T1]  ? __pfx_vp_notify+0x10/0x10
+[    7.734971][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.784590][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.784590][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.784590][    T1]  vp_setup_vq+0xbf/0x330
+[    7.784590][    T1]  ? __pfx_vp_config_changed+0x10/0x10
+[    7.784590][    T1]  ? ioread16+0x2f/0x90
+[    7.784590][    T1]  ? __pfx_virtscsi_ctrl_done+0x10/0x10
+[    7.784590][    T1]  vp_find_vqs_msix+0x8b2/0xc80
+[    7.784590][    T1]  vp_find_vqs+0x4c/0x4e0
+[    7.784590][    T1]  virtscsi_init+0x8db/0xd00
+[    7.784590][    T1]  ? __pfx_virtscsi_init+0x10/0x10
+[    7.784590][    T1]  ? __pfx_default_calc_sets+0x10/0x10
+[    7.784590][    T1]  ? scsi_host_alloc+0xa57/0xea0
+[    7.784590][    T1]  ? vp_get+0xfd/0x140
+[    7.784590][    T1]  virtscsi_probe+0x3ea/0xf60
+[    7.784590][    T1]  ? __pfx_virtscsi_probe+0x10/0x10
+[    7.784590][    T1]  ? kernfs_add_one+0x156/0x8b0
+[    7.784590][    T1]  ? virtio_no_restricted_mem_acc+0x9/0x10
+[    7.784590][    T1]  ? virtio_features_ok+0x10c/0x270
+[    7.784590][    T1]  virtio_dev_probe+0x991/0xaf0
+[    7.784590][    T1]  ? __pfx_virtio_dev_probe+0x10/0x10
+[    7.784590][    T1]  really_probe+0x2b8/0xad0
+[    7.784590][    T1]  __driver_probe_device+0x1a2/0x390
+[    7.784590][    T1]  driver_probe_device+0x50/0x430
+[    7.784590][    T1]  __driver_attach+0x45f/0x710
+[    7.784590][    T1]  ? __pfx___driver_attach+0x10/0x10
+[    7.784590][    T1]  bus_for_each_dev+0x239/0x2b0
+[    7.784590][    T1]  ? __pfx___driver_attach+0x10/0x10
+[    7.784590][    T1]  ? __pfx_bus_for_each_dev+0x10/0x10
+[    7.784590][    T1]  ? do_raw_spin_unlock+0x13c/0x8b0
+[    7.784590][    T1]  bus_add_driver+0x347/0x620
+[    7.784590][    T1]  driver_register+0x23a/0x320
+[    7.784590][    T1]  ? __pfx_virtio_scsi_init+0x10/0x10
+[    7.784590][    T1]  virtio_scsi_init+0x65/0xe0
+[    7.784590][    T1]  ? __pfx_virtio_scsi_init+0x10/0x10
+[    7.784590][    T1]  do_one_initcall+0x248/0x880
+[    7.784590][    T1]  ? __pfx_virtio_scsi_init+0x10/0x10
+[    7.784590][    T1]  ? __pfx_do_one_initcall+0x10/0x10
+[    7.784590][    T1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[    7.784590][    T1]  ? __pfx_parse_args+0x10/0x10
+[    7.784590][    T1]  ? do_initcalls+0x1c/0x80
+[    7.784590][    T1]  ? rcu_is_watching+0x15/0xb0
+[    7.784590][    T1]  do_initcall_level+0x157/0x210
+[    7.784590][    T1]  do_initcalls+0x3f/0x80
+[    7.784590][    T1]  kernel_init_freeable+0x435/0x5d0
+[    7.784590][    T1]  ? __pfx_kernel_init_freeable+0x10/0x10
+[    7.784590][    T1]  ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
+[    7.784590][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.784590][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.784590][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.784590][    T1]  kernel_init+0x1d/0x2b0
+[    7.784590][    T1]  ret_from_fork+0x4b/0x80
+[    7.784590][    T1]  ? __pfx_kernel_init+0x10/0x10
+[    7.784590][    T1]  ret_from_fork_asm+0x1a/0x30
+[    7.834581][    T1]  </TASK>
+[    7.834581][    T1] Kernel Offset: disabled
+[    7.834581][    T1] Rebooting in 86400 seconds..
+
+
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.21.4'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build686088701=3D/tmp/go-build -gno-record-gcc=
+-switches'
+
+git status (err=3D<nil>)
+HEAD detached at 610f2a54d
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D610f2a54d02f8cf4f2454c03bf679b602e6e59b6 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240503-155746'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
+ github.com/google/syzkaller/syz-fuzzer
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D610f2a54d02f8cf4f2454c03bf679b602e6e59b6 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240503-155746'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D610f2a54d02f8cf4f2454c03bf679b602e6e59b6 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240503-155746'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-stress=
+ github.com/google/syzkaller/tools/syz-stress
+mkdir -p ./bin/linux_amd64
+gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -std=3Dc++11 -I. -Ivendor -O2 -pthread -Wall -Werror -Wparentheses -W=
+unused-const-variable -Wframe-larger-than=3D16384 -Wno-stringop-overflow -W=
+no-array-bounds -Wno-format-overflow -Wno-unused-but-set-variable -Wno-unus=
+ed-command-line-argument -static-pie -fpermissive -w -DGOOS_linux=3D1 -DGOA=
+RCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"610f2a54d02f8cf4f2454c03bf679b602e=
+6e59b6\"
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D1233c3ec980000
+
+
+Tested on:
+
+commit:         889914b5 f2fs: fix to cover read extent cache access w..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.=
+git wip
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1ace29459a0a191=
+5
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D74ebe2104433e9dc6=
+10d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+
+Note: no patches were applied.
 
