@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-20450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30A28D3B44
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 17:43:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9898D3B51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 17:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8758928A1A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267501C22DA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54ED3181B9C;
-	Wed, 29 May 2024 15:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E488B181D1B;
+	Wed, 29 May 2024 15:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ra7TUX2g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1HcRd4F"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F75335C7;
-	Wed, 29 May 2024 15:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0A71386C6;
+	Wed, 29 May 2024 15:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716997424; cv=none; b=i+sbCnodHGCJ/sq8/tmbs09y13UWcEMV+0+UXinc0br8gEmhVH7Ym/1x5ndcYqE9cXLcgbe3F+EFIfgXrZ8n6i6Ve9uazzEHXZNJD+u6IZXvVZ6yUeyC4rCUABr/DkNjasjs1hs5PKak5DIiSoXdASdbmPc2w2KQebW7R/2QAOI=
+	t=1716997586; cv=none; b=K2GpBDHK5DZ33YyGUbONGay/rcpqLesF3PjVlyGhM+5lEjOAAxg7euTecWyjnu52jCSsruMdON8sSJcmEz95k2Ygk+1QwmOIj3Lx4+HEjQHxERkykRz1De+StMy7sw/q6AZOj3XN5UwCIkvq+PnyyXVM+ox4n2rxG/xr85vTT2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716997424; c=relaxed/simple;
-	bh=rtiYzR2d0gNJz+xTIr5OK/69rdIOERezItOLSlVDENg=;
+	s=arc-20240116; t=1716997586; c=relaxed/simple;
+	bh=5H/9tAGxhCnQIdq/gPNT2uQTCgvD6jAZwCxyBBdjciY=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lNmHv4Sgp3pp+hLyBJlvpISFRWuU2U1Er59J7v/NQ5n96Ibbdik7lrBbTKUX969XixHEte0dBKNGMDumGSqxGnqjSlsGorvGfVZZaonRZ60S/j+QWyDKl/GycEwr75+FnvX0ZD3G+RfoTfYF4Muwzc5eApPHwf3AdRkAVY1hr5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ra7TUX2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7CFC113CC;
-	Wed, 29 May 2024 15:43:44 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pTXU4Gf0jOK9W6oTvBxsHcb0u0OnVUy7B5Sgr6UPfnRJfAJYSWKGw2oNH2hsXiNX5R9wNTFd0j6RgOOAe6FVoosszNUFLCnRCKUNmxc3buNjvBQEqEcTnWK5xIrHHNj6hm8Xvc/5CZouTA2j5ix+YnWJDRVZXOTO7zc4AaIeOU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1HcRd4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC9CC116B1;
+	Wed, 29 May 2024 15:46:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716997424;
-	bh=rtiYzR2d0gNJz+xTIr5OK/69rdIOERezItOLSlVDENg=;
+	s=k20201202; t=1716997585;
+	bh=5H/9tAGxhCnQIdq/gPNT2uQTCgvD6jAZwCxyBBdjciY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ra7TUX2g8mo33GD3tl07Um+9ADUtOuW+I9YHAg1nbuNNCESxcOFqeFmlTxyhh5SMy
-	 u61BQTt8Z/zsylvsEh1eTwivoY9rewzZFA3PpZumClT55KWnsgxtC4+Mm4mcVHIYit
-	 fE8TpLVlIgXl8c+JINnJx09RYtIngXYaNRICYHF2+Q0cPVBEZC/H8wpqRTb/MoKgsH
-	 M5T1T9zQtm4HOmm+pQWRwcScbW3QP+Hn7zs4w16keDW0rue4hiJo1xXBwFLDMPNbI7
-	 ZfSv66doNzzRkNRMwJ68TlGPtQ9xx4HXZGxkesI9D0XrBK51IOVddNkZZZGI6ckeRu
-	 iw3NWVOWRHXJw==
+	b=b1HcRd4FyRr1Fgr8KI7GaMOYM54DLB/kJz++0sBj9koRiH1ImimLxCkncD3DWiJb4
+	 NDH8P+IaKPe1VLQGZJP5nf9t3/ZSchz0OAJ4mpGWs1V3Apgz6CUNpTj4p22M34KEtD
+	 loH1/x5pPy2LnldfHajuPt15CKIwbllYL7rKylFdmMpIBBgYHlG/x0E6Prqo4VLR5F
+	 BXQc7DRs+e2H+ZvsNZNJqBI82iorAnwgpyaXrvj8xDcNrsvMLpbDse62m0cMekjJFE
+	 qRxhbulfJVSoPdv1Pix0R7Pb3LaMDPnYzIDyrfMx4qLrotZZidXBLndgigIRuAscB0
+	 vdOTG32dAyCcw==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.95)
 	(envelope-from <maz@kernel.org>)
-	id 1sCLSn-00GflM-HC;
-	Wed, 29 May 2024 16:43:41 +0100
-Date: Wed, 29 May 2024 16:43:40 +0100
-Message-ID: <864jagmxn7.wl-maz@kernel.org>
+	id 1sCLVP-00Gfog-PN;
+	Wed, 29 May 2024 16:46:23 +0100
+Date: Wed, 29 May 2024 16:46:23 +0100
+Message-ID: <8634q0mxio.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
 To: Joey Gouly <joey.gouly@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -75,10 +75,10 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	will@kernel.org,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 07/29] KVM: arm64: Save/restore POE registers
-In-Reply-To: <20240503130147.1154804-8-joey.gouly@arm.com>
+Subject: Re: [PATCH v4 08/29] KVM: arm64: make kvm_at() take an OP_AT_*
+In-Reply-To: <20240503130147.1154804-9-joey.gouly@arm.com>
 References: <20240503130147.1154804-1-joey.gouly@arm.com>
-	<20240503130147.1154804-8-joey.gouly@arm.com>
+	<20240503130147.1154804-9-joey.gouly@arm.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -94,10 +94,11 @@ X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akp
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 03 May 2024 14:01:25 +0100,
+On Fri, 03 May 2024 14:01:26 +0100,
 Joey Gouly <joey.gouly@arm.com> wrote:
 > 
-> Define the new system registers that POE introduces and context switch them.
+> To allow using newer instructions that current assemblers don't know about,
+> replace the `at` instruction with the underlying SYS instruction.
 > 
 > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 > Cc: Marc Zyngier <maz@kernel.org>
@@ -105,168 +106,47 @@ Joey Gouly <joey.gouly@arm.com> wrote:
 > Cc: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Will Deacon <will@kernel.org>
 > ---
->  arch/arm64/include/asm/kvm_host.h          |  4 +++
->  arch/arm64/include/asm/vncr_mapping.h      |  1 +
->  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 29 ++++++++++++++++++++++
->  arch/arm64/kvm/sys_regs.c                  |  8 ++++--
->  4 files changed, 40 insertions(+), 2 deletions(-)
+>  arch/arm64/include/asm/kvm_asm.h       | 3 ++-
+>  arch/arm64/kvm/hyp/include/hyp/fault.h | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 9e8a496fb284..28042da0befd 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -419,6 +419,8 @@ enum vcpu_sysreg {
->  	GCR_EL1,	/* Tag Control Register */
->  	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
->  
-> +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
-> +
->  	/* 32bit specific registers. */
->  	DACR32_EL2,	/* Domain Access Control Register */
->  	IFSR32_EL2,	/* Instruction Fault Status Register */
-> @@ -489,6 +491,8 @@ enum vcpu_sysreg {
->  	VNCR(PIR_EL1),	 /* Permission Indirection Register 1 (EL1) */
->  	VNCR(PIRE0_EL1), /*  Permission Indirection Register 0 (EL1) */
->  
-> +	VNCR(POR_EL1),	/* Permission Overlay Register 1 (EL1) */
-> +
->  	VNCR(HFGRTR_EL2),
->  	VNCR(HFGWTR_EL2),
->  	VNCR(HFGITR_EL2),
-> diff --git a/arch/arm64/include/asm/vncr_mapping.h b/arch/arm64/include/asm/vncr_mapping.h
-> index df2c47c55972..06f8ec0906a6 100644
-> --- a/arch/arm64/include/asm/vncr_mapping.h
-> +++ b/arch/arm64/include/asm/vncr_mapping.h
-> @@ -52,6 +52,7 @@
->  #define VNCR_PIRE0_EL1		0x290
->  #define VNCR_PIRE0_EL2		0x298
->  #define VNCR_PIR_EL1		0x2A0
-> +#define VNCR_POR_EL1		0x2A8
->  #define VNCR_ICH_LR0_EL2        0x400
->  #define VNCR_ICH_LR1_EL2        0x408
->  #define VNCR_ICH_LR2_EL2        0x410
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> index 4be6a7fa0070..1c9536557bae 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> @@ -16,9 +16,15 @@
->  #include <asm/kvm_hyp.h>
->  #include <asm/kvm_mmu.h>
->  
-> +static inline bool ctxt_has_s1poe(struct kvm_cpu_context *ctxt);
-> +
->  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
->  {
->  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
-> +
-> +	// POR_EL0 can affect uaccess, so must be saved/restored early.
-> +	if (ctxt_has_s1poe(ctxt))
-> +		ctxt_sys_reg(ctxt, POR_EL0)	= read_sysreg_s(SYS_POR_EL0);
->  }
->  
->  static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
-> @@ -55,6 +61,17 @@ static inline bool ctxt_has_s1pie(struct kvm_cpu_context *ctxt)
->  	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64MMFR3_EL1, S1PIE, IMP);
->  }
->  
-> +static inline bool ctxt_has_s1poe(struct kvm_cpu_context *ctxt)
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +
-> +	if (!system_supports_poe())
-> +		return false;
-> +
-> +	vcpu = ctxt_to_vcpu(ctxt);
-> +	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64MMFR3_EL1, S1POE, IMP);
-> +}
-> +
->  static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
->  {
->  	ctxt_sys_reg(ctxt, SCTLR_EL1)	= read_sysreg_el1(SYS_SCTLR);
-> @@ -77,6 +94,10 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
->  		ctxt_sys_reg(ctxt, PIR_EL1)	= read_sysreg_el1(SYS_PIR);
->  		ctxt_sys_reg(ctxt, PIRE0_EL1)	= read_sysreg_el1(SYS_PIRE0);
->  	}
-> +
-> +	if (ctxt_has_s1poe(ctxt))
-> +		ctxt_sys_reg(ctxt, POR_EL1)	= read_sysreg_el1(SYS_POR);
-> +
+> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> index 24b5e6b23417..ce65fd0f01b0 100644
+> --- a/arch/arm64/include/asm/kvm_asm.h
+> +++ b/arch/arm64/include/asm/kvm_asm.h
+> @@ -10,6 +10,7 @@
+>  #include <asm/hyp_image.h>
+>  #include <asm/insn.h>
+>  #include <asm/virt.h>
+> +#include <asm/sysreg.h>
 
-Since you are hacking around here, could you please make the
-save/restore of TCR2_EL1 conditional on FEAT_TCR2 being advertised
-instead of just checking what's on the host?
+nit: include order.
 
-Given that this feature is implied by both S1PIE and S1POE, you'd just
-have to have some local flag. Doesn't have to be part of this patch
-either.
-
->  	ctxt_sys_reg(ctxt, PAR_EL1)	= read_sysreg_par();
->  	ctxt_sys_reg(ctxt, TPIDR_EL1)	= read_sysreg(tpidr_el1);
 >  
-> @@ -107,6 +128,10 @@ static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
->  static inline void __sysreg_restore_common_state(struct kvm_cpu_context *ctxt)
->  {
->  	write_sysreg(ctxt_sys_reg(ctxt, MDSCR_EL1),  mdscr_el1);
-> +
-> +	// POR_EL0 can affect uaccess, so must be saved/restored early.
-> +	if (ctxt_has_s1poe(ctxt))
-> +		write_sysreg_s(ctxt_sys_reg(ctxt, POR_EL0),	SYS_POR_EL0);
->  }
->  
->  static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
-> @@ -153,6 +178,10 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
->  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIR_EL1),	SYS_PIR);
->  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIRE0_EL1),	SYS_PIRE0);
->  	}
-> +
-> +	if (ctxt_has_s1poe(ctxt))
-> +		write_sysreg_el1(ctxt_sys_reg(ctxt, POR_EL1),	SYS_POR);
-> +
->  	write_sysreg(ctxt_sys_reg(ctxt, PAR_EL1),	par_el1);
->  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL1),	tpidr_el1);
->  
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index c9f4f387155f..be04fae35afb 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2423,6 +2423,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_MAIR_EL1), access_vm_reg, reset_unknown, MAIR_EL1 },
->  	{ SYS_DESC(SYS_PIRE0_EL1), NULL, reset_unknown, PIRE0_EL1 },
->  	{ SYS_DESC(SYS_PIR_EL1), NULL, reset_unknown, PIR_EL1 },
-> +	{ SYS_DESC(SYS_POR_EL1), NULL, reset_unknown, POR_EL1 },
->  	{ SYS_DESC(SYS_AMAIR_EL1), access_vm_reg, reset_amair_el1, AMAIR_EL1 },
->  
->  	{ SYS_DESC(SYS_LORSA_EL1), trap_loregion },
-> @@ -2506,6 +2507,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	  .access = access_pmovs, .reg = PMOVSSET_EL0,
->  	  .get_user = get_pmreg, .set_user = set_pmreg },
->  
-> +	{ SYS_DESC(SYS_POR_EL0), NULL, reset_unknown, POR_EL0 },
->  	{ SYS_DESC(SYS_TPIDR_EL0), NULL, reset_unknown, TPIDR_EL0 },
->  	{ SYS_DESC(SYS_TPIDRRO_EL0), NULL, reset_unknown, TPIDRRO_EL0 },
->  	{ SYS_DESC(SYS_TPIDR2_EL0), undef_access },
-> @@ -4057,8 +4059,6 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
->  	kvm->arch.fgu[HFGxTR_GROUP] = (HFGxTR_EL2_nAMAIR2_EL1		|
->  				       HFGxTR_EL2_nMAIR2_EL1		|
->  				       HFGxTR_EL2_nS2POR_EL1		|
-> -				       HFGxTR_EL2_nPOR_EL1		|
-> -				       HFGxTR_EL2_nPOR_EL0		|
->  				       HFGxTR_EL2_nACCDATA_EL1		|
->  				       HFGxTR_EL2_nSMPRI_EL1_MASK	|
->  				       HFGxTR_EL2_nTPIDR2_EL0_MASK);
-> @@ -4093,6 +4093,10 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
->  		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPIRE0_EL1 |
->  						HFGxTR_EL2_nPIR_EL1);
->  
-> +	if (!kvm_has_feat(kvm, ID_AA64MMFR3_EL1, S1POE, IMP))
-> +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPOR_EL1 |
-> +						HFGxTR_EL2_nPOR_EL0);
-> +
->  	if (!kvm_has_feat(kvm, ID_AA64PFR0_EL1, AMU, IMP))
->  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
->  						  HAFGRTR_EL2_RES1);
-
-Otherwise, looks good.
+>  #define ARM_EXIT_WITH_SERROR_BIT  31
+>  #define ARM_EXCEPTION_CODE(x)	  ((x) & ~(1U << ARM_EXIT_WITH_SERROR_BIT))
+> @@ -261,7 +262,7 @@ extern u64 __kvm_get_mdcr_el2(void);
+>  	asm volatile(							\
+>  	"	mrs	%1, spsr_el2\n"					\
+>  	"	mrs	%2, elr_el2\n"					\
+> -	"1:	at	"at_op", %3\n"					\
+> +	"1:	" __msr_s(at_op, "%3") "\n"				\
+>  	"	isb\n"							\
+>  	"	b	9f\n"						\
+>  	"2:	msr	spsr_el2, %1\n"					\
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/fault.h b/arch/arm64/kvm/hyp/include/hyp/fault.h
+> index 9e13c1bc2ad5..487c06099d6f 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/fault.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/fault.h
+> @@ -27,7 +27,7 @@ static inline bool __translate_far_to_hpfar(u64 far, u64 *hpfar)
+>  	 * saved the guest context yet, and we may return early...
+>  	 */
+>  	par = read_sysreg_par();
+> -	if (!__kvm_at("s1e1r", far))
+> +	if (!__kvm_at(OP_AT_S1E1R, far))
+>  		tmp = read_sysreg_par();
+>  	else
+>  		tmp = SYS_PAR_EL1_F; /* back to the guest */
 
 Reviewed-by: Marc Zyngier <maz@kernel.org>
 
