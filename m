@@ -1,202 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-20447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC428D3857
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 15:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4712E8D392C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 16:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2D62B25A81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 13:49:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013AA286CE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2024 14:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9729B5FEE5;
-	Wed, 29 May 2024 13:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F77115820F;
+	Wed, 29 May 2024 14:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="XOB+N42p"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mw8j/CgV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8325D54FAE;
-	Wed, 29 May 2024 13:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E516156F38;
+	Wed, 29 May 2024 14:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716990370; cv=none; b=ILkCSH/roY0b6jgTOFuIKl/bMSJ0NDS82ZrlDIaqdSuojJyDH0MlejHIhaxu2rkSu9zQx49hGMWLvp39GKhq9uwwoVS98of1DxbxDqaodOiBXDnUiZ79i3Ut0Zrug8THqxgT/5KKGhZFx8x/XGoIuzU6jfvvnR5TiZ7RMm7Lliw=
+	t=1716992924; cv=none; b=a+C+SIxbfjAqS4LCgnTwjFWZQAuPsYyOJitE8B5Qm9l/ciYlG6hm2qdRD+AS7RsTlmkLy5boYrpAgkLLYbzXUNDESQUKk6oNQ3fm2ceW0OjwoSmV+P7w0B43V1EuQrmyXNhVW3XSf/o1kIg33rFMnrahOAXBHLoLqakBZ+MV3xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716990370; c=relaxed/simple;
-	bh=Bd1DidW1VaQFsu722u8hSC2d9nc3WHgEr4MJCAsqorg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OpBNnOeBoOM/uwLtBkuMB67MGT9AaXtcEqSKYBVkIcJ+LX1E1RhiXNRbQgC2WrQ2bIatshw7wtoqgEmuLB7jezf9UXIo9K6eCZ5vAZzFC7UCcMGpso2YaHnYsLsK9iiDiC0I3f6kaG+1dzhLbei76+rJFSSwX04FQrJkiB9pldM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=XOB+N42p; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Vq9dT0Tshz9shb;
-	Wed, 29 May 2024 15:46:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1716990365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CqWeILzukHgisrDT2Qez2BasOK0ht2d7BaH6ApZlpmc=;
-	b=XOB+N42pJ9+3yh+2a6EE3JxrNjiMx8gcmgcydGpbQbIokRbFL9n3t1fou4c1PKi/QVZjOS
-	dTxNmxENzLyvTp1SXADWg964pMqyPN3GvoMMuBfee0rb00QvHSqiAOuULn+UyqpRJTRgTN
-	9e9oJyX7ba+wT93bWncZTvZBfDTMvOZmPihPM4+cO/q40fueOR+XsgPF3Wgq2fBwarvFlU
-	zPAKTlze5cXDwRdOdd9G2L1s1oqtTlVZUbyy89yBU89iVhZ2zyAWqcJlR9CK5IIol98vkB
-	iFvGPn/UHeDLe6u78yR2gJyiiDC3TA7k7Ux5UUp++B4SSoEcLTqVFSyWzsjLBA==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: david@fromorbit.com,
-	chandan.babu@oracle.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	willy@infradead.org,
-	djwong@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	hare@suse.de,
-	john.g.garry@oracle.com,
-	gost.dev@samsung.com,
-	yang@os.amperecomputing.com,
-	p.raghav@samsung.com,
-	cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org,
-	hch@lst.de,
-	mcgrof@kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 11/11] xfs: enable block size larger than page size support
-Date: Wed, 29 May 2024 15:45:09 +0200
-Message-Id: <20240529134509.120826-12-kernel@pankajraghav.com>
-In-Reply-To: <20240529134509.120826-1-kernel@pankajraghav.com>
-References: <20240529134509.120826-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1716992924; c=relaxed/simple;
+	bh=YMQyhhaP6Gg3VRgatRDCJBiv0lWaUNKjwv78w6uHqZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nmhMu8ikKxP4FwSntfSupSf8/xpxz8NWqAQl/mjgeJ4+TOg9TfZsVz1iiuNWZQaYUup5A+WW6DCR3FGz7yvWpKN83+OqKCCAnxn4EnuS7PSVqKSRHcaNech3Uu9Ur58ZGr6uFmxFNBxFRTBU+xSHtLA2LHXbPhi4u3F/CCDt+eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mw8j/CgV; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716992918; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Oje62Ov6FUBQ4DHAsaEy7GE8Yt2ouQ/knXBYAIm0bWE=;
+	b=mw8j/CgV/4aYJxy1mQgVGQg1YxAhvc0mxSSeSAgQkpRRCd8NaV8RXY7cZHl2bek/h80eaKAK/EREjWe/QcnSstPxHjDX2dqcXNIJM37g8RyFhapq4YpEzqu1IzVW140eEcv6y/OjkaAcJDdiiAYnt+0JiiJ+rh0L30NDQ4zl7Mo=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7U1T.u_1716992916;
+Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7U1T.u_1716992916)
+          by smtp.aliyun-inc.com;
+          Wed, 29 May 2024 22:28:37 +0800
+Message-ID: <2dc48e89-cd3f-4736-8847-4d23bcad27e5@linux.alibaba.com>
+Date: Wed, 29 May 2024 22:28:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4Vq9dT0Tshz9shb
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/12] cachefiles: some bugfixes and cleanups for
+ ondemand requests
+To: Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org, libaokun@huaweicloud.com
+Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Gao Xiang <xiang@kernel.org>
+References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
+ <20240529-lehrling-verordnen-e5040aa65017@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240529-lehrling-verordnen-e5040aa65017@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+Hi Christian,
 
-Page cache now has the ability to have a minimum order when allocating
-a folio which is a prerequisite to add support for block size > page
-size.
+On 2024/5/29 19:07, Christian Brauner wrote:
+> On Wed, 22 May 2024 19:42:56 +0800, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Hi all!
+>>
+>> This is the third version of this patch series. The new version has no
+>> functional changes compared to the previous one, so I've kept the previous
+>> Acked-by and Reviewed-by, so please let me know if you have any objections.
+>>
+>> [...]
+> 
+> So I've taken that as a fixes series which should probably make it upstream
+> rather sooner than later. Correct?
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
- fs/xfs/libxfs/xfs_shared.h |  3 +++
- fs/xfs/xfs_icache.c        |  6 ++++--
- fs/xfs/xfs_mount.c         |  1 -
- fs/xfs/xfs_super.c         | 18 ++++++++++--------
- 5 files changed, 22 insertions(+), 11 deletions(-)
+Yeah, many thanks for picking these up!  AFAIK, they've already been
+landed downstream for a while so it'd be much better to address
+these upstream. :-)
 
-diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-index 14c81f227c5b..1e76431d75a4 100644
---- a/fs/xfs/libxfs/xfs_ialloc.c
-+++ b/fs/xfs/libxfs/xfs_ialloc.c
-@@ -3019,6 +3019,11 @@ xfs_ialloc_setup_geometry(
- 		igeo->ialloc_align = mp->m_dalign;
- 	else
- 		igeo->ialloc_align = 0;
-+
-+	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-+		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-+	else
-+		igeo->min_folio_order = 0;
- }
- 
- /* Compute the location of the root directory inode that is laid out by mkfs. */
-diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-index 34f104ed372c..e67a1c7cc0b0 100644
---- a/fs/xfs/libxfs/xfs_shared.h
-+++ b/fs/xfs/libxfs/xfs_shared.h
-@@ -231,6 +231,9 @@ struct xfs_ino_geometry {
- 	/* precomputed value for di_flags2 */
- 	uint64_t	new_diflags2;
- 
-+	/* minimum folio order of a page cache allocation */
-+	unsigned int	min_folio_order;
-+
- };
- 
- #endif /* __XFS_SHARED_H__ */
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 0953163a2d84..5ed3dc9e7d90 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -89,7 +89,8 @@ xfs_inode_alloc(
- 	/* VFS doesn't initialise i_mode or i_state! */
- 	VFS_I(ip)->i_mode = 0;
- 	VFS_I(ip)->i_state = 0;
--	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-+	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 
- 	XFS_STATS_INC(mp, vn_active);
- 	ASSERT(atomic_read(&ip->i_pincount) == 0);
-@@ -324,7 +325,8 @@ xfs_reinit_inode(
- 	inode->i_rdev = dev;
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
--	mapping_set_large_folios(inode->i_mapping);
-+	mapping_set_folio_min_order(inode->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 	return error;
- }
- 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 46cb0384143b..a99454208807 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -135,7 +135,6 @@ xfs_sb_validate_fsb_count(
- 	uint64_t		max_index;
- 	uint64_t		max_bytes;
- 
--	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
- 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
- 
- 	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 27e9f749c4c7..b8a93a8f35ca 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1638,16 +1638,18 @@ xfs_fs_fill_super(
- 		goto out_free_sb;
- 	}
- 
--	/*
--	 * Until this is fixed only page-sized or smaller data blocks work.
--	 */
- 	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
--		xfs_warn(mp,
--		"File system with blocksize %d bytes. "
--		"Only pagesize (%ld) or less will currently work.",
-+		if (!xfs_has_crc(mp)) {
-+			xfs_warn(mp,
-+"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
- 				mp->m_sb.sb_blocksize, PAGE_SIZE);
--		error = -ENOSYS;
--		goto out_free_sb;
-+			error = -ENOSYS;
-+			goto out_free_sb;
-+		}
-+
-+		xfs_warn(mp,
-+"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-+			mp->m_sb.sb_blocksize);
- 	}
- 
- 	/* Ensure this filesystem fits in the page cache limits */
--- 
-2.34.1
+Thanks,
+Gao Xiang
 
+> 
+> ---
+> 
+> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> Patches in the vfs.fixes branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.fixes
+> 
+> [01/12] cachefiles: add output string to cachefiles_obj_[get|put]_ondemand_fd
+>          https://git.kernel.org/vfs/vfs/c/cc5ac966f261
+> [02/12] cachefiles: remove requests from xarray during flushing requests
+>          https://git.kernel.org/vfs/vfs/c/0fc75c5940fa
+> [03/12] cachefiles: fix slab-use-after-free in cachefiles_ondemand_get_fd()
+>          https://git.kernel.org/vfs/vfs/c/de3e26f9e5b7
+> [04/12] cachefiles: fix slab-use-after-free in cachefiles_ondemand_daemon_read()
+>          https://git.kernel.org/vfs/vfs/c/da4a82741606
+> [05/12] cachefiles: remove err_put_fd label in cachefiles_ondemand_daemon_read()
+>          https://git.kernel.org/vfs/vfs/c/3e6d704f02aa
+> [06/12] cachefiles: add consistency check for copen/cread
+>          https://git.kernel.org/vfs/vfs/c/a26dc49df37e
+> [07/12] cachefiles: add spin_lock for cachefiles_ondemand_info
+>          https://git.kernel.org/vfs/vfs/c/0a790040838c
+> [08/12] cachefiles: never get a new anonymous fd if ondemand_id is valid
+>          https://git.kernel.org/vfs/vfs/c/4988e35e95fc
+> [09/12] cachefiles: defer exposing anon_fd until after copy_to_user() succeeds
+>          https://git.kernel.org/vfs/vfs/c/4b4391e77a6b
+> [10/12] cachefiles: Set object to close if ondemand_id < 0 in copen
+>          https://git.kernel.org/vfs/vfs/c/4f8703fb3482
+> [11/12] cachefiles: flush all requests after setting CACHEFILES_DEAD
+>          https://git.kernel.org/vfs/vfs/c/85e833cd7243
+> [12/12] cachefiles: make on-demand read killable
+>          https://git.kernel.org/vfs/vfs/c/bc9dde615546
 
