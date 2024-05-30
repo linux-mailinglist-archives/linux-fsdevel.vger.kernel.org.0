@@ -1,673 +1,402 @@
-Return-Path: <linux-fsdevel+bounces-20502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676CD8D45B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 09:04:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9CD8D45C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 09:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64EBAB24084
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 07:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCCA6B24228
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 07:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DD83DABE9;
-	Thu, 30 May 2024 07:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007813DAC1E;
+	Thu, 30 May 2024 07:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhljHI3L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vve4jgoB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3B6143727;
-	Thu, 30 May 2024 07:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EC13DAC15;
+	Thu, 30 May 2024 07:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717052665; cv=none; b=lNDjxwZNIynDlcz252GiJ1ubXEF56GfpOvtnsdd58DFDCq7XbsStDkDb7GYRBjN3AAjKvtK4sm6kGGsa13Efd2MLyqh9fBf75Xl04oL4asvYi3GEqYp/iXMYv/YV5JKHQgWmFJDSnCzKfwsbfX3tF28hLdX7izL9FYwW0TBIPZA=
+	t=1717052838; cv=none; b=ECxOkycfTyikxoNm5bIoNudqNThgPDcECDv99bEH6yKiVDI5LtTv4cdLAYaqQGh/UmZlfDpyTIadXIOmyhTvU7LMz63g3GKxoQCC2auJO0tfNI4AHR0/XRtavP8aGFQaTsflVdSKU+jhPdQ+KSSBoHAhuWahdJxXgRC23f8Am7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717052665; c=relaxed/simple;
-	bh=IuWXRoKt0Vda7ySINYJLMDsAIM6XZ2RgN5AA+dUFZXc=;
+	s=arc-20240116; t=1717052838; c=relaxed/simple;
+	bh=irwK6RXR5/05uj4nCr9bvcDr2hVyQVL8DLWyT3HVadU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BLeFuD+CbZ3Q3icQA2Gsvun3/+V2O7aXFnAcyNn3hHDwBMczGBrxbukUwljlXLDHkjrV4B3oNpz5Td/47lbZxqWW2/GU+qPAQOybAdnScw7skzlFlB7uMZ8poEg35oi2++zGotBVItuc3SMrLmnrS1GaSjrsERzq3aQbh41tb+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhljHI3L; arc=none smtp.client-ip=209.85.219.42
+	 To:Cc:Content-Type; b=JqcS5gTuRD/GZdIBkfmp9Cs8pzxX62x+JcBpjPcwI0NXCEI5p514qMce/zEwD4pcXWp2UTpe8eor3vpzBRle+Zudof/YGjxTcz5ALKaxLE/oDYJNesrmXC/uNLvxXpN77qf62NilT69FYUwPOmC/TWbSEjVq7ZWzaNgi+g7WOdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vve4jgoB; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6ab9d9f0ee2so2059046d6.3;
-        Thu, 30 May 2024 00:04:23 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfa46cedc5aso495663276.0;
+        Thu, 30 May 2024 00:07:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717052662; x=1717657462; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717052835; x=1717657635; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AaUlsS1ePGHCHrnvMkDqo0MpQ0D+mVu2iqLzzZf7A4c=;
-        b=RhljHI3LaI2MbQRmKg9uZpz6NOhQJTWZFRF8MxpEe4Jltqpa7DZeGymIs3D1n1eSzN
-         wzEhqQB9KcUMvgl6bXeNktVerbBd3yvxoYgpJfuO5hBhdsSKUXmQuN+WxOaM/NE5qgp6
-         r9dHYb28qU9m+5tPhgsiKR81jE9YgkHN8auQGCrtUN9DGSyWTxVadPLvmV5Q+4WohhGx
-         9IZEWdjohVZWBgeBIWAqZ+bLcTjV80o/bG2v61Oa5zXEZmqGfsCTOAkQU7XkcdpzqTCB
-         urXWW6zS4YsWBW7tQdNwvg0koA8AQnbkL+3BE0wxNALe6oqzCVRQvHygtkzpnjiCHX16
-         ZByQ==
+        bh=eK89R1a10KXaZlXiRp3RYmDCezJsnnWejIw7FUe/BKQ=;
+        b=Vve4jgoBixnzVNpQxKEgAwCk6eBnuRYM69jfo6OAEP8hYwZQHY0na63A7IpbdbJmJ+
+         vEl5GlXqvkoi1WioUR6N0MVwLWW/4reTl7iov7QCTOpPu/TBfOC9gq9AmIxP8ZFB1SYA
+         Ek35xWaqgwOdF2rTXtzW7d4ngsT0Be9wHurdXK0I6qQRqFhun29LnA3gLe3PrRavvNhQ
+         hkwBdmikQA26FvuycYDD9dC2+whfNYasdYJDUxWaP/QJVc/D8+wjXxCNIjrBrmK8+t5i
+         37aSojyNDn5gQn86SFj0yu9u9skG1VW8QMcnQdJcvipUn3reYHivl+z3uCs73rGCgxO1
+         Up+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717052662; x=1717657462;
+        d=1e100.net; s=20230601; t=1717052835; x=1717657635;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AaUlsS1ePGHCHrnvMkDqo0MpQ0D+mVu2iqLzzZf7A4c=;
-        b=Blc9cgDMNTaqFyiPpW53RoJRrlqgIn2idUk5nTJCtwpk5dJSQsSZOYYUkKWlkeGWjE
-         xaZ7aTq2YwuQCgS+orAHDa2yrLUpjrqsvoB+b3rQ/Mgk/3LcutKs3/86my2b4eDESu/C
-         GpgGoMw8r1ZbJWu/S6W8e528AGX7nFC5RCOsSoO3Scjdzf6n9gzNo7JDu0dCoGoV1YT1
-         0nQFtsweVg+9T5hMvDoB3zIBmo5pJ8dkP7jw/SNBk6HGvSMDNxKtadU/KC+GU1B1WRqA
-         hL0T8ne7h7ikYFruc/oG6TXprfHXt0PFrbXU15x+6DvcxAdFj4lYVG/0k6QVqo00+9pe
-         +n6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWShWt/B/0OPwk0el2QJc58wJ3cCV8bRqZPI5Urt7VwhwBnxNr/hIF+W3/O0Xve9UWkSEkDAg1yisEznUycZ42t38nbf1elHN10oe7kSY2Cne4SuN/UKUdD9tByuuksPlzrKpMcBfbrjV+4EA==
-X-Gm-Message-State: AOJu0Yz4ERQ0ufNeR/ojG0rzwP3A5cCMnrnaN4ChXznU11/xeYs42oYz
-	jdazGR4S3lCnEzH6augfEK7XR4XS+PbZbATm9Q01Joh+6KNfQT31ICTEC/GOLJbddVlSqPbNzOo
-	jEKA/k1VlMF3At1oDxzBJaWdqabM=
-X-Google-Smtp-Source: AGHT+IFQiOmb3dQ5hvUp1rbKF61gb6kMqn/i8DMawpaq/sUFnU3c13M4jxRIunwOTrEzwn9ekAzKaMWDurTdpflkeZQ=
-X-Received: by 2002:a0c:f8c5:0:b0:6ae:116b:ef6a with SMTP id
- 6a1803df08f44-6ae116bf4d8mr5393436d6.60.1717052662119; Thu, 30 May 2024
- 00:04:22 -0700 (PDT)
+        bh=eK89R1a10KXaZlXiRp3RYmDCezJsnnWejIw7FUe/BKQ=;
+        b=GbubR1s5kdaYheyib7oqNN0lrsMWi29g0nZeuCTxrwf4GV/HL9QGzVaaNpjwSz80rl
+         eYd7HpCQleR5M6NZAf5k4ie/IeCSSQ3qzcqFTMQH6dtNJnzz6U0fFigkewKXMQJ0JoZ+
+         NO7spi1WjMaO59HpMl+TiXlM2w1HStpkW0vfBwg+lmBbjhh3bx2K64u42C7h24jzKppd
+         tRvfZi4dQ7u5N/+CltvfubLoclnVtVLo9b3gG3qXi98WL0Eu2Fmy6d84CwjHCfrDB6+q
+         NzKiNeYgJ8xMFBk4lSeoH+KXu/B0HH9SXORmvTAEuC7vI2OB0DcroF9vUvfBbvLE596S
+         NB1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWOjXA7AC+uUdDev9aB9CSvufV2yDVlmI1a1ZsSd8gyFj8zCQT8IJVHmOSzUodLJThlfO8x9qeOiEw26vYyp4DGJ8wu4ml4UuJNZWDN6TRNOn1AJaBswHEi8FTZ/XfvdIHsibV3C5bd
+X-Gm-Message-State: AOJu0YzTXuhCp6uXbsCVg60/wRNC95yYvrR6PvM19f8cAnVHWNSuikeD
+	ijqwOUh5ZqgdqVBjb0P69rT1/naVccOztSqM7rW77e1xdHNgbQK7Pt0Nq4Ed3EzBOaG8kZO7jbe
+	dWab3Wc+631Jnt4+NtFYrFGniDqYnCkpO
+X-Google-Smtp-Source: AGHT+IHmyG+8VCkRkeTpo+vYeetBzpXpaz2qupLpu11qXJFBUjAbUuH+5iB3CGLHbynm0kTloExXxM9MiDqhCECN/3g=
+X-Received: by 2002:a25:8306:0:b0:df4:d29a:6897 with SMTP id
+ 3f1490d57ef6-dfa5a618102mr1288629276.35.1717052835418; Thu, 30 May 2024
+ 00:07:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202405291318.4dfbb352-oliver.sang@intel.com>
-In-Reply-To: <202405291318.4dfbb352-oliver.sang@intel.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 30 May 2024 15:03:45 +0800
-Message-ID: <CALOAHbBOpjbY=daw0WKHGvmA5Uh7zoW5bYf9CEoVVKsFDy9kVA@mail.gmail.com>
-Subject: Re: [linus:master] [vfs] 681ce86235: filebench.sum_operations/s -7.4% regression
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Waiman Long <longman@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Wangkai <wangkai86@huawei.com>, 
-	Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org, ying.huang@intel.com, 
-	feng.tang@intel.com, fengwei.yin@intel.com
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 30 May 2024 10:07:03 +0300
+Message-ID: <CAOQ4uxjsjrmHHXd8B5xaBjfPZTZtHrFsNUmAmjBVMK3+t9aR1w@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 1:52=E2=80=AFPM kernel test robot <oliver.sang@inte=
-l.com> wrote:
+On Wed, May 29, 2024 at 9:01=E2=80=AFPM Bernd Schubert <bschubert@ddn.com> =
+wrote:
 >
+> From: Bernd Schubert <bschubert@ddn.com>
 >
-> hi, Yafang Shao,
+> This adds support for uring communication between kernel and
+> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+> appraoch was taken from ublk.  The patches are in RFC state,
+> some major changes are still to be expected.
 >
-> we captured this filebench regression after this patch is merged into mai=
-line.
+> Motivation for these patches is all to increase fuse performance.
+> In fuse-over-io-uring requests avoid core switching (application
+> on core X, processing of fuse server on random core Y) and use
+> shared memory between kernel and userspace to transfer data.
+> Similar approaches have been taken by ZUFS and FUSE2, though
+> not over io-uring, but through ioctl IOs
 >
-> we noticed there is difference with original version in
-> https://lore.kernel.org/all/20240515091727.22034-1-laoar.shao@gmail.com/
+> https://lwn.net/Articles/756625/
+> https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git/log/?h=
+=3Dfuse2
 >
-> but we confirmed there is similar regression by origial version. details =
-as
-> below [1] FYI.
+> Avoiding cache line bouncing / numa systems was discussed
+> between Amir and Miklos before and Miklos had posted
+> part of the private discussion here
+> https://lore.kernel.org/linux-fsdevel/CAJfpegtL3NXPNgK1kuJR8kLu3WkVC_ErBP=
+RfToLEiA_0=3Dw3=3DhA@mail.gmail.com/
 >
+> This cache line bouncing should be addressed by these patches
+> as well.
 >
+> I had also noticed waitq wake-up latencies in fuse before
+> https://lore.kernel.org/lkml/9326bb76-680f-05f6-6f78-df6170afaa2c@fastmai=
+l.fm/T/
 >
-> Hello,
+> This spinning approach helped with performance (>40% improvement
+> for file creates), but due to random server side thread/core utilization
+> spinning cannot be well controlled in /dev/fuse mode.
+> With fuse-over-io-uring requests are handled on the same core
+> (sync requests) or on core+1 (large async requests) and performance
+> improvements are achieved without spinning.
 >
-> kernel test robot noticed a -7.4% regression of filebench.sum_operations/=
-s on:
+> Splice/zero-copy is not supported yet, Ming Lei is working
+> on io-uring support for ublk_drv, but I think so far there
+> is no final agreement on the approach to be taken yet.
+> Fuse-over-io-uring runs significantly faster than reads/writes
+> over /dev/fuse, even with splice enabled, so missing zc
+> should not be a blocking issue.
 >
+> The patches have been tested with multiple xfstest runs in a VM
+> (32 cores) with a kernel that has several debug options
+> enabled (like KASAN and MSAN).
+> For some tests xfstests reports that O_DIRECT is not supported,
+> I need to investigate that. Interesting part is that exactly
+> these tests fail in plain /dev/fuse posix mode. I had to disabled
+> generic/650, which is enabling/disabling cpu cores - given ring
+> threads are bound to cores issues with that are no totally
+> unexpected, but then there (scheduler) kernel messages that
+> core binding for these threads is removed - this needs
+> to be further investigates.
+> Nice effect in io-uring mode is that tests run faster (like
+> generic/522 ~2400s /dev/fuse vs. ~1600s patched), though still
+> slow as this is with ASAN/leak-detection/etc.
 >
-> commit: 681ce8623567ba7e7333908e9826b77145312dda ("vfs: Delete the associ=
-ated dentry when deleting a file")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> The corresponding libfuse patches are on my uring branch,
+> but need cleanup for submission - will happen during the next
+> days.
+> https://github.com/bsbernd/libfuse/tree/uring
 >
+> If it should make review easier, patches posted here are on
+> this branch
+> https://github.com/bsbernd/linux/tree/fuse-uring-for-6.9-rfc2
 >
-> [still regression on linus/master 2bfcfd584ff5ccc8bb7acde19b42570414bf880=
-b]
+> TODO list for next RFC versions
+> - Let the ring configure ioctl return information, like mmap/queue-buf si=
+ze
+> - Request kernel side address and len for a request - avoid calculation i=
+n userspace?
+> - multiple IO sizes per queue (avoiding a calculation in userspace is pro=
+bably even
+>   more important)
+> - FUSE_INTERRUPT handling?
+> - Logging (adds fields in the ioctl and also ring-request),
+>   any mismatch between client and server is currently very hard to unders=
+tand
+>   through error codes
 >
+> Future work
+> - notifications, probably on their own ring
+> - zero copy
 >
-> testcase: filebench
-> test machine: 128 threads 2 sockets Intel(R) Xeon(R) Platinum 8358 CPU @ =
-2.60GHz (Ice Lake) with 128G memory
-> parameters:
+> I had run quite some benchmarks with linux-6.2 before LSFMMBPF2023,
+> which, resulted in some tuning patches (at the end of the
+> patch series).
 >
->         disk: 1HDD
->         fs: ext4
->         test: webproxy.f
->         cpufreq_governor: performance
+> Some benchmark results
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 >
+> System used for the benchmark is a 32 core (HyperThreading enabled)
+> Xeon E5-2650 system. I don't have local disks attached that could do
+> >5GB/s IOs, for paged and dio results a patched version of passthrough-hp
+> was used that bypasses final reads/writes.
 >
+> paged reads
+> -----------
+>             128K IO size                      1024K IO size
+> jobs   /dev/fuse     uring    gain     /dev/fuse    uring   gain
+>  1        1117        1921    1.72        1902       1942   1.02
+>  2        2502        3527    1.41        3066       3260   1.06
+>  4        5052        6125    1.21        5994       6097   1.02
+>  8        6273       10855    1.73        7101      10491   1.48
+> 16        6373       11320    1.78        7660      11419   1.49
+> 24        6111        9015    1.48        7600       9029   1.19
+> 32        5725        7968    1.39        6986       7961   1.14
 >
+> dio reads (1024K)
+> -----------------
 >
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202405291318.4dfbb352-oliver.san=
-g@intel.com
+> jobs   /dev/fuse  uring   gain
+> 1           2023   3998   2.42
+> 2           3375   7950   2.83
+> 4           3823   15022  3.58
+> 8           7796   22591  2.77
+> 16          8520   27864  3.27
+> 24          8361   20617  2.55
+> 32          8717   12971  1.55
 >
+> mmap reads (4K)
+> ---------------
+> (sequential, I probably should have made it random, sequential exposes
+> a rather interesting/weird 'optimized' memcpy issue - sequential becomes
+> reversed order 4K read)
+> https://lore.kernel.org/linux-fsdevel/aae918da-833f-7ec5-ac8a-115d66d80d0=
+e@fastmail.fm/
 >
-> Details are as below:
-> -------------------------------------------------------------------------=
-------------------------->
+> jobs  /dev/fuse     uring    gain
+> 1       130          323     2.49
+> 2       219          538     2.46
+> 4       503         1040     2.07
+> 8       1472        2039     1.38
+> 16      2191        3518     1.61
+> 24      2453        4561     1.86
+> 32      2178        5628     2.58
 >
+> (Results on request, setting MAP_HUGETLB much improves performance
+> for both, io-uring mode then has a slight advantage only.)
 >
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240529/202405291318.4dfbb352-ol=
-iver.sang@intel.com
+> creates/s
+> ----------
+> threads /dev/fuse     uring   gain
+> 1          3944       10121   2.57
+> 2          8580       24524   2.86
+> 4         16628       44426   2.67
+> 8         46746       56716   1.21
+> 16        79740      102966   1.29
+> 20        80284      119502   1.49
 >
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> compiler/cpufreq_governor/disk/fs/kconfig/rootfs/tbox_group/test/testcase=
-:
->   gcc-13/performance/1HDD/ext4/x86_64-rhel-8.3/debian-12-x86_64-20240206.=
-cgz/lkp-icl-2sp6/webproxy.f/filebench
+> (the gain drop with >=3D8 cores needs to be investigated)
+
+Hi Bernd,
+
+Those are impressive results!
+
+When approaching the FUSE uring feature from marketing POV,
+I think that putting the emphasis on metadata operations is the
+best approach.
+
+Not the dio reads are not important (I know that is part of your use case),
+but I imagine there are a lot more people out there waiting for
+improvement in metadata operations overhead.
+
+To me it helps to know what the current main pain points are
+for people using FUSE filesystems wrt performance.
+
+Although it may not be uptodate, the most comprehensive
+study about FUSE performance overhead is this FAST17 paper:
+
+https://www.usenix.org/system/files/conference/fast17/fast17-vangoor.pdf
+
+In this paper, table 3 summarizes the different overheads observed
+per workload. According to this table, the workloads that degrade
+performance worse on an optimized passthrough fs over SSD are:
+- many file creates
+- many file deletes
+- many small file reads
+In all these workloads, it was millions of files over many directories.
+The highest performance regression reported was -83% on many
+small file creations.
+
+The moral of this long story is that it would be nice to know
+what performance improvement FUSE uring can aspire to.
+This is especially relevant for people that would be interested
+in combining the benefits of FUSE passthrough (for data) and
+FUSE uring (for metadata).
+
+What did passthrough_hp do in your patched version with creates?
+Did it actually create the files?
+In how many directories?
+Maybe the directory inode lock impeded performance improvement
+with >=3D8 threads?
+
 >
-> commit:
->   29c73fc794 ("Merge tag 'perf-tools-for-v6.10-1-2024-05-21' of git://git=
-.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools")
->   681ce86235 ("vfs: Delete the associated dentry when deleting a file")
+> Remaining TODO list for RFCv3:
+> --------------------------------
+> 1) Let the ring configure ioctl return information,
+> like mmap/queue-buf size
 >
-> 29c73fc794c83505 681ce8623567ba7e7333908e982
-> ---------------- ---------------------------
->          %stddev     %change         %stddev
->              \          |                \
->   31537383 =C4=85  2%     -75.1%    7846497 =C4=85  4%  cpuidle..usage
->      27.21            +1.4%      27.59        iostat.cpu.system
->    3830823 =C4=85  5%     -16.2%    3208825 =C4=85  4%  numa-numastat.nod=
-e1.local_node
->    3916065 =C4=85  5%     -16.3%    3277633 =C4=85  3%  numa-numastat.nod=
-e1.numa_hit
->     455641           -74.2%     117514 =C4=85  4%  vmstat.system.cs
->      90146           -34.9%      58712        vmstat.system.in
->       0.14            -0.0        0.12 =C4=85  2%  mpstat.cpu.all.irq%
->       0.07            -0.0        0.04 =C4=85  2%  mpstat.cpu.all.soft%
->       0.56            -0.2        0.36 =C4=85  2%  mpstat.cpu.all.usr%
->       2038 =C4=85  6%     -25.8%       1511 =C4=85  3%  perf-c2c.DRAM.loc=
-al
->      20304 =C4=85 14%     -62.9%       7523 =C4=85  2%  perf-c2c.DRAM.rem=
-ote
->      18850 =C4=85 16%     -71.0%       5470 =C4=85  2%  perf-c2c.HITM.loc=
-al
->      13220 =C4=85 15%     -68.1%       4218 =C4=85  3%  perf-c2c.HITM.rem=
-ote
->      32070 =C4=85 15%     -69.8%       9688 =C4=85  2%  perf-c2c.HITM.tot=
-al
->     191435 =C4=85  7%     +37.3%     262935 =C4=85 11%  sched_debug.cfs_r=
-q:/.avg_vruntime.stddev
->     191435 =C4=85  7%     +37.3%     262935 =C4=85 11%  sched_debug.cfs_r=
-q:/.min_vruntime.stddev
->     285707           -72.1%      79601 =C4=85 11%  sched_debug.cpu.nr_swi=
-tches.avg
->     344088 =C4=85  2%     -69.8%     103953 =C4=85  9%  sched_debug.cpu.n=
-r_switches.max
->     206926 =C4=85  8%     -73.0%      55912 =C4=85 15%  sched_debug.cpu.n=
-r_switches.min
->      26177 =C4=85 10%     -63.9%       9453 =C4=85 10%  sched_debug.cpu.n=
-r_switches.stddev
->       5.00 =C4=85  9%     +21.2%       6.06 =C4=85  6%  sched_debug.cpu.n=
-r_uninterruptible.stddev
->     497115 =C4=85 40%     -44.8%     274644 =C4=85 44%  numa-meminfo.node=
-0.AnonPages
->    2037838 =C4=85 26%     -78.4%     440153 =C4=85 49%  numa-meminfo.node=
-1.Active
->    2001934 =C4=85 26%     -79.8%     405182 =C4=85 52%  numa-meminfo.node=
-1.Active(anon)
->     527723 =C4=85 38%     +42.4%     751463 =C4=85 16%  numa-meminfo.node=
-1.AnonPages
->    3853109 =C4=85 35%     -85.5%     559704 =C4=85 33%  numa-meminfo.node=
-1.FilePages
->      93331 =C4=85 18%     -58.7%      38529 =C4=85 22%  numa-meminfo.node=
-1.Mapped
->    5189577 =C4=85 27%     -61.5%    1999161 =C4=85 13%  numa-meminfo.node=
-1.MemUsed
->    2014284 =C4=85 26%     -78.2%     439808 =C4=85 51%  numa-meminfo.node=
-1.Shmem
->     123485 =C4=85 41%     -45.0%      67888 =C4=85 44%  numa-vmstat.node0=
-.nr_anon_pages
->     500704 =C4=85 26%     -79.8%     101309 =C4=85 52%  numa-vmstat.node1=
-.nr_active_anon
->     131174 =C4=85 38%     +42.6%     187092 =C4=85 16%  numa-vmstat.node1=
-.nr_anon_pages
->     963502 =C4=85 35%     -85.5%     139952 =C4=85 33%  numa-vmstat.node1=
-.nr_file_pages
->      23724 =C4=85 18%     -59.2%       9690 =C4=85 22%  numa-vmstat.node1=
-.nr_mapped
->     503779 =C4=85 26%     -78.2%     109954 =C4=85 51%  numa-vmstat.node1=
-.nr_shmem
->     500704 =C4=85 26%     -79.8%     101309 =C4=85 52%  numa-vmstat.node1=
-.nr_zone_active_anon
->    3915420 =C4=85  5%     -16.3%    3276906 =C4=85  3%  numa-vmstat.node1=
-.numa_hit
->    3830177 =C4=85  5%     -16.2%    3208097 =C4=85  4%  numa-vmstat.node1=
-.numa_local
->    2431824           -65.5%     839190 =C4=85  4%  meminfo.Active
->    2357128           -67.3%     770208 =C4=85  4%  meminfo.Active(anon)
->      74695 =C4=85  3%      -7.6%      68981 =C4=85  2%  meminfo.Active(fi=
-le)
->    5620559           -27.6%    4067556        meminfo.Cached
->    3838924           -40.4%    2286726        meminfo.Committed_AS
->      25660 =C4=85 19%     +25.8%      32289 =C4=85  5%  meminfo.Inactive(=
-file)
->     141631 =C4=85  5%     -32.4%      95728 =C4=85  4%  meminfo.Mapped
->    8334057           -18.6%    6783406        meminfo.Memused
->    2390655           -64.9%     837973 =C4=85  4%  meminfo.Shmem
->    9824314           -15.2%    8328190        meminfo.max_used_kB
->       1893            -7.4%       1752        filebench.sum_bytes_mb/s
->   45921381            -7.4%   42512980        filebench.sum_operations
->     765287            -7.4%     708444        filebench.sum_operations/s
->     201392            -7.4%     186432        filebench.sum_reads/s
->       0.04          +263.5%       0.14        filebench.sum_time_ms/op
->      40278            -7.4%      37286        filebench.sum_writes/s
->   48591837            -7.4%   44996528        filebench.time.file_system_=
-outputs
->       6443 =C4=85  3%     -88.7%     729.10 =C4=85  4%  filebench.time.in=
-voluntary_context_switches
->       3556            +1.4%       3605        filebench.time.percent_of_c=
-pu_this_job_got
->       5677            +2.1%       5798        filebench.time.system_time
->      99.20           -41.4%      58.09 =C4=85  2%  filebench.time.user_ti=
-me
->   37526666           -74.5%    9587296 =C4=85  4%  filebench.time.volunta=
-ry_context_switches
->     589410           -67.3%     192526 =C4=85  4%  proc-vmstat.nr_active_=
-anon
->      18674 =C4=85  3%      -7.6%      17253 =C4=85  2%  proc-vmstat.nr_ac=
-tive_file
->    6075100            -7.4%    5625692        proc-vmstat.nr_dirtied
->    3065571            +1.3%    3104313        proc-vmstat.nr_dirty_backgr=
-ound_threshold
->    6138638            +1.3%    6216217        proc-vmstat.nr_dirty_thresh=
-old
->    1407207           -27.6%    1019126        proc-vmstat.nr_file_pages
->   30829764            +1.3%   31217496        proc-vmstat.nr_free_pages
->     262267            +3.4%     271067        proc-vmstat.nr_inactive_ano=
-n
->       6406 =C4=85 19%     +26.1%       8076 =C4=85  5%  proc-vmstat.nr_in=
-active_file
->      35842 =C4=85  5%     -32.2%      24284 =C4=85  4%  proc-vmstat.nr_ma=
-pped
->     597809           -65.0%     209518 =C4=85  4%  proc-vmstat.nr_shmem
->      32422            -3.3%      31365        proc-vmstat.nr_slab_reclaim=
-able
->     589410           -67.3%     192526 =C4=85  4%  proc-vmstat.nr_zone_ac=
-tive_anon
->      18674 =C4=85  3%      -7.6%      17253 =C4=85  2%  proc-vmstat.nr_zo=
-ne_active_file
->     262267            +3.4%     271067        proc-vmstat.nr_zone_inactiv=
-e_anon
->       6406 =C4=85 19%     +26.1%       8076 =C4=85  5%  proc-vmstat.nr_zo=
-ne_inactive_file
->     100195 =C4=85 10%     -54.0%      46112 =C4=85 10%  proc-vmstat.numa_=
-hint_faults
->      48654 =C4=85  9%     -50.1%      24286 =C4=85 13%  proc-vmstat.numa_=
-hint_faults_local
->    7506558           -12.4%    6577262        proc-vmstat.numa_hit
->    7373151           -12.6%    6444638        proc-vmstat.numa_local
->     803560 =C4=85  4%      -6.4%     752097 =C4=85  5%  proc-vmstat.numa_=
-pte_updates
->    4259084            -3.8%    4098506        proc-vmstat.pgactivate
->    7959837           -11.3%    7064279        proc-vmstat.pgalloc_normal
->     870736            -9.4%     789267        proc-vmstat.pgfault
->    7181295            -5.6%    6775640        proc-vmstat.pgfree
->       1.96 =C4=85  2%     -36.9%       1.23        perf-stat.i.MPKI
->  3.723e+09           +69.5%  6.309e+09        perf-stat.i.branch-instruct=
-ions
->       2.70            -0.0        2.66        perf-stat.i.branch-miss-rat=
-e%
->   16048312           -38.4%    9889213        perf-stat.i.branch-misses
->      16.44            -2.0       14.42        perf-stat.i.cache-miss-rate=
-%
->   43146188           -47.3%   22744395 =C4=85  2%  perf-stat.i.cache-miss=
-es
->  1.141e+08           -39.8%   68732731        perf-stat.i.cache-reference=
-s
->     465903           -75.4%     114745 =C4=85  4%  perf-stat.i.context-sw=
-itches
->       4.11           -36.6%       2.61        perf-stat.i.cpi
->   1.22e+11            -5.2%  1.157e+11        perf-stat.i.cpu-cycles
->     236.15           -18.3%     192.90        perf-stat.i.cpu-migrations
->       1997 =C4=85  2%     +40.1%       2798        perf-stat.i.cycles-bet=
-ween-cache-misses
->  1.644e+10           +90.3%   3.13e+10        perf-stat.i.instructions
->       0.38           +14.7%       0.43        perf-stat.i.ipc
->       3.63           -75.7%       0.88 =C4=85  4%  perf-stat.i.metric.K/s=
-ec
->       4592 =C4=85  2%     -11.6%       4057        perf-stat.i.minor-faul=
-ts
->       4592 =C4=85  2%     -11.6%       4057        perf-stat.i.page-fault=
-s
->       2.62           -72.3%       0.73 =C4=85  2%  perf-stat.overall.MPKI
->       0.43            -0.3        0.16        perf-stat.overall.branch-mi=
-ss-rate%
->      37.79            -4.6       33.22        perf-stat.overall.cache-mis=
-s-rate%
->       7.41           -50.1%       3.70        perf-stat.overall.cpi
->       2827           +80.1%       5092 =C4=85  2%  perf-stat.overall.cycl=
-es-between-cache-misses
->       0.13          +100.5%       0.27        perf-stat.overall.ipc
->  3.693e+09           +77.2%  6.544e+09        perf-stat.ps.branch-instruc=
-tions
->   15913729           -36.1%   10173711        perf-stat.ps.branch-misses
->   42783592           -44.9%   23577137 =C4=85  2%  perf-stat.ps.cache-mis=
-ses
->  1.132e+08           -37.3%   70963587        perf-stat.ps.cache-referenc=
-es
->     461953           -74.2%     118964 =C4=85  4%  perf-stat.ps.context-s=
-witches
->     234.44           -17.3%     193.77        perf-stat.ps.cpu-migrations
->  1.632e+10           +99.0%  3.246e+10        perf-stat.ps.instructions
->       4555 =C4=85  2%     -10.9%       4060        perf-stat.ps.minor-fau=
-lts
->       4555 =C4=85  2%     -10.9%       4060        perf-stat.ps.page-faul=
-ts
->  2.659e+12           +99.2%  5.299e+12        perf-stat.total.instruction=
-s
+> Right now libfuse and kernel have lots of duplicated setup code
+> and any kind of pointer/offset mismatch results in a non-working
+> ring that is hard to debug - probably better when the kernel does
+> the calculations and returns that to server side
 >
+> 2) In combination with 1, ring requests should retrieve their
+> userspace address and length from kernel side instead of
+> calculating it through the mmaped queue buffer on their own.
+> (Introduction of FUSE_URING_BUF_ADDR_FETCH)
 >
+> 3) Add log buffer into the ioctl and ring-request
 >
-> [1]
+> This is to provide better error messages (instead of just
+> errno)
 >
-> for patch in
-> https://lore.kernel.org/all/20240515091727.22034-1-laoar.shao@gmail.com/
+> 3) Multiple IO sizes per queue
 >
-> we apply it upon
->   3c999d1ae3 ("Merge tag 'wq-for-6.10' of git://git.kernel.org/pub/scm/li=
-nux/kernel/git/tj/wq")
+> Small IOs and metadata requests do not need large buffer sizes,
+> we need multiple IO sizes per queue.
 >
-> there is similar regression
+> 4) FUSE_INTERRUPT handling
 >
+> These are not handled yet, kernel side is probably not difficult
+> anymore as ring entries take fuse requests through lists.
 >
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> compiler/cpufreq_governor/disk/fs/kconfig/rootfs/tbox_group/test/testcase=
-:
->   gcc-13/performance/1HDD/ext4/x86_64-rhel-8.3/debian-12-x86_64-20240206.=
-cgz/lkp-icl-2sp6/webproxy.f/filebench
+> Long term TODO:
+> --------------
+> Notifications through io-uring, maybe with a separated ring,
+> but I'm not sure yet.
+
+Is that going to improve performance in any real life workload?
+
+Thanks,
+Amir.
+
 >
-> commit:
->   3c999d1ae3 ("Merge tag 'wq-for-6.10' of git://git.kernel.org/pub/scm/li=
-nux/kernel/git/tj/wq")
->   3681ce3644 ("vfs: Delete the associated dentry when deleting a file")
+> Changes since RFCv1
+> -------------------
+> - No need to hold the task of the server side anymore.  Also no
+>   ioctls/threads waiting for shutdown anymore.  Shutdown now more
+>   works like the traditional fuse way.
+> - Each queue clones the fuse and device release makes an  exception
+>   for io-uring. Reason is that queued IORING_OP_URING_CMD
+>   (through .uring_cmd) prevent a device release. I.e. a killed
+>   server side typically triggers fuse_abort_conn(). This was the
+>   reason for the async stop-monitor in v1 and reference on the daemon
+>   task. However it was very racy and annotated immediately by Miklos.
+> - In v1 the offset parameter to mmap was identifying the QID, in v2
+>   server side is expected to send mmap from a core bound ring thread
+>   in numa mode and numa node is taken through the core of that thread.
+>   Kernel side of the mmap buffer is stored in an rbtree and assigned
+>   to the right qid through an additional queue ioctl.
+> - Release of IORING_OP_URING_CMD is done through lists now, instead
+>   of iterating over the entire array of queues/entries and does not
+>   depend on the entry state anymore (a bit of the state is still left
+>   for sanity check).
+> - Finding free ring queue entries is done through lists and not through
+>   a bitmap anymore
+> - Many other code changes and bug fixes
+> - Performance tunings
 >
-> 3c999d1ae3c75991 3681ce364442ce2ec7c7fbe90ad
-> ---------------- ---------------------------
->          %stddev     %change         %stddev
->              \          |                \
->      31.06            +2.8%      31.94        boot-time.boot
->   30573542 =C4=85  2%     -77.0%    7043084 =C4=85  5%  cpuidle..usage
->      27.25            +1.3%      27.61        iostat.cpu.system
->       0.14            -0.0        0.12        mpstat.cpu.all.irq%
->       0.07            -0.0        0.04        mpstat.cpu.all.soft%
->       0.56            -0.2        0.34 =C4=85  2%  mpstat.cpu.all.usr%
->       0.29 =C4=85100%     -77.4%       0.07 =C4=85 28%  vmstat.procs.b
->     448491 =C4=85  2%     -76.3%     106251 =C4=85  5%  vmstat.system.cs
->      90174           -36.5%      57279        vmstat.system.in
->    3460368 =C4=85  4%     -10.3%    3103696 =C4=85  4%  numa-numastat.nod=
-e0.local_node
->    3522472 =C4=85  4%      -9.2%    3197492 =C4=85  3%  numa-numastat.nod=
-e0.numa_hit
->    3928489 =C4=85  4%     -17.7%    3232163 =C4=85  3%  numa-numastat.nod=
-e1.local_node
->    3998985 =C4=85  3%     -18.2%    3270980 =C4=85  3%  numa-numastat.nod=
-e1.numa_hit
->       1968 =C4=85  5%     -23.2%       1511        perf-c2c.DRAM.local
->      16452 =C4=85 22%     -54.2%       7541 =C4=85  4%  perf-c2c.DRAM.rem=
-ote
->      14780 =C4=85 26%     -64.0%       5321 =C4=85  4%  perf-c2c.HITM.loc=
-al
->      10689 =C4=85 24%     -60.1%       4262 =C4=85  5%  perf-c2c.HITM.rem=
-ote
->      25469 =C4=85 25%     -62.4%       9584 =C4=85  4%  perf-c2c.HITM.tot=
-al
->     196899 =C4=85 10%     +31.1%     258125 =C4=85 11%  sched_debug.cfs_r=
-q:/.avg_vruntime.stddev
->     196899 =C4=85 10%     +31.1%     258125 =C4=85 11%  sched_debug.cfs_r=
-q:/.min_vruntime.stddev
->     299051 =C4=85 12%     -76.0%      71664 =C4=85 15%  sched_debug.cpu.n=
-r_switches.avg
->     355466 =C4=85 11%     -73.4%      94490 =C4=85 14%  sched_debug.cpu.n=
-r_switches.max
->     219349 =C4=85 12%     -76.6%      51435 =C4=85 12%  sched_debug.cpu.n=
-r_switches.min
->      25523 =C4=85 11%     -67.4%       8322 =C4=85 18%  sched_debug.cpu.n=
-r_switches.stddev
->      36526 =C4=85  4%     -16.4%      30519 =C4=85  6%  numa-meminfo.node=
-0.Active(file)
->     897165 =C4=85 14%     -26.7%     657740 =C4=85  9%  numa-meminfo.node=
-0.AnonPages.max
->      23571 =C4=85 10%     -14.5%      20159 =C4=85 10%  numa-meminfo.node=
-0.Dirty
->    2134726 =C4=85 10%     -76.9%     493176 =C4=85 35%  numa-meminfo.node=
-1.Active
->    2096208 =C4=85 11%     -78.3%     455673 =C4=85 38%  numa-meminfo.node=
-1.Active(anon)
->     965352 =C4=85 13%     +23.5%    1192437 =C4=85  2%  numa-meminfo.node=
-1.AnonPages.max
->      18386 =C4=85 17%     +23.8%      22761 =C4=85  4%  numa-meminfo.node=
-1.Inactive(file)
->    2108104 =C4=85 11%     -76.7%     492042 =C4=85 37%  numa-meminfo.node=
-1.Shmem
->    2395006 =C4=85  2%     -67.4%     779863 =C4=85  3%  meminfo.Active
->    2319964 =C4=85  2%     -69.3%     711848 =C4=85  4%  meminfo.Active(an=
-on)
->      75041 =C4=85  2%      -9.4%      68015 =C4=85  2%  meminfo.Active(fi=
-le)
->    5583921           -28.3%    4002297        meminfo.Cached
->    3802632           -41.5%    2224370        meminfo.Committed_AS
->      28940 =C4=85  5%     +13.6%      32890 =C4=85  4%  meminfo.Inactive(=
-file)
->     134576 =C4=85  6%     -31.2%      92641 =C4=85  3%  meminfo.Mapped
->    8310087           -19.2%    6718172        meminfo.Memused
->    2354275 =C4=85  2%     -67.1%     775732 =C4=85  4%  meminfo.Shmem
->    9807659           -15.7%    8271698        meminfo.max_used_kB
->       1903            -9.3%       1725        filebench.sum_bytes_mb/s
->   46168615            -9.4%   41846487        filebench.sum_operations
->     769403            -9.4%     697355        filebench.sum_operations/s
->     202475            -9.4%     183514        filebench.sum_reads/s
->       0.04          +268.3%       0.14        filebench.sum_time_ms/op
->      40495            -9.4%      36703        filebench.sum_writes/s
->   48846906            -9.3%   44298468        filebench.time.file_system_=
-outputs
->       6633           -89.4%     701.33 =C4=85  6%  filebench.time.involun=
-tary_context_switches
->       3561            +1.3%       3607        filebench.time.percent_of_c=
-pu_this_job_got
->       5686            +2.1%       5804        filebench.time.system_time
->      98.62           -44.2%      55.04 =C4=85  2%  filebench.time.user_ti=
-me
->   36939924 =C4=85  2%     -76.6%    8653175 =C4=85  5%  filebench.time.vo=
-luntary_context_switches
->       9134 =C4=85  4%     -16.5%       7628 =C4=85  6%  numa-vmstat.node0=
-.nr_active_file
->    3141362 =C4=85  3%     -11.5%    2780445 =C4=85  4%  numa-vmstat.node0=
-.nr_dirtied
->       9134 =C4=85  4%     -16.5%       7628 =C4=85  6%  numa-vmstat.node0=
-.nr_zone_active_file
->    3522377 =C4=85  4%      -9.2%    3197360 =C4=85  3%  numa-vmstat.node0=
-.numa_hit
->    3460272 =C4=85  4%     -10.3%    3103565 =C4=85  4%  numa-vmstat.node0=
-.numa_local
->     524285 =C4=85 11%     -78.3%     113936 =C4=85 38%  numa-vmstat.node1=
-.nr_active_anon
->       4630 =C4=85 17%     +22.6%       5674 =C4=85  4%  numa-vmstat.node1=
-.nr_inactive_file
->     527242 =C4=85 11%     -76.7%     123018 =C4=85 37%  numa-vmstat.node1=
-.nr_shmem
->     524285 =C4=85 11%     -78.3%     113936 =C4=85 38%  numa-vmstat.node1=
-.nr_zone_active_anon
->       4630 =C4=85 17%     +22.5%       5674 =C4=85  4%  numa-vmstat.node1=
-.nr_zone_inactive_file
->    3998675 =C4=85  3%     -18.2%    3270307 =C4=85  3%  numa-vmstat.node1=
-.numa_hit
->    3928179 =C4=85  4%     -17.7%    3231491 =C4=85  3%  numa-vmstat.node1=
-.numa_local
->       1.82 =C4=85 18%      -0.5        1.28 =C4=85 16%  perf-profile.call=
-trace.cycles-pp.mmap_region.do_mmap.vm_mmap_pgoff.ksys_mmap_pgoff.do_syscal=
-l_64
->       1.58 =C4=85  8%      -0.5        1.13 =C4=85 18%  perf-profile.call=
-trace.cycles-pp.ksys_mmap_pgoff.do_syscall_64.entry_SYSCALL_64_after_hwfram=
-e
->       1.53 =C4=85  9%      -0.4        1.13 =C4=85 18%  perf-profile.call=
-trace.cycles-pp.vm_mmap_pgoff.ksys_mmap_pgoff.do_syscall_64.entry_SYSCALL_6=
-4_after_hwframe
->       2.05 =C4=85  7%      -0.3        1.76 =C4=85 11%  perf-profile.call=
-trace.cycles-pp.update_sd_lb_stats.sched_balance_find_src_group.sched_balan=
-ce_rq.sched_balance_newidle.balance_fair
->       3.80 =C4=85  5%      -0.3        3.52 =C4=85  5%  perf-profile.call=
-trace.cycles-pp.smpboot_thread_fn.kthread.ret_from_fork.ret_from_fork_asm
->       2.11 =C4=85 11%      +0.3        2.39 =C4=85  4%  perf-profile.call=
-trace.cycles-pp.sched_setaffinity.evlist_cpu_iterator__next.read_counters.p=
-rocess_interval.dispatch_events
->       3.55 =C4=85 10%      +0.3        3.86 =C4=85  4%  perf-profile.call=
-trace.cycles-pp.exc_page_fault.asm_exc_page_fault
->       2.63 =C4=85  9%      +0.4        3.03 =C4=85  6%  perf-profile.call=
-trace.cycles-pp.evlist_cpu_iterator__next.read_counters.process_interval.di=
-spatch_events.cmd_stat
->       3.47 =C4=85  2%      -0.6        2.86 =C4=85 10%  perf-profile.chil=
-dren.cycles-pp.vm_mmap_pgoff
->       3.30 =C4=85  2%      -0.6        2.73 =C4=85 10%  perf-profile.chil=
-dren.cycles-pp.do_mmap
->       3.02 =C4=85  6%      -0.6        2.46 =C4=85 11%  perf-profile.chil=
-dren.cycles-pp.mmap_region
->       2.34 =C4=85  8%      -0.6        1.80 =C4=85 12%  perf-profile.chil=
-dren.cycles-pp.ksys_mmap_pgoff
->       3.80 =C4=85  5%      -0.3        3.52 =C4=85  5%  perf-profile.chil=
-dren.cycles-pp.smpboot_thread_fn
->       0.29 =C4=85  2%      -0.1        0.17 =C4=85 71%  perf-profile.chil=
-dren.cycles-pp.acpi_evaluate_dsm
->       0.29 =C4=85  2%      -0.1        0.17 =C4=85 71%  perf-profile.chil=
-dren.cycles-pp.acpi_evaluate_object
->       0.29 =C4=85  2%      -0.1        0.17 =C4=85 71%  perf-profile.chil=
-dren.cycles-pp.acpi_nfit_ctl
->       0.29 =C4=85  2%      -0.1        0.17 =C4=85 71%  perf-profile.chil=
-dren.cycles-pp.acpi_nfit_query_poison
->       0.29 =C4=85  2%      -0.1        0.17 =C4=85 71%  perf-profile.chil=
-dren.cycles-pp.acpi_nfit_scrub
->       0.16 =C4=85 36%      -0.1        0.05 =C4=85 44%  perf-profile.chil=
-dren.cycles-pp._find_first_bit
->       0.10 =C4=85 44%      -0.1        0.03 =C4=85100%  perf-profile.chil=
-dren.cycles-pp.mtree_load
->       0.30 =C4=85 25%      +0.2        0.47 =C4=85 13%  perf-profile.chil=
-dren.cycles-pp.__update_blocked_fair
->       0.23 =C4=85 55%      -0.2        0.08 =C4=85 70%  perf-profile.self=
-.cycles-pp.malloc
->       0.16 =C4=85 40%      -0.1        0.05 =C4=85 44%  perf-profile.self=
-.cycles-pp._find_first_bit
->       0.19 =C4=85 30%      -0.1        0.09 =C4=85 84%  perf-profile.self=
-.cycles-pp.d_alloc_parallel
->       0.86 =C4=85 17%      +0.3        1.12 =C4=85 10%  perf-profile.self=
-.cycles-pp.menu_select
->     580113 =C4=85  2%     -69.3%     177978 =C4=85  4%  proc-vmstat.nr_ac=
-tive_anon
->      18761 =C4=85  2%      -9.3%      17008 =C4=85  2%  proc-vmstat.nr_ac=
-tive_file
->    6107024            -9.3%    5538417        proc-vmstat.nr_dirtied
->    3066271            +1.3%    3105966        proc-vmstat.nr_dirty_backgr=
-ound_threshold
->    6140041            +1.3%    6219526        proc-vmstat.nr_dirty_thresh=
-old
->    1398313           -28.3%    1002802        proc-vmstat.nr_file_pages
->   30835864            +1.3%   31234154        proc-vmstat.nr_free_pages
->     262597            +2.8%     269986        proc-vmstat.nr_inactive_ano=
-n
->       7233 =C4=85  5%     +13.4%       8201 =C4=85  4%  proc-vmstat.nr_in=
-active_file
->      34066 =C4=85  6%     -31.1%      23487 =C4=85  3%  proc-vmstat.nr_ma=
-pped
->     588705 =C4=85  2%     -67.0%     193984 =C4=85  4%  proc-vmstat.nr_sh=
-mem
->      32476            -3.6%      31292        proc-vmstat.nr_slab_reclaim=
-able
->     580113 =C4=85  2%     -69.3%     177978 =C4=85  4%  proc-vmstat.nr_zo=
-ne_active_anon
->      18761 =C4=85  2%      -9.3%      17008 =C4=85  2%  proc-vmstat.nr_zo=
-ne_active_file
->     262597            +2.8%     269986        proc-vmstat.nr_zone_inactiv=
-e_anon
->       7233 =C4=85  5%     +13.4%       8201 =C4=85  4%  proc-vmstat.nr_zo=
-ne_inactive_file
->     148417 =C4=85 19%     -82.3%      26235 =C4=85 17%  proc-vmstat.numa_=
-hint_faults
->      76831 =C4=85 23%     -84.5%      11912 =C4=85 33%  proc-vmstat.numa_=
-hint_faults_local
->    7524741           -14.0%    6471471        proc-vmstat.numa_hit
->    7392150           -14.2%    6338859        proc-vmstat.numa_local
->     826291 =C4=85  4%     -12.3%     724471 =C4=85  4%  proc-vmstat.numa_=
-pte_updates
->    4284054            -6.1%    4024194        proc-vmstat.pgactivate
->    7979760           -12.9%    6948927        proc-vmstat.pgalloc_normal
->     917223 =C4=85  2%     -16.2%     768255        proc-vmstat.pgfault
->    7212208            -7.4%    6679624        proc-vmstat.pgfree
->       1.97           -39.5%       1.19 =C4=85  2%  perf-stat.i.MPKI
->  3.749e+09           +65.2%  6.195e+09        perf-stat.i.branch-instruct=
-ions
->       2.69            -0.0        2.65        perf-stat.i.branch-miss-rat=
-e%
->   15906654           -39.7%    9595633        perf-stat.i.branch-misses
->      16.53            -2.2       14.37        perf-stat.i.cache-miss-rate=
-%
->   43138175           -48.8%   22080984 =C4=85  2%  perf-stat.i.cache-miss=
-es
->  1.137e+08           -41.1%   67035007 =C4=85  2%  perf-stat.i.cache-refe=
-rences
->     458704 =C4=85  2%     -77.4%     103593 =C4=85  6%  perf-stat.i.conte=
-xt-switches
->       4.04           -39.3%       2.45        perf-stat.i.cpi
->  1.221e+11            -5.4%  1.155e+11        perf-stat.i.cpu-cycles
->     238.75           -19.5%     192.29        perf-stat.i.cpu-migrations
->       1960           +45.0%       2843 =C4=85  2%  perf-stat.i.cycles-bet=
-ween-cache-misses
->  1.678e+10          +103.7%  3.419e+10        perf-stat.i.instructions
->       0.39           +17.5%       0.46        perf-stat.i.ipc
->       3.58 =C4=85  2%     -77.8%       0.80 =C4=85  6%  perf-stat.i.metri=
-c.K/sec
->       4918 =C4=85  3%     -19.9%       3940        perf-stat.i.minor-faul=
-ts
->       4918 =C4=85  3%     -19.9%       3940        perf-stat.i.page-fault=
-s
->       2.57           -74.9%       0.65 =C4=85  2%  perf-stat.overall.MPKI
->       0.42            -0.3        0.15        perf-stat.overall.branch-mi=
-ss-rate%
->      37.92            -4.8       33.07        perf-stat.overall.cache-mis=
-s-rate%
->       7.27           -53.5%       3.38        perf-stat.overall.cpi
->       2830           +85.1%       5239 =C4=85  2%  perf-stat.overall.cycl=
-es-between-cache-misses
->       0.14          +115.0%       0.30        perf-stat.overall.ipc
->   3.72e+09           +72.8%  6.428e+09        perf-stat.ps.branch-instruc=
-tions
->   15775403           -37.5%    9854215        perf-stat.ps.branch-misses
->   42773264           -46.5%   22897139 =C4=85  2%  perf-stat.ps.cache-mis=
-ses
->  1.128e+08           -38.6%   69221969 =C4=85  2%  perf-stat.ps.cache-ref=
-erences
->     454754 =C4=85  2%     -76.4%     107434 =C4=85  6%  perf-stat.ps.cont=
-ext-switches
->     237.02           -18.5%     193.17        perf-stat.ps.cpu-migrations
->  1.666e+10          +113.0%  3.548e+10        perf-stat.ps.instructions
->       4878 =C4=85  3%     -19.3%       3937        perf-stat.ps.minor-fau=
-lts
->       4878 =C4=85  3%     -19.3%       3937        perf-stat.ps.page-faul=
-ts
->  2.715e+12          +113.5%  5.796e+12        perf-stat.total.instruction=
-s
+> ---
+> Bernd Schubert (19):
+>       fuse: rename to fuse_dev_end_requests and make non-static
+>       fuse: Move fuse_get_dev to header file
+>       fuse: Move request bits
+>       fuse: Add fuse-io-uring design documentation
+>       fuse: Add a uring config ioctl
+>       Add a vmalloc_node_user function
+>       fuse uring: Add an mmap method
+>       fuse: Add the queue configuration ioctl
+>       fuse: {uring} Add a dev_release exception for fuse-over-io-uring
+>       fuse: {uring} Handle SQEs - register commands
+>       fuse: Add support to copy from/to the ring buffer
+>       fuse: {uring} Add uring sqe commit and fetch support
+>       fuse: {uring} Handle uring shutdown
+>       fuse: {uring} Allow to queue to the ring
+>       export __wake_on_current_cpu
+>       fuse: {uring} Wake requests on the the current cpu
+>       fuse: {uring} Send async requests to qid of core + 1
+>       fuse: {uring} Set a min cpu offset io-size for reads/writes
+>       fuse: {uring} Optimize async sends
 >
+>  Documentation/filesystems/fuse-io-uring.rst |  167 ++++
+>  fs/fuse/Kconfig                             |   12 +
+>  fs/fuse/Makefile                            |    1 +
+>  fs/fuse/dev.c                               |  310 +++++--
+>  fs/fuse/dev_uring.c                         | 1232 +++++++++++++++++++++=
+++++++
+>  fs/fuse/dev_uring_i.h                       |  395 +++++++++
+>  fs/fuse/file.c                              |   15 +-
+>  fs/fuse/fuse_dev_i.h                        |   67 ++
+>  fs/fuse/fuse_i.h                            |    9 +
+>  fs/fuse/inode.c                             |    3 +
+>  include/linux/vmalloc.h                     |    1 +
+>  include/uapi/linux/fuse.h                   |  135 +++
+>  kernel/sched/wait.c                         |    1 +
+>  mm/nommu.c                                  |    6 +
+>  mm/vmalloc.c                                |   41 +-
+>  15 files changed, 2330 insertions(+), 65 deletions(-)
+> ---
+> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+> change-id: 20240529-fuse-uring-for-6-9-rfc2-out-f0a009005fdf
 >
-> Disclaimer:
-> Results have been estimated based on internal Intel analysis and are prov=
-ided
-> for informational purposes only. Any difference in system hardware or sof=
-tware
-> design or configuration may affect actual performance.
->
->
+> Best regards,
 > --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> Bernd Schubert <bschubert@ddn.com>
 >
-
-Thanks for your report. I will try to reproduce it on my test machine.
-
---=20
-Regards
-Yafang
 
