@@ -1,109 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-20531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A708D4F31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 17:36:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C0E8D4F34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 17:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394591C21566
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 15:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C3B1F21783
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 15:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A43182D21;
-	Thu, 30 May 2024 15:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8D0187558;
+	Thu, 30 May 2024 15:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UtBYzAAu"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gnA7vGMC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D4182D0B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 15:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA6617C23F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 15:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717083371; cv=none; b=G/cMZJWq84Xj3vxo01ocXeSnh8+jYnINAMY6TGhfvj+mOIS3CA8weUTLERKtWJi9DwezmeMQjHTX6kg2aDk4dB6DPADKK0SGx1iZxttZYfYLxIH6J3wnY2GAHCZxLRS9RTnKkmCqlnmnJZYAFyzwb3vCOsb41yBv4e6eB2Olyow=
+	t=1717083417; cv=none; b=JkzswqLfTccsUbNj6myV86X1UvUcnoF8DE91dzdXbkub6Djm7MVBBfpiy06FVEa3pTtTtgp6qdIJ41mdyK1u5PWf/tHMbiwJIf2sG0WhFuRyTGDRYsaa5UbK02QTbIbgYA971zlPLikpzRPEANJFOlRikpeZS8wavNal2gnwjT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717083371; c=relaxed/simple;
-	bh=KbLdL/seA21LV9zN+LpX02fN0fOL7QT1V1+L/wG42Tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=daYMRbxwROIDTc4GBsAn870Gw4nyVhts6rlh9F6N2bw8bMZf3EzqsUODCDrkE0H8Lb+MpnY0ypgYYgj+sPr6F9OzsY1/URu/eRjTXZV0siJzrYLh65uZLPr/2/mA56X59VyZvzW+exfxfSNb48Apt0ze0GUD8msAoj4f8ndMDoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UtBYzAAu; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717083365; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=w1t0izbHYuiodnmYQS/W/QtzQhF1IvrQmY/kNuEtIxk=;
-	b=UtBYzAAuqsXfcabSxAKAbLcrM63f4WXNEKdoxx5O7HVdiNBZWgegXI98aKSJh4dafQLvC1/kw2b28rz112LQNQwrKMCLWWD6d0zwTnuGVQShGrxo9473D95INbwTZyafnUgnt+3denapL9BRrI3L23/FeD8mag81Eon4oRUbjLA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W7XEnis_1717083364;
-Received: from 192.168.31.58(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7XEnis_1717083364)
-          by smtp.aliyun-inc.com;
-          Thu, 30 May 2024 23:36:05 +0800
-Message-ID: <2b97f4bd-818f-4d8b-b55e-8410c0fb2768@linux.alibaba.com>
-Date: Thu, 30 May 2024 23:36:00 +0800
+	s=arc-20240116; t=1717083417; c=relaxed/simple;
+	bh=PgEEPPJ7huqT12B4Wb+pYeIFMau0oMceIwl7H9dzBV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fboUhDFBCKBXFCu6zgYrRuyiSHnJWy+JVJPvyLPOcZ78wFjxpM7zaAYM4rMiQZCblqKlplSiWNwR2OIQZvym+3NZnh4PXK6oVyj73R1UdMI0+msD9X9NLJs8VAbh/+ZLhNaSti3JsjGhYT962AU1DBY/no4cWC7oJ6mwA+YpJ/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gnA7vGMC; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: bschubert@ddn.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717083413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EijsAgXsRWXx6XFjbJyE2P7goIY3BBH3zxCViy1wr3s=;
+	b=gnA7vGMCGLRmT+wucoFpM8VRIuReG3m23CGR3ks1TFPZtF3WilXg9Z7G6mWkxPSUehXMOW
+	BTytO8YVTyv3IPflt86WDFozlZZFsvZQZ+s/XUJBZyXIjwqElfZk6C9mO4ojb5ym5ug2Jk
+	rnUsvmW3BUnV8Qx6HcApWWZvhdB2QT4=
+X-Envelope-To: miklos@szeredi.hu
+X-Envelope-To: amir73il@gmail.com
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: bernd.schubert@fastmail.fm
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: avagin@google.com
+X-Envelope-To: io-uring@vger.kernel.org
+Date: Thu, 30 May 2024 11:36:49 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+Message-ID: <5mimjjxul2sc2g7x6pttnit46pbw3astwj2giqfr4xayp63el2@fb5bgtiavwgv>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: cleanup request queuing towards virtiofs
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
- Peter-Jan Gootzen <pgootzen@nvidia.com>,
- Stefan Hajnoczi <stefanha@redhat.com>, Yoray Zack <yorayz@nvidia.com>,
- Vivek Goyal <vgoyal@redhat.com>, virtualization@lists.linux.dev
-References: <20240529155210.2543295-1-mszeredi@redhat.com>
- <af09b5d3-940f-491d-97ba-bd3bf19b750a@linux.alibaba.com>
- <CAJfpeguV0dNiyR5jzQH7H4x0vOzFTcBgnnLDHBPU9fH23A0kng@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJfpeguV0dNiyR5jzQH7H4x0vOzFTcBgnnLDHBPU9fH23A0kng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 5/30/24 5:00 PM, Miklos Szeredi wrote:
-> On Thu, 30 May 2024 at 05:20, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+On Wed, May 29, 2024 at 08:00:35PM +0200, Bernd Schubert wrote:
+> From: Bernd Schubert <bschubert@ddn.com>
 > 
->>> +             if (test_bit(FR_FINISHED, &req->flags)) {
->>> +                     list_del_init(&req->intr_entry);
->>> +                     spin_unlock(&fiq->lock                  ^
->>                 missing "return" here?
+> This adds support for uring communication between kernel and
+> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+> appraoch was taken from ublk.  The patches are in RFC state,
+> some major changes are still to be expected.
 > 
-> Well spotted.  Thanks.
-> 
->>> -             err = -ENODEV;
->>> -             spin_unlock(&fiq->lock);
->>> -             fuse_put_request(req);
->>> -     }
->>> +     fuse_send_one(fiq, req);
->>>
->>> -     return err;
->>> +     return 0;
->>>  }
->>
->> There's a minor changed behavior visible to users.  Prior to the patch,
->> the FUSE_NOTIFY_RETRIEVE will returns -ENODEV when the connection is
->> aborted, but now it returns 0.
->>
->> It seems only example/notify_store_retrieve.c has used
->> FUSE_NOTIFY_RETRIEVE in libfuse.  I'm not sure if this change really
->> matters.
-> 
-> It will return -ENOTCONN from  fuse_simple_notify_reply() ->
-> fuse_get_req().  The -ENODEV would be a very short transient error
-> during the abort, so it doesn't matter.
+> Motivation for these patches is all to increase fuse performance.
+> In fuse-over-io-uring requests avoid core switching (application
+> on core X, processing of fuse server on random core Y) and use
+> shared memory between kernel and userspace to transfer data.
+> Similar approaches have been taken by ZUFS and FUSE2, though
+> not over io-uring, but through ioctl IOs
 
-Okay, fair enough.  Feel free to add:
+What specifically is it about io-uring that's helpful here? Besides the
+ringbuffer?
 
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+So the original mess was that because we didn't have a generic
+ringbuffer, we had aio, tracing, and god knows what else all
+implementing their own special purpose ringbuffers (all with weird
+quirks of debatable or no usefulness).
 
+It seems to me that what fuse (and a lot of other things want) is just a
+clean simple easy to use generic ringbuffer for sending what-have-you
+back and forth between the kernel and userspace - in this case RPCs from
+the kernel to userspace.
 
--- 
-Thanks,
-Jingbo
+But instead, the solution seems to be just toss everything into a new
+giant subsystem?
 
