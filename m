@@ -1,101 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-20504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C022A8D45D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 09:13:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CCE8D45E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 09:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C491C215FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 07:13:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708971F235AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 07:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417F74D8B8;
-	Thu, 30 May 2024 07:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ADC1C2A3;
+	Thu, 30 May 2024 07:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTaCa7W0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8s/NHsO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5504D8B2;
-	Thu, 30 May 2024 07:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9457F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 07:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717053181; cv=none; b=PMRu0X7Eb2F2ZNMNkMJpuXp+6np1vnBZXUQBRdYf2kLM4lPBWEFSBW18Ofr3m3yXb8ZkDcG1NWiTKymyd64BcR4Lc4+feMcVCfsXTknMaglEn2xpt7t7OkMjm+8MOfPYeAdFyy8yuGzDV5RF8hwwSru4NNQc/hKRrBcN3FePLBg=
+	t=1717053399; cv=none; b=NEB1SVhDC8uM59tpsQvQHrvQq7t1v5fKHFGolnzEG6JFdzVOJjuJgrh6xpXArtQYy5nIZ2yBKDBoZJ58u6eTZaw8w9330ZlQ5mFst9fnKmYrjPWBbX8DXUJVNIlvZo0aek0/Op/FCGYnElFniMHQy0PWOCegk2hvH1Jc4+rf4Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717053181; c=relaxed/simple;
-	bh=8ULP4kKmkBkB8OhdDy2ZgeEvGKgKKr0EOtx31F1eVaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pLWDBIkYekwTSd6tvKkli20jonLqbo1TKS9AnzhJVmhpxQQtKn0VU44lb92nNdKegAwbjeW1u/lwBLztf4Rc8tadysrYS2ZNRkCs0V/Uu0AIO1escpTW9WTCNEJIJIlKMP3rhZNYD3POLMAANP2mu5pJmHcxpF6tjnVrFqMgNz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTaCa7W0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8915AC2BBFC;
-	Thu, 30 May 2024 07:12:59 +0000 (UTC)
+	s=arc-20240116; t=1717053399; c=relaxed/simple;
+	bh=3K/uOcD3XMeAB8wrQpNaP5yAkQCdIWgkX1zSa+6noBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXrbLcBfgQUkHfmN1RVY7FcIQCfYHAdXuOoiFkuL/PUxyj42qbc89st0uinQVRTWj45Z4F3XAjkrHyWDAXMyKMSpIBk0fn0IyncH6yi05eB+VziKVdJAhodbM1IqdwxOwfU+6rSPu6rZpt2I+icFm1pMG1FSUtlB3dEzNoSGEf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8s/NHsO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C54EC2BBFC;
+	Thu, 30 May 2024 07:16:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717053181;
-	bh=8ULP4kKmkBkB8OhdDy2ZgeEvGKgKKr0EOtx31F1eVaM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pTaCa7W00BtA8JKrCNXNmV8d62duYklrrNYmxTy76yVZaPce7bAeoHXBselgNOUpy
-	 Xu0seF4pq4Fy9bPD0FZ1cueLOHsGREEKKxwpMhB+1pfoW7K+u0Z3jLme6JjLkdVY0i
-	 g7iTq63PGO/LRmtPUW+U+qFaOSpHmlNqvLXFbZk0E++ldOvaF1FAmFsQrz7fcJP8ZP
-	 oOHCqYu+Fz9qBw8BLQJni58bhwM4796Ca5aLHMIhYxaKvTUw9hpChPx9LWSjmm0j9W
-	 y39FBcIsnxZxtXtA1eQlwZ028aNJi7vWMVkQ0NbkcHfd/AytDqyGil1oZUjyxuq8c2
-	 W1mE0rmZasYZw==
+	s=k20201202; t=1717053399;
+	bh=3K/uOcD3XMeAB8wrQpNaP5yAkQCdIWgkX1zSa+6noBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K8s/NHsOpvON1O9pYJk/+nGAWf7JZRoNjMOCJqRvLM4xrega5PPNL1GSyIcXA4vX5
+	 Y+kl5CmpIuPGjunaoH/tRBbr+jxkhEtdkBjS0zF/Kd04veveerWWdLNwdQg7VJ2Jhd
+	 NuwCtMcNpzcIoKZP/JqjGMAE8hKJYOZ/Up7eM961XHHB2MdbOzV3QTyr/aDiH2tQtH
+	 unXOz/fMzNoS39cGMJEebNcFoX/GNzohMLLkGZKp1iRi35J8hXLa/QA8Bh5Is+aLPN
+	 CCzTr4B5w2Z/QE2KruV8yRKpMZzJF9LdvTcYnyp8binTW+9BISxERT8PUwhJ2nJXMY
+	 FDzKf5l2hd8Eg==
+Date: Thu, 30 May 2024 09:16:35 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/file: fix the check in find_next_fd()
-Date: Thu, 30 May 2024 09:12:52 +0200
-Message-ID: <20240530-gewichen-herzhaft-afdc69132239@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240529160656.209352-1-yuntao.wang@linux.dev>
-References: <20240529160656.209352-1-yuntao.wang@linux.dev>
+To: Thiago Macieira <thiago.macieira@intel.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: Re: statmount: requesting more information: statfs, devname, label
+Message-ID: <20240530-hygiene-einkalkulieren-c190143e41d9@brauner>
+References: <11382958.Mp67QZiUf9@tjmaciei-mobl5>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1347; i=brauner@kernel.org; h=from:subject:message-id; bh=8ULP4kKmkBkB8OhdDy2ZgeEvGKgKKr0EOtx31F1eVaM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRFqH05ZvP2WSvLzX9tZ0sWBFYcXlBflqvEwWvWfEcwV lRv9YK0jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm0CTAyXP2V03+aSeerfpVg /T5r24Lfr3sdUvkt+XYc2fJNynDVWYZ/+qtfxDsqTXv/9vyvp7rbW9d2vl8YmfzgAx+zluGafvP 3DAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <11382958.Mp67QZiUf9@tjmaciei-mobl5>
 
-On Thu, 30 May 2024 00:06:56 +0800, Yuntao Wang wrote:
-> The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
-> maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
-> gives the value of bitbit, which can never be greater than maxfd, it can
-> only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
-> will never be true.
+On Wed, May 29, 2024 at 03:36:39PM -0300, Thiago Macieira wrote:
+> Hello Miklos & others
 > 
-> Moreover, when bitbit equals maxfd, it indicates that there are no unused
-> fds, and the function can directly return.
+> Thank you for the listmount() & statmount() API. I found it very easy to use 
+> and definitely easier than parsing of /proc/self/mountinfo. I am missing three 
+> pieces of information from statmount(), two of which I can get from elsewhere 
+> but the third is a showstopper.
 > 
-> [...]
+> The showstopper is the lack of mnt_devname anywhere in the output. It is 
+> present in mountinfo and even in the older /etc/mtab and I couldn't find a way 
+> to convert back from the device's major/minor to a string form. Scanning /dev 
+> will not work because the process in question may not have a populated /dev 
+> and even if it does, it would be wasteful to scan /dev for all devices. 
+> Moreover, given symlinks for device-mapper, /dev/dm-1 isn't as descriptive as 
+> /dev/mapper/system-root or /dev/system/root.
+> 
+> Is there a chance of getting this in a new version of the kernel?
+> 
+> Of the two others, we can get via other system calls, but would be nice if 
+> statmount() also provided it.
+> 
+> First, the information provided by statfs(), which is the workaround. It's 
+> easy to call statfs() with the returned mount point path, though that causes a 
+> minor race.
+> 
+> The second is the filesystem label. The workaround for this is opening the 
+> mount point and issuing ioctl(FS_IOC_GETFSLABEL), but that again introduces a 
+> minor race and also requires that the ability to open() the path in question. 
+> The second fallback to that is to scan /dev/disks/by-label, which is populated 
+> by udev/udisks/systemd.
 
-Comment added as that's really useful in general.
-
----
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fs/file: fix the check in find_next_fd()
-      https://git.kernel.org/vfs/vfs/c/96998332ac4d
+I think that mnt_devname makes sense!
+I don't like the other additions because they further blur the
+distinction between mount and filesystem information.
 
