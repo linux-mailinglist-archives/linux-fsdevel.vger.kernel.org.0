@@ -1,147 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-20515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9C18D4A14
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 13:10:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7E78D4B00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 13:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5B81C21E63
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 11:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 981FF1C22506
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 11:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCDF16F282;
-	Thu, 30 May 2024 11:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="KA06aF0U"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5BE176AAA;
+	Thu, 30 May 2024 11:48:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0517C16F0DE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 11:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDDD183964
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 11:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717067450; cv=none; b=GT26Ko+/pnap2L/7NwhrDVe26uALNpqJoJfL4U/DAOcI45/hr0PTAs+nimvyuPLU8DRogZNTH5+uWKLpFqalI0nXud+gDkuuelDg+zXP9RQsucZAQFQ8IqLovKFNCF376EVXgEGqeLtg6h/yFDEX0FA7bOjgl0gxugCzudFxNVQ=
+	t=1717069684; cv=none; b=GTA8yY3Y+iGM8Ip7EfxGZoBTqzs2sSNXB2IdiRRK/izzrQPL1dr/2UUgOcm0m1ls5MeGzieaG6wKXrzcLFrtw5vo0Z3kSxH+WhHFn6AgjI9Ox0vNdmi8TsJseE/WsVfKK0vswOSQkXl8I+AdZwud7fiuxAkfKGezfFL0Ucfn/JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717067450; c=relaxed/simple;
-	bh=6cQQT1iNHkPNVZ1fV3a9CoRBkW4GBeWmVMJ7xh+x3P4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bE0rrb7CiksKcomVdV28DFSgGKNNKQCv0vPos28/3vFQ9VgxgZwmnIJi+HYyQ28KiwC/wE6sOxMOqTuUmHM+zwbx21vwGKh6QnVc0mWN98gY1e//nmlWLjZO38EcRu9e8DL5GNWQUXXMoFH96LM9uh+PLg8xOmchWcg4RsAwDwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=KA06aF0U; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35507a3a038so518965f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 04:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717067446; x=1717672246; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kiy02xbpkVoe0jsA57DQLD//qIOyPVkR19TcyOZjzlw=;
-        b=KA06aF0UxXX6gvPHAi5VEaG8RTIwT1rANECvghtsv0echx0y6+rrUGuuOE+WV4IRS2
-         1wn+zXckFKQi5kSxJgsjaBlu8L6HkwNaNyM1CCKQkKPjo/HD2odYWYsf2jq4v4pUn+Ao
-         0VOCEttYmYJoooRTWrRTLY2qiejUW/ynlI+sNslT+nyMmy3b2C3RjIXC2WvWGnodAvQP
-         YnIsxnTh2YITS2prbeZSnNy2CxxuU0ljpgu0Fm7/Cr6JsQ27RN6KxNf2qb81IKkcDRSS
-         umRZozZpRCFGN+gVIJ+/MrLC08KfuJGLDp5+ZVYQZpiivn6wRN4gRYXzV/qD8gDvgWiR
-         O8Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717067446; x=1717672246;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kiy02xbpkVoe0jsA57DQLD//qIOyPVkR19TcyOZjzlw=;
-        b=pmzTm0waWeJeOoZiQbhyp5eaMAM3q549SDoZD3CVWZ8KCE/PK++ojpuWM0hixekK/S
-         W61RvoSPP0tAuha9TRtT+7Dega82A8xCYK1c0374DKFCMO7T2uAKRl0+kROeFpep75S0
-         Ioyc88VHf8V422Fhog++0cRpmoHXy/eY4z5/QDSfkKggP99yp3OzDnLYQ11C7IkmNRtF
-         AYX5Drs9rSS2mcFA1ob/6FGpSwD/pFsy5GmRX4JlIJh1NmdhuLaSWmAjrHhrIdd8h+ce
-         xOJShakUqf7Se16qyWLlTTPhiwOsMxKfXv1vXnjlIe6tKvbZmnpdk63mSU3uk/Y7MhL8
-         /HBA==
-X-Forwarded-Encrypted: i=1; AJvYcCW++nv54XFoYDV55SjlE8QrPIWYWCCUXYeCAJ0z0tapGWgw1ggslka8KwwBkPk1wJ8TwLSo5koAyqfA1unlfZtREf3U/XkGwChw1eoCew==
-X-Gm-Message-State: AOJu0YxEivwXAFytC9FgOyf2QtNnDFAqv1SKiRXE7EGalqA4HllXJsYj
-	pfSby2XvUk3KkVTwWhJz4Grfo/nKO4n/Dm1NAEJ1rvMdiSWDKZVhzmXnAvmpG/I=
-X-Google-Smtp-Source: AGHT+IGchwI3vGbp2XfZ0nNpV0truuCoIeo7BGZQIyTNoxwDO/cF3FCmMTdbSH9KXzYGNrWg5l0NwA==
-X-Received: by 2002:a5d:6acd:0:b0:354:faec:c9e4 with SMTP id ffacd0b85a97d-35dc00c7d46mr2029957f8f.60.1717067446409;
-        Thu, 30 May 2024 04:10:46 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-357ad6c2fabsm13518620f8f.83.2024.05.30.04.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 04:10:45 -0700 (PDT)
-Date: Thu, 30 May 2024 12:10:44 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Phil Auld <pauld@redhat.com>
-Subject: Re: [PATCH v2] sched/rt: Clean up usage of rt_task()
-Message-ID: <20240530111044.d4jegeiueizvdjrg@airbuntu>
-References: <20240515220536.823145-1-qyousef@layalina.io>
- <20240521110035.KRIwllGe@linutronix.de>
- <20240527172650.kieptfl3zhyljkzx@airbuntu>
- <20240529082912.gPDpgVy3@linutronix.de>
- <20240529103409.3iiemroaavv5lh2p@airbuntu>
- <20240529105528.9QBTCqCr@linutronix.de>
+	s=arc-20240116; t=1717069684; c=relaxed/simple;
+	bh=C0Pgs8gmUVD60xjItK/ZZjzHKThqzM4CpQVps2B01GA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FDLemGjKOjkJBxHWsT/s6kCCMvp7atyQhx6jfZfAOJH8RWP4T8XrEZYTCleWyqxSDyhiggMkJIGiQw73chmaulWJTXitwgDyJnu/P4+BAX92G7WGx3pEhsDKeLfgCT6DlqKgqxpMphvmA1Q+6BUKyxZQqaBwb81JFVt4fM4qdDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VqksY3crKzmWyJ;
+	Thu, 30 May 2024 19:43:29 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id AAEA0140382;
+	Thu, 30 May 2024 19:47:53 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 30 May 2024 19:47:53 +0800
+Message-ID: <49f5cd14-987f-4d72-8606-496fca08a708@huawei.com>
+Date: Thu, 30 May 2024 19:47:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240529105528.9QBTCqCr@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hostfs: convert hostfs to use the new mount api
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: <oe-kbuild@lists.linux.dev>, <richard@nod.at>,
+	<anton.ivanov@cambridgegreys.com>, <johannes@sipsolutions.net>,
+	<lkp@intel.com>, <oe-kbuild-all@lists.linux.dev>,
+	<linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>
+References: <d845ba1a-2b10-4d83-a687-56406ce657c9@suswa.mountain>
+ <74576c52-5eca-4961-ada4-a9ec99fb16cf@huawei.com>
+ <df349a89-e638-41de-858b-04341d89774e@moroto.mountain>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <df349a89-e638-41de-858b-04341d89774e@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On 05/29/24 12:55, Sebastian Andrzej Siewior wrote:
-> On 2024-05-29 11:34:09 [+0100], Qais Yousef wrote:
-> > > behaviour. But then it is insistent which matters only in the RT case.
-> > > Puh. Any sched folks regarding policy?
-> > 
-> > I am not sure I understood you here. Could you rephrase please?
+Thanks for replying.
+
+I will send the new patch marked with v2 later.
+
+regards,
+Hongbo Li
+
+On 2024/5/23 18:43, Dan Carpenter wrote:
+> On Fri, May 17, 2024 at 07:21:09PM +0800, Hongbo Li wrote:
+>> Thanks for your attention, I have solved the warnings in the following patch
+>> (the similar title: hostfs: convert hostfs to use the new mount API):
+>>
+>> https://lore.kernel.org/all/20240515025536.3667017-1-lihongbo22@huawei.com/
+>>
+>> or
+>>
+>> https://patchwork.ozlabs.org/project/linux-um/patch/20240515025536.3667017-1-lihongbo22@huawei.com/
+>>
+>> It was strange that the kernel test robot did not send the results on the
+>> new patch.
 > 
-> Right now a SCHED_OTHER task boosted to a realtime priority gets
-> slack=0. In the !RT scenario everything is fine.
-> For RT the slack=0 also happens but the init of the timer looks at the
-> policy instead at the possible boosted priority and uses a different
-> clock attribute. This can lead to a delayed wake up (so avoiding the
-> slack does not solve the problem).
+> With uninitialized variable warnings, quite often Smatch is not the only
+> or first checker to report the bug so I normally search lore to see if
+> it has already been fixed.  In this case there were no bug reports from
+> Nathan Chancelor and the second version of the patch wasn't marked as a
+> v2 and there was no note explaining it like:
 > 
-> This is not consistent because IMHO the clock setup & slack should be
-> handled equally. So I am asking the sched folks for a policy and I am
-> leaning towards looking at task-policy in this case instead of prio
-> because you shouldn't do anything that can delay.
-
-Can't we do that based on is_soft/is_hard flag in hrtimer struct when we apply
-the slack in hrtimer_set_expires_range_ns() instead?
-
-(not compile tested even)
-
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index aa1e65ccb615..e001f20bbea9 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -102,12 +102,16 @@ static inline void hrtimer_set_expires(struct hrtimer *timer, ktime_t time)
- 
- static inline void hrtimer_set_expires_range(struct hrtimer *timer, ktime_t time, ktime_t delta)
- {
-+       if (timer->is_soft || timer->is_hard)
-+               delta = 0;
-        timer->_softexpires = time;
-        timer->node.expires = ktime_add_safe(time, delta);
- }
- 
- static inline void hrtimer_set_expires_range_ns(struct hrtimer *timer, ktime_t time, u64 delta)
- {
-+       if (timer->is_soft || timer->is_hard)
-+               delta = 0;
-        timer->_softexpires = time;
-        timer->node.expires = ktime_add_safe(time, ns_to_ktime(delta));
- }
+> ---
+> v2: fixed uninitialized variable warning
+> 
+> So it wasn't immediately clear that it had been fixed already.
+> https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+> 
+> regards,
+> dan carpenter
+> 
 
