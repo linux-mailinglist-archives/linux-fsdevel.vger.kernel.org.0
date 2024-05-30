@@ -1,74 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-20542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49E78D4FC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 18:21:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB67D8D4FE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 18:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7561F25ECB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 16:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45356B221AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 16:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39ED1CF94;
-	Thu, 30 May 2024 16:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85BC200C7;
+	Thu, 30 May 2024 16:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0ImOQ6Fw"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="kkbvhgEb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZCXszEPo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBD41CD24
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 16:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7982E417;
+	Thu, 30 May 2024 16:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717086085; cv=none; b=myzMg/dwYIb2cDTfBXGiiRFZ2cb1JaSqo8sITbtgAL+zx8Bmprx8CfFCtUG16QRDxry2DImt0efVlYUiczEkWf2DUzEcw6bQ2KkDHXg34ovJCKuXQn5sMK2wX6yGp+lfs1NdT4WhdW+e/6RmcFr/VXk8b0fNIkxGfphBdAIMkT8=
+	t=1717086756; cv=none; b=r2Qk7I8TI05ssDiPCqzd8fgnwvkMfJrD9ltUzuI0OV6emT2brg4sfyRu+pJF75CUXPMtFsWqhfMU45Oqky+O/pYyxfQKXyKTkHZs64zVjIogC6bfYDr7nVqcCmr7OTWiq7+Y/g8hQ34/mb5ySdM/iNs+2SgCMuvmZAWfp4W02jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717086085; c=relaxed/simple;
-	bh=jLCnzk1FgN12Kwp/oacBiVBLmsM1zx3ZPo3OjeUZ3l8=;
+	s=arc-20240116; t=1717086756; c=relaxed/simple;
+	bh=RfMtDG8CnOGXEk70NubsN9/P4gwT8kDTXYKcm/sIU2s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G+AMHnTlwyQWdocHwT1014/Ru+H6u6qhygn/Lsmnfg6E1tj4HjHRzfC1/P6Q0t8nCs96sC1kuBR4t8Hua9EgQmA/bKsv+ol6VV/J/it2kY57oeuVQKGs2RrpjOyTN3EQl7Enr6SdfyRccZIRZHtSoMaSRpsZ/fV/vODbX98kZgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0ImOQ6Fw; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f8d967078dso29168a34.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 09:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717086082; x=1717690882; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OieraxBcsvRTdK3OcSRojD9cGTahPveJy8SszB1ZOBE=;
-        b=0ImOQ6Fwqm4HfrIZLyzqtIce4FVtiiUMiu9RN6JyRMEgDOLPAnu1LJzbxvJ/V9TTSg
-         xC2iAJvQiKdOi3QlDJyfZEY/OI7APZEGdMdpOaZQH54BHCIv9wRMs9quZm2A3fgMlDTx
-         KwQWWFiLUGF3hHlvyBnxEUH/aSzw+G6wX/1TfeINUL/kd3FjXnb7aZuW2kk/wcUaLhuk
-         uio8s5Ok512O4j+dSjboF9ZaLajyj4Oe/dlGA5gPuM5xIfrlrUuSxPYi+d1Gea9Z2o8x
-         v6PwVC4EaYi/0XLH//+6SA/IWW1HYs8f2MFNO3RsAEKTABZ/DS07dVcHSkNauIr7EaNk
-         ukbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717086082; x=1717690882;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OieraxBcsvRTdK3OcSRojD9cGTahPveJy8SszB1ZOBE=;
-        b=qyMyOldq1/oDS1ERYYnifA6NjDu/IGd3jZy5vs5yJZ8egSoVGnX83FZiZO2AXuiTkO
-         TLceP8DcUcfaVS+RlcCiZ/4lPkzATRGDlu8cUYGuim9QMtdv5+z2dXwyopE/XIDU/hmY
-         FoKN+oW1vyOgSnynXjR18tmvLFXUgfEsAfeI6ZsrNdTmvmwAmvOcjjkZluwCqzK7mmPb
-         0JdkYG9nw4P3jJJiESK775alXF+Xx+WvzGGEnKI1u6M1c7r6U9njWKLXH8rXZJq6oZhV
-         Xgo9S+ngE6BDjMJyz84hThnfCyQ2wl/gzNx38iUvGAQhwJ9boJ8Syo8t0IO97qseMaWi
-         9E3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMu+4ep2wxAUWhYpehTK2ydhW6bSm/zZCbupcegX4GUr0Nk3CbAZjVWVbVl5UTfcuJUAfmqtm0ouIBNTw5bD0P3S5kS6J7pzdhgY7JYA==
-X-Gm-Message-State: AOJu0Yz7yccGREXJH7H0o9OBtMfJWF2Txw4m999Dfp1rZP0v6AfGKN3t
-	Qb+Iwwwk7nkJKqR74T4kb0O2ZdYBVH9nLG2knLsO7K830weh5D6Db2nGa1gRIdE=
-X-Google-Smtp-Source: AGHT+IGaxrcFOIbphwZTYIv0ek+RxPvRrF6ZGN6TagnzapF/2qunE37ScKDQuQWCgn/L7gsn4PPBgw==
-X-Received: by 2002:a05:6830:7203:b0:6f0:6420:35d6 with SMTP id 46e09a7af769-6f90af7702cmr2780805a34.3.1717086081998;
-        Thu, 30 May 2024 09:21:21 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f91059cc0bsm12129a34.57.2024.05.30.09.21.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 09:21:20 -0700 (PDT)
-Message-ID: <9db5fc0c-cce5-4d01-af60-f28f55c3aa99@kernel.dk>
-Date: Thu, 30 May 2024 10:21:19 -0600
+	 In-Reply-To:Content-Type; b=iGloQYLe/92OnnlhTtea+CXoaVnIJpXlVdhPj7A15fMde48Dv0LIfzf7J3uwlV5kUNSY9QNNi1HcvcM7DHHx951i6MbW6aTLHgrkdbxZMcgf7obaA0r/cqBkarPKrhwOTXiEDHpCey/W2XRg9Yv/9385jhvMrV33iokXNBTLFUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=kkbvhgEb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZCXszEPo; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4AC3211400FC;
+	Thu, 30 May 2024 12:32:33 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 30 May 2024 12:32:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1717086753;
+	 x=1717173153; bh=Z4Mm1fkBTA3G1C9T3Tcls34tn8SvlTzmOdzcBAwMLg0=; b=
+	kkbvhgEbnEgoRF6t9YBedwE5kcWWLw9KtvCXj8gaNVX07uevoUFm/NVZrxu5ddoz
+	9+5xSvyxUUYLVZgnck1hH3R3AI7Wc5+NsRrrwdOZGVjNKGiOeTkGlnEUwosMd6km
+	q7fKNSr67HYq3zwdkhdoF1q8nmGgms+J6RYLyX49MJZ3gjj8WCWImHc7Z2BXHtoW
+	mW2Z2Cav9qr4jHbSRTk3ypoX/1X6AJaNg44FfUbcKCk7Jlf/TYOcLtri0j7soOYf
+	fV4A1CSJXGBddUnwrJoK9Wm3tUCFfEbkp5D2COk062pm5YhlS/pbmn174SGxVdBM
+	c55xiJp4/Ap/qYnyEPJf4g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717086753; x=
+	1717173153; bh=Z4Mm1fkBTA3G1C9T3Tcls34tn8SvlTzmOdzcBAwMLg0=; b=Z
+	CXszEPopBF+gpaNXu6tmgcIOGJYOorFOTUFnD1VLE4590Q1QpqWoUCiiucOIoCpZ
+	Fe6RzjnjUHFoStMSOCM4vnoPyNO+WNvvuUQmHibbcaNDG9XzQDPOnBnDj3KvjWm/
+	1QvH4qA4SBXMI50f3vIKhSn3kxscDTX+VxxY9S14o+RaVC7ciRnHRzbhWEIzu9EM
+	I6h6359NMopGMagccAhHG3HmXlvo51H5xwUeLPe7RKb+ozp6qT6fmfD+JcPVuAIR
+	wmyluALrLeisGkCknLqco/TjenmU1lPwBj1tdzmsAEouFl++fUzSj713F3fApFCJ
+	ZAuSmWZkAnLXnjuBGzK5A==
+X-ME-Sender: <xms:IKpYZhlpAbsy2U0zGFzkXZJyfw6ZICeFCMIXwNuqdy89klBcvmC3MQ>
+    <xme:IKpYZs1RCL2Z7WcFFcZd1bLT-x8aF3K6AaJhy0n1p6VA3cIEGpdZJjHBPs1Xcp04A
+    GwwIr5-YuXMwrxj>
+X-ME-Received: <xmr:IKpYZnpaZRxk9HEbTTJg0v3AU7Yxw2t6W2BUmehR2rH1yr9lcZSJaiy6VepqILtkaJNPDklZdj5X_bvQePxQWV3Xwiy0weLzKLssA56ne-OlC2UvwzJd>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedgleelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
+    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:IKpYZhmOzJ-QN_SbLAovxDKscMJLhN1PlE0oycH3kvdzuD5sL8ZJ6g>
+    <xmx:IKpYZv26ErvJWNKdZxx_ti9EOYUspV6Vq2WPhX2c7Rp4RjOIb5u6ng>
+    <xmx:IKpYZguIG8M7QQ3YlljsH28fTjXVqVC8ugkpBdOf-bte9ItykUvXmg>
+    <xmx:IKpYZjVgtDV17rWE3s38y9AApnmYLmAmH8soRJBcp5DBnFR-D6MvSw>
+    <xmx:IapYZm11Gg8lRZPCTlM6bAUiJXlww7heo-mWKeMq8kdD38viGQSNsdY0>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 May 2024 12:32:30 -0400 (EDT)
+Message-ID: <43205d1f-de49-4115-857f-c2c7db28b418@fastmail.fm>
+Date: Thu, 30 May 2024 18:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,9 +92,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Bernd Schubert <bschubert@ddn.com>
+To: Jens Axboe <axboe@kernel.dk>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
  linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
  linux-mm@kvack.org, Ingo Molnar <mingo@redhat.com>,
@@ -89,70 +103,88 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
 References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
  <5mimjjxul2sc2g7x6pttnit46pbw3astwj2giqfr4xayp63el2@fb5bgtiavwgv>
  <8c3548a9-3b15-49c4-9e38-68d81433144a@fastmail.fm>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <8c3548a9-3b15-49c4-9e38-68d81433144a@fastmail.fm>
+ <9db5fc0c-cce5-4d01-af60-f28f55c3aa99@kernel.dk>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <9db5fc0c-cce5-4d01-af60-f28f55c3aa99@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/30/24 10:02 AM, Bernd Schubert wrote:
-> 
-> 
-> On 5/30/24 17:36, Kent Overstreet wrote:
->> On Wed, May 29, 2024 at 08:00:35PM +0200, Bernd Schubert wrote:
->>> From: Bernd Schubert <bschubert@ddn.com>
+
+
+On 5/30/24 18:21, Jens Axboe wrote:
+> On 5/30/24 10:02 AM, Bernd Schubert wrote:
+>>
+>>
+>> On 5/30/24 17:36, Kent Overstreet wrote:
+>>> On Wed, May 29, 2024 at 08:00:35PM +0200, Bernd Schubert wrote:
+>>>> From: Bernd Schubert <bschubert@ddn.com>
+>>>>
+>>>> This adds support for uring communication between kernel and
+>>>> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+>>>> appraoch was taken from ublk.  The patches are in RFC state,
+>>>> some major changes are still to be expected.
+>>>>
+>>>> Motivation for these patches is all to increase fuse performance.
+>>>> In fuse-over-io-uring requests avoid core switching (application
+>>>> on core X, processing of fuse server on random core Y) and use
+>>>> shared memory between kernel and userspace to transfer data.
+>>>> Similar approaches have been taken by ZUFS and FUSE2, though
+>>>> not over io-uring, but through ioctl IOs
 >>>
->>> This adds support for uring communication between kernel and
->>> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
->>> appraoch was taken from ublk.  The patches are in RFC state,
->>> some major changes are still to be expected.
+>>> What specifically is it about io-uring that's helpful here? Besides the
+>>> ringbuffer?
 >>>
->>> Motivation for these patches is all to increase fuse performance.
->>> In fuse-over-io-uring requests avoid core switching (application
->>> on core X, processing of fuse server on random core Y) and use
->>> shared memory between kernel and userspace to transfer data.
->>> Similar approaches have been taken by ZUFS and FUSE2, though
->>> not over io-uring, but through ioctl IOs
+>>> So the original mess was that because we didn't have a generic
+>>> ringbuffer, we had aio, tracing, and god knows what else all
+>>> implementing their own special purpose ringbuffers (all with weird
+>>> quirks of debatable or no usefulness).
+>>>
+>>> It seems to me that what fuse (and a lot of other things want) is just a
+>>> clean simple easy to use generic ringbuffer for sending what-have-you
+>>> back and forth between the kernel and userspace - in this case RPCs from
+>>> the kernel to userspace.
+>>>
+>>> But instead, the solution seems to be just toss everything into a new
+>>> giant subsystem?
 >>
->> What specifically is it about io-uring that's helpful here? Besides the
->> ringbuffer?
 >>
->> So the original mess was that because we didn't have a generic
->> ringbuffer, we had aio, tracing, and god knows what else all
->> implementing their own special purpose ringbuffers (all with weird
->> quirks of debatable or no usefulness).
+>> Hmm, initially I had thought about writing my own ring buffer, but then 
+>> io-uring got IORING_OP_URING_CMD, which seems to have exactly what we
+>> need? From interface point of view, io-uring seems easy to use here, 
+>> has everything we need and kind of the same thing is used for ublk - 
+>> what speaks against io-uring? And what other suggestion do you have?
 >>
->> It seems to me that what fuse (and a lot of other things want) is just a
->> clean simple easy to use generic ringbuffer for sending what-have-you
->> back and forth between the kernel and userspace - in this case RPCs from
->> the kernel to userspace.
+>> I guess the same concern would also apply to ublk_drv. 
 >>
->> But instead, the solution seems to be just toss everything into a new
->> giant subsystem?
+>> Well, decoupling from io-uring might help to get for zero-copy, as there
+>> doesn't seem to be an agreement with Mings approaches (sorry I'm only
+>> silently following for now).
 > 
+> If you have an interest in the zero copy, do chime in, it would
+> certainly help get some closure on that feature. I don't think anyone
+> disagrees it's a useful and needed feature, but there are different view
+> points on how it's best solved.
+
+We had a bit of discussion with Ming about that last year, besides that
+I got busy with other parts, it got a bit less of personal interest for
+me as our project really needs to access the buffer (additional
+checksums, sending it out over network library (libfabric), possibly
+even preprocessing of some data) - I think it makes sense if I work on
+the other fuse parts first and only come back zero copy a bit later.
+
 > 
-> Hmm, initially I had thought about writing my own ring buffer, but then 
-> io-uring got IORING_OP_URING_CMD, which seems to have exactly what we
-> need? From interface point of view, io-uring seems easy to use here, 
-> has everything we need and kind of the same thing is used for ublk - 
-> what speaks against io-uring? And what other suggestion do you have?
+>> From our side, a customer has pointed out security concerns for io-uring. 
 > 
-> I guess the same concern would also apply to ublk_drv. 
-> 
-> Well, decoupling from io-uring might help to get for zero-copy, as there
-> doesn't seem to be an agreement with Mings approaches (sorry I'm only
-> silently following for now).
+> That's just bs and fud these days.
 
-If you have an interest in the zero copy, do chime in, it would
-certainly help get some closure on that feature. I don't think anyone
-disagrees it's a useful and needed feature, but there are different view
-points on how it's best solved.
+I wasn't in contact with that customer personally, I had just seen their
+email.It would probably help if RHEL would eventually gain io-uring
+support - almost all of HPC systems are using it or a clone. I was
+always hoping that RHEL would get it before I'm done with
+fuse-over-io-uring, now I'm not so sure anymore.
 
-> From our side, a customer has pointed out security concerns for io-uring. 
 
-That's just bs and fud these days.
-
--- 
-Jens Axboe
-
+Thanks,
+Bernd
 
