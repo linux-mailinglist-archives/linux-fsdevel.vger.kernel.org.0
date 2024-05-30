@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-20519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5E18D4C01
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 14:50:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CC18D4C0D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 14:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24655B22145
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 12:50:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D527B246CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 12:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFF7132126;
-	Thu, 30 May 2024 12:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F3E183979;
+	Thu, 30 May 2024 12:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Oqu73bAq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O0/Vx6rD"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="SFyZEd3j";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YuyLvbnZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CEE1E515
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 12:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9500D3DAC00
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 12:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717073435; cv=none; b=bVfdMKnaSvoru2oEXJnI1HTxByWSZxJ/HAHF6XLv0qzyE11M8dzaxUW3uHVSzTA+K6myEAfy7NKrtHPV7+VfNMxTSO9QJYvlntABYuJrWjS9iwaYA0SpA5OogH0UCbB0Lm6d8cmhhNn1G8HOUx10VgcOkqMfDm80pkwnEr6q4lo=
+	t=1717073503; cv=none; b=cpG8nrGcoqeQ050kw9I6kV9kVQPeoDlqjCLxDvnwSTTb9awS1s4CAfwpzKr1eM6d52EFhilLVAJ+500dGAGHFBMLRBZzaCuRLMcmzGa3HIfQyVpAKwk2xFLgb1RZowlD4OpqmoVQp/AHORIfqcfL/sNu3tmZTZEX6nvuPQxkft0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717073435; c=relaxed/simple;
-	bh=xyCFcgCyr047cCb6fEF1M5XJHbfSF/tRphznUbgbJfU=;
+	s=arc-20240116; t=1717073503; c=relaxed/simple;
+	bh=vw3dVHxmjamX9NEf/yj67Jp0tFx3tgzNoetr/OTckFQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jdTYKF9swtlPYNLK6PFwLeGCcCHZO241TLE1zdVZudcOpsuTb9pwsFHGyeWBvY/gPkc/2BmCTomo2sXtmG9nQj3Rl7Bn8+zB00PxNk85uKtFO/qGbgyX8QBtV6det6Ld2E/JJr3vhZr6K4r9+tllD//M3sLHjmqvr3e9E0+/w/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=Oqu73bAq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O0/Vx6rD; arc=none smtp.client-ip=103.168.172.149
+	 In-Reply-To:Content-Type; b=VGLXCY3r6U1P2Mj7vjyGsYeV/o4sq7tpeWNpLwgH2YnrSnGrE/xFhf1Af9cS2GXaFCPNzZ8/6QKnEoT12BpohXU+YP1pE6cWp0kEfeMXQbu2DzvavKI/Mr5m3+SK597Rc3u9dwkultgJ4i+ktR0QkcY1Mg5BytvQ4mUodjLpqmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=SFyZEd3j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YuyLvbnZ; arc=none smtp.client-ip=103.168.172.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 67B7013800D8;
-	Thu, 30 May 2024 08:50:32 -0400 (EDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id BF4BE114014A;
+	Thu, 30 May 2024 08:51:40 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 30 May 2024 08:50:32 -0400
+  by compute6.internal (MEProxy); Thu, 30 May 2024 08:51:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1717073432;
-	 x=1717159832; bh=2uNXQ6Fjo+kSEjWPunY1HiCaofbdzyN995eTo2NCSXM=; b=
-	Oqu73bAqzJrJspLz9H+rld/rEuIRWqsdWZRgNSafeBLi5z+g1Yrraz3+a9RqFM0j
-	o/BNynfsEULyfGLU9VF9JwBQpov+FvfM3sRCnEjH+uxCey7aOX8HnOscd7P4l7GF
-	RFSbaJiJr2T5eIBIYZW158SjmCh+yX4quiA4t0onOWwXoT0zBm8gQ2ZbUGRhIOrx
-	UKB59xRqY1amW0Dzkfm/Lkshf7mVH42HaosgHyZKFNxko29FoLL5sOGzVWAYiosx
-	c0KaNdy4OV4FJizg9oYzvgk2wTFD82r1CQwSz0E3QKbNGIEDd9BRAurwj5gHIov4
-	5TnzNUJNpamobAORizphug==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1717073500;
+	 x=1717159900; bh=Gdlp9J6gp4GbuOSX44soEBa+M8AblzmVQbSaibx1PX8=; b=
+	SFyZEd3jTvQYU5fAn/QVa5h7f/UggituAdMJw428loCWBk6CUPrn/j02YPRLC8U9
+	NxmotY2cu+RPL+/D0BYkN85qBkXKM0vfzYm/0b4axLAlGFioEBt2uw2FudcHVMVn
+	guqNm4MMfN66S1urEuze5ZgH827baNDveG/0wLklWm5WYUaFF3KQZ3kws6IS43nd
+	cHyDAScjKDCnVdSJsgx4GgW4mz/t+zYytiwDIQcXYTjDZk2O41wCzkaYKUiHfD9I
+	1xn7otR+ikv8g/M+9fSD2TWZC0Ap3TvVC+0bPRp3mwnhroki+wzKiJ90DwqzVxbr
+	prbNkJSKBzK+qu8Td2NVJw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717073432; x=
-	1717159832; bh=2uNXQ6Fjo+kSEjWPunY1HiCaofbdzyN995eTo2NCSXM=; b=O
-	0/Vx6rDgRKViQUjyN2J+hPDlYsrl1D+k3T2m7huS+OBtoM0CPuWHbTcF5YeSGj8+
-	kO1kxDs1UtVJTIQ+K6KUAiupe00lmNlw6j/0Ra5huHGj5kCGD3XsyWmh14fAlxxc
-	vNfoXCFw8TbB/Iqg2pemqr+y4lW90Ausgis5m0xtplDaqpgnt8cdvnDayIUgFSXE
-	ArVSvcLNtT8ZIaz4oZv+X9hCmcAYe869wQjO4/dhOKJYm79ltDoy7SShupgjmWo8
-	rpwivlL8TGVEC5gcXXswcCCg4NeiXOMUBbXTVPwfZpyX9BP17sDrkMD1dIn6TP5y
-	m29h6nIhcjxqMQ+W3cABg==
-X-ME-Sender: <xms:F3ZYZk0NR8FOgtRWPTW1Wtx27YfETUZX5uNXQ5XF0eco19TUnNft6g>
-    <xme:F3ZYZvHzJXIvfAuJtH5hDgRRM8N44FS4TSmwlG8h9iy34KsvAjZRe2WlLnaAM3aT9
-    UVMjShmBbEq8p7Z>
-X-ME-Received: <xmr:F3ZYZs6734rjpZHnUPg2AbXehe_IBR45dWDaQzVybWi08Kt_zf23TDkxVvMdDBWJ7uDex-PThEyCvsvHJu6xie9xV-D_D_Fe6YkCVHjgtdm-Dq15Vbx9>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedgheegucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717073500; x=
+	1717159900; bh=Gdlp9J6gp4GbuOSX44soEBa+M8AblzmVQbSaibx1PX8=; b=Y
+	uyLvbnZ9pWm6P6P68QjnudjWKMo7f9U8gM08shIEId4rUmNqS06zl4eRoePAXNdG
+	jzRsGOMRDWuhTr+Xi+ki9nnDyoNAycNXha7PbVzQyYKsSCnQky6p2dChvdQP6aCc
+	68myPVEzD9P77KTPLkhMXzH5h3UNJ92Jdn5lqi8fzJjkr0rjh06wgu90E5z5ifI2
+	DOfDld3bJWdncE4qHfmITfWX2U36CgSirfkG8TOcQnwrvI/XoXklfrQTOBQi6oqF
+	NysYYN43zEHssRfEilKqfL8oOap+c8IfDuyf/nYoj9y8TLsHlE6j2eQgexw3i0r7
+	2d2GWcZNaBijuvMaVIBRA==
+X-ME-Sender: <xms:XHZYZlMAAFcN9cTIijSnLNUf3IktNoJP12lkNBZ_LoEJMED127LtdQ>
+    <xme:XHZYZn_RxJlr07KgXf911HCho74s4cjUnGRkhWeFcJ9VH-ZxyXp9C5x_SmlfnmA4J
+    LOZlRRuJXfQXEkR>
+X-ME-Received: <xmr:XHZYZkSleYeIx_F_zQh8o6btcbIPOti6zDKqWfK9nXjlT-4pVXi-6I_3A7nYPCnyUTS30Y58xoThzAbd72O4wsk2Rwfa-0PuLr1xFlIPiz5n_jfTJr7O>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedgheehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
@@ -74,16 +74,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedgheegucetufdoteggod
     jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
     hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
     fhhm
-X-ME-Proxy: <xmx:F3ZYZt12yS4049EFWsDOf3B7OsnUnwR_9EUNtHcbbteuYF7sOcUq8w>
-    <xmx:F3ZYZnHukWJOBPQxxfrPP8WwwhByEkMND4P2Xdba1I5_UBu2bC02AQ>
-    <xmx:F3ZYZm-obmPz_hCxEE8CAihhMi2y6DnDVt7J2B9t2TVWkmOKqXm0aw>
-    <xmx:F3ZYZskCY7w9DdLFfTPK9P-X-T3MLv-cDr-XxaDO3YDdcKNrz7WtJQ>
-    <xmx:GHZYZoPBEvfPC6WTtuzn0wkALvTcps0V2THdKfWsXO0auMM7AUy5GzD5>
+X-ME-Proxy: <xmx:XHZYZhvi2ZD2UpWQqpxjgoTvshBrWxAHhqnzAkiUMGT0emLXgORIaA>
+    <xmx:XHZYZtdLEYUGWTno9ocs10zWrlz7ilVHEpscOUhOx80mCBWCTzfdmQ>
+    <xmx:XHZYZt0Qmw8GNWvSeA8HeLYEyw5WNp7Xwgw7Aas08kArRwKkllCONw>
+    <xmx:XHZYZp9NhpqCJJqCIAYcFTNkI-YZOvsNjI0uk4gkodIjCf0oMUBPPw>
+    <xmx:XHZYZmGo6RgRw6t5nHIADxY08dEgKZ3VLscn2q-SZLxfuibEeBTJHdk0>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 May 2024 08:50:31 -0400 (EDT)
-Message-ID: <8e756ed6-3b12-4afa-ad6a-94e9a56fd4be@fastmail.fm>
-Date: Thu, 30 May 2024 14:50:30 +0200
+ 30 May 2024 08:51:39 -0400 (EDT)
+Message-ID: <996a49b0-5230-4106-900e-7b5ff3e151cf@fastmail.fm>
+Date: Thu, 30 May 2024 14:51:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,210 +91,557 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 04/19] fuse: Add fuse-io-uring design documentation
+Subject: Re: [PATCH RFC v2 05/19] fuse: Add a uring config ioctl
 To: Josef Bacik <josef@toxicpanda.com>, Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
  linux-fsdevel@vger.kernel.org
 References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-4-d149476b1d65@ddn.com>
- <20240529211746.GD2182086@perftesting>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-5-d149476b1d65@ddn.com>
+ <20240529212450.GE2182086@perftesting>
 From: Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Language: en-US, de-DE, fr
-In-Reply-To: <20240529211746.GD2182086@perftesting>
+In-Reply-To: <20240529212450.GE2182086@perftesting>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 5/29/24 23:17, Josef Bacik wrote:
-> On Wed, May 29, 2024 at 08:00:39PM +0200, Bernd Schubert wrote:
+On 5/29/24 23:24, Josef Bacik wrote:
+> On Wed, May 29, 2024 at 08:00:40PM +0200, Bernd Schubert wrote:
+>> This only adds the initial ioctl for basic fuse-uring initialization.
+>> More ioctl types will be added later to initialize queues.
+>>
+>> This also adds data structures needed or initialized by the ioctl
+>> command and that will be used later.
+>>
 >> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 >> ---
->>  Documentation/filesystems/fuse-io-uring.rst | 167 ++++++++++++++++++++++++++++
->>  1 file changed, 167 insertions(+)
+>>  fs/fuse/Kconfig           |  12 +++
+>>  fs/fuse/Makefile          |   1 +
+>>  fs/fuse/dev.c             |  91 ++++++++++++++++--
+>>  fs/fuse/dev_uring.c       | 122 +++++++++++++++++++++++
+>>  fs/fuse/dev_uring_i.h     | 239 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  fs/fuse/fuse_dev_i.h      |   1 +
+>>  fs/fuse/fuse_i.h          |   5 +
+>>  fs/fuse/inode.c           |   3 +
+>>  include/uapi/linux/fuse.h |  73 ++++++++++++++
+>>  9 files changed, 538 insertions(+), 9 deletions(-)
 >>
->> diff --git a/Documentation/filesystems/fuse-io-uring.rst b/Documentation/filesystems/fuse-io-uring.rst
->> new file mode 100644
->> index 000000000000..4aa168e3b229
->> --- /dev/null
->> +++ b/Documentation/filesystems/fuse-io-uring.rst
->> @@ -0,0 +1,167 @@
->> +.. SPDX-License-Identifier: GPL-2.0
+>> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+>> index 8674dbfbe59d..11f37cefc94b 100644
+>> --- a/fs/fuse/Kconfig
+>> +++ b/fs/fuse/Kconfig
+>> @@ -63,3 +63,15 @@ config FUSE_PASSTHROUGH
+>>  	  to be performed directly on a backing file.
+>>  
+>>  	  If you want to allow passthrough operations, answer Y.
 >> +
->> +===============================
->> +FUSE Uring design documentation
->> +==============================
+>> +config FUSE_IO_URING
+>> +	bool "FUSE communication over io-uring"
+>> +	default y
+>> +	depends on FUSE_FS
+>> +	depends on IO_URING
+>> +	help
+>> +	  This allows sending FUSE requests over the IO uring interface and
+>> +          also adds request core affinity.
 >> +
->> +This documentation covers basic details how the fuse
->> +kernel/userspace communication through uring is configured
->> +and works. For generic details about FUSE see fuse.rst.
+>> +	  If you want to allow fuse server/client communication through io-uring,
+>> +	  answer Y
+>> diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+>> index 6e0228c6d0cb..7193a14374fd 100644
+>> --- a/fs/fuse/Makefile
+>> +++ b/fs/fuse/Makefile
+>> @@ -11,5 +11,6 @@ fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
+>>  fuse-y += iomode.o
+>>  fuse-$(CONFIG_FUSE_DAX) += dax.o
+>>  fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+>> +fuse-$(CONFIG_FUSE_IO_URING) += dev_uring.o
+>>  
+>>  virtiofs-y := virtio_fs.o
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index b98ecb197a28..bc77413932cf 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -8,6 +8,7 @@
+>>  
+>>  #include "fuse_i.h"
+>>  #include "fuse_dev_i.h"
+>> +#include "dev_uring_i.h"
+>>  
+>>  #include <linux/init.h>
+>>  #include <linux/module.h>
+>> @@ -26,6 +27,13 @@
+>>  MODULE_ALIAS_MISCDEV(FUSE_MINOR);
+>>  MODULE_ALIAS("devname:fuse");
+>>  
+>> +#if IS_ENABLED(CONFIG_FUSE_IO_URING)
+>> +static bool __read_mostly enable_uring;
+>> +module_param(enable_uring, bool, 0644);
+>> +MODULE_PARM_DESC(enable_uring,
+>> +		 "Enable uring userspace communication through uring.");
+>> +#endif
 >> +
->> +This document also covers the current interface, which is
->> +still in development and might change.
->> +
->> +Limitations
->> +===========
->> +As of now not all requests types are supported through uring, userspace
-> 
-> s/userspace side/userspace/
-> 
->> +side is required to also handle requests through /dev/fuse after
->> +uring setup is complete. These are especially notifications (initiated
-> 
-> especially is an awkward word choice here, I'm not quite sure what you're trying
-> say here, perhaps
-> 
-> "Specifically notifications (initiated from the daemon side), interrupts and
-> forgets"
-
-Yep, thanks a lot! I removed forgets", these should be working over the ring 
-in the mean time.
-
-> 
-> ?
-> 
->> +from daemon side), interrupts and forgets.
->> +Interrupts are probably not working at all when uring is used. At least
->> +current state of libfuse will not be able to handle those for requests
->> +on ring queues.
->> +All these limitation will be addressed later.
->> +
->> +Fuse uring configuration
->> +========================
->> +
->> +Fuse kernel requests are queued through the classical /dev/fuse
->> +read/write interface - until uring setup is complete.
->> +
->> +In order to set up fuse-over-io-uring userspace has to send ioctls,
->> +mmap requests in the right order
->> +
->> +1) FUSE_DEV_IOC_URING ioctl with FUSE_URING_IOCTL_CMD_RING_CFG
->> +
->> +First the basic kernel data structure has to be set up, using
->> +FUSE_DEV_IOC_URING with subcommand FUSE_URING_IOCTL_CMD_RING_CFG.
->> +
->> +Example (from libfuse)
->> +
->> +static int fuse_uring_setup_kernel_ring(int session_fd,
->> +					int nr_queues, int sync_qdepth,
->> +					int async_qdepth, int req_arg_len,
->> +					int req_alloc_sz)
+>>  static struct kmem_cache *fuse_req_cachep;
+>>  
+>>  static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *req)
+>> @@ -2297,16 +2305,12 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
+>>  	return 0;
+>>  }
+>>  
+>> -static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+>> +static long _fuse_dev_ioctl_clone(struct file *file, int oldfd)
+>>  {
+>>  	int res;
+>> -	int oldfd;
+>>  	struct fuse_dev *fud = NULL;
+>>  	struct fd f;
+>>  
+>> -	if (get_user(oldfd, argp))
+>> -		return -EFAULT;
+>> -
+>>  	f = fdget(oldfd);
+>>  	if (!f.file)
+>>  		return -EINVAL;
+>> @@ -2329,6 +2333,16 @@ static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+>>  	return res;
+>>  }
+>>  
+>> +static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
 >> +{
->> +	int rc;
+>> +	int oldfd;
 >> +
->> +	struct fuse_ring_config rconf = {
->> +		.nr_queues		    = nr_queues,
->> +		.sync_queue_depth	= sync_qdepth,
->> +		.async_queue_depth	= async_qdepth,
->> +		.req_arg_len		= req_arg_len,
->> +		.user_req_buf_sz	= req_alloc_sz,
->> +		.numa_aware		    = nr_queues > 1,
->> +	};
+>> +	if (get_user(oldfd, argp))
+>> +		return -EFAULT;
 >> +
->> +	struct fuse_uring_cfg ioc_cfg = {
->> +		.flags = 0,
->> +		.cmd = FUSE_URING_IOCTL_CMD_RING_CFG,
->> +		.rconf = rconf,
->> +	};
->> +
->> +	rc = ioctl(session_fd, FUSE_DEV_IOC_URING, &ioc_cfg);
->> +	if (rc)
->> +		rc = -errno;
->> +
->> +	return rc;
+>> +	return _fuse_dev_ioctl_clone(file, oldfd);
 >> +}
 >> +
->> +2) MMAP
+>>  static long fuse_dev_ioctl_backing_open(struct file *file,
+>>  					struct fuse_backing_map __user *argp)
+>>  {
+>> @@ -2364,8 +2378,65 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+>>  	return fuse_backing_close(fud->fc, backing_id);
+>>  }
+>>  
+>> -static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>> -			   unsigned long arg)
+>> +/**
+>> + * Configure the queue for the given qid. First call will also initialize
+>> + * the ring for this connection.
+>> + */
+>> +static long fuse_uring_ioctl(struct file *file, __u32 __user *argp)
+>> +{
+>> +#if IS_ENABLED(CONFIG_FUSE_IO_URING)
+>> +	int res;
+>> +	struct fuse_uring_cfg cfg;
+>> +	struct fuse_dev *fud;
+>> +	struct fuse_conn *fc;
+>> +	struct fuse_ring *ring;
 >> +
->> +For shared memory communication between kernel and userspace
->> +each queue has to allocate and map memory buffer.
->> +For numa awares kernel side verifies if the allocating thread
-> 
-> This bit is awkwardly worded and there's some spelling mistakes.  Perhaps
-> something like this?
-> 
-> "For numa aware kernels, the kernel verifies that the allocating thread is bound
-> to a single core, as the kernel has the expectation that only a single thread
-> accesses a queue, and for numa aware memory allocation the core of the thread
-> sending the mmap request is used to identify the numa node"
-
-Thank you, updated. I actually consider to reduce this to a warning (will try 
-to add an async FUSE_WARN request type for this and others). Issue is that
-systems cannot set up fuse-uring when a core is disabled. 
-
-> 
->> +is bound to a single core - in general kernel side has expectations
->> +that only a single thread accesses a queue and for numa aware
->> +memory alloation the core of the thread sending the mmap request
->> +is used to identify the numa node.
+>> +	res = copy_from_user(&cfg, (void *)argp, sizeof(cfg));
+>> +	if (res != 0)
+>> +		return -EFAULT;
 >> +
->> +The offsset parameter has to be FUSE_URING_MMAP_OFF to identify
->        ^^^^ "offset"
-
-
-Fixed.
-
-> 
->> +it is a request concerning fuse-over-io-uring.
+>> +	fud = fuse_get_dev(file);
+>> +	if (fud == NULL)
+>> +		return -ENODEV;
+>> +	fc = fud->fc;
 >> +
->> +3) FUSE_DEV_IOC_URING ioctl with FUSE_URING_IOCTL_CMD_QUEUE_CFG
+>> +	switch (cfg.cmd) {
+>> +	case FUSE_URING_IOCTL_CMD_RING_CFG:
+>> +		if (READ_ONCE(fc->ring) == NULL)
+>> +			ring = kzalloc(sizeof(*fc->ring), GFP_KERNEL);
 >> +
->> +This ioctl has to be send for every queue and takes the queue-id (qid)
->                         ^^^^ "sent"
+>> +		spin_lock(&fc->lock);
+>> +		if (fc->ring == NULL) {
+>> +			fc->ring = ring;
 > 
->> +and memory address obtained by mmap to set up queue data structures.
+> Need to have error handling here in case the kzalloc failed.
+> 
+>> +			fuse_uring_conn_init(fc->ring, fc);
+>> +		} else {
+>> +			kfree(ring);
+>> +		}
 >> +
->> +Kernel - userspace interface using uring
->> +========================================
+>> +		spin_unlock(&fc->lock);
+>> +		if (fc->ring == NULL)
+>> +			return -ENOMEM;
 >> +
->> +After queue ioctl setup and memory mapping userspace submits
-> 
-> This needs a comma, so
-> 
-> "After queue ioctl setup and memory mapping, userspace submites"
-> 
->> +SQEs (opcode = IORING_OP_URING_CMD) in order to fetch
->> +fuse requests. Initial submit is with the sub command
->> +FUSE_URING_REQ_FETCH, which will just register entries
->> +to be available on the kernel side - it sets the according
-> 
-> s/according/associated/ maybe?
-> 
->> +entry state and marks the entry as available in the queue bitmap.
-
-Or maybe like this?
-
-Initial submit is with the sub command FUSE_URING_REQ_FETCH, which 
-will just register entries to be available in the kernel.
-
-
+>> +		mutex_lock(&fc->ring->start_stop_lock);
+>> +		res = fuse_uring_conn_cfg(fc->ring, &cfg.rconf);
+>> +		mutex_unlock(&fc->ring->start_stop_lock);
 >> +
->> +Once all entries for all queues are submitted kernel side starts
->> +to enqueue to ring queue(s). The request is copied into the shared
->> +memory queue entry buffer and submitted as CQE to the userspace
->> +side.
->> +Userspace side handles the CQE and submits the result as subcommand
->> +FUSE_URING_REQ_COMMIT_AND_FETCH - kernel side does completes the requests
+>> +		if (res != 0)
+>> +			return res;
+>> +		break;
+>> +	default:
+>> +		res = -EINVAL;
+>> +	}
+>> +
+>> +		return res;
+>> +#else
+>> +	return -ENOTTY;
+>> +#endif
+>> +}
+>> +
+>> +static long
+>> +fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>> +	       unsigned long arg)
+>>  {
+>>  	void __user *argp = (void __user *)arg;
+>>  
+>> @@ -2379,8 +2450,10 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>>  	case FUSE_DEV_IOC_BACKING_CLOSE:
+>>  		return fuse_dev_ioctl_backing_close(file, argp);
+>>  
+>> -	default:
+>> -		return -ENOTTY;
+>> +	case FUSE_DEV_IOC_URING:
+>> +		return fuse_uring_ioctl(file, argp);
+>> +
 > 
-> "the kernel completes the request"
+> Instead just wrap the above in 
+> 
+> #ifdef CONFIG_FUSE_IO_URING
+> 	case FUSE_DEV_IOC_URING:
+> 		return fuse_uring_ioctl(file, argp);
+> #endif
+> 
+> instead of wrapping the entire function above in the check.
+> 	
+>> +	default: return -ENOTTY;
+>>  	}
+>>  }
+>>  
+>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+>> new file mode 100644
+>> index 000000000000..702a994cf192
+>> --- /dev/null
+>> +++ b/fs/fuse/dev_uring.c
+>> @@ -0,0 +1,122 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * FUSE: Filesystem in Userspace
+>> + * Copyright (c) 2023-2024 DataDirect Networks.
+>> + */
+>> +
+>> +#include "fuse_i.h"
+>> +#include "fuse_dev_i.h"
+>> +#include "dev_uring_i.h"
+>> +
+>> +#include "linux/compiler_types.h"
+>> +#include "linux/spinlock.h"
+>> +#include <linux/init.h>
+>> +#include <linux/module.h>
+>> +#include <linux/poll.h>
+>> +#include <linux/sched/signal.h>
+>> +#include <linux/uio.h>
+>> +#include <linux/miscdevice.h>
+>> +#include <linux/pagemap.h>
+>> +#include <linux/file.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/pipe_fs_i.h>
+>> +#include <linux/swap.h>
+>> +#include <linux/splice.h>
+>> +#include <linux/sched.h>
+>> +#include <linux/io_uring.h>
+>> +#include <linux/mm.h>
+>> +#include <linux/io.h>
+>> +#include <linux/io_uring.h>
+>> +#include <linux/io_uring/cmd.h>
+>> +#include <linux/topology.h>
+>> +#include <linux/io_uring/cmd.h>
+>> +
+>> +/*
+>> + * Basic ring setup for this connection based on the provided configuration
+>> + */
+>> +int fuse_uring_conn_cfg(struct fuse_ring *ring, struct fuse_ring_config *rcfg)
+>> +{
+>> +	size_t queue_sz;
+>> +
+>> +	if (ring->configured) {
+>> +		pr_info("The ring is already configured.\n");
+>> +		return -EALREADY;
+>> +	}
+>> +
+>> +	if (rcfg->nr_queues == 0) {
+>> +		pr_info("zero number of queues is invalid.\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (rcfg->nr_queues > 1 && rcfg->nr_queues != num_present_cpus()) {
+>> +		pr_info("nr-queues (%d) does not match nr-cores (%d).\n",
+>> +			rcfg->nr_queues, num_present_cpus());
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (rcfg->req_arg_len < FUSE_RING_MIN_IN_OUT_ARG_SIZE) {
+>> +		pr_info("Per req buffer size too small (%d), min: %d\n",
+>> +			rcfg->req_arg_len, FUSE_RING_MIN_IN_OUT_ARG_SIZE);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (WARN_ON(ring->queues))
+>> +		return -EINVAL;
+>> +
+>> +	ring->numa_aware = rcfg->numa_aware;
+>> +	ring->nr_queues = rcfg->nr_queues;
+>> +	ring->per_core_queue = rcfg->nr_queues > 1;
+>> +
+>> +	ring->max_nr_sync = rcfg->sync_queue_depth;
+>> +	ring->max_nr_async = rcfg->async_queue_depth;
+>> +	ring->queue_depth = ring->max_nr_sync + ring->max_nr_async;
+>> +
+>> +	ring->req_arg_len = rcfg->req_arg_len;
+>> +	ring->req_buf_sz = rcfg->user_req_buf_sz;
+>> +
+>> +	ring->queue_buf_size = ring->req_buf_sz * ring->queue_depth;
+>> +
+>> +	queue_sz = sizeof(*ring->queues) +
+>> +		   ring->queue_depth * sizeof(struct fuse_ring_ent);
+>> +	ring->queues = kcalloc(rcfg->nr_queues, queue_sz, GFP_KERNEL);
+>> +	if (!ring->queues)
+>> +		return -ENOMEM;
+>> +	ring->queue_size = queue_sz;
+>> +	ring->configured = 1;
+>> +
+>> +	atomic_set(&ring->queue_refs, 0);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void fuse_uring_ring_destruct(struct fuse_ring *ring)
+>> +{
+>> +	unsigned int qid;
+>> +	struct rb_node *rbn;
+>> +
+>> +	for (qid = 0; qid < ring->nr_queues; qid++) {
+>> +		struct fuse_ring_queue *queue = fuse_uring_get_queue(ring, qid);
+>> +
+>> +		vfree(queue->queue_req_buf);
+>> +	}
+>> +
+>> +	kfree(ring->queues);
+>> +	ring->queues = NULL;
+>> +	ring->nr_queues_ioctl_init = 0;
+>> +	ring->queue_depth = 0;
+>> +	ring->nr_queues = 0;
+>> +
+>> +	rbn = rb_first(&ring->mem_buf_map);
+>> +	while (rbn) {
+>> +		struct rb_node *next = rb_next(rbn);
+>> +		struct fuse_uring_mbuf *entry =
+>> +			rb_entry(rbn, struct fuse_uring_mbuf, rb_node);
+>> +
+>> +		rb_erase(rbn, &ring->mem_buf_map);
+>> +		kfree(entry);
+>> +
+>> +		rbn = next;
+>> +	}
+>> +
+>> +	mutex_destroy(&ring->start_stop_lock);
+>> +}
+>> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+>> new file mode 100644
+>> index 000000000000..58ab4671deff
+>> --- /dev/null
+>> +++ b/fs/fuse/dev_uring_i.h
+>> @@ -0,0 +1,239 @@
+>> +/* SPDX-License-Identifier: GPL-2.0
+>> + *
+>> + * FUSE: Filesystem in Userspace
+>> + * Copyright (c) 2023-2024 DataDirect Networks.
+>> + */
+>> +
+>> +#ifndef _FS_FUSE_DEV_URING_I_H
+>> +#define _FS_FUSE_DEV_URING_I_H
+>> +
+>> +#include "fuse_i.h"
+>> +#include "linux/compiler_types.h"
+>> +#include "linux/rbtree_types.h"
+>> +
+>> +#if IS_ENABLED(CONFIG_FUSE_IO_URING)
+>> +
+>> +/* IORING_MAX_ENTRIES */
+>> +#define FUSE_URING_MAX_QUEUE_DEPTH 32768
+>> +
+>> +struct fuse_uring_mbuf {
+>> +	struct rb_node rb_node;
+>> +	void *kbuf; /* kernel allocated ring request buffer */
+>> +	void *ubuf; /* mmaped address */
+>> +};
+>> +
+>> +/** A fuse ring entry, part of the ring queue */
+>> +struct fuse_ring_ent {
+>> +	/*
+>> +	 * pointer to kernel request buffer, userspace side has direct access
+>> +	 * to it through the mmaped buffer
+>> +	 */
+>> +	struct fuse_ring_req *rreq;
+>> +
+>> +	/* the ring queue that owns the request */
+>> +	struct fuse_ring_queue *queue;
+>> +
+>> +	struct io_uring_cmd *cmd;
+>> +
+>> +	struct list_head list;
+>> +
+>> +	/*
+>> +	 * state the request is currently in
+>> +	 * (enum fuse_ring_req_state)
+>> +	 */
+>> +	unsigned long state;
+>> +
+>> +	/* array index in the ring-queue */
+>> +	int tag;
+>> +
+>> +	/* is this an async or sync entry */
+>> +	unsigned int async : 1;
+>> +
+>> +	struct fuse_req *fuse_req; /* when a list request is handled */
+>> +};
+>> +
+>> +struct fuse_ring_queue {
+>> +	/* task belonging to the current queue */
+>> +	struct task_struct *server_task;
+>> +
+>> +	/*
+>> +	 * back pointer to the main fuse uring structure that holds this
+>> +	 * queue
+>> +	 */
+>> +	struct fuse_ring *ring;
+>> +
+>> +	/* issue flags when running in io-uring task context */
+>> +	unsigned int uring_cmd_issue_flags;
+>> +
+>> +	int qid;
+>> +
+>> +	/*
+>> +	 * available number of sync requests,
+>> +	 * loosely bound to fuse foreground requests
+>> +	 */
+>> +	int nr_req_sync;
+>> +
+>> +	/*
+>> +	 * available number of async requests
+>> +	 * loosely bound to fuse background requests
+>> +	 */
+>> +	int nr_req_async;
+>> +
+>> +	/* queue lock, taken when any value in the queue changes _and_ also
+>> +	 * a ring entry state changes.
+>> +	 */
+>> +	spinlock_t lock;
+>> +
+>> +	/* per queue memory buffer that is divided per request */
+>> +	char *queue_req_buf;
+>> +
+>> +	/* fuse fg/bg request types */
+>> +	struct list_head async_fuse_req_queue;
+>> +	struct list_head sync_fuse_req_queue;
+>> +
+>> +	/* available ring entries (struct fuse_ring_ent) */
+>> +	struct list_head async_ent_avail_queue;
+>> +	struct list_head sync_ent_avail_queue;
+>> +
+>> +	struct list_head ent_in_userspace;
+>> +
+>> +	unsigned int configured : 1;
+>> +	unsigned int stopped : 1;
+>> +
+>> +	/* size depends on queue depth */
+>> +	struct fuse_ring_ent ring_ent[] ____cacheline_aligned_in_smp;
+>> +};
+>> +
+>> +/**
+>> + * Describes if uring is for communication and holds alls the data needed
+>> + * for uring communication
+>> + */
+>> +struct fuse_ring {
+>> +	/* back pointer to fuse_conn */
+>> +	struct fuse_conn *fc;
+>> +
+>> +	/* number of ring queues */
+>> +	size_t nr_queues;
+>> +
+>> +	/* number of entries per queue */
+>> +	size_t queue_depth;
+>> +
+>> +	/* max arg size for a request */
+>> +	size_t req_arg_len;
+>> +
+>> +	/* req_arg_len + sizeof(struct fuse_req) */
+>> +	size_t req_buf_sz;
+>> +
+>> +	/* max number of background requests per queue */
+>> +	size_t max_nr_async;
+>> +
+>> +	/* max number of foreground requests */
+>> +	size_t max_nr_sync;
+>> +
+>> +	/* size of struct fuse_ring_queue + queue-depth * entry-size */
+>> +	size_t queue_size;
+>> +
+>> +	/* buffer size per queue, that is used per queue entry */
+>> +	size_t queue_buf_size;
+>> +
+>> +	/* Used to release the ring on stop */
+>> +	atomic_t queue_refs;
+>> +
+>> +	/* Hold ring requests */
+>> +	struct fuse_ring_queue *queues;
+>> +
+>> +	/* number of initialized queues with the ioctl */
+>> +	int nr_queues_ioctl_init;
+>> +
+>> +	/* number of SQEs initialized */
+>> +	atomic_t nr_sqe_init;
+>> +
+>> +	/* one queue per core or a single queue only ? */
+>> +	unsigned int per_core_queue : 1;
+>> +
+>> +	/* Is the ring completely iocl configured */
+>> +	unsigned int configured : 1;
+>> +
+>> +	/* numa aware memory allocation */
+>> +	unsigned int numa_aware : 1;
+>> +
+>> +	/* Is the ring read to take requests */
+>> +	unsigned int ready : 1;
+>> +
+>> +	/*
+>> +	 * Log ring entry states onces on stop when entries cannot be
+>> +	 * released
+>> +	 */
+>> +	unsigned int stop_debug_log : 1;
+>> +
+>> +	struct mutex start_stop_lock;
+>> +
+>> +	wait_queue_head_t stop_waitq;
+>> +
+>> +	/* mmaped ring entry memory buffers, mmaped values is the key,
+>> +	 * kernel pointer is the value
+>> +	 */
+>> +	struct rb_root mem_buf_map;
+>> +
+>> +	struct delayed_work stop_work;
+>> +	unsigned long stop_time;
+>> +};
+> 
+> This is mostly a preference thing, but you've added a huge amount of code that
+> isn't used in this patch, so it makes it hard for me to review without knowing
+> how the things are to be used.
+> 
+> Generally it's easier on reviewers if you're adding the structs as you need them
+> so you can clearly follow what the purpose of everything is.  Here I just have
+> to go look at the end result and figure out what everything does and if it makes
+> sense.  Thanks,
+> 
+> Josef
 
-Yeah, now I see the bad grammar myself. Updated to
+Yeah, entirely agreed. Will improve that in the next patch version.
 
 
-Once all entries for all queues are submitted, kernel starts
-to enqueue to ring queues. The request is copied into the shared
-memory buffer and submitted as CQE to the daemon.
-Userspace handles the CQE/fuse-request and submits the result as
-subcommand FUSE_URING_REQ_COMMIT_AND_FETCH - kernel completes
-the requests and also marks the entry available again. If there are
-pending requests waiting the request will be immediately submitted
-to the daemon again.
-
-
-
-Thank you very much for your help to phrase this better!
-
-
-
+Thanks,
 Bernd
 
