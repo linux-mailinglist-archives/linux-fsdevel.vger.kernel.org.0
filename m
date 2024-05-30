@@ -1,82 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-20528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648788D4E86
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 17:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A208D4EB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 17:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8721C1C233CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 15:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780EE2864B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 15:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E4E17D8A1;
-	Thu, 30 May 2024 14:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BD617D8AB;
+	Thu, 30 May 2024 15:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="RD5oyUel"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="MxYxJJi2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A5A17D8A0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 14:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8A7186E38
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 15:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717081198; cv=none; b=PbzDRSZDi1tgiDlibAqV1WdMA5E66W/17T2sRTcKWY4B6hrIGSW/oNvq6QmLBBCUMwiUHSVl5v7xQboaYZf3TuxkyCVRYYQJ+TqiKV7xmkWSrPfmdB2ocNSU859GfE9yUSRrwYcEH9Ieo6uGopQa16eBV0dx0vaCG2RM9FiwYrs=
+	t=1717081805; cv=none; b=C5OKtM72FAdiXv3bfDUWR8nyzzGep/p4rNrSGBiPAtvbbfZ79cA9DJsSQjH8w49fg+KvqKct6mdEk+f1TFVMzm1NUmOgXAyMsbPMJI3SZr6Yr4O9orFkp84cpCFHyAfOCuWvDLl982BDSxx1s0Xs961JbIZdQ+nj8Jwf+hjrdkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717081198; c=relaxed/simple;
-	bh=7uXhRnNROcjnlQ+4K/Jeo4vJ2IhE4NUb7skACzV+x34=;
+	s=arc-20240116; t=1717081805; c=relaxed/simple;
+	bh=aN2FGb10UwzIaqlWvr+5bXB+lbd0DnxeL6eXZB0aq3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u5nKioVdOXyhawocbjsKBst5KI2zj4KoVqu5aori8H1sEGOVds5YGr1Nx9KFuSz+uApFbSOK4vaHbnsON/4BmQqV8bYEq0pmHONZiGvxaKIkJxDz4uq47nr+tZ//+7lYCJw7ofOqHcHQpe3t6ps1fNAQIQ6lNVAeqbHd6GTnDdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=RD5oyUel; arc=none smtp.client-ip=209.85.160.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmswQDeNoFQ1kbyRKUJm9xNJOroPjAvIQ4ahYv2InCWP8phlKu564NgaiSZjLgbUBrY8AYegoOGAoX/2Qd6C2iYlGIu13ij3Glo/jUGEe73ulC05cJbQR1I3S5fzENEAFKR3dKAVV7SeNw2E1cMtgLlE/U53e9Q3pOGA7mz/vpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=MxYxJJi2; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43fb058873bso5064061cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 07:59:56 -0700 (PDT)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7948b50225bso365985a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 08:10:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717081195; x=1717685995; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717081803; x=1717686603; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iliHbEYgDEOUMT8Ywm5JgqUevvmnGhuiPFTCi9smHK4=;
-        b=RD5oyUel1Cu8mDpztKNRpCKcOHBAW308wemzmHSOttQN4vK1OTmABwX7/YOdf8VsRm
-         Lm3ZQDiIMWinBCuasTCFo7SxEDsx6vNc325CginO2nAE2WQuY//BZmD14UuItk5RItqf
-         avKUlu/M0JRYCY+QivX9I/a0zjU6OFD1CTdrpTCbcj58G1JatWODu4Fdv3OD13KnDhhW
-         xIpPWCX4jDXTAfl2wCUf/Ud3bXssjgZq5SQZnLOcz5CZBLUErxhvVFgu5zy4yhQELepb
-         vrnwXMLIlIctCzWweVx8wZUGY9Wc4WJ0ZN8VixrcA4RPO+zTOi0IoZlCM+3YI4WEvwEt
-         5+0A==
+        bh=a1h+yJpIPUnfHN2elftbTXHU8+8yB5j/+qieJyJU0zw=;
+        b=MxYxJJi28iWvfYIfmfWDPTQwNLKKotTv2spbnwElzQVoemDdyZ3mlRcXNQ+apRBUXK
+         f1Fg4pXyk32MfbxMSE/WvkOnjrbsCxSaccK731iqcu0gqoVIcdnVwABYmeXpfLU+FxUj
+         582vz7nbaczUNl0NogEHS04QwWm6suOc3frbyF8+rm92DyDBZ9E0Tx5CG4bWEVi9eSuY
+         Rt+FM5zpMROPHTU88WYrSlZQOgNmRsb1qAXNbqOe8i9u+AGYFjBJj5rNvb8cJYr5cREb
+         kja7iwb41WvSezqseLvhajhmG3raA+5MsvS3TNkVJUY4DDZLosgmd3dn+ECrF8veqGbr
+         yBYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717081195; x=1717685995;
+        d=1e100.net; s=20230601; t=1717081803; x=1717686603;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iliHbEYgDEOUMT8Ywm5JgqUevvmnGhuiPFTCi9smHK4=;
-        b=kUcc1LiFGe/bX8lrlfQb1Pouth+LeXbOQ4mK5o9g5OXnqias7AJyY4t9e+WAfFIPvK
-         6mtY0KmSE+fkZpBWTZsh9sbN/TGEpH6LRh/VzvquHCVeFfXfHfuBMnKJSTczxhkdXbkj
-         GWY4ykwTm/0cgR6dapQERFGdm4Qb/F2SSJ3cI2aDbb1r2AtGKP6HJUJUB9JXftheDCZk
-         RXZx3yqVWj0fmDQelCkY1OL0cF/QV4q/qsib+u4OK0/ij2DZi3oGlRpjVKCfy/0hM6g0
-         yHa3Cfr1M6Q8DRw+7SWehaSGC7NJGfcuRc1oykDvtecwOHVGsbiqKq3f5yUS6AQG2+aD
-         14MA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXqJAN/iBMJzLWAO60xYaJBLaC7XHufHvCJ5Vq8Lwj7qLHHoLKQUL35Xrz5dq+bx//h38232A66vUzv7hvQOwb44Goi6aNVHLTQtttHA==
-X-Gm-Message-State: AOJu0YzplVfxp4RGwvgIo8LqfffrYIthsv+wrHTPAyFxQ00cRqrvQdYG
-	ihmLrM6P01q1Z/PY+tr9Z4QoyI6pAD375YQkv3yAa8faiN0OXEX9yGyqDEGisDQ=
-X-Google-Smtp-Source: AGHT+IFTM3jcYEL7yzaiBtIP1TDwW6npXPsGW4S1cXF+U1DkMJ72dvCmzmopbBUuk6weQxhiVTLv1w==
-X-Received: by 2002:a05:622a:2cc:b0:43d:fe36:99 with SMTP id d75a77b69052e-43fe931eed9mr28515871cf.52.1717081195087;
-        Thu, 30 May 2024 07:59:55 -0700 (PDT)
+        bh=a1h+yJpIPUnfHN2elftbTXHU8+8yB5j/+qieJyJU0zw=;
+        b=YzaNx8xAbM2rXVRYSgJkaQDRMX5pt4TP+hdYDL5/xtngOrWQpMGkBhS21PTauevmNO
+         BW1jIVhxd8JOXahzdY9hFB4eWtrr/Vi+7wxbtShep9DdXssoyPVNxh1SY6KoEP0osFlG
+         tnUiXUPL9A1hLRXNw3DpqCmq6HjoEkNtb27SYdz0Io7GPOb4O2jd+Hj4SEKr3e0EVnsz
+         I8llVTRn86EF8x5+A5djppk1Km1xIBRsOxTTJy6f3r35LYv0a8jr68nGsXN8QhFSl30T
+         3bmm4iG/gaidmr33T4RWFDTf/blITHpgIbY4VwTo45NE1IRtq3b78tySsBuv257bXhb3
+         wJTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpoz13Fckm9RpvhmZjwBPKMQ+MDn+pCO/v3td2+4mHfRiTLaMFTW++WF+srrl1+oSXfg/1ZQ6J/f65Z0oRIOh61pVh1Nc9bAE9BWsCYQ==
+X-Gm-Message-State: AOJu0YwL0dUuTOmLMiD1P/8Bsr7ALhyuFb+aiVhkWzZPl/hDTbYPhyAa
+	w22cTpzu8gvvVqZhOJbhMWgPziLZytfX+ZG1LOCCOpHNDFwdv7v1dq/zElqMcuo=
+X-Google-Smtp-Source: AGHT+IE9GPmruKEUfq6P93JSBKNuh0HAuSj2mAje54FwOuTmaQpcBN9srFhsmHk8oE+z8lmBmzAosg==
+X-Received: by 2002:a05:620a:28d5:b0:78d:5065:c5df with SMTP id af79cd13be357-794e9daa82cmr302588585a.18.1717081802736;
+        Thu, 30 May 2024 08:10:02 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fe6c67dc0sm14209501cf.42.2024.05.30.07.59.54
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abcc0f04sm561568685a.42.2024.05.30.08.10.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:59:54 -0700 (PDT)
-Date: Thu, 30 May 2024 10:59:53 -0400
+        Thu, 30 May 2024 08:10:02 -0700 (PDT)
+Date: Thu, 30 May 2024 11:10:01 -0400
 From: Josef Bacik <josef@toxicpanda.com>
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 04/19] fuse: Add fuse-io-uring design documentation
-Message-ID: <20240530145953.GB2205585@perftesting>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Subject: Re: [PATCH RFC v2 06/19] Add a vmalloc_node_user function
+Message-ID: <20240530151001.GC2205585@perftesting>
 References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-4-d149476b1d65@ddn.com>
- <20240529211746.GD2182086@perftesting>
- <8e756ed6-3b12-4afa-ad6a-94e9a56fd4be@fastmail.fm>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-6-d149476b1d65@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,201 +84,101 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e756ed6-3b12-4afa-ad6a-94e9a56fd4be@fastmail.fm>
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-6-d149476b1d65@ddn.com>
 
-On Thu, May 30, 2024 at 02:50:30PM +0200, Bernd Schubert wrote:
+On Wed, May 29, 2024 at 08:00:41PM +0200, Bernd Schubert wrote:
+> This is to have a numa aware vmalloc function for memory exposed to
+> userspace. Fuse uring will allocate queue memory using this
+> new function.
 > 
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> cc: Andrew Morton <akpm@linux-foundation.org>
+> cc: linux-mm@kvack.org
+> Acked-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  include/linux/vmalloc.h |  1 +
+>  mm/nommu.c              |  6 ++++++
+>  mm/vmalloc.c            | 41 +++++++++++++++++++++++++++++++++++++----
+>  3 files changed, 44 insertions(+), 4 deletions(-)
 > 
-> On 5/29/24 23:17, Josef Bacik wrote:
-> > On Wed, May 29, 2024 at 08:00:39PM +0200, Bernd Schubert wrote:
-> >> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> >> ---
-> >>  Documentation/filesystems/fuse-io-uring.rst | 167 ++++++++++++++++++++++++++++
-> >>  1 file changed, 167 insertions(+)
-> >>
-> >> diff --git a/Documentation/filesystems/fuse-io-uring.rst b/Documentation/filesystems/fuse-io-uring.rst
-> >> new file mode 100644
-> >> index 000000000000..4aa168e3b229
-> >> --- /dev/null
-> >> +++ b/Documentation/filesystems/fuse-io-uring.rst
-> >> @@ -0,0 +1,167 @@
-> >> +.. SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +===============================
-> >> +FUSE Uring design documentation
-> >> +==============================
-> >> +
-> >> +This documentation covers basic details how the fuse
-> >> +kernel/userspace communication through uring is configured
-> >> +and works. For generic details about FUSE see fuse.rst.
-> >> +
-> >> +This document also covers the current interface, which is
-> >> +still in development and might change.
-> >> +
-> >> +Limitations
-> >> +===========
-> >> +As of now not all requests types are supported through uring, userspace
-> > 
-> > s/userspace side/userspace/
-> > 
-> >> +side is required to also handle requests through /dev/fuse after
-> >> +uring setup is complete. These are especially notifications (initiated
-> > 
-> > especially is an awkward word choice here, I'm not quite sure what you're trying
-> > say here, perhaps
-> > 
-> > "Specifically notifications (initiated from the daemon side), interrupts and
-> > forgets"
-> 
-> Yep, thanks a lot! I removed forgets", these should be working over the ring 
-> in the mean time.
-> 
-> > 
-> > ?
-> > 
-> >> +from daemon side), interrupts and forgets.
-> >> +Interrupts are probably not working at all when uring is used. At least
-> >> +current state of libfuse will not be able to handle those for requests
-> >> +on ring queues.
-> >> +All these limitation will be addressed later.
-> >> +
-> >> +Fuse uring configuration
-> >> +========================
-> >> +
-> >> +Fuse kernel requests are queued through the classical /dev/fuse
-> >> +read/write interface - until uring setup is complete.
-> >> +
-> >> +In order to set up fuse-over-io-uring userspace has to send ioctls,
-> >> +mmap requests in the right order
-> >> +
-> >> +1) FUSE_DEV_IOC_URING ioctl with FUSE_URING_IOCTL_CMD_RING_CFG
-> >> +
-> >> +First the basic kernel data structure has to be set up, using
-> >> +FUSE_DEV_IOC_URING with subcommand FUSE_URING_IOCTL_CMD_RING_CFG.
-> >> +
-> >> +Example (from libfuse)
-> >> +
-> >> +static int fuse_uring_setup_kernel_ring(int session_fd,
-> >> +					int nr_queues, int sync_qdepth,
-> >> +					int async_qdepth, int req_arg_len,
-> >> +					int req_alloc_sz)
-> >> +{
-> >> +	int rc;
-> >> +
-> >> +	struct fuse_ring_config rconf = {
-> >> +		.nr_queues		    = nr_queues,
-> >> +		.sync_queue_depth	= sync_qdepth,
-> >> +		.async_queue_depth	= async_qdepth,
-> >> +		.req_arg_len		= req_arg_len,
-> >> +		.user_req_buf_sz	= req_alloc_sz,
-> >> +		.numa_aware		    = nr_queues > 1,
-> >> +	};
-> >> +
-> >> +	struct fuse_uring_cfg ioc_cfg = {
-> >> +		.flags = 0,
-> >> +		.cmd = FUSE_URING_IOCTL_CMD_RING_CFG,
-> >> +		.rconf = rconf,
-> >> +	};
-> >> +
-> >> +	rc = ioctl(session_fd, FUSE_DEV_IOC_URING, &ioc_cfg);
-> >> +	if (rc)
-> >> +		rc = -errno;
-> >> +
-> >> +	return rc;
-> >> +}
-> >> +
-> >> +2) MMAP
-> >> +
-> >> +For shared memory communication between kernel and userspace
-> >> +each queue has to allocate and map memory buffer.
-> >> +For numa awares kernel side verifies if the allocating thread
-> > 
-> > This bit is awkwardly worded and there's some spelling mistakes.  Perhaps
-> > something like this?
-> > 
-> > "For numa aware kernels, the kernel verifies that the allocating thread is bound
-> > to a single core, as the kernel has the expectation that only a single thread
-> > accesses a queue, and for numa aware memory allocation the core of the thread
-> > sending the mmap request is used to identify the numa node"
-> 
-> Thank you, updated. I actually consider to reduce this to a warning (will try 
-> to add an async FUSE_WARN request type for this and others). Issue is that
-> systems cannot set up fuse-uring when a core is disabled. 
-> 
-> > 
-> >> +is bound to a single core - in general kernel side has expectations
-> >> +that only a single thread accesses a queue and for numa aware
-> >> +memory alloation the core of the thread sending the mmap request
-> >> +is used to identify the numa node.
-> >> +
-> >> +The offsset parameter has to be FUSE_URING_MMAP_OFF to identify
-> >        ^^^^ "offset"
-> 
-> 
-> Fixed.
-> 
-> > 
-> >> +it is a request concerning fuse-over-io-uring.
-> >> +
-> >> +3) FUSE_DEV_IOC_URING ioctl with FUSE_URING_IOCTL_CMD_QUEUE_CFG
-> >> +
-> >> +This ioctl has to be send for every queue and takes the queue-id (qid)
-> >                         ^^^^ "sent"
-> > 
-> >> +and memory address obtained by mmap to set up queue data structures.
-> >> +
-> >> +Kernel - userspace interface using uring
-> >> +========================================
-> >> +
-> >> +After queue ioctl setup and memory mapping userspace submits
-> > 
-> > This needs a comma, so
-> > 
-> > "After queue ioctl setup and memory mapping, userspace submites"
-> > 
-> >> +SQEs (opcode = IORING_OP_URING_CMD) in order to fetch
-> >> +fuse requests. Initial submit is with the sub command
-> >> +FUSE_URING_REQ_FETCH, which will just register entries
-> >> +to be available on the kernel side - it sets the according
-> > 
-> > s/according/associated/ maybe?
-> > 
-> >> +entry state and marks the entry as available in the queue bitmap.
-> 
-> Or maybe like this?
-> 
-> Initial submit is with the sub command FUSE_URING_REQ_FETCH, which 
-> will just register entries to be available in the kernel.
-> 
-> 
-> >> +
-> >> +Once all entries for all queues are submitted kernel side starts
-> >> +to enqueue to ring queue(s). The request is copied into the shared
-> >> +memory queue entry buffer and submitted as CQE to the userspace
-> >> +side.
-> >> +Userspace side handles the CQE and submits the result as subcommand
-> >> +FUSE_URING_REQ_COMMIT_AND_FETCH - kernel side does completes the requests
-> > 
-> > "the kernel completes the request"
-> 
-> Yeah, now I see the bad grammar myself. Updated to
-> 
-> 
-> Once all entries for all queues are submitted, kernel starts
-> to enqueue to ring queues. The request is copied into the shared
-> memory buffer and submitted as CQE to the daemon.
-> Userspace handles the CQE/fuse-request and submits the result as
-> subcommand FUSE_URING_REQ_COMMIT_AND_FETCH - kernel completes
-> the requests and also marks the entry available again. If there are
-> pending requests waiting the request will be immediately submitted
-> to the daemon again.
-> 
-> 
-> 
-> Thank you very much for your help to phrase this better!
-> 
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index 98ea90e90439..e7645702074e 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -141,6 +141,7 @@ static inline unsigned long vmalloc_nr_pages(void) { return 0; }
+>  extern void *vmalloc(unsigned long size) __alloc_size(1);
+>  extern void *vzalloc(unsigned long size) __alloc_size(1);
+>  extern void *vmalloc_user(unsigned long size) __alloc_size(1);
+> +extern void *vmalloc_node_user(unsigned long size, int node) __alloc_size(1);
+>  extern void *vmalloc_node(unsigned long size, int node) __alloc_size(1);
+>  extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
+>  extern void *vmalloc_32(unsigned long size) __alloc_size(1);
+> diff --git a/mm/nommu.c b/mm/nommu.c
+> index 5ec8f44e7ce9..207ddf639aa9 100644
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -185,6 +185,12 @@ void *vmalloc_user(unsigned long size)
+>  }
+>  EXPORT_SYMBOL(vmalloc_user);
+>  
+> +void *vmalloc_node_user(unsigned long size, int node)
+> +{
+> +	return __vmalloc_user_flags(size, GFP_KERNEL | __GFP_ZERO);
+> +}
+> +EXPORT_SYMBOL(vmalloc_node_user);
+> +
+>  struct page *vmalloc_to_page(const void *addr)
+>  {
+>  	return virt_to_page(addr);
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 68fa001648cc..0ac2f44b2b1f 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3958,6 +3958,25 @@ void *vzalloc(unsigned long size)
+>  }
+>  EXPORT_SYMBOL(vzalloc);
+>  
+> +/**
+> + * _vmalloc_node_user - allocate zeroed virtually contiguous memory for userspace
+> + * on the given numa node
+> + * @size: allocation size
+> + * @node: numa node
+> + *
+> + * The resulting memory area is zeroed so it can be mapped to userspace
+> + * without leaking data.
+> + *
+> + * Return: pointer to the allocated memory or %NULL on error
+> + */
+> +static void *_vmalloc_node_user(unsigned long size, int node)
+> +{
+> +	return __vmalloc_node_range(size, SHMLBA,  VMALLOC_START, VMALLOC_END,
+> +				    GFP_KERNEL | __GFP_ZERO, PAGE_KERNEL,
+> +				    VM_USERMAP, node,
+> +				    __builtin_return_address(0));
+> +}
+> +
 
-This all looks great, thanks!
+Looking at the rest of vmalloc it seems like adding an extra variant to do the
+special thing is overkill, I think it would be fine to just have
+
+void *vmalloc_nod_user(unsigned long size, int node)
+{
+	return __vmalloc_node_range(size, SHMLBA,  VMALLOC_START, VMALLOC_END,
+				    GFP_KERNEL | __GFP_ZERO, PAGE_KERNEL,
+				    VM_USERMAP, node,
+				    __builtin_return_address(0));
+}
+
+instead of creating a _vmalloc_node_user().
+
+Also as an aside, this is definitely being used by this series, but I think it
+would be good to go ahead and send this by itself with just the explanation that
+it's going to be used by the fuse iouring stuff later, that way you can get this
+merged and continue working on the iouring part.
+
+This also goes for the other prep patches earlier this this series, but since
+those are fuse related it's probably fine to just keep shipping them with this
+series.  Thanks,
 
 Josef
 
