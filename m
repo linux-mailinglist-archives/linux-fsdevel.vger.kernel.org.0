@@ -1,133 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-20506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07308D4631
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 09:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBA48D46FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 10:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83228B22CB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 07:38:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED54AB23AEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 08:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70EB4D8B9;
-	Thu, 30 May 2024 07:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B1614D45A;
+	Thu, 30 May 2024 08:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECLs8GzH"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="h4IQ0fk7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5C3168BD;
-	Thu, 30 May 2024 07:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2E214B967
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 08:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717054674; cv=none; b=fH183GKnLQ23f7YIDOdxiUSh5IieocmOBq9e0fmZFKwf1TB/cF4KRkWs7BM6XSnoJGsYBmXdWn9jQtivJhuKqALGUWmH1vj7kFUndT8BQJf0IUCQyeEKI3KzRNQOYpqnQgpJ2azNfGbVzLV354GivxeqneMQTyajKxrWGYmML4s=
+	t=1717057556; cv=none; b=ckpowRsgGixjZ8rNbC4t+NUWbAI1LK/EvFiFiS2jsg5LWY+tifAwrH+gHjWybSeMA1r0E4NVjbunngBAh3TC4t1n5pX+T3BLjszVUYmXtqMZ3oMNjDWtkqN2eKXhBWERfdNDiKpTSshdreIkkHsz+lTxIt2EOlmSHh09qqVle1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717054674; c=relaxed/simple;
-	bh=gFvPGd/GOwdbWalVNT4aW5mjXz8rzEAiL3wltYmPa6Y=;
+	s=arc-20240116; t=1717057556; c=relaxed/simple;
+	bh=Mh+aQDHzYgLaU+Il1QYQyK3zbaYC3IDaUh6LhiP0mKM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PF3a1BmX2G5hYozQ09WNUYpMoCWI2H4nxrtk11SzSlkTIKP9O46klcUEsgl2ikAwqKijuVfS51e2HqnwG9EjNrJJntLlflPgD432t9xW6oAPnCsoi4636DgDZfbSBbZdGottX3nbVG0drjslZNJo81KiBsUYH0nkM3bhJ8ioGLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ECLs8GzH; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6ae259b1c87so432776d6.1;
-        Thu, 30 May 2024 00:37:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=aA4LQEpWgr7xQMoBlX37L1dy1Df/16vmJbypOYdRGtDO4h+XmEn8T4kEP2Oc5WmZaCGNPs6ya2OdhZmuEeqtn7gg68xWimDZ5xQI/ejjyjzna27E+ziBpilPmlAnCkDEZjrhpOnAk/TSmr7zu9HH7QnfMhjcLZoFCabYhr768Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=h4IQ0fk7; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a653972487fso30700666b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 01:25:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717054671; x=1717659471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=550m7jm8I2c4tBa/pg01mJQwXAb2hba6vqvQBtGQrp0=;
-        b=ECLs8GzHZB1didcuXiNWDyZUwVKcFZSeS1mSGNeEzL7Z07RH3WvSWrYUW+/D3l/OFo
-         EA5Divt8Wl8OUMp0qiCV3+ZM+gHzHEPAYTLH0MGfdvSf3sfz2PM6q2O8gHVDwhYVJAO4
-         sBvgh3tqLyPnKV8tino9njMhyfoCdEt2Bj/HWNTGA+sCvoHOHbngQ7pZWk4Q1m9wZeZx
-         tk3af+91igHMvdCtcxf0FB4nbN5RR+vb9+fo82IuKazo9/0KRE5U8N9HYPhkJXw7en18
-         ZlA7bMoNh7Xni1LdBImwdcKFGUb7CJ2y75GF4oZoYy3L4JzkgrKLPboY5abBwSe38pHG
-         cy8w==
+        d=szeredi.hu; s=google; t=1717057551; x=1717662351; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OzVFVVzRu2A8BuocCgv4mvFhjQF5B5aQV6bx9DrZsKk=;
+        b=h4IQ0fk71XLY1LRrlTCE9JsHrhbDtVnLXq4Iox8Ism8QesQeVEn47OnnAb+Uq8F/WV
+         Rgvyn81+BYmAH8Qh6MtsfG1byLDZQJ792ETR/Vxy6S7PHtS2WIJWFO9qQIMxDB30NIGV
+         ii7WrCOkr627qrv63AOCy7kZ1tA3s6lSzg6Co=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717054671; x=1717659471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=550m7jm8I2c4tBa/pg01mJQwXAb2hba6vqvQBtGQrp0=;
-        b=gPDi99NuXMOnZS6fDITnCnEDFsrxeKU0JpvgduN9Ti60RvqQSwfcHWuVFE+x0VFHI7
-         vgKeaqCfo2BXkjDkIfqApT8vVY3JhrCRmbbDHQooj343mWIOsmH3YKGPFP171qHT5jxb
-         WaYH1dZAjlUg5wexSKkc626dzakeaGhPuc3maecyoRwr8cpQ3mBcssFsGl7lWxw+xe7N
-         EoEka3HoQaA3Az9eMTc8dVVTZkvuDFM1UOdZXM7tD+KnOQRerCs66s2f8oYgkfUfTiik
-         RlGOEHnUz/IU53KDarBg22YHShanw9vHQzC7ZQ5wupWSAlTHygxUbm6bj77B8H1TX71Z
-         yi1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWeTYjoL4QOK9MxL2t/gSj/IofTiNeKbupavQwlNWWj4Lr+NgKORvnFueF8yPEjwwGBByHcZC1AM3L9hzV5gZ0tja1RRdcML9IO3vU+Q0sD7Wq+ns87/rea8js/cyYCmlceqMvhutFRUeybLA==
-X-Gm-Message-State: AOJu0Yw+i/oQ0t1Ykuy9jqTaV0PLxvXW2N0wbmbx5n4A5AKkQQRIbxoy
-	riNJcV1yVunr7TDmGSfx4Q/Thvj9zRR5+yyOFGzz3LPkSJuc8GRIDwjYhMaZbxfSfxgOIZ4JSRS
-	z6RSd8RNVyVP8LVuF2si5jd1xgdU=
-X-Google-Smtp-Source: AGHT+IEM6EoEcqJtHVn4gpWAdF7QhgkkO41aWkjwpJKVm9CM2RuEAKjVBtYHiEW+YYjJv5m71Z8+96lIKYufz8AVhYg=
-X-Received: by 2002:a0c:f40f:0:b0:6aa:2d64:2015 with SMTP id
- 6a1803df08f44-6ae0fad1a32mr21653536d6.18.1717054670651; Thu, 30 May 2024
- 00:37:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717057551; x=1717662351;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OzVFVVzRu2A8BuocCgv4mvFhjQF5B5aQV6bx9DrZsKk=;
+        b=Hlca2Q4+FdO405j2pBkqasLcLBwnHh81e1Nb6KoY0fZb0YaSST5CR9vcOBX+XhLZxe
+         wFfRBSZwcRbhGtX99J/ygvbiO3wbOjK+R/Cat7KbcYvdQCROp920qdWvjpdCjLiWl0CF
+         t6CHlDE2mcoxKM3nrV74WmD50fqGZ7rP9QJeCaItOfiyB0OE9DDRnTPoUmbFpjlVyRFy
+         MIhw7/8ljZo7qwtvnr8/OqYiU86/j23HzF968pFzsNTMvLewWaEv9ydZOK0uTFUne7B+
+         yTjf5P6SKw5Qs7OQhGJzHAt1IY5hporO2lh4XUcOPP2jsj1UwgmZwEYXNumHJe4mafGl
+         7Rmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUqc5M6HxXeaYE4JOmTBR/qUZ2P5EnghBYtf5IDTl3ykEogDi1/psLOlFFF470s41Szmf+DRiHWi1UWPnGv3bKQqOP/M2R6X1JQeNyPg==
+X-Gm-Message-State: AOJu0YxmMi7pUaljUP63fPAdgL0yDmgLX+sqRG2WtAIvYbuNROyT6tsN
+	pCDe5j93jGshH458GeNNdObT2MY7gpHyypoi8nrQR0ElyppbcdH7b5d5sLE5HmXd8QCWFIUUjEC
+	MdcNLMMe6x0W8S6CGoky4Dj25PaDS4UC3DTFXeQ==
+X-Google-Smtp-Source: AGHT+IGTvAY/5EuKWYcdbe5yLKL7KjM49nxRJdoR5opaEOCu0cOeIqfcg1haeH6tSTBQCPY3eeszBLLP8Bnf1fbRvu0=
+X-Received: by 2002:a17:906:4906:b0:a59:9e01:e788 with SMTP id
+ a640c23a62f3a-a65e8f74b7dmr83473566b.34.1717057551310; Thu, 30 May 2024
+ 01:25:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202405291318.4dfbb352-oliver.sang@intel.com> <CAHk-=wg29dKaLVo7UQ-0CWhja-XdbDmUOuN7RrY9-X-0i-wZdA@mail.gmail.com>
-In-Reply-To: <CAHk-=wg29dKaLVo7UQ-0CWhja-XdbDmUOuN7RrY9-X-0i-wZdA@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 30 May 2024 15:37:13 +0800
-Message-ID: <CALOAHbDYSXzv-c-bOBTR0Rp70zZWGWBG0Hwd-0OkA-YzA-QHtg@mail.gmail.com>
-Subject: Re: [linus:master] [vfs] 681ce86235: filebench.sum_operations/s -7.4% regression
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Waiman Long <longman@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Wangkai <wangkai86@huawei.com>, 
-	Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org, ying.huang@intel.com, 
-	feng.tang@intel.com, fengwei.yin@intel.com
+References: <11382958.Mp67QZiUf9@tjmaciei-mobl5> <20240530-hygiene-einkalkulieren-c190143e41d9@brauner>
+In-Reply-To: <20240530-hygiene-einkalkulieren-c190143e41d9@brauner>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 30 May 2024 10:25:39 +0200
+Message-ID: <CAJfpegv_6K-tFtNjOnTBxc0KTSy7Horpu4OFAvkLBkPtv=CoRw@mail.gmail.com>
+Subject: Re: statmount: requesting more information: statfs, devname, label
+To: Christian Brauner <brauner@kernel.org>
+Cc: Thiago Macieira <thiago.macieira@intel.com>, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <mszeredi@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 12:38=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Thu, 30 May 2024 at 09:16, Christian Brauner <brauner@kernel.org> wrote:
 >
-> On Tue, 28 May 2024 at 22:52, kernel test robot <oliver.sang@intel.com> w=
-rote:
-> >
-> > kernel test robot noticed a -7.4% regression of filebench.sum_operation=
-s/s on:
-> >
-> > commit: 681ce8623567 ("vfs: Delete the associated dentry when deleting =
-a file")
->
-> Well, there we are. I guess I'm reverting this, and we're back to the
-> drawing board for some of the other alternatives to fixing Yafang's
-> issue.
+> On Wed, May 29, 2024 at 03:36:39PM -0300, Thiago Macieira wrote:
 
-Hi Linus,
+> > First, the information provided by statfs(), which is the workaround. It's
+> > easy to call statfs() with the returned mount point path, though that causes a
+> > minor race.
 
-I just checked the test case webproxy.f[0], which triggered the regression.
+It's easy enough to shove struct statfs fields into struct statmount.
+I didn't do that for the first version to minimise the size of the
+patch but I think it makes sense.  Even Linus suggested that this
+syscall should be an extended statfs(2), which implies that statfs
+info should be included.
 
-This test case follows a deletefile-createfile pattern, as shown below:
+> > The second is the filesystem label. The workaround for this is opening the
+> > mount point and issuing ioctl(FS_IOC_GETFSLABEL), but that again introduces a
+> > minor race and also requires that the ability to open() the path in question.
+> > The second fallback to that is to scan /dev/disks/by-label, which is populated
+> > by udev/udisks/systemd.
 
-  - flowop deletefile name=3Ddeletefile1, filesetname=3Dbigfileset
-  - flowop createfile name=3Dcreatefile1, filesetname=3Dbigfileset, fd=3D1
+FS_IOC_GETFSLABEL seems to be implemented only by a handful of
+filesystems.   I don't really undestand how this label thing works...
 
-It seems that this pattern is causing the regression. As we discussed
-earlier, my patch might negatively impact this delete-create pattern.
-The question is whether this scenario is something we need to address.
-Perhaps it only occurs in this specific benchmark and doesn't
-represent a real-world workload.
+> I think that mnt_devname makes sense!
+> I don't like the other additions because they further blur the
+> distinction between mount and filesystem information.
 
-[0] https://github.com/filebench/filebench/blob/master/workloads/webproxy.f
+mnt_devname is exactly that: filesystem information (don't let it fool
+you that it's in struct mount, that's just an historical accident).
+It's just a special option that customarily refers to a device path,
+but in general is very much filesystem specific.
 
->
-> Al, did you decide on what approach you'd prefer?
->
->                      Linus
+I don't think we've promised that statmount(2) will only return mount
+information.  In fact it does already return a fair amount of
+filesystem info as well.  Note, stat/statx also return various bits
+and pieces, some inode some mount and some fs specific.
 
+I'd put fs options in there too, but that was something Christian
+disliked.  We should have a discussion about how to retrieve options,
+and maybe the other things like label, devname, etc will fall out of
+that too.
 
-
---=20
-Regards
-Yafang
+Thanks,
+Miklos
 
