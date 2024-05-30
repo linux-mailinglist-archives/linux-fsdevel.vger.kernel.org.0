@@ -1,184 +1,547 @@
-Return-Path: <linux-fsdevel+bounces-20529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A208D4EB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 17:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C558D4EFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 17:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780EE2864B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 15:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35610287AE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 15:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BD617D8AB;
-	Thu, 30 May 2024 15:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6BA18755E;
+	Thu, 30 May 2024 15:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="MxYxJJi2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Or3Z4CAA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8A7186E38
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 15:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A14D1EA84
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 15:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717081805; cv=none; b=C5OKtM72FAdiXv3bfDUWR8nyzzGep/p4rNrSGBiPAtvbbfZ79cA9DJsSQjH8w49fg+KvqKct6mdEk+f1TFVMzm1NUmOgXAyMsbPMJI3SZr6Yr4O9orFkp84cpCFHyAfOCuWvDLl982BDSxx1s0Xs961JbIZdQ+nj8Jwf+hjrdkw=
+	t=1717082595; cv=none; b=CaSLHEU/FJwnY6RVDVPcQyMa+RPVHRSJ1tAPvpZP+9jifuLx1eRhp+1AI4wlHMKVWx0lnUFaK0FHwNjrOvKnCsFlh2khbAwdQKY7V/kIlG2CSstauiuEGYZb+bTw4Uwa5T65dDmqITaivBOZkhMDYrMLuPxrrFDheh24EqcBTfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717081805; c=relaxed/simple;
-	bh=aN2FGb10UwzIaqlWvr+5bXB+lbd0DnxeL6eXZB0aq3Q=;
+	s=arc-20240116; t=1717082595; c=relaxed/simple;
+	bh=t/HAzQIBqGTB3rTxLnsyciPbR+sFeyAO+1O3O+lZECU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UmswQDeNoFQ1kbyRKUJm9xNJOroPjAvIQ4ahYv2InCWP8phlKu564NgaiSZjLgbUBrY8AYegoOGAoX/2Qd6C2iYlGIu13ij3Glo/jUGEe73ulC05cJbQR1I3S5fzENEAFKR3dKAVV7SeNw2E1cMtgLlE/U53e9Q3pOGA7mz/vpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=MxYxJJi2; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7948b50225bso365985a.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 08:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717081803; x=1717686603; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a1h+yJpIPUnfHN2elftbTXHU8+8yB5j/+qieJyJU0zw=;
-        b=MxYxJJi28iWvfYIfmfWDPTQwNLKKotTv2spbnwElzQVoemDdyZ3mlRcXNQ+apRBUXK
-         f1Fg4pXyk32MfbxMSE/WvkOnjrbsCxSaccK731iqcu0gqoVIcdnVwABYmeXpfLU+FxUj
-         582vz7nbaczUNl0NogEHS04QwWm6suOc3frbyF8+rm92DyDBZ9E0Tx5CG4bWEVi9eSuY
-         Rt+FM5zpMROPHTU88WYrSlZQOgNmRsb1qAXNbqOe8i9u+AGYFjBJj5rNvb8cJYr5cREb
-         kja7iwb41WvSezqseLvhajhmG3raA+5MsvS3TNkVJUY4DDZLosgmd3dn+ECrF8veqGbr
-         yBYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717081803; x=1717686603;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a1h+yJpIPUnfHN2elftbTXHU8+8yB5j/+qieJyJU0zw=;
-        b=YzaNx8xAbM2rXVRYSgJkaQDRMX5pt4TP+hdYDL5/xtngOrWQpMGkBhS21PTauevmNO
-         BW1jIVhxd8JOXahzdY9hFB4eWtrr/Vi+7wxbtShep9DdXssoyPVNxh1SY6KoEP0osFlG
-         tnUiXUPL9A1hLRXNw3DpqCmq6HjoEkNtb27SYdz0Io7GPOb4O2jd+Hj4SEKr3e0EVnsz
-         I8llVTRn86EF8x5+A5djppk1Km1xIBRsOxTTJy6f3r35LYv0a8jr68nGsXN8QhFSl30T
-         3bmm4iG/gaidmr33T4RWFDTf/blITHpgIbY4VwTo45NE1IRtq3b78tySsBuv257bXhb3
-         wJTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpoz13Fckm9RpvhmZjwBPKMQ+MDn+pCO/v3td2+4mHfRiTLaMFTW++WF+srrl1+oSXfg/1ZQ6J/f65Z0oRIOh61pVh1Nc9bAE9BWsCYQ==
-X-Gm-Message-State: AOJu0YwL0dUuTOmLMiD1P/8Bsr7ALhyuFb+aiVhkWzZPl/hDTbYPhyAa
-	w22cTpzu8gvvVqZhOJbhMWgPziLZytfX+ZG1LOCCOpHNDFwdv7v1dq/zElqMcuo=
-X-Google-Smtp-Source: AGHT+IE9GPmruKEUfq6P93JSBKNuh0HAuSj2mAje54FwOuTmaQpcBN9srFhsmHk8oE+z8lmBmzAosg==
-X-Received: by 2002:a05:620a:28d5:b0:78d:5065:c5df with SMTP id af79cd13be357-794e9daa82cmr302588585a.18.1717081802736;
-        Thu, 30 May 2024 08:10:02 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abcc0f04sm561568685a.42.2024.05.30.08.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 08:10:02 -0700 (PDT)
-Date: Thu, 30 May 2024 11:10:01 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: Re: [PATCH RFC v2 06/19] Add a vmalloc_node_user function
-Message-ID: <20240530151001.GC2205585@perftesting>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-6-d149476b1d65@ddn.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OEET7os1fpV372E8OR/MzkSX81R4I9B94fTwbHLZWxszR1u/3KgdmGVvom4nYQ+vmnkE/jwc8U1Q+IDsU7ksvoHyYADF2Qp4SogETBUjKQx+w/nEQMO/ruK5CK4OYVs4/yWwYsqQHiHUcaBSkrn2MoKQTITiO0mOdYqKRg7l7KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Or3Z4CAA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75BAC2BBFC;
+	Thu, 30 May 2024 15:23:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717082594;
+	bh=t/HAzQIBqGTB3rTxLnsyciPbR+sFeyAO+1O3O+lZECU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Or3Z4CAAaoDeQW+e1VAS8muTagyi0CkGizYl8b5aMuUYim/vM0tO/Jf8kIGZO9Wws
+	 MojVh9zBcd0cAuEvhz2FZ2REWEiIDOjdnwskzmfk06T5kFNYPiOnGO7nbjcKNOaF6I
+	 sBZ4pKP17JrtCgYQXGfVRWYn8u3+9ekc4/RgZc1+5/LRPw8OV7oj1oj9+9k0olteQi
+	 87bjge8AJ/sU2MgLzHE10EmNZdio4bbfEFn/VJz0PkC8nBZFx6Hae8WxDFUhIOWHBs
+	 Nflv0+kjTmodAzkoZyTR49Ky4rAYIckmAyu3kqo3u71gbJ5NW6AMSpsu2pzwdMdoT0
+	 bzRpD11s8b9OQ==
+Date: Thu, 30 May 2024 17:23:10 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	david@fromorbit.com, amir73il@gmail.com, hch@lst.de
+Subject: Re: [PATCH][RFC] fs: add levels to inode write access
+Message-ID: <20240530-rangordnung-gepocht-57a36ab8d500@brauner>
+References: <72fc22ebeaf50fabf9d14f90f6f694f88b5fc359.1717015144.git.josef@toxicpanda.com>
+ <20240530-atheismus-festland-c11c1d3b7671@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-6-d149476b1d65@ddn.com>
+In-Reply-To: <20240530-atheismus-festland-c11c1d3b7671@brauner>
 
-On Wed, May 29, 2024 at 08:00:41PM +0200, Bernd Schubert wrote:
-> This is to have a numa aware vmalloc function for memory exposed to
-> userspace. Fuse uring will allocate queue memory using this
-> new function.
+On Thu, May 30, 2024 at 12:32:06PM +0200, Christian Brauner wrote:
+> On Wed, May 29, 2024 at 04:41:32PM -0400, Josef Bacik wrote:
+> > NOTE:
+> > This is compile tested only.  It's also based on an out of tree feature branch
+> > from Amir that I'm extending to add page fault content events to allow us to
+> > have on-demand binary loading at exec time.  If you need more context please let
+> > me know, I'll push my current branch somewhere and wire up how I plan to use
+> > this patch so you can see it in better context, but hopefully I've described
+> > what I'm trying to accomplish enough that this leads to useful discussion.
+> > 
+> > 
+> > Currently we have ->i_writecount to control write access to an inode.
+> > Callers may deny write access by calling deny_write_access(), which will
+> > cause ->i_writecount to go negative, and allow_write_access() to push it
+> > back up to 0.
+> > 
+> > This is used in a few ways, the biggest user being exec.  Historically
+> > we've blocked write access to files that are opened for executing.
+> > fsverity is the other notable user.
+> > 
+> > With the upcoming fanotify feature that allows for on-demand population
+> > of files, this blanket policy of denying writes to files opened for
+> > executing creates a problem.  We have to issue events right before
+> > denying access, and the entire file must be populated before we can
+> > continue with the exec.
+> > 
+> > This creates a problem for users who have large binaries they want to
+> > populate on demand.  Inside of Meta we often have multi-gigabyte
+> > binaries, even on the order of tens of gigabytes.  Pre-loading these
+> > large files is costly, especially when large portions of the binary may
+> > never be read (think debuginfo).
+> > 
+> > In order to facilitate on-demand loading of binaries we need to have a
+> > way to punch a hole in this exec related write denial.
 > 
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> cc: Andrew Morton <akpm@linux-foundation.org>
-> cc: linux-mm@kvack.org
-> Acked-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  include/linux/vmalloc.h |  1 +
->  mm/nommu.c              |  6 ++++++
->  mm/vmalloc.c            | 41 +++++++++++++++++++++++++++++++++++++----
->  3 files changed, 44 insertions(+), 4 deletions(-)
+> Hm. I suggest we try to tackle this in a completely different way. Maybe
+> I mentioned it during LSFMM but instead of doing this dance we should
+> try and remove the deny_write_access() mechanisms for exec completely.
 > 
-> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-> index 98ea90e90439..e7645702074e 100644
-> --- a/include/linux/vmalloc.h
-> +++ b/include/linux/vmalloc.h
-> @@ -141,6 +141,7 @@ static inline unsigned long vmalloc_nr_pages(void) { return 0; }
->  extern void *vmalloc(unsigned long size) __alloc_size(1);
->  extern void *vzalloc(unsigned long size) __alloc_size(1);
->  extern void *vmalloc_user(unsigned long size) __alloc_size(1);
-> +extern void *vmalloc_node_user(unsigned long size, int node) __alloc_size(1);
->  extern void *vmalloc_node(unsigned long size, int node) __alloc_size(1);
->  extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
->  extern void *vmalloc_32(unsigned long size) __alloc_size(1);
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index 5ec8f44e7ce9..207ddf639aa9 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -185,6 +185,12 @@ void *vmalloc_user(unsigned long size)
->  }
->  EXPORT_SYMBOL(vmalloc_user);
->  
-> +void *vmalloc_node_user(unsigned long size, int node)
-> +{
-> +	return __vmalloc_user_flags(size, GFP_KERNEL | __GFP_ZERO);
-> +}
-> +EXPORT_SYMBOL(vmalloc_node_user);
-> +
->  struct page *vmalloc_to_page(const void *addr)
->  {
->  	return virt_to_page(addr);
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 68fa001648cc..0ac2f44b2b1f 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3958,6 +3958,25 @@ void *vzalloc(unsigned long size)
->  }
->  EXPORT_SYMBOL(vzalloc);
->  
-> +/**
-> + * _vmalloc_node_user - allocate zeroed virtually contiguous memory for userspace
-> + * on the given numa node
-> + * @size: allocation size
-> + * @node: numa node
-> + *
-> + * The resulting memory area is zeroed so it can be mapped to userspace
-> + * without leaking data.
-> + *
-> + * Return: pointer to the allocated memory or %NULL on error
-> + */
-> +static void *_vmalloc_node_user(unsigned long size, int node)
-> +{
-> +	return __vmalloc_node_range(size, SHMLBA,  VMALLOC_START, VMALLOC_END,
-> +				    GFP_KERNEL | __GFP_ZERO, PAGE_KERNEL,
-> +				    VM_USERMAP, node,
-> +				    __builtin_return_address(0));
-> +}
-> +
+> Back in 2021 we removed the remaining VM_DENYWRITE bits but left in
+> deny_write_access() for exec. Back then I had thought that this was a
+> bit risky for not too much gain. But looking at this code here I think
+> we now have an even stronger reason to try and get rid of this
+> restriction. And I've since changed my mind. See my notes on the
+> _completely untested_ RFC patch I appended.
+> 
+> Ofc depends on whether Linus still agrees that removing this might be
+> something we could try.
 
-Looking at the rest of vmalloc it seems like adding an extra variant to do the
-special thing is overkill, I think it would be fine to just have
+(Ignore point (4) on my notes list. I somehow forgot to remove this
+as it's obviously nonsense.)
 
-void *vmalloc_nod_user(unsigned long size, int node)
-{
-	return __vmalloc_node_range(size, SHMLBA,  VMALLOC_START, VMALLOC_END,
-				    GFP_KERNEL | __GFP_ZERO, PAGE_KERNEL,
-				    VM_USERMAP, node,
-				    __builtin_return_address(0));
-}
+> 
+> > This patch accomplishes this by doing something similar to the freeze
+> > levels on the super block.  We have two levels, one for all write
+> > denial, and one for exec.  People wishing to deny writes will specify
+> > the level they're denying.  Users wishing to get write access must go
+> > through all of the levels and increment each levels counter until it
+> > increments them all, or encounters a level that is currently denied, at
+> > which point they undo their increments and return an error.
+> > 
+> > Future patches will use the get_write_access_level() helper in order to
+> > skip the level they wish to be allowed to access.  Any inode being
+> > populated via the pre-content fanotify mechanism will be marked with a
+> > special flag, and the open path will use get_write_access_level() in
+> > order to bypass the exec restriction.
+> > 
+> > This is a significant behavior change, as it allows us to write to a
+> > file that is currently being exec'ed.  However this will be limited to a
+> > very narrow use case.
+> > 
+> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > ---
+> >  drivers/md/md.c                   |  2 +-
+> >  fs/binfmt_elf.c                   |  4 +-
+> >  fs/exec.c                         |  6 +--
+> >  fs/ext4/file.c                    |  4 +-
+> >  fs/inode.c                        |  3 +-
+> >  fs/kernel_read_file.c             |  4 +-
+> >  fs/locks.c                        |  2 +-
+> >  fs/quota/dquot.c                  |  2 +-
+> >  fs/verity/enable.c                |  4 +-
+> >  include/linux/fs.h                | 90 +++++++++++++++++++++++++++----
+> >  include/trace/events/filelock.h   |  2 +-
+> >  kernel/fork.c                     | 11 ++--
+> >  security/integrity/evm/evm_main.c |  2 +-
+> >  security/integrity/ima/ima_main.c |  2 +-
+> >  14 files changed, 104 insertions(+), 34 deletions(-)
+> > 
+> > diff --git a/drivers/md/md.c b/drivers/md/md.c
+> > index aff9118ff697..134cefbd7bef 100644
+> > --- a/drivers/md/md.c
+> > +++ b/drivers/md/md.c
+> > @@ -7231,7 +7231,7 @@ static int set_bitmap_file(struct mddev *mddev, int fd)
+> >  			pr_warn("%s: error: bitmap file must open for write\n",
+> >  				mdname(mddev));
+> >  			err = -EBADF;
+> > -		} else if (atomic_read(&inode->i_writecount) != 1) {
+> > +		} else if (atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]) != 1) {
+> >  			pr_warn("%s: error: bitmap file is already in use\n",
+> >  				mdname(mddev));
+> >  			err = -EBUSY;
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index a43897b03ce9..9a6fcf8ba17c 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -1216,7 +1216,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+> >  		}
+> >  		reloc_func_desc = interp_load_addr;
+> >  
+> > -		allow_write_access(interpreter);
+> > +		allow_write_access(interpreter, INODE_DENY_WRITE_EXEC);
+> >  		fput(interpreter);
+> >  
+> >  		kfree(interp_elf_ex);
+> > @@ -1308,7 +1308,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+> >  	kfree(interp_elf_ex);
+> >  	kfree(interp_elf_phdata);
+> >  out_free_file:
+> > -	allow_write_access(interpreter);
+> > +	allow_write_access(interpreter, INODE_DENY_WRITE_EXEC);
+> >  	if (interpreter)
+> >  		fput(interpreter);
+> >  out_free_ph:
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index 18f057ba64a5..6b2900ee448d 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -971,7 +971,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+> >  	if (err)
+> >  		goto exit;
+> >  
+> > -	err = deny_write_access(file);
+> > +	err = deny_write_access(file, INODE_DENY_WRITE_EXEC);
+> >  	if (err)
+> >  		goto exit;
+> >  
+> > @@ -1545,7 +1545,7 @@ static void do_close_execat(struct file *file)
+> >  {
+> >  	if (!file)
+> >  		return;
+> > -	allow_write_access(file);
+> > +	allow_write_access(file, INODE_DENY_WRITE_EXEC);
+> >  	fput(file);
+> >  }
+> >  
+> > @@ -1865,7 +1865,7 @@ static int exec_binprm(struct linux_binprm *bprm)
+> >  		bprm->file = bprm->interpreter;
+> >  		bprm->interpreter = NULL;
+> >  
+> > -		allow_write_access(exec);
+> > +		allow_write_access(exec, INODE_DENY_WRITE_EXEC);
+> >  		if (unlikely(bprm->have_execfd)) {
+> >  			if (bprm->executable) {
+> >  				fput(exec);
+> > diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> > index c89e434db6b7..6196f449649c 100644
+> > --- a/fs/ext4/file.c
+> > +++ b/fs/ext4/file.c
+> > @@ -171,8 +171,8 @@ static int ext4_release_file(struct inode *inode, struct file *filp)
+> >  	}
+> >  	/* if we are the last writer on the inode, drop the block reservation */
+> >  	if ((filp->f_mode & FMODE_WRITE) &&
+> > -			(atomic_read(&inode->i_writecount) == 1) &&
+> > -			!EXT4_I(inode)->i_reserved_data_blocks) {
+> > +	    (atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]) == 1) &&
+> > +	    !EXT4_I(inode)->i_reserved_data_blocks) {
+> >  		down_write(&EXT4_I(inode)->i_data_sem);
+> >  		ext4_discard_preallocations(inode);
+> >  		up_write(&EXT4_I(inode)->i_data_sem);
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 3a41f83a4ba5..fb6155412252 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -173,7 +173,8 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+> >  		inode->i_opflags |= IOP_XATTR;
+> >  	i_uid_write(inode, 0);
+> >  	i_gid_write(inode, 0);
+> > -	atomic_set(&inode->i_writecount, 0);
+> > +	for (int i = 0; i < INODE_DENY_WRITE_LEVEL; i++)
+> > +		atomic_set(&inode->i_writecount[i], 0);
+> >  	inode->i_size = 0;
+> >  	inode->i_write_hint = WRITE_LIFE_NOT_SET;
+> >  	inode->i_blocks = 0;
+> > diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
+> > index c429c42a6867..9af82d20aa1f 100644
+> > --- a/fs/kernel_read_file.c
+> > +++ b/fs/kernel_read_file.c
+> > @@ -48,7 +48,7 @@ ssize_t kernel_read_file(struct file *file, loff_t offset, void **buf,
+> >  	if (!S_ISREG(file_inode(file)->i_mode))
+> >  		return -EINVAL;
+> >  
+> > -	ret = deny_write_access(file);
+> > +	ret = deny_write_access(file, INODE_DENY_WRITE_ALL);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > @@ -119,7 +119,7 @@ ssize_t kernel_read_file(struct file *file, loff_t offset, void **buf,
+> >  	}
+> >  
+> >  out:
+> > -	allow_write_access(file);
+> > +	allow_write_access(file, INODE_DENY_WRITE_ALL);
+> >  	return ret == 0 ? copied : ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(kernel_read_file);
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index 90c8746874de..3e6a62f56528 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -1763,7 +1763,7 @@ check_conflicting_open(struct file *filp, const int arg, int flags)
+> >  	else if (filp->f_mode & FMODE_READ)
+> >  		self_rcount = 1;
+> >  
+> > -	if (atomic_read(&inode->i_writecount) != self_wcount ||
+> > +	if (atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]) != self_wcount ||
+> >  	    atomic_read(&inode->i_readcount) != self_rcount)
+> >  		return -EAGAIN;
+> >  
+> > diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> > index 627eb2f72ef3..fa470d76f0b3 100644
+> > --- a/fs/quota/dquot.c
+> > +++ b/fs/quota/dquot.c
+> > @@ -1031,7 +1031,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
+> >  	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+> >  		spin_lock(&inode->i_lock);
+> >  		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+> > -		    !atomic_read(&inode->i_writecount) ||
+> > +		    !inode_is_open_for_write(inode) ||
+> >  		    !dqinit_needed(inode, type)) {
+> >  			spin_unlock(&inode->i_lock);
+> >  			continue;
+> > diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+> > index c284f46d1b53..a0e0d49c6ccc 100644
+> > --- a/fs/verity/enable.c
+> > +++ b/fs/verity/enable.c
+> > @@ -371,7 +371,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
+> >  	if (err) /* -EROFS */
+> >  		return err;
+> >  
+> > -	err = deny_write_access(filp);
+> > +	err = deny_write_access(filp, INODE_DENY_WRITE_ALL);
+> >  	if (err) /* -ETXTBSY */
+> >  		goto out_drop_write;
+> >  
+> > @@ -397,7 +397,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
+> >  	 * allow_write_access() is needed to pair with deny_write_access().
+> >  	 * Regardless, the filesystem won't allow writing to verity files.
+> >  	 */
+> > -	allow_write_access(filp);
+> > +	allow_write_access(filp, INODE_DENY_WRITE_ALL);
+> >  out_drop_write:
+> >  	mnt_drop_write_file(filp);
+> >  	return err;
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 0283cf366c2a..f0720cd0ab45 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -620,6 +620,22 @@ is_uncached_acl(struct posix_acl *acl)
+> >  #define IOP_XATTR	0x0008
+> >  #define IOP_DEFAULT_READLINK	0x0010
+> >  
+> > +/*
+> > + * These are used with the *write_access helpers.
+> > + *
+> > + * INODE_DENY_WRITE_ALL		-	Do not allow writes at all.
+> > + * INODE_DENY_WRITE_EXEC	-	Do not allow writes because we are
+> > + *					exec'ing the file.  This can be bypassed
+> > + *					in cases where the file needs to be
+> > + *					filled in via the fanotify pre-content
+> > + *					hooks.
+> > + */
+> > +enum inode_write_level {
+> > +	INODE_DENY_WRITE_ALL,
+> > +	INODE_DENY_WRITE_EXEC,
+> > +	INODE_DENY_WRITE_LEVEL,
+> > +};
+> > +
+> >  /*
+> >   * Keep mostly read-only and often accessed (especially for
+> >   * the RCU path lookup and 'stat' data) fields at the beginning
+> > @@ -701,7 +717,7 @@ struct inode {
+> >  	atomic64_t		i_sequence; /* see futex */
+> >  	atomic_t		i_count;
+> >  	atomic_t		i_dio_count;
+> > -	atomic_t		i_writecount;
+> > +	atomic_t		i_writecount[INODE_DENY_WRITE_LEVEL];
+> >  #if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
+> >  	atomic_t		i_readcount; /* struct files open RO */
+> >  #endif
+> > @@ -2920,38 +2936,90 @@ static inline void kiocb_end_write(struct kiocb *iocb)
+> >   * put_write_access() releases this write permission.
+> >   * deny_write_access() denies write access to a file.
+> >   * allow_write_access() re-enables write access to a file.
+> > + * __get_write_access_level() gets write permission for a file for the given
+> > + *				level.
+> > + * put_write_access_level() releases the level write permission.
+> >   *
+> > - * The i_writecount field of an inode can have the following values:
+> > + * The level indicates which level we're denying writes for.  Some levels are
+> > + * allowed to be bypassed in special circumstances.  In the cases that the write
+> > + * level needs to be bypassed the user must use the
+> > + * get_write_access_level()/put_write_access_level() pairs of the helpers, which
+> > + * will allow the user to bypass the given level, but none of the others.
+> > + *
+> > + * The i_writecount[level] field of an inode can have the following values:
+> >   * 0: no write access, no denied write access
+> > - * < 0: (-i_writecount) users that denied write access to the file.
+> > - * > 0: (i_writecount) users that have write access to the file.
+> > + * < 0: (-i_writecount[level]) users that denied write access to the file.
+> > + * > 0: (i_writecount[level]) users that have write access to the file.
+> >   *
+> >   * Normally we operate on that counter with atomic_{inc,dec} and it's safe
+> >   * except for the cases where we don't hold i_writecount yet. Then we need to
+> >   * use {get,deny}_write_access() - these functions check the sign and refuse
+> >   * to do the change if sign is wrong.
+> >   */
+> > +static inline int __get_write_access(struct inode *inode,
+> > +				     enum inode_write_level skip_level)
+> > +{
+> > +	int i;
+> > +
+> > +	/* We are not allowed to skip INODE_DENY_WRITE_ALL. */
+> > +	WARN_ON_ONCE(skip_level == INODE_DENY_WRITE_ALL);
+> > +
+> > +	for (i = 0; i < INODE_DENY_WRITE_LEVEL; i++) {
+> > +		if (i == skip_level)
+> > +			continue;
+> > +		if (!atomic_inc_unless_negative(&inode->i_writecount[i]))
+> > +			goto fail;
+> > +	}
+> > +	return 0;
+> > +fail:
+> > +	while (--i >= 0) {
+> > +		if (i == skip_level)
+> > +			continue;
+> > +		atomic_dec(&inode->i_writecount[i]);
+> > +	}
+> > +	return -ETXTBSY;
+> > +}
+> >  static inline int get_write_access(struct inode *inode)
+> >  {
+> > -	return atomic_inc_unless_negative(&inode->i_writecount) ? 0 : -ETXTBSY;
+> > +	return __get_write_access(inode, INODE_DENY_WRITE_LEVEL);
+> >  }
+> > -static inline int deny_write_access(struct file *file)
+> > +static inline int get_write_access_level(struct inode *inode,
+> > +					 enum inode_write_level skip_level)
+> > +{
+> > +	return __get_write_access(inode, skip_level);
+> > +}
+> > +static inline int deny_write_access(struct file *file,
+> > +				    enum inode_write_level level)
+> >  {
+> >  	struct inode *inode = file_inode(file);
+> > -	return atomic_dec_unless_positive(&inode->i_writecount) ? 0 : -ETXTBSY;
+> > +	return atomic_dec_unless_positive(&inode->i_writecount[level]) ? 0 : -ETXTBSY;
+> > +}
+> > +static inline void __put_write_access(struct inode *inode,
+> > +				      enum inode_write_level skip_level)
+> > +{
+> > +	for (int i = 0; i < INODE_DENY_WRITE_LEVEL; i++) {
+> > +		if (i == skip_level)
+> > +			continue;
+> > +		atomic_dec(&inode->i_writecount[i]);
+> > +	}
+> >  }
+> >  static inline void put_write_access(struct inode * inode)
+> >  {
+> > -	atomic_dec(&inode->i_writecount);
+> > +	__put_write_access(inode, INODE_DENY_WRITE_LEVEL);
+> >  }
+> > -static inline void allow_write_access(struct file *file)
+> > +static inline void put_write_access_level(struct inode *inode,
+> > +					  enum inode_write_level skip_level)
+> > +{
+> > +	__put_write_access(inode, skip_level);
+> > +}
+> > +static inline void allow_write_access(struct file *file, enum inode_write_level level)
+> >  {
+> >  	if (file)
+> > -		atomic_inc(&file_inode(file)->i_writecount);
+> > +		atomic_inc(&file_inode(file)->i_writecount[level]);
+> >  }
+> >  static inline bool inode_is_open_for_write(const struct inode *inode)
+> >  {
+> > -	return atomic_read(&inode->i_writecount) > 0;
+> > +	return atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]) > 0;
+> >  }
+> >  
+> >  #if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
+> > diff --git a/include/trace/events/filelock.h b/include/trace/events/filelock.h
+> > index b8d1e00a7982..ad076e87a956 100644
+> > --- a/include/trace/events/filelock.h
+> > +++ b/include/trace/events/filelock.h
+> > @@ -187,7 +187,7 @@ TRACE_EVENT(generic_add_lease,
+> >  	TP_fast_assign(
+> >  		__entry->s_dev = inode->i_sb->s_dev;
+> >  		__entry->i_ino = inode->i_ino;
+> > -		__entry->wcount = atomic_read(&inode->i_writecount);
+> > +		__entry->wcount = atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]);
+> >  		__entry->rcount = atomic_read(&inode->i_readcount);
+> >  		__entry->icount = atomic_read(&inode->i_count);
+> >  		__entry->owner = fl->c.flc_owner;
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 99076dbe27d8..b6dc7aed2ebf 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -620,7 +620,7 @@ static void dup_mm_exe_file(struct mm_struct *mm, struct mm_struct *oldmm)
+> >  	 * We depend on the oldmm having properly denied write access to the
+> >  	 * exe_file already.
+> >  	 */
+> > -	if (exe_file && deny_write_access(exe_file))
+> > +	if (exe_file && deny_write_access(exe_file, INODE_DENY_WRITE_EXEC))
+> >  		pr_warn_once("deny_write_access() failed in %s\n", __func__);
+> >  }
+> >  
+> > @@ -1417,13 +1417,14 @@ int set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
+> >  		 * We expect the caller (i.e., sys_execve) to already denied
+> >  		 * write access, so this is unlikely to fail.
+> >  		 */
+> > -		if (unlikely(deny_write_access(new_exe_file)))
+> > +		if (unlikely(deny_write_access(new_exe_file,
+> > +					       INODE_DENY_WRITE_EXEC)))
+> >  			return -EACCES;
+> >  		get_file(new_exe_file);
+> >  	}
+> >  	rcu_assign_pointer(mm->exe_file, new_exe_file);
+> >  	if (old_exe_file) {
+> > -		allow_write_access(old_exe_file);
+> > +		allow_write_access(old_exe_file, INODE_DENY_WRITE_EXEC);
+> >  		fput(old_exe_file);
+> >  	}
+> >  	return 0;
+> > @@ -1464,7 +1465,7 @@ int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
+> >  			return ret;
+> >  	}
+> >  
+> > -	ret = deny_write_access(new_exe_file);
+> > +	ret = deny_write_access(new_exe_file, INODE_DENY_WRITE_EXEC);
+> >  	if (ret)
+> >  		return -EACCES;
+> >  	get_file(new_exe_file);
+> > @@ -1476,7 +1477,7 @@ int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
+> >  	mmap_write_unlock(mm);
+> >  
+> >  	if (old_exe_file) {
+> > -		allow_write_access(old_exe_file);
+> > +		allow_write_access(old_exe_file, INODE_DENY_WRITE_EXEC);
+> >  		fput(old_exe_file);
+> >  	}
+> >  	return 0;
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 62fe66dd53ce..b83dfb295d85 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -1084,7 +1084,7 @@ static void evm_file_release(struct file *file)
+> >  	if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
+> >  		return;
+> >  
+> > -	if (iint && atomic_read(&inode->i_writecount) == 1)
+> > +	if (iint && atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]) == 1)
+> >  		iint->flags &= ~EVM_NEW_FILE;
+> >  }
+> >  
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index f04f43af651c..7aed80a70692 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -164,7 +164,7 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+> >  		return;
+> >  
+> >  	mutex_lock(&iint->mutex);
+> > -	if (atomic_read(&inode->i_writecount) == 1) {
+> > +	if (atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]) == 1) {
+> >  		struct kstat stat;
+> >  
+> >  		update = test_and_clear_bit(IMA_UPDATE_XATTR,
+> > -- 
+> > 2.43.0
+> > 
 
-instead of creating a _vmalloc_node_user().
 
-Also as an aside, this is definitely being used by this series, but I think it
-would be good to go ahead and send this by itself with just the explanation that
-it's going to be used by the fuse iouring stuff later, that way you can get this
-merged and continue working on the iouring part.
-
-This also goes for the other prep patches earlier this this series, but since
-those are fuse related it's probably fine to just keep shipping them with this
-series.  Thanks,
-
-Josef
 
