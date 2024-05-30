@@ -1,81 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-20563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9988D5208
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 21:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560988D521A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 21:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ECC51F23244
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 19:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD58284FEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 19:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8155558AB;
-	Thu, 30 May 2024 19:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F6E6D1B0;
+	Thu, 30 May 2024 19:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="0MLFPAB+"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="XBVepKmv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4559D18756C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 19:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29914C624
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 19:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717095656; cv=none; b=Hnzv2QIH0AA+YkdWH4Z2Z+vz0q/qS8FssF6vUiFlkb2O0SOEZAEsTUafZC5OcQUiVg7KnVLXPebekvPBzNQV50IQENI0z6Fe7ninM7aHaooD8630gHR0qbCFtMZXmKQt1JzFn7TpJKu4oIhzL90bjxku7CDI5SACirUak5zO0sM=
+	t=1717096185; cv=none; b=S7Kdf70nM+vUrEw4ihlthFsnFn1PujFcwdutSss2RHRKC91tdgfnznEMstpN2cWcNEdXeLjL9moQcpqxi6oyqp4N37Jl15sPvYZYNQHlVH27zoLJKl38UBU/ki6NLmuP/ivPY7DwHuAlb80E2UO/OO6+LygNc4N6pOl2vqLqrnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717095656; c=relaxed/simple;
-	bh=coG0iSdStGRRkZOHoqIhp+sX+Ub/VXE/9UNIB0dzyP0=;
+	s=arc-20240116; t=1717096185; c=relaxed/simple;
+	bh=82n7acpe086iLqaQTWYYdHGZLamVImqGqDYDXR5vMtY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCRS4WXzobNL+qborBmFO0DlmWy9zm1dixG5v6uXYd5arMTHkck5nIa1lufwZJreSJo2154S1AfdOCG/Dya79AtLdqXW+Fkx6RHKrvLqxll7fYo9w0UhTRFXAq8oncSP7jTyesXGIHlkRnV4quRqJPhkIbpvAftNnZoCjs7VtJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=0MLFPAB+; arc=none smtp.client-ip=209.85.166.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZwlGvVgXmi8rRkDjmm5d+f9goF8YHWFe9PDPvr0prIIFyKZ2+0VgzLiOBaWglcRGx8lcV6Xhel4jvg1Tm/AFyN/B+eDgvyFIIzPc3QaRX+eJ3DV72WOsoCwg7RQOH+kWIoW6qskF687Ln2JGMXyS5n5cKFi2mcgi9FPISbThaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=XBVepKmv; arc=none smtp.client-ip=209.85.167.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7e238fa7b10so51661239f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 12:00:54 -0700 (PDT)
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d1d08c7c8aso693006b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 12:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717095653; x=1717700453; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717096183; x=1717700983; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1VakqD08EEz8RYq848OzpHRbO3fabiRdOrW60Ka7AvQ=;
-        b=0MLFPAB+zYUsDRyLnXtf9hBA6EjGSt5TJprLe9eK5E3DhEuWqsXtr/gXLx77+c5M6v
-         yFOtQ3f5qhWWDgtcVD834TMNb5CJEOLel3XfaADLvbVQ68F/i5u6VaTVQOeH+8zJg3lZ
-         OQRggQ7fxpWfPWvSQO1BDe3lkXg1+tZ6t91R+Kc5XupkzxOnwlIHYg8PJnVfjoksBlfb
-         pxJxHhs3OAgppwE7DjZVfnBvPiLAxuR0bBxolB0zGAVNhZ6TYstpvZG5oPN8sV5ZrxWI
-         1RjZvzGhQTSvJ9sJty7zNWjQsC7/XPsRqYUvyERCsqWMQmkst6wv1i6mxFIthSbUOaKh
-         A7gA==
+        bh=STEkyafVIcde8Faj8aThfnneXmr4cChiJsEg44JX/7E=;
+        b=XBVepKmvEEczWKag6ii2ldL3L4p5b9vEDkfnrfWMSa8K1zfvMoqen6AbPdzNbZ4zC2
+         c6Mqe348JZFlzBGusbhe5y20Y0zZt6KuQRKml4vbtOIIXiD4HxlkuXTkyXLMPmb3AoAW
+         yrWwkxbnhlgIWGIQ0sjvviQHzbujUHTMgpJVrymnygN50jpcnxqyuOR9LtcN4e2ZiEfB
+         xIVIX3Kj2kzjpcfukF5XBTKFMXXagL9+TdftfxbcydQNJhqwDe3pQWLOjkvPkSSWfYq4
+         xYl7aZadBI48O/ZCXMgA/5Chfakh9VpB7VvQVW1fxbz/Bk+EmTnv3cvOkxaE1OTpB/Kk
+         qgiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717095653; x=1717700453;
+        d=1e100.net; s=20230601; t=1717096183; x=1717700983;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1VakqD08EEz8RYq848OzpHRbO3fabiRdOrW60Ka7AvQ=;
-        b=DnWfWK35ZDvJpv4yxNsLG2focW97wr8z4pzGwNHZMna/AcFQKEZd90HqnZ0m+GsDpw
-         T0s1jiMbQ12xwTU+rvfInbHzp55vsJEN73ojYAsiET6qH21jgUyR0cPujh9tEu7qj4GH
-         WQMbo3+jB8Xh+zrkiidz4rGqEh22uBJMR3s1PYGBAqv0BF7wtrl7Flt2gmw65OdHx8rK
-         7eb882xPEQNGy8LHs+7jRsWyNdKS2pMueerPNIu9Yqb2i44S0SB7BIVPVMDsffZFf1kd
-         zq8Ub3luDpAzXTl4zXr6NQSafQbADsmr8TFynzSgHaGOPpQvQfP9kI/d2IqXWoGPLPId
-         JvTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWacoEXZkSY02EAHrCfYCL3miVnZOaQeBJidZFiKB9Sw36mTDehtpojYjFAsA4rEpR7NvtMH1BOidSmj5a1qRsSCuC8kR2S6HJw6igMRw==
-X-Gm-Message-State: AOJu0YwxjLMIVIvKo/Lu1H6Iyq2ajUmLO0Ic1oPl6ZaMfXNhSEujhCC1
-	6BY/R3+7cbdKjxsx61D6v3MkRYwXScpdpcKdRbeyjOj9ei8kIes9DiCBnJRB7O0=
-X-Google-Smtp-Source: AGHT+IETmLoUKFWUUlWAXMEIL4ZUEwYLqHxhrSt4YV6s4OG4P9MgrqoG+/wxcSxz+9VEmFXblikORg==
-X-Received: by 2002:a05:6e02:19cc:b0:374:4edd:1fd2 with SMTP id e9e14a558f8ab-3747dfbc8c0mr33137555ab.28.1717095651295;
-        Thu, 30 May 2024 12:00:51 -0700 (PDT)
+        bh=STEkyafVIcde8Faj8aThfnneXmr4cChiJsEg44JX/7E=;
+        b=EkhD9wSTBNrrIoQ+eb76bZeofU/MWb37KWYgZYjcgfXneRfjm2E7RMmLHpHTFWQIgo
+         w50o6Nk8V+1JfxjqG3LzJSRoFk7PC+2VhRvS0ilhhu+oTel14Vs4w061rZazhw52Pi8b
+         RBGhr7KxtYJwLkiyHNnxp/i5hHqgl518zhZrgvDLyPGKmTW0/+34cG8OlDJ1iSAc5iDV
+         oIix+Rl2GwsfIl0RvXHA1pmSrtAaTcTI/X/uDJKqoxQmMPcm56Gpk51OI8ywAUwAVz4l
+         b5Nl4nUNT4+qd8QEILcm3z7t8sSkf730dnlh4CxS43irnb3eigwQK6iORDlNDVinYtz6
+         dQjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAWMPrKus//B0KIoKgtHUCLr4XnA4BQBF5Y/DNURFmRd2ME2o7n+I1zVmxdGqXrVpfX1n/f/Qi98Fsqt2RbOCQGrdtqNuxR3aFwiR/UA==
+X-Gm-Message-State: AOJu0Yywux1TtvbW6m7JQ2JaOjDk5uP7tP/IjxGPS+0YNjJgF8qu8NqR
+	k9hfE9jk/Ov1GtwY1hAVWVuhtyAbOsCUAvu8Dfmhcn/5sBuLvhxT1DA9akLeGwE=
+X-Google-Smtp-Source: AGHT+IGzMKqBOeUDnXYclSdBYnjrIWAc6XIydaMi9nNxv5fMnkBfm9Ebgas0uhT0ClRRJz1TCEyANg==
+X-Received: by 2002:a05:6808:f8a:b0:3c9:c2fa:4585 with SMTP id 5614622812f47-3d1dcd0f337mr3580047b6e.42.1717096182765;
+        Thu, 30 May 2024 12:09:42 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f2f128ecsm6431585a.42.2024.05.30.12.00.50
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4a7463a5sm1004726d6.46.2024.05.30.12.09.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 12:00:50 -0700 (PDT)
-Date: Thu, 30 May 2024 15:00:49 -0400
+        Thu, 30 May 2024 12:09:42 -0700 (PDT)
+Date: Thu, 30 May 2024 15:09:41 -0400
 From: Josef Bacik <josef@toxicpanda.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm
-Subject: Re: [PATCH RFC v2 09/19] fuse: {uring} Add a dev_release exception
- for fuse-over-io-uring
-Message-ID: <20240530190049.GF2205585@perftesting>
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+Message-ID: <20240530190941.GA2210558@perftesting>
 References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-9-d149476b1d65@ddn.com>
+ <5mimjjxul2sc2g7x6pttnit46pbw3astwj2giqfr4xayp63el2@fb5bgtiavwgv>
+ <8c3548a9-3b15-49c4-9e38-68d81433144a@fastmail.fm>
+ <owccqrazlyfo2zcsprxr7bhpgjrh4km3xlc4ku2aqhqhlqhtyj@djlwwccmlwhw>
+ <fe874c55-a26f-413f-9719-9cf59b1a3d28@fastmail.fm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,114 +94,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-9-d149476b1d65@ddn.com>
+In-Reply-To: <fe874c55-a26f-413f-9719-9cf59b1a3d28@fastmail.fm>
 
-On Wed, May 29, 2024 at 08:00:44PM +0200, Bernd Schubert wrote:
-> fuse-over-io-uring needs an implicit device clone, which is done per
-> queue to avoid hanging "umount" when daemon side is already terminated.
-> Reason is that fuse_dev_release() is not called when there are queued
-> (waiting) io_uring commands.
-> Solution is the implicit device clone and an exception in fuse_dev_release
-> for uring devices to abort the connection when only uring device
-> are left.
+On Thu, May 30, 2024 at 06:17:29PM +0200, Bernd Schubert wrote:
 > 
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/dev.c         | 32 ++++++++++++++++++++++++++++++--
->  fs/fuse/dev_uring_i.h | 13 +++++++++++++
->  2 files changed, 43 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 78c05516da7f..cd5dc6ae9272 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -2257,6 +2257,8 @@ int fuse_dev_release(struct inode *inode, struct file *file)
->  		struct fuse_pqueue *fpq = &fud->pq;
->  		LIST_HEAD(to_end);
->  		unsigned int i;
-> +		int dev_cnt;
-> +		bool abort_conn = false;
->  
->  		spin_lock(&fpq->lock);
->  		WARN_ON(!list_empty(&fpq->io));
-> @@ -2266,8 +2268,34 @@ int fuse_dev_release(struct inode *inode, struct file *file)
->  
->  		fuse_dev_end_requests(&to_end);
->  
-> -		/* Are we the last open device? */
-> -		if (atomic_dec_and_test(&fc->dev_count)) {
-> +		/* Are we the last open device?  */
-> +		dev_cnt = atomic_dec_return(&fc->dev_count);
-> +		if (dev_cnt == 0)
-> +			abort_conn = true;
+> On 5/30/24 18:10, Kent Overstreet wrote:
+> > On Thu, May 30, 2024 at 06:02:21PM +0200, Bernd Schubert wrote:
+> >> Hmm, initially I had thought about writing my own ring buffer, but then 
+> >> io-uring got IORING_OP_URING_CMD, which seems to have exactly what we
+> >> need? From interface point of view, io-uring seems easy to use here, 
+> >> has everything we need and kind of the same thing is used for ublk - 
+> >> what speaks against io-uring? And what other suggestion do you have?
+> >>
+> >> I guess the same concern would also apply to ublk_drv. 
+> >>
+> >> Well, decoupling from io-uring might help to get for zero-copy, as there
+> >> doesn't seem to be an agreement with Mings approaches (sorry I'm only
+> >> silently following for now).
+> >>
+> >> From our side, a customer has pointed out security concerns for io-uring. 
+> >> My thinking so far was to implemented the required io-uring pieces into 
+> >> an module and access it with ioctls... Which would also allow to
+> >> backport it to RHEL8/RHEL9.
+> > 
+> > Well, I've been starting to sketch out a ringbuffer() syscall, which
+> > would work on any (supported) file descriptor and give you a ringbuffer
+> > for reading or writing (or call it twice for both).
+> > 
+> > That seems to be what fuse really wants, no? You're already using a file
+> > descriptor and your own RPC format, you just want a faster
+> > communications channel.
+> 
+> Fine with me, if you have something better/simpler with less security
+> concerns - why not. We just need a community agreement on that.
+> 
+> Do you have something I could look at?
 
-You can just do
+FWIW I have no strong feelings between using iouring vs any other ringbuffer
+mechanism we come up with in the future.
 
-if (atomic_dec_and_test(&fc->dev_count))
-	abort_conn = true;
-else if (fuse_uring_configured(fc))
-	abort_conn = fuse_uring_empty(fc);
-
-and have fuse_uring_empty() do the work below to find if we're able to abort the
-connection, so it's in it's own little helper.
-
-> +
-> +		/*
-> +		 * Or is this with io_uring and only ring devices left?
-> +		 * These devices will not receive a ->release() as long as
-> +		 * there are io_uring_cmd's waiting and not completed
-> +		 * with io_uring_cmd_done yet
-> +		 */
-> +		if (fuse_uring_configured(fc)) {
-> +			struct fuse_dev *list_dev;
-> +			bool all_uring = true;
-> +
-> +			spin_lock(&fc->lock);
-> +			list_for_each_entry(list_dev, &fc->devices, entry) {
-> +				if (list_dev == fud)
-> +					continue;
-> +				if (!list_dev->uring_dev)
-> +					all_uring = false;
-> +			}
-> +			spin_unlock(&fc->lock);
-> +			if (all_uring)
-> +				abort_conn = true;
-> +		}
-> +
-> +		if (abort_conn) {
->  			WARN_ON(fc->iq.fasync != NULL);
->  			fuse_abort_conn(fc);
->  		}
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index 7a2f540d3ea5..114e9c008013 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -261,6 +261,14 @@ fuse_uring_get_queue(struct fuse_ring *ring, int qid)
->  	return (struct fuse_ring_queue *)(ptr + qid * ring->queue_size);
->  }
->  
-> +static inline bool fuse_uring_configured(struct fuse_conn *fc)
-> +{
-> +	if (READ_ONCE(fc->ring) != NULL && fc->ring->configured)
-> +		return true;
-
-I see what you're trying to do here, and it is safe because you won't drop
-fc->ring at this point, but it gives the illusion that it'll work if we race
-with somebody who is freeing fc->ring, which isn't the case because you
-immediately de-reference it again afterwards.
-
-Using READ_ONCE/WRITE_ONCE for pointer access isn't actually safe unless you're
-documenting it specifically, don't use it unless you really need lockless access
-to the thing.
-
-If we know that having fc means that fc->ring will be valid at all times then
-the READ_ONCE is redundant and unnecessary, if we don't know that then this
-needs more protection to make sure we don't suddenly lose fc->ring between the
-two statements.
-
-AFAICT if we have fc then ->ring will either be NULL or it won't be (once the
-connection is established and running), so it's fine to just delete the
-READ_ONCE/WRITE_ONCE things.  Thanks,
+That being said iouring is here now, is proven to work, and these are good
+performance improvements.  If in the future something else comes along that
+gives us better performance then absolutely we should explore adding that
+functionality.  But this solves the problem today, and I need the problem solved
+yesterday, so continuing with this patchset is very much a worthwhile
+investment, one that I'm very happy you're tackling Bernd instead of me ;).
+Thanks,
 
 Josef
 
