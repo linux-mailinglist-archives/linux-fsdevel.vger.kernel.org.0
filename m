@@ -1,193 +1,380 @@
-Return-Path: <linux-fsdevel+bounces-20510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5A68D4893
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 11:32:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A5F8D494E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 12:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DB6282881
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 09:32:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7394A1C21F1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 10:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DB516F0EA;
-	Thu, 30 May 2024 09:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E2A176AC6;
+	Thu, 30 May 2024 10:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b="CZaB7oY1"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MptEa35t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2125.outbound.protection.outlook.com [40.107.255.125])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE2E13DDB4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 09:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717061494; cv=fail; b=k7rw5T7Pfk3S/Es8Qg5IcOsVlrv22L4C+YUdy5j+VBzTKQjL5cNIYEfnaTnKgThj1XiekfC7IJ7OwTQVpxP1vXoG/yYmHRbbfChpDfztNY4kTw+bmyujCp2xRKUT86a2m8qw7D4Q0XfbgNdwENvUh431ynqag0HPPF/2Q0lqXo4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717061494; c=relaxed/simple;
-	bh=0rDFu1EUIaOvE2LB82+C9odQFbYWmp1E4iZB8L/zMeQ=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ZOJIDqKu6mVoXYzHGQpt/P08KGwRifUYC6xrWD2mIaCyNxZJv5s8daKgPuAR8SCjSggISYKWhSqCWxvPOtFUltTv1gZ5AbvqY/j76Ygn6nnhLhl9WlK4luGpSAK36QU88pTmRUD68LGIsRH6vmQdiDPrkqwpe2cae1rnj38NdWE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com; spf=pass smtp.mailfrom=jaguarmicro.com; dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b=CZaB7oY1; arc=fail smtp.client-ip=40.107.255.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaguarmicro.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lCBFa4jsVeuE2wxfUrNfz8p6wS6/OWc6FU9LTx/YDTX6s+dNKO5NCirsJik9nP7QR5ed7BFU5l9yIbv4EqaDE0UTP6aqnOeqZB2KrFS21Y8iQSBwqs/h2illQOxjKdaZMQBfzBXLitKHBn4fZUMmafjYITq7GVX4iqWUH9LkdTkUGWviT70wBZ4WTvnf14O+5hzu4wcbpcu99Zpt1P5VwYo905gU6cParrJ5SJXep2pytJUlpoKit4KPiTEhp5yMyaq5sHmUo281DbqWGDSrcU0xqQ//z5qLRoWYpddWp2o15bx/FKJk3ULs3HN0d5Qt7CgRYEx+j9VKv+kKBOBqtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0rDFu1EUIaOvE2LB82+C9odQFbYWmp1E4iZB8L/zMeQ=;
- b=TF0P0LVReC12LwuLNp1acNA3+QYCvM4twv4pe9tCJ7o+185jBCTssDaz6ZtPF1ucVlfN4gN7LlnI8TaR3SJpZhw4GmunjDUDkdpltnMX+Jad91hfHxP4rXRoMxZlYGR4LyShfYDr/zTWIMNLu07F0Q/cymtggizYZlcJ9eG1t134f2tRy1eJUarWH5MaJ3zyGPjRKuHBLwICFQmi3wX0r8wcpamPz/3ZFKfK7ot5aThDLBF01lZQLYoC+QQRrVGTSEVy5sx03VAXhPA8AKScywHVgX/vGPMnY9KdLrDhD4T/zyX2PAitXPc72TDsCOejwP4WIuheYxHdy/iaGEeOuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
- header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0rDFu1EUIaOvE2LB82+C9odQFbYWmp1E4iZB8L/zMeQ=;
- b=CZaB7oY1U5i3+7Pqxx5u7S4Fk2nDht6ez5dNLbdHJJefiPieTzu9H0UStykE9KcgiQHXqADgols3GaRsaGNGcGIC2LHIii+krQniHrSGU78ldi5Vm32Q3XltQtR6RIl1/2Pay+F9ILW+dArIwqx/eFKW3preSGxJjfi7L+EdkdYljDdDBeX0EicFkpSyse9Xw9k9BeGI9zrEfft5214JX97141NeF13a/K1pkhqgYCLG/krEX6ZtkS2IQt/z4GMZYj4qhGRApanoi6IDLyZMRNNmQ0sWFCojWVhIiAh9gMk8SNIVDVHH8+eZEG+FdVVJdre1fys4YB88/AtqYW4YZA==
-Received: from SI2PR06MB5385.apcprd06.prod.outlook.com (2603:1096:4:1ec::12)
- by SI2PR06MB5089.apcprd06.prod.outlook.com (2603:1096:4:1a8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
- 2024 09:31:27 +0000
-Received: from SI2PR06MB5385.apcprd06.prod.outlook.com
- ([fe80::967d:afda:6f4:33dd]) by SI2PR06MB5385.apcprd06.prod.outlook.com
- ([fe80::967d:afda:6f4:33dd%6]) with mapi id 15.20.7633.018; Thu, 30 May 2024
- 09:31:27 +0000
-From: Lege Wang <lege.wang@jaguarmicro.com>
-To: "pgootzen@nvidia.com" <pgootzen@nvidia.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
-CC: Bin Yang <bin.yang@jaguarmicro.com>, Lege Wang
-	<lege.wang@jaguarmicro.com>, Angus Chen <angus.chen@jaguarmicro.com>
-Subject: virtio-fs tests between host(x86) and dpu(arm64)
-Thread-Topic: virtio-fs tests between host(x86) and dpu(arm64)
-Thread-Index: AdqybnzAiozTvtlkQFaloMBVG2WGpw==
-Date: Thu, 30 May 2024 09:31:26 +0000
-Message-ID:
- <SI2PR06MB53852C83901A0DDE55624063FFF32@SI2PR06MB5385.apcprd06.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SI2PR06MB5385:EE_|SI2PR06MB5089:EE_
-x-ms-office365-filtering-correlation-id: c63b81b8-232b-4254-2eab-08dc808b479d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?gb2312?B?TWIxTE1sY0h2T1dMTzhHVGxuQ3o2UmdwUjRSWCtMaTZBMXFsTFlwVDFMNU40?=
- =?gb2312?B?Nm5zTWZudVgxeld3bU9jcGk2UDB6VVF3MmNCaDhTZ3dhYlE5NnZZN0JiblVN?=
- =?gb2312?B?MmNFNnhlTVAvQ2hkYnp0S0NKd0RRSEowOEtzWlZNd2JvcUhEQ3ZCYnlGRXc1?=
- =?gb2312?B?WU5UZHVNZk8rTmJoTU4rNzRSVUp4eHFEdC81aWJMMWtNQS9ENldlQ29EZUtq?=
- =?gb2312?B?NkJrN01VaHJGdFVqSnhNS0xzY2Z3QjFWMUNlTjNLMnR4Tm5vQWNrLzdER0FV?=
- =?gb2312?B?aXM4OFJKL3ByMDA0NVRRMXcxUk1kSFFqMjhtaE1YQjF3RW9LMDY2NVd3dWhm?=
- =?gb2312?B?WjFpVEl4T1NOYzllZlNzbFRpaFJOL2l4cnBtQnBkWS9CNVNrM3E2eFBnVlpi?=
- =?gb2312?B?OUIxSHpNOXJuSlVzbXNWWnhadm10QjgvT3RKSU43YTEycXRoNktPc1o1N2Rt?=
- =?gb2312?B?NEk0OWdUZXBYZW1zdzRIeE9QOWNGZlk0OW1sYWZmRkhOeXpXdHBRWG15cm9G?=
- =?gb2312?B?VEd3NitaOE1GMXIzSzU5aTZvRHpRbnRPZ1k3c292Ky9tVm15M2xqTGN5bnBQ?=
- =?gb2312?B?OThuSzVORmw5cmltVjNhTWpGMG1pais2bEV4VVFoNGY2K1UzNTl6cHhvTlRa?=
- =?gb2312?B?QTlCWkh6cENuMnFkUHBkZzc2QzhUeFVFOHkvQnFCZDh5NXlML2Y1SzlpTkdC?=
- =?gb2312?B?cGpPLzErTUtQdEFwc2laWGxndVhlMTN1SVZOTUk0cHVTNjI5SDZJSEtLN1p3?=
- =?gb2312?B?ZDZlSTYrUy9EcmRrOXNPczQzeWhaN3JZUHRQUkV5blQvQmpnb0lCUWUyazhz?=
- =?gb2312?B?eG5VVjd0NDRoN3d4L3U4K0IvWGYwV3FSVUxWMUhSQ2tIYnZobzRMZEJpcHpD?=
- =?gb2312?B?SkZ0S044STZCSzBkWmZOaUJsZkd1bisrY082bmQrdGJhelladVZXWGlwbzkv?=
- =?gb2312?B?NHgwa25RT3RJc3Rqa3YxOXVZelBXeThWRW1yQkFOVlRQNUtFNG9IYVR2eDcr?=
- =?gb2312?B?WVdWbnEyWStWTWdnVFJ1SDg0SXZiZCtjZ25QTDZUUEo5REhNbUNvcmVqZDd0?=
- =?gb2312?B?K2hsNkQzRjk3VUc4d2YrOU1QTytDTVZYcWptZmoyMTlramhtUWF5NVpXbGYx?=
- =?gb2312?B?NHRHa1J0RVpUdzhmSEd6VVkyY2lxamFOR0tmRkcwam5yMStpWjBHb2NMNGl2?=
- =?gb2312?B?MjA2b1g3NHd5MEJoVFA4bTYxRGNmYlpucVhnUnJPancxYlA4SDRmQXRtRXBG?=
- =?gb2312?B?cWZlTnpyUkFxN3hib3poL1pNNVJVeUpNTlI1dkpISWhJeXNsK3Y3aHRvcXdr?=
- =?gb2312?B?dXptUng1VFBEOW9VOUphNlU0UnJMZmY1R2ROTlZnRCtETVA3U1FvVXFoM0dw?=
- =?gb2312?B?aHdGQ1FiWkZsVUhzcTcwOWorcytaYmUxRXh5dk5uRnpyLzBXSUhRNVZqR1VU?=
- =?gb2312?B?S0I5YW80QVVsbkhFcU5wczA5WW1aNTJZdEVkZ2pua0pyYlRveDZkeU03WTBj?=
- =?gb2312?B?WVJSM2xNajdRbVpSZVRKUHRSN0NGblBaZEoxUmt2U3A1VUlPbFJhOHdoWG45?=
- =?gb2312?B?Q1lHMHpXN0d6Z3I5dSttK3JHLzFOVTVnRE03YUdDN1NQQ0U2QStIUklmSE9v?=
- =?gb2312?B?ay9DYlNtR1JGbWo3MjZ6dnZkWW11T01vZnIxRjFpdnlmZm5XUlMvMFVjNmI5?=
- =?gb2312?B?ckI0cGZsNmN6YXVucVVEMmdNR25IZ1k3cytrSnRIcEE0V3czdGE0ekJ4M3FY?=
- =?gb2312?B?N2IrMm9jK1YyandHNUV4T0hRcU9DYlVzV3krNDBVaUtMVkFTVHhiRHd6Y2dO?=
- =?gb2312?B?Z0dNKytaZitianpQdjhTQT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5385.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?gb2312?B?UFVIM0RWbHZrWGhUTkFIcHRackhpdmVSckswbFdQZlVkMkJCdDdhcHNVUVFX?=
- =?gb2312?B?ZFdvQlloK0ppWGdXWk5EQVEvVnlSamI5eStGeXRrM28zVkd2UzR6bFJMWXMz?=
- =?gb2312?B?cEtmQ0w2SDlsVllwRWxQYThCVGxDM1l3YXV4ZE9BUUEyd1hVcDErYzlCVGk2?=
- =?gb2312?B?UXViRGdnWXIzZlRrZ08zZ3QzaFB4Y29vRmFCelo1YVpPa3Badnp5TldIVUhz?=
- =?gb2312?B?ZHNpb1RlSjVEQ3RScUs3MVpRaUgwWlBiR2s0SmVCUTlKNDl2Ry83aFBMM2g2?=
- =?gb2312?B?VDF3cnIrcUVuM2piVDNZZ2lBempyTmlCUWRFNThFa3hrV3lWeHdJLzBpYi84?=
- =?gb2312?B?dVk5c2Z5MXJBc0JZVjhpKzNYMGpmakZHT2JLM2lJY0pseDJqQ2ZmRUVadE12?=
- =?gb2312?B?bHFjRTBzNjE5eHVRaEE0WWlFdWRDS3lXbkJOUm15cGFrTFAvOGJUdzJWaTYv?=
- =?gb2312?B?VW1hTmp5ZmNTTHpLZ2xTTVFnUTJxUDBaZVd4MTFzN3d6SXV5UzNabmdWMks2?=
- =?gb2312?B?cG0zRjRDSGNrYVN1UkdONWZpVGsrQUQxMUhiNUlLSG5rVmhidllvT3VoYWow?=
- =?gb2312?B?bGtTekg2SFIzNmtMcVZMWE52Zk5qaU9xV0M3N25WZTVFeEE3blpETld2R3JT?=
- =?gb2312?B?UUpZamJVZ2NDWWhsOC83MzJwcHdlNC9CckhaWjNEbHVZVjgreUJUaDIxZUc4?=
- =?gb2312?B?RVozWnRrYUZwcjl6ck1ETkpYcFduQTVNdEEyeGtKaG15MGNZcHNJbDh6emJp?=
- =?gb2312?B?WWJ2M3Joa2JFUDc0eG9JUGRxeVc5SnVYODIyWGIweE9zbE4yckRKRGlPeUNz?=
- =?gb2312?B?UXBpekQzOWNQVnNENWF5Um02MlZIR0hWdEk5cXJGaDNzUjl6TGVyRUpNellz?=
- =?gb2312?B?djRMVENRcGFlenNtanhFYVRRSVJKRUw5ZHhkRVlpSEVFRUFqSXFma3VSRkt1?=
- =?gb2312?B?bGtwV0diK05nNkptdXFEUUY2NTNBRW5tVUhzOUFMRE9pRjJNYS9TL0hjMnVY?=
- =?gb2312?B?VHM5WlBxUTFFUXd6MmpoOFAxRng3dDFwSDBYV2JQSk9Nc1BmWkRXNnBBZzZx?=
- =?gb2312?B?dlNzKzBBV2IxZjBuU0JocUhGQWtIZVUxc0JaMXdJT3Z5M2NyaDgrZUNrQjF6?=
- =?gb2312?B?R2pIQnRvd2hyVE9vRXBFRHh6cStJTkJ6ZjduMngzbDFITE1hL0s0S3RldkVU?=
- =?gb2312?B?L0ZKTlp2Y0ZGZW03b1FzYTQzalBMK0FSZEtqc01XQWRpOTJoUnlhOVJ0K3h6?=
- =?gb2312?B?Vjd0TG9VZ2Ziekhxb1BSWkYreU5IRDU1bWg5bTR3VThrV3E1Vm8wakxZelcx?=
- =?gb2312?B?VC8zT0Vvd2JUN2hSeko5ZkgvdUxKUlFxeDNJWkNST2wwYjRCZU1BWkh0S0Qz?=
- =?gb2312?B?L1RLQXhXSHh4RThibHArNm1UbTZ2M0lvbFhQRlVSRFRjYVFmM2NyaFZYVkpS?=
- =?gb2312?B?WHgyc2x2cFhCOUZaS3dlTlNpaExlNk5qME1xWjJDSmpsRDVESE1Fa3hXbnJz?=
- =?gb2312?B?U2QzdHFSRUJrS0lWMFZOeXhwUVNGbFlqajQ5NXNxNTNOTm16cGZKcU5mZHRS?=
- =?gb2312?B?RzhKL3hUU211Q3VTQzFKek9UOHBIWGxnczQyZ2YvRHpQRzR0NEEyeEM3WWIz?=
- =?gb2312?B?S05NU1RQRkxDVnFYTzBjOUo4d1JHa29ZdDFpWkdHdVFnMDNNM21aSlpMbEd1?=
- =?gb2312?B?aDg2aXV3Z014QUpHc0ZUZThHRkxuNVBaZlF0RXl3VUpJWXk0WFBZOVVkYzhI?=
- =?gb2312?B?RFNCVHBrUldmeUpidUswYVVBdUlhM21peGtueWJ1YldETmxtKzBOVExFaCsz?=
- =?gb2312?B?Nlo1QXlsaDBHS0pMdFRlS1V1MkdrTjNTOHBtaUc4NVdMUDgrTEtOL0Jxdm5G?=
- =?gb2312?B?ckE2UHplV2I5bHlaZkhQRXRyUVI3Z2pXQmJncjBWaWxiWFhwNW9kcVdQN25u?=
- =?gb2312?B?VXZEY0Nsa0ZnREhidmFFRkVlMUExMjRicXBoLzZ5bjBPTFNyQ1N6SFJNSEFL?=
- =?gb2312?B?VTEwUUVnRGpYTW9zU2xXaTI3d2dqRWpoVVBRbG9NU202VDBlYmtINWxWaE43?=
- =?gb2312?B?cENaY2xSdkR1dzY4b3dqb0FvcjFJRDBUa0o4azNvVTFtbWs2aHUrbXBUQ3N1?=
- =?gb2312?Q?/XxoqNHvs291pzj0AILA/wL58?=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EC41761AC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 10:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717063865; cv=none; b=uE19xSgBcfYFn2Tv4ZG9+Q9P+9p2OSLr/1EA+DMVzAsVlG3VFyq9nQ3nwCwGV2OaPnRTiPKgmY+4DbXn+cj/mrUW9cM+pRI+/0FV4T3FDIqUPH1j9vr6Jw+DxuJLQ2bhjdR4sDbwDL3aG1iEBJIc+huMtQzb78KImO8Torptp1k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717063865; c=relaxed/simple;
+	bh=on/JwLTxrLuV3vO1p1ll7J4Xl/lUI9BhrYuQk7Z0lfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=ZaDjOOBB9xTjms9jW4NhA1SMuoro3RWjVCykMuD8Xh0pJA4NYx9RJTTs+7p9Izoj5WXZoimajQ0UZuYJXfBRz71jGP7rRRVN49eMqIZhxBfZP06AbksxzjgB/DIMUPfvApddONB53PPq+wqSeBorwktmRJtdRv2KvRiwOHtHTJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MptEa35t; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240530101101epoutp02933750d6752fba0f39d44d18410378f5~UPHwigCj82705827058epoutp02e
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 10:11:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240530101101epoutp02933750d6752fba0f39d44d18410378f5~UPHwigCj82705827058epoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717063861;
+	bh=rCniubpfhRi+g2l6XyRehFQ5clmSAHkrG4fc8RUMS8k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MptEa35tnH//kE2ZSyDiuh8SPwEHLdPETxNEMAdjM2dqCBESdkfpL+mM7zOewK7g7
+	 MOfSkmDkoGlQKzsQZ5LTksCaPGkLaqU0f/4wEgmwl8UPc2oxfyactQr9magBWqCrhc
+	 mER/kOnpzWys3ZiEjsIZ11yxLnPMg50p31LmOwC4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240530101101epcas5p1c534977e2860b97c465e67c8e0c9abd7~UPHv7LDHX0596505965epcas5p1b;
+	Thu, 30 May 2024 10:11:01 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Vqhpq18dGz4x9Pp; Thu, 30 May
+	2024 10:10:59 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BF.11.08853.2B058566; Thu, 30 May 2024 19:10:59 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240530072334epcas5p2294aaf32c6fd842746a3720b79e4ae0f~UM1jSPnWa0360603606epcas5p2d;
+	Thu, 30 May 2024 07:23:34 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240530072334epsmtrp10c020316720cd13ac5ee23b5f7e3fa95~UM1jQ6LhM2941029410epsmtrp14;
+	Thu, 30 May 2024 07:23:34 +0000 (GMT)
+X-AuditID: b6c32a44-fc3fa70000002295-f2-665850b2a045
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7A.C0.07412.67928566; Thu, 30 May 2024 16:23:34 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240530072330epsmtip275d026b89192731ddd356c1f20d4b985~UM1fnzfni2409724097epsmtip27;
+	Thu, 30 May 2024 07:23:30 +0000 (GMT)
+Date: Thu, 30 May 2024 07:16:30 +0000
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>, Mike
+	Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Keith
+	Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+	hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+Message-ID: <20240530071630.ufzrgji6z6abliqx@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: jaguarmicro.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5385.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c63b81b8-232b-4254-2eab-08dc808b479d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2024 09:31:26.9521
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Wra6ma4eB5gTNZdQBamNcHIE6OycBruHpfKeeqPvJO7sFgvfR1N0ltSKJa7riKVymlVuH0jAJOV5ZWQH4dncY2sHXm0xAyXydV5SlPgjXi0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5089
+In-Reply-To: <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TeUxUVxTGc9978+ZhM/oEtBe0QoaaAAaYkaUXy1IjkpfCHzTEtDE2MIXH
+	UmBmOjNUtLFsghVBFsHWQQQpkZ1RQMLiUALIMmKpRVZBqWVQNkEwtEqADjxo/O93vvvdfOfc
+	k0vhxnV8cypcqmIVUkmkkNxB1LXZWNvV+H0VIlpPwJBG14GjhIxVHJWPpZNopm0RoKsLb3E0
+	0XIBoJWHvTiq7XgK0PhvnqigMI9Awy0NGLpXmIWh0vL7GMr9ORFD99fnSJTVOgCQvl+NIe3I
+	IXQzuYhA97TdBOprvE6i/Ft6PiruXMNQ5k/9GKqfiAeoamaeQF0j+1Dvaifvs/1M32MfRlcI
+	mQb1GJ/pfXqHYPoeRjPVZRdJpqYolnlZcw0wTcNxJPPr5Ss8Ji3xFck0JD3jMa/1IwQz39xP
+	MpdrywDTU9DO9zM5GeEWxkqCWYUlKw2SBYdLQ92FPv4BxwKcXURiO7Er+kRoKZVEse5CL18/
+	O+/wSMMDCS2/l0RGGyQ/iVIpdPBwU8iiVaxlmEypchey8uBIuZPcXimJUkZLQ+2lrOqIWCQ6
+	7GwwBkaEvXvWwpcnucWMa5uIODAlSgFGFKSdYN7wKpECdlDGdBOAl0ZzAFcsAphwU4dzxTKA
+	L2/pse0ri2N6kjvQAtiWemnLtQRgzS+XwYaLoA/CttFug4uiSPoQfLBObcimtDVcHi/ezMPp
+	DhKWFmds+k3oQDiny+RtsIA+Bru0/TjHu2H3tQlig43oT+FfT+d5XBeTRnA21ZpjL1idt0hy
+	bAKnO2v5HJvDqfTkLT4NS7NLNruG9HkA1YNqwB14wiRd+mYYTodBtWYO5/SPYI6uCuP0nTBt
+	ZWJrfAGsv7HNVrBCU7AVbAYH/onfHBjSDHxSYcE9ShoO69cGsQxwQP3ePOr34jg+Ai8uJPA4
+	toCJd3MNOmXgfbB4jeLQBmoaHQoAWQbMWLkyKpQNcpaLpezp/zceJIuqBpsfyNarHgzlr9m3
+	AowCrQBSuNBU0JN1IsRYECw5c5ZVyAIU0ZGsshU4G3aViZvvCZIZfqBUFSB2chU5ubi4OLk6
+	uoiFHwpmkvKCjelQiYqNYFk5q9i+h1FG5nFYwcdfx5qSU8rnvBKPup5Q36OmlO52CrH0YshE
+	3XzXITV3NqOqtjrxoKtP55F/d/N83/5h1a4+fsfHcy9PW31j+uwukw+6ugQnR99crwh5sfyt
+	rGUw+tV87lD47+tXHrt6L114Uhnqb1PyzdyXxXzNghXb3PXI7GjV/gGvSq/zg47LLR7VP+Tv
+	CbR+N+lo0fjEPIh+YPtn5siuju9+lDVOZhxvP6fJmMZLWvZmTzeLBl/Gf55deSZnNSZzvbX0
+	eZ9+vbTAbygII17LPaPOpRfdXrKVKUdjvjhFdJsOzSaLy5u1qrETM5NTO/Pn1Me9BRq32KUD
+	f6842iwfO9yUfkqvs7L0f/NISCjDJGJbXKGU/Aem9kfwyQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphleLIzCtJLcpLzFFi42LZdlhJXrdMMyLNYPciMYv1p44xWzRN+Mts
+	sfpuP5vF68OfGC2mffjJbPHkQDujxe+z55ktthy7x2jxYL+9xYJFc1ksbh7YyWSxZ9EkJouV
+	q48yWcye3sxkcfT/WzaLSYeuMVo8vTqLyWLvLW2LhW1LWCz27D3JYnF51xw2i/nLnrJbLD/+
+	j8liYsdVJosdTxoZLda9fs9iceKWtMX5v8dZHWQ8Ll/x9ji1SMJj56y77B7n721k8bh8ttRj
+	06pONo/NS+o9Xmyeyeix+2YDm8fivsmsHr3N79g8drbeZ/X4+PQWi8f7fVfZPPq2rGL0OLPg
+	CHuAcBSXTUpqTmZZapG+XQJXxrXFK9kLpllW3Px9h7mBcbpeFyMnh4SAicSnu0/Zuhi5OIQE
+	djNKLLz5kQkiISmx7O8RZghbWGLlv+fsEEUfGSWmfJ8ElmARUJU4fOckUDcHB5uAtsTp/xwg
+	YREBDYlvD5azgNQzC5xhk5jx8AQrSEJYIEHi7amJYDavgLPEib1XmSGG9jJL3Dz/iRkiIShx
+	cuYTFhCbWcBMYt7mh8wgC5gFpCWW/+OACMtLNG+dDVbOKWAt8fDee9YJjIKzkHTPQtI9C6F7
+	FpLuBYwsqxglUwuKc9Nzkw0LDPNSy/WKE3OLS/PS9ZLzczcxghOKlsYOxnvz/+kdYmTiYDzE
+	KMHBrCTCe2ZSaJoQb0piZVVqUX58UWlOavEhRmkOFiVxXsMZs1OEBNITS1KzU1MLUotgskwc
+	nFINTCsSbv0Xr01mK5O0rxYPOv2i033Fslc9zcLKrBIbEvmMn61yaTVdcz/jCv8OUf03lccc
+	m3xudHFymkTLPJrUYmYyz3oFR8i38x4rJb98EQy0L1WLE2ytV1DNeH0n4ERd/vPkL1xm3S+2
+	Ne7K1ambuD9pYXEli6Bv5r/EPSbLLzndaGCXcTCf5fRw1vyGzk+WRS+D7hz7trDo2B/hfUJz
+	4+VyxDQV5P8KdHkfuO948/PzUJej1/dwTZ5TM23xgX4J0dsP3s/92aZ1e8GbuVu9T35/F6LE
+	NVMj6rveLtazQcut2R8/bFh0fOlc1r9ngmfWJT7O3hX1y8x054eA2gCpdqNupqw+8c2/mGeI
+	V6z2V2Ipzkg01GIuKk4EAPP8g6SXAwAA
+X-CMS-MailID: 20240530072334epcas5p2294aaf32c6fd842746a3720b79e4ae0f
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_40f67_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520102842epcas5p4949334c2587a15b8adab2c913daa622f
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+	<CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+	<20240520102033.9361-3-nj.shetty@samsung.com>
+	<eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+	<20240529061736.rubnzwkkavgsgmie@nj.shetty@samsung.com>
+	<9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+	<a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
 
-SGVsbG8sDQoNCkkgc2VlIHRoYXQgeW91IGhhdmUgYWRkZWQgbXVsdGktcXVldWUgc3VwcG9ydCBm
-b3IgdmlydGlvLWZzLCB0aGFua3MgZm9yIHRoaXMgd29yay4NCkZyb20geW91ciBwYXRjaCdzIGNv
-bW1pdCBsb2csIHlvdXIgaG9zdCBpcyB4ODYtNjQsIGRwdSBpcyBhcm02NCwgYnV0IHRoZXJlJ3Jl
-DQpkaWZmZXJlbmNlcyBhYm91dCBPX0RJUkVDVCBhbmQgT19ESVJFQ1RPUlkgYmV0d2VlbiB0aGVz
-ZSB0d28gYXJjaGl0ZWN0dXJlcy4NCg0KVGVzdCBwcm9ncmFtOg0KI2RlZmluZSBfR05VX1NPVVJD
-RQ0KDQojaW5jbHVkZSA8c3RkaW8uaD4NCiNpbmNsdWRlIDxmY250bC5oPg0KDQppbnQgbWFpbih2
-b2lkKQ0Kew0KICAgICAgICBwcmludGYoIk9fRElSRUNUOiVvXG4iLCBPX0RJUkVDVCk7DQogICAg
-ICAgIHByaW50ZigiT19ESVJFQ1RPUlk6JW9cbiIsIE9fRElSRUNUT1JZKTsNCiAgICAgICAgcmV0
-dXJuIDA7DQp9DQoNCkluIHg4Ni02NCwgdGhpcyB0ZXN0IHByb2dyYW0gb3V0cHV0czoNCk9fRElS
-RUNUOjQwMDAwDQpPX0RJUkVDVE9SWToyMDAwMDANCg0KQnV0IGluIGFybTY0LCBpdCBvdXRwdXM6
-DQpPX0RJUkVDVDoyMDAwMDANCk9fRElSRUNUT1JZOjQwMDAwDQoNCkluIGtlcm5lbCBmdXNlIG1v
-ZHVsZSwgZnVzZV9jcmVhdGVfaW4tPmZsYWdzIHdpbGwgdXNlZCB0byBob2xkIG9wZW4oMikncyBm
-bGFncywgdGhlbg0KYSBPX0RJUkVDVCBmbGFnIGZyb20gaG9zdCh4ODYpIHdvdWxkIGJlIHRyZWF0
-ZWQgYXMgT19ESVJFQ1RPUlkgaW4gZHB1KGFybTY0KSwgd2hpY2gNCnNlZW1zIGEgc2VyaW91cyBi
-dWcuDQoNCkZyb20geW91ciBmaW8gam9iLCB5b3UgdXNlIGxpYmFpbyBlbmdpbmUsIHNvIGl0J3Mg
-YXNzdW1lZCB0aGF0IGRpcmVjdC1pbyBpcw0KZW5hYmxlZCwgc28gSSB3b25kZXIgd2h5IHlvdSBk
-b24ndCBnZXQgZXJyb3JzLiBDb3VsZCB5b3UgcGxlYXNlIHRyeSBiZWxvdw0KY29tbWFuZCBpbiB5
-b3VyIHZpcnRpby1mcyBtb3VudCBwb2ludDoNCiAgZGQgaWY9L2Rldi96ZXJvIG9mPXRzdF9maWxl
-IGJzPTQwOTYgY291bnQ9MSBvZmxhZz1kaXJlY3QNCnRvIHNlZSB3aGV0aGVyIGl0IG9jY3VycyBh
-bnkgZXJyb3IuDQoNClJlZ2FyZHMsDQpYaWFvZ3VhbmcgV2FuZw0K
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_40f67_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+On 29/05/24 03:41PM, Bart Van Assche wrote:
+>On 5/29/24 12:48 AM, Damien Le Moal wrote:
+>>On 5/29/24 15:17, Nitesh Shetty wrote:
+>>>On 24/05/24 01:33PM, Bart Van Assche wrote:
+>>>>On 5/20/24 03:20, Nitesh Shetty wrote:
+>>>>>We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
+>>>>>Since copy is a composite operation involving src and dst sectors/lba,
+>>>>>each needs to be represented by a separate bio to make it compatible
+>>>>>with device mapper.
+>>>>>We expect caller to take a plug and send bio with destination information,
+>>>>>followed by bio with source information.
+>>>>>Once the dst bio arrives we form a request and wait for source
+>>>>>bio. Upon arrival of source bio we merge these two bio's and send
+>>>>>corresponding request down to device driver.
+>>>>>Merging non copy offload bio is avoided by checking for copy specific
+>>>>>opcodes in merge function.
+>>>>
+>>>>In this patch I don't see any changes for blk_attempt_bio_merge(). Does
+>>>>this mean that combining REQ_OP_COPY_DST and REQ_OP_COPY_SRC will never
+>>>>happen if the QUEUE_FLAG_NOMERGES request queue flag has been set?
+>>>>
+>>>Yes, in this case copy won't work, as both src and dst bio reach driver
+>>>as part of separate requests.
+>>>We will add this as part of documentation.
+>>
+>>So that means that 2 major SAS HBAs which set this flag (megaraid and mpt3sas)
+>>will not get support for copy offload ? Not ideal, by far.
+>
+>QUEUE_FLAG_NOMERGES can also be set through sysfs (see also
+>queue_nomerges_store()). This is one of the reasons why using the merge
+>infrastructure for combining REQ_OP_COPY_DST and REQ_OP_COPY_SRC is
+>unacceptable.
+>
+
+Bart, Damien, Hannes,
+Thanks for your review.
+We tried a slightly modified approach which simplifies this patch and
+also avoids merge path.
+Also with this, we should be able to solve the QUEUE_FLAG_MERGES issue.
+Previously we also tried payload/token based approach,
+which avoids merge path and tries to combine bios in driver.
+But we received feedback that it wasn't the right approach [1].
+Do below changes look any better or do you guys have anything else in mind ?
+
+[1] https://lore.kernel.org/linux-block/ZIKphgDavKVPREnw@infradead.org/
+
+
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 82c3ae22d76d..7158bac8cc57 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -122,6 +122,8 @@ static const char *const blk_op_name[] = {
+  	REQ_OP_NAME(ZONE_FINISH),
+  	REQ_OP_NAME(ZONE_APPEND),
+  	REQ_OP_NAME(WRITE_ZEROES),
++	REQ_OP_NAME(COPY_SRC),
++	REQ_OP_NAME(COPY_DST),
+  	REQ_OP_NAME(DRV_IN),
+  	REQ_OP_NAME(DRV_OUT),
+  };
+@@ -839,6 +841,11 @@ void submit_bio_noacct(struct bio *bio)
+  		 * requests.
+  		 */
+  		fallthrough;
++	case REQ_OP_COPY_SRC:
++	case REQ_OP_COPY_DST:
++		if (!q->limits.max_copy_sectors)
++			goto not_supported;
++		break;
+  	default:
+  		goto not_supported;
+  	}
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 8534c35e0497..a651e7c114d0 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -154,6 +154,20 @@ static struct bio *bio_split_write_zeroes(struct bio *bio,
+  	return bio_split(bio, lim->max_write_zeroes_sectors, GFP_NOIO, bs);
+  }
+  
++static struct bio *bio_split_copy(struct bio *bio,
++				  const struct queue_limits *lim,
++				  unsigned int *nsegs)
++{
++	*nsegs = 1;
++	if (bio_sectors(bio) <= lim->max_copy_sectors)
++		return NULL;
++	/*
++	 * We don't support splitting for a copy bio. End it with EIO if
++	 * splitting is required and return an error pointer.
++	 */
++	return ERR_PTR(-EIO);
++}
++
+  /*
+   * Return the maximum number of sectors from the start of a bio that may be
+   * submitted as a single request to a block device. If enough sectors remain,
+@@ -362,6 +376,12 @@ struct bio *__bio_split_to_limits(struct bio *bio,
+  	case REQ_OP_WRITE_ZEROES:
+  		split = bio_split_write_zeroes(bio, lim, nr_segs, bs);
+  		break;
++	case REQ_OP_COPY_SRC:
++	case REQ_OP_COPY_DST:
++		split = bio_split_copy(bio, lim, nr_segs);
++		if (IS_ERR(split))
++			return NULL;
++		break;
+  	default:
+  		split = bio_split_rw(bio, lim, nr_segs, bs,
+  				get_max_io_size(bio, lim) << SECTOR_SHIFT);
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 3b4df8e5ac9e..6d4ffbdade28 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2833,6 +2833,63 @@ static void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
+  		blk_mq_commit_rqs(hctx, queued, false);
+  }
+  
++/*
++ * Copy offload sends a pair of bio with REQ_OP_COPY_DST and REQ_OP_COPY_SRC
++ * operation by taking a plug.
++ * Initially DST bio is sent which forms a request and
++ * waits for SRC bio to arrive. Once SRC bio arrives
++ * we combine it and send request down to driver.
++ */
++static inline bool blk_copy_offload_combine_ok(struct request *req,
++					      struct bio *bio)
++{
++	return (req_op(req) == REQ_OP_COPY_DST &&
++		bio_op(bio) == REQ_OP_COPY_SRC);
++}
++
++static int blk_copy_offload_combine(struct request *req, struct bio *bio)
++{
++	if (!blk_copy_offload_combine_ok(req, bio))
++		return 1;
++
++	if (req->__data_len != bio->bi_iter.bi_size)
++		return 1;
++
++	req->biotail->bi_next = bio;
++	req->biotail = bio;
++	req->nr_phys_segments++;
++	req->__data_len += bio->bi_iter.bi_size;
++
++	return 0;
++}
++
++static inline bool blk_copy_offload_attempt_combine(struct request_queue *q,
++					     struct bio *bio)
++{
++	struct blk_plug *plug = current->plug;
++	struct request *rq;
++
++	if (!plug || rq_list_empty(plug->mq_list))
++		return false;
++
++	rq_list_for_each(&plug->mq_list, rq) {
++		if (rq->q == q) {
++			if (!blk_copy_offload_combine(rq, bio))
++				return true;
++			break;
++		}
++
++		/*
++		 * Only keep iterating plug list for combines if we have multiple
++		 * queues
++		 */
++		if (!plug->multiple_queues)
++			break;
++	}
++	return false;
++}
++
+  static bool blk_mq_attempt_bio_merge(struct request_queue *q,
+  				     struct bio *bio, unsigned int nr_segs)
+  {
+@@ -2977,6 +3034,9 @@ void blk_mq_submit_bio(struct bio *bio)
+  	if (blk_mq_attempt_bio_merge(q, bio, nr_segs))
+  		goto queue_exit;
+  
++	if (blk_copy_offload_attempt_combine(q, bio))
++		goto queue_exit;
++
+  	if (blk_queue_is_zoned(q) && blk_zone_plug_bio(bio, nr_segs))
+  		goto queue_exit;
+  
+diff --git a/block/blk.h b/block/blk.h
+index 189bc25beb50..112c6736f44c 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -323,6 +323,8 @@ static inline bool bio_may_exceed_limits(struct bio *bio,
+  	case REQ_OP_DISCARD:
+  	case REQ_OP_SECURE_ERASE:
+  	case REQ_OP_WRITE_ZEROES:
++	case REQ_OP_COPY_SRC:
++	case REQ_OP_COPY_DST:
+  		return true; /* non-trivial splitting decisions */
+  	default:
+  		break;
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 781c4500491b..22a08425d13e 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -342,6 +342,10 @@ enum req_op {
+  	/* reset all the zone present on the device */
+  	REQ_OP_ZONE_RESET_ALL	= (__force blk_opf_t)15,
+  
++	/* copy offload source and destination operations */
++	REQ_OP_COPY_SRC		= (__force blk_opf_t)18,
++	REQ_OP_COPY_DST		= (__force blk_opf_t)19,
++
+  	/* Driver private requests */
+  	REQ_OP_DRV_IN		= (__force blk_opf_t)34,
+  	REQ_OP_DRV_OUT		= (__force blk_opf_t)35,
+--·
+2.34.1
+
+
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_40f67_
+Content-Type: text/plain; charset="utf-8"
+
+
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_40f67_--
 
