@@ -1,82 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-20498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26AC28D42C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 03:14:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650AF8D432D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 03:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B99C8B23902
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 01:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2671F228D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 01:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2760BFC0C;
-	Thu, 30 May 2024 01:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BF918641;
+	Thu, 30 May 2024 01:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pmoEqwa4"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kTuOxVbY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA67EAC5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 01:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376E51078B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 01:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717031688; cv=none; b=hr1c2yJY36A0NZfLFsF3MZ9S3E+vqteoKmViiF0k/HzyBDs2xz8i1yKAr5CY8CGHGKlEMYeRpdIXN5pcPLb8vK63vwpeD44HiXA72lvlR3/IBpHSAYWaf3PuPPWBsnWJuvo2OO7cgbw8vrhSbPtuX2AW8uV7SGtewyiEZ1eOoqs=
+	t=1717033822; cv=none; b=rkzlYyPh1Bv9uCmTowYF0lkGHBRGx6JlO8OAOO5Nv/jSMBa86x/ThYomZ8Wfd+xkB2JcIsHAD9W/OQJMe1yDnxf+lSCS8WrCVgnBcy/Ie7UAEYzUGN/y6gKlxPiwHnDXx+ejC+V3gTTgAHw6x2QwfRl83l0oPx4rLdaQYPpYftY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717031688; c=relaxed/simple;
-	bh=TfJPpQ3Gsme1VqFNcUpnWX7HqyzfY54KmLQazYMuib0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgh2QS67jl6uF+V9NSp7qviqq6dmDL4TanytH/geS57XHLbh6SozYw25gOY3M8xgWvuLVeS8hcj5Bn4jflQrg4RjpXKNwTjQGbOocfENhe5jF24DM0potxsKUBMeRZZflHVn69tas/S0ooBxGQ/Xztl54+6JFMT2YoZ3WUym8Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pmoEqwa4; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=g74BOnEM5NWtgiU58LtR+BHyV4qd/59nrWf/OPI/7DQ=; b=pmoEqwa4dsCF5UA9FgGx2ILWBB
-	eYWWIeJq36OKAYmbP6x+wwcUBLOnHwNFNiOUnYeH8evDJId/hqf9XR00/CpzEgJ4gzqIHGJUeHLLj
-	C+mcYbdC1aTXdhrEWY7fWQyn1K4oqoyjgBJliYz8zCWwwF9VsCm1H7Ge7tdZHzGliZc/MpFcPN4Nx
-	XOuW+qKCl8bhZtj11E/ef2i2PL5FUWOJtFzLII5OYGogzj6/k5ep6iPbHEet6D8Q0v6ByFxGCJSm3
-	DRIS8yHd7NjU3svmi0z7v8SCbARVXCHrRJCXdInNXYOK5KWoZQQgmvznt1L9EsjJbi/neXxLFPiJS
-	IZ4w0YEQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCUNO-0000000AKNg-3U6F;
-	Thu, 30 May 2024 01:14:42 +0000
-Date: Thu, 30 May 2024 02:14:42 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, david@fromorbit.com,
-	amir73il@gmail.com, hch@lst.de
-Subject: Re: [PATCH][RFC] fs: add levels to inode write access
-Message-ID: <ZlfTApvagV6SeJMh@casper.infradead.org>
-References: <72fc22ebeaf50fabf9d14f90f6f694f88b5fc359.1717015144.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1717033822; c=relaxed/simple;
+	bh=dJzhMKWwI+p3fkyvY8ReszvnKdJxHAls86oOxh6MzBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SoXHPudU6WxNfMiKIbJiU58MLoTxs/neN/PM80oms6EKR+1k6bgQAZRKidAzvgUhxtjRnzIhyPkRPjGnjtgoe4VqJX1teSlk2OPLmL9IoH2M7wnVmHyNmH+Aac7fdpf8lMB0Hmc+L0qY/V0b/1J/71dTtCtypvV1lCoYRZ6fjj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kTuOxVbY; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: viro@zeniv.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717033815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CfMw9tHy0aaB3TSiLd6z9f6QlIhExqYTyd8E+3PAqVs=;
+	b=kTuOxVbYol232cWSsWqR7clknZ080/pkBgkwBM0aNmpo4MirTY1k+9TzbkG2yq+LG3q0Re
+	4EcUyYeIgsbWdTw+fh60oB39sx7eYNDRUV29yxSTFzHc/+AEzoBsBFsr808fb3ctbYV7RK
+	3zXhkDgNKqZ9c4pHVGGatnuHOV7dLI0=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: yuntao.wang@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yuntao Wang <yuntao.wang@linux.dev>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yuntao.wang@linux.dev
+Subject: Re: [PATCH] fs/file: fix the check in find_next_fd()
+Date: Thu, 30 May 2024 09:50:03 +0800
+Message-ID: <20240530015003.237210-1-yuntao.wang@linux.dev>
+In-Reply-To: <20240529190328.GP2118490@ZenIV>
+References: <20240529190328.GP2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72fc22ebeaf50fabf9d14f90f6f694f88b5fc359.1717015144.git.josef@toxicpanda.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 29, 2024 at 04:41:32PM -0400, Josef Bacik wrote:
-> +++ b/drivers/md/md.c
-> @@ -7231,7 +7231,7 @@ static int set_bitmap_file(struct mddev *mddev, int fd)
->  			pr_warn("%s: error: bitmap file must open for write\n",
->  				mdname(mddev));
->  			err = -EBADF;
-> -		} else if (atomic_read(&inode->i_writecount) != 1) {
-> +		} else if (atomic_read(&inode->i_writecount[INODE_DENY_WRITE_ALL]) != 1) {
+On Wed, 29 May 2024 20:03:28 +0100, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-I think this needs an abstraction because I have no idea what this
-means.
+> On Thu, May 30, 2024 at 12:06:56AM +0800, Yuntao Wang wrote:
+> > The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
+> > maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
+> > gives the value of bitbit, which can never be greater than maxfd, it can
+> > only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
+> > will never be true.
+> > 
+> > Moreover, when bitbit equals maxfd, it indicates that there are no unused
+> > fds, and the function can directly return.
+> > 
+> > Fix this check.
+> 
+> Hmm...  The patch is correct, AFAICS.  I _think_ what happened is that
+> Linus decided to play it safe around the last word.  In the reality
+> ->max_fds is always a multiple of BITS_PER_LONG, so there's no boundary
+> effects - a word can not cross the ->max_fds boundary, so "no zero
+> bits in full_fds_bits under max_fds/BITS_PER_LONG" does mean there's
+> no point checking in range starting at round_down(max_fds, BITS_PER_LONG).
 
-		} else if (!write_access_ok(inode, INODE_DENY_WRITE_ALL)) {
+Yes.
 
-perhaps?
+> Perhaps a comment along the lines of
+> 
+>         unsigned int maxfd = fdt->max_fds; // always a multiple of BITS_PER_LONG
+> 
+> would be useful in there...
 
+Actually, we can simplify this issue. When 'bitbit >= maxfd', it indicates that
+there are no unused fds in 'fdt->open_fds', and we can directly return maxfd,
+regardless of whether maxfd is a multiple of BITS_PER_LONG or not. Therefore, I
+think this comment may not be very necessary.
+
+Of course, I don't oppose adding this comment.
 
