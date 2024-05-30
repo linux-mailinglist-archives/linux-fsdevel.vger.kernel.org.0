@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-20575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5245D8D53B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 22:24:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0D18D53BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 22:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E605B1F21C6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 20:24:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 458E6B24FE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 20:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBBC15B96F;
-	Thu, 30 May 2024 20:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B265167D96;
+	Thu, 30 May 2024 20:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XYv2onoa"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iWllsKEW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB38158DD5;
-	Thu, 30 May 2024 20:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B645158DD8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 20:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717100481; cv=none; b=MKZ5ryX3qk72jv825te1/otHrb5pYpY6PSuOAmeJLz2CtFXNhNin5bFVdaSXHL0DvRSmdjLC1qzCRDMRmsPQZB75lKaH0rn5Dy2hkWA75zQ4/gUIrFuU3Fls//SOKty8dzhIFOj6MAsTpekL9LSV4PYfNb0RmZf5fWlkpRoY5Os=
+	t=1717100481; cv=none; b=klml3pKRgNj4JYgoNa8zZ6iW7AXqLRprHaX+qAdqhugTl0VBILK8RmEzRr6b3YkL6FtsujsjcdqRVUVBBCBDFdBHD9eZuA0bm4MeTSUHmrN8BaIaURJjRBHOmMJ89BKOmvZ1P/qhyfIbH6BJqm8StDCz0XrcHsagpncX++EziuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717100481; c=relaxed/simple;
-	bh=MNGQdCHzW25/+wHhXwXH/NMqYp82RBGV7NnH0nnxDOs=;
+	bh=HXK9SrkeoGYeQqaRCbDyaBLW2cECSXCKLkdh+hbfB5M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p84n0VVpj84AWshTWq/s+hBrcNTEZZoI2gIKPAbILZmBISoql8UABnz98pzBi8Fp5YsRmegxIrj5ZdFAM2rAjn9JbI/EigjUp4UqE8nsmedCOFWCvrbS21QLseOVGVq4EtrBex2NLscIf6DClscZk9RMb5R0yvY0lvGX1+9iRRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XYv2onoa; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=BXUjkZDhiqvjDLfI8yi0ofuBv4bPxEfFc6hqDqDV4yhNJNgfdKKHNb4smPO5ipFH810rH1KQ9AxsbwtvYkRHVM7CIL3ZXln6pcgD8UTK/cjhCL0bDf44rZXEMcKtPnr5G7D85uex6PPvd+fpq+E3MbvKdcKaw9kmvPVKfVV0Lfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iWllsKEW; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=sKwEaDMykkWblPGLhfvrNLPmAWo/K3PNSs0OffOfMK8=; b=XYv2onoaar6xJLef6854BH5CWr
-	kqBYB0uQUlqkI6Q9nnOVj4zVLHrP96PcvJCzdPDEn8D57SkzesW1n1JlN94PN6CNGwr6+3Pw3NNwh
-	03nJjKiFlwxZf/SGM/jelbXhImYTKSsFYOUfUhPmxtLPgq07rZwlArlua0FaZHQK5KEHpEBI1ZsJ0
-	xkzr000/ZKjj5IxEwxac67kTwTVOopvX/AOxrssbLR9nY12EVYax02HKrdka23D9qSp4UiRGwZ8Af
-	EqMiLT1R7iGzVIIPRMKQO0HlCWlIp/MRiwdYC5WaKckBiY/xZGOlb7Bjp8ZYq7kK3LKxlBAb1A0Ja
-	HYYL+lpQ==;
+	bh=c7vikNugCgi0jVhZmW+/vu+Luq6OpZDlsK0DHYxWiTc=; b=iWllsKEW/Za59bCRtpFF6Ms2Mf
+	M7a1WaxTVZXbkTzVn1OX4WhHEmVMbtLsyrWSuD7N4NEGBlHIC969OwLmislF2ll+Y6zQdMX2oHlAH
+	pG5KlDLN8NImAAGCBWNhuD3Hogesf4LNjRcIQLuSCYhiD1PLs+NsOasIw1bZpNgxkvGSm2RRl6IKH
+	Ft18ocAHGMCv2VbHyUYzOMr294xkNuLMsTPya0emFiNBZIfclH3BxW76U782pbhJm5uh6WTBsPoe1
+	QKeyl8j4LgmdGF0RHJu8XLLb+XGCLDD/zmy1kfZHkwBFCce6PDzKiviDv7//z2vT5q5mOEQKd949u
+	6YvmrqWQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCmH0-0000000B8LU-1Jr7;
+	id 1sCmH0-0000000B8LW-1qBb;
 	Thu, 30 May 2024 20:21:18 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Christian Brauner <brauner@kernel.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org,
-	reiserfs-devel@vger.kernel.org
-Subject: [PATCH 11/16] reiserfs: Remove call to folio_set_error()
-Date: Thu, 30 May 2024 21:21:03 +0100
-Message-ID: <20240530202110.2653630-12-willy@infradead.org>
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 12/16] romfs: Convert romfs_read_folio() to use a folio
+Date: Thu, 30 May 2024 21:21:04 +0100
+Message-ID: <20240530202110.2653630-13-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240530202110.2653630-1-willy@infradead.org>
 References: <20240530202110.2653630-1-willy@infradead.org>
@@ -63,26 +62,67 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The error flag is never tested for reiserfs folios, so stop setting it.
+Remove the conversion back to struct page and use the folio APIs instead
+of the page APIs.  It's probably more trouble than it's worth to support
+large folios in romfs, so there are still PAGE_SIZE assumptions in
+this function.
 
-Cc: reiserfs-devel@vger.kernel.org
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/reiserfs/inode.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/romfs/super.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index c1daedc50f4c..9b43a81a6488 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2699,7 +2699,6 @@ static int reiserfs_write_folio(struct folio *folio,
+diff --git a/fs/romfs/super.c b/fs/romfs/super.c
+index 2cbb92462074..68758b6fed94 100644
+--- a/fs/romfs/super.c
++++ b/fs/romfs/super.c
+@@ -101,19 +101,15 @@ static struct inode *romfs_iget(struct super_block *sb, unsigned long pos);
+  */
+ static int romfs_read_folio(struct file *file, struct folio *folio)
+ {
+-	struct page *page = &folio->page;
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
+ 	loff_t offset, size;
+ 	unsigned long fillsize, pos;
+ 	void *buf;
+ 	int ret;
+ 
+-	buf = kmap(page);
+-	if (!buf)
+-		return -ENOMEM;
++	buf = kmap_local_folio(folio, 0);
+ 
+-	/* 32 bit warning -- but not for us :) */
+-	offset = page_offset(page);
++	offset = folio_pos(folio);
+ 	size = i_size_read(inode);
+ 	fillsize = 0;
+ 	ret = 0;
+@@ -125,20 +121,14 @@ static int romfs_read_folio(struct file *file, struct folio *folio)
+ 
+ 		ret = romfs_dev_read(inode->i_sb, pos, buf, fillsize);
+ 		if (ret < 0) {
+-			SetPageError(page);
+ 			fillsize = 0;
+ 			ret = -EIO;
  		}
- 		bh = bh->b_this_page;
- 	} while (bh != head);
--	folio_set_error(folio);
- 	BUG_ON(folio_test_writeback(folio));
- 	folio_start_writeback(folio);
- 	folio_unlock(folio);
+ 	}
+ 
+-	if (fillsize < PAGE_SIZE)
+-		memset(buf + fillsize, 0, PAGE_SIZE - fillsize);
+-	if (ret == 0)
+-		SetPageUptodate(page);
+-
+-	flush_dcache_page(page);
+-	kunmap(page);
+-	unlock_page(page);
++	buf = folio_zero_tail(folio, fillsize, buf);
++	kunmap_local(buf);
++	folio_end_read(folio, ret == 0);
+ 	return ret;
+ }
+ 
 -- 
 2.43.0
 
