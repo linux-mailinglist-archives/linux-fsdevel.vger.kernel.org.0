@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-20588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69EA8D53CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 22:24:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAFB8D53E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 22:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7D671C2457E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 20:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB4F21C2253D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 20:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666E217C223;
-	Thu, 30 May 2024 20:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1451A6A8D2;
+	Thu, 30 May 2024 20:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="pkplBU7O"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="yzKgblgA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299E7158A06
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 20:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F1118641
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 20:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717100495; cv=none; b=nEV0OjqT4v8xqIQKF9pde3fog9p3BJnr+B0DVeVp5nx+qfKjtyzr8R8m/aovXWepTTjg4Jie0uz1Vb/uTfv0apyhI5CgHDME1YfTeGiyV9Fo2QXdWfkZARJvRgdZzR4Ec8ba77YOxG+z9JTCdYRPntyZq7UI8gMsp5t99md3m/E=
+	t=1717101176; cv=none; b=hJzB4tfaeHAQ3e+4wAHGIl43VyN08XYWHQB37i4Axc0SDCV/WfaxWK+MhDSSW9VA/4RPY+WGCzsHVDxHQ5N+gR2YXrD3ttt0TCW0kM1gNm++XWq0w31MgHQdbPBM2UBXEKdb3rHa08VCO4imEMHs0tj/xZD9TdQCfTdYymzJZKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717100495; c=relaxed/simple;
-	bh=NAZuWH7bOBM6fw81N/eah2vC00xwHRIdpR/pR2xJD+c=;
+	s=arc-20240116; t=1717101176; c=relaxed/simple;
+	bh=2gEWGeYcOB+AXB/Lmj6IwDcvK4u2nGGaM+/yNYCAQJY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NEa69Y3YGAag9qXoKAyh9dKJ3W/P7AxJa+k2zxFNOxX/cCk0qGtd9UvHOBrKTxbwBZCcGx1HzPk2OBP/mT7v2Nuxf2v3UkB/s5iBR+/Nl7/k/cooq+zOomqQQtzTKyaCFkQ5Op4NIShXoFcdNOeLH8tkBiw+BypGheTfZTVSIO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=pkplBU7O; arc=none smtp.client-ip=209.85.222.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9Z28ILFvoGcgDW2HokcVitjl6ld1gkQf139nr8HiCjDX3v0r6SpgO0ms8SleahX4we8H2T3qJH6XheROsUkot2ym95zD5RqepOHDGuRvwe3MUb9lLRKzf3nApPr+A8X/Sk+ZTysSC5liGWN3Y4sGqGzOnbrbJkAPMQcWw5Xfz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=yzKgblgA; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-794b1052194so91480185a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 13:21:33 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43fd2809723so6594921cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 13:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717100493; x=1717705293; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717101173; x=1717705973; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RRSDf1lMQs+7Z23AExNMDv7TO8+Bma2HvK1rK+UYjxA=;
-        b=pkplBU7OpNND9yXWLhxSUXwHjDiWSiFY3mKBp7odIJIJ8r948Ahqkn0EPKc/QN2xYt
-         6zePQiCg9TjYMJryWQvYmQb5kfJHSastJNuOKNFNt2RKTg0yvJCY19cGidedG80jFnHf
-         Fes09KASczzBo9N1TF46FOyLMXpU2gMNRVuKlX7d8HTc1JBrRPBOk8q8tZMRFEQuATbg
-         OFLoYuuWR5Ylflpi4vGT+9UkdOaiIbxUpoy4L7yARPx6x8jgupU7xfQMq3xAHwLVR9g6
-         vwF6dovkDLBzyJ2FFpXIAX7NqeIlPj20ryv76L56gGYMhZcjUvBS9NDP65pFy8V3QGzh
-         PqyA==
+        bh=gAN5ygfOWr5KC+oYo+Hy+L3m4xbm+0RzTx2uKNaehf8=;
+        b=yzKgblgAkc8WPLnFG9mumFhIq1IvZgc47DDWQ14jBxlGyWSXyW4ZISoGwMKAXybVJD
+         O/9TFcV/VSMNl2w6f9F9q/LgfIBYxXbaYI2LtOmsgEwUvgFbDoHSv6JkwXQfv7pC7Xlc
+         G0fd7O4GCplUbsbkvTFg/WVWyk/m4/PeeKsx0Gy+T22QYsbyAbS6GtmCbu62tIs8qmAz
+         zTGbqpTbK5ZNwZEFayZaTiAWbEJZLfBf8WcskxOjqNmOrMLv++Z8TMaVSf3XfQ9jcZiW
+         NhsPUilhwKgQbCpqMlcKi0Yb4c0S1tZfJvrIke/XDbF22/73/Qvn3xeDvM6qr8P3HpJg
+         0Csg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717100493; x=1717705293;
+        d=1e100.net; s=20230601; t=1717101173; x=1717705973;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RRSDf1lMQs+7Z23AExNMDv7TO8+Bma2HvK1rK+UYjxA=;
-        b=UTNMnalSX/LJ4I6QJ7CqrAr+3sdzh0ReFKjsm4xQI2fVhQI4c0vw4LGtV8JAMLez7T
-         MAkoczd27rmQhQxyNqCyq/NsMt/iwuG8tIchejD6jZRuCXX2Ma7xNdDm+V93kmkzL2QM
-         aK6QsjG/PclgciK+mif2rGaQ0gJ+JLjMPBiqIwMh1+wyDyV4WX8Sj3XwuQr+moWyLPBV
-         RDa7YvBonm417eXXi57sblDouTYZxMsEc1NcNNpzFgTCtn8fY05l9IcgZV3HYyc0TEVz
-         UX5xPIahG0h2SeKfq/A+ViEguCC5O8k65M7knmKBX6uul+iRZ6ubIPNOX6S18TUmI/SE
-         GdEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9GBlHjJ3GYCKbdAbrQg9Kp4KgpdsvrcqGcHO6PqaznmmkfYsRCoYQSVpeYKi60AUrdQuMDb6su0DiUSjmPML3YmTIJaiALXIWeHz9MA==
-X-Gm-Message-State: AOJu0YwSa+HSAutuht23ijb3+/GM1VnVJ9e+0t4BOkg9UQ236g3xPyye
-	qMgWpCFwRSkSRE+htlB3ftHtivC4b74GsZf/M+yBgbNC8GdBjOwz7ykO50D6aQQ=
-X-Google-Smtp-Source: AGHT+IFEasJPYHBJgiGZ7VkRVAj51CSE5+oVqpsbEkaqUm8NOiFZV+xLJ9imSpmmyeinHvdFdUdWqg==
-X-Received: by 2002:a05:620a:2596:b0:794:afc4:dade with SMTP id af79cd13be357-794e9e183bemr420932585a.61.1717100492899;
-        Thu, 30 May 2024 13:21:32 -0700 (PDT)
+        bh=gAN5ygfOWr5KC+oYo+Hy+L3m4xbm+0RzTx2uKNaehf8=;
+        b=k5qc2hAw1i2dQyP31k3piLTM4w7AcxZDkbXli9178x9HipprrfC7fVmv048mPX5YCo
+         q9Unf3FAjKiss8gNLSH0in6Rx1LxOrOdIkZiVxHbYHqyhkIBdosORODcTF1QY61tPTxj
+         0T0wUf+Uhip/Et8M+FA2hzAUKN2hV9eIVEp/0xH3OQDJJ79I6b/39+7NWE4/f1dGcCHj
+         8D6xrzPs3QA29b1ASFSCDq24oDTY0ulISOEratTv9gfnwgFBpf57ch1SssAHyoHuEX4e
+         /IeyQpC6rXc/txPY+fyqS0egm0EN1+h4pbi3XqNMdHYGNg+JQNjcduodUR/dDM71Ibdf
+         GO0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOcPdmPOn+BFOgQE9sTrRIaj/1wzDq/XnExa7FQeQ4t+eReqELIhoETwUBgAhmM6sM1FiLlVMdTDxByOxfe1N1i7vvYf1us/IT/Kv62Q==
+X-Gm-Message-State: AOJu0YyfbuP0F8BzMj2ULmuuABX6brwvbiQlwsEw4HAs6Jw+x4XflFNY
+	ZcXC0ZAeG/A38yzjHwIbBbiUlyTNASk1m7K2cruQKgb+q5XQCUq5swbJZpwuVLI=
+X-Google-Smtp-Source: AGHT+IHfOzc/Lq85dNH3uGT2IbA+bNqmbF/TBZEjxz88sOji1FjZUSqZqHD2LfYGtCKGkR+KRq2VEw==
+X-Received: by 2002:a05:622a:83:b0:43a:deee:a5ea with SMTP id d75a77b69052e-43fe92abf37mr32400501cf.13.1717101173267;
+        Thu, 30 May 2024 13:32:53 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f2efc67csm10748285a.20.2024.05.30.13.21.32
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43ff23bfaf9sm1539771cf.27.2024.05.30.13.32.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 13:21:32 -0700 (PDT)
-Date: Thu, 30 May 2024 16:21:31 -0400
+        Thu, 30 May 2024 13:32:52 -0700 (PDT)
+Date: Thu, 30 May 2024 16:32:51 -0400
 From: Josef Bacik <josef@toxicpanda.com>
 To: Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
 	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm
-Subject: Re: [PATCH RFC v2 13/19] fuse: {uring} Handle uring shutdown
-Message-ID: <20240530202131.GE2210558@perftesting>
+Subject: Re: [PATCH RFC v2 14/19] fuse: {uring} Allow to queue to the ring
+Message-ID: <20240530203251.GF2210558@perftesting>
 References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-13-d149476b1d65@ddn.com>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-14-d149476b1d65@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,150 +83,351 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-13-d149476b1d65@ddn.com>
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-14-d149476b1d65@ddn.com>
 
-On Wed, May 29, 2024 at 08:00:48PM +0200, Bernd Schubert wrote:
+On Wed, May 29, 2024 at 08:00:49PM +0200, Bernd Schubert wrote:
+> This enables enqueuing requests through fuse uring queues.
+> 
+> For initial simplicity requests are always allocated the normal way
+> then added to ring queues lists and only then copied to ring queue
+> entries. Later on the allocation and adding the requests to a list
+> can be avoided, by directly using a ring entry. This introduces
+> some code complexity and is therefore not done for now.
+> 
 > Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 > ---
->  fs/fuse/dev.c         |  10 +++
->  fs/fuse/dev_uring.c   | 194 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/fuse/dev_uring_i.h |  67 +++++++++++++++++
->  3 files changed, 271 insertions(+)
+>  fs/fuse/dev.c         | 80 +++++++++++++++++++++++++++++++++++++++-----
+>  fs/fuse/dev_uring.c   | 92 ++++++++++++++++++++++++++++++++++++++++++---------
+>  fs/fuse/dev_uring_i.h | 17 ++++++++++
+>  3 files changed, 165 insertions(+), 24 deletions(-)
 > 
 > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index a7d26440de39..6ffd216b27c8 100644
+> index 6ffd216b27c8..c7fd3849a105 100644
 > --- a/fs/fuse/dev.c
 > +++ b/fs/fuse/dev.c
-> @@ -2202,6 +2202,8 @@ void fuse_abort_conn(struct fuse_conn *fc)
->  		fc->connected = 0;
->  		spin_unlock(&fc->bg_lock);
+> @@ -218,13 +218,29 @@ const struct fuse_iqueue_ops fuse_dev_fiq_ops = {
+>  };
+>  EXPORT_SYMBOL_GPL(fuse_dev_fiq_ops);
 >  
-> +		fuse_uring_set_stopped(fc);
+> -static void queue_request_and_unlock(struct fuse_iqueue *fiq,
+> -				     struct fuse_req *req)
 > +
->  		fuse_set_initialized(fc);
->  		list_for_each_entry(fud, &fc->devices, entry) {
->  			struct fuse_pqueue *fpq = &fud->pq;
-> @@ -2245,6 +2247,12 @@ void fuse_abort_conn(struct fuse_conn *fc)
->  		spin_unlock(&fc->lock);
->  
->  		fuse_dev_end_requests(&to_end);
-> +
-> +		/*
-> +		 * fc->lock must not be taken to avoid conflicts with io-uring
-> +		 * locks
-> +		 */
-> +		fuse_uring_abort(fc);
-
-Perhaps a 
-
-lockdep_assert_not_held(&fc->lock)
-
-in fuse_uring_abort() then?
-
->  	} else {
->  		spin_unlock(&fc->lock);
->  	}
-> @@ -2256,6 +2264,8 @@ void fuse_wait_aborted(struct fuse_conn *fc)
->  	/* matches implicit memory barrier in fuse_drop_waiting() */
->  	smp_mb();
->  	wait_event(fc->blocked_waitq, atomic_read(&fc->num_waiting) == 0);
-> +
-> +	fuse_uring_wait_stopped_queues(fc);
->  }
->  
->  int fuse_dev_release(struct inode *inode, struct file *file)
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 5269b3f8891e..6001ba4d6e82 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -48,6 +48,44 @@ fuse_uring_async_send_to_ring(struct io_uring_cmd *cmd,
->  	io_uring_cmd_done(cmd, 0, 0, issue_flags);
->  }
->  
-> +/* Abort all list queued request on the given ring queue */
-> +static void fuse_uring_abort_end_queue_requests(struct fuse_ring_queue *queue)
-> +{
-> +	struct fuse_req *req;
-> +	LIST_HEAD(sync_list);
-> +	LIST_HEAD(async_list);
-> +
-> +	spin_lock(&queue->lock);
-> +
-> +	list_for_each_entry(req, &queue->sync_fuse_req_queue, list)
-> +		clear_bit(FR_PENDING, &req->flags);
-> +	list_for_each_entry(req, &queue->async_fuse_req_queue, list)
-> +		clear_bit(FR_PENDING, &req->flags);
-> +
-> +	list_splice_init(&queue->async_fuse_req_queue, &sync_list);
-> +	list_splice_init(&queue->sync_fuse_req_queue, &async_list);
-> +
-> +	spin_unlock(&queue->lock);
-> +
-> +	/* must not hold queue lock to avoid order issues with fi->lock */
-> +	fuse_dev_end_requests(&sync_list);
-> +	fuse_dev_end_requests(&async_list);
-> +}
-> +
-> +void fuse_uring_abort_end_requests(struct fuse_ring *ring)
-> +{
-> +	int qid;
-> +
-> +	for (qid = 0; qid < ring->nr_queues; qid++) {
-> +		struct fuse_ring_queue *queue = fuse_uring_get_queue(ring, qid);
-> +
-> +		if (!queue->configured)
-> +			continue;
-> +
-> +		fuse_uring_abort_end_queue_requests(queue);
-> +	}
-> +}
-> +
->  /* Update conn limits according to ring values */
->  static void fuse_uring_conn_cfg_limits(struct fuse_ring *ring)
+> +static void queue_request_and_unlock(struct fuse_conn *fc,
+> +				     struct fuse_req *req, bool allow_uring)
+>  __releases(fiq->lock)
 >  {
-> @@ -361,6 +399,162 @@ int fuse_uring_queue_cfg(struct fuse_ring *ring,
->  	return 0;
+> +	struct fuse_iqueue *fiq = &fc->iq;
+> +
+>  	req->in.h.len = sizeof(struct fuse_in_header) +
+>  		fuse_len_args(req->args->in_numargs,
+>  			      (struct fuse_arg *) req->args->in_args);
+> +
+> +	if (allow_uring && fuse_uring_ready(fc)) {
+> +		int res;
+> +
+> +		/* this lock is not needed at all for ring req handling */
+> +		spin_unlock(&fiq->lock);
+> +		res = fuse_uring_queue_fuse_req(fc, req);
+> +		if (!res)
+> +			return;
+> +
+> +		/* fallthrough, handled through /dev/fuse read/write */
+
+We need the lock here because we're modifying &fiq->pending, this will end in
+tears.
+
+> +	}
+> +
+>  	list_add_tail(&req->list, &fiq->pending);
+>  	fiq->ops->wake_pending_and_unlock(fiq);
+>  }
+> @@ -261,7 +277,7 @@ static void flush_bg_queue(struct fuse_conn *fc)
+>  		fc->active_background++;
+>  		spin_lock(&fiq->lock);
+>  		req->in.h.unique = fuse_get_unique(fiq);
+> -		queue_request_and_unlock(fiq, req);
+> +		queue_request_and_unlock(fc, req, true);
+>  	}
 >  }
 >  
-> +static void fuse_uring_stop_fuse_req_end(struct fuse_ring_ent *ent)
+> @@ -405,7 +421,8 @@ static void request_wait_answer(struct fuse_req *req)
+>  
+>  static void __fuse_request_send(struct fuse_req *req)
+>  {
+> -	struct fuse_iqueue *fiq = &req->fm->fc->iq;
+> +	struct fuse_conn *fc = req->fm->fc;
+> +	struct fuse_iqueue *fiq = &fc->iq;
+>  
+>  	BUG_ON(test_bit(FR_BACKGROUND, &req->flags));
+>  	spin_lock(&fiq->lock);
+> @@ -417,7 +434,7 @@ static void __fuse_request_send(struct fuse_req *req)
+>  		/* acquire extra reference, since request is still needed
+>  		   after fuse_request_end() */
+>  		__fuse_get_request(req);
+> -		queue_request_and_unlock(fiq, req);
+> +		queue_request_and_unlock(fc, req, true);
+>  
+>  		request_wait_answer(req);
+>  		/* Pairs with smp_wmb() in fuse_request_end() */
+> @@ -487,6 +504,10 @@ ssize_t fuse_simple_request(struct fuse_mount *fm, struct fuse_args *args)
+>  	if (args->force) {
+>  		atomic_inc(&fc->num_waiting);
+>  		req = fuse_request_alloc(fm, GFP_KERNEL | __GFP_NOFAIL);
+> +		if (unlikely(!req)) {
+> +			ret = -ENOTCONN;
+> +			goto err;
+> +		}
+
+This is extraneous, and not possible since we're doing __GFP_NOFAIL.
+
+>  
+>  		if (!args->nocreds)
+>  			fuse_force_creds(req);
+> @@ -514,16 +535,55 @@ ssize_t fuse_simple_request(struct fuse_mount *fm, struct fuse_args *args)
+>  	}
+>  	fuse_put_request(req);
+>  
+> +err:
+>  	return ret;
+>  }
+>  
+> -static bool fuse_request_queue_background(struct fuse_req *req)
+> +static bool fuse_request_queue_background_uring(struct fuse_conn *fc,
+> +					       struct fuse_req *req)
 > +{
-> +	struct fuse_req *req = ent->fuse_req;
+> +	struct fuse_iqueue *fiq = &fc->iq;
+> +	int err;
 > +
-> +	ent->fuse_req = NULL;
-> +	clear_bit(FRRS_FUSE_REQ, &ent->state);
-> +	clear_bit(FR_SENT, &req->flags);
-> +	req->out.h.error = -ECONNABORTED;
-> +	fuse_request_end(req);
+> +	req->in.h.unique = fuse_get_unique(fiq);
+> +	req->in.h.len = sizeof(struct fuse_in_header) +
+> +		fuse_len_args(req->args->in_numargs,
+> +			      (struct fuse_arg *) req->args->in_args);
+> +
+> +	err = fuse_uring_queue_fuse_req(fc, req);
+> +	if (!err) {
+
+I'd rather
+
+if (err)
+	return false;
+
+Then the rest of this code.
+
+Also generally speaking I think you're correct, below isn't needed because the
+queues themselves have their own limits, so I think just delete this bit.
+
+> +		/* XXX remove and lets the users of that use per queue values -
+> +		 * avoid the shared spin lock...
+> +		 * Is this needed at all?
+> +		 */
+> +		spin_lock(&fc->bg_lock);
+> +		fc->num_background++;
+> +		fc->active_background++;
+> +
+> +
+> +		/* XXX block when per ring queues get occupied */
+> +		if (fc->num_background == fc->max_background)
+> +			fc->blocked = 1;
+> +		spin_unlock(&fc->bg_lock);
+> +	}
+> +
+> +	return err ? false : true;
 > +}
 > +
 > +/*
-> + * Release a request/entry on connection shutdown
+> + * @return true if queued
 > + */
-> +static bool fuse_uring_try_entry_stop(struct fuse_ring_ent *ent,
-> +				      bool need_cmd_done)
-> +	__must_hold(ent->queue->lock)
+> +static int fuse_request_queue_background(struct fuse_req *req)
+>  {
+>  	struct fuse_mount *fm = req->fm;
+>  	struct fuse_conn *fc = fm->fc;
+>  	bool queued = false;
+>  
+>  	WARN_ON(!test_bit(FR_BACKGROUND, &req->flags));
+> +
+> +	if (fuse_uring_ready(fc))
+> +		return fuse_request_queue_background_uring(fc, req);
+> +
+>  	if (!test_bit(FR_WAITING, &req->flags)) {
+>  		__set_bit(FR_WAITING, &req->flags);
+>  		atomic_inc(&fc->num_waiting);
+> @@ -576,7 +636,8 @@ static int fuse_simple_notify_reply(struct fuse_mount *fm,
+>  				    struct fuse_args *args, u64 unique)
+>  {
+>  	struct fuse_req *req;
+> -	struct fuse_iqueue *fiq = &fm->fc->iq;
+> +	struct fuse_conn *fc = fm->fc;
+> +	struct fuse_iqueue *fiq = &fc->iq;
+>  	int err = 0;
+>  
+>  	req = fuse_get_req(fm, false);
+> @@ -590,7 +651,8 @@ static int fuse_simple_notify_reply(struct fuse_mount *fm,
+>  
+>  	spin_lock(&fiq->lock);
+>  	if (fiq->connected) {
+> -		queue_request_and_unlock(fiq, req);
+> +		/* uring for notify not supported yet */
+> +		queue_request_and_unlock(fc, req, false);
+>  	} else {
+>  		err = -ENODEV;
+>  		spin_unlock(&fiq->lock);
+> @@ -2205,6 +2267,7 @@ void fuse_abort_conn(struct fuse_conn *fc)
+>  		fuse_uring_set_stopped(fc);
+>  
+>  		fuse_set_initialized(fc);
+> +
+
+Extraneous newline.
+
+>  		list_for_each_entry(fud, &fc->devices, entry) {
+>  			struct fuse_pqueue *fpq = &fud->pq;
+>  
+> @@ -2478,6 +2541,7 @@ static long fuse_uring_ioctl(struct file *file, __u32 __user *argp)
+>  		if (res != 0)
+>  			return res;
+>  		break;
+> +
+
+Extraneous newline.
+
+>  		case FUSE_URING_IOCTL_CMD_QUEUE_CFG:
+>  			fud->uring_dev = 1;
+>  			res = fuse_uring_queue_cfg(fc->ring, &cfg.qconf);
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 6001ba4d6e82..fe80e66150c3 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -32,8 +32,7 @@
+>  #include <linux/io_uring/cmd.h>
+>  
+>  static void fuse_uring_req_end_and_get_next(struct fuse_ring_ent *ring_ent,
+> -					    bool set_err, int error,
+> -					    unsigned int issue_flags);
+> +					    bool set_err, int error);
+>  
+>  static void fuse_ring_ring_ent_unset_userspace(struct fuse_ring_ent *ent)
+>  {
+> @@ -683,8 +682,7 @@ static int fuse_uring_copy_to_ring(struct fuse_ring *ring, struct fuse_req *req,
+>   * userspace will read it
+>   * This is comparable with classical read(/dev/fuse)
+>   */
+> -static void fuse_uring_send_to_ring(struct fuse_ring_ent *ring_ent,
+> -				    unsigned int issue_flags, bool send_in_task)
+> +static void fuse_uring_send_to_ring(struct fuse_ring_ent *ring_ent)
+>  {
+>  	struct fuse_ring *ring = ring_ent->queue->ring;
+>  	struct fuse_ring_req *rreq = ring_ent->rreq;
+> @@ -721,20 +719,17 @@ static void fuse_uring_send_to_ring(struct fuse_ring_ent *ring_ent,
+>  	rreq->in = req->in.h;
+>  	set_bit(FR_SENT, &req->flags);
+>  
+> -	pr_devel("%s qid=%d tag=%d state=%lu cmd-done op=%d unique=%llu issue_flags=%u\n",
+> +	pr_devel("%s qid=%d tag=%d state=%lu cmd-done op=%d unique=%llu\n",
+>  		 __func__, ring_ent->queue->qid, ring_ent->tag, ring_ent->state,
+> -		 rreq->in.opcode, rreq->in.unique, issue_flags);
+> +		 rreq->in.opcode, rreq->in.unique);
+>  
+> -	if (send_in_task)
+> -		io_uring_cmd_complete_in_task(ring_ent->cmd,
+> -					      fuse_uring_async_send_to_ring);
+> -	else
+> -		io_uring_cmd_done(ring_ent->cmd, 0, 0, issue_flags);
+> +	io_uring_cmd_complete_in_task(ring_ent->cmd,
+> +				      fuse_uring_async_send_to_ring);
+>  
+>  	return;
+>  
+>  err:
+> -	fuse_uring_req_end_and_get_next(ring_ent, true, err, issue_flags);
+> +	fuse_uring_req_end_and_get_next(ring_ent, true, err);
+>  }
+>  
+>  /*
+> @@ -811,8 +806,7 @@ static bool fuse_uring_ent_release_and_fetch(struct fuse_ring_ent *ring_ent)
+>   * has lock/unlock/lock to avoid holding the lock on calling fuse_request_end
+>   */
+>  static void fuse_uring_req_end_and_get_next(struct fuse_ring_ent *ring_ent,
+> -					    bool set_err, int error,
+> -					    unsigned int issue_flags)
+> +					    bool set_err, int error)
+>  {
+>  	struct fuse_req *req = ring_ent->fuse_req;
+>  	int has_next;
+> @@ -828,7 +822,7 @@ static void fuse_uring_req_end_and_get_next(struct fuse_ring_ent *ring_ent,
+>  	has_next = fuse_uring_ent_release_and_fetch(ring_ent);
+>  	if (has_next) {
+>  		/* called within uring context - use provided flags */
+> -		fuse_uring_send_to_ring(ring_ent, issue_flags, false);
+> +		fuse_uring_send_to_ring(ring_ent);
+>  	}
+>  }
+>  
+> @@ -863,7 +857,7 @@ static void fuse_uring_commit_and_release(struct fuse_dev *fud,
+>  out:
+>  	pr_devel("%s:%d ret=%zd op=%d req-ret=%d\n", __func__, __LINE__, err,
+>  		 req->args->opcode, req->out.h.error);
+> -	fuse_uring_req_end_and_get_next(ring_ent, set_err, err, issue_flags);
+> +	fuse_uring_req_end_and_get_next(ring_ent, set_err, err);
+>  }
+>  
+>  /*
+> @@ -1101,3 +1095,69 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+>  	goto out;
+>  }
+>  
+> +int fuse_uring_queue_fuse_req(struct fuse_conn *fc, struct fuse_req *req)
 > +{
-> +	struct fuse_ring_queue *queue = ent->queue;
-> +	bool released = false;
+> +	struct fuse_ring *ring = fc->ring;
+> +	struct fuse_ring_queue *queue;
+> +	int qid = 0;
+> +	struct fuse_ring_ent *ring_ent = NULL;
+> +	int res;
+> +	bool async = test_bit(FR_BACKGROUND, &req->flags);
+> +	struct list_head *req_queue, *ent_queue;
 > +
-> +	if (test_bit(FRRS_FREED, &ent->state))
-> +		goto out; /* no work left, freed before */
-
-Just return false;
-
+> +	if (ring->per_core_queue) {
+> +		/*
+> +		 * async requests are best handled on another core, the current
+> +		 * core can do application/page handling, while the async request
+> +		 * is handled on another core in userspace.
+> +		 * For sync request the application has to wait - no processing, so
+> +		 * the request should continue on the current core and avoid context
+> +		 * switches.
+> +		 * XXX This should be on the same numa node and not busy - is there
+> +		 * a scheduler function available  that could make this decision?
+> +		 * It should also not persistently switch between cores - makes
+> +		 * it hard for the scheduler.
+> +		 */
+> +		qid = task_cpu(current);
 > +
-> +	if (ent->state == BIT(FRRS_INIT) || test_bit(FRRS_WAIT, &ent->state) ||
-> +	    test_bit(FRRS_USERSPACE, &ent->state)) {
+> +		if (unlikely(qid >= ring->nr_queues)) {
+> +			WARN_ONCE(1,
+> +				  "Core number (%u) exceeds nr ueues (%zu)\n",
+> +				  qid, ring->nr_queues);
+> +			qid = 0;
+> +		}
+> +	}
+> +
+> +	queue = fuse_uring_get_queue(ring, qid);
+> +	req_queue = async ? &queue->async_fuse_req_queue :
+> +			    &queue->sync_fuse_req_queue;
+> +	ent_queue = async ? &queue->async_ent_avail_queue :
+> +			    &queue->sync_ent_avail_queue;
+> +
+> +	spin_lock(&queue->lock);
+> +
+> +	if (unlikely(queue->stopped)) {
+> +		res = -ENOTCONN;
+> +		goto err_unlock;
 
-Again, apologies for just now noticing this, but this is kind of a complicated
-state machine.
+This is the only place we use err_unlock, just do
 
-I think I'd rather you just use ent->state as an actual state machine, so it has
-one value and one value only at any given time, which appears to be what happens
-except in that we have FRRS_INIT set in addition to whatever other bit is set.
+if (unlikely(queue->stopped)) {
+	spin_unlock(&queue->lock);
+	return -ENOTCONN;
+}
 
-Rework this so it's less complicated, because it's quite difficult to follow in
-it's current form.  Thanks,
+and then you can get rid of res.  Thanks,
 
 Josef
 
