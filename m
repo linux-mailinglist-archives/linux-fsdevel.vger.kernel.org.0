@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-20545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A5A8D5059
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 18:59:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF568D5081
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 19:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05CD1C2224B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 16:59:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BBF2B20E4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 17:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3EF3D579;
-	Thu, 30 May 2024 16:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5BB41A94;
+	Thu, 30 May 2024 17:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="3M+ykaLY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PkYkhQg9"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="bx4wQV0J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PdKE6HW/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0883E3B1A1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 16:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0C42E832
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 17:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088371; cv=none; b=c3y83YZoZbQmH1J617SzacS9LES7BIR3W4BYKMz+yAZL1TvVZSIFR+tAReh8KviTlQ/Y8whOQ7IxfiN64TXZi0c1p+zQJSRNxzPmB2LxaK0SW/2tTPTtCiPPTqhnp6O2qGuQ3PvZ2TVSlJ4oE7uX657ps3ZAygKuGcFYluLa7ok=
+	t=1717088831; cv=none; b=FYJxy8WBH2mqPohy6D6UqYhXQZbDEQ+wjgpz3LRwhediv/3YvQdEDn6ciS83RIRtd3nzuWncuHrs1isadjAerlgJI0xsy/ojwbmoEjFYIMTddvuPn91uMLcq5GJx1p1MjSsENwbhAODvyfRSZXBk86Q2BP4ZlQYt4e5fHlgNJ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088371; c=relaxed/simple;
-	bh=gRx2mrpH5ht3t1SahUHVoW7eRJLIfBO/n+NkaD1DD3s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MivN0yHIigj/f/fAT+spXQBm8If5LRD5RmzAwbAf4BO1N4BGBmY+HFIqfQ0A0bOeKCsWI9YIDdO15ZwZLhGCW3UrXnnb8mb3MYKb/yFqSnL66ammuv+hMWItu3D4AiuudMFKtaswou+XmBPKVM7vgQeV6zzo9GcSI1piuNlO8nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=3M+ykaLY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PkYkhQg9; arc=none smtp.client-ip=103.168.172.144
+	s=arc-20240116; t=1717088831; c=relaxed/simple;
+	bh=Pze4JWmgktlZhIcEkdHDHpuJDqL8JuzL0NdU4OpZ/OI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LcJBRLTZtudQGdgVZn6SHouYRlEOsYvYf+BU2Ilx0ZmXp1Nxdz3yh0Wp3sC3rdnipKUPX/pVoxB3LqthqokgwXoSnvsUSwCAbMcAfAQnIRPoTCDgPbozcLhUImsvd0nfVYEEVKWNs2h8h43fLMdQ4elhV5kYfcxVETsO964P63o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=bx4wQV0J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PdKE6HW/; arc=none smtp.client-ip=103.168.172.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 2019113800E1;
-	Thu, 30 May 2024 12:59:29 -0400 (EDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id E352411400D8;
+	Thu, 30 May 2024 13:07:08 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 30 May 2024 12:59:29 -0400
+  by compute5.internal (MEProxy); Thu, 30 May 2024 13:07:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1717088369;
-	 x=1717174769; bh=MgwqPMbI3WSXy/+SGPR5Z6nSc1+yGsFUMrlsOW2YCAM=; b=
-	3M+ykaLYlZMZiWARE1nCtM9B8FHrUtdPZXP+0NHsHOHPlAqZoJLdo1JQqKpGAdzW
-	JOiXJr6eZVxgtOjamGYUDlw2TdQyj7S/UNMoNy7V9rxxFEl2grdnRXBzcRg63a3U
-	0YEug4fniDekrmOOuYXdTXbd8q0vddbGqSVVtCkxVXWUTFrGoGh0NjUwGmEFVOy8
-	LgD7DvzWNinZsb1AFf4/gCHsALqWUJwaYBqyw675qewxx0q2dRmFa5i2DxSsOxx4
-	Ot6hr0POXtKmkcimBumaXF+u7GF/6Uq2TtKW6/KBsIBaN6WPWXo1jHGc2TOxmyo6
-	w20/S5Hv3c3pPJSORYWnig==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1717088828;
+	 x=1717175228; bh=Uct+wQBF1Nd5cFfdDzVj2Wu2zqXPNu0gAhOFt/0aWdQ=; b=
+	bx4wQV0JV5VoKEzoEzND12Ol9u/8vUX1eQGEeFRm58iaHZ9P27Qj+UB5PiMsesfR
+	w0kK9+2vlH7hx2CJ52P+aCY6ZEQsk8Tc+lWFW5qVFE9N+4CsHFDeenMWOGjA59Xg
+	ncuWrWBgpegVyiKg88atb3A08Im3E6ntwvZL998jOHmRgVBIecJT2a0/q8ri4Mzg
+	yG8oT2q+q4OTYnv6IC3BCaXwC2D+eNXOZakSzDs23GGFJ4gc7ElLZxw0MFhXyJwX
+	7EMXLkj8Pu/tPJcsuXezdCrr7hSouDf7q/DjCLjK4c2tMVxauIzcq6tqLsRW9k80
+	RqzE+pEvSXJ9idLaE36fqw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717088369; x=
-	1717174769; bh=MgwqPMbI3WSXy/+SGPR5Z6nSc1+yGsFUMrlsOW2YCAM=; b=P
-	kYkhQg9nMMFlzk9GmBh2O65TTPNh5slgUI9fdE05IB0e6g8t8iujtB6blPDE5jI5
-	Ngg/VP+voIfI55MmlpoQavBaxv+bOpkM/3YJUf0jk+ZaOtHg5qBYB45YAfVto/s+
-	tYvQGi9NW0Q3jjVujGatKX08wv1dvle9kKhDRS8eWau94MYR7sxOkwA6EJOWsqqd
-	EnceZzABLCVNDrMZUO4ZiT0re2UFeikwrXzPIdVn0V2r95EHaeUYTbXcs2O5Lmwo
-	6WHDrhvi0twmRLMpSrx54nmml3o6q0FvG8aqxLKZzKFxwG+SqPey/xbJLLaemkV+
-	UqEMXAWx2v0OEpGjiM/5g==
-X-ME-Sender: <xms:cLBYZtHLSFhWmACjKGhb-PtPmhn2C44B2qa7IWmUcW7uqlaI6gCFow>
-    <xme:cLBYZiWqvmi0ZGH6mmqkSkadm5_mmRfDsQ8_L8Y9rjRJTh6oDA3Xg-r2lDazAGE_j
-    wkViGrnExyxnR-h>
-X-ME-Received: <xmr:cLBYZvIHiM39Aw3l1YthB5-g9Xm7HsM3YTWzmXo4xkhMw42HNYm_u_sALk9LAUHTBfN7CY-3GKxzzbcxHZlQBkveQSKqkH2T1V7uDftDe9Lhj7V3rDLT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedguddtgecutefuodetggdotefrod
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717088828; x=
+	1717175228; bh=Uct+wQBF1Nd5cFfdDzVj2Wu2zqXPNu0gAhOFt/0aWdQ=; b=P
+	dKE6HW/kQtnvVasfAzPaKW2QSAVkkKMglWNf6zEMhvjC/joaE6SGOeGColuUZazT
+	xyeqdjaRSC8O7QGnfIx/7aXIvElY2i0ZJA211kbR90JCaTqS2QcUe3mElHtmkxzo
+	hi/68Mgd3s4Y3nCvDnHckafGFCv8vg7k2Xqevcm5E899QWV62TPU/dhZNIr0/W/d
+	BKf9JTBAcOhN3/pFcro2nmim76vWEjCkVzc7wI93R3T5X+eBUoaN+2TdD2KTXvT7
+	7hWuK7cj+24AHUl9KQfpsH/S8aa4HSu+sr9DyWcItQvxvHR8M/Wb1GvHXHAh4xDo
+	oxzYXUM4EqaawT7slp2VA==
+X-ME-Sender: <xms:O7JYZng_XRwG8SronX-03PQggVh9RhnfkF_V8Ld1aCWjve2ryvrWQw>
+    <xme:O7JYZkDyT7UTYiguvtk0zdwtHsQ2NAa-rRpiXocVNUC07nH5442YmCS8qjnhgpA9T
+    C1P9qTyVGO4bGeb>
+X-ME-Received: <xmr:O7JYZnH9D9Fnr43IxXGSefVYg-dX1zjBpX5Q8VTEVxkSriHUda5ljw3ybVmq14F_gO5w6cPAzMkaAQMxYJEz1kww4nXz6KYgHX0py8KzzlYPCdsqIh_i>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedguddtiecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepuegv
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegv
     rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeeukeduudekheegieellefgfeehledtudfg
-    udelfeetvdehveegtdefiedvhedtgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdtgfegleefvdehfeei
+    veejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
     grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
     rdhfmh
-X-ME-Proxy: <xmx:cLBYZjE6Ci5vy1JDYOyqlO4BPkUY-4CaqM1r7nA6p9c0C6wVj2FSMQ>
-    <xmx:cLBYZjWREiqOCwGcFBZbypxViz8jhcem1uLFelOSVw2boauCCnht-Q>
-    <xmx:cLBYZuMNIOwtSYz04-TtUpbsaQmgeexFQgXzFA6kRy7WJvtPeysAOQ>
-    <xmx:cLBYZi1tAXC7L2zSEF3YZgh4iej4fScgXnnGS5SsjX7j9ZNQL3PTTQ>
-    <xmx:cbBYZpdkjIsoMhca-3064P640ZvH7ZNHiVbvUHR-FOi0To8nHZAikvTc>
+X-ME-Proxy: <xmx:PLJYZkTbkUhEGwSr5ZmfbnfWCTu6gMQ19pW5_bTK9erX-SlUmjR_rQ>
+    <xmx:PLJYZkw4DUjZFkrwSePZVUIOnZICjdmiBP0-iJewdk7H_ADS2gY-bA>
+    <xmx:PLJYZq7cK90p3JlDIg_Bf2D156yXy4LCpD0g7pSm7Iu5h65UirK9nQ>
+    <xmx:PLJYZpzb9lrlJPfj17AQJu4rJW4CNW3sN3dLYn7nPkpzCPRQzYDWqQ>
+    <xmx:PLJYZgdVpIhanX5ADSVAtIJ7ET8lLfE3fDC2eYACDl09bTkVq_wsXJsg>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 May 2024 12:59:27 -0400 (EDT)
-Message-ID: <b52576cd-9128-4ef8-9b64-0dd2543c609d@fastmail.fm>
-Date: Thu, 30 May 2024 18:59:27 +0200
+ 30 May 2024 13:07:06 -0400 (EDT)
+Message-ID: <f15f8e34-7440-4dd6-b1b5-720c618aeff4@fastmail.fm>
+Date: Thu, 30 May 2024 19:07:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,83 +91,62 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: cleanup request queuing towards virtiofs
+To: Miklos Szeredi <miklos@szeredi.hu>, Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+ Peter-Jan Gootzen <pgootzen@nvidia.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Yoray Zack <yorayz@nvidia.com>,
+ Vivek Goyal <vgoyal@redhat.com>, virtualization@lists.linux.dev
+References: <20240529155210.2543295-1-mszeredi@redhat.com>
+ <af09b5d3-940f-491d-97ba-bd3bf19b750a@linux.alibaba.com>
+ <CAJfpeguV0dNiyR5jzQH7H4x0vOzFTcBgnnLDHBPU9fH23A0kng@mail.gmail.com>
 From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Subject: Re: [PATCH RFC v2 16/19] fuse: {uring} Wake requests on the the
- current cpu
-To: Shachar Sharon <synarete@gmail.com>, Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- linux-fsdevel@vger.kernel.org
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-16-d149476b1d65@ddn.com>
- <CAL_uBtfpdFAjZuALySuMoyegGpoyPFg32tw5K+vKzDsrzs=ZAg@mail.gmail.com>
 Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAL_uBtfpdFAjZuALySuMoyegGpoyPFg32tw5K+vKzDsrzs=ZAg@mail.gmail.com>
+In-Reply-To: <CAJfpeguV0dNiyR5jzQH7H4x0vOzFTcBgnnLDHBPU9fH23A0kng@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 5/30/24 18:44, Shachar Sharon wrote:
-> On Wed, May 29, 2024 at 10:36 PM Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> Most of the performance improvements
->> with fuse-over-io-uring for synchronous requests is the possibility
->> to run processing on the submitting cpu core and to also wake
->> the submitting process on the same core - switching between
->> cpu cores.
->>
->> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->> ---
->>  fs/fuse/dev.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->> index c7fd3849a105..851c5fa99946 100644
->> --- a/fs/fuse/dev.c
->> +++ b/fs/fuse/dev.c
->> @@ -333,7 +333,10 @@ void fuse_request_end(struct fuse_req *req)
->>                 spin_unlock(&fc->bg_lock);
->>         } else {
->>                 /* Wake up waiter sleeping in request_wait_answer() */
->> -               wake_up(&req->waitq);
->> +               if (fuse_per_core_queue(fc))
->> +                       __wake_up_on_current_cpu(&req->waitq, TASK_NORMAL, NULL);
->> +               else
->> +                       wake_up(&req->waitq);
+On 5/30/24 11:00, Miklos Szeredi wrote:
+> On Thu, 30 May 2024 at 05:20, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
 > 
-> Would it be possible to apply this idea for regular FUSE connection?
+>>> +             if (test_bit(FR_FINISHED, &req->flags)) {
+>>> +                     list_del_init(&req->intr_entry);
+>>> +                     spin_unlock(&fiq->lock                  ^
+>>                 missing "return" here?
+> 
+> Well spotted.  Thanks.
+> 
+>>> -             err = -ENODEV;
+>>> -             spin_unlock(&fiq->lock);
+>>> -             fuse_put_request(req);
+>>> -     }
+>>> +     fuse_send_one(fiq, req);
+>>>
+>>> -     return err;
+>>> +     return 0;
+>>>  }
+>>
+>> There's a minor changed behavior visible to users.  Prior to the patch,
+>> the FUSE_NOTIFY_RETRIEVE will returns -ENODEV when the connection is
+>> aborted, but now it returns 0.
+>>
+>> It seems only example/notify_store_retrieve.c has used
+>> FUSE_NOTIFY_RETRIEVE in libfuse.  I'm not sure if this change really
+>> matters.
+> 
+> It will return -ENOTCONN from  fuse_simple_notify_reply() ->
+> fuse_get_req().  The -ENODEV would be a very short transient error
+> during the abort, so it doesn't matter.
 
-I probably should have written it in the commit message, without uring
-performance is the same or slightly worse. With direct-IO reads
-
-jobs    /dev/fuse         /dev/fuse
-        (migrate off)     (migrate on)
-1           2023             1652
-2           3375   	     2805
-4           3823             4193
-8           7796             8161
-16          8520             8518
-24          8361             8084
-32          8717             8342
-
-
-(in MB/s).
-
-I think there is no improvement as daemon threads process requests on
-random cores. I.e. request processing doesn't happen on the same core
-a request was submitted to.
-
-
-> What would happen if some (buggy or malicious) userspace FUSE server uses
-> sched_setaffinity(2) to run only on a subset of active CPUs?
-
-
-The request goes to the ring, which cpu it eventually handles should not
-matter. Performance will not be optimal then.
-That being said, the introduction mail points out an issue with xfstest
-generic/650,
-which disables/enables CPUs in a loop - I need to investigate what
-happens there.
+example/notify_store_retrieve and example/notify_inval_inode actually
+get EBADF on umount. Issue is that FUSE_DESTROY is sent very late only,
+but inodes already released. If server side sends a notification in the
+wrong moment, it gets EBADF. We would need something like
+FUSE_PREPARE_DESTROY that is being send when umount processing starts to
+stop notifications. I'm not sure if that exists in the VFS and didn't
+have time yet to check.
 
 
 Thanks,
