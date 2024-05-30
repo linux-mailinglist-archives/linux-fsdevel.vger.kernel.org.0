@@ -1,86 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-20500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97B68D43BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 04:38:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CF48D4401
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 05:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D92AD1C2195E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 02:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211C81F230D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2024 03:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E99B1C698;
-	Thu, 30 May 2024 02:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71F11CD3B;
+	Thu, 30 May 2024 03:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F9BvcxNL"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JTQv+OsP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.cecloud.com (unknown [1.203.97.246])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51E117545;
-	Thu, 30 May 2024 02:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D2A6AA1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2024 03:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717036715; cv=none; b=NYiAcVCYjNHDZYHssIbkx+J3E2BsvtGk+T7UZH4OivS/Kwt7xxWiM5AgL5VS3OZXgJUxM/ld8wREKnQHzimvFZSUgZ9uOfnMBPuspT3+ouqyZHiUy3DH1JxL/sIFjMUdaRbWtm3ni/M3jKqQoTvTt5tVlZMb2WzkD/J+zwv70eE=
+	t=1717039242; cv=none; b=cKn+xkGKjsTjWH6mnTJfd3mEJyb3+3XWgAK3qtNZklUWQWqkOlqZo8iSj9p9PLW6xNGXgXtENfgjfK8UqYAJ6uaQeYJ6EbgPSSkvrPX1yqf2d3ShlsHlOGU+kTkNpNViKBiJ8b1CuPXTuQp5piuFZoYpE9rvf+Dr41aBmpTkqrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717036715; c=relaxed/simple;
-	bh=TNoVU3TtSf6bcIdcXsfbZYo/x8ibozTXW6/eh8jkNaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNBsBZHXjrYQCvEmSeDKtY69i/yFiFkJaGyciKrgNGPacsuCuDttf7xrTITZS3sXc1batEvTrdzVSH4VMQ4M80tSPoQ0S1KImnyxHw7tm2RvVKyKWcohu74CD5OncxP3eNkUyjwe97/l1CToCLyIzueilATYSDkYQ5fjJf+2o3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; dkim=fail (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F9BvcxNL reason="signature verification failed"; arc=none smtp.client-ip=209.85.214.174; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; arc=none smtp.client-ip=1.203.97.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id A879C7C012C;
-	Thu, 30 May 2024 10:33:09 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-ANTISPAM-LEVEL:2
-X-SKE-CHECKED:1
-X-ABS-CHECKED:1
-Received: from localhost.localdomain (unknown [111.48.58.12])
-	by smtp.cecloud.com (postfix) whith ESMTP id P1860752T281471823376752S1717036388286019_;
-	Thu, 30 May 2024 10:33:09 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:liuwei09@cestc.cn
-X-SENDER:liuwei09@cestc.cn
-X-LOGIN-NAME:liuwei09@cestc.cn
-X-FST-TO:liuwei09@cestc.cn
-X-RCPT-COUNT:9
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:111.48.58.12
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<ab71a20c679e9c04ec8ec16fdd219dda>
-X-System-Flag:0
-From: Liu Wei <liuwei09@cestc.cn>
-To: liuwei09@cestc.cn
-Cc: akpm@linux-foundation.org,
-	hch@lst.de,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rgoldwyn@suse.com,
-	willy@infradead.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when io with IOCB_NOWAIT
-Date: Thu, 30 May 2024 10:33:04 +0800
-Message-ID: <c66ca795-da93-437c-bb11-718801f8114a@kernel.dk>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <20240527100908.49913-1-liuwei09@cestc.cn>
-References: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk> <20240527100908.49913-1-liuwei09@cestc.cn>
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174]) (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id A493717E8E2 for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f4c043d2f6so35095ad.2 for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716824187; x=1717428987; darn=vger.kernel.org; h=content-transfer-encoding:in-reply-to:from:content-language :references:cc:to:subject:user-agent:mime-version:date:message-id :from:to:cc:subject:date:message-id:reply-to; bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=; b=F9BvcxNLHbFCL5XfHLnGTxQs/kbGpALZnSl2DYjNA/21xx0FBmmySwAJN/5dtkPhZV IwwKjcqRB9pV10OOLL6wHdu5znp/6PE86Vas57cBS/wuAbBw2UZndM8t2ducr7YYWm6Y qK9hMREyXKjeBhZWSjTI2InCbzAtbz3PLAwXmX2LUbmD27CV84Ld62XttJh+nGQRapAs b070pptuUluTj7BrbyTY7tkobVJKFo/9qxvErZHnOMlm8wItNpZuLUNC8RDdtzThAB2N KMJsW+YN/2uWpInjYvnpvDqSoW6Kn8DylQoMu4CqVNrueusLUWYFZNSZk1pdxY03zMc1 k2IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20230601; t=1716824187; x=1717428987; h=content-transfer-encoding:in-reply-to:from:content-language :references:cc:to:subject:user-agent:mime-version:date:message-id :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to; bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=; b=CPhMhbHOK9YffoFiKDtV0Khpu+NfyscXGdbauR7ikW2SVhyGiJpw4+uaH2oTdxcQJp 8n4PLLZijcpA7uhY6eSngYbNg9W0N8GVCb0k+Es5NqFIDwRGN5hQ53IWyAuavf8MxoPQ gyf/CMAUI2l4mRd6ebTUPSgYTPvl+YPTsWJWI6RVFTvYrWMlXaDm72KLOUADWEQhAvtZ wIQt3RivAEe6aaeIkaFXSlkvu3/TkmFqvry2kOWIMCJuavmmBTFM+6Jm8zt1wOhuvRDX KeT9zlF1L0CSx7G6Eu0CQqpNUPji9HMjieOGHhgPLFFXAc1685CBAslFxHZSSIx3CZi6 rypw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMOG1hqfcAj8O+U8OYJhDCzufVhCbdgAbARsyGquOUCPGzb4/qlUWfi1GmEWjyNPXVWjcnOAIwkpkfqK1b0Rr2kWyMri0yOsSYAgLj
-X-Gm-Message-State: AOJu0YzKpYHq7uA5B37LhUsrmqqOlmSrPE30ly9kbznTlXurSaloSBil CUW6yqJdNri6W8/hPsAPPODhw+jVKov//aV6VQLQxPVoTmgOmj9khDGcyWUQ8lk=
-X-Google-Smtp-Source: AGHT+IHTxIPNAK3HsNoC9uItVsCnZCK8MD3ThRKVvVNi4TwdQa2YRFJqyU+MaLPmqStXfF6Dl3dotQ==
-X-Received: by 2002:a17:902:e810:b0:1f2:fd9a:dbf8 with SMTP id d9443c01a7336-1f449907a09mr116945035ad.5.1716824186842; Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194]) by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c970058sm64280955ad.121.2024.05.27.08.36.25 (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128); Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Precedence: bulk
+	s=arc-20240116; t=1717039242; c=relaxed/simple;
+	bh=MQTQ7Cp02xw7hHkn7dKec4W7o8RkEWaaDwz+tXow0RY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDj1o+OmjLaIo4oN/F2mpAQR5KRiRoFGZIh/thzxkUHlfuCi/lGpJRbTJOI6TrrOSqoaL/kpItZ/96JaDC9cyVoC8y55jhM6AVXu+L7NTw90RgSsq/O5erocLdF54qguiwiC+D7kaAmfgBKbU5sDpWkBXi6+Ra8DehTNz1iCwHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JTQv+OsP; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717039236; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=+Fxqt3tnwHm9/kuy3jiTE8slP9edWqwdcp8oxwmEvek=;
+	b=JTQv+OsPFbp9usda/bLnvpWJ3LHqYVwjrEv+V4+ACxFFUnEk1VnsunETi9BM7vSZQ+1KoDph7RjMgi+mqNbOAH0TNK3k63sp5GmdcZ/QbYxljc3r8GgX0qno+dQsC02KJRroAUVfmhKaAk8H/OSSlhtzTFdjH1vEvk187kg/5PQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W7VW8-W_1717039235;
+Received: from 30.221.148.14(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7VW8-W_1717039235)
+          by smtp.aliyun-inc.com;
+          Thu, 30 May 2024 11:20:36 +0800
+Message-ID: <af09b5d3-940f-491d-97ba-bd3bf19b750a@linux.alibaba.com>
+Date: Thu, 30 May 2024 11:20:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,43 +49,101 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: cleanup request queuing towards virtiofs
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: Peter-Jan Gootzen <pgootzen@nvidia.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Yoray Zack <yorayz@nvidia.com>,
+ Vivek Goyal <vgoyal@redhat.com>, virtualization@lists.linux.dev
+References: <20240529155210.2543295-1-mszeredi@redhat.com>
 Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240529155210.2543295-1-mszeredi@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-From: Jens Axboe <axboe@kernel.dk>
-
-On 5/27/24 4:09 AM, Liu Wei wrote:
-> > I am a newer, thanks for the reminder.
-> > 
-> >>
-> >> I don't think WB_SYNC_NONE tells it not to block, it just says not to
-> >> wait for it... So this won't work as-is.
-> > 
-> > Yes, but I think an asynchronous writex-back is better than simply
-> > return EAGAIN. By using __filemap_fdatawrite_range to trigger a
-> > writeback, subsequent retries may have a higher chance of success. 
-> 
-> And what's the application supposed to do, just hammer on the same
-> IOCB_NOWAIT submission until it then succeeds? The only way this can
-> reasonably work for that would be if yo can do:
-> 
-> 1) Issue IOCB_NOWAIT IO
-> 2) Get -EAGAIN
-> 3) Sync kick off writeback, wait for it to be done
-> 4) Issue IOCB_NOWAIT IO again
-> 5) Success
-> 
-> If you just kick it off, then you'd repeat steps 1..2 ad nauseam until
-> it works out, not tenable.
-> 
-> And this doesn't even include the other point I mentioned, which is
-> __filemap_fdatawrite_range() IO issue blocking in the first place.
-> 
-> So no, NAK on this patch.
->
-
-I know, thanks for your patient explanation.
+Content-Transfer-Encoding: 7bit
 
 
+
+On 5/29/24 11:52 PM, Miklos Szeredi wrote:
+> Virtiofs has its own queing mechanism, but still requests are first queued
+> on fiq->pending to be immediately dequeued and queued onto the virtio
+> queue.
+> 
+> The queuing on fiq->pending is unnecessary and might even have some
+> performance impact due to being a contention point.
+> 
+> Forget requests are handled similarly.
+> 
+> Move the queuing of requests and forgets into the fiq->ops->*.
+> fuse_iqueue_ops are renamed to reflect the new semantics.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+
+[...]
+
+> +static void fuse_dev_queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
+> +{
+> +	spin_lock(&fiq->lock);
+> +	if (list_empty(&req->intr_entry)) {
+> +		list_add_tail(&req->intr_entry, &fiq->interrupts);
+> +		/*
+> +		 * Pairs with smp_mb() implied by test_and_set_bit()
+> +		 * from fuse_request_end().
+> +		 */
+> +		smp_mb();
+> +		if (test_bit(FR_FINISHED, &req->flags)) {
+> +			list_del_init(&req->intr_entry);
+> +			spin_unlock(&fiq->lock			^
+		missing "return" here?
+
+> +		}
+> +		fuse_dev_wake_and_unlock(fiq);
+> +	} else {
+> +		spin_unlock(&fiq->lock);
+> +	}
+> +}
+
+[...]
+
+>  static void fuse_adjust_compat(struct fuse_conn *fc, struct fuse_args *args)
+> @@ -581,7 +605,6 @@ static int fuse_simple_notify_reply(struct fuse_mount *fm,
+>  {
+>  	struct fuse_req *req;
+>  	struct fuse_iqueue *fiq = &fm->fc->iq;
+> -	int err = 0;
+>  
+>  	req = fuse_get_req(fm, false);
+>  	if (IS_ERR(req))> @@ -592,16 +615,9 @@ static int fuse_simple_notify_reply(struct
+fuse_mount *fm,
+>  
+>  	fuse_args_to_req(req, args);
+>  
+> -	spin_lock(&fiq->lock);
+> -	if (fiq->connected) {
+> -		queue_request_and_unlock(fiq, req);
+> -	} else {
+> -		err = -ENODEV;
+> -		spin_unlock(&fiq->lock);
+> -		fuse_put_request(req);
+> -	}
+> +	fuse_send_one(fiq, req);
+>  
+> -	return err;
+> +	return 0;
+>  }
+
+There's a minor changed behavior visible to users.  Prior to the patch,
+the FUSE_NOTIFY_RETRIEVE will returns -ENODEV when the connection is
+aborted, but now it returns 0.
+
+It seems only example/notify_store_retrieve.c has used
+FUSE_NOTIFY_RETRIEVE in libfuse.  I'm not sure if this change really
+matters.
+
+Maybe we could check req->out.h.error after fuse_send_one() returns?
+
+
+-- 
+Thanks,
+Jingbo
 
