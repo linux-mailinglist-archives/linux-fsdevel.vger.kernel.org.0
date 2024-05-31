@@ -1,135 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-20639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F97E8D64FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:56:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A338D64DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2DBB23E2B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80BA1C24CD4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B057074435;
-	Fri, 31 May 2024 14:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76F361FC4;
+	Fri, 31 May 2024 14:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="gJhSWPMl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7ZHKBoq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7981058AB9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 14:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FDD59147
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 14:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717167201; cv=none; b=aq9rJF5Dv4VsNrMBHThWu88tJNUA6k7S4dos2Uyw1BGpj1CY8Yd+ObQTpS4tNtTvf5DuY1dwplVElG2XwsXwTlR6scMDZ/j5z5EkJegKE0qtm3yUUJQVsEnqSnzfEkSxhInOwm5LMeJI+6JN4T2/5skUkkULlPX6UsRlFu2hEcI=
+	t=1717167022; cv=none; b=qhS0A323FCegdYKbAUI0Fb4MlbWlYmkjWffFdT9TA+bdyAJZRhAkZskqAmSGfzYwss2r2/egm7EGR9PwSEw/uqcbMbtPQ277XEwJiG6oPVW7UBpj5MYsQyezAY/2wPY6PZwbTkAzvpB7B/67FNqGUrjB0hiP2y3D7afSbe/25ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717167201; c=relaxed/simple;
-	bh=zIxJj+eFNW131CghuD8tAVb+DXZz1K/r7747QzysLZ0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=f/P+IJ/GnI0x9NkD95iDaOhxUGvi4hznX4bhnVpP5Y6jLKHX23YRPS7pZTbB5vFLQbyhP/yy32DcWizEX67w+NEJKBUTp5pSFz1PTS7xkxkACXhQO/Nj3PqLHlFO/t7eG2QebrV2efXcvMOYO1XDwBcNRN9gPCa5Q+/2luvmqaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=gJhSWPMl; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (unn-149-40-50-56.datapacket.com [149.40.50.56] (may be forged))
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44VEnwYM020082
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 10:50:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1717167002; bh=TVitHfGXx2wIQGCXtRSfpVuiPAJXkRLy5+/11kjTZi8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=gJhSWPMlva12midGaeg/PHU2neWOcKsKiFso7tYpYY6tMVpafdbk0znXMFEK9H1hU
-	 qdyBPtkEngiB7yqQ+IbNrHlkWYOWgTjcvQgJNO7MTOTZisvZdZSoDHJWY3lqeJaYZE
-	 U38u43F9VE4lFxJknYqgbIoTNE+P1A2Q4LVc12BHeDv1KKY88JN9DqWz4hzA6iWmx8
-	 y2TY1uFckzpWjIiew4C1qPlARFYwrj6ebMmhkk+fiFQEX7rpKDXel6j5rvPRdi9eDf
-	 HMJqjXMcGDUiuhpBoML4bUHQ6xIbM2FnKtOoPuHSbUzya2eBGa7gg01LX6ZZmBbqR2
-	 QX791qc6scs2g==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 257EA340A68; Fri, 31 May 2024 16:49:57 +0200 (CEST)
-Date: Fri, 31 May 2024 16:49:57 +0200
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, ksummit@lists.linux.dev
-Subject: Maintainers Summit 2024 Call for Topics
-Message-ID: <20240531144957.GA301668@mit.edu>
+	s=arc-20240116; t=1717167022; c=relaxed/simple;
+	bh=wCG0Kk12+8rPEl7wBJxrScV+Pl8bYtwHrLKLSj44qW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGnnpKn7zv4PcEZAsOHgrUvmzhDVbq3pvWNDIg1OZVWIVoHR5bI7bJTTRGLLKAepHb5ZmAgJxC2Q63fYJ4HCFcl396+xxXVMI+Rhus1VKEmzddkSnsCbAeX63KFqzdTC76qF7cjAbrAtkP/aNVhe5XSZwAgdzMrBiMvnvYr6ats=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7ZHKBoq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 715FDC116B1;
+	Fri, 31 May 2024 14:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717167021;
+	bh=wCG0Kk12+8rPEl7wBJxrScV+Pl8bYtwHrLKLSj44qW0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b7ZHKBoqoXXCQ8/i61s374ZLJResmIYk0Vw3FKsgmka5WXLmZ41+Ko3jZLd8Gpe1N
+	 WAmC38n8vMEgxbLUPzIPreNsbbSsmPuc6gUqe83TFx3mshv4SfB5Qnf9GeO7WLU+nC
+	 qOVTbdgfrPek2GsUKyBkz2C230Ab3qsUNGHFAA5a0tMz5dMfCsM5ltMMmls8zlymhK
+	 EiOo0UvtWUKEl/8UYRndkzDTEGAFpa6Bm2BxGYUyx/oV+IqHVswjaK1eLevo6kbRY3
+	 fPwol/Jf3JKdvSvMmWbqXthl+IX84fthgDUkRGOxnU1cOjYebwc6YTCjAssHMc2UG6
+	 boymRQtWDCUow==
+Date: Fri, 31 May 2024 16:50:16 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, david@fromorbit.com, hch@lst.de, 
+	Mimi Zohar <zohar@linux.ibm.com>
+Subject: Re: [PATCH][RFC] fs: add levels to inode write access
+Message-ID: <20240531-weltoffen-drohnen-413f15b646cb@brauner>
+References: <72fc22ebeaf50fabf9d14f90f6f694f88b5fc359.1717015144.git.josef@toxicpanda.com>
+ <20240530-atheismus-festland-c11c1d3b7671@brauner>
+ <CAHk-=wg_rw5jNAQ3HUH8FeMvRDFKRGGiyKJ-QCZF7d+EdNenfQ@mail.gmail.com>
+ <20240531-ausdiskutiert-wortgefecht-f90dca685f8c@brauner>
+ <20240531-beheben-panzerglas-5ba2472a3330@brauner>
+ <CAOQ4uxhCkK4H32Y8KQTrg0W3y4wpiiDBAfOs4TPLkRprKgKK3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhCkK4H32Y8KQTrg0W3y4wpiiDBAfOs4TPLkRprKgKK3A@mail.gmail.com>
 
-This year, the Maintainers Summit will be held in Vienna, Austria on
-Tuesday, September 17th, 2024, just before the Linux Plumber's Conference
-(September 18--20th).
+On Fri, May 31, 2024 at 04:09:17PM +0300, Amir Goldstein wrote:
+> On Fri, May 31, 2024 at 3:32 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, May 31, 2024 at 12:02:16PM +0200, Christian Brauner wrote:
+> > > On Thu, May 30, 2024 at 08:49:12AM -0700, Linus Torvalds wrote:
+> > > > On Thu, 30 May 2024 at 03:32, Christian Brauner <brauner@kernel.org> wrote:
+> > > > >
+> > > > > Ofc depends on whether Linus still agrees that removing this might be
+> > > > > something we could try.
+> > > >
+> > > > I _definitely_ do not want to see any more complex deny_write_access().
+> > > >
+> > > > So yes, if people have good reasons to override the inode write
+> > > > access, I'd rather remove it entirely than make it some eldritch
+> > > > horror that is even worse than what we have now.
+> > > >
+> > > > It would obviously have to be tested in case some odd case actually
+> > > > depends on the ETXTBSY semantics, since we *have* supported it for a
+> > > > long time.  But iirc nobody even noticed when we removed it from
+> > > > shared libraries, so...
+> > > >
+> > > > That said, verity seems to depend on it as a way to do the
+> > > > "enable_verity()" atomically with no concurrent writes, and I see some
+> > > > i_writecount noise in the integrity code too.
+> 
+> This one is a bit more challenging.
+> The IMA ima_bprm_check() LSM hook (called from exec_binprm() context)
+> may read the file (in ima_collect_measurement()) and record the signature
+> of the file to be executed, assuming that it cannot be modified.
+> Not sure how to deal with this expectation.
 
-As in previous years, the Maintainers Summit is invite-only, where the
-primary focus will be process issues around Linux Kernel Development.
-It will be limited to 30 invitees and a handful of sponsored
-attendees.
+This is very annoying. And it probably doesn't work for dynamic
+binaries. 90% of the code will be in libraries to which one can happily
+write. Plus there's various attacks to break this:
+https://svs.informatik.uni-hamburg.de/publications/2020/2020-08-27-Bohling-IMA.pdf
 
-Linus has generated a list of people for the program committee to
-consider.  People who suggest topics that should be discussed at the
-Maintainers Summit will also be added to the list for consideration.
-To make topic suggestions for the Maintainers Summit, please send
-e-mail to the ksummit@lists.linux.dev with a subject prefix of
-[MAINTAINERS SUMMIT].
+Anyway, I really really don't want to add more complex
+deny_write_access() either. It's hard to understand, it's hard to
+document and it punches holes into this anyway. The freezing levels are
+annoying enough already.
 
-To get the most out of our topic discussions, folks proposing a topic
-should also suggest relevant people and desired outcomes.
+So then I propose we just make the deny write stuff during exec
+conditional on IMA being active. At the end it's small- vs chicken pox.
 
-For an examples of past Maintainers Summit topics, please see these
-LWN articles:
+(I figure it won't be enough for IMA to read the executable after it has
+been mapped MS_PRIVATE?)
 
- * 2023 https://lwn.net/Articles/951847/
- * 2022 https://lwn.net/Articles/908320/
- * 2021 https://lwn.net/Articles/870415/
-
-The Kernel Summit is organized as a track which is run in parallel
-with the other tracks at the Linux Plumbers Conference (LPC), and is
-open to all registered attendees of LPC.  The goal of the Kernel
-Summit track will be to provide a forum to discuss specific technical
-issues that would be easier to resolve in person than over e-mail.
-The program committee will also consider "information sharing" topics
-if they are clearly of interest to the wider development community
-(i.e., advanced training in topics that would be useful to kernel
-developers).
-
-To suggest a topic for the Kernel Summit, please do two things. by
-June 16th, 2024.  First, please tag your e-mail with [TECH TOPIC].  As
-before, please use a separate e-mail for each topic, and send the
-topic suggestions to the ksummit discussion list.
-
-Secondly, please create a topic at the Linux Plumbers Conference
-proposal submission site and target it to the Kernel Summit track:
-
-	https://lpc.events/event/18/abstracts/
-
-Please do both steps.  I'll try to notice if someone forgets one or
-the other, but your chances of making sure your proposal gets the
-necessary attention and consideration are maximized by submitting both
-to the mailing list and the web site.
-
-
-If you were not subscribed on to the kernel mailing list from
-last year (or if you had removed yourself after the kernel summit),
-you can subscribe by sending an e-mail to the address:
-
-   ksummit+subscribe@lists.linux.dev
-
-The program committee this year is composed of the following people:
-
-Christian Brauner
-Jon Corbet
-Greg KH
-Sasha Levin
-Ted Ts'o
-Rafael J. Wysocki
-
+> Only thing I could think of is that IMA would be allowed to
+> deny_write_access() and set FMODE_EXEC_DENY_WRITE
+> as a hint for do_close_execat() to allow_write_access(), but
+> it's pretty ugly, I admit.
+> 
+> > > >
+> > > > But maybe that's just a belt-and-suspenders thing?
+> > > >
+> > > > Because if execve() no longer does it, I think we should just remove
+> > > > that i_writecount thing entirely.
+> > >
+> > > deny_write_access() is being used from kernel_read_file() which has a
+> > > few wrappers around it and they are used in various places:
+> > >
+> > > (1) kernel_read_file() based helpers:
+> > >   (1.1) kernel_read_file_from_path()
+> > >   (1.2) kernel_read_file_from_path_initns()
+> > >   (1.3) kernel_read_file_from_fd()
+> > >
+> > > (2) kernel_read_file() users:
+> > >     (2.1) kernel/module/main.c:init_module_from_file()
+> > >     (2.2) security/loadpin/loadpin.c:read_trusted_verity_root_digests()
+> > >
+> > > (3) kernel_read_file_from_path() users:
+> > >     (3.1) security/integrity/digsig.c:integrity_load_x509()
+> > >     (3.2) security/integrity/ima/ima_fs.c:ima_read_busy()
+> > >
+> > > (4) kernel_read_file_from_path_initns() users:
+> > >     (4.1) drivers/base/firmware_loader/main.c:fw_get_filesystem_firmware()
+> > >
+> > > (5) kernel_read_file_from_fd() users:
+> > >     (5.1) kernel/kexec_file.c:kimage_file_prepare_segments()
+> > >
+> > > In order to remove i_writecount completely we would need to do this in
+> >
+> > Sorry, typo s/i_write_count/deny_write_access()/g
+> > (I don't think we can remove i_writecount itself as it's used for file
+> > leases and locks.)
+> 
+> Indeed, i_writecount (as does i_readcount) is used by fs/locks.c:
+> check_conflicting_open(), but not as a synchronization primitive.
+> 
+> >
+> > > multiple steps as some of that stuff seems potentially sensitive.
+> > >
+> > > The exec deny write mechanism can be removed because we have a decent
+> > > understanding of the implications and there's decent justification for
+> > > removing it.
+> > >
+> > > So I propose that I do various testing (LTP) etc. now, send the patch
+> > > and then put this into -next to see if anything breaks?
+> 
+> Wouldn't hurt to see what else we are missing.
+> 
+> Thanks,
+> Amir.
 
