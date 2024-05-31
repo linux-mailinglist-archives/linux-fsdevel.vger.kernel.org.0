@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-20627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4A28D63DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFBD8D63EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDBF285CC1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56640285AD3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F2315B975;
-	Fri, 31 May 2024 13:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA83115B56F;
+	Fri, 31 May 2024 14:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dyo4c21p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFFsw1KE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBA4158DAA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 13:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E169155C8E;
+	Fri, 31 May 2024 14:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717163763; cv=none; b=aFeN8nSg112jrORImk8wCWeyjp0EDZ5Pwjk6wDLbInK8acNxnVSyKL+2/pA20pschCjSAqgGdggzfprQ074IEnnL1ojaa33YMs/eEU0qH1wiefKQPmjsRG+DF/4qU+urnOCsq/RxBDN3OzBGBFsy5GtUW5vE4ZxUUwg06KLuS6Q=
+	t=1717164239; cv=none; b=LOpEhtEgVZlvn6mlLMWOgQDv+lPcrkd6X88dqLIJPY3OVB1MPT4O3FPaJ3PONbecqB6JkrPXwuiNWAlDQ059xMaPTn/KvZB7F1gi84DSKzQy2zDrm789FT3uowOxfXUbxcKQJbw+kuIQ9GWrUqTWxNj2gYl+qjNX6cn/Qum3Yug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717163763; c=relaxed/simple;
-	bh=WsL3o3+MWJeRdy6mlc1F3IoI0R79X6T9RXYBYupgFMI=;
+	s=arc-20240116; t=1717164239; c=relaxed/simple;
+	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roYH5aD1M3ql1ae+CsMI2LyG21PGqjGFH+H4bmJA/DiW5J7NTwxWhLnH2xBbKJEJrrR8l1UmyLHziggL+7BlUyGBMepNTidPl1E34RkFT5BxXz5OQMDBKhLhi2OdKnjHg7VjbOeHY4cZc2ur0NhZsVsk8QMRL5qiBTiI3H0YGEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dyo4c21p; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hOUDzBNArOYepgPXo1iBbPP69U/83MRMAzI9ClltqG8=; b=dyo4c21paVDca+eFQBC4DuhOYJ
-	LTeU21aATKcrl3hz/Eg8cFbI2gUdm+HhwSEzjTDcL5v6TtrfdusHofTY7e2B2WbMv2+vp1DcBk5io
-	dpNZm/JIKpcohiX5AQfvkzXlEYy2W8Brtj6XTbPkZWNoMDzyYGjKk5URQWxTISnLOQRYH9E01pwEn
-	01WAfbf9VOG+qsETi3vINJ19k8tRXl2RzrxxrHpDxp7+h6cya5JuvXyD9fGS7veahJtNpNtMNpjKR
-	8yKpAbbMLJfeE+h0sod77aWaNnEmphVLf8zLwIjjzSvZ51esr0Ea5704S0jqpESMutLWONUCvRZrF
-	hZXuCyxw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD2jh-0000000AQEH-1vt9;
-	Fri, 31 May 2024 13:56:01 +0000
-Date: Fri, 31 May 2024 06:56:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: Re: [PATCH RFC v2 06/19] Add a vmalloc_node_user function
-Message-ID: <ZlnW8UFrGmY-kgoV@infradead.org>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-6-d149476b1d65@ddn.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXDB1+mptQJQL2xu7Uubqy6d3WU8VyoIT+ilXP8Rzd6iNCf2wYSRiUDH4kiBz17kcQXENCwuQEXPF/rPc3fcRufWFJ2Pi5cC2xIbs/3N8g8QnA/t+L5XlGdJSixZdKFj/6Lz++nFlvaI64Zro4ZBkcV1p1HiUuvnTnQKOau+CEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFFsw1KE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBC4C116B1;
+	Fri, 31 May 2024 14:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717164238;
+	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FFFsw1KE13cBSVF2ZFI9uk0KAKuzlQrCqop/BEXWXprSV00dzWLST+9JnszVIsWKB
+	 tH9cq83udcxZf0UltjzdgnB3b5T5dWP3WSNGu8tyN27taocyat5DgxNPuP4HfYx8lU
+	 aAPdQ+2D99XHoOnjBMZtPUYW1AHLkhd2bGBG6XUO72abikZAqYjXKY2MBlHAQbmEgo
+	 IoNNvhJOtuHSzihshNNXKT/sGQGNkhogqagJ+UnuSisaIfwQooFxKw2wRBJDJ4JnAO
+	 YufkmiWK8XyOOMDLvW/ShbkkUhXegNilrcpc3UaM5Nha7dZHxud3Pj2oHSqUBklnN6
+	 P1LErz+lf8k8g==
+Date: Fri, 31 May 2024 07:03:58 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
+Message-ID: <20240531140358.GF52987@frogsfrogsfrogs>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+ <ZlnMfSJcm5k6Dg_e@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,90 +62,177 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-6-d149476b1d65@ddn.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ZlnMfSJcm5k6Dg_e@infradead.org>
 
-On Wed, May 29, 2024 at 08:00:41PM +0200, Bernd Schubert wrote:
-> This is to have a numa aware vmalloc function for memory exposed to
-> userspace. Fuse uring will allocate queue memory using this
-> new function.
+On Fri, May 31, 2024 at 06:11:25AM -0700, Christoph Hellwig wrote:
+> On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
+> > XXX: how do we detect a iomap containing a cow mapping over a hole
+> > in iomap_zero_iter()? The XFS code implies this case also needs to
+> > zero the page cache if there is data present, so trigger for page
+> > cache lookup only in iomap_zero_iter() needs to handle this case as
+> > well.
 > 
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> cc: Andrew Morton <akpm@linux-foundation.org>
-> cc: linux-mm@kvack.org
-> Acked-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  include/linux/vmalloc.h |  1 +
->  mm/nommu.c              |  6 ++++++
->  mm/vmalloc.c            | 41 +++++++++++++++++++++++++++++++++++++----
->  3 files changed, 44 insertions(+), 4 deletions(-)
+> If there is no data in the page cache and either a whole or unwritten
+> extent it really should not matter what is in the COW fork, a there
+> obviously isn't any data we could zero.
 > 
-> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-> index 98ea90e90439..e7645702074e 100644
-> --- a/include/linux/vmalloc.h
-> +++ b/include/linux/vmalloc.h
-> @@ -141,6 +141,7 @@ static inline unsigned long vmalloc_nr_pages(void) { return 0; }
->  extern void *vmalloc(unsigned long size) __alloc_size(1);
->  extern void *vzalloc(unsigned long size) __alloc_size(1);
->  extern void *vmalloc_user(unsigned long size) __alloc_size(1);
-> +extern void *vmalloc_node_user(unsigned long size, int node) __alloc_size(1);
->  extern void *vmalloc_node(unsigned long size, int node) __alloc_size(1);
->  extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
->  extern void *vmalloc_32(unsigned long size) __alloc_size(1);
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index 5ec8f44e7ce9..207ddf639aa9 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -185,6 +185,12 @@ void *vmalloc_user(unsigned long size)
->  }
->  EXPORT_SYMBOL(vmalloc_user);
+> If there is data in the page cache for something that is marked as
+> a hole in the srcmap, but we have data in the COW fork due to
+> COW extsize preallocation we'd need to zero it, but as the
+> xfs iomap ops don't return a separate srcmap for that case we
+> should be fine.  Or am I missing something?
+
+It might be useful to skip the scan for dirty pagecache if both forks
+have holes, since (in theory) that's never possible on xfs.
+
+OTOH maybe there are filesystems that allow dirty pagecache over a hole?
+
+> > + * Note: when zeroing unwritten extents, we might have data in the page cache
+> > + * over an unwritten extent. In this case, we want to do a pure lookup on the
+> > + * page cache and not create a new folio as we don't need to perform zeroing on
+> > + * unwritten extents if there is no cached data over the given range.
+> >   */
+> >  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+> >  {
+> >  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
+> >  
+> > +	if (iter->flags & IOMAP_ZERO) {
+> > +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> > +
+> > +		if (srcmap->type == IOMAP_UNWRITTEN)
+> > +			fgp &= ~FGP_CREAT;
+> > +	}
+> 
+> Nit:  The comment would probably stand out a little better if it was
+> right next to the IOMAP_ZERO conditional instead of above the
+> function.
+
+Agreed.
+
+> > +		if (status) {
+> > +			if (status == -ENOENT) {
+> > +				/*
+> > +				 * Unwritten extents need to have page cache
+> > +				 * lookups done to determine if they have data
+> > +				 * over them that needs zeroing. If there is no
+> > +				 * data, we'll get -ENOENT returned here, so we
+> > +				 * can just skip over this index.
+> > +				 */
+> > +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
+> 
+> I'd return -EIO if the WARN_ON triggers.
+> 
+> > +loop_continue:
+> 
+> While I'm no strange to gotos for loop control something trips me
+> up about jumping to the end of the loop.  Here is what I could come
+> up with instead.  Not arguing it's objectively better, but I somehow
+> like it a little better:
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 700b22d6807783..81378f7cd8d7ff 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+>  		bool ret;
 >  
-> +void *vmalloc_node_user(unsigned long size, int node)
-> +{
-> +	return __vmalloc_user_flags(size, GFP_KERNEL | __GFP_ZERO);
-> +}
-> +EXPORT_SYMBOL(vmalloc_node_user);
+>  		status = iomap_write_begin(iter, pos, bytes, &folio);
+> -		if (status) {
+> -			if (status == -ENOENT) {
+> -				/*
+> -				 * Unwritten extents need to have page cache
+> -				 * lookups done to determine if they have data
+> -				 * over them that needs zeroing. If there is no
+> -				 * data, we'll get -ENOENT returned here, so we
+> -				 * can just skip over this index.
+> -				 */
+> -				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
+> -				if (bytes > PAGE_SIZE - offset_in_page(pos))
+> -					bytes = PAGE_SIZE - offset_in_page(pos);
+> -				goto loop_continue;
+> -			}
+> +		if (status && status != -ENOENT)
+>  			return status;
+> -		}
+> -		if (iter->iomap.flags & IOMAP_F_STALE)
+> -			break;
+>  
+> -		offset = offset_in_folio(folio, pos);
+> -		if (bytes > folio_size(folio) - offset)
+> -			bytes = folio_size(folio) - offset;
+> +		if (status == -ENOENT) {
+> +			/*
+> +			 * If we end up here, we did not find a folio in the
+> +			 * page cache for an unwritten extent and thus can
+> +			 * skip over the range.
+> +			 */
+> +			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
+> +				return -EIO;
+>  
+> -		/*
+> -		 * If the folio over an unwritten extent is clean (i.e. because
+> -		 * it has been read from), then it already contains zeros. Hence
+> -		 * we can just skip it.
+> -		 */
+> -		if (srcmap->type == IOMAP_UNWRITTEN &&
+> -		    !folio_test_dirty(folio)) {
+> -			folio_unlock(folio);
+> -			goto loop_continue;
+> +			/*
+> +			 * XXX: It would be nice if we could get the offset of
+> +			 * the next entry in the pagecache so that we don't have
+> +			 * to iterate one page at a time here.
+> +			 */
+> +			offset = offset_in_page(pos);
+> +			if (bytes > PAGE_SIZE - offset)
+> +				bytes = PAGE_SIZE - offset;
+
+Why is it PAGE_SIZE here and not folio_size() like below?
+
+(I know you're just copying the existing code; I'm merely wondering if
+this is some minor bug.)
+
+--D
+
+> +		} else {
+> +			if (iter->iomap.flags & IOMAP_F_STALE)
+> +				break;
 > +
->  struct page *vmalloc_to_page(const void *addr)
->  {
->  	return virt_to_page(addr);
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 68fa001648cc..0ac2f44b2b1f 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3958,6 +3958,25 @@ void *vzalloc(unsigned long size)
->  }
->  EXPORT_SYMBOL(vzalloc);
+> +			offset = offset_in_folio(folio, pos);
+> +			if (bytes > folio_size(folio) - offset)
+> +				bytes = folio_size(folio) - offset;
+> +		
+> +			/*
+> +			 * If the folio over an unwritten extent is clean (i.e.
+> +			 * because it has only been read from), then it already
+> +			 * contains zeros.  Hence we can just skip it.
+> +			 */
+> +			if (srcmap->type == IOMAP_UNWRITTEN &&
+> +			    !folio_test_dirty(folio)) {
+> +				folio_unlock(folio);
+> +				status = -ENOENT;
+> +			}
+>  		}
 >  
-> +/**
-> + * _vmalloc_node_user - allocate zeroed virtually contiguous memory for userspace
-
-Please avoid the overly long line.
-
-> + * on the given numa node
-> + * @size: allocation size
-> + * @node: numa node
-> + *
-> + * The resulting memory area is zeroed so it can be mapped to userspace
-> + * without leaking data.
-> + *
-> + * Return: pointer to the allocated memory or %NULL on error
-> + */
-> +static void *_vmalloc_node_user(unsigned long size, int node)
-
-Although for static functions kerneldoc comments are pretty silly
-to start with.
-
->  void *vmalloc_user(unsigned long size)
->  {
-> -	return __vmalloc_node_range(size, SHMLBA,  VMALLOC_START, VMALLOC_END,
-> -				    GFP_KERNEL | __GFP_ZERO, PAGE_KERNEL,
-> -				    VM_USERMAP, NUMA_NO_NODE,
-> -				    __builtin_return_address(0));
-> +	return _vmalloc_node_user(size, NUMA_NO_NODE);
-
-But I suspect simply adding a gfp_t argument to vmalloc_node might be
-a much easier to use interface here, even if it would need a sanity
-check to only allow for actually useful to vmalloc flags.
-
+> -		folio_zero_range(folio, offset, bytes);
+> -		folio_mark_accessed(folio);
+> +		if (status != -ENOENT) {
+> +			folio_zero_range(folio, offset, bytes);
+> +			folio_mark_accessed(folio);
+>  
+> -		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
+> -		__iomap_put_folio(iter, pos, bytes, folio);
+> -		if (WARN_ON_ONCE(!ret))
+> -			return -EIO;
+> +			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
+> +			__iomap_put_folio(iter, pos, bytes, folio);
+> +			if (WARN_ON_ONCE(!ret))
+> +				return -EIO;
+> +		}
+>  
+> -loop_continue:
+>  		pos += bytes;
+>  		length -= bytes;
+>  		written += bytes;
+> 
 
