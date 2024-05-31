@@ -1,59 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-20629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF4B8D63FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA338D6401
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3C31F2667D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:04:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075C11F26878
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3261115B99F;
-	Fri, 31 May 2024 14:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD5615B975;
+	Fri, 31 May 2024 14:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nH1rEpv6"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TpMr8I+B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E7615AAB6;
-	Fri, 31 May 2024 14:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA5B155C8E;
+	Fri, 31 May 2024 14:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717164283; cv=none; b=brikfm0nH3LT7A8ePvZWO5OMEGE/+tfWAtevoavFXtzMf3ovp+9F2UGUlTcl+OL2Y2W3bL1bnmNh45FkiSkpym/e7+jWQlX7OcxVhdxzq1EB6bxjaEpeRbzs9G3Uo2jRvUDap8RyRItdjgj8qK91XFpEynSCpdH/RCA97q8VZ0g=
+	t=1717164341; cv=none; b=bFpCqp+wgiKcdyDtW9u6Ouo48B0xO0bq0dZAYc9SEqA6O1lKFiaWQjaJkLpMn6hZw5x2V9l8Qg2VQn1up7BV7p18d8kJEq0QIoBgLYz8280eqUlnyFNi+bT65bfjZj6vJgByA7nb6crWDNW+m+6sr3KfQLHkLAbj70Bl5a1eH6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717164283; c=relaxed/simple;
-	bh=b5qIPlknK8jeWDh3WleCY1vRy0w4FGugICdq2Y4YMvM=;
+	s=arc-20240116; t=1717164341; c=relaxed/simple;
+	bh=8vBlPwHaxEwRcsYd9GsTqJI41u/YSqgeRaG06NEqjYw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bX73YZsVLZ9z/QxvSRkdaxKfCJnhQ8lW91r75C2pgyA0ZnFmad+z3HXnhWpF9HH3MtDzd6awuO1doucnFG3Z4os9OPyYpSy0ndL0MuDGE1N0N1fgsA9w9sqY17tMsIV/8Fwf+74RocVyRw7t4ctQNXtBQh6s3k+KDkTRTx5/CNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nH1rEpv6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FC9C116B1;
-	Fri, 31 May 2024 14:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717164283;
-	bh=b5qIPlknK8jeWDh3WleCY1vRy0w4FGugICdq2Y4YMvM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nH1rEpv61HPwulSaOR9famkQ9Xic/cw0ly3cU/keRssOQgODRyvAQ8PV7WBD87yXU
-	 cFaFlfhSjKPQXGoNF1Zu94DAx40IXm2wtejn87Tvd+367xlR+fpKgCMu+88M2hdoLo
-	 986X5yaH4gi3KaZVPOZ+5b/zpWKOli1UvgsNSLXqEz3zZxYThmHgfhkUvDYPPHARJs
-	 PnY16UKVc9dfmQMLhvt/ZhJWQaz6gkxa3qSF1pm7lgMYaUdFvRvsDZD/LM2Teie5D6
-	 4Iu2Dwzc3/3/vJ3ju+2RoVpW02Srb29a9VzpvZ2oa/Un5KVIBm5l85gP1JGqn+LH0k
-	 2QziNQ48nuVXw==
-Date: Fri, 31 May 2024 07:04:42 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
-	willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 2/8] math64: add rem_u64() to just return the
- remainder
-Message-ID: <20240531140442.GG52987@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgEqp7rYtdD2lv3w8ZK6Tqy8l7z+2fKg2a5YoPNLoqFKWo/ZL3N6xj0xqSs+fvDWEmtv5mZYFOv/h950PlKw2SxCY7EapUg2hmmwGJPvZsPtrzX/ZIggsmh2ZkonmOoJZCzg9RiZEC1yNLpIgQqzr6e17B6scjmqYkLg4ePNIqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TpMr8I+B; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mc4Z71sdMwN4heTeb/sLKN+8AiLMl/vGU3VtZcBbWrU=; b=TpMr8I+BqMuG9Q7OUZAv02fo2f
+	RCBb9rRru+WRce4a9hKsgSCduC1wr5nOGCZFRw+ch8Jx1vk1aiJp/t+6a240b0osLAoxW0ggqhjfg
+	KBhmm2uL+iVI+piRMvuQOkqFVZp5kdDcLcBonf5oBFw9CICp6v2wLQl5f2IOQO4b7gqyUVmPCG52q
+	Di4EdawpL0Z+UI14ye0IfS/9cwhr+SvSiaTtXOjTavDIfqBoDQWWJRJ4Hq9POC6gB4vuMXYMGnliK
+	1HwZ+xB1g1OFMTAkUpWtUVM6XentAfqu1Qg8c2n4vETqysQi1s2gdfUyUZzfYb2CHvKzLeIZTaxKJ
+	8YlViJgA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD2t0-0000000ARo2-3cxa;
+	Fri, 31 May 2024 14:05:38 +0000
+Date: Fri, 31 May 2024 07:05:38 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
+Message-ID: <ZlnZMiBJ6Fapor5G@infradead.org>
 References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-3-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+ <ZlnMfSJcm5k6Dg_e@infradead.org>
+ <20240531140358.GF52987@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,76 +67,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529095206.2568162-3-yi.zhang@huaweicloud.com>
+In-Reply-To: <20240531140358.GF52987@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, May 29, 2024 at 05:52:00PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Fri, May 31, 2024 at 07:03:58AM -0700, Darrick J. Wong wrote:
+> > +			/*
+> > +			 * XXX: It would be nice if we could get the offset of
+> > +			 * the next entry in the pagecache so that we don't have
+> > +			 * to iterate one page at a time here.
+> > +			 */
+> > +			offset = offset_in_page(pos);
+> > +			if (bytes > PAGE_SIZE - offset)
+> > +				bytes = PAGE_SIZE - offset;
 > 
-> Add a new helper rem_u64() to only get the remainder of unsigned 64bit
-> divide with 32bit divisor.
+> Why is it PAGE_SIZE here and not folio_size() like below?
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> (I know you're just copying the existing code; I'm merely wondering if
+> this is some minor bug.)
 
-Modulo hch's comments,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+See the comment just above :)
 
---D
-
-> ---
->  include/linux/math64.h | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/include/linux/math64.h b/include/linux/math64.h
-> index d34def7f9a8c..618df4862091 100644
-> --- a/include/linux/math64.h
-> +++ b/include/linux/math64.h
-> @@ -3,6 +3,7 @@
->  #define _LINUX_MATH64_H
->  
->  #include <linux/types.h>
-> +#include <linux/log2.h>
->  #include <linux/math.h>
->  #include <asm/div64.h>
->  #include <vdso/math64.h>
-> @@ -12,6 +13,20 @@
->  #define div64_long(x, y) div64_s64((x), (y))
->  #define div64_ul(x, y)   div64_u64((x), (y))
->  
-> +/**
-> + * rem_u64 - remainder of unsigned 64bit divide with 32bit divisor
-> + * @dividend: unsigned 64bit dividend
-> + * @divisor: unsigned 32bit divisor
-> + *
-> + * Return: dividend % divisor
-> + */
-> +static inline u32 rem_u64(u64 dividend, u32 divisor)
-> +{
-> +	if (is_power_of_2(divisor))
-> +		return dividend & (divisor - 1);
-> +	return dividend % divisor;
-> +}
-> +
->  /**
->   * div_u64_rem - unsigned 64bit divide with 32bit divisor with remainder
->   * @dividend: unsigned 64bit dividend
-> @@ -86,6 +101,15 @@ static inline s64 div64_s64(s64 dividend, s64 divisor)
->  #define div64_long(x, y) div_s64((x), (y))
->  #define div64_ul(x, y)   div_u64((x), (y))
->  
-> +#ifndef rem_u64
-> +static inline u32 rem_u64(u64 dividend, u32 divisor)
-> +{
-> +	if (is_power_of_2(divisor))
-> +		return dividend & (divisor - 1);
-> +	return do_div(dividend, divisor);
-> +}
-> +#endif
-> +
->  #ifndef div_u64_rem
->  static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
->  {
-> -- 
-> 2.39.2
-> 
-> 
 
