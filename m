@@ -1,181 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-20619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897FE8D626E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:10:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895258D6281
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D2FB229E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 13:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0031C234FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 13:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93163158DA8;
-	Fri, 31 May 2024 13:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DE4158DC6;
+	Fri, 31 May 2024 13:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXffLcFe"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f3YxeQ19"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DC1158A2D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 13:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413B1158A14;
+	Fri, 31 May 2024 13:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717160975; cv=none; b=NQag9WB2bMDAnEU4S41sX4GdzoLeoJZtEWsDPt3AkI2hvi56ViqAMS1c355C85e2ws7foEpyB0CnO8Rj+e4UWUYGwv2X7xex0jbJHjuToZoKrRf273saYri+sqs0rtMHkR67pdo1cksBqSyNezOpBUYDz29OZ6nb3weL1RsyF0I=
+	t=1717161087; cv=none; b=VqOou36dHPbiO7QLdhLxHvYXRo9FDqSG+1v4scSX/cTDVf0yf04AdmyNCiXdI0LEX20JmmLeCmj62kSphmbZLFL6N92Y9jWjC42H3hFs96xpb1yjyrtW2I5puR8Qf+pNM3u/NJvGR2OxzskyK90bfA24zovGkBn++qai+OGX68k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717160975; c=relaxed/simple;
-	bh=SPCfDlovBs05QadYCK+NknY578YWQmtFn0husjGBpDA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P+D2ZdzZphz4OEHsBlpyZwAramvgNmVS6Vo9ZF5hBxSB9pDZluOsxTHnQ0L0N8we6aeyNhSqUwVWlFOaNh4VAfNpHBMZNl8jp664oZubbUjaRYQA+vOtrEBpxOKmHI3eSA2rkfxx0kAUGnbMdtJKkliJug1sXdOg2t+67FkMF0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZXffLcFe; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6ad7a2f8715so18612046d6.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 06:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717160971; x=1717765771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zpUW3f1Bdd9WhbU+HHykUaBhwPwQ2xDc3WpLb3JeTCk=;
-        b=ZXffLcFe7Upt2nshkRP2I7iUzHrLcl/CN563b1HuzZYSp/EB8FK2sVBor+ltTajpvM
-         Dz1BOKi3oel/8PdznhXn7UURwIKfJjSeqc5OX84R5BP114CHRZCe7DptaWDmL5ZK5FS3
-         DxZhgnXJ0dlLIoBDFjUdEDDug1kbv+SAQdYe4w9BFKg7JjyppEeiXz4eHaAiWmnzVmPT
-         S8QZSAmyBCpqlpgft0DduhUd2+CDnZLc5FRdv+rcmZDOdAtIa9Ae5aBtsZdZchRSgweg
-         71Xd3GYoDKwL5xkckZiyT/mkAop24hrp9TwBG653pg90pDaq54wPJuHtPOd9Y3PpSQGy
-         lTPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717160971; x=1717765771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zpUW3f1Bdd9WhbU+HHykUaBhwPwQ2xDc3WpLb3JeTCk=;
-        b=RR85ESFBJoneHpvLe5Rmj6f1HDsfPzQUowmysgJ3FVU4SfgYH5evW2T1rJUKClPErm
-         IllTRM59yJwhFsXU3Vg45o93uM9MJRWZKVLmDu9QmOnOCWbZa4B3qKw2RscOZygsZcbM
-         9Va7o7POuDey04+BG3lzYJDgYKjbOch2I8fYK2nLw2P1G8RWLN/pdyIwQdQsoAQCTp9O
-         B3d/h54USCz81QF2amLEREE0SRkn5iaND2WvMbfHZAusnEIQ9IGwUw8FXjBuqQTnxlJh
-         jviGPA4d+ef1MZ8BRfDoFMAUdDTtTC2U84W61Hk2VNeFrQLaUMNMl24iBrK9r12Tlx34
-         Q7Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgOvYtxnC4OK45R3TrIWYYJ2L65nyfMDsiZAzFKMTzpHyTv0TTeT5sVrrmO0nJndetqDdqRJtIB2vUdeYhfh+0vu7Z2QvHz2i12zOKJA==
-X-Gm-Message-State: AOJu0YxwA6Xcz/xEshmTT6b3gY+eC/7RH9hIHm+r5g6KdcodWgV7vYKX
-	MITCRkz9flBbhrCniAwkqEHJRwBKKP9jdxcKVQ/Iv3hX4lgM4+JPVDahO87A2JzqdZDKb0R8vEg
-	GWrevZR9yWjIKzas6ZxhSHu1wYH4=
-X-Google-Smtp-Source: AGHT+IGv9yF9ZXP19PhXSY4jx9GDXmJiDF7XU/UqX7Bi3Iccg1m4YwIso6NmRsdvq3PTpbpqbfcM7ZwMaLtiUKmypoI=
-X-Received: by 2002:a05:6214:20cb:b0:6ab:7ab4:f309 with SMTP id
- 6a1803df08f44-6ae0e768290mr83317166d6.1.1717160970945; Fri, 31 May 2024
- 06:09:30 -0700 (PDT)
+	s=arc-20240116; t=1717161087; c=relaxed/simple;
+	bh=dbVpcj6lEF7ZMOUwEixLA9Qbf6Mjg1Vgndp9rKsWPHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t7OTjbccyJdanPLYEyezdOk0R3LTiZcLpkXWGCO7X2Y9ZzS3lK1FdH3tV9q0G6V/p8HwQtE3UZe7VJkvYRY1Aws8KTDPK+IcgKxfsPfRqVHJwrEqVKvswXym0MVXNQlXbc7f4kzE8/1HqmPiaY9vWrMYjgRNHg9Q7A5ArgXHcdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f3YxeQ19; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=B0njvbhUXTgT/K1JkeyWR7Yg/ve/W+DwUWJceKkwN2g=; b=f3YxeQ19IOyh8l3J31nByIOeej
+	4Z+pFrYHpfWjuj3txCiq25wcdH2aNEyj5HAyJlGFrmPLsWCst1ARjljPusb0Tmb3x7gGkvtp6SNCV
+	TE96z+8WsHW7thycrRIXPfQEJ59efHDnXIRrz64BIsX2DdJJzt/K9NtE7q2/dUAT1GOiw60Q6TDqt
+	bFC01CttF2tBa9F8HxAZLpk7HdGacP0ea7XKSpnTPdPrD/hu1RImXftEenBSYUBhbdhmF7K0VPLea
+	q5x/pvvWp4z55bMGeNfU6lTrrOJ7xR0vQWx5gbsSj6YNogNvhEttv00REiqrgEi2qQj04t+9Pyn73
+	LesLWjhQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD22X-0000000AIKs-3B9D;
+	Fri, 31 May 2024 13:11:25 +0000
+Date: Fri, 31 May 2024 06:11:25 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
+Message-ID: <ZlnMfSJcm5k6Dg_e@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <72fc22ebeaf50fabf9d14f90f6f694f88b5fc359.1717015144.git.josef@toxicpanda.com>
- <20240530-atheismus-festland-c11c1d3b7671@brauner> <CAHk-=wg_rw5jNAQ3HUH8FeMvRDFKRGGiyKJ-QCZF7d+EdNenfQ@mail.gmail.com>
- <20240531-ausdiskutiert-wortgefecht-f90dca685f8c@brauner> <20240531-beheben-panzerglas-5ba2472a3330@brauner>
-In-Reply-To: <20240531-beheben-panzerglas-5ba2472a3330@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 31 May 2024 16:09:17 +0300
-Message-ID: <CAOQ4uxhCkK4H32Y8KQTrg0W3y4wpiiDBAfOs4TPLkRprKgKK3A@mail.gmail.com>
-Subject: Re: [PATCH][RFC] fs: add levels to inode write access
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	david@fromorbit.com, hch@lst.de, Mimi Zohar <zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, May 31, 2024 at 3:32=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Fri, May 31, 2024 at 12:02:16PM +0200, Christian Brauner wrote:
-> > On Thu, May 30, 2024 at 08:49:12AM -0700, Linus Torvalds wrote:
-> > > On Thu, 30 May 2024 at 03:32, Christian Brauner <brauner@kernel.org> =
-wrote:
-> > > >
-> > > > Ofc depends on whether Linus still agrees that removing this might =
-be
-> > > > something we could try.
-> > >
-> > > I _definitely_ do not want to see any more complex deny_write_access(=
-).
-> > >
-> > > So yes, if people have good reasons to override the inode write
-> > > access, I'd rather remove it entirely than make it some eldritch
-> > > horror that is even worse than what we have now.
-> > >
-> > > It would obviously have to be tested in case some odd case actually
-> > > depends on the ETXTBSY semantics, since we *have* supported it for a
-> > > long time.  But iirc nobody even noticed when we removed it from
-> > > shared libraries, so...
-> > >
-> > > That said, verity seems to depend on it as a way to do the
-> > > "enable_verity()" atomically with no concurrent writes, and I see som=
-e
-> > > i_writecount noise in the integrity code too.
+On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
+> XXX: how do we detect a iomap containing a cow mapping over a hole
+> in iomap_zero_iter()? The XFS code implies this case also needs to
+> zero the page cache if there is data present, so trigger for page
+> cache lookup only in iomap_zero_iter() needs to handle this case as
+> well.
 
-This one is a bit more challenging.
-The IMA ima_bprm_check() LSM hook (called from exec_binprm() context)
-may read the file (in ima_collect_measurement()) and record the signature
-of the file to be executed, assuming that it cannot be modified.
-Not sure how to deal with this expectation.
+If there is no data in the page cache and either a whole or unwritten
+extent it really should not matter what is in the COW fork, a there
+obviously isn't any data we could zero.
 
-Only thing I could think of is that IMA would be allowed to
-deny_write_access() and set FMODE_EXEC_DENY_WRITE
-as a hint for do_close_execat() to allow_write_access(), but
-it's pretty ugly, I admit.
+If there is data in the page cache for something that is marked as
+a hole in the srcmap, but we have data in the COW fork due to
+COW extsize preallocation we'd need to zero it, but as the
+xfs iomap ops don't return a separate srcmap for that case we
+should be fine.  Or am I missing something?
 
-> > >
-> > > But maybe that's just a belt-and-suspenders thing?
-> > >
-> > > Because if execve() no longer does it, I think we should just remove
-> > > that i_writecount thing entirely.
-> >
-> > deny_write_access() is being used from kernel_read_file() which has a
-> > few wrappers around it and they are used in various places:
-> >
-> > (1) kernel_read_file() based helpers:
-> >   (1.1) kernel_read_file_from_path()
-> >   (1.2) kernel_read_file_from_path_initns()
-> >   (1.3) kernel_read_file_from_fd()
-> >
-> > (2) kernel_read_file() users:
-> >     (2.1) kernel/module/main.c:init_module_from_file()
-> >     (2.2) security/loadpin/loadpin.c:read_trusted_verity_root_digests()
-> >
-> > (3) kernel_read_file_from_path() users:
-> >     (3.1) security/integrity/digsig.c:integrity_load_x509()
-> >     (3.2) security/integrity/ima/ima_fs.c:ima_read_busy()
-> >
-> > (4) kernel_read_file_from_path_initns() users:
-> >     (4.1) drivers/base/firmware_loader/main.c:fw_get_filesystem_firmwar=
-e()
-> >
-> > (5) kernel_read_file_from_fd() users:
-> >     (5.1) kernel/kexec_file.c:kimage_file_prepare_segments()
-> >
-> > In order to remove i_writecount completely we would need to do this in
->
-> Sorry, typo s/i_write_count/deny_write_access()/g
-> (I don't think we can remove i_writecount itself as it's used for file
-> leases and locks.)
+> + * Note: when zeroing unwritten extents, we might have data in the page cache
+> + * over an unwritten extent. In this case, we want to do a pure lookup on the
+> + * page cache and not create a new folio as we don't need to perform zeroing on
+> + * unwritten extents if there is no cached data over the given range.
+>   */
+>  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+>  {
+>  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
+>  
+> +	if (iter->flags & IOMAP_ZERO) {
+> +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> +
+> +		if (srcmap->type == IOMAP_UNWRITTEN)
+> +			fgp &= ~FGP_CREAT;
+> +	}
 
-Indeed, i_writecount (as does i_readcount) is used by fs/locks.c:
-check_conflicting_open(), but not as a synchronization primitive.
+Nit:  The comment would probably stand out a little better if it was
+right next to the IOMAP_ZERO conditional instead of above the
+function.
 
->
-> > multiple steps as some of that stuff seems potentially sensitive.
-> >
-> > The exec deny write mechanism can be removed because we have a decent
-> > understanding of the implications and there's decent justification for
-> > removing it.
-> >
-> > So I propose that I do various testing (LTP) etc. now, send the patch
-> > and then put this into -next to see if anything breaks?
+> +		if (status) {
+> +			if (status == -ENOENT) {
+> +				/*
+> +				 * Unwritten extents need to have page cache
+> +				 * lookups done to determine if they have data
+> +				 * over them that needs zeroing. If there is no
+> +				 * data, we'll get -ENOENT returned here, so we
+> +				 * can just skip over this index.
+> +				 */
+> +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
 
-Wouldn't hurt to see what else we are missing.
+I'd return -EIO if the WARN_ON triggers.
 
-Thanks,
-Amir.
+> +loop_continue:
+
+While I'm no strange to gotos for loop control something trips me
+up about jumping to the end of the loop.  Here is what I could come
+up with instead.  Not arguing it's objectively better, but I somehow
+like it a little better:
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 700b22d6807783..81378f7cd8d7ff 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		bool ret;
+ 
+ 		status = iomap_write_begin(iter, pos, bytes, &folio);
+-		if (status) {
+-			if (status == -ENOENT) {
+-				/*
+-				 * Unwritten extents need to have page cache
+-				 * lookups done to determine if they have data
+-				 * over them that needs zeroing. If there is no
+-				 * data, we'll get -ENOENT returned here, so we
+-				 * can just skip over this index.
+-				 */
+-				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
+-				if (bytes > PAGE_SIZE - offset_in_page(pos))
+-					bytes = PAGE_SIZE - offset_in_page(pos);
+-				goto loop_continue;
+-			}
++		if (status && status != -ENOENT)
+ 			return status;
+-		}
+-		if (iter->iomap.flags & IOMAP_F_STALE)
+-			break;
+ 
+-		offset = offset_in_folio(folio, pos);
+-		if (bytes > folio_size(folio) - offset)
+-			bytes = folio_size(folio) - offset;
++		if (status == -ENOENT) {
++			/*
++			 * If we end up here, we did not find a folio in the
++			 * page cache for an unwritten extent and thus can
++			 * skip over the range.
++			 */
++			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
++				return -EIO;
+ 
+-		/*
+-		 * If the folio over an unwritten extent is clean (i.e. because
+-		 * it has been read from), then it already contains zeros. Hence
+-		 * we can just skip it.
+-		 */
+-		if (srcmap->type == IOMAP_UNWRITTEN &&
+-		    !folio_test_dirty(folio)) {
+-			folio_unlock(folio);
+-			goto loop_continue;
++			/*
++			 * XXX: It would be nice if we could get the offset of
++			 * the next entry in the pagecache so that we don't have
++			 * to iterate one page at a time here.
++			 */
++			offset = offset_in_page(pos);
++			if (bytes > PAGE_SIZE - offset)
++				bytes = PAGE_SIZE - offset;
++		} else {
++			if (iter->iomap.flags & IOMAP_F_STALE)
++				break;
++
++			offset = offset_in_folio(folio, pos);
++			if (bytes > folio_size(folio) - offset)
++				bytes = folio_size(folio) - offset;
++		
++			/*
++			 * If the folio over an unwritten extent is clean (i.e.
++			 * because it has only been read from), then it already
++			 * contains zeros.  Hence we can just skip it.
++			 */
++			if (srcmap->type == IOMAP_UNWRITTEN &&
++			    !folio_test_dirty(folio)) {
++				folio_unlock(folio);
++				status = -ENOENT;
++			}
+ 		}
+ 
+-		folio_zero_range(folio, offset, bytes);
+-		folio_mark_accessed(folio);
++		if (status != -ENOENT) {
++			folio_zero_range(folio, offset, bytes);
++			folio_mark_accessed(folio);
+ 
+-		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
+-		__iomap_put_folio(iter, pos, bytes, folio);
+-		if (WARN_ON_ONCE(!ret))
+-			return -EIO;
++			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
++			__iomap_put_folio(iter, pos, bytes, folio);
++			if (WARN_ON_ONCE(!ret))
++				return -EIO;
++		}
+ 
+-loop_continue:
+ 		pos += bytes;
+ 		length -= bytes;
+ 		written += bytes;
 
