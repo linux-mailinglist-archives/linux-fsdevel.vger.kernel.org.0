@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-20628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFBD8D63EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF4B8D63FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56640285AD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3C31F2667D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA83115B56F;
-	Fri, 31 May 2024 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3261115B99F;
+	Fri, 31 May 2024 14:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFFsw1KE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nH1rEpv6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E169155C8E;
-	Fri, 31 May 2024 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E7615AAB6;
+	Fri, 31 May 2024 14:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717164239; cv=none; b=LOpEhtEgVZlvn6mlLMWOgQDv+lPcrkd6X88dqLIJPY3OVB1MPT4O3FPaJ3PONbecqB6JkrPXwuiNWAlDQ059xMaPTn/KvZB7F1gi84DSKzQy2zDrm789FT3uowOxfXUbxcKQJbw+kuIQ9GWrUqTWxNj2gYl+qjNX6cn/Qum3Yug=
+	t=1717164283; cv=none; b=brikfm0nH3LT7A8ePvZWO5OMEGE/+tfWAtevoavFXtzMf3ovp+9F2UGUlTcl+OL2Y2W3bL1bnmNh45FkiSkpym/e7+jWQlX7OcxVhdxzq1EB6bxjaEpeRbzs9G3Uo2jRvUDap8RyRItdjgj8qK91XFpEynSCpdH/RCA97q8VZ0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717164239; c=relaxed/simple;
-	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
+	s=arc-20240116; t=1717164283; c=relaxed/simple;
+	bh=b5qIPlknK8jeWDh3WleCY1vRy0w4FGugICdq2Y4YMvM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXDB1+mptQJQL2xu7Uubqy6d3WU8VyoIT+ilXP8Rzd6iNCf2wYSRiUDH4kiBz17kcQXENCwuQEXPF/rPc3fcRufWFJ2Pi5cC2xIbs/3N8g8QnA/t+L5XlGdJSixZdKFj/6Lz++nFlvaI64Zro4ZBkcV1p1HiUuvnTnQKOau+CEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFFsw1KE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBC4C116B1;
-	Fri, 31 May 2024 14:03:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bX73YZsVLZ9z/QxvSRkdaxKfCJnhQ8lW91r75C2pgyA0ZnFmad+z3HXnhWpF9HH3MtDzd6awuO1doucnFG3Z4os9OPyYpSy0ndL0MuDGE1N0N1fgsA9w9sqY17tMsIV/8Fwf+74RocVyRw7t4ctQNXtBQh6s3k+KDkTRTx5/CNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nH1rEpv6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FC9C116B1;
+	Fri, 31 May 2024 14:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717164238;
-	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
+	s=k20201202; t=1717164283;
+	bh=b5qIPlknK8jeWDh3WleCY1vRy0w4FGugICdq2Y4YMvM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FFFsw1KE13cBSVF2ZFI9uk0KAKuzlQrCqop/BEXWXprSV00dzWLST+9JnszVIsWKB
-	 tH9cq83udcxZf0UltjzdgnB3b5T5dWP3WSNGu8tyN27taocyat5DgxNPuP4HfYx8lU
-	 aAPdQ+2D99XHoOnjBMZtPUYW1AHLkhd2bGBG6XUO72abikZAqYjXKY2MBlHAQbmEgo
-	 IoNNvhJOtuHSzihshNNXKT/sGQGNkhogqagJ+UnuSisaIfwQooFxKw2wRBJDJ4JnAO
-	 YufkmiWK8XyOOMDLvW/ShbkkUhXegNilrcpc3UaM5Nha7dZHxud3Pj2oHSqUBklnN6
-	 P1LErz+lf8k8g==
-Date: Fri, 31 May 2024 07:03:58 -0700
+	b=nH1rEpv61HPwulSaOR9famkQ9Xic/cw0ly3cU/keRssOQgODRyvAQ8PV7WBD87yXU
+	 cFaFlfhSjKPQXGoNF1Zu94DAx40IXm2wtejn87Tvd+367xlR+fpKgCMu+88M2hdoLo
+	 986X5yaH4gi3KaZVPOZ+5b/zpWKOli1UvgsNSLXqEz3zZxYThmHgfhkUvDYPPHARJs
+	 PnY16UKVc9dfmQMLhvt/ZhJWQaz6gkxa3qSF1pm7lgMYaUdFvRvsDZD/LM2Teie5D6
+	 4Iu2Dwzc3/3/vJ3ju+2RoVpW02Srb29a9VzpvZ2oa/Un5KVIBm5l85gP1JGqn+LH0k
+	 2QziNQ48nuVXw==
+Date: Fri, 31 May 2024 07:04:42 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
-Message-ID: <20240531140358.GF52987@frogsfrogsfrogs>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
+	willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 2/8] math64: add rem_u64() to just return the
+ remainder
+Message-ID: <20240531140442.GG52987@frogsfrogsfrogs>
 References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
- <ZlnMfSJcm5k6Dg_e@infradead.org>
+ <20240529095206.2568162-3-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,177 +62,76 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZlnMfSJcm5k6Dg_e@infradead.org>
+In-Reply-To: <20240529095206.2568162-3-yi.zhang@huaweicloud.com>
 
-On Fri, May 31, 2024 at 06:11:25AM -0700, Christoph Hellwig wrote:
-> On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
-> > XXX: how do we detect a iomap containing a cow mapping over a hole
-> > in iomap_zero_iter()? The XFS code implies this case also needs to
-> > zero the page cache if there is data present, so trigger for page
-> > cache lookup only in iomap_zero_iter() needs to handle this case as
-> > well.
+On Wed, May 29, 2024 at 05:52:00PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> If there is no data in the page cache and either a whole or unwritten
-> extent it really should not matter what is in the COW fork, a there
-> obviously isn't any data we could zero.
+> Add a new helper rem_u64() to only get the remainder of unsigned 64bit
+> divide with 32bit divisor.
 > 
-> If there is data in the page cache for something that is marked as
-> a hole in the srcmap, but we have data in the COW fork due to
-> COW extsize preallocation we'd need to zero it, but as the
-> xfs iomap ops don't return a separate srcmap for that case we
-> should be fine.  Or am I missing something?
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-It might be useful to skip the scan for dirty pagecache if both forks
-have holes, since (in theory) that's never possible on xfs.
-
-OTOH maybe there are filesystems that allow dirty pagecache over a hole?
-
-> > + * Note: when zeroing unwritten extents, we might have data in the page cache
-> > + * over an unwritten extent. In this case, we want to do a pure lookup on the
-> > + * page cache and not create a new folio as we don't need to perform zeroing on
-> > + * unwritten extents if there is no cached data over the given range.
-> >   */
-> >  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
-> >  {
-> >  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
-> >  
-> > +	if (iter->flags & IOMAP_ZERO) {
-> > +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> > +
-> > +		if (srcmap->type == IOMAP_UNWRITTEN)
-> > +			fgp &= ~FGP_CREAT;
-> > +	}
-> 
-> Nit:  The comment would probably stand out a little better if it was
-> right next to the IOMAP_ZERO conditional instead of above the
-> function.
-
-Agreed.
-
-> > +		if (status) {
-> > +			if (status == -ENOENT) {
-> > +				/*
-> > +				 * Unwritten extents need to have page cache
-> > +				 * lookups done to determine if they have data
-> > +				 * over them that needs zeroing. If there is no
-> > +				 * data, we'll get -ENOENT returned here, so we
-> > +				 * can just skip over this index.
-> > +				 */
-> > +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
-> 
-> I'd return -EIO if the WARN_ON triggers.
-> 
-> > +loop_continue:
-> 
-> While I'm no strange to gotos for loop control something trips me
-> up about jumping to the end of the loop.  Here is what I could come
-> up with instead.  Not arguing it's objectively better, but I somehow
-> like it a little better:
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 700b22d6807783..81378f7cd8d7ff 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  		bool ret;
->  
->  		status = iomap_write_begin(iter, pos, bytes, &folio);
-> -		if (status) {
-> -			if (status == -ENOENT) {
-> -				/*
-> -				 * Unwritten extents need to have page cache
-> -				 * lookups done to determine if they have data
-> -				 * over them that needs zeroing. If there is no
-> -				 * data, we'll get -ENOENT returned here, so we
-> -				 * can just skip over this index.
-> -				 */
-> -				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
-> -				if (bytes > PAGE_SIZE - offset_in_page(pos))
-> -					bytes = PAGE_SIZE - offset_in_page(pos);
-> -				goto loop_continue;
-> -			}
-> +		if (status && status != -ENOENT)
->  			return status;
-> -		}
-> -		if (iter->iomap.flags & IOMAP_F_STALE)
-> -			break;
->  
-> -		offset = offset_in_folio(folio, pos);
-> -		if (bytes > folio_size(folio) - offset)
-> -			bytes = folio_size(folio) - offset;
-> +		if (status == -ENOENT) {
-> +			/*
-> +			 * If we end up here, we did not find a folio in the
-> +			 * page cache for an unwritten extent and thus can
-> +			 * skip over the range.
-> +			 */
-> +			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
-> +				return -EIO;
->  
-> -		/*
-> -		 * If the folio over an unwritten extent is clean (i.e. because
-> -		 * it has been read from), then it already contains zeros. Hence
-> -		 * we can just skip it.
-> -		 */
-> -		if (srcmap->type == IOMAP_UNWRITTEN &&
-> -		    !folio_test_dirty(folio)) {
-> -			folio_unlock(folio);
-> -			goto loop_continue;
-> +			/*
-> +			 * XXX: It would be nice if we could get the offset of
-> +			 * the next entry in the pagecache so that we don't have
-> +			 * to iterate one page at a time here.
-> +			 */
-> +			offset = offset_in_page(pos);
-> +			if (bytes > PAGE_SIZE - offset)
-> +				bytes = PAGE_SIZE - offset;
-
-Why is it PAGE_SIZE here and not folio_size() like below?
-
-(I know you're just copying the existing code; I'm merely wondering if
-this is some minor bug.)
+Modulo hch's comments,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> +		} else {
-> +			if (iter->iomap.flags & IOMAP_F_STALE)
-> +				break;
+> ---
+>  include/linux/math64.h | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/include/linux/math64.h b/include/linux/math64.h
+> index d34def7f9a8c..618df4862091 100644
+> --- a/include/linux/math64.h
+> +++ b/include/linux/math64.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_MATH64_H
+>  
+>  #include <linux/types.h>
+> +#include <linux/log2.h>
+>  #include <linux/math.h>
+>  #include <asm/div64.h>
+>  #include <vdso/math64.h>
+> @@ -12,6 +13,20 @@
+>  #define div64_long(x, y) div64_s64((x), (y))
+>  #define div64_ul(x, y)   div64_u64((x), (y))
+>  
+> +/**
+> + * rem_u64 - remainder of unsigned 64bit divide with 32bit divisor
+> + * @dividend: unsigned 64bit dividend
+> + * @divisor: unsigned 32bit divisor
+> + *
+> + * Return: dividend % divisor
+> + */
+> +static inline u32 rem_u64(u64 dividend, u32 divisor)
+> +{
+> +	if (is_power_of_2(divisor))
+> +		return dividend & (divisor - 1);
+> +	return dividend % divisor;
+> +}
 > +
-> +			offset = offset_in_folio(folio, pos);
-> +			if (bytes > folio_size(folio) - offset)
-> +				bytes = folio_size(folio) - offset;
-> +		
-> +			/*
-> +			 * If the folio over an unwritten extent is clean (i.e.
-> +			 * because it has only been read from), then it already
-> +			 * contains zeros.  Hence we can just skip it.
-> +			 */
-> +			if (srcmap->type == IOMAP_UNWRITTEN &&
-> +			    !folio_test_dirty(folio)) {
-> +				folio_unlock(folio);
-> +				status = -ENOENT;
-> +			}
->  		}
+>  /**
+>   * div_u64_rem - unsigned 64bit divide with 32bit divisor with remainder
+>   * @dividend: unsigned 64bit dividend
+> @@ -86,6 +101,15 @@ static inline s64 div64_s64(s64 dividend, s64 divisor)
+>  #define div64_long(x, y) div_s64((x), (y))
+>  #define div64_ul(x, y)   div_u64((x), (y))
 >  
-> -		folio_zero_range(folio, offset, bytes);
-> -		folio_mark_accessed(folio);
-> +		if (status != -ENOENT) {
-> +			folio_zero_range(folio, offset, bytes);
-> +			folio_mark_accessed(folio);
->  
-> -		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-> -		__iomap_put_folio(iter, pos, bytes, folio);
-> -		if (WARN_ON_ONCE(!ret))
-> -			return -EIO;
-> +			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-> +			__iomap_put_folio(iter, pos, bytes, folio);
-> +			if (WARN_ON_ONCE(!ret))
-> +				return -EIO;
-> +		}
->  
-> -loop_continue:
->  		pos += bytes;
->  		length -= bytes;
->  		written += bytes;
+> +#ifndef rem_u64
+> +static inline u32 rem_u64(u64 dividend, u32 divisor)
+> +{
+> +	if (is_power_of_2(divisor))
+> +		return dividend & (divisor - 1);
+> +	return do_div(dividend, divisor);
+> +}
+> +#endif
+> +
+>  #ifndef div_u64_rem
+>  static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
+>  {
+> -- 
+> 2.39.2
+> 
 > 
 
