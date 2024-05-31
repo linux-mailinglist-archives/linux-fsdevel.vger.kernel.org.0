@@ -1,64 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-20675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58878D6BE0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 23:45:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CACD8D6BF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 23:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B3328338E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 21:45:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCAE9B2709B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 21:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E9B7F7CA;
-	Fri, 31 May 2024 21:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBE17F7EF;
+	Fri, 31 May 2024 21:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIHj44PF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFsNzDFj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCAFAD59;
-	Fri, 31 May 2024 21:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE2AD59;
+	Fri, 31 May 2024 21:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717191931; cv=none; b=FBUR8DtBDWoJmVO2FfdG/yed5IBJnCZFrUbq7N8WJUAnmjUOHK8LpaMNmPM2gBHfs0SRKp+T9mtGLh0aPAilygsjKsxCC9H2ymUeju9WmBdM32hWadoo+7cXwUPIZ2MlSNiLGMmztA8U4VVCm7pa0c3syJyiOCsqapBBv3JNGQM=
+	t=1717192350; cv=none; b=hcZS0fRgPML3MVAagauCqFtn+kY0gj2U5PYgloZV7x0lmTq1e8Jr8OEAGAebBKbDGAfk22x+DrmRdqrshpvbmDzrprnylNEYiwXJi/Av6mcmwuqKhq0NSfVO8MPLvDO99RhY3gg4FO6w3C69gB11oQdLqQNoyI9R84kKaljaO5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717191931; c=relaxed/simple;
-	bh=HHQP+Fg1R6MOWZlS0A4+JYwt6Gcvc6gytPwUX0yRCdU=;
+	s=arc-20240116; t=1717192350; c=relaxed/simple;
+	bh=QGFa1su3G1GQlhYw2Bl1frsvO5x1Io9tnw4wIHm8v4Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1plnlsaQa7/13zk8cM1ZkPmg+VaebahOjIfRVK/1JEXztT7697iNh+lUdRJhcTPicwKLEgn5Eibtdww/gMBq77Z0sOtIdpiet6PvUq0PrkcOVziqDQasD0EQhXxueyhdltST9grmTDSUOJCSDKpTcB81ZbHeBygmVM7ffXY0HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIHj44PF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7AE7C116B1;
-	Fri, 31 May 2024 21:45:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lioW62HB4g77DgjjtH0riGZruOhEvcjM3JHX/H6V/cn35Nslxkd0mlfnP2xdMxoD62SeSdk2pkyb2pRb4lpYUxiHhaGsBu4JFipwvEQXqQSmbzHworkNBDi7cmNLMT65WCPdR/XUCLVpz3fJewCt7zOUfbhGxxnSJu9JKfv7JD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFsNzDFj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6393FC116B1;
+	Fri, 31 May 2024 21:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717191930;
-	bh=HHQP+Fg1R6MOWZlS0A4+JYwt6Gcvc6gytPwUX0yRCdU=;
+	s=k20201202; t=1717192349;
+	bh=QGFa1su3G1GQlhYw2Bl1frsvO5x1Io9tnw4wIHm8v4Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tIHj44PFphhGxBWMMvfIT/ucvmBtdDzYph7XCFPh4RlO32s5dw29DX927JT0KbRQx
-	 OSMfWAlIFMQyoQ8Zr6hTuWY74jQ/EqKVV2m/+zh7Na/qcVbBP3GKTAb596LuAvI/+d
-	 aflLHDzmyiTI8G9QKZgfc1v0/SWTLHss8Eu09+DcRDKGqe44WA0jYVFpg9WmR5ezBa
-	 lpQoaZ+hq/gUFDvnTkk+rfHOtxapX1TxIa6354PUiUrlQhFYo5fg5cHjCCiZrk7HQi
-	 ZoHk4pR0iE7Z5hk367iGwosGDoVvSvLRRIiWbEKAFW3im6TvxEMW6+Is9C5hwDDTlf
-	 XdTr7ZWKn/TIQ==
-Date: Fri, 31 May 2024 21:45:29 +0000
+	b=OFsNzDFj0NCEqWTvkytvVOXDu/bYefFjFt8aMHe03+SKhpJHrPkbNeDIYLzE3xKVb
+	 2Hr2VSqNPxXX9OkxQqS//w29agcrCI/Egzn6jVpAaydrIU8xXcpkYsei2TJVf+ZROQ
+	 1tfG9C6CYTa6YuJk8iHt0e7VFk+OF2VCAge13fKs8iCD6shhzReiCkWiKl1UUR82JJ
+	 h4CB2mPV1QZD/tzn0EEmOogtl9Ihn6hqXKlSlf1Jz+cUCdyjynnqYP6vl+e+qlPY85
+	 tZ1TEqaSCmxtYZmzCLRa30jDi0Lij9bJklY101KmpQjj+rdiMmgjzc4qbDQOzlV7/s
+	 Sl4FpLtM4FvXA==
+Date: Fri, 31 May 2024 21:52:28 +0000
 From: Eric Biggers <ebiggers@kernel.org>
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, aalbersh@redhat.com,
-	linux-xfs@vger.kernel.org, alexl@redhat.com, walters@verbum.org,
-	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 18/26] xfs: use merkle tree offset as attr hash
-Message-ID: <20240531214529.GC2838215@google.com>
-References: <ZjxY_LbTOhv1i24m@infradead.org>
- <20240509200250.GQ360919@frogsfrogsfrogs>
- <Zj2r0Ewrn-MqNKwc@infradead.org>
- <Zj28oXB6leJGem-9@infradead.org>
- <20240517171720.GA360919@frogsfrogsfrogs>
- <ZktEn5KOZTiy42c8@infradead.org>
- <20240520160259.GA25546@frogsfrogsfrogs>
- <Zk4DIzXJX_gVoj2-@infradead.org>
- <20240522182900.GB1789@sol.localdomain>
- <20240531212850.GU52987@frogsfrogsfrogs>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@redhat.com>
+Subject: Re: [PATCH] fsverity: support block-based Merkle tree caching
+Message-ID: <20240531215228.GD2838215@google.com>
+References: <20240515015320.323443-1-ebiggers@kernel.org>
+ <20240531213212.GV52987@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,69 +58,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531212850.GU52987@frogsfrogsfrogs>
+In-Reply-To: <20240531213212.GV52987@frogsfrogsfrogs>
 
-On Fri, May 31, 2024 at 02:28:50PM -0700, Darrick J. Wong wrote:
-> On Wed, May 22, 2024 at 11:29:00AM -0700, Eric Biggers wrote:
-> > On Wed, May 22, 2024 at 07:37:23AM -0700, Christoph Hellwig wrote:
-> > > On Mon, May 20, 2024 at 09:02:59AM -0700, Darrick J. Wong wrote:
-> > > > On Mon, May 20, 2024 at 05:39:59AM -0700, Christoph Hellwig wrote:
-> > > > > On Fri, May 17, 2024 at 10:17:20AM -0700, Darrick J. Wong wrote:
-> > > > > > >   Note that the verity metadata *must* be encrypted when the file is,
-> > > > > > >   since it contains hashes of the plaintext data.
-> > > > > > 
-> > > > > > Refresh my memory of fscrypt -- does it encrypt directory names, xattr
-> > > > > > names, and xattr values too?  Or does it only do that to file data?
-> > > > > 
-> > > > > It does encrypt the file names in the directories, but nothing in
-> > > > > xattrs as far as I can tell.
-> > > > 
-> > > > Do we want that for user.* attrs?  That seems like quite an omission.
-> > > 
-> > > I'll let Eric answer that.  Btw, is the threat model for fscrypt written
-> > > down somewhere?
+On Fri, May 31, 2024 at 02:32:12PM -0700, Darrick J. Wong wrote:
+> On Tue, May 14, 2024 at 06:53:20PM -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
 > > 
-> > See https://www.kernel.org/doc/html/latest/filesystems/fscrypt.html?highlight=fscrypt#threat-model
+> > Currently fs/verity/ assumes that filesystems cache Merkle tree blocks
+> > in the page cache.  Specifically, it requires that filesystems provide a
+> > ->read_merkle_tree_page() method which returns a page of blocks.  It
+> > also stores the "is the block verified" flag in PG_checked, or (if there
+> > are multiple blocks per page) in a bitmap, with PG_checked used to
+> > detect cache evictions instead.  This solution is specific to the page
+> > cache, as a different cache would store the flag in a different way.
 > > 
-> > As for why it stopped at file contents and names (and fsverity Merkle tree
-> > blocks which ext4 and f2fs encrypt in the same way as contents), it's just
-> > because it's very difficult to add more, and file contents and names alone were
-> > enough for parity with most other file-level encryption systems.  That's just
-> > the nature of file-level encryption.  For each additional type of data or
-> > metadata that's encrypted, there are a huge number of things that need to be
-> > resolved including algorithm selection, key derivation, IV selection, on-disk
-> > format, padding, UAPI for enabling the feature, userspace tool support including
-> > fsck and debugging tools, access semantics without the key, etc...
+> > To allow XFS to use a custom Merkle tree block cache, this patch
+> > refactors the Merkle tree caching interface to be based around the
+> > concept of reading and dropping blocks (not pages), where the storage of
+> > the "is the block verified" flag is up to the implementation.
 > > 
-> > xattr encryption is definitely something that people have thought about, and it
-> > probably would be the next thing to consider after the existing contents and
-> > names.  Encrypting the exact file sizes is also something to consider.  But it's
-> > not something that someone has volunteered to do all the work for (yet).  If you
-> > restricted it to the contents of user xattrs only (not other xattrs, and not
-> > xattr names), it would be more feasible than trying to encrypt the names and
-> > values of all xattrs, though it would still be difficult.
+> > The existing pagecache based solution, used by ext4, f2fs, and btrfs, is
+> > reimplemented using this interface.
 > > 
-> > Of course, generally speaking, when adding fscrypt support to a filesystem, it's
-> > going to be much easier to just target the existing feature set, and not try to
-> > include new, unproven features too.  (FWIW, this also applies to fsverity.)  If
-> > someone is interested in taking on an experimental project add xattr encryption
-> > support, I'd be glad to try to provide guidance, but it probably should be
-> > separated out from adding fscrypt support in the first place.
+> > Co-developed-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > Co-developed-by: Darrick J. Wong <djwong@kernel.org>
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> > 
+> > This reworks the block-based caching patch to clean up many different
+> > things, including putting the pagecache based caching behind the same
+> > interface as suggested by Christoph.
 > 
-> Does the fscrypt data unit size have to match i_blocksize?  Or the
-> fsverity merkle tree block size?
+> I gather this means that you ported btrfs/f2fs/ext4 to use the read/drop
+> merkle_tree_block interfaces?
 
-The crypto data unit size is a power of 2 less than or equal to i_blocksize
-(usually equal to it, as that is the default).  See
-https://www.kernel.org/doc/html/latest/filesystems/fscrypt.html#contents-encryption
+Yes, this patch does that.
 
-It applies to contents encryption only, though as you know, ext4 and f2fs treat
-the Merkle tree in mostly the same way as contents, including for encryption.
-For an implementation of fsverity that doesn't treat the Merkle tree as contents
-like this, and where the filesystem supports fscrypt too, encryption of the
-Merkle tree would need to be implemented a bit differently.  It wouldn't need to
-use the same crypto data unit size as the contents, e.g. it could be always one
-data unit per Merkle tree block.
+> >                                       This applies to mainline commit
+> > a5131c3fdf26.  It corresponds to the following patches in Darrick's v5.6
+> > patchset:
+> > 
+> >     fsverity: convert verification to use byte instead of page offsets
+> >     fsverity: support block-based Merkle tree caching
+> >     fsverity: pass the merkle tree block level to fsverity_read_merkle_tree_block
+> >     fsverity: pass the zero-hash value to the implementation
+> > 
+> > (I don't really understand the split between the first two, as I see
+> > them as being logically part of the same change.  The new parameters
+> > would make sense to split out though.)
+> 
+> I separated the first two to reduce the mental burden of rebasing these
+> patches against new -rc1 kernels.  It's a lot less effort if one only
+> has to concentrate on one aspect at a time.  You might have heard that
+> it's difficult to add an xfs feature without it taking multiple kernel
+> cycles.
+> 
+> (That said, 6.10 wasn't bad at all.)
+> 
+
+I'd be glad to start applying some of the fsverity patches for 6.11.  This one
+seems good to me (if it's revised to split the new parameters back into separate
+patches again), but it only really makes sense if XFS is going to use it, and
+that seems uncertain now.  Either way though, we could go ahead with the
+workqueue change, FS_XFLAG_VERITY, and tracepoints.
 
 - Eric
 
