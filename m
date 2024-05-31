@@ -1,87 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-20653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6878D66A0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 18:18:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0378D66BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 18:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C475B2B99E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:18:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23136B2664C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C56A158DD3;
-	Fri, 31 May 2024 16:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C7B158DA1;
+	Fri, 31 May 2024 16:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="stGSz/LK"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vhacHjyj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95643D57E;
-	Fri, 31 May 2024 16:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519B1156242
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 16:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172274; cv=none; b=UBb2CDEY9x9rL7jvIIIqM/IbkOrVoL0+AEOffwPWiVxSg0RXLobS79YDVhaPNHCk+kZ7a07SEKDzBvMcFYytkh+LKAREoUas7NP1lfBJDZ94+Lwn4y5F2e8FDr0wgILOkvKixcDrnALFrh9K7JEapbNlbyti6Bt6UMftxDzjz20=
+	t=1717172646; cv=none; b=XHBbcV7BGV0iNLPxybblLvF7ZYoavgYPQ4QJTHlU+5acQQCCHmFBXcbVQDVpRyUnTc1PjsbUysQB/8kXDIFJmZ7C9vxzF6wunVSzcrBw8j8xgaaWjyFckV8lw0IDXNcy/qQq/HIyRBDH1wOq8RJ+mOD3y9cBMakUpE8gNvluXW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172274; c=relaxed/simple;
-	bh=vlldDds/fh09JBc7WVUVFuFOn32xy1JcFdVT445R33Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mb4KNV8KcgDcal3RJEJL132t4L9hncTvNflBYoKcgnMkgdC98FEmSe+Yk2cqJDaroAtyL2Cu3QNCf1C8Rwq08265Na72LBp7Gp22UUmBq7vcM5kqcGC1oEZj4A/yuyE+emZbFXmvB2E4GVUOpQWoOI9ZE8RoLkxDttwbkn4SNZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=stGSz/LK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nez/jzPvJv9Aintcu3RZ3COXxw6jF9V/9ALZcl2RF5Y=; b=stGSz/LKwiyNGVDT61NEq7ww4H
-	m3UVCPdgFtRPNdP/L/DHJA8zNB1gxZ2trLgTB10psBhR9lKlN/arXp+LhCViU4QyDfYm5BTMll6gN
-	4KjfxrMbI0V8gtA3TIpfJ4ql/RnC2y6/W+KNkLRhzeg2rcZ3RnFw/lNsx54EbzLEPCnSEm101AmyN
-	25BYt9aT56J5NHBo8nI7lPmLe1d+Xrjak5u7Z6BFsAYTmtv2ggMZvBQGrz5G8RrN0Zg4M75sezwud
-	2ktaWrgM7+i8x3CpSPM05HU+rgnV8VK4NPGssegEPYmH6TAzyIJJn79YD6wMRHmdmp3AFPEej2Ajl
-	TTH5RBCg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD4wy-0000000AoKY-1dBu;
-	Fri, 31 May 2024 16:17:52 +0000
-Date: Fri, 31 May 2024 09:17:52 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 7/8] xfs: reserve blocks for truncating realtime
- inode
-Message-ID: <Zln4MAQmvk8BSKJM@infradead.org>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-8-yi.zhang@huaweicloud.com>
- <ZlnFvWsvfrR1HBZW@infradead.org>
- <20240531141000.GH52987@frogsfrogsfrogs>
- <Zlna8S76sbj-6ItP@infradead.org>
- <20240531152922.GN52987@frogsfrogsfrogs>
+	s=arc-20240116; t=1717172646; c=relaxed/simple;
+	bh=lbfmCc0C6vxw1XUTxL5z++ZJIOBzsLoT9JsXDkl9BJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ku0DPJt/GJFjKoS8qc0b355KRJE3wKAhj88GhUeLj9DlVRU8U0zLX4XsaLSknrL2tflosY7z+O/XbzufCtYZRYkWcbHH453JSmDWVyewrVwJ7w1EieXZRQJtIB16tXS0vMKa3VIsstYzkaYMkewFCHw5Zs4mNtpuIvfgfy6YTk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vhacHjyj; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b3356fd4f3so310030eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 09:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717172643; x=1717777443; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rd2v09dpPVB0uQaTFOM+mu5cCEjyqc20z6fVnQytKmg=;
+        b=vhacHjyjwhUG+mVVxwjx5ghyvf4UhE+3ygqgAvVOjBSBk4dutnqjQUuNHuHfXGbTX0
+         hR+EZ2FVexrqqNcf31ufTlswPNQJTPUn++G+OsWeksDU3i4viEioGYtIMX6EARxmftWi
+         M93YPrIq6oBWNLzQs2ZRYowUZpodL7prgIBS7+a2wewVJmvrX/TSwvcr7kwfidnzJE/I
+         BEgPjFei8kBJErcJqWr9hbVF64MozNWS2CCB/2zKYHVp0HGAY5MGqNzPJHwVdgyHnd4d
+         SzxFfL0Gmef2eA80X5xx5n/jvNoglcPtW3/IHjSD43crBCdPcFGOteiseJaQ3MG23NgM
+         naQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717172643; x=1717777443;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rd2v09dpPVB0uQaTFOM+mu5cCEjyqc20z6fVnQytKmg=;
+        b=J9gUN87l7qt76kdHKA0GseuagXhx+X1OYAGz5r8rAETuoFx1bX8+vWI4G98JEmcq+e
+         Lcs8w8eWiGvRR+kbJzxCmth9of3Kq5Isoy8WcD9YT6ZwFWyQK6ZLT83BGnksbtqvyAZa
+         fkBpfsARViptTNgGIbDXlL/VD3W1xEkruwkZ3EHdnVvz8GvTloJxqxfT1ChZbZTbiZ63
+         jCwdg/rP2mErnlKxrUnAWgY5Cnc8KT9ZBQcxUY+oYR9QLUS4UcAScUtc665mzo+hOruv
+         wJWWAiW3ajPPyBdNY0eGc1wyl8AEF64OnSNd1cu8Ps1510R/2LZJcAOq90ZdJ8loSnw7
+         oodg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOhegDLUWPB9g3hADMOQGL0UrFVXdOsvnDYWNGokFtdbYXGjqhWZhDVmc/ZvhmBsT3/NdVZX84z8YJfUsJtFwFH1mJNfkTop0jNA+qQA==
+X-Gm-Message-State: AOJu0Ywt0jnVZKPvjT9WjZWluP+FwTDQWOKcb6UMZWjrlYe+7HwTa77+
+	B9UsVfZcSAhjqQAZ3CvQ0MmrOBGUP0gdRG9/7oMeFOdNEhSvCBBNRIKsNFSoLUU=
+X-Google-Smtp-Source: AGHT+IFivnw1QES2JYvk0mbF8rmqda47iKxw5iyCB/Z8gLPHMrhzIOsSbr0pKOdfyVdLpn1NDoFexA==
+X-Received: by 2002:a05:6870:f71f:b0:250:826d:5202 with SMTP id 586e51a60fabf-2508bd9611amr2762121fac.3.1717172642916;
+        Fri, 31 May 2024 09:24:02 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25084ee76adsm594421fac.11.2024.05.31.09.24.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 09:24:01 -0700 (PDT)
+Message-ID: <ee075116-5ed0-4ad7-9db2-048b14655d42@kernel.dk>
+Date: Fri, 31 May 2024 10:24:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531152922.GN52987@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 19/19] fuse: {uring} Optimize async sends
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+ bernd.schubert@fastmail.fm
+Cc: io-uring@vger.kernel.org
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-19-d149476b1d65@ddn.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-19-d149476b1d65@ddn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 08:29:22AM -0700, Darrick J. Wong wrote:
-> > 
-> > Sorry, it was meant to say for the data device.  My whole journey
-> > to check if this could get called for the attr fork twisted my mind.
+On 5/29/24 12:00 PM, Bernd Schubert wrote:
+> This is to avoid using async completion tasks
+> (i.e. context switches) when not needed.
 > 
-> I really hope not -- all writes to the attr fork have known sizes at
-> syscall time, and appending doesn't even make sense.
+> Cc: io-uring@vger.kernel.org
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 
-It's obviously not.  I just had to go out and actually read the code
-before commenting.
+This patch is very confusing, even after having pulled the other
+changes. In general, would be great if the io_uring list was CC'ed on
+the whole series, it's very hard to review just a single patch, when you
+don't have the full picture.
+
+Outside of that, would be super useful to include a blurb on how you set
+things up for testing, and how you run the testing. That would really
+help in terms of being able to run and test it, and also to propose
+changes that might make a big difference.
+
+-- 
+Jens Axboe
 
 
