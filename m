@@ -1,61 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-20620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895258D6281
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:12:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51078D628B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0031C234FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 13:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF90287CCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 13:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DE4158DC6;
-	Fri, 31 May 2024 13:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA6A158D7F;
+	Fri, 31 May 2024 13:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f3YxeQ19"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e4DKkVwb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413B1158A14;
-	Fri, 31 May 2024 13:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FA4158DC3;
+	Fri, 31 May 2024 13:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717161087; cv=none; b=VqOou36dHPbiO7QLdhLxHvYXRo9FDqSG+1v4scSX/cTDVf0yf04AdmyNCiXdI0LEX20JmmLeCmj62kSphmbZLFL6N92Y9jWjC42H3hFs96xpb1yjyrtW2I5puR8Qf+pNM3u/NJvGR2OxzskyK90bfA24zovGkBn++qai+OGX68k=
+	t=1717161138; cv=none; b=Vu1o8cTfD+LU+NVAaqZCAn3LSw1Gu+FNk1tdUQHB6kpRbp4E9CCPeav5PRMgc/xMpzKWmT4qcWwQIU9mVXK0U2y1mqPwjlTvWxTTkRlonWd7bIV67lIJYlPJQE+WYPWeN/xkofH7fYuKgmyRufHN/dfRU1oBkquqwvsQnepR9bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717161087; c=relaxed/simple;
-	bh=dbVpcj6lEF7ZMOUwEixLA9Qbf6Mjg1Vgndp9rKsWPHI=;
+	s=arc-20240116; t=1717161138; c=relaxed/simple;
+	bh=25Z6DAQycunMds44dtwFH80eMUBSwTTavxBmP3PpFeQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7OTjbccyJdanPLYEyezdOk0R3LTiZcLpkXWGCO7X2Y9ZzS3lK1FdH3tV9q0G6V/p8HwQtE3UZe7VJkvYRY1Aws8KTDPK+IcgKxfsPfRqVHJwrEqVKvswXym0MVXNQlXbc7f4kzE8/1HqmPiaY9vWrMYjgRNHg9Q7A5ArgXHcdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f3YxeQ19; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=B0njvbhUXTgT/K1JkeyWR7Yg/ve/W+DwUWJceKkwN2g=; b=f3YxeQ19IOyh8l3J31nByIOeej
-	4Z+pFrYHpfWjuj3txCiq25wcdH2aNEyj5HAyJlGFrmPLsWCst1ARjljPusb0Tmb3x7gGkvtp6SNCV
-	TE96z+8WsHW7thycrRIXPfQEJ59efHDnXIRrz64BIsX2DdJJzt/K9NtE7q2/dUAT1GOiw60Q6TDqt
-	bFC01CttF2tBa9F8HxAZLpk7HdGacP0ea7XKSpnTPdPrD/hu1RImXftEenBSYUBhbdhmF7K0VPLea
-	q5x/pvvWp4z55bMGeNfU6lTrrOJ7xR0vQWx5gbsSj6YNogNvhEttv00REiqrgEi2qQj04t+9Pyn73
-	LesLWjhQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD22X-0000000AIKs-3B9D;
-	Fri, 31 May 2024 13:11:25 +0000
-Date: Fri, 31 May 2024 06:11:25 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
-Message-ID: <ZlnMfSJcm5k6Dg_e@infradead.org>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pV0sov+zuW5WhcLYn3ouBWvQYHgww7LiXVAWkNaPtB5uFsdg98Uw4QIlh76oP9QVhHylqkSHvMgyJiyGGBNE/V1nzDBiwFs7SWV8/SQsv6cH/Vtuy/dEdwTTSs1AEOXH0JNTUljh3XyBzNeoye2399mJJNTf1bYimXWRXkHmx+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e4DKkVwb; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717161136; x=1748697136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=25Z6DAQycunMds44dtwFH80eMUBSwTTavxBmP3PpFeQ=;
+  b=e4DKkVwbEcGz1F/4cj+qUHRC2l+HBJncZuVlcb1k7bCKNV8vuvMJr8gi
+   RR1SH64qkPjt9bGiRxhiNSOBZ1KtkyWUwQWMQIqJ23rFkv+9cCZCfMJU5
+   nFXlYp2/GvoGGZ68SNUat41mjqSYsGNbX52yUCvQDjRIaPOyBj3jg4T/I
+   gvRShphA7Nrc+/V62aoRachM8cvt8X0pDaxiMVSt+RoivSmI0JiRHZILU
+   cSeEMhI/Out8G7vuCS4CFEwhVwAGOar9Fs6W+A2A5tDhqJBY1nZ5NtVla
+   /xW/isO5NlYb8B6Ot/hj7gP09TpVZZxUEKOaAeNXCz14yvB+FANwAljXh
+   w==;
+X-CSE-ConnectionGUID: WXmEGQFaS3qSX59WpJJbJg==
+X-CSE-MsgGUID: 00NsbryXT72KY09ZdrVaVw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13462654"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="13462654"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:12:15 -0700
+X-CSE-ConnectionGUID: jo99xN1lTV+hw4hFYdn9bg==
+X-CSE-MsgGUID: 5/w1+c2oRuW19KyNsIJ5RA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="41081267"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 31 May 2024 06:12:11 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sD235-000H7l-2o;
+	Fri, 31 May 2024 13:12:03 +0000
+Date: Fri, 31 May 2024 21:11:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: oe-kbuild-all@lists.linux.dev, Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH] fs: sys_ringbuffer() (WIP)
+Message-ID: <202405312050.MkVo7MG8-lkp@intel.com>
+References: <ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt@chgq5hw3ny3r>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,161 +87,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt@chgq5hw3ny3r>
 
-On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
-> XXX: how do we detect a iomap containing a cow mapping over a hole
-> in iomap_zero_iter()? The XFS code implies this case also needs to
-> zero the page cache if there is data present, so trigger for page
-> cache lookup only in iomap_zero_iter() needs to handle this case as
-> well.
+Hi Kent,
 
-If there is no data in the page cache and either a whole or unwritten
-extent it really should not matter what is in the COW fork, a there
-obviously isn't any data we could zero.
+kernel test robot noticed the following build errors:
 
-If there is data in the page cache for something that is marked as
-a hole in the srcmap, but we have data in the COW fork due to
-COW extsize preallocation we'd need to zero it, but as the
-xfs iomap ops don't return a separate srcmap for that case we
-should be fine.  Or am I missing something?
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.10-rc1]
+[cannot apply to tip/x86/asm next-20240531]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> + * Note: when zeroing unwritten extents, we might have data in the page cache
-> + * over an unwritten extent. In this case, we want to do a pure lookup on the
-> + * page cache and not create a new folio as we don't need to perform zeroing on
-> + * unwritten extents if there is no cached data over the given range.
->   */
->  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
->  {
->  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
->  
-> +	if (iter->flags & IOMAP_ZERO) {
-> +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +
-> +		if (srcmap->type == IOMAP_UNWRITTEN)
-> +			fgp &= ~FGP_CREAT;
-> +	}
+url:    https://github.com/intel-lab-lkp/linux/commits/Kent-Overstreet/fs-sys_ringbuffer-WIP/20240531-115626
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt%40chgq5hw3ny3r
+patch subject: [PATCH] fs: sys_ringbuffer() (WIP)
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240531/202405312050.MkVo7MG8-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405312050.MkVo7MG8-lkp@intel.com/reproduce)
 
-Nit:  The comment would probably stand out a little better if it was
-right next to the IOMAP_ZERO conditional instead of above the
-function.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405312050.MkVo7MG8-lkp@intel.com/
 
-> +		if (status) {
-> +			if (status == -ENOENT) {
-> +				/*
-> +				 * Unwritten extents need to have page cache
-> +				 * lookups done to determine if they have data
-> +				 * over them that needs zeroing. If there is no
-> +				 * data, we'll get -ENOENT returned here, so we
-> +				 * can just skip over this index.
-> +				 */
-> +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
+All errors (new ones prefixed by >>):
 
-I'd return -EIO if the WARN_ON triggers.
+   In file included from include/linux/sched/signal.h:14,
+                    from include/linux/ptrace.h:7,
+                    from arch/openrisc/kernel/asm-offsets.c:28:
+>> include/linux/mm_types.h:8:10: fatal error: linux/darray_types.h: No such file or directory
+       8 | #include <linux/darray_types.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+   make[3]: *** [scripts/Makefile.build:117: arch/openrisc/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1208: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
-> +loop_continue:
 
-While I'm no strange to gotos for loop control something trips me
-up about jumping to the end of the loop.  Here is what I could come
-up with instead.  Not arguing it's objectively better, but I somehow
-like it a little better:
+vim +8 include/linux/mm_types.h
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 700b22d6807783..81378f7cd8d7ff 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		bool ret;
- 
- 		status = iomap_write_begin(iter, pos, bytes, &folio);
--		if (status) {
--			if (status == -ENOENT) {
--				/*
--				 * Unwritten extents need to have page cache
--				 * lookups done to determine if they have data
--				 * over them that needs zeroing. If there is no
--				 * data, we'll get -ENOENT returned here, so we
--				 * can just skip over this index.
--				 */
--				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
--				if (bytes > PAGE_SIZE - offset_in_page(pos))
--					bytes = PAGE_SIZE - offset_in_page(pos);
--				goto loop_continue;
--			}
-+		if (status && status != -ENOENT)
- 			return status;
--		}
--		if (iter->iomap.flags & IOMAP_F_STALE)
--			break;
- 
--		offset = offset_in_folio(folio, pos);
--		if (bytes > folio_size(folio) - offset)
--			bytes = folio_size(folio) - offset;
-+		if (status == -ENOENT) {
-+			/*
-+			 * If we end up here, we did not find a folio in the
-+			 * page cache for an unwritten extent and thus can
-+			 * skip over the range.
-+			 */
-+			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
-+				return -EIO;
- 
--		/*
--		 * If the folio over an unwritten extent is clean (i.e. because
--		 * it has been read from), then it already contains zeros. Hence
--		 * we can just skip it.
--		 */
--		if (srcmap->type == IOMAP_UNWRITTEN &&
--		    !folio_test_dirty(folio)) {
--			folio_unlock(folio);
--			goto loop_continue;
-+			/*
-+			 * XXX: It would be nice if we could get the offset of
-+			 * the next entry in the pagecache so that we don't have
-+			 * to iterate one page at a time here.
-+			 */
-+			offset = offset_in_page(pos);
-+			if (bytes > PAGE_SIZE - offset)
-+				bytes = PAGE_SIZE - offset;
-+		} else {
-+			if (iter->iomap.flags & IOMAP_F_STALE)
-+				break;
-+
-+			offset = offset_in_folio(folio, pos);
-+			if (bytes > folio_size(folio) - offset)
-+				bytes = folio_size(folio) - offset;
-+		
-+			/*
-+			 * If the folio over an unwritten extent is clean (i.e.
-+			 * because it has only been read from), then it already
-+			 * contains zeros.  Hence we can just skip it.
-+			 */
-+			if (srcmap->type == IOMAP_UNWRITTEN &&
-+			    !folio_test_dirty(folio)) {
-+				folio_unlock(folio);
-+				status = -ENOENT;
-+			}
- 		}
- 
--		folio_zero_range(folio, offset, bytes);
--		folio_mark_accessed(folio);
-+		if (status != -ENOENT) {
-+			folio_zero_range(folio, offset, bytes);
-+			folio_mark_accessed(folio);
- 
--		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
--		__iomap_put_folio(iter, pos, bytes, folio);
--		if (WARN_ON_ONCE(!ret))
--			return -EIO;
-+			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-+			__iomap_put_folio(iter, pos, bytes, folio);
-+			if (WARN_ON_ONCE(!ret))
-+				return -EIO;
-+		}
- 
--loop_continue:
- 		pos += bytes;
- 		length -= bytes;
- 		written += bytes;
+     6	
+     7	#include <linux/auxvec.h>
+   > 8	#include <linux/darray_types.h>
+     9	#include <linux/kref.h>
+    10	#include <linux/list.h>
+    11	#include <linux/spinlock.h>
+    12	#include <linux/rbtree.h>
+    13	#include <linux/maple_tree.h>
+    14	#include <linux/rwsem.h>
+    15	#include <linux/completion.h>
+    16	#include <linux/cpumask.h>
+    17	#include <linux/uprobes.h>
+    18	#include <linux/rcupdate.h>
+    19	#include <linux/page-flags-layout.h>
+    20	#include <linux/workqueue.h>
+    21	#include <linux/seqlock.h>
+    22	#include <linux/percpu_counter.h>
+    23	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
