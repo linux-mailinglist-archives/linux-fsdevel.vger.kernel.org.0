@@ -1,84 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-20621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51078D628B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E942F8D6307
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF90287CCA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 13:13:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A153C2892B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 13:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA6A158D7F;
-	Fri, 31 May 2024 13:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD24158DAA;
+	Fri, 31 May 2024 13:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e4DKkVwb"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F9IakoLu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FA4158DC3;
-	Fri, 31 May 2024 13:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C22833CF1;
+	Fri, 31 May 2024 13:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717161138; cv=none; b=Vu1o8cTfD+LU+NVAaqZCAn3LSw1Gu+FNk1tdUQHB6kpRbp4E9CCPeav5PRMgc/xMpzKWmT4qcWwQIU9mVXK0U2y1mqPwjlTvWxTTkRlonWd7bIV67lIJYlPJQE+WYPWeN/xkofH7fYuKgmyRufHN/dfRU1oBkquqwvsQnepR9bc=
+	t=1717162300; cv=none; b=h6zhatydowizK41bYsZQGN5i3wS376LFP0nVXvLNGNe/8yaZPZfrYLBWB8jAuQ5OSgjDRmbPalqoUDi7nlj5zKiSJyrx8CKv9jLYcUbia3YwAK/IoCXlapxUXb7AI0odOJhX1U01fKVKGHST8vZvI1dD4EMAlu+8KR5K+4efRpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717161138; c=relaxed/simple;
-	bh=25Z6DAQycunMds44dtwFH80eMUBSwTTavxBmP3PpFeQ=;
+	s=arc-20240116; t=1717162300; c=relaxed/simple;
+	bh=TkIEk5wzeceT/BFmLNrFp8yBH9ZXT5OYIGMv9WzP9kU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pV0sov+zuW5WhcLYn3ouBWvQYHgww7LiXVAWkNaPtB5uFsdg98Uw4QIlh76oP9QVhHylqkSHvMgyJiyGGBNE/V1nzDBiwFs7SWV8/SQsv6cH/Vtuy/dEdwTTSs1AEOXH0JNTUljh3XyBzNeoye2399mJJNTf1bYimXWRXkHmx+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e4DKkVwb; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717161136; x=1748697136;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=25Z6DAQycunMds44dtwFH80eMUBSwTTavxBmP3PpFeQ=;
-  b=e4DKkVwbEcGz1F/4cj+qUHRC2l+HBJncZuVlcb1k7bCKNV8vuvMJr8gi
-   RR1SH64qkPjt9bGiRxhiNSOBZ1KtkyWUwQWMQIqJ23rFkv+9cCZCfMJU5
-   nFXlYp2/GvoGGZ68SNUat41mjqSYsGNbX52yUCvQDjRIaPOyBj3jg4T/I
-   gvRShphA7Nrc+/V62aoRachM8cvt8X0pDaxiMVSt+RoivSmI0JiRHZILU
-   cSeEMhI/Out8G7vuCS4CFEwhVwAGOar9Fs6W+A2A5tDhqJBY1nZ5NtVla
-   /xW/isO5NlYb8B6Ot/hj7gP09TpVZZxUEKOaAeNXCz14yvB+FANwAljXh
-   w==;
-X-CSE-ConnectionGUID: WXmEGQFaS3qSX59WpJJbJg==
-X-CSE-MsgGUID: 00NsbryXT72KY09ZdrVaVw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13462654"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="13462654"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:12:15 -0700
-X-CSE-ConnectionGUID: jo99xN1lTV+hw4hFYdn9bg==
-X-CSE-MsgGUID: 5/w1+c2oRuW19KyNsIJ5RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="41081267"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 31 May 2024 06:12:11 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sD235-000H7l-2o;
-	Fri, 31 May 2024 13:12:03 +0000
-Date: Fri, 31 May 2024 21:11:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: oe-kbuild-all@lists.linux.dev, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH] fs: sys_ringbuffer() (WIP)
-Message-ID: <202405312050.MkVo7MG8-lkp@intel.com>
-References: <ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt@chgq5hw3ny3r>
+	 Content-Type:Content-Disposition:In-Reply-To; b=htT2fdL2m4XnHW+g07gyl6M9obtODFgm6cieIhhXDQ8offiFYWs85g8C9m/w4WeOdtTD8axK0daSpALU93L+IJjIEeumCbLhKFVd5ApgTez21Yfysn36oG1Gt3X3v8XocymyZBk2l7umQvlZWttOcaL86Dn/DbWqDj2bZ9iDMIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F9IakoLu; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZnYJekxqs+YixkIAFqhWnZz9hWHwrTGHYqUHWnP5PR8=; b=F9IakoLuCEZorXEUpiAIFC9CTn
+	OnQjknl1sgjgBHHW9/ahaYXquglI747gvuJWW/ZfHvmXSAWT0XrzsOvFK4Njs//5kxtCApNarBLxE
+	5JirlPwAXPmYC7ESlz8PPDMNu7s0zlAK1v39qGhGfrYsyCRwDCjsXW/q31u9K8uwOry5XDoQbsrvx
+	fzdl5mnhnux0J53XUutmnMkDb4gmAPnVavJbhDFs3bKlj0KtndGxP3UBm7BaGXftbNtFH2ibwcVBS
+	WLM9J32lo3mnyvt7VyoIzovD7V0Qk6zib3UV+SlOTW26wjhm6jN5KCCTwX4j2CVjfMhb8yuOaKtFw
+	fDT19pUQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD2M4-0000000ALq6-1jvw;
+	Fri, 31 May 2024 13:31:36 +0000
+Date: Fri, 31 May 2024 06:31:36 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 5/8] xfs: refactor the truncating order
+Message-ID: <ZlnRODP_b8bhXOEE@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,73 +64,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt@chgq5hw3ny3r>
+In-Reply-To: <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Kent,
+> +	write_back = newsize > ip->i_disk_size && oldsize != ip->i_disk_size;
 
-kernel test robot noticed the following build errors:
+Maybe need_writeback would be a better name for the variable?  Also no
+need to initialize it to false at declaration time if it is
+unconditionally set here.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.10-rc1]
-[cannot apply to tip/x86/asm next-20240531]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +		/*
+> +		 * Updating i_size after writing back to make sure the zeroed
+> +		 * blocks could been written out, and drop all the page cache
+> +		 * range that beyond blocksize aligned new EOF block.
+> +		 *
+> +		 * We've already locked out new page faults, so now we can
+> +		 * safely remove pages from the page cache knowing they won't
+> +		 * get refaulted until we drop the XFS_MMAP_EXCL lock after the
+> +		 * extent manipulations are complete.
+> +		 */
+> +		i_size_write(inode, newsize);
+> +		truncate_pagecache(inode, roundup_64(newsize, blocksize));
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kent-Overstreet/fs-sys_ringbuffer-WIP/20240531-115626
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt%40chgq5hw3ny3r
-patch subject: [PATCH] fs: sys_ringbuffer() (WIP)
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240531/202405312050.MkVo7MG8-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405312050.MkVo7MG8-lkp@intel.com/reproduce)
+Any reason this open codes truncate_setsize()?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405312050.MkVo7MG8-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/sched/signal.h:14,
-                    from include/linux/ptrace.h:7,
-                    from arch/openrisc/kernel/asm-offsets.c:28:
->> include/linux/mm_types.h:8:10: fatal error: linux/darray_types.h: No such file or directory
-       8 | #include <linux/darray_types.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-   make[3]: *** [scripts/Makefile.build:117: arch/openrisc/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1208: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +8 include/linux/mm_types.h
-
-     6	
-     7	#include <linux/auxvec.h>
-   > 8	#include <linux/darray_types.h>
-     9	#include <linux/kref.h>
-    10	#include <linux/list.h>
-    11	#include <linux/spinlock.h>
-    12	#include <linux/rbtree.h>
-    13	#include <linux/maple_tree.h>
-    14	#include <linux/rwsem.h>
-    15	#include <linux/completion.h>
-    16	#include <linux/cpumask.h>
-    17	#include <linux/uprobes.h>
-    18	#include <linux/rcupdate.h>
-    19	#include <linux/page-flags-layout.h>
-    20	#include <linux/workqueue.h>
-    21	#include <linux/seqlock.h>
-    22	#include <linux/percpu_counter.h>
-    23	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
