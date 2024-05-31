@@ -1,55 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-20643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767C68D65A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 17:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864718D65B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 17:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313AF28B10A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B7981F254B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27962B9CE;
-	Fri, 31 May 2024 15:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1AE770F3;
+	Fri, 31 May 2024 15:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDsbjgom"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103DB29A0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 15:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76721C687;
+	Fri, 31 May 2024 15:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717168909; cv=none; b=JerJHSua33Hhk9F0ZjA/M2njwtW0j5skRuJPT14axGEN2EkYObPbORR+xkbpqkWZfdwiGbryxrArB7UYX2qAynUQIHWKxVBpvD+IrLSskqKrHRWpVinUAWljRLax/ffQ//0O/qKSKY0PpmrFUenJswDKRZlFYvZcZsDV2DER5iM=
+	t=1717169253; cv=none; b=nNJABPQIy0ozn0mAGsen1tPVTbktFc8uUHHvfMgi5Fd8HeBEQ/fiSwIC/0pTwPRcWE39d2plJOY5JCW8mXOjbA5wt7GEWyHxrgJvlDnyEhixjCfL910BpUkmR1vkhHCrvbLkWoSYZomSQfqsj+0N0dDEJToSoY4TgMTSdEzNayQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717168909; c=relaxed/simple;
-	bh=6tkFTIkMXaIqV5pXYi60ue+41zjgXhfYoh1WY9sqHTw=;
+	s=arc-20240116; t=1717169253; c=relaxed/simple;
+	bh=rjij/e0aNKDfKAiiaNEJ7N7+ZrqYaMhO+848HjpvkF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LjhC+b5tmCMWR+MeJSjbmyiLPsLPj7/NIF8pMIEf7LexRaundkOF1akq0RB55GpEHzGIS3kqfN6NOhEIPGS2EA7AMokbsdESMEutUWlDb8/DKYzLUoUyEPpXXI8HcD0MdAfLvzqWVaS0Fue7o3+Mu5/5gW3l6jEVYT3dAFfbv8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D4BD1424;
-	Fri, 31 May 2024 08:22:11 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31AA63F641;
-	Fri, 31 May 2024 08:21:44 -0700 (PDT)
-Date: Fri, 31 May 2024 16:21:38 +0100
-From: Joey Gouly <joey.gouly@arm.com>
-To: Szabolcs Nagy <szabolcs.nagy@arm.com>, dave.hansen@linux.intel.com
-Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
-	broonie@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
-	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, tglx@linutronix.de,
-	will@kernel.org, x86@kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 17/29] arm64: implement PKEYS support
-Message-ID: <20240531152138.GA1805682@e124191.cambridge.arm.com>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-18-joey.gouly@arm.com>
- <ZlnlQ/avUAuSum5R@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqtYAEmfEz1g5szWXmQYf9Z2evEGbcWa1tuNTKLtRGoP7CfNZ+nHfq6KM4CgZC6NPO/ZaWOUGn85HgWnwwDkTUL7h5Xa8enl9REyt7c3YWEVigmboAKk9LyfnCO0L1v/5H9J2w+ct20DCIQxioU3Mm1gC0jqgaitAaAB8A/dOxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDsbjgom; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52C21C116B1;
+	Fri, 31 May 2024 15:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717169253;
+	bh=rjij/e0aNKDfKAiiaNEJ7N7+ZrqYaMhO+848HjpvkF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WDsbjgom4IPUjMX7uh8DQOqumPO4dBoDgGxbqi1FsE+c59LokizFlvmnmkEWykPvm
+	 9vFEdwI1n0M7xzHISQFTv+p1C4lmtQoLvGe5gAwJLgBlfW3mpMUHxVE941lqPWu/OH
+	 PMNBRXcN+aOU/9m6q/id+Ox3YvAuPzS+NdR44L2KoGF+zLi6pKgkLqC5rhLeFTPUm3
+	 MlMhWCpm9FVw2X/qanj1024hmrS1DfSXYs5MZG2pYmUKA2iLVXB9EMztBC84ADLH59
+	 bsI6+v9MTyCftjTXac9qATSEuQ4UMayjvS96fGgn9P9T/yfUpXfLguhivY7XZebjtw
+	 eBvZjjSGq//YA==
+Date: Fri, 31 May 2024 08:27:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 5/8] xfs: refactor the truncating order
+Message-ID: <20240531152732.GM52987@frogsfrogsfrogs>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
+ <ZlnRODP_b8bhXOEE@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,71 +62,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZlnlQ/avUAuSum5R@arm.com>
+In-Reply-To: <ZlnRODP_b8bhXOEE@infradead.org>
 
-Hi Szabolcs,
-
-On Fri, May 31, 2024 at 03:57:07PM +0100, Szabolcs Nagy wrote:
-> The 05/03/2024 14:01, Joey Gouly wrote:
-> > Implement the PKEYS interface, using the Permission Overlay Extension.
-> ...
-> > +#ifdef CONFIG_ARCH_HAS_PKEYS
-> > +int arch_set_user_pkey_access(struct task_struct *tsk, int pkey, unsigned long init_val)
-> > +{
-> > +	u64 new_por = POE_RXW;
-> > +	u64 old_por;
-> > +	u64 pkey_shift;
-> > +
-> > +	if (!arch_pkeys_enabled())
-> > +		return -ENOSPC;
-> > +
-> > +	/*
-> > +	 * This code should only be called with valid 'pkey'
-> > +	 * values originating from in-kernel users.  Complain
-> > +	 * if a bad value is observed.
-> > +	 */
-> > +	if (WARN_ON_ONCE(pkey >= arch_max_pkey()))
-> > +		return -EINVAL;
-> > +
-> > +	/* Set the bits we need in POR:  */
-> > +	if (init_val & PKEY_DISABLE_ACCESS)
-> > +		new_por = POE_X;
-> > +	else if (init_val & PKEY_DISABLE_WRITE)
-> > +		new_por = POE_RX;
-> > +
+On Fri, May 31, 2024 at 06:31:36AM -0700, Christoph Hellwig wrote:
+> > +	write_back = newsize > ip->i_disk_size && oldsize != ip->i_disk_size;
 > 
-> given that the architecture allows r,w,x permissions to be
-> set independently, should we have a 'PKEY_DISABLE_EXEC' or
-> similar api flag?
+> Maybe need_writeback would be a better name for the variable?  Also no
+> need to initialize it to false at declaration time if it is
+> unconditionally set here.
+
+This variable captures whether or not we need to write dirty file tail
+data because we're extending the ondisk EOF, right?
+
+I don't really like long names like any good 1980s C programmer, but
+maybe we should name this something like "extending_ondisk_eof"?
+
+	if (newsize > ip->i_disk_size && oldsize != ip->i_disk_size)
+		extending_ondisk_eof = true;
+
+	...
+
+	if (did_zeroing || extending_ondisk_eof)
+		filemap_write_and_wait_range(...);
+
+Hm?
+
+> > +		/*
+> > +		 * Updating i_size after writing back to make sure the zeroed
+> > +		 * blocks could been written out, and drop all the page cache
+> > +		 * range that beyond blocksize aligned new EOF block.
+> > +		 *
+> > +		 * We've already locked out new page faults, so now we can
+> > +		 * safely remove pages from the page cache knowing they won't
+> > +		 * get refaulted until we drop the XFS_MMAP_EXCL lock after the
+
+And can we correct the comment here too?
+
+"...until we drop XFS_MMAPLOCK_EXCL after the extent manipulations..."
+
+--D
+
+> > +		 * extent manipulations are complete.
+> > +		 */
+> > +		i_size_write(inode, newsize);
+> > +		truncate_pagecache(inode, roundup_64(newsize, blocksize));
 > 
-> (on other targets it can be some invalid value that fails)
-
-I didn't think about the best way to do that yet. PowerPC has a PKEY_DISABLE_EXECUTE.
-
-We could either make that generic, and X86 has to error if it sees that bit, or
-we add a arch-specific PKEY_DISABLE_EXECUTE like PowerPC.
-
-A user can still set it by interacting with the register directly, but I guess
-we want something for the glibc interface..
-
-Dave, any thoughts here?
-
+> Any reason this open codes truncate_setsize()?
 > 
-> > +	/* Shift the bits in to the correct place in POR for pkey: */
-> > +	pkey_shift = pkey * POR_BITS_PER_PKEY;
-> > +	new_por <<= pkey_shift;
-> > +
-> > +	/* Get old POR and mask off any old bits in place: */
-> > +	old_por = read_sysreg_s(SYS_POR_EL0);
-> > +	old_por &= ~(POE_MASK << pkey_shift);
-> > +
-> > +	/* Write old part along with new part: */
-> > +	write_sysreg_s(old_por | new_por, SYS_POR_EL0);
-> > +
-> > +	return 0;
-> > +}
-> > +#endif
-
-Thanks,
-Joey
+> 
 
