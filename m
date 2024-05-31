@@ -1,138 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-20668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394578D6924
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 20:44:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E598D6973
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 21:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB631C23CE0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 18:44:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59CA9B2556D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 19:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F42B7E591;
-	Fri, 31 May 2024 18:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE72717C22E;
+	Fri, 31 May 2024 19:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Mlml4Tt3"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MS9rPDWx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8EE44C6C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 18:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEC9158D9C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 19:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181084; cv=none; b=A6ymbhsrCZMYe6s9PEupGupmUB+oyZDga/Y0zvM7Z2gRq19E1fjntyL0KZVquMlNxFQchIaxoIGhU8SIQn2IJQ3XliLBuEELJaN6m4aC7n7K+4sd7IEVe0/OtYsF7nZSJqM/G2awvIFlWDATK2yk4xTgVK0LJhGMQs1PmWzXEP8=
+	t=1717182654; cv=none; b=hLzll6H18ZdqEjl9bxQosJ8Q9M+eykxROPDOgzlsuf9SG73YtvSJiNxnHIBvz4u4wU0M9xBYrTg38mQdzjegizAm6Ww6QFKIeyFwGhJ5uVTkhn1upRuWhYFj+nkWIytjqmb6W0kJ5itxd94Z7CiBeJOi7thqDzN4Rkto9Sc1eHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181084; c=relaxed/simple;
-	bh=lClgfGGMd4oHf0pDEaMTvMEqOfx/HScpLazot9q0RTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BGvvU7TmBeS9dJ8XRyKQJEPbULeYs/1NS6oK37yVXfOQ8sU6altbvBkATWrhmGT+B/Ub98w4nyJhCTcBIVoP0VnXlg0/CXRVelFNF+0X5ZhtEP1Y6stkPzo1w2i3PC8WK9ZMRlq0S/tyql/mg+h6APkSLmHjVSQNgTCiMfoYE7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Mlml4Tt3; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b86cfcbcaso2473844e87.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 11:44:42 -0700 (PDT)
+	s=arc-20240116; t=1717182654; c=relaxed/simple;
+	bh=1dudp+Dca+UU1IewyMXGzTACJ0D9g1SIjy9XEflX+ig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D61mRjM7XVzYOWSRVtDeNq3OpY1z7v13MIHM0vp0Wm18/k/EH+1MYsK7Qyuged16bz0nWAWpJtjVLES1GyBsVuZqplZIPLT6/Y8MJETA5L3SHfFhp90zTCM3o0npesARBrXAQma6aRCan39cNlVuJfVQDYadrBCGmhTSTY4y2Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MS9rPDWx; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f8edbcded8so39608b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 12:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1717181080; x=1717785880; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bx6t4jazLUqv5H0bltVAWI7s0Qwv16yRPXPTraDkilo=;
-        b=Mlml4Tt3DxzfY2cpiAPf5clqKuPyGYAUFKMniyXoq/F8jG1TpP/HYwIEeg2hv9X6vW
-         W4VLT4iq9m/Z8FG+kSZc+9/ZjiYU64BR8X5tpWVLMYTkQuxOR1TqXRF0RBIzWsv0bmJ9
-         wxycBNO9BhyKSeLgBkctyVOUA4RJ9QdrPHqsQ=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717182651; x=1717787451; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nesPb3ikOdykWdzBTsuyXBWRTSA6l9jG6DEva+E2AsA=;
+        b=MS9rPDWxIqvEBJsQPHNcOvKc2kF/nf02yHACyI+CnGmz2ojoEcvpfU7vIgUDg1N168
+         THnwhhouvMhnXG3o0fa6DRJcHGaEM8elDz1qPdmqNrSDwTarktTPzSixGp5eMxn4Snsl
+         rSQIRlpRAnlJGnvv0YF3Jy6uTiQWseU1R6zvw+oQlRqWDVeAmqUh5T+HMMJf6yJ2MnOU
+         QClTB/xAMRsSK/gzAH8LtVMypgAUfoR2XIfZrL7ZpWOz8fPHiVxCPjIUDjjZSf31CLcb
+         olbvDkU2rumCK+JO3yWvfgvAI3OKBcyFxnLkRglT9xk21AvPOD5dw/hg6qYSiUVV1gat
+         AVrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717181080; x=1717785880;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bx6t4jazLUqv5H0bltVAWI7s0Qwv16yRPXPTraDkilo=;
-        b=r7zsJSXPaIkN8MADA69W63nNia5YBWDKg61AKxB4UtYuRjPxvpkXU0xW8CDgSqxuCg
-         BzgceVmuQYSRIF8muL1H85RXJZNPcwI59GmgCH16y5kEFiX9m6546yq3pCnDurw4dmEz
-         6ya0Cb2XHOt3xsCd/s9dbToTltODh7cw72kLtVsaDGwpnX3Zz4A6u5Wc0DPgZdRY5T29
-         lsp+3CBhjU/0EKgv7ARou4Ol66bsJ/sqDhu+mFEVPRAq7SUJ1/gglbbyXNVF2Vk/TvWt
-         1aRD2xaQSRIbAE1aoj9rA57PgF79jMd3U87J43JYQ7ohwGUDNhmDELPh09kbWbwrZf1C
-         2gIQ==
-X-Gm-Message-State: AOJu0Yz2JngU2DbJXU1wgTZEh4xji0CzQqjQBEOY6CkHOWoB/h5X93Fr
-	NN8J4BTdH5Z50ToMVVAVvleTZSAmty8Mx8hU6vOnPUWpEcFJUnIBmZ/d82EpVJMf4S3+uQDF6/W
-	uYeBR8A==
-X-Google-Smtp-Source: AGHT+IHWaZE4yAR2wkhE4Q8zregvWimmefgGrCScnWE/umLtWcXJ5o4fjVyZ5HPpQ67nSMghjFUQIg==
-X-Received: by 2002:a19:641c:0:b0:52b:8255:71d6 with SMTP id 2adb3069b0e04-52b896afe32mr2032418e87.59.1717181080161;
-        Fri, 31 May 2024 11:44:40 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b8bb3659dsm210799e87.227.2024.05.31.11.44.39
-        for <linux-fsdevel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1717182651; x=1717787451;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nesPb3ikOdykWdzBTsuyXBWRTSA6l9jG6DEva+E2AsA=;
+        b=bzem6eO4j+/ojKyX7mbvndJ+iXut6Ugd44LekT26cm5voaOh511t51XR1badhvvcSC
+         92mWTBlQRnClvWD1QuD3loREkLwxY3TaBPj6rt3mNnIFZ5GnHEEK+34tzlx9WFM3IAh5
+         E1I7IUzWWlq88gPMn/j/A/OMqSevTx7z7UzGjq3RrKmkcAKngxTa9zDGeVUPml0gPq4O
+         4G5jinftPdNa3wsrePGpXQP/Tw0MieoaCEAwr3E8Yh2b04Dfx/g5E48gxlrgTVRG51Mg
+         SVJyg2wIYCqpcHWEp5cEtqQRLR6kKvDrue7eqEgSMbt52M7e2HY8LpYDfvKW8Z+Ehc+h
+         FW0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUGUmO8J3grjjF9chM8teYj9ixMFgv0nPGEWiCPqm3A85bcvhbzKrAMAeYlOmj6IfpvhBD6m2BQShg6+Mz0sYwAdXqUJM1r5/FRm2KFEw==
+X-Gm-Message-State: AOJu0Yyu9xervJJ9+DkwLZUZWxJn5t5vwzYjpaSLPr4+zp82it2S67ZI
+	yb4rmTJdor9YcLyE43Qotz0cSYYbwTwnvoq09aw2g+DHIs/dZk3iviYaHg/IfqY=
+X-Google-Smtp-Source: AGHT+IHWFk+srywj1XgbKk4pALN2Vbw6fh0959m0ZBqz29FdQa3ULjNg0yP3f2lWosybEoMXx7h5JA==
+X-Received: by 2002:a05:6a00:6585:b0:701:bde7:c857 with SMTP id d2e1a72fcca58-702478c7471mr2802070b3a.3.1717182650720;
+        Fri, 31 May 2024 12:10:50 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702425d8a5fsm1705830b3a.76.2024.05.31.12.10.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 11:44:39 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b0d25b54eso3591394e87.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 11:44:39 -0700 (PDT)
-X-Received: by 2002:a05:6512:20c6:b0:521:92f6:3d34 with SMTP id
- 2adb3069b0e04-52b8954e8f1mr2091841e87.22.1717181079180; Fri, 31 May 2024
- 11:44:39 -0700 (PDT)
+        Fri, 31 May 2024 12:10:50 -0700 (PDT)
+Message-ID: <30513e0e-6af5-4b1a-9963-f6e1ae20a2ea@kernel.dk>
+Date: Fri, 31 May 2024 13:10:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531031802.GA1629371@ZenIV> <20240531163045.GA1916035@ZenIV>
-In-Reply-To: <20240531163045.GA1916035@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 31 May 2024 11:44:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjm3XN1rOWpOKp0=Jgce-bCUmeWvaHLmUiqsDgunUDzxw@mail.gmail.com>
-Message-ID: <CAHk-=wjm3XN1rOWpOKp0=Jgce-bCUmeWvaHLmUiqsDgunUDzxw@mail.gmail.com>
-Subject: Re: [RFC] struct fd situation
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 19/19] fuse: {uring} Optimize async sends
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "bernd.schubert@fastmail.fm" <bernd.schubert@fastmail.fm>
+Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-19-d149476b1d65@ddn.com>
+ <ee075116-5ed0-4ad7-9db2-048b14655d42@kernel.dk>
+ <870c28bd-1921-4e00-9898-1d93b031c465@ddn.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <870c28bd-1921-4e00-9898-1d93b031c465@ddn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 31 May 2024 at 09:30, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> That would be something along the lines of
+On 5/31/24 11:36 AM, Bernd Schubert wrote:
+> On 5/31/24 18:24, Jens Axboe wrote:
+>> On 5/29/24 12:00 PM, Bernd Schubert wrote:
+>>> This is to avoid using async completion tasks
+>>> (i.e. context switches) when not needed.
+>>>
+>>> Cc: io-uring@vger.kernel.org
+>>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>>
+>> This patch is very confusing, even after having pulled the other
+>> changes. In general, would be great if the io_uring list was CC'ed on
+> 
+> Hmm, let me try to explain. And yes, I definitely need to add these details 
+> to the commit message
+> 
+> Without the patch:
+> 
+> <sending a struct fuse_req> 
+> 
+> fuse_uring_queue_fuse_req
+>     fuse_uring_send_to_ring
+>         io_uring_cmd_complete_in_task
+>         
+> <async task runs>
+>     io_uring_cmd_done()
 
-Looks all sane to me.
+And this is a worthwhile optimization, you always want to complete it
+line if at all possible. But none of this logic or code belongs in fuse,
+it really should be provided by io_uring helpers.
 
-Putting error values in there worries me just a tiny bit, because they
-won't have the low bits clear, so error values will match the FDPUT_X
-bits, but your approach of using another type for it looks like a sane
-and clean model.
+I would just drop this patch for now and focus on the core
+functionality. Send out a version with that, and then we'll be happy to
+help this as performant as it can be. This is where the ask on "how to
+reproduce your numbers" comes from - with that, it's usually trivial to
+spot areas where things could be improved. And I strongly suspect that
+will involve providing you with the right API to use here, and perhaps
+refactoring a bit on the fuse side. Making up issue_flags is _really_
+not something a user should do.
 
-In fact, with the different types, I think you could make things
-cleaner by using _Generic(), and do things like
+> 1) (current == queue->server_task)
+> fuse_uring_cmd (IORING_OP_URING_CMD) received a completion for a 
+> previous fuse_req, after completion it fetched the next fuse_req and 
+> wants to send it - for 'current == queue->server_task' issue flags
+> got stored in struct fuse_ring_queue::uring_cmd_issue_flags
 
-   #define fd_empty(f) _Generic(f, \
-        struct fd: unlikely(!(f).word), \
-        struct fd_err: unlikely(IS_ERR((f).word))
+And queue->server_task is the owner of the ring? Then yes that is safe
+> 
+> 2) 'else if (current->io_uring)'
+> 
+> (actually documented in the code)
+> 
+> 2.1 This might be through IORING_OP_URING_CMD as well, but then server 
+> side uses multiple threads to access the same ring - not nice. We only
+> store issue_flags into the queue for 'current == queue->server_task', so
+> we do not know issue_flags - sending through task is needed.
 
-or something like that. Untested, written in the MUA, but I think it's
-a good way to avoid having to remember which kind you're working with.
+What's the path leading to you not having the issue_flags?
 
-The above obviously assumes that an 'fd_err' never contains NULL.
-Either it's the pointer to the fd (with whatever FDPUT_xyz bits) or
-it's an error value. I don't know if that was your plan.
+> 2.2 This might be an application request through the mount point, through
+> the io-uring interface. We do know issue flags either.
+> (That one was actually a surprise for me, when xfstests caught it.
+> Initially I had a condition to send without the extra task then lockdep
+> caught that.
 
-You can use similar tricks to then get the error value, ie
+In general, if you don't know the context (eg you don't have issue_flags
+passed in), you should probably assume the only way is to sanely proceed
+is to have it processed by the task itself.
 
-   #define fd_error(f) _Generic(f, \
-        struct fd: -EBADF, \
-        struct fd_err: PTR_ERR((f).word))
+> 
+> In both cases it has to use a tasks.
+> 
+> 
+> My question here is if 'current->io_uring' is reliable.
 
-and now you can write code like
+Yes that will be reliable in the sense that it tells you that the
+current task has (at least) one io_uring context setup. But it doesn't
+tell you anything beyond that, like if it's the owner of this request.
 
-        if (fd_empty(x))
-                return fd_error(x);
+> 3) everything else
+> 
+> 3.1) For async requests, interesting are cached reads and writes here. At a minimum
+> writes a holding a spin lock and that lock conflicts with the mutex io-uring is taking - 
+> we need a task as well
+> 
+> 3.2) sync - no lock being hold, it can send without the extra task.
 
-and it will automagically just DTRT, regardless of whether 'x' is a
-'struct fd' or a 'struct fd_err'.
+As mentioned, let's drop this patch 19 for now. Send out what you have
+with instructions on how to test it, and I'll give it a spin and see
+what we can do about this.
 
-The same model goes for 'fdput()' - don't make people have to use two
-names and pointlessly state the type.
+>> Outside of that, would be super useful to include a blurb on how you set
+>> things up for testing, and how you run the testing. That would really
+>> help in terms of being able to run and test it, and also to propose
+>> changes that might make a big difference.
+>>
+> 
+> Will do in the next version. 
+> You basically need my libfuse uring branch
+> (right now commit history is not cleaned up) and follow
+> instructions in <libfuse>/xfstests/README.md how to run xfstests.
+> Missing is a slight patch for that dir to set extra daemon parameters,
+> like direct-io (fuse' FOPEN_DIRECT_IO) and io-uring. Will add that libfuse
+> during the next days.
 
-The bad old days where people were convinced that "Hungarian notation"
-was a good thing were bad. Let's leave them behind completely.
+I'll leave the xfstests to you for now, but running some perf testing
+just to verify how it's being used would be useful and help improve it
+for sure.
 
-Worth it? Who knows.. But I like your type-based approach, and I think
-that _Generic() thing would fit very very with it.
+-- 
+Jens Axboe
 
-             Linus
 
