@@ -1,179 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-20609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1FE58D5F5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 12:16:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DE48D60CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 13:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18E60B2160E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 10:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5F0D1C23DB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 11:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7787015099D;
-	Fri, 31 May 2024 10:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A406F157A67;
+	Fri, 31 May 2024 11:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oWRW3qCV"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Zo5y3Tcr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBE31420A8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 10:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C310D8173C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 11:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150581; cv=none; b=uCdS5MAfJn7G1O42O1dJuXjhWPMj3YxHm3H7taW0SHdrsmJlpZ/GjdX83FiCeLx8xLTG7gd84U27g3wN1Pd+Wh1PpJ61KF5gaBXGUJgQA9FqCfoeVi1CrxXkphJzOov4yio+Q6o381HUb1fdSMFIRuzB8i/LyW/C3jb3JMbwg7A=
+	t=1717155471; cv=none; b=LqooFBMcWG0/VpuUpdZvnriGWklY83KUqWt/r5g9kQKGNRwBq2VEnCexF7gLOQbUxc1FVflKCWnoV9x7bdkUWYb1QLNBv6t/HzVMZJp8/T6/GLMH/1J8m9ySSp97GRSR4dIFHz1z/FWQv3kqbOJ5hrqjQ1ezjXGoeoIczcnvNL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150581; c=relaxed/simple;
-	bh=QHgyjjJaCiC23glQhIuoKAJ2DmNT6bQlQnJB0Ht2ZpQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=SoKiAsic97voeg8c5C+KpPB/h/QfG3RC8wgnrUqNyv/wyJZs3wX7R3UK7picmPOSz/ZnapRKs9WNB82L+edy1P8KenX42pJOBZk1KYkulUk1NIExruaL1ogNFziSv4oqdSJZKu+2AFOS3x4zchKtlqKARfBrDGeON8taqq7i6cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oWRW3qCV; arc=none smtp.client-ip=203.254.224.34
+	s=arc-20240116; t=1717155471; c=relaxed/simple;
+	bh=5iTMpsvzMyQ/7iNgBxDn85nSx55OLExRikQYm+HZuZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=Gz+S6RVYKtkw1YYIHmiaiHTcO2EQ8WJIt25TlG3u3peWcmf0C+70yY4o7Vc8mQVidFhasynGG8bpQvWRQq0zAsNdmZ/euzboKi1lr+094WayLY5KNiR01nO9DGnVDtl4nE/9J1pgS4Oq94HG9Lr/IhtyyY9T36vRth8wyuOyFfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Zo5y3Tcr; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240531101617epoutp046e50381a258825f8743f74c85a36a264~Ui1olJUNr1879718797epoutp04C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 10:16:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240531101617epoutp046e50381a258825f8743f74c85a36a264~Ui1olJUNr1879718797epoutp04C
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240531113747epoutp03713849ba5f6b2c4da08f42f0d00ffc98~Uj8ywEw-r2985329853epoutp03O
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 11:37:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240531113747epoutp03713849ba5f6b2c4da08f42f0d00ffc98~Uj8ywEw-r2985329853epoutp03O
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717150577;
-	bh=/KU+xOxNrt2ZnfYjFJ1+VO+CSsfLs3zgl8VpEFUWhc4=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=oWRW3qCV0QFNuHCCi+pkAhuHqUIH+LGMv2bP1VPZFwZcFswcsuk/eHwwumdovBrg0
-	 ppww107fNIvCHCkVks5OV9Mzq6WdcXMQZzYkcfTvJL8ibuHr1LduRNvJ+z/ZWY4YKm
-	 6QurtSXo6CltubY3RNZXCjT+859TgGPiZY8KBTQA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240531101616epcas1p3ae240bce1c93c1ce35fc32475543ce16~Ui1n_uCWD1793917939epcas1p3R;
-	Fri, 31 May 2024 10:16:16 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.226]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VrJtS1SbNz4x9Pw; Fri, 31 May
-	2024 10:16:16 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	70.A8.08602.073A9566; Fri, 31 May 2024 19:16:16 +0900 (KST)
+	s=mail20170921; t=1717155467;
+	bh=GuBJyqD/FJYmGRU68Nv2DmyeEsS9lS8noNHMcJZHInE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Zo5y3TcrmVBhdBVls+HHHYQ2JQckAPhmwsVEfAaUbEm79Dp/0WscpfUCE/jvqvuD7
+	 NM0DbkNPwSjJ5I94T9KDlwZ/GSKo6DL1lWsnzw5839PU3h7a1UGsSAnVOu9dw9UT+/
+	 F/KQTUjkgxxZ/TLQ4CvF3v7Xu1eT1YG528L0E6EI=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240531113746epcas5p17564f49cdac426bcf4937b284cf1d8b0~Uj8xqSF7O2277522775epcas5p15;
+	Fri, 31 May 2024 11:37:46 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VrLhS279dz4x9Pw; Fri, 31 May
+	2024 11:37:44 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F6.ED.10047.886B9566; Fri, 31 May 2024 20:37:44 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a~Ui1nRqTi81794517945epcas1p3R;
-	Fri, 31 May 2024 10:16:15 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240531102425epcas5p41ac34975c3253e5892c57c1adfd985c1~Ui8vlOYLr1813818138epcas5p4H;
+	Fri, 31 May 2024 10:24:25 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240531101615epsmtrp1b3b592a72c12134a5c6ab76b4ed8049a~Ui1nQ4tgJ0964109641epsmtrp1o;
-	Fri, 31 May 2024 10:16:15 +0000 (GMT)
-X-AuditID: b6c32a33-c9f8da800000219a-40-6659a3708afb
+	20240531102425epsmtrp10f664c9827b18effa1ea05ad5456a5eb~Ui8vkDLwa1379513795epsmtrp1H;
+	Fri, 31 May 2024 10:24:25 +0000 (GMT)
+X-AuditID: b6c32a49-1d5fa7000000273f-bb-6659b688a794
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3C.0E.07412.F63A9566; Fri, 31 May 2024 19:16:15 +0900 (KST)
-Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
-	[10.91.133.14]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240531101615epsmtip296f408870311044c8070f1ac3fc2da5e~Ui1nDfC7B0954209542epsmtip2d;
-	Fri, 31 May 2024 10:16:15 +0000 (GMT)
-From: Sungjong Seo <sj1557.seo@samsung.com>
-To: linkinjeon@kernel.org, sj1557.seo@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
-Subject: [PATCH] exfat: fix potential deadlock on __exfat_get_dentry_set
-Date: Fri, 31 May 2024 19:14:44 +0900
-Message-Id: <20240531101444.1874926-1-sj1557.seo@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4D.5F.08622.955A9566; Fri, 31 May 2024 19:24:25 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240531102421epsmtip279078faf44b3f9c2ecbcfc63278512ac~Ui8r7n6rH1383313833epsmtip2V;
+	Fri, 31 May 2024 10:24:21 +0000 (GMT)
+Date: Fri, 31 May 2024 10:17:21 +0000
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>, Mike
+	Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Keith
+	Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+	hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+Message-ID: <20240531101721.f3sclknsowyceszx@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmvm7B4sg0g6+vWC0mTlvKbLFn70kW
-	i8u75rBZbPl3hNViwcZHjBbHWtazOrB5bFrVyebRt2UVo8fMt2oenzfJBbBENTDaJBYlZ2SW
-	pSqk5iXnp2TmpdsqhYa46VooKWTkF5fYKkUbGhrpGRqY6xkZGemZGsVaGZkqKeQl5qbaKlXo
-	QvUqKRQlFwDV5lYWAw3ISdWDiusVp+alOGTll4IcrFecmFtcmpeul5yfq6RQlphTCjRCST/h
-	G2PGrq9XGQvO81W8/L+DvYFxJ1cXIyeHhICJROORNaxdjFwcQgI7GCW+zf/EDOF8YpSYdeQK
-	VOYbo8ST3s1MMC2PNz+ESuxllJjbsIoFwmlnkpj/8gwzSBWbgLbE8qZlYLaIgKHEjCO3wIqY
-	BSYxSlxtOAE2SljAQ2LOnHNsIDaLgKrEnnW7WEBsXgFbicXHrjJCrJOXmHnpOztEXFDi5Mwn
-	YDXMQPHmrbPBjpUQ2Mcu8efnKWaIBheJ9dc+sELYwhKvjm9hh7ClJF72t7FDNHQzShz/+I4F
-	IjGDUWJJhwOEbS/R3NoMdBEH0AZNifW79CGW8Um8+9oDNVNQ4vS1bmaQEgkBXomONiGIsIrE
-	9w87WWBWXflxFRpcHhJvmk6D/SIkECvR82EW2wRG+VlI3pmF5J1ZCIsXMDKvYhRLLSjOTU9N
-	NiwwRI7aTYzghKllvIPx8vx/eocYmTgYDzFKcDArifD+So9IE+JNSaysSi3Kjy8qzUktPsSY
-	DAzgicxSosn5wJSdVxJvaGZmaWFpZGJobGZoSFjYxNLAxMzIxMLY0thMSZz3zJWyVCGB9MSS
-	1OzU1ILUIpgtTBycUg1MDue3LFA3EfvXEeAb8Uar1v3+Vp5IHdltZydLlr2qFz8eVXNlR9Xz
-	o7tmLXy3UZczyatNd9FEp+2R/Mdcps37MDXl4Gf9M5YF6S3XXZbek3huv4R9KbO18uq1l8wF
-	0szlbL4Xzzt44h+zeNqXzkenLXKua/tvEHTseJubeKbodatJW91MiQ9nH6+5++1z7HSHZxER
-	fhM7snfWBhmZvM8/d37u059tz2xSa9elKagK/eJLfHWsUpBfNeRMadhetSXBbBIFMXfyHgeU
-	73l5pDrFcdHl51diazOW7UqXqQ5nM9t0MST/Qp731e6OPxqM8wQ46q49kkpe+cpb5PmqAMbd
-	F3/e0O725hHP2rBDTm+NEktxRqKhFnNRcSIADeEhAU8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrELMWRmVeSWpSXmKPExsWy7bCSvG7+4sg0g6bvGhYTpy1lttiz9ySL
-	xeVdc9gstvw7wmqxYOMjRotjLetZHdg8Nq3qZPPo27KK0WPmWzWPz5vkAliiuGxSUnMyy1KL
-	9O0SuDJ2fb3KWHCer+Ll/x3sDYw7uboYOTkkBEwkHm9+yApiCwnsZpTYepW/i5EDKC4lcXCf
-	JoQpLHH4cHEXIxdQRSuTxKrPT5lBytkEtCWWNy0Ds0UEjCUenWtmBSliFpjCKHH53RawmcIC
-	HhJz5pxjA7FZBFQl9qzbxQJi8wrYSiw+dpUR4gZ5iZmXvrNDxAUlTs58AlbDDBRv3jqbeQIj
-	3ywkqVlIUgsYmVYxSqYWFOem5yYbFhjmpZbrFSfmFpfmpesl5+duYgQHo5bGDsZ78//pHWJk
-	4mA8xCjBwawkwvsrPSJNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalF
-	MFkmDk6pBqa12oYt/83mffK8J71csP2/XOdt1TpmJ5PwkOuvz3f8EMkuKt0hPkVu2j6hPUzc
-	n3TK94u5ZWobGEvuz85mffDEqmadq2VP2Ow36S8t7zBtWZxaPLNfS5nx1tXt67afWv/jM4OO
-	/b87vnLvBFu/uvqlfxY+tEzdS1G+/MSGL7M6Zd5me523Y9sSckWtK5Gru8rt8rODZgynJhVv
-	M6h4pBveNH3C8/UzzISLj9++semNk9u6PgvnJ9vUPlhtVAi8UzxtWl7Val/RlDWcPkuun5b2
-	Fav3l2nXu/yrpEP0Sl7PgYmeXv/2rGb7cab8QyNDp7viz9KXn6taXBOMwouPvugQ6/lnf799
-	tt7iushZyUosxRmJhlrMRcWJAP0cIv21AgAA
-X-CMS-MailID: 20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a
+In-Reply-To: <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TeVATVxzHfbubzQaHdg12fKItTBhnOIZACqSPS+votMvgHwxYa2lHSGEh
+	FEgyCWhtZyw3CgoiAhJAkdIiR0GOUg6xyH05jOVoSYtSS7DIDVWLiDZhoeN/n/f9/n7v/Y55
+	FC6s55tTYYooVq2QRYhIE6K+3cba/mz9JyGOOfdIVNXXhaO4i+s4Kh9PJ9FM+zJA2YurOJps
+	TQZo7e4gjuq67gM08fMBVFhUQKCx1kYM3Sq6hKHS8k4M5eXEY6jz1RyJLrWNAqQf0WKoRWeH
+	ricVE+hWSy+BhprySXTtez0flXS/xFDG2REMNUzGAlQ5s0CgHt0eNLjezXt/LzM07M30FUGm
+	UTvOZwbvVxPM0N1opqbsHMnUFn/D/F2bC5jmsRiS+TYtk8dciJ8nmcbEBzxmSa8jmIXbIyST
+	VlcGmIHCDr6PmX+4h5yVBbNqS1YRpAwOU4R6irz9Ag4FuEgdJfYSV/SeyFIhi2Q9RYeP+Nh/
+	EBZhGJDI8qQsItog+cg0GpHDfg+1MjqKtZQrNVGeIlYVHKFyVok1skhNtCJUrGCj3CSOju+6
+	GAIDw+X6J4NAVWv25fp5HYgBt+kUIKAg7QwTs0p4KcCEEtLNANY8SyONhpBeBrDxhg9nPDVw
+	Wj9/KyO5s5rPGS0AZtW3ENxhBcDMP1M30gl6H7ysrzdEURRJ28H+V5RR3klbw6cTJRvxON1F
+	wtKSi8BomNGBcK4vg2dkU/oQ7OlOwTjeAXtzJwkjC2h3mNQ6s1ErpKcEcHa8guRKOgy/q6ni
+	cWwGH3fXbZZqDqfTkzb5FCy9fIPkkhMA1P6qBZxxACb2peNGxmk5/Lf1DsHpb8OsvkqM09+A
+	F9YmMU43hQ1Xt9gKVlQVbhaxG44+iyWNHUOagb9XWHBTiSGgrnqcvAje0b7WkPa15zh2g+cW
+	43gcW8D4H/NwreEqnN4DS15SHNrAqiaHQkCWgd2sShMZympcVBIFe+r/jQcpI2vAxgey9WoA
+	4xOL4jaAUaANQAoX7TR9Hno8RGgaLDv9FatWBqijI1hNG3AxLCsDN38rSGn4gYqoAImzq6Oz
+	VCp1dnWSSkS7TGcSC4KFdKgsig1nWRWr3srDKIF5DOZV4b/C3Ju1Lfto4s1fwgQmc+l2/Z7n
+	m3Jyd10rW5p37yjYvmD+9XRfxD7rvH5havNe+56JgdjF5jonPzJu2HdUuvrhVH5S4oNKadfn
+	KQIPicqrouDYi/m6HWM3Y4TS6Sqn3tbrHSeviLzKpw4+SQg4Q1ox+3m+mQ5JcxPBeeYvxMnb
+	+b26tF5qySqw7reclIHh4RXxPzVtD2NXjzl0PM62sUt9pPl4KrRn+Qu+t5AZLi3q+OnRied/
+	KK+4y090f+pXdOT00Z6QfjKz7GGXcnZb8x13t9aKhDMWshJqqGctO6b9oEpfuvqZvUdVU+9f
+	R4t/yLdAjduOi31HR/z9cwNXPG4OiQiNXCaxxdUa2X/Ru+CDyQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZdlhJXjdyaWSawcJJ6hbrTx1jtmia8JfZ
+	YvXdfjaL14c/MVpM+/CT2eLJgXZGi99nzzNbbDl2j9HiwX57iwWL5rJY3Dywk8liz6JJTBYr
+	Vx9lspg9vZnJ4uj/t2wWkw5dY7R4enUWk8XeW9oWC9uWsFjs2XuSxeLyrjlsFvOXPWW3WH78
+	H5PFxI6rTBY7njQyWqx7/Z7F4sQtaYvzf4+zOsh4XL7i7XFqkYTHzll32T3O39vI4nH5bKnH
+	plWdbB6bl9R7vNg8k9Fj980GNo/FfZNZPXqb37F57Gy9z+rx8ektFo/3+66yefRtWcXocWbB
+	EfYA4Sgum5TUnMyy1CJ9uwSujAOXVjIWHBGo2Hc7vIHxDW8XIyeHhICJRPvRjexdjFwcQgK7
+	GSXat3SyQSQkJZb9PcIMYQtLrPz3nB3EFhL4yCjR9iMaxGYRUJWY8nQbUJyDg01AW+L0fw6Q
+	sIiAhsS3B8tZQGYyC5xhk5jx8AQrSEJYIEHi7amJYDavgLPEieNdTBCLG1gkpvQ1sEMkBCVO
+	znzCAmIzC5hJzNv8kBlkAbOAtMTyfxwQYXmJ5q2zwW7jFLCWaDvwmnUCo+AsJN2zkHTPQuie
+	haR7ASPLKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4GSipbWDcc+qD3qHGJk4GA8x
+	SnAwK4nw/kqPSBPiTUmsrEotyo8vKs1JLT7EKM3BoiTO++11b4qQQHpiSWp2ampBahFMlomD
+	U6qBaevs3V/fc9jP8NZ+Pm1x0nszGb9p5geCufYsFCkW+zOhR/SJ1CLd14u0KgoWFgositVj
+	uiPg+Dtu8/NrpWxHb05cwGglmiKmo/kn7JTFhQ9v9K/pH41fw/RAULnmfWX0Fq6ZpxPk/i1V
+	2anPwBL2oNZrk9qWM0/410atcXh06Fb1/tS54Vd/212/HODt9NQm4d9U28W3/2QdsbiUvMJo
+	n0HK8SKdsENNv/yEzb5VeQkk7LfZ3nJ65ZRXWy6r3znB5NO+KkNaRUxZ91tj0XaJkL4l2lsf
+	G3XsLK/6yHFCkDfo8o4tkz9xvWOQl7T+lSByqFgn9u9Bxu4Dz61E9X8U+irv8LOtm/DtafSX
+	uccT1JRYijMSDbWYi4oTAfUGRciVAwAA
+X-CMS-MailID: 20240531102425epcas5p41ac34975c3253e5892c57c1adfd985c1
 X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-ArchiveUser: EV
+Content-Type: multipart/mixed;
+	boundary="----4kURd6qQA_jt7Hem8gQqXiu1-FVD8qSeML2_RvQot6TDP4ZY=_48084_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a
-References: <CGME20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a@epcas1p3.samsung.com>
+X-CMS-RootMailID: 20240520102842epcas5p4949334c2587a15b8adab2c913daa622f
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+	<CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+	<20240520102033.9361-3-nj.shetty@samsung.com>
+	<eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+	<20240529061736.rubnzwkkavgsgmie@nj.shetty@samsung.com>
+	<9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+	<a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+	<665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
+	<abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
 
-When accessing a file with more entries than ES_MAX_ENTRY_NUM, the bh-array
-is allocated in __exfat_get_entry_set. The problem is that the bh-array is
-allocated with GFP_KERNEL. It does not make sense. In the following cases,
-a deadlock for sbi->s_lock between the two processes may occur.
+------4kURd6qQA_jt7Hem8gQqXiu1-FVD8qSeML2_RvQot6TDP4ZY=_48084_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-       CPU0                CPU1
-       ----                ----
-  kswapd
-   balance_pgdat
-    lock(fs_reclaim)
-                      exfat_iterate
-                       lock(&sbi->s_lock)
-                       exfat_readdir
-                        exfat_get_uniname_from_ext_entry
-                         exfat_get_dentry_set
-                          __exfat_get_dentry_set
-                           kmalloc_array
-                            ...
-                            lock(fs_reclaim)
-    ...
-    evict
-     exfat_evict_inode
-      lock(&sbi->s_lock)
+On 30/05/24 10:11AM, Bart Van Assche wrote:
+>On 5/30/24 00:16, Nitesh Shetty wrote:
+>>+static inline bool blk_copy_offload_attempt_combine(struct request_queue *q,
+>>+                         struct bio *bio)
+>>+{
+>>+    struct blk_plug *plug = current->plug;
+>>+    struct request *rq;
+>>+
+>>+    if (!plug || rq_list_empty(plug->mq_list))
+>>+        return false;
+>>+
+>>+    rq_list_for_each(&plug->mq_list, rq) {
+>>+        if (rq->q == q) {
+>>+            if (!blk_copy_offload_combine(rq, bio))
+>>+                return true;
+>>+            break;
+>>+        }
+>>+
+>>+        /*
+>>+         * Only keep iterating plug list for combines if we have multiple
+>>+         * queues
+>>+         */
+>>+        if (!plug->multiple_queues)
+>>+            break;
+>>+    }
+>>+    return false;
+>>+}
+>
+>This new approach has the following two disadvantages:
+>* Without plug, REQ_OP_COPY_SRC and REQ_OP_COPY_DST are not combined. These two
+>  operation types are the only operation types for which not using a plug causes
+>  an I/O failure.
+>* A loop is required to combine the REQ_OP_COPY_SRC and REQ_OP_COPY_DST operations.
+>
+>Please switch to the approach Hannes suggested, namely bio chaining. Chaining
+>REQ_OP_COPY_SRC and REQ_OP_COPY_DST bios before these are submitted eliminates the
+>two disadvantages mentioned above.
+>
+Bart, Hannes,
 
-To fix this, let's allocate bh-array with GFP_NOFS.
+I see the following challenges with bio-chained approach.
+1. partitioned device:
+	We need to add the code which iterates over all bios and adjusts
+	the sectors offsets.
+2. dm/stacked device:
+	We need to make major changes in dm, such as allocating cloned
+	bios, IO splits, IO offset mappings. All of which need to
+	iterate over chained BIOs.
 
-Fixes: a3ff29a95fde ("exfat: support dynamic allocate bh for exfat_entry_set_cache")
-Cc: stable@vger.kernel.org # v6.2+
-Reported-by: syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/lkml/000000000000fef47e0618c0327f@google.com
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- fs/exfat/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Overall with chained BIOs we need to add a special handling only for copy
+to iterate over chained BIOs and do the same thing which is being done
+for single BIO at present.
+Or am I missing something here ?
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 84572e11cc05..7446bf09a04a 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -813,7 +813,7 @@ static int __exfat_get_dentry_set(struct exfat_entry_set_cache *es,
- 
- 	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
- 	if (num_bh > ARRAY_SIZE(es->__bh)) {
--		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
-+		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_NOFS);
- 		if (!es->bh) {
- 			brelse(bh);
- 			return -ENOMEM;
--- 
-2.25.1
+Thank You,
+Nitesh Shetty
 
+------4kURd6qQA_jt7Hem8gQqXiu1-FVD8qSeML2_RvQot6TDP4ZY=_48084_
+Content-Type: text/plain; charset="utf-8"
+
+
+------4kURd6qQA_jt7Hem8gQqXiu1-FVD8qSeML2_RvQot6TDP4ZY=_48084_--
 
