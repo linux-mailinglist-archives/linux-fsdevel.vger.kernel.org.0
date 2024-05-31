@@ -1,224 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-20636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A339A8D64A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:40:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F97E8D64FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 16:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B507282CBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:40:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2DBB23E2B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 14:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D59452F9E;
-	Fri, 31 May 2024 14:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B057074435;
+	Fri, 31 May 2024 14:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="gJhSWPMl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from hs01.dakr.org (hs01.dk-develop.de [173.249.23.66])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAEF41C69;
-	Fri, 31 May 2024 14:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.23.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7981058AB9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 14:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717166416; cv=none; b=Wp19KFH/WtNleM6m7mR6gOitjhbMiKGFNV7c52yeLcSQ7kgvkGWqSm3PrJIbMH21cZd6MQJ3NoEKVQS8DgX9xogOj62eLv0ogIRXi90cPhr7D3sUPOBxOjZhweDneiY46R8nNrrZ8RW/a/9m/iRUOAVt15uLmPBrwncm2dQwKOY=
+	t=1717167201; cv=none; b=aq9rJF5Dv4VsNrMBHThWu88tJNUA6k7S4dos2Uyw1BGpj1CY8Yd+ObQTpS4tNtTvf5DuY1dwplVElG2XwsXwTlR6scMDZ/j5z5EkJegKE0qtm3yUUJQVsEnqSnzfEkSxhInOwm5LMeJI+6JN4T2/5skUkkULlPX6UsRlFu2hEcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717166416; c=relaxed/simple;
-	bh=xlO1Mp3KBU+sq/6oeFxX6/VD7mrtgTn6P2Yuj2MlJiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZaWzj8KSWYQwkgpPSZX7nQ1U+DDCPqT8hllVg7G7+WAWYZerVqwOxPKKiPv7HWZIWak+wtakC7ZxP7FAXH4WHDGKl3ChRymUiniRlsDihrKDhwe5muBY5X/bCf1ryCjZnFQU/i3DgdNrgalrd9qh9d8b3V6chL3x1Zxgoka0BAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org; spf=pass smtp.mailfrom=dakr.org; arc=none smtp.client-ip=173.249.23.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dakr.org
-Message-ID: <38f11766-b601-410b-9025-1e6b4c2203e7@dakr.org>
-Date: Fri, 31 May 2024 16:34:00 +0200
+	s=arc-20240116; t=1717167201; c=relaxed/simple;
+	bh=zIxJj+eFNW131CghuD8tAVb+DXZz1K/r7747QzysLZ0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f/P+IJ/GnI0x9NkD95iDaOhxUGvi4hznX4bhnVpP5Y6jLKHX23YRPS7pZTbB5vFLQbyhP/yy32DcWizEX67w+NEJKBUTp5pSFz1PTS7xkxkACXhQO/Nj3PqLHlFO/t7eG2QebrV2efXcvMOYO1XDwBcNRN9gPCa5Q+/2luvmqaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=gJhSWPMl; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (unn-149-40-50-56.datapacket.com [149.40.50.56] (may be forged))
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44VEnwYM020082
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 10:50:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1717167002; bh=TVitHfGXx2wIQGCXtRSfpVuiPAJXkRLy5+/11kjTZi8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=gJhSWPMlva12midGaeg/PHU2neWOcKsKiFso7tYpYY6tMVpafdbk0znXMFEK9H1hU
+	 qdyBPtkEngiB7yqQ+IbNrHlkWYOWgTjcvQgJNO7MTOTZisvZdZSoDHJWY3lqeJaYZE
+	 U38u43F9VE4lFxJknYqgbIoTNE+P1A2Q4LVc12BHeDv1KKY88JN9DqWz4hzA6iWmx8
+	 y2TY1uFckzpWjIiew4C1qPlARFYwrj6ebMmhkk+fiFQEX7rpKDXel6j5rvPRdi9eDf
+	 HMJqjXMcGDUiuhpBoML4bUHQ6xIbM2FnKtOoPuHSbUzya2eBGa7gg01LX6ZZmBbqR2
+	 QX791qc6scs2g==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 257EA340A68; Fri, 31 May 2024 16:49:57 +0200 (CEST)
+Date: Fri, 31 May 2024 16:49:57 +0200
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, ksummit@lists.linux.dev
+Subject: Maintainers Summit 2024 Call for Topics
+Message-ID: <20240531144957.GA301668@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH v2 00/30] Rust abstractions for VFS
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Matthew Wilcox <willy@infradead.org>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Christian Brauner <brauner@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240514131711.379322-1-wedsonaf@gmail.com>
-Content-Language: en-US
-From: Danilo Krummrich <me@dakr.org>
-In-Reply-To: <20240514131711.379322-1-wedsonaf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Wedson,
+This year, the Maintainers Summit will be held in Vienna, Austria on
+Tuesday, September 17th, 2024, just before the Linux Plumber's Conference
+(September 18--20th).
 
-On 5/14/24 15:16, Wedson Almeida Filho wrote:
-> This series introduces Rust abstractions that allow read-only file systems to
-> be written in Rust.
-> 
-> There are three file systems implementations using these abstractions
-> abstractions: ext2, tarfs, and puzzlefs. The first two are part of this series.
-> 
-> Rust file system modules can be declared with the `module_fs` macro and are
-> required to implement the following functions (which are part of the
-> `FileSystem` trait):
-> 
->      fn fill_super(
->          sb: &mut SuperBlock<Self, sb::New>,
->          mapper: Option<inode::Mapper>,
->      ) -> Result<Self::Data>;
-> 
->      fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>>;
-> 
-> They can optionally implement the following:
-> 
->      fn read_xattr(
->          _dentry: &DEntry<Self>,
->          _inode: &INode<Self>,
->          _name: &CStr,
->          _outbuf: &mut [u8],
->      ) -> Result<usize>;
-> 
->      fn statfs(_dentry: &DEntry<Self>) -> Result<Stat>;
-> 
-> They may also choose the type of the data they can attach to superblocks and/or
-> inodes.
-> 
-> Lastly, file systems can implement inode, file, and address space operations
-> and attach them to inodes when they're created, similar to how C does it. They
-> can get a ro address space operations table from an implementation of iomap
-> operations, to be used with generic ro file operations.
-> 
-> A git tree is available here:
->      git://github.com/wedsonaf/linux.git vfs-v2
-> 
-> Web:
->      https://github.com/wedsonaf/linux/commits/vfs-v2
+As in previous years, the Maintainers Summit is invite-only, where the
+primary focus will be process issues around Linux Kernel Development.
+It will be limited to 30 invitees and a handful of sponsored
+attendees.
 
-This branch indicates that this patch series might have a few more dependencies
-that are not upstream yet, e.g. [1].
+Linus has generated a list of people for the program committee to
+consider.  People who suggest topics that should be discussed at the
+Maintainers Summit will also be added to the list for consideration.
+To make topic suggestions for the Maintainers Summit, please send
+e-mail to the ksummit@lists.linux.dev with a subject prefix of
+[MAINTAINERS SUMMIT].
 
-Do you intend to send them in a separate series (soon)? In case they were already
-submitted somewhere and I just failed to find them, please be so kind an provide
-me with a pointer.
+To get the most out of our topic discussions, folks proposing a topic
+should also suggest relevant people and desired outcomes.
 
-[1] https://github.com/wedsonaf/linux/commit/96ef0376887f4194ebad608f9943eb41108cf255
+For an examples of past Maintainers Summit topics, please see these
+LWN articles:
 
-- Danilo
+ * 2023 https://lwn.net/Articles/951847/
+ * 2022 https://lwn.net/Articles/908320/
+ * 2021 https://lwn.net/Articles/870415/
 
-> 
-> ---
-> 
-> Changes in v2:
-> 
-> - Rebased to latest rust-next tree
-> - Removed buffer heads
-> - Added iomap support
-> - Removed `_pin` field from `Registration` as it's not needed anymore
-> - Renamed sample filesystem to match the module's name
-> - Using typestate instead of a separate type for superblock/new-superblock
-> - Created separate submodules for superblocks, inodes, dentries, and files
-> - Split out operations from FileSystem to inode/file/address_space ops, similar to how C does it
-> - Removed usages of folio_set_error
-> - Removed UniqueFolio, for now reading blocks from devices via the pagecache
-> - Changed map() to return the entire folio if not in highmem
-> - Added support for unlocking the folio asynchronously
-> - Added `from_raw` to all new ref-counted types
-> - Added explicit types in calls to cast()
-> - Added typestate to folio
-> - Added support for implementing get_link
-> - Fixed data race when reading inode->i_state
-> - Added nofs scope support during allocation
-> - Link to v1: https://lore.kernel.org/rust-for-linux/20231018122518.128049-1-wedsonaf@gmail.com/
-> 
-> ---
-> 
-> Wedson Almeida Filho (30):
->    rust: fs: add registration/unregistration of file systems
->    rust: fs: introduce the `module_fs` macro
->    samples: rust: add initial ro file system sample
->    rust: fs: introduce `FileSystem::fill_super`
->    rust: fs: introduce `INode<T>`
->    rust: fs: introduce `DEntry<T>`
->    rust: fs: introduce `FileSystem::init_root`
->    rust: file: move `kernel::file` to `kernel::fs::file`
->    rust: fs: generalise `File` for different file systems
->    rust: fs: add empty file operations
->    rust: fs: introduce `file::Operations::read_dir`
->    rust: fs: introduce `file::Operations::seek`
->    rust: fs: introduce `file::Operations::read`
->    rust: fs: add empty inode operations
->    rust: fs: introduce `inode::Operations::lookup`
->    rust: folio: introduce basic support for folios
->    rust: fs: add empty address space operations
->    rust: fs: introduce `address_space::Operations::read_folio`
->    rust: fs: introduce `FileSystem::read_xattr`
->    rust: fs: introduce `FileSystem::statfs`
->    rust: fs: introduce more inode types
->    rust: fs: add per-superblock data
->    rust: fs: allow file systems backed by a block device
->    rust: fs: allow per-inode data
->    rust: fs: export file type from mode constants
->    rust: fs: allow populating i_lnk
->    rust: fs: add `iomap` module
->    rust: fs: add memalloc_nofs support
->    tarfs: introduce tar fs
->    WIP: fs: ext2: add rust ro ext2 implementation
-> 
->   fs/Kconfig                        |   2 +
->   fs/Makefile                       |   2 +
->   fs/rust-ext2/Kconfig              |  13 +
->   fs/rust-ext2/Makefile             |   8 +
->   fs/rust-ext2/defs.rs              | 173 +++++++
->   fs/rust-ext2/ext2.rs              | 551 +++++++++++++++++++++
->   fs/tarfs/Kconfig                  |  15 +
->   fs/tarfs/Makefile                 |   8 +
->   fs/tarfs/defs.rs                  |  80 +++
->   fs/tarfs/tar.rs                   | 394 +++++++++++++++
->   rust/bindings/bindings_helper.h   |  11 +
->   rust/helpers.c                    | 182 +++++++
->   rust/kernel/block.rs              |  10 +-
->   rust/kernel/error.rs              |   8 +-
->   rust/kernel/file.rs               | 251 ----------
->   rust/kernel/folio.rs              | 305 ++++++++++++
->   rust/kernel/fs.rs                 | 492 +++++++++++++++++++
->   rust/kernel/fs/address_space.rs   |  90 ++++
->   rust/kernel/fs/dentry.rs          | 136 ++++++
->   rust/kernel/fs/file.rs            | 607 +++++++++++++++++++++++
->   rust/kernel/fs/inode.rs           | 780 ++++++++++++++++++++++++++++++
->   rust/kernel/fs/iomap.rs           | 281 +++++++++++
->   rust/kernel/fs/sb.rs              | 194 ++++++++
->   rust/kernel/lib.rs                |   6 +-
->   rust/kernel/mem_cache.rs          |   2 -
->   rust/kernel/user.rs               |   1 -
->   samples/rust/Kconfig              |  10 +
->   samples/rust/Makefile             |   1 +
->   samples/rust/rust_rofs.rs         | 202 ++++++++
->   scripts/generate_rust_analyzer.py |   2 +-
->   30 files changed, 4555 insertions(+), 262 deletions(-)
->   create mode 100644 fs/rust-ext2/Kconfig
->   create mode 100644 fs/rust-ext2/Makefile
->   create mode 100644 fs/rust-ext2/defs.rs
->   create mode 100644 fs/rust-ext2/ext2.rs
->   create mode 100644 fs/tarfs/Kconfig
->   create mode 100644 fs/tarfs/Makefile
->   create mode 100644 fs/tarfs/defs.rs
->   create mode 100644 fs/tarfs/tar.rs
->   delete mode 100644 rust/kernel/file.rs
->   create mode 100644 rust/kernel/folio.rs
->   create mode 100644 rust/kernel/fs.rs
->   create mode 100644 rust/kernel/fs/address_space.rs
->   create mode 100644 rust/kernel/fs/dentry.rs
->   create mode 100644 rust/kernel/fs/file.rs
->   create mode 100644 rust/kernel/fs/inode.rs
->   create mode 100644 rust/kernel/fs/iomap.rs
->   create mode 100644 rust/kernel/fs/sb.rs
->   create mode 100644 samples/rust/rust_rofs.rs
-> 
-> 
-> base-commit: 183ea65d1fcd71039cf4d111a22d69c337bfd344
+The Kernel Summit is organized as a track which is run in parallel
+with the other tracks at the Linux Plumbers Conference (LPC), and is
+open to all registered attendees of LPC.  The goal of the Kernel
+Summit track will be to provide a forum to discuss specific technical
+issues that would be easier to resolve in person than over e-mail.
+The program committee will also consider "information sharing" topics
+if they are clearly of interest to the wider development community
+(i.e., advanced training in topics that would be useful to kernel
+developers).
+
+To suggest a topic for the Kernel Summit, please do two things. by
+June 16th, 2024.  First, please tag your e-mail with [TECH TOPIC].  As
+before, please use a separate e-mail for each topic, and send the
+topic suggestions to the ksummit discussion list.
+
+Secondly, please create a topic at the Linux Plumbers Conference
+proposal submission site and target it to the Kernel Summit track:
+
+	https://lpc.events/event/18/abstracts/
+
+Please do both steps.  I'll try to notice if someone forgets one or
+the other, but your chances of making sure your proposal gets the
+necessary attention and consideration are maximized by submitting both
+to the mailing list and the web site.
+
+
+If you were not subscribed on to the kernel mailing list from
+last year (or if you had removed yourself after the kernel summit),
+you can subscribe by sending an e-mail to the address:
+
+   ksummit+subscribe@lists.linux.dev
+
+The program committee this year is composed of the following people:
+
+Christian Brauner
+Jon Corbet
+Greg KH
+Sasha Levin
+Ted Ts'o
+Rafael J. Wysocki
+
 
