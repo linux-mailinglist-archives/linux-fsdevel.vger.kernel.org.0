@@ -1,61 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-20602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB0A8D59A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 06:49:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C708D5A61
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 08:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8731C22B78
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 04:49:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73948B22703
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 06:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE89478C88;
-	Fri, 31 May 2024 04:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQyewlPk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094E87D401;
+	Fri, 31 May 2024 06:14:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C69F1C6A7;
-	Fri, 31 May 2024 04:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F06633CA;
+	Fri, 31 May 2024 06:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717130934; cv=none; b=iGhcyj60+3BH2HLo7WUSw3mQmPKIxnsQVzL6aHZdDw+xEGQ9fJYVhIDcX76qftHSbTP+XJuzcsbYAXOhDBntFWaVKZxJ5aB/0XcBuNQaNmEr3EmTvqbGDgHOTr9ZWiMFnNmY/i/2bLGedawN/cx9aIoYEMtiY1kMvqd8Wd9UdOw=
+	t=1717136088; cv=none; b=MujxNVBluxk1lcHLF0DAtY9bqRP9QuTQXNq4xKJ6ahiKkAUqm0iM093a9H3yJl7s2dkzdoHjhN0pAdipVSQc0I3I7bdenkTRWXgKy+y17dnwfD9K/HWmzI8es+R3LmtMrEEvJ/FI01sUjMJwlAHWjFWsKkgohl0AYVmxvCdMyYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717130934; c=relaxed/simple;
-	bh=rwZVOoPGbQlEDRXpL/1iSA1Qlmy2Y3mYxOuSyODH8DM=;
+	s=arc-20240116; t=1717136088; c=relaxed/simple;
+	bh=9sT3MQVbINa2QkpjT76cLIiEX5eklfCgeONx5HJU7Kc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LioG8EfHFgb/95hJRoScLp9RV3TjoNcb4MxIPJ82v3g4qumCT90ffvNnBD7XrZE40wn2STAltF7Rh5W9MKnupsQbGToQZlbfQrqOoozdDEnDIl2RsPxfpH2YmpstOE7qBXie13XfB45w+xq1UGIWTSCRxHK5XEOckpE0Z6UTnBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQyewlPk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4820CC116B1;
-	Fri, 31 May 2024 04:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717130933;
-	bh=rwZVOoPGbQlEDRXpL/1iSA1Qlmy2Y3mYxOuSyODH8DM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TQyewlPkyzvr81BeLKj47j+oHAqkafhoB/DIsCyjteH/CtWXrQVDA48PvKdxBmfee
-	 zVVS1mq2JRFLY/VqjYaHMzIM2EHhSCXNXFBZbI8I2QsYuIgrC5df9DV7TAbQSPYVTr
-	 1JBb6aIJPLQ0xOYth6tTT18KncAR+xuNRLJuQ4UHFvZt8VsgyKsMjqvPFNhyKlsl92
-	 bOwYAeQHqzAWUdtm8uCrsujcNo5y9tDP2xRew8aIvsSXyHTrtML0VdEBSzV+nsppvr
-	 JjG6SXii9vIY3wlq5gEHudVMg4tV7gJO+EEZIDKrBencsaHSr+SOAa4GMSNwu0jiO/
-	 8bIa0hL5yG7ng==
-Date: Thu, 30 May 2024 21:48:51 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
-	adilger.kernel@dilger.ca, tytso@mit.edu, krisman@suse.de,
-	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-	kernel@collabora.com,
-	Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v17 3/7] libfs: Introduce case-insensitive string
- comparison helper
-Message-ID: <20240531044851.GE6505@sol.localdomain>
-References: <20240529082634.141286-1-eugen.hristev@collabora.com>
- <20240529082634.141286-4-eugen.hristev@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKf0U3+Baffc9m0f6nEHRadXWnBm59XsqX9PXYQ97TjNZtyx4/hLpY76AGJFVOyGDzVue2uBpck83qn0uR4v+2IqY5Y8Rl/YEwOwvdGmOtIF5UTTfqtYXrW5JUmKE4oDU7jHS1FMUZlN0dRtM+z9bExCN8X1/Z8jM31Sdh7JiNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 6D3D768BFE; Fri, 31 May 2024 08:14:43 +0200 (CEST)
+Date: Fri, 31 May 2024 08:14:43 +0200
+From: "hch@lst.de" <hch@lst.de>
+To: Trond Myklebust <trondmy@hammerspace.com>
+Cc: "hch@lst.de" <hch@lst.de>, "anna@kernel.org" <anna@kernel.org>,
+	"willy@infradead.org" <willy@infradead.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: support large folios for NFS
+Message-ID: <20240531061443.GA18075@lst.de>
+References: <20240527163616.1135968-1-hch@lst.de> <777517bda109f0e4a37fdd8a2d4d03479dfbceaf.camel@hammerspace.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,21 +50,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529082634.141286-4-eugen.hristev@collabora.com>
+In-Reply-To: <777517bda109f0e4a37fdd8a2d4d03479dfbceaf.camel@hammerspace.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, May 29, 2024 at 11:26:30AM +0300, Eugen Hristev via Linux-f2fs-devel wrote:
-> +	/*
-> +	 * Attempt a case-sensitive match first. It is cheaper and
-> +	 * should cover most lookups, including all the sane
-> +	 * applications that expect a case-sensitive filesystem.
-> +	 */
-> +
-> +	if (dirent.len == (folded_name->name ? folded_name->len : name->len) &&
-> +	    !memcmp(name->name, dirent.name, dirent.len))
-> +		goto out;
+On Wed, May 29, 2024 at 09:59:44PM +0000, Trond Myklebust wrote:
+> Which tree did you intend to merge this through? Willy's or Anna and
+> mine? I'm OK either way. I just want to make sure we're on the same
+> page.
 
-Shouldn't it be just 'name->len' instead of
-'(folded_name->name ? folded_name->len : name->len)'?
+I'm perfectly fine either way too.  If willy wants to get any other
+work for generic_perform_write in as per his RFC patches the pagecache
+tree might be a better place, if not maybe the nfs tree.
 
-- Eric
 
