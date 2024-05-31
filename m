@@ -1,75 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-20649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F7E8D6600
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 17:44:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2B58D6609
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 17:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7601F23FDC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:44:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B959B24A5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2024 15:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256A1155C8B;
-	Fri, 31 May 2024 15:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC42155CA1;
+	Fri, 31 May 2024 15:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G/6rSHcE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JetiMsk2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C16CDA3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 15:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E157A81725
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2024 15:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717170287; cv=none; b=Uq2jS2eTIgu41BQcsYXAdZnF9vrIniOlzadq4wKWkNLJC7VtD2hYO37yPVR3EN4huMQq2cYL+dECfPri+TvDFYVXKZUD86HnV+Oqt4kEmxxfguQRKkrT5lOYHwkQ+9eFDbyUhbXwKmq1OTvf2DDnBl7Mlg6YbcGENlEi1BwmWCI=
+	t=1717170446; cv=none; b=Djyw/3p+2Fe5pFdBBuqYBzJ/hFXccWjdon8WjIRa+zDC/HsRjQ/Ez+amArEyrVCORNFVvSkLJeWYMf9bG0aOup9C4KojLtZGsYZnbbxOwDxyK+hGMUVDszFLCS8GpWgk1JDk9gp1nIUAZ+C8M3PxitaNk8mUhHoPV3INtK8sMA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717170287; c=relaxed/simple;
-	bh=IXRTBMJGT+iSuCCQAkiOZnTweB6qbKtOWyUhz+MPsEA=;
+	s=arc-20240116; t=1717170446; c=relaxed/simple;
+	bh=hWFZ/V332u6k3fNB59cuO4HATknVnL+ShwJd8fzVto0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKglEjptN6yp32+mEhM1nPtOtsQkm6hC0xBVamnLsXl2YrQil88iHU72cq0s24FRr34x+aeaZngWrcwvggbP2wPG0Bv3wIfKZGN0d89awo6FlG0hlCwI57X8DVl2n7bVW+Ov9ZZQmSys45mI15JJe1kOL0FzkMe/ymzvGYdYHXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G/6rSHcE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717170285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xxl866ZDHDKQJI6Eanti9jZI/91ugmixsdkqx9T3qKc=;
-	b=G/6rSHcEQQRjYd/f7VUvkl1dTb7USqBpPaG7wufFHAJVzC+rw3jSEcSJA/2BbviYMvrYhs
-	7XO33H7DF//MgiEjonXzo+4gBdfn2x2EwwknOH7Q1MNDPNFISQNC0BMLvtRLl3hoYL/fdZ
-	Q3PsP9hUex9rrDc2rcvSe++v3bfDjbQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-53-0_-x3j11OjGLwyrj4RtVfA-1; Fri, 31 May 2024 11:44:40 -0400
-X-MC-Unique: 0_-x3j11OjGLwyrj4RtVfA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E8060101A52C;
-	Fri, 31 May 2024 15:44:39 +0000 (UTC)
-Received: from bfoster (unknown [10.22.8.96])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 6413D105480A;
-	Fri, 31 May 2024 15:44:39 +0000 (UTC)
-Date: Fri, 31 May 2024 11:44:57 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
-Message-ID: <ZlnweWTV4Y5STK-q@bfoster>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
- <ZlnMfSJcm5k6Dg_e@infradead.org>
- <20240531140358.GF52987@frogsfrogsfrogs>
- <ZlnZMiBJ6Fapor5G@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoW2lem6CsdPPotlFvm1hID5S/8Xb2benSUIRUmJsJHTGTac6AwYKiRtQl0FEcsrrK/FZD7LQT6nKyRwztciJZXohW3IRWGAtSCF8Wt+Y8vcHWHxwXAv9i7NbjlszsKjvluvBB2pfurVbSxKK1bulPQsKPX6R5Mq1zrk9K0KAvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JetiMsk2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KVfH790qGwx5nczioSeEaOxkLjtb03deFnL1/0VWPxs=; b=JetiMsk2M0dp0zV5eVZBjRfiol
+	S5STb7JCAmhxx8E/B/FEnCuMJ1ycvfeDmzs8hi485v8ZEFS7mMvvmTrzHQP9TqueL8TLnKL8AqpS2
+	KSu8qRRIn9kXnxLYyoEDFGOGOotoI3DPhm9k01JiDZvnUfSV/vms+X6O2brDfTTROQ/2NEeUt2rjr
+	DqnRQMxPXqq0Qir4xEy9yPNi7+0sT4dhlgF7RdeF3eSxH4ZUiTrrbxhpTWPF/xLDUaJSdecfGZZFc
+	r1+3aGIWX0XKuPXPUXELjtYroUsaAK3cHf6RbuBHVhC9lnWmEEH7HNLLvyGhpmJ7xpnuu/aB9Fdjp
+	bazz8y2w==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD4TQ-0000000Bpwf-2oXI;
+	Fri, 31 May 2024 15:47:20 +0000
+Date: Fri, 31 May 2024 16:47:20 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, david@fromorbit.com,
+	hch@lst.de, Mimi Zohar <zohar@linux.ibm.com>
+Subject: Re: [PATCH][RFC] fs: add levels to inode write access
+Message-ID: <ZlnxCJ-14kVXxyV9@casper.infradead.org>
+References: <72fc22ebeaf50fabf9d14f90f6f694f88b5fc359.1717015144.git.josef@toxicpanda.com>
+ <20240530-atheismus-festland-c11c1d3b7671@brauner>
+ <CAHk-=wg_rw5jNAQ3HUH8FeMvRDFKRGGiyKJ-QCZF7d+EdNenfQ@mail.gmail.com>
+ <20240531-ausdiskutiert-wortgefecht-f90dca685f8c@brauner>
+ <20240531-beheben-panzerglas-5ba2472a3330@brauner>
+ <CAOQ4uxhCkK4H32Y8KQTrg0W3y4wpiiDBAfOs4TPLkRprKgKK3A@mail.gmail.com>
+ <20240531-weltoffen-drohnen-413f15b646cb@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,37 +69,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZlnZMiBJ6Fapor5G@infradead.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+In-Reply-To: <20240531-weltoffen-drohnen-413f15b646cb@brauner>
 
-On Fri, May 31, 2024 at 07:05:38AM -0700, Christoph Hellwig wrote:
-> On Fri, May 31, 2024 at 07:03:58AM -0700, Darrick J. Wong wrote:
-> > > +			/*
-> > > +			 * XXX: It would be nice if we could get the offset of
-> > > +			 * the next entry in the pagecache so that we don't have
-> > > +			 * to iterate one page at a time here.
-> > > +			 */
-> > > +			offset = offset_in_page(pos);
-> > > +			if (bytes > PAGE_SIZE - offset)
-> > > +				bytes = PAGE_SIZE - offset;
-> > 
-> > Why is it PAGE_SIZE here and not folio_size() like below?
-> > 
-> > (I know you're just copying the existing code; I'm merely wondering if
-> > this is some minor bug.)
+On Fri, May 31, 2024 at 04:50:16PM +0200, Christian Brauner wrote:
+> So then I propose we just make the deny write stuff during exec
+> conditional on IMA being active. At the end it's small- vs chicken pox.
 > 
-> See the comment just above :)
-> 
-> 
+> (I figure it won't be enough for IMA to read the executable after it has
+> been mapped MS_PRIVATE?)
 
-FWIW, something like the following is pretty slow with the current
-implementation on a quick test:
+do you mean MAP_PRIVATE?
 
-  xfs_io -fc "falloc -k 0 1t" -c "pwrite 1000g 4k" <file>
-
-... so I'd think you'd want some kind of data seek or something to more
-efficiently process the range.
-
-Brian
-
+If so, you have a misapprehension.  We can change the contents of the
+pagecache after MAP_PRIVATE and that will not cause COW.  COW only
+occurs if someone writes through a MAP_PRIVATE.
 
