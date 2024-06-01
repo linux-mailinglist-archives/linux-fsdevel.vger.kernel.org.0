@@ -1,119 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-20707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB0E8D7056
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 15:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B45398D7067
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 16:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4547CB21E07
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 13:59:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35513B21C93
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 14:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E3215216A;
-	Sat,  1 Jun 2024 13:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6F615218F;
+	Sat,  1 Jun 2024 14:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHU91Krr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rrdpjmcn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8680D14267;
-	Sat,  1 Jun 2024 13:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E426E14F9D4;
+	Sat,  1 Jun 2024 14:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717250377; cv=none; b=q0WmuiWLzAmAeGJCQMHxO4XjMH1LPORCAOomM4LkSAV7CJAQ05sooq6IIBmEREFnGdLXvZg0U2W2LRyp5Y20YePwyKt6VtcolOZRor8rp0KqVWmQm8wV4K3STAajSvH+v6wkZ9kmby580xIzVfl2CqWKxb9aZc9EVMe439h1Rpk=
+	t=1717250973; cv=none; b=eN2UzAchL7PUlzzVWJHcKu9rAIMMzre1dR8Sp8PgSl5wA0gkHFrGSIqJKJ/kva1tApj5wpszVWMkG/3DHa+IwItr/XyNX5E8rXkKDOg6fPHWvEIEnEKY6JUE/Nsg6vI4btqy/jK8J/VV7PDe9XSFDFmUnHu1TFPa1hSL41FJuSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717250377; c=relaxed/simple;
-	bh=2n194l4N524yZXAcuX+GKrEjUkd6WzRDbNokvT1uDzQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=io+H3Shl4C4ideyLFAUSiQY9/gEi6AaAOKbolF0kPgRRKXb9E6wbVmNY2A1xHcmvBVARWLV9/m3mR2visayDkDFMrp234En53/juBsgDSxdOGJuTclpx2ZtUahuWEC5/6e/9RdQT6IaFrL83BBywEPIKZvyOZ/yutLgwMsdYUdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHU91Krr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78CAAC116B1;
-	Sat,  1 Jun 2024 13:59:36 +0000 (UTC)
+	s=arc-20240116; t=1717250973; c=relaxed/simple;
+	bh=CH98rChsYVgD9QB6NwKsJnFDWE+xfbmZZktISZ08DXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=omh9jPUboXH0n4yvR+52asvkqzuILT6bzjYDF106f+aocbJ0hGtxMdTuNTRY9UPMugINhIe1kZ3Tx0Nmo5kvf8tlM3IbjnPz5CvvBT/jdeLBUA9NUnsutrUCL3sdc52mtWHi+zNgmvwuYHovgFl0iIAMpH9WqGAjG86fjXmLot0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rrdpjmcn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C70C116B1;
+	Sat,  1 Jun 2024 14:09:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717250377;
-	bh=2n194l4N524yZXAcuX+GKrEjUkd6WzRDbNokvT1uDzQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fHU91KrrdhBX/PEG3l1SL7O0rnx7It5YZheepYfxEXR/DA3J5RHtdF6FSRjO+i2dV
-	 I/4yIlC2lAeE+2CZXaCuC2N9q3sTVKtN2N8NlrCnQHOqiftJ15UyEMISrjWMXHdQCu
-	 HC+rdG6oGiIzBHxZQXCWojeG8wF21aftPj1Ttl1lcaSiftYmyNP0cZNYicxlzFWhGL
-	 jLYGfz8Z7q1/4WD21eHRYV08orK8S+GKbuPCyvaX8OJWEeR5CyqzvHWYmPWoyFUwVY
-	 TLmPD2i7ijiVue6Lt4UkBAisrSvkcUTEHnMEmzzVSL3A26C1lBhmGNFPiZGu1JYH1u
-	 kC2lhPsXXLuXw==
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: chandanbabu@kernel.org,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org
-Subject: [GIT PULL] xfs: bug fixes for 6.10
-Date: Sat, 01 Jun 2024 19:25:29 +0530
-Message-ID: <87cyp0wypl.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=k20201202; t=1717250972;
+	bh=CH98rChsYVgD9QB6NwKsJnFDWE+xfbmZZktISZ08DXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RrdpjmcnkV2/UVGdrhtrRDAKS5XoJLVSB+XD6Rkp5SL+xy20olx0fADE185+Lqupp
+	 AcpZHOcxp0KpS8ZwwA7ySOiu8hnKeEfwGYKHeUtdy+3ZOMx81Lh0O9haS9W+oydxab
+	 eKXCgfIuDqcsWS4VJ3T8MDyfWdhq5zLvgQS02kkCXZUU4TVH8sR61lGGztvwhXr1qn
+	 t1OSYFQ3RkJoSEYM28oQexlnnUv5jmiiXf6uAq8vzN1XU9y/o35YfftTAeQ2vyMCAh
+	 7UjqsCnZE2M1OhRPXqq+obaxXzrdDbRKQseF2uRPHZctARLMSfLdaIFwzo8BpI9Wnn
+	 i5KmZkeZZl4iw==
+Date: Sat, 1 Jun 2024 07:09:32 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs updates fro 6.10-rc1
+Message-ID: <202406010706.E3A0E963FE@keescook>
+References: <zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
+ <202405191921.C218169@keescook>
+ <2uuhtn5rnrfqvwx7krec6lc57gptqearrwwbtbpedvlbor7ziw@zgbzssfacdbe>
+ <a1aa10f9d97b2d80048a26f518df2a4b90c90620.camel@HansenPartnership.com>
+ <ZlsHCzAPzp6XwTqw@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlsHCzAPzp6XwTqw@finisterre.sirena.org.uk>
 
-Hi Linus,
+On Sat, Jun 01, 2024 at 12:33:31PM +0100, Mark Brown wrote:
+> On Mon, May 20, 2024 at 12:10:31PM -0400, James Bottomley wrote:
+> > On Sun, 2024-05-19 at 23:52 -0400, Kent Overstreet wrote:
+> 
+> > > I also do (try to) post patches to the list that are doing something
+> > > interesting and worth discussion; the vast majority this cycle has
+> > > been boring syzbot crap...
+> 
+> > you still don't say what problem not posting most patches solves?  You
+> > imply it would slow you down, but getting git-send-email to post to a
+> > mailing list can actually be automated through a pre-push commit hook
+> > with no slowdown in the awesome rate at which you apply patches to your
+> > own tree.
+> 
+> > Linux kernel process exists because it's been found to work over time.
+> > That's not to say it can't be changed, but it usually requires at least
+> > some stab at a reason before that happens.
+> 
+> Even if no meaningful review ever happens on the actual posts there's
+> still utility in having the patches on a list and findable in lore,
+> since everything is normally on the list people end up with workflows
+> that assume that they'll be able to find things there.  For example it's
+> common for test people who identify which patch introduces an issue to
+> grab the patch from lore in order to review any discussion of the patch,
+> then report by replying to the patch to help with context for their
+> report and get some help with figuring out a CC list.  Posting costs
+> very little and makes people's lives easier.
 
-Please pull this branch which contains XFS bug fixes for 6.10-rc2. A brief
-summary of the bug fixes is provided below.
+Exactly. This is the standard workflow that everyone depends on.
 
-I did a test-merge with the main upstream branch as of a few minutes ago and
-didn't see any conflicts.  Please let me know if you encounter any problems.
+So, for example, for my -next trees, I only ever add patches to them via
+"b4 am lore-url-here...".
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+If I've got patches to add to -next from some devel tree, I don't
+cherry-pick them to my -next tree: I send them to lore, and then pull
+them back down.
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+But the point is: send your stuff to lore. :)
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.10-fixes-1
-
-for you to fetch changes up to b0c6bcd58d44b1b843d1b7218db5a1efe917d27e:
-
-  xfs: Add cond_resched to block unmap range and reflink remap path (2024-05-27 20:50:35 +0530)
-
-----------------------------------------------------------------
-Bug fixes for 6.10-rc2:
-
- * Fix a livelock by dropping an xfarray sortinfo folio when an error is
-   encountered.
- * During extended attribute operations, Initialize transaction reservation
-   computation based on attribute operation code.
- * Relax symbolic link's ondisk verification code to allow symbolic links
-   with short remote targets.
- * Prevent soft lockups when unmapping file ranges and also during remapping
-   blocks during a reflink operation.
- * Fix compilation warnings when XFS is built with W=1 option.
-
-Signed-off-by: Chandan Babu R <chandanbabu@kernel.org>
-
-----------------------------------------------------------------
-Darrick J. Wong (4):
-      xfs: drop xfarray sortinfo folio on error
-      xfs: fix xfs_init_attr_trans not handling explicit operation codes
-      xfs: allow symlinks with short remote targets
-      xfs: don't open-code u64_to_user_ptr
-
-John Garry (2):
-      xfs: Clear W=1 warning in xfs_iwalk_run_callbacks()
-      xfs: Stop using __maybe_unused in xfs_alloc.c
-
-Ritesh Harjani (IBM) (1):
-      xfs: Add cond_resched to block unmap range and reflink remap path
-
- fs/xfs/libxfs/xfs_alloc.c     |  6 ++----
- fs/xfs/libxfs/xfs_attr.c      | 38 ++++++++++++++++++--------------------
- fs/xfs/libxfs/xfs_attr.h      |  3 +--
- fs/xfs/libxfs/xfs_bmap.c      |  1 +
- fs/xfs/libxfs/xfs_inode_buf.c | 28 ++++++++++++++++++++++++----
- fs/xfs/scrub/scrub.c          |  2 +-
- fs/xfs/scrub/xfarray.c        |  9 ++++++---
- fs/xfs/xfs_attr_item.c        | 17 +++++++++++++++--
- fs/xfs/xfs_handle.c           |  7 +------
- fs/xfs/xfs_iwalk.c            |  5 ++---
- fs/xfs/xfs_reflink.c          |  1 +
- 11 files changed, 72 insertions(+), 45 deletions(-)
+-- 
+Kees Cook
 
