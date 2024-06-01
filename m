@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-20690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975D78D6DCC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 05:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1338D6DCA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 05:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57579285B2B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 03:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF5631C21D09
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 03:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1600E37143;
-	Sat,  1 Jun 2024 03:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2067EF;
+	Sat,  1 Jun 2024 03:42:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2657101E2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7FB101CA;
 	Sat,  1 Jun 2024 03:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717213326; cv=none; b=pSmR9YXssL7zfXpHhL4prt4KoSW+6YhZ5n4sG2/QRK8MGndFcof5f5qb3pOUtgBVJqq1+EllI15LOLr36qOROgsmWBl6/6RagqTSKCFbJQLzi5Nr/i/R19FXgj2/a62b4Pfa7VHW7bX1Wih+FgI1t6BWxEO7DKrSTgattAb/380=
+	t=1717213326; cv=none; b=CPSMZY9Vjul8bTobuYYe6B8KMH91hiUArpTZHyvXG1yvEswXPR4YAuncEZFDMrTrGhbR59EgFOHye55ARaiL+Txys918x0ZSDMypzfoG0Gl/3hjOmN7+KsKkmzzfnVc5+LaO3eXLmhLBi1wmy4yx+glO3pS/FfHppJWUl+P51bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717213326; c=relaxed/simple;
-	bh=EQypYngzAQHg/Zc5pHG0SgFtSQb6lhgy/tuxA8eUUQQ=;
+	bh=r/Q8Q+Y1qlOGOZSAInCLXijzotPxo89lZP1qo/yLn6E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OM7GpKy6jsnIzgh0YwJMslBnjBisLaN8J0i/rVJDgTC4rm01usSOfOS7f97OiALcGLmTPsYkL41wI9ojsOAe8ckaVNvp+fnlRnjki2MTWAhnh1kbXC3f5qbiL8knA+HIw7zPOefQqxprWeqigLYJB5czFnJtaIP4wIbCR6ufNTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=u424Rk0LTLxYGfxvAluVMk7ucYRXXLGDbhg2QHYoHcu8nyCNUDR91CjP8fpmDYOu4VOmnWv5H526UD9FQNcCCLJE/pw589Cw7TwakEBVJijJyfGjW3x9Hzj/QIqyuAhJBKq234VuaiU59AHF061DrwMldeWoQWqyMhNz94X4et8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vrm4p1FXJz4f3jdL;
-	Sat,  1 Jun 2024 11:41:46 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vrm4s6hvrz4f3jkJ;
+	Sat,  1 Jun 2024 11:41:49 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9AA251A0170;
-	Sat,  1 Jun 2024 11:41:55 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 1A0DD1A0A9F;
+	Sat,  1 Jun 2024 11:41:56 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6RFumFpmHN_4OA--.4543S11;
+	by APP1 (Coremail) with SMTP id cCh0CgAX6RFumFpmHN_4OA--.4543S12;
 	Sat, 01 Jun 2024 11:41:55 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH 07/10] ext4: drop ext4_es_delayed_clu()
-Date: Sat,  1 Jun 2024 11:41:46 +0800
-Message-Id: <20240601034149.2169771-8-yi.zhang@huaweicloud.com>
+Subject: [PATCH 08/10] ext4: use ext4_map_query_blocks() in ext4_map_blocks()
+Date: Sat,  1 Jun 2024 11:41:47 +0800
+Message-Id: <20240601034149.2169771-9-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240601034149.2169771-1-yi.zhang@huaweicloud.com>
 References: <20240601034149.2169771-1-yi.zhang@huaweicloud.com>
@@ -63,10 +63,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX6RFumFpmHN_4OA--.4543S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw1fZw43Zry7CrWxKrWrAFb_yoWrGF1Dp3
-	43try7JrW3Xw409a1xtw18Xr15t3Wqk3yUGr9ay3WrKFyrAr1SkFnYyFyrZFyrtrWxuF1Y
-	qFWj9a4UCF4jgFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAX6RFumFpmHN_4OA--.4543S12
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF18Wry7Wry3Jr1kuF43GFg_yoW8GrW5pr
+	9xAryfGrWUWw1q9a1xKr48ZryxK3WUKrWqq3yxGr1rZ345Crn3tF45tFyfAFZ8KrZ7Xw4Y
+	qFWrGry8C3yrGrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -85,128 +85,47 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Since we move ext4_da_update_reserve_space() to ext4_es_insert_extent(),
-no one uses ext4_es_delayed_clu() and __es_delayed_clu(), just drop
-them.
+The blocks map querying logic in ext4_map_blocks() are the same as
+ext4_map_query_blocks(), so switch to directly use it.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/extents_status.c | 88 ----------------------------------------
- fs/ext4/extents_status.h |  2 -
- 2 files changed, 90 deletions(-)
+ fs/ext4/inode.c | 22 +---------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
 
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 841f2f6d536d..f28435b2618f 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -2189,94 +2189,6 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
- 	return;
- }
- 
--/*
-- * __es_delayed_clu - count number of clusters containing blocks that
-- *                    are delayed only
-- *
-- * @inode - file containing block range
-- * @start - logical block defining start of range
-- * @end - logical block defining end of range
-- *
-- * Returns the number of clusters containing only delayed (not delayed
-- * and unwritten) blocks in the range specified by @start and @end.  Any
-- * cluster or part of a cluster within the range and containing a delayed
-- * and not unwritten block within the range is counted as a whole cluster.
-- */
--static unsigned int __es_delayed_clu(struct inode *inode, ext4_lblk_t start,
--				     ext4_lblk_t end)
--{
--	struct ext4_es_tree *tree = &EXT4_I(inode)->i_es_tree;
--	struct extent_status *es;
--	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
--	struct rb_node *node;
--	ext4_lblk_t first_lclu, last_lclu;
--	unsigned long long last_counted_lclu;
--	unsigned int n = 0;
--
--	/* guaranteed to be unequal to any ext4_lblk_t value */
--	last_counted_lclu = ~0ULL;
--
--	es = __es_tree_search(&tree->root, start);
--
--	while (es && (es->es_lblk <= end)) {
--		if (ext4_es_is_delonly(es)) {
--			if (es->es_lblk <= start)
--				first_lclu = EXT4_B2C(sbi, start);
--			else
--				first_lclu = EXT4_B2C(sbi, es->es_lblk);
--
--			if (ext4_es_end(es) >= end)
--				last_lclu = EXT4_B2C(sbi, end);
--			else
--				last_lclu = EXT4_B2C(sbi, ext4_es_end(es));
--
--			if (first_lclu == last_counted_lclu)
--				n += last_lclu - first_lclu;
--			else
--				n += last_lclu - first_lclu + 1;
--			last_counted_lclu = last_lclu;
--		}
--		node = rb_next(&es->rb_node);
--		if (!node)
--			break;
--		es = rb_entry(node, struct extent_status, rb_node);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 0dde2bf078ba..46e151f26655 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -658,27 +658,7 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
+ 	 * file system block.
+ 	 */
+ 	down_read(&EXT4_I(inode)->i_data_sem);
+-	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
+-		retval = ext4_ext_map_blocks(handle, inode, map, 0);
+-	} else {
+-		retval = ext4_ind_map_blocks(handle, inode, map, 0);
 -	}
+-	if (retval > 0) {
+-		unsigned int status;
 -
--	return n;
--}
+-		if (unlikely(retval != map->m_len)) {
+-			ext4_warning(inode->i_sb,
+-				     "ES len assertion failed for inode "
+-				     "%lu: retval %d != map->m_len %d",
+-				     inode->i_ino, retval, map->m_len);
+-			WARN_ON(1);
+-		}
 -
--/*
-- * ext4_es_delayed_clu - count number of clusters containing blocks that
-- *                       are both delayed and unwritten
-- *
-- * @inode - file containing block range
-- * @lblk - logical block defining start of range
-- * @len - number of blocks in range
-- *
-- * Locking for external use of __es_delayed_clu().
-- */
--unsigned int ext4_es_delayed_clu(struct inode *inode, ext4_lblk_t lblk,
--				 ext4_lblk_t len)
--{
--	struct ext4_inode_info *ei = EXT4_I(inode);
--	ext4_lblk_t end;
--	unsigned int n;
--
--	if (len == 0)
--		return 0;
--
--	end = lblk + len - 1;
--	WARN_ON(end < lblk);
--
--	read_lock(&ei->i_es_lock);
--
--	n = __es_delayed_clu(inode, lblk, end);
--
--	read_unlock(&ei->i_es_lock);
--
--	return n;
--}
--
- /*
-  * __revise_pending - makes, cancels, or leaves unchanged pending cluster
-  *                    reservations for a specified block range depending
-diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
-index 3c8e2edee5d5..5b49cb3b9aff 100644
---- a/fs/ext4/extents_status.h
-+++ b/fs/ext4/extents_status.h
-@@ -252,8 +252,6 @@ extern bool ext4_is_pending(struct inode *inode, ext4_lblk_t lblk);
- extern void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
- 					  ext4_lblk_t len, bool lclu_allocated,
- 					  bool end_allocated);
--extern unsigned int ext4_es_delayed_clu(struct inode *inode, ext4_lblk_t lblk,
--					ext4_lblk_t len);
- extern void ext4_clear_inode_es(struct inode *inode);
+-		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
+-				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+-		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+-				      map->m_pblk, status);
+-	}
++	retval = ext4_map_query_blocks(handle, inode, map);
+ 	up_read((&EXT4_I(inode)->i_data_sem));
  
- #endif /* _EXT4_EXTENTS_STATUS_H */
+ found:
 -- 
 2.31.1
 
