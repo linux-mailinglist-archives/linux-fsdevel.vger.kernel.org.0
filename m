@@ -1,122 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-20704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559EC8D6F2A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 11:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9C98D6F7D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 13:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7AF1C210C1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 09:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BD71F22228
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 11:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2396914E2F2;
-	Sat,  1 Jun 2024 09:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6CA84E08;
+	Sat,  1 Jun 2024 11:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="dxwOQmNH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pse4ENjE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1C07E766
-	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Jun 2024 09:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7B97F7CA;
+	Sat,  1 Jun 2024 11:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717234454; cv=none; b=R2K7YJu6QXV5voJc5BKm952v7HUKKVapRDyJoLrYQK2aZ+uYZxC54K9hZpyhCo1bJUyqgrcCanzosSxKJtYk2s0VJ6L13I9tpG2nBWyY3DWedAudHWqiAUjiaA1uPLVy8hnDn0FARqHpo/nXNttQN+/qk0AFhtJej83tTJPi1Jk=
+	t=1717241615; cv=none; b=U8EuQ6/QYaY8/b9XL3HaflijyqDeNTCpu3qDlH79INptyE8AD1f05JHNn4+jknBu9cDBEzkFMvjSGi5myDGndBgXQec5QxsOBaAdm16nsLPsdGm9IzZUTVDipPwiJ8S+m/A+1MEyysEay0boDwXmAtAkZrOoAvjUEJJ9x04brq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717234454; c=relaxed/simple;
-	bh=PDIhnFKslvYdvVWIZtqzQUmt09I6mMJxyq/3liyAGkA=;
+	s=arc-20240116; t=1717241615; c=relaxed/simple;
+	bh=1sQLkbFvGo0K2q+/mxnULj8MtZJc0U6foyt7fFEL0Iw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPS6mM4DtrKtpN+Yd7pUMIqtiv1LeukCLUjf7rroMZSKTUf6RsxNBCeR3zh6qTh1ZQHCTwLmIoy1lOjlL0Pbm23h9grCHh31ySQo6UqYva9KtOI8DM5UcEKGI5pH3e3wjz+y7fA3Vbzp4+Mw730YgfMOPQSOSjReDiX5WCLSlcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=dxwOQmNH; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (unn-149-40-50-25.datapacket.com [149.40.50.25] (may be forged))
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4519XSrK015047
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 1 Jun 2024 05:33:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1717234413; bh=GZ0408TmIABRPqW2q8FHPsPmzLEavYEG/LOb2+cRwi4=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=dxwOQmNHGPD6R3ZrzWqaLbnYu5Bbbju7WhHtcVu/4qC5cef3PAcsJcrZhDHtHuNSo
-	 /BXQLgZwEGVWtOIkKNmwQEZRgME27WWPqTnlbNee2X5ucRMtEeA6ghuvsjrXupgQ9G
-	 46l5V5Tpa5ASaqfz40rmMEiCR8VMpUs+RxyeCSv6PEAsyu6mCjXSOurp9GKRLdgHA1
-	 Ezf5/WcPUMX7m6/MJLAajKA75JlXTDMCqxKx2IfgBQ2yqcnn+Zy4SPPdcUQWJd47Us
-	 g7q3sXLnOVWHY6WOBs/eDkygQshB0E4AuTK0hB37bTiksFYnZhmeRPZ4pWCtw8tVKA
-	 1ptBxtc1XtnRA==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id D21FA340FB3; Sat, 01 Jun 2024 11:33:25 +0200 (CEST)
-Date: Sat, 1 Jun 2024 11:33:25 +0200
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, David Bueso <dave@stgolabs.net>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        catherine.hoang@oracle.com
-Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
-Message-ID: <20240601093325.GC247052@mit.edu>
-References: <20240228061257.GA106651@mit.edu>
- <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
- <Zk5qKUJUOjGXEWus@bombadil.infradead.org>
- <bf638db9-c4d3-44bd-a92c-d36e3d95adb6@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=heE/LGQBjjj8viuGWJVMfmqOFktjRALFUFZX2ZOucO+Uq9+kl7kVteNyrUhzoviRgx2M5HqLMo0rx6sIrZTLDe72O5PoOjTEupAsOWkhDSgjZULqSQwlR2zOJ4zesytfhAD/HnNCPsPF1nTuFYPqUo75c9W3lern+o72DeB4KkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pse4ENjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC40C116B1;
+	Sat,  1 Jun 2024 11:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717241614;
+	bh=1sQLkbFvGo0K2q+/mxnULj8MtZJc0U6foyt7fFEL0Iw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pse4ENjEiWPsplyFVmTE4IAyWq6Kt9wKjNgHZrwIkEK23dzThHnZHJS3BvMNKDO9X
+	 9sFs9Qjb2HCk1CqPtAYUs9LvJRiNfjdVVno4rHlwFd8QpxuvA6/W/4lR0rjfJZrnuy
+	 /cNfHqY3p3nul1dbZmm9CzQ5LhBTattxxXh7oS6SgZZtDK6FoK8EJnCCvYvLT0cHFs
+	 Mwu5K3ZizZZAq8Ic4kIjFdenWGqMZTAKTupS0COfFrTkW3ZPI4OLtCmuAPrPNUcyiG
+	 jXidr8VOltAzSj27aDJGxETk/P4Qe+h7Q7pejnIQbvp+MN/WLfgOO+JnoXw+0OQkzd
+	 Jpbq0YzbzK/nA==
+Date: Sat, 1 Jun 2024 12:33:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Kees Cook <keescook@chromium.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs updates fro 6.10-rc1
+Message-ID: <ZlsHCzAPzp6XwTqw@finisterre.sirena.org.uk>
+References: <zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
+ <202405191921.C218169@keescook>
+ <2uuhtn5rnrfqvwx7krec6lc57gptqearrwwbtbpedvlbor7ziw@zgbzssfacdbe>
+ <a1aa10f9d97b2d80048a26f518df2a4b90c90620.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4CGzBNjsXpkSmh79"
+Content-Disposition: inline
+In-Reply-To: <a1aa10f9d97b2d80048a26f518df2a4b90c90620.camel@HansenPartnership.com>
+X-Cookie: I had pancake makeup for brunch!
+
+
+--4CGzBNjsXpkSmh79
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bf638db9-c4d3-44bd-a92c-d36e3d95adb6@oracle.com>
 
-On Thu, May 23, 2024 at 12:59:57PM +0100, John Garry wrote:
-> 
-> That's my point really. There were some positive discussion. I put across
-> the idea of implementing buffered atomic writes, and now I want to ensure
-> that everyone is satisfied with that going forward. I think that a LWN
-> report is now being written.
+On Mon, May 20, 2024 at 12:10:31PM -0400, James Bottomley wrote:
+> On Sun, 2024-05-19 at 23:52 -0400, Kent Overstreet wrote:
 
-I checked in with some PostgreSQL developers after LSF/MM, and
-unfortunately, the idea of immediately sending atomic buffered I/O
-directly to the storage device is going to be problematic for them.
-The problem is that they depend on the database to coalesce writes for
-them.  So if they are doing a large database commit that involves
-touching hundreds or thousands of 16k database pages, they today issue
-a separate buffered write request for each database page.  So if we
-turn each one into an immediate SCSI/NVMe write request, that would be
-disastrous for performance.  Yes, when they migrate to using Direct
-I/O, the database is going to have to figure out how to coalesce write
-requests; but this is why it's going to take at least 3 years to make
-this migration (and some will call this hopelessly optimistic), and
-then users will probably wait another 3 to 5 years before they trust
-that the database rewrite to use Direct I/O will get it right and
-trust their enterprise workloads to it....
+> > I also do (try to) post patches to the list that are doing something
+> > interesting and worth discussion; the vast majority this cycle has
+> > been boring syzbot crap...
 
-So I think this goes back to either (a) trying to track which writes
-we've promised atomic write semantics, or (b) using a completely
-different API that only promises "untorn writes with a specified
-granulatity" approach for the untorn buffered writes I/O interface,
-instead in addition to, or instead of, the current "atomic write"
-interface which we are currently trying to promulate for Direct I/O.
+> you still don't say what problem not posting most patches solves?  You
+> imply it would slow you down, but getting git-send-email to post to a
+> mailing list can actually be automated through a pre-push commit hook
+> with no slowdown in the awesome rate at which you apply patches to your
+> own tree.
 
-Personally, I'd advocate for two separate interfaces; one for "atomic"
-I/O's, and a different one for "untorn writes with a specified
-guaranteed granularity".  And if XFS folks want to turn the atomic I/O
-interface into something where you can do a multi-megabyte atomic
-write into something that requires allocating new blocks and
-atomically mutating the file system metadata to do this kind of
-atomicity --- even though the Database folks Don't Care --- God bless.
+> Linux kernel process exists because it's been found to work over time.
+> That's not to say it can't be changed, but it usually requires at least
+> some stab at a reason before that happens.
 
-But let's have something which *just* promises the guarantee requested
-by the primary requesteres of this interface, at least for the
-buffered I/O case.
+Even if no meaningful review ever happens on the actual posts there's
+still utility in having the patches on a list and findable in lore,
+since everything is normally on the list people end up with workflows
+that assume that they'll be able to find things there.  For example it's
+common for test people who identify which patch introduces an issue to
+grab the patch from lore in order to review any discussion of the patch,
+then report by replying to the patch to help with context for their
+report and get some help with figuring out a CC list.  Posting costs
+very little and makes people's lives easier.
 
-Cheers,
+--4CGzBNjsXpkSmh79
+Content-Type: application/pgp-signature; name="signature.asc"
 
-						- Ted
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZbBwcACgkQJNaLcl1U
+h9Ctrgf/V6HUvGS/lPiuRfYtqLPYUmt8K87RV8eA9xCDQGpM7WHVSbkFrSSXMJy5
+kGecY0z4i1r25gjcaTl1DeqIa7QUs5SBWTzj+UC7dT0Sy4tLdNAT0jTbWetaUBTU
+g/7S6c4OED/rNxsh8+uSHRbVZ3HBrtI4oAkG7jF2kuAWEoV4VmktIoeCgMrryNMc
+VIfedpdi3QAs3Emog0zyGJBT9W7SL87woIvJYqdEuqePMdKiGol/X7XEXouCuBAz
++tuQSVVCBeAS0CunkIb520pAQP0OQopWQ5VhC6DdBeIHUttRoSfYWsophiULuAhj
+bBYASjNxk6wEC/C8ikmxN4WYA0znrQ==
+=3llj
+-----END PGP SIGNATURE-----
+
+--4CGzBNjsXpkSmh79--
 
