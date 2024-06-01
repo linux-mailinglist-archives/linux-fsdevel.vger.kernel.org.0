@@ -1,119 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-20681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4209E8D6D9B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 05:09:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070E38D6DB8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 05:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A641C21388
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 03:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1E21F213B5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 03:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EECFAD5A;
-	Sat,  1 Jun 2024 03:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N6Bd/4xb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E54E541;
+	Sat,  1 Jun 2024 03:42:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2716B6FA8;
-	Sat,  1 Jun 2024 03:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E197EF;
+	Sat,  1 Jun 2024 03:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717211333; cv=none; b=nbYA0BzyMOH5mGZ/EhhwRcDyQYipMs6tnDkyCXw2839PhbneoCX56SpEsqA+f/nMScxL3RrQz3Ct2epybz+RhF5OBkfO/13UFypxlCFAoSV3bxxzlb3jVw3rpZi/NXr/zQApZmr/TbKSsq4qGbkaTVe3PoaJZIUZQetxhl9GbRQ=
+	t=1717213324; cv=none; b=aXeSIm/HMXv8Z+f1ujjoOftH4+Hqiuun7DjwvElm+4jLOJ+RfDOFcQZzDURXpeD8O0ZaK+FIuWl4EFE36NC7eSAFfi7AaUCDwqbkiASqiNXY2VKtlx7bB0t0Ws6C/s1uzKwNeZjxOwqlnmvVH97kLoPwnvg/4safT2SjcrnV/Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717211333; c=relaxed/simple;
-	bh=Hr7lNj8rNQelxv9ycFyPb/3vMY1/XzuEKLRHy2XNFCY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=WAdmT+uHslId0gaPeQncCClnJKt1BpjH9YIrok5S4JZ0dXVTTkQyudldZcjJnbQP6vexa76crGxSEIf5oK28UWBpKLHmGRCTj8+Fpy+vAFdEgX3MhGJuNpOYxw5Oz6ENYUgVkCmP8kMdBcqovXECYvR5rNJeCSbigr68otWgq84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N6Bd/4xb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VIf1Hq002217;
-	Sat, 1 Jun 2024 03:08:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Hr7lNj8rNQelxv9ycFyPb/
-	3vMY1/XzuEKLRHy2XNFCY=; b=N6Bd/4xb2OMBce+Z7XgyqmkcfquFoc/6V1CfhE
-	R2F2HZf7WhOhkRD7pf/BvLE1uN9YY8+7+sehkKkHSJGn54RG5FjsOqJMFo8one2N
-	T/ZBOda/jwpDjs1dfy86MMf3CuOZ7/EaUh6yO8oQk6qvEkgaajWI3zx0lJMQIRmr
-	NSHqBK9o9v6K9uLb5Oij3EOtsaci9I6jUprnm+YGx1vm6D4JSrzch0zyD2BTfdh+
-	93qssxFidDZ8j2c5g1JPzpAePzDYV/t/ZPuP4fbGsnz6yStB0R0R9bh8O8005jzz
-	XSgmMHx9gLj+fQ1dUdjW13iYv14raKmGJ2OTBQm6u18XzUzA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfc9nja54-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Jun 2024 03:08:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 45138e0m020184
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 1 Jun 2024 03:08:40 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 20:08:40 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 31 May 2024 20:08:37 -0700
-Subject: [PATCH] test_xarray: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717213324; c=relaxed/simple;
+	bh=iC5J5NaNVHLn9fKACjdIwUU56j5iHHVCyrp73CAFfc8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fvgr/QiG+Pii9Q7LhdLuKmReRnqUdUhxLTefHEZSE2IsdO+i3WcNfS05F1QznLVEnNkCHWz6/N28XERLmjT5zUnPTWLXXFbWtvBcn/4PInjIueP0KHLoj4PzA1fhpPg5dCEM0nErQFIygNqSYS4DN/Fo7PLASt/8GI1RYDBKAM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vrm4k6HtSz4f3jXm;
+	Sat,  1 Jun 2024 11:41:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 52DC41A016E;
+	Sat,  1 Jun 2024 11:41:52 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAX6RFumFpmHN_4OA--.4543S4;
+	Sat, 01 Jun 2024 11:41:50 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH 00/10] ext4: simplify the counting and management of delalloc reserved blocks
+Date: Sat,  1 Jun 2024 11:41:39 +0800
+Message-Id: <20240601034149.2169771-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240531-md-lib-test_xarray-v1-1-42fd6833bdd4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALSQWmYC/x3MQQrCMBBA0auUWTuQ1EiJVxEpSTPagTbKTJRI6
- d2NLt/i/w2UhEnh3G0g9GblR26whw6mOeQ7Iadm6E3vzOlocU24cMRCWsYaRMIHvesH78klawZ
- o4VPoxvU/vVybY1DCKCFP82+1cH5VXIMWEtj3L9wu87aDAAAA
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox
-	<willy@infradead.org>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eNzcFjEk4ErfDeotMtVnihy0Ue90s6HH
-X-Proofpoint-GUID: eNzcFjEk4ErfDeotMtVnihy0Ue90s6HH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-01_01,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015 spamscore=0
- priorityscore=1501 mlxlogscore=999 suspectscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406010022
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX6RFumFpmHN_4OA--.4543S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1xXrW3Gr1kGw4rWw15Arb_yoW8uw1DpF
+	WfC3W3Gr18Ww17W393Aw1UJw1rW3WfCr4UWrWfKw18ZFWrAr1xZFn2gF1ruFWrKrWxAF1Y
+	qF1akw18Cas8CrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UZa9-UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_xarray.o
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Hello!
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- lib/test_xarray.c | 1 +
- 1 file changed, 1 insertion(+)
+This patch series is the part 3 prepartory changes of the buffered IO
+iomap conversion, it simplify the counting and updating logic of delalloc
+reserved blocks. I picked them out from my buffered IO iomap conversion
+RFC series v4[1], and did some minor change log messages improvement.
+It's based on the part 2 prepartory series [2] (not merged yet) +
+6.10-rc1.
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index ab9cc42a0d74..d5c5cbba33ed 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -2173,4 +2173,5 @@ static void xarray_exit(void)
- module_init(xarray_checks);
- module_exit(xarray_exit);
- MODULE_AUTHOR("Matthew Wilcox <willy@infradead.org>");
-+MODULE_DESCRIPTION("XArray API test module");
- MODULE_LICENSE("GPL");
+Patch 1-3 simplify the delalloc extent management logic by changes to
+always set EXT4_GET_BLOCKS_DELALLOC_RESERVE flag when allocating
+preallocated blocks, and don't add EXTENT_STATUS_DELAYED flag to an
+unwritten extent, which means ext4_es_is_delayed() is equal to
+ext4_es_is_delonly().
 
----
-base-commit: b050496579632f86ee1ef7e7501906db579f3457
-change-id: 20240531-md-lib-test_xarray-942799e4d107
+Patch 4-6 simplify the reserved blocks updating logic by moves the
+reserved blocks updating from ext4_{ind|ext}_map_blocks() to
+ext4_es_insert_extent().
+
+Patch 7-10 drop the unused code (e.g. ext4_es_is_delonly())and update
+comments.
+
+This series has passed through kvm-xfstests in auto mode many times,
+please take a look at it.
+
+[1] https://lore.kernel.org/linux-ext4/20240410142948.2817554-1-yi.zhang@huaweicloud.com/
+[2] https://lore.kernel.org/linux-ext4/20240517124005.347221-1-yi.zhang@huaweicloud.com/
+
+Thanks,
+Yi.
+
+Zhang Yi (10):
+  ext4: factor out ext4_map_create_blocks() to allocate new blocks
+  ext4: optimize the EXT4_GET_BLOCKS_DELALLOC_RESERVE flag set
+  ext4: don't set EXTENT_STATUS_DELAYED on allocated blocks
+  ext4: let __revise_pending() return newly inserted pendings
+  ext4: count removed reserved blocks for delalloc only extent entry
+  ext4: update delalloc data reserve spcae in ext4_es_insert_extent()
+  ext4: drop ext4_es_delayed_clu()
+  ext4: use ext4_map_query_blocks() in ext4_map_blocks()
+  ext4: drop ext4_es_is_delonly()
+  ext4: drop all delonly descriptions
+
+ fs/ext4/extents.c        |  37 ------
+ fs/ext4/extents_status.c | 271 ++++++++++++++++-----------------------
+ fs/ext4/extents_status.h |   7 -
+ fs/ext4/indirect.c       |   7 -
+ fs/ext4/inode.c          | 197 +++++++++++++---------------
+ 5 files changed, 195 insertions(+), 324 deletions(-)
+
+-- 
+2.31.1
 
 
