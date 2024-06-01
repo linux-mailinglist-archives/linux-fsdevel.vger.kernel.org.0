@@ -1,104 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-20711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A72A8D7169
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 19:52:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D868D71FC
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 23:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CA51C20C24
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 17:52:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2739D1C20AD8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2024 21:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7421153BD9;
-	Sat,  1 Jun 2024 17:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EE322F0A;
+	Sat,  1 Jun 2024 21:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="usOr6DVG"
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="TLwXvDBd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF9D26AF6
-	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Jun 2024 17:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1511DFF8
+	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Jun 2024 21:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717264318; cv=none; b=uQ/2nRt6OLUZYySuqeuZ7uHk83B4P2nrNMHnSi1/wYNs65ADk/tteAeU/jV9ERgV/8+Hh92l/X+3rBWp/JfViBWcJvCvEMPTvXMHjGxTy7YFDan/AgvfP1sU83FzTlj5qtlQJBLaZrMc9ONR14lkvC5onbPQaykTVk0Gpyy7wKg=
+	t=1717277613; cv=none; b=UHFSTQauxtWjl/aEDZ4wZwoliOpofr6cYNR4pUF0IUKgKeK6hHFyRjrNfakjVC6cONC+VFTU1ZTknhju6qPuw6Q93VcQVjYumyMU307spaYBe4z7tZ6G532zSwJSrW5KW0jp8UTVw8xY/wDUuXNqokh/trFvacGZXzBDI+8XrxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717264318; c=relaxed/simple;
-	bh=8V1ubKEyQ3e7H8A/w7DRiM3nW8hgyL58Bajr80atib8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6GPifbeNzET1GaQuqKeqlb0CXdJOWNmYJi9FLAs0lFNk7mxrehC2Pe8+2+GsJJEtgvaACMz0dQEEBqaNp5AONGusXhasWoa22U204znW/GvhfGaRG+wXOyoMtSFJR6mEF8dVG4C3V+1Mi1cgvEdthVHK8isUIdDpkMdegqSCvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=usOr6DVG; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e3H8ZnKQ2E/gGeLDugd4OQeoR4SU0nPKKSaqfqZJIe4=; b=usOr6DVGa75frbZI5HDsskF0il
-	o64h/n1TgsL/TZinf4GhTSIpP4l22GB8cx2dGpAeyZ8y4WICZpJix0dQKn7vsuR6BrjEXOIsug13s
-	tsbr04GrUpLzrFS+szIrkFegEQ/PugTqdo3em7R43hOPP1VXKfYrusX8i4teNCzSI0PGNZNVxXcmi
-	SjDDVT3AZzDOaq8gNRZ18oOu1ufPTn6NvtUmGoErbDM2lPW2vCyMDNFQanXhoOs5rSYRb8h229XaK
-	HxIwfjO2I71VRp8S75hZlCWBQvN79oCwxJOhZ4TjtG6d+6idpVhi2xIp10ZqfICfH0fXktTOYoUJW
-	/X6Fg66w==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sDStN-0000000ChWn-3zwu;
-	Sat, 01 Jun 2024 17:51:45 +0000
-Date: Sat, 1 Jun 2024 18:51:45 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Johannes Thumshirn <jth@kernel.org>, linux-fsdevel@vger.kernel.org,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH] zonefs: move super block reading from page to folio
-Message-ID: <ZltfsUjv9RaVWCtd@casper.infradead.org>
-References: <20240514152208.26935-1-jth@kernel.org>
- <Zk6e30EMxz_8LbW6@casper.infradead.org>
- <20240531011616.GA52973@frogsfrogsfrogs>
- <5eedc500-5d85-4e41-87b5-61901ca59847@kernel.org>
+	s=arc-20240116; t=1717277613; c=relaxed/simple;
+	bh=3sBwYo/AqZ+0RfDJFg+GCK+aWleW3pxMfuHyAah0dzA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m30IDPOeF+WiSOEz69hpm6ui9p+IGho5O1ZZ1MJ6GMjxl6GJyLgz544Dm7AJ7mK9u2dp3e1aCOSEssZgpb5hGPt5j+6D+GVb+09kRdyGAw4NdIqt+lMzQZJPBp2AeVhqEhPFr1phbMmA9zxP0qfaRI2gKTsi4Kfer4tX2UJ+/mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=TLwXvDBd; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42137366995so5000545e9.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Jun 2024 14:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717277610; x=1717882410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJt3Ya3JYlNDKcCqPU+4dBowkDesFTehUTcWLYXANYk=;
+        b=TLwXvDBd2KibpGurTDNi0sS+F1f2zelbruqHlBywSWqKU0TBnjVDV2I9he92JaYU+J
+         wkztfGH/CioZVK4nKw0NVukUyatKtpyj/Qw9a7+0w6AOW61OOyUmKQQK/YDiWuohdgj1
+         7hq0QEZu++TL9htN8+fffSxcA1BTQRsNaE9fv082V56CEc+wTYar/pfjMOhwxek2VFGc
+         HqkJRulNSTqpx5rfrUIglt6di5bT2mYLGJr/3yYSZMybL0C/13lEHP5uOSiipbdXvaAL
+         /d0ROzAFVNH7iXSpNoOgKPIn1MbQtYIMiooXq6730LwBebTl3KzTYl6xueNsTXl4Bx0S
+         JVTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717277610; x=1717882410;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HJt3Ya3JYlNDKcCqPU+4dBowkDesFTehUTcWLYXANYk=;
+        b=weqociPQjkavTQffmMqHauaUJ7TmBLmJ2YTZpOE40T+eDfficSOPkPLp25H7G2vw/C
+         OH+S7BLu/6kdePta07kalgpquYes+X3R9YAxlxIPGJv9sZHp98WplnfMjvO2F/EbD7U/
+         tJQ2YOyVA5ppBEpov5rWzjuHmF8JXe058wcvbNn7SQl/MBUk9shNQ2eCBBCo2A1i7Bpo
+         Q6ADxobfqM/u0Qt/jmhncoFnBS+MYVkB6saK5kk0wwr+mGCncAhGCTRi47/CLi8lDRkv
+         eur0uB0NZ/Q654DgGuzdyI4MkzmimA+NYoyoWoDpt7BpScyBqPp7W5A69pUC/3exDMEY
+         rdTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRYJLJcU1QpLjGeRP38VOgKtK2cVs6lEtxuxVx4HkHMTClWzI0qMske0uE8jO9NiQDdSWMGXiUxO/g4aGFmVjphoj/WLMkz7Bp3sSYSQ==
+X-Gm-Message-State: AOJu0YysChsq66LvAPb8+FHa8hxdIbfy3vpFgTvvUi1D5lvThZbI5UUt
+	z2I+j5U7jOQ1Gc8EDccYrRJz7BY/Nyj/fU7b+fHd9DGIvLGWj2myoXfFZ1LuM54=
+X-Google-Smtp-Source: AGHT+IGl9Hl1b8VRJQpVpXl7hCsSBOPLOHgRsVLux3bAWL4Geb2ApKKwM1lVHyceYADVoADXs17YOw==
+X-Received: by 2002:adf:e80f:0:b0:354:f724:6419 with SMTP id ffacd0b85a97d-35e0f25509fmr4554299f8f.8.1717277609843;
+        Sat, 01 Jun 2024 14:33:29 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0839sm4751324f8f.23.2024.06.01.14.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 14:33:29 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH v4 0/2] Clean up usage of rt_task()
+Date: Sat,  1 Jun 2024 22:33:07 +0100
+Message-Id: <20240601213309.1262206-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5eedc500-5d85-4e41-87b5-61901ca59847@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 10:28:50AM +0900, Damien Le Moal wrote:
-> >> This will stop working at some point.  It'll return NULL once we get
-> >> to the memdesc future (because the memdesc will be a slab, not a folio).
-> > 
-> > Hmmm, xfs_buf.c plays a similar trick here for sub-page buffers.  I'm
-> > assuming that will get ported to ... whatever the memdesc future holds?
+Make rt_task() return true only for RT class and add new realtime_task() to
+return true for RT and DL classes to avoid some confusion the old API can
+cause.
 
-I don't think it does, exactly?  Are you referring to kmem_to_page()?
-That will continue to work.  You're not trying to get a folio from a
-slab allocation; that will start to fail.
+No functional changes intended in patch 1. Patch 2 cleans up the return type as
+suggested by Steve.
 
-> >> I think the right way to handle this is to call read_mapping_folio().
-> >> That will allocate a folio in the page cache for you (obeying the
-> >> minimum folio size).  Then you can examine the contents.  It should
-> >> actually remove code from zonefs.  Don't forget to call folio_put()
-> >> when you're done with it (either at unmount or at the end of mount if
-> >> you copy what you need elsewhere).
-> > 
-> > The downside of using bd_mapping is that userspace can scribble all over
-> > the folio contents.  For zonefs that's less of a big deal because it
-> > only reads it once, but for everyone else (e.g. ext4) it's been a huge
-> 
-> Yes, and zonefs super block is read-only, we never update it after formatting.
-> 
-> > problem.  I guess you could always do max(ZONEFS_SUPER_SIZE,
-> > block_size(sb->s_bdev)) if you don't want to use the pagecache.
-> 
-> Good point. ZONEFS_SUPER_SIZE is 4K and given that I only know of 512e and 4K
-> zoned block devices, this is not an issue yet. But better safe than sorry, so
-> doing the max() thing you propose is better. Will patch that.
+Changes since v3:
 
-I think you should use read_mapping_folio() for now instead of
-complicating zonefs.  Once there's a grand new buffer cache, switch to
-that, but I don't think you're introducing a significant vulnerability
-by using the block device's page cache.
+	* Make sure the 'new' bool functions return true/false instead of 1/0.
+	* Drop patch 2 about hrtimer usage of realtime_task() as ongoing
+	  discussion on v1 indicates its scope outside of this simple cleanup.
+
+Changes since v2:
+
+	* Fix one user that should use realtime_task() but remained using
+	  rt_task() (Sebastian)
+	* New patch to convert all hrtimer users to use realtime_task_policy()
+	  (Sebastian)
+	* Add a new patch to convert return type to bool (Steve)
+	* Rebase on tip/sched/core and handle a conflict with code shuffle to
+	  syscalls.c
+	* Add Reviewed-by Steve
+
+Changes since v1:
+
+	* Use realtime_task_policy() instead task_has_realtime_policy() (Peter)
+	* Improve commit message readability about replace some rt_task()
+	  users.
+
+v1 discussion: https://lore.kernel.org/lkml/20240514234112.792989-1-qyousef@layalina.io/
+v2 discussion: https://lore.kernel.org/lkml/20240515220536.823145-1-qyousef@layalina.io/
+v3 discussion: https://lore.kernel.org/lkml/20240527234508.1062360-1-qyousef@layalina.io/
+
+Qais Yousef (2):
+  sched/rt: Clean up usage of rt_task()
+  sched/rt, dl: Convert functions to return bool
+
+ fs/bcachefs/six.c                 |  2 +-
+ fs/select.c                       |  2 +-
+ include/linux/ioprio.h            |  2 +-
+ include/linux/sched/deadline.h    | 14 +++++++------
+ include/linux/sched/prio.h        |  1 +
+ include/linux/sched/rt.h          | 35 ++++++++++++++++++++++++++-----
+ kernel/locking/rtmutex.c          |  4 ++--
+ kernel/locking/rwsem.c            |  4 ++--
+ kernel/locking/ww_mutex.h         |  2 +-
+ kernel/sched/core.c               |  4 ++--
+ kernel/sched/syscalls.c           |  2 +-
+ kernel/time/hrtimer.c             |  6 +++---
+ kernel/trace/trace_sched_wakeup.c |  2 +-
+ mm/page-writeback.c               |  4 ++--
+ mm/page_alloc.c                   |  2 +-
+ 15 files changed, 57 insertions(+), 29 deletions(-)
+
+-- 
+2.34.1
+
 
