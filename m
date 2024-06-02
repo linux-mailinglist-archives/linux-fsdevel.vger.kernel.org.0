@@ -1,156 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-20725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BADE8D7380
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 05:46:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1533A8D73B9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 06:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3C81C225BE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 03:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C342F281F95
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 04:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550D4B662;
-	Sun,  2 Jun 2024 03:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51C612B6C;
+	Sun,  2 Jun 2024 04:08:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883878493
-	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Jun 2024 03:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BD3BE47;
+	Sun,  2 Jun 2024 04:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717299967; cv=none; b=RrYxrdOqYXS8ETROAQbp5f7UY4BWuaeZVn3RjRbVBzazrrEDzb+XlWYPtCnS6keOq6ocPjXCT7FJFronRYjdbjLYOe+LqrHkfRRIHQa9lmh+4eLoSyEq5LBQhvjCqELz3/PjxXTQx8d35QXwOfAwEcFjMzUqVz9BSG8J4PQJcAE=
+	t=1717301334; cv=none; b=Tbqj6E8c4oLuZ4y0DJJQDGQX2hikOXcJnguSQAGXY616qmKOK3IKfbB67m0ktHOqBsYqAEuWvlkpmeEgTDJQldKa8vCHq08sKVWV9cxj/jrJVPccOEme3+RWtUUZQI+0G77WYbeI0QqfvBr+tJAE3l/+NqA+K4G+i6pSVXOjPWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717299967; c=relaxed/simple;
-	bh=plRV+ubUUxqtsKUx1W3lqAkRwL2tSFYQNbjn2KD6NZ4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pXZ1jHuF0ll/qTqZ1sBEegcebqkk1lnmfmtSTcd9lHZQTrZ020JC9cffaJL7o1oRNLgnsO8xMty8iVb8K1X3JlhVTlMFAbp8AasHUDiSyRIk7q60rEIwFBgwtcKfrFOr1XCYkQTfPZY4mZIhRoC+XbGMOsuo5dJ18vzcEnxJWrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3747f77bafcso27817365ab.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Jun 2024 20:46:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717299965; x=1717904765;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jdZaO1NNvfMfg/xJ1g6VKs8HYRcpBdNPd/3YBF7Tpo0=;
-        b=bMHQFnAZEKgh1Sb7ZgGU+8vTkMFiCPhI4UfGP7ifuNoLyBjqUa1ZMqEbkd6OlQYn+F
-         yhEL98b88VSwDXDdedFz1Jzj1quEtdIyyPBuEdFOnpJIaM+i8jpK8K7C401yQP38QeW1
-         Sr8rMVH2aMb4Tve+tE4tGa9kMPRuTFu5e0PZbxc7ebXllgwC1CtJusOsfQbs6Ql1JxFD
-         H3xjmpyRMT6Qi+3E6+0VlUiz8CjJ/8wzrjaThxO21ma4FZ58DCXLbtNOYulyeP9Cq57r
-         LqyD+/zLg8QJXkRfT6G44gYEa42KvDpwNPLZ3P8E8VI/ZERHstZC5KjLdiWg6X7D9zQ5
-         4U5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZls3Z2HavfUcT5XhI7ynyaJ7qcI0McWoqg2lfQmm7SqkYZZevViIR+hzmszZTRsi23+yS8YxWWshfQaGctqbbolLX+l/yD5YmBWTdvA==
-X-Gm-Message-State: AOJu0Yxi/OYZQEuh3K4ZyTpp/+Iu4sKze0gO8JVArAU9zJ66rGbfz5Fa
-	7uf8dJ4HbZAiwccDETKwT5xyJbN41LCW0Qyj57/Z08aEozKSpCUUz477Yq/+QlS0YY/7qNreXT0
-	vqerjwC+6qc62ii8XLZ6/0RBE2hrQ0J4nWFONg83uF2TMW6qON/W5S0Y=
-X-Google-Smtp-Source: AGHT+IFLEZ8vWRTHlOpAJT+955J8E1QvkBjpgAL78/rciAqlnjDb7I+dtmrtkT88HzP37E5s9e878wmClXICvmsrokVjjTtXjn3L
+	s=arc-20240116; t=1717301334; c=relaxed/simple;
+	bh=zt/mCGLUmVzFbMigp4I4greEWSN7ilXHuSeRteZ0s7s=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=L6nUy9WgrZi+DmP0TfUf6zR6GmrNu5RTSIZYo7ingCNtcEvP3fjdAEMTew9nB8wcSs0vOyYbxZVzkh3YEujbsHiBBN6wHZkuzmOLYlTGugNZITX6AeW9GvpsA/uwrXDy57JJvv+V1qKN7Wqxufd6VPo2AOqOdnSbfDkUQGOosYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:36664)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sDcGs-00Eawn-4E; Sat, 01 Jun 2024 21:52:38 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:34300 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sDcGq-00F7Wn-Mp; Sat, 01 Jun 2024 21:52:37 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org,  linux-mm@kvack.org,
+  linux-fsdevel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
+  audit@vger.kernel.org,  linux-security-module@vger.kernel.org,
+  selinux@vger.kernel.org,  bpf@vger.kernel.org,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
+ Kara <jack@suse.cz>,  Kees Cook <keescook@chromium.org>
+References: <20240602023754.25443-1-laoar.shao@gmail.com>
+	<20240602023754.25443-2-laoar.shao@gmail.com>
+Date: Sat, 01 Jun 2024 22:51:57 -0500
+In-Reply-To: <20240602023754.25443-2-laoar.shao@gmail.com> (Yafang Shao's
+	message of "Sun, 2 Jun 2024 10:37:49 +0800")
+Message-ID: <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1e08:b0:374:5eee:dc2f with SMTP id
- e9e14a558f8ab-3748b8f23b6mr5680435ab.0.1717299964841; Sat, 01 Jun 2024
- 20:46:04 -0700 (PDT)
-Date: Sat, 01 Jun 2024 20:46:04 -0700
-In-Reply-To: <d586a439-4f58-4409-8a60-6a00614ec346@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000609f770619e00ec5@google.com>
-Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_write_inline_data
-From: syzbot <syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1sDcGq-00F7Wn-Mp;;;mid=<87ikysdmsi.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1860tjt8nodVMvTZzeRt1UmJFO9w9v1+IM=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: **
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Yafang Shao <laoar.shao@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 817 ms - load_scoreonly_sql: 0.07 (0.0%),
+	signal_user_changed: 14 (1.7%), b_tie_ro: 12 (1.4%), parse: 1.68
+	(0.2%), extract_message_metadata: 39 (4.7%), get_uri_detail_list: 4.4
+	(0.5%), tests_pri_-2000: 39 (4.8%), tests_pri_-1000: 2.8 (0.3%),
+	tests_pri_-950: 1.37 (0.2%), tests_pri_-900: 1.09 (0.1%),
+	tests_pri_-90: 126 (15.4%), check_bayes: 93 (11.4%), b_tokenize: 10
+	(1.3%), b_tok_get_all: 10 (1.3%), b_comp_prob: 3.1 (0.4%),
+	b_tok_touch_all: 65 (8.0%), b_finish: 1.24 (0.2%), tests_pri_0: 357
+	(43.7%), check_dkim_signature: 0.57 (0.1%), check_dkim_adsp: 3.2
+	(0.4%), poll_dns_idle: 215 (26.3%), tests_pri_10: 2.0 (0.3%),
+	tests_pri_500: 229 (28.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 
-Hello,
+Yafang Shao <laoar.shao@gmail.com> writes:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in f2fs_write_inline_data
+> Quoted from Linus [0]:
+>
+>   Since user space can randomly change their names anyway, using locking
+>   was always wrong for readers (for writers it probably does make sense
+>   to have some lock - although practically speaking nobody cares there
+>   either, but at least for a writer some kind of race could have
+>   long-term mixed results
 
-loop0: detected capacity change from 0 to 40427
-F2FS-fs (loop0): Invalid log_blocksize (268), supports only 12
-F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
-F2FS-fs (loop0): Found nat_bits in checkpoint
-F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/inline.c:276!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 5967 Comm: syz-executor Not tainted 6.9.0-syzkaller-10227-g9ee8c306dc6b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:276
-Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c e3 fc ff ff 48 89 df e8 cf da 09 fe e9 d6 fc ff ff e8 75 68 96 07 e8 30 03 a4 fd 90 <0f> 0b e8 28 03 a4 fd 90 0f 0b 0f 1f 44 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000352eb20 EFLAGS: 00010293
-RAX: ffffffff83f22ec0 RBX: 0000000000000001 RCX: ffff888024a21e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000352ec50 R08: ffffffff83f22985 R09: 1ffff1100d23c095
-R10: dffffc0000000000 R11: ffffed100d23c096 R12: ffffc9000352eba8
-R13: 1ffff1100d23c095 R14: ffffc9000352eba0 R15: ffffc9000352ebb0
-FS:  00007efdd7bfa6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020002000 CR3: 000000007ac94000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- f2fs_write_single_data_page+0xbb6/0x1e90 fs/f2fs/data.c:2888
- f2fs_write_cache_pages fs/f2fs/data.c:3187 [inline]
- __f2fs_write_data_pages fs/f2fs/data.c:3342 [inline]
- f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3369
- do_writepages+0x359/0x870 mm/page-writeback.c:2634
- filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- file_write_and_wait_range+0x1aa/0x290 mm/filemap.c:788
- f2fs_do_sync_file+0x68a/0x1ae0 fs/f2fs/file.c:276
- generic_write_sync include/linux/fs.h:2806 [inline]
- f2fs_file_write_iter+0x7bd/0x24e0 fs/f2fs/file.c:4977
- call_write_iter include/linux/fs.h:2114 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efdd6e7cee9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007efdd7bfa0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007efdd6fb3fa0 RCX: 00007efdd6e7cee9
-RDX: 0000000000002000 RSI: 0000000020000040 RDI: 0000000000000006
-RBP: 00007efdd6ec947f R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007efdd6fb3fa0 R15: 00007ffd0e21ca28
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:276
-Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c e3 fc ff ff 48 89 df e8 cf da 09 fe e9 d6 fc ff ff e8 75 68 96 07 e8 30 03 a4 fd 90 <0f> 0b e8 28 03 a4 fd 90 0f 0b 0f 1f 44 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000352eb20 EFLAGS: 00010293
-RAX: ffffffff83f22ec0 RBX: 0000000000000001 RCX: ffff888024a21e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000352ec50 R08: ffffffff83f22985 R09: 1ffff1100d23c095
-R10: dffffc0000000000 R11: ffffed100d23c096 R12: ffffc9000352eba8
-R13: 1ffff1100d23c095 R14: ffffc9000352eba0 R15: ffffc9000352ebb0
-FS:  00007efdd7bfa6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020002000 CR3: 000000007ac94000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Ugh.
+Ick.
+
+This code is buggy.
+
+I won't argue that Linus is wrong, about removing the
+task_lock.
+
+Unfortunately strscpy_pad does not work properly with the
+task_lock removed, and buf_size larger that TASK_COMM_LEN.
+There is a race that will allow reading past the end
+of tsk->comm, if we read while tsk->common is being
+updated.
+
+So __get_task_comm needs to look something like:
+
+char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+{
+	size_t len = buf_size;
+        if (len > TASK_COMM_LEN)
+        	len = TASK_COMM_LEN;
+	memcpy(buf, tsk->comm, len);
+        buf[len -1] = '\0';
+	return buf;
+}
+
+What shows up in buf past the '\0' is not guaranteed in the above
+version but I would be surprised if anyone cares.
+
+If people do care the code can do something like:
+char *last = strchr(buf);
+memset(last, '\0', buf_size - (last - buf));
+
+To zero everything in the buffer past the first '\0' byte.
 
 
-Tested on:
+Eric
 
-commit:         9ee8c306 f2fs: fix to truncate preallocated blocks in ..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ab0a4a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48a63c58ee55467e
-dashboard link: https://syzkaller.appspot.com/bug?extid=848062ba19c8782ca5c8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Note: no patches were applied.
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Link: https://lore.kernel.org/all/CAHk-=wivfrF0_zvf+oj6==Sh=-npJooP8chLPEfaFV0oNYTTBA@mail.gmail.com [0]
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/exec.c             | 7 +++++--
+>  include/linux/sched.h | 2 +-
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index b3c40fbb325f..b43992d35a8a 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1227,12 +1227,15 @@ static int unshare_sighand(struct task_struct *me)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * User space can randomly change their names anyway, so locking for readers
+> + * doesn't make sense. For writers, locking is probably necessary, as a race
+> + * condition could lead to long-term mixed results.
+> + */
+>  char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+>  {
+> -	task_lock(tsk);
+>  	/* Always NUL terminated and zero-padded */
+>  	strscpy_pad(buf, tsk->comm, buf_size);
+> -	task_unlock(tsk);
+>  	return buf;
+>  }
+>  EXPORT_SYMBOL_GPL(__get_task_comm);
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index c75fd46506df..56a927393a38 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1083,7 +1083,7 @@ struct task_struct {
+>  	 *
+>  	 * - normally initialized setup_new_exec()
+>  	 * - access it with [gs]et_task_comm()
+> -	 * - lock it with task_lock()
+> +	 * - lock it with task_lock() for writing
+>  	 */
+>  	char				comm[TASK_COMM_LEN];
 
