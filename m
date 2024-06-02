@@ -1,88 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-20747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402698D76BE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 17:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE288D772C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 18:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF75A1F219FF
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 15:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401541C21212
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 16:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1E34AEE9;
-	Sun,  2 Jun 2024 15:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399D755C3E;
+	Sun,  2 Jun 2024 16:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dq0bR5SS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9DC41C73
-	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Jun 2024 15:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1DF4778C;
+	Sun,  2 Jun 2024 16:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717342205; cv=none; b=QPbpS5Srs0UQ4MrUmbTfu3Cc4I++Z17vOUlACwdOQCldrONQRoy2EYaW+uHj2z1TrBjnss2eASQ2+oLBu8ffwC9gJtIcs+C2czorB26Cht4xipdoRpjSvcqCYB9ETH0/2Z7QHoQy/HVVJ1Q4+Dws0deYwi4sSPGlJHZ0UJurYFU=
+	t=1717346134; cv=none; b=j6vpniDYZWD6y1/mxQLawKOG2KReIJ11EnVJ+TvoRF7s2EazFCI9dSvk4PmNFZMZxtDwqLys7W4aSmpB9louPUdqG9I74xQMVT0gw0jDf5lVAMJlhTIn+4k3S4T7oHgTcurxNQ4IEui5tEqba+97JutZw4SSlvu6RNXIUdMOXS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717342205; c=relaxed/simple;
-	bh=bOm9gWls7u3Ju5r4S+P0rlGua90hTb86K2Nx7PDj0PI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=q+qs0v1hQtI7CnMPEern/jYIoHu9b6Gvqj+bj1cwatyrlj6uf1Ym1LFlPwgzitmkS5Sd1p/oRRpWu5jH73tXSdPTcbnRqMMg1gm2WrV18QhmrlBDkTFfLkVOoD3akXlbRRyxE2ZKk4tqwGWOZzmmbeyn+E2DobiiDysuo2xG8jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-374933240bbso10223905ab.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Jun 2024 08:30:03 -0700 (PDT)
+	s=arc-20240116; t=1717346134; c=relaxed/simple;
+	bh=r82fZk9re4kiB+HKLO6WiG+MsU1AilTXXjpCSldZGF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cgiusQ02nKF9IbKvqjPUre0ANZUKP3qYfw2iMxvCrdmaDNWlLP7nq9vbu2N1fNSAM39MibB7vmYEbEugTH+8+GsCVrWzeXyS58t+ku+kL2OWw5bkKewZh2YbK+PDUxwNwmrmCLlSlSs9c6+YBLTrTFGtjPxnS7iqm7Spk83enVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dq0bR5SS; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35e4be5bd7fso1031565f8f.1;
+        Sun, 02 Jun 2024 09:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717346131; x=1717950931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3F/P98Vvj42F4uAlpuFuX2wB1pLK9ulXz/7ywvM+Wo=;
+        b=Dq0bR5SSvLVJ/5Dn6QjQ5w2YIldf+IfZ0xkc1xKade5APFOCExr0/FnICwX0lhQRa8
+         jr/tfDnYEaaqa2SjNZFCLZ9tWsoKdP/+m2vzQhuB7TG24oIUT8hKTdi+PDPTb2fgz+B+
+         bViAs8giwixJNssKv8VB8B9rWj/dGMxdx1raTiwqO41ER4j3J3WGCKgE+Xa2xkji3GSY
+         Ty3gTenupusY+/gxFtmzg2VuTMLS8LlthcCJM5etJMCKmOhnEOqnyUiszitFwbV/bXvR
+         uTAtItJMIDRNaitycIrd/1cj60VtVg2pD/hkrMMZrzyNDt2e56+ndzNDIiTpgEpRFFy0
+         jNlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717342203; x=1717947003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WOcPbj2g/KS87dFDOfGs2GB8jKiVY1KgyNHsqEeYjUo=;
-        b=kDqUEijxy8XTndUlVpdBTCZ7Tf7xJ5gD1LuXkvLozj4wFEMeoz5gokoPu3CgYsSyC5
-         Va/hhwY7B+5xaxQTXYiPfcmSO2KTwbgCE3Rb+jYUNOZGIWojxLuDoSUajTzSSORKPbMn
-         IMyzT335VRFoCOTb2vdqjvOr0s0B8m37AhO5WvOU4u6HOUflTsqEa7R1v9TBammb9qrz
-         Hh9HoDj4sDZnIwWyPvRvhADtAninSzsvSjzWuB+AJMDzGiXO7iHDVYzswrXez2DUV6Gq
-         1tENtmp7mm0SuB4obF0uVRgoGQvGEL8koRtYApeeRbAm5lfeGI7E2SHnD7X19v40c36F
-         CsBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXa9BbTzLkguR6Z68Q1Ycw0sP6aNokxhNoaVKDwswmCtSN61cW7j/iiN/7m63LvI0o2Zihqg7NRrZjMskLgJKoT+BGTKLcjM1HchIe23A==
-X-Gm-Message-State: AOJu0YyKxgaUnGqZYxb3yg91P/ty53IBnNEeKJMepX7QkqK3I2TZLl4Q
-	ym4UzqGy9uBahzYskPGjim+44BzohrUA2ngjRk9ctV3phCGWpVxpFwgfEWQMWDkaazU3AUw3p98
-	KqXybWWyLQzbrGIodRBmbsyydWu8cXl+mqCNanx6G8L+fkEduvCovcNM=
-X-Google-Smtp-Source: AGHT+IGNFH7WpmuoUYSt/vcWg8NsJsKafOrSf7a1UACgOj50zR9yRqd2W1/qedHtJ+vKZZZEe4RSkLMEFw7wLpooTeo7dpAzNEBM
+        d=1e100.net; s=20230601; t=1717346131; x=1717950931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3F/P98Vvj42F4uAlpuFuX2wB1pLK9ulXz/7ywvM+Wo=;
+        b=b6kdWulmwitQk0J5s2r7V5rr9H1yDphIPItGHTZkFok5s1ix5zhZWF2Ej9xsoUc+LD
+         jyqZDCmzsryiYasG/BBqGBQrcEPw3851lKI9TPvQzmuIFgU8hM2wCEsSY7L0SLbvPM56
+         +cryL9zlrsm9nH44zYfC20WAwjFtpe6vuzVgV0is6zI51uj+jVEWzTlkvw3Rr3IZTrrz
+         3fWGL0TqQzccOYdLgJDs9yHA/OpXL3ICYdj/yHjH2eel7or6aIsGO5m66S5jVeUhI/rg
+         MaHoe2VZVmqdmZfc226khIVnkwHeJ+pSOXxIMEMOrutCKdaiLKTAlpqoDazX2Ib8lF4E
+         CzNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrgmXB0PuuGJj+puScnUvFQ7aWafW6MAxiyptzbF4HYsBhX4eEt5rjfMPUeSlco4CVYXmK+ck6HDIA561M6DQyt5yl7rN6hnjj+wiD/oqEahEUDCidZspBg9e6yLEQp2bF1fjIYkNrx9/x3D9KBFKMnGckzwOBrFX6lzilWGqjuD7ls0EH3/cUGxw/kbyIwSryGQvVioruwycl8kqYyAZTMulQrE7uUd6abqXLTW3Q86mBwQRWAIj/rGCLmVGKd8e4mcJomb3aElRf1cD73EaTEU7j5lQxgYlLrPq07w==
+X-Gm-Message-State: AOJu0YykYsI3+waM/jc63H4bVjXouhyZQ/nF80QtBMAaidTWNor++76H
+	pF8Ul1cb1wTCY7DlaJC77feJ80Bi57AU4yrrPipLkav1c5WyJ6kfMesb4cMUGqaz63d/GZG660V
+	HwcOo8vctnSUFv0kjukbktrhlblQ=
+X-Google-Smtp-Source: AGHT+IGhoPhpe51Y6Tp0rsrrRoTYtVnReDI2hgHxSRyGOSVnzBaep7p/mha6bjIlUVzy7MousDnj/U19epRohpFPBTE=
+X-Received: by 2002:a5d:4f01:0:b0:354:f66f:9292 with SMTP id
+ ffacd0b85a97d-35e0f28441amr4419798f8f.28.1717346131116; Sun, 02 Jun 2024
+ 09:35:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9d:b0:374:9c67:1dea with SMTP id
- e9e14a558f8ab-3749c6721a2mr1304405ab.5.1717342203107; Sun, 02 Jun 2024
- 08:30:03 -0700 (PDT)
-Date: Sun, 02 Jun 2024 08:30:03 -0700
-In-Reply-To: <e2e23c33-b318-472b-a9af-3ed787149b2d@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f971fe0619e9e3f3@google.com>
-Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_write_inline_data
-From: syzbot <syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-2-laoar.shao@gmail.com>
+ <87ikysdmsi.fsf@email.froward.int.ebiederm.org> <CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
+In-Reply-To: <CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 2 Jun 2024 09:35:19 -0700
+Message-ID: <CAADnVQJ_RPg_xTjuO=+3G=4auZkS-t-F2WTs18rU2PbVdJVbdQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, audit@vger.kernel.org, 
+	LSM List <linux-security-module@vger.kernel.org>, selinux@vger.kernel.org, 
+	bpf <bpf@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Jun 1, 2024 at 11:57=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> =
+wrote:
+>
+> On Sun, Jun 2, 2024 at 11:52=E2=80=AFAM Eric W. Biederman <ebiederm@xmiss=
+ion.com> wrote:
+> >
+> > Yafang Shao <laoar.shao@gmail.com> writes:
+> >
+> > > Quoted from Linus [0]:
+> > >
+> > >   Since user space can randomly change their names anyway, using lock=
+ing
+> > >   was always wrong for readers (for writers it probably does make sen=
+se
+> > >   to have some lock - although practically speaking nobody cares ther=
+e
+> > >   either, but at least for a writer some kind of race could have
+> > >   long-term mixed results
+> >
+> > Ugh.
+> > Ick.
+> >
+> > This code is buggy.
+> >
+> > I won't argue that Linus is wrong, about removing the
+> > task_lock.
+> >
+> > Unfortunately strscpy_pad does not work properly with the
+> > task_lock removed, and buf_size larger that TASK_COMM_LEN.
+> > There is a race that will allow reading past the end
+> > of tsk->comm, if we read while tsk->common is being
+> > updated.
+>
+> It appears so. Thanks for pointing it out. Additionally, other code,
+> such as the BPF helper bpf_get_current_comm(), also uses strscpy_pad()
+> directly without the task_lock. It seems we should change that as
+> well.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hmm. What race do you see?
+If lock is removed from __get_task_comm() it probably can be removed from
+__set_task_comm() as well.
+And both are calling strscpy_pad to write and read comm.
+So I don't see how it would read past sizeof(comm),
+because 'buf' passed into __set_task_comm is NUL-terminated.
+So the concurrent read will find it.
 
-Reported-and-tested-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+> >
+> > So __get_task_comm needs to look something like:
+> >
+> > char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *t=
+sk)
+> > {
+> >         size_t len =3D buf_size;
+> >         if (len > TASK_COMM_LEN)
+> >                 len =3D TASK_COMM_LEN;
+> >         memcpy(buf, tsk->comm, len);
+> >         buf[len -1] =3D '\0';
+> >         return buf;
+> > }
+>
+> Thanks for your suggestion.
+>
+> >
+> > What shows up in buf past the '\0' is not guaranteed in the above
+> > version but I would be surprised if anyone cares.
+>
+> I believe we pad it to prevent the leakage of kernel data. In this
+> case, since no kernel data will be leaked, the following change may be
+> unnecessary.
 
-Tested on:
-
-commit:         9c84cdc8 f2fs: fix return value of f2fs_convert_inline..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e10032980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48a63c58ee55467e
-dashboard link: https://syzkaller.appspot.com/bug?extid=848062ba19c8782ca5c8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+It's not about leaking of kernel data, but more about not writing
+garbage past NUL.
+Because comm[] is a part of some record that is used as a key
+in a hash map.
 
