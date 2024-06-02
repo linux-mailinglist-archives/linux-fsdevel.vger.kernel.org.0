@@ -1,111 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-20729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22D58D74BB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 12:17:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FB18D74D2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 13:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F6282281
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 10:17:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AF9B21275
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 11:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D986637703;
-	Sun,  2 Jun 2024 10:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EF337708;
+	Sun,  2 Jun 2024 11:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Um0aWvdI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O43mqPsJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A3CA21
-	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Jun 2024 10:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41FC2628D
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Jun 2024 11:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717323420; cv=none; b=ogjYOAu55QBa3dTaSW8vSbofBSJhsI4WnQHNenXwfC1BxgwSOPG29BtLWpCOWU3skRZ9GIaEtDbDXJxkG5PCAZTimCDjXGi8abeRimahG+9FXPN1kASv5TthO4PaSql3sp+23+EtlQccqvfvGSlaopC5AJv082LOeiBtKHiFg38=
+	t=1717326280; cv=none; b=rLHLvtZRivC8Tx6htK1H+4EkG5OztxJJLnDPWmVv5XlXBUSA6R78nxSb+0m9QOVbD3QY+5neA6N78r9P1OT0Pa0NR0KjRv/aKn3a9iEkcwkTEgUnYnUB1g5aIl0o8SGUmB2k5nRblsx9fozJaO0TjC+sDRwnmi1YlSNCStB5nXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717323420; c=relaxed/simple;
-	bh=yUcu5ZhMJ76iR7nE8A2EtC5tQTiifrETLT1ZqPj2Trc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iv9YRthqdWauA0wHLNXjpSrUFd5cyNysevuDS2svAx6UU681AkyetKb0RWXm0dINWWp1/TBypOkLNywcNFeZ5s0Cw4985PtUlPXygkd3mDcldR1MQG/7JQFHEGCNYpolnBo8Ow2Fv9tJCDstVTpmMDURLEH4zwu0cgS3pD8Wdi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Um0aWvdI; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35e4aaa0f33so1078179f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Jun 2024 03:16:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717323417; x=1717928217; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OKR6ACuuSUyRzCi9kmvzKqaFwdsC9dBrDR9WibPo+Q=;
-        b=Um0aWvdIqs8VfI36wuEwuPr0/PzcBy+rJZd8dfP9cjj7srCz07dViz9YxYmUPhxf2T
-         UbqzeSqTMtfr2FolJfaBQ1L6RF+n6xTYD4QVVdJSHi4zx/oBa2ISaWxEwejCqZ6G8rxp
-         HXaBeof/iTGdJHJnBg8/jGW04o9bOyvZ7wlOzqaXzNjroFdlMum49//tstWbVmnXsEWJ
-         uHiEaHo+LRaOEToeL4jAaodvEeqGTI0Oto98xusOKKKlC4SFpoIo9ul3HsqgolDRATN8
-         dk+P68XSXNfuN+aVNusnr0j3Jbm1WcqUYRLF5fZFA6I5I2rtFbFoHuUaFWkv4cWE0267
-         NhGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717323417; x=1717928217;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7OKR6ACuuSUyRzCi9kmvzKqaFwdsC9dBrDR9WibPo+Q=;
-        b=j9XsLZ1gveRFFEQ2qdm6OICl8taezaYdkNsvg0tnCMih+k8b48seq/E6tbSST84HPp
-         R/pmgacoRnmIFH//pj7bqc4U2CaPr+1byTZvHRaAd42X89Kvr3YfxNFvXfMzBuu5L/Pn
-         x6JFe0P3AcME5zUThu9TEUY5h1ovGVJBBiHxefJo0aOonnRY45X8dhB6gPiJomkH5wxb
-         BubCSGGmao7MdzBzXCl3+nyPHgaQvj2KHUB+U4m0Q6459Zt5snOzgtIoXtuLWIUERLYp
-         3aw6qNyg7m0PSVbfOURpiyRUrMtaWOF5+uVgyybaWDHvUPgmD6IMoWG9Cr8Cedgp7p1a
-         8EiQ==
-X-Gm-Message-State: AOJu0Yx7ngU/mSl83FI2AnRXjbQpQxKO1n2+ARH2dmleSgCN6tzUI7q3
-	koE1tpmsee2ny7dVB5VPk4hZk9joqoaRqoZwg/BvqmWRBdlPF0B9v2hLDqXuW4w=
-X-Google-Smtp-Source: AGHT+IHiajIY8OlAv+K5TPOBGfQEsw40eH9SJPmOGgbGrZD9TIDr12iJR1he85deR732ex66YnvK1A==
-X-Received: by 2002:a5d:538d:0:b0:354:fcbf:f3c0 with SMTP id ffacd0b85a97d-35e0f25508emr6255048f8f.4.1717323416659;
-        Sun, 02 Jun 2024 03:16:56 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-81.dynamic.mnet-online.de. [82.135.80.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04ca482sm5728149f8f.32.2024.06.02.03.16.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 03:16:56 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] readdir: Remove unused header include
-Date: Sun,  2 Jun 2024 12:15:35 +0200
-Message-ID: <20240602101534.348159-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717326280; c=relaxed/simple;
+	bh=PvJfrcgdw2ZEP8oxZRffPus/wUS5uj9s+Fa7sxHHdzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0D8mJtFfKy9yM6YWbJYNleJg8BaT26ZiBcTwNrpBAzq5vu3tqlgEcm4qJC+TvpQn0TbIbCnVFiRAKNS8OLIXSpZqgZXyZhQW2lls/C6wUHFSJxliSqB8Do6wr/pQ2kgBEAI5u4PWJFmhpMgnfc2oesdMMsNsmG8/tzIo5HkqRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O43mqPsJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717326277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2RmCsa3x4PFA+Awu1HBsaYV9OR5QaPiIjh54C0Qzzgg=;
+	b=O43mqPsJ1ni05Yshn+kGeZ8rbqQKJBxEJNRfJu7ZYuauRsj/7Krq136Cg0wGR9HiY4xNlR
+	WL3XoVWsF/HD66NUoyW/FP+kSRS6/Z8cqEVV8mrxV3slFenTKsnvl0pym2EZx5dAU7x7KW
+	Q1CZFn8g7MRr9ibDSenySFkvlbpRoEI=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-319-0ynkJ7azMDSTQA4HTcLcpg-1; Sun,
+ 02 Jun 2024 07:04:31 -0400
+X-MC-Unique: 0ynkJ7azMDSTQA4HTcLcpg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F5053C025AC;
+	Sun,  2 Jun 2024 11:04:30 +0000 (UTC)
+Received: from bfoster (unknown [10.22.8.96])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C8C5105480A;
+	Sun,  2 Jun 2024 11:04:29 +0000 (UTC)
+Date: Sun, 2 Jun 2024 07:04:47 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
+Message-ID: <ZlxRz9LPNuoOZOtl@bfoster>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Since commit c512c6918719 ("uaccess: implement a proper
-unsafe_copy_to_user() and switch filldir over to it") the header file is
-no longer needed.
+On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
+> From: Dave Chinner <dchinner@redhat.com>
+> 
+> Unwritten extents can have page cache data over the range being
+> zeroed so we can't just skip them entirely. Fix this by checking for
+> an existing dirty folio over the unwritten range we are zeroing
+> and only performing zeroing if the folio is already dirty.
+> 
+> XXX: how do we detect a iomap containing a cow mapping over a hole
+> in iomap_zero_iter()? The XFS code implies this case also needs to
+> zero the page cache if there is data present, so trigger for page
+> cache lookup only in iomap_zero_iter() needs to handle this case as
+> well.
+> 
+> Before:
+> 
+> $ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
+> path /mnt/scratch/foo, 50000 iters
+> 
+> real    0m14.103s
+> user    0m0.015s
+> sys     0m0.020s
+> 
+> $ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
+> path /mnt/scratch/foo, 50000 iters
+> % time     seconds  usecs/call     calls    errors syscall
+> ------ ----------- ----------- --------- --------- ----------------
+>  85.90    0.847616          16     50000           ftruncate
+>  14.01    0.138229           2     50000           pwrite64
+> ....
+> 
+> After:
+> 
+> $ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
+> path /mnt/scratch/foo, 50000 iters
+> 
+> real    0m0.144s
+> user    0m0.021s
+> sys     0m0.012s
+> 
+> $ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
+> path /mnt/scratch/foo, 50000 iters
+> % time     seconds  usecs/call     calls    errors syscall
+> ------ ----------- ----------- --------- --------- ----------------
+>  53.86    0.505964          10     50000           ftruncate
+>  46.12    0.433251           8     50000           pwrite64
+> ....
+> 
+> Yup, we get back all the performance.
+> 
+> As for the "mmap write beyond EOF" data exposure aspect
+> documented here:
+> 
+> https://lore.kernel.org/linux-xfs/20221104182358.2007475-1-bfoster@redhat.com/
+> 
+> With this command:
+> 
+> $ sudo xfs_io -tfc "falloc 0 1k" -c "pwrite 0 1k" \
+>   -c "mmap 0 4k" -c "mwrite 3k 1k" -c "pwrite 32k 4k" \
+>   -c fsync -c "pread -v 3k 32" /mnt/scratch/foo
+> 
+> Before:
+> 
+> wrote 1024/1024 bytes at offset 0
+> 1 KiB, 1 ops; 0.0000 sec (34.877 MiB/sec and 35714.2857 ops/sec)
+> wrote 4096/4096 bytes at offset 32768
+> 4 KiB, 1 ops; 0.0000 sec (229.779 MiB/sec and 58823.5294 ops/sec)
+> 00000c00:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
+> XXXXXXXXXXXXXXXX
+> 00000c10:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
+> XXXXXXXXXXXXXXXX
+> read 32/32 bytes at offset 3072
+> 32.000000 bytes, 1 ops; 0.0000 sec (568.182 KiB/sec and 18181.8182
+>    ops/sec
+> 
+> After:
+> 
+> wrote 1024/1024 bytes at offset 0
+> 1 KiB, 1 ops; 0.0000 sec (40.690 MiB/sec and 41666.6667 ops/sec)
+> wrote 4096/4096 bytes at offset 32768
+> 4 KiB, 1 ops; 0.0000 sec (150.240 MiB/sec and 38461.5385 ops/sec)
+> 00000c00:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ................
+> 00000c10:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ................
+> read 32/32 bytes at offset 3072
+> 32.000000 bytes, 1 ops; 0.0000 sec (558.036 KiB/sec and 17857.1429
+>    ops/sec)
+> 
+> We see that this post-eof unwritten extent dirty page zeroing is
+> working correctly.
+> 
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- fs/readdir.c | 2 --
- 1 file changed, 2 deletions(-)
+I've pointed this out in the past, but IIRC this implementation is racy
+vs. reclaim. Specifically, relying on folio lookup after mapping lookup
+doesn't take reclaim into account, so if we look up an unwritten mapping
+and then a folio flushes and reclaims by the time the scan reaches that
+offset, it incorrectly treats that subrange as already zero when it
+actually isn't (because the extent is actually stale by that point, but
+the stale extent check is skipped).
 
-diff --git a/fs/readdir.c b/fs/readdir.c
-index 5045e32f1cb6..d6c82421902a 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -22,8 +22,6 @@
- #include <linux/compat.h>
- #include <linux/uaccess.h>
- 
--#include <asm/unaligned.h>
--
- /*
-  * Some filesystems were never converted to '->iterate_shared()'
-  * and their directory iterators want the inode lock held for
--- 
-2.45.1
+A simple example to demonstrate this is something like the following:
+
+# looping truncate zeroing
+while [ true ]; do
+	xfs_io -fc "truncate 0" -c "falloc 0 32K" -c "pwrite 0 4k" -c "truncate 2k" <file>
+	xfs_io -c "mmap 0 4k" -c "mread -v 2k 16" <file> | grep cd && break
+done
+
+vs.
+
+# looping writeback and reclaim
+while [ true ]; do
+	xfs_io -c "sync_range -a 0 0" -c "fadvise -d 0 0" <file>
+done
+
+If I ran that against this patch, the first loop will eventually detect
+stale data exposed past eof.
+
+Brian
 
 
