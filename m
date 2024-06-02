@@ -1,71 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-20730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FB18D74D2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 13:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2D28D74E8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 13:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AF9B21275
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 11:04:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA62B2141F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 11:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EF337708;
-	Sun,  2 Jun 2024 11:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28CB38389;
+	Sun,  2 Jun 2024 11:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O43mqPsJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FNciHn5B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41FC2628D
-	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Jun 2024 11:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1993A1BB
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Jun 2024 11:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717326280; cv=none; b=rLHLvtZRivC8Tx6htK1H+4EkG5OztxJJLnDPWmVv5XlXBUSA6R78nxSb+0m9QOVbD3QY+5neA6N78r9P1OT0Pa0NR0KjRv/aKn3a9iEkcwkTEgUnYnUB1g5aIl0o8SGUmB2k5nRblsx9fozJaO0TjC+sDRwnmi1YlSNCStB5nXQ=
+	t=1717327002; cv=none; b=eEwwgs2ZoRhVMJ0NL/GBHwgmjan90RsDHB3K6uJSGQZcTzuXydzeDTbjK6/b74CJg/Z34ojaJRKWdEYyc2MtJaT3gCKtPSFhszgM2AgK+cJOWavklPnfAcXCAZdbcsGOeJop7zNQPmr0rjgy5Jst7pAxq1jfSmVdcMsnJ73bXgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717326280; c=relaxed/simple;
-	bh=PvJfrcgdw2ZEP8oxZRffPus/wUS5uj9s+Fa7sxHHdzs=;
+	s=arc-20240116; t=1717327002; c=relaxed/simple;
+	bh=YCmxdfhYQeXhWlaQwq3LcnFSAcFQkqT2we7Sk85tI9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0D8mJtFfKy9yM6YWbJYNleJg8BaT26ZiBcTwNrpBAzq5vu3tqlgEcm4qJC+TvpQn0TbIbCnVFiRAKNS8OLIXSpZqgZXyZhQW2lls/C6wUHFSJxliSqB8Do6wr/pQ2kgBEAI5u4PWJFmhpMgnfc2oesdMMsNsmG8/tzIo5HkqRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O43mqPsJ; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilWCqYCIBPg8Mis98Xx9dOwqzJR/PUfK3P5fSJdBqkocP5gJH6eMAcP7sKozX2qiTpG4n9/I4q6oKE/qbg6fvJpiVEOw62a5UOZAKHG1WgckCyK2ln17V5HoT2KcmvQWXzAA1Hr/G5AjWibc9IGN9nFOHlO1bBkrpi8Hx43HdIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FNciHn5B; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717326277;
+	s=mimecast20190719; t=1717326999;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2RmCsa3x4PFA+Awu1HBsaYV9OR5QaPiIjh54C0Qzzgg=;
-	b=O43mqPsJ1ni05Yshn+kGeZ8rbqQKJBxEJNRfJu7ZYuauRsj/7Krq136Cg0wGR9HiY4xNlR
-	WL3XoVWsF/HD66NUoyW/FP+kSRS6/Z8cqEVV8mrxV3slFenTKsnvl0pym2EZx5dAU7x7KW
-	Q1CZFn8g7MRr9ibDSenySFkvlbpRoEI=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-319-0ynkJ7azMDSTQA4HTcLcpg-1; Sun,
- 02 Jun 2024 07:04:31 -0400
-X-MC-Unique: 0ynkJ7azMDSTQA4HTcLcpg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	bh=xB7XoRdgVTbFO1Td9v+EnfBLv3e5u1le/I3V6za6ljg=;
+	b=FNciHn5BU0YqiqV60bopOSdJY/FV8XMCst6CxMeWwmmwXe6gvb5YvyZ1XtpNYofTc95/u0
+	YqwqMRyT5MTYxIbZc4lo3BU5Stdj0vgo/cAXl0D9bGyvhlWy8/HCdAOlgiV/qf2fbZKubg
+	FHEuB/alniCna3ixNmo2S7ZnrJMQM6A=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-3bU5Tr9hMr2vyiekgUpSTw-1; Sun, 02 Jun 2024 07:16:36 -0400
+X-MC-Unique: 3bU5Tr9hMr2vyiekgUpSTw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F5053C025AC;
-	Sun,  2 Jun 2024 11:04:30 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DD83881227E;
+	Sun,  2 Jun 2024 11:16:35 +0000 (UTC)
 Received: from bfoster (unknown [10.22.8.96])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C8C5105480A;
-	Sun,  2 Jun 2024 11:04:29 +0000 (UTC)
-Date: Sun, 2 Jun 2024 07:04:47 -0400
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 21FFB36EC;
+	Sun,  2 Jun 2024 11:16:35 +0000 (UTC)
+Date: Sun, 2 Jun 2024 07:16:53 -0400
 From: Brian Foster <bfoster@redhat.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
-Message-ID: <ZlxRz9LPNuoOZOtl@bfoster>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandanbabu@kernel.org, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 3/8] iomap: pass blocksize to iomap_truncate_page()
+Message-ID: <ZlxUpYvb9dlOHFR3@bfoster>
 References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-4-yi.zhang@huaweicloud.com>
+ <ZlnE7vrk_dmrqUxC@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,128 +75,120 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+In-Reply-To: <ZlnE7vrk_dmrqUxC@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+On Fri, May 31, 2024 at 05:39:10AM -0700, Christoph Hellwig wrote:
+> > -		const struct iomap_ops *ops)
+> > +iomap_truncate_page(struct inode *inode, loff_t pos, unsigned int blocksize,
+> > +		bool *did_zero, const struct iomap_ops *ops)
+> >  {
+> > -	unsigned int blocksize = i_blocksize(inode);
+> > -	unsigned int off = pos & (blocksize - 1);
+> > +	unsigned int off = rem_u64(pos, blocksize);
+> >  
+> >  	/* Block boundary? Nothing to do */
+> >  	if (!off)
 > 
-> Unwritten extents can have page cache data over the range being
-> zeroed so we can't just skip them entirely. Fix this by checking for
-> an existing dirty folio over the unwritten range we are zeroing
-> and only performing zeroing if the folio is already dirty.
+> Instad of passing yet another argument here, can we just kill
+> iomap_truncate_page?
 > 
-> XXX: how do we detect a iomap containing a cow mapping over a hole
-> in iomap_zero_iter()? The XFS code implies this case also needs to
-> zero the page cache if there is data present, so trigger for page
-> cache lookup only in iomap_zero_iter() needs to handle this case as
-> well.
+> I.e. just open code the rem_u64 and 0 offset check in the only caller
+> and call iomap_zero_range.  Same for the DAX variant and it's two
+> callers.
 > 
-> Before:
-> 
-> $ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> 
-> real    0m14.103s
-> user    0m0.015s
-> sys     0m0.020s
-> 
-> $ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->  85.90    0.847616          16     50000           ftruncate
->  14.01    0.138229           2     50000           pwrite64
-> ....
-> 
-> After:
-> 
-> $ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> 
-> real    0m0.144s
-> user    0m0.021s
-> sys     0m0.012s
-> 
-> $ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->  53.86    0.505964          10     50000           ftruncate
->  46.12    0.433251           8     50000           pwrite64
-> ....
-> 
-> Yup, we get back all the performance.
-> 
-> As for the "mmap write beyond EOF" data exposure aspect
-> documented here:
-> 
-> https://lore.kernel.org/linux-xfs/20221104182358.2007475-1-bfoster@redhat.com/
-> 
-> With this command:
-> 
-> $ sudo xfs_io -tfc "falloc 0 1k" -c "pwrite 0 1k" \
->   -c "mmap 0 4k" -c "mwrite 3k 1k" -c "pwrite 32k 4k" \
->   -c fsync -c "pread -v 3k 32" /mnt/scratch/foo
-> 
-> Before:
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0000 sec (34.877 MiB/sec and 35714.2857 ops/sec)
-> wrote 4096/4096 bytes at offset 32768
-> 4 KiB, 1 ops; 0.0000 sec (229.779 MiB/sec and 58823.5294 ops/sec)
-> 00000c00:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
-> XXXXXXXXXXXXXXXX
-> 00000c10:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
-> XXXXXXXXXXXXXXXX
-> read 32/32 bytes at offset 3072
-> 32.000000 bytes, 1 ops; 0.0000 sec (568.182 KiB/sec and 18181.8182
->    ops/sec
-> 
-> After:
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0000 sec (40.690 MiB/sec and 41666.6667 ops/sec)
-> wrote 4096/4096 bytes at offset 32768
-> 4 KiB, 1 ops; 0.0000 sec (150.240 MiB/sec and 38461.5385 ops/sec)
-> 00000c00:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ................
-> 00000c10:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ................
-> read 32/32 bytes at offset 3072
-> 32.000000 bytes, 1 ops; 0.0000 sec (558.036 KiB/sec and 17857.1429
->    ops/sec)
-> 
-> We see that this post-eof unwritten extent dirty page zeroing is
-> working correctly.
 > 
 
-I've pointed this out in the past, but IIRC this implementation is racy
-vs. reclaim. Specifically, relying on folio lookup after mapping lookup
-doesn't take reclaim into account, so if we look up an unwritten mapping
-and then a folio flushes and reclaims by the time the scan reaches that
-offset, it incorrectly treats that subrange as already zero when it
-actually isn't (because the extent is actually stale by that point, but
-the stale extent check is skipped).
+Hey Christoph,
 
-A simple example to demonstrate this is something like the following:
+I've wondered the same about killing off iomap_truncate_page(), but JFYI
+one of the several prototypes I have around of other potential ways to
+address this problem slightly splits off truncate page from being a
+straight zero range wrapper. A quick diff [2] of that is inlined below
+for reference (only lightly tested, may be busted, etc.).
 
-# looping truncate zeroing
-while [ true ]; do
-	xfs_io -fc "truncate 0" -c "falloc 0 32K" -c "pwrite 0 4k" -c "truncate 2k" <file>
-	xfs_io -c "mmap 0 4k" -c "mread -v 2k 16" <file> | grep cd && break
-done
-
-vs.
-
-# looping writeback and reclaim
-while [ true ]; do
-	xfs_io -c "sync_range -a 0 0" -c "fadvise -d 0 0" <file>
-done
-
-If I ran that against this patch, the first loop will eventually detect
-stale data exposed past eof.
+The idea is that IIRC truncate_page() was really the only zero range
+user that might actually encounter dirty cache over unwritten mappings,
+so given that and the typically constrained range size of truncate page,
+just let it be more aggressive about bypassing the unwritten mapping
+optimization in iomap_zero_iter(). Just something else to consider, and
+this is definitely not something you'd want to do for zero range proper.
 
 Brian
+
+P.S., I think the last patches I actually posted around this were here
+[1], but I also have multiple versions of that selective flush approach
+ported to iomap instead of being XFS specific as well.
+
+[1] https://lore.kernel.org/linux-xfs/20221104182358.2007475-1-bfoster@redhat.com/
+    https://lore.kernel.org/linux-xfs/20221128173945.3953659-1-bfoster@redhat.com/
+[2] truncate page POC:
+
+--- 8< ---
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index c5802a459334..a261e732ea05 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1380,7 +1380,8 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+ }
+ EXPORT_SYMBOL_GPL(iomap_file_unshare);
+ 
+-static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
++static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
++			      bool dirty_cache)
+ {
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	loff_t pos = iter->pos;
+@@ -1388,7 +1389,8 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 	loff_t written = 0;
+ 
+ 	/* already zeroed?  we're done. */
+-	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
++	if (srcmap->type == IOMAP_HOLE ||
++	    (!dirty_cache && srcmap->type == IOMAP_UNWRITTEN))
+ 		return length;
+ 
+ 	do {
+@@ -1439,7 +1441,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+ 	int ret;
+ 
+ 	while ((ret = iomap_iter(&iter, ops)) > 0)
+-		iter.processed = iomap_zero_iter(&iter, did_zero);
++		iter.processed = iomap_zero_iter(&iter, did_zero, false);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(iomap_zero_range);
+@@ -1450,11 +1452,29 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+ {
+ 	unsigned int blocksize = i_blocksize(inode);
+ 	unsigned int off = pos & (blocksize - 1);
++	struct iomap_iter iter = {
++		.inode		= inode,
++		.pos		= pos,
++		.len		= blocksize - off,
++		.flags		= IOMAP_ZERO,
++	};
++	loff_t end;
++	int ret;
++	bool dirty_cache = false;
+ 
+ 	/* Block boundary? Nothing to do */
+ 	if (!off)
+ 		return 0;
+-	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops);
++
++	/* overwrite unwritten ranges if any part of the range is dirty for
++	 * truncate page */
++	end = iter.pos + iter.len - 1;
++	if (filemap_range_needs_writeback(inode->i_mapping, iter.pos, end))
++		dirty_cache = true;
++
++	while ((ret = iomap_iter(&iter, ops)) > 0)
++		iter.processed = iomap_zero_iter(&iter, did_zero, dirty_cache);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(iomap_truncate_page);
+ 
 
 
