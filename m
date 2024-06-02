@@ -1,195 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-20726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1533A8D73B9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 06:09:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0318D7409
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 08:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C342F281F95
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 04:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FF71F21571
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 06:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51C612B6C;
-	Sun,  2 Jun 2024 04:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E88B208A1;
+	Sun,  2 Jun 2024 06:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLoWVB8A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BD3BE47;
-	Sun,  2 Jun 2024 04:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50C18E11;
+	Sun,  2 Jun 2024 06:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717301334; cv=none; b=Tbqj6E8c4oLuZ4y0DJJQDGQX2hikOXcJnguSQAGXY616qmKOK3IKfbB67m0ktHOqBsYqAEuWvlkpmeEgTDJQldKa8vCHq08sKVWV9cxj/jrJVPccOEme3+RWtUUZQI+0G77WYbeI0QqfvBr+tJAE3l/+NqA+K4G+i6pSVXOjPWI=
+	t=1717311422; cv=none; b=N+7QB4f//PG61jMvjyfnWuiO4jI1ZpD9/4jukbPMP5tDeFyQcHfCOy1AcdShbMdkzhdUnsLDrinj2EK51KrhwNc6hUb7Mhw4OAM1XjGFcyHCsqVSJXUKOL2jhbl8fPFJYlhwW2HK+qbZiW7gyxdJhUKa9h/Tr69rDj5HP6yFRQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717301334; c=relaxed/simple;
-	bh=zt/mCGLUmVzFbMigp4I4greEWSN7ilXHuSeRteZ0s7s=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=L6nUy9WgrZi+DmP0TfUf6zR6GmrNu5RTSIZYo7ingCNtcEvP3fjdAEMTew9nB8wcSs0vOyYbxZVzkh3YEujbsHiBBN6wHZkuzmOLYlTGugNZITX6AeW9GvpsA/uwrXDy57JJvv+V1qKN7Wqxufd6VPo2AOqOdnSbfDkUQGOosYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:36664)
-	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sDcGs-00Eawn-4E; Sat, 01 Jun 2024 21:52:38 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:34300 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sDcGq-00F7Wn-Mp; Sat, 01 Jun 2024 21:52:37 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org,  linux-mm@kvack.org,
-  linux-fsdevel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
-  audit@vger.kernel.org,  linux-security-module@vger.kernel.org,
-  selinux@vger.kernel.org,  bpf@vger.kernel.org,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
- Kara <jack@suse.cz>,  Kees Cook <keescook@chromium.org>
-References: <20240602023754.25443-1-laoar.shao@gmail.com>
-	<20240602023754.25443-2-laoar.shao@gmail.com>
-Date: Sat, 01 Jun 2024 22:51:57 -0500
-In-Reply-To: <20240602023754.25443-2-laoar.shao@gmail.com> (Yafang Shao's
-	message of "Sun, 2 Jun 2024 10:37:49 +0800")
-Message-ID: <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717311422; c=relaxed/simple;
+	bh=kNaAdwj4JXsTfPgEJdtdgcc05WNgvnkp0WyXnDIgbWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hpS53aY4x7LyMJ4aTYvPfY3nUt9sQXBjbXaXov3VJsCRH0OAkEQFCOt5HL5c8YTZAEKdv9MyhkiLiedrmu4xHXA6Z65/7ZylUjvw3bBIiviXaXt2mbvXoXVD81YITjqaPdcmLW9PgIRcehfwkP392CSdqLNkPh+eJm0kq13XUms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLoWVB8A; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6ae279e6427so14716346d6.1;
+        Sat, 01 Jun 2024 23:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717311420; x=1717916220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AAUPbRzuyrXUUhAbCV+RswkSNoR9RTLDNyX2Ucwmfqo=;
+        b=WLoWVB8ARGhW9CHP6QC1567Gawsr3LZmSR2SXlu/OVL2xD8emi2TqPu9l6kJC3vE/8
+         ZISgbrVy3432imlcxjziw7+jRLS78gabV0Rf50pmCYqv65TLwz4S1C3Ey34d39U3yWLl
+         IAXy95KCmyJzgvvcQCZR8g6rDJx5R5hPEvL4VWHMrXJXnCUSW2CzK5BKp41b9NWq0nDh
+         8PX28VgxhMnBqYiDWeVQSX1A2rqBfU9BN+frUhVvntbEw6unSB5hWJh/97e+HJricNV/
+         Ln5zfhPa+cmkyayd0PwbjzaUciz/gQEi7gKRkNo/aI3uYtKc7t4Ph4B1YfdYYt68QoeW
+         Vi7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717311420; x=1717916220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AAUPbRzuyrXUUhAbCV+RswkSNoR9RTLDNyX2Ucwmfqo=;
+        b=YgpJkIt/36YCc/t+koT3YH6xrLyrkCoT/tJZiW0dL925oQKMCzkJ+ekk2BEFVR8eKg
+         AhotUzBJK5fyY3RWFBzgR4grtjifgBI9dr26tvdL6clS0bMCX9QLvlzwRJl/B1zEsN1z
+         h1v9EOXWNSkvqWbyP8zWsUWBsYMJRtZRokRAuDV+9UzS4l9LFRgEWBhDe5E/x2joqtNu
+         NNwNn23JyZq+OeI8DH3Q9FMvSqhE9HTa/ILemlVGm77VS4XIgz4ftx+3HpXlUBund9lx
+         JOYA0Inhqty70pKHujXggfT3ZX6X9V8uPM1C1exrl8Y9qxOjUsQ9ZUWvS6vuI7vrIWrj
+         5qYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdOnO1kBtKrircJXJb5t/SwIv1MlXfXcuV6rLEDG4CuAuv1KMKUcvvjfw+f0kRg38aGLABA0RzYTOh9oJE7u4gHmiubhrYTe136WwU9e8YqfkdJV61IG+uqE8uLaQytdqhZQ+nbY3ruHqOWo7cqxyAHGD0t51IscuyL21l2PR7djiNHYoO6Qm574urD861Dog7p0AbEOjnMYWYGzDcxFWyMRN+4FwpVu9C1bBKtOfjEAgUPiodg1Oa0/k4jgUCYq5Ls3PprtNqrDWKOEUqm+6Z07oSxQvcrsZ3cSjagQ==
+X-Gm-Message-State: AOJu0Ywb+6Hb8Pp33Noz83GuzFPNy0UhXKTRBvPXSbFpd/pYoR5P8tui
+	aXC2iFwowTIUHcl8pWPh4MZqW/CwQkkhXeQIr0hLGOZb0eWTrPpPcUPIJzEOH9x6UBEFAXmIJM4
+	Hsa0a9HBZwlHZyFH9Fp0tqkCgT90=
+X-Google-Smtp-Source: AGHT+IHBO8CcAWYey7pRZVURNsZzP8hqqeNI4aNYwlr3UTd/2FxO0+zZYuavJGm6rllryB0FhnqOhCZpQ6HL1oaZSiY=
+X-Received: by 2002:a05:6214:4891:b0:6ab:9492:7d89 with SMTP id
+ 6a1803df08f44-6aecd6f054bmr77058646d6.52.1717311419907; Sat, 01 Jun 2024
+ 23:56:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1sDcGq-00F7Wn-Mp;;;mid=<87ikysdmsi.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1860tjt8nodVMvTZzeRt1UmJFO9w9v1+IM=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: **
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_03 6+ unique symbols in subject
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Yafang Shao <laoar.shao@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 817 ms - load_scoreonly_sql: 0.07 (0.0%),
-	signal_user_changed: 14 (1.7%), b_tie_ro: 12 (1.4%), parse: 1.68
-	(0.2%), extract_message_metadata: 39 (4.7%), get_uri_detail_list: 4.4
-	(0.5%), tests_pri_-2000: 39 (4.8%), tests_pri_-1000: 2.8 (0.3%),
-	tests_pri_-950: 1.37 (0.2%), tests_pri_-900: 1.09 (0.1%),
-	tests_pri_-90: 126 (15.4%), check_bayes: 93 (11.4%), b_tokenize: 10
-	(1.3%), b_tok_get_all: 10 (1.3%), b_comp_prob: 3.1 (0.4%),
-	b_tok_touch_all: 65 (8.0%), b_finish: 1.24 (0.2%), tests_pri_0: 357
-	(43.7%), check_dkim_signature: 0.57 (0.1%), check_dkim_adsp: 3.2
-	(0.4%), poll_dns_idle: 215 (26.3%), tests_pri_10: 2.0 (0.3%),
-	tests_pri_500: 229 (28.0%), rewrite_mail: 0.00 (0.0%)
+References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-2-laoar.shao@gmail.com>
+ <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Sun, 2 Jun 2024 14:56:23 +0800
+Message-ID: <CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
 Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: torvalds@linux-foundation.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yafang Shao <laoar.shao@gmail.com> writes:
-
-> Quoted from Linus [0]:
+On Sun, Jun 2, 2024 at 11:52=E2=80=AFAM Eric W. Biederman <ebiederm@xmissio=
+n.com> wrote:
 >
->   Since user space can randomly change their names anyway, using locking
->   was always wrong for readers (for writers it probably does make sense
->   to have some lock - although practically speaking nobody cares there
->   either, but at least for a writer some kind of race could have
->   long-term mixed results
-
-Ugh.
-Ick.
-
-This code is buggy.
-
-I won't argue that Linus is wrong, about removing the
-task_lock.
-
-Unfortunately strscpy_pad does not work properly with the
-task_lock removed, and buf_size larger that TASK_COMM_LEN.
-There is a race that will allow reading past the end
-of tsk->comm, if we read while tsk->common is being
-updated.
-
-So __get_task_comm needs to look something like:
-
-char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
-{
-	size_t len = buf_size;
-        if (len > TASK_COMM_LEN)
-        	len = TASK_COMM_LEN;
-	memcpy(buf, tsk->comm, len);
-        buf[len -1] = '\0';
-	return buf;
-}
-
-What shows up in buf past the '\0' is not guaranteed in the above
-version but I would be surprised if anyone cares.
-
-If people do care the code can do something like:
-char *last = strchr(buf);
-memset(last, '\0', buf_size - (last - buf));
-
-To zero everything in the buffer past the first '\0' byte.
-
-
-Eric
-
-
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Link: https://lore.kernel.org/all/CAHk-=wivfrF0_zvf+oj6==Sh=-npJooP8chLPEfaFV0oNYTTBA@mail.gmail.com [0]
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> ---
->  fs/exec.c             | 7 +++++--
->  include/linux/sched.h | 2 +-
->  2 files changed, 6 insertions(+), 3 deletions(-)
+> Yafang Shao <laoar.shao@gmail.com> writes:
 >
-> diff --git a/fs/exec.c b/fs/exec.c
-> index b3c40fbb325f..b43992d35a8a 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1227,12 +1227,15 @@ static int unshare_sighand(struct task_struct *me)
->  	return 0;
->  }
->  
-> +/*
-> + * User space can randomly change their names anyway, so locking for readers
-> + * doesn't make sense. For writers, locking is probably necessary, as a race
-> + * condition could lead to long-term mixed results.
-> + */
->  char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
->  {
-> -	task_lock(tsk);
->  	/* Always NUL terminated and zero-padded */
->  	strscpy_pad(buf, tsk->comm, buf_size);
-> -	task_unlock(tsk);
->  	return buf;
->  }
->  EXPORT_SYMBOL_GPL(__get_task_comm);
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index c75fd46506df..56a927393a38 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1083,7 +1083,7 @@ struct task_struct {
->  	 *
->  	 * - normally initialized setup_new_exec()
->  	 * - access it with [gs]et_task_comm()
-> -	 * - lock it with task_lock()
-> +	 * - lock it with task_lock() for writing
->  	 */
->  	char				comm[TASK_COMM_LEN];
+> > Quoted from Linus [0]:
+> >
+> >   Since user space can randomly change their names anyway, using lockin=
+g
+> >   was always wrong for readers (for writers it probably does make sense
+> >   to have some lock - although practically speaking nobody cares there
+> >   either, but at least for a writer some kind of race could have
+> >   long-term mixed results
+>
+> Ugh.
+> Ick.
+>
+> This code is buggy.
+>
+> I won't argue that Linus is wrong, about removing the
+> task_lock.
+>
+> Unfortunately strscpy_pad does not work properly with the
+> task_lock removed, and buf_size larger that TASK_COMM_LEN.
+> There is a race that will allow reading past the end
+> of tsk->comm, if we read while tsk->common is being
+> updated.
+
+It appears so. Thanks for pointing it out. Additionally, other code,
+such as the BPF helper bpf_get_current_comm(), also uses strscpy_pad()
+directly without the task_lock. It seems we should change that as
+well.
+
+>
+> So __get_task_comm needs to look something like:
+>
+> char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk=
+)
+> {
+>         size_t len =3D buf_size;
+>         if (len > TASK_COMM_LEN)
+>                 len =3D TASK_COMM_LEN;
+>         memcpy(buf, tsk->comm, len);
+>         buf[len -1] =3D '\0';
+>         return buf;
+> }
+
+Thanks for your suggestion.
+
+>
+> What shows up in buf past the '\0' is not guaranteed in the above
+> version but I would be surprised if anyone cares.
+
+I believe we pad it to prevent the leakage of kernel data. In this
+case, since no kernel data will be leaked, the following change may be
+unnecessary.
+
+>
+> If people do care the code can do something like:
+> char *last =3D strchr(buf);
+> memset(last, '\0', buf_size - (last - buf));
+>
+> To zero everything in the buffer past the first '\0' byte.
+>
+
+--=20
+Regards
+Yafang
 
