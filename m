@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-20720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582A78D731B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 04:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFDDA8D7320
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 04:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C414C1F217F3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 02:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EE728203D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 02:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB30EA932;
-	Sun,  2 Jun 2024 02:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5627EAD49;
+	Sun,  2 Jun 2024 02:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z97RSFnx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpIKMHHX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BC44C81;
-	Sun,  2 Jun 2024 02:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695B44C8C;
+	Sun,  2 Jun 2024 02:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717295910; cv=none; b=ao9kH9JYCe0iNoapbIiQrtEU7ozMHqd8gnKHhmWpQQAlW8j/4KuIDn6hC2++OBYvUSuMUNuhN8ymJiUsInpZTCYkdrGEihCvMhQaDp5OdAVfYNqAiXdsO33wIBu0Zc33s1przFe3StgKAmu7BXTYlckOaKr8qEN2Rj7EN4QrOIY=
+	t=1717295917; cv=none; b=VqqMy0a4C5akdZKxP6+6+yPf/QhOtwQrNYHmLG47JuCujb5uGXqZiYwwl3R3aLHu+scIMpVs29uO4IsplmbPHnC5DHivyS3L6PSVwJ11FEpaIAuowXWEqIjXQml9wbsahnsxkXWQ6AGa3aAu6WVNMVKCCD+l0WDyF576rqI+W3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717295910; c=relaxed/simple;
-	bh=CGWh4S8+r91SSRuLn3E71JJWKgrT+nzupvKqmDjon1Q=;
+	s=arc-20240116; t=1717295917; c=relaxed/simple;
+	bh=3RtLwIqj8y9FKL3we3+yUHHdPufkZZtSuz+OWtIZu5g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VXiQ6x6WkYiCP7HacmYX/gJRDbAvSQSsPwkOCq7kyfWlqtNhqvjzAHDAaT5KIiF6cgchyNBIc+oDqpbUKUsTKuVf9JXqrvfOamqSl0K23OlM+n8OX+ZKBpEQ7KgQ1hEzQJYLURltT7/XLBphL5BdoUBuFqHZGWIhzqBTi+0lbm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z97RSFnx; arc=none smtp.client-ip=209.85.215.173
+	 MIME-Version; b=u/mWrgSQuB6yK8FEiGWX6QJiErkuMHHn08yDN/OMwisfFwzk/VBIGNaDBFsLhOhzZ7aj3Uv/+LP6Ma8WyQSePWV7K1N2xDKhmWV2/E1t2FoMeC5oxixjBeowVV+jR99XD/sF9bYOp+JgQRnKmM3UosT08e4pd5mbvyd12m7W8Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IpIKMHHX; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6818e31e5baso2630174a12.1;
-        Sat, 01 Jun 2024 19:38:28 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6c9d747be82so459127a12.3;
+        Sat, 01 Jun 2024 19:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717295908; x=1717900708; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717295916; x=1717900716; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y4yHgpWtrekLlyiVlHlJ07YnG43AZ2I7wcs9NGubtp0=;
-        b=Z97RSFnxcD20zapViDGJfi1H6KOSLbTSKGmBazpGUxpYaSWVDtdog759Rkh7SRgrjR
-         zUV/Dwp/7m1787ldPU3JigLzKrCdmiI9i+x9+kwbIIarzjTNkys6zZQLmt1cPvct2Pj/
-         NrHeJBRmK3Z10rjMsD2eeKy5MN5nFu+54C3qIi0LekOE/AEHC8wRplC9PkYfcgs4Cu+9
-         MX3xOfTI7FaUZcirXDJXDFZMaFAan2Lg8CF+BfNwF4Z+OQ2DbhP0m4+kVuOM2Fz9ssIR
-         Y475Z/Hzqq4hNxKMXoVDidjK0d3Y3FQTridHMKa0oadVkzvefbjdZDYGxQ25N5mfxp4I
-         Gnjw==
+        bh=86BLVNhH4ic1Ff0npcvsPGdGMp4TM/B2Y17eUoaRoKo=;
+        b=IpIKMHHXlk40M6HM7zVnEYf1vdIIJ0TDmjod7p+CQKUlfrtE/2t9tF10UynNhKuE60
+         BchTP+I+NfC2DODCxZf5Z06TBKHJ3bjJoiU2AJL7ZqZNWVBS37iwfO0HWB39tfG1Hv5b
+         CQt1het7uaMps0gAGAm0V+ULmhn0MAXBb/NKgIkDamfmdw7wontDyZ98Q2WCoBCQM98e
+         j55/fEJaV9oaqrqsOmyRrGeYx/wTyMfoXkRNiff+oancz4ENQTcrAOpBLjo41pLUFYex
+         t9HSsdBDgHPsPOFcsvsw6W6a61zp0IMlCo/mBSwlZU04Tk6e12mUgQhgoAKbHn0lKvs1
+         zFAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717295908; x=1717900708;
+        d=1e100.net; s=20230601; t=1717295916; x=1717900716;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y4yHgpWtrekLlyiVlHlJ07YnG43AZ2I7wcs9NGubtp0=;
-        b=SCgQQL02R2VFlcNCYiv7kuAjBZlb7IDVs2NUuBtuYloKfP2S+pcGOsmCsAuyZv1G+9
-         KTGxrhe90/v7FuxEsbSCRnVILVSY4hsdubdFDrD8tRF3Ueue3jBf5lodQNOaswPDPTXL
-         j9I1iV3qBA6FSmX6zr0PNiGVxknwNekbjkbWRSGVVMXGRJoSNI/qwv4ktUCNN/ijKI/M
-         GqjdyupiYQLI9G4h6dFc/U/I+SmapEkh/eGAUCXLMvHJQ792z7+8usiSVgjpKLt6QTpP
-         gnRjXu6k5hN5EW/eT+g4oL10sp30CjkwWXHKBOjIv6mBXVFzdd4jje7QYbb5/zNsATrK
-         Kc+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXfB/IpMjtpP9lOCemmuwMO0HFlukr0DCJp3bU1ilS1wrdW1yI7jO1UVR6SVUoX2ADBg/RJuQY/v9yh3saQ8UCSJ98mhk52JOY1n+8QHyrJ94FmyftNc6ajoD0P8rnBjlxqHsQ8RT3UGVZNU2IcN8dEMS6b03iIGH04el3AlTC8cBDw6D/f42QkpnC+ciFVrVZ+F+KJ8v43hAwOzfHClE8f2Z7MBpvWNMzmttrwtQhrOzt9RT89RQv9BfVRuqGsXkHEsLyNNteHyMcwWMr9aIoKTXDgvECKgPauYZ89CQ==
-X-Gm-Message-State: AOJu0YzUUHxH6yAx6GjILICyFvvS0QTYBapJu427O2Mqh54FxGP/NjYn
-	a+3w4Dd6L/63YoRgbU+sA6CSqGESri1ChIpacY7FdyTNpyzyUcxZ
-X-Google-Smtp-Source: AGHT+IE+a6Agoj8+Gjr8xAx8NUyto1//finy+7nb6g1z3TiLFFz5Bgij41khKDrpJ1UuLaT9z0xZDA==
-X-Received: by 2002:a17:902:d4cc:b0:1f2:f1bf:cf44 with SMTP id d9443c01a7336-1f636fdebcamr71682625ad.6.1717295907785;
-        Sat, 01 Jun 2024 19:38:27 -0700 (PDT)
+        bh=86BLVNhH4ic1Ff0npcvsPGdGMp4TM/B2Y17eUoaRoKo=;
+        b=jb7FUV9KPKzA2j8vkqeFMD1oDUeMeiabPIUzHwXoSOZYjv0EM/g7TFcT6gy6k8s+gb
+         jWKYjp7UF/Y64hya/zONw4pjj9074p4WqDV3obxveOqPcz6axNP5dFS3Q3BqTHfpjwUl
+         0mjBtT1Ya0vQbPOhHkNNUBeKNP2KBPcUp95y4i+LcRXDe39OGBT+lg+1y5D5rIOLIzFB
+         kNstN1FcYZ3iE1OXs2CRigGIYpr6dZNDfg4h2E7m60e+RH8Tr6R1PGRCiSHoPYRgIa+3
+         DJVrjqB1e5m0vhWvqk9+2s9hSvyeQCzE5KhI6Dj2Nf/ZIOwa8MGjoCHBHdMristkDPMp
+         clTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIypwU72By1fR2oe9bjITC4GTD2/QGZ+C8Zi8mtS0hvAJQcCWFSx86Az3874N2R81k4JtOl2qWtRsVOhPPy7DFgWkESZx/HuYXNQQZvBLocbBsgeQMgVYgj8mv2ZFwjT9ZGrqKH5dtowm/bOSKS3FJjgyPfwunWZlL21g0I25d/53f23+jhjLXAaci1JUB1g85uyqoIs6mAYULTiY8SyWxWizEca4GQT9/UgH50Z/Wu6Yf6pV1jLQ4lgPo3ODbT9lc1cmDDWgWUXFdT442h6USXAvi88mGZdgMLdatxg==
+X-Gm-Message-State: AOJu0Yz+Z1MzGn0gkSyVTAGjKOGz5pIchTtI+x3nSJiA4GqfE9ixSe7n
+	+87ivFb8HQC3WQbAq/yHYnvSn386kmyl7+pyrJRLByu32IaJSW/b
+X-Google-Smtp-Source: AGHT+IGNFv/boPhAUu2B0W3t33lg4GlGND9qco4AaBPr3IkdnpkGlhsaTOMWXxep7jl0e5AswLTzAA==
+X-Received: by 2002:a17:902:c946:b0:1f6:6946:ef72 with SMTP id d9443c01a7336-1f66946f176mr13505155ad.36.1717295915514;
+        Sat, 01 Jun 2024 19:38:35 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.45.187])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ea21csm39379575ad.202.2024.06.01.19.38.20
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ea21csm39379575ad.202.2024.06.01.19.38.28
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Jun 2024 19:38:27 -0700 (PDT)
+        Sat, 01 Jun 2024 19:38:35 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: torvalds@linux-foundation.org
 Cc: linux-mm@kvack.org,
@@ -77,12 +77,11 @@ Cc: linux-mm@kvack.org,
 	selinux@vger.kernel.org,
 	bpf@vger.kernel.org,
 	Yafang Shao <laoar.shao@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH 2/6] tracing: Replace memcpy() with __get_task_comm()
-Date: Sun,  2 Jun 2024 10:37:50 +0800
-Message-Id: <20240602023754.25443-3-laoar.shao@gmail.com>
+	Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@redhat.com>
+Subject: [PATCH 3/6] auditsc: Replace memcpy() with __get_task_comm()
+Date: Sun,  2 Jun 2024 10:37:51 +0800
+Message-Id: <20240602023754.25443-4-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 In-Reply-To: <20240602023754.25443-1-laoar.shao@gmail.com>
 References: <20240602023754.25443-1-laoar.shao@gmail.com>
@@ -99,265 +98,43 @@ always NUL-terminated, regardless of the source string. This approach also
 facilitates future extensions to the task comm.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>
 ---
- include/linux/tracepoint.h     |  4 ++--
- include/trace/events/block.h   | 10 +++++-----
- include/trace/events/oom.h     |  2 +-
- include/trace/events/osnoise.h |  2 +-
- include/trace/events/sched.h   | 27 ++++++++++++++-------------
- include/trace/events/signal.h  |  2 +-
- include/trace/events/task.h    |  4 ++--
- 7 files changed, 26 insertions(+), 25 deletions(-)
+ kernel/auditsc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 689b6d71590e..6381824d8107 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -519,10 +519,10 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-  *	*
-  *
-  *	TP_fast_assign(
-- *		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-+ *		__get_task_comm(__entry->next_comm, TASK_COMM_LEN, next);
-  *		__entry->prev_pid	= prev->pid;
-  *		__entry->prev_prio	= prev->prio;
-- *		memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
-+ *		__get_task_comm(__entry->prev_comm, TASK_COMM_LEN, prev);
-  *		__entry->next_pid	= next->pid;
-  *		__entry->next_prio	= next->prio;
-  *	),
-diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-index 0e128ad51460..6f8c5d0014e6 100644
---- a/include/trace/events/block.h
-+++ b/include/trace/events/block.h
-@@ -193,7 +193,7 @@ DECLARE_EVENT_CLASS(block_rq,
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 6f0d6fb6523f..0459a141dc86 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2730,7 +2730,7 @@ void __audit_ptrace(struct task_struct *t)
+ 	context->target_uid = task_uid(t);
+ 	context->target_sessionid = audit_get_sessionid(t);
+ 	security_task_getsecid_obj(t, &context->target_sid);
+-	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
++	__get_task_comm(context->target_comm, TASK_COMM_LEN, t);
+ }
  
- 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
- 		__get_str(cmd)[0] = '\0';
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, current);
- 	),
+ /**
+@@ -2757,7 +2757,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+ 		ctx->target_uid = t_uid;
+ 		ctx->target_sessionid = audit_get_sessionid(t);
+ 		security_task_getsecid_obj(t, &ctx->target_sid);
+-		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
++		__get_task_comm(ctx->target_comm, TASK_COMM_LEN, t);
+ 		return 0;
+ 	}
  
- 	TP_printk("%d,%d %s %u (%s) %llu + %u [%s]",
-@@ -328,7 +328,7 @@ DECLARE_EVENT_CLASS(block_bio,
- 		__entry->sector		= bio->bi_iter.bi_sector;
- 		__entry->nr_sector	= bio_sectors(bio);
- 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, current);
- 	),
+@@ -2778,7 +2778,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+ 	axp->target_uid[axp->pid_count] = t_uid;
+ 	axp->target_sessionid[axp->pid_count] = audit_get_sessionid(t);
+ 	security_task_getsecid_obj(t, &axp->target_sid[axp->pid_count]);
+-	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
++	__get_task_comm(axp->target_comm[axp->pid_count], TASK_COMM_LEN, t);
+ 	axp->pid_count++;
  
- 	TP_printk("%d,%d %s %llu + %u [%s]",
-@@ -415,7 +415,7 @@ TRACE_EVENT(block_plug,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, current);
- 	),
- 
- 	TP_printk("[%s]", __entry->comm)
-@@ -434,7 +434,7 @@ DECLARE_EVENT_CLASS(block_unplug,
- 
- 	TP_fast_assign(
- 		__entry->nr_rq = depth;
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, current);
- 	),
- 
- 	TP_printk("[%s] %d", __entry->comm, __entry->nr_rq)
-@@ -485,7 +485,7 @@ TRACE_EVENT(block_split,
- 		__entry->sector		= bio->bi_iter.bi_sector;
- 		__entry->new_sector	= new_sector;
- 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, current);
- 	),
- 
- 	TP_printk("%d,%d %s %llu / %llu [%s]",
-diff --git a/include/trace/events/oom.h b/include/trace/events/oom.h
-index b799f3bcba82..f29be9ebcd4d 100644
---- a/include/trace/events/oom.h
-+++ b/include/trace/events/oom.h
-@@ -23,7 +23,7 @@ TRACE_EVENT(oom_score_adj_update,
- 
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
--		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, task);
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
- 
-diff --git a/include/trace/events/osnoise.h b/include/trace/events/osnoise.h
-index 82f741ec0f57..50f480655722 100644
---- a/include/trace/events/osnoise.h
-+++ b/include/trace/events/osnoise.h
-@@ -20,7 +20,7 @@ TRACE_EVENT(thread_noise,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, t);
- 		__entry->pid = t->pid;
- 		__entry->start = start;
- 		__entry->duration = duration;
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 68973f650c26..2a9d7c62c58a 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -9,6 +9,7 @@
- #include <linux/sched/numa_balancing.h>
- #include <linux/tracepoint.h>
- #include <linux/binfmts.h>
-+#include <linux/sched.h>
- 
- /*
-  * Tracepoint for calling kthread_stop, performed to end a kthread:
-@@ -25,7 +26,7 @@ TRACE_EVENT(sched_kthread_stop,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, t);
- 		__entry->pid	= t->pid;
- 	),
- 
-@@ -152,7 +153,7 @@ DECLARE_EVENT_CLASS(sched_wakeup_template,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, p);
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 		__entry->target_cpu	= task_cpu(p);
-@@ -239,11 +240,11 @@ TRACE_EVENT(sched_switch,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->next_comm, TASK_COMM_LEN, next);
- 		__entry->prev_pid	= prev->pid;
- 		__entry->prev_prio	= prev->prio;
- 		__entry->prev_state	= __trace_sched_switch_state(preempt, prev_state, prev);
--		memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->prev_comm, TASK_COMM_LEN, prev);
- 		__entry->next_pid	= next->pid;
- 		__entry->next_prio	= next->prio;
- 		/* XXX SCHED_DEADLINE */
-@@ -286,7 +287,7 @@ TRACE_EVENT(sched_migrate_task,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, p);
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 		__entry->orig_cpu	= task_cpu(p);
-@@ -311,7 +312,7 @@ DECLARE_EVENT_CLASS(sched_process_template,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, p);
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 	),
-@@ -357,7 +358,7 @@ TRACE_EVENT(sched_process_wait,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, current);
- 		__entry->pid		= pid_nr(pid);
- 		__entry->prio		= current->prio; /* XXX SCHED_DEADLINE */
- 	),
-@@ -383,9 +384,9 @@ TRACE_EVENT(sched_process_fork,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->parent_comm, parent->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->parent_comm, TASK_COMM_LEN, parent);
- 		__entry->parent_pid	= parent->pid;
--		memcpy(__entry->child_comm, child->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->child_comm, TASK_COMM_LEN, child);
- 		__entry->child_pid	= child->pid;
- 	),
- 
-@@ -481,7 +482,7 @@ DECLARE_EVENT_CLASS_SCHEDSTAT(sched_stat_template,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, tsk);
- 		__entry->pid	= tsk->pid;
- 		__entry->delay	= delay;
- 	),
-@@ -539,7 +540,7 @@ DECLARE_EVENT_CLASS(sched_stat_runtime,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, tsk);
- 		__entry->pid		= tsk->pid;
- 		__entry->runtime	= runtime;
- 	),
-@@ -571,7 +572,7 @@ TRACE_EVENT(sched_pi_setprio,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, tsk);
- 		__entry->pid		= tsk->pid;
- 		__entry->oldprio	= tsk->prio;
- 		__entry->newprio	= pi_task ?
-@@ -596,7 +597,7 @@ TRACE_EVENT(sched_process_hang,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, tsk);
- 		__entry->pid = tsk->pid;
- 	),
- 
-diff --git a/include/trace/events/signal.h b/include/trace/events/signal.h
-index 1db7e4b07c01..8f317a265392 100644
---- a/include/trace/events/signal.h
-+++ b/include/trace/events/signal.h
-@@ -67,7 +67,7 @@ TRACE_EVENT(signal_generate,
- 	TP_fast_assign(
- 		__entry->sig	= sig;
- 		TP_STORE_SIGINFO(__entry, info);
--		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, task);
- 		__entry->pid	= task->pid;
- 		__entry->group	= group;
- 		__entry->result	= result;
-diff --git a/include/trace/events/task.h b/include/trace/events/task.h
-index 47b527464d1a..77c14707460e 100644
---- a/include/trace/events/task.h
-+++ b/include/trace/events/task.h
-@@ -21,7 +21,7 @@ TRACE_EVENT(task_newtask,
- 
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
--		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		__get_task_comm(__entry->comm, TASK_COMM_LEN, task);
- 		__entry->clone_flags = clone_flags;
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
-@@ -46,7 +46,7 @@ TRACE_EVENT(task_rename,
- 
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
--		memcpy(entry->oldcomm, task->comm, TASK_COMM_LEN);
-+		__get_task_comm(entry->oldcomm, TASK_COMM_LEN, task);
- 		strscpy(entry->newcomm, comm, TASK_COMM_LEN);
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
+ 	return 0;
 -- 
 2.39.1
 
