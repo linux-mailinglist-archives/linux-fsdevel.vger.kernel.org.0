@@ -1,159 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-20727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0318D7409
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 08:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E478D74AC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 11:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FF71F21571
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 06:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55155282337
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 09:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E88B208A1;
-	Sun,  2 Jun 2024 06:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1930374CB;
+	Sun,  2 Jun 2024 09:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLoWVB8A"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rN6lHVAh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50C18E11;
-	Sun,  2 Jun 2024 06:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D061029CFB;
+	Sun,  2 Jun 2024 09:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717311422; cv=none; b=N+7QB4f//PG61jMvjyfnWuiO4jI1ZpD9/4jukbPMP5tDeFyQcHfCOy1AcdShbMdkzhdUnsLDrinj2EK51KrhwNc6hUb7Mhw4OAM1XjGFcyHCsqVSJXUKOL2jhbl8fPFJYlhwW2HK+qbZiW7gyxdJhUKa9h/Tr69rDj5HP6yFRQc=
+	t=1717322221; cv=none; b=mvU9Z79E12NVvPOtSbOuU1c6IKKfub04Anr7RqyM+H+C57OJzuND1sWVDr05cqmbOyN3x11Dh8n1gNLGZMQbo3y8OUxzq38ys1iS7whpiOnWAVZGxCuUyM2hja4DbuRah5OSqTm9CP4nPONfdpIjg+V5whCxiLu1FLlkkEUDhHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717311422; c=relaxed/simple;
-	bh=kNaAdwj4JXsTfPgEJdtdgcc05WNgvnkp0WyXnDIgbWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpS53aY4x7LyMJ4aTYvPfY3nUt9sQXBjbXaXov3VJsCRH0OAkEQFCOt5HL5c8YTZAEKdv9MyhkiLiedrmu4xHXA6Z65/7ZylUjvw3bBIiviXaXt2mbvXoXVD81YITjqaPdcmLW9PgIRcehfwkP392CSdqLNkPh+eJm0kq13XUms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLoWVB8A; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6ae279e6427so14716346d6.1;
-        Sat, 01 Jun 2024 23:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717311420; x=1717916220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAUPbRzuyrXUUhAbCV+RswkSNoR9RTLDNyX2Ucwmfqo=;
-        b=WLoWVB8ARGhW9CHP6QC1567Gawsr3LZmSR2SXlu/OVL2xD8emi2TqPu9l6kJC3vE/8
-         ZISgbrVy3432imlcxjziw7+jRLS78gabV0Rf50pmCYqv65TLwz4S1C3Ey34d39U3yWLl
-         IAXy95KCmyJzgvvcQCZR8g6rDJx5R5hPEvL4VWHMrXJXnCUSW2CzK5BKp41b9NWq0nDh
-         8PX28VgxhMnBqYiDWeVQSX1A2rqBfU9BN+frUhVvntbEw6unSB5hWJh/97e+HJricNV/
-         Ln5zfhPa+cmkyayd0PwbjzaUciz/gQEi7gKRkNo/aI3uYtKc7t4Ph4B1YfdYYt68QoeW
-         Vi7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717311420; x=1717916220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AAUPbRzuyrXUUhAbCV+RswkSNoR9RTLDNyX2Ucwmfqo=;
-        b=YgpJkIt/36YCc/t+koT3YH6xrLyrkCoT/tJZiW0dL925oQKMCzkJ+ekk2BEFVR8eKg
-         AhotUzBJK5fyY3RWFBzgR4grtjifgBI9dr26tvdL6clS0bMCX9QLvlzwRJl/B1zEsN1z
-         h1v9EOXWNSkvqWbyP8zWsUWBsYMJRtZRokRAuDV+9UzS4l9LFRgEWBhDe5E/x2joqtNu
-         NNwNn23JyZq+OeI8DH3Q9FMvSqhE9HTa/ILemlVGm77VS4XIgz4ftx+3HpXlUBund9lx
-         JOYA0Inhqty70pKHujXggfT3ZX6X9V8uPM1C1exrl8Y9qxOjUsQ9ZUWvS6vuI7vrIWrj
-         5qYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdOnO1kBtKrircJXJb5t/SwIv1MlXfXcuV6rLEDG4CuAuv1KMKUcvvjfw+f0kRg38aGLABA0RzYTOh9oJE7u4gHmiubhrYTe136WwU9e8YqfkdJV61IG+uqE8uLaQytdqhZQ+nbY3ruHqOWo7cqxyAHGD0t51IscuyL21l2PR7djiNHYoO6Qm574urD861Dog7p0AbEOjnMYWYGzDcxFWyMRN+4FwpVu9C1bBKtOfjEAgUPiodg1Oa0/k4jgUCYq5Ls3PprtNqrDWKOEUqm+6Z07oSxQvcrsZ3cSjagQ==
-X-Gm-Message-State: AOJu0Ywb+6Hb8Pp33Noz83GuzFPNy0UhXKTRBvPXSbFpd/pYoR5P8tui
-	aXC2iFwowTIUHcl8pWPh4MZqW/CwQkkhXeQIr0hLGOZb0eWTrPpPcUPIJzEOH9x6UBEFAXmIJM4
-	Hsa0a9HBZwlHZyFH9Fp0tqkCgT90=
-X-Google-Smtp-Source: AGHT+IHBO8CcAWYey7pRZVURNsZzP8hqqeNI4aNYwlr3UTd/2FxO0+zZYuavJGm6rllryB0FhnqOhCZpQ6HL1oaZSiY=
-X-Received: by 2002:a05:6214:4891:b0:6ab:9492:7d89 with SMTP id
- 6a1803df08f44-6aecd6f054bmr77058646d6.52.1717311419907; Sat, 01 Jun 2024
- 23:56:59 -0700 (PDT)
+	s=arc-20240116; t=1717322221; c=relaxed/simple;
+	bh=94oYn28sQMThSshDbznH0NXY+/CnYNyP4bnXq2olcDk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=p8o8IBus637dG2v1TOAjY/rljDFS0wMiV54P+AJGRq2IuysiF3gy8btImbySY4iIZVYj9WZVlmIIN5RqgTY0sm/ZJ8BEk78yF6bb6z7hYDLvwOGe0tUuKnMGx+8STm+QLtoZKPRO0pNQIbqln2toIATmaa/ZT6wcBq1/n6wURMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rN6lHVAh; arc=none smtp.client-ip=203.205.221.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1717322216; bh=yAGaiayGKFE1lZ7KHZ0iKdH2nu2needeaNKQWb5vLMI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=rN6lHVAhUCv1Igea2g9RpSjmIxYJ7JQeKqdMoerloOQiRAVMMd+XqkNdDC94SIK+j
+	 ouzdtD6C/kjqT5Gt2/h96zj+gFfwxSbF0Tf4lqe5IxT19AxOOFzI8dZ/c/bw4LeEER
+	 7E4US93CeX0N7TjkW33WI0ueWS+GUA5S+7HGJzF4=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id E352E24B; Sun, 02 Jun 2024 17:56:53 +0800
+X-QQ-mid: xmsmtpt1717322213tn7qbsm37
+Message-ID: <tencent_706EA97643BAE446F774577CA6D6536A0305@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmapMNs4lAv6xsi5CZUvaxRTgDCnQpuxpUhHgwEi1dv+P3x72iO2i
+	 LjqWnzgBB0bGwr4vQJo2P58jK7IvrUD3ZGLdzHoznl65zQyNZnR6bUGbFhnkxsyZiDVqLObZ21m5
+	 Pms/pqYoXeoJZY0ub0vG6vzUX4yPZl+9i/GNAN0l7VBJb+KCZMwTOLwZojDBM8yZ8VKfQNMyNKyk
+	 jLo/iOv/OahfzPX5kzLm21SH/xJEBwWu/pHOTD0f6u6NV8bUDv84hwhvMbsC+l9wbgfoiWZx5YC1
+	 /l8hkbngeid7iKGV0pLxsI83ha1jN3/DlKV0XopX/PO0J/dOg5rRVRvyzcU7j/XwxMttNpfsrWVE
+	 7AdEH0Vqy4qz5IqcKn/Dc9VGyxgN2ZEM/U0LPdE1eHUk+v8ylM8LRBkILwqCB3QzzwUBJZz8EHEo
+	 lJM4dNz9v6FMClC0s3/1HE4VzyiDrrwjmACDwdc5OKXLj8yYnQHVmYgL1oyEV32ojzrptg+JDx/Q
+	 dGug62LLL3iu9d2JPOyVeK8Q4wiXFuyEcmKeQmDK7AXvhDvAhDY0hikIKT6Yes8itxYsRR7W75QW
+	 lu2qlhawXpDr+tRD8yIKyOpejqph9PsCPOB8t6XWQxmSFJnAPp/xf99F+RASZwZ3fQ+AHdWAz5T1
+	 anPtmWzLh9IOBuNiO1EZJPpNR/JHZhLwK3DL5sgai3csWhQ/5AAiOalHROQRL9lGKZpsov5K6WRn
+	 GSuYsQ5xo9BOOd+nn/u1yS5YyffqtuPHtzvcanq10EKAUa13l/J121mCfofqFlLa3FdnjjDBKDiI
+	 QUrvJrUQSXb1BxsTB6GcuoZZPEYHLB1elYXAEXBhn0e+vbKQsxN6QNIE1Hyk3VqZ/IhJqiDhTjL1
+	 vaVteTmfVMYrf/NvTGU0qnJ91LYCNTT6rAZ808YesXFil+M4ADlfz0SY96I2gdnU/oaXIKkaMh
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] fs/ntfs3: dealing with situations where dir_search_u may return null
+Date: Sun,  2 Jun 2024 17:56:54 +0800
+X-OQ-MSGID: <20240602095653.1544037-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+References: <000000000000f386f90616fea5ef@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-2-laoar.shao@gmail.com>
- <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 2 Jun 2024 14:56:23 +0800
-Message-ID: <CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: torvalds@linux-foundation.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 2, 2024 at 11:52=E2=80=AFAM Eric W. Biederman <ebiederm@xmissio=
-n.com> wrote:
->
-> Yafang Shao <laoar.shao@gmail.com> writes:
->
-> > Quoted from Linus [0]:
-> >
-> >   Since user space can randomly change their names anyway, using lockin=
-g
-> >   was always wrong for readers (for writers it probably does make sense
-> >   to have some lock - although practically speaking nobody cares there
-> >   either, but at least for a writer some kind of race could have
-> >   long-term mixed results
->
-> Ugh.
-> Ick.
->
-> This code is buggy.
->
-> I won't argue that Linus is wrong, about removing the
-> task_lock.
->
-> Unfortunately strscpy_pad does not work properly with the
-> task_lock removed, and buf_size larger that TASK_COMM_LEN.
-> There is a race that will allow reading past the end
-> of tsk->comm, if we read while tsk->common is being
-> updated.
+If hdr_find_e() fails to find an entry in the index buffer, dir_search_u() maybe
+return NULL.
+Therefore, it is necessary to add relevant judgment conditions in ntfs_lookup().
 
-It appears so. Thanks for pointing it out. Additionally, other code,
-such as the BPF helper bpf_get_current_comm(), also uses strscpy_pad()
-directly without the task_lock. It seems we should change that as
-well.
+Reported-and-tested-by: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ntfs3/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> So __get_task_comm needs to look something like:
->
-> char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk=
-)
-> {
->         size_t len =3D buf_size;
->         if (len > TASK_COMM_LEN)
->                 len =3D TASK_COMM_LEN;
->         memcpy(buf, tsk->comm, len);
->         buf[len -1] =3D '\0';
->         return buf;
-> }
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index 084d19d78397..293c37171d97 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -93,7 +93,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
+ 	 * If the MFT record of ntfs inode is not a base record, inode->i_op can be NULL.
+ 	 * This causes null pointer dereference in d_splice_alias().
+ 	 */
+-	if (!IS_ERR_OR_NULL(inode) && !inode->i_op) {
++	if (IS_ERR_OR_NULL(inode) || !inode->i_op) {
+ 		iput(inode);
+ 		inode = ERR_PTR(-EINVAL);
+ 	}
+-- 
+2.43.0
 
-Thanks for your suggestion.
-
->
-> What shows up in buf past the '\0' is not guaranteed in the above
-> version but I would be surprised if anyone cares.
-
-I believe we pad it to prevent the leakage of kernel data. In this
-case, since no kernel data will be leaked, the following change may be
-unnecessary.
-
->
-> If people do care the code can do something like:
-> char *last =3D strchr(buf);
-> memset(last, '\0', buf_size - (last - buf));
->
-> To zero everything in the buffer past the first '\0' byte.
->
-
---=20
-Regards
-Yafang
 
