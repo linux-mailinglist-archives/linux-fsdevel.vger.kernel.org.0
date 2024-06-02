@@ -1,74 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-20728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E478D74AC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 11:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E22D58D74BB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 12:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55155282337
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 09:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F6282281
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Jun 2024 10:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1930374CB;
-	Sun,  2 Jun 2024 09:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D986637703;
+	Sun,  2 Jun 2024 10:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rN6lHVAh"
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Um0aWvdI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D061029CFB;
-	Sun,  2 Jun 2024 09:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A3CA21
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Jun 2024 10:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717322221; cv=none; b=mvU9Z79E12NVvPOtSbOuU1c6IKKfub04Anr7RqyM+H+C57OJzuND1sWVDr05cqmbOyN3x11Dh8n1gNLGZMQbo3y8OUxzq38ys1iS7whpiOnWAVZGxCuUyM2hja4DbuRah5OSqTm9CP4nPONfdpIjg+V5whCxiLu1FLlkkEUDhHU=
+	t=1717323420; cv=none; b=ogjYOAu55QBa3dTaSW8vSbofBSJhsI4WnQHNenXwfC1BxgwSOPG29BtLWpCOWU3skRZ9GIaEtDbDXJxkG5PCAZTimCDjXGi8abeRimahG+9FXPN1kASv5TthO4PaSql3sp+23+EtlQccqvfvGSlaopC5AJv082LOeiBtKHiFg38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717322221; c=relaxed/simple;
-	bh=94oYn28sQMThSshDbznH0NXY+/CnYNyP4bnXq2olcDk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=p8o8IBus637dG2v1TOAjY/rljDFS0wMiV54P+AJGRq2IuysiF3gy8btImbySY4iIZVYj9WZVlmIIN5RqgTY0sm/ZJ8BEk78yF6bb6z7hYDLvwOGe0tUuKnMGx+8STm+QLtoZKPRO0pNQIbqln2toIATmaa/ZT6wcBq1/n6wURMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rN6lHVAh; arc=none smtp.client-ip=203.205.221.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1717322216; bh=yAGaiayGKFE1lZ7KHZ0iKdH2nu2needeaNKQWb5vLMI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=rN6lHVAhUCv1Igea2g9RpSjmIxYJ7JQeKqdMoerloOQiRAVMMd+XqkNdDC94SIK+j
-	 ouzdtD6C/kjqT5Gt2/h96zj+gFfwxSbF0Tf4lqe5IxT19AxOOFzI8dZ/c/bw4LeEER
-	 7E4US93CeX0N7TjkW33WI0ueWS+GUA5S+7HGJzF4=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id E352E24B; Sun, 02 Jun 2024 17:56:53 +0800
-X-QQ-mid: xmsmtpt1717322213tn7qbsm37
-Message-ID: <tencent_706EA97643BAE446F774577CA6D6536A0305@qq.com>
-X-QQ-XMAILINFO: NDgMZBR9sMmapMNs4lAv6xsi5CZUvaxRTgDCnQpuxpUhHgwEi1dv+P3x72iO2i
-	 LjqWnzgBB0bGwr4vQJo2P58jK7IvrUD3ZGLdzHoznl65zQyNZnR6bUGbFhnkxsyZiDVqLObZ21m5
-	 Pms/pqYoXeoJZY0ub0vG6vzUX4yPZl+9i/GNAN0l7VBJb+KCZMwTOLwZojDBM8yZ8VKfQNMyNKyk
-	 jLo/iOv/OahfzPX5kzLm21SH/xJEBwWu/pHOTD0f6u6NV8bUDv84hwhvMbsC+l9wbgfoiWZx5YC1
-	 /l8hkbngeid7iKGV0pLxsI83ha1jN3/DlKV0XopX/PO0J/dOg5rRVRvyzcU7j/XwxMttNpfsrWVE
-	 7AdEH0Vqy4qz5IqcKn/Dc9VGyxgN2ZEM/U0LPdE1eHUk+v8ylM8LRBkILwqCB3QzzwUBJZz8EHEo
-	 lJM4dNz9v6FMClC0s3/1HE4VzyiDrrwjmACDwdc5OKXLj8yYnQHVmYgL1oyEV32ojzrptg+JDx/Q
-	 dGug62LLL3iu9d2JPOyVeK8Q4wiXFuyEcmKeQmDK7AXvhDvAhDY0hikIKT6Yes8itxYsRR7W75QW
-	 lu2qlhawXpDr+tRD8yIKyOpejqph9PsCPOB8t6XWQxmSFJnAPp/xf99F+RASZwZ3fQ+AHdWAz5T1
-	 anPtmWzLh9IOBuNiO1EZJPpNR/JHZhLwK3DL5sgai3csWhQ/5AAiOalHROQRL9lGKZpsov5K6WRn
-	 GSuYsQ5xo9BOOd+nn/u1yS5YyffqtuPHtzvcanq10EKAUa13l/J121mCfofqFlLa3FdnjjDBKDiI
-	 QUrvJrUQSXb1BxsTB6GcuoZZPEYHLB1elYXAEXBhn0e+vbKQsxN6QNIE1Hyk3VqZ/IhJqiDhTjL1
-	 vaVteTmfVMYrf/NvTGU0qnJ91LYCNTT6rAZ808YesXFil+M4ADlfz0SY96I2gdnU/oaXIKkaMh
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
-Cc: almaz.alexandrovich@paragon-software.com,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1717323420; c=relaxed/simple;
+	bh=yUcu5ZhMJ76iR7nE8A2EtC5tQTiifrETLT1ZqPj2Trc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iv9YRthqdWauA0wHLNXjpSrUFd5cyNysevuDS2svAx6UU681AkyetKb0RWXm0dINWWp1/TBypOkLNywcNFeZ5s0Cw4985PtUlPXygkd3mDcldR1MQG/7JQFHEGCNYpolnBo8Ow2Fv9tJCDstVTpmMDURLEH4zwu0cgS3pD8Wdi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Um0aWvdI; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35e4aaa0f33so1078179f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Jun 2024 03:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717323417; x=1717928217; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7OKR6ACuuSUyRzCi9kmvzKqaFwdsC9dBrDR9WibPo+Q=;
+        b=Um0aWvdIqs8VfI36wuEwuPr0/PzcBy+rJZd8dfP9cjj7srCz07dViz9YxYmUPhxf2T
+         UbqzeSqTMtfr2FolJfaBQ1L6RF+n6xTYD4QVVdJSHi4zx/oBa2ISaWxEwejCqZ6G8rxp
+         HXaBeof/iTGdJHJnBg8/jGW04o9bOyvZ7wlOzqaXzNjroFdlMum49//tstWbVmnXsEWJ
+         uHiEaHo+LRaOEToeL4jAaodvEeqGTI0Oto98xusOKKKlC4SFpoIo9ul3HsqgolDRATN8
+         dk+P68XSXNfuN+aVNusnr0j3Jbm1WcqUYRLF5fZFA6I5I2rtFbFoHuUaFWkv4cWE0267
+         NhGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717323417; x=1717928217;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7OKR6ACuuSUyRzCi9kmvzKqaFwdsC9dBrDR9WibPo+Q=;
+        b=j9XsLZ1gveRFFEQ2qdm6OICl8taezaYdkNsvg0tnCMih+k8b48seq/E6tbSST84HPp
+         R/pmgacoRnmIFH//pj7bqc4U2CaPr+1byTZvHRaAd42X89Kvr3YfxNFvXfMzBuu5L/Pn
+         x6JFe0P3AcME5zUThu9TEUY5h1ovGVJBBiHxefJo0aOonnRY45X8dhB6gPiJomkH5wxb
+         BubCSGGmao7MdzBzXCl3+nyPHgaQvj2KHUB+U4m0Q6459Zt5snOzgtIoXtuLWIUERLYp
+         3aw6qNyg7m0PSVbfOURpiyRUrMtaWOF5+uVgyybaWDHvUPgmD6IMoWG9Cr8Cedgp7p1a
+         8EiQ==
+X-Gm-Message-State: AOJu0Yx7ngU/mSl83FI2AnRXjbQpQxKO1n2+ARH2dmleSgCN6tzUI7q3
+	koE1tpmsee2ny7dVB5VPk4hZk9joqoaRqoZwg/BvqmWRBdlPF0B9v2hLDqXuW4w=
+X-Google-Smtp-Source: AGHT+IHiajIY8OlAv+K5TPOBGfQEsw40eH9SJPmOGgbGrZD9TIDr12iJR1he85deR732ex66YnvK1A==
+X-Received: by 2002:a5d:538d:0:b0:354:fcbf:f3c0 with SMTP id ffacd0b85a97d-35e0f25508emr6255048f8f.4.1717323416659;
+        Sun, 02 Jun 2024 03:16:56 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-81.dynamic.mnet-online.de. [82.135.80.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04ca482sm5728149f8f.32.2024.06.02.03.16.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 03:16:56 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	ntfs3@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] fs/ntfs3: dealing with situations where dir_search_u may return null
-Date: Sun,  2 Jun 2024 17:56:54 +0800
-X-OQ-MSGID: <20240602095653.1544037-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000f386f90616fea5ef@google.com>
-References: <000000000000f386f90616fea5ef@google.com>
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] readdir: Remove unused header include
+Date: Sun,  2 Jun 2024 12:15:35 +0200
+Message-ID: <20240602101534.348159-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,30 +83,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If hdr_find_e() fails to find an entry in the index buffer, dir_search_u() maybe
-return NULL.
-Therefore, it is necessary to add relevant judgment conditions in ntfs_lookup().
+Since commit c512c6918719 ("uaccess: implement a proper
+unsafe_copy_to_user() and switch filldir over to it") the header file is
+no longer needed.
 
-Reported-and-tested-by: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- fs/ntfs3/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/readdir.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
-index 084d19d78397..293c37171d97 100644
---- a/fs/ntfs3/namei.c
-+++ b/fs/ntfs3/namei.c
-@@ -93,7 +93,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
- 	 * If the MFT record of ntfs inode is not a base record, inode->i_op can be NULL.
- 	 * This causes null pointer dereference in d_splice_alias().
- 	 */
--	if (!IS_ERR_OR_NULL(inode) && !inode->i_op) {
-+	if (IS_ERR_OR_NULL(inode) || !inode->i_op) {
- 		iput(inode);
- 		inode = ERR_PTR(-EINVAL);
- 	}
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 5045e32f1cb6..d6c82421902a 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -22,8 +22,6 @@
+ #include <linux/compat.h>
+ #include <linux/uaccess.h>
+ 
+-#include <asm/unaligned.h>
+-
+ /*
+  * Some filesystems were never converted to '->iterate_shared()'
+  * and their directory iterators want the inode lock held for
 -- 
-2.43.0
+2.45.1
 
 
