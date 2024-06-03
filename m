@@ -1,167 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-20809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F4C8D812F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:27:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102C88D815C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AF51C21107
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 11:27:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58403B231DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 11:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D9684A5A;
-	Mon,  3 Jun 2024 11:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E584D27;
+	Mon,  3 Jun 2024 11:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y6W/tjwL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p2RIwMKT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="flPfk7AO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FUz/Pj4g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IY7MjAQv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6482C6A3;
-	Mon,  3 Jun 2024 11:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CAB288DF;
+	Mon,  3 Jun 2024 11:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717414035; cv=none; b=p8kD0k5JkZyR3doAe5gJmsVR/RbCG0MtsxjD6PVFb29dYlzVbszi4EwmjBSKGwjtPfKOtCtbGwlTlklO7MhUMk97ZHSUH1NzhAGV/MPar3xZdJcYitHeseCbT/5l3zlilZAw6LvyKBkFdgfBQrVQzazFHWiJwnESWHzPQVJ0O3w=
+	t=1717414545; cv=none; b=iNov4I8FhBu5E1RYWIOGf4i4lTcbjxddVsUmWUivUrh8+A1weKZGSwT5tFix0B+3T4MOrgjEtsPoBdTaK62se7lvOpM45SroWo0wjx/tBQePQVfk2r6aTpIObP0qWWAMv/JDXl5ZLwgC/txcX+coZCgKkL3oa9wwXiqtCKEQEE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717414035; c=relaxed/simple;
-	bh=cJPnpg2hCwgHukR1vYoWJ+DVnA03/FFtOwtTCUJ8wkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YMs2O09di+tB4XMzUfMUv/nXqsLLfeTKOLs4EwYrOkWKppwk7D+uRuivGFsQekBYqaX9r+tu8UdjKofIzZ5xoCPq9uCpJ+LalTB1Iy6pUFZs/lAnQlyjCrHA1BbYcEd2p+yXpi3NQYYr5rRELQAtzEE2NMeyBw51FL2L5Xe8lCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y6W/tjwL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p2RIwMKT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=flPfk7AO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FUz/Pj4g; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 63A272224D;
-	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717414031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=y6W/tjwLyJFxYOMqAVNiil/WQmavDW8lR/py1GpPK1u/XNM6fc+gV0qTEt47HpLOW1/hh5
-	PxMOJvMm4dp6wluFyY5UtrEO0BIEH67CI8b0a4TdpSMtj1pS+ULuY7XCKL7hK+gy1lSLAA
-	I6CDN8g9JIBJoxujiCClmPECcCM4g00=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717414031;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=p2RIwMKT1kTsj9NXcpvegHJol5lw/KUIDeHqirTbn039oAQbu8V8mzDa3yH6SBTEjIrlTa
-	ts0FHhDL8vR+S0Bw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=flPfk7AO;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="FUz/Pj4g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717414030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=flPfk7AOOeYAnUfLtCpiJv36/Q16dFQN4aXjltYqF/2fKTOb1Xw4Qoxp34/tZvKvR5tb1K
-	Pav9u71FY5VZRtJowJ4bon3w0m134DzwyfCGDFQSW6S6Msg2qSpjft255ZXFkLlexH4Sjf
-	8REr4OA0CUrTdkFoqT27hgkFO7z1znY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717414030;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=FUz/Pj4gT+sjqZWtu+0NyY8suUgunZRzh1/vNXe92rZEbWS7Ha0DJnNTVHro4FGrP5i/C9
-	29QjW+mtQUuUzOBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59687139CB;
-	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nr/PFY6oXWb/JwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:27:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0799EA087F; Mon,  3 Jun 2024 13:27:05 +0200 (CEST)
-Date: Mon, 3 Jun 2024 13:27:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
-Message-ID: <20240603112705.hafr4gh5foxccw7f@quack3>
-References: <00000000000054d8540619f43b86@google.com>
+	s=arc-20240116; t=1717414545; c=relaxed/simple;
+	bh=aoxYSkwX+tV+MwMpCD6gcgbnNLkztkC6LLaSmt3gHik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q/LVAdOifGPR+tJ2cMFLo61q9P5stzivv+tDyY0EHb5ENw9d9Ji1mQWBHXgltnH44v/KRRbRFb211RWAxpzVnaEXPPdsBuQw7u5diCfyF5c69fSHSYQFzMs+pim9M4JBMeIDjUIDFDNKQRfeTg0253NFejRW2cCXNGVBPM82xtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IY7MjAQv; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6ae0abdf095so22586686d6.2;
+        Mon, 03 Jun 2024 04:35:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717414543; x=1718019343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2/pL0kZCeM1y16ZAOktPzW9q0OBMB22PikjjFd/rS+w=;
+        b=IY7MjAQvE5fw1U2yiXaOKJVtYjdd8A0wTJf5Jdgaoer2my4WfCLhM2QRBTH4gYplIi
+         /zoEFv1/xxK4LjVo+NbIj8cIm7OodTBmArb4w4c76iocR4JWKuiBHKytb1NvEZ2DNdIC
+         jfk2piiZny5R51T095op3y2Kx7XL1tudJY3hQ2/7l89CVGoIt+fJTIom02cK4ctk8WJY
+         maXInlVdOcPQgz7QwoH6CzUmkej8aSuwwakoXGC60w+d18pT9nsnoRpmtS0ONoiO+I8z
+         4+poAGOhiy81wZ6ScIdyKseKHQ6zOW3bMyg8rOWA48RDsudsAEHkh9ZZJrfTiV2TYE6x
+         hx2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717414543; x=1718019343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2/pL0kZCeM1y16ZAOktPzW9q0OBMB22PikjjFd/rS+w=;
+        b=MHg1qeWG/6HyOFNucbfFbBf4o9xvhd6JQOpQiDqs1nMoqJA+/7Srf/2YgmtMx96K8Y
+         VApz/zO4PI2Zuo6o7xH2ePoAPP4yzXYvVxV8lr8SRq6tjHgJakSby4mHDeaJr9JZEX2M
+         PazPPqjhlY2Vew77eda7pgMWPv9b7BChtSUkFhe/HnJN/vuHw/2kuFncelJnFnvKYgAd
+         Xl0k6tuO2XUpLg4WnHJR2mWNNXLCtHxOr0r7WhPb78DR9UpnYzbL6FYIcXgMTIJE4YGw
+         yz4Jtvz9XcckRcprvLHN2sWtfrD8nY38dujEbnx1sKc42hXtlsx1H1knBFtnjjdLsGm8
+         Ds5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVSSY3nVl6kSgaELn5nHbTRYLjQLj8LMljC+VIoJKbl585Vfg3xCPvM81RAyoIKNFU/7MqEn1WY43pP+rJi//6RKaPYCdIs1qQ+HrPl9xUXi08LatEatPZ1Ao+SKDaL6pjXJ2ifLTxFs+YvJ3auy4jfCiCWxALw3/O4zneIeZ6ze8aGgBVGFaXC5V/05uXEVLreoQGZDcX9BzkyUy0PZXbrwXmH7Bw6r1CSalhS80dkoF+jL6l5CCQUvHAy1NLhyFo0nXjdARGIAvtwZQ+5uid3xl15ik3ln+OgJlmfNQ==
+X-Gm-Message-State: AOJu0Yw4yruvQ15d3ZEGIk3GO1xM+Y/g4IzO5XG1C/KfZM7MgwVtr9TV
+	NMyHF5Fg6U3Lqk8SvYdrpUlUFMgo/jWxGhlRK2ry09yX+qomTzEte3eoUBvsWs+Dj0G/EqYHhsS
+	Aeked5ch6Yplkfs5ra2ZocyPbIwY=
+X-Google-Smtp-Source: AGHT+IEMPGXe1xq7rGBpGwfaIRAsELArfyOIl90qn3qIm6Yayy3B/d/0+DEKGHoLO4/5D6X82RkZyCrmvpduHJpXVSc=
+X-Received: by 2002:a05:6214:3d99:b0:6af:c64c:d1a0 with SMTP id
+ 6a1803df08f44-6afc64cd5b7mr18050666d6.56.1717414542934; Mon, 03 Jun 2024
+ 04:35:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000054d8540619f43b86@google.com>
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.92 / 50.00];
-	BAYES_HAM(-2.41)[97.28%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[42986aeeddfd7ed93c8b];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: 63A272224D
-X-Spam-Flag: NO
-X-Spam-Score: -0.92
-X-Spamd-Bar: /
+References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-2-laoar.shao@gmail.com>
+ <87ikysdmsi.fsf@email.froward.int.ebiederm.org> <CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
+ <CAADnVQJ_RPg_xTjuO=+3G=4auZkS-t-F2WTs18rU2PbVdJVbdQ@mail.gmail.com>
+ <874jabdygo.fsf@email.froward.int.ebiederm.org> <CAADnVQ+9T4n=ZhNMd57qfu2w=VqHM8Dzx-7UAAinU5MoORg63w@mail.gmail.com>
+In-Reply-To: <CAADnVQ+9T4n=ZhNMd57qfu2w=VqHM8Dzx-7UAAinU5MoORg63w@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 3 Jun 2024 19:35:04 +0800
+Message-ID: <CALOAHbARXwZvr0GBxKc_c-3nay--h4NhvZbSyt8eZwijNW1a0w@mail.gmail.com>
+Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, audit@vger.kernel.org, 
+	LSM List <linux-security-module@vger.kernel.org>, selinux@vger.kernel.org, 
+	bpf <bpf@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun 02-06-24 20:50:18, syzbot wrote:
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1466269a980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a5b3ec980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103820f2980000
+On Mon, Jun 3, 2024 at 2:23=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Sun, Jun 2, 2024 at 10:53=E2=80=AFAM Eric W. Biederman <ebiederm@xmiss=
+ion.com> wrote:
+> >
+> > Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> >
+> > > On Sat, Jun 1, 2024 at 11:57=E2=80=AFPM Yafang Shao <laoar.shao@gmail=
+.com> wrote:
+> > >>
+> > >> On Sun, Jun 2, 2024 at 11:52=E2=80=AFAM Eric W. Biederman <ebiederm@=
+xmission.com> wrote:
+> > >> >
+> > >> > Yafang Shao <laoar.shao@gmail.com> writes:
+> > >> >
+> > >> > > Quoted from Linus [0]:
+> > >> > >
+> > >> > >   Since user space can randomly change their names anyway, using=
+ locking
+> > >> > >   was always wrong for readers (for writers it probably does mak=
+e sense
+> > >> > >   to have some lock - although practically speaking nobody cares=
+ there
+> > >> > >   either, but at least for a writer some kind of race could have
+> > >> > >   long-term mixed results
+> > >> >
+> > >> > Ugh.
+> > >> > Ick.
+> > >> >
+> > >> > This code is buggy.
+> > >> >
+> > >> > I won't argue that Linus is wrong, about removing the
+> > >> > task_lock.
+> > >> >
+> > >> > Unfortunately strscpy_pad does not work properly with the
+> > >> > task_lock removed, and buf_size larger that TASK_COMM_LEN.
+> > >> > There is a race that will allow reading past the end
+> > >> > of tsk->comm, if we read while tsk->common is being
+> > >> > updated.
+> > >>
+> > >> It appears so. Thanks for pointing it out. Additionally, other code,
+> > >> such as the BPF helper bpf_get_current_comm(), also uses strscpy_pad=
+()
+> > >> directly without the task_lock. It seems we should change that as
+> > >> well.
+> > >
+> > > Hmm. What race do you see?
+> > > If lock is removed from __get_task_comm() it probably can be removed =
+from
+> > > __set_task_comm() as well.
+> > > And both are calling strscpy_pad to write and read comm.
+> > > So I don't see how it would read past sizeof(comm),
+> > > because 'buf' passed into __set_task_comm is NUL-terminated.
+> > > So the concurrent read will find it.
+> >
+> > The read may race with a write that is changing the location
+> > of '\0'.  Especially if the new value is shorter than
+> > the old value.
+>
+> so ?
+> strscpy_pad in __[gs]et_task_comm will read/write either long
+> or byte at a time.
+> Assume 64 bit and, say, we had comm where 2nd u64 had NUL.
+> Now two cpus are racing. One is writing shorter comm.
+> Another is reading.
+> The latter can read 1st u64 without NUL and will proceed
+> to read 2nd u64. Either it will read the old u64 with NUL in it
+> or it will read all zeros in 2nd u64 or some zeros in 2nd u64
+> depending on how the compiler generated memset(.., 0, ..)
+> as part of strscpy_pad().
+> _pad() part is critical here.
+> If it was just strscpy() then there would indeed be a chance
+> of reading both u64-s and not finding NUL in any of them.
+>
+> > If you are performing lockless reads and depending upon a '\0'
+> > terminator without limiting yourself to the size of the buffer
+> > there needs to be a big fat comment as to how in the world
+> > you are guaranteed that a '\0' inside the buffer will always
+> > be found.
+>
+> I think Yafang can certainly add such a comment next to
+> __[gs]et_task_comm.
+>
+> I prefer to avoid open coding memcpy + mmemset when strscpy_pad works.
 
-Based on strace (and also the reproducer) this looks purely in exfat
-driver. So:
+Thanks for your explanation.
+I will add a comment for it in the next version.
 
-#syz set subsystems: exfat
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Regards
+Yafang
 
