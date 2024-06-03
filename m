@@ -1,101 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-20841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7EE8D852F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 16:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49498D852D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 16:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12658B24D0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 14:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119E31C20E4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 14:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0173F12FB2F;
-	Mon,  3 Jun 2024 14:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2B4CV+M"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EEE12F5B8;
+	Mon,  3 Jun 2024 14:35:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6417612BF34
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 14:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C1A12EBE6;
+	Mon,  3 Jun 2024 14:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717425342; cv=none; b=aSRK7lTfTyPGMrEK0lYTm/efvkgPoDlc5XvwpBga4Vusyfu6Em3G+V5P6Yfeim87LyEvSGZGAb28Sw1DQ98aEBlOGxFyUCjTvFOWzbs0EG33Oh4o8i0trK055LZr8YmjqWmwI6Sn5jsE4fbBImgz8+2WZPYfxaGo2AoRjOa6SBM=
+	t=1717425342; cv=none; b=NbzTF9GRVegzYBzvCWL9Q/IdVZe8uVYLfIGjxv7Jj0txtVAG6Mym0XDWpXSSsT0hKNkbZubyiW65B/wTZvbtLl/uETx0zYW2VLsHhrDWiLxmpb2u5CrjnML7w4oFJEZH3X4mVSUiBvwHftKKqgv2+Ny/xFu/uHsJnTcGe2Szud8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717425342; c=relaxed/simple;
-	bh=gXDxGgjsqZPij10gds5fIA4zMBd03zCzjfopUpR6A9A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r7Z6827x7IU2UVr3vPHFQu7z0YexSQ+bDy77MWgA55ZXPxIqX0rrkvcQZU9ACTYGQlT4M07YwfOm9htaOQmG9Sx6oIPbqxTKfwg9zpxzvjB+FL/JSaVi0JpRqC4oKre9w0XhetnkNaOCxP6HGFGiU6LDldZ3V/CdGYEJuvvs3rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2B4CV+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7866C32781;
-	Mon,  3 Jun 2024 14:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717425342;
-	bh=gXDxGgjsqZPij10gds5fIA4zMBd03zCzjfopUpR6A9A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p2B4CV+M/UAZb8IY71evyjcLfpRcAydjClLqgG4S5Bh4jlhQUpqeH4eibFp8umofE
-	 PEIZUfDFfQwdz9wgNmSSuymFdo9XkP5xTzBdCCPjcU0DkCVADyGMwTKCg3HoleiFW/
-	 y9zhlEMOVfHXqlCj7Y3j4Yt886xTjgNa18/Up6VaFpWuKTVBFP9r+Z4XjwDRa+0BDm
-	 tHQoI5Wae5FCKm5CbvAUxFFYNZviCPSYgJHdsSXksYQPO3oUi33kHzk5hQPFuEXD9T
-	 JC47CEd4IQoVkI0KOIesbnOLH+5IO88+imiNyPJPvC+zv1ZQS1NW+0By9nsxhKX2rw
-	 RFkfQI78RhZYw==
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Hugh Dickins <hughd@google.com>,
-	linux-mm@kvack.org,
-	Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: [PATCH] tmpfs: don't interrupt fallocate with EINTR
-Date: Mon,  3 Jun 2024 16:35:33 +0200
-Message-ID: <20240603-fixkosten-ansehen-af907fa0a056@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240515221044.590-1-jack@suse.cz>
-References: <20240515221044.590-1-jack@suse.cz>
+	bh=aS7WNKyb79nHjkRKjId2BNPG35Iq9xA2er2JeQ/uKJA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rrwMWhg7LKqQcxGxJGo0dLnpMv/m7sXE8eSbNNuijnyJH0BfoNhTKZEKzhPGuUb0xAohwUEUqN5tPkdsQJuu2Wg//wIqCGRRZVK7a77PIYjxVP21PfObFWQlCOUfgnlScHotdyegcWcR+gUHmo/82vAWlCl/PPin9Ro/D+bmqEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtGV96W3Vz4f3jkk;
+	Mon,  3 Jun 2024 22:35:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 2D4441A0170;
+	Mon,  3 Jun 2024 22:35:36 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgDnCg621F1mAppQOw--.29601S3;
+	Mon, 03 Jun 2024 22:35:36 +0800 (CST)
+Subject: Re: [RFC PATCH v4 6/8] xfs: correct the truncate blocksize of
+ realtime inode
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
+ willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-7-yi.zhang@huaweicloud.com>
+ <ZlnSTAg15vWjc1Qm@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <67a811e0-6723-3bb6-5f74-a66610b884a0@huaweicloud.com>
+Date: Mon, 3 Jun 2024 22:35:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1564; i=brauner@kernel.org; h=from:subject:message-id; bh=gXDxGgjsqZPij10gds5fIA4zMBd03zCzjfopUpR6A9A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFXtm+9VCbwJRPzV/damfpn2aYb37ulRfDLoHrF8Lj8 za99Zv7qKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiJsoM/4ybFawfeLX9e8Cj 3LPgiMbk1Ox1+wqCfe/67mZU8BYXb2Nk+Fq4+ecWgx1GGxKvsxYUb2Q4NMFF7hL/GXErp4oj25X ZmAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZlnSTAg15vWjc1Qm@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgDnCg621F1mAppQOw--.29601S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrury3tryDtr4xWw18Jr4xJFb_yoWxZrc_ua
+	y5Ar92g3WkWFn5Aa17Cr15GFsxKFW2krsrXw15XFsFq3sxtas5ta1qyrWFkF1DKFsrtrn8
+	ZryI9r4avrnFgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
+	1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU1zuWJUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, 16 May 2024 00:10:44 +0200, Jan Kara wrote:
-> I have a program that sets up a periodic timer with 10ms interval. When
-> the program attempts to call fallocate(2) on tmpfs, it goes into an
-> infinite loop. fallocate(2) takes longer than 10ms, so it gets
-> interrupted by a signal and it returns EINTR. On EINTR, the fallocate
-> call is restarted, going into the same loop again.
+On 2024/5/31 21:36, Christoph Hellwig wrote:
+> On Wed, May 29, 2024 at 05:52:04PM +0800, Zhang Yi wrote:
+>> +	if (xfs_inode_has_bigrtalloc(ip))
+>> +		first_unmap_block = xfs_rtb_roundup_rtx(mp, first_unmap_block);
 > 
-> Let's change the signal_pending() check in shmem_fallocate() loop to
-> fatal_signal_pending(). This solves the problem of shmem_fallocate()
-> constantly restarting. Since most other filesystem's fallocate methods
-> don't react to signals, it is unlikely userspace really relies on timely
-> delivery of non-fatal signals while fallocate is running. Also the
-> comment before the signal check:
+> Given that first_unmap_block is a xfs_fileoff_t and not a xfs_rtblock_t,
+> this looks a bit confusing.  I'd suggest to just open code the
+> arithmetics in xfs_rtb_roundup_rtx.  For future proofing my also
+> use xfs_inode_alloc_unitsize() as in the hunk below instead of hard
+> coding the rtextsize.  I.e.:
 > 
-> [...]
+> 	first_unmap_block = XFS_B_TO_FSB(mp,
+> 		roundup_64(new_size, xfs_inode_alloc_unitsize(ip)));
+> 
+Sure, makes sense to me.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Thanks,
+Yi.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] tmpfs: don't interrupt fallocate with EINTR
-      https://git.kernel.org/vfs/vfs/c/f113ef08b6bd
 
