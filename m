@@ -1,100 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-20804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAC98D8098
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81838D80E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90DABB23504
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 11:10:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3931C21C5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 11:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5733184A28;
-	Mon,  3 Jun 2024 11:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3A784039;
+	Mon,  3 Jun 2024 11:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BWdUminq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D02RXRQ/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BWdUminq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D02RXRQ/"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e7VpV3zs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B5L/F2DY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ose4pF9G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TC39YB7Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F2F80039;
-	Mon,  3 Jun 2024 11:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F9019E;
+	Mon,  3 Jun 2024 11:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717413007; cv=none; b=fJQhAQgYIkk2F6VT/8u+VnI7zsHCfoXMJ+sHAhIMQv1GK8hzKPWjKTHPNi3oMg+Fwqg+ncrk7FB4MeeEqQKLxNw9Irf72UH1WrC4vJcu1GrT3BloX8neMWsMBk2/yIu+zETmm02mL2N7n12HjKptocSpFfh1vZ8YeJ2/b3DekT0=
+	t=1717413532; cv=none; b=QcFXCsELasud+V/EiplReys4U3aaKE6X7JDi8WLpscrWGv1MgyFHuhiZEm5iZuXLyLRPZe6KdANYs3qKgjPtAcs+U5H200PbzOAGysBoJSzhKs7cc2C0SV6w9PkRcmyMU5UpnxJ6ZKjU/6G9+OmsIU6gfVbI69aZvSX+oOuLrg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717413007; c=relaxed/simple;
-	bh=QJmR2fZSpwd1bnIzbLsPjrZJAzboq407Jt6ky5wo0+s=;
+	s=arc-20240116; t=1717413532; c=relaxed/simple;
+	bh=Z/kN2v+vYtxWp9RIZ2oSiu3+w1DhZNB4wkdQ143Vr0E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZfnSbtkbl2BOD3GVYKngIw9fCXicfvZllvzzs4dHg/DLCg6RBpay38fXEI4rAeMPV6GxrKcyd4wmsZn+sJMrFd+31OOO6AjfrfxgM+GPMPdrU6Tn6o0vhMAQJDFqufz/4gUFzWZiw4hl7YsuXPaGRy3zIt5tLQEKRXd1XIZOZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BWdUminq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D02RXRQ/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BWdUminq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D02RXRQ/; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sle9sQB2G575W4+HU6K/1P10iaadosDMwXzGyI/JWB1VIpld2tBx90rMtBmyhtG9VVgsrYoz8qL9oj3gvpxZGVxZQ4A589eTF88snaQfvPYhX68Am1tUfTOMpY1ko9o/7lK0AZhKgLkXhzlkgrMBlLlTfcbcJeE1rLbla2tYeAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e7VpV3zs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B5L/F2DY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ose4pF9G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TC39YB7Q; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6FC0420031;
-	Mon,  3 Jun 2024 11:10:04 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E6EE520032;
+	Mon,  3 Jun 2024 11:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717413004; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1717413529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CFTkACK56sbPNHG137Zoa10b1jiuGODyVen8+TQw2k4=;
-	b=BWdUminqdsEgXpYg6OtrV6MBmBTUxenz8TQViZq2MQmreiN58+WQEiAq6NJquxFu8OwYPS
-	fs5XMQCGFDlwwORRmScl16H24tXhBoomzUcJHTKlg0yFHP/LIopQtwIaoOJt0QcESLtWQR
-	DvRC9ASRa6aJPoWE5agzYNMEnZ0mKJE=
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=e7VpV3zs2jh+wmbrUdLnR26tJzGo2RKy3ZFsqf0mnVPCJlUvIucThKrDFs1rU1jWtTP+yu
+	iNgowpia0gANIlcEpA3QgQbV6TPlyHvj1qHrrT3hDzuuLDLQyl2salwDdrGrKksBDQHymK
+	R9h4Q5T81O/V0w5/FmhEjf9RQiLL5NQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717413004;
+	s=susede2_ed25519; t=1717413529;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CFTkACK56sbPNHG137Zoa10b1jiuGODyVen8+TQw2k4=;
-	b=D02RXRQ/Vy0t7FaWMS2HE90F1rx88vfRRTlsbXTu9z596vN90nBfBPC2xFmrDgsMprqmpt
-	KsFarKRFuzvlxbCw==
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=B5L/F2DYaT9ZV5fIfhTflOgVFOXiQEUcfY/X5RwOZs01JsHCrAQjxFJcPNP9qoD4RUAWiq
+	QxGVRDPT420hOzCw==
 Authentication-Results: smtp-out2.suse.de;
-	none
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Ose4pF9G;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TC39YB7Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717413004; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1717413528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CFTkACK56sbPNHG137Zoa10b1jiuGODyVen8+TQw2k4=;
-	b=BWdUminqdsEgXpYg6OtrV6MBmBTUxenz8TQViZq2MQmreiN58+WQEiAq6NJquxFu8OwYPS
-	fs5XMQCGFDlwwORRmScl16H24tXhBoomzUcJHTKlg0yFHP/LIopQtwIaoOJt0QcESLtWQR
-	DvRC9ASRa6aJPoWE5agzYNMEnZ0mKJE=
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=Ose4pF9G29NVZPwO90i+1qNfs6QpxTCF5o7IkLhxYu4x41Y66IQXPJV4ycQANu5JXeETeY
+	6afuL1MP1e7r7x8ZQUiGNc9uxR8ZiSAOQ6b3uy1OnXoPXQulIdN6JXnJJEshz2vPyed/Xn
+	vGS4qCT2FodIFzV2k2PZYvfAnqsKTkk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717413004;
+	s=susede2_ed25519; t=1717413528;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CFTkACK56sbPNHG137Zoa10b1jiuGODyVen8+TQw2k4=;
-	b=D02RXRQ/Vy0t7FaWMS2HE90F1rx88vfRRTlsbXTu9z596vN90nBfBPC2xFmrDgsMprqmpt
-	KsFarKRFuzvlxbCw==
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=TC39YB7QGP3fbWt9znHOLLLqnPvKa+zz9NdPDlwUVWewicmzUccizkYdlY8VQNJtoOTvr7
+	ksULYXT31/JvqABA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6093E13A93;
-	Mon,  3 Jun 2024 11:10:04 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D90E713A93;
+	Mon,  3 Jun 2024 11:18:48 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BtU7F4ykXWaiIgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:10:04 +0000
+	id 7oKvNJimXWZyJQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:18:48 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5C61EA087F; Mon,  3 Jun 2024 13:09:57 +0200 (CEST)
-Date: Mon, 3 Jun 2024 13:09:57 +0200
+	id 816E8A087F; Mon,  3 Jun 2024 13:18:44 +0200 (CEST)
+Date: Mon, 3 Jun 2024 13:18:44 +0200
 From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: replace WARN(down_read_trylock, ...) abuse with
- proper asserts
-Message-ID: <20240603110957.we2e2af33qsesmmj@quack3>
-References: <20240602123720.775702-1-mjguzik@gmail.com>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH] fs/direct-io: Remove linux/prefetch.h include
+Message-ID: <20240603111844.l4g2yk5q6z23cz3n@quack3>
+References: <20240603014834.45294-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,90 +105,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240602123720.775702-1-mjguzik@gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+In-Reply-To: <20240603014834.45294-1-youling.tang@linux.dev>
 X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+X-Spamd-Result: default: False [-3.99 / 50.00];
+	BAYES_HAM(-2.98)[99.92%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	MX_GOOD(-0.01)[];
 	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email];
 	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: E6EE520032
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -3.99
 
-On Sun 02-06-24 14:37:19, Mateusz Guzik wrote:
-> Note the macro used here works regardless of LOCKDEP.
+On Mon 03-06-24 09:48:34, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
 > 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> After commit c22198e78d52 ("direct-io: remove random prefetches"), Nothing
+> in this file needs anything from `linux/prefetch.h`.
+> 
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 
-Nice cleanup. Feel free to add:
+Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/dcache.c      | 2 +-
->  fs/quota/dquot.c | 8 ++------
->  2 files changed, 3 insertions(+), 7 deletions(-)
+>  fs/direct-io.c | 6 ------
+>  1 file changed, 6 deletions(-)
 > 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 407095188f83..a0a944fd3a1c 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -1548,7 +1548,7 @@ void shrink_dcache_for_umount(struct super_block *sb)
->  {
->  	struct dentry *dentry;
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index b0aafe640fa4..bbd05f1a2145 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -37,7 +37,6 @@
+>  #include <linux/rwsem.h>
+>  #include <linux/uio.h>
+>  #include <linux/atomic.h>
+> -#include <linux/prefetch.h>
 >  
-> -	WARN(down_read_trylock(&sb->s_umount), "s_umount should've been locked");
-> +	rwsem_assert_held_write(&sb->s_umount);
+>  #include "internal.h"
 >  
->  	dentry = sb->s_root;
->  	sb->s_root = NULL;
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index 627eb2f72ef3..a2b256dac36e 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -2246,9 +2246,7 @@ int dquot_disable(struct super_block *sb, int type, unsigned int flags)
->  	int cnt;
->  	struct quota_info *dqopt = sb_dqopt(sb);
+> @@ -1121,11 +1120,6 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+>  	struct blk_plug plug;
+>  	unsigned long align = offset | iov_iter_alignment(iter);
 >  
-> -	/* s_umount should be held in exclusive mode */
-> -	if (WARN_ON_ONCE(down_read_trylock(&sb->s_umount)))
-> -		up_read(&sb->s_umount);
-> +	rwsem_assert_held_write(&sb->s_umount);
->  
->  	/* Cannot turn off usage accounting without turning off limits, or
->  	 * suspend quotas and simultaneously turn quotas off. */
-> @@ -2510,9 +2508,7 @@ int dquot_resume(struct super_block *sb, int type)
->  	int ret = 0, cnt;
->  	unsigned int flags;
->  
-> -	/* s_umount should be held in exclusive mode */
-> -	if (WARN_ON_ONCE(down_read_trylock(&sb->s_umount)))
-> -		up_read(&sb->s_umount);
-> +	rwsem_assert_held_write(&sb->s_umount);
->  
->  	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
->  		if (type != -1 && cnt != type)
+> -	/*
+> -	 * Avoid references to bdev if not absolutely needed to give
+> -	 * the early prefetch in the caller enough time.
+> -	 */
+> -
+>  	/* watch out for a 0 len io from a tricksy fs */
+>  	if (iov_iter_rw(iter) == READ && !count)
+>  		return 0;
 > -- 
-> 2.39.2
+> 2.34.1
 > 
 -- 
 Jan Kara <jack@suse.com>
