@@ -1,106 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-20771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B0E8D7A17
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 04:33:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A70A8D7A7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 05:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F405E1F2180E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 02:33:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441631C20E3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 03:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFDF46AF;
-	Mon,  3 Jun 2024 02:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24BA101E4;
+	Mon,  3 Jun 2024 03:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GSG8U6F+"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bNIFtfnC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD47BB64B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 02:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E897D271;
+	Mon,  3 Jun 2024 03:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717382025; cv=none; b=m+t4wG/GZpR8Sm4NbcXwJg3MZd+FlRRZyOq7d1sbXjs/PN+ojcDbOufbc0mZAn7GSC16rc+yQ0BPHayF0OrMLsc1S9/Mrh+K6yZ+jwQT/rBVHD5H1RYrwK2g+p4c2g2jCOg71OgkyvhuE13oflf6JBV6Q0SJZHRmwHKJvddDqio=
+	t=1717386069; cv=none; b=L778CkyIxZ0x9WNmpVjEab/m7GAhNs9Movoy0GlRbxxayCBrosBfJTiEdmwagUaq4vIUXsSa6mbvB8CNZIZe5fULW0yADRD2Csd7fTBvyn36y+yDAVCSerY05xY6+cVKqkIWV5V9TMmgB3nuDYLEpZtyLPPSADG+3tBc0Y1HAzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717382025; c=relaxed/simple;
-	bh=BP4NW2opTyAbUPlo92AtzqCxpqbL3Z23qXtpki6HmCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tI1y5pOCeQvj0EkuJDkl7HIHld0AYb5Hy14GZGsqQhHKfI3U4j7qn3G7WjqnRGxJEDnT+zHTDjD8vFm+qgF/6Ssdu/7sYTXfYFvzCP63Dabl2dgnzdyx3m/WGKxvZmX4kd75h3lz2JTjeIuU5XQSbyuqwRl2ok97a4PDwdjgQUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GSG8U6F+; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717382020; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=AsUB/xjwHQK0EuulmLU9C1IXmpORl+ep1cLz5q1MGH0=;
-	b=GSG8U6F+CHYuCAi3BwQnkxFjSebx/eR6hIfofZgDrWa4e8t0OVszDlXxkcWV3yxB8lyde1b/f9hog8xeYDAk8QzHHyqcoQElGi8RRNsvgbcMKhpOX7OLIdpz0LDgy/oZyh34/71AgxGnEPUjs8SG61XKOzBfUqW+92SoweuKKB4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R471e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W7g-u1p_1717382019;
-Received: from 30.97.48.113(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7g-u1p_1717382019)
-          by smtp.aliyun-inc.com;
-          Mon, 03 Jun 2024 10:33:40 +0800
-Message-ID: <49210e35-1cca-4d5a-a099-5a2d7b0390d0@linux.alibaba.com>
-Date: Mon, 3 Jun 2024 10:33:38 +0800
+	s=arc-20240116; t=1717386069; c=relaxed/simple;
+	bh=qhOdS37CSAz5kEDZhCfPQ3VlbrqMMSx7enccrII8eBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdaNHhV4Aorb8Fb6Goz510vHNgCm6u4DqJPKTOhar79tEcRxKPw3NAd3nq8Gduuzoy4JUzqYUKHgbuhlDLiKEgIGy+Xx4CmSAG8JsFMI8LKAYFeEgquUPFli53DIUu/gcwg4wR8uzs4y8RWg3E70GRM3OE2R5DngH8US0WYVdwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bNIFtfnC; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JBJPVZtxP6EfzexbhZIaZFG/RSUHAxjmZiqygSOGvlw=; b=bNIFtfnCKa7dPGCg1I/Kru1k9D
+	1myZ0/JgSGamDZc+LcBdKaXJnV7mIgmGS47vulUr0eZe8zRT87kSg7g/kJZhwdnuHVrZ4daPwB0hR
+	D8zyiO7jxxCaekRKBG75fxexEbovhkEkgYL/qZUusiK/Y2YjRyIHEVayVjGL2W6CMTgyPaZtPUXdv
+	1u/IpH55NU/LhYGuV34oHYfe4uWB5g+6UK4m02HebZLbLsVvYz2LafLei9y6yZfsDdnsVT7s1vQao
+	aMUjiV5eYwOIUtKSyGAVuqrbbPes8QMknDn598YZVIjXFcjih0YFfKXsjUSew41vCRnqvnz8CmGjh
+	YDLXL/Aw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sDyZ5-00BLOK-2I;
+	Mon, 03 Jun 2024 03:40:55 +0000
+Date: Mon, 3 Jun 2024 04:40:55 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Baokun Li <libaokun1@huawei.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] get rid of close_fd() misuse in cachefiles
+Message-ID: <20240603034055.GI1629371@ZenIV>
+References: <20240603001128.GG1629371@ZenIV>
+ <80e3f7fd-6a1c-4d88-84de-7c34984a5836@linux.alibaba.com>
+ <20240603022129.GH1629371@ZenIV>
+ <49210e35-1cca-4d5a-a099-5a2d7b0390d0@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] get rid of close_fd() misuse in cachefiles
-To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Baokun Li <libaokun1@huawei.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org
-References: <20240603001128.GG1629371@ZenIV>
- <80e3f7fd-6a1c-4d88-84de-7c34984a5836@linux.alibaba.com>
- <20240603022129.GH1629371@ZenIV>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240603022129.GH1629371@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49210e35-1cca-4d5a-a099-5a2d7b0390d0@linux.alibaba.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Al,
+On Mon, Jun 03, 2024 at 10:33:38AM +0800, Gao Xiang wrote:
 
-On 2024/6/3 10:21, Al Viro wrote:
-> On Mon, Jun 03, 2024 at 09:53:26AM +0800, Gao Xiang wrote:
->> Hi Al,
->>
->> On 2024/6/3 08:11, Al Viro wrote:
->>> 	fd_install() can't be undone by close_fd().  Just delay it
->>> until the last failure exit - have cachefiles_ondemand_get_fd()
->>> return the file on success (and ERR_PTR() on error) and let the
->>> caller do fd_install() after successful copy_to_user()
->>>
->>> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
->>
->> It's a straight-forward fix to me, yet it will have a conflict with
->> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/fs/cachefiles?h=vfs.fixes&id=4b4391e77a6bf24cba2ef1590e113d9b73b11039
->> https://lore.kernel.org/all/20240522114308.2402121-10-libaokun@huaweicloud.com/
->>
->> It also moves fd_install() to the end of the daemon_read() and tends
->> to fix it for months, does it look good to you?
+> > Anyway, your variant seems to be correct; feel free to slap my
+> > ACKed-by on it.
 > 
-> Looks sane (and my variant lacks put_unused_fd(), so it leaks the
-> descriptor).  OTOH, I suspect that my variant of calling conventions
-> makes for less churn - fd is available anyway, so you just need error
-> or file reference, and for that struct file * with ERR_PTR() for
-> errors works fine.
+> Hi Christian, would you mind take Al's ack for this, and
+> hopefully upstream these patches? Many thanks!
 
-Yes, I agree with that, but since these patches are already
-in the -next queue.  We could clean up these later with
-your idea later, otherwise I'm not sure if some other
-implicit inter-dependencies show up..
-
-> 
-> Anyway, your variant seems to be correct; feel free to slap my
-> ACKed-by on it.
-
-Hi Christian, would you mind take Al's ack for this, and
-hopefully upstream these patches? Many thanks!
-
-Thanks,
-Gao Xiang
+FWIW, another thing that would be nice to have there is
+removal of now-pointless include on linux/fdtable.h
 
