@@ -1,97 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-20838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773608D84F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 16:30:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552BF8D851F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 16:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F8192832BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 14:30:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 691421C214C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 14:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADE212EBF2;
-	Mon,  3 Jun 2024 14:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D7712F596;
+	Mon,  3 Jun 2024 14:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOUaAi1x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJhzz29v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE30F12BF34
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 14:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9099F57C9A;
+	Mon,  3 Jun 2024 14:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717425007; cv=none; b=H+RCtUw4ycP/sPE/0Uha6SZ15u4h4lB4+rx7zh3iVqfoh3p/0KqnmBFtjymd09XDxWoKLL2Td51O9ZZhHbLzA085LkF31ZppvUuNJmRQ85a9COonyIeeteYPMGpDNWOpf2ZBsw0EC6MZ3Xpo6iv+lhWtqtoZTyeEZpOhEUgJZwY=
+	t=1717425207; cv=none; b=Z5AXEJlB8MmO42Uu1UGQr6ULVidXxxvaSH34UTBChNydlt2sVDHFxfnLv/31uK46OP4VKw7fHLBlBDXcP52lAGHYbiWkK4DwkC6RK9pLLQ7hWNWZVaVwPXOPNPpmAgQgWc3Uj2NIowa6rI1KvC4HIKJPGupxCxDeH+V9INp12ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717425007; c=relaxed/simple;
-	bh=ilP/mqfminFIlL/9jrVY6neS/CASV0S8jeIG1imK2Z4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VJx7l0A+l7TlgokdtNvpBJBWLa2vXuKwzNCJSFTyTVwQ2BhNfRNNQD+E5A7LTzfmyIOuelVvQqzRhB9mcEul7IjJ+9vSZzxxR6e2ZFcLIHAm8lk99iGlceThJ6lv1X/7xhpAXFEvQoc3xjcVr4U9JW11bCjZMh3dw8aA+a4Qb60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOUaAi1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BE2CC2BD10;
-	Mon,  3 Jun 2024 14:30:05 +0000 (UTC)
+	s=arc-20240116; t=1717425207; c=relaxed/simple;
+	bh=7Ze13k74YYFAGZMWLGKT63zEhS3FmZYEIvaL8zuzG4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lWPLu1qd38TBRWKw2QqlBHuJz/Ip4vd82+KqUbrHZ17+j+kqNm6IvZ/kMOfhIxjXcIVsKJpbAB10RBKFgdykb70O2wUL6ZD7vt/rqsHxO2oXSnmhZPCncs+ysB0XufIDGVRcvNKjUVbLt3kwxf+QX83ZPCHfe0pOToDpRThrBdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJhzz29v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4FA7C32781;
+	Mon,  3 Jun 2024 14:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717425007;
-	bh=ilP/mqfminFIlL/9jrVY6neS/CASV0S8jeIG1imK2Z4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SOUaAi1xXGHSyy/rlD1HUDAyHs9dC0Lx8iSP2YfHHmW42T5/f6kpJWZgv6+Frblt3
-	 vT1M6mHyqooUYneH4d2q2PGWBVkleqxNimOZGnBg2ihwKVECFcSWPxMNej1Nyuy4/D
-	 NZWY1INWnnzXVAfMM/mlbM6pV7UtP17AjQ2mwc6JGxtBq20Y5rq+T7cf6+S8wsVCHv
-	 7H71i9p70n4REHuC55bFd1Wyp9Wf/AqK76FVsmDgA0Tm5wO0BzunobTWqlQl4V2Qyq
-	 hg9yDdpAqijewZqMwf6Pa/uhIepp8SixlcRNtrm8WQpMk1iywEP2/p3FAffZGkzIik
-	 GIaXMAnorwJ0g==
+	s=k20201202; t=1717425206;
+	bh=7Ze13k74YYFAGZMWLGKT63zEhS3FmZYEIvaL8zuzG4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nJhzz29vE4W9Y3EUb1HfKsOE1Ft4wF+rMuC/UjgrbQFtoM9yTaTd/9uAkG2SVcLyu
+	 1hDeQs3k3e8+/DJV6RJGye+WWpE8Vvme8qwNc5rCKYtBPLfJSNWgTWaoi2tknDsIy5
+	 dLsGWhqNABHJ2OAnzMdilTyrxUMZAgi4oIZYo4Nx2KlGGnLgRxpFbNZq99sWosiMhS
+	 B7ZJL9oCnfwefGzHyTy7lYUoz8mSdwGK+XKpR474goULG7s+01Z1L+UO5eZqVWIBL+
+	 NP4BuQJAJ2bd/M6HZZzyngITyAGs5Z+pl4++GzOSAFlRCcAwFdLMrpc2EGCDbPCvNZ
+	 KQJnpCjMaM2yw==
+Date: Mon, 3 Jun 2024 16:33:20 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-um@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Subject: Re: [PATCH v2] hostfs: convert hostfs to use the new mount API
-Date: Mon,  3 Jun 2024 16:29:52 +0200
-Message-ID: <20240603-abklingen-zutreffen-1bc4c642168b@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240530120111.3794664-1-lihongbo22@huawei.com>
-References: <20240530120111.3794664-1-lihongbo22@huawei.com>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
+Message-ID: <20240603-turnen-wagen-685f86730633@brauner>
+References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
+ <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
+ <20240527100618.np2wqiw5mz7as3vk@ninjato>
+ <20240527-pittoresk-kneipen-652000baed56@brauner>
+ <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
+ <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
+ <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1149; i=brauner@kernel.org; h=from:subject:message-id; bh=ilP/mqfminFIlL/9jrVY6neS/CASV0S8jeIG1imK2Z4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFXk4PFwi+9HLBfoUs/j9XBXONXbh+2ec1TLm73/3Bu ZXVHJquHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpYmH4Hyi90DLxY4tmUQXD U+kTd6ty2pdP37TT3vpr+Krrs5d/qWdk+Mp5tcb6/Kd/66Vsk/6HN+xncH8ie80ui0/BTeBCz2J eDgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
 
-On Thu, 30 May 2024 20:01:11 +0800, Hongbo Li wrote:
-> Convert the hostfs filesystem to the new internal mount API as the old
-> one will be obsoleted and removed.  This allows greater flexibility in
-> communication of mount parameters between userspace, the VFS and the
-> filesystem.
+On Mon, Jun 03, 2024 at 09:17:10AM -0500, Eric Sandeen wrote:
+> On 6/3/24 8:31 AM, Christian Brauner wrote:
+> > On Mon, Jun 03, 2024 at 09:24:50AM +0200, Wolfram Sang wrote:
+> >>
+> >>>>> Does that fix it for you?
+> >>>>
+> >>>> Yes, it does, thank you.
+> >>>>
+> >>>> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>>
+> >>> Thanks, applied. Should be fixed by end of the week.
+> >>
+> >> It is in -next but not in rc2. rc3 then?
+> > 
+> > Yes, it wasn't ready when I sent the fixes for -rc2 as I just put it in
+> > that day.
+> > 
 > 
-> See Documentation/filesystems/mount_api.txt for more information.
+> See my other reply, are you sure we should make this change? From a
+> "keep the old behavior" POV maybe so, but this looks to me like a
+> bug in busybox, passing fstab hint "options" like "auto" as actual mount
+> options being the root cause of the problem. debugfs isn't uniquely
+> affected by this behavior.
 > 
-> [...]
+> I'm not dead set against the change, just wanted to point this out.
 
-Applied to the vfs.mount.api branch of the vfs/vfs.git tree.
-Patches in the vfs.mount.api branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.mount.api
-
-[1/1] hostfs: convert hostfs to use the new mount API
-      https://git.kernel.org/vfs/vfs/c/cd140ce9f611
+Hm, it seems I forgot your other mail, sorry.
+So the issue is that we're breaking existing userspace and it doesn't
+seem like a situation where we can just ignore broken userspace. If
+busybox has been doing that for a long time we might just have to
+accommodate their brokenness. Thoughts?
 
