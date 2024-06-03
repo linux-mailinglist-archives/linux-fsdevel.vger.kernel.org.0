@@ -1,114 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-20856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430228D8874
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 20:09:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAADD8D888F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 20:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742D01C21772
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 18:09:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4A91F22AB6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 18:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF02137C3F;
-	Mon,  3 Jun 2024 18:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7D01384AB;
+	Mon,  3 Jun 2024 18:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lfq+vRAa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WetvLmim"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885B0135A46;
-	Mon,  3 Jun 2024 18:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB61D137C4A;
+	Mon,  3 Jun 2024 18:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717438166; cv=none; b=st+uNO08TB8yuJxRkefACi/ZPXnRQ5PL7R01+1jImiE8UQD+6PC97UKrf28GPhPsLke2+QJeSMfq/IesLrzw3PeZn7KHCwjmH5M7fRw/aIWeWKkgmeTWwHPzFn57fDPwwmk9Ea5KalPG/UBnn15nKQgqvNsjDly8me5hUr2A1hY=
+	t=1717439052; cv=none; b=cyc09YjMPu6IBG3tS28XTEo+n9OHW1kQuBVvabyb+mP4+0C/iJZjCtJr+KnnvlWQn/YWrZdoBbPoTrl6fCC+bXWacnOtm2jankZOIbLp+Pm1wUI5gQUoiWOXdSDT8quSjCMvlh+mljwYYH7GGW0fEnjcu1astrWYMG9Pu8j8jY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717438166; c=relaxed/simple;
-	bh=EbQBKymnLfQkHlodvpkwnhhpbzot4LiyZVD0ZhAWyCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCjL1WsrdOrWkF0AtCZCsjRF8hsMXKMScEPmv266Smn3YbHTWxIGhpp+YbnIQdkzZSXb+JpLhkfnK/2k16DMNx33ZquJ2vOfcFB3+oVqO3nYqR1/7TaJOqlAGHBkyC96P4XbWi4emtNaYg9IHMt3aVNqw5ATjqt/DzTw9B+tEjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lfq+vRAa; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1717439052; c=relaxed/simple;
+	bh=hDcknhcOYWbRk6WkT26dnpu/5uKCkV7h6LNO0ijMspA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pi8N37wEVelnQND3jYO4I/yueTob6g8028gQHWC93gnakvSvvzizLtJhGpk8EFUuQ/SiZRjX+F1mZ9QOW7iELS3zwd5Cw29wJnMX0hRPwtDWaXyALCXyXAqkP53113kbIyNY4Bu0VRsK0zpu6uIEXQ04ExZuz2UxteDF0xD9ykQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WetvLmim; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f44b441b08so35895345ad.0;
-        Mon, 03 Jun 2024 11:09:24 -0700 (PDT)
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b3241a69f4so2220034eaf.2;
+        Mon, 03 Jun 2024 11:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717438164; x=1718042964; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YXl034VbTvbkD/cq16AaCovQc9yLMytZtK7abGPdXzg=;
-        b=Lfq+vRAaISDhvDLknkoLHki/FQCIq6svqEOFK6DlMyAZFpiXzsTlywDgF8seIMjWnJ
-         Xs8vndg1e4ehy6nC9Zob99UxkxIcrUEAT7u4TFnnIF66D9S7HLyMCnS2D2OTCMV1YXRe
-         nzGXh9uifhdGxVT2xVwFi0f+vF6p2y/i+Bv6RMNxvTPXrAMCHsc1CSdSUFHPdvOGpFU6
-         Bi2acZaIanCt0qyP1du8P3o3hooxQFe61+rakK4OI6Yg1dz+VZfXD/CWwVJLjxnv+bA7
-         u5kPDiAYvO6A9Kl1T6Sksf5zo9BX1Y5eZsaq8JHEuXw65NmI/zG9xksDNK521975vY9N
-         9USg==
+        d=gmail.com; s=20230601; t=1717439050; x=1718043850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5EI4ejkvsKs4g2VYFTyDLmFa3QzZwi5NQWive6oeaWA=;
+        b=WetvLmimo28CDbCThVCrz0/B+CodS7qK1CVeYair99Dk5L5LitBL1bu/8e9ikyZwXn
+         qEW0kf6y0N10foLfhnkoJqWKaWeSdNTw+nNF3u3ldOMYF7xB97lbUd8Jn6A+6kVm5Jgf
+         gE/nX5OG68RD8ol3QcXByR9WiQJIym3jRxXFCrwVMvqKRKEpKC5MS1huy5djEcQZ7Hiq
+         pxZyvWaM/1vWETbEOtW7Sm1wyz/qYi87YcoFAWmuxuW3WdpkdGyvVAqi4DXnwwEUDCvM
+         AXpyAu3R/sQit94Ft3Zy+QUUdtTLph9fUZ7rHWl1+GNZFzV5wi0EeIWotRfFz4PZMpKz
+         Sw8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717438164; x=1718042964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YXl034VbTvbkD/cq16AaCovQc9yLMytZtK7abGPdXzg=;
-        b=BBbYjcmBzSAiqyHFXiQHS4MZWEYsDNEF9n+RfcB9ql5p/R1QljdkRkJW7IA4zWwB0A
-         erYebopKIx8JH25Tnu19LLhRpFOO1Adi5ZY27ceAuMBpKIMO2rYVbYCuKDd/7oS+WMTK
-         OxtDcpLwA6URDzh81dtVCDzkaMK250M/iMm7wUyniToHEruIj3sVWzWXEvF/DJ5hAuBS
-         akPwn1j0ehk38ox5r1E7M/T5l+E28rDk/N0gddtteTHi1QPQrmwIKnay0uXuuXbDL8CW
-         QVm+IM8kgnquAwqqQFmFAA5S0hSnhPOrLGRbq1louwqx6J769IcPUOda1IKGXVNu9N+r
-         nrfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzkiEddbQPFn54ZfDeKp6OUwVodfmq4Fh/7LKXG465RchBXlzQb1sCosN3ytdaFi1yfa52+XzIqJAYF7m+t75bb7iD182W6EuI4ect/+mo+endAklY0Z1pp9z4s+wJVT2D6dDvOY1uFaFr6g==
-X-Gm-Message-State: AOJu0YzqDY0dB/wn95u3EuavLXsXS0Xtc6aOBy6ZJzHFUWsGZR208igU
-	QLPJzPChAPOy8iohzkOXGhjR7K0UjKM9QymmLLveZukpMAVhriZR
-X-Google-Smtp-Source: AGHT+IHSwf3aVNsUusaergW0STCqU0itWuY9cjfQCrhrIMhWg30627T2Ovf4HIXKoM2Fm2C8sSjl7g==
-X-Received: by 2002:a17:902:fcc8:b0:1f4:bcef:e970 with SMTP id d9443c01a7336-1f6370cda21mr76848495ad.55.1717438163739;
-        Mon, 03 Jun 2024 11:09:23 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323e27a3sm67526665ad.180.2024.06.03.11.09.23
+        d=1e100.net; s=20230601; t=1717439050; x=1718043850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5EI4ejkvsKs4g2VYFTyDLmFa3QzZwi5NQWive6oeaWA=;
+        b=KQwtzJBbBmBf26WTHlX8iaqbdAuVHXOsJeFKJAVzatJ30a8CTBDqiE/wCEfgVcc5Fy
+         cP9G5hvPcDBmnRMht+7gRXKuAx65UT2fIT5l2X/S/m5cyFJ8XYOyHY6v+i7Xm9K8bJ58
+         NEQCA1oVmW/LeQ8LEGqPKMK7viMXF1C9C4NjrB8hCzrw59FGxgXfjRAPrKcz5b8Ufl/W
+         4WfXz7Aje4VUeIAa8GGdmScRK+eCkn9KNAEOFE1sRmjgvdhtKvmoi4TaUYpPuTcC2c+7
+         wd0lZxmDylnxRSAolM1ftiEv8F5cJ3tFOOfdIEPqkkgj/Sc9kh10UMgyDumTM1Yz1/GS
+         S+Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbF80KvX3+mh4WMNeQ7DQXI8+bsPj3oOU5OSxQ7v3Lt9oJh1kqalGE4ApyKTrflVSwVO7vCcJiKdCjnihbCktCjCLMeOyVI2x/hHlahtbK5TS7fUTPMug6ikovUXhX/Dy6yjLpsVjLd90/sA==
+X-Gm-Message-State: AOJu0Yx1OzbmFIlL5M/f8B3NX9OF+6t+5AJx7Df/clLfyNYib101WvXx
+	6lWDQ4RZR8EkLLWJIAcNfIuVgVq3wVXpCHaclsmKQKf+3l7CcviiTuaf97aW
+X-Google-Smtp-Source: AGHT+IF/PMhSgjeWGpH+lwhjVNWk5wZqk+U9pM49w8GWSnAmdfw1UbZDr9/cU2rHjJbRKm8oEEESpQ==
+X-Received: by 2002:a05:6358:f44:b0:183:612d:44a1 with SMTP id e5c5f4694b2df-19b490c54bamr1072290955d.28.1717439049552;
+        Mon, 03 Jun 2024 11:24:09 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40c1:3c:9322:2d09:c2c:3b62:755a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c35a4ba741sm5075892a12.85.2024.06.03.11.24.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 11:09:23 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 3 Jun 2024 08:09:22 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mon, 03 Jun 2024 11:24:09 -0700 (PDT)
+From: Amit Vadhavana <av2082000@gmail.com>
+To: dhowells@redhat.com,
+	jlayton@kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] writeback: factor out balance_wb_limits to remove
- repeated code
-Message-ID: <Zl4G0tI_0CHKIWHh@slm.duckdns.org>
-References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
- <20240514125254.142203-9-shikemeng@huaweicloud.com>
- <ZljGiunxmVAlW6EE@slm.duckdns.org>
- <cfbbcc80-7db1-8277-98ab-1f32c3a629ab@huaweicloud.com>
+Cc: skhan@linuxfoundation.org,
+	av2082000@gmail.com
+Subject: [PATCH] netfs: Fix documentation comment for netfs_wait_for_outstanding_io()
+Date: Mon,  3 Jun 2024 23:53:56 +0530
+Message-Id: <20240603182356.11682-1-av2082000@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfbbcc80-7db1-8277-98ab-1f32c3a629ab@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Correct the parameter name in the documentation comment of the
+netfs_wait_for_outstanding_io() to match the actual function parameter.
+This change ensures that the kernel-doc tool can generate accurate
+documentation and eliminates any warnings related to parameter mismatches.
 
-On Mon, Jun 03, 2024 at 02:39:18PM +0800, Kemeng Shi wrote:
-> > Isn't this a bit nasty? The helper skips updating states because it knows
-> > the caller is not going to use them? I'm not sure the slight code reduction
-> > justifies the added subtlety.
-> 
-> It's a general rule that wb should not be limited if the wb is in freerun state.
-> So I think it's intuitive to obey the rule in both balance_wb_limits and it's
-> caller in which case balance_wb_limits and it's caller should stop to do anything
-> when freerun state of wb is first seen.
-> But no insistant on this...
+kernel-doc warning:
+  ./include/linux/netfs.h:532: warning: Function parameter or struct member 'inode' not described in 'netfs_wait_for_outstanding_io'
+  ./include/linux/netfs.h:532: warning: Excess function parameter 'ctx' description in 'netfs_wait_for_outstanding_io'
 
-Hmm... can you at least add comments pointing out that if freerun, the
-limits fields are invalid?
+Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
+---
+ include/linux/netfs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
-
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 3ca3906bb8da..5d0288938cc2 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -521,7 +521,7 @@ static inline struct fscache_cookie *netfs_i_cookie(struct netfs_inode *ctx)
+ 
+ /**
+  * netfs_wait_for_outstanding_io - Wait for outstanding I/O to complete
+- * @ctx: The netfs inode to wait on
++ * @inode: The netfs inode to wait on
+  *
+  * Wait for outstanding I/O requests of any type to complete.  This is intended
+  * to be called from inode eviction routines.  This makes sure that any
 -- 
-tejun
+2.25.1
+
 
