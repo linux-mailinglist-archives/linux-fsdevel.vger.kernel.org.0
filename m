@@ -1,79 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-20871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745238FA5E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 00:42:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 232938FA625
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 01:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326ED1F24ED3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 22:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC11D1F21020
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 23:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F151C13D29C;
-	Mon,  3 Jun 2024 22:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F77F29CEC;
+	Mon,  3 Jun 2024 23:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ICuYMLam"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C32136994;
-	Mon,  3 Jun 2024 22:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B6E71747
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 23:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717454347; cv=none; b=ZUhS1b8rmxDNPR6eXgROxD630qbRzSoEdfvnZC4d+DHq6Pj87zow7kJZQge6zzWn+RwfPhCcvc1kSw+/7ZWZ5SsLT6X2B774uRBm2HdVbOcO1kve5xdrKQpL2PeMePK1VlXYEQKI1dFh+hfbEwTKfhxsxAIJSOn3GSQxTNc7CtQ=
+	t=1717455761; cv=none; b=nnHI2uFP9kf4sDZQbC1yV4V7oPjFR7H7vLjzTOvyA88SOMQRtpgZVimZS2fVF3HEfMxyGUXWYoojXvi2uENelE8Aj5RJ3lPXMHKDrn+R9FRsPysYPN/Z142sap8/IS5tw9/wO8BhgyVXkhqUXCHYw2IilsSJ3tfI+js1X4T2FY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717454347; c=relaxed/simple;
-	bh=dM5djux4B7U2WW16KMjOhhGaxS9EJBjSC0Y78XYzP7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vF47Bg1sEtNw1VHFQD4klB5VrKZPqzgVQXAVUMVem+tM3xvMZyzJfbzBHHlpNktx3fFbSeF9F/6gu7X8lazZ3mPsdqO0VWCGpVX7LeJ9gHqTHvW+9qOamj05HCXkRxvocoGoSU2qtZlYMhjAlECwwpCFXZ0Grr6lqPTWA+A9uWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A673C2BD10;
-	Mon,  3 Jun 2024 22:39:05 +0000 (UTC)
-Date: Mon, 3 Jun 2024 18:40:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- audit@vger.kernel.org, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org, bpf@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 2/6] tracing: Replace memcpy() with __get_task_comm()
-Message-ID: <20240603184016.3374559f@gandalf.local.home>
-In-Reply-To: <20240603183742.17b34bc3@gandalf.local.home>
-References: <20240602023754.25443-1-laoar.shao@gmail.com>
-	<20240602023754.25443-3-laoar.shao@gmail.com>
-	<20240603172008.19ba98ff@gandalf.local.home>
-	<CAHk-=whPUBbug2PACOzYXFbaHhA6igWgmBzpr5tOQYzMZinRnA@mail.gmail.com>
-	<20240603181943.09a539aa@gandalf.local.home>
-	<CAHk-=wgDWUpz2LG5KEztbg-S87N9GjPf5Tv2CVFbxKJJ0uwfSQ@mail.gmail.com>
-	<20240603183742.17b34bc3@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717455761; c=relaxed/simple;
+	bh=5tOD2pHjMWWdT8TSGj9EPKKaUP3pnp/j6cP/I84FMmg=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ogX/posf8fuDt+FfPewirKLd25TfcMbRl2sH0OukYgveMwR3nzyU2goiUXGEtvv8r5zUn1YCxPp0XCoe1FaQtSaBKno3LDR0W19dpj/VPAXaRVDJtiOQf7ZlBpUk3FRwPZPfuei1GJGMHwoicUQlEuB3ExFf/dH8GsHI2ijg7CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ICuYMLam; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-245435c02e1so2675104fac.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jun 2024 16:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717455759; x=1718060559; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ggaQ6J5T1IxPl9jccfKKlkkSH+FkZbGLyq3WMqICX4c=;
+        b=ICuYMLamE/chWrfVWwNlsbzjO57nSS56w+ONXVTWS8yzc71ECSuIjvJnPXBVCjYVkP
+         PrscTxhX9+Z1SKVYBYdeB4JmFPj2qYnL45xhIWlO5snkkfLV+9CAmANwx6LhlLNqVdZG
+         COsNljzFFRJpyjfhN6gQnaYAuD5bxwPSck6uQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717455759; x=1718060559;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ggaQ6J5T1IxPl9jccfKKlkkSH+FkZbGLyq3WMqICX4c=;
+        b=cjcHP1ET1Mk1BXrNB1GoaK5lz6ampvo2mSNFMn/Z/XdVCXAsXtKe2LkBaZRSqkPTqg
+         hcmbMyFy8/cPrDZD3ysSW2ZU0Uzem5wAvVry9JduTzf8fyOr5D2xTJvUngAHU/J5qnEf
+         Oj4lyuX+LBrhhdf1i9Uiocxs5SLF21ZIkAr/kO+3a0V4XjMd6yFjFscaz/Uut+CCkNNK
+         SNWJIlOc2MZgvJtZrsdWq+TnJ2T9tZSgO1gZ2IwWGtMKfoEJVQoF/qB7QsmQ6iuVp8PE
+         kfEugfOocnptpYPImlJOs9l9tllk7A+9Xcx2Isk9I5+pHaoBtz2ZMe6twrrKCgQbIM23
+         3oVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHPCCOolRCli9IGt7pIT5sFiu6kRrZek5uEKmJLhL3btHBXf73md6mfYDvbCCbME9SaH37+rg0ISmMwJzpdeNe7NPTFiLrtaXnOtYvEw==
+X-Gm-Message-State: AOJu0YyuIbhURE7s/5GaBWEUE5JlCVp9HU2C/jISSPyVz9bdEZTczQsg
+	LHWAK7QvfEjKWuDKyjj5uBYSaagwiuD+psA+8IuIXcTBcUcAhsZlkhyl60bD1f2sLgGrXG4ebfK
+	JTuDDsOK7KR9qXfZZXWDHvsF5QwybR18w+lKYYF1iDg2Vvp8=
+X-Google-Smtp-Source: AGHT+IF7d/TDt2PvSfLYQF36A+sjUkHpPi0ohhg8rJGf+olIn56FTIptan9DUYCXFiaG4Z93Ic9j80AfvaYOMw8ZPZU=
+X-Received: by 2002:a05:6870:d8d3:b0:24f:d6c1:692 with SMTP id
+ 586e51a60fabf-2508ba20045mr12189521fac.29.1717455759199; Mon, 03 Jun 2024
+ 16:02:39 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 3 Jun 2024 16:02:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20221006224212.569555-8-gpiccoli@igalia.com>
+References: <20221006224212.569555-1-gpiccoli@igalia.com> <20221006224212.569555-8-gpiccoli@igalia.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Mon, 3 Jun 2024 16:02:38 -0700
+Message-ID: <CAE-0n50vo5xkUNK0-cF9HZRXShsxbikqmdVnmMzRsn+Z7MEJTg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] efi: pstore: Follow convention for the efi-pstore
+ backend name
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: kernel-dev@igalia.com, kernel@gpiccoli.net, keescook@chromium.org, 
+	anton@enomsg.org, ccross@android.com, tony.luck@intel.com, 
+	linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 3 Jun 2024 18:37:42 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Quoting Guilherme G. Piccoli (2022-10-06 15:42:11)
+> For some reason, the efi-pstore backend name (exposed through the
+> pstore infrastructure) is hardcoded as "efi", whereas all the other
+> backends follow a kind of convention in using the module name.
+>
+> Let's do it here as well, to make user's life easier (they might
+> use this info for unloading the module backend, for example).
 
-> Note, I've been wanting to get rid of the hard coded TASK_COMM_LEN from the
-> events for a while. As I mentioned before, the only reason the memcpy exists
-> is because it was added before the __string() logic was. Then it became
-> somewhat of a habit to do that for everything that referenced task->comm. :-/
+This patch broke ChromeOS' crash reporter when running on EFI[1], which
+luckily isn't the typical mode of operation for Chromebooks. The problem
+was that we had hardcoded something like dmesg-efi-<number> into the
+regex logic that finds EFI pstore records. I didn't write the original
+code but I think the idea was to speed things up by parsing the
+filenames themselves to collect the files related to a crash record
+instead of opening and parsing the header from the files to figure out
+which file corresponds to which record.
 
-My point is that if we are going to be changing the way we record
-task->comm in the events, might as well do the change I've been wanting to
-do for years. I'd hold off on the sched_switch event, as that's the one
-event (and perhaps sched_waking events) that user space may be have
-hardcoded how to read it.
+I suspect the fix is pretty simple (make the driver name match either
+one via a regex) but I just wanted to drop a note here that this made
+some lives harder, not easier.
 
-I would be interested in changing it, just to see what breaks, so I would
-know where to go fix things. But keep it a separate patch so that it could
-be easily reverted.
+>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+>  drivers/firmware/efi/efi-pstore.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
+> index 3bddc152fcd4..97a9e84840a0 100644
+> --- a/drivers/firmware/efi/efi-pstore.c
+> +++ b/drivers/firmware/efi/efi-pstore.c
+> @@ -207,7 +207,7 @@ static int efi_pstore_erase(struct pstore_record *record)
+>
+>  static struct pstore_info efi_pstore_info = {
+>         .owner          = THIS_MODULE,
+> -       .name           = "efi",
+> +       .name           = KBUILD_MODNAME,
+>         .flags          = PSTORE_FLAGS_DMESG,
+>         .open           = efi_pstore_open,
+>         .close          = efi_pstore_close,
 
--- Steve
+[1] https://source.chromium.org/chromiumos/chromiumos/codesearch/+/main:src/platform2/crash-reporter/kernel_collector.cc;l=54;drc=7a522166f0b2b32ece60f520b5d3d571c7545b0b
 
