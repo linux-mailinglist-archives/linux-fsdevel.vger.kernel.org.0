@@ -1,157 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-20791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8196D8D7C7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 09:34:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C1F8D7C86
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 09:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B22751C21345
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 07:34:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F3DCB22612
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 07:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E0F47F6B;
-	Mon,  3 Jun 2024 07:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C89F487BF;
+	Mon,  3 Jun 2024 07:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wbfMUy2e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FAB63D5;
-	Mon,  3 Jun 2024 07:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3914206C;
+	Mon,  3 Jun 2024 07:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717400040; cv=none; b=I+K9srFyvtZjmrGKcs+jU2v5G+IvgZqndZvJ+gmT8cBej9iNdKoGwFeuH9zjVHd5V3BoLdKl333dcu1M6T9KdsMAt4Chw4PG6N+pWibzbjX3TqXusYWlcBrH5m/IBhl8KyY+s1zLEGA1qye3f0OLOrj0D+4xNMu25N54PtgKCM8=
+	t=1717400172; cv=none; b=p3Sr7YkolRl9h5XXY5BkaqIILLoOHwM176Hc1QoPeiJV2ahnLEbTqAdt5WbnRVoNorhNLj3GIZx/wCMCgAe2scI+t1UkSjLH6G94X33SnULtOzgBjTHcaGH+yV+Zdl5h8q8W5VxgG5edYeaH0IeX7K4fhfhq7apQA34pZGGM0hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717400040; c=relaxed/simple;
-	bh=bMwHq1gbaaHFe+5rDN7x7ihdVSCPg5KBQmDrKPdlJ5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNd1P20TbGs3J6iVwGUaMZXYWigs9NoLLOVvvFTXz0PcOI1ZRnsAhPVzwMQHQ8lXn2GqR3JodA8Sj0CY0hHfNx6K90PiEly/syb71/SrfmoprxOmYyq/8xWVsfre1PDc9NrqpVvrwRSlhNJU4zMXnVX/uKjwNa2QH2QVEncXDFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A35E1042;
-	Mon,  3 Jun 2024 00:34:21 -0700 (PDT)
-Received: from [10.57.5.79] (unknown [10.57.5.79])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45BC03F762;
-	Mon,  3 Jun 2024 00:33:54 -0700 (PDT)
-Message-ID: <417b39d1-8de8-4234-92dc-f1ef5fd95da7@arm.com>
-Date: Mon, 3 Jun 2024 08:33:53 +0100
+	s=arc-20240116; t=1717400172; c=relaxed/simple;
+	bh=0kQf22K2deHNwZd2BeXcd7XR0S10w4Ui/1GCnO6Zbqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=etcok4J4kzRsnrKn5kf3PmStKtq+LvqSdd8DJIuBuIFXhhW94/IDa+NT2OTR0cpx3iDRNoM41WmrTaSZ40V2H80+47ogMaWtAHVVm4SJ1O0S2gQfCY36Ajg1mXs8ipuOGw7XTK2AoHeOmR2GG8rOoB7LnzCajdWb4/i0P5LMuzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wbfMUy2e; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zPJMNxL9q3oOUNAtT7uHZ2LdiEyt30JwkKPIDktMlZE=; b=wbfMUy2ejaVqZJEdRxZt/8mv/G
+	w6qxt4V7clVUtrveTSc1Rj697prXOhOY0Rj/ZfD/RrEq3wsaTXTTeBHnlG1R8ymIiLA0Dmh7iIxMi
+	QXepflqfijrviWoc9YKel9IbuF28gsj8NoOiwYHcIgnKokxbHMeOUwCQfBTlDHPOnHJELvFp98S0g
+	mg7W9YyRs3617FaSaqJrwUVE4ZOj74IhkSUx62eBsZEJGWkoQptG2kWH1y+vCf4AxyWEHIbEDAAJo
+	hjVPw9LBJCqsgARykMTVvx40VpaW+OXxEt3tek4y4TDp7dpUZzdBlJgini5p11PhHa+ZxYh2rtDd2
+	Ax7RkRsg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sE2ER-00BZ6z-1G;
+	Mon, 03 Jun 2024 07:35:51 +0000
+Date: Mon, 3 Jun 2024 08:35:51 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Hyeonwoo Cha <chw1119@hanyang.ac.kr>
+Cc: david.sterba@suse.com, aivazian.tigran@gmail.com, brauner@kernel.org,
+	jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
+	hirofumi@mail.parknet.co.jp, sfr@canb.auug.org.au,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Subject: Re: [PATCH] Fix filesystem issue: description of the fix Fix
+ mark_buffer_dirty_inode to mark_buffer_dirty_fsync Signed-off-by: HyeonWoo
+ Cha <chw1119@hanyang.ac.kr>
+Message-ID: <20240603073551.GM1629371@ZenIV>
+References: <20240603065910.20736-1-chw1119@hanyang.ac.kr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] sched/rt, dl: Convert functions to return bool
-To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240601213309.1262206-1-qyousef@layalina.io>
- <20240601213309.1262206-3-qyousef@layalina.io>
-Content-Language: en-US
-From: Metin Kaya <metin.kaya@arm.com>
-In-Reply-To: <20240601213309.1262206-3-qyousef@layalina.io>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603065910.20736-1-chw1119@hanyang.ac.kr>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 01/06/2024 10:33 pm, Qais Yousef wrote:
-> {rt, realtime, dl}_{task, prio}() functions return value is actually
-> a bool.  Convert their return type to reflect that.
-> 
-> Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Signed-off-by: Qais Yousef <qyousef@layalina.io>
-> ---
->   include/linux/sched/deadline.h |  8 ++++----
->   include/linux/sched/rt.h       | 16 ++++++++--------
->   2 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 5cb88b748ad6..f2053f46f1d5 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -10,18 +10,18 @@
->   
->   #include <linux/sched.h>
->   
-> -static inline int dl_prio(int prio)
-> +static inline bool dl_prio(int prio)
->   {
->   	if (unlikely(prio < MAX_DL_PRIO))
-> -		return 1;
-> -	return 0;
-> +		return true;
-> +	return false;
+On Mon, Jun 03, 2024 at 03:59:10PM +0900, Hyeonwoo Cha wrote:
 
-Nit: `return unlikely(prio < MAX_DL_PRIO)` would be simpler.
-The same can be applied to rt_prio() and realtime_prio(). This would 
-make {dl, rt, realtime}_task() single-liner. Maybe further 
-simplification can be done.
-
->   }
->   
->   /*
->    * Returns true if a task has a priority that belongs to DL class. PI-boosted
->    * tasks will return true. Use dl_policy() to ignore PI-boosted tasks.
->    */
-> -static inline int dl_task(struct task_struct *p)
-> +static inline bool dl_task(struct task_struct *p)
->   {
->   	return dl_prio(p->prio);
->   }
-> diff --git a/include/linux/sched/rt.h b/include/linux/sched/rt.h
-> index a055dd68a77c..efbdd2e57765 100644
-> --- a/include/linux/sched/rt.h
-> +++ b/include/linux/sched/rt.h
-> @@ -6,25 +6,25 @@
->   
->   struct task_struct;
->   
-> -static inline int rt_prio(int prio)
-> +static inline bool rt_prio(int prio)
->   {
->   	if (unlikely(prio < MAX_RT_PRIO && prio >= MAX_DL_PRIO))
-> -		return 1;
-> -	return 0;
-> +		return true;
-> +	return false;
->   }
->   
-> -static inline int realtime_prio(int prio)
-> +static inline bool realtime_prio(int prio)
->   {
->   	if (unlikely(prio < MAX_RT_PRIO))
-> -		return 1;
-> -	return 0;
-> +		return true;
-> +	return false;
->   }
->   
->   /*
->    * Returns true if a task has a priority that belongs to RT class. PI-boosted
->    * tasks will return true. Use rt_policy() to ignore PI-boosted tasks.
->    */
-> -static inline int rt_task(struct task_struct *p)
-> +static inline bool rt_task(struct task_struct *p)
->   {
->   	return rt_prio(p->prio);
->   }
-> @@ -34,7 +34,7 @@ static inline int rt_task(struct task_struct *p)
->    * PI-boosted tasks will return true. Use realtime_task_policy() to ignore
->    * PI-boosted tasks.
->    */
-> -static inline int realtime_task(struct task_struct *p)
-> +static inline bool realtime_task(struct task_struct *p)
->   {
->   	return realtime_prio(p->prio);
->   }
-
+NAK.  Reasons:
+	* patch described as a fix; that implies that some behaviour
+change is there.  Yet there's no description of that change or
+explanation of the problem being fixed.
+	* lack of _any_ explanations, period.  Including e.g.
+a discussion of the reasons why the change makes sense.
+	* apparent blind trust in continued applicability of comments
+that date back to 2002; in any case, no analysis is offered anywhere -
+reviewers are supposed to do that themselves, presumably.
+	* failure to Cc the original author of the comment in question.
 
