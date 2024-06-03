@@ -1,116 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-20790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D418D7C6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 09:25:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8196D8D7C7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 09:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C671B225BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 07:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B22751C21345
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 07:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9984482E2;
-	Mon,  3 Jun 2024 07:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RGGnHXMh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E0F47F6B;
+	Mon,  3 Jun 2024 07:34:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6E94EB51
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 07:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FAB63D5;
+	Mon,  3 Jun 2024 07:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717399498; cv=none; b=FeUO16SPpiHMudGURLwhF4in6wt97HCtljWGJ9rtxc/bx0+UyvfCDKPRYBUIRWvqJzGG7O6X9oSqwXx0Q6udsWCP8Jz4+ZMkRfXeEx9x94DDwDM23iPyuU95WpDdxp9FgbzCA5gPC0glK5Y+HFSDs7GzfBG0UxpKZw10GVXn9CY=
+	t=1717400040; cv=none; b=I+K9srFyvtZjmrGKcs+jU2v5G+IvgZqndZvJ+gmT8cBej9iNdKoGwFeuH9zjVHd5V3BoLdKl333dcu1M6T9KdsMAt4Chw4PG6N+pWibzbjX3TqXusYWlcBrH5m/IBhl8KyY+s1zLEGA1qye3f0OLOrj0D+4xNMu25N54PtgKCM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717399498; c=relaxed/simple;
-	bh=MMSanncrp/6sHc+FstGi0yx7PbgnY74Rsicjkp0BGFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORsK974rAjA40VaF8eOwwK7C5wkCJ941FCYlhimAIq1uPHGdLfsc3RtRmB5/uqrgb4gFtBihuaGpMmMkP39PosKgmum0qxYUwRdfmYMWbVR33FBjHP/RHFo3nzGWrZu/t4oAoj49MXbw1arLyMXJz+fRNB0WNVpqalmxLekP2CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RGGnHXMh; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=MMSa
-	nncrp/6sHc+FstGi0yx7PbgnY74Rsicjkp0BGFY=; b=RGGnHXMh6QLX6orEcadl
-	amLGnMcGYcaT6VBOeFbLrovvvrO6ZgBJng4oCuB3H+rxCz4/LCTSKgphySIo0stM
-	gJE0sxjG4MLsjJq61L9C5fub0KZSBHPo92nc3gsSST4kcB+xsOwEhCgJP/WKLq9E
-	qbGrXwCrAAvf30lWoaA1BsEEs/kmMjIOKo77SvXscOTxnwCJtz3j+p4gERJrMjHy
-	PRh7HmJCmoKK8RnqdlUad8awF9Nimw2MSTkAuu6Wqzx8y25yEFNElW6V52qtzsff
-	ov6kvmztdLE4PtZFlbfZlfOusHMxO2gk9VIx1Lduh0Gh64Xo8ofajjYUl4OMtItE
-	wA==
-Received: (qmail 1864745 invoked from network); 3 Jun 2024 09:24:50 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 09:24:50 +0200
-X-UD-Smtp-Session: l3s3148p1@wnqQOvcZAIAgAwDPXzLGAH1eNELjOc3g
-Date: Mon, 3 Jun 2024 09:24:50 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, David Howells <dhowells@redhat.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Christian Brauner <brauner@kernel.org>, Eric Sandeen <sandeen@redhat.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
- <20240527-pittoresk-kneipen-652000baed56@brauner>
+	s=arc-20240116; t=1717400040; c=relaxed/simple;
+	bh=bMwHq1gbaaHFe+5rDN7x7ihdVSCPg5KBQmDrKPdlJ5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DNd1P20TbGs3J6iVwGUaMZXYWigs9NoLLOVvvFTXz0PcOI1ZRnsAhPVzwMQHQ8lXn2GqR3JodA8Sj0CY0hHfNx6K90PiEly/syb71/SrfmoprxOmYyq/8xWVsfre1PDc9NrqpVvrwRSlhNJU4zMXnVX/uKjwNa2QH2QVEncXDFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A35E1042;
+	Mon,  3 Jun 2024 00:34:21 -0700 (PDT)
+Received: from [10.57.5.79] (unknown [10.57.5.79])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45BC03F762;
+	Mon,  3 Jun 2024 00:33:54 -0700 (PDT)
+Message-ID: <417b39d1-8de8-4234-92dc-f1ef5fd95da7@arm.com>
+Date: Mon, 3 Jun 2024 08:33:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xkspjckpbjuf2tis"
-Content-Disposition: inline
-In-Reply-To: <20240527-pittoresk-kneipen-652000baed56@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] sched/rt, dl: Convert functions to return bool
+To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240601213309.1262206-1-qyousef@layalina.io>
+ <20240601213309.1262206-3-qyousef@layalina.io>
+Content-Language: en-US
+From: Metin Kaya <metin.kaya@arm.com>
+In-Reply-To: <20240601213309.1262206-3-qyousef@layalina.io>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 01/06/2024 10:33 pm, Qais Yousef wrote:
+> {rt, realtime, dl}_{task, prio}() functions return value is actually
+> a bool.  Convert their return type to reflect that.
+> 
+> Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> ---
+>   include/linux/sched/deadline.h |  8 ++++----
+>   include/linux/sched/rt.h       | 16 ++++++++--------
+>   2 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+> index 5cb88b748ad6..f2053f46f1d5 100644
+> --- a/include/linux/sched/deadline.h
+> +++ b/include/linux/sched/deadline.h
+> @@ -10,18 +10,18 @@
+>   
+>   #include <linux/sched.h>
+>   
+> -static inline int dl_prio(int prio)
+> +static inline bool dl_prio(int prio)
+>   {
+>   	if (unlikely(prio < MAX_DL_PRIO))
+> -		return 1;
+> -	return 0;
+> +		return true;
+> +	return false;
 
---xkspjckpbjuf2tis
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Nit: `return unlikely(prio < MAX_DL_PRIO)` would be simpler.
+The same can be applied to rt_prio() and realtime_prio(). This would 
+make {dl, rt, realtime}_task() single-liner. Maybe further 
+simplification can be done.
 
+>   }
+>   
+>   /*
+>    * Returns true if a task has a priority that belongs to DL class. PI-boosted
+>    * tasks will return true. Use dl_policy() to ignore PI-boosted tasks.
+>    */
+> -static inline int dl_task(struct task_struct *p)
+> +static inline bool dl_task(struct task_struct *p)
+>   {
+>   	return dl_prio(p->prio);
+>   }
+> diff --git a/include/linux/sched/rt.h b/include/linux/sched/rt.h
+> index a055dd68a77c..efbdd2e57765 100644
+> --- a/include/linux/sched/rt.h
+> +++ b/include/linux/sched/rt.h
+> @@ -6,25 +6,25 @@
+>   
+>   struct task_struct;
+>   
+> -static inline int rt_prio(int prio)
+> +static inline bool rt_prio(int prio)
+>   {
+>   	if (unlikely(prio < MAX_RT_PRIO && prio >= MAX_DL_PRIO))
+> -		return 1;
+> -	return 0;
+> +		return true;
+> +	return false;
+>   }
+>   
+> -static inline int realtime_prio(int prio)
+> +static inline bool realtime_prio(int prio)
+>   {
+>   	if (unlikely(prio < MAX_RT_PRIO))
+> -		return 1;
+> -	return 0;
+> +		return true;
+> +	return false;
+>   }
+>   
+>   /*
+>    * Returns true if a task has a priority that belongs to RT class. PI-boosted
+>    * tasks will return true. Use rt_policy() to ignore PI-boosted tasks.
+>    */
+> -static inline int rt_task(struct task_struct *p)
+> +static inline bool rt_task(struct task_struct *p)
+>   {
+>   	return rt_prio(p->prio);
+>   }
+> @@ -34,7 +34,7 @@ static inline int rt_task(struct task_struct *p)
+>    * PI-boosted tasks will return true. Use realtime_task_policy() to ignore
+>    * PI-boosted tasks.
+>    */
+> -static inline int realtime_task(struct task_struct *p)
+> +static inline bool realtime_task(struct task_struct *p)
+>   {
+>   	return realtime_prio(p->prio);
+>   }
 
-> > > Does that fix it for you?
-> >=20
-> > Yes, it does, thank you.
-> >=20
-> > Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Thanks, applied. Should be fixed by end of the week.
-
-It is in -next but not in rc2. rc3 then?
-
-
---xkspjckpbjuf2tis
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZdb70ACgkQFA3kzBSg
-KbZkJhAAoj5KbUejwU9YyeAk7sGJ8tfd/3ZOjyGc6Y9EHGp4Lv53qOwXCtoJdiqU
-jMbq8dBC3CXTAvKwSugsUG73nbxiYct0B6GNFVGu31s0BfMwiarrU+Wo98PB/w8H
-vpPaZ51lGOmUbAoojm0HkfC9UOrO8tSlrvzs6YXNJXS+RO70p/dUFEQzzOQhORuN
-g+xuliNgWR7Fpp2lqzUQZEckRyaRqLB35jGhCZBOuFJcB2xrDkGU+htN4s/r8Edt
-6AUh7IBw0uuQgFWJoMDHlhMMDswymVcdYK7IKN7w5T1c3h+zMdE45W+rNoISMrP/
-ThvkK2Lrt0xGJJLURGAoiLbQrON6p+9yQZwOiA/k9ULYz+hRxrPJE8l8XVPZ2Grb
-9T07N9FB2IdeUBtTDqZ81Ei+hccLbrgX9YwWV23R8I8vZrWV8fIPQgY5pRKqAMaO
-VUZAcZJEB0sYjVcoRiXIiLSX80dXe5rzrnf49D0PHMEk9GCP399TkFhmVrXiQAS3
-3F4S8WubvO3WDt/qzy9Yuq/P8Lf+2kClb5RiGHUxIkGOTupxVbdy9O5H9D3FUilx
-r2/FrTbQ7kSVPKW+QFJ93YH5/GEU9QERVmnApKmA38vI0Ow2nclci61+H/NNicKv
-nRMlFWXKprL8+ox9MEMHfWRkp5ET/lhILa5hivXYMqyB8UIyC2A=
-=Bmf7
------END PGP SIGNATURE-----
-
---xkspjckpbjuf2tis--
 
