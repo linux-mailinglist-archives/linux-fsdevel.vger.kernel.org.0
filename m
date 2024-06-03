@@ -1,145 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-20830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F4C8D8467
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:51:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AA38D846B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924552830A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:51:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3631F227CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDD912E1ED;
-	Mon,  3 Jun 2024 13:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2371F12E1DE;
+	Mon,  3 Jun 2024 13:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTEgNAXu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B307E12DDAE;
-	Mon,  3 Jun 2024 13:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D4512E1D7
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 13:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422685; cv=none; b=cge99zofr2tDmXQIQ+ZsgunahQqtDAkY7kOm1PelvSsXBxAbKy5k/umzLL8vf8b2Sr0StVqZwXi5+Ue7KrwqC1sIRfoNIX5ExHXoKOBcxt8W2EZe4Zbafty+0plPE1RFJ6UjVT/coY2BvjhBQdIp9CIEXtEpyNy3GLxJVy9AjGE=
+	t=1717422762; cv=none; b=HDP6Xy+cRTOUsFhDcW+DnYXZE7kERoOTXers1RiY51LpbCN8DueqTukvhhT3YhPylp9wI6n2326fEpxH/UhJMY4EKstx3m00148zAU6i4LhlrrQOEu1bnXC+/5UpWu+W0JILZS79tH5k9lodovTZcfu9JJ/DdWgQtU7kbtKzHc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422685; c=relaxed/simple;
-	bh=HKKTu5vhAUsqBzR4kRXK9CCm8TDx2Kz71laD8niO1YI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BOQaDV888Hh8b7Bn3vGy0jMiOIqCm5QgmmpsTl1FBWR9hoYPojD2trgPmXxv3mexX1CKvXV+l2qkB36z/QX26HBOFNyF7AQpvY7Vcm3SMO0ccmLY58ufGErI4XP8PxjW62npgn8bqHfQ2Xw7uNsrGv4wc+V+24DMg9/f4NN95ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VtFW11hWcz4f3jXr;
-	Mon,  3 Jun 2024 21:51:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id C95761A0170;
-	Mon,  3 Jun 2024 21:51:18 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAXOQxUyl1mA7BNOw--.32316S3;
-	Mon, 03 Jun 2024 21:51:18 +0800 (CST)
-Subject: Re: [RFC PATCH v4 5/8] xfs: refactor the truncating order
-To: "Darrick J. Wong" <djwong@kernel.org>,
- Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, brauner@kernel.org, david@fromorbit.com,
- chandanbabu@kernel.org, jack@suse.cz, willy@infradead.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
- <ZlnRODP_b8bhXOEE@infradead.org> <20240531152732.GM52987@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <de2c345e-6892-f3c1-09a9-cdf5991cca7e@huaweicloud.com>
-Date: Mon, 3 Jun 2024 21:51:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717422762; c=relaxed/simple;
+	bh=aRTEJPua0TVAxoHlVq/mpvFaY70e4bRglzv1MxsutUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aLIn/zzoJbvBGHLEM7VB2anfFH+QXo/2yXjwJMsRdQsgz+YDIdxO3XXWfVc1cyNl/0PQ7KH5TX0dHOCSq4CzLLe7eX8nz97r0DZCY4JhOmcqEzvaWqQo8tUii/T73rJBb7p3eIh+vqYEs9ktTEeUx892iayvmABIsiH1sFyaIls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTEgNAXu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174FBC4AF0B;
+	Mon,  3 Jun 2024 13:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717422762;
+	bh=aRTEJPua0TVAxoHlVq/mpvFaY70e4bRglzv1MxsutUE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hTEgNAXuPV+b5l3ugRGoKnr479AgIjmtfyjGXuHDUEzp21GWv8xnQtUo4/H8DYwMJ
+	 X81fZd5Qb9f0X4lymMwln7rlGZVgY17MifiWyXOY9VmYgaEUfjq3bjC+t85PJv/kYZ
+	 RkZQP7aCS1XCIn2MP4f+5rIE9yLeFJDvSuIk6reexA/81oAH69oBgn7s0o+/gbThYg
+	 aJzK2bo+k81SFZxF+grVqbqAuSzmcYUWnS5haNe4ZRZ47Vg0L1ID5QFjCHDszHTXIB
+	 mWcbOrRPVnQWJcNsaEwF64jZPmeYtt7/9Wshdsl4edUo2bdULrUSMf0hlTL62orDDU
+	 LB04IBl/V40oA==
+From: Christian Brauner <brauner@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	david@fromorbit.com,
+	hch@lst.de,
+	Josef Bacik <josef@toxicpanda.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	amir73il@gmail.com
+Subject: Re: (subset) [PATCH] fs: don't block i_writecount during exec
+Date: Mon,  3 Jun 2024 15:52:25 +0200
+Message-ID: <20240603-gewand-dezember-07697c3252d2@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
+References: <20240531-beheben-panzerglas-5ba2472a3330@brauner> <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240531152732.GM52987@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAXOQxUyl1mA7BNOw--.32316S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7urykXw18WFy7KFWkKrW5GFg_yoW8Aw4xpr
-	W3CasYvr1kKr1UAr18X3W0qwna9a98tayxJr95WFn7KF98uryfXF1xtryjgF4UArn3Ww4S
-	qa1DW34fCwn5AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1234; i=brauner@kernel.org; h=from:subject:message-id; bh=aRTEJPua0TVAxoHlVq/mpvFaY70e4bRglzv1MxsutUE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnlp4/XTqnAaHpZXGE6es/hov0PnOVsY+QPSQW8sex Qz3KXVSHcUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPhiWR4Z674u8qYb+UBQ1PF yRevP/y+y5k1/KBxORvPyomRRz8x/LPnir/55WDO99/Koqr7/fYeeKnwMV9ZQFBlklrzM3WmaEY A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/31 23:27, Darrick J. Wong wrote:
-> On Fri, May 31, 2024 at 06:31:36AM -0700, Christoph Hellwig wrote:
->>> +	write_back = newsize > ip->i_disk_size && oldsize != ip->i_disk_size;
->>
->> Maybe need_writeback would be a better name for the variable?  Also no
->> need to initialize it to false at declaration time if it is
->> unconditionally set here.
+On Fri, 31 May 2024 15:01:43 +0200, Christian Brauner wrote:
+> Back in 2021 we already discussed removing deny_write_access() for
+> executables. Back then I was hesistant because I thought that this might
+> cause issues in userspace. But even back then I had started taking some
+> notes on what could potentially depend on this and I didn't come up with
+> a lot so I've changed my mind and I would like to try this.
 > 
-> This variable captures whether or not we need to write dirty file tail
-> data because we're extending the ondisk EOF, right?
+> Here are some of the notes that I took:
 > 
-> I don't really like long names like any good 1980s C programmer, but
-> maybe we should name this something like "extending_ondisk_eof"?
-> 
-> 	if (newsize > ip->i_disk_size && oldsize != ip->i_disk_size)
-> 		extending_ondisk_eof = true;
-> 
-> 	...
-> 
-> 	if (did_zeroing || extending_ondisk_eof)
-> 		filemap_write_and_wait_range(...);
-> 
-> Hm?
+> [...]
 
-Sure, this name looks better.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-> 
->>> +		/*
->>> +		 * Updating i_size after writing back to make sure the zeroed
->>> +		 * blocks could been written out, and drop all the page cache
->>> +		 * range that beyond blocksize aligned new EOF block.
->>> +		 *
->>> +		 * We've already locked out new page faults, so now we can
->>> +		 * safely remove pages from the page cache knowing they won't
->>> +		 * get refaulted until we drop the XFS_MMAP_EXCL lock after the
-> 
-> And can we correct the comment here too?
-> 
-> "...until we drop XFS_MMAPLOCK_EXCL after the extent manipulations..."
-> 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Sure,
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> --D
-> 
->>> +		 * extent manipulations are complete.
->>> +		 */
->>> +		i_size_write(inode, newsize);
->>> +		truncate_pagecache(inode, roundup_64(newsize, blocksize));
->>
->> Any reason this open codes truncate_setsize()?
->>
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-It's not equal to open codes truncate_setsize(), please look the truncate
-start pos is aligned to rtextsize for realtime inode, we only drop page
-cache that beyond the new aligned EOF block.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-Thanks,
-Yi.
-
+[1/1] fs: don't block i_writecount during exec
+      https://git.kernel.org/vfs/vfs/c/244ebddd34a0
 
