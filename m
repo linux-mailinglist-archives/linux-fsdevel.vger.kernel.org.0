@@ -1,161 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-20847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0D48D85D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 17:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AC18D85EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 17:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33CD41F225F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA6C1F22E18
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60ADB130495;
-	Mon,  3 Jun 2024 15:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFA91311A1;
+	Mon,  3 Jun 2024 15:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c7Z4wSA+"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="DBT54nDA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F30A12D75A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 15:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F68312C530
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 15:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717427632; cv=none; b=RwlCRF2v8MEiD5TC3cPCdWNz6dBPtKONwW3qWoPUfhuDcFfXIiXqp5LYzw879tXMBakWJu3EattYKIagojy3T7Boj4J5pMV4XXKBJxIrgGqk+olJ6hSpK6yy90pCT326YiSMCcBK2bf3hRHU1NNGm+Bm3N5vk8WydeT8noxYsNw=
+	t=1717427999; cv=none; b=EgP2dFXJUw/0hwukacx4rzNu4TeVNX/PHQObe4brM17OLh6oualOmpP1kw3+vt84POUGQLLgQGQ/QrZw5+svojkgL+BDToIPUsrVsPY/lznB+I04S3KOrzTOgtY3bQgzzWcZWjMbNKGzltrZC3TF5kZkSZ/QP5uzKKt615hgD4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717427632; c=relaxed/simple;
-	bh=k13MWYRn4rywxvrD+TS2aLB+mXifXkz0yc8cNBRMw8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KcM3qYTpr1WvXJ/NODQk20cFYut4M9451LZqDnMir2SDMyl1mksgEUHnQJEHb0DmuKXOBcDywzg3RjF8ViXLgK6cMSdr13POkRNzMy/UEIL4q+IKn/j7HJtdY83UhZAGyK+6QQBuecM9yAxWr0F2fomOVSBAaOWk8cmmfIrZemk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c7Z4wSA+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717427630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1RGr3OiNByqA746VAB7r+MtAa90GReZ3yy6ZqYyS84Y=;
-	b=c7Z4wSA+uWQ/EZ6OcUEOiRQldxl6GBiRCtaavi7x8YSycAUxlKEdo9yKq31EG330SGItJj
-	1BKqZAaz5B+8goSql52Ike1yrc5prdMnq3DfEaUIaKer8wcCNk+GvzqRfSskaDh/KxAzEt
-	GtXtOxuawrt0J0D3hE+tJeW5LRE+z2w=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-17-shUTV5a-NY-ryilDAgQVUw-1; Mon, 03 Jun 2024 11:13:48 -0400
-X-MC-Unique: shUTV5a-NY-ryilDAgQVUw-1
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7eb01189491so404577139f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jun 2024 08:13:47 -0700 (PDT)
+	s=arc-20240116; t=1717427999; c=relaxed/simple;
+	bh=NQ95lMcPWzwTE2o3kU0Ae+ZOlNKig0yne1jUrW5+ZI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FzM72IqhwQEjJowZ3EapnTmm35GOk429kO2HZ+8CBKgXIdICzwI3DQpzO03UbjoTO7jtsO8ByLH03x+WVNJT/EoEO8ZhhsHoEVrDGMcz6rFOGUb1uYcuPPZULqsra81OWciI//CNgHh/yeVZPZtfTMsvrwQZYKHcAyxsXIaV1kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=DBT54nDA; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a68f10171bdso179921766b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jun 2024 08:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1717427996; x=1718032796; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=woBS2IATcUYSmA3gxVexLIm6p+YGbILHlSrgGqEEWEE=;
+        b=DBT54nDA29gh01S8f/V+korNEGWGoUWm3EX6/3uDb3Eyn2E1oNHS4AB+ElO65QPSf8
+         9Xjev6wNxGhmsg7bc0fXYPq9WX6Z+fKtsh0rRbeHu0+CGWzMw5fJQ1kVAmVgQyXFMdiG
+         V1guAukKADv9pOMx9uNM26XYKxlxsyf/XBvVk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717427627; x=1718032427;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1RGr3OiNByqA746VAB7r+MtAa90GReZ3yy6ZqYyS84Y=;
-        b=G8ZJkwAiu/O3YmYz/fzkdMqXr48wmreyQkV2bCnkAPfv8efVzmGAoyQl59ubaZcQOP
-         1H6E6HQawVl4IqSAaT9NdzCX8JGCKejWskNu9ezYbWpApAro2R5kGHrajdi5qsSXapiH
-         pjRVvWxr7YKP2bJM1uN0HcccQGMsGofb6oCHguZJ4uGxCjIN8GJfZLefIEiT+J/oZpJq
-         VOkKjyR+5jmDYQ3615cVHuaW9oli/2LZqEcu79Q1cOB36Xuqo1nQELwPVco0MGesG4Xi
-         1HLBHgFyt4j7bVAp1qPXRdhW1U/Wi+igP6FP2GNGfW9XTHQ7pR3U3s16kB2UbDnDjRB1
-         86vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWu+C4yerlFuG9FZemJye1QS4OjL26bx0YU69xVF7G/zqRxV6RCSzTG3BP8eddFEH9XZmgHHvTfXLeFS2p0c/Fe19trRlUxiqba8bs5Ig==
-X-Gm-Message-State: AOJu0YwVsB9tHTZZL7L8WTqt+iT1+dTDWPPbqzgAAWlAVEOF5TuZgvKX
-	L6wUM29WUokw19wm8b4t7pOZ8wjreYXbaBp8TUeCB5IR+rcVDMGFjCBC9+LEIyvWm+Et+TP1DtH
-	SAFJcXEglZXIItCBt25fduMdDgaJayauwWYHNxBxi4Wo+iYz4zO+YJJ2fnKvdDtQ=
-X-Received: by 2002:a05:6602:27c1:b0:7e1:b3fa:6470 with SMTP id ca18e2360f4ac-7eafff254edmr1168242039f.19.1717427626381;
-        Mon, 03 Jun 2024 08:13:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBxDvtFv5AIBCKC8eC8LS4yo/KVyqHTSZm/yVbm26pabAXTp4n+GMy/7B6FT6aNuqxToGQDA==
-X-Received: by 2002:a05:6602:27c1:b0:7e1:b3fa:6470 with SMTP id ca18e2360f4ac-7eafff254edmr1168233839f.19.1717427624919;
-        Mon, 03 Jun 2024 08:13:44 -0700 (PDT)
-Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b5fafbb3aesm44683173.19.2024.06.03.08.13.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 08:13:44 -0700 (PDT)
-Message-ID: <934aaad0-4c41-43d4-9ba2-bd15513b9527@redhat.com>
-Date: Mon, 3 Jun 2024 10:13:43 -0500
+        d=1e100.net; s=20230601; t=1717427996; x=1718032796;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=woBS2IATcUYSmA3gxVexLIm6p+YGbILHlSrgGqEEWEE=;
+        b=DfwGGqYJVoyTUPUCeIh52obivXVw/tblmib6Q+YVIooz0McLsc61f5OMO9QoKFt3sI
+         9LGZK01BRr8mMJI+q0h3Jd+pxtp2/AuFzUtbyrvk9o9b3pE72THzOrLRWrNtOBvUzmEI
+         KE3c3JCCcDGYPwn0bPncVqlQJzeCmYCDnnq/cEk9gchO968muQUjtkZDgO0F4A+jCPaT
+         23oQIeXT8iSxMvYeui7jx5MctAyEsXHwKZ2du5UbbDMlnWEHXIReKhiADtFw6PPLCK0D
+         vTzva7HhcdtGk7YZv8JX3bcucWfKGxzx4Op8bs8wtTp67G/FxssbaoAmwTfKDdYa5xme
+         12Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTDsQpT6SKdJ91+825rbc8lkNU2HkXFslRQXKxELpdZeYeJHhU+BxrCfsQ7ClOgaW9MqvXZj62aihrwNj1XtSyrmfNCtqnSnUN1hA/WA==
+X-Gm-Message-State: AOJu0YzULIEWdzc66VJtGD8w7QK38KX3hS2uIf5nqLueiGVx29wjvrIQ
+	JQcExrr1aiKjJxZFVaV+GJohBbzN8JnOcpj+i6BG4uzUSa5kukqcXraDQzv8vu7+0wfl/AjSvca
+	IHJAIXWEPAFX+CcHiN4Kj3b6rvh0HyxGDVnL4ng==
+X-Google-Smtp-Source: AGHT+IFiK+1AY6mYKiuFSwJ+GpwFCotbgojMdxXzefTcjLEOieydftGm63EUOLwyGjuudIvwhegCcs7IhunFek4wyNw=
+X-Received: by 2002:a17:906:130e:b0:a67:7649:3c3c with SMTP id
+ a640c23a62f3a-a6821d62f61mr773336166b.56.1717427995768; Mon, 03 Jun 2024
+ 08:19:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-To: Christian Brauner <brauner@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, David Howells
- <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
- <20240527-pittoresk-kneipen-652000baed56@brauner>
- <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
- <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
- <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
- <20240603-turnen-wagen-685f86730633@brauner>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <20240603-turnen-wagen-685f86730633@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com> <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+In-Reply-To: <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 3 Jun 2024 17:19:44 +0200
+Message-ID: <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lege.wang@jaguarmicro.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/3/24 9:33 AM, Christian Brauner wrote:
-> On Mon, Jun 03, 2024 at 09:17:10AM -0500, Eric Sandeen wrote:
->> On 6/3/24 8:31 AM, Christian Brauner wrote:
->>> On Mon, Jun 03, 2024 at 09:24:50AM +0200, Wolfram Sang wrote:
->>>>
->>>>>>> Does that fix it for you?
->>>>>>
->>>>>> Yes, it does, thank you.
->>>>>>
->>>>>> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>>>
->>>>> Thanks, applied. Should be fixed by end of the week.
->>>>
->>>> It is in -next but not in rc2. rc3 then?
->>>
->>> Yes, it wasn't ready when I sent the fixes for -rc2 as I just put it in
->>> that day.
->>>
->>
->> See my other reply, are you sure we should make this change? From a
->> "keep the old behavior" POV maybe so, but this looks to me like a
->> bug in busybox, passing fstab hint "options" like "auto" as actual mount
->> options being the root cause of the problem. debugfs isn't uniquely
->> affected by this behavior.
->>
->> I'm not dead set against the change, just wanted to point this out.
-> 
-> Hm, it seems I forgot your other mail, sorry.
+On Mon, 3 Jun 2024 at 16:43, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 6/3/24 08:17, Jingbo Xu wrote:
+> > Hi, Miklos,
+> >
+> > We spotted a performance bottleneck for FUSE writeback in which the
+> > writeback kworker has consumed nearly 100% CPU, among which 40% CPU is
+> > used for copy_page().
+> >
+> > fuse_writepages_fill
+> >   alloc tmp_page
+> >   copy_highpage
+> >
+> > This is because of FUSE writeback design (see commit 3be5a52b30aa
+> > ("fuse: support writable mmap")), which newly allocates a temp page for
+> > each dirty page to be written back, copy content of dirty page to temp
+> > page, and then write back the temp page instead.  This special design is
+> > intentional to avoid potential deadlocked due to buggy or even malicious
+> > fuse user daemon.
+>
+> I also noticed that and I admin that I don't understand it yet. The commit says
+>
+> <quote>
+>     The basic problem is that there can be no guarantee about the time in which
+>     the userspace filesystem will complete a write.  It may be buggy or even
+>     malicious, and fail to complete WRITE requests.  We don't want unrelated parts
+>     of the system to grind to a halt in such cases.
+> </quote>
+>
+>
+> Timing - NFS/cifs/etc have the same issue? Even a local file system has no guarantees
+> how fast storage is?
 
-No worries!
+I don't have the details but it boils down to the fact that the
+allocation context provided by GFP_NOFS (PF_MEMALLOC_NOFS) cannot be
+used by the unprivileged userspace server (and even if it could,
+there's no guarantee, that it would).
 
-> So the issue is that we're breaking existing userspace and it doesn't
-> seem like a situation where we can just ignore broken userspace. If
-> busybox has been doing that for a long time we might just have to
-> accommodate their brokenness. Thoughts?
+When this mechanism was introduced, the deadlock was a real
+possibility.  I'm not sure that it can still happen, but proving that
+it cannot might be difficult.
 
-Yep, I can totally see that POV.
-
-It's just that surely every other strict-parsing filesystem is also
-broken in this same way, so coding around the busybox bug only in debugfs
-seems a little strange. (Surely we won't change every filesystem to accept
-unknown options just for busybox's benefit.)
-
-IOWS: why do we accomodate busybox brokenness only for debugfs, given that
-"auto" can be used in fstab for any filesystem?
-
-But in simplest terms - it was, in fact, debugfs that a) changed and
-b) got the bug report, so I don't have strong objections to going back
-to the old behavior.
-
--Eric
-
-
-
+Thanks,
+Miklos
 
