@@ -1,115 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-20813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CAA68D8191
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:50:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9B58D820F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 14:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2DE1C21723
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 11:50:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088EE1C2205B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 12:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB21785959;
-	Mon,  3 Jun 2024 11:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745D212C477;
+	Mon,  3 Jun 2024 12:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGGuuZCj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ry9W5eVA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530C985935;
-	Mon,  3 Jun 2024 11:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450E912AADD;
+	Mon,  3 Jun 2024 12:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717415441; cv=none; b=drEWYsApDuhI3VIR2jewYCyxYyATOhym+eWNSBtR6veTXUiM311ficQxfb2yOzbtLDUrbZTjE0daq9uT4zIsMrVSnDOSk6t8QID/dzC7zXMcekHdZX/fgNFv0jaJxOE0LDGuT56iBLLUQAmVzq9FhciPDUNkB9lDIC2fL6zjsV4=
+	t=1717417136; cv=none; b=lIP+WXKEugb3XxEYX0b91t19LLvknw1x6RmW01TRJL2hk5dTCPUJzTP0Eyzuijdn5cGPKQRBRW0yIKdOckZkZJMOiWxsLY6BZJPkI0lFy0o4ZwXrhB8T74sgEh0pGfzWArLqYd9RkP5711qZw9Y+i5bSPxUOwv/1jl27qk/Kjv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717415441; c=relaxed/simple;
-	bh=Ef8601AvoIDfPOriBRG7eHg2z8rWNV2l2tKH9n1+nkU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XNKNWdiSYAZaLgwbD64HyhDAw51HxRjOTW9IrX9C+yfBBSU4PL/G6ILrEQwtmOOsRpRw9E1RjjHRMts2onyzeAiSrq//y85FvrJRiBUSJ2kxZSLa7VPJUELhLZsDPJi0ibYhcTqvP8CQyDLFGmF5F7PO0+AZrwOnusePetPahUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGGuuZCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34071C4AF09;
-	Mon,  3 Jun 2024 11:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717415441;
-	bh=Ef8601AvoIDfPOriBRG7eHg2z8rWNV2l2tKH9n1+nkU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rGGuuZCjBWkOzFHWhQXRwV36Mj4e4i5FxTV7SwMhE+KE20CD5WunE9VNRIwbnz5IM
-	 U3VHwvOsXPRXHyUclA77b1dsD0IgeVcB3TFATjcDFoMxJIbR5dWVb3N+kCdzwyEENr
-	 FpSi3ysnrsSBtdS8uGozEhjYDQMYpnigcYwUSX9TnnUAYUFs9pcBy1cJPbmOtZZP2F
-	 vm7OK2EUYX85CdEw4NkvxyU3fdfWV5mnuimRl/Jil8d6TqPHZxHJMxIvVcrVdOjUuE
-	 tyByeebh+IBSzKIxMjr1g37IVnDnN+sy03sFVdIauixcjDciYWW4N0ani4fTt6F2rA
-	 zR2To+gOuWMiA==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b96a78639aso1861003eaf.1;
-        Mon, 03 Jun 2024 04:50:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXZS19iaD+qYER19b7o2hQdpKVMkGno5BbLiWK70Vuo4l4gu4rEkIC3DbYeGR8W6CpNjbq08p9SieqAszSYOdbLufASqUCYViTEf5NbTziFAU/ezCPPs76yMlsLpEV1UnH+FeSW
-X-Gm-Message-State: AOJu0YyjC0SIjg4MWffgnkgqufR7n5xYgRco9wnwt44FsPujaohNN4RI
-	FFMU8jRXweWOZXpLIAEB+x59gFBO3eRQgzRX5xNcB5SR3YRuJiKFFlBoZ8I0wjqpn9pFL6cTAqD
-	6qjNngufPmoHwr09sjoo3wi68jiI=
-X-Google-Smtp-Source: AGHT+IEMtJutuogKyxLH8LA4gpH7pP0JB9BUJXlbDAbWahKXyTmF/cAWoa0Z9SMHK4nQF11HsNs8MLtAmTeY1M0GPyE=
-X-Received: by 2002:a05:6820:1607:b0:5b9:fc9f:6a55 with SMTP id
- 006d021491bc7-5ba05e00201mr8257945eaf.7.1717415440275; Mon, 03 Jun 2024
- 04:50:40 -0700 (PDT)
+	s=arc-20240116; t=1717417136; c=relaxed/simple;
+	bh=jDGW5R5UtzbmJ3VGAKqw58LCkqb0dw9w9Jb61rkJ3qw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOapz9sOvB0xDiyqCEHkt3xzx2sbzR9ff0hysDu4IUBPZkp2u/DhV3OOmQjZO2O56UxoDx5CFnSaxnhQNQR/Q9CJ4bCrsT2K5pRrGiB/KXfFIVccQFz3L/+tU163pVPLhMh033ok+1mCH7E6B2MhWjGIdZzP1xsS6xQqJoFX5nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ry9W5eVA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mrfTYsS95Bd6Q8FrjNuVkMUgYtvqhZBTbPKZbn4NM34=; b=Ry9W5eVAbnuZbmAmEuVatNnp7E
+	avF4x+DHl4hmbrVAwR0JkcjbUZ9HuSfEhT3zuP1STtRBWQMcunmG1tvrNmrdZCnk7P1l/Ly207nqV
+	SD+e1kKqPT87SvKDGwQPMViwPW2QjQSiSY3cfSZjxsrdRb9Dm80IiLAJoALooeDiXwANgDog07QMf
+	ZpY3EVbPqj/Tcc7dvDOTAicfFngN06h1XcM4FYumQm8ALEzkLxRh+yoRK1v/PYkK12PcVN8w4wrY3
+	vId7mCgf2xWpMh/1r6WFg/+ez3HcqBiGmAzKE4u7rTi+Gm1yGWnJva5TuxqSAz7HBv1xfLiMSX2tI
+	F/17n6fg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sE6eD-0000000E5Yz-1yAV;
+	Mon, 03 Jun 2024 12:18:45 +0000
+Date: Mon, 3 Jun 2024 13:18:45 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, chandan.babu@oracle.com, akpm@linux-foundation.org,
+	brauner@kernel.org, djwong@kernel.org, linux-kernel@vger.kernel.org,
+	hare@suse.de, john.g.garry@oracle.com, gost.dev@samsung.com,
+	yang@os.amperecomputing.com, p.raghav@samsung.com,
+	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
+	mcgrof@kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 03/11] filemap: allocate mapping_min_order folios in
+ the page cache
+Message-ID: <Zl20pc-YlIWCSy6Z@casper.infradead.org>
+References: <20240529134509.120826-1-kernel@pankajraghav.com>
+ <20240529134509.120826-4-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a@epcas1p3.samsung.com>
- <20240531101444.1874926-1-sj1557.seo@samsung.com>
-In-Reply-To: <20240531101444.1874926-1-sj1557.seo@samsung.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 3 Jun 2024 20:50:29 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8UD7bzUJ4wntiSMEn+x=anoaJcfisKJoNSUo67F_HpjA@mail.gmail.com>
-Message-ID: <CAKYAXd8UD7bzUJ4wntiSMEn+x=anoaJcfisKJoNSUo67F_HpjA@mail.gmail.com>
-Subject: Re: [PATCH] exfat: fix potential deadlock on __exfat_get_dentry_set
-To: Sungjong Seo <sj1557.seo@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529134509.120826-4-kernel@pankajraghav.com>
 
-2024=EB=85=84 5=EC=9B=94 31=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 7:16, S=
-ungjong Seo <sj1557.seo@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> When accessing a file with more entries than ES_MAX_ENTRY_NUM, the bh-arr=
-ay
-> is allocated in __exfat_get_entry_set. The problem is that the bh-array i=
-s
-> allocated with GFP_KERNEL. It does not make sense. In the following cases=
-,
-> a deadlock for sbi->s_lock between the two processes may occur.
->
->        CPU0                CPU1
->        ----                ----
->   kswapd
->    balance_pgdat
->     lock(fs_reclaim)
->                       exfat_iterate
->                        lock(&sbi->s_lock)
->                        exfat_readdir
->                         exfat_get_uniname_from_ext_entry
->                          exfat_get_dentry_set
->                           __exfat_get_dentry_set
->                            kmalloc_array
->                             ...
->                             lock(fs_reclaim)
->     ...
->     evict
->      exfat_evict_inode
->       lock(&sbi->s_lock)
->
-> To fix this, let's allocate bh-array with GFP_NOFS.
->
-> Fixes: a3ff29a95fde ("exfat: support dynamic allocate bh for exfat_entry_=
-set_cache")
-> Cc: stable@vger.kernel.org # v6.2+
-> Reported-by: syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/lkml/000000000000fef47e0618c0327f@google.=
-com
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-Applied it to #dev.
-Thanks for your patch!
+On Wed, May 29, 2024 at 03:45:01PM +0200, Pankaj Raghav (Samsung) wrote:
+> @@ -1919,8 +1921,10 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  		folio_wait_stable(folio);
+>  no_page:
+>  	if (!folio && (fgp_flags & FGP_CREAT)) {
+> -		unsigned order = FGF_GET_ORDER(fgp_flags);
+> +		unsigned int min_order = mapping_min_folio_order(mapping);
+> +		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
+>  		int err;
+> +		index = mapping_align_start_index(mapping, index);
+>  
+>  		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
+>  			gfp |= __GFP_WRITE;
+> @@ -1958,7 +1962,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  				break;
+>  			folio_put(folio);
+>  			folio = NULL;
+> -		} while (order-- > 0);
+> +		} while (order-- > min_order);
+
+I'd argue you also need to change:
+
+-                       if (order > 0)
++			if (order > min_order)
+                                alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
+
+since that is the last point at which we can fall back.  If we can't
+immediately allocate a min_order folio, we want to retry, and we
+want to warn if we can't get it.
+
 
