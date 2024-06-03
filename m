@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-20828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298A58D8458
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:49:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF2B8D845C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AAB51C21716
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24FFD1F21F00
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1997B12DDAE;
-	Mon,  3 Jun 2024 13:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F0712DDBC;
+	Mon,  3 Jun 2024 13:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZisACYn8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cl1GuiBU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0512D775;
-	Mon,  3 Jun 2024 13:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F04112DD9D;
+	Mon,  3 Jun 2024 13:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422551; cv=none; b=fGQJAIcpsfF3WelzFHorWSZVv7iRa/O+Aa2yQ8aKPGTttI41zZ8wDIel7//hoDGqkS6EJxUrpdOOH8z9qnuvjQPru60LWh3XVdCfqh7MldxcwVi4ZxDrioQqBU7mm6QZHRhTP+uaaGlLPkNrDBSHXomgMqIGE1fSQ2f2kRnYGhE=
+	t=1717422595; cv=none; b=jLJzQ9N6weFjk1BPrapCEQH6osEQ5TAb+Rs5Gi+2QPDmCQKqaBrMUfcJlsKIDEMl2Q132EqLGG8F5fWCMFOHW7cHvNcgs+zhvVF9LWHnVBI/t9rMkwDFPD7uzjV2URzze49cOcATjFm9Q8QRTrxAAxGqz/yeQvkRGze1V+c0voQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422551; c=relaxed/simple;
-	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
+	s=arc-20240116; t=1717422595; c=relaxed/simple;
+	bh=9WeO85belMJdnC/BRkbMnH+4twnrcoxfjxbj+btQL8U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Po6pxrofGl/gSv+KOBiWgJSGTaPEKRDFQsjN+zFWrYL1T+GIJeuGC1WToCtF39TPbl8MQjUFgB2AcDj1TY+UR0t7aKjeeyBvXEtmXqmHCffVej+lp3SNHhYqTTLYiwKoRq3XgcchuCYv4+ADeF/vsYJGSmq647iKrVwwX2P0t8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZisACYn8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6627EC2BD10;
-	Mon,  3 Jun 2024 13:49:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=J4nbajaO6X0Mm96kPodwNXt6JgCoxaV1kZz8oO3+F7cT9mcwDL1U0d4KoYX7rtIBOz/MJtJy16jyYtFSSzqXdXrw9SFP1G42aJ/sgk6ret21od8V2pou71y3abFJ9ujtfx5lGzJ21ShS4yMi+EvweB7SmD7yjOX5Y3ExFuHvaCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cl1GuiBU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E7C5C2BD10;
+	Mon,  3 Jun 2024 13:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717422551;
-	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
+	s=k20201202; t=1717422595;
+	bh=9WeO85belMJdnC/BRkbMnH+4twnrcoxfjxbj+btQL8U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZisACYn87/yVDMYuUqZhSnnIDcT1BBhqBJf3pwJ9g36CqBaRd1o++SF7xAIaUJ+yq
-	 A8G6tyhCpv5uvRxScuApOIceS+HbBOShXATC+57sKgqA0H/vFpKtbrGTMozCsNPp27
-	 bK4bHMLMZKGRuiNLQGFWN1my+eqqxbI3otY09ptnkjM4C/08GOvZxOjqUPcsW8ITjr
-	 o4PvmaXrbM4Pa+JerKjE5y5loTi2ClWbVJfm4mz0b/nFx6M7t7+E3vCvMJxvySQSqE
-	 Y+3XPMNxRgxhwkoGw4RD3Cfj1cCUR1fpPg2h5+ltUr9y5mU+lesA/mIrjk3nxmoQ7r
-	 eMSWOd1DP8vuQ==
+	b=cl1GuiBUYeoYsK6oNNpAWAmRP82WjWr/SS8isnFeu9n8STX1xzF69r51cw4j3cJOi
+	 8pJNBUTIgVH2jdD1GL0OkP0GVyCnSQABaTzVyUwbQEBFARH23UR6Irdv6bydQYJauZ
+	 5OrIpffzekMlsMnX3QS8d4eHX7x/NEuLd2rNy/+cCnUvlI1OV9LP78l3WBB43gA5y9
+	 aKFGke6hamTDNVrjSDoCzcxkp5QoIy2JJN/ETQVAa6Q8JtB9UWfSwSwqgYwOJCtd1h
+	 Gs24NisRB8C7KA0yoI+1VyYBl5a/+xJ2vgX1+vlhptOW0TmL8VpGolDna5lMhzL7Kn
+	 bxj2QurH0HzPw==
 From: Christian Brauner <brauner@kernel.org>
 To: Thorsten Blum <thorsten.blum@toblux.com>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -48,12 +48,12 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] readdir: Remove unused header include
-Date: Mon,  3 Jun 2024 15:48:56 +0200
-Message-ID: <20240603-kugel-kopieren-03484dc4daab@brauner>
+Subject: Re: [PATCH] readdir: Add missing quote in macro comment
+Date: Mon,  3 Jun 2024 15:49:42 +0200
+Message-ID: <20240603-lehrjahr-jagen-01b5fbadb203@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240602101534.348159-2-thorsten.blum@toblux.com>
-References: <20240602101534.348159-2-thorsten.blum@toblux.com>
+In-Reply-To: <20240602004729.229634-2-thorsten.blum@toblux.com>
+References: <20240602004729.229634-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,14 +61,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=brauner@kernel.org; h=from:subject:message-id; bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnrwgZMi24qn6h+33ZR5dZcre+S28QLgkziPg4q3k9 dUlPxMKOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaydinD/8xJ736evPgiT1Vh gcYvqU1WLPtW62xSFvabVe/TVL67VZOR4fzGxutu/1Q6t9gZHVxZc+WnYGii/9t3jw+rhzY855t +nwMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=902; i=brauner@kernel.org; h=from:subject:message-id; bh=9WeO85belMJdnC/BRkbMnH+4twnrcoxfjxbj+btQL8U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnvzrpnPj43ZBA5ma9dMtG+3svY4rZFlKFE/M0Us7e CnivnxyRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERmZzAyPPnKvq34JZPj+aon 24tn/vlbeD9xa+ruNxkr2NW8WWtMHjH8z7r9teO4/f/Zj/3aVm6RvvGhrT4nj/GsvXlZc6yE6uk LDAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Sun, 02 Jun 2024 12:15:35 +0200, Thorsten Blum wrote:
-> Since commit c512c6918719 ("uaccess: implement a proper
-> unsafe_copy_to_user() and switch filldir over to it") the header file is
-> no longer needed.
+On Sun, 02 Jun 2024 02:47:30 +0200, Thorsten Blum wrote:
+> Add a missing double quote in the unsafe_copy_dirent_name() macro
+> comment.
 > 
 > 
 
@@ -87,6 +86,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.misc
 
-[1/1] readdir: Remove unused header include
-      https://git.kernel.org/vfs/vfs/c/c06a4cc368ac
+[1/1] readdir: Add missing quote in macro comment
+      https://git.kernel.org/vfs/vfs/c/1f9ccdf69c9f
 
