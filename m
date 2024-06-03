@@ -1,105 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-20840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49498D852D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 16:35:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0978D8566
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 16:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119E31C20E4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 14:35:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63D56B22A87
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 14:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EEE12F5B8;
-	Mon,  3 Jun 2024 14:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3785712FB09;
+	Mon,  3 Jun 2024 14:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QH+jBWqR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C1A12EBE6;
-	Mon,  3 Jun 2024 14:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9510226AD5;
+	Mon,  3 Jun 2024 14:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717425342; cv=none; b=NbzTF9GRVegzYBzvCWL9Q/IdVZe8uVYLfIGjxv7Jj0txtVAG6Mym0XDWpXSSsT0hKNkbZubyiW65B/wTZvbtLl/uETx0zYW2VLsHhrDWiLxmpb2u5CrjnML7w4oFJEZH3X4mVSUiBvwHftKKqgv2+Ny/xFu/uHsJnTcGe2Szud8=
+	t=1717425995; cv=none; b=A25MAXrOCRuC5fo13kzjynsDI9Jb83rQOQMRhEyjakp2Amk4ru43FbFXMyRSdd/wf9zPab0hbPu7xBc3PtMU/xh7Q3ycf6+lYNE6w5O84dj9MeA36tLeCXVH+BkjqTdC0fEYMtsaps7EJqFX7Hr/0X+B2JWCvQSuh82eo6HogMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717425342; c=relaxed/simple;
-	bh=aS7WNKyb79nHjkRKjId2BNPG35Iq9xA2er2JeQ/uKJA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rrwMWhg7LKqQcxGxJGo0dLnpMv/m7sXE8eSbNNuijnyJH0BfoNhTKZEKzhPGuUb0xAohwUEUqN5tPkdsQJuu2Wg//wIqCGRRZVK7a77PIYjxVP21PfObFWQlCOUfgnlScHotdyegcWcR+gUHmo/82vAWlCl/PPin9Ro/D+bmqEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtGV96W3Vz4f3jkk;
-	Mon,  3 Jun 2024 22:35:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 2D4441A0170;
-	Mon,  3 Jun 2024 22:35:36 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDnCg621F1mAppQOw--.29601S3;
-	Mon, 03 Jun 2024 22:35:36 +0800 (CST)
-Subject: Re: [RFC PATCH v4 6/8] xfs: correct the truncate blocksize of
- realtime inode
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-7-yi.zhang@huaweicloud.com>
- <ZlnSTAg15vWjc1Qm@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <67a811e0-6723-3bb6-5f74-a66610b884a0@huaweicloud.com>
-Date: Mon, 3 Jun 2024 22:35:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717425995; c=relaxed/simple;
+	bh=ANoxgMGV23DkMPB+4QIDz19SbnyYNPj5Qnure/xMmD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pm3aAFiNg7TGl4CzMpQ7c4KOZvr9P8Na6N6XwfMIb6vCXq7whn9YjZvYZOAS+EPpOe+ZoKHyn0YmqqhqjVX9ShETwfFv9jyVUcfGsg64guI52ZAXvxRf6CtcrI/7laI/gaXKCHAOrwCFhUODOdxZo9RJ0N7paP8DteSKt6haI84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QH+jBWqR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B773C2BD10;
+	Mon,  3 Jun 2024 14:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717425995;
+	bh=ANoxgMGV23DkMPB+4QIDz19SbnyYNPj5Qnure/xMmD4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QH+jBWqRfXKPzVvMLrt/S0t+n4P8iWA2G++uF/Dish3I5Q7/sjB9D5UVTlnJNFW/H
+	 37tdH0Qh9/9Ec+8CLlfHOIyYH0YlHVWcvjdK9cROxShqg2+cOEWqETrOpWjMf3iv/L
+	 oeTUWg+SggFpClTaREfm3SidfDa2aF8X1TrPqc/H9UwnDTwOHS8Ck4PDquOyp2R+7g
+	 eTErNUnwUU8wI4NVH12/2GAXCfHT6g9R037RR1xiR9Pyj/V2BNcxW1pzvV6z8jMIEY
+	 rKnHffMDr9enMwzNcl814qV+tulBnhkzu5Zf/GONt3wBp3aoB9FWoQsgqwW9MA3u4A
+	 +5S9Up44+S2DA==
+Date: Mon, 3 Jun 2024 16:46:31 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [RFC] misuse of descriptor tables in HID-BPF
+Message-ID: <xghiytd7462sujj5lw65jcrc3c5yoq35cstumkk7tvq2a5wl7y@3c2ori7znd62>
+References: <20240602234048.GF1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZlnSTAg15vWjc1Qm@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDnCg621F1mAppQOw--.29601S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrury3tryDtr4xWw18Jr4xJFb_yoWxZrc_ua
-	y5Ar92g3WkWFn5Aa17Cr15GFsxKFW2krsrXw15XFsFq3sxtas5ta1qyrWFkF1DKFsrtrn8
-	ZryI9r4avrnFgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
-	1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU1zuWJUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602234048.GF1629371@ZenIV>
 
-On 2024/5/31 21:36, Christoph Hellwig wrote:
-> On Wed, May 29, 2024 at 05:52:04PM +0800, Zhang Yi wrote:
->> +	if (xfs_inode_has_bigrtalloc(ip))
->> +		first_unmap_block = xfs_rtb_roundup_rtx(mp, first_unmap_block);
-> 
-> Given that first_unmap_block is a xfs_fileoff_t and not a xfs_rtblock_t,
-> this looks a bit confusing.  I'd suggest to just open code the
-> arithmetics in xfs_rtb_roundup_rtx.  For future proofing my also
-> use xfs_inode_alloc_unitsize() as in the hunk below instead of hard
-> coding the rtextsize.  I.e.:
-> 
-> 	first_unmap_block = XFS_B_TO_FSB(mp,
-> 		roundup_64(new_size, xfs_inode_alloc_unitsize(ip)));
-> 
-Sure, makes sense to me.
+Hi Al,
 
-Thanks,
-Yi.
+On Jun 03 2024, Al Viro wrote:
+> static int hid_bpf_insert_prog(int prog_fd, struct bpf_prog *prog)
+> {
+>         int i, index = -1, map_fd = -1, err = -EINVAL;
+> 
+>         /* retrieve a fd of our prog_array map in BPF */
+>         map_fd = skel_map_get_fd_by_id(jmp_table.map->id);
+> 
+> 	...
+> 
+>         /* insert the program in the jump table */
+>         err = skel_map_update_elem(map_fd, &index, &prog_fd, 0);
+>         if (err)
+>                 goto out;
+> 
+> 	...
+> 
+>         if (err < 0)
+>                 __hid_bpf_do_release_prog(map_fd, index);
+>         if (map_fd >= 0)
+>                 close_fd(map_fd);
+>         return err;
+> }
+> 
+> What.  The.  Hell?
 
+TL;DR: I'm getting rid of that code in (hopefully v6.11), so any bad
+justification I can come up with can safely be ignored.
+
+> 
+> Folks, descriptor table is a shared object.  It is NOT safe to use
+> as a scratchpad.
+> 
+> Another thread might do whatever it bloody wants to anything inserted
+> there.  It may close your descriptor, it may replace it with something
+> entirely unrelated to what you've placed there, etc.
+> 
+> This is fundamentally broken.  The same goes for anything that tries
+> to play similar games.  Don't use descriptor tables that way.
+> 
+> Kernel-side descriptors should be used only for marshalling - they can
+> be passed by userland (and should be resolved to struct file *, with
+> no expectations that repeated call of fget() would yield the same
+> pointer) and they can be returned _to_ userland - after you've allocated
+> them and associated them with struct file *.
+
+I think the situation is not as bad as you think it is.
+First these fds are not actually struct file * but bpf objects. So the
+users of them should be rather small. Threading in this case is probably
+fine because this only happens under a mutex lock.
+
+And last, and I think that's the biggest point here, we are not really
+"in the kernel". The code is executed in the kernel, but it's coming
+from a syscall bpf program, and as such we are in a blurry state between
+userspace and kernel space. Then, the bpf API uses fds because we are
+effectively going through the userspace API from within the kernel to
+populate the maps. At any point here we don't assume the fd is safe.
+Whenever the call to skel_map_update_elem() is done, the kernel emits
+an equivalent of a syscall to this kernel function, and as such the
+actual kernel code behind it treats everything like a kernel code should.
+
+Efectively, this use of fds is to pass information from/to userland :)
+
+But I agree, the whole logic of this file is weird, and not clean.
+
+Luckily, with the help of the bpf folks, I came to a better solution,
+with bpf_struct_ops[0].
+
+> 
+> Using them as handles for internal objects is an equivalent of playing
+> in the traffic - think of it as evolution in action.
+
+Which now raises the question: should I ask for the bpf_struct_ops
+conversion to be backported in stable, because that code is too ugly?
+
+Cheers,
+Benjamin
+
+[0] https://lore.kernel.org/bpf/20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org/
 
