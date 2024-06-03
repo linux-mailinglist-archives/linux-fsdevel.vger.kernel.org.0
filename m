@@ -1,171 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-20864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9986E8FA55B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 00:06:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E788FA564
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 00:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55CCD284B19
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 22:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A28E1F260CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 22:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0DB13C90F;
-	Mon,  3 Jun 2024 22:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EEF13C90F;
+	Mon,  3 Jun 2024 22:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NiqfGCuA"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="srpa8opl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB28213BAE7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 22:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D10813B791
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 22:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717452410; cv=none; b=suLWLEy4Ra8G0tFr43099H2P3F7hv3thS8KUaEP0P2RUUYUtqZbNTKEnzZy0ow3GByqo5tGZDgSGA/9ElJPJ8kdkAcYMVStBCbzB7Yej6HXKewt0OMRobfee3SpnoObHeKuI7+afYcV1K3MCnXAZdg8S2whNArolKhbud9giW1g=
+	t=1717452606; cv=none; b=gZit+nGp6rTeyv2AgeN1evbCOmOUDwyo3kcjqxXP3zBzzzeYksOxbfnY1+KGnxEokVDCEVrILYFX3qQZEHJnKuZMb4E6Zg06cIfhOIPVIJODJi7Q9qIowQbRHvqgc6iTxfcU87u0ffIZTU13RQ/ldtkdTCUhR2dLRVu7Uyoxkmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717452410; c=relaxed/simple;
-	bh=VmmtVwxasoTOHFXd7uw7knGwecHF+qPHtfjb8cGfUDQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LNKhkQc2pg2DkJCTE+ZVmF4krSIEX04vmelzMGh0fBi00LR09s0JiXF31z0gRutkWpHYszt/PB6ZKhMj0dL8lMGjLLImOoKuecXbbodLfpT5QzibGgxPe05zlmcyOkdgstiFFCca9XiTsMYxP1VO70mjV8KfrF39aazr+Os38Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NiqfGCuA; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-62c6317d15cso46840617b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jun 2024 15:06:48 -0700 (PDT)
+	s=arc-20240116; t=1717452606; c=relaxed/simple;
+	bh=6JYUK/JYFtBaQXk5Wd3j593s8c/SjwpSDffu/EOZPtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XvSFJ4UKe3Sb+WRgJUEN8mRgcoiKzmmUAuwSPCSk0IK0PsKT7jGMJ9okxqtEZXU34WUnw7O9Uiqi6saz5oLhFmDRYHV0OOkTKaNlplz9cFT04RxCTaRb0pcUme9vll+0nKtJDXhAXPFIUe1B6bJOVbgp8FJciZCbvSf+m6UDP3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=srpa8opl; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f480624d0dso39192885ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jun 2024 15:10:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1717452408; x=1718057208; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zX8PVfQ5qnzftwtpw106lfiQ8TgkbA0h4I3z6i3Eidw=;
-        b=NiqfGCuAI1K9brleigY26fMpTB1gm2A2FWJwARfHvWhWo+Pub71Qg6Ye+LiYNERiOu
-         CMpl1MNwb3AJlP/bxR/++d5xV4izMwem9575sGOf9vcOrxjQsiDJ1GgAm5e3DwQwJSpH
-         u24wNc3dZbt/77pEn6td9HBEmfYnc0WlGZxGY3ZzTvCU+GHJmg6OoHn9WPo4AUEyS6Ko
-         Ga4k+1bgP4SyKtKtsOPD5uQBmT0g37rIX099dLfZTOZqr3DXcCqvh3IdPPpKhOKzKu5+
-         WaABleaD6zGHx+kVKqxV4imM6NqKUvAty0LW+9+l7xzi5i3CweMCNNEN486Lmqr2b2WS
-         twrg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717452604; x=1718057404; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t7GKUQMjJhl3ipM3zR31k8Ko1N1r8B30w07RRIKYgq4=;
+        b=srpa8oplsXgiu6bczYQgBXvvkq2slK5PLSHEUghf2Z0cxTAoh/H0N+KJlNXHtZbZUk
+         kEbeozoxv23bFPpB78LRQ3oxmyEOPhJ+NatqfqU7jfNnYYBAaf4a5IFydee8+ryiAKyV
+         am1LYBVdNA581qbXRV4dhO2afYDFjd/AsysudYi0LJv9tnOmd7wM+R0AQmiFi3qOvCUR
+         iLaQ/TAQhBkgohImwFzzwoIJdwoDvwhDV84k3gRYc1pH/RUhVuSnkKsx4xW9qeS04SSm
+         twK2WnavdmM85UWYRij7V+I3IAMjwbIvInm+no9giNZ2TRrRB/3v5oz/aSL7zDxOj/7P
+         0NaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717452408; x=1718057208;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zX8PVfQ5qnzftwtpw106lfiQ8TgkbA0h4I3z6i3Eidw=;
-        b=rhLJrw4G9vpEwnxyEPlKbSAAmlVNBPEz+njxHVN6pRzbzrRwejS8ddVSyYgdVO3RMr
-         P68IksjgAYYSCiKYAT8N8lhWFubJPyiwkUh36t3rZfYgZZJj/65425JQIGfEVgPlqO5R
-         dt1KP4WCwvsNYT4jtKgpm6yCkkQL50KY/wmzAzVrajQp9pGrdYiiG0W2MiLjcDrl7zKz
-         G+0jv6ZYRjSMUNu7/iq5rdkrZE2WYLvd3mGXxE+jZwcyQMw9+YsniBR+W7elwPR+r6DL
-         +zthpfzQCO1pyg3hTbZ3oFxLga7ei/XBsSlmAgMn90owg24rtugB3Xnovuftj70tWLeS
-         wp8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUoAi+VP/RxTNjWDg2E7duOu2E9dnA8HykIctxhCb+l+ouY6dWSm3Zpb6DHY11pO9a8VzFzO5RUijqsehVgo43MXToPs1Md5gryvm9pMA==
-X-Gm-Message-State: AOJu0YxhIjJn21WdU90H1IwvPsJPArAVgeO+pqUiQsgNHe8H3v0YQpZU
-	gF+GyBFYbsxGUlAIeaY/XfLEdz9hf5HXtzbSR8ks0zuUgXQFkfbIcuwQpk3vCTN1gPvY9pN/lwl
-	M22oi7/wA7kfCOoZsWYlpP157oPuvtmQad5S1
-X-Google-Smtp-Source: AGHT+IFlZXhnnbTx1bR3IL0MEuJpb6BYtD7X1NVqh0jIq3mMhTGkqNSjbPG9eHDX2tOy0Ga8K2kdNA8x6bcAW9bCfZ4=
-X-Received: by 2002:a81:92c2:0:b0:61b:33ae:e065 with SMTP id
- 00721157ae682-62c7947ecbdmr103514047b3.0.1717452406285; Mon, 03 Jun 2024
- 15:06:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717452604; x=1718057404;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t7GKUQMjJhl3ipM3zR31k8Ko1N1r8B30w07RRIKYgq4=;
+        b=YCNr7U3uT8/5we0Ul4H096/JdvGAvwPgoFxFlFPzdnxLiMm8P8Ae6fZoT9hqvL5W52
+         98ex3XPmkEWSZ7VxxaxG9FnfsvpBisDFVKCYuQuw08zxZ2Ljt4iki5FfUpUCtII2blD8
+         2GXB51BP27TrQIeSxHvAMTGpuKSZ6F9erlZiFHpkME9CiXx4litn/h4PLREF3V/RkKSV
+         dFw2SvIdmG5iqBNwb3ByU8SsREL5OmVS1bMeLG6vJEN7JwfKsQZILYIopvxrYqmviF9q
+         t18kC1XSMmt0iS2PyJFaIEqr1YXgOjPJMlklx0V48EKMzez09xmxGINbyTyl9+qwGUXO
+         nvXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkg1cjHGWifb6iJBDYz78pqH67/7axL1qs5JoyUuQQUQxX1U+xPClYvznP77gGhT0EICAAhVjaUYHW6ODuz8zlpiGBsWzDI0m8fGuuIQ==
+X-Gm-Message-State: AOJu0Yz3SH1W3S5Pk+/us3pRjVia/zxGX8gIBL5Fd55SYvb0zf/BS134
+	Ed/rw2ZA2GbQsM1gZ44DJukZ268qXTQ90rAOCjGtOgeNrTyY9Rq7aFmnNI4LkVtB+8aVKMqpwP/
+	I
+X-Google-Smtp-Source: AGHT+IH5yMClkcY+6/WbP2qYz4dW8LFjoQ+vX8JMxAX2MslIbXm1VlEjEbivmMhYyH34HOly6saJ6A==
+X-Received: by 2002:a17:902:eccc:b0:1f6:65b1:1208 with SMTP id d9443c01a7336-1f665b1145amr85868595ad.47.1717452603776;
+        Mon, 03 Jun 2024 15:10:03 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f691cdd674sm5019255ad.80.2024.06.03.15.10.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 15:10:03 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sEFsO-003KJd-0g;
+	Tue, 04 Jun 2024 08:10:00 +1000
+Date: Tue, 4 Jun 2024 08:10:00 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+	Jingbo Xu <jefflexu@linux.alibaba.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	lege.wang@jaguarmicro.com
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+Message-ID: <Zl4/OAsMiqB4LO0e@dread.disaster.area>
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-5-laoar.shao@gmail.com>
-In-Reply-To: <20240602023754.25443-5-laoar.shao@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 3 Jun 2024 18:06:35 -0400
-Message-ID: <CAHC9VhTd+tx5vk+z_6e2hF4Ovoc76AMLchMPerpzsAiB=8E_2w@mail.gmail.com>
-Subject: Re: [PATCH 4/6] security: Replace memcpy() with __get_task_comm()
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
 
-On Sat, Jun 1, 2024 at 10:38=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> =
-wrote:
->
-> Quoted from Linus [0]:
->
->   selinux never wanted a lock, and never wanted any kind of *consistent*
->   result, it just wanted a *stable* result.
->
-> Using __get_task_comm() to read the task comm ensures that the name is
-> always NUL-terminated, regardless of the source string. This approach als=
-o
-> facilitates future extensions to the task comm.
->
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> LINK: https://lore.kernel.org/all/CAHk-=3DwivfrF0_zvf+oj6=3D=3DSh=3D-npJo=
-oP8chLPEfaFV0oNYTTBA@mail.gmail.com/ [0]
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  security/lsm_audit.c         | 4 ++--
->  security/selinux/selinuxfs.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
+On Mon, Jun 03, 2024 at 05:19:44PM +0200, Miklos Szeredi wrote:
+> On Mon, 3 Jun 2024 at 16:43, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+> >
+> >
+> >
+> > On 6/3/24 08:17, Jingbo Xu wrote:
+> > > Hi, Miklos,
+> > >
+> > > We spotted a performance bottleneck for FUSE writeback in which the
+> > > writeback kworker has consumed nearly 100% CPU, among which 40% CPU is
+> > > used for copy_page().
+> > >
+> > > fuse_writepages_fill
+> > >   alloc tmp_page
+> > >   copy_highpage
+> > >
+> > > This is because of FUSE writeback design (see commit 3be5a52b30aa
+> > > ("fuse: support writable mmap")), which newly allocates a temp page for
+> > > each dirty page to be written back, copy content of dirty page to temp
+> > > page, and then write back the temp page instead.  This special design is
+> > > intentional to avoid potential deadlocked due to buggy or even malicious
+> > > fuse user daemon.
+> >
+> > I also noticed that and I admin that I don't understand it yet. The commit says
+> >
+> > <quote>
+> >     The basic problem is that there can be no guarantee about the time in which
+> >     the userspace filesystem will complete a write.  It may be buggy or even
+> >     malicious, and fail to complete WRITE requests.  We don't want unrelated parts
+> >     of the system to grind to a halt in such cases.
+> > </quote>
+> >
+> >
+> > Timing - NFS/cifs/etc have the same issue? Even a local file system has no guarantees
+> > how fast storage is?
+> 
+> I don't have the details but it boils down to the fact that the
+> allocation context provided by GFP_NOFS (PF_MEMALLOC_NOFS) cannot be
+> used by the unprivileged userspace server (and even if it could,
+> there's no guarantee, that it would).
 
-Similar to the audit change, as long as you sort out the
-__get_task_comm() issues such that it can operate without task_lock()
-this should be fine.
+I thought we had PR_SET_IO_FLUSHER for that. Requires
+CAP_SYS_RESOURCES but no other privileges, then the userspace
+server will then always operate in PF_MEMALLOC_NOIO |
+PF_LOCAL_THROTTLE memory allocation context.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
-
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 849e832719e2..a922e4339dd5 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -207,7 +207,7 @@ static void dump_common_audit_data(struct audit_buffe=
-r *ab,
->         BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
->
->         audit_log_format(ab, " pid=3D%d comm=3D", task_tgid_nr(current));
-> -       audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(=
-comm)));
-> +       audit_log_untrustedstring(ab, __get_task_comm(comm, sizeof(comm),=
- current));
->
->         switch (a->type) {
->         case LSM_AUDIT_DATA_NONE:
-> @@ -302,7 +302,7 @@ static void dump_common_audit_data(struct audit_buffe=
-r *ab,
->                                 char comm[sizeof(tsk->comm)];
->                                 audit_log_format(ab, " opid=3D%d ocomm=3D=
-", pid);
->                                 audit_log_untrustedstring(ab,
-> -                                   memcpy(comm, tsk->comm, sizeof(comm))=
-);
-> +                                   __get_task_comm(comm, sizeof(comm), t=
-sk));
->                         }
->                 }
->                 break;
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index e172f182b65c..a8a2ec742576 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -708,7 +708,7 @@ static ssize_t sel_write_checkreqprot(struct file *fi=
-le, const char __user *buf,
->         if (new_value) {
->                 char comm[sizeof(current->comm)];
->
-> -               memcpy(comm, current->comm, sizeof(comm));
-> +               __get_task_comm(comm, sizeof(comm), current);
->                 pr_err("SELinux: %s (%d) set checkreqprot to 1. This is n=
-o longer supported.\n",
->                        comm, current->pid);
->         }
-> --
-> 2.39.1
-
---=20
-paul-moore.com
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
