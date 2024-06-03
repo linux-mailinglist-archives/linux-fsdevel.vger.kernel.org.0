@@ -1,138 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-20827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6C78D8455
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298A58D8458
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C68286C02
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AAB51C21716
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DB212CDAF;
-	Mon,  3 Jun 2024 13:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1997B12DDAE;
+	Mon,  3 Jun 2024 13:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="vYOmDLMT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IOsb+9wY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZisACYn8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8539712F59B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 13:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0512D775;
+	Mon,  3 Jun 2024 13:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422520; cv=none; b=tLqCEn4033PvT0eiiDiyWQuEBl9H4pxQb2Vw69uA/CSD2LZO0EtbtL3I3sb0s8X9WGCFK3A7DbTkXHG2hWfa4wSvfrc5R4mOYewFNryD2aw+xaVQXxdrlOT6QjBbGF0Zo1mb8EW1B/vpYI+pYlphm40AJViIFV9RkOzmlezuiqA=
+	t=1717422551; cv=none; b=fGQJAIcpsfF3WelzFHorWSZVv7iRa/O+Aa2yQ8aKPGTttI41zZ8wDIel7//hoDGqkS6EJxUrpdOOH8z9qnuvjQPru60LWh3XVdCfqh7MldxcwVi4ZxDrioQqBU7mm6QZHRhTP+uaaGlLPkNrDBSHXomgMqIGE1fSQ2f2kRnYGhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422520; c=relaxed/simple;
-	bh=p5UhYnBlxZWL0icuCFNGHgC2app/V6c68wN2EsQUSDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pC2UQ29HSV0+PcBCK9+9ykwrZ6crts47g5HmFUyr5E5K7rHpBPIBVx7ADESuPEgizW0Uz3AFqLeoWqP3QMJuWOv9KPfNoqxmFCGWjHoFdiWv2PkpaMsw4laqk5coPUspUmo9ogIp64P2YOyfoEldkxli9Dh28SF8ZDMTMLd/VMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=vYOmDLMT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IOsb+9wY; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 8345713800E2;
-	Mon,  3 Jun 2024 09:48:37 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 03 Jun 2024 09:48:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1717422517;
-	 x=1717508917; bh=JcwzpvuGQtt9SVsfeZMocQtIPCT5U6gl68YQbwTUvDQ=; b=
-	vYOmDLMT4Nh+HASjTStnIlsQy6CVChYczq0xUaaVK9FLJY4un8pzfa/6lpHesYn3
-	UkamxaaoXNdVcpm9fv0qFqTkYsDoOAxQjAu4fa3tD+TKAZgoz5sDYJyShRj3eXkC
-	ILZ1Iz4PoXXWK9dGiA73yb4jr91mcgi0mLNAeC7NJrxiV4+5rhb48C/ltDYnPh2J
-	rnqAmXaU/VqQ6FqydQwCetcfGva+tDmPnjVKFyRfx6MNIo/aWMqrLXA9v/KpAljn
-	QnsRtHIuY7OAqirADKoGYejVOZMLEpIm2QqYN/LMGpx+l1zL55Z7VWTiTnxeRGtd
-	uVyEc2df/6UI+j7TDBlsgA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717422517; x=
-	1717508917; bh=JcwzpvuGQtt9SVsfeZMocQtIPCT5U6gl68YQbwTUvDQ=; b=I
-	Osb+9wYNv4EQnEJ2dAh3yvSE4+MmK1eGFi/sBqHLomBeRmCcFLUkIuMliUj0eNmn
-	BGQvKyCATdpG/aaZEd+5dT5fEwJrvMwr68lsmL/kfcTbvVopd9p7bTQ+mDOzs2hz
-	NP6QctaqasfFMzsXt61LUTHCvgBPLWc7/hS6FzgtFe4//6g1nR6Yd6n/kv6YYjCC
-	A7sWEF0I9gRJJnnZEY7bqvy9gmDBndY5pWxwbsUE3K9w6+7ZfS3QV3oVgCQjZx42
-	trGayDUDj3Q3H/bNj+AC4p8DVyWLIKDCaPFCDql1UCt9H8g08Bog4QrSylcBN5yZ
-	jNZ9LXVhZ8JrUcQqEXTOg==
-X-ME-Sender: <xms:tcldZpSBJwiBHDi1Tl82QjSh9Tp34xA4Ng9FhoNVf5Q4t-9QXouJHQ>
-    <xme:tcldZixAows3bGHT-madWil7zgb1UJ7PdWOfguvBD_ShsHGZSkwGgvY_-i7hb9zM9
-    dNnFEvNP1VKamO4>
-X-ME-Received: <xmr:tcldZu0yGuiFRORv9E-7G3gcYy-DEOErH7QbSvvTr-upUFyQvAP3LF_C_55uWvtGKVaXXJZEW79d4JNbMLQXumFQTOWXey_PcDFKQbYd_XEkOAWGDnuq>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelvddgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
-    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:tcldZhAJSBqKjUuZCRxRnPuovqjGTsucKbqnEPxgT9b5ZkiPTCQSLw>
-    <xmx:tcldZigA1F-jdH_msJXbtIeNTQFbZicwzRIydbtdTKOK8icolfGmSg>
-    <xmx:tcldZlqdLpsTIKYLqwjz0gIfsqXWRTup53p_xe8wcSmNtEMrRQPdGg>
-    <xmx:tcldZthszYHZBUO-8ZFxoLPg5z0c75gvp_NX2quI_NaU3AIYyUPyRw>
-    <xmx:tcldZqe-PoodF8ubprFCsY12JPmNWQO_Hn0bE4y9XiUtvOsct5TkfPOq>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Jun 2024 09:48:36 -0400 (EDT)
-Message-ID: <321915d5-95ac-468b-a036-7a8a50dd3c48@fastmail.fm>
-Date: Mon, 3 Jun 2024 15:48:35 +0200
+	s=arc-20240116; t=1717422551; c=relaxed/simple;
+	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Po6pxrofGl/gSv+KOBiWgJSGTaPEKRDFQsjN+zFWrYL1T+GIJeuGC1WToCtF39TPbl8MQjUFgB2AcDj1TY+UR0t7aKjeeyBvXEtmXqmHCffVej+lp3SNHhYqTTLYiwKoRq3XgcchuCYv4+ADeF/vsYJGSmq647iKrVwwX2P0t8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZisACYn8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6627EC2BD10;
+	Mon,  3 Jun 2024 13:49:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717422551;
+	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZisACYn87/yVDMYuUqZhSnnIDcT1BBhqBJf3pwJ9g36CqBaRd1o++SF7xAIaUJ+yq
+	 A8G6tyhCpv5uvRxScuApOIceS+HbBOShXATC+57sKgqA0H/vFpKtbrGTMozCsNPp27
+	 bK4bHMLMZKGRuiNLQGFWN1my+eqqxbI3otY09ptnkjM4C/08GOvZxOjqUPcsW8ITjr
+	 o4PvmaXrbM4Pa+JerKjE5y5loTi2ClWbVJfm4mz0b/nFx6M7t7+E3vCvMJxvySQSqE
+	 Y+3XPMNxRgxhwkoGw4RD3Cfj1cCUR1fpPg2h5+ltUr9y5mU+lesA/mIrjk3nxmoQ7r
+	 eMSWOd1DP8vuQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] readdir: Remove unused header include
+Date: Mon,  3 Jun 2024 15:48:56 +0200
+Message-ID: <20240603-kugel-kopieren-03484dc4daab@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240602101534.348159-2-thorsten.blum@toblux.com>
+References: <20240602101534.348159-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 05/19] fuse: Add a uring config ioctl
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-5-d149476b1d65@ddn.com>
- <CAJfpegs4ATQXyUEEsV+s3Zh_iSfyAEpAOdOfw_5iL=_uNjHQWQ@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegs4ATQXyUEEsV+s3Zh_iSfyAEpAOdOfw_5iL=_uNjHQWQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=brauner@kernel.org; h=from:subject:message-id; bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnrwgZMi24qn6h+33ZR5dZcre+S28QLgkziPg4q3k9 dUlPxMKOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaydinD/8xJ736evPgiT1Vh gcYvqU1WLPtW62xSFvabVe/TVL67VZOR4fzGxutu/1Q6t9gZHVxZc+WnYGii/9t3jw+rhzY855t +nwMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-
-
-On 6/3/24 15:03, Miklos Szeredi wrote:
-> On Wed, 29 May 2024 at 20:01, Bernd Schubert <bschubert@ddn.com> wrote:
+On Sun, 02 Jun 2024 12:15:35 +0200, Thorsten Blum wrote:
+> Since commit c512c6918719 ("uaccess: implement a proper
+> unsafe_copy_to_user() and switch filldir over to it") the header file is
+> no longer needed.
 > 
->> --- a/include/uapi/linux/fuse.h
->> +++ b/include/uapi/linux/fuse.h
->> @@ -1079,12 +1079,79 @@ struct fuse_backing_map {
->>         uint64_t        padding;
->>  };
->>
->> +enum fuse_uring_ioctl_cmd {
->> +       /* not correctly initialized when set */
->> +       FUSE_URING_IOCTL_CMD_INVALID    = 0,
->> +
->> +       /* Ioctl to prepare communucation with io-uring */
->> +       FUSE_URING_IOCTL_CMD_RING_CFG   = 1,
->> +
->> +       /* Ring queue configuration ioctl */
->> +       FUSE_URING_IOCTL_CMD_QUEUE_CFG  = 2,
->> +};
 > 
-> Is there a reason why these cannot be separate ioctl commands?
 
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-I just personally didn't like the idea to have multiple ioctl commands
-for the same feature. Initially there were also more ioctls. Easy to
-change if you prefer that.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Thanks,
-Bernd
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] readdir: Remove unused header include
+      https://git.kernel.org/vfs/vfs/c/c06a4cc368ac
 
