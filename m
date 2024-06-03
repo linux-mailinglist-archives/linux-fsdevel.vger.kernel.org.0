@@ -1,208 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-20808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE208D8116
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F4C8D812F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00CC1C21CE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 11:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AF51C21107
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 11:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D2484A58;
-	Mon,  3 Jun 2024 11:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D9684A5A;
+	Mon,  3 Jun 2024 11:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y6W/tjwL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p2RIwMKT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="flPfk7AO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FUz/Pj4g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0807884A35;
-	Mon,  3 Jun 2024 11:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6482C6A3;
+	Mon,  3 Jun 2024 11:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717413759; cv=none; b=R8FHZW4LB2oMjNFMYDOXOR7aR7DWvPpFB+id0DpLY44vmqNq5sdUfYpE8U9U5E8YsF04gW3N3AHNJS4Kr1iuSP1qWGKuQksFnt/dGEX4Hea0WwJTnG6U512IHHGUYeviFL4Tyz0Ofeyl1UWnCSRVgDThmwyA9wwW556p7+gZe7o=
+	t=1717414035; cv=none; b=p8kD0k5JkZyR3doAe5gJmsVR/RbCG0MtsxjD6PVFb29dYlzVbszi4EwmjBSKGwjtPfKOtCtbGwlTlklO7MhUMk97ZHSUH1NzhAGV/MPar3xZdJcYitHeseCbT/5l3zlilZAw6LvyKBkFdgfBQrVQzazFHWiJwnESWHzPQVJ0O3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717413759; c=relaxed/simple;
-	bh=+1yO6XiLifIlUjN1yQiYVIst+aMZZ4COwNUTz0Nb4JQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e02K0Jag1NgQHjgYMpB/LNV2NGaqT+KmxdhAH8zQCtfJnNWpp9yPtuqaqZ2sQV5dru3dkmFb8ju7C6Tm1oK1ejdFGHz4rZn/CM3gdwJBosuG5UlAafEU0X4wWTwaRV/vCkqvdWyX9BPwFKM6u80jMFsu3zIMHIQfoRwMC+IStnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtBCL0Pmlz4f3nbl;
-	Mon,  3 Jun 2024 19:22:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 195A01A0A25;
-	Mon,  3 Jun 2024 19:22:33 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAXKwRop11mWbbQOQ--.26657S4;
-	Mon, 03 Jun 2024 19:22:31 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH] iomap: keep on increasing i_size in iomap_write_end()
-Date: Mon,  3 Jun 2024 19:22:22 +0800
-Message-Id: <20240603112222.2109341-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717414035; c=relaxed/simple;
+	bh=cJPnpg2hCwgHukR1vYoWJ+DVnA03/FFtOwtTCUJ8wkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMs2O09di+tB4XMzUfMUv/nXqsLLfeTKOLs4EwYrOkWKppwk7D+uRuivGFsQekBYqaX9r+tu8UdjKofIzZ5xoCPq9uCpJ+LalTB1Iy6pUFZs/lAnQlyjCrHA1BbYcEd2p+yXpi3NQYYr5rRELQAtzEE2NMeyBw51FL2L5Xe8lCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y6W/tjwL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p2RIwMKT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=flPfk7AO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FUz/Pj4g; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 63A272224D;
+	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717414031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=y6W/tjwLyJFxYOMqAVNiil/WQmavDW8lR/py1GpPK1u/XNM6fc+gV0qTEt47HpLOW1/hh5
+	PxMOJvMm4dp6wluFyY5UtrEO0BIEH67CI8b0a4TdpSMtj1pS+ULuY7XCKL7hK+gy1lSLAA
+	I6CDN8g9JIBJoxujiCClmPECcCM4g00=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717414031;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=p2RIwMKT1kTsj9NXcpvegHJol5lw/KUIDeHqirTbn039oAQbu8V8mzDa3yH6SBTEjIrlTa
+	ts0FHhDL8vR+S0Bw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=flPfk7AO;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="FUz/Pj4g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717414030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=flPfk7AOOeYAnUfLtCpiJv36/Q16dFQN4aXjltYqF/2fKTOb1Xw4Qoxp34/tZvKvR5tb1K
+	Pav9u71FY5VZRtJowJ4bon3w0m134DzwyfCGDFQSW6S6Msg2qSpjft255ZXFkLlexH4Sjf
+	8REr4OA0CUrTdkFoqT27hgkFO7z1znY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717414030;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=FUz/Pj4gT+sjqZWtu+0NyY8suUgunZRzh1/vNXe92rZEbWS7Ha0DJnNTVHro4FGrP5i/C9
+	29QjW+mtQUuUzOBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59687139CB;
+	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nr/PFY6oXWb/JwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:27:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0799EA087F; Mon,  3 Jun 2024 13:27:05 +0200 (CEST)
+Date: Mon, 3 Jun 2024 13:27:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
+Message-ID: <20240603112705.hafr4gh5foxccw7f@quack3>
+References: <00000000000054d8540619f43b86@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAXKwRop11mWbbQOQ--.26657S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF1kZFyUtw1xKr4xuF4UArb_yoWrtr47pr
-	ZF93y8CFs7tw47Wr1kAF98ZryYya4fKrW7Cry7Wr4avFn0yr17Kr1rWayYkFyrJ3srCr4S
-	qF4kA348WF1UAr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
-	E_M3UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000054d8540619f43b86@google.com>
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.92 / 50.00];
+	BAYES_HAM(-2.41)[97.28%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[42986aeeddfd7ed93c8b];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 63A272224D
+X-Spam-Flag: NO
+X-Spam-Score: -0.92
+X-Spamd-Bar: /
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Sun 02-06-24 20:50:18, syzbot wrote:
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1466269a980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a5b3ec980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103820f2980000
 
-Commit '943bc0882ceb ("iomap: don't increase i_size if it's not a write
-operation")' breaks xfs with realtime device on generic/561, the problem
-is when unaligned truncate down a xfs realtime inode with rtextsize > 1
-fs block, xfs only zero out the EOF block but doesn't zero out the tail
-blocks that aligned to rtextsize, so if we don't increase i_size in
-iomap_write_end(), it could expose stale data after we do an append
-write beyond the aligned EOF block.
+Based on strace (and also the reproducer) this looks purely in exfat
+driver. So:
 
-xfs should zero out the tail blocks when truncate down, but before we
-finish that, let's fix the issue by just revert the changes in
-iomap_write_end().
+#syz set subsystems: exfat
 
-Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
-Reported-by: Chandan Babu R <chandanbabu@kernel.org>
-Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/iomap/buffered-io.c | 53 +++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 29 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index c5802a459334..bd70fcbc168e 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -877,22 +877,37 @@ static bool iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-+	loff_t old_size = iter->inode->i_size;
-+	size_t written;
- 
- 	if (srcmap->type == IOMAP_INLINE) {
- 		iomap_write_end_inline(iter, folio, pos, copied);
--		return true;
-+		written = copied;
-+	} else if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
-+		written = block_write_end(NULL, iter->inode->i_mapping, pos,
-+					len, copied, &folio->page, NULL);
-+		WARN_ON_ONCE(written != copied && written != 0);
-+	} else {
-+		written = __iomap_write_end(iter->inode, pos, len, copied,
-+					    folio) ? copied : 0;
- 	}
- 
--	if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
--		size_t bh_written;
--
--		bh_written = block_write_end(NULL, iter->inode->i_mapping, pos,
--					len, copied, &folio->page, NULL);
--		WARN_ON_ONCE(bh_written != copied && bh_written != 0);
--		return bh_written == copied;
-+	/*
-+	 * Update the in-memory inode size after copying the data into the page
-+	 * cache.  It's up to the file system to write the updated size to disk,
-+	 * preferably after I/O completion so that no stale data is exposed.
-+	 * Only once that's done can we unlock and release the folio.
-+	 */
-+	if (pos + written > old_size) {
-+		i_size_write(iter->inode, pos + written);
-+		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
- 	}
-+	__iomap_put_folio(iter, pos, written, folio);
- 
--	return __iomap_write_end(iter->inode, pos, len, copied, folio);
-+	if (old_size < pos)
-+		pagecache_isize_extended(iter->inode, old_size, pos);
-+
-+	return written == copied;
- }
- 
- static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-@@ -907,7 +922,6 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 
- 	do {
- 		struct folio *folio;
--		loff_t old_size;
- 		size_t offset;		/* Offset into folio */
- 		size_t bytes;		/* Bytes to write to folio */
- 		size_t copied;		/* Bytes copied from user */
-@@ -959,23 +973,6 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 		written = iomap_write_end(iter, pos, bytes, copied, folio) ?
- 			  copied : 0;
- 
--		/*
--		 * Update the in-memory inode size after copying the data into
--		 * the page cache.  It's up to the file system to write the
--		 * updated size to disk, preferably after I/O completion so that
--		 * no stale data is exposed.  Only once that's done can we
--		 * unlock and release the folio.
--		 */
--		old_size = iter->inode->i_size;
--		if (pos + written > old_size) {
--			i_size_write(iter->inode, pos + written);
--			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
--		}
--		__iomap_put_folio(iter, pos, written, folio);
--
--		if (old_size < pos)
--			pagecache_isize_extended(iter->inode, old_size, pos);
--
- 		cond_resched();
- 		if (unlikely(written == 0)) {
- 			/*
-@@ -1346,7 +1343,6 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
- 			bytes = folio_size(folio) - offset;
- 
- 		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
--		__iomap_put_folio(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
-@@ -1412,7 +1408,6 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		folio_mark_accessed(folio);
- 
- 		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
--		__iomap_put_folio(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
+								Honza
 -- 
-2.39.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
