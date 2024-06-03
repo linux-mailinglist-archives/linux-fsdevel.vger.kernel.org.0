@@ -1,99 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-20831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AA38D846B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA728D847B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 15:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3631F227CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CF151C224CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 13:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2371F12E1DE;
-	Mon,  3 Jun 2024 13:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCE312DDB3;
+	Mon,  3 Jun 2024 13:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTEgNAXu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IG0rmC6J"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D4512E1D7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 13:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE4F12DD9F
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 13:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422762; cv=none; b=HDP6Xy+cRTOUsFhDcW+DnYXZE7kERoOTXers1RiY51LpbCN8DueqTukvhhT3YhPylp9wI6n2326fEpxH/UhJMY4EKstx3m00148zAU6i4LhlrrQOEu1bnXC+/5UpWu+W0JILZS79tH5k9lodovTZcfu9JJ/DdWgQtU7kbtKzHc0=
+	t=1717423005; cv=none; b=GMC6W9V8q5+0qv01w1RiWXg1W9zlRzwyJ6d+bz/zvQtzNZ2JBk/LzZoQ86/1DIXtBLdUfERP155aWN2VwAQli0VAluCUG3iZf3X0+WhCiqhl9NE6pECPdSMjM8iT9B4/xp1srXxhQPGoOU0IVevAgpf1HmSkkMS0D89uBqdp99o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422762; c=relaxed/simple;
-	bh=aRTEJPua0TVAxoHlVq/mpvFaY70e4bRglzv1MxsutUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aLIn/zzoJbvBGHLEM7VB2anfFH+QXo/2yXjwJMsRdQsgz+YDIdxO3XXWfVc1cyNl/0PQ7KH5TX0dHOCSq4CzLLe7eX8nz97r0DZCY4JhOmcqEzvaWqQo8tUii/T73rJBb7p3eIh+vqYEs9ktTEeUx892iayvmABIsiH1sFyaIls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTEgNAXu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174FBC4AF0B;
-	Mon,  3 Jun 2024 13:52:39 +0000 (UTC)
+	s=arc-20240116; t=1717423005; c=relaxed/simple;
+	bh=eoXoJIXMQYzDNyedyplY1qFrKgHLm1khvEKgzmUux4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7O+9UV5pzvVF5kUAaBATtT5RbJD10UIuw20QEsbzrAuceYTYd8ACFc91tERz4VNgQ1LVJ6UKIBytyU6q8VwC9kZHdfa6zGNG2235NS/1k7SgkALszgt4IIqRJ1rnNxH3xoJ5U8VY/Aqj47Z5YtOvA/atU7MjXg32WWn0ErSRrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IG0rmC6J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D42C2BD10;
+	Mon,  3 Jun 2024 13:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717422762;
-	bh=aRTEJPua0TVAxoHlVq/mpvFaY70e4bRglzv1MxsutUE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hTEgNAXuPV+b5l3ugRGoKnr479AgIjmtfyjGXuHDUEzp21GWv8xnQtUo4/H8DYwMJ
-	 X81fZd5Qb9f0X4lymMwln7rlGZVgY17MifiWyXOY9VmYgaEUfjq3bjC+t85PJv/kYZ
-	 RkZQP7aCS1XCIn2MP4f+5rIE9yLeFJDvSuIk6reexA/81oAH69oBgn7s0o+/gbThYg
-	 aJzK2bo+k81SFZxF+grVqbqAuSzmcYUWnS5haNe4ZRZ47Vg0L1ID5QFjCHDszHTXIB
-	 mWcbOrRPVnQWJcNsaEwF64jZPmeYtt7/9Wshdsl4edUo2bdULrUSMf0hlTL62orDDU
-	 LB04IBl/V40oA==
+	s=k20201202; t=1717423004;
+	bh=eoXoJIXMQYzDNyedyplY1qFrKgHLm1khvEKgzmUux4Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IG0rmC6JlVMvwhPV4tMmwvlOBk6rXEyP7fwWTKVHCaA3AAG4pB1tS3QgaOLsGPYFm
+	 PiL8P11hNdbA7i9ikCeQPiQW2sYbLic6r60NX+Fl5NPp5Sgg+rYkZp/MxDqhW3gG8n
+	 j5JzCyAEbIzCRodxnlgrhXdo66Qb39Q2n6wWNUsFY24BZL3UImZElTNiqjFckG0oCI
+	 Cfn7qFHwlMzvLNiZSxV2xrdn5o2S8U1fVHjQ8def/2sSDqTevZLWRsphUVHVlHbMW2
+	 f0FyjIF9i1NupRbAMfi9xWn9IupPu9BKv8stLaE3j7QeuDgKrtwbHMYsvzJ2SW8Uw/
+	 N9aW2DzJkHUGQ==
+Date: Mon, 3 Jun 2024 15:56:40 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	david@fromorbit.com,
-	hch@lst.de,
-	Josef Bacik <josef@toxicpanda.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	amir73il@gmail.com
-Subject: Re: (subset) [PATCH] fs: don't block i_writecount during exec
-Date: Mon,  3 Jun 2024 15:52:25 +0200
-Message-ID: <20240603-gewand-dezember-07697c3252d2@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
-References: <20240531-beheben-panzerglas-5ba2472a3330@brauner> <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH][RFC] move close_range(2) into fs/file.c, fold
+ __close_range() into it
+Message-ID: <20240603-fallpauschalen-abmahnung-96be1cf0063c@brauner>
+References: <20240602204238.GD1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1234; i=brauner@kernel.org; h=from:subject:message-id; bh=aRTEJPua0TVAxoHlVq/mpvFaY70e4bRglzv1MxsutUE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnlp4/XTqnAaHpZXGE6es/hov0PnOVsY+QPSQW8sex Qz3KXVSHcUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPhiWR4Z674u8qYb+UBQ1PF yRevP/y+y5k1/KBxORvPyomRRz8x/LPnir/55WDO99/Koqr7/fYeeKnwMV9ZQFBlklrzM3WmaEY A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240602204238.GD1629371@ZenIV>
 
-On Fri, 31 May 2024 15:01:43 +0200, Christian Brauner wrote:
-> Back in 2021 we already discussed removing deny_write_access() for
-> executables. Back then I was hesistant because I thought that this might
-> cause issues in userspace. But even back then I had started taking some
-> notes on what could potentially depend on this and I didn't come up with
-> a lot so I've changed my mind and I would like to try this.
+On Sun, Jun 02, 2024 at 09:42:38PM +0100, Al Viro wrote:
+> 	We never had callers for __close_range() except for close_range(2)
+> itself.  Nothing of that sort has appeared in four years and if any users
+> do show up, we can always separate those suckers again.
 > 
-> Here are some of the notes that I took:
-> 
-> [...]
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Note, that the __close_range() solely existed (iirc) because want
+close(2) and close_range(2) shouldn't end up in two separate files
+because it is royally annoying to have to switch files for system calls
+that conceptually do very similar things.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+But I don't care enough so,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs: don't block i_writecount during exec
-      https://git.kernel.org/vfs/vfs/c/244ebddd34a0
+> diff --git a/fs/file.c b/fs/file.c
+> index 8076aef9c210..f9fcebc7c838 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -732,7 +732,7 @@ static inline void __range_close(struct files_struct *files, unsigned int fd,
+>  }
+>  
+>  /**
+> - * __close_range() - Close all file descriptors in a given range.
+> + * sys_close_range() - Close all file descriptors in a given range.
+>   *
+>   * @fd:     starting file descriptor to close
+>   * @max_fd: last file descriptor to close
+> @@ -740,8 +740,10 @@ static inline void __range_close(struct files_struct *files, unsigned int fd,
+>   *
+>   * This closes a range of file descriptors. All file descriptors
+>   * from @fd up to and including @max_fd are closed.
+> + * Currently, errors to close a given file descriptor are ignored.
+>   */
+> -int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+> +SYSCALL_DEFINE3(close_range, unsigned int, fd, unsigned int, max_fd,
+> +		unsigned int, flags)
+>  {
+>  	struct task_struct *me = current;
+>  	struct files_struct *cur_fds = me->files, *fds = NULL;
+> diff --git a/fs/open.c b/fs/open.c
+> index 89cafb572061..7ee11c4de4ca 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1564,23 +1564,6 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+>  	return retval;
+>  }
+>  
+> -/**
+> - * sys_close_range() - Close all file descriptors in a given range.
+> - *
+> - * @fd:     starting file descriptor to close
+> - * @max_fd: last file descriptor to close
+> - * @flags:  reserved for future extensions
+> - *
+> - * This closes a range of file descriptors. All file descriptors
+> - * from @fd up to and including @max_fd are closed.
+> - * Currently, errors to close a given file descriptor are ignored.
+> - */
+> -SYSCALL_DEFINE3(close_range, unsigned int, fd, unsigned int, max_fd,
+> -		unsigned int, flags)
+> -{
+> -	return __close_range(fd, max_fd, flags);
+> -}
+> -
+>  /*
+>   * This routine simulates a hangup on the tty, to arrange that users
+>   * are given clean terminals at login time.
+> diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+> index 2944d4aa413b..4e7d1bcca5b7 100644
+> --- a/include/linux/fdtable.h
+> +++ b/include/linux/fdtable.h
+> @@ -113,7 +113,6 @@ int iterate_fd(struct files_struct *, unsigned,
+>  		const void *);
+>  
+>  extern int close_fd(unsigned int fd);
+> -extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
+>  extern struct file *file_close_fd(unsigned int fd);
+>  extern int unshare_fd(unsigned long unshare_flags, unsigned int max_fds,
+>  		      struct files_struct **new_fdp);
 
