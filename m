@@ -1,137 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-20860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B838D8AAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 22:00:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F098D8B3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 23:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993781C220A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 20:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD6D1F23392
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2024 21:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF8213B5AF;
-	Mon,  3 Jun 2024 20:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083A313B5A5;
+	Mon,  3 Jun 2024 21:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MEVnxCmn"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VMn4yVx1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AFB136E17;
-	Mon,  3 Jun 2024 20:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4243113958F
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jun 2024 21:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444829; cv=none; b=G/1su7ux7WsFgq5NYp9+o6mmRm9kK+wYxTbXF17peHglJGEvCNqo5PeD8lUv1E6Ucxz5epRNBQVF6Si1nAKfW/dGnM5U7j3EtB9glh7/WxyDZSChZrsuPWKiw+lgBtJaa7r3gw6uA6zfAINjyZ0JTJJEgiwICFLdZ8uvGDCOWxw=
+	t=1717448650; cv=none; b=emV5TIZCKYp0XkhQ5fYgcc+OlvocnvYJQlvA9ds0qiIJtMh5c/WAgg66eYCpuYSuMvkF8M+/rSB4XLpzME4J0VPA8tA8hHQJTSFOj4GMtoxvLBsUObLhdMCvZwW2hRBVVGXaDI7BCrNx1WeVvD/1WFybwJzHR7Cj5W3giHHfxDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444829; c=relaxed/simple;
-	bh=LvfYWC9ai0O4h/qMhZHU4BhEwmCWRQGAkgn1fVm/API=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoqK9lptIwbWJVl+jWhomRg5cfwOq88/vMtMgF1irJHNs/9XUU48rzUFL5rQbX2ifN08pI/+SJWuIJXFV8z53v9Uc4v/fFMZC0F0kHdobLSNUmUtDiMJ63lBZ1PCZQEmSCmZhaUKAhkg6MiZo7sMwxrDFehxZLtv77G+l0dFDnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MEVnxCmn; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LP1zmN7gh+LnGD4nFAKmEqqZF8DCbsNy58ickS09QtQ=; b=MEVnxCmnaED6bwuUtUSMUo/k1Z
-	Bwhuc3hPg6PiiG6MBE7w50UfPvmxUc7wuWRMaUDZSYSZ0vZj5l3sn2m/ZoeLuVwOUbwaUUXFvrcS2
-	Ksy+ybRgsYv0/LNDLsMpRnvUc112tCc4YCsVJ6oI2SjW2+OaOS82R0EpgeyDP7dPQ4TOQEhaJQblT
-	zr03y1UfvX8lrkWOIWURBm28KY1X2W89rfJMR4iOG0Ml4T8G2FTF8LmkaWHVHZ3LxL+0J/nGWjXLx
-	1WjpVdGRv1z7ddD0LO2TnleNBLbLSlBKbKLfBPHSvrRujzAcRXiGq7OPFHCm/gn/JdG6wfinjND+t
-	SRLZm4Dw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sEDqx-00Chme-38;
-	Mon, 03 Jun 2024 20:00:24 +0000
-Date: Mon, 3 Jun 2024 21:00:23 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [RFC] misuse of descriptor tables in HID-BPF
-Message-ID: <20240603200023.GN1629371@ZenIV>
-References: <20240602234048.GF1629371@ZenIV>
- <xghiytd7462sujj5lw65jcrc3c5yoq35cstumkk7tvq2a5wl7y@3c2ori7znd62>
+	s=arc-20240116; t=1717448650; c=relaxed/simple;
+	bh=kx2kvEZgNc5XsnnewjVka9co2H4QjUYDuU73T0I0Hl8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/GENLWXQGfw28ieQbRjuSa59+XfgAiH/AOhkO2toG5yLjFg2XWj4Ovia4xBVcee5pyyMbWYK1EwwtJq0Qyik2RSny807wAe40ITcdmttWVqj7qiQbnJAg3LU3QawKy3+90SYtWRyZ0l5zTXgmz+tdvLPn5SGLN3N2reM4vkdh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VMn4yVx1; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-62a087c3a92so3957527b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jun 2024 14:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1717448647; x=1718053447; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A4Xwo04AxfSK0W6mUhqUjoHJv2i+cgsYyuXRU+BzfeA=;
+        b=VMn4yVx1AYSFygWtRu5+IglA1BVBZXIDkLMZdFsI6Mm7qdpKVMCWvLyJPV3NTT4HzC
+         0CulDm2WXkRXh1cnRTQGZUtR3Xd4CuCUWIplnYH4Q3S0QWgiNSXrdHbBrfIf9vdhPVrR
+         Ad6jqImA/J1vJLVb4a1EsfeN6pYWwd5afsuAj2gK97uEYtYJ3MTdvbi7irvogUFApxI6
+         o+zdNcpF0+/AvnYCUQoTJ8CGE/+vgqlhwNKZ0nBNaDibw5tpHyEg0a8f2NWwBwJOZCzv
+         5smUPWJI72Y4dnho+rlH2lXeDxKpR2tLinCMumyyk/0/96vhtngi+EtetW0uJgE4wux+
+         87pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717448647; x=1718053447;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A4Xwo04AxfSK0W6mUhqUjoHJv2i+cgsYyuXRU+BzfeA=;
+        b=JGeJb3+L6REuJlvcHvp1B5KubpFizUikyBW0uWOZx+ajNUFcYjz1xO3ehsEZq/A+h9
+         kBtBbyO1NGVi0PUzSAUp8bsCDv9ZejhXYEz9oh3MEx97GBYjMbRtJFh7gM9UW1cLdv1r
+         18YVpT/HyabbTbrk8s3YupTf+ABpPvBrriSfm5BfnODtcnPhPbrYgyIGyAbExB1eOTeC
+         PXo7CmW8RtAH5FoGWOURWad89Fq/zZhGG6W3PiYg2G/aArxMD33f5h8JVcrK8w6sMndR
+         uUCeMxS5gEJoi+kxde5zXnwBw5Gb3quZto6s4XQ59tGH9w6m2MXKiXbPc3tuoBkF9Ymd
+         D9kA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJGtlSXXWQn/Ni+ZNx5ws29h9TK5EAQsDAXj0YZvUpsCIiZX3FDUI8cEvO7ddSyvvVcUyswiY4NnSMVpjS2nv3tnv2SWohx/bJ4FHqkg==
+X-Gm-Message-State: AOJu0YyOXs9iSRb1e/G85/rbr8/uu4RygXpPlzOUcqhd3rwFE+FdxhAm
+	7is1CZTNxkldX0AWQ6XBlXy21RNI+adaNxrqrS5ooR7HTcDUcNlfP9kF46tbg5YcXW5MRQNH1Ak
+	87Ll5coDlSkuUdX5vn+hR0QVD4JSlm29ruiTd
+X-Google-Smtp-Source: AGHT+IGR+FpbhgOaypOj8EHAJX7D2rLdNzF0sO2h5xEd4/ttL81NSVdpzxrwxGxotbOO4RE/GArlcQx7GP4z1mOA6C8=
+X-Received: by 2002:a05:690c:82e:b0:627:de5d:cf36 with SMTP id
+ 00721157ae682-62c79777753mr103683987b3.39.1717448646572; Mon, 03 Jun 2024
+ 14:04:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xghiytd7462sujj5lw65jcrc3c5yoq35cstumkk7tvq2a5wl7y@3c2ori7znd62>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-4-laoar.shao@gmail.com>
+In-Reply-To: <20240602023754.25443-4-laoar.shao@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 3 Jun 2024 17:03:55 -0400
+Message-ID: <CAHC9VhRBN94QRGAmjZKDk_H0GxAEn-PBE4_2tTwuwfXps1Hr5A@mail.gmail.com>
+Subject: Re: [PATCH 3/6] auditsc: Replace memcpy() with __get_task_comm()
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 03, 2024 at 04:46:31PM +0200, Benjamin Tissoires wrote:
+On Sat, Jun 1, 2024 at 10:38=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> =
+wrote:
+>
+> Using __get_task_comm() to read the task comm ensures that the name is
+> always NUL-terminated, regardless of the source string. This approach als=
+o
+> facilitates future extensions to the task comm.
+>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Eric Paris <eparis@redhat.com>
+> ---
+>  kernel/auditsc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-> > Kernel-side descriptors should be used only for marshalling - they can
-> > be passed by userland (and should be resolved to struct file *, with
-> > no expectations that repeated call of fget() would yield the same
-> > pointer) and they can be returned _to_ userland - after you've allocated
-> > them and associated them with struct file *.
-> 
-> I think the situation is not as bad as you think it is.
-> First these fds are not actually struct file * but bpf objects. So the
-> users of them should be rather small. Threading in this case is probably
-> fine because this only happens under a mutex lock.
+Assuming you've sorted out all the problems identified earlier in the
+patchset and __get_task_comm() no longer takes task_lock() this should
+be okay from an audit perspective.
 
-First of all, _any_ of those is actually a struct file * - it's just that
-initially you have a reference to opened bpffs file there.  As soon
-as it's in the table, it can be replaced with _any_ reference to opened
-file.  And no, your mutex doesn't matter here - dup2() neither knows
-nor cares about it.  And that's all you need to replace a descriptor table
-entry - dup2() from another thread that happens to share descriptor table
-with the one you are currently running in.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-> And last, and I think that's the biggest point here, we are not really
-> "in the kernel". The code is executed in the kernel, but it's coming
-> from a syscall bpf program, and as such we are in a blurry state between
-> userspace and kernel space.
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 6f0d6fb6523f..0459a141dc86 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2730,7 +2730,7 @@ void __audit_ptrace(struct task_struct *t)
+>         context->target_uid =3D task_uid(t);
+>         context->target_sessionid =3D audit_get_sessionid(t);
+>         security_task_getsecid_obj(t, &context->target_sid);
+> -       memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
+> +       __get_task_comm(context->target_comm, TASK_COMM_LEN, t);
+>  }
+>
+>  /**
+> @@ -2757,7 +2757,7 @@ int audit_signal_info_syscall(struct task_struct *t=
+)
+>                 ctx->target_uid =3D t_uid;
+>                 ctx->target_sessionid =3D audit_get_sessionid(t);
+>                 security_task_getsecid_obj(t, &ctx->target_sid);
+> -               memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
+> +               __get_task_comm(ctx->target_comm, TASK_COMM_LEN, t);
+>                 return 0;
+>         }
+>
+> @@ -2778,7 +2778,7 @@ int audit_signal_info_syscall(struct task_struct *t=
+)
+>         axp->target_uid[axp->pid_count] =3D t_uid;
+>         axp->target_sessionid[axp->pid_count] =3D audit_get_sessionid(t);
+>         security_task_getsecid_obj(t, &axp->target_sid[axp->pid_count]);
+> -       memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
+> +       __get_task_comm(axp->target_comm[axp->pid_count], TASK_COMM_LEN, =
+t);
+>         axp->pid_count++;
+>
+>         return 0;
+> --
+> 2.39.1
 
-In context of which thread is it executed?  IOW, what does current point
-to when your code runs?
-
-> Then, the bpf API uses fds because we are
-> effectively going through the userspace API from within the kernel to
-> populate the maps. At any point here we don't assume the fd is safe.
-> Whenever the call to skel_map_update_elem() is done, the kernel emits
-> an equivalent of a syscall to this kernel function, and as such the
-> actual kernel code behind it treats everything like a kernel code should.
-
-It's not about the isolated accesses of descriptor table being unsafe;
-it's about the assumption that references you've put into descriptor
-table will not be replaced by another thread, both sides using perfectly
-sound operations for each access.
-
-Again, descriptor table should be treated as a shared data structure.
-There are some exceptions (e.g. in execve() past the point of no return,
-after it has explicitly unshared the descriptor table), but none of those
-applies in your case.
-
-There's no such thing as "lock descriptor table against modifications"
-available outside of fs/file.c; moreover, the thing used inside fs/file.c
-to protect individual table modifications is a spinlock and it really
-can't be held over blocking operations.
-
-So the descriptor table itself will be fine, but the references you store
-in there might be replaced at any point.
-
-> Efectively, this use of fds is to pass information from/to userland :)
-
-"Here's a new descriptor, feel free to do IO on it" is fine - if another
-thread starts playing silly buggers with descriptor table (e.g. closes
-that descriptor behind the first thread's back), it's a userland bug
-and the kernel is fine.  Two threads sharing descriptor table are likely
-to share memory as well, so they can step on each others' toes in a lot
-of other ways.  Your situation is different - you have kernel-side code
-putting stuff into descriptor table and expecting the same thing to be
-found at the same place later on.  _That_ is a trouble waiting to happen.
-
-> But I agree, the whole logic of this file is weird, and not clean.
-> 
-> Luckily, with the help of the bpf folks, I came to a better solution,
-> with bpf_struct_ops[0].
-
-Hadn't looked at it yet...
+--=20
+paul-moore.com
 
