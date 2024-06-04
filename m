@@ -1,209 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-20927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759528FAE73
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 11:13:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F341B8FAE95
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 11:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B261C2458D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:13:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907FC1F255A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4341442F0;
-	Tue,  4 Jun 2024 09:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DE914386B;
+	Tue,  4 Jun 2024 09:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VgXt9qy3"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jhl6VXAX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3E91428F5;
-	Tue,  4 Jun 2024 09:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F051411F2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 09:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717492306; cv=none; b=nLNkgm41kK7Vukk7ltq9/p3yfTloAOnAN7TxFQoid7HMVZCOw3g0WD5YNzDMjP90Gt+/XSOb2oumCzi6Q/XWUNy0QO3HDXJQQoZC96G45JEr3eS4Smum6HunFuSgYFy/G8HOHxbOEkwasj7nvUaX7zf+5c1JMP/hhcwRz9XCQUo=
+	t=1717492735; cv=none; b=kRXYumLtHYA4DyxZ+GanO128v2L3r/oodVkReh6zL3qHpF7kA9+oouqT11NPkBU8B0TyjGJNyeXp8Ql9rs9rraOnbRtZfXxzM66jHc1X/isrkxkgoGr3Cw1Jxj0E5+bZXymJ2wbZCESHNI9aMXuT6l7t+10L5AnwpN96uIbZBWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717492306; c=relaxed/simple;
-	bh=n0+6Zr+fVpwoIm04mx+e+RHQbAYONFbtegnmjOCnEFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmdWdOKXOFEKMep41RfnbLEx20of95CJq12Y2Ar4M3YJ8GATAu3kwvT8rEpG7fGBOXLM8nxSSgqTEIFRxFaC0L7Xb1fWtfkq+3HA3WG9dLUYDa4EyAiz2xyFL0ZCRQDSmZ9w2LLl5A/6HpDZByU0sx1S4AdrgJJnB2NzDqColO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VgXt9qy3; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717492305; x=1749028305;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n0+6Zr+fVpwoIm04mx+e+RHQbAYONFbtegnmjOCnEFE=;
-  b=VgXt9qy3+TtdqoI+231qDTjfMHkUBHatgeHYKuacqPmfF7hdW+9WJxA5
-   QXTdRZyW4JbAQQNYPq/TKViEgaQYaRZdrl50ECl/t+qs6j/udUohGPafv
-   lPo3DAMSVfqwKlLw51pTkStT1p3aBUkONEQoNEv5yfi8whuLnT38Ce1Rm
-   5kX0jl4cdVXfCJ+eCMZzwDkbWBtKxtyjVjQdTuE8VPKIFmkwpYzNPtHnJ
-   ATpJZL2fpNiaOtcyJGQykMcFsPFbdDhf3fG1TwzpZmGpIhjnCkRDoDJ7+
-   5C8m1o9Tl1ZEkaO8btyBF4JaNxzmkItQYXUvpyhB2YjJa9Pn6m2/Lmwmw
-   g==;
-X-CSE-ConnectionGUID: RhufaxHJQRKTlUe07Isbew==
-X-CSE-MsgGUID: +MPAa+qmSNaweFnS57qW1A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17854982"
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="17854982"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 02:11:44 -0700
-X-CSE-ConnectionGUID: KaKEcYXXR8KSoqyaybARGA==
-X-CSE-MsgGUID: aXf4mTjmQP6psAbqM4zCxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="37299304"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 04 Jun 2024 02:11:41 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEQCg-000MzV-1v;
-	Tue, 04 Jun 2024 09:11:38 +0000
-Date: Tue, 4 Jun 2024 17:10:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hyeonwoo Cha <chw1119@hanyang.ac.kr>, david.sterba@suse.com
-Cc: oe-kbuild-all@lists.linux.dev, aivazian.tigran@gmail.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	tytso@mit.edu, adilger.kernel@dilger.ca,
-	hirofumi@mail.parknet.co.jp, sfr@canb.auug.org.au,
-	chw1119@hanyang.ac.kr, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	reiserfs-devel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-Message-ID: <202406041616.S1kIWWZc-lkp@intel.com>
-References: <20240604060636.87652-1-chw1119@hanyang.ac.kr>
+	s=arc-20240116; t=1717492735; c=relaxed/simple;
+	bh=y24sg8KoLjv+41EDnW9OXIgfRUxZm78ZBUxCXzBqUnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kmlK4/Aatbl0q1w8r7qjYUEqzdyTN0+xT2EWgBoaMI1ejy41UyPJAGlmZuC6SlerrCi18a41xoZCwOQf33UAIIV8iC7O9Iv3t73fIomrPxD2N1U1OaFrQPCWf/Yqtt4coxjeR4BqYJJG+iuer4z7P7JQfR6sjVFjXemDJOwcHe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jhl6VXAX; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63a96so4783059a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2024 02:18:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1717492732; x=1718097532; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fEpYJu85v46NTnKJ3KqBksM1WhwBh1dyX2mzBw78w34=;
+        b=jhl6VXAXcssubLcMDFEJjrihaRDZX6cipGvAIkRLt6FQl3TthroX0c4EZ3qQwaOBCl
+         Sxv4Kk3Lk0fA0ZRYZiJGy5BPyp23eef6LDAN/TV046Irnde/B5kJGO68/06ZyWXul+EQ
+         Ftd9ErL8HY8KlaDVLsYOdk8CydqCuZ1ie5cXs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717492732; x=1718097532;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fEpYJu85v46NTnKJ3KqBksM1WhwBh1dyX2mzBw78w34=;
+        b=DQFts2/kjbo54ej60pGnjs1PEhZq2IIfeqd7R4jStgfSgX9EX+SOJwCJsufTaw+0t0
+         tcMTPuvXNkME+AI4BsVMvPftxjnP7VHjm+Usa8NBXAbcZ1ebij6iNqUCdAyRCxyApOqk
+         PGUzkuLZWCc4OWZjh69hEyF/J1Q2TdXqMUPltaZztKkZ2YN/SvFFudbXAndWVLlzBgIY
+         vOFRLLnDiPdp0K9P9PA/HXiaiayHxUfKshLqAsw5R6T3bT/AvrADaWVUo80+w5yufGXD
+         dZGfnFhG/xnTNG3zILT7Eu2IQTixYhpp9eYRMo9Hdg0flc5puazAyCj3sKhozw7C2Jqs
+         SJAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiSz+e4ExQ/ZfqkTDkWdwwnStOkH3WmmMMvA6G57L159MVumWxzR24XiKQ+uH2KzdW0Qq+4sAS5+FuOedtFIlbUeIEGRCYAZIJ/zpHeQ==
+X-Gm-Message-State: AOJu0YwoTH9vDUDrntJSA7e78VgID8oHyyGUkspar2jra9hT9FxxEdvI
+	l5+UPM74De+wv4kEPyt3thL+/ZepT2Z2Iry/OH8K/vp/6BJi6pGYni1wwucayNyn1stq6n5s7OH
+	exGcOlGNTMSKesLaZiLSUCmAAg88iwZjOWDstNw==
+X-Google-Smtp-Source: AGHT+IFo8j4sOBfT1n8cPC7tGx+7OLobCxi5ayAMEMDGNgh+nAaoLHPDPn7rp6lrSqaGLRRjQ0GDgHh2x0xSeqMgKdo=
+X-Received: by 2002:a17:906:b20a:b0:a68:a52b:7554 with SMTP id
+ a640c23a62f3a-a68a52b7810mr533041766b.66.1717492732344; Tue, 04 Jun 2024
+ 02:18:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604060636.87652-1-chw1119@hanyang.ac.kr>
+References: <SI2PR06MB53852C83901A0DDE55624063FFF32@SI2PR06MB5385.apcprd06.prod.outlook.com>
+ <b55cb50b3ecf8d6132f8633ce346b6adc159b38c.camel@nvidia.com>
+ <CAJfpegsppbYbbLaECO+K2xpg8v0XZaQKFRZRTj=gJc9p7swdvQ@mail.gmail.com>
+ <bbf427150d16122da9dd2a8ebec0ab1c9a758b56.camel@nvidia.com>
+ <CAJfpegshNFmJ-LVfRQW0YxNyWGyMMOmzLAoH65DLg4JxwBYyAA@mail.gmail.com>
+ <20240603134427.GA1680150@fedora.redhat.com> <CAOssrKfw4MKbGu=dXAdT=R3_2RX6uGUUVS+NEZp0fcfiNwyDWw@mail.gmail.com>
+ <20240603152801.GA1688749@fedora.redhat.com> <CAJfpegsr7hW1ryaZXFbA+njQQyoXgQ_H-wX-13n=YF86Bs7LxA@mail.gmail.com>
+ <bc4bb938b875ef8931d42030ae85220c9763154f.camel@nvidia.com>
+ <CAJfpegshpJ3=hXuxpeq79MuBv_E-MPpPb3GVg3oEP3p5t=VAZQ@mail.gmail.com> <464c42bc3711332c5f50a562d99eb8353ef24acb.camel@nvidia.com>
+In-Reply-To: <464c42bc3711332c5f50a562d99eb8353ef24acb.camel@nvidia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 4 Jun 2024 11:18:40 +0200
+Message-ID: <CAJfpegu3kwv9y1+Yz=Ad_eJt7-fNJbxgJ8m2_B=Su+Lg6EskGQ@mail.gmail.com>
+Subject: Re: Addressing architectural differences between FUSE driver and fs -
+ Re: virtio-fs tests between host(x86) and dpu(arm64)
+To: Peter-Jan Gootzen <pgootzen@nvidia.com>
+Cc: Idan Zach <izach@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
+	"stefanha@redhat.com" <stefanha@redhat.com>, Max Gurtovoy <mgurtovoy@nvidia.com>, 
+	"angus.chen@jaguarmicro.com" <angus.chen@jaguarmicro.com>, Oren Duer <oren@nvidia.com>, 
+	Yoray Zack <yorayz@nvidia.com>, "mszeredi@redhat.com" <mszeredi@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"bin.yang@jaguarmicro.com" <bin.yang@jaguarmicro.com>, Eliav Bar-Ilan <eliavb@nvidia.com>, 
+	"mst@redhat.com" <mst@redhat.com>, "lege.wang@jaguarmicro.com" <lege.wang@jaguarmicro.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Hyeonwoo,
+On Tue, 4 Jun 2024 at 11:08, Peter-Jan Gootzen <pgootzen@nvidia.com> wrote:
 
-kernel test robot noticed the following build errors:
+> Option 2 is detectable if fuse_init_out.minor < CANON_ARCH_MINOR, not
+> sure yet what we could do with that knowledge (maybe useful in error
+> logging?).
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.10-rc2 next-20240604]
-[cannot apply to jack-fs/for_next tytso-ext4/dev vfs-idmapping/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Using the version for feature detection breaks if a feature is
+backported.  So this method has been deprecated and not used on new
+features.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hyeonwoo-Cha/Fix-issue-in-mark_buffer_dirty_inode/20240604-140958
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240604060636.87652-1-chw1119%40hanyang.ac.kr
-patch subject: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240604/202406041616.S1kIWWZc-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406041616.S1kIWWZc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406041616.S1kIWWZc-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   fs/affs/namei.c: In function 'affs_symlink':
->> fs/affs/namei.c:377:9: error: expected ',' or ';' before 'mark_buffer_dirty_fsync'
-     377 |         mark_buffer_dirty_fsync(bh, mapping);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
->> fs/affs/namei.c:376:31: warning: unused variable 'mapping' [-Wunused-variable]
-     376 |         struct address_space *mapping = inode->i_mapping
-         |                               ^~~~~~~
-
-
-vim +377 fs/affs/namei.c
-
-   314	
-   315	int
-   316	affs_symlink(struct mnt_idmap *idmap, struct inode *dir,
-   317		     struct dentry *dentry, const char *symname)
-   318	{
-   319		struct super_block	*sb = dir->i_sb;
-   320		struct buffer_head	*bh;
-   321		struct inode		*inode;
-   322		char			*p;
-   323		int			 i, maxlen, error;
-   324		char			 c, lc;
-   325	
-   326		pr_debug("%s(%lu,\"%pd\" -> \"%s\")\n",
-   327			 __func__, dir->i_ino, dentry, symname);
-   328	
-   329		maxlen = AFFS_SB(sb)->s_hashsize * sizeof(u32) - 1;
-   330		inode  = affs_new_inode(dir);
-   331		if (!inode)
-   332			return -ENOSPC;
-   333	
-   334		inode->i_op = &affs_symlink_inode_operations;
-   335		inode_nohighmem(inode);
-   336		inode->i_data.a_ops = &affs_symlink_aops;
-   337		inode->i_mode = S_IFLNK | 0777;
-   338		affs_mode_to_prot(inode);
-   339	
-   340		error = -EIO;
-   341		bh = affs_bread(sb, inode->i_ino);
-   342		if (!bh)
-   343			goto err;
-   344		i  = 0;
-   345		p  = (char *)AFFS_HEAD(bh)->table;
-   346		lc = '/';
-   347		if (*symname == '/') {
-   348			struct affs_sb_info *sbi = AFFS_SB(sb);
-   349			while (*symname == '/')
-   350				symname++;
-   351			spin_lock(&sbi->symlink_lock);
-   352			while (sbi->s_volume[i])	/* Cannot overflow */
-   353				*p++ = sbi->s_volume[i++];
-   354			spin_unlock(&sbi->symlink_lock);
-   355		}
-   356		while (i < maxlen && (c = *symname++)) {
-   357			if (c == '.' && lc == '/' && *symname == '.' && symname[1] == '/') {
-   358				*p++ = '/';
-   359				i++;
-   360				symname += 2;
-   361				lc = '/';
-   362			} else if (c == '.' && lc == '/' && *symname == '/') {
-   363				symname++;
-   364				lc = '/';
-   365			} else {
-   366				*p++ = c;
-   367				lc   = c;
-   368				i++;
-   369			}
-   370			if (lc == '/')
-   371				while (*symname == '/')
-   372					symname++;
-   373		}
-   374		*p = 0;
-   375		inode->i_size = i + 1;
- > 376		struct address_space *mapping = inode->i_mapping
- > 377		mark_buffer_dirty_fsync(bh, mapping);
-   378		affs_brelse(bh);
-   379		mark_inode_dirty(inode);
-   380	
-   381		error = affs_add_entry(dir, inode, dentry, ST_SOFTLINK);
-   382		if (error)
-   383			goto err;
-   384	
-   385		return 0;
-   386	
-   387	err:
-   388		clear_nlink(inode);
-   389		mark_inode_dirty(inode);
-   390		iput(inode);
-   391		return error;
-   392	}
-   393	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Miklos
 
