@@ -1,47 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-20920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7F68FAC24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA448FAC36
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6C31F2234E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 07:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287D41F21880
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 07:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C91140E2F;
-	Tue,  4 Jun 2024 07:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E451411E0;
+	Tue,  4 Jun 2024 07:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AJzjWWAF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI261o57"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155313DDD3;
-	Tue,  4 Jun 2024 07:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4680F1EB30;
+	Tue,  4 Jun 2024 07:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717486583; cv=none; b=dmxDr9HAPB75t59AF7Y6u+lDPq8GUND3DUb2+Y3O8rMC3hDQKQzB15/N9tCAgMAPm5eBvQPFf6CVT4u8et/+0hwSNTV2p+XJYPbbxU1IesNdkG9E77yxXJTfN//cl50E6lGZswZMzC2I01/FjRyR8CYDwqyM97A0mwF26vE9xDw=
+	t=1717486771; cv=none; b=FdzOn4M3TR9xulbXJGtnZrZPFYA+DHn6tVjGZvTKPouJLEDNWlGgfXyNJYITQUJA0K6VFiyDDVc8ZQK6plrPNWL7pvfLvg+xSqo2LfPF/hsMzsR+DwUPhkzmye8/nb7FnAJLmVwrYyDjlztILYUV35AsIANClfL8E7Ah3HSrS0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717486583; c=relaxed/simple;
-	bh=Fw2dlhvUDvhaiIAs+Ca0alCjR7N9kP9wakSguQ5bY00=;
+	s=arc-20240116; t=1717486771; c=relaxed/simple;
+	bh=IwRk73FI7oCSvA9GoThk9eEnhOPDGRbbqcPOdPVc2Uw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bNyOGaG77zu6b3pUaN2wZa5jGYkh+4eUL41Um3BMMLtuWiYwndkSee16PN+0ZAyq5e2E7/XDc2W6ufP/TPbigxekvmWCp1f77ZpLJG1fTS67nC+XsVfshfylvvhWtrGWzfmHq5yw2Snh1dUzEpZhhsiGWDskvcHARJHR6F9tTkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AJzjWWAF; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717486577; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ODwm6X80T2O9PNIpKJj73Wx7jHKcAvCfBJLjUeUP88g=;
-	b=AJzjWWAFf4KwF6ByDbP9e9Uv+RuCU+0//hjRCA+Y2ocAJv3Kuj2VkBre0UuaDEBCBFA8kUjC1kbBD+nC1Po0BSIRvvLOoQV/LL48cBjqein9TrGCRVTXjaMQ3rICe+Ti0bqMrq6sGWCwwxp/lnViuNw1/4qjOQ3RNMM7Q8x9eqw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7q92aK_1717486576;
-Received: from 30.221.146.134(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7q92aK_1717486576)
-          by smtp.aliyun-inc.com;
-          Tue, 04 Jun 2024 15:36:17 +0800
-Message-ID: <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com>
-Date: Tue, 4 Jun 2024 15:36:15 +0800
+	 In-Reply-To:Content-Type; b=qUzx9cG0SUqbRDiM/U2xVcpFMCV2roMQJ9RZOqPEBgz8PioWDzB+rSaoDmNpVStQ1YywYe+GAAGBiv0HSEN9Ok+VmmfAqFQi4lcpA4Pit7uMlqqjUcVFByDtc/GPYLT6e+hPzr51LNyZN+Us3yxgkCkz866GysabXcHyNirkuVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI261o57; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11995C32782;
+	Tue,  4 Jun 2024 07:39:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717486770;
+	bh=IwRk73FI7oCSvA9GoThk9eEnhOPDGRbbqcPOdPVc2Uw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GI261o576gg25/lggqNDA2SfXlSJn3QRY7AGVwcyAmBUOY2+2/Skb/bS1BUCh9qWl
+	 QKz3Jh5M82o5F/6PUgsBq0Gsh7DHrbgUxYPptG+VI9WDVVcsarzvpz92mvCFUSRn4w
+	 dsA3PAUnRTIlKggNkbrr+yewxURwwu2pgA4udfQ7PsravITSz0hF0RNkvPEsXjrDW0
+	 wgwdLoaBdgKRYI4xl7pgSc9vSh2CdAzwjhxH4xcArykbw0zJHnERyQlz+xAu/TMLtL
+	 Yd9pQ9MINSEdazBen1lLjskybIkbgnHTDxCdtLFQWOH/x3vJ71IiKQwnw36Gv4Ljfd
+	 jhhldACaNEbJQ==
+Message-ID: <5441b256-494a-4344-89fd-ee8c5a073f8b@kernel.org>
+Date: Tue, 4 Jun 2024 16:39:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,54 +50,64 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- lege.wang@jaguarmicro.com
-References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
- <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
- <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
- <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
- <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+Subject: Re: [PATCH v20 00/12] Implement copy offload support
+To: Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>,
+ Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240604043242.GC28886@lst.de>
+ <393edf87-30c9-48b8-b703-4b8e514ac4d9@suse.de>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+Organization: Western Digital Research
+In-Reply-To: <393edf87-30c9-48b8-b703-4b8e514ac4d9@suse.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 6/4/24 16:16, Hannes Reinecke wrote:
+> On 6/4/24 06:32, Christoph Hellwig wrote:
+>> On Mon, Jun 03, 2024 at 10:53:39AM +0000, Nitesh Shetty wrote:
+>>> The major benefit of this copy-offload/emulation framework is
+>>> observed in fabrics setup, for copy workloads across the network.
+>>> The host will send offload command over the network and actual copy
+>>> can be achieved using emulation on the target (hence patch 4).
+>>> This results in higher performance and lower network consumption,
+>>> as compared to read and write travelling across the network.
+>>> With this design of copy-offload/emulation we are able to see the
+>>> following improvements as compared to userspace read + write on a
+>>> NVMeOF TCP setup:
+>>
+>> What is the use case of this?   What workloads does raw copies a lot
+>> of data inside a single block device?
+>>
+> 
+> The canonical example would be VM provisioning from a master copy.
+> That's not within a single block device, mind; that's more for copying 
+> the contents of one device to another.
 
+Wouldn't such use case more likely to use file copy ?
+I have not heard a lot of cases where VM images occupy an entire block device,
+but I may be mistaken here...
 
-On 6/4/24 3:27 PM, Miklos Szeredi wrote:
-> On Tue, 4 Jun 2024 at 03:57, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
-> 
->> IIUC, there are two sources that may cause deadlock:
->> 1) the fuse server needs memory allocation when processing FUSE_WRITE
->> requests, which in turn triggers direct memory reclaim, and FUSE
->> writeback then - deadlock here
-> 
-> Yep, see the folio_wait_writeback() call deep in the guts of direct
-> reclaim, which sleeps until the PG_writeback flag is cleared.  If that
-> happens to be triggered by the writeback in question, then that's a
-> deadlock.
-> 
->> 2) a process that trigfgers direct memory reclaim or calls sync(2) may
->> hang there forever, if the fuse server is buggyly or malicious and thus
->> hang there when processing FUSE_WRITE requests
-> 
-> Ah, yes, sync(2) is also an interesting case.   We don't want unpriv
-> fuse servers to be able to block sync(2), which means that sync(2)
-> won't actually guarantee a synchronization of fuse's dirty pages.  I
-> don't think there's even a theoretical solution to that, but
-> apparently nobody cares...
+> But I wasn't aware that this approach is limited to copying within a 
+> single block devices; that would be quite pointless indeed.
 
-Okay if the temp page design is unavoidable, then I don't know if there
-is any approach (in FUSE or VFS layer) helps page copy offloading.  At
-least we don't want the writeback performance to be limited by the
-single writeback kworker.  This is also the initial attempt of this thread.
+Not pointless for any FS doing CoW+Rebalancing of block groups (e.g. btrfs) and
+of course GC for FSes on zoned devices. But for this use case, an API allowing
+multiple sources and one destination would be better.
 
 -- 
-Thanks,
-Jingbo
+Damien Le Moal
+Western Digital Research
+
 
