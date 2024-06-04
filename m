@@ -1,58 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-20892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53658FA95C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 06:41:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756E08FA9EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 07:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4283AB24FA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 04:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289991F217DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 05:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B49E13DBA0;
-	Tue,  4 Jun 2024 04:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28AB13DBA4;
+	Tue,  4 Jun 2024 05:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EkwUzVRb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB93613D638;
-	Tue,  4 Jun 2024 04:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF877C6D5;
+	Tue,  4 Jun 2024 05:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717476050; cv=none; b=MtwLwIoSHHG9bk/Yu3ixH8dXfJVgMgIIPPMsx0y5ufuNiwCTdYrIO+sNiz/Ue0CqxFaEPX85nMXZzhlhkhkDQBUkuyPwUMKpsahqaTgsDdPXq3Om08bWSurC+/X5WB2N/gqeY3c2aw+eI5b2EwvX1FyxSSKPcBcg9hnPDF1abio=
+	t=1717478547; cv=none; b=U+cXNIyQrJ9GdkXIwMVcvuQuPB7OIhXz33vbqwYRb90UNs4UHbcacTCErpFdHvvDEmY7/das18PcmjA0qy5YXCo4uzNoX+e7hIhC4sX5fAYQ9oN83gjbcHtVoPDCZ7mjnT5TGtYmCavLHJ/k4ItptX6NMj3Ajw3GtLHVXz9To9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717476050; c=relaxed/simple;
-	bh=YspLg/oZO+NECETpz3U99drDYtBVvMb6eMXzhEQZu1I=;
+	s=arc-20240116; t=1717478547; c=relaxed/simple;
+	bh=mr8J9SWdsAEvT+DfxSemt3ZV6Jo5MqmVNgY1EU4+3qo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjoKciJKskMO8scKIxjtcD8rSfWx52AhznzPgs68r8V9pBmAub31EbPFRz5yg857F//Dv+p8s8ML6p8gyUaKryygBIkf169Ahvqq0jVQ88fjPyr334LoE4KJuOGurTqmYjiCH+Z34s2V6RQQCZdXEiumrnvYWlTSMwlrxFqS2EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id EAF7068D12; Tue,  4 Jun 2024 06:40:42 +0200 (CEST)
-Date: Tue, 4 Jun 2024 06:40:42 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>, Nitesh Shetty <nj.shetty@samsung.com>,
-	Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=oIVNi5uvan8yZZ2WFblYXseVIrsap3E+Rkib993mOI7OG7zdhgYKcV/63ejctyel4+ELcjplZhD+tAhZ5O2dZ5dZvAfEb47ZFKK9vRkwT5cPCNxoH17OmNeUDiKXVe+Zb+7sFryV5nglu2F0w0hPFN51NVJ0tdwlEnzqSFx8PHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EkwUzVRb; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1mOyWxoB94x5TWgcP2yO2aQH6LrzarpsrO8qe7Bl0N4=; b=EkwUzVRbUjCUAryPsum/6jNKfP
+	TzkL+n4jlvpRo+Q4sJaGt3s8z75bqjCl/ri13WcRaHciG43y+4zdbvFeeaku4FC3bKtquzL8gW+92
+	EB1XPbfDarMHN2xuINhmSd4ljpIr0PCxOCRsIb0tOz10zwBHg58IYV9cQbsJvGZQP6QrMYwn9FXoU
+	FPwMf6lifDua5cGX/WBqWXijWnzN+HMnGR5Y2nC/QD1EGA0YREYy2gp0q8Lb7yaxfpb/729GRToj9
+	j47jKSZsOWTEw1XEas+B5hk5Tus1v4/+TPBfLxBodrN6QZjWOXYXsb7vO0KSLFJg2D99kmacsc3m7
+	E/1jURLQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sEMco-00000001GJE-30tG;
+	Tue, 04 Jun 2024 05:22:22 +0000
+Date: Mon, 3 Jun 2024 22:22:22 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christoph Hellwig <hch@infradead.org>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <20240604044042.GA29094@lst.de>
-References: <20240520102033.9361-1-nj.shetty@samsung.com> <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com> <20240520102033.9361-3-nj.shetty@samsung.com> <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org> <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org> <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org> <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com> <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org> <20240601055931.GB5772@lst.de> <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <Zl6kjsiGl0pm-p-o@infradead.org>
+References: <20240527133430.ifjo2kksoehtuwrn@quack3>
+ <ZlSzotIrVPGrC6vt@infradead.org>
+ <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
+ <ZlWVkJwwJ0-B-Zyl@infradead.org>
+ <20240528-gesell-evakuieren-899c08cbfa06@brauner>
+ <ZlW4IWMYxtwbeI7I@infradead.org>
+ <20240528-gipfel-dilemma-948a590a36fd@brauner>
+ <ZlXaj9Qv0bm9PAjX@infradead.org>
+ <CAJfpegvznUGTYxxTzB5QQHWtNrCfSkWvGscacfZ67Gn+6XoD8w@mail.gmail.com>
+ <20240529.013815-fishy.value.nervous.brutes-FzobWXrzoo2@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,38 +78,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240529.013815-fishy.value.nervous.brutes-FzobWXrzoo2@cyphar.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Jun 03, 2024 at 10:12:48AM -0700, Bart Van Assche wrote:
-> Consider the following use case:
-> * Task A calls blk_start_plug()
-> * Task B calls blk_start_plug()
-> * Task A submits a REQ_OP_COPY_DST bio and a REQ_OP_COPY_SRC bio.
-> * Task B submits a REQ_OP_COPY_DST bio and a REQ_OP_COPY_SRC bio.
-> * The stacking driver to which all REQ_OP_COPY_* operations have been
->   submitted processes bios asynchronusly.
-> * Task A calls blk_finish_plug()
-> * Task B calls blk_finish_plug()
-> * The REQ_OP_COPY_DST bio from task A and the REQ_OP_COPY_SRC bio from
->   task B are combined into a single request.
-> * The REQ_OP_COPY_DST bio from task B and the REQ_OP_COPY_SRC bio from
->   task A are combined into a single request.
->
-> This results in silent and hard-to-debug data corruption. Do you agree
-> that we should not restrict copy offloading to stacking drivers that
-> process bios synchronously and also that this kind of data corruption
-> should be prevented?
+On Sat, Jun 01, 2024 at 01:12:31AM -0700, Aleksa Sarai wrote:
+> Not to mention that providing a mount fd is what allows for extensions
+> like Christian's proposed method of allowing restricted forms of
+> open_by_handle_at() to be used by unprivileged users.
 
-There is no requirement to process them synchronously, there is just
-a requirement to preserve the order.  Note that my suggestion a few
-arounds ago also included a copy id to match them up.  If we don't
-need that I'm happy to leave it away.  If need it it to make stacking
-drivers' lifes easier that suggestion still stands.
+As mentioned there I find the concept of an unprivileged
+open_by_handle_at extremely questionable as it trivially gives access to
+any inode on the file systems.
 
->
-> Thanks,
->
-> Bart.
----end quoted text---
+> If file handles really are going to end up being the "correct" mechanism
+> of referencing inodes by userspace,
+
+They aren't.
+
+> then future API designs really need
+> to stop assuming that the user is capable(CAP_DAC_READ_SEARCH).
+
+There is no way to support open by handle for unprivileged users.  The
+concept of an inode number based file handle simply does not work for
+that at all.
+
 
