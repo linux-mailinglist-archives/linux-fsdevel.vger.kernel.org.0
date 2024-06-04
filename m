@@ -1,113 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-20877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E598FA713
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 02:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 429B88FA7F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 03:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22F001F23DE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 00:35:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD4FA1F271CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 01:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092156FD5;
-	Tue,  4 Jun 2024 00:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A96513D882;
+	Tue,  4 Jun 2024 01:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Of5MZH2D"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KYk0RwQB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CCBA5F;
-	Tue,  4 Jun 2024 00:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248CD137924;
+	Tue,  4 Jun 2024 01:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717461331; cv=none; b=r1uDA2YKure6zDJ8BSU2G8lVqAQL5NjXGam+9RuQu5QibeTtFd1IeA1lDLN49WGnwLebHl8XMWjTaEbemKgRptly4xHtj7yICMS2JyrHIOr8ZgKYwunFD4mVo+HryuGJsLcMxlYHE231hvoYrVLTioHsh/LFjOWK4XqNJkFABzY=
+	t=1717466229; cv=none; b=Y9iQS8Wmt8Hl1lXHvDFOz1j9BIyO7C79hZgtENJPMW54swk2zNNiBVm9NLTNk/Ylz8HprMmV1Io0qaoL1ovtmaZbArououWEGYN8uCOsD2EQZK8P49+d6iosdlO0p2+VxP8TLFGBl4M7Aq1kzVaoncj/guw4W9rBW2Q7Ah44uZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717461331; c=relaxed/simple;
-	bh=0/BmyU0aNVlKQYkbJNKMsRqVuSbr5yVewq+9OZMeWXA=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=E8+vI65apJgT3QH8NOgm0tJp2JoMDcMqWz88VFqVg8S1sUH8p3Hj9xNgOKiYASS8veaDRsFIyCzqhCr8oPcTp3QpQcitKxU2BgH9VKIdKtTH4jn31W0d3jKM04HeaV3uVoysq5z4Ka6Sizi6hUDg/9AQwVxfwHPleyhzAbdC0so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Of5MZH2D; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-702621d8725so2211496b3a.0;
-        Mon, 03 Jun 2024 17:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717461329; x=1718066129; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=55wy5hMiqIM/D1rd3GDpvg/HtGbO7BZblZ9Ox2jpi2s=;
-        b=Of5MZH2DG1X1ZYegeTWHcO10u1yrgJvwdPTB1csnH8xX4WCblUzY4GG4Dl3P2Gbi2L
-         3maTLQGFay3aYMNfWoYL1AiGgB0Guu8Pkc/Wb3Wlgbq20ELY0hAshrAXmBaWnMwiwzRq
-         tOcwATmz+vIUGoNTOFkWc18pN4v5tCUGTrxc/0af9k80jJ7s8si5YVEDzOGgvLjup3/a
-         Rn3iHY9E5TrwTEXjj7HTLD7e+0HGmN8tcSBxeBY6CsZKMINbchq1uq7YysMHfLhuV2Iz
-         sFk43biDoL/IqRf/zftDtEmroHNxJCPvzwzfL9pYO3MasQZ+sOhu7tgFckoOPkShq7/I
-         UmHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717461329; x=1718066129;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=55wy5hMiqIM/D1rd3GDpvg/HtGbO7BZblZ9Ox2jpi2s=;
-        b=kSnvqiiwu6rS+Udxk3mbpPzDfJSuiSTYxWljRTw6JOe8BH1iEI2QMveoHQpXzPkSXB
-         P/EpAMdJOuLrmeZviAS4tFP2z0RZp8K/0rVF+2mLIPyLfUWP7LlW/cf0B29h70snKhWU
-         OtG3jFlaCB0+vq0UpOhdI0Wgmf/S4iDJHyogVV/Q5zIK4V7Ka0cFrQC4g0sc0Jxd3dST
-         bnRF6qZ+T9dMDuN0qKPF3/rPwJcf/DCCVO12K9Sbmyb8kujqs8pQWizOSiv+Hkv+1CPT
-         w/7muJqyNVdQ/OfpLHo1oSX2DagXghbNQ4J/8qak6UYsBNXWAuJOfF0oL421y0Mwfj8q
-         dBBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIeF1eF1XxYKe7nVnqxFLl9JQ1wtfCgjHyxqJ3aSN9Y5SsXKtBskvJt417cWAeEaIGHz7W3TuD/Ge0Te7Hguph7YtcUfKP1HHUpxi+DA==
-X-Gm-Message-State: AOJu0YxJZhvrA6KPersp/ijVNn6LWQCPsh5HGbPJFbUK73noR3HZWYBh
-	k04foui64jBkRP/PKd/hS7cwMLRZMRh1Rb4ipOn2PxceRV/xZ3hXrkf0tGcQ
-X-Google-Smtp-Source: AGHT+IH7GN4LutNeCgU+vVd8qrFyJypGY+ZwmC+mPwah8yLDnqb0U3qua1Mz6iBSz4sNgm5S5mFfuQ==
-X-Received: by 2002:a05:6a20:729a:b0:1af:8fa8:3126 with SMTP id adf61e73a8af0-1b26f0f1acemr12407204637.6.1717461329316;
-        Mon, 03 Jun 2024 17:35:29 -0700 (PDT)
-Received: from dw-tp ([171.76.82.16])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63241f3e4sm70873845ad.306.2024.06.03.17.35.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 17:35:28 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: linux-xfs@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, "Darrick J . Wong" <djwong@kernel.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCHv2 0/2] iomap: Optimize read_folio
-In-Reply-To: <cover.1715067055.git.ritesh.list@gmail.com>
-Date: Tue, 04 Jun 2024 06:02:41 +0530
-Message-ID: <878qzlmtsm.fsf@gmail.com>
-References: <cover.1715067055.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1717466229; c=relaxed/simple;
+	bh=vAHxqC5p21VJM3W0tqZX2heKAMVPYr0MbjkwYfHJtjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MH+Wh2kvKEB/GTnnza880hSjdDk3mnopl278DiLM6OsNti6k33d8BeDFwOTFoiFTFE4bPYHnL8+qUG2NW/HJTucZNYt8uhXyosBqXd0vq0Lrb+tRk7HMH/E9wOhc+wyN2fBuZKhpDGKJZqN5/lsgimo5EJwOVPp93C8a/ugmaLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KYk0RwQB; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717466223; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Qe5hOBNaCqLZm/rRI4XccAdFKiV/c/Rsd9mYPA/Q9+4=;
+	b=KYk0RwQBbcDcuNn16o9LuVna9X2GOCX0hAmMEqkXATC1hUwWV+ErGwPBOKzmfnEdZhsuEsywBx6sXkr5kFA+sg4eyH0St+eEgNjzinQnRJPBQQnMVX3SgLFuoHT2Smq3wIKU7y/Y5aVSVmVsl8HeFjuJTo5jZ+5kDueEo3IKt/Q=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7p7gKf_1717466222;
+Received: from 30.221.146.134(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7p7gKf_1717466222)
+          by smtp.aliyun-inc.com;
+          Tue, 04 Jun 2024 09:57:03 +0800
+Message-ID: <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
+Date: Tue, 4 Jun 2024 09:57:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Miklos Szeredi <miklos@szeredi.hu>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ lege.wang@jaguarmicro.com
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Bernd and Miklos,
 
-+Christian
+On 6/3/24 11:19 PM, Miklos Szeredi wrote:
+> On Mon, 3 Jun 2024 at 16:43, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>> On 6/3/24 08:17, Jingbo Xu wrote:
+>>> Hi, Miklos,
+>>>
+>>> We spotted a performance bottleneck for FUSE writeback in which the
+>>> writeback kworker has consumed nearly 100% CPU, among which 40% CPU is
+>>> used for copy_page().
+>>>
+>>> fuse_writepages_fill
+>>>   alloc tmp_page
+>>>   copy_highpage
+>>>
+>>> This is because of FUSE writeback design (see commit 3be5a52b30aa
+>>> ("fuse: support writable mmap")), which newly allocates a temp page for
+>>> each dirty page to be written back, copy content of dirty page to temp
+>>> page, and then write back the temp page instead.  This special design is
+>>> intentional to avoid potential deadlocked due to buggy or even malicious
+>>> fuse user daemon.
+>>
+>> I also noticed that and I admin that I don't understand it yet. The commit says
+>>
+>> <quote>
+>>     The basic problem is that there can be no guarantee about the time in which
+>>     the userspace filesystem will complete a write.  It may be buggy or even
+>>     malicious, and fail to complete WRITE requests.  We don't want unrelated parts
+>>     of the system to grind to a halt in such cases.
+>> </quote>
+>>
+>>
+>> Timing - NFS/cifs/etc have the same issue? Even a local file system has no guarantees
+>> how fast storage is?
+> 
+> I don't have the details but it boils down to the fact that the
+> allocation context provided by GFP_NOFS (PF_MEMALLOC_NOFS) cannot be
+> used by the unprivileged userspace server (and even if it could,
+> there's no guarantee, that it would).
+> 
+> When this mechanism was introduced, the deadlock was a real
+> possibility.  I'm not sure that it can still happen, but proving that
+> it cannot might be difficult.
 
-"Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
+IIUC, there are two sources that may cause deadlock:
+1) the fuse server needs memory allocation when processing FUSE_WRITE
+requests, which in turn triggers direct memory reclaim, and FUSE
+writeback then - deadlock here
+2) a process that trigfgers direct memory reclaim or calls sync(2) may
+hang there forever, if the fuse server is buggyly or malicious and thus
+hang there when processing FUSE_WRITE requests
 
-> Hello,
->
-> Please find these two patches which were identified while working on ext2
-> buffered-io conversion to iomap. One of them is a bug fix and the other one
-> optimizes the read_folio path. More details can be found in individual
-> commit messages.
->
-> [v1]: https://lore.kernel.org/all/cover.1714046808.git.ritesh.list@gmail.com/
->
-> Ritesh Harjani (IBM) (2):
->   iomap: Fix iomap_adjust_read_range for plen calculation
->   iomap: Optimize iomap_read_folio
+Thus the temp page design was introduced to avoid the above potential
+issues.
 
-Hi Christian, 
+I think case 1 may be fixed (if any), but I don't know how case 2 can be
+avoided as any one could run a fuse server in unprivileged mode.  Or if
+case 2 really matters?  Please correct me if I miss something.
 
-I guess these 2 patches are not picked yet into the tree? In case if
-these are missed could you please pick them up for inclusion?
-
--ritesh
-
-
->
->  fs/iomap/buffered-io.c | 23 +++++++++++++++++++++--
->  1 file changed, 21 insertions(+), 2 deletions(-)
->
-> --
-> 2.44.0
+-- 
+Thanks,
+Jingbo
 
