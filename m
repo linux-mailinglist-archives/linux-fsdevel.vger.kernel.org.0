@@ -1,96 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-20930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E188FAEB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 11:26:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F0A8FAEBC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 11:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1AD28368D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:26:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463691F21C50
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09605143898;
-	Tue,  4 Jun 2024 09:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A73143898;
+	Tue,  4 Jun 2024 09:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M/iyTqJH"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bFxyH7fB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kFfWpXu/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bFxyH7fB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kFfWpXu/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEF4142E63
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 09:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21461823BC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 09:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717493208; cv=none; b=Z7Pmo2QpGVQ01CzhXoal9Gb0u3ZOj0Y+xEI59nustlhi4lzPBU3Tinrp/QenVqyDG6j7+tc8v4E1+h9ej3EMpdOkZ4As57Y4FlOHnXV/CzFs9KzHrXPKcOOI8SUmY6fo27JIdiW8OkQTEruygu+IRtw4ftZljjOIU7pZAUWkJag=
+	t=1717493282; cv=none; b=PWbHuUMxj59RxvCmZQ2Pxjxqc14dDnaixABsnKSqPqoJjOp8s4pnpNr849ylAnMNnV+G5voueIQ8ORXpTN88G3MA8+Odic/OmMk45cWZ/rgvZGb5HsB+cGQxclN9toQlHv/DhuEy4fIkLDLr1WoHDSNnp3CbD2arWlfTqobcwMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717493208; c=relaxed/simple;
-	bh=aVQnIPm1ZMTJ9RbIhPF6MnGMusADLtPLarvam/Gs+Fw=;
+	s=arc-20240116; t=1717493282; c=relaxed/simple;
+	bh=3lMLtGlNfOHQoIHcqwyqfiXUDRgQgtlYIONEfmANOKo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jnfh7ulxF1US3vVX8T1F7GVlIsxWeT0EM2oAtbUzAdwtWOG0rus+RSbjJpMnKZ+vVMEF2SqmFRcev2mtWG/z4jNHsLV4kBxQU3CjlJ+urP5gu9I35n8c6COWF5e8Jf3SkyTSyAfXwaPYC7BXA+Yli7pvkO2WUFWVLlzCTK6iyEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M/iyTqJH; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=L/kzu0HD4XWFceqdw27/Z8VfxVxA7swpYnMTjuuLn/M=; b=M/iyTqJHE2OlKfN+zUXDfOH2t9
-	fXYgrLVaBI8pKVD6qIpPK0XNELFzqfJAsMJIDjY1arMoMPSs42h60I74hMdjAfq8F31N0RpvrmK2O
-	4Xk5FdD2/fBRGt7e95bqMfPN2I9w8GBT2A24dDaCJNLknPNX2muzh4uInGa8uosJhJg4oRQvt/Itb
-	gSGvmt881elLYoo9rL+gC8YXUK4ERezuv5xHKNCZTwW0mpTsGXoTR0bNGo+aQGxX61vA9fwiWNrZT
-	1UgJwv+0StSzARaaI6Em3HTaWJ+pWvlkLqpTJe6QH+0kSZEV+XXwl2/3/JIsTdU7n8yUFDXoTJkeO
-	kOF2pK4Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sEQRB-0000000FW6s-0LI4;
-	Tue, 04 Jun 2024 09:26:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9C4C730068B; Tue,  4 Jun 2024 11:26:35 +0200 (CEST)
-Date: Tue, 4 Jun 2024 11:26:35 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-	bernd.schubert@fastmail.fm, Ingo Molnar <mingo@redhat.com>,
-	Andrei Vagin <avagin@google.com>
-Subject: Re: [PATCH RFC v2 15/19] export __wake_on_current_cpu
-Message-ID: <20240604092635.GN26599@noisy.programming.kicks-ass.net>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-15-d149476b1d65@ddn.com>
- <20240530203729.GG2210558@perftesting>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSJ7uFxG1z8+AVQewl33Xyn40Kz/dlpwE+lEQy6d4pHArvRlVpqRtnAprXqnp7ppjI/J1G8Ic0UPuokVF5ee3f3T9Lt7qPYtK6+98/sfE+WFj+5sKKeYCPI0r128emJfWcgi2hETVXntWzfEE4qLELyphSmH2mXgVQKenwc7lYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bFxyH7fB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kFfWpXu/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bFxyH7fB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kFfWpXu/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3694D1F7DB;
+	Tue,  4 Jun 2024 09:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717493278; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nyu0dA5OD8cG3QzMqvCexMsipvUkaQWchy7/rf2Ho20=;
+	b=bFxyH7fB6266+lvs0NOkQ1JrkP32W4aYugtetp9zR5JKvsvKs1GUXxyMse5ngS0CasnpLv
+	3JVLXjLXXP5lU/rnNuhr73TqiRw6cvkPud1bI9f7ZNRZ2Epown/UJgII6xJpPRRyeXLL6S
+	XuBhhiU2YjDxz13w4ErCxp2EcVsdf6I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717493278;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nyu0dA5OD8cG3QzMqvCexMsipvUkaQWchy7/rf2Ho20=;
+	b=kFfWpXu/wv26eJTtTktij99hErXFQKgH9zLenFsqb4cDuNk78yYGzFXOxvMwKxGVZb7vbl
+	DpIwjqF+k/AzHvDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717493278; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nyu0dA5OD8cG3QzMqvCexMsipvUkaQWchy7/rf2Ho20=;
+	b=bFxyH7fB6266+lvs0NOkQ1JrkP32W4aYugtetp9zR5JKvsvKs1GUXxyMse5ngS0CasnpLv
+	3JVLXjLXXP5lU/rnNuhr73TqiRw6cvkPud1bI9f7ZNRZ2Epown/UJgII6xJpPRRyeXLL6S
+	XuBhhiU2YjDxz13w4ErCxp2EcVsdf6I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717493278;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nyu0dA5OD8cG3QzMqvCexMsipvUkaQWchy7/rf2Ho20=;
+	b=kFfWpXu/wv26eJTtTktij99hErXFQKgH9zLenFsqb4cDuNk78yYGzFXOxvMwKxGVZb7vbl
+	DpIwjqF+k/AzHvDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D2471398F;
+	Tue,  4 Jun 2024 09:27:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8uD+Ch7eXma0KwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 04 Jun 2024 09:27:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D0172A086D; Tue,  4 Jun 2024 11:27:57 +0200 (CEST)
+Date: Tue, 4 Jun 2024 11:27:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: JunChao Sun <sunjunchao2870@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>
+Subject: Re: Is is reasonable to support quota in fuse?
+Message-ID: <20240604092757.k5kkc67j3ssnc6um@quack3>
+References: <CAHB1NaicRULmaq8ks4JCtc3ay3AQ9mG77jc5t_bNdn3wMwMrMg@mail.gmail.com>
+ <CAJfpegsELV80nfYUP0CvbE=c45re184T4_WtUEhhfRGVmpmpcQ@mail.gmail.com>
+ <CAHB1NaiddGRxh7UjaXejWsYnJY52dYDvaB2oZpqQXqVocxTm+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240530203729.GG2210558@perftesting>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHB1NaiddGRxh7UjaXejWsYnJY52dYDvaB2oZpqQXqVocxTm+w@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	SUBJECT_ENDS_QUESTION(1.00)[];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,szeredi.hu:email]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Thu, May 30, 2024 at 04:37:29PM -0400, Josef Bacik wrote:
-> On Wed, May 29, 2024 at 08:00:50PM +0200, Bernd Schubert wrote:
-> > This is needed by fuse-over-io-uring to wake up the waiting
-> > application thread on the core it was submitted from.
-> > Avoiding core switching is actually a major factor for
-> > fuse performance improvements of fuse-over-io-uring.
-> > 
-> > Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Andrei Vagin <avagin@google.com>
+On Tue 04-06-24 14:54:01, JunChao Sun wrote:
+> Miklos Szeredi <miklos@szeredi.hu> 于2024年6月4日周二 14:40写道：
+> >
+> > On Mon, 3 Jun 2024 at 13:37, JunChao Sun <sunjunchao2870@gmail.com> wrote:
+> >
+> > > Given these challenges, I would like to inquire about the community's
+> > > perspective on implementing quota functionality at the FUSE kernel
+> > > part. Is it feasible to implement quota functionality in the FUSE
+> > > kernel module, allowing users to set quotas for FUSE just as they
+> > > would for ext4 (e.g., using commands like quotaon /mnt/fusefs or
+> > > quotaset /mnt/fusefs)?  Would the community consider accepting patches
+> > > for this feature?
+> >
+> >
+> > > I would say yes, but I have no experience with quota in any way, so
+> > > cannot help with the details.
 > 
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> 
-> Probably best to submit this as a one-off so the sched guys can take it and it's
-> not in the middle of a fuse patchset they may be ignoring.  Thanks,
+> Thanks for your reply. I'd like try to implement this feature.
 
-On its own its going to not be applied. Never merge an EXPORT without a
-user.
+Nice idea! But before you go and spend a lot of time trying to implement
+something, I suggest that you write down a design how you imagine all this
+to work and we can talk about it. Questions like: Do you have particular
+usecases in mind? Where do you plan to perform the accounting /
+enforcement? Where do you want to store quota information? How do you want
+to recover from unclean shutdowns? Etc...
 
-As is, I don't have enough of the series to even see the user, so yeah,
-not happy :/
+								Honza
 
-And as hch said, this very much needs to be a GPL export.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
