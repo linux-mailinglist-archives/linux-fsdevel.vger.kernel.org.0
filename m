@@ -1,99 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-20963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E2A8FB70F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 17:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F8D8FB797
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 17:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 977F51C22EB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 15:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64A4281FA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 15:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2285C1448DE;
-	Tue,  4 Jun 2024 15:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1E5144303;
+	Tue,  4 Jun 2024 15:40:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D4B143C7A;
-	Tue,  4 Jun 2024 15:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDA4BE4A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 15:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514882; cv=none; b=SMzwzBJxqgEluhcMUIhx7o7Xmj3NqLfpVuK9qvGvWue2Enr6phJkJgG7ccdxvL0t2p+ZNwvE1uJOHBhSuplRLG6DSaq5pMKZNEmWxMyq9Vo1vBetBkfeT976DGPFRMU/9g/PgEG5bOEDjJbk50n0szS/US257UacI8jupNI0cT4=
+	t=1717515606; cv=none; b=J3jXmTs56NijgERukZ17YXmk729LO0zzCfcW1RTo+ja8/A3IGf8xSc4QtWOdaTjhLdHQg/WqOvtBC958PcQiPi1Jfv4CjsX5fXDYFK/Yd7L8lkiW54JK39kPZ9k6aQ86mUa5g92O9gnScYqxMszGrkQbVuhsUdbNhleRN6I4fCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514882; c=relaxed/simple;
-	bh=N7rt7381fj96UTAPC9MEjjfA0I4AkNKWgkWWPbMyq44=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Egk1CRfM0QvaEWx9Dlr5mhzRvAQ7p0dTYNd/2qURYYdciJNhXIS2SkV4fhSR5wDqWs2An+sQcGOsWc9usOsrjaTMWO5Husc4uWRvEN6rH/c7JvZ2BRyiMgio9+0CGcfiKEjB4wdlRNhr1FiNlg8uuT1SUuGjkaqhIMF87Welf9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30859C4AF07;
-	Tue,  4 Jun 2024 15:28:00 +0000 (UTC)
-Date: Tue, 4 Jun 2024 11:27:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Metin Kaya <metin.kaya@arm.com>
-Cc: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 2/2] sched/rt, dl: Convert functions to return bool
-Message-ID: <20240604112759.56b9394c@gandalf.local.home>
-In-Reply-To: <417b39d1-8de8-4234-92dc-f1ef5fd95da7@arm.com>
-References: <20240601213309.1262206-1-qyousef@layalina.io>
-	<20240601213309.1262206-3-qyousef@layalina.io>
-	<417b39d1-8de8-4234-92dc-f1ef5fd95da7@arm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717515606; c=relaxed/simple;
+	bh=IYrpEI9ESUXgfrd6PmmnBS91BTgpJHWgWPbCxOv4sfg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j0KWmyVNnbVFDjGMUKqB03xrCvIkOPdxwuA7nqTK/9vr9Mw7LJHEn55tI27UWMMMbk/9/pcxENBhS2d/KuiQFgBWuz0qcacahWigDw2tK+rCEEn4hgzij0iXy+lea4syhDqnYXRiwWpa2BgeML+xF+OaH4m1Z3hYTA90hgkVrHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37481e2793eso43083535ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2024 08:40:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717515604; x=1718120404;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUyz+L4QW1yPiCkGSSsrehPuI4CGB6TTCD6NGaUJQcs=;
+        b=H2fHbAR+KBcdzleSgLxg/vfeB6IAo76LD6xsYYDESFf09p9p/Rl0NsWuCbbDyuIQ4w
+         z7V4g00Zi7PTLgNF7PG4X89yLxD+bB4ot/Y3WI45AsR39/Eh9nt/aeFIIucCyV6R4jas
+         1BuRjrsnoYZ5c/rBgpdKTo66ufgoV1pn+K8M0U4hzNzUmPglg9uzq43hbsFJm2qVMxIW
+         0MyUok9lRq04J/LM+FTsi0y4ocSIZ7syDnpjE0LK4/NivKgxhi4JZ4tYDm4I7fnVrEJq
+         L8++vIvvig9oUMdB78qfR8sQMymjzNYZC+9Xm6Y9LuDzNcHPlP/0uw+epH7AfmvMEpAc
+         QCeA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6gfy9e9BEUDUd/TKLpoyXzyLP+wtom3WD1n2dblXufjSs2bb00wQOYEU2vmBWBQ1P4q9uPIFIXDoYBti2LlD1iiWgpJ57/sDYPrJ5uQ==
+X-Gm-Message-State: AOJu0YyG9sdQDyU7GoBZpuonNyBybUiqowcIHZaNp+e4O2kaozcMUdXg
+	qDknbrUeaEd6xmPdhU9vFLQS+1oa5QP9pi0RheY7o2neRMwGHtASnTP5sGCvPhzZ0LoSgpDQgDn
+	muC+oLJHXjhbrjS8ATbmmh87NNbqoqFnAE49GybjOENpwkQe4ahvi5TA=
+X-Google-Smtp-Source: AGHT+IFGhGxQk2d4VPpAMbOpbT3fHBYBgC5cRPRwhnU2rdKJrsLua3NcjPW+ofZYIToEnVAlPsVSGeQJSptZd9DrNQqZdq1fO/Ps
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:20e1:b0:374:9305:62be with SMTP id
+ e9e14a558f8ab-374a850a1fcmr1743585ab.2.1717515604014; Tue, 04 Jun 2024
+ 08:40:04 -0700 (PDT)
+Date: Tue, 04 Jun 2024 08:40:04 -0700
+In-Reply-To: <08cf0523-b70f-422b-8125-884ddc21d1ea@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000079499e061a12436f@google.com>
+Subject: Re: [syzbot] [f2fs?] INFO: task hung in f2fs_balance_fs
+From: syzbot <syzbot+8b85865808c8908a0d8c@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 3 Jun 2024 08:33:53 +0100
-Metin Kaya <metin.kaya@arm.com> wrote:
+Hello,
 
-> On 01/06/2024 10:33 pm, Qais Yousef wrote:
-> > {rt, realtime, dl}_{task, prio}() functions return value is actually
-> > a bool.  Convert their return type to reflect that.
-> > 
-> > Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > Signed-off-by: Qais Yousef <qyousef@layalina.io>
-> > ---
-> >   include/linux/sched/deadline.h |  8 ++++----
-> >   include/linux/sched/rt.h       | 16 ++++++++--------
-> >   2 files changed, 12 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> > index 5cb88b748ad6..f2053f46f1d5 100644
-> > --- a/include/linux/sched/deadline.h
-> > +++ b/include/linux/sched/deadline.h
-> > @@ -10,18 +10,18 @@
-> >   
-> >   #include <linux/sched.h>
-> >   
-> > -static inline int dl_prio(int prio)
-> > +static inline bool dl_prio(int prio)
-> >   {
-> >   	if (unlikely(prio < MAX_DL_PRIO))
-> > -		return 1;
-> > -	return 0;
-> > +		return true;
-> > +	return false;  
-> 
-> Nit: `return unlikely(prio < MAX_DL_PRIO)` would be simpler.
-> The same can be applied to rt_prio() and realtime_prio(). This would 
-> make {dl, rt, realtime}_task() single-liner. Maybe further 
-> simplification can be done.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Agreed.
+Reported-and-tested-by: syzbot+8b85865808c8908a0d8c@syzkaller.appspotmail.com
 
--- Steve
+Tested on:
+
+commit:         4d419837 f2fs: fix to don't dirty inode for readonly f..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
+console output: https://syzkaller.appspot.com/x/log.txt?x=117f66f6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db568e553e0f3797
+dashboard link: https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
