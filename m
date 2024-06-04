@@ -1,84 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-20983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB458FBC45
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 21:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BCA8FBC64
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 21:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B63D1C243F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 19:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE3228642E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 19:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F038C14B075;
-	Tue,  4 Jun 2024 19:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B8913F45D;
+	Tue,  4 Jun 2024 19:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XX0Ajj3Y"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Tjih+1uX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CCD14AD23
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 19:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11795801
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 19:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528241; cv=none; b=BH1SlrZOnkIFc67uqSp+9DGnOIMdvFYXsF5lWhLW95xMQpHYuo9YHNXSvshfzgm4aYXxs+iZ7JKQiUTdzkI1d6U1Sy372++CtPHZ3/Ss0g6csMVgM43edAdFdHcy6NZMFGBBxPNylffUsQC1IMnMxDVSSYtvsXxXLQDNjVX0ImM=
+	t=1717528660; cv=none; b=lELwuCh/G3qXWi68ine01svPVvfuMhVKzxG0pYwIVltmHbDtMxrYMtWjDPVcPDH7rmnBo3YY/eWnd9DFOfDtRE1GdwhkNQvzozgLSdTuzZhfjbuDFiQhKqOBgGf4rQqjtxHJXGYfL64DYnbQDnJfybI3gFHK2HIX2ZztF1R52sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528241; c=relaxed/simple;
-	bh=6WRhNvMputCmUE8KuRCNypytBhygsDlUsvmXPlqiqT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=MGSo1gBXTvNitxatG0BqisP8ZIVBj6DBHa/IOP0qU+UB4t91cpXHIFcAqTHvje6Dk1I6lKU6I2GuEnkYkTWPeuUch0hjHS8V+RMZWf06puxw8EJh/1vycbQgiHmsiPURvjjmFx3G7NwC4/ma6ClzZkvCWU4e7nMWPwTC2SB5Yao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XX0Ajj3Y; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57a033c2e9fso7760756a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2024 12:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717528238; x=1718133038; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzA8SRe4whRjxMfh3T9fimsp/JqPLwi91HrTpjRxV+U=;
-        b=XX0Ajj3Y+1AZObqOfPb18cGyraQBDDLO2XIlAPS8Ly83mZMEaDukTwLl+9+4GwpKd2
-         THP7pT7DLRfk9UqrlX/fGSI5cZPLFm8D0w5CUdEI3pYebM+h81FoVigV9m2nEfYj4kRC
-         TonahQMlIiCAWbop+xMV9g639FTHM0BNlMfdtUrRWitQi6eLhlCZAtRVbPilZLWl0auA
-         8h2mQJGO7Hs2apj6epMapIMzjz6YH5eOzwmLsxZKClVONJ1f6gxRaW+EvpI+QRaIfMhz
-         7XZQpiWfGApQyh6Jx4J7T+OGwblLT6XKCE2SpIvVkKV0X1DWJhFjGQN7d0Qx/HnXjWz+
-         qRYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717528238; x=1718133038;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uzA8SRe4whRjxMfh3T9fimsp/JqPLwi91HrTpjRxV+U=;
-        b=JTMv6O48y8gVpvwnFSPDZN9oV/Yy/DfYlQ7buILyIov6y2aUqh2GhiayTde4DbLeOw
-         fSP6k6PkXi513p8G74u4LRe8AmKJeWep6YFxAxBpgeBLWfiukTPZGpZqs+tjnFW4Yw85
-         8j9Wb1kED77jhFwxtizbaqm0GFD1jm6AXXlzx3FUdVFYWIxwgH1R/DZQK0cg9jZCbXkK
-         T7TmT8G8MvuCICPqSYssoSQz+S1a0IZeyOP4b+hBLUMV3MBH0BMBz2iDpudGmC/Hu4GT
-         8DB7A2jJQ+LQAMB110GVXprFOIDshWiDZtD7IVJBc3SmnY67URYnyoU9FipuKhJvdD8U
-         7H9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWgQRpkn/EWFUmcIr8V9kMOw0ip9dLaIoBcWs6eBh5mhNJqgQJpWj0rzFiejMVRu+t5Hk5cbrA+3nlPXw885b2FDsnXU+BdKvpKi4XgFw==
-X-Gm-Message-State: AOJu0Yw8FRXvlG8PHvkMjMecQcPhfP1HGthUBdqiAJAx8p11jhRVIkKG
-	MZs6qxq/XfQCW8ZOJbAZR/AeAYW9uxvoxpzd2gemvyWIqHZGKxeXNJf3SVybscc=
-X-Google-Smtp-Source: AGHT+IGlsLGfRHK0f6DmqF44S64KIFY4M3R+3mRgGUK5rWCZG7z77L7iKZ+bC3jDwWK1rj3XV48eRQ==
-X-Received: by 2002:a50:d4db:0:b0:57a:242e:806b with SMTP id 4fb4d7f45d1cf-57a8b6acd8emr362804a12.18.1717528237801;
-        Tue, 04 Jun 2024 12:10:37 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31bb825esm7847800a12.32.2024.06.04.12.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 12:10:37 -0700 (PDT)
-Date: Tue, 4 Jun 2024 22:10:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Hyeonwoo Cha <chw1119@hanyang.ac.kr>,
-	david.sterba@suse.com
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, aivazian.tigran@gmail.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	tytso@mit.edu, adilger.kernel@dilger.ca,
-	hirofumi@mail.parknet.co.jp, sfr@canb.auug.org.au,
-	chw1119@hanyang.ac.kr, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	reiserfs-devel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-Message-ID: <97ac9280-4c7b-4466-9cb8-2a81882f0b80@moroto.mountain>
+	s=arc-20240116; t=1717528660; c=relaxed/simple;
+	bh=O1L4khWYYkg1cHB6hrcOG3/ktIEUtQl9uTRFej1rx3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gvNaLcObjq9agZhaAsgy5Zq6ZlLft2U9oeJnH70biQOq43Ek9Ld6EshCe99GWDPorz3gm3EoWy7Cylon4OWPiUNYaJdt5MGsvi/2uiV5fXuEDs8SjzrLhi9SR0CtRvrxjBRgUbEPT6ItK/9lshGMdvAis2GX7hLtXCbiJ5t8RFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Tjih+1uX; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8b8dtXgQZCXrmh7YRr+ZsZgt6hnJ6O2FEKhSmrRNCTg=; b=Tjih+1uXbbNitDrQV0ZGYV5vgd
+	SKb54wjXm/KQfArWb48AQFppQfQML32hA1YFPnR7Z5XvbAUR8CQ+PPlRidsSvoWtx+x6+l7Zo0yj4
+	VZt3ufSQhqaTwobx8CCwoyBtF7MaGKhVoCN3MN2Lb7dHFcewEsvFY+8rS8eQLazsncfmXlxnV9VIV
+	Ks3bCsza/EzHM9G5lmVjfbd0yr8D3TAbYmB5xoJwvJ0Gz8iyuA76wgRWmyqH8ytCYqeV950D2xQUa
+	hN7L8nmLSt3pZYkrWbmjfVG5BoqiQ1WIteKu9tYaGlR/UbpuYpaKVZtHV0qLNgUWdJHanZrq98KiZ
+	wUl7lHCg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sEZf4-00E1ZT-0C;
+	Tue, 04 Jun 2024 19:17:34 +0000
+Date: Tue, 4 Jun 2024 20:17:34 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Felix Kuehling <felix.kuehling@amd.com>
+Cc: amd-gfx@lists.freedesktop.org,
+	Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 1/2][RFC] amdgpu: fix a race in kfd_mem_export_dmabuf()
+Message-ID: <20240604191734.GS1629371@ZenIV>
+References: <20240604021255.GO1629371@ZenIV>
+ <20240604021354.GA3053943@ZenIV>
+ <611b4f6e-e91b-4759-a170-fb43819000ce@amd.com>
+ <20240604191004.GR1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,59 +64,201 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604060636.87652-1-chw1119@hanyang.ac.kr>
+In-Reply-To: <20240604191004.GR1629371@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Hyeonwoo,
+[now without a descriptor leak; it really needs testing, though]
 
-kernel test robot noticed the following build warnings:
+Using drm_gem_prime_handle_to_fd() to set dmabuf up and insert it into
+descriptor table, only to have it looked up by file descriptor and
+remove it from descriptor table is not just too convoluted - it's
+racy; another thread might have modified the descriptor table while
+we'd been going through that song and dance.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+It's not hard to fix - turn drm_gem_prime_handle_to_fd()
+into a wrapper for a new helper that would simply return the
+dmabuf, without messing with descriptor table.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hyeonwoo-Cha/Fix-issue-in-mark_buffer_dirty_inode/20240604-140958
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240604060636.87652-1-chw1119%40hanyang.ac.kr
-patch subject: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-config: i386-randconfig-141-20240604 (https://download.01.org/0day-ci/archive/20240605/202406050218.U7c0DL3C-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+Then kfd_mem_export_dmabuf() would simply use that new helper
+and leave the descriptor table alone.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406050218.U7c0DL3C-lkp@intel.com/
-
-smatch warnings:
-fs/buffer.c:673 mark_buffer_dirty_fsync() warn: if statement not indented
-fs/buffer.c:682 mark_buffer_dirty_fsync() warn: inconsistent indenting
-
-vim +673 fs/buffer.c
-
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  667  void mark_buffer_dirty_fsync(struct buffer_head *bh, struct address_space *mapping)
-^1da177e4c3f41 Linus Torvalds          2005-04-16  668  {
-abc8a8a2c7dc7b Matthew Wilcox (Oracle  2022-12-15  669) 	struct address_space *buffer_mapping = bh->b_folio->mapping;
-^1da177e4c3f41 Linus Torvalds          2005-04-16  670  
-^1da177e4c3f41 Linus Torvalds          2005-04-16  671  	mark_buffer_dirty(bh);
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  672  
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04 @673  	if (bh->b_assoc_map)
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  674          return;
-
-The code is okay, but the indenting is messed up.
-
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  675  
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  676) 	if (!mapping->i_private_data) {
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  677)     	mapping->i_private_data = buffer_mapping;
-^1da177e4c3f41 Linus Torvalds          2005-04-16  678      } else {
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  679)         BUG_ON(mapping->i_private_data != buffer_mapping);
-^1da177e4c3f41 Linus Torvalds          2005-04-16  680      }
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  681  
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17 @682)     spin_lock(&buffer_mapping->i_private_lock);
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  683      list_move_tail(&bh->b_assoc_buffers, &mapping->i_private_list);
-58ff407bee5a55 Jan Kara                2006-10-17  684      bh->b_assoc_map = mapping;
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  685)     spin_unlock(&buffer_mapping->i_private_lock);
-^1da177e4c3f41 Linus Torvalds          2005-04-16  686  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+index 8975cf41a91a..793780bb819c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+@@ -25,7 +25,6 @@
+ #include <linux/pagemap.h>
+ #include <linux/sched/mm.h>
+ #include <linux/sched/task.h>
+-#include <linux/fdtable.h>
+ #include <drm/ttm/ttm_tt.h>
+ 
+ #include <drm/drm_exec.h>
+@@ -812,18 +811,13 @@ static int kfd_mem_export_dmabuf(struct kgd_mem *mem)
+ 	if (!mem->dmabuf) {
+ 		struct amdgpu_device *bo_adev;
+ 		struct dma_buf *dmabuf;
+-		int r, fd;
+ 
+ 		bo_adev = amdgpu_ttm_adev(mem->bo->tbo.bdev);
+-		r = drm_gem_prime_handle_to_fd(&bo_adev->ddev, bo_adev->kfd.client.file,
++		dmabuf = drm_gem_prime_handle_to_dmabuf(&bo_adev->ddev, bo_adev->kfd.client.file,
+ 					       mem->gem_handle,
+ 			mem->alloc_flags & KFD_IOC_ALLOC_MEM_FLAGS_WRITABLE ?
+-					       DRM_RDWR : 0, &fd);
+-		if (r)
+-			return r;
+-		dmabuf = dma_buf_get(fd);
+-		close_fd(fd);
+-		if (WARN_ON_ONCE(IS_ERR(dmabuf)))
++					       DRM_RDWR : 0);
++		if (IS_ERR(dmabuf))
+ 			return PTR_ERR(dmabuf);
+ 		mem->dmabuf = dmabuf;
+ 	}
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 03bd3c7bd0dc..467c7a278ad3 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -409,23 +409,9 @@ static struct dma_buf *export_and_register_object(struct drm_device *dev,
+ 	return dmabuf;
+ }
+ 
+-/**
+- * drm_gem_prime_handle_to_fd - PRIME export function for GEM drivers
+- * @dev: dev to export the buffer from
+- * @file_priv: drm file-private structure
+- * @handle: buffer handle to export
+- * @flags: flags like DRM_CLOEXEC
+- * @prime_fd: pointer to storage for the fd id of the create dma-buf
+- *
+- * This is the PRIME export function which must be used mandatorily by GEM
+- * drivers to ensure correct lifetime management of the underlying GEM object.
+- * The actual exporting from GEM object to a dma-buf is done through the
+- * &drm_gem_object_funcs.export callback.
+- */
+-int drm_gem_prime_handle_to_fd(struct drm_device *dev,
++struct dma_buf *drm_gem_prime_handle_to_dmabuf(struct drm_device *dev,
+ 			       struct drm_file *file_priv, uint32_t handle,
+-			       uint32_t flags,
+-			       int *prime_fd)
++			       uint32_t flags)
+ {
+ 	struct drm_gem_object *obj;
+ 	int ret = 0;
+@@ -434,14 +420,14 @@ int drm_gem_prime_handle_to_fd(struct drm_device *dev,
+ 	mutex_lock(&file_priv->prime.lock);
+ 	obj = drm_gem_object_lookup(file_priv, handle);
+ 	if (!obj)  {
+-		ret = -ENOENT;
++		dmabuf = ERR_PTR(-ENOENT);
+ 		goto out_unlock;
+ 	}
+ 
+ 	dmabuf = drm_prime_lookup_buf_by_handle(&file_priv->prime, handle);
+ 	if (dmabuf) {
+ 		get_dma_buf(dmabuf);
+-		goto out_have_handle;
++		goto out;
+ 	}
+ 
+ 	mutex_lock(&dev->object_name_lock);
+@@ -463,7 +449,6 @@ int drm_gem_prime_handle_to_fd(struct drm_device *dev,
+ 		/* normally the created dma-buf takes ownership of the ref,
+ 		 * but if that fails then drop the ref
+ 		 */
+-		ret = PTR_ERR(dmabuf);
+ 		mutex_unlock(&dev->object_name_lock);
+ 		goto out;
+ 	}
+@@ -478,34 +463,51 @@ int drm_gem_prime_handle_to_fd(struct drm_device *dev,
+ 	ret = drm_prime_add_buf_handle(&file_priv->prime,
+ 				       dmabuf, handle);
+ 	mutex_unlock(&dev->object_name_lock);
+-	if (ret)
+-		goto fail_put_dmabuf;
+-
+-out_have_handle:
+-	ret = dma_buf_fd(dmabuf, flags);
+-	/*
+-	 * We must _not_ remove the buffer from the handle cache since the newly
+-	 * created dma buf is already linked in the global obj->dma_buf pointer,
+-	 * and that is invariant as long as a userspace gem handle exists.
+-	 * Closing the handle will clean out the cache anyway, so we don't leak.
+-	 */
+-	if (ret < 0) {
+-		goto fail_put_dmabuf;
+-	} else {
+-		*prime_fd = ret;
+-		ret = 0;
++	if (ret) {
++		dma_buf_put(dmabuf);
++		dmabuf = ERR_PTR(ret);
+ 	}
+-
+-	goto out;
+-
+-fail_put_dmabuf:
+-	dma_buf_put(dmabuf);
+ out:
+ 	drm_gem_object_put(obj);
+ out_unlock:
+ 	mutex_unlock(&file_priv->prime.lock);
++	return dmabuf;
++}
++EXPORT_SYMBOL(drm_gem_prime_handle_to_dmabuf);
+ 
+-	return ret;
++/**
++ * drm_gem_prime_handle_to_fd - PRIME export function for GEM drivers
++ * @dev: dev to export the buffer from
++ * @file_priv: drm file-private structure
++ * @handle: buffer handle to export
++ * @flags: flags like DRM_CLOEXEC
++ * @prime_fd: pointer to storage for the fd id of the create dma-buf
++ *
++ * This is the PRIME export function which must be used mandatorily by GEM
++ * drivers to ensure correct lifetime management of the underlying GEM object.
++ * The actual exporting from GEM object to a dma-buf is done through the
++ * &drm_gem_object_funcs.export callback.
++ */
++int drm_gem_prime_handle_to_fd(struct drm_device *dev,
++			       struct drm_file *file_priv, uint32_t handle,
++			       uint32_t flags,
++			       int *prime_fd)
++{
++	struct dma_buf *dmabuf;
++	int fd = get_unused_fd_flags(flags);
++
++	if (fd < 0)
++		return fd;
++
++	dmabuf = drm_gem_prime_handle_to_dmabuf(dev, file_priv, handle, flags);
++	if (IS_ERR(dmabuf)) {
++		put_unused_fd(fd);
++		return PTR_ERR(dmabuf);
++	}
++
++	fd_install(fd, dmabuf->file);
++	*prime_fd = fd;
++	return 0;
+ }
+ EXPORT_SYMBOL(drm_gem_prime_handle_to_fd);
+ 
+diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
+index 2a1d01e5b56b..fa085c44d4ca 100644
+--- a/include/drm/drm_prime.h
++++ b/include/drm/drm_prime.h
+@@ -69,6 +69,9 @@ void drm_gem_dmabuf_release(struct dma_buf *dma_buf);
+ 
+ int drm_gem_prime_fd_to_handle(struct drm_device *dev,
+ 			       struct drm_file *file_priv, int prime_fd, uint32_t *handle);
++struct dma_buf *drm_gem_prime_handle_to_dmabuf(struct drm_device *dev,
++			       struct drm_file *file_priv, uint32_t handle,
++			       uint32_t flags);
+ int drm_gem_prime_handle_to_fd(struct drm_device *dev,
+ 			       struct drm_file *file_priv, uint32_t handle, uint32_t flags,
+ 			       int *prime_fd);
 
