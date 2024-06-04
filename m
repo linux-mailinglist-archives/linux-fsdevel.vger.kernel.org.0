@@ -1,136 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-20989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5147E8FBC82
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 21:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DD58FBCE5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 22:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0643628406D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 19:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003E62854DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 20:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D1C14A62B;
-	Tue,  4 Jun 2024 19:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D21114B942;
+	Tue,  4 Jun 2024 20:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p0VyzOC0"
+	dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b="RoiU1XS6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from smtp-out.cvt.stuba.sk (smtp-out.cvt.stuba.sk [147.175.1.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4506713D2AF
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 19:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFAE13790A;
+	Tue,  4 Jun 2024 20:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.175.1.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717529285; cv=none; b=enlOyw4FEyOLXM/lY1ECo5nvdac4hilcopPd7O9OcbkxAnjlbco9xNrMqkuxokKGPEtEKs3I/yTC2FyPcCvwzn/FFHjSQp3kJ72oaB3tc9Rnc8X5EpabRayKjlT9EFvuUNhN20XkWm8zDq13VHip1IGd8hZclFEp9CFDTyUADUg=
+	t=1717531306; cv=none; b=VQhSKZ7YboKnO96FJVU2/deWvxre0ZFVFDgMCWPtsRncqna6lIEqcl3taIiQlsmHGWQs9WVmOiCdDQuwaveBGdB6L6Kmu1StwGn5H8uSNzR/oN7BQvtRdl/Jhk1SWXk+uEQNQrgIFNfloAvyTN4oNtpYL02tV40kDGnRD8XYLqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717529285; c=relaxed/simple;
-	bh=0JsQ5I3TUPLRmdgVEQReqvmGXYRbdqD3/h9bJU8flyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5KTQV2q9xGqcRhHhJ0vFNQu3LUS4N0rBiM/fijGFaAHrKVRDU+jsbmg6eICIBcduBCyiVPAQB45jbHn5y+EUH4GX8cuBqI4iwalwmg2cYINy4DBA/7jmif083+EYzJZhuESjfFIoIni5rMXkikgvLadKFUO6h/c3jD+utRAsVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p0VyzOC0; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pEmaYiLWKTByKFN/Lq/wIKk8L82NPkCU0Wc63JHsyaQ=; b=p0VyzOC0ScAMBVfu4OUdYbh6pe
-	aKa5hqUJkZmk3Nl96l/mn1W2Kpsbbm9VQWyo/rQp1EH1PIWZt0eCI0IxRyvND/2OWDLvffYSIpbPd
-	dcXBCZBATZw4LrvN5E8m+98tEx04e913/T0H8xJ/8yduyRyFzjt1bsdQZ0idPiBXBRMWoeJK/YYFW
-	syXc4SL+k2Wnzz1ovaWoq8fXDLdqkLbO4OUkZlq3/chhscPtff+cvHmIowq1KpETop8hudPEQ50Gp
-	NnbHen/kLaSiin07BRhDssTqa2aFQT2StVOmSNuwRNUPbssKbDs150EEjzr5lSfTBbnawK79YCNDP
-	fCGh13yA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sEZp4-0000000FZjw-0Ug0;
-	Tue, 04 Jun 2024 19:27:54 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B6D7B30068B; Tue,  4 Jun 2024 21:27:52 +0200 (CEST)
-Date: Tue, 4 Jun 2024 21:27:52 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"bernd.schubert@fastmail.fm" <bernd.schubert@fastmail.fm>,
-	Ingo Molnar <mingo@redhat.com>, Andrei Vagin <avagin@google.com>
-Subject: Re: [PATCH RFC v2 15/19] export __wake_on_current_cpu
-Message-ID: <20240604192752.GQ40213@noisy.programming.kicks-ass.net>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-15-d149476b1d65@ddn.com>
- <20240530203729.GG2210558@perftesting>
- <20240604092635.GN26599@noisy.programming.kicks-ass.net>
- <f1989554-35f2-4f42-af98-69521f620143@ddn.com>
+	s=arc-20240116; t=1717531306; c=relaxed/simple;
+	bh=xe0cw9thbST3IGZR/oHrSk2h8gDB0o+KtYMQ4u2eRgs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQu+Rk5vBK2qKO1mz66x/2OrnW18nZW8Lul61lmc6bD3FjtQQTyCzK1QHYQ/L6rv1UmhGJkza6Zgg32CsEL9SDF6/NPT1N33eWjVvdjajQjnqBP3kIXiYY40KSTiEeHv7urWA+UB/RWjUBDSGZyUjVGL1OWz45FlCd/LgLJksos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk; spf=pass smtp.mailfrom=stuba.sk; dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b=RoiU1XS6; arc=none smtp.client-ip=147.175.1.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stuba.sk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=stuba.sk;
+	s=20180406; h=Content-Transfer-Encoding:Content-Type:From:To:Subject:
+	MIME-Version:Date:Message-ID; bh=OzD8eiGhu04GmQy5cDB6iwlOJ1sKBpFqwfQpiANZgQs=
+	; t=1717531302; x=1717963302; b=RoiU1XS6EhzSDf09oyYzywSNGFz8JaMeIms5Ttmc9CrmA
+	K46kprcWX743g67XvJYCRjIurWRbwNnDdr4DOyw1rMHgzeb7gEemvX1+8MZ9ROB2mV797paJsF2xH
+	0qrNun3ZOEe/rQM6FvNOgUZx0g7z1l1d+MUuKCWRf7lmBamgs2HWibosk3p26gw/hHR16Fd8Vpq0g
+	PzWcKzwh2tUA5zeUSkeukEnt4Kspa6w6AdMIkNVxwflYyVa3en3xGBmnFTXUZbUN12jz2gdNu05hf
+	ntL71IV33u7PpZMpXdtZF1b03JmOI+1T66dEqCkw1/0ThU9PaLO6S/FMiMu7849yUQ==;
+X-STU-Diag: 9f3e1a9c84f4ccb1 (auth)
+Received: from ellyah.uim.fei.stuba.sk ([147.175.106.89])
+	by mx1.stuba.sk (Exim4) with esmtpsa (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(envelope-from <matus.jokay@stuba.sk>)
+	id 1sEaLi-0000iB-Fy; Tue, 04 Jun 2024 22:01:38 +0200
+Message-ID: <6cf37b34-c5e4-4d92-8a60-6c083e109439@stuba.sk>
+Date: Tue, 4 Jun 2024 22:01:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1989554-35f2-4f42-af98-69521f620143@ddn.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
+To: Yafang Shao <laoar.shao@gmail.com>, torvalds@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+ bpf@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>
+References: <20240602023754.25443-1-laoar.shao@gmail.com>
+ <20240602023754.25443-2-laoar.shao@gmail.com>
+Content-Language: en-US
+From: Matus Jokay <matus.jokay@stuba.sk>
+In-Reply-To: <20240602023754.25443-2-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 04, 2024 at 09:36:08AM +0000, Bernd Schubert wrote:
-> On 6/4/24 11:26, Peter Zijlstra wrote:
-> > On Thu, May 30, 2024 at 04:37:29PM -0400, Josef Bacik wrote:
-> >> On Wed, May 29, 2024 at 08:00:50PM +0200, Bernd Schubert wrote:
-> >>> This is needed by fuse-over-io-uring to wake up the waiting
-> >>> application thread on the core it was submitted from.
-> >>> Avoiding core switching is actually a major factor for
-> >>> fuse performance improvements of fuse-over-io-uring.
-> >>>
-> >>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> >>> Cc: Ingo Molnar <mingo@redhat.com>
-> >>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>> Cc: Andrei Vagin <avagin@google.com>
-> >>
-> >> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> >>
-> >> Probably best to submit this as a one-off so the sched guys can take it and it's
-> >> not in the middle of a fuse patchset they may be ignoring.  Thanks,
-> > 
-> > On its own its going to not be applied. Never merge an EXPORT without a
-> > user.
-> > 
-> > As is, I don't have enough of the series to even see the user, so yeah,
-> > not happy :/
-> > 
-> > And as hch said, this very much needs to be a GPL export.
-> 
-> Sorry, accidentally done without the _GPL. What is the right way to get this merged? 
-> First merge the entire fuse-io-uring series and then add on this? I already have these 
-> optimization patches at the end of the series... The user for this is in the next patch
+Sorry guys for the mistake,
 
-Yeah, but you didn't send me the next patch, did you? So I have no
-clue.. :-)
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index c75fd46506df..56a927393a38 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1083,7 +1083,7 @@ struct task_struct {
+>  	 *
+>  	 * - normally initialized setup_new_exec()
+>  	 * - access it with [gs]et_task_comm()
+> -	 * - lock it with task_lock()
+> +	 * - lock it with task_lock() for writing
+there should be fixed only the comment about ->comm initialization during exec.
 
-Anyway, if you could add a wee comment to __wake_up_con_current_cpu()
-along with the EXPORT_SYMBOL_GPL() that might be nice. I suppose you can
-copy paste from __wake_up() and then edit a wee bit.
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index c75fd46506df..48aa5c85ed9e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1081,9 +1081,9 @@ struct task_struct {
+ 	/*
+ 	 * executable name, excluding path.
+ 	 *
+-	 * - normally initialized setup_new_exec()
++	 * - normally initialized begin_new_exec()
+ 	 * - access it with [gs]et_task_comm()
+-	 * - lock it with task_lock()
++	 * - lock it with task_lock() for writing
+ 	 */
+ 	char				comm[TASK_COMM_LEN];
+ 
+Again, sorry for the noise. It's a very minor fix, but maybe even a small fix to the documentation can help increase the readability of the code.
 
-> [PATCH RFC v2 16/19] fuse: {uring} Wake requests on the the current cpu
-> 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index c7fd3849a105..851c5fa99946 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -333,7 +333,10 @@ void fuse_request_end(struct fuse_req *req)
->                 spin_unlock(&fc->bg_lock);
->         } else {
->                 /* Wake up waiter sleeping in request_wait_answer() */
-> -               wake_up(&req->waitq);
-> +               if (fuse_per_core_queue(fc))
-> +                       __wake_up_on_current_cpu(&req->waitq, TASK_NORMAL, NULL);
-> +               else
-> +                       wake_up(&req->waitq);
->         }
-> 
->         if (test_bit(FR_ASYNC, &req->flags))
-
-Fair enough, although do we want a helper like wake_up() -- something
-like wake_up_on_current_cpu() ?
-
+--
+Thanks
+mY
 
 
