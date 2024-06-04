@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-20935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780098FAF1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 11:43:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E1F8FAF20
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 11:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1851E1F24D79
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:43:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E6281C227E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 09:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA9F1442F7;
-	Tue,  4 Jun 2024 09:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201156A343;
+	Tue,  4 Jun 2024 09:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="BhxBAtgY"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="YtAkYBgi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA00F12B17B;
-	Tue,  4 Jun 2024 09:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20EE1442EF;
+	Tue,  4 Jun 2024 09:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494181; cv=none; b=omglR+4pu6aIoyRYLgE9HMTJKDtyDP9CvkUi5hT2SCh0vVczP6JrK32CtB3p2UFv7LXpgvAsFulTk4O6RbgwOveM1vB4hFP+89VsELF0ylDDk6wxR4pRhI3XDUSH/4hKfZK9+NfYr9XSTv7ACpwaZvynONXAxYk0ea8bAHtiZEw=
+	t=1717494225; cv=none; b=Y1Ry6+ZGtRPsEfcCjPm4NjW3YoP1mHBznXSCnQlZexZ5mBEWnhZfJRxRHPiMDsyaKOb8TY16apuBnH4brbmk4qV5qdTqF/UuK+UqOoIkw+zGPH53q2wbF45Sl2nlMRwpLyfUw7/xOCFe0JDT5Jz9hk20nv7fxOpQuaOCAbb/XDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494181; c=relaxed/simple;
-	bh=MA1mKVUFSQbibfU52Ruzr7yQn+NzA2FeGtM1hmfDuTo=;
+	s=arc-20240116; t=1717494225; c=relaxed/simple;
+	bh=5RkdUsK0tny5QZcZrgeZEhT5qBBrTYbEIMgRpQp+U/c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ML7StcBJ2SGpzGbOvAjQzLIqGONh1UZx6Kv1whUj2NyieRXDmKBi1XmpO7X6LcJsT3A0jJxEKRS3xgHBPeAy26MQGELt1lIJm7q7KM1LCCaemtNE0zzgWuEwozNiUSmSPN8a5zKpsKaDTuBgNNJJqQ+janJLNzFIBiaHm5jxs1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=BhxBAtgY; arc=none smtp.client-ip=80.241.56.152
+	 Content-Type:Content-Disposition:In-Reply-To; b=JREG71UZ87n/wBjSaCoEm39R50ZPY0/D7uaqAepgR7qFrV6dfIQMEseapI4Z7Gf7x5xcUYUlsnu2uex3U6sL9JHjEx1ID3CNxYdiAjq3oAYwPS6/4Er3OPjuHYVFnLUzaV5WaOQix+6ye60CBgufGn1GUYqpodnru3QKWcoX5K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=YtAkYBgi; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Vtly2399bz9swF;
-	Tue,  4 Jun 2024 11:42:50 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Vtlyt3kv8z9sqF;
+	Tue,  4 Jun 2024 11:43:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717494170;
+	s=MBO0001; t=1717494214;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BwfviVSUVjyzK7z0Oz8qcwUlgiOXWr8u7z2/yepDw0E=;
-	b=BhxBAtgYhyhzPeOgmDqd34ZmUeefBR+MfK7CU65OVl+qKZoeSu7FVj9jW2Yr2xBqz9f+r9
-	3ex9Ri1OiQGpL1UkdDImUVZUWHGVarixU1UKzZU9mfn2DHPiB6XHxoeeFKXEe/a40KTUxg
-	sNFnRK149QKjw64Sa1vXgM2HIWt1zD9v+cxhjKCXMDBY+d3Q5/0wmj8vA5AbtfSoVDThLp
-	igxWkSSOnahjECeHmWBYZFdIQxY8Ks1o1YVDyoVau8Hs8SyOKqbOT4t6IrIfgBW/9wYKet
-	5BV2x1wNgCjnHAXATAQjCl4SiKrI+C+rBAuScByIpi7TjNNMCFQJMEya2imJaA==
-Date: Tue, 4 Jun 2024 09:42:45 +0000
+	bh=/wyixPQKPllzlkQ6nP0MNk7Q+TX9oe0qPOvgtCB3QtA=;
+	b=YtAkYBgiDiiLTrSB1xXRBsq9S9oVQd4+fGLl114XZLZfFLqEjmSRSi3OD/ewx2b4xsFrin
+	b31N9SmU65EekOzDKNDv/0VOdTQC76P9QfvlKf2AMY5TZpbIK/XI8ojK3aSFwdx+DAE6j5
+	TUrzR5fJsAaKzjhai6vLP5SOdNCd31xk0yfdOo3EPOJGxACiklOpHTpNuPSoQSkjXee9V+
+	bfUAHw5Bx49k5i6dyWfpCfn8RpXkeCERgAjUoxIKsiaVISFqz3t1aeX8py5FO6HZnWBB+i
+	j5epziGzDMKCXz/rHreSnRbSe6R5xg7SFo73vhNBVNNuRmT53/F2MZP0GtcEEA==
+Date: Tue, 4 Jun 2024 09:43:31 +0000
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, akpm@linux-foundation.org,
-	brauner@kernel.org, djwong@kernel.org, linux-kernel@vger.kernel.org,
-	hare@suse.de, john.g.garry@oracle.com, gost.dev@samsung.com,
-	yang@os.amperecomputing.com, p.raghav@samsung.com,
-	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	mcgrof@kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 03/11] filemap: allocate mapping_min_order folios in
- the page cache
-Message-ID: <20240604094245.zn5hqezd5q5eoehv@quentin>
+To: Dave Chinner <david@fromorbit.com>
+Cc: chandan.babu@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
+	willy@infradead.org, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, hare@suse.de, john.g.garry@oracle.com,
+	gost.dev@samsung.com, yang@os.amperecomputing.com,
+	p.raghav@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, mcgrof@kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 07/11] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240604094331.gybm6la3xdunpcin@quentin>
 References: <20240529134509.120826-1-kernel@pankajraghav.com>
- <20240529134509.120826-4-kernel@pankajraghav.com>
- <Zl20pc-YlIWCSy6Z@casper.infradead.org>
+ <20240529134509.120826-8-kernel@pankajraghav.com>
+ <Zlz+upnpESvduk7L@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,43 +72,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zl20pc-YlIWCSy6Z@casper.infradead.org>
+In-Reply-To: <Zlz+upnpESvduk7L@dread.disaster.area>
+X-Rspamd-Queue-Id: 4Vtlyt3kv8z9sqF
 
-On Mon, Jun 03, 2024 at 01:18:45PM +0100, Matthew Wilcox wrote:
-> On Wed, May 29, 2024 at 03:45:01PM +0200, Pankaj Raghav (Samsung) wrote:
-> > @@ -1919,8 +1921,10 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
-> >  		folio_wait_stable(folio);
-> >  no_page:
-> >  	if (!folio && (fgp_flags & FGP_CREAT)) {
-> > -		unsigned order = FGF_GET_ORDER(fgp_flags);
-> > +		unsigned int min_order = mapping_min_folio_order(mapping);
-> > +		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
-> >  		int err;
-> > +		index = mapping_align_start_index(mapping, index);
-> >  
-> >  		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
-> >  			gfp |= __GFP_WRITE;
-> > @@ -1958,7 +1962,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
-> >  				break;
-> >  			folio_put(folio);
-> >  			folio = NULL;
-> > -		} while (order-- > 0);
-> > +		} while (order-- > min_order);
+> >  static int __init iomap_init(void)
+> >  {
+> > +	zero_fs_block = alloc_pages(GFP_KERNEL | __GFP_ZERO, ZERO_FSB_ORDER);
+> > +	if (!zero_fs_block)
+> > +		return -ENOMEM;
+> > +
+> >  	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+> >  			   offsetof(struct iomap_ioend, io_bio),
+> >  			   BIOSET_NEED_BVECS);
 > 
-> I'd argue you also need to change:
-> 
-> -                       if (order > 0)
-> +			if (order > min_order)
->                                 alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
-> 
-> since that is the last point at which we can fall back.  If we can't
-> immediately allocate a min_order folio, we want to retry, and we
-> want to warn if we can't get it.
+> just create an iomap_dio_init() function in iomap/direct-io.c
+> and call that from here. Then everything can be private to
+> iomap/direct-io.c...
 
-That is a good point. It is also a feedback to the admin if they start
-using LBS and assess the memory requirement based on memory alloc
-warning?
-
---
-Pankaj
+ Sounds good :)
 
