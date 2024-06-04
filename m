@@ -1,68 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-20939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E861C8FAFDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 12:29:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B868FB035
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 12:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CAC21F238BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 10:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497901C23223
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 10:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770D0144D02;
-	Tue,  4 Jun 2024 10:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C71B145321;
+	Tue,  4 Jun 2024 10:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="rp6HJoAr"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC9xw6k6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CvYjR7Fw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC9xw6k6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CvYjR7Fw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B2329401;
-	Tue,  4 Jun 2024 10:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1CA143755;
+	Tue,  4 Jun 2024 10:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717496981; cv=none; b=PWbM3M/8aTmw4tC+YVoU1GrOLmNJr+r2hx++QH7rpRtubRkNeQ7p5bMnn3fJzyeiVzmiNQq8pygO9CZ8n0eIlB2l2tRRD/E8kxuMuJeNgTlQTR3wUqm3XyrcbIClgOszNB2ue9yxzcCpjl5wi7v19oC5iM0lSpAARsge9MYrHg8=
+	t=1717497715; cv=none; b=XosmlXCZKUCLvuH6A9Y6ssFV6BSLwf/cy8P1ufxEEb9bteyH+GabfKhR0LVuTQJ3qIhOPoXHJDDnGLNJisHpAYbFwqPIcHUZUmebzQSxCZzd2nPwH8+Rkyf1st0qc9vif4zoH/Rkd//YHxi4lTmdBNVuZF5YTCCJEFAgAdQ/Sgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717496981; c=relaxed/simple;
-	bh=BQ+qiq72QPdaBXb30EQGfPMHadzeqg43TjzADDa4iJA=;
+	s=arc-20240116; t=1717497715; c=relaxed/simple;
+	bh=dp0fo3XdeqZlYypGl9DeIj5tcmNB7aysxjzk84H8XLM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6Mr6sxo3byVovmgpJxFDHr3vzE7ZQuRRP7QKitZsmcZZsIwRwsKi/LUex98YEGkNNb0U8H/Vq/eI0eHFg1yxdMhh0FqBgXF5G/naZydm+0F+pWe87h92oBdwS9al7YZz/O4NZXLk/x+rR7KjAyjFVCx0fR7ocqNMZMPIv5QcX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=rp6HJoAr; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	 Content-Type:Content-Disposition:In-Reply-To; b=q6osS0DlXs2MBCQYdRUyaS9Y5FLSLIaG1XA9LPYapI5dYZxJS+I/+4MrlJwWAznR1eRsD6tpGzFpF5o/O7Gp2eTta7gz2YcY0uYtkktRZDVYkiHyILkqU2XjYjn0QA8TLBjyC4XuwU4g8cfs64mm+0HWLbfVc51wDRfGQbL/a6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC9xw6k6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CvYjR7Fw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC9xw6k6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CvYjR7Fw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Vtmzt1dBjz9sS2;
-	Tue,  4 Jun 2024 12:29:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717496970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8C0651F7E1;
+	Tue,  4 Jun 2024 10:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717497711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6DG7DXE2JJh9dM3bhGo7RQTMbF5V2xeF0wZaeXe7lOs=;
-	b=rp6HJoAr4fgn8D/Lj3iM+i2F/Bkkah1tOkbOY3bFKl3+D6oskWV+IVl4f4fY7q49kt4oJY
-	PecYhtX+D45PzWEvv0NaHqK+hDsMs1YUuzzdS02RRSMarCRks2Zh+RxHJAEv7lPhiecDGT
-	O4RHqW3zPVzx+TjgEPU6GT1fveYC5d+NpIRI23HIpf4KndEokN/ti0YAjO10KfJfT8JVl3
-	D397p4GHT6fAhAWQyZ54Vx3o0yDI1oDRZfzRWLzy+qZcoNBb0DnOjyMqPZVvVZFX5axh7N
-	DjrOhaIEALi7giAnw0mqMUlY0PCNOnLlOJkHlkH3aHfHlm+S8+0KypkCo1uuSg==
-Date: Tue, 4 Jun 2024 10:29:24 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, akpm@linux-foundation.org,
-	brauner@kernel.org, djwong@kernel.org, linux-kernel@vger.kernel.org,
-	hare@suse.de, john.g.garry@oracle.com, gost.dev@samsung.com,
-	yang@os.amperecomputing.com, p.raghav@samsung.com,
-	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	mcgrof@kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 05/11] mm: split a folio in minimum folio order chunks
-Message-ID: <20240604102924.u6n35x4rfzdvis3l@quentin>
-References: <20240529134509.120826-1-kernel@pankajraghav.com>
- <20240529134509.120826-6-kernel@pankajraghav.com>
- <Zl243qf2WiPHIMWN@casper.infradead.org>
+	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
+	b=DC9xw6k6BGTGAmaiJWgeOUFIL0h6Nok4Ol0RGeCiIMDyhIFIbOrI/4ozp5hFb5CucGJCTJ
+	4G8NF9ID5nE0gV2ziqoj3AtkRs2xk/XPiQmFLqKw+OYON9+WHXbuAADDAeVblM4lvhnxf0
+	YjwP5eHXnoRwOrNScpO57UO5MRRc19o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717497711;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
+	b=CvYjR7FwREKuPNr9YcV1PPc7aMaUHAk1Mt90+xMoRHT7OoIkh0h3GBZ/zs1joWWPtIIQES
+	8lA5cSjQJJoI1WBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DC9xw6k6;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=CvYjR7Fw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717497711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
+	b=DC9xw6k6BGTGAmaiJWgeOUFIL0h6Nok4Ol0RGeCiIMDyhIFIbOrI/4ozp5hFb5CucGJCTJ
+	4G8NF9ID5nE0gV2ziqoj3AtkRs2xk/XPiQmFLqKw+OYON9+WHXbuAADDAeVblM4lvhnxf0
+	YjwP5eHXnoRwOrNScpO57UO5MRRc19o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717497711;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
+	b=CvYjR7FwREKuPNr9YcV1PPc7aMaUHAk1Mt90+xMoRHT7OoIkh0h3GBZ/zs1joWWPtIIQES
+	8lA5cSjQJJoI1WBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 753FD13A93;
+	Tue,  4 Jun 2024 10:41:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pZSbHG/vXmYRRAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 04 Jun 2024 10:41:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2D054A086D; Tue,  4 Jun 2024 12:41:51 +0200 (CEST)
+Date: Tue, 4 Jun 2024 12:41:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	hch@infradead.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] fs/splice: don't block splice_direct_to_actor() after
+ data was read
+Message-ID: <20240604104151.73n3zmn24hxmmwj6@quack3>
+References: <20240604092431.2183929-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,66 +105,125 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zl243qf2WiPHIMWN@casper.infradead.org>
-X-Rspamd-Queue-Id: 4Vtmzt1dBjz9sS2
+In-Reply-To: <20240604092431.2183929-1-max.kellermann@ionos.com>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 8C0651F7E1
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-On Mon, Jun 03, 2024 at 01:36:46PM +0100, Matthew Wilcox wrote:
-> On Wed, May 29, 2024 at 03:45:03PM +0200, Pankaj Raghav (Samsung) wrote:
-> > @@ -3572,14 +3600,19 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
-> >  
-> >  	for (index = off_start; index < off_end; index += nr_pages) {
-> >  		struct folio *folio = filemap_get_folio(mapping, index);
-> > +		unsigned int min_order, target_order = new_order;
-> >  
-> >  		nr_pages = 1;
-> >  		if (IS_ERR(folio))
-> >  			continue;
-> >  
-> > -		if (!folio_test_large(folio))
-> > +		if (!folio->mapping || !folio_test_large(folio))
-> >  			goto next;
+On Tue 04-06-24 11:24:31, Max Kellermann wrote:
+> If userspace calls sendfile() with a very large "count" parameter, the
+> kernel can block for a very long time until 2 GiB (0x7ffff000 bytes)
+> have been read from the hard disk and pushed into the socket buffer.
 > 
-> This check is useless.  folio->mapping is set to NULL on truncate,
-> but you haven't done anything to prevent truncate yet.  That happens
-> later when you lock the folio.
+> Usually, that is not a problem, because the socket write buffer gets
+> filled quickly, and if the socket is non-blocking, the last
+> direct_splice_actor() call will return -EAGAIN, causing
+> splice_direct_to_actor() to break from the loop, and sendfile() will
+> return a partial transfer.
 > 
-> > +		min_order = mapping_min_folio_order(mapping);
+> However, if the network happens to be faster than the hard disk, and
+> the socket buffer keeps getting drained between two
+> generic_file_read_iter() calls, the sendfile() system call can keep
+> running for a long time, blocking for disk I/O over and over.
 > 
-> You should hoist this out of the loop.
+> That is undesirable, because it can block the calling process for too
+> long.  I discovered a problem where nginx would block for so long that
+> it would drop the HTTP connection because the kernel had just
+> transferred 2 GiB in one call, and the HTTP socket was not writable
+> (EPOLLOUT) for more than 60 seconds, resulting in a timeout:
 > 
-> > +		if (new_order < min_order)
-> > +			target_order = min_order;
-> > +
-> >  		total++;
-> >  		nr_pages = folio_nr_pages(folio);
-> >  
-> > @@ -3589,7 +3622,18 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
-> >  		if (!folio_trylock(folio))
-> >  			goto next;
-> >  
-> > -		if (!split_folio_to_order(folio, new_order))
-> > +		if (!folio_test_anon(folio)) {
+>   sendfile(4, 12, [5518919528] => [5884939344], 1813448856) = 366019816 <3.033067>
+>   sendfile(4, 12, [5884939344], 1447429040) = -1 EAGAIN (Resource temporarily unavailable) <0.000037>
+>   epoll_wait(9, [{EPOLLOUT, {u32=2181955104, u64=140572166585888}}], 512, 60000) = 1 <0.003355>
+>   gettimeofday({tv_sec=1667508799, tv_usec=201201}, NULL) = 0 <0.000024>
+>   sendfile(4, 12, [5884939344] => [8032418896], 2147480496) = 2147479552 <10.727970>
+>   writev(4, [], 0) = 0 <0.000439>
+>   epoll_wait(9, [], 512, 60000) = 0 <60.060430>
+>   gettimeofday({tv_sec=1667508869, tv_usec=991046}, NULL) = 0 <0.000078>
+>   write(5, "10.40.5.23 - - [03/Nov/2022:21:5"..., 124) = 124 <0.001097>
+>   close(12) = 0 <0.000063>
+>   close(4)  = 0 <0.000091>
 > 
-> Please explain how a folio _in a file_ can be anon?
+> In newer nginx versions (since 1.21.4), this problem was worked around
+> by defaulting "sendfile_max_chunk" to 2 MiB:
 > 
-> > +			unsigned int min_order;
-> > +
-> > +			if (!folio->mapping)
-> > +				goto next;
-> > +
-> > +			min_order = mapping_min_folio_order(folio->mapping);
-> > +			if (new_order < target_order)
-> > +				target_order = min_order;
-> 
-> Why is this being repeated?
-> 
-> > +		}
+>  https://github.com/nginx/nginx/commit/5636e7f7b4
 
-You are right. There are some repetition and checks that are not needed.
-I will clean this function for the next revision. 
+Well, I can see your pain but after all the kernel does exactly what
+userspace has asked for?
 
-Thanks.
+> Instead of asking userspace to provide an artificial upper limit, I'd
+> like the kernel to block for disk I/O at most once, and then pass back
+> control to userspace.
+> 
+> There is prior art for this kind of behavior in filemap_read():
+> 
+> 	/*
+> 	 * If we've already successfully copied some data, then we
+> 	 * can no longer safely return -EIOCBQUEUED. Hence mark
+> 	 * an async read NOWAIT at that point.
+> 	 */
+> 	if ((iocb->ki_flags & IOCB_WAITQ) && already_read)
+> 		iocb->ki_flags |= IOCB_NOWAIT;
 
---
-Pankaj
+Do note the IOCB_WAITQ test - this means that the request is coming from
+io_uring and that has a retry logic to handle short reads. I'm really
+nervous about changing sendfile behavior to unconditionally returning short
+writes. In particular see this in do_sendfile():
+
+#if 0
+        /*
+         * We need to debate whether we can enable this or not. The
+         * man page documents EAGAIN return for the output at least,
+         * and the application is arguably buggy if it doesn't expect
+         * EAGAIN on a non-blocking file descriptor.
+         */
+        if (in.file->f_flags & O_NONBLOCK)
+                fl = SPLICE_F_NONBLOCK;
+#endif
+
+We have been through these discussions in the past and so far we have
+always decided the chances for userspace breakage are too big. After all
+there's no substantial difference between userspace issuing a 2GB read(2) and
+2GB sendfile(2). In both cases you are going to be blocked for a long
+time and there are too many userspace applications that depend on this
+behavior...
+
+So I don't think we want to change the current behavior. We could create a
+new interface to provide the semantics you want (like a flag to sendfile(2)
+- which would mean a new syscall) but I'm wondering whether these days
+io_uring isn't a better answer if you want to more closely control IO
+behavior of your application and are willing to change used interface.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
