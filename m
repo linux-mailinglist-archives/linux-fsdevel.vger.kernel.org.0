@@ -1,168 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-20972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE878FB994
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 18:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558838FBA1F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 19:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8064528398D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 16:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F941C2259C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 17:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F076A1494BD;
-	Tue,  4 Jun 2024 16:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5669114388D;
+	Tue,  4 Jun 2024 17:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="tgiQ44bJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MxyfcMbk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED55E14885D
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 16:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC72B7E2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 17:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520003; cv=none; b=d2X/sjCoEY8R1alrgiiRHIW4CSwCcsEkpYrqGphOtziABusQpUrc11I3xpg8Ue7XM+5A7HIWG2m8EMSjYzt8JTuCQnt1jdic9sU6v/DCra8fDjaCVW+a05iQkGfpTTXfqEadRWAtLFErzJ6+vB/sssOF6J44EXYlDHtp8DkVqGU=
+	t=1717521465; cv=none; b=EKAXTT0XGfHu/vqAVLvLVeKcVyZgPNBQ0JVQNegq6iPVbEW5W4nY1Xzly+cyngLb85tEiEQgGurGQnwmcOsDC03Jwx35qbLl3HyKifmjG9ZSVmnEVKJ3Zj2Sjf9iqaRR63Z+SSqIxdbyMkgeY8qHWAgElg+sto4BqDNZwOEPrJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717520003; c=relaxed/simple;
-	bh=yBAgk7JYRJdSCs/1yDW6N2bILHhUa/I1Vjjoi64zjow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P62CzkBfvMQaNpbaU+yvjHpLMdFh3bF0n7l/3ueAPHhFs2XN2DSTi5fOYF69r6bFskaDsa47INzdDhk2Y3blEeWrg3x1rBK5jMrohG8cBtUmJE9L5bRcaKCwljFTGJME9UfYk8h0lie4ffhMkXeuyFpyBn2kNlLuadnnT23eu3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=tgiQ44bJ; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-702621d8725so3099943b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2024 09:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717520001; x=1718124801; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7vQ85ddbl1Y3ttl8lJSOOTPnAC8qpNtaLzkY277e3vA=;
-        b=tgiQ44bJ3xcSY56L4He/DRGJfOM9rWRrK+mBbyVI4ZmiR3VFZJK2ql+bP/t2p7Y3Ae
-         pQm9JfcR/IB+yn9jo7QUMF/fbltRQ9AXooy4q5FYWujDwPtV/z6Kx2KezV/74dkDKFDH
-         7tDdMyF03bXsrOVLJCF6ZvNJfgutuzVosA2wLk6aDYb9LNvn2qr2s0rKEO/zawtZmnkK
-         AaZzWzacCnOPJMgXicIHvhhUW4Zzo9Z4wZZvjrqdiN/Jk24VreVABOku0KvWqOHCUHdg
-         3xlcZDE5wynrKKk40jXKxK2lQVCx6FmiRScIj/agpsdlbkYin7zFNxkpB7lZZK69y1A5
-         LAfQ==
+	s=arc-20240116; t=1717521465; c=relaxed/simple;
+	bh=6KpvonU28xAaESTXS/DQ7D1ZoHutYvZAzRUJbQQT7DE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ea0BlvlzMI5+jAaBkiRkPNEdsl0HywV7ucyU0OkOzYB5iHfXOkHkDCb0GwHqNTudP27VDCVm5Q2EGfeBGMi9lZVRUl/TcYs3nvjWeWoIY/01f/ms70eTABBTWukRribEwlm9H18utXZJP2aj8yXpTw3nFAFWueTN6fJ2j+I/fcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MxyfcMbk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717521463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AV25XjL9BzFccI0I9XCoNrwxuId5sqRgx8tkB1IYPDc=;
+	b=MxyfcMbkgdJ/vanMhsfNZKU+lJHaExd4hSV2/KyMXNgbPhAVZGxoouRYzdY6tU7AaLiAGX
+	oicQeWRBJ9HMAZMTTZ8PapYABMnr99FPcKsp4Jpiz8mjYRd0NKird2lcpB58ow8hLyzxcs
+	lVf06yIpwqfiMvxAh9ZQglnHUtnCG0g=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-Tlc1uTwWMGaCRQpC_G3Zvw-1; Tue, 04 Jun 2024 13:17:41 -0400
+X-MC-Unique: Tlc1uTwWMGaCRQpC_G3Zvw-1
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ea27057813so549214239f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2024 10:17:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717520001; x=1718124801;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7vQ85ddbl1Y3ttl8lJSOOTPnAC8qpNtaLzkY277e3vA=;
-        b=DrInYLgME1FVg7P5zZF6y4oLEgfK8cudFRwEWgXFea31VXR00vmljvzVgKnDwy1FFg
-         gfxppj2kjNTamBDrSk4y5+h+Ca+kZ+B63UxeVhOaMTNpHGZV3gnjrfLQObC2WBtZrX25
-         39DGaRIp3qvOXnzbOYdrWnZqPzDQMPBM4AdJqlzhQZXloFfEPUbSg594bywRrTGmSeZL
-         NuexaRKqfJ8Y21mv3cvG01+8gJZIY085DDFa2+pDpUKV3nDqmUhs4ruClKO3lZF39HSH
-         Ni1CnIKwbcol14i3kWHcV7sUdey6E65GYdyXJfFoXyaTi8+aJf7untF7LhUq12izayxa
-         uDMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSSs5CoF83aw1zIXMhlkMDS4E3y8DN5zgN21SlF/28pa8TtxZRLad1h8i0uTlcjwazAi++PtR3t7wWdnihG+A31facZI+8MasBmcL62A==
-X-Gm-Message-State: AOJu0YwnP/1YGP+MieKpoE+MjjWWWr0su6F7V7uc4mzibT0HMhwWjpx4
-	dMaVeWrtej1cxSwG5wVTtEO2xt6yVi3WXgWTYj/4qshqslb34vwBsyGrnm7agjFbiHQfrpsSrXX
-	i
-X-Google-Smtp-Source: AGHT+IHvwAhnFmofRW/FUlHCpb2IDlz0WHB2sx85SoTSq8DDRF9UfvrId/NyFG0DgwCG9iB1Id54yw==
-X-Received: by 2002:a17:90b:1215:b0:2bf:bb85:edc1 with SMTP id 98e67ed59e1d1-2c1dc5ccdf3mr10534146a91.40.1717520001152;
-        Tue, 04 Jun 2024 09:53:21 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:600::1:de74])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a77afb24sm10700646a91.46.2024.06.04.09.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:53:20 -0700 (PDT)
-Date: Tue, 4 Jun 2024 12:53:19 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	lege.wang@jaguarmicro.com,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-Message-ID: <20240604165319.GG3413@localhost.localdomain>
-References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
- <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
- <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
- <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
- <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
- <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com>
- <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
- <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
- <21741978-a604-4054-8af9-793085925c82@fastmail.fm>
+        d=1e100.net; s=20230601; t=1717521461; x=1718126261;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AV25XjL9BzFccI0I9XCoNrwxuId5sqRgx8tkB1IYPDc=;
+        b=mVsGLDgaum/I+2uyO1KTQpTorLHqAz+8eTX0WVbNI/GoLDtcFh6uwlH9WHtgMfjN6S
+         nwp+gzXfAFZOy5lJlVzJCuD3VKDA7dP+NLr8f3KZptKwOkr65ZLb2ZfV1UVkocdHGv36
+         E+xtUt5dNOS898wN1qpMBnPXAfIzzp5/8BVxCyL/mzlU6vCTrcrRYh7El9w3htsKaiMv
+         HtunpHHBtBGJQg1xlscyppGgL62reVfioyzPeQMf0ob55IwZoAVCFufvTa3GnkFujYoA
+         sztNwmJQFdCtm2fp7zXvoszBPMIbBEbSDmUJ+33LjXiQBz3l4KHhWVC7WVOWll+sT0bd
+         8SQw==
+X-Gm-Message-State: AOJu0YxriELa4NO/u9gpNyJ9N/S7zrx7ATYu36STBpgWY7PcOnyxQUGA
+	DHP9DVfd5UYQd3Dsen7Y2mucaldDtQiLFb72CDbH+k6HNn5FE6uhw2JSSSktEF98oVGhTaTmYtA
+	S0ZIDgYw+3YqmPtw22ISX+qIL01mYNmEgUheoqb1GsgMaKfaOqVavOHyEY0Axz/XP0xWlJ8siKj
+	AbtAXEX7g2Uxjq8mdzsgskAVJK94J9zhvaQuAbWYKu2EMtbg==
+X-Received: by 2002:a05:6602:3f86:b0:7e1:b4b2:d708 with SMTP id ca18e2360f4ac-7eaffe9a58amr1716364539f.4.1717521460518;
+        Tue, 04 Jun 2024 10:17:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHLL2KONXVJlNFYlrUALg4lwzfVacjPw5xw0VoepXa3sYFrh2b5JdYgFn4mZiFJxrcqHRq3A==
+X-Received: by 2002:a05:6602:3f86:b0:7e1:b4b2:d708 with SMTP id ca18e2360f4ac-7eaffe9a58amr1716361439f.4.1717521460022;
+        Tue, 04 Jun 2024 10:17:40 -0700 (PDT)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7eafe5ba64fsm261253139f.30.2024.06.04.10.17.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 10:17:39 -0700 (PDT)
+Message-ID: <8b06d4d4-3f99-4c16-9489-c6cc549a3daf@redhat.com>
+Date: Tue, 4 Jun 2024 12:17:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21741978-a604-4054-8af9-793085925c82@fastmail.fm>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+ David Howells <dhowells@redhat.com>, Bill O'Donnell <billodo@redhat.com>
+From: Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH RFC] fs_parse: add uid & gid option parsing helpers
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 04, 2024 at 04:13:25PM +0200, Bernd Schubert wrote:
-> 
-> 
-> On 6/4/24 12:02, Miklos Szeredi wrote:
-> > On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
-> > 
-> >> Back to the background for the copy, so it copies pages to avoid
-> >> blocking on memory reclaim. With that allocation it in fact increases
-> >> memory pressure even more. Isn't the right solution to mark those pages
-> >> as not reclaimable and to avoid blocking on it? Which is what the tmp
-> >> pages do, just not in beautiful way.
-> > 
-> > Copying to the tmp page is the same as marking the pages as
-> > non-reclaimable and non-syncable.
-> > 
-> > Conceptually it would be nice to only copy when there's something
-> > actually waiting for writeback on the page.
-> > 
-> > Note: normally the WRITE request would be copied to userspace along
-> > with the contents of the pages very soon after starting writeback.
-> > After this the contents of the page no longer matter, and we can just
-> > clear writeback without doing the copy.
-> > 
-> > But if the request gets stuck in the input queue before being copied
-> > to userspace, then deadlock can still happen if the server blocks on
-> > direct reclaim and won't continue with processing the queue.   And
-> > sync(2) will also block in that case.>
-> > So we'd somehow need to handle stuck WRITE requests.   I don't see an
-> > easy way to do this "on demand", when something actually starts
-> > waiting on PG_writeback.  Alternatively the page copy could be done
-> > after a timeout, which is ugly, but much easier to implement.
-> 
-> I think the timeout method would only work if we have already allocated
-> the pages, under memory pressure page allocation might not work well.
-> But then this still seems to be a workaround, because we don't take any
-> less memory with these copied pages.
-> I'm going to look into mm/ if there isn't a better solution.
+Multiple filesystems take uid and gid as options, and the code to
+create the ID from an integer and validate it is standard boilerplate
+that can be moved into common parsing helper functions, so do that for
+consistency and less cut&paste.
 
-I've thought a bit about this, and I still don't have a good solution, so I'm
-going to throw out my random thoughts and see if it helps us get to a good spot.
+This also helps avoid the buggy pattern noted by Seth Jenkins at
+https://lore.kernel.org/lkml/CALxfFW4BXhEwxR0Q5LSkg-8Vb4r2MONKCcUCVioehXQKr35eHg@mail.gmail.com/
+because uid/gid parsing will fail before any assignment in most
+filesystems.
 
-1. Generally we are moving away from GFP_NOFS/GFP_NOIO to instead use
-   memalloc_*_save/memalloc_*_restore, so instead the process is marked being in
-   these contexts.  We could do something similar for FUSE, tho this gets hairy
-   with things that async off request handling to other threads (which is all of
-   the FUSE file systems we have internally).  We'd need to have some way to
-   apply this to an entire process group, but this could be a workable solution.
+With this in place, filesystem parsing is simplified, as in
+the patch at
+https://git.kernel.org/pub/scm/linux/kernel/git/sandeen/linux.git/commit/?h=mount-api-uid-helper&id=480d0d3c6699abfbb174b1bf2ab2bbeeec4fe911
 
-2. Per-request timeouts.  This is something we're planning on tackling for other
-   reasons, but it could fit nicely here to say "if this fuse fs has a
-   per-request timeout, skip the copy".  That way we at least know we're upper
-   bound on how long we would be "deadlocked".  I don't love this approach
-   because it's still a deadlock until the timeout elapsed, but it's an idea.
+Note that FS_USERNS_MOUNT filesystems still need to do additional
+checking with k[ug]id_has_mapping(), I think.
 
-3. Since we're limiting writeout per the BDI, we could just say FUSE is special,
-   only one memory reclaim related writeout at a time.  We flag when we're doing
-   a write via memory reclaim, and then if we try to trigger writeout via memory
-   reclaim again we simply reject it to avoid the deadlock.  This has the
-   downside of making it so non-fuse related things that may be triggering
-   direct reclaim through FUSE means they'll reclaim something else, and if the
-   dirty pages from FUSE are the ones causing the problem we could spin a bunch
-   evicting pages that we don't care about and thrashing a bit.
+Thoughts? Is this useful / worthwhile? If so I can send a proper
+2-patch series ccing the dozen or so filesystems the 2nd patch will
+touch. :)
 
-As I said all of these have downsides, I think #1 is probably the most workable,
-but I haven't thought about it super thoroughly. Thanks,
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+---
+ Documentation/filesystems/mount_api.rst |  9 +++++++--
+ fs/fs_parser.c                          | 34 +++++++++++++++++++++++++++++++++
+ include/linux/fs_parser.h               |  6 +++++-
+ 3 files changed, 46 insertions(+), 3 deletions(-)
 
-Josef
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index 9aaf6ef75eb53b..317934c9e8fcac 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -645,6 +645,8 @@ The members are as follows:
+ 	fs_param_is_blockdev	Blockdev path		* Needs lookup
+ 	fs_param_is_path	Path			* Needs lookup
+ 	fs_param_is_fd		File descriptor		result->int_32
++	fs_param_is_uid		User ID (u32)           result->uid
++	fs_param_is_gid		Group ID (u32)          result->gid
+ 	=======================	=======================	=====================
+ 
+      Note that if the value is of fs_param_is_bool type, fs_parse() will try
+@@ -678,6 +680,8 @@ The members are as follows:
+ 	fsparam_bdev()		fs_param_is_blockdev
+ 	fsparam_path()		fs_param_is_path
+ 	fsparam_fd()		fs_param_is_fd
++	fsparam_uid()		fs_param_is_uid
++	fsparam_gid()		fs_param_is_gid
+ 	=======================	===============================================
+ 
+      all of which take two arguments, name string and option number - for
+@@ -784,8 +788,9 @@ process the parameters it is given.
+      option number (which it returns).
+ 
+      If successful, and if the parameter type indicates the result is a
+-     boolean, integer or enum type, the value is converted by this function and
+-     the result stored in result->{boolean,int_32,uint_32,uint_64}.
++     boolean, integer, enum, uid, or gid type, the value is converted by this
++     function and the result stored in
++     result->{boolean,int_32,uint_32,uint_64,uid,gid}.
+ 
+      If a match isn't initially made, the key is prefixed with "no" and no
+      value is present then an attempt will be made to look up the key with the
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index a4d6ca0b8971e6..9c4e4984aae8a4 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -308,6 +308,40 @@ int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
+ }
+ EXPORT_SYMBOL(fs_param_is_fd);
+ 
++int fs_param_is_uid(struct p_log *log, const struct fs_parameter_spec *p,
++		    struct fs_parameter *param, struct fs_parse_result *result)
++{
++	kuid_t uid;
++
++	if (fs_param_is_u32(log, p, param, result) != 0)
++		return fs_param_bad_value(log, param);
++
++	uid = make_kuid(current_user_ns(), result->uint_32);
++	if (!uid_valid(uid))
++		return inval_plog(log, "Bad uid '%s'", param->string);
++
++	result->uid = uid;
++	return 0;
++}
++EXPORT_SYMBOL(fs_param_is_uid);
++
++int fs_param_is_gid(struct p_log *log, const struct fs_parameter_spec *p,
++		    struct fs_parameter *param, struct fs_parse_result *result)
++{
++	kgid_t gid;
++
++	if (fs_param_is_u32(log, p, param, result) != 0)
++		return fs_param_bad_value(log, param);
++
++	gid = make_kgid(current_user_ns(), result->uint_32);
++	if (!gid_valid(gid))
++		return inval_plog(log, "Bad gid '%s'", param->string);
++
++	result->gid = gid;
++	return 0;
++}
++EXPORT_SYMBOL(fs_param_is_gid);
++
+ int fs_param_is_blockdev(struct p_log *log, const struct fs_parameter_spec *p,
+ 		  struct fs_parameter *param, struct fs_parse_result *result)
+ {
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index d3350979115f0a..6cf713a7e6c6fc 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -28,7 +28,7 @@ typedef int fs_param_type(struct p_log *,
+  */
+ fs_param_type fs_param_is_bool, fs_param_is_u32, fs_param_is_s32, fs_param_is_u64,
+ 	fs_param_is_enum, fs_param_is_string, fs_param_is_blob, fs_param_is_blockdev,
+-	fs_param_is_path, fs_param_is_fd;
++	fs_param_is_path, fs_param_is_fd, fs_param_is_uid, fs_param_is_gid;
+ 
+ /*
+  * Specification of the type of value a parameter wants.
+@@ -57,6 +57,8 @@ struct fs_parse_result {
+ 		int		int_32;		/* For spec_s32/spec_enum */
+ 		unsigned int	uint_32;	/* For spec_u32{,_octal,_hex}/spec_enum */
+ 		u64		uint_64;	/* For spec_u64 */
++		kuid_t		uid;
++		kgid_t		gid;
+ 	};
+ };
+ 
+@@ -131,6 +133,8 @@ static inline bool fs_validate_description(const char *name,
+ #define fsparam_bdev(NAME, OPT)	__fsparam(fs_param_is_blockdev, NAME, OPT, 0, NULL)
+ #define fsparam_path(NAME, OPT)	__fsparam(fs_param_is_path, NAME, OPT, 0, NULL)
+ #define fsparam_fd(NAME, OPT)	__fsparam(fs_param_is_fd, NAME, OPT, 0, NULL)
++#define fsparam_uid(NAME, OPT) __fsparam(fs_param_is_uid, NAME, OPT, 0, NULL)
++#define fsparam_gid(NAME, OPT) __fsparam(fs_param_is_gid, NAME, OPT, 0, NULL)
+ 
+ /* String parameter that allows empty argument */
+ #define fsparam_string_empty(NAME, OPT) \
+-- 
+cgit 1.2.3-korg
+
 
