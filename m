@@ -1,88 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-20964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-20965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F8D8FB797
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 17:40:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B17A8FB80B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 17:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64A4281FA0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 15:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7571F21B15
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2024 15:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1E5144303;
-	Tue,  4 Jun 2024 15:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21771465BD;
+	Tue,  4 Jun 2024 15:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdIqqpH7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDA4BE4A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2024 15:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FC9946C;
+	Tue,  4 Jun 2024 15:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717515606; cv=none; b=J3jXmTs56NijgERukZ17YXmk729LO0zzCfcW1RTo+ja8/A3IGf8xSc4QtWOdaTjhLdHQg/WqOvtBC958PcQiPi1Jfv4CjsX5fXDYFK/Yd7L8lkiW54JK39kPZ9k6aQ86mUa5g92O9gnScYqxMszGrkQbVuhsUdbNhleRN6I4fCA=
+	t=1717516394; cv=none; b=rz1rwWvY9vA6RBF7sR+XqwHmPrs7YVuKY7hzr3RPgxSCqWmyQ2TMBHF064hdis1z7PdbuGVidQ+wJQ1vpKuK8i7tG6qKf5EO25A4X3oB6DrhR3EWSMVN1RxxWOu99s3f2116VE7Vwyi+6RvG2hyO03nRU0kAeu0sguP2Uc3rS7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717515606; c=relaxed/simple;
-	bh=IYrpEI9ESUXgfrd6PmmnBS91BTgpJHWgWPbCxOv4sfg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=j0KWmyVNnbVFDjGMUKqB03xrCvIkOPdxwuA7nqTK/9vr9Mw7LJHEn55tI27UWMMMbk/9/pcxENBhS2d/KuiQFgBWuz0qcacahWigDw2tK+rCEEn4hgzij0iXy+lea4syhDqnYXRiwWpa2BgeML+xF+OaH4m1Z3hYTA90hgkVrHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37481e2793eso43083535ab.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2024 08:40:04 -0700 (PDT)
+	s=arc-20240116; t=1717516394; c=relaxed/simple;
+	bh=aSzmxffLT7xQZWhpjpSVznQm9u7RY3I60GUWBZuzKb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HSFgrPckardychhDLI4Jg+sJ7FgjIKt5lOXMtdLnQ5YbtDpTMoTO+E4z+HN03zo/UL8q/pu0z8YamIY+6+QhTQzu6uZ9YW3B86iRFYv8Qk1suod4GFMM28oxrB7A7QEUETSEENvJM0qF2y7u1eveNpeCQGr6y/hqOI+GRYuGzpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdIqqpH7; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a677d3d79so3767144a12.1;
+        Tue, 04 Jun 2024 08:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717516391; x=1718121191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aLWnc7JHma6VN/R7uX8zeGLyZqDO4slq0l0l53iTXbI=;
+        b=HdIqqpH7HV3Kkc/62R7E36BZz39krUl3EcMsn2qSbc+HTTWLE4IGx8YvgG+LhV8y/f
+         yawCwGK+ebJbQbDvEsttrux8neTxp2BRsq1OmA5hMxi6z6+48anc9xtq0DaMTk2xSCKa
+         wUGSW/uHAc2gW+MdJ2uMWgZhMiW4kxkIGZilhpvoM88i3UY3lSjw3nJGF/cnJ9LHrbeK
+         LbRYSNu/UFvfos2KifXp1sVPpsHdSlAVhT06GM5It1k6ur67Dfsd0ySTHpxVl9U0ntlj
+         lceymvz9ebzG92NdrNsRG00FoHK88oZeOEai6A0GaIZUBIM0FuJYPOllgK8/C7oYHNKf
+         /RmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717515604; x=1718120404;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUyz+L4QW1yPiCkGSSsrehPuI4CGB6TTCD6NGaUJQcs=;
-        b=H2fHbAR+KBcdzleSgLxg/vfeB6IAo76LD6xsYYDESFf09p9p/Rl0NsWuCbbDyuIQ4w
-         z7V4g00Zi7PTLgNF7PG4X89yLxD+bB4ot/Y3WI45AsR39/Eh9nt/aeFIIucCyV6R4jas
-         1BuRjrsnoYZ5c/rBgpdKTo66ufgoV1pn+K8M0U4hzNzUmPglg9uzq43hbsFJm2qVMxIW
-         0MyUok9lRq04J/LM+FTsi0y4ocSIZ7syDnpjE0LK4/NivKgxhi4JZ4tYDm4I7fnVrEJq
-         L8++vIvvig9oUMdB78qfR8sQMymjzNYZC+9Xm6Y9LuDzNcHPlP/0uw+epH7AfmvMEpAc
-         QCeA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6gfy9e9BEUDUd/TKLpoyXzyLP+wtom3WD1n2dblXufjSs2bb00wQOYEU2vmBWBQ1P4q9uPIFIXDoYBti2LlD1iiWgpJ57/sDYPrJ5uQ==
-X-Gm-Message-State: AOJu0YyG9sdQDyU7GoBZpuonNyBybUiqowcIHZaNp+e4O2kaozcMUdXg
-	qDknbrUeaEd6xmPdhU9vFLQS+1oa5QP9pi0RheY7o2neRMwGHtASnTP5sGCvPhzZ0LoSgpDQgDn
-	muC+oLJHXjhbrjS8ATbmmh87NNbqoqFnAE49GybjOENpwkQe4ahvi5TA=
-X-Google-Smtp-Source: AGHT+IFGhGxQk2d4VPpAMbOpbT3fHBYBgC5cRPRwhnU2rdKJrsLua3NcjPW+ofZYIToEnVAlPsVSGeQJSptZd9DrNQqZdq1fO/Ps
+        d=1e100.net; s=20230601; t=1717516391; x=1718121191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aLWnc7JHma6VN/R7uX8zeGLyZqDO4slq0l0l53iTXbI=;
+        b=TUzgdFwgUJM1NYWiXbWU4A9TUUGEg0fVZxytqzasO/7B9t27PMkBaBpspXhFZkcsDu
+         NIfpfe/50RZ8A5MK25lBrtrQmNRSPBoZR+pb5I4iEUTlTQFylQ/Nwvl9k5KINcI1sWDA
+         mG2ih8IFVpZFdCciwU8/2k/dM1j8qfbmXxbuDt9LqWfj0wOY7fAE8NSa/Tz9GRGmJ3eW
+         U7UQDEZgxcBzamBsLjLoFDuBzYkCfvLlVEnUQ0R9Ntsjma46OSU1SH+rAovRwWyUvyaO
+         97s+dNMW1Qo9LTSXZDjy6VlHYVFEAU6MNbudx24JvWsYHgMK0dqvWsjPuvdegiDFSZlk
+         Dknw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu9ntlWrNpVtsmfPnAAsZFeLz0rlpSxQAdS5DWS04gbroaRy0sPv2FjB73Uf7czW6ghKJkxXkc4APGFF14j8bUvan5GGm4IRaisMyOWOSauLPR6XiQkT6SNFtsP/EzCjJ+6sVLhRHq23m4Ag==
+X-Gm-Message-State: AOJu0Yyg31h/O2/PUMfjlwG+twM/DuYJ3+EC10NlSiU+wWONtUHaG7Ab
+	CT8TxRioWvka6G4VGE/3wTxIPADyJF0tiODpFXqxOj04XeHosbAn
+X-Google-Smtp-Source: AGHT+IGFZ0l1gtDovbb086G8tFW/Ft2wcKlYGv5ipkwKsDOEVzD4v7NbKDh7A4tzdZgBoLn90tYWhg==
+X-Received: by 2002:a17:907:8f0a:b0:a68:f43c:57dd with SMTP id a640c23a62f3a-a699d63f681mr2013266b.23.1717516390844;
+        Tue, 04 Jun 2024 08:53:10 -0700 (PDT)
+Received: from f.. (cst-prg-5-143.cust.vodafone.cz. [46.135.5.143])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e624db7esm423380066b.66.2024.06.04.08.53.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 08:53:09 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 0/3] whack user_path_at_empty, cleanup getname_flags
+Date: Tue,  4 Jun 2024 17:52:54 +0200
+Message-ID: <20240604155257.109500-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20e1:b0:374:9305:62be with SMTP id
- e9e14a558f8ab-374a850a1fcmr1743585ab.2.1717515604014; Tue, 04 Jun 2024
- 08:40:04 -0700 (PDT)
-Date: Tue, 04 Jun 2024 08:40:04 -0700
-In-Reply-To: <08cf0523-b70f-422b-8125-884ddc21d1ea@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000079499e061a12436f@google.com>
-Subject: Re: [syzbot] [f2fs?] INFO: task hung in f2fs_balance_fs
-From: syzbot <syzbot+8b85865808c8908a0d8c@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+I tried to take a stab at the atomic filename refcount thing [1], found
+some easy cleanup to do as a soft prerequisite.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+user_path_at_empty saddles getname_flags with an int * argument nobody
+else uses, so it only results in everyone else having to pass NULL
+there. This is trivially avoidable.
 
-Reported-and-tested-by: syzbot+8b85865808c8908a0d8c@syzkaller.appspotmail.com
+Should a need for user_path_at_empty it can probably be implemented in a
+nicer manner than it was.
 
-Tested on:
+1: https://lore.kernel.org/linux-fsdevel/20240604132448.101183-1-mjguzik@gmail.com/T/#u
 
-commit:         4d419837 f2fs: fix to don't dirty inode for readonly f..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
-console output: https://syzkaller.appspot.com/x/log.txt?x=117f66f6980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=db568e553e0f3797
-dashboard link: https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Mateusz Guzik (3):
+  vfs: stop using user_path_at_empty in do_readlinkat
+  vfs: retire user_path_at_empty and drop empty arg from getname_flags
+  vfs: shave a branch in getname_flags
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+ fs/fsopen.c           |  2 +-
+ fs/namei.c            | 41 +++++++++++++++++++------------------
+ fs/stat.c             | 47 ++++++++++++++++++++++++-------------------
+ include/linux/fs.h    |  2 +-
+ include/linux/namei.h |  8 +-------
+ io_uring/statx.c      |  3 +--
+ io_uring/xattr.c      |  4 ++--
+ 7 files changed, 53 insertions(+), 54 deletions(-)
+
+-- 
+2.39.2
+
 
