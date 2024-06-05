@@ -1,112 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-21066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB258FD2EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 18:30:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C2C8FD31E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 18:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7035F1F22C0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 16:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E7C2869C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 16:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42214594D;
-	Wed,  5 Jun 2024 16:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BD8188CDF;
+	Wed,  5 Jun 2024 16:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="ZVTDVofG"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3AYZ15AF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sandeen.net (sandeen.net [63.231.237.45])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8709E4642D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 16:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.231.237.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717605030; cv=none; b=WQC8ffbLDVPswOKm5CG3q5xuslyHJR6Atrjg9hMLgZMzt5p603rj8TCSoOejVHGghSKsEumxRJBaIeUBjCG1xzqEh+YbD+Jtl3EC3d1YwdL9EwBgegia0dwkCs+4LCwFfWqYsofCyG242sNWbwMM5FhQ+/pm+FReoHMD/rUNVqg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717605030; c=relaxed/simple;
-	bh=poXdErzsadQbTxHGxQ1BJGATyqzgb3e9WNXXPmygZtI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sFACY6s/LsblMuzU/0VRD4GKb62c6KG2aTO8XJHvXMvZ1Vg9TpNBwd3pPaopo79h5rx5go/uU4EjaJWMiUFIgZlFeO085eRwRGzrtfy5P8Z8tKOukqNOCrsyyG3w5bMhCCOFckUyIxIem1enKeB1ayEA6ByBA+r5eZq1FifZYMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=ZVTDVofG; arc=none smtp.client-ip=63.231.237.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from [10.0.0.71] (usg [10.0.0.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sandeen.net (Postfix) with ESMTPSA id 08D4311671;
-	Wed,  5 Jun 2024 11:30:20 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net 08D4311671
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net;
-	s=default; t=1717605021;
-	bh=v4b0Yfwhb5Bz8tOnnNZ3n2UifLtoDhazko+6+5dr87A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZVTDVofGRWqKOd6n45zdlnW2HRGbyMiDCTB4VKGLRQvaIoearZ1xZvRSuOhu5YJju
-	 bszKII/9rtVmEcnXlFrqeZ88vqvY+Gzcz+rKvdNN+TZbPRroHROIN2WBeNHuZoUoiY
-	 nEqgveYt1mD+Rfd01mK93QG4DXTBy2Rg3NuenGEuUDq9UhRVJwieNujPxwNmHeGCxb
-	 tfaYazgstGfOJg09OVQuHpfJyYLYYUCs3nd2f87g7zcHaYvvc1W64c3RiDTZw2dlCj
-	 trhoVmYRGKjGru4F+B9ss8dAceaiTHqwmckNSFthan/hg6d/9Yuu1BK8DdB1C0r6NQ
-	 3TO76WbuJWo0Q==
-Message-ID: <2508590b-54db-4f52-ac55-e5014fffabb9@sandeen.net>
-Date: Wed, 5 Jun 2024 11:30:20 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72FA61FD6;
+	Wed,  5 Jun 2024 16:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717606225; cv=none; b=iOVufJIipnENx8fhekh+7lvdqCCIJYl0Q6jBVLKPoMjPySlTGRJnFgDVDTuz28Qa2fXFyCZkD1MVhEqZJvnBv7QOGScT+pmKZBlZPeA26vsz2Df9dF5ioLiQaTiXz6KkMJOLgUR6TB59s67biaUKbQPZXzs308JQ/zV1cqe3ugY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717606225; c=relaxed/simple;
+	bh=r8vTxJSt9oFOh/9CtnB9cm8GeC1a3icEgU2GNHOZxuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bzrskWBSlq9cUs2jyoNl7yOph8iRbK56KBYGd9cg9Kwj3ji5IPqQ2DX/DjkpgKd9a+YG6h9PzbUjJLFNg1GaJobCl9hTj3t/XLEksvucBl9cXb2K/B/zazdRlBGhvK9D0WUwCcuYXcczI/etsCTLkwPki0ih5sixjF9n+NSsOPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3AYZ15AF; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717606216;
+	bh=r8vTxJSt9oFOh/9CtnB9cm8GeC1a3icEgU2GNHOZxuE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=3AYZ15AFB85fkCsf/9fpAXJN66Mq0C+da+koQ6zPIetiXS8c4MWok4fENZHwUNC9l
+	 E0NLQczAdp5JYnJhNIaJSLq7vP/yAEWP+8CFB6PM+h4maeENMsii+JsLb+5JfY39dy
+	 sH3eKqy7t7fPD0JiWvnNKAqiXos9TO3pJaaeQhPmbkiyxuhCvwywefCN7VaKTRoPpm
+	 ZYrTq/f0xLgiPNH2beKaPduln9a7lg7qefVebioxq4DWOjbXVklDetYX8iL+QxzXGu
+	 UPSaXL0VZh1+IR/E+Ne+iS7KDixap6P0N+ExLnQ52ssBqyaFLMWg8ZSBvx68k72kbg
+	 DoYbOFM5WYqow==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aratiu)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 785A3378219B;
+	Wed,  5 Jun 2024 16:50:15 +0000 (UTC)
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel@collabora.com,
+	gbiv@google.com,
+	ryanbeltran@google.com,
+	inglorion@google.com,
+	ajordanr@google.com,
+	jorgelo@chromium.org,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH v5 1/2] proc: pass file instead of inode to proc_mem_open
+Date: Wed,  5 Jun 2024 19:49:30 +0300
+Message-ID: <20240605164931.3753-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] fs_parse: add uid & gid option parsing helpers
-To: Christian Brauner <brauner@kernel.org>, Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
- Bill O'Donnell <billodo@redhat.com>
-References: <8b06d4d4-3f99-4c16-9489-c6cc549a3daf@redhat.com>
- <20240605-moralisieren-nahegehen-90101b576679@brauner>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20240605-moralisieren-nahegehen-90101b576679@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/5/24 9:35 AM, Christian Brauner wrote:
-> On Tue, Jun 04, 2024 at 12:17:39PM -0500, Eric Sandeen wrote:
->> Multiple filesystems take uid and gid as options, and the code to
->> create the ID from an integer and validate it is standard boilerplate
->> that can be moved into common parsing helper functions, so do that for
->> consistency and less cut&paste.
->>
->> This also helps avoid the buggy pattern noted by Seth Jenkins at
->> https://lore.kernel.org/lkml/CALxfFW4BXhEwxR0Q5LSkg-8Vb4r2MONKCcUCVioehXQKr35eHg@mail.gmail.com/
->> because uid/gid parsing will fail before any assignment in most
->> filesystems.
->>
->> With this in place, filesystem parsing is simplified, as in
->> the patch at
->> https://git.kernel.org/pub/scm/linux/kernel/git/sandeen/linux.git/commit/?h=mount-api-uid-helper&id=480d0d3c6699abfbb174b1bf2ab2bbeeec4fe911
->>
->> Note that FS_USERNS_MOUNT filesystems still need to do additional
->> checking with k[ug]id_has_mapping(), I think.
->>
->> Thoughts? Is this useful / worthwhile? If so I can send a proper
->> 2-patch series ccing the dozen or so filesystems the 2nd patch will
->> touch. :)
->>
->> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
->> ---
-> 
-> Seems worthwhile to me. Ideally you'd funnel through the fc->user_ns smh
-> so we can do the k[ug]id_has_mapping() checks right in these parsing
-> helpers.
+The file struct is required in proc_mem_open() so its
+f_mode can be checked when deciding whether to allow or
+deny /proc/*/mem open requests via the new read/write
+and foll_force restriction mechanism.
 
-Yep that bothered me too, but we don't have fc here and getting to it looks...
-tricky. And on a sidebar with Al he seemed to not want that in here, though
-I'm not quite sure why not.
+Thus instead of directly passing the inode to the fun,
+we pass the file and get the inode inside it.
 
-(the reason we don't have fc in the parsers now is because of changes made to
-support RBD in 7f5d38141e30)
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Xu <jeffxu@google.com>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+Reviewed-by: Kees Cook <kees@kernel.org>
+---
+Changes in v5:
+* Fixed task_nommu.c 0day build error
+* Added Reviewed-by tag by Kees C. (thanks!)
+* Rebased on next-20240605
+---
+ fs/proc/base.c       | 6 +++---
+ fs/proc/internal.h   | 2 +-
+ fs/proc/task_mmu.c   | 6 +++---
+ fs/proc/task_nommu.c | 2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-Perhaps it's worth getting this far, and fight that battle another day?
-
-Thanks,
--Eric
-
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675c..4c607089f66ed 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -794,9 +794,9 @@ static const struct file_operations proc_single_file_operations = {
+ };
+ 
+ 
+-struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
++struct mm_struct *proc_mem_open(struct file  *file, unsigned int mode)
+ {
+-	struct task_struct *task = get_proc_task(inode);
++	struct task_struct *task = get_proc_task(file->f_inode);
+ 	struct mm_struct *mm = ERR_PTR(-ESRCH);
+ 
+ 	if (task) {
+@@ -816,7 +816,7 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+ 
+ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+ {
+-	struct mm_struct *mm = proc_mem_open(inode, mode);
++	struct mm_struct *mm = proc_mem_open(file, mode);
+ 
+ 	if (IS_ERR(mm))
+ 		return PTR_ERR(mm);
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index a71ac5379584a..d38b2eea40d12 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -295,7 +295,7 @@ struct proc_maps_private {
+ #endif
+ } __randomize_layout;
+ 
+-struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode);
++struct mm_struct *proc_mem_open(struct file *file, unsigned int mode);
+ 
+ extern const struct file_operations proc_pid_maps_operations;
+ extern const struct file_operations proc_pid_numa_maps_operations;
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f8d35f993fe50..fe3b2182b0aae 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -210,7 +210,7 @@ static int proc_maps_open(struct inode *inode, struct file *file,
+ 		return -ENOMEM;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(priv->mm)) {
+ 		int err = PTR_ERR(priv->mm);
+ 
+@@ -1030,7 +1030,7 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
+ 		goto out_free;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(priv->mm)) {
+ 		ret = PTR_ERR(priv->mm);
+ 
+@@ -1754,7 +1754,7 @@ static int pagemap_open(struct inode *inode, struct file *file)
+ {
+ 	struct mm_struct *mm;
+ 
+-	mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(mm))
+ 		return PTR_ERR(mm);
+ 	file->private_data = mm;
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index bce6745330003..a8ab182a4ed14 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -259,7 +259,7 @@ static int maps_open(struct inode *inode, struct file *file,
+ 		return -ENOMEM;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(priv->mm)) {
+ 		int err = PTR_ERR(priv->mm);
+ 
+-- 
+2.30.2
 
 
