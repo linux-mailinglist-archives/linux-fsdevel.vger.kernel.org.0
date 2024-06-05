@@ -1,612 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-21006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072FF8FC0BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 02:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CD58FC0DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 02:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F32DB26370
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 00:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0ECF1F23552
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 00:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D24D14D2AA;
-	Wed,  5 Jun 2024 00:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C93257B;
+	Wed,  5 Jun 2024 00:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8wNTrs9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/frZdgH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753C214B071;
-	Wed,  5 Jun 2024 00:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBFE17D2;
+	Wed,  5 Jun 2024 00:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717547148; cv=none; b=TS4UyZ30/BTrWrt2k6hl46ypsNmBLsl+CqQ2tC/pY0JfMr+k8TWb2K5+h3AwXzZE8hP8gimmSDSeUCQHi0GEmqLtQqG8/GNG2A+VkOZ/8QVoezGlGtkXAMdSBztRpWEDScbXmW7ugDAjupeM7engOwoaIPCEosxXpj+Yv2cHpQA=
+	t=1717547877; cv=none; b=MSpyo0znv34+B+tOMgHNCmmM1ppYanlh4p3pqWwQ/CFtnGLmVeSdZAOz+1mR/eXvb9RR6NI7nOxKvjANSjnAR/IJiSi3EEY1Oww+UZOxUYfteb1VArfYyqOyX42QJwcHOpcu7nd+aGB4tN7HwCnvnbN0vTHiTR3gjQcJU3drELg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717547148; c=relaxed/simple;
-	bh=NP8+W+bH6pHbXy3KBT/Ddc18s0vHb1N4SFb+qkc6u48=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jmw65yV6bZGLnq+U+qzcKNQ33KtXsEbTv6oqyko6ElleaLHlgjqsgLrxBMacYiBX+duFtDqW1mXDzD1SkFu8ck7i9+qL8E7D5r6Ry6bvWXdrBtam5yKpCqtyIXHQq5/q6xGnU04EcBecYgy/OLE95d6whVJg+wPXmgghHzOWe5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8wNTrs9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20434C2BBFC;
-	Wed,  5 Jun 2024 00:25:48 +0000 (UTC)
+	s=arc-20240116; t=1717547877; c=relaxed/simple;
+	bh=MsU08HHsxHeQbGD4Wl3i5+Z2PYwo6GFP1KcWDbVKV88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7yRQaxVKvl2imkX+XJgxq8NsVE8ZbWbTAZ+EBqKeZeWDM6W7QywL0LpgdCViIGJnQcdXSBgdfGrWNwGTWOCnwLZNwY6PiT6JgNZU1DYkFXZvGdBtqJCNVXvo89azNiJojpFNPscXtOFZJRc6lXs3p+8yhvCPST3DRh0edhO6nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/frZdgH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C32AFC2BBFC;
+	Wed,  5 Jun 2024 00:37:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717547148;
-	bh=NP8+W+bH6pHbXy3KBT/Ddc18s0vHb1N4SFb+qkc6u48=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P8wNTrs9jtprlX6mlecKnGpXHERAfE1l5gK04NjIESARVbZSqk+Q14GN4aFlu6qAs
-	 3CcagYWcZ7CnQHItJhL2c2RBU2c5woxMvw1TSFaJAGabOCC6FPKFeQVOt7K8sXPNxJ
-	 XvPgb8DOZolYDBFoxvIxTPfScFUcz4s9ocqER0d8W6xPlzXbBdZ78xVn2Lx80f+KOf
-	 4Vfh0AKDuO4mdu7wk0j3pKtkFuetw9DtTWhK/ALzRXGTJAH//A4BTjiVdJvJPzv6TB
-	 +UxijZ9f2+tuRWI0J+B8yXqWPe88AmjMqysO5KhYsJVMIUpQrM93rF+gvEgH2lewkW
-	 N/FNjY0HbSzMg==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-mm@kvack.org,
-	liam.howlett@oracle.com,
-	surenb@google.com,
-	rppt@kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v3 9/9] selftests/bpf: add simple benchmark tool for /proc/<pid>/maps APIs
-Date: Tue,  4 Jun 2024 17:24:54 -0700
-Message-ID: <20240605002459.4091285-10-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605002459.4091285-1-andrii@kernel.org>
-References: <20240605002459.4091285-1-andrii@kernel.org>
+	s=k20201202; t=1717547876;
+	bh=MsU08HHsxHeQbGD4Wl3i5+Z2PYwo6GFP1KcWDbVKV88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L/frZdgH0L5glNRtkd+VGSbcRoaab/BbN3mnFVTca3Pvog5722ZbMw2o5sEjcdhgr
+	 EprBZHpVD65HJFVKeSOJzVtTqylCXynhygqCvXpgmuyxiQouwqHFBzNjifWUPBBx9o
+	 btgWevO5quotw1I/TWS/E9HNroTANJ0jGI5oBwKw11RgjTXX/1XROfSks2cSMhtUc2
+	 YVo+0CTT2z8j0zynrHFGO9TGjmAkXHfZboKG2AObLdc8YMVECHJorOsXwjHZ7d08MA
+	 muIOYB9NukKa4oEmifc3qtqh/gGHscK2L+Zh6iDNvQPptNZ8RcKJU08KZU6Q/pBE2U
+	 cqljDPyTywrNQ==
+Date: Tue, 4 Jun 2024 17:37:56 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and
+ FS_IOC_FSGETXATTRAT
+Message-ID: <20240605003756.GH52987@frogsfrogsfrogs>
+References: <20240522100007.zqpa5fxsele5m7wo@quack3>
+ <snhvkg3lm2lbdgswfzyjzmlmtcwcb725madazkdx4kd6ofqmw6@hiunsuigmq6f>
+ <20240523074828.7ut55rhhbawsqrn4@quack3>
+ <xne47dpalyqpstasgoepi4repm44b6g6rsntk2ln3aqhn4putw@4cen74g6453o>
+ <20240524161101.yyqacjob42qjcbnb@quack3>
+ <20240531145204.GJ52987@frogsfrogsfrogs>
+ <20240603104259.gii7lfz2fg7lyrcw@quack3>
+ <vbiskxttukwzhjoiic6toscqc6b2qekuwumfpzqp5vkxf6l6ia@pby5fjhlobrb>
+ <20240603174259.GB52987@frogsfrogsfrogs>
+ <20240604085843.q6qtmtitgefioj5m@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604085843.q6qtmtitgefioj5m@quack3>
 
-Implement a simple tool/benchmark for comparing address "resolution"
-logic based on textual /proc/<pid>/maps interface and new binary
-ioctl-based PROCMAP_QUERY command.
+On Tue, Jun 04, 2024 at 10:58:43AM +0200, Jan Kara wrote:
+> On Mon 03-06-24 10:42:59, Darrick J. Wong wrote:
+> > On Mon, Jun 03, 2024 at 06:28:47PM +0200, Andrey Albershteyn wrote:
+> > > On 2024-06-03 12:42:59, Jan Kara wrote:
+> > > > On Fri 31-05-24 07:52:04, Darrick J. Wong wrote:
+> > > > > On Fri, May 24, 2024 at 06:11:01PM +0200, Jan Kara wrote:
+> > > > > > On Thu 23-05-24 13:16:48, Andrey Albershteyn wrote:
+> > > > > > > On 2024-05-23 09:48:28, Jan Kara wrote:
+> > > > > > > > Hi!
+> > > > > > > > 
+> > > > > > > > On Wed 22-05-24 12:45:09, Andrey Albershteyn wrote:
+> > > > > > > > > On 2024-05-22 12:00:07, Jan Kara wrote:
+> > > > > > > > > > Hello!
+> > > > > > > > > > 
+> > > > > > > > > > On Mon 20-05-24 18:46:21, Andrey Albershteyn wrote:
+> > > > > > > > > > > XFS has project quotas which could be attached to a directory. All
+> > > > > > > > > > > new inodes in these directories inherit project ID set on parent
+> > > > > > > > > > > directory.
+> > > > > > > > > > > 
+> > > > > > > > > > > The project is created from userspace by opening and calling
+> > > > > > > > > > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
+> > > > > > > > > > > files such as FIFO, SOCK, BLK etc. as opening them returns a special
+> > > > > > > > > > > inode from VFS. Therefore, some inodes are left with empty project
+> > > > > > > > > > > ID. Those inodes then are not shown in the quota accounting but
+> > > > > > > > > > > still exist in the directory.
+> > > > > > > > > > > 
+> > > > > > > > > > > This patch adds two new ioctls which allows userspace, such as
+> > > > > > > > > > > xfs_quota, to set project ID on special files by using parent
+> > > > > > > > > > > directory to open FS inode. This will let xfs_quota set ID on all
+> > > > > > > > > > > inodes and also reset it when project is removed. Also, as
+> > > > > > > > > > > vfs_fileattr_set() is now will called on special files too, let's
+> > > > > > > > > > > forbid any other attributes except projid and nextents (symlink can
+> > > > > > > > > > > have one).
+> > > > > > > > > > > 
+> > > > > > > > > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > > > > > > > 
+> > > > > > > > > > I'd like to understand one thing. Is it practically useful to set project
+> > > > > > > > > > IDs for special inodes? There is no significant disk space usage associated
+> > > > > > > > > > with them so wrt quotas we are speaking only about the inode itself. So is
+> > > > > > > > > > the concern that user could escape inode project quota accounting and
+> > > > > > > > > > perform some DoS? Or why do we bother with two new somewhat hairy ioctls
+> > > > > > > > > > for something that seems as a small corner case to me?
+> > > > > > > > > 
+> > > > > > > > > So there's few things:
+> > > > > > > > > - Quota accounting is missing only some special files. Special files
+> > > > > > > > >   created after quota project is setup inherit ID from the project
+> > > > > > > > >   directory.
+> > > > > > > > > - For special files created after the project is setup there's no
+> > > > > > > > >   way to make them project-less. Therefore, creating a new project
+> > > > > > > > >   over those will fail due to project ID miss match.
+> > > > > > > > > - It wasn't possible to hardlink/rename project-less special files
+> > > > > > > > >   inside a project due to ID miss match. The linking is fixed, and
+> > > > > > > > >   renaming is worked around in first patch.
+> > > > > > > > > 
+> > > > > > > > > The initial report I got was about second and last point, an
+> > > > > > > > > application was failing to create a new project after "restart" and
+> > > > > > > > > wasn't able to link special files created beforehand.
+> > > > > > > > 
+> > > > > > > > I see. OK, but wouldn't it then be an easier fix to make sure we *never*
+> > > > > > > > inherit project id for special inodes? And make sure inodes with unset
+> > > > > > > > project ID don't fail to be linked, renamed, etc...
+> > > > > > > 
+> > > > > > > But then, in set up project, you can cross-link between projects and
+> > > > > > > escape quota this way. During linking/renaming if source inode has
+> > > > > > > ID but target one doesn't, we won't be able to tell that this link
+> > > > > > > is within the project.
+> > > > > > 
+> > > > > > Well, I didn't want to charge these special inodes to project quota at all
+> > > > > > so "escaping quota" was pretty much what I suggested to do. But my point
+> > > > > > was that since the only thing that's really charged for these inodes is the
+> > > > > > inodes itself then does this small inaccuracy really matter in practice?
+> > > > > > Are we afraid the user is going to fill the filesystem with symlinks?
+> > > > > 
+> > > > > I thought the worry here is that you can't fully reassign the project
+> > > > > id for a directory tree unless you have an *at() version of the ioctl
+> > > > > to handle the special files that you can't open directly?
+> > > > > 
+> > > > > So you start with a directory tree that's (say) 2% symlinks and project
+> > > > > id 5.  Later you want to set project id 7 on that subtree, but after the
+> > > > > incomplete change, projid 7 is charged for 98% of the tree, and 2% are
+> > > > > still stuck on projid 5.  This is a mess, and if enforcement is enabled
+> > > > > you've just broken it in a way that can't be fixed aside from recreating
+> > > > > those files.
+> > > > 
+> > > > So the idea I'm trying to propose (and apparently I'm failing to explain it
+> > > > properly) is:
+> > > > 
+> > > > When creating special inode, set i_projid = 0 regardless of directory
+> > > > settings.
+> > > > 
+> > > > When creating hardlink or doing rename, if i_projid of dentry is 0, we
+> > > > allow the operation.
+> > > > 
+> > > > Teach fsck to set i_projid to 0 when inode is special.
+> > > > 
+> > > > As a result, AFAICT no problem with hardlinks, renames or similar. No need
+> > > > for special new ioctl or syscall. The downside is special inodes escape
+> > > > project quota accounting. Do we care?
+> > > 
+> > > I see. But is it fine to allow fill filesystem with special inodes?
+> > > Don't know if it can be used somehow but this is exception from
+> > > isoft/ihard limits then.
+> > > 
+> > > I don't see issues with this approach also, if others don't have
+> > > other points or other uses for those new syscalls, I can go with
+> > > this approach.
+> > 
+> > I do -- allowing unpriviledged users to create symlinks that consume
+> > icount (and possibly bcount) in the root project breaks the entire
+> > enforcement mechanism.  That's not the way that project quota has worked
+> > on xfs and it would be quite rude to nullify the PROJINHERIT flag bit
+> > only for these special cases.
+> 
+> OK, fair enough. I though someone will hate this. I'd just like to
+> understand one thing: Owner of the inode can change the project ID to 0
+> anyway so project quotas are more like a cooperative space tracking scheme
+> anyway. If you want to escape it, you can. So what are you exactly worried
+> about? Is it the container usecase where from within the user namespace you
+> cannot change project IDs?
 
-The tool expects a file with a list of hex addresses, relevant PID, and
-then provides control over whether textual or binary ioctl-based ways to
-process VMAs should be used.
+Yep.
 
-The overall logic implements as efficient way to do batched processing
-of a given set of (unsorted) addresses. We first sort them in increasing
-order (remembering their original position to restore original order, if
-necessary), and then process all VMAs from /proc/<pid>/maps, matching
-addresses to VMAs and calculating file offsets, if matched. For
-ioctl-based approach the idea is similar, but is implemented even more
-efficiently, requesting only VMAs that cover all given addresses,
-skipping all the irrelevant VMAs altogether.
+> Anyway I just wanted to have an explicit decision that the simple solution
+> is not good enough before we go the more complex route ;).
 
-To be able to compare efficiency of both APIs the tool has "benchark" mode.
-User provides a number of processing runs to run in a tight loop, only timing
-specifically /proc/<pid>/maps parsing and processing parts of the logic.
-Address sorting and re-sorting is excluded. This gives a more direct way
-to compare ioctl- vs text-based APIs.
+Also, every now and then someone comes along and half-proposes making it
+so that non-root cannot change project ids anymore.  Maybe some day that
+will succeed.
 
-We used a medium-sized production application to do representative
-benchmark. A bunch of stack traces were captured, resulting in 3244
-user space addresses (464 unique ones, but we didn't deduplicate them).
-Application itself had 655 VMAs reported in /proc/<pid>/maps.
+--D
 
-Averaging time taken to process all addresses 10000 times, showed that:
-  - text-based approach took 333 microseconds *per one batch run*;
-  - ioctl-based approach took 8 microseconds *per (identical) batch run*.
-
-This gives about ~40x speed up to do exactly the same amount of work
-(build IDs were not fetched for ioctl-based benchmark; fetching build
-IDs resulted in 2x slowdown compared to no-build-ID case). The ratio
-will vary depending on exact set of addresses and how many VMAs they are
-mapped to. So 40x isn't something to take for granted, but it does show
-possible improvements that are achievable.
-
-I also did an strace run of both cases. In text-based one the tool did
-27 read() syscalls, fetching up to 4KB of data in one go (which is
-seq_file limitations, bumping the buffer size has no effect, as data is
-always capped at 4KB). In comparison, ioctl-based implementation had to
-do only 5 ioctl() calls to fetch all relevant VMAs.
-
-It is projected that savings from processing big production applications
-would only widen the gap in favor of binary-based querying ioctl API, as
-bigger applications will tend to have even more non-executable VMA
-mappings relative to executable ones. E.g., one of the larger production
-applications in the server fleet has upwards of 20000 VMAs, which would
-make benchmark even more unfair to processing /proc/<pid>/maps file.
-
-This tool is implementing one of the patterns of usage, referred to as
-"on-demand profiling" use case in the main patch implementing ioctl()
-API. perf is an example of the pre-processing pattern in which all (or
-all executable) VMAs are loaded and stored for further querying. We
-implemented an experimental change to perf to benchmark text-based and
-ioctl-based APIs, and in perf benchmarks ioctl-based interface was no
-worse than optimized text-based parsing benchmark. Filtering to only
-executable VMAs further made ioctl-based benchmarks faster, as perf
-would be querying about 1/3 of all VMAs only, compared to the need to
-read and parse all of VMAs.
-
-E.g., running `perf bench internals synthesize --mt -M 8`, we are getting.
-
-TEXT-BASED
-==========
-  # ./perf-parse bench internals synthesize --mt -M 8
-  # Running 'internals/synthesize' benchmark:
-  Computing performance of multi threaded perf event synthesis by
-  synthesizing events on CPU 0:
-    Number of synthesis threads: 1
-      Average synthesis took: 10238.600 usec (+- 309.656 usec)
-      Average num. events: 3744.000 (+- 0.000)
-      Average time per event 2.735 usec
-    ...
-    Number of synthesis threads: 8
-      Average synthesis took: 6814.600 usec (+- 149.418 usec)
-      Average num. events: 3744.000 (+- 0.000)
-      Average time per event 1.820 usec
-
-IOCTL-BASED, FETCHING ALL VMAS
-==============================
-  # ./perf-ioctl-all bench internals synthesize --mt -M 8
-  # Running 'internals/synthesize' benchmark:
-  Computing performance of multi threaded perf event synthesis by
-  synthesizing events on CPU 0:
-    Number of synthesis threads: 1
-      Average synthesis took: 9944.800 usec (+- 381.794 usec)
-      Average num. events: 3593.000 (+- 0.000)
-      Average time per event 2.768 usec
-    ...
-    Number of synthesis threads: 8
-      Average synthesis took: 6598.600 usec (+- 137.503 usec)
-      Average num. events: 3595.000 (+- 0.000)
-      Average time per event 1.835 usec
-
-IOCTL-BASED, FETCHING EXECUTABLE VMAS
-=====================================
-  # ./perf-ioctl-exec bench internals synthesize --mt -M 8
-  # Running 'internals/synthesize' benchmark:
-  Computing performance of multi threaded perf event synthesis by
-  synthesizing events on CPU 0:
-    Number of synthesis threads: 1
-      Average synthesis took: 8539.600 usec (+- 364.875 usec)
-      Average num. events: 3569.000 (+- 0.000)
-      Average time per event 2.393 usec
-    ...
-    Number of synthesis threads: 8
-      Average synthesis took: 5657.600 usec (+- 107.219 usec)
-      Average num. events: 3571.000 (+- 0.000)
-      Average time per event 1.584 usec
-
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- tools/testing/selftests/bpf/.gitignore     |   1 +
- tools/testing/selftests/bpf/Makefile       |   2 +-
- tools/testing/selftests/bpf/procfs_query.c | 386 +++++++++++++++++++++
- 3 files changed, 388 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/bpf/procfs_query.c
-
-diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
-index 5025401323af..903b14931bfe 100644
---- a/tools/testing/selftests/bpf/.gitignore
-+++ b/tools/testing/selftests/bpf/.gitignore
-@@ -44,6 +44,7 @@ test_cpp
- /veristat
- /sign-file
- /uprobe_multi
-+/procfs_query
- *.ko
- *.tmp
- xskxceiver
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index e0b3887b3d2d..0afa667a54e5 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -144,7 +144,7 @@ TEST_GEN_PROGS_EXTENDED = test_skb_cgroup_id_user \
- 	flow_dissector_load test_flow_dissector test_tcp_check_syncookie_user \
- 	test_lirc_mode2_user xdping test_cpp runqslower bench bpf_testmod.ko \
- 	xskxceiver xdp_redirect_multi xdp_synproxy veristat xdp_hw_metadata \
--	xdp_features bpf_test_no_cfi.ko
-+	xdp_features bpf_test_no_cfi.ko procfs_query
- 
- TEST_GEN_FILES += liburandom_read.so urandom_read sign-file uprobe_multi
- 
-diff --git a/tools/testing/selftests/bpf/procfs_query.c b/tools/testing/selftests/bpf/procfs_query.c
-new file mode 100644
-index 000000000000..63e06568f1ff
---- /dev/null
-+++ b/tools/testing/selftests/bpf/procfs_query.c
-@@ -0,0 +1,386 @@
-+// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-+#include <argp.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <stdlib.h>
-+#include <time.h>
-+#include <stdbool.h>
-+#include <stdint.h>
-+#include <sys/ioctl.h>
-+#include <linux/fs.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <time.h>
-+
-+static bool verbose;
-+static bool quiet;
-+static bool use_ioctl;
-+static bool request_build_id;
-+static char *addrs_path;
-+static int pid;
-+static int bench_runs;
-+
-+const char *argp_program_version = "procfs_query 0.0";
-+const char *argp_program_bug_address = "<bpf@vger.kernel.org>";
-+
-+static inline uint64_t get_time_ns(void)
-+{
-+	struct timespec t;
-+
-+	clock_gettime(CLOCK_MONOTONIC, &t);
-+
-+	return (uint64_t)t.tv_sec * 1000000000 + t.tv_nsec;
-+}
-+
-+static const struct argp_option opts[] = {
-+	{ "verbose", 'v', NULL, 0, "Verbose mode" },
-+	{ "quiet", 'q', NULL, 0, "Quiet mode (no output)" },
-+	{ "pid", 'p', "PID", 0, "PID of the process" },
-+	{ "addrs-path", 'f', "PATH", 0, "File with addresses to resolve" },
-+	{ "benchmark", 'B', "RUNS", 0, "Benchmark mode" },
-+	{ "query", 'Q', NULL, 0, "Use ioctl()-based point query API (by default text parsing is done)" },
-+	{ "build-id", 'b', NULL, 0, "Fetch build ID, if available (only for ioctl mode)" },
-+	{},
-+};
-+
-+static error_t parse_arg(int key, char *arg, struct argp_state *state)
-+{
-+	switch (key) {
-+	case 'v':
-+		verbose = true;
-+		break;
-+	case 'q':
-+		quiet = true;
-+		break;
-+	case 'Q':
-+		use_ioctl = true;
-+		break;
-+	case 'b':
-+		request_build_id = true;
-+		break;
-+	case 'p':
-+		pid = strtol(arg, NULL, 10);
-+		break;
-+	case 'f':
-+		addrs_path = strdup(arg);
-+		break;
-+	case 'B':
-+		bench_runs = strtol(arg, NULL, 10);
-+		if (bench_runs <= 0) {
-+			fprintf(stderr, "Invalid benchmark run count: %s\n", arg);
-+			return -EINVAL;
-+		}
-+		break;
-+	case ARGP_KEY_ARG:
-+		argp_usage(state);
-+		break;
-+	default:
-+		return ARGP_ERR_UNKNOWN;
-+	}
-+	return 0;
-+}
-+
-+static const struct argp argp = {
-+	.options = opts,
-+	.parser = parse_arg,
-+};
-+
-+struct addr {
-+	unsigned long long addr;
-+	int idx;
-+};
-+
-+static struct addr *addrs;
-+static size_t addr_cnt, addr_cap;
-+
-+struct resolved_addr {
-+	unsigned long long file_off;
-+	const char *vma_name;
-+	int build_id_sz;
-+	char build_id[20];
-+};
-+
-+static struct resolved_addr *resolved;
-+
-+static int resolve_addrs_ioctl(void)
-+{
-+	char buf[32], build_id_buf[20], vma_name[PATH_MAX];
-+	struct procmap_query q;
-+	int fd, err, i;
-+	struct addr *a = &addrs[0];
-+	struct resolved_addr *r;
-+
-+	snprintf(buf, sizeof(buf), "/proc/%d/maps", pid);
-+	fd = open(buf, O_RDONLY);
-+	if (fd < 0) {
-+		err = -errno;
-+		fprintf(stderr, "Failed to open process map file (%s): %d\n", buf, err);
-+		return err;
-+	}
-+
-+	memset(&q, 0, sizeof(q));
-+	q.size = sizeof(q);
-+	q.query_flags = PROCMAP_QUERY_COVERING_OR_NEXT_VMA;
-+	q.vma_name_addr = (__u64)vma_name;
-+	if (request_build_id)
-+		q.build_id_addr = (__u64)build_id_buf;
-+
-+	for (i = 0; i < addr_cnt; ) {
-+		char *name = NULL;
-+
-+		q.query_addr = (__u64)a->addr;
-+		q.vma_name_size = sizeof(vma_name);
-+		if (request_build_id)
-+			q.build_id_size = sizeof(build_id_buf);
-+
-+		err = ioctl(fd, PROCMAP_QUERY, &q);
-+		if (err < 0 && errno == ENOTTY) {
-+			close(fd);
-+			fprintf(stderr, "PROCMAP_QUERY ioctl() command is not supported on this kernel!\n");
-+			return -EOPNOTSUPP; /* ioctl() not implemented yet */
-+		}
-+		if (err < 0 && errno == ENOENT) {
-+			fprintf(stderr, "ENOENT addr %lx\n", (long)q.query_addr);
-+			i++;
-+			a++;
-+			continue; /* unresolved address */
-+		}
-+		if (err < 0) {
-+			err = -errno;
-+			close(fd);
-+			fprintf(stderr, "PROCMAP_QUERY ioctl() returned error: %d\n", err);
-+			return err;
-+		}
-+
-+		if (verbose) {
-+			printf("VMA FOUND (addr %08lx): %08lx-%08lx %c%c%c%c %08lx %02x:%02x %ld %s (build ID: %s, %d bytes)\n",
-+			       (long)q.query_addr, (long)q.vma_start, (long)q.vma_end,
-+			       (q.vma_flags & PROCMAP_QUERY_VMA_READABLE) ? 'r' : '-',
-+			       (q.vma_flags & PROCMAP_QUERY_VMA_WRITABLE) ? 'w' : '-',
-+			       (q.vma_flags & PROCMAP_QUERY_VMA_EXECUTABLE) ? 'x' : '-',
-+			       (q.vma_flags & PROCMAP_QUERY_VMA_SHARED) ? 's' : 'p',
-+			       (long)q.vma_offset, q.dev_major, q.dev_minor, (long)q.inode,
-+			       q.vma_name_size ? vma_name : "",
-+			       q.build_id_size ? "YES" : "NO",
-+			       q.build_id_size);
-+		}
-+
-+		/* skip addrs falling before current VMA */
-+		for (; i < addr_cnt && a->addr < q.vma_start; i++, a++) {
-+		}
-+		/* process addrs covered by current VMA */
-+		for (; i < addr_cnt && a->addr < q.vma_end; i++, a++) {
-+			r = &resolved[a->idx];
-+			r->file_off = a->addr - q.vma_start + q.vma_offset;
-+
-+			/* reuse name, if it was already strdup()'ed */
-+			if (q.vma_name_size)
-+				name = name ?: strdup(vma_name);
-+			r->vma_name = name;
-+
-+			if (q.build_id_size) {
-+				r->build_id_sz = q.build_id_size;
-+				memcpy(r->build_id, build_id_buf, q.build_id_size);
-+			}
-+		}
-+	}
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static int resolve_addrs_parse(void)
-+{
-+	size_t vma_start, vma_end, vma_offset, ino;
-+	uint32_t dev_major, dev_minor;
-+	char perms[4], buf[32], vma_name[PATH_MAX], fbuf[4096];
-+	FILE *f;
-+	int err, idx = 0;
-+	struct addr *a = &addrs[idx];
-+	struct resolved_addr *r;
-+
-+	snprintf(buf, sizeof(buf), "/proc/%d/maps", pid);
-+	f = fopen(buf, "r");
-+	if (!f) {
-+		err = -errno;
-+		fprintf(stderr, "Failed to open process map file (%s): %d\n", buf, err);
-+		return err;
-+	}
-+
-+	err = setvbuf(f, fbuf, _IOFBF, sizeof(fbuf));
-+	if (err) {
-+		err = -errno;
-+		fprintf(stderr, "Failed to set custom file buffer size: %d\n", err);
-+		return err;
-+	}
-+
-+	while ((err = fscanf(f, "%zx-%zx %c%c%c%c %zx %x:%x %zu %[^\n]\n",
-+			     &vma_start, &vma_end,
-+			     &perms[0], &perms[1], &perms[2], &perms[3],
-+			     &vma_offset, &dev_major, &dev_minor, &ino, vma_name)) >= 10) {
-+		const char *name = NULL;
-+
-+		/* skip addrs before current vma, they stay unresolved */
-+		for (; idx < addr_cnt && a->addr < vma_start; idx++, a++) {
-+		}
-+
-+		/* resolve all addrs within current vma now */
-+		for (; idx < addr_cnt && a->addr < vma_end; idx++, a++) {
-+			r = &resolved[a->idx];
-+			r->file_off = a->addr - vma_start + vma_offset;
-+
-+			/* reuse name, if it was already strdup()'ed */
-+			if (err > 10)
-+				name = name ?: strdup(vma_name);
-+			else
-+				name = NULL;
-+			r->vma_name = name;
-+		}
-+
-+		/* ran out of addrs to resolve, stop early */
-+		if (idx >= addr_cnt)
-+			break;
-+	}
-+
-+	fclose(f);
-+	return 0;
-+}
-+
-+static int cmp_by_addr(const void *a, const void *b)
-+{
-+	const struct addr *x = a, *y = b;
-+
-+	if (x->addr != y->addr)
-+		return x->addr < y->addr ? -1 : 1;
-+	return x->idx < y->idx ? -1 : 1;
-+}
-+
-+static int cmp_by_idx(const void *a, const void *b)
-+{
-+	const struct addr *x = a, *y = b;
-+
-+	return x->idx < y->idx ? -1 : 1;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	FILE* f;
-+	int err, i;
-+	unsigned long long addr;
-+	uint64_t start_ns;
-+	double total_ns;
-+
-+	/* Parse command line arguments */
-+	err = argp_parse(&argp, argc, argv, 0, NULL, NULL);
-+	if (err)
-+		return err;
-+
-+	if (pid <= 0 || !addrs_path) {
-+		fprintf(stderr, "Please provide PID and file with addresses to process!\n");
-+		exit(1);
-+	}
-+
-+	if (verbose) {
-+		fprintf(stderr, "PID: %d\n", pid);
-+		fprintf(stderr, "PATH: %s\n", addrs_path);
-+	}
-+
-+	f = fopen(addrs_path, "r");
-+	if (!f) {
-+		err = -errno;
-+		fprintf(stderr, "Failed to open '%s': %d\n", addrs_path, err);
-+		goto out;
-+	}
-+
-+	while ((err = fscanf(f, "%llx\n", &addr)) == 1) {
-+		if (addr_cnt == addr_cap) {
-+			addr_cap = addr_cap == 0 ? 16 : (addr_cap * 3 / 2);
-+			addrs = realloc(addrs, sizeof(*addrs) * addr_cap);
-+			memset(addrs + addr_cnt, 0, (addr_cap - addr_cnt) * sizeof(*addrs));
-+		}
-+
-+		addrs[addr_cnt].addr = addr;
-+		addrs[addr_cnt].idx = addr_cnt;
-+
-+		addr_cnt++;
-+	}
-+	if (verbose)
-+		fprintf(stderr, "READ %zu addrs!\n", addr_cnt);
-+	if (!feof(f)) {
-+		fprintf(stderr, "Failure parsing full list of addresses at '%s'!\n", addrs_path);
-+		err = -EINVAL;
-+		fclose(f);
-+		goto out;
-+	}
-+	fclose(f);
-+	if (addr_cnt == 0) {
-+		fprintf(stderr, "No addresses provided, bailing out!\n");
-+		err = -ENOENT;
-+		goto out;
-+	}
-+
-+	resolved = calloc(addr_cnt, sizeof(*resolved));
-+
-+	qsort(addrs, addr_cnt, sizeof(*addrs), cmp_by_addr);
-+	if (verbose) {
-+		fprintf(stderr, "SORTED ADDRS (%zu):\n", addr_cnt);
-+		for (i = 0; i < addr_cnt; i++) {
-+			fprintf(stderr, "ADDR #%d: %#llx\n", addrs[i].idx, addrs[i].addr);
-+		}
-+	}
-+
-+	start_ns = get_time_ns();
-+	for (i = bench_runs ?: 1; i > 0; i--) {
-+		if (use_ioctl) {
-+			err = resolve_addrs_ioctl();
-+		} else {
-+			err = resolve_addrs_parse();
-+		}
-+		if (err) {
-+			fprintf(stderr, "Failed to resolve addrs: %d!\n", err);
-+			goto out;
-+		}
-+	}
-+	total_ns = get_time_ns() - start_ns;
-+
-+	if (bench_runs) {
-+		fprintf(stderr, "BENCHMARK MODE. RUNS: %d TOTAL TIME (ms): %.3lf TIME/RUN (ms): %.3lf TIME/ADDR (us): %.3lf\n",
-+			bench_runs, total_ns / 1000000.0, total_ns / bench_runs / 1000000.0,
-+			total_ns / bench_runs / addr_cnt / 1000.0);
-+	}
-+
-+	/* sort them back into the original order */
-+	qsort(addrs, addr_cnt, sizeof(*addrs), cmp_by_idx);
-+
-+	if (!quiet) {
-+		printf("RESOLVED ADDRS (%zu):\n", addr_cnt);
-+		for (i = 0; i < addr_cnt; i++) {
-+			const struct addr *a = &addrs[i];
-+			const struct resolved_addr *r = &resolved[a->idx];
-+
-+			if (r->file_off) {
-+				printf("RESOLVED   #%d: %#llx -> OFF %#llx",
-+					a->idx, a->addr, r->file_off);
-+				if (r->vma_name)
-+					printf(" NAME %s", r->vma_name);
-+				if (r->build_id_sz) {
-+					char build_id_str[41];
-+					int j;
-+
-+					for (j = 0; j < r->build_id_sz; j++)
-+						sprintf(&build_id_str[j * 2], "%02hhx", r->build_id[j]);
-+					printf(" BUILDID %s", build_id_str);
-+				}
-+				printf("\n");
-+			} else {
-+				printf("UNRESOLVED #%d: %#llx\n", a->idx, a->addr);
-+			}
-+		}
-+	}
-+out:
-+	free(addrs);
-+	free(addrs_path);
-+	free(resolved);
-+
-+	return err < 0 ? -err : 0;
-+}
--- 
-2.43.0
-
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+> 
 
