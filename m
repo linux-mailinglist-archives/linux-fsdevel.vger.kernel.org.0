@@ -1,103 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-21053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16DC8FD193
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 17:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CEC08FD169
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 17:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A62121C21FC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 15:26:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E6AD1C2142C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 15:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5062E481B3;
-	Wed,  5 Jun 2024 15:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCD63D548;
+	Wed,  5 Jun 2024 15:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxSIBGH6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwPGMecg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FE619D8A2;
-	Wed,  5 Jun 2024 15:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05C419D891;
+	Wed,  5 Jun 2024 15:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601169; cv=none; b=jIbL/8eEphguyO0orUznfK/1fk+1/0PRDFfKsnx9CV1pk1Mc/QR8zaQ1nF21eAOKi7FHyDZvh6FhAw8DhqrUBtHiRLUedUzgc2aVweJvaAW4EfVpILcFfkDdjDPgl9sRGr2l7SIWPq8g39RP3ZP6IjJr2Q0EnGrPNwpobfuL/B0=
+	t=1717600239; cv=none; b=NbbUaAU22kMjHA2hOiTUP33viqSWK4UauTj1t8AFbWk436JWsaR5nddG+ub2NOBvZq160Lz7uxBDKeKNwlyZI3glsN6g6A+FH3KLxSWWdu9KXpkfwGxUHeNtrGo9q5BasfkEG/+LY8q89HyprTtVyfd7AjnfmtEvI56hUmbmmPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601169; c=relaxed/simple;
-	bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=envxarqUcZfqVGrB9+dGgaMABhWCNCwDfbv+5D0T3vCYTnIBjTUtBLLtgK1uMTWvEZioRgbW3Uc9jqY/YFYzcx6oeRn99TdvhYLTdVc1jO8p5tqGD9s3I4t/zX9529UZjgJmQZ7pwBQ0IdeQvuQ+ZXzyaG/4vgzsQQ1zhEa0XcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxSIBGH6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADEEC2BD11;
-	Wed,  5 Jun 2024 15:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717601169;
-	bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XxSIBGH6rRgGrOvWHVda0jAQp3yhRM782xGt9XMZcSl7d0ZA1lIizB1m02OTh41lU
-	 OrgAkmc26Q+hlkecOcTIdgf4h0DD7g3Qf8a9CiHFwye67f6dMi24jzxoSljrTYTDqg
-	 FF3vy/uyk7Hbv2d1UWIxVQyN/cSjKma5vY9TasiN9eLBbGHOdp3g0+C17YonBncNeQ
-	 4z5CdS2uEe3o+SrmoXZ1adaCx8EVoK7FzIYJiEcRFdT6IupN2Lyutk+jkCaTew7aMI
-	 6G0NQWBVJzAuF/rcttJUUz1NJttM7PHuB332ybK/OXHgqyc27x208p9iQL2n8igUVL
-	 rGoril+oaHeIA==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] whack user_path_at_empty, cleanup getname_flags
-Date: Wed,  5 Jun 2024 17:10:03 +0200
-Message-ID: <20240605-notation-rausnehmen-c4bd0c38f994@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240604155257.109500-1-mjguzik@gmail.com>
-References: <20240604155257.109500-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1717600239; c=relaxed/simple;
+	bh=SiSRiLqVQvkgjbroyhbLKTPsZvrrL6hgIXaNmPPH5Hc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6FqSUQh8iBknU/3oIuRieY6UoNPVkGL7Wpwi6bstwcuUU0z2Vu7d8+ir1fZd9p0GnzhK/DzcDTEeeb8LFAcj74TLNcgi11I2M/DRXvzWXqJEHKBrh+aqEh/dROwtpMU9uK4WtxlmGt+Vj2+KijdIDzsPbrRfmXRGXwKZDik+PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwPGMecg; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso3280881a12.0;
+        Wed, 05 Jun 2024 08:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717600236; x=1718205036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SiSRiLqVQvkgjbroyhbLKTPsZvrrL6hgIXaNmPPH5Hc=;
+        b=bwPGMecgqov+HbunlNCZf5WZWYiDwfsYJtC9UyUDeXTf/GbSY+epnZ/zP1ZvebpM/j
+         T0h65xiRNSqczRHE6lNsrj3gFTu4XAD8zF/pXTbB7/G7UGAHPmW11izTIIMxrPJVF/Oe
+         ZMTKPaubNICp9gQrjI59Pff0+Tm6b1U+AMjYVORTtiMvokyejX3ClwyrpcG/myzEDhi6
+         C0laUD8resYIuHtx375GfjAchndfsiFlV/4O4pXl2d57oLPQWm3L/Re3t27ERLkYroQU
+         7Tqrgjf5XMstMGqRO7hCmKGNclRMQdJxASmcgMKBORJT67K5gKn8waeNfMmYakx+tORZ
+         +6uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717600236; x=1718205036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SiSRiLqVQvkgjbroyhbLKTPsZvrrL6hgIXaNmPPH5Hc=;
+        b=nuTNnoiq4gGQs5QknXUopueR28d0yHtFU8u1PKi4Ixg+AP0FX8sER00ETo9jh9rjgE
+         iPwNyg5OUazWI/FaV9FtqW8LMWojFr2WATb0BqqJFcVsyj0VbNszo3Qojt8t8Yg59Xm1
+         V1BgGZLvtm5SIX3KiIjsZLteKAir+knENqdOIodmGE8uvdMFxRdbp1eGxTDFj8KF4fy4
+         mUjaRjom0Rwde+5bzUhZLavfnUSJMtMHUqcZi/m1izSyy8zteKp/DDRl5WwLqcWNA+0L
+         7znTdDh+Fg/s8ZevJotl1Wl6tkyNy8zzBdWb5hNL15WyNoZRRDaZNEcwn4VT+Z1fAHH+
+         ibHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlGAM2w3hKf6syL0wgELFnCxB7ONNnRlwozoXSSs/5r9kJKuTwatvBPaqCakqWNPIqk8LPPgkuBfm3ZakzUl01WlQNfTe85hld44qrykF7ayWNOyecAGjkxQZcxkN+j5oo8rlcnuMKRnKiVw==
+X-Gm-Message-State: AOJu0Yx9HWvxKKd8zy/MjkfLtlTWjMGiPiHVVXE7phJPaPgjnryQaLYJ
+	N/n5PDLsiGxzEqOo0P13csaLZQ+qm464ZWJb5EvbN3lXVSK/b/aiOKeuGCzVaiWJRB82B9jIJNc
+	nSqkH17okulkzgvcLZdcLqD1tnGU=
+X-Google-Smtp-Source: AGHT+IGRImTrlF9tKlBBgLVkRuBVevowWXm72ttizbamHPcLJEzMxuXdmC7xfDoNWP+ZeKqDN+efam3m0IuhieyYeuo=
+X-Received: by 2002:a50:9548:0:b0:57a:31eb:83da with SMTP id
+ 4fb4d7f45d1cf-57a8b7c6240mr1913836a12.30.1717600235863; Wed, 05 Jun 2024
+ 08:10:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1442; i=brauner@kernel.org; h=from:subject:message-id; bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQlNLf5fI6WunTQXPrVzJ7D7z+qPG30nKiW3nC/y2zSA qMP50JedJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkfiEjw0OHuokvp7l8dRCw /t3r4uaVlpa6+IR8EpdDzkcBoZIlqxgZru84+TJkoc6z+dZ1jSvlHk1ew6h89t321bVpQuqptql bGQE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240604155257.109500-1-mjguzik@gmail.com> <20240604155257.109500-4-mjguzik@gmail.com>
+ <20240605-sonnabend-busbahnhof-3f93ffcac846@brauner>
+In-Reply-To: <20240605-sonnabend-busbahnhof-3f93ffcac846@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 5 Jun 2024 17:10:23 +0200
+Message-ID: <CAGudoHG-YVNui5NW7hx8dXJiYaM_L5_uMQB2bmwRVkOg03NKFw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] vfs: shave a branch in getname_flags
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 04 Jun 2024 17:52:54 +0200, Mateusz Guzik wrote:
-> I tried to take a stab at the atomic filename refcount thing [1], found
-> some easy cleanup to do as a soft prerequisite.
-> 
-> user_path_at_empty saddles getname_flags with an int * argument nobody
-> else uses, so it only results in everyone else having to pass NULL
-> there. This is trivially avoidable.
-> 
-> [...]
+On Wed, Jun 5, 2024 at 5:03=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Tue, Jun 04, 2024 at 05:52:57PM +0200, Mateusz Guzik wrote:
+> > Check for an error while copying and no path in one branch.
+>
+> Fine to move that check up but we need to redo it after we recopied.
+> It's extremely unlikely but the contents could've changed iirc. I can
+> fix that up though.
 
-Snatched with some minor changes unless I hear complaints.
+Oh I see, you mean the buffer might have initially been too big so it
+landed in the zmalloc fallback, but by that time userspace might have
+played games and slapped a NUL char in there.
 
----
+Fair, but also trivial to fix up, so I would appreciate if you sorted
+it out, especially since you offered :)
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/3] vfs: stop using user_path_at_empty in do_readlinkat
-      https://git.kernel.org/vfs/vfs/c/d63b3a67520b
-[2/3] vfs: retire user_path_at_empty and drop empty arg from getname_flags
-      https://git.kernel.org/vfs/vfs/c/a01c264715dc
-[3/3] vfs: shave a branch in getname_flags
-      https://git.kernel.org/vfs/vfs/c/12a8c8f491b4
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
