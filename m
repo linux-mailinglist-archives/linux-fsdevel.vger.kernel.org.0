@@ -1,181 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-21034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CF98FC99E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 13:03:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036798FC9A3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 13:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9011C233B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 11:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3E6284E75
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 11:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D741922F7;
-	Wed,  5 Jun 2024 11:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79ED1922E9;
+	Wed,  5 Jun 2024 11:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="RC9U54tb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i+UYPUTm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979421373
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 11:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720A4146017
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 11:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717585369; cv=none; b=pmEBy9LvEJ2BcTerd9VjLBYgqeT647HjgLkl5iweasNu2InwHO0eOw0vLoxz02c75iTh0ruj5Rmgj1fnwXKzAHe83Sd9kKiSeHfpc4r3LUX6V13mp+P7EVs+Nk/kcQzDg8LpxlOJgtOTa5U9g357UoKvN6x54mtgyFSQDSMlbx0=
+	t=1717585477; cv=none; b=K0FYrIEqQwFyQQgQwUDC+L5Di9btGRmLqU1DkwLvIyMzkU1dC97wkOiLsYe5b/1UBVYfofPPiq7kF7EP63wTxqo8VNMGyLLkrQyFEXPX4S0sqchGxrDR93Iw1B5K+YH1DOJrpRMF/Aaa+7+vd1ByKPIV/+cO4tCegTOS2aclHGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717585369; c=relaxed/simple;
-	bh=7FgkUmzW4vq4WuhnkXWvITbhdqSRYHVlZ8igKZumwzk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UpcHNRitVpAjOeu2Qnb61y/MuoHFiobZN0g3sQGLvhTtU86XGzSR2dDnkFpZsd1s4w6BvOu4yAPovYNWMSQtEGIec7EszeU0bc7x9a7Hd8gnUvYcDUwvKxJY0WHcuXaQif4qOIZ+6ibs3qDKI9Wph4VUMTweOCM8IIG8bdqbdY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=RC9U54tb; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52961b77655so2286314e87.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 04:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1717585366; x=1718190166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cEYhMckwB2/P4xzPW88npOsZyYkpk9RU9J5XlEXZ8BE=;
-        b=RC9U54tb5Nd5PPrdWHPA6yNhk8ZJC0rAdL8c2Am/MjcAy73MwJOqNK4gajlwI7YG4H
-         H9ZbQa63Mxs0OofE5sK94hG9uTEngRsZo75fT1EDjGX6Pl84KmcvM1+WrlXLNM7Ydxic
-         CmA1OlQnFfiPkSrcL/nwXZqwh405yNj4G2DtZVLPvp53UIEfNxhXj8i+Jmta6xou5NVj
-         /qUXCyFNJ9yhwIwJP9oSy0Py4MTLUMrBhEFCp9f9DoAnJW5959YdVZSwTohU3B04ydeM
-         /V3aQ9RSWYjnyK86uUmD8gorVwD8eVKpaWWpytjKFAgpG97ihxfIYrD+DoZrY8SorHoX
-         RaXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717585366; x=1718190166;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cEYhMckwB2/P4xzPW88npOsZyYkpk9RU9J5XlEXZ8BE=;
-        b=IVFmx0L17FyjxDgDeAVBa63N7a8X1JnS85asDjcnaSpuFsRdbLJuQBbMrmnc9wspgR
-         /W/pQVxb8yAs1VvmESVNA6qSBJJh8rzJAIzuUF0VIPpm0vsMs4MRYqcwQxEKK+AFEy82
-         sniRvbGci9fm6GJUtz36LNpn0dcEZPQX3fHe3KHCPyHMIiDt+s+t3HPGu5ajFPFVT8GG
-         d5SMXkhqhX1mO25h9pbxvSmU+NOAdvfF3YMlRy+BO35vvYbQa8qYwadyowScHDoilM46
-         63MN/ac96xS4v9VXlsoNLJBRVFuCLYx4S62tti2liHQ5sMZnkaqmwX6tyS+8/RqTSJT8
-         ByJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGr7vj2yVNvfhvnnJrVvfQpI8u57ZevqAD4txkLYIRFfb6waQTbJ3b5UYnGdWlCCQuTg9d27dEf8Kh13q2pAw1tYg93yTFok9cCGN3EQ==
-X-Gm-Message-State: AOJu0Yz8SLhGDRymRfz3kRgAa7nTGsErbp39RogHQnwqqUxVmQsqzvzo
-	LDOsYYrkXpRfynx4QFlayFcBfSc2ZCVEn8f80un7TfVb8SjVpTdFRV7CNWteSg0=
-X-Google-Smtp-Source: AGHT+IFTiG3JX/p/DawD0Ae2OAwaEN0LLyKy41m3I3xduQ2hQnmGquYk6KqGSPjPVeNVFNBYMBPhsA==
-X-Received: by 2002:a05:6512:10d2:b0:51e:11d5:bca5 with SMTP id 2adb3069b0e04-52bab502b5cmr1623187e87.54.1717585365502;
-        Wed, 05 Jun 2024 04:02:45 -0700 (PDT)
-Received: from ssdfs-test-0070.sigma.sbrf.ru ([84.252.147.254])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d7ff10sm1762868e87.210.2024.06.05.04.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 04:02:44 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: slava@dubeiko.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC] ML infrastructure in Linux kernel
-Date: Wed,  5 Jun 2024 14:02:19 +0300
-Message-Id: <20240605110219.7356-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717585477; c=relaxed/simple;
+	bh=aacbWcBdmej5VM/1HQcinIqRHUX3BrAjJvVP8miwrcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=asy5vLphOeZoaVgtRigaz4enQnl5ds0SoaeJLOieaT65nMxyT1DdbbDZxGOZxGlShaO3ogQXAa9lu/OuYnP3hCBluCeaCMjTTT2NP4bECbfZU2T2XwLx3x+z3GbMAJHjpQ+uBbweiVENjPWF+v0VdsG47juX96QAOuYcXpmkrNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i+UYPUTm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717585473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ERhPWPhucZxJF11EopTAywzmhEWvAHMOqkMcgq9R5o8=;
+	b=i+UYPUTmlq8NgurG6kArzxoTHFfkpk3Q+3q9OZyP/FKz18vTSGBkXYtMWMFXxv+H1dcAkn
+	e2vK8ppiOY8iC+JRrvIo976WoxmKb407WekA3/YGQ08kQtXmVLJV2VIjhNq/63FLZzMPwe
+	GvvfDOuni/X1efNQ9SIA2tnxD3sodzw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-kS3eThQCOW-jNDUfnSoyIw-1; Wed,
+ 05 Jun 2024 07:04:29 -0400
+X-MC-Unique: kS3eThQCOW-jNDUfnSoyIw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5CADD1955D9A;
+	Wed,  5 Jun 2024 11:04:27 +0000 (UTC)
+Received: from localhost (unknown [10.39.195.133])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0B9E11955F79;
+	Wed,  5 Jun 2024 11:04:25 +0000 (UTC)
+Date: Wed, 5 Jun 2024 07:04:23 -0400
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Peter-Jan Gootzen <pgootzen@nvidia.com>
+Cc: "mszeredi@redhat.com" <mszeredi@redhat.com>,
+	Idan Zach <izach@nvidia.com>,
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+	"jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	Max Gurtovoy <mgurtovoy@nvidia.com>,
+	"vgoyal@redhat.com" <vgoyal@redhat.com>,
+	Oren Duer <oren@nvidia.com>, Yoray Zack <yorayz@nvidia.com>
+Subject: Re: [PATCH] fuse: cleanup request queuing towards virtiofs
+Message-ID: <20240605110423.GA135899@fedora.redhat.com>
+References: <20240529155210.2543295-1-mszeredi@redhat.com>
+ <20240529183231.GC1203999@fedora.redhat.com>
+ <02a56c0d80c2fab16b7d3b536727ff6865aded40.camel@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nmOucSGHiJiHzIv5"
+Content-Disposition: inline
+In-Reply-To: <02a56c0d80c2fab16b7d3b536727ff6865aded40.camel@nvidia.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello,
 
-I would like to initiate a discussion related to an unified
-infrastructure for ML workloads and user-space drivers.
+--nmOucSGHiJiHzIv5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[PROBLEM STATEMENT]
+On Wed, Jun 05, 2024 at 10:40:44AM +0000, Peter-Jan Gootzen wrote:
+> On Wed, 2024-05-29 at 14:32 -0400, Stefan Hajnoczi wrote:
+> > On Wed, May 29, 2024 at 05:52:07PM +0200, Miklos Szeredi wrote:
+> > > Virtiofs has its own queing mechanism, but still requests are first
+> > > queued
+> > > on fiq->pending to be immediately dequeued and queued onto the
+> > > virtio
+> > > queue.
+> > >=20
+> > > The queuing on fiq->pending is unnecessary and might even have some
+> > > performance impact due to being a contention point.
+> > >=20
+> > > Forget requests are handled similarly.
+> > >=20
+> > > Move the queuing of requests and forgets into the fiq->ops->*.
+> > > fuse_iqueue_ops are renamed to reflect the new semantics.
+> > >=20
+> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > > ---
+> > > =A0fs/fuse/dev.c=A0=A0=A0=A0=A0=A0 | 159 ++++++++++++++++++++++++----=
+-------------
+> > > ---
+> > > =A0fs/fuse/fuse_i.h=A0=A0=A0 |=A0 19 ++----
+> > > =A0fs/fuse/virtio_fs.c |=A0 41 ++++--------
+> > > =A03 files changed, 106 insertions(+), 113 deletions(-)
+> >=20
+> > This is a little scary but I can't think of a scenario where directly
+> > dispatching requests to virtqueues is a problem.
+> >=20
+> > Is there someone who can run single and multiqueue virtiofs
+> > performance
+> > benchmarks?
+> >=20
+> > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+>=20
+> I ran some tests and experiments on the patch (on top of v6.10-rc2) with
+> our multi-queue capable virtio-fs device. No issues were found.
+>=20
+> Experimental system setup (which is not the fastest possible setup nor
+> the most optimized setup!):
+> # Host:
+>    - Dell PowerEdge R7525
+>    - CPU: 2x AMD EPYC 7413 24-Core
+>    - VM: QEMU KVM with 24 cores, vCPUs locked to the NUMA nodes on which
+> the DPU is attached. VFIO-pci device to passthrough the DPU.          =20
+> Running a default x86_64 ext4 buildroot with fio installed.
+> # Virtio-fs device:
+>    - BlueField-3 DPU
+>    - CPU: ARM Cortex-A78AE, 16 cores
+>    - One thread per queue, each busy polling on one request queue
+>    - Each queue is 1024 descriptors deep
+> # Workload (deviations are specified in the table):
+>    - fio 3.34
+>    - sequential read
+>    - ioengine=3Dio_uring, single 4GiB file, iodepth=3D128, bs=3D256KiB,  =
+ =20
+> runtime=3D30s, ramp_time=3D10s, direct=3D1
+>    - T is the number of threads (numjobs=3DT with thread=3D1)
+>    - Q is the number of request queues
+>=20
+> | Workload           | Before patch | After patch |
+> | ------------------ | ------------ | ----------- |
+> | T=3D1 Q=3D1            | 9216MiB/s    | 9201MiB/s   |
+> | T=3D2 Q=3D2            | 10.8GiB/s    | 10.7GiB/s   |
+> | T=3D4 Q=3D4            | 12.6GiB/s    | 12.2GiB/s   |
+> | T=3D8 Q=3D8            | 19.5GiB/s    | 19.7GiB/s   |
+> | T=3D16 Q=3D1           | 9451MiB/s    | 9558MiB/s   |
+> | T=3D16 Q=3D2           | 13.5GiB/s    | 13.4GiB/s   |
+> | T=3D16 Q=3D4           | 11.8GiB/s    | 11.4GiB/s   |
+> | T=3D16 Q=3D8           | 11.1GiB/s    | 10.8GiB/s   |
+> | T=3D24 Q=3D24          | 26.5GiB/s    | 26.5GiB/s   |
+> | T=3D24 Q=3D24 24 files | 26.5GiB/s    | 26.6GiB/s   |
+> | T=3D24 Q=3D24 4k       | 948MiB/s     | 955MiB/s    |
+>=20
+> Averaging out those results, the difference is within a reasonable
+> margin of a error (less than 1%). So in this setup's
+> case we see no difference in performance.
+> However if the virtio-fs device was more optimized, e.g. if it didn't
+> copy the data to its memory, then the bottleneck could possibly be on
+> the driver-side and this patch could show some benefit at those higher
+> message rates.
+>=20
+> So although I would have hoped for some performance increase already
+> with this setup, I still think this is a good patch and a logical
+> optimization for high performance virtio-fs devices that might show a
+> benefit in the future.
+>=20
+> Tested-by: Peter-Jan Gootzen <pgootzen@nvidia.com>
+> Reviewed-by: Peter-Jan Gootzen <pgootzen@nvidia.com>
 
-Last several years have revealed two important trends:
-(1) moving kernel-space functionality into user-space drivers
-(for example, SPDK, DPDK, ublk); (2) significant number of efforts
-of using ML models for various real life applications (for example,
-tuning kernel parameters, storage device failure prediction, fail
-slow drive detection, and so on). Both trends represent significant
-importance for the evolution of the Linux kernel. From one point of view,
-user-space drivers represent the way of decreasing the latency and
-improving the performance of operations. However, from another point of
-view, the approach of bypassing the Linux kernel introduces security and
-efficiency risks, potential synchronization issues of user-space threads,
-and breaking the Linux kernel architecture’s paradigm. Generally speaking,
-direct implementation of ML approaches in Linux kernel-space is very hard,
-inefficient, and problematic because of practical unavailability of
-floating point operations in the Linux kernel, and the computational power
-hungry nature of ML algorithms (especially, during training phase).
-It is possible to state that Linux kernel needs to introduce and to unify
-an infrastructure as for ML approaches as for user-space drivers.
+Thank you!
 
-[WHY DO WE NEED ML in LINUX KERNEL?]
+Stefan
 
-Do we really need a ML infrastructure in the Linux kernel? First of all,
-it is really easy to imagine a lot of down to earth applications of ML
-algorithms for automation of routine operations during working with
-Linux kernel. Moreover, potentially, the ML subsystem could be used for
-automated research and statistics gathering on the whole fleet of running
-Linux kernels. Also, the ML subsystem is capable of writing documentation,
-tuning kernel parameters on the fly, kernel recompilation, and even automated
-reporting about bugs and crashes. Generally speaking, the ML subsystem
-potentially can extend the Linux kernel capabilities. The main question is how?
 
-[POTENTIAL INFRASTRUCTURE VISION]
+--nmOucSGHiJiHzIv5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Technically speaking , both cases (user-space driver and ML subsystem)
-require a user-space functionality that can be considered as user-space
-extension of Linux kernel functionality. Such approach is similar to microkernel
-architecture by the minimal functionality on kernel side and the main
-functionality on user-space side with the mandatory minimization
-the number of context switches between kernel-space and user-space.
-The key responsibility of kernel-side agent (or subsystem) is the accounting
-of user-space extensions, synchronization of their access to shared resources
-or metadata on kernel side, statistics gathering and sharing it through
-the sysfs or specialized log file (likewise to syslog).
+-----BEGIN PGP SIGNATURE-----
 
-For example, such specialized log file(s) can be used by ML user-space
-extensions for executing the ML algorithms with the goal of analyzing data
-and available statistics. Generally speaking, the main ML logic can be executed
-by extension(s) on the user-space side. This ML logic can elaborate
-some “recommendations”, for example, that can  be shared with an ML agent
-on the kernel side. As a result, the kernel-space ML agent can check
-the shared “recommendations” and to apply the valid “recommendations”
-by means of Linux kernel tuning, recompilation, “hot” restart and so on.
-Technically speaking, the user-space driver requires pretty much the same
-architecture as the simple kernel-space agent/subsystem and user-space
-extension(s). The main functionality is on the user-space side and
-kernel-space side delivers only accounting the user-space extensions,
-allocating necessary resources, synchronizing access to shared resources,
-and gathering statistics.
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmZgRjcACgkQnKSrs4Gr
+c8iyCggAhkhXMzDotyA6BkP9KLtvG2AhuoWCtTHYJGxlK2Pn3zREK1/ZJBRzCOD1
+U+5Cgc+XkDThFmX7yTO5FDuXl/af/e4r1mxYV7a7mXH7o8bU1j5YtmiaDh0b7mWJ
+TDmpzZukIp+dMuW8SgUuf4JQKSDal3NioybeZ+69l95RIKfFL4wOxX/tNrcAtDZj
+69yYFXNuND/k1knDUXieodeU8zIh0AA32ym7WgVeJ1yFBWnv1phxxRxijWQoc+4I
+EA7xgnJlLLwgK9xsUor48i/8oSmgltg4hAKB4M4sf+Buguy9ar7jSHcNzMkDIsN5
+nRCXsFy17X+R46IZtTjGjPabatbrmg==
+=Oh6C
+-----END PGP SIGNATURE-----
 
-Generally speaking, such an approach implies the necessity of
-registering a specialized driver class that could represent
-an ML agent or user-space driver on kernel side. Then, it will be possible
-to use a modprobe-like model to create an instance of ML agent or
-user-space driver. Finally, we will have the kernel-space agent
-that is connected to the user-space extension. The key point here is that
-the user-space extension can directly communicate with a hardware device,
-but the kernel-space side can account for the activity of the user-space
-extension and allocates resources. It is possible to suggest an unified
-architecture of the kernel-side agent that will be specialized by
-the logic of user-space extension. But the logic of the kernel-space
-agent should be minimal, simple, and unified as much as possible.
-Technically speaking, the logic of kernel-space agent can be defined by
-the eBPF program and eBPF arena (or shared memory between kernel-space
-and user-space) can be used for interaction between the kernel-space
-agent and the user-space extension. And such interaction could be implemented
-through submission and completion queues, for example.
+--nmOucSGHiJiHzIv5--
 
-As a summary, described architecture is capable of implementing
-ML infrastructure in Linux kernel and unification of user-space drivers
-architecture.
-
-Any opinion on this? How feasible could be such vision?
-
-Thanks,
-Slava.
 
