@@ -1,135 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-21011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360E98FC202
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 04:49:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35738FC229
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 05:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD982B220BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 02:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80613285057
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 03:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868C6BB26;
-	Wed,  5 Jun 2024 02:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBC17345C;
+	Wed,  5 Jun 2024 03:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbDxYfSv"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qqk+zrTb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D19F9E9;
-	Wed,  5 Jun 2024 02:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0642056470;
+	Wed,  5 Jun 2024 03:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717555774; cv=none; b=nr9iaYB5pQQRtkK8yrWuQZ43cvqOj7jFkkYLZo/lIk+rlpbpddkuNZksjLs+jcuFOrwQ8BeOte3SdOrURNjEirQd/UGOje30COWtjDT/KmqgTeq4sw9LQk3pwbX4ocxv90JgtncjvW3xTwDq76bWJFx560gysN2p118VKvkQ5UI=
+	t=1717557933; cv=none; b=X1X2IcEU3VW7Pjlh9IBNFQlGqAK6TJiQopRT7qDazw9v+unG0ttM26RJNgdaUOv6cdtah7ZQtihiYHy2kngAF5nvGyrhaIPYwp0tl+bCJpn33aitg+YQ6kpz/EUW8oTFYVs//DTMRjDXmoW5JftbsL3+UGpmwzqspCeR0WUoQ1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717555774; c=relaxed/simple;
-	bh=F0SsIy3+W19LLpvn7Tlg14aUoOAuRRvMVsUgVQ8aDAQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KxnGFbNhMeeTWfTecvKyEfGiTx2sJvRAQ8uup7nobS081ELpogyrBw7gFb3GX3KWbY3WiLBEiwW0/XrVxaF1OMEe1rd+B+T1sCoTKXWWYGKP3zmjFKOvBPJf3w3UznlNbUvg0PHs13dnhNfNOZhTIyn4Kyn3ehYNlCaUn2Uxnuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbDxYfSv; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6af27d0c9f8so20564986d6.2;
-        Tue, 04 Jun 2024 19:49:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717555771; x=1718160571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2saUQpdqdIbqLGxvd8R0wiju4YwezRrdt4faqpUQys4=;
-        b=gbDxYfSvspenEyveQjmbVoQhfLbxrugrohbD5BwxIdYKwytRxZJG3LEuuGAOfjaXdR
-         spqfWHc9RCFCtPriT87vI1n1MlF4tqyopdaKQFN1GVYX+10tLmyFL3RLFLvyvSBqr6Fs
-         1pf8Q0MVOHYhFhl/EoCRgxxDTkhQnUYB4GBTbEvfqjQ6vELr6tN215UB6+3lBOZ1h0LI
-         W+lg+nw34mrqDrh8IGQ8CiLWPdMrzE1UrU6XxOnalFiWG0bZQWtE4L6nyDBF+lIcKpyX
-         licf6CbHKyFg43jWU4+hVdYXQ9zO7o7+KXi4YA0AWxFC1nBfnGaUrz2U9UCksk9tTCVb
-         QAkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717555771; x=1718160571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2saUQpdqdIbqLGxvd8R0wiju4YwezRrdt4faqpUQys4=;
-        b=JECJIAuCiThd8zcTRVo6iOihB1qTni7uoon96La9+A0hGfT435LcpHBk9LBRh21Pf7
-         tGNtCUSuKSJdnKx9Wls/9M/KkjCGMMV9RFE+IDm3D1J71hgN/FPlsrIvbSDwD3AzVAWq
-         0ty8/l046ePf9Ky/KFHemKYMiPRWDvfBfo7d1o/bQQPcaVIbf+wuVXQyyERekVS/7LSM
-         CoybtOHWBq17UCCMTa6wJbxIG0i7FOS/aYm2vzvqbYNt+yNsox8pMfLeKfprdW1lKOaN
-         DhKo87CralDtYs6AT66U8qpaOZxXTgHtsurnI91Q35CURA/0dgcCsBV/OJANLKCGm6fk
-         7CvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHBItQhioDoqOiyr1Y/0hyYYVVZxL5Q0de+LJck2RBmhGDPYBHyjMVFTNFuSlfZdk22O0zf9Nf/4WpwygdGwoxPmkHCcSsp4yhSpcm31WUhskiVF5qyF06uUiub1Nz1Zx7luybarSG7aRAypwHV0lbKOnjs5nszaf/LI7/1NgmDE/HeuvVhtc6f/eyTYbfbNI297AiCLxjpxtkZWefsNlOSPS8t60O02suLE+ziBSbqmWHPxQimuTU5mzrioC5y6Y9OKzSZb6edHdK8Vs0B3lxE+L4bOCQATZDK2EZQw==
-X-Gm-Message-State: AOJu0Yyv60dNijPxmrL7EC43g2WEFkIfAspFKCEkDmqw+IyiBZg426nN
-	9cGYPbQqQ2oINAbe1P0owqpJpYsib6nrSozEVFnh7wwi4yR7E8LPVhp/eqXkA2hrgNSknK7It/k
-	nrrBS9ZWOXYivW1j3115QWOZtjoRslewFGbaeHQ==
-X-Google-Smtp-Source: AGHT+IFq+yCl5o74ZjH3g13NJDso8wQ5+sJqbQadqfrtImzCDvp3GWtQvEB2R3IWUMP4fI/FfSN1B6bVUP2acYQYprE=
-X-Received: by 2002:a05:6214:4498:b0:6af:d47a:1421 with SMTP id
- 6a1803df08f44-6b030a9d410mr14097896d6.60.1717555771212; Tue, 04 Jun 2024
- 19:49:31 -0700 (PDT)
+	s=arc-20240116; t=1717557933; c=relaxed/simple;
+	bh=kSrIVEn5+ULziH4lIqSRZBF9y1SbsW1rFOIKZRGUYMY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Pa+/GZZ0invzHaUlBADMPdIUoh+riZ7zELqbwbDNlIZ+phRBN5mww8Ub8PfhvQ7JyWg0Yi34M/3TAY4K+W5olmbCZa8tUNzmuEgHVw623302gWojHm0+fODTD0jfdOb5ReuvhmXxwnRHalWUwHA3GwHDPlx38ThGEXVuydiwpCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qqk+zrTb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FB8BC32781;
+	Wed,  5 Jun 2024 03:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1717557932;
+	bh=kSrIVEn5+ULziH4lIqSRZBF9y1SbsW1rFOIKZRGUYMY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Qqk+zrTb3qN0u7nr+Ltb8BGII6GpqS9r3xPSvfVItICcFbPgKyQdNoxG25i7GOTg8
+	 aS+pj1Ao1N1lbuNg24jqF+JAEi/vN4E+gsPVlAUMF6t2DjeVFQ1oY1v/nxzdpxSBJu
+	 W8lxcEcDUrdIu5pH0BiEVOB4oHcVD/m3+rkLB2v4=
+Date: Tue, 4 Jun 2024 20:25:31 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Amer Al Shanawany <amer.shanawany@gmail.com>, Shuah Khan
+ <shuah@kernel.org>, Swarup Laxman Kotiaklapudi
+ <swarupkotikalapudi@gmail.com>, Hugh Dickins <hughd@google.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] selftests: proc: remove unreached code and fix build
+ warning
+Message-Id: <20240604202531.5d559ec4daed484a7a23592c@linux-foundation.org>
+In-Reply-To: <14f55053-2ff8-4086-8aac-b8ee2d50a427@p183>
+References: <202404010211.ygidvMwa-lkp@intel.com>
+	<20240603124220.33778-1-amer.shanawany@gmail.com>
+	<14f55053-2ff8-4086-8aac-b8ee2d50a427@p183>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-2-laoar.shao@gmail.com>
- <6cf37b34-c5e4-4d92-8a60-6c083e109439@stuba.sk>
-In-Reply-To: <6cf37b34-c5e4-4d92-8a60-6c083e109439@stuba.sk>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 5 Jun 2024 10:48:55 +0800
-Message-ID: <CALOAHbC-DDEhkTwxinLnfFo_quoNzg4ADjJAaZDWNQ0f64Dsiw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
-To: Matus Jokay <matus.jokay@stuba.sk>
-Cc: torvalds@linux-foundation.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 5, 2024 at 4:01=E2=80=AFAM Matus Jokay <matus.jokay@stuba.sk> w=
-rote:
->
-> Sorry guys for the mistake,
->
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index c75fd46506df..56a927393a38 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -1083,7 +1083,7 @@ struct task_struct {
-> >        *
-> >        * - normally initialized setup_new_exec()
-> >        * - access it with [gs]et_task_comm()
-> > -      * - lock it with task_lock()
-> > +      * - lock it with task_lock() for writing
-> there should be fixed only the comment about ->comm initialization during=
- exec.
->
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index c75fd46506df..48aa5c85ed9e 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1081,9 +1081,9 @@ struct task_struct {
->         /*
->          * executable name, excluding path.
->          *
-> -        * - normally initialized setup_new_exec()
-> +        * - normally initialized begin_new_exec()
->          * - access it with [gs]et_task_comm()
-> -        * - lock it with task_lock()
-> +        * - lock it with task_lock() for writing
->          */
->         char                            comm[TASK_COMM_LEN];
->
-> Again, sorry for the noise. It's a very minor fix, but maybe even a small=
- fix to the documentation can help increase the readability of the code.
->
+On Mon, 3 Jun 2024 17:24:47 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-Thank you for your improvement. It is very helpful. I will include it
-in the next version.
+> On Mon, Jun 03, 2024 at 02:42:20PM +0200, Amer Al Shanawany wrote:
+> > fix the following warning:
+> > proc-empty-vm.c:385:17: warning: ignoring return value of ‘write’
+> 
+> > --- a/tools/testing/selftests/proc/proc-empty-vm.c
+> > +++ b/tools/testing/selftests/proc/proc-empty-vm.c
+> > @@ -381,9 +381,6 @@ static int test_proc_pid_statm(pid_t pid)
+> 
+> > -	if (0) {
+> > -		write(1, buf, rv);
+> > -	}
+> 
+> no thanks
 
---=20
-Regards
-Yafang
+Why not?
+
+Why does that code exist anyway?  It at least needs a comment.
 
