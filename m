@@ -1,211 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-21057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993938FD1BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 17:36:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F68A8FD1CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 17:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3EE28801F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 15:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 976C31C21320
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 15:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1C956477;
-	Wed,  5 Jun 2024 15:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31581481D3;
+	Wed,  5 Jun 2024 15:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ypV8qNl2"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2taKfjw5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="suAoY8gm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oCZ6wGr9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8yoxrJg6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744201E4BF
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 15:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8100119D891
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 15:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601757; cv=none; b=I1NrXlyggcuw9Zuk59ixbzoOm7F5iTQx4qWWhhxob3SbBXwE8spgk2Xc0K1p948pgbimD/LLyGejxgM+4XSrApjL4ggLPXqDal8FxT/NI+1mVria5wqBeG13bHLoa0JXwz/X27vDsTVrXOkDoasGFVg71MZD1CaIRsNU1NH9r3Q=
+	t=1717601883; cv=none; b=JqJJoLo6+MBXzXhNPzKkxkTbEuvNd1hHvM4JW9Xuw/HmzQ4hrUQo3IhVBYuC0n8OVacaaNC26B/r7RHh4pA51ovIfndz5/pOR93GBwfSz7GjmEYUBvWX1fRj3Apd8Ee6STCYStuWJr16gJILPeABMfgxfSTC07CSzYpEfoMp9lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601757; c=relaxed/simple;
-	bh=+OZm5/y3/uFdNftvyg7ho7vFKppQZBuz2dYEwop/gSg=;
+	s=arc-20240116; t=1717601883; c=relaxed/simple;
+	bh=6+a0HduqCUR7kANz00Jf/9Dmtarv140XVMFBj5qMRoI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ts0b309w4tTstk6II5XU1qZXrd7REUZlRGFncU1olzKNKqmkeqx2ivobnYtnj71OL2q8fIAe+8itpDxom3qud3G8637BeFo8H09JzaFsNhbtBcMANBk13nE+1bjgedjE/bPcxnEk67wzQdmC6Wrt9Eo1TTFSPxqvV5o/0E1ReKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ypV8qNl2; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f6559668e1so33050835ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 08:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717601755; x=1718206555; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nAk75/rNTsxI/8Vj4jK+Zvdo2XN9iI9bePNHVmD2D10=;
-        b=ypV8qNl24BWzflq56OYyGSsH/4P2yxkb18K91z3/fDdt+mY0Ie7ee2LgReVSsoBVZ4
-         FKbHDnGvYPC0ZKNb99Rjnu6Mb5MnRhALqUvZ5XVymdRXWoi7IsOMsamqERT1nhoC8PyJ
-         75KCy7WnGLPODVnLXKv7iT7g3Pc0H9RmK8XxSN9Ta9Xhdca4XzzQwvv3TLlOoPxr92fx
-         KoWK5qxGjJ8FPrrUPcKReTHP6Do4zWiQ7uZg3T6Dm8jJOpp9wjekB7y4mBcY1NZCXqHo
-         dv8FFIUWrv1xmKwXfL+YLq7vEMw+yC9lAgD/5NeDU8KF/QEBneZpwadwQYiHZI/eBpTs
-         paMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717601755; x=1718206555;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAk75/rNTsxI/8Vj4jK+Zvdo2XN9iI9bePNHVmD2D10=;
-        b=h34aLIQ5r62vaUyLrwp/PJXyn0GVdT1WXhYCi8PbYeUDV1j+CTK9j2bJdfPr1Q6RUv
-         lBYCU/qUTnirV5gMBMSpF5DhuVfc7F7F2IUbr3h9t4lolP5JcxWkiKSpEJ0Wmk19PAYg
-         WNXok7ShQxS5kP1RguSFGEavlFLH1kBlvmUHoCozaD63S4QujTyxSZ1kb7AbC0uDfauc
-         /uc8y81FrMcElB4EX/2l4E6N/yeOzUTb1I/q34q1X8mMnWomVZP2888g5SvGtEYjvHAp
-         9rrEzJ0T2QU0W1lcL+aM0gT0Yt0d5x/5frUFZMly0peBd+Wm2M1Z6vZFD9djWxLREer6
-         f/gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWg1gOpQMOz3Uk/jg1KHP+0FLBYeRTG/RypVA/Wk/9rAACrMWpG2uJMIliWLpQ3A3dWMqz78q+O32PLVeWnZ4H9c4IZSBA5+HZd0J+jow==
-X-Gm-Message-State: AOJu0Yy8FEq7q2qXkIKcGQSYnnNlckDDG/gwXIPZfIxf3lJrzUIKQaOx
-	+kjmKiytKftkGl9HrBA235CNtXbX0wAMZc+uVedXmI1miiTSNnIs8pYtifip6uM=
-X-Google-Smtp-Source: AGHT+IGDBGJ8ZJCOCV4o7bc6YmUIzOf8ghMtygf47Fad9OJyRtHeX7zioK4Rcra76/1jvDQUwhrw+w==
-X-Received: by 2002:a17:902:da8d:b0:1f3:4d2:7025 with SMTP id d9443c01a7336-1f6a5a6ab9cmr36668345ad.49.1717601754632;
-        Wed, 05 Jun 2024 08:35:54 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:600::1:eaa0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323570f5sm103535245ad.75.2024.06.05.08.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 08:35:54 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:35:52 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	lege.wang@jaguarmicro.com,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-Message-ID: <20240605153552.GB21567@localhost.localdomain>
-References: <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
- <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
- <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com>
- <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
- <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
- <21741978-a604-4054-8af9-793085925c82@fastmail.fm>
- <20240604165319.GG3413@localhost.localdomain>
- <6853a389-031b-4bd6-a300-dea878979d8c@fastmail.fm>
- <20240604221654.GA17503@localhost.localdomain>
- <CAOQ4uxjTb=ja-fe6qqKjEo96m_AU6ikpERh1putSM9e_-6Y01g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tauSXIYwDCBtwPmB+V8WMLUB/U2/9KrJlmgV+CsJo8waRR+T7SOuk3TdD1SQewq5kKGjqWdiVEU8U+/AbDfFclTmif59ZsRmcP3jlYDGHKDzSN1ozfacRjsM/4S5WFurGTDZ4oEZRQAZC3CwUTDwbSsvspycT/EbYEC+thcuR/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2taKfjw5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=suAoY8gm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oCZ6wGr9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8yoxrJg6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 57DEF21A86;
+	Wed,  5 Jun 2024 15:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717601879; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX6gDXQML70p3N5o3TwGJkHa2c3BXgreA1dmoIS+C0Y=;
+	b=2taKfjw5tFMiSaXN7VlyJAP2mV8E2jEPpYhtlqalszbpMHix+ffyuMuMNGNaVzG86grzVU
+	euEHFm6Rw+Yvb+ZoyME8X9DAZ6E7OYFyiHR+flpzDg7OE0o657VLlePhhAGw/d8d8gBGxs
+	ya7iiyEW+J2H4ei7Ru1kCXguI2DM+IY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717601879;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX6gDXQML70p3N5o3TwGJkHa2c3BXgreA1dmoIS+C0Y=;
+	b=suAoY8gmfyK++O+obrlZ+huxjaM2yl2aTsLcc8J+SR5vjf46/L9NM9Y/vKp61/GXfLP5cJ
+	/fDkg1uVvDAjvoDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717601878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX6gDXQML70p3N5o3TwGJkHa2c3BXgreA1dmoIS+C0Y=;
+	b=oCZ6wGr9jKD5uQeFUU7+j4wv+vV2e1OIfxxxejpAY+5cKKG017nZrbDC/wwmpEjK/7QJZk
+	bMvu/Ci0JE41tSbf73pMYTNJjBOthhhka/sBqo+lEXNDXgLcYeV4kvzuxBt4+7OaDBf3/G
+	zannVeE3eO/Xk+Bn/TCBsCEYk/6tTww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717601878;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX6gDXQML70p3N5o3TwGJkHa2c3BXgreA1dmoIS+C0Y=;
+	b=8yoxrJg6iI0F4zYgSRbm639m6G8vH5FHEzPJeKlobV9sWeDc57crfBqAH9//VGOMeffuSC
+	yMa5Uq3FaJ44vUDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4984D13A24;
+	Wed,  5 Jun 2024 15:37:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NkzqEVaGYGaSSgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 05 Jun 2024 15:37:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C3911A086C; Wed,  5 Jun 2024 17:37:57 +0200 (CEST)
+Date: Wed, 5 Jun 2024 17:37:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jemmy <jemmywong512@gmail.com>
+Cc: longman@redhat.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, jemmy512@icloud.com
+Subject: Re: [PATCH] Improving readability of copy_tree
+Message-ID: <20240605153757.acrxforzws5d5rby@quack3>
+References: <20240604134347.9357-1-jemmywong512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjTb=ja-fe6qqKjEo96m_AU6ikpERh1putSM9e_-6Y01g@mail.gmail.com>
+In-Reply-To: <20240604134347.9357-1-jemmywong512@gmail.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,icloud.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,icloud.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
 
-On Wed, Jun 05, 2024 at 08:49:48AM +0300, Amir Goldstein wrote:
-> On Wed, Jun 5, 2024 at 1:17 AM Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Tue, Jun 04, 2024 at 11:39:17PM +0200, Bernd Schubert wrote:
-> > >
-> > >
-> > > On 6/4/24 18:53, Josef Bacik wrote:
-> > > > On Tue, Jun 04, 2024 at 04:13:25PM +0200, Bernd Schubert wrote:
-> > > >>
-> > > >>
-> > > >> On 6/4/24 12:02, Miklos Szeredi wrote:
-> > > >>> On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
-> > > >>>
-> > > >>>> Back to the background for the copy, so it copies pages to avoid
-> > > >>>> blocking on memory reclaim. With that allocation it in fact increases
-> > > >>>> memory pressure even more. Isn't the right solution to mark those pages
-> > > >>>> as not reclaimable and to avoid blocking on it? Which is what the tmp
-> > > >>>> pages do, just not in beautiful way.
-> > > >>>
-> > > >>> Copying to the tmp page is the same as marking the pages as
-> > > >>> non-reclaimable and non-syncable.
-> > > >>>
-> > > >>> Conceptually it would be nice to only copy when there's something
-> > > >>> actually waiting for writeback on the page.
-> > > >>>
-> > > >>> Note: normally the WRITE request would be copied to userspace along
-> > > >>> with the contents of the pages very soon after starting writeback.
-> > > >>> After this the contents of the page no longer matter, and we can just
-> > > >>> clear writeback without doing the copy.
-> > > >>>
-> > > >>> But if the request gets stuck in the input queue before being copied
-> > > >>> to userspace, then deadlock can still happen if the server blocks on
-> > > >>> direct reclaim and won't continue with processing the queue.   And
-> > > >>> sync(2) will also block in that case.>
-> > > >>> So we'd somehow need to handle stuck WRITE requests.   I don't see an
-> > > >>> easy way to do this "on demand", when something actually starts
-> > > >>> waiting on PG_writeback.  Alternatively the page copy could be done
-> > > >>> after a timeout, which is ugly, but much easier to implement.
-> > > >>
-> > > >> I think the timeout method would only work if we have already allocated
-> > > >> the pages, under memory pressure page allocation might not work well.
-> > > >> But then this still seems to be a workaround, because we don't take any
-> > > >> less memory with these copied pages.
-> > > >> I'm going to look into mm/ if there isn't a better solution.
-> > > >
-> > > > I've thought a bit about this, and I still don't have a good solution, so I'm
-> > > > going to throw out my random thoughts and see if it helps us get to a good spot.
-> > > >
-> > > > 1. Generally we are moving away from GFP_NOFS/GFP_NOIO to instead use
-> > > >    memalloc_*_save/memalloc_*_restore, so instead the process is marked being in
-> > > >    these contexts.  We could do something similar for FUSE, tho this gets hairy
-> > > >    with things that async off request handling to other threads (which is all of
-> > > >    the FUSE file systems we have internally).  We'd need to have some way to
-> > > >    apply this to an entire process group, but this could be a workable solution.
-> > > >
-> > >
-> > > I'm not sure how either of of both (GFP_ and memalloc_) would work for
-> > > userspace allocations.
-> > > Wouldn't we basically need to have a feature to disable memory
-> > > allocations for fuse userspace tasks? Hmm, maybe through mem_cgroup.
-> > > Although even then, the file system might depend on other kernel
-> > > resources (backend file system or block device or even network) that
-> > > might do allocations on their own without the knowledge of the fuse server.
-> > >
-> >
-> > Basically that only in the case that we're handling a request from memory
-> > pressure we would invoke this, and then any allocation would automatically have
-> > gfp_nofs protection because it's flagged at the task level.
-> >
-> > Again there's a lot of problems with this, like how do we set it for the task,
-> > how does it work for threads etc.
-> >
-> > > > 2. Per-request timeouts.  This is something we're planning on tackling for other
-> > > >    reasons, but it could fit nicely here to say "if this fuse fs has a
-> > > >    per-request timeout, skip the copy".  That way we at least know we're upper
-> > > >    bound on how long we would be "deadlocked".  I don't love this approach
-> > > >    because it's still a deadlock until the timeout elapsed, but it's an idea.
-> > >
-> > > Hmm, how do we know "this fuse fs has a per-request timeout"? I don't
-> > > think we could trust initialization flags set by userspace.
-> > >
-> >
-> > It would be controlled by the kernel.  So at init time the fuse file system says
-> > "my command timeout is 30 minutes."  Then the kernel enforces this by having a
-> > per-request timeout, and once that 30 minutes elapses we cancel the request and
-> > EIO it.  User space doesn't do anything beyond telling the kernel what it's
-> > timeout is, so this would be safe.
-> >
+
+Hello!
+
+On Tue 04-06-24 21:43:47, Jemmy wrote:
+> I'm new to Linux kernel development
+> and excited to make my first contribution.
+> While working with the copy_tree function,
+> I noticed some unclear variable names e.g., p, q, r.
+> I've updated them to be more descriptive,
+> aiming to make the code easier to understand.
 > 
-> Maybe that would be better to configure by mounter, similar to nfs -otimeo
-> and maybe consider opt-in to returning ETIMEDOUT in this case.
-> At least nfsd will pass that error to nfs client and nfs client will retry.
+> Changes:
 > 
-> Different applications (or network protocols) handle timeouts differently,
-> so the timeout and error seems like a decision for the admin/mounter not
-> for the fuse server, although there may be a fuse fs that would want to
-> set the default timeout, as if to request the kernel to be its watchdog
-> (i.e. do not expect me to take more than 30 min to handle any request).
+> p       -> o_parent, old parent
+> q       -> n_mnt, new mount
+> r       -> o_mnt, old child
+> s       -> o_child, old child
+> parent  -> n_parent, new parent
+> 
+> Thanks for the opportunity to be part of this community!
 
-Oh yeah for sure, I'm just saying for the purposes of allowing the FUSE daemon
-to be a little riskier with system resources we base it off of wether it opts in
-to command timeouts.
+So I agree more descriptive names would help readability of this code. But
+I'd pick different names which IMHO better capture the purpose.
 
-My plans are to have it be able to be set by the fuse daemon, or externally by a
-sysadmin via sysfs.  Thanks,
+mnt -> root (root of the tree to copy)
+r -> root_child (direct child of the root we are cloning)
+s -> cur_mnt (current mount we are copying)
+p -> cur_parent (parent of cur_mnt)
+q -> cloned_mnt (freshly cloned mount)
+parent -> cloned_parent
 
-Josef
+								Honza
+
+> Signed-off-by: Jemmy <jemmywong512@gmail.com>
+> ---
+>  fs/namespace.c | 51 +++++++++++++++++++++++++-------------------------
+>  1 file changed, 25 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 5a51315c6678..b1cf95ddfb87 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1969,7 +1969,7 @@ static bool mnt_ns_loop(struct dentry *dentry)
+>  struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
+>  					int flag)
+>  {
+> -	struct mount *res, *p, *q, *r, *parent;
+> +	struct mount *res, *o_parent, *o_child, *o_mnt, *n_parent, *n_mnt;
+>  
+>  	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(mnt))
+>  		return ERR_PTR(-EINVAL);
+> @@ -1977,47 +1977,46 @@ struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
+>  	if (!(flag & CL_COPY_MNT_NS_FILE) && is_mnt_ns_file(dentry))
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	res = q = clone_mnt(mnt, dentry, flag);
+> -	if (IS_ERR(q))
+> -		return q;
+> +	res = n_mnt = clone_mnt(mnt, dentry, flag);
+> +	if (IS_ERR(n_mnt))
+> +		return n_mnt;
+>  
+> -	q->mnt_mountpoint = mnt->mnt_mountpoint;
+> +	n_mnt->mnt_mountpoint = mnt->mnt_mountpoint;
+>  
+> -	p = mnt;
+> -	list_for_each_entry(r, &mnt->mnt_mounts, mnt_child) {
+> -		struct mount *s;
+> -		if (!is_subdir(r->mnt_mountpoint, dentry))
+> +	o_parent = mnt;
+> +	list_for_each_entry(o_mnt, &mnt->mnt_mounts, mnt_child) {
+> +		if (!is_subdir(o_mnt->mnt_mountpoint, dentry))
+>  			continue;
+>  
+> -		for (s = r; s; s = next_mnt(s, r)) {
+> +		for (o_child = o_mnt; o_child; o_child = next_mnt(o_child, o_mnt)) {
+>  			if (!(flag & CL_COPY_UNBINDABLE) &&
+> -			    IS_MNT_UNBINDABLE(s)) {
+> -				if (s->mnt.mnt_flags & MNT_LOCKED) {
+> +			    IS_MNT_UNBINDABLE(o_child)) {
+> +				if (o_child->mnt.mnt_flags & MNT_LOCKED) {
+>  					/* Both unbindable and locked. */
+> -					q = ERR_PTR(-EPERM);
+> +					n_mnt = ERR_PTR(-EPERM);
+>  					goto out;
+>  				} else {
+> -					s = skip_mnt_tree(s);
+> +					o_child = skip_mnt_tree(o_child);
+>  					continue;
+>  				}
+>  			}
+>  			if (!(flag & CL_COPY_MNT_NS_FILE) &&
+> -			    is_mnt_ns_file(s->mnt.mnt_root)) {
+> -				s = skip_mnt_tree(s);
+> +			    is_mnt_ns_file(o_child->mnt.mnt_root)) {
+> +				o_child = skip_mnt_tree(o_child);
+>  				continue;
+>  			}
+> -			while (p != s->mnt_parent) {
+> -				p = p->mnt_parent;
+> -				q = q->mnt_parent;
+> +			while (o_parent != o_child->mnt_parent) {
+> +				o_parent = o_parent->mnt_parent;
+> +				n_mnt = n_mnt->mnt_parent;
+>  			}
+> -			p = s;
+> -			parent = q;
+> -			q = clone_mnt(p, p->mnt.mnt_root, flag);
+> -			if (IS_ERR(q))
+> +			o_parent = o_child;
+> +			n_parent = n_mnt;
+> +			n_mnt = clone_mnt(o_parent, o_parent->mnt.mnt_root, flag);
+> +			if (IS_ERR(n_mnt))
+>  				goto out;
+>  			lock_mount_hash();
+> -			list_add_tail(&q->mnt_list, &res->mnt_list);
+> -			attach_mnt(q, parent, p->mnt_mp, false);
+> +			list_add_tail(&n_mnt->mnt_list, &res->mnt_list);
+> +			attach_mnt(n_mnt, n_parent, o_parent->mnt_mp, false);
+>  			unlock_mount_hash();
+>  		}
+>  	}
+> @@ -2028,7 +2027,7 @@ struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
+>  		umount_tree(res, UMOUNT_SYNC);
+>  		unlock_mount_hash();
+>  	}
+> -	return q;
+> +	return n_mnt;
+>  }
+>  
+>  /* Caller should check returned pointer for errors */
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
