@@ -1,92 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-21047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4E28FD153
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 17:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52078FD156
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 17:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC691F26BC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 15:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAEA01C236C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 15:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C065144C9E;
-	Wed,  5 Jun 2024 15:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DE4482C3;
+	Wed,  5 Jun 2024 15:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k2t8Wv4x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CD7ZrY+x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2372C184
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 15:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0444776A;
+	Wed,  5 Jun 2024 15:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717599643; cv=none; b=Jmb65t+P/5L9dl3M73FHLD+0FuSOBSsif/34OIxedBxgSBn1wYnyseaLLgAgOZSBBdqKhZznXQH1Msq+4Q/l0qjEEGafOKUw5oXrMZqV7k6lNtV8MRKgZkwLVVEeYDYlKpKm77ABlouyMghj8K4GQhv6K2HwGe4BXGK0L1XhyvQ=
+	t=1717599795; cv=none; b=OSOVOFRFTpiqLeRNW7m1TW8vfqGsYyDlCu4r1itx9p1u3zkBu9ZX+l8bG5DQ7zbPejfZ5l0+2YCpz46FI2c+te2dlBXz5PMs0Sfs2bjqfuea5XGzSYkfgfmyIz5h/uCdPdP8SJzzGc4/pbLNZt27Tzncazr/MNm/JR72Y+Rxt0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717599643; c=relaxed/simple;
-	bh=Zz1j0hYSAGppgQC9YAIbqYWXNAuMOAAQHxImzWIrScY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ab7mhLpq0wCoJ86lFcFmpRUgu/YezgMZ4WdVJ+AgrHQVIBD2kYaKqoAXJ5FD5Q/v+emDBCzIyUfA3OH/mDht3q9a3UnJ7GQvmXjULolLuNqBAW1NJDkHi9ZdcsEX4xvdRmogfrdiFfMQT2uXCYzA4QW8fEoKP56cFWNLP3IIj/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k2t8Wv4x; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: torvalds@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717599638;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=xcISW8lyXXqJzrVhgbIG0dJoTv2UgwwyLRjlJ9tmt8I=;
-	b=k2t8Wv4xgqYx/bG18obWqaT7KjrAK4EiapNHsqN9jDmVzdG8Rvbbrs4UydHTbSSdtwjDW8
-	OtTzg4755j1P75Iw8ankvTl/S9Z3Jc6wol69TbZrQWDzSim6/eS/4XqD7qiWOF+vogyrAs
-	on0g6SB01Ej10FXLQSpVqqkDB3x0AxA=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Wed, 5 Jun 2024 11:00:34 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.10-rc3
-Message-ID: <4a4gssdsaohqqh33hd2i2tavvfsjixngyfsyddy73keqauh3yo@m4vtvrly275m>
+	s=arc-20240116; t=1717599795; c=relaxed/simple;
+	bh=iqV2acmMzOLGBC90yH0i7PZOjKc+YcoOzvs2GcSNu0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iiIcRWpdZ54O09DnsqqNesTdQU9rDyRC+Q5dcC/oA0yOLjbnAFnZzLmw+zCdYzINI82OSYw4yd6rAJ1cU8dlVqc68nkDtRxJ1AMkyry16g5Ab8fP0yDSwwooapvoJzp1TSHVEVZmVQJ3XDzFj/Q3KgJ2JyZwNZsNuGytx3hnZH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CD7ZrY+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0ED8C2BD11;
+	Wed,  5 Jun 2024 15:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717599794;
+	bh=iqV2acmMzOLGBC90yH0i7PZOjKc+YcoOzvs2GcSNu0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CD7ZrY+xO4CHKNb+DEk8cqYB/csWTMoUhn0/v8yXjBWT77Yq7kUBYB3B3jgoAJZPm
+	 Gwh3p9Nh6Tnn4xQjZzCjO4AFzUuyrjj4xy+NJmpELrIVwF5s0TqLP6kCSe/hyhj2U5
+	 I9swmUvsDLbgNMYRkfQ8CMsH/a7G6MScLZ2KXc0dy/nMspx15DoLMsjCslS/FTDXo/
+	 gavP5OCIt2rBM/jG7g6eMRioA+zVrDoPqypDg2O9jUC9esfeZFlMYzdZt9Xy26U9eP
+	 aFa+md3b3hH1/TZein3rlu0W3K7gG0zPEP8gm7ezQm9UKjpiqEOBhFEBat0PvZTZ/E
+	 YafsTzQO2DA/Q==
+Date: Wed, 5 Jun 2024 17:03:09 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] vfs: shave a branch in getname_flags
+Message-ID: <20240605-sonnabend-busbahnhof-3f93ffcac846@brauner>
+References: <20240604155257.109500-1-mjguzik@gmail.com>
+ <20240604155257.109500-4-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240604155257.109500-4-mjguzik@gmail.com>
 
-Hi Linus, few small ones for you:
+On Tue, Jun 04, 2024 at 05:52:57PM +0200, Mateusz Guzik wrote:
+> Check for an error while copying and no path in one branch.
 
-The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
-
-  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
-
-are available in the Git repository at:
-
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-05
-
-for you to fetch changes up to 319fef29e96524966bb8593117ce0c5867846eea:
-
-  bcachefs: Fix trans->locked assert (2024-06-05 10:44:08 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.10-rc3
-
-Just a few small fixes.
-
-----------------------------------------------------------------
-Kent Overstreet (3):
-      bcachefs: Fix GFP_KERNEL allocation in break_cycle()
-      bcachefs: Rereplicate now moves data off of durability=0 devices
-      bcachefs: Fix trans->locked assert
-
- fs/bcachefs/btree_locking.c |  1 +
- fs/bcachefs/move.c          | 16 +++++++++++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+Fine to move that check up but we need to redo it after we recopied.
+It's extremely unlikely but the contents could've changed iirc. I can
+fix that up though.
 
