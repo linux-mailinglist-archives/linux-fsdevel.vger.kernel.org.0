@@ -1,62 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-21008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A998FC109
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 02:57:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4362F8FC1D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 04:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42678B25599
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 00:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A1A1F25D1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 02:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DEC5C82;
-	Wed,  5 Jun 2024 00:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2513338DD6;
+	Wed,  5 Jun 2024 02:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YJIbCAlf"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oot3Z9pq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59FD6FB0;
-	Wed,  5 Jun 2024 00:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BB517C79
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 02:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717549049; cv=none; b=IhRwI1h6F3NOXm7Zgatua43iEhxiOz/0hRQTS05zbKNgp+BU7jWeRFuV4lB6MpX0S18oOSzBpzEidhYtec6it9k0HhqQQAvNDslUBzA/7Q/foegkz11rrHz0I3niJU5by6cRSb4m5vyO8DbYjtrH+g7wz5RYNPNZyIteIK/f4Iw=
+	t=1717554541; cv=none; b=iNcR8mKDmhQJoqKPtHpuHYozsruF76d6Dex244zDZSHXJPejwbuxnA865NfzZNg0UNN//YaIIqRGm5Dhm7ilZFjcOWqdXCwbNTnkFWwFVAEPPjHpxrThCddS9+6iumozjtWUVVZWg0EOQjrQdKcb01Hs/P45iamNi+Hk+GSU7s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717549049; c=relaxed/simple;
-	bh=+xrDUIF+EJ+GMGqVUKrY/AR4ZBF14Q2JYATUJuO/NAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhIPoYZNPqqQUkOCBIBkLxU73rnxTjxVmLuzTkBcsSO0FCMMAEa2uxehO+SKwrbZy7exHp/pWLr4dFPOSm1vILVW21rZFsssx4HvCfY8xM7IjXlfLdxq6rS5993bfPpXcCJX5YOtXkghVMh0iWnNPDVDBw8PyhvXI2bQzQRlvu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YJIbCAlf; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1717554541; c=relaxed/simple;
+	bh=oRv51QDrfR15x8fhd924ttSzeBhShT4rloOreFzTVRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bItwlr7zzG54oN4jGFDmTsBFzFghiFPkFX0LW9SyVXwLIkIqxFlD/2CLlZItunrtti1uhMTd4gJM9D/7iug93GP+2J1xFxgBQ0oA+ftFY+futLw32AXqbpMY2kJ2wJa5vVdUcqEwlUucMJNYO8b3Y7NOWze5r+Q0VXvxgRXWObg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oot3Z9pq; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aBjOdC47mqVeNYrbSIGN2A/7SGRjWQavLlZ1uT7tR5I=; b=YJIbCAlfyAOt49uyvw1ZysTsMR
-	z6dl0Jr0j0MnxqnB0gB4HRq3QfiZZfNLjRPN+0nHkPRR3VvTxi+2m9uNZ2NwTHesXUI5Z2QPV+Cxv
-	qjxLjWvy6qxqotQl5DWGi89siuIr7gmIFqFNNKJHkMnKsoQz7QkrfwW32AHmWgbMBCwMHIfnseBgX
-	h9HIUHo7yGPJ4AYbTF2hgiTlJVKdHzlSQdprG8uli3eE3JIIoN6FoISHT9MyJ78UazJqMjrqRsLKb
-	DLYPf8IRdeNbpbA96kmoEL7UExbMiwr15JRjzwNiGwHhxEOcbvQf6g6vhrE5UkphXYr+sWA2KVsPN
-	a0QNlCXA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sEexu-0000000FFDM-0FOy;
-	Wed, 05 Jun 2024 00:57:22 +0000
-Date: Wed, 5 Jun 2024 01:57:21 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	gregkh@linuxfoundation.org, linux-mm@kvack.org,
-	liam.howlett@oracle.com, surenb@google.com, rppt@kernel.org
-Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
- taking VMA lock
-Message-ID: <Zl-38XrUw9entlFR@casper.infradead.org>
-References: <20240605002459.4091285-1-andrii@kernel.org>
- <20240605002459.4091285-2-andrii@kernel.org>
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=D7AlNzLH/LpoGZ1P9hnhJE7k7x9gv+IAhslVeil8X+4=; b=oot3Z9pq/IFU5oipp18VhW42jI
+	XivbM67WM/s/QbG54eWFNHyUhZ8B/tOgFMERTA0Vp4iH2NydcgZDZshXmRDJ8PHsrJpilNtSy6o+c
+	Ds77q5cxvv2/CXopT7n61EnWoQFeixlvbN+qGsVr7gllaWB1B7iSU9pT4ocJscwOHYidzzBkDtx7v
+	JaLzzYY/06WqamGrN233qs4KeVcgh09AN8pV0pqL56WnOrVsbAvJXyeDO8nfDuC9jaV9n0OcbY38L
+	14zOT19KLtEJtUySsbI649COIfwnsm/qbjHgZi/xwOnxaYIsS6wZ1Ws9MK/T0eT1rtherP0UalvDy
+	9br2IqjQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sEgOV-00Evij-2j;
+	Wed, 05 Jun 2024 02:28:55 +0000
+Date: Wed, 5 Jun 2024 03:28:55 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: [RFC] possible way to deal with dup2() vs. allocated but still not
+ opened descriptors
+Message-ID: <20240605022855.GV1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,64 +59,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605002459.4091285-2-andrii@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko wrote:
-> +/*
-> + * find_and_lock_vma_rcu() - Find and lock the VMA for a given address, or the
-> + * next VMA. Search is done under RCU protection, without taking or assuming
-> + * mmap_lock. Returned VMA is guaranteed to be stable and not isolated.
+	dup2(old, new) has an unpleasant corner case - when new has been
+already reserved by e.g. open() from another thread, but that open()
+still didn't get to installing an opened file to that descriptor.
 
-You know this is supposed to be the _short_ description, right?
-Three lines is way too long.  The full description goes between the
-arguments and the Return: line.
+	It's outside of POSIX scope and any userland code that might
+run into it is buggy.  However, we need to make sure that nothing breaks
+kernel-side.  We used to have interesting bugs in that area and so did
+*BSD kernels.
 
-> + * @mm: The mm_struct to check
-> + * @addr: The address
-> + *
-> + * Returns: The VMA associated with addr, or the next VMA.
-> + * May return %NULL in the case of no VMA at addr or above.
-> + * If the VMA is being modified and can't be locked, -EBUSY is returned.
-> + */
-> +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_struct *mm,
-> +					     unsigned long address)
-> +{
-> +	MA_STATE(mas, &mm->mm_mt, address, address);
-> +	struct vm_area_struct *vma;
-> +	int err;
-> +
-> +	rcu_read_lock();
-> +retry:
-> +	vma = mas_find(&mas, ULONG_MAX);
-> +	if (!vma) {
-> +		err = 0; /* no VMA, return NULL */
-> +		goto inval;
-> +	}
-> +
-> +	if (!vma_start_read(vma)) {
-> +		err = -EBUSY;
-> +		goto inval;
-> +	}
-> +
-> +	/*
-> +	 * Check since vm_start/vm_end might change before we lock the VMA.
-> +	 * Note, unlike lock_vma_under_rcu() we are searching for VMA covering
-> +	 * address or the next one, so we only make sure VMA wasn't updated to
-> +	 * end before the address.
-> +	 */
-> +	if (unlikely(vma->vm_end <= address)) {
-> +		err = -EBUSY;
-> +		goto inval_end_read;
-> +	}
-> +
-> +	/* Check if the VMA got isolated after we found it */
-> +	if (vma->detached) {
-> +		vma_end_read(vma);
-> +		count_vm_vma_lock_event(VMA_LOCK_MISS);
-> +		/* The area was replaced with another one */
+	Current solution is to have dup2() fail with -EBUSY.  However,
+there's an approach that might avoid that wart.  I'm not sure whether
+it's worth bothering with - it will have a cost, but then it might reduce
+the pingpong on current->files->file_lock.
 
-Surely you need to mas_reset() before you goto retry?
+	Here's what we could do:
+* have alloc_fd() insert (struct file *)((unsigned long)current | 1)
+into the array of files.
+* have fget() et.al. check if the value they'd fetched is even and
+treat odd ones as NULL.
+* have fd_install() check if the value being replaced is
+(struct file *)((unsigned long)current | 1) and quitely do fput()
+otherwise.  That, AFAICS, can be done without ->file_lock, just
+with cmpxchg().
+* have dup2() skip the "is it claimed, but still not open" logics
+and skip the "filp_close() whatever we had there" if the old value
+had been odd.
+* have file_close_fd_locked() treat odd values as 0.
+* have put_unused_fd() check if the value currently there is
+(struct file *)((unsigned long)current | 1) and quitely do nothing
+otherwise.
 
-> +		goto retry;
-> +	}
+That, AFAICS, would treat dup2() racing with open() as if open() has won
+the race - the end result is that open() succeeds, returns the descriptor
+it would've returned but does not do anything to whatever dup2() has
+put there.  Same as if open() had finished first, then lost CPU on the
+way out to userland and didn't regain it until dup2() has succeeded.
+
+The tasty part (and the only reason why that might be worth considering)
+is that we don't need to grab ->file_lock twice per open() that way -
+we do have the second atomic operation on fd_install(), but that's going
+to be in the cacheline where the file pointer ends up being installed.
+
+The question is whether that outweights the cost of check LSB and branch
+not taken on a bunch of hot paths.
+
+Comments?
 
