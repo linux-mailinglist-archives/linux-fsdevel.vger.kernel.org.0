@@ -1,186 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-21063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174018FD2B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 18:19:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7188FD2E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 18:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1AD81C23773
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 16:19:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D689B24842
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 16:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806E015A84D;
-	Wed,  5 Jun 2024 16:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B543188CA3;
+	Wed,  5 Jun 2024 16:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dIkUGvpu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eBIdPu1d";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dIkUGvpu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eBIdPu1d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVHsNPwH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACB619D899;
-	Wed,  5 Jun 2024 16:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDC961FD6;
+	Wed,  5 Jun 2024 16:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604343; cv=none; b=Z1I7Ss3dHTVrFBZdFE98/Gga4CcgqcBGrwNm3yi19SkSaYOBo3D/ZOFAL3/clFRGcfUPUb8IT9BV2QsYZIgaNpV3561ziR2eBYJ+8oSlp/AO+YpD7WhtPBgCpRPk7DcHrPzgIsDU958++RZPEkL/j/+A4MssXdRYZqD4NnqcsMs=
+	t=1717604661; cv=none; b=J3bFiFOsrqx9/UXvCDWhvZOAiOF8igEtEk6nsp79jwPsRuSAK4YOqe0I6SdJK/Ga+YLZ0OWaEeYc7YYxZ06OkUd1vZiuxiq1MEiP0b9DnOcAMRGZBV4Yz5rwco/XPHXzWdGhfwO76nG5+j64Epy1BPBJ4leWy7srMvTHOLqE1W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604343; c=relaxed/simple;
-	bh=lHV5wwB9e3B2P0F3EVrAQ7ztBPk4L/SA7XMeetXBSy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MA7syTEfQY+Le7J2mfOKNaR+Uk94+U+TjkBcUT4E+eNKoNt46+ZDxp8s+VXEAhKtoMJkwaGIOjkOnICGp6s49ALvvOtw4dGbZF/KxmKk/WX7ZlnQpGfWpdo4J040rge8ekHRNxiVwRe9oFSwzt48VKU7pgQG0MuHXia4CKyri9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dIkUGvpu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eBIdPu1d; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dIkUGvpu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eBIdPu1d; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 63A0C21A7D;
-	Wed,  5 Jun 2024 16:18:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717604339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cVUQtlRLszCU94XAJg4Sr2x5/iksbWcHEIMrG0v+xrc=;
-	b=dIkUGvpuXjyw8hWpX0TCGxHMJzIwndbSEfMyUR61koOqjgd3gZ87h85g3MqkIskdjfFUhX
-	RfGyCNBpysOEG8Yfg11A7COSDlVYZlHWjP6s7NG2TPhAubquIL6p6vZFJV84M28B/iU1+P
-	RCbTHGsS/AtYfbh7WwjAhQLmZqRucIc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717604339;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cVUQtlRLszCU94XAJg4Sr2x5/iksbWcHEIMrG0v+xrc=;
-	b=eBIdPu1dlG0VDL3zSNN9m6cB840iiZOKYWePAKCDOIGSz2dh7VNcU0mhxBhWYLGzUb99CX
-	jeKIs2BwIBpH0xDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717604339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cVUQtlRLszCU94XAJg4Sr2x5/iksbWcHEIMrG0v+xrc=;
-	b=dIkUGvpuXjyw8hWpX0TCGxHMJzIwndbSEfMyUR61koOqjgd3gZ87h85g3MqkIskdjfFUhX
-	RfGyCNBpysOEG8Yfg11A7COSDlVYZlHWjP6s7NG2TPhAubquIL6p6vZFJV84M28B/iU1+P
-	RCbTHGsS/AtYfbh7WwjAhQLmZqRucIc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717604339;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cVUQtlRLszCU94XAJg4Sr2x5/iksbWcHEIMrG0v+xrc=;
-	b=eBIdPu1dlG0VDL3zSNN9m6cB840iiZOKYWePAKCDOIGSz2dh7VNcU0mhxBhWYLGzUb99CX
-	jeKIs2BwIBpH0xDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5839013A24;
-	Wed,  5 Jun 2024 16:18:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 23KFFfOPYGZoWAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Jun 2024 16:18:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D355BA086C; Wed,  5 Jun 2024 18:18:58 +0200 (CEST)
-Date: Wed, 5 Jun 2024 18:18:58 +0200
-From: Jan Kara <jack@suse.cz>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Jan Kara <jack@suse.cz>, axboe@kernel.dk, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, hch@infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] fs/splice: don't block splice_direct_to_actor() after
- data was read
-Message-ID: <20240605161858.w2izlcbhuixjhzoo@quack3>
-References: <20240604092431.2183929-1-max.kellermann@ionos.com>
- <20240604104151.73n3zmn24hxmmwj6@quack3>
- <CAKPOu+9BEAOSDPM97uzHUoQoNZC064D-F2SWZR=BSxi-r-=2VA@mail.gmail.com>
- <20240604132737.rpo464bhikcvkusy@quack3>
- <CAKPOu+_Ry45cJYjje_WcGsjzN55uyfVqdbLvXJDO0OHbWL3FZQ@mail.gmail.com>
+	s=arc-20240116; t=1717604661; c=relaxed/simple;
+	bh=fy2dC7kJ5yIyYLkY6YYNVLaA9wC2Bbg3j4tuIPc/4tc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=fPEBSXK98kGY6oKIjA5gD+UuVlowG/+foRy2IpdpH/lSnMC8pi8kY31C9wa6KBxjogWXjUbVqMaUWAV4FjkuV8q4fRIjKrmHuUyks+G5pkE82IHQHUwPxLoIsyFqmK0mm1fN4H3qxBzE6+IJrv27UOoZGCwOk/LCt/vAR6mCXdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bVHsNPwH; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7024791a950so785835b3a.0;
+        Wed, 05 Jun 2024 09:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717604659; x=1718209459; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=flQITc7xQJ7hzuC/l9q3Vyu4uqvXTdu5y2cqIKMXoP8=;
+        b=bVHsNPwHaG6DWjrcPfRAcl2Kc14h4ZyvhCYqVlsxzrlpPiE6KdwTp1at0BIfLrDcen
+         ZZ/eyFv9H/0Gk9kbeAbW5GMNrvJwGksf4bYjlILyFygq5o7tadnirdvSHJUUp0UauPZM
+         urn8KJ6i0uizcpwpojuH+tcQWwIaZw+tcD+S9u17bCe/+HqBJmq9dp+d6jDhe768AiTj
+         8Ad1B5sYMI/GuSpEsJioug4PB3JgUMhSb0gLoFmrn6Q2CzFb4/WrPDBazrO2B+yzb9GC
+         emuK5FGMhsyhHqoqG44FKc4ijbs6/TWTFtVcmC9Fu5J162PqLUk+8ukgUx6YftoLivsr
+         jeAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717604659; x=1718209459;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=flQITc7xQJ7hzuC/l9q3Vyu4uqvXTdu5y2cqIKMXoP8=;
+        b=S3ZqrZa5/VMnU9pN1YRMJ4n29vJTjHH7ZND/TsNp/y2sHKEw4ZX1EHhGfEeolSDsWw
+         G64pNqdB3kOafyMQiboAvB1WoVVIq97BcEFB5i7c171JPNWZvbtBLrEPNBkLU4xA7pG4
+         2fLjwYCF/YR144gfoBpJsMtcgC86YVLIQ3707ByfFL4DmWzWjKHklSPr3hSwFc8SaKGY
+         Rqf8cWnr7K2+J4Tnb34YBvZYF6bA24r9Gw0iDENmqdqfSkYkIYGuZ+EAlJeduM2izoRG
+         iapD774DJvIMp6oRCrLlWvtw8GVn8c5kg7+m0q4RxW78pyiT2Iki5SWMDJQ1wuDi/v1c
+         ke2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOm6BSl2Mvl/JRvHCUio1bVFtSxnWLryscE8tiQJOD6JR6ppq/5gMnFoWC3i2qMfg2VOVcgH2oGqZDnIru8IwPP/xEWyI/eKKRa6e+ByAflCsYwsMHdZuW2qwPgDbF3E8L2uN2LGhcoNH8agbt1JY6I9Fz3enZG+Q6NwgL0y4o0w==
+X-Gm-Message-State: AOJu0Yy3iYq0n/2n75NVqYRQ0qhJmnVZY5gPTiA3vJbAhgsdQTF/i2JW
+	GgEvvuqA6IAk+aCvl4MlSbFoifYJsi8q149sWuOjhhWsHjfcw7hW3uNkUlFs82v1sOGm9AAFTS8
+	Prc1KuB3oHsx+3DIzfTOfchMUSBM=
+X-Google-Smtp-Source: AGHT+IFl4BDR1W/qUUzA2PO/5TqjnOMuZDrbSdWXqHm0/vvIQclz1kYhZyeF3J6773NUVsVX4sJpCnsoN9a3gAPR1gc=
+X-Received: by 2002:a17:90a:6b43:b0:2c1:dc60:d933 with SMTP id
+ 98e67ed59e1d1-2c299a23347mr185983a91.19.1717604659345; Wed, 05 Jun 2024
+ 09:24:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+_Ry45cJYjje_WcGsjzN55uyfVqdbLvXJDO0OHbWL3FZQ@mail.gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-2-andrii@kernel.org>
+ <Zl-38XrUw9entlFR@casper.infradead.org> <uevtozlryyqw5vj2duuzowupknfynmreruiw6m7bcxryjppqpm@7g766emooxfh>
+ <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
+In-Reply-To: <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Jun 2024 09:24:07 -0700
+Message-ID: <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
+ taking VMA lock
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, surenb@google.com, rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 04-06-24 21:24:14, Max Kellermann wrote:
-> On Tue, Jun 4, 2024 at 3:27 PM Jan Kara <jack@suse.cz> wrote:
-> > OK, so that was not clear to me (and this may well be just my ignorance of
-> > networking details). Do you say that your patch changes the behavior only
-> > for this cornercase? Even if the socket fd is blocking? AFAIU with your
-> > patch we'd return short write in that case as well (roughly 64k AFAICT
-> > because that's the amount the internal splice pipe will take) but currently
-> > we block waiting for more space in the socket bufs?
-> 
-> My patch changes only the file-read side, not the socket-write side.
-> It adds IOCB_NOWAIT for reading from the file, just like
-> filemap_read() does. Therefore, it does not matter whether the socket
-> is non-blocking.
-> 
-> But thanks for the reply - this was very helpful input for me because
-> I have to admit that part of my explanation was wrong:
-> I misunderstood how sending to a blocking socket works. I thought that
-> send() and sendfile() would return after sending at least one byte
-> (only recv() works that way), but in fact both block until everything
-> has been submitted.
+On Wed, Jun 5, 2024 at 9:13=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Wed, Jun 5, 2024 at 6:33=E2=80=AFAM Liam R. Howlett <Liam.Howlett@orac=
+le.com> wrote:
+> >
+> > * Matthew Wilcox <willy@infradead.org> [240604 20:57]:
+> > > On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko wrote:
+> > > > +/*
+> > > > + * find_and_lock_vma_rcu() - Find and lock the VMA for a given add=
+ress, or the
+> > > > + * next VMA. Search is done under RCU protection, without taking o=
+r assuming
+> > > > + * mmap_lock. Returned VMA is guaranteed to be stable and not isol=
+ated.
+> > >
+> > > You know this is supposed to be the _short_ description, right?
+> > > Three lines is way too long.  The full description goes between the
+> > > arguments and the Return: line.
+>
+> Sure, I'll adjust.
+>
+> > >
+> > > > + * @mm: The mm_struct to check
+> > > > + * @addr: The address
+> > > > + *
+> > > > + * Returns: The VMA associated with addr, or the next VMA.
+> > > > + * May return %NULL in the case of no VMA at addr or above.
+> > > > + * If the VMA is being modified and can't be locked, -EBUSY is ret=
+urned.
+> > > > + */
+> > > > +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_struct *mm,
+> > > > +                                        unsigned long address)
+> > > > +{
+> > > > +   MA_STATE(mas, &mm->mm_mt, address, address);
+> > > > +   struct vm_area_struct *vma;
+> > > > +   int err;
+> > > > +
+> > > > +   rcu_read_lock();
+> > > > +retry:
+> > > > +   vma =3D mas_find(&mas, ULONG_MAX);
+> > > > +   if (!vma) {
+> > > > +           err =3D 0; /* no VMA, return NULL */
+> > > > +           goto inval;
+> > > > +   }
+> > > > +
+> > > > +   if (!vma_start_read(vma)) {
+> > > > +           err =3D -EBUSY;
+> > > > +           goto inval;
+> > > > +   }
+> > > > +
+> > > > +   /*
+> > > > +    * Check since vm_start/vm_end might change before we lock the =
+VMA.
+> > > > +    * Note, unlike lock_vma_under_rcu() we are searching for VMA c=
+overing
+> > > > +    * address or the next one, so we only make sure VMA wasn't upd=
+ated to
+> > > > +    * end before the address.
+> > > > +    */
+> > > > +   if (unlikely(vma->vm_end <=3D address)) {
+> > > > +           err =3D -EBUSY;
+> > > > +           goto inval_end_read;
+> > > > +   }
+> > > > +
+> > > > +   /* Check if the VMA got isolated after we found it */
+> > > > +   if (vma->detached) {
+> > > > +           vma_end_read(vma);
+> > > > +           count_vm_vma_lock_event(VMA_LOCK_MISS);
+> > > > +           /* The area was replaced with another one */
+> > >
+> > > Surely you need to mas_reset() before you goto retry?
+> >
+> > Probably more than that.  We've found and may have adjusted the
+> > index/last; we should reconfigure the maple state.  You should probably
+> > use mas_set(), which will reset the maple state and set the index and
+> > long to address.
+>
+> Yep, makes sense, thanks. As for the `unlikely(vma->vm_end <=3D
+> address)` case, I presume we want to do the same, right? Basically, on
+> each retry start from the `address` unconditionally, no matter what's
+> the reason for retry.
 
-Yeah, this was exactly what I was trying to point at...
+ah, never mind, we don't retry in that situation, I'll just put
+`mas_set(&mas, address);` right before `goto retry;`. Unless we should
+actually retry in the case when VMA got moved before the requested
+address, not sure, let me know what you think. Presumably retrying
+will allow us to get the correct VMA without the need to fall back to
+mmap_lock?
 
-> I could change this to only use IOCB_NOWAIT if the destination is
-> non-blocking, but something about this sounds wrong - it changes the
-> read side just because the write side is non-blocking.
-> We can't change the behavior out of fear of breaking applications; but
-> can we have a per-file flag so applications can opt into partial
-> reads/writes? This would be useful for all I/O on regular files (and
-> sockets and everything else). There would not be any guarantees, just
-> allowing the kernel to use relaxed semantics for those who can deal
-> with partial I/O.
-> Maybe I'm overthinking things and I should just fast-track full
-> io_uring support in my code...
-
-Adding open flags is messy (because they are different on different
-architectures AFAIR 8-|) and I'm not sure we have much left. In principle
-it is possible and I agree it seems useful. But I'm not sure how widespread
-use it would get as, as you write above, these days the time may be better
-spent on converting code with such needs to io_uring...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> >
+> >
+> > >
+> > > > +           goto retry;
+> > > > +   }
+> > >
 
