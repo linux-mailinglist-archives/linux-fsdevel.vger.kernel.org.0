@@ -1,86 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-21012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35738FC229
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 05:25:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8206E8FC2C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 06:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80613285057
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 03:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3246B1F234B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 04:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBC17345C;
-	Wed,  5 Jun 2024 03:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368B213174B;
+	Wed,  5 Jun 2024 04:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qqk+zrTb"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2HSz4Kn6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0642056470;
-	Wed,  5 Jun 2024 03:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439B763B;
+	Wed,  5 Jun 2024 04:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717557933; cv=none; b=X1X2IcEU3VW7Pjlh9IBNFQlGqAK6TJiQopRT7qDazw9v+unG0ttM26RJNgdaUOv6cdtah7ZQtihiYHy2kngAF5nvGyrhaIPYwp0tl+bCJpn33aitg+YQ6kpz/EUW8oTFYVs//DTMRjDXmoW5JftbsL3+UGpmwzqspCeR0WUoQ1o=
+	t=1717562416; cv=none; b=d8F2q1f69dCy/rgds/XWQsyKM320c7Xe3+TY7H275a3B8oZ4YAqjtqUO7cu37CQiIMmi3wxgrDJGzs+Wn2/2EP8Rox1j1MkITT9n5GdlAlu/0y5bQOJMA4PWiFOHZcHeHw3tRnxa30i8wCzkEgbrCqzTtHOu7c/5Bpje3cuOlSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717557933; c=relaxed/simple;
-	bh=kSrIVEn5+ULziH4lIqSRZBF9y1SbsW1rFOIKZRGUYMY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Pa+/GZZ0invzHaUlBADMPdIUoh+riZ7zELqbwbDNlIZ+phRBN5mww8Ub8PfhvQ7JyWg0Yi34M/3TAY4K+W5olmbCZa8tUNzmuEgHVw623302gWojHm0+fODTD0jfdOb5ReuvhmXxwnRHalWUwHA3GwHDPlx38ThGEXVuydiwpCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qqk+zrTb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FB8BC32781;
-	Wed,  5 Jun 2024 03:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1717557932;
-	bh=kSrIVEn5+ULziH4lIqSRZBF9y1SbsW1rFOIKZRGUYMY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Qqk+zrTb3qN0u7nr+Ltb8BGII6GpqS9r3xPSvfVItICcFbPgKyQdNoxG25i7GOTg8
-	 aS+pj1Ao1N1lbuNg24jqF+JAEi/vN4E+gsPVlAUMF6t2DjeVFQ1oY1v/nxzdpxSBJu
-	 W8lxcEcDUrdIu5pH0BiEVOB4oHcVD/m3+rkLB2v4=
-Date: Tue, 4 Jun 2024 20:25:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Amer Al Shanawany <amer.shanawany@gmail.com>, Shuah Khan
- <shuah@kernel.org>, Swarup Laxman Kotiaklapudi
- <swarupkotikalapudi@gmail.com>, Hugh Dickins <hughd@google.com>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] selftests: proc: remove unreached code and fix build
- warning
-Message-Id: <20240604202531.5d559ec4daed484a7a23592c@linux-foundation.org>
-In-Reply-To: <14f55053-2ff8-4086-8aac-b8ee2d50a427@p183>
-References: <202404010211.ygidvMwa-lkp@intel.com>
-	<20240603124220.33778-1-amer.shanawany@gmail.com>
-	<14f55053-2ff8-4086-8aac-b8ee2d50a427@p183>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717562416; c=relaxed/simple;
+	bh=AVUfjlLwVnQ0CECSvBpFLm+c0d5jJ6Iru1bWLKrFg4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u924SAiA1jN7gIvKdDu18oXtoXZJBRDZw7AjB/4lszOCD1URM0//tenINKjrYToMxqZEXKDbcbtRr8MFibZrdq1vhrMyVGxWfQloKRbaYcpfRr/1pwVnaXsGTIUXl2zU/Y2UDkvL7YzeH2ufrzTYI6A6880tPVcV753Dz9dFIp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2HSz4Kn6; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4+RhDLjh6yEreRQNES552FEFK/q+qcWReXS2Og5cmdA=; b=2HSz4Kn6w95poRktsjf0iZPfEn
+	CdCppI66zSzHxZXsEGyMpM+zcGm/l9JamH3E0s3NYNbp2gYcFdg0QVd35oPEyc8RfMRpPj0kUTDCj
+	SNQtQ6goo9D3UzQ5L6jiZ+hlpMoMGP+I3AXvbHAAYlkcCfBiRhhn7TP8M3G3gGkTM9U9aIsAtyXQ4
+	dFbXOkjtGL21+dg27DCiLz0VIQ2gCuyggsWZoAPqedmcoELE8fag8Iol3AwnVEoc4niyOjQlqtXL+
+	PAvwagMsjfPiTzMEHedP2dPgCQmn8MmK4HKyh70wsdVzIRI63knR7P/lL/5ZNxVsl3kzFeX5a4t+c
+	iuVElBbA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sEiRZ-00000004cSL-0Mqe;
+	Wed, 05 Jun 2024 04:40:13 +0000
+Date: Tue, 4 Jun 2024 21:40:13 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>, da.gomez@samsung.com
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	willy@infradead.org, p.raghav@samsung.com, hare@suse.de,
+	john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [RFC] fstests: add mmap page boundary tests
+Message-ID: <Zl_sLbUlHu_RiMPY@bombadil.infradead.org>
+References: <20240415081054.1782715-1-mcgrof@kernel.org>
+ <20240415155825.GC11948@frogsfrogsfrogs>
+ <ZlZYG7-9-3NR4tdv@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlZYG7-9-3NR4tdv@bombadil.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Mon, 3 Jun 2024 17:24:47 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
-
-> On Mon, Jun 03, 2024 at 02:42:20PM +0200, Amer Al Shanawany wrote:
-> > fix the following warning:
-> > proc-empty-vm.c:385:17: warning: ignoring return value of ‘write’
+On Tue, May 28, 2024 at 03:18:03PM -0700, Luis Chamberlain wrote:
+> On Mon, Apr 15, 2024 at 08:58:25AM -0700, Darrick J. Wong wrote:
+> > On Mon, Apr 15, 2024 at 01:10:54AM -0700, Luis Chamberlain wrote:
+> > > +	#    This is not true for tmpfs.
+> > 
+> > Er... is this file size change a bug?
 > 
-> > --- a/tools/testing/selftests/proc/proc-empty-vm.c
-> > +++ b/tools/testing/selftests/proc/proc-empty-vm.c
-> > @@ -381,9 +381,6 @@ static int test_proc_pid_statm(pid_t pid)
+> There is no filesize bug, the comment about tmpfs always ensuring seeing
+> the actual data since, well, there its kind of write-through. Since we
+> share the same filemap_map_pages() I'd expect the rest should behave the
+> same with tmpfs, but since I didn't test that the test skips it for now.
 > 
-> > -	if (0) {
-> > -		write(1, buf, rv);
-> > -	}
-> 
-> no thanks
+> We'll test it, with all the patch "filemap: cap PTE range to be             
+> created to allowed zero fill in folio_map_range()" on tmpfs, and see if
+> we can just enable this test there too. Might as well as we're driving
+> by and sprinkling large folios there too.
 
-Why not?
+Turns out our patch "filemap: cap PTE range to be created to allowed
+zero fill in folio_map_range()" ends up fixing this on tmpfs for huge
+pages. So consider this now tested on tmpfs as well, I'll adjust the
+test for that.
 
-Why does that code exist anyway?  It at least needs a comment.
+  Luis
 
