@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-21009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4362F8FC1D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 04:29:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA188FC1EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 04:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A1A1F25D1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 02:29:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3442851D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2024 02:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2513338DD6;
-	Wed,  5 Jun 2024 02:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6050B61FEB;
+	Wed,  5 Jun 2024 02:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oot3Z9pq"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nCoMZlR6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BB517C79
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 02:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8EC184E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2024 02:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717554541; cv=none; b=iNcR8mKDmhQJoqKPtHpuHYozsruF76d6Dex244zDZSHXJPejwbuxnA865NfzZNg0UNN//YaIIqRGm5Dhm7ilZFjcOWqdXCwbNTnkFWwFVAEPPjHpxrThCddS9+6iumozjtWUVVZWg0EOQjrQdKcb01Hs/P45iamNi+Hk+GSU7s4=
+	t=1717555171; cv=none; b=sVQAOmCy2K58keJgUKNRhXt8FsX6966LM9pI2E5yD/E1Wu0gL3PyJq/968FDPYdeEgI+eT9jApfHG9whrLQui+Pm5Hp4qHazqZkEFxRAYxVnT+saN8rj78OQrog7KMrZnFL40ptl8cJTUhLj5dtRNWok8O6ShHbkxhxTWJO7i4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717554541; c=relaxed/simple;
-	bh=oRv51QDrfR15x8fhd924ttSzeBhShT4rloOreFzTVRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bItwlr7zzG54oN4jGFDmTsBFzFghiFPkFX0LW9SyVXwLIkIqxFlD/2CLlZItunrtti1uhMTd4gJM9D/7iug93GP+2J1xFxgBQ0oA+ftFY+futLw32AXqbpMY2kJ2wJa5vVdUcqEwlUucMJNYO8b3Y7NOWze5r+Q0VXvxgRXWObg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oot3Z9pq; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1717555171; c=relaxed/simple;
+	bh=qm+qijNIC8P4tcV0tC3mT7uYej35fwTOeTBu8iId8iM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJlxwJyo0rdHKqg+p5U0fLUds0m4/nIXpu04Xa3PI7kOgzOB/VARM8Y62L/KJKmkB32zyZGak/aFwiEYHT0kULXin4/06e6lOgAPRaycmYtNS0Z5+FYF7Uk49saidgGnqAgo9YEgVrZq2t8124DIUkY7FEW4ggf/eVM0NwXrckU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nCoMZlR6; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=D7AlNzLH/LpoGZ1P9hnhJE7k7x9gv+IAhslVeil8X+4=; b=oot3Z9pq/IFU5oipp18VhW42jI
-	XivbM67WM/s/QbG54eWFNHyUhZ8B/tOgFMERTA0Vp4iH2NydcgZDZshXmRDJ8PHsrJpilNtSy6o+c
-	Ds77q5cxvv2/CXopT7n61EnWoQFeixlvbN+qGsVr7gllaWB1B7iSU9pT4ocJscwOHYidzzBkDtx7v
-	JaLzzYY/06WqamGrN233qs4KeVcgh09AN8pV0pqL56WnOrVsbAvJXyeDO8nfDuC9jaV9n0OcbY38L
-	14zOT19KLtEJtUySsbI649COIfwnsm/qbjHgZi/xwOnxaYIsS6wZ1Ws9MK/T0eT1rtherP0UalvDy
-	9br2IqjQ==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jXi+2tU6agYYNivAaVd67hb6DcD8rsFGsjYYjUgmTVw=; b=nCoMZlR61X4DIkwvSD5ZvZMuF9
+	8oIk/TTWZNM8xn1VFFv7DzVyUkVDD9tDiitsobUWJT4Xd0k198fxdFHCJsflqPy+5S9zvlbJB/+gw
+	fjQLxrJ1tt6w8d0meZM5xYfyn85poql726np/kR5SOTT7GYaWMBlbb2dFbfqb1CvJspRf/6il2Xs0
+	au3d1RpA8NLlrn1VIe1XlZW43MApOKqIPDDj6l6ssrRLnt5+gDQzPdapUtaBKNEdzWBOO5puclBJg
+	foOCPN1+ZlcbaQ5iGE3EazzmIbEC4VoEGECF/NboF3rWjW3eTKz3/XKVihD+inIaB/JqOlUaJTKgh
+	prcTHNpA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sEgOV-00Evij-2j;
-	Wed, 05 Jun 2024 02:28:55 +0000
-Date: Wed, 5 Jun 2024 03:28:55 +0100
+	id 1sEgYh-00Ex5W-2A;
+	Wed, 05 Jun 2024 02:39:27 +0000
+Date: Wed, 5 Jun 2024 03:39:27 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: [RFC] possible way to deal with dup2() vs. allocated but still not
- opened descriptors
-Message-ID: <20240605022855.GV1629371@ZenIV>
+Subject: Re: [RFC] possible way to deal with dup2() vs. allocated but still
+ not opened descriptors
+Message-ID: <20240605023927.GW1629371@ZenIV>
+References: <20240605022855.GV1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,52 +60,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240605022855.GV1629371@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	dup2(old, new) has an unpleasant corner case - when new has been
-already reserved by e.g. open() from another thread, but that open()
-still didn't get to installing an opened file to that descriptor.
+On Wed, Jun 05, 2024 at 03:28:55AM +0100, Al Viro wrote:
 
-	It's outside of POSIX scope and any userland code that might
-run into it is buggy.  However, we need to make sure that nothing breaks
-kernel-side.  We used to have interesting bugs in that area and so did
-*BSD kernels.
+> 	Current solution is to have dup2() fail with -EBUSY.  However,
+> there's an approach that might avoid that wart.  I'm not sure whether
+> it's worth bothering with - it will have a cost, but then it might reduce
+> the pingpong on current->files->file_lock.
 
-	Current solution is to have dup2() fail with -EBUSY.  However,
-there's an approach that might avoid that wart.  I'm not sure whether
-it's worth bothering with - it will have a cost, but then it might reduce
-the pingpong on current->files->file_lock.
-
-	Here's what we could do:
-* have alloc_fd() insert (struct file *)((unsigned long)current | 1)
-into the array of files.
-* have fget() et.al. check if the value they'd fetched is even and
-treat odd ones as NULL.
-* have fd_install() check if the value being replaced is
-(struct file *)((unsigned long)current | 1) and quitely do fput()
-otherwise.  That, AFAICS, can be done without ->file_lock, just
-with cmpxchg().
-* have dup2() skip the "is it claimed, but still not open" logics
-and skip the "filp_close() whatever we had there" if the old value
-had been odd.
-* have file_close_fd_locked() treat odd values as 0.
-* have put_unused_fd() check if the value currently there is
-(struct file *)((unsigned long)current | 1) and quitely do nothing
-otherwise.
-
-That, AFAICS, would treat dup2() racing with open() as if open() has won
-the race - the end result is that open() succeeds, returns the descriptor
-it would've returned but does not do anything to whatever dup2() has
-put there.  Same as if open() had finished first, then lost CPU on the
-way out to userland and didn't regain it until dup2() has succeeded.
-
-The tasty part (and the only reason why that might be worth considering)
-is that we don't need to grab ->file_lock twice per open() that way -
-we do have the second atomic operation on fd_install(), but that's going
-to be in the cacheline where the file pointer ends up being installed.
-
-The question is whether that outweights the cost of check LSB and branch
-not taken on a bunch of hot paths.
-
-Comments?
+Gah...  Nevermind, that benefit is no longer there (and I really need
+to get some sleep - only went "wait a sec, that lock hadn't been
+taken in fd_install() since way back" after sending)
 
