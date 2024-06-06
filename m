@@ -1,230 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-21077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F16C8FDCB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 04:27:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575DD8FDD3D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 05:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D901C20F20
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 02:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042FE1C2267A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 03:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CDD1B950;
-	Thu,  6 Jun 2024 02:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041EC1F5FD;
+	Thu,  6 Jun 2024 03:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Fp7tuXZm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwLBoO52"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1856318C08
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 02:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72AE23BF
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 03:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717640864; cv=none; b=n+xlVIOQiwlm1mZlPsfyRhVnAgKy6p+iY0qWLEWM0v01HrQUgKsgfACAaxBQymacF66hAa8OZTA5fwW9uv3xL2eVtYzG9U7GmZ1liF4Sb5vwtdnSfE06STzBE3HOGhysjMTbKxfLLsoyLXddxgrLM09zGta1xjaA3Wj3twBw0tg=
+	t=1717643703; cv=none; b=b1ApPqRBFGOmqV8BjRPXvnhSU0t8O6L9rkwag3fq6srPLytxphnDkZFfbnqsim872te3w4b8P8ualV8yJT+YtZMFhVqIXFzm5KqJIRbtn5fana7faP0ENNuCQIMSut1IR1tkMKUIgr74P+iyJWTliBpP2CbbSpGqdCsQ8to225U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717640864; c=relaxed/simple;
-	bh=1LDL86QubPpmoCbk76dksUFSkh9K84fHfc7HHJImPGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJzTKhlVyL6w6HE6tlmrkaSMVtldaNPF8vfoJVCZl5FXBbBMq9Ub3Ma9kfpDJImSdpXKG/GWlcIahgM2fhu5TaH6sYlqrG9wArLJK3W4PBfIim1z6fQrN8cmSUKn9+D2fM5m4eW7TRFhI2CsjjaOEGg+HI+ZgpijXjguj9i85Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Fp7tuXZm; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70245b22365so362551b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 19:27:42 -0700 (PDT)
+	s=arc-20240116; t=1717643703; c=relaxed/simple;
+	bh=OzOa6bbKT/STfd6Xhwl3H8585ms3oMFlgFIkNH3EyFM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rH0f38kmkLdMmyafcXluKIDUIr0keVXCdpMuYKgKqalUngqNHf8Xo/GSjGuwhgWkdjiSY7A1KdKDKYQ93KjbxoTQszGDnlr00MUvbaIJWKA9rdzMoaga6aKQ2pxRzY2xP/U4pjyuwJXLwagxGMX0nNM7JeATjZfR8bIbH1BxmEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwLBoO52; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57aa64c6bbfso307691a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 20:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717640862; x=1718245662; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5TJAdD8GmJxvj8pKuF8QnnhaTXzIe7Tat0a8Ot2Rm1I=;
-        b=Fp7tuXZm1xkj8VT/ICSRidbJrnvv0Z+TEgqrFSXzp7lMQTlRKYIqIR0h3520DJos96
-         YPCbyaXE9QY/C7z9xlycFK3D6w0C6U5rU63nEBDJtXemZLUUMxQj1fUS4noT2Hns/4rW
-         CZk+YwqLIloR3h9QIrpC1rUZ5jgod0BfAiGeZ/i8JttRCFRh8/P1r0bdv90DNkH6sFg+
-         VkNlBuKX2wzvd4gz2bSMdsFFsqPZU3C2EQ7nwswDZV3bsGv9vFIiI3NbEZDScxDH3jDv
-         Mq9W37ebrOww5EbL54LtFKDwd8RwGp2qVcJQO2PBDpDKXMlQsTKd6LYVXyZAnq3hc2QY
-         qtPA==
+        d=gmail.com; s=20230601; t=1717643700; x=1718248500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j0GInmYCEY5FJcmol75dxVxvQaa/wE8syC5rHwzadwo=;
+        b=CwLBoO52aYKcRf1Q4Q9MPzFyAsBnVxw2xVTiftYSf/HcybP54pSxKOSRsgekdoCVKy
+         kkzMxWS+ccvwVuL7VybwtJO4MA5uifKmju/sMsIG4jacTNmdL/ix2zRS2cpzlHsFx3x6
+         MfffBiT4uHlsntx92rvFDLY5KXq8VxBfcjGuaP/TuMH1CoMvCHuygNPNwye59GMKz621
+         CA/rJSPGj7Vw4e/UtP4MLKHy1EDs5fpvEv922UjVJyfIHOPy0Ahz+W8VfqBn56PLNxYy
+         4R0pZKoKnvY5ej4rRTBjnTqqCf4P+avzqhBo7WxswC6EyQX8NhB8FDNGr8m80TC0y5ux
+         qcmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717640862; x=1718245662;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5TJAdD8GmJxvj8pKuF8QnnhaTXzIe7Tat0a8Ot2Rm1I=;
-        b=jGfR1B1YcK03vkLvZahdaxgsbP0PxePNMv4RUo9vXb5Ywl+Wfnr1aEA8MZA+Ox0hPG
-         /4AMZ6JTT1ibXJOnrQ77EwPTSeOYY/XsCaS5w+BINGg7qdxn9+BVRAap5qzmHLWXk4++
-         HhKUcBYm5zhWdv5IAVgdf+OlT+aVdXXvbbsEf44LoPwzVIlLzFe9hMeUm0EJkeQTfA7e
-         lC9MQFfwFuQgGKBiIztzoDIfgegh1P764eu5+iSK+kSiM/i8RJf/W8c0TKAx77ZTN8Ym
-         AK3Dntxk0QMqwKM7gnUSTLGezXyz620Sv0IyHwvAwOssXiRjcCWEqc7e5dOUENCUBo0l
-         +Eug==
-X-Forwarded-Encrypted: i=1; AJvYcCUMoH6PHbwOE3EtgRBQdau5XJ4CWJv94DKFmOa2K51lB83YKvlNzUwdJ9E+x4rKcJB7HwG7w0r7TYm16FICN1Po4hEIXHBO6YheQD0tFw==
-X-Gm-Message-State: AOJu0YzaSeV9j1I1XlDd++uuRkw2mcDR7motNPDH+774BpH5lO8efCpQ
-	WaG/qCR2jcWOngmeGbqhffFgxxNzTL1ysaMKWND8DeS7Ofs82YeO3BNRnezU9Nyl/yLjWhmdrLc
-	3
-X-Google-Smtp-Source: AGHT+IFOvqMOhYBsTyN+11L2HRn+hiKCTEcw/AH1ihwa0CkjXcJ8VasEd4Lj0Q7OqcxYZKylvjJcqQ==
-X-Received: by 2002:a05:6a20:7488:b0:1b2:66c6:7787 with SMTP id adf61e73a8af0-1b2b7019e45mr5171795637.35.1717640862099;
-        Wed, 05 Jun 2024 19:27:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd52b623sm179184b3a.207.2024.06.05.19.27.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 19:27:41 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sF2qo-005rfQ-2A;
-	Thu, 06 Jun 2024 12:27:38 +1000
-Date: Thu, 6 Jun 2024 12:27:38 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and
- FS_IOC_FSGETXATTRAT
-Message-ID: <ZmEemh4++vMEwLNg@dread.disaster.area>
-References: <20240523074828.7ut55rhhbawsqrn4@quack3>
- <xne47dpalyqpstasgoepi4repm44b6g6rsntk2ln3aqhn4putw@4cen74g6453o>
- <20240524161101.yyqacjob42qjcbnb@quack3>
- <20240531145204.GJ52987@frogsfrogsfrogs>
- <20240603104259.gii7lfz2fg7lyrcw@quack3>
- <vbiskxttukwzhjoiic6toscqc6b2qekuwumfpzqp5vkxf6l6ia@pby5fjhlobrb>
- <20240603174259.GB52987@frogsfrogsfrogs>
- <20240604085843.q6qtmtitgefioj5m@quack3>
- <20240605003756.GH52987@frogsfrogsfrogs>
- <CAOQ4uxiVVL+9DEn9iJuWRixVNFKJchJHBB8otH8PjuC+j8ii4g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1717643700; x=1718248500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j0GInmYCEY5FJcmol75dxVxvQaa/wE8syC5rHwzadwo=;
+        b=RokyXzQ9NB4yM0ZXR6Vr6wtimzPn6Ol36tsH3yUZcDXBFwqW1sRQWmTodYVJTxE6Qo
+         k2cXshySRzmd/LT3DiH2DFzOjJhhrkwxVMBhuZtURQpqtXeRWJCcEo1ViAQLWvfP1w65
+         yLNRXZCHhfHhkeFxbzK/vFgwGUX37E/PD12vivmjYITkR+zjJ2vFdLJvegVaCuoMPNJx
+         jjeXOKvoExgQQCN42sP088/Y38nUxjTjm6D9b7OXzJy1Q80UUrowCrHazecXGp1PwpKt
+         C1Re6lgeCksWcXlVT0T0ImLVngQvRcEQX4c1xe4SDD5SGTN6f+nuJGmExw5uzeU0sfm+
+         UUXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4QOjhmvDq3mpZZ4AEsvShooeRXIMIgVpDxRT0K2QiqVsK0ro/WqoxusL8+zmAmTmlKo1/JfpPQdm/XOz3T0aIoetmVr7X3mIU3Bwz5A==
+X-Gm-Message-State: AOJu0YwymSr5iZyY1yLGd1px+iQDapjycisd/YwAZQcn1hx4P/+Jjwtw
+	gXilMkb65T9jYpWwnSm9oJ2n5b4SFMbN8xhlClGTK+Ri5C94VVD1LIog0At4ker+eytZy8ZieQo
+	+l+9tIed3yQo0h7XRoVBzUihvIOM=
+X-Google-Smtp-Source: AGHT+IGiJMiwe0qCkDyNiyl85DQwHtV8s+u6+QHEeLrr9SqqXlkYdvEUPbSpSB/WA4CftddAqzY4yqFOFrgj7Ndw2Ng=
+X-Received: by 2002:a50:bac8:0:b0:578:6198:d6fa with SMTP id
+ 4fb4d7f45d1cf-57a8b6740a0mr2712418a12.2.1717643699601; Wed, 05 Jun 2024
+ 20:14:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiVVL+9DEn9iJuWRixVNFKJchJHBB8otH8PjuC+j8ii4g@mail.gmail.com>
+References: <CAHB1NaicRULmaq8ks4JCtc3ay3AQ9mG77jc5t_bNdn3wMwMrMg@mail.gmail.com>
+ <CAJfpegsELV80nfYUP0CvbE=c45re184T4_WtUEhhfRGVmpmpcQ@mail.gmail.com>
+ <CAHB1NaiddGRxh7UjaXejWsYnJY52dYDvaB2oZpqQXqVocxTm+w@mail.gmail.com>
+ <20240604092757.k5kkc67j3ssnc6um@quack3> <CAHB1NahP14FAMj04D-T-bWs7JAn_mXfmXSeKUEkRbALZrLeqAA@mail.gmail.com>
+ <20240605102945.q4nu67xpdwfziiqd@quack3>
+In-Reply-To: <20240605102945.q4nu67xpdwfziiqd@quack3>
+From: JunChao Sun <sunjunchao2870@gmail.com>
+Date: Thu, 6 Jun 2024 11:14:48 +0800
+Message-ID: <CAHB1NajZEy5kPXTcVu9G88WO-uZ5_Q6x3-EkFR4mfG0+XQWD3A@mail.gmail.com>
+Subject: Re: Is is reasonable to support quota in fuse?
+To: Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	"Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05, 2024 at 08:13:15AM +0300, Amir Goldstein wrote:
-> On Wed, Jun 5, 2024 at 3:38 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> > On Tue, Jun 04, 2024 at 10:58:43AM +0200, Jan Kara wrote:
-> > > On Mon 03-06-24 10:42:59, Darrick J. Wong wrote:
-> > > > I do -- allowing unpriviledged users to create symlinks that consume
-> > > > icount (and possibly bcount) in the root project breaks the entire
-> > > > enforcement mechanism.  That's not the way that project quota has worked
-> > > > on xfs and it would be quite rude to nullify the PROJINHERIT flag bit
-> > > > only for these special cases.
+Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B46=E6=9C=885=E6=97=A5=E5=91=A8=
+=E4=B8=89 18:29=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue 04-06-24 21:49:20, JunChao Sun wrote:
+> > Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B46=E6=9C=884=E6=97=A5=E5=
+=91=A8=E4=BA=8C 17:27=E5=86=99=E9=81=93=EF=BC=9A
+> > > On Tue 04-06-24 14:54:01, JunChao Sun wrote:
+> > > > Miklos Szeredi <miklos@szeredi.hu> =E4=BA=8E2024=E5=B9=B46=E6=9C=88=
+4=E6=97=A5=E5=91=A8=E4=BA=8C 14:40=E5=86=99=E9=81=93=EF=BC=9A
+> > > > >
+> > > > > On Mon, 3 Jun 2024 at 13:37, JunChao Sun <sunjunchao2870@gmail.co=
+m> wrote:
+> > > > >
+> > > > > > Given these challenges, I would like to inquire about the commu=
+nity's
+> > > > > > perspective on implementing quota functionality at the FUSE ker=
+nel
+> > > > > > part. Is it feasible to implement quota functionality in the FU=
+SE
+> > > > > > kernel module, allowing users to set quotas for FUSE just as th=
+ey
+> > > > > > would for ext4 (e.g., using commands like quotaon /mnt/fusefs o=
+r
+> > > > > > quotaset /mnt/fusefs)?  Would the community consider accepting =
+patches
+> > > > > > for this feature?
+> > > > >
+> > > > >
+> > > > > > I would say yes, but I have no experience with quota in any way=
+, so
+> > > > > > cannot help with the details.
+> > > >
+> > > > Thanks for your reply. I'd like try to implement this feature.
 > > >
-> > > OK, fair enough. I though someone will hate this. I'd just like to
-> > > understand one thing: Owner of the inode can change the project ID to 0
-> > > anyway so project quotas are more like a cooperative space tracking scheme
-> > > anyway. If you want to escape it, you can. So what are you exactly worried
-> > > about? Is it the container usecase where from within the user namespace you
-> > > cannot change project IDs?
+> > > Nice idea! But before you go and spend a lot of time trying to implem=
+ent
+> > > something, I suggest that you write down a design how you imagine all=
+ this
+> > > to work and we can talk about it. Questions like: Do you have particu=
+lar
+> > > usecases in mind? Where do you plan to perform the accounting /
+> > > enforcement? Where do you want to store quota information? How do you=
+ want
+> > > to recover from unclean shutdowns? Etc...
 > >
-> > Yep.
+> > Thanks a lot for your suggestions.
 > >
-> > > Anyway I just wanted to have an explicit decision that the simple solution
-> > > is not good enough before we go the more complex route ;).
-> >
-> > Also, every now and then someone comes along and half-proposes making it
-> > so that non-root cannot change project ids anymore.  Maybe some day that
-> > will succeed.
-> >
-> 
-> I'd just like to point out that the purpose of the project quotas feature
-> as I understand it, is to apply quotas to subtrees, where container storage
-> is a very common private case of project subtree.
+> > I am reviewing the quota code of ext4 and the fuse code to determine
+> > if the implementation method used in ext4 can be ported to fuse. Based
+> > on my current understanding, the key issue is that ext4 reserves
+> > several inodes for quotas and can manage the disk itself, allowing it
+> > to directly flush quota data to the disk blocks corresponding to the
+> > quota inodes within the kernel.
+>
+> Yes.
+>
+> > However, fuse does not seem to manage
+> > the disk itself; it sends all read and write requests to user space
+> > for completion. Therefore, it may not be possible to directly flush
+> > the data in the quota inode to the disk in fuse.
+>
+> Yes, ext4 uses journalling to keep filesystem state consistent with quota
+> information. Doing this within FUSE would be rather difficult (essentiall=
+y
+> you would have to implement journal within FUSE with will have rather hig=
+h
+> performace overhead).
+>
+>
+> > But that's why I'm asking for usecases. For some usecases it may be fin=
+e
+> > that in case of unclean shutdown you run quotacheck program to update q=
+uota
+> > information based on current usage - non-journalling filesystems use th=
+is
+> > method. So where do you want to use quotas on a FUSE filesystem?
 
-That is the most modern use case, yes.
+Please allow me to ask a silly question. I'm not sure if I correctly
+understand what you mean by 'unclean shutdown'. Do you mean an
+inconsistent state that requires using fsck to repair, like in ext4
+after a sudden power loss, or is it something else only about quota?
+In my scenario, FUSE (both the kernel and user space parts) acts
+merely as a proxy. FUSE is based on multiple file systems, and a
+user's file and directory exists in only one of these file systems. It
+does not even have its own superblock or inode metadata. When a user
+performs read or write operations on a specific file, FUSE checks the
+directory corresponding to this file on each file system to see if the
+user's file is there; if one is not, it continues to check the next
+file system.
 
-[ And for a walk down history lane.... ]
+>
+> > I am considering whether it would be feasible to implement the quota
+> > inode in user space in a similar manner. For example, users could
+> > reserve a few regular files that are invisible to actual file system
+> > users to store the contents of quota. When updating the quota, the
+> > user would be notified to flush the quota data to the disk. The
+> > benefit of this approach is that it can directly reuse the quota
+> > metadata format from the kernel, users do not need to redesign
+> > metadata. However, performance might be an issue with this approach.
+>
+> Yes, storing quota data in some files inside the filesystem is probably t=
+he
+> easiest way to go. I'd just not bother with flushing because as you say
+> the performance would suck in that case.
 
-> The purpose is NOT to create a "project" of random files in random
-> paths.
+What about using caching and asynchronous updates? For example, in
+FUSE, allocate some pages to cache the quota data. When updating quota
+data, write to the cache first and then place the task in a work
+queue. The work queue will then send the request to user space to
+complete the actual disk write operation. When there are read
+requests, the content is read directly from the cache.
 
-This is *exactly* the original use case that project quotas were
-designed for back on Irix in the early 1990s and is the original
-behaviour project quotas brought to Linux.
+The problem with this approach is that asynchronous updates might lead
+to loss of quota data in the event of a sudden power failure. This
+seems acceptable to me, but I am not sure if it aligns with the
+definition of quota. Additionally, this assumes that the quota file
+will not be very large, which I believe is a reasonable
+assumption.Perhaps there are some drawbacks I haven't considered?
 
-Project quota inheritance didn't come along until 2005:
+Regarding the enforcement of quota limits, I plan to perform this in
+the kernel. For project quotas, the kernel can know how much space and
+how many inodes are being used by the corresponding project ID. For
+now, I only want to implement project quota because I believe that
+user and group quotas can be simulated using project quotas.
+Additionally, users' definitions of file system users and groups might
+differ from file UID and GID. Users can freely use project IDs to
+define file system users and groups.
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-commit 65f1866a3a8e512d43795c116bfef262e703b789
-Author: Nathan Scott <nathans@sgi.com>
-Date:   Fri Jun 3 06:04:22 2005 +0000
 
-    Add support for project quota inheritance, a merge of Glens changes.
-    Merge of xfs-linux-melb:xfs-kern:22806a by kenmcd.
-
-And full support for directory tree quotas using project IDs wasn't
-fully introduced until a year later in 2006:
-
-commit 4aef4de4d04bcc36a1461c100eb940c162fd5ee6
-Author: Nathan Scott <nathans@sgi.com>
-Date:   Tue May 30 15:54:53 2006 +0000
-
-    statvfs component of directory/project quota support, code originally by Glen.
-    Merge of xfs-linux-melb:xfs-kern:26105a by kenmcd.
-
-These changes were largely done for an SGI NAS product that allowed
-us to create one great big XFS filesystem and then create
-arbitrarily sized, thin provisoned  "NFS volumes"  as directory
-quota controlled subdirs instantenously. The directory tree quota
-defined the size of the volume, and so we could also grow and shrink
-them instantenously, too. And we could remove them instantenously
-via background garbage collection after the export was removed and
-the user had been told it had been destroyed.
-
-So that was the original use case for directory tree quotas on XFS -
-providing scalable, fast management of "thin" storage for a NAS
-product. Projects quotas had been used for accounting random
-colections of files for over a decade before this directory quota
-construct was created, and the "modern" container use cases for
-directory quotas didn't come along until almost a decade after this
-capability was added.
-
-> My point is that changing the project id of a non-dir child to be different
-> from the project id of its parent is a pretty rare use case (I think?).
-
-Not if you are using project quotas as they were originally intended
-to be used.
-
-> If changing the projid of non-dir is needed for moving it to a
-> different subtree,
-> we could allow renameat2(2) of non-dir with no hardlinks to implicitly
-> change its
-> inherited project id or explicitly with a flag for a hardlink, e.g.:
-> renameat2(olddirfd, name, newdirfd, name, RENAME_NEW_PROJID).
-
-Why?
-
-The only reason XFS returns -EXDEV to rename across project IDs is
-because nobody wanted to spend the time to work out how to do the
-quota accounting of the metadata changed in the rename operation
-accurately. So for that rare case (not something that would happen
-on the NAS product) we returned -EXDEV to trigger the mv command to
-copy the file to the destination and then unlink the source instead,
-thereby handling all the quota accounting correctly.
-
-IOWs, this whole "-EXDEV on rename across parent project quota
-boundaries" is an implementation detail and nothing more.
-Filesystems that implement project quotas and the directory tree
-sub-variant don't need to behave like this if they can accurately
-account for the quota ID changes during an atomic rename operation.
-If that's too hard, then the fallback is to return -EXDEV and let
-userspace do it the slow way which will always acocunt the resource
-usage correctly to the individual projects.
-
-Hence I think we should just fix the XFS kernel behaviour to do the
-right thing in this special file case rather than return -EXDEV and
-then forget about the rest of it. Sure, update xfs_repair to fix the
-special file project id issue if it trips over it, but other than
-that I don't think we need anything more. If fixing it requires new
-syscalls and tools, then that's much harder to backport to old
-kernels and distros than just backporting a couple of small XFS
-kernel patches...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Best regards,
+--=20
+Junchao Sun <sunjunchao2870@gmail.com>
 
