@@ -1,270 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-21115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6328FF2B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 18:41:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256DF8FF2C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 18:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DABA1F232E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBDA289FCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706FA198A07;
-	Thu,  6 Jun 2024 16:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64BA198A3E;
+	Thu,  6 Jun 2024 16:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lPkFH7X0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jiWqPDmL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lPkFH7X0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jiWqPDmL"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="4mA5ZvVo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F523197A8A
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 16:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D020C26AE7;
+	Thu,  6 Jun 2024 16:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692054; cv=none; b=n1233vGAyIWqj9dRBCmpmItWbZyod1ri1siEDibM90BDKEK9MnsQu0jJUQpxYA6unjqcUltdaVyWOOylhl3QGxNdPKhGgcidZEEYVSeuwx7XokvKV0rpFY/jXXxrdmLH1T8j6VV2k1pRBOo1mWirbvakHk8nc8/bwR4q/88T2TM=
+	t=1717692314; cv=none; b=nhFggh9R68xTWBB0RZc/vmImZj2WrW4u0F8s3UK965bHXl7nPMmS9GxZzcu6AOyGfdHG9my8pR6+o+SmgZv4HNCcRyPL2dur6/7I5c+1dXrmcW0DA6fgHFQwnW0170TjTPFfIMQBJaLR7rs+JKOHe387LDSrwNTxrlUHFfQiW70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692054; c=relaxed/simple;
-	bh=8TBkpd8pPm/5pyZEpVbloCesd0UUY9nSuEQflbfNNkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVqpgDUB07yTGDpOoK2OEL2N0AkUUSuiy3x3Brn78QFFRmuiB6ItUcegz2WeKdkGdhsOAPuNhC+W52MhmRgSJDanVwT6urCgvHci0IdIWqvwmQ40TGVPRsElLxGdxhSAkDDV28/6WqCnNyBax3Cfa3bdUwx/crKqawsIa0WzysM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lPkFH7X0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jiWqPDmL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lPkFH7X0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jiWqPDmL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1717692314; c=relaxed/simple;
+	bh=DVWoZ94Ms0F2PXMXl9M29RDWyH9n8ugMwEG4I+rMNwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ddNdLqWTEqhulc7JylpDcS5yqA3XeOlPBpoQeCNcHpRUKZz9peOgruATBcqTKXhEoumnjgaPGfqdN1B1YmBJdf59FRsSIPAHtf3mlgO2EV2Z2LwxBqSHwnoX1+niSq09vXktk2BIPSQeLrDMy0YaJHvBZ/ka5KDvmSedD3awoD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=4mA5ZvVo; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vw9DS0Qyfz6Cnk9Y;
+	Thu,  6 Jun 2024 16:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1717692294; x=1720284295; bh=DVWoZ94Ms0F2PXMXl9M29RDW
+	yH9n8ugMwEG4I+rMNwk=; b=4mA5ZvVohYkAsNlESeJ3jT48VdyeK8RVsj3ddKMP
+	SOZ3qL+U8x9NM1ZGSjH50C5K8oZL02MYFmrM4LLS7LcN6Tnu5zK6VqD49X8s+/Wl
+	Q2pqYqBgt3v5m6dNRXCT45LrvYm9WAfeX/gCjCm7WTRpeTMdmX5dtuAQmOOSWnbN
+	hg557ukShq3D5vTZUmN6TJw6dClp7RzjuendtlKDt7Nc9zcakDR8XvWcguj3R4PG
+	/Sit8qPBUqK5xyJbF0768vVr5bMJMJ09pr7q3k1PsWR5jsUvXJYgUG+4L0lkcnZJ
+	KJVBRTo/nHq8gBaiIFh6kHDmcLWyOmgEpPd01gxx+e/Khg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id riXgj8xOY7Yj; Thu,  6 Jun 2024 16:44:54 +0000 (UTC)
+Received: from [172.20.24.239] (unknown [204.98.150.10])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 03CB321B04;
-	Thu,  6 Jun 2024 16:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717692051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FhkaLIsm3OMy5B1emSJtF/sEJqoxW+pm2SUVQ0HVT5o=;
-	b=lPkFH7X0HzEsUi1I7uJhl5oU8S4s/VWWWCsz6zf4Hom7zv3iALCtkouafyQzQIA+1NrA07
-	FT1UP0dZWl16NHbkXpQF90Bze1J8OYCeI5r8Fp0i2Sz8eDm0PtCA198f56qtMOMqZRSune
-	Xs7AgiCxBNJcYgvHS8nPv2x1d+19OV8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717692051;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FhkaLIsm3OMy5B1emSJtF/sEJqoxW+pm2SUVQ0HVT5o=;
-	b=jiWqPDmLojaUGwttBQ/BOai1tAEAm5X8SZIOB9EsDjxzYw0kUoM/PLrUsPaIQu9RZ5sSXm
-	4d6fH4Wqj0a3SfCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717692051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FhkaLIsm3OMy5B1emSJtF/sEJqoxW+pm2SUVQ0HVT5o=;
-	b=lPkFH7X0HzEsUi1I7uJhl5oU8S4s/VWWWCsz6zf4Hom7zv3iALCtkouafyQzQIA+1NrA07
-	FT1UP0dZWl16NHbkXpQF90Bze1J8OYCeI5r8Fp0i2Sz8eDm0PtCA198f56qtMOMqZRSune
-	Xs7AgiCxBNJcYgvHS8nPv2x1d+19OV8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717692051;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FhkaLIsm3OMy5B1emSJtF/sEJqoxW+pm2SUVQ0HVT5o=;
-	b=jiWqPDmLojaUGwttBQ/BOai1tAEAm5X8SZIOB9EsDjxzYw0kUoM/PLrUsPaIQu9RZ5sSXm
-	4d6fH4Wqj0a3SfCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E819513A1E;
-	Thu,  6 Jun 2024 16:40:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id f2VYOJLmYWZpCAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 06 Jun 2024 16:40:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7CA4CA088A; Thu,  6 Jun 2024 18:40:46 +0200 (CEST)
-Date: Thu, 6 Jun 2024 18:40:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jemmy <jemmywong512@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, jemmy512@icloud.com,
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v3] Improve readability of copy_tree
-Message-ID: <20240606164046.nzsry5uoukukqoqx@quack3>
-References: <20240604134347.9357-1-jemmywong512@gmail.com>
- <20240606090254.36274-1-jemmywong512@gmail.com>
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vw9D15Xxtz6Cnk9X;
+	Thu,  6 Jun 2024 16:44:49 +0000 (UTC)
+Message-ID: <d4946174-32e1-47f0-b448-38377dae0600@acm.org>
+Date: Thu, 6 Jun 2024 10:44:47 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606090254.36274-1-jemmywong512@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,icloud.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,suse.cz,icloud.com,vger.kernel.org,zeniv.linux.org.uk];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-3-nj.shetty@samsung.com>
+ <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+ <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+ <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+ <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
+ <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org> <20240601055931.GB5772@lst.de>
+ <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
+ <20240604044042.GA29094@lst.de>
+ <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
+ <CGME20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42@epcas5p2.samsung.com>
+ <66618886.630a0220.4d4fc.1c9cSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <66618886.630a0220.4d4fc.1c9cSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 06-06-24 17:02:54, Jemmy wrote:
-> by employing `copy mount tree from src to dst` concept.
-> This involves renaming the opaque variables (e.g., p, q, r, s)
-> to be more descriptive, aiming to make the code easier to understand.
-> 
-> Changes:
-> mnt     -> src_root (root of the tree to copy)
-> r       -> src_child (direct child of the root being cloning)
+On 6/6/24 01:28, Nitesh Shetty wrote:
+> On 04/06/24 04:44AM, Bart Van Assche wrote:
+>> On 6/3/24 21:40, Christoph Hellwig wrote:
+>>> There is no requirement to process them synchronously, there is just
+>>> a requirement to preserve the order.=C2=A0 Note that my suggestion a =
+few
+>>> arounds ago also included a copy id to match them up.=C2=A0 If we don=
+'t
+>>> need that I'm happy to leave it away.=C2=A0 If need it it to make sta=
+cking
+>>> drivers' lifes easier that suggestion still stands.
+>>
+>> Including an ID in REQ_OP_COPY_DST and REQ_OP_COPY_SRC operations soun=
+ds
+>> much better to me than abusing the merge infrastructure for combining
+>> these two operations into a single request. With the ID-based approach
+>> stacking drivers are allowed to process copy bios asynchronously and i=
+t
+>> is no longer necessary to activate merging for copy operations if
+>> merging is disabled (QUEUE_FLAG_NOMERGES).
+>>
+> Single request, with bio merging approach:
+> The current approach is to send a single request to driver,
+> which contains both destination and source information inside separate =
+bios.
+> Do you have any different approach in mind ?
 
-I'd call this src_root_child to distinguish it from a child of
-"src_parent". Otherwise these names work for me.
+No. I did not propose to change how copy offload requests are sent to blo=
+ck
+drivers (other than stacking drivers).
 
-> p       -> src_parent (parent of src_mnt)
-> s       -> src_mnt (current mount being copying)
-> parent  -> dst_parent (parent of dst_child)
-> q       -> dst_mnt (freshly cloned mount)
-> 
-> Signed-off-by: Jemmy <jemmywong512@gmail.com>
+> If we want to proceed with this single request based approach,
+> we need to merge the destination request with source BIOs at some point=
+.
+> a. We chose to do it via plug approach.
+> b. Alternative I see is scheduler merging, but here we need some way to
+> hold the request which has destination info, until source bio is also
+> submitted.
+> c. Is there any other way, which I am missing here ?
 
-								Honza
+There are already exceptions in blk_mq_submit_bio() for zoned writes and =
+for
+flush bios. Another exception could be added for REQ_OP_COPY_* bios. I'm =
+not
+claiming that this is the best possible alternative. I'm only mentioning =
+this
+to show that there are alternatives.
 
-> ---
->  fs/namespace.c | 59 ++++++++++++++++++++++++++------------------------
->  1 file changed, 31 insertions(+), 28 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 5a51315c6678..0dd43633607b 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1966,69 +1966,72 @@ static bool mnt_ns_loop(struct dentry *dentry)
->  	return current->nsproxy->mnt_ns->seq >= mnt_ns->seq;
->  }
->  
-> -struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
-> +struct mount *copy_tree(struct mount *src_root, struct dentry *dentry,
->  					int flag)
->  {
-> -	struct mount *res, *p, *q, *r, *parent;
-> +	struct mount *res, *src_parent, *src_child, *src_mnt,
-> +		*dst_parent, *dst_mnt;
->  
-> -	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(mnt))
-> +	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(src_root))
->  		return ERR_PTR(-EINVAL);
->  
->  	if (!(flag & CL_COPY_MNT_NS_FILE) && is_mnt_ns_file(dentry))
->  		return ERR_PTR(-EINVAL);
->  
-> -	res = q = clone_mnt(mnt, dentry, flag);
-> -	if (IS_ERR(q))
-> -		return q;
-> +	res = dst_mnt = clone_mnt(src_root, dentry, flag);
-> +	if (IS_ERR(dst_mnt))
-> +		return dst_mnt;
->  
-> -	q->mnt_mountpoint = mnt->mnt_mountpoint;
-> +	src_parent = src_root;
-> +	dst_mnt->mnt_mountpoint = src_root->mnt_mountpoint;
->  
-> -	p = mnt;
-> -	list_for_each_entry(r, &mnt->mnt_mounts, mnt_child) {
-> -		struct mount *s;
-> -		if (!is_subdir(r->mnt_mountpoint, dentry))
-> +	list_for_each_entry(src_child, &src_root->mnt_mounts, mnt_child) {
-> +		if (!is_subdir(src_child->mnt_mountpoint, dentry))
->  			continue;
->  
-> -		for (s = r; s; s = next_mnt(s, r)) {
-> +		for (src_mnt = src_child; src_mnt;
-> +			src_mnt = next_mnt(src_mnt, src_child)) {
->  			if (!(flag & CL_COPY_UNBINDABLE) &&
-> -			    IS_MNT_UNBINDABLE(s)) {
-> -				if (s->mnt.mnt_flags & MNT_LOCKED) {
-> +			    IS_MNT_UNBINDABLE(src_mnt)) {
-> +				if (src_mnt->mnt.mnt_flags & MNT_LOCKED) {
->  					/* Both unbindable and locked. */
-> -					q = ERR_PTR(-EPERM);
-> +					dst_mnt = ERR_PTR(-EPERM);
->  					goto out;
->  				} else {
-> -					s = skip_mnt_tree(s);
-> +					src_mnt = skip_mnt_tree(src_mnt);
->  					continue;
->  				}
->  			}
->  			if (!(flag & CL_COPY_MNT_NS_FILE) &&
-> -			    is_mnt_ns_file(s->mnt.mnt_root)) {
-> -				s = skip_mnt_tree(s);
-> +			    is_mnt_ns_file(src_mnt->mnt.mnt_root)) {
-> +				src_mnt = skip_mnt_tree(src_mnt);
->  				continue;
->  			}
-> -			while (p != s->mnt_parent) {
-> -				p = p->mnt_parent;
-> -				q = q->mnt_parent;
-> +			while (src_parent != src_mnt->mnt_parent) {
-> +				src_parent = src_parent->mnt_parent;
-> +				dst_mnt = dst_mnt->mnt_parent;
->  			}
-> -			p = s;
-> -			parent = q;
-> -			q = clone_mnt(p, p->mnt.mnt_root, flag);
-> -			if (IS_ERR(q))
-> +
-> +			src_parent = src_mnt;
-> +			dst_parent = dst_mnt;
-> +			dst_mnt = clone_mnt(src_mnt, src_mnt->mnt.mnt_root, flag);
-> +			if (IS_ERR(dst_mnt))
->  				goto out;
->  			lock_mount_hash();
-> -			list_add_tail(&q->mnt_list, &res->mnt_list);
-> -			attach_mnt(q, parent, p->mnt_mp, false);
-> +			list_add_tail(&dst_mnt->mnt_list, &res->mnt_list);
-> +			attach_mnt(dst_mnt, dst_parent, src_parent->mnt_mp, false);
->  			unlock_mount_hash();
->  		}
->  	}
->  	return res;
-> +
->  out:
->  	if (res) {
->  		lock_mount_hash();
->  		umount_tree(res, UMOUNT_SYNC);
->  		unlock_mount_hash();
->  	}
-> -	return q;
-> +	return dst_mnt;
->  }
->  
->  /* Caller should check returned pointer for errors */
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Copy ID approach:
+> We see 3 possibilities here:
+> 1. No merging: If we include copy-id in src and dst bio, the bio's will=
+ get
+> submitted separately and reach to the driver as separate requests.
+> How do we plan to form a copy command in driver ?
+> 2. Merging BIOs:
+> At some point we need to match the src bio with the dst bio and send th=
+is
+> information together to the driver. The current implementation.
+> This still does not solve the asynchronous submission problem, mentione=
+d
+> above.
+> 3. Chaining BIOs:
+> This won't work with stacked devices as there will be cloning, and henc=
+e
+> chain won't be maintained.
+
+I prefer option (2). Option (1) could result in a deadlock because the so=
+urce
+and destination bio both would have to be converted into a request before
+these are sent to a request-based driver.
+
+Thanks,
+
+Bart.
+
 
