@@ -1,238 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-21123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B4F8FF3B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 19:28:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4B78FF3D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 19:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D2D288904
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 17:28:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92E76B28B00
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 17:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AA81991BD;
-	Thu,  6 Jun 2024 17:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D7619922D;
+	Thu,  6 Jun 2024 17:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yXB3t5wM"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDTXyTi0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4991198E90
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 17:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0E9197A6A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 17:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694900; cv=none; b=kdRuOloTp2b7cI+eS8MTdhHa3OJC24iAsmAAzImGaoNUFEApTU8Ribx4yWu0FBZoW+pzMB6LKmkcDIAP7NU9VfM8rT7PAbZ80wmWHqgtAHjdvDPqcWEuqTJFUTOhNu8T5PM9w5lWNwoIxeS73EqAdRTmT2TBh+J0mVpRv7MB0GQ=
+	t=1717695218; cv=none; b=Wy18dni/obofnyEnpUD4uscM9s6lbpib432Cek7nYjFND2QbAaLSMzYr/snivJpubW3eAfhp51BBluqBNbry/qff7T5UY3+C+FoY1cYjlaoqinFfOAvZm0PypfeejrG83lE606EqHrEsAuBZ+a1rqztZrqAkqHoVe0tOedNzDdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694900; c=relaxed/simple;
-	bh=VyaTOddNCzEFJ/NEh/9NuxV4q03NkvdncMSoKRh5+1c=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=bGyQdeAv2t+gDmRHQRulhsl+vt8w92inLVkUCXWCMtmyD0NqjAUfXC24S2W+Tlhz78G5CjdccLo03jWgA1QHixM4RlA41KYhCRc+yYTJ0Lc0x1tp62ytNP6WE82jekQ6cR4o+VYcnnzlAl3Sm8tsjJrCHm4Y5Tw7Dw1k6TJO8R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yXB3t5wM; arc=none smtp.client-ip=209.85.219.202
+	s=arc-20240116; t=1717695218; c=relaxed/simple;
+	bh=rYVMkwI8qFoB/ptB7kU79gZFDx+FsNx/WF4p8yfanOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=ON7ElGIfxm7Rc7eEztKTwrKqmj064VMjAfnVBPM0DtLKuFNz8v3sXZ8e90enJkZg/6916z5A2tZCqVDw9NWYx+Oo5xzOu/y6MGdmO4WZQAX4CKCK4A4aPK/I3+zDjmmGKm82dSgTqH62MRbZ4ZNWkt3h9/wscauRAam9DBXaot4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDTXyTi0; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfa75354911so2050128276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 10:28:17 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so13741155e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 10:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717694897; x=1718299697; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HgRRo88YfpvYO7wSKqGlPrXzX3q2dRMuM6tAFdbCFr0=;
-        b=yXB3t5wMDrrw9Run39TOpZ+h7Q9lnvAdfioCbhEPhYFAnzgBB/p8LAM6xEIwvn1iYs
-         cES716Y24+eXYnCQKVPpcVAr6lfWv/DDNkD8VA38RbZ31MqgIZzpEJjN44YPpLLS7U1V
-         A+POHMK/vfWvgXPHrdS5DblevpYFDQpHf0SmAz8reI6Rn/7Zmz1rDP2/Sdvdrwe2W79M
-         krjzFD8WbymCUhkcnDCd+jF81aOKKvm21EynQXnw4jORFca19oupSsbs37UfAdM0ISih
-         GxVJyg4vkuSZ62miKHMxjvD3tmWtyAgsTjhKpDHU+YqY5qI7rb7j6JKzqceOkO1INYgt
-         fSjg==
+        d=google.com; s=20230601; t=1717695215; x=1718300015; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mPjsJlKDBXzcFKJiIo/4f6GGzkeINELRnLiFwHcGpOo=;
+        b=mDTXyTi0rNw369u0JcGh6PhF8bbU1DdWb+GmNbbS/K5/j1zjdJa6PDMz2m++vK1gwa
+         M0qxjq4TcBc8R8CeRthxIZQfF5Y/RuM6f/Sme+sY6OvrFkZyWMw5QZvRDZlL3PbgoFIK
+         vZT1mxIRTSQioeBa//dcS7595/B+C46yb79cZ5cCBKkyLcLWC7VaVQhzgc1s5wq52nGJ
+         AZu3JET/rp8SQwrPDW0qXqJ7NJKJHRSIF3PB9tfKwPIlB4ZBJ8hfjzRWMNCraIIJ+26G
+         Yg1jT2s3OZfaq9250Ovcm6F5rElsrxJ3yLWk5oMcwzGt0wBMZsJB0Y6Age3GbIzX5QOL
+         m8Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717694897; x=1718299697;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HgRRo88YfpvYO7wSKqGlPrXzX3q2dRMuM6tAFdbCFr0=;
-        b=HzEaduFlNjzi96h/mrYqhs3OzKfB/tKgTUuSQXTP1JFWhMB4ass9qYqJ0Kn5TkQfai
-         CP89BsibfPkkDEK4oL9GVZCiBiaXJNqrae1gSPtFFXl7U+zDMd7Y/wmgik/Ri6Qx0jz5
-         WHFefBI/Xd07PHyIYjxFdI9iniz4OmjveTz+cMYfflJ4dEazEJOhYBP2B/4WpMihBvKz
-         MIh5yGo3kFZOQBGTLl9JF4N4rY2K1b1bP2mbWBYBUlKqp5zEnr+3jJEJwbZiBEe3iQPv
-         b3AsXGnvmftwQXRS1NvCQ4dvttE3wZotRxCE1HfAXOwlts7+CJq51nIVqKnJZg/fu/rQ
-         g0BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX86VS0Mswlfi/rSv6x0ZZvM/pRvFK2WfGiAVDslYnuW0AWJNcWUEOgMZ/N8YSv8d2SIxNAW+VMCe0o9+PkEnyLa0eQ6AJ64SA+y0xjjA==
-X-Gm-Message-State: AOJu0YzU4Sg6zBDGYZZYQlyQ4h5BSee4i1gdwb4EQw22MfBrAlXm+3xQ
-	WnoJZWCENNH0gZwfWNakmvoiGZzGjISIP3p4LJHTd4r3wjUBFYPr0idAxFuCoRIs063m+gPeV3h
-	yqF+i3QiUWcv3RtO1guPKElHsO8R+8GY93Q==
-X-Google-Smtp-Source: AGHT+IGmL/ci+QUeD78WXo0hxk1uBw/HJGmZ0Y2PniemChSJPTzIQcW9M9adT9vpi4Jwi6aRAmFxTkLHJQdDOs8cEtopoQ==
-X-Received: from isaacmanjarres.irv.corp.google.com ([2620:15c:2d:3:662b:6cb2:952a:1074])
- (user=isaacmanjarres job=sendgmr) by 2002:a25:b28a:0:b0:df7:7a90:26c1 with
- SMTP id 3f1490d57ef6-dfaf667f667mr10303276.13.1717694896769; Thu, 06 Jun 2024
- 10:28:16 -0700 (PDT)
-Date: Thu,  6 Jun 2024 10:28:11 -0700
+        d=1e100.net; s=20230601; t=1717695215; x=1718300015;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mPjsJlKDBXzcFKJiIo/4f6GGzkeINELRnLiFwHcGpOo=;
+        b=VAfMrX+QEGbdtCYz53ySoyWOR3Z9CG/0ADXr7ZWwE7mjpA/niCdSqqCf8qC6Qkv8Xv
+         y58bbzZhRxrjOGt34h7dcG0JDS6XPQbE8KGwJxUnuwSyYs7PuOTZBbNvnW/3fEm2RBZ6
+         gDfehGHp0gkWzGEuyi1xv3NTvdt5IYgNV+4T0mUPenKr+5BPqDI7/xAVaFX4x12Eyk6l
+         3OB09wswYWHHnIWSLejsxij27mZJ8wTuYmwUevpG+sejALVfh72ILTCD1PCErb6Os/Ot
+         kXMJFsbAZX8jF2cDDsT7K0WIeOam61LqUeY+0G7wLb8Grca6z6LC83pAt57JUBzxmzgI
+         EJOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaFuWhUEEpD8Q0FECc+9+xYeMJLPflS9c1RYhZ3pjXwHXIePSh4AXQOrw02dnp2g7IkzilyDa9mFXu/bJyGrSc3oEerKa92AugZQM67A==
+X-Gm-Message-State: AOJu0Yxuk4XR2GXW1nUSyHYRHHxYl8qHJsc3Eu3vsZprB6Cqt2ejlOcJ
+	BayLtUF7yoflzPZ5ZdUM1VOkWtkc+pUv58wCG3vQXoZeWDuIonW1n1Tkt2p/cbmClAiBlDhl3k4
+	pCjBJbBbgv+FmdW3upUhS4P34Yij9exCYIP6w
+X-Google-Smtp-Source: AGHT+IE4QPvkBQBYH5qBQiqsMSACkO+0MruSkYzXUyRwuzkvF/JqqLhtKdRfSDNl8JmBwmG1H52WpeDjd6vt0pJCRZ4=
+X-Received: by 2002:a05:600c:54ca:b0:420:309a:fe63 with SMTP id
+ 5b1f17b1804b1-42164a030a5mr3279955e9.22.1717695214069; Thu, 06 Jun 2024
+ 10:33:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240606172813.2755930-1-isaacmanjarres@google.com>
-Subject: [PATCH v5] fs: Improve eventpoll logging to stop indicting timerfd
-From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-To: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: saravanak@google.com, Manish Varma <varmam@google.com>, 
-	Kelly Rossmoyer <krossmo@google.com>, "Isaac J . Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
+MIME-Version: 1.0
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-5-andrii@kernel.org>
+ <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
+ <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com> <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+In-Reply-To: <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 6 Jun 2024 10:33:19 -0700
+Message-ID: <CAJuCfpEFpd-+DDr=EyA1gMKZcDZYpZN9pBuFczhVXrFSe11U_g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
+ PROCMAP_QUERY API
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, rppt@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Manish Varma <varmam@google.com>
+On Thu, Jun 6, 2024 at 10:15=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240606 12:52]:
+> > On Wed, Jun 5, 2024 at 4:16=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
+e.com> wrote:
+> > >
+> > > On Tue, Jun 4, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko <andrii@kernel=
+.org> wrote:
+> > > >
+> > > > Attempt to use RCU-protected per-VMA lock when looking up requested=
+ VMA
+> > > > as much as possible, only falling back to mmap_lock if per-VMA lock
+> > > > failed. This is done so that querying of VMAs doesn't interfere wit=
+h
+> > > > other critical tasks, like page fault handling.
+> > > >
+> > > > This has been suggested by mm folks, and we make use of a newly add=
+ed
+> > > > internal API that works like find_vma(), but tries to use per-VMA l=
+ock.
+> > > >
+> > > > We have two sets of setup/query/teardown helper functions with diff=
+erent
+> > > > implementations depending on availability of per-VMA lock (conditio=
+ned
+> > > > on CONFIG_PER_VMA_LOCK) to abstract per-VMA lock subtleties.
+> > > >
+> > > > When per-VMA lock is available, lookup is done under RCU, attemptin=
+g to
+> > > > take a per-VMA lock. If that fails, we fallback to mmap_lock, but t=
+hen
+> > > > proceed to unconditionally grab per-VMA lock again, dropping mmap_l=
+ock
+> > > > immediately. In this configuration mmap_lock is never helf for long=
+,
+> > > > minimizing disruptions while querying.
+> > > >
+> > > > When per-VMA lock is compiled out, we take mmap_lock once, query VM=
+As
+> > > > using find_vma() API, and then unlock mmap_lock at the very end onc=
+e as
+> > > > well. In this setup we avoid locking/unlocking mmap_lock on every l=
+ooked
+> > > > up VMA (depending on query parameters we might need to iterate a fe=
+w of
+> > > > them).
+> > > >
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > > >  fs/proc/task_mmu.c | 46 ++++++++++++++++++++++++++++++++++++++++++=
+++++
+> > > >  1 file changed, 46 insertions(+)
+> > > >
+> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > > index 614fbe5d0667..140032ffc551 100644
+> > > > --- a/fs/proc/task_mmu.c
+> > > > +++ b/fs/proc/task_mmu.c
+> > > > @@ -388,6 +388,49 @@ static int pid_maps_open(struct inode *inode, =
+struct file *file)
+> > > >                 PROCMAP_QUERY_VMA_FLAGS                         \
+> > > >  )
+> > > >
+> > > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > > +static int query_vma_setup(struct mm_struct *mm)
+> > > > +{
+> > > > +       /* in the presence of per-VMA lock we don't need any setup/=
+teardown */
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static void query_vma_teardown(struct mm_struct *mm, struct vm_are=
+a_struct *vma)
+> > > > +{
+> > > > +       /* in the presence of per-VMA lock we need to unlock vma, i=
+f present */
+> > > > +       if (vma)
+> > > > +               vma_end_read(vma);
+> > > > +}
+> > > > +
+> > > > +static struct vm_area_struct *query_vma_find_by_addr(struct mm_str=
+uct *mm, unsigned long addr)
+> > > > +{
+> > > > +       struct vm_area_struct *vma;
+> > > > +
+> > > > +       /* try to use less disruptive per-VMA lock */
+> > > > +       vma =3D find_and_lock_vma_rcu(mm, addr);
+> > > > +       if (IS_ERR(vma)) {
+> > > > +               /* failed to take per-VMA lock, fallback to mmap_lo=
+ck */
+> > > > +               if (mmap_read_lock_killable(mm))
+> > > > +                       return ERR_PTR(-EINTR);
+> > > > +
+> > > > +               vma =3D find_vma(mm, addr);
+> > > > +               if (vma) {
+> > > > +                       /*
+> > > > +                        * We cannot use vma_start_read() as it may=
+ fail due to
+> > > > +                        * false locked (see comment in vma_start_r=
+ead()). We
+> > > > +                        * can avoid that by directly locking vm_lo=
+ck under
+> > > > +                        * mmap_lock, which guarantees that nobody =
+can lock the
+> > > > +                        * vma for write (vma_start_write()) under =
+us.
+> > > > +                        */
+> > > > +                       down_read(&vma->vm_lock->lock);
+> > >
+> > > Hi Andrii,
+> > > The above pattern of locking VMA under mmap_lock and then dropping
+> > > mmap_lock is becoming more common. Matthew had an RFC proposal for an
+> > > API to do this here:
+> > > https://lore.kernel.org/all/ZivhG0yrbpFqORDw@casper.infradead.org/. I=
+t
+> > > might be worth reviving that discussion.
+> >
+> > Sure, it would be nice to have generic and blessed primitives to use
+> > here. But the good news is that once this is all figured out by you mm
+> > folks, it should be easy to make use of those primitives here, right?
+> >
+> > >
+> > > > +               }
+> > > > +
+> > > > +               mmap_read_unlock(mm);
+> > >
+> > > Later on in your code you are calling get_vma_name() which might call
+> > > anon_vma_name() to retrieve user-defined VMA name. After this patch
+> > > this operation will be done without holding mmap_lock, however per
+> > > https://elixir.bootlin.com/linux/latest/source/include/linux/mm_types=
+.h#L582
+> > > this function has to be called with mmap_lock held for read. Indeed
+> > > with debug flags enabled you should hit this assertion:
+> > > https://elixir.bootlin.com/linux/latest/source/mm/madvise.c#L96.
+>
+> The documentation on the first link says to hold the lock or take a
+> reference, but then we assert the lock.  If you take a reference to the
+> anon vma name, then we will trigger the assert.  Either the
+> documentation needs changing or the assert is incorrect - or I'm missing
+> something?
 
-timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
-it names them after the underlying file descriptor, and since all
-timerfd file descriptors are named "[timerfd]" (which saves memory on
-systems like desktops with potentially many timerfd instances), all
-wakesources created as a result of using the eventpoll-on-timerfd idiom
-are called... "[timerfd]".
+I think the documentation is correct. It says that at the time of
+calling anon_vma_name() the mmap_lock should be locked (hence the
+assertion). Then the user can raise anon_vma_name refcount, drop
+mmap_lock and safely continue using anon_vma_name object. IOW this is
+fine:
 
-However, it becomes impossible to tell which "[timerfd]" wakesource is
-affliated with which process and hence troubleshooting is difficult.
+mmap_read_lock(vma->mm);
+anon_name =3D anon_vma_name(vma);
+anon_vma_name_get(anon_name);
+mmap_read_unlock(vma->mm);
+// keep using anon_name
+anon_vma_name_put(anon_name);
 
-This change addresses this problem by changing the way eventpoll
-wakesources are named:
 
-1) the top-level per-process eventpoll wakesource is now named
-"epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
-and P is the PID of the creating process.
-2) individual per-underlying-file descriptor eventpoll wakesources are
-now named "epollitemN:P.F", where N is a unique ID token and P is PID
-of the creating process and F is the name of the underlying file
-descriptor.
-
-Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
-Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
-Signed-off-by: Manish Varma <varmam@google.com>
-Co-developed-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
----
- drivers/base/power/wakeup.c | 12 +++++++++---
- fs/eventpoll.c              | 11 +++++++++--
- include/linux/pm_wakeup.h   |  8 ++++----
- 3 files changed, 22 insertions(+), 9 deletions(-)
-
- v1 -> v2:
- - Renamed instance count to wakesource_create_id to better describe
-   its purpose.
- - Changed the wakeup source naming convention for wakeup sources
-   created by eventpoll to avoid changing the timerfd names.
- - Used the PID of the process instead of the process name for the
-   sake of uniqueness when creating wakeup sources.
-
-v2 -> v3:
- - Changed wakeup_source_register() to take in a format string
-   and arguments to avoid duplicating code to construct wakeup
-   source names.
- - Moved the definition of wakesource_create_id so that it is
-   always defined to fix an compilation error.
-
-v3 -> v4:
- - Changed the naming convention for the top-level epoll wakeup
-   sources to include an ID for uniqueness. This is needed in
-   cases where a process is using two epoll fds.
- - Edited commit log to reflect new changes and add new tags.
-
-v4 -> v5:
- - Added the format attribute to the wakeup_source_register()
-   function to address a warning from the kernel test robot:
-   https://lore.kernel.org/all/202406050504.UvdlPAQ0-lkp@intel.com/
-
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index 752b417e8129..04a808607b62 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -209,13 +209,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
- /**
-  * wakeup_source_register - Create wakeup source and add it to the list.
-  * @dev: Device this wakeup source is associated with (or NULL if virtual).
-- * @name: Name of the wakeup source to register.
-+ * @fmt: format string for the wakeup source name
-  */
--struct wakeup_source *wakeup_source_register(struct device *dev,
--					     const char *name)
-+__printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
-+							    const char *fmt, ...)
- {
- 	struct wakeup_source *ws;
- 	int ret;
-+	char name[128];
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vsnprintf(name, sizeof(name), fmt, args);
-+	va_end(args);
- 
- 	ws = wakeup_source_create(name);
- 	if (ws) {
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index f53ca4f7fced..941df15208a4 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -338,6 +338,7 @@ static void __init epoll_sysctls_init(void)
- #define epoll_sysctls_init() do { } while (0)
- #endif /* CONFIG_SYSCTL */
- 
-+static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
- static const struct file_operations eventpoll_fops;
- 
- static inline int is_file_epoll(struct file *f)
-@@ -1545,15 +1546,21 @@ static int ep_create_wakeup_source(struct epitem *epi)
- {
- 	struct name_snapshot n;
- 	struct wakeup_source *ws;
-+	pid_t task_pid;
-+	int id;
-+
-+	task_pid = task_pid_nr(current);
- 
- 	if (!epi->ep->ws) {
--		epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
-+		id = atomic_inc_return(&wakesource_create_id);
-+		epi->ep->ws = wakeup_source_register(NULL, "epoll:%d:%d", id, task_pid);
- 		if (!epi->ep->ws)
- 			return -ENOMEM;
- 	}
- 
-+	id = atomic_inc_return(&wakesource_create_id);
- 	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
--	ws = wakeup_source_register(NULL, n.name.name);
-+	ws = wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task_pid, n.name.name);
- 	release_dentry_name_snapshot(&n);
- 
- 	if (!ws)
-diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-index 76cd1f9f1365..1fb6dca981c2 100644
---- a/include/linux/pm_wakeup.h
-+++ b/include/linux/pm_wakeup.h
-@@ -99,8 +99,8 @@ extern struct wakeup_source *wakeup_source_create(const char *name);
- extern void wakeup_source_destroy(struct wakeup_source *ws);
- extern void wakeup_source_add(struct wakeup_source *ws);
- extern void wakeup_source_remove(struct wakeup_source *ws);
--extern struct wakeup_source *wakeup_source_register(struct device *dev,
--						    const char *name);
-+extern __printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
-+								   const char *fmt, ...);
- extern void wakeup_source_unregister(struct wakeup_source *ws);
- extern int wakeup_sources_read_lock(void);
- extern void wakeup_sources_read_unlock(int idx);
-@@ -140,8 +140,8 @@ static inline void wakeup_source_add(struct wakeup_source *ws) {}
- 
- static inline void wakeup_source_remove(struct wakeup_source *ws) {}
- 
--static inline struct wakeup_source *wakeup_source_register(struct device *dev,
--							   const char *name)
-+static inline __printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
-+									  const char *fmt, ...)
- {
- 	return NULL;
- }
--- 
-2.45.2.505.gda0bf45e8d-goog
-
+>
+> >
+> > Sigh... Ok, what's the suggestion then? Should it be some variant of
+> > mmap_assert_locked() || vma_assert_locked() logic, or it's not so
+> > simple?
+> >
+> > Maybe I should just drop the CONFIG_PER_VMA_LOCK changes for now until
+> > all these gotchas are figured out for /proc/<pid>/maps anyway, and
+> > then we can adapt both text-based and ioctl-based /proc/<pid>/maps
+> > APIs on top of whatever the final approach will end up being the right
+> > one?
+> >
+> > Liam, any objections to this? The whole point of this patch set is to
+> > add a new API, not all the CONFIG_PER_VMA_LOCK gotchas. My
+> > implementation is structured in a way that should be easily amenable
+> > to CONFIG_PER_VMA_LOCK changes, but if there are a few more subtle
+> > things that need to be figured for existing text-based
+> > /proc/<pid>/maps anyways, I think it would be best to use mmap_lock
+> > for now for this new API, and then adopt the same final
+> > CONFIG_PER_VMA_LOCK-aware solution.
+>
+> The reason I was hoping to have the new interface use the per-vma
+> locking from the start is to ensure the guarantees that we provide to
+> the users would not change.  We'd also avoid shifting to yet another
+> mmap_lock users.
+>
+> I also didn't think it would complicate your series too much, so I
+> understand why you want to revert to the old locking semantics.  I'm
+> fine with you continuing with the series on the old lock.  Thanks for
+> trying to make this work.
+>
+> Regards,
+> Liam
 
