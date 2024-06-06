@@ -1,132 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-21076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0458FDBA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 02:51:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F16C8FDCB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 04:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62F0F1C21DB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 00:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D901C20F20
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 02:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD641EEC5;
-	Thu,  6 Jun 2024 00:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CDD1B950;
+	Thu,  6 Jun 2024 02:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i9WPi2D2"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Fp7tuXZm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A98DDDC
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 00:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1856318C08
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 02:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717635081; cv=none; b=ioZEijuYhEsOwkQPqdGXRSD0lGM+szru5dWE3pkfCgPE1y2qNM8MhLuUVkou6LAc8C79qvXmRCv7jDSJyKBPm9CVA5xVHn++vdDw6A/78MX27d8oWeUGTcCz4sU32wT916yoaRHMfhe3FsOSzzI5PfjFRKUMqYcJeWJ7C7OhppY=
+	t=1717640864; cv=none; b=n+xlVIOQiwlm1mZlPsfyRhVnAgKy6p+iY0qWLEWM0v01HrQUgKsgfACAaxBQymacF66hAa8OZTA5fwW9uv3xL2eVtYzG9U7GmZ1liF4Sb5vwtdnSfE06STzBE3HOGhysjMTbKxfLLsoyLXddxgrLM09zGta1xjaA3Wj3twBw0tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717635081; c=relaxed/simple;
-	bh=GRqVKXcsJh/sEtGC6AlRPdUI8v4SOfb2fFYrbfnYbr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bhJ2uGhG5tJm2XqGnij/BrvxizDWZg6A0rU3B9g1H+6j8K951b5F02iU7FRkTsSk4WpTYErmIXmKV+NQA2u/q6ae1QiT8nxsZJoJYcuKNNG5FPAp7zRjMdgVvl3Jxew92H8ecAYftJLvxjl6blFNX3pjd/WXazFUIT3FjT6xPbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i9WPi2D2; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfa4ad7f6dfso451771276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 17:51:19 -0700 (PDT)
+	s=arc-20240116; t=1717640864; c=relaxed/simple;
+	bh=1LDL86QubPpmoCbk76dksUFSkh9K84fHfc7HHJImPGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJzTKhlVyL6w6HE6tlmrkaSMVtldaNPF8vfoJVCZl5FXBbBMq9Ub3Ma9kfpDJImSdpXKG/GWlcIahgM2fhu5TaH6sYlqrG9wArLJK3W4PBfIim1z6fQrN8cmSUKn9+D2fM5m4eW7TRFhI2CsjjaOEGg+HI+ZgpijXjguj9i85Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Fp7tuXZm; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70245b22365so362551b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 19:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717635079; x=1718239879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f+cCaO4GQQZF5arDTs75VRTDY7XKwvZ01IHsyj7Khdo=;
-        b=i9WPi2D2SIQOws4z/n+I+Q4kv5gk6biurZkPtultB9YREs33YDKujY5qfmjPqMveh3
-         sR9lZDet4kOmLTzlwwi1mxNx9gLQmV0hVDDV6chHA/TYO1vQD3Ek7hyxPnlXxdFUpXrq
-         uPOVI9r7fU1fPc9oJ/QMcnv02wAkExLI9qKyWEuD2c8LsksEIgu2Z4o0wEJ5BzY/aEJA
-         8zTgELWgU1blvN0M7xa+2PJWPNLOXbTd+ud3XN+Eb2Z5CEPyApsLG1JrlEJgXw9KOgUR
-         N8w6qDWZAfX7CeOuG0UnTAd0fp5htp0JbnLhrsGOfA6RHcG/Yefl+sBq+EbSuj363lDK
-         2kfg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717640862; x=1718245662; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5TJAdD8GmJxvj8pKuF8QnnhaTXzIe7Tat0a8Ot2Rm1I=;
+        b=Fp7tuXZm1xkj8VT/ICSRidbJrnvv0Z+TEgqrFSXzp7lMQTlRKYIqIR0h3520DJos96
+         YPCbyaXE9QY/C7z9xlycFK3D6w0C6U5rU63nEBDJtXemZLUUMxQj1fUS4noT2Hns/4rW
+         CZk+YwqLIloR3h9QIrpC1rUZ5jgod0BfAiGeZ/i8JttRCFRh8/P1r0bdv90DNkH6sFg+
+         VkNlBuKX2wzvd4gz2bSMdsFFsqPZU3C2EQ7nwswDZV3bsGv9vFIiI3NbEZDScxDH3jDv
+         Mq9W37ebrOww5EbL54LtFKDwd8RwGp2qVcJQO2PBDpDKXMlQsTKd6LYVXyZAnq3hc2QY
+         qtPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717635079; x=1718239879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f+cCaO4GQQZF5arDTs75VRTDY7XKwvZ01IHsyj7Khdo=;
-        b=TXOlEnrM6z1IJHrh2mzPzYAAaO5J+AAU03L8FbqBWti8mFvdlSEPAdvAG25qWGA0+X
-         jcLh1RYd7mEsh2aokcu8rIjAuoADG2qH/yVeOyONMc0R1YuLzdVuC1WjCMrCI5wJrTlB
-         kYl2GPdiZbxV4O5HdvjUZ/ocfWYh0wRRkRNaxnbb32ah31GUj0kKGbgfolQ6OlZu6yrz
-         u1eVhuenJ6aYcimlRPp4k5Y4H2ihDehg2NiadVnGR6N6zWdFrlOkqkXsHW8861+yeekr
-         ssR47UDEbwG1/IQVmO7JKxSM+TWRlGvFWaPAP/ZIOdwpqd8Z9KKg87iFdLLLLuflPdAv
-         3ROg==
-X-Forwarded-Encrypted: i=1; AJvYcCUH5v8nxWDA+lF4SfaY8yIXc/eixXFdGwgRasnsh/Ovi7Ql2fKbvl1GJd8wpEEGoaEGUJqZR+F7gWNeGXM4jbL+Wfvue/VYmLrrM8ih5A==
-X-Gm-Message-State: AOJu0YyMLbUH/uhQMLJuk1oXLVsVicu8VT85ew1bc7WF0vNxjecfwIBK
-	5qKV39/qGEXhZsmkzTrpu1mlXqyvNs1OvlxojEyBGwDfoRJjBDhYHSm9ycXrnglrZXbBmu1MsW1
-	N9qKnvvTinYT9hTCosSSjzC9aGEoDLk1B8GFJ
-X-Google-Smtp-Source: AGHT+IEsn/LiMweS6R6p+zt8kRJUiTPyCnADdmFz9d/yv/LTm6IC2uClrAE9Un5+DNW2ZVH+y0uZPZJi/Z0fKwigOaM=
-X-Received: by 2002:a05:6902:4c4:b0:dfa:e131:2a8e with SMTP id
- 3f1490d57ef6-dfae1313607mr704141276.47.1717635078316; Wed, 05 Jun 2024
- 17:51:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717640862; x=1718245662;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5TJAdD8GmJxvj8pKuF8QnnhaTXzIe7Tat0a8Ot2Rm1I=;
+        b=jGfR1B1YcK03vkLvZahdaxgsbP0PxePNMv4RUo9vXb5Ywl+Wfnr1aEA8MZA+Ox0hPG
+         /4AMZ6JTT1ibXJOnrQ77EwPTSeOYY/XsCaS5w+BINGg7qdxn9+BVRAap5qzmHLWXk4++
+         HhKUcBYm5zhWdv5IAVgdf+OlT+aVdXXvbbsEf44LoPwzVIlLzFe9hMeUm0EJkeQTfA7e
+         lC9MQFfwFuQgGKBiIztzoDIfgegh1P764eu5+iSK+kSiM/i8RJf/W8c0TKAx77ZTN8Ym
+         AK3Dntxk0QMqwKM7gnUSTLGezXyz620Sv0IyHwvAwOssXiRjcCWEqc7e5dOUENCUBo0l
+         +Eug==
+X-Forwarded-Encrypted: i=1; AJvYcCUMoH6PHbwOE3EtgRBQdau5XJ4CWJv94DKFmOa2K51lB83YKvlNzUwdJ9E+x4rKcJB7HwG7w0r7TYm16FICN1Po4hEIXHBO6YheQD0tFw==
+X-Gm-Message-State: AOJu0YzaSeV9j1I1XlDd++uuRkw2mcDR7motNPDH+774BpH5lO8efCpQ
+	WaG/qCR2jcWOngmeGbqhffFgxxNzTL1ysaMKWND8DeS7Ofs82YeO3BNRnezU9Nyl/yLjWhmdrLc
+	3
+X-Google-Smtp-Source: AGHT+IFOvqMOhYBsTyN+11L2HRn+hiKCTEcw/AH1ihwa0CkjXcJ8VasEd4Lj0Q7OqcxYZKylvjJcqQ==
+X-Received: by 2002:a05:6a20:7488:b0:1b2:66c6:7787 with SMTP id adf61e73a8af0-1b2b7019e45mr5171795637.35.1717640862099;
+        Wed, 05 Jun 2024 19:27:42 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd52b623sm179184b3a.207.2024.06.05.19.27.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 19:27:41 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sF2qo-005rfQ-2A;
+	Thu, 06 Jun 2024 12:27:38 +1000
+Date: Thu, 6 Jun 2024 12:27:38 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrey Albershteyn <aalbersh@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and
+ FS_IOC_FSGETXATTRAT
+Message-ID: <ZmEemh4++vMEwLNg@dread.disaster.area>
+References: <20240523074828.7ut55rhhbawsqrn4@quack3>
+ <xne47dpalyqpstasgoepi4repm44b6g6rsntk2ln3aqhn4putw@4cen74g6453o>
+ <20240524161101.yyqacjob42qjcbnb@quack3>
+ <20240531145204.GJ52987@frogsfrogsfrogs>
+ <20240603104259.gii7lfz2fg7lyrcw@quack3>
+ <vbiskxttukwzhjoiic6toscqc6b2qekuwumfpzqp5vkxf6l6ia@pby5fjhlobrb>
+ <20240603174259.GB52987@frogsfrogsfrogs>
+ <20240604085843.q6qtmtitgefioj5m@quack3>
+ <20240605003756.GH52987@frogsfrogsfrogs>
+ <CAOQ4uxiVVL+9DEn9iJuWRixVNFKJchJHBB8otH8PjuC+j8ii4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531163217.1584450-1-Liam.Howlett@oracle.com> <20240531163217.1584450-2-Liam.Howlett@oracle.com>
-In-Reply-To: <20240531163217.1584450-2-Liam.Howlett@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 5 Jun 2024 17:51:05 -0700
-Message-ID: <CAJuCfpHqDNGM=6+TX4xE-YY91fETSM+r70ZdgxUyw=9X+3qQCQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] mm/mmap: Correctly position vma_iterator in __split_vma()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	sidhartha.kumar@oracle.com, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiVVL+9DEn9iJuWRixVNFKJchJHBB8otH8PjuC+j8ii4g@mail.gmail.com>
 
-On Fri, May 31, 2024 at 9:33=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> The vma iterator may be left pointing to the newly created vma.  This
-> happens when inserting the new vma at the end of the old vma
-> (!new_below).
->
-> The incorrect position in the vma iterator is not exposed currently
-> since the vma iterator is repositioned in the munmap path and is not
-> reused in any of the other paths.
->
-> This has limited impact in the current code, but is required for future
-> changes.
->
-> Fixes: b2b3b886738f ("mm: don't use __vma_adjust() in __split_vma()")
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> ---
->  mm/mmap.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 83b4682ec85c..31d464e6a656 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2442,6 +2442,9 @@ static int __split_vma(struct vma_iterator *vmi, st=
-ruct vm_area_struct *vma,
->         /* Success. */
->         if (new_below)
->                 vma_next(vmi);
-> +       else
-> +               vma_prev(vmi);
-> +
+On Wed, Jun 05, 2024 at 08:13:15AM +0300, Amir Goldstein wrote:
+> On Wed, Jun 5, 2024 at 3:38 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> > On Tue, Jun 04, 2024 at 10:58:43AM +0200, Jan Kara wrote:
+> > > On Mon 03-06-24 10:42:59, Darrick J. Wong wrote:
+> > > > I do -- allowing unpriviledged users to create symlinks that consume
+> > > > icount (and possibly bcount) in the root project breaks the entire
+> > > > enforcement mechanism.  That's not the way that project quota has worked
+> > > > on xfs and it would be quite rude to nullify the PROJINHERIT flag bit
+> > > > only for these special cases.
+> > >
+> > > OK, fair enough. I though someone will hate this. I'd just like to
+> > > understand one thing: Owner of the inode can change the project ID to 0
+> > > anyway so project quotas are more like a cooperative space tracking scheme
+> > > anyway. If you want to escape it, you can. So what are you exactly worried
+> > > about? Is it the container usecase where from within the user namespace you
+> > > cannot change project IDs?
+> >
+> > Yep.
+> >
+> > > Anyway I just wanted to have an explicit decision that the simple solution
+> > > is not good enough before we go the more complex route ;).
+> >
+> > Also, every now and then someone comes along and half-proposes making it
+> > so that non-root cannot change project ids anymore.  Maybe some day that
+> > will succeed.
+> >
+> 
+> I'd just like to point out that the purpose of the project quotas feature
+> as I understand it, is to apply quotas to subtrees, where container storage
+> is a very common private case of project subtree.
 
-IIUC the goal is to always point vmi to the old (original) vma? If so,
-then change LGTM.
+That is the most modern use case, yes.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+[ And for a walk down history lane.... ]
 
->         return 0;
->
->  out_free_mpol:
-> --
-> 2.43.0
->
+> The purpose is NOT to create a "project" of random files in random
+> paths.
+
+This is *exactly* the original use case that project quotas were
+designed for back on Irix in the early 1990s and is the original
+behaviour project quotas brought to Linux.
+
+Project quota inheritance didn't come along until 2005:
+
+commit 65f1866a3a8e512d43795c116bfef262e703b789
+Author: Nathan Scott <nathans@sgi.com>
+Date:   Fri Jun 3 06:04:22 2005 +0000
+
+    Add support for project quota inheritance, a merge of Glens changes.
+    Merge of xfs-linux-melb:xfs-kern:22806a by kenmcd.
+
+And full support for directory tree quotas using project IDs wasn't
+fully introduced until a year later in 2006:
+
+commit 4aef4de4d04bcc36a1461c100eb940c162fd5ee6
+Author: Nathan Scott <nathans@sgi.com>
+Date:   Tue May 30 15:54:53 2006 +0000
+
+    statvfs component of directory/project quota support, code originally by Glen.
+    Merge of xfs-linux-melb:xfs-kern:26105a by kenmcd.
+
+These changes were largely done for an SGI NAS product that allowed
+us to create one great big XFS filesystem and then create
+arbitrarily sized, thin provisoned  "NFS volumes"  as directory
+quota controlled subdirs instantenously. The directory tree quota
+defined the size of the volume, and so we could also grow and shrink
+them instantenously, too. And we could remove them instantenously
+via background garbage collection after the export was removed and
+the user had been told it had been destroyed.
+
+So that was the original use case for directory tree quotas on XFS -
+providing scalable, fast management of "thin" storage for a NAS
+product. Projects quotas had been used for accounting random
+colections of files for over a decade before this directory quota
+construct was created, and the "modern" container use cases for
+directory quotas didn't come along until almost a decade after this
+capability was added.
+
+> My point is that changing the project id of a non-dir child to be different
+> from the project id of its parent is a pretty rare use case (I think?).
+
+Not if you are using project quotas as they were originally intended
+to be used.
+
+> If changing the projid of non-dir is needed for moving it to a
+> different subtree,
+> we could allow renameat2(2) of non-dir with no hardlinks to implicitly
+> change its
+> inherited project id or explicitly with a flag for a hardlink, e.g.:
+> renameat2(olddirfd, name, newdirfd, name, RENAME_NEW_PROJID).
+
+Why?
+
+The only reason XFS returns -EXDEV to rename across project IDs is
+because nobody wanted to spend the time to work out how to do the
+quota accounting of the metadata changed in the rename operation
+accurately. So for that rare case (not something that would happen
+on the NAS product) we returned -EXDEV to trigger the mv command to
+copy the file to the destination and then unlink the source instead,
+thereby handling all the quota accounting correctly.
+
+IOWs, this whole "-EXDEV on rename across parent project quota
+boundaries" is an implementation detail and nothing more.
+Filesystems that implement project quotas and the directory tree
+sub-variant don't need to behave like this if they can accurately
+account for the quota ID changes during an atomic rename operation.
+If that's too hard, then the fallback is to return -EXDEV and let
+userspace do it the slow way which will always acocunt the resource
+usage correctly to the individual projects.
+
+Hence I think we should just fix the XFS kernel behaviour to do the
+right thing in this special file case rather than return -EXDEV and
+then forget about the rest of it. Sure, update xfs_repair to fix the
+special file project id issue if it trips over it, but other than
+that I don't think we need anything more. If fixing it requires new
+syscalls and tools, then that's much harder to backport to old
+kernels and distros than just backporting a couple of small XFS
+kernel patches...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
