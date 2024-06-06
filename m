@@ -1,62 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-21106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8B08FE9C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:16:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AE48FE9C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 061CC1C24F8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 14:16:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A454C2863FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 14:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45AE19B3FF;
-	Thu,  6 Jun 2024 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B8319B3F4;
+	Thu,  6 Jun 2024 14:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GvNklwV1"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sZs+KFHs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EC4196DB7;
-	Thu,  6 Jun 2024 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553FF19B588;
+	Thu,  6 Jun 2024 14:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683064; cv=none; b=G8aPXnUdT30gengDI4kq0ifuhfCn1oyKAgKKTspZw5zrj3MvgcWGAuB9Xc/+sAKKZNllr/A5XG95AdEyRE3ItynNUf/awUUOimqalGCB76stLWbRRj8OzkFiQ/IfIKM3sNnVdUpqpoK1YLgOEUZiwmBjdLPGPGoysKH7lrxFG8U=
+	t=1717683065; cv=none; b=OQzvfDQHt+Xq63qyRNozgR2z4q10JU1G5H9/eOaxdwN++DdWyzHQL38jHfUnFaTBNiy8W8gz81Kqf3RiN0Gyv4aUtbUJT+vFqP8Z8UqEN0LUlP/5ALKDR171Nm9aKqw4RIoaxbn/3Ks9B1QNQBHNbrr0/P+orTOpq3hD7A3uTvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683064; c=relaxed/simple;
-	bh=UilmObbR7r5nLNHpqautuz291uaNurHl2F3cXtiZjOU=;
+	s=arc-20240116; t=1717683065; c=relaxed/simple;
+	bh=U3tvp00cBml/3/LozcTj/aStuQPzsTggVXKu4P/7SSI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wv7nv/+GBkwnk6wEL3neYeXoOjUF0hk9tXtTxZ6dX6Ed9ea5C7bsIU3hLZ7FCK3EZPzFyjYo5v0I6S4XKnj35sD6f8/PCKKsy5oA8qhX6Zbakqo39dwH3tMWMbGHzFB3+u2k/w6OyZldjFjX6KSowygjyPlrj9Sw0dk0MsKrOto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GvNklwV1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E7F4C4AF0C;
-	Thu,  6 Jun 2024 14:11:04 +0000 (UTC)
+	 MIME-Version; b=on3jfwwsHlterPetPEfIwjv/tTFLkVaDOPrlFUZQ223bK1d5F2S0iXQHSRI6vFHtK0tOJPn/5zBoPC6BEX7867lMzXvw3LC6HQKh64B0nJx3QC8kLBJyVYd+uEfW9YSD74Cl+b3bQAa3U4Q7BW0V0kxbNy61GvkFgEYh03jP7q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sZs+KFHs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3273CC4AF08;
+	Thu,  6 Jun 2024 14:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1717683064;
-	bh=UilmObbR7r5nLNHpqautuz291uaNurHl2F3cXtiZjOU=;
+	s=korg; t=1717683065;
+	bh=U3tvp00cBml/3/LozcTj/aStuQPzsTggVXKu4P/7SSI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GvNklwV1X9RpYp1AHPM6N2MyMxM9wIDb3hnN4gpLUpnuTVL7Iz3XhIBGD3RoTr1mc
-	 xPV8qWeWflM1yR1enSa1aHm00a0r83WNc4O6bVubjb/g0ahFxSzIdctOJjdL2pWSU5
-	 Cl2BGya7epwYpIL4jHtZRq/2lqwbEzTOVVeEEVno=
+	b=sZs+KFHsdkWIs7kmCbAYPgru3XNGPrKkim6FCG3qMCFn9P05DuhPl9Wt/els4jQwk
+	 6OKalOMHL05nV+Hnb0Bb7Qv1Q6kwltB5OPrJy4c+BbowjgO3Otkn0gskQSm/PLfpWx
+	 VKbxEPWnTiodV3roZxx/z1/3fiRgJWs/ChiPq8NU=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
 	David Howells <dhowells@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	Steve French <sfrench@samba.org>,
+	Shyam Prasad N <nspmangalore@gmail.com>,
+	Rohith Surabattula <rohiths.msft@gmail.com>,
 	Jeff Layton <jlayton@kernel.org>,
-	Enzo Matsumiya <ematsumiya@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	v9fs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
 	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
+	linux-mm@kvack.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.9 276/374] netfs: Fix setting of BDP_ASYNC from iocb flags
-Date: Thu,  6 Jun 2024 16:04:15 +0200
-Message-ID: <20240606131701.151618725@linuxfoundation.org>
+Subject: [PATCH 6.9 278/374] cifs: Set zero_point in the copy_file_range() and remap_file_range()
+Date: Thu,  6 Jun 2024 16:04:17 +0200
+Message-ID: <20240606131701.206658882@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240606131651.683718371@linuxfoundation.org>
 References: <20240606131651.683718371@linuxfoundation.org>
@@ -77,53 +75,58 @@ Content-Transfer-Encoding: 8bit
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit c596bea1452ddf172ec9b588e4597228e9a1f4d5 ]
+[ Upstream commit 3758c485f6c9124d8ad76b88382004cbc28a0892 ]
 
-Fix netfs_perform_write() to set BDP_ASYNC if IOCB_NOWAIT is set rather
-than if IOCB_SYNC is not set.  It reflects asynchronicity in the sense of
-not waiting rather than synchronicity in the sense of not returning until
-the op is complete.
+Set zero_point in the copy_file_range() and remap_file_range()
+implementations so that we don't skip reading data modified on a
+server-side copy.
 
-Without this, generic/590 fails on cifs in strict caching mode with a
-complaint that one of the writes fails with EAGAIN.  The test can be
-distilled down to:
-
-        mount -t cifs /my/share /mnt -ostuff
-        xfs_io -i -c 'falloc 0 8191M -c fsync -f /mnt/file
-        xfs_io -i -c 'pwrite -b 1M -W 0 8191M' /mnt/file
-
-Fixes: c38f4e96e605 ("netfs: Provide func to copy data to pagecache for buffered write")
 Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/316306.1716306586@warthog.procyon.org.uk
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
 cc: Jeff Layton <jlayton@kernel.org>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: netfs@lists.linux.dev
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
 cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+cc: linux-mm@kvack.org
+Stable-dep-of: 93a43155127f ("cifs: Fix missing set of remote_i_size")
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/buffered_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/smb/client/cifsfs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index 267b622d923b1..912ad0a1df021 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -163,7 +163,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
- 	struct folio *folio;
- 	enum netfs_how_to_modify howto;
- 	enum netfs_folio_trace trace;
--	unsigned int bdp_flags = (iocb->ki_flags & IOCB_SYNC) ? 0: BDP_ASYNC;
-+	unsigned int bdp_flags = (iocb->ki_flags & IOCB_NOWAIT) ? BDP_ASYNC : 0;
- 	ssize_t written = 0, ret, ret2;
- 	loff_t i_size, pos = iocb->ki_pos, from, to;
- 	size_t max_chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index 39277c37185ca..c8449f43856c5 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -1342,6 +1342,8 @@ static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
+ 	rc = cifs_flush_folio(target_inode, destend, &fstart, &fend, false);
+ 	if (rc)
+ 		goto unlock;
++	if (fend > target_cifsi->netfs.zero_point)
++		target_cifsi->netfs.zero_point = fend + 1;
+ 
+ 	/* Discard all the folios that overlap the destination region. */
+ 	cifs_dbg(FYI, "about to discard pages %llx-%llx\n", fstart, fend);
+@@ -1360,6 +1362,8 @@ static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
+ 			fscache_resize_cookie(cifs_inode_cookie(target_inode),
+ 					      new_size);
+ 		}
++		if (rc == 0 && new_size > target_cifsi->netfs.zero_point)
++			target_cifsi->netfs.zero_point = new_size;
+ 	}
+ 
+ 	/* force revalidate of size and timestamps of target file now
+@@ -1451,6 +1455,8 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+ 	rc = cifs_flush_folio(target_inode, destend, &fstart, &fend, false);
+ 	if (rc)
+ 		goto unlock;
++	if (fend > target_cifsi->netfs.zero_point)
++		target_cifsi->netfs.zero_point = fend + 1;
+ 
+ 	/* Discard all the folios that overlap the destination region. */
+ 	truncate_inode_pages_range(&target_inode->i_data, fstart, fend);
 -- 
 2.43.0
 
