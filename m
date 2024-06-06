@@ -1,215 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-21083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28468FDE1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 07:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D71BE8FDE34
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 07:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACDB286A27
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 05:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879B928786A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 05:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB161374FB;
-	Thu,  6 Jun 2024 05:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GsDqW2B7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6F24315F;
+	Thu,  6 Jun 2024 05:41:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B2D1754B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 05:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850D7CA6F;
+	Thu,  6 Jun 2024 05:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717651470; cv=none; b=EQ3mn7PS/msPzedfrtLBbAqIZAOgCgL7vYo18tnGqth2d4tu+XGLpJppDNxEQt9WkAfmr52MmURgDjjksk2AHNarwpaaXliEVymrzEBGzyTz1TemoQFfXEKX0n5Fjv7UFW245/ERE/s2JX28z97eGws8lVra0A1VzemC7zBdlRU=
+	t=1717652511; cv=none; b=QqUhxkka2lVneQfL7I6lYSYCwAr36RbEhc5dMdeTR0fC+nycUdcKsd8XKTVv7Zy0AiFxPAukhj6bHEHK+R5ffDA+2ggR87oHHuqa6uNdfDjsXLjqMBl9nx8r9ZkagiM9CP7OWNe26zRSAMq38bgBRfBh84/JbFX0tQmYs+Uk0ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717651470; c=relaxed/simple;
-	bh=pPBnlqVWi38Xct8OdLcRfZMr0TWIy49wpDlNsGTxwXE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BCy/tBKNL5tJFpnXVGOPZStB32kRny7SOCaD44GuDCNR4KTp59IWGrEWUctKHotg0HvQ5MqQbUGiKCooAt3u3noSaARpUucW/bd8GbPTczOdcCsFNKbykC3WdlPvpvGDEb8D9qIbrlumTd/jGizEUWFbbp9CRPQngy96JtVk2uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GsDqW2B7; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c1a4192d55so450477a91.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 22:24:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717651468; x=1718256268; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XEUEFl1eF8bbOWBmBCCME2t3ev7m6QXNPymuHxfIalA=;
-        b=GsDqW2B7ZjqV6fxsiFM12LnUyVwwBpm26Xe3vw+Pok6kto3HFf7m455jeTBLcps5uF
-         OhJRUiXXaNfjghnded0gQxSOOiywo1FLiulKxz1r+XoSr2yE6feoPfZHLKs/EKeBNFif
-         7Dxb6Ac9mgK2z84h991+rrIm2pbGB3I/qTUiF9kTyxazUmlwUOadpzuPTzT22n0i6KhV
-         ToBu1CY93usFsPKzQxKsJgPK9CP4yfOuEnNC3Udv0U+YyQDmEJjlL2c3Ohj8/r0eVGxB
-         gRQGrgDDN9gJT4E0X8I+y5wUKDuR+Qn5FUDPy/hX+YTpGflIziy7Iu8eBhoSB0OPK15I
-         bq7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717651468; x=1718256268;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XEUEFl1eF8bbOWBmBCCME2t3ev7m6QXNPymuHxfIalA=;
-        b=uiXyW6aeoZTUFYkaSzBINg1Lch+a9Ifwh1slNO6NqyZ8eFAGsVAfH045n+0TaLzVka
-         gSU9Je1jo0wMhQi0m7nMMLMaV04deAxkDsOIsDo15oQfcHteNopMO6/HulAruvkfEBG1
-         pLYcvOjo0pGEEZQdlaMF+Nyj1zvHm7kfA3laC1D5rSrKN2bqBznLlzuql0Tyki9l2lom
-         8ndFK7h92DMCyhAS12qBJcuD49QMsG9e19dMrdAujCVVb4OolFHJh3H7rUGstafJTe92
-         pbQ1fhqr1LaEWY/CnMT3eugVsfLzIGwoSfVJQu2lXGOQ7lMEk2bSFw/mIMFm7oTPieum
-         AK0g==
-X-Gm-Message-State: AOJu0YyGP33xC5moH2LeYutG3OuYoJFadXf0YQNpK1ZkLkF9aqH/x3Tq
-	3zqZbZan/amccA57uQHZ979cOb6uGKrKUC8ZOvdYHzNV7DWyhQl1IdmbjD6yB2yl6g==
-X-Google-Smtp-Source: AGHT+IHy1hgDBrQfR2o3bzZozlnxBL+97o0vDsRJo9bSUCuUlxNeQddU7MKGufSjuLTPzr5c8fukfg==
-X-Received: by 2002:a17:90b:1992:b0:2b6:22bd:f4b2 with SMTP id 98e67ed59e1d1-2c27daf658fmr4364469a91.4.1717651467744;
-        Wed, 05 Jun 2024 22:24:27 -0700 (PDT)
-Received: from localhost ([139.196.161.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c29c388fa8sm572106a91.41.2024.06.05.22.24.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 22:24:27 -0700 (PDT)
-From: Jemmy <jemmywong512@gmail.com>
-To: jemmywong512@gmail.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	jemmy512@icloud.com
-Subject: [PATCH v2] Employ `copy mount tree from src to dst` concept in copy_tree
-Date: Thu,  6 Jun 2024 13:23:51 +0800
-Message-Id: <20240606052351.32223-1-jemmywong512@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240604134347.9357-1-jemmywong512@gmail.com>
-References: <20240604134347.9357-1-jemmywong512@gmail.com>
+	s=arc-20240116; t=1717652511; c=relaxed/simple;
+	bh=8HB3h2MFtgnlhVUGhlc62c46kh4NgGxbN7o6c6UXwRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFf4g+XdSFfHNxKRMVI5DVLF+CUzRHC48JDDwC/F8XBRVQe24TKnTBDJoFTbGVuyCE0bwC2gAFXn7J+WJROY4vYJTH22x6b/bpmCHaKTkYsavp0gDhZBzeR8LKo36IEH8dSnI/oXocKTA4cDh3N80mocOlsh/z2hNFOsGz4Pvro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5391A68CFE; Thu,  6 Jun 2024 07:41:44 +0200 (CEST)
+Date: Thu, 6 Jun 2024 07:41:43 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+	sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
+	djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	dchinner@redhat.com, jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com, willy@infradead.org,
+	Prasad Singamsetty <prasad.singamsetty@oracle.com>
+Subject: Re: [PATCH v7 2/9] fs: Initial atomic write support
+Message-ID: <20240606054143.GB9123@lst.de>
+References: <20240602140912.970947-1-john.g.garry@oracle.com> <20240602140912.970947-3-john.g.garry@oracle.com> <20240605083015.GA20984@lst.de> <fbb835ff-f1ae-4b59-8cb3-22a11449d781@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbb835ff-f1ae-4b59-8cb3-22a11449d781@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Variable names in copy_tree (e.g., p, q, r, s) are opaque;
-renaming them to be more descriptive
-would aim to make the code easier to understand.
+On Wed, Jun 05, 2024 at 11:48:12AM +0100, John Garry wrote:
+> I have no strong attachment to that name (atomic).
+>
+> For both SCSI and NVMe, it's an "atomic" feature and I was basing the 
+> naming on that.
+>
+> We could have RWF_NOTEARS or RWF_UNTEARABLE_WRITE or RWF_UNTEARABLE or 
+> RWF_UNTORN or similar. Any preference?
 
-V2 Changes:
-mnt 	-> src_root (root of the tree to copy)
-r 		-> src_child (direct child of the root being cloning)
-p 		-> src_parent (parent of src_mnt)
-s 		-> src_mnt (current mount being copying)
-parent	-> dst_parent (parent of dst_child)
-q 		-> dst_mnt (freshly cloned mount)
+No particular preference between any of the option including atomic.
+Just mumbling out aloud my thoughts :)
 
-Signed-off-by: Jemmy <jemmywong512@gmail.com>
----
- fs/namespace.c | 59 ++++++++++++++++++++++++++------------------------
- 1 file changed, 31 insertions(+), 28 deletions(-)
+> For io_uring/rw.c, we have io_write() -> io_rw_init_file(..., WRITE), and 
+> then later we set IOCB_WRITE, so would be neat to use there. But then 
+> do_iter_readv_writev() does not set IOCB_WRITE - I can't imagine that 
+> setting IOCB_WRITE would do any harm there. I see a similar change in 
+> https://lore.kernel.org/linux-fsdevel/167391048988.2311931.1567396746365286847.stgit@warthog.procyon.org.uk/
+>
+> AFAICS, setting IOCB_WRITE is quite inconsistent. From browsing through 
+> fsdevel on lore, there was some history in trying to use IOCB_WRITE always 
+> instead of iov_iter direction. Any idea what happened to that?
+>
+> I'm just getting the feeling that setting IOCB_WRITE in 
+> kiocb_set_rw_flags() is a small part - and maybe counter productive - of a 
+> larger job of fixing IOCB_WRITE usage.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 5a51315c6678..38048b9b6c6c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1966,69 +1966,72 @@ static bool mnt_ns_loop(struct dentry *dentry)
- 	return current->nsproxy->mnt_ns->seq >= mnt_ns->seq;
- }
- 
--struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
-+struct mount *copy_tree(struct mount *src_root, struct dentry *dentry,
- 					int flag)
- {
--	struct mount *res, *p, *q, *r, *parent;
-+	struct mount *res, *src_parent, *src_child, *src_mnt,
-+		*dst_parent, *dst_mnt;
- 
--	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(mnt))
-+	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(src_root))
- 		return ERR_PTR(-EINVAL);
- 
- 	if (!(flag & CL_COPY_MNT_NS_FILE) && is_mnt_ns_file(dentry))
- 		return ERR_PTR(-EINVAL);
- 
--	res = q = clone_mnt(mnt, dentry, flag);
--	if (IS_ERR(q))
--		return q;
-+	res = dst_mnt = clone_mnt(src_root, dentry, flag);
-+	if (IS_ERR(dst_mnt))
-+		return dst_mnt;
- 
--	q->mnt_mountpoint = mnt->mnt_mountpoint;
-+	src_parent = src_root;
-+	dst_mnt->mnt_mountpoint = src_root->mnt_mountpoint;
- 
--	p = mnt;
--	list_for_each_entry(r, &mnt->mnt_mounts, mnt_child) {
--		struct mount *s;
--		if (!is_subdir(r->mnt_mountpoint, dentry))
-+	list_for_each_entry(src_child, &src_root->mnt_mounts, mnt_child) {
-+		if (!is_subdir(src_child->mnt_mountpoint, dentry))
- 			continue;
- 
--		for (s = r; s; s = next_mnt(s, r)) {
-+		for (src_mnt = src_child; src_mnt;
-+			src_mnt = next_mnt(src_mnt, src_child)) {
- 			if (!(flag & CL_COPY_UNBINDABLE) &&
--			    IS_MNT_UNBINDABLE(s)) {
--				if (s->mnt.mnt_flags & MNT_LOCKED) {
-+				IS_MNT_UNBINDABLE(src_mnt)) {
-+				if (src_mnt->mnt.mnt_flags & MNT_LOCKED) {
- 					/* Both unbindable and locked. */
--					q = ERR_PTR(-EPERM);
-+					dst_mnt = ERR_PTR(-EPERM);
- 					goto out;
- 				} else {
--					s = skip_mnt_tree(s);
-+					src_mnt = skip_mnt_tree(src_mnt);
- 					continue;
- 				}
- 			}
- 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
--			    is_mnt_ns_file(s->mnt.mnt_root)) {
--				s = skip_mnt_tree(s);
-+				is_mnt_ns_file(src_mnt->mnt.mnt_root)) {
-+				src_mnt = skip_mnt_tree(src_mnt);
- 				continue;
- 			}
--			while (p != s->mnt_parent) {
--				p = p->mnt_parent;
--				q = q->mnt_parent;
-+			while (src_parent != src_mnt->mnt_parent) {
-+				src_parent = src_parent->mnt_parent;
-+				dst_mnt = dst_mnt->mnt_parent;
- 			}
--			p = s;
--			parent = q;
--			q = clone_mnt(p, p->mnt.mnt_root, flag);
--			if (IS_ERR(q))
-+
-+			src_parent = src_mnt;
-+			dst_parent = dst_mnt;
-+			dst_mnt = clone_mnt(src_mnt, src_mnt->mnt.mnt_root, flag);
-+			if (IS_ERR(dst_mnt))
- 				goto out;
- 			lock_mount_hash();
--			list_add_tail(&q->mnt_list, &res->mnt_list);
--			attach_mnt(q, parent, p->mnt_mp, false);
-+			list_add_tail(&dst_mnt->mnt_list, &res->mnt_list);
-+			attach_mnt(dst_mnt, dst_parent, src_parent->mnt_mp, false);
- 			unlock_mount_hash();
- 		}
- 	}
- 	return res;
-+
- out:
- 	if (res) {
- 		lock_mount_hash();
- 		umount_tree(res, UMOUNT_SYNC);
- 		unlock_mount_hash();
- 	}
--	return q;
-+	return dst_mnt;
- }
- 
- /* Caller should check returned pointer for errors */
--- 
-2.34.1
+Someone (IIRC Dave H.) want to move it into the iov_iter a while ago.
+I think that is a bad idea - the iov_iter is a data container except
+for the shoehorned in read/write information doesn't describe the
+operation at all.  So using the flag in the iocb seems like the better
+architecture.  But I can understand that you might want to stay out
+of all of this, so let's not touch IOCB_WRITE here.
 
 
