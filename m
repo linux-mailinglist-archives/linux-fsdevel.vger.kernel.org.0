@@ -1,236 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-21118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084B38FF2F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 18:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3A78FF301
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 18:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA84290033
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477B0291297
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223891990D2;
-	Thu,  6 Jun 2024 16:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC561990A5;
+	Thu,  6 Jun 2024 16:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZDmjnz6"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="yx0lbTnK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F61196DB0;
-	Thu,  6 Jun 2024 16:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADAA198E98
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 16:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692725; cv=none; b=Vj9ZXq5HiSIvCdYxBUbwr5S2vBI1WmymZRXJVP9/G/Qw/W9W2wnwIX06O9GbOctV2EiWgBSh+E/lajV67fmO/xIJFJ+lL/dZPkdVt5PhxBT2fn4qifUbj4K5lK5XwviNOtvUBT6y7vI/QWvP96AepQIoGdtukN/r1cMHGxEJvPQ=
+	t=1717692803; cv=none; b=F6tF2SV/Ae5hX3vazUwCvKlYyEjRcsr/qrgPfi7+S9MwBNMJhIEc51fRjbTIpk/TJE8BKdld0QyxoxQdlP0NAb96aunB9cWTHLzN5zVCbEdybmXRnL52OF7iEEIrByUTALbdjXModpIHBhb2yBG2e/MWduMtxIu53ZJn8+Oy1Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692725; c=relaxed/simple;
-	bh=e1O3UJIALNPdhBkiYJFVlFPPit40t4xY0hK3WgJhTD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oFZl0fcPYv/euwklSsa4IaBoyGU3gEKYhLOxXHbt8NyQBsawvl5s8ikMw3r0BfTIXq3qNzLQOjfsDTaYQ61o2JzNWyl2sYu+ZEJzbNt1wuVUEzWfxl1ZtgrYX77j41ZKOUUbfyM/113Nv1ictw54duEr7DycHhChk1ejYLwfGO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZDmjnz6; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6c4829d7136so911661a12.1;
-        Thu, 06 Jun 2024 09:52:02 -0700 (PDT)
+	s=arc-20240116; t=1717692803; c=relaxed/simple;
+	bh=33Lr+Fgz2JdFKSmgSpp1LKmPL7/qtpD+579xNjyX0uQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnVB1sZTrqNntclB0xoY3qX7hm7OWPy4lgTPx6Fv80MF7MsYkpljftv241DWPl3zz/6xxqS3ELaMdgjmKx9yQB3g8EA86WfmVMMkydFfwQiT5VFf7N2LsIPXeUHTQf0OqeOKL2rMykSXsw4j1ter+KwrkSqdpNppMyC8uxAyjI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=yx0lbTnK; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7951f67e88bso69555985a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 09:53:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717692722; x=1718297522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bPKhCgxXa/CNr7U5QI54wZCLdvYy/KVKpQ3JKTtNoA4=;
-        b=BZDmjnz6H9CVxOp8TBe2dDDjbEXOJEnjNG7199zpBxIPPJiABRe1YulZdXAVuagW+j
-         GhFNBYfq+26YMwjSvyqmrn9T/AEaVslTBvINt+W2ClqHV3i2iJLvLpKAz2t9ZC/Y+WXI
-         5YqVTocV91JAWV4YhAhqbYwJI4ls8IyaTk21cgIiRlq9YNW7X9I9ZF5PQMIFUfwxx9GW
-         NNQAMQnBRj9m8aZLhPK2aCjJ5g8//QWKMsMTAiQaTucgmT6hRSNlRfaCyGGxpOVeUYO+
-         Zz8IEB6mCl2vmJElJbGylW45j3Z1VcP70SCf2KU2o6Fd5cXFrWlcU8tLRaFAWqAxni1E
-         g71g==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717692799; x=1718297599; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tAos8J0tLNdYoQThcWMldxRDeAUbPUYjKQJicRpXiAo=;
+        b=yx0lbTnKX8aKX/6QHwmx0xxGqMqBlJ1dulDKqHwtD1cHL5GoKCQ9pzd76It5vB8VuH
+         FH2MzfHuTDo9SsoMiw/79v3eavzBOpDMiUd8+/8ROqXbO9vCit7g7XV1V0BsVY5rEPIC
+         DPGJG6eIr1+4ZxU8DCAynxp1eEd3R18Y4u+3xoS/Lkkn2CDvM63WJoY9dq9gjeDiLBZF
+         3AqeL9oP5uFzoA8A3BBETrWjN0V547NOot7wGUXmBc8SP/4tJJhQ0QAhJNNVDj6PO2dS
+         R/DgeU5oxvufa25B6XOjr67M+xDVNtlg59qXypQzUdtPWdxuMfW4E+f7zQ3suyQAOrth
+         PRxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717692722; x=1718297522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bPKhCgxXa/CNr7U5QI54wZCLdvYy/KVKpQ3JKTtNoA4=;
-        b=PMh4X0fmj5NVogBPt2a3tFwhz7LYJ2x/e35fCWqwJbggvBTzgXO2iFW+gMi41ZCTjv
-         V47TpwgYpp1I36CxGXMgD4ICko8zp723oHZVw9fE2jyWjdFiqsyenMXzGNm+ztV5/mK/
-         QUuRV3Cijn22Eau5Dem4FjsKqN7Obr1uQggUE6EUGszZT8pOH87aj/IBJsZgJiS084Le
-         9dZrOpek1in5IYeMgeFLw6OF8sJZJiFR9hjXg6fKVamduEuRcTRVPhD3f/DQm2+38Fea
-         tv8frfbME+BfMdPnRhPZiGl0vjNMqVM3QXZ04ksjZiWB/njfk/aDA05HuxT7ofVxz1Fp
-         ZoTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXB9sGtZMaQEkCcax596n8Nz4g6g6rRk4lw5rUhY7cLcR3begje+PUmQn3KbV87zcqSNqcz7tr6LsqmJXfJRypLmGszLL307q5TBdRitk0wETFAjZZ3CjxGs681NCriHeQmzkg7+MwT4J31Mg1DxXo6TO/ohHDdcvo84Cl1+5J43A==
-X-Gm-Message-State: AOJu0Yy0n6n1mobFxwNIkCAN4boB8x13JVUdFMV4MF3LiRsU5InjEnbU
-	JVWAZXLY0co3c5Y7XqtGAWtMjdzlfzaurH+QeclMPoBTdei7dQPJU7PiEwD6iRf0xiQbZTSPcw3
-	EX1AZFMit8BB8H+nueiIHcntdtUQPtg==
-X-Google-Smtp-Source: AGHT+IEB6OolDSrP3Rnv3sb7vP6n8o1kGoB493b6UbHnJIs0/RiYGEy3CxkFieHAInZhO251MHV/iElJCcjo/8r8NX0=
-X-Received: by 2002:a17:90a:5588:b0:2bf:6a1b:fcb8 with SMTP id
- 98e67ed59e1d1-2c2bcaf9250mr77250a91.24.1717692722316; Thu, 06 Jun 2024
- 09:52:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717692799; x=1718297599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tAos8J0tLNdYoQThcWMldxRDeAUbPUYjKQJicRpXiAo=;
+        b=dPSYvWpsczGJK1OVf/ncwsIWvslZ6tHg8FvgauyHj+L1XbPou5dZApZHGohHm1KCtE
+         DSIRNMFeE5sWHpnRVc9GR/m8Av+VYoDVwoupJMPv5nKoqKEnUl9OZ4IQBcZ2NprUjWkm
+         nrWhvt0KknS9vIJEXf2wmwdvb4zgyZgJME5PUo9g9RTpIv9Uqpqv6SRJD1z382K+3mvu
+         rKwLTwBRDEfwTCcI9FxvMogggj8oOAczm2Xcpw9+wkkcyFMZg88UcW4+iDxKLx+Ewv92
+         c3wN5JILxajeKGEuNgEIJ5FcvK71nB+RNfK+SYqP7GeNjA3osBS0AGby6EkQujDBirV5
+         C/8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUAK84dkqLBoRqOWvi6wYz/l5STN5QGeDK72z8j8DGME1yiTqZ1OpG1nz15aQb6e+/2TtXp7BkLMrG6DOXRN7/DSU55AB98xsXILq68Ww==
+X-Gm-Message-State: AOJu0YzI+3/z8X6PM3p1VbCb8x4zvAXQ6VRULzkYq70v5lPhfh0amz52
+	rmv0DN6QrlnbV/ZkQBveXzhcyWSkN3RF4j7tlz+XuQjFmtrGLwoIrLFxBA875Ys=
+X-Google-Smtp-Source: AGHT+IF7zcbpRU8H/HHtv+vOIdSt3/L0Nx6HYJ2PHRZzP1uP+i39oqO8/5/NB4XrGfeE6DzoOleEBg==
+X-Received: by 2002:a05:6214:3982:b0:6ab:99df:4106 with SMTP id 6a1803df08f44-6b059bdb228mr855806d6.36.1717692799536;
+        Thu, 06 Jun 2024 09:53:19 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04fa18abdsm7895616d6.130.2024.06.06.09.53.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 09:53:19 -0700 (PDT)
+Date: Thu, 6 Jun 2024 12:53:18 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Aishwarya TCV <aishwarya.tcv@arm.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, david@fromorbit.com, hch@lst.de,
+	Linus Torvalds <torvalds@linux-foundation.org>, amir73il@gmail.com,
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: Re: [PATCH] fs: don't block i_writecount during exec
+Message-ID: <20240606165318.GB2529118@perftesting>
+References: <20240531-beheben-panzerglas-5ba2472a3330@brauner>
+ <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
+ <f8586f0c-f62c-4d92-8747-0ba20a03f681@arm.com>
+ <9bfb5ebb-80f4-4f43-80af-e0d7d28234fc@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-2-andrii@kernel.org>
- <Zl-38XrUw9entlFR@casper.infradead.org> <uevtozlryyqw5vj2duuzowupknfynmreruiw6m7bcxryjppqpm@7g766emooxfh>
- <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
- <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
- <CAEf4Bzbzj55LfgTom9KiM1Xe8pfXvpWBd6ETjXQCh7M===G5aw@mail.gmail.com>
- <5fmylram4hhrrdl7vf6odyvuxcrvhipsx2ij5z4dsfciuzf4on@qwk7qzze6gbt> <CAJuCfpER9qUSGbWBcHhT1=ssH41Xv8--XVA5BEPCM7uf=z_GLw@mail.gmail.com>
-In-Reply-To: <CAJuCfpER9qUSGbWBcHhT1=ssH41Xv8--XVA5BEPCM7uf=z_GLw@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 6 Jun 2024 09:51:50 -0700
-Message-ID: <CAEf4Bzax2E1JS=MUm=sBJvcMb+CyWaPdxmr2mDuODs2cc3_mTg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
- taking VMA lock
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9bfb5ebb-80f4-4f43-80af-e0d7d28234fc@sirena.org.uk>
 
-On Wed, Jun 5, 2024 at 4:22=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> On Wed, Jun 5, 2024 at 10:03=E2=80=AFAM Liam R. Howlett <Liam.Howlett@ora=
-cle.com> wrote:
-> >
-> > * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240605 12:27]:
-> > > On Wed, Jun 5, 2024 at 9:24=E2=80=AFAM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > On Wed, Jun 5, 2024 at 9:13=E2=80=AFAM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > On Wed, Jun 5, 2024 at 6:33=E2=80=AFAM Liam R. Howlett <Liam.Howl=
-ett@oracle.com> wrote:
-> > > > > >
-> > > > > > * Matthew Wilcox <willy@infradead.org> [240604 20:57]:
-> > > > > > > On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko wro=
-te:
-> > > > > > > > +/*
-> > > > > > > > + * find_and_lock_vma_rcu() - Find and lock the VMA for a g=
-iven address, or the
-> > > > > > > > + * next VMA. Search is done under RCU protection, without =
-taking or assuming
-> > > > > > > > + * mmap_lock. Returned VMA is guaranteed to be stable and =
-not isolated.
-> > > > > > >
-> > > > > > > You know this is supposed to be the _short_ description, righ=
-t?
-> > > > > > > Three lines is way too long.  The full description goes betwe=
-en the
-> > > > > > > arguments and the Return: line.
-> > > > >
-> > > > > Sure, I'll adjust.
-> > > > >
-> > > > > > >
-> > > > > > > > + * @mm: The mm_struct to check
-> > > > > > > > + * @addr: The address
-> > > > > > > > + *
-> > > > > > > > + * Returns: The VMA associated with addr, or the next VMA.
-> > > > > > > > + * May return %NULL in the case of no VMA at addr or above=
-.
-> > > > > > > > + * If the VMA is being modified and can't be locked, -EBUS=
-Y is returned.
-> > > > > > > > + */
-> > > > > > > > +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_str=
-uct *mm,
-> > > > > > > > +                                        unsigned long addr=
-ess)
-> > > > > > > > +{
-> > > > > > > > +   MA_STATE(mas, &mm->mm_mt, address, address);
-> > > > > > > > +   struct vm_area_struct *vma;
-> > > > > > > > +   int err;
-> > > > > > > > +
-> > > > > > > > +   rcu_read_lock();
-> > > > > > > > +retry:
-> > > > > > > > +   vma =3D mas_find(&mas, ULONG_MAX);
-> > > > > > > > +   if (!vma) {
-> > > > > > > > +           err =3D 0; /* no VMA, return NULL */
-> > > > > > > > +           goto inval;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   if (!vma_start_read(vma)) {
-> > > > > > > > +           err =3D -EBUSY;
-> > > > > > > > +           goto inval;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   /*
-> > > > > > > > +    * Check since vm_start/vm_end might change before we l=
-ock the VMA.
-> > > > > > > > +    * Note, unlike lock_vma_under_rcu() we are searching f=
-or VMA covering
-> > > > > > > > +    * address or the next one, so we only make sure VMA wa=
-sn't updated to
-> > > > > > > > +    * end before the address.
-> > > > > > > > +    */
-> > > > > > > > +   if (unlikely(vma->vm_end <=3D address)) {
-> > > > > > > > +           err =3D -EBUSY;
-> > > > > > > > +           goto inval_end_read;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   /* Check if the VMA got isolated after we found it */
-> > > > > > > > +   if (vma->detached) {
-> > > > > > > > +           vma_end_read(vma);
-> > > > > > > > +           count_vm_vma_lock_event(VMA_LOCK_MISS);
-> > > > > > > > +           /* The area was replaced with another one */
-> > > > > > >
-> > > > > > > Surely you need to mas_reset() before you goto retry?
-> > > > > >
-> > > > > > Probably more than that.  We've found and may have adjusted the
-> > > > > > index/last; we should reconfigure the maple state.  You should =
-probably
-> > > > > > use mas_set(), which will reset the maple state and set the ind=
-ex and
-> > > > > > long to address.
-> > > > >
-> > > > > Yep, makes sense, thanks. As for the `unlikely(vma->vm_end <=3D
-> > > > > address)` case, I presume we want to do the same, right? Basicall=
-y, on
-> > > > > each retry start from the `address` unconditionally, no matter wh=
-at's
-> > > > > the reason for retry.
-> > > >
-> > > > ah, never mind, we don't retry in that situation, I'll just put
-> > > > `mas_set(&mas, address);` right before `goto retry;`. Unless we sho=
-uld
-> > > > actually retry in the case when VMA got moved before the requested
-> > > > address, not sure, let me know what you think. Presumably retrying
-> > > > will allow us to get the correct VMA without the need to fall back =
-to
-> > > > mmap_lock?
-> > >
-> > > sorry, one more question as I look some more around this (unfamiliar
-> > > to me) piece of code. I see that lock_vma_under_rcu counts
-> > > VMA_LOCK_MISS on retry, but I see that there is actually a
-> > > VMA_LOCK_RETRY stat as well. Any reason it's a MISS instead of RETRY?
-> > > Should I use MISS as well, or actually count a RETRY?
-> > >
-> >
-> > VMA_LOCK_MISS is used here because we missed the VMA due to a write
-> > happening to move the vma (rather rare).  The VMA_LOCK missed the vma.
-> >
-> > VMA_LOCK_RETRY is used to indicate we need to retry under the mmap lock=
-.
-> > A retry is needed after the VMA_LOCK did not work under rcu locking.
->
-> Originally lock_vma_under_rcu() was used only inside page fault path,
-> so these counters helped us quantify how effective VMA locking is when
-> handling page faults. With more users of that function these counters
-> will be affected by other paths as well. I'm not sure but I think it
-> makes sense to use them only inside page fault path, IOW we should
-> probably move count_vm_vma_lock_event() calls outside of
-> lock_vma_under_rcu() and add them only when handling page faults.
+On Thu, Jun 06, 2024 at 04:37:49PM +0100, Mark Brown wrote:
+> On Thu, Jun 06, 2024 at 01:45:05PM +0100, Aishwarya TCV wrote:
+> > On 31/05/2024 14:01, Christian Brauner wrote:
+> 
+> > > Back in 2021 we already discussed removing deny_write_access() for
+> > > 
+> > > executables. Back then I was hesistant because I thought that this might
+> > > 
+> > > cause issues in userspace. But even back then I had started taking some
+> > > 
+> > > notes on what could potentially depend on this and I didn't come up with
+> > > 
+> > > a lot so I've changed my mind and I would like to try this.
+> 
+> > LTP test "execve04" is failing when run against
+> > next-master(next-20240606) kernel with Arm64 on JUNO in our CI.
+> 
+> It's also causing the LTP creat07 test to fail with basically the same
+> bisection (I started from next/pending-fixes rather than the -rc so the
+> initial phases were different):
+> 
+> tst_test.c:1690: TINFO: LTP version: 20230929
+> tst_test.c:1574: TINFO: Timeout per run is 0h 01m 30s
+> creat07.c:37: TFAIL: creat() succeeded unexpectedly
+> Test timeouted, sending SIGKILL!
+> tst_test.c:1622: TINFO: Killed the leftover descendant processes
+> tst_test.c:1628: TINFO: If you are running on slow machine, try exporting LTP_TIMEOUT_MUL > 1
+> tst_test.c:1630: TBROK: Test killed! (timeout?)
+> 
+> The code in the testcase is below:
+> 
+> static void verify_creat(void)
+> {
+>         pid_t pid;
+> 
+>         pid = SAFE_FORK();
+>         if (pid == 0) {
+>                 SAFE_EXECL(TEST_APP, TEST_APP, NULL);
+>                 exit(1);
+>         }
+> 
+>         TST_CHECKPOINT_WAIT(0);
+> 
+>         TEST(creat(TEST_APP, O_WRONLY));
+> 
+>         if (TST_RET != -1) {
+>                 tst_res(TFAIL, "creat() succeeded unexpectedly");
+>                 return;
+>         }
+> 
+>         if (TST_ERR == ETXTBSY)
+>                 tst_res(TPASS, "creat() received EXTBSY");
+>         else
+>                 tst_res(TFAIL | TTERRNO, "creat() failed unexpectedly");
+> 
 
-Alright, seems like I should then just drop count_vm_vma_lock_event()
-from the API I'm adding.
+These tests will have to be updated, as this patch removes that behavior.
+Thanks,
 
->
-> >
-> > Thanks,
-> > Liam
+Josef
 
