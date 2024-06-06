@@ -1,227 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-21078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575DD8FDD3D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 05:15:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3E08FDD6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 05:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042FE1C2267A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 03:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC7A281C83
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 03:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041EC1F5FD;
-	Thu,  6 Jun 2024 03:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwLBoO52"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B311DFF5;
+	Thu,  6 Jun 2024 03:24:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72AE23BF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 03:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CEF17BD8;
+	Thu,  6 Jun 2024 03:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717643703; cv=none; b=b1ApPqRBFGOmqV8BjRPXvnhSU0t8O6L9rkwag3fq6srPLytxphnDkZFfbnqsim872te3w4b8P8ualV8yJT+YtZMFhVqIXFzm5KqJIRbtn5fana7faP0ENNuCQIMSut1IR1tkMKUIgr74P+iyJWTliBpP2CbbSpGqdCsQ8to225U=
+	t=1717644288; cv=none; b=tm9p9mH47VbvMK7x9T6Va2vlwJ/nc4XyL3N/LiSgmyS4Se9EGL2yptI05qO663Cj7OO2Jl1QruAxeHfGQsUhxkUAFVYIfM9QYSRD+GzK1ZjQlOaUtApbuWyinZdu+w5KuCalsBULbLUojbc77NmdtsKfZhe0LIN0xvtatwjf7Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717643703; c=relaxed/simple;
-	bh=OzOa6bbKT/STfd6Xhwl3H8585ms3oMFlgFIkNH3EyFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rH0f38kmkLdMmyafcXluKIDUIr0keVXCdpMuYKgKqalUngqNHf8Xo/GSjGuwhgWkdjiSY7A1KdKDKYQ93KjbxoTQszGDnlr00MUvbaIJWKA9rdzMoaga6aKQ2pxRzY2xP/U4pjyuwJXLwagxGMX0nNM7JeATjZfR8bIbH1BxmEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwLBoO52; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57aa64c6bbfso307691a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2024 20:15:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717643700; x=1718248500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0GInmYCEY5FJcmol75dxVxvQaa/wE8syC5rHwzadwo=;
-        b=CwLBoO52aYKcRf1Q4Q9MPzFyAsBnVxw2xVTiftYSf/HcybP54pSxKOSRsgekdoCVKy
-         kkzMxWS+ccvwVuL7VybwtJO4MA5uifKmju/sMsIG4jacTNmdL/ix2zRS2cpzlHsFx3x6
-         MfffBiT4uHlsntx92rvFDLY5KXq8VxBfcjGuaP/TuMH1CoMvCHuygNPNwye59GMKz621
-         CA/rJSPGj7Vw4e/UtP4MLKHy1EDs5fpvEv922UjVJyfIHOPy0Ahz+W8VfqBn56PLNxYy
-         4R0pZKoKnvY5ej4rRTBjnTqqCf4P+avzqhBo7WxswC6EyQX8NhB8FDNGr8m80TC0y5ux
-         qcmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717643700; x=1718248500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j0GInmYCEY5FJcmol75dxVxvQaa/wE8syC5rHwzadwo=;
-        b=RokyXzQ9NB4yM0ZXR6Vr6wtimzPn6Ol36tsH3yUZcDXBFwqW1sRQWmTodYVJTxE6Qo
-         k2cXshySRzmd/LT3DiH2DFzOjJhhrkwxVMBhuZtURQpqtXeRWJCcEo1ViAQLWvfP1w65
-         yLNRXZCHhfHhkeFxbzK/vFgwGUX37E/PD12vivmjYITkR+zjJ2vFdLJvegVaCuoMPNJx
-         jjeXOKvoExgQQCN42sP088/Y38nUxjTjm6D9b7OXzJy1Q80UUrowCrHazecXGp1PwpKt
-         C1Re6lgeCksWcXlVT0T0ImLVngQvRcEQX4c1xe4SDD5SGTN6f+nuJGmExw5uzeU0sfm+
-         UUXA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4QOjhmvDq3mpZZ4AEsvShooeRXIMIgVpDxRT0K2QiqVsK0ro/WqoxusL8+zmAmTmlKo1/JfpPQdm/XOz3T0aIoetmVr7X3mIU3Bwz5A==
-X-Gm-Message-State: AOJu0YwymSr5iZyY1yLGd1px+iQDapjycisd/YwAZQcn1hx4P/+Jjwtw
-	gXilMkb65T9jYpWwnSm9oJ2n5b4SFMbN8xhlClGTK+Ri5C94VVD1LIog0At4ker+eytZy8ZieQo
-	+l+9tIed3yQo0h7XRoVBzUihvIOM=
-X-Google-Smtp-Source: AGHT+IGiJMiwe0qCkDyNiyl85DQwHtV8s+u6+QHEeLrr9SqqXlkYdvEUPbSpSB/WA4CftddAqzY4yqFOFrgj7Ndw2Ng=
-X-Received: by 2002:a50:bac8:0:b0:578:6198:d6fa with SMTP id
- 4fb4d7f45d1cf-57a8b6740a0mr2712418a12.2.1717643699601; Wed, 05 Jun 2024
- 20:14:59 -0700 (PDT)
+	s=arc-20240116; t=1717644288; c=relaxed/simple;
+	bh=EeTpYbZng4Y5bfpMT8WReGs6mMWFJe0SV0m03KYwY3M=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=FMoJE9Xnwfba+4tdw7TflACk3bvWtognmZu41hmsi+cXPK/WXzzmHo6hZSzKsJrjkL7azqY2zgKE9atQPca/CI951sCtRMzzJwp5HPq6idzi2BjjVXMydpz5diJwFvOPW3gBcQh9S9mBymnYuoB0mTcERIGqpzRETX1HC7FfTtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VvqST1C9mz4f3nKW;
+	Thu,  6 Jun 2024 11:24:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 556A31A016E;
+	Thu,  6 Jun 2024 11:24:36 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP3 (Coremail) with SMTP id _Ch0CgAnMJjyK2Fmz2rqOQ--.40149S2;
+	Thu, 06 Jun 2024 11:24:36 +0800 (CST)
+Subject: Re: [PATCH v2 8/8] writeback: factor out balance_wb_limits to remove
+ repeated code
+To: Tejun Heo <tj@kernel.org>
+Cc: willy@infradead.org, akpm@linux-foundation.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
+ <20240514125254.142203-9-shikemeng@huaweicloud.com>
+ <ZljGiunxmVAlW6EE@slm.duckdns.org>
+ <cfbbcc80-7db1-8277-98ab-1f32c3a629ab@huaweicloud.com>
+ <Zl4G0tI_0CHKIWHh@slm.duckdns.org>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <6d5e260e-4910-92d1-faf4-8aee0b78b16d@huaweicloud.com>
+Date: Thu, 6 Jun 2024 11:24:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHB1NaicRULmaq8ks4JCtc3ay3AQ9mG77jc5t_bNdn3wMwMrMg@mail.gmail.com>
- <CAJfpegsELV80nfYUP0CvbE=c45re184T4_WtUEhhfRGVmpmpcQ@mail.gmail.com>
- <CAHB1NaiddGRxh7UjaXejWsYnJY52dYDvaB2oZpqQXqVocxTm+w@mail.gmail.com>
- <20240604092757.k5kkc67j3ssnc6um@quack3> <CAHB1NahP14FAMj04D-T-bWs7JAn_mXfmXSeKUEkRbALZrLeqAA@mail.gmail.com>
- <20240605102945.q4nu67xpdwfziiqd@quack3>
-In-Reply-To: <20240605102945.q4nu67xpdwfziiqd@quack3>
-From: JunChao Sun <sunjunchao2870@gmail.com>
-Date: Thu, 6 Jun 2024 11:14:48 +0800
-Message-ID: <CAHB1NajZEy5kPXTcVu9G88WO-uZ5_Q6x3-EkFR4mfG0+XQWD3A@mail.gmail.com>
-Subject: Re: Is is reasonable to support quota in fuse?
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	"Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B46=E6=9C=885=E6=97=A5=E5=91=A8=
-=E4=B8=89 18:29=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue 04-06-24 21:49:20, JunChao Sun wrote:
-> > Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B46=E6=9C=884=E6=97=A5=E5=
-=91=A8=E4=BA=8C 17:27=E5=86=99=E9=81=93=EF=BC=9A
-> > > On Tue 04-06-24 14:54:01, JunChao Sun wrote:
-> > > > Miklos Szeredi <miklos@szeredi.hu> =E4=BA=8E2024=E5=B9=B46=E6=9C=88=
-4=E6=97=A5=E5=91=A8=E4=BA=8C 14:40=E5=86=99=E9=81=93=EF=BC=9A
-> > > > >
-> > > > > On Mon, 3 Jun 2024 at 13:37, JunChao Sun <sunjunchao2870@gmail.co=
-m> wrote:
-> > > > >
-> > > > > > Given these challenges, I would like to inquire about the commu=
-nity's
-> > > > > > perspective on implementing quota functionality at the FUSE ker=
-nel
-> > > > > > part. Is it feasible to implement quota functionality in the FU=
-SE
-> > > > > > kernel module, allowing users to set quotas for FUSE just as th=
-ey
-> > > > > > would for ext4 (e.g., using commands like quotaon /mnt/fusefs o=
-r
-> > > > > > quotaset /mnt/fusefs)?  Would the community consider accepting =
-patches
-> > > > > > for this feature?
-> > > > >
-> > > > >
-> > > > > > I would say yes, but I have no experience with quota in any way=
-, so
-> > > > > > cannot help with the details.
-> > > >
-> > > > Thanks for your reply. I'd like try to implement this feature.
-> > >
-> > > Nice idea! But before you go and spend a lot of time trying to implem=
-ent
-> > > something, I suggest that you write down a design how you imagine all=
- this
-> > > to work and we can talk about it. Questions like: Do you have particu=
-lar
-> > > usecases in mind? Where do you plan to perform the accounting /
-> > > enforcement? Where do you want to store quota information? How do you=
- want
-> > > to recover from unclean shutdowns? Etc...
-> >
-> > Thanks a lot for your suggestions.
-> >
-> > I am reviewing the quota code of ext4 and the fuse code to determine
-> > if the implementation method used in ext4 can be ported to fuse. Based
-> > on my current understanding, the key issue is that ext4 reserves
-> > several inodes for quotas and can manage the disk itself, allowing it
-> > to directly flush quota data to the disk blocks corresponding to the
-> > quota inodes within the kernel.
->
-> Yes.
->
-> > However, fuse does not seem to manage
-> > the disk itself; it sends all read and write requests to user space
-> > for completion. Therefore, it may not be possible to directly flush
-> > the data in the quota inode to the disk in fuse.
->
-> Yes, ext4 uses journalling to keep filesystem state consistent with quota
-> information. Doing this within FUSE would be rather difficult (essentiall=
-y
-> you would have to implement journal within FUSE with will have rather hig=
-h
-> performace overhead).
->
->
-> > But that's why I'm asking for usecases. For some usecases it may be fin=
-e
-> > that in case of unclean shutdown you run quotacheck program to update q=
-uota
-> > information based on current usage - non-journalling filesystems use th=
-is
-> > method. So where do you want to use quotas on a FUSE filesystem?
-
-Please allow me to ask a silly question. I'm not sure if I correctly
-understand what you mean by 'unclean shutdown'. Do you mean an
-inconsistent state that requires using fsck to repair, like in ext4
-after a sudden power loss, or is it something else only about quota?
-In my scenario, FUSE (both the kernel and user space parts) acts
-merely as a proxy. FUSE is based on multiple file systems, and a
-user's file and directory exists in only one of these file systems. It
-does not even have its own superblock or inode metadata. When a user
-performs read or write operations on a specific file, FUSE checks the
-directory corresponding to this file on each file system to see if the
-user's file is there; if one is not, it continues to check the next
-file system.
-
->
-> > I am considering whether it would be feasible to implement the quota
-> > inode in user space in a similar manner. For example, users could
-> > reserve a few regular files that are invisible to actual file system
-> > users to store the contents of quota. When updating the quota, the
-> > user would be notified to flush the quota data to the disk. The
-> > benefit of this approach is that it can directly reuse the quota
-> > metadata format from the kernel, users do not need to redesign
-> > metadata. However, performance might be an issue with this approach.
->
-> Yes, storing quota data in some files inside the filesystem is probably t=
-he
-> easiest way to go. I'd just not bother with flushing because as you say
-> the performance would suck in that case.
-
-What about using caching and asynchronous updates? For example, in
-FUSE, allocate some pages to cache the quota data. When updating quota
-data, write to the cache first and then place the task in a work
-queue. The work queue will then send the request to user space to
-complete the actual disk write operation. When there are read
-requests, the content is read directly from the cache.
-
-The problem with this approach is that asynchronous updates might lead
-to loss of quota data in the event of a sudden power failure. This
-seems acceptable to me, but I am not sure if it aligns with the
-definition of quota. Additionally, this assumes that the quota file
-will not be very large, which I believe is a reasonable
-assumption.Perhaps there are some drawbacks I haven't considered?
-
-Regarding the enforcement of quota limits, I plan to perform this in
-the kernel. For project quotas, the kernel can know how much space and
-how many inodes are being used by the corresponding project ID. For
-now, I only want to implement project quota because I believe that
-user and group quotas can be simulated using project quotas.
-Additionally, users' definitions of file system users and groups might
-differ from file UID and GID. Users can freely use project IDs to
-define file system users and groups.
->
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+In-Reply-To: <Zl4G0tI_0CHKIWHh@slm.duckdns.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgAnMJjyK2Fmz2rqOQ--.40149S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFyrWFW8JF4UCF43Zr4DXFb_yoW3Wwb_WF
+	s29aykKw4UuFs7ta1vyF45J34xGFWrXryUZ348Way7C34fAa1UWay5WFyav3WxJr4IkF9x
+	W3Z2g340kry2vjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
+	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUzsqWUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
 
-Best regards,
---=20
-Junchao Sun <sunjunchao2870@gmail.com>
+
+on 6/4/2024 2:09 AM, Tejun Heo wrote:
+> Hello,
+> 
+> On Mon, Jun 03, 2024 at 02:39:18PM +0800, Kemeng Shi wrote:
+>>> Isn't this a bit nasty? The helper skips updating states because it knows
+>>> the caller is not going to use them? I'm not sure the slight code reduction
+>>> justifies the added subtlety.
+>>
+>> It's a general rule that wb should not be limited if the wb is in freerun state.
+>> So I think it's intuitive to obey the rule in both balance_wb_limits and it's
+>> caller in which case balance_wb_limits and it's caller should stop to do anything
+>> when freerun state of wb is first seen.
+>> But no insistant on this...
+> 
+> Hmm... can you at least add comments pointing out that if freerun, the
+> limits fields are invalid?
+Sure, will add it in next version. Thanks
+> 
+> Thanks.
+> 
+
 
