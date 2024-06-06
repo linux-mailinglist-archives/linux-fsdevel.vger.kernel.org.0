@@ -1,251 +1,381 @@
-Return-Path: <linux-fsdevel+bounces-21121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3169F8FF371
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 19:14:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5968FF385
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 19:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC8F289982
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 17:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745BB1F23192
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 17:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F25C1990D7;
-	Thu,  6 Jun 2024 17:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EECC1990DC;
+	Thu,  6 Jun 2024 17:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZfHKPHd8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EwsWS1Zg";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="jwu0yWPW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ABD198E7F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 17:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694048; cv=none; b=D1xyCOOK+cfE3rZkWj22BXOe2k96aMqrc24Qwxy9AhkxDK3+HiaNTSrnlC6kDhx4aC+/OvG5Sla89ofmiYYOxPKyzd+UW0Q5i4lO1/TG/stwhh/MMJw18PDLUoA/J/0pJx+Cw4uBvMwBPOrC2H9ko8ZvzrzSiUDVxJiPeOuVU3I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694048; c=relaxed/simple;
-	bh=3PcZbTSvMIet1KvRH/3UIizXiqdHfZwbn62ekU7BeTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJ/6OdgOuLDl3lZgqfRIj8McYQXpGkT0SVJauOeTsbVLASQczru1yMeQeaz3DXoMztE2cpn7PMwRvR+fQhthrtqZyHS5O8Q1gIx+yvXk509O4zXAFLSqWlZqZuvalVAzwOL21gp/UVVbJ4+1DhV//+9yGXbwHHQi6Lxc3AOTFxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZfHKPHd8; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-62a0809c805so12054057b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 10:14:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DB6197A8F;
+	Thu,  6 Jun 2024 17:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717694170; cv=fail; b=tD5vBVcCSwhWuSgiWWxkdt010dDpM4VixciTyjI1mNga+mg/zciwzywGauGwjE30Nr0Lwwiu7aSbmdryXphdmaEzBaJNyk4M1cNrbS9TPSwSaRfdsb2Ne+05isINvMDbI3kUTtdgEyNWy5C4Vx/4h4GhrUaVrfMCy8g4RsJ1XZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717694170; c=relaxed/simple;
+	bh=p+Tj4sdCZD3ztS/1Ic21wsDG9rlW/hml8vn+iMdqW+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DH9UoytX4Qd4HJJgf6hQglkGciec1NYHmh3SIzyxTH3P0JAj/DfT3JIM0Qe7IgeHfVWvXGBGz4m1tVE9VvwZgZgYro4wdoaRsLgzLNv/LbYeMmgmd1MT3ccex5NQegyk4hVQgH+MmJx1L0lSrZl29jx5AQRTvmLj1ZS158zcoPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EwsWS1Zg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=jwu0yWPW; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4568ilui021994;
+	Thu, 6 Jun 2024 17:15:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=corp-2023-11-20;
+ bh=VEBVmKnHpWTTS7KU7mIicewI72j8qnZxJXALkV8pJ6E=;
+ b=EwsWS1Zg1ogt+asSXL6E+23ZmG9QN/1RFmB34JAVkUWosRv6QT0X9I6mP2dYa7MIMJyx
+ TnjWGkwYKDSKGUzQRBH5a42qd1bSijD3JWUHRCpjGS+HXY/wiKYC7AZVDDiJObqO0nNU
+ HCkJ3QGn18lh3nrmSce+MpNNis3InoJkGTkTK3Gz0x5fYpF2x4JHitOC/lm9wsKyWlit
+ Gm08CN6c8R6t88zNx/8MqNLA3zTsVxdidim8qDqlfnaesL6gGDei7IqYO/pZhsqje7ro
+ CbnK+ZE8YoTtOdUPhQmJuSgIcj90NV1BoBnNNCvVJpfTJcTkNXW7s3bl8tX350kFJKpL rQ== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbqn412p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 17:15:50 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 456GYkMl025263;
+	Thu, 6 Jun 2024 17:15:49 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrtbwk4m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 17:15:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HrFsOjZtIeQnsN9H4tZgJNwAJ5oO/ALIHvLBJA2sHlckQpuOpVqUj2vSW4mtK17KhuPxVo+PY5KQ/l7vr6P+IJIee/HlbKmslLqoY7/bd+YpAUZOS14QPp08NqZ5qtiF/IY78EKEQ5F7AlYgS4CcKzB+3EjgL5dAMiLS6EULdg1iZUBGJcnwG6YeQtcZDXvxrigcdd9LDHD39wSMRxKBVGnYGHcp3skV5csbQo5HIX+yn8A5htWbFu/FRpxZ2LVHPvOXmI+vIcOx9hXqfsxWgyjJE1yoqwBLbf91qGuutdI7L91KCyf6SuIigEem6ZX8MI17eSQGIa0YfkCJAwDMFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VEBVmKnHpWTTS7KU7mIicewI72j8qnZxJXALkV8pJ6E=;
+ b=SgGJrRE6GRWcmaRnE7lO1qwaV7jtleCAc77TtXuALI/jsK4QLqMRWiaI3rg5aee5LeCrY4L5BBv5xApu0r/G8BdOfrpQ6awmOfY+SKN1G30Mgbkte4fMPsGHjm213uxx3GndCTPJKoe/REriS2xSmTnqFaiuKq+DRhrJ3slvRuDmgYwiTgllU/nDzxDnHeF8RgreB2Ejmr4xATGcjW8+S2pIQkvTikiBPG4kHW7BzeFVSFqpZ4BHfSmImnyBfy6ooLGnMgdEV4SSoH72guRyh1xwCem7fOrq+JN5RIxExqEBxKjWWoIpxU2eqp6GApZIWBPg1pwv8AxQFjH7+Qe6nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717694045; x=1718298845; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hRK/mnhg9puUTTzwI/wwQsIKXT3wkOFAvZtn/HKANeU=;
-        b=ZfHKPHd88/pQdXDhSx7rj+OQOYhlJT8Ziy+oVtQGDenFjzFnp1lY1uDONjpIbY6C6L
-         T0SbIYjboXx1e02tAi3c3ZD3Gq+G2goZHggWjMm33l5djEuEPgfApdzrTlQsVSUKx1NT
-         STiUjeurb7q9QslwoKoU9kU6oYDOqZkkXO+LgaFSf6sv3L/fTb5ekW0oqxuv34FoqNxA
-         T5PcV+YIq8Lh/fwjRYzWA/oIS3a3kfdo+pTp/iOWhEUJXrhxNxbjCaYVw3m+oPnMl0pm
-         qbpCxk7rC7UMkgI24mawWB4sAvdATgJ0ztfcCGzylZuwZLWS+CzpSmGIURkswJap463h
-         4b2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717694045; x=1718298845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hRK/mnhg9puUTTzwI/wwQsIKXT3wkOFAvZtn/HKANeU=;
-        b=wDMVjWxVJDX0HnxPhB4HlJJmuwfVBXCE6w3YEo8yHWCbJ474y4HkGht4d+Ogd6rpEJ
-         lEXG/U0W5edbcjtDFqjlL3KZjM4qMW3nrbANZy/z9A4oldhupF1UszKYxVBw47E2eGsn
-         sh4ANT5uVOOkGX9nbiqLd2YXoA3ymGYrXzj32jhio+lFkJ6rLZPpNRImDmu2Me1SODRo
-         GH6W3e6MTgvp0hnNBjyuQPDAny3B/7cCb8sJz934l88tkDfY758Q9ooSsM3JE24MMdtY
-         c3O76I2PKZtoL2lExqrbKXbj1OUIMzyHz6n2osn8Uvhx7tVJVg67L4APs3cOh4Pu7V4i
-         ygGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4sIyDDrMM51jLP4yVCpqiCNw1k0pIVx03z6uZX81J8CCE5YcGpbEgIWynozEXUMBCa17RsfWH6pM4Z1OLABTzw99ZRj3Z7qgIV+66wQ==
-X-Gm-Message-State: AOJu0YzVCUxmV55Ac7K8dtarL04dHSzzHpUDgVFNEt9/5UeFAprzS1KD
-	uXvY1898OFa/nvAkir1zsWBKlDY4LOMJGpBvRbnDPhf8AmLCn8R8rebrsVVoGkbYLc5FJI/7ZIr
-	JMX9bTFBhTu1aHvsCYDOMAS/XyzVr5NUgVDoo
-X-Google-Smtp-Source: AGHT+IE6g1Qt1a0uWEMeEkhuX3E8E0Aujra9U26A4am4FT81CMUGmJmJOs73aDziKCtCgxpH2azFXeJj7iJZZjlkoqQ=
-X-Received: by 2002:a0d:d709:0:b0:615:1a0:78ea with SMTP id
- 00721157ae682-62cbff3b0eamr45661767b3.34.1717694044790; Thu, 06 Jun 2024
- 10:14:04 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VEBVmKnHpWTTS7KU7mIicewI72j8qnZxJXALkV8pJ6E=;
+ b=jwu0yWPWV7XcIYnnnBEIjsH66pJBACnQzxDNZRd3V1NPxb8+/pzvP+0JevcFD0xHxb/8O8vXs1Z3OyImiDf1j5FZ8Lc1KLerdUlw3EKswbKNGccN43YnmxDC1I/x5nNRxFhNRGZ9AbXjPus790cKgA3Wzqd1mV/FIIIVHhLwJ8c=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by DM6PR10MB4236.namprd10.prod.outlook.com (2603:10b6:5:212::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Thu, 6 Jun
+ 2024 17:15:46 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
+ 17:15:46 +0000
+Date: Thu, 6 Jun 2024 13:15:43 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+        Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+        brauner@kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        gregkh@linuxfoundation.org, linux-mm@kvack.org, rppt@kernel.org
+Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
+ PROCMAP_QUERY API
+Message-ID: <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, gregkh@linuxfoundation.org, linux-mm@kvack.org, rppt@kernel.org
+References: <20240605002459.4091285-1-andrii@kernel.org>
+ <20240605002459.4091285-5-andrii@kernel.org>
+ <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
+ <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com>
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: YT3PR01CA0066.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:84::17) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-2-andrii@kernel.org>
- <Zl-38XrUw9entlFR@casper.infradead.org> <uevtozlryyqw5vj2duuzowupknfynmreruiw6m7bcxryjppqpm@7g766emooxfh>
- <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
- <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
- <CAEf4Bzbzj55LfgTom9KiM1Xe8pfXvpWBd6ETjXQCh7M===G5aw@mail.gmail.com>
- <5fmylram4hhrrdl7vf6odyvuxcrvhipsx2ij5z4dsfciuzf4on@qwk7qzze6gbt>
- <CAJuCfpER9qUSGbWBcHhT1=ssH41Xv8--XVA5BEPCM7uf=z_GLw@mail.gmail.com> <CAEf4Bzax2E1JS=MUm=sBJvcMb+CyWaPdxmr2mDuODs2cc3_mTg@mail.gmail.com>
-In-Reply-To: <CAEf4Bzax2E1JS=MUm=sBJvcMb+CyWaPdxmr2mDuODs2cc3_mTg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 6 Jun 2024 10:13:52 -0700
-Message-ID: <CAJuCfpFKA9KChaunoYo-yH4GipvGjRpKqyneOhwi-E6n3Lfq3g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
- taking VMA lock
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|DM6PR10MB4236:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3308434f-9243-41be-bc9d-08dc864c4dce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|7416005|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?anlBYVlreEI2a3Q5bGZjZVVqV1BYN0hMV1lhdklqdVZQWW9TcGwrb3VXWVFB?=
+ =?utf-8?B?bk9BRGc0NlFXbjdQSlBLdmhLdDZzZWNtRW5PdGR4Q3FpZUg0R3h0YXFJVHF6?=
+ =?utf-8?B?YytaNGwwY2Jvb20rM2FIZTZHMkx5Q25PVmxkQXVtWExqNlJSSER1NWRSbXJD?=
+ =?utf-8?B?V0VDR0dsVStTaW9vdWphSXcrakpyR055Nzdzai9BcFgyZFFHejRvN054WHFl?=
+ =?utf-8?B?T29CWlM0M3dwRXY1a1FxMlV5dWE5SHRjSWE5WnMvQnJINjBkcU43S1FiYWhy?=
+ =?utf-8?B?MWtQNDdCYTduNXpLV25DeVZuWW5GVkovRG1rdFpLZGpwUnZ6WWdHM0FHSUtu?=
+ =?utf-8?B?MWxscExyVG5HQ0JGL1hSa3YxVHRpTmd0bkluSldRT3p1Wngvb3JWYjgvRVpM?=
+ =?utf-8?B?cWRJdzFSN2hVdEorUGZFS0VTL3lndTM4blV3a2daTFNCUURhN1lLaTQrMTdu?=
+ =?utf-8?B?d1ZmRS83Q2Q4UFBoLzFoUytDRDJpU2RuWkVYaHI3SHFVbmhBVzg1bDRZZ1FX?=
+ =?utf-8?B?T1lvamovRjM0NmtSL3ZsWUI3eGtLdFpYdnN0bnhxaVIrRW5nVldYNmZzeGx6?=
+ =?utf-8?B?NDNTM2g2MUJQZnZUQzVyOGd0TGJieTRaaXBQaDY0RjFmRG4rTXhpbndIWmd6?=
+ =?utf-8?B?eEluWWtjNFRFV24ranBteHRyTEZidThSaVN3bytRZVdLYVFPNVR3bGtrRkRj?=
+ =?utf-8?B?YW1kbDV0Mi8zc1JLakV5aHgrRXVRbUtDZ2dKZGd5Tmx3TjBBRFNJcVlnM3ZJ?=
+ =?utf-8?B?RHBpRHVLMHRmV2NoV2lPSUoyZW40b3dIQTZUZG05c0x2VDlIN0NONHF2dGVv?=
+ =?utf-8?B?YjRxVnBkMk4zWUpUK21rZ2o3Q1lhNi9iYm93SHJJRVJRR3I2UzJrRThJUGpq?=
+ =?utf-8?B?aTgvbVhkSG9mQTMyU01GWlZ1dVphc00wTkdDczN0dms2RW41QWZqRHovZHpr?=
+ =?utf-8?B?U2pTZlMyQ0F2NkdjVFZkck1yQ3Jpdk9uajhrUVJORmtHbzN1ZE5yZ2JsMU0w?=
+ =?utf-8?B?TlA5aEhoWlBoOGZIUkNYaWxVYjlyUyt0ZXFSMjFwczg3Tkc4Q0N0Y2pzMVhI?=
+ =?utf-8?B?RlRDTkdYNnpjMzVHcVlnWDNlSVp5amFhdVQxM013ck03VDZjdGNXZ1RqWWV5?=
+ =?utf-8?B?NHM4YS9QcFNUNG1iSmZERlExOXlQRXREQVhRb1lIU0E0T2ZicmIrdUNWRE44?=
+ =?utf-8?B?WXNsSkljaTdwb3VacHBRbXlvSTgwZ21LRjlnSHJJdVl3MDNoTVM4VlRGblI2?=
+ =?utf-8?B?ZmllWENaRXV5NlZZa0ZQQUxuZEp2VG5VdG5tVlQ4K3RORXYrK3FrZ2N0Rkpu?=
+ =?utf-8?B?ZDJZNWZ5b09nQk9FNE1meFhRQ1Z1MWNtZlZLVk1kUWRZWjhhYjZ5OEJUMVRu?=
+ =?utf-8?B?ZXhIVzc3S2ptalREbVpLeFo5V1V6bmw3V0xSdU9rSjZVY0VFVGwwOUhwYjB6?=
+ =?utf-8?B?eW1tNW5UbHdJRldYZ1NIeUFyRnJpSDhDeWp5WXZwM1l0WjM1V1B6c1VTM3JV?=
+ =?utf-8?B?TkJUTjFWTUNhb0xNYU5xODNkaFFrQjRmd29JV1FydWh6L0NiVFVQTHJsdWln?=
+ =?utf-8?B?emVScWljbkpaTXRLakw4NW1mT3Zjc0ZPN1k2ZXhXQ0EveUgzWVNNdHpXV1B3?=
+ =?utf-8?B?alJsSm5vOU9acUJZYWc4aXBVWFplaUV4Sml4b2lDanZmTnUybHYrUTA0djZM?=
+ =?utf-8?B?RXE1bkZKZGJIUnoyei9YQUxmcUQxRmk4QmZWelZwdlo1Mmc1bklwdlRRPT0=?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?N0cwYUtadS9KQVdXdzdONUl6eERkQ1AyRmZyQXBaSVZ1WDV0akhqUUtWbXJ4?=
+ =?utf-8?B?U0ZvbVpGSTZIOXVIYytBUVI2cnh6S1JMckxUUnJkTUVpakxHMTdqYURGN0p2?=
+ =?utf-8?B?T0hSQUJqSlV4K0VVRWVKWUtibzljdHdheUhPL2pIUE55dEc4d2pxTm5IMmpX?=
+ =?utf-8?B?VDBuVTlENWVlVm4xMDBvdXhWbDJxQU5NUWh0TE5MNXlETGtPcWdPQWJpMmlV?=
+ =?utf-8?B?UmFrSEhOZXo3K1VyNGZ2N09LVVU3OVV5a2haWXRjUDdpUnBjMGxWd0pxRWx4?=
+ =?utf-8?B?TGJHQzFTTHhJUm1OQ0V2VXVoMmpXZUd5SGhVMDdna0NBVURYaUd6VUd4SGJG?=
+ =?utf-8?B?WUlKMDRpQlZZNDNkNjQyTnV2ZDJmQUIrOHZiNjhjUDhIN2JJSWZ2VmxQZVlZ?=
+ =?utf-8?B?RUJmc2ZBWmM3SjFOTjBucU1uTnlqYm5saDZMT2xtT0N5dDJMSS9GQ2FHWFZX?=
+ =?utf-8?B?b20rY0dxVTl4NzlBbWF2aUpUaTZWSGhXak1jdDFWOXJLb1V1d2ZxQkJPcFc4?=
+ =?utf-8?B?Y0dxazdwdjk5b1FlVWgvZjFhUTFPbjVod3hWODNSbjRlQTRLa0JyNFN1eEFy?=
+ =?utf-8?B?bzJOKytjOHJ1ZlBXN3NSUU0xRDEzZmZSY2wzYVA1SWxKTUZOdjNDT0Z4YndM?=
+ =?utf-8?B?bURtbVk5Y3FUc0hjL3cwcU44ZDVFaHltdktaUGtSN2lBanJoenZlOVZrNTRG?=
+ =?utf-8?B?dGpvbUNjMGl6WVJ5d1VVQW96WkZGTi9WUFl3L0xOYzhBcGMwRzErSUM3YmJW?=
+ =?utf-8?B?T0V5c0I4TUR5SlNVUEVqWERHL0ZLK050U3Zsc0ZleXN0bzhsMWdpdXJuMUVh?=
+ =?utf-8?B?Uld4a2tXQjB6aWYwd0FhVFpSWlNaMlpySnllQlAyWERjTUNTTFJxU21Vanp3?=
+ =?utf-8?B?cWYzVnRaK2FOMkQrTGZwZlpXWUhQSVh0SWx2aTZsVHMra1pTbW54bjIxN3dD?=
+ =?utf-8?B?U3E0dUZ5QmR4WmZLRXlNU0NQUjN4L3VmdlBnSzdabGVpbDRaYVVweWtOOU10?=
+ =?utf-8?B?Rys1TW5rRG9tZFpMMVhZcFpSTnhITDhPcGZKK2ZJcWxkYmpTR05QbVVvVW53?=
+ =?utf-8?B?bFE1VTJ6Unl0Y1gyeGRrWlpWb05ZY083QmNVNjV2M1FZWmJETExRcGxRQWtV?=
+ =?utf-8?B?R1FYMWFRSlpKNHI1ZE11QTNHT2x4eXkwVTY0cExHNkdaWVovcDFtTTFMMkJ1?=
+ =?utf-8?B?djZWbzRLVmhKVFZmQTVBOWU4ekROcG8vWTZRNmYxSHNWaVVZaEcvSnliVGpX?=
+ =?utf-8?B?aGVDa2lkY25wNCtlWDA2QzR0S0NUdmpuK3RPN2JUV1dSRmhDcnR1QUFTRnhD?=
+ =?utf-8?B?M3I0YkVMczZ4dFoyd1Q4WU1VeFdNbW9KNHhYWU1xLzdHcTcwcWpkTGpHRVls?=
+ =?utf-8?B?QzVXRzFMckw4ZERuN2Ztdk5DRGN0b2pqQzc2U3BDNFdEL0ppRU1JQ1JjTzR4?=
+ =?utf-8?B?N1JhUWRMbDBDdXQ3K3Izbk44VElPNkY5U1Y4QXF2d3Q5UDRzVFIwaXFaMU1H?=
+ =?utf-8?B?Y0NudDZBMC9iZ0hHZGhCMGdadUdXWFhsY3lKYWlKTGpzS3dVQ1plTjN5YUJk?=
+ =?utf-8?B?UzdKcUlYdlhqZEpXNW1JbjVHSlZUdjByek5YM3BhUUpUT0ZmUW1sZUNzMnp6?=
+ =?utf-8?B?cDZXZVVFLzkvRW16cFVYbFhCWG1ybXhmSXN4aG9JYmIyRkUvaFFLRGN3c0lv?=
+ =?utf-8?B?MmY3cSttOXZjMC83alFKaDdGNVN3SFRNSHg0RmtSNUNBVUdPckU3M1FPNTAw?=
+ =?utf-8?B?R0UrRTZDYlo0NlhGdTRodHJlWHF6MXkwTnFncVZ6ZGtlLzdUNXNwcWJLYmhS?=
+ =?utf-8?B?Z3o1U05ucllXenpVVGx4dWcwcVhyUVB3ZWU1a0xUUVlodXdMcE9GRkRheVhl?=
+ =?utf-8?B?bTJjOGpGS1Azb2poUVdwNUFGcWxLbzE3TDNrV1FTOWEwN1BlKzZ0WTVkcUFj?=
+ =?utf-8?B?Q0tlb1ovcnNETjZ4VWhBZVpvNmFCZDE5OTAyS0x0RTM4cnhURDRGbkNBc1lS?=
+ =?utf-8?B?VVN3dkp4UFRlM1FsS2JLOVBnMms4VGJzck9MR2NPTDdnMCtOSlhKOHlnb3NO?=
+ =?utf-8?B?aFl0VmV2YjExRlQyemJseTJrWVFZM3dibVF5Nmd1RFNhT0Y0dmk0YmhNUjhQ?=
+ =?utf-8?Q?al/8Y2ZbLtC4ueHdM8//VlL8M?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	RiRC1bTeGL3TSWAQsF7mEWPhZ5Gzbvd3w/N5dpjWTym8xqal9cuZ8uBWykdYDXFcsIS8EMpIBpwiuZ33XXecUXDYSu8wMgQbATDYDuTw8ybCn7hP+RL0TvIj75sOy4izB0LNXYj4T3KtU0lsOYpQV91u9LZfFZDANH9B3FERJs93KqBq0lF71wK9GuG4rfrpIFJhtq8DMSxlnZqAr0rGEDtcHZEaa+sGcHDECbhcMWA7vz31CjhrizBni27L4v03hGfUJie1BHBGSn2iR7IKcYzj8an3AJc+tpOyqm2qnvJuFN0BjuJb4v/TLoZl9IQjY20J0Q+3+RKI3+NKimFXZiCvztKnS5hSNzMUx8sWeVToas5Mf9VVyLsLZXYBsptSJPNzZCSt7xy64DUI9dtDfTcfeQopU0wHd8x15akdyjj7xHlj2ATy33HM0qYkIvzMKCPIJFWiAxKteToo74gZVrR2BoOsi+I3e/ChO90lq1Db+Dg0qP261ee77jlgUX2ijuWVGss5XEHz9LSXFg1GRFL5UyFH4y5Ex/ECKQumEOQwRvMTchAX+wm5sq9ikgsrtLla6qEzWRHFSZGVNxSLBcc/x5Upa50rMb6wKUxDQ/Y=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3308434f-9243-41be-bc9d-08dc864c4dce
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 17:15:46.2627
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Mi0XDLRkOguojEGruP1wsABnwW+/67LO1bDcOsXokA9VrJrp6qW5c+PY5agD1bDPLQwp8s+kMoj6F5u3iP4nLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4236
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_14,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 spamscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406060122
+X-Proofpoint-ORIG-GUID: 9hVc3AQJ64c88r9cu6cmbEZD1NbPdPcK
+X-Proofpoint-GUID: 9hVc3AQJ64c88r9cu6cmbEZD1NbPdPcK
 
-On Thu, Jun 6, 2024 at 9:52=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Wed, Jun 5, 2024 at 4:22=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
+* Andrii Nakryiko <andrii.nakryiko@gmail.com> [240606 12:52]:
+> On Wed, Jun 5, 2024 at 4:16=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
 com> wrote:
 > >
-> > On Wed, Jun 5, 2024 at 10:03=E2=80=AFAM Liam R. Howlett <Liam.Howlett@o=
-racle.com> wrote:
+> > On Tue, Jun 4, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko <andrii@kernel.o=
+rg> wrote:
 > > >
-> > > * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240605 12:27]:
-> > > > On Wed, Jun 5, 2024 at 9:24=E2=80=AFAM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > On Wed, Jun 5, 2024 at 9:13=E2=80=AFAM Andrii Nakryiko
-> > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > >
-> > > > > > On Wed, Jun 5, 2024 at 6:33=E2=80=AFAM Liam R. Howlett <Liam.Ho=
-wlett@oracle.com> wrote:
-> > > > > > >
-> > > > > > > * Matthew Wilcox <willy@infradead.org> [240604 20:57]:
-> > > > > > > > On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko w=
-rote:
-> > > > > > > > > +/*
-> > > > > > > > > + * find_and_lock_vma_rcu() - Find and lock the VMA for a=
- given address, or the
-> > > > > > > > > + * next VMA. Search is done under RCU protection, withou=
-t taking or assuming
-> > > > > > > > > + * mmap_lock. Returned VMA is guaranteed to be stable an=
-d not isolated.
-> > > > > > > >
-> > > > > > > > You know this is supposed to be the _short_ description, ri=
-ght?
-> > > > > > > > Three lines is way too long.  The full description goes bet=
-ween the
-> > > > > > > > arguments and the Return: line.
-> > > > > >
-> > > > > > Sure, I'll adjust.
-> > > > > >
-> > > > > > > >
-> > > > > > > > > + * @mm: The mm_struct to check
-> > > > > > > > > + * @addr: The address
-> > > > > > > > > + *
-> > > > > > > > > + * Returns: The VMA associated with addr, or the next VM=
-A.
-> > > > > > > > > + * May return %NULL in the case of no VMA at addr or abo=
-ve.
-> > > > > > > > > + * If the VMA is being modified and can't be locked, -EB=
-USY is returned.
-> > > > > > > > > + */
-> > > > > > > > > +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_s=
-truct *mm,
-> > > > > > > > > +                                        unsigned long ad=
-dress)
-> > > > > > > > > +{
-> > > > > > > > > +   MA_STATE(mas, &mm->mm_mt, address, address);
-> > > > > > > > > +   struct vm_area_struct *vma;
-> > > > > > > > > +   int err;
-> > > > > > > > > +
-> > > > > > > > > +   rcu_read_lock();
-> > > > > > > > > +retry:
-> > > > > > > > > +   vma =3D mas_find(&mas, ULONG_MAX);
-> > > > > > > > > +   if (!vma) {
-> > > > > > > > > +           err =3D 0; /* no VMA, return NULL */
-> > > > > > > > > +           goto inval;
-> > > > > > > > > +   }
-> > > > > > > > > +
-> > > > > > > > > +   if (!vma_start_read(vma)) {
-> > > > > > > > > +           err =3D -EBUSY;
-> > > > > > > > > +           goto inval;
-> > > > > > > > > +   }
-> > > > > > > > > +
-> > > > > > > > > +   /*
-> > > > > > > > > +    * Check since vm_start/vm_end might change before we=
- lock the VMA.
-> > > > > > > > > +    * Note, unlike lock_vma_under_rcu() we are searching=
- for VMA covering
-> > > > > > > > > +    * address or the next one, so we only make sure VMA =
-wasn't updated to
-> > > > > > > > > +    * end before the address.
-> > > > > > > > > +    */
-> > > > > > > > > +   if (unlikely(vma->vm_end <=3D address)) {
-> > > > > > > > > +           err =3D -EBUSY;
-> > > > > > > > > +           goto inval_end_read;
-> > > > > > > > > +   }
-> > > > > > > > > +
-> > > > > > > > > +   /* Check if the VMA got isolated after we found it */
-> > > > > > > > > +   if (vma->detached) {
-> > > > > > > > > +           vma_end_read(vma);
-> > > > > > > > > +           count_vm_vma_lock_event(VMA_LOCK_MISS);
-> > > > > > > > > +           /* The area was replaced with another one */
-> > > > > > > >
-> > > > > > > > Surely you need to mas_reset() before you goto retry?
-> > > > > > >
-> > > > > > > Probably more than that.  We've found and may have adjusted t=
-he
-> > > > > > > index/last; we should reconfigure the maple state.  You shoul=
-d probably
-> > > > > > > use mas_set(), which will reset the maple state and set the i=
-ndex and
-> > > > > > > long to address.
-> > > > > >
-> > > > > > Yep, makes sense, thanks. As for the `unlikely(vma->vm_end <=3D
-> > > > > > address)` case, I presume we want to do the same, right? Basica=
-lly, on
-> > > > > > each retry start from the `address` unconditionally, no matter =
-what's
-> > > > > > the reason for retry.
-> > > > >
-> > > > > ah, never mind, we don't retry in that situation, I'll just put
-> > > > > `mas_set(&mas, address);` right before `goto retry;`. Unless we s=
-hould
-> > > > > actually retry in the case when VMA got moved before the requeste=
+> > > Attempt to use RCU-protected per-VMA lock when looking up requested V=
+MA
+> > > as much as possible, only falling back to mmap_lock if per-VMA lock
+> > > failed. This is done so that querying of VMAs doesn't interfere with
+> > > other critical tasks, like page fault handling.
+> > >
+> > > This has been suggested by mm folks, and we make use of a newly added
+> > > internal API that works like find_vma(), but tries to use per-VMA loc=
+k.
+> > >
+> > > We have two sets of setup/query/teardown helper functions with differ=
+ent
+> > > implementations depending on availability of per-VMA lock (conditione=
 d
-> > > > > address, not sure, let me know what you think. Presumably retryin=
-g
-> > > > > will allow us to get the correct VMA without the need to fall bac=
-k to
-> > > > > mmap_lock?
-> > > >
-> > > > sorry, one more question as I look some more around this (unfamilia=
-r
-> > > > to me) piece of code. I see that lock_vma_under_rcu counts
-> > > > VMA_LOCK_MISS on retry, but I see that there is actually a
-> > > > VMA_LOCK_RETRY stat as well. Any reason it's a MISS instead of RETR=
-Y?
-> > > > Should I use MISS as well, or actually count a RETRY?
-> > > >
+> > > on CONFIG_PER_VMA_LOCK) to abstract per-VMA lock subtleties.
 > > >
-> > > VMA_LOCK_MISS is used here because we missed the VMA due to a write
-> > > happening to move the vma (rather rare).  The VMA_LOCK missed the vma=
+> > > When per-VMA lock is available, lookup is done under RCU, attempting =
+to
+> > > take a per-VMA lock. If that fails, we fallback to mmap_lock, but the=
+n
+> > > proceed to unconditionally grab per-VMA lock again, dropping mmap_loc=
+k
+> > > immediately. In this configuration mmap_lock is never helf for long,
+> > > minimizing disruptions while querying.
+> > >
+> > > When per-VMA lock is compiled out, we take mmap_lock once, query VMAs
+> > > using find_vma() API, and then unlock mmap_lock at the very end once =
+as
+> > > well. In this setup we avoid locking/unlocking mmap_lock on every loo=
+ked
+> > > up VMA (depending on query parameters we might need to iterate a few =
+of
+> > > them).
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  fs/proc/task_mmu.c | 46 ++++++++++++++++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 46 insertions(+)
+> > >
+> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > index 614fbe5d0667..140032ffc551 100644
+> > > --- a/fs/proc/task_mmu.c
+> > > +++ b/fs/proc/task_mmu.c
+> > > @@ -388,6 +388,49 @@ static int pid_maps_open(struct inode *inode, st=
+ruct file *file)
+> > >                 PROCMAP_QUERY_VMA_FLAGS                         \
+> > >  )
+> > >
+> > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > +static int query_vma_setup(struct mm_struct *mm)
+> > > +{
+> > > +       /* in the presence of per-VMA lock we don't need any setup/te=
+ardown */
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static void query_vma_teardown(struct mm_struct *mm, struct vm_area_=
+struct *vma)
+> > > +{
+> > > +       /* in the presence of per-VMA lock we need to unlock vma, if =
+present */
+> > > +       if (vma)
+> > > +               vma_end_read(vma);
+> > > +}
+> > > +
+> > > +static struct vm_area_struct *query_vma_find_by_addr(struct mm_struc=
+t *mm, unsigned long addr)
+> > > +{
+> > > +       struct vm_area_struct *vma;
+> > > +
+> > > +       /* try to use less disruptive per-VMA lock */
+> > > +       vma =3D find_and_lock_vma_rcu(mm, addr);
+> > > +       if (IS_ERR(vma)) {
+> > > +               /* failed to take per-VMA lock, fallback to mmap_lock=
+ */
+> > > +               if (mmap_read_lock_killable(mm))
+> > > +                       return ERR_PTR(-EINTR);
+> > > +
+> > > +               vma =3D find_vma(mm, addr);
+> > > +               if (vma) {
+> > > +                       /*
+> > > +                        * We cannot use vma_start_read() as it may f=
+ail due to
+> > > +                        * false locked (see comment in vma_start_rea=
+d()). We
+> > > +                        * can avoid that by directly locking vm_lock=
+ under
+> > > +                        * mmap_lock, which guarantees that nobody ca=
+n lock the
+> > > +                        * vma for write (vma_start_write()) under us=
 .
-> > >
-> > > VMA_LOCK_RETRY is used to indicate we need to retry under the mmap lo=
-ck.
-> > > A retry is needed after the VMA_LOCK did not work under rcu locking.
+> > > +                        */
+> > > +                       down_read(&vma->vm_lock->lock);
 > >
-> > Originally lock_vma_under_rcu() was used only inside page fault path,
-> > so these counters helped us quantify how effective VMA locking is when
-> > handling page faults. With more users of that function these counters
-> > will be affected by other paths as well. I'm not sure but I think it
-> > makes sense to use them only inside page fault path, IOW we should
-> > probably move count_vm_vma_lock_event() calls outside of
-> > lock_vma_under_rcu() and add them only when handling page faults.
->
-> Alright, seems like I should then just drop count_vm_vma_lock_event()
-> from the API I'm adding.
-
-That would be my preference but as I said, I'm not 100% sure about
-this direction.
-
->
+> > Hi Andrii,
+> > The above pattern of locking VMA under mmap_lock and then dropping
+> > mmap_lock is becoming more common. Matthew had an RFC proposal for an
+> > API to do this here:
+> > https://lore.kernel.org/all/ZivhG0yrbpFqORDw@casper.infradead.org/. It
+> > might be worth reviving that discussion.
+>=20
+> Sure, it would be nice to have generic and blessed primitives to use
+> here. But the good news is that once this is all figured out by you mm
+> folks, it should be easy to make use of those primitives here, right?
+>=20
 > >
-> > >
-> > > Thanks,
-> > > Liam
+> > > +               }
+> > > +
+> > > +               mmap_read_unlock(mm);
+> >
+> > Later on in your code you are calling get_vma_name() which might call
+> > anon_vma_name() to retrieve user-defined VMA name. After this patch
+> > this operation will be done without holding mmap_lock, however per
+> > https://elixir.bootlin.com/linux/latest/source/include/linux/mm_types.h=
+#L582
+> > this function has to be called with mmap_lock held for read. Indeed
+> > with debug flags enabled you should hit this assertion:
+> > https://elixir.bootlin.com/linux/latest/source/mm/madvise.c#L96.
+
+The documentation on the first link says to hold the lock or take a
+reference, but then we assert the lock.  If you take a reference to the
+anon vma name, then we will trigger the assert.  Either the
+documentation needs changing or the assert is incorrect - or I'm missing
+something?
+
+>=20
+> Sigh... Ok, what's the suggestion then? Should it be some variant of
+> mmap_assert_locked() || vma_assert_locked() logic, or it's not so
+> simple?
+>=20
+> Maybe I should just drop the CONFIG_PER_VMA_LOCK changes for now until
+> all these gotchas are figured out for /proc/<pid>/maps anyway, and
+> then we can adapt both text-based and ioctl-based /proc/<pid>/maps
+> APIs on top of whatever the final approach will end up being the right
+> one?
+>=20
+> Liam, any objections to this? The whole point of this patch set is to
+> add a new API, not all the CONFIG_PER_VMA_LOCK gotchas. My
+> implementation is structured in a way that should be easily amenable
+> to CONFIG_PER_VMA_LOCK changes, but if there are a few more subtle
+> things that need to be figured for existing text-based
+> /proc/<pid>/maps anyways, I think it would be best to use mmap_lock
+> for now for this new API, and then adopt the same final
+> CONFIG_PER_VMA_LOCK-aware solution.
+
+The reason I was hoping to have the new interface use the per-vma
+locking from the start is to ensure the guarantees that we provide to
+the users would not change.  We'd also avoid shifting to yet another
+mmap_lock users.
+
+I also didn't think it would complicate your series too much, so I
+understand why you want to revert to the old locking semantics.  I'm
+fine with you continuing with the series on the old lock.  Thanks for
+trying to make this work.
+
+Regards,
+Liam
 
