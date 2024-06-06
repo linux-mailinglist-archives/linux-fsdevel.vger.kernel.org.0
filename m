@@ -1,211 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-21097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3A58FE169
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 10:47:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC7A8FE2C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 11:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621C3287BF6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 08:47:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0959B29ECB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 09:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F84213D8AC;
-	Thu,  6 Jun 2024 08:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA848158DA3;
+	Thu,  6 Jun 2024 09:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YbKTq5JE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERE3CvAr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD513CFAF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 08:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96FC158A04
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 09:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663628; cv=none; b=FVi7GdWY4XzRw3/agEC74Dt+hY0qmojVJxnqo/Nl91jx8cbj2KjOEvHeVNCIwNqMY2k3XQhiEgNl3fjGDKnO0o+X2MSJ+q3wAyLczrgGWdner1LuhGnRyFIKSubXyKyUi2CBLn2TP5y4H/kUhHZieHot5fLBd5vTejhmOlvpuDc=
+	t=1717664581; cv=none; b=qbYGFxFF/MxQxpw1qWrDiO8lxez/TSHlX/zNo2Q+Z4UVO+Hz6RX2n4jrDm7WCXD03FBtpwzxuUSUn7jRptslS6T7rWKqk85TghqjvZnv0PEcXdv9p79jmWpqkg7+BbtO8c8/d802cbP3ODxMZ5n5VSzSbnrk0G02kJ12GZ5M35E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663628; c=relaxed/simple;
-	bh=Cniel9xmz6tFmH21G0iQilDoqldTJ7+he557GBpk4mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrlQsfqjAKZawg1FUOYezH54vzRyfl53UuQWlUL2XCRDzBJ8qBrJH6h750KcqWjJoQ5MbTWOPIN7TzsIGJftC+dPdOM1xwmIe8aw+Ws32+vkUMQCKhSc04aJ+pAgmmWejILZl9GVE/9pAcRNWHiFNkhYQlvAEhdJjk/eCowbwik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YbKTq5JE; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70260814b2dso532230b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 01:47:07 -0700 (PDT)
+	s=arc-20240116; t=1717664581; c=relaxed/simple;
+	bh=dQ6qrGFQylOjMkDa+4W7SivdQjzeJG4LiAkR6KbcvQQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Eg1lK5ZAFIGC2o/6lPxUwxbP//FtYmebZja3kpO/r79rA7RaWUxucC3wK4cQwlnOIlilBlPTGe9NrqJvkpqVOJAWNbGTRlc9tFw+8z9qOs7m4ceCXwyxdgngbkkYzo2jydDzzsVnne9mg77xF488vAuLVOE7GwqQsHJGzqcSb40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERE3CvAr; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f32a3b9491so5672825ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 02:02:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717663627; x=1718268427; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=41y8XHGYPcaf8xhTg/yf8k7aSgLq6vpwTaajj5o1iV0=;
-        b=YbKTq5JE7bUxuyGpvh8Td2MgBPekNV4/yshy/pLrOTb/G3Dpd8grz/Ox1yxGavclOc
-         FeMKPKeX8y+AwkxSwV9i6LQrZPcApskmCCNxxkAW6eG9mUJ0Wf1PUt9kJLELmtdSCTGA
-         8nD5S3N8q17ciI8V/d80e7sbATg+KWk3L3ItXx3garZwvd91RTltr7GevJs8FXUR+bXt
-         vGGZzCcOwQNZguIYmBKbGnw0B8xaFu141N/jQiLynApX/zrKNqlLGnZ2eWizIBKV0eOP
-         /DiEaekdE7UkSk/oIUh0zjbDl6vcn572oLKTgWzz6Itfo8lzS5g5KSPDhqMuaPf8xofn
-         mWFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663627; x=1718268427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717664579; x=1718269379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=41y8XHGYPcaf8xhTg/yf8k7aSgLq6vpwTaajj5o1iV0=;
-        b=d0ZvdyQgsohUjQP8030f1UtAdXYnSqeAlN3ZHLoGuLAi5SZyfthES2yjlRjvAoPe3f
-         zHRDnyoyGEg3mgRcxDOI0dLlNZNrAgGe6KbZwaKF5OSy9GtXUIcmr1hdBptBN/ekCsrw
-         SxuqFiKOzsgWgkahpsHfE+B1A5XY5LzGmSuifHuLJ3WE+x/UhmKGq/Lk7Uq19ul9Puwl
-         mJKKWS3M4QCq/Ef3jKB95+svSAiHAhJQQv8N6OFqXPHi+YXdUwpwsy12K/p7LcIVqIH7
-         Ha87dZ9xfXGlJ1bgOFclUmi26r0k4BQ2q5JqCZ9vQzh9yLUclbxeetaxgUn6S8mCF8kF
-         xAnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0pqGizVmYOvpbn8bSuPfyK3lSkoLAnukhUng5i1vgKHscjK4EqPkexh3CanCU7gPlgkzkPLoAzaaP6wV7XRSGoRU+41Qrv142ZlVbNA==
-X-Gm-Message-State: AOJu0YwMeaPQHjT91+FSEdpprYEVDDmUcF4YuKuQlWjPZEiKP+alexSy
-	oFncfAOjt7AVjiMPaMEziYt/FVq9gDfx2YM8ugCd5NvsbX788Ud0YG9F2aQEIfE=
-X-Google-Smtp-Source: AGHT+IHjGeY29y4OU+xw1rBhPOFqtYDVJ8x9JMmJjh9yFx+g6FM2F5NCbVZSw7OeTFhUfQU8Amb4dA==
-X-Received: by 2002:a05:6a20:2447:b0:1b2:cd79:f41b with SMTP id adf61e73a8af0-1b2cd7a18aamr558625637.25.1717663626447;
-        Thu, 06 Jun 2024 01:47:06 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de28957153sm695226a12.91.2024.06.06.01.47.05
+        bh=FQ6hjiBYWd826p6EVFtzxCpKH2q4xsNw2rMUVVsE56o=;
+        b=ERE3CvAr2VAwi15EBZsRwVSy0FV0JZfBQyajetfJhZhSnVce3ho4MSJSdeb4w+0Yq7
+         JKO7FaQF5qTXIw27SwtnXTb8DqFJqTSsmy4ZlemAtkwAdWCgc8Kx9wHyT7rxEdbTp+f7
+         cGY9w3QgEzlfCejmbU+aoxvZRCGXIScZsqY5duAXwSd84j+0oo31v6mj0j6yFJAMhS6t
+         XL120Ird7ZS57ZLJpfn0/vUphca+KcwfxKgylHZdns8rIO4MlSDUba0y8sVjvkRZapg4
+         QXbQk4DZ93WGRtgo+SHqLxsuVYoJ5Zbv4w5pTWe1juAmoc2If9Z7G/Wy0gYCVPepnixZ
+         OS6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717664579; x=1718269379;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FQ6hjiBYWd826p6EVFtzxCpKH2q4xsNw2rMUVVsE56o=;
+        b=CS2inmCtwbf8vbHKq9ZaaLIjiGWw9W7q4xRi/gpWfUvSln9m6pmQbNZyF8Lmog/tFb
+         NbXJM4m40V/N1HDEYnegKfcKJhW3mtqYXCVJ7slCOnGMTSep21nwFSz2ryt2KpDJBKs8
+         BfgWWdA2tyjzxn2mj2MTxolmW2TeUF+oT61TnjhMdJy3xYNB8LRDHwjmbrXtcCCp0Go9
+         lC7H676h0CeB7ghLzGadCBhZnmw3agH47l30CovyHDlpZEmgGNr9dGLfXVwq8gNiCkKR
+         VOkjzC10/cH7w3mJsc5hZMnL/uawi4/f4BOmmrjiKK6rXH/wXb9IMhz5bWrRNuRajobE
+         0rvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSDR8vY0azdTXX3i0GR9vgPQ0CNLiwHlxaFN3q+/4JSBRfUDs2+XZLGLSiOLfJeqRKiqvLOyI0qdqMLAwdMaW9aYo0IsJZsSRrudE/nw==
+X-Gm-Message-State: AOJu0Yzw4rEfnaElSRHM6FgLZLMt69R0P5PjF6SzW4jRuJUHOMOHsLDS
+	Repa0k3Y5X9D1njD80j5PhoOVDJcNr5i8TawdgrEivRCB9PiOyuL
+X-Google-Smtp-Source: AGHT+IEF8HberASoXN//tmKrmcSaW43/MrtV393rmNaltcZylnErE5wTjUDpu0xUWkY16LxVgnYWsw==
+X-Received: by 2002:a17:903:4053:b0:1f6:3720:ce56 with SMTP id d9443c01a7336-1f6a5a12094mr39551055ad.27.1717664579092;
+        Thu, 06 Jun 2024 02:02:59 -0700 (PDT)
+Received: from localhost ([139.196.161.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76c240sm9742315ad.89.2024.06.06.02.02.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:47:05 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sF8lz-006AWk-0H;
-	Thu, 06 Jun 2024 18:47:03 +1000
-Date: Thu, 6 Jun 2024 18:47:03 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com,
-	willy@infradead.org, axboe@kernel.dk, martin.petersen@oracle.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
-	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com,
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH v3 07/21] fs: xfs: align args->minlen for forced
- allocation alignment
-Message-ID: <ZmF3h2ObrJ5hNADp@dread.disaster.area>
-References: <20240429174746.2132161-1-john.g.garry@oracle.com>
- <20240429174746.2132161-8-john.g.garry@oracle.com>
- <c9ac2f74-73f9-4eb5-819e-98a34dfb6b23@oracle.com>
+        Thu, 06 Jun 2024 02:02:58 -0700 (PDT)
+From: Jemmy <jemmywong512@gmail.com>
+To: jemmywong512@gmail.com
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	jemmy512@icloud.com,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH v3] Improve readability of copy_tree
+Date: Thu,  6 Jun 2024 17:02:54 +0800
+Message-Id: <20240606090254.36274-1-jemmywong512@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240604134347.9357-1-jemmywong512@gmail.com>
+References: <20240604134347.9357-1-jemmywong512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9ac2f74-73f9-4eb5-819e-98a34dfb6b23@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 03:26:11PM +0100, John Garry wrote:
-> Hi Dave,
-> 
-> I still think that there is a problem with this code or some other allocator
-> code which gives rise to unexpected -ENOSPC. I just highlight this code,
-> above, as I get an unexpected -ENOSPC failure here when the fs does have
-> many free (big enough) extents. I think that the problem may be elsewhere,
-> though.
-> 
-> Initially we have a file like this:
-> 
->  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
->    0: [0..127]:        62592..62719      0 (62592..62719)     128
->    1: [128..895]:      hole                                   768
->    2: [896..1023]:     63616..63743      0 (63616..63743)     128
->    3: [1024..1151]:    64896..65023      0 (64896..65023)     128
->    4: [1152..1279]:    65664..65791      0 (65664..65791)     128
->    5: [1280..1407]:    68224..68351      0 (68224..68351)     128
->    6: [1408..1535]:    76416..76543      0 (76416..76543)     128
->    7: [1536..1791]:    62720..62975      0 (62720..62975)     256
->    8: [1792..1919]:    60032..60159      0 (60032..60159)     128
->    9: [1920..2047]:    63488..63615      0 (63488..63615)     128
->   10: [2048..2303]:    63744..63999      0 (63744..63999)     256
-> 
-> forcealign extsize is 16 4k fsb, so the layout looks ok.
-> 
-> Then we truncate the file to 454 sectors (or 56.75 fsb). This gives:
-> 
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
->    0: [0..127]:        62592..62719      0 (62592..62719)     128
->    1: [128..455]:      hole                                   328
->
-> We have 57 fsb.
-> 
-> Then I attempt to write from byte offset 232448 (454 sector) and a get a
-> write failure in xfs_bmap_select_minlen() returning -ENOSPC; at that point
-> the file looks like this:
+by employing `copy mount tree from src to dst` concept.
+This involves renaming the opaque variables (e.g., p, q, r, s)
+to be more descriptive, aiming to make the code easier to understand.
 
-So you are doing an unaligned write of some size at EOF and EOF is
-not aligned to the extsize?
+Changes:
+mnt     -> src_root (root of the tree to copy)
+r       -> src_child (direct child of the root being cloning)
+p       -> src_parent (parent of src_mnt)
+s       -> src_mnt (current mount being copying)
+parent  -> dst_parent (parent of dst_child)
+q       -> dst_mnt (freshly cloned mount)
 
->  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
->    0: [0..127]:        62592..62719      0 (62592..62719)     128
->    1: [128..447]:      hole                                   320
->    2: [448..575]:      62720..62847      0 (62720..62847)     128
-> 
-> That hole in ext #1 is 40 fsb, and not aligned with forcealign granularity.
-> This means that ext #2 is misaligned wrt forcealign granularity.
+Signed-off-by: Jemmy <jemmywong512@gmail.com>
+---
+ fs/namespace.c | 59 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 31 insertions(+), 28 deletions(-)
 
-OK, so the command to produce this would be something like this?
-
-# xfs_io -fd -c "truncate 0" \
-	-c "chattr +<forcealign>" -c "extsize 64k" \
-	-c "pwrite 0 64k -b 64k" -c "pwrite 448k 64k -b 64k" \
-	-c "bmap -vvp" \
-	-c "truncate 227k" \
-	-c "bmap -vvp" \
-	-c "pwrite 227k 64k -b 64k" \
-	-c "bmap -vvp" \
-	/mnt/scratch/testfile
-
-> This is strange.
-> 
-> I notice that we when allocate ext #2, xfs_bmap_btalloc() returns
-> ap->blkno=7840, length=16, offset=56. I would expect offset % 16 == 0, which
-> it is not.
-
-IOWs, the allocation was not correctly rounded down to an aligned
-start offset.  What were the initial parameters passed to this
-allocation? i.e. why didn't it round the start offset down to 48?
-Answering that question will tell you where the bug is.
-
-Of course, if the allocation start is rounded down to 48, then
-the length should be rounded up to 32 to cover the entire range we
-are writing new data to.
-
-> In the following sub-io block zeroing, I note that we zero the front padding
-> from pos=196608 (or fsb 48 or sector 384) for len=35840, and back padding
-> from pos=263680 for len=64000 (upto sector 640 or fsb 80). That seems wrong,
-> as we are zeroing data in the ext #1 hole, right?
-
-The sub block zeroing is doing exactly the right thing - it is
-demonstrating the exact range that the force aligned allocation
-should have covered.
-
-> Now the actual -ENOSPC comes from xfs_bmap_btalloc() -> ... ->
-> xfs_bmap_select_minlen() with initially blen=32 args->alignment=16
-> ap->minlen=1 args->maxlen=8. There xfs_bmap_btalloc() has ap->length=8
-> initially. This may be just a symptom.
-
-Yeah, now the allocator is trying to fix up the mess that the first unaligned
-allocation created, and it's tripping over ENOSPC because it's not
-allowed to do sub-extent size hint allocations when forced alignment
-is enabled....
-
-> I guess that there is something wrong in the block allocator for ext #2. Any
-> idea where to check?
-
-Start with tracing exactly what range iomap is requesting be
-allocated, and then follow that through into the allocator to work
-out why the offset being passed to the allocation never gets rounded
-down to be aligned. There's a mistake in the logic somewhere that is
-failing to apply the start alignment to the allocation request (i.e.
-the bug will be in the allocation setup code path. i.e. somewhere
-in the xfs_bmapi_write -> xfs_bmap_btalloc path *before* we get to
-the xfs_alloc_vextent...() calls.
-
--Dave.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 5a51315c6678..0dd43633607b 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1966,69 +1966,72 @@ static bool mnt_ns_loop(struct dentry *dentry)
+ 	return current->nsproxy->mnt_ns->seq >= mnt_ns->seq;
+ }
+ 
+-struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
++struct mount *copy_tree(struct mount *src_root, struct dentry *dentry,
+ 					int flag)
+ {
+-	struct mount *res, *p, *q, *r, *parent;
++	struct mount *res, *src_parent, *src_child, *src_mnt,
++		*dst_parent, *dst_mnt;
+ 
+-	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(mnt))
++	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(src_root))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	if (!(flag & CL_COPY_MNT_NS_FILE) && is_mnt_ns_file(dentry))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	res = q = clone_mnt(mnt, dentry, flag);
+-	if (IS_ERR(q))
+-		return q;
++	res = dst_mnt = clone_mnt(src_root, dentry, flag);
++	if (IS_ERR(dst_mnt))
++		return dst_mnt;
+ 
+-	q->mnt_mountpoint = mnt->mnt_mountpoint;
++	src_parent = src_root;
++	dst_mnt->mnt_mountpoint = src_root->mnt_mountpoint;
+ 
+-	p = mnt;
+-	list_for_each_entry(r, &mnt->mnt_mounts, mnt_child) {
+-		struct mount *s;
+-		if (!is_subdir(r->mnt_mountpoint, dentry))
++	list_for_each_entry(src_child, &src_root->mnt_mounts, mnt_child) {
++		if (!is_subdir(src_child->mnt_mountpoint, dentry))
+ 			continue;
+ 
+-		for (s = r; s; s = next_mnt(s, r)) {
++		for (src_mnt = src_child; src_mnt;
++			src_mnt = next_mnt(src_mnt, src_child)) {
+ 			if (!(flag & CL_COPY_UNBINDABLE) &&
+-			    IS_MNT_UNBINDABLE(s)) {
+-				if (s->mnt.mnt_flags & MNT_LOCKED) {
++			    IS_MNT_UNBINDABLE(src_mnt)) {
++				if (src_mnt->mnt.mnt_flags & MNT_LOCKED) {
+ 					/* Both unbindable and locked. */
+-					q = ERR_PTR(-EPERM);
++					dst_mnt = ERR_PTR(-EPERM);
+ 					goto out;
+ 				} else {
+-					s = skip_mnt_tree(s);
++					src_mnt = skip_mnt_tree(src_mnt);
+ 					continue;
+ 				}
+ 			}
+ 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
+-			    is_mnt_ns_file(s->mnt.mnt_root)) {
+-				s = skip_mnt_tree(s);
++			    is_mnt_ns_file(src_mnt->mnt.mnt_root)) {
++				src_mnt = skip_mnt_tree(src_mnt);
+ 				continue;
+ 			}
+-			while (p != s->mnt_parent) {
+-				p = p->mnt_parent;
+-				q = q->mnt_parent;
++			while (src_parent != src_mnt->mnt_parent) {
++				src_parent = src_parent->mnt_parent;
++				dst_mnt = dst_mnt->mnt_parent;
+ 			}
+-			p = s;
+-			parent = q;
+-			q = clone_mnt(p, p->mnt.mnt_root, flag);
+-			if (IS_ERR(q))
++
++			src_parent = src_mnt;
++			dst_parent = dst_mnt;
++			dst_mnt = clone_mnt(src_mnt, src_mnt->mnt.mnt_root, flag);
++			if (IS_ERR(dst_mnt))
+ 				goto out;
+ 			lock_mount_hash();
+-			list_add_tail(&q->mnt_list, &res->mnt_list);
+-			attach_mnt(q, parent, p->mnt_mp, false);
++			list_add_tail(&dst_mnt->mnt_list, &res->mnt_list);
++			attach_mnt(dst_mnt, dst_parent, src_parent->mnt_mp, false);
+ 			unlock_mount_hash();
+ 		}
+ 	}
+ 	return res;
++
+ out:
+ 	if (res) {
+ 		lock_mount_hash();
+ 		umount_tree(res, UMOUNT_SYNC);
+ 		unlock_mount_hash();
+ 	}
+-	return q;
++	return dst_mnt;
+ }
+ 
+ /* Caller should check returned pointer for errors */
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
