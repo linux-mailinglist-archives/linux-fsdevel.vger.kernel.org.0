@@ -1,176 +1,259 @@
-Return-Path: <linux-fsdevel+bounces-21116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256DF8FF2C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 18:45:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F2F8FF2F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 18:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBDA289FCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:45:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D1228F998
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 16:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64BA198A3E;
-	Thu,  6 Jun 2024 16:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9564A198E99;
+	Thu,  6 Jun 2024 16:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="4mA5ZvVo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBm6QRjF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D020C26AE7;
-	Thu,  6 Jun 2024 16:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9AC43ACB;
+	Thu,  6 Jun 2024 16:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692314; cv=none; b=nhFggh9R68xTWBB0RZc/vmImZj2WrW4u0F8s3UK965bHXl7nPMmS9GxZzcu6AOyGfdHG9my8pR6+o+SmgZv4HNCcRyPL2dur6/7I5c+1dXrmcW0DA6fgHFQwnW0170TjTPFfIMQBJaLR7rs+JKOHe387LDSrwNTxrlUHFfQiW70=
+	t=1717692717; cv=none; b=YHJW0LXu2T5zn1K+ejWr7bmBjnTCB1v+UMlMTBGyG4TU7MQVIJNWxyUKFMTXMy4UYmikXL5ponal6ue1bbIf/Zyju+ic27/CxZz3CbW/oRE3xM2I7hMESiZgR1bWxbfNJmOs30KqPszNGbkfvq3FBe1xgShL+BAkKgb1tKrCZq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692314; c=relaxed/simple;
-	bh=DVWoZ94Ms0F2PXMXl9M29RDWyH9n8ugMwEG4I+rMNwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ddNdLqWTEqhulc7JylpDcS5yqA3XeOlPBpoQeCNcHpRUKZz9peOgruATBcqTKXhEoumnjgaPGfqdN1B1YmBJdf59FRsSIPAHtf3mlgO2EV2Z2LwxBqSHwnoX1+niSq09vXktk2BIPSQeLrDMy0YaJHvBZ/ka5KDvmSedD3awoD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=4mA5ZvVo; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vw9DS0Qyfz6Cnk9Y;
-	Thu,  6 Jun 2024 16:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1717692294; x=1720284295; bh=DVWoZ94Ms0F2PXMXl9M29RDW
-	yH9n8ugMwEG4I+rMNwk=; b=4mA5ZvVohYkAsNlESeJ3jT48VdyeK8RVsj3ddKMP
-	SOZ3qL+U8x9NM1ZGSjH50C5K8oZL02MYFmrM4LLS7LcN6Tnu5zK6VqD49X8s+/Wl
-	Q2pqYqBgt3v5m6dNRXCT45LrvYm9WAfeX/gCjCm7WTRpeTMdmX5dtuAQmOOSWnbN
-	hg557ukShq3D5vTZUmN6TJw6dClp7RzjuendtlKDt7Nc9zcakDR8XvWcguj3R4PG
-	/Sit8qPBUqK5xyJbF0768vVr5bMJMJ09pr7q3k1PsWR5jsUvXJYgUG+4L0lkcnZJ
-	KJVBRTo/nHq8gBaiIFh6kHDmcLWyOmgEpPd01gxx+e/Khg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id riXgj8xOY7Yj; Thu,  6 Jun 2024 16:44:54 +0000 (UTC)
-Received: from [172.20.24.239] (unknown [204.98.150.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vw9D15Xxtz6Cnk9X;
-	Thu,  6 Jun 2024 16:44:49 +0000 (UTC)
-Message-ID: <d4946174-32e1-47f0-b448-38377dae0600@acm.org>
-Date: Thu, 6 Jun 2024 10:44:47 -0600
+	s=arc-20240116; t=1717692717; c=relaxed/simple;
+	bh=ATGThuu+pF7blY+n42lON5C+U/eiOI1dhQFtkGRBpWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I/0+fk3oVO9smxm/i8KbsEzUXDZmFf7Ot4A74B7aVssjQOdWxd2sbRibQZpyrIKVMubPG6Z/mD9dlyKs3BZs117vTIQ6YpMOjWLqFCGQMFeA8td/JQh+fh5ffStn5/md1OceoPSRLaRq3hNjG0Gf+oZdmv74rGZBvFCVj3+rO/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBm6QRjF; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7024cd9dd3dso978166b3a.3;
+        Thu, 06 Jun 2024 09:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717692715; x=1718297515; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pRcNGWjjh7UdvSzMfC+vxv6k260+2UboBQ1hJWD5TG8=;
+        b=TBm6QRjFlFCjxnZQ0YYoDb45cW0xaChBqtibpAslIzzcDN3pfK1KGEhG6bHK/nFGDt
+         KosZ5n8c/7rXj3iYFOvcosiEk3AtTqpk1Cx3BHKkBUx7+ZhU+loc74IV3L4iwiIWsnKl
+         3nKPNfcRGuS5up3akT8chiI7xlLGisCM3xmiPMxZoEmR2L9xJq/7vpy6jlp7Ms5fG4mZ
+         ug6EkjWMTiQ+hphohn5BIYLpXpImeuZVWfIlCOUfQVZa5nHDbgaBSW+6jSWThakeTG2H
+         00EeGE6/uhhF+LIcAXKjb+6NgaffQsAgGzTJKEbH7jBwlyGGGkgjjbe45Y0UN8JJk1MA
+         1Nsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717692715; x=1718297515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pRcNGWjjh7UdvSzMfC+vxv6k260+2UboBQ1hJWD5TG8=;
+        b=uPkL9flgTOfyZn+TFGtDotfUTLsyKWfdN6BYA/QvE7B+iejqo0PCv/X+x2tFTDyjq6
+         8iMvzC95961Emd6N3nJYU0xRJ9Kc83lCzgpL3NeUEj79oPkEyALaJIKl9JPmgcMwBLwG
+         Oc2tqObG3oQtGBD27Gy3xWWK2/C4mKF+554IJkHNGqb7nTzfqIogHSGxlpxUk+tUd0fV
+         +C1LcgY67w8NuEA8zBR42QSOztF9l0GJJzND1KXOXjyY5bQpkgK7l4CgNANb9kAfL3sH
+         yRwhWdO+5j7UkIwdMvADiCZ/R/3x1dtEe3GqBCdxtDNkpoyZ7tvtU6rwW6A1n4hdckpH
+         fH1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWHgqVblmXn7xH0eEvjGGrg0FZNjUn19DtTJT5tbAQtUjOqmrZHobp/FvLtTqWjKTckbCguB6MueTeXGVezEjFLzXReKWaRZ99SfmAc3iQXJ5Y9m3Lzaqe8q7J+WETDA3ro8frtFm/jBsjV0LGkPr57y3hPtxinuAvNtkMWH3ufgg==
+X-Gm-Message-State: AOJu0YwJA3uT0dJWEqlAMzFXrB8PQLZJGxL+yJ7IMQ7yxOQBpEoBomEJ
+	bqDUTvflHiY/EldKu1Q2PiedF5wnjxFVXArERDezD+1ob7mpM9gRnGBG2A6hbO8b3PGkGp6Wmdm
+	YBFejP+SB8THZkExKh8qsQofxLPU=
+X-Google-Smtp-Source: AGHT+IG+iriY1C6m2KcPqevYlxmvmTV9onEU6KUKB7+3t3oIqLC1nn1err2v+gcspD5d//2VeMoAebazpM8D9YLNI3g=
+X-Received: by 2002:a17:90b:1008:b0:2c1:9c10:8b87 with SMTP id
+ 98e67ed59e1d1-2c2bcc0bed1mr76660a91.29.1717692714697; Thu, 06 Jun 2024
+ 09:51:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
- damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
- nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-3-nj.shetty@samsung.com>
- <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
- <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
- <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
- <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
- <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org> <20240601055931.GB5772@lst.de>
- <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
- <20240604044042.GA29094@lst.de>
- <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
- <CGME20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42@epcas5p2.samsung.com>
- <66618886.630a0220.4d4fc.1c9cSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <66618886.630a0220.4d4fc.1c9cSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-5-andrii@kernel.org>
+ <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
+In-Reply-To: <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 6 Jun 2024 09:51:41 -0700
+Message-ID: <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
+ PROCMAP_QUERY API
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, liam.howlett@oracle.com, rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 6/6/24 01:28, Nitesh Shetty wrote:
-> On 04/06/24 04:44AM, Bart Van Assche wrote:
->> On 6/3/24 21:40, Christoph Hellwig wrote:
->>> There is no requirement to process them synchronously, there is just
->>> a requirement to preserve the order.=C2=A0 Note that my suggestion a =
-few
->>> arounds ago also included a copy id to match them up.=C2=A0 If we don=
-'t
->>> need that I'm happy to leave it away.=C2=A0 If need it it to make sta=
-cking
->>> drivers' lifes easier that suggestion still stands.
->>
->> Including an ID in REQ_OP_COPY_DST and REQ_OP_COPY_SRC operations soun=
-ds
->> much better to me than abusing the merge infrastructure for combining
->> these two operations into a single request. With the ID-based approach
->> stacking drivers are allowed to process copy bios asynchronously and i=
+On Wed, Jun 5, 2024 at 4:16=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Tue, Jun 4, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+> >
+> > Attempt to use RCU-protected per-VMA lock when looking up requested VMA
+> > as much as possible, only falling back to mmap_lock if per-VMA lock
+> > failed. This is done so that querying of VMAs doesn't interfere with
+> > other critical tasks, like page fault handling.
+> >
+> > This has been suggested by mm folks, and we make use of a newly added
+> > internal API that works like find_vma(), but tries to use per-VMA lock.
+> >
+> > We have two sets of setup/query/teardown helper functions with differen=
 t
->> is no longer necessary to activate merging for copy operations if
->> merging is disabled (QUEUE_FLAG_NOMERGES).
->>
-> Single request, with bio merging approach:
-> The current approach is to send a single request to driver,
-> which contains both destination and source information inside separate =
-bios.
-> Do you have any different approach in mind ?
-
-No. I did not propose to change how copy offload requests are sent to blo=
-ck
-drivers (other than stacking drivers).
-
-> If we want to proceed with this single request based approach,
-> we need to merge the destination request with source BIOs at some point=
-.
-> a. We chose to do it via plug approach.
-> b. Alternative I see is scheduler merging, but here we need some way to
-> hold the request which has destination info, until source bio is also
-> submitted.
-> c. Is there any other way, which I am missing here ?
-
-There are already exceptions in blk_mq_submit_bio() for zoned writes and =
-for
-flush bios. Another exception could be added for REQ_OP_COPY_* bios. I'm =
-not
-claiming that this is the best possible alternative. I'm only mentioning =
-this
-to show that there are alternatives.
-
-> Copy ID approach:
-> We see 3 possibilities here:
-> 1. No merging: If we include copy-id in src and dst bio, the bio's will=
- get
-> submitted separately and reach to the driver as separate requests.
-> How do we plan to form a copy command in driver ?
-> 2. Merging BIOs:
-> At some point we need to match the src bio with the dst bio and send th=
-is
-> information together to the driver. The current implementation.
-> This still does not solve the asynchronous submission problem, mentione=
+> > implementations depending on availability of per-VMA lock (conditioned
+> > on CONFIG_PER_VMA_LOCK) to abstract per-VMA lock subtleties.
+> >
+> > When per-VMA lock is available, lookup is done under RCU, attempting to
+> > take a per-VMA lock. If that fails, we fallback to mmap_lock, but then
+> > proceed to unconditionally grab per-VMA lock again, dropping mmap_lock
+> > immediately. In this configuration mmap_lock is never helf for long,
+> > minimizing disruptions while querying.
+> >
+> > When per-VMA lock is compiled out, we take mmap_lock once, query VMAs
+> > using find_vma() API, and then unlock mmap_lock at the very end once as
+> > well. In this setup we avoid locking/unlocking mmap_lock on every looke=
 d
-> above.
-> 3. Chaining BIOs:
-> This won't work with stacked devices as there will be cloning, and henc=
-e
-> chain won't be maintained.
+> > up VMA (depending on query parameters we might need to iterate a few of
+> > them).
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  fs/proc/task_mmu.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 46 insertions(+)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index 614fbe5d0667..140032ffc551 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -388,6 +388,49 @@ static int pid_maps_open(struct inode *inode, stru=
+ct file *file)
+> >                 PROCMAP_QUERY_VMA_FLAGS                         \
+> >  )
+> >
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +static int query_vma_setup(struct mm_struct *mm)
+> > +{
+> > +       /* in the presence of per-VMA lock we don't need any setup/tear=
+down */
+> > +       return 0;
+> > +}
+> > +
+> > +static void query_vma_teardown(struct mm_struct *mm, struct vm_area_st=
+ruct *vma)
+> > +{
+> > +       /* in the presence of per-VMA lock we need to unlock vma, if pr=
+esent */
+> > +       if (vma)
+> > +               vma_end_read(vma);
+> > +}
+> > +
+> > +static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct =
+*mm, unsigned long addr)
+> > +{
+> > +       struct vm_area_struct *vma;
+> > +
+> > +       /* try to use less disruptive per-VMA lock */
+> > +       vma =3D find_and_lock_vma_rcu(mm, addr);
+> > +       if (IS_ERR(vma)) {
+> > +               /* failed to take per-VMA lock, fallback to mmap_lock *=
+/
+> > +               if (mmap_read_lock_killable(mm))
+> > +                       return ERR_PTR(-EINTR);
+> > +
+> > +               vma =3D find_vma(mm, addr);
+> > +               if (vma) {
+> > +                       /*
+> > +                        * We cannot use vma_start_read() as it may fai=
+l due to
+> > +                        * false locked (see comment in vma_start_read(=
+)). We
+> > +                        * can avoid that by directly locking vm_lock u=
+nder
+> > +                        * mmap_lock, which guarantees that nobody can =
+lock the
+> > +                        * vma for write (vma_start_write()) under us.
+> > +                        */
+> > +                       down_read(&vma->vm_lock->lock);
+>
+> Hi Andrii,
+> The above pattern of locking VMA under mmap_lock and then dropping
+> mmap_lock is becoming more common. Matthew had an RFC proposal for an
+> API to do this here:
+> https://lore.kernel.org/all/ZivhG0yrbpFqORDw@casper.infradead.org/. It
+> might be worth reviving that discussion.
 
-I prefer option (2). Option (1) could result in a deadlock because the so=
-urce
-and destination bio both would have to be converted into a request before
-these are sent to a request-based driver.
+Sure, it would be nice to have generic and blessed primitives to use
+here. But the good news is that once this is all figured out by you mm
+folks, it should be easy to make use of those primitives here, right?
 
-Thanks,
+>
+> > +               }
+> > +
+> > +               mmap_read_unlock(mm);
+>
+> Later on in your code you are calling get_vma_name() which might call
+> anon_vma_name() to retrieve user-defined VMA name. After this patch
+> this operation will be done without holding mmap_lock, however per
+> https://elixir.bootlin.com/linux/latest/source/include/linux/mm_types.h#L=
+582
+> this function has to be called with mmap_lock held for read. Indeed
+> with debug flags enabled you should hit this assertion:
+> https://elixir.bootlin.com/linux/latest/source/mm/madvise.c#L96.
 
-Bart.
+Sigh... Ok, what's the suggestion then? Should it be some variant of
+mmap_assert_locked() || vma_assert_locked() logic, or it's not so
+simple?
 
+Maybe I should just drop the CONFIG_PER_VMA_LOCK changes for now until
+all these gotchas are figured out for /proc/<pid>/maps anyway, and
+then we can adapt both text-based and ioctl-based /proc/<pid>/maps
+APIs on top of whatever the final approach will end up being the right
+one?
+
+Liam, any objections to this? The whole point of this patch set is to
+add a new API, not all the CONFIG_PER_VMA_LOCK gotchas. My
+implementation is structured in a way that should be easily amenable
+to CONFIG_PER_VMA_LOCK changes, but if there are a few more subtle
+things that need to be figured for existing text-based
+/proc/<pid>/maps anyways, I think it would be best to use mmap_lock
+for now for this new API, and then adopt the same final
+CONFIG_PER_VMA_LOCK-aware solution.
+
+>
+> > +       }
+> > +
+> > +       return vma;
+> > +}
+> > +#else
+> >  static int query_vma_setup(struct mm_struct *mm)
+> >  {
+> >         return mmap_read_lock_killable(mm);
+> > @@ -402,6 +445,7 @@ static struct vm_area_struct *query_vma_find_by_add=
+r(struct mm_struct *mm, unsig
+> >  {
+> >         return find_vma(mm, addr);
+> >  }
+> > +#endif
+> >
+> >  static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
+> >                                                  unsigned long addr, u3=
+2 flags)
+> > @@ -441,8 +485,10 @@ static struct vm_area_struct *query_matching_vma(s=
+truct mm_struct *mm,
+> >  skip_vma:
+> >         /*
+> >          * If the user needs closest matching VMA, keep iterating.
+> > +        * But before we proceed we might need to unlock current VMA.
+> >          */
+> >         addr =3D vma->vm_end;
+> > +       vma_end_read(vma); /* no-op under !CONFIG_PER_VMA_LOCK */
+> >         if (flags & PROCMAP_QUERY_COVERING_OR_NEXT_VMA)
+> >                 goto next_vma;
+> >  no_vma:
+> > --
+> > 2.43.0
+> >
 
