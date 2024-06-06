@@ -1,224 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-21100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593BA8FE3AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 11:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3A58FE169
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 10:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D523228774B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 09:59:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621C3287BF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 08:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F76E181BAE;
-	Thu,  6 Jun 2024 09:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F84213D8AC;
+	Thu,  6 Jun 2024 08:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QKw0wDIB"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YbKTq5JE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA58180A93
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 09:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD513CFAF
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 08:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717667973; cv=none; b=PXrmElSw+hr5lVgklEnmDsyl389qZOWji6NLMtXpVEVEjCe5xBXsg2ZNsvqMdKWOmAWPnzrH59F4mUYqQSfWuGAye1oyv4+JzWm12hg8W3iOvMYyJo6CYX4YLSGDVMsHiCrHRpHqQXg+94ERYQWB8gplJwOLr8JMbSb3g3wBb4s=
+	t=1717663628; cv=none; b=FVi7GdWY4XzRw3/agEC74Dt+hY0qmojVJxnqo/Nl91jx8cbj2KjOEvHeVNCIwNqMY2k3XQhiEgNl3fjGDKnO0o+X2MSJ+q3wAyLczrgGWdner1LuhGnRyFIKSubXyKyUi2CBLn2TP5y4H/kUhHZieHot5fLBd5vTejhmOlvpuDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717667973; c=relaxed/simple;
-	bh=+kWRtm46EHgrfEjT1jHXAvldmafiXTrXdwgo0depAw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=ui4B5rehfjSvQF0qtwmSn/NNLtVUv4PTE7SsVWjhri1NQIRaQ89QTQKY5ADG6hQ/1OiLClsgCsxS1FEft+8dK2bMpPJ/qcIi4aV4c1tdo4I6DNEU9s4cX6OhMY7seqV64/bYIISqJSBJCQ9Efj2Bd191al8mbLLWs8phjd2tNE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QKw0wDIB; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240606095929epoutp03914dc71ef678d9b1927aae3826c8542b~WYesJiXHI0992609926epoutp03f
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 09:59:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240606095929epoutp03914dc71ef678d9b1927aae3826c8542b~WYesJiXHI0992609926epoutp03f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717667970;
-	bh=X/08X1olkAIHOusibyucFDGsWQxmM65XPCWbJyAP97k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QKw0wDIB92CTHYFpIxJAvP41i3DJ/cf/0ZXQkxIvg3jr4bqVBhe5VbL0CBZzrUrbE
-	 VIsnKoi3ITrM41Z5pbK7a8XevDX5hsX25Fs2A4xZtx278nq37+lT2uXKtF7YrXjbk4
-	 YCRlRNkc3u6DgyW/ZC5f8kM7jxZaEw/81EV7Z4xg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240606095929epcas5p245fe6bdf77b2f0f33a3edf73692d5856~WYerhxehs1456214562epcas5p21;
-	Thu,  6 Jun 2024 09:59:29 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Vw0DH2hHwz4x9Px; Thu,  6 Jun
-	2024 09:59:27 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A2.3C.19174.F7881666; Thu,  6 Jun 2024 18:59:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42~WWaz25d7o3006730067epcas5p2d;
-	Thu,  6 Jun 2024 07:28:27 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240606072827epsmtrp28b89143fbe61df61e97e0db30931c9e8~WWaz1zddk3242132421epsmtrp2a;
-	Thu,  6 Jun 2024 07:28:27 +0000 (GMT)
-X-AuditID: b6c32a50-157f7a8000004ae6-62-6661887f9388
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C9.FC.07412.B1561666; Thu,  6 Jun 2024 16:28:27 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240606072823epsmtip2dad935b746ccadd32ea43752942abaab~WWawJjuEm2294122941epsmtip2Y;
-	Thu,  6 Jun 2024 07:28:23 +0000 (GMT)
-Date: Thu, 6 Jun 2024 12:58:35 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
-	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
-	hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <20240606072835.a7hnqm5mkzvgsojp@nj.shetty@samsung.com>
+	s=arc-20240116; t=1717663628; c=relaxed/simple;
+	bh=Cniel9xmz6tFmH21G0iQilDoqldTJ7+he557GBpk4mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrlQsfqjAKZawg1FUOYezH54vzRyfl53UuQWlUL2XCRDzBJ8qBrJH6h750KcqWjJoQ5MbTWOPIN7TzsIGJftC+dPdOM1xwmIe8aw+Ws32+vkUMQCKhSc04aJ+pAgmmWejILZl9GVE/9pAcRNWHiFNkhYQlvAEhdJjk/eCowbwik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YbKTq5JE; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70260814b2dso532230b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 01:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717663627; x=1718268427; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=41y8XHGYPcaf8xhTg/yf8k7aSgLq6vpwTaajj5o1iV0=;
+        b=YbKTq5JE7bUxuyGpvh8Td2MgBPekNV4/yshy/pLrOTb/G3Dpd8grz/Ox1yxGavclOc
+         FeMKPKeX8y+AwkxSwV9i6LQrZPcApskmCCNxxkAW6eG9mUJ0Wf1PUt9kJLELmtdSCTGA
+         8nD5S3N8q17ciI8V/d80e7sbATg+KWk3L3ItXx3garZwvd91RTltr7GevJs8FXUR+bXt
+         vGGZzCcOwQNZguIYmBKbGnw0B8xaFu141N/jQiLynApX/zrKNqlLGnZ2eWizIBKV0eOP
+         /DiEaekdE7UkSk/oIUh0zjbDl6vcn572oLKTgWzz6Itfo8lzS5g5KSPDhqMuaPf8xofn
+         mWFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717663627; x=1718268427;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=41y8XHGYPcaf8xhTg/yf8k7aSgLq6vpwTaajj5o1iV0=;
+        b=d0ZvdyQgsohUjQP8030f1UtAdXYnSqeAlN3ZHLoGuLAi5SZyfthES2yjlRjvAoPe3f
+         zHRDnyoyGEg3mgRcxDOI0dLlNZNrAgGe6KbZwaKF5OSy9GtXUIcmr1hdBptBN/ekCsrw
+         SxuqFiKOzsgWgkahpsHfE+B1A5XY5LzGmSuifHuLJ3WE+x/UhmKGq/Lk7Uq19ul9Puwl
+         mJKKWS3M4QCq/Ef3jKB95+svSAiHAhJQQv8N6OFqXPHi+YXdUwpwsy12K/p7LcIVqIH7
+         Ha87dZ9xfXGlJ1bgOFclUmi26r0k4BQ2q5JqCZ9vQzh9yLUclbxeetaxgUn6S8mCF8kF
+         xAnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0pqGizVmYOvpbn8bSuPfyK3lSkoLAnukhUng5i1vgKHscjK4EqPkexh3CanCU7gPlgkzkPLoAzaaP6wV7XRSGoRU+41Qrv142ZlVbNA==
+X-Gm-Message-State: AOJu0YwMeaPQHjT91+FSEdpprYEVDDmUcF4YuKuQlWjPZEiKP+alexSy
+	oFncfAOjt7AVjiMPaMEziYt/FVq9gDfx2YM8ugCd5NvsbX788Ud0YG9F2aQEIfE=
+X-Google-Smtp-Source: AGHT+IHjGeY29y4OU+xw1rBhPOFqtYDVJ8x9JMmJjh9yFx+g6FM2F5NCbVZSw7OeTFhUfQU8Amb4dA==
+X-Received: by 2002:a05:6a20:2447:b0:1b2:cd79:f41b with SMTP id adf61e73a8af0-1b2cd7a18aamr558625637.25.1717663626447;
+        Thu, 06 Jun 2024 01:47:06 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de28957153sm695226a12.91.2024.06.06.01.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 01:47:05 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sF8lz-006AWk-0H;
+	Thu, 06 Jun 2024 18:47:03 +1000
+Date: Thu, 6 Jun 2024 18:47:03 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com,
+	willy@infradead.org, axboe@kernel.dk, martin.petersen@oracle.com,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
+	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH v3 07/21] fs: xfs: align args->minlen for forced
+ allocation alignment
+Message-ID: <ZmF3h2ObrJ5hNADp@dread.disaster.area>
+References: <20240429174746.2132161-1-john.g.garry@oracle.com>
+ <20240429174746.2132161-8-john.g.garry@oracle.com>
+ <c9ac2f74-73f9-4eb5-819e-98a34dfb6b23@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTZxjG951zetoSyo7A9APUscKygdw62/rhRIyiHnUzJGbZhltKVw4t
-	AdquFxTHwn1yGchlw1EUOyRyKYEJjIGCY6CAVccWoIsYCyawTQFh3ibrKAMKi//98j7Pm+f7
-	3jcvB3c1sT05cUodo1FKE/ikE9HW6+cXmJojjQ0pH+ahJnMfjjKKFnBkunuKRFO9jwAqm5vH
-	0UT3SYBstwZx1NpnBWj8x3BkrDpLoNvdHRjqrCrBUJ3pGoYqTmdi6NriDIlKeiwATY4YMNQ1
-	ugV9+0U1gTq7rhNo6NIZEp27MMlGNf12DBXnjGCofSIdoMapWQINjHqhwYV+1q6N9NDwIdpc
-	BekOw102PWi9SNBDt/R0c30uSbdUp9J/tpQD+vLtNJI+X1jKogsyH5J0R/YYi/5rcpSgZ6+M
-	kHRhaz2gbxqvsiPdouJ3KBhpDKPxZpQyVUycUh7GP3REskciEocIAgWhaBvfWylNZML4Ee9E
-	Bu6LS1gaEN87SZqgXypFSrVafvDOHRqVXsd4K1RaXRifUcckqIXqIK00UatXyoOUjG67ICTk
-	LdGSMTpe8aTIRKq/9Dg+cKeBSAP33PMAlwMpIczPyCbygBPHleoEsNGahS0LrtQjAEtmkhzC
-	MwAvdBURax01RSPAIXQB+MvT31fbHwP43Pore9lFUL7wfG8+mQc4HJLaAm8scpbL7tSb8Nl4
-	zYofp/pIWJ1VhC8LblQ0nDEXs5aZR+2BBWdqcQevg9fLJ1aSudTbcPFkJ9vxCgsX2upkDo6A
-	P/xswhzsBh/0t656POHjh12kg4/Buq9qyeVgSGUBaPjNABxCOMw2n1oJwykFbLUMrDZvgl+b
-	GzFH3QUW2CZWA3iwvXKNfWBDk3E1wANa/k5fZRr+O9DMckzlMgGtNhtWBDYbXviQ4YU8B2+H
-	uXMZLMPSwHDKC9bYOQ70g02Xgo2AVQ88GbU2Uc7IRGpBoJI59v+aZarEZrByNf6R7cD03UJQ
-	D8A4oAdADs535x3WSmJdeTHS5BOMRiXR6BMYbQ8QLW2oGPd8RaZaOjulTiIQhoYIxWKxMHSr
-	WMDfwJvKPhvjSsmlOiaeYdSMZq0P43A907DoWmuA+l6OuOAb/5SL4fv50x+ZDoJX28osXp++
-	FEU+sGtN3buD54z1zv6Efue2AIvQU+WzcXb6e5GGm60Yn5D46g8vJC/4RB3ENb5xf1QON93M
-	cJluOnDUY778n/WFJ+wfXnV3OWBzvsMqed4bgaUlFUpSaKtH+v5NybobgfSY9T2/gNLP98pf
-	rzmnqUjJP7JPJ1duDc2ZT/G4YiktbulIHuYmDSsTe40NyXszsbqyhdPzUevL7GW75zTeE7By
-	PlV4vyKg0Nn22sgHn8h2rVM+/ezJ+23xH6c62ac4iy+bQSw/F5fdF232dfvpXXfp8TfE7q7e
-	RxXpG7ww7lhzJ28mmE9oFVKBP67RSv8D5UMMgL4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxiGfc97enqoIzmU4l6EaDyZDmrsbLLha2SbupicBINTyBLFDc/k
-	UAkUSEvdJNlkoKI0sPIRLaUbHxKLVUQBDShUUpRK1ZAMYaEOpFrkS2A1zoxMyiyNkX93nuu+
-	nufPQ0PpC3I1nZaZI2gy+QyWkpA3utm1myIEPnWzsUuEm5w9EOcbFiC+NPwrhae7XwJ89u95
-	iD1dhQD/97AP4taeEYBHb3+Ja+p+I/FQVzuBO+rKCHzx0l0CV50rIPDdxRkKl9kHAR4bMBG4
-	07UR156qJ3FHZy+J+2+aKVx9YUyMLQ4fgUtPDxC4zfMLwFem50h8zxWB+xYcou2RXP+jOM5Z
-	h7h207CY6xu5RnL9D3Vcs/UMxbXUH+cmWioBd2soj+LOl5SLuOKCWYprP/lExHnHXCQ3Zxug
-	uJJWK+Ae1NwRfx16QBKbImSkHRU0n3xxSHJkwuASZdtW/Wh9biTyQKO0CATRiPkUWQwDoAhI
-	aClzC6DGWgcVAOHowsIdGMih6KJvXBwoeQEqbdMTfkAyH6Hz3fq3Ak1TzEZ0f5H2j2VMFHo9
-	aiH9fcg4KTRkNpF+EMocQjPOUpE/BzNfoWJzAwwsHYeoVf+KDIAQ1FvpWcqQiUG/t7ih/wBk
-	IpDFt3QgiNmGFgs7xAbAmJYZpmWG6b1RA6AVhAvZWrVKfViZrcwUflBoebVWl6lSHM5SN4Ol
-	h5BHtYGRap/CDgga2AGiISsLjtcmp0qDU/hjuYImK1mjyxC0dhBBk+yHwUpjVYqUUfE5Qrog
-	ZAuad5Sgg1bnEeZoeVLfQfOa10mPd9fu4QcTbeky25a2+akdPZ1bp4yRzeV7w1hen7sfZmzu
-	mGWFpsHkKce2GP2bj6uUCajCs5YdzUqSJwCQmkMbfGc863adiM0tPvqm4rPwyzNaw+RJvdnb
-	0Ijmeo8h+QsVW1Fc+NTt/vyVybslMqxopXVn51DV+PxIdPKpEPw00cL/k6D0psf3mk9Xh8Bv
-	bVv/ffC96PFfLnvKow3Pd4T9dFO0zq26bZ2t1zntsdUfRJUoLnfL9sU9a3kiv27P/c6RuvK+
-	fPrn+fWJDVfzj5esgAd1aeJE4qVsMmdS4qbUVNKfBScs3xjjW59dG6zIU/yRX7aJJbVHeKUc
-	arT8/7jiQ5l/AwAA
-X-CMS-MailID: 20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42
-References: <20240520102033.9361-3-nj.shetty@samsung.com>
-	<eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
-	<9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
-	<a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
-	<665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
-	<abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
-	<20240601055931.GB5772@lst.de>
-	<d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
-	<20240604044042.GA29094@lst.de>
-	<4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
-	<CGME20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42@epcas5p2.samsung.com>
-
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <c9ac2f74-73f9-4eb5-819e-98a34dfb6b23@oracle.com>
 
-On 04/06/24 04:44AM, Bart Van Assche wrote:
->On 6/3/24 21:40, Christoph Hellwig wrote:
->>There is no requirement to process them synchronously, there is just
->>a requirement to preserve the order.  Note that my suggestion a few
->>arounds ago also included a copy id to match them up.  If we don't
->>need that I'm happy to leave it away.  If need it it to make stacking
->>drivers' lifes easier that suggestion still stands.
+On Wed, Jun 05, 2024 at 03:26:11PM +0100, John Garry wrote:
+> Hi Dave,
+> 
+> I still think that there is a problem with this code or some other allocator
+> code which gives rise to unexpected -ENOSPC. I just highlight this code,
+> above, as I get an unexpected -ENOSPC failure here when the fs does have
+> many free (big enough) extents. I think that the problem may be elsewhere,
+> though.
+> 
+> Initially we have a file like this:
+> 
+>  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>    0: [0..127]:        62592..62719      0 (62592..62719)     128
+>    1: [128..895]:      hole                                   768
+>    2: [896..1023]:     63616..63743      0 (63616..63743)     128
+>    3: [1024..1151]:    64896..65023      0 (64896..65023)     128
+>    4: [1152..1279]:    65664..65791      0 (65664..65791)     128
+>    5: [1280..1407]:    68224..68351      0 (68224..68351)     128
+>    6: [1408..1535]:    76416..76543      0 (76416..76543)     128
+>    7: [1536..1791]:    62720..62975      0 (62720..62975)     256
+>    8: [1792..1919]:    60032..60159      0 (60032..60159)     128
+>    9: [1920..2047]:    63488..63615      0 (63488..63615)     128
+>   10: [2048..2303]:    63744..63999      0 (63744..63999)     256
+> 
+> forcealign extsize is 16 4k fsb, so the layout looks ok.
+> 
+> Then we truncate the file to 454 sectors (or 56.75 fsb). This gives:
+> 
+> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>    0: [0..127]:        62592..62719      0 (62592..62719)     128
+>    1: [128..455]:      hole                                   328
 >
->Including an ID in REQ_OP_COPY_DST and REQ_OP_COPY_SRC operations sounds
->much better to me than abusing the merge infrastructure for combining
->these two operations into a single request. With the ID-based approach
->stacking drivers are allowed to process copy bios asynchronously and it
->is no longer necessary to activate merging for copy operations if
->merging is disabled (QUEUE_FLAG_NOMERGES).
->
-Single request, with bio merging approach:
-The current approach is to send a single request to driver,
-which contains both destination and source information inside separate bios.
-Do you have any different approach in mind ?
+> We have 57 fsb.
+> 
+> Then I attempt to write from byte offset 232448 (454 sector) and a get a
+> write failure in xfs_bmap_select_minlen() returning -ENOSPC; at that point
+> the file looks like this:
 
-If we want to proceed with this single request based approach,
-we need to merge the destination request with source BIOs at some point.
-a. We chose to do it via plug approach.
-b. Alternative I see is scheduler merging, but here we need some way to
-hold the request which has destination info, until source bio is also
-submitted.
-c. Is there any other way, which I am missing here ?
+So you are doing an unaligned write of some size at EOF and EOF is
+not aligned to the extsize?
 
-Limitation of current plug based approach:
-I missed the possibility of asynchronous submission by stacked device.
-Since we enabled only dm-linear, we had synchronous submission till now
-and our test cases worked fine.
-But in future if we start enabling dm targets with asynchronous submission,
-the current plug based approach won't work.
-The case where Bart mentioned possibility of 2 different tasks sending
-copy[1] and they are getting merged wrongly is valid in this case.
-There will be corruption, copy ID approach can solve this wrong merging.
+>  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>    0: [0..127]:        62592..62719      0 (62592..62719)     128
+>    1: [128..447]:      hole                                   320
+>    2: [448..575]:      62720..62847      0 (62720..62847)     128
+> 
+> That hole in ext #1 is 40 fsb, and not aligned with forcealign granularity.
+> This means that ext #2 is misaligned wrt forcealign granularity.
 
-Copy ID based merging might preserve the order, but we still need the
-copy destination request to wait for copy source bio to merge.
+OK, so the command to produce this would be something like this?
 
-Copy ID approach:
-We see 3 possibilities here:
-1. No merging: If we include copy-id in src and dst bio, the bio's will get
-submitted separately and reach to the driver as separate requests.
-How do we plan to form a copy command in driver ?
-2. Merging BIOs:
-At some point we need to match the src bio with the dst bio and send this
-information together to the driver. The current implementation.
-This still does not solve the asynchronous submission problem, mentioned
-above.
-3. Chaining BIOs:
-This won't work with stacked devices as there will be cloning, and hence
-chain won't be maintained.
+# xfs_io -fd -c "truncate 0" \
+	-c "chattr +<forcealign>" -c "extsize 64k" \
+	-c "pwrite 0 64k -b 64k" -c "pwrite 448k 64k -b 64k" \
+	-c "bmap -vvp" \
+	-c "truncate 227k" \
+	-c "bmap -vvp" \
+	-c "pwrite 227k 64k -b 64k" \
+	-c "bmap -vvp" \
+	/mnt/scratch/testfile
 
-[1] https://lore.kernel.org/all/d7ae00c8-c038-4bed-937e-222251bc627a@acm.org/
+> This is strange.
+> 
+> I notice that we when allocate ext #2, xfs_bmap_btalloc() returns
+> ap->blkno=7840, length=16, offset=56. I would expect offset % 16 == 0, which
+> it is not.
 
-Thank You,
-Nitesh Shetty
+IOWs, the allocation was not correctly rounded down to an aligned
+start offset.  What were the initial parameters passed to this
+allocation? i.e. why didn't it round the start offset down to 48?
+Answering that question will tell you where the bug is.
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_
-Content-Type: text/plain; charset="utf-8"
+Of course, if the allocation start is rounded down to 48, then
+the length should be rounded up to 32 to cover the entire range we
+are writing new data to.
 
+> In the following sub-io block zeroing, I note that we zero the front padding
+> from pos=196608 (or fsb 48 or sector 384) for len=35840, and back padding
+> from pos=263680 for len=64000 (upto sector 640 or fsb 80). That seems wrong,
+> as we are zeroing data in the ext #1 hole, right?
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_--
+The sub block zeroing is doing exactly the right thing - it is
+demonstrating the exact range that the force aligned allocation
+should have covered.
+
+> Now the actual -ENOSPC comes from xfs_bmap_btalloc() -> ... ->
+> xfs_bmap_select_minlen() with initially blen=32 args->alignment=16
+> ap->minlen=1 args->maxlen=8. There xfs_bmap_btalloc() has ap->length=8
+> initially. This may be just a symptom.
+
+Yeah, now the allocator is trying to fix up the mess that the first unaligned
+allocation created, and it's tripping over ENOSPC because it's not
+allowed to do sub-extent size hint allocations when forced alignment
+is enabled....
+
+> I guess that there is something wrong in the block allocator for ext #2. Any
+> idea where to check?
+
+Start with tracing exactly what range iomap is requesting be
+allocated, and then follow that through into the allocator to work
+out why the offset being passed to the allocation never gets rounded
+down to be aligned. There's a mistake in the logic somewhere that is
+failing to apply the start alignment to the allocation request (i.e.
+the bug will be in the allocation setup code path. i.e. somewhere
+in the xfs_bmapi_write -> xfs_bmap_btalloc path *before* we get to
+the xfs_alloc_vextent...() calls.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
