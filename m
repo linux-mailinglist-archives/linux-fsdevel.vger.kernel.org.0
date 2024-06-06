@@ -1,86 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-21102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AB28FE5B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 13:45:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7711B8FE5E4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 13:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3ED0287FF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 11:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 649751C25D8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 11:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2619013F014;
-	Thu,  6 Jun 2024 11:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A969C19596C;
+	Thu,  6 Jun 2024 11:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="k58sY1g6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1F0195973
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 11:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F0313D28C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2024 11:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717674304; cv=none; b=SZeE5zNA8S25gzluXb3VCCCaVhgbpDQ+ik66lXI0kboReoBFwz7CT93w3d+baMP74LRLUJsMWmNpuYbnZPLgYt11lYjhgq+k52DWREwcTnXuWeMuDuOnmlev5nJvj5NTgFB/o/C2DglmDqY6sx4YS10P+4N0kZCtCwamEkW/tIk=
+	t=1717675048; cv=none; b=eKnw7fpit60HtPt4sb3Zr4Um51XBvOoNw/Jgabll1RvF7Fp1WLeh2QBRMbZLteB56L6ENIjXRAlg8yxwHxicgpxkETFc71VVQ9cGMa5ZnZ/ve9d7SjydOdRjQHuWVE4fMDoDqaCrpgJNizxfwDvDiS0V+6Bu73ktmSYU+Kh5Tvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717674304; c=relaxed/simple;
-	bh=NSnqkr/gfjY1p48t+iFaGKw6DOOdST7s2h6VaDJRfVs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O9pE5m4na+UIUiXD6JEZ+79zt1acshupAvwzlHRmljY+fgr9NJnfhRDQY7nRxYaS/y4Rt0D86k3kFchmk7N7zhDy6UERySVi/EPTXBdXMTTw1VpLntaz4pXlLwLlYd4XP5NYXuFex5YrFJgafdIlV4zvyuD3EyNALNtdEtn8ICk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-374933240bbso8066555ab.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 04:45:03 -0700 (PDT)
+	s=arc-20240116; t=1717675048; c=relaxed/simple;
+	bh=yRNz1iBHgX4K/IXUNo+IYCbFZ0ijdce068h0Rdde/LQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j0lMEDZj6yIClTljM5BpRZYrOErOjR/gRlWjgK02S5J0CcFT0ONMU0TxriqhE6v/nbjFM6CL5Py4Lw4/7goQI/1nIUAc+kkzz+GZfqt8ITsxTAFncbBuQb5pJLiOy3CUbraR3rfYTtVb15zziVRh+klh7QjsFy5S/xkAFC9fLTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=k58sY1g6; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a68ca4d6545so156678666b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 04:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1717675045; x=1718279845; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yRNz1iBHgX4K/IXUNo+IYCbFZ0ijdce068h0Rdde/LQ=;
+        b=k58sY1g6Y48uwuTFUMOV97/WhJbfAQjvdJYhPQGnnNyxqZCUNo3h+HaD/2bAPg9oac
+         wUNF0m1keY2I7pIWPlnn7sGTSsiAEUghgevruMICBlHMA7z/lcOxqUu4p8h+Cabd77HI
+         H8Q6AjjYbFFc834WdWM8ubCmuj07Y5YwTUwpc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717674302; x=1718279102;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+u7BjMvOtjUoqQAFOQc26Gn/n/2VEOVuCJ6OTmdBu4=;
-        b=TSakClVm/qKGkXtc4qG4g3AQ6nh5iuRJ7y4lZfr2iS6EbIZBChB/+xaeNvpovBIpWv
-         Q9vzbhkAYWeqOd3zrpUSE643RmK50rhGonOS3zAD6eqZxd90D/HORBZJBpI663DnzOpV
-         O44LG21uAtoi+KtvX4iegufsMzCHKXDWmczLbDxq5w1Qq35q6vnGWYs6gJv5ghWU4pkR
-         uMu/+AhUkT2Ju+ncR0BoYCsMM4Smw5/MxFnuOfKsuYeLUn0sTXDKkIBprWFz7t4CfNQ5
-         Cvr9PuTEQIgrR5MhTzlGWI2o8AuFGlzBqhTqamJRAP2tRRiDeCHjdg+Z4agz89uoLJ0r
-         H5QQ==
-X-Gm-Message-State: AOJu0YyGP3/7jJrO1tFK06XzKRaOrb4bqJFE1KLXHOwhzrG1Awutj8GK
-	0DlZbLslxtQvwgvKacK2uUPlwrLeKeV3ezX1doRsm70M0HxNEqQWC6LYY40ldmJpF2gOT8yJzUE
-	mts9id3BfTXlOjnQBLOwTo3MJ/lVq2Aya7rpDogOD77WmSUeTi4CIqvE=
-X-Google-Smtp-Source: AGHT+IEvVTLQWUUVW4dX+tdko3DC2U0Lom5rowVnSiDS6z0cgoL1la8PQ1WzXbE7DP2uJQtxcIh6qg6wbHciCneAEo3j5dq++qnX
+        d=1e100.net; s=20230601; t=1717675045; x=1718279845;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yRNz1iBHgX4K/IXUNo+IYCbFZ0ijdce068h0Rdde/LQ=;
+        b=EiAaim2qRbQc/SsxxZFkD1qx4ncgkXBeAYavcuMAemqU2voTyORGm3ilcdnFp2k3lx
+         lj1dx1ZmzNrPqKDG5MOpZMaPOyPH3FDuWsDgjNy6/pDPhLPcy1oI8XmzwcexL8xT4T3N
+         tK7VxTw9BrjfdR2/FU+RAssPAJiPSqPacS6pMVYdv0afHnade8OA3EJCBtH/AERz10jq
+         q//tGGVZnPkaIWDL2lCLe7GEb2abeAr1p3vCfC8tgHYoP5rkeZx9a85lxBc3uBuaKE6w
+         XS2DCf/uZqojzcRi8iWcaYgSKECkBgFLk1eCVGAepfj0hdzma3DJRKIPjC92r/XQmLXq
+         9OMA==
+X-Gm-Message-State: AOJu0YxgFTcyBD0HReuLwHPfldlHqLiuvtByR9p3hMkjivESSyK09qd/
+	SaXCyxsaA8yfZ6mwZ3DBKMdWj0WiLU8UeXvZdBECCBuYV2w0gOeH6d4bspr0FPVr8z+Empd/GJT
+	NBfKhw1b400pF4MlQFNLinaR00Eq6ydK3cdxLbQ==
+X-Google-Smtp-Source: AGHT+IEZChVQXnyGFb0q1z2OcJNfROfWpovcuEmTvT5lcePccPpw6v0YfNA8gLYpgX+VqE3IUrsxwaJs/USfhaB9UN8=
+X-Received: by 2002:a17:906:f819:b0:a6c:70f3:de0f with SMTP id
+ a640c23a62f3a-a6c763bf45bmr217578366b.28.1717675044718; Thu, 06 Jun 2024
+ 04:57:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:6406:0:b0:374:c152:3d45 with SMTP id
- e9e14a558f8ab-374c1523fc8mr182895ab.6.1717674302623; Thu, 06 Jun 2024
- 04:45:02 -0700 (PDT)
-Date: Thu, 06 Jun 2024 04:45:02 -0700
-In-Reply-To: <CAJfpegutqoJxR303yk_8pkvGidEztteGhTpk2uhf-oC4AXdZRA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a5ec61061a373662@google.com>
+References: <000000000000c27c85061828ca26@google.com>
+In-Reply-To: <000000000000c27c85061828ca26@google.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 6 Jun 2024 13:57:13 +0200
+Message-ID: <CAJfpegtbimr3sbe-8aDLcbQ4FHJiuUdOh=AwFsqAWbCvAj5KJw@mail.gmail.com>
 Subject: Re: [syzbot] [fuse?] WARNING in fuse_request_end
-From: syzbot <syzbot+da4ed53f6a834e1bf57f@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+To: syzbot <syzbot+da4ed53f6a834e1bf57f@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
-
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-and-tested-by: syzbot+da4ed53f6a834e1bf57f@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         24601487 fuse: clear FR_SENT when re-adding requests i..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=15256e16980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98d5a8e00ed1044a
-dashboard link: https://syzkaller.appspot.com/bug?extid=da4ed53f6a834e1bf57f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+#syz fix: fuse: clear FR_SENT when re-adding requests into pending list
 
