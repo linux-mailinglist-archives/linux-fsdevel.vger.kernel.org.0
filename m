@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-21145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2978A8FF9CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 04:00:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3C58FF9CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 04:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4ECF284B65
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:00:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159301C210B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB8E1B28D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1A21C2AF;
 	Fri,  7 Jun 2024 02:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="L/X9KdiJ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wn8W7H/9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9EF125B9
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 01:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58985125C0
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 02:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725602; cv=none; b=d7vwUgDLegLXKufbPKgXGmZ0rd7bQwMDUjkwh6VL7M9dPuDHwVnmalTDaQNgUX7SYSol/OGA/ytFPEfBQMRJS4cEq1aW6I9rkTOuk6c6CegPAFraZ8kaXdZ0D3p1hqrK2Kn2TWo0mxghY0+T/FvnXmzqejKx8Tz3zUXykY4kIEo=
+	t=1717725603; cv=none; b=f0sKS2Ju0coU9ft+9FrdNexYmDMm40UUyF/jJs/WTw1CwBGSKKkNlzndSf53nMWdGWPvuKVbW4qYRLX13ovA/HrNcnokB66/XtYxCxa/XgPK55NRE0UfRSvQuAgPO3vxhUnzdC7PpzxGdr6NxuCFrM3VrklAacGyW7xo4HaR1nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725602; c=relaxed/simple;
-	bh=jbQDNmjdOl3DVfQmFgHDXbgPNMmk+eAwmPmfTNm1mC4=;
+	s=arc-20240116; t=1717725603; c=relaxed/simple;
+	bh=wCU7Vob8BOTErlpqdONt5vHANtK+zT2YMo8ovGRfmWQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ciUERR9FRB7b6m8dHEln3AByQOUVnsCpQph1gp3t/6EkTv9BO2Y3tsWgZWObAZ5OFpeXJs79oiOHjvqVm8EWdwrhROgcG3YXVxagAyBPbg3YtbkzwZpfPQpHXWLh7dpRK3GpzZrkOOi74HAnQCxB1ry0Trga5X3dLg7mHLs6xZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=L/X9KdiJ; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=geX5wNPsMWSK3SY9zhIh1vYYcqm5M5YRxl7ZFq5C2e1BkrpVl/P93MxrfymNMRtsrKBerBV3cMxLqkU1SjEQ3FtmcWct7d4xPF7cD3OswvUjc3zN7QofhcHmVdCEOnvahy60MF7ePoUd9iRwGKOybejAKEYQWH1qnLxAU1ISRYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wn8W7H/9; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=KnJwsvhSb2V9KKabGYKwZt7vzpqFmHIXGO5cNnvgBAg=; b=L/X9KdiJoeVsCdjdyD2ZLENwYb
-	JnKcpG9USCwhPOff8HkkC2X8ayP5Z/+vnUAkHoP7qw2zDrHXb1qBUolj1qGtOaKOV4DezCphjNWp4
-	JT+2JRSe31OEUeXFYstDUrg8++lFVOdyYul69SLp/V/uACnCVEcTfC4YsScJ2+YJ1HogXzOMUd6L/
-	2WRDF4F2SlHrsh+3lgkuG5cgqTktnCMAVtNaGO/y5r12g/ryew7FITHJKrzwJwyhVLEOoUmjTkeoX
-	XMht9CEoxkOwm1xep4G9hpE993NsY4WMb22sBB4J0czx9M4Qh8P5hv1l69l6chYVMhuYpGbuemf6z
-	zZ1H8IOQ==;
+	bh=gWHqG4B0VA72DIxMeIGtuYic1XRhNVSYC5SrYxF2ZeQ=; b=wn8W7H/9tLJ1GgrGe1PFLE5Wxz
+	H8+7/izyYg/0WIjBsmnUUxSFLiuqYpwrzhHBwdTrRcw1ot8YnQ9F3iplmWn5rEfb7I4ga2hupKyQI
+	PlDCK6DPSGFHDS1Whx2iAl894mc9UXK+rQoas17sWi3kB8QY2lM33Ekiz2w94YvI+CnJs+iHBMhvw
+	Lbe8ZWemEziKDMHgRm5XFY4AndKIDGWxjzWSF9YN5pi9/IujTsCsOIasaNYowomh5fCe345uEG+c4
+	5PW1efRN6pE2qDKtxSJTFoOs62FjRUZ85IRzcex6DLdtiWCKPzu0HCSkcmHRFDqPz1bflsmR6hdUf
+	/xUZMPQw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sFOta-009xBd-1b;
+	id 1sFOta-009xBl-2T;
 	Fri, 07 Jun 2024 01:59:58 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH 06/19] net/socket.c: switch to CLASS(fd)
-Date: Fri,  7 Jun 2024 02:59:44 +0100
-Message-Id: <20240607015957.2372428-6-viro@zeniv.linux.org.uk>
+Subject: [PATCH 07/19] introduce struct fderr, convert overlayfs uses to that
+Date: Fri,  7 Jun 2024 02:59:45 +0100
+Message-Id: <20240607015957.2372428-7-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
 References: <20240607015656.GX1629371@ZenIV>
@@ -64,621 +64,490 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	I strongly suspect that important part in sockfd_lookup_light()
-is avoiding needless file refcount operations, not the marginal reduction
-of the register pressure from not keeping a struct file pointer in
-the caller.
+Similar to struct fd; unlike struct fd, it can represent
+error values.
 
-	If that's true, we should get the same benefits from straight
-fdget()/fdput().  And AFAICS with sane use of CLASS(fd) we can get a
-better code generation...
+Accessors:
 
-	Would be nice if somebody tested it on networking test suites
-(including benchmarks)...
+* fd_empty(f):	true if f represents an error
+* fd_file(f):	just as for struct fd it yields a pointer to
+		struct file if fd_empty(f) is false.  If
+		fd_empty(f) is true, fd_file(f) is guaranteed
+		_not_ to be an address of any object (IS_ERR()
+		will be true in that case)
+* fd_error(f):	if f represents an error, returns that error,
+		otherwise the return value is junk.
 
-	sockfd_lookup_light() does fdget(), uses sock_from_file() to
-get the associated socket and returns the struct socket reference to
-the caller, along with "do we need to fput()" flag.  No matching fdput(),
-the caller does its equivalent manually, using the fact that sock->file
-points to the struct file the socket has come from.
+Constructors:
 
-	Get rid of that - have the callers do fdget()/fdput() and
-use sock_from_file() directly.  That kills sockfd_lookup_light()
-and fput_light() (no users left).
+* ERR_FD(-E...):	an instance encoding given error [ERR_FDERR, perhaps?]
+* BORROWED_FDERR(file):	if file points to a struct file instance,
+			return a struct fderr representing that file
+			reference with no flags set.
+			if file is an ERR_PTR(-E...), return a struct
+			fderr representing that error.
+			file MUST NOT be NULL.
+* CLONED_FDERR(file):	similar, but in case when file points to
+			a struct file instance, set FDPUT_FPUT in flags.
 
-	What's more, we can get rid of explicit fdget()/fdput() by
-switching to CLASS(fd, ...) - code generation does not suffer, since
-now fdput() inserted on "descriptor is not opened" failure exit
-is recognized to be a no-op by compiler.
+fdput_err() serves as a destructor.
 
-	We could split that commit in two (getting rid of sockd_lookup_light()
-and switch to CLASS(fd, ...)), but AFAICS it ends up being harder to read
-that way.
+See fs/overlayfs/file.c for example of use.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- include/linux/file.h |   6 -
- net/socket.c         | 325 ++++++++++++++++++++-----------------------
- 2 files changed, 148 insertions(+), 183 deletions(-)
+ fs/overlayfs/file.c  | 149 +++++++++++++++++--------------------------
+ include/linux/file.h |  39 ++++++++++-
+ 2 files changed, 97 insertions(+), 91 deletions(-)
 
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 7bc6e24e86ce..744a6315f1ac 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -29,12 +29,6 @@ extern struct file *alloc_file_pseudo_noaccount(struct inode *, struct vfsmount
- extern struct file *alloc_file_clone(struct file *, int flags,
- 	const struct file_operations *);
- 
--static inline void fput_light(struct file *file, int fput_needed)
--{
--	if (fput_needed)
--		fput(file);
--}
--
- /* either a reference to struct file + flags
-  * (cloned vs. borrowed, pos locked), with
-  * flags stored in lower bits of value,
-diff --git a/net/socket.c b/net/socket.c
-index a2c509363d4d..ca3fd754fb5b 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -510,7 +510,7 @@ static int sock_map_fd(struct socket *sock, int flags)
- 
- struct socket *sock_from_file(struct file *file)
- {
--	if (file->f_op == &socket_file_ops)
-+	if (likely(file->f_op == &socket_file_ops))
- 		return file->private_data;	/* set in sock_alloc_file */
- 
- 	return NULL;
-@@ -550,24 +550,6 @@ struct socket *sockfd_lookup(int fd, int *err)
- }
- EXPORT_SYMBOL(sockfd_lookup);
- 
--static struct socket *sockfd_lookup_light(int fd, int *err, int *fput_needed)
--{
--	struct fd f = fdget(fd);
--	struct socket *sock;
--
--	*err = -EBADF;
--	if (fd_file(f)) {
--		sock = sock_from_file(fd_file(f));
--		if (likely(sock)) {
--			*fput_needed = f.word & FDPUT_FPUT;
--			return sock;
--		}
--		*err = -ENOTSOCK;
--		fdput(f);
--	}
--	return NULL;
--}
--
- static ssize_t sockfs_listxattr(struct dentry *dentry, char *buffer,
- 				size_t size)
- {
-@@ -1834,23 +1816,25 @@ int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen)
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
--	int err, fput_needed;
--
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock) {
--		err = move_addr_to_kernel(umyaddr, addrlen, &address);
--		if (!err) {
--			err = security_socket_bind(sock,
--						   (struct sockaddr *)&address,
--						   addrlen);
--			if (!err)
--				err = READ_ONCE(sock->ops)->bind(sock,
--						      (struct sockaddr *)
--						      &address, addrlen);
--		}
--		fput_light(sock->file, fput_needed);
--	}
--	return err;
-+	CLASS(fd, f)(fd);
-+	int err;
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
-+
-+	err = move_addr_to_kernel(umyaddr, addrlen, &address);
-+	if (unlikely(err))
-+		return err;
-+
-+	err = security_socket_bind(sock, (struct sockaddr *)&address, addrlen);
-+	if (unlikely(err))
-+		return err;
-+
-+	return READ_ONCE(sock->ops)->bind(sock,
-+					  (struct sockaddr *)&address, addrlen);
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 458299873780..d57106966084 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -89,58 +89,51 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
+ 	return 0;
  }
  
- SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
-@@ -1867,21 +1851,24 @@ SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
- int __sys_listen(int fd, int backlog)
+-static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
+-			       bool allow_meta)
++static struct fderr ovl_real_fdget_meta(const struct file *file, bool allow_meta)
  {
- 	struct socket *sock;
--	int err, fput_needed;
-+	CLASS(fd, f)(fd);
- 	int somaxconn;
-+	int err;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock) {
--		somaxconn = READ_ONCE(sock_net(sock->sk)->core.sysctl_somaxconn);
--		if ((unsigned int)backlog > somaxconn)
--			backlog = somaxconn;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--		err = security_socket_listen(sock, backlog);
--		if (!err)
--			err = READ_ONCE(sock->ops)->listen(sock, backlog);
-+	somaxconn = READ_ONCE(sock_net(sock->sk)->core.sysctl_somaxconn);
-+	if ((unsigned int)backlog > somaxconn)
-+		backlog = somaxconn;
-+
-+	err = security_socket_listen(sock, backlog);
-+	if (!err)
-+		err = READ_ONCE(sock->ops)->listen(sock, backlog);
- 
--		fput_light(sock->file, fput_needed);
--	}
- 	return err;
- }
- 
-@@ -1992,17 +1979,12 @@ static int __sys_accept4_file(struct file *file, struct sockaddr __user *upeer_s
- int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
- 		  int __user *upeer_addrlen, int flags)
- {
--	int ret = -EBADF;
--	struct fd f;
-+	CLASS(fd, f)(fd);
- 
--	f = fdget(fd);
--	if (fd_file(f)) {
--		ret = __sys_accept4_file(fd_file(f), upeer_sockaddr,
-+	if (fd_empty(f))
-+		return -EBADF;
-+	return __sys_accept4_file(fd_file(f), upeer_sockaddr,
- 					 upeer_addrlen, flags);
--		fdput(f);
--	}
--
--	return ret;
- }
- 
- SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
-@@ -2054,20 +2036,18 @@ int __sys_connect_file(struct file *file, struct sockaddr_storage *address,
- 
- int __sys_connect(int fd, struct sockaddr __user *uservaddr, int addrlen)
- {
--	int ret = -EBADF;
--	struct fd f;
-+	struct sockaddr_storage address;
-+	CLASS(fd, f)(fd);
-+	int ret;
- 
--	f = fdget(fd);
--	if (fd_file(f)) {
--		struct sockaddr_storage address;
-+	if (fd_empty(f))
-+		return -EBADF;
- 
--		ret = move_addr_to_kernel(uservaddr, addrlen, &address);
--		if (!ret)
--			ret = __sys_connect_file(fd_file(f), &address, addrlen, 0);
--		fdput(f);
--	}
-+	ret = move_addr_to_kernel(uservaddr, addrlen, &address);
-+	if (ret)
-+		return ret;
- 
--	return ret;
-+	return __sys_connect_file(fd_file(f), &address, addrlen, 0);
- }
- 
- SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
-@@ -2086,26 +2066,25 @@ int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
--	int err, fput_needed;
-+	CLASS(fd, f)(fd);
-+	int err;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	err = security_socket_getsockname(sock);
- 	if (err)
--		goto out_put;
-+		return err;
- 
- 	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 0);
- 	if (err < 0)
--		goto out_put;
--	/* "err" is actually length in this case */
--	err = move_addr_to_user(&address, err, usockaddr, usockaddr_len);
-+		return err;
- 
--out_put:
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	/* "err" is actually length in this case */
-+	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
- }
- 
- SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
-@@ -2124,26 +2103,25 @@ int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
--	int err, fput_needed;
-+	CLASS(fd, f)(fd);
-+	int err;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock != NULL) {
--		const struct proto_ops *ops = READ_ONCE(sock->ops);
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--		err = security_socket_getpeername(sock);
--		if (err) {
--			fput_light(sock->file, fput_needed);
--			return err;
--		}
-+	err = security_socket_getpeername(sock);
-+	if (err)
-+		return err;
- 
--		err = ops->getname(sock, (struct sockaddr *)&address, 1);
--		if (err >= 0)
--			/* "err" is actually length in this case */
--			err = move_addr_to_user(&address, err, usockaddr,
--						usockaddr_len);
--		fput_light(sock->file, fput_needed);
--	}
--	return err;
-+	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 1);
-+	if (err < 0)
-+		return err;
-+
-+	/* "err" is actually length in this case */
-+	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
- }
- 
- SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
-@@ -2164,14 +2142,17 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
- 	struct sockaddr_storage address;
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct file *private = file->private_data;
+ 	struct path realpath;
  	int err;
- 	struct msghdr msg;
--	int fput_needed;
  
- 	err = import_ubuf(ITER_SOURCE, buff, len, &msg.msg_iter);
- 	if (unlikely(err))
- 		return err;
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
-+
-+	CLASS(fd, f)(fd);
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
+-	real->word = (unsigned long)private;
+-
+ 	if (allow_meta) {
+ 		ovl_path_real(dentry, &realpath);
+ 	} else {
+ 		/* lazy lookup and verify of lowerdata */
+ 		err = ovl_verify_lowerdata(dentry);
+ 		if (err)
+-			return err;
++			return ERR_FD(err);
  
- 	msg.msg_name = NULL;
- 	msg.msg_control = NULL;
-@@ -2181,7 +2162,7 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
- 	if (addr) {
- 		err = move_addr_to_kernel(addr, addr_len, &address);
- 		if (err < 0)
--			goto out_put;
-+			return err;
- 		msg.msg_name = (struct sockaddr *)&address;
- 		msg.msg_namelen = addr_len;
+ 		ovl_path_realdata(dentry, &realpath);
  	}
-@@ -2189,12 +2170,7 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
- 	if (sock->file->f_flags & O_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
- 	msg.msg_flags = flags;
--	err = __sock_sendmsg(sock, &msg);
--
--out_put:
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	return __sock_sendmsg(sock, &msg);
- }
+ 	if (!realpath.dentry)
+-		return -EIO;
++		return ERR_FD(-EIO);
  
- SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
-@@ -2229,14 +2205,18 @@ int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
- 	};
- 	struct socket *sock;
- 	int err, err2;
--	int fput_needed;
- 
- 	err = import_ubuf(ITER_DEST, ubuf, size, &msg.msg_iter);
- 	if (unlikely(err))
- 		return err;
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
-+
-+	CLASS(fd, f)(fd);
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	if (sock->file->f_flags & O_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
-@@ -2248,9 +2228,6 @@ int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
- 		if (err2 < 0)
- 			err = err2;
- 	}
--
--	fput_light(sock->file, fput_needed);
--out:
- 	return err;
- }
- 
-@@ -2325,17 +2302,16 @@ int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
- {
- 	sockptr_t optval = USER_SOCKPTR(user_optval);
- 	bool compat = in_compat_syscall();
--	int err, fput_needed;
- 	struct socket *sock;
-+	CLASS(fd, f)(fd);
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
--
--	err = do_sock_setsockopt(sock, compat, level, optname, optval, optlen);
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--	fput_light(sock->file, fput_needed);
--	return err;
-+	return do_sock_setsockopt(sock, compat, level, optname, optval, optlen);
- }
- 
- SYSCALL_DEFINE5(setsockopt, int, fd, int, level, int, optname,
-@@ -2391,20 +2367,17 @@ EXPORT_SYMBOL(do_sock_getsockopt);
- int __sys_getsockopt(int fd, int level, int optname, char __user *optval,
- 		int __user *optlen)
- {
--	int err, fput_needed;
- 	struct socket *sock;
--	bool compat;
-+	CLASS(fd, f)(fd);
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--	compat = in_compat_syscall();
--	err = do_sock_getsockopt(sock, compat, level, optname,
-+	return do_sock_getsockopt(sock, in_compat_syscall(), level, optname,
- 				 USER_SOCKPTR(optval), USER_SOCKPTR(optlen));
--
--	fput_light(sock->file, fput_needed);
--	return err;
- }
- 
- SYSCALL_DEFINE5(getsockopt, int, fd, int, level, int, optname,
-@@ -2430,15 +2403,16 @@ int __sys_shutdown_sock(struct socket *sock, int how)
- 
- int __sys_shutdown(int fd, int how)
- {
--	int err, fput_needed;
- 	struct socket *sock;
-+	CLASS(fd, f)(fd);
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (sock != NULL) {
--		err = __sys_shutdown_sock(sock, how);
--		fput_light(sock->file, fput_needed);
--	}
--	return err;
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
-+
-+	return __sys_shutdown_sock(sock, how);
- }
- 
- SYSCALL_DEFINE2(shutdown, int, fd, int, how)
-@@ -2654,22 +2628,21 @@ long __sys_sendmsg_sock(struct socket *sock, struct msghdr *msg,
- long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
- 		   bool forbid_cmsg_compat)
- {
--	int fput_needed, err;
- 	struct msghdr msg_sys;
- 	struct socket *sock;
- 
- 	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
- 		return -EINVAL;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
-+	CLASS(fd, f)(fd);
- 
--	err = ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	return ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
- }
- 
- SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int, flags)
-@@ -2684,7 +2657,7 @@ SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int
- int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 		   unsigned int flags, bool forbid_cmsg_compat)
- {
--	int fput_needed, err, datagrams;
-+	int err, datagrams;
- 	struct socket *sock;
- 	struct mmsghdr __user *entry;
- 	struct compat_mmsghdr __user *compat_entry;
-@@ -2700,9 +2673,13 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 
- 	datagrams = 0;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
-+	CLASS(fd, f)(fd);
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	used_address.name_len = UINT_MAX;
- 	entry = mmsg;
-@@ -2739,8 +2716,6 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 		cond_resched();
+ 	/* Has it been copied up since we'd opened it? */
+ 	if (unlikely(file_inode(private) != d_inode(realpath.dentry))) {
+-		struct file *f = ovl_open_realfile(file, &realpath);
+-		if (IS_ERR(f))
+-			return PTR_ERR(f);
+-		real->word = (unsigned long)ovl_open_realfile(file, &realpath) | FDPUT_FPUT;
+-		return 0;
++		return CLONED_FDERR(ovl_open_realfile(file, &realpath));
  	}
  
--	fput_light(sock->file, fput_needed);
--
- 	/* We only return an error if no datagrams were able to be sent */
- 	if (datagrams != 0)
- 		return datagrams;
-@@ -2862,22 +2837,21 @@ long __sys_recvmsg_sock(struct socket *sock, struct msghdr *msg,
- long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
- 		   bool forbid_cmsg_compat)
- {
--	int fput_needed, err;
- 	struct msghdr msg_sys;
- 	struct socket *sock;
- 
- 	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
- 		return -EINVAL;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		goto out;
-+	CLASS(fd, f)(fd);
- 
--	err = ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
--	fput_light(sock->file, fput_needed);
--out:
--	return err;
-+	return ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
- }
- 
- SYSCALL_DEFINE3(recvmsg, int, fd, struct user_msghdr __user *, msg,
-@@ -2894,7 +2868,7 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
- 			  unsigned int vlen, unsigned int flags,
- 			  struct timespec64 *timeout)
- {
--	int fput_needed, err, datagrams;
-+	int err, datagrams;
- 	struct socket *sock;
- 	struct mmsghdr __user *entry;
- 	struct compat_mmsghdr __user *compat_entry;
-@@ -2909,16 +2883,18 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
- 
- 	datagrams = 0;
- 
--	sock = sockfd_lookup_light(fd, &err, &fput_needed);
--	if (!sock)
--		return err;
-+	CLASS(fd, f)(fd);
-+
-+	if (fd_empty(f))
-+		return -EBADF;
-+	sock = sock_from_file(fd_file(f));
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
- 
- 	if (likely(!(flags & MSG_ERRQUEUE))) {
- 		err = sock_error(sock->sk);
--		if (err) {
--			datagrams = err;
--			goto out_put;
--		}
+ 	/* Did the flags change since open? */
+-	if (unlikely((file->f_flags ^ private->f_flags) & ~OVL_OPEN_FLAGS))
+-		return ovl_change_flags(private, file->f_flags);
++	if (unlikely((file->f_flags ^ private->f_flags) & ~OVL_OPEN_FLAGS)) {
++		err = ovl_change_flags(private, file->f_flags);
 +		if (err)
-+			return err;
- 	}
++			return ERR_FD(err);
++	}
  
- 	entry = mmsg;
-@@ -2975,12 +2951,10 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
- 	}
+-	return 0;
++	return BORROWED_FDERR(private);
+ }
  
- 	if (err == 0)
--		goto out_put;
-+		return datagrams;
- 
--	if (datagrams == 0) {
--		datagrams = err;
--		goto out_put;
+-static int ovl_real_fdget(const struct file *file, struct fd *real)
++static struct fderr ovl_real_fdget(const struct file *file)
+ {
+-	if (d_is_dir(file_dentry(file))) {
+-		struct file *f = ovl_dir_real_file(file, false);
+-		if (IS_ERR(f))
+-			return PTR_ERR(f);
+-		real->word = (unsigned long)f;
+-		return 0;
 -	}
-+	if (datagrams == 0)
-+		return err;
++	if (d_is_dir(file_dentry(file)))
++		return BORROWED_FDERR(ovl_dir_real_file(file, false));
+ 
+-	return ovl_real_fdget_meta(file, real, false);
++	return ovl_real_fdget_meta(file, false);
+ }
+ 
++DEFINE_CLASS(fd_real, struct fderr, fdput_err(_T), ovl_real_fdget(file), struct file *file)
++
+ static int ovl_open(struct inode *inode, struct file *file)
+ {
+ 	struct dentry *dentry = file_dentry(file);
+@@ -183,7 +176,6 @@ static int ovl_release(struct inode *inode, struct file *file)
+ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct fd real;
+ 	const struct cred *old_cred;
+ 	loff_t ret;
+ 
+@@ -199,9 +191,9 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 			return vfs_setpos(file, 0, 0);
+ 	}
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
+-		return ret;
++	CLASS(fd_real, real)(file);
++	if (fd_empty(real))
++		return fd_error(real);
  
  	/*
- 	 * We may return less entries than requested (vlen) if the
-@@ -2995,9 +2969,6 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
- 		 */
- 		WRITE_ONCE(sock->sk->sk_err, -err);
- 	}
--out_put:
--	fput_light(sock->file, fput_needed);
+ 	 * Overlay file f_pos is the master copy that is preserved
+@@ -220,8 +212,6 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 	file->f_pos = fd_file(real)->f_pos;
+ 	ovl_inode_unlock(inode);
+ 
+-	fdput(real);
 -
- 	return datagrams;
+ 	return ret;
  }
  
+@@ -262,8 +252,6 @@ static void ovl_file_accessed(struct file *file)
+ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct file *file = iocb->ki_filp;
+-	struct fd real;
+-	ssize_t ret;
+ 	struct backing_file_ctx ctx = {
+ 		.cred = ovl_creds(file_inode(file)->i_sb),
+ 		.user_file = file,
+@@ -273,22 +261,18 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (!iov_iter_count(iter))
+ 		return 0;
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
+-		return ret;
+-
+-	ret = backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
+-				     &ctx);
+-	fdput(real);
++	CLASS(fd_real, real)(file);
++	if (fd_empty(real))
++		return fd_error(real);
+ 
+-	return ret;
++	return backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
++				      &ctx);
+ }
+ 
+ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
+-	struct fd real;
+ 	ssize_t ret;
+ 	int ifl = iocb->ki_flags;
+ 	struct backing_file_ctx ctx = {
+@@ -304,9 +288,11 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	/* Update mode */
+ 	ovl_copyattr(inode);
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
++	CLASS(fd_real, real)(file);
++	if (fd_empty(real)) {
++		ret = fd_error(real);
+ 		goto out_unlock;
++	}
+ 
+ 	if (!ovl_should_sync(OVL_FS(inode->i_sb)))
+ 		ifl &= ~(IOCB_DSYNC | IOCB_SYNC);
+@@ -317,7 +303,6 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	 */
+ 	ifl &= ~IOCB_DIO_CALLER_COMP;
+ 	ret = backing_file_write_iter(fd_file(real), iter, iocb, ifl, &ctx);
+-	fdput(real);
+ 
+ out_unlock:
+ 	inode_unlock(inode);
+@@ -329,22 +314,18 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
+ 			       struct pipe_inode_info *pipe, size_t len,
+ 			       unsigned int flags)
+ {
+-	struct fd real;
+-	ssize_t ret;
++	CLASS(fd_real, real)(in);
+ 	struct backing_file_ctx ctx = {
+ 		.cred = ovl_creds(file_inode(in)->i_sb),
+ 		.user_file = in,
+ 		.accessed = ovl_file_accessed,
+ 	};
+ 
+-	ret = ovl_real_fdget(in, &real);
+-	if (ret)
+-		return ret;
+-
+-	ret = backing_file_splice_read(fd_file(real), ppos, pipe, len, flags, &ctx);
+-	fdput(real);
++	if (fd_empty(real))
++		return fd_error(real);
+ 
+-	return ret;
++	return backing_file_splice_read(fd_file(real), ppos, pipe, len, flags,
++					&ctx);
+ }
+ 
+ /*
+@@ -358,7 +339,6 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
+ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 				loff_t *ppos, size_t len, unsigned int flags)
+ {
+-	struct fd real;
+ 	struct inode *inode = file_inode(out);
+ 	ssize_t ret;
+ 	struct backing_file_ctx ctx = {
+@@ -371,13 +351,13 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 	/* Update mode */
+ 	ovl_copyattr(inode);
+ 
+-	ret = ovl_real_fdget(out, &real);
+-	if (ret)
++	CLASS(fd_real, real)(out);
++	if (fd_empty(real)) {
++		ret = fd_error(real);
+ 		goto out_unlock;
++	}
+ 
+ 	ret = backing_file_splice_write(pipe, fd_file(real), ppos, len, flags, &ctx);
+-	fdput(real);
+-
+ out_unlock:
+ 	inode_unlock(inode);
+ 
+@@ -386,7 +366,7 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 
+ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ {
+-	struct fd real;
++	struct fderr real;
+ 	const struct cred *old_cred;
+ 	int ret;
+ 
+@@ -394,9 +374,9 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ 	if (ret <= 0)
+ 		return ret;
+ 
+-	ret = ovl_real_fdget_meta(file, &real, !datasync);
+-	if (ret)
+-		return ret;
++	real = ovl_real_fdget_meta(file, !datasync);
++	if (fd_empty(real))
++		return fd_error(real);
+ 
+ 	/* Don't sync lower file for fear of receiving EROFS error */
+ 	if (file_inode(fd_file(real)) == ovl_inode_upper(file_inode(file))) {
+@@ -405,7 +385,7 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ 		revert_creds(old_cred);
+ 	}
+ 
+-	fdput(real);
++	fdput_err(real);
+ 
+ 	return ret;
+ }
+@@ -425,7 +405,6 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
+ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct fd real;
+ 	const struct cred *old_cred;
+ 	int ret;
+ 
+@@ -436,9 +415,11 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 	if (ret)
+ 		goto out_unlock;
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
++	CLASS(fd_real, real)(file);
++	if (fd_empty(real)) {
++		ret = fd_error(real);
+ 		goto out_unlock;
++	}
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = vfs_fallocate(fd_file(real), mode, offset, len);
+@@ -447,8 +428,6 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 	/* Update size */
+ 	ovl_file_modified(file);
+ 
+-	fdput(real);
+-
+ out_unlock:
+ 	inode_unlock(inode);
+ 
+@@ -457,20 +436,17 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 
+ static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ {
+-	struct fd real;
++	CLASS(fd_real, real)(file);
+ 	const struct cred *old_cred;
+ 	int ret;
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
+-		return ret;
++	if (fd_empty(real))
++		return fd_error(real);
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = vfs_fadvise(fd_file(real), offset, len, advice);
+ 	revert_creds(old_cred);
+ 
+-	fdput(real);
+-
+ 	return ret;
+ }
+ 
+@@ -485,7 +461,6 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 			    loff_t len, unsigned int flags, enum ovl_copyop op)
+ {
+ 	struct inode *inode_out = file_inode(file_out);
+-	struct fd real_in, real_out;
+ 	const struct cred *old_cred;
+ 	loff_t ret;
+ 
+@@ -498,13 +473,15 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 			goto out_unlock;
+ 	}
+ 
+-	ret = ovl_real_fdget(file_out, &real_out);
+-	if (ret)
++	CLASS(fd_real, real_out)(file_out);
++	if (fd_empty(real_out)) {
++		ret = fd_error(real_out);
+ 		goto out_unlock;
++	}
+ 
+-	ret = ovl_real_fdget(file_in, &real_in);
+-	if (ret) {
+-		fdput(real_out);
++	CLASS(fd_real, real_in)(file_in);
++	if (fd_empty(real_in)) {
++		ret = fd_error(real_in);
+ 		goto out_unlock;
+ 	}
+ 
+@@ -531,9 +508,6 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 	/* Update size */
+ 	ovl_file_modified(file_out);
+ 
+-	fdput(real_in);
+-	fdput(real_out);
+-
+ out_unlock:
+ 	inode_unlock(inode_out);
+ 
+@@ -577,21 +551,18 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
+ 
+ static int ovl_flush(struct file *file, fl_owner_t id)
+ {
+-	struct fd real;
++	CLASS(fd_real, real)(file);
+ 	const struct cred *old_cred;
+-	int err;
++	int err = 0;
+ 
+-	err = ovl_real_fdget(file, &real);
+-	if (err)
+-		return err;
++	if (fd_empty(real))
++		return fd_error(real);
+ 
+ 	if (fd_file(real)->f_op->flush) {
+ 		old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 		err = fd_file(real)->f_op->flush(fd_file(real), id);
+ 		revert_creds(old_cred);
+ 	}
+-	fdput(real);
+-
+ 	return err;
+ }
+ 
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 744a6315f1ac..6571ef345d35 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -10,6 +10,7 @@
+ #include <linux/types.h>
+ #include <linux/posix_types.h>
+ #include <linux/errno.h>
++#include <linux/err.h>
+ #include <linux/cleanup.h>
+ 
+ struct file;
+@@ -37,13 +38,26 @@ extern struct file *alloc_file_clone(struct file *, int flags,
+ struct fd {
+ 	unsigned long word;
+ };
++
++/* either a reference to struct file + flags
++ * (cloned vs. borrowed, pos locked), with
++ * flags stored in lower bits of value,
++ * or an error (represented by small negative value).
++ */
++struct fderr {
++	unsigned long word;
++};
++
+ #define FDPUT_FPUT       1
+ #define FDPUT_POS_UNLOCK 2
+ 
++#define fd_empty(f)	_Generic((f), \
++				struct fd: unlikely(!(f).word), \
++				struct fderr: IS_ERR_VALUE((f).word))
+ #define fd_file(f) ((struct file *)((f).word & ~3))
+-static inline bool fd_empty(struct fd f)
++static inline long fd_error(struct fderr f)
+ {
+-	return unlikely(!f.word);
++	return (long)f.word;
+ }
+ 
+ #define EMPTY_FD (struct fd){0}
+@@ -56,12 +70,33 @@ static inline struct fd CLONED_FD(struct file *f)
+ 	return (struct fd){(unsigned long)f | FDPUT_FPUT};
+ }
+ 
++static inline struct fderr ERR_FD(long n)
++{
++	return (struct fderr){(unsigned long)n};
++}
++static inline struct fderr BORROWED_FDERR(struct file *f)
++{
++	return (struct fderr){(unsigned long)f};
++}
++static inline struct fderr CLONED_FDERR(struct file *f)
++{
++	if (IS_ERR(f))
++		return BORROWED_FDERR(f);
++	return (struct fderr){(unsigned long)f | FDPUT_FPUT};
++}
++
+ static inline void fdput(struct fd fd)
+ {
+ 	if (fd.word & FDPUT_FPUT)
+ 		fput(fd_file(fd));
+ }
+ 
++static inline void fdput_err(struct fderr fd)
++{
++	if (!fd_empty(fd) && fd.word & FDPUT_FPUT)
++		fput(fd_file(fd));
++}
++
+ extern struct file *fget(unsigned int fd);
+ extern struct file *fget_raw(unsigned int fd);
+ extern struct file *fget_task(struct task_struct *task, unsigned int fd);
 -- 
 2.39.2
 
