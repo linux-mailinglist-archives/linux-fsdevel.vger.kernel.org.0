@@ -1,136 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-21155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E558FF9D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 04:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FF08FF9DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 04:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2EC1284B84
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CD01C2220A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED2E39FFB;
-	Fri,  7 Jun 2024 02:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029CE125C0;
+	Fri,  7 Jun 2024 02:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZIrDazY/"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="robFGF0U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A25B17BAF
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 02:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1867FDDD4
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 02:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725604; cv=none; b=BGdDmoGQPeIK9mtx8JS1JjXeWAd1/uOua89t4PD64Pt+NxxJNI93h/7aLPXU4K4kYxLlm9epUmyIERTSrdlJG93VDOZ6IZUYtCeiLn9dqy+nq36r/1O+WY6ziqYpFTtP+CPlEHPMBOLzaaycbfLEHWotlDX8Zj2awLOnPlS6G+Q=
+	t=1717725904; cv=none; b=o2j2WRMghJD6BYkyKdvLQANKQqhOTNt4X2qDnf6oropC2kQHya83Q48eFUGjA7ViGx8ZYJe4W5YVqWXr5yql3haBPiw6tgFV0AVhhaC3gIkuExZZ+swUJCzk0RjMZMG2WtGDQqb/jv8x23lRB5wrjGAcl+az7XFkNJjNrNacbng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725604; c=relaxed/simple;
-	bh=B8jj4X6GSJr4oh32exWYSro2VtuLyzyy+5pglJaloZs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S+UpldrV3R+zOTavF2Kafdm2MhMSlpxc2OPNXV2F88GPq1JIaaTWHebAP8iEFb6BxmFJzzdyfFSSZWrXWqHmA1xxCSXkvJ5+KL3Ec5d+T8W2TOZzFLObb2g7ZGpn/cZAxCPxgtM3vjo5/+hslCP6b9BO4oXdVIkPzQTlUkSUqVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZIrDazY/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Ux5W4RKMVkxHYoSIQfR1y1LIkABcx87HV0CScbR079g=; b=ZIrDazY/cVvJBuLSpp5IF+oIrL
-	9xsQnGBZoSrYw/bKbBZ3ZpDFpwo8ixqu0H6v+D005ZKuDXDO2awx0riySEdJwoK+VgjDuQ6eoCDrk
-	DBwme4O9KldWlCLLHuvW8S1K7S9CiX/BaFkyCVdFz4sMtr2GRLZVE0jSWecpRiCl9ct1ZGX7R3VMP
-	e3XRdNAAY6TjPXKLwczqcaADNaukFhy/lHW18AyyqVRnbzG7P14SkhCKP/fCcCQWGgYT8k5L44A+t
-	TEFsh3Oyrq0DMILF3OHQWHtPNUgmbE3WGwDbT05bKl65Fsv5ZqoKZD1RhljsNXp5mQIxJVivVH3qn
-	6dX82E8g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sFOtc-009xD2-2x;
-	Fri, 07 Jun 2024 02:00:00 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org,
-	torvalds@linux-foundation.org
-Subject: [PATCH 19/19] deal with the last remaing boolean uses of fd_file()
-Date: Fri,  7 Jun 2024 02:59:57 +0100
-Message-Id: <20240607015957.2372428-19-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
-References: <20240607015656.GX1629371@ZenIV>
- <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1717725904; c=relaxed/simple;
+	bh=zWikLDUbPHzpkyuMa9SvJfhr99C0pRruMAI38ekM2cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQU8kPz70koOgjq2m73UcmyESdzCnoPs/GV/QI+Dy6NT1+93hkcsypGurXSYRHv2Y1kHLJk1+FCVIaTAfoej0sq6ktNzGk8txDu2IoMsg9RX14CxkTayOzlSC6/Evd9ElCoO/Mcl2vGpNjvtjpK43MpUhCeYjCoKk7WZSXmwcEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=robFGF0U; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-245435c02e1so855175fac.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 19:05:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717725902; x=1718330702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HKuuaXk4YNdRbMNXNWT/TcuUhZ1SuAkFriq95pCZdUs=;
+        b=robFGF0UW7hpXvpys9yc0fpSd1xUkDYMAWmRxVUvpe8dKxtOzxflIC9sxnD3fUKQbt
+         QdraQkBgdwY5NQqtm4TW+vXv26p+JFU/s+0YqtqKGbPMC54ggKEUdCquIZRcKkNL75q6
+         iG8P8I4tNToh/GKO86BPnodiQTZ86b6OoNMFg1Z4/bkEBzLiHRtLCvdFr9CH4rX3NM4O
+         xU0Kldy2k3K/EqRc+ML9BtbH6nn6rrcZloW91Gi8KzJ1ZAeMnr6z3MnmBMsK8/2TEbUA
+         9AbygJfucBr7El+fkzvw1P/RXlLG4teq/AYyiNEvR04UoRnB4cEyG0qWBnff8S21mopR
+         VEtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717725902; x=1718330702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HKuuaXk4YNdRbMNXNWT/TcuUhZ1SuAkFriq95pCZdUs=;
+        b=eraSJZeuItB7r3u8312YANgwlSJaek29DilY7l+44HlGCJ54Y27mVFwtn8gFEIPukf
+         oCu/FkEFG5q1U1dZta9I4sMlbQKnBoGmR5Hhtj0ECsaGfVt+Y23DYsCoVqeUG9feJux6
+         7WypDm68jvwqO0Wg8OCh2YvRCFQP8Ohf32pUlBFr44jWaa13vND0aR13pU4fk6VDFzGz
+         G4WjrOtOvzKIc2gEKeuQelp81XEr4B3bxe8HV79alnkaJBk2hbK6TDrqLruSLso5IDzG
+         tCLN3xRoqKd4dXrTFaCfBnDY998hLQhYtuJzA47YXoL/7wJk2+UAi3h3AS9K7Ilv1wt6
+         ZlAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVf4g+UjrB9AihS1BP9qreY13wMebQsQT5XgT48z8H2lGM6DYpWUBeUtdrf7dphPAiLRhvbl2jQcKsp4ChKJcEXmp5Gc0M7Uf5P5x6jyw==
+X-Gm-Message-State: AOJu0YxGsb/Wwb9s3c8smar8Tno+fwUcmfr7m9aT9QKII117giGjEnq+
+	b0nSoJgIfZPlyAtB2OB484xSRRuVoC7FTIRJ6A+iH5UZMRDkP3ovNKFVPndETIw=
+X-Google-Smtp-Source: AGHT+IG0TPOxnGysWka2PW7vDNgAiA6BVNC6fKtQ+0c898BXoBu9nsrqdblxPQrgncIqEfCUsLuOCQ==
+X-Received: by 2002:a05:6870:548c:b0:24f:ebcd:6aa9 with SMTP id 586e51a60fabf-25464384754mr1399622fac.1.1717725901930;
+        Thu, 06 Jun 2024 19:05:01 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd495083sm1682576b3a.136.2024.06.06.19.05.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 19:05:01 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sFOyQ-0070gF-0J;
+	Fri, 07 Jun 2024 12:04:58 +1000
+Date: Fri, 7 Jun 2024 12:04:58 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
+Message-ID: <ZmJqyrgPXXjY2Iem@dread.disaster.area>
+References: <20240606140515.216424-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606140515.216424-1-mjguzik@gmail.com>
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- drivers/infiniband/core/uverbs_cmd.c | 8 +++-----
- include/linux/cleanup.h              | 2 +-
- sound/core/pcm_native.c              | 2 +-
- 3 files changed, 5 insertions(+), 7 deletions(-)
+On Thu, Jun 06, 2024 at 04:05:15PM +0200, Mateusz Guzik wrote:
+> Instantiating a new inode normally takes the global inode hash lock
+> twice:
+> 1. once to check if it happens to already be present
+> 2. once to add it to the hash
+> 
+> The back-to-back lock/unlock pattern is known to degrade performance
+> significantly, which is further exacerbated if the hash is heavily
+> populated (long chains to walk, extending hold time). Arguably hash
+> sizing and hashing algo need to be revisited, but that's beyond the
+> scope of this patch.
+> 
+> A long term fix would introduce fine-grained locking, this was attempted
+> in [1], but that patchset was already posted several times and appears
+> stalled.
 
-diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
-index efe3cc3debba..717880ebdd88 100644
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -584,7 +584,7 @@ static int ib_uverbs_open_xrcd(struct uverbs_attr_bundle *attrs)
- 	if (cmd.fd != -1) {
- 		/* search for file descriptor */
- 		f = fdget(cmd.fd);
--		if (!fd_file(f)) {
-+		if (fd_empty(f)) {
- 			ret = -EBADF;
- 			goto err_tree_mutex_unlock;
- 		}
-@@ -632,8 +632,7 @@ static int ib_uverbs_open_xrcd(struct uverbs_attr_bundle *attrs)
- 		atomic_inc(&xrcd->usecnt);
- 	}
- 
--	if (fd_file(f))
--		fdput(f);
-+	fdput(f);
- 
- 	mutex_unlock(&ibudev->xrcd_tree_mutex);
- 	uobj_finalize_uobj_create(&obj->uobject, attrs);
-@@ -648,8 +647,7 @@ static int ib_uverbs_open_xrcd(struct uverbs_attr_bundle *attrs)
- 	uobj_alloc_abort(&obj->uobject, attrs);
- 
- err_tree_mutex_unlock:
--	if (fd_file(f))
--		fdput(f);
-+	fdput(f);
- 
- 	mutex_unlock(&ibudev->xrcd_tree_mutex);
- 
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 22cda00cf6a8..d3f943ea1d60 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -95,7 +95,7 @@ const volatile void * __must_check_fn(const volatile void *val)
-  * DEFINE_CLASS(fdget, struct fd, fdput(_T), fdget(fd), int fd)
-  *
-  *	CLASS(fdget, f)(fd);
-- *	if (!fd_file(f))
-+ *	if (fd_empty(f))
-  *		return -EBADF;
-  *
-  *	// use 'f' without concern
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index 388fdc226c1a..af5f651c9cc6 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -2242,7 +2242,7 @@ static int snd_pcm_link(struct snd_pcm_substream *substream, int fd)
- 	bool nonatomic = substream->pcm->nonatomic;
- 	CLASS(fd, f)(fd);
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADFD;
- 	if (!is_pcm_file(fd_file(f)))
- 		return -EBADFD;
+Why not just pick up those patches and drive them to completion?
+
+I have no issues with somebody else doing the finishing work for
+that code; several of the patches in that series were originally
+written by other people in the first place...
+
+-Dave.
 -- 
-2.39.2
-
+Dave Chinner
+david@fromorbit.com
 
