@@ -1,378 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-21263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD2C900932
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 17:34:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53880900939
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 17:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26EB2859A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 15:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BE74B24DED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 15:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56948197A99;
-	Fri,  7 Jun 2024 15:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090EE1991DB;
+	Fri,  7 Jun 2024 15:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QnY1zHUX"
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="P3/QUAO6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2107.outbound.protection.outlook.com [40.107.236.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B697526288
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 15:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717774243; cv=none; b=pdxa6XZ0YIau1L4e+JPTAVw0WODvszGHjTxJQa5+ChTHA+9eNkzMs6uVy+YzocxQE7yp3uNpPXXknTorXl5/iV0xfX5QTXuejptN65It6dq5v/ZG/6NcswWjJfnj+l7do1jodiMsiqXVfOLmu3ZaeX+gU/LyZRdm8qapoY1ssic=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717774243; c=relaxed/simple;
-	bh=TRuhBxGqdc0XVJo1BRsSpiDjCPjMhqZcQFC4UGdwGVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mBQai6yrT6qQbnmgvcQkX756YgGLr3Hv7nBJG5HOBBjptlOsUHXZuTRJpIQe8nH1dVAJ/yI7Zqp8qfJYYWA7mk8yILHQyIaHALO8B32fuJsi1XZpglwU/JW8wa5yrXb+CXWgcYI6Ou5cNCZkaQscLUZvaj718UOvrCW8IuHrAW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QnY1zHUX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7503CC2BBFC;
-	Fri,  7 Jun 2024 15:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717774243;
-	bh=TRuhBxGqdc0XVJo1BRsSpiDjCPjMhqZcQFC4UGdwGVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QnY1zHUXDQ8VpUyD3Gt1BnjoT/Bn6dC5vcy6GoxJbKPgVynq2zfRLa05r2XIPDYbm
-	 6uS24YiTyDjYoqCBeohp3ptHfCF7hMIRtDn1rDVzyv8COPYcFO3vgEC5AYQ9EsM99+
-	 rdX4HJUne2tgb+Cg50s9Hx45zhvUUyVw/85fQy904xSQsOuui7vDn1LeLNFbF6apqm
-	 4tANIQ3EWjW6kd7heM1RLuzgZ/ooi5tylHHXgynvIKa7/VV5c04BZUnYzPUNLpO+h2
-	 L3HP2ACCXxwjUGZ9mJ/RYAp3uoVQ5X+AFs8v+nSDvRHPYDiRM51MUHSRthZbPpp5fe
-	 ydcAMEZXMpEjA==
-Date: Fri, 7 Jun 2024 17:30:39 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCHES][RFC] rework of struct fd handling
-Message-ID: <20240607-abhob-gesehen-ed7db9af5eca@brauner>
-References: <20240607015656.GX1629371@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490101CD37;
+	Fri,  7 Jun 2024 15:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717774371; cv=fail; b=tKK+Q/ywFSu7JlZJGfmrhYaFAE/HOZWxRwJ1XFI1xYWV8PYAFby3UgMz654EMd+5fCdzoD9SGoTETHsS/zaeRvKXyMd6+xa5KaxoMZjD41ypqbNZBK2QQclKHAx447OZZt9hvp2X7HdVf752Jm1g1xzazxmvf69r4LtMuPsR+Xw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717774371; c=relaxed/simple;
+	bh=aZnB0niVu3j1F/qyPXuK9wmQX+mwzlPfyfGAqeN6pso=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OnDJkvGH6RGoGw/3sZ9Hq3brEMYLPNT1iCXD3CG7ZlnXNNIsJHOiPpO7GFCK3nU8Ww5cQp2AGn+Yf0C3v9QjtNJ1fuDYek5IwIvk8iDExm8xhSy4F2aB2okyQCA6t8ATG2PJgC4TQpDLJ5pUfXa4djEfuiGVP7nf17tk83AnuyA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=P3/QUAO6; arc=fail smtp.client-ip=40.107.236.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cR4qRkqJkyywEsQMJfg3LBrVb6zeQKtXIvcpGsR82wdIm5rNsUGoY7W6BPawbDlqt/U1ozLn1PwostcDKYZRSSKjntLlLYwqvV03V+9FpzHh/aWTEltwoAXZpfUXi7xVKW3UvSmdZat2w1XADw7L5cosRup0VsCQ+0Z/lzfYSrkEI7G2mQZihx/ACj4tqavv7dH0D28AdsB8UZJdZbIMgk69ICjU2R9msrssIMvQztIy/WiGl9tpl5ni8OrivsW1ODD5D+HtmWlclJSFdqltp3JX9qORx+e/0woZME42c1/Un/6FTi45hrowGysqo7/MZe/Q62sJLtfdx1ddMCFokw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aZnB0niVu3j1F/qyPXuK9wmQX+mwzlPfyfGAqeN6pso=;
+ b=OVdaX9bzIB70njTaRVULumbW3fOpnpfFlIkptCth8NZRHprTf6POVj3SGn+uo0rnSbtz+i+GfojoVBTfESaOF5vAIsvSW6IEwAf2CRzOCnqxjpRpUknIfJtsJQfabiTexjgGPThvKdGq1sLWcUtd6YH+povhnBDabN0Lu1+GkVfVSwfcXlxDUkO2EL5ptSYvVrHhtSmV3kU7QXyPF/CTzj7lmMFf8zY9eEQgYlnriTlg6tbYebgJJMhq8sT4Vlu0edo+ibJRvyK7AyOeKyvud3QwfGfK3G8WG2tmFB6gvn2LdKJl8xfktUduhkavzTioovJZqMZ4uDBy/GC049irng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aZnB0niVu3j1F/qyPXuK9wmQX+mwzlPfyfGAqeN6pso=;
+ b=P3/QUAO6yVzREo1kaZGqOs/lq3bPAwc+VzLoIE0nEIISxINJNzyPMLukzCs8Y6dMeyHXzm3DnOgV9/FHexZn5MIcReXeaPvFcFaLn4xfZRymXNaclcV1RGor/SyTXoRWav4nPZF4Z07owobbMXFgOKfhoaoiAOvYc9u0SFWl8nk=
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com (2603:10b6:610:111::7)
+ by BY1PR13MB7115.namprd13.prod.outlook.com (2603:10b6:a03:5ac::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.8; Fri, 7 Jun
+ 2024 15:32:42 +0000
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::67bb:bacd:2321:1ecb]) by CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::67bb:bacd:2321:1ecb%5]) with mapi id 15.20.7656.012; Fri, 7 Jun 2024
+ 15:32:42 +0000
+From: Trond Myklebust <trondmy@hammerspace.com>
+To: "hch@lst.de" <hch@lst.de>
+CC: "anna@kernel.org" <anna@kernel.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "linux-nfs@vger.kernel.org"
+	<linux-nfs@vger.kernel.org>, "willy@infradead.org" <willy@infradead.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: support large folios for NFS
+Thread-Topic: support large folios for NFS
+Thread-Index: AQHasFQEtVPFzJw4R0eoRu1V26ovVbGuxl2AgAIcooCACvOsgIAAqIaA
+Date: Fri, 7 Jun 2024 15:32:42 +0000
+Message-ID: <cf530d0c99c2b090e789b1beaf421bb4899f1d24.camel@hammerspace.com>
+References: <20240527163616.1135968-1-hch@lst.de>
+	 <777517bda109f0e4a37fdd8a2d4d03479dfbceaf.camel@hammerspace.com>
+	 <20240531061443.GA18075@lst.de> <20240607052927.GA3442@lst.de>
+In-Reply-To: <20240607052927.GA3442@lst.de>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH0PR13MB5084:EE_|BY1PR13MB7115:EE_
+x-ms-office365-filtering-correlation-id: a4504199-b510-43b9-c40f-08dc87071278
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|366007|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WThEN2lBUWJScTY3NytTUWhhaDV3QUpON3Y5UUdsWFNNNE1HTlZndVV1U0Vk?=
+ =?utf-8?B?YUxIQi9mRWVwYm5oYW9vR2t5dkNUT0UvVml2L3ZNbU5QR2N2R21lT2s4WCtw?=
+ =?utf-8?B?dmlkaXZwQ0F6WU1Xb0ZnZTdJbU5jaEN1THRxMkxvbTFWL2c3WGNZbGxhNUlJ?=
+ =?utf-8?B?YUg3NE9JQXlQZ1pTanZzbGJRL2JSZDJHMkhRWUVzejRGTURhczcwRlBva1hs?=
+ =?utf-8?B?ZXl5RHdBZGpRZ2VnTEl5LzFnb1k5YitKaHhzZ2pZQWRLRG8vNmFqRXBCRm1L?=
+ =?utf-8?B?dXk1SFJLNkxzUitPb3gwcGJFNDFkQnVzeFlYYWxPb0t2YXRzOFZxMm1XaXdj?=
+ =?utf-8?B?SkwvbW9ZaHdhSXEwMHdCNXE2WjJpYTZBQnZVMy9XQ3hTUUdkQjdhOUVZaFBO?=
+ =?utf-8?B?bVQ3VWN2cHlwMmtNcDRtbDJyQUJUQ3N1VXl3UWwzZy83U2FSdFFIbGhYdVFN?=
+ =?utf-8?B?ZHM1OFBSL0FwNStlV0Fvb0Zoa2R6d3YxR1lpRXVFVDhMRGUyKzc1eUdJc2R1?=
+ =?utf-8?B?RkF0dkxCSUhPZkIrV3k1S0RZUTQ0NXloU2JSeXZmQlV2WVdpZ2VOcm41eTI4?=
+ =?utf-8?B?THpPNTVCdWhTS3hvRkpTTDRQckg0U0VRYm9kdExCM2MybDlGM0pMVWd5ZVpF?=
+ =?utf-8?B?VWVaOUZPbkw2ZXd2RVI5UzFUQW9QdWQ1WmJrVEJ2MnlZMVhjTXVHNUM1M29Y?=
+ =?utf-8?B?U2FXMFdCWThuL3h5UWlpWEJKMlIvSVpyWmFJUmN1cVhha1dNU25CQTVQZThn?=
+ =?utf-8?B?SENrWnp6dG1BSklRKzJ5QjFVcDZwb1VpZGc1aU9pbng5K1B5NTlJVFUvZlFD?=
+ =?utf-8?B?SSt4NHZIS3ozVk5yaHpoK1E2anFvc25LSDlzZWZBaEZST21xM0dsQkdQS25P?=
+ =?utf-8?B?RGtzWUYyMkU1V3FpZkdUOGFXNGd5QkQ3SkhKYWtIcURmMitUVTA2N3V3TXNG?=
+ =?utf-8?B?dWlZd3V2U3dSVHBac1RVaTRlNXk4cE5VVWhKa00rU3FqRFZsZlQ0Q1VkcmFO?=
+ =?utf-8?B?dkJLdEs5Y0xHWHRJRDIwQVlKcWFtNTN6SjVoTi9DYW9GTmhOZXNORUMxK3lV?=
+ =?utf-8?B?VEQ0ZjgxdTNNRHpiampyLzFzRHkva3FUa09aZU5CTDRPd2kyTVJCdEJwbFlJ?=
+ =?utf-8?B?Z082T1g1Nm01aTR4T24rZDEybGU2L3NqK3laTjM3TUc3OFIxOFFxUnhNTU5F?=
+ =?utf-8?B?VTc3cHdNbEFENkk4M29pdElDK0Y1R01ya3R5RDNCV2RVWHVWYlhHQmxzYkMw?=
+ =?utf-8?B?Qm9FRWUxSzl1Nk41aXRqSXdFNG9kei90Q092cVB4c3lOREgrakNTcEZNcVVC?=
+ =?utf-8?B?L2xhMzFTQVp5TzhRb2s3dGQ3bmNNVTFQZVU3RVhialdpSjNHNS91VW5xblVq?=
+ =?utf-8?B?amh5M1VzMzV5UUNCOU1wQVVqWlFmRHorcGI0azE5T0xhaGNQRjc2TUZFUURn?=
+ =?utf-8?B?aWxib0pjeFNxTEVZWjNhVmgvdVhQRU9iSDN4bzFMYmd4SXZrZW1zUU1PdFha?=
+ =?utf-8?B?UjVpcU5tN0IxMzRFVXJsUGY3TnBlV25BYk9veUQ4Z25yeW1SYVJSZzJOUXhB?=
+ =?utf-8?B?dThxS0hoYTYrTEFQeEo1STEvcENhS3JPUytlTTVNRURMSlRwL2tHYzJCbUJh?=
+ =?utf-8?B?WFY1b0pGdUdMMDc4VHp1SEU2aysxTXd5VHFkeENuMnZPVVdGb2hEbjJjZitv?=
+ =?utf-8?B?ZFM4Skx5ZnczUFBTZlNycm9FVXhsSXJzMWR1Y3loTm03NUJzWVR6dG9lbEhP?=
+ =?utf-8?B?YkhJbXovc1o1WS9PMUY5UTRvSXRhSHlWVmRjYXpScGhmbjdVY0xVbXQ5ZkJi?=
+ =?utf-8?Q?MQmFsDe5fgM8bywKAQUTqD0j8QgaO2QRXZl2c=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR13MB5084.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?S21rNFg4Y0plWXM0R3dqaTRxNldkU2pFTXdNRytDeG9GK08yQUtoREdMc2Fi?=
+ =?utf-8?B?cFlaQXhvZUxOY0lwL20rc1VEcExoOFRGSEVpNE1lV2JTMmhvTUdUSXhPZUE5?=
+ =?utf-8?B?cGFOc2VnUG1vaWlEZ1B2NVZoaFUxeHd1Z3FYWlBJZS9mNXVLSWJHTDF6UkVZ?=
+ =?utf-8?B?VDlDSURPaWRCT0Zia0thdm5GYkFjMXZLcytIbXNha0Q3akdQalU2VHArRjAv?=
+ =?utf-8?B?RkExdGhGVUxONE82RG0yaUk0RmlkL3pPTndzSmJNK3d6Ni9qdnhMNGRlUG5w?=
+ =?utf-8?B?TFgxQWREQ0l0MVlSb1oyaHZZZVlLNUVBV1UzVkd0cUdTY2RaQ1FGSjc5cU9U?=
+ =?utf-8?B?OEMyR3BWSXRLVjFpVHhQb2pyNE9UN3JlV2hENFFVdTdwWnZnTVhUU1U3dEpO?=
+ =?utf-8?B?Q3JiaFp0S2xIUjArL0VFZWE3SHoxa1Y3MXhiQmdNdHRFbFVwanJ1cWdPVFpT?=
+ =?utf-8?B?VE14TlJQNUtCQlNwWkQzMTlrbS9nR3VPeG1DdGg5cmhiaDhrMjdBZ2UwY2l3?=
+ =?utf-8?B?dXliK3pCRFJ4Uk4rMlJxWUJYSDBsU3NVREZiZXJ6aEVSajhsQitEZHc0bk9E?=
+ =?utf-8?B?czZIcVNnQldnSndVZ1g1Vm1YendqVldyaXRXN2J1bVBVaEkreXNaZDRmUjNO?=
+ =?utf-8?B?OE5Md283bkdwcUp1bksva1kxblRrYmFFd3lJRlRQRXN6OGFjVnhlZDU1MSsv?=
+ =?utf-8?B?bVJXZ1R5b3htT01hdmxrT2E5aFV0eFF0NVhDV3RuTDhHekQ1My9lZ3hBS2NH?=
+ =?utf-8?B?YlhDbFJIRS8zYlpneUkrWFlSUzFTa2d1bGFnMkd4VnYrclZQdUFna21STi9P?=
+ =?utf-8?B?TmM2Q2R3L2NjdDRxWSt3N0k3TjVEUXJpNmRsRVJhd29sQnNZVG1PTitLejRq?=
+ =?utf-8?B?Vks1UW4vWG9tSWt6WlE3cC9VVHF3QTYxcE5RSzJDRGd2M2JpOGlQQVAyRnNP?=
+ =?utf-8?B?QVNXZDM0MmsxWkhGWk5uaW93eFBSY3Z2NXFQZlFUbC9hSGt0QTYvdUdjblpO?=
+ =?utf-8?B?QVZrUGVVeU9JWkU5eFhTMkgzbkNNaE01Wjlpd1hTTlVTT3NmekVFV21KVzVL?=
+ =?utf-8?B?d3VjU0x1UWpMSjhMOEIzVmZuZmgvN3pvYTk1SEpzbUJOc09mbmNWQ2FlTVUy?=
+ =?utf-8?B?S29QbmcxYkZ3Sm5RUHRaTzZGY0IxVG92RGY1elJFRHo3dWxTcTJEV01aMWlL?=
+ =?utf-8?B?Z212YWxDM1d5ZXVCY2ZCbnpRaXp3SVBOc0RvWTF0c1lDRHUySXQxV0xBdzE3?=
+ =?utf-8?B?bU9QVzJoWUhWamJLYjBMT0NsV1pVQ1JOa3JCVlNJc3NlREpmTFFXelVxVWNX?=
+ =?utf-8?B?V0xqVWNkZ1o0MkNYL1Z2ZFhYL3ZCR3YvMzd3SjBlaFdoQWlaMjZ5cFBtMXk0?=
+ =?utf-8?B?cURDejNyS0xGaE1iazJjc1kwZ3RQQ3Ezc3RwMU15ODlTZlM2WGtzUkJXV3l6?=
+ =?utf-8?B?bGtLSFNkbUdFQU8zNEJVWHpNWmdOTk9wMTJhNjVDZDErQ3liaDJjTGZlcWdI?=
+ =?utf-8?B?bk9yLzF2TThobzFSQmwrUUlaeHlKR0t3MU4wY2Y5QlUrVUpCSUx5cGNEbnpy?=
+ =?utf-8?B?cEdrZXRFT1dsUVV4S0tOUXFENWZ3WERYckJUT2ZuNzlqZGc3VUl2aTBNVVd4?=
+ =?utf-8?B?VHJjZ1lXVDl0SjYzZ0k0SW1WR05vQUxtanRsN21mZmRoamU3R2hLRDhUaTlM?=
+ =?utf-8?B?NGZ3REZCMjkvSzUzMTJiWmJVWGxweVp2TkIrYm1KRm5KNkcyYlRZSUNNZE4x?=
+ =?utf-8?B?MjNiNkNTQUFGMTZDdW56N3N4ZFJSZVFTTGhBSjlCbklUVmpiY0J6NWxZUTdz?=
+ =?utf-8?B?aitVUFovaTQ2VGtDMlVneDRrOHBhblhMSzhXZ1l3MUhia3hJT3JzTHBIY0pK?=
+ =?utf-8?B?MVZickQ5Q01lcWN6TEpiSEFvTndHMEpwUXhsM0FCanUycUhOdG1PVU03YS9M?=
+ =?utf-8?B?ajE2WTE2U04rckYvcWVYUTRZWll0Z3l1T0hZVkRybms5VERwVnpDUGFySlJ4?=
+ =?utf-8?B?UDFSaDlkbDVrWEZhc3AvSGRZTUlkdmJsaG03bm8yc3I4RENSWjZ0aGliRjVi?=
+ =?utf-8?B?eHQrcWFCck5yNDlhRkRXSFpVcmNwb0RLUCs3NExsb0RZNUFjdUI0eHZwM09u?=
+ =?utf-8?B?UEhsQWZKUDdGU0xwSjhPSUtSV201cGFOb1p0NU12Z3haL05MU0F6MGdCZmUr?=
+ =?utf-8?B?OWN3TDdTL0FOeFBzNkJOMTB0UWdBZm9qQ3hHRVoxRlZHaXZEQkR5TUVjVWpz?=
+ =?utf-8?B?UFZYcmZMSSthbEhiSDhVbG90V0RRPT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4C560D1AB4203C4BB2FD388F778A57E9@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240607015656.GX1629371@ZenIV>
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR13MB5084.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4504199-b510-43b9-c40f-08dc87071278
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2024 15:32:42.4065
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: S6DqIduqtAbEBq5jvpzNc3tG2N30Mt94/FhHNDsGFYjNXgdx1RFXyeRo2UX2+vokT8HrNu1hvP3zORWHzPYgiQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR13MB7115
 
-On Fri, Jun 07, 2024 at 02:56:56AM +0100, Al Viro wrote:
-> 	Experimental series trying to sanitize the handling
-> of struct fd.  Lightly tested, in serious need of review.
-> 
-> It's 6.10-rc1-based, lives in 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.fd
-> Individual patches in followups, descriptions below.
-
-Looks overall like a good approach to me and I really like that we're
-not renaming struct fd.
-
-(IMHO, you should just send the CLASS(fd_pos) cleanup helper addition
-upstream for this cycle because it's the only thing we're missing. And
-that'll likely make conversions in individual patches/per subsystem
-easier as well.)
-
-> 
-> Shortlog:
-> Al Viro (19):
->       powerpc: fix a file leak in kvm_vcpu_ioctl_enable_cap()
->       lirc: rc_dev_get_from_fd(): fix file leak
->       introduce fd_file(), convert all accessors to it.
->       struct fd: representation change
->       add struct fd constructors, get rid of __to_fd()
->       net/socket.c: switch to CLASS(fd)
->       introduce struct fderr, convert overlayfs uses to that
->       fdget_raw() users: switch to CLASS(fd_raw, ...)
->       css_set_fork(): switch to CLASS(fd_raw, ...)
->       introduce "fd_pos" class
->       switch simple users of fdget() to CLASS(fd, ...)
->       bpf: switch to CLASS(fd, ...)
->       convert vmsplice() to CLASS(fd, ...)
->       finit_module(): convert to CLASS(fd, ...)
->       timerfd: switch to CLASS(fd, ...)
->       do_mq_notify(): switch to CLASS(fd, ...)
->       simplify xfs_find_handle() a bit
->       convert kernel/events/core.c
->       deal with the last remaing boolean uses of fd_file()
-> 
-> Diffstat:
->  arch/alpha/kernel/osf_sys.c                |   7 +-
->  arch/arm/kernel/sys_oabi-compat.c          |  18 +-
->  arch/powerpc/kvm/book3s_64_vio.c           |   9 +-
->  arch/powerpc/kvm/powerpc.c                 |  26 +--
->  arch/powerpc/platforms/cell/spu_syscalls.c |  17 +-
->  arch/x86/kernel/cpu/sgx/main.c             |  10 +-
->  arch/x86/kvm/svm/sev.c                     |  43 ++--
->  drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c  |  27 +--
->  drivers/gpu/drm/drm_syncobj.c              |  11 +-
->  drivers/infiniband/core/ucma.c             |  21 +-
->  drivers/infiniband/core/uverbs_cmd.c       |  12 +-
->  drivers/media/mc/mc-request.c              |  22 +-
->  drivers/media/rc/lirc_dev.c                |  13 +-
->  drivers/vfio/group.c                       |  10 +-
->  drivers/vfio/virqfd.c                      |  20 +-
->  drivers/virt/acrn/irqfd.c                  |  14 +-
->  drivers/xen/privcmd.c                      |  35 ++--
->  fs/btrfs/ioctl.c                           |   7 +-
->  fs/coda/inode.c                            |  13 +-
->  fs/eventfd.c                               |   9 +-
->  fs/eventpoll.c                             |  62 ++----
->  fs/ext4/ioctl.c                            |  23 +-
->  fs/f2fs/file.c                             |  17 +-
->  fs/fcntl.c                                 |  74 +++----
->  fs/fhandle.c                               |   7 +-
->  fs/file.c                                  |  26 +--
->  fs/fsopen.c                                |  23 +-
->  fs/fuse/dev.c                              |  10 +-
->  fs/ioctl.c                                 |  47 ++---
->  fs/kernel_read_file.c                      |  12 +-
->  fs/locks.c                                 |  27 +--
->  fs/namei.c                                 |  19 +-
->  fs/namespace.c                             |  53 ++---
->  fs/notify/fanotify/fanotify_user.c         |  50 ++---
->  fs/notify/inotify/inotify_user.c           |  44 ++--
->  fs/ocfs2/cluster/heartbeat.c               |  17 +-
->  fs/open.c                                  |  67 +++---
->  fs/overlayfs/file.c                        | 187 +++++++----------
->  fs/quota/quota.c                           |  18 +-
->  fs/read_write.c                            | 227 +++++++++-----------
->  fs/readdir.c                               |  38 ++--
->  fs/remap_range.c                           |  11 +-
->  fs/select.c                                |  17 +-
->  fs/signalfd.c                              |  11 +-
->  fs/smb/client/ioctl.c                      |  17 +-
->  fs/splice.c                                |  82 +++-----
->  fs/stat.c                                  |  10 +-
->  fs/statfs.c                                |  12 +-
->  fs/sync.c                                  |  33 ++-
->  fs/timerfd.c                               |  42 ++--
->  fs/utimes.c                                |  11 +-
->  fs/xattr.c                                 |  64 +++---
->  fs/xfs/xfs_exchrange.c                     |  12 +-
->  fs/xfs/xfs_handle.c                        |  16 +-
->  fs/xfs/xfs_ioctl.c                         |  85 +++-----
->  include/linux/bpf.h                        |   9 +-
->  include/linux/cleanup.h                    |   2 +-
->  include/linux/file.h                       |  89 +++++---
->  io_uring/sqpoll.c                          |  31 +--
->  ipc/mqueue.c                               | 126 +++++------
->  kernel/bpf/bpf_inode_storage.c             |  29 +--
->  kernel/bpf/btf.c                           |  13 +-
->  kernel/bpf/map_in_map.c                    |  37 +---
->  kernel/bpf/syscall.c                       | 197 ++++++-----------
->  kernel/bpf/token.c                         |  19 +-
->  kernel/bpf/verifier.c                      |  20 +-
->  kernel/cgroup/cgroup.c                     |  21 +-
->  kernel/events/core.c                       |  67 +++---
->  kernel/module/main.c                       |  15 +-
->  kernel/nsproxy.c                           |  15 +-
->  kernel/pid.c                               |  26 +--
->  kernel/signal.c                            |  33 ++-
->  kernel/sys.c                               |  21 +-
->  kernel/taskstats.c                         |  20 +-
->  kernel/watch_queue.c                       |   8 +-
->  mm/fadvise.c                               |  10 +-
->  mm/filemap.c                               |  19 +-
->  mm/memcontrol.c                            |  37 ++--
->  mm/readahead.c                             |  25 +--
->  net/core/net_namespace.c                   |  14 +-
->  net/core/sock_map.c                        |  23 +-
->  net/socket.c                               | 325 +++++++++++++----------------
->  security/integrity/ima/ima_main.c          |   9 +-
->  security/landlock/syscalls.c               |  57 ++---
->  security/loadpin/loadpin.c                 |  10 +-
->  sound/core/pcm_native.c                    |   6 +-
->  virt/kvm/eventfd.c                         |  19 +-
->  virt/kvm/vfio.c                            |  18 +-
->  88 files changed, 1234 insertions(+), 1951 deletions(-)
-> 
-> 01/19) powerpc: fix a file leak in kvm_vcpu_ioctl_enable_cap()
-> 02/19) lirc: rc_dev_get_from_fd(): fix file leak
-> 
-> 	First two patches are obvious leak fixes - missing fdput()
-> on one a failure exits.
-> 
-> 03/19) introduce fd_file(), convert all accessors to it.
-> 
-> 	For any changes of struct fd representation we need to
-> turn existing accesses to fields into calls of wrappers.
-> Accesses to struct fd::flags are very few (3 in linux/file.h,
-> 1 in net/socket.c, 3 in fs/overlayfs/file.c and 3 more in
-> explicit initializers).
-> 	Those can be dealt with in the commit converting to
-> new layout; accesses to struct fd::file are too many for that.
-> 	This commit converts (almost) all of f.file to
-> fd_file(f).  It's not entirely mechanical ('file' is used as
-> a member name more than just in struct fd) and it does not
-> even attempt to distinguish the uses in pointer context from
-> those in boolean context; the latter will be eventually turned
-> into a separate helper (fd_empty()).
-> 
-> NB: this commit is where I'd expect arseloads of conflicts
-> through the cycle, simply because of the breadth of area being
-> touched.  The biggest one, as well (500 lines modified).
-> Might be worth splitting - not sure.
-> 
-> 04/19) struct fd: representation change
-> 
-> 	The absolute majority of instances comes from fdget() and its
-> relatives; the underlying primitives actually return a struct file
-> reference and a couple of flags encoded into an unsigned long - the lower
-> two bits of file address are always zero, so we can stash the flags
-> into those.  On the way out we use __to_fd() to unpack that unsigned
-> long into struct fd.
-> 	Let's use that representation for struct fd itself - make it
-> a structure with a single unsigned long member (.word), with the value
-> equal either to (unsigned long)p | flags, p being an address of some
-> struct file instance, or to 0 for an empty fd.
-> 	Note that we never used a struct fd instance with NULL ->file
-> and non-zero ->flags; the emptiness had been checked as (!f.file) and
-> we expected e.g. fdput(empty) to be a no-op.  With new representation
-> we can use (!f.word) for emptiness check; that is enough for compiler
-> to figure out that (f.word & FDPUT_FPUT) will be false and that fdput(f)
-> will be a no-op in such case.
-> 	For now the new predicate (fd_empty(f)) has no users; all the
-> existing checks have form (!fd_file(f)).  We will convert to fd_empty()
-> use later; here we only define it (and tell the compiler that it's
-> unlikely to return true).
-> 	This commit only deals with representation change; there will
-> be followups.
-> 	NOTE: overlayfs part is _not_ in the final form - it will be
-> massaged shortly.
-> 
-> 05/19) add struct fd constructors, get rid of __to_fd()
-> 
-> 	Make __fdget() et.al. return struct fd directly.
-> New helpers: BORROWED_FD(file) and CLONED_FD(file), for
-> borrowed and cloned file references resp.
-> 	NOTE: this might need tuning; in particular, inline on
-> __fget_light() is there to keep the code generation same as
-> before - we probably want to keep it inlined in fdget() et.al.
-> (especially so in fdget_pos()), but that needs profiling.
-> 
-> 
-> Next two commits deal with the worst irregularities in struct fd use:
-> in net/socket.c we have fdget() without matching fdput() - fdget() is
-> done in sockfd_lookup_light(), then the results are passed (in modified
-> form) to caller, which deals with conditional fput().  And in
-> overlayfs we have an almost-but-not-quite struct fd shoehorned into
-> struct fd, with ugly calling conventions as the result of that.
-> I'm not sure what order would be better for these two commits.
-> 
-> 06/19) net/socket.c: switch to CLASS(fd)
-> 
-> 	I strongly suspect that important part in sockfd_lookup_light() is
-> avoiding needless file refcount operations, not the marginal reduction of
-> the register pressure from not keeping a struct file pointer in the caller.
-> 	If that's true, we should get the same benefits from straight
-> fdget()/fdput().  And AFAICS with sane use of CLASS(fd) we can get a better
-> code generation...
-> 	Would be nice if somebody tested it on networking test suites
-> (including benchmarks)...
-> 
-> 	sockfd_lookup_light() does fdget(), uses sock_from_file() to
-> get the associated socket and returns the struct socket reference to
-> the caller, along with "do we need to fput()" flag.  No matching fdput(),
-> the caller does its equivalent manually, using the fact that sock->file
-> points to the struct file the socket has come from.
-> 	Get rid of that - have the callers do fdget()/fdput() and
-> use sock_from_file() directly.  That kills sockfd_lookup_light()
-> and fput_light() (no users left).
-> 	What's more, we can get rid of explicit fdget()/fdput() by
-> switching to CLASS(fd, ...) - code generation does not suffer, since
-> now fdput() inserted on "descriptor is not opened" failure exit
-> is recognized to be a no-op by compiler.
-> 	We could split that commit in two (getting rid of sockd_lookup_light()
-> and switch to CLASS(fd, ...)), but AFAICS it ends up being harder to read
-> that way.
-> 
-> 07/19) introduce struct fderr, convert overlayfs uses to that
-> 
-> Similar to struct fd; unlike struct fd, it can represent
-> error values.
-> Accessors:
-> * fd_empty(f):	true if f represents an error
-> * fd_file(f):	just as for struct fd it yields a pointer to
-> 		struct file if fd_empty(f) is false.  If
-> 		fd_empty(f) is true, fd_file(f) is guaranteed
-> 		_not_ to be an address of any object (IS_ERR()
-> 		will be true in that case)
-> * fd_error(f):	if f represents an error, returns that error,
-> 		otherwise the return value is junk.
-> Constructors:
-> * ERR_FD(-E...):	an instance encoding given error [ERR_FDERR, perhaps?]
-> * BORROWED_FDERR(file):	if file points to a struct file instance,
-> 			return a struct fderr representing that file
-> 			reference with no flags set.
-> 			if file is an ERR_PTR(-E...), return a struct
-> 			fderr representing that error.
-> 			file MUST NOT be NULL.
-> * CLONED_FDERR(file):	similar, but in case when file points to
-> 			a struct file instance, set FDPUT_FPUT in flags.
-> fdput_err() serves as a destructor.
-> See fs/overlayfs/file.c for example of use.
-> 
-> 08/19) fdget_raw() users: switch to CLASS(fd_raw, ...)
-> 	all convert trivially
-> 09/19) css_set_fork(): switch to CLASS(fd_raw, ...)
-> 	reference acquired there by fget_raw() is not stashed anywhere -
-> we could as well borrow instead.
-> 
-> 10/19) introduce "fd_pos" class
-> 	fdget_pos() for constructor, fdput_pos() for cleanup, users of
-> fd..._pos() converted.
-> 
-> 11/19) switch simple users of fdget() to CLASS(fd, ...)
-> 	low-hanging fruit; that's another likely source of conflicts
-> over the cycle and it might make a lot of sense to split; fortunately,
-> it can be split pretty much on per-function basis - chunks are independent
-> from each other.
-> 
-> 12/19) bpf: switch to CLASS(fd, ...)
-> 	Calling conventions for __bpf_map_get() would be more convenient
-> if it left fpdut() on failure to callers.  Makes for simpler logics
-> in the callers.
-> 	Among other things, the proof of memory safety no longer has to
-> rely upon file->private_data never being ERR_PTR(...) for bpffs files.
-> Original calling conventions made it impossible for the caller to tell
-> whether __bpf_map_get() has returned ERR_PTR(-EINVAL) because it has found
-> the file not be a bpf map one (in which case it would've done fdput())
-> or because it found that ERR_PTR(-EINVAL) in file->private_data of a
-> bpf map file (in which case fdput() would _not_ have been done).
-> 	With that calling conventions change it's easy to switch all
-> bpffs users to CLASS(fd, ...).
-> 
-> 13/19) convert vmsplice() to CLASS(fd, ...)
-> 	Irregularity here is fdput() not in the same scope as fdget();
-> we could just lift it out vmsplice_type() in vmsplice(2), but there's
-> no much point keeping vmsplice_type() separate after that...
-> 
-> 14/19) finit_module(): convert to CLASS(fd, ...)
-> 	Slightly unidiomatic emptiness check; just lift it out of
-> idempotent_init_module() and into finit_module(2) and that's it.
-> 
-> 15/19) timerfd: switch to CLASS(fd, ...)
-> 	Fold timerfd_fget() into both callers to have fdget() and fdput()
-> in the same scope.  Could be done in different ways, but this is probably
-> the smallest solution.
-> 
-> 16/19) do_mq_notify(): switch to CLASS(fd, ...)
-> 	a minor twist is the reuse of struct fd instance in there
-> 
-> 17/19) simplify xfs_find_handle() a bit
-> 	XFS_IOC_FD_TO_HANDLE can grab a reference to copied ->f_path and
-> let the file go; results in simpler control flow - cleanup is
-> the same for both "by descriptor" and "by pathname" cases.
-> 	NOTE: grabbing f->f_path to pin file_inode(f) is valid, since
-> we are dealing with XFS files here - no reassignments of file_inode().
-> 
-> 18/19) convert kernel/events/core.c
-> 	a questionable trick in perf_event_open(2) - deliberate call of
-> fdget(-1), expecting it to yield empty
-> 
-> 19/19) deal with the last remaing boolean uses of fd_file()
-> 	... replacing them with uses of fd_empty()
+T24gRnJpLCAyMDI0LTA2LTA3IGF0IDA3OjI5ICswMjAwLCBoY2hAbHN0LmRlIHdyb3RlOg0KPiBP
+biBGcmksIE1heSAzMSwgMjAyNCBhdCAwODoxNDo0M0FNICswMjAwLCBoY2hAbHN0LmRlwqB3cm90
+ZToNCj4gPiBPbiBXZWQsIE1heSAyOSwgMjAyNCBhdCAwOTo1OTo0NFBNICswMDAwLCBUcm9uZCBN
+eWtsZWJ1c3Qgd3JvdGU6DQo+ID4gPiBXaGljaCB0cmVlIGRpZCB5b3UgaW50ZW5kIHRvIG1lcmdl
+IHRoaXMgdGhyb3VnaD8gV2lsbHkncyBvciBBbm5hDQo+ID4gPiBhbmQNCj4gPiA+IG1pbmU/IEkn
+bSBPSyBlaXRoZXIgd2F5LiBJIGp1c3Qgd2FudCB0byBtYWtlIHN1cmUgd2UncmUgb24gdGhlDQo+
+ID4gPiBzYW1lDQo+ID4gPiBwYWdlLg0KPiA+IA0KPiA+IEknbSBwZXJmZWN0bHkgZmluZSBlaXRo
+ZXIgd2F5IHRvby7CoCBJZiB3aWxseSB3YW50cyB0byBnZXQgYW55IG90aGVyDQo+ID4gd29yayBm
+b3IgZ2VuZXJpY19wZXJmb3JtX3dyaXRlIGluIGFzIHBlciBoaXMgUkZDIHBhdGNoZXMgdGhlDQo+
+ID4gcGFnZWNhY2hlDQo+ID4gdHJlZSBtaWdodCBiZSBhIGJldHRlciBwbGFjZSwgaWYgbm90IG1h
+eWJlIHRoZSBuZnMgdHJlZS4NCj4gDQo+IFRoYXQgbWFpbnRhaW5lciBjZWxlYnJpdHkgZGVhdGgg
+bWF0Y2ggd2FzIGEgYml0IGJvcmluZyA6KcKgIEFueQ0KPiB0YWtlcnM/DQo+IA0KDQrwn5mCIFdl
+J2xsIHB1c2ggdGhlbSB0aHJvdWdoIHRoZSBORlMgdHJlZS4NCg0KLS0gDQpUcm9uZCBNeWtsZWJ1
+c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25kLm15a2xl
+YnVzdEBoYW1tZXJzcGFjZS5jb20NCg0KDQo=
 
