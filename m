@@ -1,353 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-21137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D718FF892
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:15:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7858FF9BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 03:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495C7B212B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 00:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE32282C97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 01:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D060323AD;
-	Fri,  7 Jun 2024 00:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DA111CBD;
+	Fri,  7 Jun 2024 01:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n37H05bj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gfWnCPgO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415A7E9
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 00:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA1F10A24
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 01:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717719296; cv=none; b=cMpVDAQ3GjzOL7I7n1gIq7f1Rq9bki8Vj2vq2JSvIcErMoRO1tiyFrJdIdpGiptPV68iMthmkaTUp2DtFfPSc9fIIy9fM5urXx9+AT3hHUlSGIuQGAw9NitsgzI17JpZGWThHSU5fcJTfiB7sThHJFiByKZfHxzr4F/uQ/Eq2Qs=
+	t=1717725005; cv=none; b=rRdrvuGGokkA1NOQmC3UikHNp75qhuRoF7T/y1f4HclY2R2Wfmp+NjYcrm68NgaEDQ9Pfxp6Q1joCNRY2gudYpPH8fWDLCQlcz4gqcGZT5gYTYAfRzaErExZwi8V8rC6RhfYqb98RCQWpZcyvee/5lic/zZvEP+WzTgCPXG2Dnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717719296; c=relaxed/simple;
-	bh=ELaO09jTIhdzgXvmdO2g4ynqTY+hfPvxTzC9Nf1ua1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nUwHGVikw3MUVNwFTyxdZKE1gJOqhlUTQbuKtrjVeALgiDgjGtXjyItOO6FySwAAK/UY1lONZug1d39mZLeDmYBi1V/lcTv+NlbCjJQETn/ZrrmdqI1w/xK0qSx04PRprGDN6G2rRLJmDWxgeqrZ3Ak+hjs4YTzqXZE3t3pcePA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n37H05bj; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfa48f505a3so1665374276.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 17:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717719293; x=1718324093; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+eF3WC0S/6RgLrCcIQVGlYiaYG+UbXjTsmyozrkqgz8=;
-        b=n37H05bjQsoXP+fkV2I10fesDdEmCmZXQeI04FG+th9i6KEFqrSi4OhtxmjfXfPfg/
-         +tJppMBRxPh7ppBd13F31agt9JOoTKA/TmaBjapF6WLfOkFWawYQKefY1yAUuSYP5pJP
-         8MS+h33OjdccnvvR/Mmc2LxQF4eubnDJclJoVkSbj8EHviloV5sj/0PR2r8qOK+24GqE
-         FeQrhBcxlJGD1AmT0/8iURP/pa77Kh68SRqT3GBmJcNud8TfPhU9osrykztmLTo9W7Cp
-         AYJ0bnZSuY6I041mVjqeOhP+Mpvp9M5OMBxXAKG8DHk+Fkc9ZlGuliDFms74rExJ9/r0
-         z4Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717719293; x=1718324093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+eF3WC0S/6RgLrCcIQVGlYiaYG+UbXjTsmyozrkqgz8=;
-        b=r5fnUZNwU+7focOowni6x7951RhyQ1W7oJMUx9YwIs78KuDc6FDVEMtSR85rHDvMf7
-         1JGVGx9JCLm1IohCat/dra6VhCj/iBE2aBJ8l/FE7wiK81ipRxV6M+PGtj6V7Rg8Ozxx
-         A4jpfapQ5R1GAvp1gzW8usjUfbqn4Hi9JGtg6i1w8kHjS0kE6fnxhXguNE56QTN9AItW
-         7lOi4CrwFaVXpeZ4r/iDvUGdfkvmoIRRiTZKs9+aNIDnXTfdvOGm6P7OhdsW1Q9bWBkV
-         BFCwW77Gg2Z039JZDrjA/evZzy4d8hoc19r83YjK+2W/P9PbdCaihsw6/bj57R8svosB
-         DLGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkbNvk7zNp1jPj/C739+VrtYsgVA2Tdba0wcj8jmkgUwRBAV0a1zlOir8+AwNEjMDawdDWDmlaGbUVBGoGQK+B8/8LITJkikk1R51gPQ==
-X-Gm-Message-State: AOJu0YychQXrrXz8E6BOnHenwtyNHSv3p8k4rG0e7ys6ruT3h62BWG7s
-	l4dUAvpzm7MlXf2Ebu5cJJ8GRshvZ9zzXLnZEE3xzN7OeEvVEs8kHoC/evn75xd1HiVj8wj3jsf
-	ZqPt8IKESQa5vsdH1uEzWVMVIp90hl16i/dyV
-X-Google-Smtp-Source: AGHT+IEdhMX0D8OjtW6dAblDMt6aDio5sK4QaHdcTMdMHidp0Gqnq5XSOtYVRNrhNlpXIlzh8dUCogC6KyQhG1f6eKA=
-X-Received: by 2002:a25:ef50:0:b0:df1:ce95:5490 with SMTP id
- 3f1490d57ef6-dfaf65c6857mr944656276.18.1717719293250; Thu, 06 Jun 2024
- 17:14:53 -0700 (PDT)
+	s=arc-20240116; t=1717725005; c=relaxed/simple;
+	bh=yHu4MIT8ArMtnYCHIPL7t66IA1H1cKrrnc6xNtyy9/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kc+Hefej4qJCVilNYDuPIclmNGQrI7I+FI90NNmGicFYx4UJU01gX+fwx01cb0N0NGrmoq2BxWMj9qs8/xN8q6hOA1uF4EGgPi9LX5+CbxvaMEXcNgHTxJgKLXIuLSefMVhGK5Kosc7fVmlbmHoh6N1yf44d2er4t+/CsI5OFoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gfWnCPgO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717725002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZkAPm8DbDW67h9USLeOSVGxamhmKQHZK3DhyTSz3PxI=;
+	b=gfWnCPgOwwogQL2iOqB3tkjOJFanA0hxU1ayhlhS/wRJvuzHlXC6lKNNE0MeGnM7TxkeQM
+	t8xwRj9a9zSY9dbB7Fxe0huJcjy5DR9PE2imANtIv7es/WfiOz1S/1JieiThftbfAuuXjo
+	zCzh0oAhv/5vm3lxMtvVeHdGIvRXUAw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-228-91H9ln_-Nae7KsgSWjADwQ-1; Thu, 06 Jun 2024 21:49:58 -0400
+X-MC-Unique: 91H9ln_-Nae7KsgSWjADwQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BBF6685A588;
+	Fri,  7 Jun 2024 01:49:57 +0000 (UTC)
+Received: from localhost (unknown [10.39.192.6])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 9F461408A402;
+	Fri,  7 Jun 2024 01:49:56 +0000 (UTC)
+Date: Thu, 6 Jun 2024 21:49:54 -0400
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	Bernd Schubert <bernd.schubert@fastmail.fm>, linux-mm@kvack.org,
+	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
+	kwolf@redhat.com
+Subject: Re: [PATCH 0/5] sys_ringbuffer
+Message-ID: <20240607014954.GA219708@fedora.redhat.com>
+References: <20240603003306.2030491-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531163217.1584450-1-Liam.Howlett@oracle.com> <20240531163217.1584450-3-Liam.Howlett@oracle.com>
-In-Reply-To: <20240531163217.1584450-3-Liam.Howlett@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 6 Jun 2024 17:14:40 -0700
-Message-ID: <CAJuCfpFDW-=35GyRikn3-yZPPrKx_aFbaJj-yFqGut4dJfCsdw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/5] mm/mmap: Split do_vmi_align_munmap() into a
- gather and complete operation
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	sidhartha.kumar@oracle.com, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="j/CfATJu0W0vRWqP"
+Content-Disposition: inline
+In-Reply-To: <20240603003306.2030491-1-kent.overstreet@linux.dev>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+
+
+--j/CfATJu0W0vRWqP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 9:33=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> Split the munmap function into a gathering of vmas and a cleanup of the
-> gathered vmas.  This is necessary for the later patches in the series.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+On Sun, Jun 02, 2024 at 08:32:57PM -0400, Kent Overstreet wrote:
+> New syscall for mapping generic ringbuffers for arbitary (supported)
+> file descriptors.
+>=20
+> Ringbuffers can be created either when requested or at file open time,
+> and can be mapped into multiple address spaces (naturally, since files
+> can be shared as well).
+>=20
+> Initial motivation is for fuse, but I plan on adding support to pipes
+> and possibly sockets as well - pipes are a particularly interesting use
+> case, because if both the sender and receiver of a pipe opt in to the
+> new ringbuffer interface, we can make them the _same_ ringbuffer for
+> true zero copy IO, while being backwards compatible with existing pipes.
 
-The refactoring looks correct but it's quite painful to verify all the
-pieces. Not sure if it could have been refactored in more gradual
-steps...
+Hi Kent,
+I recently came across a similar use case where the ability to "upgrade"
+an fd into a more efficient interface would be useful like in this pipe
+scenario you are describing.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+My use case is when you have a block device using the ublk driver. ublk
+lets userspace servers implement block devices. ublk is great when
+compatibility is required with applications that expect block device
+fds, but when an application is willing to implement a shared memory
+interface to communicate directly with the ublk server then going
+through a block device is inefficient.
 
-> ---
->  mm/mmap.c | 143 ++++++++++++++++++++++++++++++++++++++----------------
->  1 file changed, 101 insertions(+), 42 deletions(-)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 31d464e6a656..fad40d604c64 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2340,6 +2340,7 @@ static inline void remove_mt(struct mm_struct *mm, =
-struct ma_state *mas)
->
->                 if (vma->vm_flags & VM_ACCOUNT)
->                         nr_accounted +=3D nrpages;
-> +
+In my case the application is QEMU, where the virtual machine runs a
+virtio-blk driver that could talk directly to the ublk server via
+vhost-user-blk. vhost-user-blk is a protocol that allows the virtual
+machine to talk directly to the ublk server via shared memory without
+going through QEMU or the host kernel block layer.
 
-nit: here and below a couple of unnecessary empty lines.
+QEMU would need a way to upgrade from a ublk block device file to a
+vhost-user socket. Just like in your pipe example, this approach relies
+on being able to go from a "compatibility" fd to a more efficient
+interface gracefully when both sides support this feature.
 
->                 vm_stat_account(mm, vma->vm_flags, -nrpages);
->                 remove_vma(vma, false);
->         }
-> @@ -2545,33 +2546,45 @@ struct vm_area_struct *vma_merge_extend(struct vm=
-a_iterator *vmi,
->                          vma->vm_userfaultfd_ctx, anon_vma_name(vma));
->  }
->
-> +
-> +static inline void abort_munmap_vmas(struct ma_state *mas_detach)
-> +{
-> +       struct vm_area_struct *vma;
-> +       int limit;
-> +
-> +       limit =3D mas_detach->index;
-> +       mas_set(mas_detach, 0);
-> +       /* Re-attach any detached VMAs */
-> +       mas_for_each(mas_detach, vma, limit)
-> +               vma_mark_detached(vma, false);
-> +
-> +       __mt_destroy(mas_detach->tree);
-> +}
-> +
->  /*
-> - * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
-.
-> + * vmi_gather_munmap_vmas() - Put all VMAs within a range into a maple t=
-ree
-> + * for removal at a later date.  Handles splitting first and last if nec=
-essary
-> + * and marking the vmas as isolated.
-> + *
->   * @vmi: The vma iterator
->   * @vma: The starting vm_area_struct
->   * @mm: The mm_struct
->   * @start: The aligned start address to munmap.
->   * @end: The aligned end address to munmap.
->   * @uf: The userfaultfd list_head
-> - * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
-n
-> - * success.
-> + * @mas_detach: The maple state tracking the detached tree
->   *
-> - * Return: 0 on success and drops the lock if so directed, error and lea=
-ves the
-> - * lock held otherwise.
-> + * Return: 0 on success
->   */
->  static int
-> -do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
-,
-> +vmi_gather_munmap_vmas(struct vma_iterator *vmi, struct vm_area_struct *=
-vma,
->                     struct mm_struct *mm, unsigned long start,
-> -                   unsigned long end, struct list_head *uf, bool unlock)
-> +                   unsigned long end, struct list_head *uf,
-> +                   struct ma_state *mas_detach, unsigned long *locked_vm=
-)
->  {
-> -       struct vm_area_struct *prev, *next =3D NULL;
-> -       struct maple_tree mt_detach;
-> -       int count =3D 0;
-> +       struct vm_area_struct *next =3D NULL;
->         int error =3D -ENOMEM;
-> -       unsigned long locked_vm =3D 0;
-> -       MA_STATE(mas_detach, &mt_detach, 0, 0);
-> -       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
-_MASK);
-> -       mt_on_stack(mt_detach);
-> +       int count =3D 0;
->
->         /*
->          * If we need to split any vma, do it now to save pain later.
-> @@ -2610,15 +2623,14 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
-uct vm_area_struct *vma,
->                                 goto end_split_failed;
->                 }
->                 vma_start_write(next);
-> -               mas_set(&mas_detach, count);
-> -               error =3D mas_store_gfp(&mas_detach, next, GFP_KERNEL);
-> +               mas_set(mas_detach, count++);
-> +               if (next->vm_flags & VM_LOCKED)
-> +                       *locked_vm +=3D vma_pages(next);
-> +
-> +               error =3D mas_store_gfp(mas_detach, next, GFP_KERNEL);
->                 if (error)
->                         goto munmap_gather_failed;
->                 vma_mark_detached(next, true);
-> -               if (next->vm_flags & VM_LOCKED)
-> -                       locked_vm +=3D vma_pages(next);
-> -
-> -               count++;
->                 if (unlikely(uf)) {
->                         /*
->                          * If userfaultfd_unmap_prep returns an error the=
- vmas
-> @@ -2643,7 +2655,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, struc=
-t vm_area_struct *vma,
->  #if defined(CONFIG_DEBUG_VM_MAPLE_TREE)
->         /* Make sure no VMAs are about to be lost. */
->         {
-> -               MA_STATE(test, &mt_detach, 0, 0);
-> +               MA_STATE(test, mas_detach->tree, 0, 0);
->                 struct vm_area_struct *vma_mas, *vma_test;
->                 int test_count =3D 0;
->
-> @@ -2663,13 +2675,29 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
-uct vm_area_struct *vma,
->         while (vma_iter_addr(vmi) > start)
->                 vma_iter_prev_range(vmi);
->
-> -       error =3D vma_iter_clear_gfp(vmi, start, end, GFP_KERNEL);
-> -       if (error)
-> -               goto clear_tree_failed;
-> +       return 0;
->
-> -       /* Point of no return */
-> -       mm->locked_vm -=3D locked_vm;
-> +userfaultfd_error:
-> +munmap_gather_failed:
-> +end_split_failed:
-> +       abort_munmap_vmas(mas_detach);
-> +start_split_failed:
-> +map_count_exceeded:
-> +       return error;
-> +}
-> +
-> +static void
-> +vmi_complete_munmap_vmas(struct vma_iterator *vmi, struct vm_area_struct=
- *vma,
-> +               struct mm_struct *mm, unsigned long start,
-> +               unsigned long end, bool unlock, struct ma_state *mas_deta=
-ch,
-> +               unsigned long locked_vm)
-> +{
-> +       struct vm_area_struct *prev, *next;
-> +       int count;
-> +
-> +       count =3D mas_detach->index + 1;
->         mm->map_count -=3D count;
-> +       mm->locked_vm -=3D locked_vm;
->         if (unlock)
->                 mmap_write_downgrade(mm);
->
-> @@ -2682,30 +2710,61 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
-uct vm_area_struct *vma,
->          * We can free page tables without write-locking mmap_lock becaus=
-e VMAs
->          * were isolated before we downgraded mmap_lock.
->          */
-> -       mas_set(&mas_detach, 1);
-> -       unmap_region(mm, &mas_detach, vma, prev, next, start, end, count,
-> +       mas_set(mas_detach, 1);
-> +       unmap_region(mm, mas_detach, vma, prev, next, start, end, count,
->                      !unlock);
->         /* Statistics and freeing VMAs */
-> -       mas_set(&mas_detach, 0);
-> -       remove_mt(mm, &mas_detach);
-> +       mas_set(mas_detach, 0);
-> +       remove_mt(mm, mas_detach);
->         validate_mm(mm);
->         if (unlock)
->                 mmap_read_unlock(mm);
->
-> -       __mt_destroy(&mt_detach);
-> -       return 0;
-> +       __mt_destroy(mas_detach->tree);
-> +}
->
-> -clear_tree_failed:
-> -userfaultfd_error:
-> -munmap_gather_failed:
-> -end_split_failed:
-> -       mas_set(&mas_detach, 0);
-> -       mas_for_each(&mas_detach, next, end)
-> -               vma_mark_detached(next, false);
-> +/*
-> + * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
-.
-> + * @vmi: The vma iterator
-> + * @vma: The starting vm_area_struct
-> + * @mm: The mm_struct
-> + * @start: The aligned start address to munmap.
-> + * @end: The aligned end address to munmap.
-> + * @uf: The userfaultfd list_head
-> + * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
-n
-> + * success.
-> + *
-> + * Return: 0 on success and drops the lock if so directed, error and lea=
-ves the
-> + * lock held otherwise.
-> + */
-> +static int
-> +do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
-,
-> +                   struct mm_struct *mm, unsigned long start,
-> +                   unsigned long end, struct list_head *uf, bool unlock)
-> +{
-> +       struct maple_tree mt_detach;
-> +       MA_STATE(mas_detach, &mt_detach, 0, 0);
-> +       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
-_MASK);
-> +       mt_on_stack(mt_detach);
-> +       int error;
-> +       unsigned long locked_vm =3D 0;
->
-> -       __mt_destroy(&mt_detach);
-> -start_split_failed:
-> -map_count_exceeded:
-> +       error =3D vmi_gather_munmap_vmas(vmi, vma, mm, start, end, uf,
-> +                                      &mas_detach, &locked_vm);
-> +       if (error)
-> +               goto gather_failed;
-> +
-> +       error =3D vma_iter_clear_gfp(vmi, start, end, GFP_KERNEL);
-> +       if (error)
-> +               goto clear_area_failed;
-> +
-> +       vmi_complete_munmap_vmas(vmi, vma, mm, start, end, unlock, &mas_d=
-etach,
-> +                                locked_vm);
-> +       return 0;
-> +
-> +clear_area_failed:
-> +       abort_munmap_vmas(&mas_detach);
-> +gather_failed:
->         validate_mm(mm);
->         return error;
->  }
-> --
-> 2.43.0
->
+The generic ringbuffer approach in this series would not work for
+the vhost-user protocol because the client must be able to provide its
+own memory and file descriptor passing is needed in general. The
+protocol spec is here:
+https://gitlab.com/qemu-project/qemu/-/blob/master/docs/interop/vhost-user.=
+rst
+
+A different way to approach the fd upgrading problem is to treat this as
+an AF_UNIX connectivity feature rather than a new ring buffer API.
+Imagine adding a new address type to AF_UNIX for looking up connections
+in a struct file (e.g. the pipe fd) instead of on the file system (or
+the other AF_UNIX address types).
+
+The first program creates the pipe and also an AF_UNIX socket. It calls
+bind(2) on the socket with the sockaddr_un path
+"/dev/self/fd/<fd>/<discriminator>" where fd is a pipe fd and
+discriminator is a string like "ring-buffer" that describes the
+service/protocol. The AF_UNIX kernel code parses this special path and
+stores an association with the pipe file for future connect(2) calls.
+The program listens on the AF_UNIX socket and then continues doing its
+stuff.
+
+The second program runs and inherits the pipe fd on stdin. It creates an
+AF_UNIX socket and attempts to connect(2) to
+"/dev/self/fd/0/ring-buffer". The AF_UNIX kernel code parses this
+special path and establishes a connection between the connecting and
+listening sockets inside the pipe fd's struct file. If connect(2) fails
+then the second program knows that this is an ordinary pipe that does
+not support upgrading to ring buffer operation.
+
+Now the AF_UNIX socket can be used to pass shared memory for the ring
+buffer and futexes. This AF_UNIX approach also works for my ublk block
+device to vhost-user-blk upgrade use case. It does not require a new
+ring buffer API but instead involves extending AF_UNIX.
+
+You have more use cases than just the pipe scenario, maybe my half-baked
+idea won't cover all of them, but I wanted to see what you think.
+
+Stefan
+
+> the ringbuffer_wait and ringbuffer_wakeup syscalls are probably going
+> away in a future iteration, in favor of just using futexes.
+>=20
+> In my testing, reading/writing from the ringbuffer 16 bytes at a time is
+> ~7x faster than using read/write syscalls - and I was testing with
+> mitigations off, real world benefit will be even higher.
+>=20
+> Kent Overstreet (5):
+>   darray: lift from bcachefs
+>   darray: Fix darray_for_each_reverse() when darray is empty
+>   fs: sys_ringbuffer
+>   ringbuffer: Test device
+>   ringbuffer: Userspace test helper
+>=20
+>  MAINTAINERS                             |   7 +
+>  arch/x86/entry/syscalls/syscall_32.tbl  |   3 +
+>  arch/x86/entry/syscalls/syscall_64.tbl  |   3 +
+>  fs/Makefile                             |   2 +
+>  fs/bcachefs/Makefile                    |   1 -
+>  fs/bcachefs/btree_types.h               |   2 +-
+>  fs/bcachefs/btree_update.c              |   2 +
+>  fs/bcachefs/btree_write_buffer_types.h  |   2 +-
+>  fs/bcachefs/fsck.c                      |   2 +-
+>  fs/bcachefs/journal_io.h                |   2 +-
+>  fs/bcachefs/journal_sb.c                |   2 +-
+>  fs/bcachefs/sb-downgrade.c              |   3 +-
+>  fs/bcachefs/sb-errors_types.h           |   2 +-
+>  fs/bcachefs/sb-members.h                |   3 +-
+>  fs/bcachefs/subvolume.h                 |   1 -
+>  fs/bcachefs/subvolume_types.h           |   2 +-
+>  fs/bcachefs/thread_with_file_types.h    |   2 +-
+>  fs/bcachefs/util.h                      |  28 +-
+>  fs/ringbuffer.c                         | 474 ++++++++++++++++++++++++
+>  fs/ringbuffer_test.c                    | 209 +++++++++++
+>  {fs/bcachefs =3D> include/linux}/darray.h |  61 +--
+>  include/linux/darray_types.h            |  22 ++
+>  include/linux/fs.h                      |   2 +
+>  include/linux/mm_types.h                |   4 +
+>  include/linux/ringbuffer_sys.h          |  18 +
+>  include/uapi/linux/futex.h              |   1 +
+>  include/uapi/linux/ringbuffer_sys.h     |  40 ++
+>  init/Kconfig                            |   9 +
+>  kernel/fork.c                           |   2 +
+>  lib/Kconfig.debug                       |   5 +
+>  lib/Makefile                            |   2 +-
+>  {fs/bcachefs =3D> lib}/darray.c           |  12 +-
+>  tools/ringbuffer/Makefile               |   3 +
+>  tools/ringbuffer/ringbuffer-test.c      | 254 +++++++++++++
+>  34 files changed, 1125 insertions(+), 62 deletions(-)
+>  create mode 100644 fs/ringbuffer.c
+>  create mode 100644 fs/ringbuffer_test.c
+>  rename {fs/bcachefs =3D> include/linux}/darray.h (63%)
+>  create mode 100644 include/linux/darray_types.h
+>  create mode 100644 include/linux/ringbuffer_sys.h
+>  create mode 100644 include/uapi/linux/ringbuffer_sys.h
+>  rename {fs/bcachefs =3D> lib}/darray.c (56%)
+>  create mode 100644 tools/ringbuffer/Makefile
+>  create mode 100644 tools/ringbuffer/ringbuffer-test.c
+>=20
+> --=20
+> 2.45.1
+>=20
+
+--j/CfATJu0W0vRWqP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmZiZ0IACgkQnKSrs4Gr
+c8jpagf7BxpNTX4pblcntzL0Y5rs9POU3DQY+Y6yg1MYsv0HdaYISgxeBqbwr4UG
+L4MrIpCbkGUJN4L4DJr+qdfv94JjiaGw7ULUjHF9U8e5rhqTiGXC6aOZAbjnIa1e
+OXHdQI/V35WkpEbynu7v//5H/be/dkw+6qy7wwyVupAsLm2Uk76QTl6ngvcoOaNv
+Z2sc6qWEXaAKIyPrB1PZPMPX7kSKiZtrdCy2y4OhFSfjD3A2kQApkhPk80UP6Z9f
+YftM/cNg154DPnItqD4vCH/PDGESy+ITBW9EEQ1PQz8Ydvi2ho31ZX43tSgCxppe
+EzRiR6Ano16JtNGo4usvXl+13k+2AA==
+=z2cS
+-----END PGP SIGNATURE-----
+
+--j/CfATJu0W0vRWqP--
+
 
