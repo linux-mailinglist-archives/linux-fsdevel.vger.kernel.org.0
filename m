@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-21242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8190900804
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 17:02:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B933E900801
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 17:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F15028C8B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 15:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95A31C22B90
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 15:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3179019B5A5;
-	Fri,  7 Jun 2024 14:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0E319B3EA;
+	Fri,  7 Jun 2024 14:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="FkxZmTeU"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="HNg2Zlay"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E219119B3FF;
-	Fri,  7 Jun 2024 14:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CA419B3D3;
+	Fri,  7 Jun 2024 14:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717772374; cv=none; b=mDxE0b59pGAbTKUNg88zAV7Lo13mROhtW43vdyAC8Vn7/7n1MknHAOmI9qwK29czZI8+Ngk/L5pw5cNHhds0dTSxgTX7oU34xeT46KoaE5q/+0BLMar7gAXXxDHLeiM0RN69/5uOpUnRfxXGUYJyS+3FwOCtEIhR8gEUXM1M450=
+	t=1717772371; cv=none; b=gpIWsCPO19bwDESepigZ3S1TbjhIe3rNMh2x4rfyrVLMiWJbWCDvvs1GilGIjKoZdsNZfl8Ihwk9FNla3f7B49eVi9g/Q/vGqr1PZvifvlJKQl4J59MbdgGdg/+y7PT9PLF/630WnZxgUe9N3Hui2gxT1l5jaGqOKAXgccHPLOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717772374; c=relaxed/simple;
-	bh=lbv0itGOzatp3n/PHe8lv107qcmBTcfYEIFSF2I5aD0=;
+	s=arc-20240116; t=1717772371; c=relaxed/simple;
+	bh=NEU1YKn8XdRoPS5041H7/m6H9yP7woEBYkHVucW3IbI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PTPFb205HTDuYMkxK+lbPJM3Q3TpsXUiPCd24Oz01eGN07LmJswkOwnRHk1Kpt6Yhw3A8ln93pbgawEfY3TlgOBe4+jD0HttBBrE2oMM8c+pdESr1ZMq6fcDsDpe4kXSeqxlDkof23NyI3OBsjptAUZaY4OIUNQMiO1MhuBgUcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=FkxZmTeU; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=SZJQhk4P+QJR2e1AGRG1TnvhfTNUNwNajqGDY42q5bg9FwrMV8PFHPnjdmpQwB86PhB7/mRphievfrso4YtT2JhPU7olgopj3y1iPiZ4O6m+4G5IXeW3umL32UyviNK8YupXs4bHOnH1AWnbA0hJU0RGQuhBz3nZKk668yAevKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=HNg2Zlay; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Vwkqt2MWmz9sjD;
-	Fri,  7 Jun 2024 16:59:22 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Vwkqy3GMxz9smQ;
+	Fri,  7 Jun 2024 16:59:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717772362;
+	s=MBO0001; t=1717772366;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Irw62N1JW6TXxSmdYHpkVdAv1s6RDr+2+xzjFjEPurM=;
-	b=FkxZmTeUQodjEwwEb75K+2zFPvV6b3JqGei1ApUQXuLQDxmDPz7MmaHI7SKOBUvLpmf/+6
-	RIG/chfBNPr6kotV6OPdDvQ2fwPorxEiUAdm4lDe/5yIeIzs6Lg5h1Hw/zyJ3o1NyHKRQq
-	kmed/ezABoj9DNu1Wa4aNFXxRIjx/Qn/Vol75q9M1CNMQMSfGRzNQwUMhcHAe6jVL088In
-	KZPehD/qjeDDVgFzm+4i5Nz9ZXZ+uuuIGrUE9KmBArwJl4NsL/bEQaSQuKxPcLwgZpiX1/
-	1jJOTZA699fY5g1ol6vT8/4maWJuppnAYwwt91laAD3wYIiOgszdFZcKO9WSRw==
+	bh=gcGImSYw6myhhr+aFoG6zYcMMyebatE1gThNoSCMqDI=;
+	b=HNg2Zlay2Z+TJiNAAL/h42UPCFPyyjecycy9Rzn3UPRWBgUjnJgbsCSIjM4WoHM1JTXBMX
+	hCfT1g6FDmQQYumow62hfgcTTyqWLaWigc8MLjlBgOs9U6Udn2Ufg9QXj3KCcR3HpLIQOn
+	EzIjcnhiQRKvFbHJz8ZhAcXMXtn+kf3u7YBF9+W6zny1XIDPiilEMmKiSzCUBL2MDZ8V5O
+	TZYFf27k5Kci3MKtZI63RCU84Fiw6g4YpkFOSs+k6O61zJw84mFhgXfNM3j2tCeWzGVWe5
+	gTVlByOdsdDkNx/NdTOKUzebiyJ03ma21W5BwlHvtkWZI9H2UZeReiue4sdvlg==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: david@fromorbit.com,
 	djwong@kernel.org,
@@ -70,9 +70,9 @@ Cc: mcgrof@kernel.org,
 	gost.dev@samsung.com,
 	cl@os.amperecomputing.com,
 	john.g.garry@oracle.com
-Subject: [PATCH v7 03/11] filemap: allocate mapping_min_order folios in the page cache
-Date: Fri,  7 Jun 2024 14:58:54 +0000
-Message-ID: <20240607145902.1137853-4-kernel@pankajraghav.com>
+Subject: [PATCH v7 04/11] readahead: allocate folios with mapping_min_order in readahead
+Date: Fri,  7 Jun 2024 14:58:55 +0000
+Message-ID: <20240607145902.1137853-5-kernel@pankajraghav.com>
 In-Reply-To: <20240607145902.1137853-1-kernel@pankajraghav.com>
 References: <20240607145902.1137853-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -82,154 +82,243 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4Vwkqt2MWmz9sjD
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-filemap_create_folio() and do_read_cache_folio() were always allocating
-folio of order 0. __filemap_get_folio was trying to allocate higher
-order folios when fgp_flags had higher order hint set but it will default
-to order 0 folio if higher order memory allocation fails.
+page_cache_ra_unbounded() was allocating single pages (0 order folios)
+if there was no folio found in an index. Allocate mapping_min_order folios
+as we need to guarantee the minimum order if it is set.
+When read_pages() is triggered and if a page is already present, check
+for truncation and move the ractl->_index by mapping_min_nrpages if that
+folio was truncated. This is done to ensure we keep the alignment
+requirement while adding a folio to the page cache.
 
-Supporting mapping_min_order implies that we guarantee each folio in the
-page cache has at least an order of mapping_min_order. When adding new
-folios to the page cache we must also ensure the index used is aligned to
-the mapping_min_order as the page cache requires the index to be aligned
-to the order of the folio.
+page_cache_ra_order() tries to allocate folio to the page cache with a
+higher order if the index aligns with that order. Modify it so that the
+order does not go below the mapping_min_order requirement of the page
+cache. This function will do the right thing even if the new_order passed
+is less than the mapping_min_order.
+When adding new folios to the page cache we must also ensure the index
+used is aligned to the mapping_min_order as the page cache requires the
+index to be aligned to the order of the folio.
 
-Co-developed-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+readahead_expand() is called from readahead aops to extend the range of
+the readahead so this function can assume ractl->_index to be aligned with
+min_order.
+
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- include/linux/pagemap.h | 20 ++++++++++++++++++++
- mm/filemap.c            | 26 ++++++++++++++++++--------
- 2 files changed, 38 insertions(+), 8 deletions(-)
+ mm/readahead.c | 85 +++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 71 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 228275e7049f..899b8d751768 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -439,6 +439,26 @@ unsigned int mapping_min_folio_order(const struct address_space *mapping)
- 	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
- }
- 
-+static inline unsigned long mapping_min_folio_nrpages(struct address_space *mapping)
-+{
-+	return 1UL << mapping_min_folio_order(mapping);
-+}
-+
-+/**
-+ * mapping_align_start_index() - Align starting index based on the min
-+ * folio order of the page cache.
-+ * @mapping: The address_space.
-+ *
-+ * Ensure the index used is aligned to the minimum folio order when adding
-+ * new folios to the page cache by rounding down to the nearest minimum
-+ * folio number of pages.
-+ */
-+static inline pgoff_t mapping_align_start_index(struct address_space *mapping,
-+						pgoff_t index)
-+{
-+	return round_down(index, mapping_min_folio_nrpages(mapping));
-+}
-+
- /*
-  * Large folio support currently depends on THP.  These dependencies are
-  * being worked on but are not yet fixed.
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 46c7a6f59788..8bb0d2bc93c5 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -859,6 +859,8 @@ noinline int __filemap_add_folio(struct address_space *mapping,
- 
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(folio_test_swapbacked(folio), folio);
-+	VM_BUG_ON_FOLIO(folio_order(folio) < mapping_min_folio_order(mapping),
-+			folio);
- 	mapping_set_update(&xas, mapping);
- 
- 	VM_BUG_ON_FOLIO(index & (folio_nr_pages(folio) - 1), folio);
-@@ -1919,8 +1921,10 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 		folio_wait_stable(folio);
- no_page:
- 	if (!folio && (fgp_flags & FGP_CREAT)) {
--		unsigned order = FGF_GET_ORDER(fgp_flags);
-+		unsigned int min_order = mapping_min_folio_order(mapping);
-+		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
- 		int err;
-+		index = mapping_align_start_index(mapping, index);
- 
- 		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
- 			gfp |= __GFP_WRITE;
-@@ -1943,7 +1947,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 			gfp_t alloc_gfp = gfp;
- 
- 			err = -ENOMEM;
--			if (order > 0)
-+			if (order > min_order)
- 				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 			folio = filemap_alloc_folio(alloc_gfp, order);
- 			if (!folio)
-@@ -1958,7 +1962,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 				break;
- 			folio_put(folio);
- 			folio = NULL;
--		} while (order-- > 0);
-+		} while (order-- > min_order);
- 
- 		if (err == -EEXIST)
- 			goto repeat;
-@@ -2447,13 +2451,16 @@ static int filemap_update_page(struct kiocb *iocb,
- }
- 
- static int filemap_create_folio(struct file *file,
--		struct address_space *mapping, pgoff_t index,
-+		struct address_space *mapping, loff_t pos,
- 		struct folio_batch *fbatch)
+diff --git a/mm/readahead.c b/mm/readahead.c
+index da34b28da02c..389cd802da63 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -206,9 +206,10 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 		unsigned long nr_to_read, unsigned long lookahead_size)
  {
- 	struct folio *folio;
- 	int error;
-+	unsigned int min_order = mapping_min_folio_order(mapping);
-+	pgoff_t index;
+ 	struct address_space *mapping = ractl->mapping;
+-	unsigned long index = readahead_index(ractl);
++	unsigned long ra_folio_index, index = readahead_index(ractl);
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
+-	unsigned long i = 0;
++	unsigned long mark, i = 0;
++	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
  
--	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
-+	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
-+				    min_order);
- 	if (!folio)
- 		return -ENOMEM;
+ 	/*
+ 	 * Partway through the readahead operation, we will have added
+@@ -223,6 +224,22 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 	unsigned int nofs = memalloc_nofs_save();
  
-@@ -2471,6 +2478,8 @@ static int filemap_create_folio(struct file *file,
- 	 * well to keep locking rules simple.
- 	 */
  	filemap_invalidate_lock_shared(mapping);
-+	/* index in PAGE units but aligned to min_order number of pages. */
-+	index = (pos >> (PAGE_SHIFT + min_order)) << min_order;
- 	error = filemap_add_folio(mapping, folio, index,
- 			mapping_gfp_constraint(mapping, GFP_KERNEL));
- 	if (error == -EEXIST)
-@@ -2531,8 +2540,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 	if (!folio_batch_count(fbatch)) {
- 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
- 			return -EAGAIN;
--		err = filemap_create_folio(filp, mapping,
--				iocb->ki_pos >> PAGE_SHIFT, fbatch);
-+		err = filemap_create_folio(filp, mapping, iocb->ki_pos, fbatch);
- 		if (err == AOP_TRUNCATED_PAGE)
- 			goto retry;
- 		return err;
-@@ -3748,9 +3756,11 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
- repeat:
- 	folio = filemap_get_folio(mapping, index);
- 	if (IS_ERR(folio)) {
--		folio = filemap_alloc_folio(gfp, 0);
-+		folio = filemap_alloc_folio(gfp,
++	index = mapping_align_start_index(mapping, index);
++
++	/*
++	 * As iterator `i` is aligned to min_nrpages, round_up the
++	 * difference between nr_to_read and lookahead_size to mark the
++	 * index that only has lookahead or "async_region" to set the
++	 * readahead flag.
++	 */
++	ra_folio_index = round_up(readahead_index(ractl) + nr_to_read - lookahead_size,
++				  min_nrpages);
++	mark = ra_folio_index - index;
++	if (index != readahead_index(ractl)) {
++		nr_to_read += readahead_index(ractl) - index;
++		ractl->_index = index;
++	}
++
+ 	/*
+ 	 * Preallocate as many pages as we will need.
+ 	 */
+@@ -230,7 +247,9 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 		struct folio *folio = xa_load(&mapping->i_pages, index + i);
+ 		int ret;
+ 
++
+ 		if (folio && !xa_is_value(folio)) {
++			long nr_pages = folio_nr_pages(folio);
+ 			/*
+ 			 * Page already present?  Kick off the current batch
+ 			 * of contiguous pages before continuing with the
+@@ -240,12 +259,24 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 			 * not worth getting one just for that.
+ 			 */
+ 			read_pages(ractl);
+-			ractl->_index += folio_nr_pages(folio);
++
++			/*
++			 * Move the ractl->_index by at least min_pages
++			 * if the folio got truncated to respect the
++			 * alignment constraint in the page cache.
++			 *
++			 */
++			if (mapping != folio->mapping)
++				nr_pages = min_nrpages;
++
++			VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
++			ractl->_index += nr_pages;
+ 			i = ractl->_index + ractl->_nr_pages - index;
+ 			continue;
+ 		}
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask,
 +					    mapping_min_folio_order(mapping));
  		if (!folio)
- 			return ERR_PTR(-ENOMEM);
+ 			break;
+ 
+@@ -255,11 +286,11 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 			if (ret == -ENOMEM)
+ 				break;
+ 			read_pages(ractl);
+-			ractl->_index++;
++			ractl->_index += min_nrpages;
+ 			i = ractl->_index + ractl->_nr_pages - index;
+ 			continue;
+ 		}
+-		if (i == nr_to_read - lookahead_size)
++		if (i == mark)
+ 			folio_set_readahead(folio);
+ 		ractl->_workingset |= folio_test_workingset(folio);
+ 		ractl->_nr_pages += folio_nr_pages(folio);
+@@ -493,13 +524,19 @@ void page_cache_ra_order(struct readahead_control *ractl,
+ {
+ 	struct address_space *mapping = ractl->mapping;
+ 	pgoff_t index = readahead_index(ractl);
++	unsigned int min_order = mapping_min_folio_order(mapping);
+ 	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
+ 	pgoff_t mark = index + ra->size - ra->async_size;
+ 	unsigned int nofs;
+ 	int err = 0;
+ 	gfp_t gfp = readahead_gfp_mask(mapping);
++	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
+ 
+-	if (!mapping_large_folio_support(mapping) || ra->size < 4)
++	/*
++	 * Fallback when size < min_nrpages as each folio should be
++	 * at least min_nrpages anyway.
++	 */
++	if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
+ 		goto fallback;
+ 
+ 	limit = min(limit, index + ra->size - 1);
+@@ -508,11 +545,20 @@ void page_cache_ra_order(struct readahead_control *ractl,
+ 		new_order += 2;
+ 		new_order = min(mapping_max_folio_order(mapping), new_order);
+ 		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
++		new_order = max(new_order, min_order);
+ 	}
+ 
+ 	/* See comment in page_cache_ra_unbounded() */
+ 	nofs = memalloc_nofs_save();
+ 	filemap_invalidate_lock_shared(mapping);
++	/*
++	 * If the new_order is greater than min_order and index is
++	 * already aligned to new_order, then this will be noop as index
++	 * aligned to new_order should also be aligned to min_order.
++	 */
++	ractl->_index = mapping_align_start_index(mapping, index);
++	index = readahead_index(ractl);
++
+ 	while (index <= limit) {
+ 		unsigned int order = new_order;
+ 
+@@ -520,7 +566,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
+ 		if (index & ((1UL << order) - 1))
+ 			order = __ffs(index);
+ 		/* Don't allocate pages past EOF */
+-		while (index + (1UL << order) - 1 > limit)
++		while (order > min_order && index + (1UL << order) - 1 > limit)
+ 			order--;
+ 		err = ra_alloc_folio(ractl, index, mark, order, gfp);
+ 		if (err)
+@@ -784,8 +830,15 @@ void readahead_expand(struct readahead_control *ractl,
+ 	struct file_ra_state *ra = ractl->ra;
+ 	pgoff_t new_index, new_nr_pages;
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
++	unsigned long min_nrpages = mapping_min_folio_nrpages(mapping);
++	unsigned int min_order = mapping_min_folio_order(mapping);
+ 
+ 	new_index = new_start / PAGE_SIZE;
++	/*
++	 * Readahead code should have aligned the ractl->_index to
++	 * min_nrpages before calling readahead aops.
++	 */
++	VM_BUG_ON(!IS_ALIGNED(ractl->_index, min_nrpages));
+ 
+ 	/* Expand the leading edge downwards */
+ 	while (ractl->_index > new_index) {
+@@ -795,9 +848,11 @@ void readahead_expand(struct readahead_control *ractl,
+ 		if (folio && !xa_is_value(folio))
+ 			return; /* Folio apparently present */
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask, min_order);
+ 		if (!folio)
+ 			return;
++
 +		index = mapping_align_start_index(mapping, index);
- 		err = filemap_add_folio(mapping, folio, index, gfp);
- 		if (unlikely(err)) {
+ 		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
  			folio_put(folio);
+ 			return;
+@@ -807,7 +862,7 @@ void readahead_expand(struct readahead_control *ractl,
+ 			ractl->_workingset = true;
+ 			psi_memstall_enter(&ractl->_pflags);
+ 		}
+-		ractl->_nr_pages++;
++		ractl->_nr_pages += min_nrpages;
+ 		ractl->_index = folio->index;
+ 	}
+ 
+@@ -822,9 +877,11 @@ void readahead_expand(struct readahead_control *ractl,
+ 		if (folio && !xa_is_value(folio))
+ 			return; /* Folio apparently present */
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask, min_order);
+ 		if (!folio)
+ 			return;
++
++		index = mapping_align_start_index(mapping, index);
+ 		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
+ 			folio_put(folio);
+ 			return;
+@@ -834,10 +891,10 @@ void readahead_expand(struct readahead_control *ractl,
+ 			ractl->_workingset = true;
+ 			psi_memstall_enter(&ractl->_pflags);
+ 		}
+-		ractl->_nr_pages++;
++		ractl->_nr_pages += min_nrpages;
+ 		if (ra) {
+-			ra->size++;
+-			ra->async_size++;
++			ra->size += min_nrpages;
++			ra->async_size += min_nrpages;
+ 		}
+ 	}
+ }
 -- 
 2.44.1
 
