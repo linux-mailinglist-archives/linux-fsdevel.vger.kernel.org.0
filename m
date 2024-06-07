@@ -1,209 +1,353 @@
-Return-Path: <linux-fsdevel+bounces-21136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32508FF7DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 00:55:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D718FF892
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1791F2303A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2024 22:55:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495C7B212B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 00:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211E313E041;
-	Thu,  6 Jun 2024 22:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D060323AD;
+	Fri,  7 Jun 2024 00:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWzImHRb"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n37H05bj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D02B13DDAD;
-	Thu,  6 Jun 2024 22:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415A7E9
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 00:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717714497; cv=none; b=euTb2emacBrl355YMMZevQwQdAv6tEJtW5nsR/2nVNePGPg9VbWpbP3tDszzUBTdJXK+nCs0+r0DoL/3yUAuO2KBZVZn1mNS7EuszSGWFT7tLtJSGNQH0i99IrelobegUCKkbV8muzS7cw4kILfW3vg5pFTGDohStVYd60XGyo8=
+	t=1717719296; cv=none; b=cMpVDAQ3GjzOL7I7n1gIq7f1Rq9bki8Vj2vq2JSvIcErMoRO1tiyFrJdIdpGiptPV68iMthmkaTUp2DtFfPSc9fIIy9fM5urXx9+AT3hHUlSGIuQGAw9NitsgzI17JpZGWThHSU5fcJTfiB7sThHJFiByKZfHxzr4F/uQ/Eq2Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717714497; c=relaxed/simple;
-	bh=Bzghvltxq1MRcY+oGehXBRSsz9rM21ZFVK/y+dmeIEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfLApbDVlZpqNevo9x1AShmgg1qefoi3OG35eADg8Sb4W030FOvefEpPBIiVdsE07P3+yGEVtTsdF2kZ3t/ie360LTmM1B9KmjwIHYF+pCDoXCB9kqa2/IKqmVgEmPt9p9lO8kIJGAwDEi82cuEgAPQCaOMjmZTlPjJB+RljT9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWzImHRb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303C7C4AF08;
-	Thu,  6 Jun 2024 22:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717714497;
-	bh=Bzghvltxq1MRcY+oGehXBRSsz9rM21ZFVK/y+dmeIEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MWzImHRb5mezFeKRbhID2aHf5Wk6kSepJ+7wId+axGmCKG4lmhfCE1ce6Gl4vExE5
-	 gFzZGd8MPmwMIxOk7NtjJvYGr7TW6iSGZLood2A74xAiuNC3DAKgMHjV5YCidZRF9L
-	 2hbANF5evlj2nM3ven1nmpNi2CMCQCdQ6M3dA637Nwy6ky1zISEVx+YMn71tPXbJ6F
-	 WZ95RrhTd7aTBO/IMyZQE9mkfDsD16Xh+zkyEVQtpn1lqT581kWg8ytUN2hCRqe//R
-	 jxCsvucnXWpgRj24tZcXlhxeKYtx1Eb5SKAiQRDUCIzTW5PQnu7E74ghqbugVyBOCX
-	 f2F+01yE4Uybw==
-Date: Thu, 6 Jun 2024 15:54:56 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and
- FS_IOC_FSGETXATTRAT
-Message-ID: <20240606225456.GP52987@frogsfrogsfrogs>
-References: <xne47dpalyqpstasgoepi4repm44b6g6rsntk2ln3aqhn4putw@4cen74g6453o>
- <20240524161101.yyqacjob42qjcbnb@quack3>
- <20240531145204.GJ52987@frogsfrogsfrogs>
- <20240603104259.gii7lfz2fg7lyrcw@quack3>
- <vbiskxttukwzhjoiic6toscqc6b2qekuwumfpzqp5vkxf6l6ia@pby5fjhlobrb>
- <20240603174259.GB52987@frogsfrogsfrogs>
- <20240604085843.q6qtmtitgefioj5m@quack3>
- <20240605003756.GH52987@frogsfrogsfrogs>
- <CAOQ4uxiVVL+9DEn9iJuWRixVNFKJchJHBB8otH8PjuC+j8ii4g@mail.gmail.com>
- <ZmEemh4++vMEwLNg@dread.disaster.area>
+	s=arc-20240116; t=1717719296; c=relaxed/simple;
+	bh=ELaO09jTIhdzgXvmdO2g4ynqTY+hfPvxTzC9Nf1ua1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nUwHGVikw3MUVNwFTyxdZKE1gJOqhlUTQbuKtrjVeALgiDgjGtXjyItOO6FySwAAK/UY1lONZug1d39mZLeDmYBi1V/lcTv+NlbCjJQETn/ZrrmdqI1w/xK0qSx04PRprGDN6G2rRLJmDWxgeqrZ3Ak+hjs4YTzqXZE3t3pcePA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n37H05bj; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfa48f505a3so1665374276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2024 17:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717719293; x=1718324093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+eF3WC0S/6RgLrCcIQVGlYiaYG+UbXjTsmyozrkqgz8=;
+        b=n37H05bjQsoXP+fkV2I10fesDdEmCmZXQeI04FG+th9i6KEFqrSi4OhtxmjfXfPfg/
+         +tJppMBRxPh7ppBd13F31agt9JOoTKA/TmaBjapF6WLfOkFWawYQKefY1yAUuSYP5pJP
+         8MS+h33OjdccnvvR/Mmc2LxQF4eubnDJclJoVkSbj8EHviloV5sj/0PR2r8qOK+24GqE
+         FeQrhBcxlJGD1AmT0/8iURP/pa77Kh68SRqT3GBmJcNud8TfPhU9osrykztmLTo9W7Cp
+         AYJ0bnZSuY6I041mVjqeOhP+Mpvp9M5OMBxXAKG8DHk+Fkc9ZlGuliDFms74rExJ9/r0
+         z4Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717719293; x=1718324093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+eF3WC0S/6RgLrCcIQVGlYiaYG+UbXjTsmyozrkqgz8=;
+        b=r5fnUZNwU+7focOowni6x7951RhyQ1W7oJMUx9YwIs78KuDc6FDVEMtSR85rHDvMf7
+         1JGVGx9JCLm1IohCat/dra6VhCj/iBE2aBJ8l/FE7wiK81ipRxV6M+PGtj6V7Rg8Ozxx
+         A4jpfapQ5R1GAvp1gzW8usjUfbqn4Hi9JGtg6i1w8kHjS0kE6fnxhXguNE56QTN9AItW
+         7lOi4CrwFaVXpeZ4r/iDvUGdfkvmoIRRiTZKs9+aNIDnXTfdvOGm6P7OhdsW1Q9bWBkV
+         BFCwW77Gg2Z039JZDrjA/evZzy4d8hoc19r83YjK+2W/P9PbdCaihsw6/bj57R8svosB
+         DLGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkbNvk7zNp1jPj/C739+VrtYsgVA2Tdba0wcj8jmkgUwRBAV0a1zlOir8+AwNEjMDawdDWDmlaGbUVBGoGQK+B8/8LITJkikk1R51gPQ==
+X-Gm-Message-State: AOJu0YychQXrrXz8E6BOnHenwtyNHSv3p8k4rG0e7ys6ruT3h62BWG7s
+	l4dUAvpzm7MlXf2Ebu5cJJ8GRshvZ9zzXLnZEE3xzN7OeEvVEs8kHoC/evn75xd1HiVj8wj3jsf
+	ZqPt8IKESQa5vsdH1uEzWVMVIp90hl16i/dyV
+X-Google-Smtp-Source: AGHT+IEdhMX0D8OjtW6dAblDMt6aDio5sK4QaHdcTMdMHidp0Gqnq5XSOtYVRNrhNlpXIlzh8dUCogC6KyQhG1f6eKA=
+X-Received: by 2002:a25:ef50:0:b0:df1:ce95:5490 with SMTP id
+ 3f1490d57ef6-dfaf65c6857mr944656276.18.1717719293250; Thu, 06 Jun 2024
+ 17:14:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmEemh4++vMEwLNg@dread.disaster.area>
+References: <20240531163217.1584450-1-Liam.Howlett@oracle.com> <20240531163217.1584450-3-Liam.Howlett@oracle.com>
+In-Reply-To: <20240531163217.1584450-3-Liam.Howlett@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 6 Jun 2024 17:14:40 -0700
+Message-ID: <CAJuCfpFDW-=35GyRikn3-yZPPrKx_aFbaJj-yFqGut4dJfCsdw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/5] mm/mmap: Split do_vmi_align_munmap() into a
+ gather and complete operation
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	sidhartha.kumar@oracle.com, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 12:27:38PM +1000, Dave Chinner wrote:
-> On Wed, Jun 05, 2024 at 08:13:15AM +0300, Amir Goldstein wrote:
-> > On Wed, Jun 5, 2024 at 3:38 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > On Tue, Jun 04, 2024 at 10:58:43AM +0200, Jan Kara wrote:
-> > > > On Mon 03-06-24 10:42:59, Darrick J. Wong wrote:
-> > > > > I do -- allowing unpriviledged users to create symlinks that consume
-> > > > > icount (and possibly bcount) in the root project breaks the entire
-> > > > > enforcement mechanism.  That's not the way that project quota has worked
-> > > > > on xfs and it would be quite rude to nullify the PROJINHERIT flag bit
-> > > > > only for these special cases.
-> > > >
-> > > > OK, fair enough. I though someone will hate this. I'd just like to
-> > > > understand one thing: Owner of the inode can change the project ID to 0
-> > > > anyway so project quotas are more like a cooperative space tracking scheme
-> > > > anyway. If you want to escape it, you can. So what are you exactly worried
-> > > > about? Is it the container usecase where from within the user namespace you
-> > > > cannot change project IDs?
-> > >
-> > > Yep.
-> > >
-> > > > Anyway I just wanted to have an explicit decision that the simple solution
-> > > > is not good enough before we go the more complex route ;).
-> > >
-> > > Also, every now and then someone comes along and half-proposes making it
-> > > so that non-root cannot change project ids anymore.  Maybe some day that
-> > > will succeed.
-> > >
-> > 
-> > I'd just like to point out that the purpose of the project quotas feature
-> > as I understand it, is to apply quotas to subtrees, where container storage
-> > is a very common private case of project subtree.
-> 
-> That is the most modern use case, yes.
-> 
-> [ And for a walk down history lane.... ]
+On Fri, May 31, 2024 at 9:33=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> Split the munmap function into a gathering of vmas and a cleanup of the
+> gathered vmas.  This is necessary for the later patches in the series.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-Could you take all your institutional knowledge and paste it into a
-Documentation/ file that we can use as a starting point for what exactly
-does the project quota design do, please?  I'm betting the other two
-filesystems that implement it (ext4/f2fs) don't quite implement the same
-behaviors.
+The refactoring looks correct but it's quite painful to verify all the
+pieces. Not sure if it could have been refactored in more gradual
+steps...
 
---D
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-> > The purpose is NOT to create a "project" of random files in random
-> > paths.
-> 
-> This is *exactly* the original use case that project quotas were
-> designed for back on Irix in the early 1990s and is the original
-> behaviour project quotas brought to Linux.
-> 
-> Project quota inheritance didn't come along until 2005:
-> 
-> commit 65f1866a3a8e512d43795c116bfef262e703b789
-> Author: Nathan Scott <nathans@sgi.com>
-> Date:   Fri Jun 3 06:04:22 2005 +0000
-> 
->     Add support for project quota inheritance, a merge of Glens changes.
->     Merge of xfs-linux-melb:xfs-kern:22806a by kenmcd.
-> 
-> And full support for directory tree quotas using project IDs wasn't
-> fully introduced until a year later in 2006:
-> 
-> commit 4aef4de4d04bcc36a1461c100eb940c162fd5ee6
-> Author: Nathan Scott <nathans@sgi.com>
-> Date:   Tue May 30 15:54:53 2006 +0000
-> 
->     statvfs component of directory/project quota support, code originally by Glen.
->     Merge of xfs-linux-melb:xfs-kern:26105a by kenmcd.
-> 
-> These changes were largely done for an SGI NAS product that allowed
-> us to create one great big XFS filesystem and then create
-> arbitrarily sized, thin provisoned  "NFS volumes"  as directory
-> quota controlled subdirs instantenously. The directory tree quota
-> defined the size of the volume, and so we could also grow and shrink
-> them instantenously, too. And we could remove them instantenously
-> via background garbage collection after the export was removed and
-> the user had been told it had been destroyed.
-> 
-> So that was the original use case for directory tree quotas on XFS -
-> providing scalable, fast management of "thin" storage for a NAS
-> product. Projects quotas had been used for accounting random
-> colections of files for over a decade before this directory quota
-> construct was created, and the "modern" container use cases for
-> directory quotas didn't come along until almost a decade after this
-> capability was added.
-> 
-> > My point is that changing the project id of a non-dir child to be different
-> > from the project id of its parent is a pretty rare use case (I think?).
-> 
-> Not if you are using project quotas as they were originally intended
-> to be used.
-> 
-> > If changing the projid of non-dir is needed for moving it to a
-> > different subtree,
-> > we could allow renameat2(2) of non-dir with no hardlinks to implicitly
-> > change its
-> > inherited project id or explicitly with a flag for a hardlink, e.g.:
-> > renameat2(olddirfd, name, newdirfd, name, RENAME_NEW_PROJID).
-> 
-> Why?
-> 
-> The only reason XFS returns -EXDEV to rename across project IDs is
-> because nobody wanted to spend the time to work out how to do the
-> quota accounting of the metadata changed in the rename operation
-> accurately. So for that rare case (not something that would happen
-> on the NAS product) we returned -EXDEV to trigger the mv command to
-> copy the file to the destination and then unlink the source instead,
-> thereby handling all the quota accounting correctly.
-> 
-> IOWs, this whole "-EXDEV on rename across parent project quota
-> boundaries" is an implementation detail and nothing more.
-> Filesystems that implement project quotas and the directory tree
-> sub-variant don't need to behave like this if they can accurately
-> account for the quota ID changes during an atomic rename operation.
-> If that's too hard, then the fallback is to return -EXDEV and let
-> userspace do it the slow way which will always acocunt the resource
-> usage correctly to the individual projects.
-> 
-> Hence I think we should just fix the XFS kernel behaviour to do the
-> right thing in this special file case rather than return -EXDEV and
-> then forget about the rest of it. Sure, update xfs_repair to fix the
-> special file project id issue if it trips over it, but other than
-> that I don't think we need anything more. If fixing it requires new
-> syscalls and tools, then that's much harder to backport to old
-> kernels and distros than just backporting a couple of small XFS
-> kernel patches...
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+> ---
+>  mm/mmap.c | 143 ++++++++++++++++++++++++++++++++++++++----------------
+>  1 file changed, 101 insertions(+), 42 deletions(-)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 31d464e6a656..fad40d604c64 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2340,6 +2340,7 @@ static inline void remove_mt(struct mm_struct *mm, =
+struct ma_state *mas)
+>
+>                 if (vma->vm_flags & VM_ACCOUNT)
+>                         nr_accounted +=3D nrpages;
+> +
+
+nit: here and below a couple of unnecessary empty lines.
+
+>                 vm_stat_account(mm, vma->vm_flags, -nrpages);
+>                 remove_vma(vma, false);
+>         }
+> @@ -2545,33 +2546,45 @@ struct vm_area_struct *vma_merge_extend(struct vm=
+a_iterator *vmi,
+>                          vma->vm_userfaultfd_ctx, anon_vma_name(vma));
+>  }
+>
+> +
+> +static inline void abort_munmap_vmas(struct ma_state *mas_detach)
+> +{
+> +       struct vm_area_struct *vma;
+> +       int limit;
+> +
+> +       limit =3D mas_detach->index;
+> +       mas_set(mas_detach, 0);
+> +       /* Re-attach any detached VMAs */
+> +       mas_for_each(mas_detach, vma, limit)
+> +               vma_mark_detached(vma, false);
+> +
+> +       __mt_destroy(mas_detach->tree);
+> +}
+> +
+>  /*
+> - * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
+.
+> + * vmi_gather_munmap_vmas() - Put all VMAs within a range into a maple t=
+ree
+> + * for removal at a later date.  Handles splitting first and last if nec=
+essary
+> + * and marking the vmas as isolated.
+> + *
+>   * @vmi: The vma iterator
+>   * @vma: The starting vm_area_struct
+>   * @mm: The mm_struct
+>   * @start: The aligned start address to munmap.
+>   * @end: The aligned end address to munmap.
+>   * @uf: The userfaultfd list_head
+> - * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
+n
+> - * success.
+> + * @mas_detach: The maple state tracking the detached tree
+>   *
+> - * Return: 0 on success and drops the lock if so directed, error and lea=
+ves the
+> - * lock held otherwise.
+> + * Return: 0 on success
+>   */
+>  static int
+> -do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
+,
+> +vmi_gather_munmap_vmas(struct vma_iterator *vmi, struct vm_area_struct *=
+vma,
+>                     struct mm_struct *mm, unsigned long start,
+> -                   unsigned long end, struct list_head *uf, bool unlock)
+> +                   unsigned long end, struct list_head *uf,
+> +                   struct ma_state *mas_detach, unsigned long *locked_vm=
+)
+>  {
+> -       struct vm_area_struct *prev, *next =3D NULL;
+> -       struct maple_tree mt_detach;
+> -       int count =3D 0;
+> +       struct vm_area_struct *next =3D NULL;
+>         int error =3D -ENOMEM;
+> -       unsigned long locked_vm =3D 0;
+> -       MA_STATE(mas_detach, &mt_detach, 0, 0);
+> -       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
+_MASK);
+> -       mt_on_stack(mt_detach);
+> +       int count =3D 0;
+>
+>         /*
+>          * If we need to split any vma, do it now to save pain later.
+> @@ -2610,15 +2623,14 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
+uct vm_area_struct *vma,
+>                                 goto end_split_failed;
+>                 }
+>                 vma_start_write(next);
+> -               mas_set(&mas_detach, count);
+> -               error =3D mas_store_gfp(&mas_detach, next, GFP_KERNEL);
+> +               mas_set(mas_detach, count++);
+> +               if (next->vm_flags & VM_LOCKED)
+> +                       *locked_vm +=3D vma_pages(next);
+> +
+> +               error =3D mas_store_gfp(mas_detach, next, GFP_KERNEL);
+>                 if (error)
+>                         goto munmap_gather_failed;
+>                 vma_mark_detached(next, true);
+> -               if (next->vm_flags & VM_LOCKED)
+> -                       locked_vm +=3D vma_pages(next);
+> -
+> -               count++;
+>                 if (unlikely(uf)) {
+>                         /*
+>                          * If userfaultfd_unmap_prep returns an error the=
+ vmas
+> @@ -2643,7 +2655,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, struc=
+t vm_area_struct *vma,
+>  #if defined(CONFIG_DEBUG_VM_MAPLE_TREE)
+>         /* Make sure no VMAs are about to be lost. */
+>         {
+> -               MA_STATE(test, &mt_detach, 0, 0);
+> +               MA_STATE(test, mas_detach->tree, 0, 0);
+>                 struct vm_area_struct *vma_mas, *vma_test;
+>                 int test_count =3D 0;
+>
+> @@ -2663,13 +2675,29 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
+uct vm_area_struct *vma,
+>         while (vma_iter_addr(vmi) > start)
+>                 vma_iter_prev_range(vmi);
+>
+> -       error =3D vma_iter_clear_gfp(vmi, start, end, GFP_KERNEL);
+> -       if (error)
+> -               goto clear_tree_failed;
+> +       return 0;
+>
+> -       /* Point of no return */
+> -       mm->locked_vm -=3D locked_vm;
+> +userfaultfd_error:
+> +munmap_gather_failed:
+> +end_split_failed:
+> +       abort_munmap_vmas(mas_detach);
+> +start_split_failed:
+> +map_count_exceeded:
+> +       return error;
+> +}
+> +
+> +static void
+> +vmi_complete_munmap_vmas(struct vma_iterator *vmi, struct vm_area_struct=
+ *vma,
+> +               struct mm_struct *mm, unsigned long start,
+> +               unsigned long end, bool unlock, struct ma_state *mas_deta=
+ch,
+> +               unsigned long locked_vm)
+> +{
+> +       struct vm_area_struct *prev, *next;
+> +       int count;
+> +
+> +       count =3D mas_detach->index + 1;
+>         mm->map_count -=3D count;
+> +       mm->locked_vm -=3D locked_vm;
+>         if (unlock)
+>                 mmap_write_downgrade(mm);
+>
+> @@ -2682,30 +2710,61 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
+uct vm_area_struct *vma,
+>          * We can free page tables without write-locking mmap_lock becaus=
+e VMAs
+>          * were isolated before we downgraded mmap_lock.
+>          */
+> -       mas_set(&mas_detach, 1);
+> -       unmap_region(mm, &mas_detach, vma, prev, next, start, end, count,
+> +       mas_set(mas_detach, 1);
+> +       unmap_region(mm, mas_detach, vma, prev, next, start, end, count,
+>                      !unlock);
+>         /* Statistics and freeing VMAs */
+> -       mas_set(&mas_detach, 0);
+> -       remove_mt(mm, &mas_detach);
+> +       mas_set(mas_detach, 0);
+> +       remove_mt(mm, mas_detach);
+>         validate_mm(mm);
+>         if (unlock)
+>                 mmap_read_unlock(mm);
+>
+> -       __mt_destroy(&mt_detach);
+> -       return 0;
+> +       __mt_destroy(mas_detach->tree);
+> +}
+>
+> -clear_tree_failed:
+> -userfaultfd_error:
+> -munmap_gather_failed:
+> -end_split_failed:
+> -       mas_set(&mas_detach, 0);
+> -       mas_for_each(&mas_detach, next, end)
+> -               vma_mark_detached(next, false);
+> +/*
+> + * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
+.
+> + * @vmi: The vma iterator
+> + * @vma: The starting vm_area_struct
+> + * @mm: The mm_struct
+> + * @start: The aligned start address to munmap.
+> + * @end: The aligned end address to munmap.
+> + * @uf: The userfaultfd list_head
+> + * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
+n
+> + * success.
+> + *
+> + * Return: 0 on success and drops the lock if so directed, error and lea=
+ves the
+> + * lock held otherwise.
+> + */
+> +static int
+> +do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
+,
+> +                   struct mm_struct *mm, unsigned long start,
+> +                   unsigned long end, struct list_head *uf, bool unlock)
+> +{
+> +       struct maple_tree mt_detach;
+> +       MA_STATE(mas_detach, &mt_detach, 0, 0);
+> +       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
+_MASK);
+> +       mt_on_stack(mt_detach);
+> +       int error;
+> +       unsigned long locked_vm =3D 0;
+>
+> -       __mt_destroy(&mt_detach);
+> -start_split_failed:
+> -map_count_exceeded:
+> +       error =3D vmi_gather_munmap_vmas(vmi, vma, mm, start, end, uf,
+> +                                      &mas_detach, &locked_vm);
+> +       if (error)
+> +               goto gather_failed;
+> +
+> +       error =3D vma_iter_clear_gfp(vmi, start, end, GFP_KERNEL);
+> +       if (error)
+> +               goto clear_area_failed;
+> +
+> +       vmi_complete_munmap_vmas(vmi, vma, mm, start, end, unlock, &mas_d=
+etach,
+> +                                locked_vm);
+> +       return 0;
+> +
+> +clear_area_failed:
+> +       abort_munmap_vmas(&mas_detach);
+> +gather_failed:
+>         validate_mm(mm);
+>         return error;
+>  }
+> --
+> 2.43.0
+>
 
