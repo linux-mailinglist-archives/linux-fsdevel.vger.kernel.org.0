@@ -1,229 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-21237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92B89007F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 17:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD489007F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 17:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2AD1C22FDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 15:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC50C28C348
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 15:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C775199255;
-	Fri,  7 Jun 2024 14:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421C619A2AC;
+	Fri,  7 Jun 2024 14:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuRsynMP"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="NLH1n10p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE9154660
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 14:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28F5197521;
+	Fri,  7 Jun 2024 14:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717772158; cv=none; b=FMmodOXYQUiSZ6XujHrO30qiOChI9lOIyzl9+YbRp6xvGXh90UjdahJXSajxCQ1nAp3q9PJeLwS99f2UxyMIAm282vDAICLeninjP7GiSsXqu3k86LOL8hOSWFP2CSwHQuBdax43L4WsSZxMAUT9JNQYiqzhtQ3fhVNGfWiUVAU=
+	t=1717772365; cv=none; b=SrrBPjlb58xQVYTc2j7yR2RND9FiRMFsYm+hSdP2JeP+MjUHPukTKLozrO2bdrS/fjRb1ocIoM835caATUbxHd0RHuE45nyqZOYiKK9C9wm0xhMBDZq5YvAfV/OkAvwxFUzi/43j7eq38R3Ib0X0xwHoNmXWx6DjXNvT2HRAdFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717772158; c=relaxed/simple;
-	bh=g7bulEmSdhtPayCYyl9eLgPHqmNEoIh5/t7WlOUgO5Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TZ11oxv2MLvHdIaHRkdynDG+E0aupXlgevQ4O7oo+MW7pXBTiVhXPYSWWAij6avkRDsmKKRFA+V4vvo2kRVNAEA9csxkhKFG6M0PM2btYDvwAtfJEtby5s05ONGeQSVZC59zkL7rEA0fo1ZZBSID8IzKC2BeIaPsn1D6cTrBYOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuRsynMP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48FDEC32786;
-	Fri,  7 Jun 2024 14:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717772158;
-	bh=g7bulEmSdhtPayCYyl9eLgPHqmNEoIh5/t7WlOUgO5Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=BuRsynMPS2FI4TQ2JGuJVA3FdH3TwmTBpVKipBVkNHTGKTFoU4brFpNAPP39IcZxR
-	 gZU11DsKYyBO4k3XrGeXmnVYTiiQ6CVZy3dfeHFFgzV5mlWWIUERBbqbN6AQDNcs9r
-	 MGgjQxfPTdiik5tf3mJlBSEHnMq5ZRUwE9eV2sezuZxnHrE6oVSx3fAxfJ/ChsJv6w
-	 ul094eT2fkC/6k7Taeb9MXVVYqzdctYiF8VXGWjUeSW0wvygzX1eC3+nIfSnR5K746
-	 m1kPFBUUqHXLWtk00W/N0ynw2rLRIN2tt1AprWMcifRO3HE06yrrlPXBKmX0NfgVjz
-	 NgbAA3nZ10Kqw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 07 Jun 2024 16:55:37 +0200
-Subject: [PATCH 4/4] listmount: allow listing in reverse order
+	s=arc-20240116; t=1717772365; c=relaxed/simple;
+	bh=h4gCbxxv+R5hXT1j0c37Tu4VJUNZwt5f6bSw3O+p4TA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jzt761r400J3Wh0rcB7BcZY03oWix38QM5Sd18dbAM3pXaj+r2QuxyhuEq4vApIlVXL7wb/huRV14kjFC4moSbFAEIhM3BZbJDOivxjwZ3BxHA49bIX94s/ESuzaoLC7Xba2q0EAwYXMg2W/qNzje8YFBhLd+bIlCdVTSOSGjs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=NLH1n10p; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Vwkqh4dS1z9sSR;
+	Fri,  7 Jun 2024 16:59:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1717772352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=L5/K/voROGxiCi8/nrKyR1+yqBSs4rSx+7KJpqqgfCw=;
+	b=NLH1n10pMvMbTG2IkpAspVJoe3J9POQgeAzS4s4nfxIUCuyJ5o4BEwTlLep/h/I3ARa2ox
+	GMbzxhV684OGNRSRTG6Hb4G7lZ7IUZIzmRlQToB/BVeTHqjQwX3sKFDBhqBvAY0NffdnWH
+	ejgS8ytScZGwMMyj3KmaK36P77dlBj3LzkrOeX1cvH1rKOE45q+VBSCl3blefjcXO2P3aw
+	iVvoWJ7LhfqQ3PsLSN9nGbUYmb0kgGCv3QAWCgV0SlmH2WqKi3tRxxDJfGr9O5ivJ4zN4+
+	snrxILtMTSaqo8h2XwLhr8yX9SJ/K5i28W2B+TVuBffuO9IcurgEUCXNhmkqmQ==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com,
+	djwong@kernel.org,
+	chandan.babu@oracle.com,
+	brauner@kernel.org,
+	akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: mcgrof@kernel.org,
+	linux-mm@kvack.org,
+	hare@suse.de,
+	linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com,
+	Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org,
+	kernel@pankajraghav.com,
+	hch@lst.de,
+	gost.dev@samsung.com,
+	cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: [PATCH v7 00/11] enable bs > ps in XFS
+Date: Fri,  7 Jun 2024 14:58:51 +0000
+Message-ID: <20240607145902.1137853-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240607-vfs-listmount-reverse-v1-4-7877a2bfa5e5@kernel.org>
-References: <20240607-vfs-listmount-reverse-v1-0-7877a2bfa5e5@kernel.org>
-In-Reply-To: <20240607-vfs-listmount-reverse-v1-0-7877a2bfa5e5@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Karel Zak <kzak@redhat.com>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.14-dev-2ee9f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5183; i=brauner@kernel.org;
- h=from:subject:message-id; bh=g7bulEmSdhtPayCYyl9eLgPHqmNEoIh5/t7WlOUgO5Y=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQly5dZMk2rfJJaN3eC0Z+ndrWbP1uabI0u2dLl2Oewt
- W/vjcb/HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNZXcbIsEF4afq+aTl3JO7L
- /9Hd6BTXu4bR7W1jb5zitg4JiyVutgz/HW8bxSj3KZyfGR4cZKL0vbnAY/Z7JQdtwV3B2jILoyS
- 4AQ==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-util-linux is about to implement listmount() and statmount() support.
-Karel requested the ability to scan the mount table in backwards order
-because that's what libmount currently does in order to get the latest
-mount first. We currently don't support this in listmount(). Add a new
-LISTMOUNT_RESERVE flag to allow listing mounts in reverse order. For
-example, listing all child mounts of /sys without LISTMOUNT_REVERSE
-gives:
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-    /sys/kernel/security @ mnt_id: 4294968369
-    /sys/fs/cgroup @ mnt_id: 4294968370
-    /sys/firmware/efi/efivars @ mnt_id: 4294968371
-    /sys/fs/bpf @ mnt_id: 4294968372
-    /sys/kernel/tracing @ mnt_id: 4294968373
-    /sys/kernel/debug @ mnt_id: 4294968374
-    /sys/fs/fuse/connections @ mnt_id: 4294968375
-    /sys/kernel/config @ mnt_id: 4294968376
+This is the seventh version of the series that enables block size > page size
+(Large Block Size) in XFS targetted for inclusion in 6.11.
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would
+like more context on this effort.
 
-whereas with LISTMOUNT_RESERVE it gives:
+The major change on this v6 we retry getting a folio and we enable
+warning if we failed to get a folio in __filemap_get_folio if the
+order <= min_order (Patch 3)[7].
 
-    /sys/kernel/config @ mnt_id: 4294968376
-    /sys/fs/fuse/connections @ mnt_id: 4294968375
-    /sys/kernel/debug @ mnt_id: 4294968374
-    /sys/kernel/tracing @ mnt_id: 4294968373
-    /sys/fs/bpf @ mnt_id: 4294968372
-    /sys/firmware/efi/efivars @ mnt_id: 4294968371
-    /sys/fs/cgroup @ mnt_id: 4294968370
-    /sys/kernel/security @ mnt_id: 4294968369
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/namespace.c             | 62 ++++++++++++++++++++++++++++++++++++++--------
- include/uapi/linux/mount.h |  1 +
- 2 files changed, 53 insertions(+), 10 deletions(-)
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 507f310dbf33..911c149c7979 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1448,6 +1448,30 @@ static struct mount *mnt_find_id_at(struct mnt_namespace *ns, u64 mnt_id)
- 	return ret;
- }
- 
-+/*
-+ * Returns the mount which either has the specified mnt_id, or has the next
-+ * greater id before the specified one.
-+ */
-+static struct mount *mnt_find_id_at_reverse(struct mnt_namespace *ns, u64 mnt_id)
-+{
-+	struct rb_node *node = ns->mounts.rb_node;
-+	struct mount *ret = NULL;
-+
-+	while (node) {
-+		struct mount *m = node_to_mount(node);
-+
-+		if (mnt_id >= m->mnt_id_unique) {
-+			ret = node_to_mount(node);
-+			if (mnt_id == m->mnt_id_unique)
-+				break;
-+			node = node->rb_right;
-+		} else {
-+			node = node->rb_left;
-+		}
-+	}
-+	return ret;
-+}
-+
- #ifdef CONFIG_PROC_FS
- 
- /* iterator; we want it to have access to namespace_sem, thus here... */
-@@ -5042,14 +5066,22 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 	return ret;
- }
- 
--static struct mount *listmnt_next(struct mount *curr)
-+static struct mount *listmnt_next(struct mount *curr, bool reverse)
- {
--	return node_to_mount(rb_next(&curr->mnt_node));
-+	struct rb_node *node;
-+
-+	if (reverse)
-+		node = rb_prev(&curr->mnt_node);
-+	else
-+		node = rb_next(&curr->mnt_node);
-+
-+	return node_to_mount(node);
- }
- 
- static ssize_t do_listmount(struct mount *first, struct path *orig,
- 			    u64 mnt_parent_id, u64 __user *mnt_ids,
--			    size_t nr_mnt_ids, const struct path *root)
-+			    size_t nr_mnt_ids, const struct path *root,
-+			    bool reverse)
- {
- 	struct mount *r;
- 	ssize_t ret;
-@@ -5066,7 +5098,7 @@ static ssize_t do_listmount(struct mount *first, struct path *orig,
- 	if (ret)
- 		return ret;
- 
--	for (ret = 0, r = first; r && nr_mnt_ids; r = listmnt_next(r)) {
-+	for (ret = 0, r = first; r && nr_mnt_ids; r = listmnt_next(r, reverse)) {
- 		if (r->mnt_id_unique == mnt_parent_id)
- 			continue;
- 		if (!is_path_reachable(r, r->mnt.mnt_root, orig))
-@@ -5090,9 +5122,10 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req, u64 __user *,
- 	struct path orig;
- 	u64 mnt_parent_id, last_mnt_id;
- 	const size_t maxcount = (size_t)-1 >> 3;
-+	bool reverse_order;
- 	ssize_t ret;
- 
--	if (flags)
-+	if (flags & ~LISTMOUNT_REVERSE)
- 		return -EINVAL;
- 
- 	if (unlikely(nr_mnt_ids > maxcount))
-@@ -5118,12 +5151,21 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req, u64 __user *,
- 			return -ENOENT;
- 		orig.dentry = orig.mnt->mnt_root;
- 	}
--	if (!last_mnt_id)
--		first = node_to_mount(rb_first(&ns->mounts));
--	else
--		first = mnt_find_id_at(ns, last_mnt_id + 1);
-+	reverse_order = flags & LISTMOUNT_REVERSE;
-+	if (!last_mnt_id) {
-+		if (reverse_order)
-+			first = node_to_mount(rb_last(&ns->mounts));
-+		else
-+			first = node_to_mount(rb_first(&ns->mounts));
-+	} else {
-+		if (reverse_order)
-+			first = mnt_find_id_at_reverse(ns, last_mnt_id - 1);
-+		else
-+			first = mnt_find_id_at(ns, last_mnt_id + 1);
-+	}
- 
--	return do_listmount(first, &orig, mnt_parent_id, mnt_ids, nr_mnt_ids, &root);
-+	return do_listmount(first, &orig, mnt_parent_id, mnt_ids, nr_mnt_ids,
-+			    &root, reverse_order);
- }
- 
- 
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index ad5478dbad00..88d78de1519f 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -207,5 +207,6 @@ struct mnt_id_req {
-  * Special @mnt_id values that can be passed to listmount
-  */
- #define LSMT_ROOT		0xffffffffffffffff	/* root mount */
-+#define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
- 
- #endif /* _UAPI_LINUX_MOUNT_H */
+I also ran split_huge_page_test selftest on XFS filesystem to check for
+huge page splits in min order chunks is done correctly.
 
+No regressions were found with these patches added on top.
+
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
+
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
+
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
+
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+For those who want this in a git tree we have this up on a kdevops
+large-block-minorder-for-next-v7 tag [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/
+[7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+
+Changes since v6:
+- Warn users if we can't get a min order folio in __filemap_get_folio().
+- Added iomap_dio_init() function and moved zero buffer init into that.
+- Modified split_huge_pages_pid() to also consider non-anonymous memory
+  and removed condition for anonymous memory in split_huge_pages_file().
+- Collected RVB from Hannes.
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Hannes Reinecke (1):
+  readahead: rework loop in page_cache_ra_unbounded()
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/internal.h                 |   5 ++
+ fs/iomap/buffered-io.c        |   6 ++
+ fs/iomap/direct-io.c          |  26 ++++++++-
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |  11 +++-
+ fs/xfs/xfs_super.c            |  18 +++---
+ include/linux/huge_mm.h       |  14 +++--
+ include/linux/pagemap.h       | 106 +++++++++++++++++++++++++++++-----
+ mm/filemap.c                  |  38 +++++++-----
+ mm/huge_memory.c              |  55 ++++++++++++++++--
+ mm/readahead.c                |  98 ++++++++++++++++++++++++-------
+ 15 files changed, 330 insertions(+), 78 deletions(-)
+
+
+base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
 -- 
-2.43.0
+2.44.1
 
 
