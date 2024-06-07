@@ -1,244 +1,370 @@
-Return-Path: <linux-fsdevel+bounces-21138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7858FF9BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 03:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F988FF9C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 03:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE32282C97
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 01:50:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45652838F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 01:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DA111CBD;
-	Fri,  7 Jun 2024 01:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3454111718;
+	Fri,  7 Jun 2024 01:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gfWnCPgO"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Vja9JCdW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA1F10A24
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 01:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566D84C76
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 01:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725005; cv=none; b=rRdrvuGGokkA1NOQmC3UikHNp75qhuRoF7T/y1f4HclY2R2Wfmp+NjYcrm68NgaEDQ9Pfxp6Q1joCNRY2gudYpPH8fWDLCQlcz4gqcGZT5gYTYAfRzaErExZwi8V8rC6RhfYqb98RCQWpZcyvee/5lic/zZvEP+WzTgCPXG2Dnw=
+	t=1717725425; cv=none; b=Uph62AWJamLo8hWF0dpfP6ZYxNBjpKx4Tq64uPUHvTaclHvk8Tt8EGt61aaWI8cyenxP8HuuANJ+cbtjvDgQXR2fD10eVncG3vzQg4/QB7h9LYd0rXViiMwRrrS5aqgswXrRYpjDSTHyI/ozrjEgo9cuV0aiUAkKFDnsSuH2Ca0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725005; c=relaxed/simple;
-	bh=yHu4MIT8ArMtnYCHIPL7t66IA1H1cKrrnc6xNtyy9/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kc+Hefej4qJCVilNYDuPIclmNGQrI7I+FI90NNmGicFYx4UJU01gX+fwx01cb0N0NGrmoq2BxWMj9qs8/xN8q6hOA1uF4EGgPi9LX5+CbxvaMEXcNgHTxJgKLXIuLSefMVhGK5Kosc7fVmlbmHoh6N1yf44d2er4t+/CsI5OFoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gfWnCPgO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717725002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZkAPm8DbDW67h9USLeOSVGxamhmKQHZK3DhyTSz3PxI=;
-	b=gfWnCPgOwwogQL2iOqB3tkjOJFanA0hxU1ayhlhS/wRJvuzHlXC6lKNNE0MeGnM7TxkeQM
-	t8xwRj9a9zSY9dbB7Fxe0huJcjy5DR9PE2imANtIv7es/WfiOz1S/1JieiThftbfAuuXjo
-	zCzh0oAhv/5vm3lxMtvVeHdGIvRXUAw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-228-91H9ln_-Nae7KsgSWjADwQ-1; Thu, 06 Jun 2024 21:49:58 -0400
-X-MC-Unique: 91H9ln_-Nae7KsgSWjADwQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BBF6685A588;
-	Fri,  7 Jun 2024 01:49:57 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.6])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 9F461408A402;
-	Fri,  7 Jun 2024 01:49:56 +0000 (UTC)
-Date: Thu, 6 Jun 2024 21:49:54 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	Bernd Schubert <bernd.schubert@fastmail.fm>, linux-mm@kvack.org,
-	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
-	kwolf@redhat.com
-Subject: Re: [PATCH 0/5] sys_ringbuffer
-Message-ID: <20240607014954.GA219708@fedora.redhat.com>
-References: <20240603003306.2030491-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1717725425; c=relaxed/simple;
+	bh=RYwOWqLMqtFJg3Eu08L8Tq3tDBtOBcNNLpbF5lyyiu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bdNXs+120e5Y3mO4Po3ABIWK1J5exnWSjX7bNMaPvhYRY5A/nRJlJ/ZMDYqFe0xY6lcia9Fp8BpeQRSg5RdjZ8dEa9Fexio7qpHXInrROgXfD8HV7/lETUviNxj8TUl2QBGGGYNkWokOCCC0xJm/CaXeRUdAIzcqHfJ6vFbd0EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Vja9JCdW; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=XeAIYMvnicwK2TvzwIptOh27mghmccJaBg5yrdGhHL8=; b=Vja9JCdWiQHgmY69zec5fEbvGr
+	IHwK1svUGJ2RmWp1DPiO+ZAM0NZnggKXnMMlSQSMAyxmfB/nABuvz9PBuuU5Ddp1PzdEkg767BGsK
+	YH8XVErLHkEWaYmdj2n4T6iIZ8qfY3GGa/ENkkyAuuVcfuWVtRbKfXaB2jxYZ2kAWeC/0jNGEj6L7
+	GLviQae6uW1VFFzUrEmDKLKsjR6lDlNWPXzbWjo816baInyb+s8xtFnElCYJDQnMfN2ysVdBwGVMA
+	0iFHr+Kj+sZiMmjvVrm/taWcdcm3yV29mtfDPOm9YSM2cAXOwVgs87WFCar0UWbQMKlyGRuOqMb3U
+	UlpnUnaQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sFOqe-009wYE-36;
+	Fri, 07 Jun 2024 01:56:57 +0000
+Date: Fri, 7 Jun 2024 02:56:56 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCHES][RFC] rework of struct fd handling
+Message-ID: <20240607015656.GX1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="j/CfATJu0W0vRWqP"
-Content-Disposition: inline
-In-Reply-To: <20240603003306.2030491-1-kent.overstreet@linux.dev>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
-
-
---j/CfATJu0W0vRWqP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Jun 02, 2024 at 08:32:57PM -0400, Kent Overstreet wrote:
-> New syscall for mapping generic ringbuffers for arbitary (supported)
-> file descriptors.
->=20
-> Ringbuffers can be created either when requested or at file open time,
-> and can be mapped into multiple address spaces (naturally, since files
-> can be shared as well).
->=20
-> Initial motivation is for fuse, but I plan on adding support to pipes
-> and possibly sockets as well - pipes are a particularly interesting use
-> case, because if both the sender and receiver of a pipe opt in to the
-> new ringbuffer interface, we can make them the _same_ ringbuffer for
-> true zero copy IO, while being backwards compatible with existing pipes.
+	Experimental series trying to sanitize the handling
+of struct fd.  Lightly tested, in serious need of review.
 
-Hi Kent,
-I recently came across a similar use case where the ability to "upgrade"
-an fd into a more efficient interface would be useful like in this pipe
-scenario you are describing.
+It's 6.10-rc1-based, lives in 
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.fd
+Individual patches in followups, descriptions below.
 
-My use case is when you have a block device using the ublk driver. ublk
-lets userspace servers implement block devices. ublk is great when
-compatibility is required with applications that expect block device
-fds, but when an application is willing to implement a shared memory
-interface to communicate directly with the ublk server then going
-through a block device is inefficient.
+Shortlog:
+Al Viro (19):
+      powerpc: fix a file leak in kvm_vcpu_ioctl_enable_cap()
+      lirc: rc_dev_get_from_fd(): fix file leak
+      introduce fd_file(), convert all accessors to it.
+      struct fd: representation change
+      add struct fd constructors, get rid of __to_fd()
+      net/socket.c: switch to CLASS(fd)
+      introduce struct fderr, convert overlayfs uses to that
+      fdget_raw() users: switch to CLASS(fd_raw, ...)
+      css_set_fork(): switch to CLASS(fd_raw, ...)
+      introduce "fd_pos" class
+      switch simple users of fdget() to CLASS(fd, ...)
+      bpf: switch to CLASS(fd, ...)
+      convert vmsplice() to CLASS(fd, ...)
+      finit_module(): convert to CLASS(fd, ...)
+      timerfd: switch to CLASS(fd, ...)
+      do_mq_notify(): switch to CLASS(fd, ...)
+      simplify xfs_find_handle() a bit
+      convert kernel/events/core.c
+      deal with the last remaing boolean uses of fd_file()
 
-In my case the application is QEMU, where the virtual machine runs a
-virtio-blk driver that could talk directly to the ublk server via
-vhost-user-blk. vhost-user-blk is a protocol that allows the virtual
-machine to talk directly to the ublk server via shared memory without
-going through QEMU or the host kernel block layer.
+Diffstat:
+ arch/alpha/kernel/osf_sys.c                |   7 +-
+ arch/arm/kernel/sys_oabi-compat.c          |  18 +-
+ arch/powerpc/kvm/book3s_64_vio.c           |   9 +-
+ arch/powerpc/kvm/powerpc.c                 |  26 +--
+ arch/powerpc/platforms/cell/spu_syscalls.c |  17 +-
+ arch/x86/kernel/cpu/sgx/main.c             |  10 +-
+ arch/x86/kvm/svm/sev.c                     |  43 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c  |  27 +--
+ drivers/gpu/drm/drm_syncobj.c              |  11 +-
+ drivers/infiniband/core/ucma.c             |  21 +-
+ drivers/infiniband/core/uverbs_cmd.c       |  12 +-
+ drivers/media/mc/mc-request.c              |  22 +-
+ drivers/media/rc/lirc_dev.c                |  13 +-
+ drivers/vfio/group.c                       |  10 +-
+ drivers/vfio/virqfd.c                      |  20 +-
+ drivers/virt/acrn/irqfd.c                  |  14 +-
+ drivers/xen/privcmd.c                      |  35 ++--
+ fs/btrfs/ioctl.c                           |   7 +-
+ fs/coda/inode.c                            |  13 +-
+ fs/eventfd.c                               |   9 +-
+ fs/eventpoll.c                             |  62 ++----
+ fs/ext4/ioctl.c                            |  23 +-
+ fs/f2fs/file.c                             |  17 +-
+ fs/fcntl.c                                 |  74 +++----
+ fs/fhandle.c                               |   7 +-
+ fs/file.c                                  |  26 +--
+ fs/fsopen.c                                |  23 +-
+ fs/fuse/dev.c                              |  10 +-
+ fs/ioctl.c                                 |  47 ++---
+ fs/kernel_read_file.c                      |  12 +-
+ fs/locks.c                                 |  27 +--
+ fs/namei.c                                 |  19 +-
+ fs/namespace.c                             |  53 ++---
+ fs/notify/fanotify/fanotify_user.c         |  50 ++---
+ fs/notify/inotify/inotify_user.c           |  44 ++--
+ fs/ocfs2/cluster/heartbeat.c               |  17 +-
+ fs/open.c                                  |  67 +++---
+ fs/overlayfs/file.c                        | 187 +++++++----------
+ fs/quota/quota.c                           |  18 +-
+ fs/read_write.c                            | 227 +++++++++-----------
+ fs/readdir.c                               |  38 ++--
+ fs/remap_range.c                           |  11 +-
+ fs/select.c                                |  17 +-
+ fs/signalfd.c                              |  11 +-
+ fs/smb/client/ioctl.c                      |  17 +-
+ fs/splice.c                                |  82 +++-----
+ fs/stat.c                                  |  10 +-
+ fs/statfs.c                                |  12 +-
+ fs/sync.c                                  |  33 ++-
+ fs/timerfd.c                               |  42 ++--
+ fs/utimes.c                                |  11 +-
+ fs/xattr.c                                 |  64 +++---
+ fs/xfs/xfs_exchrange.c                     |  12 +-
+ fs/xfs/xfs_handle.c                        |  16 +-
+ fs/xfs/xfs_ioctl.c                         |  85 +++-----
+ include/linux/bpf.h                        |   9 +-
+ include/linux/cleanup.h                    |   2 +-
+ include/linux/file.h                       |  89 +++++---
+ io_uring/sqpoll.c                          |  31 +--
+ ipc/mqueue.c                               | 126 +++++------
+ kernel/bpf/bpf_inode_storage.c             |  29 +--
+ kernel/bpf/btf.c                           |  13 +-
+ kernel/bpf/map_in_map.c                    |  37 +---
+ kernel/bpf/syscall.c                       | 197 ++++++-----------
+ kernel/bpf/token.c                         |  19 +-
+ kernel/bpf/verifier.c                      |  20 +-
+ kernel/cgroup/cgroup.c                     |  21 +-
+ kernel/events/core.c                       |  67 +++---
+ kernel/module/main.c                       |  15 +-
+ kernel/nsproxy.c                           |  15 +-
+ kernel/pid.c                               |  26 +--
+ kernel/signal.c                            |  33 ++-
+ kernel/sys.c                               |  21 +-
+ kernel/taskstats.c                         |  20 +-
+ kernel/watch_queue.c                       |   8 +-
+ mm/fadvise.c                               |  10 +-
+ mm/filemap.c                               |  19 +-
+ mm/memcontrol.c                            |  37 ++--
+ mm/readahead.c                             |  25 +--
+ net/core/net_namespace.c                   |  14 +-
+ net/core/sock_map.c                        |  23 +-
+ net/socket.c                               | 325 +++++++++++++----------------
+ security/integrity/ima/ima_main.c          |   9 +-
+ security/landlock/syscalls.c               |  57 ++---
+ security/loadpin/loadpin.c                 |  10 +-
+ sound/core/pcm_native.c                    |   6 +-
+ virt/kvm/eventfd.c                         |  19 +-
+ virt/kvm/vfio.c                            |  18 +-
+ 88 files changed, 1234 insertions(+), 1951 deletions(-)
 
-QEMU would need a way to upgrade from a ublk block device file to a
-vhost-user socket. Just like in your pipe example, this approach relies
-on being able to go from a "compatibility" fd to a more efficient
-interface gracefully when both sides support this feature.
+01/19) powerpc: fix a file leak in kvm_vcpu_ioctl_enable_cap()
+02/19) lirc: rc_dev_get_from_fd(): fix file leak
 
-The generic ringbuffer approach in this series would not work for
-the vhost-user protocol because the client must be able to provide its
-own memory and file descriptor passing is needed in general. The
-protocol spec is here:
-https://gitlab.com/qemu-project/qemu/-/blob/master/docs/interop/vhost-user.=
-rst
+	First two patches are obvious leak fixes - missing fdput()
+on one a failure exits.
 
-A different way to approach the fd upgrading problem is to treat this as
-an AF_UNIX connectivity feature rather than a new ring buffer API.
-Imagine adding a new address type to AF_UNIX for looking up connections
-in a struct file (e.g. the pipe fd) instead of on the file system (or
-the other AF_UNIX address types).
+03/19) introduce fd_file(), convert all accessors to it.
 
-The first program creates the pipe and also an AF_UNIX socket. It calls
-bind(2) on the socket with the sockaddr_un path
-"/dev/self/fd/<fd>/<discriminator>" where fd is a pipe fd and
-discriminator is a string like "ring-buffer" that describes the
-service/protocol. The AF_UNIX kernel code parses this special path and
-stores an association with the pipe file for future connect(2) calls.
-The program listens on the AF_UNIX socket and then continues doing its
-stuff.
+	For any changes of struct fd representation we need to
+turn existing accesses to fields into calls of wrappers.
+Accesses to struct fd::flags are very few (3 in linux/file.h,
+1 in net/socket.c, 3 in fs/overlayfs/file.c and 3 more in
+explicit initializers).
+	Those can be dealt with in the commit converting to
+new layout; accesses to struct fd::file are too many for that.
+	This commit converts (almost) all of f.file to
+fd_file(f).  It's not entirely mechanical ('file' is used as
+a member name more than just in struct fd) and it does not
+even attempt to distinguish the uses in pointer context from
+those in boolean context; the latter will be eventually turned
+into a separate helper (fd_empty()).
 
-The second program runs and inherits the pipe fd on stdin. It creates an
-AF_UNIX socket and attempts to connect(2) to
-"/dev/self/fd/0/ring-buffer". The AF_UNIX kernel code parses this
-special path and establishes a connection between the connecting and
-listening sockets inside the pipe fd's struct file. If connect(2) fails
-then the second program knows that this is an ordinary pipe that does
-not support upgrading to ring buffer operation.
+NB: this commit is where I'd expect arseloads of conflicts
+through the cycle, simply because of the breadth of area being
+touched.  The biggest one, as well (500 lines modified).
+Might be worth splitting - not sure.
 
-Now the AF_UNIX socket can be used to pass shared memory for the ring
-buffer and futexes. This AF_UNIX approach also works for my ublk block
-device to vhost-user-blk upgrade use case. It does not require a new
-ring buffer API but instead involves extending AF_UNIX.
+04/19) struct fd: representation change
 
-You have more use cases than just the pipe scenario, maybe my half-baked
-idea won't cover all of them, but I wanted to see what you think.
+	The absolute majority of instances comes from fdget() and its
+relatives; the underlying primitives actually return a struct file
+reference and a couple of flags encoded into an unsigned long - the lower
+two bits of file address are always zero, so we can stash the flags
+into those.  On the way out we use __to_fd() to unpack that unsigned
+long into struct fd.
+	Let's use that representation for struct fd itself - make it
+a structure with a single unsigned long member (.word), with the value
+equal either to (unsigned long)p | flags, p being an address of some
+struct file instance, or to 0 for an empty fd.
+	Note that we never used a struct fd instance with NULL ->file
+and non-zero ->flags; the emptiness had been checked as (!f.file) and
+we expected e.g. fdput(empty) to be a no-op.  With new representation
+we can use (!f.word) for emptiness check; that is enough for compiler
+to figure out that (f.word & FDPUT_FPUT) will be false and that fdput(f)
+will be a no-op in such case.
+	For now the new predicate (fd_empty(f)) has no users; all the
+existing checks have form (!fd_file(f)).  We will convert to fd_empty()
+use later; here we only define it (and tell the compiler that it's
+unlikely to return true).
+	This commit only deals with representation change; there will
+be followups.
+	NOTE: overlayfs part is _not_ in the final form - it will be
+massaged shortly.
 
-Stefan
+05/19) add struct fd constructors, get rid of __to_fd()
 
-> the ringbuffer_wait and ringbuffer_wakeup syscalls are probably going
-> away in a future iteration, in favor of just using futexes.
->=20
-> In my testing, reading/writing from the ringbuffer 16 bytes at a time is
-> ~7x faster than using read/write syscalls - and I was testing with
-> mitigations off, real world benefit will be even higher.
->=20
-> Kent Overstreet (5):
->   darray: lift from bcachefs
->   darray: Fix darray_for_each_reverse() when darray is empty
->   fs: sys_ringbuffer
->   ringbuffer: Test device
->   ringbuffer: Userspace test helper
->=20
->  MAINTAINERS                             |   7 +
->  arch/x86/entry/syscalls/syscall_32.tbl  |   3 +
->  arch/x86/entry/syscalls/syscall_64.tbl  |   3 +
->  fs/Makefile                             |   2 +
->  fs/bcachefs/Makefile                    |   1 -
->  fs/bcachefs/btree_types.h               |   2 +-
->  fs/bcachefs/btree_update.c              |   2 +
->  fs/bcachefs/btree_write_buffer_types.h  |   2 +-
->  fs/bcachefs/fsck.c                      |   2 +-
->  fs/bcachefs/journal_io.h                |   2 +-
->  fs/bcachefs/journal_sb.c                |   2 +-
->  fs/bcachefs/sb-downgrade.c              |   3 +-
->  fs/bcachefs/sb-errors_types.h           |   2 +-
->  fs/bcachefs/sb-members.h                |   3 +-
->  fs/bcachefs/subvolume.h                 |   1 -
->  fs/bcachefs/subvolume_types.h           |   2 +-
->  fs/bcachefs/thread_with_file_types.h    |   2 +-
->  fs/bcachefs/util.h                      |  28 +-
->  fs/ringbuffer.c                         | 474 ++++++++++++++++++++++++
->  fs/ringbuffer_test.c                    | 209 +++++++++++
->  {fs/bcachefs =3D> include/linux}/darray.h |  61 +--
->  include/linux/darray_types.h            |  22 ++
->  include/linux/fs.h                      |   2 +
->  include/linux/mm_types.h                |   4 +
->  include/linux/ringbuffer_sys.h          |  18 +
->  include/uapi/linux/futex.h              |   1 +
->  include/uapi/linux/ringbuffer_sys.h     |  40 ++
->  init/Kconfig                            |   9 +
->  kernel/fork.c                           |   2 +
->  lib/Kconfig.debug                       |   5 +
->  lib/Makefile                            |   2 +-
->  {fs/bcachefs =3D> lib}/darray.c           |  12 +-
->  tools/ringbuffer/Makefile               |   3 +
->  tools/ringbuffer/ringbuffer-test.c      | 254 +++++++++++++
->  34 files changed, 1125 insertions(+), 62 deletions(-)
->  create mode 100644 fs/ringbuffer.c
->  create mode 100644 fs/ringbuffer_test.c
->  rename {fs/bcachefs =3D> include/linux}/darray.h (63%)
->  create mode 100644 include/linux/darray_types.h
->  create mode 100644 include/linux/ringbuffer_sys.h
->  create mode 100644 include/uapi/linux/ringbuffer_sys.h
->  rename {fs/bcachefs =3D> lib}/darray.c (56%)
->  create mode 100644 tools/ringbuffer/Makefile
->  create mode 100644 tools/ringbuffer/ringbuffer-test.c
->=20
-> --=20
-> 2.45.1
->=20
+	Make __fdget() et.al. return struct fd directly.
+New helpers: BORROWED_FD(file) and CLONED_FD(file), for
+borrowed and cloned file references resp.
+	NOTE: this might need tuning; in particular, inline on
+__fget_light() is there to keep the code generation same as
+before - we probably want to keep it inlined in fdget() et.al.
+(especially so in fdget_pos()), but that needs profiling.
 
---j/CfATJu0W0vRWqP
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Next two commits deal with the worst irregularities in struct fd use:
+in net/socket.c we have fdget() without matching fdput() - fdget() is
+done in sockfd_lookup_light(), then the results are passed (in modified
+form) to caller, which deals with conditional fput().  And in
+overlayfs we have an almost-but-not-quite struct fd shoehorned into
+struct fd, with ugly calling conventions as the result of that.
+I'm not sure what order would be better for these two commits.
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmZiZ0IACgkQnKSrs4Gr
-c8jpagf7BxpNTX4pblcntzL0Y5rs9POU3DQY+Y6yg1MYsv0HdaYISgxeBqbwr4UG
-L4MrIpCbkGUJN4L4DJr+qdfv94JjiaGw7ULUjHF9U8e5rhqTiGXC6aOZAbjnIa1e
-OXHdQI/V35WkpEbynu7v//5H/be/dkw+6qy7wwyVupAsLm2Uk76QTl6ngvcoOaNv
-Z2sc6qWEXaAKIyPrB1PZPMPX7kSKiZtrdCy2y4OhFSfjD3A2kQApkhPk80UP6Z9f
-YftM/cNg154DPnItqD4vCH/PDGESy+ITBW9EEQ1PQz8Ydvi2ho31ZX43tSgCxppe
-EzRiR6Ano16JtNGo4usvXl+13k+2AA==
-=z2cS
------END PGP SIGNATURE-----
+06/19) net/socket.c: switch to CLASS(fd)
 
---j/CfATJu0W0vRWqP--
+	I strongly suspect that important part in sockfd_lookup_light() is
+avoiding needless file refcount operations, not the marginal reduction of
+the register pressure from not keeping a struct file pointer in the caller.
+	If that's true, we should get the same benefits from straight
+fdget()/fdput().  And AFAICS with sane use of CLASS(fd) we can get a better
+code generation...
+	Would be nice if somebody tested it on networking test suites
+(including benchmarks)...
 
+	sockfd_lookup_light() does fdget(), uses sock_from_file() to
+get the associated socket and returns the struct socket reference to
+the caller, along with "do we need to fput()" flag.  No matching fdput(),
+the caller does its equivalent manually, using the fact that sock->file
+points to the struct file the socket has come from.
+	Get rid of that - have the callers do fdget()/fdput() and
+use sock_from_file() directly.  That kills sockfd_lookup_light()
+and fput_light() (no users left).
+	What's more, we can get rid of explicit fdget()/fdput() by
+switching to CLASS(fd, ...) - code generation does not suffer, since
+now fdput() inserted on "descriptor is not opened" failure exit
+is recognized to be a no-op by compiler.
+	We could split that commit in two (getting rid of sockd_lookup_light()
+and switch to CLASS(fd, ...)), but AFAICS it ends up being harder to read
+that way.
+
+07/19) introduce struct fderr, convert overlayfs uses to that
+
+Similar to struct fd; unlike struct fd, it can represent
+error values.
+Accessors:
+* fd_empty(f):	true if f represents an error
+* fd_file(f):	just as for struct fd it yields a pointer to
+		struct file if fd_empty(f) is false.  If
+		fd_empty(f) is true, fd_file(f) is guaranteed
+		_not_ to be an address of any object (IS_ERR()
+		will be true in that case)
+* fd_error(f):	if f represents an error, returns that error,
+		otherwise the return value is junk.
+Constructors:
+* ERR_FD(-E...):	an instance encoding given error [ERR_FDERR, perhaps?]
+* BORROWED_FDERR(file):	if file points to a struct file instance,
+			return a struct fderr representing that file
+			reference with no flags set.
+			if file is an ERR_PTR(-E...), return a struct
+			fderr representing that error.
+			file MUST NOT be NULL.
+* CLONED_FDERR(file):	similar, but in case when file points to
+			a struct file instance, set FDPUT_FPUT in flags.
+fdput_err() serves as a destructor.
+See fs/overlayfs/file.c for example of use.
+
+08/19) fdget_raw() users: switch to CLASS(fd_raw, ...)
+	all convert trivially
+09/19) css_set_fork(): switch to CLASS(fd_raw, ...)
+	reference acquired there by fget_raw() is not stashed anywhere -
+we could as well borrow instead.
+
+10/19) introduce "fd_pos" class
+	fdget_pos() for constructor, fdput_pos() for cleanup, users of
+fd..._pos() converted.
+
+11/19) switch simple users of fdget() to CLASS(fd, ...)
+	low-hanging fruit; that's another likely source of conflicts
+over the cycle and it might make a lot of sense to split; fortunately,
+it can be split pretty much on per-function basis - chunks are independent
+from each other.
+
+12/19) bpf: switch to CLASS(fd, ...)
+	Calling conventions for __bpf_map_get() would be more convenient
+if it left fpdut() on failure to callers.  Makes for simpler logics
+in the callers.
+	Among other things, the proof of memory safety no longer has to
+rely upon file->private_data never being ERR_PTR(...) for bpffs files.
+Original calling conventions made it impossible for the caller to tell
+whether __bpf_map_get() has returned ERR_PTR(-EINVAL) because it has found
+the file not be a bpf map one (in which case it would've done fdput())
+or because it found that ERR_PTR(-EINVAL) in file->private_data of a
+bpf map file (in which case fdput() would _not_ have been done).
+	With that calling conventions change it's easy to switch all
+bpffs users to CLASS(fd, ...).
+
+13/19) convert vmsplice() to CLASS(fd, ...)
+	Irregularity here is fdput() not in the same scope as fdget();
+we could just lift it out vmsplice_type() in vmsplice(2), but there's
+no much point keeping vmsplice_type() separate after that...
+
+14/19) finit_module(): convert to CLASS(fd, ...)
+	Slightly unidiomatic emptiness check; just lift it out of
+idempotent_init_module() and into finit_module(2) and that's it.
+
+15/19) timerfd: switch to CLASS(fd, ...)
+	Fold timerfd_fget() into both callers to have fdget() and fdput()
+in the same scope.  Could be done in different ways, but this is probably
+the smallest solution.
+
+16/19) do_mq_notify(): switch to CLASS(fd, ...)
+	a minor twist is the reuse of struct fd instance in there
+
+17/19) simplify xfs_find_handle() a bit
+	XFS_IOC_FD_TO_HANDLE can grab a reference to copied ->f_path and
+let the file go; results in simpler control flow - cleanup is
+the same for both "by descriptor" and "by pathname" cases.
+	NOTE: grabbing f->f_path to pin file_inode(f) is valid, since
+we are dealing with XFS files here - no reassignments of file_inode().
+
+18/19) convert kernel/events/core.c
+	a questionable trick in perf_event_open(2) - deliberate call of
+fdget(-1), expecting it to yield empty
+
+19/19) deal with the last remaing boolean uses of fd_file()
+	... replacing them with uses of fd_empty()
 
