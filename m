@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-21147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3C58FF9CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 04:00:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709FB8FF9CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 04:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159301C210B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCD7284A7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 02:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1A21C2AF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133DE18EA8;
 	Fri,  7 Jun 2024 02:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wn8W7H/9"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZihFAkmd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58985125C0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A8212B73
 	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 02:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725603; cv=none; b=f0sKS2Ju0coU9ft+9FrdNexYmDMm40UUyF/jJs/WTw1CwBGSKKkNlzndSf53nMWdGWPvuKVbW4qYRLX13ovA/HrNcnokB66/XtYxCxa/XgPK55NRE0UfRSvQuAgPO3vxhUnzdC7PpzxGdr6NxuCFrM3VrklAacGyW7xo4HaR1nw=
+	t=1717725602; cv=none; b=EGb4A1hZE7OcSyX+3LlArui2K+HsGI2OCfKOOvrfd4eUQAj443GqIg08qbDWw0Bh+QIhQ/s4CiovO74Q9cmv85KOF+/nWtq/C3zSev6CX4QfY/vumGIodwmolvLeqPjR9xxymJJWHHugc4wwFLOu3fMCLagcaEMTdlbiAWxbIh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725603; c=relaxed/simple;
-	bh=wCU7Vob8BOTErlpqdONt5vHANtK+zT2YMo8ovGRfmWQ=;
+	s=arc-20240116; t=1717725602; c=relaxed/simple;
+	bh=waupRMH9XLCEdgiisehW8lFfsL6DBt+T0zNAwVd7+gw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=geX5wNPsMWSK3SY9zhIh1vYYcqm5M5YRxl7ZFq5C2e1BkrpVl/P93MxrfymNMRtsrKBerBV3cMxLqkU1SjEQ3FtmcWct7d4xPF7cD3OswvUjc3zN7QofhcHmVdCEOnvahy60MF7ePoUd9iRwGKOybejAKEYQWH1qnLxAU1ISRYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wn8W7H/9; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=ueX1BMfZkxxa1Mu9N7SrFya94RzFg2au7B8Uw4wSA37Ylpw8TOquR/vPqYokQ81pbIa1L0jbNFlfkqbYkGX8/NJC7LLCi0iEhlBN/FW44IiBFqow+n+jnIz2cE/qadCozLOSr0hpERPoOrQ0EYaN7xDjn9SkyVJC+NpC1w7fDJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZihFAkmd; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=gWHqG4B0VA72DIxMeIGtuYic1XRhNVSYC5SrYxF2ZeQ=; b=wn8W7H/9tLJ1GgrGe1PFLE5Wxz
-	H8+7/izyYg/0WIjBsmnUUxSFLiuqYpwrzhHBwdTrRcw1ot8YnQ9F3iplmWn5rEfb7I4ga2hupKyQI
-	PlDCK6DPSGFHDS1Whx2iAl894mc9UXK+rQoas17sWi3kB8QY2lM33Ekiz2w94YvI+CnJs+iHBMhvw
-	Lbe8ZWemEziKDMHgRm5XFY4AndKIDGWxjzWSF9YN5pi9/IujTsCsOIasaNYowomh5fCe345uEG+c4
-	5PW1efRN6pE2qDKtxSJTFoOs62FjRUZ85IRzcex6DLdtiWCKPzu0HCSkcmHRFDqPz1bflsmR6hdUf
-	/xUZMPQw==;
+	bh=z8nCzcgRDkfAk5n+DwK1pXzkK9q3BsG2xPPikL9WKXI=; b=ZihFAkmdOhG1aSJUZuSHsiCh3K
+	VM9ZddBeYSTIducNd4ljNT6ZLLbaS8LtUP6ddHe9S79+95tMriVc4sA7qPmg5sUSDeWiioKvZ2ffA
+	AWxELSY0OBSqTS1xXPuMaDZd5v3PcI3qkQxe/ZPEc6kgxCfpFp2xkfxUaBr3Z3aQMnyBmHiqTL9aJ
+	Q+qc177ngHcAo11XutHMik0I/ekNhplycoAdSqCbp8lN4K+IZk75SlwugfCh8/TNFeX/UPpXFuJlp
+	WbThBXvmf2ZYjanghacwmSAnon/Z5yfKwCgEdipIE8dUmgpl/EyDn9hlQ7GUw3wba5YuXawJnRbKK
+	J0vXKuCQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sFOta-009xBl-2T;
-	Fri, 07 Jun 2024 01:59:58 +0000
+	id 1sFOta-009xBq-37;
+	Fri, 07 Jun 2024 01:59:59 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH 07/19] introduce struct fderr, convert overlayfs uses to that
-Date: Fri,  7 Jun 2024 02:59:45 +0100
-Message-Id: <20240607015957.2372428-7-viro@zeniv.linux.org.uk>
+Subject: [PATCH 08/19] fdget_raw() users: switch to CLASS(fd_raw, ...)
+Date: Fri,  7 Jun 2024 02:59:46 +0100
+Message-Id: <20240607015957.2372428-8-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
 References: <20240607015656.GX1629371@ZenIV>
@@ -64,490 +64,445 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Similar to struct fd; unlike struct fd, it can represent
-error values.
-
-Accessors:
-
-* fd_empty(f):	true if f represents an error
-* fd_file(f):	just as for struct fd it yields a pointer to
-		struct file if fd_empty(f) is false.  If
-		fd_empty(f) is true, fd_file(f) is guaranteed
-		_not_ to be an address of any object (IS_ERR()
-		will be true in that case)
-* fd_error(f):	if f represents an error, returns that error,
-		otherwise the return value is junk.
-
-Constructors:
-
-* ERR_FD(-E...):	an instance encoding given error [ERR_FDERR, perhaps?]
-* BORROWED_FDERR(file):	if file points to a struct file instance,
-			return a struct fderr representing that file
-			reference with no flags set.
-			if file is an ERR_PTR(-E...), return a struct
-			fderr representing that error.
-			file MUST NOT be NULL.
-* CLONED_FDERR(file):	similar, but in case when file points to
-			a struct file instance, set FDPUT_FPUT in flags.
-
-fdput_err() serves as a destructor.
-
-See fs/overlayfs/file.c for example of use.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/overlayfs/file.c  | 149 +++++++++++++++++--------------------------
- include/linux/file.h |  39 ++++++++++-
- 2 files changed, 97 insertions(+), 91 deletions(-)
+ arch/arm/kernel/sys_oabi-compat.c | 10 +++-----
+ fs/fcntl.c                        | 42 +++++++++++++------------------
+ fs/namei.c                        | 13 +++-------
+ fs/open.c                         | 13 +++-------
+ fs/quota/quota.c                  | 12 +++------
+ fs/stat.c                         | 10 +++-----
+ fs/statfs.c                       | 12 ++++-----
+ kernel/bpf/bpf_inode_storage.c    | 25 ++++++------------
+ kernel/cgroup/cgroup.c            |  9 +++----
+ security/landlock/syscalls.c      | 19 +++++---------
+ 10 files changed, 58 insertions(+), 107 deletions(-)
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 458299873780..d57106966084 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -89,58 +89,51 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
- 	return 0;
- }
- 
--static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
--			       bool allow_meta)
-+static struct fderr ovl_real_fdget_meta(const struct file *file, bool allow_meta)
+diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
+index f5781ff54a5c..2944721e82a2 100644
+--- a/arch/arm/kernel/sys_oabi-compat.c
++++ b/arch/arm/kernel/sys_oabi-compat.c
+@@ -235,12 +235,12 @@ asmlinkage long sys_oabi_fcntl64(unsigned int fd, unsigned int cmd,
+ 				 unsigned long arg)
  {
- 	struct dentry *dentry = file_dentry(file);
- 	struct file *private = file->private_data;
- 	struct path realpath;
- 	int err;
+ 	void __user *argp = (void __user *)arg;
+-	struct fd f = fdget_raw(fd);
++	CLASS(fd_raw, f)(fd);
+ 	struct flock64 flock;
+-	long err = -EBADF;
++	long err;
  
--	real->word = (unsigned long)private;
--
- 	if (allow_meta) {
- 		ovl_path_real(dentry, &realpath);
- 	} else {
- 		/* lazy lookup and verify of lowerdata */
- 		err = ovl_verify_lowerdata(dentry);
- 		if (err)
--			return err;
-+			return ERR_FD(err);
+-	if (!fd_file(f))
+-		goto out;
++	if (fd_empty(f))
++		return -EBADF;
  
- 		ovl_path_realdata(dentry, &realpath);
+ 	switch (cmd) {
+ 	case F_GETLK64:
+@@ -271,8 +271,6 @@ asmlinkage long sys_oabi_fcntl64(unsigned int fd, unsigned int cmd,
+ 		err = sys_fcntl64(fd, cmd, arg);
+ 		break;
  	}
- 	if (!realpath.dentry)
--		return -EIO;
-+		return ERR_FD(-EIO);
- 
- 	/* Has it been copied up since we'd opened it? */
- 	if (unlikely(file_inode(private) != d_inode(realpath.dentry))) {
--		struct file *f = ovl_open_realfile(file, &realpath);
--		if (IS_ERR(f))
--			return PTR_ERR(f);
--		real->word = (unsigned long)ovl_open_realfile(file, &realpath) | FDPUT_FPUT;
--		return 0;
-+		return CLONED_FDERR(ovl_open_realfile(file, &realpath));
- 	}
- 
- 	/* Did the flags change since open? */
--	if (unlikely((file->f_flags ^ private->f_flags) & ~OVL_OPEN_FLAGS))
--		return ovl_change_flags(private, file->f_flags);
-+	if (unlikely((file->f_flags ^ private->f_flags) & ~OVL_OPEN_FLAGS)) {
-+		err = ovl_change_flags(private, file->f_flags);
-+		if (err)
-+			return ERR_FD(err);
-+	}
- 
--	return 0;
-+	return BORROWED_FDERR(private);
- }
- 
--static int ovl_real_fdget(const struct file *file, struct fd *real)
-+static struct fderr ovl_real_fdget(const struct file *file)
- {
--	if (d_is_dir(file_dentry(file))) {
--		struct file *f = ovl_dir_real_file(file, false);
--		if (IS_ERR(f))
--			return PTR_ERR(f);
--		real->word = (unsigned long)f;
--		return 0;
--	}
-+	if (d_is_dir(file_dentry(file)))
-+		return BORROWED_FDERR(ovl_dir_real_file(file, false));
- 
--	return ovl_real_fdget_meta(file, real, false);
-+	return ovl_real_fdget_meta(file, false);
- }
- 
-+DEFINE_CLASS(fd_real, struct fderr, fdput_err(_T), ovl_real_fdget(file), struct file *file)
-+
- static int ovl_open(struct inode *inode, struct file *file)
- {
- 	struct dentry *dentry = file_dentry(file);
-@@ -183,7 +176,6 @@ static int ovl_release(struct inode *inode, struct file *file)
- static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
- {
- 	struct inode *inode = file_inode(file);
--	struct fd real;
- 	const struct cred *old_cred;
- 	loff_t ret;
- 
-@@ -199,9 +191,9 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
- 			return vfs_setpos(file, 0, 0);
- 	}
- 
--	ret = ovl_real_fdget(file, &real);
--	if (ret)
--		return ret;
-+	CLASS(fd_real, real)(file);
-+	if (fd_empty(real))
-+		return fd_error(real);
- 
- 	/*
- 	 * Overlay file f_pos is the master copy that is preserved
-@@ -220,8 +212,6 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
- 	file->f_pos = fd_file(real)->f_pos;
- 	ovl_inode_unlock(inode);
- 
--	fdput(real);
--
- 	return ret;
- }
- 
-@@ -262,8 +252,6 @@ static void ovl_file_accessed(struct file *file)
- static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	struct file *file = iocb->ki_filp;
--	struct fd real;
--	ssize_t ret;
- 	struct backing_file_ctx ctx = {
- 		.cred = ovl_creds(file_inode(file)->i_sb),
- 		.user_file = file,
-@@ -273,22 +261,18 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	if (!iov_iter_count(iter))
- 		return 0;
- 
--	ret = ovl_real_fdget(file, &real);
--	if (ret)
--		return ret;
--
--	ret = backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
--				     &ctx);
--	fdput(real);
-+	CLASS(fd_real, real)(file);
-+	if (fd_empty(real))
-+		return fd_error(real);
- 
--	return ret;
-+	return backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
-+				      &ctx);
- }
- 
- static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file_inode(file);
--	struct fd real;
- 	ssize_t ret;
- 	int ifl = iocb->ki_flags;
- 	struct backing_file_ctx ctx = {
-@@ -304,9 +288,11 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	/* Update mode */
- 	ovl_copyattr(inode);
- 
--	ret = ovl_real_fdget(file, &real);
--	if (ret)
-+	CLASS(fd_real, real)(file);
-+	if (fd_empty(real)) {
-+		ret = fd_error(real);
- 		goto out_unlock;
-+	}
- 
- 	if (!ovl_should_sync(OVL_FS(inode->i_sb)))
- 		ifl &= ~(IOCB_DSYNC | IOCB_SYNC);
-@@ -317,7 +303,6 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	 */
- 	ifl &= ~IOCB_DIO_CALLER_COMP;
- 	ret = backing_file_write_iter(fd_file(real), iter, iocb, ifl, &ctx);
--	fdput(real);
- 
- out_unlock:
- 	inode_unlock(inode);
-@@ -329,22 +314,18 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
- 			       struct pipe_inode_info *pipe, size_t len,
- 			       unsigned int flags)
- {
--	struct fd real;
--	ssize_t ret;
-+	CLASS(fd_real, real)(in);
- 	struct backing_file_ctx ctx = {
- 		.cred = ovl_creds(file_inode(in)->i_sb),
- 		.user_file = in,
- 		.accessed = ovl_file_accessed,
- 	};
- 
--	ret = ovl_real_fdget(in, &real);
--	if (ret)
--		return ret;
--
--	ret = backing_file_splice_read(fd_file(real), ppos, pipe, len, flags, &ctx);
--	fdput(real);
-+	if (fd_empty(real))
-+		return fd_error(real);
- 
--	return ret;
-+	return backing_file_splice_read(fd_file(real), ppos, pipe, len, flags,
-+					&ctx);
- }
- 
- /*
-@@ -358,7 +339,6 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
- static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 				loff_t *ppos, size_t len, unsigned int flags)
- {
--	struct fd real;
- 	struct inode *inode = file_inode(out);
- 	ssize_t ret;
- 	struct backing_file_ctx ctx = {
-@@ -371,13 +351,13 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 	/* Update mode */
- 	ovl_copyattr(inode);
- 
--	ret = ovl_real_fdget(out, &real);
--	if (ret)
-+	CLASS(fd_real, real)(out);
-+	if (fd_empty(real)) {
-+		ret = fd_error(real);
- 		goto out_unlock;
-+	}
- 
- 	ret = backing_file_splice_write(pipe, fd_file(real), ppos, len, flags, &ctx);
--	fdput(real);
--
- out_unlock:
- 	inode_unlock(inode);
- 
-@@ -386,7 +366,7 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- {
--	struct fd real;
-+	struct fderr real;
- 	const struct cred *old_cred;
- 	int ret;
- 
-@@ -394,9 +374,9 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	if (ret <= 0)
- 		return ret;
- 
--	ret = ovl_real_fdget_meta(file, &real, !datasync);
--	if (ret)
--		return ret;
-+	real = ovl_real_fdget_meta(file, !datasync);
-+	if (fd_empty(real))
-+		return fd_error(real);
- 
- 	/* Don't sync lower file for fear of receiving EROFS error */
- 	if (file_inode(fd_file(real)) == ovl_inode_upper(file_inode(file))) {
-@@ -405,7 +385,7 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 		revert_creds(old_cred);
- 	}
- 
--	fdput(real);
-+	fdput_err(real);
- 
- 	return ret;
- }
-@@ -425,7 +405,6 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
- static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- {
- 	struct inode *inode = file_inode(file);
--	struct fd real;
- 	const struct cred *old_cred;
- 	int ret;
- 
-@@ -436,9 +415,11 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
- 	if (ret)
- 		goto out_unlock;
- 
--	ret = ovl_real_fdget(file, &real);
--	if (ret)
-+	CLASS(fd_real, real)(file);
-+	if (fd_empty(real)) {
-+		ret = fd_error(real);
- 		goto out_unlock;
-+	}
- 
- 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
- 	ret = vfs_fallocate(fd_file(real), mode, offset, len);
-@@ -447,8 +428,6 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
- 	/* Update size */
- 	ovl_file_modified(file);
- 
--	fdput(real);
--
- out_unlock:
- 	inode_unlock(inode);
- 
-@@ -457,20 +436,17 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
- 
- static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
- {
--	struct fd real;
-+	CLASS(fd_real, real)(file);
- 	const struct cred *old_cred;
- 	int ret;
- 
--	ret = ovl_real_fdget(file, &real);
--	if (ret)
--		return ret;
-+	if (fd_empty(real))
-+		return fd_error(real);
- 
- 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
- 	ret = vfs_fadvise(fd_file(real), offset, len, advice);
- 	revert_creds(old_cred);
- 
--	fdput(real);
--
- 	return ret;
- }
- 
-@@ -485,7 +461,6 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
- 			    loff_t len, unsigned int flags, enum ovl_copyop op)
- {
- 	struct inode *inode_out = file_inode(file_out);
--	struct fd real_in, real_out;
- 	const struct cred *old_cred;
- 	loff_t ret;
- 
-@@ -498,13 +473,15 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
- 			goto out_unlock;
- 	}
- 
--	ret = ovl_real_fdget(file_out, &real_out);
--	if (ret)
-+	CLASS(fd_real, real_out)(file_out);
-+	if (fd_empty(real_out)) {
-+		ret = fd_error(real_out);
- 		goto out_unlock;
-+	}
- 
--	ret = ovl_real_fdget(file_in, &real_in);
--	if (ret) {
--		fdput(real_out);
-+	CLASS(fd_real, real_in)(file_in);
-+	if (fd_empty(real_in)) {
-+		ret = fd_error(real_in);
- 		goto out_unlock;
- 	}
- 
-@@ -531,9 +508,6 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
- 	/* Update size */
- 	ovl_file_modified(file_out);
- 
--	fdput(real_in);
--	fdput(real_out);
--
- out_unlock:
- 	inode_unlock(inode_out);
- 
-@@ -577,21 +551,18 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
- 
- static int ovl_flush(struct file *file, fl_owner_t id)
- {
--	struct fd real;
-+	CLASS(fd_real, real)(file);
- 	const struct cred *old_cred;
--	int err;
-+	int err = 0;
- 
--	err = ovl_real_fdget(file, &real);
--	if (err)
--		return err;
-+	if (fd_empty(real))
-+		return fd_error(real);
- 
- 	if (fd_file(real)->f_op->flush) {
- 		old_cred = ovl_override_creds(file_inode(file)->i_sb);
- 		err = fd_file(real)->f_op->flush(fd_file(real), id);
- 		revert_creds(old_cred);
- 	}
--	fdput(real);
--
+-	fdput(f);
+-out:
  	return err;
  }
  
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 744a6315f1ac..6571ef345d35 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -10,6 +10,7 @@
- #include <linux/types.h>
- #include <linux/posix_types.h>
- #include <linux/errno.h>
-+#include <linux/err.h>
- #include <linux/cleanup.h>
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 2b5616762354..f96328ee3853 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -476,24 +476,21 @@ static int check_fcntl_cmd(unsigned cmd)
  
- struct file;
-@@ -37,13 +38,26 @@ extern struct file *alloc_file_clone(struct file *, int flags,
- struct fd {
- 	unsigned long word;
- };
-+
-+/* either a reference to struct file + flags
-+ * (cloned vs. borrowed, pos locked), with
-+ * flags stored in lower bits of value,
-+ * or an error (represented by small negative value).
-+ */
-+struct fderr {
-+	unsigned long word;
-+};
-+
- #define FDPUT_FPUT       1
- #define FDPUT_POS_UNLOCK 2
+ SYSCALL_DEFINE3(fcntl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
+ {	
+-	struct fd f = fdget_raw(fd);
+-	long err = -EBADF;
++	CLASS(fd_raw, f)(fd);
++	long err;
  
-+#define fd_empty(f)	_Generic((f), \
-+				struct fd: unlikely(!(f).word), \
-+				struct fderr: IS_ERR_VALUE((f).word))
- #define fd_file(f) ((struct file *)((f).word & ~3))
--static inline bool fd_empty(struct fd f)
-+static inline long fd_error(struct fderr f)
+-	if (!fd_file(f))
+-		goto out;
++	if (fd_empty(f))
++		return -EBADF;
+ 
+ 	if (unlikely(fd_file(f)->f_mode & FMODE_PATH)) {
+ 		if (!check_fcntl_cmd(cmd))
+-			goto out1;
++			return -EBADF;
+ 	}
+ 
+ 	err = security_file_fcntl(fd_file(f), cmd, arg);
+ 	if (!err)
+ 		err = do_fcntl(fd, cmd, arg, fd_file(f));
+ 
+-out1:
+- 	fdput(f);
+-out:
+ 	return err;
+ }
+ 
+@@ -502,21 +499,21 @@ SYSCALL_DEFINE3(fcntl64, unsigned int, fd, unsigned int, cmd,
+ 		unsigned long, arg)
+ {	
+ 	void __user *argp = (void __user *)arg;
+-	struct fd f = fdget_raw(fd);
++	CLASS(fd_raw, f)(fd);
+ 	struct flock64 flock;
+-	long err = -EBADF;
++	long err;
+ 
+-	if (!fd_file(f))
+-		goto out;
++	if (fd_empty(f))
++		return -EBADF;
+ 
+ 	if (unlikely(fd_file(f)->f_mode & FMODE_PATH)) {
+ 		if (!check_fcntl_cmd(cmd))
+-			goto out1;
++			return -EBADF;
+ 	}
+ 
+ 	err = security_file_fcntl(fd_file(f), cmd, arg);
+ 	if (err)
+-		goto out1;
++		return err;
+ 	
+ 	switch (cmd) {
+ 	case F_GETLK64:
+@@ -541,9 +538,6 @@ SYSCALL_DEFINE3(fcntl64, unsigned int, fd, unsigned int, cmd,
+ 		err = do_fcntl(fd, cmd, arg, fd_file(f));
+ 		break;
+ 	}
+-out1:
+-	fdput(f);
+-out:
+ 	return err;
+ }
+ #endif
+@@ -639,21 +633,21 @@ static int fixup_compat_flock(struct flock *flock)
+ static long do_compat_fcntl64(unsigned int fd, unsigned int cmd,
+ 			     compat_ulong_t arg)
  {
--	return unlikely(!f.word);
-+	return (long)f.word;
+-	struct fd f = fdget_raw(fd);
++	CLASS(fd_raw, f)(fd);
+ 	struct flock flock;
+-	long err = -EBADF;
++	long err;
+ 
+-	if (!fd_file(f))
+-		return err;
++	if (fd_empty(f))
++		return -EBADF;
+ 
+ 	if (unlikely(fd_file(f)->f_mode & FMODE_PATH)) {
+ 		if (!check_fcntl_cmd(cmd))
+-			goto out_put;
++			return -EBADF;
+ 	}
+ 
+ 	err = security_file_fcntl(fd_file(f), cmd, arg);
+ 	if (err)
+-		goto out_put;
++		return err;
+ 
+ 	switch (cmd) {
+ 	case F_GETLK:
+@@ -696,8 +690,6 @@ static long do_compat_fcntl64(unsigned int fd, unsigned int cmd,
+ 		err = do_fcntl(fd, cmd, arg, fd_file(f));
+ 		break;
+ 	}
+-out_put:
+-	fdput(f);
+ 	return err;
  }
  
- #define EMPTY_FD (struct fd){0}
-@@ -56,12 +70,33 @@ static inline struct fd CLONED_FD(struct file *f)
- 	return (struct fd){(unsigned long)f | FDPUT_FPUT};
- }
+diff --git a/fs/namei.c b/fs/namei.c
+index 72736b6328a6..ae916b49a25f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2416,26 +2416,22 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 		}
+ 	} else {
+ 		/* Caller must check execute permissions on the starting path component */
+-		struct fd f = fdget_raw(nd->dfd);
++		CLASS(fd_raw, f)(nd->dfd);
+ 		struct dentry *dentry;
  
-+static inline struct fderr ERR_FD(long n)
-+{
-+	return (struct fderr){(unsigned long)n};
-+}
-+static inline struct fderr BORROWED_FDERR(struct file *f)
-+{
-+	return (struct fderr){(unsigned long)f};
-+}
-+static inline struct fderr CLONED_FDERR(struct file *f)
-+{
-+	if (IS_ERR(f))
-+		return BORROWED_FDERR(f);
-+	return (struct fderr){(unsigned long)f | FDPUT_FPUT};
-+}
-+
- static inline void fdput(struct fd fd)
+-		if (!fd_file(f))
++		if (fd_empty(f))
+ 			return ERR_PTR(-EBADF);
+ 
+ 		if (flags & LOOKUP_LINKAT_EMPTY) {
+ 			if (fd_file(f)->f_cred != current_cred() &&
+-			    !ns_capable(fd_file(f)->f_cred->user_ns, CAP_DAC_READ_SEARCH)) {
+-				fdput(f);
++			    !ns_capable(fd_file(f)->f_cred->user_ns, CAP_DAC_READ_SEARCH))
+ 				return ERR_PTR(-ENOENT);
+-			}
+ 		}
+ 
+ 		dentry = fd_file(f)->f_path.dentry;
+ 
+-		if (*s && unlikely(!d_can_lookup(dentry))) {
+-			fdput(f);
++		if (*s && unlikely(!d_can_lookup(dentry)))
+ 			return ERR_PTR(-ENOTDIR);
+-		}
+ 
+ 		nd->path = fd_file(f)->f_path;
+ 		if (flags & LOOKUP_RCU) {
+@@ -2445,7 +2441,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 			path_get(&nd->path);
+ 			nd->inode = nd->path.dentry->d_inode;
+ 		}
+-		fdput(f);
+ 	}
+ 
+ 	/* For scoped-lookups we need to set the root to the dirfd as well. */
+diff --git a/fs/open.c b/fs/open.c
+index 29e0ec819bc4..4cb5e12e84a5 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -577,23 +577,18 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
+ 
+ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
  {
- 	if (fd.word & FDPUT_FPUT)
- 		fput(fd_file(fd));
+-	struct fd f = fdget_raw(fd);
++	CLASS(fd_raw, f)(fd);
+ 	int error;
+ 
+-	error = -EBADF;
+-	if (!fd_file(f))
+-		goto out;
++	if (fd_empty(f))
++		return -EBADF;
+ 
+-	error = -ENOTDIR;
+ 	if (!d_can_lookup(fd_file(f)->f_path.dentry))
+-		goto out_putf;
++		return -ENOTDIR;
+ 
+ 	error = file_permission(fd_file(f), MAY_EXEC | MAY_CHDIR);
+ 	if (!error)
+ 		set_fs_pwd(current->fs, &fd_file(f)->f_path);
+-out_putf:
+-	fdput(f);
+-out:
+ 	return error;
  }
  
-+static inline void fdput_err(struct fderr fd)
-+{
-+	if (!fd_empty(fd) && fd.word & FDPUT_FPUT)
-+		fput(fd_file(fd));
-+}
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index 290157bc7bec..7c2b75a44485 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -976,21 +976,19 @@ SYSCALL_DEFINE4(quotactl_fd, unsigned int, fd, unsigned int, cmd,
+ 	struct super_block *sb;
+ 	unsigned int cmds = cmd >> SUBCMDSHIFT;
+ 	unsigned int type = cmd & SUBCMDMASK;
+-	struct fd f;
++	CLASS(fd_raw, f)(fd);
+ 	int ret;
+ 
+-	f = fdget_raw(fd);
+-	if (!fd_file(f))
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+-	ret = -EINVAL;
+ 	if (type >= MAXQUOTAS)
+-		goto out;
++		return -EINVAL;
+ 
+ 	if (quotactl_cmd_write(cmds)) {
+ 		ret = mnt_want_write(fd_file(f)->f_path.mnt);
+ 		if (ret)
+-			goto out;
++			return ret;
+ 	}
+ 
+ 	sb = fd_file(f)->f_path.mnt->mnt_sb;
+@@ -1008,7 +1006,5 @@ SYSCALL_DEFINE4(quotactl_fd, unsigned int, fd, unsigned int, cmd,
+ 
+ 	if (quotactl_cmd_write(cmds))
+ 		mnt_drop_write(fd_file(f)->f_path.mnt);
+-out:
+-	fdput(f);
+ 	return ret;
+ }
+diff --git a/fs/stat.c b/fs/stat.c
+index 740e5997da09..e593fbbfed83 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -189,15 +189,11 @@ EXPORT_SYMBOL(vfs_getattr);
+  */
+ int vfs_fstat(int fd, struct kstat *stat)
+ {
+-	struct fd f;
+-	int error;
++	CLASS(fd_raw, f)(fd);
+ 
+-	f = fdget_raw(fd);
+-	if (!fd_file(f))
++	if (fd_empty(f))
+ 		return -EBADF;
+-	error = vfs_getattr(&fd_file(f)->f_path, stat, STATX_BASIC_STATS, 0);
+-	fdput(f);
+-	return error;
++	return vfs_getattr(&fd_file(f)->f_path, stat, STATX_BASIC_STATS, 0);
+ }
+ 
+ int getname_statx_lookup_flags(int flags)
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 9c7bb27e7932..a45ac85e6048 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -114,13 +114,11 @@ int user_statfs(const char __user *pathname, struct kstatfs *st)
+ 
+ int fd_statfs(int fd, struct kstatfs *st)
+ {
+-	struct fd f = fdget_raw(fd);
+-	int error = -EBADF;
+-	if (fd_file(f)) {
+-		error = vfs_statfs(&fd_file(f)->f_path, st);
+-		fdput(f);
+-	}
+-	return error;
++	CLASS(fd_raw, f)(fd);
 +
- extern struct file *fget(unsigned int fd);
- extern struct file *fget_raw(unsigned int fd);
- extern struct file *fget_task(struct task_struct *task, unsigned int fd);
++	if (fd_empty(f))
++		return -EBADF;
++	return vfs_statfs(&fd_file(f)->f_path, st);
+ }
+ 
+ static int do_statfs_native(struct kstatfs *st, struct statfs __user *p)
+diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
+index 0a79aee6523d..a2c05db49ebc 100644
+--- a/kernel/bpf/bpf_inode_storage.c
++++ b/kernel/bpf/bpf_inode_storage.c
+@@ -78,13 +78,12 @@ void bpf_inode_storage_free(struct inode *inode)
+ static void *bpf_fd_inode_storage_lookup_elem(struct bpf_map *map, void *key)
+ {
+ 	struct bpf_local_storage_data *sdata;
+-	struct fd f = fdget_raw(*(int *)key);
++	CLASS(fd_raw, f)(*(int *)key);
+ 
+-	if (!fd_file(f))
++	if (fd_empty(f))
+ 		return ERR_PTR(-EBADF);
+ 
+ 	sdata = inode_storage_lookup(file_inode(fd_file(f)), map, true);
+-	fdput(f);
+ 	return sdata ? sdata->data : NULL;
+ }
+ 
+@@ -92,19 +91,16 @@ static long bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
+ 					     void *value, u64 map_flags)
+ {
+ 	struct bpf_local_storage_data *sdata;
+-	struct fd f = fdget_raw(*(int *)key);
++	CLASS(fd_raw, f)(*(int *)key);
+ 
+-	if (!fd_file(f))
++	if (fd_empty(f))
+ 		return -EBADF;
+-	if (!inode_storage_ptr(file_inode(fd_file(f)))) {
+-		fdput(f);
++	if (!inode_storage_ptr(file_inode(fd_file(f))))
+ 		return -EBADF;
+-	}
+ 
+ 	sdata = bpf_local_storage_update(file_inode(fd_file(f)),
+ 					 (struct bpf_local_storage_map *)map,
+ 					 value, map_flags, GFP_ATOMIC);
+-	fdput(f);
+ 	return PTR_ERR_OR_ZERO(sdata);
+ }
+ 
+@@ -123,15 +119,10 @@ static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
+ 
+ static long bpf_fd_inode_storage_delete_elem(struct bpf_map *map, void *key)
+ {
+-	struct fd f = fdget_raw(*(int *)key);
+-	int err;
+-
+-	if (!fd_file(f))
++	CLASS(fd_raw, f)(*(int *)key);
++	if (fd_empty(f))
+ 		return -EBADF;
+-
+-	err = inode_storage_delete(file_inode(fd_file(f)), map);
+-	fdput(f);
+-	return err;
++	return inode_storage_delete(file_inode(fd_file(f)), map);
+ }
+ 
+ /* *gfp_flags* is a hidden argument provided by the verifier */
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 0a6e9f566ca6..d53673ccaefc 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -6880,14 +6880,11 @@ EXPORT_SYMBOL_GPL(cgroup_get_from_path);
+  */
+ struct cgroup *cgroup_v1v2_get_from_fd(int fd)
+ {
+-	struct cgroup *cgrp;
+-	struct fd f = fdget_raw(fd);
+-	if (!fd_file(f))
++	CLASS(fd_raw, f)(fd);
++	if (fd_empty(f))
+ 		return ERR_PTR(-EBADF);
+ 
+-	cgrp = cgroup_v1v2_get_from_file(fd_file(f));
+-	fdput(f);
+-	return cgrp;
++	return cgroup_v1v2_get_from_file(fd_file(f));
+ }
+ 
+ /**
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 44edbf57644d..97b3df540dc7 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -269,15 +269,12 @@ static struct landlock_ruleset *get_ruleset_from_fd(const int fd,
+  */
+ static int get_path_from_fd(const s32 fd, struct path *const path)
+ {
+-	struct fd f;
+-	int err = 0;
++	CLASS(fd_raw, f)(fd);
+ 
+ 	BUILD_BUG_ON(!__same_type(
+ 		fd, ((struct landlock_path_beneath_attr *)NULL)->parent_fd));
+ 
+-	/* Handles O_PATH. */
+-	f = fdget_raw(fd);
+-	if (!fd_file(f))
++	if (fd_empty(f))
+ 		return -EBADF;
+ 	/*
+ 	 * Forbids ruleset FDs, internal filesystems (e.g. nsfs), including
+@@ -288,16 +285,12 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
+ 	    (fd_file(f)->f_path.mnt->mnt_flags & MNT_INTERNAL) ||
+ 	    (fd_file(f)->f_path.dentry->d_sb->s_flags & SB_NOUSER) ||
+ 	    d_is_negative(fd_file(f)->f_path.dentry) ||
+-	    IS_PRIVATE(d_backing_inode(fd_file(f)->f_path.dentry))) {
+-		err = -EBADFD;
+-		goto out_fdput;
+-	}
++	    IS_PRIVATE(d_backing_inode(fd_file(f)->f_path.dentry)))
++		return -EBADFD;
++
+ 	*path = fd_file(f)->f_path;
+ 	path_get(path);
+-
+-out_fdput:
+-	fdput(f);
+-	return err;
++	return 0;
+ }
+ 
+ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
 -- 
 2.39.2
 
