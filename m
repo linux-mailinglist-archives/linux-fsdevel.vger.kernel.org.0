@@ -1,72 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-21197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8993F90037B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 14:26:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56111900475
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 15:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A544DB229A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 12:26:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701A21C249E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2024 13:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B31198846;
-	Fri,  7 Jun 2024 12:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94C919412A;
+	Fri,  7 Jun 2024 13:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RGp9aHPF"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gf/8G/fz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F12F196DA5
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 12:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F82E78C96
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2024 13:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717763060; cv=none; b=sQ5rwa0dkumQfmUZShglPGpykAq/ZPVLNuBZ0iaZJOWx9N9wg+wnMeqVKZA0yIJKmhY45VvRHauxpnXe0crihnMqRh25RMEGoVDHtpSyPH6n0YxqfuHLc04NJlERgkS+hvgR+U79XQNxh6vaMe7MfssrGcqUdbulxILeM42Ebws=
+	t=1717766329; cv=none; b=Fu68QThXEbm5VSnpk1h1SNQMajD4W5C9RPDb214OIg63zuKC6cO7iUa4CmMG+L6kbLWkGr1LnHhSXwQUK5iR7BRQTrFKcnQVa1In8HM7yBmE18le2WQNAMbDgzfKUZLsJa1T6YrFdXSRGP7hp1i5GOqj81L/pS9qmbEUYfsfPiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717763060; c=relaxed/simple;
-	bh=aM9gkPNW3QwA9rEu3NxyfkEZn/hZo8E1WPrx4kQC32g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uSJqUUNvj9zZhSw8+RubTx+Vmo2XZeUSIOsEa4MtOTyNAIBSkk31EIGJimuMgqSlSGxQ0Ml6S5wwqhVgLBje4hc+Pk2Q2J6Td+6EQd/IkP76y/di79QSANxPNhLftFIDIeURSWwYXaOCU8w+USAQ+WnuITcKEECswHDZXvluO5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RGp9aHPF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717763058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IlZ3OfYfLTtJDLF62yb3XVghB10LN2zpLPX8h3wsziU=;
-	b=RGp9aHPFv/VxK5QegxmQLZPXUMWlx9aJohvPV9MJ6Xr+HtQ/5PGuEgV1nsoN/b6jRnIYd5
-	/dwFIvGtsZyww1WZYIHqZ2Jlj4/2vadvUGRcTuFWYcARHVDUPk8/tJf9NLcs1MrAZFCJCo
-	b/rtMJH5LyL8bECzvze3JcqsOW8oSI8=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-Ohcn_-66MiOtK0ykrtlcjQ-1; Fri,
- 07 Jun 2024 08:24:14 -0400
-X-MC-Unique: Ohcn_-66MiOtK0ykrtlcjQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8FE221C05129;
-	Fri,  7 Jun 2024 12:24:13 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.39.192.109])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 3A45F492BCD;
-	Fri,  7 Jun 2024 12:24:11 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
+	s=arc-20240116; t=1717766329; c=relaxed/simple;
+	bh=nxrhpfJSNSOyp/3P/72Vc5v+qaFes7O1pm1nHMhjYDc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJ3EQz4/L1o6rwDBEXZUMqUjzMr1m9jvV2PwHOB4ECgov3SPlCXpnuLRT/Xpxdc09uYlodhUuihAFaaVMULYoBteqySpe+4FQLVn0IA6pVmWzsINNM9FWo8RJar+x8z5knVd5yXSNBp3SbkYtTUogZct598wYFGGl5NzwQt5ses=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gf/8G/fz; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so23390901fa.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2024 06:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717766324; x=1718371124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UNOtY9kbCwarj0NKj0Q/xsdwvI1gsG+x4nJEIzhwFBs=;
+        b=gf/8G/fzWqOlKvRriGjReem4l5AXOoPsaUxt3IW/kb4CSZUBp+9Y1wkpLIPIvi3mDk
+         nJr5wmMwbaF4MUWpLY6gDG2N+ABPBVou3Tyst4cEp40tTvAzKC8/3lc1xdzYpp5MC6H5
+         9W14vcalpgTPdni3VNLQTAPQfBBmpghzVoTxDmxuZP1KacVUpA3YC3x3EbKqGgcHGVey
+         ilkWpKbqAiuih371FW72noJDMCsYk+33SwQINTM1JHy93XNK5mKtBE2kWNti+1VSEcFW
+         BguTf3i3Np3W0QVzajdjXDPVvC/hZkcK6qY/NM4dWfXsGXo97MK+gFp/SLp8z1b7VmjI
+         wAuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717766324; x=1718371124;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UNOtY9kbCwarj0NKj0Q/xsdwvI1gsG+x4nJEIzhwFBs=;
+        b=YiIk6Ez3Br1XzUS71bH/eohbqo3clVFqHJdnGD0Fja+TIaFaL58GMRAMXRKATmWzEJ
+         63z/J7matgF9unAtuOVaRnJaJ5zElJmPV3yFnxx7xfImC5enry3IbvQN61qqwwoBMBKz
+         OCEcDVBzV4Ekb10w2joLT5Ods8nF6Q/f3JoCcdPOGeav/Ro5M9oFnn8yYgEYrMQVGQr/
+         L+WiNbcxKgumXZVOGSRFRmsuCY9sUuvCbP+yT4jfAp9YX13OaFpuG8AFoXFtur3M7a80
+         UufhEwvhVRz5pYxYgw2ES+AqmlIvKfh8t0EjJeHESzDFjueqSTuPOR8MHaotTsFeDSqs
+         81hg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPrXSII0BzMVWnEmgXfox4dnQuYjwVbWOxss7+5/51u/e36YMI3CMpvGzzIE1hX01SQjHhVxPx2uLVJeGdi2KTrobhu2tXOJO0LOw2TA==
+X-Gm-Message-State: AOJu0Yw6cFBRfVs27zmoTWXBI/NludtIPgaj9yFIwget6isOTdh9LUV5
+	TyWQE+SlBPQ/PWGn+FYb75N9KkRCq4tnU/fhjuIK5uVvDJqzAt6aXMzmhIUI2v0y3Rj7QypQn65
+	6
+X-Google-Smtp-Source: AGHT+IEBxyjXDl9VEt7rh7TeIxG6bOvGA4j17IdvLoM+xGRwnhFMyvO9AhcxnCYNWTyb7vuvBSDlAQ==
+X-Received: by 2002:a05:651c:550:b0:2ea:e12e:bee5 with SMTP id 38308e7fff4ca-2eae12ec074mr11738031fa.4.1717766324270;
+        Fri, 07 Jun 2024 06:18:44 -0700 (PDT)
+Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158111143sm87617865e9.20.2024.06.07.06.18.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 06:18:44 -0700 (PDT)
+From: Oscar Salvador <osalvador@suse.com>
+X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
+Date: Fri, 7 Jun 2024 15:18:40 +0200
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v1 6/6] Documentation/admin-guide/mm/pagemap.rst: drop "Using pagemap to do something useful"
-Date: Fri,  7 Jun 2024 14:23:57 +0200
-Message-ID: <20240607122357.115423-7-david@redhat.com>
-In-Reply-To: <20240607122357.115423-1-david@redhat.com>
+Subject: Re: [PATCH v1 0/6] fs/proc: move page_mapcount() to
+ fs/proc/internal.h
+Message-ID: <ZmMIsJ4Yg2r9bT81@localhost.localdomain>
 References: <20240607122357.115423-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,58 +85,36 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607122357.115423-1-david@redhat.com>
 
-That example was added in 2008. In 2015, we restricted access to the
-PFNs in the pagemap to CAP_SYS_ADMIN, making that approach quite less
-usable.
+On Fri, Jun 07, 2024 at 02:23:51PM +0200, David Hildenbrand wrote:
+> With all other page_mapcount() users in the tree gone, move
+> page_mapcount() to fs/proc/internal.h, rename it and extend the
+> documentation to prevent future (ab)use.
+> 
+> ... of course, I find some issues while working on that code that I sort
+> first ;)
+> 
+> We'll now only end up calling page_mapcount()
+> [now folio_precise_page_mapcount()] on pages mapped via present page table
+> entries. Except for /proc/kpagecount, that still does questionable things,
+> but we'll leave that legacy interface as is for now.
+> 
+> Did a quick sanity check. Likely we would want some better selfestest
+> for /proc/$/pagemap + smaps. I'll see if I can find some time to write
+> some more.
 
-It's 2024 now, and using that racy and low-lewel mechanism to calculate the
-USS should not be considered a good example anymore. /proc/$pid/smaps
-and /proc/$pid/smaps_rollup can do a much better job without any of
-that low-level handling.
+I stumbled upon some of these issues while unifying .{pud/pmd}_entry and
+.hugetlb_entry.
+I am not sure what is the current state of pagemap/smaps selftest, but
+since I am going to need them anyway to keep me in check and making sure
+I do not break anything hugetlb-related, I might as well write some of
+them.
 
-Let's just drop that example.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- Documentation/admin-guide/mm/pagemap.rst | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-index f5f065c67615d..f2817a8015962 100644
---- a/Documentation/admin-guide/mm/pagemap.rst
-+++ b/Documentation/admin-guide/mm/pagemap.rst
-@@ -173,27 +173,6 @@ LRU related page flags
- The page-types tool in the tools/mm directory can be used to query the
- above flags.
- 
--Using pagemap to do something useful
--====================================
--
--The general procedure for using pagemap to find out about a process' memory
--usage goes like this:
--
-- 1. Read ``/proc/pid/maps`` to determine which parts of the memory space are
--    mapped to what.
-- 2. Select the maps you are interested in -- all of them, or a particular
--    library, or the stack or the heap, etc.
-- 3. Open ``/proc/pid/pagemap`` and seek to the pages you would like to examine.
-- 4. Read a u64 for each page from pagemap.
-- 5. Open ``/proc/kpagecount`` and/or ``/proc/kpageflags``.  For each PFN you
--    just read, seek to that entry in the file, and read the data you want.
--
--For example, to find the "unique set size" (USS), which is the amount of
--memory that a process is using that is not shared with any other process,
--you can go through every map in the process, find the PFNs, look those up
--in kpagecount, and tally up the number of pages that are only referenced
--once.
--
- Exceptions for Shared Memory
- ============================
- 
 -- 
-2.45.2
-
+Oscar Salvador
+SUSE Labs
 
