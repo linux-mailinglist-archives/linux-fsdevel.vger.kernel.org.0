@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-21282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5951890120C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 16:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 459E9901221
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 16:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0625B2828C8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 14:35:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E881F214EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 14:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7B517A93C;
-	Sat,  8 Jun 2024 14:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3903B14389B;
+	Sat,  8 Jun 2024 14:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="H/3bKZTJ"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jWztZ6EV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C67149DED;
-	Sat,  8 Jun 2024 14:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E85D1C6A3;
+	Sat,  8 Jun 2024 14:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717857305; cv=none; b=ZWZZBBDMYELYT1AKTCCwEirIz6bg8qTWxEqGuCX5vP1c+rXExc1Z9vt1n9VJkl3iN0WYIiQciqo/91YO11xCSduoLFT8bGUxRFvQrOU0xrGb8oyi9kXC4xbmQjDQhpjh4vq91+u6WH8AJiM6l4sLystY9cNbzeHLoASh2KP/tcI=
+	t=1717857849; cv=none; b=tBi++uDH9bOw3PlSzTU3pHIJPZMCclzcsPXiRx4dsX+YyFzA3TN05/seXNOpZFGVNc9ISAo1UX3I9KuN4iulEgJVXzQWI7HwiOiBClSNEb4h6nMiwE19l73lA/XfhQGIpHduK2aUGcdIrg5Fb8tpnHuzmQXc5F7jqUh1QqRbV2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717857305; c=relaxed/simple;
-	bh=Avzt8iuW+icupfQzd34mdUP1exisuMqsbmUkbTgWcBk=;
+	s=arc-20240116; t=1717857849; c=relaxed/simple;
+	bh=lWUI/lLw4K/aku+gQBv6f012sqNodVM7vtKVJcOLBr4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E3vK9IB1F6SoCECVWOhI/b43ZpfmVfB7Wiuv59qOECtcjrvC2iXuy4322cdUorN1bl5PxbF99Xi07T4V/AtFG0YyHlRWM34ZSj+1+EsYjDXlDabLroYRkSstobh2aQf9aOtpOMdGdEczsPg1fWDRIJ/EjhQJlqiF4W/pBZk6TVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=H/3bKZTJ; arc=none smtp.client-ip=80.12.242.70
+	 MIME-Version; b=duPo3BsLCM2MdNb9NHfL1fJCq6EA9YgC4c++rnUNWoNqWIH5G9OyRSbgN20KHAOSC9/bxBhpS7cungm1fZ/wZtNu3RcOIuOURgn2a9l9LSQ1I9xQeQ2nPc+EmkNzFTKEXq4RA3obMORv82LZk2JBocZDBm2UrG5H/vH3HTWMmmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jWztZ6EV; arc=none smtp.client-ip=80.12.242.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id Fx9Rs04TztVxQFx9gsAXpq; Sat, 08 Jun 2024 16:34:53 +0200
+	id Fx9Rs04TztVxQFx9hsAXq3; Sat, 08 Jun 2024 16:34:54 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1717857293;
-	bh=5Rt9DtR3wFrK6NMeCAc9r8PlkozK/OUjFMR/opTt2bA=;
+	s=t20230301; t=1717857294;
+	bh=MxuPvXcFH8FAbiPwG6OxtP6h9EO2lNhJCavfueUtjog=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=H/3bKZTJzfjZgxWQ8Rs0pWnmgAXTGeglbXFR4n4P469sILXGIkny3rjPA3/Bu8+Vv
-	 sGSH8L+E+1yaCyhC8y9hV76w0dguIvAtpgioV7E2/RfdU2ssj6/v63KNKTFpwBjoo8
-	 YJ5dbTWax5EV0LrH3UVGHaJhxcdYF8CAxS+wV0+e/yZPIzlQBXz+CWVexB/3q0xkZL
-	 Ic/cn4zhFBj8t6e/tFR9NdMDKD7enSUxCPAiUp/cyIJom+iUJ1RyqPqB9bab2RvcNB
-	 0Z9raMR654UkVwRhj+rrAEbIRsIwiiDCwy4sC47c6KP5z0ayRfyB9p0KjGjnjW7eOX
-	 jXQfBpKEtiMvA==
+	b=jWztZ6EVoUlEaMITLyVQXV8Wl8O4L5I8bCtc2ArUUjoekzpq2A2X3UkWKnT/jDAwS
+	 XuzKKA3KABulEqqMzUvGPCvbgzdzEGF8BbzWm771khCIGhaHuwmWTQj1fUg/aS8qLq
+	 +E51xjytZlntwD6T7ZvfEHocZ/I40zrT+EYKJAd1/cDAoZ2+Ky8gNppX9nQQ/To6k2
+	 Ff0Mung6kPU0j8yDTU3xIXRkZ78hdvmoZtGEBkzzOjuwVcpt8j0ZPwIdKlTvSmYYQ6
+	 75vhfG/svmw0NBCish3QjmHVTxyIMCum/6bEHOcaKPGwT+dshVyWRW6E2FlhTni9YT
+	 GYF8R5lAKr/UQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Jun 2024 16:34:53 +0200
+X-ME-Date: Sat, 08 Jun 2024 16:34:54 +0200
 X-ME-IP: 86.243.222.230
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: jk@ozlabs.org,
@@ -62,9 +62,9 @@ Cc: linux-fsi@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH RESEND 2/3] most: Remove usage of the deprecated ida_simple_xx() API
-Date: Sat,  8 Jun 2024 16:34:19 +0200
-Message-ID: <ddbb2e3f249ba90417dc7ab01713faa1091fb44c.1717855701.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH RESEND 3/3] proc: Remove usage of the deprecated ida_simple_xx() API
+Date: Sat,  8 Jun 2024 16:34:20 +0200
+Message-ID: <ae10003feb87d240163d0854de95f09e1f00be7d.1717855701.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
@@ -79,113 +79,55 @@ Content-Transfer-Encoding: 8bit
 ida_alloc() and ida_free() should be preferred to the deprecated
 ida_simple_get() and ida_simple_remove().
 
-This is less verbose.
+Note that the upper limit of ida_simple_get() is exclusive, but the one of
+ida_alloc_max() is inclusive. So a -1 has been added when needed.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
-This patch has been sent about 6 months ago [1].
-A gentle reminder has been sent 2 months later and an A-by has been given
-[2].
+This patch has been sent about 5 months ago [1] and has been A-by just a
+few minutes after.
 
-Another gentle reminder has been sent another 2 months later [3].
+A gentle reminder has been sent 3 months later [2].
 
 However, it has still not reached -next since then in the last 2 months.
 
-So, I've added the A-b tag and I'm adding Andrew Morton in To:, in order to
+So, I've added the R-b tag and I'm adding Andrew Morton in To:, in order to
 help in the merge process.
 
 Thanks
 CJ
 
-[1]: https://lore.kernel.org/all/988c218ef3d91bffaf4c3db9b6fba0d369cbb2b2.1702326601.git.christophe.jaillet@wanadoo.fr/
-[2]: https://lore.kernel.org/all/cd56d073-04ad-40ad-968b-7e137d10f456@microchip.com/
-[3]: https://lore.kernel.org/all/c5e519ea-2602-417c-84e9-199b610d427e@wanadoo.fr/
+[1]: https://lore.kernel.org/all/f235bd25763bd530ff5508084989f63e020c3606.1705341186.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/24c05525-05f7-48bb-bf74-945cf55d3477@wanadoo.fr/
 ---
- drivers/most/core.c      | 10 +++++-----
- drivers/most/most_cdev.c |  6 +++---
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ fs/proc/generic.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/most/core.c b/drivers/most/core.c
-index f13d0e14a48b..10342e8801bf 100644
---- a/drivers/most/core.c
-+++ b/drivers/most/core.c
-@@ -1286,7 +1286,7 @@ int most_register_interface(struct most_interface *iface)
- 	    !iface->poison_channel || (iface->num_channels > MAX_CHANNELS))
- 		return -EINVAL;
- 
--	id = ida_simple_get(&mdev_id, 0, 0, GFP_KERNEL);
-+	id = ida_alloc(&mdev_id, GFP_KERNEL);
- 	if (id < 0) {
- 		dev_err(iface->dev, "Failed to allocate device ID\n");
- 		return id;
-@@ -1294,7 +1294,7 @@ int most_register_interface(struct most_interface *iface)
- 
- 	iface->p = kzalloc(sizeof(*iface->p), GFP_KERNEL);
- 	if (!iface->p) {
--		ida_simple_remove(&mdev_id, id);
-+		ida_free(&mdev_id, id);
- 		return -ENOMEM;
- 	}
- 
-@@ -1308,7 +1308,7 @@ int most_register_interface(struct most_interface *iface)
- 		dev_err(iface->dev, "Failed to register interface device\n");
- 		kfree(iface->p);
- 		put_device(iface->dev);
--		ida_simple_remove(&mdev_id, id);
-+		ida_free(&mdev_id, id);
- 		return -ENOMEM;
- 	}
- 
-@@ -1366,7 +1366,7 @@ int most_register_interface(struct most_interface *iface)
- 	}
- 	kfree(iface->p);
- 	device_unregister(iface->dev);
--	ida_simple_remove(&mdev_id, id);
-+	ida_free(&mdev_id, id);
- 	return -ENOMEM;
- }
- EXPORT_SYMBOL_GPL(most_register_interface);
-@@ -1397,7 +1397,7 @@ void most_deregister_interface(struct most_interface *iface)
- 		device_unregister(&c->dev);
- 	}
- 
--	ida_simple_remove(&mdev_id, iface->p->dev_id);
-+	ida_free(&mdev_id, iface->p->dev_id);
- 	kfree(iface->p);
- 	device_unregister(iface->dev);
- }
-diff --git a/drivers/most/most_cdev.c b/drivers/most/most_cdev.c
-index 3ed8f461e01e..b9423f82373d 100644
---- a/drivers/most/most_cdev.c
-+++ b/drivers/most/most_cdev.c
-@@ -100,7 +100,7 @@ static void destroy_cdev(struct comp_channel *c)
- 
- static void destroy_channel(struct comp_channel *c)
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 775ce0bcf08c..c02f1e63f82d 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -202,8 +202,8 @@ int proc_alloc_inum(unsigned int *inum)
  {
--	ida_simple_remove(&comp.minor_id, MINOR(c->devno));
-+	ida_free(&comp.minor_id, MINOR(c->devno));
- 	kfifo_free(&c->fifo);
- 	kfree(c);
- }
-@@ -425,7 +425,7 @@ static int comp_probe(struct most_interface *iface, int channel_id,
- 	if (c)
- 		return -EEXIST;
+ 	int i;
  
--	current_minor = ida_simple_get(&comp.minor_id, 0, 0, GFP_KERNEL);
-+	current_minor = ida_alloc(&comp.minor_id, GFP_KERNEL);
- 	if (current_minor < 0)
- 		return current_minor;
+-	i = ida_simple_get(&proc_inum_ida, 0, UINT_MAX - PROC_DYNAMIC_FIRST + 1,
+-			   GFP_KERNEL);
++	i = ida_alloc_max(&proc_inum_ida, UINT_MAX - PROC_DYNAMIC_FIRST,
++			  GFP_KERNEL);
+ 	if (i < 0)
+ 		return i;
  
-@@ -472,7 +472,7 @@ static int comp_probe(struct most_interface *iface, int channel_id,
- err_free_c:
- 	kfree(c);
- err_remove_ida:
--	ida_simple_remove(&comp.minor_id, current_minor);
-+	ida_free(&comp.minor_id, current_minor);
- 	return retval;
+@@ -213,7 +213,7 @@ int proc_alloc_inum(unsigned int *inum)
+ 
+ void proc_free_inum(unsigned int inum)
+ {
+-	ida_simple_remove(&proc_inum_ida, inum - PROC_DYNAMIC_FIRST);
++	ida_free(&proc_inum_ida, inum - PROC_DYNAMIC_FIRST);
  }
  
+ static int proc_misc_d_revalidate(struct dentry *dentry, unsigned int flags)
 -- 
 2.45.2
 
