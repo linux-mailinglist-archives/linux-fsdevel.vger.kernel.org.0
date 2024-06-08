@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-21283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9757F901210
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 16:36:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5951890120C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 16:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332191F21EBF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 14:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0625B2828C8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2024 14:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C083117B402;
-	Sat,  8 Jun 2024 14:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7B517A93C;
+	Sat,  8 Jun 2024 14:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="n+yonB1f"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="H/3bKZTJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828F817836A;
-	Sat,  8 Jun 2024 14:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C67149DED;
+	Sat,  8 Jun 2024 14:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717857358; cv=none; b=QVJjP+avOP4q41nWD/OP4WozBxxOpVRYDvNZDaAcojkJthmMbQSd/mezErmKfxCyA25gDJfHFSrIBizfHzfVIS95jzjb3uEJ+rGB0RXduXPifrvap+HhveJJZ2O/RXjNFbZ6Wi9VNDzFsJrknPmUwRLCDSJptpZKNcP611MYAsw=
+	t=1717857305; cv=none; b=ZWZZBBDMYELYT1AKTCCwEirIz6bg8qTWxEqGuCX5vP1c+rXExc1Z9vt1n9VJkl3iN0WYIiQciqo/91YO11xCSduoLFT8bGUxRFvQrOU0xrGb8oyi9kXC4xbmQjDQhpjh4vq91+u6WH8AJiM6l4sLystY9cNbzeHLoASh2KP/tcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717857358; c=relaxed/simple;
-	bh=Gw3IHsF8xwkAd4RVR6D2AlTIiy5xd3jFHG78ox0JiaQ=;
+	s=arc-20240116; t=1717857305; c=relaxed/simple;
+	bh=Avzt8iuW+icupfQzd34mdUP1exisuMqsbmUkbTgWcBk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ozAnevETDe5Z0TCmPzPdjMPfSNbkRj/Iv2YrNzb04qa+DYv5kgLHR6CNjnMxV3cbNuArsDiRmNfi8DGY4paka5LymsO/aeZOD5fz37YE/VWRu6K+jwBSwSklsegmH4AC3THgj0cbN3yrDQVZDNZJNzxk6PoXl4QzxHpQ2k2WIVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=n+yonB1f; arc=none smtp.client-ip=80.12.242.17
+	 MIME-Version; b=E3vK9IB1F6SoCECVWOhI/b43ZpfmVfB7Wiuv59qOECtcjrvC2iXuy4322cdUorN1bl5PxbF99Xi07T4V/AtFG0YyHlRWM34ZSj+1+EsYjDXlDabLroYRkSstobh2aQf9aOtpOMdGdEczsPg1fWDRIJ/EjhQJlqiF4W/pBZk6TVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=H/3bKZTJ; arc=none smtp.client-ip=80.12.242.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id Fx9Rs04TztVxQFx9fsAXpW; Sat, 08 Jun 2024 16:34:51 +0200
+	id Fx9Rs04TztVxQFx9gsAXpq; Sat, 08 Jun 2024 16:34:53 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1717857291;
-	bh=fNkS2pUJH/530BOXMXUfzjEuADK4W5StN8pRfow5/4g=;
+	s=t20230301; t=1717857293;
+	bh=5Rt9DtR3wFrK6NMeCAc9r8PlkozK/OUjFMR/opTt2bA=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=n+yonB1fz172Vros/qBrBgV+34VqIPu2Ma2lTpEMPK9plDEW2RWqUEVfatlzY/J8X
-	 iZtRHxcosamF26qyzxYpUXxSp4UlxHjvK39lM+AOhJ9Dw64B9qZcz/FBYE6hkYYxEo
-	 GPWcMlAh+5DhwRerxD/2Q2iF2Lu2euHB/szT7szFNiK2IaPJHAdZUHAsXLP9P6B7R8
-	 voeGdNC36i88uUkKK71xipDXsmpnJjX/9fKOEGfzTQWIN0dh6Sxh2nNIdoJ3UUFgsV
-	 oDKYxX36rx5ivekm8kqkwEiMsG/rY2PIqjNu1g8mTFWBIjpu6NzmjixWfckYMAFBSM
-	 bVA8C/e+Uy9ow==
+	b=H/3bKZTJzfjZgxWQ8Rs0pWnmgAXTGeglbXFR4n4P469sILXGIkny3rjPA3/Bu8+Vv
+	 sGSH8L+E+1yaCyhC8y9hV76w0dguIvAtpgioV7E2/RfdU2ssj6/v63KNKTFpwBjoo8
+	 YJ5dbTWax5EV0LrH3UVGHaJhxcdYF8CAxS+wV0+e/yZPIzlQBXz+CWVexB/3q0xkZL
+	 Ic/cn4zhFBj8t6e/tFR9NdMDKD7enSUxCPAiUp/cyIJom+iUJ1RyqPqB9bab2RvcNB
+	 0Z9raMR654UkVwRhj+rrAEbIRsIwiiDCwy4sC47c6KP5z0ayRfyB9p0KjGjnjW7eOX
+	 jXQfBpKEtiMvA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Jun 2024 16:34:51 +0200
+X-ME-Date: Sat, 08 Jun 2024 16:34:53 +0200
 X-ME-IP: 86.243.222.230
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: jk@ozlabs.org,
@@ -62,9 +62,9 @@ Cc: linux-fsi@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH RESEND 1/3] fsi: occ: Remove usage of the deprecated ida_simple_xx() API
-Date: Sat,  8 Jun 2024 16:34:18 +0200
-Message-ID: <8e28b0c45fe8f28ca4475fe0027f8099c41259f0.1717855701.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH RESEND 2/3] most: Remove usage of the deprecated ida_simple_xx() API
+Date: Sat,  8 Jun 2024 16:34:19 +0200
+Message-ID: <ddbb2e3f249ba90417dc7ab01713faa1091fb44c.1717855701.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
@@ -79,86 +79,113 @@ Content-Transfer-Encoding: 8bit
 ida_alloc() and ida_free() should be preferred to the deprecated
 ida_simple_get() and ida_simple_remove().
 
-Note that the upper limit of ida_simple_get() is exclusive, but the one of
-ida_alloc_range() is inclusive. So, this upper limit, INT_MAX, should have
-been changed to INT_MAX-1.
-
-But, it is likely that the INT_MAX 'idx' is valid that the max value passed
-to ida_simple_get() should have been 0.
-
-So, allow this INT_MAX 'idx' value now.
+This is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
+Acked-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
 ---
-The change related to the INT_MAX value is speculative.
-Review with care. (or I can re-submit with INT_MAX-1, to be safe :))
-
-
-This patch has been sent about 5 months ago [1].
-A gentle reminder has been sent 3 months later and an R-by has been given
+This patch has been sent about 6 months ago [1].
+A gentle reminder has been sent 2 months later and an A-by has been given
 [2].
 
-However, it has still not reached -next in the last 2 months.
+Another gentle reminder has been sent another 2 months later [3].
 
-So, I've added the R-b tag and I'm adding Andrew Morton in To:, in order to
+However, it has still not reached -next since then in the last 2 months.
+
+So, I've added the A-b tag and I'm adding Andrew Morton in To:, in order to
 help in the merge process.
 
 Thanks
 CJ
 
-[1]: https://lore.kernel.org/all/6e17f2145ce2bbc12af6700c8bd56a8a7bdb103d.1705738045.git.christophe.jaillet@wanadoo.fr/
-[2]: https://lore.kernel.org/all/57291e66-fb7d-4ef8-985e-7e85866c90bb@linux.ibm.com/
+[1]: https://lore.kernel.org/all/988c218ef3d91bffaf4c3db9b6fba0d369cbb2b2.1702326601.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/cd56d073-04ad-40ad-968b-7e137d10f456@microchip.com/
+[3]: https://lore.kernel.org/all/c5e519ea-2602-417c-84e9-199b610d427e@wanadoo.fr/
 ---
- drivers/fsi/fsi-occ.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/most/core.c      | 10 +++++-----
+ drivers/most/most_cdev.c |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/fsi/fsi-occ.c b/drivers/fsi/fsi-occ.c
-index da35ca9e84a6..f7157c1d77d8 100644
---- a/drivers/fsi/fsi-occ.c
-+++ b/drivers/fsi/fsi-occ.c
-@@ -656,17 +656,16 @@ static int occ_probe(struct platform_device *pdev)
- 		rc = of_property_read_u32(dev->of_node, "reg", &reg);
- 		if (!rc) {
- 			/* make sure we don't have a duplicate from dts */
--			occ->idx = ida_simple_get(&occ_ida, reg, reg + 1,
--						  GFP_KERNEL);
-+			occ->idx = ida_alloc_range(&occ_ida, reg, reg,
-+						   GFP_KERNEL);
- 			if (occ->idx < 0)
--				occ->idx = ida_simple_get(&occ_ida, 1, INT_MAX,
--							  GFP_KERNEL);
-+				occ->idx = ida_alloc_min(&occ_ida, 1,
-+							 GFP_KERNEL);
- 		} else {
--			occ->idx = ida_simple_get(&occ_ida, 1, INT_MAX,
--						  GFP_KERNEL);
-+			occ->idx = ida_alloc_min(&occ_ida, 1, GFP_KERNEL);
- 		}
- 	} else {
--		occ->idx = ida_simple_get(&occ_ida, 1, INT_MAX, GFP_KERNEL);
-+		occ->idx = ida_alloc_min(&occ_ida, 1, GFP_KERNEL);
+diff --git a/drivers/most/core.c b/drivers/most/core.c
+index f13d0e14a48b..10342e8801bf 100644
+--- a/drivers/most/core.c
++++ b/drivers/most/core.c
+@@ -1286,7 +1286,7 @@ int most_register_interface(struct most_interface *iface)
+ 	    !iface->poison_channel || (iface->num_channels > MAX_CHANNELS))
+ 		return -EINVAL;
+ 
+-	id = ida_simple_get(&mdev_id, 0, 0, GFP_KERNEL);
++	id = ida_alloc(&mdev_id, GFP_KERNEL);
+ 	if (id < 0) {
+ 		dev_err(iface->dev, "Failed to allocate device ID\n");
+ 		return id;
+@@ -1294,7 +1294,7 @@ int most_register_interface(struct most_interface *iface)
+ 
+ 	iface->p = kzalloc(sizeof(*iface->p), GFP_KERNEL);
+ 	if (!iface->p) {
+-		ida_simple_remove(&mdev_id, id);
++		ida_free(&mdev_id, id);
+ 		return -ENOMEM;
  	}
  
- 	platform_set_drvdata(pdev, occ);
-@@ -680,7 +679,7 @@ static int occ_probe(struct platform_device *pdev)
- 	rc = misc_register(&occ->mdev);
- 	if (rc) {
- 		dev_err(dev, "failed to register miscdevice: %d\n", rc);
--		ida_simple_remove(&occ_ida, occ->idx);
-+		ida_free(&occ_ida, occ->idx);
- 		kvfree(occ->buffer);
- 		return rc;
+@@ -1308,7 +1308,7 @@ int most_register_interface(struct most_interface *iface)
+ 		dev_err(iface->dev, "Failed to register interface device\n");
+ 		kfree(iface->p);
+ 		put_device(iface->dev);
+-		ida_simple_remove(&mdev_id, id);
++		ida_free(&mdev_id, id);
+ 		return -ENOMEM;
  	}
-@@ -719,7 +718,7 @@ static int occ_remove(struct platform_device *pdev)
- 	else
- 		device_for_each_child(&pdev->dev, NULL, occ_unregister_of_child);
  
--	ida_simple_remove(&occ_ida, occ->idx);
-+	ida_free(&occ_ida, occ->idx);
- 
- 	return 0;
+@@ -1366,7 +1366,7 @@ int most_register_interface(struct most_interface *iface)
+ 	}
+ 	kfree(iface->p);
+ 	device_unregister(iface->dev);
+-	ida_simple_remove(&mdev_id, id);
++	ida_free(&mdev_id, id);
+ 	return -ENOMEM;
  }
+ EXPORT_SYMBOL_GPL(most_register_interface);
+@@ -1397,7 +1397,7 @@ void most_deregister_interface(struct most_interface *iface)
+ 		device_unregister(&c->dev);
+ 	}
+ 
+-	ida_simple_remove(&mdev_id, iface->p->dev_id);
++	ida_free(&mdev_id, iface->p->dev_id);
+ 	kfree(iface->p);
+ 	device_unregister(iface->dev);
+ }
+diff --git a/drivers/most/most_cdev.c b/drivers/most/most_cdev.c
+index 3ed8f461e01e..b9423f82373d 100644
+--- a/drivers/most/most_cdev.c
++++ b/drivers/most/most_cdev.c
+@@ -100,7 +100,7 @@ static void destroy_cdev(struct comp_channel *c)
+ 
+ static void destroy_channel(struct comp_channel *c)
+ {
+-	ida_simple_remove(&comp.minor_id, MINOR(c->devno));
++	ida_free(&comp.minor_id, MINOR(c->devno));
+ 	kfifo_free(&c->fifo);
+ 	kfree(c);
+ }
+@@ -425,7 +425,7 @@ static int comp_probe(struct most_interface *iface, int channel_id,
+ 	if (c)
+ 		return -EEXIST;
+ 
+-	current_minor = ida_simple_get(&comp.minor_id, 0, 0, GFP_KERNEL);
++	current_minor = ida_alloc(&comp.minor_id, GFP_KERNEL);
+ 	if (current_minor < 0)
+ 		return current_minor;
+ 
+@@ -472,7 +472,7 @@ static int comp_probe(struct most_interface *iface, int channel_id,
+ err_free_c:
+ 	kfree(c);
+ err_remove_ida:
+-	ida_simple_remove(&comp.minor_id, current_minor);
++	ida_free(&comp.minor_id, current_minor);
+ 	return retval;
+ }
+ 
 -- 
 2.45.2
 
