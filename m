@@ -1,178 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-21303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07975901964
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 04:33:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C19901965
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 04:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A90F1B2147D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 02:33:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 508F61C20E3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 02:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9681CAD4B;
-	Mon, 10 Jun 2024 02:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E425227;
+	Mon, 10 Jun 2024 02:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FhtChlaT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BBF136A;
-	Mon, 10 Jun 2024 02:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC95E380
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2024 02:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717986787; cv=none; b=owhSqJAQSOgU6vC3jGYJs6RtU2ojNK0iUa88OSYKLm3yWMEeJ4fEOzHJppSMvx8J31PNdhdjkdcpe9+r9/XfPLeC47pRZopT2m9RlzyTv/AqkSF9aJSYJjwVCkLl4u7OLPgjf+5T8uAOvXdyB2z1XtF1S8ogCt8JOd8/QwMco5E=
+	t=1717987486; cv=none; b=WYUK6Y2NAKo9ZdjmiArVLzA8nzgVYm5L5isJHfoo/b8uI8fcS77fJIpo/e4v1QxjCscM6zpfWn87TVZqzMsc98uQTdLfQj94+0hbauDhX3rWcNxSqJ36CBzme9WpkiD64AAi7xC+FoU5s8yi5rIzeAbkzfkEQXKCjm/kdUVSlsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717986787; c=relaxed/simple;
-	bh=HbycHs7DADBVRvhki7EX2pSnnSjZWAfNBicUJiliqt8=;
+	s=arc-20240116; t=1717987486; c=relaxed/simple;
+	bh=4zKa1YXYhMIIrdPz5TroUzbXtE8LAGVLkXTyI/QV9xI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtY4YQLcj1Aj1Ja0JxvG905IMPg0QEv5mTgltCPzPYh8NC0JxKGtAGQo0vCPSerSycGmMe8RliNr1+jE1YbaC8rYdMqqqtcetY6Ki8l+NnsD+0tc8VpX9bmEphsqJKEG9R5UqSAs1cgQ1STDkxOC/kExeAW6vtsEtXx96RY6vSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 63BEA234; Sun,  9 Jun 2024 21:33:01 -0500 (CDT)
-Date: Sun, 9 Jun 2024 21:33:01 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
-	John Johansen <john.johansen@canonical.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
- caps
-Message-ID: <20240610023301.GA2183903@mail.hallyn.com>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-3-jcalmels@3xx0.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CVLTwlwqbdI+GHsbjvQXKBViKF3qkU5iNbE1o1s0ad05VG7lCBOSF66mnYBrtfcayhEaR7//3b/12D+DkiFSOj7Gj2neWCR8tViDbcE000LB6A/M3VOgDxW2nsPxf0LFdONpBzp5i2EfRjGhEO7VMzRVDAWHCGv/xAoAl5hcsTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FhtChlaT; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NnahmfVvmfIdd6h5c4SLKZq/yChaFKl1BGROqQ776UY=; b=FhtChlaTNy/6bDJZQ3/r+inUzi
+	H3Miv8cq7tU5zhQSKB8TZqVDYbGlORJv2praibS+RN9QfJqjyEkk+K+Yk7DWhwT9y3oCd7b191CrJ
+	pvD1Pj+I5dxzOZSjWl/w/ISYlzuBPVvIpFXvXQgpV8C640tnKnbsUdhB00CSMIV341gEP32jnASxY
+	7DrzecsRCgFzzj0yRpG4tg7WfY0LVCq90G7lyZQyda8zg65z4qCGA9rsKbqAjowEry9/5RPTy6Wdw
+	p31yo89rA7Wg/OBiFyzuj2/H2Rr+wNr+MjdsNO/hZjfcR7ywhZfiNFuJgbKyFr4d2C/1b9rfP59aM
+	aJHKP+Jw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sGV1R-006DiH-1b;
+	Mon, 10 Jun 2024 02:44:37 +0000
+Date: Mon, 10 Jun 2024 03:44:37 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Paul Mackerras <paulus@ozlabs.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [RFC] potential UAF in kvm_spapr_tce_attach_iommu_group() (was Re:
+ [PATCH 11/19] switch simple users of fdget() to CLASS(fd, ...))
+Message-ID: <20240610024437.GA1464458@ZenIV>
+References: <20240607015656.GX1629371@ZenIV>
+ <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
+ <20240607015957.2372428-11-viro@zeniv.linux.org.uk>
+ <20240607-gelacht-enkel-06a7c9b31d4e@brauner>
+ <20240607161043.GZ1629371@ZenIV>
+ <20240607210814.GC1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240609104355.442002-3-jcalmels@3xx0.net>
+In-Reply-To: <20240607210814.GC1629371@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Jun 09, 2024 at 03:43:35AM -0700, Jonathan Calmels wrote:
-> This patch adds a new capability security bit designed to constrain a
-> task’s userns capability set to its bounding set. The reason for this is
-> twofold:
+On Fri, Jun 07, 2024 at 10:08:14PM +0100, Al Viro wrote:
+
+> Hell knows - it feels like mixing __cleanup-based stuff with anything
+> explicit leads to massive headache.  And I *really* hate to have
+> e.g. inode_unlock() hidden in __cleanup in a random subset of places.
+> Unlike dropping file references (if we do that a bit later, nothing
+> would really care), the loss of explicit control over the places where
+> inode lock is dropped is asking for serious trouble.
 > 
-> - This serves as a quick and easy way to lock down a set of capabilities
->   for a task, thus ensuring that any namespace it creates will never be
->   more privileged than itself is.
-> - This helps userspace transition to more secure defaults by not requiring
->   specific logic for the userns capability set, or libcap support.
-> 
-> Example:
-> 
->     # capsh --secbits=$((1 << 8)) --drop=cap_sys_rawio -- \
->             -c 'unshare -r grep Cap /proc/self/status'
->     CapInh: 0000000000000000
->     CapPrm: 000001fffffdffff
->     CapEff: 000001fffffdffff
->     CapBnd: 000001fffffdffff
->     CapAmb: 0000000000000000
->     CapUNs: 000001fffffdffff
+> Any suggestions?  Linus, what's your opinion on the use of CLASS...
+> stuff?
 
-But you are not (that I can see, in this or the previous patch)
-keeping SECURE_USERNS_STRICT_CAPS in securebits on the next
-level unshare.  Though I think it's ok, because by then both
-cap_userns and cap_bset are reduced and cap_userns can't be
-expanded.  (Sorry, just thinking aloud here)
+While looking through the converted fdget() users, some interesting
+stuff got caught.  Example:
 
-> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> ---
->  include/linux/securebits.h      |  1 +
->  include/uapi/linux/securebits.h | 11 ++++++++++-
->  kernel/user_namespace.c         |  5 +++++
->  3 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/securebits.h b/include/linux/securebits.h
-> index 656528673983..5f9d85cd69c3 100644
-> --- a/include/linux/securebits.h
-> +++ b/include/linux/securebits.h
-> @@ -5,4 +5,5 @@
->  #include <uapi/linux/securebits.h>
->  
->  #define issecure(X)		(issecure_mask(X) & current_cred_xxx(securebits))
-> +#define iscredsecure(cred, X)	(issecure_mask(X) & cred->securebits)
->  #endif /* !_LINUX_SECUREBITS_H */
-> diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
-> index d6d98877ff1a..2da3f4be4531 100644
-> --- a/include/uapi/linux/securebits.h
-> +++ b/include/uapi/linux/securebits.h
-> @@ -52,10 +52,19 @@
->  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
->  			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
->  
-> +/* When set, user namespace capabilities are restricted to their parent's bounding set. */
-> +#define SECURE_USERNS_STRICT_CAPS			8
-> +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9  /* make bit-8 immutable */
-> +
-> +#define SECBIT_USERNS_STRICT_CAPS (issecure_mask(SECURE_USERNS_STRICT_CAPS))
-> +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
-> +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_LOCKED))
-> +
->  #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
->  				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
->  				 issecure_mask(SECURE_KEEP_CAPS) | \
-> -				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
-> +				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
-> +				 issecure_mask(SECURE_USERNS_STRICT_CAPS))
->  #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
->  
->  #endif /* _UAPI_LINUX_SECUREBITS_H */
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 7e624607330b..53848e2b68cd 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -10,6 +10,7 @@
->  #include <linux/cred.h>
->  #include <linux/securebits.h>
->  #include <linux/security.h>
-> +#include <linux/capability.h>
->  #include <linux/keyctl.h>
->  #include <linux/key-type.h>
->  #include <keys/user-type.h>
-> @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts *ucounts)
->  
->  static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
->  {
-> +	/* Limit userns capabilities to our parent's bounding set. */
+kvm_device_fops.unlocked_ioctl() is equal to kvm_device_ioctl() and it
+gets called (by ioctl(2)) without any locks.
 
-In the case of userns_install(), it will be the target user namespace
-creator's bounding set, right?  Not "our parent's"?
+kvm_device_ioctl() calls kvm_device_ioctl_attr(), passing it dev->ops->set_attr.
 
-> +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
-> +		cred->cap_userns = cap_intersect(cred->cap_userns, cred->cap_bset);
-> +
->  	/* Start with the capabilities defined in the userns set. */
->  	cred->cap_bset = cred->cap_userns;
->  	cred->cap_permitted = cred->cap_userns;
-> -- 
-> 2.45.2
+kvm_device_ioctl_attr() calls the callback passed to it, still without any
+locks.
+
+->set_attr() can be kvm_vfio_set_attr(), which calls kvm_vfio_set_file(), which
+calls kvm_vfio_file_set_spapr_tce(), which takes dev->private.lock and
+calls kvm_spapr_tce_attach_iommu_group().  No kvm->lock held.
+
+
+Now, in kvm_spapr_tce_attach_iommu_group() we have (in mainline)
+        f = fdget(tablefd);
+        if (!f.file)
+                return -EBADF;
+
+        rcu_read_lock();
+        list_for_each_entry_rcu(stt, &kvm->arch.spapr_tce_tables, list) {
+                if (stt == f.file->private_data) {
+                        found = true;
+                        break;
+                }
+        }
+        rcu_read_unlock();
+
+        fdput(f);
+
+        if (!found)
+                return -EINVAL;
+
+	....
+        list_add_rcu(&stit->next, &stt->iommu_tables);
+
+What happens if another thread closes the damn descriptor just as we'd
+done fdput()?  This:
+static int kvm_spapr_tce_release(struct inode *inode, struct file *filp)
+{
+        struct kvmppc_spapr_tce_table *stt = filp->private_data;
+        struct kvmppc_spapr_tce_iommu_table *stit, *tmp;
+        struct kvm *kvm = stt->kvm;
+
+        mutex_lock(&kvm->lock);
+        list_del_rcu(&stt->list);
+        mutex_unlock(&kvm->lock);
+
+        list_for_each_entry_safe(stit, tmp, &stt->iommu_tables, next) {
+                WARN_ON(!kref_read(&stit->kref));
+                while (1) {
+                        if (kref_put(&stit->kref, kvm_spapr_tce_liobn_put))
+                                break;
+                }
+        }
+
+        account_locked_vm(kvm->mm,
+                kvmppc_stt_pages(kvmppc_tce_pages(stt->size)), false);
+
+        kvm_put_kvm(stt->kvm);
+
+        call_rcu(&stt->rcu, release_spapr_tce_table);
+
+        return 0;
+}
+
+Leaving aside the question of sanity of that while (!kfref_put()) loop,
+that function will *NOT* block on kvm->lock (the only lock being held
+by the caller of kvm_spapr_tce_attach_iommu_group() is struct kvm_vfio::lock,
+not struct kvm::lock) and it will arrange for RCU-delayed call of
+release_spapr_tce_table(), which will kfree stt.
+
+Recall that in kvm_spapr_tce_attach_iommu_group() we are not holding
+rcu_read_lock() between fdput() and list_add_rcu() (we couldn't - not
+with the blocking allocations we have there), so call_rcu() might as
+well have been a direct call.
+
+What's there to protect stt from being freed right after fdput()?
+
+Unless I'm misreading that code (entirely possible), this fdput() shouldn't
+be done until we are done with stt.
 
