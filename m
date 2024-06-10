@@ -1,132 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-21300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C616901844
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2024 23:20:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DBA9018E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 02:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 350B21F212A5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2024 21:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03618B20BFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 00:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9144E1DD;
-	Sun,  9 Jun 2024 21:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518244428;
+	Mon, 10 Jun 2024 00:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="cOC6iF44"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RBSp1Q0K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8610718C22;
-	Sun,  9 Jun 2024 21:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCB5EC5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2024 00:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717968024; cv=none; b=pnXrps0RUyu206PEU8R/putQ4nrnXV5XNJrP/nV91VxqeNKK5lnWUHhCWLiiaI5jfg8nffvg8lVg3ghOw4rLsZvEkcAqSG3QPbUnmK8/wkGOln57zj/oHeYdRb8nLevYBGdBQMeGMfEk3yBMqzf+M3BAWpsDaCPp4n+A9DP7tmo=
+	t=1717978743; cv=none; b=DezNPQqTeBLA+RAUf9FAFPsx50GpTdcsR5ZGKfPwnhTIQBBUK69d+6GP8ktyWRI0Wr4trOTXEY18uO6XICrTIQJavniYq3EYr27okiXmQB4CC+HYJSJrRFGlhbqlzDqvv+YUoZMBBLIu5Gk+QYpgl1h3jRJLs+D+wAJyE92GYzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717968024; c=relaxed/simple;
-	bh=BuBxWK6zUA+6c3zugRmfDYEDY4Qkmac/nkrzIbKU8ZY=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=bTsQYRCo++p+1YTimVriKLIjFp5RXRTXeQjw5mig2crbw3pAq6L1FcR2rvSzaFOEZ1xXyUb8eKR3mJBaUQLTRViTLLeJOGwL0bX3/u5UHKGADjaXVNBs/++Jpbx5wzGsPkxEjLokxJAFPOGkc0q9mpBkgvXKwNFe9EAJ67QnK+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=cOC6iF44; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1717968016; x=1718572816; i=quwenruo.btrfs@gmx.com;
-	bh=BuBxWK6zUA+6c3zugRmfDYEDY4Qkmac/nkrzIbKU8ZY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
-	 Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=cOC6iF44Sg14vS0PtNPqR/GoNAZuyDTJ0hdDUFiNfdat9jtYtTBb6oJDEqojb7Wm
-	 qPux8PKmB/NhjHJUDQd6hVMliUQ89NFsWOOMtk9Ssy59FCxgYfYw37Rv6hfrXDgFd
-	 e69rm487cCb32gRRKHIgZSjxpIBm1Gt5otrclsTCfgIAPfPrLTXK2UOX111G0tKBT
-	 R/Za8Btt/WseMx/3FF1i0Gi7brwT+UeizCCkbXXj12qODovaZMFljDRvCQij5jPjp
-	 AwB9SHYCM+zzEAIMdt79Bf0T0oU/jj006rpEUPHKX4wwdiebw2MIa1NLLL4t5Xd+6
-	 BxgHqjdI1Iy3l1rQjw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.219] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MStCY-1rqf6v1imc-00MGxT; Sun, 09
- Jun 2024 23:20:16 +0200
-Message-ID: <960aa841-8d7c-413f-9a1b-0364ae3b9493@gmx.com>
-Date: Mon, 10 Jun 2024 06:50:11 +0930
+	s=arc-20240116; t=1717978743; c=relaxed/simple;
+	bh=ouwqqZ0IrZq2p2VNSQskkMAORAvHn7/TuYsSh0/Nnes=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lN4vMpAT0G2gTa16u6sqba5QS1v204gOLaL6SdwVOiyX5iALOLz7Q8idssX4mk1mbzvNmi7w8fqXYXNMlKXkrdYwQvHHB1Jdys9S/ZT2Tibx4J9ZLh01fqO7di2dC6ATyCSnHFuwQghz5Z2/F7QgfCEbexlTHKricFhCcYQtXvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RBSp1Q0K; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa588f7283so3932003276.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Jun 2024 17:19:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1717978740; x=1718583540; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DaBC4lccKq90V2Qdlha3eJDRzM1Bcauqmp5mASHkKAs=;
+        b=RBSp1Q0KZSkKXckwKm0NH9KWKK5B+2YY5YU4X/4nzvQWEKPM1v55ClNvnC7+Yny4jC
+         Uc3bPfpFgjmC0zjs+fdvdjzoQDxGJuSlUEp8DCWfatyKzs6qil3gyCYvKQgcGElhOAzx
+         P1C9KAk+0vHoMGuVp1BOPlydzgjvuEhRsAEsD7kHLRwdVoJzLXtU1kFGlexxszvYLhpV
+         RW5PYCH3gr9itlXgflPMlGvcobNWzbGArbc2ztA8wDEv0N6mmfEjwRxGMV05SWDQkZ6/
+         hTer95s4MbetC8+D4CQnIjl1+EsjgEQb7pDoJCIMONxKk9D3QxuztjlH/INCSjT6GhE0
+         JqDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717978740; x=1718583540;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DaBC4lccKq90V2Qdlha3eJDRzM1Bcauqmp5mASHkKAs=;
+        b=wVW2pSpjzf7JNB8NvzsgwWnibt0Y0vsjF1axbTZ0A8Y0w4RIFNFds6+2b4tXj2PzjF
+         0rbuMV2gFrDky629bPAMdioclFevSzSZcbxeCDyIuYoSH1KC5HBNMMHlNsy0nqK6GG+s
+         3Ph1/kOHqmDZKOTD/hrD1kS8FjjnswyqLGOJfzCk6EGhJbQl/B5kaNiVzclHb5D0FhW3
+         rXuLIkZ/RqPUwXo0s+SBs+6cRUjm7rjc4Oo55PyVrGWRTteJkUKz9AlZq4wmNMMlqKoh
+         wkw+KlD87/lcoeJi5UC0+GHQreEdcu2acMyxVzT7TcjvSrEvmYMWEFICLOm/GlDsFtbF
+         UllQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtom9peLCnl4J0n0L/Hdv8AnBUASmWIWwFjLb812HM+E5Dy6nEbC21qs0mrLaSatCQiJCimGYC21LaTURb7d/JEbPqBpIcgI897pd4gA==
+X-Gm-Message-State: AOJu0Yzyy79TEmiTxMcr+ZqK4Kl+dVlciIxtHVwfv+AWyRb22cTvDM7J
+	PRzbk36/hWYOADVC+9Go3FOCkjX4UwtEZdXulPtOCsfLBYs0/TyZWwVHJC4DJdiIPZOhXxGtDJe
+	qB5tKEjI3IA17ozQt9rv68hA/0LHZcCOctuYc
+X-Google-Smtp-Source: AGHT+IGUSJ9gCJQ/d525KZWGwnLKi0KTucuS2fT52NdM142pz4Cm/kHolpWE6kV3MsEu37U2P/YkyNLgVNYRzBxA+78=
+X-Received: by 2002:a5b:2ce:0:b0:dfb:308f:911 with SMTP id 3f1490d57ef6-dfb308f0b87mr1143735276.60.1717978740109;
+ Sun, 09 Jun 2024 17:19:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-fsdevel@vger.kernel.org,
- Linux Memory Management List <linux-mm@kvack.org>,
- "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: The proper handling of failed IO error?
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240609104355.442002-1-jcalmels@3xx0.net> <20240609104355.442002-5-jcalmels@3xx0.net>
+In-Reply-To: <20240609104355.442002-5-jcalmels@3xx0.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 9 Jun 2024 20:18:48 -0400
+Message-ID: <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM hooks
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com, 
+	Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>, John Johansen <john.johansen@canonical.com>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WQvn05ZDkwcI1DIt7MwycALGo25CsUb79JLfOSucQTxG19MNLF5
- 1rqjDrrolzNg3fYUxsclZidg5YEhPfm47Zf4kaH0USzLlJs2w9MzqNiZEIhyP/+eA/phaBe
- Z/G6drGUEayBSCOWDY3iew3T8ni72terxPuwutZQkz9awz3qp/vIi4BdKU6wWVokYOaheId
- dPId93kG42UxY/PpjSeVw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:g3LRJgwpr88=;NcJSxFNN8Qu+cz/qeR6Ox2TQy2L
- 2PTX9Z7maYQ1kc42tTLfVczL/bS/t7J23FRXmzWt9AwuFn9loWFKEaZM3RC6wwRU86raseDg3
- iB8G9UAVTExayG1PKvxf+pkKdPBiWWqJHFrs5lTfqvY45t6bYbY7p132b5PStOJZMHw+mId81
- aqQcuifnrnj49zyqrb3gsODCc2YFzFw/cQ2wzYCh7rceaTJRKxPhgnaLCq3HUyIMcMh+gCDLH
- Zgk/p2kJ/v0zGEwJnONkFuP52pKJETM6RAV1gMaG5grsQodL7SWKkU/+7YC09yzzysYOEgZTu
- pVbjX8XdZcY2vdZR9Nfdf8khdVCDw5y1VdJS6PHx/GHsDYx+wu/5Dw49yTWMENAl9el/XWtrB
- TVUB1UypFPYbWCemseIampB3sS/teudZQKtTgXyRZKwowfgaz9SABc+2deSz+JpQO3J1R2noz
- EPkgQXWKM0Bfv9mt10qIHEeGW4eJxk29o0WXsFs89cpMrXg9/QisIj2OfGUXUVjlMypZtoJ/u
- KX22Q24K/scLaOcQR3R8vjWATy+GPn+FHwMYbkkl8VzttWsj98PrvqjOZ+6MgeZcqps7Ll1VW
- jUYeIUDemOvtjuT52OPGPrX2uZO0r7eWbEOOorVJDzwnbjqD3Xby6/qOxoYD7t9jVYRBOvLYl
- l/6iWku4AUQOQnMyAYC2QVlreDqXWXLlz8D8H1LU7zmiNnQzuO1tMHuYwOEYmykOIZkHqt6MH
- UOHfAA55qt+sK50EqYVqKdofLB//jBUDmMPtHUafpFr2BPkFKoiim9giE4lqAnoXep512SJxp
- ANCw/vMbtFirWxdEa5M96hRfpNIGJuA59OTQsbIP5KXn4=
 
-Hi,
+On Sun, Jun 9, 2024 at 6:40=E2=80=AFAM Jonathan Calmels <jcalmels@3xx0.net>=
+ wrote:
+>
+> This patch allows modifying the various capabilities of the struct cred
+> in BPF-LSM hooks. More specifically, the userns_create hook called
+> prior to creating a new user namespace.
+>
+> With the introduction of userns capabilities, this effectively provides
+> a simple way for LSMs to control the capabilities granted to a user
+> namespace and all its descendants.
+>
+> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
+> namespaces and checking the resulting task's bounding set.
+>
+> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> ---
+>  include/linux/lsm_hook_defs.h                 |  2 +-
+>  include/linux/security.h                      |  4 +-
+>  kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
+>  security/apparmor/lsm.c                       |  2 +-
+>  security/security.c                           |  6 +-
+>  security/selinux/hooks.c                      |  2 +-
+>  .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
+>  .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
+>  8 files changed, 76 insertions(+), 14 deletions(-)
 
-There is a recent (well a year ago) change in btrfs to remove the usage
-of page/folio error, which gets me wondering what would happen if we got
-a lot of write errors and high memory pressure?
+I'm not sure we want to go down the path of a LSM modifying the POSIX
+capabilities of a task, other than the capabilities/commoncap LSM.  It
+sets a bad precedent and could further complicate issues around LSM
+ordering.
 
-Yes, all file systems calls mapping_set_error() so that fsync call would
-return error, but I'm wondering what would happen to those folios that
-failed to be written?
-
-Those folios has their DIRTY flag cleared before submission, and and
-their endio functions, the WRITEBACK flags is also cleared.
-
-Meaning after such write failure, the page/folio has UPTODATE flag, and
-no DIRTY/ERROR/WRITEBACK flags (at least for btrfs and ext4, meanwhile
-iomap still set the ERROR flag).
-
-Would any memory pressure just reclaim those pages/folios without them
-really reaching the disk?
-
-Thanks,
-Qu
+--
+paul-moore.com
 
