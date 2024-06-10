@@ -1,103 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-21309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25F7901A15
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 06:51:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDA7901A35
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 07:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D64282029
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 04:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4711C20C34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 05:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3367BDDB8;
-	Mon, 10 Jun 2024 04:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43598101E2;
+	Mon, 10 Jun 2024 05:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MneOOx+1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dpbhr+aJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MneOOx+1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dpbhr+aJ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ik0ekPw0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7E01876;
-	Mon, 10 Jun 2024 04:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69A41852;
+	Mon, 10 Jun 2024 05:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717995082; cv=none; b=WyXODHIn0qGvezVwC9I5tCN/PFjeK01vR7aqD6btmeHH+j6QjbaSTmhoYwxvRdhDlvOo8YC3w2ySfcqEMrfk0Ob5dECXpnoQhhvGn9ILv5QM+1tPESJfotH1c0+Y/lrYgtKGd9idVtF47lSC91+gYK4znDSotnmWx/+7kocUymY=
+	t=1717997726; cv=none; b=kUNrlE9VG2jkWjmT90I3jDsBGRefsuFjhFpdXuYEM8OPd0sSLmUblJrb1WBnTPJUUrdGdlLHziuLhVEy2XSb2gmO7MTjL3HuYOFK7z2Qkm9CMiXgNlneUzoFX2LTzgFFfdy6/nP+9NxoFiVIM7xtOktoAcPNx+G05BbgpZxZfpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717995082; c=relaxed/simple;
-	bh=7qKPtaal4QnVDHVSx+pi8mWVmic8iCOzD3fxUS1BCcY=;
+	s=arc-20240116; t=1717997726; c=relaxed/simple;
+	bh=j5JDaMwuzJvc73EGL77K10m92BLzD8OND8bZM7llTHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMlJ+GvveqH3td6iBXefEEud0ATgSSLo984V6rMykVrYYbKerk5iBDk9DvHEZ7+wAFiN14kxo6A0nEa5codf/w4Xi0TJHePUSidSy5dUX5tAmqABqsKwzSmcj63Y5guA0HYXyKQ3r9LB8ZM0V8HYvBhuLS8yq0Rr7W4XVJfv0xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MneOOx+1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dpbhr+aJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MneOOx+1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dpbhr+aJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 38A28219BD;
-	Mon, 10 Jun 2024 04:51:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717995079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=MneOOx+1gNcO52wjHjbtfvSOIFd2eLO7f0JeCEkn1WWeCMuHu97X5WFutxD1M7GMvOHS/9
-	xyURXfjcjF4O/mvjDZLul8gh64AOhEI28Tg3mXu1XRpC5xnFo8Zn1J4UYpILXq8qVk8Pek
-	+5NVhqSi6QGN449xlVKByUM90ju7NcQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717995079;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=Dpbhr+aJgsRfAZ0eTMD/fBth3eN8Oab5culOdlnVfX4aZrhAvBbfqxmyksY6dBKf7CJKCD
-	MamWDYGzf1wknrDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MneOOx+1;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Dpbhr+aJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717995079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=MneOOx+1gNcO52wjHjbtfvSOIFd2eLO7f0JeCEkn1WWeCMuHu97X5WFutxD1M7GMvOHS/9
-	xyURXfjcjF4O/mvjDZLul8gh64AOhEI28Tg3mXu1XRpC5xnFo8Zn1J4UYpILXq8qVk8Pek
-	+5NVhqSi6QGN449xlVKByUM90ju7NcQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717995079;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=Dpbhr+aJgsRfAZ0eTMD/fBth3eN8Oab5culOdlnVfX4aZrhAvBbfqxmyksY6dBKf7CJKCD
-	MamWDYGzf1wknrDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD45913A7F;
-	Mon, 10 Jun 2024 04:51:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id miCHK0aGZmbIHAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 10 Jun 2024 04:51:18 +0000
-Date: Mon, 10 Jun 2024 06:51:09 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v1 3/6] fs/proc/task_mmu: properly detect
- PM_MMAP_EXCLUSIVE per page of PMD-mapped THPs
-Message-ID: <ZmaGPfSsJ1tguUry@localhost.localdomain>
-References: <20240607122357.115423-1-david@redhat.com>
- <20240607122357.115423-4-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UErLXw1Ye3M+azkMHVH5zU6fEoJfN5eN8lv7kmHK82Z1HWuc9cVbM+jE1u1aEXUz98UJd1l0ZqloJ5AbH5KbOA7fY5q48bDDtWELuC1UcRfH70FnaaeCopyOEXd+m2P75y07CJ0+9kmqR1Ctl0v79sJV+2kmQsvtuIv+OPsmgQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ik0ekPw0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eB0NMMEEXOM2b2CYR7Yv3NlVBKULaZ5fvEsvZRl6UCM=; b=ik0ekPw0EQjtiH+5BdPz5Qlw0V
+	A3zpcoqkjm5sVEpkhsXBjpZmMuDQZcyg53ghnS07iwAryrgCNLW1zLyZN76Hjy20YLyjGBIEuFOm3
+	9q6JDb3ljqbkNabzfM6WV63r/a8j7CILx72udH4IznkNlgxrt6ORWj9kn/GnIxOmMdd8KBeAxYYN/
+	BPEwYDrM4u2Brqj7tFV2XfljfIa97FE45o0iZBVpnbSYJpuj36GDelA/ISCemX8NZ/U282I6SFJPP
+	zGyTt4o1oJboeFg2ykrsQMjlvmh3V1U+a+8DoVQ7bmLdQqPzmZvg/1kuyTW4xEINYrgNBzvXxmtCd
+	VvZNhxNw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sGXKA-006dpp-0V;
+	Mon, 10 Jun 2024 05:12:06 +0000
+Date: Mon, 10 Jun 2024 06:12:06 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Fei Li <fei1.li@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [RFC] UAF in acrn_irqfd_assign() and vfio_virqfd_enable()
+Message-ID: <20240610051206.GD1629371@ZenIV>
+References: <20240607015656.GX1629371@ZenIV>
+ <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
+ <20240607015957.2372428-11-viro@zeniv.linux.org.uk>
+ <20240607-gelacht-enkel-06a7c9b31d4e@brauner>
+ <20240607161043.GZ1629371@ZenIV>
+ <20240607210814.GC1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,59 +65,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607122357.115423-4-david@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 38A28219BD
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
+In-Reply-To: <20240607210814.GC1629371@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Jun 07, 2024 at 02:23:54PM +0200, David Hildenbrand wrote:
-> We added PM_MMAP_EXCLUSIVE in 2015 via commit 77bb499bb60f ("pagemap: add
-> mmap-exclusive bit for marking pages mapped only here"), when THPs could
-> not be partially mapped and page_mapcount() returned something
-> that was true for all pages of the THP.
-> 
-> In 2016, we added support for partially mapping THPs via
-> commit 53f9263baba6 ("mm: rework mapcount accounting to enable 4k mapping
-> of THPs") but missed to determine PM_MMAP_EXCLUSIVE as well per page.
-> 
-> Checking page_mapcount() on the head page does not tell the whole story.
-> 
-> We should check each individual page. In a future without per-page
-> mapcounts it will be different, but we'll change that to be consistent
-> with PTE-mapped THPs once we deal with that.
-> 
-> Fixes: 53f9263baba6 ("mm: rework mapcount accounting to enable 4k mapping of THPs")
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+In acrn_irqfd_assign():
+	irqfd = kzalloc(sizeof(*irqfd), GFP_KERNEL);
+	...
+	set it up
+	...
+        mutex_lock(&vm->irqfds_lock);
+        list_for_each_entry(tmp, &vm->irqfds, list) {
+                if (irqfd->eventfd != tmp->eventfd)
+                        continue;
+                ret = -EBUSY;
+                mutex_unlock(&vm->irqfds_lock);
+                goto fail;
+        }
+        list_add_tail(&irqfd->list, &vm->irqfds);
+        mutex_unlock(&vm->irqfds_lock);
+Now irqfd is visible in vm->irqfds.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+        /* Check the pending event in this stage */
+        events = vfs_poll(f.file, &irqfd->pt);
 
--- 
-Oscar Salvador
-SUSE Labs
+        if (events & EPOLLIN)
+                acrn_irqfd_inject(irqfd);
+
+OTOH, in
+
+static int acrn_irqfd_deassign(struct acrn_vm *vm,
+                               struct acrn_irqfd *args)
+{
+        struct hsm_irqfd *irqfd, *tmp;
+        struct eventfd_ctx *eventfd;
+
+        eventfd = eventfd_ctx_fdget(args->fd);
+        if (IS_ERR(eventfd))
+                return PTR_ERR(eventfd);
+
+        mutex_lock(&vm->irqfds_lock);
+        list_for_each_entry_safe(irqfd, tmp, &vm->irqfds, list) {
+                if (irqfd->eventfd == eventfd) {
+                        hsm_irqfd_shutdown(irqfd);
+
+and
+
+static void hsm_irqfd_shutdown(struct hsm_irqfd *irqfd)
+{
+        u64 cnt;
+
+        lockdep_assert_held(&irqfd->vm->irqfds_lock);
+
+        /* remove from wait queue */
+        list_del_init(&irqfd->list);
+        eventfd_ctx_remove_wait_queue(irqfd->eventfd, &irqfd->wait, &cnt);
+        eventfd_ctx_put(irqfd->eventfd);
+        kfree(irqfd);
+}
+
+Both acrn_irqfd_assign() and acrn_irqfd_deassign() are callable via
+ioctl(2), with no serialization whatsoever.  Suppose deassign hits
+as soon as we'd inserted the damn thing into the list.  By the
+time we call vfs_poll() irqfd might have been freed.  The same
+can happen if hsm_irqfd_wakeup() gets called with EPOLLHUP as a key
+(incidentally, it ought to do
+	__poll_t poll_bits = key_to_poll(key);
+instead of
+        unsigned long poll_bits = (unsigned long)key;
+and check for EPOLLIN and EPOLLHUP instead of POLLIN and POLLHUP).
+
+AFAICS, that's a UAF...
+
+We could move vfs_poll() under vm->irqfds_lock, but that smells
+like asking for deadlocks ;-/
+
+vfio_virqfd_enable() has the same problem, except that there we
+definitely can't move vfs_poll() under the lock - it's a spinlock.
+
+Could we move vfs_poll() + inject to _before_ making the thing
+public?  We'd need to delay POLLHUP handling there, but then
+we need it until the moment with do inject anyway.  Something
+like replacing
+        if (!list_empty(&irqfd->list))
+		hsm_irqfd_shutdown(irqfd);
+in hsm_irqfd_shutdown_work() with
+        if (!list_empty(&irqfd->list))
+		hsm_irqfd_shutdown(irqfd);
+	else
+		irqfd->need_shutdown = true;
+and doing
+	if (unlikely(irqfd->need_shutdown))
+		hsm_irqfd_shutdown(irqfd);
+	else
+		list_add_tail(&irqfd->list, &vm->irqfds);
+when the sucker is made visible.
+
+I'm *not* familiar with the area, though, so that might be unfeasible
+for any number of reasons.
+
+Suggestions?
 
