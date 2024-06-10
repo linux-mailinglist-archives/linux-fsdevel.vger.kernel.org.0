@@ -1,179 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-21340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8E5902290
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 15:22:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7168B9023E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 16:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8061281C7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 13:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A45EB29415
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 14:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAFD824AE;
-	Mon, 10 Jun 2024 13:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF58484DE7;
+	Mon, 10 Jun 2024 14:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsbU8Uex"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRM1CBXR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552E14501B;
-	Mon, 10 Jun 2024 13:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DA423B0;
+	Mon, 10 Jun 2024 14:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025713; cv=none; b=PvYZhqCOBwG+ynHz2P6wp9zjvb6BRI/H493NDtiHAEw0A5lg2MxTOtXDL1JvoAmV0xmcIsLMo6Np5OQdnLKB3lTqAyWErn+r3+WyZnZV4FvBBnrSCiXRGKT5GQ+FdkBL80p98GLJaog/bZZ34qnYE0E0L3hE4s9p2tX9LmxTiiI=
+	t=1718028648; cv=none; b=LCs7aI3mHHQ916BqaTAPAZnQlowyL988hew5shaolyZIJhKch7vTxx6Y52DRg1l/XbmigvWYsxdEbLrQlNbx5l+VxNcnvcHzwFBKpkKDHjVpAzLcZsuadA0vlHeKTw8SG1wZCumXckqbD+bD3Mv6MqJlei1m08O5J5I3Y26bd0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025713; c=relaxed/simple;
-	bh=4SbC6w7LV+Y002BkaDiHjFCieigGtOeuU66oIxLwQag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kpdHQbn6usb1ErrbwkVOECkN0OJaiLQETEjDACT88cWa+LR4i8Zq6ECJecw7kfQ2QYa37S+TEMl0aoREhTsdTmY2Krj2BPARMnvBu9UC3POCim65TvbRtxZeEax7sYGRqagCkxuWhhbrRDNd36Tj9lhbiC2sqY8CMDT09pobe7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsbU8Uex; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b05e504bceso23123506d6.2;
-        Mon, 10 Jun 2024 06:21:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718025711; x=1718630511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4SbC6w7LV+Y002BkaDiHjFCieigGtOeuU66oIxLwQag=;
-        b=SsbU8UexSAqcQtG7+6ZAZwtFJLNBvSod1ZoLqARiuLzLjKTAU22s0p85BBgJpYmcQ9
-         rYHL/Jg1Q2dRAMXbCJl6BkTQJvpWt6L4jcUfPjCyzDlltD0aBYo1zfB60DSOJ+RHv6vQ
-         TReDJV2W8tZBjK1ybq54Af6Mypv+OJjIgSuvwaREGjvCAXu0soTjVvLUDrpwcY/+yJ95
-         /6NDC2TziiFu8Ir9Zn40gpBhZlao65h+YlCzJyQwAjab+UmcPOWi606jjz59HNqT6t52
-         fpe6cMLO9FoEzsiR21FiLS135hHISJpz1KcfsAQdJ6riI8hWgPiMdxXisY5MAHX7b3sW
-         MluQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718025711; x=1718630511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4SbC6w7LV+Y002BkaDiHjFCieigGtOeuU66oIxLwQag=;
-        b=ujuW6xO38Ilee5GuQx34pBIGaCtRHNjhKYtSeFucFmL+77l+s+6wpULHiH0ZnAa0it
-         pPv9eylQU0kxHVVS9pk2AtQKYcFdF6um2nOGSC/7COILB81bTnfyTMZZA/5kDyPtq+nn
-         AYIovYULutWaATxQIwXb5qlCzlTU9GTvi4PN2eAQYKD0uFp70NwwHfISoJpAcqUDy+RV
-         +7pOFfEJt0Cqemid0jatFntR5cWYUk8plJy5XOyp1J0vLsnP9sBuUAdzFtqCbExRkRX3
-         l3Qg/CwtqFDyL5f3Q88/LVmU7yANKixqJn/JKdlEJc6lg5FAyT748Tu0x7i+pVisb+FX
-         x+Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCUK50qhXWlz3hccGLrGUZzkiZi3tj2wB4EUfhmIMnUBGKBYMOZbSLQjZW+1Q0/q14WR+TCR/DoweSXAGj9Fq/amJHyxyIBkanVzPs1e0GN/uDSxtKMjT9uccsgRKHSHeQiOxwyYbd3Igg==
-X-Gm-Message-State: AOJu0YyWI516rbPh91wcJPTb35YqM7N5bqkw6IMKXdclpFM9WruOQmDy
-	1J1l7DH5PPWkNKDD0fadtgUb01SDOnxNoZGbDeHXPB0RS/oYe97Wc2KQEAakL9NKZLSI2W9l1df
-	/sFKbFdXczVLyWKFmVpp9eYKaKi8=
-X-Google-Smtp-Source: AGHT+IFXdAJ4P0gih9diJ3CnyRV7VCkCqNa4qGRUx3JH0L6l6+4eFkuUBOqmNinoaN9CPr9WH3zwLmeQrnr7YE8wLRs=
-X-Received: by 2002:a05:6214:588a:b0:6b0:7747:be42 with SMTP id
- 6a1803df08f44-6b07747c007mr41935976d6.55.1718025711164; Mon, 10 Jun 2024
- 06:21:51 -0700 (PDT)
+	s=arc-20240116; t=1718028648; c=relaxed/simple;
+	bh=2eh5fXSWeeSBjf8qN/ZVFdd9bpC1U/JqDHicBRIk/Pw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S5jl0YU55lyuzNJo9rAsmOtEzCVF2lp7ZuUwlam8hyvZ3TG+kSqrZxAzOpY4rrlqqyLAyhiQepPYFm6dqU24U3XWsfsvElYqHedMV/ON6V9s02ROslqfRW5Rj4FcO2Xax10T5xyR4uIFPzE/NU+ib+h6T9w5sRQPNkj5cBg8a5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRM1CBXR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A755C2BBFC;
+	Mon, 10 Jun 2024 14:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718028647;
+	bh=2eh5fXSWeeSBjf8qN/ZVFdd9bpC1U/JqDHicBRIk/Pw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VRM1CBXRqwMoesfO3Wii8BrMsr5/tU4dKUfTJOL1f0kZY/3iQs6v0UGxgI0vQkJf7
+	 orT66yVpsiQJ2jA/516zMTzxsK/k85RO88j6AEXB++9N6+Z7JAZ0acMcao40QFOWyt
+	 w9TxJdP6PkAg0G6VqOzOJmWBLx8324I/jW+53dkb0WVfYi+f0Z7B14gZBPMaGf3KcW
+	 L3+/P5NHvK5esZyJYqF2oDvdoGXAXgjub6JWdxkfrqnLY8nPlZmuLXeveLF2WeM9uA
+	 2qOU9tuDg03H0jQdXRQ2jpcR2J5xI26Vjx/2glj4jwr3tJVS7YBB/eLbTkHnVFqLF3
+	 V8zaklaa6yM7A==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon, 10 Jun 2024 16:09:10 +0200
+Message-ID: <20240610-vfs-fixes-a84527e50cdb@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531145204.GJ52987@frogsfrogsfrogs> <20240603104259.gii7lfz2fg7lyrcw@quack3>
- <vbiskxttukwzhjoiic6toscqc6b2qekuwumfpzqp5vkxf6l6ia@pby5fjhlobrb>
- <20240603174259.GB52987@frogsfrogsfrogs> <20240604085843.q6qtmtitgefioj5m@quack3>
- <20240605003756.GH52987@frogsfrogsfrogs> <CAOQ4uxiVVL+9DEn9iJuWRixVNFKJchJHBB8otH8PjuC+j8ii4g@mail.gmail.com>
- <ZmEemh4++vMEwLNg@dread.disaster.area> <tnj5nqca7ewg5igfvhwhmjigpg3nxeic4pdqecac3azjsvcdev@plebr5ozlvmb>
- <CAOQ4uxg6qihDRS1c11KUrrANrxJ2XvFUtC2gHY0Bf3TQjS0y4A@mail.gmail.com> <kh5z3o4wj2mxx45cx3v2p6osbgn5bd2sdexksmwio5ad5biiru@wglky7rxvj6l>
-In-Reply-To: <kh5z3o4wj2mxx45cx3v2p6osbgn5bd2sdexksmwio5ad5biiru@wglky7rxvj6l>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 10 Jun 2024 16:21:39 +0300
-Message-ID: <CAOQ4uxgLbXHYxhgtLByDyMcEwFGfg548AmJj7A99kwFkS_qTmw@mail.gmail.com>
-Subject: Re: Re: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and FS_IOC_FSGETXATTRAT
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Dave Chinner <david@fromorbit.com>, "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4766; i=brauner@kernel.org; h=from:subject:message-id; bh=2eh5fXSWeeSBjf8qN/ZVFdd9bpC1U/JqDHicBRIk/Pw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSlc8asD7dKf5/7cc81ybuSCtmN/vO2pq+QXT09OpeT8 3x68s2IjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkkXmb4p2UdonB/wduKg9YW vRc/qi9Z7eP03dXNdrXuCtvZxXJxDIwMWw88Yl20dMvWQ+WTAl/cKdRedPpgxfS3CyJZy0/Fvy3 4ywwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 2:50=E2=80=AFPM Andrey Albershteyn <aalbersh@redhat=
-.com> wrote:
->
-> On 2024-06-10 12:19:50, Amir Goldstein wrote:
-> > On Mon, Jun 10, 2024 at 11:17=E2=80=AFAM Andrey Albershteyn <aalbersh@r=
-edhat.com> wrote:
-> > >
-> > > On 2024-06-06 12:27:38, Dave Chinner wrote:
-> > ...
-> > > >
-> > > > The only reason XFS returns -EXDEV to rename across project IDs is
-> > > > because nobody wanted to spend the time to work out how to do the
-> > > > quota accounting of the metadata changed in the rename operation
-> > > > accurately. So for that rare case (not something that would happen
-> > > > on the NAS product) we returned -EXDEV to trigger the mv command to
-> > > > copy the file to the destination and then unlink the source instead=
-,
-> > > > thereby handling all the quota accounting correctly.
-> > > >
-> > > > IOWs, this whole "-EXDEV on rename across parent project quota
-> > > > boundaries" is an implementation detail and nothing more.
-> > > > Filesystems that implement project quotas and the directory tree
-> > > > sub-variant don't need to behave like this if they can accurately
-> > > > account for the quota ID changes during an atomic rename operation.
-> > > > If that's too hard, then the fallback is to return -EXDEV and let
-> > > > userspace do it the slow way which will always acocunt the resource
-> > > > usage correctly to the individual projects.
-> > > >
-> > > > Hence I think we should just fix the XFS kernel behaviour to do the
-> > > > right thing in this special file case rather than return -EXDEV and
-> > > > then forget about the rest of it.
-> > >
-> > > I see, I will look into that, this should solve the original issue.
-> >
-> > I see that you already got Darrick's RVB on the original patch:
-> > https://lore.kernel.org/linux-xfs/20240315024826.GA1927156@frogsfrogsfr=
-ogs/
-> >
-> > What is missing then?
-> > A similar patch for rename() that allows rename of zero projid special
-> > file as long as (target_dp->i_projid =3D=3D src_dp->i_projid)?
-> >
-> > In theory, it would have been nice to fix the zero projid during the
-> > above link() and rename() operations, but it would be more challenging
-> > and I see no reason to do that if all the other files remain with zero
-> > projid after initial project setup (i.e. if not implementing the syscal=
-ls).
->
-> I think Dave suggests to get rid of this if-guard and allow
-> link()/rename() for special files but with correct quota calculation.
->
-> >
-> > >
-> > > But those special file's inodes still will not be accounted by the
-> > > quota during initial project setup (xfs_quota will skip them), would
-> > > it worth it adding new syscalls anyway?
-> > >
-> >
-> > Is it worth it to you?
-> >
-> > Adding those new syscalls means adding tests and documentation
-> > and handle all the bugs later.
-> >
-> > If nobody cared about accounting of special files inodes so far,
-> > there is no proof that anyone will care that you put in all this work.
->
-> I already have patch and some simple man-pages prepared, I'm
-> wondering if this would be useful for any other usecases
+Hey Linus,
 
-Yes, I personally find it useful.
-I have applications that query the fsx_xflags and would rather
-be able to use O_PATH to query/set those flags, since
-internally in vfs, fileattr_[gs]et() do not really need an open file.
+/* Summary */
+This contains fixes for this merge window:
 
-> which would
-> require setting extended attributes on spec indodes.
+* Restore debugfs behavior of ignoring unknown mount options.
+* Fix kernel doc for netfs_wait_for_oustanding_io().
+* Remove unneeded fdtable.h include in cachefiles.
+* Fix struct statx comment after new addition for this cycle.
+* Fix data zeroing behavior when an extent spans the block that contains i_size.
+* Restore i_size increasing in iomap_write_end() for now to avoid stale data
+  exposure on xfs with a realtime device.
+* Fix a check in find_next_fd().
+* Improve trace output for cachefiles_obj_{get,put}_ondemand_fd().
+* Remove requests from the request list in cachefiles to prevent accessing
+  already freed requests.
+* Fix UAF when issuing restore command while the daemon is still alive by
+  adding an additional reference count to cachefile requests.
+* Fix UAF in cachefiles by grabbing a reference during xarray lookup with
+  xa_lock() held.
+* Simplify error handling in cachefiles_ondemand_daemon_read().
+* Add consistency checks to cachefiles read and open requests to avoid crashes.
+* Add a spinlock to protect ondemand_id variable which is used to determine
+  whether an anonymous cachefiles fd has already been closed.
+* Make on-demand reads for cachefiles killable allowing to handle broken
+  cachefiles daemon better.
+* Flush all requests after the kernel has been marked dead via CACHEFILES_DEAD
+  to avoid hung-tasks.
+* Ensure that closed requests are marked as such to avoid reusing them with a
+  reopen request.
+* Defer fd_install() until after copy_to_user() succeeded in cachefiles and
+  thereby get rid of having to use close_fd().
+* Ensure that anonymous cachefiles on-demand fds are reused while they are
+  valid to avoid pinning already freed cookies.
 
-Please do not use the terminology "extended attributes" in the man page
-to describe struct fsxattr.
-Better follow the "additional attributes" terminology of xfs ioctl man page=
- [1],
-even though it is already confusing enough w.r.t "extended attributes" IMO.
+/* Testing */
+clang: Debian clang version 16.0.6 (27)
+gcc: (Debian 13.2.0-25) 13.2.0
 
-Thanks,
-Amir.
+All patches are based on mainline. No build failures or warnings were observed.
 
-[1] https://man7.org/linux/man-pages/man2/ioctl_xfs_fsgetxattr.2.html
+/* Conflicts */
+No known conflicts.
+
+The following changes since commit 2bfcfd584ff5ccc8bb7acde19b42570414bf880b:
+
+  Merge tag 'pmdomain-v6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm (2024-05-27 08:18:31 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc4.fixes
+
+for you to fetch changes up to f5ceb1bbc98c69536d4673a97315e8427e67de1b:
+
+  iomap: Fix iomap_adjust_read_range for plen calculation (2024-06-05 17:27:03 +0200)
+
+Please consider pulling these changes from the signed vfs-6.10-rc4.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.10-rc4.fixes
+
+----------------------------------------------------------------
+Baokun Li (11):
+      cachefiles: add output string to cachefiles_obj_[get|put]_ondemand_fd
+      cachefiles: remove requests from xarray during flushing requests
+      cachefiles: fix slab-use-after-free in cachefiles_ondemand_get_fd()
+      cachefiles: fix slab-use-after-free in cachefiles_ondemand_daemon_read()
+      cachefiles: remove err_put_fd label in cachefiles_ondemand_daemon_read()
+      cachefiles: add consistency check for copen/cread
+      cachefiles: add spin_lock for cachefiles_ondemand_info
+      cachefiles: never get a new anonymous fd if ondemand_id is valid
+      cachefiles: defer exposing anon_fd until after copy_to_user() succeeds
+      cachefiles: flush all requests after setting CACHEFILES_DEAD
+      cachefiles: make on-demand read killable
+
+Christian Brauner (3):
+      debugfs: continue to ignore unknown mount options
+      netfs: fix kernel doc for nets_wait_for_outstanding_io()
+      Merge patch series "cachefiles: some bugfixes and cleanups for ondemand requests"
+
+Gao Xiang (1):
+      cachefiles: remove unneeded include of <linux/fdtable.h>
+
+John Garry (1):
+      statx: Update offset commentary for struct statx
+
+Ritesh Harjani (IBM) (1):
+      iomap: Fix iomap_adjust_read_range for plen calculation
+
+Yuntao Wang (1):
+      fs/file: fix the check in find_next_fd()
+
+Zhang Yi (1):
+      iomap: keep on increasing i_size in iomap_write_end()
+
+Zizhi Wo (1):
+      cachefiles: Set object to close if ondemand_id < 0 in copen
+
+ fs/cachefiles/daemon.c            |   3 +-
+ fs/cachefiles/internal.h          |   5 +
+ fs/cachefiles/ondemand.c          | 218 ++++++++++++++++++++++++++++----------
+ fs/debugfs/inode.c                |  10 +-
+ fs/file.c                         |   4 +-
+ fs/iomap/buffered-io.c            |  56 +++++-----
+ include/linux/netfs.h             |   2 +-
+ include/trace/events/cachefiles.h |   8 +-
+ include/uapi/linux/stat.h         |   2 +-
+ 9 files changed, 215 insertions(+), 93 deletions(-)
 
