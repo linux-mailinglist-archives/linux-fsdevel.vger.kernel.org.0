@@ -1,212 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-21315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E9C901CC0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 10:18:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADFD901CE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 10:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C3CCB230DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 08:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F7D1F2164C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 08:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF896F30D;
-	Mon, 10 Jun 2024 08:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1144B6F06D;
+	Mon, 10 Jun 2024 08:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qd4vuO7J"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qe9iiASP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="520Ny57m";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qe9iiASP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="520Ny57m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8370655885;
-	Mon, 10 Jun 2024 08:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0BF23B0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2024 08:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007478; cv=none; b=au27ndr9o+I+rOwfzYOkavZmZ19dHgIDn6srQT5kXaQvoq85BPdmsU4wn41ppEvMEGIlXVwykep+XBnAHG2jfwTtf0n6JQ7tb1tzJtWRNku+A9lj3S42Kg/UhSIVws2tU5oi/eCuHKWKDtLZcOHwiPv/fR8EPyF/tMz7BROWix8=
+	t=1718008077; cv=none; b=VwrbGlvtDfF53GcUrWF+xIublHAo0NMcKCMQKIenr1SoVby4c+y/UfW0tTlYfnwaHe7H64KkZ5hYl+Ddy9WrNPEReEmuH9VScDjL6zXf0pzTvOg7RVUm9jz3Wy0MutG5XAVIZBB9i1a13XB7WbaazwDZlbLeAPpzyEvPZClisII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007478; c=relaxed/simple;
-	bh=pX55hZgAslFU347Mp/z056R6oguHdC5TccmaX2t/iog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J74TFdlnIBcYxsgW11rC9S5PhDia7b+ZuplXacEMvBsvwLloRU+yvTUBgfiqZH3gB5B6K9gjACErw7O8gxTUhh8HehBShgmmUCLXonHY8sNFMxriPX+jAhEXMTI3Zr499NbcLYKAppT2USE+aX+B/HZfKX4qvHljZOxNQgkKyfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qd4vuO7J; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c31144881eso372605a91.1;
-        Mon, 10 Jun 2024 01:17:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718007476; x=1718612276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=boO2l3vZN7nH3KvrAr9prlBUcFPwMQHcvTnj1oW/1V8=;
-        b=Qd4vuO7J7pOSzPSTR04IvrxjsOaAJQYOlOgb9umlg3/ECvlDW+6xQgzkGfNtck5Hbk
-         qZs3ED5sJroIpReIpJqODmixSLJ90bkH2QHXYOI0dwrO20DYYJXsyOXe2S3KtVy15UYn
-         UuxKKQGjYI031S5MmNLioFQbUzd3kmJYRrNzF+Rn9yXxHtKR5e7brna3wEWUK8JdkYtw
-         Vqin4HbPRldzYL/+HopnK23/XQQpdbYCRnOeQeFji15Y3WIOklPPHnErsi7neL1DH+Ys
-         rPDkfvL/+9yr6C3+nhx1XH91RsI8bgk8LBn30xtWluLIL9P/v1uf02IHOZdFtZfCqmLa
-         NkBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718007476; x=1718612276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=boO2l3vZN7nH3KvrAr9prlBUcFPwMQHcvTnj1oW/1V8=;
-        b=EYqyJlXbIphDPvfgps06LMd5lmqmpFLD9vnnxdW/Sshd3j2DHgq0abH/uX59L7jiQV
-         BSaVI9vFrFFbmyYLal8qECY67lVjiAKAhAlFSxHtmZGp6taNdTb+Gddxwd7ysheQ1MhZ
-         bYhgqlODQ5yK3U6ba78i63Z7Dh1Ybt1Cjkr12V2bmKtz6x6JYhu48CmQUWyk0affBhMK
-         7Jy3fLuW7mmQ6GR0FqyOEXHjhsChbsKygdF9KsSiyMxxtFxJl44BaJuuw9drnnUkKciG
-         NJbQRtgbJXaQockdNAqcK4TefoH6X8evmxZ20zAy+zO+vK9FW132Q6+78ZUo0I3vma3o
-         c6sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfG/8ELR9vu0D4ezaUDuREOU9vtl9ou/NJMp7QaA0AKOvYQJfCRUohM9gRGB2Pomz29zpopyRG3esBMGduMFHRYCKqSrBDr1ZmEPVymus9Ci6D/jqrMqQ/v6568mTlGMQpoINJHR/3Ueu32Qj1vQ3gj9qvxqj0/O6xMD1GNtlzkQ==
-X-Gm-Message-State: AOJu0YyFQ/g/NO0HmaBaxnyr82Ff+GWBnLAH7LncE6P/HG8HiuqEA/5c
-	6tFVO37nhiv6IT/Qjl67IFOIKaB8HZleVZPlu/GPdkCVDNy7Vf7bx+OUirmUoeUKC3bPDEQPNGR
-	tCqiQcDiOo5Jr9iIW32gK5WB8eT8=
-X-Google-Smtp-Source: AGHT+IH0FNZaeJCNfSLD4WEifC4IPCYbk21g97wqXKFaiT0J77VYQN7/t7VgnP5Uc4iC2YUAA8yNQ8/3tWb10uQonKk=
-X-Received: by 2002:a17:90b:b15:b0:2c2:fe3d:3453 with SMTP id
- 98e67ed59e1d1-2c2fe3d3560mr2157855a91.18.1718007475751; Mon, 10 Jun 2024
- 01:17:55 -0700 (PDT)
+	s=arc-20240116; t=1718008077; c=relaxed/simple;
+	bh=n9z5PcEJ614H6L/znCGQ/tlNzlggaTgdCkC1a4EOOqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AX8dkl96tQjvaEKbOoVHkDm0JatVFKDu8WVU/EEG1KAVIHyxxQ6AagJjs+pkBGTBQq58a7Ez+w4ukDkLgwbkqGa66o1GTAgo+Lx5UCWUS/iiTJ/dGg+I/4FD+2baBODTDVZv/dgtsDRVSWYEtzt5buao71+c22QDiClfT3dRXHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qe9iiASP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=520Ny57m; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qe9iiASP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=520Ny57m; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8E8061F7BC;
+	Mon, 10 Jun 2024 08:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718008073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DmUUS9C0YeSTWVq2iGwOo5vFaAggB5XKcGRSkSoepSQ=;
+	b=qe9iiASP/w7+lY9rUnC18GEKbFiFeWSWKP5r2bXqK3Gv3Atpau4pPrSNWlMKlu/4qvzkrI
+	uN9o+uzyCkd9JPkaftxI4WpY8WpVY0h22SpYLSM4GL5jAsxvJII1y3RvgUpsVsolEqHWvh
+	RcgJMIrE+TkdGkx5vv+v2VEoeOgFZIE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718008073;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DmUUS9C0YeSTWVq2iGwOo5vFaAggB5XKcGRSkSoepSQ=;
+	b=520Ny57mvmQzTE54gq4PN5w15onycj1yMmorL6HoPdPC2fY8dVfzf8GU/GIq05Y6RJL3zH
+	a9+901MfjYVL5VBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qe9iiASP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=520Ny57m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718008073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DmUUS9C0YeSTWVq2iGwOo5vFaAggB5XKcGRSkSoepSQ=;
+	b=qe9iiASP/w7+lY9rUnC18GEKbFiFeWSWKP5r2bXqK3Gv3Atpau4pPrSNWlMKlu/4qvzkrI
+	uN9o+uzyCkd9JPkaftxI4WpY8WpVY0h22SpYLSM4GL5jAsxvJII1y3RvgUpsVsolEqHWvh
+	RcgJMIrE+TkdGkx5vv+v2VEoeOgFZIE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718008073;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DmUUS9C0YeSTWVq2iGwOo5vFaAggB5XKcGRSkSoepSQ=;
+	b=520Ny57mvmQzTE54gq4PN5w15onycj1yMmorL6HoPdPC2fY8dVfzf8GU/GIq05Y6RJL3zH
+	a9+901MfjYVL5VBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8321013AA0;
+	Mon, 10 Jun 2024 08:27:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ghz+Hwm5Zmb5VwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 10 Jun 2024 08:27:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 30C9BA0870; Mon, 10 Jun 2024 10:27:53 +0200 (CEST)
+Date: Mon, 10 Jun 2024 10:27:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jemmy <jemmywong512@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, jemmy512@icloud.com,
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v4] Improve readability of copy_tree
+Message-ID: <20240610082753.djzssloosrdhj3ld@quack3>
+References: <20240604134347.9357-1-jemmywong512@gmail.com>
+ <20240606173912.99442-1-jemmywong512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-4-andrii@kernel.org>
- <ZmOKMgZn_ki17UYM@gmail.com>
-In-Reply-To: <ZmOKMgZn_ki17UYM@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 10 Jun 2024 09:17:43 +0100
-Message-ID: <CAEf4BzYAQwX0AQ_fbcB9kVBj3vpx0-5pPPZNYKL4VjnX_eYKpg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] fs/procfs: implement efficient VMA querying API
- for /proc/<pid>/maps
-To: Andrei Vagin <avagin@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
-	rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606173912.99442-1-jemmywong512@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,icloud.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,icloud.com,vger.kernel.org,zeniv.linux.org.uk];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 8E8061F7BC
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-On Fri, Jun 7, 2024 at 11:31=E2=80=AFPM Andrei Vagin <avagin@gmail.com> wro=
-te:
->
-> On Tue, Jun 04, 2024 at 05:24:48PM -0700, Andrii Nakryiko wrote:
-> > /proc/<pid>/maps file is extremely useful in practice for various tasks
-> > involving figuring out process memory layout, what files are backing an=
-y
-> > given memory range, etc. One important class of applications that
-> > absolutely rely on this are profilers/stack symbolizers (perf tool bein=
-g one
-> > of them). Patterns of use differ, but they generally would fall into tw=
-o
-> > categories.
-> >
-> > In on-demand pattern, a profiler/symbolizer would normally capture stac=
-k
-> > trace containing absolute memory addresses of some functions, and would
-> > then use /proc/<pid>/maps file to find corresponding backing ELF files
-> > (normally, only executable VMAs are of interest), file offsets within
-> > them, and then continue from there to get yet more information (ELF
-> > symbols, DWARF information) to get human-readable symbolic information.
-> > This pattern is used by Meta's fleet-wide profiler, as one example.
-> >
-> > In preprocessing pattern, application doesn't know the set of addresses
-> > of interest, so it has to fetch all relevant VMAs (again, probably only
-> > executable ones), store or cache them, then proceed with profiling and
-> > stack trace capture. Once done, it would do symbolization based on
-> > stored VMA information. This can happen at much later point in time.
-> > This patterns is used by perf tool, as an example.
-> >
-> > In either case, there are both performance and correctness requirement
-> > involved. This address to VMA information translation has to be done as
-> > efficiently as possible, but also not miss any VMA (especially in the
-> > case of loading/unloading shared libraries). In practice, correctness
-> > can't be guaranteed (due to process dying before VMA data can be
-> > captured, or shared library being unloaded, etc), but any effort to
-> > maximize the chance of finding the VMA is appreciated.
-> >
-> > Unfortunately, for all the /proc/<pid>/maps file universality and
-> > usefulness, it doesn't fit the above use cases 100%.
-> >
-> > First, it's main purpose is to emit all VMAs sequentially, but in
-> > practice captured addresses would fall only into a smaller subset of al=
-l
-> > process' VMAs, mainly containing executable text. Yet, library would
-> > need to parse most or all of the contents to find needed VMAs, as there
-> > is no way to skip VMAs that are of no use. Efficient library can do the
-> > linear pass and it is still relatively efficient, but it's definitely a=
-n
-> > overhead that can be avoided, if there was a way to do more targeted
-> > querying of the relevant VMA information.
-> >
-> > Second, it's a text based interface, which makes its programmatic use f=
-rom
-> > applications and libraries more cumbersome and inefficient due to the
-> > need to handle text parsing to get necessary pieces of information. The
-> > overhead is actually payed both by kernel, formatting originally binary
-> > VMA data into text, and then by user space application, parsing it back
-> > into binary data for further use.
->
-> I was trying to solve all these issues in a more generic way:
-> https://lwn.net/Articles/683371/
->
+On Fri 07-06-24 01:39:12, Jemmy wrote:
+> by employing `copy mount tree from src to dst` concept.
+> This involves renaming the opaque variables (e.g., p, q, r, s)
+> to be more descriptive, aiming to make the code easier to understand.
+> 
+> Changes:
+> mnt     -> src_root (root of the tree to copy)
+> r       -> src_root_child (direct child of the root being cloning)
+> p       -> src_parent (parent of src_mnt)
+> s       -> src_mnt (current mount being copying)
+> parent  -> dst_parent (parent of dst_child)
+> q       -> dst_mnt (freshly cloned mount)
+> 
+> Signed-off-by: Jemmy <jemmywong512@gmail.com>
 
-Can you please provide a tl;dr summary of that effort?
+Thanks! Feel free to add:
 
-> We definitely interested in this new interface to use it in CRIU.
->
-> <snip>
->
-> > +
-> > +     if (karg.vma_name_size) {
-> > +             size_t name_buf_sz =3D min_t(size_t, PATH_MAX, karg.vma_n=
-ame_size);
-> > +             const struct path *path;
-> > +             const char *name_fmt;
-> > +             size_t name_sz =3D 0;
-> > +
-> > +             get_vma_name(vma, &path, &name, &name_fmt);
-> > +
-> > +             if (path || name_fmt || name) {
-> > +                     name_buf =3D kmalloc(name_buf_sz, GFP_KERNEL);
-> > +                     if (!name_buf) {
-> > +                             err =3D -ENOMEM;
-> > +                             goto out;
-> > +                     }
-> > +             }
-> > +             if (path) {
-> > +                     name =3D d_path(path, name_buf, name_buf_sz);
-> > +                     if (IS_ERR(name)) {
-> > +                             err =3D PTR_ERR(name);
-> > +                             goto out;
->
-> It always fails if a file path name is longer than PATH_MAX.
->
-> Can we add a flag to indicate whether file names are needed to be
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-It's already supported. Getting a VMA name is optional. See a big
-comment next to the vma_name_size field in the UAPI header. If
-vma_name_size is set to zero, VMA name is not retrieved at all,
-avoiding the overhead and this issue with PATH_MAX.
+								Honza
 
-> resolved? In criu, we use special names like "vvar", "vdso", but we dump
-> files via /proc/pid/map_files.
->
-> > +                     }
-> > +                     name_sz =3D name_buf + name_buf_sz - name;
-> > +             } else if (name || name_fmt) {
-> > +                     name_sz =3D 1 + snprintf(name_buf, name_buf_sz, n=
-ame_fmt ?: "%s", name);
-> > +                     name =3D name_buf;
-> > +             }
-> > +             if (name_sz > name_buf_sz) {
-> > +                     err =3D -ENAMETOOLONG;
-> > +                     goto out;
-> > +             }
-> > +             karg.vma_name_size =3D name_sz;
-> > +     }
->
-> Thanks,
-> Andrei
+> ---
+>  fs/namespace.c | 59 ++++++++++++++++++++++++++------------------------
+>  1 file changed, 31 insertions(+), 28 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 5a51315c6678..b0202e37515e 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1966,69 +1966,72 @@ static bool mnt_ns_loop(struct dentry *dentry)
+>  	return current->nsproxy->mnt_ns->seq >= mnt_ns->seq;
+>  }
+>  
+> -struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
+> +struct mount *copy_tree(struct mount *src_root, struct dentry *dentry,
+>  					int flag)
+>  {
+> -	struct mount *res, *p, *q, *r, *parent;
+> +	struct mount *res, *src_parent, *src_root_child, *src_mnt,
+> +		*dst_parent, *dst_mnt;
+>  
+> -	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(mnt))
+> +	if (!(flag & CL_COPY_UNBINDABLE) && IS_MNT_UNBINDABLE(src_root))
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	if (!(flag & CL_COPY_MNT_NS_FILE) && is_mnt_ns_file(dentry))
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	res = q = clone_mnt(mnt, dentry, flag);
+> -	if (IS_ERR(q))
+> -		return q;
+> +	res = dst_mnt = clone_mnt(src_root, dentry, flag);
+> +	if (IS_ERR(dst_mnt))
+> +		return dst_mnt;
+>  
+> -	q->mnt_mountpoint = mnt->mnt_mountpoint;
+> +	src_parent = src_root;
+> +	dst_mnt->mnt_mountpoint = src_root->mnt_mountpoint;
+>  
+> -	p = mnt;
+> -	list_for_each_entry(r, &mnt->mnt_mounts, mnt_child) {
+> -		struct mount *s;
+> -		if (!is_subdir(r->mnt_mountpoint, dentry))
+> +	list_for_each_entry(src_root_child, &src_root->mnt_mounts, mnt_child) {
+> +		if (!is_subdir(src_root_child->mnt_mountpoint, dentry))
+>  			continue;
+>  
+> -		for (s = r; s; s = next_mnt(s, r)) {
+> +		for (src_mnt = src_root_child; src_mnt;
+> +		    src_mnt = next_mnt(src_mnt, src_root_child)) {
+>  			if (!(flag & CL_COPY_UNBINDABLE) &&
+> -			    IS_MNT_UNBINDABLE(s)) {
+> -				if (s->mnt.mnt_flags & MNT_LOCKED) {
+> +			    IS_MNT_UNBINDABLE(src_mnt)) {
+> +				if (src_mnt->mnt.mnt_flags & MNT_LOCKED) {
+>  					/* Both unbindable and locked. */
+> -					q = ERR_PTR(-EPERM);
+> +					dst_mnt = ERR_PTR(-EPERM);
+>  					goto out;
+>  				} else {
+> -					s = skip_mnt_tree(s);
+> +					src_mnt = skip_mnt_tree(src_mnt);
+>  					continue;
+>  				}
+>  			}
+>  			if (!(flag & CL_COPY_MNT_NS_FILE) &&
+> -			    is_mnt_ns_file(s->mnt.mnt_root)) {
+> -				s = skip_mnt_tree(s);
+> +			    is_mnt_ns_file(src_mnt->mnt.mnt_root)) {
+> +				src_mnt = skip_mnt_tree(src_mnt);
+>  				continue;
+>  			}
+> -			while (p != s->mnt_parent) {
+> -				p = p->mnt_parent;
+> -				q = q->mnt_parent;
+> +			while (src_parent != src_mnt->mnt_parent) {
+> +				src_parent = src_parent->mnt_parent;
+> +				dst_mnt = dst_mnt->mnt_parent;
+>  			}
+> -			p = s;
+> -			parent = q;
+> -			q = clone_mnt(p, p->mnt.mnt_root, flag);
+> -			if (IS_ERR(q))
+> +
+> +			src_parent = src_mnt;
+> +			dst_parent = dst_mnt;
+> +			dst_mnt = clone_mnt(src_mnt, src_mnt->mnt.mnt_root, flag);
+> +			if (IS_ERR(dst_mnt))
+>  				goto out;
+>  			lock_mount_hash();
+> -			list_add_tail(&q->mnt_list, &res->mnt_list);
+> -			attach_mnt(q, parent, p->mnt_mp, false);
+> +			list_add_tail(&dst_mnt->mnt_list, &res->mnt_list);
+> +			attach_mnt(dst_mnt, dst_parent, src_parent->mnt_mp, false);
+>  			unlock_mount_hash();
+>  		}
+>  	}
+>  	return res;
+> +
+>  out:
+>  	if (res) {
+>  		lock_mount_hash();
+>  		umount_tree(res, UMOUNT_SYNC);
+>  		unlock_mount_hash();
+>  	}
+> -	return q;
+> +	return dst_mnt;
+>  }
+>  
+>  /* Caller should check returned pointer for errors */
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
