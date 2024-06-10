@@ -1,91 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-21307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CFC9019CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 06:39:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D83901A12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 06:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82E0DB213B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 04:38:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0981F21C63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 04:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97675B67F;
-	Mon, 10 Jun 2024 04:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCED9DDBB;
+	Mon, 10 Jun 2024 04:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="saXPWnjG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DqCF0EH5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OHUb2VpQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GzK8PFnJ"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GU+QqmkW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2Xu3G1CW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GU+QqmkW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2Xu3G1CW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5F56FB6;
-	Mon, 10 Jun 2024 04:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4049D304;
+	Mon, 10 Jun 2024 04:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717994328; cv=none; b=eCZv8ERO2PyclHA61GCyiAKnq3K5rj1lgYwAL/tB3R1ugjSy92j5I+LcufOYWsIRI0gvGzSVXnpPUsf6uOBTvWBvdSn5FJKVJSgOyjL1VtSTrNlexh/Oez0l9g1A1REw3UtRzbLfM7kh2wVJHbTIm3Clbdol+sU2e+F/wil5IAU=
+	t=1717994955; cv=none; b=FuYlsJrbgdzSHA0zolT15i5A/ya8xA07IoW0vSdKg9TwPMmcwru6LcjBfLeQjAdhwIv3HhAOUOqVxRgHX7SqzWPokUzS5MHI30DX7IrFb3DhKfx7MfQdmVc6fpI0GKR5xvn0GLJEWEF+roR32u0CcKjbXRzWTQpDId+WY2M6OuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717994328; c=relaxed/simple;
-	bh=AJ+Wru5ybSpKxohsJxOE4zcTMQHNP41mGIe7OS2Kx08=;
+	s=arc-20240116; t=1717994955; c=relaxed/simple;
+	bh=ewlToF4d7d5kFiGevHJgz4TudxyAcaMpxGxi+4W1iKE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIay8HsF9HRF+9p676onU8Np2aF7sOddKe2ocYx78AuMk6Y3fivA0kM0MOdghQs/RlpwUIPTIqlcVa00/CjHX/+hQOI2aD+rNRUdW6Hgbdbgsa7VrB63Z8QZemtWizfQkwd+NlBlhqzW2UN55vB5o/us7dqgGQuiEro9AwcV5P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=saXPWnjG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DqCF0EH5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OHUb2VpQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GzK8PFnJ; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=gbKAXRhFZlwuEQyQoczjcL+gx0Q98bK7ZWwgfZoMZbozDYNAyaAvb9053WnfhX8aOEA5cwXoKpYFGHr5/KQHCG4DYzSWQvOyNdkJliO8AIJClEQF0m6G5A/tIJWBthPJ3yuPER80WLxJWTHDHrVwoxdDKqPDLF1Egf6/mkV9CVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GU+QqmkW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2Xu3G1CW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GU+QqmkW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2Xu3G1CW; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8AE111F78E;
-	Mon, 10 Jun 2024 04:38:43 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C550621A28;
+	Mon, 10 Jun 2024 04:49:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717994324; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1717994951; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44b65Qtx0GUTMeu+t5DPRyJLh8bwKaMPwRjjHIXsQdA=;
-	b=saXPWnjGLY4bdAYRAIIE0yvQCij4VXUKetGnoIweu6/V47hvPxSqp0CW4rQLAy85lJiFeg
-	1QZR2WyLVKyqtr/yUhIgj8NzhX2B0JUSikLILnYiODF2j+VJodwinaBU52bGdHwaLIvrA5
-	KolVIUGuBdMDfYE6BIsseB9BXaAEZU0=
+	bh=8CnYPnGkfnl4u6bw5KXqozmF5Gw9xCjdvsWRN0WG0YI=;
+	b=GU+QqmkWmqkb/WMg/Xw/lZuzX3xYTh1mLoVT83OkJcaDQwirJhkizproDDRneLrofKGJAq
+	To7ZsWuthJJaGNitkyQufQLtGZAS7NXzgGJ34bIlwgXpw3HhUzwFbAX6M1msfFvzvQkb8K
+	csvnoKcKvUfXfrm2MBY++t7llliP4Ps=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717994324;
+	s=susede2_ed25519; t=1717994951;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44b65Qtx0GUTMeu+t5DPRyJLh8bwKaMPwRjjHIXsQdA=;
-	b=DqCF0EH51a7wumTthdIJHmvilIjSX8R9ANElBhwfxIE58c7pSTL4E6g6Z+o/w7+jKGezAY
-	sjdqM5sjnG8EJqDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=OHUb2VpQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=GzK8PFnJ
+	bh=8CnYPnGkfnl4u6bw5KXqozmF5Gw9xCjdvsWRN0WG0YI=;
+	b=2Xu3G1CWjQMBrWHWy+Raxz32I23yOu3otkTScqrd3tZDMsuGh+mcx7LkNVMoKq4hljq7NZ
+	/Of0G/J2YjneYuDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717994323; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1717994951; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44b65Qtx0GUTMeu+t5DPRyJLh8bwKaMPwRjjHIXsQdA=;
-	b=OHUb2VpQqzV3DOig5EL5GAjJ1sj9rcVhIDSYTigtAtA8TcGfYE3ytCn5F8deNIhV03H6lJ
-	132K39rowPVrXWIPUT21hVzcUAZKudT5Jg4YbfmwMIfszsrJou7oIIwI3skSCnLwTrR/s1
-	ljDaKFDlvU1kQngYEkubOJHRvJlREqs=
+	bh=8CnYPnGkfnl4u6bw5KXqozmF5Gw9xCjdvsWRN0WG0YI=;
+	b=GU+QqmkWmqkb/WMg/Xw/lZuzX3xYTh1mLoVT83OkJcaDQwirJhkizproDDRneLrofKGJAq
+	To7ZsWuthJJaGNitkyQufQLtGZAS7NXzgGJ34bIlwgXpw3HhUzwFbAX6M1msfFvzvQkb8K
+	csvnoKcKvUfXfrm2MBY++t7llliP4Ps=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717994323;
+	s=susede2_ed25519; t=1717994951;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44b65Qtx0GUTMeu+t5DPRyJLh8bwKaMPwRjjHIXsQdA=;
-	b=GzK8PFnJYqXsQPfLZrTpZvRUNb/l3CAWomGSm8IGphAJnn4Y4KImH9ioZQxXIpcUwhTonG
-	mfwwm/Vpj+LInNAg==
+	bh=8CnYPnGkfnl4u6bw5KXqozmF5Gw9xCjdvsWRN0WG0YI=;
+	b=2Xu3G1CWjQMBrWHWy+Raxz32I23yOu3otkTScqrd3tZDMsuGh+mcx7LkNVMoKq4hljq7NZ
+	/Of0G/J2YjneYuDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20EAA13A7F;
-	Mon, 10 Jun 2024 04:38:43 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 610C913A7F;
+	Mon, 10 Jun 2024 04:49:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iLK2BFODZmYoGgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 10 Jun 2024 04:38:43 +0000
-Date: Mon, 10 Jun 2024 06:38:33 +0200
+	id 0AUaFceFZmZYHAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 10 Jun 2024 04:49:11 +0000
+Date: Mon, 10 Jun 2024 06:49:09 +0200
 From: Oscar Salvador <osalvador@suse.de>
 To: David Hildenbrand <david@redhat.com>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
@@ -94,7 +93,7 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Jonathan Corbet <corbet@lwn.net>
 Subject: Re: [PATCH v1 2/6] fs/proc/task_mmu: don't indicate
  PM_MMAP_EXCLUSIVE without PM_PRESENT
-Message-ID: <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
+Message-ID: <ZmaFxfQX3AVMIVkp@localhost.localdomain>
 References: <20240607122357.115423-1-david@redhat.com>
  <20240607122357.115423-3-david@redhat.com>
 Precedence: bulk
@@ -106,34 +105,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20240607122357.115423-3-david@redhat.com>
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 8AE111F78E
 X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
 	RCVD_TLS_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	DKIM_TRACE(0.00)[suse.de:+]
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
 On Fri, Jun 07, 2024 at 02:23:53PM +0200, David Hildenbrand wrote:
 > Relying on the mapcount for non-present PTEs that reference pages
@@ -150,13 +142,26 @@ On Fri, Jun 07, 2024 at 02:23:53PM +0200, David Hildenbrand wrote:
 > although they are fake-present already sounds suspiciously wrong.
 > 
 > Let's never indicate PM_MMAP_EXCLUSIVE without PM_PRESENT.
-
-Alternatively we could use is_pfn_swap_entry?
-But the PM_PRESENT approach seems more correct.
-
+> 
 > Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Forgot to comment on something:
+
+> @@ -1517,14 +1514,13 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  			if (pmd_swp_uffd_wp(pmd))
+>  				flags |= PM_UFFD_WP;
+>  			VM_BUG_ON(!is_pmd_migration_entry(pmd));
+> -			migration = is_migration_entry(entry);
+>  			page = pfn_swap_entry_to_page(entry);
+
+We do not really need to get the page anymore here as that is the non-present
+part.
+
+Then we could get away without checking the flags as only page != NULL
+would mean a present pmd.
+
+Not that we gain much as this is far from being a hot-path, but just
+saying..
 
 -- 
 Oscar Salvador
