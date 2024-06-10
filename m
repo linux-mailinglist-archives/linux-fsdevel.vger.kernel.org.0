@@ -1,65 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-21304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C19901965
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 04:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB3B901999
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 05:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 508F61C20E3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 02:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3005C1C20E51
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2024 03:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E425227;
-	Mon, 10 Jun 2024 02:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5938A953;
+	Mon, 10 Jun 2024 03:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FhtChlaT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a2qTU3O1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC95E380
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2024 02:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F74F524F;
+	Mon, 10 Jun 2024 03:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717987486; cv=none; b=WYUK6Y2NAKo9ZdjmiArVLzA8nzgVYm5L5isJHfoo/b8uI8fcS77fJIpo/e4v1QxjCscM6zpfWn87TVZqzMsc98uQTdLfQj94+0hbauDhX3rWcNxSqJ36CBzme9WpkiD64AAi7xC+FoU5s8yi5rIzeAbkzfkEQXKCjm/kdUVSlsc=
+	t=1717991392; cv=none; b=TWuOZ4pNp4aHvYB5+0v70IHNrJFWA63FRSwgpJOb/RCw7Quxz4WmPOnw/gortHsSU3PJdWtM/TslnoQqAiRq0lXI7jAFL84QrEdttDA1VS8IMm0IZTzNKDo9DOcBLyamWRa/o0IhYZxwDAtmD63hAQAD24k5V1QLHXCHYajKB2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717987486; c=relaxed/simple;
-	bh=4zKa1YXYhMIIrdPz5TroUzbXtE8LAGVLkXTyI/QV9xI=;
+	s=arc-20240116; t=1717991392; c=relaxed/simple;
+	bh=GNFczgUrkO7ygrAlBbLlS7v6xYKhuU9FhDRVfEarIUM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CVLTwlwqbdI+GHsbjvQXKBViKF3qkU5iNbE1o1s0ad05VG7lCBOSF66mnYBrtfcayhEaR7//3b/12D+DkiFSOj7Gj2neWCR8tViDbcE000LB6A/M3VOgDxW2nsPxf0LFdONpBzp5i2EfRjGhEO7VMzRVDAWHCGv/xAoAl5hcsTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FhtChlaT; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=ecmVhFLO9hBirYLi0LccMRJSlvhOqCQ/j+KcglnZ0IBK5VG2Y8orMJTeReeTv2MH+4GNZAzc0lwyu2j8Pq+ZOw3Lrre6XbNDo7o2gZYkPTj61lqKxVwXns/z3xt4JKnEo5FjR3eCc3KKrK9hSjpk01Ec1C23ziDdISXLdr7G8mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a2qTU3O1; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NnahmfVvmfIdd6h5c4SLKZq/yChaFKl1BGROqQ776UY=; b=FhtChlaTNy/6bDJZQ3/r+inUzi
-	H3Miv8cq7tU5zhQSKB8TZqVDYbGlORJv2praibS+RN9QfJqjyEkk+K+Yk7DWhwT9y3oCd7b191CrJ
-	pvD1Pj+I5dxzOZSjWl/w/ISYlzuBPVvIpFXvXQgpV8C640tnKnbsUdhB00CSMIV341gEP32jnASxY
-	7DrzecsRCgFzzj0yRpG4tg7WfY0LVCq90G7lyZQyda8zg65z4qCGA9rsKbqAjowEry9/5RPTy6Wdw
-	p31yo89rA7Wg/OBiFyzuj2/H2Rr+wNr+MjdsNO/hZjfcR7ywhZfiNFuJgbKyFr4d2C/1b9rfP59aM
-	aJHKP+Jw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sGV1R-006DiH-1b;
-	Mon, 10 Jun 2024 02:44:37 +0000
-Date: Mon, 10 Jun 2024 03:44:37 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Paul Mackerras <paulus@ozlabs.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC] potential UAF in kvm_spapr_tce_attach_iommu_group() (was Re:
- [PATCH 11/19] switch simple users of fdget() to CLASS(fd, ...))
-Message-ID: <20240610024437.GA1464458@ZenIV>
-References: <20240607015656.GX1629371@ZenIV>
- <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
- <20240607015957.2372428-11-viro@zeniv.linux.org.uk>
- <20240607-gelacht-enkel-06a7c9b31d4e@brauner>
- <20240607161043.GZ1629371@ZenIV>
- <20240607210814.GC1629371@ZenIV>
+	bh=6zeyRcb+UnQLSBhCUqWO1SmkhhrRQveKMeLzcs+rE1w=; b=a2qTU3O1Pc23GUNyvyzjVCt1ec
+	Y2tJDScltfNlQVffSWXcNGqM/WVDJBqakKRd+mP8yrt4lr78r5j4dCZD/lBJxb+LVxWFxNoNIRViC
+	ma6ho/c9uRGiYpoMgYC2rDj3TCK07VZvcVGUwo+OgjWelGHA+IYDy3z4MHbKeux7qVzIQ5AmF3nfh
+	NqM006pjbldpcKzGKNs8sh4DlrMYrACrqF2I92EAS4mceI1vfrIl5YunTvaQZIBZofp423QdzumLa
+	thn+bjPGdtPa9tp0G6pVziIPI+Vg5LtWZfnnx6TenuAdI2bUoYboHup5wD1BqVry3NAfG9rkFJ51+
+	jQCBYegA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGW2N-00000008ZAk-395W;
+	Mon, 10 Jun 2024 03:49:39 +0000
+Date: Mon, 10 Jun 2024 04:49:39 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: The proper handling of failed IO error?
+Message-ID: <ZmZ3001_gcjAryte@casper.infradead.org>
+References: <960aa841-8d7c-413f-9a1b-0364ae3b9493@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,102 +61,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607210814.GC1629371@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <960aa841-8d7c-413f-9a1b-0364ae3b9493@gmx.com>
 
-On Fri, Jun 07, 2024 at 10:08:14PM +0100, Al Viro wrote:
-
-> Hell knows - it feels like mixing __cleanup-based stuff with anything
-> explicit leads to massive headache.  And I *really* hate to have
-> e.g. inode_unlock() hidden in __cleanup in a random subset of places.
-> Unlike dropping file references (if we do that a bit later, nothing
-> would really care), the loss of explicit control over the places where
-> inode lock is dropped is asking for serious trouble.
+On Mon, Jun 10, 2024 at 06:50:11AM +0930, Qu Wenruo wrote:
+> Hi,
 > 
-> Any suggestions?  Linus, what's your opinion on the use of CLASS...
-> stuff?
+> There is a recent (well a year ago) change in btrfs to remove the usage
+> of page/folio error, which gets me wondering what would happen if we got
+> a lot of write errors and high memory pressure?
+> 
+> Yes, all file systems calls mapping_set_error() so that fsync call would
+> return error, but I'm wondering what would happen to those folios that
+> failed to be written?
+> 
+> Those folios has their DIRTY flag cleared before submission, and and
+> their endio functions, the WRITEBACK flags is also cleared.
+> 
+> Meaning after such write failure, the page/folio has UPTODATE flag, and
+> no DIRTY/ERROR/WRITEBACK flags (at least for btrfs and ext4, meanwhile
+> iomap still set the ERROR flag).
+> 
+> Would any memory pressure just reclaim those pages/folios without them
+> really reaching the disk?
 
-While looking through the converted fdget() users, some interesting
-stuff got caught.  Example:
+Yes.
 
-kvm_device_fops.unlocked_ioctl() is equal to kvm_device_ioctl() and it
-gets called (by ioctl(2)) without any locks.
+Core code doesn't (and hasn't in some time) checked the page/folio
+error flag.  That's why it's being removed.
 
-kvm_device_ioctl() calls kvm_device_ioctl_attr(), passing it dev->ops->set_attr.
-
-kvm_device_ioctl_attr() calls the callback passed to it, still without any
-locks.
-
-->set_attr() can be kvm_vfio_set_attr(), which calls kvm_vfio_set_file(), which
-calls kvm_vfio_file_set_spapr_tce(), which takes dev->private.lock and
-calls kvm_spapr_tce_attach_iommu_group().  No kvm->lock held.
-
-
-Now, in kvm_spapr_tce_attach_iommu_group() we have (in mainline)
-        f = fdget(tablefd);
-        if (!f.file)
-                return -EBADF;
-
-        rcu_read_lock();
-        list_for_each_entry_rcu(stt, &kvm->arch.spapr_tce_tables, list) {
-                if (stt == f.file->private_data) {
-                        found = true;
-                        break;
-                }
-        }
-        rcu_read_unlock();
-
-        fdput(f);
-
-        if (!found)
-                return -EINVAL;
-
-	....
-        list_add_rcu(&stit->next, &stt->iommu_tables);
-
-What happens if another thread closes the damn descriptor just as we'd
-done fdput()?  This:
-static int kvm_spapr_tce_release(struct inode *inode, struct file *filp)
-{
-        struct kvmppc_spapr_tce_table *stt = filp->private_data;
-        struct kvmppc_spapr_tce_iommu_table *stit, *tmp;
-        struct kvm *kvm = stt->kvm;
-
-        mutex_lock(&kvm->lock);
-        list_del_rcu(&stt->list);
-        mutex_unlock(&kvm->lock);
-
-        list_for_each_entry_safe(stit, tmp, &stt->iommu_tables, next) {
-                WARN_ON(!kref_read(&stit->kref));
-                while (1) {
-                        if (kref_put(&stit->kref, kvm_spapr_tce_liobn_put))
-                                break;
-                }
-        }
-
-        account_locked_vm(kvm->mm,
-                kvmppc_stt_pages(kvmppc_tce_pages(stt->size)), false);
-
-        kvm_put_kvm(stt->kvm);
-
-        call_rcu(&stt->rcu, release_spapr_tce_table);
-
-        return 0;
-}
-
-Leaving aside the question of sanity of that while (!kfref_put()) loop,
-that function will *NOT* block on kvm->lock (the only lock being held
-by the caller of kvm_spapr_tce_attach_iommu_group() is struct kvm_vfio::lock,
-not struct kvm::lock) and it will arrange for RCU-delayed call of
-release_spapr_tce_table(), which will kfree stt.
-
-Recall that in kvm_spapr_tce_attach_iommu_group() we are not holding
-rcu_read_lock() between fdput() and list_add_rcu() (we couldn't - not
-with the blocking allocations we have there), so call_rcu() might as
-well have been a direct call.
-
-What's there to protect stt from being freed right after fdput()?
-
-Unless I'm misreading that code (entirely possible), this fdput() shouldn't
-be done until we are done with stt.
+Also, btrfs was using it incorrectly to indicate a write error.
+It was supposed to be used for read errors, not write errors.
+Another good reason to remove it.
 
