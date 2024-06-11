@@ -1,161 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-21428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005D4903A69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 13:37:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB34E903A91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 13:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A251C22C5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 11:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481AE2820BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 11:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D87017B514;
-	Tue, 11 Jun 2024 11:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8C417C23B;
+	Tue, 11 Jun 2024 11:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7aiwTj0"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KIRuJDWc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W2Czjrfv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a2XAqvI9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WfrglvM2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B5171644;
-	Tue, 11 Jun 2024 11:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E813717B4F9;
+	Tue, 11 Jun 2024 11:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105668; cv=none; b=BaUCKflApIa1jdKvZU0RsQtglp20KN4YSMb6Zk38Eg3n8b3qnoPlsyAKYcd0xAcNqlrlJjO0EGHbUGTidMr4Mz3ARV9tit3KWrWdxLA4+yRTSERm+nmz5CHpbjZJ3X8tqkJ2RssRAEZyNS40uSAbtlzcFb00vKbjpi+qZDp3c90=
+	t=1718106014; cv=none; b=PsuJNjdW040F9AkQ+/Spi2dY+GNmxqkpzD2tYM3iziO/wmx/r/DB9ISZ5L8CBKfFZr3M8NezG7JvevIHYvHKOle3H/px+oXfxhD0R9rDbpTHPl2sTVFRh3m4ttgGytYUjjuaO51ltLX+UOuKAa7GeODH+bjgSrA4YdWdihZMhnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105668; c=relaxed/simple;
-	bh=lgMdaGmCPRH+3LfLApnRp+QzYV7UGkzgZMXXTOVZe9Q=;
+	s=arc-20240116; t=1718106014; c=relaxed/simple;
+	bh=2iEWoOFwjNB/5le8qLnLO2p7knyI+HsxMB0pfPnUwpI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qd8Eh9rEV8eUlcd3YkBwUoERGUGwxlEl3V3cNsRDdEF8zACJ5WNhDxCUvUQFbQ2PAkta2ytjdIPOUSGkFu07ZI/g2XhjaliyqMcRzPyrdUNka/I5HfMmscf2j/8rSv+4ZwJRw0ggZV3Gp3XkUm6hPj34OIKE7ZCcrKVft0X0jWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7aiwTj0; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f0f4746c2so702895f8f.3;
-        Tue, 11 Jun 2024 04:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718105665; x=1718710465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HlD8loeKV8w1EBghL7dw9jtTM30qBeXBqWr6znCZpWo=;
-        b=O7aiwTj0fYojdlF8pjAgHyc7zrGs0PyS6xQQq13ygSAEmJYhJs2xXS/OitXjjCkkz/
-         xh+fZsa3zZ3MD2CDQO9+iXBoMK9cMSy9nZxOq6l4vqVpsgN3gBPhWenYm0HznTuejwnn
-         rPjVgjuR4L6Qzcofc1mWR8A/VtLtzV7TVuq6pXi2LNzqAJvCgE+Ot/lGrBUyQmO1V3PJ
-         08g0GNbGtsSovfi8gzzuiIhavdgFkst/wIpEN4foh92u6TYDuYcq78tr0usHdua3IeKC
-         EFSJma76Gryjea/wxfffPEuc9JAlbmhPnevucLrwVd9RUvunZxLfypiZ8vDUWz9rwZ/c
-         hgew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718105665; x=1718710465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HlD8loeKV8w1EBghL7dw9jtTM30qBeXBqWr6znCZpWo=;
-        b=SGoihm+DcjKMPwWimti0/46oLosYRGMrxnquWgv/8XhwK0aIYs0Ey2VM4Prl57UjZz
-         AoWlflAIO8IO7lSZDJGHjqy5nerIAoDh7GzfJzR47+Q5dfZ6H+g+WXxEXt2j55+MrHMJ
-         cI+S+OGh7m3K6YO8BoymV0s3HF1VgrKQzd81tOAIGw1VLyuLjFyVu9tlp9X/r5FYv5lf
-         oPzEy/oxbq4I8nzI8eP61UpTlqvXS+ZhqA7BsnN8i+8uVZkZ/MkI/05HViYIyqb7vlCC
-         hTr9cxBWoqsCpxbGL1UhsUJ/iAIepIHCWhe9fV3GVSpndGDbY3k6Br61tEAogsyQeJqx
-         UC0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCdDVPkEjXcw0pYwUJWovlP+h6qNW9G0JFkepHajAlWJuURxDqEnoeODXhuL5QoERy6st8pB76SSL72yfIds7B/NON8ey4Jl0XXK5cB5gsTsaUEp1E13QhNKgl4RmqxB7J3LfmpL61u+3mPg==
-X-Gm-Message-State: AOJu0Yx59Sg8VHishIzyVoJaW0kKZzKC7J4knjVzvtmSPH/42QK++Jfl
-	Px3ssnfuOOq9+YLPC8Z0ljCD7OSl7LcEuEaEz7KKa/Z5ydUFRvOp
-X-Google-Smtp-Source: AGHT+IEtoKBTY3mWsQ0cFYgh5+pGCUHk1MHqLMF4DKj5V7rLcmoHSGA20A8XC8fy4FRRbpKhSCrq0Q==
-X-Received: by 2002:a5d:6482:0:b0:35f:2256:1722 with SMTP id ffacd0b85a97d-35f225617aamr5468205f8f.33.1718105665379;
-        Tue, 11 Jun 2024 04:34:25 -0700 (PDT)
-Received: from f (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f27c8a444sm3876601f8f.53.2024.06.11.04.34.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:34:24 -0700 (PDT)
-Date: Tue, 11 Jun 2024 13:34:18 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, david@fromorbit.com, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1KJSCRcQGBz6YJoMqhO7VxfcoADUCelDQaLse/O7oJVicZZFRs33tJxp7R09pXn9GiTPIH6qeY6vuMC6Ocw8RX1kDLtN2yBj7uo4QPPZHhSldZqWSSrhdgJvw0fqkW4EOOToohrMcM6Rttk8A0tIhxbS28V7BfFOVhHSD+AE9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KIRuJDWc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W2Czjrfv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a2XAqvI9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WfrglvM2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D27B63372D;
+	Tue, 11 Jun 2024 11:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718106011; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=KIRuJDWcwRSMre8IPCVsgCLpMA4iemriNkNGcH0rXEZdbGIbjOMG06jhMqXrI7LHgjQn8+
+	9WGCh81IAGwWwAQgDT71Bsmr/AF5Nuo+zqCpVDBcMmzp9SB2Vqf24ouZFIlf4ozLMH0AEl
+	bBXZqkeDw2Oq/rSjXoBkWoGexWUeCTo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718106011;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=W2Czjrfv6JWDdnqdNLv3RKyACI0JgSgmxtE3ttmD9XiPGOcEx+XflKRsMBi+O2ufjr8XK5
+	2+ZGvrYsqI5o9lCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=a2XAqvI9;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WfrglvM2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718106010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=a2XAqvI9BR4ZfPmi6rdVQ2W1OagsobpGWZbrEkqPlefvmcscrPTVWDg46CieR4NtpJ+Zr6
+	sv2syeRUO0ptAddgOgyRMa+BocLGhhBRISiKLL61vUxcX+nlv/n4tZnXyOTrgUdmwHaeTc
+	JCSqzQRQNlTGhYBVnE6a5jp4sFcRpww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718106010;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=WfrglvM2iMHmniAf4NUpxZxoMPETFH6D7BcHhNmxiAXQAOaPcfuFUwEybFX508PHEWAw+/
+	QDRHV0+oVGwa8UBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C7F4A13A55;
+	Tue, 11 Jun 2024 11:40:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RrrKMJo3aGaEHAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Jun 2024 11:40:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 688DFA0886; Tue, 11 Jun 2024 13:40:06 +0200 (CEST)
+Date: Tue, 11 Jun 2024 13:40:06 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
-Message-ID: <7tl2j4usjuf7bl4l4ikhy5nz3ssars6w4jq3esjluteex5o6tc@en4qbkcpdgiu>
+Message-ID: <20240611114006.swwo2o7cldvp2wyy@quack3>
 References: <20240611041540.495840-1-mjguzik@gmail.com>
  <20240611100222.htl43626sklgso5p@quack3>
  <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
- <20240611110505.udtzfwgj3o4vxrxl@quack3>
+ <ZmgtaGglOL33Wkzr@dread.disaster.area>
+ <q5xcdmugfoccgu2cs5n7ku6asyaslunm2tty6r757cc2jkqjnm@g6cl4rayvxcq>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611110505.udtzfwgj3o4vxrxl@quack3>
+In-Reply-To: <q5xcdmugfoccgu2cs5n7ku6asyaslunm2tty6r757cc2jkqjnm@g6cl4rayvxcq>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: D27B63372D
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
 
-On Tue, Jun 11, 2024 at 01:05:05PM +0200, Jan Kara wrote:
-> On Tue 11-06-24 12:23:59, Mateusz Guzik wrote:
-> > On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
-> > > On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
-> > > > new_inode used to have the following:
-> > > > 	spin_lock(&inode_lock);
-> > > > 	inodes_stat.nr_inodes++;
-> > > > 	list_add(&inode->i_list, &inode_in_use);
-> > > > 	list_add(&inode->i_sb_list, &sb->s_inodes);
-> > > > 	inode->i_ino = ++last_ino;
-> > > > 	inode->i_state = 0;
-> > > > 	spin_unlock(&inode_lock);
-> > > > 
-> > > > over time things disappeared, got moved around or got replaced (global
-> > > > inode lock with a per-inode lock), eventually this got reduced to:
-> > > > 	spin_lock(&inode->i_lock);
-> > > > 	inode->i_state = 0;
-> > > > 	spin_unlock(&inode->i_lock);
-> > > > 
-> > > > But the lock acquire here does not synchronize against anyone.
-> > > > 
-> > > > Additionally iget5_locked performs i_state = 0 assignment without any
-> > > > locks to begin with and the two combined look confusing at best.
-> > > > 
-> > > > It looks like the current state is a leftover which was not cleaned up.
-> > > > 
-> > > > Ideally it would be an invariant that i_state == 0 to begin with, but
-> > > > achieving that would require dealing with all filesystem alloc handlers
-> > > > one by one.
-> > > > 
-> > > > In the meantime drop the misleading locking and move i_state zeroing to
-> > > > alloc_inode so that others don't need to deal with it by hand.
-> > > > 
-> > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > 
-> > > Good point. But the initialization would seem more natural in
-> > > inode_init_always(), wouldn't it? And that will also address your "FIXME"
-> > > comment.
-> > > 
+On Tue 11-06-24 13:26:45, Mateusz Guzik wrote:
+> On Tue, Jun 11, 2024 at 08:56:40PM +1000, Dave Chinner wrote:
+> > On Tue, Jun 11, 2024 at 12:23:59PM +0200, Mateusz Guzik wrote:
+> > > I did not patch inode_init_always because it is exported and xfs uses it
+> > > in 2 spots, only one of which zeroing the thing immediately after.
+> > > Another one is a little more involved, it probably would not be a
+> > > problem as the value is set altered later anyway, but I don't want to
+> > > mess with semantics of the func if it can be easily avoided.
 > > 
-> > My point is that by the time the inode is destroyed some of the fields
-> > like i_state should be set to a well-known value, this one preferably
-> > plain 0.
+> > Better to move the zeroing to inode_init_always(), do the basic
+> > save/restore mod to xfs_reinit_inode(), and let us XFS people worry
+> > about whether inode_init_always() is the right thing to be calling
+> > in their code...
+> > 
+> > All you'd need to do in xfs_reinit_inode() is this
+> > 
+> > +	unsigned long	state = inode->i_state;
+> > 
+> > 	.....
+> > 	error = inode_init_always(mp->m_super, inode);
+> > 	.....
+> > +	inode->i_state = state;
+> > 	.....
+> > 
+> > And it should behave as expected.
+> > 
 > 
-> Well, i_state is set to a more or less well defined value but it is not
-> zero. I don't see a performance difference in whether set it to 0 on
-> freeing or on allocation and on allocation it is actually much easier to
-> find when reading the code.
+> Ok, so what would be the logistics of submitting this?
 > 
-
-I was thinking more about assertion potential, not anything
-perf-related, but it is a moot subject now.
-
-> > I did not patch inode_init_always because it is exported and xfs uses it
-> > in 2 spots, only one of which zeroing the thing immediately after.
-> > Another one is a little more involved, it probably would not be a
-> > problem as the value is set altered later anyway, but I don't want to
-> > mess with semantics of the func if it can be easily avoided.
+> Can I submit one patch which includes the above + i_state moved to
+> inode_init_always?
 > 
-> Well, I'd consider that as another good reason to actually clean this up.
-> Look, inode_init_always() is used in bcachefs and xfs. bcachefs sets
-> i_state to 0 just before calling inode_init_always(), xfs just after one
-> call of inode_init_always() and the call in xfs_reinit_inode() is used
-> only from xfs_iget_recycle() which sets i_state to I_NEW. So I claim that
-> moving i_state clearing to inode_init_always() will not cause any issue and
-> is actually desirable.
+> Do I instead ship a two-part patchset, starting with the xfs change and
+> stating it was your idea?
 > 
+> Something else?
 
-Ok, see my reply to Dave's e-mail.
+Well, I'd do it as 4 patches actually:
 
-Just tell me how to ship this and I'll do the needful(tm).
+1) xfs i_state workaround in xfs_reinit_inode()
+2) add i_state zeroing to inode_init_always(), drop pointless zeroing from
+VFS.
+3) drop now pointless zeroing from xfs
+4) drop now pointless zeroing from bcachefs
+
+This way also respective maintainers can easily ack the bits they care about.
+I can live with two as you suggest since the changes are tiny but four is
+IMHO a "proper" way to do things ;).
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
