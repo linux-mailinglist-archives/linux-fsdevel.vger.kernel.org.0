@@ -1,65 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-21381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB6D903233
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 08:07:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3582090333D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 09:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D64F4B22D77
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 06:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72442281A91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 07:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE48171644;
-	Tue, 11 Jun 2024 06:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B89D172777;
+	Tue, 11 Jun 2024 07:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yy2GDgHO"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XKoJtDzi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4eqAmxye";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="joOPdg0L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hJGyDQHd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF517108D;
-	Tue, 11 Jun 2024 06:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32E318643;
+	Tue, 11 Jun 2024 07:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718085946; cv=none; b=jpzp6DL/MFKpOGLS84If8dv1ZD7Y2YJKNt3oW2SHu5Yw7Z8BYUBK27HnHBxRtXISIHfQXbvfFNi1TePaPeTVV2YMq2YblmuGlv3vt9SvadPiK4A+bHuhG0ovaMXyDPrKZeU81BmlrS9Aec53exrzp3k7k+iMi2CSeSIDpna5uTU=
+	t=1718090043; cv=none; b=IpTgyrqfXgqVl9uaQSi/2LGaZKdzJ41F1qfNiZ5sHn7AN/E6FMeGV/r5ANDTgfQLvw6y3+SGD1ytCbKe9+Pnw+K1Zy2d+ItK/alKFgPpW4gvNgQu3EcIYUXYg1C+S9D4a9eCyobfZiJbqDBNFJmvMS739wJKs5UjI+6xMIK8V10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718085946; c=relaxed/simple;
-	bh=fzwbb4rgS+TOgZOXbyzeVCgDtutYzL0zX8ev4fFjZcg=;
+	s=arc-20240116; t=1718090043; c=relaxed/simple;
+	bh=XeUNpSU7d3V1UZlO08Dsvz+kUONVDg04zNzZDSlTYCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cvSKbTJI2oP4CB8s8AVoPXV1S905DiEaGzRXRQpUnPBp46KOzaYbq+lz6F0l6VBY3SEDHZXwESOipZeH94XZfwMwT4Ykj+vFcGEtwzB4i1dLmUTVDB3dLJ25lEc0Ql56ZX0AqYb1tFVURmMCWRyl4spa5BBjSh58VX4OZ4PZIv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yy2GDgHO; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fzwbb4rgS+TOgZOXbyzeVCgDtutYzL0zX8ev4fFjZcg=; b=Yy2GDgHOIm16MpZUBcVWFHHUCi
-	ZnJalcsiVNQRViDl/VUgf2H8F6gYHlXuWr98JfS3Nv8HRtMQLv4kOp8z1jlVIIaidH4ZIgTWUP00O
-	CxQEM2arFch1mMt0wFgO9GpJHXkjHTt80hNYB+UKglzMpcxmIdBIbd/FkYgFzuoc1q5PxSWfsnMlo
-	KQhUlm25HDUP3WNbK1MDWsuXfnkkXxt46kghOdWqnHyTkH/ldriAguKkNjCZc9zKZ5QpOaHD/cRi3
-	aMBAafgaGfhXm040fnEiw3qTKuFgGL83MzLXYTAv1kqDsQ3zMdfHmueWPw9xDs/64Zcfus9vczKdm
-	lGwYsZPA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGudb-00000007cwV-23gN;
-	Tue, 11 Jun 2024 06:05:43 +0000
-Date: Mon, 10 Jun 2024 23:05:43 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	josef@toxicpanda.com
-Subject: Re: [PATCH v2 1/2] vfs: add rcu-based find_inode variants for iget
- ops
-Message-ID: <ZmfpN2-3pck1zSRx@infradead.org>
-References: <20240610195828.474370-1-mjguzik@gmail.com>
- <20240610195828.474370-2-mjguzik@gmail.com>
- <ZmfZukP3a2atzQma@infradead.org>
- <CAGudoHE12-7c0kmVpKz8HyBeHt8jX8hOQ7zQxZNJ0Re7FF8r6g@mail.gmail.com>
- <ZmfemrY9ZPnvmocu@infradead.org>
- <CAGudoHH_Cx1F5Fdiv7EQaz_pWmZUyuieMdx+_XsUXa6AY829Yw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUHpAn4uHYUyuQHnosdZKjqCj+J48FTFJ7ZHHL8UffnH1Giu848VLqPDTmDFzLMfjS46G0Fw1jJlulV8DvHqNj5RaYqUhHSKupz+7Xcl7GrIWOaA5AvmuCWbDkDz3VSpGYMH8elzO8eqfLdOY4BaRokPt4SPA/vKnVb0ytcWxBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XKoJtDzi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4eqAmxye; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=joOPdg0L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hJGyDQHd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D10BF2051A;
+	Tue, 11 Jun 2024 07:13:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718090040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YlL+OWuw0802KSXyQBux9dX7ezSqhAZ0pJtvU4rpMUc=;
+	b=XKoJtDzimLSS2XO4MhwrgjeJiPdUQJJe38pacnaTy4O0bzV7XRSlA/5zXBuIGUZf1vurLH
+	K0liQFiNB7QTD3jX/SnkiPh6KVn/2r0IysZ9HEkO4LfyL/RQJwy6gRnaa9m9bZhbBHnndE
+	oTFmr0RFlY7CVgfJZQZKlvTskqb8ck4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718090040;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YlL+OWuw0802KSXyQBux9dX7ezSqhAZ0pJtvU4rpMUc=;
+	b=4eqAmxyed4wxhE1zFqg6tgXXN7pXifa7iQyk6dAgrWQbSgfMQz9jd8VQt4IX9lf+23bSIf
+	8DOhOffpCMpGS9BA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=joOPdg0L;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hJGyDQHd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718090039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YlL+OWuw0802KSXyQBux9dX7ezSqhAZ0pJtvU4rpMUc=;
+	b=joOPdg0LPdLvECRCbtOJCRH7QsqVJlilZj4P9jJpPHcp7HSEywvTklNyA0XJtaj6w+oCye
+	VAmbjhcQV/ReZvFcKqCr1sNHETAypZXORSgalifpwOznm5ktbhZok1l0HS5oPEwWJoVy5T
+	oC53ldNu98JCu0GxSQfSCpVkcjuaDrw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718090039;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YlL+OWuw0802KSXyQBux9dX7ezSqhAZ0pJtvU4rpMUc=;
+	b=hJGyDQHdY9CGAybVhv77JZ242gs0nHpGMaftb+NtDJj2qU4CHc836nprALYxoRveCmYcJb
+	9/9cEdWupYa8WKCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 634AF13A55;
+	Tue, 11 Jun 2024 07:13:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rzsgFTf5Z2ZyRgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 11 Jun 2024 07:13:59 +0000
+Date: Tue, 11 Jun 2024 09:13:57 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v1 2/6] fs/proc/task_mmu: don't indicate
+ PM_MMAP_EXCLUSIVE without PM_PRESENT
+Message-ID: <Zmf5NdeKewGEhYLI@localhost.localdomain>
+References: <20240607122357.115423-1-david@redhat.com>
+ <20240607122357.115423-3-david@redhat.com>
+ <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,14 +106,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHH_Cx1F5Fdiv7EQaz_pWmZUyuieMdx+_XsUXa6AY829Yw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: D10BF2051A
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
 
-On Tue, Jun 11, 2024 at 07:36:46AM +0200, Mateusz Guzik wrote:
-> I am explaining why the addition looks the way it does: I am keeping
-> it consistent with the surroundings, which I assumed is the preferred
-> way.
+On Mon, Jun 10, 2024 at 06:38:33AM +0200, Oscar Salvador wrote:
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
-It is not, and it's clearly documented that it isn't.
+Uh, I spaced out here, sorry.
 
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
