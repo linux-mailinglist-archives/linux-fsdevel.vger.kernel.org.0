@@ -1,180 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-21482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5DD904784
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 01:09:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6268D9047B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 01:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52281C23863
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 23:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0DE1F23087
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 23:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC242155CAE;
-	Tue, 11 Jun 2024 23:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5AC155CB8;
+	Tue, 11 Jun 2024 23:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="39nJIEgh"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EQSI5O/N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02AE155A47;
-	Tue, 11 Jun 2024 23:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F78155CAF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 23:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718147338; cv=none; b=umj28EI18UnVym2jq4fNjjsgpg9Yok3XhhnvtiZhoJMR2o8oE7LXiDfMzcd+KdpEgxthUiajPfwn269fsD5uCqxOr2wqEYxnxIs9+flFwXiLWtjXoiUJKOhUVznKsPEVsCpGhw1ZLP3oVeDOgx0RA4f2HxizzmtfsGG1BKgTd54=
+	t=1718148912; cv=none; b=aEud6MN0KwGoaPQQgSVICwz8vvQ9W00hovJqFoawLkHSeZsPQNyT3H0NotPlSU/6inNVyQr7zpTdZXLeIklyFAobGTXUnkosddH25F7ZuhAhyF1cPHH7G7JwvgD/OvxVvRZtMkOIVBktoNimU3QdKvC47k87aeqAbKf5S8/OAxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718147338; c=relaxed/simple;
-	bh=SMsMnl/E19q1EZECqP3FDag1lE3b7Ahyh8DT0mGtfvE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=I3+RdSNkr4sjTWP0oXS+GyXNrwP3NXjbvALyga/51+S0Jwjbr6DU1IETWOl5knP3l9ppKexuNPgLAIcigJIzu8ukU2kgNy9F+6p/HFtTTzEFQwDlnsCIgzGE5uGD0NvkLqlhs1p12Ym0wawfzu+xofB9Yp4/pQNjTHtKkq0OpCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=39nJIEgh; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VzPVw0Xr1z6CmSMs;
-	Tue, 11 Jun 2024 23:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:content-language:references:subject:subject:from:from
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1718147327; x=1720739328; bh=6DyzKM+DtIuobPzwKOhzgzP6
-	zkpd17hL1Aod6VJ/k68=; b=39nJIEghuNGK8K73AWmToVISBeoYV97i8RVEhARB
-	IRWhsd6ZL2QdIjPJ7QnzwRbKfRaZ87lsD7S5g5Z++gK4qzFWDrFiAET0BiuRs06o
-	USgIpJxgOyp7ofPPz/5l117TJMTR/6Zf+EKUZk13h1SdkDqopqVaDfyd4P3zj9kE
-	qvy4qDb7cImQyKSzUoJmxrIlDJSFBDKDpyIOX7rwQpPB9cLLQXnR3jw5FP7hUoQn
-	BlUUg8xfHQCTKMLpOXW0KJvGuuR/ziY/2UC7wMh/uIzdSA1HjNMFWU1GZ/zdAXeM
-	xWb6FFfP3xrcVN868iwkDsldcRYcDPDhMx3Sz435/+Cc/w==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id dk6etEF2j3HT; Tue, 11 Jun 2024 23:08:47 +0000 (UTC)
-Received: from [192.168.3.219] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VzPVk0Gv6z6Cnk8s;
-	Tue, 11 Jun 2024 23:08:45 +0000 (UTC)
-Message-ID: <9dae2056-792a-4bd0-ab1d-6c545ec781b9@acm.org>
-Date: Tue, 11 Jun 2024 16:08:44 -0700
+	s=arc-20240116; t=1718148912; c=relaxed/simple;
+	bh=kx0jnwFfHx0pXiMaG0jVnF0VB8qCjcRFWQY61UFu/t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFn/fYjF5vs9hAesoc+WYToCRDmqzCEBIt02wKTlnFX8opBTegwWNacOn5UiMDIneQ3BBqI7cQFKqzkA+I/dt9mVSbY+TWGF2tz4wLfcNSJsWZ1jjFAsJjU/0rGQwm3W8kxgNrD+6drP+MsOpZOjBhXGoD+R139dUd7fY3ieOlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EQSI5O/N; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: bernd.schubert@fastmail.fm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718148907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Cjknq0RVOyh4UWOHg2cniGcfnX4Dm7y/+Yo/T54704=;
+	b=EQSI5O/NkSpUX1Bw8cam3LaOgO8YAC9bkApzrxADLXhslIYL3X4ETjkYwT0xlmd2zQ+7Ql
+	tqBUTPZB8Umn1DLKOH2Bedairl7sKZytfi5gV3GyBfjrZB7NhffhzUn2AZAgTdAgLjuCIv
+	2dJR4iY89A2bxV1nhueC/U11CIVsDnw=
+X-Envelope-To: miklos@szeredi.hu
+X-Envelope-To: bschubert@ddn.com
+X-Envelope-To: amir73il@gmail.com
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: avagin@google.com
+X-Envelope-To: io-uring@vger.kernel.org
+Date: Tue, 11 Jun 2024 19:35:01 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+Message-ID: <im6hqczm7qpr3oxndwupyydnclzne6nmpidln6wee4cer7i6up@hmpv4juppgii>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
+ <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
+ <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
+ <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v9 11/19] scsi: sd: Translate data lifetime information
-To: Christian Heusel <christian@heusel.eu>,
- Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>,
- Kanchan Joshi <joshi.k@samsung.com>, Damien Le Moal <dlemoal@kernel.org>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>, regressions@lists.linux.dev
-References: <20240130214911.1863909-1-bvanassche@acm.org>
- <20240130214911.1863909-12-bvanassche@acm.org>
- <Zmi6QDymvLY5wMgD@surfacebook.localdomain>
- <678af54a-2f5d-451d-8a4d-9af4d88bfcbb@heusel.eu>
-Content-Language: en-US
-In-Reply-To: <678af54a-2f5d-451d-8a4d-9af4d88bfcbb@heusel.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
+X-Migadu-Flow: FLOW_OUT
 
-On 6/11/24 2:21 PM, Christian Heusel wrote:
-> On 24/06/11 11:57PM, Andy Shevchenko wrote:
->> Tue, Jan 30, 2024 at 01:48:37PM -0800, Bart Van Assche kirjoitti:
->>> Recently T10 standardized SBC constrained streams. This mechanism allows
->>> to pass data lifetime information to SCSI devices in the group number
->>> field. Add support for translating write hint information into a
->>> permanent stream number in the sd driver. Use WRITE(10) instead of
->>> WRITE(6) if data lifetime information is present because the WRITE(6)
->>> command does not have a GROUP NUMBER field.
->>
->> This patch broke very badly my connected Garmin FR35 sport watch. The boot time
->> increased by 1 minute along with broken access to USB mass storage.
->>
->> On the reboot it takes ages as well.
->>
->> Revert of this and one little dependency (unrelated by functional means) helps.
+On Tue, Jun 11, 2024 at 07:37:30PM GMT, Bernd Schubert wrote:
 > 
-> We have tested that the revert fixes the issue on top of v6.10-rc3.
 > 
-> Also adding the regressions list in CC and making regzbot aware of this
-> issue.
+> On 6/11/24 17:35, Miklos Szeredi wrote:
+> > On Tue, 11 Jun 2024 at 12:26, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+> > 
+> >> Secondly, with IORING_OP_URING_CMD we already have only a single command
+> >> to submit requests and fetch the next one - half of the system calls.
+> >>
+> >> Wouldn't IORING_OP_READV/IORING_OP_WRITEV be just this approach?
+> >> https://github.com/uroni/fuseuring?
+> >> I.e. it hook into the existing fuse and just changes from read()/write()
+> >> of /dev/fuse to io-uring of /dev/fuse. With the disadvantage of zero
+> >> control which ring/queue and which ring-entry handles the request.
+> > 
+> > Unlike system calls, io_uring ops should have very little overhead.
+> > That's one of the main selling points of io_uring (as described in the
+> > io_uring(7) man page).
+> > 
+> > So I don't think it matters to performance whether there's a combined
+> > WRITEV + READV (or COMMIT + FETCH) op or separate ops.
 > 
->> Details are here: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/60
->>
->> P.S. Big thanks to Arch Linux team to help with bisection!
+> This has to be performance proven and is no means what I'm seeing. How
+> should io-uring improve performance if you have the same number of
+> system calls?
 > 
-> If this is fixed adding in a "Reported-by" or "Bisected-by" (depending
-> on what this subsystem uses) for me would be appreciated :)
+> As I see it (@Jens or @Pavel or anyone else please correct me if I'm
+> wrong), advantage of io-uring comes when there is no syscall overhead at
+> all - either you have a ring with multiple entries and then one side
+> operates on multiple entries or you have polling and no syscall overhead
+> either. We cannot afford cpu intensive polling - out of question,
+> besides that I had even tried SQPOLL and it made things worse (that is
+> actually where my idea about application polling comes from).
+> As I see it, for sync blocking calls (like meta operations) with one
+> entry in the queue, you would get no advantage with
+> IORING_OP_READV/IORING_OP_WRITEV -  io-uring has  do two system calls -
+> one to submit from kernel to userspace and another from userspace to
+> kernel. Why should io-uring be faster there?
+> 
+> And from my testing this is exactly what I had seen - io-uring for meta
+> requests (i.e. without a large request queue and *without* core
+> affinity) makes meta operations even slower that /dev/fuse.
+> 
+> For anything that imposes a large ring queue and where either side
+> (kernel or userspace) needs to process multiple ring entries - system
+> call overhead gets reduced by the queue size. Just for DIO or meta
+> operations that is hard to reach.
+> 
+> Also, if you are using IORING_OP_READV/IORING_OP_WRITEV, nothing would
+> change in fuse kernel? I.e. IOs would go via fuse_dev_read()?
+> I.e. we would not have encoded in the request which queue it belongs to?
 
-Thank you Christian for having gone through the painful process of
-bisecting this issue.
+Want to try out my new ringbuffer syscall?
 
-Is the Garmin FR35 Flash device perhaps connected to a USB bus? If so,
-this is the second report of a USB storage device that resets if it
-receives a query for the IO Advice Hints Grouping mode page. Does the
-patch below help?
+I haven't yet dug far into the fuse protocol or /dev/fuse code yet, only
+skimmed. But using it to replace the read/write syscall overhead should
+be straightforward; you'll want to spin up a kthread for responding to
+requests.
 
-Thanks,
+The next thing I was going to look at is how you guys are using splice,
+we want to get away from that too.
 
-Bart.
-
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 3a43e2209751..fcf3d7730466 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -63,6 +63,7 @@
-  #include <scsi/scsi_cmnd.h>
-  #include <scsi/scsi_dbg.h>
-  #include <scsi/scsi_device.h>
-+#include <scsi/scsi_devinfo.h>
-  #include <scsi/scsi_driver.h>
-  #include <scsi/scsi_eh.h>
-  #include <scsi/scsi_host.h>
-@@ -3117,6 +3118,9 @@ static void sd_read_io_hints(struct scsi_disk *sdkp, unsigned char *buffer)
-  	struct scsi_mode_data data;
-  	int res;
-
-+	if (sdp->sdev_bflags & BLIST_SKIP_IO_HINTS)
-+		return;
-+
-  	res = scsi_mode_sense(sdp, /*dbd=*/0x8, /*modepage=*/0x0a,
-  			      /*subpage=*/0x05, buffer, SD_BUF_SIZE, SD_TIMEOUT,
-  			      sdkp->max_retries, &data, &sshdr);
-diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
-index b31464740f6c..9a7185c68872 100644
---- a/drivers/usb/storage/scsiglue.c
-+++ b/drivers/usb/storage/scsiglue.c
-@@ -79,6 +79,8 @@ static int slave_alloc (struct scsi_device *sdev)
-  	if (us->protocol == USB_PR_BULK && us->max_lun > 0)
-  		sdev->sdev_bflags |= BLIST_FORCELUN;
-
-+	sdev->sdev_bflags |= BLIST_SKIP_IO_HINTS;
-+
-  	return 0;
-  }
-
-diff --git a/include/scsi/scsi_devinfo.h b/include/scsi/scsi_devinfo.h
-index 6b548dc2c496..fa8721e49dec 100644
---- a/include/scsi/scsi_devinfo.h
-+++ b/include/scsi/scsi_devinfo.h
-@@ -69,8 +69,10 @@
-  #define BLIST_RETRY_ITF		((__force blist_flags_t)(1ULL << 32))
-  /* Always retry ABORTED_COMMAND with ASC 0xc1 */
-  #define BLIST_RETRY_ASC_C1	((__force blist_flags_t)(1ULL << 33))
-+/* Do not read the I/O hints mode page */
-+#define BLIST_SKIP_IO_HINTS	((__force blist_flags_t)(1ULL << 34))
-
--#define __BLIST_LAST_USED BLIST_RETRY_ASC_C1
-+#define __BLIST_LAST_USED BLIST_SKIP_IO_HINTS
-
-  #define __BLIST_HIGH_UNUSED (~(__BLIST_LAST_USED | \
-  			       (__force blist_flags_t) \
+Brian was also saying the fuse virtio_fs code may be worth
+investigating, maybe that could be adapted?
 
