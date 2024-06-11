@@ -1,164 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-21413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B5E903951
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 12:51:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FDA903963
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 12:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25F0EB21CB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92501C21803
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7260017A906;
-	Tue, 11 Jun 2024 10:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A2F179675;
+	Tue, 11 Jun 2024 10:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XuJJpmZ/"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="c1weGvuO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D30178CF1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 10:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DB654750
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 10:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103096; cv=none; b=L8mvZciJOBTS2IHWI7JomzymniOZDFM4XMc25HlDB5aImz+hsVe+Ey2R7EnUzJDPZsGy1S4xymb0mEpy99QeHH3PY9np+S5wyo80JmftyTnHZMcBCUDfL+Lb8Z+HUDwF6FQ/ttQa7bolqynHAiBe2LbRCcnIVeDaux8gMVhJjXE=
+	t=1718103405; cv=none; b=AXyxWtH2XS/r2qIbCCL5H9hedtuR4jDAV41MCZWBqyvek26mkmzWFyl4R6eIka5oYJlBKsMtlQ38YHOggUY1og8BkoyiPRtCXklv0pHaotnRn1yfUvXTTUnNRGVDQujJZQumKAc3Z58T2Q1zgY4tuYH7Hz5gzqUI1qSHk0XrXWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103096; c=relaxed/simple;
-	bh=5jokJu+77cTy9PlFn2+XS0YSs6Y+O/ThgQSZEKuYE/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d9jr7Ovij0MSGJFMy/OKqm6Sg6kJrixeQmfp9WCSa+EdT0xO+z25AG/hLccC0gRMJaBpZqTPc26jW4v5Cm4PbTPMmkUp65zV19H8CJVzVq0PPEspSOrMiZnLlOAQJQL4M9kK2HRmjLR6h7tI63B7AbxVN7nUuouAmdH0AnoI+uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XuJJpmZ/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718103094;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xJzyOstj03OACQiOW3AK8lHNiLSnxNoCbEIihZoOnH0=;
-	b=XuJJpmZ/0XmtmucD2TltVwqnHwkXKQORnH8UqoKp6Cw74fkQLKgR6stUaksvkdQRz35bY1
-	uXiJjEUoEevIjoOKHQwlHAlzCtMh58hdp37uMPSbOCKbe1YrHb3mHJc9W1a0k0cc+i7ORY
-	TJK/QAJn9x+wTePO4jzU8akdQvWRE2M=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-tn8tWhBKOpCGSnO2MFp30A-1; Tue, 11 Jun 2024 06:51:31 -0400
-X-MC-Unique: tn8tWhBKOpCGSnO2MFp30A-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ea892f8441so7015991fa.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 03:51:31 -0700 (PDT)
+	s=arc-20240116; t=1718103405; c=relaxed/simple;
+	bh=VS52WzltTszbYB/0AuS6XbIVZSd6jF210Ln2FEwF98Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsZi8w5FiauihSW2fObBfZTFVPTTd+SaY27PEalvKVCFWVe/m/0gW29ch6PPYHwI7unSS4ggdqVUsTNA6NTPP1UVr8GyFZ16fW5MQUHnr3wo2kWXY9rOfg6+U12YK3xmrYh1ZzIpfMYx5AWTUTQuJtB0zfNYrxK8DU0JFKrVW4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=c1weGvuO; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70599522368so778840b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 03:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718103403; x=1718708203; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mXKCVYj/en67A5jojR7ZOsNjCFi9wMZegvGM7Xga/QY=;
+        b=c1weGvuOhkgH6T8P2IUfWxB75718lNZNTsEpzWY3NPoGV2GDM2M79UtUIhuHhFOukY
+         cu1JcQ3QW6v46IslS2T96lw9+o5EcCZrBqdl5nyo3Krhc1jZVBF80bSocz+dIu9wNOdr
+         IFPDx9s+QwZgJFN12fBqsW+Im9bP86LwndPDgorbRNU4pQkvUILGiqvWsfu5a92HIJcY
+         1haQcUC8MIMkt/HDU+eKdawPU/cOb+Tlbm0Ueh2b8j97AX8ixbb9m6PxWSK6hqLsT2zl
+         8J/EMdT9XKOgonVEOgiMMKGKybargDKpiAGx/Msyv7SfvsmyGl75po5S4x8SsTCjysch
+         ML9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718103090; x=1718707890;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xJzyOstj03OACQiOW3AK8lHNiLSnxNoCbEIihZoOnH0=;
-        b=B7yqIVCePaqOhEEUY1aAyCqmvvk+s1aAsC4WR+i330ZO63onUJlaRNcleqoQwyLT3e
-         owmxrsqW7GN7FzES9UaqMvq1gXoPa6t84hqYRD1Pm0WcBVJZ6vhaZoagFex82/ezEQ1S
-         0PZLpxnlKaNXoVUq8hvdK9ICivija/nTWTj1xKI8zolT3uYYsOy4wcY4bYfmZ+5kC1gC
-         AjHpTT1whB7yrDyIg+FY5fCaiUsyw7Vq+3BJ3qnsODDRc97HvqyMV2YsdkOT6VNRsjb7
-         nZfgsAv9sqdvuvX/IWG9hj+50ABo3EEGKDaC6SD3buZNC8kwoXJZM0OPjFPBlVD0zPsI
-         WkFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbG39V2zUm6qhe6cWlxy34iv0a25MVmwI60iK0/KUQBNHFcmttg/6uNOPiib9jsbq4Ajv1IsriQfEV+DzJykrNf+ixqNs0EPyuJMa+Lw==
-X-Gm-Message-State: AOJu0YzGwIgGnji0wyrTZj6z7PEsnoyTdPhGEIUxoGd2ylATpzL+ebIn
-	RLDp5m3Lc/F9QVNcCHjzmVRn+06n/B92554GWkU8iIfFqHE3R+Vqyi6dJZ77kRHkdxwDbYsgewd
-	o/7TBtIqJRz+gk/Wa4jothz6yHB6rqmSH9xZ3GvS9spSeT09b/p6sTeAI7zVKNRA=
-X-Received: by 2002:a2e:968e:0:b0:2ea:eb13:daca with SMTP id 38308e7fff4ca-2eaeb13dc4bmr56084741fa.47.1718103089992;
-        Tue, 11 Jun 2024 03:51:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEI8M5WVGO1DoLzk1IMAmgEjhphAqPWfsq/oAwYotOI1b9XdZDhhbZgyW9zoL+yWdPtjk0DYA==
-X-Received: by 2002:a2e:968e:0:b0:2ea:eb13:daca with SMTP id 38308e7fff4ca-2eaeb13dc4bmr56084601fa.47.1718103089490;
-        Tue, 11 Jun 2024 03:51:29 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1b1cc3e6sm7980702f8f.34.2024.06.11.03.51.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 03:51:25 -0700 (PDT)
-Message-ID: <48d71064-b9a4-49dd-b933-e9891982e1c2@redhat.com>
-Date: Tue, 11 Jun 2024 12:51:24 +0200
+        d=1e100.net; s=20230601; t=1718103403; x=1718708203;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mXKCVYj/en67A5jojR7ZOsNjCFi9wMZegvGM7Xga/QY=;
+        b=doXetzaHVofxW75kpbTLegrqRJf2r46hrUPq5edarfpzZN1zPJlw/y8NzUBXibeWNO
+         hPj0CBztED+nBQTdUWGQ7lnuYLI3A4DlXPd6X1lWv+yObuiqF5EchNz9cg2WTzHoLJfQ
+         4iSsg9YIh7z2xWlurzYJwW2UTPyIbl19/bCmKQcLIG6JyQrYKpEveyDVGb68QKkhOzhy
+         kPPSgQJouko2cYqMqiOwZ1Q+Kcnj8OYWrMXl/XCq5morK/GzXUppwpP7GBXyoKG9Kr4k
+         rHQYAdQF7R22OowG2dXvjflhFMlPg6PKuswcS0KASuaBqJ4EyRZiPBM/qQTU9+VvfNPU
+         FvIg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6h9UclUqiZfPgazWHrQ/8+dk1bQ8rPxd16+MQ/d+VpP33tQl5n2677X5562pGx+bEmROIAqjtu98HbKYO5UdsY0+XyB+J6jVK/wsntg==
+X-Gm-Message-State: AOJu0Yz3vLQMq7AP7hxBTj2aqQ4HT5HjCZGNZ2N0WeHVaGorqe/zy1m3
+	FIDnMSf+5JLfkxtQEAfkcnfNUX8yBucY9VdYO0bRUafAh+ysmIj7DsNnyVoqP9w=
+X-Google-Smtp-Source: AGHT+IHK8K2V7kQymm38HJCYaowY5rCw46Jeqv5NKPUtVcg9MLXbwyJNHKJq2OnyYuNzXkS/aVN5kQ==
+X-Received: by 2002:a05:6a20:4310:b0:1b7:406c:1086 with SMTP id adf61e73a8af0-1b85ac05febmr3167116637.6.1718103403178;
+        Tue, 11 Jun 2024 03:56:43 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7042f5584e9sm4812995b3a.12.2024.06.11.03.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 03:56:42 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sGzBA-00C5re-0c;
+	Tue, 11 Jun 2024 20:56:40 +1000
+Date: Tue, 11 Jun 2024 20:56:40 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
+Message-ID: <ZmgtaGglOL33Wkzr@dread.disaster.area>
+References: <20240611041540.495840-1-mjguzik@gmail.com>
+ <20240611100222.htl43626sklgso5p@quack3>
+ <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/6] fs/proc/task_mmu: don't indicate PM_MMAP_EXCLUSIVE
- without PM_PRESENT
-To: Oscar Salvador <osalvador@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
-References: <20240607122357.115423-1-david@redhat.com>
- <20240607122357.115423-3-david@redhat.com>
- <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
- <Zmf5NdeKewGEhYLI@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zmf5NdeKewGEhYLI@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
 
-On 11.06.24 09:13, Oscar Salvador wrote:
-> On Mon, Jun 10, 2024 at 06:38:33AM +0200, Oscar Salvador wrote:
->> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+On Tue, Jun 11, 2024 at 12:23:59PM +0200, Mateusz Guzik wrote:
+> On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
+> > On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
+> > > new_inode used to have the following:
+> > > 	spin_lock(&inode_lock);
+> > > 	inodes_stat.nr_inodes++;
+> > > 	list_add(&inode->i_list, &inode_in_use);
+> > > 	list_add(&inode->i_sb_list, &sb->s_inodes);
+> > > 	inode->i_ino = ++last_ino;
+> > > 	inode->i_state = 0;
+> > > 	spin_unlock(&inode_lock);
+> > > 
+> > > over time things disappeared, got moved around or got replaced (global
+> > > inode lock with a per-inode lock), eventually this got reduced to:
+> > > 	spin_lock(&inode->i_lock);
+> > > 	inode->i_state = 0;
+> > > 	spin_unlock(&inode->i_lock);
+> > > 
+> > > But the lock acquire here does not synchronize against anyone.
+> > > 
+> > > Additionally iget5_locked performs i_state = 0 assignment without any
+> > > locks to begin with and the two combined look confusing at best.
+> > > 
+> > > It looks like the current state is a leftover which was not cleaned up.
+> > > 
+> > > Ideally it would be an invariant that i_state == 0 to begin with, but
+> > > achieving that would require dealing with all filesystem alloc handlers
+> > > one by one.
+> > > 
+> > > In the meantime drop the misleading locking and move i_state zeroing to
+> > > alloc_inode so that others don't need to deal with it by hand.
+> > > 
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > 
+> > Good point. But the initialization would seem more natural in
+> > inode_init_always(), wouldn't it? And that will also address your "FIXME"
+> > comment.
+> > 
 > 
-> Uh, I spaced out here, sorry.
-> 
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> My point is that by the time the inode is destroyed some of the fields
+> like i_state should be set to a well-known value, this one preferably
+> plain 0.
+>
+> I did not patch inode_init_always because it is exported and xfs uses it
+> in 2 spots, only one of which zeroing the thing immediately after.
+> Another one is a little more involved, it probably would not be a
+> problem as the value is set altered later anyway, but I don't want to
+> mess with semantics of the func if it can be easily avoided.
 
-:)
+Better to move the zeroing to inode_init_always(), do the basic
+save/restore mod to xfs_reinit_inode(), and let us XFS people worry
+about whether inode_init_always() is the right thing to be calling
+in their code...
 
-Thanks!
+All you'd need to do in xfs_reinit_inode() is this
 
++	unsigned long	state = inode->i_state;
+
+	.....
+	error = inode_init_always(mp->m_super, inode);
+	.....
++	inode->i_state = state;
+	.....
+
+And it should behave as expected.
+
+-Dave.
 -- 
-Cheers,
-
-David / dhildenb
-
+Dave Chinner
+david@fromorbit.com
 
