@@ -1,168 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-21472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982AD904654
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 23:43:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE3A904658
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 23:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156F71F236E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 21:43:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69267285AE9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 21:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3C6154C08;
-	Tue, 11 Jun 2024 21:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56C615442C;
+	Tue, 11 Jun 2024 21:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="hLoIQ1Z0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AlrXhgN+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7101A150991
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 21:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3647D15445F;
+	Tue, 11 Jun 2024 21:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718142213; cv=none; b=ns6+k0Ex9JPB9+dXVrPYlyooouW5XXAwDCAXFAm4ICnQDbXgenVAwd+ZC7SUxCaGWHghKiZnN4mbwlimFY8aXvKpIauIhoo15z4Wt7PEQI+YahgaegnY15lp2CO9vfvs8eG3PJ9GiAb8wRG+AP9A8T0Or12YulI3rCHX1pCzgYU=
+	t=1718142236; cv=none; b=RFlrri9Lmi05ZhkeVZLzfSeGjgJFGQHYYo5RUFT16mWDWRc5tBjdqMqLj3qOXyTHsp6/j5R2cGiH1XqyUaVJqdW/ktZiBrIpBdFF64QEfIFw5Toa/2pApJDGOAgtpYHgQ5dgH8Ppm2dBykEsFtrZa7zF0O/VgJfOIM1h9peYewA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718142213; c=relaxed/simple;
-	bh=tKNeb6MNeTb6ee8NKd9t3VFI6dIDLg/h2mK+QErnQdE=;
+	s=arc-20240116; t=1718142236; c=relaxed/simple;
+	bh=KlHIgNvDyZC9MtN2GZoUqn6aV2oBNClS6zkq5k/Kvi4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5RTg8NjDLqzdd9RQ35hFPIckicEU3H3dyhqoAbQ/X5PeT1wFXzJbQciE9wU29jOKXA/VMJp06C1Cj0YSVekpyT3YIfS5GU4Gf2Sqh0+st9tF10lEMzcm3ifZJsqT82wCOe52g5gjdOHj+ve6DtiiZZ6rcXDt8BQkGyGLwTz+wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=hLoIQ1Z0; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f65a3abd01so13649255ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 14:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718142208; x=1718747008; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ztr+9QM8MemVkqb7WSlTcd/bIoHdITmojB66zbPzo7s=;
-        b=hLoIQ1Z03IizaxdC0cDUub0rQqvXFdK+55wJyQQtLIFbjsqasIwp4CzEvt6ElT9AeX
-         jbmkjm1f2jKQKLVcMxNpyicCWfy8k8NPGTlwQdZEcx1NSUXLVgh9JW5rve1xIS8Hgb7W
-         ghKZxWnypSU7CXRePPfSgxF7N85XS/Jss8GzDxy8ST0yEL7rrH3OEkq76IjvWEvos77L
-         +yFDozkmPtOAnjlg2DRRYoek+6NvhlvxmJWslO7nVFeltxlJgTFg3trVuWP6r9r6yK0i
-         bnVLYNswPsGZ8rGdPpQyiZLinOZZkuAj5gCgE/1e+uEQoBsJpZL9R3mHi0T1gbbNnDQa
-         sfLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718142208; x=1718747008;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ztr+9QM8MemVkqb7WSlTcd/bIoHdITmojB66zbPzo7s=;
-        b=mv8KrJ+IICfNZWLSDfiPMXum6M+78YeL7i+UM+Bto+oD0uwZkC/G/BNvexfOgh33wH
-         TH0+jBKtwUSp/l4cH9ogx683meXo+rbnE8hs5A5xTpre7eKVd5yJkaFg3YcwYG+OVMFx
-         X2t4T0Lckx4CzMAxv5XvWWFddVrafQOEosyoHawuz/Mn2hcg5jTHUNfLXhHD761iXhvI
-         RZ1uyWTUwhIbgWAE2eKUwM29tAjUAkr4Bi1QZYz6sMpwnlO1NyxfwMqKvszG0Ta1ixdw
-         IbbdKUL1vPacvpV0CXFKXlg2IBQFjxU6TmAEBX16eX+TgtsPHWthRRQ41aENgRXxnwJb
-         0f4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ZV3tTOMGoHYBBjPpzYMbXe3zYbNnxYeGC2vzYRsOpdVaV3WHToQgSvdN5iPx8PB63blUnwWDMZOo/6gRNOL0XdWtB11SBm3tlNuQyg==
-X-Gm-Message-State: AOJu0Yyd4DHO7PzB/8oonA4CRFKrtiS8G6fTNaqyA3AUmUSh5Ad0hIRW
-	udIkIAx/DbhMfP9662j7Vh95YnbROY5tK5YJ51CulWpPlio5xqqtIX1TIzBZmys=
-X-Google-Smtp-Source: AGHT+IHDQ4oQoqDpkhxCqSAL5XBWT95fcvMXTg1YL+KxJAxLhBxcAFRK9oVidT84+tTBeNJkgEp4vg==
-X-Received: by 2002:a17:902:c94d:b0:1f7:11dd:6d89 with SMTP id d9443c01a7336-1f83b76c5a9mr1351325ad.68.1718142207471;
-        Tue, 11 Jun 2024 14:43:27 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6d71a81f1sm87058795ad.98.2024.06.11.14.43.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 14:43:26 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sH9H1-00CcNh-1z;
-	Wed, 12 Jun 2024 07:43:23 +1000
-Date: Wed, 12 Jun 2024 07:43:23 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	josef@toxicpanda.com, hch@infradead.org
-Subject: Re: [PATCH v3 1/2] vfs: add rcu-based find_inode variants for iget
- ops
-Message-ID: <ZmjE+y9nw/+1CnJB@dread.disaster.area>
-References: <20240611101633.507101-1-mjguzik@gmail.com>
- <20240611101633.507101-2-mjguzik@gmail.com>
- <20240611105011.ofuqtmtdjddskbrt@quack3>
- <2aoxtcshqzrrqfvjs2xger5omq2fjkfifhkdjzvscrtybisca7@eoisrrcki2vw>
- <20240611-zwirn-zielbereich-9457b18177de@brauner>
- <CAGudoHHFh1d3AWcGQ-dm=DbwR8o-+a6+pcsvQbW-F_=qxbD0LA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lbv9GYAmRtQcyZ3AJRugWVyBQOLhMcyvtNJYmxgEPJ2ittX4tCXKq0SQQgJH/gZKT/DjV4XLzGh9xr8Q3qoDe0xELOR6oNFLLEDNSFSpB9GHRFm4ll5gnieYEHDiGwqky4FsJeyedlfBKa7FRXPVeRxmwIYOJcxbUDtyU9acn0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AlrXhgN+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD2FC2BD10;
+	Tue, 11 Jun 2024 21:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718142235;
+	bh=KlHIgNvDyZC9MtN2GZoUqn6aV2oBNClS6zkq5k/Kvi4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AlrXhgN+tImDEj8BhwYCLJVBaeCpEN2s3VdkI0kSsXxSjOlyoHcOcCCYYQtbgsE7b
+	 3JNpEZnDofkDMMxqXMUdbUO/lxEs210S+CP9mx4c+aMv5XIoyPj/ix4DUC3+Y8W70a
+	 pVlGSZBjg0UfNwBi632p0OisVrOIEkP1ePbYCBFpRbzDgSIoSM+HpCQb8da8hhz39O
+	 NhiWHjzYYK9FVTNsVqQRbbzpCchV3gO+9dK9eep+miFiK2dGTbS0Qm+zC857AiKKT0
+	 ZgMKBEWoLKUU8hdXFxZz7BWvUfTx0pronIdiol1/rsE/BxF7V2kz1jfX4pkkQuB6Ih
+	 BPnEOQzdLZbNA==
+Date: Tue, 11 Jun 2024 14:43:55 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH] Documentation: document the design of iomap and how to
+ port
+Message-ID: <20240611214355.GB52987@frogsfrogsfrogs>
+References: <20240608001707.GD52973@frogsfrogsfrogs>
+ <ZmVNblggFRgR8bnJ@infradead.org>
+ <20240609155506.GT52987@frogsfrogsfrogs>
+ <Zmh3XTDLM1TToQ2g@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHHFh1d3AWcGQ-dm=DbwR8o-+a6+pcsvQbW-F_=qxbD0LA@mail.gmail.com>
+In-Reply-To: <Zmh3XTDLM1TToQ2g@infradead.org>
 
-On Tue, Jun 11, 2024 at 03:13:45PM +0200, Mateusz Guzik wrote:
-> On Tue, Jun 11, 2024 at 3:04 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Jun 11, 2024 at 01:40:37PM +0200, Mateusz Guzik wrote:
-> > > On Tue, Jun 11, 2024 at 12:50:11PM +0200, Jan Kara wrote:
-> > > > On Tue 11-06-24 12:16:31, Mateusz Guzik wrote:
-> > > > > +/**
-> > > > > + * ilookup5 - search for an inode in the inode cache
-> > > >       ^^^ ilookup5_rcu
-> > > >
-> > >
-> > > fixed in my branch
-> > >
-> > > > > + * @sb:          super block of file system to search
-> > > > > + * @hashval:     hash value (usually inode number) to search for
-> > > > > + * @test:        callback used for comparisons between inodes
-> > > > > + * @data:        opaque data pointer to pass to @test
-> > > > > + *
-> > > > > + * This is equivalent to ilookup5, except the @test callback must
-> > > > > + * tolerate the inode not being stable, including being mid-teardown.
-> > > > > + */
-> > > > ...
-> > > > > +struct inode *ilookup5_nowait_rcu(struct super_block *sb, unsigned long hashval,
-> > > > > +         int (*test)(struct inode *, void *), void *data);
-> > > >
-> > > > I'd prefer wrapping the above so that it fits into 80 columns.
-> > > >
-> > >
-> > > the last comma is precisely at 80, but i can wrap it if you insist
-> > >
-> > > > Otherwise feel free to add:
-> > > >
-> > > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > >
-> > >
-> > > thanks
-> > >
-> > > I'm going to wait for more feedback, tweak the commit message to stress
-> > > that this goes from 2 hash lock acquires to 1, maybe fix some typos and
-> > > submit a v4.
-> > >
-> > > past that if people want something faster they are welcome to implement
-> > > or carry it over the finish line themselves.
-> >
-> > I'm generally fine with this but I would think that we shouldn't add all
-> > these helpers without any users. I'm not trying to make this a chicken
-> > and egg problem though. Let's get the blessing from Josef to convert
-> > btrfs to that *_rcu variant and then we can add that helper. Additional
-> > helpers can follow as needed? @Jan, thoughts?
+On Tue, Jun 11, 2024 at 09:12:13AM -0700, Christoph Hellwig wrote:
+> On Sun, Jun 09, 2024 at 08:55:06AM -0700, Darrick J. Wong wrote:
+> > HTML version here, text version below.
 > 
-> That's basically v1 of the patch (modulo other changes like EXPORT_SYMBOL_GPL).
+> That is so much nicer than all the RST stuff..
 > 
-> It only has iget5_locked_rcu for btrfs and ilookup5_rcu for bcachefs,
-> which has since turned out to not use it.
+> >    iomap is a filesystem library for handling various filesystem
+> >    operations that involves mapping of file's logical offset ranges
+> >    to physical extents. This origins of this library is the file I/O
+> >    path that XFS once used; it has now been extended to cover several
+> >    other operations. The library provides various APIs for
+> >    implementing various file and pagecache operations, such as:
 > 
-> Jan wanted iget5_locked_rcu to follow the iget5_locked in style, hence
-> I ended up with 3 helpers instead of 1.
+> Does anyone care about the origin?
 
-We don't need any extra APIs if you just convert the inode cache to
-using hash-bl rather than just converting lookups to RCU. Everyone
-automatically gets the all extra scalability improvements and no new
-interfaces are needed at all.
+I do; occasionally people who are totally new to iomap wonder why
+suchandsuch works in the odd way it does, and I can point them at its
+XFS origins.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> > 
+> >        * Pagecache reads and writes
+> > 
+> >        * Folio write faults to the pagecache
+> > 
+> >        * Writeback of dirty folios
+> > 
+> >        * Direct I/O reads and writes
+> > 
+> >        * FIEMAP
+> > 
+> >        * lseek SEEK_DATA and SEEK_HOLE
+> > 
+> >        * swapfile activation
+> 
+> One useful bit might be that there are two layer in iomap.
+> 
+>  1) the very simply underlying layer in iter.c that just provides
+>     a nicer iteration over logical file offsets
+>  2) anything built on top.  That's the things mentioned above plus
+>     DAX.
+> 
+> What is also kinda interesting as it keeps confusing people is that
+> nothing in the iterator is block device specific.  In fact the DAX
+> code now has no block device dependencies, as does the lseek and
+> FIEMAP code.
+
+<nod>
+
+> Because of that it might make sense to split this document up a bit
+> for the different layers and libraries.  Or maybe not if too many
+> documents are too confusing.
+
+Hmm.  The internal design is about ~400 lines of text.  The actual
+operations iomap implements are another ~600 LoT, and the porting
+guidelines at the end are about 140 LoT.  Maybe that's a reasonable
+length for splitting?
+
+> >          2. For each sub-unit of work...
+> > 
+> >               1. Revalidate the mapping and go back to (1) above, if
+> >                  necessary
+> 
+> That's something only really done in the buffered write path.
+
+Yeah.
+
+> >    Each iomap operation will be covered in more detail below. This
+> >    library was covered previously by an LWN article and a
+> >    KernelNewbies page.
+> 
+> Maybe these are links in other formats, but if not this information
+> isn't very useful.  Depending on how old that information is it
+> probably isn't even with links.
+
+There are links, which are visible in the HTML version.  Maybe I
+should've run links in whichever mode spits out all the links as
+footnotes.  (rst2html -> links is how I made the text version in the
+first place).
+
+> >    The filesystem returns the mappings via the following structure.
+> >    For documentation purposes, the structure has been reordered to
+> >    group fields that go together logically.
+> 
+> I don't think putting a different layout in here is a good idea.
+> In fact duplicating the definition means it will be out of sync
+> rather sooner than later.  Given that we have to deal with RST anyway
+> we might as well want to pull this in as kerneldoc comments.
+> And maybe reorder the actual definition while we're at it,
+> as the version below still packs nicely.
+
+Ok, I'll copy struct iomap as is.
+
+> >      struct block_device          *bdev;
+> >      struct dax_device            *dax_dev;
+> >      void                         *inline_data;
+> 
+> Note: The could become a union these days.  I tried years ago
+> before fully decoupling the DAX code and that didn't work,
+> but we should be fine now.
+
+You and Ritesh have both suggested that today.
+
+> >        * type describes the type of the space mapping:
+> > 
+> >             * IOMAP_HOLE: No storage has been allocated. This type
+> >               must never be returned in response to an IOMAP_WRITE
+> >               operation because writes must allocate and map space,
+> >               and return the mapping. The addr field must be set to
+> >               IOMAP_NULL_ADDR. iomap does not support writing
+> >               (whether via pagecache or direct I/O) to a hole.
+> 
+> ...
+> 
+> These should probably also be kerneldoc comments instead of being
+> away from the definitions?
+
+I don't like how kerneldoc makes it hard to associate iomap::type with
+the IOMAP_* constants that go in it.  This would probably be ok for
+::type if we turned it into an actual enum, but as C doesn't actually
+have a bitset type, the only way to tell the reader which flags go where
+is either strong namespacing (we blew it on that) or writing linking
+text into the kerneldoc.
+
+With this format I can lay out the document with relevant topics
+adjacent and indented, so the association is obvious.  The oneline
+comments in the header file can jog readers' memories, without us
+needing to stuff a whole ton of documentation into a C header.
+
+Besides, kerneldoc only tells the reader what the interfaces are, not
+how all those pieces fit together.
+
+> >             * IOMAP_F_XATTR: The mapping is for extended attribute
+> >               data, not regular file data. This is only useful for
+> >               FIEMAP.
+> 
+> .. and only used inside XFS.  Maybe we should look into killing it.
+
+Yeah.
+
+> >    These struct kiocb flags are significant for buffered I/O with
+> >    iomap:
+> > 
+> >        * IOCB_NOWAIT: Only proceed with the I/O if mapping data are
+> >          already in memory, we do not have to initiate other I/O, and
+> >          we acquire all filesystem locks without blocking. Neither
+> >          this flag nor its definition RWF_NOWAIT actually define what
+> >          this flag means, so this is the best the author could come
+> >          up with.
+> 
+> I don't think that's true.  But if it feels true to you submitting
+> a patch to describe it better is probably more helpful than this.
+
+I think Dave just told me off for this, so I'll probably replace the
+whole section with what he and Jan wrote.
+
+> >    iomap internally tracks two state bits per fsblock:
+> > 
+> >        * uptodate: iomap will try to keep folios fully up to date. If
+> >          there are read(ahead) errors, those fsblocks will not be
+> >          marked uptodate. The folio itself will be marked uptodate
+> >          when all fsblocks within the folio are uptodate.
+> > 
+> >        * dirty: iomap will set the per-block dirty state when
+> >          programs write to the file. The folio itself will be marked
+> >          dirty when any fsblock within the folio is dirty.
+> > 
+> >    iomap also tracks the amount of read and write disk IOs that are
+> >    in flight. This structure is much lighter weight than struct
+> >    buffer_head.
+> 
+> Is this really something that should go into an API documentation?
+
+Strictly speaking, no.  It should be in a separate internals document.
+
+> Note that the structure not only is lighter weight than a buffer_head,
+> but more importantly there are a lot less of them as there is only
+> one per folio and not one per FSB.
+> 
+> >   Why Convert to iomap?
+> 
+> Make this a separate document?
+
+I was pondering splitting these into two pieces:
+
+Documentation/iomap/{design,porting}.rst
+
+Though the porting guide is 10% of the document.  Maybe that's worth it.
+
+--D
 
