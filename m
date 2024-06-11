@@ -1,201 +1,297 @@
-Return-Path: <linux-fsdevel+bounces-21423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D4D9039A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 13:05:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3319039C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 13:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5FA72895F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 11:05:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00B91C22254
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 11:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADF517B4E1;
-	Tue, 11 Jun 2024 11:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA4317A930;
+	Tue, 11 Jun 2024 11:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zXY8LbtR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MJtPTKBW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zXY8LbtR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MJtPTKBW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSFaFRfc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F3C179951;
-	Tue, 11 Jun 2024 11:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8FC46525;
+	Tue, 11 Jun 2024 11:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103910; cv=none; b=qysNLkFq8iN56GbOOax9x4q2TK3hoZIKSvFMI4qafm3eMCcJRITU3Qgi6Uf8vUVmpA9/ozrdDFcgf4Dtc1HOwsR1cUNs6k34ROgqV+wjy1t1CxHTVl0ItaaCnoCil+N61HHAwELqgaYUvdSCWIPsnASuIW1CHjt5LBaJwrnqalc=
+	t=1718104409; cv=none; b=gpO6lLjak5ZuG3wCX/BzObxqq/s8PWl3As1w9egNUOjL9nA4L37ViE3KUkJOuXlhRjJGFOGsz1d26SqI3TtKG4Cc1n15AA9ailvBWQ9NsG3Z4QM6T/EF40iH9VgQvfn1TiILxzNdjaU2cTII45khI+xFhCcisZmh6ErCBVA1+Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103910; c=relaxed/simple;
-	bh=0maF6TePGQjOsEHBGqnzTgl9lMhx9NHYxp8R0kLCbHM=;
+	s=arc-20240116; t=1718104409; c=relaxed/simple;
+	bh=uGB5GUqDbU3shTYJyUbSitl55+MFpoGvmfgJsPwSyzY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5cPwT9YICEBmeeW7TT27uik3rUF9WIFKLjVsQEUq11ClLdcmbtOM4zFBTquIvyrY4gFcxYfksVuU9cEvXZtv8B2/WTfwVXhakShkqhONEWlHwaq7QOE0ImnV7oJQ8SE4UkefypdD4IvnMXnb7/z7Q8CNFxwcLcJgTvv9UxBgB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zXY8LbtR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MJtPTKBW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zXY8LbtR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MJtPTKBW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B98C1F8BA;
-	Tue, 11 Jun 2024 11:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718103906; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
-	b=zXY8LbtRdqOCxsHsZtmuWjo/7rj51WhVQVVEXZXDjgOz1LXjGxvI26zoEa03IOsJHPH8v4
-	aF+AuXtszD0gpKpfBjRsEP9mTkQPj3BPC+alF6YOIZMKbQ/7BrABeixWeGUb7SYzXXtLWD
-	IidmeoGcbk4tAcFGn6z6xEAwVcduBto=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718103906;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
-	b=MJtPTKBWV4pZLj+TdLvHfGomOUkSAy/BEGfa+zpf/lxfY4e+ewHUMzCW6kTKuWkFL04/3Q
-	F6+ops359EzwP/BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718103906; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
-	b=zXY8LbtRdqOCxsHsZtmuWjo/7rj51WhVQVVEXZXDjgOz1LXjGxvI26zoEa03IOsJHPH8v4
-	aF+AuXtszD0gpKpfBjRsEP9mTkQPj3BPC+alF6YOIZMKbQ/7BrABeixWeGUb7SYzXXtLWD
-	IidmeoGcbk4tAcFGn6z6xEAwVcduBto=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718103906;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
-	b=MJtPTKBWV4pZLj+TdLvHfGomOUkSAy/BEGfa+zpf/lxfY4e+ewHUMzCW6kTKuWkFL04/3Q
-	F6+ops359EzwP/BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FFBC137DF;
-	Tue, 11 Jun 2024 11:05:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P3fdA2IvaGZmEgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Jun 2024 11:05:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A7AD3A0880; Tue, 11 Jun 2024 13:05:05 +0200 (CEST)
-Date: Tue, 11 Jun 2024 13:05:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	david@fromorbit.com, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
-Message-ID: <20240611110505.udtzfwgj3o4vxrxl@quack3>
-References: <20240611041540.495840-1-mjguzik@gmail.com>
- <20240611100222.htl43626sklgso5p@quack3>
- <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJMsG5HPwRiESOVuXfZX6d2IFq66tPmU8Q5JYfVvjsN1IOhkTIz0FxrfdJRFWNBjFQoP+0IfIovEXg8BlJE1iDXq+vvHQ96/ZZxy4WRkXG1Lu7lCIK+vZUEsc7UKFRIowQZ/jTUND8KzMEaQN/hE9pUvcp0NjfnIiUX2LOGXVtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSFaFRfc; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f1c490c13so2959707f8f.3;
+        Tue, 11 Jun 2024 04:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718104406; x=1718709206; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wcyzKAO/IuM07Iw8vOtrpHPcZD7TewKdhTyFnYxXKuQ=;
+        b=aSFaFRfcV1rsOCzdoaj9LPtTnSGHqMzX3RS8D+YKf/tJJGEMe8NdjrIycCcqhnYLGi
+         CyCR+mU7gk2xNmKe7BWnMgPjr+7N6h3KGkcsf4L1dU+cfDWBK2qxqpiTs2l+KbAnk03m
+         C3yM4ay0NQRLhUEaGw2yWoGhVtydYdQl7Yr0wRm72PBMs0/6NTcrRAn66Cd1KQ5ijWZY
+         S3SYKU72l+zvapfnwT2XgUrcnbZmjO+2/djm+uMbC5x5/XAXOih2e4WUTIPDZ8g8+uNi
+         rhzbs59SaXRyys5jQm8FbqTlzjI7MG0b1+9+b9sJZD8x15bXo5Yr9D1Ei9SvJ6uBdRdB
+         pPMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718104406; x=1718709206;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wcyzKAO/IuM07Iw8vOtrpHPcZD7TewKdhTyFnYxXKuQ=;
+        b=huGEcNHRQfLufqSs/CPec71cUaltV5dGqN9SGCQxcuRc2N4qO+Nqb3sdEGuD5qyUx3
+         2tx/CRlDB2ScCI4JsnSwORhhSYKqThAbnNLVAsolkN6nSHP20KizSsXc+yC8XTjAvROY
+         mG1wFti/hyfC5yKdigWu0uZiWWmks8eMAX94rhDs+YBxteWC5AhR6cQw31/HQz3o+QnL
+         5b3zrwYEEO8p5qWKf+bDcq9kt79YkzRzX3dYWpQjuz60dzr327IsKFmKt1oQzgP1NK9f
+         Wy/MO04UA5biAD/zU/RUtJmFINIuOGVgrmjblutmbTEeNBgNtrwo3vWQHIS3NV8gSYS7
+         YgWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZu0tCDSZkDxUdsvxZmdJXfoaZlBNURXerFbrU/6PchzatnIt1iRH89+1C00w47l0s7uBcd5hVWnCNi0hyvQGLt0oEfVQk7d684+0639YpSACzgs7ZkBeB1PZudoi5Hz6IDNS8ev/QFwIq4A==
+X-Gm-Message-State: AOJu0YxK7FjMqliSQ9zwZjCh1+SSWjcBXbtlEOrZZaWrpUBRBd0SdZs5
+	SrfyACEDBLldww4dvDIhndLNFSXpdRcIHrhOkao0YbJ/OwMVNMHW4NwEhg==
+X-Google-Smtp-Source: AGHT+IGqDyIFNOXzPPzcxX0qjnr2dc3NM6/CmEQWBh5IJiaKCPUwZQMSI8/6pKtLZClNwJRvUVrZqQ==
+X-Received: by 2002:a5d:5f96:0:b0:351:b56e:8bc3 with SMTP id ffacd0b85a97d-35efedd7dcamr11584415f8f.53.1718104405501;
+        Tue, 11 Jun 2024 04:13:25 -0700 (PDT)
+Received: from f (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f27600519sm4026251f8f.32.2024.06.11.04.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 04:13:24 -0700 (PDT)
+Date: Tue, 11 Jun 2024 13:13:17 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
+Message-ID: <bfmwwxmpmu6t2tkj2aexalhfyrcjwb6alxongp4mftqrigotcv@nhipbhchji3z>
+References: <20240606140515.216424-1-mjguzik@gmail.com>
+ <ZmJqyrgPXXjY2Iem@dread.disaster.area>
+ <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
+ <ZmgkLHa6LoV8yzab@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+In-Reply-To: <ZmgkLHa6LoV8yzab@dread.disaster.area>
 
-On Tue 11-06-24 12:23:59, Mateusz Guzik wrote:
-> On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
-> > On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
-> > > new_inode used to have the following:
-> > > 	spin_lock(&inode_lock);
-> > > 	inodes_stat.nr_inodes++;
-> > > 	list_add(&inode->i_list, &inode_in_use);
-> > > 	list_add(&inode->i_sb_list, &sb->s_inodes);
-> > > 	inode->i_ino = ++last_ino;
-> > > 	inode->i_state = 0;
-> > > 	spin_unlock(&inode_lock);
+On Tue, Jun 11, 2024 at 08:17:16PM +1000, Dave Chinner wrote:
+> On Fri, Jun 07, 2024 at 09:51:51AM +0200, Mateusz Guzik wrote:
+> > On Fri, Jun 07, 2024 at 12:04:58PM +1000, Dave Chinner wrote:
+> > > On Thu, Jun 06, 2024 at 04:05:15PM +0200, Mateusz Guzik wrote:
+> > > > Instantiating a new inode normally takes the global inode hash lock
+> > > > twice:
+> > > > 1. once to check if it happens to already be present
+> > > > 2. once to add it to the hash
+> > > > 
+> > > > The back-to-back lock/unlock pattern is known to degrade performance
+> > > > significantly, which is further exacerbated if the hash is heavily
+> > > > populated (long chains to walk, extending hold time). Arguably hash
+> > > > sizing and hashing algo need to be revisited, but that's beyond the
+> > > > scope of this patch.
+> > > > 
+> > > > A long term fix would introduce fine-grained locking, this was attempted
+> > > > in [1], but that patchset was already posted several times and appears
+> > > > stalled.
 > > > 
-> > > over time things disappeared, got moved around or got replaced (global
-> > > inode lock with a per-inode lock), eventually this got reduced to:
-> > > 	spin_lock(&inode->i_lock);
-> > > 	inode->i_state = 0;
-> > > 	spin_unlock(&inode->i_lock);
+> > > Why not just pick up those patches and drive them to completion?
 > > > 
-> > > But the lock acquire here does not synchronize against anyone.
-> > > 
-> > > Additionally iget5_locked performs i_state = 0 assignment without any
-> > > locks to begin with and the two combined look confusing at best.
-> > > 
-> > > It looks like the current state is a leftover which was not cleaned up.
-> > > 
-> > > Ideally it would be an invariant that i_state == 0 to begin with, but
-> > > achieving that would require dealing with all filesystem alloc handlers
-> > > one by one.
-> > > 
-> > > In the meantime drop the misleading locking and move i_state zeroing to
-> > > alloc_inode so that others don't need to deal with it by hand.
-> > > 
-> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > > 
-> > Good point. But the initialization would seem more natural in
-> > inode_init_always(), wouldn't it? And that will also address your "FIXME"
-> > comment.
+> > Time constraints on my end aside.
 > > 
+> > From your own e-mail [1] last year problems are:
+> > 
+> > > - A lack of recent validation against ext4, btrfs and other
+> > > filesystems.
+> > > - the loss of lockdep coverage by moving to bit locks
+> > > - it breaks CONFIG_PREEMPT_RT=y because we nest other spinlocks
+> > >   inside the inode_hash_lock and we can't do that if we convert the
+> > >   inode hash to bit locks because RT makes spinlocks sleeping locks.
+> > > - There's been additions for lockless RCU inode hash lookups from
+> > >   AFS and ext4 in weird, uncommon corner cases and I have no idea
+> > >   how to validate they still work correctly with hash-bl. I suspect
+> > >   they should just go away with hash-bl, but....
+> > 
+> > > There's more, but these are the big ones.
+> > 
+> > I did see the lockdep and preempt_rt problem were patched up in a later
+> > iteration ([2]).
+> > 
+> > What we both agree on is that the patchset adds enough complexity that
+> > it needs solid justification. I assumed one was there on your end when
+> > you posted it.
+> > 
+> > For that entire patchset I don't have one. I can however justify the
+> > comparatively trivial thing I posted in this thread.
 > 
-> My point is that by the time the inode is destroyed some of the fields
-> like i_state should be set to a well-known value, this one preferably
-> plain 0.
+> I didn't suggest you pick up the entire patchset, I suggested you
+> pull the inode cache conversion to hash-bl from it and use that
+> instead of hacking RCU lookups into the inode cache.
+> 
 
-Well, i_state is set to a more or less well defined value but it is not
-zero. I don't see a performance difference in whether set it to 0 on
-freeing or on allocation and on allocation it is actually much easier to
-find when reading the code.
+That's still a significantly more complicated change than my proposal.
 
-> I did not patch inode_init_always because it is exported and xfs uses it
-> in 2 spots, only one of which zeroing the thing immediately after.
-> Another one is a little more involved, it probably would not be a
-> problem as the value is set altered later anyway, but I don't want to
-> mess with semantics of the func if it can be easily avoided.
+> > That aside if I had to make the entire thing scale I would approach
+> > things differently, most notably in terms of locking granularity. Per
+> > your own statement things can be made to look great in microbenchmarks,
+> > but that does not necessarily mean they help. A lot of it is a tradeoff
+> > and making everything per-cpu for this particular problem may be taking
+> > it too far.
+> 
+> The hash-bl conversion doesn't make anything per-cpu, so I don't
+> know what you are complaining about here.
+> 
 
-Well, I'd consider that as another good reason to actually clean this up.
-Look, inode_init_always() is used in bcachefs and xfs. bcachefs sets
-i_state to 0 just before calling inode_init_always(), xfs just after one
-call of inode_init_always() and the call in xfs_reinit_inode() is used
-only from xfs_iget_recycle() which sets i_state to I_NEW. So I claim that
-moving i_state clearing to inode_init_always() will not cause any issue and
-is actually desirable.
+I crossed the wires with another patchset and wrote some garbage here,
+but it is not hard to error-correct to what I meant given the context:
+per-chain locking is not necessarily warranted, in which case bitlocks
+and associated trouble can be avoided.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> > For the inode hash it may be the old hack of having a lock array would
+> > do it more than well enough -- say 32 locks (or some other number
+> > dependent on hash size) each covering a dedicated subset.
+> 
+> No, that's a mid 1990s-era hack that was done because we didn't know
+> any better ways to scale global algorithms back then. 
+> It's not a scalable algorithm, it's a global algorithm that
+> has been sharded a few times to try to keep global scope operations
+> apart. The moment you have subset collisions because of a specific
+> workload pattern, then the scalability problem comes straight back.
+> 
+
+It is a tradeoff, as I said. Avoidance of bitlock-associated trouble is
+the only reason I considered it.
+
+> Your patch, however, just converts *some* of the lookup API
+> operations to use RCU. It adds complexity for things like inserts
+> which are going to need inode hash locking if the RCU lookup fails,
+> anyway.
+> 
+
+You may notice the patch only trivially alters insertion code because
+rcu awaraness in the hash was already present.
+
+> Hence your patch optimises the case where the inode is in cache but
+> the dentry isn't, but we'll still get massive contention on lookup
+> when the RCU lookup on the inode cache and inserts are always going
+> to be required.
+
+While it is true that the particular case gets sped up, that's not the
+only thing that happens and should you take a look at the synthethic
+benchmark I'm running you will see it does not even test that -- it is
+very heavily cache busting.
+
+The win comes from going from back-to-back lock acquire (a well known
+terribly performing pattern) to just one.
+
+> IOWs, even RCU lookups are not going to prevent inode hash lock
+> contention for parallel cold cache lookups. Hence, with RCU,
+> applications are going to see unpredictable contention behaviour
+> dependent on the memory footprint of the caches at the time of the
+> lookup. Users will have no way of predicting when the behaviour will
+> change, let alone have any way of mitigating it. Unpredictable
+> variable behaviour is the thing we want to avoid the most with core
+> OS caches.
+
+Of course it's still contended, I just claim it happens less.
+
+> 
+> IOWs, the hash-bl solution is superior to RCU lookups for many
+> reasons. RCU lookups might be fast, but it's not the best solution
+> to every problem that requires scalable behaviour.
+> 
+
+Of course hash-bl is faster, I never claimed otherwise.
+
+I did claim my patch is trivial and provides a nice win for little work
+in exchange. See below for a continuation.
+
+> > All that said, if someone(tm) wants to pick up your patchset and even
+> > commit it the way it is right now I'm not going to protest anything.
+> >
+> > I don't have time nor justification to do full work My Way(tm).
+> 
+> You *always* say this sort of thing when someone asks you to do
+> something different.
+> 
+> If you don't agree with the reviewer's comments, you make some
+> statement about how you "don't care enough to fix it properly" or
+> that you don't have time to fix it properly, or that you think the
+> reviewing is asking you to "fix everything" rather than just one
+> line in your patch so you reject all the reviewers comment, or you
+> say "if the maintainers want something" as a way of saying "you
+> don't have any authority, so I'm not going to listen to you at all",
+> or ....
+> 
+
+By any chance is your idea of me claiming the reviewer is asking to "fix
+everything" based on my exchange with Christopher Hellwing concerning v2
+of the patch? Because I pretty clearly did not say anything of the sort,
+even though he might have taken it that way.
+
+Anyhow, you do understand I'm not getting paid to do this work?
+
+So here how I see it: the inode hash is a problem, there is one patchset
+which solves it but is stalled. Seeing how nobody is working on the
+problem and that there is an easy to code speed up, I hack it up, bench
+and submit.
+
+This is where you come in suggesting I carry hash-bl across the finish
+line instead, despite my submission explicitly stating limited interest
+in devoting time to the area.
+
+I write an explicit explanation why I'm not interested in doing it.
+
+This is where you should stop instead of complaining I'm not picking up
+your thing.
+
+> > I did have time to hack up the initial rcu lookup, which imo does not
+> > require much to justify inclusion and does help the case I'm interested
+> > in.
+> 
+> I thin kit requires a lot more justification than you have given,
+> especially given the fact changing memory pressure, access patterns
+> and cache balance will have a great impact on whether the RCU path
+> makes any different to inode hash lock contention at all.
+> 
+
+Per my explanation above the win is not from iget getting away without
+taking the hash lock, but from only taking it once instead of twice. The
+commit message starts with explicitly stating it.
+
+New inodes continuously land in the hash in my benchmark.
+
+> The hash-bl conversion is a much a better solution and the
+> work is mostly done. If you want your workload case to perform
+> better, then please pick up the inode hash lock conversion to
+> hash-bl.
+> 
+
+It is a much faster thing, but also requiring much more work to get in.
+I am not interested in putting in that work at this moment.
+
+That aside, one mailing list over there is another person arguing the
+hash in its current form needs to be eliminated altogether in favor of
+rhashtables and they very well may be right. Whoever picks this up will
+have probably have to argue against that too.
+
+All that said, my wilingness to touch the ordeal for the time being is
+limited to maybe one round of cosmetic fixups to post a v4 of my thing.
+
+If the patch is not wanted, someone decides to get hash-bl in, or
+rshashtable or something completely different, and my patch is whacked,
+I'm going to have 0 complains. I can't stress enough how side-questy
+this particular thing is at the moment.
 
