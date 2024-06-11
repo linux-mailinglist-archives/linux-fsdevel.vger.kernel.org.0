@@ -1,131 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-21445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00426903F9E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 17:07:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E17903FBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 17:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E301C245BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 15:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5F01C24CE4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 15:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBA454FB5;
-	Tue, 11 Jun 2024 15:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6565740856;
+	Tue, 11 Jun 2024 15:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f2YWHNa+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+Qju2Fc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737A23A1DC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 15:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71C23D38E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 15:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718118270; cv=none; b=OtN8vzd4i4Xd4SIsDdz6lnBy1ghdmU8zc+10IKP49/c3hD2/y+XaoRKO71U5auz1H9zvNsiExZ9CdKl9ws5ekiVZxl7jswuN5d5nUNdrnyw3rzJhleYfifI1l8h/LKV5US6jkaQnKc+2K4ad0QrKOyGOeHrjo67tPlRA5bs8T9c=
+	t=1718118364; cv=none; b=LzcjnIM9yLgAdbBgtBlPFT5oKE7nDqAMiO9VQLGfK0OPYUkP0heW1oydJR5u61dpAWl0cJmTkia+4CCKJaKeJYXF3Q8iJ6GllATEqZU1Fcp/UjoKnELbxA6o7odOHI0FPkjDL7uI8pqaJu/gzH04FXjmQmMgumy5gpDxDItThUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718118270; c=relaxed/simple;
-	bh=AkUd3nITwa1Nsrx5FGIDh+oFc9gDF9r3YGUNfEDGOdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ktH/zHvPAI0Tpg9BXDSMLVNOwbtBgSmJ1jZ6G9nvmytpaQPgSYjM1fhT6e9kKsS6v8GxVH/2eelYVpGkQL1oyMwCbPIRZci/PSig2zRJU2eR+UvMlgaFMvt5twdAjOgqjmRYJx4bbzuIr0M6qiz1vbdaHQrkGQHFKorwFweqmko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f2YWHNa+; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d22b2a6261so151703b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 08:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718118266; x=1718723066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U1vw+2ACNqWtSlz7WiuesM2J8QxhMf27utzH+YpcgUU=;
-        b=f2YWHNa+NzKq6p06NcHmTrhmFPxBNtf57gmsdOhfH8ZMkjt7WXez7KiFFABFba2guQ
-         E7R9Hk3EWcEqvvov7f37ydSrEy0UyhahCv+hphrtrbf/ghRwesyD9P3jOjFUKYTuFWkb
-         5VyPBtCQk4a45pX81xHF894pzb9xnol4pxoRY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718118266; x=1718723066;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U1vw+2ACNqWtSlz7WiuesM2J8QxhMf27utzH+YpcgUU=;
-        b=FDiIxXpAfGcqAIaOs09RTiL7fvMpYpULpLRWMd5s6uZPhwYrMKTBx0qFaCdNJKdrrJ
-         7jbBysC2T/E6sChAdLk1SPhhhBRMoVtICM7E3vanuzHqNf4yCnTrjFWrsL1fmFgbm6SR
-         qjb4IEfewpN96It3sLuFRD8/lkGtNJxhZQnHOMOioetATQFfWooM29jTy0p9oSbNrUB4
-         vdubYaMFFxPtFZ60a0pDd9sa+XUF0HIATM4RWIr9LeFe6gVLi1101f4JfLpMt0U18YfB
-         TYME3Af4E0EkFs0cZ/PoOtKeudcIax4BcD8bpebyKrtt9iCbuX9/FsC2NC9NYNhkEPIU
-         KAdA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6I8DScfYPX53RPezlVNMrPqJ1y/jhvVVT33XLHfM58ko+9Byue9mt0XRhk6KurFzhnl6n/4mgLfcXke/X8pTfjWhUMYSH606eOxvGcg==
-X-Gm-Message-State: AOJu0Yyxk+vwxfPJAGcx9yogloh/xPhq58j7dm+5yxMSbG8AqY72QIRx
-	KxBBK5SDFonnTyv5cGpkf66m+xUCfo2uWs7wPZTrr9bMyaI6u764DlbJPpNPmGs=
-X-Google-Smtp-Source: AGHT+IGlfmuk878CG8En5W5lnHLDlQmd3V99IlMUJd8rH48VkCqYhG6rTzSfb4MZ//slpZJu5TCXQw==
-X-Received: by 2002:a05:6808:1b08:b0:3d2:2356:d271 with SMTP id 5614622812f47-3d22356d368mr9188713b6e.1.1718118266435;
-        Tue, 11 Jun 2024 08:04:26 -0700 (PDT)
-Received: from ?IPV6:2607:fb91:213b:a129:544a:cc06:ea0:4045? ([2607:fb91:213b:a129:544a:cc06:ea0:4045])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccacadc00sm20643537b3.1.2024.06.11.08.04.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 08:04:26 -0700 (PDT)
-Message-ID: <0556ee55-6bdf-4392-8933-03539768f671@linuxfoundation.org>
-Date: Tue, 11 Jun 2024 09:04:24 -0600
+	s=arc-20240116; t=1718118364; c=relaxed/simple;
+	bh=sGrn3uo3kRFq6eRj0uHeZFI9a2Wrj353StAhI3Dx9zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6Ud3SXER9naTPIpvbBU6n8mqfKO55B4f2MkSXaxcjYZZR45YkbHcXn0bM4xl3+qADvLuTe/xcENpmdOFZ8L8IWxSjNQ421xL2n2Sd7/xJCrBBYWqYJLVkFVcxsxcaV4V9hXIKadxbUWLXGKVi99IJ7VmgMH8yYj+n+8/GvrRe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+Qju2Fc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9350C4DE00;
+	Tue, 11 Jun 2024 15:06:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718118364;
+	bh=sGrn3uo3kRFq6eRj0uHeZFI9a2Wrj353StAhI3Dx9zE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W+Qju2FcsXsOPo35tyUJPd1MbtnFFk9DIRJTpFuTqCg02IP7KE3ktS73xcgZp07j0
+	 smRtPofr4GR9+3DXkLRal6brnj0HAZtkhe5uWQUw9BBWwV9l+jCP2mQ/a4FUpKtAHb
+	 o8qgXqb/R/fH1AjC3+3EdMWmV7kpPympUBBMaXOL6ZgS2d5j6HWzVBTr6aZjSjpo3h
+	 Y/3W+J4Ff7W6yavjUF4WhabMqn6s3Xrs8tLzg0rzsSgqEEKhRTjH8GoTkEHn55KQjj
+	 r1MdsfykNoLlz3ACNGdCogQjYOq8dTikYQ5JM/38NEakgLFOsgK/hSZ/I4zULCmdDI
+	 mcC5ZcFIdfnpQ==
+Date: Tue, 11 Jun 2024 17:05:59 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Bill O'Donnell <billodo@redhat.com>
+Subject: Re: [PATCH RFC] fs_parse: add uid & gid option parsing helpers
+Message-ID: <20240611-granit-amateur-820745d37012@brauner>
+References: <8b06d4d4-3f99-4c16-9489-c6cc549a3daf@redhat.com>
+ <20240605-moralisieren-nahegehen-90101b576679@brauner>
+ <2508590b-54db-4f52-ac55-e5014fffabb9@sandeen.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: proc: remove unreached code and fix build
- warning
-To: Alexey Dobriyan <adobriyan@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Amer Al Shanawany <amer.shanawany@gmail.com>,
- Shuah Khan <shuah@kernel.org>,
- Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>,
- Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- kernel test robot <lkp@intel.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <202404010211.ygidvMwa-lkp@intel.com>
- <20240603124220.33778-1-amer.shanawany@gmail.com>
- <14f55053-2ff8-4086-8aac-b8ee2d50a427@p183>
- <20240604202531.5d559ec4daed484a7a23592c@linux-foundation.org>
- <eb9b2d6e-91eb-4fdc-b352-b3d0c290da2f@p183>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <eb9b2d6e-91eb-4fdc-b352-b3d0c290da2f@p183>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2508590b-54db-4f52-ac55-e5014fffabb9@sandeen.net>
 
-On 6/7/24 09:25, Alexey Dobriyan wrote:
-> On Tue, Jun 04, 2024 at 08:25:31PM -0700, Andrew Morton wrote:
->> On Mon, 3 Jun 2024 17:24:47 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
->>
->>> On Mon, Jun 03, 2024 at 02:42:20PM +0200, Amer Al Shanawany wrote:
->>>> fix the following warning:
->>>> proc-empty-vm.c:385:17: warning: ignoring return value of ‘write’
->>>
->>>> --- a/tools/testing/selftests/proc/proc-empty-vm.c
->>>> +++ b/tools/testing/selftests/proc/proc-empty-vm.c
->>>> @@ -381,9 +381,6 @@ static int test_proc_pid_statm(pid_t pid)
->>>
->>>> -	if (0) {
->>>> -		write(1, buf, rv);
->>>> -	}
->>>
->>> no thanks
->>
->> Why not?
->>
->> Why does that code exist anyway?  It at least needs a comment.
-> 
-> OK, whatever.
-> 
-> If test fails, it better record buggy output somewhere (to coredump or to terminal).
+> Perhaps it's worth getting this far, and fight that battle another day?
 
-+1 on reporting results - the best way to do this is to add a meaningful message
-for users to understand what went wrong.
-
-Please suggest how you would like this warning addressed and report the error.
-
-thanks,
--- Shuah
+Agreed!
 
