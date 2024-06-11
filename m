@@ -1,146 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-21388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C17903542
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3977C9035C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF7A1F21F4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 08:15:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73801F28682
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 08:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B5117334E;
-	Tue, 11 Jun 2024 08:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5868E172799;
+	Tue, 11 Jun 2024 08:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="J/rYoVfI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="knDhbLDt"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kI3jT0P2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wflow1-smtp.messagingengine.com (wflow1-smtp.messagingengine.com [64.147.123.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57F03F8C7;
-	Tue, 11 Jun 2024 08:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22076172BCE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 08:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093739; cv=none; b=rYX/8Juy/KVXENGvSFn6eBQPvXAdYF0Hi82IqBImV2PeWGfR9AY8hXRMVRt5y7Ymc+m7i/0Ot8mK7BmiGVwRDp3WhF7SrQ6ofEpLU9Kkrm1uv8oOInxQLh7wX+Obrwtx+m58NkEudTN6+DE8UAxw39WjUg/1UcOWchvjgdiV3nU=
+	t=1718094058; cv=none; b=O1Qg6JgwdvowDjfMA0/XZ1JafuLfrPtDZJ00Je06BMymjcmq78fYVlh+wrKPlrU4dA6lCHPYWDJigRJq5fGioilUrNRrRt2G/wAy9wOQBEtffo0SSl2/cYzvAPKLUIjEjRwJzY6xIMG3n2qu2PQVUnLMPtjy5anwIaN6T1ihdhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093739; c=relaxed/simple;
-	bh=z43s94CnLrweY/tQQTWD/T164eJu5lCBbRFTHO2hCys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGyJ1FIh+Ev3pFy8c1ZGH+Lr4ssu33UkggZZtY4z/iAjfKKo9PwKzge4os0RdFhQwCzRkP+zXzw/nMHu3Rqe7VVsLpzGJPqfubgDM3A3ddkVCQYGyG4CBjLqWSjH5v+LKd6JP6Regs6G2LUPm6JQcZx4b2r9I36oYilGp8YAhu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=J/rYoVfI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=knDhbLDt; arc=none smtp.client-ip=64.147.123.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailflow.west.internal (Postfix) with ESMTP id 57A532CC01C9;
-	Tue, 11 Jun 2024 04:15:34 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 11 Jun 2024 04:15:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718093733; x=1718097333; bh=FHmyaqd99K
-	ibuNFcHRNSHKPpvreyC45H6/JsNKHxzgM=; b=J/rYoVfIrIPfb3R2Z5VsoocWAy
-	9b2ZNUviqa5JVMGRCXBoiGRPeEeflfhkWFoS4xp0wjGjjSoSzjr9/Ry2HM1NQBN3
-	rGqBL30RWZBG73M3IR0nPjnmrU3Sz21PdFoKWDbMJzhPW3O6iAMidFE01i0ne35m
-	ZCifgOEBmaiySDmPBUt0jV5RVgES7tcTELewog99jLkcFGyJRB8tLQTfAuJ5fzWU
-	NvC+jd9iAPGpwbp55drVsng9u6fA/WRQbuNVFLgVl4Q6G7g9XnWXU3XoTYp415xB
-	qCvlyQPcfOV73rrJSbvTeUD+H6r87uB59hI4zB3Q1HHFT3ENM1XmjkFWtMsg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718093733; x=1718097333; bh=FHmyaqd99KibuNFcHRNSHKPpvrey
-	C45H6/JsNKHxzgM=; b=knDhbLDtDZHXqot+UutYHGqxS+ybOwLtEfM2l9Qv3Bwk
-	xRNVii1WuqbblONh3bapyi6jj+y6ihyLWa0qNKKjHiIl7XFMm7fgR+5L+xCTF92K
-	GWHUzRyxh9lghsjWzQ9gBVJ9hjKTS/HWxw2ShAhRKgm7Vm8yRx40W3qpoNsSCaGu
-	aqquX1GrReuK45wM0FrT8SBTo3nZHK/2eH89ywUAXSuW5VUSDZmD4xm60JzA6TSe
-	giAHdHgi2K8JXuiZ7rHtmgxSaDO6GemHKVygtxIh52B0oRqDmtyKfd4UH0PMBIWP
-	mYiMgkVPIG2EZJBxX48gzPmFFkCXkWkL2HNPICsi/Q==
-X-ME-Sender: <xms:pQdoZnJwpUwMJ5aSh754SMicBUig2Yo7cuxFIWBG488MykM7DOVeAg>
-    <xme:pQdoZrJohRL0fRPyBWFyomxQw_Wntfm3Hi8KpMnHjHHAFSi3UgnvVIf_nrppUfvqp
-    nbk4c5IYdmGH_HX-Us>
-X-ME-Received: <xmr:pQdoZvvXVZYadnWUMnwqdouS2UsXYPZmppj5ffgA80HwlxeFKqUKT3Tckwlj9nuA14nh00vFXkes2Lh_2rgy-v4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvdcutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttdejnecuhfhrohhmpeflohhnrghthhgr
-    nhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenucggtffrrg
-    htthgvrhhnpeekkeetgeefgfdvfefgfeffueefffejvdduieejheejheffkeejkeelffeu
-    lefggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:pQdoZgbk3yz2iWEH2OCd2tzORrTqUi8Xy8tlfWlgEJ7aFszfgufoNA>
-    <xmx:pQdoZuY-_ecrn57VvpsDzZQxq0DRPaeHlkGlaWPxohtt9RKsQqVRjw>
-    <xmx:pQdoZkAIRT6rZ72ReWB9WCp__6QSGkYRSShFTuVyOTissCzd__D53w>
-    <xmx:pQdoZsaUaxZf6hlV2VqKqE-kV3pGikI5Wpp7thyLHw9MpGq7NOr0AQ>
-    <xmx:pQdoZioJsRbSnszbs1P2taAhZGEiLrtjH4FHUkxUUaOwAvhnVOVqp5RG>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 04:15:29 -0400 (EDT)
-Date: Tue, 11 Jun 2024 01:20:40 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Andrew Morgan <morgan@kernel.org>, brauner@kernel.org,
- 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
- 	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- KP Singh <kpsingh@kernel.org>,
- 	Matt Bobrowski <mattbobrowski@google.com>,
- Alexei Starovoitov <ast@kernel.org>,
- 	Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>,
- 	Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- John Johansen <john.johansen@canonical.com>,
- 	David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- 	Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
- 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
-Message-ID: <o5llgu7tzei7g2alssdqvy4g2gn66b73tcsir3xqktfqs765ke@wyofd2abvdbj>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-2-jcalmels@3xx0.net>
- <20240610130057.GB2193924@mail.hallyn.com>
+	s=arc-20240116; t=1718094058; c=relaxed/simple;
+	bh=vO3JurHnqRom7JH3aovwHNNB21erWLhlHlVhgVC7CNo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=duQKKspB21mTQKIY/wcjsO96qqcYRzWcybaDhHSDy9Fd/jePpRAz3dbCCx+J7b8cTAwmnSLPyT8KTz1x6B7bMbu+KC5mztpeLZqrtwxwhTIQXtONwYhU/B2iHGKFN9pUJcGLdsuX7s3B80Mj1f+zBt+B8gBS3qtukm4Xi2Z1V6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=kI3jT0P2; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfda9ec1917so251203276.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 01:20:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1718094055; x=1718698855; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TsjHdLyVH+/QRYOQgnmFiCH9v5EDjsTLPrAqffUv+uc=;
+        b=kI3jT0P2KoEAKR0OFfxgrm+lSJa8fnnG9jygTm0WYzgi41Ocy9RAZGAI21u8Nj03WX
+         0VIPhNcO4DzsbYm4xxzUe07ZGzCkDwDIWLTJYsowhKcNK15V3A8gSNTlbuig3zwiU3Kq
+         DUeja4q9KY1HJkwORhh18PB+mWu2Vqf4mUvXI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718094055; x=1718698855;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TsjHdLyVH+/QRYOQgnmFiCH9v5EDjsTLPrAqffUv+uc=;
+        b=IkaJMMD70WRd4AvrnE7tUFANBly6z/Q6XhEuD0XKJ4XURWboAt/bPfi/nWQfYywPzq
+         vXvgCOqNsZ77Ks5KuHRjK7x0p6oFDE0rDKBODcpFRJskKOocoHBJM/pwbLVVL0FY5M58
+         IcKX4cTVbROSTavr0tjIno3cfPEJ9YeiSLu/W0nqKdDV9NjPOELS38NufkZragXo/Yjn
+         tW0Vyla6p7LMkk3B1k3TsTpDHEK68OuL6xaD0zB+gHyNbtPYtbZFBF6iGkPefw55t8WW
+         3xdIAI4g93xbG9is0zDdyXFnPOcHnUPZrKjha13IvMPCR+mH3k0A3OgoXLJYR1bfpTN/
+         Cx+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWPKOQKAvPi9EqtEpIWxNw9Sh/4vYmdR504xuA/6MzyUAfoDFF7BaDjq4yFd8kew8d4foTui8h3RTLdD6DLGEF1IfyeBkpav3DdGdcTEQ==
+X-Gm-Message-State: AOJu0YwiyEc7KWgCGWQQLITAtqV2NmhJ/ne+cMldzspXZ3GlIYPM5DCl
+	h/PkPKWm72nPWfroJEFRJihHsvoChWgPDEcjGWMBVwZ9d6Mx5ATdqHHm8N0XMw9QyqCDP9HHWi8
+	wVFvKNfJ/7ZXEkyC4Pi6kMk8IkmQb0OKoirjqww==
+X-Google-Smtp-Source: AGHT+IGV43mp6SccLEJHmFQqXVggcZgGWtTaNQ77TCVt0LJrCuabfnXvVEhVcOdoMIPnLgFfeGrshI120aFHrmTB4yk=
+X-Received: by 2002:a25:ce11:0:b0:dfa:fff4:8ef5 with SMTP id
+ 3f1490d57ef6-dfafff492e6mr9926637276.48.1718094054913; Tue, 11 Jun 2024
+ 01:20:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240610130057.GB2193924@mail.hallyn.com>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 11 Jun 2024 10:20:42 +0200
+Message-ID: <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 10, 2024 at 08:00:57AM GMT, Serge E. Hallyn wrote:
-> 
-> Now, one thing that does occur to me here is that there is a
-> very mild form of sendmail-capabilities vulnerability that
-> could happen here.  Unpriv user joe can drop CAP_SYS_ADMIN
-> from cap_userns, then run a setuid-root program which starts
-> a container which expects CAP_SYS_ADMIN.  This could be a
-> shared container, and so joe could be breaking expected
-> behavior there.
-> 
-> I *think* we want to say we don't care about this case, but
-> if we did, I suppose we could say that the normal cap raise
-> rules on setuid should apply to cap_userns?
-> 
+On Wed, 29 May 2024 at 20:01, Bernd Schubert <bschubert@ddn.com> wrote:
+>
+> From: Bernd Schubert <bschubert@ddn.com>
+>
+> This adds support for uring communication between kernel and
+> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+> appraoch was taken from ublk.  The patches are in RFC state,
+> some major changes are still to be expected.
 
-Right, good catch. If we do want to fix it, we could just check for
-setuid no? Or do we want to follow the normal root inheritance rules
-too? Essentially something like this:
+Thank you very much for tackling this.  I think this is an important
+feature and one that could potentially have a significant effect on
+fuse performance, which is something many people would love to see.
 
-pU' = is_suid(root) ? X : pU
+I'm thinking about the architecture and there are some questions:
+
+Have you tried just plain IORING_OP_READV / IORING_OP_WRITEV?  That's
+would just be the async part, without the mapped buffer.  I suspect
+most of the performance advantage comes from this and the per-CPU
+queue, not from the mapped buffer, yet most of the complexity seems to
+be related to the mapped buffer.
+
+Maybe there's an advantage in using an atomic op for WRITEV + READV,
+but I'm not quite seeing it yet, since there's no syscall overhead for
+separate ops.
+
+What's the reason for separate async and sync request queues?
+
+> Avoiding cache line bouncing / numa systems was discussed
+> between Amir and Miklos before and Miklos had posted
+> part of the private discussion here
+> https://lore.kernel.org/linux-fsdevel/CAJfpegtL3NXPNgK1kuJR8kLu3WkVC_ErBPRfToLEiA_0=w3=hA@mail.gmail.com/
+>
+> This cache line bouncing should be addressed by these patches
+> as well.
+
+Why do you think this is solved?
+
+> I had also noticed waitq wake-up latencies in fuse before
+> https://lore.kernel.org/lkml/9326bb76-680f-05f6-6f78-df6170afaa2c@fastmail.fm/T/
+>
+> This spinning approach helped with performance (>40% improvement
+> for file creates), but due to random server side thread/core utilization
+> spinning cannot be well controlled in /dev/fuse mode.
+> With fuse-over-io-uring requests are handled on the same core
+> (sync requests) or on core+1 (large async requests) and performance
+> improvements are achieved without spinning.
+
+I feel this should be a scheduler decision, but the selecting the
+queue needs to be based on that decision.  Maybe the scheduler people
+can help out with this.
+
+Thanks,
+Miklos
 
