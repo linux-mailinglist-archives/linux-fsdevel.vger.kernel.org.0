@@ -1,99 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-21392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D3C903718
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:52:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2839D903763
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 11:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF236289EF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 08:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8123E28D6B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 09:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8BD176221;
-	Tue, 11 Jun 2024 08:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AE717624A;
+	Tue, 11 Jun 2024 09:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="nkumsAtJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZMuskOP3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138CF175570
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 08:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686B6176221
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 09:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718095964; cv=none; b=tA2WkyQGIEtxxOrTngQqYP4GBK1zo4nypaK0sFI2qVCm351VRopvMYLZG6tEhdl4CE5glCq8HILOYdRWpQ2NU9p6wZ/+G0DWeyG0izuoRg4bjA+uDFmmhl77gYlqcquv6uGE6n3UQkd8/CymIc7qqosZ/fVsOEF68hPFljtEaVY=
+	t=1718096617; cv=none; b=See33h9ZGB1hPnH/l2kAkP9TCx8NGyEORi2Tnupncktxii2NMDn/VD4VEUBWFUsbrf7X9tdfqjfPT4Uytt1UIhJa0IFNrNdFDrINgcwQgsHfMu+/HHhezUhutAYzXI8GLFUFoLJKTgvCMSFQGyPQ2hXydLV01cINlmUUoJoCHxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718095964; c=relaxed/simple;
-	bh=e1jKfrVJvNRUjZ1G7GMXs/Auo65RBO7a6yZMmElGgzo=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F+5cVBWpGed0kQQhtfiWW1+aYLbYdYNHC2o51yq1RA0Yt72A+kimpJJfhjSbZ22+Rqr0tn+AIXZQ5ooF+msGYFAHRXsmihrT7F8ZcxKltuzQ/iSl/hctag/iKtqAfAbH2X33r/VSMoEhxYRUt95V/O+PLyDvzXqbhIUHn4G1cf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=nkumsAtJ; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (unn-37-19-197-199.datapacket.com [37.19.197.199] (may be forged))
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45B8qFri013014
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 04:52:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1718095944; bh=SeRNdQn2ssqgKAus6AWOugRGaJLxS3fn0v7E7U0Lyaw=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=nkumsAtJuXUyjG1S4kNF4T71+CDE1Sg/+yCCOV7PWS+Z4p0BcabCql9o97LZtT7nw
-	 yns/TZjLhbFNIwaR1wC7P6pkKC6AzJqJEsEjpOIlKMBX4vokEsqdSuNGuZBvCgi5Ll
-	 15gRYpAICP/GYnW+07M6y9t79Jr0vmHhCi2nJV04+V+1e0IFqogn42h6LJI/LiiXkt
-	 T9qH4fnJV1jTsJwVTrYmsU8q5ItIDDMvKRci09fq1IBlM3KGCNCAG3s8hf60qYphuT
-	 FxDFxtsBnN73ColJVKZfIgiplQ6oQJuzZHqw3njI+1sHOcBTSD4mFRFaN1BTvgd3gk
-	 fGLIm5pt1mmHA==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 67DBA341669; Tue, 11 Jun 2024 10:52:10 +0200 (CEST)
-Date: Tue, 11 Jun 2024 09:52:10 +0100
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org, fstests@vger.kernel.org
-Subject: Flaky test: generic/085
-Message-ID: <20240611085210.GA1838544@mit.edu>
+	s=arc-20240116; t=1718096617; c=relaxed/simple;
+	bh=wU35Bt/W4Th7ebj0fz6w+yPys0fnerf+0iDw45DCtn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gNoKVmoDisQEEk5YiqRItevm/5CDDATfn+RfPPiu1qmel+i0JIGskBRbk1tq2rx0dUdhvEyv0Dm05/vmTzsQmfkg0ikhBN1V4NmXS3xYhHtCekuGdbbKffqLPeQyr+4+E3JT1ztI3BAY6hfGoYa3hDCpkcogO9HMNoadeKMTd6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZMuskOP3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718096615;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XLWHA3e+iEuCixJwfkXomh9A2UOMcv37vtzmFIMouF4=;
+	b=ZMuskOP3Jz5MEbp7zANbK8GNZ0HGVu/IrdhjxsxeUD2DQDWIhp7KzP8A8ipebsrVcXMUrj
+	aBR+n9SsYYk16SVV3ZYlHGb7GXrqcx00uwDrizhzomHsqqt1OraKIDePxhkG0uZD5f867G
+	Tr4xojdo89E6dXIemGlCrUZdm4VjbDI=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-20nuNgopPTaNUzgUUkdXvQ-1; Tue, 11 Jun 2024 05:03:29 -0400
+X-MC-Unique: 20nuNgopPTaNUzgUUkdXvQ-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57c748dd112so556691a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 02:03:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718096608; x=1718701408;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLWHA3e+iEuCixJwfkXomh9A2UOMcv37vtzmFIMouF4=;
+        b=cvYkVBIDQjy7YcoUch3eRVR4y/aQkGCNIx2R7r7xB1DvhjxKCagWXp1C4+I9T70OQ7
+         XzlhvwLlPqM5GAIkDK1fifPjnohJ697+9li75hkS4gxDaaCEqnfxK3z/K7hghntC2kW2
+         CI0/kdcQEv3zXdKsC0L9cGor8d4Wu2VdNE6uRd6Jh0SwSNf2ghXDyP8Nn72RJHiaqE9l
+         tUNmKfAqMIthlX+k6Jo3We8/vD8KrHJ3l7V6ziTaEXJDkOYT9PybfwR20d68imj5UUn4
+         ElirFEu/XWrYhBGa08M6G1x8l0Tv2wgsqhyF0bw15xnppCfwv9RFTpv5zYRL2t13u1ez
+         HugQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX27G/+ya5lYe07mkyz1WNLj7h72xiWrh23EuzP4OzvZyIKJ4EH11V5clftiii25Y6pQVPhL/H9jYhF6HxMZZcdDrsWGoef/i5XRjHfrA==
+X-Gm-Message-State: AOJu0YyHshEpU4K1XlNOYmCyr3IZRIRrOpZT0UKhccpu22n3SEbaISnA
+	N8MxOoWQOZmj6OuVIHBKCwCZcagfFe6/GkQTWOm+zWD3hLF0yC9mIJ5Cll1K3vjTHhnHwCahnjA
+	T5WkvnLWFZIx0ZX3LsDW6inni+t2H6BNizVzgYUwCj5VOQJn68yNg4P4fHLnJ7UA=
+X-Received: by 2002:a50:8a82:0:b0:57a:33a5:9b71 with SMTP id 4fb4d7f45d1cf-57c50972f28mr9752104a12.33.1718096608145;
+        Tue, 11 Jun 2024 02:03:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBNv7S2oEwkt1dYa7oWJiEJQJtRTwaghusj5MnBn4EV1Sy+PsswgNz9xRNTlMZV4hQSAwwSQ==
+X-Received: by 2002:a50:8a82:0:b0:57a:33a5:9b71 with SMTP id 4fb4d7f45d1cf-57c50972f28mr9752074a12.33.1718096607760;
+        Tue, 11 Jun 2024 02:03:27 -0700 (PDT)
+Received: from [192.168.0.102] (host-95-245-118-97.retail.telecomitalia.it. [95.245.118.97])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae11a98csm8905551a12.48.2024.06.11.02.03.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 02:03:27 -0700 (PDT)
+Message-ID: <b5f84790-8036-44cf-bfd9-0a43269a26d9@redhat.com>
+Date: Tue, 11 Jun 2024 11:03:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/3] sched/rt: Rename realtime_{prio, task}() to
+ rt_or_dl_{prio, task}()
+To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+ Metin Kaya <metin.kaya@arm.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240610192018.1567075-1-qyousef@layalina.io>
+ <20240610192018.1567075-4-qyousef@layalina.io>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@redhat.com>
+In-Reply-To: <20240610192018.1567075-4-qyousef@layalina.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, I've recently found a flaky test, generic/085 on 6.10-rc2 and
-fs-next.  It's failing on both ext4 and xfs, and it reproduces more
-easiy with the dax config:
+On 6/10/24 21:20, Qais Yousef wrote:
+> -	if (realtime_prio(p->prio)) /* includes deadline */
+> +	if (rt_or_dl_prio(p->prio))
 
-xfs/4k: 20 tests, 1 failures, 137 seconds
-  Flaky: generic/085:  5% (1/20)
-xfs/dax: 20 tests, 11 failures, 71 seconds
-  Flaky: generic/085: 55% (11/20)
-ext4/4k: 20 tests, 111 seconds
-ext4/dax: 20 tests, 8 failures, 69 seconds
-  Flaky: generic/085: 40% (8/20)
-Totals: 80 tests, 0 skipped, 20 failures, 0 errors, 388s
+that is it... no thinking, no recall, no comment, no confusion...
 
-The failure is caused by a WARN_ON in fs_bdev_thaw() in fs/super.c:
+-- Daniel.
 
-static int fs_bdev_thaw(struct block_device *bdev)
-{
-	...
-	sb = get_bdev_super(bdev);
-	if (WARN_ON_ONCE(!sb))
-		return -EINVAL;
-
-
-The generic/085 test which exercises races between the fs
-freeze/unfeeze and mount/umount code paths, so this appears to be
-either a VFS-level or block device layer bug.  Modulo the warning, it
-looks relatively harmless, so I'll just exclude generic/085 from my
-test appliance, at least for now.  Hopefully someone will have a
-chance to take a look at it?
-
-Thanks,
-
-					- Ted
 
