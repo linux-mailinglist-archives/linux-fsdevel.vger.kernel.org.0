@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-21461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB329043B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 20:33:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A719043F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 20:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD4C21F2298B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 18:33:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4661F286F31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 18:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91125770FB;
-	Tue, 11 Jun 2024 18:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5CC7404F;
+	Tue, 11 Jun 2024 18:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u4wHn2wb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCEc5Ow5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E198474BE2;
-	Tue, 11 Jun 2024 18:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508B7101E2;
+	Tue, 11 Jun 2024 18:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718130601; cv=none; b=PyITepaDUWUYDPo2qAs+S9ShJMMlec2HfoVrVGfDvucsxT4wU5irnhkHADKsV6EiNPQhmjtLxT7TDzIzBO7AJ9AVlD/TWbw2Qozwg6AzYeOe8vEiCS7qpdXPUEGCafT9pAD7W5Gq4jrjgHaaGzJ+sjZmQ7V7bXiO1Pk5imivlQk=
+	t=1718131564; cv=none; b=YqNpl5zBbB/7e/jViSlwwijYiNqMvMMKvAJbWij7A3Ow/8bkrslaJcOECe7dCgrhzebaDXNc5A6WBAf6UtEv0sXO0pyvsBYnXjAUnFPULlTX/dNTOcBJQNpjczZzr4U3RJoFdmu/hQ1QDFSLIdDGqfs0gZ5JvPwMQbAXj/abkME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718130601; c=relaxed/simple;
-	bh=5EOvWQp68RIcBOSg4YFAnSWecjOyMMJj7nDme+d1s/4=;
+	s=arc-20240116; t=1718131564; c=relaxed/simple;
+	bh=fQvBpIT6KQAxfjKGEbjvREPakNLI7ETD7RyksVDEKf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=auuj4b2Z5UwEYT2LZ59dX3VKiPg6YcM5PhsbcViPKv+V/e7mDkxF5p0uMSpvMSgQrSV8Sr0erf8oFAe7RBjmkStEXU6XUODTFy0Roij9s0DtmekOTf7mAbnw20+V7KOtIQv5+/v2GflV5Pzzxi9KhIpyH5GFpp3vaww3qTci2D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u4wHn2wb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 621C7C4AF67;
-	Tue, 11 Jun 2024 18:30:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4m8j0OCqHlgQjOy7C04el7HOJQNgpyXgZklNy5vdQ2D/+AEP2nImmDePEd0KgGMm3MReVajPesxHHVwFBGu7IWCCpDL/zXe1TBuX75jHE1tZTpms/g4teZH2+iUZIc/pM/1uZpP2Uva82VJ8gZ8DxzW0VhdPlqrkbf/C5RtyoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCEc5Ow5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270C6C2BD10;
+	Tue, 11 Jun 2024 18:46:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718130600;
-	bh=5EOvWQp68RIcBOSg4YFAnSWecjOyMMJj7nDme+d1s/4=;
+	s=k20201202; t=1718131564;
+	bh=fQvBpIT6KQAxfjKGEbjvREPakNLI7ETD7RyksVDEKf0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u4wHn2wbBtiahaV8uAu5b30r04/E1lT2osRrSUQBMYaGr0T87eN7bAdoA3h2cA8yH
-	 EpzxeJ+aRGrEzrH9vvXzpTsTEdaOFQk7lwUG9n/jmjSm+WHXy0mV1LaPNhnjslIcsi
-	 dJOftjE0a3kmEAanBAk53b3DVsMnc4axdHAFl6CkAzoJ60coBQ75YkAXQEESseXAIU
-	 E61FXNtkztNh/m97ZI43UX9iIiAMpngeZe7gXFXrZiWdEbkq6P+wqCRcEDVwRaAUvw
-	 vRlLJQMqG9e4HWPtNF4/7SidJm7zmZGC79zFpMniPHMKO5R/9Epgx/SvIo0lqmSgbS
-	 6Om99EnfMpTRg==
-Date: Tue, 11 Jun 2024 11:29:59 -0700
+	b=HCEc5Ow5f2FvsdBvOSotl00EucsrMNJCn6sDkeRkkc0F7su4BsuT/U6h+E3LgJAvh
+	 anIZ023tdSi2la4eSQNioiTK1uSfI92zRcMVrnfFNgG7KalmiYWwcxUgO6GDPZO3WJ
+	 +z+/9BTybZw522QmmYnlApZYy7HS2wgC54GPlBvluTuna2a6LBye5uHDaokBt0y4mA
+	 RieQLqFZl2BTARfyyr2Mm0JB7CxoPPWfH63y0h7DkKNEWkCM92HELsioa5+X1VyuDP
+	 d01roPcEJGxFqgVGl9wHEmtinFKEtRBbCM3PPnyxzEFr3bxcvYmrD+Go65K3c7zw8G
+	 blJCpMQvKL+uA==
+Date: Tue, 11 Jun 2024 11:46:03 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Luis Chamberlain <mcgrof@kernel.org>
 Cc: patches@lists.linux.dev, fstests@vger.kernel.org,
@@ -52,12 +52,12 @@ Cc: patches@lists.linux.dev, fstests@vger.kernel.org,
 	linmiaohe@huawei.com, muchun.song@linux.dev, osalvador@suse.de,
 	p.raghav@samsung.com, da.gomez@samsung.com, hare@suse.de,
 	john.g.garry@oracle.com
-Subject: Re: [PATCH 5/5] fstests: add stress truncation + writeback test
-Message-ID: <20240611182959.GZ52987@frogsfrogsfrogs>
+Subject: Re: [PATCH 2/5] fstests: add mmap page boundary tests
+Message-ID: <20240611184603.GA52987@frogsfrogsfrogs>
 References: <20240611030203.1719072-1-mcgrof@kernel.org>
- <20240611030203.1719072-6-mcgrof@kernel.org>
- <20240611144503.GI52977@frogsfrogsfrogs>
- <ZmiUWCPcmtFSdrBG@bombadil.infradead.org>
+ <20240611030203.1719072-3-mcgrof@kernel.org>
+ <20240611164811.GL52977@frogsfrogsfrogs>
+ <ZmiTBZLQ8uOGS5i8@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,83 +66,117 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmiUWCPcmtFSdrBG@bombadil.infradead.org>
+In-Reply-To: <ZmiTBZLQ8uOGS5i8@bombadil.infradead.org>
 
-On Tue, Jun 11, 2024 at 11:15:52AM -0700, Luis Chamberlain wrote:
-> On Tue, Jun 11, 2024 at 07:45:03AM -0700, Darrick J. Wong wrote:
-> > On Mon, Jun 10, 2024 at 08:02:02PM -0700, Luis Chamberlain wrote:
-> > > +# Requires CONFIG_DEBUGFS and truncation knobs
-> > > +_require_split_debugfs()
+On Tue, Jun 11, 2024 at 11:10:13AM -0700, Luis Chamberlain wrote:
+> On Tue, Jun 11, 2024 at 09:48:11AM -0700, Darrick J. Wong wrote:
+> > On Mon, Jun 10, 2024 at 08:01:59PM -0700, Luis Chamberlain wrote:
+> > > +# As per POSIX NOTES mmap(2) maps multiples of the system page size, but if the
+> > > +# data mapped is not multiples of the page size the remaining bytes are zeroed
+> > > +# out when mapped and modifications to that region are not written to the file.
+> > > +# On Linux when you write data to such partial page after the end of the
+> > > +# object, the data stays in the page cache even after the file is closed and
+> > > +# unmapped and  even  though  the data  is never written to the file itself,
+> > > +# subsequent mappings may see the modified content. If you go *beyond* this
 > > 
-> > Er... I thought "split" referred to debugfs itself.
+> > Does this happen (mwrite data beyond eof sticks around) with large
+> > folios as well?
+> 
+> That corner case of checking to see if it stays is not tested by this
+> test, but we could / should extend this test later for that. But then
+> the question becomes, what is right, given we are in grey area, if we
+> don't have any defined standard for it, it seems odd to test for it.
+> 
+> So the test currently only tests for correctness of what we expect for
+> POSIX and what we all have agreed for Linux.
+> 
+> Hurding everyone to follow suit for the other corner cases is something
+> perhaps we should do. Do we have a "strict fail" ? So that perhaps we can
+> later add a test case for it and so that onnce and if we get consensus
+> on what we do we can enable say a "strict-Linux" mode where we are
+> pedantic about a new world order?
+
+I doubt there's an easy way to guarantee more than "initialized to zero,
+contents may stay around in memory but will not be written to disk".
+You could do asinine things like fault on every access and manually
+inject zero bytes, but ... yuck.
+
+That said -- let's say you have a 33k file, and a space mapping for
+0-63k (e.g. it was preallocated).  Can the pagecache grab (say) a 64k
+folio for the EOF part of the pagecache?  And can you mmap that whole
+region?  And see even more grey area mmapping?  Or does mmap always cut
+off the mapping at roundup(i_size_read(), PAGE_SIZE) ?
+
+(I feel like I've asked this before, and forgotten the answer. :()
+
+> > > +	rm -rf "${SCRATCH_MNT:?}"/*
 > > 
-> > _require_split_huge_pages_knob?
+> > rm -f $SCRATCH_MNT/file ?
 > 
-> Much better, thanks.
+> Sure.
 > 
-> > > +# This aims at trying to reproduce a difficult to reproduce bug found with
-> > > +# min order. The issue was root caused to an xarray bug when we split folios
-> > > +# to another order other than 0. This functionality is used to support min
-> > > +# order. The crash:
-> > > +#
-> > > +# https://gist.github.com/mcgrof/d12f586ec6ebe32b2472b5d634c397df
+> > > +	# A couple of mmap() tests:
+> > > +	#
+> > > +	# We are allowed to mmap() up to the boundary of the page size of a
+> > > +	# data object, but there a few rules to follow we must check for:
+> > > +	#
+> > > +	# a) zero-fill test for the data: POSIX says we should zero fill any
+> > > +	#    partial page after the end of the object. Verify zero-fill.
+> > > +	# b) do not write this bogus data to disk: on Linux, if we write data
+> > > +	#    to a partially filled page, it will stay in the page cache even
+> > > +	#    after the file is closed and unmapped even if it never reaches the
+> > > +	#    file. Subsequent mappings *may* see the modified content, but it
+> > > +	#    also can get other data. Since the data read after the actual
 > > 
-> > You might want to paste the stacktrace in here directly, in case the
-> > gist ever goes away.
+> > What other data?
 > 
-> Its not a simple crash trace, it is pretty enourmous considering I
-> decoded it, and it has all locking candidates. Even including it after
-> the "---" lines of the patch might make someone go: TLDR. Thoughts?
+> Beats me, got that from the man page bible on mmap. I think its homework
+> for us to find out who is spewing that out, which gives a bit more value
+> to the idea of that strict-linux thing. How else will we find out?
 
-I'd paste it in, even if it's quite lengthy.  I don't even think it's all that
-much if you remove some of the less useful bits of the unwind:
+Oh, ok.  I couldn't tell if *you* had seen "other" data emerging from
+the murk, or if that was merely what a spec says.  Please cite the
+particular bible you were reading. ;)
 
-"Crash excerpt is as follows:
+> > > +	#    object data can vary we just verify the filesize does not change.
+> > > +	if [[ $map_len -gt $new_filelen ]]; then
+> > > +		zero_filled_data_len=$((map_len - new_filelen))
+> > > +		_scratch_cycle_mount
+> > > +		expected_zero_data="00"
+> > > +		zero_filled_data=$($XFS_IO_PROG -r $test_file \
+> > > +			-c "mmap -r 0 $map_len" \
+> > > +			-c "mread -v $new_filelen $zero_filled_data_len" \
+> > > +			-c "munmap" | \
+> > > +			filter_xfs_io_data_unique)
+> > > +		if [[ "$zero_filled_data" != "$expected_zero_data" ]]; then
+> > > +			echo "Expected data: $expected_zero_data"
+> > > +			echo "  Actual data: $zero_filled_data"
+> > > +			_fail "Zero-fill expectations with mmap() not respected"
+> > > +		fi
+> > > +
+> > > +		_scratch_cycle_mount
+> > > +		$XFS_IO_PROG $test_file \
+> > > +			-c "mmap -w 0 $map_len" \
+> > > +			-c "mwrite $new_filelen $zero_filled_data_len" \
+> > > +			-c "munmap"
+> > > +		sync
+> > > +		csum_post="$(_md5_checksum $test_file)"
+> > > +		if [[ "$csum_orig" != "$csum_post" ]]; then
+> > > +			echo "Expected csum: $csum_orig"
+> > > +			echo " Actual  csum: $csum_post"
+> > > +			_fail "mmap() write up to page boundary should not change actual file contents"
+> > 
+> > Do you really want to stop the test immediately?  Or keep going and see
+> > what other errors fall out?  (i.e. s/_fail/echo/ here)
+> 
+> Good point. We could go on, I'll change on the next v2.
+> 
+> Thanks!
 
-"BUG: kernel NULL pointer dereference, address: 0000000000000036
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 7 PID: 2190 Comm: kworker/u38:5 Not tainted 6.9.0-rc5+ #14
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Workqueue: writeback wb_workfn (flush-7:5)
-RIP: 0010:filemap_get_folios_tag+0xa9/0x200
-Call Trace:
- <TASK>
- writeback_iter+0x17d/0x310
- write_cache_pages+0x42/0xa0
- iomap_writepages+0x33/0x50
- xfs_vm_writepages+0x63/0x90 [xfs]
- do_writepages+0xcc/0x260
- __writeback_single_inode+0x3d/0x340
- writeback_sb_inodes+0x1ed/0x4b0
- __writeback_inodes_wb+0x4c/0xe0
- wb_writeback+0x267/0x2d0
- wb_workfn+0x2a4/0x440
- process_one_work+0x189/0x3b0
- worker_thread+0x273/0x390
- kthread+0xda/0x110
- ret_from_fork+0x2d/0x50
- ret_from_fork_asm+0x1a/0x30
- </TASK>"
+NP.
 
 --D
 
-> > > +if grep -q thp_split_page /proc/vmstat; then
-> > > +	split_count_after=$(grep ^thp_split_page /proc/vmstat | head -1 | awk '{print $2}')
-> > > +	split_count_failed_after=$(grep ^thp_split_page_failed /proc/vmstat | head -1 | awk '{print $2}')
-> > 
-> > I think this ought to be a separate function for cleanliness?
-> > 
-> > _proc_vmstat()
-> > {
-> > 	awk -v name="$1" '{if ($1 ~ name) {print($2)}}' /proc/vmstat
-> > }
-> 
-> > Otherwise this test looks fine to me.
-> 
-> Thanks!
 > 
 >   Luis
 > 
