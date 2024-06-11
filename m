@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-21412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3077F90394E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 12:51:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B5E903951
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 12:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F022AB25306
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25F0EB21CB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03247179951;
-	Tue, 11 Jun 2024 10:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7260017A906;
+	Tue, 11 Jun 2024 10:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwlDQo2n"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XuJJpmZ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48698178CE4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 10:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D30178CF1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 10:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103054; cv=none; b=dvOOV71ZDsPF9lsk8RKNUYDzYiFkwN3EcHR4nedO0Zf6+ESchSbZibGjPX8ZFssRJzgb8YjXXb+7fiIFP+zLvuc6ndjnJpTfWePH33NzWY3XMt2ROCtH5mOBqBHlxUnG2jJFQ0ULPxlCvKSd6VR6MxK9hJhkdyYJKJpAV/DHsks=
+	t=1718103096; cv=none; b=L8mvZciJOBTS2IHWI7JomzymniOZDFM4XMc25HlDB5aImz+hsVe+Ey2R7EnUzJDPZsGy1S4xymb0mEpy99QeHH3PY9np+S5wyo80JmftyTnHZMcBCUDfL+Lb8Z+HUDwF6FQ/ttQa7bolqynHAiBe2LbRCcnIVeDaux8gMVhJjXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103054; c=relaxed/simple;
-	bh=gEu3DeLm/Cj4KzSje6vtm9+JuOx5buAoruQTENtwymU=;
+	s=arc-20240116; t=1718103096; c=relaxed/simple;
+	bh=5jokJu+77cTy9PlFn2+XS0YSs6Y+O/ThgQSZEKuYE/E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hzW9eFj2BZ9hxVVt20LL/trc+6kO1LCf98iXtM9ntziuf8qts6Zm9uNzfgEttU9WmNjIdgHdqEeH//7U/3nEZ6Qz5LCHlN1b7L9MpW8c300mCmTiwPiANnq1x/4ClXLrsFhwJ7q/njvGee/pIXDUdCu64n/I9Vm2eQ1UaANziKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwlDQo2n; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=d9jr7Ovij0MSGJFMy/OKqm6Sg6kJrixeQmfp9WCSa+EdT0xO+z25AG/hLccC0gRMJaBpZqTPc26jW4v5Cm4PbTPMmkUp65zV19H8CJVzVq0PPEspSOrMiZnLlOAQJQL4M9kK2HRmjLR6h7tI63B7AbxVN7nUuouAmdH0AnoI+uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XuJJpmZ/; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718103051;
+	s=mimecast20190719; t=1718103094;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3ysdFsrtDcDxrPLWReLHv5ssrGeZHQvSPRbBF339uAA=;
-	b=fwlDQo2n354FCwVJLEo+hK85AsqxtkHoU1/+Oo9HseEAyXc5qr6NAf1PVHK5/YTFza6wxr
-	uAuytm9Hlu6JrAPk3mrmNXFfnStpJrhyuhKeAZa+iKmUuaEhvn0uJBllzWzbIqrlCeHGTg
-	7NtlRu2KNM1aj+6T51T2nDH1Y8eFfwI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=xJzyOstj03OACQiOW3AK8lHNiLSnxNoCbEIihZoOnH0=;
+	b=XuJJpmZ/0XmtmucD2TltVwqnHwkXKQORnH8UqoKp6Cw74fkQLKgR6stUaksvkdQRz35bY1
+	uXiJjEUoEevIjoOKHQwlHAlzCtMh58hdp37uMPSbOCKbe1YrHb3mHJc9W1a0k0cc+i7ORY
+	TJK/QAJn9x+wTePO4jzU8akdQvWRE2M=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-564-lHEV5U5WMki6Vs__crbjAw-1; Tue, 11 Jun 2024 06:50:50 -0400
-X-MC-Unique: lHEV5U5WMki6Vs__crbjAw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42117a61bccso40117035e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 03:50:49 -0700 (PDT)
+ us-mta-662-tn8tWhBKOpCGSnO2MFp30A-1; Tue, 11 Jun 2024 06:51:31 -0400
+X-MC-Unique: tn8tWhBKOpCGSnO2MFp30A-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ea892f8441so7015991fa.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 03:51:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718103049; x=1718707849;
+        d=1e100.net; s=20230601; t=1718103090; x=1718707890;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=3ysdFsrtDcDxrPLWReLHv5ssrGeZHQvSPRbBF339uAA=;
-        b=sa4Kpd81E/W7ZDeIe90KaetX3ltAXMcidUXqJUYvYndCkMaA7S76GFZmhdEklFJ+hO
-         3a7BLRF2+HRzBh3xO/mk3nMRGt2Gdi3NjgvhHL0ByykO+jrR0pyJmuzz7YadgZyAiTO+
-         5lE5MTh1DIQBZ5faYsQvB0Riv+3Pt4gwA056tmdqnqKNAYKOFem7mriHbovBWrhnvG1l
-         5F4aeWBJhowvxoRP83egpOCYAx/OKd43vg/ZqQJVQzmU37+kieWMyft//56W2vWe/WWD
-         QKXo6Q1pdjTg1C5aXCXrwzsIB1NQSJ2AtfVF6nzBk9pVshcZNLPQ26HbaTOGVHLU1Ijf
-         XfSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuO2BLYxlUYfMNA/5ayFv3D2tGt6PQEYl/tvLSVOjqw1T+Ai8YvKbnxShGWN/MLMuc43KBLF6hH7cgw713ToxvFZ4+jSXpnSeQ49YcoA==
-X-Gm-Message-State: AOJu0YwU5oiEPDvSHJNkmWmDH2/ewD2dYPSSqwndbr8oXGKrcBNA/rmU
-	Lll2P4nynlPfM8fli92LShN3Ndf+0x7aaV3QhBgKKAD/s5AMRmzET/bTdBHy44LROKj/dT9CVht
-	4/YYqdwgFwefsCao4NatoxnJJwO6d++8lUJNyNVQJsCeofJ3ubdKBOT6I2uF1ASM=
-X-Received: by 2002:a5d:5254:0:b0:35f:159e:5ec2 with SMTP id ffacd0b85a97d-35f159e6186mr5609431f8f.39.1718103048817;
-        Tue, 11 Jun 2024 03:50:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXDhdkA/eYdpilHthDuW6/sqyY7YL810c3QO5B5dWAJ2pffJ1e96n0xCMflbdVhb7aOmh/NA==
-X-Received: by 2002:a5d:5254:0:b0:35f:159e:5ec2 with SMTP id ffacd0b85a97d-35f159e6186mr5609419f8f.39.1718103048419;
-        Tue, 11 Jun 2024 03:50:48 -0700 (PDT)
+        bh=xJzyOstj03OACQiOW3AK8lHNiLSnxNoCbEIihZoOnH0=;
+        b=B7yqIVCePaqOhEEUY1aAyCqmvvk+s1aAsC4WR+i330ZO63onUJlaRNcleqoQwyLT3e
+         owmxrsqW7GN7FzES9UaqMvq1gXoPa6t84hqYRD1Pm0WcBVJZ6vhaZoagFex82/ezEQ1S
+         0PZLpxnlKaNXoVUq8hvdK9ICivija/nTWTj1xKI8zolT3uYYsOy4wcY4bYfmZ+5kC1gC
+         AjHpTT1whB7yrDyIg+FY5fCaiUsyw7Vq+3BJ3qnsODDRc97HvqyMV2YsdkOT6VNRsjb7
+         nZfgsAv9sqdvuvX/IWG9hj+50ABo3EEGKDaC6SD3buZNC8kwoXJZM0OPjFPBlVD0zPsI
+         WkFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbG39V2zUm6qhe6cWlxy34iv0a25MVmwI60iK0/KUQBNHFcmttg/6uNOPiib9jsbq4Ajv1IsriQfEV+DzJykrNf+ixqNs0EPyuJMa+Lw==
+X-Gm-Message-State: AOJu0YzGwIgGnji0wyrTZj6z7PEsnoyTdPhGEIUxoGd2ylATpzL+ebIn
+	RLDp5m3Lc/F9QVNcCHjzmVRn+06n/B92554GWkU8iIfFqHE3R+Vqyi6dJZ77kRHkdxwDbYsgewd
+	o/7TBtIqJRz+gk/Wa4jothz6yHB6rqmSH9xZ3GvS9spSeT09b/p6sTeAI7zVKNRA=
+X-Received: by 2002:a2e:968e:0:b0:2ea:eb13:daca with SMTP id 38308e7fff4ca-2eaeb13dc4bmr56084741fa.47.1718103089992;
+        Tue, 11 Jun 2024 03:51:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEI8M5WVGO1DoLzk1IMAmgEjhphAqPWfsq/oAwYotOI1b9XdZDhhbZgyW9zoL+yWdPtjk0DYA==
+X-Received: by 2002:a2e:968e:0:b0:2ea:eb13:daca with SMTP id 38308e7fff4ca-2eaeb13dc4bmr56084601fa.47.1718103089490;
+        Tue, 11 Jun 2024 03:51:29 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d2e73dsm13674969f8f.16.2024.06.11.03.50.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1b1cc3e6sm7980702f8f.34.2024.06.11.03.51.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 03:50:48 -0700 (PDT)
-Message-ID: <2b912e12-8289-4ce8-99bb-103a289a23cb@redhat.com>
-Date: Tue, 11 Jun 2024 12:50:46 +0200
+        Tue, 11 Jun 2024 03:51:25 -0700 (PDT)
+Message-ID: <48d71064-b9a4-49dd-b933-e9891982e1c2@redhat.com>
+Date: Tue, 11 Jun 2024 12:51:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,7 +91,8 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
 References: <20240607122357.115423-1-david@redhat.com>
  <20240607122357.115423-3-david@redhat.com>
- <ZmaFxfQX3AVMIVkp@localhost.localdomain>
+ <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
+ <Zmf5NdeKewGEhYLI@localhost.localdomain>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -139,48 +140,21 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ZmaFxfQX3AVMIVkp@localhost.localdomain>
+In-Reply-To: <Zmf5NdeKewGEhYLI@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10.06.24 06:49, Oscar Salvador wrote:
-> On Fri, Jun 07, 2024 at 02:23:53PM +0200, David Hildenbrand wrote:
->> Relying on the mapcount for non-present PTEs that reference pages
->> doesn't make any sense: they are not accounted in the mapcount, so
->> page_mapcount() == 1 won't return the result we actually want to know.
->>
->> While we don't check the mapcount for migration entries already, we
->> could end up checking it for swap, hwpoison, device exclusive, ...
->> entries, which we really shouldn't.
->>
->> There is one exception: device private entries, which we consider
->> fake-present (e.g., incremented the mapcount). But we won't care about
->> that for now for PM_MMAP_EXCLUSIVE, because indicating PM_SWAP for them
->> although they are fake-present already sounds suspiciously wrong.
->>
->> Let's never indicate PM_MMAP_EXCLUSIVE without PM_PRESENT.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
+On 11.06.24 09:13, Oscar Salvador wrote:
+> On Mon, Jun 10, 2024 at 06:38:33AM +0200, Oscar Salvador wrote:
+>> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 > 
-> Forgot to comment on something:
+> Uh, I spaced out here, sorry.
 > 
->> @@ -1517,14 +1514,13 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
->>   			if (pmd_swp_uffd_wp(pmd))
->>   				flags |= PM_UFFD_WP;
->>   			VM_BUG_ON(!is_pmd_migration_entry(pmd));
->> -			migration = is_migration_entry(entry);
->>   			page = pfn_swap_entry_to_page(entry);
-> 
-> We do not really need to get the page anymore here as that is the non-present
-> part.
-> 
-> Then we could get away without checking the flags as only page != NULL
-> would mean a present pmd.
-> 
-> Not that we gain much as this is far from being a hot-path, but just
-> saying..
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-I *think* we still want that for indicating PM_FILE after patch #1.
+:)
+
+Thanks!
 
 -- 
 Cheers,
