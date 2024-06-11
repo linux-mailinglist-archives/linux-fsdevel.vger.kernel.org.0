@@ -1,182 +1,325 @@
-Return-Path: <linux-fsdevel+bounces-21409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BFC90392C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 12:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2405903938
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 12:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50F91F24ABC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702A3283C94
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 10:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E883F17B42B;
-	Tue, 11 Jun 2024 10:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBAD178CF1;
+	Tue, 11 Jun 2024 10:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Creg/OrD"
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="EE5G2RRG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84BD17B407
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 10:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102733; cv=none; b=eW/JXSxl0dQ0tKJ8g/tnIfmwomKGiBYlP7Emg8JC1sQmbwJmcRRC81wOx0K3TgvEJLFrGs6oCFQgqXMKqXuFp4dBCOkSeyh3/zIwDcaa+kPEByzWTuQRiHFdmShlQ7+CCaOOZI/sskBUYdOHM80lmgpCDSMoYfCGblcWTuRaels=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102733; c=relaxed/simple;
-	bh=81aQ12LJNT5wUo68VRAaJIJg+Y08vkvRunN59IdJWVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ICjqM6xgq8ZR9Tu6bVVzpholN6vs0CMXmpuaKbtPmvSwrbcdrSiSQrxM5xiuEvBrhvBJFzcea6g/Lnqw9OKgEBB2o+Fjc9T5KGdqAYtgkGkyDj4MSTKE+UG9VA/eSgwGkuiR+3faowSL4wFZ4wCDnI5z0tCe3XI9YYW0RJNH2AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Creg/OrD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718102730;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=b56Xo9cU8SJGzlzzEuOUM6veXq1e4lsaNn+mMTgMXNo=;
-	b=Creg/OrDb4836KBk4uRxhWx2h3+KNam+ipPLF1/GCgmFUsqjWCiIjonfPYqPKaMgS4MvvH
-	URBHo74igfCHRQueO6AQ6G8JJz9dwR4KXSakFCcQVtUO0+1x6ep1lNfH8lapjyIwv4PgR1
-	LJHDk+eQ/n4b3XpWtq6/v6mZ801wd98=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-281-daaVKy8YNSCt8CuXh8Eyrg-1; Tue, 11 Jun 2024 06:45:29 -0400
-X-MC-Unique: daaVKy8YNSCt8CuXh8Eyrg-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ebe4b327a6so7817881fa.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 03:45:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718102728; x=1718707528;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b56Xo9cU8SJGzlzzEuOUM6veXq1e4lsaNn+mMTgMXNo=;
-        b=AjLxvYl4RDC7/qf6Mg7UDbIAqHue9/5OlbUpwapHLkzpilzIFQP0OXLmreDOJh4j36
-         2FkIBgsQouh6joNPABw0QZWUHmm1APWwpjVasc4j0vqSmUyim0auMBa9KpfMAEfLNeFC
-         GwuzVIeUTdZz3y1cc9/ixwifvnykaEprqCDir0ngLzm5yi7fjBZaT6bzt55sD64dAtM5
-         NMLr/5+vpInJSbP77T2mPsD0IsuI050Zlz/k6ftYWGiaEMe4LLwq3LyAmU0BGkUPoa4/
-         jRqeey5ZApQ6NmwfMPYO8JuRJ2FH0BWZW+IOvn0dOaV+1ANj6mERAz7Oj1bkqpWBVkmt
-         Abmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsUTxdFjxOzdOSDOe486/ktOi7Hlzj8SDKPJlox677NQonJI72qzPSjR44VzS1xAlMPzSahSssSlq018T980c6mRAnOdtNFB9aYfPwxA==
-X-Gm-Message-State: AOJu0YyfXlmDhKECHgtx9PYMhRHDZneuS1aIRH3Jk4F447iCOUIt3Lmh
-	2vzt5WrBnkNvpeO4Jkcv2AQOIuKW3rjFL9+9uXkzoQGZZbQzpqlPnlvaiseULgRY4bCky9hQHEn
-	kMA+QxZaU18SD8nSGOuSDutdplgfzL8TXRTt6/6K2m/aN5r6kKGb91/B2o7EI5P8=
-X-Received: by 2002:a2e:95cb:0:b0:2eb:1216:1bb9 with SMTP id 38308e7fff4ca-2eb12161d9dmr60858591fa.19.1718102727840;
-        Tue, 11 Jun 2024 03:45:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjUlDwQt6XADfNCyrepf2O0SucKhyd8S8dEWEIGbCA71G2YroE72/KoE0CQZH2rSQ8sp9IEg==
-X-Received: by 2002:a2e:95cb:0:b0:2eb:1216:1bb9 with SMTP id 38308e7fff4ca-2eb12161d9dmr60858341fa.19.1718102726442;
-        Tue, 11 Jun 2024 03:45:26 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e567sm174033245e9.1.2024.06.11.03.45.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 03:45:26 -0700 (PDT)
-Message-ID: <68292d2d-c1a4-46bf-a3a2-7fa37fe6b4f3@redhat.com>
-Date: Tue, 11 Jun 2024 12:45:25 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011F014F9CD;
+	Tue, 11 Jun 2024 10:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.143.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718102885; cv=fail; b=YG+vzhgIEpR54+48Ygix9WZFaMYjY7C1PlujFeicKEPXvlh4Nynis6j7FhG0qOa63e7d7f3WsPMI9BIb63umQPI/X9NUPMcZsSG4M7hu2aaZmdRdlgGF1A8ECS7gkCbWVthKgvT00kW2CFvawSZ5k29MqXAdtaUt2S0iyvPdxwI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718102885; c=relaxed/simple;
+	bh=l3qSo/BaZNxTXaW7TA5D5WKS2LykfuSYA3n4XDai2wQ=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nLyUrRzdARLAsUawxeM3O7xRbzrOQ6zplsqyHBfUOGaQBngys7ZgT/FTwKvMCbWRC2zuOnBWNOr1RitUT4tGIwmMd1+ibnH3aLXkAOavuyZCgA/7Nyx18j+qF4ZksQ/h+ziSQvYM28iAMKSO5h0SeiwSMYMgqwWrxOuavcnhstw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=EE5G2RRG; arc=fail smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 45B4bYn7016963;
+	Tue, 11 Jun 2024 10:47:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pps0720;
+ bh=Uzf1a1jqcDalpp33gDcYF2pLVBqq13HDlP7Jdv4rjNM=;
+ b=EE5G2RRGTDxjLtaHm7fuwZAig+/DM5ythK7WR5Fk1imLxxxwnejrNb3oGuE3tvnkm17A
+ x+rRhfVPohw5NP4YeqI+3gFOi4+ezGn8lJpf+snuCLnp487AxVRbpTdQ+w5Jp3qRqczX
+ pNtBtHAKDvqyGyKPqxGheF1FVkBXQklu5jLAmT/fhYJPFkV5UtmvpYfa2HkWcPu7BV13
+ wRk6B9z0LkEKos0iSGBytREO3M2hw4Y4SA0cZ2MdsxjMggJ6Nk3E38iOKLotqn70omg9
+ VTPpLJ/AyMbALdXbEmphuoh23MJV+4GuifrRcGt/3oRus4pV9hrKbZFusvT97EZFwN3C Dg== 
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3ypdjvbhqh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 10:47:39 +0000
+Received: from p1wg14926.americas.hpqcorp.net (unknown [10.119.18.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 6A5018059D8;
+	Tue, 11 Jun 2024 10:47:37 +0000 (UTC)
+Received: from p1wg14927.americas.hpqcorp.net (10.119.18.117) by
+ p1wg14926.americas.hpqcorp.net (10.119.18.115) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Mon, 10 Jun 2024 22:47:33 -1200
+Received: from p1wg14923.americas.hpqcorp.net (10.119.18.111) by
+ p1wg14927.americas.hpqcorp.net (10.119.18.117) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Mon, 10 Jun 2024 22:47:33 -1200
+Received: from p1wg14919.americas.hpqcorp.net (16.230.19.122) by
+ p1wg14923.americas.hpqcorp.net (10.119.18.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42
+ via Frontend Transport; Mon, 10 Jun 2024 22:47:33 -1200
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (192.58.206.35)
+ by edge.it.hpe.com (16.230.19.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Mon, 10 Jun 2024 22:47:32 -1200
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kdI4XDYwHCx2qrrCu5ZMsbqtycUq34+pEMcFZSlFtQsaFLzcoarytv7mCpwBJDZf46OcyuwbjFjI7VEkdclCwI2thp9uojYrbxPXrSRnL8RE/qLhWNNXHJpYDw943LV8ouQg2QsBXNxUe30pzxWz97ORdEoT6QBAJjwYI1hG64J7P64/q31NSSqqwYUUON4GwgDuP9PNdUU+7I6Da/Ocf4EpmmoOcf/WiwZ6RYNl1Azuw3HDPyvnW2IBnx1Xjz7oDPQlt8QuoWamPs6hQqxG2T3OdIzWyKZjwRi5WkZMFezJHURJuL4odj6EP/xAwYIYSIox/Gxxlx/MzoqtKeueGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Uzf1a1jqcDalpp33gDcYF2pLVBqq13HDlP7Jdv4rjNM=;
+ b=bh2OL7ZtLf9is9oEsvTUdtPmXoYgM65cHGt6acmssd2DwWl7F2g94fR4evDs8Ql6z+Fcf4zgPnOu2lNY7A5KEGQ3y4VAwKrVpBGwC3ouWaY6sSis107RJf07xasYYHTtkVYda/SA3va8fA5zy/E1kX1vOtWAYCKbjuozsQxpiMPJZ6uhuRNxAaqcmtnx/0E9aK9XbEvw8usdpNq8WPXt8JFcAGzuMJiNShsudijKuR1mRE5zcbcf36NNArfoVaWHRfBgiI/K01KOeSY5v2zLalSDQ83/0jPVG7ndy1Qoz8yMctxPDDrjYoWalVBl//JIdbRL8nEA9/3pzeBSe0QFmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hpe.com; dmarc=pass action=none header.from=hpe.com; dkim=pass
+ header.d=hpe.com; arc=none
+Received: from SJ0PR84MB1697.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:a03:430::22)
+ by MN0PR84MB3913.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:208:4c3::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 10:47:31 +0000
+Received: from SJ0PR84MB1697.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::5041:5fe4:74c2:c9af]) by SJ0PR84MB1697.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::5041:5fe4:74c2:c9af%4]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 10:47:31 +0000
+Message-ID: <8e23be47-e542-4bb8-8da7-da7801c98e42@hpe.com>
+Date: Tue, 11 Jun 2024 17:47:12 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] filemap: Convert generic_perform_write() to support
+ large folios
+To: Christoph Hellwig <hch@lst.de>,
+        Trond Myklebust
+	<trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        "Matthew
+ Wilcox" <willy@infradead.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20240527163616.1135968-1-hch@lst.de>
+ <20240527163616.1135968-2-hch@lst.de>
+Content-Language: en-US
+From: Shaun Tancheff <shaun.tancheff@hpe.com>
+In-Reply-To: <20240527163616.1135968-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR01CA0002.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::21) To SJ0PR84MB1697.NAMPRD84.PROD.OUTLOOK.COM
+ (2603:10b6:a03:430::22)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/6] fs/proc/task_mmu: don't indicate PM_MMAP_EXCLUSIVE
- without PM_PRESENT
-To: Oscar Salvador <osalvador@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
-References: <20240607122357.115423-1-david@redhat.com>
- <20240607122357.115423-3-david@redhat.com>
- <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR84MB1697:EE_|MN0PR84MB3913:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0a56e543-cc8f-4817-b0f8-08dc8a03e4e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|52116005|1800799015|366007|38350700005;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cnNHREFnYks1bzlGVG1aRWJUZ000QjJ4VVAvV05IZnY1d2hXT1VBTU1nZmJM?=
+ =?utf-8?B?UW1GQ1RmNTZhVGhBRVdvcjNCd2dkRGlMaFhNcGxPM3lGMm92d0JlcUttcWZz?=
+ =?utf-8?B?byt6K3Vzd0VzbWlFa0ZqWld0Z0FOM0NUSHdYUFZKcnlVZmdSNStMSmowQk1z?=
+ =?utf-8?B?cDNqV3loWTdiWEpBd2JiK2N2LzRrSk1jbllFSEtJU0VLb0FseTNFU3hoeUIx?=
+ =?utf-8?B?UTMzTHlwVVNIUmZOcElzN3VYam1KcFNuL0lXWWFQekh4UkluRHBvdlZaQktF?=
+ =?utf-8?B?NWRvNWFZQzVlcWo4NElDUHNoTlUrcGxaWlB4ZDU0a09RL3dVQUlTb3I1VHRF?=
+ =?utf-8?B?MklSMVdCRUNSREtCeWxwVWV3T2VPNklCTlhnVnN1NXc3Y1N6ajVyWG80aG5V?=
+ =?utf-8?B?S0dxbGRiUXJIK1FqM2c4WU5XeFpSRXdNbXZ4dTY0V0Z5NitvUkxMbEVyQmhi?=
+ =?utf-8?B?WWEwVE5WSEhTZUZmMjg4b1VIYWQvcUxTSFJ5YXQ1Rmp1YmVzRWFDVTdwcjAr?=
+ =?utf-8?B?ejhkenREZldBcXJHS2tOWlFzSW1qalorMElCYWZHc3M5TjFOUCtXQWtSeitS?=
+ =?utf-8?B?TWlDRUNLb21INU56N01RaUQ4ZHdOVGVsT1R3ems3bnV4a0d2ZDlqZzZsQ2d3?=
+ =?utf-8?B?THpGZlRUM0FnOEtUYThyMDNpZkhDdzJTWVJjS3RYWjdHaWUxcWNxYmVNbVdU?=
+ =?utf-8?B?WTRiMlF6S2hDS2NOVElEdkZ1VWMrdFdNWE5Bb3hhWXdXbUc2WEZtV2V6c1Mw?=
+ =?utf-8?B?K1kxNGlYL05sTzhiZHBndHhmRzlIZ1o5eFdFNjlZV1puUThVbFprdW1xQlJ5?=
+ =?utf-8?B?VjIwbU9acUh4cTJlRnpZVmlpcTdBRUFPUzZhVk9PY2JkaFhiZVF0bllVL2du?=
+ =?utf-8?B?MC8rTE1QWThIL0VtTWRBTWtwSmRORmFjSFNodjVxVDVzVm1pQUdqTTViZWZH?=
+ =?utf-8?B?VXFtOXpTVE44MjlUUjJlRHRIVEliTkZmVzM1WmFFTVRUTklUb3FzQUR2THBz?=
+ =?utf-8?B?VEw2Zkc5SVNmZENuZjZLZEhNK1RtZStZeTBHZVFVNnR4a1JsZTMwa0NGdU5m?=
+ =?utf-8?B?M0czblowTXR2MVA1VHJiUktnVUZjZXJEYUZyUEZCNVU3eWs3UDdtc3pBZml5?=
+ =?utf-8?B?OWNZWWJaQXY3b24rTG5MbXMxNEJqUjI2UFRmb1BBZHlTVHZZcFk3b3J4Q0xr?=
+ =?utf-8?B?UDdoVlRubVNXR2FrSEdoRGFJcUZSc2w5TWFjWVJyZVRYM3FnUVk3MWtXMFJH?=
+ =?utf-8?B?bWJsTDVhSGVldjE5NjcwVWxQVDZFTzhka0VmRGNMZThRU2grczdBWFBYdHgv?=
+ =?utf-8?B?bmozNHczeW94T3Z0M3c4OWNIRXFzVmlCRnBJa1NseWg3cTRtbWxjZnNhcGVY?=
+ =?utf-8?B?cWFUOGRxS2FBNjRKS3JHT0RURW83VlhRT1NId0ZPWmVEc0RqeGJNeDQrdm1i?=
+ =?utf-8?B?UVA4UHZmRlRHWWd0MnB4enRUVEMzOU1rcUdWUUhQRHQrM3djQTJPTkFCVnYx?=
+ =?utf-8?B?dWFidlF5cmtiMXlkR0tHWW0wcVM4bGNqRlFLb09lVW5PeFIwLzcyNVFydlln?=
+ =?utf-8?B?SEp6Z1Y4K1dLd1hURjE1M0tJYmZBYU5zQUl4T0Rhb1RORlZ4YThxck1wNjR4?=
+ =?utf-8?B?aUlIV2lIdzlCTlMrOUg4S1FPN216dm1FZkVDeDlTcmcxYzFFQ0xQU0VEV0p3?=
+ =?utf-8?B?VlBzaTcxckUrY0x4Umkyb3lBR2VxcnBjMVp4TmNab3hRSExiby9aZkNxWklM?=
+ =?utf-8?B?U2V4QmRmVnhqTDVRSEJTTEF4dkdyaDlOL2x6b0JFQ0NqQ09QWHpvVlVzMFdI?=
+ =?utf-8?Q?r6OCJzbrZ1zBH3nzWIgRCbj6CgaVoBbCRL5O8=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR84MB1697.NAMPRD84.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(1800799015)(366007)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a0srZ0Zibk41OVViNkthNi9iMW9vQS84MEpXSmtQb3Z1NTVhWm1KS0h1bUNx?=
+ =?utf-8?B?MnA0YThWYmQwSDlkV09JR1NsL1FMbGcrcmZrQTVGY205NWhXRWdjaU15em9T?=
+ =?utf-8?B?c1YwSjVNZnRCZ2s3aTJaalByRWQ4NGZWSVVTVFBwYnRzR2oyMEg1dHo1aXVZ?=
+ =?utf-8?B?RUwwTHc0WjViT09Bck14ZDBzdHNrSVNqaXF2bGpWL2dpRGVteTRrWVhYN095?=
+ =?utf-8?B?Q1hxMndVOXV4emxIaExseERLaGtJNWJBM2NUc2k5ZDhVYVZJQ3pGYVRCTUZt?=
+ =?utf-8?B?cjNQaldXdStRWS90eXBnOTBmdVlDbmd3djI5RER6ZCs0V05ZZ2pFOTFrSVBZ?=
+ =?utf-8?B?eFZyUFQzWGU2ZkcrZmZGM2w2WXJnWVBEY2Z2SFg5K3p5TkJMZlZhbUdiZytV?=
+ =?utf-8?B?NFgvenQ4RURDM0N2OC94K3hFdVRCM0RaeUUwWjFBblFxN1hQZC9sY3c5RTcz?=
+ =?utf-8?B?NnhIci9HcGh6Ti83N0hEM3J2VWFiK3VQWnJocDJKbU1hWmw0TVd5L0pFQUM4?=
+ =?utf-8?B?c1FWbDg3TDk0a09INUhrc0ltY2ZHRU5GdlJzRUxNRHlBc3ByejBJazRzKzZG?=
+ =?utf-8?B?Nk9mY0JqWXhIUUwwd3hodGxmYisxS1hrenRQaFRHb3ZtZ1QyclFUMEc1SXdD?=
+ =?utf-8?B?YVpQUU5NQmk0MEllMG1YeTZXdzVpMjM2QzZzNXFCOU55Z2JIR1ozZXovTUNn?=
+ =?utf-8?B?TTRIc3dBREt6K1JCdWRYRFRtSk5GQUdkSlJNRjdXbDB6Y2hoNEF1WlN2Q1ZE?=
+ =?utf-8?B?NW5CcGowYjMrbWE2Slh3YkMxb1FaZFQwaTI4VndwOWpnSTdwelZQdkN3ME5W?=
+ =?utf-8?B?YjJsTFk5elpOS3ZFeUZKc0RMWU9QdlpLc085dG1aVHhuN1RYL2swR2s4NjZD?=
+ =?utf-8?B?R3NIKzNKc1ZRUU1BM3pNWEkyYWozKzA2N0xPQVB5RzdEUkJOVUZDQTJ4WHVq?=
+ =?utf-8?B?cDg0UWZmVWV3SVFiZUwraDR3MVNmYjVRSWhqa2dhRkVIZEtiNTAvTjZvZDVP?=
+ =?utf-8?B?WGN4UmtiQnJhcnlqalNvS293NXI3Qld3Um5HRTJBeURzVlhtOXAwODFjVHRD?=
+ =?utf-8?B?M09uZmhhNnhKVFZNVEw5WVFwbURrdXZtSHRSREk5cW95K0NtVmtFRnYyb28r?=
+ =?utf-8?B?L1FFK2IrR0gxOHgzMWthVHJRQ2tnVm1pQnBWZ3B5SzF4QUVwRmZkdDZIVlJR?=
+ =?utf-8?B?TUttQVVRRGE5dDloYUIyS1phWVh6azY2cGtBbnRybU1qRTdFckpwc00wR1BT?=
+ =?utf-8?B?OVBCb0lscDVXYnlIdy9BSWNuY0s5T0hKY21sNkFlNzBVY05DaHZ2VHJuSnFS?=
+ =?utf-8?B?dnNFVno5QVJOcUNHc2tWdERHM0tuRzY3WkFxeFRncXR3aFArWFlmU1BTK0VC?=
+ =?utf-8?B?V0hjQ2pqRGlkYThBcW1pNU1PaHVpcXpVbXRnMVVGMk1xYnNHWDYxQi9QWnRm?=
+ =?utf-8?B?YUQ5UEpnZ0FwNmIyeHhVRXdnMEFTTlpHUTN3TDdWdTh1VUlMZWljTk9lR21D?=
+ =?utf-8?B?ZksrMHh6eFpKbXp0TUNxQVBHVnB1bGNPSkJ6bUk3Q3FZenJYQlNQV05sbVVy?=
+ =?utf-8?B?ZkZudEFIeDJXeTM0eTNaSEhFTzRyTG1uU3BDQ1E4QjBVR0YyRXQvUUZleVVl?=
+ =?utf-8?B?bEM3QzRJRDR5YjMyZkczTFpJUGpMdysxcm5mNm1KMTB0eW5sWWh2U1VCbHE0?=
+ =?utf-8?B?OGJLSE5TNnNMUS9IMTl0amFSbjROV1Z6SUp1aWJ1R0Q2WW5obE15ZmR6b2ZM?=
+ =?utf-8?B?emNZVUZ5Wi9uMHl1UHJKSWZUeFN2M1VvWlZuOWltMEZNTUYycWNKUU1NK2s5?=
+ =?utf-8?B?N0NlcGUxb2tpMXExL3FHRzJmVDdld3Rqb25yT2dlVWNpR2VGc2NITFE2dnZu?=
+ =?utf-8?B?UG40a1pXUVdBZkhJd3BQaGkxNFZ4MzlYb0M1c0NKdTJ5Tm5iYWFFNTNmWHl6?=
+ =?utf-8?B?QUZGaUFWbTdhbWhleTFlK1oxWEJDRVlsVnZXNkxqTnBmeDVtbGJlczBuWWYx?=
+ =?utf-8?B?bU51QlNPMnQ1Y05VTVFTK3FveTRpYkRabW91N1hnclliUDRpWk1LNTZwTmR0?=
+ =?utf-8?B?b3ZHanZJYjVKT1dXSHRzOUhSRDUwRjJBR0lXT2RoZEkydklOZno0bjF4MENR?=
+ =?utf-8?Q?SADH/ybgJQ+PwiYqAgyF5oLQE?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a56e543-cc8f-4817-b0f8-08dc8a03e4e4
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR84MB1697.NAMPRD84.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 10:47:31.0517
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OSGKXHG6dvAqNB8CdR5msAvMaJHMM7xkeS7Tv7nyYSibmrnQSVuEUIVG/u0xieNBvByfr12XDTucAbNHBH5fkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR84MB3913
+X-OriginatorOrg: hpe.com
+X-Proofpoint-ORIG-GUID: yPFUXbeTuFJmA-wDLoEAjseP2FNsC0-r
+X-Proofpoint-GUID: yPFUXbeTuFJmA-wDLoEAjseP2FNsC0-r
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ bulkscore=0 phishscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406110081
 
-On 10.06.24 06:38, Oscar Salvador wrote:
-> On Fri, Jun 07, 2024 at 02:23:53PM +0200, David Hildenbrand wrote:
->> Relying on the mapcount for non-present PTEs that reference pages
->> doesn't make any sense: they are not accounted in the mapcount, so
->> page_mapcount() == 1 won't return the result we actually want to know.
->>
->> While we don't check the mapcount for migration entries already, we
->> could end up checking it for swap, hwpoison, device exclusive, ...
->> entries, which we really shouldn't.
->>
->> There is one exception: device private entries, which we consider
->> fake-present (e.g., incremented the mapcount). But we won't care about
->> that for now for PM_MMAP_EXCLUSIVE, because indicating PM_SWAP for them
->> although they are fake-present already sounds suspiciously wrong.
->>
->> Let's never indicate PM_MMAP_EXCLUSIVE without PM_PRESENT.
-> 
-> Alternatively we could use is_pfn_swap_entry?
+On 5/27/24 23:36, Christoph Hellwig wrote:
 
-It's all weird, because only device private fake swp entries are 
-fake-present. For these, we might want to use PM_PRESENT, but I don't 
-care enough about device private entries to handle that here in a better 
-way :)
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>
+> Modelled after the loop in iomap_write_iter(), copy larger chunks from
+> userspace if the filesystem has created large folios.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> [hch: use mapping_max_folio_size to keep supporting file systems that do
+>   not support large folios]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   mm/filemap.c | 40 +++++++++++++++++++++++++---------------
+>   1 file changed, 25 insertions(+), 15 deletions(-)
+>
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 382c3d06bfb10c..860728e26ccf32 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3981,21 +3981,24 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+>   	loff_t pos = iocb->ki_pos;
+>   	struct address_space *mapping = file->f_mapping;
+>   	const struct address_space_operations *a_ops = mapping->a_ops;
+> +	size_t chunk = mapping_max_folio_size(mapping);
 
-Indicating PM_SWAP for something that is not swap (migration/poison/...) 
-is also a bit weird. But likely nobody cared about that for now: it's 
-either present (PM_PRESENT), something else (PM_SWAP), or nothing is 
-there (no bit set).
+Better to default chunk to PAGE_SIZE for backward compat
++       size_t chunk = PAGE_SIZE;
 
-Thanks!
+>   	long status = 0;
+>   	ssize_t written = 0;
+>   
 
--- 
-Cheers,
+Have fs opt in to large folio support:
 
-David / dhildenb
++       if (mapping_large_folio_support(mapping))
++               chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
+
+>   	do {
+>   		struct page *page;
+> -		unsigned long offset;	/* Offset into pagecache page */
+> -		unsigned long bytes;	/* Bytes to write to page */
+> +		struct folio *folio;
+> +		size_t offset;		/* Offset into folio */
+> +		size_t bytes;		/* Bytes to write to folio */
+>   		size_t copied;		/* Bytes copied from user */
+>   		void *fsdata = NULL;
+>   
+> -		offset = (pos & (PAGE_SIZE - 1));
+> -		bytes = min_t(unsigned long, PAGE_SIZE - offset,
+> -						iov_iter_count(i));
+> +		bytes = iov_iter_count(i);
+> +retry:
+> +		offset = pos & (chunk - 1);
+> +		bytes = min(chunk - offset, bytes);
+> +		balance_dirty_pages_ratelimited(mapping);
+>   
+> -again:
+>   		/*
+>   		 * Bring in the user page that we will copy from _first_.
+>   		 * Otherwise there's a nasty deadlock on copying from the
+> @@ -4017,11 +4020,16 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+>   		if (unlikely(status < 0))
+>   			break;
+>   
+> +		folio = page_folio(page);
+> +		offset = offset_in_folio(folio, pos);
+> +		if (bytes > folio_size(folio) - offset)
+> +			bytes = folio_size(folio) - offset;
+> +
+>   		if (mapping_writably_mapped(mapping))
+> -			flush_dcache_page(page);
+> +			flush_dcache_folio(folio);
+>   
+> -		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
+> -		flush_dcache_page(page);
+> +		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+> +		flush_dcache_folio(folio);
+>   
+>   		status = a_ops->write_end(file, mapping, pos, bytes, copied,
+>   						page, fsdata);
+> @@ -4039,14 +4047,16 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+>   			 * halfway through, might be a race with munmap,
+>   			 * might be severe memory pressure.
+>   			 */
+> -			if (copied)
+> +			if (chunk > PAGE_SIZE)
+> +				chunk /= 2;
+> +			if (copied) {
+>   				bytes = copied;
+> -			goto again;
+> +				goto retry;
+> +			}
+> +		} else {
+> +			pos += status;
+> +			written += status;
+>   		}
+> -		pos += status;
+> -		written += status;
+> -
+> -		balance_dirty_pages_ratelimited(mapping);
+>   	} while (iov_iter_count(i));
+>   
+>   	if (!written)
+
+Tested with Lustre with large folios and kernel 6.6 with this patch (and suggested changes).
+
+Tested-by: Shaun Tancheff <shaun.tancheff@hpe.com>
 
 
