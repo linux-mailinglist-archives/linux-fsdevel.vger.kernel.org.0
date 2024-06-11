@@ -1,175 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-21453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED439904191
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 18:50:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 710CB90424D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 19:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CDA1F238A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 16:50:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BDDD1C24357
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 17:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BD44D8AD;
-	Tue, 11 Jun 2024 16:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D05482ED;
+	Tue, 11 Jun 2024 17:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="y3SMqKoQ"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="T29diAYW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E5343AAE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 16:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9856742052
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 17:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718124598; cv=none; b=Epkne37wPY6sU6HyteFFDVvJIlHQ3Y4rDBqDvYFQGzyT2Jteck/jgtVyn2h3S7ESE76JZTMygG4jSgsJzuzgsx7KJaSw+C9D3yHAjIBbQNewrRJH9HDusUnzJaKq4zDs1fIpP0f4A+N+tz+/qWTycq2yS5EES6AxC2gJcj7xiJQ=
+	t=1718126386; cv=none; b=oAdDr1gb67fE+oZdWz3yDOsWQp7UKmAEhjmdPTycUR6QPrStyGdJ7OH2O/ZHETw1PkjImiyO2dQKND9X6MqoYQbJV989vX1X+QzzCcpuitzlVmJMreapu+qViqNI3sNPfuYpe2nUBxx+OCAlemm3lLhWnkXyeEtNyu7MG5vaQck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718124598; c=relaxed/simple;
-	bh=MreIlMooNRf639ruyk8R4KbSz88+aCksPZ1DbVVAbvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3WZ8RauPu0ryOkxymbAAZ+ZbCb0zWUbbA9dcdGbj0wyqZaxnuvreLeoFraOJHqgh+elm+Hl42zBBgslRkRL0O8Jcz/EzD5G1Ltg2nRS04axObaWVAWcdbJQDxcWY+zM7Osa7FtTC9984HqUOXWkS3cwEAnGec9g/kx5vqPowWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=y3SMqKoQ; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62cecc3f949so15953187b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 09:49:56 -0700 (PDT)
+	s=arc-20240116; t=1718126386; c=relaxed/simple;
+	bh=c0Hu3eDQNUHdzMWHOZviKhvIvMHCcuBZbeevCnua86U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WZIWW8CZosLE4Mn5o7akjtq31Hgknu0cn778fXk0ICCDkHtQ5v1e4n9PWpsshEUdFYw/xXp/jJtrGvFFeYD08gNEP47tLrM2AzuKkWj2MeQev80DCIw/xr8DLVX6HNkw3BxqKF9BNCaUqLuhB78NBiTQVi0+WmuXTodQJuR50tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=T29diAYW; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so5822778276.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 10:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1718124596; x=1718729396; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7JnGMgyfSYYWtEjlzPfN4hmoXT439HFNz0d94uVz2J4=;
-        b=y3SMqKoQgWwszJShEg4lM1emGCZL8Rm/0WYtO5K38Jm2MRszr7rWq3D0eAVUUMXZ/6
-         ksK7ms/M3wagkL2167CtQ5tB/hrKz4XSRBOAmGQjg9KpQwymGGR0BLBLX0aLF49Vkghv
-         k3RfQgoF/ho0RMT0sT6ZGAJVJsTMzqeZYHBFDuDhgE6DxquzjFLcyT0GNZnXaLs0fFx2
-         MmECccXLMaEjzPNyEgW9FhdtR9PPtWtjYiYDf0g9R1y5ncQljfLQk+otWRr2Gi44P+JK
-         HiNafNxTpT4LO16567hhGBFOHyyRT9Ui0mHUZt+pGrMYlIqraG8Ds4gxD5S7dnA1md7w
-         AQGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718124596; x=1718729396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1718126383; x=1718731183; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7JnGMgyfSYYWtEjlzPfN4hmoXT439HFNz0d94uVz2J4=;
-        b=Trnk9t9rNBhj/GivvjwzQAq40etwNigw9mc0PVji6DJgfeT9efSe2zBSDNYZKmFrMR
-         q/QQwsB6STuzs6Cl3O3C/4/who97vHpK5cmOGI1vLKpUNWS8NXpPbAESUJvoFlv9w8Cf
-         UCTT4CT2lWk3PwgL6fPHcpDrlyi2Z+rG3aRbANgB+MUXkWeq/t6fwfnmxAXuVQuljOCG
-         C2jmmeXR41g4kpJVtOhX1Hdc97tlWWSsysp3qSQPIZI2Hq0nBFdCU5eOo/mPIOAEST+2
-         K0gFF32o0bJTju7Dcs9YBR5NWiHBAoYUYwm3ZeZ0sZ/supnnVeaPUAQfO4xg8CAe+UFs
-         d4Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgZFF5f6z8QMoXuJykpyBP/iK4OenlnAgIT/MKoj3Wk7e8micdKvxJHgqPV5tERbk7x4vsjYtKICgwCKtTT9fmW+F4eQyi/TQETuROcQ==
-X-Gm-Message-State: AOJu0YwtnMGw5m33ONV+u8w3BMVtmTwteC+S6nBT3sSF9eBntuVm7dUS
-	Qk4L1obbNtZ4ML0ToXHuFAMlwgHWFLCdEaEPhOVIzfP4/8bB9aatgrM3x8I72fY=
-X-Google-Smtp-Source: AGHT+IEgSQHZ9Ca/meY6ChiB+OY2zTSlD3WY3Cf/xA7fFzm7DHmZml5zF09haqocKRev36lx9709fA==
-X-Received: by 2002:a81:5215:0:b0:627:972f:baba with SMTP id 00721157ae682-62cd55f7322mr129115757b3.31.1718124595699;
-        Tue, 11 Jun 2024 09:49:55 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62cfb6e4638sm11635327b3.75.2024.06.11.09.49.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 09:49:55 -0700 (PDT)
-Date: Tue, 11 Jun 2024 12:49:53 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, hch@infradead.org
-Subject: Re: [PATCH v3 0/2] rcu-based inode lookup for iget*
-Message-ID: <20240611164953.GC247672@perftesting>
-References: <20240611101633.507101-1-mjguzik@gmail.com>
+        bh=J9ogFLxbLWp/7JKp4IH1qADojIschvT679JCf6moq4c=;
+        b=T29diAYWUnPRLlv83N9dKpZuDxlytRJnk6hS2w82SGvLUKjj4Kq6ntUFi+qCrd2lQP
+         T22EOHyAqkQsLo86q+sd0vbDpN0edfxzHDjcnCc3bGiHRHKHER/QFwNbSsHqhZDrw8TJ
+         KO0U4UvNgYkfAoC5MTBCXm8IwRmZtCellVJfaWE/KMDElgxJWt9j1dVshPSqkf+uTDmW
+         JVYzdZBk47BE16irAIRBTD+PSvWF1V5LK25zGBsCceSKOrLhfhZJQoA0TDQ8pRRLjnmk
+         oY+YOLAZ0MVn3ewUcnJ6D6L6IOzSHJNLcAzY2fVLPB/ftz5PrMzgx2lNAQS1RtbMwXum
+         bvdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718126383; x=1718731183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J9ogFLxbLWp/7JKp4IH1qADojIschvT679JCf6moq4c=;
+        b=ahA8+bLK7RVMktj+grFo3on6bxNd4tvVr9fgBBN8fxoLTS4KeKSXrjQQfCa0zOmz7L
+         NPqCJFd3hFF9r0vM2j8fvIDrHeo1FsLnAofi0ZfM3MGglVTidHgmb2e3mQsjB+92hgjV
+         SkTXVUCKYiHQpMzk8Fgm2yYs6mCLQ20IoALrqFBLugvS/dGT6/+i9ElbO4UwhUedAJHq
+         3B9uXcaq16kwKnGmkoH0nhuWHpYGzEU9BMs7Ft8p9lExohZguD6xlI5ER6BrH1/OFhs5
+         7+Wr5Ne118CLVfgtn4XuZi3vmFBYqJD7S/rF2C+a8JgJM4wvOqKbOCF63ytOq+s7J5XC
+         7oNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbrMWWBUBZ5Ypftb4K9tVNqJlGLl5DqbNkGlClzN6vli/c0JzpXPr1Q668Vf3FP5GlNKxhmFnW272BZccKbEuUykwX+Y68TNLFUuxfxA==
+X-Gm-Message-State: AOJu0YyVIxaGBM947ONy0pSjTmInx0U7yx+jHxKO9DnfF9NKHQuR7Acy
+	tlcn7FUxPvlKkLqLtCYGgDusltcqFc0n1v6OfOn9Zbmyl1nBI2mgaHfV6BHick48k8I9ulosBLE
+	zji+2I5GxtaJVsjnus7ZI8K1CCHrBKmyH+iTz
+X-Google-Smtp-Source: AGHT+IEdDn6ha3s1+w4VrQk0fxK1wz6Q1fTrUfNyPSzmZbTczlAzPMLTr9NS3aslGjyW4jmQxcE6FAM1ugrcNSNTbXc=
+X-Received: by 2002:a25:84c8:0:b0:dfa:582f:8b93 with SMTP id
+ 3f1490d57ef6-dfaf6492e0dmr11875248276.10.1718126383599; Tue, 11 Jun 2024
+ 10:19:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611101633.507101-1-mjguzik@gmail.com>
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+ <202402070631.7B39C4E8@keescook> <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
+ <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
+ <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
+ <202405011257.E590171@keescook> <CAHC9VhTucjgxe8rc1j3r3krGPzLFYmPeToCreaqc3HSUkg6dZA@mail.gmail.com>
+ <7445203e-50b1-49a6-b7a3-8357b4fe62ab@I-love.SAKURA.ne.jp>
+In-Reply-To: <7445203e-50b1-49a6-b7a3-8357b4fe62ab@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 11 Jun 2024 13:19:32 -0400
+Message-ID: <CAHC9VhQEq=8j-EW_DX9ebm1dO9m5gvRV+CcjV0aaemUuzu_t0g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Serge Hallyn <serge@hallyn.com>, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 12:16:30PM +0200, Mateusz Guzik wrote:
-> I think the appropriate blurb which needs to land here also needs to be
-> in the commit message for the first patch, so here it is copy pasted
-> with some modifications at the end:
-> 
-> [quote]
-> Instantiating a new inode normally takes the global inode hash lock
-> twice:
-> 1. once to check if it happens to already be present
-> 2. once to add it to the hash
-> 
-> The back-to-back lock/unlock pattern is known to degrade performance
-> significantly, which is further exacerbated if the hash is heavily
-> populated (long chains to walk, extending hold time). Arguably hash
-> sizing and hashing algo need to be revisited, but that's beyond the
-> scope of this patch.
-> 
-> A long term fix would introduce finer-grained locking. An attempt was
-> made several times, most recently in [1], but the effort appears
-> stalled.
-> 
-> A simpler idea which solves majority of the problem and which may be
-> good enough for the time being is to use RCU for the initial lookup.
-> Basic RCU support is already present in the hash. This being a temporary
-> measure I tried to keep the change as small as possible.
-> 
-> iget_locked consumers (notably ext4) get away without any changes
-> because inode comparison method is built-in.
-> 
-> iget5_locked and ilookup5_nowait consumers pass a custom callback. Since
-> removal of locking adds more problems (inode can be changing) it's not
-> safe to assume all filesystems happen to cope.  Thus iget5_locked_rcu,
-> ilookup5_rcu and ilookup5_nowait_rcu get added, requiring manual
-> conversion.
-> 
-> In order to reduce code duplication find_inode and find_inode_fast grow
-> an argument indicating whether inode hash lock is held, which is passed
-> down should sleeping be necessary. They always rcu_read_lock, which is
-> redundant but harmless. Doing it conditionally reduces readability for
-> no real gain that I can see. RCU-alike restrictions were already put on
-> callbacks due to the hash spinlock being held.
-> 
-> There is a real cache-busting workload scanning millions of files in
-> parallel (it's a backup server thing), where the initial lookup is
-> guaranteed to fail resulting in the 2 lock acquires.
-> 
-> Implemented below is a synthehic benchmark which provides the same
-> behavior. [I shall note the workload is not running on Linux, instead it
-> was causing trouble elsewhere. Benchmark below was used while addressing
-> said problems and was found to adequately represent the real workload.]
-> 
-> Total real time fluctuates by 1-2s.
-> 
-> With 20 threads each walking a dedicated 1000 dirs * 1000 files
-> directory tree to stat(2) on a 32 core + 24GB RAM vm:
-> [/quote]
-> 
-> Specific results:
-> 
-> ext4 (needed mkfs.ext4 -N 24000000):
-> before:	3.77s user 890.90s system 1939% cpu 46.118 total
-> after:  3.24s user 397.73s system 1858% cpu 21.581 total (-53%)
-> 
-> btrfs (s/iget5_locked/iget5_locked_rcu in fs/btrfs/inode.c):
-> before: 3.54s user 892.30s system 1966% cpu 45.549 total
-> after:  3.28s user 738.66s system 1955% cpu 37.932 total (-16.7%)
-> 
-> btrfs bottlenecks itself on its own locks here.
-> 
-> Benchmark can be found here: https://people.freebsd.org/~mjg/fstree.tgz
-> 
-> fs rundown is as follows:
-> - ext4 patched implicitly
-> - xfs does not use the inode hash
-> - bcachefs is out of the picture as Kent decided to implement his own
->   inode hashing based on rhashtable, for now private to his fs.
-> 
-> I have not looked at others.
-> 
-> [1] https://lore.kernel.org/all/20231206060629.2827226-1-david@fromorbit.com/
-> 
+On Tue, Jun 11, 2024 at 9:10=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/06/11 5:44, Paul Moore wrote:
+> >> diff --git a/fs/exec.c b/fs/exec.c
+> >> index 40073142288f..7ec13b104960 100644
+> >> --- a/fs/exec.c
+> >> +++ b/fs/exec.c
+> >> @@ -1532,6 +1532,7 @@ static void do_close_execat(struct file *file)
+> >>
+> >>  static void free_bprm(struct linux_binprm *bprm)
+> >>  {
+> >> +       security_bprm_free(bprm);
+> >>         if (bprm->mm) {
+> >>                 acct_arg_size(bprm, 0);
+> >>                 mmput(bprm->mm);
+> >>
+> >
+> > Tetsuo, it's been a while since we've heard from you in this thread -
+> > are you still planning to work on this?  If not, would you object if
+> > someone else took over this patchset?
+>
+> You are going to merge static call patches first (though I call it a regr=
+ession),
+> aren't you?
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+That is the plan, although we need another revision as the latest
+draft has a randstruct casting problem.
 
-Thanks,
+> For me, reviving dynamically appendable hooks (which is about to be
+> killed by static call patches) has the higher priority than adding
+> security_bprm_free() hook.
 
-Josef
+Unfortunately, dynamic hooks do not appear to be something we are
+going to support, at least in the near term.  With that understanding,
+do you expect to be able to work on the security_bprm_free() hook
+patchset?
+
+--=20
+paul-moore.com
 
