@@ -1,188 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-21476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BC19046A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 00:00:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 156649046D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 00:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248A41C237AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 22:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957DA1F25638
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 22:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C24815383F;
-	Tue, 11 Jun 2024 22:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1AA15534F;
+	Tue, 11 Jun 2024 22:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="dHb/BvRh"
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="Pq9rjGAS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ISNh/oJu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wflow2-smtp.messagingengine.com (wflow2-smtp.messagingengine.com [64.147.123.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9702D611
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 22:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F87438DC8;
+	Tue, 11 Jun 2024 22:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718143247; cv=none; b=QcbTUN6NPSVFAuzDLB2/e8A3X3gObvBvkcMmSnK2Fpr+dTHIGrKnN+1LXhq5g2GU2BQSo5etjSHmn4U/+QPBQCUqF9RJNtub1xOzlCrZUSqRVoKL0oOY0co0KmkSLQbXGWay3QbjVGTUE/TqvurCc86n+zOXxuN+ZorkfuWH3DQ=
+	t=1718144134; cv=none; b=O0BnY08yVEVn0WAAJx0Tgfo7wIF7syl5/PfW76t90Vh5T0ZVboPxLzyRiBLo6Krze168JGofkzXjuk6nUBtuOxiQA3IGN18RsB9LkjaoXGuoYMgKXumRL2qgZWGnFyOEQ0E8/v5gwOeXbPS1+QzF/qEcKZd1ZDdCS1G5toluK5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718143247; c=relaxed/simple;
-	bh=FtBOiWFncM3ovOqL8hAeZj1EPtQ9g2uHQfDy21bJETg=;
+	s=arc-20240116; t=1718144134; c=relaxed/simple;
+	bh=GdAkFK62RY/EebkDCQaRIl7vglLd8+Mimrq9+Eb15nk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sgvte+0vjzHY5w5X+0dMUG/mmkN/1bLTJ69MEvYYMOona1bwCqLjEq//My5ayptlJ+3uwteKLzCLydRtjYtoGKxLHt3oltASaAgAkjIaVSF5/7weT8mKIt+gQz00wihhnILACt+JBwju7xnepTflq043R82kcAB0w+0ZX0MKYiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=dHb/BvRh; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6e40d54e4a3so3396119a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 15:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718143246; x=1718748046; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eHrOxF5RfsfEQJHgKoGMj8t4JaNF1ExxMJOzCNX5n2s=;
-        b=dHb/BvRh/8ZNSf166kt4zvC5dYEu96yZdScsoTdMW2DV0jr2z4OTHZ0Ckgu9cf8aB+
-         MXZmpCV/bSmpQ0HiF+8obYdIOTG366o1Bj4Q7bIKrJp6u8R7xT9ifI4VRJTUVzr4FTcf
-         NfMYDlI1LjwTexZAA/T3tEL1luB62gzg1IWcJFzGXIjF/odsOukHpLKDzhAGAbydTOS+
-         ssChMgheRl3gDJE2Yy1bkAbKTmMIAj3qygdX4rOV2k7aJbK++Fhj0ugIz915J0nMC0ZY
-         cPPTgf5/n+g8BigGzoKf6gYZFGyRGvjEO29vebxksnQ8n9Rm05RfhcvYs0aXBddCxTxq
-         7bxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718143246; x=1718748046;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eHrOxF5RfsfEQJHgKoGMj8t4JaNF1ExxMJOzCNX5n2s=;
-        b=LhUqEXDKSnEAy9PjcK6X6XmntOOJ7Un9/+uNCwtoqhxDGN9zg93hCiBXr9NR4NEpW6
-         xxb9bxCQbh3cRiYRPyGHrVvIvNd3pDtZgtLhedQQCVbxtB7R646M1F8gOZsgeWUgzS/I
-         YWspFHJkZr347mKhIF2xIhNrXIXhFSbtNgzMLaS75lXnxXaDboRtcDmc0yZpzzIfCp6g
-         hLjRgIsuyf8KU9AsnUkqnCgub+3kAMFwHuCa4h8dL4X1XSw0AFKexghX5aHCvt8rwrfj
-         higCU8Pm++RGcwcbUDuof/Pin1NVm56lo29/4K03fWh6VYh6JazC4PVDenVafjhcqCmp
-         2G5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwCQeyd66PgoWwyUwwG5pADB+TtsXqxRQ8Sog1ODAw8eQfIapUraPuhfh5h1JzZYEt/k49a74qlqDlyoDKileAoPR3PYSPn/fA5leECA==
-X-Gm-Message-State: AOJu0YwonnIy3NgfzdwYrzncGARbOV7pdpCTmaZWrdBRo6axwFFDB8kP
-	l4RVqgE8pgE0N+SxEO16t3xPSAyc7ny+mpG7pYtbQnV4SYI/1qk31TMV6wS/yS8=
-X-Google-Smtp-Source: AGHT+IEEvku0qFLDSu5fmCz08QiHgFPcipPG93BRa/6a6lBcHoHCFRAqDEQiF6Oj6a+FswFCCBRqqw==
-X-Received: by 2002:a17:902:ab88:b0:1f4:7a5c:65d4 with SMTP id d9443c01a7336-1f83b5e7089mr1607015ad.18.1718143245491;
-        Tue, 11 Jun 2024 15:00:45 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7178d6d40sm41000115ad.212.2024.06.11.15.00.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 15:00:44 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sH9Xm-00CdLe-1I;
-	Wed, 12 Jun 2024 08:00:42 +1000
-Date: Wed, 12 Jun 2024 08:00:42 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
-Message-ID: <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
-References: <20240606140515.216424-1-mjguzik@gmail.com>
- <ZmJqyrgPXXjY2Iem@dread.disaster.area>
- <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
- <ZmgkLHa6LoV8yzab@dread.disaster.area>
- <20240611112846.qesh7qhhuk3qp4dy@quack3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhzmLOoOn31Z6acsu8IcW5TFA2ETxenJS4iEYTKdjnONyPHnh1I6GixBrbY0WphqExCjdX0jiXGJyceOYsHDZ7tVDcRtwNT+NND655CM89iHjYe4Eo5RhhgGz97tJ5oZsp/V4l8xz7vZvPLpzn4VnKfLrXWvWzLdx56saFYDGoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=Pq9rjGAS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ISNh/oJu; arc=none smtp.client-ip=64.147.123.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.west.internal (Postfix) with ESMTP id C97482CC0169;
+	Tue, 11 Jun 2024 18:15:27 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 11 Jun 2024 18:15:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718144127;
+	 x=1718147727; bh=hLoyDphzPvoA7UYBfDpLVZId/MwW/v8vWSAXuFf49/w=; b=
+	Pq9rjGAS1w/Bgo5vWiHK4C9GSmw8UEqW23zxfC6CU+LFTqGfGsPAhKcyrwHoj90O
+	2g7tjpvdho680sZED5/2pEYwnSPHE6Nyuowy4t+liSKxQFrggVMMiqon8nSX9UYe
+	oVBsXm4b6ZW6z97l0uDDa5lkmqrKrNH3jKXI/kXAvkXXFnrHwG6oKoSy/6j3AF1Y
+	8cm9z2VOiKm0Y60hTybScXH/pn1OM/r/TpGNjtGS43aretvWB4MzGA3unImRVifY
+	913jLZ1dcL0oU2fUqcd35OHYcKeVnIiStKNnfKqAViqm85MfWYGX9m8CAyZAGKTa
+	iabR1CZR/u5ovgrtmgo/zg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718144127; x=
+	1718147727; bh=hLoyDphzPvoA7UYBfDpLVZId/MwW/v8vWSAXuFf49/w=; b=I
+	SNh/oJu/e8FBFK91pEhdVzPaxeoy0vJBcCYsFR5dTBa0eTNI52Mh6vmtzoNEnGGo
+	0nk1m7ki7/In22P/dp/EXcSDHlAz5BfLVF+KTy5T2BmEdmd9GgekK0iKTSeHoXrF
+	qgiz+C959oucHJqv+TsGRpUAUjs2GCWmVT1rVLthx5HBkCDuetmM/I23iDS5r0tT
+	W6HmZFu74Tm8QZns/LE00Y7Nh3h6HK7WrxdV+ExaadRJAJwmM9Qv5H0pqfa0EnHA
+	Pq+gmx9IfmHP/NPUS88TJZaod19sMGo6bD1rEZ6UeYk8d3P1h816uGx3p9eTi7ne
+	VZ5GqWvsh5NKbZvAPyg3A==
+X-ME-Sender: <xms:fsxoZqoVnHB2uGoc7C0A7BixBJXGpc11qlCUk3a6hvFctlK7PdBKkA>
+    <xme:fsxoZooRmtozI0oKjoRwzZnuKSw8qtfaYL--1NQiRvpNaw-gFmHdFKZpfzO16EY2q
+    Wz6KAFCvBXQU1xOAYA>
+X-ME-Received: <xmr:fsxoZvPL801GFa0JdYFCAOHyDF4GcEcnIZ4r8mQNRH4NDIvzS9R2KSXWHk7HkTFFGFWEcogO8cqqGrkZ0AEzTiM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedufedgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
+    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpeetgedutdfggeetleefhfeuhedtheduteekieduvdeigeegvdev
+    vddtieekiedvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:f8xoZp6U8TxIwbBdIkAUIulkUDaDRV4oFBo0EBVqjfd1jc3IUfHrRw>
+    <xmx:f8xoZp7_TUBZagIfh40y2sdsDedvT-h5VXVtRjmhUKH4ThdVyvjDuw>
+    <xmx:f8xoZphmbJ-AsduE8UunEraJ_Nu6pDRX9sPBXVa9qb7iygs6fiB0gg>
+    <xmx:f8xoZj7QERyBvlOn4w7jLMGtV-DEUFk1T2Viw9CMO6OeJGkw-uv4eA>
+    <xmx:f8xoZkIrhrrTIB3VBMJkOqlUb0VXeh5tcuzeAhLiHln_J1A0uzp3N8Xe>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Jun 2024 18:15:23 -0400 (EDT)
+Date: Tue, 11 Jun 2024 15:20:33 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: John Johansen <john.johansen@canonical.com>, brauner@kernel.org,
+ 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
+ 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ 	KP Singh <kpsingh@kernel.org>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ 	Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ 	Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ 	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ 	Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
+ David Howells <dhowells@redhat.com>,
+ 	Jarkko Sakkinen <jarkko@kernel.org>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ 	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, 	containers@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ 	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org, 	apparmor@lists.ubuntu.com,
+ keyrings@vger.kernel.org, selinux@vger.kernel.org,
+ 	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
+ hooks
+Message-ID: <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-5-jcalmels@3xx0.net>
+ <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
+ <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
+ <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
+ <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240611112846.qesh7qhhuk3qp4dy@quack3>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
 
-On Tue, Jun 11, 2024 at 01:28:46PM +0200, Jan Kara wrote:
-> On Tue 11-06-24 20:17:16, Dave Chinner wrote:
-> > Your patch, however, just converts *some* of the lookup API
-> > operations to use RCU. It adds complexity for things like inserts
-> > which are going to need inode hash locking if the RCU lookup fails,
-> > anyway.
-> > 
-> > Hence your patch optimises the case where the inode is in cache but
-> > the dentry isn't, but we'll still get massive contention on lookup
-> > when the RCU lookup on the inode cache and inserts are always going
-> > to be required.
-> > 
-> > IOWs, even RCU lookups are not going to prevent inode hash lock
-> > contention for parallel cold cache lookups. Hence, with RCU,
-> > applications are going to see unpredictable contention behaviour
-> > dependent on the memory footprint of the caches at the time of the
-> > lookup. Users will have no way of predicting when the behaviour will
-> > change, let alone have any way of mitigating it. Unpredictable
-> > variable behaviour is the thing we want to avoid the most with core
-> > OS caches.
+On Tue, Jun 11, 2024 at 03:01:01PM GMT, Paul Moore wrote:
+> On Tue, Jun 11, 2024 at 6:32 AM John Johansen
+> <john.johansen@canonical.com> wrote:
+> >
+> > On 6/11/24 01:09, Jonathan Calmels wrote:
+> > > On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
+> > >> On Sun, Jun 9, 2024 at 6:40 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
+> > >>>
+> > >>> This patch allows modifying the various capabilities of the struct cred
+> > >>> in BPF-LSM hooks. More specifically, the userns_create hook called
+> > >>> prior to creating a new user namespace.
+> > >>>
+> > >>> With the introduction of userns capabilities, this effectively provides
+> > >>> a simple way for LSMs to control the capabilities granted to a user
+> > >>> namespace and all its descendants.
+> > >>>
+> > >>> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
+> > >>> namespaces and checking the resulting task's bounding set.
+> > >>>
+> > >>> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> > >>> ---
+> > >>>   include/linux/lsm_hook_defs.h                 |  2 +-
+> > >>>   include/linux/security.h                      |  4 +-
+> > >>>   kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
+> > >>>   security/apparmor/lsm.c                       |  2 +-
+> > >>>   security/security.c                           |  6 +-
+> > >>>   security/selinux/hooks.c                      |  2 +-
+> > >>>   .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
+> > >>>   .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
+> > >>>   8 files changed, 76 insertions(+), 14 deletions(-)
+> > >>
+> > >> I'm not sure we want to go down the path of a LSM modifying the POSIX
+> > >> capabilities of a task, other than the capabilities/commoncap LSM.  It
+> > >> sets a bad precedent and could further complicate issues around LSM
+> > >> ordering.
+> > >
+> > > Well unless I'm misunderstanding, this does allow modifying the
+> > > capabilities/commoncap LSM through BTF. The reason for allowing
+> > > `userns_create` to be modified is that it is functionally very similar
+> > > to `cred_prepare` in that it operates with new creds (but specific to
+> > > user namespaces because of reasons detailed in [1]).
+> >
+> > yes
+> >
+> > > There were some concerns in previous threads that the userns caps by
+> > > themselves wouldn't be granular enough, hence the LSM integration.
+> >
+> > > Ubuntu for example, currently has to resort to a hardcoded profile
+> > > transition to achieve this [2].
+> > >
+> >
+> > The hard coded profile transition, is because the more generic solution
+> > as part of policy just wasn't ready. The hard coding will go away before
+> > it is upstreamed.
+> >
+> > But yes, updating the cred really is necessary for the flexibility needed
+> > whether it is modifying the POSIX capabilities of the task or the LSM
+> > modifying its own security blob.
+> >
+> > I do share some of Paul's concerns about the LSM modifying the POSIX
+> > capabilities of the task, but also thing the LSM here needs to be
+> > able to modify its own blob.
 > 
-> I don't believe this is what Mateusz's patches do (but maybe I've terribly
-> misread them). iget_locked() does:
+> To be clear, this isn't about a generic LSM needing to update its own
+> blob (LSM state), it is about the BPF LSM updating the capability
+> sets.  While we obviously must support a LSM updating its own state,
+> I'm currently of the opinion that allowing one LSM to update the state
+> of another LSM is only going to lead to problems.  We wouldn't want to
+> allow Smack to update AppArmor state, and from my current perspective
+> allowing the BPF LSM to update the capability state is no different.
 > 
-> 	spin_lock(&inode_hash_lock);
-> 	inode = find_inode_fast(...);
-> 	spin_unlock(&inode_hash_lock);
-> 	if (inode)
-> 		we are happy and return
-> 	inode = alloc_inode(sb);
-> 	spin_lock(&inode_hash_lock);
-> 	old = find_inode_fast(...)
-> 	the rest of insert code
-> 	spin_unlock(&inode_hash_lock);
+> It's also important to keep in mind that if we allow one LSM to do
+> something, we need to allow all LSMs to do something.  If we allow
+> multiple LSMs to manipulate the capability sets, how do we reconcile
+> differences in the desired capability state?  Does that resolution
+> change depending on what LSMs are enabled at build time?  Enabled at
+> boot?  Similarly, what about custom LSM ordering?
 > 
-> And Mateusz got rid of the first lock-unlock pair by teaching
-> find_inode_fast() to *also* operate under RCU. The second lookup &
-> insertion stays under inode_hash_lock as it is now.
+> What about those LSMs that use a task's capabilities as an input to an
+> access control decision?  If those LSMs allow an access based on a
+> given capability set only to have a LSM later in the ordering modify
+> that capability set to something which would have resulted in an
+> access denial, do we risk a security regression?
 
-Yes, I understand that. I also understand what that does to
-performance characteristics when memory pressure causes the working
-set cache footprint to change. This will result in currently 
-workloads that hit the fast path falling off the fast path and
-hitting contention and performing no better than they do today.
+I understand the concerns, what I fail to understand however, is how is
+it any different from say the `cred_prepare` hook today?
 
-Remember, the inode has lock is taken when inode are evicted from
-memory, too, so contention on the inode hash lock will be much worse
-when we are cycling inodes through the cache compared to when we are
-just doing hot cache lookups.
+> Our current approach to handling multiple LSMs is that each LSM is
+> limited to modifying its own state, and I'm pretty confident that we
+> stick to this model if we have any hope of preserving the sanity of
+> the LSM layer as a whole.  If you want to modify the capability set
+> you need to do so within the confines of the capability LSM and/or
+> modify the other related kernel subsystems (which I'm guessing will
+> likely necessitate a change in the LSMs, but that avenue is very
+> unclear if such an option even exists).
 
-> So his optimization is
-> orthogonal to your hash bit lock improvements AFAICT.
+What do you mean by "within the confines of the capability LSM" here?
 
-Not really. RCU for lookups is not necessary when hash-bl is used.
-The new apis and conditional locking changes needed for RCU to work
-are not needed with hash-bl. hash-bl scales and performs the same
-regardless of whether the workload is cache hot or cache-cold.
-
-And the work is almost all done already - it just needs someone with
-time to polish it for merge.
-
-> Sure his optimization
-> just ~halves the lock hold time for uncached cases (for cached it
-> completely eliminates the lock acquisition but I agree these are not that
-> interesting) so it is not a fundamental scalability improvement but still
-> it is a nice win for a contended lock AFAICT.
-
-Yes, but my point is that it doesn't get rid of the scalability
-problem - it just kicks it down the road for small machines and
-people with big machines will continue to suffer from the global
-lock contention cycling inodes through the inode cache causes...
-
-That's kinda my point - adding RCU doesn't fix the scalability
-problem, it simply hides a specific symptom of the problem *in some
-environments* for *some worklaods*. hash-bl works for everyone,
-everywhere and for all workloads, doesn't require new APIs or
-conditional locking changes, and th work is mostly done. Why take a
-poor solution when the same amount of verification effort would
-finish off a complete solution?
-
-The hash-bl patchset is out there - I don't have time to finish it,
-so anyone who has time to work on inode hash lock scalability issues
-is free to take it and work on it. I may have written it, but I
-don't care who gets credit for getting it merged. Again: why take
-a poor solution just because the person who wants the scalability
-problem fixed won't pick up the almost finished work that has all
-ready been done?
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Arguably, if we do want fine-grained userns policies, we need LSMs to
+influence the userns capset at some point. Regardless of how or where we
+do this, it will always be subject to some sort of ordering. We could
+come up with some rules to limit surprises (e.g. caps can only be
+dropped, only possible through some hooks, etc), but at the end of the
+day, something needs to have the final word when it comes to deciding
+what the creds should be.
 
