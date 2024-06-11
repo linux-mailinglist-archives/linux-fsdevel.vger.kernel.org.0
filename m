@@ -1,89 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-21395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960B29037AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 11:19:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962DA90380C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 11:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0361C212C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 09:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177C71F248DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2024 09:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF46C176244;
-	Tue, 11 Jun 2024 09:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16DD176FC6;
+	Tue, 11 Jun 2024 09:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Din4qqCL"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="d95O85Gn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AB316F8F0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 09:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99BA17623B;
+	Tue, 11 Jun 2024 09:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718097547; cv=none; b=tofnHsntEXT6Nu1P7NtUEN1Cqxm9zUN9QO3QhuUbQV7KgzLkjV2yqCEqptaJLM/Vcl2hAfCXmlb5yOsFJwtuwlQeRZIacvhqIDYjS5juCAtORNkZ3+3v+Cegd48oKNFt58O+wkQ2M67BoT5CZFmOub8+wEY8CurxZlMMhZMlWo4=
+	t=1718098914; cv=none; b=E/aCZCoSkAAvQBpcSpYPbSduT3UA9DqGw4CVpWAkcii/QU8lFqX6cGpl7D/9gb+Jp+K+Im4YpJ1YvPVqMeuGHTnXH+A9WL/O0iB1VbW2eJ3VzUVaPqtk4o9Mvwakh2pEJmkZZUr8fdNHdKB/LBkU5syr2sFi6Lwclbq1rOsNnns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718097547; c=relaxed/simple;
-	bh=h9mB6JOkfiuYUHIoFddpH6zwD+eYp90mVVEYcj5srVU=;
+	s=arc-20240116; t=1718098914; c=relaxed/simple;
+	bh=37YAOyLbzHAe/CTu+jh14G55K4UoZ2Y4wMYFT0xQ7uo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMwOMZowCTlSm7lz06wHaNLKjKMDH5FgbLwbpFlIPtHM9TRobpmJtBdHSSKZ3YkxJJPseMoU0HZPWjUa2Xru3BSYhzkE7+VBjlK9m/YIbinLtxg+6syi9OBXuiJLQkbXYqJukz0HxkILy7o46U23V/1SwMWXZpBUxajydQMhGA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Din4qqCL; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f1c209893so2845201f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2024 02:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718097544; x=1718702344; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ps2N1Am+eO68AysV/PVFcrJRz34VjfFRtWBoGRzfhpw=;
-        b=Din4qqCL5ROnGRtf1skv93gsYajaq93yOEJdxyWZ+hTRokCYa2MFffzhqaTBT15rG7
-         HeDC07/EUYZLFY1c+8RsED6giKl3xg9rQJKqBYWh9eNtKC7hZxV8DTq29hbqxjxzSWQt
-         qVNaXBNDWDYGD2vvc+ZZJDWjMphlOXJy1xh0wT6wE61fCjqY4phszswwC1r3PnZ5F6Id
-         xTiEcoAAMZoBteAtLZQh/E5If08EDfRQhUbhjiatrQ8mytk22T+0mxrVQS3DfmGa2JAZ
-         9m0y2w5lkfZHaF1dPfaCnxjqD95s23hEjQ3W45VsHmtnnnqJjfdJ59LFFXG1N7uO45aJ
-         XgAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718097544; x=1718702344;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ps2N1Am+eO68AysV/PVFcrJRz34VjfFRtWBoGRzfhpw=;
-        b=mL1Iv4gdic0sZye/1Z0BNgf8oSZjrKc5f5e8xgCs3UXzazbM62e0XZcffW8ulNFiVS
-         wiAEWc0ciIvPMKqGaTyobFja1XxvXioWMZQWFS4FgwOF7iHnF9pBdrwIo3v4NIhXFrRO
-         tSzol89tNHFlNEFvg7kL0pfa1ERaLbLh5agopyuBfm9IJ/fMveXuuUrBBS+rdMg/+Jjo
-         R2gE5vevOiZUuAXWDvTosaRied7VfuQQJplGmrOYFIFc/xZlLpYtAa+R14RvpCkdPzzi
-         sGfqWD9KQLpfoXFWRAN2tNec/8jT9fIpKfuplz90p3WmWJ2y5nHzyzADES6jkWl6Y5zN
-         mBrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCOe4OmB025hx0KFMzLu2XeyD0C8KbVVSSgHSv9u6sztVj1LdMtoOzD/CbXgu96IQjn0QUo3d5l4FZzuWtvotgrRB4HhDTSUCH3Ev+Jg==
-X-Gm-Message-State: AOJu0YyZnm4KPh1dLfh1maZFSGYRhn3eEu8+OIwKtOafURRpuGt/veCf
-	voY5mpK69PBmaLCQAzVvOUwd8QeUFcFulp9o5/RhOb5+Gr3QdBANi9hg15PaYA==
-X-Google-Smtp-Source: AGHT+IFvw9AoMpMLtxSAEwVADz1EUNN8lzkMo5ne0b71vkTSoYSsb3umTlTGDpHAaueebUmL9Y86JA==
-X-Received: by 2002:a5d:634d:0:b0:35f:1d3b:4f7e with SMTP id ffacd0b85a97d-35f1d3b5004mr5003652f8f.26.1718097543845;
-        Tue, 11 Jun 2024 02:19:03 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:9c:201:7a2:184:b13b:60d8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1e20664esm6703606f8f.52.2024.06.11.02.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 02:19:03 -0700 (PDT)
-Date: Tue, 11 Jun 2024 11:18:57 +0200
-From: Marco Elver <elver@google.com>
-To: Marco Elver <elver@google.com>
-Cc: peterz@infradead.org, alexander.shishkin@linux.intel.com,
-	acme@kernel.org, mingo@redhat.com, jolsa@redhat.com,
-	mark.rutland@arm.com, namhyung@kernel.org, tglx@linutronix.de,
-	glider@google.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
-	christian@brauner.io, dvyukov@google.com, jannh@google.com,
-	axboe@kernel.dk, mascasa@google.com, pcc@google.com,
-	irogers@google.com, oleg@redhat.com, kasan-dev@googlegroups.com,
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] Add support for synchronous signals on perf
- events
-Message-ID: <ZmgWgcf3x-vQYCon@elver.google.com>
-References: <20210408103605.1676875-1-elver@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqF6AEQusZnFDivrRx01G+ppY77D9c5tGwJ6xJkwhiNcvT9YCn0Gl2BX75p1ewHS1jHXssci0mJ9e7PubEBvKwwANBrQ6Lmh7WExtGzRGpS5RNDf8Ekpz9dcjBTZi9IRFYevJEd04CyHmBcZzvuGhA/Z0EMXp7FmMKSEyiwED5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=d95O85Gn; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Vz3bV1zx3z9sGf;
+	Tue, 11 Jun 2024 11:41:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1718098902;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zbkiOeCEyPQu0nf19vXRe22PR52sb7jygcpNN/dtAno=;
+	b=d95O85GnokMrBOReY4l/P1SXMB5K0c089lZGv3kW963gYYVhEPxc4qUr4cnBcUibeImrTy
+	4dmvTMoKr96fPVR6lU6b6nEdupU/yE88lTZfIzJzUl0kK60oWw5MT0S6p/oUUeLAMLHnZx
+	eXOvUop11JoBAKgsWMEX+mqJoneMBs5tQZFWYOtaSQyntZUr51DFhjmdXkAsXENbkjtl3Z
+	ZbZQqEWx1tI9pKSLYFEYpmVhuLq1/+WqqPQeMkK/kM/1VhDgQKspLucK1INMEIl3i2cnE7
+	5GIouw9U+4n5+sxPh6Iv1SvVFrSCMmyZWL04TVpYPrcp3d3ieFeoS2vNHcYgPg==
+Date: Tue, 11 Jun 2024 09:41:37 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
+	mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com
+Subject: Re: [PATCH v7 07/11] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240611094137.vxuhldj4b3qslsdj@quentin>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-8-kernel@pankajraghav.com>
+ <4c6e092d-5580-42c8-9932-b42995e914be@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,74 +72,123 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210408103605.1676875-1-elver@google.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <4c6e092d-5580-42c8-9932-b42995e914be@oracle.com>
 
-On Thu, Apr 08, 2021 at 12:35PM +0200, Marco Elver wrote:
-[...]
-> Motivation and Example Uses
-> ---------------------------
+> > index 49938419fcc7..9f791db473e4 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1990,6 +1990,12 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
+> >   static int __init iomap_init(void)
+> >   {
+> > +	int ret;
+> > +
+> > +	ret = iomap_dio_init();
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >   	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+> >   			   offsetof(struct iomap_ioend, io_bio),
+> >   			   BIOSET_NEED_BVECS);
 > 
-> 1. 	Our immediate motivation is low-overhead sampling-based race
-> 	detection for user space [1]. By using perf_event_open() at
-> 	process initialization, we can create hardware
-> 	breakpoint/watchpoint events that are propagated automatically
-> 	to all threads in a process. As far as we are aware, today no
-> 	existing kernel facility (such as ptrace) allows us to set up
-> 	process-wide watchpoints with minimal overheads (that are
-> 	comparable to mprotect() of whole pages).
-> 
-> 2.	Other low-overhead error detectors that rely on detecting
-> 	accesses to certain memory locations or code, process-wide and
-> 	also only in a specific set of subtasks or threads.
-> 
-> [1] https://llvm.org/devmtg/2020-09/slides/Morehouse-GWP-Tsan.pdf
-> 
-> Other ideas for use-cases we found interesting, but should only
-> illustrate the range of potential to further motivate the utility (we're
-> sure there are more):
-> 
-> 3.	Code hot patching without full stop-the-world. Specifically, by
-> 	setting a code breakpoint to entry to the patched routine, then
-> 	send signals to threads and check that they are not in the
-> 	routine, but without stopping them further. If any of the
-> 	threads will enter the routine, it will receive SIGTRAP and
-> 	pause.
-> 
-> 4.	Safepoints without mprotect(). Some Java implementations use
-> 	"load from a known memory location" as a safepoint. When threads
-> 	need to be stopped, the page containing the location is
-> 	mprotect()ed and threads get a signal. This could be replaced with
-> 	a watchpoint, which does not require a whole page nor DTLB
-> 	shootdowns.
-> 
-> 5.	Threads receiving signals on performance events to
-> 	throttle/unthrottle themselves.
-> 
-> 6.	Tracking data flow globally.
+> I suppose that it does not matter that zero_fs_block is leaked if this fails
+> (or is it even leaked?), as I don't think that failing that bioset_init()
+> call is handled at all.
 
-For future reference:
+If bioset_init fails, then we have even more problems than just a leaked
+64k memory? ;)
 
-I often wonder what happened to some new kernel feature, and how people
-are using it. I'm guessing there must be other users of "synchronous
-signals on perf events" somewhere by now (?), but the reason the whole
-thing started was because points #1 and #2 above.
+Do you have something like this in mind?
 
-Now 3 years later we were able to open source a framework that does #1
-and #2 and more: https://github.com/google/gwpsan - "A framework for
-low-overhead sampling-based dynamic binary instrumentation, designed for
-implementing various bug detectors (also called "sanitizers") suitable
-for production uses. GWPSan does not modify the executed code, but
-instead performs dynamic analysis from signal handlers."
+diff --git a/fs/internal.h b/fs/internal.h
+index 30217f0ff4c6..def96c7ed9ea 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -39,6 +39,7 @@ int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
+  * iomap/direct-io.c
+  */
+ int iomap_dio_init(void);
++void iomap_dio_exit(void);
+ 
+ /*
+  * char_dev.c
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 9f791db473e4..8d8b9e62201f 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1994,10 +1994,16 @@ static int __init iomap_init(void)
+ 
+        ret = iomap_dio_init();
+        if (ret)
+-               return ret;
++               goto out;
+ 
+-       return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
++       ret = bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+                           offsetof(struct iomap_ioend, io_bio),
+                           BIOSET_NEED_BVECS);
++       if (!ret)
++               goto out;
++
++       iomap_dio_exit();
++out:
++       return ret;
+ }
+ fs_initcall(iomap_init);
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index b95600b254a3..f4c9445ca50d 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -69,6 +69,12 @@ int iomap_dio_init(void)
+        return 0;
+ }
+ 
++void iomap_dio_exit(void)
++{
++       __free_pages(zero_fs_block, ZERO_FSB_ORDER);
++
++}
++
+ static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
+                struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf)
+ {
 
-Documentation is sparse, it's still in development, and probably has
-numerous sharp corners right now...
+> 
+> > +
+> >   static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
+> >   		struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf)
+> >   {
+> > @@ -236,17 +253,22 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+> >   		loff_t pos, unsigned len)
+> >   {
+> >   	struct inode *inode = file_inode(dio->iocb->ki_filp);
+> > -	struct page *page = ZERO_PAGE(0);
+> >   	struct bio *bio;
+> > +	/*
+> > +	 * Max block size supported is 64k
+> > +	 */
+> > +	WARN_ON_ONCE(len > ZERO_FSB_SIZE);
+> 
+> JFYI, As mentioned in https://lore.kernel.org/linux-xfs/20240429174746.2132161-1-john.g.garry@oracle.com/T/#m5354e2b2531a5552a8b8acd4a95342ed4d7500f2,
+> we would like to support an arbitrary size. Maybe I will need to loop for
+> zeroing sizes > 64K.
 
-That being said, the code demonstrates how low-overhead "process-wide
-synchronous event handling" thanks to perf events can be used to
-implement crazier things outside the realm of performance profiling.
+The initial patches were looping with a ZERO_PAGE(0), but the initial
+feedback was to use a huge zero page. But when I discussed that at LSF,
+the people thought we will be using a lot of memory for sub-block
+memory, especially on architectures with 64k base page size.
 
-Thanks!
+So for now a good tradeoff between memory usage and efficiency was to
+use a 64k buffer as that is the maximum FSB we support.[1]
 
--- Marco
+IIUC, you will be using this function also to zero out the extent and
+not just a FSB?
+
+I think we could resort to looping until we have a way to request
+arbitrary zero folios without having to allocate at it in
+iomap_dio_alloc_bio() for every IO.
+
+[1] https://lore.kernel.org/linux-xfs/20240529134509.120826-8-kernel@pankajraghav.com/
+
+--
+Pankaj
 
