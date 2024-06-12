@@ -1,54 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-21564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFCF905C2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 21:41:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9338C905CB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 22:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23DC21F22A23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 19:41:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827B31C23414
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 20:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F16D83A19;
-	Wed, 12 Jun 2024 19:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78E0128372;
+	Wed, 12 Jun 2024 20:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld1DIZUH"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rhQtJxAF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE7B433D8;
-	Wed, 12 Jun 2024 19:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A6184D03
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 20:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718221297; cv=none; b=Vdjo1VHrkavLWYCouwWC//OaMgZMCScprYk65xAsA5U0VXwQnvBVlA/qihzxZJeJ2xAqkshYivzdAaaNEbhLI7JN++cRdDYUKOK3t8l7QjzSX8XUO4dz0CVaP7mBN97eTdDr5g6shvWVL4bPCS9xnc9ICjW5BtAPn+xWI9DPxlU=
+	t=1718223692; cv=none; b=CVd80wiLWp2JpKAlGc6h9y90yzf5u1pD6mF/0rYbDOhSfD/Ah3eSXCN0m1YXU4VcpePMPYwEe3TfTkgLvF1+Rob3Y25zhycqP7hZwKwdwehI5L08Gw5sjXDZGqCkGFIAYGlZ13169BSUn7P9cCHI9MTKSSS1903A32qsSIibkj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718221297; c=relaxed/simple;
-	bh=eYAfv2IaeIPk7YgUpGrCp904JmVahjLKMWGGq1Z2nPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UmrN+Wb6PcwEo7ucuEoCgIs7I5eaE86vU6uCQeJ3oUO3X5JHgkGGO0Pkw5tjJ17fF2kECG0NsJkdas1jjvP7SE8o7vx7yX3t1iJZ6xRR19cvQSlJZ6sJmA0q0wm6sWCf7nyhMC+RuuFsdvoPbmWihg7olIR4F6k/7mjajfNa9vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld1DIZUH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34579C116B1;
-	Wed, 12 Jun 2024 19:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718221297;
-	bh=eYAfv2IaeIPk7YgUpGrCp904JmVahjLKMWGGq1Z2nPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ld1DIZUHmUQWoJdWOJRcMipafbO1TzvzzpOFkKcDxwGXTkFb3g1/9q88+FN5kr6o1
-	 1GjJnMG/0ao13otOpez8evQhmmP2FZU3wXdhrlfys0RW+vb72ckXo9y1SmBMfaJ4mh
-	 PsIvBN72o+riOUHjpwCjafLji2zFMs3M6CNr3SU5EltImyRuTtQ1uIm3jpuL4Whiyy
-	 lAv5RPrY82ZVg52rbVs9fMME7QUL2kDkkS7O/FlWdYVMFkBHTBN1Efv4uqkAp00Aqr
-	 qnRIIxymHIdVbk733S2PQwAYXSPjv1d4LvDHg9OS3o5J0aDpitZalpVmzc7l+qqq2B
-	 RWeeUS8e+0TKA==
-Date: Wed, 12 Jun 2024 12:41:36 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-	fstests@vger.kernel.org
-Subject: Re: Flaky test: generic:269 (EBUSY on umount)
-Message-ID: <20240612194136.GA2764780@frogsfrogsfrogs>
-References: <20240612162948.GA2093190@mit.edu>
+	s=arc-20240116; t=1718223692; c=relaxed/simple;
+	bh=Y9JmGBo0c7lW83Az7dSmFQ4xeG9SUat2NMd0Gd2IswQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UuCwnRt+PlPnIySbNI5hI30BY4gsqfF+Ciq3ajYIhkdzKHMXg6k77JnvJY5tlJ2O1NvDNaqQVMVLk5NwfOvjpLCdGcPViM6cnGB1Aa3neEYNikiK/XDN2VHTSd65Ic30RqjmcyJmztdHyXaTh9QbBomOYDkIwjOPEx3r+pM97Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rhQtJxAF; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: torvalds@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718223686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=wXcD6/YF85x4CLdgIr2RqnTdVu0TMTvQKa4O5vPHG4s=;
+	b=rhQtJxAFenwuQ6pEBVukxUvt/crmCY9eWVUQQ4XVUfSiXrTWEhHfTLFc8LOCTeal2Kh7Oz
+	VRLzUwdd/c+W/PfeiTMe96GK8x+2RxxD3/QWdZ32T19Nv+JDQ+kT8FfSiGp+GHe9XYY8s4
+	AFHTuMbe1k3X9NfwB5guXi3evHqAG+g=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Wed, 12 Jun 2024 16:21:22 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.10-rc4
+Message-ID: <6pkst4l27qb7asdlg47jy6zycvvse45ienwiybqgjtc47fs4so@f6ahc5rwgv46>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,109 +59,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612162948.GA2093190@mit.edu>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 12, 2024 at 05:29:48PM +0100, Theodore Ts'o wrote:
-> I've been trying to clear various failing or flaky tests, and in that
-> context I've been finding that generic/269 is failing with a
-> probability of ~5% on a wide variety of test scenarios on ext4, xfs,
-> btrfs, and f2fs on 6.10-rc2 and on fs-next.  (See below for the
-> details; the failure probability ranges from 1% to 10% depending on
-> the test config.)
-> 
-> What generic/269 does is to run fsstress and ENOSPC hitters in
-> parallel, and checks to make sure the file system is consistent at the
-> end of the tests.  Failure is caused by the umount of the file system
-> failing with EBUSY.  I've tried adding a sync and a "sync -f
-> $SCRATCH_MNT" before the attempted _scratch_umount, and that doesn't
-> seem to change the failure.
-> 
-> However, on a failure, if you sleep for 10 seconds, and then retry the
-> unmount, this seems to make the proble go away.  This is despite the
-> fact that we do wait for the fstress process to exit --- I vaguely
-> recall that there is some kind of RCU failure which means that the
-> umount will not reliably succeed under some circumstances.  Do we
-> think this is the right fix?
-> 
-> (Note: when I tried shortening the sleep 10 to sleep 1, the problem
-> came back; so this seems like a real hack.   Thoughts?)
+Hi Linus, another batch of fixes for you. Nothing terribly exciting, the
+usual mix of syzbot + user bug fixes.
 
-I don't see this problem; if you apply this to fstests to turn off
-io_uring:
-https://lore.kernel.org/fstests/169335095953.3534600.16325849760213190849.stgit@frogsfrogsfrogs/#r
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-do the problems go away?
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
---D
+are available in the Git repository at:
 
-> Thanks,
-> 
->      	      	   	      	     - Ted
-> 
-> diff --git a/tests/generic/269 b/tests/generic/269
-> index 29f453735..dad02abf3
-> --- a/tests/generic/269
-> +++ b/tests/generic/269
-> @@ -51,9 +51,12 @@ if ! _workout; then
->  fi
->  
->  if ! _scratch_unmount; then
-> +    sleep 10
-> +    if ! _scratch_unmount ; then
->  	echo "failed to umount"
->  	status=1
->  	exit
-> +    fi
->  fi
->  status=0
->  exit
-> 
-> 
-> ext4/4k: 50 tests, 2 failures, 1339 seconds
->   Flaky: generic/269:  4% (2/50)
-> ext4/1k: 50 tests, 5 failures, 1224 seconds
->   Flaky: generic/269: 10% (5/50)
-> ext4/ext3: 50 tests, 1477 seconds
-> ext4/encrypt: 50 tests, 2 failures, 1253 seconds
->   Flaky: generic/269:  4% (2/50)
-> ext4/nojournal: 50 tests, 1 failures, 1503 seconds
->   Flaky: generic/269:  2% (1/50)
-> ext4/ext3conv: 50 tests, 4 failures, 1294 seconds
->   Flaky: generic/269:  8% (4/50)
-> ext4/adv: 50 tests, 2 failures, 1263 seconds
->   Flaky: generic/269:  4% (2/50)
-> ext4/dioread_nolock: 50 tests, 3 failures, 1327 seconds
->   Flaky: generic/269:  6% (3/50)
-> ext4/data_journal: 50 tests, 1 failures, 1317 seconds
->   Flaky: generic/269:  2% (1/50)
-> ext4/bigalloc_4k: 50 tests, 2 failures, 1193 seconds
->   Flaky: generic/269:  4% (2/50)
-> ext4/bigalloc_1k: 50 tests, 1259 seconds
-> ext4/dax: 50 tests, 5 failures, 1136 seconds
->   Flaky: generic/269: 10% (5/50)
-> xfs/4k: 50 tests, 3 failures, 1211 seconds
->   Flaky: generic/269:  6% (3/50)
-> xfs/1k: 50 tests, 1219 seconds
-> xfs/v4: 50 tests, 4 failures, 1206 seconds
->   Flaky: generic/269:  8% (4/50)
-> xfs/adv: 50 tests, 1 failures, 1206 seconds
->   Flaky: generic/269:  2% (1/50)
-> xfs/quota: 50 tests, 2 failures, 1460 seconds
->   Flaky: generic/269:  4% (2/50)
-> xfs/quota_1k: 50 tests, 1449 seconds
-> xfs/dirblock_8k: 50 tests, 1 failures, 1351 seconds
->   Flaky: generic/269:  2% (1/50)
-> xfs/realtime: 50 tests, 1286 seconds
-> xfs/realtime_28k_logdev: 50 tests, 1234 seconds
-> xfs/realtime_logdev: 50 tests, 1259 seconds
-> xfs/logdev: 50 tests, 3 failures, 1390 seconds
->   Flaky: generic/269:  6% (3/50)
-> xfs/dax: 50 tests, 1125 seconds
-> btrfs/default: 50 tests, 1573 seconds
-> f2fs/default: 50 tests, 1471 seconds
-> f2fs/encrypt: 50 tests, 1 failures, 1424 seconds
->   Flaky: generic/269:  2% (1/50)
-> Totals: 1350 tests, 0 skipped, 42 failures, 0 errors, 35449s
-> 
-> 
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-12
+
+for you to fetch changes up to f2736b9c791a126ecb9cfc1aef1c7b4152b66e2d:
+
+  bcachefs: Fix rcu_read_lock() leak in drop_extra_replicas (2024-06-11 18:59:08 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.10-rc4
+
+- fix kworker explosion, due to calling submit_bio() (which can block)
+  from a multithreaded workqueue
+- fix error handling in btree node scan
+- forward compat fix: kill an old debug assert
+- key cache shrinker fixes
+  this is a partial fix for stalls doing multithreaded creates - there
+  were various O(n^2) issues the key cache shrinker was hitting
+
+  https://lore.kernel.org/linux-bcachefs/fmfpgkt3dlzxhotrfmqg3j3wn5bpqiqvlc44xllncvdkimmx3i@n4okabtvhu7t/
+
+  there's more work coming here; I'm working on a patch to delete the
+  key cache lock, which initial testing shows to be a pretty drastic
+  performance improvement
+- assorted syzbot fixes
+
+----------------------------------------------------------------
+Hongbo Li (1):
+      bcachefs: fix the display format for show-super
+
+Kent Overstreet (16):
+      bcachefs: Split out btree_write_submit_wq
+      bcachefs: Fix incorrect error handling found_btree_node_is_readable()
+      bcachefs: Delete incorrect BTREE_ID_NR assertion
+      bcachefs: fix stack frame size in fsck.c
+      bcachefs: Enable automatic shrinking for rhashtables
+      bcachefs: increase key cache shrinker batch size
+      bcachefs: set sb->s_shrinker->seeks = 0
+      bcachefs: Fix reporting of freed objects from key cache shrinker
+      bcachefs: Leave a buffer in the btree key cache to avoid lock thrashing
+      bcachefs: Fix refcount leak in check_fix_ptrs()
+      bcachefs: Fix snapshot_create_lock lock ordering
+      bcachefs: Replace bucket_valid() asserts in bucket lookup with proper checks
+      bcachefs: Check for invalid bucket from bucket_gen(), gc_bucket()
+      bcachefs: Add missing synchronize_srcu_expedited() call when shutting down
+      bcachefs: Add missing bch_inode_info.ei_flags init
+      bcachefs: Fix rcu_read_lock() leak in drop_extra_replicas
+
+ fs/bcachefs/alloc_background.c |  22 +++-
+ fs/bcachefs/bcachefs.h         |   3 +-
+ fs/bcachefs/btree_cache.c      |   9 +-
+ fs/bcachefs/btree_gc.c         |  17 ++-
+ fs/bcachefs/btree_io.c         |   8 +-
+ fs/bcachefs/btree_iter.c       |  11 +-
+ fs/bcachefs/btree_key_cache.c  |  33 +++--
+ fs/bcachefs/btree_node_scan.c  |   9 +-
+ fs/bcachefs/buckets.c          | 293 +++++++++++++++++++++++------------------
+ fs/bcachefs/buckets.h          |  17 ++-
+ fs/bcachefs/buckets_types.h    |   2 +
+ fs/bcachefs/data_update.c      |   3 +-
+ fs/bcachefs/ec.c               |  26 +++-
+ fs/bcachefs/extents.c          |   9 +-
+ fs/bcachefs/fs-ioctl.c         |  17 +--
+ fs/bcachefs/fs.c               |   3 +
+ fs/bcachefs/fsck.c             |   3 +
+ fs/bcachefs/io_read.c          |  37 ++++--
+ fs/bcachefs/io_write.c         |  19 ++-
+ fs/bcachefs/movinggc.c         |   7 +-
+ fs/bcachefs/super-io.c         |   6 +-
+ fs/bcachefs/super.c            |  10 +-
+ 22 files changed, 344 insertions(+), 220 deletions(-)
 
