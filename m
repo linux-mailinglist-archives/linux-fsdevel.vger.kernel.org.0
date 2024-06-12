@@ -1,131 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-21531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE4C905412
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 15:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B66F9905450
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 15:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1A81F26B05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 13:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB921F22F60
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 13:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E81517DE38;
-	Wed, 12 Jun 2024 13:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CF417F4E9;
+	Wed, 12 Jun 2024 13:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="PfdQ4BgC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ayM4U6eK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvKnVWA6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBC17CA07;
-	Wed, 12 Jun 2024 13:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B7C17F386;
+	Wed, 12 Jun 2024 13:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200006; cv=none; b=QD19wrwCRgPrsDJzSc9RIke845idrXNOj+cXgOUTOgHv5I9GJdrbgnJLV00Xwhm+U3UeqMBSHIUUzS+0Agn6CaWXgsj3Fqd+D9Jaz56E93BEqqd42Y+GTL+Ik6DavuUSTg9uXeq3+M851LshhvyUwP76HiTpeiy0CHLc1J4qAXo=
+	t=1718200393; cv=none; b=Dd+6ZCK/ng7/RLzLdaAtqzvnvdxSmYCgXBUtIC/+0j2yRS5qWZdCOIUpGCd0AW67mCVxK4Aj9L9n5FmJoUjRR2N3krOhxBRjA5puPvy98ATl7dq1F9RZpCJ6+h7u0bVxZn83RVCc1pcCFw91MpuRuorDsmp8ysuJex52VSiVLUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200006; c=relaxed/simple;
-	bh=xM2mkgCYXY3LW4Gkd+ntoO/HJ+6A/plCYS7Ibh5SWu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXzVqI384DDxuGFlzNbgPqow8BEyxGYLDsWUZ0jrPudIYbxygDLYLHnilEaW1R0SBWvYPHsI6u2yZTLrtRBX9tZ3ECHKy2qFVlrZqHO9xGLi1JgthHrxqp5oTJMUy5Lgz+CGStA2X6kQ3WLrErd7DSW4tWqhvVQkgeiwsihFzeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=PfdQ4BgC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ayM4U6eK; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6F0111140150;
-	Wed, 12 Jun 2024 09:46:43 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 12 Jun 2024 09:46:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718200003;
-	 x=1718286403; bh=9Gox+jN/71my3TOsF6ZDOvg8wmlhZO67uf48HwSqNWQ=; b=
-	PfdQ4BgC+n1qUiSSGVFI2rgrHt28OBsKJcaSPLf5aMC4d+MSSmRMSEBbWZ5YyY5I
-	8SkvO9KqdJSSO32O0OjzhCyPY3UG0PPYS90Jkj0kXpV+S5dzYPeWPkkYwOq2BTYa
-	EhV0aHGWC/bcr52RyS1CqgfPNIGbBXTZOFtGPQzgMZT8JaHHGmD7SoZCJTQeWxBe
-	+jpHScF73lQX1UGgMBGD424wdVBbFH2IvhJgSYDKK2HiPDdpFJpllLNKuoFu0rvY
-	ctN7ojcdllsVjPmj9kai05uKW5bxOpbPjoUfWgjkth/WcbA4KgcXi7zm+QFcCd4o
-	KklnSbBOauR1vcyUVES0yg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718200003; x=
-	1718286403; bh=9Gox+jN/71my3TOsF6ZDOvg8wmlhZO67uf48HwSqNWQ=; b=a
-	yM4U6eKarymhG+Spu+gnmFOG22w4gWtVsWcS+cf+6lkSNxY5QErHkxwty7ucgkLb
-	b5zRYlmbuB+qdlw2jTtFBhgSB3TzdVLJD2pERY9s7xZWW0nFjK43B8SmXiiaeevB
-	p2MlVqIYLik+3zZWAOMEI8H94tzz7O4Uc028b74H+UMQbclNUYwVtSCi3wnZQfrJ
-	WxzQf/eq0DslTTEe6UO64T/MY3NhkOFeRBLFUtsVBOv6Ka/ZtYBWoV1wnEUQx3x9
-	mR1dscUydEqNnb3s+JmtMqe7D/jAzcCsxAXgLMNoYVDnfQww/iXYhVxq4UC+W4Fl
-	cn10tRkm/YnFIrivGF8Qw==
-X-ME-Sender: <xms:wqZpZqGwUxiWUYLLhiu9iaSfxpmD0AqUevgmd4OjlSG7oDOSOU3sIw>
-    <xme:wqZpZrX2tEbASKYc_Zaa9JIrIenbi9BldEYJVNPRwRQHAy8vSwvgC3ju4qzXi8bBy
-    670FErpIubhl-4F>
-X-ME-Received: <xmr:wqZpZkIB8AyIBXBiYujqxJzHVrdkcDBhKhawkb14c_PVHMzN6s_S0vhKG2jgNKUVLg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgieejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
-    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:wqZpZkFBDc1bBVDorJ5bBj8njkAik0_6wuaB_zFvPWOJ-n32rigkBQ>
-    <xmx:wqZpZgXzdPl7md2UpwSI9Jvt3-Egbh9Q6ipucKwGY3iw83Ns6fdmpQ>
-    <xmx:wqZpZnOTpCjaq3gXpeWEicpjfS6SbnmJSInYMDj1rn-MUbomJK5bSA>
-    <xmx:wqZpZn2rLUUp6vUImNy1uuZ5Jh_0tsINej7wZLKsbUurJI-i6Ha69w>
-    <xmx:w6ZpZvNoosnWCu2UcXknQ6W27s7cPVMmMGS1Q24x6ySCUxsj4unU1Jfw>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 09:46:41 -0400 (EDT)
-Message-ID: <1a5c214c-db14-42a4-8415-ab2c90a04917@fastmail.fm>
-Date: Wed, 12 Jun 2024 15:46:40 +0200
+	s=arc-20240116; t=1718200393; c=relaxed/simple;
+	bh=9ZhMiQb8F+YQkrSmW/uvqq+sOj8IhPHHedOkJlMaFF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S495T8X2nM/VLsUsOARHVIyzKT7Wj45+vN0xYrrmqr4ncIHF+I03RMeSAHOHccBNX/YBMo667UmD23eV//CJj4rqCszCGQrsiTOLfQcjii4SyNPoriTllxRQKpz3eKIWoQOw3tXZACtkYQ/pbNa6G5YmvAL1hSSvgA00jtL183M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvKnVWA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E7AC4AF4D;
+	Wed, 12 Jun 2024 13:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718200393;
+	bh=9ZhMiQb8F+YQkrSmW/uvqq+sOj8IhPHHedOkJlMaFF4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fvKnVWA67l2XCec23FfIZmoq1TS+spuTVbQympdCm7UMttUJCZLZZLe64EqSf6FXI
+	 8SCU86o5e5aoAixswN3wUaJ9u6l7ri5xkVbcLVW9bKm/5jiyPilSe5xkPiYXKmwTis
+	 NtSzPwrdd/y9XD64ii4OrGOevxIt0b3ekkUY846QVMYQnINaBz9qk+4D3+o9V5Ql2q
+	 IFHVXcjOrFJi/a6jiLCUYoxUEV5tPmGfvBAInTaRGLW8plyEHBDjz2GPCXSQ06H6TE
+	 t7Lgu1AcIMYvUQUtQseFJiMcExfYzQi8SHvi6GCrBOQaWL5mV533wS4UAq6Eh618B6
+	 4jbj+ACrX4XAg==
+Date: Wed, 12 Jun 2024 15:53:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, James Clark <james.clark@arm.com>, ltp@lists.linux.it, 
+	linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+Message-ID: <20240612-nennung-ungnade-ae9bdc5f8c4c@brauner>
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
- <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US
-In-Reply-To: <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <171817619547.14261.975798725161704336@noble.neil.brown.name>
 
-
-
-On 6/12/24 15:32, Bernd Schubert wrote:
-> On 6/12/24 09:39, Miklos Szeredi wrote:
->>> Personally I don't see anything twisted here, one just needs to
->>> understand that IORING_OP_URING_CMD was written for that reverse order.
->>
->> That's just my gut feeling.   fuse/dev_uring.c is 1233 in this RFC.
->> And that's just the queuing.
+On Wed, Jun 12, 2024 at 05:09:55PM +1000, NeilBrown wrote:
 > 
+> When a file is opened and created with open(..., O_CREAT) we get
+> both the CREATE and OPEN fsnotify events and would expect them in that
+> order.   For most filesystems we get them in that order because
+> open_last_lookups() calls fsnofify_create() and then do_open() (from
+> path_openat()) calls vfs_open()->do_dentry_open() which calls
+> fsnotify_open().
+> 
+> However when ->atomic_open is used, the
+>    do_dentry_open() -> fsnotify_open()
+> call happens from finish_open() which is called from the ->atomic_open
+> handler in lookup_open() which is called *before* open_last_lookups()
+> calls fsnotify_create.  So we get the "open" notification before
+> "create" - which is backwards.  ltp testcase inotify02 tests this and
+> reports the inconsistency.
+> 
+> This patch lifts the fsnotify_open() call out of do_dentry_open() and
+> places it higher up the call stack.  There are three callers of
+> do_dentry_open().
+> 
+> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
+> directly in that caller so there should be no behavioural change.
+> 
+> For finish_open() there are two cases:
+>  - finish_open is used in ->atomic_open handlers.  For these we add a
+>    call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
+>    set - which means do_dentry_open() has been called.
+>  - finish_open is used in ->tmpfile() handlers.  For these a similar
+>    call to fsnotify_open() is added to vfs_tmpfile()
+> 
+> With this patch NFSv3 is restored to its previous behaviour (before
+> ->atomic_open support was added) of generating CREATE notifications
+> before OPEN, and NFSv4 now has that same correct ordering that is has
+> not had before.  I haven't tested other filesystems.
+> 
+> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC correctly.")
+> Reported-by: James Clark <james.clark@arm.com>
+> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@arm.com
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
 
+We should take this is a bugfix because it doesn't change behavior.
 
-Btw, counting lines, majority of that is not queuing and handling requests,
-but setting up things, shutdown (start/stop is already almost half of the file)
-and then and doing sanity checks, as in fuse_uring_get_verify_queue().
+But then we should follow this up with a patch series that tries to
+rectify the open/close imbalance because I find that pretty ugly. That's
+at least my opinion.
+
+We should aim to only generate an open event when may_open() succeeds
+and don't generate a close event when the open has failed. Maybe:
+
++#ifdef CONFIG_FSNOTIFY
++#define file_nonotify(f) ((f)->f_mode |= __FMODE_NONOTIFY)
++#else
++#define file_nonotify(f) ((void)(f))
++#endif
+
+will do.
+
+Basic open permissions failing should count as failure to open and thus
+also turn of a close event.
+
+The somewhat ugly part is imho that security hooks introduce another
+layer of complexity. While we do count security_file_permission() as
+a failure to open we wouldn't e.g., count security_file_post_open() as a
+failure to open (Though granted here that "*_post_open()" makes it
+easier.). But it is really ugly that LSMs get to say "no" _after_ the
+file has been opened. I suspect this is some IMA or EVM thing where they
+hash the contents or something but it's royally ugly and I complained
+about this before. But maybe such things should just generate an LSM
+layer event via fsnotify in the future (FSNOTIFY_MAC) or something...
+Then userspace can see "Hey, the VFS said yes but then the MAC stuff
+said no."
 
