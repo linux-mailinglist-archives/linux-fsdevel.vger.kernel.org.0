@@ -1,73 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-21536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202A59054FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:19:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFAA9055C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB8A1F21C43
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 14:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B2F1F26385
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 14:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA5C17E442;
-	Wed, 12 Jun 2024 14:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CD817F391;
+	Wed, 12 Jun 2024 14:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JJzYQ8VM"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="PPcurIWF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E313B169ACA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 14:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AA417F39A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 14:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201960; cv=none; b=FbMnlAan1qNtyx0EcKyfKuPcOT2Dpx9VoywSHDtiHzo1un/g89SqEAuJBQBEEJEeTV10B3UFSmMKIGn7cpTFk6dQtUlRRgwr0wI+AHW9BwFErbLUQ6F1/3UQ1oVhlLWv6UaTjMy+14q2xgdSL4jYp/muBkAVxnlxpCV4gtW3TCI=
+	t=1718203979; cv=none; b=PCRJ+CJpQPgeFTOv29z6zYUYXb1ME3dFLGtRBD+RvLjDRgT+IYEihIJqUv4G5m7P5SHwr09ekms1BqlLvZF29XXG4RAGKQ4HB7Iz/AK+t/NSEPYwZLZt2wsNe1yUL0WedA9l3IwZB1JneYc2mBQpR87xYRxkYzqdO2DHJTj0BX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201960; c=relaxed/simple;
-	bh=/onCZr4Z+weTYzmsfq1IIbhJMXw4FaLJ6Jn3ovKITuo=;
+	s=arc-20240116; t=1718203979; c=relaxed/simple;
+	bh=63uDnaLNPzf7zYzjBBak3Mlpdy0J42gOZiMjhyZQs3k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNyzt/DHK8d+ZxgVkGXrXP61SMMP5W02G3eF48+3hUikX7e/dNTZNoa0A4horFJILjWJpYzmWdHIL6MQZGyQcs7qsBBx4OEfMYRLQvQMO6+fV3dH1li66S22qfA1QY4RXiRhE3f2pzHY9/F9vJxHD3LVi6GdIgohwnS0spXw6X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JJzYQ8VM; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: bernd.schubert@fastmail.fm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718201954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1qyUcDw4VUGrxahyrz6XNaVMu1zSkDs4ZdYN1kGuIwo=;
-	b=JJzYQ8VM1uLxaZ8wS525J/R7Wmkdn1+cRTDkMVo79K6uogeKOKwB023Pr3vijy4zwQBOJZ
-	gd4a5hwhf5JxwWVmhMRHHFSPicshx6yd/7x0e1gUGn3Lyx7uxc1ktOVccS9O3OLtjQ/LWW
-	abF7CwJ+l66FtnWCMWWlfej2vRAvduo=
-X-Envelope-To: miklos@szeredi.hu
-X-Envelope-To: bschubert@ddn.com
-X-Envelope-To: amir73il@gmail.com
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: avagin@google.com
-X-Envelope-To: io-uring@vger.kernel.org
-Date: Wed, 12 Jun 2024 10:19:07 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-Message-ID: <olaitdmh662osparvdobr267qgjitygkl7lt7zdiyyi6ee6jlc@xaashssdxwxm>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <im6hqczm7qpr3oxndwupyydnclzne6nmpidln6wee4cer7i6up@hmpv4juppgii>
- <a5ab3ea8-f730-4087-a9ea-b3ac4c8e7919@fastmail.fm>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGd0tZP06Ay4XkbSgeCW1jhbded3+1wDZsCwmropofp/NN3vOEzwOH2ukTOuTyMysoubQI0Md65D31AquAJ6Q6lAJOs7RbeBusJnn7qA2arwh12dFwDokhC+U0RIGW3+GdkMQBxjhUm3XLHoA8qcLYIiKcNMx2lxmdPE+3wwQKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=PPcurIWF; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (unn-37-19-197-214.datapacket.com [37.19.197.214] (may be forged))
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45CEqWtO008694
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 10:52:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1718203956; bh=Ad/lS1KWrRm2Xarx3jCuFG9NWf2VJ632aU+pWHVzie4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=PPcurIWFchb2ph0NOrKu1dfvAgQTefNT5cBb0QiCyd2Fz4Ngk03gVLv9R670Z10Py
+	 7InoHeMYTRZ7Ij9b40IUne+q7d1kq1UJk4OOF1ai8LYJ9r74bLaeywrar44/dv+bjL
+	 TE2Rh8bAqm3iOCtcKy2VfqB44oWHh9VTM1LR95Ew6j9KLbOY3dXkaLOwTqzhfoAAZv
+	 JaHTl1BaeDrRHnhRxWj/g4s5SIWXvG+j70tXlaRo67TVvWk815iTHTBrpCo51IG2bs
+	 SiHoOuLOYzLd1Z9dZcOqQmMRBCnkZKOlEbpQtbJ3+R/zDwB8YJvgkmiq8/L6rt3bHR
+	 SMZG9OHY76C6w==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 7124034167F; Wed, 12 Jun 2024 16:47:16 +0200 (CEST)
+Date: Wed, 12 Jun 2024 15:47:16 +0100
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+        Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org, fstests@vger.kernel.org
+Subject: Re: Flaky test: generic/085
+Message-ID: <20240612144716.GB1906022@mit.edu>
+References: <20240611085210.GA1838544@mit.edu>
+ <20240611163701.GK52977@frogsfrogsfrogs>
+ <20240612-abdrehen-popkultur-80006c9e4c8d@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,42 +67,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5ab3ea8-f730-4087-a9ea-b3ac4c8e7919@fastmail.fm>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240612-abdrehen-popkultur-80006c9e4c8d@brauner>
 
-On Wed, Jun 12, 2024 at 03:53:42PM GMT, Bernd Schubert wrote:
-> I will definitely look at it this week. Although I don't like the idea
-> to have a new kthread. We already have an application thread and have
-> the fuse server thread, why do we need another one?
-
-Ok, I hadn't found the fuse server thread - that should be fine.
-
-> > 
-> > The next thing I was going to look at is how you guys are using splice,
-> > we want to get away from that too.
+On Wed, Jun 12, 2024 at 01:25:07PM +0200, Christian Brauner wrote:
+> I've been trying to reproduce this with pmem yesterday and wasn't able to.
 > 
-> Well, Ming Lei is working on that for ublk_drv and I guess that new approach
-> could be adapted as well onto the current way of io-uring.
-> It _probably_ wouldn't work with IORING_OP_READV/IORING_OP_WRITEV.
-> 
-> https://lore.gnuweeb.org/io-uring/20240511001214.173711-6-ming.lei@redhat.com/T/
-> 
-> > 
-> > Brian was also saying the fuse virtio_fs code may be worth
-> > investigating, maybe that could be adapted?
-> 
-> I need to check, but really, the majority of the new additions
-> is just to set up things, shutdown and to have sanity checks.
-> Request sending/completing to/from the ring is not that much new lines.
+> What's the kernel config and test config that's used?
+>
 
-What I'm wondering is how read/write requests are handled. Are the data
-payloads going in the same ringbuffer as the commands? That could work,
-if the ringbuffer is appropriately sized, but alignment is a an issue.
+The kernel config can be found here:
 
-We just looked up the device DMA requirements and with modern NVME only
-4 byte alignment is required, but the block layer likely isn't set up to
-handle that.
+https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kernel-configs/config-6.1
 
-So - prearranged buffer? Or are you using splice to get pages that
-userspace has read into into the kernel pagecache?
+Drop it into .config in the build directory of any kernel sources
+newer than 6.1, and then run "make olddefconfig".  This is all
+automated in the install-kconfig script which I use:
+
+https://github.com/tytso/xfstests-bld/blob/master/kernel-build/install-kconfig
+
+The VM has 4 CPU's, and 26GiB of memory, and kernel is booted with the
+boot command line options "memmap=4G!9G memmap=9G!14G", which sets up
+fake /dev/pmem0 and /dev/pmem1 devices backed by RAM.  This is my poor
+engineer's way of testing DAX without needing to get access to
+expensive VM's with pmem.  :-)
+
+I'm assuming this is a timing-dependant bug which is easiest to
+trigger on fast devices, so a ramdisk might also work.  FWIW, I also
+can see failures relatively frequently using the ext4/nojournal
+configuration on a SSD-backed cloud block device (GCE's Persistent
+Disk SSD product).
+
+As a result, if you grab my xfstests-bld repo from github, and then
+run "qemu-xfstests -c ext4/nojournal C 20 generic/085" it should
+also reproduce.  See the Documentation/kvm-quickstart.md for more details.
+
+						- Ted
 
