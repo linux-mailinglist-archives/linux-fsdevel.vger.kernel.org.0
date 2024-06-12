@@ -1,63 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-21542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC6090573B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 17:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB3590577D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 17:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF281F27E08
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 15:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98C91F28B8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 15:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CB4180A77;
-	Wed, 12 Jun 2024 15:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86899180A82;
+	Wed, 12 Jun 2024 15:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Usgv+C/e"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tBfOSzNs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148361802D7;
-	Wed, 12 Jun 2024 15:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9DE16D4F6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 15:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207024; cv=none; b=gSbbVer5HOmpEuusFNkVfVYCUWMNPA5zzMgIyAXNsMPThYUp1mRxeK2qVjHik0PQqoNXjngfPxp8JtfVWWcc/Z92EkyuQh80fAg+bv55MG1UZlYL5OrWQnsm4eO3NIK6wD8YMEw4zC2Or76wnRvw0bxQsNyWL6miLbimYA3YU3s=
+	t=1718207712; cv=none; b=LF5AQJMeJ665p8fxUJVZBMViJFaFBCHY7ScW5TQL0dfdiEKHQnDJjFTjAuCrN5nsjCHGxk5y31iLUrImd41lkAbNqNfIoXYKaSiHGPSRw6Nd2MjSRLJq8uFcMHWqbSGuE1dm4cda+hudhIw8uKTEWhU55SAwVW15SFXvKQ3oYfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207024; c=relaxed/simple;
-	bh=viWgeyD653r31MiLWhNh3LFZNvBZzTGpeJJoQhAvSz4=;
+	s=arc-20240116; t=1718207712; c=relaxed/simple;
+	bh=tQ6eaUMy/U4jhIuannuweep0uBcOKLnG1LqdwHEAHeA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+VMZEtQAaPUPcLfBPJnHW4Hm4sgPD3TcHXjIzrp2On4FgxOMVU+IbKA95yiyFlhobHtxzTtmIBsmC1VTFIxYUpNTSODA4HhHfq3HLIkET/7oj+MWbtO/fRaHIv/icd107FMesO7AiOTeV0KASAQPpJ5LMkmWGyqVUI8ua5VrW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Usgv+C/e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84387C116B1;
-	Wed, 12 Jun 2024 15:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718207023;
-	bh=viWgeyD653r31MiLWhNh3LFZNvBZzTGpeJJoQhAvSz4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Usgv+C/eWKPNVB/O70oZtRo7hZ1YUmaavo22jrWBVrIBUr+0SA8gMhgwRRMtfBvLH
-	 ncSICA4si0AJgTjQoXpGrai5D/sZRz6pQCHJpYNWuas4ZclFuORK04RbVDobc+2/Iw
-	 0Zz/bZuxg01mNo6ffpOtgrID37SxaPf2QIF39XOzWnE+Hk4sqC0HegVnNjo7TGl4Tc
-	 hrW8BT1zN5o1XZqmfFVmZUJa4O08515lRI035ztq0ZG7xgb6cybUHYQHgrt1EhLnm6
-	 gZhqsBWH3qv5Q+Wj27xW5mXGiXcWIK3c/Y0ngyWiZeYzl1oCjjQ9msCs4NLUN7kSRX
-	 Nn2LXiCSfn9aw==
-Date: Wed, 12 Jun 2024 08:43:42 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Long Li <leo.lilong@huawei.com>, david@fromorbit.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	chandan.babu@oracle.com, willy@infradead.org, axboe@kernel.dk,
-	martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com, mcgrof@kernel.org,
-	p.raghav@samsung.com, linux-xfs@vger.kernel.org,
-	catherine.hoang@oracle.com
-Subject: Re: [PATCH v3 08/21] xfs: Introduce FORCEALIGN inode flag
-Message-ID: <20240612154342.GC2764752@frogsfrogsfrogs>
-References: <20240429174746.2132161-1-john.g.garry@oracle.com>
- <20240429174746.2132161-9-john.g.garry@oracle.com>
- <20240612021058.GA729527@ceph-admin>
- <82269717-ab49-4a02-aaad-e25a01f15768@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qd07USDww8IedLdoTWZLmBZWH1yphZ97Qx2kbyvv4N1YHKwImffr01cYtA1CYCc8YMGRkX2+er2z3j1CGNLyuJDOdcmN371XOqRXBfX2FYJpPcuX6uUgqrtclP0OilHGk+foP80IAKnOHV0FxmOkPasNxu2rL/8wj/IEmzjmY44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tBfOSzNs; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: bschubert@ddn.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718207708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AvL1Mr0Fm0dZcOgqN+9E74/tJ0v+sK2Qs50nD6yxG/I=;
+	b=tBfOSzNsZtHuam2LcfyThM1Q7QYdjTEHsJ+upKwR+o01BtIwjefYnW2l8sf0lsdEvqF4n9
+	qheOfzV5uZffa+YyyKdgv7hc8pkSAp+UaKILQWP4YSRBhhSHszgcqN0NHEQaUSWace0JSo
+	pSarQHVvr7YBAoBr/hL2cMkf4WQk+sE=
+X-Envelope-To: bernd.schubert@fastmail.fm
+X-Envelope-To: miklos@szeredi.hu
+X-Envelope-To: amir73il@gmail.com
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: avagin@google.com
+X-Envelope-To: io-uring@vger.kernel.org
+Date: Wed, 12 Jun 2024 11:55:03 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>, 
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+Message-ID: <hhkehi7qlcjulhyvtd5j25cl3xw764cjk7tbsakf3ueerdhp3j@6d2nka5oalzn>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
+ <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
+ <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
+ <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
+ <im6hqczm7qpr3oxndwupyydnclzne6nmpidln6wee4cer7i6up@hmpv4juppgii>
+ <a5ab3ea8-f730-4087-a9ea-b3ac4c8e7919@fastmail.fm>
+ <olaitdmh662osparvdobr267qgjitygkl7lt7zdiyyi6ee6jlc@xaashssdxwxm>
+ <4e5a84ab-4aa5-4d8b-aa12-625082d92073@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,78 +80,91 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <82269717-ab49-4a02-aaad-e25a01f15768@oracle.com>
+In-Reply-To: <4e5a84ab-4aa5-4d8b-aa12-625082d92073@ddn.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 12, 2024 at 07:55:31AM +0100, John Garry wrote:
-> On 12/06/2024 03:10, Long Li wrote:
-> > On Mon, Apr 29, 2024 at 05:47:33PM +0000, John Garry wrote:
-> > > From: "Darrick J. Wong"<djwong@kernel.org>
-> > > 
-> > > Add a new inode flag to require that all file data extent mappings must
-> > > be aligned (both the file offset range and the allocated space itself)
-> > > to the extent size hint.  Having a separate COW extent size hint is no
-> > > longer allowed.
-> > > 
-> > > The goal here is to enable sysadmins and users to mandate that all space
-> > > mappings in a file must have a startoff/blockcount that are aligned to
-> > > (say) a 2MB alignment and that the startblock/blockcount will follow the
-> > > same alignment.
-> > > 
-> > > jpg: Enforce extsize is a power-of-2 and aligned with afgsize + stripe
-> > >       alignment for forcealign
-> > > Signed-off-by: "Darrick J. Wong"<djwong@kernel.org>
-> > > Co-developed-by: John Garry<john.g.garry@oracle.com>
-> > > Signed-off-by: John Garry<john.g.garry@oracle.com>
-> > > ---
-> > >   fs/xfs/libxfs/xfs_format.h    |  6 ++++-
-> > >   fs/xfs/libxfs/xfs_inode_buf.c | 50 +++++++++++++++++++++++++++++++++++
-> > >   fs/xfs/libxfs/xfs_inode_buf.h |  3 +++
-> > >   fs/xfs/libxfs/xfs_sb.c        |  2 ++
-> > >   fs/xfs/xfs_inode.c            | 12 +++++++++
-> > >   fs/xfs/xfs_inode.h            |  2 +-
-> > >   fs/xfs/xfs_ioctl.c            | 34 +++++++++++++++++++++++-
-> > >   fs/xfs/xfs_mount.h            |  2 ++
-> > >   fs/xfs/xfs_super.c            |  4 +++
-> > >   include/uapi/linux/fs.h       |  2 ++
-> > >   10 files changed, 114 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> > > index 2b2f9050fbfb..4dd295b047f8 100644
-> > > --- a/fs/xfs/libxfs/xfs_format.h
-> > > +++ b/fs/xfs/libxfs/xfs_format.h
-> > > @@ -353,6 +353,7 @@ xfs_sb_has_compat_feature(
-> > >   #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
-> > >   #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
-> > >   #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
-> > > +#define XFS_SB_FEAT_RO_COMPAT_FORCEALIGN (1 << 30)	/* aligned file data extents */
-> > Hi, John
+On Wed, Jun 12, 2024 at 03:40:14PM GMT, Bernd Schubert wrote:
+> On 6/12/24 16:19, Kent Overstreet wrote:
+> > On Wed, Jun 12, 2024 at 03:53:42PM GMT, Bernd Schubert wrote:
+> >> I will definitely look at it this week. Although I don't like the idea
+> >> to have a new kthread. We already have an application thread and have
+> >> the fuse server thread, why do we need another one?
 > > 
-> > You know I've been using and testing your atomic writes patch series recently,
-> > and I'm particularly interested in the changes to the on-disk format. I noticed
-> > that XFS_SB_FEAT_RO_COMPAT_FORCEALIGN uses bit 30 instead of bit 4, which would
-> > be the next available bit in sequence.
+> > Ok, I hadn't found the fuse server thread - that should be fine.
 > > 
-> > I'm wondering if using bit 30 is just a temporary solution to avoid conflicts,
-> > and if the plan is to eventually use bits sequentially, for example, using bit 4?
-> > I'm looking forward to your explanation.
+> >>>
+> >>> The next thing I was going to look at is how you guys are using splice,
+> >>> we want to get away from that too.
+> >>
+> >> Well, Ming Lei is working on that for ublk_drv and I guess that new approach
+> >> could be adapted as well onto the current way of io-uring.
+> >> It _probably_ wouldn't work with IORING_OP_READV/IORING_OP_WRITEV.
+> >>
+> >> https://lore.gnuweeb.org/io-uring/20240511001214.173711-6-ming.lei@redhat.com/T/
+> >>
+> >>>
+> >>> Brian was also saying the fuse virtio_fs code may be worth
+> >>> investigating, maybe that could be adapted?
+> >>
+> >> I need to check, but really, the majority of the new additions
+> >> is just to set up things, shutdown and to have sanity checks.
+> >> Request sending/completing to/from the ring is not that much new lines.
+> > 
+> > What I'm wondering is how read/write requests are handled. Are the data
+> > payloads going in the same ringbuffer as the commands? That could work,
+> > if the ringbuffer is appropriately sized, but alignment is a an issue.
 > 
-> I really don't know. I'm looking through the history and it has been like
-> that this the start of my source control records.
-> 
-> Maybe it was a copy-and-paste error from XFS_FEAT_FORCEALIGN, whose value
-> has changed since.
-> 
-> Anyway, I'll ask a bit more internally, and I'll look to change to (1 << 4)
-> if ok.
+> That is exactly the big discussion Miklos and I have. Basically in my
+> series another buffer is vmalloced, mmaped and then assigned to ring entries.
+> Fuse meta headers and application payload goes into that buffer.
+> In both kernel/userspace directions. io-uring only allows 80B, so only a
+> really small request would fit into it.
 
-I tend to use upper bits for ondisk features that are still under
-development so that (a) there won't be collisions with other features
-getting merged and (b) after the feature I'm working on gets merged, any
-old fs images in my zoo will no longer mount.
+Well, the generic ringbuffer would lift that restriction.
 
---D
+> Legacy /dev/fuse has an alignment issue as payload follows directly as the fuse
+> header - intrinsically fixed in the ring patches.
 
-> Thanks,
-> John
+*nod*
+
+That's the big question, put the data inline (with potential alignment
+hassles) or manage (and map) a separate data structure.
+
+Maybe padding could be inserted to solve alignment?
+
+A separate data structure would only really be useful if it enabled zero
+copy, but that should probably be a secondary enhancement.
+
+> I will now try without mmap and just provide a user buffer as pointer in the 80B
+> section.
 > 
+> 
+> > 
+> > We just looked up the device DMA requirements and with modern NVME only
+> > 4 byte alignment is required, but the block layer likely isn't set up to
+> > handle that.
+> 
+> I think existing fuse headers have and their data have a 4 byte alignment.
+> Maybe even 8 byte, I don't remember without looking through all request types.
+> If you try a simple O_DIRECT read/write to libfuse/example_passthrough_hp
+> without the ring patches it will fail because of alignment. Needs to be fixed
+> in legacy fuse and would also avoid compat issues we had in libfuse when the
+> kernel header was updated.
+> 
+> > 
+> > So - prearranged buffer? Or are you using splice to get pages that
+> > userspace has read into into the kernel pagecache?
+> 
+> I didn't even try to use splice yet, because for the DDN (my employer) use case
+> we cannot use  zero copy, at least not without violating the rule that one
+> cannot access the application buffer in userspace.
+
+DDN - lustre related?
+
+> 
+> I will definitely look into Mings work, as it will be useful for others.
+> 
+> 
+> Cheers,
+> Bernd
 
