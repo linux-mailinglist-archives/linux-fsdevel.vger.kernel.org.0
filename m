@@ -1,64 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-21563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1383B905BB3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 21:08:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFCF905C2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 21:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B4D285267
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 19:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23DC21F22A23
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 19:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3E582893;
-	Wed, 12 Jun 2024 19:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F16D83A19;
+	Wed, 12 Jun 2024 19:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HCmF8r2F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld1DIZUH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88E381AF;
-	Wed, 12 Jun 2024 19:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE7B433D8;
+	Wed, 12 Jun 2024 19:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718219307; cv=none; b=U4/J/rCoWJLu5mR+IgwCrWyueGAHYYraCb9XCX4JDVXBjeGh4eE+qW2E2VAglqf3xEhmdS4Eo+oeL0J6sunBUr5i2k78q7SyJteQa3UYZVklKqyk2bFciTbGhSBrAUBKvcgXRrAcdt6LTIRe4ayA+uAQJkFkGKrMvKyUh+YirPY=
+	t=1718221297; cv=none; b=Vdjo1VHrkavLWYCouwWC//OaMgZMCScprYk65xAsA5U0VXwQnvBVlA/qihzxZJeJ2xAqkshYivzdAaaNEbhLI7JN++cRdDYUKOK3t8l7QjzSX8XUO4dz0CVaP7mBN97eTdDr5g6shvWVL4bPCS9xnc9ICjW5BtAPn+xWI9DPxlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718219307; c=relaxed/simple;
-	bh=acyp+foR3H6xaVXmAsc6xlFxbLgR9ZZPxI1Etk5jNaQ=;
+	s=arc-20240116; t=1718221297; c=relaxed/simple;
+	bh=eYAfv2IaeIPk7YgUpGrCp904JmVahjLKMWGGq1Z2nPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9J+CKB+DhlLuZEu9KJNYyfTOcRO+b3KmopfxpIF61bB9QvF+Z6DWrHpkuJfQOOYXmC00d4H1drgkjxKTECNMbrjRlEnJtGe69aIwQRrQGGHLqygefSX6ayjwoJyHs6XJv+geVFHVSnqfk/2oCIkXSn7G0kVyoqR3yzmM4BWA+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HCmF8r2F; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nXMsYCyv4Yf7/Yu0L4W/RILlfgsgIycAWX2uQcsZwVg=; b=HCmF8r2FVSCYuICzIMuXFI/Cci
-	kfi3EelJoIlhXTo027+7qAg8KPfT+I8Y9B1pRhU/mfiGb2/y88pqAAClO7sJERJU2KbJU4JuCfjvM
-	aOjxzUtwo/hGHToL7VI98vwE3CbIyciALaQDc+hY5E5JxUvAgIqEZh23bB7efTVtkT4TYhHn6K2ja
-	WWZBTD48mR+KKa8ou0/C4UJ7Iuo+E4fi0FpmuWZ9qC0zkiXRWyaS6V4FMxJT4Hs9yKOdHnquLTIdo
-	xHtqx8pyTEu+jI9shrlDU3fAIUNfdDwY1VSzAr+iRxuMZgfSQk6riQ8PTkbEvW64WEnPlobIvlbqL
-	fnSlGl7Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHTKR-0000000F0Aj-1j7U;
-	Wed, 12 Jun 2024 19:08:15 +0000
-Date: Wed, 12 Jun 2024 20:08:15 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
- zero fill in folio_map_range()
-Message-ID: <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-7-kernel@pankajraghav.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmrN+Wb6PcwEo7ucuEoCgIs7I5eaE86vU6uCQeJ3oUO3X5JHgkGGO0Pkw5tjJ17fF2kECG0NsJkdas1jjvP7SE8o7vx7yX3t1iJZ6xRR19cvQSlJZ6sJmA0q0wm6sWCf7nyhMC+RuuFsdvoPbmWihg7olIR4F6k/7mjajfNa9vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld1DIZUH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34579C116B1;
+	Wed, 12 Jun 2024 19:41:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718221297;
+	bh=eYAfv2IaeIPk7YgUpGrCp904JmVahjLKMWGGq1Z2nPM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ld1DIZUHmUQWoJdWOJRcMipafbO1TzvzzpOFkKcDxwGXTkFb3g1/9q88+FN5kr6o1
+	 1GjJnMG/0ao13otOpez8evQhmmP2FZU3wXdhrlfys0RW+vb72ckXo9y1SmBMfaJ4mh
+	 PsIvBN72o+riOUHjpwCjafLji2zFMs3M6CNr3SU5EltImyRuTtQ1uIm3jpuL4Whiyy
+	 lAv5RPrY82ZVg52rbVs9fMME7QUL2kDkkS7O/FlWdYVMFkBHTBN1Efv4uqkAp00Aqr
+	 qnRIIxymHIdVbk733S2PQwAYXSPjv1d4LvDHg9OS3o5J0aDpitZalpVmzc7l+qqq2B
+	 RWeeUS8e+0TKA==
+Date: Wed, 12 Jun 2024 12:41:36 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+	fstests@vger.kernel.org
+Subject: Re: Flaky test: generic:269 (EBUSY on umount)
+Message-ID: <20240612194136.GA2764780@frogsfrogsfrogs>
+References: <20240612162948.GA2093190@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,71 +57,109 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607145902.1137853-7-kernel@pankajraghav.com>
+In-Reply-To: <20240612162948.GA2093190@mit.edu>
 
-On Fri, Jun 07, 2024 at 02:58:57PM +0000, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Wed, Jun 12, 2024 at 05:29:48PM +0100, Theodore Ts'o wrote:
+> I've been trying to clear various failing or flaky tests, and in that
+> context I've been finding that generic/269 is failing with a
+> probability of ~5% on a wide variety of test scenarios on ext4, xfs,
+> btrfs, and f2fs on 6.10-rc2 and on fs-next.  (See below for the
+> details; the failure probability ranges from 1% to 10% depending on
+> the test config.)
 > 
-> Usually the page cache does not extend beyond the size of the inode,
-> therefore, no PTEs are created for folios that extend beyond the size.
+> What generic/269 does is to run fsstress and ENOSPC hitters in
+> parallel, and checks to make sure the file system is consistent at the
+> end of the tests.  Failure is caused by the umount of the file system
+> failing with EBUSY.  I've tried adding a sync and a "sync -f
+> $SCRATCH_MNT" before the attempted _scratch_umount, and that doesn't
+> seem to change the failure.
 > 
-> But with LBS support, we might extend page cache beyond the size of the
-> inode as we need to guarantee folios of minimum order. Cap the PTE range
-> to be created for the page cache up to the max allowed zero-fill file
-> end, which is aligned to the PAGE_SIZE.
-
-I think this is slightly misleading because we might well zero-fill
-to the end of the folio.  The issue is that we're supposed to SIGBUS
-if userspace accesses pages which lie entirely beyond the end of this
-file.  Can you rephrase this?
-
-(from mmap(2))
-       SIGBUS Attempted access to a page of the buffer that lies beyond the end
-              of the mapped file.  For an explanation of the treatment  of  the
-              bytes  in  the  page that corresponds to the end of a mapped file
-              that is not a multiple of the page size, see NOTES.
-
-
-The code is good though.
-
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-
-> An fstests test has been created to trigger this edge case [0].
+> However, on a failure, if you sleep for 10 seconds, and then retry the
+> unmount, this seems to make the proble go away.  This is despite the
+> fact that we do wait for the fstress process to exit --- I vaguely
+> recall that there is some kind of RCU failure which means that the
+> umount will not reliably succeed under some circumstances.  Do we
+> think this is the right fix?
 > 
-> [0] https://lore.kernel.org/fstests/20240415081054.1782715-1-mcgrof@kernel.org/
+> (Note: when I tried shortening the sleep 10 to sleep 1, the problem
+> came back; so this seems like a real hack.   Thoughts?)
+
+I don't see this problem; if you apply this to fstests to turn off
+io_uring:
+https://lore.kernel.org/fstests/169335095953.3534600.16325849760213190849.stgit@frogsfrogsfrogs/#r
+
+do the problems go away?
+
+--D
+
+> Thanks,
 > 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  mm/filemap.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>      	      	   	      	     - Ted
 > 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 8bb0d2bc93c5..0e48491b3d10 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3610,7 +3610,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct file *file = vma->vm_file;
->  	struct address_space *mapping = file->f_mapping;
-> -	pgoff_t last_pgoff = start_pgoff;
-> +	pgoff_t file_end, last_pgoff = start_pgoff;
->  	unsigned long addr;
->  	XA_STATE(xas, &mapping->i_pages, start_pgoff);
->  	struct folio *folio;
-> @@ -3636,6 +3636,10 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
->  		goto out;
->  	}
+> diff --git a/tests/generic/269 b/tests/generic/269
+> index 29f453735..dad02abf3
+> --- a/tests/generic/269
+> +++ b/tests/generic/269
+> @@ -51,9 +51,12 @@ if ! _workout; then
+>  fi
 >  
-> +	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
-> +	if (end_pgoff > file_end)
-> +		end_pgoff = file_end;
-> +
->  	folio_type = mm_counter_file(folio);
->  	do {
->  		unsigned long end;
-> -- 
-> 2.44.1
+>  if ! _scratch_unmount; then
+> +    sleep 10
+> +    if ! _scratch_unmount ; then
+>  	echo "failed to umount"
+>  	status=1
+>  	exit
+> +    fi
+>  fi
+>  status=0
+>  exit
+> 
+> 
+> ext4/4k: 50 tests, 2 failures, 1339 seconds
+>   Flaky: generic/269:  4% (2/50)
+> ext4/1k: 50 tests, 5 failures, 1224 seconds
+>   Flaky: generic/269: 10% (5/50)
+> ext4/ext3: 50 tests, 1477 seconds
+> ext4/encrypt: 50 tests, 2 failures, 1253 seconds
+>   Flaky: generic/269:  4% (2/50)
+> ext4/nojournal: 50 tests, 1 failures, 1503 seconds
+>   Flaky: generic/269:  2% (1/50)
+> ext4/ext3conv: 50 tests, 4 failures, 1294 seconds
+>   Flaky: generic/269:  8% (4/50)
+> ext4/adv: 50 tests, 2 failures, 1263 seconds
+>   Flaky: generic/269:  4% (2/50)
+> ext4/dioread_nolock: 50 tests, 3 failures, 1327 seconds
+>   Flaky: generic/269:  6% (3/50)
+> ext4/data_journal: 50 tests, 1 failures, 1317 seconds
+>   Flaky: generic/269:  2% (1/50)
+> ext4/bigalloc_4k: 50 tests, 2 failures, 1193 seconds
+>   Flaky: generic/269:  4% (2/50)
+> ext4/bigalloc_1k: 50 tests, 1259 seconds
+> ext4/dax: 50 tests, 5 failures, 1136 seconds
+>   Flaky: generic/269: 10% (5/50)
+> xfs/4k: 50 tests, 3 failures, 1211 seconds
+>   Flaky: generic/269:  6% (3/50)
+> xfs/1k: 50 tests, 1219 seconds
+> xfs/v4: 50 tests, 4 failures, 1206 seconds
+>   Flaky: generic/269:  8% (4/50)
+> xfs/adv: 50 tests, 1 failures, 1206 seconds
+>   Flaky: generic/269:  2% (1/50)
+> xfs/quota: 50 tests, 2 failures, 1460 seconds
+>   Flaky: generic/269:  4% (2/50)
+> xfs/quota_1k: 50 tests, 1449 seconds
+> xfs/dirblock_8k: 50 tests, 1 failures, 1351 seconds
+>   Flaky: generic/269:  2% (1/50)
+> xfs/realtime: 50 tests, 1286 seconds
+> xfs/realtime_28k_logdev: 50 tests, 1234 seconds
+> xfs/realtime_logdev: 50 tests, 1259 seconds
+> xfs/logdev: 50 tests, 3 failures, 1390 seconds
+>   Flaky: generic/269:  6% (3/50)
+> xfs/dax: 50 tests, 1125 seconds
+> btrfs/default: 50 tests, 1573 seconds
+> f2fs/default: 50 tests, 1471 seconds
+> f2fs/encrypt: 50 tests, 1 failures, 1424 seconds
+>   Flaky: generic/269:  2% (1/50)
+> Totals: 1350 tests, 0 skipped, 42 failures, 0 errors, 35449s
+> 
 > 
 
