@@ -1,234 +1,373 @@
-Return-Path: <linux-fsdevel+bounces-21521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B53905077
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 12:35:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B302905157
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 13:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2573E1F23697
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 10:35:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D9E9B22970
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 11:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD0816EBFA;
-	Wed, 12 Jun 2024 10:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDC616F0ED;
+	Wed, 12 Jun 2024 11:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYglZfeb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5R1ehBD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DD37BB19;
-	Wed, 12 Jun 2024 10:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5F116F0D6;
+	Wed, 12 Jun 2024 11:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188507; cv=none; b=Yq268k8uaiindXKiao6N/9qqQ1M7auNbDXZ0djIxzUiYUVU4hIt6lr6j32mo2LfJLeIjGDs3PGCtFVFOVsq8KAGMsbVpn2Xo5RSoaoyo+tRN8413pkmCbg2ZHcNP+GPtk8wylpbRquEk2C19Ug5aIS6DU0jZacd5k6CcLN7bylE=
+	t=1718191464; cv=none; b=afNozXTgV1YrqYX2MN8+Rt24r8y4m+oEyXPsWu3awEhUcYO2P3UfzUWRqZFTW6DISy2KBLh7vUlYRl/cW8A6cLzH/lqENmSCzVFoXNqsG/Re2/UVuUEppG0HMbNHPxivcC8MkWhonWNdFZ2ZS1ShmW1qdXAZBIB0hNnSMVkrXJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188507; c=relaxed/simple;
-	bh=l6qWXOlYkiNh4aZueT78jx9WwtWf3q89ozgoiZSCKP8=;
+	s=arc-20240116; t=1718191464; c=relaxed/simple;
+	bh=t3t5MWO0ICuW3sXXD04RvPPdmQ+TjJEAKo3O2TyNJJY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t9dqdDYdPWclXPw0aU18g9bjGicjIQK4GzzBo822AfABnhAkVdavoNnIuSXbtGjZt3mj01busZlHgRxz1ApkSFdY38mXmcYvvhnBgUgxkA32nPHnOhrKnvjbPHruZj/UMxEv0M/S/CuOdw98M5zCXwzdVUFuIDhPA81+E+/ZACw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYglZfeb; arc=none smtp.client-ip=209.85.222.49
+	 To:Cc:Content-Type; b=UNYFkA0zevda9i046ZAwwbz5L/+jhdpOQWoS9OMQmzzRHS+ohloRdVZlQB2T7OSrc3pn60GFfbGN5ZH0WNcBtlD3LDfvIzbUP7sHRAq0+oyhKZbpoM/szTcOHmH6l6HnZKH4AoEnqzLzY3m7ZkyBkPUSHXw83zN1d3HUYIsC0UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5R1ehBD; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-80b9c393c8cso957477241.1;
-        Wed, 12 Jun 2024 03:35:05 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7955dc86cacso196553285a.0;
+        Wed, 12 Jun 2024 04:24:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718188505; x=1718793305; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718191461; x=1718796261; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WRlD9+JeJs697iLsuSWlTga8APWs4QACVErNO0SLQZ0=;
-        b=mYglZfeba6kbFgBYdmOyYGF1ElwC638ccF8rYZrBFRZ4W1pyG5VbWBqTGRBzIrv1Pp
-         Hno0DrU3vbXJ+/bXMwgiYc/HN2cR1VKTsX0GcplBwKQgpFaMLdTEB7C64GnFecqtVVPC
-         VGVd3Pxl4k24hkllr3NPHduS9e+9i4iSWunY7oPH/c5a7uy5jwRx+80Ifj3O5zsvd6Hc
-         IBQj3yEsNkUUH+a57uhcY+gbdTr2AKY7ul5B4koKp9PM3+KiXDUWXPow78nh60Gyz7eI
-         cfOdY6hlvGaZVX9JP1K8lkk2CUfUBjz1dH3FBaWGHdf8dfc0vgbkSfOF4tWGDxLlFUx+
-         2DBQ==
+        bh=/ZrOsFWvan+NvZizFQf+yZHV16x+sb5kT5yYbhjfnOQ=;
+        b=U5R1ehBDAKDFoJpxHfSaMKCzdQ+2YsAjgvHdfiiA2SPYJPhqbIjaQLUWcwLOnMijrM
+         my6wiL2SZ3M6fq/K/7L37fhdOtN7t6gPVgnJi19iUfgb/ML8MtNZTkTNypb7+KoAFauv
+         zu3rJAvJq0GJeoPc9MuvlKsXA8JB4eUB0kdwb6CkOZnzBLVxmWjN6aQpQ411i7Ytj0Se
+         7TtW+dmtFenGBcygEMEmmOey+3nlHdK+KSbTCpMQtIJDBubjMozphcLwZZhkfHAcu0N6
+         gVtCJlL92yr/9rcj++aoNLLnytndA4jt1xxBWrOJRPc2rMGDrEuCUDrD8FZYEWuSQi7H
+         LEcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718188505; x=1718793305;
+        d=1e100.net; s=20230601; t=1718191461; x=1718796261;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WRlD9+JeJs697iLsuSWlTga8APWs4QACVErNO0SLQZ0=;
-        b=xExJJZK6Mx39yB92XXzOq/PFMMRFNyy7xp9yTkaot58lNNBokM9p62XtLk0LknCM5L
-         tHUnK6+Z+amrpIwf3SryuN7dR9QPfvmVZ8xp5PAflRoM+GtQMZ1DBTBTwtblLK+F7OVc
-         258915/1R21U/7ToJZVxf6aQaYvMOpv1Ne7Y2+yKxqtAfdu3DFc91MXEJF8NBLThahP+
-         12ruj3L+ShpCFB6uxkhvHU3HR+NFwG59M+0FEgjwA0oPNov4gjDYANpvcPWUyYJQYDaK
-         zPY8eqPyqcqx6ZeoQMw2+xEeR1Vv6IWwhcf+3ZDI09i1EYnOZdpOQC2OLKwwLtqoQ8OL
-         ksow==
-X-Forwarded-Encrypted: i=1; AJvYcCWis202AED39k/b+2Py5X5gAJ3R9o+sFFawUSD5cz92uV5FH6rJzSjRichp2XrsZISQ4NUjdDHgGQ0aOeYiUkMyPSs3U+6YFQgcTNvdJ7XPIiWQnsUds3M6Ntk5+4NHYUEGDc3e5QzB/qTfcRV1geDBmDc3e2j30l+1lC+T79xQZUfYN0UoHQ==
-X-Gm-Message-State: AOJu0YyzOm+Ijm4BjpEMTAzs2/nWd0jG0l3/WpKKUYjYMNefgGOP/r5F
-	CEeKMl5rOzvnrNSIos8IoVyK9KA2ICrizjWxGRsZydpvwuHE1NtSUsZCg2gV1hofDPG3jdp6wg9
-	NoX6lsQccReyqYSx47Y5vxF8eH6I=
-X-Google-Smtp-Source: AGHT+IG8RGjKwVA0WwyDvkW2k2N3AJJ0ptGb1SFZEGLpT6RKIK/BYhZ9JO1JKUds6gHjILDew716N+6RV8hr8WKKw3g=
-X-Received: by 2002:a05:6102:d5:b0:48c:323e:1ba3 with SMTP id
- ada2fe7eead31-48d91e64e02mr1518264137.31.1718188504940; Wed, 12 Jun 2024
- 03:35:04 -0700 (PDT)
+        bh=/ZrOsFWvan+NvZizFQf+yZHV16x+sb5kT5yYbhjfnOQ=;
+        b=CZOZK9zSp6x5aWhHadjLXpDeD37PAObpDGhRlXmb1CeZsEJDvt4XDRueUPyPpX7IBU
+         ASZtxtWwbGhf9VRqw2LqLPRGMphR69CD3VtlhSl/ME8vhaChkHjtVLhgkPOyy944WuEQ
+         B80e40WI36ox+bySZ+uZpiTNUW2hpJ8/75X2e6eZu5ibY+6jtpgFDZqCOECNzZKU40ga
+         IWNJBl0lp+JiqZapsf8a9MXo2XpbL9Lm89VNsbftFc0Xk/RvlMvBtKtzaCjuXFP1hq8K
+         6IJnWDOFP5mc5p07Rwni8Cey5y0YYQEPO+ajhMidyF8M03HVu6Vtkz+DfBKm5cCCzZE9
+         Bztw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhZEVHgC8Mp6jZO9n09ysnZGSmEORfBOzZmA7RxDLOWspvgzpNEXDbIovAycJrfSSTAX770YMjJu1fOzmUxbUdOwO2lgfjB+j5kO/6u5owCyKoCnmd1HFVbThdgxzzRrjbd56gR6yuPQ==
+X-Gm-Message-State: AOJu0YxaOPxwXzFiGYVxCycO4tL2CgDKC4Mh5EWsN+Lk0X4sg9qzddEA
+	/QDadwt8Ci95u0zX/WR1ABdQdxkz/4njeMscsGp3fDtqGvPbi+I5ON0fpDqeP+MPtNeWvvpP/x5
+	NDrTrD8PKu0qXlK1abS+saUvwOdMPzshW
+X-Google-Smtp-Source: AGHT+IGQRVErb2rjwPFlzC31ejyEigK7eBe7AJ19lYcEqH4+w0FNe7hOBHTv9OnvJblszjcjRW2keQqqEzZUjy09N8w=
+X-Received: by 2002:a05:6214:33c2:b0:6b0:91a4:ecdf with SMTP id
+ 6a1803df08f44-6b1a6d4d875mr18338976d6.42.1718191461132; Wed, 12 Jun 2024
+ 04:24:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
-In-Reply-To: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+References: <20240524161101.yyqacjob42qjcbnb@quack3> <20240531145204.GJ52987@frogsfrogsfrogs>
+ <20240603104259.gii7lfz2fg7lyrcw@quack3> <vbiskxttukwzhjoiic6toscqc6b2qekuwumfpzqp5vkxf6l6ia@pby5fjhlobrb>
+ <20240603174259.GB52987@frogsfrogsfrogs> <20240604085843.q6qtmtitgefioj5m@quack3>
+ <20240605003756.GH52987@frogsfrogsfrogs> <CAOQ4uxiVVL+9DEn9iJuWRixVNFKJchJHBB8otH8PjuC+j8ii4g@mail.gmail.com>
+ <ZmEemh4++vMEwLNg@dread.disaster.area> <CAOQ4uxgV5V0TmbZk1vqn=bYfSsdLofDRKvBT4O60zU+jXo0YMQ@mail.gmail.com>
+ <ZmjgbJcjQeejYeOB@dread.disaster.area>
+In-Reply-To: <ZmjgbJcjQeejYeOB@dread.disaster.area>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 12 Jun 2024 13:34:53 +0300
-Message-ID: <CAOQ4uxidUYY02xry+y5VpRWfBjCmAt0CnmJ3JbgLTLkZ6nn1sA@mail.gmail.com>
-Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
- ->atomic_open used.
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	James Clark <james.clark@arm.com>, ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 12 Jun 2024 14:24:09 +0300
+Message-ID: <CAOQ4uxizWXnnHszVCrh=5DscdA3_GzGztJaruZ-ocNTdubNQhA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] fs: add FS_IOC_FSSETXATTRAT and FS_IOC_FSGETXATTRAT
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrey Albershteyn <aalbersh@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 10:10=E2=80=AFAM NeilBrown <neilb@suse.de> wrote:
+On Wed, Jun 12, 2024 at 2:40=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+wrote:
 >
+> On Fri, Jun 07, 2024 at 09:17:34AM +0300, Amir Goldstein wrote:
+> > On Thu, Jun 6, 2024 at 5:27=E2=80=AFAM Dave Chinner <david@fromorbit.co=
+m> wrote:
+> > >
+> > > On Wed, Jun 05, 2024 at 08:13:15AM +0300, Amir Goldstein wrote:
+> > > > On Wed, Jun 5, 2024 at 3:38=E2=80=AFAM Darrick J. Wong <djwong@kern=
+el.org> wrote:
+> > > > > On Tue, Jun 04, 2024 at 10:58:43AM +0200, Jan Kara wrote:
+> > > > > > On Mon 03-06-24 10:42:59, Darrick J. Wong wrote:
+> > > > > > > I do -- allowing unpriviledged users to create symlinks that =
+consume
+> > > > > > > icount (and possibly bcount) in the root project breaks the e=
+ntire
+> > > > > > > enforcement mechanism.  That's not the way that project quota=
+ has worked
+> > > > > > > on xfs and it would be quite rude to nullify the PROJINHERIT =
+flag bit
+> > > > > > > only for these special cases.
+> > > > > >
+> > > > > > OK, fair enough. I though someone will hate this. I'd just like=
+ to
+> > > > > > understand one thing: Owner of the inode can change the project=
+ ID to 0
+> > > > > > anyway so project quotas are more like a cooperative space trac=
+king scheme
+> > > > > > anyway. If you want to escape it, you can. So what are you exac=
+tly worried
+> > > > > > about? Is it the container usecase where from within the user n=
+amespace you
+> > > > > > cannot change project IDs?
+> > > > >
+> > > > > Yep.
+> > > > >
+> > > > > > Anyway I just wanted to have an explicit decision that the simp=
+le solution
+> > > > > > is not good enough before we go the more complex route ;).
+> > > > >
+> > > > > Also, every now and then someone comes along and half-proposes ma=
+king it
+> > > > > so that non-root cannot change project ids anymore.  Maybe some d=
+ay that
+> > > > > will succeed.
+> > > > >
+> > > >
+> > > > I'd just like to point out that the purpose of the project quotas f=
+eature
+> > > > as I understand it, is to apply quotas to subtrees, where container=
+ storage
+> > > > is a very common private case of project subtree.
+> > >
+> > > That is the most modern use case, yes.
+> > >
+> > > [ And for a walk down history lane.... ]
+> > >
+> > > > The purpose is NOT to create a "project" of random files in random
+> > > > paths.
+> > >
+> > > This is *exactly* the original use case that project quotas were
+> > > designed for back on Irix in the early 1990s and is the original
+> > > behaviour project quotas brought to Linux.
+> > >
+> > > Project quota inheritance didn't come along until 2005:
+> > >
+> > > commit 65f1866a3a8e512d43795c116bfef262e703b789
+> > > Author: Nathan Scott <nathans@sgi.com>
+> > > Date:   Fri Jun 3 06:04:22 2005 +0000
+> > >
+> > >     Add support for project quota inheritance, a merge of Glens chang=
+es.
+> > >     Merge of xfs-linux-melb:xfs-kern:22806a by kenmcd.
+> > >
+> > > And full support for directory tree quotas using project IDs wasn't
+> > > fully introduced until a year later in 2006:
+> > >
+> > > commit 4aef4de4d04bcc36a1461c100eb940c162fd5ee6
+> > > Author: Nathan Scott <nathans@sgi.com>
+> > > Date:   Tue May 30 15:54:53 2006 +0000
+> > >
+> > >     statvfs component of directory/project quota support, code origin=
+ally by Glen.
+> > >     Merge of xfs-linux-melb:xfs-kern:26105a by kenmcd.
+> > >
+> > > These changes were largely done for an SGI NAS product that allowed
+> > > us to create one great big XFS filesystem and then create
+> > > arbitrarily sized, thin provisoned  "NFS volumes"  as directory
+> > > quota controlled subdirs instantenously. The directory tree quota
+> > > defined the size of the volume, and so we could also grow and shrink
+> > > them instantenously, too. And we could remove them instantenously
+> > > via background garbage collection after the export was removed and
+> > > the user had been told it had been destroyed.
+> > >
+> > > So that was the original use case for directory tree quotas on XFS -
+> > > providing scalable, fast management of "thin" storage for a NAS
+> > > product. Projects quotas had been used for accounting random
+> > > colections of files for over a decade before this directory quota
+> > > construct was created, and the "modern" container use cases for
+> > > directory quotas didn't come along until almost a decade after this
+> > > capability was added.
+> > >
+> >
+> > Cool. Didn't know all of this.
+> > Lucky for us, those historic use cases are well distinguished from
+> > the modern subtree use case by the opt-in PROJINHERIT bit.
+> > So as long as PROJINHERIT is set, my assumptions mostly hold(?)
 >
-> When a file is opened and created with open(..., O_CREAT) we get
-> both the CREATE and OPEN fsnotify events and would expect them in that
-> order.   For most filesystems we get them in that order because
-> open_last_lookups() calls fsnofify_create() and then do_open() (from
-> path_openat()) calls vfs_open()->do_dentry_open() which calls
-> fsnotify_open().
+> I'm not sure what assumptions you are making, so I can't really
+> make any binding statement on this except to say that the existance
+> of PROJINHERIT on directories does not mean strict directory quotas
+> are being used.
 >
-> However when ->atomic_open is used, the
->    do_dentry_open() -> fsnotify_open()
-> call happens from finish_open() which is called from the ->atomic_open
-> handler in lookup_open() which is called *before* open_last_lookups()
-> calls fsnotify_create.  So we get the "open" notification before
-> "create" - which is backwards.  ltp testcase inotify02 tests this and
-> reports the inconsistency.
+> i.e.  PROJINHERIT is just a flag to automatically tag inodes with
+> aproject ID on creation. It -can- be used as a directory tree quota
+> if specific restrictions in the use of the projinherit flag are
+> enforced, but it can also be used for the original project ID use
+> case so users don't have to manually tag files they create or move
+> to a projet directory with the right project ID after the fact.
 >
-> This patch lifts the fsnotify_open() call out of do_dentry_open() and
-> places it higher up the call stack.  There are three callers of
-> do_dentry_open().
+> IOWs, directories that have the same projid and PROJINHERIT set
+> do not need to be in a single hierarchy, and hence  do not fit the
+> definition of a directory tree quota. e.g:
 >
-> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
-> directly in that caller so there should be no behavioural change.
+> /projects/docs/project1
+> /projects/docs/project2
+> /projects/docs/project3
+> /projects/src/project1
+> /projects/src/project2
+> /projects/src/project3
+> /projects/build/project1
+> /projects/build/project2
+> /projects/build/project3
+> .....
+> /home/user1/project1
+> /home/user2/project3
+> /home/user6/project2
 >
-> For finish_open() there are two cases:
->  - finish_open is used in ->atomic_open handlers.  For these we add a
->    call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
->    set - which means do_dentry_open() has been called.
->  - finish_open is used in ->tmpfile() handlers.  For these a similar
->    call to fsnotify_open() is added to vfs_tmpfile()
+> Now we have multiple different disjoint directory heirarchies with
+> the same project ID because they contain files belonging to a
+> specific project. This is still a random collection of files in
+> random paths that are accounted to a project ID, but it's also using
+> PROJINHERIT to assign the default project ID to files created in the
+> respective project directories.
+>
+> The kernel has no idea that a project ID is associated with a single
+> directory tree. The kernel quota accounting itself simple sees
+> project IDs on inodes and accounts to that project ID. The create
+> and rename code simply see the parent PROJINHERIT bit and so need to
+> set up the new directory entry to be accounted to that different
+> project ID. It's all just mechanism in the kernel - applying project
+> quotas to enforce directory tree quotas is entirely a userspace
+> administration constraint....
+>
+> The only thing we do to help userspace administration is restrict
+> changing project IDs to the init namespace, thereby preventing
+> containers from being able to manipulate project IDs. This allows
+> the init namespace to set the policy for project quota use and hence
+> allow it to be used for directory tree quotas for container space
+> management. This is essentially an extension of the original NAS
+> use case, in that NFS exports were the isolation barrier that hid
+> the underlying filesystem structure and project ID quota usage
+> from the end users....
+>
+> > > > My point is that changing the project id of a non-dir child to be d=
+ifferent
+> > > > from the project id of its parent is a pretty rare use case (I thin=
+k?).
+> > >
+> > > Not if you are using project quotas as they were originally intended
+> > > to be used.
+> > >
+> >
+> > Rephrase then:
+> >
+> > Changing the projid of a non-dir child to be different from the projid
+> > of its parent, which has PROJINHERIT bit set, is a pretty rare use case=
+(?)
+>
+> I have no data to indicate how rare it might be - the kernel has
+> never enforced a policy that disallows changing project IDs when
+> PROJINHERIT is set and any user with write permission can change
+> project IDs even when PROJINHERIT is set. Hence we have to assume
+> that there are people out there that rely on this behaviour,
+> regardless of how rare it is...
+>
+> > > > If changing the projid of non-dir is needed for moving it to a
+> > > > different subtree,
+> > > > we could allow renameat2(2) of non-dir with no hardlinks to implici=
+tly
+> > > > change its
+> > > > inherited project id or explicitly with a flag for a hardlink, e.g.=
+:
+> > > > renameat2(olddirfd, name, newdirfd, name, RENAME_NEW_PROJID).
+> > >
+> > > Why?
+> > >
+> > > The only reason XFS returns -EXDEV to rename across project IDs is
+> > > because nobody wanted to spend the time to work out how to do the
+> > > quota accounting of the metadata changed in the rename operation
+> > > accurately. So for that rare case (not something that would happen
+> > > on the NAS product) we returned -EXDEV to trigger the mv command to
+> > > copy the file to the destination and then unlink the source instead,
+> > > thereby handling all the quota accounting correctly.
+> > >
+> > > IOWs, this whole "-EXDEV on rename across parent project quota
+> > > boundaries" is an implementation detail and nothing more.
+> > > Filesystems that implement project quotas and the directory tree
+> > > sub-variant don't need to behave like this if they can accurately
+> > > account for the quota ID changes during an atomic rename operation.
+> > > If that's too hard, then the fallback is to return -EXDEV and let
+> > > userspace do it the slow way which will always acocunt the resource
+> > > usage correctly to the individual projects.
+> > >
+> > > Hence I think we should just fix the XFS kernel behaviour to do the
+> > > right thing in this special file case rather than return -EXDEV and
+> > > then forget about the rest of it. Sure, update xfs_repair to fix the
+> > > special file project id issue if it trips over it, but other than
+> > > that I don't think we need anything more. If fixing it requires new
+> > > syscalls and tools, then that's much harder to backport to old
+> > > kernels and distros than just backporting a couple of small XFS
+> > > kernel patches...
+> > >
+> >
+> > I assume that by "fix the XFS behavior" you mean
+> > "we could allow renameat2(2) of non-dir with no hardlinks to implicitly
+> >  change its inherited project id"?
+> > (in case the new parent has the PROJINHERIT bit)
+> > so that the RENAME_NEW_PROJID behavior would be implicit.
+>
+> No, I meant "fix the original hardlink of an inode with no project ID
+> within a PROJINHERIT directory always gets -EXDEV" by allowing
+> hard links when the source file has no project ID specified.
+>
+> Actually, looking at 6.10-rc3, this has been merged already. So IMO
+> there's nothing more we need to do here.
+>
 
-Any handlers other than ovl_tmpfile()?
-This one is a very recent and pretty special case.
-Did open(O_TMPFILE) used to emit an OPEN event before that change?
+I don't see it.
+Which commit is that?
+I agree that would be enough to address the original report.
 
+> > Unlike rename() from one parent to the other, link()+unlink()
+> > is less obvious.
+> >
+> > The "modern" use cases that I listed where implicit change of projid
+> > does not suffice are:
+> >
+> > 1. Share some inodes (as hardlinks) among projects
+> > 2. Recursively changing a subtree projid
+> >
+> > They could be implemented by explicit flags to renameat2()/linkat() and
+> > they could be implemented by [gs]etfsxattrat(2) syscalls.
 >
-> With this patch NFSv3 is restored to its previous behaviour (before
-> ->atomic_open support was added) of generating CREATE notifications
-> before OPEN, and NFSv4 now has that same correct ordering that is has
-> not had before.  I haven't tested other filesystems.
+> What are you expecting to happen when you hardlink an inode across
+> multiple PROJINHERIT directories?  I mean, an inode can only have
+> one project ID, so you can't link it into mulitple projects at once
+> if you are using PROJINHERIT (xfs_link() expressly forbids it).
 >
-> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC co=
-rrectly.")
-> Reported-by: James Clark <james.clark@arm.com>
-> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@=
-arm.com
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/namei.c |  5 +++++
->  fs/open.c  | 19 ++++++++++++-------
->  2 files changed, 17 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 37fb0a8aa09a..057afacc4b60 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
->         int acc_mode;
->         int error;
->
-> +       if (file->f_mode & FMODE_OPENED)
-> +               fsnotify_open(file);
-> +
->         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
->                 error =3D complete_walk(nd);
->                 if (error)
-> @@ -3700,6 +3703,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
->         mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
->         error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
->         dput(child);
-> +       if (file->f_mode & FMODE_OPENED)
-> +               fsnotify_open(file);
->         if (error)
->                 return error;
->         /* Don't check for other permissions, the inode was just created =
-*/
-> diff --git a/fs/open.c b/fs/open.c
-> index 89cafb572061..970f299c0e77 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
->                 }
->         }
->
-> -       /*
-> -        * Once we return a file with FMODE_OPENED, __fput() will call
-> -        * fsnotify_close(), so we need fsnotify_open() here for symmetry=
-.
-> -        */
-> -       fsnotify_open(f);
->         return 0;
->
->  cleanup_all:
-> @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
->   */
->  int vfs_open(const struct path *path, struct file *file)
->  {
-> +       int ret;
-> +
->         file->f_path =3D *path;
-> -       return do_dentry_open(file, NULL);
-> +       ret =3D do_dentry_open(file, NULL);
-> +       if (!ret)
-> +               /*
-> +                * Once we return a file with FMODE_OPENED, __fput() will=
- call
-> +                * fsnotify_close(), so we need fsnotify_open() here for =
-symmetry.
-> +                */
-> +               fsnotify_open(file);
+> So I'm really not sure what problem you are trying to describe or
+> solve here. Can you elaborate more?
 
-I agree that this change preserves the logic, but (my own) comment
-above is inconsistent with the case of:
+The problem that Andrey described started with a subtree
+that has no projid and then projid was applied to all non-special files.
+The suggested change to relax hardlink of projid 0 solves this case.
 
-        if ((f->f_flags & O_DIRECT) && !(f->f_mode & FMODE_CAN_ODIRECT))
-                return -EINVAL;
+But a subtree could also be changed by user, say from projid P1
+to projid P2 and in that case inherited projid P1 will remain on
+the special files, causing a similar failure to link() without the
+projid 0 relax rule.
 
-Which does set FMODE_OPENED, but does not emit an OPEN event.
+Anyway, this discussion has wandered off too far from the original problem.
 
-I have a feeling that the comment is correct about the CLOSE event in
-that case, but honestly, I don't think this corner case is that important,
-just maybe the comment needs to be slightly clarified?
+If the simple fix is enough for Andrey, it's fine by me.
+
+If other people are interested in syscall or other means to change
+fsxattr on special files, it's fine by me as well.
 
 Thanks,
 Amir.
-
-> +       return ret;
->  }
->
->  struct file *dentry_open(const struct path *path, int flags,
-> @@ -1178,7 +1182,8 @@ struct file *kernel_file_open(const struct path *pa=
-th, int flags,
->         if (error) {
->                 fput(f);
->                 f =3D ERR_PTR(error);
-> -       }
-> +       } else
-> +               fsnotify_open(f);
->         return f;
->  }
->  EXPORT_SYMBOL_GPL(kernel_file_open);
-> --
-> 2.44.0
->
 
