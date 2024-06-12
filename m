@@ -1,110 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-21548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBEB9058E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 18:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F485905914
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 18:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED3A1C2158F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FCC1C21A64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EB0181330;
-	Wed, 12 Jun 2024 16:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69652181B9F;
+	Wed, 12 Jun 2024 16:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gzjFQbq2"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="4XUItZ5a";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z4wh9ljO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9611B111AD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 16:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8A716C878;
+	Wed, 12 Jun 2024 16:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718210198; cv=none; b=ghbS/kiv+6UlgangQJ4y23wFLLOjSyHkB8D8NGsSXcJdN5Xy+vibYBpuj/H1cdlhe7vOcyP8HYcqVQv5Qy5Gl9LdfC9y0vkt7lfZpMETAgaBeRp5HS/p1wiHcW0P7VyQf6t/lT1YmH2i+em/Y3ROuzWpCM2d0NMP7SXU0l+hbJU=
+	t=1718210698; cv=none; b=eOKhlXeVeUtwPtqlEku1JIhOfP/ggt6ODC7Bb24id6xOeQ7BzIbYspZ/weQVtyX7p8VUA4d7yuzazToi2wIKtBUZRJzt8TzHTngwnnJFVFkiR0+yD8PGekIkAfpzgTtLsfK5HdkC71OU+eEBx0d7eBaX4HBGbP6wnyobWlXZNjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718210198; c=relaxed/simple;
-	bh=2iqv4KUGMLTmw6kxKjOHn2QS4F5+h+1D24yCEBorKAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IdKrmQBEzC/YhaA75YDeUU27XCpRmxT0nTK5P3KUrTm7kMX2c45QA8oJyURenFNUW4NXfipybQH1IQK3E82eW3o9tcwJyvmnandfKUauCoQ+sYmL3IYpk9TSnAAaeXUecyG98gImCYS+rRb8F08fDXlvnqcTONTEQIVSdYJ2ixc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gzjFQbq2; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f177b78dcso11800566b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 09:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718210195; x=1718814995; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hccUwL20mQRicn00b3VnvJTlcDxqj6GcSYKwI7k4pbw=;
-        b=gzjFQbq2QbUAz1uVMLFc/SyzVl/tD+XtiFvyH3lgfIzL/DdKA2rTbNZ4+x3bKviPbv
-         ybUA94uEd/DtBL512gOFHJ6QW1M40zFKOE4qU33na+53x1nHu/tA0n7AOHvelaJdAKkk
-         vIxt4lZ9Tv/EvcBaz0wpg+uIKxRcqHMCM5FHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718210195; x=1718814995;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hccUwL20mQRicn00b3VnvJTlcDxqj6GcSYKwI7k4pbw=;
-        b=JyKQrOIrBSbOfcAOfT6JdLrkXsJfGelai9mPrM9DoGfFIlEQdeRECPh+2/yOQ8pmIM
-         dgUDwN3R6usu/HfaOF/kG+UsgRtlX5fda/96tl+2t6vhwIDCqcG1EFOvpplGvrIDgZbO
-         sbZ1VLIq825ewLq4ZA5IeuYr8JiSBTWyaVv6YIzEnMX6SWOGPXmQKHfgSSTWIpMod49s
-         L+vVa11Idh7LE7h4/Ja3NJFFyojXRaGBvR3czADreePNlomY4n5502KUlDiXpDyJUkM8
-         Blecl2MbjPJ9+hVQzsN31xqVBwuEEIxudH8wVUADhcwtqfwWx+RLSMcxO+H0XbfFphqX
-         ekhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWg4Gz9wByZIFWah70HbmZtkPhGppp5aUR0R7V7YJwiE+4Ugialx14cxOX+3FLlvoDGWovPfJyag9PaC7Z5AMTk3VbhLoa4XvMiGqllag==
-X-Gm-Message-State: AOJu0YxQy1Xtg26RyAFPdjK9766iJdUkdDbSk6pPLyER/7Jz/GrGLwPz
-	ATcicNFZnR2EoM0OLPNm6ucFw919L9wBCE6kSngQvigOgFPX1aT8yzAGKbCy9di2aKjig22coxS
-	tUYvVXA==
-X-Google-Smtp-Source: AGHT+IHL6xT8rZqe5gNs5rN5M5RLQP6YQ0Oj/EFU03t4PfXxR881J8/c54U7r3caKuMPO1DTg9thHw==
-X-Received: by 2002:a17:907:7da0:b0:a6f:23e5:c112 with SMTP id a640c23a62f3a-a6f47f9c51emr167965466b.43.1718210194378;
-        Wed, 12 Jun 2024 09:36:34 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80728be9sm905104666b.199.2024.06.12.09.36.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 09:36:33 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f177b78dcso11791466b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 09:36:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDihvRGaDJLPPApuwR707b5PDh5+tRlOVz+7Lcl7Huqwq6zyewSI//7CmyxGANmm7DF2lBZgXY5MvNtDtoTLoGqKHTBIkzPs9095Lyzw==
-X-Received: by 2002:a17:906:540a:b0:a6f:5165:fee7 with SMTP id
- a640c23a62f3a-a6f51660122mr30151366b.51.1718210192967; Wed, 12 Jun 2024
- 09:36:32 -0700 (PDT)
+	s=arc-20240116; t=1718210698; c=relaxed/simple;
+	bh=W370/b3sRJA8rRIniDdp4JJ0ZMfMcdXK67Tg2C071Tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lu2c8HFdhY1B8oN4hi+MnMBd3DkOiSbfDkR7bW3zATDu9rpybIzqSJJrfJRT6a1x8Hk3lEbXobjpatmcA8QWZuksem9eZov5vrMn8KCaULi5mlnJUVJuc8TB4cZDTbxZK0z9EBZ0JexRHwcCG1uFXm98mtgAwH+YlEy9VBe/qtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=4XUItZ5a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z4wh9ljO; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 0AA6913801BA;
+	Wed, 12 Jun 2024 12:44:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 12 Jun 2024 12:44:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718210696;
+	 x=1718297096; bh=D55YX+W40OzYpbYOsRCkEGZUBWknjhYT4/HuwuDHGQs=; b=
+	4XUItZ5a/XsoqAwUARxsDySMX+lfsq5z0LNZG7EclcpqTfvBVlzbAAAy9PvyWfko
+	cvwB7JnBAmY68BtFqW9GvPBR/XduzufPjmEjY518+X/4IzXRnP6YoTB+kf2yuJNF
+	0RT6egN2+p8bxZkEw7bByzHC1/0Camxx332Nk2HKSzvRpIc7C9p/4p3rj9WZ69YY
+	mZWoseye8r6ziyyZiR+5GfeIVjAYh51c2S1ATVsZBR1b5JrqiqG6Cob7bUCq+Xli
+	cbYoTLRHJ77GaAShHipR7VTHpZTruyG9GilsBAL6nAQ6IY8MTk/+vxAQnM2umi2Q
+	lW2mAHpepqtbajtggnG3mw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718210696; x=
+	1718297096; bh=D55YX+W40OzYpbYOsRCkEGZUBWknjhYT4/HuwuDHGQs=; b=Z
+	4wh9ljOGLsoXz0/LQXg/4U/RG5W/7yAI5aL5GeWHWkFOIRgOpeImN+o7Q6wSwNNs
+	ViH52oIZhIHb8JM7gFeuIjLS5cqKl1EGpovg3nBexcwxKuRkmJlnKp6/RNKG7xx5
+	WWGZNr75BZW4X6OkuSpnzxwtmt3WKh7z4vRh5sDVtWa8u/ON2EzwhslWqsYFrw2B
+	9K+Vc5QJSkYLcfcHM4wdOCSkQy9aYAw20bSxMXS57+g2tf0+6PQlskiX60NsjU2n
+	0U527baPDmrPUGg+GisbGeggfeRaangXKsO+yO1oDrXtznSqtHyJHc8aF63r0TdS
+	qYCqY01BXJNL2WYVFIPeA==
+X-ME-Sender: <xms:h9BpZoPL4WnoO2OTrCiH_T-V6wwgtNMdboPNYz3S-w_0SKChp-dPMQ>
+    <xme:h9BpZu90tXDgYicc3sBtEQkMQeHvKe1wrzkG2AYRhsB1oMWpXHOgmiwzfIpMvTvev
+    HKFDBcGu-jbM8Np>
+X-ME-Received: <xmr:h9BpZvTbBQprntHl-kQ2LFAzTnYNQpsVoipafYfEVqftwBrwvxgCuZi99uexE9LahQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedguddtfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegv
+    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
+    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeetteejudevudefffdutefgledvvdfgtdel
+    ueeifeegudehkeelkeeffedvieehkeenucffohhmrghinhepghhnuhifvggvsgdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghr
+    nhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:h9BpZgtL7ymPOnbnQcSxtgXfCpi6a0wKAdutgajGQpJZbkxYaOCQ9g>
+    <xmx:h9BpZgeatsxt_nyTcj6HNrilQgr7dbrdtBOkz-Cd1mAhD3BgQaaC7A>
+    <xmx:h9BpZk17fMkVKJsW844Kz8n_6lDNJYVqSXtigkUfBIGN_QuqzHOJgg>
+    <xmx:h9BpZk8_YYQX93LMDyHaknlvkWLQi2rauBz76H-qM4Zuf2Pb13TKkw>
+    <xmx:iNBpZk37Cx_Pc0EuY8ZOJyxbXet_l6ClNWbsuO7KcBH7hq4Jkub87JCH>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Jun 2024 12:44:54 -0400 (EDT)
+Message-ID: <8d270a22-edf4-4e38-8b62-6504c4101c6a@fastmail.fm>
+Date: Wed, 12 Jun 2024 18:44:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607015656.GX1629371@ZenIV> <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
- <20240607015957.2372428-11-viro@zeniv.linux.org.uk> <20240607-gelacht-enkel-06a7c9b31d4e@brauner>
- <20240607161043.GZ1629371@ZenIV> <20240607210814.GC1629371@ZenIV> <20240610024437.GA1464458@ZenIV>
-In-Reply-To: <20240610024437.GA1464458@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 12 Jun 2024 09:36:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgf4yN4gGsGQOTBR_xE0q-9fB04omufZk2gnBRZ0Ywbiw@mail.gmail.com>
-Message-ID: <CAHk-=wgf4yN4gGsGQOTBR_xE0q-9fB04omufZk2gnBRZ0Ywbiw@mail.gmail.com>
-Subject: Re: [RFC] potential UAF in kvm_spapr_tce_attach_iommu_group() (was
- Re: [PATCH 11/19] switch simple users of fdget() to CLASS(fd, ...))
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Alexey Kardashevskiy <aik@amd.com>, Paul Mackerras <paulus@ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
+ <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
+ <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
+ <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
+ <im6hqczm7qpr3oxndwupyydnclzne6nmpidln6wee4cer7i6up@hmpv4juppgii>
+ <a5ab3ea8-f730-4087-a9ea-b3ac4c8e7919@fastmail.fm>
+ <olaitdmh662osparvdobr267qgjitygkl7lt7zdiyyi6ee6jlc@xaashssdxwxm>
+ <4e5a84ab-4aa5-4d8b-aa12-625082d92073@ddn.com>
+ <hhkehi7qlcjulhyvtd5j25cl3xw764cjk7tbsakf3ueerdhp3j@6d2nka5oalzn>
+ <d5f61930-beb5-495b-9227-4531de98dae8@fastmail.fm>
+ <3bh7pncpg3qpeia5m7kgtolbvxwe2u46uwfixjhb5dcgni5k4m@kqode5qrywls>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US
+In-Reply-To: <3bh7pncpg3qpeia5m7kgtolbvxwe2u46uwfixjhb5dcgni5k4m@kqode5qrywls>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 9 Jun 2024 at 19:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Unless I'm misreading that code (entirely possible), this fdput() shouldn't
-> be done until we are done with stt.
 
-Ack. That looks right to me.
 
-If I follow it right, the lifetime of stt is tied to the lifetime of
-the file (plus RCU), so doing fdput early and then dropping the RCU
-lock means that stt may not be valid any more later.
+On 6/12/24 18:24, Kent Overstreet wrote:
+> On Wed, Jun 12, 2024 at 06:15:57PM GMT, Bernd Schubert wrote:
+>>
+>>
+>> On 6/12/24 17:55, Kent Overstreet wrote:
+>>> On Wed, Jun 12, 2024 at 03:40:14PM GMT, Bernd Schubert wrote:
+>>>> On 6/12/24 16:19, Kent Overstreet wrote:
+>>>>> On Wed, Jun 12, 2024 at 03:53:42PM GMT, Bernd Schubert wrote:
+>>>>>> I will definitely look at it this week. Although I don't like the idea
+>>>>>> to have a new kthread. We already have an application thread and have
+>>>>>> the fuse server thread, why do we need another one?
+>>>>>
+>>>>> Ok, I hadn't found the fuse server thread - that should be fine.
+>>>>>
+>>>>>>>
+>>>>>>> The next thing I was going to look at is how you guys are using splice,
+>>>>>>> we want to get away from that too.
+>>>>>>
+>>>>>> Well, Ming Lei is working on that for ublk_drv and I guess that new approach
+>>>>>> could be adapted as well onto the current way of io-uring.
+>>>>>> It _probably_ wouldn't work with IORING_OP_READV/IORING_OP_WRITEV.
+>>>>>>
+>>>>>> https://lore.gnuweeb.org/io-uring/20240511001214.173711-6-ming.lei@redhat.com/T/
+>>>>>>
+>>>>>>>
+>>>>>>> Brian was also saying the fuse virtio_fs code may be worth
+>>>>>>> investigating, maybe that could be adapted?
+>>>>>>
+>>>>>> I need to check, but really, the majority of the new additions
+>>>>>> is just to set up things, shutdown and to have sanity checks.
+>>>>>> Request sending/completing to/from the ring is not that much new lines.
+>>>>>
+>>>>> What I'm wondering is how read/write requests are handled. Are the data
+>>>>> payloads going in the same ringbuffer as the commands? That could work,
+>>>>> if the ringbuffer is appropriately sized, but alignment is a an issue.
+>>>>
+>>>> That is exactly the big discussion Miklos and I have. Basically in my
+>>>> series another buffer is vmalloced, mmaped and then assigned to ring entries.
+>>>> Fuse meta headers and application payload goes into that buffer.
+>>>> In both kernel/userspace directions. io-uring only allows 80B, so only a
+>>>> really small request would fit into it.
+>>>
+>>> Well, the generic ringbuffer would lift that restriction.
+>>
+>> Yeah, kind of. Instead allocating the buffer in fuse, it would be now allocated
+>> in that code. At least all that setup code would be moved out of fuse. I will
+>> eventually come to your patches today.
+>> Now we only need to convince Miklos that your ring is better ;)
+>>
+>>>
+>>>> Legacy /dev/fuse has an alignment issue as payload follows directly as the fuse
+>>>> header - intrinsically fixed in the ring patches.
+>>>
+>>> *nod*
+>>>
+>>> That's the big question, put the data inline (with potential alignment
+>>> hassles) or manage (and map) a separate data structure.
+>>>
+>>> Maybe padding could be inserted to solve alignment?
+>>
+>> Right now I have this struct:
+>>
+>> struct fuse_ring_req {
+>> 	union {
+>> 		/* The first 4K are command data */
+>> 		char ring_header[FUSE_RING_HEADER_BUF_SIZE];
+>>
+>> 		struct {
+>> 			uint64_t flags;
+>>
+>> 			/* enum fuse_ring_buf_cmd */
+>> 			uint32_t in_out_arg_len;
+>> 			uint32_t padding;
+>>
+>> 			/* kernel fills in, reads out */
+>> 			union {
+>> 				struct fuse_in_header in;
+>> 				struct fuse_out_header out;
+>> 			};
+>> 		};
+>> 	};
+>>
+>> 	char in_out_arg[];
+>> };
+>>
+>>
+>> Data go into in_out_arg, i.e. headers are padded by the union.
+>> I actually wonder if FUSE_RING_HEADER_BUF_SIZE should be page size
+>> and not a fixed 4K.
+> 
+> I would make the commands variable sized, so that commands with no data
+> buffers don't need padding, and then when you do have a data command you
+> only pad out that specific command so that the data buffer starts on a
+> page boundary.
 
-Making it use the auto-release of a fd class sounds like a good fix,
-but I don't know this code.
 
-           Linus
+The same buffer is used for kernel to userspace and the other way around 
+- it is attached to the ring entry. Either direction will always have
+data, where would a dynamic sizing then be useful?
+
+Well, some "data" like the node id don't need to be aligned - we could 
+save memory for that. I still would like to have some padding so that
+headers could be grown without any kind of compat issues. Though almost 
+4K is probably too much for that.
+
+Thanks for pointing it out, will improve it!
+
+Cheers,
+Bernd
 
