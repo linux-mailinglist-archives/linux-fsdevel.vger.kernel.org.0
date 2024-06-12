@@ -1,64 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-21561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1309905B7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 20:51:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59404905BA8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 21:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF6571C229CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 18:51:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D18E0B21BFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 19:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E69F57CAB;
-	Wed, 12 Jun 2024 18:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1614F824A4;
+	Wed, 12 Jun 2024 19:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UN40XRk9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmCQtJzC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C5D4CDF9;
-	Wed, 12 Jun 2024 18:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3561C14;
+	Wed, 12 Jun 2024 19:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718218262; cv=none; b=SOViR8y0p6bkcZe1OqVTYa8eA8Bj45SuYd+HgePN/SYCahtjOCqtxLU4S6EyT69k2a6BOFhDbkNK4JsDluZX0zMfR7vAAsZa/on2j82K2idetV1a0TzW5dUrfdeCVHtm/Al+s3Q/jSctJdKaJleS2e+x+VOU8J9TmFKz1uy0u0c=
+	t=1718219205; cv=none; b=OdYJkTwH8cxxUg8W1OyjM2pSg6Fw4HUnvSwU1gjclQCfm9M4gm6D6KObgzysqBPMHPRIvIyqAfufhVvbUucd2NyRBDzQ9pM6y6c6raAknp5jAyuKrFjauH71kVvkfZQqcNfPCY0CfXOAsyFBehnLQ8YkcH15XPMwUMIz2QSs4JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718218262; c=relaxed/simple;
-	bh=Zf7s9WeVnkvmuXPzjsfTL8ksWv08gNLaGXu8WKfdazc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmZ00bzUQQfvBVmBWQju3u3P3BN8MTxfGeu3Xr/f53089f9tkZj0l6iEHEP0ySCuEvFWI9pKbjAdd3CjPINBrNzyeZgLWtZxHqMn+d6yYQvyjFZEFAOL6eDR5/UP08nyu6HE5M6gqZVwiF6ZZsCCdqP8j/OUM3jVGfXEIbS+xcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UN40XRk9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SnTD+YzDcFdeMAvSsaXVlZcl9N1crAVDMcpCBvbsy4M=; b=UN40XRk98RsgoJc9yo1fssXg4B
-	rhAiDU4piBR+yp7MAQSmFafqrEBApb5mYlwjE9CykOkoWUBWGqMhKGrMqUoLS2TO7EVdzFDEmZfMY
-	gr2/B6BPuy6EjyIothSFx4I2t0byuYkB772tm/NlqmDkm24/i1888acz6GDNgWbjgGNJKQRbPkuAN
-	q2tsfM8iX4s+cOyTSytKQtrDOO8tvCWxya3zpclY4sBqq6LWeTY4iJg8A189S9xb3oPARsa421sAY
-	FOvNO0J/v+GC7qJRf9g3xvGtqGWhkTXdioqI/qORq91Fe43olNz3Va+hORnhpcPi0qDEKOS8hlym8
-	nxcCddog==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHT3Z-0000000EzSY-0Y2E;
-	Wed, 12 Jun 2024 18:50:49 +0000
-Date: Wed, 12 Jun 2024 19:50:49 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 04/11] readahead: allocate folios with
- mapping_min_order in readahead
-Message-ID: <ZmnuCQriFLdHKHkK@casper.infradead.org>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-5-kernel@pankajraghav.com>
+	s=arc-20240116; t=1718219205; c=relaxed/simple;
+	bh=whXhspxRaLQxdSmsmTL0/6hVFbkMp6ekeTUg+19VkDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TdYamlyCwkKRsLBj6ug20mLr79T/Ii8WFqWBJ64iTAwzf9hzJGHiF2uNHe9uY7qzWEc+rYRZuY3GUkKJbzS4Qqo49KeSNH1nuIXgQEm7cyrbOeK10kCXgrjb1GFDHyA0Xb1glZza3zTtFyNbTpk+Cipf/2ZNUU6isaWGtXN/ok4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmCQtJzC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F067BC116B1;
+	Wed, 12 Jun 2024 19:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718219205;
+	bh=whXhspxRaLQxdSmsmTL0/6hVFbkMp6ekeTUg+19VkDY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WmCQtJzCDqjCYrVKpkf0MwzV9I+FQmYd0WY8eFc2encmpWoWtyd0m8k9C0W1KmXkk
+	 xkk7nM5hOGg9/oAfz6IhwYN4vaMD85Hn1FbbVm9d38QDtZvsPu3wIvshJoMAKmUvGD
+	 T0tgNSXX0vAMOraSKRGx+6VevUFbwuFsmqdVeXCZ0nA3YclgpiexMR2lc25cODuhaR
+	 e1JlGII3pSdPJIAZhVq4GtQQUuTJ8goHT/1PnILTJN1NebXV2V65sFp7iizn5Ci3K3
+	 uFRumUTs3Dv5aKYr+2W6qhl7WaXnO/0WR7fSW+YmZ7cg7ahVreo0TehnOGvjmNKNBb
+	 +rNnbVXkFf5Vw==
+Date: Wed, 12 Jun 2024 12:06:44 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>, xfs <linux-xfs@vger.kernel.org>,
+	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	fsverity@lists.linux.dev, Eric Sandeen <sandeen@redhat.com>,
+	Shirley Ma <shirley.ma@oracle.com>
+Subject: Handing xfs fsverity development back to you
+Message-ID: <20240612190644.GA3271526@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,43 +62,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607145902.1137853-5-kernel@pankajraghav.com>
 
-On Fri, Jun 07, 2024 at 02:58:55PM +0000, Pankaj Raghav (Samsung) wrote:
-> @@ -230,7 +247,9 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  		struct folio *folio = xa_load(&mapping->i_pages, index + i);
->  		int ret;
->  
-> +
+Hi Andrey,
 
-Spurious newline
+Yesterday during office hours I mentioned that I was going to hand the
+xfs fsverity patchset back to you once I managed to get a clean fstests
+run on my 6.10 tree.  I've finally gotten there, so I'm ready to
+transfer control of this series back to you:
 
->  		if (folio && !xa_is_value(folio)) {
-> +			long nr_pages = folio_nr_pages(folio);
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity_2024-06-12
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=fsverity_2024-06-12
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity_2024-06-12
 
-Hm, but we don't have a reference on this folio.  So this isn't safe.
+At this point, we have a mostly working implementation of fsverity
+that's still based on your original design of stuffing merkle data into
+special ATTR_VERITY extended attributes, and a lightweight buffer cache
+for merkle data that can track verified status.  No contiguously
+allocated bitmap required, etc.  At this point I've done all the design
+and coding work that I care to do, EXCEPT:
 
-> @@ -240,12 +259,24 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			 * not worth getting one just for that.
->  			 */
->  			read_pages(ractl);
-> -			ractl->_index += folio_nr_pages(folio);
-> +
-> +			/*
-> +			 * Move the ractl->_index by at least min_pages
-> +			 * if the folio got truncated to respect the
-> +			 * alignment constraint in the page cache.
-> +			 *
-> +			 */
-> +			if (mapping != folio->mapping)
-> +				nr_pages = min_nrpages;
-> +
-> +			VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
-> +			ractl->_index += nr_pages;
+Unfortunately, the v5.6 review produced a major design question that has
+not been resolved, and that is the question of where to store the ondisk
+merkle data.  Someone (was it hch?) pointed out that if xfs were to
+store that fsverity data in some post-eof range of the file (ala
+ext4/f2fs) then the xfs fsverity port wouldn't need the large number of
+updates to fs/verity; and that a future xfs port to fscrypt could take
+advantage of the encryption without needing to figure out how to encrypt
+the verity xattrs.
 
-Why not just:
-			ractl->_index += min_nrpages;
+On the other side of the fence, I'm guessing you and Dave are much more
+in favor of the xattr method since that was (and still is) the original
+design of the ondisk metadata.  I could be misremembering this, but I
+think willy isn't a fan of the post-eof pagecache use either.
 
-like you do below?
+I don't have the expertise to make this decision because I don't know
+enough (or anything) about cryptography to know just how difficult it
+actually would be to get fscrypt to encrypt merkle tree data that's not
+simply located in the posteof range of a file.  I'm aware that btrfs
+uses the pagecache for caching merkle data but stores that data
+elsewhere, and that they are contemplating an fscrypt implementation,
+which is why Sweet Tea is on the cc list.  Any thoughts?
 
+(This is totally separate from fscrypt'ing regular xattrs.)
+
+If it's easy to adapt fscrypt to encrypt fsverity data stored in xattrs
+then I think we can keep the current design of the patchset and try to
+merge it for 6.11.  If not, then I think the rest of you need to think
+hard about the tradeoffs and make a decision.  Either way, the depth of
+my knowledge about this decision is limited to thinking that I have a
+good enough idea about whom to cc.
+
+Other notes about the branches I linked to:
+
+I think it's safe to skip all the patches that mention disabling
+fsverity because that's likely DOA anyway.
+
+Christoph also has a patch to convert the other fsverity implementations
+(btrfs/ext4/f2fs) to use the read/drop_merkle_tree_block interfaces:
+https://lore.kernel.org/linux-xfs/ZjMZnxgFZ_X6c9aB@infradead.org/
+
+I'm not sure if it actually handles PageChecked for the case that the
+merkle tree block size != base page size.
+
+If you prefer I can patchbomb the list with this v5.7 series.
+
+--Darrick
 
