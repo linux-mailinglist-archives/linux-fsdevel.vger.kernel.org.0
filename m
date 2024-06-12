@@ -1,159 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-21547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085F09058CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 18:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBEB9058E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 18:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9CC281AC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED3A1C2158F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52A2181332;
-	Wed, 12 Jun 2024 16:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EB0181330;
+	Wed, 12 Jun 2024 16:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="UyCEx/Jf"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gzjFQbq2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8B5180A69
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 16:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9611B111AD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 16:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718209802; cv=none; b=mxMmkzuPtjcferucTrchhdzb5VRElCsilinIPO+Xg8ms3Cy/gv1iZZXL8o4lIRoy8aBMmH/Vi5Bx+qL8X+uk9FEopGPO7RdGWZPQ80LI5ZmJw2wNa31Se890gpX52uu9rU6JeoP69pNl3KTuu6b+baGhA574wVNP6AUBxW9XxV0=
+	t=1718210198; cv=none; b=ghbS/kiv+6UlgangQJ4y23wFLLOjSyHkB8D8NGsSXcJdN5Xy+vibYBpuj/H1cdlhe7vOcyP8HYcqVQv5Qy5Gl9LdfC9y0vkt7lfZpMETAgaBeRp5HS/p1wiHcW0P7VyQf6t/lT1YmH2i+em/Y3ROuzWpCM2d0NMP7SXU0l+hbJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718209802; c=relaxed/simple;
-	bh=NPjrOI1u6ZwklqagzTtS2IYTxQHmvtjZ9iUd+Nesbsc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Sl2eU8rYkOyJ7L1ak5vvj4qIADR6kb9DcuPd46WA3A5js4wfElWlc/QXJ++utR6BYm97CGyUkomK/mkWhZiwKsSRsWK8gK53rK8xpBChBt6bpQzytiiEYXswUBW5UIDjio49DFKKCo+8KEjCCHRMUuu6nJ1XcWyQniSqR+o6Wj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=UyCEx/Jf; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([204.93.149.36])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45CGTnap031394
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 12:29:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1718209793; bh=Rn3WxPi+HKsTVNrDA9NAdBm1/yD+/Z7Mjn3olzC9d8s=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=UyCEx/JfydQlsRguZiYq6dVHQXfQdp8oab81xywQDQmjlc2XXzOc6JNIB1KbSJUSo
-	 LqxV9AXSqDPnhoYLO3fNHfKAXIo0MI/UWRJi9tK+Yo+w3XuWvbeUgUWXj+2Tpfxbqm
-	 z0j2XB/r6vciuI+ccAhX/YfMh3MytVZnUZ8c0qEHSc0tgGLTMhixVC6i6OHB+7Vpnn
-	 R3c4pbru68yp7NCtqlgzkfj/QL4J9rXquLLH3I6S97VeNrdT/I0Mi1WBINdHZKCSbq
-	 zpXOm0omOyvDLVc8HaCb7GuTPNZpswuGZx7NDp3apvGEKZuT+B0aKcUObeoPxYf4hf
-	 hj5qjdzbJsNPg==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id CF8F934167F; Wed, 12 Jun 2024 18:29:48 +0200 (CEST)
-Date: Wed, 12 Jun 2024 17:29:48 +0100
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        fstests@vger.kernel.org
-Subject: Flaky test: generic:269 (EBUSY on umount)
-Message-ID: <20240612162948.GA2093190@mit.edu>
+	s=arc-20240116; t=1718210198; c=relaxed/simple;
+	bh=2iqv4KUGMLTmw6kxKjOHn2QS4F5+h+1D24yCEBorKAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IdKrmQBEzC/YhaA75YDeUU27XCpRmxT0nTK5P3KUrTm7kMX2c45QA8oJyURenFNUW4NXfipybQH1IQK3E82eW3o9tcwJyvmnandfKUauCoQ+sYmL3IYpk9TSnAAaeXUecyG98gImCYS+rRb8F08fDXlvnqcTONTEQIVSdYJ2ixc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gzjFQbq2; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f177b78dcso11800566b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 09:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718210195; x=1718814995; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hccUwL20mQRicn00b3VnvJTlcDxqj6GcSYKwI7k4pbw=;
+        b=gzjFQbq2QbUAz1uVMLFc/SyzVl/tD+XtiFvyH3lgfIzL/DdKA2rTbNZ4+x3bKviPbv
+         ybUA94uEd/DtBL512gOFHJ6QW1M40zFKOE4qU33na+53x1nHu/tA0n7AOHvelaJdAKkk
+         vIxt4lZ9Tv/EvcBaz0wpg+uIKxRcqHMCM5FHM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718210195; x=1718814995;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hccUwL20mQRicn00b3VnvJTlcDxqj6GcSYKwI7k4pbw=;
+        b=JyKQrOIrBSbOfcAOfT6JdLrkXsJfGelai9mPrM9DoGfFIlEQdeRECPh+2/yOQ8pmIM
+         dgUDwN3R6usu/HfaOF/kG+UsgRtlX5fda/96tl+2t6vhwIDCqcG1EFOvpplGvrIDgZbO
+         sbZ1VLIq825ewLq4ZA5IeuYr8JiSBTWyaVv6YIzEnMX6SWOGPXmQKHfgSSTWIpMod49s
+         L+vVa11Idh7LE7h4/Ja3NJFFyojXRaGBvR3czADreePNlomY4n5502KUlDiXpDyJUkM8
+         Blecl2MbjPJ9+hVQzsN31xqVBwuEEIxudH8wVUADhcwtqfwWx+RLSMcxO+H0XbfFphqX
+         ekhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg4Gz9wByZIFWah70HbmZtkPhGppp5aUR0R7V7YJwiE+4Ugialx14cxOX+3FLlvoDGWovPfJyag9PaC7Z5AMTk3VbhLoa4XvMiGqllag==
+X-Gm-Message-State: AOJu0YxQy1Xtg26RyAFPdjK9766iJdUkdDbSk6pPLyER/7Jz/GrGLwPz
+	ATcicNFZnR2EoM0OLPNm6ucFw919L9wBCE6kSngQvigOgFPX1aT8yzAGKbCy9di2aKjig22coxS
+	tUYvVXA==
+X-Google-Smtp-Source: AGHT+IHL6xT8rZqe5gNs5rN5M5RLQP6YQ0Oj/EFU03t4PfXxR881J8/c54U7r3caKuMPO1DTg9thHw==
+X-Received: by 2002:a17:907:7da0:b0:a6f:23e5:c112 with SMTP id a640c23a62f3a-a6f47f9c51emr167965466b.43.1718210194378;
+        Wed, 12 Jun 2024 09:36:34 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80728be9sm905104666b.199.2024.06.12.09.36.33
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 09:36:33 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f177b78dcso11791466b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 09:36:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDihvRGaDJLPPApuwR707b5PDh5+tRlOVz+7Lcl7Huqwq6zyewSI//7CmyxGANmm7DF2lBZgXY5MvNtDtoTLoGqKHTBIkzPs9095Lyzw==
+X-Received: by 2002:a17:906:540a:b0:a6f:5165:fee7 with SMTP id
+ a640c23a62f3a-a6f51660122mr30151366b.51.1718210192967; Wed, 12 Jun 2024
+ 09:36:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240607015656.GX1629371@ZenIV> <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
+ <20240607015957.2372428-11-viro@zeniv.linux.org.uk> <20240607-gelacht-enkel-06a7c9b31d4e@brauner>
+ <20240607161043.GZ1629371@ZenIV> <20240607210814.GC1629371@ZenIV> <20240610024437.GA1464458@ZenIV>
+In-Reply-To: <20240610024437.GA1464458@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 12 Jun 2024 09:36:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgf4yN4gGsGQOTBR_xE0q-9fB04omufZk2gnBRZ0Ywbiw@mail.gmail.com>
+Message-ID: <CAHk-=wgf4yN4gGsGQOTBR_xE0q-9fB04omufZk2gnBRZ0Ywbiw@mail.gmail.com>
+Subject: Re: [RFC] potential UAF in kvm_spapr_tce_attach_iommu_group() (was
+ Re: [PATCH 11/19] switch simple users of fdget() to CLASS(fd, ...))
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Alexey Kardashevskiy <aik@amd.com>, Paul Mackerras <paulus@ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 
-I've been trying to clear various failing or flaky tests, and in that
-context I've been finding that generic/269 is failing with a
-probability of ~5% on a wide variety of test scenarios on ext4, xfs,
-btrfs, and f2fs on 6.10-rc2 and on fs-next.  (See below for the
-details; the failure probability ranges from 1% to 10% depending on
-the test config.)
+On Sun, 9 Jun 2024 at 19:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Unless I'm misreading that code (entirely possible), this fdput() shouldn't
+> be done until we are done with stt.
 
-What generic/269 does is to run fsstress and ENOSPC hitters in
-parallel, and checks to make sure the file system is consistent at the
-end of the tests.  Failure is caused by the umount of the file system
-failing with EBUSY.  I've tried adding a sync and a "sync -f
-$SCRATCH_MNT" before the attempted _scratch_umount, and that doesn't
-seem to change the failure.
+Ack. That looks right to me.
 
-However, on a failure, if you sleep for 10 seconds, and then retry the
-unmount, this seems to make the proble go away.  This is despite the
-fact that we do wait for the fstress process to exit --- I vaguely
-recall that there is some kind of RCU failure which means that the
-umount will not reliably succeed under some circumstances.  Do we
-think this is the right fix?
+If I follow it right, the lifetime of stt is tied to the lifetime of
+the file (plus RCU), so doing fdput early and then dropping the RCU
+lock means that stt may not be valid any more later.
 
-(Note: when I tried shortening the sleep 10 to sleep 1, the problem
-came back; so this seems like a real hack.   Thoughts?)
+Making it use the auto-release of a fd class sounds like a good fix,
+but I don't know this code.
 
-Thanks,
-
-     	      	   	      	     - Ted
-
-diff --git a/tests/generic/269 b/tests/generic/269
-index 29f453735..dad02abf3
---- a/tests/generic/269
-+++ b/tests/generic/269
-@@ -51,9 +51,12 @@ if ! _workout; then
- fi
- 
- if ! _scratch_unmount; then
-+    sleep 10
-+    if ! _scratch_unmount ; then
- 	echo "failed to umount"
- 	status=1
- 	exit
-+    fi
- fi
- status=0
- exit
-
-
-ext4/4k: 50 tests, 2 failures, 1339 seconds
-  Flaky: generic/269:  4% (2/50)
-ext4/1k: 50 tests, 5 failures, 1224 seconds
-  Flaky: generic/269: 10% (5/50)
-ext4/ext3: 50 tests, 1477 seconds
-ext4/encrypt: 50 tests, 2 failures, 1253 seconds
-  Flaky: generic/269:  4% (2/50)
-ext4/nojournal: 50 tests, 1 failures, 1503 seconds
-  Flaky: generic/269:  2% (1/50)
-ext4/ext3conv: 50 tests, 4 failures, 1294 seconds
-  Flaky: generic/269:  8% (4/50)
-ext4/adv: 50 tests, 2 failures, 1263 seconds
-  Flaky: generic/269:  4% (2/50)
-ext4/dioread_nolock: 50 tests, 3 failures, 1327 seconds
-  Flaky: generic/269:  6% (3/50)
-ext4/data_journal: 50 tests, 1 failures, 1317 seconds
-  Flaky: generic/269:  2% (1/50)
-ext4/bigalloc_4k: 50 tests, 2 failures, 1193 seconds
-  Flaky: generic/269:  4% (2/50)
-ext4/bigalloc_1k: 50 tests, 1259 seconds
-ext4/dax: 50 tests, 5 failures, 1136 seconds
-  Flaky: generic/269: 10% (5/50)
-xfs/4k: 50 tests, 3 failures, 1211 seconds
-  Flaky: generic/269:  6% (3/50)
-xfs/1k: 50 tests, 1219 seconds
-xfs/v4: 50 tests, 4 failures, 1206 seconds
-  Flaky: generic/269:  8% (4/50)
-xfs/adv: 50 tests, 1 failures, 1206 seconds
-  Flaky: generic/269:  2% (1/50)
-xfs/quota: 50 tests, 2 failures, 1460 seconds
-  Flaky: generic/269:  4% (2/50)
-xfs/quota_1k: 50 tests, 1449 seconds
-xfs/dirblock_8k: 50 tests, 1 failures, 1351 seconds
-  Flaky: generic/269:  2% (1/50)
-xfs/realtime: 50 tests, 1286 seconds
-xfs/realtime_28k_logdev: 50 tests, 1234 seconds
-xfs/realtime_logdev: 50 tests, 1259 seconds
-xfs/logdev: 50 tests, 3 failures, 1390 seconds
-  Flaky: generic/269:  6% (3/50)
-xfs/dax: 50 tests, 1125 seconds
-btrfs/default: 50 tests, 1573 seconds
-f2fs/default: 50 tests, 1471 seconds
-f2fs/encrypt: 50 tests, 1 failures, 1424 seconds
-  Flaky: generic/269:  2% (1/50)
-Totals: 1350 tests, 0 skipped, 42 failures, 0 errors, 35449s
-
+           Linus
 
