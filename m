@@ -1,231 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-21549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F485905914
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 18:45:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B69290591C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 18:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FCC1C21A64
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8591C20DB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 16:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69652181B9F;
-	Wed, 12 Jun 2024 16:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC12B181CF3;
+	Wed, 12 Jun 2024 16:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="4XUItZ5a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z4wh9ljO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpKSVlTp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8A716C878;
-	Wed, 12 Jun 2024 16:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB9C17FAB2;
+	Wed, 12 Jun 2024 16:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718210698; cv=none; b=eOKhlXeVeUtwPtqlEku1JIhOfP/ggt6ODC7Bb24id6xOeQ7BzIbYspZ/weQVtyX7p8VUA4d7yuzazToi2wIKtBUZRJzt8TzHTngwnnJFVFkiR0+yD8PGekIkAfpzgTtLsfK5HdkC71OU+eEBx0d7eBaX4HBGbP6wnyobWlXZNjA=
+	t=1718210845; cv=none; b=cMPFi2NEkWLZTuVtJxG7880Xfgemk5knL/q/gWFye4RhM39ScIXldjgPHLdOoXQnITdghSci/09EXjq3AxKac2v945A16AvB9hjjuKYNo6CC0iWEImvZI64aInRzGPbsXvmVSTwpPsb9nDfDlAHXtrlWaGMHFES52pBHvjRy3tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718210698; c=relaxed/simple;
-	bh=W370/b3sRJA8rRIniDdp4JJ0ZMfMcdXK67Tg2C071Tc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lu2c8HFdhY1B8oN4hi+MnMBd3DkOiSbfDkR7bW3zATDu9rpybIzqSJJrfJRT6a1x8Hk3lEbXobjpatmcA8QWZuksem9eZov5vrMn8KCaULi5mlnJUVJuc8TB4cZDTbxZK0z9EBZ0JexRHwcCG1uFXm98mtgAwH+YlEy9VBe/qtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=4XUItZ5a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z4wh9ljO; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 0AA6913801BA;
-	Wed, 12 Jun 2024 12:44:56 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 12 Jun 2024 12:44:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718210696;
-	 x=1718297096; bh=D55YX+W40OzYpbYOsRCkEGZUBWknjhYT4/HuwuDHGQs=; b=
-	4XUItZ5a/XsoqAwUARxsDySMX+lfsq5z0LNZG7EclcpqTfvBVlzbAAAy9PvyWfko
-	cvwB7JnBAmY68BtFqW9GvPBR/XduzufPjmEjY518+X/4IzXRnP6YoTB+kf2yuJNF
-	0RT6egN2+p8bxZkEw7bByzHC1/0Camxx332Nk2HKSzvRpIc7C9p/4p3rj9WZ69YY
-	mZWoseye8r6ziyyZiR+5GfeIVjAYh51c2S1ATVsZBR1b5JrqiqG6Cob7bUCq+Xli
-	cbYoTLRHJ77GaAShHipR7VTHpZTruyG9GilsBAL6nAQ6IY8MTk/+vxAQnM2umi2Q
-	lW2mAHpepqtbajtggnG3mw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718210696; x=
-	1718297096; bh=D55YX+W40OzYpbYOsRCkEGZUBWknjhYT4/HuwuDHGQs=; b=Z
-	4wh9ljOGLsoXz0/LQXg/4U/RG5W/7yAI5aL5GeWHWkFOIRgOpeImN+o7Q6wSwNNs
-	ViH52oIZhIHb8JM7gFeuIjLS5cqKl1EGpovg3nBexcwxKuRkmJlnKp6/RNKG7xx5
-	WWGZNr75BZW4X6OkuSpnzxwtmt3WKh7z4vRh5sDVtWa8u/ON2EzwhslWqsYFrw2B
-	9K+Vc5QJSkYLcfcHM4wdOCSkQy9aYAw20bSxMXS57+g2tf0+6PQlskiX60NsjU2n
-	0U527baPDmrPUGg+GisbGeggfeRaangXKsO+yO1oDrXtznSqtHyJHc8aF63r0TdS
-	qYCqY01BXJNL2WYVFIPeA==
-X-ME-Sender: <xms:h9BpZoPL4WnoO2OTrCiH_T-V6wwgtNMdboPNYz3S-w_0SKChp-dPMQ>
-    <xme:h9BpZu90tXDgYicc3sBtEQkMQeHvKe1wrzkG2AYRhsB1oMWpXHOgmiwzfIpMvTvev
-    HKFDBcGu-jbM8Np>
-X-ME-Received: <xmr:h9BpZvTbBQprntHl-kQ2LFAzTnYNQpsVoipafYfEVqftwBrwvxgCuZi99uexE9LahQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedguddtfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeetteejudevudefffdutefgledvvdfgtdel
-    ueeifeegudehkeelkeeffedvieehkeenucffohhmrghinhepghhnuhifvggvsgdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghr
-    nhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:h9BpZgtL7ymPOnbnQcSxtgXfCpi6a0wKAdutgajGQpJZbkxYaOCQ9g>
-    <xmx:h9BpZgeatsxt_nyTcj6HNrilQgr7dbrdtBOkz-Cd1mAhD3BgQaaC7A>
-    <xmx:h9BpZk17fMkVKJsW844Kz8n_6lDNJYVqSXtigkUfBIGN_QuqzHOJgg>
-    <xmx:h9BpZk8_YYQX93LMDyHaknlvkWLQi2rauBz76H-qM4Zuf2Pb13TKkw>
-    <xmx:iNBpZk37Cx_Pc0EuY8ZOJyxbXet_l6ClNWbsuO7KcBH7hq4Jkub87JCH>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 12:44:54 -0400 (EDT)
-Message-ID: <8d270a22-edf4-4e38-8b62-6504c4101c6a@fastmail.fm>
-Date: Wed, 12 Jun 2024 18:44:53 +0200
+	s=arc-20240116; t=1718210845; c=relaxed/simple;
+	bh=i1VqQul0aDavmR/6DXs1c0vrMHV9t54lQ1/SdKFFgcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUb7hlIxZRZSssstz33JWNkZFItl0/W9aO0LiisXAk07Y5hRBxM0MdD+QB778NzITjwAaSB/+rLHuv4N9DFCeE4mjQYDCggRHfG10rdimB/KsmPPFZ9EDbhdP0ts8+aXJ5j/eg/Rf7p6ih32LolfEc4LO8ua6coySMP/Wb1SsC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpKSVlTp; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52c32d934c2so105074e87.2;
+        Wed, 12 Jun 2024 09:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718210842; x=1718815642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3LSxFCdDc2AZqzsEX2s/C0J4Wg0gWxXtxhy1sWyLans=;
+        b=SpKSVlTpjgDwftsFOBfi9fyEoCinBkQpmrLfXi8v8dtabzEWdQtqjJSp/l9XkPZMQQ
+         qfJyUu3TCAHAQ8on3hR2HfRMk2FIYx1G8kabtLkm/Tx7brPmZcHsX/i30hDfdg+4Gb3N
+         7LT3hUGeZOwgEVrvy+H+WAQQnEW/y/xD1DU11wIf6ZP4WH4RM01RLSXOR8b5r9/3kPK9
+         4GrQJtGySGtv3ANAJh91vpWfEdXBA0LCrcpGYgFmkJ0QeHNUR7H20SXDxiqUoNJetB2D
+         0Q0IYrYLoSSB5KYju+KhpBLcme03NpdNS/UtySh2W51bi12TzO0KOzcfTf7Z8nP4j/pM
+         C2DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718210842; x=1718815642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3LSxFCdDc2AZqzsEX2s/C0J4Wg0gWxXtxhy1sWyLans=;
+        b=woG6VKWWja0rJCHlmJ8agtDNCdbtd+s49vpCaxTsR6Z3uLVcfhFNNymzQV9xKwwker
+         qAN5IkQUrZQm3lbIAQKxHjQRHkaXLUI1H27S3m2VT6KYwhydliVgBko4xT8Oq838j2R2
+         HUkehZz4f39wytCkod1W3uNCi0C1mUzjckv/bvIywC9M1imvHxTieNG+A0rP/TSkSKzY
+         fpR1HRfzhpAjUsZNEhmuQCMQyBqQWssWyRknStU/upSnHB8EDt3x3vMfW403CCAFzPTk
+         lWdepkbnixbIZC+qYU3qzBcqPt0VwlVg9sOJXjLCJEArdyCdWWELECEoYnx1JrtbJv0I
+         mHZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpYbhXTwz9jRWim2z7O13GNv/Dln0/mBd4c40ghfzaU7fNO07WSGMu7r7UHSd+TCoOQDYPetnt5ud5/bv18xLNV1iEX6i6dDEgpzZYJ5wziceTZUeRVd+XFWu7JQbEeJ1bN/CWBxvdk5rboA==
+X-Gm-Message-State: AOJu0Yx+llM9p+YrdnnRBX7NRfTBoGKMxhr92TPRP77QSM1MVkRtmi+k
+	9guXrkn2EYSuGcyKZld7nUS1KREMYgPwRvthmCCEUOgYhvTyHmDupKoWDQ==
+X-Google-Smtp-Source: AGHT+IHQuyWYKttlD7FyL3MnPGfd0WS563CXW9xMTDu6ak9IsSR1KZ34aIT41UCLCfzx1GUtyPkiXw==
+X-Received: by 2002:a05:6512:3b27:b0:52c:6ff5:aecc with SMTP id 2adb3069b0e04-52c9a3fe607mr1642650e87.51.1718210841736;
+        Wed, 12 Jun 2024 09:47:21 -0700 (PDT)
+Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0ce4b62fsm13786703f8f.80.2024.06.12.09.47.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 09:47:21 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: move d_lockref out of the area used by RCU lookup
+Date: Wed, 12 Jun 2024 18:47:15 +0200
+Message-ID: <20240612164715.614843-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <im6hqczm7qpr3oxndwupyydnclzne6nmpidln6wee4cer7i6up@hmpv4juppgii>
- <a5ab3ea8-f730-4087-a9ea-b3ac4c8e7919@fastmail.fm>
- <olaitdmh662osparvdobr267qgjitygkl7lt7zdiyyi6ee6jlc@xaashssdxwxm>
- <4e5a84ab-4aa5-4d8b-aa12-625082d92073@ddn.com>
- <hhkehi7qlcjulhyvtd5j25cl3xw764cjk7tbsakf3ueerdhp3j@6d2nka5oalzn>
- <d5f61930-beb5-495b-9227-4531de98dae8@fastmail.fm>
- <3bh7pncpg3qpeia5m7kgtolbvxwe2u46uwfixjhb5dcgni5k4m@kqode5qrywls>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US
-In-Reply-To: <3bh7pncpg3qpeia5m7kgtolbvxwe2u46uwfixjhb5dcgni5k4m@kqode5qrywls>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Stock kernel scales worse than FreeBSD when doing a 20-way stat(2) on
+the same tmpfs-backed file.
 
+According to perf top:
+  38.09%  [kernel]              [k] lockref_put_return
+  26.08%  [kernel]              [k] lockref_get_not_dead
+  25.60%  [kernel]              [k] __d_lookup_rcu
+   0.89%  [kernel]              [k] clear_bhb_loop
 
-On 6/12/24 18:24, Kent Overstreet wrote:
-> On Wed, Jun 12, 2024 at 06:15:57PM GMT, Bernd Schubert wrote:
->>
->>
->> On 6/12/24 17:55, Kent Overstreet wrote:
->>> On Wed, Jun 12, 2024 at 03:40:14PM GMT, Bernd Schubert wrote:
->>>> On 6/12/24 16:19, Kent Overstreet wrote:
->>>>> On Wed, Jun 12, 2024 at 03:53:42PM GMT, Bernd Schubert wrote:
->>>>>> I will definitely look at it this week. Although I don't like the idea
->>>>>> to have a new kthread. We already have an application thread and have
->>>>>> the fuse server thread, why do we need another one?
->>>>>
->>>>> Ok, I hadn't found the fuse server thread - that should be fine.
->>>>>
->>>>>>>
->>>>>>> The next thing I was going to look at is how you guys are using splice,
->>>>>>> we want to get away from that too.
->>>>>>
->>>>>> Well, Ming Lei is working on that for ublk_drv and I guess that new approach
->>>>>> could be adapted as well onto the current way of io-uring.
->>>>>> It _probably_ wouldn't work with IORING_OP_READV/IORING_OP_WRITEV.
->>>>>>
->>>>>> https://lore.gnuweeb.org/io-uring/20240511001214.173711-6-ming.lei@redhat.com/T/
->>>>>>
->>>>>>>
->>>>>>> Brian was also saying the fuse virtio_fs code may be worth
->>>>>>> investigating, maybe that could be adapted?
->>>>>>
->>>>>> I need to check, but really, the majority of the new additions
->>>>>> is just to set up things, shutdown and to have sanity checks.
->>>>>> Request sending/completing to/from the ring is not that much new lines.
->>>>>
->>>>> What I'm wondering is how read/write requests are handled. Are the data
->>>>> payloads going in the same ringbuffer as the commands? That could work,
->>>>> if the ringbuffer is appropriately sized, but alignment is a an issue.
->>>>
->>>> That is exactly the big discussion Miklos and I have. Basically in my
->>>> series another buffer is vmalloced, mmaped and then assigned to ring entries.
->>>> Fuse meta headers and application payload goes into that buffer.
->>>> In both kernel/userspace directions. io-uring only allows 80B, so only a
->>>> really small request would fit into it.
->>>
->>> Well, the generic ringbuffer would lift that restriction.
->>
->> Yeah, kind of. Instead allocating the buffer in fuse, it would be now allocated
->> in that code. At least all that setup code would be moved out of fuse. I will
->> eventually come to your patches today.
->> Now we only need to convince Miklos that your ring is better ;)
->>
->>>
->>>> Legacy /dev/fuse has an alignment issue as payload follows directly as the fuse
->>>> header - intrinsically fixed in the ring patches.
->>>
->>> *nod*
->>>
->>> That's the big question, put the data inline (with potential alignment
->>> hassles) or manage (and map) a separate data structure.
->>>
->>> Maybe padding could be inserted to solve alignment?
->>
->> Right now I have this struct:
->>
->> struct fuse_ring_req {
->> 	union {
->> 		/* The first 4K are command data */
->> 		char ring_header[FUSE_RING_HEADER_BUF_SIZE];
->>
->> 		struct {
->> 			uint64_t flags;
->>
->> 			/* enum fuse_ring_buf_cmd */
->> 			uint32_t in_out_arg_len;
->> 			uint32_t padding;
->>
->> 			/* kernel fills in, reads out */
->> 			union {
->> 				struct fuse_in_header in;
->> 				struct fuse_out_header out;
->> 			};
->> 		};
->> 	};
->>
->> 	char in_out_arg[];
->> };
->>
->>
->> Data go into in_out_arg, i.e. headers are padded by the union.
->> I actually wonder if FUSE_RING_HEADER_BUF_SIZE should be page size
->> and not a fixed 4K.
-> 
-> I would make the commands variable sized, so that commands with no data
-> buffers don't need padding, and then when you do have a data command you
-> only pad out that specific command so that the data buffer starts on a
-> page boundary.
+__d_lookup_rcu is participating in cacheline ping pong due to the
+embedded name sharing a cacheline with lockref.
 
+Moving it out resolves the problem:
+  41.50%  [kernel]                  [k] lockref_put_return
+  41.03%  [kernel]                  [k] lockref_get_not_dead
+   1.54%  [kernel]                  [k] clear_bhb_loop
 
-The same buffer is used for kernel to userspace and the other way around 
-- it is attached to the ring entry. Either direction will always have
-data, where would a dynamic sizing then be useful?
+benchmark (will-it-scale, Sapphire Rapids, tmpfs, ops/s):
+FreeBSD:7219334
+before:	5038006
+after:	7842883 (+55%)
 
-Well, some "data" like the node id don't need to be aligned - we could 
-save memory for that. I still would like to have some padding so that
-headers could be grown without any kind of compat issues. Though almost 
-4K is probably too much for that.
+One minor remark: the 'after' result is unstable, fluctuating between
+~7.8 mln and ~9 mln between restarts of the test. I picked the lower
+bound.
 
-Thanks for pointing it out, will improve it!
+An important remark: lockref API has a deficiency where if the spinlock
+is taken for any reason and there is a continuous stream of incs/decs,
+it will never recover back to atomic op -- everyone will be stuck taking
+the lock. I used to run into it on occasion when spawning 'perf top'
+while benchmarking, but now that the pressure on lockref itself is
+increased I randomly see it merely when benchmarking.
 
-Cheers,
-Bernd
+It looks like this:
+min:308703 max:429561 total:8217844	<-- nice start
+min:152207 max:178380 total:3501879	<-- things are degrading
+min:65563 max:70106 total:1349677	<-- everyone is stuck locking
+min:69001 max:72873 total:1424714
+min:68993 max:73084 total:1425902
+
+The fix would be to add a variant which will wait for the lock to be
+released for some number of spins, and only take it after to still
+guarantee forward progress. I'm going to look into it. Mentioned in the
+commit message if someone runs into it as is.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ include/linux/dcache.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index bf53e3894aae..326dbccc3736 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -89,13 +89,18 @@ struct dentry {
+ 	struct inode *d_inode;		/* Where the name belongs to - NULL is
+ 					 * negative */
+ 	unsigned char d_iname[DNAME_INLINE_LEN];	/* small names */
++	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
+ 
+ 	/* Ref lookup also touches following */
+-	struct lockref d_lockref;	/* per-dentry lock and refcount */
+ 	const struct dentry_operations *d_op;
+ 	struct super_block *d_sb;	/* The root of the dentry tree */
+ 	unsigned long d_time;		/* used by d_revalidate */
+ 	void *d_fsdata;			/* fs-specific data */
++	/* --- cacheline 2 boundary (128 bytes) --- */
++	struct lockref d_lockref;	/* per-dentry lock and refcount
++					 * keep separate from RCU lookup area if
++					 * possible!
++					 */
+ 
+ 	union {
+ 		struct list_head d_lru;		/* LRU list */
+-- 
+2.43.0
+
 
