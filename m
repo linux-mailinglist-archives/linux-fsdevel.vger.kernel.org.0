@@ -1,255 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-21510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2E0904C69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 09:10:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AC8904CEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 09:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE630283D53
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 07:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF861C243C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2024 07:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB78416B75C;
-	Wed, 12 Jun 2024 07:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6F1167D98;
+	Wed, 12 Jun 2024 07:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LkV/ZaX8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xgm+6acR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FPE2S/yD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0FtTp0u0"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="m1DrhvWa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A086D25622;
-	Wed, 12 Jun 2024 07:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBB016B72C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 07:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718176206; cv=none; b=EBF9J3LB2B0VjCp0/+lU8y4IpeNq59FEvqNkR1AMIJkCTVITNxDj0stByXmp10Ze4y0kfWJTT3Zo2IT32ANOr2lxqTiLIIM+47cgCbIadXHIlzKXcgOcBP/k5vLIrvBLiWPbgWC2uiaZlZEAdQ80VK8ayk7bqdxQolOCHLfuzfk=
+	t=1718178012; cv=none; b=h4vMSC7SnrOAyeTxnYQMEeCwY+2LKF4ffEgC1UmFbDvXmL6N9yLoqAr8JgEI6hSPNBoamPKUHTUMwZsYPhdiUgyzYgnfVfVJDxVi3djy5SNu6fH8LpJW6nHUCDwPSbuTulz+zVhLG+4s1MVRG96KM/DRyHRYTGMbDYmALs/ZRX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718176206; c=relaxed/simple;
-	bh=qbxLuon5KxXHYApDIRUEBavM5lzeW7uuEr5MdN4Lllg=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=uS59i43bdlx/P97WN1HKKmuHrD9g2t7a3mi4B/zMkNROGOvFeKdhGz919q0u/3qwDrX9RzVVwPF1TmzhDhDx1GbCLm0AeMz02zcqm4FntgiHhc7554H9wTyj28FehXwLM48mJ9dJM4gtqDfC05hPe3qPeRLX9lcnR/Gg6AAkBn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LkV/ZaX8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xgm+6acR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FPE2S/yD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0FtTp0u0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CE1ED5BD04;
-	Wed, 12 Jun 2024 07:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718176203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=LkV/ZaX8lAh6loAJySmBqgm3MoWJ2qaC/UTH6hiZv4NQLc5G5OPf43eo8Teb4ya2XflPD4
-	hgiWeFqEXDf/jKI2lFLelo1EiPom5+kHs2T9WJ/yujZXMTMMC7Z7yn2tn9Eng+NOR4S1GF
-	ZYNdebNgUPYn8qe2+IvF00+uYv0eejw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718176203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=Xgm+6acRrYEg3rDOjcP6GBzDP4JVeL0Dm2hoXSP/BB+LqT2GWCtjbTf62QEF6xI+FOytC5
-	Esq5XwDgN3mowTAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="FPE2S/yD";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0FtTp0u0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718176202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=FPE2S/yDU2yTIbPU0wRddevJtzKslVe57uxTWkRd+cjtOsQwild9quZUoo6moeZ7PG6Vks
-	kOXRY2JVCeQkieNqmrcUQhpXD441lealnKHbbdK4XUlWv0gbA6lWjMJaiSOf+tH9+5uKRM
-	1He3hQIOze2vogmudW5zc4+si4pjYkE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718176202;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=0FtTp0u091MUVhJtYYnpRK2mRbRFtlOl2V73w9vP4JAc2Waz2xxnuJI8Nyujbru64CaZj8
-	eTMtPKMtdtLownAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 291C9137DF;
-	Wed, 12 Jun 2024 07:09:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S0/bL8ZJaWYQRQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 12 Jun 2024 07:09:58 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1718178012; c=relaxed/simple;
+	bh=SHhjjQf+XCiZG5//svZCudcWMjc3JF2y5+r1zKFDWBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a3ZbGcJTuWVF1Km1Ce/OFUb/v2F7aCPCkgJD5yHLuJ6CB6kO+GkeIoexBrdEUJXD7f63gw1yLtYAi64pbt8esBOSXJkNMfZFfXWElNH/3SQVdKq9q2h6JnDfp6m14vZXo/EKhqT4OmKRIoT7O8DNpha6Wnbpco1FuMWNfCNHDbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=m1DrhvWa; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f13dddf7eso426852066b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2024 00:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1718178008; x=1718782808; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+QSosQqQLy64+Tlgv470e85em5LRwQwoSTGn3Q1iK/g=;
+        b=m1DrhvWa+IGqpiaPH9Kq7EKcFQA9Q5HPDdfYlJt4DqGLLFqECaXmjJcx0K7gbkyRje
+         ShnXJxm0G/VzssZygfRcnJT6SpKwOGjEZwAcllar8BcNvKgUwdkak/Y9MeLdiYMaHBXZ
+         ZJGmisH4LnzMDlIG5y+o5LDFvRB4C3240ot9I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718178008; x=1718782808;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+QSosQqQLy64+Tlgv470e85em5LRwQwoSTGn3Q1iK/g=;
+        b=QwRof6KdvGLIOtyLTHDxOYBNdBdb3GOpR9BXtdz4gkH40+NL7ikQATXPy8tv65e19v
+         AyQBPSHvkhkbdBPtmHq5dyzpMyfgHiDYF5hjMG9KsmTOK9Vtzddcjw2hyBAZSG6ntsGO
+         9SEb4tA5fp3Tq3sTy+bsRabW2FBvCk1JUyxX6TvO0avq+fpBvyb5pxLWaBX1b1EsHzeF
+         2nt/SuBQyCi2jUXrwxjXpPTC3kDoji5kvL+MO8XKTLCSeYRoVd/zmA0iIUbSYylt0v6t
+         Oro/2ASxgfD5m4OAkS1bfoJ7Zp/yd3RTzV45mO2AccnwTngwhdyawgj4SN+pG7AbB/bb
+         SxEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWF/SUSZdYeGsBV0b+cFqn+/osly/XpQM/NK01Uvm3qMFuVP/7rBz74cBoT4UvIIn278QaGdqQbmqDMQgG6G7zzoxzHTH9hhyVZL68UMQ==
+X-Gm-Message-State: AOJu0YyAMW5dcT9n2Ew8w0B5N0IWh2XgHkyKfHiukOSITd14iESGZBZM
+	q+/6QilDAdQTGGG0HwI0kO2lPWUvPJW162qw4LMy+GlJxyguIyg0O3xsryUh4ln9TI4tZS8MbxU
+	UF/91Ee1hWFb+U43PA4oXgBQPRaXic1oykXxV0Q==
+X-Google-Smtp-Source: AGHT+IHBlOirImqV0ywldrD6heA5rRT/yeHkVra4yo2c9+kHD7C+vJadXIrbCeB1ZgdxilgFkjhV/mtFePl8gIIao/8=
+X-Received: by 2002:a17:906:2712:b0:a6f:1c81:e220 with SMTP id
+ a640c23a62f3a-a6f47f52ec1mr60243766b.13.1718178008049; Wed, 12 Jun 2024
+ 00:40:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, James Clark <james.clark@arm.com>,
- ltp@lists.linux.it, linux-nfs@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-Subject:
- [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
-Date: Wed, 12 Jun 2024 17:09:55 +1000
-Message-id: <171817619547.14261.975798725161704336@noble.neil.brown.name>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[gmail.com,arm.com,lists.linux.it,vger.kernel.org];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: CE1ED5BD04
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
+ <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm> <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
+ <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
+In-Reply-To: <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 12 Jun 2024 09:39:56 +0200
+Message-ID: <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Bernd Schubert <bschubert@ddn.com>, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org, 
+	Kent Overstreet <kent.overstreet@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 11 Jun 2024 at 19:37, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
 
-When a file is opened and created with open(..., O_CREAT) we get
-both the CREATE and OPEN fsnotify events and would expect them in that
-order.   For most filesystems we get them in that order because
-open_last_lookups() calls fsnofify_create() and then do_open() (from
-path_openat()) calls vfs_open()->do_dentry_open() which calls
-fsnotify_open().
+> > So I don't think it matters to performance whether there's a combined
+> > WRITEV + READV (or COMMIT + FETCH) op or separate ops.
+>
+> This has to be performance proven and is no means what I'm seeing. How
+> should io-uring improve performance if you have the same number of
+> system calls?
 
-However when ->atomic_open is used, the
-   do_dentry_open() -> fsnotify_open()
-call happens from finish_open() which is called from the ->atomic_open
-handler in lookup_open() which is called *before* open_last_lookups()
-calls fsnotify_create.  So we get the "open" notification before
-"create" - which is backwards.  ltp testcase inotify02 tests this and
-reports the inconsistency.
+The ops can be queued together and submitted together.  Two separate
+(but possibly linked) ops should result in exactly the same number of
+syscalls as a single combined op.
 
-This patch lifts the fsnotify_open() call out of do_dentry_open() and
-places it higher up the call stack.  There are three callers of
-do_dentry_open().
+> Also, if you are using IORING_OP_READV/IORING_OP_WRITEV, nothing would
+> change in fuse kernel? I.e. IOs would go via fuse_dev_read()?
+> I.e. we would not have encoded in the request which queue it belongs to?
 
-For vfs_open() and kernel_file_open() the fsnotify_open() is placed
-directly in that caller so there should be no behavioural change.
+The original idea was to use the cloned /dev/fuse fd to sort requests
+into separate queues.  That was only half finished: the input queue is
+currently shared by all clones, but once a request is read by the
+server from a particular clone it is put into a separate processing
+queue.   Adding separate input queues to each clone should also be
+possible.
 
-For finish_open() there are two cases:
- - finish_open is used in ->atomic_open handlers.  For these we add a
-   call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
-   set - which means do_dentry_open() has been called.
- - finish_open is used in ->tmpfile() handlers.  For these a similar
-   call to fsnotify_open() is added to vfs_tmpfile()
+I'm not saying this is definitely the direction we should be taking,
+but it's something to consider.
 
-With this patch NFSv3 is restored to its previous behaviour (before
-->atomic_open support was added) of generating CREATE notifications
-before OPEN, and NFSv4 now has that same correct ordering that is has
-not had before.  I haven't tested other filesystems.
+> > The advantage of separate ops is more flexibility and less complexity
+> > (do only one thing in an op)
+>
+> Did you look at patch 12/19? It just does
+> fuse_uring_req_end_and_get_next(). That part isn't complex, imho.
 
-Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC correc=
-tly.")
-Reported-by: James Clark <james.clark@arm.com>
-Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@arm.=
-com
-Signed-off-by: NeilBrown <neilb@suse.de>
----
- fs/namei.c |  5 +++++
- fs/open.c  | 19 ++++++++++++-------
- 2 files changed, 17 insertions(+), 7 deletions(-)
+That function name indicates that this is too complex: it is doing two
+independent things (ending one request and fetching the next).
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 37fb0a8aa09a..057afacc4b60 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
- 	int acc_mode;
- 	int error;
-=20
-+	if (file->f_mode & FMODE_OPENED)
-+		fsnotify_open(file);
-+
- 	if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
- 		error =3D complete_walk(nd);
- 		if (error)
-@@ -3700,6 +3703,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
- 	mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
- 	error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
- 	dput(child);
-+	if (file->f_mode & FMODE_OPENED)
-+		fsnotify_open(file);
- 	if (error)
- 		return error;
- 	/* Don't check for other permissions, the inode was just created */
-diff --git a/fs/open.c b/fs/open.c
-index 89cafb572061..970f299c0e77 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
- 		}
- 	}
-=20
--	/*
--	 * Once we return a file with FMODE_OPENED, __fput() will call
--	 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
--	 */
--	fsnotify_open(f);
- 	return 0;
-=20
- cleanup_all:
-@@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
-  */
- int vfs_open(const struct path *path, struct file *file)
- {
-+	int ret;
-+
- 	file->f_path =3D *path;
--	return do_dentry_open(file, NULL);
-+	ret =3D do_dentry_open(file, NULL);
-+	if (!ret)
-+		/*
-+		 * Once we return a file with FMODE_OPENED, __fput() will call
-+		 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
-+		 */
-+		fsnotify_open(file);
-+	return ret;
- }
-=20
- struct file *dentry_open(const struct path *path, int flags,
-@@ -1178,7 +1182,8 @@ struct file *kernel_file_open(const struct path *path, =
-int flags,
- 	if (error) {
- 		fput(f);
- 		f =3D ERR_PTR(error);
--	}
-+	} else
-+		fsnotify_open(f);
- 	return f;
- }
- EXPORT_SYMBOL_GPL(kernel_file_open);
---=20
-2.44.0
+Fine if it's a valid optimization, but I'm saying that it likely isn't.
 
+> > The major difference between your idea of a fuse_uring and the
+> > io_uring seems to be that you place not only the request on the shared
+> > buffer, but the data as well.   I don't think this is a good idea,
+> > since it will often incur one more memory copy.  Otherwise the idea
+> > itself seems sound.
+>
+> Coud you explain what you mean with "one more memory copy"?
+
+If the filesystem is providing the result of a READ request as a
+pointer to a buffer (which can be the case with fuse_reply_data()),
+then that buffer will need to be copied to the shared buffer, and from
+the shared buffer to the read destination.
+
+That first copy is unnecessary if the kernel receives the pointer to
+the userspace buffer and copies the data directly to the destination.
+
+> > So I think either better integration with io_uring is needed with
+> > support for "reverse submission" or a new interface.
+>
+> Well, that is exactly what IORING_OP_URING_CMD is for, afaik. And
+> ublk_drv  also works exactly that way. I had pointed it out before,
+> initially I had considered to write a reverse io-uring myself and then
+> exactly at that time ublk came up.
+
+I'm just looking for answers why this architecture is the best.  Maybe
+it is, but I find it too complex and can't explain why it's going to
+perform better than a much simpler single ring model.
+
+> The interface of that 'reverse io' to io-uring is really simple.
+>
+> 1) Userspace sends a IORING_OP_URING_CMD SQE
+> 2) That CMD gets handled/queued by struct file_operations::uring_cmd /
+> fuse_uring_cmd(). fuse_uring_cmd() returns -EIOCBQUEUED and queues the
+> request
+> 3) When fuse client has data to complete the request, it calls
+> io_uring_cmd_done() and fuse server receives a CQE with the fuse request.
+>
+> Personally I don't see anything twisted here, one just needs to
+> understand that IORING_OP_URING_CMD was written for that reverse order.
+
+That's just my gut feeling.   fuse/dev_uring.c is 1233 in this RFC.
+And that's just the queuing.
+
+> (There came up a light twisting when io-uring introduced issue_flags -
+> that is part of discussion of patch 19/19 with Jens in the series. Jens
+> suggested to work on io-uring improvements once the main series is
+> merged. I.e. patch 19/19 will be dropped in RFCv3 and I'm going to ask
+> Jens for help once the other parts are merged. Right now that easy to
+> work around by always submitting with an io-uring task).
+>
+> Also, that simplicity is the reason why I'm hesitating a bit to work on
+> Kents new ring, as io-uring already has all what we need and with a
+> rather simple interface.
+
+I'm in favor of using io_uring, if possible.
+
+I'm also in favor of a single shared buffer (ring) if possible.  Using
+cloned fd + plain READV / WRITEV ops is one possibility.
+
+But I'm not opposed to IORING_OP_URING_CMD either.   Btw, fuse reply
+could be inlined in the majority of cases into that 80 byte free space
+in the sqe.  Also might consider an extended cqe mode, where short
+fuse request could be inlined as well (e.g. IORING_SETUP_CQE128 -> 112
+byte payload).
+
+> To be honest, I wonder how you worked around scheduler issues on waking
+> up the application thread. Did you core bind application threads as well
+> (I mean besides fuse server threads)? We now have this (unexported)
+> wake_on_current_cpu. Last year that still wasn't working perfectly well
+> and  Hillf Danton has suggested the 'seesaw' approach. And with that the
+> scheduler was working very well. You could get the same with application
+> core binding, but with 512 CPUs that is certainly not done manually
+> anymore. Did you use a script to bind application threads or did you
+> core bind from within the application?
+
+Probably, I don't remember anymore.
+
+Thanks,
+Miklos
 
