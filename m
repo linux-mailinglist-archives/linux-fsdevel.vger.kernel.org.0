@@ -1,142 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-21582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B391F90616F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 03:53:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7880F9061D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 04:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D5C0B21FF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 01:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242CA1F2239E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 02:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4997B17BBB;
-	Thu, 13 Jun 2024 01:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F9C83CB2;
+	Thu, 13 Jun 2024 02:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQ+G5u03"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79C57F9;
-	Thu, 13 Jun 2024 01:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8FE33F6;
+	Thu, 13 Jun 2024 02:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718243600; cv=none; b=g4E+HSpf60PRCUYPE+1FSpj7zpWBaiCWmAcp6AQN2PO1gG+st86L0yufA8cH3fwEZUi1OlX90244MxAosD30naCQNQyrznY4ew+MEkrOTeeTeLSaqhrLtpE79clsrMDEtgUM2LL3Ak9299VyZSwTrc9yELaGlqq0qYFsSXcazGM=
+	t=1718245865; cv=none; b=CowxOmnf5mADC4Bdhk2z5VTUiEbd6acJKuLicrwGk19hAnNEjYVWdmmrPt1pitotTDDEZIdryebVM9xCZvgoS5fQOL8urnMMbJ/4yk2wtOhgGO9bKvbgmgzDh8CDu6JbU0JMkXn+fgklir7ZYETwrbDG7yfRkhcu28xJ7JUO8XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718243600; c=relaxed/simple;
-	bh=08mouqv6dBOKj5PdWDUTOovkDkaA1fRX+axPfgiUQWY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YF+2jA1v4ofLLwhkL24Xy/zL/RM24YW/cq4vbJRnNhT940ecJSqO41NY9V8dMerYh+pjnye/v1orxq9w9Szg0+Sw+nw0s4Wie1ohoqHVmhuG8LjuMhAHSjNanqy07gZnlnGw8KZHdBw1ZPAb6Co2vaW66FdQE4RNNf9QG3CA4c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4W051y6q1czPqTg;
-	Thu, 13 Jun 2024 09:49:42 +0800 (CST)
-Received: from kwepemi500009.china.huawei.com (unknown [7.221.188.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id ABD9A18007E;
-	Thu, 13 Jun 2024 09:53:08 +0800 (CST)
-Received: from localhost (10.175.127.227) by kwepemi500009.china.huawei.com
- (7.221.188.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
- 2024 09:53:08 +0800
-Date: Thu, 13 Jun 2024 10:04:53 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: "Darrick J. Wong" <djwong@kernel.org>, John Garry
-	<john.g.garry@oracle.com>
-CC: <david@fromorbit.com>, <hch@lst.de>, <viro@zeniv.linux.org.uk>,
-	<brauner@kernel.org>, <jack@suse.cz>, <chandan.babu@oracle.com>,
-	<willy@infradead.org>, <axboe@kernel.dk>, <martin.petersen@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<tytso@mit.edu>, <jbongio@google.com>, <ojaswin@linux.ibm.com>,
-	<ritesh.list@gmail.com>, <mcgrof@kernel.org>, <p.raghav@samsung.com>,
-	<linux-xfs@vger.kernel.org>, <catherine.hoang@oracle.com>
-Subject: Re: [PATCH v3 08/21] xfs: Introduce FORCEALIGN inode flag
-Message-ID: <20240613020453.GA2926743@ceph-admin>
-References: <20240429174746.2132161-1-john.g.garry@oracle.com>
- <20240429174746.2132161-9-john.g.garry@oracle.com>
- <20240612021058.GA729527@ceph-admin>
- <82269717-ab49-4a02-aaad-e25a01f15768@oracle.com>
- <20240612154342.GC2764752@frogsfrogsfrogs>
+	s=arc-20240116; t=1718245865; c=relaxed/simple;
+	bh=tTWzkbxfg+urrQczo838x0xEXLFwq/NcmeMWL5l/9sY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rUGJOKJ8aatU8pGFUC2YJutsLgIz88x1UDgr0h2g1cfFlkLVJR1+euxAYigMSCGpCkmLDzYrRxB20F9h2/in7qwp+yZ5dkDDAkv2TcvXaqVM5jbBWVnXJ+sHSXx9piOhISftVfHR9zft8abFN8v9lkngiD1UrbnvSNo0Ur8t9xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQ+G5u03; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2c19e6dc3dcso405185a91.3;
+        Wed, 12 Jun 2024 19:31:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718245863; x=1718850663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3w4iDYMbDQ8VqQWdAkr+pXXK7YGM0mHCHQpTjjn+CA4=;
+        b=kQ+G5u03slM3vGoA++DIeIjAI5yjQWxnhqwz34ghdJ4P3w68VMFzXcQ3wk3SmnVMJb
+         gaVV0d0cO6mPAnJF/B+owUlhoTwyxm1lSB9j+j4yZohWrbhvn23CKEUIcGIgChHsU0V2
+         N/AOcxDMgmau20n9TvFZ1BSq4lGdn9QtzYNaHycwNKG+aKrmQbIxEwyLZtz+DrM5qrle
+         6s+E7KHlPRzD1g2qQ8l6up/DIm8w32kontUMEQxKby1VFoizw4phqQ1gjd2bOAD5XuFg
+         twbSGIBFAsDaEdFqSyjL0hfRXkddB0ZdaHqbtjEhrXIrczJayDQtYkH4bvSJPRI86GGT
+         tnhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718245863; x=1718850663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3w4iDYMbDQ8VqQWdAkr+pXXK7YGM0mHCHQpTjjn+CA4=;
+        b=jeP3SwyAfU7Hur9spyxlk/pCqcYku5Mv20u4I85LiX6Zzks7eKYt5bJhowyI/NoPbw
+         tdpDXpQmkDmN3L0QthCafNuR+zkFY7F2a1RRP30/B61chBXFo+hLELdT92LxVwxp07aA
+         Z+MBeeRyDC2VqSZuJuqT7orJwvXISoafXgvE8U9obPPQtGk+pyxqWV+L+thfK0BNyStL
+         Xz+xwpLmlbk6zpO9HLctDoJLJgebjm3F8oGxaykDRCB+Unov4/d2TcVTHo3elw5pC//P
+         Qj6zWmBY9qoQSTUMWC5iqNFIbvHKZ9qdETuR0UyRG+M5BZ8cp2gaaHOgRlORgbdQCfik
+         3+cg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5zW0JGryqkUqOraNZPcC5MRi3pRwrf7KaK+zsXLaJmZE55dgQy5CnJ9Ibtx0GRR6k90VmNV/MhXr2GzOxsElj05RdWEpu7z0WFeKi2x5TnkXSttVpNV933UcyKAcLDvykF2cmIHTAWmGOgodUL/PkV7ZXfNxF+ImAmJKSP8pMwK/Tk3Jcmtzi2MjrGLnKAK5M5B7rQfuf5kn9CnMOB0eM9Ovm7jdp1FP6CmAM53bbGjgg8DbAzhMhXkevjnUbssp0hE7BLhkl+G8CuO0ebCocT3ia0Ud4stNjZ7TDaDmFo29qWg9IWKX1ORmlwIET1xeNFhU7Jg==
+X-Gm-Message-State: AOJu0Yz2PctFRdwXfgBuOlHz57Wq6dDy8NzV6kz7R8hSQS3wDeCZOtff
+	q77zHKZQ9fVro//WnW6qXIbv6vnNgcsq/VLGLimz4PIt32a/cbLq
+X-Google-Smtp-Source: AGHT+IFHNRfsiu51tV3Is/1VFg4pMq/OwH4IEvQ35DxqQ9O+7zGa5prTyMS/UUJ19qnEah41eexFNg==
+X-Received: by 2002:a17:902:c944:b0:1f6:ecf8:65e4 with SMTP id d9443c01a7336-1f83b5cf98fmr45292425ad.15.1718245862670;
+        Wed, 12 Jun 2024 19:31:02 -0700 (PDT)
+Received: from localhost.localdomain ([39.144.105.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4d159sm1755695ad.289.2024.06.12.19.30.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2024 19:31:02 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com,
+	rostedt@goodmis.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	audit@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v2 00/10] Improve the copy of task comm 
+Date: Thu, 13 Jun 2024 10:30:34 +0800
+Message-Id: <20240613023044.45873-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20240612154342.GC2764752@frogsfrogsfrogs>
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi500009.china.huawei.com (7.221.188.199)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 08:43:42AM -0700, Darrick J. Wong wrote:
-> On Wed, Jun 12, 2024 at 07:55:31AM +0100, John Garry wrote:
-> > On 12/06/2024 03:10, Long Li wrote:
-> > > On Mon, Apr 29, 2024 at 05:47:33PM +0000, John Garry wrote:
-> > > > From: "Darrick J. Wong"<djwong@kernel.org>
-> > > > 
-> > > > Add a new inode flag to require that all file data extent mappings must
-> > > > be aligned (both the file offset range and the allocated space itself)
-> > > > to the extent size hint.  Having a separate COW extent size hint is no
-> > > > longer allowed.
-> > > > 
-> > > > The goal here is to enable sysadmins and users to mandate that all space
-> > > > mappings in a file must have a startoff/blockcount that are aligned to
-> > > > (say) a 2MB alignment and that the startblock/blockcount will follow the
-> > > > same alignment.
-> > > > 
-> > > > jpg: Enforce extsize is a power-of-2 and aligned with afgsize + stripe
-> > > >       alignment for forcealign
-> > > > Signed-off-by: "Darrick J. Wong"<djwong@kernel.org>
-> > > > Co-developed-by: John Garry<john.g.garry@oracle.com>
-> > > > Signed-off-by: John Garry<john.g.garry@oracle.com>
-> > > > ---
-> > > >   fs/xfs/libxfs/xfs_format.h    |  6 ++++-
-> > > >   fs/xfs/libxfs/xfs_inode_buf.c | 50 +++++++++++++++++++++++++++++++++++
-> > > >   fs/xfs/libxfs/xfs_inode_buf.h |  3 +++
-> > > >   fs/xfs/libxfs/xfs_sb.c        |  2 ++
-> > > >   fs/xfs/xfs_inode.c            | 12 +++++++++
-> > > >   fs/xfs/xfs_inode.h            |  2 +-
-> > > >   fs/xfs/xfs_ioctl.c            | 34 +++++++++++++++++++++++-
-> > > >   fs/xfs/xfs_mount.h            |  2 ++
-> > > >   fs/xfs/xfs_super.c            |  4 +++
-> > > >   include/uapi/linux/fs.h       |  2 ++
-> > > >   10 files changed, 114 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> > > > index 2b2f9050fbfb..4dd295b047f8 100644
-> > > > --- a/fs/xfs/libxfs/xfs_format.h
-> > > > +++ b/fs/xfs/libxfs/xfs_format.h
-> > > > @@ -353,6 +353,7 @@ xfs_sb_has_compat_feature(
-> > > >   #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
-> > > >   #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
-> > > >   #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
-> > > > +#define XFS_SB_FEAT_RO_COMPAT_FORCEALIGN (1 << 30)	/* aligned file data extents */
-> > > Hi, John
-> > > 
-> > > You know I've been using and testing your atomic writes patch series recently,
-> > > and I'm particularly interested in the changes to the on-disk format. I noticed
-> > > that XFS_SB_FEAT_RO_COMPAT_FORCEALIGN uses bit 30 instead of bit 4, which would
-> > > be the next available bit in sequence.
-> > > 
-> > > I'm wondering if using bit 30 is just a temporary solution to avoid conflicts,
-> > > and if the plan is to eventually use bits sequentially, for example, using bit 4?
-> > > I'm looking forward to your explanation.
-> > 
-> > I really don't know. I'm looking through the history and it has been like
-> > that this the start of my source control records.
-> > 
-> > Maybe it was a copy-and-paste error from XFS_FEAT_FORCEALIGN, whose value
-> > has changed since.
-> > 
-> > Anyway, I'll ask a bit more internally, and I'll look to change to (1 << 4)
-> > if ok.
-> 
-> I tend to use upper bits for ondisk features that are still under
-> development so that (a) there won't be collisions with other features
-> getting merged and (b) after the feature I'm working on gets merged, any
-> old fs images in my zoo will no longer mount.
-> 
+Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
+length of task comm. Changes in the task comm could result in a destination
+string that is overflow. Therefore, we should explicitly ensure the destination
+string is always NUL-terminated, regardless of the task comm. This approach
+will facilitate future extensions to the task comm.
 
-I get it, thank you very much for your response.
+As suggested by Linus [0], we can identify all relevant code with the
+following git grep command:
+
+  git grep 'memcpy.*->comm\>'
+  git grep 'kstrdup.*->comm\>'
+  git grep 'strncpy.*->comm\>'
+  git grep 'strcpy.*->comm\>'
+
+PATCH #2~#4:  memcpy
+PATCH #5:     kstrdup
+PATCH #6~#8:  strncpy
+PATCH #9~#10: strcpy
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
+
+Changes:
+v1->v2:
+- Add comment for dropping task_lock() in __get_task_comm() (Alexei)
+- Drop changes in trace event (Steven)
+- Fix comment on task comm (Matus)
+  
+v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.com/
+
+Yafang Shao (10):
+  fs/exec: Drop task_lock() inside __get_task_comm()
+  auditsc: Replace memcpy() with __get_task_comm()
+  security: Replace memcpy() with __get_task_comm()
+  bpftool: Ensure task comm is always NUL-terminated
+  mm/util: Fix possible race condition in kstrdup()
+  mm/kmemleak: Replace strncpy() with __get_task_comm()
+  tsacct: Replace strncpy() with __get_task_comm()
+  tracing: Replace strncpy() with __get_task_comm()
+  net: Replace strcpy() with __get_task_comm()
+  drm: Replace strcpy() with __get_task_comm()
+
+ drivers/gpu/drm/drm_framebuffer.c     |  2 +-
+ drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
+ fs/exec.c                             | 10 ++++++++--
+ include/linux/sched.h                 |  4 ++--
+ kernel/auditsc.c                      |  6 +++---
+ kernel/trace/trace.c                  |  2 +-
+ kernel/trace/trace_events_hist.c      |  2 +-
+ kernel/tsacct.c                       |  2 +-
+ mm/kmemleak.c                         |  8 +-------
+ mm/util.c                             |  4 +++-
+ net/ipv6/ndisc.c                      |  2 +-
+ security/lsm_audit.c                  |  4 ++--
+ security/selinux/selinuxfs.c          |  2 +-
+ tools/bpf/bpftool/pids.c              |  2 ++
+ 14 files changed, 28 insertions(+), 24 deletions(-)
+
+-- 
+2.39.1
+
 
