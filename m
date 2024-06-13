@@ -1,234 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-21660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6721A907989
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 19:17:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A30E90799C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 19:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA1F2850BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 17:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A501C226D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 17:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E0A149C6C;
-	Thu, 13 Jun 2024 17:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E6214B08C;
+	Thu, 13 Jun 2024 17:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1Lf5nfg"
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="wmFoePTk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2118.outbound.protection.outlook.com [40.107.122.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4822412D76D;
-	Thu, 13 Jun 2024 17:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299030; cv=none; b=doUaXUZzpOeED7hTI9vIz+NmPw+RyxdVpemo7GCV2kLjtlNO8pHBMfxyKC6F2y337GWrptD24A+4bIlixGjFY5/ubHaQHS9YUZKZ6qNRaNMVCohcCowccx1mdT8wHG4i77n6iLjH4J6Mk8iYJRgS0pyZxCWItgu9DaSjTQ12kUc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299030; c=relaxed/simple;
-	bh=jK3DxrrGpz2IB47xLds5Oq/aEYITWHK5WI+jV1YwRbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CZyKZwyhf3UPRxivLhZZh1CRUzaDUllgtEhTRr+HF2WfqRW01SB/QHTt4/IhNUNtsNmdH3McO8zykmwemifPHQlikPj+KBQ/F2DojHiEi8RF+xQvubmuqw7SU+2WkdhXeWSr7ix0nnr+ZPiA2QppcE1PdhPgjHHssaFcdrAJ0sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1Lf5nfg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E8BC2BBFC;
-	Thu, 13 Jun 2024 17:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718299030;
-	bh=jK3DxrrGpz2IB47xLds5Oq/aEYITWHK5WI+jV1YwRbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N1Lf5nfgb8sQWT8EzdmLsdpFsJGItenCxlbTT/m0VLEjLwu4dp++rIWrw7h4fsfDo
-	 pMWOWzWrLC/W+VwIQbLvj0KccfXb0HpMpdGuqPP0rjU0kzVSv+rsY6RSwrAUd+POJg
-	 334HlLXizYTFmywJp2f6qyCM3F6W8W63KEP6iI/PfT+4q05Yhb7+1Z9WsSoAqWjqf0
-	 PACdY+OpbybgoCAiPpNvpLIHinEZUM1GJL501R4PHqZEQ3CgsulfAZw9sN5fYYrG1R
-	 DwVhIKTRPDLuZIwAwnhrNsiIE1+oTxdztoXQGeTvf1juPzLvIzWClnmtK4UQeh5ynf
-	 HN77vpCGidaQw==
-Date: Thu, 13 Jun 2024 10:17:09 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-	linux-block@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: Flaky test: generic/085
-Message-ID: <20240613171709.GA3855044@frogsfrogsfrogs>
-References: <20240611085210.GA1838544@mit.edu>
- <20240611163701.GK52977@frogsfrogsfrogs>
- <20240612-abdrehen-popkultur-80006c9e4c8d@brauner>
- <20240612144716.GB1906022@mit.edu>
- <20240613-lackmantel-einsehen-90f0d727358d@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB4D149C4E;
+	Thu, 13 Jun 2024 17:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.118
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718299158; cv=fail; b=beFcxHLnkovi33sFFQ2YYvdKkq4izPTLCY6/9ZrLBlq4jNd1df9GTvho7qce92onTiqwqKKdXTtiaWUJZLl7ZaOGKwkDqdxYVsdAbMF+R5+EgX9cZMsPXvEkaCXfTbAsOoIOipqNfrHzam37LwHkpqfsGr6zMD7ItaxqxYbrwM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718299158; c=relaxed/simple;
+	bh=ULQvyDMaTKFJJ8MDjXTcG5wfc5BrZkjsMtlnaDOmYTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tGsVU26hXgPg+RQDUKV5hNlLhfQeeee1D1APh9Mg4ZsRxx+ub0Zbp9Jnm08HAyy4RVzJBlk6dRHqlweaE3tnE0gIjnxdF77sHn6fSOylcD043M9dy6cjB6cFKPRd4XqJi/Safcs0ihpX8wS3y59waAvOj5H1MCWMx5eBVV18pxE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=wmFoePTk; arc=fail smtp.client-ip=40.107.122.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FpaI8cttgxXdooPo4xedgHalpRViw1L0olHk5KT2OIQCCrCSxOFKKIhutqgzd1S8CzWHBZIkwDPTYHepaf1SBfeqTvk98SZffJJNkmtkYi72BVtMcDEKdFCPGOIgztLiL3LTPXQ1gNAHO0VnWlVR1H7BmjWisTUxmzrYot9al5zyYdWDu1+DNY6rNN7OX2QMS2k4rQXLAJPn3MkikC6E8EhT0hSlZi9/7E0xQoyWktiMsFADJq1ZtPyuY806cReWuy8CR9Yup1SK3wvhLv/fRBwJivIPp6jXzHFrCX8J6C6IlU5VIkU4CAB2abZ7w4uFnWpZYk2oTOCq6SuKzkujZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3X+LMw5BeLD4uRX5+KpwHODtCEMyh2914cSrarChGBs=;
+ b=Jp4QzoZjv9VCl5hDB6hKIkKWdS3hHEQsPt8hJQp6jBWerlrSaEw6Z7ag087BFWEbB00hnQX1d+Q20ovVyeXEkvk4JrU3tOHsTyceEPBHKSWq0OTfqfcYPA02WTPeiMoMRxaWH/tIp73QrYt2dp9nbfqKjWrzcb2ZL0L/5MkngVTwaTA/mXIAwMj9PtnEXepoTy7LQoxcF3ehcyfNcEoWzZQLFYRvWGFENf3ZFGuBOKPUTTcSR1a14s+X8ev8dy7yg/AMa8qF2OdEEjgcog1gQ+d9mTOPUJ862K2PyByMom6o9FUHU0289rmlISK2eXPgDNuBAdY+s/QasJL+Ph41pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3X+LMw5BeLD4uRX5+KpwHODtCEMyh2914cSrarChGBs=;
+ b=wmFoePTkosCm03QrDYoI57zcgPjMDYDEEpR8yjXHdvnEnUbU28Epe1t1KqKz1sAyTJW9NooxyV27kd7y9FVFMZKjGf0QI0Q3HDMRQKW66U5pcUKv8i5ZZBUyn1Tc6ZGrAL/4QVncuKl2uuMKV58KQUhtQ5b2ph8ifUTXUO11W8s=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO9P265MB7760.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:3b7::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24; Thu, 13 Jun
+ 2024 17:19:12 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%5]) with mapi id 15.20.7677.019; Thu, 13 Jun 2024
+ 17:19:12 +0000
+Date: Thu, 13 Jun 2024 18:19:10 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida
+ Filho <wedsonaf@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan
+ Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>,
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>,
+ Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>,
+ Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland
+ <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
+ dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <20240613181910.74db809c@eugeo>
+In-Reply-To: <ZmseosxVQXdsQjNB@boqun-archlinux>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+	<20240612223025.1158537-3-boqun.feng@gmail.com>
+	<20240613144432.77711a3a@eugeo>
+	<ZmseosxVQXdsQjNB@boqun-archlinux>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0287.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:195::22) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613-lackmantel-einsehen-90f0d727358d@brauner>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO9P265MB7760:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79560d9f-84a4-4c66-2356-08dc8bccf172
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230035|376009|7416009|1800799019|366011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?U6wss7/b9fVAOrEp/ie+Lw01PhK/AESz8H3/ZH4TAGALQ6IvEPebZbHKIG2M?=
+ =?us-ascii?Q?N+1cRPp8m7A4Y1NhAbSWBKISngGcIGS75LMGSYCIAawYRlsicmHe893YM2Ag?=
+ =?us-ascii?Q?ASqqVpyCUNhlyipFkNJP0D0jgS63hJGLDGPQq1ZT7wGccIXJP7sC9j3zpAAR?=
+ =?us-ascii?Q?nOfKj2+GlhvTMZIN/5nLM/LBDkNMB/UwREyX2ie3bTOfp6FiCYbBnMl84Iap?=
+ =?us-ascii?Q?sHdVjKpkPprqzB1D9QrBzjlWtixThta3uZgOVjp18Kz1TsNrLvk1o7P6X3+Q?=
+ =?us-ascii?Q?9Y5sRRgDTYtzJH0YaBdtw09oplr7d8KlUVjREUBw9CkBTLzKuEPj+WRr8Qey?=
+ =?us-ascii?Q?KuTMEbNUL7kowQIFbmn0L+8yptgkq1lyNqOwFKsMuMWW7fK9sW5tSQ2fbjms?=
+ =?us-ascii?Q?ZeWpgRvrH9eOjrwEJdIvXNyGk0thuXwcRMPasaCLI86QQr2qSJrDUqht2jmh?=
+ =?us-ascii?Q?w9LWW8JzE+HCq8gWKInc2/LiKo5j1onqy+MJ72kqXAM50Zl9ZZE/TX4FQpRI?=
+ =?us-ascii?Q?BhULRLkGEo1jUBsC4VrLY9nj0FgV4MU7f18JDXGTGEVvbygU/I3Vha0jZdUz?=
+ =?us-ascii?Q?PBYIxgvzO5cdG6AcU+rlQ0f3pdjLAIanOZp/INaPwKIMBYSAHQnm+neZZrNh?=
+ =?us-ascii?Q?4dqALPinNTjSO60w2aIk7MfBplTkXBPRbeagVNS0n3lVw0eqrbz5yvUrycxl?=
+ =?us-ascii?Q?uGgRA8AKt4J+C6e6o3tWjpWwzcGAPy4Qax79DQv6cxxEzeYUKF9X0ULyVRBQ?=
+ =?us-ascii?Q?2+JktQbCGqGSteCLxwi+y/3yMGYMH51UcLLpbscuhQD2cKgi2iwcV1H0XkiZ?=
+ =?us-ascii?Q?2ROcQKLGZXQl0xc03jvEzGFS676tW7c3Dna3OzeccLotCfGSRwFEum7IQT4p?=
+ =?us-ascii?Q?s3hdFSbDrCxreA8ouVwIN3wzFsFRHoNG2QL/7aCE9y2ZxkVPTJ0aMspVXT5W?=
+ =?us-ascii?Q?Ks6Aqua6oHAHXR1n/w5mee/SzR5hE8N+0mwVwsG93oAPNnY24nyvrjmdyjnE?=
+ =?us-ascii?Q?I0+ukXTeTQqIDJF4FKEVwE7cvK2AcqGvbl+NEUvvYxoxM9j6jRug5AWSe0DW?=
+ =?us-ascii?Q?Vca/JrOa/JaKJghmlw04pV+tW4xpNF+xDjEFZ7yDfDX4BqFE2o9i95+8ngbR?=
+ =?us-ascii?Q?1pWX85C62U/SioFIUjGs55MQmbuWK/DcBg7xd+DFrBFigyYpEoZu10PCNXSG?=
+ =?us-ascii?Q?A5k2Qzfk43oHsZ6RvZxqS5tLKsFySjVhZ8GmSEJKWrrDgfFL6jBFDYEVYZ5G?=
+ =?us-ascii?Q?6Zo3bJSBcP1E8rmBIJLw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230035)(376009)(7416009)(1800799019)(366011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RHNG2x6SwDE5iCEHZXMc/lucISQQAQgG40p2JdjXjTz03uisbY41/JoVjvpv?=
+ =?us-ascii?Q?DLxpw7XeTk+pTXyRB20s4j+ArTs3/S348YOnoK2qfnsreleMpn5NAwrgdTmH?=
+ =?us-ascii?Q?f72fU5Hi1/FkATEUwDRsEe3t1THnp5/gTRlT0RWkX/THXLM7KO9PhhUXPlFr?=
+ =?us-ascii?Q?nO2GtJfoCDZIfhDFrfvbdeW0gzinXma0Yiqy0Q5gquMj2tPHyJw9ftst2/8/?=
+ =?us-ascii?Q?5lae4fz5l1JXrCcdwN9kjB1VURcugLzGhMmCXjSUfrMD3hWyea6nr8D06zrU?=
+ =?us-ascii?Q?dFMbMGn/ICawnrxgUDOY86foad8/VjYiosxKOVFfT5j1r7G6Fe39ejQuITcs?=
+ =?us-ascii?Q?QnQEx0os6Bh26deuZ1znh/eRsYXr+8Cl+G53GN4YVUe2WQickiU2F7t6CanA?=
+ =?us-ascii?Q?e12/dXAJCR2LgOk3jw42mE3rByMh6g1Nc8PwdngIE4kOmV2hPgLn2gL1Qp0y?=
+ =?us-ascii?Q?Xg4QydRrtE+jHiQyCXzWWEEl8v6CyIizK7dQ0gE/KqflKxZXPHmZ9hhUIUgg?=
+ =?us-ascii?Q?snvIQbFFUEnGc29V3lOzz0KkU2wtnjBD6VXf5MVG2GOWW7E/X+/GgV8hqP+z?=
+ =?us-ascii?Q?5c4DPMn2i/pE0abNoKj/Z/jV1zEldJcEPehtj5dez0EMIDapfDK2DDdamYI3?=
+ =?us-ascii?Q?92H4e2OebvS/4Bjpeg02Zd2ufxUvBKlizD/ect/nvzVbI0CTU+D3B9vte7bo?=
+ =?us-ascii?Q?tieQnQWwZhQIBWIHp3PZCsyzjuLoK+NPg2oNzirtVmfmNgOvssn2s9G3AY9h?=
+ =?us-ascii?Q?7u6r2qCh/iCrVQGDDjxqPy1MWoXKmk8c9ZNyhNPE+EmRWz9P5zOGW0ixckxJ?=
+ =?us-ascii?Q?jjBuF+iFqMbQGU/op30h4SSsrpgd66mbtUx03I4EHxtmhUeGF0FihcUHAuN0?=
+ =?us-ascii?Q?avrKEZSpmdzp06a0Oe4g3P34F4eWfYG07UYHB5YGnTZ2XnJ29ptF3XyWmn7H?=
+ =?us-ascii?Q?ao+WXN79zadgiWIu5M1aXj7q98QX/Qy/ITR3q0lJjq4p5atsPrMo66MxyKjD?=
+ =?us-ascii?Q?7ZkE5FMtot0UrRyGAEp+R/PM/MN5jN3mnDMtQCWLvNd+RRa4fF7gW9vw7fve?=
+ =?us-ascii?Q?nRRYX8C5ovafWfSN26y3wFIMJH6PdFM9wRBjWECWNEeb6yinSxVGHigL8q45?=
+ =?us-ascii?Q?yV78MM5gU3JbbeMpBxdet+JkRSNWAUM3UEtkAxTVh8ny79cwj3eaPkDrW+JK?=
+ =?us-ascii?Q?VjAi1UWw0M6nZCFLUDE3GBFrSQ+oStv42BROcyxwgfIWqmgVRvBU5y5uRCi3?=
+ =?us-ascii?Q?3qTvjEYYwk+hW++Uv0y8XZ1sBg8vFaAxDOC2C235cJ/xev/sn0Nz5dLQ4kAh?=
+ =?us-ascii?Q?hGpszRALiMdH71wLRHB5bdNAr6ddQem3f5Q3D58g0dT8TE3poEzemHF1LuFC?=
+ =?us-ascii?Q?phKADylw9kq8bwhsyOokOvQedaH1FvojTMH7XbfZjkB3otOWMPK4p+0QwUXM?=
+ =?us-ascii?Q?3ormOxtIaoW10WwH/eO0GgpWVxkFmYgz3m8nRlRb8lJCW91kyxmYsYk6CKNt?=
+ =?us-ascii?Q?Jj4CM27ssb6sbwQs9G4yLHixjt66d641EEtj6VJKP1uR2P+OHOcEjVL64a5V?=
+ =?us-ascii?Q?GPWtBSmf9a2HZczkNQvICOwWUsouyuCyhEf7nA8E?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79560d9f-84a4-4c66-2356-08dc8bccf172
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 17:19:12.1616
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fT8x6yZZy3OIvuAQ4OfZvO8cRk+glYF+vVJ3uDT/aw0jpit6BNw/8jDjggaAay7y1xMtBJyGNMVLpKpSV9IFnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO9P265MB7760
 
-On Thu, Jun 13, 2024 at 11:55:37AM +0200, Christian Brauner wrote:
-> On Wed, Jun 12, 2024 at 03:47:16PM GMT, Theodore Ts'o wrote:
-> > On Wed, Jun 12, 2024 at 01:25:07PM +0200, Christian Brauner wrote:
-> > > I've been trying to reproduce this with pmem yesterday and wasn't able to.
-> > > 
-> > > What's the kernel config and test config that's used?
-> > >
-> > 
-> > The kernel config can be found here:
-> > 
-> > https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kernel-configs/config-6.1
-> > 
-> > Drop it into .config in the build directory of any kernel sources
-> > newer than 6.1, and then run "make olddefconfig".  This is all
-> > automated in the install-kconfig script which I use:
-> > 
-> > https://github.com/tytso/xfstests-bld/blob/master/kernel-build/install-kconfig
-> > 
-> > The VM has 4 CPU's, and 26GiB of memory, and kernel is booted with the
-> > boot command line options "memmap=4G!9G memmap=9G!14G", which sets up
-> > fake /dev/pmem0 and /dev/pmem1 devices backed by RAM.  This is my poor
-> > engineer's way of testing DAX without needing to get access to
-> > expensive VM's with pmem.  :-)
-> > 
-> > I'm assuming this is a timing-dependant bug which is easiest to
-> > trigger on fast devices, so a ramdisk might also work.  FWIW, I also
-> > can see failures relatively frequently using the ext4/nojournal
-> > configuration on a SSD-backed cloud block device (GCE's Persistent
-> > Disk SSD product).
-> > 
-> > As a result, if you grab my xfstests-bld repo from github, and then
-> > run "qemu-xfstests -c ext4/nojournal C 20 generic/085" it should
-> > also reproduce.  See the Documentation/kvm-quickstart.md for more details.
-> 
-> Thanks, Ted! Ok, I think I figured it out.
-> 
-> P1
-> dm_resume()
-> -> bdev_freeze()
->    mutex_lock(&bdev->bd_fsfreeze_mutex);
->    atomic_inc_return(&bdev->bd_fsfreeze_count); // == 1
->    mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> 
-> P2						P3
-> setup_bdev_super()
-> bdev_file_open_by_dev();
-> atomic_read(&bdev->bd_fsfreeze_count); // != 0
-> 
-> 						bdev_thaw()
-> 						mutex_lock(&bdev->bd_fsfreeze_mutex);
-> 						atomic_dec_return(&bdev->bd_fsfreeze_count); // == 0
-> 						mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> 						bd_holder_lock();
-> 						// grab passive reference on sb via sb->s_count
-> 						bd_holder_unlock();
-> 						// Sleep to be woken when superblock ready or dead
-> bdev_fput()
-> bd_holder_lock()
-> // yield bdev
-> bd_holder_unlock()
-> 
-> deactivate_locked_super()
-> // notify that superblock is dead
-> 
-> 						// get woken and see that superblock is dead; fail
-> 
-> In words this basically means that P1 calls dm_suspend() which calls
-> into bdev_freeze() before the block device has been claimed by the
-> filesystem. This brings bdev->bd_fsfreeze_count to 1 and no call into
-> fs_bdev_freeze() is required.
-> 
-> Now P2 tries to mount that frozen block device. It claims it and checks
-> bdev->bd_fsfreeze_count. As it's elevated it aborts mounting holding
-> sb->s_umount all the time ofc.
-> 
-> In the meantime P3 calls dm_resume() it sees that the block device is
-> already claimed by a filesystem and calls into fs_bdev_thaw().
-> 
-> It takes a passive reference and realizes that the filesystem isn't
-> ready yet. So P3 puts itself to sleep to wait for the filesystem to
-> become ready.
-> 
-> P2 puts the last active reference to the filesystem and marks it as
-> dying.
-> 
-> Now P3 gets woken, sees that the filesystem is dying and
-> get_bdev_super() fails.
-> 
-> So Darrick is correct about the fix but the reasoning is a bit
-> different. :)
-> 
-> Patch appended and on #vfs.fixes.
+On Thu, 13 Jun 2024 09:30:26 -0700
+Boqun Feng <boqun.feng@gmail.com> wrote:
 
-> From 35224b919d6778ca5dd11f76659ae849594bd2bf Mon Sep 17 00:00:00 2001
-> From: Christian Brauner <brauner@kernel.org>
-> Date: Thu, 13 Jun 2024 11:38:14 +0200
-> Subject: [PATCH] fs: don't misleadingly warn during thaw operations
+> > > diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
+> > > new file mode 100644
+> > > index 000000000000..b0f852cf1741
+> > > --- /dev/null
+> > > +++ b/rust/kernel/sync/atomic.rs
+> > > @@ -0,0 +1,63 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +//! Atomic primitives.
+> > > +//!
+> > > +//! These primitives have the same semantics as their C counterparts, for precise definitions of
+> > > +//! the semantics, please refer to tools/memory-model. Note that Linux Kernel Memory (Consistency)
+> > > +//! Model is the only model for Rust development in kernel right now, please avoid to use Rust's
+> > > +//! own atomics.
+> > > +
+> > > +use crate::bindings::{atomic64_t, atomic_t};
+> > > +use crate::types::Opaque;
+> > > +
+> > > +mod r#impl;
+> > > +
+> > > +/// Atomic 32bit signed integers.
+> > > +pub struct AtomicI32(Opaque<atomic_t>);
+> > > +
+> > > +/// Atomic 64bit signed integers.
+> > > +pub struct AtomicI64(Opaque<atomic64_t>);
+> > 
+> > 
+> > Can we avoid two types and use a generic `Atomic<T>` and then implement
+> > on `Atomic<i32>` and `Atomic<i64>` instead? Like the recent
+> > generic NonZero in Rust standard library or the atomic crate
+> > (https://docs.rs/atomic/).
+> > 
 > 
-> The block device may have been frozen before it was claimed by a
-> filesystem. Concurrently another process might try to mount that
-> frozen block device and has temporarily claimed the block device for
-> that purpose causing a concurrent fs_bdev_thaw() to end up here. The
-> mounter is already about to abort mounting because they still saw an
-> elevanted bdev->bd_fsfreeze_count so get_bdev_super() will return
-> NULL in that case.
+> We can always add a layer on top of what we have here to provide the
+> generic `Atomic<T>`. However, I personally don't think generic
+> `Atomic<T>` is a good idea, for a few reasons:
 > 
-> For example, P1 calls dm_suspend() which calls into bdev_freeze() before
-> the block device has been claimed by the filesystem. This brings
-> bdev->bd_fsfreeze_count to 1 and no call into fs_bdev_freeze() is
-> required.
-> 
-> Now P2 tries to mount that frozen block device. It claims it and checks
-> bdev->bd_fsfreeze_count. As it's elevated it aborts mounting.
-> 
-> In the meantime P3 calls dm_resume() it sees that the block device is
-> already claimed by a filesystem and calls into fs_bdev_thaw().
-> 
-> It takes a passive reference and realizes that the filesystem isn't
-> ready yet. So P3 puts itself to sleep to wait for the filesystem to
-> become ready.
-> 
-> P2 puts the last active reference to the filesystem and marks it as
-> dying. Now P3 gets woken, sees that the filesystem is dying and
-> get_bdev_super() fails.
+> *	I'm not sure it will bring benefits to users, the current atomic
+> 	users in kernel are pretty specific on the size of atomic they
+> 	use, so they want to directly use AtomicI32 or AtomicI64 in
+> 	their type definitions rather than use a `Atomic<T>` where their
+> 	users can provide type later.
 
-Wow that's twisty.  But it makes sense to me, so
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+You can write `Atomic<i32>` and `Atomic<i64>`.
 
---D
-
-
-> Fixes: 49ef8832fb1a ("bdev: implement freeze and thaw holder operations")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Theodore Ts'o <tytso@mit.edu>
-> Link: https://lore.kernel.org/r/20240611085210.GA1838544@mit.edu
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/super.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/super.c b/fs/super.c
-> index b72f1d288e95..095ba793e10c 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1502,8 +1502,17 @@ static int fs_bdev_thaw(struct block_device *bdev)
->  
->  	lockdep_assert_held(&bdev->bd_fsfreeze_mutex);
->  
-> +	/*
-> +	 * The block device may have been frozen before it was claimed by a
-> +	 * filesystem. Concurrently another process might try to mount that
-> +	 * frozen block device and has temporarily claimed the block device for
-> +	 * that purpose causing a concurrent fs_bdev_thaw() to end up here. The
-> +	 * mounter is already about to abort mounting because they still saw an
-> +	 * elevanted bdev->bd_fsfreeze_count so get_bdev_super() will return
-> +	 * NULL in that case.
-> +	 */
->  	sb = get_bdev_super(bdev);
-> -	if (WARN_ON_ONCE(!sb))
-> +	if (!sb)
->  		return -EINVAL;
->  
->  	if (sb->s_op->thaw_super)
-> -- 
-> 2.43.0
+> *	I can also see the future where we have different APIs on
+> 	different types of atomics, for example, we could have a:
 > 
+> 		impl AtomicI64 {
+> 		    pub fn split(&self) -> (&AtomicI32, &AtomicI32)
+> 		}
+> 
+> 	which doesn't exist for AtomicI32. Note this is not a UB because
+> 	we write our atomic implementation in asm, so it's perfectly
+> 	fine for mix-sized atomics.
 
+You can still have
+
+	impl Atomic<i64> {
+	    pub fn split(&self) -> (&Atomic<i32>, &Atomic<i32>)
+	}
+
+I see `Atomic<i32>/Atomic<i64>` being generally more flexible than
+`AtomicI32/AtomicI64`, without very little downsides. We may not have
+generic users but I think it doesn't do any harm to have it in a form
+that makes future generics easy.
+
+Best,
+Gary
 
