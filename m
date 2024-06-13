@@ -1,149 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-21640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287A1906EE7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 14:14:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A313D90730B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 15:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93F2BB26D32
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 12:14:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EBA2B23EAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 12:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EC4146A9A;
-	Thu, 13 Jun 2024 12:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE1E142633;
+	Thu, 13 Jun 2024 12:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpLx5daL"
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="HS2TOvkZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9830E1459F1;
-	Thu, 13 Jun 2024 12:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54868142654
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 12:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718280656; cv=none; b=LGBfSI5mer9YQbhCE0Kgjcwixa+0MK67hV7XIeVJ88Me5h5N+UgK0jYHtHY+yMktJkQcst9JMEqQGKmcWoINCYN0yESjoQSNT40zwinIrvHiNDHj/t4d0XiyvSqAgOrSbW3LbfSxGm0RlbqyyxFkEru1dmEbIgu/DdpIk1JQI0c=
+	t=1718283480; cv=none; b=FdBrkb9G3otBOrfXiIIGvBzQF989Y5TCpPoR62jMQU8wNZGTRuYle2RgRqerNtwYAIKm/Py0IhJEK8wB+8jqex4cUXk8+0E38Gfx+eJfpt1fB5UbSqU1zxhs1sG5l+QwwslTn04so8UT6eHlYvbP1DifjAMGAO87H+d/mmr929s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718280656; c=relaxed/simple;
-	bh=H9BiII9YUZgE5S9VCr50+FtSHFlNjcFnzHb9qUOtYcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u41sFb8t6abD48V3d2sEJ6w6HTWq//aiJarmr3Q6lLxIePbwSr5JyDFNFLN6mlAep8IxihH4Ye3OQ9XhxwEfNJB+vfQS9KQIrqU2/bs/GtVRdRx1rXITHEvHXPnfy4Chjbfah+tPtrnM0PZzGe+S/dAW0RIBchUDMj9XaPDWAW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpLx5daL; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62f86abc8abso10153057b3.0;
-        Thu, 13 Jun 2024 05:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718280653; x=1718885453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jilhcaruJb2IBiLjemWE46i5/PUFqJsWXVunml9StIM=;
-        b=hpLx5daL6vNpOfWV4Fef5kfL4DjNXjb2vErXr7bBYlrXes1/hJcYP+dFNZ8YNqxyLx
-         Z5zmHxG2DYAIo76SD7I6u8sJS8viNL/AAzQOh0L8WMXCy6cjZ2pzKlN8m/2zkq3rK9Ws
-         AkEglgy49r/YFPWisRqg0H81QICipnuuoAj5sZg9aej7eA2yJW1m5wrqiCP+CLL9mVrF
-         9/m2nbIvJ7MJsACfshNSjeUc1s4j3gYWP0uQa0Xc1AY9z5GbFvWTQBB2XvrSNfgyHtCW
-         9qhmjc4Lf4iAwoXbn/pv1v8f7dQCjj3BLvHw9IrVNf42exHpl2N12AYm1Fcz9d50k1Ha
-         hFsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718280653; x=1718885453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jilhcaruJb2IBiLjemWE46i5/PUFqJsWXVunml9StIM=;
-        b=bPbTB4/Js5dLXnArVEJsgM0U4yD5c3LDTny5dBCezxnQzdka5WPzW4R1thfDxePrST
-         yjg/c6DaEVC+gOOnaNNZpRVTjK/KDBlNkNwuu5zY61vkHawc9497NWRIOyhA0PHYeEqr
-         3D5EJywvvr3y3FJWTHR+ysvc6Tnr6KBqYnYX4RtR+MEVXWBLxBxHhDp4DxvtzHlck4K+
-         BoXSjxrt6i/cQSe9gTbuNm75O+3ZrEwqe1X2oVhuBNVUViIYU8NZCzLjgqmwGwfzRbh7
-         v1iFwOoDWrkElfzoLsIrxbWEKX3QT4NDkP4N1oscgYYiU2C+IwmM7mjyWvLR1NjKjyzQ
-         kjtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWp3EZjm0QKRpYHJsylbAQ1PB93AG+mc5+cVx+IZB55Zq4CLV+d3LoJhymLHCo4Z3LnTrXKQmAZaO1bmF4leZJMWltxNvchAarAHzY1v/5D0iLpZkhzodOyEcE7hQul0kgWfGqmsnmjvr0ekrnGNH7puOlzggJbCTtq6XuH6KfiSvwUP3TU90+GTGKxPH1LL5Q0saQxYd+tvjwMDyHFTvO7yEKBjvce+d27EszhPX4x6gNDG3Tp/i6TejKOudk81VHKfF2vBiyQGDgAUWedrv+Htg3dHXtdN6DfX7OjWzDvvZ87rjhsH5CpY+bgZKcCMoLqTRU/hA==
-X-Gm-Message-State: AOJu0YxKnSzMvK473IntlLzPBskKGebiieCaxXtMpat8SOswUYUhwtBE
-	yGhFNFEiy3cSTLItuihb3PFwVlbVEYHxnAhO4ux8m0jfv06M/CR+j9wFIXLwlg8BnPhbHK9uSuo
-	d8KwEZ/NmALKeYYfqHCrVSNGb9Aw=
-X-Google-Smtp-Source: AGHT+IECeNpAbuMBJduU/4vfo0TDc0y586W3/bKZ6gp1RqZAixArBbb8xY+5b1a7GzKTFusgDcdldUI00nJxS7Gmy8k=
-X-Received: by 2002:a05:690c:6683:b0:61a:c316:9953 with SMTP id
- 00721157ae682-62fb857416emr57999367b3.11.1718280653503; Thu, 13 Jun 2024
- 05:10:53 -0700 (PDT)
+	s=arc-20240116; t=1718283480; c=relaxed/simple;
+	bh=GaTesfPa9KfN379uX/kTNQ2N9B7b1rKEDZkn7BXqo3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tR+6wNzWuR2b0kWDVjxL2n0c5j4iZND2yEYDAAxJyWyYVVZ/VNC4ev4i9UjfFXexFdRFek9KCOUQvbtFAaze6S7Zt7IhtqZJPx1jeCHFcDlBWJRwQC0fn7xwad1SWjfQf+33VhUfS+fi0GD8jyIV3QNBhSRhIVzjugeeYqAwlXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=HS2TOvkZ; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AF49EE000F;
+	Thu, 13 Jun 2024 12:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1718283471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ln17ZxRL+upVh68wnbTdi1KTA2jYfvXcMhNeLfk448s=;
+	b=HS2TOvkZeG68w8F8vNWzKEgAX22dLWuSPHlDvOdcAPBycdM7mjvCte+RRtlAbl3VFoiZj/
+	qPcNES9ddnnPHYkw/e8p/WKEf/zkC4Zxr4c8IVlFQx0SiX76phFUUJOW9DSAh1TTJsqPhx
+	I2pKDrlruxBKZn2mTt15ASOW9pmAOVatGGVjIjboWTEiG6ebFdHH5p0J5lU89Exyg05WkH
+	lbazXqjFMXfxCLx/I9Mj2kfhC0BPiYk4viK2Cqr5rzIx22blshbo71cjUkgxCfj2XlPhEq
+	gLjvufC8BxaTKgwzy0DCeiIQsmaw3NWiV8L2srBMZ/90k578XQY2eQ21MsSyxQ==
+Message-ID: <ba441a7c-28f8-49c0-95b9-71a586007e44@yoseli.org>
+Date: Thu, 13 Jun 2024 14:57:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613023044.45873-1-laoar.shao@gmail.com> <20240613023044.45873-7-laoar.shao@gmail.com>
- <Zmqvu-1eUpdZ39PD@arm.com>
-In-Reply-To: <Zmqvu-1eUpdZ39PD@arm.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 13 Jun 2024 20:10:17 +0800
-Message-ID: <CALOAHbB3Uiwsp2ieiPZ-_CKyZPgW6_gF_y-HEGHN3KWhGh0LDg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] mm/kmemleak: Replace strncpy() with __get_task_comm()
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Issue with JFFS2 and a_ops->dirty_folio
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-mtd@lists.infradead.org, willy@infradead.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-m68k@lists.linux-m68k.org
+References: <0b657056-3a7f-46ba-8e99-a8fe2203901f@yoseli.org>
+ <ZmrV9vLwj0uFj5Dn@infradead.org>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <ZmrV9vLwj0uFj5Dn@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Thu, Jun 13, 2024 at 4:37=E2=80=AFPM Catalin Marinas <catalin.marinas@ar=
-m.com> wrote:
->
-> On Thu, Jun 13, 2024 at 10:30:40AM +0800, Yafang Shao wrote:
-> > Using __get_task_comm() to read the task comm ensures that the name is
-> > always NUL-terminated, regardless of the source string. This approach a=
-lso
-> > facilitates future extensions to the task comm.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > ---
-> >  mm/kmemleak.c | 8 +-------
-> >  1 file changed, 1 insertion(+), 7 deletions(-)
-> >
-> > diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> > index d5b6fba44fc9..ef29aaab88a0 100644
-> > --- a/mm/kmemleak.c
-> > +++ b/mm/kmemleak.c
-> > @@ -663,13 +663,7 @@ static struct kmemleak_object *__alloc_object(gfp_=
-t gfp)
-> >               strncpy(object->comm, "softirq", sizeof(object->comm));
-> >       } else {
-> >               object->pid =3D current->pid;
-> > -             /*
-> > -              * There is a small chance of a race with set_task_comm()=
-,
-> > -              * however using get_task_comm() here may cause locking
-> > -              * dependency issues with current->alloc_lock. In the wor=
-st
-> > -              * case, the command line is not correct.
-> > -              */
-> > -             strncpy(object->comm, current->comm, sizeof(object->comm)=
-);
-> > +             __get_task_comm(object->comm, sizeof(object->comm), curre=
-nt);
-> >       }
->
-> You deleted the comment stating why it does not use get_task_comm()
-> without explaining why it would be safe now. I don't recall the details
-> but most likely lockdep warned of some potential deadlocks with this
-> function being called with the task_lock held.
->
-> So, you either show why this is safe or just use strscpy() directly here
-> (not sure we'd need strscpy_pad(); I think strscpy() would do, we just
-> need the NUL-termination).
+Hello Christoph,
 
-The task_lock was dropped in patch #1 [0]. My apologies for not
-including you in the CC for that change. After this modification, it
-is now safe to use __get_task_comm().
+On 13/06/2024 13:20, Christoph Hellwig wrote:
+> On Thu, Jun 13, 2024 at 09:05:17AM +0200, Jean-Michel Hautbois wrote:
+>> Hi everyone !
+>>
+>> I am currently working on a Coldfire (MPC54418) and quite everything goes
+>> well, except that I can only execute one command from user space before
+>> getting a segmentation fault on the do_exit() syscall.
+> 
+> Looks like jffs2 is simply missing a dirty_folio implementation.  The
+> simple filemap_dirty_folio should do the job, please try the patch
+> below:
+> 
+> 
+> diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+> index 62ea76da7fdf23..7124cbad6c35ae 100644
+> --- a/fs/jffs2/file.c
+> +++ b/fs/jffs2/file.c
+> @@ -19,6 +19,7 @@
+>   #include <linux/highmem.h>
+>   #include <linux/crc32.h>
+>   #include <linux/jffs2.h>
+> +#include <linux/writeback.h>
+>   #include "nodelist.h"
+>   
+>   static int jffs2_write_end(struct file *filp, struct address_space *mapping,
+> @@ -75,6 +76,7 @@ const struct address_space_operations jffs2_file_address_operations =
+>   	.read_folio =	jffs2_read_folio,
+>   	.write_begin =	jffs2_write_begin,
+>   	.write_end =	jffs2_write_end,
+> +	.dirty_folio =	filemap_dirty_folio,
+>   };
+>   
+>   static int jffs2_do_readpage_nolock (struct inode *inode, struct page *pg)
 
-[0] https://lore.kernel.org/all/20240613023044.45873-2-laoar.shao@gmail.com=
-/
 
---=20
-Regards
-Yafang
+Thanks, I did implement this one, but now I have another weird issue, I 
+don't know if this can be related...
+
+When the bash command is launched (my init command is init=/bin/bash) I 
+can launch a first command (say, ls for instance) and it works fine. But 
+a second call to this same command or any other one juste returns as if 
+nothing was done... And I can't even debug, strace fails too:
+
+execve("/bin/ls", ["/bin/ls"], 0xbfb31ef0 /* 5 vars */) = 0
+brk(NULL)                               = 0x2ab7c000
+atomic_barrier()                        = 0
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or 
+directory)
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_LARGEFILE|O_CLOEXEC) = 
+-1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/lib/libresolv.so.2", O_RDONLY|O_LARGEFILE|O_CLOEXEC) = 3
+read(3, 
+"\177ELF\1\2\1\0\0\0\0\0\0\0\0\0\0\3\0\4\0\0\0\1\0\0\0\0\0\0\0004"..., 
+512) = 512
+statx(3, "", AT_STATX_SYNC_AS_STAT|AT_NO_AUTOMOUNT|AT_EMPTY_PATH, 
+STATX_BASIC_STATS, 
+{stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_CTIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_
+MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=43120, ...}) = 0
+mmap2(NULL, 59888, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) 
+=[   15.830000] random: crng init done
+  0x60022000
+mmap2(0x6002c000, 16384, PROT_READ|PROT_WRITE, 
+MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x8000) = 0x6002c000
+mmap2(0x60030000, 2544, PROT_READ|PROT_WRITE, 
+MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x60030000
+close(3)                                = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+openat(AT_FDCWD, "/lib/libc.so.6", O_RDONLY|O_LARGEFILE|O_CLOEXEC) = 3
+read(3, 
+"\177ELF\1\2\1\0\0\0\0\0\0\0\0\0\0\3\0\4\0\0\0\1\0\2\324\n\0\0\0004"..., 
+512) = 512
+statx(3, "", AT_STATX_SYNC_AS_STAT|AT_NO_AUTOMOUNT|AT_EMPTY_PATH, 
+STATX_BASIC_STATS, 
+{stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_CTIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_
+MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=1257660, ...}) = 0
+mmap2(NULL, 1290920, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 
+0) = 0x60032000
+mmap2(0x6015e000, 24576, PROT_READ|PROT_WRITE, 
+MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x12c000) = 0x6015e000
+mmap2(0x60164000, 37544, PROT_READ|PROT_WRITE, 
+MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x60164000
+close(3)                                = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+atomic_barrier()                        = 0
+mmap2(NULL, 16384, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 
+0) = 0x6016e000
+set_thread_area(0x601759c0)             = 0
+get_thread_area()                       = 0x601759c0
+atomic_barrier()                        = 0
+set_tid_address(0x6016e548)             = 28
+set_robust_list(0x6016e54c, 12)         = 0
+mprotect(0x6015e000, 8192, PROT_READ)   = 0
+mprotect(0x6002c000, 8192, PROT_READ)   = 0
+mprotect(0x2ab72000, 8192, PROT_READ)   = 0
+mprotect(0x6001e000, 8192, PROT_READ)   = 0
+--- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_MAPERR, si_addr=0xc00815f4} ---
++++ killed by SIGSEGV +++
+
+I suppose this can be related to the ELF_DT_DYN_BASE address, but I 
+can't see what is going on yet.
+
+Thanks,
+JM
 
