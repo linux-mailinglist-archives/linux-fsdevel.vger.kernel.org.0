@@ -1,239 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-21633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD61A906A70
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 12:50:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5D4906A85
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 12:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F8C1C23EA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 10:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FA41F2501D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 10:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4EC1428EE;
-	Thu, 13 Jun 2024 10:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553A41428F7;
+	Thu, 13 Jun 2024 10:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Suh0MZp8"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="CcTrZmH2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B433142631;
-	Thu, 13 Jun 2024 10:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5323142649
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 10:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718275848; cv=none; b=V1k6sAotTYnRP2i7c8x98m1nnkSI+UextxQIm/oSp6kIg7gYC3Du8OV/sCrOgrfyjriTAkFt+fv9qKl6JBYtvDBCw3rpM3rDBSWlTSkrfz8+qlhjD7iIZz2KvUmxQvlHb04GS6dYDT1GBMO4oK4rEXyz6i1Kliq377oaWHdKpRA=
+	t=1718276173; cv=none; b=Jc+oo2TU9S6ppsSp+XSQEmCFdiRFGuum5quAucD/CxZ53iv5Zb4UpW4ksBFkmeyrSNJ9Oy5u3tsZR85Sb5JkLcPqUjQhEhkb51Swd0A6ibf4i/LTntZUCWpUL6dRXOMhBmW+6rvDcsqkPv/3XNgRP68OaRW7DDaY8r7XoFiI/RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718275848; c=relaxed/simple;
-	bh=5PRbk3AfRxbmJsHY0erLSVKn/uDgUayeXpe4gOIVmlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIvGN64D/Mo6K1X2HtTjk6vf2BwmLBy3CSZrIespwsZKsZYkgAP5n60Zr433haHwYXBDc8NH/yKKZRLIqRGBY21n7DP2je1cLEzyAR8aSJVJYwRd+WqIKYkO3LyQGrDunFky0vT2TBJe3qXS6OqJeShwfr1c1I15g3OMROg7N4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Suh0MZp8; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso863037e87.3;
-        Thu, 13 Jun 2024 03:50:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718275844; x=1718880644; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fUOHZLqPwwXewI3YyWEmg6L7w15o022jE/kig0+VapA=;
-        b=Suh0MZp8YF4qHrKXVTrCOdV8n9EPWY7fM2h4RzPB/Gckxu/0f9/RsgSs6k/CXA0Jyb
-         sFX+x3Wc/EYc9qMl1VB3oN6GuFtflBVzhPnBoZIBrGLeFwL0JruSqVN2SyVL0boKWPws
-         fvHoEAmbsepM2PmVOGE2P83PPBvvuxpZnA85++heeXiPztUsyDokSmLbCPzAqeZkyCX6
-         ACtFplHHb38yA413WjLGPWWaN0gBLQnxDJ5FjgoMDHzPzpA+e5EvaWxvanIh7x0W6FrQ
-         GVlLE17z+CByZu4+W9gMnziA6Trnp/uWaK+e2KTWJePI4TPdfwP4udlXU9of6YhRa8Ev
-         WWdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718275844; x=1718880644;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fUOHZLqPwwXewI3YyWEmg6L7w15o022jE/kig0+VapA=;
-        b=VQDoaYVhzUITmCDZMPKZXb2xpxPMaZb2+yUxf29VdsOYzikXbxb7YySVxb85cFMfXf
-         Yz6d3P1DKa5otS3/UIKwKEJB5cyzoPR7UGN/85OcdlpB1Gs1bPs8qQKiW7wyp2l1PT/C
-         I5p/0qstw6Xw2GQ8klcIRHqYr3YN/Hk7Erq329C3HA0XeKH/725HPeapi+w/zL2ZqpUT
-         Zg7Md7GihogsKDLGZrLQkrHv9ShOlTWxTVR+ORPzjQkoi20Lus8ulve1HMNEk0TAoXay
-         Q8yw5ApyqY2BwRrgy6MYNzdZ5CHpFzUNuGJtrWamlaB7mjM4cqYBCkYc3MUbDI2qeXrh
-         R4dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFHxWFtPh4LbYJ0cF81yKk4oVD07u4cmm1kqAX9/flP+Bv9dQDwcPmaPV/XnZZDz59/EXBKp+dZpSITch+1BN3zE/6Lb3vwMFhJGquNmLxjFhRn/lcBXJ1kGlHGXmCV0ZbUBZKWhSq3L4Kaw==
-X-Gm-Message-State: AOJu0Yxw4tSWyDpxFwWwjevQfnkDmvWQI6+g6irwFyOgmd0uJAPdMepQ
-	HHwKgEy62jD9JgTG9uR0pAfwkX1PobY+wZmvEpSysFOl9eiIa9qR
-X-Google-Smtp-Source: AGHT+IH93LYEQhVEqIb57xnnF/55QOQGdtPtYnsX4yJPnd4maXAVHK2AIf1PLyUJrGR3305p67PJKA==
-X-Received: by 2002:a05:6512:34cd:b0:52c:9c33:986b with SMTP id 2adb3069b0e04-52c9c339b6dmr2319972e87.8.1718275843953;
-        Thu, 13 Jun 2024 03:50:43 -0700 (PDT)
-Received: from f (cst-prg-88-61.cust.vodafone.cz. [46.135.88.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422869d4f2esm57976275e9.0.2024.06.13.03.50.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 03:50:43 -0700 (PDT)
-Date: Thu, 13 Jun 2024 12:50:35 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
-Message-ID: <ly3nx2r4cbnvhlwcficugq7zj62xij54mzuyjowcwaucbvkwns@nuxskfzj6lvc>
-References: <20240606140515.216424-1-mjguzik@gmail.com>
- <ZmJqyrgPXXjY2Iem@dread.disaster.area>
- <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
- <ZmgkLHa6LoV8yzab@dread.disaster.area>
- <20240611112846.qesh7qhhuk3qp4dy@quack3>
- <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
+	s=arc-20240116; t=1718276173; c=relaxed/simple;
+	bh=8ZVN8+U0P3E0+x9V5CqToR4oe+PJJ07Cros3TZTQwlo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KXHtFu+SywRKWF+eASBISdjobLMsPubg2lY/Gm2b5FKvQfgHHLnNVHMlCPZ9dj19sRwCNgYK9hhTUMZP8VGbgC5zNdLviGE60+jWTIdd/NJfpQ8Za6cyxxLcDTVYkpsRDyuhvzEsP8uun27ew1ouseB1806K8juET5wGwqaVqYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=CcTrZmH2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1718276167;
+	bh=aeaFWlKbMkYQWJHoJBHcj/gpPULZP3g/VUesCefZyL8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CcTrZmH2G4VorT9I1SUm21UKRDH2lB0KXeAK1y0H/yiEQAFuGwVNQAvQ4gW6h6neu
+	 qqEgq6E90iW/xTX3pX1XkfZTXrYIq+8+OobzCactVht7N6eYUZbRnudM0EsraHQNDA
+	 yOTzMIS+DapgJBkPUnukjl2zSucfbKv08jpgjuCO7jxqasekj7pZG4TbwN/NutZ6WR
+	 f3PFPtLNfnRXM8iyCiSnePU+uuEHcvi9a+WMYggr3Q6pPF9CAZsiy8/OAazlbrpC+2
+	 oI2Hf5HLHSS3FGztDx77VOrVIywoSDSBoY/8rzjHoVJdzmljaZd0E4W0OMFbG0pl0f
+	 6KSdZwLTo959Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W0K8Q2XSRz4wbr;
+	Thu, 13 Jun 2024 20:56:06 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ Alexey Kardashevskiy <aik@amd.com>, Paul Mackerras <paulus@ozlabs.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC] potential UAF in kvm_spapr_tce_attach_iommu_group() (was
+ Re: [PATCH 11/19] switch simple users of fdget() to CLASS(fd, ...))
+In-Reply-To: <CAHk-=wgf4yN4gGsGQOTBR_xE0q-9fB04omufZk2gnBRZ0Ywbiw@mail.gmail.com>
+References: <20240607015656.GX1629371@ZenIV>
+ <20240607015957.2372428-1-viro@zeniv.linux.org.uk>
+ <20240607015957.2372428-11-viro@zeniv.linux.org.uk>
+ <20240607-gelacht-enkel-06a7c9b31d4e@brauner>
+ <20240607161043.GZ1629371@ZenIV> <20240607210814.GC1629371@ZenIV>
+ <20240610024437.GA1464458@ZenIV>
+ <CAHk-=wgf4yN4gGsGQOTBR_xE0q-9fB04omufZk2gnBRZ0Ywbiw@mail.gmail.com>
+Date: Thu, 13 Jun 2024 20:56:03 +1000
+Message-ID: <878qz9p0vw.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
+Content-Type: text/plain
 
-On Wed, Jun 12, 2024 at 08:00:42AM +1000, Dave Chinner wrote:
-> On Tue, Jun 11, 2024 at 01:28:46PM +0200, Jan Kara wrote:
-> > On Tue 11-06-24 20:17:16, Dave Chinner wrote:
-> > > Your patch, however, just converts *some* of the lookup API
-> > > operations to use RCU. It adds complexity for things like inserts
-> > > which are going to need inode hash locking if the RCU lookup fails,
-> > > anyway.
-> > > 
-> > > Hence your patch optimises the case where the inode is in cache but
-> > > the dentry isn't, but we'll still get massive contention on lookup
-> > > when the RCU lookup on the inode cache and inserts are always going
-> > > to be required.
-> > > 
-> > > IOWs, even RCU lookups are not going to prevent inode hash lock
-> > > contention for parallel cold cache lookups. Hence, with RCU,
-> > > applications are going to see unpredictable contention behaviour
-> > > dependent on the memory footprint of the caches at the time of the
-> > > lookup. Users will have no way of predicting when the behaviour will
-> > > change, let alone have any way of mitigating it. Unpredictable
-> > > variable behaviour is the thing we want to avoid the most with core
-> > > OS caches.
-> > 
-> > I don't believe this is what Mateusz's patches do (but maybe I've terribly
-> > misread them). iget_locked() does:
-> > 
-> > 	spin_lock(&inode_hash_lock);
-> > 	inode = find_inode_fast(...);
-> > 	spin_unlock(&inode_hash_lock);
-> > 	if (inode)
-> > 		we are happy and return
-> > 	inode = alloc_inode(sb);
-> > 	spin_lock(&inode_hash_lock);
-> > 	old = find_inode_fast(...)
-> > 	the rest of insert code
-> > 	spin_unlock(&inode_hash_lock);
-> > 
-> > And Mateusz got rid of the first lock-unlock pair by teaching
-> > find_inode_fast() to *also* operate under RCU. The second lookup &
-> > insertion stays under inode_hash_lock as it is now.
-> 
-> Yes, I understand that. I also understand what that does to
-> performance characteristics when memory pressure causes the working
-> set cache footprint to change. This will result in currently 
-> workloads that hit the fast path falling off the fast path and
-> hitting contention and performing no better than they do today.
-> 
-> Remember, the inode has lock is taken when inode are evicted from
-> memory, too, so contention on the inode hash lock will be much worse
-> when we are cycling inodes through the cache compared to when we are
-> just doing hot cache lookups.
-> 
-> > So his optimization is
-> > orthogonal to your hash bit lock improvements AFAICT.
-> 
-> Not really. RCU for lookups is not necessary when hash-bl is used.
-> The new apis and conditional locking changes needed for RCU to work
-> are not needed with hash-bl. hash-bl scales and performs the same
-> regardless of whether the workload is cache hot or cache-cold.
-> 
-> And the work is almost all done already - it just needs someone with
-> time to polish it for merge.
-> 
-> > Sure his optimization
-> > just ~halves the lock hold time for uncached cases (for cached it
-> > completely eliminates the lock acquisition but I agree these are not that
-> > interesting) so it is not a fundamental scalability improvement but still
-> > it is a nice win for a contended lock AFAICT.
-> 
-> Yes, but my point is that it doesn't get rid of the scalability
-> problem - it just kicks it down the road for small machines and
-> people with big machines will continue to suffer from the global
-> lock contention cycling inodes through the inode cache causes...
-> 
-> That's kinda my point - adding RCU doesn't fix the scalability
-> problem, it simply hides a specific symptom of the problem *in some
-> environments* for *some worklaods*. hash-bl works for everyone,
-> everywhere and for all workloads, doesn't require new APIs or
-> conditional locking changes, and th work is mostly done. Why take a
-> poor solution when the same amount of verification effort would
-> finish off a complete solution?
-> 
-> The hash-bl patchset is out there - I don't have time to finish it,
-> so anyone who has time to work on inode hash lock scalability issues
-> is free to take it and work on it. I may have written it, but I
-> don't care who gets credit for getting it merged. Again: why take
-> a poor solution just because the person who wants the scalability
-> problem fixed won't pick up the almost finished work that has all
-> ready been done?
-> 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> On Sun, 9 Jun 2024 at 19:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>>
+>> Unless I'm misreading that code (entirely possible), this fdput() shouldn't
+>> be done until we are done with stt.
+>
+> Ack. That looks right to me.
+>
+> If I follow it right, the lifetime of stt is tied to the lifetime of
+> the file (plus RCU), so doing fdput early and then dropping the RCU
+> lock means that stt may not be valid any more later.
 
-My patch submission explicitly states that it does not fix the
-scalability problem but merely reduces it, so we are in agreement on
-this bit. My primary point being that absent full solutions the
-benefit/effort ratio is pretty good, but people are free to disagree
-with it.
+Yep. I added a sleep after the fdput and was able to get KASAN to catch
+it (below).
 
-This conversation is going in circles, so how about this as a way
-forward:
+I'll send a fix patch tomorrow, just using fdput(), and then the CLASS
+conversion can go on top later.
 
-1. you could isolate the hash-bl parts from your original patchset (+
-rebase) and write a quick rundown what needs to be done for this to be
-committable
-2. if you think you can find the time to do the work yourself in the
-foreseeable future you could state the rough timeline (the thing will
-probably want to miss this merge cycle anyway so there is plenty of
-time)
-3. if you can't commit to the work yourself you can look for someone to
-do it for you. while you suggested that on the list there were no takers
-(for example someone else could have stepped in after I said I'm not
-going to do it, but that did not happen). perhaps you can prod people at
-your dayjob and whatever non-list spots.
+cheers
 
-If you can't do the work in the foreseeable future (understandable) and
-there are no takers (realistically I suspect there wont be) then you are
-going to have stop opposing my patch on the grounds that hash-bl exists.
 
-I don't know how much work is needed to sort it out, it is definitely
-much more than what was needed for my thing, which is in part why I did
-not go for hash-bl myself.
+==================================================================
+BUG: KASAN: slab-use-after-free in kvm_spapr_tce_attach_iommu_group+0x298/0x720 [kvm]
+Read of size 4 at addr c000200027552c30 by task kvm-vfio/2505
 
-Of course there may be reasons to not include my patch regardless of the
-state of hash-bl. If you have any then I suggest you state them for the
-vfs folk to consider. If you intend to write it should not go in on the
-because it does not fully fix the problem, then I note the commit
-message both concedes there is a limitation and provides a justification
-for inclusion despite of it. Merely stating there is still a scalability
-ceiling does not address it. Claiming it adds too much complexity for
-the reported benefit is imo not legit, but again it is a judgment call
-to make by the vfs folk.
+CPU: 54 PID: 2505 Comm: kvm-vfio Not tainted 6.10.0-rc3-next-20240612-dirty #1
+Hardware name: 8335-GTH POWER9 0x4e1202 opal:skiboot-v6.5.3-35-g1851b2a06 PowerNV
+Call Trace:
+[c00020008c2a7860] [c0000000027d4d50] dump_stack_lvl+0xb4/0x108 (unreliable)
+[c00020008c2a78a0] [c00000000072dfa8] print_report+0x2b4/0x6ec
+[c00020008c2a7990] [c00000000072d898] kasan_report+0x118/0x2b0
+[c00020008c2a7aa0] [c00000000072ff38] __asan_load4+0xb8/0xd0
+[c00020008c2a7ac0] [c00800001b343140] kvm_spapr_tce_attach_iommu_group+0x298/0x720 [kvm]
+[c00020008c2a7b90] [c00800001b31d61c] kvm_vfio_set_attr+0x524/0xac0 [kvm]
+[c00020008c2a7c60] [c00800001b3083ec] kvm_device_ioctl+0x144/0x240 [kvm]
+[c00020008c2a7cd0] [c0000000007e052c] sys_ioctl+0x62c/0x1810
+[c00020008c2a7df0] [c000000000038d90] system_call_exception+0x190/0x440
+[c00020008c2a7e50] [c00000000000d15c] system_call_vectored_common+0x15c/0x2ec
+--- interrupt: 3000 at 0x7fff8af5bedc
+NIP:  00007fff8af5bedc LR: 00007fff8af5bedc CTR: 0000000000000000
+REGS: c00020008c2a7e80 TRAP: 3000   Not tainted  (6.10.0-rc3-next-20240612-dirty)
+MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44002482  XER: 00000000
+IRQMASK: 0 
+GPR00: 0000000000000036 00007fffda53b1f0 00007fff8b066d00 0000000000000006 
+GPR04: 000000008018aee1 00007fffda53b270 0000000000000008 00007fff8ac0e9e0 
+GPR08: 0000000000000006 0000000000000000 0000000000000000 0000000000000000 
+GPR12: 0000000000000000 00007fff8b2ca540 0000000000000000 0000000000000000 
+GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+GPR20: 0000000000000000 0000000000000000 0000000000000000 00000000100101c0 
+GPR24: 00007fff8b2bf840 00007fff8b2c0000 00007fffda53b728 0000000000000001 
+GPR28: 00007fffda53b838 0000000000000006 0000000000000001 0000000000000005 
+NIP [00007fff8af5bedc] 0x7fff8af5bedc
+LR [00007fff8af5bedc] 0x7fff8af5bedc
+--- interrupt: 3000
 
-Right now the v4 landed in a vfs.inode.rcu branch. It really does not
-have to reach master if someone gets hash-bl to a state where the vfs
-cabal is happy with it. I don't know if Christian intends to submit it
-to master in the upcomming merge cycle, it is perfectly fine with me if
-it does not happen. Perhaps it even should not happen if the hash-bl
-gets a sensible timeline. Even so, should my patch land in master and
-hash-bl get work done at a much later date, there is no difficulty added
-to it stemming from my thing -- at worst some trivial editing to resolve
-a merge conflict.
+Allocated by task 2505:
+ kasan_save_stack+0x48/0x80
+ kasan_save_track+0x2c/0x50
+ kasan_save_alloc_info+0x44/0x60
+ __kasan_kmalloc+0xd0/0x120
+ __kmalloc_noprof+0x214/0x670
+ kvm_vm_ioctl_create_spapr_tce+0x10c/0x420 [kvm]
+ kvm_arch_vm_ioctl+0x5fc/0x890 [kvm]
+ kvm_vm_ioctl+0xa54/0x13d0 [kvm]
+ sys_ioctl+0x62c/0x1810
+ system_call_exception+0x190/0x440
+ system_call_vectored_common+0x15c/0x2ec
 
-And with this message I'm done with the entire ordeal, with 2 exceptions:
-- if there is a bug reported against my patch i'm going to investigate
-- if my patch is stalled in the vfs.inode.rcu branch for weeks and there
-  is no replacement in sight (hash-bl, rhashtable, ${whatever_else}), I'm
-  going to prod about it
+Freed by task 0:
+ kasan_save_stack+0x48/0x80
+ kasan_save_track+0x2c/0x50
+ kasan_save_free_info+0xac/0xd0
+ __kasan_slab_free+0x120/0x210
+ kfree+0xec/0x3e0
+ release_spapr_tce_table+0xd4/0x11c [kvm]
+ rcu_core+0x568/0x16a0
+ handle_softirqs+0x23c/0x920
+ do_softirq_own_stack+0x6c/0x90
+ do_softirq_own_stack+0x58/0x90
+ __irq_exit_rcu+0x218/0x2d0
+ irq_exit+0x30/0x80
+ arch_local_irq_restore+0x128/0x230
+ arch_local_irq_enable+0x1c/0x30
+ cpuidle_enter_state+0x134/0x5cc
+ cpuidle_enter+0x6c/0xb0
+ call_cpuidle+0x7c/0x100
+ do_idle+0x394/0x410
+ cpu_startup_entry+0x60/0x70
+ start_secondary+0x3fc/0x410
+ start_secondary_prolog+0x10/0x14
 
-Cheers.
+Last potentially related work creation:
+ kasan_save_stack+0x48/0x80
+ __kasan_record_aux_stack+0xcc/0x130
+ __call_rcu_common.constprop.0+0x8c/0x8e0
+ kvm_spapr_tce_release+0x29c/0xbc10 [kvm]
+ __fput+0x22c/0x630
+ sys_close+0x70/0xe0
+ system_call_exception+0x190/0x440
+ system_call_vectored_common+0x15c/0x2ec
+
+The buggy address belongs to the object at c000200027552c00
+ which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 48 bytes inside of
+ freed 256-byte region [c000200027552c00, c000200027552d00)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xc000200027551800 pfn:0x20002755
+flags: 0x83ffff800000000(node=8|zone=0|lastcpupid=0x7ffff)
+page_type: 0xfdffffff(slab)
+raw: 083ffff800000000 c000000007010d80 5deadbeef0000122 0000000000000000
+raw: c000200027551800 0000000080800078 00000001fdffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ c000200027552b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ c000200027552b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>c000200027552c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ c000200027552c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ c000200027552d00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+Disabling lock debugging due to kernel taint
 
