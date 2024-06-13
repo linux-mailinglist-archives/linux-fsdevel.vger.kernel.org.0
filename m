@@ -1,121 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-21630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3B5906A25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 12:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D8A906A43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 12:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE26B2817F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 10:36:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0DF11F22528
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 10:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276D41428F2;
-	Thu, 13 Jun 2024 10:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCAD142902;
+	Thu, 13 Jun 2024 10:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="N1TjR+pb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633C025632;
-	Thu, 13 Jun 2024 10:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC77B1422DA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 10:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718274986; cv=none; b=b0z2+vRFtNbsGtRSzTZBvxDzirSZ/SgbSwz+UCEiDSHbsA0usAbG9R60h55u+su++pl81lOa6pOLVTofLQJfP6Fj/BcykqpQ4wZRqAfjUx2HDgboiRdMSay01NwV2k75CsrrfZef2osTTY2ijzAsSRvQInEnmevc1NLMg2toMsc=
+	t=1718275457; cv=none; b=jL0TSY9x7p7BqOI1IsWE4FPHk0cI+OUdeYcWf2AEX36vx992FNiEx7o0mgmZjLnZzA/fsvkz2yFQenHMqvGefen2KGQd3KLdQDCkCHIA67BCBdJUoM1PbkUXdbKazt4nS9aDkh12ILuyO8noDzLYebPrt4FXNVj+rZmzTcSSzxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718274986; c=relaxed/simple;
-	bh=cHpapWwllRR92WhnROTVW7uuoH/zjVZME5D0Uwcllug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nFCdRzakVCdoG/G+WWu26nBhHmeEZcLdDqcRVoykWKUeiimrjmdDslp/mHZPrb2aU0SC3R3psftxrijHZc9r+jKGVNivZ8AOdcjPpcSFD1BPNTyecmuUdubcv44gONbq3YnHkaecqzah69Gti5z4N5tWKZHeECJUyiTsEgFCuXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C82113D5;
-	Thu, 13 Jun 2024 03:36:43 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD2203F5A1;
-	Thu, 13 Jun 2024 03:36:12 -0700 (PDT)
-Date: Thu, 13 Jun 2024 11:36:10 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	kent.overstreet@gmail.com, elver@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
-	dakr@redhat.com
-Subject: Re: [RFC 1/2] rust: Introduce atomic API helpers
-Message-ID: <ZmrLmnPz_0Q8oXny@J2N7QTR9R3>
-References: <20240612223025.1158537-1-boqun.feng@gmail.com>
- <20240612223025.1158537-2-boqun.feng@gmail.com>
- <2024061341-whole-snowfall-89a6@gregkh>
- <20240613091747.GB17707@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1718275457; c=relaxed/simple;
+	bh=t98d2hcOrmG+gBwD8a5DyCNMvtSGIPlvdKTgtnV4XgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uxG10gGspyy3PpFTYk1StMQz9nUdHTffjMEeW5LEGtPG4B6hQSVwOtnFC7oNEiuCnLJw5XEhmJYgT3zx+4CD4fNkAjIiFCYfcWwWdTsxcIOQWG+RZZ6FwsP0nL/L2OunoQ9qNuFEF0SjDzuo7+237fzV4VRKG8YZ9jE94+FXb2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=N1TjR+pb; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c1def9b4b3so711673a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 03:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1718275455; x=1718880255; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KC0WEOCbeOn3xeFYjkoPmf4SR20pzkx2hnnF8x8VHJ4=;
+        b=N1TjR+pbBXxu6oqhWgLU6HqtpHBQSFM2vt2JkC1EPHOjSovafYOTEZvbxH4yzjGgyd
+         7GPWGvsk4ysjt4wsZhwwwBCrzSYfbp+p5KeIrWKnRXQmoCvzYC0LrhG9uGYC5rJ8MXOZ
+         uzqnQZUNYAq1GGP7R62ie+POzeWC7SdrzNhDV+ehsqFiqEtFep9KN/dER115c6bTxItS
+         2KBvBNImAVbVZZJYaW3AvcQ5CB8zNJ85m9zd6oLSp/gKXvEjA9yiB37kkXDeZkzuuLQJ
+         FpgbQC9NABkyoaBn/nqfNra7tJEwkOBp7MqnZrra7BsbZ/4U73c6W0HWF7IsKzGVLMaF
+         wUjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718275455; x=1718880255;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KC0WEOCbeOn3xeFYjkoPmf4SR20pzkx2hnnF8x8VHJ4=;
+        b=kcFF5ZJ1MmCY+nrQct1CBvGshm5+I9CEk3zWsmvxqxH436khinGPijsDxohF87GZyR
+         tgs3fPU5tBJOInU8STVUoEYShveI5cDCkHp9rd5RSPT1uNSvNcY0wzQa0zF2B+QFYHOy
+         PIs9dOTMLaXmiQ9umUPCe4NlHY8IPt8zcZ7FCT0Lw3MKGVP5tUYZZORPyOG5i60oC4Uj
+         0gUgdDR7LweAK8yRoRppERlF6XZ0CTfuXHVNMIG2QDs/laXRvS+ijKwUB8Z1r8L3qcoN
+         84dzMuBse35Nj5EC23jUVIAOrN9wpxv6XVeIgRRYguuJdx4ucg8782L0HscfwVkVWodi
+         ENNA==
+X-Gm-Message-State: AOJu0YxNRAGd+fzwmhXaag9rGAMB3PmC8/AJEeOETPbFT3ca+R9q4y0z
+	QtcKu+3se/nl65Nt9C9a0E29eK16WCjSpINxXE4XwbVXvMO1+v0pNLriP1QNVJrvgAuXNS0ZzzA
+	i1WTb5A==
+X-Google-Smtp-Source: AGHT+IGlpvPyAiGmESmFdDl6gD0NZ1PLRf93mXOdanpWoZd1AGVGVrKf+uFXs8r4KD3vp0PvvfcMOg==
+X-Received: by 2002:a17:90a:de18:b0:2bf:8ce5:dc51 with SMTP id 98e67ed59e1d1-2c4a76d4e4bmr5106783a91.35.1718275455083;
+        Thu, 13 Jun 2024 03:44:15 -0700 (PDT)
+Received: from [10.54.24.59] ([143.92.118.3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c45cc95dsm1322791a91.22.2024.06.13.03.44.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 03:44:14 -0700 (PDT)
+Message-ID: <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
+Date: Thu, 13 Jun 2024 18:44:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613091747.GB17707@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240613040147.329220-1-haifeng.xu@shopee.com>
+ <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
+From: Haifeng Xu <haifeng.xu@shopee.com>
+In-Reply-To: <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 13, 2024 at 11:17:47AM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 13, 2024 at 07:38:51AM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, Jun 12, 2024 at 03:30:24PM -0700, Boqun Feng wrote:
-> > > +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
-> > > +// DO NOT MODIFY THIS FILE DIRECTLY
-> > 
-> > Why not just build this at build time and not check the file into the
-> > tree if it is always automatically generated?  That way it never gets
-> > out of sync.  We do this for other types of auto-generated files in the
-> > kernel today already.
+
+
+On 2024/6/13 15:55, Miklos Szeredi wrote:
+> On Thu, 13 Jun 2024 at 06:02, Haifeng Xu <haifeng.xu@shopee.com> wrote:
+>>
+>> When the child reaper of a pid namespace exits, it invokes
+>> zap_pid_ns_processes() to send SIGKILL to all processes in the
+>> namespace and wait them exit. But one of the child processes get
+>> stuck and its call trace like this:
+>>
+>> [<0>] request_wait_answer+0x132/0x210 [fuse]
+>> [<0>] fuse_simple_request+0x1a8/0x2e0 [fuse]
+>> [<0>] fuse_flush+0x193/0x1d0 [fuse]
+>> [<0>] filp_close+0x34/0x70
+>> [<0>] close_fd+0x38/0x50
+>> [<0>] __x64_sys_close+0x12/0x40
+>> [<0>] do_syscall_64+0x59/0xc0
+>> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
 > 
-> Part of the problem is, is that a *TON* of files depend on the atomic.h
-> headers. If we'd generate it on every build, you'd basically get to
-> rebuild the whole kernel every single time.
+> Which process is this?
+
+The client process is one of the processes in container. And the server process is lxcfs 
+which belongs to global namespace.
+
 > 
-> Also, these files don't change too often. And if you look, there's a
-> hash in those files which is used to check if things somehow got stale.
+> In my experience such lockups are caused by badly written fuse servers.
 
-That and:
 
-1) The generation is currently slow (multiple seconds), which gets
-   people angry if they have to wait for it for a clean build. Improving
-   that would require changing the way we generate the headers (e.g.
-   rewrite that in something else to avoid the subshell fork problem).
+In this case, if the interrupt request is processed before the original request is processed, 
+for the arriving original request, fuse_session_process_buf_int（）which used in libfuse
+invokes check_interrupt() can find the interrupt request and mark the req as interrupted, 
+so the server thread which invokes fuse_lib_flush() will sleep for some time and eventually 
+send reply to client without setting FUSE_INT_REQ_BIT in unique.
 
-   Last I looked there wasn't an obvious better way to do this, because
-   nice options ended up pulling in more build-time dependencies.
+So why the client doesn't get woken up?
 
-2) Linus wanted git grep to work, which meant checking in the generated
-   files:
 
-   https://lore.kernel.org/all/CA+55aFxjU0op8QLLu0n-RjHBs7gQsLvD8jcyedgw6jeZFN7B+Q@mail.gmail.com/
-
-Mark.
+> 
+>> The flags of fuse request is (FR_ISREPLY | FR_FORCE | FR_WAITING
+>> | FR_INTERRUPTED | FR_SENT). For interrupt requests, fuse_dev_do_write()
+>> doesn't invoke fuse_request_end() to wake the client thread, so it will
+>> get stuck forever and the child reaper can't exit.
+>>
+>> In order to write reply to the client thread and make it exit the
+>> namespace, so do not generate interrupt requests for fatal signals.
+> 
+> Interrupt request must be generated for all signals. Not generating
+> them for SIGKILL would break existing filesystems.
+> 
+> Thanks,
+> Miklos
 
