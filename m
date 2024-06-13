@@ -1,117 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-21672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD2A907CB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 21:35:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8023907CC5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 21:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA96B1F23FA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 19:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABFCB1C20B48
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 19:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EEE15217E;
-	Thu, 13 Jun 2024 19:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E69C14C5A1;
+	Thu, 13 Jun 2024 19:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IW0NQsVR"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gHN1FKo/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D69914B091
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 19:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BF4134407;
+	Thu, 13 Jun 2024 19:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307261; cv=none; b=fyuIzhCmxkeDfauLY7ipYL0NAYYX1JT8Rfdk7wuHXgv4XJvk0E2pkwIJSK1PTImcT1rmUu+oEMU3cQ2aKNW/cPdDcL7VuI60irObbXm6eZzVCDSHedjnDd1+NF6pbHi8y0yk5oG/EB6st9lnzRKHtxtpvqL0+CgfZr2Edb9BBB8=
+	t=1718307585; cv=none; b=SNXuk1ToW0MRQ36ooHIruuLhMR+2c5wllG5DeINUnBJEmGMB0eS2jzkZ/nvC0xw6k94Y3brbtlfpwi0T3KohrJLOfj/TBhL/tcs2qUwOQXAMzGwrbauR7hF32xV2ZIJ1N+tnmNIY5xk/3xjW6uU7EHGGbauJbMa0bFh2mR8VEKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307261; c=relaxed/simple;
-	bh=Lwk7smutNQj9Ma2l6ms8QeeuTagK4tf2FFnHtSPVUfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HHEbEowI2RaHP8oLOhuqXQgY03cV7EdKXNXBJZixy+D/M/TBCi/HhAOhk1ZOSDDzrg6zGwYaFUFEQdcRXZSEjfp/8PuiEYXJaTQm0VonTQaEnNb/kkjBtFWd2QVzgI5jqebbtZTRJELywZHJWQEizeYlQWfqvQtCiY1UnNTJCl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IW0NQsVR; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6266ffdba8so175120666b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 12:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718307257; x=1718912057; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZg0hrY0cl/sTszXcVnYwhyU3X3/PKHb3J+JILn3ksY=;
-        b=IW0NQsVRX3Wf9NS48HWHJMiflIPZgwaLXPZm7Y8ivxdlBbR05Up0IQLkY7k58de6gJ
-         faCCH/nASJG30RZcVoA+/4ErLh9YWlP4QCOQYpPqKGngTlKn00lBqRQcTseQI2OJeoQS
-         Wanz8ICQM0pUsi/ikf+HpMgUVUa8P9LNjuXnA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718307257; x=1718912057;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BZg0hrY0cl/sTszXcVnYwhyU3X3/PKHb3J+JILn3ksY=;
-        b=bRNu+uo59xWFwhsbLW1qN5t+M46r/yBuNxsBIEXFJXzpdQAAoVDgSZLFHEjm8xCfcr
-         3269mbNxIBJCtqOTX+9SGF6MtVsV+6CdhhAsIIY7Rou7bJCK7zkVe7hDJeGURXyxjaMw
-         vPtrgF1Hx6iz1tj/AXauhmpvyzN2P6u1BeS9VKQ1hEF5Fcm95ibq4q3eYb1pdsXmvej8
-         okVy4mr7iiu7DfQ3h9ABbWLJvogKG9e66GoI9dnp/TCE7QpijGxX5tM0U7/XhC+IHxAw
-         +CUDRprFdvLGcHsc6qsv8E+iZDDIUp31ZFHAhPB7g48EMLL0awLS/wmV8GLjZRce3tRE
-         Q6xA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6q+JrLdqrVey+ANhHZFS50ym20sX5Cl048QS/o0Vt4MbXmGbCquhQaM+Qq93Nc9XDYhcS50YhmdGcixcTT1gWjo0w/NsYNApJWkFBFQ==
-X-Gm-Message-State: AOJu0YwRA6Hg0mkRG3wUKMR3zzWq4deHlZTJwk8e3CNKyiAsJO/TGWtc
-	I4U2fxGuqtW6PdSSi2BTlTV61pbo28SBncXgXIRF5Cyr4SHf8lNfNEDaUuty3jcBn0C/ceubRYA
-	0qSqgeg==
-X-Google-Smtp-Source: AGHT+IGctalnh/PGYzlFKdygGOHU4ARW+2y5wJdaLfRA5uwXa67+TwWNtZwUb75oKwVEhZ0HTdT8TA==
-X-Received: by 2002:a17:906:48d:b0:a6f:501d:c224 with SMTP id a640c23a62f3a-a6f60dc4dd6mr46321466b.57.1718307257380;
-        Thu, 13 Jun 2024 12:34:17 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db67e5sm102568366b.66.2024.06.13.12.34.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 12:34:16 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6266ffdba8so175119266b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 12:34:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbhYtbsmK9c81ZqeA4t6VBobH2FnJBCMA1WV0Ab5NsSKPfYAJHTDvvdvqZ6nP/SNiHXo2xJHW8T8VBlL1ijigTmNWZo0Y5X14CRVvSeA==
-X-Received: by 2002:a17:906:f105:b0:a6f:586b:6c2 with SMTP id
- a640c23a62f3a-a6f60dc4faemr43433766b.60.1718307256510; Thu, 13 Jun 2024
- 12:34:16 -0700 (PDT)
+	s=arc-20240116; t=1718307585; c=relaxed/simple;
+	bh=Xr1ZR0w4u2FAgkjvH5Mi9hxZ/0C28Zy328vRfJN5fEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=trwiVtIlSETbW0ZB0i1GG12Ghot+K7Zeynwg+JVpOE1lGWIUE0iAvWwzh5QEE1Go2SmghVRImHhPKgyz2js6wkJoh2EoAW4kiju4XXoRJxDeeryvFxCB7RYD+07bWsnzryFiXdoI0edeuv/du+/ieBPcwPzefJVBtGPvghY8DOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gHN1FKo/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zszsi0/aB2A5gS3nj8dtgFtDV/ZCUUoBmBVvRLy5hi4=; b=gHN1FKo/gLkrKUqlWBHqnu5ICW
+	tW5aD/4ifvUlVBvAHVylwxXEpvpguH59nQIX5H6WkFRNAcj6aR6TGR85v0cTHzvT2KQLdtR+GK0qP
+	fRmgw6YLsUmThl/Kj9O8bJ9c9WkikVf2myaGQ0AC+cbud5Kas7Rt2Zk23eOZRFygikkg32gTOx+QJ
+	xDbOzuShVX9VaDl6R7wJcm7vk5BygjkwJ7F5F48D0/KBW0pW3PE4W5wJ0FDsLUXA3MMZrLGY+7OVE
+	bOYGVzvlISO1vrDkKgNhrnErMIfjOL9QiGpY9qESwtpkw4aFLKPBBohz8/DBdxlQdUoGyPo7c4OqL
+	8iHdTHtg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHqIG-00000000IvW-0Jyf;
+	Thu, 13 Jun 2024 19:39:32 +0000
+Date: Thu, 13 Jun 2024 12:39:32 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
+	yang@os.amperecomputing.com, linmiaohe@huawei.com,
+	muchun.song@linux.dev, osalvador@suse.de,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+	hare@suse.de, linux-kernel@vger.kernel.org,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
+ zero fill in folio_map_range()
+Message-ID: <ZmtK9NcsITV0aoL8@bombadil.infradead.org>
+References: <20240607145902.1137853-7-kernel@pankajraghav.com>
+ <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
+ <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
+ <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
+ <ZmqqIrv4Fms-Vi6E@bombadil.infradead.org>
+ <b3fef638-4f4a-4688-8a39-8dfa4ae88836@redhat.com>
+ <ZmsP36zmg2-hgtak@bombadil.infradead.org>
+ <ZmsRC8YF-JEc_dQ0@casper.infradead.org>
+ <ZmsSZzIGCfOXPKjj@bombadil.infradead.org>
+ <ZmsS7JipzuBxJm92@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
- <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
- <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
- <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
- <20240613-pumpen-durst-fdc20c301a08@brauner> <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
- <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
- <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
- <CAGudoHGdWQYH8pRu1B5NLRa_6EKPR6hm5vOf+fyjvUzm1po8VQ@mail.gmail.com> <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 13 Jun 2024 12:33:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
-Message-ID: <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
- be released
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmsS7JipzuBxJm92@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Thu, 13 Jun 2024 at 11:56, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I didn't *think* anything in the dentry struct should care about
-> debugging, but clearly that sequence number thing did.
+On Thu, Jun 13, 2024 at 04:40:28PM +0100, Matthew Wilcox wrote:
+> On Thu, Jun 13, 2024 at 08:38:15AM -0700, Luis Chamberlain wrote:
+> > On Thu, Jun 13, 2024 at 04:32:27PM +0100, Matthew Wilcox wrote:
+> > > On Thu, Jun 13, 2024 at 08:27:27AM -0700, Luis Chamberlain wrote:
+> > > > The case I tested that failed the test was tmpfs with huge pages (not
+> > > > large folios). So should we then have this:
+> > > 
+> > > No.
+> > 
+> > OK so this does have a change for tmpfs with huge pages enabled, do we
+> > take the position then this is a fix for that?
+> 
+> You literally said it was a fix just a few messages up thread?
+> 
+> Besides, the behaviour changes (currently) depending on whether
+> you specify "within_size" or "always".  This patch makes it consistent.
 
-Looking at the 32-bit build, it looks like out current 'struct dentry'
-is 136 bytes in size, not 128.
+The quoted mmap(2) text made me doubt it, and I was looking for
+clarification. It seems clear now based on feedback the text does
+not apply to tmpfs with huge pages, and so we'll just annotate it
+as a fix for tmpfs with huge pages.
 
-Looks like DNAME_INLINE_LEN should be reduced to 36 on 32-bit.
+It makes sense to not apply, I mean, why *would* you assume you will
+have an extended range zeroed out range to muck around with beyond
+PAGE_SIZE just because huge pages were used when the rest of all other
+filesystem APIs count on the mmap(2) PAGE_SIZE boundary.
 
-And moving d_lockref to after d_fsdata works there too.
+Thanks!
 
-Not that anybody really cares, but let's make sure it's actually
-properly done when this is changed. Christian?
-
-              Linus
+  Luis
 
