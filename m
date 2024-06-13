@@ -1,76 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-21673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8023907CC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 21:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4352B907D6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 22:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABFCB1C20B48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 19:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FE61F24EAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 20:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E69C14C5A1;
-	Thu, 13 Jun 2024 19:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A3213A275;
+	Thu, 13 Jun 2024 20:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gHN1FKo/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTte/A1u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BF4134407;
-	Thu, 13 Jun 2024 19:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47A983A12;
+	Thu, 13 Jun 2024 20:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307585; cv=none; b=SNXuk1ToW0MRQ36ooHIruuLhMR+2c5wllG5DeINUnBJEmGMB0eS2jzkZ/nvC0xw6k94Y3brbtlfpwi0T3KohrJLOfj/TBhL/tcs2qUwOQXAMzGwrbauR7hF32xV2ZIJ1N+tnmNIY5xk/3xjW6uU7EHGGbauJbMa0bFh2mR8VEKg=
+	t=1718310337; cv=none; b=Nra0SlQRLm1e2JUncEVMW4wPtSjv3hos5mGWgw2oOlsOv+tq6QNxIC9UJrRfCDUTLIa9omgLzPbphPE0m2iNS+3CXYyVYbuVbi2GdpTuhD3ro4wW7rbH91Z5moBP1Jj32nZeW7ecP3WhFIiSnqefiB4ADmHndcmSwb9LAmNSWsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307585; c=relaxed/simple;
-	bh=Xr1ZR0w4u2FAgkjvH5Mi9hxZ/0C28Zy328vRfJN5fEY=;
+	s=arc-20240116; t=1718310337; c=relaxed/simple;
+	bh=XZMnBPtlkifS5Fdca+gG4KAFlQ4eMVf6o5s14uxWoGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=trwiVtIlSETbW0ZB0i1GG12Ghot+K7Zeynwg+JVpOE1lGWIUE0iAvWwzh5QEE1Go2SmghVRImHhPKgyz2js6wkJoh2EoAW4kiju4XXoRJxDeeryvFxCB7RYD+07bWsnzryFiXdoI0edeuv/du+/ieBPcwPzefJVBtGPvghY8DOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gHN1FKo/; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zszsi0/aB2A5gS3nj8dtgFtDV/ZCUUoBmBVvRLy5hi4=; b=gHN1FKo/gLkrKUqlWBHqnu5ICW
-	tW5aD/4ifvUlVBvAHVylwxXEpvpguH59nQIX5H6WkFRNAcj6aR6TGR85v0cTHzvT2KQLdtR+GK0qP
-	fRmgw6YLsUmThl/Kj9O8bJ9c9WkikVf2myaGQ0AC+cbud5Kas7Rt2Zk23eOZRFygikkg32gTOx+QJ
-	xDbOzuShVX9VaDl6R7wJcm7vk5BygjkwJ7F5F48D0/KBW0pW3PE4W5wJ0FDsLUXA3MMZrLGY+7OVE
-	bOYGVzvlISO1vrDkKgNhrnErMIfjOL9QiGpY9qESwtpkw4aFLKPBBohz8/DBdxlQdUoGyPo7c4OqL
-	8iHdTHtg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHqIG-00000000IvW-0Jyf;
-	Thu, 13 Jun 2024 19:39:32 +0000
-Date: Thu, 13 Jun 2024 12:39:32 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
-	yang@os.amperecomputing.com, linmiaohe@huawei.com,
-	muchun.song@linux.dev, osalvador@suse.de,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-	hare@suse.de, linux-kernel@vger.kernel.org,
-	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	john.g.garry@oracle.com
-Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
- zero fill in folio_map_range()
-Message-ID: <ZmtK9NcsITV0aoL8@bombadil.infradead.org>
-References: <20240607145902.1137853-7-kernel@pankajraghav.com>
- <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
- <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
- <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
- <ZmqqIrv4Fms-Vi6E@bombadil.infradead.org>
- <b3fef638-4f4a-4688-8a39-8dfa4ae88836@redhat.com>
- <ZmsP36zmg2-hgtak@bombadil.infradead.org>
- <ZmsRC8YF-JEc_dQ0@casper.infradead.org>
- <ZmsSZzIGCfOXPKjj@bombadil.infradead.org>
- <ZmsS7JipzuBxJm92@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMIz51rIJsW1wc842ilQC2XWhtzODoMVdemf9+96S9VzGFxz3jBTF+/U5t/sNNuWjQi+U5zd4C6onGsQ5Kw3Vc1euuh3ZvRD9BjTWBluopRw+IAbX33oVbYlvtcxx4HDpSu0PGpu07wbviLFmuwT5wK8zw91NhOdkLZUejd78EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTte/A1u; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7955c585af0so101523585a.2;
+        Thu, 13 Jun 2024 13:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718310335; x=1718915135; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EMz0ZFRHVHUChYlldLB+9O1uGefbqiAdPKIID9/kO3c=;
+        b=XTte/A1ur7U4yPV8CpLWuoJfbuWjv0eH6hAe0zuYkJjv+CQXcsMliBV+kzJFAjm4eO
+         6VdP6RjtHe1R2k80KPxR5xr3+9tXGDIxq/+IzSlyI7tWt/tLDJgDUT7Gb763ITIauxdn
+         7kt0lyklucCd4jq5MV9JH7hiaepKdTGihH25qxPHmbU8XKsU3CvAJNV/cJcyJKPUbvLo
+         DieUdtL1qet2oPhA/qG+KxCwBf4INgVKkG/Ar9FqAIgpiQVbCkQGDyXK9kS18fkIzIui
+         ZJT0X8+I/tE30PCWdtHseqd6ikbtamxzWWdIX2BpcHjHKVYxTxcMvo/KOchmEY2BgBgQ
+         ePMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718310335; x=1718915135;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EMz0ZFRHVHUChYlldLB+9O1uGefbqiAdPKIID9/kO3c=;
+        b=u7M+8EIVt+lxWSA6xdopu1lkKdXVE4eMXrUpvRu6oCYtRCr17GSPhecI8CiGRqLv42
+         JdiNioVuUNgSXqa5Yf1hhLkxtJNs/xf6SmjL9mbaP3s5pG3ZqJbwWmaXCCHPcsVKB4N5
+         n66jWjZfDjAF2rWL12hpFFa5mxUKOC+/mBzwS2V1DPK8AdTonPvCNVKFTQqHVdYeXziM
+         qwg67QbrW4YMM4/Jum4juJ43BnyJT7e+kRSOmbi5+Ko1rwsN+UOU4gJ7k9qxcqb4vc39
+         k76LMa6zAoIfOA7eFTk1DI5frfo2V0Z3O33W3+UP4JevKkACfrv4sLCrlYLdjKBXeG7/
+         1rpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhnf80OBNqZ/7DpRPleaLAVxJr5IDeIYgldyzxKwV1/rJap1Dc+RWHLGczKmG6MO5nxLSdsqXGA+WgQrtxq/mSgSJnXWDPKu3HlbSw1acyBH52u27Co1nTCix4p42s1Q5uy45cuCaluJ4p/OmqWlqrE0im8NxxJ539CHlO5skPYfyhH7mIFrg=
+X-Gm-Message-State: AOJu0YwTH0Io9hr5Ir4dOnURrL777JdJzoMVc4heUjKgXkhVp0qmYLj8
+	fLpiWz5z43Rr5Nxog3OuJXd0X07u2laGrgQja7UrXEd5GkJOchCf
+X-Google-Smtp-Source: AGHT+IGpSoIULcvWez99JK7JK+Up8HU1l/s1FINDWZs8LC9tBJeQ3hxxZVJWnFEHKbk+02gDLzMs0Q==
+X-Received: by 2002:a05:620a:4007:b0:797:e9f7:e924 with SMTP id af79cd13be357-798d26af852mr68059885a.65.1718310334648;
+        Thu, 13 Jun 2024 13:25:34 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2fcc468sm9379261cf.70.2024.06.13.13.25.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 13:25:34 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 283391200069;
+	Thu, 13 Jun 2024 16:25:33 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 13 Jun 2024 16:25:33 -0400
+X-ME-Sender: <xms:vFVrZgtyFF8uQGfrwFobOorS3vOPl_--u_9m9T3AhsbuxVq2xi72zw>
+    <xme:vFVrZteMRM4PasZI_VHT9e2_LY__Y8z3ZnNYO3RfHb23AFY2Z913Tln8h8msbAnfB
+    eYMqpyIJIRn0-XRBg>
+X-ME-Received: <xmr:vFVrZrx5Tan5t4KnPFuuL5T2vPasCz-gKubfZx0xAmf_NUnPbp19npTIFsk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgudegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:vVVrZjMpjzd4Kew3lRZR2cVcvzPaSrroXMn4v74PLBzfBsascPkW1Q>
+    <xmx:vVVrZg8hQLget4rip9IgUQthGkKPjBxRow_6r2bsiNtYh8W7qBADYQ>
+    <xmx:vVVrZrUpvA1qg1wcNJfzvK9OScd1f1tINnwbxniD6g1bzVvlFGZ-_w>
+    <xmx:vVVrZpfxD8JRupYWW-fTnuQwYYUeIqAPuEbyfo7uRA5cNm_a5wxaeg>
+    <xmx:vVVrZidUvKWatd8WUPO9_xQZFbBUTxfkOpnCNTkVq6SSFMg-qIW2TX_D>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Jun 2024 16:25:32 -0400 (EDT)
+Date: Thu, 13 Jun 2024 13:25:02 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <ZmtVngqKZ0arLzL-@boqun-archlinux>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,37 +135,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmsS7JipzuBxJm92@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <20240612223025.1158537-3-boqun.feng@gmail.com>
 
-On Thu, Jun 13, 2024 at 04:40:28PM +0100, Matthew Wilcox wrote:
-> On Thu, Jun 13, 2024 at 08:38:15AM -0700, Luis Chamberlain wrote:
-> > On Thu, Jun 13, 2024 at 04:32:27PM +0100, Matthew Wilcox wrote:
-> > > On Thu, Jun 13, 2024 at 08:27:27AM -0700, Luis Chamberlain wrote:
-> > > > The case I tested that failed the test was tmpfs with huge pages (not
-> > > > large folios). So should we then have this:
-> > > 
-> > > No.
-> > 
-> > OK so this does have a change for tmpfs with huge pages enabled, do we
-> > take the position then this is a fix for that?
-> 
-> You literally said it was a fix just a few messages up thread?
-> 
-> Besides, the behaviour changes (currently) depending on whether
-> you specify "within_size" or "always".  This patch makes it consistent.
+On Wed, Jun 12, 2024 at 03:30:25PM -0700, Boqun Feng wrote:
+[...]
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 48e7029f1054..99e6e2b2867f 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1601,6 +1601,8 @@ static bool
+>  has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
+>  {
+>  	u64 val = read_scoped_sysreg(entry, scope);
+> +	if (entry->capability == ARM64_HAS_LSE_ATOMICS)
+> +		return false;
+>  	return feature_matches(val, entry);
+>  }
+>  
 
-The quoted mmap(2) text made me doubt it, and I was looking for
-clarification. It seems clear now based on feedback the text does
-not apply to tmpfs with huge pages, and so we'll just annotate it
-as a fix for tmpfs with huge pages.
+Yeah, this part was mis-committed, will remove it in the next version.
 
-It makes sense to not apply, I mean, why *would* you assume you will
-have an extended range zeroed out range to muck around with beyond
-PAGE_SIZE just because huge pages were used when the rest of all other
-filesystem APIs count on the mmap(2) PAGE_SIZE boundary.
+Regards,
+Boqun
 
-Thanks!
-
-  Luis
+[...]
 
