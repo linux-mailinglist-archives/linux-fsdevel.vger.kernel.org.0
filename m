@@ -1,236 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-21627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4526C906970
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 11:56:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C7D906990
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 12:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6951F238E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 09:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1158B1F23023
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 10:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D5C1411F8;
-	Thu, 13 Jun 2024 09:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1FC1411D6;
+	Thu, 13 Jun 2024 10:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqmuBfJy"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NqNPZhTJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F394140E22;
-	Thu, 13 Jun 2024 09:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BCF134409;
+	Thu, 13 Jun 2024 10:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272542; cv=none; b=fKX60B7m6jB/U1xYJLrvw3qvYkfsJnQXLQOFjIilJDNHMbVO1Q/hPmSvxzSUtI9+AUpP8VTpZHoNJ8d4/aYDnyaKXXl2ext6akw3AJmPHueDHEtIOLQAkIpmXWSubvNWoBBvIiHZc2KTb0lDT7+stJhJKtIbIyOneAeQy1rqKK8=
+	t=1718272987; cv=none; b=tC7jmHQ9xKhItrBQXQmYz3FNHLKDQNA0/x0CHLf9TVenGVNn4eNR4TcU+00DL7Sm9HaKSjipj1LZizmpsgkEwqggt6xygjDcKKX0z4PFYt5QVB0Y+b0ixzCXi2vkzdT11MbzgukLnXhFWUqry13PeW52lraB/drG9bw09kCCeHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272542; c=relaxed/simple;
-	bh=XmS+lF9Ds2ss/fP43EzxkHbFuhkOym3rDSSC14WaCpw=;
+	s=arc-20240116; t=1718272987; c=relaxed/simple;
+	bh=CqHO2/KK7eIKe3EFoA4TtHPEMTMPdLClBxAJ4UmrvLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GayyhwC6fmTSzP25e6kh5Y0ORw1SJWxlpMtvfpYLrfTJPUDD7K1XxSusy+sEePrq0eq9846z7nICmIfChBh7rvORsHlaySjit6/JCzahrZvPsuqCT7tjbyt6n7lyT19xc9OTuigpAr3hMEZOreWZeMXtpDyQLhG7hRrXwoamQJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqmuBfJy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4425EC3277B;
-	Thu, 13 Jun 2024 09:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718272541;
-	bh=XmS+lF9Ds2ss/fP43EzxkHbFuhkOym3rDSSC14WaCpw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXEbRwvpUv0yDre/bda07f9U93V5poLFzW8WRCqXVi3juaBI/RjmH5CmvqwrsdZwxAgvZ1OnCZMwtzsoVbOQotE8mnl7Vg5APzQQAAT21ifCZBx9XtcMwA58yBnjXizWxf/jHl6pVkA6HIdkNwFI2GvoXODN9gU1Ylu4Ss34FHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NqNPZhTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18679C2BBFC;
+	Thu, 13 Jun 2024 10:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718272986;
+	bh=CqHO2/KK7eIKe3EFoA4TtHPEMTMPdLClBxAJ4UmrvLg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eqmuBfJyQ4ulCxseiCrrkDyL3guNZ29qhM/nw9/qf902UeGvp+PzW/70QDUWHtXB/
-	 eJxK8BCW7uu/3vi4UosB69ghoU196sWwfaIhsQUQ4i/dE0eBjibdHnvPENskMtJ2CU
-	 O9SNGkbCeMfKv3fxMQjwjjk1K5FbafqpZamVKJmn5QEwffu8s8t/qs6fvQH4Afow9d
-	 TtxMeemVo9PifqenT0pJhdS4SJzfeQltd5M6J8OXETwPxlHvF66QDaWpiI+R0wI8BS
-	 YGdEjjUp+cdgZ20w4CJEzd8yFlYS64KParP7UdMaFzuJWG8BAjITTqYHSKVU9hNHAE
-	 ugTk/SRH+Zm5A==
-Date: Thu, 13 Jun 2024 11:55:37 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>, 
-	linux-block@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: Flaky test: generic/085
-Message-ID: <20240613-lackmantel-einsehen-90f0d727358d@brauner>
-References: <20240611085210.GA1838544@mit.edu>
- <20240611163701.GK52977@frogsfrogsfrogs>
- <20240612-abdrehen-popkultur-80006c9e4c8d@brauner>
- <20240612144716.GB1906022@mit.edu>
+	b=NqNPZhTJEpyCvzXfGU5AnNh2gavLMwsYzQ5eTYx5mLDPdSSIqSRAKZLJPIpCHaYJR
+	 ZbGmNlNWp/ql5XfAGCsjaIZewR5YWdNBQPF/JbE+b4CeU2YsQUlvxT4PItgpgWF4TL
+	 CUhzvnxOEk/9SvVUdnWqARHGMUiC0hjz2Vn2kezE=
+Date: Thu, 13 Jun 2024 12:03:03 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
+	dakr@redhat.com
+Subject: Re: [RFC 1/2] rust: Introduce atomic API helpers
+Message-ID: <2024061353-stillness-unearned-dc4f@gregkh>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-2-boqun.feng@gmail.com>
+ <2024061341-whole-snowfall-89a6@gregkh>
+ <20240613091747.GB17707@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="zhjf4qywshxgjish"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612144716.GB1906022@mit.edu>
+In-Reply-To: <20240613091747.GB17707@noisy.programming.kicks-ass.net>
 
-
---zhjf4qywshxgjish
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-On Wed, Jun 12, 2024 at 03:47:16PM GMT, Theodore Ts'o wrote:
-> On Wed, Jun 12, 2024 at 01:25:07PM +0200, Christian Brauner wrote:
-> > I've been trying to reproduce this with pmem yesterday and wasn't able to.
+On Thu, Jun 13, 2024 at 11:17:47AM +0200, Peter Zijlstra wrote:
+> On Thu, Jun 13, 2024 at 07:38:51AM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Jun 12, 2024 at 03:30:24PM -0700, Boqun Feng wrote:
+> > > +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
+> > > +// DO NOT MODIFY THIS FILE DIRECTLY
 > > 
-> > What's the kernel config and test config that's used?
-> >
+> > Why not just build this at build time and not check the file into the
+> > tree if it is always automatically generated?  That way it never gets
+> > out of sync.  We do this for other types of auto-generated files in the
+> > kernel today already.
 > 
-> The kernel config can be found here:
+> Part of the problem is, is that a *TON* of files depend on the atomic.h
+> headers. If we'd generate it on every build, you'd basically get to
+> rebuild the whole kernel every single time.
 > 
-> https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kernel-configs/config-6.1
-> 
-> Drop it into .config in the build directory of any kernel sources
-> newer than 6.1, and then run "make olddefconfig".  This is all
-> automated in the install-kconfig script which I use:
-> 
-> https://github.com/tytso/xfstests-bld/blob/master/kernel-build/install-kconfig
-> 
-> The VM has 4 CPU's, and 26GiB of memory, and kernel is booted with the
-> boot command line options "memmap=4G!9G memmap=9G!14G", which sets up
-> fake /dev/pmem0 and /dev/pmem1 devices backed by RAM.  This is my poor
-> engineer's way of testing DAX without needing to get access to
-> expensive VM's with pmem.  :-)
-> 
-> I'm assuming this is a timing-dependant bug which is easiest to
-> trigger on fast devices, so a ramdisk might also work.  FWIW, I also
-> can see failures relatively frequently using the ext4/nojournal
-> configuration on a SSD-backed cloud block device (GCE's Persistent
-> Disk SSD product).
-> 
-> As a result, if you grab my xfstests-bld repo from github, and then
-> run "qemu-xfstests -c ext4/nojournal C 20 generic/085" it should
-> also reproduce.  See the Documentation/kvm-quickstart.md for more details.
+> Also, these files don't change too often. And if you look, there's a
+> hash in those files which is used to check if things somehow got stale.
 
-Thanks, Ted! Ok, I think I figured it out.
-
-P1
-dm_resume()
--> bdev_freeze()
-   mutex_lock(&bdev->bd_fsfreeze_mutex);
-   atomic_inc_return(&bdev->bd_fsfreeze_count); // == 1
-   mutex_unlock(&bdev->bd_fsfreeze_mutex);
-
-P2						P3
-setup_bdev_super()
-bdev_file_open_by_dev();
-atomic_read(&bdev->bd_fsfreeze_count); // != 0
-
-						bdev_thaw()
-						mutex_lock(&bdev->bd_fsfreeze_mutex);
-						atomic_dec_return(&bdev->bd_fsfreeze_count); // == 0
-						mutex_unlock(&bdev->bd_fsfreeze_mutex);
-						bd_holder_lock();
-						// grab passive reference on sb via sb->s_count
-						bd_holder_unlock();
-						// Sleep to be woken when superblock ready or dead
-bdev_fput()
-bd_holder_lock()
-// yield bdev
-bd_holder_unlock()
-
-deactivate_locked_super()
-// notify that superblock is dead
-
-						// get woken and see that superblock is dead; fail
-
-In words this basically means that P1 calls dm_suspend() which calls
-into bdev_freeze() before the block device has been claimed by the
-filesystem. This brings bdev->bd_fsfreeze_count to 1 and no call into
-fs_bdev_freeze() is required.
-
-Now P2 tries to mount that frozen block device. It claims it and checks
-bdev->bd_fsfreeze_count. As it's elevated it aborts mounting holding
-sb->s_umount all the time ofc.
-
-In the meantime P3 calls dm_resume() it sees that the block device is
-already claimed by a filesystem and calls into fs_bdev_thaw().
-
-It takes a passive reference and realizes that the filesystem isn't
-ready yet. So P3 puts itself to sleep to wait for the filesystem to
-become ready.
-
-P2 puts the last active reference to the filesystem and marks it as
-dying.
-
-Now P3 gets woken, sees that the filesystem is dying and
-get_bdev_super() fails.
-
-So Darrick is correct about the fix but the reasoning is a bit
-different. :)
-
-Patch appended and on #vfs.fixes.
-
---zhjf4qywshxgjish
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-fs-don-t-misleadingly-warn-during-thaw-operations.patch"
-
-From 35224b919d6778ca5dd11f76659ae849594bd2bf Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 13 Jun 2024 11:38:14 +0200
-Subject: [PATCH] fs: don't misleadingly warn during thaw operations
-
-The block device may have been frozen before it was claimed by a
-filesystem. Concurrently another process might try to mount that
-frozen block device and has temporarily claimed the block device for
-that purpose causing a concurrent fs_bdev_thaw() to end up here. The
-mounter is already about to abort mounting because they still saw an
-elevanted bdev->bd_fsfreeze_count so get_bdev_super() will return
-NULL in that case.
-
-For example, P1 calls dm_suspend() which calls into bdev_freeze() before
-the block device has been claimed by the filesystem. This brings
-bdev->bd_fsfreeze_count to 1 and no call into fs_bdev_freeze() is
-required.
-
-Now P2 tries to mount that frozen block device. It claims it and checks
-bdev->bd_fsfreeze_count. As it's elevated it aborts mounting.
-
-In the meantime P3 calls dm_resume() it sees that the block device is
-already claimed by a filesystem and calls into fs_bdev_thaw().
-
-It takes a passive reference and realizes that the filesystem isn't
-ready yet. So P3 puts itself to sleep to wait for the filesystem to
-become ready.
-
-P2 puts the last active reference to the filesystem and marks it as
-dying. Now P3 gets woken, sees that the filesystem is dying and
-get_bdev_super() fails.
-
-Fixes: 49ef8832fb1a ("bdev: implement freeze and thaw holder operations")
-Cc: <stable@vger.kernel.org>
-Reported-by: Theodore Ts'o <tytso@mit.edu>
-Link: https://lore.kernel.org/r/20240611085210.GA1838544@mit.edu
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/super.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/fs/super.c b/fs/super.c
-index b72f1d288e95..095ba793e10c 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1502,8 +1502,17 @@ static int fs_bdev_thaw(struct block_device *bdev)
- 
- 	lockdep_assert_held(&bdev->bd_fsfreeze_mutex);
- 
-+	/*
-+	 * The block device may have been frozen before it was claimed by a
-+	 * filesystem. Concurrently another process might try to mount that
-+	 * frozen block device and has temporarily claimed the block device for
-+	 * that purpose causing a concurrent fs_bdev_thaw() to end up here. The
-+	 * mounter is already about to abort mounting because they still saw an
-+	 * elevanted bdev->bd_fsfreeze_count so get_bdev_super() will return
-+	 * NULL in that case.
-+	 */
- 	sb = get_bdev_super(bdev);
--	if (WARN_ON_ONCE(!sb))
-+	if (!sb)
- 		return -EINVAL;
- 
- 	if (sb->s_op->thaw_super)
--- 
-2.43.0
-
-
---zhjf4qywshxgjish--
+Ok, fair enough, if you all don't think this will change often...
 
