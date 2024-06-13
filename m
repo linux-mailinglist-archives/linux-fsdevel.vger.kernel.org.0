@@ -1,206 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-21625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9710E90680F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 11:04:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF600906863
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 11:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04CFFB27221
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 09:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021EF1C24584
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 09:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4635142629;
-	Thu, 13 Jun 2024 09:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35C614037C;
+	Thu, 13 Jun 2024 09:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A0TLT7/3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9186413F44A;
-	Thu, 13 Jun 2024 09:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6531513E8A7;
+	Thu, 13 Jun 2024 09:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269275; cv=none; b=o3CO+1+ktR+s7EnNQI8crWZ/saJQB5J6UPV50jWtgD22sz2MEMZ5DzxN+OU+Iv0h4BI4PzhwHqVB2LmeArGK7B/uwb7fuJw6QeJknw3HnYSw8Y719WV1ZucMI9/ytcdA58RoPuygJVa73+sjSPNjkgfTli0Wae4MaiQAhpZaccE=
+	t=1718270294; cv=none; b=OKfdBTLOYaoM6ETT12uRUlEz0LvhVleSfWrUh75/EGq2p/w4tpji+1hS9bBwBPFzf9nofVZoS8enbIzEC59iWoTdl+Fdg+DDR9FHHgRXsioHRFdUiVYuYQm8qwAwt23kPK2TB/rReBJrDhOjFaObGAJkwMvR8AmQvjL2yJpnMVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269275; c=relaxed/simple;
-	bh=pBXZbUm/Jl5grb2RKQ/TbHzbCh4rKjcU503dKpopY5k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kyKczP33hp1+0c8KuLNEJT5PpaSjyDVl0PCMtoZG/NV+eBvPsWUVmq1R+QtbSMstJg9eaKDhxOVL96PrMmVwx1crnkdeOt95yGeHrWC2j0oaO10eN7yLSx2gbsW1ZOLJs0827sVw7edx3FUMKWnth1XhUlCThuqJ+Pi1nel1AIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W0Gbh0CLKz4f3kkY;
-	Thu, 13 Jun 2024 17:01:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9CD191A0568;
-	Thu, 13 Jun 2024 17:01:10 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBFOtWpmHK1uPQ--.16895S12;
-	Thu, 13 Jun 2024 17:01:10 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH -next v5 8/8] iomap: don't increase i_size in iomap_write_end()
-Date: Thu, 13 Jun 2024 17:00:33 +0800
-Message-Id: <20240613090033.2246907-9-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
-References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1718270294; c=relaxed/simple;
+	bh=j57AjH7vWOzLYS8GEi6N0Sm4lqhf9PnfiNNs+BWRZvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ub9Sul6WhfiOSoZL6TupcoJSA6XFzYzfR9cPjZrtZ6TQmCVJEQeYm8tdR8QfzIui21jcwfDOqK0/dJGkfyjdzjZuxFuWtcZmv47TKSob4R0Bnt9NEVGB7Y3b7sbZEDHBfzWrmXnkS9HbstOpLSq1R58Li/BRmjQ2Or+TLt9EZP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A0TLT7/3; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=p0dnDPDEIYuJ2y75CbrgMsy67e1FESlmVsvTOPepdeA=; b=A0TLT7/3PW8jq4FG22ssotSS0g
+	zPEMM2uzluilJ2tNOjM9f5NZ6KZM2OQshkLdPgKv+9qmi+fIk9ccNkgp82a7JoC9sCGKPOG1eN6ZK
+	fLtadKbtssSZyz+uAin1jf6o+EDnhCxsprUnKhbmaxCAdSCtSINGkMzMb9Sa8yQr+d8UJrIW4e37c
+	Z7NIv6OC2+S2ZHiBSzwmuYy9biFMMC+KNad4ogL57b1BoNyAUNeuFmNTetACp01Gh8YYGucXUvY1w
+	8ZL4IUDpKPtuypRva/qqBvfWB1zmtJIqc6lwu58UdEw3eYOIvsTlkddi7wZMC0I1YWt8D1tkXCRk/
+	fWpzxxjQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHgaW-00000003Uvs-2WWA;
+	Thu, 13 Jun 2024 09:17:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4C42E300B40; Thu, 13 Jun 2024 11:17:47 +0200 (CEST)
+Date: Thu, 13 Jun 2024 11:17:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
+	dakr@redhat.com
+Subject: Re: [RFC 1/2] rust: Introduce atomic API helpers
+Message-ID: <20240613091747.GB17707@noisy.programming.kicks-ass.net>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-2-boqun.feng@gmail.com>
+ <2024061341-whole-snowfall-89a6@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXKBFOtWpmHK1uPQ--.16895S12
-X-Coremail-Antispam: 1UD129KBjvJXoWxCrW3CFWxCFWUWr48Cw4DJwb_yoWrAF4kpr
-	y293yrCan7tw17Wr1kAF98ZryYka4fKFW7CrW7GrWavFn0yr1xKF1rWayYyF95J3srCF4S
-	qr4kA3yrWF1UAr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUA
-	rcfUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024061341-whole-snowfall-89a6@gregkh>
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Thu, Jun 13, 2024 at 07:38:51AM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Jun 12, 2024 at 03:30:24PM -0700, Boqun Feng wrote:
+> > +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
+> > +// DO NOT MODIFY THIS FILE DIRECTLY
+> 
+> Why not just build this at build time and not check the file into the
+> tree if it is always automatically generated?  That way it never gets
+> out of sync.  We do this for other types of auto-generated files in the
+> kernel today already.
 
-This reverts commit '0841ea4a3b41 ("iomap: keep on increasing i_size in
-iomap_write_end()")'.
+Part of the problem is, is that a *TON* of files depend on the atomic.h
+headers. If we'd generate it on every build, you'd basically get to
+rebuild the whole kernel every single time.
 
-After xfs could zero out the tail blocks aligned to the allocation
-unitsize and convert the tail blocks to unwritten for realtime inode on
-truncate down, it couldn't expose any stale data when unaligned truncate
-down realtime inodes, so we could keep on stop increasing i_size for
-IOMAP_UNSHARE and IOMAP_ZERO in iomap_write_end().
-
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/iomap/buffered-io.c | 53 +++++++++++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4a23c3950a47..75360128f1da 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -891,37 +891,22 @@ static bool iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
--	loff_t old_size = iter->inode->i_size;
--	size_t written;
- 
- 	if (srcmap->type == IOMAP_INLINE) {
- 		iomap_write_end_inline(iter, folio, pos, copied);
--		written = copied;
--	} else if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
--		written = block_write_end(NULL, iter->inode->i_mapping, pos,
--					len, copied, &folio->page, NULL);
--		WARN_ON_ONCE(written != copied && written != 0);
--	} else {
--		written = __iomap_write_end(iter->inode, pos, len, copied,
--					    folio) ? copied : 0;
-+		return true;
- 	}
- 
--	/*
--	 * Update the in-memory inode size after copying the data into the page
--	 * cache.  It's up to the file system to write the updated size to disk,
--	 * preferably after I/O completion so that no stale data is exposed.
--	 * Only once that's done can we unlock and release the folio.
--	 */
--	if (pos + written > old_size) {
--		i_size_write(iter->inode, pos + written);
--		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
--	}
--	__iomap_put_folio(iter, pos, written, folio);
-+	if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
-+		size_t bh_written;
- 
--	if (old_size < pos)
--		pagecache_isize_extended(iter->inode, old_size, pos);
-+		bh_written = block_write_end(NULL, iter->inode->i_mapping, pos,
-+					len, copied, &folio->page, NULL);
-+		WARN_ON_ONCE(bh_written != copied && bh_written != 0);
-+		return bh_written == copied;
-+	}
- 
--	return written == copied;
-+	return __iomap_write_end(iter->inode, pos, len, copied, folio);
- }
- 
- static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-@@ -936,6 +921,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 
- 	do {
- 		struct folio *folio;
-+		loff_t old_size;
- 		size_t offset;		/* Offset into folio */
- 		size_t bytes;		/* Bytes to write to folio */
- 		size_t copied;		/* Bytes copied from user */
-@@ -987,6 +973,23 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 		written = iomap_write_end(iter, pos, bytes, copied, folio) ?
- 			  copied : 0;
- 
-+		/*
-+		 * Update the in-memory inode size after copying the data into
-+		 * the page cache.  It's up to the file system to write the
-+		 * updated size to disk, preferably after I/O completion so that
-+		 * no stale data is exposed.  Only once that's done can we
-+		 * unlock and release the folio.
-+		 */
-+		old_size = iter->inode->i_size;
-+		if (pos + written > old_size) {
-+			i_size_write(iter->inode, pos + written);
-+			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
-+		}
-+		__iomap_put_folio(iter, pos, written, folio);
-+
-+		if (old_size < pos)
-+			pagecache_isize_extended(iter->inode, old_size, pos);
-+
- 		cond_resched();
- 		if (unlikely(written == 0)) {
- 			/*
-@@ -1357,6 +1360,7 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
- 			bytes = folio_size(folio) - offset;
- 
- 		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-+		__iomap_put_folio(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
-@@ -1422,6 +1426,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		folio_mark_accessed(folio);
- 
- 		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-+		__iomap_put_folio(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
--- 
-2.39.2
-
+Also, these files don't change too often. And if you look, there's a
+hash in those files which is used to check if things somehow got stale.
 
