@@ -1,441 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-21663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA5A907A68
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 19:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C27A4907AA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 20:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D361F2439F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 17:58:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C6BF1F2316D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 18:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9DB14A619;
-	Thu, 13 Jun 2024 17:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C095C14A632;
+	Thu, 13 Jun 2024 18:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwH41Q0v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljbStTQj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2B614A089;
-	Thu, 13 Jun 2024 17:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A937D14A4F0;
+	Thu, 13 Jun 2024 18:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718301503; cv=none; b=SVSP2rifZscBxLC0cjvamU/zdv4kBUYDqirGOOTazY5zMH3fhAAmLJKuaT8jOYRz7BKFkbO34w3AxDg+ZaDywdyoeSgRCxaaHqXgf0jp1Uqxu6Jj5pLgPWY4GluV9zQdJXo7+FltE6H0/8LyZbUSNzQWkfQIFyd46ItM/FlZ+XY=
+	t=1718302407; cv=none; b=Q85mCHdjtQ7rwJbgzyGWytXfOhtHNKtgipAqGxo74fecGpFZEtYlDPLG20O3uVQCjqe4TSrEGgi1mMMJgT9YylJctDa1HsGSMP/gVjOOrrMJ3QX7CXT7JF9zAvtQ/0k33KQ13IJaSt+RTtY1i1e3UVd4JIqOpHCc99p7InBzP6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718301503; c=relaxed/simple;
-	bh=bgFDf0RcHIHWl5mkjwGNAsJfd7ndu2ENses6VhQLacY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1yK7ZvboIUpgqCwkE9WdJYKNPjYe9Qtp5jvslEO5dOH2g7M3rOqhiD378Zhk5MVn7bO5FLrRWijpETrCal0rLaBsbmokRhNM1nS4Ghlph6bw6yx4W2N1t58R8coBfiSnYT+KBH1j4H59b0YzYXIgZXd7J8iMcW3u4kS5/RkPqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwH41Q0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00A72C3277B;
-	Thu, 13 Jun 2024 17:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718301503;
-	bh=bgFDf0RcHIHWl5mkjwGNAsJfd7ndu2ENses6VhQLacY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QwH41Q0v4tpBKYeX/83G20ZrVDtrVkmuBqVv6I2MC1lWlz6Q2cHlz0OscAIE9ggBv
-	 cCDqtTl4DAAseU6ttU96TXXlcE/djo2r49+Gh1Mrhn+h+76iB+JD7LV3hHgaCfCKIB
-	 dJJXxM1po6VDKWUEX6f1r7XaE7EgFEso0DowrVh+NztjdEgHi25JmRt9oy5JkVMfHC
-	 /ahOxSBlYhgKxbpJ0Y3zzic3qnnk1GNV24I1MAtIv/IHCAMPykmW2lk68zNEMX+UIr
-	 Oy+u3dlasIs0qEHRlqB1KGkOlaLaBWfeemcWTD00ya9bG69FEWv+SxQwz/h2L62pEF
-	 e9dyTwDDb+RdA==
-Date: Thu, 13 Jun 2024 10:58:22 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>,
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH] Documentation: document the design of iomap and how to
- port
-Message-ID: <20240613175822.GA3855056@frogsfrogsfrogs>
-References: <20240608001707.GD52973@frogsfrogsfrogs>
- <878qza2t1p.fsf@gmail.com>
+	s=arc-20240116; t=1718302407; c=relaxed/simple;
+	bh=wNNl8rrQPycSg4IXL1NS7035Hu/VIN3/XOUEICPOlvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SiZ4SmorIk1YInZ/1Iq3gRmgZ/zixa+mUtytDyAq99l/7Wdnj0/cGcW6dHOJgbvG1qkXUS7bQNDKZGsyq8QVAPtzCLQCRHotfWaTZX7FwqNu0v/m1wNTLse0m0FTVuq5Vw2TBr+p+xXvuncduxBwSYZbOEss1dmxO4LLgAazb20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljbStTQj; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57c8353d8d0so1601144a12.1;
+        Thu, 13 Jun 2024 11:13:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718302404; x=1718907204; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wNNl8rrQPycSg4IXL1NS7035Hu/VIN3/XOUEICPOlvQ=;
+        b=ljbStTQj5l2UkGLsjkeEdPMsvJxQgTAJFSNDTfBP+AxdVwMY3IFzJvayeC0jGE/Zex
+         BZuJXrcTcVZgTQVqF0HaPpdy3B2jK66EcubnuCFInykukUhA4LaQkglzxmWMcWlt7M+Z
+         0iwqpArn1wZRkNy/HISQomyBiGRv3FIUfGOeZ2ZLZk/79vgm5yskcKVACst2cmlUxust
+         IiIVtWS7Vdv9zRFRXtllSfV+FARtUPL0/n8sdLxIOrrlbHdl6+VRb/3Wr3RtstBEj7Ln
+         QRXlcY6HCDiyyZ6Ao1Fce0DlT/rM/oBx796ByD3G/Vw7U8sKLrc76wAkbElPhHVbxwQ1
+         Q1Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718302404; x=1718907204;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wNNl8rrQPycSg4IXL1NS7035Hu/VIN3/XOUEICPOlvQ=;
+        b=VqvQW7IEJ4+kWlA8kLWke03sNLAdnH+UftVCp81wKz5uZ7fmTSPLS9N4FDidXyrgDh
+         Pc3tOjKCMojPNvmAhrSQiugGK9IYwxLxzkrAg/LfKpcBJSWsKVFnxJdsetYfhPKJ5fNx
+         5XInH9GnUZYS9tgqnKx0TngCbvyo6w/jSW7s+rPckXcFTtjDXSlQDQbjWqmlM4+ZPBCm
+         IAuNwY3cirzCgLLvX5eQCsU1jzenY+l3SF0QtU7OoknWVk3U6zLszIcKEgRTNOq4OAsN
+         7om3N1ik7ll6Uaz+vx4rLHf2x11kWlWD6Ne0b7mrpGLFJWlHMkPz6AAKtYXlVefd+9Vo
+         gLIg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4htjjEbEYSyDF1NGc9fo/7d7QeuxFQ/lY2LtSUuUSS0WgBHgGfCwiOMfryRY7nmJ3bE/oWkv04RG0CQEzpNQD5Bdss2sg0ecnRBsVkmH3DlFAbKwMfEC14PPCCQws6OC1c6WqhFsWPfWsYA==
+X-Gm-Message-State: AOJu0YzPjF8NDrUazOMKqIyNIvhf7ce2Cwg8IE17exyrlwJPpLGOELt+
+	Omrl6LFWTFiAPvEyaGlPaeQeqVz7vVvw1B90iqByak8yX1ZL0hkduilTtdAFDqVxy7Z7EU9oBqt
+	n9FGBF6sdEIi976ERrouH5Fpa87s=
+X-Google-Smtp-Source: AGHT+IEDJPaqSZUv5B5MxjIAxl6QnKc6ZsHvMrpeSQPPtVjYYPsRr9TBGMDkk43sN9E+cAoFf9Wiyix2XkFa0c4Z+4U=
+X-Received: by 2002:a50:cdde:0:b0:57c:74a3:8fd2 with SMTP id
+ 4fb4d7f45d1cf-57cbd67f655mr488376a12.21.1718302403764; Thu, 13 Jun 2024
+ 11:13:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878qza2t1p.fsf@gmail.com>
+References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
+ <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
+ <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
+ <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
+ <20240613-pumpen-durst-fdc20c301a08@brauner> <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 13 Jun 2024 20:13:10 +0200
+Message-ID: <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
+ be released
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 06:54:02PM +0530, Ritesh Harjani wrote:
-> 
-> <snip>
-> > +Direct I/O
-> > +----------
-> > +
-> > +In Linux, direct I/O is defined as file I/O that is issued directly to
-> > +storage, bypassing the pagecache.
-> > +
-> > +The ``iomap_dio_rw`` function implements O_DIRECT (direct I/O) reads and
-> > +writes for files.
-> > +An optional ``ops`` parameter can be passed to change the behavior of
-> > +direct I/O.
-> 
-> Did you mean "dops" iomap_dio_ops (instead of ops)?
+On Thu, Jun 13, 2024 at 7:00=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, 13 Jun 2024 at 06:46, Christian Brauner <brauner@kernel.org> wrot=
+e:
+> >
+> > I've picked Linus patch and your for testing into the vfs.inode.rcu bra=
+nch.
+>
+> Btw, if you added [patch 2/2] too, I think the exact byte counts in
+> the comments are a bit misleading.
+>
+> The actual cacheline details will very much depend on 32-bit vs 64-bit
+> builds, but also on things like the slab allocator debug settings.
+>
 
-Oops, yes.
+I indeed assumed "x86_64 production", with lines just copied from pahole.
 
-> ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> 		unsigned int dio_flags, void *private, size_t done_before);
-> 
-> 1. Also can you please explain what you meant by "change the behavior of
-> direct-io"?
+However, to the best of my understanding the counts are what one
+should expect on a 64-bit kernel.
 
-"The filesystem can provide the ``dops`` parameter if it needs to
-perform extra work before or after the I/O is issued to storage."
+That said:
 
-> 
-> 2. Do you think we should add the function declaration of
-> iomap_dio_rw() here, given it has so many arguments?
+> I think the important part is to keep the d_lockref - that is often
+> dirty and exclusive in the cache - away from the mostly RO parts of
+> the dentry that can be shared across CPU's in the cache.
+>
+> So rather than talk about exact byte offsets, maybe just state that
+> overall rule?
+>
 
-Will do.
+I would assume the rule is pretty much well known and instead an
+indicator where is what (as added in my comments) would be welcome.
 
-> > +The ``done_before`` parameter should be set if writes have been
-> > +initiated prior to the call.
-> 
-> I don't think this is specific to "writes" alone. 
-> 
-> Maybe this?
-> 
-> The ``done_before`` parameter tells the how much of the request has
-> already been transferred. It gets used for finishing a request
-> asynchronously when part of the request has already been complete
-> synchronously.
-> 
-> Maybe please also add a the link to this (for easy reference).
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c03098d4b9ad76bca2966a8769dcfe59f7f85103
+But if going that route, then perhaps:
+"Make sure d_lockref does not share a cacheline with fields used by
+RCU lookup, otherwise it can result in a signification throughput
+reduction. You can use pahole(1) to check the layout."
+[maybe a link to perfbook or something goes here?]
 
-Yep, thanks for that.
+Arguably a bunch of BUILD_BUG_ONs could be added to detect the overlap
+(only active without whatever runtime debug messing with the layout).
 
-> > +The direction of the I/O is determined from the ``iocb`` passed in.
-> > +
-> > +The ``flags`` argument can be any of the following values:
-> 
-> Callers of iomap_dio_rw() can set the flags argument which can be any of
-> the following values:
-> 
-> Just a bit more descriptive ^^^
-> 
-> > +
-> > + * ``IOMAP_DIO_FORCE_WAIT``: Wait for the I/O to complete even if the
-> > +   kiocb is not synchronous.
-> 
-> Adding an example would be nice.
-> 
-> e.g. callers might want to consider setting this flag for extending writes.
-> 
-> > +
-> > + * ``IOMAP_DIO_OVERWRITE_ONLY``: Allocating blocks, zeroing partial
-> > +   blocks, and extensions of the file size are not allowed.
-> > +   The entire file range must to map to a single written or unwritten
->                                 ^^^ an extra to
-> 
-> > +   extent.
-> > +   This flag exists to enable issuing concurrent direct IOs with only
-> > +   the shared ``i_rwsem`` held when the file I/O range is not aligned to
-> > +   the filesystem block size.
-> > +   ``-EAGAIN`` will be returned if the operation cannot proceed.
-> 
-> Can we please add these below details too. I would rather avoid wasting
-> my time in searching the history about, why EXT4 does not use this flag :)
-> 
-> Currently XFS uses this flag. EXT4 does not use it since it checks for
-> overwrites or unaligned overwrites and uses appropriate locking
-> up front rather than on a retry response to -EAGAIN [1] [2].
-> 
-> [1]: https://lore.kernel.org/linux-ext4/20230810165559.946222-1-bfoster@redhat.com/
-> [2]: https://lore.kernel.org/linux-ext4/20230314130759.642710-1-bfoster@redhat.com/
-
-Ok.  I'll just mention that it's a performance optimization to reduce
-lock contention, but that a lot of detailed checking is required to do
-it correctly.
-
-> > +
-> > + * ``IOMAP_DIO_PARTIAL``: If a page fault occurs, return whatever
-> > +   progress has already been made.
-> > +   The caller may deal with the page fault and retry the operation.
-> 
-> Callers use ``dio_before`` argument along with ``IOMAP_DIO_PARTIAL`` to
-> tell the iomap subsystem about how much of the requested I/O was already
-> done.
-
-Let's be more specific than that -- if the caller decides to perform
-multiple retries, then the done_before parameter to the next call should
-be the accumulated return values of all the previous attempts.
-
-> > +
-> > +These ``struct kiocb`` flags are significant for direct I/O with iomap:
-> > +
-> > + * ``IOCB_NOWAIT``: Only proceed with the I/O if mapping data are
-> > +   already in memory, we do not have to initiate other I/O, and we
-> > +   acquire all filesystem locks without blocking.
-> > +
-> 
-> Maybe explicitly mentioning about "no block allocation"?
-> 
-> * ``IOCB_NOWAIT``: Only proceed with the I/O if mapping data are
->   already in memory, we do not have to initiate other I/O or do any
->   block allocations, and we acquire all filesystem locks without
->   blocking.
-
-Oh, I changed all these NOWAIT bits to define what nowait means (i.e.
-dave's long paragraph about it) in its own section, and all these bullet
-points merely point back to that definition.
-
-> > + * ``IOCB_SYNC``: Ensure that the device has persisted data to disk
-> > +   BEFORE completing the call.
-> > +   In the case of pure overwrites, the I/O may be issued with FUA
-> > +   enabled.
-> > +
-> > + * ``IOCB_HIPRI``: Poll for I/O completion instead of waiting for an
-> > +   interrupt.
-> > +   Only meaningful for asynchronous I/O, and only if the entire I/O can
-> > +   be issued as a single ``struct bio``.
-> > +
-> > + * ``IOCB_DIO_CALLER_COMP``: Try to run I/O completion from the caller's
-> > +   process context.
-> > +   See ``linux/fs.h`` for more details.
-> > +
-> > +Filesystems should call ``iomap_dio_rw`` from ``->read_iter`` and
-> > +``->write_iter``, and set ``FMODE_CAN_ODIRECT`` in the ``->open``
-> > +function for the file.
-> > +They should not set ``->direct_IO``, which is deprecated.
-> > +
-> 
-> Return value: 
-> ~~~~~~~~~~~~~
-> On success it will return the number of bytes transferred. On failure it
-> will return a negative error value. 
-> 
-> Note:
-> -ENOTBLK is a magic return value which callers may use for falling back
-> to buffered-io. ->iomap_end()/->iomap_begin() can decide to return this
-> magic return value if it decides to fallback to buffered-io. iomap
-> subsystem return this value in case if it fails to invalidate the
-> pagecache pages belonging to the direct-io range before initiating the
-> direct-io.
-> 
-> -EIOCBQUEUED is returned when an async direct-io request is queued for I/O. 
-
-Done.
-
-> > +If a filesystem wishes to perform its own work before direct I/O
-> > +completion, it should call ``__iomap_dio_rw``.
-> > +If its return value is not an error pointer or a NULL pointer, the
-> > +filesystem should pass the return value to ``iomap_dio_complete`` after
-> > +finishing its internal work.
-> > +
-> > +Direct Reads
-> > +~~~~~~~~~~~~
-> > +
-> > +A direct I/O read initiates a read I/O from the storage device to the
-> > +caller's buffer.
-> > +Dirty parts of the pagecache are flushed to storage before initiating
-> > +the read io.
-> > +The ``flags`` value for ``->iomap_begin`` will be ``IOMAP_DIRECT`` with
-> > +any combination of the following enhancements:
-> > +
-> > + * ``IOMAP_NOWAIT``: Read if mapping data are already in memory.
-> > +   Does not initiate other I/O or block on filesystem locks.
-> > +
-> > +Callers commonly hold ``i_rwsem`` in shared mode.
-> > +
-> > +Direct Writes
-> > +~~~~~~~~~~~~~
-> > +
-> > +A direct I/O write initiates a write I/O to the storage device to the
-> > +caller's buffer.
-> 
-> to the storage device "from" the caller's buffer.
-
-Heh, oooops.  Thanks for catching that.
-
-> > +Dirty parts of the pagecache are flushed to storage before initiating
-> > +the write io.
-> > +The pagecache is invalidated both before and after the write io.
-> > +The ``flags`` value for ``->iomap_begin`` will be ``IOMAP_DIRECT |
-> > +IOMAP_WRITE`` with any combination of the following enhancements:
-> > +
-> > + * ``IOMAP_NOWAIT``: Write if mapping data are already in memory.
-> > +   Does not initiate other I/O or block on filesystem locks.
-> > + * ``IOMAP_OVERWRITE_ONLY``: Allocating blocks and zeroing partial
-> > +   blocks is not allowed.
-> > +   The entire file range must to map to a single written or unwritten
-> > +   extent.
-> > +   The file I/O range must be aligned to the filesystem block size.
-> > +
-> > +Callers commonly hold ``i_rwsem`` in shared or exclusive mode.
-> > +
-> > +struct iomap_dio_ops:
-> > +~~~~~~~~~~~~~~~~~~~~~
-> > +.. code-block:: c
-> > +
-> > + struct iomap_dio_ops {
-> > +     void (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
-> > +                       loff_t file_offset);
-> > +     int (*end_io)(struct kiocb *iocb, ssize_t size, int error,
-> > +                   unsigned flags);
-> > +     struct bio_set *bio_set;
-> > + };
-> > +
-> > +The fields of this structure are as follows:
-> > +
-> > +  - ``submit_io``: iomap calls this function when it has constructed a
-> > +    ``struct bio`` object for the I/O requested, and wishes to submit it
-> > +    to the block device.
-> > +    If no function is provided, ``submit_bio`` will be called directly.
-> > +    Filesystems that would like to perform additional work before (e.g.
-> > +    data replication for btrfs) should implement this function.
-> > +
-> > +  - ``end_io``: This is called after the ``struct bio`` completes.
-> > +    This function should perform post-write conversions of unwritten
-> > +    extent mappings, handle write failures, etc.
-> > +    The ``flags`` argument may be set to a combination of the following:
-> > +
-> > +    * ``IOMAP_DIO_UNWRITTEN``: The mapping was unwritten, so the ioend
-> > +      should mark the extent as written.
-> > +
-> > +    * ``IOMAP_DIO_COW``: Writing to the space in the mapping required a
-> > +      copy on write operation, so the ioend should switch mappings.
-> > +
-> > +  - ``bio_set``: This allows the filesystem to provide a custom bio_set
-> > +    for allocating direct I/O bios.
-> > +    This enables filesystems to `stash additional per-bio information
-> > +    <https://lore.kernel.org/all/20220505201115.937837-3-hch@lst.de/>`_
-> > +    for private use.
-> > +    If this field is NULL, generic ``struct bio`` objects will be used.
-> > +
-> > +Filesystems that want to perform extra work after an I/O completion
-> > +should set a custom ``->bi_end_io`` function via ``->submit_io``.
-> > +Afterwards, the custom endio function must call
-> > +``iomap_dio_bio_end_io`` to finish the direct I/O.
-> > +
-> > +DAX I/O
-> > +-------
-> > +
-> > +Storage devices that can be directly mapped as memory support a new
-> > +access mode known as "fsdax".
-> 
-> Added a comma before "support" for better readability.
-> 
-> Storage devices that can be directly mapped as memory, support a new
-> access mode known as "fsdax".
-
-Eh, I don't like the comma.  Maybe this should say a teensy bit more
-about what fsdax even is?
-
-"Some storage devices can be directly mapped as memory.
-These devices support a new access mode known as fsdax that allows
-loads and stores through the CPU and memory controller."
-
-> 
-> > +
-> > +fsdax Reads
-> > +~~~~~~~~~~~
-> > +
-> > +A fsdax read performs a memcpy from storage device to the caller's
-> > +buffer.
-> > +The ``flags`` value for ``->iomap_begin`` will be ``IOMAP_DAX`` with any
-> > +combination of the following enhancements:
-> > +
-> > + * ``IOMAP_NOWAIT``: Read if mapping data are already in memory.
-> > +   Does not initiate other I/O or block on filesystem locks.
-> > +
-> > +Callers commonly hold ``i_rwsem`` in shared mode.
-> >   +
-> > +fsdax Writes
-> > +~~~~~~~~~~~~
-> > +
-> > +A fsdax write initiates a memcpy to the storage device to the caller's
-> 
-> "from" the storage device
-
-Fixed, thank you.
-
-> > +buffer.
-> > +The ``flags`` value for ``->iomap_begin`` will be ``IOMAP_DAX |
-> > +IOMAP_WRITE`` with any combination of the following enhancements:
-> > +
-> > + * ``IOMAP_NOWAIT``: Write if mapping data are already in memory.
-> > +   Does not initiate other I/O or block on filesystem locks.
-> > +
-> > + * ``IOMAP_OVERWRITE_ONLY``: Allocating blocks and zeroing partial
-> > +   blocks is not allowed.
-> > +   The entire file range must to map to a single written or unwritten
-> > +   extent.
-> > +   The file I/O range must be aligned to the filesystem block size.
-> > +
-> > +Callers commonly hold ``i_rwsem`` in exclusive mode.
-> > +
-> > +mmap Faults
-> > +~~~~~~~~~~~
-> > +
-> > +The ``dax_iomap_fault`` function handles read and write faults to fsdax
-> > +storage.
-> > +For a read fault, ``IOMAP_DAX | IOMAP_FAULT`` will be passed as the
-> > +``flags`` argument to ``->iomap_begin``.
-> > +For a write fault, ``IOMAP_DAX | IOMAP_FAULT | IOMAP_WRITE`` will be
-> > +passed as the ``flags`` argument to ``->iomap_begin``.
-> > +
-> > +Callers commonly hold the same locks as they do to call their iomap
-> > +pagecache counterparts.
-> > +
-> > +Truncation, fallocate, and Unsharing
-> > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > +
-> > +For fsdax files, the following functions are provided to replace their
-> > +iomap pagecache I/O counterparts.
-> > +The ``flags`` argument to ``->iomap_begin`` are the same as the
-> > +pagecache counterparts, with ``IOMAP_DIO`` added.
-> 
-> with "IOMAP_DAX"
-
-Fixed, thanks.
-
-> > +
-> > + * ``dax_file_unshare``
-> > + * ``dax_zero_range``
-> > + * ``dax_truncate_page``
-> 
-> Shall we mention
-> "dax_remap_file_range_prep()/dax_dedupe_file_range_compare()" ?
-
-I think dax_remap_file_range_prep is a rather silly wrapper.  But I
-suppose filesystems that support dax and reflink need to know about it,
-so I'll add a section:
-
-"Filesystems implementing the ``FIDEDUPERANGE`` ioctl must call the
-``dax_remap_file_range_prep`` function with their own iomap read ops."
-
-The only caller of dax_dedupe_file_range_compare is the vfs itself, so I
-don't think this is worth mentioning.
-
-> > +
-> > +Callers commonly hold the same locks as they do to call their iomap
-> > +pagecache counterparts.
-> > +
-> 
-> Stopping here for now. Will resume the rest of the document review
-> later.
-
-Ok.  I didn't see this email before my previous reply.  You're pretty
-close to the end, so I'll respin the series on the list after I see your
-next reply.  An interim version is here:
-
-https://djwong.org/docs/iomap/
-
---D
-
-> -ritesh
-> 
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
