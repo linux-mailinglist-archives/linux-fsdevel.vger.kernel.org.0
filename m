@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-21591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF92D9061F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 04:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC57B9061FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 04:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDD631C216D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 02:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E4C1F22714
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 02:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154D712F385;
-	Thu, 13 Jun 2024 02:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AAC12BEA4;
+	Thu, 13 Jun 2024 02:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahzSj4bB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MqmpQnVi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245DB33F6;
-	Thu, 13 Jun 2024 02:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2C3B664;
+	Thu, 13 Jun 2024 02:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718245927; cv=none; b=rtnM8D1ISiJzlH7mOuamF7xz0okpX92qVf29ZX16hVOJgSaTA15NEnQOM1zyPHKGXOZA3jQ7D14kJrmtyx9sbfUflsH3uxPXpKT9i9n9lFYtaR6MbcSVTHHnPSLB/KTElrq6c8JbV1OlzfrBE1bm1ZamzYyYq5yC2Af84PcuDuY=
+	t=1718245937; cv=none; b=ig7QDpqrXVTkMU/sSvdWjaEGoKyfdI3ezb7dSF3CcQyuuQPkKUysVaAG7j7vhxQN/N9sIj+q3L3E9p/OrlFvmRDCyoQ8nF5eIjjDGwDSPe9AH4xV4viDzWFb9nTjmYdp9IHlDKtHkbdhUhMkjMNvFEuOA7spjVu29cTLnMl04hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718245927; c=relaxed/simple;
-	bh=/gCH7e28NIl/tMHPCXOAQ7VQOVOI1s0RashVXkQPLGY=;
+	s=arc-20240116; t=1718245937; c=relaxed/simple;
+	bh=TWuud7jK3hME1+ZYOV8l3v30JtoJYeBhxXk+ueWY4nU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e1i0nrn7v77gD3XrP28ELMMTCieUhDGlOIBGGuFAcErBm46P/dWu6wwnX8jVo5gbgUxEyurj4X9WwL5CrEEqWxns7l1RB/qRnQxkJuvh0lFjmSJT9OkEbbaT/QSKqfJaKL4JkHcvEQeUi3D9TX0mdSv8LKiBE81h6z9JMV5QTuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahzSj4bB; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=YxCKyxOXv0IPzsuRwCggf5ijDMbOYWkvj1xlqpO1hbSJwsapQh/ITNapRpwaWldmNU6pwTDIsANAlZvzICpAlMfdlaZ8aw5d+hogodHHCP8nN2jydyWWd5xwaJFPnOk2f7piBWUTHNX6dIRedSn94g04fq1ZH90h0RX1pdlUi3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MqmpQnVi; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f4a0050b9aso4929575ad.2;
-        Wed, 12 Jun 2024 19:32:06 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f6f38b1ab0so4496965ad.1;
+        Wed, 12 Jun 2024 19:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718245925; x=1718850725; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718245935; x=1718850735; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HQT31JSkonb7Xmqn+k1uqrjgngeoHr6IFKrX/+KN6Ok=;
-        b=ahzSj4bBabw5mTPe2ui8++fY3UPhZ4793SJtyzsXDMY4mm/KVBk3Xiy7Ik3mY+U0VW
-         yllAsNR9DdOs12k/b8ivorcWkdiGSlM3qW7l0koN3NytmIekX/VFRR2onZhvPVaJxyYn
-         0Cybg1pVvcgAUWPJEaIRZPm3ThoCOqRZyLj6Vqyu+WkDyS3hiVj6mhPQf0gWrJxFrme5
-         pkMYT+yAmZjk+ECzN+PQUMOiACWVjFTBjedbyOh+7zkMyZP49fAnidhYCCAik4ZEi73H
-         rusWyGDmssIQVQoc0TNeAuNn7HtDAHGSkC7Jiuk1rmTsAWs8bEXFcWlkwDMKXiH0fAWI
-         PQ6A==
+        bh=wLV4tdtvKwjUMxvLd3MjEerWvvi0S3KYqORy/5kgs/I=;
+        b=MqmpQnViA3btrY3puGSfBvCJAvfJ2Iovn1Lr6IKTCp6IXBy79oeV+Bk+FzP8aRFBMp
+         PWCuicLk1rSu7ynri8m5yc7Nqd9tADBwlQZE0tjrvW+9VQCVf9Ohlvdh/SKuvEIMqKhP
+         3uYXjNjDj948wvqhiK+/SzQ8lqqF3dfwgm/sHK26L9Wq/+aIkXngclViccGODdbLxjv5
+         58wvsH83+EnQEeZr4G/dlscYQUkYwfES4cXoHw2F0K6CkMqvqRD28Sgov+S1jTVtfNlW
+         qAsWVzYKXXfljjS9gGPUrkrmXZYdpdzjWCWQZ31Z6gbeYt0ivCZY0xkkBzNL9ShcvVKn
+         L+cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718245925; x=1718850725;
+        d=1e100.net; s=20230601; t=1718245936; x=1718850736;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HQT31JSkonb7Xmqn+k1uqrjgngeoHr6IFKrX/+KN6Ok=;
-        b=YfNzyC20TrQg7qwea8UixKmh6yCy/Dn4AVm6GMeL5qXv5XguKOtcEMlfHZaKt8Yofh
-         Dr4THKp6zaZ6FNrjIjlpaC8mRown8wwb/RgvoNxl0u42PMUJdKZx0/0M/h1mxdOxXJ15
-         bn1ntBTP29mJR5guzvm+KeOmq9KiGlH5cRvhtJ7oD6d53QkJDVLkEvEWMLvlSsQ8qYYL
-         DK8i7PTB1SYVpCH8NCstzuxGZaXeSQz5enrd+00BMMRrU70xut2lvm3PNPAgZcf36ucH
-         txvLmfyxQAPE3lRnGJpppfurgqPLE+DWjMkQObWMjD4GeUCDZK+WQ7OuHxB2GqNXQleN
-         5xmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpdo++oAtSQzFhaNB/0+QScE5PcqNfkUBWD1Wq8ETdrhB+JGrqaM7W3jfRs28v0b+ORw37rLi5fJxJkGHJu4VwOT5QltjmYtjKvEuNv/lxQ3MC+E6QnUAihy26esSQeRhKG120M1lVBv29rVULkqFQjcyExrV9IQuYyJtxDZNJslxeodW54vlbsu9FiNkeWSN/883uHcX4Hci4siKyn0I4pB9/qlplEweH+YfrqN+aiLM8QSXLRBL3qtRbFmlZ1LMP5Iv4YIQemi5IYvwpK8+2bFrUl34y+P/fcWA3yJH42GgNuOQawXGnXS5XArRgfeG0bvM27A==
-X-Gm-Message-State: AOJu0YwOMg0labgbRUlcJbn92Ka5CVs36uLCAveTS4HEGB2yFz9BHGdt
-	DrAAT9n89yATJ6vrbSZO/S6GuyPR2hxIk+umbCSflsA0OL8XZ2vn
-X-Google-Smtp-Source: AGHT+IE/Thj9zy8OzNEgltY85A2YMlP/9PBe6RK31xV6C4QSBrLzPw+agMFJyhDUlBI6xydC6ujXaw==
-X-Received: by 2002:a17:903:1c2:b0:1f6:89b1:a419 with SMTP id d9443c01a7336-1f83b5583a6mr41814045ad.17.1718245925584;
-        Wed, 12 Jun 2024 19:32:05 -0700 (PDT)
+        bh=wLV4tdtvKwjUMxvLd3MjEerWvvi0S3KYqORy/5kgs/I=;
+        b=RnJyO2kzov8WlDi9w1bz7BR6Qbnwh/vzC4P8yof5gfFaPawsLwrcqz5+57sP2hTaqI
+         pkG86uYSuaxu+svU4I8CZjULMTLMuDS7LVpj/PHip1YrvckLNgYJfhIn9USYM4RbxGmX
+         PQ/jCFiwntfOP748hQBnD2+4eQCCsZ0ZcjAXzQ0yRI5FM/cifzAYiYZSiXV3V4FdQnN/
+         DmFJSyRVkWxm5wqwWu0Ha2pmOF3qZ02cEIFMFv9QhkiDt9Pk8eD5CwRUG3cWWaS9x28v
+         ZFxfE+KDcXj4Xd0Jg1gWYHSRlLUqSTxgopsipoxaD7DTq0iXWh5TmO1+P3phha1gFufy
+         BxGw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5381DHe0PNMv4Lbe4TOrgKRvfmvZl1zfC2CFqg1Cir5EinnFSYpdBBpqfqxHrN9pUjFKZ8PB/sMt1BZYgfGjwDZoeOFKZ0Dq+KfOA5es0fLGZOvpRJlS2+XqOl+mQ4CFj6oTMc8IQ+7GOlG0EGzBGuUJkxbj0RYI/akua6ZU0M0LvwHzfyqd2QcFIxAv6znunhd1sFA88Yv6qFBmfMEqcbN0Izsf8MV+pXYvBIcEiPwLpUOaLh6iVf9Y7fTZ0guoynhqKDDU8eJN4vtsfDKpPe32u3IH+eIqprkoqbMc6LdNgzX7cnwvk9JrvUzM5ep/8ioaT8A==
+X-Gm-Message-State: AOJu0YwmR7JVtZoSYKz3L5S36ZLov9iB+hoLlmppkE8LI+rUxNpxFJcZ
+	n/Zho51YyKHs26cCDK7fZz0rzE66C0n1qNnHjOgaGMGGrYbmt8C0
+X-Google-Smtp-Source: AGHT+IHU8nljO/XpjX7VaEB7PAOC5fyOplOexRJH9EcW/3foBQqPSTf9j2DyRFgOTFj3wqtthRwoDg==
+X-Received: by 2002:a17:902:d4cb:b0:1f7:3763:5ffb with SMTP id d9443c01a7336-1f83b74d134mr37873815ad.59.1718245935611;
+        Wed, 12 Jun 2024 19:32:15 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.105.92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4d159sm1755695ad.289.2024.06.12.19.31.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4d159sm1755695ad.289.2024.06.12.19.32.05
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2024 19:32:05 -0700 (PDT)
+        Wed, 12 Jun 2024 19:32:15 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: torvalds@linux-foundation.org
 Cc: ebiederm@xmission.com,
@@ -82,11 +82,14 @@ Cc: ebiederm@xmission.com,
 	netdev@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Yafang Shao <laoar.shao@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH v2 08/10] tracing: Replace strncpy() with __get_task_comm()
-Date: Thu, 13 Jun 2024 10:30:42 +0800
-Message-Id: <20240613023044.45873-9-laoar.shao@gmail.com>
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH v2 09/10] net: Replace strcpy() with __get_task_comm()
+Date: Thu, 13 Jun 2024 10:30:43 +0800
+Message-Id: <20240613023044.45873-10-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 In-Reply-To: <20240613023044.45873-1-laoar.shao@gmail.com>
 References: <20240613023044.45873-1-laoar.shao@gmail.com>
@@ -98,45 +101,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Using __get_task_comm() to read the task comm ensures that the name is
-always NUL-terminated, regardless of the source string. This approach also
-facilitates future extensions to the task comm.
+To prevent errors from occurring when the src string is longer than the dst
+string in strcpy(), we should use __get_task_comm() instead. This approach
+also facilitates future extensions to the task comm.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: David Ahern <dsahern@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
 ---
- kernel/trace/trace.c             | 2 +-
- kernel/trace/trace_events_hist.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/ipv6/ndisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 578a49ff5c32..ce94a86154a2 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1907,7 +1907,7 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 	max_data->critical_start = data->critical_start;
- 	max_data->critical_end = data->critical_end;
- 
--	strncpy(max_data->comm, tsk->comm, TASK_COMM_LEN);
-+	__get_task_comm(max_data->comm, TASK_COMM_LEN, tsk);
- 	max_data->pid = tsk->pid;
- 	/*
- 	 * If tsk == current, then use current_uid(), as that does not use
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 6ece1308d36a..721d4758a79f 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1599,7 +1599,7 @@ static inline void save_comm(char *comm, struct task_struct *task)
- 		return;
- 	}
- 
--	strncpy(comm, task->comm, TASK_COMM_LEN);
-+	__get_task_comm(comm, TASK_COMM_LEN, task);
- }
- 
- static void hist_elt_data_free(struct hist_elt_data *elt_data)
+diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
+index d914b23256ce..37fa3b69df45 100644
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -1942,7 +1942,7 @@ static void ndisc_warn_deprecated_sysctl(struct ctl_table *ctl,
+ 	static char warncomm[TASK_COMM_LEN];
+ 	static int warned;
+ 	if (strcmp(warncomm, current->comm) && warned < 5) {
+-		strcpy(warncomm, current->comm);
++		__get_task_comm(warncomm, TASK_COMM_LEN, current);
+ 		pr_warn("process `%s' is using deprecated sysctl (%s) net.ipv6.neigh.%s.%s - use net.ipv6.neigh.%s.%s_ms instead\n",
+ 			warncomm, func,
+ 			dev_name, ctl->procname,
 -- 
 2.39.1
 
