@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-21576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A1C905F9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 02:12:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDB0905F9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 02:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758B71F226C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 00:12:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECC21C21754
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 00:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001EB811;
-	Thu, 13 Jun 2024 00:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943A22CA6;
+	Thu, 13 Jun 2024 00:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nK00puUc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJp9VgaE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C169D37C;
-	Thu, 13 Jun 2024 00:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B1D15CB;
+	Thu, 13 Jun 2024 00:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718237550; cv=none; b=u0u3oo8cLSiGysWGA4vJYHafuz0irw6pVnh7shFzokvkYW0THXk9KITP0+4/Dvjn5Jpk3xNNklkNux1F6X+YuzraDIooJ7JU4wGuU5DsWRDpkpS8sRe0Sum4GQ3aGtH5shjncym8QwRtKiZlkZv4HKvK5blG3zeKS3V7Z8GofZM=
+	t=1718237554; cv=none; b=rEjK1q1EBkvAjoeQD1Lbg244LSPTEkprU1i/UsdLPjyUapdVHKqBsL0vWLTnX5x5i2PuYBWq01OfSe6vzvuALfGCpkDDq82ICkRxyDuCxPEAJoBAvVPdCxi0xFolaOgle1V9jI12HtXMfkzoRUEVnB7xBvLbpEfUw3J9M66ja4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718237550; c=relaxed/simple;
-	bh=tEx+LJNXz9PFrn7vIl6JLnyx3AVFe4T8kkOrSetYXXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MqSO2PgcniH0PUP1l4DfhxY1rsVW9a4eQ4C67PuWpGkmUPmw8RZLQ4K2OXFyxnkWtlWMtT2fLjLwfIbjm7Zqo8uLCxoxitG1YiM/d1PjoICC3onLdy7ye9/9zgIP82TOzUodc/+Rl2p50vXLkp6hpH8CzoNF2dZ9ZtAX1ELiuXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nK00puUc; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1718237554; c=relaxed/simple;
+	bh=8EUyhfj+zpqg4Fce77r2+ZXQqEGm3vNZ/nYjDp2Nkc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=U57g4pSxf925xCiFteMQkZ60Mr+j83Q6cbO4UiCGFW4xNeHQxw9popR0lMIa0aLibHw4cf89Qiaf4/CGPWo2CyRcvGoo6JEn3HPS6Dv8DCF7W74funWOw+z/T/wp1tqfQ15vj41GRdySpMtCC8CEqA4qBHIvSEs0QwwJ/70wadQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJp9VgaE; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c525257feso571242e87.1;
-        Wed, 12 Jun 2024 17:12:28 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52bc335e49aso558904e87.3;
+        Wed, 12 Jun 2024 17:12:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718237547; x=1718842347; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2dC12ioj9GImDlFvCZvgTh+Z1SR27gpojQmyo3A1jbQ=;
-        b=nK00puUcEU6sroF0FApwKZBcc6bfyoag3tUcMBWW47He22igVUPuOZX6leIRH9ir1x
-         j9OHdg3sryqLPAcq/IFXrH4bSRZF2mWOevqWK8OQxhkNhAihlE0Hje2hl6isDbzGSHzw
-         uxezGPZEYAtGSBHFAN03vO38jMRkU+Xu7YFOPs1VfXfIbgMzKdmF7Hv4N6wshumdPigJ
-         b+wEu0PKh+3PDjMdpAuhIzrUEbGgdUkAZp78LA7wfuflGo/0nLRJFgX5CcbNXPTXjJfs
-         d2vome73Pkoc39b1CUX0umrOLcpM+IFhwGslO+5BWzrTpzbRWPo8KmEI2u6pfq8E3CSM
-         UWUw==
+        d=gmail.com; s=20230601; t=1718237549; x=1718842349; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oXABC3gILXNUweUcHa6z6RMjkl0AXhA15Mutin2/Bpc=;
+        b=DJp9VgaEUCVmwAuDgVdyCna+LtZ+JrlYoUXYW/xSKPW4+BVNLf1cH/YSRuRRpJG+BS
+         1oCHXvnysEnhM9w9YTVvX0wdOK8gN3qTsxVwBggEMruDdMFXfzTLrweB173GaKncJhb/
+         /BCT4YY4RrJrKqviPmIO6iyir5SCTW07s2BAVFcT+Gix9o/LXdnQPFwWIlukN2k0plpR
+         mZ6tS7y5bXmscBWGTXqoN0YgMM09sbPfe9417thSUfmnBJTZ5m1o2A3UiGoVQ8J2MxcX
+         15Fwj/6nzhKyAsSjIns9cg/bQs3fC0S0pTLO0KD94yuAIoBl9r/gbN7xFdsdDzJM8xnh
+         8zRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718237547; x=1718842347;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2dC12ioj9GImDlFvCZvgTh+Z1SR27gpojQmyo3A1jbQ=;
-        b=Jo/zlnxOkoPHns7BjMBLYapirWnnc4naM7OtV+JSkCFltZzUC8q0nH/MynIFjbEeMd
-         Nja+VlH99zelZrHJlPiPVZSUFd3CdWnNFBPqws5DTPI7Gm9yAACRqW5wrNe1n2ej0oNA
-         mMYeO0WD8c+nCSeVqA7AYV1PsPUT+EtVK8Qgezh7cBzCkZYAudNNdOk7gc/zsX94isor
-         Wx/HssV0oNaTUPJdh2CCOBpxgEV5nQI1y1q4VNFNLGtkfn2imJ7nHD+J/H87VX4ngR4C
-         RyGKydI8kjGrTU0qvZyny1W674sSeHYvB1iVP/n3vUqREAt2lLDK6H9bize4f0gPn3e2
-         vdBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUk4auvh5GhvhXCXY2CR2aWzn2JEsTcnjtsyCbwE3dUOdmSfYCuJDTCQY82Qkjz56GO3IfDfy4NXtCqJylAmrvD7Moubx7UwaXGvHF9WD+3gfxX/bHUKW8IMxyfEqjghUus+jZQQTh8AzTZ2w==
-X-Gm-Message-State: AOJu0YydjBLnrNdtZREyQ1t3+Pff3TwRAQI3WvjoMLPfMDSOFEaZNKO2
-	z7XahuLw8Hk5LdFISeGj0FywaKqEen/w5AhR16CCNcw0Fq/SKniH
-X-Google-Smtp-Source: AGHT+IHm6qNDfQ97rAv3j6FbiuObVnBhMcuQdvorNn8UHNzX1OYdhtdCqDA1heVH5Y2GaGKiGKayvg==
-X-Received: by 2002:a05:6512:690:b0:52c:9d99:cd04 with SMTP id 2adb3069b0e04-52c9d99cf20mr1798792e87.51.1718237546568;
-        Wed, 12 Jun 2024 17:12:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718237549; x=1718842349;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oXABC3gILXNUweUcHa6z6RMjkl0AXhA15Mutin2/Bpc=;
+        b=SVQEzLaXL7Np4nqANjvZ4MdUs2Tu/vUHaoEnXssG/E8ne1FMR8Kb4oUYKIClEmkRuA
+         /8vrnrUfc6xnJ2QJBubf1Y9cYJDAHIGhAqdE50D4kpUm5V05iSXEAtyS94JgsYsykqZq
+         ZXP0nTK5TJRdyBtxwKzFj7cnqAYS5IE9hZ5fzJagfPE7y7kmOge1zwFePYUjsKmARg4/
+         cFt9MCfYcyIJhATbLN0INbBrKUlsSC/CHUnbipO7hXU2veA6ereFdSEH1AYlDUJJ1agE
+         6IjrOP4lPhcSm3+Kr05x5PZYgAS04B5xmPEjuS499PrlzvryyEMlddr7xiHd5tNawXgL
+         Q/nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfT9y035cb5LWkFHFswqfmkNzRYrIXCH/PyG4W/QqxGXnXBtjBCEP1FsYryDvPJxFqhCgw7gew2bU+OYuIWoW7nMpJ+a2hoTjRq3KSkHdrqCZrlos2sz+LwoNFxAZHQ86AeFNZZmjHWm+IJQ==
+X-Gm-Message-State: AOJu0YwnhKa9hpOEHjjvBK0LmMDlUm5H2TyJqUS9AtDUKKHhpMQMfhHB
+	V/VTVb1YWUSFV6TE0eJt5ujivFah+4FAyHiFuplqi+MhiEkEtzxb
+X-Google-Smtp-Source: AGHT+IGjPBG5pMhwkwGYp05epSPLIMXAMD1I3C5uel4NRtBgDRj93E7KJ2rVGTs5w8txmElp3SaDCg==
+X-Received: by 2002:a05:6512:2f7:b0:52c:88b8:12ab with SMTP id 2adb3069b0e04-52c9a3c7362mr1662292e87.23.1718237549121;
+        Wed, 12 Jun 2024 17:12:29 -0700 (PDT)
 Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f2489sm145114f8f.69.2024.06.12.17.12.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f2489sm145114f8f.69.2024.06.12.17.12.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 17:12:25 -0700 (PDT)
+        Wed, 12 Jun 2024 17:12:28 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: torvalds@linux-foundation.org
 Cc: brauner@kernel.org,
@@ -73,10 +75,12 @@ Cc: brauner@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 0/2] stop lockref from degrading to locked-only ops
-Date: Thu, 13 Jun 2024 02:12:13 +0200
-Message-ID: <20240613001215.648829-1-mjguzik@gmail.com>
+Subject: [PATCH 1/2] lockref: speculatively spin waiting for the lock to be released
+Date: Thu, 13 Jun 2024 02:12:14 +0200
+Message-ID: <20240613001215.648829-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240613001215.648829-1-mjguzik@gmail.com>
+References: <20240613001215.648829-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,71 +89,187 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-... and speed up parallel lookups of the same terminal inode
+The usual inc/dec scheme is to try to do it with atomics if the lock is
+not taken and fallback to locked operation otherwise.
 
-Hi Linus. It is rather unclear who to mail concerning lockref. Last time
-I had issues with it (the cpu_relax removal) you were quite responsive
-and the resulting commit is the last one made there, so I figured I'm
-going to rope you in.
+If the lock is only transiently held routines could instead
+speculatively wait and avoid the acquire altogether.
 
-lockref has a corner case where it can degrade to always taking the spin
-lock (triggerable while benchmarking). In the past I sometimes ran into
-it and ignored the problem, but it started showing up a lot with my
-dentry patch (outlined below). I think it is time to address it.
+This has a minor benefit of slightly speeding up cases of the sort,
+which do happen in real workloads.
 
-The dentry thing moves d_lockref out of an area used by rcu lookup.
-This provides a significant speed up when doing parallel stat on the
-same file (will-it-scale, see [1] for the bench).
+More importantly this fixes a corner case where lockref consumers
+degrade to locked operation and are unable to go back to atomics.
 
-Results (see patch 2):
-> before: 5038006
-> after:  7842883 (+55%)
+Consider a continuous stream of lockref ops from several threads and
+another thread taking the lock for a brief moment. Any lockref user
+which manages to observe the lock as taken is going to fallback to
+locking it itself, but this increases the likelihood that more threads
+executing the code will do the same. This eventually can culminate in
+nobody being able to go back to atomics on the problematic lockref.
 
-> One minor remark: the 'after' result is unstable, fluctuating in the
-> range ~7.8 mln to ~9 mln during different runs.
+While this is not a state which can persist in a real workload for
+anything but few calls, it very much can permanently degrade when
+benchmarking and in consequence grossly disfigure results.
 
-The speed up also means the vulnerable code executes more often per
-second, making it more likely to spot a transient lock acquire by
-something unrelated and decide to lock as well, starting the cascade.
+Here is an example of will-it-scale doing 20-way stat(2) on the same
+file residing on tmpfs, reports once per second with number of ops
+completed:
+[snip several ok results]
+min:417297 max:426249 total:8401766	<-- expected performance
+min:219024 max:221764 total:4398413	<-- some locking started
+min:62855 max:64949 total:1273712	<-- everyone degraded
+min:62472 max:64873 total:1268733
+min:62179 max:63843 total:1256375
+[snip remaining bad results]
 
-If I leave it running it eventually degrades to locked-only operation,
-stats look like this:
-> min:417297 max:426249 total:8401766     <-- expected performance
-> min:219024 max:221764 total:4398413     <-- some locking started
-> min:62855 max:64949 total:1273712       <-- everyone degraded
-> min:62472 max:64873 total:1268733
-> min:62179 max:63843 total:1256375
+While I did not try to figure out who transiently took the lock (it was
+something outside of the benchmark), I devised a trivial reproducer
+which triggers the problem almost every time: merely issue "ls" of the
+directory containing the tested file (in this case: "ls /tmp").
 
-Sometimes takes literally few seconds, other times it takes few minutes.
+The problem does not persist with the fix below.
 
-I don't know who transiently takes the d_lock and I don't think it is
-particularly relevant. I did find that I can trivially trigger the
-problem by merely issuing "ls /tmp" a few times. It does depend on
-tmpfs, no problem with ext4 at least.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ lib/lockref.c | 85 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-Bottom line though is that if the d_lockref reordering lands and this
-issue is not addressed, the lkp folks (or whoever else benchmarking) may
-trigger the bug and report a bogus regression.
-
-Even if the d_lockref patch gets rejected I would argue the problem
-should be sorted out, it is going to eventually bite someone.
-
-I wrote the easiest variant of the fix I could think of but I'm not
-married to any specific way to solve it.
-
-If the vfs things is accepted it needs to land after the lockref issue
-is resolved, thus I'm mailing both in the same patchset.
-
-[1] https://github.com/antonblanchard/will-it-scale/pull/35
-
-Mateusz Guzik (2):
-  lockref: speculatively spin waiting for the lock to be released
-  vfs: move d_lockref out of the area used by RCU lookup
-
- include/linux/dcache.h |  7 +++-
- lib/lockref.c          | 85 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 91 insertions(+), 1 deletion(-)
-
+diff --git a/lib/lockref.c b/lib/lockref.c
+index 2afe4c5d8919..596b521bc1f1 100644
+--- a/lib/lockref.c
++++ b/lib/lockref.c
+@@ -26,10 +26,46 @@
+ 	}									\
+ } while (0)
+ 
++/*
++ * Most routines only ever inc/dec the reference, but the lock may be
++ * transiently held forcing them to take it as well.
++ *
++ * Should the lock be taken for any reason (including outside of lockref),
++ * a steady stream of ref/unref requests may find itself unable to go back
++ * to lockless operation.
++ *
++ * Combat the problem by giving the routines a way to speculatively wait in
++ * hopes of avoiding having to take the lock.
++ *
++ * The spin count is limited to guarantee forward progress, although the
++ * value is arbitrarily chosen.
++ *
++ * Note this routine is only used if the lock was found to be taken.
++ */
++static inline bool lockref_trywait_unlocked(struct lockref *lockref)
++{
++	struct lockref old;
++	int retry = 100;
++
++	for (;;) {
++		cpu_relax();
++		old.lock_count = READ_ONCE(lockref->lock_count);
++		if (arch_spin_value_unlocked(old.lock.rlock.raw_lock))
++			return true;
++		if (!--retry)
++			return false;
++	}
++}
++
+ #else
+ 
+ #define CMPXCHG_LOOP(CODE, SUCCESS) do { } while (0)
+ 
++static inline bool lockref_trywait_unlocked(struct lockref *lockref)
++{
++	return false;
++}
++
+ #endif
+ 
+ /**
+@@ -47,6 +83,14 @@ void lockref_get(struct lockref *lockref)
+ 		return;
+ 	);
+ 
++	if (lockref_trywait_unlocked(lockref)) {
++		CMPXCHG_LOOP(
++			new.count++;
++		,
++			return;
++		);
++	}
++
+ 	spin_lock(&lockref->lock);
+ 	lockref->count++;
+ 	spin_unlock(&lockref->lock);
+@@ -70,6 +114,16 @@ int lockref_get_not_zero(struct lockref *lockref)
+ 		return 1;
+ 	);
+ 
++	if (lockref_trywait_unlocked(lockref)) {
++		CMPXCHG_LOOP(
++			new.count++;
++			if (old.count <= 0)
++				return 0;
++		,
++			return 1;
++		);
++	}
++
+ 	spin_lock(&lockref->lock);
+ 	retval = 0;
+ 	if (lockref->count > 0) {
+@@ -98,6 +152,16 @@ int lockref_put_not_zero(struct lockref *lockref)
+ 		return 1;
+ 	);
+ 
++	if (lockref_trywait_unlocked(lockref)) {
++		CMPXCHG_LOOP(
++			new.count--;
++			if (old.count <= 1)
++				return 0;
++		,
++			return 1;
++		);
++	}
++
+ 	spin_lock(&lockref->lock);
+ 	retval = 0;
+ 	if (lockref->count > 1) {
+@@ -125,6 +189,17 @@ int lockref_put_return(struct lockref *lockref)
+ 	,
+ 		return new.count;
+ 	);
++
++	if (lockref_trywait_unlocked(lockref)) {
++		CMPXCHG_LOOP(
++			new.count--;
++			if (old.count <= 0)
++				return -1;
++		,
++			return new.count;
++		);
++	}
++
+ 	return -1;
+ }
+ EXPORT_SYMBOL(lockref_put_return);
+@@ -181,6 +256,16 @@ int lockref_get_not_dead(struct lockref *lockref)
+ 		return 1;
+ 	);
+ 
++	if (lockref_trywait_unlocked(lockref)) {
++		CMPXCHG_LOOP(
++			new.count++;
++			if (old.count < 0)
++				return 0;
++		,
++			return 1;
++		);
++	}
++
+ 	spin_lock(&lockref->lock);
+ 	retval = 0;
+ 	if (lockref->count >= 0) {
 -- 
 2.43.0
 
