@@ -1,511 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-21648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AC3907571
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 16:41:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A33907592
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 16:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604831C216F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 14:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37EA285926
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 14:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA13146D6C;
-	Thu, 13 Jun 2024 14:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DDA145FEA;
+	Thu, 13 Jun 2024 14:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TgVNIKLo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FCpyFjpQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TgVNIKLo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FCpyFjpQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QtMHqspW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D191448D7;
-	Thu, 13 Jun 2024 14:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE0F146A83
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 14:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289646; cv=none; b=ZI3j67Y0lBJvqTp1mVWDUhSnE68XTnBAcjW0F3Mw6MNN8dVlXPWxdUPmWicPEU1HZOtdCL9hs/IoYBQngvWxRqaWULbkn/7/tPCQY3miHnsjPBOLHu0GtUI8wt6h/XlPzZ53Z3b0x+36nzXg9P+tymr5JGcPcgVpyiwLWO9DuL8=
+	t=1718290031; cv=none; b=TzJj0IgJ2A6OaQQKBAzhZ0ibCHOvNSrzo04HjDBX6ikZBAdPDn8jw48MLvZpP3MvzMeiY09xAhU7z5II51yS3rXLLFyrmSe8Nk9xKgNv9Mo9O1Ho46qWoJnWqvSEn/liR/dsKlm/ND00kp9kgst7Fasmr+sahrwB3kkv7m1OCiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289646; c=relaxed/simple;
-	bh=Vylgub80OOZhxp8G4oXJk2kSySofV8Qa0quu2RB96gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNL2mMXrAJdE2IuL04NTgxM7QJeNoTBJJVM2x8fY9zspDRWf+IUGnKMt9CEqKIi0n/6wlqsVqMrqaww9m+3Nahpmtfawf6mfCUETPZ0/4MbURzUi9r2Lk+V9aIfk9krcSOdtNtLIeGTBFNkPWNL3FciNgcCPX0RnvKuVmG67Tt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TgVNIKLo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FCpyFjpQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TgVNIKLo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FCpyFjpQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4C8D85D4A7;
-	Thu, 13 Jun 2024 14:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718289641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=14D2XLC6LZpKUlBb4mIQXL+Nt4wTJ5RbiQAvrS7h1Wg=;
-	b=TgVNIKLoraOgX+W+DOkjo5JslHRtiDrJ3sLkQ1+EqSwZpn6HNEWqQWaeGCKkHER5iStxDZ
-	W+AvSP0qoxTyXdsaS4RZDTNTGT3Ep9hCaUY402s4FQFxzzVudZfPaFY1dy1le3wGdyZHj6
-	xKT58JdfOxcU7o4Px8nTjEMaSJMB7KA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718289641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=14D2XLC6LZpKUlBb4mIQXL+Nt4wTJ5RbiQAvrS7h1Wg=;
-	b=FCpyFjpQ7gMaSQ0n6q7APghKlcSLnA06D/rQgCRHCLYMjmntaPBowsAvPGM6O7kZzYjWMz
-	/Vf3SSwaqIZfaHDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718289641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=14D2XLC6LZpKUlBb4mIQXL+Nt4wTJ5RbiQAvrS7h1Wg=;
-	b=TgVNIKLoraOgX+W+DOkjo5JslHRtiDrJ3sLkQ1+EqSwZpn6HNEWqQWaeGCKkHER5iStxDZ
-	W+AvSP0qoxTyXdsaS4RZDTNTGT3Ep9hCaUY402s4FQFxzzVudZfPaFY1dy1le3wGdyZHj6
-	xKT58JdfOxcU7o4Px8nTjEMaSJMB7KA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718289641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=14D2XLC6LZpKUlBb4mIQXL+Nt4wTJ5RbiQAvrS7h1Wg=;
-	b=FCpyFjpQ7gMaSQ0n6q7APghKlcSLnA06D/rQgCRHCLYMjmntaPBowsAvPGM6O7kZzYjWMz
-	/Vf3SSwaqIZfaHDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 380B713A7F;
-	Thu, 13 Jun 2024 14:40:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IfBmDekEa2YYUwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 13 Jun 2024 14:40:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 75161A0889; Thu, 13 Jun 2024 16:40:40 +0200 (CEST)
-Date: Thu, 13 Jun 2024 16:40:40 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, josef@toxicpanda.com,
-	hch@infradead.org
-Subject: Re: [PATCH v4 1/2] vfs: add rcu-based find_inode variants for iget
- ops
-Message-ID: <20240613144040.zkd7ojl7nf2ksoxb@quack3>
-References: <20240611173824.535995-1-mjguzik@gmail.com>
- <20240611173824.535995-2-mjguzik@gmail.com>
+	s=arc-20240116; t=1718290031; c=relaxed/simple;
+	bh=KzF5Tbzpbw9twuZ0/Ci/fvBAp4/uWzauqXXdFMVgGjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GLYGohm+KCWcZr0/YpjzniROgh+okvMRuuVVfP2HbuVVJbfwn6Oq1UP0GU2DU7IYrEdGOqqBp6Sesa0GsMTKFdZG0pRMZQrUhiLGSmQQZGRxeWc5VfVW7WYbz9XuGo4x0XwiPC84beOBLshZ9ztiiLU7o0l4LlNLKPG8pCaS4UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QtMHqspW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718290029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XFy9yOTK/NUjd05V0pDMeaunxYzPoKIX/9kty4IIa04=;
+	b=QtMHqspWM1j0hYUmlHKQIUZi+rFT0umynIC0F5/Iin+XC1kdOTs9MgYuYevpg1xVqLYIYq
+	wES871f2pkZpJfjZMDyXQ5rvT0URZxlFLse9CrwZag2UemXMa0XW7GeQAk7xsckq8E+7T4
+	bReto4ymjqNlXwH9NHwybvnGWDNZ5uQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-184-oHS0X8-ZOsiYOMfjziMqSw-1; Thu, 13 Jun 2024 10:47:08 -0400
+X-MC-Unique: oHS0X8-ZOsiYOMfjziMqSw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4213441aa8cso7660065e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2024 07:47:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718290026; x=1718894826;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XFy9yOTK/NUjd05V0pDMeaunxYzPoKIX/9kty4IIa04=;
+        b=Hucm8PRSzmiQw78YhRdrkwe0BIYAIL+dma1EpPANA85WAAmjrxQ6rNlWo/9YLVsN2L
+         vhqN3E2isWTFOnXAIQE0E+LtA7SrniAJbQjsnEuikQW5kd967duuu15N/OkZr3SjNiyR
+         /Vw4FhFlTzQEE3Btd9FxkGAkKzPPQDK0Q3VYX3l/AzhgUCNFr5wA/Rf8BEOdzd2UAD94
+         rDOcZ7UIEP75mz0nopy7lUGMPldezYH8fygpMI31QhtEZH/8EQEwFBr49IcrJDCebE1E
+         p9kb8PhQP0ydg8M2GpocyQrzONXjRa8mitg16eeWs3wNgOs32DIGBx3/n2mvc8b0DMQH
+         3DQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJMJ4HNtRm+zqzNpbQ4YXxWn4NeectVjesk7Y3U1dq8HffCmhm+Fe6TkQmlFrE7oeKehJCuFXzmlsWbkI85+WBMaZ8zZ7OTIYvKd1t/A==
+X-Gm-Message-State: AOJu0YzxQrYNnglHQomnWDdRdgKIAq1BaXV6CU2ucGkemTW7oz6yKpLJ
+	5BI/MqlZMAG+5rZENgJ/mQJzuqB3NCySOVe7XtJig5T+4k2VX6MbU03lnlkjL2oP5BLAgJtHuDH
+	KpMbY9+y7HiEYyMU0E5v5wHI+rysD4ns5mM/u+hSyuv1cbqIBb5CHts4WIS7ahPA=
+X-Received: by 2002:a05:600c:3ba2:b0:422:7dc7:fc23 with SMTP id 5b1f17b1804b1-42304860becmr170575e9.41.1718290026628;
+        Thu, 13 Jun 2024 07:47:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMftS0z8N6fHpAeOmiSiaUIphWPLN0PZ4Yyz2ER7qbYbx1O2WcSNSoAqQ0CvzHXVh0Ws7zhQ==
+X-Received: by 2002:a05:600c:3ba2:b0:422:7dc7:fc23 with SMTP id 5b1f17b1804b1-42304860becmr170425e9.41.1718290026195;
+        Thu, 13 Jun 2024 07:47:06 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c703:fe00:10fe:298:6bf1:d163? (p200300cbc703fe0010fe02986bf1d163.dip0.t-ipconnect.de. [2003:cb:c703:fe00:10fe:298:6bf1:d163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e74c7sm65109465e9.47.2024.06.13.07.47.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 07:47:05 -0700 (PDT)
+Message-ID: <895c6ff2-9b8c-4d35-b75c-8d0287d12233@redhat.com>
+Date: Thu, 13 Jun 2024 16:47:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611173824.535995-2-mjguzik@gmail.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/proc/task_mmu: fix uninitialized variable in
+ pagemap_pmd_range()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrei Vagin <avagin@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Hugh Dickins <hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <9d6eaba7-92f8-4a70-8765-38a519680a87@moroto.mountain>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <9d6eaba7-92f8-4a70-8765-38a519680a87@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 11-06-24 19:38:22, Mateusz Guzik wrote:
-> This avoids one inode hash lock acquire in the common case on inode
-> creation, in effect significantly reducing contention.
+On 13.06.24 16:34, Dan Carpenter wrote:
+> The "folio" pointer is tested for NULL, but it's either valid or
+> uninitialized.  Initialize it to NULL.
 > 
-> On the stock kernel said lock is typically taken twice:
-> 1. once to check if the inode happens to already be present
-> 2. once to add it to the hash
-> 
-> The back-to-back lock/unlock pattern is known to degrade performance
-> significantly, which is further exacerbated if the hash is heavily
-> populated (long chains to walk, extending hold time). Arguably hash
-> sizing and hashing algo need to be revisited, but that's beyond the
-> scope of this patch.
-> 
-> With the acquire from step 1 eliminated with RCU lookup throughput
-> increases significantly at the scale of 20 cores (benchmark results at
-> the bottom).
-> 
-> So happens the hash already supports RCU-based operation, but lookups on
-> inode insertions didn't take advantage of it.
-> 
-> This of course has its limits as the global lock is still a bottleneck.
-> There was a patchset posted which introduced fine-grained locking[1] but
-> it appears staled. Apart from that doubt was expressed whether a
-> handrolled hash implementation is appropriate to begin with, suggesting
-> replacement with rhashtables. Nobody committed to carrying [1] across
-> the finish line or implementing anything better, thus the bandaid below.
-> 
-> iget_locked consumers (notably ext4) get away without any changes
-> because inode comparison method is built-in.
-> 
-> iget5_locked consumers pass a custom callback. Since removal of locking
-> adds more problems (inode can be changing) it's not safe to assume all
-> filesystems happen to cope.  Thus iget5_locked_rcu gets added, requiring
-> manual conversion of interested filesystems.
-> 
-> In order to reduce code duplication find_inode and find_inode_fast grow
-> an argument indicating whether inode hash lock is held, which is passed
-> down in case sleeping is necessary. They always rcu_read_lock, which is
-> redundant but harmless. Doing it conditionally reduces readability for
-> no real gain that I can see. RCU-alike restrictions were already put on
-> callbacks due to the hash spinlock being held.
-> 
-> Benchmarking:
-> There is a real cache-busting workload scanning millions of files in
-> parallel (it's a backup appliance), where the initial lookup is
-> guaranteed to fail resulting in the two lock acquires on stock kernel
-> (and one with the patch at hand).
-> 
-> Implemented below is a synthetic benchmark providing the same behavior.
-> [I shall note the workload is not running on Linux, instead it was
-> causing trouble elsewhere. Benchmark below was used while addressing
-> said problems and was found to adequately represent the real workload.]
-> 
-> Total real time fluctuates by 1-2s.
-> 
-> With 20 threads each walking a dedicated 1000 dirs * 1000 files
-> directory tree to stat(2) on a 32 core + 24GB RAM vm:
-> 
-> ext4 (needed mkfs.ext4 -N 24000000):
-> before: 3.77s user 890.90s system 1939% cpu 46.118 total
-> after:  3.24s user 397.73s system 1858% cpu 21.581 total (-53%)
-> 
-> That's 20 million files to visit, while the machine can only cache about
-> 15 million at a time (obtained from ext4_inode_cache object count in
-> /proc/slabinfo). Since each terminal inode is only visited once per run
-> this amounts to 0% hit ratio for the dentry cache and the hash table
-> (there are however hits for the intermediate directories).
-> 
-> On repeated runs the kernel caches the last ~15 mln, meaning there is ~5
-> mln of uncached inodes which are going to be visited first, evicting the
-> previously cached state as it happens.
-> 
-> Lack of hits can be trivially verified with bpftrace, like so:
-> bpftrace -e 'kretprobe:find_inode_fast { @[kstack(), retval != 0] = count(); }'\
-> -c "/bin/sh walktrees /testfs 20"
-> 
-> Best ran more than once.
-> 
-> Expected results after "warmup":
-> [snip]
-> @[
->     __ext4_iget+275
->     ext4_lookup+224
->     __lookup_slow+130
->     walk_component+219
->     link_path_walk.part.0.constprop.0+614
->     path_lookupat+62
->     filename_lookup+204
->     vfs_statx+128
->     vfs_fstatat+131
->     __do_sys_newfstatat+38
->     do_syscall_64+87
->     entry_SYSCALL_64_after_hwframe+118
-> , 1]: 20000
-> @[
->     __ext4_iget+275
->     ext4_lookup+224
->     __lookup_slow+130
->     walk_component+219
->     path_lookupat+106
->     filename_lookup+204
->     vfs_statx+128
->     vfs_fstatat+131
->     __do_sys_newfstatat+38
->     do_syscall_64+87
->     entry_SYSCALL_64_after_hwframe+118
-> , 1]: 20000000
-> 
-> That is 20 million calls for the initial lookup and 20 million after
-> allocating a new inode, all of them failing to return a value != 0
-> (i.e., they are returning NULL -- no match found).
-> 
-> Of course aborting the benchmark in the middle and starting it again (or
-> messing with the state in other ways) is going to alter these results.
-> 
-> Benchmark can be found here: https://people.freebsd.org/~mjg/fstree.tgz
-> 
-> [1] https://lore.kernel.org/all/20231206060629.2827226-1-david@fromorbit.com/
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-Looks good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Fixes: 84f57f8b8914 ("fs/proc: move page_mapcount() to fs/proc/internal.h")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  fs/inode.c         | 97 ++++++++++++++++++++++++++++++++++++++--------
->  include/linux/fs.h |  7 +++-
->  2 files changed, 86 insertions(+), 18 deletions(-)
+>   fs/proc/task_mmu.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 3a41f83a4ba5..8c57cea7bbbb 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -886,36 +886,45 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
->  	return freed;
->  }
->  
-> -static void __wait_on_freeing_inode(struct inode *inode);
-> +static void __wait_on_freeing_inode(struct inode *inode, bool locked);
->  /*
->   * Called with the inode lock held.
->   */
->  static struct inode *find_inode(struct super_block *sb,
->  				struct hlist_head *head,
->  				int (*test)(struct inode *, void *),
-> -				void *data)
-> +				void *data, bool locked)
->  {
->  	struct inode *inode = NULL;
->  
-> +	if (locked)
-> +		lockdep_assert_held(&inode_hash_lock);
-> +	else
-> +		lockdep_assert_not_held(&inode_hash_lock);
-> +
-> +	rcu_read_lock();
->  repeat:
-> -	hlist_for_each_entry(inode, head, i_hash) {
-> +	hlist_for_each_entry_rcu(inode, head, i_hash) {
->  		if (inode->i_sb != sb)
->  			continue;
->  		if (!test(inode, data))
->  			continue;
->  		spin_lock(&inode->i_lock);
->  		if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
-> -			__wait_on_freeing_inode(inode);
-> +			__wait_on_freeing_inode(inode, locked);
->  			goto repeat;
->  		}
->  		if (unlikely(inode->i_state & I_CREATING)) {
->  			spin_unlock(&inode->i_lock);
-> +			rcu_read_unlock();
->  			return ERR_PTR(-ESTALE);
->  		}
->  		__iget(inode);
->  		spin_unlock(&inode->i_lock);
-> +		rcu_read_unlock();
->  		return inode;
->  	}
-> +	rcu_read_unlock();
->  	return NULL;
->  }
->  
-> @@ -924,29 +933,39 @@ static struct inode *find_inode(struct super_block *sb,
->   * iget_locked for details.
->   */
->  static struct inode *find_inode_fast(struct super_block *sb,
-> -				struct hlist_head *head, unsigned long ino)
-> +				struct hlist_head *head, unsigned long ino,
-> +				bool locked)
->  {
->  	struct inode *inode = NULL;
->  
-> +	if (locked)
-> +		lockdep_assert_held(&inode_hash_lock);
-> +	else
-> +		lockdep_assert_not_held(&inode_hash_lock);
-> +
-> +	rcu_read_lock();
->  repeat:
-> -	hlist_for_each_entry(inode, head, i_hash) {
-> +	hlist_for_each_entry_rcu(inode, head, i_hash) {
->  		if (inode->i_ino != ino)
->  			continue;
->  		if (inode->i_sb != sb)
->  			continue;
->  		spin_lock(&inode->i_lock);
->  		if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
-> -			__wait_on_freeing_inode(inode);
-> +			__wait_on_freeing_inode(inode, locked);
->  			goto repeat;
->  		}
->  		if (unlikely(inode->i_state & I_CREATING)) {
->  			spin_unlock(&inode->i_lock);
-> +			rcu_read_unlock();
->  			return ERR_PTR(-ESTALE);
->  		}
->  		__iget(inode);
->  		spin_unlock(&inode->i_lock);
-> +		rcu_read_unlock();
->  		return inode;
->  	}
-> +	rcu_read_unlock();
->  	return NULL;
->  }
->  
-> @@ -1161,7 +1180,7 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
->  
->  again:
->  	spin_lock(&inode_hash_lock);
-> -	old = find_inode(inode->i_sb, head, test, data);
-> +	old = find_inode(inode->i_sb, head, test, data, true);
->  	if (unlikely(old)) {
->  		/*
->  		 * Uhhuh, somebody else created the same inode under us.
-> @@ -1245,6 +1264,48 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
->  }
->  EXPORT_SYMBOL(iget5_locked);
->  
-> +/**
-> + * iget5_locked_rcu - obtain an inode from a mounted file system
-> + * @sb:		super block of file system
-> + * @hashval:	hash value (usually inode number) to get
-> + * @test:	callback used for comparisons between inodes
-> + * @set:	callback used to initialize a new struct inode
-> + * @data:	opaque data pointer to pass to @test and @set
-> + *
-> + * This is equivalent to iget5_locked, except the @test callback must
-> + * tolerate the inode not being stable, including being mid-teardown.
-> + */
-> +struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
-> +		int (*test)(struct inode *, void *),
-> +		int (*set)(struct inode *, void *), void *data)
-> +{
-> +	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
-> +	struct inode *inode, *new;
-> +
-> +again:
-> +	inode = find_inode(sb, head, test, data, false);
-> +	if (inode) {
-> +		if (IS_ERR(inode))
-> +			return NULL;
-> +		wait_on_inode(inode);
-> +		if (unlikely(inode_unhashed(inode))) {
-> +			iput(inode);
-> +			goto again;
-> +		}
-> +		return inode;
-> +	}
-> +
-> +	new = alloc_inode(sb);
-> +	if (new) {
-> +		new->i_state = 0;
-> +		inode = inode_insert5(new, hashval, test, set, data);
-> +		if (unlikely(inode != new))
-> +			destroy_inode(new);
-> +	}
-> +	return inode;
-> +}
-> +EXPORT_SYMBOL_GPL(iget5_locked_rcu);
-> +
->  /**
->   * iget_locked - obtain an inode from a mounted file system
->   * @sb:		super block of file system
-> @@ -1263,9 +1324,7 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
->  	struct hlist_head *head = inode_hashtable + hash(sb, ino);
->  	struct inode *inode;
->  again:
-> -	spin_lock(&inode_hash_lock);
-> -	inode = find_inode_fast(sb, head, ino);
-> -	spin_unlock(&inode_hash_lock);
-> +	inode = find_inode_fast(sb, head, ino, false);
->  	if (inode) {
->  		if (IS_ERR(inode))
->  			return NULL;
-> @@ -1283,7 +1342,7 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
->  
->  		spin_lock(&inode_hash_lock);
->  		/* We released the lock, so.. */
-> -		old = find_inode_fast(sb, head, ino);
-> +		old = find_inode_fast(sb, head, ino, true);
->  		if (!old) {
->  			inode->i_ino = ino;
->  			spin_lock(&inode->i_lock);
-> @@ -1419,7 +1478,7 @@ struct inode *ilookup5_nowait(struct super_block *sb, unsigned long hashval,
->  	struct inode *inode;
->  
->  	spin_lock(&inode_hash_lock);
-> -	inode = find_inode(sb, head, test, data);
-> +	inode = find_inode(sb, head, test, data, true);
->  	spin_unlock(&inode_hash_lock);
->  
->  	return IS_ERR(inode) ? NULL : inode;
-> @@ -1474,7 +1533,7 @@ struct inode *ilookup(struct super_block *sb, unsigned long ino)
->  	struct inode *inode;
->  again:
->  	spin_lock(&inode_hash_lock);
-> -	inode = find_inode_fast(sb, head, ino);
-> +	inode = find_inode_fast(sb, head, ino, true);
->  	spin_unlock(&inode_hash_lock);
->  
->  	if (inode) {
-> @@ -2235,17 +2294,21 @@ EXPORT_SYMBOL(inode_needs_sync);
->   * wake_up_bit(&inode->i_state, __I_NEW) after removing from the hash list
->   * will DTRT.
->   */
-> -static void __wait_on_freeing_inode(struct inode *inode)
-> +static void __wait_on_freeing_inode(struct inode *inode, bool locked)
->  {
->  	wait_queue_head_t *wq;
->  	DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
->  	wq = bit_waitqueue(&inode->i_state, __I_NEW);
->  	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
->  	spin_unlock(&inode->i_lock);
-> -	spin_unlock(&inode_hash_lock);
-> +	rcu_read_unlock();
-> +	if (locked)
-> +		spin_unlock(&inode_hash_lock);
->  	schedule();
->  	finish_wait(wq, &wait.wq_entry);
-> -	spin_lock(&inode_hash_lock);
-> +	if (locked)
-> +		spin_lock(&inode_hash_lock);
-> +	rcu_read_lock();
->  }
->  
->  static __initdata unsigned long ihash_entries;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bfc1e6407bf6..3eb88cb3c1e6 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3045,7 +3045,12 @@ extern struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
->  		int (*test)(struct inode *, void *),
->  		int (*set)(struct inode *, void *),
->  		void *data);
-> -extern struct inode * iget5_locked(struct super_block *, unsigned long, int (*test)(struct inode *, void *), int (*set)(struct inode *, void *), void *);
-> +struct inode *iget5_locked(struct super_block *, unsigned long,
-> +			   int (*test)(struct inode *, void *),
-> +			   int (*set)(struct inode *, void *), void *);
-> +struct inode *iget5_locked_rcu(struct super_block *, unsigned long,
-> +			       int (*test)(struct inode *, void *),
-> +			       int (*set)(struct inode *, void *), void *);
->  extern struct inode * iget_locked(struct super_block *, unsigned long);
->  extern struct inode *find_inode_nowait(struct super_block *,
->  				       unsigned long,
-> -- 
-> 2.43.0
-> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 631371cb80a0..6ed1f56b32b4 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1492,7 +1492,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>   		u64 flags = 0, frame = 0;
+>   		pmd_t pmd = *pmdp;
+>   		struct page *page = NULL;
+> -		struct folio *folio;
+> +		struct folio *folio = NULL;
+>   
+>   		if (vma->vm_flags & VM_SOFTDIRTY)
+>   			flags |= PM_SOFT_DIRTY;
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+Thanks!
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+David / dhildenb
+
 
