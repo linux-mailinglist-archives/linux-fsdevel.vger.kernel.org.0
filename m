@@ -1,50 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-21611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959C490671B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 10:39:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B08090674F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 10:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19A3FB2560A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 08:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C041D1C21844
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 08:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E231411F6;
-	Thu, 13 Jun 2024 08:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532BF13E8BF;
+	Thu, 13 Jun 2024 08:44:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C0384A2E;
-	Thu, 13 Jun 2024 08:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA1A13777D;
+	Thu, 13 Jun 2024 08:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718267840; cv=none; b=lC0UP8LpPQgBntA2hhocOrIfgSFlR0VcvoEZxOcDm4JoFHz/WCNMTemDbfFf2L1JqjBNLsICupxcSMJsNTHInAWZpYg7DlDQw4WroAXat8eR1XjmAfxn/TuhUy94MetEMx7gyuREUP5EjcjnG53x7BY36ffR1I+MBCmPISJvuK0=
+	t=1718268258; cv=none; b=WBmQomqJNTfkvzFQKnppImVFJkwZwLBo6drfWoh831iTDrnK2Jl1hoKklK7hFvmcmij7VNH9Z+0wgzFQ9O/KKncCgSNH+dgYApReDigMBFX9Uf/lLBgr9mcyFhz3QlMVqe9+gjiwDGmx9ePCrSjyOEerXk/DcauBQceGIspQG08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718267840; c=relaxed/simple;
-	bh=h5wDivARpTb9Bsym4NLG7piXQK127/7v0HULHzaLt3o=;
+	s=arc-20240116; t=1718268258; c=relaxed/simple;
+	bh=NSrOqHEzu2xbZAdhX9ligMyBTflH4RGvPxAtZPprF1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LS8Yf+5plieGU9BK1skcwZRBRI+i5aBGlDHhpqlNPJ5t0VT5GIzmj8UN2UQtsUYGAILzLd3julg9mqeQUDEHLtfzMcwfXLxDnqkp3l7xW9PjIpIwSu+8vjAjaAQ4U3f8fAes0q8xHm2ZbtRbGu3UikeKdt6T8KJMs3+xgS8jo2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88FA1C4AF1D;
-	Thu, 13 Jun 2024 08:37:17 +0000 (UTC)
-Date: Thu, 13 Jun 2024 09:37:15 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-	bpf@vger.kernel.org, netdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 06/10] mm/kmemleak: Replace strncpy() with
- __get_task_comm()
-Message-ID: <Zmqvu-1eUpdZ39PD@arm.com>
-References: <20240613023044.45873-1-laoar.shao@gmail.com>
- <20240613023044.45873-7-laoar.shao@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqjrALJKls8RG3T0GLRt0PmPXteNVazjwq3lMymodNUo5M3F6QQ5m7WEUMoSoGQBZ2aGhLRFLD9R/VUAmUdUOH5RE+fiW7Jrig5Xo8zQ909pVbPMbBzQ9a8z4vpjhjKV+aFfQHZaDlAuGLUrLSQHoSB0/fVMppcdE3YcQO1uKik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id B74A468AFE; Thu, 13 Jun 2024 10:44:10 +0200 (CEST)
+Date: Thu, 13 Jun 2024 10:44:10 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
+	mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: Re: [PATCH v7 03/11] filemap: allocate mapping_min_order folios in
+ the page cache
+Message-ID: <20240613084409.GA23371@lst.de>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com> <20240607145902.1137853-4-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,47 +54,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613023044.45873-7-laoar.shao@gmail.com>
+In-Reply-To: <20240607145902.1137853-4-kernel@pankajraghav.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Jun 13, 2024 at 10:30:40AM +0800, Yafang Shao wrote:
-> Using __get_task_comm() to read the task comm ensures that the name is
-> always NUL-terminated, regardless of the source string. This approach also
-> facilitates future extensions to the task comm.
-> 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  mm/kmemleak.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index d5b6fba44fc9..ef29aaab88a0 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -663,13 +663,7 @@ static struct kmemleak_object *__alloc_object(gfp_t gfp)
->  		strncpy(object->comm, "softirq", sizeof(object->comm));
->  	} else {
->  		object->pid = current->pid;
-> -		/*
-> -		 * There is a small chance of a race with set_task_comm(),
-> -		 * however using get_task_comm() here may cause locking
-> -		 * dependency issues with current->alloc_lock. In the worst
-> -		 * case, the command line is not correct.
-> -		 */
-> -		strncpy(object->comm, current->comm, sizeof(object->comm));
-> +		__get_task_comm(object->comm, sizeof(object->comm), current);
->  	}
+On Fri, Jun 07, 2024 at 02:58:54PM +0000, Pankaj Raghav (Samsung) wrote:
+> +static inline unsigned long mapping_min_folio_nrpages(struct address_space *mapping)
+> +{
+> +	return 1UL << mapping_min_folio_order(mapping);
+> +}
 
-You deleted the comment stating why it does not use get_task_comm()
-without explaining why it would be safe now. I don't recall the details
-but most likely lockdep warned of some potential deadlocks with this
-function being called with the task_lock held.
+Overly long line here, just line break after the return type.
 
-So, you either show why this is safe or just use strscpy() directly here
-(not sure we'd need strscpy_pad(); I think strscpy() would do, we just
-need the NUL-termination).
+Then again it only has a single user just below and no documentation
+so maybe just fold it into the caller?
 
--- 
-Catalin
+>  no_page:
+>  	if (!folio && (fgp_flags & FGP_CREAT)) {
+> -		unsigned order = FGF_GET_ORDER(fgp_flags);
+> +		unsigned int min_order = mapping_min_folio_order(mapping);
+> +		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
+>  		int err;
+> +		index = mapping_align_start_index(mapping, index);
+
+I wonder if at some point splitting this block that actually allocates
+a new folio into a separate helper would be nice.  It just keep growing
+in size and complexity.
+
+> -	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
+> +	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
+> +				    min_order);
+
+Nit: no need to split this into multiple lines.
+
+>  	if (!folio)
+>  		return -ENOMEM;
+>  
+> @@ -2471,6 +2478,8 @@ static int filemap_create_folio(struct file *file,
+>  	 * well to keep locking rules simple.
+>  	 */
+>  	filemap_invalidate_lock_shared(mapping);
+> +	/* index in PAGE units but aligned to min_order number of pages. */
+
+in PAGE_SIZE units?  Maybe also make this a complete sentence?
+
 
