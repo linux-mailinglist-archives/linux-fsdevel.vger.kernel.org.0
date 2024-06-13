@@ -1,148 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-21593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFD6906202
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 04:33:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988089062E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 05:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EAA8282834
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 02:33:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9FA7B227C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2024 03:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD2A12DD83;
-	Thu, 13 Jun 2024 02:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D35132123;
+	Thu, 13 Jun 2024 03:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNz+sP19"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="An6aC73w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ADE12BF1B;
-	Thu, 13 Jun 2024 02:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D3F130ACF;
+	Thu, 13 Jun 2024 03:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718245946; cv=none; b=cLeBHX6oYEJCwkm8KrUPIeX+5rgvyOawVg+/t++Jkq+J9dKdoC0T+2iGuKVR2Hw/KMAh3L9gj1gbHkDvphBL6AViV+zEGDbiEaEHTj0R2KDaYp4d6b74rpADWxRYVLlL2Engp5/xuv1l9eki8Y7rFaQGnyQHaAVnQMZW33vQJWo=
+	t=1718250892; cv=none; b=OX7nPdXEVOf8cetP099JitcjBA0m9uHOzXjQYG1hQB06D8N4tXj+kJwb4woWC+Ck5uTwnNhCx2YEoSci9K8KXtcUPfwz/yjvhV8J3ZngjvUC0HvAf9P99ABdRIju0xg+V6a1LFHPYdCx0yNBk/+HhxbE1lsSLEFnk7wnSf98qPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718245946; c=relaxed/simple;
-	bh=TrtFPtQa1k97XzAC7EiU7HM1PNrmylMnQBNN3TI+v6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dgADylTPRDdYfQdybrUMlpojp+fHiBR4xGg50ixYYXMd16ETtBkhkAg+K44CrVfOQtL5RdRTz/3LfoRYRA5D+ri+ZhyiO10+PwzHbSTTRioFo3nJ7Ca1nXZuzwsPUBmScL5vl7UwGytTiCTP69owRyWEIew+SD5CHwe+IcO8Ko8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KNz+sP19; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6bfd4b88608so384166a12.1;
-        Wed, 12 Jun 2024 19:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718245945; x=1718850745; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ByPZqEdQZBBtzQ6Ut5Ro8SR1Vw4SYts83oZvgSR+UR8=;
-        b=KNz+sP19rR/J1QPCoy92dk++7ImDyANr9pg1B+U6haVHH2QtXuC0SR2+ExDKA3SCHu
-         VSj/azb+VYMlOi/bO2c3fqiKJ9XSHUvUYRFsvNjON9CvLk4j7tzcM9kvarV/z4VoakDg
-         yltVoBq2qp4g1VY48Wipz1i8bmJPCSiIo7/F/RB7KVCmDEekDwzkBlmHr0ZzE8JZy683
-         inFxaX9bqLhXnbVikHlr1E5N53mcgLGolzphRxyo2Nh1VXk8qZ+B7PsVL8OoWyxhI1Au
-         5uqUy3A+V0pPWAlpu1CYnSLsBERNZPMeXnejh3vIY/SAMZJUa7jjr0jaNiuztKBcagoG
-         4yNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718245945; x=1718850745;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ByPZqEdQZBBtzQ6Ut5Ro8SR1Vw4SYts83oZvgSR+UR8=;
-        b=PBeD76lnxPiT8QiEGU77oFM+AysSRYVtOOJtVxSxzVU1QbmAMHGWyE1Ayqr9clIESX
-         CZ2bA1jMVcMQDW4oieFVJ6MwbddFtHZuGXXj4ql1Snylb76Nz7QO0yCLW2M+hrxDjmA9
-         JaCiWtgMCG2PwX8lnm47O92L/1lhNY9EBYQm7vBcDYrraq6Ge0gDgDfLRITOIMQtlelo
-         Nhmfv5ZZ0+guZ3El0iqFsnIe2hpo9kk17kqKm6GHfOih+7ghTwbiFj0e/4ggndFvSjdM
-         WcYzZyjUPQgv0Bx0vAF8viircENBdvn5nNb5z7UQ0vjFwuM7w+loMsJ+gc1eG3bFtIbP
-         Xv0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXF11T/XjWHaHCZwDrMzO4Z9DFIusqpXbC8T3D0vP5/Y3FzQ9La+1p9Xmzqisxo3bHOUYtRWVur25gwdrXqv2cX2YONxP8+5g/jLnAp3FZwIZ4ci/frp9KzhqxqwAkKiXXeyt/8ZA89p1ep5trhViGK6lkWz9TkKHCXqXLh9DJJ8hsfc6xXjERXqpCTziXHFZjLpjzSSFlByQW7JaCgkA3a4nrcEuyahYM3YbKze4ESe2ENd+tn/hcb9ir2cPuACIMBDn5BgViXb9UMertILWKSeeg38Fj0azexPjd3uNlINDg7qK0St+1cFY1E/uJkGoALp3dOgQ==
-X-Gm-Message-State: AOJu0YxGGxbzhhxH+g1cXH2+sMi6gri5mWQ/ZACw0/PdlBGl33bzRnxS
-	8O4TBZEdtAJU7N071vumg5wq0PtUmW5UfT81KfdA+8xDJnUR8Sh2QAgSexPPjAU=
-X-Google-Smtp-Source: AGHT+IE+I63Tcz7mU3dbe4p80REUOFhGXlU1vxQyrrx4b613sOPf+IM/heFPON96TqCsfc2pgVpt6g==
-X-Received: by 2002:a05:6a20:840c:b0:1b6:c527:7e42 with SMTP id adf61e73a8af0-1b8a9b1eb09mr4050153637.3.1718245944827;
-        Wed, 12 Jun 2024 19:32:24 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.105.92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4d159sm1755695ad.289.2024.06.12.19.32.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2024 19:32:24 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2 10/10] drm: Replace strcpy() with __get_task_comm()
-Date: Thu, 13 Jun 2024 10:30:44 +0800
-Message-Id: <20240613023044.45873-11-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20240613023044.45873-1-laoar.shao@gmail.com>
-References: <20240613023044.45873-1-laoar.shao@gmail.com>
+	s=arc-20240116; t=1718250892; c=relaxed/simple;
+	bh=4IRlCB/4nUSbZwsJUsWYdboTwZ+C4w4yUEx925ojR84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sHuCGAHKnmZvQ+1iH1Rq70d4vnhArf9XB0M8t/TfbDMMNrd6nuy+mjHRq45y62hdkq5u2+O79LdgRiAZLqJjHe+Bc4XYuL1ZTrsE41/1jv0AaaQVSwd+miGYidCFPCS6FBg9WSPkqgGIclbTod7GUX6d3b4ELBMYlohC2cFTI8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=An6aC73w; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.83] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id CF5353F2CF;
+	Thu, 13 Jun 2024 03:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1718250879;
+	bh=xYQFrwIswvtW1GDA70qHgG50RX/kaBNY/JfSUQQLhR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=An6aC73w/ZU7OmxOvSuz+41Bk29n1RzGYRS+uRav0+cXNZDYiw0ei2+4KT0DLIQmR
+	 9MPSEbJLAQuXnRU2l1p5K7g/ngtisXCiqJY7+DpIcX5gf4NxXTNZ2gQBcyTwkHaWl2
+	 an0g3lTyh8FUBr/bb/bwBKK+Xtp76qqkp6BMD6e2lqrSMqPfvZYNBGaxIdZEzNL8GV
+	 tBGXvU3Wtn4rdYuAH+yDwsroZEcMpfJlu5/xnvb9ExOtXOW8NG1DzWyKKjscsSy82e
+	 fJk1rQRpk9QlhZcG88cuwit7OGlxxr/aGxauV5NxUS3y54lAajmfI41kRTr0kmKwzQ
+	 Vl+U1To6ETOYA==
+Message-ID: <ba8d88c8-a251-4c1f-8653-1082b0a101dd@canonical.com>
+Date: Wed, 12 Jun 2024 20:54:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
+ hooks
+To: Paul Moore <paul@paul-moore.com>, Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+ Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
+ David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org, apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-5-jcalmels@3xx0.net>
+ <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
+ <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
+ <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
+ <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
+ <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
+ <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com>
+ <rgzhcsblub7wedm734n56cw2qf6czjb4jgck6l5miur6odhovo@n5tgrco74zce>
+ <CAHC9VhRGJTND25MFk4gR-FGxoLhMmgUrMpz_YoMFOwL6kr28zQ@mail.gmail.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <CAHC9VhRGJTND25MFk4gR-FGxoLhMmgUrMpz_YoMFOwL6kr28zQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-To prevent erros from occurring when the src string is longer than the
-dst string in strcpy(), we should use __get_task_comm() instead. This
-approach also facilitates future extensions to the task comm.
+On 6/12/24 10:29, Paul Moore wrote:
+> On Wed, Jun 12, 2024 at 4:15 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
+>> On Tue, Jun 11, 2024 at 06:38:31PM GMT, Paul Moore wrote:
+>>> On Tue, Jun 11, 2024 at 6:15 PM Jonathan Calmels <jcalmels@3xx0.net> wrote:
+> 
+> ...
+> 
+>>>> Arguably, if we do want fine-grained userns policies, we need LSMs to
+>>>> influence the userns capset at some point.
+>>>
+>>> One could always use, or develop, a LSM that offers additional
+>>> controls around exercising capabilities.  There are currently four
+>>> in-tree LSMs, including the capabilities LSM, which supply a
+>>> security_capable() hook that is used by the capability-based access
+>>> controls in the kernel; all of these hook implementations work
+>>> together within the LSM framework and provide an additional level of
+>>> control/granularity beyond the existing capabilities.
+>>
+>> Right, but the idea was to have a simple and easy way to reuse/trigger
+>> as much of the commoncap one as possible from BPF. If we're saying we
+>> need to reimplement and/or use a whole new framework, then there is
+>> little value.
+> 
+> I can appreciate how allowing direct manipulation of capability bits
+> from a BPF LSM looks attractive, but my hope is that our discussion
+> here revealed that as you look deeper into making it work there are a
+> number of pitfalls which prevent this from being a safe option for
+> generalized systems.
+> 
+>> TBH, I don't feel strongly about this, which is why it is absent from
+>> v1. However, as John pointed out, we should at least be able to modify
+>> the blob if we want flexible userns caps policies down the road.
+> 
+> As discussed in this thread, there are existing ways to provide fine
+> grained control over exercising capabilities that can be safely used
+> within the LSM framework.  I don't want to speak to what John is
+> envisioning, but he should be aware of these mechanisms, and if I
+> recall he did voice a level of concern about the same worries I
+> mentioned.
+> 
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
----
- drivers/gpu/drm/drm_framebuffer.c     | 2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+sorry, I should have been more clear. I envision LSMs being able to
+update their own state in the userns hook.
 
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 888aadb6a4ac..25262b07ffaf 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
- 	INIT_LIST_HEAD(&fb->filp_head);
- 
- 	fb->funcs = funcs;
--	strcpy(fb->comm, current->comm);
-+	__get_task_comm(fb->comm, sizeof(fb->comm), current);
- 
- 	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
- 				    false, drm_framebuffer_free);
-diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-index 625b3c024540..b2c16a53bd24 100644
---- a/drivers/gpu/drm/i915/i915_gpu_error.c
-+++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-@@ -1411,7 +1411,7 @@ static bool record_context(struct i915_gem_context_coredump *e,
- 	rcu_read_lock();
- 	task = pid_task(ctx->pid, PIDTYPE_PID);
- 	if (task) {
--		strcpy(e->comm, task->comm);
-+		__get_task_comm(e->comm, sizeof(e->comm), task);
- 		e->pid = task->pid;
- 	}
- 	rcu_read_unlock();
--- 
-2.39.1
+Basically the portion of the patch that removes const from the
+userns hook.
+
+An LSM updating the capset is worrysome for all the reasons you
+pointed out, and I think a few more. I haven't had a chance to really
+look at v2 yet, so I didn't want to speak directly on the bpf part of
+the patch without first giving a good once over.
+
+> I'm happy to discuss ways in which we can adjust the LSM hooks/layer
+> to support different approaches to capability controls, but one LSM
+> directly manipulating the state of another is going to be a no vote
+> from me.
+> 
+I might not be as hard no as Paul here, I am always willing to listen
+to arguments, but it would have to be a really good argument to
+modify the capset, when there are multiple LSMs in play on a system.
+
 
 
