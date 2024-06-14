@@ -1,169 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-21709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0382908B07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 13:46:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55975908BA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 14:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C21DB20C4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 11:46:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BEBD1C25B17
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 12:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF4919645D;
-	Fri, 14 Jun 2024 11:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F3B1991B9;
+	Fri, 14 Jun 2024 12:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D20YfIx9"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="OCXJ+COK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453CA190487;
-	Fri, 14 Jun 2024 11:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273F4198840;
+	Fri, 14 Jun 2024 12:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718365579; cv=none; b=R7QHZt42nbzyS7YPzwZpVcqhvC87+cjy/18zAf9FEbV2lbFkyLuLo2UTtNKcqe5tIv9S8Ra8pMUUUAd5XmGR+jpHof8Agd0BoVcNFef3N9+xySmatqTtw/CZ3cYTZxBwGzJdDtNHnSjnxmPkiNvzpj566z1s3zh2mOxoqH5Qs4Q=
+	t=1718368162; cv=none; b=VZVV+MZ7ikMaWofyIHwU9gtTVpeEPPfJx7bDhO7AW3sl+73PqK0acPLZPvrChZqgOILdE6xe47c5SVdqS4pOyuqACLSKnBDu3drNtsCwuVvfGu6OhzwdY8DNauZI/2P0D7vNjPQS6up+7Kfom+P+Ou40w8BEd2YFbDWmSESIpGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718365579; c=relaxed/simple;
-	bh=yKBS8YrQvYaJRUodD7XdGXa+UFaJJMkLRRHcLb+/TXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cm5/sKI5QQRJMXiBbt7JR0s3JUDBCTDKZALYJwlmanr2uBe5M58vP66yDJOfZ85LN4wn9RGm1aJTe8ABd7CIFPfQQDC2zCay4y91CFKBDoSLthU0BysLaeZf0F6DGmFRR9DyAOSd4t8NnjOzobCC7LVgceeowi9h/G56ESCFLLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D20YfIx9; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b064841f81so16659026d6.1;
-        Fri, 14 Jun 2024 04:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718365577; x=1718970377; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YhZTA0P9EB3vGdWtMZhD6+owrd3MXBYsoXYXThbWv8c=;
-        b=D20YfIx9g37xfBpgnJeYuDSWVgN5mkg1Zs3BmfzVxx+bSIPa8Of2XPQQ23beYP7y83
-         zIx2ygHm66/BPz9ERzLgIjBEW3d36mdlqidtAvyVfrDr6SYrRYCqTaIw4tSEhLxsyb4Z
-         kC20WwlBBVwdhSjzo5yNyidReAfeOBO1vRoXkQxlDX7GlKYu9OQvxD8eIkfglt7tMAb8
-         fYW2LyBL+uI+lokuKk5GuWq/mpWYQyQiN+l4ZAxTzCTCSQLdxO3xba2kAo/1IPr6xBd7
-         LiX1gnJyJu7yIDKN3KobPfuIBdlpYrMvaAzsPJO2Pm3v+0ZwD2B8QhudjhnHa4anO5hx
-         7+Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718365577; x=1718970377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YhZTA0P9EB3vGdWtMZhD6+owrd3MXBYsoXYXThbWv8c=;
-        b=BxbA9U8DsUY8VGcwsITsT9ip8xmKyWEAOLCx9hhzITXQinPUXV475VGIvPS9YINCbk
-         nmNsh44a8HsXalHQEXHw2Ijq/KHDeaCU2AzNhcorsSiUQTJK0Xfb53VhxtzcVkD1/M6R
-         mXRL7o1S1Uy9gsAtJSXd6Q2ZBx/M4Fn7n8HsEgU+dw0xlxxQ92Kg0EsvHRugi8Dp7MFN
-         fDcmeTUl5FXlr54FsoPcWn88czs5vVCHj4IEilI5rCNyVEis9WW26uwBDM9+uYWGZhUc
-         TVXeUuQb1HgoZyf7yed7LjGnTbcpZD0cbnisDACbinPhSA8tmw3mWciTWI5zT1/it7+g
-         BJqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4FNMVAdwC0RL8r6m3b+otYVAdq4LR7QA25OV/Zomr4MdGcUVM81Cy8yFz1I6wwClCjaxEOgJbpsz+VvSWvUK0EXlhZDc+Xd/ocOR78a+HtVM3CttJaeDTDP3AxJHAcws8b6inqvBz1ht5T43s50729E+GJEiOJxPuMKkp3+RbU8sbnOUj28ITgfutX38Wo31pQYa2svaYZ6fHsx/8OFa6hyHcjQL2VkRusuGGTCACwJSL1EI3f/SH/COTAVlgbsk0ygce2qVTMp4wO67ZckawCQ6C2skAWjCwavGjI4FOcJ6187wmXftqk19xRGpaxQCzZobxhA==
-X-Gm-Message-State: AOJu0YzmdK0TYu2Gx2m+pz93J6wxbaR3Jdkef8qaLPjyA7bR48txF/3E
-	7ALlHErbhZJACtPn6ANMa8laTeO0EbuJdGvEL8+CzC/VsktoGpj9295EqjI1yiuuKj7ycpB4CI2
-	Z4ACjVQYuObZLr3STqpXUUB12GvY=
-X-Google-Smtp-Source: AGHT+IFaFnMNLjJYSYrMKDyE9tX4zgL8n/jhcGz01q5yiY/JXZZX7mC42E5kkQyr9LsVQPUZ9vqhx86BbZKpLx0rTA8=
-X-Received: by 2002:a0c:c203:0:b0:6b0:77fb:8f19 with SMTP id
- 6a1803df08f44-6b2afd6cb2cmr22836486d6.47.1718365577138; Fri, 14 Jun 2024
- 04:46:17 -0700 (PDT)
+	s=arc-20240116; t=1718368162; c=relaxed/simple;
+	bh=cBmpqiI4smYWZBQIHnTdgHbfzxQKIz6BboeBUIk/BBE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lAlldUrUEeOK+pbPjKd/zhw49nF0q3xsRSag2NMNkmU26r2lSGyZm4lziDaDlB/RlVa1HA6nop82mvRTOn68bbonbuw8B+/mdLKUuEzT9qRkLKM5GTlancHqtlDGlLP8x/zw7OA8bRk9d3Hs5vYj4PLKuVOIYnniLTgyqOhVeEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=OCXJ+COK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1718368156;
+	bh=7O5o/6HkAr/0K4wsEW3vA0ECN5IMlfvMhmIkuXxjohA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OCXJ+COKRCZZcN3OHnZ69GN6ZwN/MzaovDVJGHxI2Z0z/Ep+ZZE32twF1yqXY8M4w
+	 otnL7hJAJwNkxcykbkSrQKJE0LI/r0WvhiTqoRj8APOWpTfHPnjhirEPxwYPaiA+3b
+	 QsCzipD/+ygtbTjEHvS3s7GkhMWAg3tzr65xQxKh9FEt0cBLMNAR45J6ffoAy6P+Jf
+	 nHo7NqXMswJirnlEFuCH+cMTP5oMREv3XrA5BCj2b9kzmBFRn6YULce1lcIuNPA6xF
+	 JhK5smGOGp1C0gEGB5HHclieK5jRlcXQ+PQMfVTqQeYY9mqSWOq8P3Iy+l+4VE84RP
+	 MunDRQHjL3lyA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W0z9R3h4jz4wcl;
+	Fri, 14 Jun 2024 22:29:15 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org,
+	aik@amd.com,
+	paulus@samba.org,
+	torvalds@linux-foundation.org,
+	kvm@vger.kernel.org,
+	tpearson@raptorengineering.com,
+	sbhat@linux.ibm.com
+Subject: [PATCH] KVM: PPC: Book3S HV: Prevent UAF in kvm_spapr_tce_attach_iommu_group()
+Date: Fri, 14 Jun 2024 22:29:10 +1000
+Message-ID: <20240614122910.3499489-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613023044.45873-1-laoar.shao@gmail.com> <20240613023044.45873-7-laoar.shao@gmail.com>
- <Zmqvu-1eUpdZ39PD@arm.com> <CALOAHbB3Uiwsp2ieiPZ-_CKyZPgW6_gF_y-HEGHN3KWhGh0LDg@mail.gmail.com>
- <ZmwiEbCcovJ8fdr5@arm.com>
-In-Reply-To: <ZmwiEbCcovJ8fdr5@arm.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Fri, 14 Jun 2024 19:45:40 +0800
-Message-ID: <CALOAHbAvUPf5_ryDNm=Ujqmg_XycK0Sh23dr_62gFch9NhRGng@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] mm/kmemleak: Replace strncpy() with __get_task_comm()
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 6:57=E2=80=AFPM Catalin Marinas <catalin.marinas@ar=
-m.com> wrote:
->
-> On Thu, Jun 13, 2024 at 08:10:17PM +0800, Yafang Shao wrote:
-> > On Thu, Jun 13, 2024 at 4:37=E2=80=AFPM Catalin Marinas <catalin.marina=
-s@arm.com> wrote:
-> > > On Thu, Jun 13, 2024 at 10:30:40AM +0800, Yafang Shao wrote:
-> > > > Using __get_task_comm() to read the task comm ensures that the name=
- is
-> > > > always NUL-terminated, regardless of the source string. This approa=
-ch also
-> > > > facilitates future extensions to the task comm.
-> > > >
-> > > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > ---
-> > > >  mm/kmemleak.c | 8 +-------
-> > > >  1 file changed, 1 insertion(+), 7 deletions(-)
-> > > >
-> > > > diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> > > > index d5b6fba44fc9..ef29aaab88a0 100644
-> > > > --- a/mm/kmemleak.c
-> > > > +++ b/mm/kmemleak.c
-> > > > @@ -663,13 +663,7 @@ static struct kmemleak_object *__alloc_object(=
-gfp_t gfp)
-> > > >               strncpy(object->comm, "softirq", sizeof(object->comm)=
-);
-> > > >       } else {
-> > > >               object->pid =3D current->pid;
-> > > > -             /*
-> > > > -              * There is a small chance of a race with set_task_co=
-mm(),
-> > > > -              * however using get_task_comm() here may cause locki=
-ng
-> > > > -              * dependency issues with current->alloc_lock. In the=
- worst
-> > > > -              * case, the command line is not correct.
-> > > > -              */
-> > > > -             strncpy(object->comm, current->comm, sizeof(object->c=
-omm));
-> > > > +             __get_task_comm(object->comm, sizeof(object->comm), c=
-urrent);
-> > > >       }
-> > >
-> > > You deleted the comment stating why it does not use get_task_comm()
-> > > without explaining why it would be safe now. I don't recall the detai=
-ls
-> > > but most likely lockdep warned of some potential deadlocks with this
-> > > function being called with the task_lock held.
-> > >
-> > > So, you either show why this is safe or just use strscpy() directly h=
-ere
-> > > (not sure we'd need strscpy_pad(); I think strscpy() would do, we jus=
-t
-> > > need the NUL-termination).
-> >
-> > The task_lock was dropped in patch #1 [0]. My apologies for not
-> > including you in the CC for that change. After this modification, it
-> > is now safe to use __get_task_comm().
-> >
-> > [0] https://lore.kernel.org/all/20240613023044.45873-2-laoar.shao@gmail=
-.com/
->
-> Ah, great. For this patch:
->
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
->
-> You may want to add a comment in the commit log that since
-> __get_task_comm() no longer takes a long, it's safe to call it from
-> kmemleak.
+Al reported a possible use-after-free (UAF) in kvm_spapr_tce_attach_iommu_group().
 
-I will add it. Thanks for your suggestion.
+It looks up `stt` from tablefd, but then continues to use it after doing
+fdput() on the returned fd. After the fdput() the tablefd is free to be
+closed by another thread. The close calls kvm_spapr_tce_release() and
+then release_spapr_tce_table() (via call_rcu()) which frees `stt`.
 
---=20
-Regards
-Yafang
+Although there are calls to rcu_read_lock() in
+kvm_spapr_tce_attach_iommu_group() they are not sufficient to prevent
+the UAF, because `stt` is used outside the locked regions.
+
+With an artifcial delay after the fdput() and a userspace program which
+triggers the race, KASAN detects the UAF:
+
+  BUG: KASAN: slab-use-after-free in kvm_spapr_tce_attach_iommu_group+0x298/0x720 [kvm]
+  Read of size 4 at addr c000200027552c30 by task kvm-vfio/2505
+  CPU: 54 PID: 2505 Comm: kvm-vfio Not tainted 6.10.0-rc3-next-20240612-dirty #1
+  Hardware name: 8335-GTH POWER9 0x4e1202 opal:skiboot-v6.5.3-35-g1851b2a06 PowerNV
+  Call Trace:
+    dump_stack_lvl+0xb4/0x108 (unreliable)
+    print_report+0x2b4/0x6ec
+    kasan_report+0x118/0x2b0
+    __asan_load4+0xb8/0xd0
+    kvm_spapr_tce_attach_iommu_group+0x298/0x720 [kvm]
+    kvm_vfio_set_attr+0x524/0xac0 [kvm]
+    kvm_device_ioctl+0x144/0x240 [kvm]
+    sys_ioctl+0x62c/0x1810
+    system_call_exception+0x190/0x440
+    system_call_vectored_common+0x15c/0x2ec
+  ...
+  Freed by task 0:
+   ...
+   kfree+0xec/0x3e0
+   release_spapr_tce_table+0xd4/0x11c [kvm]
+   rcu_core+0x568/0x16a0
+   handle_softirqs+0x23c/0x920
+   do_softirq_own_stack+0x6c/0x90
+   do_softirq_own_stack+0x58/0x90
+   __irq_exit_rcu+0x218/0x2d0
+   irq_exit+0x30/0x80
+   arch_local_irq_restore+0x128/0x230
+   arch_local_irq_enable+0x1c/0x30
+   cpuidle_enter_state+0x134/0x5cc
+   cpuidle_enter+0x6c/0xb0
+   call_cpuidle+0x7c/0x100
+   do_idle+0x394/0x410
+   cpu_startup_entry+0x60/0x70
+   start_secondary+0x3fc/0x410
+   start_secondary_prolog+0x10/0x14
+
+Fix it by delaying the fdput() until `stt` is no longer in use, which
+is effectively the entire function. To keep the patch minimal add a call
+to fdput() at each of the existing return paths. Future work can convert
+the function to goto or __cleanup style cleanup.
+
+With the fix in place the test case no longer triggers the UAF.
+
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Closes: https://lore.kernel.org/all/20240610024437.GA1464458@ZenIV/
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ arch/powerpc/kvm/book3s_64_vio.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+I'll plan to merge this via the powerpc/fixes tree, unless anyone thinks otherwise.
+
+cheers
+
+diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
+index b569ebaa590e..3ff3de9a52ac 100644
+--- a/arch/powerpc/kvm/book3s_64_vio.c
++++ b/arch/powerpc/kvm/book3s_64_vio.c
+@@ -130,14 +130,16 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
+ 	}
+ 	rcu_read_unlock();
+ 
+-	fdput(f);
+-
+-	if (!found)
++	if (!found) {
++		fdput(f);
+ 		return -EINVAL;
++	}
+ 
+ 	table_group = iommu_group_get_iommudata(grp);
+-	if (WARN_ON(!table_group))
++	if (WARN_ON(!table_group)) {
++		fdput(f);
+ 		return -EFAULT;
++	}
+ 
+ 	for (i = 0; i < IOMMU_TABLE_GROUP_MAX_TABLES; ++i) {
+ 		struct iommu_table *tbltmp = table_group->tables[i];
+@@ -158,8 +160,10 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
+ 			break;
+ 		}
+ 	}
+-	if (!tbl)
++	if (!tbl) {
++		fdput(f);
+ 		return -EINVAL;
++	}
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(stit, &stt->iommu_tables, next) {
+@@ -170,6 +174,7 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
+ 			/* stit is being destroyed */
+ 			iommu_tce_table_put(tbl);
+ 			rcu_read_unlock();
++			fdput(f);
+ 			return -ENOTTY;
+ 		}
+ 		/*
+@@ -177,6 +182,7 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
+ 		 * its KVM reference counter and can return.
+ 		 */
+ 		rcu_read_unlock();
++		fdput(f);
+ 		return 0;
+ 	}
+ 	rcu_read_unlock();
+@@ -184,6 +190,7 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
+ 	stit = kzalloc(sizeof(*stit), GFP_KERNEL);
+ 	if (!stit) {
+ 		iommu_tce_table_put(tbl);
++		fdput(f);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -192,6 +199,7 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
+ 
+ 	list_add_rcu(&stit->next, &stt->iommu_tables);
+ 
++	fdput(f);
+ 	return 0;
+ }
+ 
+-- 
+2.45.1
+
 
