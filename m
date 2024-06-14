@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-21727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B619093C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 23:46:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B53A9093C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 23:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1051B282E5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 21:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8459A1F22757
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 21:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EAA185084;
-	Fri, 14 Jun 2024 21:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20410185084;
+	Fri, 14 Jun 2024 21:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fq+j2v4X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9ZPcJ62"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE613A27E;
-	Fri, 14 Jun 2024 21:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF322032A;
+	Fri, 14 Jun 2024 21:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718401567; cv=none; b=hKRYzIl1RTXtLhNYict5jBErIr23w1NuQKlEU6c+UIK4x9OSGANb461I7gU2q3zrvfBpwKmTlyiw911AXE3sb58HCwnIIHTysiyjYMIKW4l4CSb2AebFCrEhLn8zmwbzglRBj+yTuHu6wGnlI6tIvm8GN5QlXcIx6FQ+0byNBjU=
+	t=1718401623; cv=none; b=EP30VtbwbY8u23hjhQmxYve/fPgU1TJtX7MdBDM9O52tttGh+nTk3xEeLfJwNIezSKFRU9GZkgeAjTJQgSRc3utjCwaFaMc7iarbHzSS+1jdJih17j4Hi+MBhf4Z30MFRF6p9LgSzOXe5cm8MHd0jP4NjZYBk9GJBh99asKFbmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718401567; c=relaxed/simple;
-	bh=i4jX7659cAMQGML0/4MIrvWLaOXekkxxGp6cZqT4hA4=;
+	s=arc-20240116; t=1718401623; c=relaxed/simple;
+	bh=2Qg9Yyi/lBJpGF1pwk1Q2c3T3f4+hG+x7lNz9oQcMOo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bfjdaZ4hu6l5UpzI88jr/vVGLPmgohx50XBbazwDpqCUWVW/BfVN5JNp7jLh3c2WLzAORLVWZFH81cccGeSSgil6Q8J74A/YYurdRLvEikxbD9AOEVoHZx8NlEQSbqgsMFpGm+RGHtssJDtmsey8/h5DgUxqK93l4L6zzB5mzgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fq+j2v4X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17A68C2BD10;
-	Fri, 14 Jun 2024 21:46:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pla8DRLP1RboJ4tTKu43O4Lv9miEuZcs/e2wWzVdfz0fzn+bWJn2gYj00DnF14dNPAbZuUgr4ZeUlDesxBzEao8HPZ4atZvt3MobfnrKdZviG6dY5hMslJmfiiY3LxYAI42Oc6Ezigj2g91n047p83g9drSUCKHPSFd6Zz4yzos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9ZPcJ62; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBBEC2BD10;
+	Fri, 14 Jun 2024 21:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718401567;
-	bh=i4jX7659cAMQGML0/4MIrvWLaOXekkxxGp6cZqT4hA4=;
+	s=k20201202; t=1718401622;
+	bh=2Qg9Yyi/lBJpGF1pwk1Q2c3T3f4+hG+x7lNz9oQcMOo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fq+j2v4XOTYaceMHapsgd0uzezQDlX6UA8+oL1/EDUeiMIXgTm7Tt+Oo9IH/QSPta
-	 p0Ar+OeJLJs0LmIwKjSRlWS2sYDzbMOdMHO69up7WmXXkvMoPMUzXlGEZX20NCUMQR
-	 edOQF47nYG97xht93AcjJF2SwRgjbQiQDyuQOJ9L0zpJfqNo++GS8CDQh9BmKH4z23
-	 NiZWAa8vJRhrD3ylDti5DIOFAyXaWFVIfkUBxBSEbGPV4UHL6ck9nRo3C7NtbYAHsC
-	 TMVrN25kVkePOpUr5rKQnwyqCgX4zGeM5EfGGT7tg1bTxwNCxI8aKBPfUineExYSbf
-	 y9AXJDVgZWTkw==
-Date: Fri, 14 Jun 2024 14:46:06 -0700
+	b=i9ZPcJ62RIS1kRWCn9r8H135XucMWrSnaaZ+0M8kMNtoshpR5zt3u0xNBPKip5EK2
+	 JOfRHvhJewnvubZQEsKvL7iMXBcQi+5dFUpmw0zbsRK1XDB/5vVzF2D+0yPwEAFFKM
+	 1IuFYiMLvIU5kW81sBpdKOwzwCMM5/Jxf8YHNqSY0ZKL4m7c1mAEVV6kYDU7tVuTb6
+	 6NN3+Ea1v2P9ljNTVXqE62W/n5TQAuEIt7AMx0Z1E0DXdt1/YSGjwYYOu2a1r5JMrv
+	 cJV/h/XW65IUObZry9HSpzv6t+9mkIjyvPBC+a6mbrnJBJA5vYehke9Ieymy8NlKRK
+	 cKYt2/Of6NRmQ==
+Date: Fri, 14 Jun 2024 14:47:02 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
@@ -51,8 +51,8 @@ Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>,
 	Luis Chamberlain <mcgrof@kernel.org>
-Subject: [TEXT 1/3] design of iomap
-Message-ID: <20240614214606.GL6125@frogsfrogsfrogs>
+Subject: [TEXT 2/3] file operations
+Message-ID: <20240614214702.GM6125@frogsfrogsfrogs>
 References: <20240614214347.GK6125@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -64,398 +64,633 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20240614214347.GK6125@frogsfrogsfrogs>
 
-Here's the design document, rendered as a textonly version of
-https://djwong.org/docs/iomap/design.html
+Here's the file operations provided by the upper layer of iomap.
+https://djwong.org/docs/iomap/operations.html
 
 --D
 
-                     (iomap) Library Design
+                       Supported File Operations
 
    Table of Contents
 
-     * Introduction
-     * Who Should Read This?
-     * How Is This Better?
-     * File Range Iterator
-          * Definitions
-          * struct iomap
-          * struct iomap_ops
-               * ->iomap_begin
-               * ->iomap_end
-     * Preparing for File Operations
-     * Locking Hierarchy
-     * Bugs and Limitations
+     * Buffered I/O
+          * struct address_space_operations
+          * struct iomap_folio_ops
+          * Internal per-Folio State
+          * Buffered Readahead and Reads
+          * Buffered Writes
+               * mmap Write Faults
+               * Buffered Write Failures
+               * Zeroing for File Operations
+               * Unsharing Reflinked File Data
+          * Truncation
+          * Pagecache Writeback
+               * struct iomap_writeback_ops
+               * Pagecache Writeback Completion
+     * Direct I/O
+          * Return Values
+          * Direct Reads
+          * Direct Writes
+          * struct iomap_dio_ops:
+     * DAX I/O
+          * fsdax Reads
+          * fsdax Writes
+               * fsdax mmap Faults
+          * fsdax Truncation, fallocate, and Unsharing
+          * fsdax Deduplication
+     * Seeking Files
+          * SEEK_DATA
+          * SEEK_HOLE
+     * Swap File Activation
+     * File Space Mapping Reporting
+          * FS_IOC_FIEMAP
+          * FIBMAP (deprecated)
 
-                              Introduction
+   Below are a discussion of the high level file operations that
+   iomap implements.
 
-   iomap is a filesystem library for handling common file operations.
-   The library has two layers:
+                              Buffered I/O
 
-      1. A lower layer that provides an iterator over ranges of file
-         offsets. This layer tries to obtain mappings of each file
-         ranges to storage from the filesystem, but the storage
-         information is not necessarily required.
-      2. An upper layer that acts upon the space mappings provided by
-         the lower layer iterator.
+   Buffered I/O is the default file I/O path in Linux. File contents
+   are cached in memory ("pagecache") to satisfy reads and writes.
+   Dirty cache will be written back to disk at some point that can be
+   forced via fsync and variants.
 
-   The iteration can involve mappings of file's logical offset ranges
-   to physical extents, but the storage layer information is not
-   necessarily required, e.g. for walking cached file information.
-   The library exports various APIs for implementing file operations
-   such as:
+   iomap implements nearly all the folio and pagecache management
+   that filesystems have to implement themselves under the legacy I/O
+   model. This means that the filesystem need not know the details of
+   allocating, mapping, managing uptodate and dirty state, or
+   writeback of pagecache folios. Under the legacy I/O model, this
+   was managed very inefficiently with linked lists of buffer heads
+   instead of the per-folio bitmaps that iomap uses. Unless the
+   filesystem explicitly opts in to buffer heads, they will not be
+   used, which makes buffered I/O much more efficient, and the
+   pagecache maintainer much happier.
 
-       * Pagecache reads and writes
-       * Folio write faults to the pagecache
-       * Writeback of dirty folios
-       * Direct I/O reads and writes
-       * fsdax I/O reads, writes, loads, and stores
-       * FIEMAP
-       * lseek SEEK_DATA and SEEK_HOLE
-       * swapfile activation
+struct address_space_operations
 
-   This origins of this library is the file I/O path that XFS once
-   used; it has now been extended to cover several other operations.
+   The following iomap functions can be referenced directly from the
+   address space operations structure:
 
-                         Who Should Read This?
+       * iomap_dirty_folio
+       * iomap_release_folio
+       * iomap_invalidate_folio
+       * iomap_is_partially_uptodate
 
-   The target audience for this document are filesystem, storage, and
-   pagecache programmers and code reviewers.
+   The following address space operations can be wrapped easily:
 
-   If you are working on PCI, machine architectures, or device
-   drivers, you are most likely in the wrong place.
+       * read_folio
+       * readahead
+       * writepages
+       * bmap
+       * swap_activate
 
-                          How Is This Better?
+struct iomap_folio_ops
 
-   Unlike the classic Linux I/O model which breaks file I/O into
-   small units (generally memory pages or blocks) and looks up space
-   mappings on the basis of that unit, the iomap model asks the
-   filesystem for the largest space mappings that it can create for a
-   given file operation and initiates operations on that basis. This
-   strategy improves the filesystem's visibility into the size of the
-   operation being performed, which enables it to combat
-   fragmentation with larger space allocations when possible. Larger
-   space mappings improve runtime performance by amortizing the cost
-   of mapping function calls into the filesystem across a larger
-   amount of data.
+   The ->iomap_begin function for pagecache operations may set the
+   struct iomap::folio_ops field to an ops structure to override
+   default behaviors of iomap:
 
-   At a high level, an iomap operation looks like this:
+ struct iomap_folio_ops {
+     struct folio *(*get_folio)(struct iomap_iter *iter, loff_t pos,
+                                unsigned len);
+     void (*put_folio)(struct inode *inode, loff_t pos, unsigned copied,
+                       struct folio *folio);
+     bool (*iomap_valid)(struct inode *inode, const struct iomap *iomap);
+ };
 
-    1. For each byte in the operation range...
-         1. Obtain a space mapping via ->iomap_begin
-         2. For each sub-unit of work...
-              1. Revalidate the mapping and go back to (1) above, if
-                 necessary. So far only the pagecache operations need
-                 to do this.
-              2. Do the work
-         3. Increment operation cursor
-         4. Release the mapping via ->iomap_end, if necessary
+   iomap calls these functions:
 
-   Each iomap operation will be covered in more detail below. This
-   library was covered previously by an LWN article and a
-   KernelNewbies page.
+       * get_folio: Called to allocate and return an active reference
+         to a locked folio prior to starting a write. If this
+         function is not provided, iomap will call iomap_get_folio.
+         This could be used to set up per-folio filesystem state for
+         a write.
 
-   The goal of this document is to provide a brief discussion of the
-   design and capabilities of iomap, followed by a more detailed
-   catalog of the interfaces presented by iomap. If you change iomap,
-   please update this design document.
+       * put_folio: Called to unlock and put a folio after a
+         pagecache operation completes. If this function is not
+         provided, iomap will folio_unlock and folio_put on its own.
+         This could be used to commit per-folio filesystem state that
+         was set up by ->get_folio.
 
-                          File Range Iterator
+       * iomap_valid: The filesystem may not hold locks between
+         ->iomap_begin and ->iomap_end because pagecache operations
+         can take folio locks, fault on userspace pages, initiate
+         writeback for memory reclamation, or engage in other
+         time-consuming actions. If a file's space mapping data are
+         mutable, it is possible that the mapping for a particular
+         pagecache folio can change in the time it takes to allocate,
+         install, and lock that folio.
 
-Definitions
+         For the pagecache, races can happen if writeback doesn't
+         take i_rwsem or invalidate_lock and updates mapping
+         information. Races can also happen if the filesytem allows
+         concurrent writes. For such files, the mapping must be
+         revalidated after the folio lock has been taken so that
+         iomap can manage the folio correctly.
 
-       * buffer head: Shattered remnants of the old buffer cache.
-       * fsblock: The block size of a file, also known as
-         i_blocksize.
-       * i_rwsem: The VFS struct inode rwsemaphore. Processes hold
-         this in shared mode to read file state and contents. Some
-         filesystems may allow shared mode for writes. Processes
-         often hold this in exclusive mode to change file state and
-         contents.
-       * invalidate_lock: The pagecache struct address_space
-         rwsemaphore that protects against folio insertion and
-         removal for filesystems that support punching out folios
-         below EOF. Processes wishing to insert folios must hold this
-         lock in shared mode to prevent removal, though concurrent
-         insertion is allowed. Processes wishing to remove folios
-         must hold this lock in exclusive mode to prevent insertions.
-         Concurrent removals are not allowed.
-       * dax_read_lock: The RCU read lock that dax takes to prevent a
-         device pre-shutdown hook from returning before other threads
-         have released resources.
-       * filesystem mapping lock: This synchronization primitive is
-         internal to the filesystem and must protect the file mapping
-         data from updates while a mapping is being sampled. The
-         filesystem author must determine how this coordination
-         should happen; it does not need to be an actual lock.
-       * iomap internal operation lock: This is a general term for
-         synchronization primitives that iomap functions take while
-         holding a mapping. A specific example would be taking the
-         folio lock while reading or writing the pagecache.
-       * pure overwrite: A write operation that does not require any
-         metadata or zeroing operations to perform during either
-         submission or completion. This implies that the fileystem
-         must have already allocated space on disk as IOMAP_MAPPED
-         and the filesystem must not place any constaints on IO
-         alignment or size. The only constraints on I/O alignment are
-         device level (minimum I/O size and alignment, typically
-         sector size).
+         fsdax does not need this revalidation because there's no
+         writeback and no support for unwritten extents.
 
-struct iomap
+         Filesystems subject to this kind of race must provide a
+         ->iomap_valid function to decide if the mapping is still
+         valid. If the mapping is not valid, the mapping will be
+         sampled again.
 
-   The filesystem communicates to the iomap iterator the mapping of
-   byte ranges of a file to byte ranges of a storage device with the
-   structure below:
+         To support making the validity decision, the filesystem's
+         ->iomap_begin function may set struct iomap::validity_cookie
+         at the same time that it populates the other iomap fields. A
+         simple validation cookie implementation is a sequence
+         counter. If the filesystem bumps the sequence counter every
+         time it modifies the inode's extent map, it can be placed in
+         the struct iomap::validity_cookie during ->iomap_begin. If
+         the value in the cookie is found to be different to the
+         value the filesystem holds when the mapping is passed back
+         to ->iomap_valid, then the iomap should considered stale and
+         the validation failed.
 
- struct iomap {
-     u64                 addr;
-     loff_t              offset;
-     u64                 length;
-     u16                 type;
-     u16                 flags;
-     struct block_device *bdev;
-     struct dax_device   *dax_dev;
-     voidw               *inline_data;
-     void                *private;
-     const struct iomap_folio_ops *folio_ops;
-     u64                 validity_cookie;
+   These struct kiocb flags are significant for buffered I/O with
+   iomap:
+
+       * IOCB_NOWAIT: Turns on IOMAP_NOWAIT.
+
+Internal per-Folio State
+
+   If the fsblock size matches the size of a pagecache folio, it is
+   assumed that all disk I/O operations will operate on the entire
+   folio. The uptodate (memory contents are at least as new as what's
+   on disk) and dirty (memory contents are newer than what's on disk)
+   status of the folio are all that's needed for this case.
+
+   If the fsblock size is less than the size of a pagecache folio,
+   iomap tracks the per-fsblock uptodate and dirty state itself. This
+   enables iomap to handle both "bs < ps" filesystems and large
+   folios in the pagecache.
+
+   iomap internally tracks two state bits per fsblock:
+
+       * uptodate: iomap will try to keep folios fully up to date. If
+         there are read(ahead) errors, those fsblocks will not be
+         marked uptodate. The folio itself will be marked uptodate
+         when all fsblocks within the folio are uptodate.
+       * dirty: iomap will set the per-block dirty state when
+         programs write to the file. The folio itself will be marked
+         dirty when any fsblock within the folio is dirty.
+
+   iomap also tracks the amount of read and write disk IOs that are
+   in flight. This structure is much lighter weight than struct
+   buffer_head because there is only one per folio, and the
+   per-fsblock overhead is two bits vs. 104 bytes.
+
+   Filesystems wishing to turn on large folios in the pagecache
+   should call mapping_set_large_folios when initializing the incore
+   inode.
+
+Buffered Readahead and Reads
+
+   The iomap_readahead function initiates readahead to the pagecache.
+   The iomap_read_folio function reads one folio's worth of data into
+   the pagecache. The flags argument to ->iomap_begin will be set to
+   zero. The pagecache takes whatever locks it needs before calling
+   the filesystem.
+
+Buffered Writes
+
+   The iomap_file_buffered_write function writes an iocb to the
+   pagecache. IOMAP_WRITE or IOMAP_WRITE | IOMAP_NOWAIT will be
+   passed as the flags argument to ->iomap_begin. Callers commonly
+   take i_rwsem in either shared or exclusive mode before calling
+   this function.
+
+  mmap Write Faults
+
+   The iomap_page_mkwrite function handles a write fault to a folio
+   in the pagecache. IOMAP_WRITE | IOMAP_FAULT will be passed as the
+   flags argument to ->iomap_begin. Callers commonly take the mmap
+   invalidate_lock in shared or exclusive mode before calling this
+   function.
+
+  Buffered Write Failures
+
+   After a short write to the pagecache, the areas not written will
+   not become marked dirty. The filesystem must arrange to cancel
+   such reservations because writeback will not consume the
+   reservation. The iomap_file_buffered_write_punch_delalloc can be
+   called from a ->iomap_end function to find all the clean areas of
+   the folios caching a fresh (IOMAP_F_NEW) delalloc mapping. It
+   takes the invalidate_lock.
+
+   The filesystem must supply a function punch to be called for each
+   file range in this state. This function must only remove delayed
+   allocation reservations, in case another thread racing with the
+   current thread writes successfully to the same region and triggers
+   writeback to flush the dirty data out to disk.
+
+  Zeroing for File Operations
+
+   Filesystems can call iomap_zero_range to perform zeroing of the
+   pagecache for non-truncation file operations that are not aligned
+   to the fsblock size. IOMAP_ZERO will be passed as the flags
+   argument to ->iomap_begin. Callers typically hold i_rwsem and
+   invalidate_lock in exclusive mode before calling this function.
+
+  Unsharing Reflinked File Data
+
+   Filesystems can call iomap_file_unshare to force a file sharing
+   storage with another file to preemptively copy the shared data to
+   newly allocate storage. IOMAP_WRITE | IOMAP_UNSHARE will be passed
+   as the flags argument to ->iomap_begin. Callers typically hold
+   i_rwsem and invalidate_lock in exclusive mode before calling this
+   function.
+
+Truncation
+
+   Filesystems can call iomap_truncate_page to zero the bytes in the
+   pagecache from EOF to the end of the fsblock during a file
+   truncation operation. truncate_setsize or truncate_pagecache will
+   take care of everything after the EOF block. IOMAP_ZERO will be
+   passed as the flags argument to ->iomap_begin. Callers typically
+   hold i_rwsem and invalidate_lock in exclusive mode before calling
+   this function.
+
+Pagecache Writeback
+
+   Filesystems can call iomap_writepages to respond to a request to
+   write dirty pagecache folios to disk. The mapping and wbc
+   parameters should be passed unchanged. The wpc pointer should be
+   allocated by the filesystem and must be initialized to zero.
+
+   The pagecache will lock each folio before trying to schedule it
+   for writeback. It does not lock i_rwsem or invalidate_lock.
+
+   The dirty bit will be cleared for all folios run through the
+   ->map_blocks machinery described below even if the writeback
+   fails. This is to prevent dirty folio clots when storage devices
+   fail; an -EIO is recorded for userspace to collect via fsync.
+
+   The ops structure must be specified and is as follows:
+
+  struct iomap_writeback_ops
+
+ struct iomap_writeback_ops {
+     int (*map_blocks)(struct iomap_writepage_ctx *wpc, struct inode *inode,
+                       loff_t offset, unsigned len);
+     int (*prepare_ioend)(struct iomap_ioend *ioend, int status);
+     void (*discard_folio)(struct folio *folio, loff_t pos);
  };
 
    The fields are as follows:
 
-       * offset and length describe the range of file offsets, in
-         bytes, covered by this mapping. These fields must always be
-         set by the filesystem.
+       * map_blocks: Sets wpc->iomap to the space mapping of the file
+         range (in bytes) given by offset and len. iomap calls this
+         function for each dirty fs block in each dirty folio, though
+         it will reuse mappings for runs of contiguous dirty fsblocks
+         within a folio. Do not return IOMAP_INLINE mappings here;
+         the ->iomap_end function must deal with persisting written
+         data. Do not return IOMAP_DELALLOC mappings here; iomap
+         currently requires mapping to allocated space. Filesystems
+         can skip a potentially expensive mapping lookup if the
+         mappings have not changed. This revalidation must be
+         open-coded by the filesystem; it is unclear if
+         iomap::validity_cookie can be reused for this purpose. This
+         function must be supplied by the filesystem.
+       * prepare_ioend: Enables filesystems to transform the
+         writeback ioend or perform any other preparatory work before
+         the writeback I/O is submitted. This might include pre-write
+         space accounting updates, or installing a custom ->bi_end_io
+         function for internal purposes, such as deferring the ioend
+         completion to a workqueue to run metadata update
+         transactions from process context. This function is
+         optional.
+       * discard_folio: iomap calls this function after ->map_blocks
+         fails to schedule I/O for any part of a dirty folio. The
+         function should throw away any reservations that may have
+         been made for the write. The folio will be marked clean and
+         an -EIO recorded in the pagecache. Filesystems can use this
+         callback to remove delalloc reservations to avoid having
+         delalloc reservations for clean pagecache. This function is
+         optional.
 
-       * type describes the type of the space mapping:
+  Pagecache Writeback Completion
 
-            * IOMAP_HOLE: No storage has been allocated. This type
-              must never be returned in response to an IOMAP_WRITE
-              operation because writes must allocate and map space,
-              and return the mapping. The addr field must be set to
-              IOMAP_NULL_ADDR. iomap does not support writing
-              (whether via pagecache or direct I/O) to a hole.
-            * IOMAP_DELALLOC: A promise to allocate space at a later
-              time ("delayed allocation"). If the filesystem returns
-              IOMAP_F_NEW here and the write fails, the ->iomap_end
-              function must delete the reservation. The addr field
-              must be set to IOMAP_NULL_ADDR.
-            * IOMAP_MAPPED: The file range maps to specific space on
-              the storage device. The device is returned in bdev or
-              dax_dev. The device address, in bytes, is returned via
-              addr.
-            * IOMAP_UNWRITTEN: The file range maps to specific space
-              on the storage device, but the space has not yet been
-              initialized. The device is returned in bdev or dax_dev.
-              The device address, in bytes, is returned via addr.
-              Reads from this type of mapping will return zeroes to
-              the caller. For a write or writeback operation, the
-              ioend should update the mapping to MAPPED. Refer to the
-              sections about ioends for more details.
-            * IOMAP_INLINE: The file range maps to the memory buffer
-              specified by inline_data. For write operation, the
-              ->iomap_end function presumably handles persisting the
-              data. The addr field must be set to IOMAP_NULL_ADDR.
-       * flags describe the status of the space mapping. These flags
-         should be set by the filesystem in ->iomap_begin:
+   To handle the bookkeeping that must happen after disk I/O for
+   writeback completes, iomap creates chains of struct iomap_ioend
+   objects that wrap the bio that is used to write pagecache data to
+   disk. By default, iomap finishes writeback ioends by clearing the
+   writeback bit on the folios attached to the ioend. If the write
+   failed, it will also set the error bits on the folios and the
+   address space. This can happen in interrupt or process context,
+   depending on the storage device.
 
-            * IOMAP_F_NEW: The space under the mapping is newly
-              allocated. Areas that will not be written to must be
-              zeroed. If a write fails and the mapping is a space
-              reservation, the reservation must be deleted.
-            * IOMAP_F_DIRTY: The inode will have uncommitted metadata
-              needed to access any data written. fdatasync is
-              required to commit these changes to persistent storage.
-              This needs to take into account metadata changes that
-              may be made at I/O completion, such as file size
-              updates from direct I/O.
-            * IOMAP_F_SHARED: The space under the mapping is shared.
-              Copy on write is necessary to avoid corrupting other
-              file data.
-            * IOMAP_F_BUFFER_HEAD: This mapping requires the use of
-              buffer heads for pagecache operations. Do not add more
-              uses of this.
-            * IOMAP_F_MERGED: Multiple contiguous block mappings were
-              coalesced into this single mapping. This is only useful
-              for FIEMAP.
-            * IOMAP_F_XATTR: The mapping is for extended attribute
-              data, not regular file data. This is only useful for
-              FIEMAP.
-            * IOMAP_F_PRIVATE: Starting with this value, the upper
-              bits can be set by the filesystem for its own purposes.
+   Filesystems that need to update internal bookkeeping (e.g.
+   unwritten extent conversions) should provide a ->prepare_ioend
+   function to set struct iomap_end::bio::bi_end_io to its own
+   function. This function should call iomap_finish_ioends after
+   finishing its own work (e.g. unwritten extent conversion).
 
-         These flags can be set by iomap itself during file
-         operations. The filesystem should supply an ->iomap_end
-         function if it needs to observe these flags:
+   Some filesystems may wish to amortize the cost of running metadata
+   transactions for post-writeback updates by batching them. They may
+   also require transactions to run from process context, which
+   implies punting batches to a workqueue. iomap ioends contain a
+   list_head to enable batching.
 
-            * IOMAP_F_SIZE_CHANGED: The file size has changed as a
-              result of using this mapping.
-            * IOMAP_F_STALE: The mapping was found to be stale. iomap
-              will call ->iomap_end on this mapping and then
-              ->iomap_begin to obtain a new mapping.
+   Given a batch of ioends, iomap has a few helpers to assist with
+   amortization:
 
-         Currently, these flags are only set by pagecache operations.
+       * iomap_sort_ioends: Sort all the ioends in the list by file
+         offset.
+       * iomap_ioend_try_merge: Given an ioend that is not in any
+         list and a separate list of sorted ioends, merge as many of
+         the ioends from the head of the list into the given ioend.
+         ioends can only be merged if the file range and storage
+         addresses are contiguous; the unwritten and shared status
+         are the same; and the write I/O outcome is the same. The
+         merged ioends become their own list.
+       * iomap_finish_ioends: Finish an ioend that possibly has other
+         ioends linked to it.
 
-       * addr describes the device address, in bytes.
+                               Direct I/O
 
-       * bdev describes the block device for this mapping. This only
-         needs to be set for mapped or unwritten operations.
+   In Linux, direct I/O is defined as file I/O that is issued
+   directly to storage, bypassing the pagecache. The iomap_dio_rw
+   function implements O_DIRECT (direct I/O) reads and writes for
+   files.
 
-       * dax_dev describes the DAX device for this mapping. This only
-         needs to be set for mapped or unwritten operations, and only
-         for a fsdax operation.
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+                      const struct iomap_ops *ops,
+                      const struct iomap_dio_ops *dops,
+                      unsigned int dio_flags, void *private,
+                      size_t done_before);
 
-       * inline_data points to a memory buffer for I/O involving
-         IOMAP_INLINE mappings. This value is ignored for all other
-         mapping types.
+   The filesystem can provide the dops parameter if it needs to
+   perform extra work before or after the I/O is issued to storage.
+   The done_before parameter tells the how much of the request has
+   already been transferred. It is used to continue a request
+   asynchronously when part of the request has already been completed
+   synchronously.
 
-       * private is a pointer to filesystem-private information. This
-         value will be passed unchanged to ->iomap_end.
+   The done_before parameter should be set if writes for the iocb
+   have been initiated prior to the call. The direction of the I/O is
+   determined from the iocb passed in.
 
-       * folio_ops will be covered in the section on pagecache
-         operations.
+   The dio_flags argument can be set to any combination of the
+   following values:
 
-       * validity_cookie is a magic freshness value set by the
-         filesystem that should be used to detect stale mappings. For
-         pagecache operations this is critical for correct operation
-         because page faults can occur, which implies that filesystem
-         locks should not be held between ->iomap_begin and
-         ->iomap_end. Filesystems with completely static mappings
-         need not set this value. Only pagecache operations
-         revalidate mappings; see the section about iomap_valid for
-         details.
+       * IOMAP_DIO_FORCE_WAIT: Wait for the I/O to complete even if
+         the kiocb is not synchronous.
+       * IOMAP_DIO_OVERWRITE_ONLY: Perform a pure overwrite for this
+         range or fail with -EAGAIN. This can be used by filesystems
+         with complex unaligned I/O write paths to provide an
+         optimised fast path for unaligned writes. If a pure
+         overwrite can be performed, then serialisation against other
+         I/Os to the same filesystem block(s) is unnecessary as there
+         is no risk of stale data exposure or data loss. If a pure
+         overwrite cannot be performed, then the filesystem can
+         perform the serialisation steps needed to provide exclusive
+         access to the unaligned I/O range so that it can perform
+         allocation and sub-block zeroing safely. Filesystems can use
+         this flag to try to reduce locking contention, but a lot of
+         detailed checking is required to do it correctly.
+       * IOMAP_DIO_PARTIAL: If a page fault occurs, return whatever
+         progress has already been made. The caller may deal with the
+         page fault and retry the operation. If the caller decides to
+         retry the operation, it should pass the accumulated return
+         values of all previous calls as the done_before parameter to
+         the next call.
 
-struct iomap_ops
+   These struct kiocb flags are significant for direct I/O with
+   iomap:
 
-   Every iomap function requires the filesystem to pass an operations
-   structure to obtain a mapping and (optionally) to release the
-   mapping:
+       * IOCB_NOWAIT: Turns on IOMAP_NOWAIT.
+       * IOCB_SYNC: Ensure that the device has persisted data to disk
+         before completing the call. In the case of pure overwrites,
+         the I/O may be issued with FUA enabled.
+       * IOCB_HIPRI: Poll for I/O completion instead of waiting for
+         an interrupt. Only meaningful for asynchronous I/O, and only
+         if the entire I/O can be issued as a single struct bio.
+       * IOCB_DIO_CALLER_COMP: Try to run I/O completion from the
+         caller's process context. See linux/fs.h for more details.
 
- struct iomap_ops {
-     int (*iomap_begin)(struct inode *inode, loff_t pos, loff_t length,
-                        unsigned flags, struct iomap *iomap,
-                        struct iomap *srcmap);
+   Filesystems should call iomap_dio_rw from ->read_iter and
+   ->write_iter, and set FMODE_CAN_ODIRECT in the ->open function for
+   the file. They should not set ->direct_IO, which is deprecated.
 
-     int (*iomap_end)(struct inode *inode, loff_t pos, loff_t length,
-                      ssize_t written, unsigned flags,
-                      struct iomap *iomap);
+   If a filesystem wishes to perform its own work before direct I/O
+   completion, it should call __iomap_dio_rw. If its return value is
+   not an error pointer or a NULL pointer, the filesystem should pass
+   the return value to iomap_dio_complete after finishing its
+   internal work.
+
+Return Values
+
+   iomap_dio_rw can return one of the following:
+
+       * A non-negative number of bytes transferred.
+       * -ENOTBLK: Fall back to buffered I/O. iomap itself will
+         return this value if it cannot invalidate the page cache
+         before issuing the I/O to storage. The ->iomap_begin or
+         ->iomap_end functions may also return this value.
+       * -EIOCBQUEUED: The asynchronous direct I/O request has been
+         queued and will be completed separately.
+       * Any of the other negative error codes.
+
+Direct Reads
+
+   A direct I/O read initiates a read I/O from the storage device to
+   the caller's buffer. Dirty parts of the pagecache are flushed to
+   storage before initiating the read io. The flags value for
+   ->iomap_begin will be IOMAP_DIRECT with any combination of the
+   following enhancements:
+
+       * IOMAP_NOWAIT, as defined previously.
+
+   Callers commonly hold i_rwsem in shared mode before calling this
+   function.
+
+Direct Writes
+
+   A direct I/O write initiates a write I/O to the storage device
+   from the caller's buffer. Dirty parts of the pagecache are flushed
+   to storage before initiating the write io. The pagecache is
+   invalidated both before and after the write io. The flags value
+   for ->iomap_begin will be IOMAP_DIRECT | IOMAP_WRITE with any
+   combination of the following enhancements:
+
+       * IOMAP_NOWAIT, as defined previously.
+       * IOMAP_OVERWRITE_ONLY: Allocating blocks and zeroing partial
+         blocks is not allowed. The entire file range must map to a
+         single written or unwritten extent. The file I/O range must
+         be aligned to the filesystem block size if the mapping is
+         unwritten and the filesystem cannot handle zeroing the
+         unaligned regions without exposing stale contents.
+
+   Callers commonly hold i_rwsem in shared or exclusive mode before
+   calling this function.
+
+struct iomap_dio_ops:
+
+ struct iomap_dio_ops {
+     void (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
+                       loff_t file_offset);
+     int (*end_io)(struct kiocb *iocb, ssize_t size, int error,
+                   unsigned flags);
+     struct bio_set *bio_set;
  };
 
-  ->iomap_begin
+   The fields of this structure are as follows:
 
-   iomap operations call ->iomap_begin to obtain one file mapping for
-   the range of bytes specified by pos and length for the file inode.
-   This mapping should be returned through the iomap pointer. The
-   mapping must cover at least the first byte of the supplied file
-   range, but it does not need to cover the entire requested range.
+       * submit_io: iomap calls this function when it has constructed
+         a struct bio object for the I/O requested, and wishes to
+         submit it to the block device. If no function is provided,
+         submit_bio will be called directly. Filesystems that would
+         like to perform additional work before (e.g. data
+         replication for btrfs) should implement this function.
+       * end_io: This is called after the struct bio completes. This
+         function should perform post-write conversions of unwritten
+         extent mappings, handle write failures, etc. The flags
+         argument may be set to a combination of the following:
+            * IOMAP_DIO_UNWRITTEN: The mapping was unwritten, so the
+              ioend should mark the extent as written.
+            * IOMAP_DIO_COW: Writing to the space in the mapping
+              required a copy on write operation, so the ioend should
+              switch mappings.
+       * bio_set: This allows the filesystem to provide a custom
+         bio_set for allocating direct I/O bios. This enables
+         filesystems to stash additional per-bio information for
+         private use. If this field is NULL, generic struct bio
+         objects will be used.
 
-   Each iomap operation describes the requested operation through the
-   flags argument. The exact value of flags will be documented in the
-   operation-specific sections below. These flags can, at least in
-   principle, apply generally to iomap operations:
+   Filesystems that want to perform extra work after an I/O
+   completion should set a custom ->bi_end_io function via
+   ->submit_io. Afterwards, the custom endio function must call
+   iomap_dio_bio_end_io to finish the direct I/O.
 
-       * IOMAP_DIRECT is set when the caller wishes to issue file I/O
-         to block storage.
-       * IOMAP_DAX is set when the caller wishes to issue file I/O to
-         memory-like storage.
-       * IOMAP_NOWAIT is set when the caller wishes to perform a best
-         effort attempt to avoid any operation that would result in
-         blocking the submitting task. This is similar in intent to
-         O_NONBLOCK for network APIs - it is intended for
-         asynchronous applications to keep doing other work instead
-         of waiting for the specific unavailable filesystem resource
-         to become available. Filesystems implementing IOMAP_NOWAIT
-         semantics need to use trylock algorithms. They need to be
-         able to satisfy the entire I/O request range with a single
-         iomap mapping. They need to avoid reading or writing
-         metadata synchronously. They need to avoid blocking memory
-         allocations. They need to avoid waiting on transaction
-         reservations to allow modifications to take place. They
-         probably should not be allocating new space. And so on. If
-         there is any doubt in the filesystem developer's mind as to
-         whether any specific IOMAP_NOWAIT operation may end up
-         blocking, then they should return -EAGAIN as early as
-         possible rather than start the operation and force the
-         submitting task to block. IOMAP_NOWAIT is often set on
-         behalf of IOCB_NOWAIT or RWF_NOWAIT.
+                                DAX I/O
 
-   If it is necessary to read existing file contents from a different
-   device or address range on a device, the filesystem should return
-   that information via srcmap. Only pagecache and fsdax operations
-   support reading from one mapping and writing to another.
+   Some storage devices can be directly mapped as memory. These
+   devices support a new access mode known as "fsdax" that allows
+   loads and stores through the CPU and memory controller.
 
-  ->iomap_end
+fsdax Reads
 
-   After the operation completes, the ->iomap_end function, if
-   present, is called to signal that iomap is finished with a
-   mapping. Typically, implementations will use this function to tear
-   down any context that were set up in ->iomap_begin. For example, a
-   write might wish to commit the reservations for the bytes that
-   were operated upon and unreserve any space that was not operated
-   upon. written might be zero if no bytes were touched. flags will
-   contain the same value passed to ->iomap_begin. iomap ops for
-   reads are not likely to need to supply this function.
+   A fsdax read performs a memcpy from storage device to the caller's
+   buffer. The flags value for ->iomap_begin will be IOMAP_DAX with
+   any combination of the following enhancements:
 
-   Both functions should return a negative errno code on error, or
-   zero on success.
+       * IOMAP_NOWAIT, as defined previously.
 
-                     Preparing for File Operations
+   Callers commonly hold i_rwsem in shared mode before calling this
+   function.
 
-   iomap only handles mapping and I/O. Filesystems must still call
-   out to the VFS to check input parameters and file state before
-   initiating an I/O operation. It does not handle obtaining
-   filesystem freeze protection, updating of timestamps, stripping
-   privileges, or access control.
+fsdax Writes
 
-                           Locking Hierarchy
+   A fsdax write initiates a memcpy to the storage device from the
+   caller's buffer. The flags value for ->iomap_begin will be
+   IOMAP_DAX | IOMAP_WRITE with any combination of the following
+   enhancements:
 
-   iomap requires that filesystems supply their own locking model.
-   There are three categories of synchronization primitives, as far
-   as iomap is concerned:
+       * IOMAP_NOWAIT, as defined previously.
+       * IOMAP_OVERWRITE_ONLY: The caller requires a pure overwrite
+         to be performed from this mapping. This requires the
+         filesystem extent mapping to already exist as an
+         IOMAP_MAPPED type and span the entire range of the write I/O
+         request. If the filesystem cannot map this request in a way
+         that allows the iomap infrastructure to perform a pure
+         overwrite, it must fail the mapping operation with -EAGAIN.
 
-       * The upper level primitive is provided by the filesystem to
-         coordinate access to different iomap operations. The exact
-         primitive is specifc to the filesystem and operation, but is
-         often a VFS inode, pagecache invalidation, or folio lock.
-         For example, a filesystem might take i_rwsem before calling
-         iomap_file_buffered_write and iomap_file_unshare to prevent
-         these two file operations from clobbering each other.
-         Pagecache writeback may lock a folio to prevent other
-         threads from accessing the folio until writeback is
-         underway.
-            * The lower level primitive is taken by the filesystem in
-              the ->iomap_begin and ->iomap_end functions to
-              coordinate access to the file space mapping
-              information. The fields of the iomap object should be
-              filled out while holding this primitive. The upper
-              level synchronization primitive, if any, remains held
-              while acquiring the lower level synchronization
-              primitive. For example, XFS takes ILOCK_EXCL and ext4
-              takes i_data_sem while sampling mappings. Filesystems
-              with immutable mapping information may not require
-              synchronization here.
-            * The operation primitive is taken by an iomap operation
-              to coordinate access to its own internal data
-              structures. The upper level synchronization primitive,
-              if any, remains held while acquiring this primitive.
-              The lower level primitive is not held while acquiring
-              this primitive. For example, pagecache write operations
-              will obtain a file mapping, then grab and lock a folio
-              to copy new contents. It may also lock an internal
-              folio state object to update metadata.
+   Callers commonly hold i_rwsem in exclusive mode before calling
+   this function.
 
-   The exact locking requirements are specific to the filesystem; for
-   certain operations, some of these locks can be elided. All further
-   mention of locking are recommendations, not mandates. Each
-   filesystem author must figure out the locking for themself.
+  fsdax mmap Faults
 
-                          Bugs and Limitations
+   The dax_iomap_fault function handles read and write faults to
+   fsdax storage. For a read fault, IOMAP_DAX | IOMAP_FAULT will be
+   passed as the flags argument to ->iomap_begin. For a write fault,
+   IOMAP_DAX | IOMAP_FAULT | IOMAP_WRITE will be passed as the flags
+   argument to ->iomap_begin.
 
-       * No support for fscrypt.
-       * No support for compression.
-       * No support for fsverity yet.
-       * Strong assumptions that IO should work the way it does on
-         XFS.
-       * Does iomap actually work for non-regular file data?
+   Callers commonly hold the same locks as they do to call their
+   iomap pagecache counterparts.
 
-   Patches welcome!
+fsdax Truncation, fallocate, and Unsharing
+
+   For fsdax files, the following functions are provided to replace
+   their iomap pagecache I/O counterparts. The flags argument to
+   ->iomap_begin are the same as the pagecache counterparts, with
+   IOMAP_DAX added.
+
+       * dax_file_unshare
+       * dax_zero_range
+       * dax_truncate_page
+
+   Callers commonly hold the same locks as they do to call their
+   iomap pagecache counterparts.
+
+fsdax Deduplication
+
+   Filesystems implementing the FIDEDUPERANGE ioctl must call the
+   dax_remap_file_range_prep function with their own iomap read ops.
+
+                             Seeking Files
+
+   iomap implements the two iterating whence modes of the llseek
+   system call.
+
+SEEK_DATA
+
+   The iomap_seek_data function implements the SEEK_DATA "whence"
+   value for llseek. IOMAP_REPORT will be passed as the flags
+   argument to ->iomap_begin.
+
+   For unwritten mappings, the pagecache will be searched. Regions of
+   the pagecache with a folio mapped and uptodate fsblocks within
+   those folios will be reported as data areas.
+
+   Callers commonly hold i_rwsem in shared mode before calling this
+   function.
+
+SEEK_HOLE
+
+   The iomap_seek_hole function implements the SEEK_HOLE "whence"
+   value for llseek. IOMAP_REPORT will be passed as the flags
+   argument to ->iomap_begin.
+
+   For unwritten mappings, the pagecache will be searched. Regions of
+   the pagecache with no folio mapped, or a !uptodate fsblock within
+   a folio will be reported as sparse hole areas.
+
+   Callers commonly hold i_rwsem in shared mode before calling this
+   function.
+
+                          Swap File Activation
+
+   The iomap_swapfile_activate function finds all the base-page
+   aligned regions in a file and sets them up as swap space. The file
+   will be fsync()'d before activation. IOMAP_REPORT will be passed
+   as the flags argument to ->iomap_begin. All mappings must be
+   mapped or unwritten; cannot be dirty or shared, and cannot span
+   multiple block devices. Callers must hold i_rwsem in exclusive
+   mode; this is already provided by swapon.
+
+                      File Space Mapping Reporting
+
+   iomap implements two of the file space mapping system calls.
+
+FS_IOC_FIEMAP
+
+   The iomap_fiemap function exports file extent mappings to
+   userspace in the format specified by the FS_IOC_FIEMAP ioctl.
+   IOMAP_REPORT will be passed as the flags argument to
+   ->iomap_begin. Callers commonly hold i_rwsem in shared mode before
+   calling this function.
+
+FIBMAP (deprecated)
+
+   iomap_bmap implements FIBMAP. The calling conventions are the same
+   as for FIEMAP. This function is only provided to maintain
+   compatibility for filesystems that implemented FIBMAP prior to
+   conversion. This ioctl is deprecated; do not add a FIBMAP
+   implementation to filesystems that do not have it. Callers should
+   probably hold i_rwsem in shared mode before calling this function,
+   but this is unclear.
 
