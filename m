@@ -1,149 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-21718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A084908FB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 18:10:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2CB909247
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 20:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 243A51F21C50
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 16:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD981C21467
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 18:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83E619E7D0;
-	Fri, 14 Jun 2024 16:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700AA19E7D0;
+	Fri, 14 Jun 2024 18:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VB20f3hC"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="TqXSAAeH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FC219D068;
-	Fri, 14 Jun 2024 16:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9CF19ADB3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jun 2024 18:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381342; cv=none; b=Db4qomzak/+95p8h0TK9JuZjJD9cMzLLZuX/qIF/sBoATsvSLH7SWND0/XT4E3jQA9/vSmnLmnkVNzjAYHGz/tLLL1FggCNiOT4UJZrhwu4tXn6kJdG79m6WJU1GCP/tOq/Yym/Khwu04QdjilquZmVa/vjBnGPY3xcEfeHhMdk=
+	t=1718389699; cv=none; b=sMxjzd7TlbJwhEtFJEMOpK9OWe2fOtc1hK5cAGQ0MNGgYQydrdAXnCEmb4cUhk6nfLmWG6EZS9n030FT9fmteJiWzswLF3EhlTSzoKDbuZapD8+Jxa4vcmACx77TN5SHRO6M0tvrP7LV4b1Y23A/mzC9aUlcBpJFvcpx9wqrSUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381342; c=relaxed/simple;
-	bh=7j/faoRXzWh8uYOzQ7IXFB9d5L6kjkr5xK99YDrC7To=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QF/pk05xc1Y9bgz27SK+yD9gSzQfrGjxGuFQQ+8MicztL7WoWuotsD7uryKBgSi3GHH14chE/3dXWPfM+fCs+3jne5TjmTPrOHDyziZQlerYODWsXbmz1Inw+XTXVUiGfyzkFcFEOKaKmELvu9vnPNnD/UOuIA5KhWMCbSFtt0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VB20f3hC; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718381341; x=1749917341;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7j/faoRXzWh8uYOzQ7IXFB9d5L6kjkr5xK99YDrC7To=;
-  b=VB20f3hCKJcgOMYIFt4PpDglZ4g2NbLrdeQ4Ok27fSkFjrq9Tno+dNx7
-   Twzvxth4nNgcUfBNu8J5z4Lp7ekB4PyNkDFKsRISSconfl40Xlm/uIreJ
-   rx6n/h+iR5YEiNjVk0SRieRWW4FvGux98+AKqAKNJVpD7LauFaq58kN27
-   npclSeVZuSCFUkut7pR1vxX72eq3uJPZkiWcF8zqBmQ0Yl9Z86gojCoLc
-   Bkc0gNFF1Fc23EWgODtAwPhXj4brmPnfNRM8mNPnTsy7fSvE4xk+71kBX
-   uHcNAqsLFI3Cf/n+NBUJwVz6PprqvauBDrr9XPzHeXIr8+vXVrfXC4pJh
-   w==;
-X-CSE-ConnectionGUID: rur5bjjARpSF1Z+kfpxQRA==
-X-CSE-MsgGUID: aiTmifgOSJSUm6/oEbx1Pg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="15399431"
-X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
-   d="scan'208";a="15399431"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 09:09:00 -0700
-X-CSE-ConnectionGUID: Y2zZfm5BTlukoOmsTXo3aA==
-X-CSE-MsgGUID: koUQl62rTAqdHC4GeeJaBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
-   d="scan'208";a="71741096"
-Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
-  by fmviesa001.fm.intel.com with ESMTP; 14 Jun 2024 09:08:58 -0700
-From: Yu Ma <yu.ma@intel.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tim.c.chen@linux.intel.com,
-	tim.c.chen@intel.com,
-	pan.deng@intel.com,
-	tianyou.li@intel.com,
-	yu.ma@intel.com
-Subject: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to put_unused_fd()
-Date: Fri, 14 Jun 2024 12:34:16 -0400
-Message-ID: <20240614163416.728752-4-yu.ma@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240614163416.728752-1-yu.ma@intel.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
+	s=arc-20240116; t=1718389699; c=relaxed/simple;
+	bh=n0nzYbuEKsP5CR5izx9tmUeBzNZs6Dv9llNLoXFas/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rl07JYP4MNbWPPhYIaEbNCt4tLfIo0AB7tpi1Aj3PuYwKaAi1/qn4UxYeGiefYMAxAEzDiYJ7bmSpYaWInlScUHLvGOGx7mEOlKxQhWBAnC3HI2znQkW3fjnFx9clp/HQHjhruG2PQ/Sjp6Aa5TtoHKDCenobVv0RkJpAwXWdEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=TqXSAAeH; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org ([84.247.112.25])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45EIS5YI006182
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 14:28:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1718389688; bh=UBuv+ACn7yY6Imbu4MZetpHQlIo5F19TevPQHO1PRME=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=TqXSAAeHFlrvMmoGgZH7vuDT4FIZLDOG5CjnIarT1J/2KgJ33AoaKNyF9aTPSjsdg
+	 z2pZApE6L/0/Noj6HkpsOoe6TxwHQP3VfYckNz7JsKPCDQ03IVG+P1Pv3/ErLF62mx
+	 IrO6Q9nPNfEilnUPnisqpWJqQKdHtynPXxBeEUO0Twjs9yRJgughiqswvrbVvSDxYx
+	 AKv1wza3b/pFX+AG6GkTBmdIJmEbeutduj+Y/Cr55hF9Bp/LF1F37yXOTD0AYtHIM5
+	 w0pwSNvMsEA5wLvPG5Eqx27g4uzw8iC65XTZGFUzSiouj9cWEoAr60X3aXLanMqzYN
+	 O3iIlVmFuv6kg==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 4C9A7340F4A; Fri, 14 Jun 2024 20:27:59 +0200 (CEST)
+Date: Fri, 14 Jun 2024 19:27:59 +0100
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        fstests@vger.kernel.org
+Subject: Re: Flaky test: generic:269 (EBUSY on umount)
+Message-ID: <20240614182759.GF1906022@mit.edu>
+References: <20240612162948.GA2093190@mit.edu>
+ <20240612194136.GA2764780@frogsfrogsfrogs>
+ <20240613215639.GE1906022@mit.edu>
+ <20240614041618.GA6147@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614041618.GA6147@frogsfrogsfrogs>
 
-alloc_fd() has a sanity check inside to make sure the FILE object mapping to the
-allocated fd is NULL. Move the sanity check from performance critical alloc_fd()
-path to non performance critical put_unused_fd() path.
+On Thu, Jun 13, 2024 at 09:16:18PM -0700, Darrick J. Wong wrote:
+> 
+> Amusingly enough, I still have that patch (and generic/1220) in my
+> fstests branch, and I haven't seen this problem happen on g/1220 in
+> quite a while.
 
-As the initial NULL FILE object condition can be assured by zero initialization
-in init_file, we just need to make sure that it is NULL when recycling fd back.
-There are 3 functions call __put_unused_fd() to return fd,
-file_close_fd_locked(), do_close_on_exec() and put_unused_fd(). For
-file_close_fd_locked() and do_close_on_exec(), they have implemented NULL check
-already. Adds NULL check to put_unused_fd() to cover all release paths.
+Remind me what your fstests git repo is again?
 
-Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read improved by
-32%, write improved by 15% on Intel ICX 160 cores configuration with v6.8-rc6.
+The generic/750 test in my patch 2/2 that I sent out reproduces the
+problem super-reliably, so long as fsstress actually issues the
+io_uring reads and writes.  So if you have your patch applied which
+suppresses io_uring from fstress by default, you might need to modify
+the patch series to force the io_uring, at which point it quite nicely
+demonstrates the fsstress ; umount problem.  (It sometimes requires
+more rounds of fsstress ; umounts before it repro's on the xfs/4k, but
+it repro's really nicely on ext4/4k).
 
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Yu Ma <yu.ma@intel.com>
----
- fs/file.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+xfs/4k:
+  generic/750  Failed   3s
+  generic/750  Failed   1s
+  generic/750  Failed   33s
+  generic/750  Failed   1s
+  generic/750  Pass     33s
+ext4/4k:
+  generic/750  Failed   3s
+  generic/750  Failed   2s
+  generic/750  Failed   7s
+  generic/750  Failed   2s
+  generic/750  Failed   7s
 
-diff --git a/fs/file.c b/fs/file.c
-index a0e94a178c0b..59d62909e2e3 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -548,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
- 	else
- 		__clear_close_on_exec(fd, fdt);
- 	error = fd;
--#if 1
--	/* Sanity check */
--	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
--		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
--		rcu_assign_pointer(fdt->fd[fd], NULL);
--	}
--#endif
- 
- out:
- 	spin_unlock(&files->file_lock);
-@@ -572,7 +565,7 @@ int get_unused_fd_flags(unsigned flags)
- }
- EXPORT_SYMBOL(get_unused_fd_flags);
- 
--static void __put_unused_fd(struct files_struct *files, unsigned int fd)
-+static inline void __put_unused_fd(struct files_struct *files, unsigned int fd)
- {
- 	struct fdtable *fdt = files_fdtable(files);
- 	__clear_open_fd(fd, fdt);
-@@ -583,7 +576,12 @@ static void __put_unused_fd(struct files_struct *files, unsigned int fd)
- void put_unused_fd(unsigned int fd)
- {
- 	struct files_struct *files = current->files;
-+	struct fdtable *fdt = files_fdtable(files);
- 	spin_lock(&files->file_lock);
-+	if (unlikely(rcu_access_pointer(fdt->fd[fd]))) {
-+		printk(KERN_WARNING "put_unused_fd: slot %d not NULL!\n", fd);
-+		rcu_assign_pointer(fdt->fd[fd], NULL);
-+	}
- 	__put_unused_fd(files, fd);
- 	spin_unlock(&files->file_lock);
- }
--- 
-2.43.0
-
+							- Ted
+							
 
