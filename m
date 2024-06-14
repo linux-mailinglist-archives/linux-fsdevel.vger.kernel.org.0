@@ -1,152 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-21686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA9B9081CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 04:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B6890825F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 05:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70804284017
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 02:42:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA73C1C22016
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2024 03:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4977A1836DA;
-	Fri, 14 Jun 2024 02:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4RfEauM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B8F1836F1;
+	Fri, 14 Jun 2024 03:14:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5149A183083;
-	Fri, 14 Jun 2024 02:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5E4145323;
+	Fri, 14 Jun 2024 03:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718332934; cv=none; b=QytSD+7Nbl0zAQ79YtwJRlprbUqc8aW+n/YYDASt/OJjREddkVjZ6UCsBTeNHy1lpAO+FczEddC5K41xnCDBBvAD1PfY02mzbzryP65XFqouEIKqXTL9NS+z5EVDco1EfkErsAPaiitNjVmbBbE26liipURkZqn1CBA7BvdKMs0=
+	t=1718334882; cv=none; b=K26At792lJRX3eItTkp3i8/9KeytqdVOVRuOgIDW18K2IMW+OoGKzOZqXN5IatF3XD8Az4vhnb2FlJQJ5Iz8U9HrDopchSp0aRFi4hKO2Ii8NgxduyUS6Z8N675U/H2+akid6b9xg93RJupc4eWwxmgVW9XnpV+B7tNL2a2Jyq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718332934; c=relaxed/simple;
-	bh=vNjTA0syhWWpwu4OQvLgeCxKSSMi3SLyACzq+WGQKdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X3mzQV9l4IXGUBEnFlJ8DidJgeef9VIE5dPeZkDJMGjbZfPEa4J7TJKR63bv243DMPBsRWaDdqdFDbLkMyaYf0BnrJoNY93wwWlWBr8mjoVdhqHSivLF1/E8SaU4s4+D8FSNkPclr8saGz4TPMpXbvwaw2JxaV0ki+byDcIkbm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4RfEauM; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b064841f81so13799756d6.1;
-        Thu, 13 Jun 2024 19:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718332932; x=1718937732; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bkn1Dqg/KvSsIEf4PMDdbgaHl7N3wpCE5dnCq2yPOs0=;
-        b=j4RfEauMXjxQqQpvwfxVMUXnZh+zOan8Ibj+eIRWz/BFjPSrkoAd6y5WVXKC4mOZlX
-         zpvL4mlIxlQFD0D5MWJZGVW47Ce0DqQMt0HfBCCQGKAtZ2PoyQb/Ku3FcLO25GZVRVHA
-         5TnNWmKz4v4zCcKGOKvqVANbM+sAV66N+sfD8k6kd82VTyLjWqWC8k3pKJ4p2f6O+XYB
-         vBRubLXoz2Ldh25ZTNyVoyI8RH3ajd1m+bnn4qpqC7PYjuMfctp44ng4KO79mQQyxfRc
-         d/9z9XvfK+Drlvt6MuC9VmTjn3Uw18yrgNqGkR0kSLyQ7POkZMo56ke8SjiTHZvlAbf7
-         wPzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718332932; x=1718937732;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bkn1Dqg/KvSsIEf4PMDdbgaHl7N3wpCE5dnCq2yPOs0=;
-        b=D//UuvOPEQy/YMwoXz53VwyW2Te5rtVa70Tx1nsUrbUXZAD1aJ4SIgCnDBrkkoIIlB
-         sA6qlTb/An19Wo85tBce7yUa1HveFLr0lUxjsUHMjzbaqm9nFrl8dkJGhpPofDH3+o5e
-         c4VaH+1ZUoYTQBlu+Aj+CGSlOlitqLfLkTUucAfmTcCa0KDVdT5a9C0+nkparn0TggBi
-         JPjcqqszSgEFR+nPm0qJ/zB8w7nNVKKwSBeOh0Ptzw03vTQPUGBI+3Im4u2l+s86QxR+
-         Do8eoJNTskH3hpOZzYr0Y28SF/Zcx026nG9/t5gHo1uruJkq9FN7jfcnpgweIHyO3eiS
-         /UNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwPgUywI3Ed4fLS1xr5h2RoxhMpv2kIIVv53YJBYH4ATYV6Xms0hDvFb0m/4GF9YJ9j+0WULCU5+U3UBmOF/y8uv47L/p8fQp+wZ3FNp9eALFptUd0iLQ8dT6uUvkJwfXh+A4ps8yhgWYvbMNF1PvG1lajsLg/pIqK7IE28Q86L4cLF0uhrm7tXF3vRrugt/CdnyveqwgGafsK7wH/uAwhZP0E5GB2tHS8dXoVYvKrmUYQ73fz+y241LWLl+IHAc2fL+87B00P5GNpLHKQZw/lorUhwt2A1ZGPxX06XGwCjxJYSzj6Og+Je0PbURTif6Q4oirJ4Q==
-X-Gm-Message-State: AOJu0Yye13G9yt2IChSfhKxQ0eK78IxlaqtlIARg3FPKPs2SH6DNL/O3
-	OJW6ByPDXrXE/uKr7JG8QWta7rsZccmEX594xjtSEcbHk6FeT1lkCatw9TaKRaj9xmlkUQgDct5
-	0csKOaDNj1U8iU8VKttY7QulSuJc=
-X-Google-Smtp-Source: AGHT+IH2yJkDatqeZR2Ou1juwPDu1s/BD6Hx184YCW7utolqXQ5u8htp4butw/HzKwBNPXerjjKUWiJm/DxherGGPpI=
-X-Received: by 2002:a0c:c581:0:b0:6b0:8ff6:7565 with SMTP id
- 6a1803df08f44-6b2afd6e8a0mr14215336d6.49.1718332932181; Thu, 13 Jun 2024
- 19:42:12 -0700 (PDT)
+	s=arc-20240116; t=1718334882; c=relaxed/simple;
+	bh=0ixiiw8ol5u8bIR8LGd0cG5wPj2c29OVajtD5oCH+TM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W/CKdGWVnWPX7/FMHv7GgDxiT4fUMnW1E/xE3w/DOKpOYnHZox913xMIN7vw9HG+7hBy85rHb1GdTnWi1UwFNsmtzUdy86ngjSC9UoLDvd8RefxLWTvgXN22TONw1dEkT+0SKm7l6a/BGuQYipSlC6KOkl0IQ3UYpWPpAEpv7XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W0ksC2MQbz4f3kk6;
+	Fri, 14 Jun 2024 11:14:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id EB55D1A12BC;
+	Fri, 14 Jun 2024 11:14:29 +0800 (CST)
+Received: from [10.174.179.155] (unknown [10.174.179.155])
+	by APP1 (Coremail) with SMTP id cCh0CgBHZQ6TtWtmy9O1PQ--.63899S3;
+	Fri, 14 Jun 2024 11:14:29 +0800 (CST)
+Message-ID: <ca71d3c4-0b87-8a1e-a442-236d91674a87@huaweicloud.com>
+Date: Fri, 14 Jun 2024 11:14:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613023044.45873-1-laoar.shao@gmail.com> <20240613023044.45873-6-laoar.shao@gmail.com>
- <20240613141435.fad09579c934dbb79a3086cc@linux-foundation.org> <CAHk-=wgqrwFXK-CO8-V4fwUh5ymnUZ=wJnFyufV1dM9rC1t3Lg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgqrwFXK-CO8-V4fwUh5ymnUZ=wJnFyufV1dM9rC1t3Lg@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Fri, 14 Jun 2024 10:41:34 +0800
-Message-ID: <CALOAHbCrZp2XV_zp0-mH2frW2Fk15Tz-A9J0K6gcJTbSXvTsPg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] mm/util: Fix possible race condition in kstrdup()
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
+ Thunderbird/104.0
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+Subject: Re: [PATCH RFC 2/2] NFSv4: set sb_flags to second superblock
+To: dhowells@redhat.com, marc.dionne@auristor.com, raven@themaw.net,
+ gregkh@linuxfoundation.org, rafael@kernel.org, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, jack@suse.cz, miklos@szeredi.hu,
+ trond.myklebust@hammerspace.com, anna@kernel.org, sfrench@samba.org,
+ pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com,
+ tom@talpey.com, bharathsm@microsoft.com, djwong@kernel.org
+Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+ autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ zhangxiaoxu5@huawei.com, lilingfeng3@huawei.com
+References: <20240604112636.236517-1-lilingfeng@huaweicloud.com>
+ <20240604112636.236517-3-lilingfeng@huaweicloud.com>
+In-Reply-To: <20240604112636.236517-3-lilingfeng@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBHZQ6TtWtmy9O1PQ--.63899S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4xAw1UGrWrtFykJw48tFb_yoW5urW8pF
+	WfAryjkr4kJF17Wa18AFWrXa4Svw18ZF4UCF93ua4kAryUXrn7X3ZxKFWYgFy8ur4furyD
+	XFWrtF13C3W7ZFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07jU-B_UUUUU=
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-On Fri, Jun 14, 2024 at 6:18=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 13 Jun 2024 at 14:14, Andrew Morton <akpm@linux-foundation.org> w=
-rote:
-> >
-> > The concept sounds a little strange.  If some code takes a copy of a
-> > string while some other code is altering it, yes, the result will be a
-> > mess.  This is why get_task_comm() exists, and why it uses locking.
->
-> The thing is, get_task_comm() is terminally broken.
->
-> Nobody sane uses it, and sometimes it's literally _because_ it uses locki=
-ng.
->
-> Let's look at the numbers:
->
->  - 39 uses of get_task_comm()
->
->  - 2 uses of __get_task_comm() because the locking doesn't work
->
->  - 447 uses of raw "current->comm"
->
->  - 112 uses of raw 'ta*sk->comm' (and possibly
->
-> IOW, we need to just accept the fact that nobody actually wants to use
-> "get_task_comm()". It's a broken interface. It's inconvenient, and the
-> locking makes it worse.
->
-> Now, I'm not convinced that kstrdup() is what anybody should use
-> should, but of the 600 "raw" uses of ->comm, four of them do seem to
-> be kstrdup.
->
-> Not great, I think they could be removed, but they are examples of
-> people doing this. And I think it *would* be good to have the
-> guarantee that yes, the kstrdup() result is always a proper string,
-> even if it's used for unstable sources. Who knows what other unstable
-> sources exist?
->
-> I do suspect that most of the raw uses of 'xyz->comm' is for
-> printouts. And I think we would be better with a '%pTSK' vsnprintf()
-> format thing for that.
+I think this may be a problem, but I'm unable to come up with a suitable 
+solution. Would you mind providing some suggestions?
 
-I will implement this change in the next step if no one else handles it.
-
+在 2024/6/4 19:26, Li Lingfeng 写道:
+> From: Li Lingfeng <lilingfeng3@huawei.com>
 >
-> Sadly, I don't think coccinelle can do the kinds of transforms that
-> involve printf format strings.
-
-Yes, we need to carefully check them one by one.
-
+> During the process of mounting an NFSv4 client, two superblocks will be
+> created in sequence. The first superblock corresponds to the root
+> directory exported by the server, and the second superblock corresponds to
+> the directory that will be actually mounted. The first superblock will
+> eventually be destroyed.
+> The flag passed from user mode will only be passed to the first
+> superblock, resulting in the actual used superblock not carrying the flag
+> passed from user mode(fs_context_for_submount() will set sb_flags as 0).
 >
-> And no, a printk() string still couldn't use the locking version.
+> If the 'ro' parameter is used in two consecutive mount commands, only the
+> first execution will create a new vfsmount, and the kernel will return
+> EBUSY on the second execution. However, if a remount command with the 'ro'
+> parameter is executed between the two mount commands, both mount commands
+> will create new vfsmounts.
 >
->                Linus
+> The superblock generated after the first mount command does not have the
+> 'ro' flag, and the read-only status of the file system is implemented by
+> checking the read-only flag of the vfsmount. After executing the remount
+> command, the 'ro' flag will be added to the superblock. When the second
+> mount command is executed, the comparison result between the superblock
+> with the 'ro' flag and the fs_context without the flag in the
+> nfs_compare_mount_options() function will be different, resulting in the
+> creation of a new vfsmount.
+>
+> This problem can be reproduced by performing the following operations:
+> mount -t nfs -o ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
+> mount -t nfs -o remount,ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
+> mount -t nfs -o ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
+> Two vfsmounts are generated:
+> [root@localhost ~]# mount | grep nfs
+> 192.168.240.250:/sdb on /mnt/sdb type nfs4 (ro,relatime,vers=4.0,
+> rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,
+> sec=sys,clientaddr=192.168.240.251,local_lock=none,addr=192.168.240.250)
+> 192.168.240.250:/sdb on /mnt/sdb type nfs4 (ro,relatime,vers=4.0,
+> rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,
+> sec=sys,clientaddr=192.168.240.251,local_lock=none,addr=192.168.240.250)
+>
+> Fix this by setting sb_flags to second superblock.
+>
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+>   fs/nfs/namespace.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+> index 887aeacedebd..8b3d75af60d4 100644
+> --- a/fs/nfs/namespace.c
+> +++ b/fs/nfs/namespace.c
+> @@ -158,7 +158,7 @@ struct vfsmount *nfs_d_automount(struct path *path, unsigned int sb_flags)
+>   	/* Open a new filesystem context, transferring parameters from the
+>   	 * parent superblock, including the network namespace.
+>   	 */
+> -	fc = fs_context_for_submount(path->mnt->mnt_sb->s_type, path->dentry, 0);
+> +	fc = fs_context_for_submount(path->mnt->mnt_sb->s_type, path->dentry, sb_flags);
+>   	if (IS_ERR(fc))
+>   		return ERR_CAST(fc);
+>   
 
-
-
---=20
-Regards
-Yafang
 
