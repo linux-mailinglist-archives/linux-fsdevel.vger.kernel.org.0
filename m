@@ -1,106 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-21745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5859095FF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 06:39:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70151909601
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 06:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281CA1C20DA2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 04:39:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1284283674
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 04:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8F1F507;
-	Sat, 15 Jun 2024 04:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EE1F507;
+	Sat, 15 Jun 2024 04:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="m8SymDI6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1sGke49"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF0FD517;
-	Sat, 15 Jun 2024 04:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB3D8F70;
+	Sat, 15 Jun 2024 04:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718426348; cv=none; b=f/82qfvoDuSU46AQw799OQKs/y6jN/D3zcYhkyLnNT20rXSgqYBNjR5KHNM0o67H/PvSVttdnBSCIDrgpstterpxubWpcfB68WW6Kj1woxpw+Aqp2LL3N0nLoWwrNu2c+0Jlf8xYEf3YkSOxZwUd7Ty7T4XImFmnAGe+xaQqyU4=
+	t=1718426519; cv=none; b=K4i7e6nPbPmjGsRTGm/ITimdtmt28eSaLVepOpRYtH/FUS2FCsLq12bZao5IPS+N11gM2XKFZasJmXpgrlSEXl6ppvi00mGmcNV2bqHRtYNzQbdt70pz7ToCPP/ou2e4zxfsT2h8PPm+ICBMJKDT9xl2K52Te0QiJNfOO+ISkco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718426348; c=relaxed/simple;
-	bh=ZfBQKJ/zqEB12UpD+dypBmDQEFr7tmObzwDhgJfIaf0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=uGFbz/am9q9wu8Z+MF8r+zBZZuqh+q2BVOOt89CExf1Y5xw4MA8DO3NLQM5QR6SYlSAfys1MV8M33qrzRzpw3IZ0thIlMzA3u8Okq8N4wRhthhTNMOOUuvv8Q3fTCu2DZXML/IxQ/IPR/6XZVHR2siVjL5GmooI1w/8BmPBsLmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=m8SymDI6; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718426323; bh=TbnaeDCMFC8mDLM8U3qCPOGqIZSkpYEhQWHYBR3rMDc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=m8SymDI6YQKERJhfcxQzgyblQUSruJlrmKR/IBvoKZ/IroFB7dzWmYj+FZbiF2f9z
-	 4+xwtJKk3Csm9JSWGaWs3ykylJEUBXMP8KBdxJcS0rhidPFGeyhXdSDFYGKFKN2P/B
-	 zG4ng5ew02Y2Iz6JX3scfQl+3HfOc4J/C7HLuHEs=
-Received: from ubuntu.. ([36.129.28.219])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id 9A9930AD; Sat, 15 Jun 2024 12:38:41 +0800
-X-QQ-mid: xmsmtpt1718426321txzl8iil9
-Message-ID: <tencent_63C013752AD7CA1A22E75CEF6166442E6D05@qq.com>
-X-QQ-XMAILINFO: NGZp1yYNf7Y+FIEqY/GtKlkQbX15go7mBJyJ77MNq3a0ks3yZyu+2yYtEFgQvp
-	 Cv37InPutOszHWUfBNT3lL1W3gvG1FvL3ZA7SqOlyCizbZ914XJhUrNPWKj2QrKZGGgHenHXPoJi
-	 1RZA/vgQwVHTJVUB0ezcCpIIZTrT5DvhmOdAv7jTdzTtYfvdmdIQZn5ohPFCAPXwlf5lvV+TZRQ4
-	 3jT21P0Mvd+BYcNN01KU87p7cgbG/tDic9i78KUODysKXyQDNvUIrfMU2dHgyH/9aMV2G6x7bgNU
-	 5vLeb67G0zhz5YeUnVogst4bovG5XKtIR01tKeXf+zXOfuTBrV1Et8NTLYginZuciVVQTzwuqcb4
-	 lWAG5LWTmoFyA81VXdaldS0skuz9E0xIeYrAj6ZuIEIDgayECnX/9VJHG8Gak6FdqDdJ0TSWBAST
-	 AbTocABs2TJ9MtEC6W9AYcyqT8alMytLGNmiHI5V+kh0nZa/41uiAD01GAxpg6GI/D35rauA4g8u
-	 PbwhbT+Z1Wkjlvm28x8hfSHGYXR6zSJ8MH0eXwzgIEKW27YGiasCemAzZdlIS48ImgD6wPhHMemH
-	 qQAs8PhFThHQevQATHfN1ygse5fhEqNtZKpwRpXISyfr54QBEgN7ZdLme0aIJVYqCEujE9Uzjnd4
-	 y3Hx9IRmx4QIPV1tGgqJp7/huQnn/pIvoGU/nTnrLzkz0xSabu0ACxZ4FkgCcVwLcxpzxUzKF/VE
-	 dLJim8RZHZ3XjlBZfRE8qNJphWbrL9ghzVk3AEFNQi9uXO9RcaDpck/mW7+BD9yPIPcIjkvDhf4/
-	 jdnL8qflpjNyWNy/rzb5J3cAWlremUKxIqnUK+kSVBOyaV34O9IWM1hJ/MDF0BuUEDR6RCw7/+NM
-	 z1Cp8KhSD528oNjE5daRKJu8P6Rz5CL+L4oAxN2ssZZO2r2L4vUuXaPRR3l7CXS6aWy6w28JA5wD
-	 5xZNO5pujTS1RGYk4KXLNH4ZjrpPZJlRQgQz6AjD60GK7vm0fbzN56aF2ykJjV1xWoS7SHhm5ltA
-	 h+v3h/4VINbLgutI5HK/QTb1afZj0=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Congjie Zhou <zcjie0802@qq.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zcjie0802@qq.com
-Subject: [PATCH v2] fs: modify the annotation of vfs_mkdir() in fs/namei.c
-Date: Sat, 15 Jun 2024 12:38:32 +0800
-X-OQ-MSGID: <20240615043832.9796-1-zcjie0802@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240615030056.GO1629371@ZenIV>
-References: <20240615030056.GO1629371@ZenIV>
+	s=arc-20240116; t=1718426519; c=relaxed/simple;
+	bh=UsW5f2mRaDwai/bK6ucBq8wXkpvVGTtyzCqYbvt2ku4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gE069Vk3UytyOGED6KJlBND+GQdikrBUWeWcYMVohIMQbCMALZlrEb5lJ+64As4Hrhuiz7nudOGo8yhJWNiM7qMfs7PQc9BPzYCU8DOZIpN//8id9yaIiH1Nc6NaT7bhagi2zFibOHMBiGXCMjgy+ZaRweA66ul6ChH+4IRqYaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1sGke49; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4217d808034so26962465e9.3;
+        Fri, 14 Jun 2024 21:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718426516; x=1719031316; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K2qrQhaKuq5qmeUje0aTpEyuTysZEWpi+WcIcMw+cck=;
+        b=J1sGke49rQ6zn69ORFrg/m2HNWcYXR1ID1FqfJ2e1r8c9oWdZ0Yre8Y0mQv/AxbxRT
+         sWxjjoChzUdohkfbdwMZKmu8xNXT7x6ejiVeamr/gfCaGsQ2IhQbLZ3YzNyTLEJCtpgY
+         u30/09I5icX0wRtHo3x0pJEFmhOmtviYGUKFBTyV364xBnVcxtEClLYH3FB/tmqiAjyX
+         6lDa/4Ts5XRlClOLZMerUW/95w1g6Ytw9RUubtj4G6MYXH/VJQNG72QOC2pS8Gp43egM
+         lYx/l9jjWYtxPDS0zE25w/S1CGGitd+8ySeErwrgnvHH+DhLbxpENTuEtUhuuAYpd6he
+         aj0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718426516; x=1719031316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K2qrQhaKuq5qmeUje0aTpEyuTysZEWpi+WcIcMw+cck=;
+        b=ftw7pudM57ovEA80HuYrRAw5zQMkpyWjRCZt8fdr32g3h2FaTZrDqCkSVuhW8j7L0G
+         UbsRZ6JcxHCHPOJI550565h65qeSLW+3vFE36yMqMXTAjiM+CHq8wxaIgDvvKqQMC0TK
+         WJsRakqM9z9O4Xy7RnetEdOdJMBY5ptHKyJmgj7HA3TNNGd5aGZbD47LOa5Vfc7KEL66
+         lfDJDldz5nnbe2ygWIvF0QsjIkDhesbMbm9hIfhtP55wujAEE/REbg9sI5daBsBijUT7
+         QImsPgU/ahyfFe2uBd3ifAodrVHBS2t7qrbHyjk8qstfWjQIDVtu0K1N9I2Sp79Lq9F5
+         BG+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW58Mg0xHgTkCATimI92ViDlubHiuQefGPUfGCiXEmYpTezu+9j2BlN8al3SLOATHu6w9eXZ/ZwmBUU4sD2W58nSWNHdRYHMBqy6/oAdb9Magj36ZYwu+4AxsCI5Ioul2CKs+rOYXN8tIH4hw==
+X-Gm-Message-State: AOJu0Yx+6BV0NvvBoqfUmXOv7BRV9B+Ips7dA5PY2uaPCGh9VtpizADn
+	pB0kUeJhb+X2lFG7wYLfKwrhfqobvaUxCaeJFwv9IADbkTOWPbM4
+X-Google-Smtp-Source: AGHT+IHgajnB5XGD80al+ghVpMqGo0+Es5Vn6cIaMGlf7eeJLe2pwopKZwZdpZfQyrTDpFQuCOnUfw==
+X-Received: by 2002:a05:600c:4ca9:b0:422:52c3:7fe0 with SMTP id 5b1f17b1804b1-4230482c1e9mr41320185e9.22.1718426515401;
+        Fri, 14 Jun 2024 21:41:55 -0700 (PDT)
+Received: from f (cst-prg-88-61.cust.vodafone.cz. [46.135.88.61])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320c21sm86927655e9.34.2024.06.14.21.41.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 21:41:54 -0700 (PDT)
+Date: Sat, 15 Jun 2024 06:41:45 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Yu Ma <yu.ma@intel.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com, 
+	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
+Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
+ put_unused_fd()
+Message-ID: <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240614163416.728752-4-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240614163416.728752-4-yu.ma@intel.com>
 
-modify the annotation of @dir and @dentry
+On Fri, Jun 14, 2024 at 12:34:16PM -0400, Yu Ma wrote:
+> alloc_fd() has a sanity check inside to make sure the FILE object mapping to the
 
-Signed-off-by: Congjie Zhou <zcjie0802@qq.com>
----
- fs/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Total nitpick: FILE is the libc thing, I would refer to it as 'struct
+file'. See below for the actual point.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 37fb0a8aa..2fd3ba6a4 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4095,8 +4095,8 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
- /**
-  * vfs_mkdir - create directory
-  * @idmap:	idmap of the mount the inode was found from
-- * @dir:	inode of @dentry
-- * @dentry:	pointer to dentry of the base directory
-+ * @dir:	inode of the parent directory
-+ * @dentry:	dentry of the child directory
-  * @mode:	mode of the new directory
-  *
-  * Create a directory.
--- 
-2.34.1
+> Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read improved by
+> 32%, write improved by 15% on Intel ICX 160 cores configuration with v6.8-rc6.
+> 
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> ---
+>  fs/file.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index a0e94a178c0b..59d62909e2e3 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -548,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>  	else
+>  		__clear_close_on_exec(fd, fdt);
+>  	error = fd;
+> -#if 1
+> -	/* Sanity check */
+> -	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
+> -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
+> -		rcu_assign_pointer(fdt->fd[fd], NULL);
+> -	}
+> -#endif
+>  
 
+I was going to ask when was the last time anyone seen this fire and
+suggest getting rid of it if enough time(tm) passed. Turns out it does
+show up sometimes, latest result I found is 2017 vintage:
+https://groups.google.com/g/syzkaller-bugs/c/jfQ7upCDf9s/m/RQjhDrZ7AQAJ
+
+So you are moving this to another locked area, but one which does not
+execute in the benchmark?
+
+Patch 2/3 states 28% read and 14% write increase, this commit message
+claims it goes up to 32% and 15% respectively -- pretty big. I presume
+this has to do with bouncing a line containing the fd.
+
+I would argue moving this check elsewhere is about as good as removing
+it altogether, but that's for the vfs overlords to decide.
+
+All that aside, looking at disasm of alloc_fd it is pretty clear there
+is time to save, for example:
+
+	if (unlikely(nr >= fdt->max_fds)) {
+		if (fd >= end) {
+			error = -EMFILE;
+			goto out;
+		}
+		error = expand_files(fd, fd);
+		if (error < 0)
+			goto out;
+		if (error)
+			goto repeat;
+	}
+
+This elides 2 branches and a func call in the common case. Completely
+untested, maybe has some brainfarts, feel free to take without credit
+and further massage the routine.
+
+Moreover my disasm shows that even looking for a bit results in
+a func call(!) to _find_next_zero_bit -- someone(tm) should probably
+massage it into another inline.
+
+After the above massaging is done and if it turns out the check has to
+stay, you can plausibly damage-control it with prefetch -- issue it
+immediately after finding the fd number, before any other work.
+
+All that said, by the above I'm confident there is still *some*
+performance left on the table despite the lock.
+
+>  out:
+>  	spin_unlock(&files->file_lock);
+> @@ -572,7 +565,7 @@ int get_unused_fd_flags(unsigned flags)
+>  }
+>  EXPORT_SYMBOL(get_unused_fd_flags);
+>  
+> -static void __put_unused_fd(struct files_struct *files, unsigned int fd)
+> +static inline void __put_unused_fd(struct files_struct *files, unsigned int fd)
+>  {
+>  	struct fdtable *fdt = files_fdtable(files);
+>  	__clear_open_fd(fd, fdt);
+> @@ -583,7 +576,12 @@ static void __put_unused_fd(struct files_struct *files, unsigned int fd)
+>  void put_unused_fd(unsigned int fd)
+>  {
+>  	struct files_struct *files = current->files;
+> +	struct fdtable *fdt = files_fdtable(files);
+>  	spin_lock(&files->file_lock);
+> +	if (unlikely(rcu_access_pointer(fdt->fd[fd]))) {
+> +		printk(KERN_WARNING "put_unused_fd: slot %d not NULL!\n", fd);
+> +		rcu_assign_pointer(fdt->fd[fd], NULL);
+> +	}
+>  	__put_unused_fd(files, fd);
+>  	spin_unlock(&files->file_lock);
+>  }
 
