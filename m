@@ -1,323 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-21732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3865890950F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 02:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92917909523
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 03:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7792826B5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 00:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172D9284CA6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2024 01:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2868827;
-	Sat, 15 Jun 2024 00:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396B34C97;
+	Sat, 15 Jun 2024 01:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3MSpdLBr"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rgiqf7Tj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2087.outbound.protection.outlook.com [40.107.96.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4881373;
-	Sat, 15 Jun 2024 00:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718411381; cv=none; b=kRg8yOGoOrJwWH2sqfcUjL+9i/2RJ1EF54n4dz4lgPIgZh5dk79/WNsnJcvxfE6y1r/ocMHyf16kD0iWjV5tthI5B3bxFqPmBbcqFCDS5Z7eWcb2DRafbvVGZ1+7LMhorYN2cYmLg+0hJu+Oju55XvjXWv/6kFm3aor2GnVYo14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718411381; c=relaxed/simple;
-	bh=23OppSH4VJiPTS/LZgMcxF4fCbkMgH0Eq6plozU+DX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tfhaa45FE6CN++x2HjnZezdl0BWKMS4k2vRanjaVibN+sv1b0AYAtoceMO6TAZzV6mt33nCJ+b0H/m8quVrcE9bOLEHzEkrZLM8qSQgoLqKZJaE/Z14l2KtiD0AOr0oNLk/MpUoc87FmklnJWMEbd0bRknyQmcgZ5w8OFzFeNEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3MSpdLBr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=u7sKH/EoTHoAcleZsYCTpUg3LOCTJBFwB5grFo4U/wA=; b=3MSpdLBrKBSHiTPDCXi8f3roPV
-	rMKOIAC1AbLX0GSwAMQwn3Akw+Q44loSSfHgW/L4yWuNky8v+D1IxdAth/0968Yzq+VbfhT5pO9zL
-	IlRtULLdknMEePWE7q5IRloeWWTZS8Onnmjlbxqviv3QpBMnXe1TLdbgHSUnFkUESyKE/s6B6+7O4
-	xyN5ZhJfgp9C0+DRRIghzAO9AqJx0DhmigdYXAS/0vmzK028AZAQnC5E4GwfcL8/YSX0b0LnacBw6
-	csYmtAhmyj1c6E19zZKIq/Mokm/2M0l1lLMyx/N6JRRp2pwnKuwHQdH6xB9l6AT0tZnHTXt1JZ6Ll
-	qS+UXReg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sIHIW-00000004KkQ-0DrD;
-	Sat, 15 Jun 2024 00:29:36 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: patches@lists.linux.dev,
-	fstests@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	ziy@nvidia.com,
-	vbabka@suse.cz,
-	seanjc@google.com,
-	willy@infradead.org,
-	david@redhat.com,
-	hughd@google.com,
-	linmiaohe@huawei.com,
-	muchun.song@linux.dev,
-	osalvador@suse.de,
-	p.raghav@samsung.com,
-	da.gomez@samsung.com,
-	hare@suse.de,
-	john.g.garry@oracle.com,
-	mcgrof@kernel.org
-Subject: [PATCH v2 5/5] fstests: add stress truncation + writeback test
-Date: Fri, 14 Jun 2024 17:29:34 -0700
-Message-ID: <20240615002935.1033031-6-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240615002935.1033031-1-mcgrof@kernel.org>
-References: <20240615002935.1033031-1-mcgrof@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C47173;
+	Sat, 15 Jun 2024 01:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718413441; cv=fail; b=d/41BEFkT97LXA615s0ZXs3NtV3VzzflZ0JvECTSIji/KIl3sGzwm7fYaTo1SSjVACMTRMXEgUczYqPO+acOpHN3GGsfrvUHOHtavLMc86VPznHPiMcLJlk0VeO7efzoXqlDs2m3OqAGWwd3UbMJFL6uYV/509wXB6ppvxiIRO8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718413441; c=relaxed/simple;
+	bh=Md4OuCGfV1aAK7iAEbju5/Y6nujHjyTJuuDiPquQz5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kw2Q9OfjPcxVqjoHgnzEzatsXyS+bibXfmtlXFLvLDymFKD+Ztx+lwszEDpyJM9y1JGC8Y95mqJKbB8Cs0biceZCVwWmPNJ+ca6oQdhsfSKcEO0VvezkA1IpgRoX3SZmc5FZoPteRIP2+Mfbekq8on4xiwd5pXl4X4oBzfUJlH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rgiqf7Tj; arc=fail smtp.client-ip=40.107.96.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kO+WWhY9ZeazbDTejLCWaem8zcbBQPb/X8COL6yuGxQ/uFIBd7+fNEbx3WdaQMKT3P3EWknZb4zUlChYkn1t5/eJrj/IJ7Mq+Bdu73a3I0QayPbSDyKK2r9FhCUrAevBGNNGVGn4DElM58G8TU0P4afnzPwWDhElcBexiXc8YnjtRTfZxaQTYZITN+/iY02ym60MgAlO5jeDzm6YCbm37VTLKDqtHvAZiGOq3v+e6OeCv7up3VFos8F7vy1YBlH+P0/So1cY5eJUb0meCBS99SXGEq3sZQN35QAIsTPS92UiEma5sQWZta2xS7Mne61yWplWcL+X/fJpxh2BATqe4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+wQnPu6jsJn/7S2p4Y+wzsRPXeOmTVW9JBsX0vFSDIs=;
+ b=P3090PZs5Q/O0HgBr1+fPchyUwo4FQG5alLuvPogfllXJ1dPZU+x3OZFmebaI1PBdo4keFGycG9WQ+UbS3m7C7/bMARILClrTscaUlo8PIBOH+2oI56k62TCXc3ff//DBHbfrCtAqW1n8dgHq/gnGS+UsG/zyHKGPmQULFgUQqselPtKQJf81AVeyX/OsHGcNYh/ifmT8+V1H/VXWQkkmAx62CI+F6Io7dH40S5PnNvgEYh/ST1Q311vagfdq//WkbfWP+VdyjIAymy0Dvoqj1CeX/9Ic1qDIXL8UUIu8QdHB+LPAyu18OiAtcn64M5u5WS3m3CdGAdWyzbLWDmmBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+wQnPu6jsJn/7S2p4Y+wzsRPXeOmTVW9JBsX0vFSDIs=;
+ b=Rgiqf7TjZc4Lpac1yQc7gaPfTDJAO5xNx6WA80R/1cY529vyIYAEYrdLOM3FcYQAdIFsg+1pxDVUzbTjKJ9LCKWt293tydlq22Unpc8yD7L3CkMSNzUW7GdH1hM3a+EIohfDxfmG8z/C7BXNERYbP22iHTIBNWfUZj1Pksg5OgZcDOmgxW1GJc1X9ju708jdjwsQn67vMvH1SlBmsp4BncI92GWevRYiSHvb5qzS8YPkeoda8pVH7BJPToYvUEk4yCSIjz2hGQR28g9/+oK5yxGx/mKGKPNYFeeOWnjwuOSNNo2Uf0hSIvzNcGbEBNauCSx3LXvVJL+9GWaIHNHzOQ==
+Received: from CH0PR03CA0292.namprd03.prod.outlook.com (2603:10b6:610:e6::27)
+ by MN0PR12MB6003.namprd12.prod.outlook.com (2603:10b6:208:37f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24; Sat, 15 Jun
+ 2024 01:03:56 +0000
+Received: from CH2PEPF00000147.namprd02.prod.outlook.com
+ (2603:10b6:610:e6:cafe::4d) by CH0PR03CA0292.outlook.office365.com
+ (2603:10b6:610:e6::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.26 via Frontend
+ Transport; Sat, 15 Jun 2024 01:03:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF00000147.mail.protection.outlook.com (10.167.244.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Sat, 15 Jun 2024 01:03:56 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 14 Jun
+ 2024 18:03:40 -0700
+Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 14 Jun
+ 2024 18:03:39 -0700
+Message-ID: <79239550-dd6e-4738-acea-e7df50176487@nvidia.com>
+Date: Fri, 14 Jun 2024 18:03:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Boqun Feng
+	<boqun.feng@gmail.com>
+CC: Gary Guo <gary@garyguo.net>, <rust-for-linux@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+	<alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
+	<benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, "Alice
+ Ryhl" <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, "Andrea
+ Parri" <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David
+ Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc
+ Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>,
+	"Akira Yokosawa" <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>,
+	"Joel Fernandes" <joel@joelfernandes.org>, Nathan Chancellor
+	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+	<kent.overstreet@gmail.com>, "Greg Kroah-Hartman"
+	<gregkh@linuxfoundation.org>, <elver@google.com>, Mark Rutland
+	<mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	<torvalds@linux-foundation.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-fsdevel@vger.kernel.org>, Trevor Gross <tmgross@umich.edu>,
+	<dakr@redhat.com>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
+ <20240613144432.77711a3a@eugeo> <ZmseosxVQXdsQjNB@boqun-archlinux>
+ <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
+ <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
+ <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000147:EE_|MN0PR12MB6003:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa803fb8-5abd-441f-faa1-08dc8cd7082e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|36860700010|376011|7416011|1800799021|82310400023;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MFhsZnkvRlJLT3ZxR2d2OVcwQXFpbGpiTmEydDQ3Mks4TTR6ZHNYQUhuZHdB?=
+ =?utf-8?B?clhhUW53RzZjSmlUNURsZXdsRHN3ZXhRZC9UM09ld0xHWFBNQU4zUzJIeHpn?=
+ =?utf-8?B?VlVKQjlwRGphcy9uV1o5b0tXN1QwTW14ZTNkUnUzd2ZkNm9IbkdQb3o0cnFm?=
+ =?utf-8?B?a1kxbmV4T24xbHZ1RWZGR1ppVGRWZ01ZYkE1UWRsemFsNzlmLzdNSFJ0OCt0?=
+ =?utf-8?B?ZHViT04yMFE5RWgyVm11WklEdGtzQis2SmVaTlJtVlFFWUdZS0FMYTk1LzZL?=
+ =?utf-8?B?aHdMMnNUcjN1ODAyY2kyd2k5cnVYZ1I5aUpCWmQ1ajVMRnhBYVY1RStjQW40?=
+ =?utf-8?B?cmJPbk4yQXFkYi9uZFNrTlJGT3lRRFc3U0UrUFlpVHY2ZlFkYlYwbWlzNzA2?=
+ =?utf-8?B?OU9oTEVkQzE5TTA1ZjJhRmtKODBMK0FmOW9RVDVrWXlwZFJaQUhJbU1uNVVX?=
+ =?utf-8?B?RkdXbkZ0NUQvSVh6R2FhcWdZeDloYzE5OFNpam1jdWpLMWs2b0tqTXlDZWhi?=
+ =?utf-8?B?M2Y3bzJkd0t1R051NFYyT3dNYUZSOUNrL2xhUFZOUGZnTFNLenlrbEVRTUtG?=
+ =?utf-8?B?UmdMQnl6YzZDUFgzd3JMVG0zK3RRcTAyNW02UkVLRjBxdGh1cUxkOFc4emJC?=
+ =?utf-8?B?QzV4VGpHMDZ0ZDZoa3lxSWVkUEpyYnYzZnhyUFVERGFCNTNGSVJEQ3hTMWRi?=
+ =?utf-8?B?OUQ5cDNBalY4UnFtQUlHQ3lHb0c0T0c1NkMrVVFKTzhFcjcwTVBCa0RDelBR?=
+ =?utf-8?B?blN3ejVMd28zM1hsU3Q5ZGZrNEd0VXMxajdvQTZ0MlB0RGVqOTMvNm5ZbjZS?=
+ =?utf-8?B?Smhac2tjVm5UWHB0aEtKaGt2cVhwblZ1eDNoNDRvcWVta01NRlpVZVVjZVRa?=
+ =?utf-8?B?Zldud1dNVzRzVDdRTENTUlhFVkNRcGtLRFpBakVTWmY0bVY4V2t4WkNvMVRh?=
+ =?utf-8?B?TjkxNmx5dk9uMEk2K2lyTlE1K3hqVktBK0QzVC9iUGo2VjlwKzdHZExOc1JK?=
+ =?utf-8?B?OXZ4NHp6MHNMUEhXTFFNbkJFeEVWQ0FnbGduTlRJZU1sT05oMkhsVjQwaURu?=
+ =?utf-8?B?MlNwcjcvUGY5NEFySmdwZE5ucFYwWjcxSS9vYzZGcElyK3JISUZMUGVqRGdy?=
+ =?utf-8?B?bnhud1kyWldOWk1WNm5mdHN2L2dsM1B4MGR6Um1oQWhvM0NDT0d6ZXpRZ25C?=
+ =?utf-8?B?SHJYMGVUWVVrcW5MemwyQWNzU3hISGt3VkFYazd5ckQ1NGVEcTdoa0tHMXQz?=
+ =?utf-8?B?ZkRGYkltbVhhcHpDRjBHZTR4dXd2alVybnRtYXY5MXEyZStpZkVwMEpFUGZU?=
+ =?utf-8?B?alZkOFFRcFJNRStTaE1ud0JvcjQxeUFjNXVYZU54OWdwWlhmbG1yZ2REQS9O?=
+ =?utf-8?B?WVVScDVsa0lHREFwc05CUnR2Tk1vbGhEOU5zRGI0NmlNdFQ2c2ViYVJFSmJm?=
+ =?utf-8?B?cXlrbWlNYTBkbkFFaGREb3ZZSkorZEFSdVRKSUlldzZrMnBRT0lsL01FM3lk?=
+ =?utf-8?B?UWQ3WXhQMlh0Vm1jdS94amMrNnFNb0VnbmVoeXNjY3ZkNzczZER0S3NjSVNO?=
+ =?utf-8?B?UTZYTmpZMWVRYkoyeTNtaDk0SURCc2FwTEZpTnA0RDNLa01odlQzYUxENGp0?=
+ =?utf-8?B?RG9ibUdOQmF1Tjg2dVhLZnlhYzZVL2VuQlRJcmZqTmVzVWlKRDc0MURESlF1?=
+ =?utf-8?B?UUgwRC9lTzR0dUtOVWl5Ry93N2FNUk9rYVhBZXIyVkViN1ZWWVFqMFgvTDNn?=
+ =?utf-8?B?c0lzYXpCRTI1azhCZm1pOS96bk9GZDVBL2xkNnlVR3lNelNrd2RvUUNTR1J5?=
+ =?utf-8?B?aXhmMzRVaUlIL2xSRnZGN0tUMThNeWZ0L1NjZTlTS1F6RE5pTHpZVUx6Yzdh?=
+ =?utf-8?B?dnBOQzdubFFmSnc0WHVKbTRqeTNLSTVvSEVEMFVIRk4rRGc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230037)(36860700010)(376011)(7416011)(1800799021)(82310400023);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2024 01:03:56.1515
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa803fb8-5abd-441f-faa1-08dc8cd7082e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000147.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6003
 
-Stress test folio splits by using the new debugfs interface to a target
-a new smaller folio order while triggering writeback at the same time.
+On 6/14/24 2:59 AM, Miguel Ojeda wrote:
+> On Thu, Jun 13, 2024 at 9:05 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+>>
+>> Does this make sense?
+> 
+> Implementation-wise, if you think it is simpler or more clear/elegant
+> to have the extra lower level layer, then that sounds fine.
+> 
+> However, I was mainly talking about what we would eventually expose to
+> users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
+> then we could make the lower layer private already.
+> 
+> We can defer that extra layer/work if needed even if we go for
+> `Atomic<T>`, but it would be nice to understand if we have consensus
+> for an eventual user-facing API, or if someone has any other opinion
+> or concerns on one vs. the other.
 
-This is known to only creates a crash with min order enabled, so for example
-with a 16k block sized XFS test profile, an xarray fix for that is merged
-already. This issue is fixed by kernel commit 2a0774c2886d ("XArray: set the
-marks correctly when splitting an entry").
+Well, here's one:
 
-If inspecting more closely, you'll want to enable on your kernel boot:
+The reason that we have things like atomic64_read() in the C code is
+because C doesn't have generics.
 
-	dyndbg='file mm/huge_memory.c +p'
+In Rust, we should simply move directly to Atomic<T>, as there are,
+after all, associated benefits. And it's very easy to see the connection
+between the C types and the Atomic<T> types.
 
-Since we want to race large folio splits we also augment the full test
-output log $seqres.full with the test specific number of successful
-splits from vmstat thp_split_page and thp_split_page_failed. The larger
-the vmstat thp_split_page the more we stress test this path.
 
-This test reproduces a really hard to reproduce crash immediately.
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- common/rc             |  14 ++++
- tests/generic/751     | 170 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/751.out |   2 +
- 3 files changed, 186 insertions(+)
- create mode 100755 tests/generic/751
- create mode 100644 tests/generic/751.out
-
-diff --git a/common/rc b/common/rc
-index 30beef4e5c02..31ad30276ca6 100644
---- a/common/rc
-+++ b/common/rc
-@@ -158,6 +158,20 @@ _require_vm_compaction()
- 	    _notrun "Need compaction enabled CONFIG_COMPACTION=y"
- 	fi
- }
-+
-+# Requires CONFIG_DEBUGFS and truncation knobs
-+_require_split_huge_pages_knob()
-+{
-+       if [ ! -f $DEBUGFS_MNT/split_huge_pages ]; then
-+           _notrun "Needs CONFIG_DEBUGFS and split_huge_pages"
-+       fi
-+}
-+
-+_split_huge_pages_all()
-+{
-+	echo 1 > $DEBUGFS_MNT/split_huge_pages
-+}
-+
- # Get hugepagesize in bytes
- _get_hugepagesize()
- {
-diff --git a/tests/generic/751 b/tests/generic/751
-new file mode 100755
-index 000000000000..ac0ca2f07443
---- /dev/null
-+++ b/tests/generic/751
-@@ -0,0 +1,170 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2024 Luis Chamberlain. All Rights Reserved.
-+#
-+# FS QA Test No. 751
-+#
-+# stress page cache truncation + writeback
-+#
-+# This aims at trying to reproduce a difficult to reproduce bug found with
-+# min order. The issue was root caused to an xarray bug when we split folios
-+# to another order other than 0. This functionality is used to support min
-+# order. The crash:
-+#
-+# https://gist.github.com/mcgrof/d12f586ec6ebe32b2472b5d634c397df
-+# Crash excerpt is as follows:
-+#
-+# BUG: kernel NULL pointer dereference, address: 0000000000000036
-+# #PF: supervisor read access in kernel mode
-+# #PF: error_code(0x0000) - not-present page
-+# PGD 0 P4D 0
-+# Oops: 0000 [#1] PREEMPT SMP NOPTI
-+# CPU: 7 PID: 2190 Comm: kworker/u38:5 Not tainted 6.9.0-rc5+ #14
-+# Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-+# Workqueue: writeback wb_workfn (flush-7:5)
-+# RIP: 0010:filemap_get_folios_tag+0xa9/0x200
-+# Call Trace:
-+#  <TASK>
-+#   writeback_iter+0x17d/0x310
-+#  write_cache_pages+0x42/0xa0
-+#  iomap_writepages+0x33/0x50
-+#  xfs_vm_writepages+0x63/0x90 [xfs]
-+#  do_writepages+0xcc/0x260
-+#  __writeback_single_inode+0x3d/0x340
-+#  writeback_sb_inodes+0x1ed/0x4b0
-+#  __writeback_inodes_wb+0x4c/0xe0
-+#  wb_writeback+0x267/0x2d0
-+#  wb_workfn+0x2a4/0x440
-+#  process_one_work+0x189/0x3b0
-+#  worker_thread+0x273/0x390
-+#  kthread+0xda/0x110
-+#  ret_from_fork+0x2d/0x50
-+#  ret_from_fork_asm+0x1a/0x30
-+#  </TASK>
-+#
-+# This may also find future truncation bugs in the future, as truncating any
-+# mapped file through the collateral of using echo 1 > split_huge_pages will
-+# always respect the min order. Truncating to a larger order then is excercised
-+# when this test is run against any filesystem LBS profile or an LBS device.
-+#
-+# If you're enabling this and want to check underneath the hood you may want to
-+# enable:
-+#
-+# dyndbg='file mm/huge_memory.c +p'
-+#
-+# This tests aims at increasing the rate of successful truncations so we want
-+# to increase the value of thp_split_page in $seqres.full. Using echo 1 >
-+# split_huge_pages is extremely aggressive, and even accounts for anonymous
-+# memory on a system, however we accept that tradeoff for the efficiency of
-+# doing the work in-kernel for any mapped file too. Our general goal here is to
-+# race with folio truncation + writeback.
-+
-+. ./common/preamble
-+
-+_begin_fstest auto long_rw stress soak smoketest
-+
-+# Override the default cleanup function.
-+_cleanup()
-+{
-+	cd /
-+	rm -f $tmp.*
-+	rm -f $runfile
-+	kill -9 $split_huge_pages_files_pid > /dev/null 2>&1
-+}
-+
-+fio_config=$tmp.fio
-+fio_out=$tmp.fio.out
-+fio_err=$tmp.fio.err
-+
-+# real QA test starts here
-+_supported_fs generic
-+_require_test
-+_require_scratch
-+_require_debugfs
-+_require_split_huge_pages_knob
-+_require_command "$KILLALL_PROG" "killall"
-+_fixed_by_git_commit kernel 2a0774c2886d \
-+	"XArray: set the marks correctly when splitting an entry"
-+
-+proc_vmstat()
-+{
-+	awk -v name="$1" '{if ($1 ~ name) {print($2)}}' /proc/vmstat | head -1
-+}
-+
-+# we need buffered IO to force truncation races with writeback in the
-+# page cache
-+cat >$fio_config <<EOF
-+[force_large_large_folio_parallel_writes]
-+ignore_error=ENOSPC
-+nrfiles=10
-+direct=0
-+bs=4M
-+group_reporting=1
-+filesize=1GiB
-+readwrite=write
-+fallocate=none
-+numjobs=$(nproc)
-+directory=$SCRATCH_MNT
-+runtime=100*${TIME_FACTOR}
-+time_based
-+EOF
-+
-+_require_fio $fio_config
-+
-+echo "Silence is golden"
-+
-+_scratch_mkfs >>$seqres.full 2>&1
-+_scratch_mount >> $seqres.full 2>&1
-+
-+# used to let our loops know when to stop
-+runfile="$tmp.keep.running.loop"
-+touch $runfile
-+
-+# The background ops are out of bounds, the goal is to race with fsstress.
-+
-+# Force folio split if possible, this seems to be screaming for MADV_NOHUGEPAGE
-+# for large folios.
-+while [ -e $runfile ]; do
-+	_split_huge_pages_all >/dev/null 2>&1
-+done &
-+split_huge_pages_files_pid=$!
-+
-+split_count_before=0
-+split_count_failed_before=0
-+
-+if grep -q thp_split_page /proc/vmstat; then
-+	split_count_before=$(proc_vmstat thp_split_page)
-+	split_count_failed_before=$(proc_vmstat thp_split_page_failed)
-+else
-+	echo "no thp_split_page in /proc/vmstat" >> $seqres.full
-+fi
-+
-+# we blast away with large writes to force large folio writes when
-+# possible.
-+echo -e "Running fio with config:\n" >> $seqres.full
-+cat $fio_config >> $seqres.full
-+$FIO_PROG $fio_config --alloc-size=$(( $(nproc) * 8192 )) \
-+	--output=$fio_out 2> $fio_err
-+FIO_ERR=$?
-+
-+rm -f $runfile
-+
-+wait > /dev/null 2>&1
-+
-+if grep -q thp_split_page /proc/vmstat; then
-+	split_count_after=$(proc_vmstat thp_split_page)
-+	split_count_failed_after=$(proc_vmstat thp_split_page_failed)
-+	thp_split_page=$((split_count_after - split_count_before))
-+	thp_split_page_failed=$((split_count_failed_after - split_count_failed_before))
-+
-+	echo "vmstat thp_split_page: $thp_split_page" >> $seqres.full
-+	echo "vmstat thp_split_page_failed: $thp_split_page_failed" >> $seqres.full
-+fi
-+
-+# exitall_on_error=ENOSPC does not work as it should, so we need this eyesore
-+if [[ $FIO_ERR -ne 0 ]] && ! grep -q "No space left on device" $fio_err; then
-+	_fail "fio failed with err: $FIO_ERR"
-+fi
-+
-+status=0
-+exit
-diff --git a/tests/generic/751.out b/tests/generic/751.out
-new file mode 100644
-index 000000000000..6479fa6f1404
---- /dev/null
-+++ b/tests/generic/751.out
-@@ -0,0 +1,2 @@
-+QA output created by 751
-+Silence is golden
+thanks,
 -- 
-2.43.0
+John Hubbard
+NVIDIA
 
 
