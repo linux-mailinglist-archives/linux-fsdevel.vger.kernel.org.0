@@ -1,152 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-21774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E94909B7E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 06:01:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD58909CD2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 11:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B6C1F2143C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 04:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF971F214AA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 09:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF3416C694;
-	Sun, 16 Jun 2024 04:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1841B185080;
+	Sun, 16 Jun 2024 09:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QwXyhJra"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="gdcka24V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD12632;
-	Sun, 16 Jun 2024 04:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C249216D9AA;
+	Sun, 16 Jun 2024 09:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718510476; cv=none; b=ZlE/jv2nW4w0UN26cHLVDrJjynpSerbG3/yPgNWMRCagAiK9XtA62b0biygwq/9PNPG07QJ9pVagL9bOWkcUSpWv/d/n/4HAIst3WBWZK4/vQQ9gQrX03zkkBdMcwlMeCEx3jk0GhQ/8f8N0mslVQrJ/ndaDVcDAZlYvLHKcmjQ=
+	t=1718531223; cv=none; b=M0Hi38iZ18WmZR61b0CDsv/F1B2MRvJ8HS5OY2FjEbMpo4ZmO7fR5oOSPSZUSbbSMax6e9/yG2DbVIEFbx4CGvqTbL3aeBH7lWbEOlzzIMhq++XZ3Jl6mL6anzCQGDmWt02Wm+D0L0QRn381Aju1saBXhiUkFNMPDLg/v5qPUC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718510476; c=relaxed/simple;
-	bh=LOBeSDMLvjOcAiROl79GUg1b1Ol44rfsv4ROT9gOiwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jlcLLCoZObs8dg2mH8DV/RHKYiOdzzazHWuAMAjh5j2EcMK+JQDqEfous06KCfh9o3yg833BZDl2MXAuQNTPHKvlDzfV6OYX4CcPiXHZ21nX6FwzMp7y4YAZ0NZWIKTM+O61mjSRjZBjGz2hqKMn0A2cxD1/+ZmNjtI5CJIO6W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QwXyhJra; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718510475; x=1750046475;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LOBeSDMLvjOcAiROl79GUg1b1Ol44rfsv4ROT9gOiwM=;
-  b=QwXyhJra17edh9OMySGRiZ7BTqZK8Nere+NQsUKOT8LxDgUd4fzB2oPC
-   mqrvl7uIMrGI/roBHTSKkoedHdpUhYAL1qS2nj6HYTacutn3vYdnMr2vC
-   DI68X5fq1Uqy6sKBaDPGjReq/BMS1FSRNMrYAONWsGro1XXiXdwv+XLUV
-   DPi90QaFNe1GHINqtEd6nIw0hEmzYYPzEdBUBD7KKQPOcd03baYAXuT7A
-   KsPBrEhuvG5zASk3TNjzhYmYdbtIzWmbP9vAk0ycDOJdkkKOEwoFNSV4n
-   0fVfHYbWfvHLFN6YQl/9XJvGW9DRS2GBDc8PA9fmlBczqgqE49T/YyR60
-   w==;
-X-CSE-ConnectionGUID: w+lQzJn7RJCGz6sy68s8BQ==
-X-CSE-MsgGUID: lWc7TzTATCmV5nyWzRuy7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="15521681"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="15521681"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 21:01:14 -0700
-X-CSE-ConnectionGUID: jg446RxPQhqExQiBLcU+1g==
-X-CSE-MsgGUID: SUtQbsIdSLG7yt5XT8M2Qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="41557169"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.232.251]) ([10.124.232.251])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 21:01:13 -0700
-Message-ID: <3fa7c6c4-d9e4-4233-93a7-12e5d34ee4d0@intel.com>
-Date: Sun, 16 Jun 2024 12:01:09 +0800
+	s=arc-20240116; t=1718531223; c=relaxed/simple;
+	bh=q26N2GgeVglH9gCbjku86QbUgLOk6W++2mgK2GguLKA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Psp8iExEV0tyzndRMKlcj/5Vl1ad3MlWDXpI4woI/qU7Bn7qtJRZGgdGeb5dgHoFes7qdR1mX2Hub2AFHGcp4EptAC2QZfkVhGg2jI08zYBN+MAwKDdwu3ad7j0BALg7S3awqdthhGC5uWrtxTobr7UzA3xv67dZHa9sE3pTSd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=gdcka24V; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1718531210; x=1718790410;
+	bh=znzItjjdQt5Gx2XVgBVIK96GA/gE2ZHpRn5IIrL3wOI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=gdcka24V73hbb95kA47a+wMdMUp4FbYBulK5vF0HVp5VuuKVIHcdEWJBB3Pr9bu6R
+	 NhlXLdn5BBT81CawX9HbibONV/+vAxt3WSCairMGdKuSRg2n6YWI8G/wJ2DbrPKpf9
+	 HS2i9kWdmrq8qeVqsz85MnkkYJGU468NSjOAVPo/T9VGGCYLfS4Uf4L55f1dZy2R26
+	 9IX33orpEJWw52nEKBg45ayRvmmriRTDobFE4Yw8fZNKBX/SOqToQAtOsvc54DuE62
+	 FvHp1UnFcS7dQGK8DhM/BJHitJbhGgI0o9RkWHNf+XL3ZY7PwFhxxHMnhkctS5siBg
+	 uWVcH/2yjrgLQ==
+Date: Sun, 16 Jun 2024 09:46:45 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <d67aeb8c-3499-4498-aaf9-4ac459c2f747@proton.me>
+In-Reply-To: <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
+References: <20240612223025.1158537-3-boqun.feng@gmail.com> <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com> <ZmtC7h7v1t6XJ6EI@boqun-archlinux> <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com> <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home> <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me> <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home> <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me> <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: aa019b834b17958b26c96544baf90fc8c32aaadd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] fs/file.c: add fast path in alloc_fd()
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tim.c.chen@linux.intel.com, tim.c.chen@intel.com, pan.deng@intel.com,
- tianyou.li@intel.com, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240614163416.728752-2-yu.ma@intel.com>
- <egcrzi4bkw7lm2q4wml2y7pptpxos4nf5v3il3jmhptcurhxjj@fxtica52olsj>
-Content-Language: en-US
-From: "Ma, Yu" <yu.ma@intel.com>
-In-Reply-To: <egcrzi4bkw7lm2q4wml2y7pptpxos4nf5v3il3jmhptcurhxjj@fxtica52olsj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On 16.06.24 00:12, Boqun Feng wrote:
+> On Sat, Jun 15, 2024 at 07:09:30AM +0000, Benno Lossin wrote:
+>> On 15.06.24 03:33, Boqun Feng wrote:
+>>> On Fri, Jun 14, 2024 at 09:22:24PM +0000, Benno Lossin wrote:
+>>>> On 14.06.24 16:33, Boqun Feng wrote:
+>>>>> On Fri, Jun 14, 2024 at 11:59:58AM +0200, Miguel Ojeda wrote:
+>>>>>> On Thu, Jun 13, 2024 at 9:05=E2=80=AFPM Boqun Feng <boqun.feng@gmail=
+.com> wrote:
+>>>>>>>
+>>>>>>> Does this make sense?
+>>>>>>
+>>>>>> Implementation-wise, if you think it is simpler or more clear/elegan=
+t
+>>>>>> to have the extra lower level layer, then that sounds fine.
+>>>>>>
+>>>>>> However, I was mainly talking about what we would eventually expose =
+to
+>>>>>> users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
+>>>>>
+>>>>> The truth is I don't know ;-) I don't have much data on which one is
+>>>>> better. Personally, I think AtomicI32 and AtomicI64 make the users ha=
+ve
+>>>>> to think about size, alignment, etc, and I think that's important for
+>>>>> atomic users and people who review their code, because before one use=
+s
+>>>>> atomics, one should ask themselves: why don't I use a lock? Atomics
+>>>>> provide the ablities to do low level stuffs and when doing low level
+>>>>> stuffs, you want to be more explicit than ergonomic.
+>>>>
+>>>> How would this be different with `Atomic<i32>` and `Atomic<i64>`? Just
+>>>
+>>> The difference is that with Atomic{I32,I64} APIs, one has to choose (an=
+d
+>>> think about) the size when using atomics, and cannot leave that option
+>>> open. It's somewhere unconvenient, but as I said, atomics variables are
+>>> different. For example, if someone is going to implement a reference
+>>> counter struct, they can define as follow:
+>>>
+>>> =09struct Refcount<T> {
+>>> =09    refcount: AtomicI32,
+>>> =09    data: UnsafeCell<T>
+>>> =09}
+>>>
+>>> but with atomic generic, people can leave that option open and do:
+>>>
+>>> =09struct Refcount<R, T> {
+>>> =09    refcount: Atomic<R>,
+>>> =09    data: UnsafeCell<T>
+>>> =09}
+>>>
+>>> while it provides configurable options for experienced users, but it
+>>> also provides opportunities for sub-optimal types, e.g. Refcount<u8, T>=
+:
+>>> on ll/sc architectures, because `data` and `refcount` can be in the sam=
+e
+>>> machine-word, the accesses of `refcount` are affected by the accesses o=
+f
+>>> `data`.
+>>
+>> I think this is a non-issue. We have two options of counteracting this:
+>> 1. We can just point this out in reviews and force people to use
+>>    `Atomic<T>` with a concrete type. In cases where there really is the
+>>    need to be generic, we can have it.
+>> 2. We can add a private trait in the bounds for the generic, nobody
+>>    outside of the module can access it and thus they need to use a
+>>    concrete type:
+>>
+>>         // needs a better name
+>>         trait Integer {}
+>>         impl Integer for i32 {}
+>>         impl Integer for i64 {}
+>>
+>>         pub struct Atomic<T: Integer> {
+>>             /* ... */
+>>         }
+>>
+>> And then in the other module, you can't do this (with compiler error):
+>>
+>>         pub struct Refcount<R: Integer, T> {
+>>                             // ^^^^^^^ not found in this scope
+>>                             // note: trait `crate::atomic::Integer` exis=
+ts but is inaccessible
+>>             refcount: Atomic<R>,
+>>             data: UnsafeCell<T>,
+>>         }
+>>
+>> I think that we can start with approach 2 and if we find a use-case
+>> where generics are really unavoidable, we can either put it in the same
+>> module as `Atomic<T>`, or change the access of `Integer`.
+>>
+>=20
+> What's the issue of having AtomicI32 and AtomicI64 first then? We don't
+> need to do 1 or 2 until the real users show up.
 
-On 6/15/2024 2:31 PM, Mateusz Guzik wrote:
-> On Fri, Jun 14, 2024 at 12:34:14PM -0400, Yu Ma wrote:
->> There is available fd in the lower 64 bits of open_fds bitmap for most cases
->> when we look for an available fd slot. Skip 2-levels searching via
->> find_next_zero_bit() for this common fast path.
->>
->> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
->> free slot is available there, as:
->> (1) The fd allocation algorithm would always allocate fd from small to large.
->> Lower bits in open_fds bitmap would be used much more frequently than higher
->> bits.
->> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
->> it would never be shrunk. The search size increases but there are few open fds
->> available here.
->> (3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
->> searching.
->>
->> With the fast path added in alloc_fd() through one-time bitmap searching,
->> pts/blogbench-1.1.0 read is improved by 20% and write by 10% on Intel ICX 160
->> cores configuration with v6.8-rc6.
->>
->> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->> Signed-off-by: Yu Ma <yu.ma@intel.com>
->> ---
->>   fs/file.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/file.c b/fs/file.c
->> index 3b683b9101d8..e8d2f9ef7fd1 100644
->> --- a/fs/file.c
->> +++ b/fs/file.c
->> @@ -510,8 +510,13 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->>   	if (fd < files->next_fd)
->>   		fd = files->next_fd;
->>   
->> -	if (fd < fdt->max_fds)
->> +	if (fd < fdt->max_fds) {
->> +		if (~fdt->open_fds[0]) {
->> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
->> +			goto success;
->> +		}
->>   		fd = find_next_fd(fdt, fd);
->> +	}
->>   
->>   	/*
->>   	 * N.B. For clone tasks sharing a files structure, this test
->> @@ -531,7 +536,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->>   	 */
->>   	if (error)
->>   		goto repeat;
->> -
->> +success:
->>   	if (start <= files->next_fd)
->>   		files->next_fd = fd + 1;
->>   
-> As indicated in my other e-mail it may be a process can reach a certain
-> fd number and then lower its rlimit(NOFILE). In that case the max_fds
-> field can happen to be higher and the above patch will fail to check for
-> the (fd < end) case.
+Generics allow you to avoid code duplication (I don't think that you
+want to create the `Atomic{I32,I64}` types via macros...). We would have
+to do a lot of refactoring, when we want to introduce it. I don't see
+the harm of introducing generics from the get-go.
 
-Thanks for the good catch, replied in that mail thread for details.
+> And I'd like also to point out that there are a few more trait bound
+> designs needed for Atomic<T>, for example, Atomic<u32> and Atomic<i32>
+> have different sets of API (no inc_unless_negative() for u32).
 
->
->> -- 
->> 2.43.0
->>
+Sure, just like Gary said, you can just do:
+
+    impl Atomic<i32> {
+        pub fn inc_unless_negative(&self, ordering: Ordering) -> bool;
+    }
+
+Or add a `HasNegative` trait.
+
+> Don't make me wrong, I have no doubt we can handle this in the type
+> system, but given the design work need, won't it make sense that we take
+> baby steps on this? We can first introduce AtomicI32 and AtomicI64 which
+> already have real users, and then if there are some values of generic
+> atomics, we introduce them and have proper discussion on design.
+
+I don't understand this point, why can't we put in the effort for a good
+design? AFAIK we normally spend considerable time to get the API right
+and I think in this case it would include making it generic.
+
+> To me, it's perfectly fine that Atomic{I32,I64} co-exist with Atomic<T>.
+> What's the downside? A bit specific example would help me understand
+> the real concern here.
+
+I don't like that, why have two ways of doing the same thing? People
+will be confused whether they should use `AtomicI32` vs `Atomic<i32>`...
+
+---
+Cheers,
+Benno
+
 
