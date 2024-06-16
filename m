@@ -1,144 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-21781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1180909E0C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 17:06:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B50909E15
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 17:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02232816F5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 15:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828651F21654
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 15:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3225014292;
-	Sun, 16 Jun 2024 15:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EE01805A;
+	Sun, 16 Jun 2024 15:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Valy6Z1L"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mSraej69"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E647FBF6;
-	Sun, 16 Jun 2024 15:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3640814F90;
+	Sun, 16 Jun 2024 15:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718550372; cv=none; b=RSJpOrLwuQM4lKpROOKtoojDK1wYNAbUZjj5EuZSncSgj5Sbu1yre/qxQnXZ2c4UXu9nZk/ftOH6xDBhxHpO1d9GICwhVBFRKGD5pr/56Brnmn/WGpk5+yTsWi3N5y3XsCWYEhrrN11DY7TAOH19OvKuCAvrd+7thEmSCeuugHk=
+	t=1718550416; cv=none; b=k9aj7qcrVds1gYU7dasRHQGdMJaPnE8QlIYQ5w7BYpEPLjBEuP7dC74qmaJBXvzRJNBDLqzrEWRR5XhnSdZ18PCXZ9QpzJos4cQW/LrG3waSoGhiLjnr7nw2aZW9gjSE9xxQ1jla3j96mIr/4zNRIUQWRKnRY6MqCYXePTf53WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718550372; c=relaxed/simple;
-	bh=eodZ+veoHiLvaS3SWWrwg+RSiia4D2YjRohGE/R66+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izeO9JhvM/VrWkUfv+ZLHRqt7T5fR5b8voKgh6IVtC3Q4LlUjzUMae1zuwFaMfoDy0aKxLA3vSEpwJqJ7NG1MBy63O6QZBj5Ox6dEa9QK972uuOHsR5+MHCS7vC4wg9e4KMwQ7b7qw83YLpBVFQyhABjNYIYtXfv0rfMunFSbHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Valy6Z1L; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b064841f81so29326496d6.1;
-        Sun, 16 Jun 2024 08:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718550369; x=1719155169; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqObIqQp+WLPy3VVCqeSeRx29NarkCBbux5QQu76V4Y=;
-        b=Valy6Z1LcuOAYdNLqh5s7edYH5rWeCdAvw1rqRfa62QjQ8JQv0seDl2fLDU4Dgv6CN
-         vnAK3Jnbxm8pBcSlbfx9q5Olgj6P5bqmIBzAb7CKEUbOyQRrDhHiqynUH+yTNmu8fH9+
-         NVimIgAkawEqICLKSwkJL2N6WHpWyrU6E5ptygm01WVwGYf5ePTsTgVyxOcfbzp8+M4C
-         0SXmkeC5z+OSwd8PNvJiT8xqOlL5iyfnHeqqHyy7Dx78MDb5cL/V8hcVFQnv2beOzmCW
-         vmugyYSmfoK3h+taPnrI1ZsMgSTKFXowvfVOAmzGtRJQLP8zFVYzrZC6ZcTCY06Wd2qw
-         PlHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718550369; x=1719155169;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VqObIqQp+WLPy3VVCqeSeRx29NarkCBbux5QQu76V4Y=;
-        b=k80mVug6C5BdtYeJnpchpoW8VMpVCvmFdjItyqaEQLhcnW8HT5ybpOpjXL4LUmADvW
-         XgmTr9BbpPEUKZ3KqtQLb2Wm3AruJUfJiD8xoXv6QFJFY4Sb23qCi+J/17UfWJahYk3d
-         02z9e6VZrDfRtxjvq61BzmIcYNUOhl6LP7/nb7GRJCm0UgjOcMJVCgtEjjL5fa2mF8ZX
-         up1WAiIjIJqDq3woPsFscY5xBMG/HNcYW5lmYgd/RhJ+Dfo9omHMA8Rb+D1vp2/EAXf7
-         6f36wjuWcJJHVtE3XSf5gK/rSqMpM59FaQp77/UkHwTK78PNpsBZV7cZhQ2d4ujvuakD
-         +uhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK1fzEAXYqINnIvYoqXQnYCw4JSxISebbkcg6uXufEVFCe/FiCko6XfI3C4BN/0ZmI4TuloPs+bDPWji1zieUVcaDoS27e7AnKi3X8tCyNEuQOkziF1WBeKywS1iX4OCKGhhHRLJ7Z6XXNYDXPIR3LbzGHRiWX2ZGHLZ+y5grqk7uRcpvTrfpFvQmtTuU3l0BD45VmdvhHxwnUEiEP6PkJc/WeHNT7RA==
-X-Gm-Message-State: AOJu0YxWAF7wF1NIhPApsVfFPvZULCqo4RWjJ6+hpnCuysTgyJ/315Ii
-	AUa1WpltMVlStgROnRASLkb9W9Uc2GRQJgJHGxSR38HzhqHpSY65
-X-Google-Smtp-Source: AGHT+IGBNIQC6j0BqwcDzH3wRTTRHzh/QPcr+NqgMAY2KJ5ds6X+rg2sPyjML9quC4pDD9ZSVedEYg==
-X-Received: by 2002:ad4:4ea9:0:b0:6b0:8f42:2435 with SMTP id 6a1803df08f44-6b2afd6a451mr116202186d6.51.1718550368805;
-        Sun, 16 Jun 2024 08:06:08 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5bf2879sm44716896d6.21.2024.06.16.08.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 08:06:08 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 3E0C61200043;
-	Sun, 16 Jun 2024 11:06:07 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 16 Jun 2024 11:06:07 -0400
-X-ME-Sender: <xms:X_9uZvCCkIhVEDfGa96FmikD-smutPRls8X6T98ysAk3o8mYV0NSEA>
-    <xme:X_9uZlh8YRgX0duI0y2Ie5sn-Jn-72D0ogLmixpPtK7D8IM8JBp9sxggGiclyNTGA
-    XZkNo2M92bSJ9xOiw>
-X-ME-Received: <xmr:X_9uZqlZud_vyJdZgPDo1LlRLeUHA1ZC_X2ILBo2_1CboirpuDTWN8zYcw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedgkeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepgffgheejtdfhheehtdejffehgedujeekudfgieejledttedvvdeiuefg
-    fedvffdvnecuffhomhgrihhnpegtrhgrthgvshdrihhonecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:X_9uZhxvKEM97Ulpcf4GVxbxFnA7E_JZZyvyZz9dedGrt-a4kbWJyA>
-    <xmx:X_9uZkQ7Ht69gXaoQIf43_cdFuyBs6VfZDjIjuKy3uUQbzEFkenwZg>
-    <xmx:X_9uZkbwtNcKXt6VNNVWdwo_nPXrIIQUFO-9iL9Gp-BAppy8gxX2uA>
-    <xmx:X_9uZlTDDg_hBZyPuca8BcznkGuTRWsh_xJwHtIlUASb2--utKbj3Q>
-    <xmx:X_9uZqBv556ZNnyPfitADxfD6mvgWmY6JVws7eQzSbfTxCHhO7UNroo1>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Jun 2024 11:06:06 -0400 (EDT)
-Date: Sun, 16 Jun 2024 08:06:05 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Gary Guo <gary@garyguo.net>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
- linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
- Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+	s=arc-20240116; t=1718550416; c=relaxed/simple;
+	bh=p5zJ4+9q8IuUz87Wd9F+o/28kdYtulCro0d2mJm/XEY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vCWvFGDOv2P2oKvoR2QF3uazwyOE2Z6HMhaw/1kiLY/bVj+lUxTpBAEHoHC8TrnzVVjEiHYPaGjN0/yrhq68Uw2ud57mTwfKGfGoOueKrSqF2Z1nLmyLWY6ZfCkT1Y1sepOLBa6mZ64NSx/ExJmANRrSgv8Rmwk7UBlsHiUC+8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=mSraej69; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=6oh7yesvyjgnxl3sh6rcesrhj4.protonmail; t=1718550405; x=1718809605;
+	bh=3NPcfb3TcZHCQq/fKC5xCaBEd1Gh0/q4eoxgjTOHKCw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=mSraej692hLKvs7mzHtyoFIACPfk+BbHW1PJdNOssrPuAExdBfaeVAoaHLN9yQ42p
+	 VUV3G2T82Oyc0asvyD7ZX2d1ndVyFPTclvW68QT0U0xyNqjFjozCpGeX/k/9rGH09P
+	 6QfS3FzHuyhv7c3jG1Ee6ymycimn38p1OBCMJJOE7/3n3dgpyjbcUAoOejwyz1o2gA
+	 L/NDRr2Web4yroKi7RlJPc4TpAYFF0QHjnEKI7P1ne+mchcmCu0ZAUw9DANaImMnhz
+	 VtVaj+9AhWL4nyet3pgmlEGK2o9za39WNUTyboboJ4xJCOhXoH9c3PfosFvWIkjHNT
+	 8JEGxsTkIImYQ==
+Date: Sun, 16 Jun 2024 15:06:36 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
 Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <Zm7_XWe6ciy1yN-h@Boquns-Mac-mini.home>
-References: <20240613144432.77711a3a@eugeo>
- <ZmseosxVQXdsQjNB@boqun-archlinux>
- <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
- <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
- <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
- <79239550-dd6e-4738-acea-e7df50176487@nvidia.com>
- <ZmztZd9OJdLnBZs5@Boquns-Mac-mini.home>
- <c243bef3-e152-462f-be68-91dbf876092b@nvidia.com>
- <Zmz-338Ad6r4vzM-@Boquns-Mac-mini.home>
- <20240616155145.54371240.gary@garyguo.net>
+Message-ID: <f29cb2fd-651b-4bc5-8055-e3a412192e29@proton.me>
+In-Reply-To: <Zm7xySzPJcddF-I_@Boquns-Mac-mini.home>
+References: <20240612223025.1158537-3-boqun.feng@gmail.com> <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com> <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home> <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me> <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home> <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me> <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home> <d67aeb8c-3499-4498-aaf9-4ac459c2f747@proton.me> <Zm7xySzPJcddF-I_@Boquns-Mac-mini.home>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 491e33e1981ad9297cbb1951124c18038c7ab95a
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -146,119 +61,194 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240616155145.54371240.gary@garyguo.net>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 16, 2024 at 03:51:45PM +0100, Gary Guo wrote:
-> On Fri, 14 Jun 2024 19:39:27 -0700
-> Boqun Feng <boqun.feng@gmail.com> wrote:
-> 
-> > On Fri, Jun 14, 2024 at 06:28:00PM -0700, John Hubbard wrote:
-> > > On 6/14/24 6:24 PM, Boqun Feng wrote:  
-> > > > On Fri, Jun 14, 2024 at 06:03:37PM -0700, John Hubbard wrote:  
-> > > > > On 6/14/24 2:59 AM, Miguel Ojeda wrote:  
-> > > > > > On Thu, Jun 13, 2024 at 9:05 PM Boqun Feng <boqun.feng@gmail.com> wrote:  
-> > > > > > > 
-> > > > > > > Does this make sense?  
-> > > > > > 
-> > > > > > Implementation-wise, if you think it is simpler or more clear/elegant
-> > > > > > to have the extra lower level layer, then that sounds fine.
-> > > > > > 
-> > > > > > However, I was mainly talking about what we would eventually expose to
-> > > > > > users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
-> > > > > > then we could make the lower layer private already.
-> > > > > > 
-> > > > > > We can defer that extra layer/work if needed even if we go for
-> > > > > > `Atomic<T>`, but it would be nice to understand if we have consensus
-> > > > > > for an eventual user-facing API, or if someone has any other opinion
-> > > > > > or concerns on one vs. the other.  
-> > > > > 
-> > > > > Well, here's one:
-> > > > > 
-> > > > > The reason that we have things like atomic64_read() in the C code is
-> > > > > because C doesn't have generics.
-> > > > > 
-> > > > > In Rust, we should simply move directly to Atomic<T>, as there are,
-> > > > > after all, associated benefits. And it's very easy to see the connection  
-> > > > 
-> > > > What are the associated benefits you are referring to? Rust std doesn't
-> > > > use Atomic<T>, that somewhat proves that we don't need it.  
-> > > Just the stock things that a generic provides: less duplicated code,  
-> > 
-> > It's still a bit handwavy, sorry.
-> > 
-> > Admittedly, I haven't looked into too much Rust concurrent code, maybe
-> > it's even true for C code ;-) So I took a look at the crate that Gary
-> > mentioned (the one provides generic atomic APIs):
-> > 
-> > 	https://crates.io/crates/atomic
-> > 
-> > there's a "Dependent" tab where you can see the other crates that
-> > depends on it. With a quick look, I haven't found any Rust concurrent
-> > project I'm aware of (no crossbeam, no tokio, no futures). On the other
-> > hand, there is a non-generic based atomic library:
-> > 
-> > 	https://crates.io/crates/portable-atomic
-> > 
-> > which has more projects depend on it, and there are some Rust concurrent
-> > projects that I'm aware of: futures, async-task etc. Note that people
-> > can get the non-generic based atomic API from Rust std library, and
-> > the "portable-atomic" crate is only 2-year old, while "atomic" crate is
-> > 8-year old.
-> > 
-> > More interestingly, the same author of "atomic" crate, who is an expert
-> > in concurrent areas, has another project (there are a lot projects from
-> > the author, but this is the one I'm mostly aware of) "parking_lot",
-> > which "provides implementations of Mutex, RwLock, Condvar and Once that
-> > are smaller, faster and more flexible than those in the Rust standard
-> > library, as well as a ReentrantMutex type which supports recursive
-> > locking.", and it doesn't use the "atomic" crate either.
-> 
-> Note that crossbeam's AtomicCell is also generic, and crossbeam is used
-> by tons of crates. As Miguel mentioned, I think it's very likely that in
-> the future we want be able to do atomics on new types (e.g. for
-> seqlocks perhaps). We probably don't need the non-lock-free fallback of
+On 16.06.24 16:08, Boqun Feng wrote:
+> On Sun, Jun 16, 2024 at 09:46:45AM +0000, Benno Lossin wrote:
+>> On 16.06.24 00:12, Boqun Feng wrote:
+>>> On Sat, Jun 15, 2024 at 07:09:30AM +0000, Benno Lossin wrote:
+>>>> On 15.06.24 03:33, Boqun Feng wrote:
+>>>>> On Fri, Jun 14, 2024 at 09:22:24PM +0000, Benno Lossin wrote:
+>>>>>> On 14.06.24 16:33, Boqun Feng wrote:
+>>>>>>> On Fri, Jun 14, 2024 at 11:59:58AM +0200, Miguel Ojeda wrote:
+>>>>>>>> On Thu, Jun 13, 2024 at 9:05=E2=80=AFPM Boqun Feng <boqun.feng@gma=
+il.com> wrote:
+>>>>>>>>>
+>>>>>>>>> Does this make sense?
+>>>>>>>>
+>>>>>>>> Implementation-wise, if you think it is simpler or more clear/eleg=
+ant
+>>>>>>>> to have the extra lower level layer, then that sounds fine.
+>>>>>>>>
+>>>>>>>> However, I was mainly talking about what we would eventually expos=
+e to
+>>>>>>>> users, i.e. do we want to provide `Atomic<T>` to begin with? If ye=
+s,
+>>>>>>>
+>>>>>>> The truth is I don't know ;-) I don't have much data on which one i=
+s
+>>>>>>> better. Personally, I think AtomicI32 and AtomicI64 make the users =
+have
+>>>>>>> to think about size, alignment, etc, and I think that's important f=
+or
+>>>>>>> atomic users and people who review their code, because before one u=
+ses
+>>>>>>> atomics, one should ask themselves: why don't I use a lock? Atomics
+>>>>>>> provide the ablities to do low level stuffs and when doing low leve=
+l
+>>>>>>> stuffs, you want to be more explicit than ergonomic.
+>>>>>>
+>>>>>> How would this be different with `Atomic<i32>` and `Atomic<i64>`? Ju=
+st
+>>>>>
+>>>>> The difference is that with Atomic{I32,I64} APIs, one has to choose (=
+and
+>>>>> think about) the size when using atomics, and cannot leave that optio=
+n
+>>>>> open. It's somewhere unconvenient, but as I said, atomics variables a=
+re
+>>>>> different. For example, if someone is going to implement a reference
+>>>>> counter struct, they can define as follow:
+>>>>>
+>>>>> =09struct Refcount<T> {
+>>>>> =09    refcount: AtomicI32,
+>>>>> =09    data: UnsafeCell<T>
+>>>>> =09}
+>>>>>
+>>>>> but with atomic generic, people can leave that option open and do:
+>>>>>
+>>>>> =09struct Refcount<R, T> {
+>>>>> =09    refcount: Atomic<R>,
+>>>>> =09    data: UnsafeCell<T>
+>>>>> =09}
+>>>>>
+>>>>> while it provides configurable options for experienced users, but it
+>>>>> also provides opportunities for sub-optimal types, e.g. Refcount<u8, =
+T>:
+>>>>> on ll/sc architectures, because `data` and `refcount` can be in the s=
+ame
+>>>>> machine-word, the accesses of `refcount` are affected by the accesses=
+ of
+>>>>> `data`.
+>>>>
+>>>> I think this is a non-issue. We have two options of counteracting this=
+:
+>>>> 1. We can just point this out in reviews and force people to use
+>>>>    `Atomic<T>` with a concrete type. In cases where there really is th=
+e
+>>>>    need to be generic, we can have it.
+>>>> 2. We can add a private trait in the bounds for the generic, nobody
+>>>>    outside of the module can access it and thus they need to use a
+>>>>    concrete type:
+>>>>
+>>>>         // needs a better name
+>>>>         trait Integer {}
+>>>>         impl Integer for i32 {}
+>>>>         impl Integer for i64 {}
+>>>>
+>>>>         pub struct Atomic<T: Integer> {
+>>>>             /* ... */
+>>>>         }
+>>>>
+>>>> And then in the other module, you can't do this (with compiler error):
+>>>>
+>>>>         pub struct Refcount<R: Integer, T> {
+>>>>                             // ^^^^^^^ not found in this scope
+>>>>                             // note: trait `crate::atomic::Integer` ex=
+ists but is inaccessible
+>>>>             refcount: Atomic<R>,
+>>>>             data: UnsafeCell<T>,
+>>>>         }
+>>>>
+>>>> I think that we can start with approach 2 and if we find a use-case
+>>>> where generics are really unavoidable, we can either put it in the sam=
+e
+>>>> module as `Atomic<T>`, or change the access of `Integer`.
+>>>>
+>>>
+>>> What's the issue of having AtomicI32 and AtomicI64 first then? We don't
+>>> need to do 1 or 2 until the real users show up.
+>>
+>> Generics allow you to avoid code duplication (I don't think that you
+>> want to create the `Atomic{I32,I64}` types via macros...). We would have
+>> to do a lot of refactoring, when we want to introduce it. I don't see
+>=20
+> You can simply do
+>=20
+> =09type AtomicI32=3DAtomic<i32>;
 
-Good, another design bit, thank you!
+Eh, I would think that we could just do a text replacement in this case.
+Or if that doesn't work, Coccinelle should be able to do this...
 
-What's our overall idea on sub-word types, like Atomic<u8> and
-Atomic<u16>, do we plan to say no to them, or they could have a limited
-APIs? IIUC, some operations on them are relatively sub-optimal on some
-architectures, supporting the same set of API as i32 and i64 is probably
-a bad idea.
+> Plus, we always do refactoring in kernel, because it's impossible to get
+> everything right at the first time. TBH, it's too confident to think one
+> can.
 
-Another thing in my mind is making `Atomic<T>`
+I don't think that we're at the "let's just put it in" stage. This is an
+RFC version, so it should be fine to completely change the approach.
+I agree, that we can't get it 100% right the first time, but we should
+at least strive to get a good version.
 
-	pub struct Atomic<T: Send + ...> { ... }
+>> the harm of introducing generics from the get-go.
+>>
+>>> And I'd like also to point out that there are a few more trait bound
+>>> designs needed for Atomic<T>, for example, Atomic<u32> and Atomic<i32>
+>>> have different sets of API (no inc_unless_negative() for u32).
+>>
+>> Sure, just like Gary said, you can just do:
+>>
+>>     impl Atomic<i32> {
+>>         pub fn inc_unless_negative(&self, ordering: Ordering) -> bool;
+>>     }
+>>
+>> Or add a `HasNegative` trait.
+>>
+>>> Don't make me wrong, I have no doubt we can handle this in the type
+>>> system, but given the design work need, won't it make sense that we tak=
+e
+>>> baby steps on this? We can first introduce AtomicI32 and AtomicI64 whic=
+h
+>>> already have real users, and then if there are some values of generic
+>>> atomics, we introduce them and have proper discussion on design.
+>>
+>> I don't understand this point, why can't we put in the effort for a good
+>> design? AFAIK we normally spend considerable time to get the API right
+>> and I think in this case it would include making it generic.
+>>
+>=20
+> What's the design you propose here? Well, the conversation between us is
+> only the design bit I saw, elsewhere it's all handwaving that "generics
+> are overall really good". I'm happy to get the API right, and it's easy
+> and simple to do on concrete types. But IIUC, Gary's suggestion is to
+> only have Atomic<i32> and Atomic<i64> first, and do the design later,
+> which I really don't like. It may not be a complete design, but I need
+> to see the design now to understand whether we need to go to that
+> direction. I cannot just introduce a TBD generic.
 
-so that `Atomic<T>` will always be `Sync`, because quite frankly, an
-atomic type that cannot `Sync` is pointless.
+I don't think that the idea was to "do the design later". I don't even
+know how you would do that, since you need the design to submit a patch.
 
-Regards,
-Boqun
+I can't offer you a complete API description, since that would require
+me writing it up myself. But I would recommend trying to get it to work
+with generics. I got a few other comments:
+- I don't think that we should resort to a script to generate the Rust
+  code since it prevents adding good documentation & examples to the
+  various methods. AFAIU you want to generate the functions from
+  `scripts/atomic/atomics.tbl` to keep it in sync with the C side. I
+  looked at the git log of that file and it hasn't been changed
+  significantly since its inception. I don't think that there is any
+  benefit to generating the functions from that file.
+- most of the documented functions say "See `c_function`", I don't like
+  this, can we either copy the C documentation (I imagine it not
+  changing that often, or is that assumption wrong?) or write our own?
+- we should try to use either const generic or normal parameters for the
+  access ordering instead of putting it in the function name.
+- why do we need both non-return and return variants?
 
-> crossbeam's AtomicCell, but the lock-free subset with newtype support
-> is desirable.
-> 
-> People in general don't use the `atomic` crate because it provides no
-> additional feature compared to the standard library. But it doesn't
-> really mean that the standard library's atomic design is good.
-> 
-> People decided to use AtomicT and NonZeroT instead of Atomic<T> or
-> NonZero<T> long time ago, but many now thinks the decision was bad.
-> Introduction of NonZero<T> is a good example of it. NonZeroT are now
-> all type aliases of NonZero<T>.
-> 
-> I also don't see any downside in using generics. We can provide type
-> aliases so people can use `AtomicI32` and `AtomicI64` when they want
-> their code to be compatible with userspace Rust can still do so.
-> 
-> `Atomic<i32>` is also just aesthetically better than `AtomicI32` IMO.
-> When all other types look like `NonZero<i32>`, `Wrapping<i32>`, I don't
-> think we should have `AtomicI32` just because "it's done this way in
-> Rust std". Our alloc already deviates a lot from Rust std.
-> 
-> Best,
-> Gary
+I think it is probably a good idea to discuss this in our meeting.
+
+---
+Cheers,
+Benno
+
 
