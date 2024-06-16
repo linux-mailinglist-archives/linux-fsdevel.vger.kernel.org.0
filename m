@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-21784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22FC909E21
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 17:23:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CB1909E25
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 17:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDC01F21364
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 15:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57DF1F215AB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jun 2024 15:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E26A1758C;
-	Sun, 16 Jun 2024 15:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15531757D;
+	Sun, 16 Jun 2024 15:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="feWXWjPK"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qBn8YPc+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DBB15ACB
-	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jun 2024 15:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9301E14AB2
+	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jun 2024 15:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718551413; cv=none; b=mVO/PU4HaFy+lX9GGbVaB02K1OS3DPofqExxeeE/7N2LUo0f4iaXXHHFa/xV5qlEXoOxWKvTwu9MYQLIURa9sG1t7UM1krEzMBFnxLZvwnHXhcc8e7JfVU1HqCeRDN/yldhJb2vHeG4DVJrmfc8UwB1qD+TXViiMz5CeMZAMnZY=
+	t=1718551964; cv=none; b=dDiCsLF36amNY568djzglk+iAsNp2RO4SS20cHDGOUcuHvfY7fGfs+yy9kAbKKmqEeHFWOr9EfZU6on/WapWjm8yzCtIQKTKyRRjuytdRcOVWhoQXcv3m0kwpHJM/7txJQmq8BrkPh1jrPbSL/McTeJC/7YY9HD6Z/6NVckzofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718551413; c=relaxed/simple;
-	bh=No/yQzvhSQo5eA4MVA3Ontr93OnajiTCJcU9VnBHmPA=;
+	s=arc-20240116; t=1718551964; c=relaxed/simple;
+	bh=uVdTOpoqCs1tXlSXuegTKEr1kms4N6fLFNvkatDFQ/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRZzG1yD1ZisKoeOpJyZmCHFi+63JLZFVkL9itwyKO15zREU4m+3S5dhlJkP800IVIGxvR22TTnZaFdnjP8KYlDL8L6mssiTEamI1p2LY7zsDX3dx27PP+rfMWB7tD5XTmibLs/+Gck6CpBaX4EAtc65rnVKEhOoP3LnElZ4z9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=feWXWjPK; arc=none smtp.client-ip=91.218.175.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7i1dM2foQbkZAjFiDbmp+8U3Vq2vfsG4lMS6NV32Xisv3a7y6MfDlaR3s7mfUMDrx9SdCXnFeQREGDy5tTOwgd9aoCFDsdfdvWxhr5rNDq/uhAi1r6zH10fXzLTkuBe/VpQK9V8ShSqN6TJRXEKIjYIdY/l1tekIVshSYnQhok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qBn8YPc+; arc=none smtp.client-ip=95.215.58.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: boqun.feng@gmail.com
+X-Envelope-To: miguel.ojeda.sandonis@gmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718551409;
+	t=1718551960;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+Y0ywigxrcxoZLMnkkInJwDOVqW5TO6Aw/Ls7GsS5vA=;
-	b=feWXWjPKXXY7VhKtIp2DrasCgMafipVFZJqsNNTR46i50F7JtgPaTyHGZrVzvKgTPXfIop
-	WWU8jryipa3fHFey+xiAVr+eIxX5lyPSUIT/Q0P7ZxQlWEfNatfhz+vepE0+dVYnnvuUCE
-	RgLLOMq/CTSyPIrdJhB58exbhTZzXR8=
+	bh=Ll3O6qu97KkSvJ8QsIboEEwbJeNhMP7fi32IUtBVHiY=;
+	b=qBn8YPc+8gQTTCTfPXn+NLJvV06FoUZnxL+APcrxgFz5+PzSDPSNhQkvPgIsKFKBAAxV5y
+	IqmuqOnexSMZcJv8PwWThkCw1vwq+jLy036imkGm7Pzqg8G2mCpi6X57Pu7fej5bDhBlZB
+	7KGUEI96BBwvYI1vHLIU+NljWMkMbwM=
+X-Envelope-To: boqun.feng@gmail.com
 X-Envelope-To: benno.lossin@proton.me
-X-Envelope-To: miguel.ojeda.sandonis@gmail.com
 X-Envelope-To: gary@garyguo.net
 X-Envelope-To: rust-for-linux@vger.kernel.org
 X-Envelope-To: linux-kernel@vger.kernel.org
@@ -84,12 +85,12 @@ X-Envelope-To: linux-arm-kernel@lists.infradead.org
 X-Envelope-To: linux-fsdevel@vger.kernel.org
 X-Envelope-To: tmgross@umich.edu
 X-Envelope-To: dakr@redhat.com
-Date: Sun, 16 Jun 2024 11:23:20 -0400
+Date: Sun, 16 Jun 2024 11:32:31 -0400
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, 
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
 	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
@@ -109,9 +110,8 @@ Cc: Benno Lossin <benno.lossin@proton.me>,
 	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, 
 	dakr@redhat.com
 Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <zq5p4o6j4avgncfacqrz6naaw7yqk4e5fbmwz547ge7xi52vmq@zjk3ncmsdrkk>
-References: <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
- <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
+Message-ID: <4pez6kilgykarr5qeutgaw3pvkxf2nmh4lzuftadshmkke7d3q@3jfgvjveqdbz>
+References: <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
  <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
  <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home>
  <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me>
@@ -120,54 +120,70 @@ References: <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
  <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
  <5lwylk6fhlvqfgxmt7xdoxdrhtvmplo5kazpdbt3kxpnlltxit@v5xbpiv3dnqq>
  <Zm7zvt7cNT2YpiIi@Boquns-Mac-mini.home>
+ <CANiq72mz=OzzHJJyOPeWcxEtppP+v0KUq63_u5NB7-R84avaPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zm7zvt7cNT2YpiIi@Boquns-Mac-mini.home>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72mz=OzzHJJyOPeWcxEtppP+v0KUq63_u5NB7-R84avaPg@mail.gmail.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Sun, Jun 16, 2024 at 07:16:30AM -0700, Boqun Feng wrote:
-> On Sun, Jun 16, 2024 at 05:51:07AM -0400, Kent Overstreet wrote:
-> > On Sat, Jun 15, 2024 at 03:12:33PM -0700, Boqun Feng wrote:
-> > > What's the issue of having AtomicI32 and AtomicI64 first then? We don't
-> > > need to do 1 or 2 until the real users show up.
-> > > 
-> > > And I'd like also to point out that there are a few more trait bound
-> > > designs needed for Atomic<T>, for example, Atomic<u32> and Atomic<i32>
-> > > have different sets of API (no inc_unless_negative() for u32).
-> > > 
-> > > Don't make me wrong, I have no doubt we can handle this in the type
-> > > system, but given the design work need, won't it make sense that we take
-> > > baby steps on this? We can first introduce AtomicI32 and AtomicI64 which
-> > > already have real users, and then if there are some values of generic
-> > > atomics, we introduce them and have proper discussion on design.
-> > > 
-> > > To me, it's perfectly fine that Atomic{I32,I64} co-exist with Atomic<T>.
-> > > What's the downside? A bit specific example would help me understand
-> > > the real concern here.
-> > 
-> > Err, what?
-> > 
-> > Of course we want generic atomics, and we need that for properly
-> > supporting cmpxchg.
-> > 
+On Sun, Jun 16, 2024 at 05:14:56PM +0200, Miguel Ojeda wrote:
+> On Sun, Jun 16, 2024 at 4:16 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Hmm? Have you seen the email I replied to John, a broader Rust community
+> > seems doesn't appreciate the idea of generic atomics.
 > 
-> Nope. Note this series only introduces the atomic types (atomic_ C
-> APIs), but cmpxchg C APIs (no atomic_ prefix) are probably presented via
-> a different API, where we need to make it easier to interact with normal
-> types, and we may use generic there.
+> I don't think we can easily draw that conclusion from those download
+> numbers / dependent crates.
 > 
-> > Bogun, you've got all the rust guys pushing for doing this with
-> > generics, I'm not sure why you're being stubborn here?
+> portable-atomic may be more popular simply because it provides
+> features for platforms the standard library does not. The interface
+> being generic or not may have nothing to do with it. Or perhaps
+> because it has a 1.x version, while the other doesn't, etc.
 > 
-> Hmm? Have you seen the email I replied to John, a broader Rust community
-> seems doesn't appreciate the idea of generic atomics.
+> In fact, the atomic crate is essentially about providing `Atomic<T>`,
+> so one could argue that all those downloads are precisely from people
+> that want a generic atomic.
+> 
+> Moreover, I noticed portable-atomic's issue #1 in GitHub is,
+> precisely, adding `Atomic<T>` support. The maintainer has a PR for
+> that updated over time, most recently a few hours ago.
+> 
+> There is also `AtomicCell<T>` from crossbeam, which is the first
+> feature listed in its docs.
+> 
+> Anyway...
+> 
+> The way I see it, both approaches seem similar (i.e. for what we are
+> going to use them for today, at least) and neither apparently has a
+> major downside today for those use cases (apart from needed refactors
+> later to go to another approach).
+> 
+> (By the "generic approach", by the way, I mean just providing
+> `Atomic<{i32,i64}>`, not a complex design)
+> 
+> So it is up to you on what you send for the non-RFC patches, of
+> course, and if nobody has the time / wants to do the work for the
+> "simple" generic approach, then we can just go ahead with this for the
+> moment. But I think it would be nice to at least consider the "simple"
+> generic approach to see how much worse it would be.
+> 
+> Other bits to consider, that perhaps give you arguments for one or the
+> other: consequences on the compilation time, on inlining, on the error
+> messages for new users, on the generated documentation, on how easy to
+> grep they are, etc.
 
-Apologies, I appear to have gotten things backwards in my pre-coffee
-reading, I'll have to catch up on the whole thread :)
+Yeah, rereading the thread - I'm with Miguel and Gary.
+
+Generics are simply the correct way to do it, if the wider rust
+community didn't do it that way I think that can be chalked up more to
+historical baggage or needlessly copying the base integer type scheme.
+
+Let's please do it right here, and generics are the correct approach.
 
