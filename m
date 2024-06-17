@@ -1,89 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-21810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD30E90A9A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 11:34:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333A190AA20
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 11:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3330428A69E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:34:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F3D3B3210C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554FA193094;
-	Mon, 17 Jun 2024 09:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4FE19307B;
+	Mon, 17 Jun 2024 09:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1F1UKsM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e0eoA3Rw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="60VR4dPt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e0eoA3Rw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="60VR4dPt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75972190053
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 09:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5022F190673;
+	Mon, 17 Jun 2024 09:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616861; cv=none; b=qPJ4UG+5u13uPPo2u9zwnPEC2DWgVQXjB+TV3oUBqlbJWs5YWyRRl7WBZkgSAlJnKKEaVU8OFKhsl2G6r6LbxlpnzZN2Iy8mPFcbVgNJBxm62rfjKrMUZI49mjslTjSE+T/CeIcMoQGxfpufR4zcgsJUfAYIW44Ma698N/oph9Q=
+	t=1718617070; cv=none; b=Ret+ZKYY3TbGmXpD59WqRmKh5AfLjYYkMvqGsHrrt9y6nIGN+lCpPBYjL8C/VZGmEjMFInjoyJo+EiCasl/Tgffn8nEA6Nc0VBTrxLE0Xw0Bg4SM/zVKu04eveDrwAoYhtQEMHAj5Rr4tCgPK6CAyyKNGF5UfQ/pOiBL496iud0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616861; c=relaxed/simple;
-	bh=GhvOab+mCRok04/yA9hiMIiPytkHb/9U93weDvXdevw=;
+	s=arc-20240116; t=1718617070; c=relaxed/simple;
+	bh=6GJI8RyV4Rxgbr0HGunZUiPB2c9B8M95YOgm2k5GYIA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbAVWYProFXrwnIQdL0FfHeIO1LCAju7ZYeaSJr0k7tqc1+LGyd+XPG2BylA8loEIJcZ+RQ0FXM3sPQqVcQPf3VFGk+Isx04p+5XNPGrT4kXBDSKQMdP2wAEeHAOdT9HPm4bhwnpbezlDPM7B3XLx0gTDPdUfUyN/97gKhg7pZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1F1UKsM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718616858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uy12kYpESvpLidfbm0vQYkScPK9OeI1PWfb5OaMGEjzWiSHVImPeZ3KKwtZ788jI/sDN4rnhbuPADWrO6kG9y+joKQrh6ys56F2hXxPwxzTUCUVNQIynvit2mo1Yqika7kCtOUk71uM0G39TL3RDZpVzeghElTdEUb+473Pc20U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e0eoA3Rw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=60VR4dPt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e0eoA3Rw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=60VR4dPt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1C3045FE13;
+	Mon, 17 Jun 2024 09:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718617066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=roSRF/l+UjSsOxWpFV+d4iz/3ho6cXj+v4kuJWoKNWI=;
-	b=S1F1UKsMK3HlJdOWNiR55dVAIMWY1upY3p75PJz+3WHTGHizNN+HQZhWGTOzHCCrCw3aZd
-	sfXKmn9XMUuZBRUBu0mPo38J0/vxB9kyB9jFjnW8FBU4NgEuNpaiy2nnm1EEzC7hn/3nSJ
-	gSYZpBCtPdtjwjjvoVx6vjTQmsQo4Fs=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-657-YdPUCPhZMyekY17R9hO_cA-1; Mon, 17 Jun 2024 05:34:17 -0400
-X-MC-Unique: YdPUCPhZMyekY17R9hO_cA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42183fdd668so25665985e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 02:34:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718616856; x=1719221656;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=roSRF/l+UjSsOxWpFV+d4iz/3ho6cXj+v4kuJWoKNWI=;
-        b=OS+yxWyrRXWgZrbv2RnQ7+4DbGqqWyGJSSGqSlII1JyE2tG5xlu547EZjBOChRmWVT
-         Q8Iutg8hoOeZSL88A7PTd2/ixo2K/bYy8MzcS9gAckbygejSHOu6XMzg5F+HmPc7RvTh
-         4te59T0J+h5FzctiH8yrepzzeBvl/nc7oG/YAq4Pp5cY2iIfUsi45jb680iiRGUn/dP6
-         GBVDcTDYX/wG4sLtCmkPKrhC7MSdzMEAUNyJgx6HQFSdGnjTTdugsBo893JU+tZ1u4aH
-         /8iiqN+Ci92KPd505R8D8HZ4ZwiPe9cneMNSei10Bbpp6S/erkg1sVGDgYLftDaNpWbu
-         1WZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiDI7jNd9nKeOFQsiOz2htdhW9y7+7tVAIuoxucxipPmf7NbtjB+UnceSJULcqsu327aCcjLE/e+qkBCRF8bLiZtaYYGovx0lM9fK8RA==
-X-Gm-Message-State: AOJu0YyzC4WEvPOruOr3fZFizqVreJh7zaClb8s89WQ4vd6kGJF1KZGP
-	pYBR+UMhi/fsir94KT4xKFsAac69GERRe91H6a3yuYi/NrkpCRzuIDQPE8egkLf0aW23flJbU+0
-	hmC9MX8cJsveSWtVy1yaZv808Uz07gplhUDM4vu58Nl9TwBvv6o6p0AFQz9XcpQ==
-X-Received: by 2002:a05:600c:4b23:b0:422:47a:15c8 with SMTP id 5b1f17b1804b1-42304820d71mr75071035e9.12.1718616855764;
-        Mon, 17 Jun 2024 02:34:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1T8BzPKLN6V32qh0IOTwR3BvWw2RR4kRiN/3ni0sUSBYk+kKMtHY4PTXjTwDBDi9nWAHssQ==
-X-Received: by 2002:a05:600c:4b23:b0:422:47a:15c8 with SMTP id 5b1f17b1804b1-42304820d71mr75070745e9.12.1718616855122;
-        Mon, 17 Jun 2024 02:34:15 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4246bddc59bsm17147185e9.5.2024.06.17.02.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:34:14 -0700 (PDT)
-Date: Mon, 17 Jun 2024 11:34:13 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>, 
-	xfs <linux-xfs@vger.kernel.org>, Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, 
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	fsverity@lists.linux.dev, Eric Sandeen <sandeen@redhat.com>, 
-	Shirley Ma <shirley.ma@oracle.com>
-Subject: Re: Handing xfs fsverity development back to you
-Message-ID: <vg3n7rusjj2cnkdfm45bnsgf4jacts5elc2umbyxcfhcatmtvc@z7u64a5n4wc6>
-References: <20240612190644.GA3271526@frogsfrogsfrogs>
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=e0eoA3RwXAUApO9OKFPUvDLR7Su4DXfOVMavcXGgWD2mB625CNUBJPgxynUWq0RXpTy8U1
+	dNsdSNXz/cOIs0WeOmwg1BkKaXMXVSMq6zA50xqDvsb5sW1PN5LCTejML6iMlLLvh9ChwR
+	vRsoNbrAf5iy8S1rJq8pbDgMGE3USQs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718617066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=60VR4dPt9IjY7qkDextIsvc8s7WdXcsVzYK2nbo624/PVrX35T0zYvjSGzWKaS1ETvUHRr
+	KnV99vuMnASrOjDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=e0eoA3Rw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=60VR4dPt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718617066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=e0eoA3RwXAUApO9OKFPUvDLR7Su4DXfOVMavcXGgWD2mB625CNUBJPgxynUWq0RXpTy8U1
+	dNsdSNXz/cOIs0WeOmwg1BkKaXMXVSMq6zA50xqDvsb5sW1PN5LCTejML6iMlLLvh9ChwR
+	vRsoNbrAf5iy8S1rJq8pbDgMGE3USQs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718617066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=60VR4dPt9IjY7qkDextIsvc8s7WdXcsVzYK2nbo624/PVrX35T0zYvjSGzWKaS1ETvUHRr
+	KnV99vuMnASrOjDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E24913AAA;
+	Mon, 17 Jun 2024 09:37:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lkRuA+oDcGYgeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 17 Jun 2024 09:37:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A9A78A0886; Mon, 17 Jun 2024 11:37:45 +0200 (CEST)
+Date: Mon, 17 Jun 2024 11:37:45 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: NeilBrown <neilb@suse.de>, Amir Goldstein <amir73il@gmail.com>,
+	James Clark <james.clark@arm.com>, ltp@lists.linux.it,
+	linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+Message-ID: <20240617093745.nhnc7e7efdldnjzl@quack3>
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,79 +108,138 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612190644.GA3271526@frogsfrogsfrogs>
+In-Reply-To: <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,gmail.com,arm.com,lists.linux.it,vger.kernel.org,zeniv.linux.org.uk,suse.cz];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 1C3045FE13
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On 2024-06-12 12:06:44, Darrick J. Wong wrote:
-> Hi Andrey,
+On Sat 15-06-24 07:35:42, Christian Brauner wrote:
+> On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
+> > When a file is opened and created with open(..., O_CREAT) we get
+> > both the CREATE and OPEN fsnotify events and would expect them in that
+> > order.   For most filesystems we get them in that order because
+> > open_last_lookups() calls fsnofify_create() and then do_open() (from
+> > path_openat()) calls vfs_open()->do_dentry_open() which calls
+> > fsnotify_open().
+> > 
+> > [...]
 > 
-> Yesterday during office hours I mentioned that I was going to hand the
-> xfs fsverity patchset back to you once I managed to get a clean fstests
-> run on my 6.10 tree.  I've finally gotten there, so I'm ready to
-> transfer control of this series back to you:
+> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> Patches in the vfs.fixes branch should appear in linux-next soon.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity_2024-06-12
-> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=fsverity_2024-06-12
-> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity_2024-06-12
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
 > 
-> At this point, we have a mostly working implementation of fsverity
-> that's still based on your original design of stuffing merkle data into
-> special ATTR_VERITY extended attributes, and a lightweight buffer cache
-> for merkle data that can track verified status.  No contiguously
-> allocated bitmap required, etc.  At this point I've done all the design
-> and coding work that I care to do, EXCEPT:
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
 > 
-> Unfortunately, the v5.6 review produced a major design question that has
-> not been resolved, and that is the question of where to store the ondisk
-> merkle data.  Someone (was it hch?) pointed out that if xfs were to
-> store that fsverity data in some post-eof range of the file (ala
-> ext4/f2fs) then the xfs fsverity port wouldn't need the large number of
-> updates to fs/verity; and that a future xfs port to fscrypt could take
-> advantage of the encryption without needing to figure out how to encrypt
-> the verity xattrs.
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
 > 
-> On the other side of the fence, I'm guessing you and Dave are much more
-> in favor of the xattr method since that was (and still is) the original
-> design of the ondisk metadata.  I could be misremembering this, but I
-> think willy isn't a fan of the post-eof pagecache use either.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.fixes
 > 
-> I don't have the expertise to make this decision because I don't know
-> enough (or anything) about cryptography to know just how difficult it
-> actually would be to get fscrypt to encrypt merkle tree data that's not
-> simply located in the posteof range of a file.  I'm aware that btrfs
-> uses the pagecache for caching merkle data but stores that data
-> elsewhere, and that they are contemplating an fscrypt implementation,
-> which is why Sweet Tea is on the cc list.  Any thoughts?
-> 
-> (This is totally separate from fscrypt'ing regular xattrs.)
-> 
-> If it's easy to adapt fscrypt to encrypt fsverity data stored in xattrs
-> then I think we can keep the current design of the patchset and try to
-> merge it for 6.11.  If not, then I think the rest of you need to think
-> hard about the tradeoffs and make a decision.  Either way, the depth of
-> my knowledge about this decision is limited to thinking that I have a
-> good enough idea about whom to cc.
-> 
-> Other notes about the branches I linked to:
-> 
-> I think it's safe to skip all the patches that mention disabling
-> fsverity because that's likely DOA anyway.
-> 
-> Christoph also has a patch to convert the other fsverity implementations
-> (btrfs/ext4/f2fs) to use the read/drop_merkle_tree_block interfaces:
-> https://lore.kernel.org/linux-xfs/ZjMZnxgFZ_X6c9aB@infradead.org/
-> 
-> I'm not sure if it actually handles PageChecked for the case that the
-> merkle tree block size != base page size.
-> 
-> If you prefer I can patchbomb the list with this v5.7 series.
-> 
-> --Darrick
-> 
+> [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+>       https://git.kernel.org/vfs/vfs/c/7536b2f06724
 
-Thanks, I will look into fscrypt and if it's feasible to make it
-work with xattrs in XFS or not.
+I have reviewed the patch you've committed since I wasn't quite sure which
+changes you're going to apply after your discussion with Amir. And I have
+two comments:
 
+@@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+  */
+ int vfs_open(const struct path *path, struct file *file)
+ {
++	int ret;
++
+ 	file->f_path = *path;
+-	return do_dentry_open(file, NULL);
++	ret = do_dentry_open(file, NULL);
++	if (!ret)
++		/*
++		 * Once we return a file with FMODE_OPENED, __fput() will call
++		 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
++		 */
++		fsnotify_open(file);
++	return ret;
+ }
+
+AFAICT this will have a side-effect that now fsnotify_open() will be
+generated even for O_PATH open. It is true that fsnotify_close() is getting
+generated for them already and we should strive for symmetry. Conceptually
+it doesn't make sense to me to generate fsnotify events for O_PATH
+opens/closes but maybe I miss something. Amir, any opinion here?
+
+@@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+ 	int acc_mode;
+ 	int error;
+ 
++	if (file->f_mode & FMODE_OPENED)
++		fsnotify_open(file);
++
+ 	if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+ 		error = complete_walk(nd);
+ 		if (error)
+
+Frankly, this works but looks as an odd place to put this notification to.
+Why not just placing it just next to where fsnotify_create() is generated
+in open_last_lookups()? Like:
+
+        if (open_flag & O_CREAT)
+                inode_lock(dir->d_inode);
+        else
+                inode_lock_shared(dir->d_inode);
+        dentry = lookup_open(nd, file, op, got_write);
+-	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+-		fsnotify_create(dir->d_inode, dentry);
++	if (!IS_ERR(dentry)) {
++		if (file->f_mode & FMODE_CREATED)
++	                fsnotify_create(dir->d_inode, dentry);
++		if (file->f_mode & FMODE_OPENED)
++			fsnotify_open(file);
++	}
+        if (open_flag & O_CREAT)
+                inode_unlock(dir->d_inode);
+        else
+                inode_unlock_shared(dir->d_inode);
+
+That looks like a place where it is much more obvious this is for
+atomic_open() handling? Now I admit I'm not really closely familiar with
+the atomic_open() paths so maybe I miss something and do_open() is better.
+
+								Honza
 -- 
-- Andrey
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
