@@ -1,234 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-21839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E762A90B78D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 19:12:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CB490B7D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 19:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664FC1F22CD3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 17:12:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34976284E88
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 17:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B1E16A94E;
-	Mon, 17 Jun 2024 17:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E50516D4EB;
+	Mon, 17 Jun 2024 17:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GumAcy6E"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ewGtm58f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D164E16A93C;
-	Mon, 17 Jun 2024 17:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD8516CD3F;
+	Mon, 17 Jun 2024 17:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718644354; cv=none; b=mAlQSRUVQCrBUMO3XqryJO0rjFGNW11tuFE2T0az6x6GBZ/Yg37A+vGCfziKzxLuMMrH3jWlkP2ft65xu/Bcpq2zrtwAgX1uEGA+crPKgRemPmPNWRZy6EdvkhrfJTrJlk+ficutHRDy5LlIriLYgZHiqWrtnFcoTO3VuzzBKLM=
+	t=1718644941; cv=none; b=j/fJiSqPlUS3evWMYQc/4xxTYmKPgLgibf/q39ZBkgZ85HaJswyPkksaVAD5Htkx84bk1mOdocg9bVcZ1GjaGOVTRS0pP3Unx0iSzfo07jRjuPH5gHRBpAxl3OXa2KwFCucfxYuBhsD65nPKQS2+3xXqfoHrrXtvW8cjUo9NlhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718644354; c=relaxed/simple;
-	bh=ISxkW9K320Bmd5RQDq2ZbzfdwhVCbKLmvhyYXjmlSCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mmuAGygfeltBK1pn0mkC2JK4W7S7C5uAOkmi/AabAPCoYUh0I+93v6oHkve4KvOlCzDEwTLjq7LTMv6uo6kV+8YZMyojvpoIKYO3jZBF34HnswFawGTA9LGvJDo5rKJal4Y98HoyIeuGRwzuUccUGcnrJxAJfHtWyfL5U9XeqlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GumAcy6E; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b065d12dc6so24266096d6.0;
-        Mon, 17 Jun 2024 10:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718644352; x=1719249152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L8Y4dIpWWIt1HFS2GNCWadogAx3UU4JsBC/chYCx394=;
-        b=GumAcy6EWHdHXTqJPZOoE3B6pgc/vDKL1wl3ETOntlxohzGrniCkh1tiQhTPfImK/d
-         pRliekaM/MSWrlVj2rJhQZkITJH11H3H19h3y03KjewzCx9ZB6ZiA7gzhTIIc8Yav1co
-         UDAvyI2BE6drReK9VtbyDB5zrHkHALCquDABeXwZbH5nFhrsxfUE3eCmSMPqd2OIcXPo
-         Oar2TH9q3QuvrxWKP6P3LfXimqVSO0xdb5Ng0ntvYr93pC1tdIB66USD7R1wkv/Amvx2
-         zXixo7f9PmP6EYWbV7LYq+BEY/o485Zn5+FnSRq7G4wZ6ww2S80Y+Z4UmWHai1WVoFn3
-         UvWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718644352; x=1719249152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L8Y4dIpWWIt1HFS2GNCWadogAx3UU4JsBC/chYCx394=;
-        b=LqN7kNTp4lU/KJGhKPbw9EpvW0oc5DUtulgWZNohc8UnxHNtJeIPZ+XK8Gx25LhlTt
-         NwJmeAPEpXszbJsjLjt+vQW4/jX/kpavdY3by0eSEXDqpZCqK7BesHHtNPhJsPMibrWC
-         lBPnkXi+/C+wuvphtMxb2FQkinGp1OrmA4swfAsxTPBSAQt5cIv5pVjjNPIEIs8bd5nZ
-         AsWDwjHfmD0tOsJsjdXVKb6cDEpLi8qbAh73nReSF/DNarSmOutIAfR7PPnuwkopYW1X
-         pTBsFTu0pWyyPFv6YZDXwhtFcho5cciaX/xgoDiCaIFKXSWUFxrasWTK0HoTuo44shRr
-         uswg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/oacKti987OSQ5p05S6DQ42bSvNeHzvLI0NdPSYLpRVXmq1tgwjkzH5V+Vuz4H4/LV4BgTcsev46BuoVYxEc2ZKbl5SFHVcmlD5bZ/WzhoAUVJEZplAFIH6IUJuhhivxzCpjE40ytdA==
-X-Gm-Message-State: AOJu0Yw1vjDIti4Q5SuFuqqHkF95WQCu3L+/d9QiH6dVZvQc+Sqh3YL6
-	2tSyJbi3VnkfPUGXLavQwmK10NICECOO3zCEGVMEOBbWlZz4iulcCQkWIFkSOX0oCbFEbiCVGhi
-	HKlyMrlbigEStCuFClMd+WxpoSds=
-X-Google-Smtp-Source: AGHT+IHAP4gy8lnROASB8oUCFBeFNwK9k1Y9Fg4moSWCdTK/kmcqlQoziT3/xJr7TMRegSRGJNJddUNJ3mRnbsMVkrA=
-X-Received: by 2002:a0c:ef0a:0:b0:6b2:cefe:6c79 with SMTP id
- 6a1803df08f44-6b2cefe6ce9mr50141586d6.9.1718644351581; Mon, 17 Jun 2024
- 10:12:31 -0700 (PDT)
+	s=arc-20240116; t=1718644941; c=relaxed/simple;
+	bh=zptzhIEUP8jnYvt0dNb3Qykrja0JIEF/vS5PqxZQQHo=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=nR0ipdRlPuwbnerFnB7CeCVhXd1NCoVHPMkUGDFEIyuK8l1+tTeYF0z9RvtRjV6V8nJ+N2lpu/bqqwY2QQ1r57cd7dmbJeGyfHJsZUVCb+tv6PwZb8ahPt/8ER5oxhBSmk+3ryGxD1yiL9sy8ysFgELxqJ8U1HaZzlA5/+ZZ+7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ewGtm58f; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718644939; x=1750180939;
+  h=message-id:date:mime-version:subject:references:from:to:
+   cc:in-reply-to:content-transfer-encoding;
+  bh=zptzhIEUP8jnYvt0dNb3Qykrja0JIEF/vS5PqxZQQHo=;
+  b=ewGtm58fd8ggF2MiUWvjTUQnZot1Pqc+seohP2/4KTt19vyp1crwuyd2
+   7X88ch3YcAO2pQoAU3+MjdB7S3nieMku8mPWUYoCI1n/s1ANKXtaZ1GD9
+   jO8xs60RtU6r6hHCvFTGQHgXXbnwJrqZQ75jxRiSlzNvJAjsGU1rOr2Ue
+   hl7B+F5sf/e+SoCXN2rjvCTEAjGJdP/8b6oHMocH7AsK9maXwmWezliOF
+   ZP3X502iFoUyvvC753wFHguVOzyLwL2Rd51qoxL9IFMu2Nt4wKnr9sqMB
+   7JHht1O/thhZihm1193rmoVGK4IfMbq84/SWmjQtoGjjPmizRkSw977eI
+   g==;
+X-CSE-ConnectionGUID: OqW5+oJEQieEl9SO8sZSpA==
+X-CSE-MsgGUID: 3dwz1wpZTw+U/CJUl+IaCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15608879"
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="15608879"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:22:19 -0700
+X-CSE-ConnectionGUID: fT/NIVfcRne7nSd02QR49Q==
+X-CSE-MsgGUID: Aehq75JrQN2Ks/LW7Ia31g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="41192247"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.224.103]) ([10.124.224.103])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:22:16 -0700
+Message-ID: <c96d2f39-fa90-41da-985c-116cf4cc967a@intel.com>
+Date: Tue, 18 Jun 2024 01:22:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617161828.6718-1-jack@suse.cz> <20240617162303.1596-2-jack@suse.cz>
-In-Reply-To: <20240617162303.1596-2-jack@suse.cz>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 17 Jun 2024 20:12:19 +0300
-Message-ID: <CAOQ4uxh2WrSGjBNNTaY4Eew3cX6iPrAT9TnpqtQFccS_omNqzg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: generate FS_CREATE before FS_OPEN when
- ->atomic_open used.
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	James Clark <james.clark@arm.com>, linux-nfs@vger.kernel.org, NeilBrown <neilb@suse.de>, 
-	Al Viro <viro@zeniv.linux.org.uk>, ltp@lists.linux.it
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
+ put_unused_fd()
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240614163416.728752-4-yu.ma@intel.com>
+ <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+ <e316cbe9-0e66-414f-8948-ba3b56187a98@intel.com>
+ <suehfaqsibehz3vws6oourswenaz7bbbn75a7joi5cxi6komyk@3fxp7v3bg5qk>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tim.c.chen@linux.intel.com, tim.c.chen@intel.com, pan.deng@intel.com,
+ tianyou.li@intel.com, yu.ma@intel.com
+In-Reply-To: <suehfaqsibehz3vws6oourswenaz7bbbn75a7joi5cxi6komyk@3fxp7v3bg5qk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 7:23=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> From: NeilBrown <neilb@suse.de>
->
-> When a file is opened and created with open(..., O_CREAT) we get
-> both the CREATE and OPEN fsnotify events and would expect them in that
-> order.   For most filesystems we get them in that order because
-> open_last_lookups() calls fsnofify_create() and then do_open() (from
-> path_openat()) calls vfs_open()->do_dentry_open() which calls
-> fsnotify_open().
->
-> However when ->atomic_open is used, the
->    do_dentry_open() -> fsnotify_open()
-> call happens from finish_open() which is called from the ->atomic_open
-> handler in lookup_open() which is called *before* open_last_lookups()
-> calls fsnotify_create.  So we get the "open" notification before
-> "create" - which is backwards.  ltp testcase inotify02 tests this and
-> reports the inconsistency.
->
-> This patch lifts the fsnotify_open() call out of do_dentry_open() and
-> places it higher up the call stack.  There are three callers of
-> do_dentry_open().
->
-> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
-> directly in that caller so there should be no behavioural change.
->
-> For finish_open() there are two cases:
->  - finish_open is used in ->atomic_open handlers.  For these we add a
->    call to fsnotify_open() at open_last_lookups() if FMODE_OPENED is
->    set - which means do_dentry_open() has been called.
->  - finish_open is used in ->tmpfile() handlers.  For these a similar
->    call to fsnotify_open() is added to vfs_tmpfile()
->
-> With this patch NFSv3 is restored to its previous behaviour (before
-> ->atomic_open support was added) of generating CREATE notifications
-> before OPEN, and NFSv4 now has that same correct ordering that is has
-> not had before.  I haven't tested other filesystems.
->
-> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC co=
-rrectly.")
-> Reported-by: James Clark <james.clark@arm.com>
-> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@=
-arm.com
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> Link: https://lore.kernel.org/r/171817619547.14261.975798725161704336@nob=
-le.neil.brown.name
-> Fixes: 7b8c9d7bb457 ("fsnotify: move fsnotify_open() hook into do_dentry_=
-open()")
-> Tested-by: James Clark <james.clark@arm.com>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Jan Kara <jack@suse.cz>
 
-Looks good.
+On 6/17/2024 7:23 PM, Mateusz Guzik wrote:
+> On Sun, Jun 16, 2024 at 11:47:40AM +0800, Ma, Yu wrote:
+>> On 6/15/2024 12:41 PM, Mateusz Guzik wrote:
+>>> So you are moving this to another locked area, but one which does not
+>>> execute in the benchmark?
+>> The consideration here as mentioned is to reduce the performance impact (if
+>> to reserve the sanity check, and have the same functionality) by moving it
+>> from critical path to non-critical, as put_unused_fd() is mostly used for
+>> error handling when fd is allocated successfully but struct file failed to
+>> obtained in the next step.
+>>
+> As mentioned by Christian in his mail this check can just be removed.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Yes, that's great, I'll update in v2
 
-> ---
->  fs/namei.c | 10 ++++++++--
->  fs/open.c  | 22 +++++++++++++++-------
->  2 files changed, 23 insertions(+), 9 deletions(-)
 >
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 37fb0a8aa09a..1e05a0f3f04d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3572,8 +3572,12 @@ static const char *open_last_lookups(struct nameid=
-ata *nd,
->         else
->                 inode_lock_shared(dir->d_inode);
->         dentry =3D lookup_open(nd, file, op, got_write);
-> -       if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
-> -               fsnotify_create(dir->d_inode, dentry);
-> +       if (!IS_ERR(dentry)) {
-> +               if (file->f_mode & FMODE_CREATED)
-> +                       fsnotify_create(dir->d_inode, dentry);
-> +               if (file->f_mode & FMODE_OPENED)
-> +                       fsnotify_open(file);
-> +       }
->         if (open_flag & O_CREAT)
->                 inode_unlock(dir->d_inode);
->         else
-> @@ -3700,6 +3704,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
->         mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
->         error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
->         dput(child);
-> +       if (file->f_mode & FMODE_OPENED)
-> +               fsnotify_open(file);
->         if (error)
->                 return error;
->         /* Don't check for other permissions, the inode was just created =
-*/
-> diff --git a/fs/open.c b/fs/open.c
-> index 89cafb572061..f1607729acb9 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
->                 }
->         }
+>>          error = -EMFILE;
+>>          if (fd < fdt->max_fds) {
+> I would likely() on it.
+
+That's better :)
+
 >
-> -       /*
-> -        * Once we return a file with FMODE_OPENED, __fput() will call
-> -        * fsnotify_close(), so we need fsnotify_open() here for symmetry=
-.
-> -        */
-> -       fsnotify_open(f);
->         return 0;
+>>                  if (~fdt->open_fds[0]) {
+>>                          fd = find_next_zero_bit(fdt->open_fds,
+>> BITS_PER_LONG, fd);
+>>                          goto fastreturn;
+>>                  }
+>>                  fd = find_next_fd(fdt, fd);
+>>          }
+>>
+>>          if (unlikely(fd >= fdt->max_fds)) {
+>>                  error = expand_files(files, fd);
+>>                  if (error < 0)
+>>                          goto out;
+>>                  if (error)
+>>                          goto repeat;
+>>          }
+>> fastreturn:
+>>          if (unlikely(fd >= end))
+>>                  goto out;
+>>          if (start <= files->next_fd)
+>>                  files->next_fd = fd + 1;
+>>
+>>         ....
+>>
+> This is not a review, but it does read fine.
 >
->  cleanup_all:
-> @@ -1085,8 +1080,19 @@ EXPORT_SYMBOL(file_path);
->   */
->  int vfs_open(const struct path *path, struct file *file)
->  {
-> +       int ret;
-> +
->         file->f_path =3D *path;
-> -       return do_dentry_open(file, NULL);
-> +       ret =3D do_dentry_open(file, NULL);
-> +       if (!ret) {
-> +               /*
-> +                * Once we return a file with FMODE_OPENED, __fput() will=
- call
-> +                * fsnotify_close(), so we need fsnotify_open() here for
-> +                * symmetry.
-> +                */
-> +               fsnotify_open(file);
-> +       }
-> +       return ret;
->  }
+> LTP (https://github.com/linux-test-project/ltp.git) has a bunch of fd
+> tests, I would make sure they still pass before posting a v2.
+Got it, thanks for the kind reminder.
 >
->  struct file *dentry_open(const struct path *path, int flags,
-> @@ -1177,8 +1183,10 @@ struct file *kernel_file_open(const struct path *p=
-ath, int flags,
->         error =3D do_dentry_open(f, NULL);
->         if (error) {
->                 fput(f);
-> -               f =3D ERR_PTR(error);
-> +               return ERR_PTR(error);
->         }
-> +
-> +       fsnotify_open(f);
->         return f;
->  }
->  EXPORT_SYMBOL_GPL(kernel_file_open);
-> --
-> 2.35.3
+> I would definitely try moving out the lock to its own cacheline --
+> currently it resides with the bitmaps (and first 4 fds of the embedded
+> array).
 >
+> I expect it to provide some win on top of the current patchset, but
+> whether it will be sufficient to justify it I have no idea.
+>
+> Something of this sort:
+> diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+> index 2944d4aa413b..423cb599268a 100644
+> --- a/include/linux/fdtable.h
+> +++ b/include/linux/fdtable.h
+> @@ -50,11 +50,11 @@ struct files_struct {
+>      * written part on a separate cache line in SMP
+>      */
+>          spinlock_t file_lock ____cacheline_aligned_in_smp;
+> -       unsigned int next_fd;
+> +       unsigned int next_fd ____cacheline_aligned_in_smp;
+>          unsigned long close_on_exec_init[1];
+>          unsigned long open_fds_init[1];
+>          unsigned long full_fds_bits_init[1];
+> -       struct file __rcu * fd_array[NR_OPEN_DEFAULT];
+> +       struct file __rcu * fd_array[NR_OPEN_DEFAULT] ____cacheline_aligned_in_smp;
+>   };
+>
+>   struct file_operations;
+>
+> (feel free to just take)
+
+Thanks Guzik for the thoughtful suggestions, seems we've ever tried to 
+separate file_lock and next_fd to different cachelines, but no obvious 
+improvement observed, we'll double check and verify these 2 tips to see 
+how it goes.
+
+>
+> All that said, I have to note blogbench has numerous bugs. For example
+> it collects stats by merely bumping a global variable (not even with
+> atomics), so some updates are straight up lost.
+>
+> To my understanding it was meant to test filesystems and I'm guessing
+> threading (instead of separate processes) was only used to make it
+> easier to share statistics. Given the current scales this
+> unintentionally transitioned into bottlenecking on the file_lock
+> instead.
+>
+> There were scalability changes made about 9 years ago and according to
+> git log they were benchmarked by Eric Dumazet, while benchmark code was
+> not shared. I suggest CC'ing the guy with your v2 and asking if he can
+> bench.  Even if he is no longer in position to do it perhaps he can rope
+> someone in (or even better share his benchmark).
+
+Good advice, we also noticed the problem for blogbench, and current data 
+in commits is collected based on revision to make sure the variables for 
+score statistic/reporting are safe, will submit patch to blogbench for 
+update. We'll copy Eric for more information on his benchmark and check 
+details if it is available.
+
 
