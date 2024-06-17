@@ -1,52 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-21799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA3C90A61B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 08:51:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5072B90A63E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 08:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8474B1F247C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 06:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1F61C26377
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 06:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA02418734A;
-	Mon, 17 Jun 2024 06:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D74187322;
+	Mon, 17 Jun 2024 06:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V/IEwK45"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6647E18628B;
-	Mon, 17 Jun 2024 06:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4711A19BC6;
+	Mon, 17 Jun 2024 06:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718607071; cv=none; b=F5DSccw7YPzSiqr8gAqBZ+izE1dvR2POUtUIRbdNH1Zc6Uj5ar9hlIELXwnSPxMT5EPp0W2lYsQdJnFdldmdDNR0D7UDrJDtJ0gK0oc68thjW6PvUTxfHsyp5lFYDt9ZmJWHx6Vw9dzOHhuKJaYLJrOJu+P4p3lI16qFBVL93Do=
+	t=1718607569; cv=none; b=d/FTh2F7Csl5hsud5KL12mgVHsgGHVrq42QhlN928DPpYFwwc2Pbl1IIGufEzkW+WHQjby2aTtm3yjJ8SJrUxjtRkstKe49u2KCLpdx2HifxPJzIAQlX84lCqbR2FDL9wXEYzfAxXScoNwDB943vRYM2dhiqwO7N5GbOfy8s3Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718607071; c=relaxed/simple;
-	bh=FMRBqddaOq7uQyN1fG8UkeseTiVxjGQallMuh56qp1g=;
+	s=arc-20240116; t=1718607569; c=relaxed/simple;
+	bh=olrwLSlxifw9+6rImO9yJABZFPb7HwWO627zpZFlwGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kq56pCbt+/Yg/v3S2LNYRlyHdVT1PJRnK1/b8dMvo4VF9QiraR9MSagz0wUwwiNn8hAOHxZO8sgk+7hutVYYy5Ma4QdwAqC0nXz938r5GusPo+Ssg9iQ1foQIuBbv4VPkXi+AFht8CdP6YA+3TyODAAdBUyA2gQgybdjOfaaVkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 91B8668B05; Mon, 17 Jun 2024 08:51:04 +0200 (CEST)
-Date: Mon, 17 Jun 2024 08:51:04 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	djwong@kernel.org, chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 11/11] xfs: enable block size larger than page size
- support
-Message-ID: <20240617065104.GA18547@lst.de>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com> <20240607145902.1137853-12-kernel@pankajraghav.com> <20240613084725.GC23371@lst.de> <Zm+RhjG6DUoat7lO@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnqOhArmIxFgGG7zX4qYkJNvPfzGSE+bOITtYc8KU+Ha7f+vlLB5f0X2UItFmAL26/Pzno423MCdQN0XAGrKVKzcAskmusKcguzMDdZIavkA+AIZ3Mv+0hCQwBCm0MwSjYhmauH785jY2ct+sNHbomhgzZe7c/+2bsjBiQWbVvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V/IEwK45; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NJyBy3EQeoN6bisU+MmbRSDktS2n66CGWu+GuFyxNmQ=; b=V/IEwK45sloXtbyf8pxMAGiHTW
+	92Y4uPTDjont6KxepX8+MaBC0reiI/ssyyDEIKBUXzxMNPvjNRX3Bjp31bKWIffc5FtoahbD9N8S8
+	QGZhoJW17nLu/DHhZp34BEzOdZMH2CVhwB+XoXRqlNHZ795+DCwzkra7YNbix3WnlRC+aRybODBiI
+	TeH2FCiInxVxljf3Dz/TKF4duPVMX/53eDJ2sX0asoEsqQTzhuq6BvEaPsP33Lmm1OElTVcJhoMcX
+	0/jJsLNBnn19NRMfSI9zdgSXTEoMJhxxcvRy7z+8s5CkV9ftRVnun6RpccLRJxQpAlGvGcvszYqqq
+	hjk05J7Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJ6Ks-00000009W5G-2c5l;
+	Mon, 17 Jun 2024 06:59:26 +0000
+Date: Sun, 16 Jun 2024 23:59:26 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com,
+	John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big
+ realtime inode
+Message-ID: <Zm_ezp1TaIoAK1-P@infradead.org>
+References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
+ <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
+ <ZmveZolfY0Q0--1k@infradead.org>
+ <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
+ <ZmwJuiMHQ8qgkJDS@infradead.org>
+ <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,37 +70,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zm+RhjG6DUoat7lO@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Jun 17, 2024 at 11:29:42AM +1000, Dave Chinner wrote:
-> > > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> > > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> > > +	else
-> > > +		igeo->min_folio_order = 0;
-> > >  }
-> > 
-> > The minimum folio order isn't really part of the inode (allocation)
-> > geometry, is it?
-> 
-> I suggested it last time around instead of calculating the same
-> constant on every inode allocation. We're already storing in-memory
-> strunct xfs_inode allocation init values in this structure. e.g. in
-> xfs_inode_alloc() we see things like this:
+On Sat, Jun 15, 2024 at 07:44:21PM +0800, Zhang Yi wrote:
+> The reason why atomic feature can't split and convert the tail extent on truncate
+> down now is the dio write iter loop will split an atomic dio which covers the
+> whole allocation unit(extsize) since there are two extents in on allocation unit.
 
-While new_diflags2 isn't exactly inode geometry, it at least is part
-of the inode allocation.  Folio min order for file data has nothing
-to do with this at all.
+We could fix this by merging the two in iomap_begin, as the end_io
+handler already deals with multiple ranges.  But let's think of that
+when the need actually arises.
 
-> The only other place we might store it is the struct xfs_mount, but
-> given all the inode allocation constants are already in the embedded
-> mp->m_ino_geo structure, it just seems like a much better idea to
-> put it will all the other inode allocation constants than dump it
-> randomly into the struct xfs_mount....
-
-Well, it is very closely elated to say the m_blockmask field in
-struct xfs_mount.  The again modern CPUs tend to get a you simple
-subtraction for free in most pipelines doing other things, so I'm
-not really sure it's worth caching for use in inode allocation to
-start with, but I don't care strongly about that.
 
