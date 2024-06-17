@@ -1,185 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-21808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5ED790A8BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 10:48:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C3690A934
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 11:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD9BC1C21EB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 08:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B898A1C23DEE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA80190699;
-	Mon, 17 Jun 2024 08:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L00F5III"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417419308E;
+	Mon, 17 Jun 2024 09:11:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B31171B0;
-	Mon, 17 Jun 2024 08:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E95192B89;
+	Mon, 17 Jun 2024 09:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718614103; cv=none; b=i82A1PEczVzbUT6kYg05Qk0sN0x0hiuyAGo7nJvOshVGS8c7OV0RlqKlZjynXWxdGA5uoS/ZYoCLhsQ8WOYcOKF1FpX1HG86ZU9cRAAPsuok83GtUpFL2mtq999iv3TsB+GoC7WHv1xN155tll+J1XMQndgmAGdWW3WJx+ZZib8=
+	t=1718615495; cv=none; b=S3d32lt/YuZsHf8klgcMYKtIMnY8TJlkLvYqaSDIFJizd52qYd3Gu3GJkKwiQ2KHgH7wbH+n1BnJrfEkj+XJoEwp1uxC1mdanux9poiVH1GKZjS+z3J7cQ8FO1ugE84fHSgVRGU5e30LTtVvddit02VXYxC6erWEeImQdZckNHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718614103; c=relaxed/simple;
-	bh=ahwV9Ju+1SVJkhYWRx0d6aXsj0gx6TEzit8ir2IL5ek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z/yUdiPAaF5900D74dtLa9tTeTnj/oUrtPusgq+7JQsPpuxY6sX/iqyLSDvllj4n4l88t5ZLw2sXJa5orXrN5ow1uKlq3cJWVPW2z47Ochdr/keKOP0G496PWrkAJ/GBlWQmjon2tWsA+BTml47vbQTMM72gmHtQSlFFTdeLy0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L00F5III; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89ABFC3277B;
-	Mon, 17 Jun 2024 08:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718614102;
-	bh=ahwV9Ju+1SVJkhYWRx0d6aXsj0gx6TEzit8ir2IL5ek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L00F5IIIJU/Fb9oPuacRQh6JHjKe9JMFXskYnMjttHXSAgJ8ou7NmS/FIeYizdwmc
-	 NHwqNJFdtXYG4l18e+GzQPvHj074YOzawnPrd0wMw/YrhT4AUarBDd37pcSzQljmyx
-	 /RPuuCXHchprbHKk80lNIYkfA0YqRLX9c1MWLkwFkZAaEn3W9nJGU474yqI/vLzo2Q
-	 La5U7uKtpsAMJ9tlwVXejVZRkUC0zz9fOX/iFpMvvBh1RIxE8Mu9tAvdM9tANRVwMz
-	 7lo8ttXGiZ3Nd2qoiRXa8lt3CeOMGfHiRuSwsnPccpvWn4ZGXU8theqd3tPS/9R428
-	 H8ipiRkNtR0kQ==
-Date: Mon, 17 Jun 2024 10:48:15 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, 
-	ajordanr@google.com, jorgelo@chromium.org, Jann Horn <jannh@google.com>, 
-	Kees Cook <keescook@chromium.org>, Jeff Xu <jeffxu@google.com>, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v6 1/2] proc: pass file instead of inode to proc_mem_open
-Message-ID: <20240617-emanzipation-ansiedeln-6fd2ae7659c8@brauner>
-References: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
+	s=arc-20240116; t=1718615495; c=relaxed/simple;
+	bh=BNypJZ0Cx2gOnF3iMtKKqVQWHAjZZROs/81IROL2cVU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=SbjqBryXwtF5Xj6JFoZIJ7qKnuPp3hjzgB2l/phzVr+GPVpu0fNoh0wkY1K9x+GwaEXRL8KuecIX9n36mP12maVVeWEbCx/pPY91o4t4L9t8dr5oFmFFo+uESi8s0b/OlOTYS13GOszqUSoBN+JAzVs0fRJN3Flr6FL/nSh3ZiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W2kdc1sRtz4f3ktx;
+	Mon, 17 Jun 2024 17:11:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EBF401A016E;
+	Mon, 17 Jun 2024 17:11:27 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCnDw2+_W9mE+OzAA--.36669S3;
+	Mon, 17 Jun 2024 17:11:27 +0800 (CST)
+Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big realtime
+ inode
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ John Garry <john.g.garry@oracle.com>
+References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
+ <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
+ <ZmveZolfY0Q0--1k@infradead.org>
+ <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
+ <ZmwJuiMHQ8qgkJDS@infradead.org>
+ <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
+ <Zm_ezp1TaIoAK1-P@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <59887f65-4a5b-aa96-7646-4c7b79372bf1@huaweicloud.com>
+Date: Mon, 17 Jun 2024 17:11:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <Zm_ezp1TaIoAK1-P@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCnDw2+_W9mE+OzAA--.36669S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrGr1DKr4xArWxJw1rAFyDtrb_yoWxArbEq3
+	yavrZ3ArWIy3WxZ3W2yrn8CrWIqFs5Kw4jk343Gr1DWayrXr93ZrZ8Cr1fXw1agF43Crnx
+	Kr1DZ34xXr9IgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU1zuWJUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, Jun 13, 2024 at 04:39:36PM GMT, Adrian Ratiu wrote:
-> The file struct is required in proc_mem_open() so its
-> f_mode can be checked when deciding whether to allow or
-> deny /proc/*/mem open requests via the new read/write
-> and foll_force restriction mechanism.
+On 2024/6/17 14:59, Christoph Hellwig wrote:
+> On Sat, Jun 15, 2024 at 07:44:21PM +0800, Zhang Yi wrote:
+>> The reason why atomic feature can't split and convert the tail extent on truncate
+>> down now is the dio write iter loop will split an atomic dio which covers the
+>> whole allocation unit(extsize) since there are two extents in on allocation unit.
 > 
-> Thus instead of directly passing the inode to the fun,
-> we pass the file and get the inode inside it.
+> We could fix this by merging the two in iomap_begin, as the end_io
+> handler already deals with multiple ranges.  
+
+Yeah, that's one solution.
+
+> But let's think of that when the need actually arises.
 > 
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jeff Xu <jeffxu@google.com>
-> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> ---
 
-I've tentatively applies this patch to #vfs.procfs.
-One comment, one question:
+Sure, I will retest and submit only patch 6&8 to solve current issue in my next
+version.
 
-> No changes in v6
-> ---
->  fs/proc/base.c       | 6 +++---
->  fs/proc/internal.h   | 2 +-
->  fs/proc/task_mmu.c   | 6 +++---
->  fs/proc/task_nommu.c | 2 +-
->  4 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 72a1acd03675..4c607089f66e 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -794,9 +794,9 @@ static const struct file_operations proc_single_file_operations = {
->  };
->  
->  
-> -struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
-> +struct mm_struct *proc_mem_open(struct file  *file, unsigned int mode)
->  {
-> -	struct task_struct *task = get_proc_task(inode);
-> +	struct task_struct *task = get_proc_task(file->f_inode);
+Thanks,
+Yi.
 
-Comment: This should use file_inode(file) but I've just fixed that when I
-applied.
-
-Question: Is this an equivalent transformation. So is the inode that was
-passed to proc_mem_open() always the same inode as file_inode(file)?
-
->  	struct mm_struct *mm = ERR_PTR(-ESRCH);
->  
->  	if (task) {
-> @@ -816,7 +816,7 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
->  
->  static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
->  {
-> -	struct mm_struct *mm = proc_mem_open(inode, mode);
-> +	struct mm_struct *mm = proc_mem_open(file, mode);
->  
->  	if (IS_ERR(mm))
->  		return PTR_ERR(mm);
-> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-> index a71ac5379584..d38b2eea40d1 100644
-> --- a/fs/proc/internal.h
-> +++ b/fs/proc/internal.h
-> @@ -295,7 +295,7 @@ struct proc_maps_private {
->  #endif
->  } __randomize_layout;
->  
-> -struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode);
-> +struct mm_struct *proc_mem_open(struct file *file, unsigned int mode);
->  
->  extern const struct file_operations proc_pid_maps_operations;
->  extern const struct file_operations proc_pid_numa_maps_operations;
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index f8d35f993fe5..fe3b2182b0aa 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -210,7 +210,7 @@ static int proc_maps_open(struct inode *inode, struct file *file,
->  		return -ENOMEM;
->  
->  	priv->inode = inode;
-> -	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
-> +	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
->  	if (IS_ERR(priv->mm)) {
->  		int err = PTR_ERR(priv->mm);
->  
-> @@ -1030,7 +1030,7 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
->  		goto out_free;
->  
->  	priv->inode = inode;
-> -	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
-> +	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
->  	if (IS_ERR(priv->mm)) {
->  		ret = PTR_ERR(priv->mm);
->  
-> @@ -1754,7 +1754,7 @@ static int pagemap_open(struct inode *inode, struct file *file)
->  {
->  	struct mm_struct *mm;
->  
-> -	mm = proc_mem_open(inode, PTRACE_MODE_READ);
-> +	mm = proc_mem_open(file, PTRACE_MODE_READ);
->  	if (IS_ERR(mm))
->  		return PTR_ERR(mm);
->  	file->private_data = mm;
-> diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-> index bce674533000..a8ab182a4ed1 100644
-> --- a/fs/proc/task_nommu.c
-> +++ b/fs/proc/task_nommu.c
-> @@ -259,7 +259,7 @@ static int maps_open(struct inode *inode, struct file *file,
->  		return -ENOMEM;
->  
->  	priv->inode = inode;
-> -	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
-> +	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
->  	if (IS_ERR(priv->mm)) {
->  		int err = PTR_ERR(priv->mm);
->  
-> -- 
-> 2.44.2
-> 
 
