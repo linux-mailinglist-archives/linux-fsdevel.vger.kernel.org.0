@@ -1,188 +1,325 @@
-Return-Path: <linux-fsdevel+bounces-21826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BA790B563
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 17:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9825490B5A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 18:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 079821C20C47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 15:55:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E717287F86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 16:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9279B13C3D5;
-	Mon, 17 Jun 2024 15:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0778D1757E;
+	Mon, 17 Jun 2024 15:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aJI8BvE3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0w42aqn4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aJI8BvE3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0w42aqn4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YLmvU5Yt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/1UlUamS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YLmvU5Yt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/1UlUamS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE116A33A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 15:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A07C1865A;
+	Mon, 17 Jun 2024 15:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718638925; cv=none; b=JphGk+NDHgnlNQDMtdiPbNhygx6kU3wWa95AML0buuZETzENssKxbLCdJyFqdwccSj7RzLY3PzU6bAiOUNCTGvu6DlblwkO7Igsd8Ih1d2HqdzLaj1yVHJsQAWQ46W9wL1YL3YYvTG+DMcD+P/bWby4St1Ivr1Vkab0RZ1zpKcY=
+	t=1718639520; cv=none; b=FwYXW17dnqBUJ5kxd3e86jLcsXo0JcoDdFKMqc/GHbT0+iNdilpyj1DDIHKSXBq5Yb0XqHEEPW10FH27yPJzO6A9W3dmbv+Dt96QpQ48gkqV18FC2Bo24fMg75lUo5UB3PtR1O/5zqOhn2tpx8/4t7e/pIIfX3cN6vneI/MwBRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718638925; c=relaxed/simple;
-	bh=Y+nNtCB7xLtYkMRjcmtchfkCbsoWb1OISgNYktgpSTc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ao3R8bnX7nbtRJ9D6yedHbEN2i+CVJS4Lnvp2l5Ap5+3an4ef8uyoQZR14l46k2Avw1J9L2ZZcyTxk9eMUwJDkkPmEJiPtZfAETwj7v+gqAtM2AOFq3kSiPk7IfT1kxqQHTKiarKaolM5XPXlvR24pI1gKzudrJ74pHH3gDpc+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aJI8BvE3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0w42aqn4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aJI8BvE3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0w42aqn4; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1718639520; c=relaxed/simple;
+	bh=VnRW2kGWW7hVs1AuY0hpLXowBfhicjlN5XicW2FYA+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnBREOndQ5kiecuWcEq+iNB6GZ0ajxYnr6BpW9ydrCaYn21UF5rjagbT/TwnciN1gdjWLA6PZGKpUgUbLOy3z1CvGnUoZRp2usrmGOC+J853RNHdHjgh4mthMrHQaHQgMv1pA3Hn1w/vrNW+J+HWKjc8tS05fQ1Nm/wMgjMG4aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YLmvU5Yt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/1UlUamS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YLmvU5Yt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/1UlUamS; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AED60602F0;
-	Mon, 17 Jun 2024 15:42:01 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AE3C36030B;
+	Mon, 17 Jun 2024 15:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718638921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	t=1718639516; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NeD1YV4rpleWyejUzwtT2uBg5F5uH7warSFW/H/jmlU=;
-	b=aJI8BvE3IPrbDbW9a6r4OJhhHb7yzCn2yZl7YyLgZZxAVOKgLlq54bXZSMmzWMEgQmvSDg
-	26E9S29WiHIWapPmQYwr0LE/AV7oX2DO5X+OpDPN9WMSLiXm6cuwy1mFWedZ6VwPR1q3HF
-	13OqdHN7lsu+SDkGCRNB+h6opbxd2GI=
+	bh=K3Fue+LKjyO5TsAEr1RuWsw0RHMhvEAhPkjzHF6sfnM=;
+	b=YLmvU5Yt6tD7rkbCHhRHJA68PGjyw7L2z15Cxnm/lyGphOJclhgkJgY/O4+WSKppLr03Km
+	KOkQgBgkxkMu10TPDlxubhnupIRdZFbhIJBIjpfHuEGRMPBYun4+RFRmxCp2RSr3ySqUHi
+	NqlPhDYqpDUhGLKIr+AGz/DHCf0URog=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718638921;
+	s=susede2_ed25519; t=1718639516;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NeD1YV4rpleWyejUzwtT2uBg5F5uH7warSFW/H/jmlU=;
-	b=0w42aqn4Webu256U7R0IXkUo9QY8Ef9oNewGjVHeqirB7x5qdhWziSh+EQ/1qkZ9XkHWFX
-	Lo7XPRImixbHk0BQ==
+	bh=K3Fue+LKjyO5TsAEr1RuWsw0RHMhvEAhPkjzHF6sfnM=;
+	b=/1UlUamSzd3ksPvNn1D+TJgERZUeS5WM54FwuAhyJiUuHWbGPv4whdR3bvSBakfNFvMo67
+	J88VOS5NVILqCeDQ==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718638921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	t=1718639516; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NeD1YV4rpleWyejUzwtT2uBg5F5uH7warSFW/H/jmlU=;
-	b=aJI8BvE3IPrbDbW9a6r4OJhhHb7yzCn2yZl7YyLgZZxAVOKgLlq54bXZSMmzWMEgQmvSDg
-	26E9S29WiHIWapPmQYwr0LE/AV7oX2DO5X+OpDPN9WMSLiXm6cuwy1mFWedZ6VwPR1q3HF
-	13OqdHN7lsu+SDkGCRNB+h6opbxd2GI=
+	bh=K3Fue+LKjyO5TsAEr1RuWsw0RHMhvEAhPkjzHF6sfnM=;
+	b=YLmvU5Yt6tD7rkbCHhRHJA68PGjyw7L2z15Cxnm/lyGphOJclhgkJgY/O4+WSKppLr03Km
+	KOkQgBgkxkMu10TPDlxubhnupIRdZFbhIJBIjpfHuEGRMPBYun4+RFRmxCp2RSr3ySqUHi
+	NqlPhDYqpDUhGLKIr+AGz/DHCf0URog=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718638921;
+	s=susede2_ed25519; t=1718639516;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NeD1YV4rpleWyejUzwtT2uBg5F5uH7warSFW/H/jmlU=;
-	b=0w42aqn4Webu256U7R0IXkUo9QY8Ef9oNewGjVHeqirB7x5qdhWziSh+EQ/1qkZ9XkHWFX
-	Lo7XPRImixbHk0BQ==
+	bh=K3Fue+LKjyO5TsAEr1RuWsw0RHMhvEAhPkjzHF6sfnM=;
+	b=/1UlUamSzd3ksPvNn1D+TJgERZUeS5WM54FwuAhyJiUuHWbGPv4whdR3bvSBakfNFvMo67
+	J88VOS5NVILqCeDQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D3D913AC1;
-	Mon, 17 Jun 2024 15:42:01 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C34F139AB;
+	Mon, 17 Jun 2024 15:51:56 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id u6VhJklZcGYrcAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 17 Jun 2024 15:42:01 +0000
+	id ohweJpxbcGZocwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 17 Jun 2024 15:51:56 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4341CA08A4; Mon, 17 Jun 2024 17:42:01 +0200 (CEST)
+	id 3F252A0887; Mon, 17 Jun 2024 17:51:56 +0200 (CEST)
+Date: Mon, 17 Jun 2024 17:51:56 +0200
 From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Subject: [PATCH 3/3] udf: Drop load_block_bitmap() wrapper
-Date: Mon, 17 Jun 2024 17:41:53 +0200
-Message-Id: <20240617154201.29512-3-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240617154024.22295-1-jack@suse.cz>
-References: <20240617154024.22295-1-jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	NeilBrown <neilb@suse.de>, James Clark <james.clark@arm.com>,
+	ltp@lists.linux.it, linux-nfs@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+Message-ID: <20240617155156.hdmwworcnqg5pqyw@quack3>
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
+ <20240617093745.nhnc7e7efdldnjzl@quack3>
+ <CAOQ4uxiN3JnH-oJTw63rTR_B8oPBfB7hWyun0Hsb3ZX3AORf2g@mail.gmail.com>
+ <20240617130739.ki5tpsbgvhumdrla@quack3>
+ <CAOQ4uxhGD563ye9F=+m_gcaDuYJPbD1mbwmtm0y476Oxe5fH6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1423; i=jack@suse.cz; h=from:subject; bh=Y+nNtCB7xLtYkMRjcmtchfkCbsoWb1OISgNYktgpSTc=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBmcFlAmTWErxjlf++Q113MpkzJP6vdsvxf0JkvoJYH KyIj8HuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZnBZQAAKCRCcnaoHP2RA2Sh1B/ 4+vO5/MV7ftLR53Anl6dNqOWAh2tYwSmBsm2Kkz4fjh/xr0FYgIuS4Bwca9c+wuP+XtxiwZekPAn27 tijjXefuHBuQhus3WvtJF0zcrU0pCHbvTbVd1aMxBLVSZ81QZlIvzXvkICJFA5nNhmfp6yvqhSqAK1 kuwez2DHPc7assH/6jeBuykZpEIN5eerlCOXj2w6IjwtLDCxV/bAKnTeW+IASgYmDXJ5gfu8RgAZBh zuRSMysjtTs9BtKg7giDj3oHWvxY0eXQ5GkidDZkFnRzB2lJctYu9V06fKIcs4f4rBmW+ygk8dyZ3N NZlAYdqBaYYxRlUN2pj8rRNaR7Qhjc
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-6.78 / 50.00];
+In-Reply-To: <CAOQ4uxhGD563ye9F=+m_gcaDuYJPbD1mbwmtm0y476Oxe5fH6Q@mail.gmail.com>
+X-Spamd-Result: default: False [-7.80 / 50.00];
 	REPLY(-4.00)[];
-	BAYES_HAM(-2.99)[99.94%];
-	MID_CONTAINS_FROM(1.00)[];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.986];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
 X-Spam-Flag: NO
-X-Spam-Score: -6.78
+X-Spam-Score: -7.80
 X-Spam-Level: 
 
-The wrapper is completely pointless as all the checks are already done
-in __load_block_bitmap(). Just drop it and rename __load_block_bitmap().
+On Mon 17-06-24 16:49:55, Amir Goldstein wrote:
+> On Mon, Jun 17, 2024 at 4:07 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Mon 17-06-24 15:09:09, Amir Goldstein wrote:
+> > > On Mon, Jun 17, 2024 at 12:37 PM Jan Kara <jack@suse.cz> wrote:
+> > > > On Sat 15-06-24 07:35:42, Christian Brauner wrote:
+> > > > > On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
+> > > > > > When a file is opened and created with open(..., O_CREAT) we get
+> > > > > > both the CREATE and OPEN fsnotify events and would expect them in that
+> > > > > > order.   For most filesystems we get them in that order because
+> > > > > > open_last_lookups() calls fsnofify_create() and then do_open() (from
+> > > > > > path_openat()) calls vfs_open()->do_dentry_open() which calls
+> > > > > > fsnotify_open().
+> > > > > >
+> > > > > > [...]
+> > > > >
+> > > > > Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> > > > > Patches in the vfs.fixes branch should appear in linux-next soon.
+> > > > >
+> > > > > Please report any outstanding bugs that were missed during review in a
+> > > > > new review to the original patch series allowing us to drop it.
+> > > > >
+> > > > > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > > > > patch has now been applied. If possible patch trailers will be updated.
+> > > > >
+> > > > > Note that commit hashes shown below are subject to change due to rebase,
+> > > > > trailer updates or similar. If in doubt, please check the listed branch.
+> > > > >
+> > > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > > > > branch: vfs.fixes
+> > > > >
+> > > > > [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+> > > > >       https://git.kernel.org/vfs/vfs/c/7536b2f06724
+> > > >
+> > > > I have reviewed the patch you've committed since I wasn't quite sure which
+> > > > changes you're going to apply after your discussion with Amir. And I have
+> > > > two comments:
+> > > >
+> > > > @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+> > > >   */
+> > > >  int vfs_open(const struct path *path, struct file *file)
+> > > >  {
+> > > > +       int ret;
+> > > > +
+> > > >         file->f_path = *path;
+> > > > -       return do_dentry_open(file, NULL);
+> > > > +       ret = do_dentry_open(file, NULL);
+> > > > +       if (!ret)
+> > > > +               /*
+> > > > +                * Once we return a file with FMODE_OPENED, __fput() will call
+> > > > +                * fsnotify_close(), so we need fsnotify_open() here for symmetry.
+> > > > +                */
+> > > > +               fsnotify_open(file);
+> > >
+> > > Please add { } around multi line indented text.
+> > >
+> > > > +       return ret;
+> > > >  }
+> > > >
+> > > > AFAICT this will have a side-effect that now fsnotify_open() will be
+> > > > generated even for O_PATH open. It is true that fsnotify_close() is getting
+> > > > generated for them already and we should strive for symmetry. Conceptually
+> > > > it doesn't make sense to me to generate fsnotify events for O_PATH
+> > > > opens/closes but maybe I miss something. Amir, any opinion here?
+> > >
+> > > Good catch!
+> > >
+> > > I agree that we do not need OPEN nor CLOSE events for O_PATH.
+> > > I suggest to solve it with:
+> > >
+> > > @@ -915,7 +929,7 @@ static int do_dentry_open(struct file *f,
+> > >         f->f_sb_err = file_sample_sb_err(f);
+> > >
+> > >         if (unlikely(f->f_flags & O_PATH)) {
+> > > -               f->f_mode = FMODE_PATH | FMODE_OPENED;
+> > > +               f->f_mode = FMODE_PATH | FMODE_OPENED | __FMODE_NONOTIFY;
+> > >                 f->f_op = &empty_fops;
+> > >                 return 0;
+> > >         }
+> >
+> > First I was somewhat nervous about this as it results in returning O_PATH
+> > fd with __FMODE_NONOTIFY to userspace and I was afraid it may influence
+> > generation of events *somewhere*.
+> 
+> It influences my POC code of future lookup permission event:
+> https://github.com/amir73il/linux/commits/fan_lookup_perm/
+> which is supposed to generate events on lookup with O_PATH fd.
+> 
+> > But checking a bit, we use 'file' for
+> > generating only open, access, modify, and close events so yes, this should
+> > be safe. Alternatively we could add explicit checks for !O_PATH when
+> > generating open / close events.
+> >
+> 
+> So yeh, this would be better:
+> 
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -112,7 +112,7 @@ static inline int fsnotify_file(struct file *file,
+> __u32 mask)
+>  {
+>         const struct path *path;
+> 
+> -       if (file->f_mode & FMODE_NONOTIFY)
+> +       if (file->f_mode & (FMODE_NONOTIFY | FMODE_PATH))
+>                 return 0;
+> 
+>         path = &file->f_path;
+> --
+> 
+> It is a dilemma, if this patch should be separate.
+> On the one hand it fixes unbalanced CLOSE events on O_PATH fd,
+> so it is an independent fix.
+> OTOH, it is a requirement for moving fsnotify_open() out of
+> do_dentry_open(), so not so healthy to separate them, when it is less clear
+> that they need to be backported together.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/udf/balloc.c | 23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
+Yeah, I guess a separate patch would be better because it also needs a good
+changelog explaining this.
 
-diff --git a/fs/udf/balloc.c b/fs/udf/balloc.c
-index 558ad046972a..a76490b2ca19 100644
---- a/fs/udf/balloc.c
-+++ b/fs/udf/balloc.c
-@@ -73,9 +73,9 @@ static int read_block_bitmap(struct super_block *sb,
- 	return 0;
- }
- 
--static int __load_block_bitmap(struct super_block *sb,
--			       struct udf_bitmap *bitmap,
--			       unsigned int block_group)
-+static int load_block_bitmap(struct super_block *sb,
-+			     struct udf_bitmap *bitmap,
-+			     unsigned int block_group)
- {
- 	int retval = 0;
- 	int nr_groups = bitmap->s_nr_groups;
-@@ -102,23 +102,6 @@ static int __load_block_bitmap(struct super_block *sb,
- 	return block_group;
- }
- 
--static inline int load_block_bitmap(struct super_block *sb,
--				    struct udf_bitmap *bitmap,
--				    unsigned int block_group)
--{
--	int slot;
--
--	slot = __load_block_bitmap(sb, bitmap, block_group);
--
--	if (slot < 0)
--		return slot;
--
--	if (!bitmap->s_block_bitmap[slot])
--		return -EIO;
--
--	return slot;
--}
--
- static void udf_add_free_space(struct super_block *sb, u16 partition, u32 cnt)
- {
- 	struct udf_sb_info *sbi = UDF_SB(sb);
+> > > > @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+> > > >         int acc_mode;
+> > > >         int error;
+> > > >
+> > > > +       if (file->f_mode & FMODE_OPENED)
+> > > > +               fsnotify_open(file);
+> > > > +
+> > > >         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+> > > >                 error = complete_walk(nd);
+> > > >                 if (error)
+> > > >
+> > > > Frankly, this works but looks as an odd place to put this notification to.
+> > > > Why not just placing it just next to where fsnotify_create() is generated
+> > > > in open_last_lookups()? Like:
+> > > >
+> > > >         if (open_flag & O_CREAT)
+> > > >                 inode_lock(dir->d_inode);
+> > > >         else
+> > > >                 inode_lock_shared(dir->d_inode);
+> > > >         dentry = lookup_open(nd, file, op, got_write);
+> > > > -       if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+> > > > -               fsnotify_create(dir->d_inode, dentry);
+> > > > +       if (!IS_ERR(dentry)) {
+> > > > +               if (file->f_mode & FMODE_CREATED)
+> > > > +                       fsnotify_create(dir->d_inode, dentry);
+> > > > +               if (file->f_mode & FMODE_OPENED)
+> > > > +                       fsnotify_open(file);
+> > > > +       }
+> > > >         if (open_flag & O_CREAT)
+> > > >                 inode_unlock(dir->d_inode);
+> > > >         else
+> > > >                 inode_unlock_shared(dir->d_inode);
+> > > >
+> > > > That looks like a place where it is much more obvious this is for
+> > > > atomic_open() handling? Now I admit I'm not really closely familiar with
+> > > > the atomic_open() paths so maybe I miss something and do_open() is better.
+> > >
+> > > It looks nice, but I think it is missing the fast lookup case without O_CREAT
+> > > (i.e. goto finish_lookup).
+> >
+> > I don't think so. AFAICT that case will generate the event in vfs_open()
+> > anyway and not in open_last_lookups() / do_open(). Am I missing something?
+> 
+> No. I am. This code is hard to follow.
+> I am fine with your variant, but maybe after so many in-tree changes
+> including the extra change of O_PATH, perhaps it would be better
+> to move this patch to your fsnotify tree?
+
+I don't care much which tree this goes through as the actual amount of
+context is minimal. But I definitely want to send another version of the
+series out to the tree. I guess I'll do it because Neil might have trouble
+justifying the O_PATH change in the changelog :).
+
+								Honza
+
 -- 
-2.35.3
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
