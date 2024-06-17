@@ -1,148 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-21815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC61290ACDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 13:24:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF2290ADA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 14:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA1C01C20C36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 11:24:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE614285F9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 12:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA972194AEA;
-	Mon, 17 Jun 2024 11:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4E91953B7;
+	Mon, 17 Jun 2024 12:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2rIhrfb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9UxqEI0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCF5194ADE;
-	Mon, 17 Jun 2024 11:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED7F195387;
+	Mon, 17 Jun 2024 12:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718623484; cv=none; b=sm1gw2oXqIBUbWdpKzpt0rr6EsdkpuBrsrQU5Gz6cfN7pZnOg6R+JfxiqbFCxfCZ/jHxXdqgyTjq1/egIVjfARu6X26hn9xoi+mBvCcTea2HXKZIwCCE0/SJBN1NWO9xN11DTPaRCeW2KEjJ5Y7YeCN1OZAbMMUX424/RiOxR9I=
+	t=1718626164; cv=none; b=isRuK01EobrVpkffAITYzBB4Kty9Q7/dWZ2Dmv1IbhhlesGIP6AgqrnMCVooAVHf2V/nAnoz8akrNKKLSa0Fbn+wal6L//4tQsK2sAH5VFimm53nusXbRNYo4oaFtvq8M0DWj2OXIsSAbPHZD9usk63fpelnwP+hocu+3tOMJMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718623484; c=relaxed/simple;
-	bh=eSVJenYg+Ov0lTGtltByPlRtrbUcU4mRc+K3naSiZCg=;
+	s=arc-20240116; t=1718626164; c=relaxed/simple;
+	bh=/gFndJ0TcyXllsSPb7CaJemK93EcIqv5fi1nTc1sBlo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ULOLsIYW8zroURDGpkfHp+f33vsDUpovL0JBjmSFJYRNU81xJG4uYFZtQ1Rzkxn7Bx/39cbtyDE9IPImODyQeMNUr7lnJ6m6Jf9XHXq61uGPm5yK6JrMW68hzcVEpaoVLakBHza78NEVIXo4FHxfUiQ2zQtEUgzvdMOvGviC9NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2rIhrfb; arc=none smtp.client-ip=209.85.208.171
+	 To:Cc:Content-Type; b=tMpAduE+CEuAOjanY60nN2V1LmUWG9Fdd4G7t4FTT+7jFq+dTwN/NOpFhMqK9A9Zeksv99anFfatoUU4R8kyb0395SDVfzr5zVYWZxnalDBQwEBLC+Br4I9zJg2zr6qjWdHj3wAA9Oti4QvCORR4org/7HYT7VmMrsEXNVCjRN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9UxqEI0; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so41693441fa.2;
-        Mon, 17 Jun 2024 04:24:42 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7979198531fso320768085a.0;
+        Mon, 17 Jun 2024 05:09:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718623481; x=1719228281; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718626161; x=1719230961; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9u+S5covs6tqmYHGnRdoyC4fZEq6n6k72rCqTj5o6f8=;
-        b=C2rIhrfbaA/OUYnIXpeHcRCL+L+e3NxNKry0hLfeULmOOePwxUXHk0HdELGrtneXUq
-         igr+/6VUKLVQb62iiRZOCMCXvErkkF15wlruVeygWfebMwUi3h6JJMpJEyr0Qbml/njI
-         gviEDbvqWVQkflow+IreIuzFAyw/fzYplQ79HYIN96TT9cu8G0NDQI2pk3zi9wT0HYrr
-         nTuByMD8FNmFJhvjnYxQKlj4Fsg56b+ZlT1x/2ZDFw/7vpvqtwr/o3u5IfZAIpablWxm
-         h5U16ystikB9GfLE0tTd9KL0DQUqvxGxQmLiL/jPZmhtU//SbhPFIQq4HwGTWmskE+9j
-         wr6A==
+        bh=UjnEoquzo9Lk2KRmH+XQyjN0aGvb5l6weKjYhKoEUUk=;
+        b=R9UxqEI0dcSsAm6oB3LQpl9q/2+IlIpRArP/JPOXBH/AbgNCvTg3lcuN+HoAIBSKU4
+         lCGZ3sDAKNQD0phfgRdrSH9N4tRT3z/hCn6yjT3ace2vWB4I73sZ6eQeCiLkdzx2iTtH
+         LUXgnqq0sczcuqe9pQ67Tsm+Zl8+foYegfQATw2phf9dGsTOg5AhaxDCPjdvNk99yw7H
+         pS5AC10TcoIet3VmDSPlyGM7qAPYA+4GB9cXea2xIe1TBWMLgNEczi03VnsNQfH3QWcK
+         UGXs1r9y+K0UBiY5ION6J0oi7hb42acxW4xbUSbcDdHzs6kp45qh4K3AgA2C4h7gTfE0
+         3CiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718623481; x=1719228281;
+        d=1e100.net; s=20230601; t=1718626161; x=1719230961;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9u+S5covs6tqmYHGnRdoyC4fZEq6n6k72rCqTj5o6f8=;
-        b=DRW4r919NUlIZdWCOwAkkujqWldeMbWsMPmynKC10rUXUlZxYkt1JaDvQ3W4QxHDV5
-         vpeCtS/bmW51EwCBVcWM6O5O/eS8zLybOVmbrYHijDf5qYoJxd/j9dUUfY+/rye+GmDO
-         xh0gZmiqzliAqKthgVO4L/p3+6VdKG6aWzf+rx4c9r01KzGz4cRW7Q0Rr6GNXNT5goC4
-         Bm8doAnoiOTDg0ZtTKRe+wYq0Jdakbow7aOK35LigFs6tQ///cir4FTmwSKx7wV32PmA
-         II343rvzriG6tB0wBnbQqZPcMOjJ+d7+6s+Wy221vbRTphZSUeM+I1KrnTiS9hTFzKqp
-         YeXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWH5VZXB3s278Top4xM0Vm+8zfJtgt5xSLlHcnCVsehfrrDlAcBXKGyta8H42+UXVXGZRCBLlyBIE5FIhDF9Y1I2N6CEMgqeZ46YcthKO3M9a4hj+nIEx4r10TgOxAKVwx90ERSE5noBRziEgaDncwjwvMuEk/9HthlbHJ6Rs2f1hJrHJg6K9Bm
-X-Gm-Message-State: AOJu0YzNUPzuwl5eDRBwOsTQV4GgXrfM6apvFtoFGH7bMwDSrtNw6apy
-	i8Uy2wL3kUHAJN4VoWOvyBSa2BPB3vl9YoJN1TwF4F5x5jjrlPPjuv8dynvH6moX6KduEPXPTBS
-	AbHzRqbKOGAxK1XhEKITWZ1/JNX8=
-X-Google-Smtp-Source: AGHT+IGz6l+l2whi4KHsvt7QZn5lx+DKSwikD+nALNnvZcUbYjy+X2GiVSQjXpnGcwoJjxYhQDFCdsoQdYC2+brDzHc=
-X-Received: by 2002:a2e:7311:0:b0:2eb:f2cf:1e49 with SMTP id
- 38308e7fff4ca-2ec0e5b5228mr58253731fa.2.1718623480308; Mon, 17 Jun 2024
- 04:24:40 -0700 (PDT)
+        bh=UjnEoquzo9Lk2KRmH+XQyjN0aGvb5l6weKjYhKoEUUk=;
+        b=PqLbTUvUDa9Va2cYodmPYtOBsHhiBvnHXQ3ajd/mLQjmmAm/V7xjSjq6JsgDvCX+N2
+         14weMvOz2uMdC737xTsLKWUhoXsHUzkQ4x4HbZl01YnDwM4eheSgQXyc8TBrtBq5uaJw
+         wc9Kb/AY/SQHpUd2yFj3nZKyOpVXRWY+K6onXqkAkZDR21I+2bU9EJ/Fh8VRkh2h8km4
+         XO7UXiQm6ONgcfsszhXzu8krEM8Pgk1APGskbT4Pz8OiihqnYGtqoTr0A7NAJGudAuPg
+         l8ebwyd3KORJaolCHQA+SXQWiLuDsccxtcKosNhMkeQJ+rLdwUeCJqfTaX/NIeD6PzwH
+         q+Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0zgpRBwJSc4AnSz1YFGTi2Xv2GS2BEcK5+hsNzxK0QtHAZ+pCfft2tAkyS6Rc1e8Vs0+BoBHJPuS9tklkQyJ1UhEtfbGWGp3ujuIiTcZkIpGuMJgrAWW8wtrKBhJLpdZJmPpf3DN6fYvp1o2P+9phDJ52u6LpM3D1sKVJYn09++VJ9QiG5g==
+X-Gm-Message-State: AOJu0YzuEUnXDxvw/G/k0YEbvn+6+p2U3Obr7PaBE3fMWA5w1bUofhWU
+	WwqCTrL6QRYEBIaZ9b3vPle33tG1dfTVv/fEmJ167SMyaC8DV5kLTUqM85pOyB3VJjqsJ48Pmgu
+	+5gdEQLs1d/SnUZaWTuPrElFwrt4=
+X-Google-Smtp-Source: AGHT+IGC6gJTPFUpeTBWZHvXEWPldOelBDHsw67xc0ymSDYjHFSPBn6kpD8WkNTjHbWBLj3NLVjUB4bhKcNwPIPO0bU=
+X-Received: by 2002:a05:620a:1927:b0:795:4e07:833 with SMTP id
+ af79cd13be357-798d26b4a6fmr1074839885a.71.1718626161127; Mon, 17 Jun 2024
+ 05:09:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zm39RkZMjHdui8nh@casper.infradead.org> <20240616023951.1250-1-hdanton@sina.com>
- <20240617075758.wewhukbrjod5fp5o@quack3>
-In-Reply-To: <20240617075758.wewhukbrjod5fp5o@quack3>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Mon, 17 Jun 2024 20:24:23 +0900
-Message-ID: <CAKFNMo=rL0tv1eUqHJ-KZXwZRuaJ3yWfWU8jzZaAgR3FU1DO7w@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: truncate: flush lru cache for evicted inode
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner> <20240617093745.nhnc7e7efdldnjzl@quack3>
+In-Reply-To: <20240617093745.nhnc7e7efdldnjzl@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 17 Jun 2024 15:09:09 +0300
+Message-ID: <CAOQ4uxiN3JnH-oJTw63rTR_B8oPBfB7hWyun0Hsb3ZX3AORf2g@mail.gmail.com>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
 To: Jan Kara <jack@suse.cz>
-Cc: Hillf Danton <hdanton@sina.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>, James Clark <james.clark@arm.com>, 
+	ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 4:57=E2=80=AFPM Jan Kara wrote:
+On Mon, Jun 17, 2024 at 12:37=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> On Sun 16-06-24 10:39:51, Hillf Danton wrote:
-> > On Sat, 15 Jun 2024 21:44:54 +0100 Matthew Wilcox wrote:
+> On Sat 15-06-24 07:35:42, Christian Brauner wrote:
+> > On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
+> > > When a file is opened and created with open(..., O_CREAT) we get
+> > > both the CREATE and OPEN fsnotify events and would expect them in tha=
+t
+> > > order.   For most filesystems we get them in that order because
+> > > open_last_lookups() calls fsnofify_create() and then do_open() (from
+> > > path_openat()) calls vfs_open()->do_dentry_open() which calls
+> > > fsnotify_open().
 > > >
-> > > I suspect this would trigger:
-> > >
-> > > +++ b/fs/inode.c
-> > > @@ -282,6 +282,7 @@ static struct inode *alloc_inode(struct super_blo=
-ck *sb)
-> > >  void __destroy_inode(struct inode *inode)
-> > >  {
-> > >         BUG_ON(inode_has_buffers(inode));
-> > > +       BUG_ON(inode->i_data.nrpages);
-> > >         inode_detach_wb(inode);
-> > >         security_inode_free(inode);
-> > >         fsnotify_inode_delete(inode);
-> > >
-> > Yes, it was triggered [1]
+> > > [...]
 > >
-> > [1] https://lore.kernel.org/lkml/00000000000084b401061af6ab80@google.co=
-m/
+> > Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> > Patches in the vfs.fixes branch should appear in linux-next soon.
 > >
-> > and given trigger after nrpages is checked in clear_inode(),
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
 > >
-> >       iput(inode)
-> >       evict(inode)
-> >       truncate_inode_pages_final(&inode->i_data);
-> >       clear_inode(inode);
-> >       destroy_inode(inode);
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
 > >
-> > why is folio added to exiting mapping?
+> > Note that commit hashes shown below are subject to change due to rebase=
+,
+> > trailer updates or similar. If in doubt, please check the listed branch=
+.
 > >
-> > #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
-x.git  83a7eefedc9b
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs.fixes
+> >
+> > [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+> >       https://git.kernel.org/vfs/vfs/c/7536b2f06724
 >
-> OK, so based on syzbot results this seems to be a bug in
-> nilfs_evict_inode() (likely caused by corrupted filesystem so that root
-> inode's link count was 0 and hence was getting deleted on iput()). I gues=
-s
-> nilfs maintainers need to address these with more consistency checks of
-> metadata when loading them...
+> I have reviewed the patch you've committed since I wasn't quite sure whic=
+h
+> changes you're going to apply after your discussion with Amir. And I have
+> two comments:
 >
->                                                                         H=
-onza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+>   */
+>  int vfs_open(const struct path *path, struct file *file)
+>  {
+> +       int ret;
+> +
+>         file->f_path =3D *path;
+> -       return do_dentry_open(file, NULL);
+> +       ret =3D do_dentry_open(file, NULL);
+> +       if (!ret)
+> +               /*
+> +                * Once we return a file with FMODE_OPENED, __fput() will=
+ call
+> +                * fsnotify_close(), so we need fsnotify_open() here for =
+symmetry.
+> +                */
+> +               fsnotify_open(file);
 
-Sorry for my late response.
+Please add { } around multi line indented text.
 
-Also, thank you for pointing out that the problem seems to be caused
-via nilfs_evict_inode() by a missing consistency check of the link
-count.
+> +       return ret;
+>  }
+>
+> AFAICT this will have a side-effect that now fsnotify_open() will be
+> generated even for O_PATH open. It is true that fsnotify_close() is getti=
+ng
+> generated for them already and we should strive for symmetry. Conceptuall=
+y
+> it doesn't make sense to me to generate fsnotify events for O_PATH
+> opens/closes but maybe I miss something. Amir, any opinion here?
 
-I'll check it out and think about how to deal with it.
+Good catch!
+
+I agree that we do not need OPEN nor CLOSE events for O_PATH.
+I suggest to solve it with:
+
+@@ -915,7 +929,7 @@ static int do_dentry_open(struct file *f,
+        f->f_sb_err =3D file_sample_sb_err(f);
+
+        if (unlikely(f->f_flags & O_PATH)) {
+-               f->f_mode =3D FMODE_PATH | FMODE_OPENED;
++               f->f_mode =3D FMODE_PATH | FMODE_OPENED | __FMODE_NONOTIFY;
+                f->f_op =3D &empty_fops;
+                return 0;
+        }
+
+>
+> @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+>         int acc_mode;
+>         int error;
+>
+> +       if (file->f_mode & FMODE_OPENED)
+> +               fsnotify_open(file);
+> +
+>         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+>                 error =3D complete_walk(nd);
+>                 if (error)
+>
+> Frankly, this works but looks as an odd place to put this notification to=
+.
+> Why not just placing it just next to where fsnotify_create() is generated
+> in open_last_lookups()? Like:
+>
+>         if (open_flag & O_CREAT)
+>                 inode_lock(dir->d_inode);
+>         else
+>                 inode_lock_shared(dir->d_inode);
+>         dentry =3D lookup_open(nd, file, op, got_write);
+> -       if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+> -               fsnotify_create(dir->d_inode, dentry);
+> +       if (!IS_ERR(dentry)) {
+> +               if (file->f_mode & FMODE_CREATED)
+> +                       fsnotify_create(dir->d_inode, dentry);
+> +               if (file->f_mode & FMODE_OPENED)
+> +                       fsnotify_open(file);
+> +       }
+>         if (open_flag & O_CREAT)
+>                 inode_unlock(dir->d_inode);
+>         else
+>                 inode_unlock_shared(dir->d_inode);
+>
+> That looks like a place where it is much more obvious this is for
+> atomic_open() handling? Now I admit I'm not really closely familiar with
+> the atomic_open() paths so maybe I miss something and do_open() is better=
+.
+
+It looks nice, but I think it is missing the fast lookup case without O_CRE=
+AT
+(i.e. goto finish_lookup).
 
 Thanks,
-Ryusuke Konishi
+Amir.
 
