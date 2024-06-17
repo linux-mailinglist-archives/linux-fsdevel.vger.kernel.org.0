@@ -1,85 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-21800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5072B90A63E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 08:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF5790A6F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1F61C26377
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 06:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CADE81C20FF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 07:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D74187322;
-	Mon, 17 Jun 2024 06:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F006E18C33C;
+	Mon, 17 Jun 2024 07:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V/IEwK45"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1F50vbj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4711A19BC6;
-	Mon, 17 Jun 2024 06:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D65C186E26;
+	Mon, 17 Jun 2024 07:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718607569; cv=none; b=d/FTh2F7Csl5hsud5KL12mgVHsgGHVrq42QhlN928DPpYFwwc2Pbl1IIGufEzkW+WHQjby2aTtm3yjJ8SJrUxjtRkstKe49u2KCLpdx2HifxPJzIAQlX84lCqbR2FDL9wXEYzfAxXScoNwDB943vRYM2dhiqwO7N5GbOfy8s3Gc=
+	t=1718609129; cv=none; b=qDmrUrC0H5sWFcX49fQUcjoF5FprzT5/IZ82pdnTvVFBzu3hdpdQq4/FF3i+aeXMV69s82Z5zOKZmvTXmZgaWnaEwBP6/o6n0PDNjtrLRhxed7ec+XHNqJIu/jY3pKQUnDYzrZ6TBFNlYZHMjgcqOqcGCNX7VQspbd4LMyFB6pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718607569; c=relaxed/simple;
-	bh=olrwLSlxifw9+6rImO9yJABZFPb7HwWO627zpZFlwGw=;
+	s=arc-20240116; t=1718609129; c=relaxed/simple;
+	bh=RRklOOLyOV2FNdtepI8jJ3qedGpOhvkVdeVHrm7GU0E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnqOhArmIxFgGG7zX4qYkJNvPfzGSE+bOITtYc8KU+Ha7f+vlLB5f0X2UItFmAL26/Pzno423MCdQN0XAGrKVKzcAskmusKcguzMDdZIavkA+AIZ3Mv+0hCQwBCm0MwSjYhmauH785jY2ct+sNHbomhgzZe7c/+2bsjBiQWbVvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V/IEwK45; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NJyBy3EQeoN6bisU+MmbRSDktS2n66CGWu+GuFyxNmQ=; b=V/IEwK45sloXtbyf8pxMAGiHTW
-	92Y4uPTDjont6KxepX8+MaBC0reiI/ssyyDEIKBUXzxMNPvjNRX3Bjp31bKWIffc5FtoahbD9N8S8
-	QGZhoJW17nLu/DHhZp34BEzOdZMH2CVhwB+XoXRqlNHZ795+DCwzkra7YNbix3WnlRC+aRybODBiI
-	TeH2FCiInxVxljf3Dz/TKF4duPVMX/53eDJ2sX0asoEsqQTzhuq6BvEaPsP33Lmm1OElTVcJhoMcX
-	0/jJsLNBnn19NRMfSI9zdgSXTEoMJhxxcvRy7z+8s5CkV9ftRVnun6RpccLRJxQpAlGvGcvszYqqq
-	hjk05J7Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJ6Ks-00000009W5G-2c5l;
-	Mon, 17 Jun 2024 06:59:26 +0000
-Date: Sun, 16 Jun 2024 23:59:26 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
-	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com,
-	John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big
- realtime inode
-Message-ID: <Zm_ezp1TaIoAK1-P@infradead.org>
-References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
- <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
- <ZmveZolfY0Q0--1k@infradead.org>
- <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
- <ZmwJuiMHQ8qgkJDS@infradead.org>
- <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=udTy+X7351AonvuoR+yTqx/UgQ94gUWzFjePYBoc6UywRKssgTibqCKPZwLnxm78rBIOH7hF9K90AL8vfnWkXQ1HyEEyeC/xdy1B6jtG/sfC9c1IuWjwbfmP9utNPlh8vkEX1eXAbx6Pk9bQxjAha+HBatR4Ra/ST4+5NG7KTHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1F50vbj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B08EC2BD10;
+	Mon, 17 Jun 2024 07:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718609128;
+	bh=RRklOOLyOV2FNdtepI8jJ3qedGpOhvkVdeVHrm7GU0E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o1F50vbjl2FFGALa8yqr1Dkyx/MQN6AlRTaf+DqkyTR+86HQpgfXkd1Ne3rvzVGBS
+	 NqtfbgZ7ktZ/nmy4a3EKOKys6HHPyZLZUdGREPvPkGD7RKvJNbqjC7Osa3aMug+Zyw
+	 YU0Ti7bUTs+WFArtCyTx6t4J7uBA7dlCEMWaCmIt4WCeIOqrWIHi2TiNBn/DJrXd7m
+	 8yap5nGP8TURM3X/40fh3ZRQ7H3XwbhzLS1RRLiyiawlpvVcy3Sfy7FbZgyYadLk+n
+	 L8KxlWUvdKyAclB0dZA3TOywZ/kMdzY7qGLNJwAX1BUzmiObSq0i1oMvNmY3FNtqVO
+	 g8z2vLjOMLoJw==
+Date: Mon, 17 Jun 2024 09:25:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Haifeng Xu <haifeng.xu@shopee.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
+Message-ID: <20240617-vanille-labil-8de959ba5756@brauner>
+References: <20240613040147.329220-1-haifeng.xu@shopee.com>
+ <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
+ <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
+ <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
 
-On Sat, Jun 15, 2024 at 07:44:21PM +0800, Zhang Yi wrote:
-> The reason why atomic feature can't split and convert the tail extent on truncate
-> down now is the dio write iter loop will split an atomic dio which covers the
-> whole allocation unit(extsize) since there are two extents in on allocation unit.
+On Fri, Jun 14, 2024 at 12:01:39PM GMT, Miklos Szeredi wrote:
+> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
+> 
+> > So why the client doesn't get woken up?
+> 
+> Need to find out what the server (lxcfs) is doing.  Can you do a
+> strace of lxcfs to see the communication on the fuse device?
 
-We could fix this by merging the two in iomap_begin, as the end_io
-handler already deals with multiple ranges.  But let's think of that
-when the need actually arises.
-
+Fwiw, I'm one of the orignal authors and maintainers of LXCFS so if you
+have specific questions, I may be able to help.
 
