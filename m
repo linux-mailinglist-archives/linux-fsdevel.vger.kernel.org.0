@@ -1,139 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-21795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1355890A1CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 03:30:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B9E90A2E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 05:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3525BB21B32
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 01:30:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4FEEB2112F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 03:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB9FDDD7;
-	Mon, 17 Jun 2024 01:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910DA17B41B;
+	Mon, 17 Jun 2024 03:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pHFdfnjb"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YvQQYkNp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD0A79F0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 01:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CADDDA3
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 03:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718587788; cv=none; b=XxRY9rlm/sEyGm6z2b7siQMo7lycYsFSQW7csVfupM5a8W6Hoj8DVaVtPKOF8wVvA0LzGts9W0abAljZqu24yT9ckNlR/ItYhjLE2Bv486VOU7WIjIybmOU9HEjff14PuGgZGqVf5XWoNSrt/TFbc2Q76TqGAzroNLJlS+bauog=
+	t=1718595282; cv=none; b=uB+xSHknqbuy+YzT0QDxdUQrTmOCbjQwxenDHt85f78AUQKxrxItToayyMXVgwiVwEWwdCz5wfyJHZ9K4TtflbCk9R1yeBHvEniNRkVgzTpB6yH/LcFpr9GlfbMjoQ7stadoNg7q9W0WnTMReYzH1zaiYCA6HSk2QtHv3fjofdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718587788; c=relaxed/simple;
-	bh=X5aRt+LPUsZLXEL4wr7fcShbnt/xSZ8e2tYNBbMPTdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jj1tD57twCLwSsrjLZCpjro0rymMN13f0Iaj9g7lOCGfQ0PdhUCR2l2s/cVN+ezplg2syKqvVIt84LhH2dghH5D2lKKJheQm9AJjTGo2oyMz0A03tkJr/wn794jYDyHRvtRGK4f4IMBV27BJrgRjMZwfioH31UF4k54kHW2/H1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pHFdfnjb; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f6c7cdec83so34199805ad.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jun 2024 18:29:46 -0700 (PDT)
+	s=arc-20240116; t=1718595282; c=relaxed/simple;
+	bh=SKlKYURJ/WFlAIa+QFwCKk08IF8XzCu8P3iyBqkBEQQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pzawn+Le/2ci2MYkX3gOH5FBCCEPZIGslPzX8T2k4Fg0sMiVEpaF6cIPRb2h9wJrk9Va+w+5IEygjwSfIYS2KJAzW5AP8NgFB6lIX4FOiYosm8MdtCQiTO4KlS7MgxWeNdfrkRgSYKiEbQeBcPvDkrDFRbfCZ3WeVZS2gEEn8uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YvQQYkNp; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfefe1a9f01so4372006276.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jun 2024 20:34:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718587786; x=1719192586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bqgWAO4mCWwupa+lR9NOrzfPSBggKHunYbwtSEV5JoQ=;
-        b=pHFdfnjbc+3sN+PiTupOJiNyZtsOSJcwLnvUHU7H9GJ2EornD4YRHGpju5jH2MGAg/
-         c4ZXQYisAo0tj6/L5aiQzDK8EwrJGd5PwNqlmiy3SHELphMmZ4iwTRkJcdqW/qN/2++P
-         RPvjZ3h1wfMf7D4OFufbFOft2BKWCQZpwQpJYfUjbg/jJPSM74hpS0ULIFStNW8dpIle
-         rRQtHJjS0bhI4Qw+8HqP/yPMI0mE56IRcfaxHl+Nep5C1XUSBEaLSfUxxVb6kMvT32pt
-         Sn1EbCQq0VpyBO5F+T3S3d6mqqMEbgYTN5fycNJwEhQ8UiAQmvgV/rCcZa9UJulLF9tR
-         g8fg==
+        d=chromium.org; s=google; t=1718595280; x=1719200080; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SKlKYURJ/WFlAIa+QFwCKk08IF8XzCu8P3iyBqkBEQQ=;
+        b=YvQQYkNp4S9qofMqBhzrDOByj8tTNJK+qyaRTOqK1lDkaAISs45g3MMQyT4v3AeThq
+         0T7DIIMVkl4orm4uRulopkKZowqnPb3qFNlqxZRZVfGYMg4V+rpIcNQ9Q3LdVYiD4aja
+         B1etjuytdN+b/2CsE7ADt5+gsmOlgyjGxBldM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718587786; x=1719192586;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bqgWAO4mCWwupa+lR9NOrzfPSBggKHunYbwtSEV5JoQ=;
-        b=Y2e29R+KqKilHRYpD1QTec88X6wQoXgFU385qrIGfuVgnjPFuYll39BSTSAE12STbM
-         /wta22XO3vqaMAk5IJR6r1AtJeH5wSHlbRddjaJmKqVA5GfCh/ubH4Vmw+hEZbQLTDrP
-         1kNg5T978aqeBcfkV8G38WY66cSM1ZSkgC4GpLPobptER2WvBZGbeQ9es0xLXd8VLi/m
-         uTnTC7WbadGmCZbsA7Fvz0I9cZ42U2x+9mXsIIMy9z4v4hCz8XUDgEv75vpNX9+Zu8Az
-         p52ke2ul5qjC1wkkfLm2ymAuAlc6YQKWj9k13X3FoQtg0dgrTQfLwO75WQ40GhdsKA17
-         z87g==
-X-Forwarded-Encrypted: i=1; AJvYcCUi/ecWNypqA760zlbLwyAPXusAQyFqzbKreIin13w3173OPRde2VmFukXahNP+QiYPyhottYYGctTo7XymDaFWctEYmU+Zr7yYoDaeIQ==
-X-Gm-Message-State: AOJu0YzS8DH6HN0O++nIdUbEjo0bUzf9HlnVoI1WcxGIgsjnPqXPPevx
-	wvFn/9cSdXpvZhbS4nBMwxDHB/VSuw5HLcC1y3DVWgCqpLMyLdIkUcoVi4uVTbY=
-X-Google-Smtp-Source: AGHT+IH2yamUY2L+mg2sDf6W0MYe+fr1/6bICbKfZYn/cmrt+tr3TvVUeXggb8kPWxWwSK9lWhE1Zw==
-X-Received: by 2002:a17:902:e88a:b0:1f6:d368:7dd7 with SMTP id d9443c01a7336-1f862b155e2mr101843335ad.45.1718587785415;
-        Sun, 16 Jun 2024 18:29:45 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee80fesm69659525ad.124.2024.06.16.18.29.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 18:29:44 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sJ1Bm-00124e-1P;
-	Mon, 17 Jun 2024 11:29:42 +1000
-Date: Mon, 17 Jun 2024 11:29:42 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, djwong@kernel.org,
-	chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 11/11] xfs: enable block size larger than page size
- support
-Message-ID: <Zm+RhjG6DUoat7lO@dread.disaster.area>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-12-kernel@pankajraghav.com>
- <20240613084725.GC23371@lst.de>
+        d=1e100.net; s=20230601; t=1718595280; x=1719200080;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SKlKYURJ/WFlAIa+QFwCKk08IF8XzCu8P3iyBqkBEQQ=;
+        b=FpAhJLQtbXrKH4m49428qvWU9/l4w9/j66bbdyT02K71IywkbWKNhacqOa3W5sjyBQ
+         Kr2MxzQCflfTA30Qa6jE1h+kmCPfdBJZxY9HS7CAMP4TThBA1XTpDkTI/eiSKKBQMn7Z
+         VrjOjQHbFEOiYC0y4XcXXn4+NooISWrCcdpXF048dkPU0n1EPG6QIT+DTfKWnJpbCudQ
+         iN5yXNzNHMrqGHmhKIZdjI93VVBq1Btkee2mWcnJI1eLF3aAs8hE2m4nc+CxSx2nRTaG
+         WaKoSydfq5dWoJZYtAQwCurcTtAZvbTr763X3vzPusOV12AlglodMIxbPHwtdzCxgUpN
+         +t0w==
+X-Gm-Message-State: AOJu0YydieCoyMhkzqylHlo62dvXXS/29j75Fsvs57364g0UZYjmwLtu
+	YYv9/SkVLtmWbB+S0da3GcxXTH8fZJv1RK7mrcK6Xh/WP48MnmWKEqlDFZFClJhkhUSYbyYYbSN
+	3YvvSM8qdf9plB93uTtGeYp29GWRagae+aWvIdk37gMKS/Mz6uA==
+X-Google-Smtp-Source: AGHT+IHlch8IG7L9R33KG9Yznc9GP2oHN3EkIIu5XBk3nJp8jd21nsJ54zww7BnboiB0ZQS8XDIR0t7VU/ZJxuViuW4=
+X-Received: by 2002:a25:d856:0:b0:dfb:441:e03a with SMTP id
+ 3f1490d57ef6-dff153db9bcmr7849218276.34.1718595279829; Sun, 16 Jun 2024
+ 20:34:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613084725.GC23371@lst.de>
+From: Keiichi Watanabe <keiichiw@chromium.org>
+Date: Mon, 17 Jun 2024 12:34:27 +0900
+Message-ID: <CAD90VcZybb0ZOVrhE-MqDPwEya8878uzA1RBwd68U7x4CufkTQ@mail.gmail.com>
+Subject: virtio-blk/ext4 error handling for host-side ENOSPC
+To: linux-fsdevel@vger.kernel.org
+Cc: Junichi Uekawa <uekawa@chromium.org>, Takaya Saeki <takayas@chromium.org>, tytso@mit.edu, 
+	Daniel Verkamp <dverkamp@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 13, 2024 at 10:47:25AM +0200, Christoph Hellwig wrote:
-> On Fri, Jun 07, 2024 at 02:59:02PM +0000, Pankaj Raghav (Samsung) wrote:
-> > --- a/fs/xfs/libxfs/xfs_ialloc.c
-> > +++ b/fs/xfs/libxfs/xfs_ialloc.c
-> > @@ -3019,6 +3019,11 @@ xfs_ialloc_setup_geometry(
-> >  		igeo->ialloc_align = mp->m_dalign;
-> >  	else
-> >  		igeo->ialloc_align = 0;
-> > +
-> > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> > +	else
-> > +		igeo->min_folio_order = 0;
-> >  }
-> 
-> The minimum folio order isn't really part of the inode (allocation)
-> geometry, is it?
+Hi,
 
-I suggested it last time around instead of calculating the same
-constant on every inode allocation. We're already storing in-memory
-strunct xfs_inode allocation init values in this structure. e.g. in
-xfs_inode_alloc() we see things like this:
+I'm using ext4 over virtio-blk for VMs, and I'd like to discuss the
+situation where the host storage gets full.
+Let's say you create a disk image file formatted with ext4 on the host
+side as a sparse file and share it with the guest using virtio-blk.
+When the host storage is full and the sparse file cannot be expanded
+any further, the guest will know the error when it flushes disk
+caches.
+In the current implementation, the VMM's virtio-blk device returns
+VIRTIO_BLK_S_IOERR, and the virtio-blk driver converts it to
+BLK_STS_IOERR. Then, the ext4 module calls mapping_set_error for that
+area.
 
-	ip->i_diflags2 = mp->m_ino_geo.new_diflags2;
+However, the host's ENOSPC may be recoverable. For example, if a host
+service periodically deletes cache files, it'd be nice if the guest
+kernel can wait a while and then retry flushing.
+So, I wonder if we can't have a special handling for host-side's
+ENOSPC in virtio-blk and ext4.
 
-So that we only calculate the default values for the filesystem once
-instead of on every inode allocation. This isn't unreasonable
-because xfs_inode_alloc() is a fairly hot path.
+My idea is like this:
+First, (1) define a new error code, VIRTIO_BLK_S_ENOSPC, in
+virtio-blk. Then, (2) if the guest file system receives this error
+code, periodically retry flushing. We may want to make the retry limit
+via a mount option or something.
 
-The only other place we might store it is the struct xfs_mount, but
-given all the inode allocation constants are already in the embedded
-mp->m_ino_geo structure, it just seems like a much better idea to
-put it will all the other inode allocation constants than dump it
-randomly into the struct xfs_mount....
+What do you think of this idea? Also, has anything similar been attempted yet?
+Thanks in advance.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Best,
+Keiichi
 
