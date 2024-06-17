@@ -1,57 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-21803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FEE90A789
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:41:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61E690A7BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4FD1C240A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 07:41:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C48B22448
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 07:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B80187559;
-	Mon, 17 Jun 2024 07:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41BB18FDAB;
+	Mon, 17 Jun 2024 07:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VA0KTs6C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIg+uePk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A729190076
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 07:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDCA38396;
+	Mon, 17 Jun 2024 07:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718610086; cv=none; b=Z7KhYfVQ9LK7qJQ0VhadsZsH045pw7O5trbsyPIj/j3Yv2IZ9eTBL3dUcky4t3769tFpxzRpQKRuTM3k1ni7Qz5j2aDIwD3m8MUHMAFtWlx3cBJhaQv7j+A6rfHWtKP3gH+ENF8XXLisJPKKz5Xa1FiIDilS99XexxgsuAlBKLU=
+	t=1718610807; cv=none; b=ssuqCQp80dGahfsTYyG3jNl2QUWZ1Vg1h94kUwphfnvaF7D+u2bw2b7BFFs9qkl9eiK04uYHq2Ycdm45PB+oJ4AiXP+7/3BJroFBb2dljMwkbO5GoD3O5/yuq9MU710wj0saA8wXmhzFwM848SshQ03AANsbLfTaNQ2W9ioyp4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718610086; c=relaxed/simple;
-	bh=7pjyFDCWSe6vZSlR1JySJsee02OsQndJ8dhf/gQzBgM=;
+	s=arc-20240116; t=1718610807; c=relaxed/simple;
+	bh=2k6bPclIn2GsbnEqlby1rhyXy6ssf+kHi4IqMQnI2/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HzrcTnEZqWeXJ1CAXnaj6KIUBbDD8BONFctlnta0FTCAxTL8TCnKDDRo+anLiso4IflSIfNNCMmDONv7z1qJKnrZyXaTdXc4ZL7oDZfvhNd19URzGMJFS3MHYNy4BxoxvTO9zkkkbfAU33xtni0MNwZOCZjfvYDhaH0wpitXYZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VA0KTs6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3BAC2BD10;
-	Mon, 17 Jun 2024 07:41:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9VCdzLS7MfGhPPLhMGRk//Tz355CTG0vON5T+GScQOBtz2R45kiGuV6hvWS/HQb85ngOR5PHdhvbMZTWqFJaJ4Ks5eg/8L0V17ML/LSBmbNm6InOWx6TwLtf2tIl7p3M46QS9w2rgC1AN8GqPH0kqZE7l3QZJoF1dLz2ok2n8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIg+uePk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B14C2BD10;
+	Mon, 17 Jun 2024 07:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718610086;
-	bh=7pjyFDCWSe6vZSlR1JySJsee02OsQndJ8dhf/gQzBgM=;
+	s=k20201202; t=1718610806;
+	bh=2k6bPclIn2GsbnEqlby1rhyXy6ssf+kHi4IqMQnI2/Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VA0KTs6C7+Xpi7NUsMQN00wVdXGTj/yVe25GgUsEgKLIlY/tnAvimc4fRgjlX0GNe
-	 ARtM2JeCctNOM6B6g1uXuWXEqbAgjUdsTM+go9dR4vTHcMRhcba1sGWtNqtr5Nf+QR
-	 k4BAONByrZaxe6UWkK3midanRZGUC1fJzAeUn26kk57F8SezqutNAP0yki9lRA3lS2
-	 JWmOYjLiE8s54E9nXts94ZqfYeNgd28MpNJHs+UPMrp1BAFHwb9r+AJsUYM5A28vb1
-	 HBZ1XgKjoSIdWzOVDrTxQn5GGUjcVRU9wJ8RD0/P1BKAMRE3GqkLGdZ7KEAtzt23jv
-	 K2F27KlxA2eeQ==
-Date: Mon, 17 Jun 2024 09:41:21 +0200
+	b=XIg+uePkldUC/VrJAexZhHCL+eEEzPHle3s9C60hhK22AbeMqbe5RouYAcPIA8r8E
+	 pK5JOIRc7cQw2jpWk3DmZ9adCp2kORGKZjm7g8LygQxJOiasAONtEGZdEorV2knBb2
+	 8BVzMYLFNohvmd1bIoXXUIN4aKD6x/b0x86Eit917aToJcrgAwYcFnZOssVQydRekR
+	 Kub82chV9LahellrWLmLjG1++I4WYPO3za1A6+8MzkEIKVTc54kWq4SbqONu2sFGpT
+	 TLx8WZVEwKJyOHNVx9ORQ2cebFHPZAvJzo4O763Gr/m9DH7lvcTs5I5NB/lpJfjsr6
+	 T5j1x0r9O5Kxw==
+Date: Mon, 17 Jun 2024 09:53:22 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, 
-	"Seth Forshee (Digital Ocean)" <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 23/25] fs: port fs{g,u}id helpers to mnt_idmap
-Message-ID: <20240617-weitblick-gefertigt-4a41f37119fa@brauner>
-References: <20230113-fs-idmapped-mnt_idmap-conversion-v1-0-fc84fa7eba67@kernel.org>
- <20230113-fs-idmapped-mnt_idmap-conversion-v1-23-fc84fa7eba67@kernel.org>
- <20240614231547.GA6102@frogsfrogsfrogs>
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: How to create new file in idmapped mountpoint
+Message-ID: <20240617-backfisch-chilipulver-77c21e2b338c@brauner>
+References: <e4f9392e-b5b6-4063-aecb-4d034c5d2bb6@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,367 +56,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240614231547.GA6102@frogsfrogsfrogs>
+In-Reply-To: <e4f9392e-b5b6-4063-aecb-4d034c5d2bb6@huawei.com>
 
-On Fri, Jun 14, 2024 at 04:15:47PM GMT, Darrick J. Wong wrote:
-> On Fri, Jan 13, 2023 at 12:49:31PM +0100, Christian Brauner wrote:
-> > Convert to struct mnt_idmap.
-> > 
-> > Last cycle we merged the necessary infrastructure in
-> > 256c8aed2b42 ("fs: introduce dedicated idmap type for mounts").
-> > This is just the conversion to struct mnt_idmap.
-> > 
-> > Currently we still pass around the plain namespace that was attached to a
-> > mount. This is in general pretty convenient but it makes it easy to
-> > conflate namespaces that are relevant on the filesystem with namespaces
-> > that are relevent on the mount level. Especially for non-vfs developers
-> > without detailed knowledge in this area this can be a potential source for
-> > bugs.
-> > 
-> > Once the conversion to struct mnt_idmap is done all helpers down to the
-> > really low-level helpers will take a struct mnt_idmap argument instead of
-> > two namespace arguments. This way it becomes impossible to conflate the two
-> > eliminating the possibility of any bugs. All of the vfs and all filesystems
-> > only operate on struct mnt_idmap.
-> > 
-> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > ---
-> >  fs/ext4/ialloc.c              |  3 +--
-> >  fs/inode.c                    |  6 ++----
-> >  fs/xfs/xfs_inode.c            | 13 +++++--------
-> >  fs/xfs/xfs_symlink.c          |  5 ++---
-> >  include/linux/fs.h            | 21 ++++++++++-----------
-> >  include/linux/mnt_idmapping.h | 18 ++++++++++--------
-> >  6 files changed, 30 insertions(+), 36 deletions(-)
-> > 
-> > diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> > index 1024b0c02431..157663031f8c 100644
-> > --- a/fs/ext4/ialloc.c
-> > +++ b/fs/ext4/ialloc.c
-> > @@ -943,7 +943,6 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
-> >  	ext4_group_t flex_group;
-> >  	struct ext4_group_info *grp = NULL;
-> >  	bool encrypt = false;
-> > -	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
-> >  
-> >  	/* Cannot create files in a deleted directory */
-> >  	if (!dir || !dir->i_nlink)
-> > @@ -973,7 +972,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
-> >  		i_gid_write(inode, owner[1]);
-> >  	} else if (test_opt(sb, GRPID)) {
-> >  		inode->i_mode = mode;
-> > -		inode_fsuid_set(inode, mnt_userns);
-> > +		inode_fsuid_set(inode, idmap);
-> >  		inode->i_gid = dir->i_gid;
-> >  	} else
-> >  		inode_init_owner(idmap, inode, dir, mode);
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 1aec92141fab..1b05e0e4b5c8 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -2293,9 +2293,7 @@ EXPORT_SYMBOL(init_special_inode);
-> >  void inode_init_owner(struct mnt_idmap *idmap, struct inode *inode,
-> >  		      const struct inode *dir, umode_t mode)
-> >  {
-> > -	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
-> > -
-> > -	inode_fsuid_set(inode, mnt_userns);
-> > +	inode_fsuid_set(inode, idmap);
-> >  	if (dir && dir->i_mode & S_ISGID) {
-> >  		inode->i_gid = dir->i_gid;
-> >  
-> > @@ -2303,7 +2301,7 @@ void inode_init_owner(struct mnt_idmap *idmap, struct inode *inode,
-> >  		if (S_ISDIR(mode))
-> >  			mode |= S_ISGID;
-> >  	} else
-> > -		inode_fsgid_set(inode, mnt_userns);
-> > +		inode_fsgid_set(inode, idmap);
-> >  	inode->i_mode = mode;
-> >  }
-> >  EXPORT_SYMBOL(inode_init_owner);
-> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > index 59fb064e2df3..7f1d715faab5 100644
-> > --- a/fs/xfs/xfs_inode.c
-> > +++ b/fs/xfs/xfs_inode.c
-> > @@ -788,7 +788,6 @@ xfs_init_new_inode(
-> >  	bool			init_xattrs,
-> >  	struct xfs_inode	**ipp)
-> >  {
-> > -	struct user_namespace	*mnt_userns = mnt_idmap_owner(idmap);
-> >  	struct inode		*dir = pip ? VFS_I(pip) : NULL;
-> >  	struct xfs_mount	*mp = tp->t_mountp;
-> >  	struct xfs_inode	*ip;
-> > @@ -824,7 +823,7 @@ xfs_init_new_inode(
-> >  	ip->i_projid = prid;
-> >  
-> >  	if (dir && !(dir->i_mode & S_ISGID) && xfs_has_grpid(mp)) {
-> > -		inode_fsuid_set(inode, mnt_userns);
-> > +		inode_fsuid_set(inode, idmap);
-> >  		inode->i_gid = dir->i_gid;
-> >  		inode->i_mode = mode;
-> >  	} else {
-> > @@ -955,7 +954,6 @@ xfs_create(
-> >  	bool			init_xattrs,
-> >  	xfs_inode_t		**ipp)
-> >  {
-> > -	struct user_namespace	*mnt_userns = mnt_idmap_owner(idmap);
-> >  	int			is_dir = S_ISDIR(mode);
-> >  	struct xfs_mount	*mp = dp->i_mount;
-> >  	struct xfs_inode	*ip = NULL;
-> > @@ -980,8 +978,8 @@ xfs_create(
-> >  	/*
-> >  	 * Make sure that we have allocated dquot(s) on disk.
-> >  	 */
-> > -	error = xfs_qm_vop_dqalloc(dp, mapped_fsuid(mnt_userns, &init_user_ns),
-> > -			mapped_fsgid(mnt_userns, &init_user_ns), prid,
-> > +	error = xfs_qm_vop_dqalloc(dp, mapped_fsuid(idmap, &init_user_ns),
-> > +			mapped_fsgid(idmap, &init_user_ns), prid,
-> >  			XFS_QMOPT_QUOTALL | XFS_QMOPT_INHERIT,
-> >  			&udqp, &gdqp, &pdqp);
-> >  	if (error)
-> > @@ -1109,7 +1107,6 @@ xfs_create_tmpfile(
-> >  	umode_t			mode,
-> >  	struct xfs_inode	**ipp)
-> >  {
-> > -	struct user_namespace	*mnt_userns = mnt_idmap_owner(idmap);
-> >  	struct xfs_mount	*mp = dp->i_mount;
-> >  	struct xfs_inode	*ip = NULL;
-> >  	struct xfs_trans	*tp = NULL;
-> > @@ -1130,8 +1127,8 @@ xfs_create_tmpfile(
-> >  	/*
-> >  	 * Make sure that we have allocated dquot(s) on disk.
-> >  	 */
-> > -	error = xfs_qm_vop_dqalloc(dp, mapped_fsuid(mnt_userns, &init_user_ns),
-> > -			mapped_fsgid(mnt_userns, &init_user_ns), prid,
-> > +	error = xfs_qm_vop_dqalloc(dp, mapped_fsuid(idmap, &init_user_ns),
-> > +			mapped_fsgid(idmap, &init_user_ns), prid,
-> >  			XFS_QMOPT_QUOTALL | XFS_QMOPT_INHERIT,
-> >  			&udqp, &gdqp, &pdqp);
-> >  	if (error)
-> > diff --git a/fs/xfs/xfs_symlink.c b/fs/xfs/xfs_symlink.c
-> > index 24cf0a16bf35..85e433df6a3f 100644
-> > --- a/fs/xfs/xfs_symlink.c
-> > +++ b/fs/xfs/xfs_symlink.c
-> > @@ -151,7 +151,6 @@ xfs_symlink(
-> >  	umode_t			mode,
-> >  	struct xfs_inode	**ipp)
-> >  {
-> > -	struct user_namespace	*mnt_userns = mnt_idmap_owner(idmap);
-> >  	struct xfs_mount	*mp = dp->i_mount;
-> >  	struct xfs_trans	*tp = NULL;
-> >  	struct xfs_inode	*ip = NULL;
-> > @@ -194,8 +193,8 @@ xfs_symlink(
-> >  	/*
-> >  	 * Make sure that we have allocated dquot(s) on disk.
-> >  	 */
-> > -	error = xfs_qm_vop_dqalloc(dp, mapped_fsuid(mnt_userns, &init_user_ns),
-> > -			mapped_fsgid(mnt_userns, &init_user_ns), prid,
-> > +	error = xfs_qm_vop_dqalloc(dp, mapped_fsuid(idmap, &init_user_ns),
-> > +			mapped_fsgid(idmap, &init_user_ns), prid,
+On Fri, Jun 14, 2024 at 03:09:22PM GMT, Hongbo Li wrote:
+> Hi everyone !
 > 
-> I know this is pretty late to be asking questions about this patch, but
-> after reviewing this code, I am curious about something --
-
-That's perfectly fine!
-
+> How can I create new file in idmapped mountpoint in ext4?
 > 
-> Here we try to allocate dquots prior to creating a file.  The uid used
-> here is:
-> 
-> 	mapped_fsuid(mnt_userns, &init_user_ns)
-> 
-> But later in inode_fsuid_set, we set the new inode's actual uid to:
-> 
-> 	mapped_fsuid(mnt_userns, i_user_ns(inode));
-> 
-> What happens if i_user_ns(inode) != &init_user_ns?  Can that change the
+> I try to do the following test:
+> ```
+> losetup /dev/loop1 ext4.img
+> mkfs.ext4 /dev/loop1
+> mount /dev/loop1 /mnt/ext4
+> ./mount-idmapped --map-mount b:0:1001:1 /mnt/ext4 /mnt/idmapped1
+> cp testfile /mnt/idmapped1
+> ```
+> then it rebacks me:
+> ```
+> cp: cannot create regular file '/mnt/idmapped1/testfile': Value too large
+> for defined data type
+> ```
+> Did I use it incorrectly?
 
-Excellent observation and question.
+You're setting up a mount in which uid 1001 maps to uid 0. So if you
+create files as uid 1001 they will map to uid 0 on-disk.
 
-> return value of mapped_fsuid with the result that quota accounting
-> charges the wrong uid if the user namespaces are different?
-> Unfortunately I'm not familiar enough with how these things work to know
-> if that's even a sensible question.
+But you haven't mapped uid 0 to anything so the mount doesn't allow the
+root user to create files. In order to that you could e.g., do:
 
-So a few preliminary remarks:
+sudo mount --bind -o X-mount.idmap='0:1001:1 1001:0:1' /mnt/ex4/ /mnt/idmapped1/
 
-(1) i_user_ns() retries the user namespace of the superblock. For
-    example:
-
-    mount a tmpfs filesystem in the initial mount namespace owned by
-    the initial user namespace:
-
-            mount -t tmpfs tmpfs /opt
-
-    In this case
-
-            init_user_ns == i_user_ns(inode)
-
-
-    But if we create a new mount namespace owned by an unprivilged user
-    namespace:
-
-            unshare --mount --user --map-root
-
-    and mount tmpfs in there:
-
-            mount -t tmpfs tmpfs /mnt
-
-    then
-
-            init_user_ns != i_user_ns(inode)
-
-(2) Filesystems must be explicitly marked as being mountable inside of a
-    user namespace aka by an unprivileged user. That only includes
-    pseudo filesystems (and I really want a VFS assertion that it
-    stays that way).
-
-Since xfs isn't in (2) the scenario described in (1) cannot happen.
-
-For all non-userns mountable filesystems like xfs I generally chose to
-pass init_user_ns explicitly everywhere it's required. But general
-helpers like i_user_ns() need to work for both and that's why it always
-uses i_user_ns().
-
-You could technically put a WARN_ON_ONCE() in inode_fsuid_set() that
-basically does:
-
-@@ -1492,6 +1492,7 @@ static inline void i_gid_update(struct mnt_idmap *idmap,
- static inline void inode_fsuid_set(struct inode *inode,
-                                   struct mnt_idmap *idmap)
- {
-+       WARN_ON_ONCE(i_user_ns(inode) != &init_user_ns && inode->i_sb->s_type->fs_flags & FS_USERNS_MOUNT);
-        inode->i_uid = mapped_fsuid(idmap, i_user_ns(inode));
- }
-
-But I didn't think it was worth it and if we wanted to use it then I'd rather
-at an inode flag so we don't have to do this double deref thing.
-
-> 
-> In my development tree I have a few assertions sprinked to see if we
-> ever detect a discrepancy in the uid that is set.  fstests doesn't
-> trigger it, nor does my usual workflow, so I really don't know.
-> 
-> --D
-> 
-> >  			XFS_QMOPT_QUOTALL | XFS_QMOPT_INHERIT,
-> >  			&udqp, &gdqp, &pdqp);
-> >  	if (error)
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 173c5274a63a..54a95ed68322 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1744,29 +1744,29 @@ static inline void i_gid_update(struct mnt_idmap *idmap,
-> >  /**
-> >   * inode_fsuid_set - initialize inode's i_uid field with callers fsuid
-> >   * @inode: inode to initialize
-> > - * @mnt_userns: user namespace of the mount the inode was found from
-> > + * @idmap: idmap of the mount the inode was found from
-> >   *
-> >   * Initialize the i_uid field of @inode. If the inode was found/created via
-> > - * an idmapped mount map the caller's fsuid according to @mnt_users.
-> > + * an idmapped mount map the caller's fsuid according to @idmap.
-> >   */
-> >  static inline void inode_fsuid_set(struct inode *inode,
-> > -				   struct user_namespace *mnt_userns)
-> > +				   struct mnt_idmap *idmap)
-> >  {
-> > -	inode->i_uid = mapped_fsuid(mnt_userns, i_user_ns(inode));
-> > +	inode->i_uid = mapped_fsuid(idmap, i_user_ns(inode));
-> >  }
-> >  
-> >  /**
-> >   * inode_fsgid_set - initialize inode's i_gid field with callers fsgid
-> >   * @inode: inode to initialize
-> > - * @mnt_userns: user namespace of the mount the inode was found from
-> > + * @idmap: idmap of the mount the inode was found from
-> >   *
-> >   * Initialize the i_gid field of @inode. If the inode was found/created via
-> > - * an idmapped mount map the caller's fsgid according to @mnt_users.
-> > + * an idmapped mount map the caller's fsgid according to @idmap.
-> >   */
-> >  static inline void inode_fsgid_set(struct inode *inode,
-> > -				   struct user_namespace *mnt_userns)
-> > +				   struct mnt_idmap *idmap)
-> >  {
-> > -	inode->i_gid = mapped_fsgid(mnt_userns, i_user_ns(inode));
-> > +	inode->i_gid = mapped_fsgid(idmap, i_user_ns(inode));
-> >  }
-> >  
-> >  /**
-> > @@ -1784,14 +1784,13 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
-> >  					struct mnt_idmap *idmap)
-> >  {
-> >  	struct user_namespace *fs_userns = sb->s_user_ns;
-> > -	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
-> >  	kuid_t kuid;
-> >  	kgid_t kgid;
-> >  
-> > -	kuid = mapped_fsuid(mnt_userns, fs_userns);
-> > +	kuid = mapped_fsuid(idmap, fs_userns);
-> >  	if (!uid_valid(kuid))
-> >  		return false;
-> > -	kgid = mapped_fsgid(mnt_userns, fs_userns);
-> > +	kgid = mapped_fsgid(idmap, fs_userns);
-> >  	if (!gid_valid(kgid))
-> >  		return false;
-> >  	return kuid_has_mapping(fs_userns, kuid) &&
-> > diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-> > index 0ccca33a7a6d..d63e7c84a389 100644
-> > --- a/include/linux/mnt_idmapping.h
-> > +++ b/include/linux/mnt_idmapping.h
-> > @@ -375,8 +375,8 @@ static inline kgid_t vfsgid_into_kgid(vfsgid_t vfsgid)
-> >  }
-> >  
-> >  /**
-> > - * mapped_fsuid - return caller's fsuid mapped up into a mnt_userns
-> > - * @mnt_userns: the mount's idmapping
-> > + * mapped_fsuid - return caller's fsuid mapped according to an idmapping
-> > + * @idmap: the mount's idmapping
-> >   * @fs_userns: the filesystem's idmapping
-> >   *
-> >   * Use this helper to initialize a new vfs or filesystem object based on
-> > @@ -385,18 +385,19 @@ static inline kgid_t vfsgid_into_kgid(vfsgid_t vfsgid)
-> >   * O_CREAT. Other examples include the allocation of quotas for a specific
-> >   * user.
-> >   *
-> > - * Return: the caller's current fsuid mapped up according to @mnt_userns.
-> > + * Return: the caller's current fsuid mapped up according to @idmap.
-> >   */
-> > -static inline kuid_t mapped_fsuid(struct user_namespace *mnt_userns,
-> > +static inline kuid_t mapped_fsuid(struct mnt_idmap *idmap,
-> >  				  struct user_namespace *fs_userns)
-> >  {
-> > +	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
-> >  	return from_vfsuid(mnt_userns, fs_userns,
-> >  			   VFSUIDT_INIT(current_fsuid()));
-> >  }
-> >  
-> >  /**
-> > - * mapped_fsgid - return caller's fsgid mapped up into a mnt_userns
-> > - * @mnt_userns: the mount's idmapping
-> > + * mapped_fsgid - return caller's fsgid mapped according to an idmapping
-> > + * @idmap: the mount's idmapping
-> >   * @fs_userns: the filesystem's idmapping
-> >   *
-> >   * Use this helper to initialize a new vfs or filesystem object based on
-> > @@ -405,11 +406,12 @@ static inline kuid_t mapped_fsuid(struct user_namespace *mnt_userns,
-> >   * O_CREAT. Other examples include the allocation of quotas for a specific
-> >   * user.
-> >   *
-> > - * Return: the caller's current fsgid mapped up according to @mnt_userns.
-> > + * Return: the caller's current fsgid mapped up according to @idmap.
-> >   */
-> > -static inline kgid_t mapped_fsgid(struct user_namespace *mnt_userns,
-> > +static inline kgid_t mapped_fsgid(struct mnt_idmap *idmap,
-> >  				  struct user_namespace *fs_userns)
-> >  {
-> > +	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
-> >  	return from_vfsgid(mnt_userns, fs_userns,
-> >  			   VFSGIDT_INIT(current_fsgid()));
-> >  }
-> > 
-> > -- 
-> > 2.34.1
-> > 
+If you now (as root) do cp testfile /mnt/idmapped1/ it will work and
+files created by root will show up as being owned by uid 1001 on disk.
 
