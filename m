@@ -1,131 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-21824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CCB90B47E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 17:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B578590B561
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 17:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A3E2846C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 15:34:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B916283D1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 15:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869C1142652;
-	Mon, 17 Jun 2024 15:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8049713C3D4;
+	Mon, 17 Jun 2024 15:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="bKvQ9GU4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8caibj2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CzGYqVHB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8caibj2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CzGYqVHB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0353C13FD8D;
-	Mon, 17 Jun 2024 15:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDD03BBD7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 15:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718636920; cv=none; b=NzpLp6aQd/G2kEaRbq1hKdVcEf1ZVBGc4JZC9mALcMYDRT+Fv4N8B00rgUzBLxpTmYGznmJ0PLVEi28K30fWKGvS+dx/i8FFwPqeAbTJ2iFximYXcuBNHBAQO4FIEtT1OQnUSG1ry15GnmVlM0y9J2eKzRQQhFffpjNxsdx1TzA=
+	t=1718638924; cv=none; b=QBd66cJdtyFdwbV+qhHphVVgK7L0cOd6BpW0GNxwP/fzTu5T2B+yFDiZioa4p0H6fY/WBXPkYRNFFbkaOygfZKRYg3d1r3wNwHS00UC6kdfEIgTxBcMK92dTZ1T6D8O4y7iayQGFoJqtpLRejjt7q0Prj4bgrGQdhfONuG6Hf8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718636920; c=relaxed/simple;
-	bh=1ZXrRYKtWHtDB6OXL5vleRJGsJqOwCMPVyP1Ec8vH88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIM+7GQonKtPYjO/ubMayRq7Jt9A5ZfRykDN4EFYTqNNVXME8R5RPSjpBNvtP4wFpYgmOd79ZlROKOEWGgcrsxKOkSTWz+4M6/d3pflB1l8nie6eD5rBqZjiOYiyo3FXLsCZMVBmxQB94Lwgf1MQy8VEMLfBg3GG6s59Rj55dpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=bKvQ9GU4; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	s=arc-20240116; t=1718638924; c=relaxed/simple;
+	bh=Ds3zZm8tNX4zxZdUY3QirJm6Vy941ZFt3soWdsYOke8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=teb+O8iXINC/HO6wfQjSQImFzOxZoickYtgVKiQGdud/rA2UrgQpP42qCrf+oeIw6f9adBOS0Fm+JjxH9Vu8A1k5c0utXlQJUsuVGzvHyLI7KK7I5UCk0vNLqSb1Do+Qu8WlDMK/UewzXsNje4ghgjAJSy4TBY1tipUzKHlZOtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8caibj2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CzGYqVHB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8caibj2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CzGYqVHB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W2tYq1NFmz9sRD;
-	Mon, 17 Jun 2024 17:08:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1718636911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HZmaK3/av/+pYCO8JH+DfV1hFjKuc0xucbwt8WDUoYk=;
-	b=bKvQ9GU4432FpITPMwykUykx1s6cXFn0dgCan0zb3jRVjd49al+ISqMn3IZ5bqFKIrM9r9
-	oU+wehwV+gD9fmPYL99Aj4P0uTOQPprZ/eD4GvdKiNAgoiNjHwldBAhUza9ZdGrkv2vffB
-	luVCyJ1jYCUGieiM+NCsB4/y/wAAis0f20MkJi86Epbffkc3DgYXRqPllJpyJmqGR93TaA
-	QXbduQ9zVP8VWnyjFHYeD/sWeJx/zlAVQqylhwpnGlo2vbvUWGbNYJ7YnQJ4JlYvtLLaFH
-	zB1lRVAqQxvE8DX05z1qsugqB2uZt1cfk/5eopjdSfHk5Fy+nDMD1zNI34U/rA==
-Date: Mon, 17 Jun 2024 15:08:23 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 07/11] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240617150823.tet4e7y7pco44dw7@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-8-kernel@pankajraghav.com>
- <20240612204025.GI2764752@frogsfrogsfrogs>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A46D6602EF;
+	Mon, 17 Jun 2024 15:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718638921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z4V9DehUgY9m0GwRC2TPfprhZy7/YoEhhbbKWWYGlLs=;
+	b=X8caibj236l5q/LO7Jf6I64oLfy4b6bduPHYA+F9CLOQr5p07JwaKIlJ2EdtldYhmdHoi3
+	D4TnpER0jC9HwR4tV3jNSFLgFZZ2WGGBj0ci3lAjdU6kf+DS/4T/6zoi2c7W2ERDTNY4yD
+	UEgXma/+5TxJk90/YLlmh4dardamQm8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718638921;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z4V9DehUgY9m0GwRC2TPfprhZy7/YoEhhbbKWWYGlLs=;
+	b=CzGYqVHBTMSk57a4Qr3mbKCTJLmYDUhDTw4N1FWQny7kt/tq6ENmUQb2rhr1/xMefaUXBs
+	TXEAepjm86p1vPCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718638921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z4V9DehUgY9m0GwRC2TPfprhZy7/YoEhhbbKWWYGlLs=;
+	b=X8caibj236l5q/LO7Jf6I64oLfy4b6bduPHYA+F9CLOQr5p07JwaKIlJ2EdtldYhmdHoi3
+	D4TnpER0jC9HwR4tV3jNSFLgFZZ2WGGBj0ci3lAjdU6kf+DS/4T/6zoi2c7W2ERDTNY4yD
+	UEgXma/+5TxJk90/YLlmh4dardamQm8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718638921;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z4V9DehUgY9m0GwRC2TPfprhZy7/YoEhhbbKWWYGlLs=;
+	b=CzGYqVHBTMSk57a4Qr3mbKCTJLmYDUhDTw4N1FWQny7kt/tq6ENmUQb2rhr1/xMefaUXBs
+	TXEAepjm86p1vPCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 97FE913AAF;
+	Mon, 17 Jun 2024 15:42:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EhzDJElZcGYmcAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 17 Jun 2024 15:42:01 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2E556A0887; Mon, 17 Jun 2024 17:42:01 +0200 (CEST)
+From: Jan Kara <jack@suse.cz>
+To: <linux-fsdevel@vger.kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Subject: [PATCH 0/3] udf: Fix two syzbot reports
+Date: Mon, 17 Jun 2024 17:41:50 +0200
+Message-Id: <20240617154024.22295-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612204025.GI2764752@frogsfrogsfrogs>
-X-Rspamd-Queue-Id: 4W2tYq1NFmz9sRD
+X-Developer-Signature: v=1; a=openpgp-sha256; l=152; i=jack@suse.cz; h=from:subject:message-id; bh=Ds3zZm8tNX4zxZdUY3QirJm6Vy941ZFt3soWdsYOke8=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBmcFk5L4WLckZy9hXwqy9bSKOfQSWFnNU/foeMJUhC mtFHJRSJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZnBZOQAKCRCcnaoHP2RA2XmtB/ 4k1mhsZ+YErK1xa0S3CkrWQikSaeXFmQA8B3ThHk381yi3EAtZDTVQK/goZQTN+KG23xBYbNitaknO U0DOPp8ibSW4vux7t+W0zvlnKuKXTgj+9ECthQSOLaPaSLwb/L6UZjUGHnY5Lyg5/72bp7CPAdibeS 1KIlSxcWfG0uS5zC7mP3yBk2MZYSXNoHmMsVyaJxk/wPe0tVN23dFpAq7U+YixUMZzaFGok+cZU60V S7hKMQBAZyN7N14qQS9tDcGJmH6NpznvBt6P9ffEJ9NSSR0CSTr1lMo2JNxxGydcYx/dJihNUhjOuQ Gfva1FjLny9KLy4/GfnaOdMxyyRa94
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.08
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-1.08 / 50.00];
+	BAYES_HAM(-1.29)[89.94%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.982];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[]
 
-On Wed, Jun 12, 2024 at 01:40:25PM -0700, Darrick J. Wong wrote:
-> On Fri, Jun 07, 2024 at 02:58:58PM +0000, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index f3b43d223a46..b95600b254a3 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -27,6 +27,13 @@
-> >  #define IOMAP_DIO_WRITE		(1U << 30)
-> >  #define IOMAP_DIO_DIRTY		(1U << 31)
-> >  
-> > +/*
-> > + * Used for sub block zeroing in iomap_dio_zero()
-> > + */
-> > +#define ZERO_FSB_SIZE (65536)
-> > +#define ZERO_FSB_ORDER (get_order(ZERO_FSB_SIZE))
-> > +static struct page *zero_fs_block;
-> 
-> Er... zero_page_64k ?
-> 
-> Since it's a permanent allocation, can we also mark the memory ro?
+Hello,
 
-Sounds good.
-> 
-> > +
-> >  struct iomap_dio {
-> >  	struct kiocb		*iocb;
-> >  	const struct iomap_dio_ops *dops;
-> > @@ -52,6 +59,16 @@ struct iomap_dio {
-> >  	};
-> >  };
-> >  
-> > +int iomap_dio_init(void)
-> > +{
-> > +	zero_fs_block = alloc_pages(GFP_KERNEL | __GFP_ZERO, ZERO_FSB_ORDER);
-> > +
-> > +	if (!zero_fs_block)
-> > +		return -ENOMEM;
-> > +
-> > +	return 0;
-> > +}
-> 
-> Can't we just turn this into another fs_initcall() instead of exporting
-> it just so we can call it from iomap_init?  And maybe rename the
-> existing iomap_init to iomap_pagecache_init or something, for clarity's
-> sake?
+these patches fix two issues syzbot found when fuzzing udf filesystem images.
+I plan to merge these fixes through my tree.
 
-Yeah, probably iomap_pagecache_init() in fs/iomap/buffered-io.c and
-iomap_dio_init() in fs/iomap/direct-io.c 
-> 
-> --D
-> 
+								Honza
 
