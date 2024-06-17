@@ -1,110 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-21809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C3690A934
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 11:12:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD30E90A9A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 11:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B898A1C23DEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3330428A69E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 09:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417419308E;
-	Mon, 17 Jun 2024 09:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554FA193094;
+	Mon, 17 Jun 2024 09:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1F1UKsM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E95192B89;
-	Mon, 17 Jun 2024 09:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75972190053
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 09:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718615495; cv=none; b=S3d32lt/YuZsHf8klgcMYKtIMnY8TJlkLvYqaSDIFJizd52qYd3Gu3GJkKwiQ2KHgH7wbH+n1BnJrfEkj+XJoEwp1uxC1mdanux9poiVH1GKZjS+z3J7cQ8FO1ugE84fHSgVRGU5e30LTtVvddit02VXYxC6erWEeImQdZckNHw=
+	t=1718616861; cv=none; b=qPJ4UG+5u13uPPo2u9zwnPEC2DWgVQXjB+TV3oUBqlbJWs5YWyRRl7WBZkgSAlJnKKEaVU8OFKhsl2G6r6LbxlpnzZN2Iy8mPFcbVgNJBxm62rfjKrMUZI49mjslTjSE+T/CeIcMoQGxfpufR4zcgsJUfAYIW44Ma698N/oph9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718615495; c=relaxed/simple;
-	bh=BNypJZ0Cx2gOnF3iMtKKqVQWHAjZZROs/81IROL2cVU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=SbjqBryXwtF5Xj6JFoZIJ7qKnuPp3hjzgB2l/phzVr+GPVpu0fNoh0wkY1K9x+GwaEXRL8KuecIX9n36mP12maVVeWEbCx/pPY91o4t4L9t8dr5oFmFFo+uESi8s0b/OlOTYS13GOszqUSoBN+JAzVs0fRJN3Flr6FL/nSh3ZiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W2kdc1sRtz4f3ktx;
-	Mon, 17 Jun 2024 17:11:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EBF401A016E;
-	Mon, 17 Jun 2024 17:11:27 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCnDw2+_W9mE+OzAA--.36669S3;
-	Mon, 17 Jun 2024 17:11:27 +0800 (CST)
-Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big realtime
- inode
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- John Garry <john.g.garry@oracle.com>
-References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
- <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
- <ZmveZolfY0Q0--1k@infradead.org>
- <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
- <ZmwJuiMHQ8qgkJDS@infradead.org>
- <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
- <Zm_ezp1TaIoAK1-P@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <59887f65-4a5b-aa96-7646-4c7b79372bf1@huaweicloud.com>
-Date: Mon, 17 Jun 2024 17:11:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1718616861; c=relaxed/simple;
+	bh=GhvOab+mCRok04/yA9hiMIiPytkHb/9U93weDvXdevw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbAVWYProFXrwnIQdL0FfHeIO1LCAju7ZYeaSJr0k7tqc1+LGyd+XPG2BylA8loEIJcZ+RQ0FXM3sPQqVcQPf3VFGk+Isx04p+5XNPGrT4kXBDSKQMdP2wAEeHAOdT9HPm4bhwnpbezlDPM7B3XLx0gTDPdUfUyN/97gKhg7pZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1F1UKsM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718616858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=roSRF/l+UjSsOxWpFV+d4iz/3ho6cXj+v4kuJWoKNWI=;
+	b=S1F1UKsMK3HlJdOWNiR55dVAIMWY1upY3p75PJz+3WHTGHizNN+HQZhWGTOzHCCrCw3aZd
+	sfXKmn9XMUuZBRUBu0mPo38J0/vxB9kyB9jFjnW8FBU4NgEuNpaiy2nnm1EEzC7hn/3nSJ
+	gSYZpBCtPdtjwjjvoVx6vjTQmsQo4Fs=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-YdPUCPhZMyekY17R9hO_cA-1; Mon, 17 Jun 2024 05:34:17 -0400
+X-MC-Unique: YdPUCPhZMyekY17R9hO_cA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42183fdd668so25665985e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2024 02:34:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718616856; x=1719221656;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=roSRF/l+UjSsOxWpFV+d4iz/3ho6cXj+v4kuJWoKNWI=;
+        b=OS+yxWyrRXWgZrbv2RnQ7+4DbGqqWyGJSSGqSlII1JyE2tG5xlu547EZjBOChRmWVT
+         Q8Iutg8hoOeZSL88A7PTd2/ixo2K/bYy8MzcS9gAckbygejSHOu6XMzg5F+HmPc7RvTh
+         4te59T0J+h5FzctiH8yrepzzeBvl/nc7oG/YAq4Pp5cY2iIfUsi45jb680iiRGUn/dP6
+         GBVDcTDYX/wG4sLtCmkPKrhC7MSdzMEAUNyJgx6HQFSdGnjTTdugsBo893JU+tZ1u4aH
+         /8iiqN+Ci92KPd505R8D8HZ4ZwiPe9cneMNSei10Bbpp6S/erkg1sVGDgYLftDaNpWbu
+         1WZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiDI7jNd9nKeOFQsiOz2htdhW9y7+7tVAIuoxucxipPmf7NbtjB+UnceSJULcqsu327aCcjLE/e+qkBCRF8bLiZtaYYGovx0lM9fK8RA==
+X-Gm-Message-State: AOJu0YyzC4WEvPOruOr3fZFizqVreJh7zaClb8s89WQ4vd6kGJF1KZGP
+	pYBR+UMhi/fsir94KT4xKFsAac69GERRe91H6a3yuYi/NrkpCRzuIDQPE8egkLf0aW23flJbU+0
+	hmC9MX8cJsveSWtVy1yaZv808Uz07gplhUDM4vu58Nl9TwBvv6o6p0AFQz9XcpQ==
+X-Received: by 2002:a05:600c:4b23:b0:422:47a:15c8 with SMTP id 5b1f17b1804b1-42304820d71mr75071035e9.12.1718616855764;
+        Mon, 17 Jun 2024 02:34:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1T8BzPKLN6V32qh0IOTwR3BvWw2RR4kRiN/3ni0sUSBYk+kKMtHY4PTXjTwDBDi9nWAHssQ==
+X-Received: by 2002:a05:600c:4b23:b0:422:47a:15c8 with SMTP id 5b1f17b1804b1-42304820d71mr75070745e9.12.1718616855122;
+        Mon, 17 Jun 2024 02:34:15 -0700 (PDT)
+Received: from thinky ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4246bddc59bsm17147185e9.5.2024.06.17.02.34.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 02:34:14 -0700 (PDT)
+Date: Mon, 17 Jun 2024 11:34:13 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>, 
+	xfs <linux-xfs@vger.kernel.org>, Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, 
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	fsverity@lists.linux.dev, Eric Sandeen <sandeen@redhat.com>, 
+	Shirley Ma <shirley.ma@oracle.com>
+Subject: Re: Handing xfs fsverity development back to you
+Message-ID: <vg3n7rusjj2cnkdfm45bnsgf4jacts5elc2umbyxcfhcatmtvc@z7u64a5n4wc6>
+References: <20240612190644.GA3271526@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zm_ezp1TaIoAK1-P@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCnDw2+_W9mE+OzAA--.36669S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrGr1DKr4xArWxJw1rAFyDtrb_yoWxArbEq3
-	yavrZ3ArWIy3WxZ3W2yrn8CrWIqFs5Kw4jk343Gr1DWayrXr93ZrZ8Cr1fXw1agF43Crnx
-	Kr1DZ34xXr9IgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU1zuWJUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612190644.GA3271526@frogsfrogsfrogs>
 
-On 2024/6/17 14:59, Christoph Hellwig wrote:
-> On Sat, Jun 15, 2024 at 07:44:21PM +0800, Zhang Yi wrote:
->> The reason why atomic feature can't split and convert the tail extent on truncate
->> down now is the dio write iter loop will split an atomic dio which covers the
->> whole allocation unit(extsize) since there are two extents in on allocation unit.
+On 2024-06-12 12:06:44, Darrick J. Wong wrote:
+> Hi Andrey,
 > 
-> We could fix this by merging the two in iomap_begin, as the end_io
-> handler already deals with multiple ranges.  
-
-Yeah, that's one solution.
-
-> But let's think of that when the need actually arises.
+> Yesterday during office hours I mentioned that I was going to hand the
+> xfs fsverity patchset back to you once I managed to get a clean fstests
+> run on my 6.10 tree.  I've finally gotten there, so I'm ready to
+> transfer control of this series back to you:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity_2024-06-12
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=fsverity_2024-06-12
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fsverity_2024-06-12
+> 
+> At this point, we have a mostly working implementation of fsverity
+> that's still based on your original design of stuffing merkle data into
+> special ATTR_VERITY extended attributes, and a lightweight buffer cache
+> for merkle data that can track verified status.  No contiguously
+> allocated bitmap required, etc.  At this point I've done all the design
+> and coding work that I care to do, EXCEPT:
+> 
+> Unfortunately, the v5.6 review produced a major design question that has
+> not been resolved, and that is the question of where to store the ondisk
+> merkle data.  Someone (was it hch?) pointed out that if xfs were to
+> store that fsverity data in some post-eof range of the file (ala
+> ext4/f2fs) then the xfs fsverity port wouldn't need the large number of
+> updates to fs/verity; and that a future xfs port to fscrypt could take
+> advantage of the encryption without needing to figure out how to encrypt
+> the verity xattrs.
+> 
+> On the other side of the fence, I'm guessing you and Dave are much more
+> in favor of the xattr method since that was (and still is) the original
+> design of the ondisk metadata.  I could be misremembering this, but I
+> think willy isn't a fan of the post-eof pagecache use either.
+> 
+> I don't have the expertise to make this decision because I don't know
+> enough (or anything) about cryptography to know just how difficult it
+> actually would be to get fscrypt to encrypt merkle tree data that's not
+> simply located in the posteof range of a file.  I'm aware that btrfs
+> uses the pagecache for caching merkle data but stores that data
+> elsewhere, and that they are contemplating an fscrypt implementation,
+> which is why Sweet Tea is on the cc list.  Any thoughts?
+> 
+> (This is totally separate from fscrypt'ing regular xattrs.)
+> 
+> If it's easy to adapt fscrypt to encrypt fsverity data stored in xattrs
+> then I think we can keep the current design of the patchset and try to
+> merge it for 6.11.  If not, then I think the rest of you need to think
+> hard about the tradeoffs and make a decision.  Either way, the depth of
+> my knowledge about this decision is limited to thinking that I have a
+> good enough idea about whom to cc.
+> 
+> Other notes about the branches I linked to:
+> 
+> I think it's safe to skip all the patches that mention disabling
+> fsverity because that's likely DOA anyway.
+> 
+> Christoph also has a patch to convert the other fsverity implementations
+> (btrfs/ext4/f2fs) to use the read/drop_merkle_tree_block interfaces:
+> https://lore.kernel.org/linux-xfs/ZjMZnxgFZ_X6c9aB@infradead.org/
+> 
+> I'm not sure if it actually handles PageChecked for the case that the
+> merkle tree block size != base page size.
+> 
+> If you prefer I can patchbomb the list with this v5.7 series.
+> 
+> --Darrick
 > 
 
-Sure, I will retest and submit only patch 6&8 to solve current issue in my next
-version.
+Thanks, I will look into fscrypt and if it's feasible to make it
+work with xattrs in XFS or not.
 
-Thanks,
-Yi.
+-- 
+- Andrey
 
 
