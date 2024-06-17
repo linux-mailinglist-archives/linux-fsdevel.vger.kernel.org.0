@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-21797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B33E90A360
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 07:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE2790A368
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 07:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2832B20F4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 05:36:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D342B21239
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 05:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF3F181D1F;
-	Mon, 17 Jun 2024 05:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61ED3181D0D;
+	Mon, 17 Jun 2024 05:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAGuTI5M"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9A+uv/C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6B717F5;
-	Mon, 17 Jun 2024 05:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B9717F5;
+	Mon, 17 Jun 2024 05:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718602584; cv=none; b=cj4eWYNwnWVbfL35ex/C3TcUMVhtSh7UgM0tFQv55d6HwpJTUDKMpfwFMtssJNleVuRwBxDsebIp/8s5y9yS+GUZn1GPnMBs8Dz+kbtFqsNXZlpJE6KbsL6/A/hghWirGV/sEsvOS4CPGXbvkJZi3dEdULgky3wOROIYP+Pt0j0=
+	t=1718602949; cv=none; b=uht/APVkUXztUw270x3ho7NN6zhYjXxDzjnbCb7evqVgiWnUghh8lc0hgiP/a2ccz2uvg5qeHlpS4WvfWCjk4lq3N6jEboWi93C0mW3xZrYKszbDOHZ4BUft3xYzWW8IWPheWvKT2I7vxx0Ixq4C8mKD8a31WC5FLEPo10uy/HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718602584; c=relaxed/simple;
-	bh=qNGJPYfBIO6Qqcf8w5/M6GsWzh6G1g0pb+xXn3QuMW0=;
+	s=arc-20240116; t=1718602949; c=relaxed/simple;
+	bh=fe1CDe4TWdB/mkMo+Ij8B6m8DzwSgqUdshEjV3EiiHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7o3N9JjPHInij+/gPZDhPwYqSe5qxRuyrQozwY/JQE2uplCUzMbx63TyYTyIFKRqbb3cLbA0jesuKFnO9si3AIP0jXPf/IBxFf+jDl0VuA5pGXdqdJvxOsR2u4YhGna9c/xGxwU7N8hvKrWuWdb1/R0amtqgqS7UJR8LEW/g58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAGuTI5M; arc=none smtp.client-ip=209.85.222.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ezr5QXTUZOjh/V/ume5TC8YvhBk+8ZgZDaQQRBZhg7EQAeV/PPPjzTgIGxQzTxieEGXQ0vPbkoRjsR6SH4S05/3ZX0h6HNkPzb+GXBpzU7ka/vCIHp1LKFRy0AX/OuVPtLAI4M1fFc18F7XobApLftAHxZzaXfWpYU4u6hRFcFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9A+uv/C; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-797a8cfc4ecso256101085a.3;
-        Sun, 16 Jun 2024 22:36:21 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44054a2c153so21057571cf.2;
+        Sun, 16 Jun 2024 22:42:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718602580; x=1719207380; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718602946; x=1719207746; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lJeIgTT6Qh/sxRKpkuk9BR9tYX+tCBNvv142Tf4kLOk=;
-        b=SAGuTI5MJ7/bb9u+ndbDkxJtImYCwnhrOu3kTVtsIUjOZ/sGc4UIIHM95KdXx+2Le4
-         hy+BzCqjix3ZDW1ROfxJ8yNPro26orj7tcPBG+iJ340zHqmx6rJvMAtmFS0PEhBPSwO7
-         Lxuey4dswjFnufaBZtiDkBQbm8/m1CEgD1cSyyTPdw1750TyWnVgtHpAOBHfbg/MiNlG
-         eEQzItb+Z1be0xyVSyWxkUlTtTW5JJu5INnHimYYSDbhhkfiRwyw0dIS1mVSXhjqt/cc
-         +Ww6ViOq2Dh5eVMiJrv9giO4//cZLCFKt1RjKu2D/W6EO4Sal9tWFl1cBEs14pfGRe8y
-         3pyA==
+        bh=djPwZuKbvrmoSptmQGftbxnFBiXhu4eAY3uKLEqMxtQ=;
+        b=N9A+uv/CJW7I/7mp8qlPKB5qibKyNL3J0m5CTuid9je8SuJUHw877G5MTJ+bc3dxt0
+         WXg+YYmACnlsyNdmo6vEBc2LklpQlzGqxmA3/RIZ0nNFVsEFa5AlsZIxhPwnRVc+cQKc
+         G8biaBEEom1m3u0wsIfH4O6PW59ltpJw1Y1wPO/TfUgkB5bHUWDvMWpnzM3eQQxMSAEa
+         v8fbiFvStkN8u8bd9H1CIq5mwc8PeIcBZs2vatDQiljJxTIuxYT0kDXRIIKFTxG3Rj//
+         PWyAhXNIJac7ctmyFORxMINB6my3Y4PNIVrgPjNBVpWDaEpZJ58ASWEMGDT9uqYNGqxU
+         ylTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718602580; x=1719207380;
+        d=1e100.net; s=20230601; t=1718602946; x=1719207746;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lJeIgTT6Qh/sxRKpkuk9BR9tYX+tCBNvv142Tf4kLOk=;
-        b=VijhRCAtZuIStoY+qGaflzef6gyVy46vc3naEo5+vZUdcvN4/MZCZC//fanxo98XZ0
-         ciYfk/SMg2fwE6lWDaC9EgfJ7Tx7b9Qd3kQw+tzHQK9ggtCY9QzQKhb+VJaSH5upyAIp
-         BkIaAzkcVRCqLjzhhb6ygdlSJO/n4uETiY/3iIVgnQenqlwuAciuLnrEbxOEQ42JzY4x
-         upbxJuh4xlnvby2dsuaxj+lRNSP4K9A7jWDvxkUQ6sAWEcpLj59mKSj7EkXD8kJjzEd+
-         MZwf58bAZqgH5t3l5W9/LCBvLHXsGs+oVgG3K4KbyuIkmCs/3Nv5hDlC/w+j8aXyy28h
-         Zl2A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+yTKGr9lJdrN4WBqnDOpyXSJHlsIanbCfXTiozjR4kDPy5D7ekazMc5bJ4my4VmhU4JNNXydewzr50JzT3nBc84C4FFI8uKB0Y0HYOc1w5orLEaZEArcXz6HQ2B8ig2OGOq4c2TGgVIUoPfqanmLcKWh9VG+ewZ5J06kdMj3FHUjQUWHKti1KmpakCECCwQp5QX4LwqGPs7jfdZVx5nVbK4lj85owtQ==
-X-Gm-Message-State: AOJu0Yw1B4RLbcsWgapDmSYDva6jcz3NLJruHiJvbkpYOsrc/M0NPuZE
-	v82zs/15oGYh3fS4jc9D0acFCDC91EqcTCBu2sov+Y6Jpg9ibB3i
-X-Google-Smtp-Source: AGHT+IHQxDKmzbQN3wDBWu2GUvw9lePhre6ZMLcLvCTUY/3kdj6Q6oqMmjAj+h53BtENoBkKnF5x2Q==
-X-Received: by 2002:a05:620a:1921:b0:797:b67e:e843 with SMTP id af79cd13be357-798d258cf02mr869592085a.48.1718602580414;
-        Sun, 16 Jun 2024 22:36:20 -0700 (PDT)
+        bh=djPwZuKbvrmoSptmQGftbxnFBiXhu4eAY3uKLEqMxtQ=;
+        b=rkw/IvQcmW/wTxp6KOHwQTGOEf5BJNUOxpNtcxoksTA7B2JExZV4GOzzWSTc4IvwCT
+         lpEM1V0Z/8LPcVFA9bE/KutcCxgmXNgA2yQbWxdpoWJFo9gHYyMQHKm2IhLnoBqdo+6d
+         fsDVfgoHDyMUwXDg93PGHp6B6i7v/ho9HIgJ3rT02nGHpQTyibQ0R5j7QGWTxYVZ1tCU
+         qqFDRDBjwvx9Ij8uChhHB9o8TJq91kZQC+BHtd10Flvpuu58R8Ta5lofQeun4JTyoONa
+         tAZhov/sox9UrVrhC+0DFXL5Shq0a4okoZR7n3VcmadArZhGt22mfNS9TxMPVyzcx9WZ
+         wgUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXawzg8Yo1wGkHjCfvTvde2mXcMDD+6Cbyf9ua0SCby5qrS3trBUkqEYHPKJ8AIATmznITaaH5IKZ7N07i305uILkN+jkPjw3MdRhMx4xLPiMFtiOOpLA5Di6mp5XOw2o5Nm3EqSsdenvnlHoqXaLYvCjLAMoaztoghcBOEb9t72iu1XcueMz+xVp9IwoZJ2uVd2ee7f1nCFuvHYcN+MvE3LIGzkXyA7w==
+X-Gm-Message-State: AOJu0YyNGKdEg5DHGc0p9DZXYcFnytJ4a7G5Blc0pVYQVvfEYt7HRi31
+	qbCMhQW73p3/1dEYPWniwKfRAkbEkvD4+Pn2LG3X3rOZ5R9vfJ9o
+X-Google-Smtp-Source: AGHT+IFs1jHgkUIF6bJM9amNqYLJX4wu5fNNYuW2fgfw3dZuTeC2J1Hh8+avNa0MuwtF0uJIpye+nw==
+X-Received: by 2002:a05:622a:5b0a:b0:444:8e78:6d25 with SMTP id d75a77b69052e-4448e786de1mr26277721cf.65.1718602946046;
+        Sun, 16 Jun 2024 22:42:26 -0700 (PDT)
 Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abe4f35dsm398786285a.122.2024.06.16.22.36.19
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f30f1d2esm43347471cf.81.2024.06.16.22.42.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 22:36:19 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id CAEB21200066;
-	Mon, 17 Jun 2024 01:36:18 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Mon, 17 Jun 2024 01:36:18 -0400
-X-ME-Sender: <xms:UstvZg4OKD0D5PdMwUkiymvL5RVxgMkqPDyDc2oI55hL3sxResMhcA>
-    <xme:UstvZh6sjGf--LJ1guqKzRWVGnZUL4raAzsqsRnDe_w0MBAypia_nDlCVa6UOnE-F
-    fd9KZlnRwz8S75bJg>
-X-ME-Received: <xmr:UstvZveUkCBgqxC1AM2WOGv4P7WJRdcihWolYDynT_0R3qfYhm-D3DwSMTsE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvgedgkeduucetufdoteggodetrfdotf
+        Sun, 16 Jun 2024 22:42:25 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id A58321200043;
+	Mon, 17 Jun 2024 01:42:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 17 Jun 2024 01:42:24 -0400
+X-ME-Sender: <xms:wMxvZo0x9rYvWqnmGzVfHtqzQ5UJdt3TQ9Y6Q36Ed4hJqAi7c9zlew>
+    <xme:wMxvZjHjSVMPeJV9Fh2t8F8OIYvHuNFa4SMst9xAKDgu62fciHn6ROTTzOXsZ23rB
+    mTq2Sgg257x3qwurg>
+X-ME-Received: <xmr:wMxvZg4aIL80NG_trWxZvtFnfjdGvo6GULztCf7a9BROKbU-6Iv_-tOSzEn3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvgedgkedvucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
@@ -87,15 +87,15 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvgedgkeduucetufdoteggod
     mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
     ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
     mhgv
-X-ME-Proxy: <xmx:UstvZlLD_I0DnJCopOEhlaBBeJjmGREaYlqiASh8Fv6MO2A9jTY8TQ>
-    <xmx:UstvZkKa9vP5p9jv6p81qfz3AeuwJedYZeAg2weT3j6_n3wo96UYVQ>
-    <xmx:UstvZmyWVWBZ8NH3B4zENjLVmv3YHMyyKgIO89Bohty3LX2JUZfGug>
-    <xmx:UstvZoKlw68_7R3rFxM_YpO3A1mVdjfaLqcy7N8X5yqExmZLq4HidA>
-    <xmx:UstvZjYRifXEzIfcyT5Mjjtnf8ibovnAmPvz4D5yA_GwgcxcQzqLcbcv>
+X-ME-Proxy: <xmx:wMxvZh0Y36WgBdy_3vUXxW_l0cXSwC1qF7IBDpgQfJkjnCOqU7xDaQ>
+    <xmx:wMxvZrEWp6ygxMKl21Fr-OMTe3dZWwRrs1qvpZt6TjP_OHURD8YKaA>
+    <xmx:wMxvZq9LmovzWkIscKjSOB3ZTFYsJvt-Yt9jLnOMu-azWM-iZOy1Cg>
+    <xmx:wMxvZgkFowrjk3ULXLAerMXFmoV45SamdfPtX1UG5t5xgnhgwXH1uQ>
+    <xmx:wMxvZrEH7HjeHWtZkpYbjttEVdIcmELQiMGL8pyCsJPmXC2K5Y_O5ORA>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Jun 2024 01:36:17 -0400 (EDT)
-Date: Sun, 16 Jun 2024 22:36:13 -0700
+ 17 Jun 2024 01:42:23 -0400 (EDT)
+Date: Sun, 16 Jun 2024 22:42:19 -0700
 From: Boqun Feng <boqun.feng@gmail.com>
 To: Gary Guo <gary@garyguo.net>
 Cc: John Hubbard <jhubbard@nvidia.com>,
@@ -128,9 +128,8 @@ Cc: John Hubbard <jhubbard@nvidia.com>,
  linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
  Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
 Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <Zm_LTXm3wJhcQIwI@Boquns-Mac-mini.home>
-References: <ZmseosxVQXdsQjNB@boqun-archlinux>
- <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
+Message-ID: <Zm_Mu7C76jpMyRy6@Boquns-Mac-mini.home>
+References: <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
  <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
  <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
  <79239550-dd6e-4738-acea-e7df50176487@nvidia.com>
@@ -139,6 +138,7 @@ References: <ZmseosxVQXdsQjNB@boqun-archlinux>
  <Zmz-338Ad6r4vzM-@Boquns-Mac-mini.home>
  <20240616155145.54371240.gary@garyguo.net>
  <Zm7_XWe6ciy1yN-h@Boquns-Mac-mini.home>
+ <Zm_LTXm3wJhcQIwI@Boquns-Mac-mini.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -147,86 +147,97 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zm7_XWe6ciy1yN-h@Boquns-Mac-mini.home>
+In-Reply-To: <Zm_LTXm3wJhcQIwI@Boquns-Mac-mini.home>
 
-On Sun, Jun 16, 2024 at 08:06:05AM -0700, Boqun Feng wrote:
-[...]
+On Sun, Jun 16, 2024 at 10:36:13PM -0700, Boqun Feng wrote:
+> On Sun, Jun 16, 2024 at 08:06:05AM -0700, Boqun Feng wrote:
+> [...]
+> > > 
+> > > Note that crossbeam's AtomicCell is also generic, and crossbeam is used
+> > > by tons of crates. As Miguel mentioned, I think it's very likely that in
+> > > the future we want be able to do atomics on new types (e.g. for
+> > > seqlocks perhaps). We probably don't need the non-lock-free fallback of
 > > 
-> > Note that crossbeam's AtomicCell is also generic, and crossbeam is used
-> > by tons of crates. As Miguel mentioned, I think it's very likely that in
-> > the future we want be able to do atomics on new types (e.g. for
-> > seqlocks perhaps). We probably don't need the non-lock-free fallback of
+> > Good, another design bit, thank you!
+> > 
+> > What's our overall idea on sub-word types, like Atomic<u8> and
+> > Atomic<u16>, do we plan to say no to them, or they could have a limited
+> > APIs? IIUC, some operations on them are relatively sub-optimal on some
+> > architectures, supporting the same set of API as i32 and i64 is probably
+> > a bad idea.
+> > 
+> > Another thing in my mind is making `Atomic<T>`
+> > 
+> > 	pub struct Atomic<T: Send + ...> { ... }
+> > 
+> > so that `Atomic<T>` will always be `Sync`, because quite frankly, an
+> > atomic type that cannot `Sync` is pointless.
+> > 
 > 
-> Good, another design bit, thank you!
+> Also, how do we avoid this issue [1] in kernel?
 > 
-> What's our overall idea on sub-word types, like Atomic<u8> and
-> Atomic<u16>, do we plan to say no to them, or they could have a limited
-> APIs? IIUC, some operations on them are relatively sub-optimal on some
-> architectures, supporting the same set of API as i32 and i64 is probably
-> a bad idea.
+> `atomic_load()` in C is implemented as READ_ONCE() and it's, at most
+> time, a volatile read, so the eventual code is:
 > 
-> Another thing in my mind is making `Atomic<T>`
-> 
-> 	pub struct Atomic<T: Send + ...> { ... }
-> 
-> so that `Atomic<T>` will always be `Sync`, because quite frankly, an
-> atomic type that cannot `Sync` is pointless.
+>     let a: (u8, u16) = (1, 2);
+>     let b = unsafe { core::ptr::read_volatile::<i32>(&a as *const _ as *const i32) };
 > 
 
-Also, how do we avoid this issue [1] in kernel?
+^^^^ this line should really be:
 
-`atomic_load()` in C is implemented as READ_ONCE() and it's, at most
-time, a volatile read, so the eventual code is:
+	let b: (u8, u16) = unsafe { transmute_copy(&read_volatile::<i32>(&a as *const _ as *const i32)) };
 
-    let a: (u8, u16) = (1, 2);
-    let b = unsafe { core::ptr::read_volatile::<i32>(&a as *const _ as *const i32) };
-
-I know we probably ignore data race here and treat `read_volatile` as a
-dependency read per LKMM [2]. But this is an using of uninitialized
-data, so it's a bit different.
-
-We can do what https://crates.io/crates/atomic does:
-
-	pub struct Atomic<T: NoUninit + ..> { ... }
-
-, where `NoUinit` means no internal padding bytes, but it loses the
-ability to put a 
-
-	#[repr(u32)]
-	pub enum Foo { .. }
-
-into `Atomic<T>`, right? Which is probably a case you want to support?
+but you get the idea.
 
 Regards,
 Boqun
 
-[1]: https://github.com/crossbeam-rs/crossbeam/issues/748#issuecomment-1133926617
-[2]: tools/memory-model/Documentation/access-marking.txt
-
+> I know we probably ignore data race here and treat `read_volatile` as a
+> dependency read per LKMM [2]. But this is an using of uninitialized
+> data, so it's a bit different.
+> 
+> We can do what https://crates.io/crates/atomic does:
+> 
+> 	pub struct Atomic<T: NoUninit + ..> { ... }
+> 
+> , where `NoUinit` means no internal padding bytes, but it loses the
+> ability to put a 
+> 
+> 	#[repr(u32)]
+> 	pub enum Foo { .. }
+> 
+> into `Atomic<T>`, right? Which is probably a case you want to support?
+> 
 > Regards,
 > Boqun
 > 
-> > crossbeam's AtomicCell, but the lock-free subset with newtype support
-> > is desirable.
+> [1]: https://github.com/crossbeam-rs/crossbeam/issues/748#issuecomment-1133926617
+> [2]: tools/memory-model/Documentation/access-marking.txt
+> 
+> > Regards,
+> > Boqun
 > > 
-> > People in general don't use the `atomic` crate because it provides no
-> > additional feature compared to the standard library. But it doesn't
-> > really mean that the standard library's atomic design is good.
-> > 
-> > People decided to use AtomicT and NonZeroT instead of Atomic<T> or
-> > NonZero<T> long time ago, but many now thinks the decision was bad.
-> > Introduction of NonZero<T> is a good example of it. NonZeroT are now
-> > all type aliases of NonZero<T>.
-> > 
-> > I also don't see any downside in using generics. We can provide type
-> > aliases so people can use `AtomicI32` and `AtomicI64` when they want
-> > their code to be compatible with userspace Rust can still do so.
-> > 
-> > `Atomic<i32>` is also just aesthetically better than `AtomicI32` IMO.
-> > When all other types look like `NonZero<i32>`, `Wrapping<i32>`, I don't
-> > think we should have `AtomicI32` just because "it's done this way in
-> > Rust std". Our alloc already deviates a lot from Rust std.
-> > 
-> > Best,
-> > Gary
+> > > crossbeam's AtomicCell, but the lock-free subset with newtype support
+> > > is desirable.
+> > > 
+> > > People in general don't use the `atomic` crate because it provides no
+> > > additional feature compared to the standard library. But it doesn't
+> > > really mean that the standard library's atomic design is good.
+> > > 
+> > > People decided to use AtomicT and NonZeroT instead of Atomic<T> or
+> > > NonZero<T> long time ago, but many now thinks the decision was bad.
+> > > Introduction of NonZero<T> is a good example of it. NonZeroT are now
+> > > all type aliases of NonZero<T>.
+> > > 
+> > > I also don't see any downside in using generics. We can provide type
+> > > aliases so people can use `AtomicI32` and `AtomicI64` when they want
+> > > their code to be compatible with userspace Rust can still do so.
+> > > 
+> > > `Atomic<i32>` is also just aesthetically better than `AtomicI32` IMO.
+> > > When all other types look like `NonZero<i32>`, `Wrapping<i32>`, I don't
+> > > think we should have `AtomicI32` just because "it's done this way in
+> > > Rust std". Our alloc already deviates a lot from Rust std.
+> > > 
+> > > Best,
+> > > Gary
 
