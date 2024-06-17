@@ -1,70 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-21831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D6B90B5D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 18:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A24190B5D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 18:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799C0281272
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 16:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93D21F20FF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 16:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AA5DF4D;
-	Mon, 17 Jun 2024 16:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23277134A9;
+	Mon, 17 Jun 2024 16:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="iAQnuvoL"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fqGn95aP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25031D9511;
-	Mon, 17 Jun 2024 16:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EBCE542;
+	Mon, 17 Jun 2024 16:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718640594; cv=none; b=oAY5EjDgnPUlnpH+KYilIr79qCxA/s/MwLI2iVuX37b1lxtwGR4iS9iEoUh7dicybN/byAA5RFe4hbY9A5ILkuCtljUPx5WnpRXxR4WRregxglDIylDeIdJu/4eCcfBTQc3kgsUSQW9wU/QEycavgIvWJ0nwdcOfu7OTrDt6rl4=
+	t=1718640628; cv=none; b=LY7lbB8zbbijMEDjf0/wiuh3PQrZbLEPfpbVtBcVGNAiEbNlXCCcNSEIhXrJglwRiwq68QFLjM3lnAEgpoQMQwwPRXIBO6td9nDJk6pbaPpRcw1cpo4BbVJLMeFGs+R80s0NMbgrcyS27A53PMsgzxfRd6A0H9Xp/VMAXEjuj1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718640594; c=relaxed/simple;
-	bh=QlfJ70u2Wi7LleuJicNvtfvXzL7+E99lv8MRZrSVKR0=;
+	s=arc-20240116; t=1718640628; c=relaxed/simple;
+	bh=WGCinyI4bK+TUxH3s7Y1GricZpal7F72PqLCJEowglg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P4ux8HWHH1pYzOtgPjEBvQ21xNHdMqg5IblHcZoWY0q0Gc+ZmGmub0dXMdnCG1q2/1iLBXR7/yruwOEdornocF4QY1QlOwJgrm+QRPw3fSiOBZax+JNq2CJEdExIAordZDHsfgKE8L4K1uPuphGRaC7dC0zfUldLKFOvRLm/p94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=iAQnuvoL; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W2vwR4pMXz9sTr;
-	Mon, 17 Jun 2024 18:09:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1718640583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=REOd4xGqWzBzFhAFswjKmpm8iEKvSL4/tKnq1vydLTA=;
-	b=iAQnuvoLmSElAeAjhjfiIaHZexRTvjZegkZcSJ9eYDpr05M5HTEWGMlmm7r9KvsaN6cvya
-	dvm7Nqg2opfsECU6ySm5+pRyuCzW3Vie4s7JVMy0PWEczowRhmNDdi9eHsbPRbyAlnfZhp
-	m7cviQDmpB/IaU4VAdiPRzvhqlu9EJ/0Mnds+X5ESMzQ0C71pp1sJ+EuMjSNYJSl599a9C
-	jkonE4yjDlceYx77FOHI1U+dTIFyc+NPl/QmuuAEpepMzewjh4bvAXlBHgvIf+ocGuYbip
-	l40pGiq3z+wZE8QoV+C0H+tTCJwT3HrMxZBiSQwjYUYteO1j7V+gs3N8clsrRw==
-Date: Mon, 17 Jun 2024 16:09:37 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=phfV5KOm/cSPaemVaKG7nmq7QOda+QFYXGijG+VQ4GeVzf/NoaVOluKesSbe1uBF8T+aiKuNKBl0ZRxoFvPAXcLjjUTll0XVMhXg0lugGenRDF6qfm+q2ZgVNf1eywF7B0Iu/PjEP5NJB0s4oYVaVzcHyjBtwX0e/iYI5cQTkSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fqGn95aP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6No9GIcViYA9Qsa5BjFQUlS6BgSash6AcUNuwZCbz/8=; b=fqGn95aPR/20iH6RT4ae5iOgiY
+	dGLQ2RFf23Rw6fkK/zl6TLzEdL3RQ7i4MyJnUI2dJy+ekYCvoThyKbfvqpgn/xBS9TDuwTwHGcOA4
+	VudWMrwKmev/AjluV//LxLMe6+1FKcvCu8ZAhSzw/JWrKRDmGohDhkEouuoh7/uSu6pj+5TCc07be
+	t/vQhogaI+Pls2cjL+5cuCYOyRVLbCOC7ZxrNavFHfU6cnUMSHm0htceXSz+Dg8920KPnQRR6B0rO
+	JeG82MFfZhxMjN0uQ4NNcp2TFVST+i5KY4XQcvYK4JhFaRPFK4D9SYuzzqndMamvLb3T8PiH6Rc+3
+	rco86QdQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJEvv-00000002Gj8-45VH;
+	Mon, 17 Jun 2024 16:10:16 +0000
+Date: Mon, 17 Jun 2024 17:10:15 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
-	mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	john.g.garry@oracle.com
-Subject: Re: [PATCH v7 10/11] xfs: make the calculation generic in
- xfs_sb_validate_fsb_count()
-Message-ID: <20240617160937.o65vhvtzr5u5iy2o@quentin>
+	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
+	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 04/11] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <ZnBf5wXMOBWNl52x@casper.infradead.org>
 References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-11-kernel@pankajraghav.com>
- <20240613084545.GB23371@lst.de>
+ <20240607145902.1137853-5-kernel@pankajraghav.com>
+ <ZmnuCQriFLdHKHkK@casper.infradead.org>
+ <20240614092602.jc5qeoxy24xj6kl7@quentin>
+ <ZnAs6lyMuHyk2wxI@casper.infradead.org>
+ <20240617160420.ifwlqsm5yth4g7eo@quentin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,53 +71,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613084545.GB23371@lst.de>
+In-Reply-To: <20240617160420.ifwlqsm5yth4g7eo@quentin>
 
-On Thu, Jun 13, 2024 at 10:45:45AM +0200, Christoph Hellwig wrote:
-> > +	uint64_t		max_index;
-> > +	uint64_t		max_bytes;
-> > +
-> >  	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
-> >  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
-> >  
-> > +	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-> > +		return -EFBIG;
-> > +
-> >  	/* Limited by ULONG_MAX of page cache index */
-> > -	if (nblocks >> (PAGE_SHIFT - sbp->sb_blocklog) > ULONG_MAX)
-> > +	max_index = max_bytes >> PAGE_SHIFT;
-> > +
-> > +	if (max_index > ULONG_MAX)
+On Mon, Jun 17, 2024 at 04:04:20PM +0000, Pankaj Raghav (Samsung) wrote:
+> On Mon, Jun 17, 2024 at 01:32:42PM +0100, Matthew Wilcox wrote:
+> So the following can still be there from Hannes patch as we have a 
+> stable reference:
 > 
-> Do we really need the max_index variable for a single user here?
-> Or do you plan to add more uses of it later (can't really think of one
-> though)?
+>  		ractl->_workingset |= folio_test_workingset(folio);
+> -		ractl->_nr_pages++;
+> +		ractl->_nr_pages += folio_nr_pages(folio);
+> +		i += folio_nr_pages(folio);
+>  	}
 
-Yeah, we could just inline it:
-
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index a99454208807..c6933440f806 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -132,7 +132,6 @@ xfs_sb_validate_fsb_count(
-        xfs_sb_t        *sbp,
-        uint64_t        nblocks)
- {
--       uint64_t                max_index;
-        uint64_t                max_bytes;
- 
-        ASSERT(sbp->sb_blocklog >= BBSHIFT);
-@@ -141,9 +140,7 @@ xfs_sb_validate_fsb_count(
-                return -EFBIG;
- 
-        /* Limited by ULONG_MAX of page cache index */
--       max_index = max_bytes >> PAGE_SHIFT;
--
--       if (max_index > ULONG_MAX)
-+       if (max_bytes >> PAGE_SHIFT > ULONG_MAX)
-                return -EFBIG;
-        return 0;
- }
-
-> 
+We _can_, but we just allocated it, so we know what size it is already.
+I'm starting to feel that Hannes' patch should be combined with this
+one.
 
