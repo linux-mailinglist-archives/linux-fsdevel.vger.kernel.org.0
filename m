@@ -1,136 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-21842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760F490B7F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 19:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E762A90B78D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 19:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0EB2826FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 17:26:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664FC1F22CD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2024 17:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6500016DEC4;
-	Mon, 17 Jun 2024 17:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B1E16A94E;
+	Mon, 17 Jun 2024 17:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=debian.org header.i=@debian.org header.b="G3Q9mHiQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GumAcy6E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kvr.at (smtp.kvr.at [83.65.151.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CA616DC32;
-	Mon, 17 Jun 2024 17:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.65.151.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D164E16A93C;
+	Mon, 17 Jun 2024 17:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645190; cv=none; b=B97/DI1faEptk4GNm8qRAYSytVM0kqbZCbjdhhpAQwpNHhQ49mLGjNH//Dzw+lZUl64mDudCCSoX/bpUaIqDrDuueKrQs7UAyvM0Zpk/oVXfNXG/2w4+aoUDQICnO5O5OUIhgulF5WUwexRYSN2uoiom2GWV9kZ+HBTZvnWbfGM=
+	t=1718644354; cv=none; b=mAlQSRUVQCrBUMO3XqryJO0rjFGNW11tuFE2T0az6x6GBZ/Yg37A+vGCfziKzxLuMMrH3jWlkP2ft65xu/Bcpq2zrtwAgX1uEGA+crPKgRemPmPNWRZy6EdvkhrfJTrJlk+ficutHRDy5LlIriLYgZHiqWrtnFcoTO3VuzzBKLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645190; c=relaxed/simple;
-	bh=eroIsAP7wOvBXsB8a4Z+fCWgoahxgGvp7mSRwrsG1DM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Egg3QYuOZj7xPW3jDzeBCK1oPcOdhfgcAVbkG//ZL7H/wBDuRCHo83XJsSeBQGqW3jUq9w/jPvvye0h0jO1qnQd+uyB7mUHq0JUmlQZTjC7/qw5uMTPa8t/rN2TZG6gGWXo6eiVR1XykkZZRXfkqeVHZFQ6Ms8Vy6OfPafuq0qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (4096-bit key) header.d=debian.org header.i=@debian.org header.b=G3Q9mHiQ; arc=none smtp.client-ip=83.65.151.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=20200417.ckk.user; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-	From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eroIsAP7wOvBXsB8a4Z+fCWgoahxgGvp7mSRwrsG1DM=; b=G3Q9mHiQA7hyoCjPxO4ITg3mvy
-	jLmhcIeKAJMMFq4TmBvjfR0asmDuEwTKF92FMLIiHvj88/r9KO+Pc5oqHBspeV6gCO/rjLrcC5YoA
-	oVxP02MWaepETm8JAVEoj8fkd4MOqCSOJj9KHYKD6vuDBc7yP9+bR+KRHupqDmn6hmYlZRkLcBPkG
-	ETWWjNKPVG+72f+z+GKGoL41/iJH1Gzc27FuUPxSmVko2xliUfFL9Wx0dWmdxWz0qq437vQUVCCa7
-	+cm4vz/G6TuiUHLn9zdND5+W0FISCaFyE932jzgBcp0sgTUnR9gyANminHUF3Bs2qaGxDZJeGs/7E
-	avHSdiDvVRTq2lu9PycGcdEQhQX/XhpToO2NdbOFsHjTuOC7R8utV5syBjD98TtudBs1Y9i95vtAO
-	wchqjgKEOFrX4bC75vIgg1UjNFydAMrQ/EfyZJOU7/rOk4fKqoXkx38hzOZ5qg7VDSO1gDmce5i0i
-	DtC77QzVzvKMGApRmI3pQVGg1LqszGbpU9xcWOxq61d8dWuVgo9J6KKI2h+Grd1KcY+fkbRu2evun
-	ix12GQk95O4yu72jkd0WPlHiXv9flF+Qr7nUkL5BYHTpko80qWGJEu4+w0ArgrqkiUfJU9DKNOYX1
-	iWOqv7aANppxW5tbVgM02dQqJJXr6Epu8rwrgsacc=;
-Received: from [192.168.0.7] (port=58816)
-	by smtp.kvr.at with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.97)
-	(envelope-from <ckk@debian.org>)
-	id 1sJFsf-00000006mK8-1MJu;
-	Mon, 17 Jun 2024 19:10:56 +0200
-Message-ID: <57e56ca5-bbbc-495a-926e-54d7e2f5e76c@debian.org>
-Date: Mon, 17 Jun 2024 19:10:56 +0200
+	s=arc-20240116; t=1718644354; c=relaxed/simple;
+	bh=ISxkW9K320Bmd5RQDq2ZbzfdwhVCbKLmvhyYXjmlSCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mmuAGygfeltBK1pn0mkC2JK4W7S7C5uAOkmi/AabAPCoYUh0I+93v6oHkve4KvOlCzDEwTLjq7LTMv6uo6kV+8YZMyojvpoIKYO3jZBF34HnswFawGTA9LGvJDo5rKJal4Y98HoyIeuGRwzuUccUGcnrJxAJfHtWyfL5U9XeqlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GumAcy6E; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b065d12dc6so24266096d6.0;
+        Mon, 17 Jun 2024 10:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718644352; x=1719249152; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L8Y4dIpWWIt1HFS2GNCWadogAx3UU4JsBC/chYCx394=;
+        b=GumAcy6EWHdHXTqJPZOoE3B6pgc/vDKL1wl3ETOntlxohzGrniCkh1tiQhTPfImK/d
+         pRliekaM/MSWrlVj2rJhQZkITJH11H3H19h3y03KjewzCx9ZB6ZiA7gzhTIIc8Yav1co
+         UDAvyI2BE6drReK9VtbyDB5zrHkHALCquDABeXwZbH5nFhrsxfUE3eCmSMPqd2OIcXPo
+         Oar2TH9q3QuvrxWKP6P3LfXimqVSO0xdb5Ng0ntvYr93pC1tdIB66USD7R1wkv/Amvx2
+         zXixo7f9PmP6EYWbV7LYq+BEY/o485Zn5+FnSRq7G4wZ6ww2S80Y+Z4UmWHai1WVoFn3
+         UvWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718644352; x=1719249152;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L8Y4dIpWWIt1HFS2GNCWadogAx3UU4JsBC/chYCx394=;
+        b=LqN7kNTp4lU/KJGhKPbw9EpvW0oc5DUtulgWZNohc8UnxHNtJeIPZ+XK8Gx25LhlTt
+         NwJmeAPEpXszbJsjLjt+vQW4/jX/kpavdY3by0eSEXDqpZCqK7BesHHtNPhJsPMibrWC
+         lBPnkXi+/C+wuvphtMxb2FQkinGp1OrmA4swfAsxTPBSAQt5cIv5pVjjNPIEIs8bd5nZ
+         AsWDwjHfmD0tOsJsjdXVKb6cDEpLi8qbAh73nReSF/DNarSmOutIAfR7PPnuwkopYW1X
+         pTBsFTu0pWyyPFv6YZDXwhtFcho5cciaX/xgoDiCaIFKXSWUFxrasWTK0HoTuo44shRr
+         uswg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/oacKti987OSQ5p05S6DQ42bSvNeHzvLI0NdPSYLpRVXmq1tgwjkzH5V+Vuz4H4/LV4BgTcsev46BuoVYxEc2ZKbl5SFHVcmlD5bZ/WzhoAUVJEZplAFIH6IUJuhhivxzCpjE40ytdA==
+X-Gm-Message-State: AOJu0Yw1vjDIti4Q5SuFuqqHkF95WQCu3L+/d9QiH6dVZvQc+Sqh3YL6
+	2tSyJbi3VnkfPUGXLavQwmK10NICECOO3zCEGVMEOBbWlZz4iulcCQkWIFkSOX0oCbFEbiCVGhi
+	HKlyMrlbigEStCuFClMd+WxpoSds=
+X-Google-Smtp-Source: AGHT+IHAP4gy8lnROASB8oUCFBeFNwK9k1Y9Fg4moSWCdTK/kmcqlQoziT3/xJr7TMRegSRGJNJddUNJ3mRnbsMVkrA=
+X-Received: by 2002:a0c:ef0a:0:b0:6b2:cefe:6c79 with SMTP id
+ 6a1803df08f44-6b2cefe6ce9mr50141586d6.9.1718644351581; Mon, 17 Jun 2024
+ 10:12:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
-To: David Howells <dhowells@redhat.com>
-Cc: Andrea Righi <andrea.righi@canonical.com>,
- Eric Van Hensbergen <ericvh@kernel.org>, linux-afs@lists.infradead.org,
- linux-cifs@vger.kernel.org, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Luca Boccassi <bluca@debian.org>,
- TJ <linux@iam.tj>, Emanuele Rocca <ema@debian.org>
-References: <Zj0ErxVBE3DYT2Ea@gpd>
- <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-41-dhowells@redhat.com>
- <531994.1716450257@warthog.procyon.org.uk> <ZlnnkzXiPPuEK7EM@ariel.home>
-Content-Language: en-US
-From: Christian Kastner <ckk@debian.org>
-Autocrypt: addr=ckk@debian.org; keydata=
- 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
-In-Reply-To: <ZlnnkzXiPPuEK7EM@ariel.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240617161828.6718-1-jack@suse.cz> <20240617162303.1596-2-jack@suse.cz>
+In-Reply-To: <20240617162303.1596-2-jack@suse.cz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 17 Jun 2024 20:12:19 +0300
+Message-ID: <CAOQ4uxh2WrSGjBNNTaY4Eew3cX6iPrAT9TnpqtQFccS_omNqzg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	James Clark <james.clark@arm.com>, linux-nfs@vger.kernel.org, NeilBrown <neilb@suse.de>, 
+	Al Viro <viro@zeniv.linux.org.uk>, ltp@lists.linux.it
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jun 17, 2024 at 7:23=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> From: NeilBrown <neilb@suse.de>
+>
+> When a file is opened and created with open(..., O_CREAT) we get
+> both the CREATE and OPEN fsnotify events and would expect them in that
+> order.   For most filesystems we get them in that order because
+> open_last_lookups() calls fsnofify_create() and then do_open() (from
+> path_openat()) calls vfs_open()->do_dentry_open() which calls
+> fsnotify_open().
+>
+> However when ->atomic_open is used, the
+>    do_dentry_open() -> fsnotify_open()
+> call happens from finish_open() which is called from the ->atomic_open
+> handler in lookup_open() which is called *before* open_last_lookups()
+> calls fsnotify_create.  So we get the "open" notification before
+> "create" - which is backwards.  ltp testcase inotify02 tests this and
+> reports the inconsistency.
+>
+> This patch lifts the fsnotify_open() call out of do_dentry_open() and
+> places it higher up the call stack.  There are three callers of
+> do_dentry_open().
+>
+> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
+> directly in that caller so there should be no behavioural change.
+>
+> For finish_open() there are two cases:
+>  - finish_open is used in ->atomic_open handlers.  For these we add a
+>    call to fsnotify_open() at open_last_lookups() if FMODE_OPENED is
+>    set - which means do_dentry_open() has been called.
+>  - finish_open is used in ->tmpfile() handlers.  For these a similar
+>    call to fsnotify_open() is added to vfs_tmpfile()
+>
+> With this patch NFSv3 is restored to its previous behaviour (before
+> ->atomic_open support was added) of generating CREATE notifications
+> before OPEN, and NFSv4 now has that same correct ordering that is has
+> not had before.  I haven't tested other filesystems.
+>
+> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC co=
+rrectly.")
+> Reported-by: James Clark <james.clark@arm.com>
+> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@=
+arm.com
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> Link: https://lore.kernel.org/r/171817619547.14261.975798725161704336@nob=
+le.neil.brown.name
+> Fixes: 7b8c9d7bb457 ("fsnotify: move fsnotify_open() hook into do_dentry_=
+open()")
+> Tested-by: James Clark <james.clark@arm.com>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-On 2024-05-31 17:06, Emanuele Rocca wrote:
-> Meanwhile TJ (in CC) has been doing a lot of further investigation and
-> opened https://bugzilla.kernel.org/show_bug.cgi?id=218916.
+Looks good.
 
-just to loop back to the MLs: in the referenced bug, TJ posted an
-analysis and and added a patch that fixed the issue for multiple testers.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Best,
-Christian
+> ---
+>  fs/namei.c | 10 ++++++++--
+>  fs/open.c  | 22 +++++++++++++++-------
+>  2 files changed, 23 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 37fb0a8aa09a..1e05a0f3f04d 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3572,8 +3572,12 @@ static const char *open_last_lookups(struct nameid=
+ata *nd,
+>         else
+>                 inode_lock_shared(dir->d_inode);
+>         dentry =3D lookup_open(nd, file, op, got_write);
+> -       if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+> -               fsnotify_create(dir->d_inode, dentry);
+> +       if (!IS_ERR(dentry)) {
+> +               if (file->f_mode & FMODE_CREATED)
+> +                       fsnotify_create(dir->d_inode, dentry);
+> +               if (file->f_mode & FMODE_OPENED)
+> +                       fsnotify_open(file);
+> +       }
+>         if (open_flag & O_CREAT)
+>                 inode_unlock(dir->d_inode);
+>         else
+> @@ -3700,6 +3704,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
+>         mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
+>         error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
+>         dput(child);
+> +       if (file->f_mode & FMODE_OPENED)
+> +               fsnotify_open(file);
+>         if (error)
+>                 return error;
+>         /* Don't check for other permissions, the inode was just created =
+*/
+> diff --git a/fs/open.c b/fs/open.c
+> index 89cafb572061..f1607729acb9 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
+>                 }
+>         }
+>
+> -       /*
+> -        * Once we return a file with FMODE_OPENED, __fput() will call
+> -        * fsnotify_close(), so we need fsnotify_open() here for symmetry=
+.
+> -        */
+> -       fsnotify_open(f);
+>         return 0;
+>
+>  cleanup_all:
+> @@ -1085,8 +1080,19 @@ EXPORT_SYMBOL(file_path);
+>   */
+>  int vfs_open(const struct path *path, struct file *file)
+>  {
+> +       int ret;
+> +
+>         file->f_path =3D *path;
+> -       return do_dentry_open(file, NULL);
+> +       ret =3D do_dentry_open(file, NULL);
+> +       if (!ret) {
+> +               /*
+> +                * Once we return a file with FMODE_OPENED, __fput() will=
+ call
+> +                * fsnotify_close(), so we need fsnotify_open() here for
+> +                * symmetry.
+> +                */
+> +               fsnotify_open(file);
+> +       }
+> +       return ret;
+>  }
+>
+>  struct file *dentry_open(const struct path *path, int flags,
+> @@ -1177,8 +1183,10 @@ struct file *kernel_file_open(const struct path *p=
+ath, int flags,
+>         error =3D do_dentry_open(f, NULL);
+>         if (error) {
+>                 fput(f);
+> -               f =3D ERR_PTR(error);
+> +               return ERR_PTR(error);
+>         }
+> +
+> +       fsnotify_open(f);
+>         return f;
+>  }
+>  EXPORT_SYMBOL_GPL(kernel_file_open);
+> --
+> 2.35.3
+>
 
