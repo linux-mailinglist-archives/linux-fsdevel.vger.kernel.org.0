@@ -1,106 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-21889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2BE90D674
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 17:02:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6130090D64A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 16:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85DEBB233FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 14:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B7C292CE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 14:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A2613C821;
-	Tue, 18 Jun 2024 14:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE5514A08D;
+	Tue, 18 Jun 2024 14:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8ZyEDqg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCxGf/k+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED68113792B;
-	Tue, 18 Jun 2024 14:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375CA20310;
+	Tue, 18 Jun 2024 14:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721181; cv=none; b=S/n21bMd2Ie6TGJXxEY/ccF4tahd5qkL8BVsLaQ5s4+LhBn+8lOf60svpVmyt9khF4hHNMuOtMPTbNht3qZI2vLk63Z4DeUD7W8eXBIvXz/D8VGsfT43vVDNhjqf9M3LqWGSFTYokX9sjJdiVew/1clwpF1eYrxmRQBo2uIrmPg=
+	t=1718722374; cv=none; b=f004jIdqmxSfAdxPE9OG1wfnPayRKW34oS/VJ2SgDUZUlCpjlp1EmxhLu5J8onH49jo+9/Ck/ogFISGB7MqLw4TNGp+4uNQGQG4x7cDcq+xh3M5S1jRZA78IvmtFV45EGVxKi/9I6bydLgV6sEuA+td9BoPtxOIrI1n/CagQgJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721181; c=relaxed/simple;
-	bh=A+79vWupD/VxycvUwB64PrvqaBGUAPzK3N53rHfZBRg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ng7Mmkm0oW4CviM9qwjr7U5cBYxehTt+3kOTDEbBH/sH2KcjwzxZtx9iiq12k+2LHNRf23Xl7CvM7miMauAhgpeexU3TkgxsiiuKQhbhWRrwWEmYZFR5Wd11bI8mJEGtvrFryBb2j+0oKD0YoM9tePTasbvqSdPLqjy09pGGPQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8ZyEDqg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D86BFC3277B;
-	Tue, 18 Jun 2024 14:32:57 +0000 (UTC)
+	s=arc-20240116; t=1718722374; c=relaxed/simple;
+	bh=Rflk2+4WjOQgrEOm82SwHFaMZBkVKpQtOD8MLUVoVf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKNVZDwcXy6/DobboFVIs/iiEGHgEVJu1QtKNdu7hhD+rbhbx2VDxgpiJxWOibdo6F2IrsuLwYvCbCZGNCOY56Gv9lIbiOpUghEETFAL5OjSfPOjrMfMDX45Kw+WTFAsFehtyodsWO249ytzGBVd67jWBsBub1LbbczBJ6y+v94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCxGf/k+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF19DC3277B;
+	Tue, 18 Jun 2024 14:52:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718721180;
-	bh=A+79vWupD/VxycvUwB64PrvqaBGUAPzK3N53rHfZBRg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E8ZyEDqgCkax/DcpF4nYawuGeBCkOGglsQey0GtiKZyzdjR9wfku2fmVVxAe4UbXg
-	 i4MvVm45faIZbSa4F2gN42i2jo+l5ignHDQu8NtBMGOvd2dKHEIVDIjbwUobEWOZuV
-	 3SCdqn8zdENPBjbwAKVsfmRx5J0YLx3P2HqtM8H8kD1yg7ADtxLHH/5vKs5xm0oyfB
-	 LO5tHelB36Dmy/X06+rWzBgQ/xd4SXCxkZx4cicrKTnq0KQiQJUAFPH4L1eBWh7nZL
-	 km52cuewrPce/lYK46EtMvBw1ZmcMB3gEy1hiQ7NetG8dwxeX8xGTWGe6Kd06wKAv9
-	 HEyQ59J/wvVkA==
+	s=k20201202; t=1718722373;
+	bh=Rflk2+4WjOQgrEOm82SwHFaMZBkVKpQtOD8MLUVoVf0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bCxGf/k+1bngfRw1QubS7zP537tVYpiDUMXTaKySJ7S1HKkVHNJt48Fsz4ct6z+kc
+	 QpZ7en3i9yA/6B7b/4kNWbYxUQxc7MT8d3uns4iqp5nvhmkzRJsKd/USDfRI4boiPH
+	 aldFsGS+wE7TctRkccw4hXyUs7maXFPFv5Zj/avI5zbpzisZ2h3bayOEAFwBq9ksCr
+	 QP678IqGfFtN3KlODt/+SWPDXFa0rv71AGPlewp0+vLRYrFG6OciquWnq8Fljj5vVo
+	 cjZXCVyL2uVGwdjLkCK8uNuZyEsdOY5O47+XRO2g/xf3ouP6N75VxeYYASFLs22MW8
+	 zKkTkUvrGzN3A==
+Date: Tue, 18 Jun 2024 16:52:49 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Jan Kara <jack@suse.cz>,
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH v2] Documentation: the design of iomap and how to port
-Date: Tue, 18 Jun 2024 16:32:30 +0200
-Message-ID: <20240618-kundig-kredenzen-f8e4a2dfda72@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240614214347.GK6125@frogsfrogsfrogs>
-References: <20240614214347.GK6125@frogsfrogsfrogs>
+To: Junchao Sun <sunjunchao2870@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, chandan.babu@oracle.com, djwong@kernel.org
+Subject: Re: [PATCH 2/2] vfs: reorder struct file structure elements to
+ remove unneeded padding.
+Message-ID: <20240618-zugerechnet-unvollendet-3ad100eff3d5@brauner>
+References: <20240618113505.476072-1-sunjunchao2870@gmail.com>
+ <20240618113505.476072-2-sunjunchao2870@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1491; i=brauner@kernel.org; h=from:subject:message-id; bh=A+79vWupD/VxycvUwB64PrvqaBGUAPzK3N53rHfZBRg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQVzpqqvaVPWFP4ws97my+3Lqy34zI7lcJydPP2ZZpbV srKKV+/21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR4xsY/rskbbibt0Fn3oy1 F5M/uqw5+HzDAtsCzcn7uPnj3HQuM7oz/JWsLvJeqGFiOmn6kv6lM5ZMvBJZuLyU1676i6Usi/G FbQwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240618113505.476072-2-sunjunchao2870@gmail.com>
 
-On Fri, 14 Jun 2024 14:43:47 -0700, Darrick J. Wong wrote:
-> Capture the design of iomap and how to port filesystems to use it.
-> Apologies for all the rst formatting, but it's necessary to distinguish
-> code from regular text.
+On Tue, Jun 18, 2024 at 07:35:05PM GMT, Junchao Sun wrote:
+> By reordering the elements in the struct file structure, we can
+> reduce the padding needed on an x86_64 system by 8 bytes.
 > 
-> A lot of this has been collected from various email conversations, code
-> comments, commit messages, my own understanding of iomap, and
-> Ritesh/Luis' previous efforts to create a document.  Please note a large
-> part of this has been taken from Dave's reply to last iomap doc
-> patchset. Thanks to Ritesh, Luis, Dave, Darrick, Matthew, Christoph and
-> other iomap developers who have taken time to explain the iomap design
-> in various emails, commits, comments etc.
+> Signed-off-by: Junchao Sun <sunjunchao2870@gmail.com>
+> ---
+>  include/linux/fs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 0283cf366c2a..9235b7a960d3 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -999,10 +999,10 @@ struct file {
+>  	 */
+>  	spinlock_t		f_lock;
+>  	fmode_t			f_mode;
+> +	unsigned int		f_flags;
 
-Applied to the vfs.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs.iomap branch should appear in linux-next soon.
+Iiuc, then this will push f_pos_lock into a new cache line whereas it's
+explicitly optimized so that f_lock, f_mode, and f_pos_lock are all in
+the same cache line.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.iomap
-
-[1/1] Documentation: the design of iomap and how to port
-      https://git.kernel.org/vfs/vfs/c/549c1f8d490e
+You could play around with moving the union to the end of struct file.
 
