@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-21881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E4290D6D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 17:14:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2945490D531
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 16:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91ACAB2E791
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 14:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23B7287C17
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 14:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7952813D29A;
-	Tue, 18 Jun 2024 14:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B539C135A40;
+	Tue, 18 Jun 2024 14:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qipe4oRu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZCJ3xBIa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9261E23BE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 14:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7098F130E4A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 14:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718719658; cv=none; b=hv2I5a/0NoaDTfRFogqf+0OGKvlmRYgsZ+gkhp8o+y2cIBU5Ro6h7sopPicJ369MwozrekSqc3Gfq8zra7Sj/hztBFKkbhWyFTFKN8hyEjfh+LaDvx6IDPtPU7vNWKgTuHBePee6fLkA5wBhgqqi4FY8CqXHbtr5dn1XRfJDrA0=
+	t=1718719836; cv=none; b=ddjPQ1Ka+4/IWVrXpConAKPPMKp4mXFnHtN1URF2dOOpiaiXGAamf5DUZc1zaNvWmdtG4R9h3rtYPd/MNeBdwyL6aekacsxILujxJehyMapm/lqW4XUe+EjSgriUQ2ux8peNcIho0mY6/s9siL/4QrVuiXJkWUD5mU364lkpckk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718719658; c=relaxed/simple;
-	bh=o6oOS9AoziaCRsYt1FDiUVPorMdX4OHyekN8d7TdfEg=;
+	s=arc-20240116; t=1718719836; c=relaxed/simple;
+	bh=tGl1yxfkuDeMIQeSADjyhPZolC20UrVrh9Ke7p4VEgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s+O/MD+8jvEbgm07ACMDJbDWOASHvsF0H9SAU05sRrtaAo5uAoFXcfPbYOnZal6Y4R58X46IGOHbUXtcyyptmK+5gEDbVzxK3R4KRQWB4fdm7AcLRZcAP3y8z0iv7dLiKdr4k0ybv766VF7zGL8Z6TPeaibrJD3HcHg9jsOSKww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qipe4oRu; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=bWZDOsAJAhGIcjJa5dOqwSjnEl68/Y7ie/N4oj6yFWOB8aAu66PU/YqtEM3uPb0d9fC7Lx5t29DwCLiZbneiWGMXiEOI5r2cne4C2iDygTSI18qy3vh6puzy+ef4rlSKqR1cgYzz8/0NSYzWN+E0WL3CYX1le1ncoSuZShwI2jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZCJ3xBIa; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718719654;
+	s=mimecast20190719; t=1718719833;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YDk9d1DZJVHFFhAA1PLcQoEXVG1f199ilHyv9gpJapw=;
-	b=Qipe4oRu8tmh8pfxTmSrMyBBw6teIp6dTsrBTHzmnR5wktftcsZYv+qNFipEAd41rmezXZ
-	lOsTzGw4eBc0ZVIKTcjNGSLNWtk82iSTY7ZKixw6McbL5q8hCNxk714KkbYRSPbaNvsjMb
-	laf3iB6QZjvBvNDR6QY2wePwB8OudN0=
+	bh=I4kwzn7nwp0hrFl15C/WJa7gZ49NVjVQcqnka+zFjp8=;
+	b=ZCJ3xBIaBmNtupmBcXObuQH7A5DF7uavfUIvDFlGsmHr8ReCVCESBDeryZioP1Y0KXsulC
+	jI+XhpK4fYi69SnWGGPbYyTfTVOAfpcgN3YRX74N1xPkI+aWvFWRU0sk6nxXLdT0wgJHhn
+	6wBGEhSo6lJ4383J7w70tjgBrHaYCGI=
 Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
  [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-600-teDD-LyjNg-zpNt7FHpK2g-1; Tue, 18 Jun 2024 10:07:33 -0400
-X-MC-Unique: teDD-LyjNg-zpNt7FHpK2g-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1f70b2475e7so46850055ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 07:07:32 -0700 (PDT)
+ us-mta-580-LBBCQolkNcWHEjiJqmGrlA-1; Tue, 18 Jun 2024 10:10:22 -0400
+X-MC-Unique: LBBCQolkNcWHEjiJqmGrlA-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1f71d5a85f9so61558915ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 07:10:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718719652; x=1719324452;
+        d=1e100.net; s=20230601; t=1718719822; x=1719324622;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YDk9d1DZJVHFFhAA1PLcQoEXVG1f199ilHyv9gpJapw=;
-        b=G2TSsZDOhIENIJ4D0pS/XN8EhweEF6PFv/aviymUClDgiR1L8Ypv4NmFw0iqDsp+hy
-         o4zqdxaaSBHRU1DpCVE+GdvIEpV+Vv776uS7hQzz0yP3JcgsgFYqRrTvXR6JpAzMbuT5
-         dBfW1ggl16C4hX0LezImItUl9rKmfhewuaBXocaRs240aPb7O4lzzFGhHUz0ANjsHwb+
-         F6zjM7MFdCGummvjFqCozJkdOnwg/RehknJwF5EVYCkqGeP6ekFT7NI8ChbKVyl5v7bN
-         Yrvbfnu+s5w6bg5bPClVcpOxdyT4WaUTqRtUDS2nZaduoAWzPjalWEcNviyLgO+Ep5mc
-         DEoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkua6HOgTLPav8ElCEQCJLtOCXneE1NeEVuT1SFDZln3IHM4/lLKfO9G4j78M1QgAMzN0pVfoyaVAF/2Sc6onBnKNGniWYmSQ8A3wKqg==
-X-Gm-Message-State: AOJu0YwS6P/Xiqra+h69YbzaXqQ/Nx7ojrAZHnnsOlYznkwlxJOH7e8y
-	WDMbZi9z61EZaOFPmdcU6r2NPh9/FsPV4340dAPahPLdikrMhS2mZX6tykqikA9sb2VicfTYHnR
-	zBwPRa8VT6mhRK5dVqZKYymW/Nv1F/RWlxYpcvuJCrWxB63a4GJrg1CJh6mARSyM=
-X-Received: by 2002:a17:902:d4c5:b0:1f8:3b20:3813 with SMTP id d9443c01a7336-1f8625c1762mr151927175ad.12.1718719651665;
-        Tue, 18 Jun 2024 07:07:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFc+ZgPAUrHnzwloSnonOmgLjLc4twZCmIxdgyHOk4Kjx8I09Imk6T3PfAjRYw2n/4WCiPIOg==
-X-Received: by 2002:a17:902:d4c5:b0:1f8:3b20:3813 with SMTP id d9443c01a7336-1f8625c1762mr151926555ad.12.1718719650994;
-        Tue, 18 Jun 2024 07:07:30 -0700 (PDT)
+        bh=I4kwzn7nwp0hrFl15C/WJa7gZ49NVjVQcqnka+zFjp8=;
+        b=BMQDw4Xk56uckjjDazOryStuLc7B+xEGMZLop65noiajnKvxteVKcFER3bM1EuqblG
+         nPOOXPTzij72QZCPlkf1ldS8YGfvVIPp/GBFXG/KVqsZ28D/KfrQbzY8lpv5Yn3pqR4n
+         6EtgKbj4BCMzfEx/R58Hq6q8euH75N3UYJYeTH0pr/6VL85P/vRg+I5vxDQoZEqRYg2Z
+         LEuWMtZ4LjWVzAQYwAMaP4Kx0hTP9kz2OYBWrzCfXY2xvq5FBSQRdYbIBnuJgYgzHSiU
+         SPetJDt05pYG8zEGiTDhdjMrqfMDfRcZxFHRFtXrG/adTETXmTh0+jr5qM7zx/EnCaWD
+         BvOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt/KON51fuIuOT3SG1yHn/+aSrhdfHWXXam/lGmKeBAaHpQI+qrxF3K7Lk0us7V/V0wDng+fkF0odIGJPTKqKD3WtcaUToiZ0fVOUexw==
+X-Gm-Message-State: AOJu0YxiuMqDA0HVaDw/ArcYqWujVblT0+s4pCE+pcgQiNt10JhT3L9E
+	h/pb6HvqCr3Z9OQpro0Qm6F7z9u50nuiq4H+PsS6QqBUdsVErtdsUfHAdmXysvYK7lZHD/jkh97
+	HQ5wni1++XpjKZfaNsJyckPYLneTdPyRIns3B9U48mJf1WQ+SB1LDwMtDCKxwmAk=
+X-Received: by 2002:a17:902:e747:b0:1f7:317f:5434 with SMTP id d9443c01a7336-1f8627e3299mr156584885ad.40.1718719821557;
+        Tue, 18 Jun 2024 07:10:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFv9qqMlG7VblsZwC7P+NfT7DBt1DHXNsixB82zrwIP85DFtLiWNRSo0cCXjVC8NYr5EAxLTQ==
+X-Received: by 2002:a17:902:e747:b0:1f7:317f:5434 with SMTP id d9443c01a7336-1f8627e3299mr156584335ad.40.1718719821007;
+        Tue, 18 Jun 2024 07:10:21 -0700 (PDT)
 Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f99b5740dbsm11773375ad.299.2024.06.18.07.07.25
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55c3bsm97927985ad.57.2024.06.18.07.10.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 07:07:30 -0700 (PDT)
-Date: Tue, 18 Jun 2024 22:07:23 +0800
+        Tue, 18 Jun 2024 07:10:20 -0700 (PDT)
+Date: Tue, 18 Jun 2024 22:10:13 +0800
 From: Zorro Lang <zlang@redhat.com>
 To: Luis Chamberlain <mcgrof@kernel.org>
 Cc: patches@lists.linux.dev, fstests@vger.kernel.org,
@@ -83,10 +83,10 @@ Cc: patches@lists.linux.dev, fstests@vger.kernel.org,
 	linmiaohe@huawei.com, muchun.song@linux.dev, osalvador@suse.de,
 	p.raghav@samsung.com, da.gomez@samsung.com, hare@suse.de,
 	john.g.garry@oracle.com
-Subject: Re: [PATCH v2 2/5] fstests: add mmap page boundary tests
-Message-ID: <20240618140723.r2g3vbsevjl67753@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+Subject: Re: [PATCH v2 5/5] fstests: add stress truncation + writeback test
+Message-ID: <20240618141013.pue6syikkp5dwj5q@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 References: <20240615002935.1033031-1-mcgrof@kernel.org>
- <20240615002935.1033031-3-mcgrof@kernel.org>
+ <20240615002935.1033031-6-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,327 +95,249 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240615002935.1033031-3-mcgrof@kernel.org>
+In-Reply-To: <20240615002935.1033031-6-mcgrof@kernel.org>
 
-On Fri, Jun 14, 2024 at 05:29:31PM -0700, Luis Chamberlain wrote:
-> mmap() POSIX compliance says we should zero fill data beyond a file
-> size up to page boundary, and issue a SIGBUS if we go beyond. While fsx
-> helps us test zero-fill sometimes, fsstress also let's us sometimes test
-> for SIGBUS however that is based on a random value and its not likely we
-> always test it. Dedicate a specic test for this to make testing for
-> this specific situation and to easily expand on other corner cases.
+On Fri, Jun 14, 2024 at 05:29:34PM -0700, Luis Chamberlain wrote:
+> Stress test folio splits by using the new debugfs interface to a target
+> a new smaller folio order while triggering writeback at the same time.
 > 
-> The only filesystem currently known to fail is tmpfs with huge pages on
-> a 4k base page size system, on 64k base page size it does not fail.
-> The pending upstream patch "filemap: cap PTE range to be created to
-> allowed zero fill in folio_map_range()" fixes this issue for tmpfs on
-> 4k base page size with huge pages and it also fixes it for LBS support.
+> This is known to only creates a crash with min order enabled, so for example
+> with a 16k block sized XFS test profile, an xarray fix for that is merged
+> already. This issue is fixed by kernel commit 2a0774c2886d ("XArray: set the
+> marks correctly when splitting an entry").
 > 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> If inspecting more closely, you'll want to enable on your kernel boot:
+> 
+> 	dyndbg='file mm/huge_memory.c +p'
+> 
+> Since we want to race large folio splits we also augment the full test
+> output log $seqres.full with the test specific number of successful
+> splits from vmstat thp_split_page and thp_split_page_failed. The larger
+> the vmstat thp_split_page the more we stress test this path.
+> 
+> This test reproduces a really hard to reproduce crash immediately.
+> 
 > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 > ---
 
 Good to me,
 Reviewed-by: Zorro Lang <zlang@redhat.com>
 
->  common/rc             |   5 +-
->  tests/generic/749     | 256 ++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/749.out |   2 +
->  3 files changed, 262 insertions(+), 1 deletion(-)
->  create mode 100755 tests/generic/749
->  create mode 100644 tests/generic/749.out
+>  common/rc             |  14 ++++
+>  tests/generic/751     | 170 ++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/751.out |   2 +
+>  3 files changed, 186 insertions(+)
+>  create mode 100755 tests/generic/751
+>  create mode 100644 tests/generic/751.out
 > 
 > diff --git a/common/rc b/common/rc
-> index fa7942809d6c..e812a2f7cc67 100644
+> index 30beef4e5c02..31ad30276ca6 100644
 > --- a/common/rc
 > +++ b/common/rc
-> @@ -60,12 +60,15 @@ _round_up_to_page_boundary()
->  	echo $(( (n + page_size - 1) & ~(page_size - 1) ))
+> @@ -158,6 +158,20 @@ _require_vm_compaction()
+>  	    _notrun "Need compaction enabled CONFIG_COMPACTION=y"
+>  	fi
 >  }
->  
-> +# You can override the $map_len but its optional, by default we use the
-> +# max allowed size. If you use a length greater than the default you can
-> +# expect a SIBGUS and test for it.
->  _mread()
+> +
+> +# Requires CONFIG_DEBUGFS and truncation knobs
+> +_require_split_huge_pages_knob()
+> +{
+> +       if [ ! -f $DEBUGFS_MNT/split_huge_pages ]; then
+> +           _notrun "Needs CONFIG_DEBUGFS and split_huge_pages"
+> +       fi
+> +}
+> +
+> +_split_huge_pages_all()
+> +{
+> +	echo 1 > $DEBUGFS_MNT/split_huge_pages
+> +}
+> +
+>  # Get hugepagesize in bytes
+>  _get_hugepagesize()
 >  {
->  	local file=$1
->  	local offset=$2
->  	local length=$3
-> -	local map_len=$(_round_up_to_page_boundary $(_get_filesize $file))
-> +	local map_len=${4:-$(_round_up_to_page_boundary $(_get_filesize $file)) }
->  
->  	# Some callers expect xfs_io to crash with SIGBUS due to the mread,
->  	# causing the shell to print "Bus error" to stderr.  To allow this
-> diff --git a/tests/generic/749 b/tests/generic/749
+> diff --git a/tests/generic/751 b/tests/generic/751
 > new file mode 100755
-> index 000000000000..2dcced4e3c13
+> index 000000000000..ac0ca2f07443
 > --- /dev/null
-> +++ b/tests/generic/749
-> @@ -0,0 +1,256 @@
+> +++ b/tests/generic/751
+> @@ -0,0 +1,170 @@
 > +#! /bin/bash
 > +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) Luis Chamberlain. All Rights Reserved.
+> +# Copyright (C) 2024 Luis Chamberlain. All Rights Reserved.
 > +#
-> +# FS QA Test 749
+> +# FS QA Test No. 751
 > +#
-> +# As per POSIX NOTES mmap(2) maps multiples of the system page size, but if the
-> +# data mapped is not multiples of the page size the remaining bytes are zeroed
-> +# out when mapped and modifications to that region are not written to the file.
-> +# On Linux when you write data to such partial page after the end of the
-> +# object, the data stays in the page cache even after the file is closed and
-> +# unmapped and  even  though  the data  is never written to the file itself,
-> +# subsequent mappings may see the modified content. If you go *beyond* this
-> +# page, you should get a SIGBUS. This test verifies we zero-fill to page
-> +# boundary and ensures we get a SIGBUS if we write to data beyond the system
-> +# page size even if the block size is greater than the system page size.
-> +. ./common/preamble
-> +. ./common/rc
-> +_begin_fstest auto quick prealloc
+> +# stress page cache truncation + writeback
+> +#
+> +# This aims at trying to reproduce a difficult to reproduce bug found with
+> +# min order. The issue was root caused to an xarray bug when we split folios
+> +# to another order other than 0. This functionality is used to support min
+> +# order. The crash:
+> +#
+> +# https://gist.github.com/mcgrof/d12f586ec6ebe32b2472b5d634c397df
+> +# Crash excerpt is as follows:
+> +#
+> +# BUG: kernel NULL pointer dereference, address: 0000000000000036
+> +# #PF: supervisor read access in kernel mode
+> +# #PF: error_code(0x0000) - not-present page
+> +# PGD 0 P4D 0
+> +# Oops: 0000 [#1] PREEMPT SMP NOPTI
+> +# CPU: 7 PID: 2190 Comm: kworker/u38:5 Not tainted 6.9.0-rc5+ #14
+> +# Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> +# Workqueue: writeback wb_workfn (flush-7:5)
+> +# RIP: 0010:filemap_get_folios_tag+0xa9/0x200
+> +# Call Trace:
+> +#  <TASK>
+> +#   writeback_iter+0x17d/0x310
+> +#  write_cache_pages+0x42/0xa0
+> +#  iomap_writepages+0x33/0x50
+> +#  xfs_vm_writepages+0x63/0x90 [xfs]
+> +#  do_writepages+0xcc/0x260
+> +#  __writeback_single_inode+0x3d/0x340
+> +#  writeback_sb_inodes+0x1ed/0x4b0
+> +#  __writeback_inodes_wb+0x4c/0xe0
+> +#  wb_writeback+0x267/0x2d0
+> +#  wb_workfn+0x2a4/0x440
+> +#  process_one_work+0x189/0x3b0
+> +#  worker_thread+0x273/0x390
+> +#  kthread+0xda/0x110
+> +#  ret_from_fork+0x2d/0x50
+> +#  ret_from_fork_asm+0x1a/0x30
+> +#  </TASK>
+> +#
+> +# This may also find future truncation bugs in the future, as truncating any
+> +# mapped file through the collateral of using echo 1 > split_huge_pages will
+> +# always respect the min order. Truncating to a larger order then is excercised
+> +# when this test is run against any filesystem LBS profile or an LBS device.
+> +#
+> +# If you're enabling this and want to check underneath the hood you may want to
+> +# enable:
+> +#
+> +# dyndbg='file mm/huge_memory.c +p'
+> +#
+> +# This tests aims at increasing the rate of successful truncations so we want
+> +# to increase the value of thp_split_page in $seqres.full. Using echo 1 >
+> +# split_huge_pages is extremely aggressive, and even accounts for anonymous
+> +# memory on a system, however we accept that tradeoff for the efficiency of
+> +# doing the work in-kernel for any mapped file too. Our general goal here is to
+> +# race with folio truncation + writeback.
 > +
-> +# Import common functions.
-> +. ./common/filter
+> +. ./common/preamble
+> +
+> +_begin_fstest auto long_rw stress soak smoketest
+> +
+> +# Override the default cleanup function.
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $tmp.*
+> +	rm -f $runfile
+> +	kill -9 $split_huge_pages_files_pid > /dev/null 2>&1
+> +}
+> +
+> +fio_config=$tmp.fio
+> +fio_out=$tmp.fio.out
+> +fio_err=$tmp.fio.err
 > +
 > +# real QA test starts here
 > +_supported_fs generic
-> +_require_scratch_nocheck
 > +_require_test
-> +_require_xfs_io_command "truncate"
-> +_require_xfs_io_command "falloc"
+> +_require_scratch
+> +_require_debugfs
+> +_require_split_huge_pages_knob
+> +_require_command "$KILLALL_PROG" "killall"
+> +_fixed_by_git_commit kernel 2a0774c2886d \
+> +	"XArray: set the marks correctly when splitting an entry"
 > +
-> +# _fixed_by_git_commit kernel <pending-upstream> \
-> +#        "filemap: cap PTE range to be created to allowed zero fill in folio_map_range()"
-> +
-> +filter_xfs_io_data_unique()
+> +proc_vmstat()
 > +{
-> +    _filter_xfs_io_offset | sed -e 's| |\n|g' | grep -E -v "\.|XX|\*" | \
-> +	sort -u | tr -d '\n'
+> +	awk -v name="$1" '{if ($1 ~ name) {print($2)}}' /proc/vmstat | head -1
 > +}
 > +
+> +# we need buffered IO to force truncation races with writeback in the
+> +# page cache
+> +cat >$fio_config <<EOF
+> +[force_large_large_folio_parallel_writes]
+> +ignore_error=ENOSPC
+> +nrfiles=10
+> +direct=0
+> +bs=4M
+> +group_reporting=1
+> +filesize=1GiB
+> +readwrite=write
+> +fallocate=none
+> +numjobs=$(nproc)
+> +directory=$SCRATCH_MNT
+> +runtime=100*${TIME_FACTOR}
+> +time_based
+> +EOF
 > +
-> +setup_zeroed_file()
-> +{
-> +	local file_len=$1
-> +	local sparse=$2
-> +
-> +	if $sparse; then
-> +		$XFS_IO_PROG -f -c "truncate $file_len" $test_file
-> +	else
-> +		$XFS_IO_PROG -f -c "falloc 0 $file_len" $test_file
-> +	fi
-> +}
-> +
-> +mwrite()
-> +{
-> +       local file=$1
-> +       local offset=$2
-> +       local length=$3
-> +       local map_len=${4:-$(_round_up_to_page_boundary $(_get_filesize $file)) }
-> +
-> +       # Some callers expect xfs_io to crash with SIGBUS due to the mread,
-> +       # causing the shell to print "Bus error" to stderr.  To allow this
-> +       # message to be redirected, execute xfs_io in a new shell instance.
-> +       # However, for this to work reliably, we also need to prevent the new
-> +       # shell instance from optimizing out the fork and directly exec'ing
-> +       # xfs_io.  The easiest way to do that is to append 'true' to the
-> +       # commands, so that xfs_io is no longer the last command the shell sees.
-> +       bash -c "trap '' SIGBUS; ulimit -c 0; \
-> +		$XFS_IO_PROG $file \
-> +               -c 'mmap -w 0 $map_len' \
-> +               -c 'mwrite $offset $length'; \
-> +	       true"
-> +}
-> +
-> +do_mmap_tests()
-> +{
-> +	local block_size=$1
-> +	local file_len=$2
-> +	local offset=$3
-> +	local len=$4
-> +	local use_sparse_file=${5:-false}
-> +	local new_filelen=0
-> +	local map_len=0
-> +	local csum=0
-> +	local fs_block_size=$(_get_file_block_size $SCRATCH_MNT)
-> +	local failed=0
-> +
-> +	echo -en "\n\n==> Testing blocksize $block_size " >> $seqres.full
-> +	echo -en "file_len: $file_len offset: $offset " >> $seqres.full
-> +	echo -e "len: $len sparse: $use_sparse_file" >> $seqres.full
-> +
-> +	if ((fs_block_size != block_size)); then
-> +		_fail "Block size created ($block_size) doesn't match _get_file_block_size on mount ($fs_block_size)"
-> +	fi
-> +
-> +	rm -f $SCRATCH_MNT/file
-> +
-> +	# This let's us also test against sparse files
-> +	setup_zeroed_file $file_len $use_sparse_file
-> +
-> +	# This will overwrite the old data, the file size is the
-> +	# delta between offset and len now.
-> +	$XFS_IO_PROG -f -c "pwrite -S 0xaa -b 512 $offset $len" \
-> +		$test_file >> $seqres.full
-> +
-> +	sync
-> +	new_filelen=$(_get_filesize $test_file)
-> +	map_len=$(_round_up_to_page_boundary $new_filelen)
-> +	csum_orig="$(_md5_checksum $test_file)"
-> +
-> +	# A couple of mmap() tests:
-> +	#
-> +	# We are allowed to mmap() up to the boundary of the page size of a
-> +	# data object, but there a few rules to follow we must check for:
-> +	#
-> +	# a) zero-fill test for the data: POSIX says we should zero fill any
-> +	#    partial page after the end of the object. Verify zero-fill.
-> +	# b) do not write this bogus data to disk: on Linux, if we write data
-> +	#    to a partially filled page, it will stay in the page cache even
-> +	#    after the file is closed and unmapped even if it never reaches the
-> +	#    file. As per mmap(2) subsequent mappings *may* see the modified
-> +	#    content. This means that it also can get other data and we have
-> +	#    no rules about what this data should be. Since the data read after
-> +	#    the actual object data can vary this test just verifies that the
-> +	#    filesize does not change.
-> +	if [[ $map_len -gt $new_filelen ]]; then
-> +		zero_filled_data_len=$((map_len - new_filelen))
-> +		_scratch_cycle_mount
-> +		expected_zero_data="00"
-> +		zero_filled_data=$($XFS_IO_PROG -r $test_file \
-> +			-c "mmap -r 0 $map_len" \
-> +			-c "mread -v $new_filelen $zero_filled_data_len" \
-> +			-c "munmap" | \
-> +			filter_xfs_io_data_unique)
-> +		if [[ "$zero_filled_data" != "$expected_zero_data" ]]; then
-> +			let failed=$failed+1
-> +			echo "Expected data: $expected_zero_data"
-> +			echo "  Actual data: $zero_filled_data"
-> +			echo "Zero-fill expectations with mmap() not respected"
-> +		fi
-> +
-> +		_scratch_cycle_mount
-> +		$XFS_IO_PROG $test_file \
-> +			-c "mmap -w 0 $map_len" \
-> +			-c "mwrite $new_filelen $zero_filled_data_len" \
-> +			-c "munmap"
-> +		sync
-> +		csum_post="$(_md5_checksum $test_file)"
-> +		if [[ "$csum_orig" != "$csum_post" ]]; then
-> +			let failed=$failed+1
-> +			echo "Expected csum: $csum_orig"
-> +			echo " Actual  csum: $csum_post"
-> +			echo "mmap() write up to page boundary should not change actual file contents"
-> +		fi
-> +
-> +		local filelen_test=$(_get_filesize $test_file)
-> +		if [[ "$filelen_test" != "$new_filelen" ]]; then
-> +			let failed=$failed+1
-> +			echo "Expected file length: $new_filelen"
-> +			echo " Actual  file length: $filelen_test"
-> +			echo "mmap() write up to page boundary should not change actual file size"
-> +		fi
-> +	fi
-> +
-> +	# Now lets ensure we get SIGBUS when we go beyond the page boundary
-> +	_scratch_cycle_mount
-> +	new_filelen=$(_get_filesize $test_file)
-> +	map_len=$(_round_up_to_page_boundary $new_filelen)
-> +	csum_orig="$(_md5_checksum $test_file)"
-> +	_mread $test_file 0 $map_len >> $seqres.full  2>$tmp.err
-> +	if grep -q 'Bus error' $tmp.err; then
-> +		failed=1
-> +		cat $tmp.err
-> +		echo "Not expecting SIGBUS when reading up to page boundary"
-> +	fi
-> +
-> +	# This should just work
-> +	_mread $test_file 0 $map_len >> $seqres.full  2>$tmp.err
-> +	if [[ $? -ne 0 ]]; then
-> +		let failed=$failed+1
-> +		echo "mmap() read up to page boundary should work"
-> +	fi
-> +
-> +	# This should just work
-> +	mwrite $map_len 0 $map_len >> $seqres.full  2>$tmp.err
-> +	if [[ $? -ne 0 ]]; then
-> +		let failed=$failed+1
-> +		echo "mmap() write up to page boundary should work"
-> +	fi
-> +
-> +	# If we mmap() on the boundary but try to read beyond it just
-> +	# fails, we don't get a SIGBUS
-> +	$XFS_IO_PROG -r $test_file \
-> +		-c "mmap -r 0 $map_len" \
-> +		-c "mread 0 $((map_len + 10))" >> $seqres.full  2>$tmp.err
-> +	local mread_err=$?
-> +	if [[ $mread_err -eq 0 ]]; then
-> +		let failed=$failed+1
-> +		echo "mmap() to page boundary works as expected but reading beyond should fail: $mread_err"
-> +	fi
-> +
-> +	$XFS_IO_PROG -w $test_file \
-> +		-c "mmap -w 0 $map_len" \
-> +		-c "mwrite 0 $((map_len + 10))" >> $seqres.full  2>$tmp.err
-> +	local mwrite_err=$?
-> +	if [[ $mwrite_err -eq 0 ]]; then
-> +		let failed=$failed+1
-> +		echo "mmap() to page boundary works as expected but writing beyond should fail: $mwrite_err"
-> +	fi
-> +
-> +	# Now let's go beyond the allowed mmap() page boundary
-> +	_mread $test_file 0 $((map_len + 10)) $((map_len + 10)) >> $seqres.full  2>$tmp.err
-> +	if ! grep -q 'Bus error' $tmp.err; then
-> +		let failed=$failed+1
-> +		echo "Expected SIGBUS when mmap() reading beyond page boundary"
-> +	fi
-> +
-> +	mwrite $test_file 0 $((map_len + 10)) $((map_len + 10))  >> $seqres.full  2>$tmp.err
-> +	if ! grep -q 'Bus error' $tmp.err; then
-> +		let failed=$failed+1
-> +		echo "Expected SIGBUS when mmap() writing beyond page boundary"
-> +	fi
-> +
-> +	local filelen_test=$(_get_filesize $test_file)
-> +	if [[ "$filelen_test" != "$new_filelen" ]]; then
-> +		let failed=$failed+1
-> +		echo "Expected file length: $new_filelen"
-> +		echo " Actual  file length: $filelen_test"
-> +		echo "reading or writing beyond file size up to mmap() page boundary should not change file size"
-> +	fi
-> +
-> +	if [[ $failed -eq 1 ]]; then
-> +		_fail "Test had $failed failures..."
-> +	fi
-> +}
-> +
-> +test_block_size()
-> +{
-> +	local block_size=$1
-> +
-> +	do_mmap_tests $block_size 512 3 5
-> +	do_mmap_tests $block_size 11k 0 $((4096 * 3 + 3))
-> +	do_mmap_tests $block_size 16k 0 $((16384+3))
-> +	do_mmap_tests $block_size 16k $((16384-10)) $((16384+20))
-> +	do_mmap_tests $block_size 64k 0 $((65536+3))
-> +	do_mmap_tests $block_size 4k 4090 30 true
-> +}
-> +
-> +_scratch_mkfs >> $seqres.full 2>&1 || _fail "mkfs failed"
-> +_scratch_mount
-> +test_file=$SCRATCH_MNT/file
-> +block_size=$(_get_file_block_size "$SCRATCH_MNT")
-> +test_block_size $block_size
+> +_require_fio $fio_config
 > +
 > +echo "Silence is golden"
+> +
+> +_scratch_mkfs >>$seqres.full 2>&1
+> +_scratch_mount >> $seqres.full 2>&1
+> +
+> +# used to let our loops know when to stop
+> +runfile="$tmp.keep.running.loop"
+> +touch $runfile
+> +
+> +# The background ops are out of bounds, the goal is to race with fsstress.
+> +
+> +# Force folio split if possible, this seems to be screaming for MADV_NOHUGEPAGE
+> +# for large folios.
+> +while [ -e $runfile ]; do
+> +	_split_huge_pages_all >/dev/null 2>&1
+> +done &
+> +split_huge_pages_files_pid=$!
+> +
+> +split_count_before=0
+> +split_count_failed_before=0
+> +
+> +if grep -q thp_split_page /proc/vmstat; then
+> +	split_count_before=$(proc_vmstat thp_split_page)
+> +	split_count_failed_before=$(proc_vmstat thp_split_page_failed)
+> +else
+> +	echo "no thp_split_page in /proc/vmstat" >> $seqres.full
+> +fi
+> +
+> +# we blast away with large writes to force large folio writes when
+> +# possible.
+> +echo -e "Running fio with config:\n" >> $seqres.full
+> +cat $fio_config >> $seqres.full
+> +$FIO_PROG $fio_config --alloc-size=$(( $(nproc) * 8192 )) \
+> +	--output=$fio_out 2> $fio_err
+> +FIO_ERR=$?
+> +
+> +rm -f $runfile
+> +
+> +wait > /dev/null 2>&1
+> +
+> +if grep -q thp_split_page /proc/vmstat; then
+> +	split_count_after=$(proc_vmstat thp_split_page)
+> +	split_count_failed_after=$(proc_vmstat thp_split_page_failed)
+> +	thp_split_page=$((split_count_after - split_count_before))
+> +	thp_split_page_failed=$((split_count_failed_after - split_count_failed_before))
+> +
+> +	echo "vmstat thp_split_page: $thp_split_page" >> $seqres.full
+> +	echo "vmstat thp_split_page_failed: $thp_split_page_failed" >> $seqres.full
+> +fi
+> +
+> +# exitall_on_error=ENOSPC does not work as it should, so we need this eyesore
+> +if [[ $FIO_ERR -ne 0 ]] && ! grep -q "No space left on device" $fio_err; then
+> +	_fail "fio failed with err: $FIO_ERR"
+> +fi
+> +
 > +status=0
 > +exit
-> diff --git a/tests/generic/749.out b/tests/generic/749.out
+> diff --git a/tests/generic/751.out b/tests/generic/751.out
 > new file mode 100644
-> index 000000000000..24658deddb99
+> index 000000000000..6479fa6f1404
 > --- /dev/null
-> +++ b/tests/generic/749.out
+> +++ b/tests/generic/751.out
 > @@ -0,0 +1,2 @@
-> +QA output created by 749
+> +QA output created by 751
 > +Silence is golden
 > -- 
 > 2.43.0
