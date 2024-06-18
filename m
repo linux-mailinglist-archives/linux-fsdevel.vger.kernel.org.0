@@ -1,93 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-21895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10EA90D9E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 18:51:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307B990DA8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 19:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF45B1C2251A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 16:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEA95282E6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 17:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A8113DDD2;
-	Tue, 18 Jun 2024 16:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8C71448C8;
+	Tue, 18 Jun 2024 17:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IAatnFbo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/glrhDY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE6213AD2F;
-	Tue, 18 Jun 2024 16:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEC92139DD;
+	Tue, 18 Jun 2024 17:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718729490; cv=none; b=skN1lD9X4T9LHysXVWY9XN8doD5rVAppLFf3VJ942RIJl6hTNJ9hfQ71U4wc1g4QeubGPmcNhw3MRnI5RS4utWsmwtbOsbvZVIAd+tR9Tf/icUNDXnTBN05jN+bXwImvgqme7zqFnZsiYFVARC9OKoG2l+6PGpq+elh4oP1kfrM=
+	t=1718731534; cv=none; b=LFZLaEpcbdOynF2a4T2bY7xrgAwdXy/yQtXph5bWT2VwhlVeuAQn/5cOVcB2v/EE39RixHlav5lr/gDxi1CFUxu55kcnHbnh2Pqlcyekzxt3UaHAeRs8q0M9a6VyseLpEpz9L4AFuQZnq02H72IuO/MM1aaWHa4UO3F7zDC2vSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718729490; c=relaxed/simple;
-	bh=Y3aAJgJAHNUzv7HCpjADYb0VWexqaz2jNCxzThrc01c=;
+	s=arc-20240116; t=1718731534; c=relaxed/simple;
+	bh=9WtmB9Bn0bftxKxvR8395pd356hshFubR0WI4s7a7NQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ssMzNgLZAieVJAtYGk+eySfIucYVeLzrdvbQjvf2RwPRlh1ZG+ev+TZ9zkVHSKTLGNh1Lc9P595yuS8gWOVWKMRjVntfXU0Zy+qTstTrDRRNrrMQXcx3uIL8B5RFDJyVpQDQfGxNyLvonP3nz9F8+jfQEDyhvpJRdpSm77YPcRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IAatnFbo; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=gNwWvVPDuFQMa8mCQ6H3iJIPwNDRw1EEOJraqpFJaVM=; b=IAatnFbo1rQj4iMoo+iZl/kvBI
-	GIrN683fTy+XzQLg7pWMdpq+B9bMeiVgrnVm0OXXG2lJR3dnFS1XqixeGKc02f0BJYqt2a7Xw5wHn
-	O7uR85eCzzycIVeuBw79hKbcQXnaFEX00ywUkeQmz0emngRvUAkInhQYHXqDPxGf1ochV8ngzvGur
-	Eo3cwRkkWn+MU5RzGIw2noGe+mYpJ8N46Ih1cQrK3xhHropnCOGF/20GpUDH4Zb57SBP2f4WiSx/g
-	kzb1CUHYtc9r0YvhwecVJgakK3gCIGMVRRGR1DjAcmcnAVlKOuUn+S9dyCZ5RtpsNl1MpDkKmtgD1
-	+RggggxQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJc3I-00000003YsD-3jNx;
-	Tue, 18 Jun 2024 16:51:24 +0000
-Date: Tue, 18 Jun 2024 17:51:24 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: JunChao Sun <sunjunchao2870@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com
-Subject: Re: [PATCH 1/2] xfs: reorder xfs_inode structure elements to remove
- unneeded padding.
-Message-ID: <ZnG7DJrVov5n6O5m@casper.infradead.org>
-References: <20240618113505.476072-1-sunjunchao2870@gmail.com>
- <20240618162327.GE103034@frogsfrogsfrogs>
- <CAHB1NajUvCmPK_fTVgpdXz--Qn69Ttx5W4k9Xbq18MbarzUfVA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbTxXiAhiy1mt+13cWbSEofpHoU1BTJi4zMLCiPJWBS/SzDNAJPPjxUMCsRn45iFYacSKU2IE99ehUjfO3AeVTMrXA/hBEy7HAOVPX+uFj9HfGXaGqHbkccLVFVVPoiidh0lxGwkw2eJN911DfySQzd0oUOGxIkRBn/WC+q0Ylk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/glrhDY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC4AC3277B;
+	Tue, 18 Jun 2024 17:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718731533;
+	bh=9WtmB9Bn0bftxKxvR8395pd356hshFubR0WI4s7a7NQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L/glrhDYm4sY+aW6Z7pWsticv8PewU9RhtaYYM2XXCXyQ7dJn+bapDjh1iVAIjRrm
+	 piW4D1gKTzDt5/l4zvkKQZd0ituyOTiYFBFUrZj3cl3kj9qCzTOuKdBYTrjdfDqvHf
+	 nw2tYUPmW/v+qurual1veLYcOf4R5ngMB1OFAzv5aGGzHXY83G9L75JQT5CeaVBtod
+	 2vadkoi5t1N78i5jAUnEDEN/yOnXJn4a4rZtBDP63+dfj4QXWar7NBEGVqaB3yJ/I/
+	 UbiWMjl6sosNLYMm1qGpqwcWgkWXMfAe7m8B6h7YzteDo5W9fG1kRjVrdUPgtl0jbw
+	 nYq5nfgtQA4zA==
+Date: Tue, 18 Jun 2024 11:25:29 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, djwong@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
+	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
+	hare@suse.de, Himanshu Madhani <himanshu.madhani@oracle.com>
+Subject: Re: [PATCH v8 05/10] block: Add core atomic write support
+Message-ID: <ZnHDCYiRA9EvuLTc@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240610104329.3555488-1-john.g.garry@oracle.com>
+ <20240610104329.3555488-6-john.g.garry@oracle.com>
+ <ZnCGwYomCC9kKIBY@kbusch-mbp.dhcp.thefacebook.com>
+ <20240618065112.GB29009@lst.de>
+ <91e9bbe3-75cf-4874-9d64-0785f7ea21d9@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHB1NajUvCmPK_fTVgpdXz--Qn69Ttx5W4k9Xbq18MbarzUfVA@mail.gmail.com>
+In-Reply-To: <91e9bbe3-75cf-4874-9d64-0785f7ea21d9@oracle.com>
 
-On Tue, Jun 18, 2024 at 12:40:23PM -0400, JunChao Sun wrote:
-> Darrick J. Wong <djwong@kernel.org> 于2024年6月18日周二 12:23写道：
-> >
-> > On Tue, Jun 18, 2024 at 07:35:04PM +0800, Junchao Sun wrote:
-> > > By reordering the elements in the xfs_inode structure, we can
-> > > reduce the padding needed on an x86_64 system by 8 bytes.
-> >
-> >
-> > > Does this result in denser packing of xfs_inode objects in the slab
-> > > page?
+On Tue, Jun 18, 2024 at 08:46:31AM +0100, John Garry wrote:
 > 
-> No. Before applying the patch, the size of xfs_inode is 1800 bytes
-> with my config, and after applying the patch, the size is 1792 bytes.
-> This slight reduction does not result in a denser packing of xfs_inode
-> objects within a single page.
+> About NVMe, the spec says that NABSN and NOIOB may not be related to one
+> another (command set spec 1.0d 5.8.2.1), but I am wondering if people really
+> build HW which would have different NABSN/NABSPF and NOIOB. I don't know.
 
-The "config dependent" part of this is important though.  On my
-laptop running Debian 6.6.15-amd64, xfs_inode is exactly 1024 bytes,
-and slab chooses to allocate 32 of them from an order-3 slab.
+The history of NOIOB is from an nvme drive that had two back-end
+controllers with their own isolated storage, and then striped together
+on the front end for the host to see. A command crossing the stripe
+boundary takes a slow path to split it for each backend controller's
+portion and merge the results. Subsequent implementations may have
+different reasons for advertising this boundary, but that was the
+original.
 
-Your config gets you 18 from an order-3 slab, and you'd need to get
-it down to 1724 (probably 1720 bytes due to alignment) to get 19
-from an order-3 slab.  I bet you have lockdep or something on.
+Anyway, there was an idea that the stripe size could be user
+configurable, though that never shipped as far as I know. If it had,
+then the optimal NOIOB could be made larger, but the atomic write size
+doesn't change.
 
