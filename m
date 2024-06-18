@@ -1,92 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-21876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155EB90CB5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 14:13:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7EB90CB6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 14:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D2C1C2278A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 12:13:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B50C1C22554
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 12:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E73137903;
-	Tue, 18 Jun 2024 12:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7045A2139BC;
+	Tue, 18 Jun 2024 12:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBcsmtJs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZsUOoSZV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995CC2139A2;
-	Tue, 18 Jun 2024 12:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7E52139BF;
+	Tue, 18 Jun 2024 12:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718712709; cv=none; b=U4YOgj5NdQjikdU1+dfMVsjL7C0DqEN0bLtxCQ/3QWJrzLZjpDi0dWiRlZxI/VAlWKLjPhlczVf6EvtviD5zSFMNPNoOd26ATegZBWFQKY5XiJ8bgOXVu50ZAE7LsWalfTKwlUM/uWc5EuWp7jvVJbdNtYsHHqFgy7stMKryii4=
+	t=1718712886; cv=none; b=aMmSJRVUu17TJ4dNO5FjyVo57AfuqY/tLlKp9qP0npVLCNuproTMfvooJyVec6+k3nk5QGAQH05E42F/dOvHSz24aWbCgJiymdoVsciWEEH7ee+x2Ax79x9QL1AylQbrp8G0k5VztZew6bfvEJH/V5zay8v0gL4xYbaeIOiBQ70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718712709; c=relaxed/simple;
-	bh=VoZ4zhtJJmaHjupDiKoJdFBRS8zOfKvXjt5MM4X0JmI=;
+	s=arc-20240116; t=1718712886; c=relaxed/simple;
+	bh=/kQQvCSO7koNN5eK0U9bdRCqiX5+Snib6/K2ZBeiXSU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hxvxy78Mn031sGLNuIFxhqhlWwcxp0A5G4LXwvdkWOVXuPuodgOb9s2wGPs5JFchpqZJTtJ/s9NdUgNoMl/eLAAQq23HcaDqAq+l+3IY2FruNqZhXVEyD5uDvCW6MAUS/H9u428scDDqGj0xMMetB89u3rl4lhhyFwwtKfZJOrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBcsmtJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8991CC32786;
-	Tue, 18 Jun 2024 12:11:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7FKVAgSl6WHzgDJwv/BEovdYIvUtBmXy2Q+bl3OkWshlXSrOnK4Xdcw5QGg2sdTUzs6Vk53b19jtGCOxRsukJYMerlxI4xX3luIhU1YUttrYdoZKF2Mp6ZgD1HLPP+xSp++KWf9icI6QVdSgb8I3a85JZM55BXEFN2hN3AhoXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZsUOoSZV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF64C3277B;
+	Tue, 18 Jun 2024 12:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718712709;
-	bh=VoZ4zhtJJmaHjupDiKoJdFBRS8zOfKvXjt5MM4X0JmI=;
+	s=k20201202; t=1718712886;
+	bh=/kQQvCSO7koNN5eK0U9bdRCqiX5+Snib6/K2ZBeiXSU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RBcsmtJsZer/gER0g2gI3eZ3i6X+NX8nSmwWQko+AxtcmGWL/tUaCZMNQ83dXDTxm
-	 El1xc+IIBTGw7fcVJsWaDsJFgbNknq8TRzqI7y94Y+2A3KTeAqeOlu77oBdRw3S7TA
-	 j6Efbqi+vUsc+qGlP13SNU0jhrZK7onuaJiCUCfUAO4z1xA/vDqadpPU1EPrsI3J5U
-	 RiqefzGbAGPpGCqHVc9twt3wRcwwtNRAQAUeRYCzlqS7nI1LD9Q8lLi1MD6Xee44dE
-	 3Z6WNLHIMszKeEi7Z2ulT0rlw5f9YTXqMEV5WtHyRlXBG2xJ/cynTnVIUZnIr6gQ7t
-	 hXbl/A4rXrdgg==
-Date: Tue, 18 Jun 2024 14:11:44 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
- be released
-Message-ID: <20240618-spotten-scheren-0c87d248419f@brauner>
-References: <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
- <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
- <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
- <20240613-pumpen-durst-fdc20c301a08@brauner>
- <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
- <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
- <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
- <CAGudoHGdWQYH8pRu1B5NLRa_6EKPR6hm5vOf+fyjvUzm1po8VQ@mail.gmail.com>
- <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
- <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
+	b=ZsUOoSZVrRj6hq+icFL2OCx5xclrS4ag8xZx5+WNKjG7pkvdV/3pjBGxUWfzyZC+/
+	 UJON+rAMvToC/c0NQnUjJZbgTdlmGEtqMkJMBqI8F09CGUd8ap+MpI5z3yDvazqNfB
+	 vyj75EWO5R58T+jv2AfWNbc8FOugsgx46rvshFuehZe9+DoPjuM4hXyPB9vLdJCAsU
+	 QhG1VCq55gerRbS88DOwTADidIaG/AOeoixD74bdonazDaoqdCs807L9Ey+x6m4/o5
+	 fTPDTydeYYXMo0YjfZVhKOGRoF7AZyalL3SDscC1djPH7Y9IZdVFN6eGhwavptK0x0
+	 k8Pw/br/x5x8g==
+Date: Tue, 18 Jun 2024 14:14:42 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] statx.2: Document STATX_SUBVOL
+Message-ID: <7ljnlwwyvzfmfyl2uu726qvvawuedrnvg44jx75yeaeeyef63b@crgy3bn5w2nd>
+References: <20240311203221.2118219-1-kent.overstreet@linux.dev>
+ <20240312021908.GC1182@sol.localdomain>
+ <ZfRRaGMO2bngdFOs@debian>
+ <019bae0e-ef9d-4678-80cf-ad9e1b42a1d8@oracle.com>
+ <bjrixeb4yxanusxjn6w342bbpfp7vartr2hoo2n7ofwdbjztn4@dawohphne57h>
+ <1d188d0e-d94d-4a49-ab88-23f6726b65c2@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wrxkr6davydpt5dj"
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
+In-Reply-To: <1d188d0e-d94d-4a49-ab88-23f6726b65c2@oracle.com>
 
-On Thu, Jun 13, 2024 at 12:33:59PM GMT, Linus Torvalds wrote:
-> On Thu, 13 Jun 2024 at 11:56, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > I didn't *think* anything in the dentry struct should care about
-> > debugging, but clearly that sequence number thing did.
-> 
-> Looking at the 32-bit build, it looks like out current 'struct dentry'
-> is 136 bytes in size, not 128.
-> 
-> Looks like DNAME_INLINE_LEN should be reduced to 36 on 32-bit.
-> 
-> And moving d_lockref to after d_fsdata works there too.
-> 
-> Not that anybody really cares, but let's make sure it's actually
-> properly done when this is changed. Christian?
 
-So I verified that indeed on i386 with CONFIG_SMP we need 36 to get to
-128 bytes and yes, moving d_lockref after d_fsdata works. So I've put
-that patch on top. (Sorry, took a bit. I'm back tomorrow.)
+--wrxkr6davydpt5dj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] statx.2: Document STATX_SUBVOL
+References: <20240311203221.2118219-1-kent.overstreet@linux.dev>
+ <20240312021908.GC1182@sol.localdomain>
+ <ZfRRaGMO2bngdFOs@debian>
+ <019bae0e-ef9d-4678-80cf-ad9e1b42a1d8@oracle.com>
+ <bjrixeb4yxanusxjn6w342bbpfp7vartr2hoo2n7ofwdbjztn4@dawohphne57h>
+ <1d188d0e-d94d-4a49-ab88-23f6726b65c2@oracle.com>
+MIME-Version: 1.0
+In-Reply-To: <1d188d0e-d94d-4a49-ab88-23f6726b65c2@oracle.com>
+
+Hi John,
+
+On Tue, Jun 18, 2024 at 10:19:05AM GMT, John Garry wrote:
+> Hi Alex,
+>=20
+> >=20
+> > On Mon, Jun 17, 2024 at 08:36:34AM GMT, John Garry wrote:
+> > > On 15/03/2024 13:47, Alejandro Colomar wrote:
+> > > > Hi!
+> > >=20
+> > > Was there ever an updated version of this patch?
+> > >=20
+> > > I don't see anything for this in the man pages git yet.
+> > When I pick a patch, I explicitly notify the author in a reply in the
+> > same thread.  I haven't.  I commented some issues with the patch so that
+> > the author sends some revised patch.
+> >=20
+>=20
+> I wanted to send a rebased version of my series https://lore.kernel.org/l=
+inux-api/20240124112731.28579-1-john.g.garry@oracle.com/
+>=20
+> [it was an oversight to not cc you / linux-man@vger.kernel.org there]
+>=20
+> Anyway I would like to use a proper baseline, which includes STATX_SUBVOL
+> info. So I will send an updated patch for STATX_SUBVOL if I don't see it
+> soon.
+
+Thanks!  no problem.
+
+Have a lovely day!
+Alex
+
+>=20
+> Thanks,
+> John
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--wrxkr6davydpt5dj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZxejIACgkQnowa+77/
+2zLGPg/8C75nI5J27deQxTu1vAf1SyUUbL1gUr4nZRK2Aez7rZ6g+p/wssNGSaJM
+bnzB+VB8xfVSom9ilBdLeeokBnA76IXGgRqwFkTJvW7lkXyLF3lzipMDCyxy5NqN
+hivglHxIy1rLn9tzjcnGC+uhuuYOdljewKluL6+0niZqUjEo6MjXStEtyDPh8bfZ
+Pss0Pp+9fjSvrXFsUjB3p2cWHqMHxDbO6wBtfZZRjjXQZ/MotWJgEtSzfQBtQRqE
+6kEcpkKSLJxLEiB3Yv5Phu6lOMDZclPTX9HNtwGPnTWmru3zt4Im4KH5xttBBxqO
+K0Chw3iO4ovrtVEwzFe+PgreH5irT2jwwPs9uBpYgxYJYC+fdeA6cuSsz74vWpV1
+5jf7OgPPkLHxY65DpbKhAveTgYRbYiteSOmAxFYGtH+aqBtAf1YoYBuFvckrRq4F
+p/EEPE8jCJWMRYH+vGxcNBTrGt3LW3+7HVigc7fNi3k8blTg70WULoM+KLYclVHg
+wmQSyB0J9JvCNIlYwGAqrS0/1ix7QLWOrOsiwJyOioShBJ2bk+qxhHogGDXx/hrR
+yIcIoSUJVczfsCB4Q6p2TcYuNX/MxYIgvE1WMct+kph5bNSRw+FlciVIZ4CHo+2K
+DXDXn7ZYxesBpqn3qHDc3sJvzOmFEcpMvHr9K8u8HgYnAbEhhdg=
+=o0qs
+-----END PGP SIGNATURE-----
+
+--wrxkr6davydpt5dj--
 
