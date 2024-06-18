@@ -1,87 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-21874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945C590CA77
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 13:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353C290CAC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 14:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8521F21782
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 11:53:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4544828A28E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 12:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB8615251D;
-	Tue, 18 Jun 2024 11:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2477BB14;
+	Tue, 18 Jun 2024 11:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUsSTUQV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSBJ5ji6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9FF14F113;
-	Tue, 18 Jun 2024 11:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546EE745C0;
+	Tue, 18 Jun 2024 11:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710521; cv=none; b=u2nxp5cD7se51nbqDNAxd6ZtFzR28sZNGCliKyikCqM3hUdPxqn08akEtywCZ9TXXit70DmLxrifviTiJEtB8HpkCDwZr4o/dfFZEohKZYFO6Fd3mxwIoT/FnN2mUTW5SqE1Zmtyy3+JSHwTn/bOfTDO+awTvVwd4SNDeVOw4l0=
+	t=1718711442; cv=none; b=qVTcQlBWuN4HS4eL2pI6Za7vvrrmAH3Irlo9QzNPv0yL00u+5lxFMawkn0Q3B4C0fSlqUy5Lp1kXXJs5nX6K2O8h3oUUN2vH7oxudp22g9wOttOWJ1enL94QeiKZu6S/1mYJpVOTX6WXQ/JH5yBP5CVnJb5QfZPIWz2cS14UJxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710521; c=relaxed/simple;
-	bh=n47kLEmQKieXHan4dWpUnWxQFa+g8WSINLqmwH5d7P8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N9nseXq//5trdJvVJUV+KtQx0R0nOJVwbnvUEK7VTj2SAC8GMNTDgW7yzxS1eUE8vCgzHOz1sckmAUT62f9AotUYL22524hwmdnX5Z9iNWJ+244TmNTmR42xCJM6rcPzDPu7oNWZLgkbqL0Kg9T04nAWBfGYQhhsMlXVxJF7kBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUsSTUQV; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1718711442; c=relaxed/simple;
+	bh=gn5CPAnzZLTEwuHX/rg00l93QkVeW3D7QPysAsulW2s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gfvoHbXPq4kW0ZzgbZEJkVdTWNHO7lRH2qjYxcTC6V71T0O0Aq4DNlv20R68FZY26R/9jb17e6WlaTblGqMqxoEJfCEXA9IdYOE9B8NRl3F+QbIZplFe8Rf+Llac6ZX0gfSgisIOCS6ODbadjYWcpTfnYfvc5as3EM5e1fYtp0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSBJ5ji6; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70423e8e6c9so4661205b3a.0;
-        Tue, 18 Jun 2024 04:35:19 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f70131063cso41811085ad.2;
+        Tue, 18 Jun 2024 04:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718710519; x=1719315319; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z7flslpC78LMU2Bq6YkuOUsByOSqBWx2+Qe6VdxlJ3Y=;
-        b=JUsSTUQVe5TRty4P1gPHCMbMGt1tLWOzBxAWkdkXEcZSCDwhow6ICkuSydiSc1hf4r
-         VtFWzrKyvcGfiqkZIPRvs9udc5z2Dw5ylGA13Rd3BiTtfE/wB4oFHECDa1qwZSF+2hJI
-         szooNibkjaEyaJ4W9OVrAXCb1/F0rQvLnRmw4z/hLAquOaDMp7BPJGYeS/lLUDvtPes4
-         LDN3sIan3aspNqT6yFhyb0tf3180sz64lH8+jUp41F1RfCllCr58CWxm4EbTKWy81Nfz
-         45JVu8+ixkd9HhmaB+Xsiy9/ruX179XAL6Yz+Lzx2WU8oo4eN+d1brfcC4ya4MlnfZ/f
-         tyaQ==
+        d=gmail.com; s=20230601; t=1718711440; x=1719316240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5s6/LFX8WRrd2o/jtRmvisL1C8048AZKiXldCA8XPv8=;
+        b=PSBJ5ji6I3hZ3WKzyuqmEA1brrxCv9m/ug/yPLZpw+up79PxIC3NMxf6rc6McBZA2g
+         bh9xSkV58QdezsG0xUsnArqkT/OPAdOWdfH2S3b1vvq18c15kZcda/Hd7V8pxuoalWUi
+         55IN6OZowZiCAQl+9Tqh/OxnI/hL/aHQA+lHhv2OwNib1lTTezjYqaaYENtdQWKgBIaB
+         70ixQdWIhjtuYEPwyB+1391+ga/1DSbXwo4ZqMz9V5nWRdZ4keHaCHRUnq1pxxUvRpCK
+         9j7OYUPW0XiIwYdaxMRbII0n52qRSaD7FmT3mR3qYQM1BsGsMgXO2NCqtFmsDpDPC581
+         agOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718710519; x=1719315319;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z7flslpC78LMU2Bq6YkuOUsByOSqBWx2+Qe6VdxlJ3Y=;
-        b=SqFN164dHHzJvS3WNY2g/k29oHW3np5madcBXuEgs8pi8CNQoZ1GKh7hFRQe7a8CFx
-         5VUL2SNSvF/NiOWE7BVvCT8Eo7rS3H4edYkSlt1WKxSX1GOnbHC0WdHvgjzcV33aTLBW
-         yUwJcZbv+MnZcYgH6FpphzZ9FmGb0rmf7meLjHdRxhy3kQw5V6H/y0XzgWXiDXzKU30X
-         xFXKc2vnQksvgNNL9Wlom/bJjJCzOaezsfqjdW4ECIzhEN3xRLj95J647R7GryXmDZMe
-         kjGtON9u20/QtJveuCVkTdHYdhGKRz6dskS9SAU2emdGWrj32PQN17gdpYUQ67A2BHw8
-         40Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdKlr419FMQSv5g90gI13odEq6ikWQgckXd2AYoqnHLNWgrdWBj9G6iw6Mp1qL+qpxB1s27C5AWhTjwE1rpaCBvgQ9jL70trPc
-X-Gm-Message-State: AOJu0Yzg7+WCkTZc/AlAtPoBycBvBzZ+uKFvDTNdVOd3lqIO9+/RyiSR
-	1kvdw2Wf0NZDYV4kgerfnhL3/koQiDHa83BnjD1Fjqc7cySW5/nZVYBGAH1H
-X-Google-Smtp-Source: AGHT+IF7g4VV0x1ZRFkMEt5reEs/zVN0Cj794QAaeGopj7qQO5Kzs6GXfWDzfFOHCHkqR2yd9wP67g==
-X-Received: by 2002:a05:6a00:4e51:b0:705:bd25:dcb5 with SMTP id d2e1a72fcca58-705d71cc2f5mr11296934b3a.28.1718710518670;
-        Tue, 18 Jun 2024 04:35:18 -0700 (PDT)
-Received: from localhost ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee3013f51sm7862210a12.61.2024.06.18.04.35.17
+        d=1e100.net; s=20230601; t=1718711440; x=1719316240;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5s6/LFX8WRrd2o/jtRmvisL1C8048AZKiXldCA8XPv8=;
+        b=tLEp8ntnTIO79WXpj/e4f+5bgXFkQh2M1ITM4dsQvcSN+MNhr86KycADfDYuFl/xmQ
+         PlVYGkW1YFd9EYVo66GY9bvIcb+8qth2xZCX3GARQ6ZNwmiSsu8eJaYWrzM62q8Qo3JK
+         CEEtAfCzv3xtRCPySryxik+gjmHQe8ALHfg6INYZ6a1ZkZHu1n/UetikhgWBLy2gjlIl
+         KlrUbRroSRf0DtAMKWmKuhNqBRy0o+PqL4FjVvVgqCXBJ9fq/El9UxW+MVK50AZAosZ5
+         eF03K5Hguz1eLvoOSQc7AQ4Lyl5RsoLqAlbwvFAoD60OdqWTHteS0TzepSDnFPpXVtrQ
+         Arnw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2lYBBzq4SmW1dSBnXnrCx9bun3bOcQzuHy65tLc+kSC+p+GLtui8wnDRAULeJVqbtYZy23DCNmwk5BIMbHYSmcKMmLt9x/rh9WQllj4gfOtg7Tw1526V7uW0AUSUh/RzNhgoIQ+7Ea8fjpA==
+X-Gm-Message-State: AOJu0Yyva8qlJWIh11SMoUp8SBH9aCJkvCJdoxKpdCGchlvLEtLOmiuy
+	v92iYxgh4XVEWFQagRVw6zmZCEj85hS1stHkzitV4qwyMXRx9oBCynCwTiO5
+X-Google-Smtp-Source: AGHT+IH6Z3j/b0LjFf0GkWIaBhwNo56mHqUE9EsvTcdnjzrbDUZk8I1kDyLDNVWXU4Yb1P3z7Mag0g==
+X-Received: by 2002:a17:902:d50a:b0:1f7:23d9:f530 with SMTP id d9443c01a7336-1f862a0eadfmr139727715ad.66.1718711440120;
+        Tue, 18 Jun 2024 04:50:40 -0700 (PDT)
+Received: from BRUZZHANG-MB0.tencent.com ([43.132.141.21])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee7ce5sm95643995ad.129.2024.06.18.04.50.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 04:35:18 -0700 (PDT)
-From: Junchao Sun <sunjunchao2870@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	Junchao Sun <sunjunchao2870@gmail.com>
-Subject: [PATCH 2/2] vfs: reorder struct file structure elements to remove unneeded padding.
-Date: Tue, 18 Jun 2024 19:35:05 +0800
-Message-Id: <20240618113505.476072-2-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240618113505.476072-1-sunjunchao2870@gmail.com>
-References: <20240618113505.476072-1-sunjunchao2870@gmail.com>
+        Tue, 18 Jun 2024 04:50:39 -0700 (PDT)
+From: Peng Zhang <zhangpengpeng0808@gmail.com>
+To: willy@infradead.org,
+	akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: bruzzhang <bruzzhang@tencent.com>,
+	Rongwei Wang <zigiwang@tencent.com>,
+	Vern Hao <vernhao@tencent.com>
+Subject: [PATCH RFC] mm/readahead: Fix repeat initial_readahead
+Date: Tue, 18 Jun 2024 19:49:41 +0800
+Message-Id: <20240618114941.5935-1-zhangpengpeng0808@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,31 +86,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-By reordering the elements in the struct file structure, we can
-reduce the padding needed on an x86_64 system by 8 bytes.
+From: bruzzhang <bruzzhang@tencent.com>
 
-Signed-off-by: Junchao Sun <sunjunchao2870@gmail.com>
+Now, if read from start of file, readahead
+state will be repeatly initialized when
+first time async readahead after sync one.
+This case likes:
+
+sequence read
+page_cache_sync_readahead()
+  --> ondemand_readahead() <-- initial ra
+  --> folio ready <-- order=2, readahead flags
+folio_test_readahead(folio)
+filemap_readahead() <-- async readahead
+ --> ondemand_readahead() <-- initial ra again
+
+The second initialization of ra seems a
+mistake, and right ra window
+(start, size, async_size) should be (4,8,8)
+instead of (0,4,3) after async readahead.
+
+What's more, this patch can improve sequence
+read greatly, the result of test as following:
+
+case name             upstream    upstream+fix  speedup
+----------            --------    ------------  --------
+randread-4k-sync      48981.00    48948.0000    -0.0674%
+seqread-4k-sync       1162630.00  1334915.00    14.8186%
+randread-4k-libaio    47561.00    49910.00      4.9389%
+seqread-4k-libaio     1058526.00  1257134.00    18.7627%
+seqread-1024k-libaio  1365866.00  1411463.00    3.3383%
+
+Signed-off-by: bruzzhang <bruzzhang@tencent.com>
+Signed-off-by: Rongwei Wang <zigiwang@tencent.com>
+Signed-off-by: Vern Hao <vernhao@tencent.com>
 ---
- include/linux/fs.h | 2 +-
+ mm/readahead.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0283cf366c2a..9235b7a960d3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -999,10 +999,10 @@ struct file {
+diff --git a/mm/readahead.c b/mm/readahead.c
+index c1b23989d..498708b4b 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -571,7 +571,7 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 	/*
+ 	 * start of file
  	 */
- 	spinlock_t		f_lock;
- 	fmode_t			f_mode;
-+	unsigned int		f_flags;
- 	atomic_long_t		f_count;
- 	struct mutex		f_pos_lock;
- 	loff_t			f_pos;
--	unsigned int		f_flags;
- 	struct fown_struct	f_owner;
- 	const struct cred	*f_cred;
- 	struct file_ra_state	f_ra;
+-	if (!index)
++	if (!folio && !index)
+ 		goto initial_readahead;
+ 
+ 	/*
 -- 
-2.39.2
+2.39.3
 
 
