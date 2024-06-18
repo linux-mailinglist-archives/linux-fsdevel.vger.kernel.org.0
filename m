@@ -1,237 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-21869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F55490C7CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 12:53:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E85890C823
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 13:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850CA1C229D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 10:53:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C17288B22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 11:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A79A156984;
-	Tue, 18 Jun 2024 09:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466381D5415;
+	Tue, 18 Jun 2024 09:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ldID+3dN";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="edjnSGn+"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ynnvl1W/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4500A156661;
-	Tue, 18 Jun 2024 09:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702370; cv=fail; b=lRIAfeN/+VQBY4JP5wj02kKa5VX2nmfdxozMO3bqFUNf1M6TtBpCikGTQCpge59UmuQ3SA8CaCN84j9G7TGUy3Lc1lkoC5cU2NOJHvryDouIslDLXtcVk7LOjT/WN+wtxCaR75ZMHn0OxtWpcwzcO0nhmjPCffukXwcCLOFtOVg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702370; c=relaxed/simple;
-	bh=li6PuOglSH6Ka7irL/R2/w1uWDD0K0rEYAlocfSr72I=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=N3pTungTNtR/wIbQ4AV/mawYmKIA2MbcdDaSYzpnYKcvv3B5Nvy539Ic6qLSDs5hWD5hrag+snWlGetcBjR6TkhreFHdBmYbjIDMy6krLblchNmHQpBm744shAkWsC1YW2JPz7HB+JIvld+U1pCZQnPHRDaH7p+T+AAdGg7k2QI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ldID+3dN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=edjnSGn+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I7tcgJ012651;
-	Tue, 18 Jun 2024 09:19:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=NcAgGohBB8WgS/h7jD7RfxYuTsXBwLZ0dSkAF3K/wZs=; b=
-	ldID+3dNwSHfCESFWTLIZJqJjyJnCBVTkMRZDfCMy9pdtTOXuB7L5vbfOJzhYHBn
-	mYyAy/MNHM31mX7doAGwUZk370vs+94Psp81Swfh03xrNwV/YYOlKm5oOOzLvnnt
-	t6n3GkRM6WjMj1dTU8EwCkN9qadmLXuXk85Q6qGiBCc3KMpqe42EVUgpCSqVYDHy
-	pM1lqFOcz/mxLOlpqnIe08anWeV6vLI/yscGt1T0qcAIRzIeQKpRQ+rV9MPkO/qk
-	7QJDIc9ZKZnpWs8vHs+/dGgbFeojcUeNyvUxnDB9NKWBYr8umeXtK46ZsFvrS8em
-	CCZCXGRInJ9UkEAS6A5hSg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ys3gsmg65-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Jun 2024 09:19:14 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45I8fT2h015483;
-	Tue, 18 Jun 2024 09:19:13 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2043.outbound.protection.outlook.com [104.47.55.43])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ys1ddv6rb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Jun 2024 09:19:13 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JY/QcmFZk2HxpmcZKp2XC3T+dN4EzcuwbqwIqTMlbBN4TbHHS1VDWw1uOerQrBcmpDYQdsEzMmKvJHcgeQasdncVCLswA57IisfHcHjbetEDguFK2VSesovoDvDTFLHpgSXUxTTixW9G2zfpz43T19wZhAxkIq9zatSXCz/L87ziGR/78iGdztVUGBjILjPvS685/aItAYm1EqkEAD5PIiFk+lTYS62Hid3Ej9Cc+1hyO9Ifnk+yUY6+v0A6U9PHmO5aBS5w4mG1ZCSwJzGmm9zrj3/rA+XdPWY0+8C2S1qDNR6EpbqgfY0kSNW6AnGCZarA25G5NWHfAcwMC4utKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NcAgGohBB8WgS/h7jD7RfxYuTsXBwLZ0dSkAF3K/wZs=;
- b=YuMk/Rb2XeN1CsucQG3HlQdP6nznZb3Wm2pkksOS+rrsGsjUn6GhWXrrCB2e9fSxsOCnEO58eEP97E2jrFqpiUZ6z3BvTnWqCCLTNGDX/5gxCM1bXwqGs+gPitTuZZVmkrun+jkRXmxE4OsGW+QpZtAHll7CNusZCr3Jl/WhZ/kslDdvv0ZTcAkALc4NcGkCN2crRmxJoOTZWwZj3OrQTxBxzgCzdWxnf4stgisdJAfedivBEZ58ai3j7RKvOYx8KgedUiklNT1RvF48q+wgB/kMqgl1eo9kuGjz3tS0FYxlpDBxwi8EGPEdkKRdTQBUeHGWhHG5P6sL5sVoLPRiFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF551581E4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 09:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718703425; cv=none; b=msWWR2mUDv9e565H7NbvzUdtKGvjhj8pS0iKDfN+DS6hajP/Ia48b78GiJ0K+6/Y+cKHmit6915W9qnY3ThMML48LHfsoTLQ+Viyp7bPg6mu2VsRilb6UV+lbecO2JEIh/ZESTCwA4VmOdYONXT0EVPwngPN9EWDw+VL3uU80rw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718703425; c=relaxed/simple;
+	bh=mpeSJ8fJ7wtK033GVI5zWN+gAxDW49LWmwr1VOj3LjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qD7rYOQLBQNijwNZlvmH6VDcdWY/tWltqfmwjvyK01erRXgxWTdo2d2xPFzgEaK8nnh9fhhBMCyd8gf4R3hLt2e7iw2lnnNO2kYGNn7yNNsUDCW1OBtarZDEcvn/R6kexki6XgVBxIqN6zf40lnk1zvbfhKSx4p5W4dW6X1FG+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ynnvl1W/; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-250671a1bc7so2495241fac.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 02:37:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NcAgGohBB8WgS/h7jD7RfxYuTsXBwLZ0dSkAF3K/wZs=;
- b=edjnSGn+BNTWMPJ2f/WVs5uoLXUpPvZeYI3n0329xFsGCQP5xN4eGyrxcHD1Br6kl+hzV3vYRsthTct2h5Hh5yFwHDic+E3eXlwCSW/GsAnvcHEEsi0kfAaqer50wsLuw0PXE0JNYZsNnCcaXwCQPfcV9AxOXJhtDrRXr0H0UdE=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by CO1PR10MB4466.namprd10.prod.outlook.com (2603:10b6:303:9b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
- 2024 09:19:10 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 09:19:10 +0000
-Message-ID: <1d188d0e-d94d-4a49-ab88-23f6726b65c2@oracle.com>
-Date: Tue, 18 Jun 2024 10:19:05 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] statx.2: Document STATX_SUBVOL
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>, linux-man@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20240311203221.2118219-1-kent.overstreet@linux.dev>
- <20240312021908.GC1182@sol.localdomain> <ZfRRaGMO2bngdFOs@debian>
- <019bae0e-ef9d-4678-80cf-ad9e1b42a1d8@oracle.com>
- <bjrixeb4yxanusxjn6w342bbpfp7vartr2hoo2n7ofwdbjztn4@dawohphne57h>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <bjrixeb4yxanusxjn6w342bbpfp7vartr2hoo2n7ofwdbjztn4@dawohphne57h>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR04CA0050.eurprd04.prod.outlook.com
- (2603:10a6:208:1::27) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=chromium.org; s=google; t=1718703423; x=1719308223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yO5Ag6TkgQi37C9WOmZH4DbdT66+5TaN0dgl3GOdIjM=;
+        b=Ynnvl1W/CxPRXFlUjD8Fvq5KI/1Z1IW9Y6oPaSoV7QS2Wnz9VIpHz487UbcrUBD3gr
+         4M5QbpsNmd8hxmh84TTxrnOWZss0f7UWCbr/Y0C7pIW2eOeTlu793Tdum3fnl/UhA8xH
+         GTro3Ml34vISoWNUpKwW8p4NWpZ84HBCCnqrU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718703423; x=1719308223;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yO5Ag6TkgQi37C9WOmZH4DbdT66+5TaN0dgl3GOdIjM=;
+        b=AaOO6GiYC9PF5m9uCz0Rc0wRwFnzfpfp/cmEYm1Uq2IGPGIst7Nr7uOHbqeDUmu6vb
+         EysMwOSEqqXHi7/rF48qPet1GeerHPUTd02vdJwIfYQ62mPOfDObepGn2wglqZLc3y5B
+         HRK8pq+wCGk2vuEDAy8cKHBHk605RSlY5Dle+2+pTcefFPlDkuBMXd8Oos7meJxx5sag
+         H6F2/yVewuZrw2E9JVfxrl6ZyxUyUKDxuxWwiSPf7dMye5uCVTC86glxw5wfvFvRVIM+
+         46DVVDNzmeJi8uOSas4oZm/T6ro4o0sYYd3eSoNuo3D1iJbGNEWcrLwt3DdkLAIv0uPy
+         INqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTv4d5ldvwiZ1sVn7iZdt/ShFas87Yz4AxT4WKBXjadcNPvWA/fp7+Tw5jIAv+WHgoIEagsCxv1pnUWT6Xb+nR+xkre+TXapGJp5O0oA==
+X-Gm-Message-State: AOJu0YyVAObm9G+teZNFr5z5vEDXZsNpud6IaqXiEe0SYjtbf3WzCMFo
+	8G0d3mmVOGCYOItzxav31WOY1yLNbbPt0sAOVzOmUrpBmc9tUZo/BqzcY5Ih
+X-Google-Smtp-Source: AGHT+IFjGk/o+lwl7K/bIc/tHdxoPP+pTmgqlmCZ6lEWgXKCgTfp4wm0qZkGTYoC1vTxxK5H8+Ha1w==
+X-Received: by 2002:a05:6870:c1d4:b0:24f:dd11:4486 with SMTP id 586e51a60fabf-25842ba209bmr14156507fac.36.1718703423087;
+        Tue, 18 Jun 2024 02:37:03 -0700 (PDT)
+Received: from localhost (148.175.199.104.bc.googleusercontent.com. [104.199.175.148])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-705d8fc3dbdsm6995546b3a.1.2024.06.18.02.36.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 02:37:02 -0700 (PDT)
+From: Takaya Saeki <takayas@chromium.org>
+To: Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Junichi Uekawa <uekawa@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takaya Saeki <takayas@chromium.org>
+Subject: [PATCH] filemap: add trace events for get_pages, map_pages, and fault
+Date: Tue, 18 Jun 2024 09:36:56 +0000
+Message-ID: <20240618093656.1944210-1-takayas@chromium.org>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CO1PR10MB4466:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf54e649-b090-4e40-ab9f-08dc8f77b671
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|366013;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?djVWRlVEVnRjbDBwaGdlMlBoL1lENFRRZzZ1RDF6eFNqL25SM01wTjc1UlBK?=
- =?utf-8?B?TzNSYSt4c2NBS09tQStqY0RCQ3V3aXRwc3ZGTnlLd2ZzTmRpbTcwV0N1Mmgx?=
- =?utf-8?B?QUtKRXVocjhQK0QzWUFQVXN1NktHMmxTLzkvVSt5RjJ3Q0duaWNyOHQ2d2VS?=
- =?utf-8?B?SWJqcEFERHNpencvRFNZT3NabEpkQTI2MkI2OU9MSWFTT0lEVE8yYWM0NHRG?=
- =?utf-8?B?dHVOcWV4NklDVHg0ck5kb0NBN3Q2OE8rT3VMWXhRbms1SnlCbWdmaGpWY2FU?=
- =?utf-8?B?dlpwTm15SFlOU3czWVNqZlBCKyszdEptOFF6TmVHRkRQUHBpdXgydUNic290?=
- =?utf-8?B?YzByNkNobEE5U0V1ZkwxV2V1eUYzV0JwTGZ3eEJyZUhKQU5GaXMwZFN3dHdv?=
- =?utf-8?B?UVJLOVAzaWZaQkNIY21BV1h6L2t6UE1CbnZkVzVERTgwV2VCTVJNV1g0K2Fp?=
- =?utf-8?B?M3F5NEVjckE5M1h1Wm1GUHJ2SmRwY1dURWRDRy9TSGdpUGI1bXczTUtIdlh1?=
- =?utf-8?B?N2s2M3BpZDlWdFFVdWVjVGUyM3JxMXNwVTdPWk1Makc4RERZVHVzaTZpbzNF?=
- =?utf-8?B?QjNvR0hORmFxVE04WlVOZVZ4bDIwMHJrZUVQY0pVSlJMTUYwOUNPSjYxRG95?=
- =?utf-8?B?Y1l2enVPTHZoemxmck9odGNPTU1mLysxMk1wRmdqYWpFdWFST29KZ09aUm1G?=
- =?utf-8?B?eGR4TzhtNWlLVGEyclZ4QUx6cGIrZDgwaHZqYm1ZUjZBQmRQd0FkNFYwbWxD?=
- =?utf-8?B?UXhBQi84YUd2ZzJPV3VtRVphZ1lRU3hVSDlhc2wrMjFHOStWOFBhMGhRaU1p?=
- =?utf-8?B?RWN0WEJ2SHdmMlVJYmtGWncrT2NFNkFEc0gzcnZUMVN2TG5JMTVraTJXY1M0?=
- =?utf-8?B?RGt0Q2VuNENhQ2tISnJNUzhBQi9Mdmw0bkEzWjhzM2hWNy9nQ3dpbFdYcW5P?=
- =?utf-8?B?UytNck1rYm1RTTRnSkhiU0RQcHVPK203ZXg4RDZzY1JZVVdNOFVjZWtSc2wy?=
- =?utf-8?B?cVVNSjlvNWZXQkxXVDh4aVErREtUT1p5SnhVdExyN3pkRGpYQVpndmdkcDFv?=
- =?utf-8?B?dnd6V3J5dXkycVBQRm9uamZ0TVZKSXZhTmNmRjhnS0JuK1dUbWh6cXB0S3NT?=
- =?utf-8?B?NFRTN2FwRDBabjM1eFMyRGxGTmU5TmpkcVVGRHFSZmhHTDNEZHlWc2dIVWo3?=
- =?utf-8?B?OU9rSXZ6OVlwemp3MCtUajJrcldjUUMzbXJwUEVRL2NyNWpSUjdoNWZ3N3JR?=
- =?utf-8?B?V25RRWZHN2c5QzBwUnpZWnYyRkx3NUN2U2QvRE5qaEczeS8yN1lMRHp6VW4x?=
- =?utf-8?B?bW9TY2MyZUdjWVY1RU9CVXhuUjB2QU92ck9kSlhtcEQzaXdEbXo5U3ZsdTNR?=
- =?utf-8?B?SlRQYVplbkNEMFdRRSttNVJQUnIyZlZLWnBBbVZkQTVJNGNsWEkrUDZBNy9x?=
- =?utf-8?B?L0VjUUdSOTJ3bE1BNi9GMTh3Y3ZXcFVsZDRrYzNCUEx4VUhhbyt1YytQb3J1?=
- =?utf-8?B?SlJIRHpnbXEySGpwekwxcUIySUxrZ0lUd0xkOGUwdXdKV2FwMVQ1bVJwMmRK?=
- =?utf-8?B?bGdJRVNpSDF1YmZ5NjRwUFJ5ZHhwazlKcnAyTjRYVFhLNmRQRmoyOVc4aHo3?=
- =?utf-8?B?cko2M01rRExnbGF2WDNZQThmNVNlL0dpdEc4Q1pjcHkrendaU0llU3JING9U?=
- =?utf-8?Q?sVj6RXJdbOcTALP+IX2C?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?cXYrTlozZENidmJRTWV6T0F0VzN4aE8rbDAzMDdCR285TGI1V2hGVU1GRFNt?=
- =?utf-8?B?MEg5WVMxUm81eW1ad0k4dWp6R1VBNTVUUjJoZkxMQndaZ0RsVEhWWUtWNlhl?=
- =?utf-8?B?VUxSUXlLQ2lDR094YVlMTTllblIzdjNHZllRRE5WTm85VWJ6K0NOTjhqdWE0?=
- =?utf-8?B?dVNzN2IvTzVhSy9Rd1Q1V1JER1NwRE40Y296eHdtRkZMTG94ZDY0OHRzdC96?=
- =?utf-8?B?Q2hDaDZPdHlVNzJHWFZHNFZBYUgwbUl4Mk5xMlR5aVdzMlhyUDMvdWlyaC8w?=
- =?utf-8?B?d2tGWDZ1T250YlN2TmtNTDNWQUF1ZVRSYk5mR2lBMkdLUkNSbWdqazRFaTlF?=
- =?utf-8?B?T1ZWZEs0WjgydGhaRDRBYmFXbHBmb1gxejMvcEprdjBqVGpwcWRzNTJvVzlT?=
- =?utf-8?B?RVFubFhNb1Q0d0FtZzE2NVBuTXcrZFpEOFozRVl4c0tmd2VYVG1PL3JXbitU?=
- =?utf-8?B?TjdoYVhKcGxOeWZLOE5ZU0VWTjd1bXBHTVArK3lZb0xFS0ZaL2V4c25tUFJi?=
- =?utf-8?B?VGJNTkJBa1ZGc3ZKSER5L1NCWGRWWWJpTW9vVEljWmlJT01OTTdmRkpiREh5?=
- =?utf-8?B?MkZ3U1B4ZWNYWnhmYkk0NXd6YTZ5ajZQSTlFYzZ4bHhNSGxRejl0b2thMStQ?=
- =?utf-8?B?b2s2WTZZWTlUdnBDMnRFY3QrTjk1MWNFSFlmWC8wV0lSVGNRbFJScjFTUVpF?=
- =?utf-8?B?MjZlMU9ETER0ZjdkWk5QN05CbVFpVUhLVHA2KzBRdFczdGZVdXJHV0dmcEhI?=
- =?utf-8?B?R2ZEb0IxOTNsUmZRZ1BFREx0cFo1dWRuWVFuYm9PQjlEYm5zNitFNW1FZzlX?=
- =?utf-8?B?bGRFMWt4bnlYMmxWdzFFNkRySnBVUlNqREtCVXNSRWxpcG1yZXNRbjJqV1JB?=
- =?utf-8?B?emN2dUNHc0N4MnFsR21iaUVxMG83QUlCNGY0a3p2UGZyWmszUGdUNkc5RFVJ?=
- =?utf-8?B?N3hLb0ZETWwxemlEOXc1TlhwRXNzZWd6QnZhSEY1TE1jRURtYVBPZUhhRWMz?=
- =?utf-8?B?OXUzRU81b2QrTXdhTDNlalpnQXFsNTgyZHdwemd0NE1ON1d4T1NnWERnMGZj?=
- =?utf-8?B?Q3c1dnVRZS9lcDlFZ1ArclFmd2JjMnhHK0tFdERqaXN1MTRNc0xnN2JzaElF?=
- =?utf-8?B?Y3RnU21KU0VtdERoaWhDSVdUeUFVemhaUXFYdU9WNzVHL2J4bTJ3T1E5dkF1?=
- =?utf-8?B?eThKblNkNW5rRnlmWWV3Wmg5anlKcmhTTFBQcVo0VXpjeVlxWHJSRE9OUEMx?=
- =?utf-8?B?NnpwRFZndmYvWU9ldUR1a2FTWGY0enRBMFR4cG8xNDF5eGlJUUh6cVVSUTR5?=
- =?utf-8?B?bXVndWVnUS9aUGZMKy9HOEpnUEFQcnlZVUg1VkVDNGQxNkg4SldjUjZ0Zlph?=
- =?utf-8?B?d0toVXJZbzZlcnMxNVVHc3ZRRUpkMmkzUFJCc2tPZndiaWtCVWhzY285T21D?=
- =?utf-8?B?S2k5TU4yMlhyL2QydHRqa1d5dGNMNzBCYTBFVDBkNWtTVW1pZWJYN2xmbXpF?=
- =?utf-8?B?bjZsVmNQZDAvaEdzc2d2RUkxTnp4RW9zNXY1QWxEYkVmcldCc2RtV1E1b3Fz?=
- =?utf-8?B?dkw5eUhWYVBNSG1rZ2Y4S2dReFBBbzh5V0JiVDQ3b1pQVE9WQW9oQTdFeUxE?=
- =?utf-8?B?U1pyY3Z2bjVBRUYzdGZwcXU5S3h3VVlzUjI2b3JsOE9Qd2IvNEU4KzZ6S3JI?=
- =?utf-8?B?d2xqUGVuY0dFU1ZSamo3SWtKL3hxMmZTZHNDTXVBOGN3QzNhTmNtYnc0VHR6?=
- =?utf-8?B?TWlvMkJtZTZaYUs5eFhicXQyM0lkSVhoV2ZOVjI2WXhHblFlVGlHbDYrM2Jm?=
- =?utf-8?B?bERBVFdNajR4c0ljSWE3Tk5tYW5udlE0MVBKMDIvZlVxcEZGc0NrZFdYSjB2?=
- =?utf-8?B?NkFGSlZjZDJheENYcmloQVJzTThRNHpGbUI2SWJ3TWZMc3BVZS9WVVNZdG1G?=
- =?utf-8?B?dWhpa09BRWlQOTBJZUMySGJZQk4xWGtVc2pUUjJxcjFhNXFZQkhVS08veEtU?=
- =?utf-8?B?YkJxZXF5aXV1alFHb0FieHVMekRqeGdtOExPQTlxQlFtdElINEdzU2hFNE5Y?=
- =?utf-8?B?R1lwM1hJWEp1ZWk0WmwyYXpHekIxMkNIN0xsY0tEUDZGY2QvdkVvNnRwZmd3?=
- =?utf-8?Q?qZ+Y9oa8vYcjqLsfuZnoYKi7w?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	JFQtgBkAC6zrBac9EE3WCZgPYiWYrVfNL8vl4EupllNqnflj9aEBzqyO9uh63TfBT5zL+3qMpmTdPbV24ZAmfpHSD0QeO1YeKjYKK7oacp5XJCZWbuFJsaApzXvwAS9vnVZ3tDILaFirmVL+IZ/DBUJynyDH1ldh42SF/WJx7meGu15fQy5JEM+UJ/Qa3xLNq/rpZV7NhE44rEyuIvbxhAXcNKuc4OQ1aNuxbGqndrkgoILpJnVOoRUR3Hxz6gphu+1h5x6ZWZ69v9XoYeTMjIBITCQzTkWmFiGo0bZURISPmN4IsrlZqStUPslvNsjVLQtw64cX9Q7cyapKFvSEBMMDl7kdR0MQj5o4sz5ZP4m++Ed5exOhjsWd7Pm2fsmJPERMCyIp9hkClmPyukQKvWWNLoomZnLHQ+Mv4AUTzADKmq66XPwqpCxf8sUw3fUwLH4br5SP1dUrNAzMIqoP1CvhD/HwBZ2Mz+0pQax+uhmd3GWyjaBcY9+MvWQDYOlmQaNUcFMv6785jKd7V8CVe7Xuh/trbOUrbzBAgb0pNmD0Vwzn4qA2isEt+rbPyMCyfr1gsqxfHLIWsuT+iI3UmwbpbRpk8JJJwL+AXpT+630=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf54e649-b090-4e40-ab9f-08dc8f77b671
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 09:19:10.6478
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WsmSUc5Nz1Gxv3U7y8vpMyEXHGDRFfFyX4ndqTuMraCZrnz5rVlPIB/eOtXUiTdud0DCC4dp1XjezYSBh1kQgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4466
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 spamscore=0
- adultscore=0 mlxlogscore=999 phishscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2406180068
-X-Proofpoint-ORIG-GUID: E2VZqiMRVswpDljrMYZzUEhQ5-EXLxJV
-X-Proofpoint-GUID: E2VZqiMRVswpDljrMYZzUEhQ5-EXLxJV
+Content-Transfer-Encoding: 8bit
 
-Hi Alex,
+To allow precise tracking of page caches accessed, add new tracepoints
+that trigger when a process actually accesses them.
 
-> 
-> On Mon, Jun 17, 2024 at 08:36:34AM GMT, John Garry wrote:
->> On 15/03/2024 13:47, Alejandro Colomar wrote:
->>> Hi!
->>
->> Was there ever an updated version of this patch?
->>
->> I don't see anything for this in the man pages git yet.
-> When I pick a patch, I explicitly notify the author in a reply in the
-> same thread.  I haven't.  I commented some issues with the patch so that
-> the author sends some revised patch.
-> 
+The ureadahead program used by ChromeOS traces the disk access of
+programs as they start up at boot up. It uses mincore(2) or the
+'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
+this information in a "pack" file and on subsequent boots, it will read
+the pack file and call readahead(2) on the information so that disk
+storage can be loaded into RAM before the applications actually need it.
 
-I wanted to send a rebased version of my series 
-https://lore.kernel.org/linux-api/20240124112731.28579-1-john.g.garry@oracle.com/
+A problem we see is that due to the kernel's readahead algorithm that
+can aggressively pull in more data than needed (to try and accomplish
+the same goal) and this data is also recorded. The end result is that
+the pack file contains a lot of pages on disk that are never actually
+used. Calling readahead(2) on these unused pages can slow down the
+system boot up times.
 
-[it was an oversight to not cc you / linux-man@vger.kernel.org there]
+To solve this, add 3 new trace events, get_pages, map_pages, and fault.
+These will be used to trace the pages are not only pulled in from disk,
+but are actually used by the application. Only those pages will be
+stored in the pack file, and this helps out the performance of boot up.
 
-Anyway I would like to use a proper baseline, which includes 
-STATX_SUBVOL info. So I will send an updated patch for STATX_SUBVOL if I 
-don't see it soon.
+With the combination of these 3 new trace events and
+mm_filemap_add_to_page_cache, we observed a reduction in the pack file
+by 7.3% - 20% on ChromeOS varying by device.
 
-Thanks,
-John
+Signed-off-by: Takaya Saeki <takayas@chromium.org>
+---
+ include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
+ mm/filemap.c                   |  4 ++
+ 2 files changed, 88 insertions(+)
+
+diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
+index 46c89c1e460c..68c705572c4f 100644
+--- a/include/trace/events/filemap.h
++++ b/include/trace/events/filemap.h
+@@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
+ 	TP_ARGS(folio)
+ 	);
+ 
++DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
++
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++
++	TP_ARGS(mapping, index, last_index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++		__field(unsigned long, last_index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++		__entry->last_index = last_index;
++	),
++
++	TP_printk(
++		"dev %d:%d ino %lx ofs=%lu max_ofs=%lu",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		__entry->index << PAGE_SHIFT,
++		__entry->last_index << PAGE_SHIFT
++	)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++TRACE_EVENT(mm_filemap_fault,
++	TP_PROTO(struct address_space *mapping, pgoff_t index),
++
++	TP_ARGS(mapping, index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++	),
++
++	TP_printk(
++		"dev %d:%d ino %lx ofs=%lu",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		__entry->index << PAGE_SHIFT
++	)
++);
++
+ TRACE_EVENT(filemap_set_wb_err,
+ 		TP_PROTO(struct address_space *mapping, errseq_t eseq),
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 876cc64aadd7..39f9d7fb3d2c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 			goto err;
+ 	}
+ 
++	trace_mm_filemap_get_pages(mapping, index, last_index);
+ 	return 0;
+ err:
+ 	if (err < 0)
+@@ -3286,6 +3287,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	if (unlikely(index >= max_idx))
+ 		return VM_FAULT_SIGBUS;
+ 
++	trace_mm_filemap_fault(mapping, index);
++
+ 	/*
+ 	 * Do we have something in the page cache already?
+ 	 */
+@@ -3652,6 +3655,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+ 	add_mm_counter(vma->vm_mm, folio_type, rss);
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
++	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
+ out:
+ 	rcu_read_unlock();
+ 
+-- 
+2.45.2.627.g7a2c4fd464-goog
 
 
