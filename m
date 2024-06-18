@@ -1,124 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-21866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DC390C729
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 12:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 739CB90C72B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 12:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9911A1C216AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 10:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C58C1C21690
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 10:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8588B1AC25C;
-	Tue, 18 Jun 2024 08:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147C91AC420;
+	Tue, 18 Jun 2024 08:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Jy0FOIiZ"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="pdlMEW1V";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="pdlMEW1V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7415014D45B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 08:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B1813B5B5;
+	Tue, 18 Jun 2024 08:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718699624; cv=none; b=OpgIVOLZf1bcQ74LqVpmm8lv91jootq6DeJiYgqzDrQmTex9U5ohJ5yVh7IeA5bYYL6gQqZv2v8ZMvZkQirru/smbTpcy9k9xfVKCjawjF9YG7Lmf/4scHbgFM7q3MvC5qIxwUr/g5oTCxMvcJtdyf1ie+GA9s9AmHdyR5B8Ntk=
+	t=1718699728; cv=none; b=VG1J9JWHTRwOC9+FK+mVUFexkwTRP59oEYbajuKxBpnmbsYVCYKeSd/YiWpGMVWhiDWAuGWWEEt2yvtQ6op5lGeMlOILHecxD/dQReNoeBWHN92PcakMcx/78XKcOkPQEZDA7gBM+34t9XWYlj7SyYN+g0ZilbT4Yq3rPSbHCo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718699624; c=relaxed/simple;
-	bh=XsGtGCy//tSaGlQno30iMsiQj1PorXqc1l0Or3UMDpM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nzMao0E4WmLzorjBzRXKZmHvhN3f4yuW8jXMciiOqLF6DioBhCi6YlTalX9VOS1gPEE3KQoio8jbP++aDrh4s8cYd8X/KMh+55Vci/fE12qkl4dFIFbCe21sMOZHKXshA3nqzZJOWavUDdEtikEI0kCnxwQ4Kn0Xxj6o4dwrRXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Jy0FOIiZ; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfb05bcc50dso4994570276.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2024 01:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718699621; x=1719304421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XsGtGCy//tSaGlQno30iMsiQj1PorXqc1l0Or3UMDpM=;
-        b=Jy0FOIiZB/IleSPzr0fmcCJJULyJJtY9n4QsISsTJM73iRZK5h0ehdksxIIVEn4Qj+
-         3UDIiMh6qGZINLkrYA4UT2c+f2TeFkASu5Fkq+fLdkuGBMASNKHrIehHbJOcD9ZlR5of
-         W2aiBQz58V7Ah8QsZy1MrNULBscoNq0U/wyBg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718699621; x=1719304421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XsGtGCy//tSaGlQno30iMsiQj1PorXqc1l0Or3UMDpM=;
-        b=g7HYpgg/1fGrq+QvgY7pBffALjPBuEqB8H+1Exbrf69bXIOuwsV003031a9BqTlSRP
-         y/68EfKm6JjgvaBNIBWX7RISdqk+3k/xPgeHhhZ+xcU5G3aZ18SQ0tAQC9SEOxH5DXb3
-         c8TRql7OHK+E1I5PKjsY5gqkQ8poWizYORTqf59xMdOJm/HyaVeBc0yOaVAEULWAF1lZ
-         keLm5FviXXJzFwVBfOiCFiobEb/FfhtVLAdY5qp1HoeiCnEWvYrzet+g2icn96POizbU
-         5BnoXaWsPWmtI6EIU0/SVtPP9oo9H2AvrlkkgCN5oCFJmKko7O2E0P+SYheEVQQltuw8
-         a47g==
-X-Gm-Message-State: AOJu0YyLHG7zKaLbVt/T0HhLgT5U5nvSJefTDpPf3PnRYG4cu+/7pnaD
-	/R5AbmH9jkTqXjFlbgs1lv03T03E+/O3zTm+GhuuQTOgZTwh5u5pIG40qFLp5AxF1XE0Jvjpnsm
-	wiaehsgkJOGFDixoPB06q3B6VbkAAhbdmYxQQdlFP6+l2h9xGP++i
-X-Google-Smtp-Source: AGHT+IHCSy2hMj7Ve/VIrl6Jj487fKsOwha4PlY5pM2CqNyl4N6quc1a1YVHNtBMxcxxtFjwYjP9IX6AFOx+Im3Ltw0=
-X-Received: by 2002:a25:ad06:0:b0:dfe:520b:88d5 with SMTP id
- 3f1490d57ef6-dff154d9bd9mr10829549276.53.1718699620789; Tue, 18 Jun 2024
- 01:33:40 -0700 (PDT)
+	s=arc-20240116; t=1718699728; c=relaxed/simple;
+	bh=qnTGA3t+pZ+nh0aZAynmbaV7VbCEqz9aJjGtpnTcg1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgmUoCuGaoeqWzx5yPupdcY8xgZqk5UgNLl2jhasudaE5i7J/E1qTMKIK2ykYFXdbxgo5I/uKhrwxQDcNgaStRN0UTKmaXRV47R8LaYgYGTbkANtmi46RHZGKG9ycRSxvjOFn9ggdXz1W30cy/CZoACdsJJRLh7QjtbWwnZliT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=pdlMEW1V; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=pdlMEW1V; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 329661F458;
+	Tue, 18 Jun 2024 08:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718699724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0U9CGlVSI1JeEsrMqZfn0xKjDwE4c1YMWoj8UyAw2XI=;
+	b=pdlMEW1V3Yuk9jtLisNSVO2grecddwP5pO+CjIq7/fpbkvMOnY1qARHyEaeMBS39GmhU16
+	+PYAOPFQOxPEu+bMjfOEPTEybsDq9YdvW3zJEkU3adfHMl+z18aT4vZWwAPhGuVhDpB4se
+	1hHjEnmBxIYYpdrtpW6EG5RkVFnHV20=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718699724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0U9CGlVSI1JeEsrMqZfn0xKjDwE4c1YMWoj8UyAw2XI=;
+	b=pdlMEW1V3Yuk9jtLisNSVO2grecddwP5pO+CjIq7/fpbkvMOnY1qARHyEaeMBS39GmhU16
+	+PYAOPFQOxPEu+bMjfOEPTEybsDq9YdvW3zJEkU3adfHMl+z18aT4vZWwAPhGuVhDpB4se
+	1hHjEnmBxIYYpdrtpW6EG5RkVFnHV20=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1512A1369F;
+	Tue, 18 Jun 2024 08:35:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 230aAsxGcWavBwAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 18 Jun 2024 08:35:24 +0000
+Date: Tue, 18 Jun 2024 10:35:23 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Yu Ma <yu.ma@intel.com>,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
+Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
+ put_unused_fd()
+Message-ID: <ZnFGy2nYI9XZSvMl@tiehlicka>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240614163416.728752-4-yu.ma@intel.com>
+ <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+ <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
+ <fd4eb382a87baed4b49e3cf2cd25e7047f9aede2.camel@linux.intel.com>
+ <8fa3f49b50515f8490acfe5b52aaf3aba0a36606.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAD90VcZybb0ZOVrhE-MqDPwEya8878uzA1RBwd68U7x4CufkTQ@mail.gmail.com>
-In-Reply-To: <CAD90VcZybb0ZOVrhE-MqDPwEya8878uzA1RBwd68U7x4CufkTQ@mail.gmail.com>
-From: Keiichi Watanabe <keiichiw@chromium.org>
-Date: Tue, 18 Jun 2024 17:33:28 +0900
-Message-ID: <CAD90Vcbt-GE6gP3tNZAUEd8-eP4NVUfET51oGA-CVvcH4=EAAA@mail.gmail.com>
-Subject: Re: virtio-blk/ext4 error handling for host-side ENOSPC
-To: linux-fsdevel@vger.kernel.org
-Cc: Junichi Uekawa <uekawa@chromium.org>, Takaya Saeki <takayas@chromium.org>, tytso@mit.edu, 
-	Daniel Verkamp <dverkamp@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8fa3f49b50515f8490acfe5b52aaf3aba0a36606.camel@linux.intel.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,intel.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-The corresponding proposal to virtio-spec is here:
-https://lore.kernel.org/virtio-comment/20240618081858.2795400-1-keiichiw@ch=
-romium.org/T/#t
+On Mon 17-06-24 11:04:41, Tim Chen wrote:
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 3a2df1bd9f64..b4e523728c3e 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -1471,6 +1471,7 @@ static int do_prlimit(struct task_struct *tsk, unsigned int resource,
+>                 return -EINVAL;
+>         resource = array_index_nospec(resource, RLIM_NLIMITS);
+>  
+> +       task_lock(tsk->group_leader);
+>         if (new_rlim) {
+>                 if (new_rlim->rlim_cur > new_rlim->rlim_max)
+>                         return -EINVAL;
 
-Best,
-Keiichi
-
-On Mon, Jun 17, 2024 at 12:34=E2=80=AFPM Keiichi Watanabe <keiichiw@chromiu=
-m.org> wrote:
->
-> Hi,
->
-> I'm using ext4 over virtio-blk for VMs, and I'd like to discuss the
-> situation where the host storage gets full.
-> Let's say you create a disk image file formatted with ext4 on the host
-> side as a sparse file and share it with the guest using virtio-blk.
-> When the host storage is full and the sparse file cannot be expanded
-> any further, the guest will know the error when it flushes disk
-> caches.
-> In the current implementation, the VMM's virtio-blk device returns
-> VIRTIO_BLK_S_IOERR, and the virtio-blk driver converts it to
-> BLK_STS_IOERR. Then, the ext4 module calls mapping_set_error for that
-> area.
->
-> However, the host's ENOSPC may be recoverable. For example, if a host
-> service periodically deletes cache files, it'd be nice if the guest
-> kernel can wait a while and then retry flushing.
-> So, I wonder if we can't have a special handling for host-side's
-> ENOSPC in virtio-blk and ext4.
->
-> My idea is like this:
-> First, (1) define a new error code, VIRTIO_BLK_S_ENOSPC, in
-> virtio-blk. Then, (2) if the guest file system receives this error
-> code, periodically retry flushing. We may want to make the retry limit
-> via a mount option or something.
->
-> What do you think of this idea? Also, has anything similar been attempted=
- yet?
-> Thanks in advance.
->
-> Best,
-> Keiichi
+This is clearly broken as it leaves the lock behind on the error, no?
+-- 
+Michal Hocko
+SUSE Labs
 
