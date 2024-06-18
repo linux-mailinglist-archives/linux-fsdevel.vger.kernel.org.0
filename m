@@ -1,137 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-21894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52AB890D97B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 18:40:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10EA90D9E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 18:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9570628685D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 16:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF45B1C2251A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2024 16:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15B67F482;
-	Tue, 18 Jun 2024 16:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A8113DDD2;
+	Tue, 18 Jun 2024 16:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCJs97BY"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IAatnFbo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8457374070;
-	Tue, 18 Jun 2024 16:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE6213AD2F;
+	Tue, 18 Jun 2024 16:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718728839; cv=none; b=Hs+Hb27kgGURiXt9gEJ/86Doe2fk3vlZvdjTh6o9uLQQNCXKVkQTC4Ej0xkOI1sYcJXllLTMuxLJXlA0r+f681E5muq7qXbO/gVFnKpcOkn4+O+6fbm7eiGBn1G4lyFZc8x84eENQf0N//8KYS1MWiyYoCNVXFvmYEybW8jm5iU=
+	t=1718729490; cv=none; b=skN1lD9X4T9LHysXVWY9XN8doD5rVAppLFf3VJ942RIJl6hTNJ9hfQ71U4wc1g4QeubGPmcNhw3MRnI5RS4utWsmwtbOsbvZVIAd+tR9Tf/icUNDXnTBN05jN+bXwImvgqme7zqFnZsiYFVARC9OKoG2l+6PGpq+elh4oP1kfrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718728839; c=relaxed/simple;
-	bh=OwxC3S19dopA5PlP4y+XYkiojTfqjif0NyiAvdYxeUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WSWrPna/Qqoey49ZTCLgS+9PHpc8EjEDT6oU1NsL1oytZyBH/oKJduhVkv6EcKvglzn7mHJ5K23MslBk6NM2WnkV204cR3DUgrcUnJbMMfFSfdghDUARCBK7h+2NKz/OL9WGEW9FQF/OzhSrSuLW4YBtbqr9LOvahR97Jaw2KSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCJs97BY; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so1569363a12.3;
-        Tue, 18 Jun 2024 09:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718728836; x=1719333636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dbjVgCulRo1Vco8eVnD2Q4EDoqgEDO/7yOIxjMGR0KM=;
-        b=XCJs97BYzoXBVchCAeF3I0nH46/WqT5nukyixSsGVeHwzlJpRo59gze6uFp/vZmtKo
-         7pHYrT28K/KSXnUufAnfHCh+5AK/Yc+A2UuDa5wh/UM8OCjewJp4b7YJYiWJbEoA5OiD
-         v8EdAzERHkmJNFZ1xNjs77ncevhBjSvxrjp5LuTM9P4hX838DYnGgFQd8BrJ3/LRNqi9
-         H0ITM2egRU71ElyerHi6PgXu260VnVXCeuPzz7v8kC+vdyoXG4eWOTr1Jzh1kdDLJ8Fy
-         e4CZJ3p+e1bILvuH0esEh/3WVhpWywI9/IrDMTR2zCwVBvU2fh6bzjdsdxzRHO20EiOy
-         N+qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718728836; x=1719333636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dbjVgCulRo1Vco8eVnD2Q4EDoqgEDO/7yOIxjMGR0KM=;
-        b=hfK2XFwcDl+p86lpntqlemmmP69UmJCXXg2F/RvfgRz/9u1ndf07IZWP6LQT6rFSFo
-         HFRfKQkpv1qUv94G1LWUllJRdooiKWtv+kuMhfeF8ktxIJ8akDHttIXkBjGp3G5vpKlX
-         D5o0UHTlGbhJGFighNFiBDSAuNGcXMEbmb517mG48aVdUnPpORjRAHZee0zvAAmDuAyy
-         y4zAC9vL2Pwj/C4bxwmQNTNz3Ea1hovjuAEYR/eLwHrrfcI59/cjipIDPpIXNb2enq42
-         JZxoEFNaLlAUQBk6Px8tZxTCFzQ06UBMo48nkIKUze8qqmq/zVqSgxf71l8WktL4ElXV
-         1BBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtXpVVhG781NDZYLw8TVk6MSjqxFTQhIRZNgvm/OScvvtT3HUFqgBknKIxp7TZze1m4OQM0IsYS6EWc72ucjCZRE+9f4sFrKA7
-X-Gm-Message-State: AOJu0Yz09VGzrD0CGJtyMhkBfxVGXCafHB5+C9zLlJTYdMMNJ9HuInKc
-	QUAY5+rMJnzPmT9+G9uWUF8QlJBY3Q1ycjA3an2gkVbtTwOQH9kZkpPdviIeksKgzYV+MREYhgC
-	m14uPvbJudbBDDL/FWp4VxXl2hwjHADUXRJlt1Q==
-X-Google-Smtp-Source: AGHT+IH1UiFGx2mq2KW5eXnZQiDr/5YShiRqGBtJpDsAfkAPVON5m/62TfC/yWJ3xz5XDQ0OtxBLnIDKNIWXl5BLb2c=
-X-Received: by 2002:a50:cdc4:0:b0:57c:6d1c:3cee with SMTP id
- 4fb4d7f45d1cf-57d07e7bba6mr21174a12.14.1718728835488; Tue, 18 Jun 2024
- 09:40:35 -0700 (PDT)
+	s=arc-20240116; t=1718729490; c=relaxed/simple;
+	bh=Y3aAJgJAHNUzv7HCpjADYb0VWexqaz2jNCxzThrc01c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ssMzNgLZAieVJAtYGk+eySfIucYVeLzrdvbQjvf2RwPRlh1ZG+ev+TZ9zkVHSKTLGNh1Lc9P595yuS8gWOVWKMRjVntfXU0Zy+qTstTrDRRNrrMQXcx3uIL8B5RFDJyVpQDQfGxNyLvonP3nz9F8+jfQEDyhvpJRdpSm77YPcRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IAatnFbo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=gNwWvVPDuFQMa8mCQ6H3iJIPwNDRw1EEOJraqpFJaVM=; b=IAatnFbo1rQj4iMoo+iZl/kvBI
+	GIrN683fTy+XzQLg7pWMdpq+B9bMeiVgrnVm0OXXG2lJR3dnFS1XqixeGKc02f0BJYqt2a7Xw5wHn
+	O7uR85eCzzycIVeuBw79hKbcQXnaFEX00ywUkeQmz0emngRvUAkInhQYHXqDPxGf1ochV8ngzvGur
+	Eo3cwRkkWn+MU5RzGIw2noGe+mYpJ8N46Ih1cQrK3xhHropnCOGF/20GpUDH4Zb57SBP2f4WiSx/g
+	kzb1CUHYtc9r0YvhwecVJgakK3gCIGMVRRGR1DjAcmcnAVlKOuUn+S9dyCZ5RtpsNl1MpDkKmtgD1
+	+RggggxQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJc3I-00000003YsD-3jNx;
+	Tue, 18 Jun 2024 16:51:24 +0000
+Date: Tue, 18 Jun 2024 17:51:24 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: JunChao Sun <sunjunchao2870@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com
+Subject: Re: [PATCH 1/2] xfs: reorder xfs_inode structure elements to remove
+ unneeded padding.
+Message-ID: <ZnG7DJrVov5n6O5m@casper.infradead.org>
+References: <20240618113505.476072-1-sunjunchao2870@gmail.com>
+ <20240618162327.GE103034@frogsfrogsfrogs>
+ <CAHB1NajUvCmPK_fTVgpdXz--Qn69Ttx5W4k9Xbq18MbarzUfVA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618113505.476072-1-sunjunchao2870@gmail.com> <20240618162327.GE103034@frogsfrogsfrogs>
-In-Reply-To: <20240618162327.GE103034@frogsfrogsfrogs>
-From: JunChao Sun <sunjunchao2870@gmail.com>
-Date: Tue, 18 Jun 2024 12:40:23 -0400
-Message-ID: <CAHB1NajUvCmPK_fTVgpdXz--Qn69Ttx5W4k9Xbq18MbarzUfVA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] xfs: reorder xfs_inode structure elements to remove
- unneeded padding.
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	chandan.babu@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHB1NajUvCmPK_fTVgpdXz--Qn69Ttx5W4k9Xbq18MbarzUfVA@mail.gmail.com>
 
-Darrick J. Wong <djwong@kernel.org> =E4=BA=8E2024=E5=B9=B46=E6=9C=8818=E6=
-=97=A5=E5=91=A8=E4=BA=8C 12:23=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Jun 18, 2024 at 07:35:04PM +0800, Junchao Sun wrote:
-> > By reordering the elements in the xfs_inode structure, we can
-> > reduce the padding needed on an x86_64 system by 8 bytes.
->
->
-> > Does this result in denser packing of xfs_inode objects in the slab
-> > page?
-
-No. Before applying the patch, the size of xfs_inode is 1800 bytes
-with my config, and after applying the patch, the size is 1792 bytes.
-This slight reduction does not result in a denser packing of xfs_inode
-objects within a single page.
-
->
-> --D
->
-> > Signed-off-by: Junchao Sun <sunjunchao2870@gmail.com>
-> > ---
-> >  fs/xfs/xfs_inode.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jun 18, 2024 at 12:40:23PM -0400, JunChao Sun wrote:
+> Darrick J. Wong <djwong@kernel.org> 于2024年6月18日周二 12:23写道：
 > >
-> > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> > index 292b90b5f2ac..3239ae4e33d2 100644
-> > --- a/fs/xfs/xfs_inode.h
-> > +++ b/fs/xfs/xfs_inode.h
-> > @@ -40,8 +40,8 @@ typedef struct xfs_inode {
-> >       /* Transaction and locking information. */
-> >       struct xfs_inode_log_item *i_itemp;     /* logging information */
-> >       struct rw_semaphore     i_lock;         /* inode lock */
-> > -     atomic_t                i_pincount;     /* inode pin count */
-> >       struct llist_node       i_gclist;       /* deferred inactivation =
-list */
-> > +     atomic_t                i_pincount;     /* inode pin count */
-> >
-> >       /*
-> >        * Bitsets of inode metadata that have been checked and/or are si=
-ck.
-> > --
-> > 2.39.2
+> > On Tue, Jun 18, 2024 at 07:35:04PM +0800, Junchao Sun wrote:
+> > > By reordering the elements in the xfs_inode structure, we can
+> > > reduce the padding needed on an x86_64 system by 8 bytes.
 > >
 > >
+> > > Does this result in denser packing of xfs_inode objects in the slab
+> > > page?
+> 
+> No. Before applying the patch, the size of xfs_inode is 1800 bytes
+> with my config, and after applying the patch, the size is 1792 bytes.
+> This slight reduction does not result in a denser packing of xfs_inode
+> objects within a single page.
 
+The "config dependent" part of this is important though.  On my
+laptop running Debian 6.6.15-amd64, xfs_inode is exactly 1024 bytes,
+and slab chooses to allocate 32 of them from an order-3 slab.
 
-
---=20
-Junchao Sun <sunjunchao2870@gmail.com>
+Your config gets you 18 from an order-3 slab, and you'd need to get
+it down to 1724 (probably 1720 bytes due to alignment) to get 19
+from an order-3 slab.  I bet you have lockdep or something on.
 
