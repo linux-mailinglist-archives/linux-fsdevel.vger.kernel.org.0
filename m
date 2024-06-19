@@ -1,131 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-21923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3351D90EF8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2024 15:57:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59E090EF9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2024 16:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B031C21B22
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2024 13:57:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32494284EF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2024 14:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B6214F9D9;
-	Wed, 19 Jun 2024 13:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271A41509AC;
+	Wed, 19 Jun 2024 14:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ee0g8HY1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNlSj1K3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2650B144D3E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jun 2024 13:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7C0D26A;
+	Wed, 19 Jun 2024 14:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805463; cv=none; b=DiGeNVpZnggp2lq30U0MFWU8ooMkmAfuWxbP0CVxeQPZWdM+MhCGo8IqJywfQdQua+beTG2B85ycaZZ0M0ai+5MjHrJa+Q4uSCB7jTXhdkPLVBW4HmHQNFJelBro8Mh3giak6isYk8j52FkZ/V0jkDRIPHdPctTSzz6qUl4iR9w=
+	t=1718805698; cv=none; b=NrRXLixU9mQcse3gpm3JyNBV4+gsG6xwaGMHETU1a6y6f3uSZU3+DHgVw+VYybJKXgP5GaPiX+5X1CEbg8qqPaNyDR4+2toFol+ZGdntsf6VuBOiq7i6OYetInAgiwekyHyNkuoZAx5xSyomEKscNC96ytEoNxXKJizvMIilZQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805463; c=relaxed/simple;
-	bh=m3JIIi4c2QOEJvKif1eKq1gmq9nKbjJSvj1cDrxumGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=cecY2oODY+gmAujyTg9Jq+YcF5kbUW16bxrDjqY65saTrmoiwwqnHcM8813br5bOyHywCBf6ofxE3yHdr75c5kve4SEuFkwmOFQgnKbxP7YG7UW9PJHLlm/xcjV2lRF0geADgE98IsAWL1cE8tYch+kto+BtLZ2LdkgHZVxUDvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ee0g8HY1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718805461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=m3JIIi4c2QOEJvKif1eKq1gmq9nKbjJSvj1cDrxumGM=;
-	b=ee0g8HY1I70QzB9yeZUuAucZ3sCc4VQb14PHdonInqL0oeUL8eXDohfVQiu3b1VP15TVMV
-	59tbzSdx6aD7QF2rNKcFz7vVtYsUBF0bScjcHcG7RfIlgABuxVwRh4HYW6ZPQI8Xrm8pfp
-	4k19PyFN5x867Wptc64HURYnExUxXG0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-hEyL_fPNPNOWG_JQkDXnCw-1; Wed,
- 19 Jun 2024 09:57:37 -0400
-X-MC-Unique: hEyL_fPNPNOWG_JQkDXnCw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87AEC19560B3;
-	Wed, 19 Jun 2024 13:57:35 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.3])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 99E7E19560AF;
-	Wed, 19 Jun 2024 13:57:34 +0000 (UTC)
-Date: Wed, 19 Jun 2024 09:57:32 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Keiichi Watanabe <keiichiw@chromium.org>
-Cc: dverkamp@chromium.org, linux-fsdevel@vger.kernel.org,
-	takayas@chromium.org, tytso@mit.edu, uekawa@chromium.org
-Subject: Re: virtio-blk/ext4 error handling for host-side ENOSPC
-Message-ID: <20240619135732.GA57867@fedora.redhat.com>
+	s=arc-20240116; t=1718805698; c=relaxed/simple;
+	bh=CEgOzGB7LClupNgDDq0D815zenWO1JkO/EBzHOwsrME=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XEyzyyjJSX2KnLmg4vw4uQFJHRcXsbca6n9mxUe2Mdc9xcNaNy+jAxrLyvLSDE6Bu0mXz/ox/BjMqrHjME0FSQL83YNbBQoxn80P0wq8jV3UzQJyiErM8TKw+PQZIWxE7GceoVx0ksrQxWJW/M/1Q2LC4dbGdSaB/m6I15DP+jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNlSj1K3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92F4C2BBFC;
+	Wed, 19 Jun 2024 14:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718805698;
+	bh=CEgOzGB7LClupNgDDq0D815zenWO1JkO/EBzHOwsrME=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oNlSj1K3HpYLwsgbrm7zxDdxWjqdGCVO+92QAXmVtEtZPVdLbI5ZURMT7kRT++WM/
+	 hFU9sZFraYvulrCDTuKvMU1dTWfIKv3SJwG9NJOeBL+anoJwaaCOJqHlQxDE7j52kg
+	 l4rzvoJuSxjqz+Cv9VwFHvIDQ9HjNCe9VU1EYqq/nmx1sJE/gFhrbHSgNnNRJmrjCv
+	 DyXAR12d/ngMDKfb3x6ixX0dgm3Ip2PgLQDDbabovZL33JlHFpEcf6Ocsm4ICug1EE
+	 UILSLGuL1e+wo5yBchqX4gmVdAwGpImmjxicRpEJB45SMuis0uIIxPxsf7VDyCMTj9
+	 LvOzpPVPUHfdg==
+From: Christian Brauner <brauner@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	david@fromorbit.com,
+	chandanbabu@kernel.org,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH -next v6 0/2] iomap/xfs: fix stale data exposure when truncating realtime inodes
+Date: Wed, 19 Jun 2024 16:01:29 +0200
+Message-ID: <20240619-umliegenden-original-ece354ddc842@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
+References: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wv8J+0evlB6f2xgi"
-Content-Disposition: inline
-In-Reply-To: <CAD90Vcbt-GE6gP3tNZAUEd8-eP4NVUfET51oGA-CVvcH4=EAAA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1467; i=brauner@kernel.org; h=from:subject:message-id; bh=CEgOzGB7LClupNgDDq0D815zenWO1JkO/EBzHOwsrME=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQVPdm1lFl1oua3Ewv2KilkH24Tt5r5snNvg8232Ng53 Slun/87dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEpo+RYYnq3K9f9/7Pa5j5 5q3Bj+A7PpOsWi1mv1687U7T86fpRvcZ/hf+LXBMujvNeV7ndL85YnViEdrbM3ILsu+LvP67bFs UGy8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Tue, 18 Jun 2024 22:21:10 +0800, Zhang Yi wrote:
+> Changes since v5:
+>  - Drop all the code about zeroing out the whole allocation unitsize
+>    on truncate down in xfs_setattr_size() as Christoph suggested, let's
+>    just fix this issue for RT file by converting tail blocks to
+>    unwritten now, and we could think about forced aligned extent and
+>    atomic write later until it needs, so only pick patch 6 and 8 in
+>    previous version, do some minor git log changes.
+> 
+> [...]
 
---wv8J+0evlB6f2xgi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've put this into vfs.iomap for testing which should end up in fs-next asap.
 
-> What do you think of this idea? Also, has anything similar been attempted yet?
+---
 
-Hi Keiichi,
-Yes, there is an existing approach that is related but not identical to
-what you are exploring:
+Applied to the vfs.iomap branch of the vfs/vfs.git tree.
+Patches in the vfs.iomap branch should appear in linux-next soon.
 
-QEMU has an option to pause the guest and raise a notification to the
-management tool that ENOSPC has been reached. The guest is unable to
-resolve ENOSPC itself and guest applications are likely to fail the disk
-becomes unavailable, hence the guest is simply paused.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-In systems that expect to hit this condition, this pause behavior can be
-combined with an early notification when a free space watermark is hit.
-This way guest are almost never paused because free space can be added
-before ENOSPC is reached. QEMU has a write watermark feature that works
-well on top of qcow2 images (they grow incrementally so it's trivial to
-monitor how much space is being consumed).
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-I wanted to share this existing approach in case you think it would work
-nicely for your use case.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-The other thought I had was: how does the new ENOSPC error fit into the
-block device model? Hopefully this behavior is not virtio-blk-specific
-behavior but rather something general that other storage protocols like
-NVMe and SCSI support too. That way file systems can handle this in a
-generic fashion.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.iomap
 
-The place I would check is Logical Block Provisioning in SCSI and NVMe.
-Perhaps there are features in these protocols for reporting low
-resources? (Sorry, I didn't have time to check.)
-
-Stefan
-
---wv8J+0evlB6f2xgi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmZy48wACgkQnKSrs4Gr
-c8gZXwf9GhgC+qbmqove5vILqMoZHIzyoDa6jH/4FHRvM6XyKqKMQHYkiUkzGJ/q
-UM4i0hJJ7dpGiobJl1cnkxdldy4Ljoh8e8+kjlwWEKznLvtYf7FiADgoXH9wSdQE
-rrDD6JwV8LYQG37r0auzp+Qa5sHe/vA142RPq7aGiwrFEPhygyvVZKXKO2ltEUmc
-Q7fvUgRAlYfSK/UNqreSii9ZlOWCmi3R3Xc66BCWNflo/YEPLf/LuttuuZWFmmAQ
-BFpaR4AKPuYJU2R01KzZJ+hUkoMukMP39PaLC4X6H+A7c/GQ5jkGhdIl884Nuq+O
-67Ntl8UmClvZIil9zP6uBVGoJ4lg1Q==
-=UtBX
------END PGP SIGNATURE-----
-
---wv8J+0evlB6f2xgi--
-
+[1/2] xfs: reserve blocks for truncating large realtime inode
+      https://git.kernel.org/vfs/vfs/c/d048945150b7
+[2/2] iomap: don't increase i_size in iomap_write_end()
+      https://git.kernel.org/vfs/vfs/c/602f09f4029c
 
