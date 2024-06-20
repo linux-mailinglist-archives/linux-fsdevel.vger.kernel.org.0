@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-22001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348D4910CAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:29:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE77910CBC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2B611F21676
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD196B279E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6950B1BB6AE;
-	Thu, 20 Jun 2024 16:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821821B3F2B;
+	Thu, 20 Jun 2024 16:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liP+clW/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abvyrJ/X"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87B21B3729;
-	Thu, 20 Jun 2024 16:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91131BB6BD;
+	Thu, 20 Jun 2024 16:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900691; cv=none; b=i3ACRjmRWf29GGC2GHjz8Ae/AZnZnoECiqW4Fu7QBcvB5cRNHbP055ZX1HdEJBGr3lyv/EED/JrAVmwaF91M4h0fz8iZiqPuKP3kfOqSQQN5g67ltCysYo9VSaeNTVj6519BjZfarzsV1YkRpluZuuDsSTHdFiGQ8ok+NDeu+pI=
+	t=1718900699; cv=none; b=X81D0J7FNrlO5i3uFmn+m22zd80bqWzWrU8fPjn9S96dTkFGW7cElD/m8Ah265RVqglzHppy8WBPj5v/GMO26nB2XSuRXF85yVv4Lvmx1/OJkoXDyxG0+ey0u7aFNDGCkfg4lmAyGjAy45Cb0XODRwyD2VdzG3RRUibsQaRfh4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900691; c=relaxed/simple;
-	bh=CTMiij8diPtp23L47nQHWXQrj3MX4OJNEzgig287ZPA=;
+	s=arc-20240116; t=1718900699; c=relaxed/simple;
+	bh=9tNBDm896BjzUxmnfvW1e6haCDwe3E/atZfPgTf6dvM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EVF7SW2v3U6BH3Ik4J5rkvO0rRwd1Lg+YxxXuOnUTH5dOr9viDMz/jLjs5QrQ8iRwx7n3KrHw7jQzKI6C4fQXeJ7Y7/cW6BEN3NftvGvDqaUYUbGDDFZk+dxW55VDGCpmHEfjTQhvMmfimfl+U7WW4SXzNrtVNftk0tu42dCcgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liP+clW/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEAEC2BD10;
-	Thu, 20 Jun 2024 16:24:44 +0000 (UTC)
+	 MIME-Version; b=QBBQ1iVdB5EZrxJW/JuDGNjAhY1UBiWoaBA5Gr0oYizEBqvB6nyXgXLpDitvXtIn36f0bpGDu4tVDV3sZA0D9QOhnfxNAoWwwbziIH0PQojKxXfohUnukzKb/wvViUVBRt0ORaitdj+dbQ2g0dHcevKXKy3/8Wx46cuvjjRfJBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abvyrJ/X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB57C4AF07;
+	Thu, 20 Jun 2024 16:24:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718900691;
-	bh=CTMiij8diPtp23L47nQHWXQrj3MX4OJNEzgig287ZPA=;
+	s=k20201202; t=1718900698;
+	bh=9tNBDm896BjzUxmnfvW1e6haCDwe3E/atZfPgTf6dvM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=liP+clW/FYJDMFwHv7e2XTi4LYa5eTnDyL47NLmiZ3cdTxaeJVM6WiqLSOvjZXten
-	 pE6JYMMTtK2vXsP1OXrG0X/wzRuupXj07RgRMay50dms6iT69PyESvm8MZAALUCwW6
-	 ScElgo7HBzd1he0cQvkNBktxqXYA3+ZQp+4j7Eyi0zUX6iTS+26CH6314rMnHOCsxp
-	 2GZ0MxgqvDjTVnlva8n8/w9P6j9/14JsdOE3xslLC/hd1U15iSxzjY7Gdw5OPMjGTi
-	 FxE0zxbrXL4hhuRiBxV9AFKTmJuqA88W9aUdlZqe/hk7lAm9X+hHNtXkp5bF7KXdDP
-	 LnYwGSfr5+nRQ==
+	b=abvyrJ/X+WgKBcKLB26W63xGzrJswPTiNJDtrvePABOWadxaiMVdFVIIrjjZH7EMt
+	 i3yfbG9sxIhKzIMCfECn8jajIwt5EnHTKwWgtPNsnEm6eH5VPX4iHwPOT/KLGXygLR
+	 Y8UtKQhQMTPuDEykuGSASDGG1jSbMq6hu59HuuOGBaXNiJXkV1zooHon61XOPITCpE
+	 SFmK3OLp8gXcumhP0tivnIEFTlCHa7lpiLvSg28jj4kABCTLi6W7v8y4Et1OD6DAcD
+	 5NN8lrWx/ZkRbGl97bKzVpQphPBlvW7EqUaJZymCAafGjzXa4xCR+daUY33mNKb8As
+	 9i6pj/PklBLgw==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-arch@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -72,11 +72,10 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	linux-fsdevel@vger.kernel.org,
 	libc-alpha@sourceware.org,
 	musl@lists.openwall.com,
-	ltp@lists.linux.it,
-	stable@vger.kernel.org
-Subject: [PATCH 11/15] hexagon: fix fadvise64_64 calling conventions
-Date: Thu, 20 Jun 2024 18:23:12 +0200
-Message-Id: <20240620162316.3674955-12-arnd@kernel.org>
+	ltp@lists.linux.it
+Subject: [PATCH 12/15] s390: remove native mmap2() syscall
+Date: Thu, 20 Jun 2024 18:23:13 +0200
+Message-Id: <20240620162316.3674955-13-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240620162316.3674955-1-arnd@kernel.org>
 References: <20240620162316.3674955-1-arnd@kernel.org>
@@ -90,53 +89,55 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-fadvise64_64() has two 64-bit arguments at the wrong alignment
-for hexagon, which turns them into a 7-argument syscall that is
-not supported by Linux.
+The mmap2() syscall has never been used on 64-bit s390x and should
+have been removed as part of 5a79859ae0f3 ("s390: remove 31 bit
+support").
 
-The downstream musl port for hexagon actually asks for a 6-argument
-version the same way we do it on arm, csky, powerpc, so make the
-kernel do it the same way to avoid having to change both.
+Remove it now.
 
-Link: https://github.com/quic/musl/blob/hexagon/arch/hexagon/syscall_arch.h#L78
-Cc: stable@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/hexagon/include/asm/syscalls.h | 6 ++++++
- arch/hexagon/kernel/syscalltab.c    | 7 +++++++
- 2 files changed, 13 insertions(+)
- create mode 100644 arch/hexagon/include/asm/syscalls.h
+ arch/s390/kernel/syscall.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-diff --git a/arch/hexagon/include/asm/syscalls.h b/arch/hexagon/include/asm/syscalls.h
-new file mode 100644
-index 000000000000..40f2d08bec92
---- /dev/null
-+++ b/arch/hexagon/include/asm/syscalls.h
-@@ -0,0 +1,6 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <asm-generic/syscalls.h>
-+
-+asmlinkage long sys_hexagon_fadvise64_64(int fd, int advice,
-+	                                  u32 a2, u32 a3, u32 a4, u32 a5);
-diff --git a/arch/hexagon/kernel/syscalltab.c b/arch/hexagon/kernel/syscalltab.c
-index 0fadd582cfc7..5d98bdc494ec 100644
---- a/arch/hexagon/kernel/syscalltab.c
-+++ b/arch/hexagon/kernel/syscalltab.c
-@@ -14,6 +14,13 @@
- #undef __SYSCALL
- #define __SYSCALL(nr, call) [nr] = (call),
+diff --git a/arch/s390/kernel/syscall.c b/arch/s390/kernel/syscall.c
+index dc2355c623d6..50cbcbbaa03d 100644
+--- a/arch/s390/kernel/syscall.c
++++ b/arch/s390/kernel/syscall.c
+@@ -38,33 +38,6 @@
  
-+SYSCALL_DEFINE6(hexagon_fadvise64_64, int, fd, int, advice,
-+		SC_ARG64(offset), SC_ARG64(len))
-+{
-+	return ksys_fadvise64_64(fd, SC_VAL64(loff_t, offset), SC_VAL64(loff_t, len), advice);
-+}
-+#define sys_fadvise64_64 sys_hexagon_fadvise64_64
-+
- void *sys_call_table[__NR_syscalls] = {
- #include <asm/unistd.h>
- };
+ #include "entry.h"
+ 
+-/*
+- * Perform the mmap() system call. Linux for S/390 isn't able to handle more
+- * than 5 system call parameters, so this system call uses a memory block
+- * for parameter passing.
+- */
+-
+-struct s390_mmap_arg_struct {
+-	unsigned long addr;
+-	unsigned long len;
+-	unsigned long prot;
+-	unsigned long flags;
+-	unsigned long fd;
+-	unsigned long offset;
+-};
+-
+-SYSCALL_DEFINE1(mmap2, struct s390_mmap_arg_struct __user *, arg)
+-{
+-	struct s390_mmap_arg_struct a;
+-	int error = -EFAULT;
+-
+-	if (copy_from_user(&a, arg, sizeof(a)))
+-		goto out;
+-	error = ksys_mmap_pgoff(a.addr, a.len, a.prot, a.flags, a.fd, a.offset);
+-out:
+-	return error;
+-}
+-
+ #ifdef CONFIG_SYSVIPC
+ /*
+  * sys_ipc() is the de-multiplexer for the SysV IPC calls.
 -- 
 2.39.2
 
