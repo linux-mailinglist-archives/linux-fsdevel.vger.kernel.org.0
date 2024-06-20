@@ -1,143 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-22040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580DA9114D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 23:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D01369116F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 01:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6381F213DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 21:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872681F22CDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 23:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B3280605;
-	Thu, 20 Jun 2024 21:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024021509BC;
+	Thu, 20 Jun 2024 23:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="N9eeNJ6u";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mn8yBW35"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="dRy3d1Xo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4116874BF0;
-	Thu, 20 Jun 2024 21:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDC943ABC;
+	Thu, 20 Jun 2024 23:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718919648; cv=none; b=o4b5gixea88kSseajy7dCBmFKzFj026e3LhLM/F87zMRuO7iczlP2j5F0Rx5Gk1cU4zX3d0PffCJnAxegBEJpB9te2z4wVxe0PJedhcsFH523XMuxNTWugT+OFsGeFlPKOKF8i56jkVn9qcBPjrPQp8evSXwyPuVLuJTiX7ikSU=
+	t=1718926930; cv=none; b=ntXGK1RzjEQSfckpj+j5qUFfdaKIQD0Ug8JYZfiSvqhHxmSXVUXjVXv/49saBxNG8TyIBAuZhCzB9BI3HyfyQp89ZqfE8bHrwq/NcAEwHPl1VYhLmt7CoEAVtjmZTGzyRozjWftXRgVDbqYKn1L/B2nswBtWeQ6mPjnY6rr9DEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718919648; c=relaxed/simple;
-	bh=/ZqHaM7eyu6SEUfj0+cHTAw1+kYHMfcUuW+8dm6VPTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1TXBi+YREsdPe5nqd8qVfbA7rSCtl/hufybju+/JrG5ntGqUOSiBNNb22AHxBg3NxYt2WlKJZIheySHKqTYOcWMw2pomGdMH0Rx2RBnDcD9/5vHk6X4s759Ln3iUUaS0fjvn9rWtsnq6/AHxxlWOOckoKvhsKcubxyMceFl28I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=N9eeNJ6u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mn8yBW35; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.west.internal (Postfix) with ESMTP id 150491C00111;
-	Thu, 20 Jun 2024 17:40:45 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 20 Jun 2024 17:40:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718919644;
-	 x=1719006044; bh=U+RQTWGThkmobRX/Ae5sAZDBhtv41vgHeflEaT6xjZA=; b=
-	N9eeNJ6uNO7irK7f8M72gWeb/rVgXRDLxog5z6GWz/j/+grE9gRoyI/1B68CVfBb
-	D6qc03M0R8DtSt06pK8mDKJ24hY32hbnewOgoZg6fTQGQd2wF+Cr6CLj1V7/+Cpz
-	MfaBLz3DppQjyYyObSrz2CaGgc2ROeOlbVTMLzg27TnAqRWKY8skzbzZ47B4WxwD
-	djJIGTmFyY70M7LPRjYx0bM+BjXgYdPJ9DyxSappwy7VPUEUM+FZopuH7QeDkbpD
-	jAW5iUD9q4M3Drn9CErNAzq2+GsG+JIFzfwn5z6nF6ayEr29UDrCfSghcW2YPY32
-	wA854AsRwmwxQZ5OE0dHdQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718919644; x=
-	1719006044; bh=U+RQTWGThkmobRX/Ae5sAZDBhtv41vgHeflEaT6xjZA=; b=M
-	n8yBW35S91ledb2ISb0AO6UywBGqhbfacKehc5eO+0U/hFJqAuL3wUGqOFQ6k5W7
-	HiyGabFBXiGTkZ4MfJewmLFofapdWXotHDAW2tIbN7HcCKCSnSatmz1zFi9YJHkl
-	wveFsAVCaX6w7KPZHg4f/k1Fi8IwU1Kb29SKQfKEK3wCO4bNFa7w7ZQlVeApXD9n
-	t+AuKZS2JQx0DUrm3gq0AG5c6e1uRR/KSQ0dLOAsJzj9TLQE8udcosGxfjb710Aa
-	b0gWHKg486FtSydP0ZQ72bilKbtEiZGjgcs3ct0cvsoUO8LD298jCGijZfKaVV0n
-	OFGRTzQLYxvaKDBZ1+gSg==
-X-ME-Sender: <xms:3KF0ZqdBFqgTUwDM-6jZGF7O3bwXIuwZXeAIa4EbfsYdzN1yjqnuAQ>
-    <xme:3KF0ZkMaYDDx64GKNU0Y87cPPW2sGBubWphSjQ22KrtSKpRf47RO0u05G4xtxOT1I
-    M8jwkiPa5-GljZC>
-X-ME-Received: <xmr:3KF0Zri4pzfok0YNrmV2t2VdoPlVbtzGJeDSMwW05hazSF9utkIk-0z15I1iuZBLchIBuYTjEwjNXym-iVeZxUybgE_h2sH9q7sC85bECoz57lzr2MbL>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeffedgtddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefgueektdefuefgkeeuieekieeljeehffej
-    heeludeifeetueefhfetueehhfefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
-    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:3KF0Zn9i4oDauOmi_nlkvaNxTJaK2Rys1nff8wqEw_xSr1qJPh7V2w>
-    <xmx:3KF0ZmvOOXA1IvatgqQmI0hZR3yekNZxRyhPqWQLOcQodmYOFZutyw>
-    <xmx:3KF0ZuGhm0300HenAkIo9NUM2kAKeGUoz24z95mTh6Lhg8Umd9h2MQ>
-    <xmx:3KF0ZlOkvapH134FoJ4dk7m8uookEBLEGUrWLqgKw9ziy_UAsJJCJA>
-    <xmx:3KF0ZoV7u-jY_UdubUqyI_qVjF7wthXcKa5tQw4osGIoqlgbXW2v7Gur>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Jun 2024 17:40:43 -0400 (EDT)
-Message-ID: <db4ed4e5-7c23-468d-8bac-cee215ace19e@fastmail.fm>
-Date: Thu, 20 Jun 2024 23:40:41 +0200
+	s=arc-20240116; t=1718926930; c=relaxed/simple;
+	bh=ZUy9KkXRtxbe3yLApS1C4yViX20c0hmWF1eeEmohgAY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fv3FfCAXhFzhn1xsbwa+AdKMeY7ErokJiXW4qWG9idEi3qzNYOYM7zYNZ5YDIUr5Epk+2fxrQKnlOpMoX+2+3z7QynZ6Q4HDUHZRWCBbGN3w4eIFl9OqZeU7udn0QSl0j9Fk7gPUB3ikqQ8LFtt8aSl5//bBOOQpNZpbLPL2rY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=dRy3d1Xo; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6EA4AC0002;
+	Thu, 20 Jun 2024 23:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1718926919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JqyvJ/RXIDEJ6K5Q9ZLLPg4KNgiAv+nZHrmU+1Tftb0=;
+	b=dRy3d1XoSgAirW+QpGaX2TNhVencRtlnrIXx9Xf35BbaDkKTW4IQyDB0iewlvhjLdAlXb7
+	ghff9GPto4i60+8ixXPrfuUv3CyicNfzGXD8XUPSOxwlzYBRl8cJtsg7NKFXu3gw7wUTvm
+	MSPH0q5ELASiyAarb6iK1THAc3B7yUoxABNQ1C/me9guRNGgpLIHjUJ/xDq95keW9WkZFx
+	XuexQhIE1ZDZHQRK4qK9QSVJuF4FmJgNcG3SVEZAweNHA9gWYkrYdIRSb786OdBS+v8m5o
+	8LBVhAWAwNrL7SUAha5Qfl3s637zGLy7zFA3JGAQ96xQlSp9z71k/ounmr6zVg==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+  <linux-fsdevel@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
+In-Reply-To: <87y17vng34.fsf@mailhost.krisman.be> (Gabriel Krisman Bertazi's
+	message of "Mon, 27 May 2024 16:40:47 -0400")
+References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
+	<87y17vng34.fsf@mailhost.krisman.be>
+Date: Thu, 20 Jun 2024 19:41:50 -0400
+Message-ID: <87v823npvl.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
-To: Haifeng Xu <haifeng.xu@shopee.com>, Christian Brauner
- <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613040147.329220-1-haifeng.xu@shopee.com>
- <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
- <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
- <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
- <20240617-vanille-labil-8de959ba5756@brauner>
- <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-GND-Sasl: gabriel@krisman.be
 
 
-
-On 6/20/24 08:43, Haifeng Xu wrote:
-> 
-> 
-> On 2024/6/17 15:25, Christian Brauner wrote:
->> On Fri, Jun 14, 2024 at 12:01:39PM GMT, Miklos Szeredi wrote:
->>> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
->>>
->>>> So why the client doesn't get woken up?
->>>
->>> Need to find out what the server (lxcfs) is doing.  Can you do a
->>> strace of lxcfs to see the communication on the fuse device?
+> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+>
+>> Currently 'make W=1' reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
 >>
->> Fwiw, I'm one of the orignal authors and maintainers of LXCFS so if you
->> have specific questions, I may be able to help.
-> 
-> Thanks. All server threads of lcxfs wokrs fine now.
-> 
-> So can we add another interface to abort those dead request?
-> If the client thread got killed and wait for relpy, but the fuse sever didn't 
-> send reply for some unknown reason，we can use this interface to wakeup the client thread.
+>> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
+>> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
+>> generated utf8data file.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>> Note that I verified that REGENERATE_UTF8DATA creates a file with
+>> the correct MODULE_DESCRIPTION(), but that file has significantly
+>> different contents than utf8data.c_shipped using the current:
+>> https://www.unicode.org/Public/UNIDATA/UCD.zip
+>
+> Thanks for reporting this.  I'll investigate and definitely regenerate
+> the file.
 
-Isn't that a manual workaround? I.e. an admin or a script needs to trigger it?
+Now that I investigated it, I realized there is perhaps a
+misunderstanding and not an issue. I just tried regenerating utf8data.c
+and the file is byte-per-byte equal utf8data_shipped.c, so all is
+good.
 
-There is a discussion in this thread to add request timeouts
-https://lore.kernel.org/linux-kernel/20240605153552.GB21567@localhost.localdomain/T/
-I guess for interrupted requests that would be definitely a case where timeouts could be
-applied?
+Considering the link you posted, I suspect you used the latest
+unicode version and not version 12.1, which we support.  So there is no
+surprise the files won't match.
 
+> The patch is good, I'll apply it to the unicode code tree
+> following the fix to the above issue.
 
-Thanks,
-Bernd
+Applied!
+
+ty,
+
+-- 
+Gabriel Krisman Bertazi
 
