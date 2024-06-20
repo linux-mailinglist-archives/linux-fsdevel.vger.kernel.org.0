@@ -1,157 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-22028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C349111D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 21:10:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D90591121A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 21:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C431C21892
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 19:10:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2661C227E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 19:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5381B4C43;
-	Thu, 20 Jun 2024 19:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD561BA093;
+	Thu, 20 Jun 2024 19:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KtKdoKGo"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F4edSRb6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA2024B26;
-	Thu, 20 Jun 2024 19:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FBE38394
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 19:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718910612; cv=none; b=s/2sDAzkSGXhC2QtDyCF3FC60cw/YfPTRQMSi9c2aXgf9xRBSYW5sNY7e8o2omNFOC5F1z27YW8wgnPN2wyOcx2S4i05hOpp/7pPjU0zl7nigsu2Qox6sWJ0X9SnPNga9L6oUs2C2I1D0VEqMb8ohqwfg5Wcmy17hv+umXTQ1QY=
+	t=1718911820; cv=none; b=hXVVd4f2MLC4k9OPkmExovD9bIdt9s5LpWVuvx9DqMpHbm0gTf5xwnK0UYe3lbsnC2qBAkh+1MZ7RBSm78CaGY684+4HSb+BcMfdOMWYs49hBZcmXixQkpD9Qi5TGTEHecd7qriZAlNyyE7Gc2qc/JgM+S38Q3QRs+DkBXKT5qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718910612; c=relaxed/simple;
-	bh=/bZO7KBfc1icR2aYLxz8pBdXer6KXEPsVMDJbOg/XA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GI780qevwpXVpSD2huncA05tFOeMhkKGC75ceuxA++AWQye5bI21C/tnVAeu03sm4x2opRPlwSftvR+ogIYUJsLnu9YbYGIr0d3qR9NzUn/KHSRqGLmWlyaT5Xcc4eE5S+P/8vdS2c14a4D/ynoTtCvWUdI+H456a9N88IAjFoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KtKdoKGo; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AE71520B7004;
-	Thu, 20 Jun 2024 12:10:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AE71520B7004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1718910610;
-	bh=EB16k8E5Dq1wrCvj7jANLEEY8d68lGEG/tqRU0fokDI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KtKdoKGo9qhs+Po3kvp/pEKlnQvMyzHhcHHRbWTrYVu9MLKXowoSxvH8j7ZYo2/FV
-	 i1FYLslX5/r2GNjOr1ZmBGO1wvVYbA0OKh+VYI7gVyouTZc7Rb4WmiPcLpHe2B0+X0
-	 v9BUyOkl9M5a5FTmBkgBHouZ9O/cSbVmMNtmSw7c=
-Message-ID: <1465b0a4-6a99-45d5-b170-7d2e470f555d@linux.microsoft.com>
-Date: Thu, 20 Jun 2024 12:10:10 -0700
+	s=arc-20240116; t=1718911820; c=relaxed/simple;
+	bh=Qt/f001x8Q0vKKDBE7TSU1xOBp1sWnrsaYRgABuCTXM=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=pNlclf+J5EUXhMlnDZXJdy+1GQs1XvT7BAipiYqJCUShNHzZn6brRpfOiblUnM9/SUB6oGTsoKjh1vN4TcrxN8d+/w3IxMr3HMAV0FGLQBkb1UExrmmbOTv9PW21ChhE5gxpZYFOBtDZMPKnNDgjdLd0ZAlLugDqQsslHmkbI/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F4edSRb6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718911817;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwdtAySFtKK2OLXgT+61d7SC+sWlPRojSuQ75KtZ2Nc=;
+	b=F4edSRb6ynBaiSuiXwJwObT/OOz6H80H/cYp53iIw41wc+lRWkMpwFA/RbFvIlrtxfEz/A
+	PfdlTuG9kpttbESILL7Z8aXFyJuCbCozTG1X4T9nxzMCXjd3ghTFqvP4X/sekW2gfsMRBK
+	8EIr9o9SeKmFr7fDBxTZOd2C3TeF4pA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-124-A6ZZI-hHP42woi_qbb99ZA-1; Thu,
+ 20 Jun 2024 15:30:13 -0400
+X-MC-Unique: A6ZZI-hHP42woi_qbb99ZA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 81A401956088;
+	Thu, 20 Jun 2024 19:30:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.195.156])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5E2001956087;
+	Thu, 20 Jun 2024 19:30:01 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240620173137.610345-10-dhowells@redhat.com>
+References: <20240620173137.610345-10-dhowells@redhat.com> <20240620173137.610345-1-dhowells@redhat.com>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 09/17] cifs: Defer read completion
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] binfmt_elf, coredump: Log the reason of the failed
- core dumps
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- akpm@linux-foundation.org, apais@linux.microsoft.com, ardb@kernel.org,
- brauner@kernel.org, jack@suse.cz, keescook@chromium.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, nagvijay@microsoft.com, oleg@redhat.com,
- tandersen@netflix.com, vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
- apais@microsoft.com, ssengar@microsoft.com, sunilmut@microsoft.com,
- vdso@hexbites.dev
-References: <20240617234133.1167523-1-romank@linux.microsoft.com>
- <20240617234133.1167523-2-romank@linux.microsoft.com>
- <20240618061849.Vh9N3ds2@linutronix.de>
- <c4644f2c-fad3-4d98-8301-acdc0ff2f3a6@linux.microsoft.com>
- <87sexakkvu.fsf@email.froward.int.ebiederm.org>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <87sexakkvu.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <612370.1718911800.1@warthog.procyon.org.uk>
+Date: Thu, 20 Jun 2024 20:30:00 +0100
+Message-ID: <612371.1718911800@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+Oops - a bit of debugging code had got left in this patch and I forgot to
+fill out the description.  Updated patch attached.
 
+David
+---
+cifs: Defer read completion
 
-On 6/18/2024 2:21 PM, Eric W. Biederman wrote:
-> Roman Kisel <romank@linux.microsoft.com> writes:
-> 
->> On 6/17/2024 11:18 PM, Sebastian Andrzej Siewior wrote:
->>> On 2024-06-17 16:41:30 [-0700], Roman Kisel wrote:
->>>> Missing, failed, or corrupted core dumps might impede crash
->>>> investigations. To improve reliability of that process and consequently
->>>> the programs themselves, one needs to trace the path from producing
->>>> a core dumpfile to analyzing it. That path starts from the core dump file
->>>> written to the disk by the kernel or to the standard input of a user
->>>> mode helper program to which the kernel streams the coredump contents.
->>>> There are cases where the kernel will interrupt writing the core out or
->>>> produce a truncated/not-well-formed core dump.
->>> How much of this happened and how much of this is just "let me handle
->>> everything that could go wrong".
->> Some of that must be happening as there are truncated dump files. Haven't run
->> the logging code at large scale yet with the systems being stressed a lot by the
->> customer workloads to hit all edge cases. Sent the changes to the kernel mail
->> list out of abundance of caution first, and being ecstatic about that: on the
->> other thread Kees noticed I didn't use the ratelimited logging. That has
->> absolutely made me day and whole week, just glowing :) Might've been a close
->> call due to something in a crash loop.
-> 
-> Another reason you could have truncated coredumps is the coredumping
-> process being killed.
-> 
-> I suspect if you want reasons why the coredump is truncated you are
-> going to want to instrument dump_interrupted, dump_skip and dump_emit
-> rather than their callers.  As they don't actually report why the
-> failed.
-I'll add logging there as well, thanks for the great idea!
+Defer read completion from the I/O thread to the cifsiod thread so as not
+to slow down the I/O thread.  This restores the behaviour of v6.9.
 
-> 
-> Are you using systemd-coredump?  Or another pipe based coredump
-> collector?  It might be the dump collector is truncating things.
-There is a collector program set via core_pattern so that the core dump 
-is streamed to its standard input. That is a very simple memcpy-like 
-bytes-in..bytes-out code. It logs how many bytes it receives and how 
-many bytes it writes, and no bytes are lost in this path. Of the system 
-itself, it is built out of the latest stable LTS kernel and a small user 
-land, not based on any distribution and packet management. One might say 
-it resembles an appliance.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/smb2pdu.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-> 
-> Do you know if your application uses io_uring?  There were some weird
-> issues with io_uring and coredumps that were causing things to get
-> truncation at one point.  As I recall a hack was put in the coredump
-> code so that it worked but maybe there is another odd case that still
-> needs to be handled.
-Couldn't appreciate the pointer more! There are cases when the user land 
-reaches out to io_uring, not the work horse though.
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 38a06e8a0f90..e213cecd5094 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4484,6 +4484,16 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
+ 	return rc;
+ }
+ 
++static void smb2_readv_worker(struct work_struct *work)
++{
++	struct cifs_io_subrequest *rdata =
++		container_of(work, struct cifs_io_subrequest, subreq.work);
++
++	netfs_subreq_terminated(&rdata->subreq,
++				(rdata->result == 0 || rdata->result == -EAGAIN) ?
++				rdata->got_bytes : rdata->result, true);
++}
++
+ static void
+ smb2_readv_callback(struct mid_q_entry *mid)
+ {
+@@ -4578,9 +4588,8 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 			rdata->result = 0;
+ 	}
+ 	rdata->credits.value = 0;
+-	netfs_subreq_terminated(&rdata->subreq,
+-				(rdata->result == 0 || rdata->result == -EAGAIN) ?
+-				rdata->got_bytes : rdata->result, true);
++	INIT_WORK(&rdata->subreq.work, smb2_readv_worker);
++	queue_work(cifsiod_wq, &rdata->subreq.work);
+ 	release_mid(mid);
+ 	add_credits(server, &credits, 0);
+ }
 
->>
->> I think it'd be fair to say that I am asking to please "let me handle (log)
->> everything that could go wrong", ratelimited, as these error cases are present
->> in the code, and logging can give a clue why the core dump collection didn't
->> succeed and what one would need to explore to increase reliability of the
->> system.
-> 
-> If you are looking for reasons you definitely want to instrument
-> fs/coredump.c much more than fs/binfmt_elf.c.  As fs/coredump.c is the
-> code that actually performs the writes.
-Understood, thank you very much!
-
-> 
-> One of these days if someone is ambitious we should probably merge the
-> coredump code from fs/binfmt_elf.c and fs/binfmt_elf_fdpic.c and just
-> hardcode the coredump code to always produce an elf format coredump.
-> Just for the simplicity of it all.
-I've had loads of experience with collecting and analyzing ELF core dump 
-files, including a tool that parses machine state, rebuilds the 
-necessary Linux kernel structures and produces ELF core dump files for 
-the user land processes from that. Perhaps I could embark on that 
-ambitious journey if no one else has time :)
-
-> 
-> Eric
-
--- 
-Thank you,
-Roman
 
