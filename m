@@ -1,128 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-21951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A8391010D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 12:04:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE185910364
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 13:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F3A1C20D4F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 10:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC97281B13
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 11:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAA51A8C2D;
-	Thu, 20 Jun 2024 10:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3EGJx0E"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855521ABCBC;
+	Thu, 20 Jun 2024 11:50:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F0319DF46;
-	Thu, 20 Jun 2024 10:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB6F157E84;
+	Thu, 20 Jun 2024 11:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718877877; cv=none; b=tUVMHEFh71N3lSZbLHF0EXtHdM+VX5IYd17SdjSjX1HJaGc9eo2MZnL1xKJhvExURy9cj8sxFX9Cs385pwGZDdZKnuaSbb1bzXwhgCePWqQ6qLPt0xR2p7YJ8JaKq6AHj+doGbuS9Jo05z3+b5H7Jmoa+b9ChEg3wam1yBqc9G8=
+	t=1718884245; cv=none; b=siYSwH60frAh7VxFuaPDWi7+LSeN/6kAzk1AYsoyE8sfXQa9s5cJ9jZFbeczyXB1Pq18rnOMVUTospfPK85TgpGhKa2bcFztJ6PZGyOLeD35E7Kfm37PIYfd/L5El7EyRCRylUsXD515qa0fvqeZo7pith/JdQP04ChnuPQR7ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718877877; c=relaxed/simple;
-	bh=qssxO3H97xYgQ6phX7ShXtegLep8IN5IzW1nwrh59UQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyVX3SCY1TcYs91Z0Uovvn0BY0BsOjG6KXtC3ZZJLHMX3DkPqHxvpQcMXi6E3x2R6mB0NnoT3Ub+/JZL8X364WHbtlugTKima2lmcQiiLWDnM0iohAyv7t5+ymk7ezhShVmwJnfZxBzNawGz7ZHrDf6RsPL9L2PhnxjvbyGGgGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3EGJx0E; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6fc36865561so311364a34.3;
-        Thu, 20 Jun 2024 03:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718877875; x=1719482675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qssxO3H97xYgQ6phX7ShXtegLep8IN5IzW1nwrh59UQ=;
-        b=B3EGJx0E3p4MH7DCwhk4udRzfvOaBzSNnCG/G7cb8VY8pHHWlgaUPt3mZhm0KKsuda
-         iSoXsL58n7GwFkqA7GbCyJY/PWYQCeilnUkgUQlOCKRsQ+WANdipFNuRsUT2PT9QvwWC
-         dUYnAXQRP/kARMzAM1mb3Fh8zVl9jZLn0JaNSOVzoRCHMylZzYumz2I7T8P4eAsThXGu
-         MRF7R1AXu9NI3stEVgeQjEj2PsTI6nuoZlxJaJ3Uc+U+HpKkaea4e9MIxS8sImbxM/c4
-         3I1XuKaVI5jfzhXoqCdJq67myYJWzpIew4bEKbqe0tgL5p406QdZS4/w8OI/OW8fjTPt
-         jExw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718877875; x=1719482675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qssxO3H97xYgQ6phX7ShXtegLep8IN5IzW1nwrh59UQ=;
-        b=PbeG4RXhUbne5d4pUzUuSszyKD4asDnOXUhJazaRxX7IceXDou0YwmHPfGuetiGh8K
-         +QAmix37ttjNOayqlMZR/xhBVJ/YGQZLr58l9HmpgXtWQCr37lzFC50l+UdHXi3aWGDG
-         xeutCDnJZQmFkx7c+OAqU6mV9xIbdh75F9XrXG8f3Bxw8ikDHsMUlHbAXH099ToOhaun
-         Yh75hZrAJobSeLUzpWDSEbQS5nztWoXDjMQa4uZEkpuDxszwLK6EqrssJtsM3L3eUDNq
-         1JQ7IidTh3MrRv7XrTkQnCpLhiELW8HcjhCC8pcKmf3VxBI7JIkOC94UiAJQYUFylglS
-         5G0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrVG9V9+BwSD+v4pR/saN8BqmxNDR5qPi4jwY69xr6C+vD3y6z549WZLoE5sim7G2SYaxf8AtROK7FVdU3lQoMHGuD0gDyPpWKZfNQYaVEZ3HeUCbDyOhbd1EhQC+JFvLIyGCF4VMlitLt5U2Udn/KVfTbRNkGnoOgXV3I2nkgt3HdOpbUSg==
-X-Gm-Message-State: AOJu0YzXRNaHLPdqjCNMt1v72rwhGyx4rIUp1rN/0ZIT+ezkmGg67r7u
-	XcNcXJ7uoaBrI94dZFPUaUvtBg31/rZTmr01NmUNDpeKBp/dmRrS8yHvOtin2PIlY5AeJwX3WGn
-	cOVugNb5ga0heAQmF/e/B0hw6gQk=
-X-Google-Smtp-Source: AGHT+IEsRoAAbHHrux8RoioxqnCJYdrd6SXFlI9sC177VWlo2dg4V8kucLTYTM3m9HxTRR2I126OQYwbcrhsErp1o4o=
-X-Received: by 2002:a05:6830:310f:b0:6f9:b69f:b64f with SMTP id
- 46e09a7af769-70076a1c558mr5925673a34.35.1718877874742; Thu, 20 Jun 2024
- 03:04:34 -0700 (PDT)
+	s=arc-20240116; t=1718884245; c=relaxed/simple;
+	bh=1h3Pr+5WfTNEzig2akkELyh2jILavy32RSE95/pIHfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ia09mE6Oh3TYYLCw7JqCj+CS39d46dI1Yx+HMEe12v8ToiEWGiblh6LTZV++Vm25hL9WD7tls25cE///xEIxCrUNEDdXz1yew0XdKNQe1bnXL9EukSXmggjrd607AWn9KmMCGEttRRq4IRAmKLWmK4z0Z2tSNCAOOdddiF1NqJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W4f0N0tJJzdcfk;
+	Thu, 20 Jun 2024 19:49:08 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3EBC61808CC;
+	Thu, 20 Jun 2024 19:50:39 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 20 Jun 2024 19:50:39 +0800
+Message-ID: <ef67511b-785e-49f8-8897-a6570d9424da@huawei.com>
+Date: Thu, 20 Jun 2024 19:50:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
- <20240615-fahrrad-bauordnung-a349bacd8c82@brauner> <20240617093745.nhnc7e7efdldnjzl@quack3>
- <20240618-wahr-drossel-19297ad2a361@brauner> <20240620094151.cuamehtaioenokyv@quack3>
-In-Reply-To: <20240620094151.cuamehtaioenokyv@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 20 Jun 2024 13:04:22 +0300
-Message-ID: <CAOQ4uxgqct2ru571NwzMqVaYOJwwr05La=OTecMCVQZJko9gPw@mail.gmail.com>
-Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
- ->atomic_open used.
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>, James Clark <james.clark@arm.com>, 
-	ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] hugetlbfs: use tracepoints in hugetlbfs functions.
+Content-Language: en-US
+To: <muchun.song@linux.dev>, <rostedt@goodmis.org>, <mhiramat@kernel.org>
+CC: <mathieu.desnoyers@efficios.com>, <linux-mm@kvack.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+References: <20240612011156.2891254-1-lihongbo22@huawei.com>
+ <20240612011156.2891254-3-lihongbo22@huawei.com>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20240612011156.2891254-3-lihongbo22@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Thu, Jun 20, 2024 at 12:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 18-06-24 16:19:37, Christian Brauner wrote:
-> > > AFAICT this will have a side-effect that now fsnotify_open() will be
-> > > generated even for O_PATH open. It is true that fsnotify_close() is g=
-etting
-> >
-> > Thanks! That change seemed sensible because a close() event is
-> > generated.
-> >
-> > But I don't agree that generating events for O_PATH fds doesn't make
-> > sense on principle. But I don't care if you drop events for O_PATH now.
->
-> Well, I can be convinced otherwise but I was not able to find a compeling
-> usecase for it. fanotify(8) users primarily care about file data
-> modification / access events and secondarily also about directory content
-> changes (because they change how data can be accessed). And creation of
-> O_PATH fds does not seem to fall into either of these categories...
+Just a friendly ping to the patch :)
 
-Not to mention the fact that security_file_open() and therefore
-fsnotify_open_perm() is not called for O_PATH open.
-
-It's not that we have to keep FS_OPEN balanced with
-FS_OPEN_PERM, but I think it will be quite odd to get FS_OPEN without
-FS_OPEN_PERM.
-
-I think that open an O_PATH fd fits perfectly to the design "pre path"
-events [1].
-I have designated FAN_PATH_ACCESS (with dir id + name info) for lookup
-permission.
-Perhaps open an O_PATH can generate the same event with additional child id
-or another dedicated FAN_PATH_OPEN event.
+https://lore.kernel.org/all/20240612011156.2891254-1-lihongbo22@huawei.com/
 
 Thanks,
-Amir.
+Hongbo
 
-[1] https://github.com/amir73il/man-pages/commits/fan_pre_path/
+On 2024/6/12 9:11, Hongbo Li wrote:
+> Here we use the hugetlbfs tracepoint to track the call stack. And
+> the output in trace is as follows:
+> 
+> ```
+> touch-5307    [004] .....  1402.167607: hugetlbfs_alloc_inode: dev = (0,50), ino = 21380, dir = 16921, mode = 0100644
+> touch-5307    [004] .....  1402.167638: hugetlbfs_setattr: dev = (0,50), ino = 21380, name = testfile1, ia_valid = 131184, ia_mode = 0132434, ia_uid = 2863018275, ia_gid = 4294967295, old_size = 0, ia_size = 4064
+> truncate-5328    [003] .....  1436.031054: hugetlbfs_setattr: dev = (0,50), ino = 21380, name = testfile1, ia_valid = 8296, ia_mode = 0177777, ia_uid = 2862574544, ia_gid = 4294967295, old_size = 0, ia_size = 2097152
+> rm-5338    [004] .....  1484.426247: hugetlbfs_evict_inode: dev = (0,50), ino = 21380, i_mode = 0100644, i_size = 2097152, i_nlink = 0, seals = 1, i_blocks = 0
+> <idle>-0       [004] ..s1.  1484.446668: hugetlbfs_free_inode: dev = (0,50), ino = 21380, i_mode = 0100644, i_size = 2097152, i_nlink = 0, seals = 1, i_blocks = 0
+> ```
+> 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+>   fs/hugetlbfs/inode.c | 21 +++++++++++++++++++--
+>   1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 412f295acebe..f3399c6a02ca 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -39,6 +39,9 @@
+>   #include <linux/uaccess.h>
+>   #include <linux/sched/mm.h>
+>   
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/hugetlbfs.h>
+> +
+>   static const struct address_space_operations hugetlbfs_aops;
+>   static const struct file_operations hugetlbfs_file_operations;
+>   static const struct inode_operations hugetlbfs_dir_inode_operations;
+> @@ -686,6 +689,7 @@ static void hugetlbfs_evict_inode(struct inode *inode)
+>   {
+>   	struct resv_map *resv_map;
+>   
+> +	trace_hugetlbfs_evict_inode(inode);
+>   	remove_inode_hugepages(inode, 0, LLONG_MAX);
+>   
+>   	/*
+> @@ -813,8 +817,10 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
+>   	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
+>   		return -EOPNOTSUPP;
+>   
+> -	if (mode & FALLOC_FL_PUNCH_HOLE)
+> -		return hugetlbfs_punch_hole(inode, offset, len);
+> +	if (mode & FALLOC_FL_PUNCH_HOLE) {
+> +		error = hugetlbfs_punch_hole(inode, offset, len);
+> +		goto out_nolock;
+> +	}
+>   
+>   	/*
+>   	 * Default preallocate case.
+> @@ -918,6 +924,9 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
+>   	inode_set_ctime_current(inode);
+>   out:
+>   	inode_unlock(inode);
+> +
+> +out_nolock:
+> +	trace_hugetlbfs_fallocate(inode, mode, offset, len, error);
+>   	return error;
+>   }
+>   
+> @@ -934,6 +943,12 @@ static int hugetlbfs_setattr(struct mnt_idmap *idmap,
+>   	if (error)
+>   		return error;
+>   
+> +	trace_hugetlbfs_setattr(inode, dentry->d_name.len, dentry->d_name.name,
+> +			attr->ia_valid, attr->ia_mode,
+> +			from_kuid(&init_user_ns, attr->ia_uid),
+> +			from_kgid(&init_user_ns, attr->ia_gid),
+> +			inode->i_size, attr->ia_size);
+> +
+>   	if (ia_valid & ATTR_SIZE) {
+>   		loff_t oldsize = inode->i_size;
+>   		loff_t newsize = attr->ia_size;
+> @@ -1032,6 +1047,7 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
+>   			break;
+>   		}
+>   		lockdep_annotate_inode_mutex_key(inode);
+> +		trace_hugetlbfs_alloc_inode(inode, dir, mode);
+>   	} else {
+>   		if (resv_map)
+>   			kref_put(&resv_map->refs, resv_map_release);
+> @@ -1274,6 +1290,7 @@ static struct inode *hugetlbfs_alloc_inode(struct super_block *sb)
+>   
+>   static void hugetlbfs_free_inode(struct inode *inode)
+>   {
+> +	trace_hugetlbfs_free_inode(inode);
+>   	kmem_cache_free(hugetlbfs_inode_cachep, HUGETLBFS_I(inode));
+>   }
+>   
 
