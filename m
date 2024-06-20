@@ -1,187 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-21976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4CB9107BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:14:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF6659107CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399951C2157C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 14:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E512812DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 14:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F401AD9EE;
-	Thu, 20 Jun 2024 14:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C0F1AD9FD;
+	Thu, 20 Jun 2024 14:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TYieyEJp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ql8zx4GC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TYieyEJp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ql8zx4GC"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e47D9UbT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCDA1AB91B;
-	Thu, 20 Jun 2024 14:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C8E17554A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 14:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718892856; cv=none; b=Ja2zydANi4O/u9TIOaPjk4rUHRiF1QFTHcHyUJqNGj8AfN/b4puP/zFEsAujbJLbvUGw7ZzXj+OaCtq2joV0DDs0Tl04I9JYU/fFtMa/LkQUWAha0mL5/nR0SE3ekCJw0yh1pMK/rFBcpZVzam5eu/EB9vNm9AQU9tRCkzUE+XM=
+	t=1718892969; cv=none; b=GbUg/cP0vRhtLyPBrmdbg7HuxL9uhjQ7c2sIDcMx2OQdhsdsqzZxcGPjHqtnZIDObMxZVU3xz4voIQ5hQbEuDKZD5nDS7FoSaQyhKd9CSwx9r4DgJ+6JRXvEgjaW9wK1yZ8bkfK6sZBjxbABeS2jrb9+V8fGJD3jSpYgmKDA4u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718892856; c=relaxed/simple;
-	bh=DPp863t6Iv2CN9gXF2rMAItgxwljmraSFPCSsQe+Yfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGei7yl4H10INxe2Y9p6b+BUml7wZJk/PTlnd73CxU9EUOskd7y1MZ8PZrEE1Y1f+lsiLa8Kz+p1h4xyB8RVCZkfv/tyCn5/eNHjE7hiLOJUs/NOjn/EHCQWYBshk7baOWzSNZ8ablDvIvwp2oXz0yLCDW8uREPZdy56HX6VHU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TYieyEJp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ql8zx4GC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TYieyEJp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ql8zx4GC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 227FE1F8AA;
-	Thu, 20 Jun 2024 14:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718892852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1718892969; c=relaxed/simple;
+	bh=ie3mMowcLl9pO6pcPDQzyfj4GHt2JUEpIdYsa7TzX6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccqxJ8NMB+SXKISqrfyC58oqn0oX8Cq65g/0YzalDfJjq2j9OR/UrwzEDMOtokzM1TiQqvfblQgn1NFPMKXVwiAisf1DZikVMLAbyET0Lpk6GY+7KGtCQD+po6/JGsGs2GEk81K3NgS0KR+z7dv538wo19D4VrW7se8eneO1gDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e47D9UbT; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: willy@infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718892965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=TYieyEJpcEliHFGUMOjVwd2MsHeTEJpl64iglSHvfZ5OZA0NbvyZ5bFjw3sVu98BxMeLfo
-	X+4Y/mvXnRL7U8eOaEoMw2oDdybBRz0U2tIyZ8EGVJgmPZng6sdYCyAYKNvWXizhZPbPOC
-	Q5/ZDx3q9VA6KEoS3xlzjy5Mj2BdhRo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718892852;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=ql8zx4GCDwPNmZBIEXu9VK0shr3zENQYJCB5gUg+QsV3semzmKkRj0Hq9/W7ouLeCyoCRO
-	gCf4QDU3fx0VO9Bw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TYieyEJp;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ql8zx4GC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718892852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=TYieyEJpcEliHFGUMOjVwd2MsHeTEJpl64iglSHvfZ5OZA0NbvyZ5bFjw3sVu98BxMeLfo
-	X+4Y/mvXnRL7U8eOaEoMw2oDdybBRz0U2tIyZ8EGVJgmPZng6sdYCyAYKNvWXizhZPbPOC
-	Q5/ZDx3q9VA6KEoS3xlzjy5Mj2BdhRo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718892852;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=ql8zx4GCDwPNmZBIEXu9VK0shr3zENQYJCB5gUg+QsV3semzmKkRj0Hq9/W7ouLeCyoCRO
-	gCf4QDU3fx0VO9Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35EA113AC1;
-	Thu, 20 Jun 2024 14:14:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MI3SBjI5dGZwWgAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 20 Jun 2024 14:14:10 +0000
-Message-ID: <4be6fe89-c972-4bf9-9d5f-84614c1c5792@suse.de>
-Date: Thu, 20 Jun 2024 16:14:09 +0200
+	bh=CVHAkEhh1ZNeSLA10+0gLjNffv+MQ5dqQHkb3aqOTl4=;
+	b=e47D9UbT/UNkMordZconCUJnNASIlnV2vDpaKbf6o6sw3fP0GmeKB7BGU+qRLSw+uNRxsY
+	0uQtNx+p3xYHOoXXVogSRY0qed5+uV08H3NpBNmOYkxpmqxJqA/hVLoekSa/Pem6//gCQQ
+	16rlp++WZF1Jse+eAusUJ2f63Qjj4ao=
+X-Envelope-To: lihongbo22@huawei.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-block@vger.kernel.org
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: hch@lst.de
+Date: Thu, 20 Jun 2024 10:16:02 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Hongbo Li <lihongbo22@huawei.com>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk, hch@lst.de
+Subject: Re: bvec_iter.bi_sector -> loff_t? (was: Re: [PATCH] bcachefs: allow
+ direct io fallback to buffer io for) unaligned length or offset
+Message-ID: <pfxno4kzdgk6imw7vt2wvpluybohbf6brka6tlx34lu2zbbuaz@khifgy2v2z5n>
+References: <20240620132157.888559-1-lihongbo22@huawei.com>
+ <bbf7lnl2d5sxdzqbv3jcn6gxmtnsnscakqmfdf6vj4fcs3nasx@zvjsxfwkavgm>
+ <ZnQ0gdpcplp_-aw7@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v9 02/10] block: Generalize chunk_sectors support as
- boundary support
-Content-Language: en-US
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
- martin.petersen@oracle.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- dchinner@redhat.com, jack@suse.cz
-Cc: djwong@kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
- linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
- linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com,
- ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
- snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev
-References: <20240620125359.2684798-1-john.g.garry@oracle.com>
- <20240620125359.2684798-3-john.g.garry@oracle.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240620125359.2684798-3-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[30];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,lists.infradead.org,mit.edu,google.com,linux.ibm.com,kvack.org,gmail.com,infradead.org,redhat.com,lists.linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RL7q43nzpr7is614unuocxbefr)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 227FE1F8AA
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
-X-Spam-Level: 
+In-Reply-To: <ZnQ0gdpcplp_-aw7@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 6/20/24 14:53, John Garry wrote:
-> The purpose of the chunk_sectors limit is to ensure that a mergeble request
-> fits within the boundary of the chunck_sector value.
+On Thu, Jun 20, 2024 at 02:54:09PM +0100, Matthew Wilcox wrote:
+> On Thu, Jun 20, 2024 at 09:36:42AM -0400, Kent Overstreet wrote:
+> > On Thu, Jun 20, 2024 at 09:21:57PM +0800, Hongbo Li wrote:
+> > > Support fallback to buffered I/O if the operation being performed on
+> > > unaligned length or offset. This may change the behavior for direct
+> > > I/O in some cases.
+> > > 
+> > > [Before]
+> > > For length which aligned with 256 bytes (not SECTOR aligned) will
+> > > read failed under direct I/O.
+> > > 
+> > > [After]
+> > > For length which aligned with 256 bytes (not SECTOR aligned) will
+> > > read the data successfully under direct I/O because it will fallback
+> > > to buffer I/O.
 > 
-> Such a feature will be useful for other request_queue boundary limits, so
-> generalize the chunk_sectors merge code.
+> This is against the O_DIRECT requirements.
 > 
-> This idea was proposed by Hannes Reinecke.
+>    O_DIRECT
+>        The O_DIRECT flag may impose alignment restrictions on  the  length  and
+>        address  of  user-space  buffers  and the file offset of I/Os.  In Linux
+>        alignment restrictions vary by filesystem and kernel version  and  might
+>        be  absent  entirely.   The  handling  of  misaligned O_DIRECT I/Os also
+>        varies; they can either fail with EINVAL or fall back to buffered I/O.
 > 
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   block/blk-merge.c      | 20 ++++++++++++++------
->   drivers/md/dm.c        |  2 +-
->   include/linux/blkdev.h | 13 +++++++------
->   3 files changed, 22 insertions(+), 13 deletions(-)
+>        Since Linux 6.1, O_DIRECT support and alignment restrictions for a  file
+>        can  be  queried using statx(2), using the STATX_DIOALIGN flag.  Support
+>        for STATX_DIOALIGN varies by filesystem; see statx(2).
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+>        Some filesystems provide their  own  interfaces  for  querying  O_DIRECT
+>        alignment restrictions, for example the XFS_IOC_DIOINFO operation in xf‐
+>        sctl(3).  STATX_DIOALIGN should be used instead when it is available.
+> 
+>        If none of the above is available, then direct I/O support and alignment
+>        restrictions  can  only  be  assumed  from  known characteristics of the
+>        filesystem, the individual file, the underlying storage  device(s),  and
+>        the  kernel  version.  In Linux 2.4, most filesystems based on block de‐
+>        vices require that the file offset and the length and memory address  of
+>        all  I/O  segments  be multiples of the filesystem block size (typically
+>        4096 bytes).  In Linux 2.6.0, this was relaxed to the logical block size
+>        of the block device (typically 512 bytes).   A  block  device's  logical
+>        block  size  can be determined using the ioctl(2) BLKSSZGET operation or
+>        from the shell using the command:
 
-Cheers,
+That's really just descriptive, not prescriptive.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+The intent of O_DIRECT is "bypass the page cache", the alignment
+restrictions are just a side effect of that. Applications just care
+about is having predictable performance characteristics.
 
+> > The catch is that struct bio - bvec_iter - represents addresses with a
+> > sector_t, and we'd want that to be a loff_t.
+> > 
+> > That's something we should do anyways; everything else in struct bio can
+> > represent a byte-aligned io, bvec_iter.bi_sector is the only exception
+> > and fixing that would help in consolidating our various scatter-gather
+> > list data structures - but we'd need buy-in from Jens and Christoph
+> > before doing that.
+> 
+> I'm against it.  Block devices only do sector-aligned IO and we should
+> not pretend otherwise.
+
+Eh?
+
+bio isn't really specific to the block layer anyways, given that an
+iov_iter can be a bio underneath. We _really_ should be trying for
+better commonality of data structures.
 
