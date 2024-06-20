@@ -1,109 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-21986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358C5910A3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 17:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621C6910BED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B441F22B42
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 15:44:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BC11C24231
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EE51B0126;
-	Thu, 20 Jun 2024 15:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720C51B3F1F;
+	Thu, 20 Jun 2024 16:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m8h4Sn6T"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZuJojiHt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAA71B0109
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 15:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B621B3743
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 16:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898231; cv=none; b=RLA0KF+VGz1/YsVS6nSm+b5ZMxA8KqHm3fDt6wGT68Hrri7AqNuaPqBo9N2DI+tvnHPVs4B9LPFr92fCKsbN3v6QWn5s3EGKiMdDYzWP6HqzE2clNHv/GwaAcAfgtAeSqZY3MNM2H2CcefzeGHpLnqneonfzugKE3aa/appZ+6w=
+	t=1718900303; cv=none; b=Uu7Lv1sDTJyYJ9EXCga54KMcNZy7uZe/ZV1wVoASDWv9IRs9LAXb/a3stfoT6S8MmUMLPLHhHFlpQQ8Z3Vw0cR361VoGUtwHjFx0/aQ+OmjtR+wYigeEpw06XFXnbh04un+uSPhX185wx0pTWP6CXttUcliXS9XuXsxlh0itMPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898231; c=relaxed/simple;
-	bh=w84aznMklvTomJKm2B/isoxH6+y5xbG2IWzD5jYKSdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2xka+wBUxcN7OZ0pKhhUedlQNIAwktkfjsOqeG2UxSx9eycseoLcxxsTmNKbu1BlIlcai2OqlmoCoTiHRD96r8JRLSzjdb+Qp5TTPAp0ImQRMOB6D/bM3WEtBDcU5oMnLLIQsBdRO1UeE2tRt0rOAyOiu3xVc8UWK6NX6Xv9Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m8h4Sn6T; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: hch@lst.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718898228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KR3OdNe6f+nFOK38PD6sSn1rboAVawph2U2KfmOAbN4=;
-	b=m8h4Sn6TpfyYEIfU43oG7do1ZqE0IVoBCNOvEBg4oxTDcx/PISBU/xTLhhkxhTRit9AWYS
-	RUZPQkm88pX/lfDkWfi+LQDmjq0CzpE4Kkuoc5GbAZD0Fd69KR7ohvCnYd1NR+j2zh3G4N
-	6n0ON49f1X2w2KHsmTjdtmmbUHqR4fE=
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: lihongbo22@huawei.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: axboe@kernel.dk
-Date: Thu, 20 Jun 2024 11:43:44 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Hongbo Li <lihongbo22@huawei.com>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, axboe@kernel.dk
-Subject: Re: bvec_iter.bi_sector -> loff_t? (was: Re: [PATCH] bcachefs: allow
- direct io fallback to buffer io for) unaligned length or offset
-Message-ID: <hehodpowajdsfscwf7y3yaqsu2byhzkwpsiaesj5sz722efzg4@gwnod5qe7ed4>
-References: <20240620132157.888559-1-lihongbo22@huawei.com>
- <bbf7lnl2d5sxdzqbv3jcn6gxmtnsnscakqmfdf6vj4fcs3nasx@zvjsxfwkavgm>
- <ZnQ0gdpcplp_-aw7@casper.infradead.org>
- <20240620153050.GA26369@lst.de>
+	s=arc-20240116; t=1718900303; c=relaxed/simple;
+	bh=Pr/Ikd1c+WzW4xHwcwh9vXtLfFfjK/HDJCD0eaHhW+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H2m5AraSOAeB5KheaFJqp/+7t+x2cMhddp0xVoScvXtcnc2qt8OXjxX807mlJUNPEqCWGSccD1QueS9bMA4u+bHHMGHUJyi/tCVwbrKhpX+eKwtBJnSI2vG9nbVhoqPqpdydQg2DeSO4TkVs2e7TjgzAyxOTgAVp5ft+uo6pX5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZuJojiHt; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52bd48cf36bso1192889e87.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 09:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718900300; x=1719505100; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pr/Ikd1c+WzW4xHwcwh9vXtLfFfjK/HDJCD0eaHhW+Y=;
+        b=ZuJojiHtM8pqmEOcImp4bpsv8cNm+3QGxS/HU+mP5Ts2QW332SAfN6gsAtju68IMvf
+         CGJkAe5wnipN2iiHMuGNIueZxL99jNrgCSbKXr7yij6WAKPks+eQAG4ehVUN8mf4yTd9
+         eOWvIxMSj37sUyhSXUrAnXa5z3UWU3DKM2jts=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718900300; x=1719505100;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pr/Ikd1c+WzW4xHwcwh9vXtLfFfjK/HDJCD0eaHhW+Y=;
+        b=nVrKlzv8L3TpxWOwlDNd17kNfLly4bzPvYNxGBDQgQgnvx+eYoK2LkuiZemfhC+q7o
+         UuX7dRBdXG9xKcz7AZMGJdMQJ5ge70kWQcR8Z8yg7J2K/k8uCN2IcXjStxIXEy5v/LfQ
+         bOxP04ol5rWKGvwvohmX/yOwrLgEzX2GbErSOfD8EpLqw9f1qvtnyr1L9kshpyQn5XU+
+         +9hQbjqm69WY68dG77+baLV1X0u5qiM/tNmuhoU+crjITMrooUOK7Fl3x1BO+qOHeUSA
+         nZEHi5Nrsta/MaKP/KdArRC7Z3/S66mGpfiv631uVgCQoBe1glpeobW1iF6thEjGkA4Q
+         TqhA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2X0iKsdRzPQjZ0+5adrP4KBevJ/L6Wu7q7OqnJuzfIn3TLkXnMrxFYq0VyJfAYw0go8COpdyFskbWc75Fch9+XRDS0YiKe17SR2XtSQ==
+X-Gm-Message-State: AOJu0Yy98dMObGR6F/k6dV+gcjlVG4Bu+Rr5yMpD8RTt9gCP0zQ+oePF
+	Hc/wkIBXEbhacDYm6INaOZxJWql0nOvxPi3M9qt97KF0hp0vryBBgCmhxZ3Xp8L5zZH1bKcMe+m
+	ryGaRvaifB+Qzt8QLZNeC/HMpUhM25hdCxMsCQ9r5yRvHnfeVFJGCUg==
+X-Google-Smtp-Source: AGHT+IHDU8ss1nc317vIe2fyNJOwpxsq9qAqH9/zotSaIpik4JcCY87vNSLPwSCr4vV4re+EvLAuOJ0Jy254SowvUGM=
+X-Received: by 2002:a19:8c0d:0:b0:52c:af5f:8535 with SMTP id
+ 2adb3069b0e04-52ccaa5a8cbmr3226753e87.18.1718900300382; Thu, 20 Jun 2024
+ 09:18:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620153050.GA26369@lst.de>
-X-Migadu-Flow: FLOW_OUT
+References: <20240618093656.1944210-1-takayas@chromium.org> <ZnNHvwV7tDlSFx8Y@casper.infradead.org>
+In-Reply-To: <ZnNHvwV7tDlSFx8Y@casper.infradead.org>
+From: Takaya Saeki <takayas@chromium.org>
+Date: Fri, 21 Jun 2024 01:18:08 +0900
+Message-ID: <CAH9xa6et8XGg9Et1X6K2o3vFF1WhAQQZqiPmTtf+BKfykSV_EQ@mail.gmail.com>
+Subject: Re: [PATCH] filemap: add trace events for get_pages, map_pages, and fault
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Junichi Uekawa <uekawa@chromium.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 20, 2024 at 05:30:50PM +0200, Christoph Hellwig wrote:
-> On Thu, Jun 20, 2024 at 02:54:09PM +0100, Matthew Wilcox wrote:
-> > I'm against it.  Block devices only do sector-aligned IO and we should
-> > not pretend otherwise.
-> 
-> While I agree with that, the bvec_iter is actually used in a few other
-> places and could be used in more, and the 512-byte sector unit bi_sector
-> is the only weird thing that's not useful elsewhere.  So turning that
-> into a
-> 
-> 	u64 bi_addr;
-> 
-> that is byte based where the meaning is specific to the user would
-> actually be kinda nice.  For traditional block users we'd need a
-> bio_sector() helpers similar to the existing bio_sectors() one,
-> but a lot of non-trivial drivers actually need to translated to
-> a variable LBA-based addressing, which would be (a tiny little bit)
-> simpler with the byte address.   As bi_size is already in bytes
-> it would also fit in pretty naturally with that.
-> 
-> The only thing that is really off putting is the amount of churn that
-> this would cause.
+Thank you Matthew for taking a look at this!
+I fix both points and send a V2 patch.
 
-I'm being imprecise when I just say 'struct bio'; there's things in
-there that are block layer specific but there are also things in there
-you want that aren't block layer specific (completion callback, write
-flags, s/bi_bdev/bi_inode and that as well, perhaps). It's not at all
-clear to me we'd want to deal with the churn to split that up or make
-bio itself less block layer specific (although, but when I say 'aiming
-for commality with struct bio' that sort of thing is what I have in
-mind.
+> This needs to be cast to an loff_t before shifting.
 
-But more immediately, yes - bi_addr as all we need for this, and like
-you said I think it'd be a worthwhile change.
+I found that this applies to add_to_page_cache and delete_from_page_cache, too.
+I could fix them too, but I didn't since it will change the max value
+of those traces from %lu to %lld on 32 bit environments, which would
+be a breaking change. However, let me know if you think we should fix
+existing events as well.
 
