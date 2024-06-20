@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-21991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE1A910C41
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2A8910C4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE0B1F22438
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6789C1F21E55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7D81B47A9;
-	Thu, 20 Jun 2024 16:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FE21B4C23;
+	Thu, 20 Jun 2024 16:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gp1OfiOJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AaWGCEH0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E881A1B14FF;
-	Thu, 20 Jun 2024 16:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690621B47CA;
+	Thu, 20 Jun 2024 16:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900630; cv=none; b=R3SgXHU4dTv6yHmwGSqgAt/M61AP9K/E5lrL0kM6TZVVx9gYtOOvEEemyg85a5/+XBO067r09IcnyhaAQeJKk+ZDbq7gPqJEL6F9amkdnjA8rwVn+qSIY+qI0Muez9s1rP7Vwc8p3Ng7ifM2hjCkNV3GfhUX4vYIZln6FW6qEYY=
+	t=1718900636; cv=none; b=SLHvIDdJtyFoX/nTf90cdcwZXn4DdKg0qIgbvkJsP/UmCRWmtXiVQ6EzeYOKxOP77f1tauvf1HjQOX+MxTxBpGNw3GaGQwccsaZcqXtj7r4FXq7RjThds7j/1GsEElB5tHimq2jWb1R+zIdzh16EYhrZlo4lkDnkQnNTsIBIiZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900630; c=relaxed/simple;
-	bh=aVxJkW/iQwrNOLgfTTVJY6pj2fg2CeUI4P5STK6H26g=;
+	s=arc-20240116; t=1718900636; c=relaxed/simple;
+	bh=Doj0//VPfq9z758xR2+yZ79Db+NeekZ0EoHrfr9q2Q0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Te6J7EQshIOsjPkCFAjdweZURST9gJ+RvwyiX7gd3xRMwZAIcBWmxvrxqoCtT4Aq6o/7WMxZdl7uxXZjeTW8tWzbj4f+kuRvjn64AIWZVJygK7rkXvDO3oYV8nAcMaJ6a79YQ/ZfmCVRdEdzKVJeR7GJpZ+0XHS2VRvZJHSK3oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gp1OfiOJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7636C32786;
-	Thu, 20 Jun 2024 16:23:42 +0000 (UTC)
+	 MIME-Version; b=K1BAVjZTkKi3r4OrxVbeVxl1T+qZ43ncBu3FboudIkrt8/tstL8hfaQvdnSgKmir2hT4mzXWvwCpo4ht7OMmz8fDACfNNoeg1gzyz6dp7FvtL8K9ii/uI6VjK+/pCCtAoNrnhV41orduMRLLN2xkyVge0Mvpzos8azUksBq6/UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AaWGCEH0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB5EC4AF07;
+	Thu, 20 Jun 2024 16:23:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718900629;
-	bh=aVxJkW/iQwrNOLgfTTVJY6pj2fg2CeUI4P5STK6H26g=;
+	s=k20201202; t=1718900636;
+	bh=Doj0//VPfq9z758xR2+yZ79Db+NeekZ0EoHrfr9q2Q0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Gp1OfiOJYVv84vePrRS45hAyaAyeMToGQzUaNUoYWz+fBT73+IF24GCI4MXB5/jOf
-	 TfGzdzxHssbjh3n4mNmOkgo0ERLGQruvRYgmzNnE8GSKu3z2MpmXMLpe+A2A2PtVbr
-	 U1TxfuGACaur0lnoibgImkdzv4Ai3KrsqZekNaDnL371jKXigoigwZlvR0LlLkvWPt
-	 yO+uEARJeqHbdyWZmwGGc+SC92Bjzq/kgjWt99bvlPjGUd/c4S9TtFxJ1KAcaqi1Ik
-	 tP/3l5RRJMIw/JiBGz59bJP6M//sxk4az8lHcyUfjthpEG+Naah/UkiFNyQAlBfBb5
-	 kp27UGFdOs+iA==
+	b=AaWGCEH0FUtHpMS1MWl92zyMC/tgI55ZbXl6tZ3t5C3/D90MhQY7LMPv52sRtXgX7
+	 /tDHOQ6fobnn4uVWb5vNTuBQIwEAxDas3AiEfhSop6feRAWhRnZ+da7P7VMngnhmkk
+	 uKday5m0uC0pCQIfQjJmNfph+BSKsE6mupZiTK4nCMh6ev02nOQHZHAifS9GhfJcf8
+	 Av2+SR2IBKxnqrqNk3UUKHECPl0wYIrYeODFjmzBUOQioGFpi7EdScbEqPk5DdwfzV
+	 /j7R+AlsEtHGaZd/7u8r6X3V3OMunqnE6kTRg7ZdDsGpPmUCRt3Q2a3/R9uSNNqkgU
+	 9t5D3HmhZEJ5Q==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-arch@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -72,11 +72,10 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	linux-fsdevel@vger.kernel.org,
 	libc-alpha@sourceware.org,
 	musl@lists.openwall.com,
-	ltp@lists.linux.it,
-	stable@vger.kernel.org
-Subject: [PATCH 02/15] syscalls: fix compat_sys_io_pgetevents_time64 usage
-Date: Thu, 20 Jun 2024 18:23:03 +0200
-Message-Id: <20240620162316.3674955-3-arnd@kernel.org>
+	ltp@lists.linux.it
+Subject: [PATCH 03/15] mips: fix compat_sys_lseek syscall
+Date: Thu, 20 Jun 2024 18:23:04 +0200
+Message-Id: <20240620162316.3674955-4-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240620162316.3674955-1-arnd@kernel.org>
 References: <20240620162316.3674955-1-arnd@kernel.org>
@@ -90,140 +89,30 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Using sys_io_pgetevents() as the entry point for compat mode tasks
-works almost correctly, but misses the sign extension for the min_nr
-and nr arguments.
+This is almost compatible, but passing a negative offset should result
+in a EINVAL error, but on mips o32 compat mode would seek to a large
+32-bit byte offset.
 
-This was addressed on parisc by switching to
-compat_sys_io_pgetevents_time64() in commit 6431e92fc827 ("parisc:
-io_pgetevents_time64() needs compat syscall in 32-bit compat mode"),
-as well as by using more sophisticated system call wrappers on x86 and
-s390. However, arm64, mips, powerpc, sparc and riscv still have the
-same bug.
+Use compat_sys_lseek() to correctly sign-extend the argument.
 
-Changes all of them over to use compat_sys_io_pgetevents_time64()
-like parisc already does. This was clearly the intention when the
-function was originally added, but it got hooked up incorrectly in
-the tables.
-
-Cc: stable@vger.kernel.org
-Fixes: 48166e6ea47d ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm64/include/asm/unistd32.h         | 2 +-
- arch/mips/kernel/syscalls/syscall_n32.tbl | 2 +-
  arch/mips/kernel/syscalls/syscall_o32.tbl | 2 +-
- arch/powerpc/kernel/syscalls/syscall.tbl  | 2 +-
- arch/s390/kernel/syscalls/syscall.tbl     | 2 +-
- arch/sparc/kernel/syscalls/syscall.tbl    | 2 +-
- arch/x86/entry/syscalls/syscall_32.tbl    | 2 +-
- include/uapi/asm-generic/unistd.h         | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 266b96acc014..1386e8e751f2 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -840,7 +840,7 @@ __SYSCALL(__NR_pselect6_time64, compat_sys_pselect6_time64)
- #define __NR_ppoll_time64 414
- __SYSCALL(__NR_ppoll_time64, compat_sys_ppoll_time64)
- #define __NR_io_pgetevents_time64 416
--__SYSCALL(__NR_io_pgetevents_time64, sys_io_pgetevents)
-+__SYSCALL(__NR_io_pgetevents_time64, compat_sys_io_pgetevents_time64)
- #define __NR_recvmmsg_time64 417
- __SYSCALL(__NR_recvmmsg_time64, compat_sys_recvmmsg_time64)
- #define __NR_mq_timedsend_time64 418
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index cc869f5d5693..953f5b7dc723 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -354,7 +354,7 @@
- 412	n32	utimensat_time64		sys_utimensat
- 413	n32	pselect6_time64			compat_sys_pselect6_time64
- 414	n32	ppoll_time64			compat_sys_ppoll_time64
--416	n32	io_pgetevents_time64		sys_io_pgetevents
-+416	n32	io_pgetevents_time64		compat_sys_io_pgetevents_time64
- 417	n32	recvmmsg_time64			compat_sys_recvmmsg_time64
- 418	n32	mq_timedsend_time64		sys_mq_timedsend
- 419	n32	mq_timedreceive_time64		sys_mq_timedreceive
 diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 008ebe60263e..85751c9b9cdb 100644
+index 85751c9b9cdb..2439a2491cff 100644
 --- a/arch/mips/kernel/syscalls/syscall_o32.tbl
 +++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -403,7 +403,7 @@
- 412	o32	utimensat_time64		sys_utimensat			sys_utimensat
- 413	o32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
- 414	o32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
--416	o32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
-+416	o32	io_pgetevents_time64		sys_io_pgetevents		compat_sys_io_pgetevents_time64
- 417	o32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
- 418	o32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
- 419	o32	mq_timedreceive_time64		sys_mq_timedreceive		sys_mq_timedreceive
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 3656f1ca7a21..c6b0546b284d 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -502,7 +502,7 @@
- 412	32	utimensat_time64		sys_utimensat			sys_utimensat
- 413	32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
- 414	32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
--416	32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
-+416	32	io_pgetevents_time64		sys_io_pgetevents		compat_sys_io_pgetevents_time64
- 417	32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
- 418	32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
- 419	32	mq_timedreceive_time64		sys_mq_timedreceive		sys_mq_timedreceive
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index bd0fee24ad10..01071182763e 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -418,7 +418,7 @@
- 412	32	utimensat_time64	-				sys_utimensat
- 413	32	pselect6_time64		-				compat_sys_pselect6_time64
- 414	32	ppoll_time64		-				compat_sys_ppoll_time64
--416	32	io_pgetevents_time64	-				sys_io_pgetevents
-+416	32	io_pgetevents_time64	-				compat_sys_io_pgetevents_time64
- 417	32	recvmmsg_time64		-				compat_sys_recvmmsg_time64
- 418	32	mq_timedsend_time64	-				sys_mq_timedsend
- 419	32	mq_timedreceive_time64	-				sys_mq_timedreceive
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index ac6c281ccfe0..b354139b40be 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -461,7 +461,7 @@
- 412	32	utimensat_time64		sys_utimensat			sys_utimensat
- 413	32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
- 414	32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
--416	32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
-+416	32	io_pgetevents_time64		sys_io_pgetevents		compat_sys_io_pgetevents_time64
- 417	32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
- 418	32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
- 419	32	mq_timedreceive_time64		sys_mq_timedreceive		sys_mq_timedreceive
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 7fd1f57ad3d3..d6ebcab1d8b2 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -420,7 +420,7 @@
- 412	i386	utimensat_time64	sys_utimensat
- 413	i386	pselect6_time64		sys_pselect6			compat_sys_pselect6_time64
- 414	i386	ppoll_time64		sys_ppoll			compat_sys_ppoll_time64
--416	i386	io_pgetevents_time64	sys_io_pgetevents
-+416	i386	io_pgetevents_time64	sys_io_pgetevents		compat_sys_io_pgetevents_time64
- 417	i386	recvmmsg_time64		sys_recvmmsg			compat_sys_recvmmsg_time64
- 418	i386	mq_timedsend_time64	sys_mq_timedsend
- 419	i386	mq_timedreceive_time64	sys_mq_timedreceive
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index d983c48a3b6a..3fdaa573d661 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -737,7 +737,7 @@ __SC_COMP(__NR_pselect6_time64, sys_pselect6, compat_sys_pselect6_time64)
- #define __NR_ppoll_time64 414
- __SC_COMP(__NR_ppoll_time64, sys_ppoll, compat_sys_ppoll_time64)
- #define __NR_io_pgetevents_time64 416
--__SYSCALL(__NR_io_pgetevents_time64, sys_io_pgetevents)
-+__SYSCALL(__NR_io_pgetevents_time64, sys_io_pgetevents, compat_sys_io_pgetevents_time64)
- #define __NR_recvmmsg_time64 417
- __SC_COMP(__NR_recvmmsg_time64, sys_recvmmsg, compat_sys_recvmmsg_time64)
- #define __NR_mq_timedsend_time64 418
+@@ -27,7 +27,7 @@
+ 17	o32	break				sys_ni_syscall
+ # 18 was sys_stat
+ 18	o32	unused18			sys_ni_syscall
+-19	o32	lseek				sys_lseek
++19	o32	lseek				sys_lseek			compat_sys_lseek
+ 20	o32	getpid				sys_getpid
+ 21	o32	mount				sys_mount
+ 22	o32	umount				sys_oldumount
 -- 
 2.39.2
 
