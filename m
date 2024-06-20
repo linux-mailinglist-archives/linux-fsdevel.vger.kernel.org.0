@@ -1,128 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-22027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C2791117B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 20:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C349111D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 21:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29101C20F81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C431C21892
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 19:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295251B47DD;
-	Thu, 20 Jun 2024 18:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5381B4C43;
+	Thu, 20 Jun 2024 19:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y4r8hLSB"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KtKdoKGo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6431AD48B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 18:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA2024B26;
+	Thu, 20 Jun 2024 19:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718909637; cv=none; b=UQyjKoSHCwO5R0OjD9pTvksPH9MM0MF+QOM+lO9Qn6xGxc8m1Xjjz3/zaFNt76dwwTBJHJSmz2CIuRzEjXlj0w6oZASn45/fdTr/M5zPOmP24+1kSPv0l6cKavqvHPnDBJJZjK/kI45xXt9z3Ef81XLBiQWTMWfdxlKexFbC7cw=
+	t=1718910612; cv=none; b=s/2sDAzkSGXhC2QtDyCF3FC60cw/YfPTRQMSi9c2aXgf9xRBSYW5sNY7e8o2omNFOC5F1z27YW8wgnPN2wyOcx2S4i05hOpp/7pPjU0zl7nigsu2Qox6sWJ0X9SnPNga9L6oUs2C2I1D0VEqMb8ohqwfg5Wcmy17hv+umXTQ1QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718909637; c=relaxed/simple;
-	bh=tP3M44smT6hPThsdntX6Te5+Dmb1eLfWnWlQN6wRAh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KihI32I8YK0y3KEiITFDcv+KNNw+1yCaKm+0wam+iz0FkmfuIVNjoTXt/OCimP73g2AHHHNmaGgCbGG1aaHZNZOSc4hMlaqCG1RyEIDCAZNL0zR5iAnW4MKTlDDZV6cgpvpGjXjUSa8MepGG4QYf3z3bDw3b0x1yIs2tpaHgumk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y4r8hLSB; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: torvalds@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718909632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6sRBiphzu+DEvlRapPGKgRN5h8VZ/w+ozHV4I9S52NI=;
-	b=Y4r8hLSBnsTzMBl3+Ue+EOal0znqrEIEaoYO96nJjAYNDVgsd5FsJCOLGU0xgGvKlM6f/p
-	vR/3xLmAPs0/Jzvac2tQZ4H2oY3s8XNBIkN+jj3QPULcwknRGHhqXMyhFgkruxiNNKyeYB
-	10/jvU8guS9fuUHx7sa6XDcDJigA2yA=
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: viro@zeniv.linux.org.uk
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: x86@kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Thu, 20 Jun 2024 14:53:48 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: FYI: path walking optimizations pending for 6.11
-Message-ID: <244rgai7qaxizd5tqbqns5atotjdsoaw2ofw7doi5hrkboegy3@zqch5vluoumn>
-References: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
- <ZnNDbe8GZJ1gNuzk@casper.infradead.org>
- <CAHk-=wi1zgFX__roHZvpYdAdae4G9Qkc-P6nGhg93AfGPzcG2A@mail.gmail.com>
+	s=arc-20240116; t=1718910612; c=relaxed/simple;
+	bh=/bZO7KBfc1icR2aYLxz8pBdXer6KXEPsVMDJbOg/XA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GI780qevwpXVpSD2huncA05tFOeMhkKGC75ceuxA++AWQye5bI21C/tnVAeu03sm4x2opRPlwSftvR+ogIYUJsLnu9YbYGIr0d3qR9NzUn/KHSRqGLmWlyaT5Xcc4eE5S+P/8vdS2c14a4D/ynoTtCvWUdI+H456a9N88IAjFoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KtKdoKGo; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AE71520B7004;
+	Thu, 20 Jun 2024 12:10:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AE71520B7004
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1718910610;
+	bh=EB16k8E5Dq1wrCvj7jANLEEY8d68lGEG/tqRU0fokDI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KtKdoKGo9qhs+Po3kvp/pEKlnQvMyzHhcHHRbWTrYVu9MLKXowoSxvH8j7ZYo2/FV
+	 i1FYLslX5/r2GNjOr1ZmBGO1wvVYbA0OKh+VYI7gVyouTZc7Rb4WmiPcLpHe2B0+X0
+	 v9BUyOkl9M5a5FTmBkgBHouZ9O/cSbVmMNtmSw7c=
+Message-ID: <1465b0a4-6a99-45d5-b170-7d2e470f555d@linux.microsoft.com>
+Date: Thu, 20 Jun 2024 12:10:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi1zgFX__roHZvpYdAdae4G9Qkc-P6nGhg93AfGPzcG2A@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] binfmt_elf, coredump: Log the reason of the failed
+ core dumps
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ akpm@linux-foundation.org, apais@linux.microsoft.com, ardb@kernel.org,
+ brauner@kernel.org, jack@suse.cz, keescook@chromium.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, nagvijay@microsoft.com, oleg@redhat.com,
+ tandersen@netflix.com, vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
+ apais@microsoft.com, ssengar@microsoft.com, sunilmut@microsoft.com,
+ vdso@hexbites.dev
+References: <20240617234133.1167523-1-romank@linux.microsoft.com>
+ <20240617234133.1167523-2-romank@linux.microsoft.com>
+ <20240618061849.Vh9N3ds2@linutronix.de>
+ <c4644f2c-fad3-4d98-8301-acdc0ff2f3a6@linux.microsoft.com>
+ <87sexakkvu.fsf@email.froward.int.ebiederm.org>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <87sexakkvu.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 19, 2024 at 03:08:47PM -0700, Linus Torvalds wrote:
-> On Wed, 19 Jun 2024 at 13:45, Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > Funnily, I'm working on rosebush v2 today.  It's in no shape to send out
-> > (it's failing ~all of its selftests) but *should* greatly improve the
-> > cache friendliness of the hash table.  And it's being written with the
-> > dcache as its first customer.
-> 
-> I'm interested to see if you can come up with something decent, but
-> I'm not hugely optimistic.
-> 
-> From what I saw, you planned on comparing with rhashtable hash chains of 10.
-> 
-> But that's not what the dentry cache uses at all. rhashtable is way
-> too slow. It's been ages since I ran the numbers, but the dcache array
-> is just sized to be "large enough".
-> 
-> In fact, my comment about my workload being better if the hash table
-> was smaller was because we really are pretty aggressive with the
-> dcache hash table size. I think our scaling factor is 13 - as in "one
-> entry per 8kB of memory".
-> 
-> Which is almost certainly wasting memory, but name lookup really does
-> show up as a hot thing on many loads.
-> 
-> Anyway, what it means is that the dcache hash chain is usually *one*.
-> Not ten. And has none of the rhashtable overheads.
-> 
-> So if your "use linear lookups to make the lookup faster" depends on
-> comparing with ten entry chains of rhashtable, you might be in for a
-> very nasty surprise.
-> 
-> In my profiles, the first load of the hash table tends to be the
-> expensive one. Not the chain following.
-> 
-> Of course, my profiles are not only just one random load, they are
-> also skewed by the fact that I reboot so much. So maybe my dentry
-> cache just doesn't grow sufficiently big during my testing, and thus
-> my numbers are skewed even for just my own loads.
-> 
-> Benchmarking is hard.
-> 
-> Anyway, that was just a warning that if you're comparing against
-> rhashtable, you have almost certainly already lost before you even got
-> started.
 
-The main room I see for improvement is that rhashtable requires two
-dependent loads to get to the hash slot - i.e. stuffing the table size
-in the low bits of the table pointer.
 
-Unfortunately, the hash seed is also in the table.
+On 6/18/2024 2:21 PM, Eric W. Biederman wrote:
+> Roman Kisel <romank@linux.microsoft.com> writes:
+> 
+>> On 6/17/2024 11:18 PM, Sebastian Andrzej Siewior wrote:
+>>> On 2024-06-17 16:41:30 [-0700], Roman Kisel wrote:
+>>>> Missing, failed, or corrupted core dumps might impede crash
+>>>> investigations. To improve reliability of that process and consequently
+>>>> the programs themselves, one needs to trace the path from producing
+>>>> a core dumpfile to analyzing it. That path starts from the core dump file
+>>>> written to the disk by the kernel or to the standard input of a user
+>>>> mode helper program to which the kernel streams the coredump contents.
+>>>> There are cases where the kernel will interrupt writing the core out or
+>>>> produce a truncated/not-well-formed core dump.
+>>> How much of this happened and how much of this is just "let me handle
+>>> everything that could go wrong".
+>> Some of that must be happening as there are truncated dump files. Haven't run
+>> the logging code at large scale yet with the systems being stressed a lot by the
+>> customer workloads to hit all edge cases. Sent the changes to the kernel mail
+>> list out of abundance of caution first, and being ecstatic about that: on the
+>> other thread Kees noticed I didn't use the ratelimited logging. That has
+>> absolutely made me day and whole week, just glowing :) Might've been a close
+>> call due to something in a crash loop.
+> 
+> Another reason you could have truncated coredumps is the coredumping
+> process being killed.
+> 
+> I suspect if you want reasons why the coredump is truncated you are
+> going to want to instrument dump_interrupted, dump_skip and dump_emit
+> rather than their callers.  As they don't actually report why the
+> failed.
+I'll add logging there as well, thanks for the great idea!
 
-If only we had a way to read/write 16 bytes atomically...
+> 
+> Are you using systemd-coredump?  Or another pipe based coredump
+> collector?  It might be the dump collector is truncating things.
+There is a collector program set via core_pattern so that the core dump 
+is streamed to its standard input. That is a very simple memcpy-like 
+bytes-in..bytes-out code. It logs how many bytes it receives and how 
+many bytes it writes, and no bytes are lost in this path. Of the system 
+itself, it is built out of the latest stable LTS kernel and a small user 
+land, not based on any distribution and packet management. One might say 
+it resembles an appliance.
+
+> 
+> Do you know if your application uses io_uring?  There were some weird
+> issues with io_uring and coredumps that were causing things to get
+> truncation at one point.  As I recall a hack was put in the coredump
+> code so that it worked but maybe there is another odd case that still
+> needs to be handled.
+Couldn't appreciate the pointer more! There are cases when the user land 
+reaches out to io_uring, not the work horse though.
+
+>>
+>> I think it'd be fair to say that I am asking to please "let me handle (log)
+>> everything that could go wrong", ratelimited, as these error cases are present
+>> in the code, and logging can give a clue why the core dump collection didn't
+>> succeed and what one would need to explore to increase reliability of the
+>> system.
+> 
+> If you are looking for reasons you definitely want to instrument
+> fs/coredump.c much more than fs/binfmt_elf.c.  As fs/coredump.c is the
+> code that actually performs the writes.
+Understood, thank you very much!
+
+> 
+> One of these days if someone is ambitious we should probably merge the
+> coredump code from fs/binfmt_elf.c and fs/binfmt_elf_fdpic.c and just
+> hardcode the coredump code to always produce an elf format coredump.
+> Just for the simplicity of it all.
+I've had loads of experience with collecting and analyzing ELF core dump 
+files, including a tool that parses machine state, rebuilds the 
+necessary Linux kernel structures and produces ELF core dump files for 
+the user land processes from that. Perhaps I could embark on that 
+ambitious journey if no one else has time :)
+
+> 
+> Eric
+
+-- 
+Thank you,
+Roman
 
