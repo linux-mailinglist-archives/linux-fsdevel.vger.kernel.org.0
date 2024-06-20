@@ -1,94 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-22034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBD091134D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 22:35:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFD8911356
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 22:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D9B1C21B24
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 20:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F481F2399D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 20:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951C759168;
-	Thu, 20 Jun 2024 20:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC155D477;
+	Thu, 20 Jun 2024 20:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="h2seSato"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GwXh+FaK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD0555880;
-	Thu, 20 Jun 2024 20:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C1D3C6AC;
+	Thu, 20 Jun 2024 20:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718915727; cv=none; b=M7f3Jv67ZT1YigwqOkIqS/OmIUCZJSku/W7piXL2AAHi6qbl9nULQcoKgbaGyEWnwb/JSxbhLTxKhPdc1SPa2j/o2XI/wGWDE8KrF213pNc7jQABCQDfvb2hrj3oR1MQ3G1n5muz28WMX4rnfTU1dieJ9Ux50Dz9WRWXA430Rrw=
+	t=1718915798; cv=none; b=SYBcY5TiivWe+vFFJDlTjdyBKxLVwHed1XduTeKW4EmBDkH52UrNKIEOR5NxlmUjOW/OKfOj16ZGbn3T9R8WwPbY0mOM20gQXRfros4f74xLKw3f2yr5IsCX0eRdN6AKRClVXhFu29Ne2wDzNh24I89hKMzGHc9j3V8idN0neW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718915727; c=relaxed/simple;
-	bh=rY6eGqJ75wEmGu1HgeNvbS4fJ9EDXfDA5wrtzZT6MjI=;
+	s=arc-20240116; t=1718915798; c=relaxed/simple;
+	bh=vEA8X/MKc0gI6uWmJH+jA33Ug9fWGn6Gnff22ONubZk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sN85Nz/t2T5VP9AGGPpC63OHtDlA+/IZYAaUevHidnT3AvOpC4Q08z7WjdoFLAzGyPyEtHoKq5GAERHAPakJu/T5OoMzHAgPNt1Br4JSz50VPlMlIEI0tHnOAKNg20BejX4QZ0CoSxiLaop++MreoPq98ezkCRK761D596v7rrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=h2seSato; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id CB8F014C2DD;
-	Thu, 20 Jun 2024 22:35:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1718915715;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UaFyOqx3Wna3PHffZA3lbOwaWZobih6I6zyfeyta8vg=;
-	b=h2seSatoOQGsC1oNd084UzbsoydUhd9vEuvTIVA67+KxCi+z8q0IS0pjF2KDpOyEXXn6xC
-	V5F5tFKch54wcT/63BHhocLiZ4AACqT7Li3GdqjRb9Uoce/o9dTPxiHGE3wZwgzlrvpbcq
-	r+1Z8DInjQu2mvVXoWl5Vtyzy4YtD5CUQZ+l8QQu5f6ZIOEm7+irf9TT9TglH+VFtK9Bf0
-	bUxiZ+0w0EPSZyZ4qOyV46FOnADlcelQ9/eQBgzAH5dQg48/EYTHDT1P+dqnsewYmXODfm
-	X8KMzeUD8xxj/M3UhmTOhPXsiVwITjND5inF4G6cZ4fpaCqg3uxxlbubVPnIGw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 9c0e7542;
-	Thu, 20 Jun 2024 20:35:04 +0000 (UTC)
-Date: Fri, 21 Jun 2024 05:34:49 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH 06/17] 9p: Enable multipage folios
-Message-ID: <ZnSSaeLo8dY7cu3W@codewreck.org>
-References: <20240620173137.610345-1-dhowells@redhat.com>
- <20240620173137.610345-7-dhowells@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj2BA8bZMxtLU488g8JTbgrtlrNc79M6jvibov9xfjYy+TAvLfdUr3quX3YVq3yyBWife7qT7vlN7VuNUBykMj8LnDZO1FwQdaCwagBorH+DcxREGTsC3N6jeVxlhagAyxnBeupgheLsU2jcHEPR/IGDC3MZyXPK3/03Mr4gx+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GwXh+FaK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4AB2C2BD10;
+	Thu, 20 Jun 2024 20:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718915797;
+	bh=vEA8X/MKc0gI6uWmJH+jA33Ug9fWGn6Gnff22ONubZk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GwXh+FaKDmL85CDPsH8udBqfeZC1mmF+n15sIcBNDwsFbFBRZMyb+xpna0zMD2PLM
+	 pqf/pNSj8Xn9DuVLbM7jilwFcIE7roNMHVfaWpDYYRGRC4SG8fpLBeRYVrM+hyP0Bi
+	 y36HAxmaieWyUEy7hWc5dTmInhBIN8woKOjinukAIvnzW+3QeIiNEpPs7813h50kTT
+	 wyzF9XYqpjMdjwns7vRDcPVOhVos9O5OcqNcwQdEk9vs5KXzSxgZieOpkG1j2x6M+v
+	 qRfkGvv4gsSMGTF47/LK1UoUzDl3zNk0K2bgfrIAMyVSEfKdZjCEH6/TKbjw7ONHqD
+	 JsWaPADEUONyA==
+Date: Thu, 20 Jun 2024 14:36:33 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
+	djwong@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
+	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
+	hare@suse.de, Alan Adamson <alan.adamson@oracle.com>
+Subject: Re: [Patch v9 10/10] nvme: Atomic write support
+Message-ID: <ZnSS0Y0AFqQg-7lm@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240620125359.2684798-1-john.g.garry@oracle.com>
+ <20240620125359.2684798-11-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620173137.610345-7-dhowells@redhat.com>
+In-Reply-To: <20240620125359.2684798-11-john.g.garry@oracle.com>
 
-David Howells wrote on Thu, Jun 20, 2024 at 06:31:24PM +0100:
-> Enable support for multipage folios on the 9P filesystem.  This is all
-> handled through netfslib and is already enabled on AFS and CIFS also.
+On Thu, Jun 20, 2024 at 12:53:59PM +0000, John Garry wrote:
+> From: Alan Adamson <alan.adamson@oracle.com>
+> 
+> Add support to set block layer request_queue atomic write limits. The
+> limits will be derived from either the namespace or controller atomic
+> parameters.
+> 
+> NVMe atomic-related parameters are grouped into "normal" and "power-fail"
+> (or PF) class of parameter. For atomic write support, only PF parameters
+> are of interest. The "normal" parameters are concerned with racing reads
+> and writes (which also applies to PF). See NVM Command Set Specification
+> Revision 1.0d section 2.1.4 for reference.
 
-Since this is fairly unrelated to the other patches let's take this
-through the 9p tree as well - I'll run some quick tests to verify writes
-go from 4k to something larger and it doesn't blow up immediately and
-push it out for 6.11
+Looks good.
 
--- 
-Dominique Martinet | Asmadeus
+Reviewed-by: Keith Busch <kbusch@kernel.org>
 
