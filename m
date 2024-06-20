@@ -1,59 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-21972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A698D910750
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:03:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5FB91076A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24DE1C22EDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 14:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F055F2874F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 14:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DC91B0136;
-	Thu, 20 Jun 2024 14:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0982A1AF693;
+	Thu, 20 Jun 2024 14:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiQMW06U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5oZDmcR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FD01B012A;
-	Thu, 20 Jun 2024 14:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B4B1AED59;
+	Thu, 20 Jun 2024 14:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718892006; cv=none; b=jIJzw7okWc4eUeCbTTWbMWTMWX/t6sajORZmpp+/OlIP9SUo7IXlDRzrFPCGSfV2+B4K0tHErCZF/Lw2js+P1a8qdg2LEp9Ei8A1Axy7Ea9n0tHqiwJlnIrjn3vP7yPKgvEw4abf47tuLyryeZq42xRbinceFm+zphHV4Cm3eT8=
+	t=1718892208; cv=none; b=GnbEMsgfWruSqXN+lbfZknxas2QkGnIRmNAHS/8Zp9AFX+2B4mHIdc+ZxRTDgcNFSkDGfpZwZxNrGRUMfeWFtaiViZ6ZjOpzCNpHYxPeoTTMBoIoWGtled+aCiyiQbN2zgZMUdcFMZC2OyQ6Yy+FqqtTIMVFlqX6YYIUD8uiea4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718892006; c=relaxed/simple;
-	bh=YZKImNC1RfWiWs1j5FyXe+Kr3Xlzbc/EX+IVY1fo+wE=;
+	s=arc-20240116; t=1718892208; c=relaxed/simple;
+	bh=Bm2ZjNf2b+VNKHoshVbV2rXdyFmyGGFZXFG269zvKN0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TuGg/BSmNehdliTc8kDMbJ9KVnFphZHS3mcnyAEfkXF0qRtl2aXcWbcEzjd8m6jlJZ6VWSlInNZh6m/pnOMm4+L6SYJAjRAeUU4WSBcUSTOotEnm8FtKICvyzwZIiPXvE/qZ4a3E90KA5pQeFDmYKzrGsdma1xp6O6D4BxBH9vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiQMW06U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39259C4AF08;
-	Thu, 20 Jun 2024 14:00:02 +0000 (UTC)
+	 MIME-Version:Content-Type; b=E9DFTxxxn2fnlhpAs415tOibfqxsqjARH4MUvoMMAO0rHKyazulGB2ac5AXiywH6/GG7+5E2aMh/re3CJoeLC57m9W8+8ExGUaA9wzP5zuBNWJ1UTvVLAPtcZLjLu/obiA1ExdLhSYrlS0KLSs62ugWjue2csqBnyEZ742XuWd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5oZDmcR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0095C32786;
+	Thu, 20 Jun 2024 14:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718892005;
-	bh=YZKImNC1RfWiWs1j5FyXe+Kr3Xlzbc/EX+IVY1fo+wE=;
+	s=k20201202; t=1718892208;
+	bh=Bm2ZjNf2b+VNKHoshVbV2rXdyFmyGGFZXFG269zvKN0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CiQMW06ULf3iJ0haviw8Rpo7YHhxc4pPYHzwDxHLOUXr2rGsqVhjG7XrGJztMbcxs
-	 SS+2mvrjM/cItNYB4xRJxntkcGjQSpUebzSoL/FZjeRY06S40bFZ0LfXXaDDLu5QOK
-	 Dz7DRyzF6KZn/3ORw/jw2kgrFljGF9V/vLUYjDfj1yLDyLvdLXR3zXj8oSg2lHjYlA
-	 itjPJlcbtEgfJNR88rnqv7XshRMgdnynLUOBUmT4yWopdAGhwnnpI1C+yRSidV9MWY
-	 CEB2DDSkLrzyGWvaunHEzd7jJAJV5nJ2LfSeQu5MJugwIReKJvqkEWOArPcN0KpMiP
-	 tk6z3LVoWlpTw==
+	b=C5oZDmcRVKiRXGV/z66rlpXEDT79Ddpy4N7glSKSArC8UTNU8pFoRHfWsC5B9w9NS
+	 T5kECR2Pd0qqet8v+1zBALgtxdmy7vGcXB0hr3h+ybzQa57RAbbb7jl2TixR8zmGya
+	 KNVrGLpf8h8wys9zex85p0mFsWByPDzJxFo/wlCi9FF2qZcO+DFqmCc+5ofCPO0qEr
+	 gDlYIGSqo6ZeY8wwrUqdcgOMfaCBz1T9zWZHzDf1PyCI8QRmms3m8R+xqDvjsh9Xq/
+	 95/kxM22g6HOD9FeAGvZJMdqUthc9aCGNPMrB7Y5WfPtbi3+HqC8EA+IZ/68MUso3l
+	 pTpfMznOFFZNw==
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
+To: Youling Tang <youling.tang@linux.dev>
 Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
-Date: Thu, 20 Jun 2024 15:59:06 +0200
-Message-ID: <20240620-unpolitisch-illegal-ec7aa4ade172@brauner>
+	linux-f2fs-devel@lists.sourceforge.net,
+	Youling Tang <tangyouling@kylinos.cn>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH 1/3] fs: Export in_group_or_capable()
+Date: Thu, 20 Jun 2024 16:03:01 +0200
+Message-ID: <20240620-biografie-anlief-f8640333c226@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240620120359.151258-1-mjguzik@gmail.com>
-References: <20240620120359.151258-1-mjguzik@gmail.com>
+In-Reply-To: <20240620032335.147136-1-youling.tang@linux.dev>
+References: <20240620032335.147136-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,22 +66,16 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1193; i=brauner@kernel.org; h=from:subject:message-id; bh=YZKImNC1RfWiWs1j5FyXe+Kr3Xlzbc/EX+IVY1fo+wE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSVmN5z/T6PVTFxT2rAns2iDFZzn/Duy/ZnVj9mHF3is NqZn3drRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESuZDP8FZf8cICBveeteZrt W91Qo+lhLowtSyO0m8sX1xqtYzeOY/gfHef8xybK/LPVtYgTKgZFrdm31vYZ3bplGbVh30Tz3B2 cAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1099; i=brauner@kernel.org; h=from:subject:message-id; bh=Bm2ZjNf2b+VNKHoshVbV2rXdyFmyGGFZXFG269zvKN0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSVmC17tVI48m/oNrs10XfDN+mzHTzSq/L+0dZ5Pv92S AR433Wu6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI6VNGhmVCq9btav7Av7Z1 3YZtD5pS5G++tNigPeuz8dWExuNXwuIZGY7czpyYG60r4W354eu/7VvMp7/b/CL3u+Hmy8JXAgw nreQHAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Jun 2024 14:03:59 +0200, Mateusz Guzik wrote:
-> The routine is called for all directories on file creation and weirdly
-> postpones the check if the dir is sticky to begin with. Instead it first
-> checks fifos and regular files (in that order), while avoidably pulling
-> globals.
+On Thu, 20 Jun 2024 11:23:33 +0800, Youling Tang wrote:
+> Export in_group_or_capable() as a VFS helper function.
 > 
-> No functional changes.
 > 
-> [...]
 
-The list of checks is unspeakably irritating. I really dislike looking at this
-function.
+This makes sense to me.
 
 ---
 
@@ -95,6 +94,10 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.misc
 
-[1/1] vfs: reorder checks in may_create_in_sticky
-      https://git.kernel.org/vfs/vfs/c/6cc620b3a050
+[1/3] fs: Export in_group_or_capable()
+      https://git.kernel.org/vfs/vfs/c/daf0f1ce3585
+[2/3] f2fs: Use in_group_or_capable() helper
+      https://git.kernel.org/vfs/vfs/c/29a76d8b349b
+[3/3] fuse: Use in_group_or_capable() helper
+      https://git.kernel.org/vfs/vfs/c/d128e6b878ac
 
