@@ -1,83 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-21988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBFA910BFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:20:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6D9910C27
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D80E1F215C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F3D1F21F7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B961F1B29CC;
-	Thu, 20 Jun 2024 16:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FA61B3732;
+	Thu, 20 Jun 2024 16:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hlQYb1Rj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XC1XYPkS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BAB1AC76D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 16:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E325E1B29C6;
+	Thu, 20 Jun 2024 16:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900354; cv=none; b=jyK7dXZwtuO3NrZtg+aukrss2HUe4/aA+1a9wvRXL5/fVDWcrLb+3VY8moxPhx+CNRzTGQL0FHUaSjXID/pOUCsxqs5jKjhGpjAq+ge4x5PcIG4fki/SHFPaNJ2nRzc7sSHHizQtGEos4i1ZqD0msFsMAflJdRkL+JSuUCR8L20=
+	t=1718900616; cv=none; b=DYwCH91wjXbamxsHHFuFiBwLRNsfSm2+kyVQU+brawzwa7WlKlJwoTTsdtdB3kXXB97OTlEOlXski419akZYZAnLRTFP+k8j0rfXWb8aquBu1RfxRDY+ZvehKtLUwd/lZ8RySDIKVZnYokr+Kn3FZt77n/fR4Fim+jOZIFcZVlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900354; c=relaxed/simple;
-	bh=oVLl+XcsKvcWdYE77A2RFFRwvfhdCY0dhp5sI6AvCr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOY1aCiqEkAsMQ/ZEWkT6M89IBbg3vFDuy/AQdV54FA4l8yqkhs32E+w9mMfVtZiVKZB2rNQ2wS7nhrloT18Jp+CCzJPs/ncie4QPq+4uz9zXNc8FvWNMkwIJb6whXl5sgrGyfSm2ExeQ6397sh8df8a4PZK2mPIjgVkPbXBD9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hlQYb1Rj; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9c6e59d34so9529725ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 09:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718900351; x=1719505151; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDTwzMRp7r7igVV+ZTOkGMM8uRoM9/iMzbfcbOs3NYs=;
-        b=hlQYb1RjDm/dAQxclkDOO4GKMXYg/SoDBVBZVczfRlNf4nMiwuaF49akqzraU9rVHJ
-         7qKWNhsFEu+w3S/ayk630UuncOfiUq0OHvswtVIK4b4Csgzw/YuNdIgZck0PR8ZrefqP
-         xhjYqQd7FLZouI8R6CHc8T3RmQ0G41d4gCV1Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718900351; x=1719505151;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gDTwzMRp7r7igVV+ZTOkGMM8uRoM9/iMzbfcbOs3NYs=;
-        b=ZL45efP97mP08eRrl3urkwDW7xW01uJEGpOdYiCHiEvlYNaMT4F8ZrzhuYpevwxgj/
-         QuH+moKykfkZA/DBjN9OTRahpEGQC8y/7sXLK/DkUmduI+Y14KVG6MjJClmykBPkttx0
-         9l93hu78WtCLYnGT1UQQhpUEeIQIqACWRowqtZ9/w6wARLRXoUvaxBmdWMT9SMlI+41c
-         GdYfyaQl+fiUVgwxEq5tdv5Oo2fXh5weJ7eVpbiwAhXGwqLriU1rdTuyB7KwOYRZDA67
-         yh/2py5q2hy5rsApDWnO+M++Y0FepdrtTxGbA30gjiq3y08hA8yI8YvhQwqUPLULmh3F
-         0LCw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6K5vRF1WA5uXIbDxfLDBmuO/7Li5DFL3V/Zi3EeQoIWwJZNBED6qb/YXL4//IvKBPnVNazZAe8pjegYdLvXahADmgT2PMSeDJYXmNiQ==
-X-Gm-Message-State: AOJu0YyYozxO5Ji5Urr6Y0hP7qa5+BTy/r+KkJVWMcChm2vE2Ca2/H6W
-	avYfpIxnDBHBM1DD3q/o6RtE+K+mD1yoXqQvDwRM4WS2WmQ8tFLmZYkJgDf1
-X-Google-Smtp-Source: AGHT+IFSW1DtPmzfkyXjIzCznsvC4863obnU5C/WxGZH3fmU++B5UFx8192lW0ggQO9pfsgefF865g==
-X-Received: by 2002:a17:903:11cc:b0:1f6:ea71:34ee with SMTP id d9443c01a7336-1f9aa3ce954mr69656465ad.16.1718900351103;
-        Thu, 20 Jun 2024 09:19:11 -0700 (PDT)
-Received: from localhost (148.175.199.104.bc.googleusercontent.com. [104.199.175.148])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1f9c72085f9sm18696855ad.79.2024.06.20.09.19.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 09:19:10 -0700 (PDT)
-From: Takaya Saeki <takayas@chromium.org>
-To: Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Junichi Uekawa <uekawa@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
+	s=arc-20240116; t=1718900616; c=relaxed/simple;
+	bh=c2+3nT3Fz2YE3y2yTCQ/lqf84edhGpnQvBt5hH6hrrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qQK2KQiOcxxrzCEsfKQ2qhAMidttfu7IDYwEZyvOAyX79regfuRag7GMcryofO737LpJ7lL3MVEJxe55xm3HO2X+DIJyymeA6r1pXdfKR3c3uZHrfvN6yckdFh8yq2+0N8BZr/Hjy8vkkteTD6fkdfHeKJFPBJb2TWl5isMYtHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XC1XYPkS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C294C32786;
+	Thu, 20 Jun 2024 16:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718900615;
+	bh=c2+3nT3Fz2YE3y2yTCQ/lqf84edhGpnQvBt5hH6hrrc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XC1XYPkSMkLHnz9abDPwB+ZF9PlO95SQ+oHvZ5uCctS66b+uYGD9F2IRJX7pEtMkc
+	 tv1ySBBzxr5W7wpTOSPmwFLPSaG8DZ+VHBfx2P4XohH/2B5Ig5ZAdTDxK0UXwPOa9f
+	 kgG01VSndf2XvLA6qgkIX+rPcLDIj4cedf9ebxSx7WytcpCCbPGct3kqyatbZdmobi
+	 VeFKF+urVmNd2v+/KXJBz8itdjWMHDfq1hlwgrSDbn0Mq69GGfKJxQF+5Zd1+MyiaZ
+	 tJ0Pd6jm0rAgBQhogByTNSzjJmQ0Xpzjvie1YBoPoSwU/RqtdxmBuhM5TomoNaluGz
+	 sj55VopFCAeAw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org,
+	Helge Deller <deller@gmx.de>,
+	linux-parisc@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	sparclinux@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	Brian Cain <bcain@quicinc.com>,
+	linux-hexagon@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	linux-csky@vger.kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	linux-s390@vger.kernel.org,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	linux-sh@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Takaya Saeki <takayas@chromium.org>
-Subject: [PATCH v2] filemap: add trace events for get_pages, map_pages, and fault
-Date: Thu, 20 Jun 2024 16:19:03 +0000
-Message-ID: <20240620161903.3176859-1-takayas@chromium.org>
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+	libc-alpha@sourceware.org,
+	musl@lists.openwall.com,
+	ltp@lists.linux.it
+Subject: [PATCH 00/15] linux system call fixes
+Date: Thu, 20 Jun 2024 18:23:01 +0200
+Message-Id: <20240620162316.3674955-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,169 +84,105 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To allow precise tracking of page caches accessed, add new tracepoints
-that trigger when a process actually accesses them.
+From: Arnd Bergmann <arnd@arndb.de>
 
-The ureadahead program used by ChromeOS traces the disk access of
-programs as they start up at boot up. It uses mincore(2) or the
-'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
-this information in a "pack" file and on subsequent boots, it will read
-the pack file and call readahead(2) on the information so that disk
-storage can be loaded into RAM before the applications actually need it.
+I'm working on cleanup series for Linux system call handling, trying to
+unify some of the architecture specific code there among other things.
 
-A problem we see is that due to the kernel's readahead algorithm that
-can aggressively pull in more data than needed (to try and accomplish
-the same goal) and this data is also recorded. The end result is that
-the pack file contains a lot of pages on disk that are never actually
-used. Calling readahead(2) on these unused pages can slow down the
-system boot up times.
+In the process, I came across a number of bugs that are ABI relevant,
+so I'm trying to merge these first. I found all of these by inspection,
+not by running the code, so any extra review would help. I assume some
+of the issues were already caught by existing LTP tests, while for others
+we could add a test. Again, I did not check what is already there.
 
-To solve this, add 3 new trace events, get_pages, map_pages, and fault.
-These will be used to trace the pages are not only pulled in from disk,
-but are actually used by the application. Only those pages will be
-stored in the pack file, and this helps out the performance of boot up.
+The sync_file_range and fadvise64_64 changes on sh, csky and hexagon
+are likely to also require changes in the libc implementation.
 
-With the combination of these 3 new trace events and
-mm_filemap_add_to_page_cache, we observed a reduction in the pack file
-by 7.3% - 20% on ChromeOS varying by device.
+Once the patches are reviewed, I plan to merge my changes as bugfixes
+through the asm-generic tree, but architecture maintainers can also
+pick them up directly to speed up the bugfix.
 
-Signed-off-by: Takaya Saeki <takayas@chromium.org>
----
-Changelog between v2 and v1
-- Fix a file offset type usage by casting pgoff_t to loff_t
-- Fixed format string of dev and inode
+     Arnd
 
- include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
- mm/filemap.c                   |  4 ++
- 2 files changed, 88 insertions(+)
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org
+Cc: Helge Deller <deller@gmx.de>
+Cc: linux-parisc@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Andreas Larsson <andreas@gaisler.com>
+Cc: sparclinux@vger.kernel.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Brian Cain <bcain@quicinc.com>
+Cc: linux-hexagon@vger.kernel.org
+Cc: Guo Ren <guoren@kernel.org>
+Cc: linux-csky@vger.kernel.org
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org
+Cc: Rich Felker <dalias@libc.org>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: linux-sh@vger.kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: libc-alpha@sourceware.org
+Cc: musl@lists.openwall.com
+Cc: ltp@lists.linux.it
 
-V1:https://lore.kernel.org/all/20240618093656.1944210-1-takayas@chromium.org/
+Arnd Bergmann (15):
+  ftruncate: pass a signed offset
+  syscalls: fix compat_sys_io_pgetevents_time64 usage
+  mips: fix compat_sys_lseek syscall
+  sparc: fix old compat_sys_select()
+  sparc: fix compat recv/recvfrom syscalls
+  parisc: use correct compat recv/recvfrom syscalls
+  parisc: use generic sys_fanotify_mark implementation
+  powerpc: restore some missing spu syscalls
+  sh: rework sync_file_range ABI
+  csky, hexagon: fix broken sys_sync_file_range
+  hexagon: fix fadvise64_64 calling conventions
+  s390: remove native mmap2() syscall
+  syscalls: mmap(): use unsigned offset type consistently
+  asm-generic: unistd: fix time32 compat syscall handling
+  linux/syscalls.h: add missing __user annotations
 
-diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
-index 46c89c1e460c..3a94bd633bf0 100644
---- a/include/trace/events/filemap.h
-+++ b/include/trace/events/filemap.h
-@@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
- 	TP_ARGS(folio)
- 	);
- 
-+DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
-+
-+	TP_PROTO(
-+		struct address_space *mapping,
-+		pgoff_t index,
-+		pgoff_t last_index
-+	),
-+
-+	TP_ARGS(mapping, index, last_index),
-+
-+	TP_STRUCT__entry(
-+		__field(unsigned long, i_ino)
-+		__field(dev_t, s_dev)
-+		__field(unsigned long, index)
-+		__field(unsigned long, last_index)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->i_ino = mapping->host->i_ino;
-+		if (mapping->host->i_sb)
-+			__entry->s_dev =
-+				mapping->host->i_sb->s_dev;
-+		else
-+			__entry->s_dev = mapping->host->i_rdev;
-+		__entry->index = index;
-+		__entry->last_index = last_index;
-+	),
-+
-+	TP_printk(
-+		"dev=%d:%d ino=%lx ofs=%lld max_ofs=%lld",
-+		MAJOR(__entry->s_dev),
-+		MINOR(__entry->s_dev), __entry->i_ino,
-+		((loff_t)__entry->index) << PAGE_SHIFT,
-+		((loff_t)__entry->last_index) << PAGE_SHIFT
-+	)
-+);
-+
-+DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
-+	TP_PROTO(
-+		struct address_space *mapping,
-+		pgoff_t index,
-+		pgoff_t last_index
-+	),
-+	TP_ARGS(mapping, index, last_index)
-+);
-+
-+DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
-+	TP_PROTO(
-+		struct address_space *mapping,
-+		pgoff_t index,
-+		pgoff_t last_index
-+	),
-+	TP_ARGS(mapping, index, last_index)
-+);
-+
-+TRACE_EVENT(mm_filemap_fault,
-+	TP_PROTO(struct address_space *mapping, pgoff_t index),
-+
-+	TP_ARGS(mapping, index),
-+
-+	TP_STRUCT__entry(
-+		__field(unsigned long, i_ino)
-+		__field(dev_t, s_dev)
-+		__field(unsigned long, index)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->i_ino = mapping->host->i_ino;
-+		if (mapping->host->i_sb)
-+			__entry->s_dev =
-+				mapping->host->i_sb->s_dev;
-+		else
-+			__entry->s_dev = mapping->host->i_rdev;
-+		__entry->index = index;
-+	),
-+
-+	TP_printk(
-+		"dev=%d:%d ino=%lx ofs=%lld",
-+		MAJOR(__entry->s_dev),
-+		MINOR(__entry->s_dev), __entry->i_ino,
-+		((loff_t)__entry->index) << PAGE_SHIFT
-+	)
-+);
-+
- TRACE_EVENT(filemap_set_wb_err,
- 		TP_PROTO(struct address_space *mapping, errseq_t eseq),
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 876cc64aadd7..39f9d7fb3d2c 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 			goto err;
- 	}
- 
-+	trace_mm_filemap_get_pages(mapping, index, last_index);
- 	return 0;
- err:
- 	if (err < 0)
-@@ -3286,6 +3287,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	if (unlikely(index >= max_idx))
- 		return VM_FAULT_SIGBUS;
- 
-+	trace_mm_filemap_fault(mapping, index);
-+
- 	/*
- 	 * Do we have something in the page cache already?
- 	 */
-@@ -3652,6 +3655,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
- 	add_mm_counter(vma->vm_mm, folio_type, rss);
- 	pte_unmap_unlock(vmf->pte, vmf->ptl);
-+	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
- out:
- 	rcu_read_unlock();
- 
+ arch/arm64/include/asm/unistd32.h         |   2 +-
+ arch/csky/include/uapi/asm/unistd.h       |   1 +
+ arch/csky/kernel/syscall.c                |   2 +-
+ arch/hexagon/include/asm/syscalls.h       |   6 +
+ arch/hexagon/include/uapi/asm/unistd.h    |   1 +
+ arch/hexagon/kernel/syscalltab.c          |   7 +
+ arch/loongarch/kernel/syscall.c           |   2 +-
+ arch/microblaze/kernel/sys_microblaze.c   |   2 +-
+ arch/mips/kernel/syscalls/syscall_n32.tbl |   2 +-
+ arch/mips/kernel/syscalls/syscall_o32.tbl |   4 +-
+ arch/parisc/Kconfig                       |   1 +
+ arch/parisc/kernel/sys_parisc32.c         |   9 -
+ arch/parisc/kernel/syscalls/syscall.tbl   |   6 +-
+ arch/powerpc/kernel/syscalls/syscall.tbl  |   6 +-
+ arch/riscv/kernel/sys_riscv.c             |   4 +-
+ arch/s390/kernel/syscall.c                |  27 ---
+ arch/s390/kernel/syscalls/syscall.tbl     |   2 +-
+ arch/sh/kernel/sys_sh32.c                 |  11 ++
+ arch/sh/kernel/syscalls/syscall.tbl       |   3 +-
+ arch/sparc/kernel/sys32.S                 | 221 ----------------------
+ arch/sparc/kernel/syscalls/syscall.tbl    |   8 +-
+ arch/x86/entry/syscalls/syscall_32.tbl    |   2 +-
+ fs/open.c                                 |   4 +-
+ include/asm-generic/syscalls.h            |   2 +-
+ include/linux/compat.h                    |   2 +-
+ include/linux/syscalls.h                  |  20 +-
+ include/uapi/asm-generic/unistd.h         | 146 +++++++++-----
+ 27 files changed, 160 insertions(+), 343 deletions(-)
+ create mode 100644 arch/hexagon/include/asm/syscalls.h
+
 -- 
-2.45.2.627.g7a2c4fd464-goog
+2.39.2
 
 
