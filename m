@@ -1,61 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-21969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-21970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3DC910652
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 15:39:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4BC19106B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 15:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F93C1F288F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 13:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163CD1C20C1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 13:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858AD1AD9D6;
-	Thu, 20 Jun 2024 13:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57071AD41E;
+	Thu, 20 Jun 2024 13:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lR8yolg9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mx5MLcEX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701E81AD3E7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 13:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4091AD4B6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 13:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718890610; cv=none; b=dhRNqZVSZ412LEn6m1hpBUYdRreipr9ffeKB1UAdWaC6iAkYbIHJqyAWyj0e+2FNNGGKnyO93IMswRyWgnNVhKfc7afgHJM2Ose8CiBb7GYgIMPYtI3HahfIK8w0JEY+oVY9CsRzkWqAkV3Jtorep6H95/J6yUSj7aFia0suICc=
+	t=1718891377; cv=none; b=hBlrwoTXl05IVvQOFY9AXgN6qQ/9jQqxaSsyzpVszBqx1QxVJcvXLGL5EgnF6xmuAhUkkwSQNRRYwg95I/1e/o1cHj/KB7MHy/5lXmv38342XQ0jdDBlWHrGEDPDua5e2+6G1obyYA6nwJLz8KWl3fVbDoFdkdSuVDtQwg2rxzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718890610; c=relaxed/simple;
-	bh=+sWTWDC3ikPWsAV1IbSylnunXKZryaaHQW9aHe9Mpo8=;
+	s=arc-20240116; t=1718891377; c=relaxed/simple;
+	bh=7YdStU7WjZ2Q91KYU7ABPZRptGhI/hfMsBOfmGhfjnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXm3lXe9VjL1Is9EsOga/27HTeYy9ouTRbFDCYTjOJX09/7nw+Vl8I6/hyIkcMdtY2IUY483xhW9wZlYsFEtkbj2xf7JYKECMnQuAJbzNuV0i6BPFZMIajvGJEn7hm0KWpM5Q3CwyphJYVTM7ZMg3SwoOO7Aeb7X7RrcrrZ3I5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lR8yolg9; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: lihongbo22@huawei.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718890605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=46Y87jZfUvizmkvEkJBUYNPGXnI+S4cKabQ3/FwgEYI=;
-	b=lR8yolg9taBy7u6SE50bHxnsAjDkQO0HDSLKvY1m30IE7QIqiJRVWnRH+wlH8BdwGQ1ZJF
-	HYxBMN63a7+uEDw4vznNxY392+mAopcJUIjJF6/pMKB4iMCHION5ua+z9wcTuM81Xn+PR5
-	XqeTVNljlqcJwXvGwU2EILMz4B3j35o=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: hch@lst.de
-Date: Thu, 20 Jun 2024 09:36:42 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, axboe@kernel.dk, hch@lst.de
-Subject: bvec_iter.bi_sector -> loff_t? (was: Re: [PATCH] bcachefs: allow
- direct io fallback to buffer io for) unaligned length or offset
-Message-ID: <bbf7lnl2d5sxdzqbv3jcn6gxmtnsnscakqmfdf6vj4fcs3nasx@zvjsxfwkavgm>
-References: <20240620132157.888559-1-lihongbo22@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAjYbDGS2OuR+FswhNfqZPqPkG5gVFD7D/a9kvzkQ9c/H1IxtXSFitRV1pOmmvrlczfPHdUxBpucUP/rUlh0ONuzG2ryGOEb/Y7RM5SHDTTWPWZZAq46rdirYRjhYD8z3sSWrDWmPIg5TiI+cpirx/4Jzb6PUNcCsLXSdHzN05A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mx5MLcEX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LFDEs6yzwudbzAfESzFFhvH2nVhaMpY/YU9oSxNJ4VM=; b=mx5MLcEXqa063zE0u3kNi42Zv/
+	oOlRxDl4Rp7ZvMl7Frf/igQnqzbNmqHgStx/39tZRFaH+qz8bvKpx7+/TNLlEJ0HEMPKEmBdS5it7
+	me4GdFjQseE7wAKSCjqSZl9NTokXqCSkuOjr17c0rjl+XF86/b1zvf5UQKQtZIAPy8QaxjzgOgPx1
+	e5EU1pN/LgcEGCnystNilJwlVX2h1gbnw1WmG0wJGXw4N8qFaYKwBYAHB+JQrztTZUAtCy3zyy+Gc
+	Gf5VKGd0MQ9S59Wq9K5b0hWLgun0Nw19bv7tMoxkySUz7/GMCuFNUe46PFjWI4DpO4FYzHOX1ALoL
+	Q+ffxaNQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sKIAM-000000067Sk-1WA2;
+	Thu, 20 Jun 2024 13:49:30 +0000
+Date: Thu, 20 Jun 2024 14:49:30 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] udf: Avoid excessive partition lengths
+Message-ID: <ZnQzaimw_oeM1se6@casper.infradead.org>
+References: <20240620130403.14731-1-jack@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,49 +59,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620132157.888559-1-lihongbo22@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240620130403.14731-1-jack@suse.cz>
 
-On Thu, Jun 20, 2024 at 09:21:57PM +0800, Hongbo Li wrote:
-> Support fallback to buffered I/O if the operation being performed on
-> unaligned length or offset. This may change the behavior for direct
-> I/O in some cases.
-> 
-> [Before]
-> For length which aligned with 256 bytes (not SECTOR aligned) will
-> read failed under direct I/O.
-> 
-> [After]
-> For length which aligned with 256 bytes (not SECTOR aligned) will
-> read the data successfully under direct I/O because it will fallback
-> to buffer I/O.
-> 
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+On Thu, Jun 20, 2024 at 03:04:03PM +0200, Jan Kara wrote:
+> +			udf_err(sb, "Partition %d it too long (%u)\n", p_index,
+> +				map->s_partition_len);
 
-I don't think we want to do this in bcachefs - we can't efficiently mix
-buffered and O_DIRECT IO on the same file. This is true on any
-filesystem, but even moreso on bcachefs as we guarantee strict page
-cache consistency (O_DIRECT IO blocks pagecache fills, and vice versa).
-
-Better way to do that would be to make the bcachefs read path natively
-handle unaligned IO, which conceptually wouldn't be difficult since our
-read path already has support for bouncing when necessary (i.e. reading
-only part of a checksummed or compressed extent).
-
-The catch is that struct bio - bvec_iter - represents addresses with a
-sector_t, and we'd want that to be a loff_t.
-
-That's something we should do anyways; everything else in struct bio can
-represent a byte-aligned io, bvec_iter.bi_sector is the only exception
-and fixing that would help in consolidating our various scatter-gather
-list data structures - but we'd need buy-in from Jens and Christoph
-before doing that.
-
-As an intermediate solution (i.e., I would want it clearly labelled as a
-hack to be removed when the proper solution is merged and an explanation
-of what we actually want), we could add a loff_t to bch_read_bio, and
-only initialize bi_iter.bi_sector right before submit_bio() when we know
-our loff_t is properly aligned. But that'd be pretty ugly, we'd have to
-audit and probably add new helpers for everywhere we use a bvec_iter in
-the read path.
+s/it/is/ ?
 
