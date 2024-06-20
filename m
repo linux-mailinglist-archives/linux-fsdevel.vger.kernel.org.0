@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-22011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16850910EED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 19:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60E9910EF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 19:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E901F22BE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 17:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A44283A1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 17:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9221F1BD4E3;
-	Thu, 20 Jun 2024 17:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FAC1BD8EB;
+	Thu, 20 Jun 2024 17:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bWbuJCtj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TdhxXr08"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD241B4C4B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046BF1BD029
 	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 17:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904752; cv=none; b=K6ib/OJ3GlzgcuwDQsndnK/mMhTDH2Nf59AwZ2qY7jtrWMXB69BNT9DfdsQPb5ipvcV8hcgomWbaSCEOeI1O4a7zPF0m63BwzmT9zE1lPQvr9sWS3U+sEAsUN0cJNuNHbV8gwp7DGYwBgIu4i+kO2Z60j3v7OfupL+iiE42BwrU=
+	t=1718904754; cv=none; b=eoWKp2Cl+IAPFRfS+aA/4PIOblDyKdQqWkIm3vo6pFDaBZQDrV7H954aKFuOBCrIuhs/ITcbpnw9fsaoiyDrFOk4mhaE/SRqi41bTU4BY9x/qdyYkipfvm3KEiaI4pfbcpe3qlTVYPkY06ZgyoZ6z/EpHqXNzh6I9YsiX2W8j1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904752; c=relaxed/simple;
-	bh=uqr+c6TSD+IA6jAqPedpS4BUZPZmSd7r1lKskAQEvlI=;
+	s=arc-20240116; t=1718904754; c=relaxed/simple;
+	bh=dSBDPG/FjcygfFFDbaMBvikq9ZldreOsesR4n2CHWMI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pxilcJxGgG7Xp+ekxe+NuOEoH6obQ/qLnk2XW5WmE5jLcDL1EhFdmfONnT7ldnBofO9MfvnHjRnoAgZlQ/SDkvYGs5O5NFu79S5SnzN1DmdpFfEKlHPnqIv56/z5+iNoAUu45hKSed5wFoA+gVQbEHz9bIzKaSjiWw8G4a9TVyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bWbuJCtj; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=N2Jq5GskiAYD9GPnaBxU3NV9UpkCEOCoQ8Rh6AiRB34/IfR4cWcofxVH0P2OIr2MuPbzSa9bHbP7joWjNbCtKu3jG6QG74saEVETXX+HgfLTwlrfNVXo3OUzqy92VLFJdbKwump4pjVJFVaZyOnx0OuPFqkvULYit1SIPbyhHW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TdhxXr08; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -37,25 +37,25 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9Za3sI46DNoDRS2zLMaVKKAo5577Q7Mj2mbpphqJpg8=;
-	b=bWbuJCtjBSe16YrY1PhW64apgpHONEWD6qlM0yKaAxGssSM22k8CjYlRUxrhT6Riup7ftF
-	x/ygLHZuNkOQlkJz6CcpbrAs/0DYLVmDudsWgaCx+AAaykCstuSek8S9QiBobU/b2IepxE
-	WF6HzncpdcGHUqrSB1iAx2jsnxMAOsk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=nD8BuDcHuaWMd5Fn2FK+IU9NPvXO40RV6M0I0jL+Pvo=;
+	b=TdhxXr088LXpftdzL0ruUGTRsoby2KTmRi7yBOvbdVKoe/DKNISFKnqyyb1qOdx3jr+Z14
+	T3kkT2psTEI0BqkgqsRw7423ioCofyhfRgmjLbkxxqIpZ7p6hCVVoS9AsfdoK9oJAAvFFR
+	7bjw5Sxpan5+1fUlGqJ88wyodBqDH2M=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-lamvqmTDOOq2ya95QZA4mQ-1; Thu,
- 20 Jun 2024 13:32:23 -0400
-X-MC-Unique: lamvqmTDOOq2ya95QZA4mQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-iKP-auBnN7ORn_GOf3niIw-1; Thu,
+ 20 Jun 2024 13:32:27 -0400
+X-MC-Unique: iKP-auBnN7ORn_GOf3niIw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 270E61956068;
-	Thu, 20 Jun 2024 17:32:16 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 66832195609F;
+	Thu, 20 Jun 2024 17:32:24 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.39.195.156])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7215F3000602;
-	Thu, 20 Jun 2024 17:32:08 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8C4DB19560AF;
+	Thu, 20 Jun 2024 17:32:17 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Christian Brauner <christian@brauner.io>,
 	Steve French <smfrench@gmail.com>,
@@ -80,13 +80,10 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Steve French <sfrench@samba.org>
-Subject: [PATCH 03/17] netfs: Fix early issue of write op on partial write to folio tail
-Date: Thu, 20 Jun 2024 18:31:21 +0100
-Message-ID: <20240620173137.610345-4-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 04/17] netfs: Adjust labels in /proc/fs/netfs/stats
+Date: Thu, 20 Jun 2024 18:31:22 +0100
+Message-ID: <20240620173137.610345-5-dhowells@redhat.com>
 In-Reply-To: <20240620173137.610345-1-dhowells@redhat.com>
 References: <20240620173137.610345-1-dhowells@redhat.com>
 Precedence: bulk
@@ -96,50 +93,71 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-During the writeback procedure, at the end of netfs_write_folio(), pending
-write operations are flushed if the amount of write-streaming data stored
-in a page is less than the size of the folio because if we haven't modified
-a folio to the end, it cannot be contiguous with the following folio...
-except if the dirty region of the folio is right at the end of the folio
-space.
+Adjust the labels in /proc/fs/netfs/stats that refer to netfs-specific
+counters.  These currently all begin with "Netfs", but change them to begin
+with more specific labels.
 
-Fix the test to take the offset into the folio into account as well, such
-that if the dirty region runs right up to the end of the folio, we leave
-the flushing for later.
-
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Jeff Layton <jlayton@kernel.org>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com> (DFS, global name space)
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
 cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
 ---
- fs/netfs/write_issue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/netfs/stats.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 3aa86e268f40..ec6cf8707fb0 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -483,7 +483,7 @@ static int netfs_write_folio(struct netfs_io_request *wreq,
- 	if (!debug)
- 		kdebug("R=%x: No submit", wreq->debug_id);
+diff --git a/fs/netfs/stats.c b/fs/netfs/stats.c
+index 0892768eea32..95ed2d2623a8 100644
+--- a/fs/netfs/stats.c
++++ b/fs/netfs/stats.c
+@@ -42,39 +42,39 @@ atomic_t netfs_n_wh_write_failed;
  
--	if (flen < fsize)
-+	if (foff + flen < fsize)
- 		for (int s = 0; s < NR_IO_STREAMS; s++)
- 			netfs_issue_write(wreq, &wreq->io_streams[s]);
- 
+ int netfs_stats_show(struct seq_file *m, void *v)
+ {
+-	seq_printf(m, "Netfs  : DR=%u RA=%u RF=%u WB=%u WBZ=%u\n",
++	seq_printf(m, "Reads  : DR=%u RA=%u RF=%u WB=%u WBZ=%u\n",
+ 		   atomic_read(&netfs_n_rh_dio_read),
+ 		   atomic_read(&netfs_n_rh_readahead),
+ 		   atomic_read(&netfs_n_rh_read_folio),
+ 		   atomic_read(&netfs_n_rh_write_begin),
+ 		   atomic_read(&netfs_n_rh_write_zskip));
+-	seq_printf(m, "Netfs  : BW=%u WT=%u DW=%u WP=%u\n",
++	seq_printf(m, "Writes : BW=%u WT=%u DW=%u WP=%u\n",
+ 		   atomic_read(&netfs_n_wh_buffered_write),
+ 		   atomic_read(&netfs_n_wh_writethrough),
+ 		   atomic_read(&netfs_n_wh_dio_write),
+ 		   atomic_read(&netfs_n_wh_writepages));
+-	seq_printf(m, "Netfs  : ZR=%u sh=%u sk=%u\n",
++	seq_printf(m, "ZeroOps: ZR=%u sh=%u sk=%u\n",
+ 		   atomic_read(&netfs_n_rh_zero),
+ 		   atomic_read(&netfs_n_rh_short_read),
+ 		   atomic_read(&netfs_n_rh_write_zskip));
+-	seq_printf(m, "Netfs  : DL=%u ds=%u df=%u di=%u\n",
++	seq_printf(m, "DownOps: DL=%u ds=%u df=%u di=%u\n",
+ 		   atomic_read(&netfs_n_rh_download),
+ 		   atomic_read(&netfs_n_rh_download_done),
+ 		   atomic_read(&netfs_n_rh_download_failed),
+ 		   atomic_read(&netfs_n_rh_download_instead));
+-	seq_printf(m, "Netfs  : RD=%u rs=%u rf=%u\n",
++	seq_printf(m, "CaRdOps: RD=%u rs=%u rf=%u\n",
+ 		   atomic_read(&netfs_n_rh_read),
+ 		   atomic_read(&netfs_n_rh_read_done),
+ 		   atomic_read(&netfs_n_rh_read_failed));
+-	seq_printf(m, "Netfs  : UL=%u us=%u uf=%u\n",
++	seq_printf(m, "UpldOps: UL=%u us=%u uf=%u\n",
+ 		   atomic_read(&netfs_n_wh_upload),
+ 		   atomic_read(&netfs_n_wh_upload_done),
+ 		   atomic_read(&netfs_n_wh_upload_failed));
+-	seq_printf(m, "Netfs  : WR=%u ws=%u wf=%u\n",
++	seq_printf(m, "CaWrOps: WR=%u ws=%u wf=%u\n",
+ 		   atomic_read(&netfs_n_wh_write),
+ 		   atomic_read(&netfs_n_wh_write_done),
+ 		   atomic_read(&netfs_n_wh_write_failed));
+-	seq_printf(m, "Netfs  : rr=%u sr=%u wsc=%u\n",
++	seq_printf(m, "Objs   : rr=%u sr=%u wsc=%u\n",
+ 		   atomic_read(&netfs_n_rh_rreq),
+ 		   atomic_read(&netfs_n_rh_sreq),
+ 		   atomic_read(&netfs_n_wh_wstream_conflict));
 
 
