@@ -1,112 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-22006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A538910CF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 18:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAD6910E6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 19:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C33C1C21088
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 16:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC1C1C212FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2024 17:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E916D1B5808;
-	Thu, 20 Jun 2024 16:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FF51B3F38;
+	Thu, 20 Jun 2024 17:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgoUfhsz"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ITKLiDfh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E13519EEBC;
-	Thu, 20 Jun 2024 16:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732931B3F0E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 17:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900791; cv=none; b=YGHojYDEX0llV0GqYco8NSjcC4bjR5BGxhOGG6t0sSxGtVlJ84Y26qERWFKTn9gSFBw6QE4+oF5ifnTTor2olPZkStjYyPRN0d+ViAvTQVv9QP8LaE3aG6kdA8ws87Bp8rdoJgfsVRQoaL983EDFHwVH1GYM8dLC1M9fi1HGGcA=
+	t=1718904356; cv=none; b=fefkDdOOqJwMw++p2QED279KgM4Coc4e414Ji9r+zjuqSCux3ysKMALRTyfhF/x9fQeU9ngMPiz8wmsD/jka+PsAQGsBn2UHesum5idF9p+MncI+EAvyxTO1d4ymmIVEv9NGUoR1EQN/4Ks3A80Nk3wAD5xdaoLfNqLfFaEhgc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900791; c=relaxed/simple;
-	bh=XxaT3nLSEdsGIJw+4O6ApGSvwQbasNX6lodtpqcsiio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNNQ0BClGbbw+HzXT4fGCTVaQP0cUrZ+jMc/bEZ2Hp4XDVG4ZGCVTb4QfpC5IfB+IkbIA185O5aGTI0vyDvlefeEKN4K7+4udCCaKMaTRLjF5RW8PRdInCI0kreQ2p7JqYfNZjPpQsA6nfera9CXcFhzr9ucTEWL1Qf/8TBqHCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgoUfhsz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92BC2C2BD10;
-	Thu, 20 Jun 2024 16:26:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718900791;
-	bh=XxaT3nLSEdsGIJw+4O6ApGSvwQbasNX6lodtpqcsiio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SgoUfhszSeuAtRk6+Zn1XWS2n7FCvAAyQn9Y5L3snT134zmlwZlrSiUaiFbNM/koo
-	 P2nPD4ng5TcRRfaf3jt2lFncH3nj/SHFLW9+h5bAzvlLEAtizhtBAoRcQeOg6Xlbdv
-	 mhaidGp6xZ3HRj6wFALxONfZ6GtOvsb/akS4mx81jBlRcwjLzgkNavXiBniCy0AtyF
-	 i6VLlcv4fyQ70aejBdTd04dr3tp91XTSpZD8obA6R7MLLZg259a+eBF/Jn+deoRrwZ
-	 QTcF5dHX1l0tpaSlw5gTtLKtV/Ql62Jh3shg91d/vCR5KCvaYmYK026iEG3kF89HPZ
-	 hBotBYOPLT5rw==
-Date: Thu, 20 Jun 2024 10:26:28 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Hongbo Li <lihongbo22@huawei.com>, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	hch@lst.de
-Subject: Re: bvec_iter.bi_sector -> loff_t?
-Message-ID: <ZnRYNKV6DqKAbxDx@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240620132157.888559-1-lihongbo22@huawei.com>
- <bbf7lnl2d5sxdzqbv3jcn6gxmtnsnscakqmfdf6vj4fcs3nasx@zvjsxfwkavgm>
- <ZnQ0gdpcplp_-aw7@casper.infradead.org>
- <pfxno4kzdgk6imw7vt2wvpluybohbf6brka6tlx34lu2zbbuaz@khifgy2v2z5n>
- <ZnRBkr_7Ah8Hj-i-@casper.infradead.org>
- <0f74318e-2442-4d7d-b839-2277a40ca196@kernel.dk>
- <ZnRHi3Cfh_w7ZQa1@casper.infradead.org>
- <861a0926-40bf-4180-8092-c84a3749f1cf@kernel.dk>
+	s=arc-20240116; t=1718904356; c=relaxed/simple;
+	bh=8dccsjcVOV2fX5Uk3UXiobDORTq2f/wq5FQct7x7GkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HPef2y84P9lBV+C5kUPhIyPxUtOT5fGV8cMdhz7nQWJrmidrse1g2/iCw3s44pVbpLbk9ERqaynebr91Hyc0jerEXRDM8/kPty5GZ80qYY6YpP2V3MU+kDLxZaV4XIP2FNu/+BvlIc1sKDOz0ILV/7CeUOl9I/Tjk3uhxTHdj88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ITKLiDfh; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52cc10b5978so1219240e87.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 10:25:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718904352; x=1719509152; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lNL9JASXnLGdYr/1kKgzyo4AtEHujMDElp9Dkk/0Lc=;
+        b=ITKLiDfhXqIzeYfcbvbJcUQReIfY/rex/a6/OYxkl+yeZHeCEH+sBv9wCHRmuujsKx
+         HDCm+hioM3Sk35u8fPjGj2jaV+CXwIVAwHad/OlLq/Q/wyYQLkbUnBnV/vUguqxb/txi
+         uchRFT2y88wqSshDC1y7fug0x15JrjFpdbn+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718904352; x=1719509152;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4lNL9JASXnLGdYr/1kKgzyo4AtEHujMDElp9Dkk/0Lc=;
+        b=dHKHXEkOtr4pX82wYfi3CX8QWHFXoSAlm7TIXe8u4O9d5cFUMBZyBb8+2psLmkbfVJ
+         S669wCbHvk/5DLZYQwskob6UHvB60SUpG4wsBm2Y3XS++QvIetRgGTdDg0k7TIKAlPmn
+         boa8+Ywj3WBsFyiGEqpXocLLiF+qtqCdxnK+ozI68w2frJ1TFheir3YzBlSDT3xM4xu2
+         H/tP+aHWiIiks0Wb7b1GL+ESOeLt29ejfkHzlhQoLpw0jj7e5LTYbTwClK7r6XC4Ukpi
+         7v+A/ssdAVM6SiJApg/uleWqGH/Lz6iQEsl+f32vbR5gld9qp7NRbzo0x/wfiL1tCX1c
+         w02Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXPI8UHtKmZtAn7tD2UUgoM4KWMl5DCSUzvujNAjYzR4fY1zlVxiY9IVYYa7ee7e2CfZbTNiQt7Tzz/EzJya9Nd5+3jTq2OfkEnwi4VKQ==
+X-Gm-Message-State: AOJu0YyqbyiQqQ5wlfKjMPt5i+NQuJeqWC2sdHap3iKryo5vUdM1oEsD
+	pbaTJuofRXxGcAfm8QLOj1hqSx6MtIYJIuGHcNUVNOP0nOm9WvAuOxFUjAXnQQAm0nQArTRTsYE
+	C9G+4JA==
+X-Google-Smtp-Source: AGHT+IGulg2y70MR45pKxGpe1RMOScpSEiomgFkrnkZs3OM8c0Sh4U3cz5LMUndYvMJspe+C03IziQ==
+X-Received: by 2002:a05:6512:3995:b0:52c:8591:1f7b with SMTP id 2adb3069b0e04-52ccaa5ac6fmr4277416e87.24.1718904352296;
+        Thu, 20 Jun 2024 10:25:52 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecdcf0sm784933566b.111.2024.06.20.10.25.51
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 10:25:51 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso1377031a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2024 10:25:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVxPcAbvXPgGmRDDbTS/67Efv+jvPfHDSVrlFu1iYj6tuPtdGaBoBT/GOM3RmdggZe4yAI+L+/SBheCFUptamx1pmA3ywXT1b2hn+/7Nw==
+X-Received: by 2002:a17:907:a80a:b0:a6f:6659:a54 with SMTP id
+ a640c23a62f3a-a6fab607137mr441965166b.6.1718904351308; Thu, 20 Jun 2024
+ 10:25:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <861a0926-40bf-4180-8092-c84a3749f1cf@kernel.dk>
+References: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
+ <90b46873-f60f-4ece-bef6-b8eed3b68ac1@app.fastmail.com>
+In-Reply-To: <90b46873-f60f-4ece-bef6-b8eed3b68ac1@app.fastmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 20 Jun 2024 10:25:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg6OHJKArnC2SMY-GEcMfncer0A6ELM4ZAnaRdbi12kdw@mail.gmail.com>
+Message-ID: <CAHk-=wg6OHJKArnC2SMY-GEcMfncer0A6ELM4ZAnaRdbi12kdw@mail.gmail.com>
+Subject: Re: FYI: path walking optimizations pending for 6.11
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 20, 2024 at 09:18:58AM -0600, Jens Axboe wrote:
-> On 6/20/24 9:15 AM, Matthew Wilcox wrote:
-> > On Thu, Jun 20, 2024 at 08:56:39AM -0600, Jens Axboe wrote:
-> >> On 6/20/24 8:49 AM, Matthew Wilcox wrote:
-> >>> On Thu, Jun 20, 2024 at 10:16:02AM -0400, Kent Overstreet wrote:
-> >>> I'm more sympathetic to "lets relax the alignment requirements", since
-> >>> most IO devices actually can do IO to arbitrary boundaries (or at least
-> >>> reasonable boundaries, eg cacheline alignment or 4-byte alignment).
-> >>> The 512 byte alignment doesn't seem particularly rooted in any hardware
-> >>> restrictions.
-> >>
-> >> We already did, based on real world use cases to avoid copies just
-> >> because the memory wasn't aligned on a sector size boundary. It's
-> >> perfectly valid now to do:
-> >>
-> >> struct queue_limits lim {
-> >> 	.dma_alignment = 3,
-> >> };
-> >>
-> >> disk = blk_mq_alloc_disk(&tag_set, &lim, NULL);
-> >>
-> >> and have O_DIRECT with a 32-bit memory alignment work just fine, where
-> >> before it would EINVAL. The sector size memory alignment thing has
-> >> always been odd and never rooted in anything other than "oh let's just
-> >> require the whole combination of size/disk offset/alignment to be sector
-> >> based".
-> > 
-> > Oh, cool!  https://man7.org/linux/man-pages/man2/open.2.html
-> > doesn't know about this yet; is anyone working on updating it?
-> 
-> Probably not... At least we do have STATX_DIOALIGN which can be used to
-> figure out what the alignment is, but I don't recall if any man date
-> updates got done. Keith may remember, CC'ed.
+On Thu, 20 Jun 2024 at 00:53, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> I don't mind making the bit that makes the untagging
+> unconditional, and I can see how this improves code
+> generation. I've tried comparing your version against
+> the more conventional
+>
+> static inline int access_ok(const void __user *p, unsigned long size)
+> {
+>         return likely(__access_ok(untagged_addr(p), size));
+> }
 
-The man page already recommends statx if available, which tells you
-everything you need to know about your device's direct io alignment
-requirements. The man only suggests block size alignment for older
-kernels, so I think it's fine as-is, no?
+Oh, I'd be ok with that.
 
-You can also query the queue's "dma_alignment" sysfs attribute.
+That "access_ok()" thing was actually the first thing I did, before
+doing all the asm goto fixes and making the arm64 "unsafe" user access
+functions work. I may have gone a bit overboard when compensating for
+all the other crap the generated code had.
+
+That said, the size check really is of dubious value, and the bit
+games did make the code nice and efficient.
+
+But yeah, maybe I made it a bit *too* subtle in the process.
+
+> On a related note, I see that there is one caller of
+> __access_ok() in common code, and this was added in
+> d319f344561d ("mm: Fix copy_from_user_nofault().").
+
+Hmm. That _is_ ugly. But I do think that the untagging is very much a
+per-thread state (well, it *should* be per-VM, but that is a whole
+other discussion), and so the rationale for _why_ that code doesn't do
+untagging is still very very true.
+
+Yes, the x86 code no longer has a WARN for that case, but the arm64
+code really *would* be horrible broken if the code just untagged based
+on random thread data.
+
+Of course, in the end that's just one more reason to consider the
+current arm64 tagging model completely broken.
+
+But my point is: copy_from_user_nofault() can be called from random
+contexts, and as long as that is the case - and as long as we still
+make the untagging some per-thread thing - that code must not do
+untagging because it's in the wrong context to actually do that
+correctly.
+
+And no, the way the arm64 hardware setup works, none of this matters.
+The arm64 untagging really *is* unconditional on a hw setup level,
+which took me by surprise.
+
+              Linus
 
