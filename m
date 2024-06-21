@@ -1,178 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-22160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B756F912EA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 22:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2614912ED5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 22:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618C31F22526
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 20:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979961F22FAE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 20:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD7117B4E8;
-	Fri, 21 Jun 2024 20:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC33017C201;
+	Fri, 21 Jun 2024 20:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFjC5+pF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAve3cmy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEFF16849B;
-	Fri, 21 Jun 2024 20:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2C1156F2E;
+	Fri, 21 Jun 2024 20:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719002287; cv=none; b=DeGx1YHvMqZY3Qz5wzWszzHifHWgcyfX52UzLcadLqBAFHjYEmWeNCnWugCNJNrULUVH8sLXbXQloq4JNuXVLDwyM6qXdWeTVl0pSgs3y6/j2gznzvcC8T70pr4CWe1Y2T/SKKJ5WTcEU6mstzTAVrmYZmiTnSE+0HQD2ydy0Nk=
+	t=1719003047; cv=none; b=HcJPcAvMmUIlDM2F4xH5SmSVaZslHHR9r32pgOGEd+GnPLi6SDaNtn2GEgAOBqkzKp2zGpVs5elGlGenmNSCgbikJsC54DY+79oU28iwX7DOIGhl5Og/Wn24cwVBfMoziz31JF/GR6RkHZpKAEjpywq8/MsF9o5eO4WUYh5Bek0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719002287; c=relaxed/simple;
-	bh=4NZsF7nKIUwjaD/dldJqTXyP3vrorwabNNaT8yPSQ/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDELbWkYabSPWU1KnqVQIssjJvBNJZKzVvZCS6cFy6d1V+4Z1IBn0BdkHl5q5rN/slaA1ReMjnyjrn999o+vIMYIKdDaZno138ECsG9Du1SM77lWefzruhsz72FrdWFeCw6X/iluLCcL59XN/nmohn6FFvoB7oN3Iw0m6OlE2xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFjC5+pF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C116CC2BBFC;
-	Fri, 21 Jun 2024 20:38:06 +0000 (UTC)
+	s=arc-20240116; t=1719003047; c=relaxed/simple;
+	bh=zHqrm6LL14pN7J1jPUokZ61GJ0sIujqExqHulesYufY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W8ntWdnEz8lMnS6RcNR4j0od+m1wZvoqU42sQLaeYEwigk3xywH4TYBbyfaEbDdTARzCNnIVXH8w+AocOnGo8w9dp9DRHeWxH8tVs1A2KUKVKApXB+Obwv5I6jFt235Zo3lqwOJsXBF+QcgdIZIEJRt6RfwLN2WBse2xfImiDEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAve3cmy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC28C32789;
+	Fri, 21 Jun 2024 20:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719002286;
-	bh=4NZsF7nKIUwjaD/dldJqTXyP3vrorwabNNaT8yPSQ/E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RFjC5+pFFHdzlmU9o0j0kFyLYWdQQw1CBO7m8mW8AFE0+AYe1EdtCwzkcuOsuWEH5
-	 H2+ZEyOvJgsjSSm4EJWWX/9gGsRrpbsJSCDSRL6bkWMkYV5ZUi7khZMlCe+rA/NkUY
-	 D3uPmRdGFbKmNYSoPDOcI/iE8lNnRlmLUAi+UX2gD2dV+BuYoZoekpna8xVpsgkCyJ
-	 SxOLxGddKr9wyhu5+Ni8/czwIPfWGvoJNaCfE+PD6ylEhzECixfaQidHCcMSBim8DN
-	 sjDtp0CGMnXqTJEhBrNgUj9rCDOdjdcyvOV9CAnS6RK6tBLiPJo54IDosaBIeJZLOb
-	 Y69V7Ulq6atUQ==
-Date: Fri, 21 Jun 2024 13:38:06 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH 06/13] xfs: align args->minlen for forced allocation
- alignment
-Message-ID: <20240621203806.GW3058325@frogsfrogsfrogs>
-References: <20240621100540.2976618-1-john.g.garry@oracle.com>
- <20240621100540.2976618-7-john.g.garry@oracle.com>
+	s=k20201202; t=1719003046;
+	bh=zHqrm6LL14pN7J1jPUokZ61GJ0sIujqExqHulesYufY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SAve3cmy5p6v3u6W23zkp6N5P7Zdim1KxMhtleXv1qc7zUJI6hRPGLiX2F9y/4Vwv
+	 hL1YERb7sBSgwHGOIBvKEy0x+x3Ox0gs0WYdOlrfAhKMeZQn/VxH+rsHBpgYpH4QZt
+	 LCQC4+YiHsoXNSSB9SMz3fEedx2BfAjbYP/M/BXmD8JxAjxLOw0KIKINUUC0C3KUld
+	 eRwGrjcgSEnaANo4EpfU2uhJa+el0gq91npAlfpLF88LC9Y6YGt5exhPDcb7LmrSqV
+	 pdFc19/VpqBtqMdXSIVxpK4WAWQ9Erq5NBGDuljncaao8jBZcLS44VDjL7pBoRzSyt
+	 X+ukufO/bgjPQ==
+From: Kees Cook <kees@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Kees Cook <kees@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Laurent Vivier <laurent@vivier.eu>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2 0/2] exec: Avoid pathological argc, envc, and bprm->p values
+Date: Fri, 21 Jun 2024 13:50:42 -0700
+Message-Id: <20240621204729.it.434-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621100540.2976618-7-john.g.garry@oracle.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=747; i=kees@kernel.org; h=from:subject:message-id; bh=zHqrm6LL14pN7J1jPUokZ61GJ0sIujqExqHulesYufY=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmdeekF5ynV+ysPDMpgOdN67QrunEd2yLM61lDt iaaLnVb092JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZnXnpAAKCRCJcvTf3G3A JrRYEACJcwXSeETPWX0azPcrjVE+k6pOKsR5cASZRppf73qGPz3sjtne2MfnPOSPHl3lGdu3pZa cHvqfcCZwciotGUh2dfRbyGs9LHlNGJz9Un31oYqiq+wvX2x6sNCNa8jG8FO+cu4cPn8lqISJHt V9QKDv9AKKj+s3qTSLVdRveg4xcuJHTV+A8R882GHLqMo12QMgA3G/CM/VZIofhKj7WTHs2LsfQ l679COtEFu5FSHOzlchAl0f86zhtYq2E6pTNsCLPNKY0NbhMtWuv1PIjJbS2SvkjSb2NMPBhsDJ KLTstbfZ9Ja+57aQRoZdereYMKSNFylYAZHI/7UDoBaCCsDNKnu6T2mcWsksKFMXfsr7AfaqR6v kuOR5Ibj3cJmS4PFE2ShtlsCzypdV7m+gQNqyTK8FMyQzMFeWseRGkbSbQYrbptfAdJqKrgdzs1 sP502r4NtJCvjIrTjWQjUnoGJ0fLXlaSBezY005UpCudsJfOjFe3Pv7CzocvGhDm5z7XQ3IIyhl Sf7S5D/Yh4E5xIvzlvmxQCjMFmOAEiDXJ46bZTztybyI3afN87kEYNj27D6GMxzrQs+x2n2SDIC B/fYFnoA542S0/X5lJBtOWl8I2GUAu6hNXhTCOExcFmT68jQ8YijBC1r+nymoYSfuMG5/bN11SZ wjC829Q5mJWK0Z
+ g==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024 at 10:05:33AM +0000, John Garry wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> If args->minlen is not aligned to the constraints of forced
-> alignment, we may do minlen allocations that are not aligned when we
-> approach ENOSPC. Avoid this by always aligning args->minlen
-> appropriately. If alignment of minlen results in a value smaller
-> than the alignment constraint, fail the allocation immediately.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+Hi,
 
-Looks good!
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+This pair of patches replaces the last patch in this[1] series.
 
---D
+Perform bprm argument overflow checking but only do argmin checks for MMU
+systems. To avoid tripping over this again, argmin is explicitly defined
+only for CONFIG_MMU. Thank you to Guenter Roeck for finding this issue
+(again)!
 
-> ---
->  fs/xfs/libxfs/xfs_bmap.c | 45 +++++++++++++++++++++++++++-------------
->  1 file changed, 31 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index 9131ba8113a6..c9cf138e13c4 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3278,33 +3278,48 @@ xfs_bmap_longest_free_extent(
->  	return 0;
->  }
->  
-> -static xfs_extlen_t
-> +static int
->  xfs_bmap_select_minlen(
->  	struct xfs_bmalloca	*ap,
->  	struct xfs_alloc_arg	*args,
->  	xfs_extlen_t		blen)
->  {
-> -
->  	/* Adjust best length for extent start alignment. */
->  	if (blen > args->alignment)
->  		blen -= args->alignment;
->  
->  	/*
->  	 * Since we used XFS_ALLOC_FLAG_TRYLOCK in _longest_free_extent(), it is
-> -	 * possible that there is enough contiguous free space for this request.
-> +	 * possible that there is enough contiguous free space for this request
-> +	 * even if best length is less that the minimum length we need.
-> +	 *
-> +	 * If the best length won't satisfy the maximum length we requested,
-> +	 * then use it as the minimum length so we get as large an allocation
-> +	 * as possible.
->  	 */
->  	if (blen < ap->minlen)
-> -		return ap->minlen;
-> +		blen = ap->minlen;
-> +	else if (blen > args->maxlen)
-> +		blen = args->maxlen;
->  
->  	/*
-> -	 * If the best seen length is less than the request length,
-> -	 * use the best as the minimum, otherwise we've got the maxlen we
-> -	 * were asked for.
-> +	 * If we have alignment constraints, round the minlen down to match the
-> +	 * constraint so that alignment will be attempted. This may reduce the
-> +	 * allocation to smaller than was requested, so clamp the minimum to
-> +	 * ap->minlen to allow unaligned allocation to succeed. If we are forced
-> +	 * to align the allocation, return ENOSPC at this point because we don't
-> +	 * have enough contiguous free space to guarantee aligned allocation.
->  	 */
-> -	if (blen < args->maxlen)
-> -		return blen;
-> -	return args->maxlen;
-> -
-> +	if (args->alignment > 1) {
-> +		blen = rounddown(blen, args->alignment);
-> +		if (blen < ap->minlen) {
-> +			if (args->datatype & XFS_ALLOC_FORCEALIGN)
-> +				return -ENOSPC;
-> +			blen = ap->minlen;
-> +		}
-> +	}
-> +	args->minlen = blen;
-> +	return 0;
->  }
->  
->  static int
-> @@ -3340,8 +3355,7 @@ xfs_bmap_btalloc_select_lengths(
->  	if (pag)
->  		xfs_perag_rele(pag);
->  
-> -	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
-> -	return error;
-> +	return xfs_bmap_select_minlen(ap, args, blen);
->  }
->  
->  /* Update all inode and quota accounting for the allocation we just did. */
-> @@ -3661,7 +3675,10 @@ xfs_bmap_btalloc_filestreams(
->  		goto out_low_space;
->  	}
->  
-> -	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
-> +	error = xfs_bmap_select_minlen(ap, args, blen);
-> +	if (error)
-> +		goto out_low_space;
-> +
->  	if (ap->aeof && ap->offset)
->  		error = xfs_bmap_btalloc_at_eof(ap, args);
->  
-> -- 
-> 2.31.1
-> 
-> 
+-Kees
+
+[1] https://lore.kernel.org/all/20240520021337.work.198-kees@kernel.org/
+
+Kees Cook (2):
+  execve: Keep bprm->argmin behind CONFIG_MMU
+  exec: Avoid pathological argc, envc, and bprm->p values
+
+ fs/exec.c               | 36 +++++++++++++++++++++++++++++-------
+ fs/exec_test.c          | 30 +++++++++++++++++++++++++++++-
+ include/linux/binfmts.h |  2 +-
+ 3 files changed, 59 insertions(+), 9 deletions(-)
+
+-- 
+2.34.1
+
 
