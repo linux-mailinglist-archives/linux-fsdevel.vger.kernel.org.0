@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-22051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B980C9118A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 04:32:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC26C9118AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 04:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F238B222FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 02:32:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542D51F22A27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 02:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8856712CDAE;
-	Fri, 21 Jun 2024 02:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5642412D209;
+	Fri, 21 Jun 2024 02:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWHwxr5I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwQXlcE5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED5284FBF;
-	Fri, 21 Jun 2024 02:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587AC84E0D;
+	Fri, 21 Jun 2024 02:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718937103; cv=none; b=HeQf9wACQvpA7HQcyEoT0EX82yHKQXDNAHLKJ2ilnmS0ta8qmIP2juKdPHRezqlmqN5z7n2/IK89qQMHa6d3PsIZ7C/16oPvDN38eD4nrgF7htvNuIyAvT1zzZFkwqZVDrfwmEE6OBbstsGiTXukuGfnDWJsxhQZ2rvcqCWDBuM=
+	t=1718937113; cv=none; b=Yj4HIT8+OzFcyEnwzgZUFKnBGAnBMC8w7Mb3xvLLSxakq+/6cEUdK+hgjaCOWToVEQ4P06eUwoAdnGoUeWbttGtyL10ST8rt+DetKxesWWt1+G7aykQi1xRKotHtb8ztDg0LnPkgc2Xw1ZUErCdlTrGoEpOvEr7xRRvjVG4qOBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718937103; c=relaxed/simple;
-	bh=Kkeo6MG1a3qIIQSVqx8qXRklhPMiGFUJA/nbOkwLjy4=;
+	s=arc-20240116; t=1718937113; c=relaxed/simple;
+	bh=ifRKs7FUaq2eQBo/kGf5I53pQ9emwiKOlYtEkCk86eQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SAM7vlOQYwpD55QPIhglnj6l+LIYyoSMGuwxw8cp6QJwdonzYfsvZy89MJ8kthWkimB8U2B2biLwLIPcf4Q06pJTII8mmSfJZ6XsKeamf7UMYGKA1cCA1Q1aRocTK6uLiZXfjjN6bhuyaSUV6e3mrrxh2lEYJNHbbcrJosxP/7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWHwxr5I; arc=none smtp.client-ip=209.85.210.170
+	 MIME-Version; b=UbuG92hwwN6ibMNcRRPC2RsmnRNtIRAxpTuPITc/SuOXDfiAV56NzuexZp09QXhLfusuRH+T1Cb45MfkKQO/rX/3N3kDUBktFFvdJB0rmZLtlZoBGm/fhYtuqajE2QOxo2dPETItQCx40RYY4L/155foo5KB9GQHFeUEnh1psx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwQXlcE5; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-704313fa830so1321029b3a.3;
-        Thu, 20 Jun 2024 19:31:41 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-705b9a89e08so1382351b3a.1;
+        Thu, 20 Jun 2024 19:31:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718937101; x=1719541901; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718937111; x=1719541911; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gIxIpX3fSDij30wx/6pUEm1wGM6JrlT5xZ3d0lBG2nM=;
-        b=XWHwxr5IJs5pY+6aUeh96ZLGYFnEGX4kNmZakghl4efSWIgcasnVezFzrcc1u2M0jG
-         4zppdszGMHZjwgDADgRTgjyr38/rtGzVQINL2szrz48vG6pR8DHt1iXl+Iq/JuAG3MHy
-         UYsbLbPa/7GoN5CI0fCIxo5f2Yfpbw44XaVIDZLup9gvOWAPwOOy/k1/0314OJLqunwv
-         ZEvj2KkzyiJiRGU5f/FvjUAGyKxPxVEaLIXhl6l+geJ0fu4BLkWm6yH+5n8eof8kxQBL
-         S+u3vVlsiNo5YL/V3/tBHxiv9wDuL3wwpQwYLa8txuY3Lu3GnU12w/EfdL420cxZb5Rg
-         erEQ==
+        bh=WYd5YNknE07k5DuwDR8qZLFs+IUn8eRucnjF7OV4ohA=;
+        b=RwQXlcE5hrb35+VgfdvD75xPvv7ifa8RzpW2gX//atQDNifeR+uJf9I9seePfknuoB
+         +3hzeJ/I0a6hZm6f6AiH+CvhCMjGTBjtRqXziGfhML0wWUhgwVJcEKoLWRfTFXoOMh49
+         WV+PZ7qVPOyFF4bkEdFC5wyF5n+VOzjJWs+6JTKzst4IdYt2xxS9qtdUZCPNSB4wvuGw
+         Vm1d7v7F5ZIZ/Ili/nNG4MDVLjmee1R1hRJpb1emceC6pXO/AhqznhXIcktJHNsxSWic
+         otIk8yVoetavtsR3zCKO91y2EhLLkAafOuI6SGInCLkAm/OU8s7HzR68ackWgBfBYyrv
+         e2Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718937101; x=1719541901;
+        d=1e100.net; s=20230601; t=1718937111; x=1719541911;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gIxIpX3fSDij30wx/6pUEm1wGM6JrlT5xZ3d0lBG2nM=;
-        b=WOrqIejJubhdLHUmTPS8EWzHltCWQUHDEWqb9G/SssPbRu1kUmEKwywRLu4/gzr606
-         ygdz4e6mXmdT/dbFOpv+QpQrT++w7YP3WKgTSoh+gIcF31GczJNy3Eo5CSO65IrDQkly
-         wQSoEoeiFmKeMB0LrUN1Uxy0g3P63jgA9NWn2Hp8xsJqlY8XRV4DKHfbSbI9lHyCLfvw
-         NEYLrvlGOV9zTNjW4SWT8cA/sgZ1cbHiKPlBYI0p/xv89YR2dKYN0j4gMFhmSUd6gRqS
-         sXRUPxrO010CydEfNFEywGgKGW3rlfbL8jUBCE/wBWQ98Y0MrFB9gDHRyHQI4ye57S2i
-         n6sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWooEQrfZMjOEoMekDBALm9DF7NZyyhvQ0wZ5XmOrl2Tx+OrnS6ct13Ok+2ckpoTVas4epdWfAHuXCBaA21h3+4WebMKJoM1fwqj+PZ3UfN1sinuMaCzijvZbjW3XYFLnmiv4E5nAy8aPiIgbNTpkeaaIO3oOsgPGtowmlNEhafKpuFy0LtlpynXFQc8emVmNij0+D63pgVyhBFMi+XSS1qg6uNTLycenkXR0ITpJWj7iWynYm/NmycuXOELMMENQBDaqQm7BoenonNDA338x9NkREMlgegSB1ioiJjCWzPfcfj8pbpw1sPOPuKnV7grhA6Q3a2Pw==
-X-Gm-Message-State: AOJu0YzkgX/VvHhGl2XB6dqK8dpiudreTSUieOa9yGbzcSiI659KrsR2
-	81Wzr+hMfuSgcePHqCXDzf9RAK7p1nZYOVkXHS05Tc/ribOAIZWH
-X-Google-Smtp-Source: AGHT+IGYNoV/DB/o6zRof24rJ6xmZEwxYI9LpBEDyg5OiYjfuVgaYmaCgemL5OUn4y/KnIdaoKGjig==
-X-Received: by 2002:a05:6a00:2f43:b0:704:2d64:747 with SMTP id d2e1a72fcca58-70629c1dcdbmr6929306b3a.7.1718937100840;
-        Thu, 20 Jun 2024 19:31:40 -0700 (PDT)
+        bh=WYd5YNknE07k5DuwDR8qZLFs+IUn8eRucnjF7OV4ohA=;
+        b=jI+s1qjyBhPHIHU1hAuUIpx9MYGqWJ3ToYVb2jhCOj7IvnpRn0T+BJh+2gqncOw8/6
+         kq7dEerBDrA/ZRxWf3r6ZH9XaAaO1Hjj7iRa2qSt5xTABsjE1I2BUxBGNCQFjDVJEo7t
+         AXsTRUJPheNIxhDUdsMINt2ujbz7hOBYp0xX+AqsogC7+O+9BWrSR1v4qmlqfod9YVPF
+         beS0uza1qgqlpJ5+a4pz2Qh5S2GZXbSZbRlcQlRDbI99fe8WrGuKPO71PQ7YfEVMbCT8
+         2GsWR3RK1Bxg66O84koI30SI2t+Yqc9UN7zIbzDyZm9upb9FkeE3uJSQHllGFFRBYvtv
+         /qSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/rWAUj8pVz7hxfq9s7gbwzdL9o/llonNY9CgJ6FPcRtq3gYLXV8AlJaq/UIkdJ1uprupzK0y6WB1pNcOfuQ6MvjENAyGBXwWVe0X10eHj3ZtqLIctkK7t9Q6ArE8yGAiM6DLJisNRPPqInGIWsNd6gzIBpvnFnx6j/ovhZ9U/PfgJ4TIN8DdFg/ujj2kFjQS4xF9qsTiQmN/K26ayxau0oYudma7LU/BESEFzoyOjJxIQhp3ICCVeWi2dFWV8AE6LzKoRRFCR2srzZYB77s2mb7cHg9+jgamgIYW0kjpLkW87ftkZr6eKOb6Dfu+YFXmCfzo0tQ==
+X-Gm-Message-State: AOJu0YxHWxDmBeM9RpoG2/avuR1MB3pu0ud7o04m6p1ycIpTRQOZQJNa
+	dHZeXxXap6kwUJHL0+4832Xt73Qp5n2RRR/8sL+EGPxHUUC0DV/D
+X-Google-Smtp-Source: AGHT+IE3vqRU4TDjYUtGu1BjTuY8WxnNKb7eQY82UPvhwXZyWJtswQi4+ta6VB9SmiN5potLRkiFDg==
+X-Received: by 2002:a05:6a00:853:b0:705:ed06:cc64 with SMTP id d2e1a72fcca58-70629c521cfmr9225541b3a.16.1718937111523;
+        Thu, 20 Jun 2024 19:31:51 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.105.24])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706511944d2sm332488b3a.70.2024.06.20.19.31.30
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706511944d2sm332488b3a.70.2024.06.20.19.31.41
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2024 19:31:40 -0700 (PDT)
+        Thu, 20 Jun 2024 19:31:51 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: torvalds@linux-foundation.org
 Cc: ebiederm@xmission.com,
@@ -85,9 +85,9 @@ Cc: ebiederm@xmission.com,
 	netdev@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v3 06/11] mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
-Date: Fri, 21 Jun 2024 10:29:54 +0800
-Message-Id: <20240621022959.9124-7-laoar.shao@gmail.com>
+Subject: [PATCH v3 07/11] mm/kmemleak: Replace strncpy() with __get_task_comm()
+Date: Fri, 21 Jun 2024 10:29:55 +0800
+Message-Id: <20240621022959.9124-8-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 In-Reply-To: <20240621022959.9124-1-laoar.shao@gmail.com>
 References: <20240621022959.9124-1-laoar.shao@gmail.com>
@@ -99,101 +99,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These three functions follow the same pattern. To deduplicate the code,
-let's introduce a common help __kstrndup().
+Since task lock was dropped from __get_task_comm(), it's safe to call it
+from kmemleak.
 
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Using __get_task_comm() to read the task comm ensures that the name is
+always NUL-terminated, regardless of the source string. This approach also
+facilitates future extensions to the task comm.
+
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- mm/internal.h | 24 ++++++++++++++++++++++++
- mm/util.c     | 27 ++++-----------------------
- 2 files changed, 28 insertions(+), 23 deletions(-)
+ mm/kmemleak.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index b2c75b12014e..fd87f685739b 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1521,4 +1521,28 @@ static inline void shrinker_debugfs_remove(struct dentry *debugfs_entry,
- void workingset_update_node(struct xa_node *node);
- extern struct list_lru shadow_nodes;
- 
-+/**
-+ * __kstrndup - Create a NUL-terminated string from @s, which might be unterminated.
-+ * @s: The data to stringify
-+ * @len: The size of the data, including the null terminator
-+ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ *
-+ * Return: newly allocated copy of @s with NUL-termination or %NULL in
-+ * case of error
-+ */
-+static __always_inline char *__kstrndup(const char *s, size_t len, gfp_t gfp)
-+{
-+	char *buf;
-+
-+	buf = kmalloc_track_caller(len, gfp);
-+	if (!buf)
-+		return NULL;
-+
-+	memcpy(buf, s, len);
-+	/* Ensure the buf is always NUL-terminated, regardless of @s. */
-+	buf[len - 1] = '\0';
-+	return buf;
-+}
-+
-+
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/util.c b/mm/util.c
-index 41c7875572ed..d9135c5fdf7f 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -58,17 +58,8 @@ char *kstrdup(const char *s, gfp_t gfp)
- 	if (!s)
- 		return NULL;
- 
--	len = strlen(s) + 1;
--	buf = kmalloc_track_caller(len, gfp);
--	if (buf) {
--		memcpy(buf, s, len);
--		/* During memcpy(), the string might be updated to a new value,
--		 * which could be longer than the string when strlen() is
--		 * called. Therefore, we need to add a null termimator.
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index d5b6fba44fc9..ef29aaab88a0 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -663,13 +663,7 @@ static struct kmemleak_object *__alloc_object(gfp_t gfp)
+ 		strncpy(object->comm, "softirq", sizeof(object->comm));
+ 	} else {
+ 		object->pid = current->pid;
+-		/*
+-		 * There is a small chance of a race with set_task_comm(),
+-		 * however using get_task_comm() here may cause locking
+-		 * dependency issues with current->alloc_lock. In the worst
+-		 * case, the command line is not correct.
 -		 */
--		buf[len - 1] = '\0';
--	}
--	return buf;
-+	len = strlen(s);
-+	return __kstrndup(s, len + 1, gfp);
- }
- EXPORT_SYMBOL(kstrdup);
+-		strncpy(object->comm, current->comm, sizeof(object->comm));
++		__get_task_comm(object->comm, sizeof(object->comm), current);
+ 	}
  
-@@ -111,12 +102,7 @@ char *kstrndup(const char *s, size_t max, gfp_t gfp)
- 		return NULL;
- 
- 	len = strnlen(s, max);
--	buf = kmalloc_track_caller(len+1, gfp);
--	if (buf) {
--		memcpy(buf, s, len);
--		buf[len] = '\0';
--	}
--	return buf;
-+	return __kstrndup(s, len + 1, gfp);
- }
- EXPORT_SYMBOL(kstrndup);
- 
-@@ -195,12 +181,7 @@ char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
- 	if (!s)
- 		return NULL;
- 
--	buf = kmalloc_track_caller(len + 1, gfp);
--	if (buf) {
--		memcpy(buf, s, len);
--		buf[len] = '\0';
--	}
--	return buf;
-+	return __kstrndup(s, len + 1, gfp);
- }
- EXPORT_SYMBOL(kmemdup_nul);
- 
+ 	/* kernel backtrace */
 -- 
 2.39.1
 
