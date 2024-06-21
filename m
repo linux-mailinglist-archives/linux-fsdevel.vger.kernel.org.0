@@ -1,159 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-22118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF53912789
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 16:21:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72769127BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 16:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3E428BA3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 14:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE8628ADD5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 14:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F7F374FF;
-	Fri, 21 Jun 2024 14:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761602BB1B;
+	Fri, 21 Jun 2024 14:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fjrdfSXq"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yCi9RXcW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6022523769;
-	Fri, 21 Jun 2024 14:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7CD208A8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2024 14:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718979677; cv=none; b=omb+QVeaJBD6XTYKErlq3WrNSmTxsNeULoXzZ4kwi+k5YZF/lQmibRq6oUYw6PTHhUyJKwr1yrf71LnsIUOsP8bBz/sYcW20i3N3zUoV0bGuA+Jj/I0dd7W1AbN1K21zPXqOPpvHUT9arhI2JueQp9ljEAgzV57fkl/VLMUqc1U=
+	t=1718980143; cv=none; b=iSEFi8xwRyZ5YZanBZrCn/rEGDEQy13TESAWXFfid90BdYByH071ssvmcZWqLwBc5D9knL0ymN0gHuRVq5JZQAFyY4LSEoYSiP0chevHxgVWoeXOHBtH8DZqPAqp1gH2sJ2dsIOGMUhqbMFMWVoLRdP/fhPkBWHDNb5ad9YeaVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718979677; c=relaxed/simple;
-	bh=FRsrRHuesg0WeyyGyORG1XpSZdf8zna/n7dNXMr5zrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=miXjN8KWQJO1/H01OQgB14SoCg9G0oBYYsBR/BPm3i1Ys11RP8Smrc3es6kqr1DloZF56ZCgIAjIyyGaEEtWPpifpS04hfiyT9dHHmhAHEykJsivIPkAiQGtGyTKRwQDKFDrhP6+RuOomwTv1kFMPpS2zzNQQNQPelEOwiVsNoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fjrdfSXq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LDpjwd007918;
-	Fri, 21 Jun 2024 14:20:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=sJJqCuieG7oXQ6BEgRLEOKCBvgY
-	hb+zAYJQBFLYnTZg=; b=fjrdfSXqB/WD9xddv5VQuyP8JhdNDSB9dZNjWi46S4w
-	Xw44JjUlI4LQieEWSqAt2at+16Znm1Skf5x65TV/adGvT7CQpYYeowsC83MAemwv
-	THbcKszsl5psJ4Xx1cYRkPdKiqqWSvloOGk9BgtrP3LaxZ69yL+023iw8mdczChq
-	jlkXeFbQUfj50sB7Lpi/eFXF68lz4A/WA75cqSqb6Q3a3AKFXWMyprLWg4IZm6vn
-	F+Uw+6bHsGAUPYISefAy9iOIJmAk/5ilNpKVTEzYATdTxa7Bi0BS6R8DKWfZZ+Pg
-	CXJpBMnSWxNx/BscnHmx7NH8tKzzKCsiKDXVXusyefw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywajp049w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:20:04 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LEK3u1031783;
-	Fri, 21 Jun 2024 14:20:03 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywajp049s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:20:03 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45LCAh6E025663;
-	Fri, 21 Jun 2024 14:20:02 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrqv7kug-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:20:02 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LEJwsl50921746
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 14:20:01 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D7C1920043;
-	Fri, 21 Jun 2024 14:19:58 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 62BBC20040;
-	Fri, 21 Jun 2024 14:19:57 +0000 (GMT)
-Received: from osiris (unknown [9.171.32.192])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 21 Jun 2024 14:19:57 +0000 (GMT)
-Date: Fri, 21 Jun 2024 16:19:55 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, Helge Deller <deller@gmx.de>,
-        linux-parisc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>,
-        linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-        linux-csky@vger.kernel.org, linux-s390@vger.kernel.org,
-        Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-        libc-alpha@sourceware.org, musl@lists.openwall.com, ltp@lists.linux.it,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 02/15] syscalls: fix compat_sys_io_pgetevents_time64 usage
-Message-ID: <20240621141955.14882-C-hca@linux.ibm.com>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-3-arnd@kernel.org>
+	s=arc-20240116; t=1718980143; c=relaxed/simple;
+	bh=56Fo7ge/GaJ7kRUMXWtKUYd2boB/qHndzM21h2jkuTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QfzSek3dly8cG5O4O46P3zvYpC/mHkl7Lf/s9ey3aAm8uXnYNOG0tUQ8l1EGGN1KLLpSJIA8VTOAZ/MnNV5S1eFJZb+JBXuDVucA4VnWwUGvo2xbA8uVQfX/o6Z38tG2W8rQsnAGAD+Q0If7sUsDdLAu6NPhg/WBliStFc2NDRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yCi9RXcW; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b3364995b4so386879eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2024 07:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718980141; x=1719584941; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1abM88BFe0lQRCbOZswUBP4pTWhgX2789Hxz6HQAYw=;
+        b=yCi9RXcWgPY73DTL0zaUltzOAbDSfPKRJzRtIzYuK08oTRM/DRLHaGs40qsavXAPMK
+         1L/oa52C+KHCoQmof6nrEDFJA3c+z5Dn8CmCPLZ5a0UNz7BY13/Yd5bmIaYI/RxzEskS
+         OC71P5Yldvz4O/Sw1sk58usICH1NeLiWdCYyREGRYLB2tvVxgN61VFyJgLiGxj+iPTVh
+         /zb822P4SfmTLKk5echBzTRL7mtzEX1lO9Vt8AUhARrnKH2w19QOXlbysljqMFXW1Zxy
+         s3kRSUKphl+I5f4a9RTU5mpkTxEmaKVjqR4X9PcysK7yNwZU2N35JqaS+/2EHJ1eu/9J
+         q4Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718980141; x=1719584941;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1abM88BFe0lQRCbOZswUBP4pTWhgX2789Hxz6HQAYw=;
+        b=ebin8tZ2IJ0e9Ni9/A0icPH2Ct6fh9Yosez8nHyfz7eob6R1c+wsNnVuTeBgEDpQyI
+         GyX39LJnnxPs5gHEXsV/9dB5HrrVKvSzuVdiUnGGZdjFfMBpy9Cxd13mZGS/ve7VO29N
+         z1TYsCJVCgMa1C3Pvb+BO27qWY8+9l0PzAMbldVFZ6JMujFq5qdEqIuC0P9/28md7KrE
+         cDVA10WrIAFsIT4ORzo7Pm19MXfalGdPskrnTf1Iq20v8A26mUXoSMu20IQw61fNEr+y
+         YhVU9JnFhcXAdQCX6nJJOEUfGh5VG+I/36phoJryxhfgG8y8fyT/8Hl7D9BGRbxL9tO4
+         JFyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw/9T1c/VzPOVAH/Zmf7NkJXhApdm5eLJsCQwoxnCiYYpRNRd6FlcYrNzz8qOdoi0/t7lsmi+oMLFEku8vESQE8VLlDH13NnG9sm1HvA==
+X-Gm-Message-State: AOJu0Yx7v7OtP9RiYRHjgJltg6cZHx8T2sF9Mjo+hlD9PdfGrXzs93gV
+	+OFP/O3MMSeSivmTbLRZrKwcpoV20hQtSNgYdqaTPd8GbgQt+kSw4AYhlym5F1c=
+X-Google-Smtp-Source: AGHT+IEkuinnMEokNvg2WVwEkTmhWFZmN7sgYIOaiINLiCcfmqVoMGTXiCo/a5mwW2DIZdGNohN5Wg==
+X-Received: by 2002:a4a:c60f:0:b0:5bd:af39:c9d9 with SMTP id 006d021491bc7-5c1ad9093ebmr9612314eaf.0.1718980140889;
+        Fri, 21 Jun 2024 07:29:00 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d58f236fsm276528eaf.37.2024.06.21.07.28.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 07:29:00 -0700 (PDT)
+Message-ID: <2159f1ad-98c0-4a71-acb9-5e0360e28bfc@kernel.dk>
+Date: Fri, 21 Jun 2024 08:28:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620162316.3674955-3-arnd@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: YXfrRffn6TYyLSwBDXqaZzkqoKWr1mYq
-X-Proofpoint-GUID: Z5Ojicv41iCrwMxI3gZzmAFXZezdhIwz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_06,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=379 mlxscore=0
- malwarescore=0 impostorscore=0 spamscore=0 priorityscore=1501 adultscore=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406210101
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v9 00/10] block atomic writes
+To: John Garry <john.g.garry@oracle.com>, kbusch@kernel.org, hch@lst.de,
+ sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+ jack@suse.cz
+Cc: djwong@kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+ linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
+ linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com,
+ ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
+ hare@suse.de
+References: <20240620125359.2684798-1-john.g.garry@oracle.com>
+ <171891858790.154563.14863944476258774433.b4-ty@kernel.dk>
+ <674559cc-4ecf-43f0-9b76-94fa24a2cf72@oracle.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <674559cc-4ecf-43f0-9b76-94fa24a2cf72@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024 at 06:23:03PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 6/21/24 1:59 AM, John Garry wrote:
+> On 20/06/2024 22:23, Jens Axboe wrote:
+>> On Thu, 20 Jun 2024 12:53:49 +0000, John Garry wrote:
+>>> This series introduces a proposal to implementing atomic writes in the
+>>> kernel for torn-write protection.
+>>>
+>>> This series takes the approach of adding a new "atomic" flag to each of
+>>> pwritev2() and iocb->ki_flags - RWF_ATOMIC and IOCB_ATOMIC, respectively.
+>>> When set, these indicate that we want the write issued "atomically".
+>>>
+>>> [...]
+>> Applied, thanks!
 > 
-> Using sys_io_pgetevents() as the entry point for compat mode tasks
-> works almost correctly, but misses the sign extension for the min_nr
-> and nr arguments.
+> Thanks Jens.
 > 
-> This was addressed on parisc by switching to
-> compat_sys_io_pgetevents_time64() in commit 6431e92fc827 ("parisc:
-> io_pgetevents_time64() needs compat syscall in 32-bit compat mode"),
-> as well as by using more sophisticated system call wrappers on x86 and
-> s390. However, arm64, mips, powerpc, sparc and riscv still have the
-> same bug.
-> 
-> Changes all of them over to use compat_sys_io_pgetevents_time64()
-> like parisc already does. This was clearly the intention when the
-> function was originally added, but it got hooked up incorrectly in
-> the tables.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 48166e6ea47d ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm64/include/asm/unistd32.h         | 2 +-
->  arch/mips/kernel/syscalls/syscall_n32.tbl | 2 +-
->  arch/mips/kernel/syscalls/syscall_o32.tbl | 2 +-
->  arch/powerpc/kernel/syscalls/syscall.tbl  | 2 +-
->  arch/s390/kernel/syscalls/syscall.tbl     | 2 +-
->  arch/sparc/kernel/syscalls/syscall.tbl    | 2 +-
->  arch/x86/entry/syscalls/syscall_32.tbl    | 2 +-
->  include/uapi/asm-generic/unistd.h         | 2 +-
->  8 files changed, 8 insertions(+), 8 deletions(-)
+> JFYI, we will probably notice a trivial conflict in
+> include/uapi/linux/stat.h when merging, as I fixed a comment there
+> which went into v6.10-rc4 . To resolve, the version in this series can
+> be used, as it also fixes that comment.
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
+I did notice and resolved it when I merged it into my for-next branch.
+And then was kind of annoyed when I noticed it was caused by a patch
+from yourself as well, surely that should either have been part of the
+series, just ignored for -git, or done after the fact. Kind of pointless
+to cause conflicts with your own series right when it needs ready to go
+into the for-next tree.
+
+-- 
+Jens Axboe
+
 
