@@ -1,121 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-22060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CEA9118E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 05:07:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CB59118EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 05:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 531B91F22DEF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 03:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 257B51C21B84
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 03:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A9586AE9;
-	Fri, 21 Jun 2024 03:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nkV4iAP5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669C91272A7;
+	Fri, 21 Jun 2024 03:13:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3273A82899
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2024 03:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B066C2AEE3;
+	Fri, 21 Jun 2024 03:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718939246; cv=none; b=gQpRSCWK66hTnIRtYvf44YR4vptVW2suSxQEqdulrq8mIKnHd0D4ikgyghdYDNlEQx4Z6Ck81rI7sSag01PzZXh5jFCFCb6x8M9kB9nttczo+qme8yccrPCiVFHt/wPtzyYZmTycTkDS1YXd/3aGWr+d9VVHT8P8Z99avvUmFJk=
+	t=1718939620; cv=none; b=LmJc0HlUBq/F6dFUpIUR1co7Q5xlGUSMvxlWbPJfeAOzWDIWYaEpGxmGdwcoD7A8rV1Wht9oD5Ku05KY8135uc0MmUWw8HTcq2I2OZkLbsfbSOeDgKMr7HU6e1dTzcJkfoxeevAvRTX1LRv6ubXzQMBCp1h+k1T3lAU80RiW35M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718939246; c=relaxed/simple;
-	bh=NjgtkMi1xH3pULRKKZi/Mq5xLJOnj+0akUY7mKfEJ+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=molRZp1b94qucI2gwKus4JfdIHsDXiYqzUic2i4BnT5nXTbFn8Z85VLaofA0r+oeB6P7iN+barv0OuYbpqRsHgUpDOC5uSSVRgwq9tAkoEdGWedz90MxzvP9Nc5CbR1E20WXDw09KdgsrbAK9gsraPlTow0M8iio4MiivCnPB+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nkV4iAP5; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: ming.lei@redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718939242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=chKn/6asD7InF/qo4+ELX//w9MRWa+KRszAVjbuY5OM=;
-	b=nkV4iAP58xnXQH3lRHJ9X/BXBh5D/jKwuhT53xmyc7f7xHNZVvHZyFqrik6wpW7om3+Vka
-	k1zWule/folIs5jWz8xLM2M4/3Tbok3xLSlEvTzPL/v+4l3c/S2FzfZpwyudal0+iB3NkB
-	J9aPf/dr8OOAQZ4saYw4HV4MBSZ0MMs=
-X-Envelope-To: hch@lst.de
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: lihongbo22@huawei.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: axboe@kernel.dk
-Date: Thu, 20 Jun 2024 23:07:19 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>, 
-	Hongbo Li <lihongbo22@huawei.com>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, axboe@kernel.dk
-Subject: Re: bvec_iter.bi_sector -> loff_t? (was: Re: [PATCH] bcachefs: allow
- direct io fallback to buffer io for) unaligned length or offset
-Message-ID: <6b45ixfmsxdsza6csmlnoatuv24ja3ffdp6lzijfhyjyylfofs@4tpl66qhxrr7>
-References: <20240620132157.888559-1-lihongbo22@huawei.com>
- <bbf7lnl2d5sxdzqbv3jcn6gxmtnsnscakqmfdf6vj4fcs3nasx@zvjsxfwkavgm>
- <ZnQ0gdpcplp_-aw7@casper.infradead.org>
- <20240620153050.GA26369@lst.de>
- <hehodpowajdsfscwf7y3yaqsu2byhzkwpsiaesj5sz722efzg4@gwnod5qe7ed4>
- <ZnTb25qQxSi+tNOk@fedora>
+	s=arc-20240116; t=1718939620; c=relaxed/simple;
+	bh=RpKbTn8z66IM6pDZnQjMY7s18b115A7rGKrIz7h93Lo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E5WXsVQDdQuV1FJKb1LxoWkaU0LJmtXtVbpz35/iF/UVnJToFOUfz7+vgGmFnkVHyytzQdVyn0OuKYLeb7h431NbGV0Fl2J82hBirQ0vE4KE1fiYQJ6g6LwwO+3fNsYt4vfCdQXHKDbniFzWmwP2oIJbd52HsilZVVcYTfXW6Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4W52QN10NMz2CkN9;
+	Fri, 21 Jun 2024 11:09:32 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6E3771A0188;
+	Fri, 21 Jun 2024 11:13:27 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 21 Jun 2024 11:13:27 +0800
+Message-ID: <8f450919-dbd2-4074-a697-92d72f414b65@huawei.com>
+Date: Fri, 21 Jun 2024 11:13:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnTb25qQxSi+tNOk@fedora>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: bvec_iter.bi_sector -> loff_t?
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>, Kent Overstreet
+	<kent.overstreet@linux.dev>
+CC: <linux-bcachefs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-block@vger.kernel.org>, <axboe@kernel.dk>, <hch@lst.de>
+References: <20240620132157.888559-1-lihongbo22@huawei.com>
+ <bbf7lnl2d5sxdzqbv3jcn6gxmtnsnscakqmfdf6vj4fcs3nasx@zvjsxfwkavgm>
+ <ZnQ0gdpcplp_-aw7@casper.infradead.org>
+ <pfxno4kzdgk6imw7vt2wvpluybohbf6brka6tlx34lu2zbbuaz@khifgy2v2z5n>
+ <ZnRBkr_7Ah8Hj-i-@casper.infradead.org>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <ZnRBkr_7Ah8Hj-i-@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Fri, Jun 21, 2024 at 09:48:11AM +0800, Ming Lei wrote:
-> On Thu, Jun 20, 2024 at 11:43:44AM -0400, Kent Overstreet wrote:
-> > On Thu, Jun 20, 2024 at 05:30:50PM +0200, Christoph Hellwig wrote:
-> > > On Thu, Jun 20, 2024 at 02:54:09PM +0100, Matthew Wilcox wrote:
-> > > > I'm against it.  Block devices only do sector-aligned IO and we should
-> > > > not pretend otherwise.
-> > > 
-> > > While I agree with that, the bvec_iter is actually used in a few other
-> > > places and could be used in more, and the 512-byte sector unit bi_sector
-> > > is the only weird thing that's not useful elsewhere.  So turning that
-> > > into a
-> > > 
-> > > 	u64 bi_addr;
-> > > 
-> > > that is byte based where the meaning is specific to the user would
-> > > actually be kinda nice.  For traditional block users we'd need a
-> > > bio_sector() helpers similar to the existing bio_sectors() one,
-> > > but a lot of non-trivial drivers actually need to translated to
-> > > a variable LBA-based addressing, which would be (a tiny little bit)
-> > > simpler with the byte address.   As bi_size is already in bytes
-> > > it would also fit in pretty naturally with that.
-> > > 
-> > > The only thing that is really off putting is the amount of churn that
-> > > this would cause.
-> > 
-> > I'm being imprecise when I just say 'struct bio'; there's things in
-> > there that are block layer specific but there are also things in there
-> > you want that aren't block layer specific (completion callback, write
-> > flags, s/bi_bdev/bi_inode and that as well, perhaps). It's not at all
-> > clear to me we'd want to deal with the churn to split that up or make
-> > bio itself less block layer specific (although, but when I say 'aiming
-> > for commality with struct bio' that sort of thing is what I have in
-> > mind.
-> > 
-> > But more immediately, yes - bi_addr as all we need for this, and like
-> > you said I think it'd be a worthwhile change.
+
+
+On 2024/6/20 22:49, Matthew Wilcox wrote:
+> On Thu, Jun 20, 2024 at 10:16:02AM -0400, Kent Overstreet wrote:
+>> That's really just descriptive, not prescriptive.
+>>
+>> The intent of O_DIRECT is "bypass the page cache", the alignment
+>> restrictions are just a side effect of that. Applications just care
+>> about is having predictable performance characteristics.
 > 
-> Still not clear why you need unaligned bi_addr for bio, if this bio needs
-> to call submit_bio(), it has to be aligned. Otherwise, you could invent any
-> structure for this purpose, and the structure can be payload of bio for
-> avoiding extra allocation, even it can be FS generic structure.
+> But any application that has been written to use O_DIRECT already has the
+> alignment & size guarantees in place.  What this patch is attempting to do
+> is make it "more friendly" to use, and I'm not sure that's a great idea.
+> Not without buy-in from a large cross-section of filesystem people.
 
-We want to have fewer scatter/gather list data structures, not more.
+Indeed, the purpose of O_DIRECT is to bypass the page cache. Either the
+file system can handle the unaligned offset or memory, or it should
+directly return EINVAL (or ENOTSUP for file cannot be read by direct
+I/O?). But I have observed that some file systems have
+this fallback logic (in ext4: if `ext4_should_use_dio` not true, it will 
+fallback to buffer I/O. in f2fs: if `f2fs_should_use_dio` not true, it 
+will fallback to buffer I/O.). Does O_DIRECT flag need prescriptive 
+definition to standardize I/O behavior?
+
+Thanks,
+Hongbo
+> 
+> I'm more sympathetic to "lets relax the alignment requirements", since
+> most IO devices actually can do IO to arbitrary boundaries (or at least
+> reasonable boundaries, eg cacheline alignment or 4-byte alignment).
+> The 512 byte alignment doesn't seem particularly rooted in any hardware
+> restrictions.
+> 
+> But size?  Fundamentally, we're asking the device to do IO directly to
+> this userspace address.  That means you get to do the entire IO, not
+> just the part of it that you want.  I know some devices have bitbucket
+> descriptors, but many don't.
+> 
+>>> I'm against it.  Block devices only do sector-aligned IO and we should
+>>> not pretend otherwise.
+>>
+>> Eh?
+>>
+>> bio isn't really specific to the block layer anyways, given that an
+>> iov_iter can be a bio underneath. We _really_ should be trying for
+>> better commonality of data structures.
+> 
+> bio is absolutely specific to the block layer.  Look at it:
+> 
+> /*
+>   * main unit of I/O for the block layer and lower layers (ie drivers and
+>   * stacking drivers)
+>   */
+> 
+>          struct block_device     *bi_bdev;
+>          unsigned short          bi_flags;       /* BIO_* below */
+>          unsigned short          bi_ioprio;
+>          blk_status_t            bi_status;
+> 
+> Filesystems get to use it to interact with the block layer.  The iov_iter
+> isn't an abstraction over the bio, it's an abstraction over the bio_vec.
+> 
 
