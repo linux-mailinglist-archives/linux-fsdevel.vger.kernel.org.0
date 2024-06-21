@@ -1,140 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-22107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8C5912324
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 13:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFF1912388
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 13:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF841C217BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 11:17:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7911F27380
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 11:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60870172BC7;
-	Fri, 21 Jun 2024 11:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6A8176ABC;
+	Fri, 21 Jun 2024 11:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1qVOfPD"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WyipYmHz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k6Hgy0By";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="duZ7Mh3d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="psEfHHaC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5812D771;
-	Fri, 21 Jun 2024 11:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD8E176254;
+	Fri, 21 Jun 2024 11:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968654; cv=none; b=jcfm9dILGTBL8yQJXhoC8b/oG42SxgiBBV0j1bWJsLeufR/JWMNdYgIdTPMYyQiRSoGKofJj+B6zTH7FN9xpnZCu7ODq8popaioEJUfimpGhU0unnPbsmxXZWCM8DsdLrvICCFXJmi0X1jczKFvvgGrORexrFighyq3BZHLNAko=
+	t=1718969124; cv=none; b=cqXmDZocdt5aXIwPdlp8quU2o/YfQvamAaT17GwZTg+i3zJuciAAMiIyFAW7cQDBF7SDzy5S/cWq+Q2mc5Pw9kWC/SBWdcW6ZQG8QDgQ+YtZ+knshgeQhl+GUU0oGwmTudzcPMqbIMZqjQYFnMygo1t62Cms6FOJzXWly9JUt2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968654; c=relaxed/simple;
-	bh=sVzc/YicQt/3Bw6kdGjiDZDnTvmjCjYj4ieJizyeyeY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=st9GX68wML/SRtWfTw3b6TRMkN55Kbdm9tMdu/6vF24Bg4wiCA+GAruL3VfG0T9sXbxwNboBmJIn6e5meZjNg7AfOufBb1pTS/sM4WAIMUC95cDimPLKU6CnGLMCY0iKGtWEI0FjiRLa+ex8LUAX5cYYG/0MGhlCzFk3130r0Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1qVOfPD; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6efacd25ecso104167766b.1;
-        Fri, 21 Jun 2024 04:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718968651; x=1719573451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g7Y9S7C57tDOTQYtWaBtzx3CbVPOS8YYr0zKSVtRrMQ=;
-        b=O1qVOfPDlmJ8eXXLZUTXATPgo2AvFqF+kG61BUkdytglILlNJrPatFb0MeEI+9kXpO
-         sAODLqsXQqLecBdonN4mtPfuD0l302pLXCpf0xTc0GqJ0pW9lLUz3z70PJ0uWhFXBmU2
-         j4QZMqPR0yQhg1D2g3xwzFf21/F60o/LJB5QDDcDl6tFVWA5cpFMtswWLr1A3py1PkOa
-         R8sFZfDxHU2O6M5Hlw0LfuDGw2GAUEzTccrWmUHWTS6NHeb1xCiRR7ZA/+mDvOGUDlep
-         clxmHCGxBKokw1LLVoSFi4CFMRQ7KcX6Eh+fA9rJgTHE/OFOE3RKlm11igakPEBRB9sI
-         RBHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718968651; x=1719573451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g7Y9S7C57tDOTQYtWaBtzx3CbVPOS8YYr0zKSVtRrMQ=;
-        b=NrRwmtZqzZvxR4g4+F0PbsMg4GsO30XZDsZXfW+iLuaCbX4NZAaZ0KM2xoiaDJk1SQ
-         v84L8jDs9UAsigVl50oGvk09Ypo6QqNPchsGKz7N1C8u1mLjGwKvq/Kv8JTdx/8ZBWd6
-         VfaYsqoh07O88GxZY4IdTJja15u67HXQzMAQVWzdi8TQL+tNhtCu+APwelgXn6WAVeyC
-         0FmiIafFYJW8rcshlTcGQ7aMQBYWJziH43Jl0d60b7YXwy+LEFx3I1obJBCtor9GYs4+
-         +ckxGRmI7BQ6le4s0XMpQfgyG7Z9QuMCJFp1lDIXI13/MCxBox0/J9ebbaRBMRnleb4G
-         yDzw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1OrQhCBPhPyRFtPMj/FDrS3cIwjjxja8LK6WLUJpxyyepu8fRzcWC+5rJgei0tHackIBBM72avwDuaKIEi+4RiRcTDO/7QHQhAFTu8gR2sedfaYFSzrCbEf1QIYedanfC0eOJB+nOuw2D+w==
-X-Gm-Message-State: AOJu0YyI7I+SPgTTG5cpvYM01qm/7zLmuLb4zOLZ6UNRkTzw22VHDOrh
-	AyWboU1eRde1L4JBQY4bqpforwfH+CzI1MoZV9mQvJsVGC+Kq34JoLpLW5D4sIW9iZVQvYYboyu
-	werolF/dRDyXbrs3afzh0sKYbqM8=
-X-Google-Smtp-Source: AGHT+IGVZAg20oIBvCbGXF8iXdeGiupDamoCVJcG/qovlSTHPYhqL6+kjJ32aTE5BJxHG1JdE+Baw+bQq4LcCmgRuwU=
-X-Received: by 2002:a50:9fc9:0:b0:57d:3df:f881 with SMTP id
- 4fb4d7f45d1cf-57d07e0d0a9mr6050621a12.3.1718968651088; Fri, 21 Jun 2024
- 04:17:31 -0700 (PDT)
+	s=arc-20240116; t=1718969124; c=relaxed/simple;
+	bh=7Wg8YiT2kEFpC+UB7M62V8+RiaolnmozV8kRePzaDdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRQ1xz/YP89WrVrsyzPSdqDD5oLYRmDRwDFc/LJHetyAhnkCkVlUwpL7yUSsdXmNcJUPZuoH7tq9g+5fc2upKAOdpyUVcNOvb89vt5n8XoVciIa2bLQPsNo3XhcqBlQPCIpWdWgfu9lqwykOEoH/DtKLKxv8aDWTH3ALmjLqqhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WyipYmHz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k6Hgy0By; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=duZ7Mh3d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=psEfHHaC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DF16821AED;
+	Fri, 21 Jun 2024 11:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718969121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=WyipYmHzsG1UAensuD//zh5tTO0fzOPs90KBZq0WUzubYGpdqbcbFRYZv2TeTotlZ6QFMx
+	p7zMk0h2BQ3WPIPSbj4lm9worX4DD9q7Oa/DRzBWrOguXx8KJRbVShidJgQEXg0Czy0k2O
+	coGFlAD9ukNAUcmlYvyR9/e4MPb8q3s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718969121;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=k6Hgy0BykMdAbsgfLELPDkuW6C8/vvVBNZkUwBjFkOEByT9IduZld8v4ZMRae6eWu2OI/e
+	rxNtVd3cGCHwvoCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718969119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=duZ7Mh3dWNJOGRI1wVpiqdQDtFTsVWVoFmpvtpJdAxFxL5JsZqpJSv0NumVzFG2RRKNPjN
+	MUPoH7TMVnllyAvu2vEIwtjkXGDC66yVXqJozbFyZVvm/BUcwUmFqY+FYxx6fCiO+E2URs
+	kh/WUNfKhRVUf0rRR9R9rvXL3Wrgo5A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718969119;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=psEfHHaCiNdyW2oUvRKBMaH3zkWtCYLj+uWmsjhmO+9mJNQ8I+ZzbC3vWLbHNupKxyEAZ8
+	/8aRzplsLixJ83Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D461A13AAA;
+	Fri, 21 Jun 2024 11:25:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dMzRMx9jdWbWZwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 21 Jun 2024 11:25:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 81A10A087E; Fri, 21 Jun 2024 13:25:19 +0200 (CEST)
+Date: Fri, 21 Jun 2024 13:25:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
+	jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
+Message-ID: <20240621112519.vp26sqmehxbihqgc@quack3>
+References: <20240620120359.151258-1-mjguzik@gmail.com>
+ <20240621-affekt-denkzettel-3c115f68355a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620120359.151258-1-mjguzik@gmail.com> <20240621-affekt-denkzettel-3c115f68355a@brauner>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20240621-affekt-denkzettel-3c115f68355a@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 21 Jun 2024 13:17:17 +0200
-Message-ID: <CAGudoHFeNy55qOw676ohM9-9P-n_P9HNX2qL+kRT-B2SmwguSQ@mail.gmail.com>
-Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,suse.cz,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On Fri, Jun 21, 2024 at 9:45=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
+On Fri 21-06-24 09:45:03, Christian Brauner wrote:
 > On Thu, Jun 20, 2024 at 02:03:59PM GMT, Mateusz Guzik wrote:
 > > The routine is called for all directories on file creation and weirdly
-> > postpones the check if the dir is sticky to begin with. Instead it firs=
-t
+> > postpones the check if the dir is sticky to begin with. Instead it first
 > > checks fifos and regular files (in that order), while avoidably pulling
 > > globals.
-> >
+> > 
 > > No functional changes.
-> >
+> > 
 > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > > ---
 > >  fs/namei.c | 6 +++---
 > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
+> > 
 > > diff --git a/fs/namei.c b/fs/namei.c
 > > index 63d1fb06da6b..b1600060ecfb 100644
 > > --- a/fs/namei.c
 > > +++ b/fs/namei.c
-> > @@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap =
-*idmap,
-> >       umode_t dir_mode =3D nd->dir_mode;
-> >       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid;
-> >
-> > -     if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
-> > -         (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
-> > -         likely(!(dir_mode & S_ISVTX)) ||
-> > +     if (likely(!(dir_mode & S_ISVTX)) ||
-> > +         (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
-> > +         (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
-> >           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
-> >           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid=
-()))
-> >               return 0;
->
-> I think we really need to unroll this unoly mess to make it more readable=
-?
->
+> > @@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
+> >  	umode_t dir_mode = nd->dir_mode;
+> >  	vfsuid_t dir_vfsuid = nd->dir_vfsuid;
+> >  
+> > -	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
+> > -	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
+> > -	    likely(!(dir_mode & S_ISVTX)) ||
+> > +	if (likely(!(dir_mode & S_ISVTX)) ||
+> > +	    (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
+> > +	    (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+> >  	    vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+> >  	    vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
+> >  		return 0;
+> 
+> I think we really need to unroll this unoly mess to make it more readable?
+
+I guess my neural network has adapted to these kind of things in the kernel :)
+
 > diff --git a/fs/namei.c b/fs/namei.c
 > index 3e23fbb8b029..1dd2d328bae3 100644
 > --- a/fs/namei.c
 > +++ b/fs/namei.c
-> @@ -1244,25 +1244,43 @@ static int may_create_in_sticky(struct mnt_idmap =
-*idmap,
->                                 struct nameidata *nd, struct inode *const=
- inode)
+> @@ -1244,25 +1244,43 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
+>                                 struct nameidata *nd, struct inode *const inode)
 >  {
->         umode_t dir_mode =3D nd->dir_mode;
-> -       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid;
-> +       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid, i_vfsuid;
+>         umode_t dir_mode = nd->dir_mode;
+> -       vfsuid_t dir_vfsuid = nd->dir_vfsuid;
+> +       vfsuid_t dir_vfsuid = nd->dir_vfsuid, i_vfsuid;
 > +       int ret;
 > +
 > +       if (likely(!(dir_mode & S_ISVTX)))
@@ -146,27 +188,24 @@ t
 > +       if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
 > +               return 0;
 > +
-> +       i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
+> +       i_vfsuid = i_uid_into_vfsuid(idmap, inode);
 > +
 > +       if (vfsuid_eq(i_vfsuid, dir_vfsuid))
 > +               return 0;
->
+> 
 > -       if (likely(!(dir_mode & S_ISVTX)) ||
 > -           (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
 > -           (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
 > -           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
-> -           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid=
-()))
+> -           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
 > +       if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
 >                 return 0;
->
+> 
 > -       if (likely(dir_mode & 0002) ||
 > -           (dir_mode & 0020 &&
-> -            ((sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mode)) =
-||
-> -             (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_mode))=
-))) {
-> -               const char *operation =3D S_ISFIFO(inode->i_mode) ?
+> -            ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
+> -             (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
+> -               const char *operation = S_ISFIFO(inode->i_mode) ?
 > -                                       "sticky_create_fifo" :
 > -                                       "sticky_create_regular";
 > -               audit_log_path_denied(AUDIT_ANOM_CREAT, operation);
@@ -176,80 +215,26 @@ t
 >         }
 > +
 > +       if (dir_mode & 0020) {
-> +               if (sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mo=
-de)) {
-> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_fifo");
+> +               if (sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) {
+> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_fifo");
 > +                       return -EACCES;
 > +               }
 > +
-> +               if (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_m=
-ode)) {
-> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_regular");
+> +               if (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode)) {
+> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_regular");
 > +                       return -EACCES;
 > +               }
 > +       }
 > +
 >         return 0;
 >  }
->
-> That gives us:
->
-> static int may_create_in_sticky(struct mnt_idmap *idmap,
->                                 struct nameidata *nd, struct inode *const=
- inode)
-> {
->         umode_t dir_mode =3D nd->dir_mode;
->         vfsuid_t dir_vfsuid =3D nd->dir_vfsuid, i_vfsuid;
->         int ret;
->
->         if (likely(!(dir_mode & S_ISVTX)))
->                 return 0;
->
->         if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
->                 return 0;
->
->         if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
->                 return 0;
->
->         i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
->
->         if (vfsuid_eq(i_vfsuid, dir_vfsuid))
->                 return 0;
->
->         if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
->                 return 0;
->
->         if (likely(dir_mode & 0002)) {
->                 audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
->                 return -EACCES;
->         }
->
->         if (dir_mode & 0020) {
->                 if (sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mo=
-de)) {
->                         audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_fifo");
->                         return -EACCES;
->                 }
->
->                 if (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_m=
-ode)) {
->                         audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_regular");
->                         return -EACCES;
->                 }
->         }
->
->         return 0;
-> }
 
-That does look better. :)
+But this definitely looks nicer to read... Feel free to add:
 
-So as far as I'm concerned my patch can be just dropped, just in case
-I'll note there is no need to mention me anywhere near this.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
