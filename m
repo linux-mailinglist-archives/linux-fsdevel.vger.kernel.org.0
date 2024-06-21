@@ -1,114 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-22140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BB1912C74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 19:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 643D3912D0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 20:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD7881F21FF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 17:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11E0D1F25AA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 18:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C74E1607A4;
-	Fri, 21 Jun 2024 17:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F99179202;
+	Fri, 21 Jun 2024 18:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OKGZ5AGK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RQl5Q5CU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FA6B67D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2024 17:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE336156227
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2024 18:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718991021; cv=none; b=Ol3EEk3BsAjecumsBjDDX8gCaNXK953HoWnWIlu5s4YsuPhx8lspLnbsSMBzZmojY7+wj3Ub+5M8AJYYtLRjw5VmPArZUj4RGzys3QOK+duNVs3516wm8D/zd6o7ewrhnKO+eY2TSZWGq0mjgImq1AHC8q+eIA8rtVYvx45QWDc=
+	t=1718993558; cv=none; b=ijku81m3KuPclHwjDjqps85K2G6RSyLboQJ8WsO2YOkiB1KhJm5ZIn4kiwWXT3UPR6rxLcNdXNX/GjmnyJEhgHcA/0wt+CkLLGlqcifd51HrefTjHkoNIa9/e3rXKlaIz51A9WKW1/uuM5ze5U4XWAQwPAPBiSLMvpY+GtYmTlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718991021; c=relaxed/simple;
-	bh=/1Z/V3pCZr27z4StOe08+bblvWTsckN3Z08VsiKU84U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N4ngPSko0hNv0wmvLeEGIQ95X8r22x/heYGEPtUwACvXIfw78faNP0O1KPHIQVRb1yITqAzGDnaV9Wyj8ufM333Iky9VmYt+Vdqijj5gO+TptGQ/JLJjw2ZA7c04AYM02VqSv7uZ8DaOLBB6RAVOLVK9LSbsz9Jv9X1SWKL2lFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OKGZ5AGK; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso22750a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2024 10:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718991018; x=1719595818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/1Z/V3pCZr27z4StOe08+bblvWTsckN3Z08VsiKU84U=;
-        b=OKGZ5AGKhDo6Ma9m5lWJ0jJT9ILWTBYl2RT3O4GGsDNAr7Kks4EltrlKzkcXrinONv
-         jrakJPAnbvZtXFJQFeex22xLZJvRZJg4Z/yQr/hyj6Ji2DVQvtlbc3DT9osyndEpPaHA
-         KmFd0yUhlxdn0ECV8P+KENMvAJfYB2t4mw9T9uRP+3XaQdmxaArOB56o6HJ7+jRuZs8+
-         BO36UTPJ0f0I4Pa1DlJ+o2MmOufKy6oOOjndB4YspAFppY3enabjsyCwS1jiYNGA5EOF
-         dmjf40V8icmisAE11QrLq69Tw/zQ1pcrteRELBCFLUX3RcRYg1D4ot7rcZwXUZlK4A57
-         ALaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718991018; x=1719595818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/1Z/V3pCZr27z4StOe08+bblvWTsckN3Z08VsiKU84U=;
-        b=STyDb6zS8EP8TMcjoRemEw+GJqnqbRWne+FuaZyQG2yehnr6Q9nJc+itc9TgwmVMNW
-         yfjLHgjXNj2TijDqdU/A/6a8PoVGa8AR4x1H/WMEkAgHp6S7RKRMSOa+N4ZZhLRlm1C1
-         UBPlCQyoQCtlMIDWVtr9V4iXSZlZGN1WL3CecfN4MDBo9CWzu2jA7/n2bFFktdGhXCuG
-         09ZCqkkLXGz9qZIImJLZbystJZfDioWpOBROqkaj9hRHD7XAGLNiTzJmA7dzigXpHCSv
-         FyEmC+jFrBIMQmU46aIZsfEihYVeGMNNr8su1Szuuac05QC30wWeQOL80sFyYFlzMrVw
-         L0Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUACzAqwB8IWiwT+JJ4JN6kfqN4PlZc5DzR+6enCCaGZ7psb4lMKBvz5/gyKhTx57dqIYUjxZYViqvVKB+TqlpxaFX2h/cCZz3tVXKynA==
-X-Gm-Message-State: AOJu0YxoyYqOQqd3BiJTc6NOySSCaHVSaGmVaS5R/8nf5nB70sqinUjH
-	gAWpMPbkL2gRqqWvWowuzX6HdH2NlZabShayjxzL+GlgU1C/UVccHWlN8Y3oYvcFqTkLjbHs1bE
-	aHLFdNr9YHZpx2KZ2DDFnmulrSPKwdv3YaAwWB0j7TZurxTlcQyBS
-X-Google-Smtp-Source: AGHT+IFCqhqWyFw06uhWIdpoEoci5WQ84TqCrDo7xDu6Un3b/I5G1wLJTN4tyEMXlmp7ovol4oJY7zRNpVLDwuLsN0Q=
-X-Received: by 2002:a05:6402:26d4:b0:57c:b712:47b5 with SMTP id
- 4fb4d7f45d1cf-57d3f5fbf99mr20040a12.4.1718991017488; Fri, 21 Jun 2024
- 10:30:17 -0700 (PDT)
+	s=arc-20240116; t=1718993558; c=relaxed/simple;
+	bh=zn0J5hnyo6dVCxNaGHylzs/o0p86kxCsjWOV/SevYqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sacmyqp13bzouOd8ga1Xc9RvWfmhrMaWV4kPq4cCFuIs4i7VlIBxdLfPHni8p2nOQtIUsjD+YeQBYUHjPZkCq1HVQ0yq2gZ4ZEltU5CfsnmaDwf9c6WNHrFhxmpOL8rr4dnI9NaOmHv53gh88xeWNeoGdp2ivoFrRqk2WHVzgfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RQl5Q5CU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718993555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Mr03uo/qNadzOQlFY//QZdUfSWytOj/GgGVXQ4GRB8Q=;
+	b=RQl5Q5CUGP+WN80rpAole8uPiINqK/u/SGTokYsDx97IdwXpbzynmaLwIRh5kfmWUJq3eb
+	iGK/ARwXowPgXT+HedJ64M6c4r8KXdkKWvSrmztvQz2FIiVmzJMpqCojkqCo4fp39R1tV2
+	ZBq03tyfPyN7JfHHrqx2EcNRvhxuOWI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-333-RT0_tw-tOvOI7aOA-C_GCg-1; Fri,
+ 21 Jun 2024 14:12:32 -0400
+X-MC-Unique: RT0_tw-tOvOI7aOA-C_GCg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2923219560A2;
+	Fri, 21 Jun 2024 18:12:30 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.33.154])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 73F821956048;
+	Fri, 21 Jun 2024 18:12:27 +0000 (UTC)
+From: Audra Mitchell <audra@redhat.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	aarcange@redhat.com,
+	akpm@linux-foundation.org,
+	rppt@linux.vnet.ibm.com,
+	shli@fb.com,
+	peterx@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	raquini@redhat.com
+Subject: [PATCH v2 1/3] Fix userfaultfd_api to return EINVAL as expected
+Date: Fri, 21 Jun 2024 14:12:22 -0400
+Message-ID: <20240621181224.3881179-1-audra@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621144017.30993-1-jack@suse.cz> <20240621144246.11148-2-jack@suse.cz>
- <20240621101058.afff9eb37e99fd48452599b7@linux-foundation.org>
-In-Reply-To: <20240621101058.afff9eb37e99fd48452599b7@linux-foundation.org>
-From: "Zach O'Keefe" <zokeefe@google.com>
-Date: Fri, 21 Jun 2024 10:29:39 -0700
-Message-ID: <CAAa6QmRev5nwPKnr72rpmi4vjMsbJSR4eGfA_-Bf6hZx-M8adQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Avoid overflows in dirty throttling logic
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Jun 21, 2024 at 10:11=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Fri, 21 Jun 2024 16:42:38 +0200 Jan Kara <jack@suse.cz> wrote:
->
-> > The dirty throttling logic is interspersed with assumptions that dirty
-> > limits in PAGE_SIZE units fit into 32-bit (so that various
-> > multiplications fit into 64-bits). If limits end up being larger, we
-> > will hit overflows, possible divisions by 0 etc. Fix these problems by
-> > never allowing so large dirty limits as they have dubious practical
-> > value anyway. For dirty_bytes / dirty_background_bytes interfaces we ca=
-n
-> > just refuse to set so large limits. For dirty_ratio /
-> > dirty_background_ratio it isn't so simple as the dirty limit is compute=
-d
-> > from the amount of available memory which can change due to memory
-> > hotplug etc. So when converting dirty limits from ratios to numbers of
-> > pages, we just don't allow the result to exceed UINT_MAX.
-> >
->
-> Shouldn't this also be cc:stable?
+Currently if we request a feature that is not set in the Kernel
+config we fail silently and return all the available features. However,
+the man page indicates we should return an EINVAL.
 
-+1 for stable, following previous attempts to address this.
+We need to fix this issue since we can end up with a Kernel warning
+should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
+a kernel with the config not set with this feature.
 
-Either way, it seems this closes the door on the particular overflow
-issue encountered previously. Thanks for the proper fix.
+ [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
+ [  200.820738] Modules linked in:
+ [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
+ [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
+ [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
 
-Reviewed-By: Zach O'Keefe <zokeefe@google.com>
+Fixes: e06f1e1dd499 ("userfaultfd: wp: enabled write protection in userfaultfd API")
+Signed-off-by: Audra Mitchell <audra@redhat.com>
+---
+ fs/userfaultfd.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index eee7320ab0b0..17e409ceaa33 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -2057,7 +2057,7 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+ 		goto out;
+ 	features = uffdio_api.features;
+ 	ret = -EINVAL;
+-	if (uffdio_api.api != UFFD_API || (features & ~UFFD_API_FEATURES))
++	if (uffdio_api.api != UFFD_API)
+ 		goto err_out;
+ 	ret = -EPERM;
+ 	if ((features & UFFD_FEATURE_EVENT_FORK) && !capable(CAP_SYS_PTRACE))
+@@ -2081,6 +2081,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+ 	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+ 	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+ #endif
++
++	ret = -EINVAL;
++	if (features & ~uffdio_api.features)
++		goto err_out;
++
+ 	uffdio_api.ioctls = UFFD_API_IOCTLS;
+ 	ret = -EFAULT;
+ 	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
+-- 
+2.44.0
+
 
