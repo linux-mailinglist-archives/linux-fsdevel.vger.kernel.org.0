@@ -1,229 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-22122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B86912834
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 16:43:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E91912B5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 18:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332471F21929
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 14:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86791C21BD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 16:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094E839856;
-	Fri, 21 Jun 2024 14:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18431607A1;
+	Fri, 21 Jun 2024 16:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CGgGfbbP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7n7W9uL4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3MwmW0kZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4UclTcqg"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="dGyJ89S3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB358328DB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2024 14:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A07208C4;
+	Fri, 21 Jun 2024 16:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718980971; cv=none; b=GlvaQAPJNnJt09Br7ShyqZz6HlQx2ImdyrYJivmbpiZy2+DzNnv+CcQqpKwbtvIpUidSBMfydlZp+Y84PHJWPXKQZpoHLrt1QMMaO8cP7gC+nXWRsuJdFbLfRIP7Ikh7VcXAtKJLdoBBUCmeBtA14rn0l3lZmK/opz6sFZkXGn4=
+	t=1718987433; cv=none; b=fFaD7wztPvbJWv9Bc3QWSkJl0NZSZ1Ex2/6kK5m5H/HXJcFv7qQ6Hkb2cr7Rgp8XXJCKRkXyppmbqmKNwJGFlrwHZHqLlKfR0rDJHOliuiuXnmRB0Ydyi7Df55+cmlht2+KxawOguZ6TVx4Tod5CNnatjJdituHvLOUG8zFnsyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718980971; c=relaxed/simple;
-	bh=PGQ9eidZxl5PPmsdmaSvP6Cbz/TS6SEJbHpwpDbqIXg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ibHv2+eNgfTv1NTKdw+nRvvRX76wfqkFL6Q4T+Qk9S15NguGdkVrM8zvT3Gyv91B0keuEnzZIgC0forUM193oic/mdabQSA2CBBMoYm+bUNbyN/GwuxnP8jMlOZwrKXVK43thD9+GJlMfeCuNjHwk9r8HGVmWD2YcjnrFbwlNqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CGgGfbbP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7n7W9uL4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3MwmW0kZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4UclTcqg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BAEC621B22;
-	Fri, 21 Jun 2024 14:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718980968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqyr0RnJbJELV3zUJDpwC0MLM3pwEIlgqTYPmWwusLQ=;
-	b=CGgGfbbPChCd8y/7GSSaz7DZIQCFRDc/9GlzIfI2xEzAkoVYUvUXeB0A9ZZ4GhlFkmLxwt
-	azwcxI6OUQMz6UOZaNsDesNsEAb4tf66O98AnAEhB6EjzhrE3TwNyJnf/UULTx8j8JtL6P
-	3xK/WuSPVsG7ZQrdgKSxVBn036KwLNw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718980968;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqyr0RnJbJELV3zUJDpwC0MLM3pwEIlgqTYPmWwusLQ=;
-	b=7n7W9uL4eF+l3Nr33q++tRL692RiB9kasHXLuo1PymJEWF2LnCFtJnHeLD703ZLlS7egsE
-	z/mkViTI+7LBusDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718980966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqyr0RnJbJELV3zUJDpwC0MLM3pwEIlgqTYPmWwusLQ=;
-	b=3MwmW0kZcf3W8Pda8g0IoaPQZr0uEX/Lr/SlgxheU9YfeIhUYTRPuO7t/PLkerWMSLRBpD
-	UaKzs5mPJU+gV/nU3xAdDTfmMVmlviZY+Itutjfjbw5JEY0vfnsbAWZrM1c2fit2sFYfjS
-	v9FXvyqkijagWJgfgsqGYPh3q/KRQY4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718980966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqyr0RnJbJELV3zUJDpwC0MLM3pwEIlgqTYPmWwusLQ=;
-	b=4UclTcqgE3nwYJ4MQieFWoVYYl6y+aKtT2DdnO0PnaOBmx8HxpEnIliGuludmCiOxYTpMb
-	9IF3T0KDC4OrF4Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AAC5713ABD;
-	Fri, 21 Jun 2024 14:42:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RoBlKWaRdWY1LgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 21 Jun 2024 14:42:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 505B6A088C; Fri, 21 Jun 2024 16:42:46 +0200 (CEST)
-From: Jan Kara <jack@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Zach O'Keefe <zokeefe@google.com>
-Subject: [PATCH 2/2] mm: Avoid overflows in dirty throttling logic
-Date: Fri, 21 Jun 2024 16:42:38 +0200
-Message-Id: <20240621144246.11148-2-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240621144017.30993-1-jack@suse.cz>
-References: <20240621144017.30993-1-jack@suse.cz>
+	s=arc-20240116; t=1718987433; c=relaxed/simple;
+	bh=TaVSF8Wo6axT8++84WQ+MyVXhldB4MqulOKt1aiG610=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mVEQZhqgc6AweIvkCDJCFyarbcmms7jWLTsNESDuPc5qlU4BjCNRBcM7gZxnXAy2lXugJE7Xyq4jv9seU1rmqLi+FhSFod+JWyIzK29hnhosaniGNUeOc6DrCeIzgfxTqn9jpHTLuxbRBmdAnFbxCXuMWIRM5YojOxvNbr2Dd7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=dGyJ89S3; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718987346; x=1719592146; i=deller@gmx.de;
+	bh=TaVSF8Wo6axT8++84WQ+MyVXhldB4MqulOKt1aiG610=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dGyJ89S3Mtnb3qCeqKQ7dNrV2AX+MBvXvpFOS5qdU5StBNeSfBhj3npOOzwCrL2I
+	 OWu4Iw7nLS7C7FqGCqb9jP0mHnSAWNDp/B7oOpqNyH+7RhIwXCY7R/TwxqQG61hYm
+	 /IvwIpeBjt0GepWOMNkDAIUg6eRs65R2+nmi0nxpCsYyDq2gK2tPySnYyWpVG8S43
+	 ZvQEf501RrASQFyXuehQg5sXe2oBtvJ5uLn25WBdeSp2PKuSAq3KMcugDsB48Eqww
+	 CywDG9/PCKvur0T1ok3M2r3j5b7JRp7HrudYWXhNrBq8o2LuvA8pkp74qNhDfJjtS
+	 rCoZwjkgBr8NtnIQgA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.133]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MfHEJ-1srq1Z2d4N-00ddIK; Fri, 21
+ Jun 2024 18:29:06 +0200
+Message-ID: <cd7fdd76-8da0-4d43-9d1c-c93aed4c0f5d@gmx.de>
+Date: Fri, 21 Jun 2024 18:28:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3212; i=jack@suse.cz; h=from:subject; bh=PGQ9eidZxl5PPmsdmaSvP6Cbz/TS6SEJbHpwpDbqIXg=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBmdZFe1cqxh1W5xSHP5qGjzvsdKdp2/ceQRROd4IDx Z1STypOJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZnWRXgAKCRCcnaoHP2RA2bh6B/ 4o3zS6c3ozgcIrmDXXjjNGDIosNSTgXsSgX4g9ID690j3es5QwCpDRSmzjA1SffZzkmIPLnQEFUfT6 /toeZ8EzycoWui6oDT9S5dS1K/6xi8fsuW78oshqhRJ09rZzpaoudk4WZmvFitgu3JzNktKpZThGTm eRM3h11/VL6VNyK0DQia1x6YU+cPq1CvJwrZfkaRA73wnN8nSuZf7Wiwwkxyr45LJzIFg4Ssefd2zS jaTOQjWKUWfpZiANeTf4ANaOEu0ZvXhiLOpp1fOUeefDqhkg9vZHbfsw9unh4PEeRdNrAKvuT3FJa/ jogccdAbXvip097M0iREZpEqvawD/h
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/15] parisc: use generic sys_fanotify_mark
+ implementation
+To: Arnd Bergmann <arnd@arndb.de>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Arnd Bergmann <arnd@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Brian Cain <bcain@quicinc.com>, linux-hexagon@vger.kernel.org,
+ guoren <guoren@kernel.org>,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Xi Ruoyao <libc-alpha@sourceware.org>,
+ "musl@lists.openwall.com" <musl@lists.openwall.com>,
+ LTP List <ltp@lists.linux.it>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-8-arnd@kernel.org>
+ <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
+ <1537113c4396cd043a08a72bdca80cccfa2d54d9.camel@physik.fu-berlin.de>
+ <ba14c4fb-e6a7-46b3-a030-081482264a99@app.fastmail.com>
+ <a623c1979ac494d01977abe6dfc22e8381dc6e4f.camel@physik.fu-berlin.de>
+ <83613d85-53f9-4644-be68-4f438abe2e52@app.fastmail.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <83613d85-53f9-4644-be68-4f438abe2e52@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qzcGugqMcbMY+YWYJmVsNMJLSzXL1IFC+qPqRPEqwIjeHu1j8dW
+ eKrd9zTKO8WqTBd1atZ9gk73fhgOsLFzmyt55jQz2EE0lv7OLTEi8eH1tERMhO+XealwSx1
+ UGgBBAPSpMfKRXJChZsTA9t/N/bEd9WMNnHEwTU1TsTs3cyh1vRWNfUsERYHddYMxe16B2C
+ 4cE95QxNZt3dO/ZdT1fcQ==
 X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+UI-OutboundReport: notjunk:1;M01:P0:qkvA0SU8VBk=;7/QatZvg+BRxv1QkYdIagec8md0
+ /gpUIUeNoh2h5Zc2DzrKSZAqUU/Uw+GnsiaAaeHEHI+myLKBBKPB0CZ4PI9GoNYcjlvRwC+Dt
+ cj4SKrgECYJdrasgoF20T9r9P8F4BOUJuHY7LfSfBt6aBQXc93SxHPI1b2yssJl0RJaoaYxmY
+ oLb2/KG/hDplIAs8CJ6xU8ciG5YfyKU1j1+jkWw1MQPFc3+e4aIxLiTSvFRncW/p38cwcMayq
+ jza45P6I18yIb0lDFwYxfYx7JtvcYmz49tEM+mRNWRo0sqZOKrDutFk2bIfcxantsC9mqHxQs
+ 5a3j94hFYF0GycjrDV+oesj7qYVBuU6oYunEsd60beMeznHHR3ImzBXx0U+lZ1yg5DwK5B7CI
+ QesCueVCEB/qYbWnjOn2wcuR9pB1PIHB4z/V43nmRFpwUH1vi3CFARq2AflaUsICu5nwLy9Xf
+ Qkf/FIQ2HAWc3Nz8D7NpxmuEdmmXn1uUlfNkFMEIMvZS08xsLcvFw7HawfxyG3k0NSKzQBLpm
+ ja62fYS6SAKuF+UBiwKzX5eFg26Sbjq3sh26tyiYHSDDdClW4X5tok+KvIYORgrjWs4GT9uCM
+ 6aaMHjRJ+tik9fPg2gVvQPbCJ7BZasXiujTtGovW47pMTNieoSrWh7Q3faXOlVgg6VgWPvFQn
+ dRdHVRBA7/oVEYpoz4lYuxsnHQfksXpjaFITA0DK0Gs+syZDYB8Aqpcri4MPk01+eWrlM5X8c
+ 1YVFCGgstmmLXXu2b3Sj6ehNnDt85oZyT/Iy1bR4HWd48jJY/zu80u6vzoZmdVbwkKjEt+2ip
+ ExQiXgsj0tPfrUnUe2j3FBUQbV3FxfoNfx2osTCe+13E8=
 
-The dirty throttling logic is interspersed with assumptions that dirty
-limits in PAGE_SIZE units fit into 32-bit (so that various
-multiplications fit into 64-bits). If limits end up being larger, we
-will hit overflows, possible divisions by 0 etc. Fix these problems by
-never allowing so large dirty limits as they have dubious practical
-value anyway. For dirty_bytes / dirty_background_bytes interfaces we can
-just refuse to set so large limits. For dirty_ratio /
-dirty_background_ratio it isn't so simple as the dirty limit is computed
-from the amount of available memory which can change due to memory
-hotplug etc. So when converting dirty limits from ratios to numbers of
-pages, we just don't allow the result to exceed UINT_MAX.
+On 6/21/24 11:52, Arnd Bergmann wrote:
+> On Fri, Jun 21, 2024, at 11:03, John Paul Adrian Glaubitz wrote:
+>> On Fri, 2024-06-21 at 10:56 +0200, Arnd Bergmann wrote:
+>>> Feel free to pick up the sh patch directly, I'll just merge whatever
+>>> is left in the end. I mainly want to ensure we can get all the bugfixe=
+s
+>>> done for v6.10 so I can build my longer cleanup series on top of it
+>>> for 6.11.
+>>
+>> This series is still for 6.10?
+>
+> Yes, these are all the bugfixes that I think we want to backport
+> to stable kernels, so it makes sense to merge them as quickly as
+> possible. The actual stuff I'm working on will come as soon as
+> I have it in a state for public review and won't need to be
+> backported.
 
-Reported-by: Zach O'Keefe <zokeefe@google.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- mm/page-writeback.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+Ah, OK.... in that case would you please keep the two parisc
+patches in your git tree? I didn't plan to send a new pull
+request during v6.10, so it's easier for me if you keep them
+and send them together with your other remaining patches.
+(I'll drop them now from the parisc tree)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 2573e2d504af..8a1c92090129 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -415,13 +415,20 @@ static void domain_dirty_limits(struct dirty_throttle_control *dtc)
- 	else
- 		bg_thresh = (bg_ratio * available_memory) / PAGE_SIZE;
- 
--	if (bg_thresh >= thresh)
--		bg_thresh = thresh / 2;
- 	tsk = current;
- 	if (rt_task(tsk)) {
- 		bg_thresh += bg_thresh / 4 + global_wb_domain.dirty_limit / 32;
- 		thresh += thresh / 4 + global_wb_domain.dirty_limit / 32;
- 	}
-+	/*
-+	 * Dirty throttling logic assumes the limits in page units fit into
-+	 * 32-bits. This gives 16TB dirty limits max which is hopefully enough.
-+	 */
-+	if (thresh > UINT_MAX)
-+		thresh = UINT_MAX;
-+	/* This makes sure bg_thresh is within 32-bits as well */
-+	if (bg_thresh >= thresh)
-+		bg_thresh = thresh / 2;
- 	dtc->thresh = thresh;
- 	dtc->bg_thresh = bg_thresh;
- 
-@@ -471,7 +478,11 @@ static unsigned long node_dirty_limit(struct pglist_data *pgdat)
- 	if (rt_task(tsk))
- 		dirty += dirty / 4;
- 
--	return dirty;
-+	/*
-+	 * Dirty throttling logic assumes the limits in page units fit into
-+	 * 32-bits. This gives 16TB dirty limits max which is hopefully enough.
-+	 */
-+	return min_t(unsigned long, dirty, UINT_MAX);
- }
- 
- /**
-@@ -508,10 +519,17 @@ static int dirty_background_bytes_handler(struct ctl_table *table, int write,
- 		void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret;
-+	unsigned long old_bytes = dirty_background_bytes;
- 
- 	ret = proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
--	if (ret == 0 && write)
-+	if (ret == 0 && write) {
-+		if (DIV_ROUND_UP(dirty_background_bytes, PAGE_SIZE) >
-+								UINT_MAX) {
-+			dirty_background_bytes = old_bytes;
-+			return -ERANGE;
-+		}
- 		dirty_background_ratio = 0;
-+	}
- 	return ret;
- }
- 
-@@ -537,6 +555,10 @@ static int dirty_bytes_handler(struct ctl_table *table, int write,
- 
- 	ret = proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- 	if (ret == 0 && write && vm_dirty_bytes != old_bytes) {
-+		if (DIV_ROUND_UP(vm_dirty_bytes, PAGE_SIZE) > UINT_MAX) {
-+			vm_dirty_bytes = old_bytes;
-+			return -ERANGE;
-+		}
- 		writeback_set_ratelimit();
- 		vm_dirty_ratio = 0;
- 	}
--- 
-2.35.3
+I tested both patches, so you may add:
+Tested-by: Helge Deller <deller@gmx.de>
+Acked-by: Helge Deller <deller@gmx.de>
 
+Thank you!
+Helge
 
