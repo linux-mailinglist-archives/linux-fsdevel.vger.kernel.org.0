@@ -1,241 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-22074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C90F911B6A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 08:20:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC48E911BCC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 08:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81677B2575F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 06:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E684B2454E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 06:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535A416C685;
-	Fri, 21 Jun 2024 06:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2820B15A49F;
+	Fri, 21 Jun 2024 06:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="q2q6LjI7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gLtfOlca";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="q2q6LjI7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gLtfOlca"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YUfcwoBS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TsA19tge"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C35A169361;
-	Fri, 21 Jun 2024 06:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936C93C0D;
+	Fri, 21 Jun 2024 06:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718950647; cv=none; b=G72emMZrjwaU82BLRP4yjHXwZ+JXi2CSB88yPoXxa96fG1d5SFesi0qwG16j1MJg07M2tWpIVfaxfkdXTMBgwgAq03e408F4fAD5QrMeX15pgdYwdROqcNdt0NoQCUrOPapvz9UkA6uEmfGxcXSqsYnVVCLzo35MQNMGivWMMH0=
+	t=1718951418; cv=none; b=JrJ5X7HnFYyRibmcCf7RKcHoJJt6rcgeXyDEX65aeQtRxlCDvx8opqyR74lnoMAsQDcwrpjRLaKQTq62dKR/PJonIcMH03lPi5Vx25A5JbTtftS0md4dNN5nbLdnWcL4g7z0aOYHagXEL3I91SSrtW2EcH7/RrwyNo+2Ue2xXzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718950647; c=relaxed/simple;
-	bh=lhaF1TdXEEGFpX6mO4PrmRoi8Yb6OvspG4qmTWJYmik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ge2kZsCMm2OZKktlSSjTPCe98QKE9yEnNgQlzrS3KDcDSyX3WGiyZ/WEbsFpqWBhVomfRODxVccnQPmKIyry1738uucom6AEaA9g1kiAjywkoasTXL4OEBFCE83ch8PPkuUe+7G5be51dDPpue8W705agXMFE1wXXcBBird0Occ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=q2q6LjI7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gLtfOlca; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=q2q6LjI7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gLtfOlca; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 20ED121A8A;
-	Fri, 21 Jun 2024 06:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718950643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1BlICI+5gigoBuJzINX9RLMovcoOejI1LZxSX8ehXg=;
-	b=q2q6LjI7eDIzYi4henwTHx8dRZaXAa7+djX0kFR5UUHAuudm612MXBypNr5L9JL2tDJ6n2
-	Y9PstPp7dMAetzheYdoenWPRwS+ttJ3wvFIHfKhd6/50oiS9OO1SxpHN6kGDfIvCbIsLJE
-	iOtD2wq1yAlAgmwsCLDr1D2bwOxaIa0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718950643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1BlICI+5gigoBuJzINX9RLMovcoOejI1LZxSX8ehXg=;
-	b=gLtfOlca4LtQoIRswmFkkMgUUOfoNpIVhowLo7kOWZagO0qVTO0s7HFZBroAJlDB7s8EXe
-	qicHOQVc/Os4wTAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=q2q6LjI7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=gLtfOlca
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718950643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1BlICI+5gigoBuJzINX9RLMovcoOejI1LZxSX8ehXg=;
-	b=q2q6LjI7eDIzYi4henwTHx8dRZaXAa7+djX0kFR5UUHAuudm612MXBypNr5L9JL2tDJ6n2
-	Y9PstPp7dMAetzheYdoenWPRwS+ttJ3wvFIHfKhd6/50oiS9OO1SxpHN6kGDfIvCbIsLJE
-	iOtD2wq1yAlAgmwsCLDr1D2bwOxaIa0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718950643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1BlICI+5gigoBuJzINX9RLMovcoOejI1LZxSX8ehXg=;
-	b=gLtfOlca4LtQoIRswmFkkMgUUOfoNpIVhowLo7kOWZagO0qVTO0s7HFZBroAJlDB7s8EXe
-	qicHOQVc/Os4wTAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E88D13ABD;
-	Fri, 21 Jun 2024 06:17:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MNsdIvEadWbDfAAAD6G6ig
-	(envelope-from <hare@suse.de>); Fri, 21 Jun 2024 06:17:21 +0000
-Message-ID: <e2574365-cb5b-4376-aa8e-adf05b788337@suse.de>
-Date: Fri, 21 Jun 2024 08:17:21 +0200
+	s=arc-20240116; t=1718951418; c=relaxed/simple;
+	bh=QTDvmlCgRLlBME4zt8gkdNo0SO4LeIf5kG63XslMO08=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=JTLcaXE9VWs/8QTVR1wiGkx7Ibvw113svzT9wDCrFfJOJ7cVtFR7OxapD/mQz5Dfiz8FRSLsb/jbJ5Dyvxfz2Tl6RZjkxZUdnzV1RThZFphJwaQuw717gR37OHAK8lSQV2Wvjaekq71Lqola5Iu8mDgaN2rSyWvDRMLR+o6UnEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YUfcwoBS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TsA19tge; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 84F2B138026C;
+	Fri, 21 Jun 2024 02:30:14 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 21 Jun 2024 02:30:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718951414;
+	 x=1719037814; bh=0NAp6YpmQQzb+XaqCHOddozx1CwlQxt9qQHhSQdm/eM=; b=
+	YUfcwoBSCsdr4lbdFToY1N/Zs4J4ckS/QAFHkFhDVLoMlvGNE9DG/Up12YB02Xt2
+	EvdhpTEPC4jKy9ytn/wkuqfYy4S1cppgeD4oj7WA+/5sqCNg/z+lPwlRbPyO/Flv
+	86iciY4yavDos8ifYZIvOfII9G79cFp+BbP22J8pM9RrD+d18AtMZbn8j9nT03bV
+	c7xQT06XqtjmkNTJ3loldGGvKZUIHFOFW5y31AIvhjBqlktBLCcT2CdKqNOYzmSV
+	sMmQF4/bSVH0PEqvVO/XPs0/1B6SgKYgXBpAog/xndEaqaywJvgFOBJuhrryZ4PT
+	p2/5cEIyG3XclTxM5zIk6Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718951414; x=
+	1719037814; bh=0NAp6YpmQQzb+XaqCHOddozx1CwlQxt9qQHhSQdm/eM=; b=T
+	sA19tgeRrtyO5cROFsAr3JW3gCmvjTkfGvoIFyTvlgeMHOUsPYhUf63dPMHGumOG
+	SIVUOPVMYqUiSDU81ctnvLlpO9PEmKT5nYGuN8Yk6mi2deAmhqwvD8T8lcVqcfB1
+	GPqL5qicjYl82FohTt6bsxJU60LE/Hsa42KrOIywf7lBtaIPivddS4cPuSL9Zm6B
+	LHiJJ7dQip90rRSAu8Rm0KDbhCZ/X7xYsJbH8aqLdEew+kE5apOFPvumBP+Yp5Fz
+	Rr5E19oZ7V3IGyh5IXREy5PC+msQ9aq0CnRgKaDNrD+E/iA5xot89u78VGuhZWhK
+	zW007umSQsVkCbMOwZN5A==
+X-ME-Sender: <xms:9B11ZuBxjRBAW0tNynq8H1-YRQjdkmL-JPoLIbLq-orE5Mdjc1QF6A>
+    <xme:9B11ZojY_qLmvoF_ar3eB4_lK44-YnS7iEik2csxzA9Ys1vKqB1JAHCw16DZLb5Ul
+    cdeR1H2mE3zhLekbAU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeffedgudduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    tehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrf
+    grthhtvghrnhepueelffeiudevhfettedvhfevkeekveevffehveehhefftdeiheduledu
+    iedtvdffnecuffhomhgrihhnpegrkhgrrdhmshenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:9B11Zhm6zOHfU1WuWgDdoSU71qsQzLDsjAJ7Nhxw117RxV0KzM2GHQ>
+    <xmx:9B11ZsweTZURJjYSmpSNhPg_buY1pvgdHiULQsyQVa-AcYIqIMlFBA>
+    <xmx:9B11ZjQp1WOoJc2XCjVhKQs5UkDHi7Xc0oSg1RRu1sY5kpyhJuIyfA>
+    <xmx:9B11ZnbfnZmS9DMt_cIsivY9q90FCfqmpn7bFXeT3Vnm0PLjcHHdDQ>
+    <xmx:9h11Zm92tL5faK9ZKeseMNCfbg9AEZegZt4gth5vlZ0KCBBhZQ4GEtV8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 60EDBB6008D; Fri, 21 Jun 2024 02:30:12 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v9 10/10] nvme: Atomic write support
-Content-Language: en-US
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
- martin.petersen@oracle.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- dchinner@redhat.com, jack@suse.cz
-Cc: djwong@kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
- linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
- linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com,
- ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
- snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
- Alan Adamson <alan.adamson@oracle.com>
-References: <20240620125359.2684798-1-john.g.garry@oracle.com>
- <20240620125359.2684798-11-john.g.garry@oracle.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240620125359.2684798-11-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 20ED121A8A
-X-Spam-Score: -3.00
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[31];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,lists.infradead.org,mit.edu,google.com,linux.ibm.com,kvack.org,gmail.com,infradead.org,redhat.com,lists.linux.dev,oracle.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,oracle.com:email,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Message-Id: <1308b23a-d7c0-449e-becd-53c42114661e@app.fastmail.com>
+In-Reply-To: <e22d7cd7-d247-4426-9506-a3a644ae03c4@cs-soprasteria.com>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-8-arnd@kernel.org>
+ <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
+ <e22d7cd7-d247-4426-9506-a3a644ae03c4@cs-soprasteria.com>
+Date: Fri, 21 Jun 2024 08:28:40 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "LEROY Christophe" <christophe.leroy2@cs-soprasteria.com>,
+ "Helge Deller" <deller@gmx.de>, "Arnd Bergmann" <arnd@kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "Rich Felker" <dalias@libc.org>, "Andreas Larsson" <andreas@gaisler.com>,
+ guoren <guoren@kernel.org>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+ "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+ "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ "Heiko Carstens" <hca@linux.ibm.com>,
+ "musl@lists.openwall.com" <musl@lists.openwall.com>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "LTP List" <ltp@lists.linux.it>, "Brian Cain" <bcain@quicinc.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Xi Ruoyao" <libc-alpha@sourceware.org>,
+ "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "Adhemerval Zanella Netto" <adhemerval.zanella@linaro.org>,
+ "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 07/15] parisc: use generic sys_fanotify_mark implementation
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/20/24 14:53, John Garry wrote:
-> From: Alan Adamson <alan.adamson@oracle.com>
-> 
-> Add support to set block layer request_queue atomic write limits. The
-> limits will be derived from either the namespace or controller atomic
-> parameters.
-> 
-> NVMe atomic-related parameters are grouped into "normal" and "power-fail"
-> (or PF) class of parameter. For atomic write support, only PF parameters
-> are of interest. The "normal" parameters are concerned with racing reads
-> and writes (which also applies to PF). See NVM Command Set Specification
-> Revision 1.0d section 2.1.4 for reference.
-> 
-> Whether to use per namespace or controller atomic parameters is decided by
-> NSFEAT bit 1 - see Figure 97: Identify – Identify Namespace Data
-> Structure, NVM Command Set.
-> 
-> NVMe namespaces may define an atomic boundary, whereby no atomic guarantees
-> are provided for a write which straddles this per-lba space boundary. The
-> block layer merging policy is such that no merges may occur in which the
-> resultant request would straddle such a boundary.
-> 
-> Unlike SCSI, NVMe specifies no granularity or alignment rules, apart from
-> atomic boundary rule. In addition, again unlike SCSI, there is no
-> dedicated atomic write command - a write which adheres to the atomic size
-> limit and boundary is implicitly atomic.
-> 
-> If NSFEAT bit 1 is set, the following parameters are of interest:
-> - NAWUPF (Namespace Atomic Write Unit Power Fail)
-> - NABSPF (Namespace Atomic Boundary Size Power Fail)
-> - NABO (Namespace Atomic Boundary Offset)
-> 
-> and we set request_queue limits as follows:
-> - atomic_write_unit_max = rounddown_pow_of_two(NAWUPF)
-> - atomic_write_max_bytes = NAWUPF
-> - atomic_write_boundary = NABSPF
-> 
-> If in the unlikely scenario that NABO is non-zero, then atomic writes will
-> not be supported at all as dealing with this adds extra complexity. This
-> policy may change in future.
-> 
-> In all cases, atomic_write_unit_min is set to the logical block size.
-> 
-> If NSFEAT bit 1 is unset, the following parameter is of interest:
-> - AWUPF (Atomic Write Unit Power Fail)
-> 
-> and we set request_queue limits as follows:
-> - atomic_write_unit_max = rounddown_pow_of_two(AWUPF)
-> - atomic_write_max_bytes = AWUPF
-> - atomic_write_boundary = 0
-> 
-> A new function, nvme_valid_atomic_write(), is also called from submission
-> path to verify that a request has been submitted to the driver will
-> actually be executed atomically. As mentioned, there is no dedicated NVMe
-> atomic write command (which may error for a command which exceeds the
-> controller atomic write limits).
-> 
-> Note on NABSPF:
-> There seems to be some vagueness in the spec as to whether NABSPF applies
-> for NSFEAT bit 1 being unset. Figure 97 does not explicitly mention NABSPF
-> and how it is affected by bit 1. However Figure 4 does tell to check Figure
-> 97 for info about per-namespace parameters, which NABSPF is, so it is
-> implied. However currently nvme_update_disk_info() does check namespace
-> parameter NABO regardless of this bit.
-> 
-> Signed-off-by: Alan Adamson <alan.adamson@oracle.com>
-> Reviewed-by: Keith Busch <kbusch@kernel.org>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> jpg: total rewrite
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   drivers/nvme/host/core.c | 52 ++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 52 insertions(+)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+On Fri, Jun 21, 2024, at 07:26, LEROY Christophe wrote:
+> Le 20/06/2024 =C3=A0 23:21, Helge Deller a =C3=A9crit :
+>> [Vous ne recevez pas souvent de courriers de deller@gmx.de. D=C3=A9co=
+uvrez
+>> pourquoi ceci est important =C3=A0
+>> https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> On 6/20/24 18:23, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> The sys_fanotify_mark() syscall on parisc uses the reverse word order
+>>> for the two halves of the 64-bit argument compared to all syscalls on
+>>> all 32-bit architectures. As far as I can tell, the problem is that
+>>> the function arguments on parisc are sorted backwards (26, 25, 24, 2=
+3,
+>>> ...) compared to everyone else,
+>>
+>> r26 is arg0, r25 is arg1, and so on.
+>> I'm not sure I would call this "sorted backwards".
+>> I think the reason is simply that hppa is the only 32-bit big-endian
+>> arch left...
+>
+> powerpc/32 is big-endian: r3 is arg0, r4 is arg1, ... r10 is arg7.
 
-Cheers,
+Right, I'm pretty sure the ordering is the same on arm, mips,
+s390, m68k, openrisc, sh and sparc when running 32-bit big-endian
+code.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+It's more likely to be related to the upward growing stack.
+I checked the gcc sources and found that out of the 50 supported
+architectures, ARGS_GROW_DOWNWARD is set on everything except
+for gcn, stormy16 and  32-bit parisc. The other two are
+little-endian though. STACK_GROWS_DOWNWARD in turn is set on
+everything other than parisc (both 32-bit and 64-bit).
 
+      Arnd
 
