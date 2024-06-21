@@ -1,35 +1,35 @@
-Return-Path: <linux-fsdevel+bounces-22129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3C9912C29
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 19:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B787912C2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 19:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14161283ED1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 17:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC23D1C21B4A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 17:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21CA15F40A;
-	Fri, 21 Jun 2024 17:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21521607AD;
+	Fri, 21 Jun 2024 17:03:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2772BD05;
-	Fri, 21 Jun 2024 17:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A8513D521;
+	Fri, 21 Jun 2024 17:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718989368; cv=none; b=iDJ3dzI4co2xh6AVNN5AAvYNCEwbQaKvWSbTYilsbTj38KNzogS0pGWaRoYnh8+xGFGmwZd1iriHq3uF10blceENNwMOtSyF42RwKkr1y0qD1wAoVaiKkYEZMnSiAQWh4i4is1oCogxEbsR1Vjw37xltakkjPReWWO/ByRhyQS4=
+	t=1718989413; cv=none; b=HV9hFVIrjMSUp//n3EXRLroI7CJGrG9Y0LyUS+4d2cPVG7FFg3+OgnGzSPvNLTcaHoVMgscjUOQkDpTMzVJswCHrsmClfF0TOpip3M3rg91mNp5emOuB4M4y+ScOqqM3EfOL1dHkOIB3WyMaIUD7yeGdmwlDtr/873X2/U5WIio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718989368; c=relaxed/simple;
-	bh=3jzH4jvEcuFZzlKGPhEVPTXbanqWf+vKVdJHAfsK8eE=;
+	s=arc-20240116; t=1718989413; c=relaxed/simple;
+	bh=D+Raz8KAfT2bCqaRz2uy0roK97yIdIygpPSbXYx7Drg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMvaONkvb0eXlb5aPGT8WYsTe1DkyJoxl0LmI7kwb+gBjxIAKwIK9sXM8AE3ZKvXW3MCKIHEKZo3fCkXjibFzCY9a83JDcMvIxkpDxLSzCzA5EoR+phupd5sDIMK/B8NMBYS+dXcxz0veP2kn3dDjFKGtp/qhMs6TgfeFIwojDM=
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdheAu2egBOFoD7h5zKwUDs/CQrevV0ooHQhBmjx1jg4wN5AuV8PlQFxvZMi2O2HYMUCk1As6VkSSwvszeUrznKyq9T/Yt/JOMWS3iv9II5t/Dq3bFgk9ur6wIxMqmTrlBq5T3VanBOss/3xMDCUV2K2JKidUek2/1kb48jO4+I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF7FC2BBFC;
-	Fri, 21 Jun 2024 17:02:43 +0000 (UTC)
-Date: Fri, 21 Jun 2024 18:02:42 +0100
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D240BC3277B;
+	Fri, 21 Jun 2024 17:03:26 +0000 (UTC)
+Date: Fri, 21 Jun 2024 18:03:24 +0100
 From: Catalin Marinas <catalin.marinas@arm.com>
 To: Joey Gouly <joey.gouly@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
@@ -42,12 +42,10 @@ Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
 	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
 	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
 	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 05/29] arm64: cpufeature: add Permission Overlay
- Extension cpucap
-Message-ID: <ZnWyMvu0HCKajrXP@arm.com>
+Subject: Re: [PATCH v4 06/29] arm64: context switch POR_EL0 register
+Message-ID: <ZnWyXEpoIx_BnUhw@arm.com>
 References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-6-joey.gouly@arm.com>
- <ZnWyAJb63XjZiEqf@arm.com>
+ <20240503130147.1154804-7-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,22 +54,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnWyAJb63XjZiEqf@arm.com>
+In-Reply-To: <20240503130147.1154804-7-joey.gouly@arm.com>
 
-On Fri, Jun 21, 2024 at 06:01:52PM +0100, Catalin Marinas wrote:
-> On Fri, May 03, 2024 at 02:01:23PM +0100, Joey Gouly wrote:
-> > This indicates if the system supports POE. This is a CPUCAP_BOOT_CPU_FEATURE
-> > as the boot CPU will enable POE if it has it, so secondary CPUs must also
-> > have this feature.
-> > 
-> > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
+On Fri, May 03, 2024 at 02:01:24PM +0100, Joey Gouly wrote:
+> POR_EL0 is a register that can be modified by userspace directly,
+> so it must be context switched.
 > 
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
 
-One ack is sufficient, ignore this one ;)
-
--- 
-Catalin
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
