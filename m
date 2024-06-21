@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-22159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E92912EA4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 22:37:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B756F912EA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 22:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4791C22E49
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 20:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618C31F22526
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 20:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FE217B512;
-	Fri, 21 Jun 2024 20:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD7117B4E8;
+	Fri, 21 Jun 2024 20:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmcabiAP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFjC5+pF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD8C17B41F;
-	Fri, 21 Jun 2024 20:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEFF16849B;
+	Fri, 21 Jun 2024 20:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719002224; cv=none; b=gEWZrbXq0xPvsz1hXXyJIu36kt+WENwfC5GIYvSNoiiHR86nXLQ3MpwqzYSUusYQgkSA0eebtM2oUEqvQiyn7jflgvBppHZLxjeGgQwfjlvY/v2m8tubsEOsNNbGpucD8TVZJJXq8kFYpWTsMYOJxstbhXVlnkh0uxmradccXPk=
+	t=1719002287; cv=none; b=DeGx1YHvMqZY3Qz5wzWszzHifHWgcyfX52UzLcadLqBAFHjYEmWeNCnWugCNJNrULUVH8sLXbXQloq4JNuXVLDwyM6qXdWeTVl0pSgs3y6/j2gznzvcC8T70pr4CWe1Y2T/SKKJ5WTcEU6mstzTAVrmYZmiTnSE+0HQD2ydy0Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719002224; c=relaxed/simple;
-	bh=K829tKMdHL12dqTYF+FPBWpnSMhQylZ6lVHoNcmwXF4=;
+	s=arc-20240116; t=1719002287; c=relaxed/simple;
+	bh=4NZsF7nKIUwjaD/dldJqTXyP3vrorwabNNaT8yPSQ/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOU9CBsys785eg8GzJtn0kXSc3gc1O3e418CZ4sHuCs0qceR2hpmhbmwPQR8QE82Ge2xkmQVXM8eisDtnuKed82lCdTaShiJ0wEV9zveaz+YAsDrFXChE/nOraz+9s81+VShVCJSgvDjdlZfi+hM/Vjgn6jbYeFTWoAgxx732c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmcabiAP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1E1C2BBFC;
-	Fri, 21 Jun 2024 20:37:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDELbWkYabSPWU1KnqVQIssjJvBNJZKzVvZCS6cFy6d1V+4Z1IBn0BdkHl5q5rN/slaA1ReMjnyjrn999o+vIMYIKdDaZno138ECsG9Du1SM77lWefzruhsz72FrdWFeCw6X/iluLCcL59XN/nmohn6FFvoB7oN3Iw0m6OlE2xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFjC5+pF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C116CC2BBFC;
+	Fri, 21 Jun 2024 20:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719002223;
-	bh=K829tKMdHL12dqTYF+FPBWpnSMhQylZ6lVHoNcmwXF4=;
+	s=k20201202; t=1719002286;
+	bh=4NZsF7nKIUwjaD/dldJqTXyP3vrorwabNNaT8yPSQ/E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pmcabiAPpI5lBmVD0cvsvrix1xZ4y2h5SXatM/V7aWvWDktMuCMbm9yN7G1cCyYy1
-	 rPtRizvDl1nvP7HWcUdLfaGXHikRr4Xjoxx99RkQm1jBRTwvEmvXKpk0jRvsieqkDP
-	 l5C3LVLWCCQCM5b/Zd9ChvFvLH5KFil9e/WfD1TmUYq1a9qyRWIBQXF88P65Fp4ktp
-	 i/Gnur4b0kXMXj26nqq3+IegaDvJuHB3tVguoVlfDDcWFQZ8CxCjXfPPMmTwlkGUeq
-	 xVKE/nRhDrmveshVR9mGi7mxeeWgXj3LM/ZO+aVFo71ZDPNLrzAPfjZWoYoC3Pythe
-	 rwjNGin5Xv4dg==
-Date: Fri, 21 Jun 2024 13:37:02 -0700
+	b=RFjC5+pFFHdzlmU9o0j0kFyLYWdQQw1CBO7m8mW8AFE0+AYe1EdtCwzkcuOsuWEH5
+	 H2+ZEyOvJgsjSSm4EJWWX/9gGsRrpbsJSCDSRL6bkWMkYV5ZUi7khZMlCe+rA/NkUY
+	 D3uPmRdGFbKmNYSoPDOcI/iE8lNnRlmLUAi+UX2gD2dV+BuYoZoekpna8xVpsgkCyJ
+	 SxOLxGddKr9wyhu5+Ni8/czwIPfWGvoJNaCfE+PD6ylEhzECixfaQidHCcMSBim8DN
+	 sjDtp0CGMnXqTJEhBrNgUj9rCDOdjdcyvOV9CAnS6RK6tBLiPJo54IDosaBIeJZLOb
+	 Y69V7Ulq6atUQ==
+Date: Fri, 21 Jun 2024 13:38:06 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
@@ -49,10 +49,11 @@ Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
 	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
 	martin.petersen@oracle.com
-Subject: Re: [PATCH 05/13] xfs: introduce forced allocation alignment
-Message-ID: <20240621203702.GV3058325@frogsfrogsfrogs>
+Subject: Re: [PATCH 06/13] xfs: align args->minlen for forced allocation
+ alignment
+Message-ID: <20240621203806.GW3058325@frogsfrogsfrogs>
 References: <20240621100540.2976618-1-john.g.garry@oracle.com>
- <20240621100540.2976618-6-john.g.garry@oracle.com>
+ <20240621100540.2976618-7-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,132 +62,115 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621100540.2976618-6-john.g.garry@oracle.com>
+In-Reply-To: <20240621100540.2976618-7-john.g.garry@oracle.com>
 
-On Fri, Jun 21, 2024 at 10:05:32AM +0000, John Garry wrote:
+On Fri, Jun 21, 2024 at 10:05:33AM +0000, John Garry wrote:
 > From: Dave Chinner <dchinner@redhat.com>
 > 
-> When forced allocation alignment is specified, the extent will
-> be aligned to the extent size hint size rather than stripe
-> alignment. If aligned allocation cannot be done, then the allocation
-> is failed rather than attempting non-aligned fallbacks.
-> 
-> Note: none of the per-inode force align configuration is present
-> yet, so this just triggers off an "always false" wrapper function
-> for the moment.
+> If args->minlen is not aligned to the constraints of forced
+> alignment, we may do minlen allocations that are not aligned when we
+> approach ENOSPC. Avoid this by always aligning args->minlen
+> appropriately. If alignment of minlen results in a value smaller
+> than the alignment constraint, fail the allocation immediately.
 > 
 > Signed-off-by: Dave Chinner <dchinner@redhat.com>
 > Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-Pretty straightfoward!
+Looks good!
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/xfs/libxfs/xfs_alloc.h |  1 +
->  fs/xfs/libxfs/xfs_bmap.c  | 29 +++++++++++++++++++++++------
->  fs/xfs/xfs_inode.h        |  5 +++++
->  3 files changed, 29 insertions(+), 6 deletions(-)
+>  fs/xfs/libxfs/xfs_bmap.c | 45 +++++++++++++++++++++++++++-------------
+>  1 file changed, 31 insertions(+), 14 deletions(-)
 > 
-> diff --git a/fs/xfs/libxfs/xfs_alloc.h b/fs/xfs/libxfs/xfs_alloc.h
-> index aa2c103d98f0..7de2e6f64882 100644
-> --- a/fs/xfs/libxfs/xfs_alloc.h
-> +++ b/fs/xfs/libxfs/xfs_alloc.h
-> @@ -66,6 +66,7 @@ typedef struct xfs_alloc_arg {
->  #define XFS_ALLOC_USERDATA		(1 << 0)/* allocation is for user data*/
->  #define XFS_ALLOC_INITIAL_USER_DATA	(1 << 1)/* special case start of file */
->  #define XFS_ALLOC_NOBUSY		(1 << 2)/* Busy extents not allowed */
-> +#define XFS_ALLOC_FORCEALIGN		(1 << 3)/* forced extent alignment */
->  
->  /* freespace limit calculations */
->  unsigned int xfs_alloc_set_aside(struct xfs_mount *mp);
 > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index 528e3cd81ee6..9131ba8113a6 100644
+> index 9131ba8113a6..c9cf138e13c4 100644
 > --- a/fs/xfs/libxfs/xfs_bmap.c
 > +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3401,9 +3401,10 @@ xfs_bmap_alloc_account(
->   * Calculate the extent start alignment and the extent length adjustments that
->   * constrain this allocation.
->   *
-> - * Extent start alignment is currently determined by stripe configuration and is
-> - * carried in args->alignment, whilst extent length adjustment is determined by
-> - * extent size hints and is carried by args->prod and args->mod.
-> + * Extent start alignment is currently determined by forced inode alignment or
-> + * stripe configuration and is carried in args->alignment, whilst extent length
-> + * adjustment is determined by extent size hints and is carried by args->prod
-> + * and args->mod.
->   *
->   * Low level allocation code is free to either ignore or override these values
->   * as required.
-> @@ -3416,11 +3417,18 @@ xfs_bmap_compute_alignments(
->  	struct xfs_mount	*mp = args->mp;
->  	xfs_extlen_t		align = 0; /* minimum allocation alignment */
->  
-> -	/* stripe alignment for allocation is determined by mount parameters */
-> -	if (mp->m_swidth && xfs_has_swalloc(mp))
-> +	/*
-> +	 * Forced inode alignment takes preference over stripe alignment.
-> +	 * Stripe alignment for allocation is determined by mount parameters.
-> +	 */
-> +	if (xfs_inode_has_forcealign(ap->ip)) {
-> +		args->alignment = xfs_get_extsz_hint(ap->ip);
-> +		args->datatype |= XFS_ALLOC_FORCEALIGN;
-> +	} else if (mp->m_swidth && xfs_has_swalloc(mp)) {
->  		args->alignment = mp->m_swidth;
-> -	else if (mp->m_dalign)
-> +	} else if (mp->m_dalign) {
->  		args->alignment = mp->m_dalign;
-> +	}
->  
->  	if (ap->flags & XFS_BMAPI_COWFORK)
->  		align = xfs_get_cowextsz_hint(ap->ip);
-> @@ -3607,6 +3615,11 @@ xfs_bmap_btalloc_low_space(
->  {
->  	int			error;
->  
-> +	if (args->alignment > 1 && (args->datatype & XFS_ALLOC_FORCEALIGN)) {
-> +		args->fsbno = NULLFSBLOCK;
-> +		return 0;
-> +	}
-> +
->  	args->alignment = 1;
->  	if (args->minlen > ap->minlen) {
->  		args->minlen = ap->minlen;
-> @@ -3658,6 +3671,8 @@ xfs_bmap_btalloc_filestreams(
->  
->  	/* Attempt non-aligned allocation if we haven't already. */
->  	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
-> +		if (args->datatype & XFS_ALLOC_FORCEALIGN)
-> +			return error;
->  		args->alignment = 1;
->  		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
->  	}
-> @@ -3716,6 +3731,8 @@ xfs_bmap_btalloc_best_length(
->  
->  	/* Attempt non-aligned allocation if we haven't already. */
->  	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
-> +		if (args->datatype & XFS_ALLOC_FORCEALIGN)
-> +			return error;
->  		args->alignment = 1;
->  		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
->  	}
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index 292b90b5f2ac..42f999c1106c 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -311,6 +311,11 @@ static inline bool xfs_inode_has_large_extent_counts(struct xfs_inode *ip)
->  	return ip->i_diflags2 & XFS_DIFLAG2_NREXT64;
+> @@ -3278,33 +3278,48 @@ xfs_bmap_longest_free_extent(
+>  	return 0;
 >  }
 >  
-> +static inline bool xfs_inode_has_forcealign(struct xfs_inode *ip)
-> +{
-> +	return false;
-> +}
+> -static xfs_extlen_t
+> +static int
+>  xfs_bmap_select_minlen(
+>  	struct xfs_bmalloca	*ap,
+>  	struct xfs_alloc_arg	*args,
+>  	xfs_extlen_t		blen)
+>  {
+> -
+>  	/* Adjust best length for extent start alignment. */
+>  	if (blen > args->alignment)
+>  		blen -= args->alignment;
+>  
+>  	/*
+>  	 * Since we used XFS_ALLOC_FLAG_TRYLOCK in _longest_free_extent(), it is
+> -	 * possible that there is enough contiguous free space for this request.
+> +	 * possible that there is enough contiguous free space for this request
+> +	 * even if best length is less that the minimum length we need.
+> +	 *
+> +	 * If the best length won't satisfy the maximum length we requested,
+> +	 * then use it as the minimum length so we get as large an allocation
+> +	 * as possible.
+>  	 */
+>  	if (blen < ap->minlen)
+> -		return ap->minlen;
+> +		blen = ap->minlen;
+> +	else if (blen > args->maxlen)
+> +		blen = args->maxlen;
+>  
+>  	/*
+> -	 * If the best seen length is less than the request length,
+> -	 * use the best as the minimum, otherwise we've got the maxlen we
+> -	 * were asked for.
+> +	 * If we have alignment constraints, round the minlen down to match the
+> +	 * constraint so that alignment will be attempted. This may reduce the
+> +	 * allocation to smaller than was requested, so clamp the minimum to
+> +	 * ap->minlen to allow unaligned allocation to succeed. If we are forced
+> +	 * to align the allocation, return ENOSPC at this point because we don't
+> +	 * have enough contiguous free space to guarantee aligned allocation.
+>  	 */
+> -	if (blen < args->maxlen)
+> -		return blen;
+> -	return args->maxlen;
+> -
+> +	if (args->alignment > 1) {
+> +		blen = rounddown(blen, args->alignment);
+> +		if (blen < ap->minlen) {
+> +			if (args->datatype & XFS_ALLOC_FORCEALIGN)
+> +				return -ENOSPC;
+> +			blen = ap->minlen;
+> +		}
+> +	}
+> +	args->minlen = blen;
+> +	return 0;
+>  }
+>  
+>  static int
+> @@ -3340,8 +3355,7 @@ xfs_bmap_btalloc_select_lengths(
+>  	if (pag)
+>  		xfs_perag_rele(pag);
+>  
+> -	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
+> -	return error;
+> +	return xfs_bmap_select_minlen(ap, args, blen);
+>  }
+>  
+>  /* Update all inode and quota accounting for the allocation we just did. */
+> @@ -3661,7 +3675,10 @@ xfs_bmap_btalloc_filestreams(
+>  		goto out_low_space;
+>  	}
+>  
+> -	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
+> +	error = xfs_bmap_select_minlen(ap, args, blen);
+> +	if (error)
+> +		goto out_low_space;
 > +
->  /*
->   * Decide if this file is a realtime file whose data allocation unit is larger
->   * than a single filesystem block.
+>  	if (ap->aeof && ap->offset)
+>  		error = xfs_bmap_btalloc_at_eof(ap, args);
+>  
 > -- 
 > 2.31.1
 > 
