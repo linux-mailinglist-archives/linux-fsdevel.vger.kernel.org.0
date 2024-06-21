@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-22163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A00912ED6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 22:51:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E61A912ED4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 22:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03FCA1F24E39
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 20:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184561F23DEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 20:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C6E17C202;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A691217C200;
 	Fri, 21 Jun 2024 20:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLrlDt0+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAkDBFKV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3031607B3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C277155329;
 	Fri, 21 Jun 2024 20:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719003047; cv=none; b=IrsYBXhtK7BjKN3mgwGof5Seib5vGtd7MVpsrfNCd4+TPpnZXz8gy3h7afE/nJxcrZcDLOAm13rd9unlrrGR5WJB/ixYftxbBpzVa98NfMSAfMTscQAnDrk5gWvyI5igddQ+xJoROMx6dDYH9DAAJH13faZPx8dDF1OXQH0UXYg=
+	t=1719003047; cv=none; b=I53SOEJ5ZSQWaUZZrdOzfv0p9tEEAEgbqFwM477LmQMxQzHpq7DwnrEXCPk3FqA6jqD6ss/HZvMBYF1L41Uz6wsSbDCiTVa1Fd89MLaAT+2Mf++34uMcWZ6cFetGwYjl0aw0gJm9/Nzm9/DcFyjW8zvAp6mWkiwaA4bvlEWCOHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719003047; c=relaxed/simple;
-	bh=08nbucMThJ3PA9ERR1mzxp2dFYTwOJzapfx7t7pEvKw=;
+	bh=HGKiztfmnXGwe57zj0+vTZfhNT7KQZ5JNN+BGrOb5Qw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YgfL03UBUVxD5kDY/OTDx9Cly3V7/OgrN2Sc/alrrnsokwCSsC4IwoOoSRckme+YrP0rCP0wllqP1Lyvli0Yd7Y/xi3QbJib2VHH6A1E79j86gY74nqbFIF2w6EJiFOeQitUv5KsKpz1xelJaxqUtURUg49DMmuxB5GmTu71v3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLrlDt0+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5D2C2BBFC;
+	 MIME-Version; b=aJhaQ1glf+X67j0PVfyP9JfMIJfAPlY3sr3Q3quEzR66u4mGqIC59xbudE2CTSr0ocejMs+egNSUyfJqalOU7bl3G5ke18SLecQxFVKnXxG55BU49qFksf/3KefZPaq0ajAXt/d2hL5iun8gHL9HYhtjZEf+AC0HH8x9KEvkGbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAkDBFKV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F68DC4AF09;
 	Fri, 21 Jun 2024 20:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1719003046;
-	bh=08nbucMThJ3PA9ERR1mzxp2dFYTwOJzapfx7t7pEvKw=;
+	bh=HGKiztfmnXGwe57zj0+vTZfhNT7KQZ5JNN+BGrOb5Qw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TLrlDt0+nOx1CCG90R/6CZa8aFePcr7Fh/AeYwaCqHSxu5FfsfEojI7ZgaeGgtqtI
-	 5XCG39Hh1W6x1coVzwHlQBQD6E7g+lgJfkSmFWJyyL5J33bhPIxoawQN6jHhSJI6Hv
-	 QBI0xRNJZLfAQc2iyBaGfKih6Dstk/bIcXw+cUHPQfTnnkm3tHEI0HEmstimhUuwOk
-	 o45jBz6xPL57QIXS9IXaN6Ysv7asvRwsPO9ZDLDq01zdzCogmhi2dD2Eneob3Svr/w
-	 Ao2EL1yAr4eLyMJTaqqeFfduG05K03dovRWo9UKw9U2mjglj9ZUtJEmECDfzZGC+2c
-	 E+yOfeRVfM69w==
+	b=RAkDBFKVl8xmtb2DHIPOV2tWg9gbzOL1odQSCGDEXJNPgM0WUxIxBe87GtqqWJ+4A
+	 1Ere96aP9tXLhWixhIZSvQheDU5VDOtlYZ7/DpmebD/f4Tp0apl4GBwQ0utpvwApMh
+	 KAeYFQUGf8tbr+xiQDD/fo3hDTyV18sQydUOi+eZsvrNA+K2MSdVQdGwKJLzt7ejma
+	 e3onkPPrABfNag37HD3ojtklzAwWmw5WQ/6vezXvCejKws996+3d20U3Ir7nxeBm4w
+	 kXP35UpmP8mmSxdjYJpGQhw+KveCa+Jz9gCAWSOsOHo7XrHNY/Nb/jhTL1PYPx5LyR
+	 LdVoE6OLcFbCg==
 From: Kees Cook <kees@kernel.org>
 To: Guenter Roeck <linux@roeck-us.net>
 Cc: Kees Cook <kees@kernel.org>,
 	Eric Biederman <ebiederm@xmission.com>,
+	Justin Stitt <justinstitt@google.com>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
 	Alexey Dobriyan <adobriyan@gmail.com>,
 	Laurent Vivier <laurent@vivier.eu>,
 	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Justin Stitt <justinstitt@google.com>,
 	linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH v2 1/2] execve: Keep bprm->argmin behind CONFIG_MMU
-Date: Fri, 21 Jun 2024 13:50:43 -0700
-Message-Id: <20240621205046.4001362-1-kees@kernel.org>
+Subject: [PATCH v2 2/2] exec: Avoid pathological argc, envc, and bprm->p values
+Date: Fri, 21 Jun 2024 13:50:44 -0700
+Message-Id: <20240621205046.4001362-2-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240621204729.it.434-kees@kernel.org>
 References: <20240621204729.it.434-kees@kernel.org>
@@ -68,132 +68,125 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3893; i=kees@kernel.org; h=from:subject; bh=08nbucMThJ3PA9ERR1mzxp2dFYTwOJzapfx7t7pEvKw=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmdeekFSbBk2O2iHqrCrSBFtyRjbOTF4Orfwi4G NzijvpupVKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZnXnpAAKCRCJcvTf3G3A JhSOEACWWK0PtH8YUUh7IL6RFGs61JDtltA65r7YwqGHW9pAb9Ei2/Pm9tSrkRjjCQJJzSUlijZ sIJL7ggzsjCbCl1l/PFkcuvC6PFmLFZ9YeyqUF0a8srpivUSLRkm7rVqiJuQ+xSRJVHc29A/ugS FS6t1mFxeikcvz9vHMaqpgenvD4Mgl14Rb4oedV0SP3ZB15v8eABGMoY4cTC3Bw0mLltSXzHm0I 1gn7FNVNhFnNJFD2t/fVw/u8uwmeGIUaAEE6J33lGvlvMJbxBFp8umKg6a6w/+98mE8jSksVIoE Pok5N1XYsTDENcddKk0ZHkY6W0ux+c967CH87wD17w2K8rgr2sFGddRYxCUSU0KG7LZFu6OR9vZ /OZKQfAZCoPw0rTZrZc1H62h7goz0vPuTsovL9Z7Y9AxFyW5AcEsqI2HNvtBhqndK3yc1myJpdP 3hJY0DDp4lEyk5qjqG1/wgir84UVSO9TISyB7t0CfX8LNOXI7cJiHUd89R/UyiAhtm02dF1QHAI 8/+q/y2dgHXVv4esZytTnXmkwtm2oZU8jjiTNfSfO9/LZElw3wMeoze4TGuAhM6wwQA7n7pQDZn tRgSx5v0//uEVarmd41/WOez36Qxoaxs5W8UfR+zanBm4abpwbd21c9B+5sxEHAOmRSxj6FmFVF k5BWD3WJLC17tDg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4831; i=kees@kernel.org; h=from:subject; bh=HGKiztfmnXGwe57zj0+vTZfhNT7KQZ5JNN+BGrOb5Qw=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmdeekLPmeDCyHBRB+FOlnbPUxLBpaNJ4ss73+0 bFmZEGvDfSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZnXnpAAKCRCJcvTf3G3A JrHpEACwK/KoxBiuYpyBhT1faCVPtic/WRxA+xyHpVQqTf6/yL7eoyTCaiJk58mIoXAOB1tXoq1 89j9SqoxNE/uRUHLli/HOj4QYrwLyzyr6XqxRj2hwij6HLNf9poM46hOJ/Zz5tgjL9EPkZDam3/ 7aK6+OHKWEWWqqlzQhmmla+vhcKlA8MMZ2t1InXPiiXw/htTp52e2IHC0W0q4rubg+6sihRa36e Ov/Pa6O58b1fG2Ik8GcjDXlBSTj3uaTNcSZOxvZg10WpPs5r2y01iBcT+N3IHSJUFmFWpiksvKT btcLB7+7FHVBvjMKcTSA9+5TytPgMiyVMN78mKTyEfkJEjWE7GRAbeVWYTPGR0giV+lV4WJ/JJK ovljU3VUetF/2fEn8Dpr8cXSNetg15795IqzDIgO0A6FDrGGHkkXF/+q0yk3Q3JMGliylAZitXC 40+5rkqqddWDwsVg+qkKqsJrx5ttQXSi+EpAhDb62nFUtbmuznNzMEwVJgfykpWhhHMsuad13G9 DKiPCY7OeiiKNbXjfgkXID2BkHtEj1kJRD6fEVkiFuDBzqD6qWDhwLCS/mv4q5u9hLpGs68pywr ivAMmlI7v7KA3pttOS+oPQea7JkKuqHV096jHTtskEhpy9PH9bGkfGeC2PLQuBjKAZ2VF2FT6Wx jsCjqkqW7b/2erQ==
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-When argmin was added in commit 655c16a8ce9c ("exec: separate
-MM_ANONPAGES and RLIMIT_STACK accounting"), it was intended only for
-validating stack limits on CONFIG_MMU[1]. All checking for reaching the
-limit (argmin) is wrapped in CONFIG_MMU ifdef checks, though setting
-argmin was not. That argmin is only supposed to be used under CONFIG_MMU
-was rediscovered recently[2], and I don't want to trip over this again.
+Make sure nothing goes wrong with the string counters or the bprm's
+belief about the stack pointer. Add checks and matching self-tests.
 
-Move argmin's declaration into the existing CONFIG_MMU area, and add
-helpers functions so the MMU tests can be consolidated.
+Take special care for !CONFIG_MMU, since argmin is not exposed there.
 
-Link: https://lore.kernel.org/all/20181126122307.GA1660@redhat.com [1]
-Link: https://lore.kernel.org/all/202406211253.7037F69@keescook/ [2]
+For 32-bit validation, 32-bit UML was used:
+$ tools/testing/kunit/kunit.py run \
+	--make_options CROSS_COMPILE=i686-linux-gnu- \
+	--make_options SUBARCH=i386 \
+	exec
+
+For !MMU validation, m68k was used:
+$ tools/testing/kunit/kunit.py run \
+	--arch m68k --make_option CROSS_COMPILE=m68k-linux-gnu- \
+	exec
+
+Link: https://lore.kernel.org/r/20240520021615.741800-2-keescook@chromium.org
 Signed-off-by: Kees Cook <kees@kernel.org>
 ---
 Cc: Guenter Roeck <linux@roeck-us.net>
 Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Justin Stitt <justinstitt@google.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Laurent Vivier <laurent@vivier.eu>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-mm@kvack.org
 ---
- fs/exec.c               | 26 ++++++++++++++++++++------
- fs/exec_test.c          |  2 ++
- include/linux/binfmts.h |  2 +-
- 3 files changed, 23 insertions(+), 7 deletions(-)
+ fs/exec.c      | 10 +++++++++-
+ fs/exec_test.c | 28 +++++++++++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 2 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index c3bec126505b..b7bc63bfb907 100644
+index b7bc63bfb907..5b580ff8d955 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -486,6 +486,23 @@ static int count_strings_kernel(const char *const *argv)
- 	return i;
- }
- 
-+static inline int bprm_set_stack_limit(struct linux_binprm *bprm,
-+				       unsigned long limit)
-+{
-+#ifdef CONFIG_MMU
-+	bprm->argmin = bprm->p - limit;
-+#endif
-+	return 0;
-+}
-+static inline bool bprm_hit_stack_limit(struct linux_binprm *bprm)
-+{
-+#ifdef CONFIG_MMU
-+	return bprm->p < bprm->argmin;
-+#else
-+	return false;
-+#endif
-+}
-+
- /*
-  * Calculate bprm->argmin from:
-  * - _STK_LIM
-@@ -532,8 +549,7 @@ static int bprm_stack_limits(struct linux_binprm *bprm)
+@@ -490,6 +490,9 @@ static inline int bprm_set_stack_limit(struct linux_binprm *bprm,
+ 				       unsigned long limit)
+ {
+ #ifdef CONFIG_MMU
++	/* Avoid a pathological bprm->p. */
++	if (bprm->p < limit)
++		return -E2BIG;
+ 	bprm->argmin = bprm->p - limit;
+ #endif
+ 	return 0;
+@@ -531,6 +534,9 @@ static int bprm_stack_limits(struct linux_binprm *bprm)
+ 	 * of argument strings even with small stacks
+ 	 */
+ 	limit = max_t(unsigned long, limit, ARG_MAX);
++	/* Reject totally pathological counts. */
++	if (bprm->argc < 0 || bprm->envc < 0)
++		return -E2BIG;
+ 	/*
+ 	 * We must account for the size of all the argv and envp pointers to
+ 	 * the argv and envp strings, since they will also take up space in
+@@ -544,7 +550,9 @@ static int bprm_stack_limits(struct linux_binprm *bprm)
+ 	 * argc can never be 0, to keep them from walking envp by accident.
+ 	 * See do_execveat_common().
+ 	 */
+-	ptr_size = (max(bprm->argc, 1) + bprm->envc) * sizeof(void *);
++	if (check_add_overflow(max(bprm->argc, 1), bprm->envc, &ptr_size) ||
++	    check_mul_overflow(ptr_size, sizeof(void *), &ptr_size))
++		return -E2BIG;
+ 	if (limit <= ptr_size)
  		return -E2BIG;
  	limit -= ptr_size;
- 
--	bprm->argmin = bprm->p - limit;
--	return 0;
-+	return bprm_set_stack_limit(bprm, limit);
- }
- 
- /*
-@@ -571,10 +587,8 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
- 		pos = bprm->p;
- 		str += len;
- 		bprm->p -= len;
--#ifdef CONFIG_MMU
--		if (bprm->p < bprm->argmin)
-+		if (bprm_hit_stack_limit(bprm))
- 			goto out;
--#endif
- 
- 		while (len > 0) {
- 			int offset, bytes_to_copy;
-@@ -649,7 +663,7 @@ int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
- 	/* We're going to work our way backwards. */
- 	arg += len;
- 	bprm->p -= len;
--	if (IS_ENABLED(CONFIG_MMU) && bprm->p < bprm->argmin)
-+	if (bprm_hit_stack_limit(bprm))
- 		return -E2BIG;
- 
- 	while (len > 0) {
 diff --git a/fs/exec_test.c b/fs/exec_test.c
-index 32a90c6f47e7..8fea0bf0b7f5 100644
+index 8fea0bf0b7f5..7c77d039680b 100644
 --- a/fs/exec_test.c
 +++ b/fs/exec_test.c
-@@ -96,7 +96,9 @@ static void exec_test_bprm_stack_limits(struct kunit *test)
+@@ -8,9 +8,34 @@ struct bprm_stack_limits_result {
+ };
  
- 		rc = bprm_stack_limits(&bprm);
- 		KUNIT_EXPECT_EQ_MSG(test, rc, result->expected_rc, "on loop %d", i);
+ static const struct bprm_stack_limits_result bprm_stack_limits_results[] = {
+-	/* Giant values produce -E2BIG */
++	/* Negative argc/envc counts produce -E2BIG */
++	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = INT_MIN, .envc = INT_MIN }, .expected_rc = -E2BIG },
++	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = 5, .envc = -1 }, .expected_rc = -E2BIG },
++	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = -1, .envc = 10 }, .expected_rc = -E2BIG },
++	/* The max value of argc or envc is MAX_ARG_STRINGS. */
+ 	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
+ 	    .argc = INT_MAX, .envc = INT_MAX }, .expected_rc = -E2BIG },
++	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = MAX_ARG_STRINGS, .envc = MAX_ARG_STRINGS }, .expected_rc = -E2BIG },
++	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = 0, .envc = MAX_ARG_STRINGS }, .expected_rc = -E2BIG },
++	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = MAX_ARG_STRINGS, .envc = 0 }, .expected_rc = -E2BIG },
++	/*
++	 * On 32-bit system these argc and envc counts, while likely impossible
++	 * to represent within the associated TASK_SIZE, could overflow the
++	 * limit calculation, and bypass the ptr_size <= limit check.
++	 */
++	{ { .p = ULONG_MAX, .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = 0x20000001, .envc = 0x20000001 }, .expected_rc = -E2BIG },
 +#ifdef CONFIG_MMU
- 		KUNIT_EXPECT_EQ_MSG(test, bprm.argmin, result->expected_argmin, "on loop %d", i);
++	/* Make sure a pathological bprm->p doesn't cause an overflow. */
++	{ { .p = sizeof(void *), .rlim_stack.rlim_cur = ULONG_MAX,
++	    .argc = 10, .envc = 10 }, .expected_rc = -E2BIG },
 +#endif
- 	}
- }
+ 	/*
+ 	 * 0 rlim_stack will get raised to ARG_MAX. With 1 string pointer,
+ 	 * we should see p - ARG_MAX + sizeof(void *).
+@@ -88,6 +113,7 @@ static void exec_test_bprm_stack_limits(struct kunit *test)
+ 	/* Double-check the constants. */
+ 	KUNIT_EXPECT_EQ(test, _STK_LIM, SZ_8M);
+ 	KUNIT_EXPECT_EQ(test, ARG_MAX, 32 * SZ_4K);
++	KUNIT_EXPECT_EQ(test, MAX_ARG_STRINGS, 0x7FFFFFFF);
  
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 70f97f685bff..e6c00e860951 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -19,13 +19,13 @@ struct linux_binprm {
- #ifdef CONFIG_MMU
- 	struct vm_area_struct *vma;
- 	unsigned long vma_pages;
-+	unsigned long argmin; /* rlimit marker for copy_strings() */
- #else
- # define MAX_ARG_PAGES	32
- 	struct page *page[MAX_ARG_PAGES];
- #endif
- 	struct mm_struct *mm;
- 	unsigned long p; /* current top of mem */
--	unsigned long argmin; /* rlimit marker for copy_strings() */
- 	unsigned int
- 		/* Should an execfd be passed to userspace? */
- 		have_execfd:1,
+ 	for (int i = 0; i < ARRAY_SIZE(bprm_stack_limits_results); i++) {
+ 		const struct bprm_stack_limits_result *result = &bprm_stack_limits_results[i];
 -- 
 2.34.1
 
