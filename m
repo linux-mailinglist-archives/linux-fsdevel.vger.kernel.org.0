@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-22045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107CC91187F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 04:30:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85341911886
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 04:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74263B21A1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 02:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88571C21E88
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2024 02:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D170084D29;
-	Fri, 21 Jun 2024 02:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E87E85956;
+	Fri, 21 Jun 2024 02:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVCopKb3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OgPhc6IH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76C23207;
-	Fri, 21 Jun 2024 02:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8507684A5E;
+	Fri, 21 Jun 2024 02:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718937036; cv=none; b=IdDocOnIxDrRVi8hWt/PGaoi7bekQRGP3Sn13URmdVKlw9KALO/28O+XK1stfj5lSB5xA9/tNXCNCn/nhGKSbX1P0qBOJGMnSjWFCg7IZLKcsIGq4TMH3emUx5GK44x+ZV9yNWxEUwKX4N38vr4l/KvNuUNetR8SMl18qvMd9Y4=
+	t=1718937048; cv=none; b=kMaxsJsW9UPIdOal7sgKcguNs8ssEpZbQIwj7kPIK6OoMS8345rTvOUifaynpujUX52zXZbMnIA+cBZTnGCZG9sh6i+R95ReWSAzcslX2mdZOzajVTibWFYwSQf9WzZEyL8lPA69jNYeeJbejKH/KVxxic2kMGBRKKldZuwuDHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718937036; c=relaxed/simple;
-	bh=fMlHavGbtfAeuokks/SCwnduQjgzHmT3IS8gpQsG98I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jpnxbertiZOV0LGt38xekZ4F8Ch6TnLfkcEmSJ/r4a2a6sAfXwM7134cR3jczVl3zWNdcUmX3XMq/vwOmY31kjbrEbFheNUqdEvtJ9OI086So9+K/rsJaYy+UC9OELQt6kE7VJSjMR38PyHBP/+MXVq068a6wsMlnPpHGT5lPyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVCopKb3; arc=none smtp.client-ip=209.85.215.172
+	s=arc-20240116; t=1718937048; c=relaxed/simple;
+	bh=LX61AqcJNexywhWKUem5c5kFXTCQtXdiKlDqbpWt6oE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=B78wbKl7AsbbbbIAM+9w86+zMqN8jOs/Tds87OpBFip3uiCWB5bZaDB0/lsfyaRZZUDRrpI6EtfY/sxfTLGQglrKGp0AF1eLFfvov/fa2aJv0CUeLrwrwF6+1E02+cGkd8zFceQ1eeXud8K7Km/A7c85zKazHDuypzzUT/uhxUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OgPhc6IH; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-652fd0bb5e6so1221875a12.0;
-        Thu, 20 Jun 2024 19:30:34 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70436048c25so1557849b3a.0;
+        Thu, 20 Jun 2024 19:30:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718937034; x=1719541834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwlwwP2ml9p21cPlAav/YvSh18oChNGHXpTCNRHeKlc=;
-        b=gVCopKb33RvG+mZPoRENvHdxkmF6ZKdBql+BV/hh4GTuFzZRQCZSsQnJZvrbO7jrNM
-         fKpfzf91ji3mpR/abfNb7gurkUV+5wypDyr4t6m0aXpierEZbAyv8LjxU3TLs1xDNUG5
-         7Y3O9u7zw4F2dUKlo68EWtF5eGzN1BFdsxxCWzdg39iFUBN0YgK060r2XbsVQ0Su4nC9
-         e4MAhwZ5R2ho20eL7u1GRIHMjwM8YLR5v2rq94xhHdiHCw8CAGR8fl7ReGf85cP2l+rB
-         qhQgPzflnEtoDR91skSHEl7B0EeF1uza7aMipwPq8JJxt5Wxcxlge4uDhgopX3ClyCPJ
-         nGhw==
+        d=gmail.com; s=20230601; t=1718937046; x=1719541846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zt6Zo0BQwE9mYz3Q0zCJOWUGA/XKEFxfC7Idotg6GZ4=;
+        b=OgPhc6IHdpjn/0c2Upp3ejw9WrJdsJdolcOgS/13YQSr0+pb/eGm7bmlMtqkZS0P9J
+         Fiy3oiq/7dCqNroVcEFM1xrl14IDKMoCnJU+Lhupyr3GCRMDqiSkIj/gTlpz1ZTh8mSs
+         hceAjNxykx25jYH8VRxAuQUhKQy005XClqxkGN1z2jut1pZh1pD1Ri0MclhLhlXV8Zi6
+         PbFvqXNMTfmhRQxp5Cni1oLc+/B3rIrA+jF0EkmkLQPCUO2f8CqlEUrZVVTbkUvUMllf
+         kwzDrE37vwBLb692YCuqxurBjUZBFq87xINqufC+JTsGQQ1XmjATe9n/bFRewHDgk20S
+         CREg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718937034; x=1719541834;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GwlwwP2ml9p21cPlAav/YvSh18oChNGHXpTCNRHeKlc=;
-        b=j8oc1u0aB6IYJn6JS/rKmidqKgmdc8FcHWKZRI5Qa5GEY3BDNKGumSMaChjeGv3Aev
-         9ZzU9pROS6++JiOlkPSrHiVpXVYS8lwhpgLYL3en0DPqu+yXLMlF4VciG+XMsXQFt0JC
-         O/8L6tqNKUfpkTF+ZGjUITsSZ13Re43qhFRJCwbpObvsHujEpLrR9ytAv9hN715QigBO
-         oT9Fnw7iWKCAWYsDSFL7zlq4v3slFOtGw0OWsTtpzombjO4bWnpC4NpR3y4g20W7iLLu
-         pk5gkMZCiWl8/pfzQGgFgLHiL60qHgMVdMBMsLPN0Td7Gzx1v7Y1/yg3h1Ih7ISN1+3b
-         WvNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWluYFFI6R6yv7Pg6sEUu129v8wjKygLnrg9M0kemt2SV+r/Jk1pq9jdKoJwTFe5Kt4SdhkjYBzSsVse57R2m67DSbHRWuwUDbdiUqPXRpEFAxb6mGDEemO2F/P3qPRQiRlv6z5nXtGCccEXuzkPI5S1NvoYZVRinSq4vUMgdKb77Xk2DR1vaXacBWUYMVmPF9xccyvrHYXnOM8xTP1XMWKJ1FvJge10fwmfD5DlMh26mTXwfEKY4a4Liz+TpPtRVmmQ+l3S+UNBCnu3CnoGTRuH+cSXnB9NyycSWPR9SNRFDgtOHB7t6U/yEMKQOUVIvQAgOpmXA==
-X-Gm-Message-State: AOJu0YxFawzzxHuVx+BDrqECyeRjt2DfULudO4Jwi9lcGldY1LkFZTCI
-	XCb++I4SUWir7yRDGLhcWsD1uNRkcUQKf/bWbF+5hQ04b7ZIi1CP
-X-Google-Smtp-Source: AGHT+IHCunKAxv47P844vphuNTxBO9sCB83yDLseIyT9/+IsrkCTE3Wi2jgqKchbD0S9to2P9PKntQ==
-X-Received: by 2002:a05:6a20:9145:b0:1b7:edea:e32 with SMTP id adf61e73a8af0-1bcbb46b981mr9429646637.32.1718937033951;
-        Thu, 20 Jun 2024 19:30:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718937046; x=1719541846;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zt6Zo0BQwE9mYz3Q0zCJOWUGA/XKEFxfC7Idotg6GZ4=;
+        b=IUeGfmhzzhJ6omrIclY8Vqi1QpL2eGjWMPobmNb0BqFcQev/mrYfSiWQXvgt8BWtnq
+         8uFwffrReaZdbKudTcB8q90bsOW+B6Pkj9PfinPJ8DPIW7DxKHmeLV8YDqSrLNsnlT51
+         NwzlwC09k4PbwXj6DCGMu6K4o6t+9jRGoIPVewPvSjl+vsHV5xADK8l/fTlAzXMauN9C
+         j/Lgxh4hIWFu5SB1hymHwRyL9+TLngu9CuTWNsm7rqaEFPdq4Ofp0hdRtHplJgTfwTF1
+         zmlpi8CJGSC59FwLzgO7iUoJyCpGxi/05WuGjvZ73EjFrVz6j1Abykl5oHujR6BxKMcT
+         lEFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcXnt5sgbCcowgje+LZf8JiiKE2PPMLU9aTdT9jploeHBJzhZQFw1pt2hq89X1IwhTOWDVuAISvJLAnsJDG41sXBRd3QGc3Xr5suTcH1DoB3x3KP+2nibMdHm0U0Y9NrKYa1O70TDxcXxNy1zm9DaElpPCOAbq7/x0zta9S60yZrIXxbQ6+/4xLEAXiSOWAs4NqHhVaNAoI6sU7keAf3fD4i3WYnzmvCwz9gQew1viC/oH8EpPp5IiCgdAkT/TT+b6TWuJ53fsNacevhvHHbYVtOH0iSZ1qmt/HrKW5iN1Tn0Wjl+6mevFr85PnypHgamrCgwmPg==
+X-Gm-Message-State: AOJu0YxxWp21w64ZrAlK53LkTslSs1U5NYYzYoavgIvDjv9nRuBV0yC/
+	5vwrzNevzRcN4+Y5k6iy974dInvT/HvdoI2A2DLxN9NvrwEyxMVw
+X-Google-Smtp-Source: AGHT+IGtfjPn4RgUkASb+Xbc5n3FAl++/e74fQb3jmqCcMo9NRTzTfAqzNgZkCzFDeDT/EYbemTCfA==
+X-Received: by 2002:a05:6a00:22c5:b0:705:ddbf:5c05 with SMTP id d2e1a72fcca58-70629c4204cmr9525016b3a.11.1718937045659;
+        Thu, 20 Jun 2024 19:30:45 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.105.24])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706511944d2sm332488b3a.70.2024.06.20.19.30.23
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706511944d2sm332488b3a.70.2024.06.20.19.30.34
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2024 19:30:32 -0700 (PDT)
+        Thu, 20 Jun 2024 19:30:45 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: torvalds@linux-foundation.org
 Cc: ebiederm@xmission.com,
@@ -82,11 +84,18 @@ Cc: ebiederm@xmission.com,
 	bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v3 00/11] Improve the copy of task comm 
-Date: Fri, 21 Jun 2024 10:29:48 +0800
-Message-Id: <20240621022959.9124-1-laoar.shao@gmail.com>
+	Yafang Shao <laoar.shao@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Kees Cook <keescook@chromium.org>,
+	Matus Jokay <matus.jokay@stuba.sk>
+Subject: [PATCH v3 01/11] fs/exec: Drop task_lock() inside __get_task_comm()
+Date: Fri, 21 Jun 2024 10:29:49 +0800
+Message-Id: <20240621022959.9124-2-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+In-Reply-To: <20240621022959.9124-1-laoar.shao@gmail.com>
+References: <20240621022959.9124-1-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,70 +104,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
-length of task comm. Changes in the task comm could result in a destination
-string that is overflow. Therefore, we should explicitly ensure the destination
-string is always NUL-terminated, regardless of the task comm. This approach
-will facilitate future extensions to the task comm.
+Quoted from Linus [0]:
 
-As suggested by Linus [0], we can identify all relevant code with the
-following git grep command:
-
-  git grep 'memcpy.*->comm\>'
-  git grep 'kstrdup.*->comm\>'
-  git grep 'strncpy.*->comm\>'
-  git grep 'strcpy.*->comm\>'
-
-PATCH #2~#4:   memcpy
-PATCH #5~#6:   kstrdup
-PATCH #7~#9:   strncpy
-PATCH #10~#11: strcpy
+  Since user space can randomly change their names anyway, using locking
+  was always wrong for readers (for writers it probably does make sense
+  to have some lock - although practically speaking nobody cares there
+  either, but at least for a writer some kind of race could have
+  long-term mixed results
 
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
+Link: https://lore.kernel.org/all/CAHk-=wivfrF0_zvf+oj6==Sh=-npJooP8chLPEfaFV0oNYTTBA@mail.gmail.com [0]
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Matus Jokay <matus.jokay@stuba.sk>
+---
+ fs/exec.c             | 10 ++++++++--
+ include/linux/sched.h |  4 ++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-Changes:
-v2->v3:
-- Deduplicate code around kstrdup (Andrew)
-- Add commit log for dropping task_lock (Catalin)
-
-v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gmail.com/
-- Add comment for dropping task_lock() in __get_task_comm() (Alexei)
-- Drop changes in trace event (Steven)
-- Fix comment on task comm (Matus)
-  
-v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.com/
-
-Yafang Shao (11):
-  fs/exec: Drop task_lock() inside __get_task_comm()
-  auditsc: Replace memcpy() with __get_task_comm()
-  security: Replace memcpy() with __get_task_comm()
-  bpftool: Ensure task comm is always NUL-terminated
-  mm/util: Fix possible race condition in kstrdup()
-  mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
-  mm/kmemleak: Replace strncpy() with __get_task_comm()
-  tsacct: Replace strncpy() with __get_task_comm()
-  tracing: Replace strncpy() with __get_task_comm()
-  net: Replace strcpy() with __get_task_comm()
-  drm: Replace strcpy() with __get_task_comm()
-
- drivers/gpu/drm/drm_framebuffer.c     |  2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
- fs/exec.c                             | 10 ++++++++--
- include/linux/sched.h                 |  4 ++--
- kernel/auditsc.c                      |  6 +++---
- kernel/trace/trace.c                  |  2 +-
- kernel/trace/trace_events_hist.c      |  2 +-
- kernel/tsacct.c                       |  2 +-
- mm/internal.h                         | 24 ++++++++++++++++++++++++
- mm/kmemleak.c                         |  8 +-------
- mm/util.c                             | 21 ++++-----------------
- net/ipv6/ndisc.c                      |  2 +-
- security/lsm_audit.c                  |  4 ++--
- security/selinux/selinuxfs.c          |  2 +-
- tools/bpf/bpftool/pids.c              |  2 ++
- 15 files changed, 53 insertions(+), 40 deletions(-)
-
+diff --git a/fs/exec.c b/fs/exec.c
+index 40073142288f..fa6b61c79df8 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1238,12 +1238,18 @@ static int unshare_sighand(struct task_struct *me)
+ 	return 0;
+ }
+ 
++/*
++ * User space can randomly change their names anyway, so locking for readers
++ * doesn't make sense. For writers, locking is probably necessary, as a race
++ * condition could lead to long-term mixed results.
++ * The strscpy_pad() in __set_task_comm() can ensure that the task comm is
++ * always NUL-terminated. Therefore the race condition between reader and writer
++ * is not an issue.
++ */
+ char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+ {
+-	task_lock(tsk);
+ 	/* Always NUL terminated and zero-padded */
+ 	strscpy_pad(buf, tsk->comm, buf_size);
+-	task_unlock(tsk);
+ 	return buf;
+ }
+ EXPORT_SYMBOL_GPL(__get_task_comm);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 61591ac6eab6..95888d1da49e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1086,9 +1086,9 @@ struct task_struct {
+ 	/*
+ 	 * executable name, excluding path.
+ 	 *
+-	 * - normally initialized setup_new_exec()
++	 * - normally initialized begin_new_exec()
+ 	 * - access it with [gs]et_task_comm()
+-	 * - lock it with task_lock()
++	 * - lock it with task_lock() for writing
+ 	 */
+ 	char				comm[TASK_COMM_LEN];
+ 
 -- 
 2.39.1
 
