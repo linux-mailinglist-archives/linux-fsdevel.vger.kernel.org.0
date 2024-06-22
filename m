@@ -1,157 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-22176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15497913450
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 16:00:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8679134C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 17:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FA61C218EE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 14:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 892C8B219F0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 15:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1D616F82E;
-	Sat, 22 Jun 2024 14:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08C516F90F;
+	Sat, 22 Jun 2024 15:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M0t2dPWY"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jAyq/f6B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6131552E1
-	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jun 2024 14:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FCFB660;
+	Sat, 22 Jun 2024 15:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719064835; cv=none; b=k8pgKhnea1BPqm/GrxswHKNPcFPUjjU59xIbcsflk/UYuSELsvaTheAytHtw7r+cGOQn68rMzGm/Vee6tO8nPXyxJbjwkoAD5VrGI2w6Bl7Hx7k0B3ENxVXZIhlOJX0NYtXWhrGFVjb0GKhcxMvjbEChRn4sVnhetune+dyaY4o=
+	t=1719069790; cv=none; b=gxjHmeBPTDpLeAPMxC88woZMQpwVnIgFuLHNVLrcfhDh1SJzehDz24gA3WZwjMJRdZL0/8YZmVyVsTPmD3lcB5arrNZS/tzmVMAmvYKz9YHUzK1nISQSJFrxcbnyIFXERXS+hLR/M8WtkqEgf64qW9lOscKUes1DWfdIV1hPyIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719064835; c=relaxed/simple;
-	bh=fs6lZuo2LUc1dax5XxIA4Tuxi1wzIBvcoBGSs24+ExE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ljdHc3QWqzG+lkFspYs8KwRab1ZHRI2ez6scGeVAnDZkPQJTb07SuJIRRVGMBpij0LKqug7FJiRrHlT1G3xURjf5yk5EYPT6uESDywl5PVLdJ/aoOX6hoRKMLjNmZkyAJAcqhKgqhritF6wKDz0GkK0FP6s/p7VjUpWWa0x89xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M0t2dPWY; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: torvalds@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719064830;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=5u24kxgSySrZQXwxrbt603z/pcXZVEqocR9DEgAawuc=;
-	b=M0t2dPWYtgK2mgJU7uhtotSGzpTYNTxfa4vJW428fdsIDouoNqhs98A33dgRyAwOOiDZ8G
-	pqJuWXKRhSecMi57Fc0N7xnoG6VsfdS4yZ8jifN5chygrRVMCaQR+rD7ikK6qyWD1kkmHT
-	vpwT5GcAasmG91mV8mW03xqTaL4jIdw=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Sat, 22 Jun 2024 10:00:27 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.10-rc5
-Message-ID: <nbed7rrwexwonrtxvv6zmlxrvheicxxx6vlzcq4hzcxhrtm7ps@s5nkcab6f3cp>
+	s=arc-20240116; t=1719069790; c=relaxed/simple;
+	bh=cOyjd06LqP//etzyIxkKXb6JWqQd2d0ROQMKn+9dM9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LB5ogh8wnAcQRE2Nfe9U4XAXXau/TyuPyozHmfKyEq529p0cV1GeSriu9nhrdheyat99CmGU4Z3/5wrsgUg+deR7iDZXdWh47HRyOC0woW5UNspSg3+y3ihiBaUT9VxSQSdT01+s1RmDIrjgITtGTdfCrrVMGPEKHbWQ2J5E60g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jAyq/f6B; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719069788; x=1750605788;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=cOyjd06LqP//etzyIxkKXb6JWqQd2d0ROQMKn+9dM9s=;
+  b=jAyq/f6BZ5saNF5+ZnOyeXBDPE2zFvWKg7XlzYpuun8R/Sx8E6weWbQh
+   vrQj8A57d3dkNwwf7khLhvmi4cFUI8i/8NxqyjPFtTcotuMYFzLMiUmw+
+   o8uyf+yAtUD/KXH5zQkNiJtDr7B5Mv5coeu+NhEojPM8DsWlCpeGUqvsF
+   mQhAQ/GpfyQTsemqiQ/+rI1ZnkBdd72bdsvuOy0FDRV/1ahz6N44WR/kn
+   KvhCg8xwuy60pA17N/4zY2sk8akc720k+JiMbYZdtaV1zjOJ9aJcj4Fnn
+   /MyIwADbJgjKjRC2bPexyImrRLeD0et+m/kIwQDQiJDjwRL2btaPzHM1d
+   A==;
+X-CSE-ConnectionGUID: kbc9S1sITAuO/hIc2k+7UQ==
+X-CSE-MsgGUID: SU6Uzgz3TEKiekGYGmg0WQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11111"; a="41495801"
+X-IronPort-AV: E=Sophos;i="6.08,258,1712646000"; 
+   d="scan'208";a="41495801"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2024 08:23:07 -0700
+X-CSE-ConnectionGUID: ivm1FCwuRF6RMuyonR6RHA==
+X-CSE-MsgGUID: +aeW7iaITTG5brKzHP1fEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,258,1712646000"; 
+   d="scan'208";a="42680514"
+Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
+  by fmviesa006.fm.intel.com with ESMTP; 22 Jun 2024 08:23:04 -0700
+From: Yu Ma <yu.ma@intel.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mjguzik@gmail.com,
+	edumazet@google.com
+Cc: yu.ma@intel.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pan.deng@intel.com,
+	tianyou.li@intel.com,
+	tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: [PATCH v2 0/3] fs/file.c: optimize the critical section of file_lock in
+Date: Sat, 22 Jun 2024 11:49:01 -0400
+Message-ID: <20240622154904.3774273-1-yu.ma@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240614163416.728752-1-yu.ma@intel.com>
+References: <20240614163416.728752-1-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Hi Linus, fresh batch of fixes for you,
+pts/blogbench-1.1.0 is a benchmark designed to replicate the
+load of a real-world busy file server by multiple threads of
+random reads, writes, and rewrites. When running default configuration
+with multiple parallel threads, hot spin lock contention is observed
+from alloc_fd(), file_closed_fd() and put_unused_fd() around file_lock.
 
-Cheers,
-Kent
+These 3 patches are created to reduce the critical section of file_lock
+in alloc_fd() and close_fd(). As a result, pts/blogbench-1.1.0 has been
+improved by 32% for read and 17% for write with over 30% kernel cycles
+reduced on ICX 160 cores configuration with v6.10-rc4.
 
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+v1 -> v2:
+1. Rebased the patch set to latest v6.10-rc4 and updated the performance
+results.
+2. Updated patch 1 to resolve the bug identified by Mateusz Guzik with rlimit
+check and ensure allocated fd is greater than start.
+3. Updated patch 3 to remove sanity_check directly per the alignment with
+maintainer
 
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+Yu Ma (3):
+  fs/file.c: add fast path in alloc_fd()
+  fs/file.c: conditionally clear full_fds
+  fs/file.c: remove sanity_check from alloc_fd()
 
-are available in the Git repository at:
+ fs/file.c | 46 ++++++++++++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-22
 
-for you to fetch changes up to bd4da0462ea7bf26b2a5df5528ec20c550f7ec41:
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+-- 
+2.43.0
 
-  bcachefs: Move the ei_flags setting to after initialization (2024-06-21 10:17:07 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.10-rc5
-
-Lots of (mostly boring) fixes for syzbot bugs and rare(r) CI bugs.
-
-The LRU_TIME_BITS fix was slightly more involved; we only have 48 bits
-for the LRU position (we would prefer 64), so wraparound is possible for
-the cached data LRUs on a filesystem that has done sufficient
-(petabytes) reads; this is now handled.
-
-One notable user reported bugfix, where we were forgetting to correctly
-set the bucket data type, which should have been BCH_DATA_need_gc_gens
-instead of BCH_DATA_free; this was causing us to go emergency read-only
-on a filesystem that had seen heavy enough use to see bucket gen
-wraparoud.
-
-We're now starting to fix simple (safe) errors without requiring user
-intervention - i.e. a small incremental step towards full self healing.
-This is currently limited to just certain allocation information
-counters, and the error is still logged in the superblock; see that
-patch for more information. ("bcachefs: Fix safe errors by default").
-
-----------------------------------------------------------------
-Kent Overstreet (20):
-      bcachefs: Fix initialization order for srcu barrier
-      bcachefs: Fix array-index-out-of-bounds
-      bcachefs: Fix a locking bug in the do_discard_fast() path
-      bcachefs: Fix shift overflow in read_one_super()
-      bcachefs: Fix btree ID bitmasks
-      bcachefs: Check for invalid btree IDs
-      bcachefs: Fix early init error path in journal code
-      bcachefs: delete_dead_snapshots() doesn't need to go RW
-      bcachefs: Guard against overflowing LRU_TIME_BITS
-      bcachefs: Handle cached data LRU wraparound
-      bcachefs: Fix bch2_sb_downgrade_update()
-      bcachefs: set_worker_desc() for delete_dead_snapshots
-      bcachefs: Fix bch2_trans_put()
-      bcachefs: Fix safe errors by default
-      closures: Change BUG_ON() to WARN_ON()
-      bcachefs: Fix missing alloc_data_type_set()
-      bcachefs: Replace bare EEXIST with private error codes
-      bcachefs: Fix I_NEW warning in race path in bch2_inode_insert()
-      bcachefs: Use bch2_print_string_as_lines for long err
-      bcachefs: Fix a UAF after write_super()
-
-Youling Tang (2):
-      bcachefs: fix alignment of VMA for memory mapped files on THP
-      bcachefs: Move the ei_flags setting to after initialization
-
- fs/bcachefs/alloc_background.c |  76 ++++--
- fs/bcachefs/alloc_background.h |   8 +-
- fs/bcachefs/bcachefs.h         |   5 +
- fs/bcachefs/bcachefs_format.h  |  13 +-
- fs/bcachefs/bkey.c             |   2 +-
- fs/bcachefs/bkey_methods.c     |   6 +-
- fs/bcachefs/bkey_methods.h     |   3 +-
- fs/bcachefs/btree_iter.c       |  11 +-
- fs/bcachefs/btree_types.h      |  16 +-
- fs/bcachefs/errcode.h          |   3 +
- fs/bcachefs/error.c            |  19 +-
- fs/bcachefs/error.h            |   7 -
- fs/bcachefs/fs-ioctl.c         |   2 +-
- fs/bcachefs/fs.c               |  21 +-
- fs/bcachefs/journal.c          |   3 +
- fs/bcachefs/journal_io.c       |  13 +-
- fs/bcachefs/lru.h              |   3 -
- fs/bcachefs/opts.h             |   2 +-
- fs/bcachefs/recovery.c         |  12 +-
- fs/bcachefs/sb-downgrade.c     |   2 +-
- fs/bcachefs/sb-errors_format.h | 559 +++++++++++++++++++++--------------------
- fs/bcachefs/snapshot.c         |   9 +-
- fs/bcachefs/str_hash.h         |   2 +-
- fs/bcachefs/super-io.c         |   7 +-
- fs/bcachefs/super.c            |  13 +-
- lib/closure.c                  |  10 +-
- 26 files changed, 472 insertions(+), 355 deletions(-)
 
