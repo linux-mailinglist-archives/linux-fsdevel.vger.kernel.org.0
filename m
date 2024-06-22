@@ -1,123 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-22180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09719134CA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 17:24:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99239134F4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 18:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 008AA1C225D6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 15:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F1781F229BA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2024 16:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9674C171E6C;
-	Sat, 22 Jun 2024 15:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815DB16FF3F;
+	Sat, 22 Jun 2024 16:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EUHnRP7j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRe8k3Ru"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACDF16F903;
-	Sat, 22 Jun 2024 15:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF31714B078;
+	Sat, 22 Jun 2024 16:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719069800; cv=none; b=FNSxG1Xks6kaIY7F/B3m/auGK1e4XFhBhHFmH1ZEtk6hn5lWWFgreqKk0rA9KmNGp4C7Xf6tVH3QyEaPKb0hfk5TjwfHeJxSHlKuYLE5CVcW9CvuT5V/oncifhhxY1+A9MWSWX36rhnyfbYr46XTuG/4MVoUi1taXxtczidy0/E=
+	t=1719072060; cv=none; b=jgIARetz9GtxNv6K3+T7ME+P2wc5WaSutne7YXkokkm//ud7LsCwcyWnx0945zKiQTdyxnFDiEbRlyCxtSJbKUy2fHarMHFPqQTY5HNqinGCrNngzEH1mmqzI4IAglfYMBEmQtpSQbIafffg+Oqe8MqSgSZGzm4perBmi+yA7QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719069800; c=relaxed/simple;
-	bh=+3EtXD3anw5T5SPSXo7iEqIIBqdxGY53eBDTDUvUN6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RKdr+fP8WDVisMiHQPTIGww7yew8HyZOt6OMb60QaixAiq5sHdClG3yHfZWPL1OUdLsxH1wz6pvOMdzN48ifJ4suOgt9kx2ERyG1qH9dJumZ57Mx32JpW73h4lfBtgNi1AnS+X0Kg4y20ti9RBOCNSbWbcS8Lz9fMi4OOCpg7tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EUHnRP7j; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719069798; x=1750605798;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+3EtXD3anw5T5SPSXo7iEqIIBqdxGY53eBDTDUvUN6A=;
-  b=EUHnRP7jGDm2Tx80mmXBHZye71Pzbr/AcqP1ih2PL52ljheDemfie3Rt
-   Qdu5XM5xphoi6LyFQTdeqlczig3r9kr4J3Xl07DLJ8OzK/bOoF0v4GlfZ
-   rBdSLwDCOhdpp05J9R7t+sPYg9wM3G6phCx9dkPKPzz1nSmT7w6o7bUsb
-   ohzbfC297heVAW8VsR8Im9bI5ELY6HwIfS2vRVIVv3alZSoeBCuIHJYlS
-   2hgxvTcXVinLFwOvSO2XcvlHWS4mUAgTfJhoXAscSSIV8ip5KThe78TML
-   iq8H3fw7+Y4CGkdM8wZqD+6spf8AtNsjmJ2xxUHpsHh85S97ZdI8B5uf4
-   g==;
-X-CSE-ConnectionGUID: ZDPF5iUMR7mpEXujn3mikw==
-X-CSE-MsgGUID: YDs3RqLuSLOHRSfF7u7Kxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11111"; a="41495819"
-X-IronPort-AV: E=Sophos;i="6.08,258,1712646000"; 
-   d="scan'208";a="41495819"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2024 08:23:18 -0700
-X-CSE-ConnectionGUID: LAVAn+nqTZC3/Mh2iI7B5A==
-X-CSE-MsgGUID: CofonECtRpuZaK2eOtuHsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,258,1712646000"; 
-   d="scan'208";a="42680526"
-Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
-  by fmviesa006.fm.intel.com with ESMTP; 22 Jun 2024 08:23:15 -0700
-From: Yu Ma <yu.ma@intel.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	edumazet@google.com
-Cc: yu.ma@intel.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pan.deng@intel.com,
-	tianyou.li@intel.com,
-	tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: [PATCH v2 3/3] fs/file.c: remove sanity_check from alloc_fd()
-Date: Sat, 22 Jun 2024 11:49:04 -0400
-Message-ID: <20240622154904.3774273-4-yu.ma@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240622154904.3774273-1-yu.ma@intel.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
+	s=arc-20240116; t=1719072060; c=relaxed/simple;
+	bh=Cqft6o4pJm38G9E48IRUjh5mW5myfKbq0sUEt0bKQH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dk5DRUSgC0bEwXTDJVztj9FPqYhlpJXAbWiNcRuTqC8/vrz+p7fHbyYCYbTF5BUU6CqO0V8E9LWxbZg2QkI318W/KiO0OsRui1deuWCQxE4w7SqMMjpfrVh5j7T1ee/uVbtj6tHsh8IgFdveQnC+bwITJA6WR39Uy6FMD+/xf88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRe8k3Ru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F455C3277B;
+	Sat, 22 Jun 2024 16:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719072059;
+	bh=Cqft6o4pJm38G9E48IRUjh5mW5myfKbq0sUEt0bKQH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oRe8k3Ru1gvdsT5/n80kpNafErHY/F4Di7B5bA2HAXW7Y9zCjmE8M9hB0y7F7Vtfs
+	 AuqkhZdvz8s0eqVa/XBU9pTSgPWN/QPycDBGV4mcjVT1jVA/RGt4qvb2PBH4FD18Gz
+	 gwOp69M4sA9ueEiHxLFRsnSpvYx5oKJVT+M/G9lCbxEaqTHkQ38TcwhF/ndqoksJic
+	 DZm8oVL0Odem0MKcGWeNUu0uZaZ0vLoyBu9T+586V7MsxwOPO5PF3HbyadC9P9iPiQ
+	 Kr5hMGSyOX5WBRo90vwExBC0RowVO0otdOF/vw8Wt1IF12FZ6hM/q08IViIsga0Elh
+	 4YBqneEaLhmLQ==
+Date: Sat, 22 Jun 2024 09:00:58 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Chandan Babu R <chandanbabu@kernel.org>
+Cc: torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [GIT PULL] xfs: bug fix for 6.10
+Message-ID: <20240622160058.GZ3058325@frogsfrogsfrogs>
+References: <87r0cpw104.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87r0cpw104.fsf@debian-BULLSEYE-live-builder-AMD64>
 
-alloc_fd() has a sanity check inside to make sure the struct file mapping to the
-allocated fd is NULL. Remove this sanity check since it can be assured by
-exisitng zero initilization and NULL set when recycling fd.
+On Sat, Jun 22, 2024 at 07:05:49PM +0530, Chandan Babu R wrote:
+> Hi Linus,
 
-Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read improved by
-32%, write improved by 17% on Intel ICX 160 cores configuration with v6.10-rc4.
+Drat, I ran the wrong script, please ignore this email, Linus.
+I guess I now have weekend work to go figure out why this happened.
 
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Yu Ma <yu.ma@intel.com>
----
- fs/file.c | 7 -------
- 1 file changed, 7 deletions(-)
+> Please pull this branch which contains an XFS bug fix for 6.10-rc5. A brief
+> description of the bug fix is provided below.
 
-diff --git a/fs/file.c b/fs/file.c
-index b4d25f6d4c19..1153b0b7ba3d 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -555,13 +555,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
- 	else
- 		__clear_close_on_exec(fd, fdt);
- 	error = fd;
--#if 1
--	/* Sanity check */
--	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
--		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
--		rcu_assign_pointer(fdt->fd[fd], NULL);
--	}
--#endif
- 
- out:
- 	spin_unlock(&files->file_lock);
--- 
-2.43.0
+Chandan: Would _you_ mind pulling this branch with 6.10 fixes and
+sending them on to Linus?
 
+--D
+
+> 
+> I did a test-merge with the main upstream branch as of a few minutes ago and
+> didn't see any conflicts.  Please let me know if you encounter any problems.
+> 
+> The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+> 
+>   Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.10-fixes-4
+> 
+> for you to fetch changes up to 348a1983cf4cf5099fc398438a968443af4c9f65:
+> 
+>   xfs: fix unlink vs cluster buffer instantiation race (2024-06-17 11:17:09 +0530)
+> 
+> ----------------------------------------------------------------
+> Bug fixes for 6.10-rc5:
+> 
+>   * Fix assertion failure due to a race between unlink and cluster buffer
+>     instantiation.
+> 
+> Signed-off-by: Chandan Babu R <chandanbabu@kernel.org>
+> 
+> ----------------------------------------------------------------
+> Dave Chinner (1):
+>       xfs: fix unlink vs cluster buffer instantiation race
+> 
+>  fs/xfs/xfs_inode.c | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+> 
 
