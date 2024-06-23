@@ -1,231 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-22200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37FF291394C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 11:36:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B060F913A57
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 14:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECF7D2815BA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 09:36:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38791C205E1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 12:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAC977105;
-	Sun, 23 Jun 2024 09:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DCF181301;
+	Sun, 23 Jun 2024 12:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QD4RnW7s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C58F38C
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jun 2024 09:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1863146A68;
+	Sun, 23 Jun 2024 12:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719135386; cv=none; b=fmVCQ9J2SxHFqovJ/gUyiTo+1VpydnlcCQIUunrLhROZcyIS7NWNZPRKgZzd/egQNYiC8M5F+68Ac6wkMv1Yg+4s5Yf5d+ww+FI2V9uf2nzGfHjcahchlvFxznCPqQKuzt5QR3IOB4bq4Cj/UUDC+lRRUKBhYdE6Es2g2mbxBls=
+	t=1719144313; cv=none; b=hbjTG8SrVnDgwIF6dddZV9G7vBGNLfb9BRxSwVmEZVJEkmohK74CCq06oi06TJhOvhFoKsIu4g3pDJVp1EEOwlv01d9nF3X2uC/4dQ+/02ssJ6IK1DZV6jsOIbwiXVukA388aX1XlI4W/EmvMT84eSnb2DpQ2e43GoRUC6N4L54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719135386; c=relaxed/simple;
-	bh=GDIuO3zgeL7Kl5+WuVPVtaND6Qt/YJy91wrUY8RBGIg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Sfy425PoIIuuZ2VLTatJHt8PKWpbipleib86GSjB9RAkRRQRXGFGStL7n4EmJ1PJwYtrsV55mpXymhGmsyV35Jmr7Nq1tlw0a1bkSF7rTVw1e4o4V6Jl5MNNi4InLlCCnWeFoXdwbIHwNXqirJy7KTRPTYdtM6Fcv1GH81Ezdrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3745fb76682so40994735ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jun 2024 02:36:24 -0700 (PDT)
+	s=arc-20240116; t=1719144313; c=relaxed/simple;
+	bh=x0eu6FzDbqlmTCln+0TmPTvoiebXfz9YLshcASu2zFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=coM2u2Yxf3xaCV0qySvaqMXOrh3RI4RTpR21prPlPp0FzSbwWstw+JQ97rUo0y7ZC+1bPBUhy0uN7310fRvw7BKUpDZtDT+XrHWbCSAxRNKu0YvotWUu+xRQJzs8fX5tJwcUFmxpQ4l6c8IGsNVp36EyPSlD1L0wAioMUhDr1I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QD4RnW7s; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso3829304a12.1;
+        Sun, 23 Jun 2024 05:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719144308; x=1719749108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v+9HDK5irEOHKoyqqTJ0d+J1J6qDyFAy5UodcdX0Ris=;
+        b=QD4RnW7s76nf8zOhFreyLrW9jGJ3xqD5xhIbMqOf98PuNpoMUz5RYM3y5XaaNeWMWd
+         6f6SsuaiJPPaLKVN3LTQtzN26bxmv4DhAO/dpmpUiEUyB5nPobOJft5TMt5Ev5xJiOCS
+         zuQ2yAPkW6rQrtDJfl7E8fChctRg1UhGeSTVG7+qUm4hAYnG3Y5oigpJxvvSF1kqmLvK
+         s+txDmVZhDrDey5n0WrqKB/YxSQ4e6pLVPECcpmvb1EDTrqbkzHYe/sC3sNgR7k0Nm0c
+         Fq/bJ1io5SuQbiIVryCS4YvcumhFwxzh+RRlpAOPKcLL8JXaKiUYWl8fjRwzH5l3BNcN
+         qqwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719135384; x=1719740184;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NG1N8DyUmAHaYDrPPVdDaQoJNaPIoWzGqw/9+ysBFKE=;
-        b=jsFVzg2AvFstQNFFmbE3gp2IJ1NNinrQ8DPQg8SxXwIne+PVgufbQjM8XscSeHY1Vf
-         XeKvjYiQbkaEbg+i46ll3m4uakMVP29ZmzJ8mY3LWHLnIxLdfEy/VSTIB3w3ySms/7de
-         EgJOzCrKZdHKAQYo5a8WpjthCvxWNjClY+YB67ykZA8WstZwi7H8nvIZxWFFI3epsD2D
-         f37OnIe6CGAm1qVuf3bxD3Tow6iA+QKTZwe5Bs8q0xCH49BlMtSqbu89WfN4GsW4mGOf
-         zf5avDD7Sh9xzoZeSdSW74m1TxnbpXXdiRb1ZAe/mEfGW73P8XTeKzaMAQHXUBDRS2VJ
-         TV+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX7AGRT26AhOS697RrtnaIt9bk2hcYJ2O6sW2Bkag8i9z8JVQeh6Z4yD8ZsIPeQBlBJgdkLUQmCNXxe8744VBykTKy3Bd1MGXaJPMKILA==
-X-Gm-Message-State: AOJu0Ywz346hi8K6OywHVnNkKHjzek5RKWhEYgBTHHjp3tH/ULm8amZy
-	ZyqvYk0lGce/tm5ikCIJl5M14utj4F1Vyruw92SPJHNj9YZXvgYlU0kgfYNUnx1tNYdxepBjSJh
-	sQQUhHrdjU4mTNyKXLC1ulshX7vzTK67ugKpoSzf+n2g1GzjL8tYGifU=
-X-Google-Smtp-Source: AGHT+IFaQDUeiIT8h4iwC3zXY0mqgOwPCVIekKrLrDxlj2j0GMhy5IG1+eVpAUt8lSuZd5adyMlELI3bVpg8q6wjKd0ZM7IlScgh
+        d=1e100.net; s=20230601; t=1719144308; x=1719749108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v+9HDK5irEOHKoyqqTJ0d+J1J6qDyFAy5UodcdX0Ris=;
+        b=TRVdLEY/xfQQucf6vNGJcqRoU3pCyZkwPvWC68mCTa82faTEh4JoE0sDlG7maiMIHb
+         aeoYKlWPeancdiX8ik2XnAvrcFwZUqSezeis5NCy8sNSVzbuTIRWO4LSRxkomydlgWPk
+         BeB07LgK3VEY+lEqvoE/vvY9RN9pCU79HbhNoqakeC4fQLBvvbe7KWXjjDPhZTfS5CTn
+         1oeKulAQY2HbtFmOGBXKnzLcnJdXY2NYd2c63zWSZntLrUiXGtU0FKqfMb4ID5HfwXq8
+         uQ18erOoUUahnBQqa+cCW5XQDW1JCh1iCe0lYrjuiKe8WH9xqBAg0ecIGpkKFVAEGrOB
+         NUeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCiM3YYSmHOa9U/mbW9QWDX8zplKKwNxekCuyVk8hFKS1kIxJdwFug8Qy8MQun+0bZanAU8+2eWq2vTr3tYUwAT3Mltqi/eWtHolbmPl7HA9QrO256OdNMTJ4IgPAx7Fsf4qPVb030LJgx3Y8E27bEp0iXs0hAHO8d099VArEq+I9RXBt+hFy3voJOLSi1tuBh8muyH23wXt7e4LOVQ2EWtshYv6C1KkxULfU=
+X-Gm-Message-State: AOJu0YwgxKa4HzW/Ll4ls6GhMvrT1kGqqfC6OgoTg28X8ihhAZ1DdmAN
+	MnJPYk/hMFLC3labgHLQ+5cJVSv1YffIKCh+zJPzqDhZXA2HCMfj1b0ymw40nD5foTpHpmjr+Io
+	2XlJNrgPx+9+GXXCxGbu/6X3M7Og=
+X-Google-Smtp-Source: AGHT+IFnMUqp7z8qfKjLX2GW9CbGe8fI9/rJ6aZbm+NwS/Y0v7CD9JEwChA4DcxpDHqQwuxtifZ4PvJaigG3mMmzT9w=
+X-Received: by 2002:aa7:d393:0:b0:57d:5600:2c94 with SMTP id
+ 4fb4d7f45d1cf-57d56003448mr135481a12.0.1719144308088; Sun, 23 Jun 2024
+ 05:05:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54b:0:b0:375:a50d:7f2d with SMTP id
- e9e14a558f8ab-3763f5c9fc5mr2100025ab.1.1719135383768; Sun, 23 Jun 2024
- 02:36:23 -0700 (PDT)
-Date: Sun, 23 Jun 2024 02:36:23 -0700
-In-Reply-To: <000000000000f07c2606165ff63a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dee3cc061b8b6538@google.com>
-Subject: Re: [syzbot] [hfs?] possible deadlock in hfs_extend_file (3)
-From: syzbot <syzbot+2a62f58f1a4951a549bb@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, jack@suse.cz, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240622105621.7922-1-xry111@xry111.site> <kslf3yc7wnwhxzv5cejaqf52bdr6yxqaqphtjl7d4iaph23y6v@ssyq7vrdwx56>
+ <CAHk-=wgj6h97Ro6oQcOq5YTG0JcKRLN0CtXgYCW_Ci6OSzL5NA@mail.gmail.com>
+ <eeb7e9895aca92fa5a8d11d9f37b283428185278.camel@xry111.site>
+ <CAGudoHFofUZ0Nb9UtV=Q3uQ0K+JnBHPrgLxNYuj7nSLF-=ue8g@mail.gmail.com> <9d1512b57683a68a7176ae8221562657fb0231a3.camel@xry111.site>
+In-Reply-To: <9d1512b57683a68a7176ae8221562657fb0231a3.camel@xry111.site>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sun, 23 Jun 2024 14:04:54 +0200
+Message-ID: <CAGudoHGsumzEukjQg=TxQgzjBcZ4a+TsdNVtFp4dpaSw6BzaSA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Add AT_EMPTY_PATH_NOCHECK as unchecked AT_EMPTY_PATH
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alejandro Colomar <alx@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Icenowy Zheng <uwu@icenowy.me>, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Sun, Jun 23, 2024 at 3:22=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Sun, 2024-06-23 at 03:07 +0200, Mateusz Guzik wrote:
+> > On Sun, Jun 23, 2024 at 2:59=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> =
+wrote:
+> > >
+> > > On Sat, 2024-06-22 at 15:41 -0700, Linus Torvalds wrote:
+> > >
+> > > > I do think that we should make AT_EMPTY_PATH with a NULL path
+> > > > "JustWork(tm)", because the stupid "look if the pathname is empty" =
+is
+> > > > horrible.
+> > > >
+> > > > But moving that check into getname() is *NOT* the right answer,
+> > > > because by the time you get to getname(), you have already lost.
+> > >
+> > > Oops.  I'll try to get around of getname() too...
+> > >
+> > > > So the short-cut in vfs_fstatat() to never get a pathname is
+> > > > disgusting - people should have used 'fstat()' - but it's _importan=
+t_
+> > > > disgusting.
+> > >
+> > > The problem is we don't have fstat() for LoongArch, and it'll be
+> > > unusable on all 32-bit arch after 2037.
+> > >
+> > > And Arnd hates the idea adding fstat() for LoongArch because there wo=
+uld
+> > > be one more 32-bit arch broken in 2037.
+> > >
+> > > Or should we just add something like "fstat_2037()"?
+> > >
+> >
+> > In that case fstat is out of the question, but no problem.
+> >
+> > It was suggested to make AT_EMPTY_PATH + NULL pathname do the right
+> > thing and have the syscalls short-circuit as needed.
+> >
+> > for statx it would look like this (except you are going to have
+> > implement do_statx_by_fd):
+> >
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index 16aa1f5ceec4..0afe72b320cc 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -710,6 +710,9 @@ SYSCALL_DEFINE5(statx,
+> >         int ret;
+> >         struct filename *name;
+> >
+> > +       if (flags =3D=3D AT_EMPTY_PATH && filename =3D=3D NULL)
+> > +               return do_statx_by_fd(...);
+> > +
+> >         name =3D getname_flags(filename, getname_statx_lookup_flags(fla=
+gs));
+> >         ret =3D do_statx(dfd, name, flags, mask, buffer);
+> >         putname(name);
+> >
+> > and so on
+> >
+> > Personally I would prefer if fstatx was added instead, fwiw most
+> > massaging in the area will be the same regardless.
+>
+> I do agree.  But if we do it *now* would it be "breaking the userspace"
+> if some stupid program relies on fstatx() to return some error when the
+> path is NULL?  The "stupid programs" may just exist in the wild...
+>
 
-HEAD commit:    563a50672d8a Merge tag 'xfs-6.10-fixes-4' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ca148e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12f98862a3c0c799
-dashboard link: https://syzkaller.appspot.com/bug?extid=2a62f58f1a4951a549bb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1287d83e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cb8151980000
+You mean statx? fstatx would not accept a path to begin with.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8f92c1547793/disk-563a5067.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/21bb27a22e67/vmlinux-563a5067.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/168847d060c0/bzImage-563a5067.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/048c1910668d/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/097a7c874267/mount_1.gz
+Worry about some code breaking is why I suggested a dedicated flag
+(AT_NO_PATH) myself in case fstatx is a no-go.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2a62f58f1a4951a549bb@syzkaller.appspotmail.com
+I am not convinced messing with AT_* flags is justified to begin with.
+Any syscall which does not have a fd-only variant and is found to be
+routinely used with AT_EMPTY_PATH should get one instead.
 
-loop0: detected capacity change from 0 to 64
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc4-syzkaller-00283-g563a50672d8a #0 Not tainted
-------------------------------------------------------
-syz-executor283/5110 is trying to acquire lock:
-ffff88805ee675f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
+As far as I know that's only stat(due to a perf bug in glibc, now
+fixed) and increasingly statx.
 
-but task is already holding lock:
-ffff88802992a0b0 (&tree->tree_lock/1){+.+.}-{3:3}, at: hfs_find_init+0x16e/0x1f0
+Suppose AT_EMPTY_PATH + NULL are to land and stat + statx get the
+treatment. What about all the other syscalls? Sorting all that out is
+quite a big of churn which is probably not worth it. But then there is
+a feature gap in that they EFAULT for this pair while the stat* ones
+don't and that's bound to raise confusion. Then one could add the
+check in the bowels of path lookup in similar way you do did to
+maintain the same behavior (but without per-syscall churn) and a big
+fat warning that anyone getting there often needs to get patched with
+short-circuiting the entire thing. So I think that's either a lot of
+churn or nasty additions.
 
-which lock already depends on the new lock.
+Regardless, as noted above, either making fstatx a thing or
+short-circuiting mostly the same patching has to be done for
+statx-related stuff.
 
+However, this is not my call to make.
 
-the existing dependency chain (in reverse order) is:
-
--> #1 (&tree->tree_lock/1){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       hfs_find_init+0x16e/0x1f0
-       hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
-       hfs_extend_file+0x31b/0x1450 fs/hfs/extent.c:401
-       hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
-       hfs_cat_create+0x1e0/0x970 fs/hfs/catalog.c:104
-       hfs_create+0x66/0xe0 fs/hfs/dir.c:202
-       lookup_open fs/namei.c:3505 [inline]
-       open_last_lookups fs/namei.c:3574 [inline]
-       path_openat+0x1425/0x3280 fs/namei.c:3804
-       do_filp_open+0x235/0x490 fs/namei.c:3834
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
-       do_sys_open fs/open.c:1420 [inline]
-       __do_sys_openat fs/open.c:1436 [inline]
-       __se_sys_openat fs/open.c:1431 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
-       hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
-       __hfs_ext_write_extent+0x22e/0x4f0 fs/hfs/extent.c:121
-       __hfs_ext_cache_extent+0x6a/0x990 fs/hfs/extent.c:174
-       hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
-       hfs_extend_file+0x344/0x1450 fs/hfs/extent.c:401
-       hfs_get_block+0x3e4/0xb60 fs/hfs/extent.c:353
-       __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2128
-       __block_write_begin fs/buffer.c:2177 [inline]
-       block_write_begin+0x9b/0x1e0 fs/buffer.c:2236
-       cont_write_begin+0x645/0x890 fs/buffer.c:2590
-       hfs_write_begin+0x8a/0xd0 fs/hfs/inode.c:53
-       generic_perform_write+0x322/0x640 mm/filemap.c:4015
-       generic_file_write_iter+0xaf/0x310 mm/filemap.c:4136
-       new_sync_write fs/read_write.c:497 [inline]
-       vfs_write+0xa72/0xc90 fs/read_write.c:590
-       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&tree->tree_lock/1);
-                               lock(&HFS_I(tree->inode)->extents_lock);
-                               lock(&tree->tree_lock/1);
-  lock(&HFS_I(tree->inode)->extents_lock);
-
- *** DEADLOCK ***
-
-4 locks held by syz-executor283/5110:
- #0: ffff888029a14420 (sb_writers#9){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2854 [inline]
- #0: ffff888029a14420 (sb_writers#9){.+.+}-{0:0}, at: vfs_write+0x227/0xc90 fs/read_write.c:586
- #1: ffff8880784d0fa8 (&sb->s_type->i_mutex_key#14){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
- #1: ffff8880784d0fa8 (&sb->s_type->i_mutex_key#14){+.+.}-{3:3}, at: generic_file_write_iter+0x83/0x310 mm/filemap.c:4133
- #2: ffff8880784d0df8 (&HFS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
- #3: ffff88802992a0b0 (&tree->tree_lock/1){+.+.}-{3:3}, at: hfs_find_init+0x16e/0x1f0
-
-stack backtrace:
-CPU: 1 PID: 5110 Comm: syz-executor283 Not tainted 6.10.0-rc4-syzkaller-00283-g563a50672d8a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
- hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
- __hfs_ext_write_extent+0x22e/0x4f0 fs/hfs/extent.c:121
- __hfs_ext_cache_extent+0x6a/0x990 fs/hfs/extent.c:174
- hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
- hfs_extend_file+0x344/0x1450 fs/hfs/extent.c:401
- hfs_get_block+0x3e4/0xb60 fs/hfs/extent.c:353
- __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2128
- __block_write_begin fs/buffer.c:2177 [inline]
- block_write_begin+0x9b/0x1e0 fs/buffer.c:2236
- cont_write_begin+0x645/0x890 fs/buffer.c:2590
- hfs_write_begin+0x8a/0xd0 fs/hfs/inode.c:53
- generic_perform_write+0x322/0x640 mm/filemap.c:4015
- generic_file_write_iter+0xaf/0x310 mm/filemap.c:4136
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe0c6fea2e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffefba1b208 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fe0c6fea2e9
-RDX: 000000000000fea7 RSI: 0000000020000000 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00000000200005c0 R09: 00007ffefba1b240
-R10: 0000000000000280 R11: 0000000000000246 R12: 00007ffefba1b22c
-R13: 000000000000000b R14: 431bde82d7b634db R15: 00007ffefba1b260
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
