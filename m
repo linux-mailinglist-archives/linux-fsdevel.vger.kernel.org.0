@@ -1,143 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-22213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77069913C50
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 17:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54BF9913D08
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 19:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B24D1F22A70
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 15:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106F8283532
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 17:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A9E181D1B;
-	Sun, 23 Jun 2024 15:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603CC18309F;
+	Sun, 23 Jun 2024 17:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i7grALWB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHcWkbRT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FC417FAB6
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jun 2024 15:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9549F183082;
+	Sun, 23 Jun 2024 17:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719156405; cv=none; b=kGOtBaG8dZHvOjGrHekxQZRUx3zWH7TlmRyaKV2Dlz5qffdHswhV5EcM6DjWBCrZMlbECK5LaGsqsstnj5nsREzNacuBHdDa3uAzbGpoTOwLq0KHkvvdsixXsaRtveRJGAwgNcDW+DAjXmtStwJEF10WxERylZ9IJiOLqMFEzco=
+	t=1719162640; cv=none; b=KJZQqP/BhlVu6ZhCAgMZdmQuoDwd2SfyD2NwEDwfyGqJbOIoFEH3iZ40SRa8XDlTWKX1p0FFYVZhImbiX9lfwoQHQrwbHLEgo5CLP/LOHO/QUddYNWoi/9/AgYVWcCEypQ/jC1ob/bdm4sDKft/OxTrQxp60vols2R3TlWmKBVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719156405; c=relaxed/simple;
-	bh=ooh7IaQj+cWRnQdaw8/1O4YXQwna4SUhIk+dL5M7/JU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBJV8f4jT2IzKVZwfBDqpL0Hwj9sB0ZW+gKcxvj2y2k7uHSDRn/z7790MV0KzgJZDGVArovtrTjXmvW305J87KEaeTIh9tk5mbdaA4As6iSpwgZIwgkdjw+oa+PEdweSJXH1sd37/9dBz9Xq3ruj22aA4WpcZj69lFHMJDANAAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i7grALWB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719156403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pFXK8G1SadQvGVrWX2KcQ+fiVJ5r+OsD2zAk1SpxTqU=;
-	b=i7grALWBBNd5WFPJXUzlrFzwvqD3yrhfG9mBkZ1C82ZSlzp0+iYHMJHoLQuZBXcivn1J14
-	yMsUUC8i3z76gd/MAFijp3JHUuapexcriBbu+t3R9+6RsiEFQDYZMCkLiziZR5BUw+3dPU
-	ta5i5+TOPVxyLLkXocFBs+hpwk6ds6Y=
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
- [209.85.161.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-140-7yfau-XNO6-RO3HNJ4nBgw-1; Sun, 23 Jun 2024 11:26:41 -0400
-X-MC-Unique: 7yfau-XNO6-RO3HNJ4nBgw-1
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-5bda84e2c81so476467eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jun 2024 08:26:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719156401; x=1719761201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pFXK8G1SadQvGVrWX2KcQ+fiVJ5r+OsD2zAk1SpxTqU=;
-        b=qhvre/IFdjfu/0ntrQvMPRQvGVRcpKjF4Q6a8+5Fdn70g4Zjc3mlwXxz3G2ZjWpF1H
-         wJeKdMjQRgiupyeW11b8khwfg66nGHwrlmkkz4dHCvXu7f7xIofjir56jUr8qM1PQMmE
-         2ifIXK0GjBkcoKMhvvt2E1ezJ+n1byQkhJVYClgKcGLMvWXjpf/2NwVVTThxkYV4Xe8+
-         Tm/jJl4bAy67zQO2Q6KqmoMJ5cu7uEHUShKNLFEn8xnoctDItxquPC3FMISPD5SSW/H/
-         3C9Ru+U/R01IJtIkH90JG67pWkIsE8DWJER4DCkgAHzsE3KvgLTrRKjG9lkTnZkbOBjS
-         h62Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXDXresV3LAQUbm0I63zR+fbyLAusjTY42Ilm9l1pkXyqMUhEXt4PE4ekjrmdIm5bj6jsAPCkDnqUWVOWJwXTHup1GExUFyLBD7KmeHCQ==
-X-Gm-Message-State: AOJu0YxY/ONx80WwONLjP0NWr0UG75+zCZc+f89j76wH0ATlGQNQO8kv
-	nACLTEpWOl0kRfiHGA2OP0Svi8KSneijvYl24CUkfLq8TAdvQqGpYWByT5OB5wcue2b1R5mcfuH
-	RzQkY+k7SXlREoPbOKrqswe6KUtQIoqSb3O9kFpSra/8mifZNPJr1N7pqaSoTxvk=
-X-Received: by 2002:a05:6808:2392:b0:3d5:4326:3601 with SMTP id 5614622812f47-3d54326392bmr4078226b6e.1.1719156400678;
-        Sun, 23 Jun 2024 08:26:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwMz32C8X8OkYsczYb+AeCSDZLUo60k21JarMrjxnPjcSuR/TnvND69SCP53Zz/0qBqCliHQ==
-X-Received: by 2002:a05:6808:2392:b0:3d5:4326:3601 with SMTP id 5614622812f47-3d54326392bmr4078192b6e.1.1719156400151;
-        Sun, 23 Jun 2024 08:26:40 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2b6b048sm32901281cf.38.2024.06.23.08.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 08:26:39 -0700 (PDT)
-Date: Sun, 23 Jun 2024 11:26:37 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
-	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, raquini@redhat.com
-Subject: Re: [PATCH v2 1/3] Fix userfaultfd_api to return EINVAL as expected
-Message-ID: <Zng-rfCPvSaGvL7p@x1n>
-References: <20240621181224.3881179-1-audra@redhat.com>
- <20240621180330.6993d5fd0bda4da230e45f0d@linux-foundation.org>
+	s=arc-20240116; t=1719162640; c=relaxed/simple;
+	bh=aosSO/S+etUamgM4SS3mlQ3heoMUr6FZbeXpiXEovy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OtiE5Nt0nFcnQljGlPPSqKqqVt9Ta7s/HUCXkDn/V4bo76YLtVeH6GBdyEVZJqf7Z1z+LNIJhaDnH4Do1ogb1FPxyQ0BjymFDIYH7Sb0oKfTNnGO8Tf5dwGG+I57rGIXar6MKGvALPUhXBRLlaDGp8bc+5gU+L9J+U8pc0kBr2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHcWkbRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1215EC4AF19;
+	Sun, 23 Jun 2024 17:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719162640;
+	bh=aosSO/S+etUamgM4SS3mlQ3heoMUr6FZbeXpiXEovy0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SHcWkbRTRysffowmKeNtbvp9bhDl+zoDvjEJ2fFDHg7LSDrwqFsJdD9YYXV4Vr+sp
+	 2E8pAnecGBkfcW3fYWlLjSsfPlPKcXnQ8nJbcMvEmYSYZS0YcgH+rt/qDOrTB8Gvu+
+	 agZuIo6AmTpr2D4xK4pBnUswovpS9ueZT7VqTzkz0VoNehsJKjKIbT7Hxbmzrk7px2
+	 nKkeeohgJbLaTj1UD/4bc2iBlfTD7iIkm5ON/CNdK03bV+FGcWIvguDXvdHM+5cgLf
+	 OB8EHfsL2MFz6vrCmyH5CregCIOmWkoz7MbvmFg/cF39yMwxMHUAlyiXqW1imSaGS0
+	 Nv1EJ4Jnnv/6A==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso38463451fa.3;
+        Sun, 23 Jun 2024 10:10:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUABcrWO+546WA1uq/7iZtUfrtI/F8b3SCqjuQoTkdlv00T6gIbcBPtNW860k9lZCksUyptHLTKTPx5Ry9PlTGpYgXaz8Q6Pc8d4ViFGEGXd00NSe5SY080a7But/HVjU/K/XbEm4TcqPYSyFraOEjoGPQnCETFMgAS8syfAd1KuhZHOKsCiFbYygqoLXuKzE0YDjH0BIZok7JLuYRNtKYh1cDqEbYIg0zMOffnXEuL8oCsRUB5E9Aoo2HxJXIHkOHykqq+OmC0s6JxPGesMrTN0oAr467I+B4OJgef7fy8pVehj7mUnWwR71Jgmti7yYhFuLBR83jIcWn74u8BqTaD9Qr7CrC/Q+W7WixgrxRhm5Oym2OJ533GrvLiArZ7iNUNPgi8XL/4e/YCewaZ1V2EWkcIdpt+F9D7lLyZ6/aZYhBr5cMOLgMJ5d0=
+X-Gm-Message-State: AOJu0YwlgS3fibMxZXsahhE6nqg8Txd2oqTFnvZr/y0iSDTRuMZIOiFl
+	AzkjI2K/klNnQ5tYVDglow4ULt7DWn7CPfw2aHP8VAbsQZFzWYqAIK/Jh76DQE+I6ik18Zmwi9B
+	sWDR9R06h9ucP+I2mFYh3Nt8ApuI=
+X-Google-Smtp-Source: AGHT+IHxMABTsjE/bTBoMOuJE1ctF+u0ZebsEtw1bh3nJ1bb3woGpWj5W/Pz1qQmYslYoKzzGRd0eu1pNlr+yN6Ofzo=
+X-Received: by 2002:a2e:3101:0:b0:2ec:1cf1:b74c with SMTP id
+ 38308e7fff4ca-2ec594cfe8fmr16740431fa.32.1719162638077; Sun, 23 Jun 2024
+ 10:10:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240621180330.6993d5fd0bda4da230e45f0d@linux-foundation.org>
+References: <20240620162316.3674955-1-arnd@kernel.org> <20240620162316.3674955-11-arnd@kernel.org>
+In-Reply-To: <20240620162316.3674955-11-arnd@kernel.org>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 24 Jun 2024 01:10:25 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTS9xKLSbSN2Scs016Boxzr6TdNxVLr2TYEfbJ0KqSgppw@mail.gmail.com>
+Message-ID: <CAJF2gTS9xKLSbSN2Scs016Boxzr6TdNxVLr2TYEfbJ0KqSgppw@mail.gmail.com>
+Subject: Re: [PATCH 10/15] csky, hexagon: fix broken sys_sync_file_range
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+	Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, 
+	linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>, 
+	linux-hexagon@vger.kernel.org, linux-csky@vger.kernel.org, 
+	Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-sh@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	libc-alpha@sourceware.org, musl@lists.openwall.com, ltp@lists.linux.it, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 06:03:30PM -0700, Andrew Morton wrote:
-> On Fri, 21 Jun 2024 14:12:22 -0400 Audra Mitchell <audra@redhat.com> wrote:
-> 
-> > Currently if we request a feature that is not set in the Kernel
-> > config we fail silently and return all the available features. However,
-> > the man page indicates we should return an EINVAL.
-> > 
-> > We need to fix this issue since we can end up with a Kernel warning
-> > should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
-> > a kernel with the config not set with this feature.
-> > 
-> >  [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
-> >  [  200.820738] Modules linked in:
-> >  [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
-> >  [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
-> >  [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
-> > 
-> > Fixes: e06f1e1dd499 ("userfaultfd: wp: enabled write protection in userfaultfd API")
-> 
-> A userspace-triggerable WARN is bad.  I added cc:stable to this.
+On Fri, Jun 21, 2024 at 12:24=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wr=
+ote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Both of these architectures require u64 function arguments to be
+> passed in even/odd pairs of registers or stack slots, which in case of
+> sync_file_range would result in a seven-argument system call that is
+> not currently possible. The system call is therefore incompatible with
+> all existing binaries.
+>
+> While it would be possible to implement support for seven arguments
+> like on mips, it seems better to use a six-argument version, either
+> with the normal argument order but misaligned as on most architectures
+> or with the reordered sync_file_range2() calling conventions as on
+> arm and powerpc.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/csky/include/uapi/asm/unistd.h    | 1 +
+>  arch/hexagon/include/uapi/asm/unistd.h | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi=
+/asm/unistd.h
+> index 7ff6a2466af1..e0594b6370a6 100644
+> --- a/arch/csky/include/uapi/asm/unistd.h
+> +++ b/arch/csky/include/uapi/asm/unistd.h
+> @@ -6,6 +6,7 @@
+>  #define __ARCH_WANT_SYS_CLONE3
+>  #define __ARCH_WANT_SET_GET_RLIMIT
+>  #define __ARCH_WANT_TIME32_SYSCALLS
+> +#define __ARCH_WANT_SYNC_FILE_RANGE2
+For csky part.
+Acked-by: Guo Ren <guoren@kernel.org>
 
-Andrew,
+>  #include <asm-generic/unistd.h>
+>
+>  #define __NR_set_thread_area   (__NR_arch_specific_syscall + 0)
+> diff --git a/arch/hexagon/include/uapi/asm/unistd.h b/arch/hexagon/includ=
+e/uapi/asm/unistd.h
+> index 432c4db1b623..21ae22306b5d 100644
+> --- a/arch/hexagon/include/uapi/asm/unistd.h
+> +++ b/arch/hexagon/include/uapi/asm/unistd.h
+> @@ -36,5 +36,6 @@
+>  #define __ARCH_WANT_SYS_VFORK
+>  #define __ARCH_WANT_SYS_FORK
+>  #define __ARCH_WANT_TIME32_SYSCALLS
+> +#define __ARCH_WANT_SYNC_FILE_RANGE2
+>
+>  #include <asm-generic/unistd.h>
+> --
+> 2.39.2
+>
 
-Note that this change may fix a WARN, but it may also start to break
-userspace which might be worse if it happens, IMHO.  I forgot to mention
-that here, but only mentioned that in v1, and from that POV not copying
-stable seems the right thing.
 
-https://lore.kernel.org/all/ZjuIEH8TW2tWcqXQ@x1n/
-
-        In summary: I think we can stick with Fixes on e06f1e1dd499, but we
-        don't copy stable.  The major reason we don't copy stable here is
-        not only about complexity of such backport, but also that there can
-        be apps trying to pass in unsupported bits (even if the kernel
-        didn't support it) but keep using MISSING mode only, then we
-        shouldn't fail them easily after a stable upgrade.  Just smells
-        dangerous to backport.
-
-I'm not sure what's the best solution for this.  A sweet spot might be that
-we start to fix it in new kernels only but not stable ones.
-
-Thanks,
-
--- 
-Peter Xu
-
+--=20
+Best Regards
+ Guo Ren
 
