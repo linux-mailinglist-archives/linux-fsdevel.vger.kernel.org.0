@@ -1,240 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-22198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F0A9137C6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 07:12:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A968291383D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 08:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866E31F226DD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 05:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C801C21240
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 06:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C2D745E2;
-	Sun, 23 Jun 2024 05:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D867620332;
+	Sun, 23 Jun 2024 06:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEMsJt+n"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R993nS54"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B69F54903;
-	Sun, 23 Jun 2024 05:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3458C11;
+	Sun, 23 Jun 2024 06:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719119515; cv=none; b=f9CdbylR0Y2rzAGrLaAqJtyaVqTh6zZ90IMW88bxp6WXRCxh6UB3y2DUuzRkOzO7do1XFsjIRWJT4aD+ot26UAAGJ6mDb0Ew06cY1viMZkiK4B9GBse/2O91XkdbjcARAe7SsXFcFIkrcD89xi1HanFcV1sNBgy2t/py/AqPY0s=
+	t=1719122468; cv=none; b=PTUmBY1dmoLJkNH7hTLa1xsNk4SjKRW6WTh4luJOhglupT9Y5dXtDWj7Xkn5ID0Sw6296myI4wjOyEAcByhk8Lb9CT7ND/3Lu691qA49c2wYGnj2/h2QSe1P2AX91DLPMfxtFZCKDKZIKLSIvmgt/VmieXQ65eQ/rSgRoDdIeMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719119515; c=relaxed/simple;
-	bh=xYJG8i+fuWApHBDCTAWc1UwRChxNBZW/laCKRJyFaE0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VprCeaaZt1um5RWp9ebSGfMEpiX2SpZp/pov9FL6eb14EoT4WA96lsry9Ocl6WOWZHdh3Me5CF5KxdYkOD1+s5CcyXGdljoNqtrWk3xf1+ghIDxvFZE5YoAKsugZ85L+zZcmE2o07/v/ovOAr/04mP3IvNcmbbKPZ1Ev/pmFJyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEMsJt+n; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1719122468; c=relaxed/simple;
+	bh=7tBYjcPASrEA9EIwWbdTX/mLPmfYmGFhdjPrPv9CTiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RQ1+YiKUYDt22Lm5MDnfhUOjUdDxsDQF6eh55HOL7G3Yojxq4svKd9adIrMLSdYjNTQ+L+CLHOLZaQwEaAQZ12nkH61i1AmuBGTxsV3HfvxoXD0daye5blAmYFKX+k/lZWwUWoz0qRvq5i3vI/21ybb2Fa6RqMjV5iebl0IohUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R993nS54; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-706642b4403so669859b3a.1;
-        Sat, 22 Jun 2024 22:11:53 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-79baa4e8531so326304185a.2;
+        Sat, 22 Jun 2024 23:01:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719119513; x=1719724313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719122465; x=1719727265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RjnjBeEg2Eh+rau6hPT05sZEODPu6+al+eM3tFMwTLA=;
-        b=fEMsJt+nhWzmUJYVeriWYf5aGs5a1mrTWSBmQLCLymtjM7ud/VnFGme7OIOvE8Y4vg
-         MVjrYhGom2LPtSIbuU2uQp/0OYQjtiJu2nCGNg5rSPW9jvQ/5jwkPyBCzMpCpQncwwXk
-         wjsOrKPjswfE4lpfONAMOHhkc48VzKXGe8Cg7iYg9gxAkRK/5Nu22Mil2Y7zEdt/lubN
-         oV6PjgtUVi0/qM5rIhoebOUduASNkzMXBBlsSWD9OGzXZ4ou6+Pisi5Hnm6BGAs+IcXc
-         FAIazh6T1UsjjDShZ3TLmuqdSa2hTcAYugdxaunPA5Ef9Gmrd4c9l3WlsmPJ/P1U1prW
-         LyUQ==
+        bh=639B1VhzkVRiQ3egX05fSRdoRLJZKUd3UI9/6wfJ8lw=;
+        b=R993nS54gBQpPnXksw45EdyenrtLPYB3PmH6lO7ye4DAWTstO2fNdwaDSKS50tzZMG
+         G2SRAG/e3ADXA7/Uw+En4WEJ66dhxJhNIQj/C4JFGQrSAOCyC7DuzK8jFHCvSxJNXG6B
+         hy7TfF/cBCwJorUHscfJETTmJufxf8caMyMvMZF2ywAWqKTcSRj0h6JDausIwcfrDElH
+         0jbik2TCCgi+eBaq4zVfXb4vbviX2AEWlrCriSPCj4jSeejjaDCweHM96sJ15UPln9M7
+         YNc5PUDAZ3RrdecTx7vsdqVzU/yIpirvYSExFO00Q5l8q6oiR5vCeiR/dXK0W35XcUln
+         txmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719119513; x=1719724313;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719122465; x=1719727265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RjnjBeEg2Eh+rau6hPT05sZEODPu6+al+eM3tFMwTLA=;
-        b=UqRNUvnpwfnYCqlHeCwMfoiIMDJFk2w5rWsTvIRj/AqZg11KrcvSgGnedUL0hpcHa8
-         Nb0E4xnDa1PWksf32RXd7N955ieJTrXDmaC18NcRr/Iqje2ljpdRxnNIbddDMvwawoLh
-         Pn/vuagxRuUTNGSmudo1Mcl/gngdjUhY8HJsKOV2Zz3N4lWANx/T6IBKpy79keU5yC6x
-         XVkVjuUx5siIceD8sFcuPbDxhuep9bB+63RaMPf92Z807DymsGcpXC3R206VWa8pTtaf
-         SXbXVVi+v7iXGFemXeRRarZghyLGft+lgEvsOE167ATVJQhzfl2iDxHNht82KNGj87jH
-         kanQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5lPvLWU/FgKcGoJIL5c/UphOX+vbHrIKBiDdY3HCMax9vTJ//NfQagmEX4o3YIN8oD26XrjN5LfT53Dnf24e0BmlhLdrilvp92gaEr/SIi92Jy3JL7vn0WXzA39tEptPaVT32bWD6bCC9gw==
-X-Gm-Message-State: AOJu0YyGl0b5DG61EMxBdayhNkFo9+sihYzCv/VtonJLoMqeXuVJ7Y+6
-	M0yii8ADKsbGQcWETGd2yRVsnEtZukFzlpwmw9+qx5FaOLWNkw6I
-X-Google-Smtp-Source: AGHT+IG3/AWgYvkNCTocWy0yKRiTkrWq4RAWHBWsaSthWvnc8UEYp3Uaz/6jmm/Mhwe2GTmaqkLPWg==
-X-Received: by 2002:aa7:824b:0:b0:706:3f17:ca2 with SMTP id d2e1a72fcca58-70669ecae02mr3320340b3a.0.1719119513305;
-        Sat, 22 Jun 2024 22:11:53 -0700 (PDT)
-Received: from carrot.. (i114-180-52-104.s42.a014.ap.plala.or.jp. [114.180.52.104])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512d3034sm4042844b3a.170.2024.06.22.22.11.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 22:11:52 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs <linux-nilfs@vger.kernel.org>,
-	syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>,
-	syzkaller-bugs@googlegroups.com,
-	LKML <linux-kernel@vger.kernel.org>,
-	hdanton@sina.com,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	willy@infradead.org
-Subject: [PATCH 3/3] nilfs2: fix incorrect inode allocation from reserved inodes
-Date: Sun, 23 Jun 2024 14:11:35 +0900
-Message-Id: <20240623051135.4180-4-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240623051135.4180-1-konishi.ryusuke@gmail.com>
-References: <000000000000fe2d22061af9206f@google.com>
- <20240623051135.4180-1-konishi.ryusuke@gmail.com>
+        bh=639B1VhzkVRiQ3egX05fSRdoRLJZKUd3UI9/6wfJ8lw=;
+        b=R6r8PO9gl32YCX79nMEJ4J4RZYcyICnnjMd9X8xtXAZt+8gC+BrTUfQPg/RSZubuzm
+         77TSRNtq8DBd8p+a8aW7TrrjaB2lY+Y/WP9xbf4eSD995/uQSQMigMRpdH85AbevF6F+
+         B3gz6UbxmkkDzL8zRj8DDspihdEac6GCkBkSQRIUsw6R2cPByZRlRutf86ccIL1ncH9/
+         pnN322M9Dq2JLFSY5TKb4GIpg/VPrV+CPcZsZODs0BuATu/Glw1v1YumsFv1sCzCqU5m
+         FdOaKbDXukPSySg/aZ9fwDMewmzKSm5s/W5Te2fMF2Z+wve+iDof5FaczqaPX1uuqHFE
+         GsOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVajQzy9Hbni0oxBpL2+OOM9ET+/fAjwYME5PfBc+rJF7nxjOuazS+nlkyWZXHMY4Kx0wsjDJoBysiuriAY+Z4GGPlf/T0Wbr6OP1PvJVa4JcdYEP8Kqz4fTP9jWmsSsjh8kxFBs+ZjdL71MwpcUEeFOCuRiyFTUxxNSzDeDsvhB2vqzwjKstF/UnkEPBnDA83PfMDq1tZVzcYwo3jGlFAqx5AI0hZYArDj7uEVFCmG84oGMYiqabRRc7scJoXm03f7w7XjjQKmY+s1rz3yZ+sxNWoLx61WR6fj/RUJ1ddX+oPW9plU8FPW8N6KoqP5e5VjuxvA5w==
+X-Gm-Message-State: AOJu0YyBC/us2QSiJofjJQ16RCW7Jk0Es7RtiShpUz1F5UZdlRFUhfhN
+	+lmnymsOwfAmr+0pqBhbPzXxambXIU6iILsCdC86bwcsoATc33cOarFvSQFnoF0IYrNmyaQ24AS
+	R9beyfGGncsFCOdoWeLOi5B3hlGE=
+X-Google-Smtp-Source: AGHT+IHcXR+ehU+k0C/NmM/DLF8W1FSfgc1FOoi+9SruG7tbvTjl8bMu8+dVhBmSjLDe3SkqoqwwTUGvFNLK0f3vidI=
+X-Received: by 2002:ad4:5228:0:b0:6b4:f644:9d87 with SMTP id
+ 6a1803df08f44-6b53debf738mr17899726d6.21.1719122465581; Sat, 22 Jun 2024
+ 23:01:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240621022959.9124-1-laoar.shao@gmail.com> <20240621022959.9124-7-laoar.shao@gmail.com>
+ <ZnWGsw4d9aq5mY0S@casper.infradead.org> <CALOAHbC0ta-g2pcWqsL6sVVigthedN04y8_tH-cS9TuDGEBsEg@mail.gmail.com>
+ <ZneSWDgijj3r0MMC@casper.infradead.org>
+In-Reply-To: <ZneSWDgijj3r0MMC@casper.infradead.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Sun, 23 Jun 2024 14:00:29 +0800
+Message-ID: <CALOAHbDvyBn=yUABT4G6Egne48cQqHDM7bvuBeKFmbSA5fhg4A@mail.gmail.com>
+Subject: Re: [PATCH v3 06/11] mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
+To: Matthew Wilcox <willy@infradead.org>
+Cc: torvalds@linux-foundation.org, ebiederm@xmission.com, 
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
+	akpm@linux-foundation.org, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If the bitmap block that manages the inode allocation status is
-corrupted, nilfs_ifile_create_inode() may allocate a new inode from
-the reserved inode area where it should not be allocated.
+On Sun, Jun 23, 2024 at 11:11=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
+g> wrote:
+>
+> On Sun, Jun 23, 2024 at 10:29:30AM +0800, Yafang Shao wrote:
+> > On Fri, Jun 21, 2024 at 9:57=E2=80=AFPM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > > On Fri, Jun 21, 2024 at 10:29:54AM +0800, Yafang Shao wrote:
+> > > > +++ b/mm/internal.h
+> > >
+> > > Why are you putting __kstrndup in a header file when it's only used
+> > > in util.c?
+> >
+> > I want to make it always inlined. However, it is not recommended to
+> > define an inline function in a .c file, right ?
+>
+> I'm not aware of any such recommendation.  Better than putting it in
+> a .h file that everybody has to look at but nobody uses.
 
-Previous fix commit d325dc6eb763 ("nilfs2: fix use-after-free bug of
-struct nilfs_root"), fixed the problem that reserved inodes with inode
-numbers less than NILFS_USER_INO (=11) were incorrectly reallocated
-due to bitmap corruption, but since the start number of non-reserved
-inodes is read from the super block and may change, in which case
-inode allocation may occur from the extended reserved inode area.
+Understood.
+Will change it.
 
-If that happens, access to that inode will cause an IO error, causing
-the file system to degrade to an error state.
-
-Fix this potential issue by adding a wraparound option to the common
-metadata object allocation routine and by modifying
-nilfs_ifile_create_inode() to disable the option so that it only
-allocates inodes with inode numbers greater than or equal to the inode
-number read in "nilfs->ns_first_ino", regardless of the bitmap status
-of reserved inodes.
-
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
----
- fs/nilfs2/alloc.c | 19 +++++++++++++++----
- fs/nilfs2/alloc.h |  4 ++--
- fs/nilfs2/dat.c   |  2 +-
- fs/nilfs2/ifile.c |  7 ++-----
- 4 files changed, 20 insertions(+), 12 deletions(-)
-
-diff --git a/fs/nilfs2/alloc.c b/fs/nilfs2/alloc.c
-index 89caef7513db..ba50388ee4bf 100644
---- a/fs/nilfs2/alloc.c
-+++ b/fs/nilfs2/alloc.c
-@@ -377,11 +377,12 @@ void *nilfs_palloc_block_get_entry(const struct inode *inode, __u64 nr,
-  * @target: offset number of an entry in the group (start point)
-  * @bsize: size in bits
-  * @lock: spin lock protecting @bitmap
-+ * @wrap: whether to wrap around
-  */
- static int nilfs_palloc_find_available_slot(unsigned char *bitmap,
- 					    unsigned long target,
- 					    unsigned int bsize,
--					    spinlock_t *lock)
-+					    spinlock_t *lock, bool wrap)
- {
- 	int pos, end = bsize;
- 
-@@ -397,6 +398,8 @@ static int nilfs_palloc_find_available_slot(unsigned char *bitmap,
- 
- 		end = target;
- 	}
-+	if (!wrap)
-+		return -ENOSPC;
- 
- 	/* wrap around */
- 	for (pos = 0; pos < end; pos++) {
-@@ -495,9 +498,10 @@ int nilfs_palloc_count_max_entries(struct inode *inode, u64 nused, u64 *nmaxp)
-  * nilfs_palloc_prepare_alloc_entry - prepare to allocate a persistent object
-  * @inode: inode of metadata file using this allocator
-  * @req: nilfs_palloc_req structure exchanged for the allocation
-+ * @wrap: whether to wrap around
-  */
- int nilfs_palloc_prepare_alloc_entry(struct inode *inode,
--				     struct nilfs_palloc_req *req)
-+				     struct nilfs_palloc_req *req, bool wrap)
- {
- 	struct buffer_head *desc_bh, *bitmap_bh;
- 	struct nilfs_palloc_group_desc *desc;
-@@ -516,7 +520,7 @@ int nilfs_palloc_prepare_alloc_entry(struct inode *inode,
- 	entries_per_group = nilfs_palloc_entries_per_group(inode);
- 
- 	for (i = 0; i < ngroups; i += n) {
--		if (group >= ngroups) {
-+		if (group >= ngroups && wrap) {
- 			/* wrap around */
- 			group = 0;
- 			maxgroup = nilfs_palloc_group(inode, req->pr_entry_nr,
-@@ -550,7 +554,14 @@ int nilfs_palloc_prepare_alloc_entry(struct inode *inode,
- 			bitmap_kaddr = kmap_local_page(bitmap_bh->b_page);
- 			bitmap = bitmap_kaddr + bh_offset(bitmap_bh);
- 			pos = nilfs_palloc_find_available_slot(
--				bitmap, group_offset, entries_per_group, lock);
-+				bitmap, group_offset, entries_per_group, lock,
-+				wrap);
-+			/*
-+			 * Since the search for a free slot in the second and
-+			 * subsequent bitmap blocks always starts from the
-+			 * beginning, the wrap flag only has an effect on the
-+			 * first search.
-+			 */
- 			kunmap_local(bitmap_kaddr);
- 			if (pos >= 0)
- 				goto found;
-diff --git a/fs/nilfs2/alloc.h b/fs/nilfs2/alloc.h
-index b667e869ac07..d825a9faca6d 100644
---- a/fs/nilfs2/alloc.h
-+++ b/fs/nilfs2/alloc.h
-@@ -50,8 +50,8 @@ struct nilfs_palloc_req {
- 	struct buffer_head *pr_entry_bh;
- };
- 
--int nilfs_palloc_prepare_alloc_entry(struct inode *,
--				     struct nilfs_palloc_req *);
-+int nilfs_palloc_prepare_alloc_entry(struct inode *inode,
-+				     struct nilfs_palloc_req *req, bool wrap);
- void nilfs_palloc_commit_alloc_entry(struct inode *,
- 				     struct nilfs_palloc_req *);
- void nilfs_palloc_abort_alloc_entry(struct inode *, struct nilfs_palloc_req *);
-diff --git a/fs/nilfs2/dat.c b/fs/nilfs2/dat.c
-index 180fc8d36213..fc1caf63a42a 100644
---- a/fs/nilfs2/dat.c
-+++ b/fs/nilfs2/dat.c
-@@ -75,7 +75,7 @@ int nilfs_dat_prepare_alloc(struct inode *dat, struct nilfs_palloc_req *req)
- {
- 	int ret;
- 
--	ret = nilfs_palloc_prepare_alloc_entry(dat, req);
-+	ret = nilfs_palloc_prepare_alloc_entry(dat, req, true);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/fs/nilfs2/ifile.c b/fs/nilfs2/ifile.c
-index 612e609158b5..1e86b9303b7c 100644
---- a/fs/nilfs2/ifile.c
-+++ b/fs/nilfs2/ifile.c
-@@ -56,13 +56,10 @@ int nilfs_ifile_create_inode(struct inode *ifile, ino_t *out_ino,
- 	struct nilfs_palloc_req req;
- 	int ret;
- 
--	req.pr_entry_nr = 0;  /*
--			       * 0 says find free inode from beginning
--			       * of a group. dull code!!
--			       */
-+	req.pr_entry_nr = NILFS_FIRST_INO(ifile->i_sb);
- 	req.pr_entry_bh = NULL;
- 
--	ret = nilfs_palloc_prepare_alloc_entry(ifile, &req);
-+	ret = nilfs_palloc_prepare_alloc_entry(ifile, &req, false);
- 	if (!ret) {
- 		ret = nilfs_palloc_get_entry_block(ifile, req.pr_entry_nr, 1,
- 						   &req.pr_entry_bh);
--- 
-2.34.1
-
+--=20
+Regards
+Yafang
 
