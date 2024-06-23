@@ -1,58 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-22205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C951D913B37
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 15:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67C6913B40
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 15:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8609728157D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 13:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059861C208F1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2024 13:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906331922E9;
-	Sun, 23 Jun 2024 13:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D0479E1;
+	Sun, 23 Jun 2024 13:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4fwikI+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRGaXpQn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D641922C0;
-	Sun, 23 Jun 2024 13:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7001719308A;
+	Sun, 23 Jun 2024 13:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719150301; cv=none; b=YLtRcVlNdICCMRxBZTFqB12FSz/933OZ2hOAGtqfaf57ZPuPfzkN5eKpXYPVszBKKaQvOqdahV9IgnhvZl6ZzHiI+v81zKdk7oRHdgEOd8HVDQ6FRUdI2CHJSbDwnxdd94bxAs5VG6PbKfyJpb6S309Maj825NrjHn7PHtZ35Zs=
+	t=1719150306; cv=none; b=KhFmvaqhrlZ9NGewa3nCocwmDbAY2xrLyUQpzWWAoSTf3rf8XC7wmjvht4kN4klF0PocD1YAsg9qZsPRsD7ZoZiV5NTC81jat39wQOjyVPIUL+FjyJc57N9r27E7anAqD3bMlsF8syMS+6xJCvDx7qGxzqcoTxRg1xjWU7Emy08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719150301; c=relaxed/simple;
-	bh=7FqicvDUYKPGZolfw+2sfBKMu8QQLpoAgoKBu9pkmws=;
+	s=arc-20240116; t=1719150306; c=relaxed/simple;
+	bh=Z0o+PpSYbQAdYjRFyAKGeoFs8grNJbIhab7koImLDDg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z4GcfyCuB5tdvKLtVCUVpqC7V6KhZ7cTUHZLwc5Oy5hApOntELexmYSAbFS/YpKxwmqbHXcv7TxM2Csi9Bn2IGX+5CLzAs2IcvywTH8xP9wmgp0o/n9GS6ouYMdADS9SxVMmP0IBHPnxhyxi3jWq5DtQofneDIvYpjLyX2hVJ7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4fwikI+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C718FC2BD10;
-	Sun, 23 Jun 2024 13:45:00 +0000 (UTC)
+	 MIME-Version; b=mb7Q/nqe1G9oJ1GaRLUcCtPmuzvi7wanbkP4c8yCU0npcAmAv89Z6Lx3WpxfypqfEaVyALaRbZjnSPNlJrQN+uEOGyFcNkrARQ8rxz1OtymW9rEW8yQ7EzKo6N/T7tGOjf5LsQjVmdPr0g/tjGoGKBdIjQWijT2x/M9VfQRPFF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRGaXpQn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB682C4AF09;
+	Sun, 23 Jun 2024 13:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719150301;
-	bh=7FqicvDUYKPGZolfw+2sfBKMu8QQLpoAgoKBu9pkmws=;
+	s=k20201202; t=1719150306;
+	bh=Z0o+PpSYbQAdYjRFyAKGeoFs8grNJbIhab7koImLDDg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K4fwikI+vQ8IVZ9d2cngYy+NmQnTU9qFLPMfd3T7Kd8lY/++eANN2PEUVOlRhkp3V
-	 9f+iQHPXxavKPNpyvbTcjUiHwzV7VBO5MnwZlSAlnQyuQslXVJF4q4GasEOhviyWOa
-	 zrZbdX8L9wHymwIgWKjbM/65o4PnsRfnwX3/8AAQ+0V14SvRCH2/Q0Su9px8Cut/XD
-	 Ee25nIeJCXdr+eZaF1a2B31fy/Wd4anqkzHfVOLzq/HnXw+e9Hcl2q0jPhx28+WkuP
-	 +8x1ERK2jv4mmWPIri6/xveFTEJlMCu+Tvo/hc5ggCc8HbMg8fksEaD0MK/a5baITk
-	 Mjvg22RZlwmeg==
+	b=TRGaXpQnRv4L/BaaTrO4LXefGOF0BjfTas6r7DOu11nydrTtF/O5VUxLeuf9xne6q
+	 vjBR7ryC9bg4AkENdlElg4rDopWPq1B8T/DtxQKO/m9YhWrZjOGwh+VvxfCyKxI0KP
+	 tN2jPM0PULhLYB9ZN6FFuAx4X+35FbvPoebtBPe2S/JCWfrLJSEhnlGZ8AH+VslaAC
+	 d3MRE3P938K6jbOYMJylilTIcYdUV7VS9v8QVBQnv/HAhFtULGCD88eqIVi2vXVxOF
+	 XoNQiwtfkApuZeu9pCQC9HWlH7Be4sUd/dNmPduzwFkuveM997uQhc7Vb2gxi9KRER
+	 Z6EwPImT3NL0A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Yuntao Wang <yuntao.wang@linux.dev>,
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Darrick J . Wong" <djwong@kernel.org>,
 	Jan Kara <jack@suse.cz>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
+	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 08/16] fs/file: fix the check in find_next_fd()
-Date: Sun, 23 Jun 2024 09:44:37 -0400
-Message-ID: <20240623134448.809470-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 11/16] iomap: Fix iomap_adjust_read_range for plen calculation
+Date: Sun, 23 Jun 2024 09:44:40 -0400
+Message-ID: <20240623134448.809470-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240623134448.809470-1-sashal@kernel.org>
 References: <20240623134448.809470-1-sashal@kernel.org>
@@ -67,49 +70,53 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.35
 Content-Transfer-Encoding: 8bit
 
-From: Yuntao Wang <yuntao.wang@linux.dev>
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 
-[ Upstream commit ed8c7fbdfe117abbef81f65428ba263118ef298a ]
+[ Upstream commit f5ceb1bbc98c69536d4673a97315e8427e67de1b ]
 
-The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
-maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
-gives the value of bitbit, which can never be greater than maxfd, it can
-only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
-will never be true.
+If the extent spans the block that contains i_size, we need to handle
+both halves separately so that we properly zero data in the page cache
+for blocks that are entirely outside of i_size. But this is needed only
+when i_size is within the current folio under processing.
+"orig_pos + length > isize" can be true for all folios if the mapped
+extent length is greater than the folio size. That is making plen to
+break for every folio instead of only the last folio.
 
-Moreover, when bitbit equals maxfd, it indicates that there are no unused
-fds, and the function can directly return.
+So use orig_plen for checking if "orig_pos + orig_plen > isize".
 
-Fix this check.
-
-Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
-Link: https://lore.kernel.org/r/20240529160656.209352-1-yuntao.wang@linux.dev
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Link: https://lore.kernel.org/r/a32e5f9a4fcfdb99077300c4020ed7ae61d6e0f9.1715067055.git.ritesh.list@gmail.com
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Jan Kara <jack@suse.cz>
+cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/iomap/buffered-io.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 3e4a4dfa38fca..a815f6eddc511 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -481,12 +481,12 @@ struct files_struct init_files = {
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 129a85633797a..975fd88c1f0f4 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -201,6 +201,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 	unsigned block_size = (1 << block_bits);
+ 	size_t poff = offset_in_folio(folio, *pos);
+ 	size_t plen = min_t(loff_t, folio_size(folio) - poff, length);
++	size_t orig_plen = plen;
+ 	unsigned first = poff >> block_bits;
+ 	unsigned last = (poff + plen - 1) >> block_bits;
  
- static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
- {
--	unsigned int maxfd = fdt->max_fds;
-+	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
- 	unsigned int maxbit = maxfd / BITS_PER_LONG;
- 	unsigned int bitbit = start / BITS_PER_LONG;
+@@ -237,7 +238,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 	 * handle both halves separately so that we properly zero data in the
+ 	 * page cache for blocks that are entirely outside of i_size.
+ 	 */
+-	if (orig_pos <= isize && orig_pos + length > isize) {
++	if (orig_pos <= isize && orig_pos + orig_plen > isize) {
+ 		unsigned end = offset_in_folio(folio, isize - 1) >> block_bits;
  
- 	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
--	if (bitbit > maxfd)
-+	if (bitbit >= maxfd)
- 		return maxfd;
- 	if (bitbit > start)
- 		start = bitbit;
+ 		if (first <= end && last > end)
 -- 
 2.43.0
 
